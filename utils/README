@@ -16,10 +16,6 @@ chktex 1.6.4 - checked 3may10
 dialog 1.1-20100119 - checked 21jan10
   ftp://invisible-island.net/dialog/dialog.tar.gz
 
-pdfopen 0.5 - checked 26nov06
-  (really xpdfopen)
-  http://tex.aanhet.net/pdfopen
-
 ps2eps 1.64 - checked 19feb08
   http://www.ipv6.tm.uka.de/~bless/ps2eps
 
@@ -36,7 +32,6 @@ tpic2pdftex
 vlna 1.2 - checked 26jun08
   ftp://math.feld.cvut.cz/pub/olsak/vlna
 
-
 xindy 2.3 - checked 24mar08
   (with numerous adaptations for TL by Vladimir)
   http://www.ctan.org/indexing/xindy/
@@ -45,6 +40,10 @@ After building clisp as described below, run the TL
   Build --enable-xindy CLISP=$clisp_builddir/clisp
 to include xindy in the build.  It is disabled by default.
 
+xpdfopen 0.80 - checked 5may10
+  http://mirror.ctan.org/support/xpdfopen.zip
+
+
 Do NOT use nohup when building clisp; this may cause weird build
 problems.  Regular redirections of stdout/stderr seem ok.
 

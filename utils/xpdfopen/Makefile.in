@@ -55,12 +55,13 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_pdfclose_OBJECTS = pdfclose.$(OBJEXT) sendx.$(OBJEXT)
+am_pdfclose_OBJECTS = pdfclose.$(OBJEXT) sendx.$(OBJEXT) \
+	utils.$(OBJEXT)
 pdfclose_OBJECTS = $(am_pdfclose_OBJECTS)
 pdfclose_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 pdfclose_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am_pdfopen_OBJECTS = pdfopen.$(OBJEXT) sendx.$(OBJEXT)
+am_pdfopen_OBJECTS = pdfopen.$(OBJEXT) sendx.$(OBJEXT) utils.$(OBJEXT)
 pdfopen_OBJECTS = $(am_pdfopen_OBJECTS)
 pdfopen_LDADD = $(LDADD)
 pdfopen_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -182,9 +183,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 AM_CFLAGS = $(WARNING_CFLAGS)
 INCLUDES = $(X_CFLAGS)
 LDADD = $(X_LIBS) -lX11 -lXmu $(X_EXTRA_LIBS)
-pdfopen_SOURCES = pdfopen.c sendx.c sendx.h
-pdfclose_SOURCES = pdfclose.c sendx.c sendx.h
-EXTRA_DIST = xpdfopen.pdf xpdfopen.tex
+pdfopen_SOURCES = pdfopen.c sendx.c utils.c sendx.h xpdfopen.h utils.h
+pdfclose_SOURCES = pdfclose.c sendx.c utils.c sendx.h xpdfopen.h utils.h
+EXTRA_DIST = xpdfopen.pdf xpdfopen.tex Makefile.am.orig \
+	configure.ac.orig
 all: all-am
 
 .SUFFIXES:
@@ -276,6 +278,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfclose.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdfopen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sendx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

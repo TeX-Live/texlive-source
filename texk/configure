@@ -646,7 +646,6 @@ enable_cxx_runtime_hack
 enable_libtool_hack
 enable_chktex
 enable_dialog
-enable_pdfopen
 enable_ps2eps
 enable_psutils
 enable_t1utils
@@ -658,6 +657,7 @@ enable_xindy_docs
 with_clisp_runtime
 with_xindy_recode
 enable_xindy
+enable_xpdfopen
 enable_web2c
 with_tex_banner
 with_editor
@@ -1440,7 +1440,6 @@ Optional Features:
   --enable-libtool-hack   ignore libtool dependency_libs
   --enable-chktex         build the chktex package
   --disable-dialog        do not build the dialog package
-  --disable-pdfopen       do not build the pdfopen package
   --disable-ps2eps        do not build the ps2eps package
   --disable-psutils       do not build the psutils package
   --disable-t1utils       do not build the t1utils package
@@ -1450,6 +1449,7 @@ Optional Features:
   --enable-xindy-rules      build and install make-rules package
   --enable-xindy-docs       build and install documentation
   --enable-xindy          build the xindy package
+  --disable-xpdfopen      do not build the xpdfopen package
   --disable-web2c         do not build the web2c (TeX & Co.) package
   --enable-auto-core        cause TeX&MF to dump core, given a certain
                             filename
@@ -2281,38 +2281,6 @@ $as_echo "$as_me: Assuming \`--enable-dialog=$enable_dialog'" >&6;}
 esac
 
 
-## utils/pdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/pdfopen/
-## configure options and TL libraries required for pdfopen
-if test "x$with_x" = xno; then :
-  case $enable_pdfopen in #(
-  "") :
-    { $as_echo "$as_me:${as_lineno-$LINENO}: \`--without-x' -> \`--disable-pdfopen'" >&5
-$as_echo "$as_me: \`--without-x' -> \`--disable-pdfopen'" >&6;}
-                      enable_pdfopen=no
-                      ac_configure_args="$ac_configure_args '--disable-pdfopen'" ;; #(
-  yes) :
-    as_fn_error "Sorry, incompatible options \`--without-x' and \`--enable-pdfopen'" "$LINENO" 5 ;; #(
-  *) :
-     ;;
-esac
-fi
-# Check whether --enable-pdfopen was given.
-if test "${enable_pdfopen+set}" = set; then :
-  enableval=$enable_pdfopen;
-fi
-case $enable_pdfopen in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_pdfopen=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-pdfopen=$enable_pdfopen'" >&5
-$as_echo "$as_me: Assuming \`--enable-pdfopen=$enable_pdfopen'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-pdfopen=$enable_pdfopen'"
-    ;;
-esac
-
-
 ## utils/ps2eps/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/ps2eps/
 ## configure options and TL libraries required for ps2eps
 # Check whether --enable-ps2eps was given.
@@ -2521,6 +2489,38 @@ fi
 if test "${with_xindy_recode+set}" = set; then :
   withval=$with_xindy_recode;
 fi
+
+
+## utils/xpdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xpdfopen/
+## configure options and TL libraries required for xpdfopen
+if test "x$with_x" = xno; then :
+  case $enable_xpdfopen in #(
+  "") :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: \`--without-x' -> \`--disable-xpdfopen'" >&5
+$as_echo "$as_me: \`--without-x' -> \`--disable-xpdfopen'" >&6;}
+                      enable_xpdfopen=no
+                      ac_configure_args="$ac_configure_args '--disable-xpdfopen'" ;; #(
+  yes) :
+    as_fn_error "Sorry, incompatible options \`--without-x' and \`--enable-xpdfopen'" "$LINENO" 5 ;; #(
+  *) :
+     ;;
+esac
+fi
+# Check whether --enable-xpdfopen was given.
+if test "${enable_xpdfopen+set}" = set; then :
+  enableval=$enable_xpdfopen;
+fi
+case $enable_xpdfopen in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_xpdfopen=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xpdfopen=$enable_xpdfopen'" >&5
+$as_echo "$as_me: Assuming \`--enable-xpdfopen=$enable_xpdfopen'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-xpdfopen=$enable_xpdfopen'"
+    ;;
+esac
 
 
 

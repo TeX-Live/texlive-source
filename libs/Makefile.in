@@ -67,7 +67,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../m4/kpse-zziplib-flags.m4 \
 	$(top_srcdir)/../utils/chktex/ac/withenable.ac \
 	$(top_srcdir)/../utils/dialog/ac/withenable.ac \
-	$(top_srcdir)/../utils/pdfopen/ac/withenable.ac \
 	$(top_srcdir)/../utils/ps2eps/ac/withenable.ac \
 	$(top_srcdir)/../utils/psutils/ac/withenable.ac \
 	$(top_srcdir)/../utils/t1utils/ac/withenable.ac \
@@ -78,6 +77,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../utils/xindy-new/ac/clisp.ac \
 	$(top_srcdir)/../utils/xindy/ac/withenable.ac \
 	$(top_srcdir)/../utils/xindy/ac/xindy.ac \
+	$(top_srcdir)/../utils/xpdfopen/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/web2c.ac \
 	$(top_srcdir)/../texk/afm2pl/ac/withenable.ac \
