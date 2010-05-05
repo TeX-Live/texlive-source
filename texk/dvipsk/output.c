@@ -804,7 +804,7 @@ cmdout(const char *s)
            linepos + l >= LINELENGTH) {
       (void)putc('\n', bitfile);
       linepos = 0;
-   } else if (! lastspecial) {
+   } else if (! lastspecial || linepos > 0) {
       (void)putc(' ', bitfile);
       linepos++;
    }

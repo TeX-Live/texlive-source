@@ -1,3 +1,8 @@
+2010-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* output.c: minor fix of the function cmdout(). Without the fix, broken
+	ps is generated for pTeX's dvi.
+
 2010-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Implement pTeX extensions, based on patches sent by Akira.
