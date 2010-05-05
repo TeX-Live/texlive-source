@@ -914,27 +914,29 @@ such as Ghostview.
 @item -noomega
 @opindex -noomega
 @cindex Omega extensions
-@cindex pTeX extensions
-This will disable the use of Omega and pTeX extensions when interpreting DVI
-files.  By default, the additional opcodes @samp{129} and @samp{134} are
-recognized by Dvips as Omega extensions and interpreted as requests to set
-2-byte characters.
+@cindex p@TeX{} extensions
+Disable the use of Omega and p@TeX{} extensions when interpreting DVI
+files.  By default, the additional opcodes @samp{129} and @samp{134}
+are recognized by Dvips as Omega extensions and interpreted as
+requests to set 2-byte characters.
 
 @item -noptex
 @opindex -noptex
-@cindex pTeX extensions
-This will disable the use of pTeX extensions when interpreting DVI files. 
-By default, the additional opcodes @samp{130} and @samp{135} are recognized
-by Dvips as Omega extensions and interpreted as requests to set 3-byte
-characters, and @samp{255} as request to change the typesetting direction.
+@cindex p@TeX{} extensions
+Disable the use of p@TeX{} extensions when interpreting DVI files.  By
+default, the additional opcodes @samp{130} and @samp{135} are
+recognized by Dvips as Omega extensions and interpreted as requests to
+set 3-byte characters, and @samp{255} as request to change the
+typesetting direction.
 
-The only drawback is that the virtual font array will (at least temporarily)
-require 65536 or more positions instead of the default 256 positions, i.e.,
-the memory requirements of Dvips will be somewhat larger.  If you find this
-unacceptable or encounter another problem with the Omega or pTeX extensions,
-you can switch off the pTeX extension by using @samp{-noptex}, or both by
-using @samp{-noomega} (but please do send a bug report if you find such
-problems, @pxref{Bugs,,, kpathsea, Kpathsea}).
+The only drawback is that the virtual font array will (at least
+temporarily) require 65536 or more positions instead of the default
+256 positions, i.e., the memory requirements of Dvips will be somewhat
+larger.  If you find this unacceptable or encounter another problem
+with the Omega or p@TeX{} extensions, you can switch off the p@TeX{}
+extension by using @samp{-noptex}, or both by using @samp{-noomega}
+(but please do send a bug report if you find such problems,
+@pxref{Bugs,,, kpathsea, Kpathsea}).
 
 @item -o @var{name}
 @opindex -o @var{name}

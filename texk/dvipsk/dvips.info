@@ -807,22 +807,22 @@ reversal, use `-r0'.  Such options are marked with a trailing `*'.
      movement, etc., in PostScript viewers such as Ghostview.
 
 `-noomega'
-     This will disable the use of Omega and pTeX extensions when
-     interpreting DVI files.  By default, the additional opcodes `129'
-     and `134' are recognized by Dvips as Omega extensions and
-     interpreted as requests to set 2-byte characters.
+     Disable the use of Omega and pTeX extensions when interpreting DVI
+     files.  By default, the additional opcodes `129' and `134' are
+     recognized by Dvips as Omega extensions and interpreted as
+     requests to set 2-byte characters.
 
 `-noptex'
-     This will disable the use of pTeX extensions when interpreting DVI
-     files.  By default, the additional opcodes `130' and `135' are
-     recognized by Dvips as Omega extensions and interpreted as
-     requests to set 3-byte characters, and `255' as request to change
-     the typesetting direction.
+     Disable the use of pTeX extensions when interpreting DVI files.  By
+     default, the additional opcodes `130' and `135' are recognized by
+     Dvips as Omega extensions and interpreted as requests to set
+     3-byte characters, and `255' as request to change the typesetting
+     direction.
 
      The only drawback is that the virtual font array will (at least
-     temporarily) require 65536 or more positions instead of the
-     default 256 positions, i.e., the memory requirements of Dvips will
-     be somewhat larger.  If you find this unacceptable or encounter
+     temporarily) require 65536 or more positions instead of the default
+     256 positions, i.e., the memory requirements of Dvips will be
+     somewhat larger.  If you find this unacceptable or encounter
      another problem with the Omega or pTeX extensions, you can switch
      off the pTeX extension by using `-noptex', or both by using
      `-noomega' (but please do send a bug report if you find such
@@ -4726,64 +4726,64 @@ Node: Basic usage20088
 Node: Command-line options21072
 Node: Option summary21521
 Node: Option details23726
-Node: Environment variables43112
-Node: Config files46071
-Node: Configuration file searching46754
-Node: Configuration file commands50054
-Node: Paper size and landscape57167
-Node: papersize special58765
-Node: Config file paper sizes60174
-Node: Paper trays64329
-Node: Interaction with PostScript65663
-Node: PostScript figures66316
-Node: Bounding box67042
-Node: \includegraphics70413
-Node: EPSF macros72704
-Node: EPSF scaling74674
-Node: EPSF clipping77244
-Node: psfile special77886
-Node: Dynamic creation of graphics80279
-Node: Fonts in figures81597
-Node: Header files83257
-Node: Including headers from TeX84463
-Node: Including headers from the command line86497
-Node: Headers and memory usage87597
-Node: Literal PS88307
-Node: " special88889
-Node: ps special89630
-Node: Literal headers91128
-Node: PostScript hooks91843
-Node: Literal examples93933
-Node: Hypertext95385
-Node: Hypertext caveats96943
-Node: Hypertext specials101340
-Node: PostScript fonts103974
-Node: Font concepts105090
-Node: Metric files106257
-Node: Glyph files109083
-Node: Virtual fonts111439
-Node: Encodings113329
-Node: PostScript typesetting115732
-Node: Making a font available118814
-Node: Invoking afm2tfm123844
-Node: Changing font encodings124814
-Node: Changing TeX encodings125604
-Node: Changing PostScript encodings126704
-Node: Changing both encodings128048
-Node: Reencoding with Afm2tfm128721
-Node: Encoding file format131825
-Node: Special font effects136028
-Node: Afm2tfm options138291
-Node: psfonts.map141276
-Node: Color146008
-Node: Color macro files147052
-Node: User-definable colors150250
-Node: Color subtleties151525
-Node: Ted Turner153176
-Node: Color device configuration154401
-Node: Color support details156843
-Node: Color specifications157221
-Node: Color specials158624
-Node: Index160753
+Node: Environment variables43092
+Node: Config files46051
+Node: Configuration file searching46734
+Node: Configuration file commands50034
+Node: Paper size and landscape57147
+Node: papersize special58745
+Node: Config file paper sizes60154
+Node: Paper trays64309
+Node: Interaction with PostScript65643
+Node: PostScript figures66296
+Node: Bounding box67022
+Node: \includegraphics70393
+Node: EPSF macros72684
+Node: EPSF scaling74654
+Node: EPSF clipping77224
+Node: psfile special77866
+Node: Dynamic creation of graphics80259
+Node: Fonts in figures81577
+Node: Header files83237
+Node: Including headers from TeX84443
+Node: Including headers from the command line86477
+Node: Headers and memory usage87577
+Node: Literal PS88287
+Node: " special88869
+Node: ps special89610
+Node: Literal headers91108
+Node: PostScript hooks91823
+Node: Literal examples93913
+Node: Hypertext95365
+Node: Hypertext caveats96923
+Node: Hypertext specials101320
+Node: PostScript fonts103954
+Node: Font concepts105070
+Node: Metric files106237
+Node: Glyph files109063
+Node: Virtual fonts111419
+Node: Encodings113309
+Node: PostScript typesetting115712
+Node: Making a font available118794
+Node: Invoking afm2tfm123824
+Node: Changing font encodings124794
+Node: Changing TeX encodings125584
+Node: Changing PostScript encodings126684
+Node: Changing both encodings128028
+Node: Reencoding with Afm2tfm128701
+Node: Encoding file format131805
+Node: Special font effects136008
+Node: Afm2tfm options138271
+Node: psfonts.map141256
+Node: Color145988
+Node: Color macro files147032
+Node: User-definable colors150230
+Node: Color subtleties151505
+Node: Ted Turner153156
+Node: Color device configuration154381
+Node: Color support details156823
+Node: Color specifications157201
+Node: Color specials158604
+Node: Index160733
 
 End Tag Table
