@@ -1,5 +1,10 @@
 2010-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	* output.c: revert cmdout() and remove lastspecial=1 in jscout().
+	Thanks Peter.
+
+2010-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	* output.c: rewrite the previous fix not to change the output format
 	for non-pTeX dvi.
 

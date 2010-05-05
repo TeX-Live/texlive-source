@@ -783,7 +783,6 @@ jscout(int c, char *fs)   /* string character out */
       sprintf(s, "a<%04x>p", c);
    }
    cmdout(s);
-   lastspecial = 1;
    instring = 0;
    jflag = 1;
    strbuffer[0] = '\0';
@@ -804,7 +803,7 @@ cmdout(const char *s)
            linepos + l >= LINELENGTH) {
       (void)putc('\n', bitfile);
       linepos = 0;
-   } else if (! lastspecial || (linepos > 0 && jflag)) {
+   } else if (! lastspecial) {
       (void)putc(' ', bitfile);
       linepos++;
    }
