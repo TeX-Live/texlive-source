@@ -30,14 +30,14 @@ struct bangspecial {
 void
 specerror(const char *s)
 {
-   if (specialerrors > 0 
+   if (specialerrors > 0
 #ifdef KPATHSEA
        && !kpse_tex_hush ("special")
 #endif
        ) {
       error(s);
       specialerrors--;
-   } else if (specialerrors == 0 
+   } else if (specialerrors == 0
 #ifdef KPATHSEA
 	      && !kpse_tex_hush ("special")
 #endif
@@ -104,6 +104,81 @@ dobs(register struct bangspecial *q)
       trytobreakout(q->actualstuff);
    }
 }
+
+/* added for dvi2ps & jdvi2kps format */
+static char *mfgets(char *buf, unsigned int bytes, FILE *fp);
+
+static void
+fgetboundingbox(char *f, float *llx_p, float *lly_p, float *urx_p, float *ury_p)
+{
+   FILE *fp;
+   char buf[BUFSIZ];
+
+   fp = search(figpath, f, READ);
+   if (fp == 0)
+      fp = search(headerpath, f, READ);
+   if (fp) {
+      while (mfgets(buf, BUFSIZ, fp) != 0) {
+         if (buf[0] == '%' && buf[1] == '%'
+             && strncmp(buf+2, "BoundingBox:", 12) == 0) {
+             if (sscanf(buf+14, "%f %f %f %f", llx_p, lly_p, urx_p, ury_p) == 4) {
+                fclose(fp);
+                return;
+             }
+          }
+      }
+      fclose(fp);
+   }
+   sprintf(errbuf, "Couldn't get BoundingBox of %s: assuming full A4 size", f);
+   specerror(errbuf);
+   *llx_p = 0.0;
+   *lly_p = 0.0;
+   *urx_p = 595.0;
+   *ury_p = 842.0;
+}
+
+static char *
+mfgets(char *buf, unsigned int bytes, FILE *fp)
+{
+   int i, cc;
+
+   for (i = 0; i < bytes; i++) {
+      cc = fgetc(fp);
+      if (cc == 0x0a || cc == 0x0d) {
+         if (cc == 0x0d) {
+            cc = fgetc(fp);
+            if (cc != 0x0a) {
+               ungetc(cc, fp);
+            }
+         }
+         cc = 0x0a;
+         buf[i] = cc;
+         buf[i+1] = '\0';
+         return buf;
+      } else if (cc == EOF) {
+         buf[i] = '\0';
+         if (i == 0) return NULL;
+         else return buf;
+      } else {
+         buf[i] = cc;
+      }
+   }
+   buf[i] = '\0';
+   return buf;
+}
+
+static void
+floatroundout(float f)
+{
+   integer i;
+   i = (integer)(f<0 ? f-0.5 : f+0.5);
+   if (i-f < 0.001 && i-f > -0.001) {
+      numout((integer)i);
+   } else {
+      floatout(f);
+   }
+}
+/* end of addition */
 
 void
 outbangspecials(void) {
@@ -193,7 +268,7 @@ int
 IsSame(const char *a, const char *b)
 {
    for(; *a != '\0'; ) {
-      if( TOLOWER(*a) != TOLOWER(*b) ) 
+      if( TOLOWER(*a) != TOLOWER(*b) )
          return( 0 );
       a++;
       b++;
@@ -206,7 +281,7 @@ const char *ValStr; /* ... String values found */
 long ValInt; /* Integer value found */
 float ValNum; /* Number or Dimension value found */
 
-char  *
+char *
 GetKeyVal(char *str, int *tno) /* returns NULL if none found, else next scan point */
      /* str : starting point for scan */
      /* tno : table entry number of keyword, or -1 if keyword not found */
@@ -262,7 +337,7 @@ found: *tno = i;
       break;
  case Number:
  case Dimension:
-      if(sscanf(ValStr,"%f",&ValNum)!=1) {  
+      if(sscanf(ValStr,"%f",&ValNum)!=1) {
           sprintf(errbuf,"Non-numeric value (%s) given for keyword %s",
               ValStr, KeyStr);
           specerror(errbuf);
@@ -491,12 +566,6 @@ case '!':
    }
    break;
 default:
-#if 0
-   {
-      /* Unknown special, must return */
-      return;
-   }
-#endif
    break;
    }
    usesspecial = 1;  /* now the special prolog will be sent */
@@ -516,7 +585,7 @@ maccess(char *s)
 
 const char *tasks[] = { 0, "iff2ps", "tek2ps" };
 
-static char psfile[511]; 
+static char psfile[511];
 void
 dospecial(integer numbytes)
 {
@@ -526,7 +595,7 @@ dospecial(integer numbytes)
    register const char *q;
    Boolean psfilewanted = 1;
    const char *task = 0;
-   char cmdbuf[111]; 
+   char cmdbuf[111];
 #ifdef HPS
 if (HPS_FLAG && PAGEUS_INTERUPPTUS) {
      HREF_COUNT--;
@@ -573,6 +642,61 @@ case 'e':
 	emspecial(p);
 	return;
    }
+
+/* added for dvi2ps special */
+   if (strncmp(p, "epsfile=", 8)==0) {  /* epsf.sty for dvi2ps-j */
+      float llx, lly, urx, ury;
+
+      p += 8;
+      sscanf(p, "%s", psfile);
+      p += strlen(psfile);
+      fgetboundingbox(psfile, &llx, &lly, &urx, &ury);
+      hvpos();
+      cmdout("@beginspecial");
+      floatroundout(llx);
+      cmdout("@llx");
+      floatroundout(lly);
+      cmdout("@lly");
+      floatroundout(urx);
+      cmdout("@urx");
+      floatroundout(ury);
+      cmdout("@ury");
+
+      while ((p = GetKeyVal(p, &j))) {
+         switch (j) {
+            case 3: /* hsize */
+               floatroundout(ValNum*10);
+               cmdout("@rwi");
+               break;
+            case 4: /* vsize */
+               floatroundout(ValNum*10);
+               cmdout("@rhi");
+               break;
+            case 7: /* hscale */
+               floatroundout((urx-llx)*ValNum*10);
+               cmdout("@rwi");
+               break;
+            case 8: /* vscale */
+               floatroundout((ury-lly)*ValNum*10);
+               cmdout("@rhi");
+               break;
+            default:
+               sprintf(errbuf, "Unknown keyword `%s' in \\special{epsfile=%s...} will be ignored\n", KeyStr, psfile);
+               specerror(errbuf);
+               break;
+         }
+      }
+      cmdout("@setspecial");
+      numout((integer)0);
+      cmdout("lly");
+      cmdout("ury");
+      cmdout("sub");
+      cmdout("TR");
+      figcopyfile(psfile, 0);
+      cmdout("\n@endspecial");
+      return;
+   }
+/* end addition */
    break;
 case 'p':
    if (strncmp(p, "pos:", 4)==0) return; /* positional specials */
@@ -604,7 +728,7 @@ case 'p':
              for (sfp = p; *sfp && *sfp != ' '; sfp++);
            }
            *sfp = '\0';
-           if (*p == '`') 
+           if (*p == '`')
              figcopyfile(p+1, 1);
            else
              figcopyfile (p, 0);
@@ -623,6 +747,34 @@ case 'p':
    if (strncmp(p, "pn ", 3) == 0) {setPenSize(p+2); return;}
    if (strncmp(p, "pa ", 3) == 0) {addPath(p+2); return;}
 #endif
+
+/* added for jdvi2kps special */
+   if (strncmp(p, "postscriptbox", 13)==0) { /* epsbox.sty for jdvi2kps */
+      float w, h;
+      float llx, lly, urx, ury;
+      if (sscanf(p+13, "{%fpt}{%fpt}{%[^}]}", &w, &h, psfile) != 3)
+         break;
+      fgetboundingbox(psfile, &llx, &lly, &urx, &ury);
+      hvpos();
+      cmdout("@beginspecial");
+      floatroundout(llx);
+      cmdout("@llx");
+      floatroundout(lly);
+      cmdout("@lly");
+      floatroundout(urx);
+      cmdout("@urx");
+      floatroundout(ury);
+      cmdout("@ury");
+      floatroundout(w*10*72/72.27);
+      cmdout("@rwi");
+      floatroundout(h*10*72/72.27);
+      cmdout("@rhi");
+      cmdout("@setspecial");
+      figcopyfile(psfile, 0);
+      cmdout("\n@endspecial");
+      return;
+   }
+/* end addition */
    break;
 case 'l':
    if (strncmp(p, "landscape", 9)==0) return;
@@ -653,9 +805,9 @@ case 'h':
 				for(ii=0;ii<lower_len;ii++) str[ii]=tolower(str[ii]);
 				do_html(str);
    			free(str);
-				} else 
+				} else
 #ifdef KPATHSEA
-				  if (!kpse_tex_hush ("special")) 
+				  if (!kpse_tex_hush ("special"))
 #endif
 				    {
 
@@ -752,14 +904,6 @@ case '"':
    return;
    break;
 default:
-#if 0
-   {
-      /* Unknown special, must return */
-      sprintf(errbuf,"Unrecognized special (first 10 chars: %.10s)", p);
-      specerror(errbuf);
-      return;
-   }
-#endif
    break;
    }
 /* At last we get to the key/value conventions */
@@ -788,7 +932,7 @@ default:
          break;
  case 0: case 1: case 2: /* psfile */
          if (psfile[0]) {
-           sprintf(errbuf, "More than one \\special %s given; %s ignored", 
+           sprintf(errbuf, "More than one \\special %s given; %s ignored",
                     "psfile",  ValStr);
            specerror(errbuf);
          }
@@ -824,7 +968,7 @@ default:
       } else {
          fprintf (stderr, "dvips: iff2ps and tek2ps are not supported.\n");
       }
-   } else if (psfilewanted 
+   } else if (psfilewanted
 #ifdef KPATHSEA
 	      && !kpse_tex_hush ("special")
 #endif

@@ -8,6 +8,12 @@
 /*   This file is the header for dvips's global data structures. */
 
 #define CREATIONDATE
+
+#define MAX_CODE 0x110000
+#define MAX_2BYTES_CODE 0x10000
+#define VF_MEM_UNIT 0x10000
+#define CD_IDX(i)  ((i>=MAX_2BYTES_CODE ? MAX_2BYTES_CODE : i))
+
 #define BANNER \
 "This is dvips(k) 5.98dev Copyright 2010 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
@@ -57,9 +63,9 @@ extern char *sprintf();
 #define STRINGSIZE (200000) /* maximum total chars in strings in program */
 #define RASTERCHUNK (8192)  /* size of chunk of raster */
 #define MINCHUNK (240)      /* minimum size char to get own raster */
-#define STACKSIZE (350)     /* maximum stack size for dvi files */
-#define MAXFRAME (10)       /* maximum depth of virtual font recursion */
-#define MAXFONTHD (100)     /* number of unique names of included fonts */
+#define STACKSIZE (500)     /* maximum stack size for dvi files */
+#define MAXFRAME (50)       /* maximum depth of virtual font recursion */
+#define MAXFONTHD (1024)    /* number of unique names of included fonts */
 #define STDOUTSIZE (75)     /* width of a standard output line */
 #define DOWNLOADEDPSSIZE (1000)  /* max number of downloaded fonts to check */
 /*
@@ -164,7 +170,7 @@ typedef struct tcd {
  *   psfile.  It can be 0, PREVPAGE, THISPAGE, or EXISTS.
  */
 typedef struct tfd {
-   integer checksum, scaledsize, designsize, thinspace;
+   integer checksum, scaledsize, designsize, thinspace, dir;
    halfword dpi, loadeddpi;
    halfword alreadyscaled;
    halfword psname;
@@ -179,6 +185,7 @@ typedef struct tfd {
    struct tfd *nextsize;
    char *scalename;
    chardesctype *chardesc;
+   int iswide;
 } fontdesctype;
 
 /*  A fontmap associates a fontdesc with a font number.
@@ -322,12 +329,10 @@ struct papsiz {
 #include <io.h>
 #include <fcntl.h>
 #define O_BINARY _O_BINARY
-#define popen _popen
-#define pclose _pclose
 #define register
 #define SET_BINARY(fd) _setmode((fd), _O_BINARY)
 #else /* !WIN32 */
-#define SET_BINARY(fd)
+#define SET_BINARY(fd) 0
 #endif
 
 #if defined(DEVICESEP)

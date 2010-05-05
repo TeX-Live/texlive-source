@@ -133,9 +133,15 @@ scanpage(void)
  
    while (1) {
       switch (cmd=dvibyte()) {
-case 130: case 131: case 135: case 136: case 139:
-case 247: case 248: case 249: case 250: case 251: case 252: case 253:
-case 254: case 255: /* unimplemented or illegal commands */
+case 255: /* pTeX's dir or undefined */
+         if (!noptex) {
+            (void)dvibyte();
+            break;
+         }
+/* illegal commands */
+case 131: case 136: case 139: /* set4, put4, bop */
+case 247: case 248: case 249: /* pre, post, post_post */
+case 250: case 251: case 252: case 253: case 254: /* undefined */
          (void)sprintf(errbuf,
             "! DVI file contains unexpected command (%d)",cmd);
          error(errbuf);
@@ -159,7 +165,16 @@ case 143: case 148: case 153: case 157: case 162: case 167:
 case 147: case 152: case 161: case 166: /* w0, x0, y0, z0 */
 case 138: case 141: case 142: /* nop, push, pop */
          break;
-case 134: case 129: /* set2, put2 */
+case 130: case 135: /* set3, put3 */
+         if (noptex) {
+            (void)sprintf(errbuf,
+               "! DVI file contains unexpected pTeX command (%d)",cmd);
+            error(errbuf);
+         }
+         mychar = dvibyte(); mychar = (mychar << 8) + dvibyte();
+         mychar = (mychar << 8) + dvibyte();
+         goto dochar;
+case 129: case 134: /* set2, put2 */
          if (noomega) {
             (void)sprintf(errbuf,
                "! DVI file contains unexpected Omega command (%d)",cmd);
@@ -167,9 +182,9 @@ case 134: case 129: /* set2, put2 */
          }
          mychar = dvibyte(); mychar = (mychar << 8) + dvibyte();
          goto dochar;
-case 133: case 128: cmd = dvibyte(); /* set1 commands drops through */
+case 128: case 133: cmd = dvibyte(); /* set1, put1 commands drops through */
 default:    /* these are commands 0 (setchar0) thru 127 (setchar 127) */
-	 mychar = cmd;
+         mychar = cmd;
 dochar:
 /*
  *   We are going to approximate that each string of consecutive characters
@@ -189,8 +204,10 @@ dochar:
             if (++frp == &frames[MAXFRAME] )
                error("! virtual recursion stack overflow");
             cd = curfnt->chardesc + mychar;
-            if (cd->packptr == 0)
- error("! a non-existent virtual character is being used; check vf/tfm files");
+            if (cd->packptr == 0) {
+               fprintf(stderr, "Wrong char code: %04X\n", mychar);
+               error("! a non-existent virtual character is being used; check vf/tfm files");
+            }
             curpos = cd->packptr + 2;
             curlim = curpos + (256*(long)(*cd->packptr)+(*(cd->packptr+1)));
             ffont = curfnt->localfonts;

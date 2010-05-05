@@ -41,6 +41,11 @@ extern char *strtok(); /* some systems don't have this in strings.h */
 #include descrip
 #endif
 #endif
+#ifdef __APPLE__ /* for Mac OS X, T. Uchiyama */
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#endif
 
 #ifndef DEFRES
 #define DEFRES (600)
@@ -57,6 +62,8 @@ extern char *strtok(); /* some systems don't have this in strings.h */
 #ifdef VMS
     static char ofnme[252],infnme[252],pap[40],thh[20];
 #endif
+
+Boolean SJIS;                /* KANJI code encoding */
 
 /* PS fonts fully downloaded as headers */ 
 char *downloadedpsnames[DOWNLOADEDPSSIZE];  
@@ -125,6 +132,7 @@ long bytesleft;              /* number of bytes left in raster */
 quarterword *raster;         /* area for raster manipulations */
 integer hh, vv;              /* horizontal and vertical pixel positions */
 Boolean noomega = 0;         /* Omega extensions are enabled */
+Boolean noptex = 0;          /* pTeX extensions are enabled */
 
 /*-----------------------------------------------------------------------*
  * The PATH definitions cannot be defined on the command line because so many
@@ -273,7 +281,8 @@ static const char *helparr[] = {
 "-m*  Manual feed                     -M*  Don't make fonts",
 "-mode s Metafont device name",
 "-n # Maximum number of pages         -N*  No structured comments",
-"-noomega  Disable Omega extensions",
+"-noomega  Disable Omega and pTeX extensions",
+"-noptex   Disable pTeX extensions",
 "-o f Output file                     -O c Set/change paper offset",
 #if defined(MSDOS) || defined(OS2)
 "-p # First page                      -P s Load $s.cfg",
@@ -284,16 +293,17 @@ static const char *helparr[] = {
 "-q*  Run quietly",
 "-r*  Reverse order of pages          -R*  Run securely",
 "-s*  Enclose output in save/restore  -S # Max section size in pages",
-"-t s Paper format                    -T c Specify desired page size",  
+"-t s Paper format                    -T c Specify desired page size",
 "-u s PS mapfile                      -U*  Disable string param trick",
 "-v   Print version number and quit   -V*  Send downloadable PS fonts as PK",
 "-x # Override dvi magnification      -X # Horizontal resolution",
-"-y # Multiply by dvi magnification   -Y # Vertical resolution",  
+"-y # Multiply by dvi magnification   -Y # Vertical resolution",
 #ifdef HPS
 "-z*  Hyper PS                        -Z*  Compress bitmap fonts",
 #else
 "                                     -Z*  Compress bitmap fonts",
 #endif
+"-SJIS* Shift-JIS encoding",
 /*"-   Interactive query of options", */
 "    # = number   f = file   s = string  * = suffix, `0' to turn off",
 "    c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)",
@@ -464,6 +474,7 @@ initialize(void)
       downloadedpsnames[i] = NULL;
    unused_top_of_psnames = 0;
    morestrings();
+   SJIS = 0;
    maxpages = 100000;
    numcopies = 1;
    iname = fulliname = strings;
@@ -575,6 +586,17 @@ main(int argc, char **argv)
 #endif
    sectiontype *sects;
 
+#ifdef WIN32
+   SET_BINARY(fileno(stdin));
+   SET_BINARY(fileno(stdout));
+#endif
+
+#ifdef __APPLE__ /* for Mac OS X, T. Uchiyama */
+   struct rlimit rl;
+   getrlimit(RLIMIT_STACK, &rl);
+   rl.rlim_cur = 2048 * 1024;
+   setrlimit(RLIMIT_STACK, &rl);
+#endif
 #ifdef KPATHSEA
    kpse_set_program_name (argv[0], "dvips");
    kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
@@ -789,10 +811,13 @@ case 'R':
                   secure_option = 1; /* Never used */
                break;
 case 'S':
-               if (*p == 0 && argv[i+1])
-                  p = argv[++i];
-               if (sscanf(p, "%d", &maxsecsize)==0)
-                  error("! Bad section size arg (-S).");
+               if (strncmp (p, "JIS", 3) == 0) SJIS = (*(p + 3) != '0');
+               else {
+                  if (*p == 0 && argv[i+1])
+                     p = argv[++i];
+                  if (sscanf(p, "%d", &maxsecsize)==0)
+                     error("! Bad section size arg (-S).");
+               }
                break;
 case 'm' :
                if (STREQ (p, "ode") && argv[i+1]) {
@@ -803,7 +828,9 @@ case 'm' :
                break;
 case 'n' :
                if (STREQ (p, "oomega")) {
-                 noomega = 1;
+                 noomega = noptex = 1;
+               } else if (STREQ (p, "optex")) {
+                 noptex = 1;
                } else {
                if (*p == 0 && argv[i+1])
                   p = argv[++i];

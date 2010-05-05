@@ -18,7 +18,8 @@ Options:
 -m*  Manual feed                     -M*  Don't make fonts
 -mode s Metafont device name
 -n # Maximum number of pages         -N*  No structured comments
--noomega  Disable Omega extensions
+-noomega  Disable Omega and pTeX extensions
+-noptex   Disable pTeX extensions
 -o f Output file                     -O c Set/change paper offset
 -p # First page                      -P s Load config.$s
 -pp l Print only pages listed

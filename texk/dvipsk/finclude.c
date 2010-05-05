@@ -393,6 +393,7 @@ scanfontcomments(const char *filename)
  *   Allow scanning of ` commands.  Better return same results both times.
  */
       f = popen(filename+1, "r");
+      (void)SET_BINARY(fileno(f));
       to_close = USE_PCLOSE;
    } else {
       f = search(figpath, filename, READ);

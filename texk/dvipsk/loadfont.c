@@ -337,6 +337,7 @@ loadfont(register fontdesctype *curfnt)
       tfmload(curfnt);
       return;
    }
+   curfnt->dir = 0;
    if (!quiet) {
       if (strlen(realnameoffile) + prettycolumn > STDOUTSIZE) {
          fprintf(stderr, "\n");

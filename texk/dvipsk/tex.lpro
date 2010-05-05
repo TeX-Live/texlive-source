@@ -258,7 +258,22 @@ TeXDict begin           % start using it.
     65781.76 div /hsize X
   } N
 
-/p {show} N        %  the main character setting routine
+/dir 0 def
+/dyy {/dir 0 def
+} B
+/dyt {/dir 1 def
+} B
+/dty {/dir 2 def
+} B
+/dtt {/dir 3 def
+} B
+
+%/p {show} N        %  the main character setting routine
+/p {dir 2 eq
+   {-90 rotate show 90 rotate}
+   {dir 3 eq {-90 rotate show 90 rotate}
+   {show} ifelse} ifelse
+} N
 
 /RMat [ 1 0 0 -1 0 0 ] N % things we need for rules
 /BDot 260 string N

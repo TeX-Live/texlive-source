@@ -13,7 +13,6 @@ struct tcd;
 
 /* prototypes for functions from bbox.c */
 extern void bbtfmload(fontdesctype *curfnt);
-extern void bbspecial(int h, int v, int nbytes);
 extern void bbdopage(void);
 extern void findbb(int bop);
 
@@ -209,7 +208,6 @@ extern void floatout(float n);
 extern void doubleout(double n);
 extern void numout(int n);
 extern void mhexout(unsigned char *p, long len);
-extern void fontout(int n);
 extern void hvpos(void);
 extern void newline(void);
 extern void nlcmdout(const char *s);
@@ -226,6 +224,7 @@ extern void psflush(void);
 extern void pageinit(void);
 extern void pageend(void);
 extern void drawrule(int rw, int rh);
+extern void cmddir(void);
 
 extern void drawchar(chardesctype * c, int cc);
 extern void tell_needed_fonts(void);
@@ -373,6 +372,7 @@ extern boolean t1_subset_2(char *, unsigned char *, char *);
 /*********** global variables ***********/
 
 /* global variables from dopage.c */
+extern integer dir;
 #ifdef HPS
 extern integer hhmem, vvmem;
 extern integer pushcount;
@@ -386,6 +386,7 @@ extern int pagecounter;
 #endif
 
 /* global variables from dvips.c */
+extern Boolean SJIS;
 extern char *downloadedpsnames[];
 extern int unused_top_of_psnames;
 extern fontdesctype *fonthead;
@@ -443,6 +444,7 @@ extern long bytesleft;
 extern quarterword *raster;
 extern integer hh, vv;
 extern Boolean noomega;
+extern Boolean noptex;
 extern const char *infont;
 #ifndef KPATHSEA
 extern char *tfmpath;
@@ -525,6 +527,7 @@ extern FILE *pkfile;
 
 /* global variables from output.c */
 extern char preamblecomment[256];
+extern integer rdir, fdir;
 
 /* global variables from pprescan.c */
 extern Boolean pprescan;

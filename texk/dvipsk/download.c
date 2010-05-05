@@ -180,11 +180,11 @@ makepsname(register char *s, register int n)
 void
 lfontout(int n)
 {
-	char buf[10];
-        char *b = buf;
-        *b++ = '/';
-        makepsname(b, n);
-	cmdout(buf);
+   char buf[10];
+   char *b = buf;
+   *b++ = '/';
+   makepsname(b, n);
+   cmdout(buf);
 }
 
 /*
@@ -210,7 +210,7 @@ download(charusetype *p, int psfont)
       for (b=0; b<16; b++)
         if(p->bitmap[b] !=0)
             non_empty =1;
-      if(non_empty==0 && curfnt->codewidth==1)
+      if(non_empty==0 && curfnt->iswide == 0 && curfnt->codewidth==1)
         return;
       cmdout(name);
 /* following code re-arranged - Rob Hutchings 1992Apr02 */
@@ -315,7 +315,7 @@ download(charusetype *p, int psfont)
    for (b=0; b<16; b++) {
       for (bit=32768; bit; bit>>=1) {
          if (p->bitmap[b] & bit) {
-            downchar(c, cc);
+            downchar(c, (shalfword)cc);
             c->flags |= EXISTS;
          } else
             c->flags &= ~EXISTS;
@@ -327,6 +327,7 @@ download(charusetype *p, int psfont)
    newline();
    fprintf(bitfile, "%%EndDVIPSBitmapFont\n");
 }
+
 /*
  *   Magic code to deal with PostScript font partial downloading.
  *   We track the encodings we've seen so far and keep them in these
@@ -453,9 +454,9 @@ downpsfont(charusetype *p, charusetype *all)
        error("! internal error in downpsfont");
     if (!partialdownload) {
         infont = all->fd->resfont->PSname;
-	copyfile(all->fd->resfont->Fontfile);
+        copyfile(all->fd->resfont->Fontfile);
         infont = 0;
-	return;
+        return;
     }
     for (cc=0; cc<256; cc++)
        grid[cc] = 0;
@@ -475,7 +476,7 @@ downpsfont(charusetype *p, charusetype *all)
            for (b=15; b>=0; b--) {
                for (bit=1; bit; bit<<=1) {
                    if (all->bitmap[b] & bit) {
-		      addGlyph(glyphs[cc]);
+                      addGlyph(glyphs[cc]);
                    }
                    c--;
                    cc--;
@@ -521,8 +522,8 @@ downpsfont(charusetype *p, charusetype *all)
               prettycolumn = 0;
            }
            (void)fprintf(stderr, "<%s>", realnameoffile);
-	   prettycolumn += strlen(realnameoffile) + 2;
-	}
+           prettycolumn += strlen(realnameoffile) + 2;
+        }
         if (! disablecomments)
            (void)fprintf(bitfile, "%%%%EndFont \n");
    }

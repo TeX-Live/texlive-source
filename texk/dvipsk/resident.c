@@ -40,10 +40,10 @@ struct header_list *ps_fonts_used;
 unsigned int
 hash(char *s)
 {
-   unsigned h = 12;
+   unsigned int h = 12;
 
    while (*s != 0)
-      h = (h + h + *s++) % RESHASHPRIME;
+      h = (h + h + (unsigned char)(*s++)) % RESHASHPRIME;
    return(h);
 }
 /*
@@ -101,7 +101,7 @@ findPSname(char *name)
  */
 void
 add_entry(char *TeXname, char *PSname, char *Fontfile,
-	  char *Vectfile, char *specinfo, char *downloadinfo)
+          char *Vectfile, char *specinfo, char *downloadinfo)
 {
    struct resfont *p;
    int h;
@@ -320,10 +320,10 @@ getdefaults(const char *s)
 	   /* $DVIPSRC was set by user */
 	   strcpy(PSname, dvipsrc);
 	 }
-	 else 
+	 else
 	   /* No env var, looking into some kind of standard path. */
 	   if (SearchPath(".;%HOME%;c:\\", ".dvipsrc", NULL,
-			  INLINE_SIZE, PSname, 
+			  INLINE_SIZE, PSname,
 			  &dvipsrc) == 0) {
 	     /* search failed, we must put something into PSname. */
 	     dvipsrc = kpse_var_expand(DVIPSRC);
@@ -334,10 +334,10 @@ getdefaults(const char *s)
 	     /* Else SearchPath has filled PSname with something */
 	   }
 	 /* remove any redundant path separators. Many configurations
-	    can show  up: c:\/.dvipsrc and so on ... */	       
-	 { 
+	    can show  up: c:\/.dvipsrc and so on ... */
+	 {
 	   char *p, *q;
-	   for (p = q = PSname; *p && (p - PSname < INLINE_SIZE); 
+	   for (p = q = PSname; *p && (p - PSname < INLINE_SIZE);
 		p++, q++) {
 	     if (IS_DIR_SEP(*p)) {
 	       *q = DIR_SEP; p++; q++;
@@ -352,7 +352,7 @@ getdefaults(const char *s)
          strcpy(PSname, dvipsrc ? dvipsrc : "~/.dvipsrc");
          if(dvipsrc) free(dvipsrc);
 #endif /* WIN32 */
-	 
+
 #else /* ! KPATHSEA */
 #ifndef VMCMS  /* IBM: VM/CMS - don't have home directory on VMCMS */
 #ifndef MVSXA
@@ -436,7 +436,7 @@ case '@' :
          } else {
             struct papsiz *ps;
             char *q;
-            
+
             ps = (struct papsiz *)mymalloc((integer)sizeof(struct papsiz));
             ps->next = papsizes;
             papsizes = ps;
@@ -458,10 +458,10 @@ case 'a' :
          break;
 case 'b':
 #ifdef SHORTINT
-         if (sscanf(was_inline+1, "%ld", &pagecopies) != 1) 
+         if (sscanf(was_inline+1, "%ld", &pagecopies) != 1)
 	   bad_config("missing pagecopies to b");
 #else
-         if (sscanf(was_inline+1, "%d", &pagecopies) != 1) 
+         if (sscanf(was_inline+1, "%d", &pagecopies) != 1)
 	   bad_config("missing pagecopies to b");
 #endif
          if (pagecopies < 1 || pagecopies > 1000)
@@ -469,7 +469,7 @@ case 'b':
          break;
 case 'm' :
 #ifdef SHORTINT
-         if (sscanf(was_inline+1, "%ld", &swmem) != 1) 
+         if (sscanf(was_inline+1, "%ld", &swmem) != 1)
 	   bad_config("missing swmem to m");
 #else   /* ~SHORTINT */
          if (sscanf(was_inline+1, "%d", &swmem) != 1)
@@ -517,7 +517,7 @@ case 'O' :
          handlepapersize(p, &hoff, &voff);
          break;
 #ifdef FONTLIB
-case 'L' : 
+case 'L' :
          {
             char tempname[INLINE_SIZE];
             if (sscanf(was_inline+1, "%s", PSname) != 1) bad_config("missing arg to L");
@@ -528,7 +528,7 @@ case 'L' :
 	 }
          break;
 #endif
-case 'T' : 
+case 'T' :
          if (sscanf(was_inline+1, "%s", PSname) != 1)
 	   bad_config("missing arg to T");
          else
@@ -540,7 +540,7 @@ case 'T' :
          break;
 case 'P' :
          if (sscanf(was_inline+1, "%s", PSname) != 1) bad_config("missing arg to P");
-         else 
+         else
 #ifdef KPATHSEA
 	   SET_CLIENT_PATH (kpse_pk_format, PSname);
 #else
@@ -560,9 +560,9 @@ case 'p' :
          }
          break;
 case 'v' : case 'V' :
-         if (sscanf(was_inline+1, "%s", PSname) != 1) 
+         if (sscanf(was_inline+1, "%s", PSname) != 1)
 	   bad_config("missing arg to V");
-         else 
+         else
 #ifdef KPATHSEA
 	   SET_CLIENT_PATH (kpse_vf_format, PSname);
 #else
@@ -570,8 +570,10 @@ case 'v' : case 'V' :
 #endif
          break;
 case 'S' :
-         if (sscanf(was_inline+1, "%s", PSname) != 1) 
-	   bad_config("missing arg to S");
+         if (!strncmp(was_inline, "SJIS", 4))
+           SJIS = (was_inline[4] != '0');
+         else if (sscanf(was_inline+1, "%s", PSname) != 1)
+           bad_config("missing arg to S");
          else
 #ifdef KPATHSEA
 	   SET_CLIENT_PATH (kpse_pict_format, PSname);
@@ -582,10 +584,10 @@ case 'S' :
 case 's':
          safetyenclose = 1;
          break;
-case 'H' : 
-         if (sscanf(was_inline+1, "%s", PSname) != 1) 
+case 'H' :
+         if (sscanf(was_inline+1, "%s", PSname) != 1)
 	   bad_config("missing arg to H");
-         else 
+         else
 #ifdef KPATHSEA
 	   SET_CLIENT_PATH (headerpath, PSname);
 #else
@@ -689,7 +691,7 @@ case 'Y' :
            bad_config("Y arg must be between 10 and 10000");
          break;
 case 'x': case 'y':
-         if (sscanf(was_inline+1, "%lg", &mag) != 1) 
+         if (sscanf(was_inline+1, "%lg", &mag) != 1)
 	   bad_config("missing arg to x or y");
          overridemag = (was_inline[0] == 'x') ? 1 : -1;
          break;
@@ -699,7 +701,7 @@ case 'e' :
          if (maxdrift < 0) bad_config("bad argument to e");
 	 vmaxdrift = maxdrift;
          break;
-case 'z' : 
+case 'z' :
 	 if (secure_option && secure && was_inline[1] == '0') {
 	   fprintf (stderr,
 	            "warning: %s: z0 directive ignored since -R1 given\n",
@@ -729,7 +731,7 @@ case 'G':
          shiftlowchars = (was_inline[1] != '0');
          break;
 #endif
-case 'h' : 
+case 'h' :
          if (sscanf(was_inline+1, "%s", PSname) != 1)
            bad_config("missing arg to h");
          else (void)add_header(PSname);
@@ -779,7 +781,7 @@ default:
           return 0;
         }
    }
-  
+
   return 1;
 }
 
@@ -852,7 +854,7 @@ getpsinfo(const char *name)
                      /* skip whitespace after < */
                      while (*p && *p <= ' ')
                        p++;
-                     
+
                      /* save start of header name */
                      hdr_name = p;
 
@@ -1014,13 +1016,13 @@ char *
 xmalloc(unsigned size)
 {
   char *mem = malloc (size);
-  
+
   if (mem == NULL)
     {
       fprintf (stderr, "! Cannot allocate %u bytes.\n", size);
       exit (10);
     }
-  
+
   return mem;
 }
 
@@ -1029,31 +1031,31 @@ char *
 xrealloc(char *ptr, unsigned size)
 {
   char *mem = realloc (ptr, size);
-  
+
   if (mem == NULL)
     {
       fprintf (stderr, "! Cannot reallocate %u bytes at %x.\n", size, (int)ptr);
       exit (10);
     }
-    
+
   return mem;
 }
 
 
 /* Return, in NAME, the next component of PATH, i.e., the characters up
    to the next PATHSEP.  */
-   
+
 static void
 next_component(char *name, char **path)
 {
   unsigned count = 0;
-  
+
   while (**path != 0 && **path != PATHSEP)
     {
       name[count++] = **path;
       (*path)++; /* Move further along, even between calls.  */
     }
-  
+
   name[count] = 0;
   if (**path == PATHSEP)
     (*path)++; /* Move past the delimiter.  */
@@ -1092,7 +1094,7 @@ concat3(char *s1, char *s2, char *s3)
 /* DIR_LIST is the default list of directories (colon-separated) to
    search.  We want to add all the subdirectories directly below each of
    the directories in the path.
-     
+
    We return the list of directories found.  */
 
 char *
@@ -1110,7 +1112,7 @@ do_subdir_path(char *dir_list)
   /* Make a copy in writable memory.  */
   dir_list = xmalloc (strlen (temp) + 1);
   strcpy (dir_list, temp);
-  
+
   *result = 0;
 
   /* Unfortunately, we can't look in the environment for the current
@@ -1177,7 +1179,7 @@ do_subdir_path(char *dir_list)
         }
     }
   while (*dir_list != 0);
-  
+
   return result;
 }
 #endif /* SEARCH_SUBDIRECTORIES */

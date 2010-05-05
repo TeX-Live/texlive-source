@@ -1,3 +1,14 @@
+2010-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Implement pTeX extensions, based on patches sent by Akira.
+	Modified to reproduce former output files. Added -noptex option.
+	* bbox.c, color.c, dopage.c, dospecial.c, download.c, drawPS.c,
+	dvips.[ch], finclude.c, fontdef.c, loadfont.c, output.c,
+	pprescan.c, prescan.c, protos.h, protos_add.h, repack.c,
+	resident.c, scanpage.c, search.c, skippage.c, tex.lpro,
+	tfmload.c, virtualfont.c: pTeX extensions.
+	* dvips.1, dvips.help, dvips.texi: Documentation.
+
 2010-05-03  Jan Lieskovsky  <jlieskov@redhat.com>
 
 	* dospecial.c (predospecial, bbdospecial): avoid numeric overflow.

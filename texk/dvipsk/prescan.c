@@ -98,8 +98,8 @@ prescanpages(void)
       if (ntfirst && mpagenum == firstpage && firstmatch == firstseq)
          ntfirst = 0;
       if (ntfirst ||
-	  ((evenpages && (pagenum & 1)) || (oddpages && (pagenum & 1)==0) ||
-	   (pagelist && !InPageList(pagenum)))) {
+          ((evenpages && (pagenum & 1)) || (oddpages && (pagenum & 1)==0) ||
+           (pagelist && !InPageList(pagenum)))) {
          skipover(40);
          skippage();
       } else {
@@ -141,7 +141,7 @@ prescanpages(void)
  */
       ret = 0;
       while (maxpages>0) {
-	 if (!(evenpages && (pagenum & 1)) &&
+         if (!(evenpages && (pagenum & 1)) &&
              !(oddpages && (pagenum & 1)==0) &&
              !(pagelist && !InPageList(pagenum))) {
             ret = scanpage();
@@ -149,7 +149,7 @@ prescanpages(void)
                break;
             pagecount++;
             maxpages--;
-	 } else
+         } else
             skippage();
          thissectionmem = swmem - fontmem - OVERCOST;
          mpagenum = abspage ? pageseq : pagenum;

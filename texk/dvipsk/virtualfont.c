@@ -148,7 +148,7 @@ vfontdef(integer s, int siz)
 Boolean
 virtualfont(register fontdesctype *curfnt)
 {
-   register integer i;
+   register integer i, j;
    register shalfword cmd;
    register integer k;
    register integer length;
@@ -160,7 +160,7 @@ virtualfont(register fontdesctype *curfnt)
    register quarterword *tempr;
    fontmaptype *fm, *newf;
    int kindfont;
-   kindfont = vfopen(curfnt);  /* 1 for TeX, 2 for Omega */
+   kindfont = vfopen(curfnt);  /* 1 for TeX and pTeX, 2 for Omega */
    if (!kindfont)
       return (0);
 #ifdef DEBUG
@@ -173,11 +173,11 @@ virtualfont(register fontdesctype *curfnt)
  *   We clear out some pointers:
  */
    if (kindfont==2) {
-     no_of_chars = 65536;
-     curfnt->maxchars=65536;
-     free(curfnt->chardesc);
-     curfnt->chardesc = (chardesctype *)
-                        mymalloc(65536 * (integer)sizeof(chardesctype));
+      no_of_chars = VF_MEM_UNIT;
+      curfnt->maxchars=VF_MEM_UNIT;
+      free(curfnt->chardesc);
+      curfnt->chardesc = (chardesctype *)
+                         mymalloc(VF_MEM_UNIT * (integer)sizeof(chardesctype));
    }
    for (i=0; i<no_of_chars; i++) {
       curfnt->chardesc[i].TFMwidth = 0;
@@ -196,9 +196,17 @@ virtualfont(register fontdesctype *curfnt)
    check_checksum (k, curfnt->checksum, curfnt->name);
    k = (integer)(alpha * (real)vfquad());
    if (k > curfnt->designsize + 2 || k < curfnt->designsize - 2) {
-      char *msg = concat("Design size mismatch in font ", name);
-      error(msg);
-      free(msg);
+      int id = 0;
+      if (!noptex) {
+         tfmopen(curfnt); /* We check if parent is jfm or not. */
+         id = tfm16();
+         (void)fclose(tfmfile);
+      }
+      if (id != 9 && id != 11) {
+         char *msg = concat("Design size mismatch in font ", name);
+         error(msg);
+         free(msg);
+      }
    }
 /*
  * Now we look for font definitions.
@@ -223,7 +231,21 @@ virtualfont(register fontdesctype *curfnt)
          if (length<2) badvf("negative length packet");
          if (length>65535) badvf("packet too long");
          cc = vfquad();
-         if (cc<0 || cc>=no_of_chars) badvf("character code out of range");
+         if (cc>=no_of_chars && cc<MAX_CODE) {
+            j = VF_MEM_UNIT * ((integer)(cc/VF_MEM_UNIT) + 1);
+            curfnt->chardesc = (chardesctype *)xrealloc(curfnt->chardesc,
+                         sizeof(chardesctype)*j);
+            for (i=no_of_chars; i<j; i++) {
+               curfnt->chardesc[i].TFMwidth = 0;
+               curfnt->chardesc[i].packptr = NULL;
+               curfnt->chardesc[i].pixelwidth = 0;
+               curfnt->chardesc[i].flags = 0;
+               curfnt->chardesc[i].flags2 = 0;
+            }
+            no_of_chars = j;
+            curfnt->maxchars=no_of_chars;
+         }
+         else if (cc<0 || cc>=no_of_chars) badvf("character code out of range");
          cd = curfnt->chardesc + cc;
          cd->TFMwidth = scalewidth(vfquad(), scaledsize);
       } else {

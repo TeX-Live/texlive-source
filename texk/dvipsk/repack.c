@@ -422,7 +422,7 @@ repack(register chardesctype *cp)
       mraster[--i] = 0;
    i = startbytes + unpack(p, (halfword *)mraster, (halfword)width,
                 (halfword)height,  *(cp->packptr));
-   dochar(mraster, (width + 7) >> 3, height);
+   dochar(mraster, (short)((width + 7) >> 3), (short)height);
    if (smallchar) {
       addts((unsigned char)0);
       addts((unsigned char)0);

@@ -26,6 +26,7 @@ newfontdesc(integer cksum, integer scsize, integer dssize,
    fp = (fontdesctype *)mymalloc((integer)sizeof(fontdesctype));
    fp->chardesc = (chardesctype *)mymalloc(256*(integer)sizeof(chardesctype));
    fp->maxchars = 256;
+   fp->iswide = 0;
    fp->psname = 0;
    fp->loaded = 0;
    fp->checksum = cksum;

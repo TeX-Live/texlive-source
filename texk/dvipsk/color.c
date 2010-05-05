@@ -26,7 +26,7 @@
  */
 #define COLORHASH (89)
 #define MAXCOLORLEN (120)     /* maximum color length for background */
-#define INITCOLORLEN (3000)   /* initial stack size in chars */
+#define INITCOLORLEN (10000)  /* initial stack size in chars */
 /*
  *   This is where we store the color information for a particular page.
  *   If we free all of these, we free all of the allocated color

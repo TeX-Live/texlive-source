@@ -9,17 +9,12 @@
  */
 #include "protos_add.h"
 
-#ifdef XENIX
+#if defined(XENIX) || defined(__THINK__)
 #define PixRound(x) ((integer)(x + (iconv >> 1)) / iconv)
-#define VPixRound(x) ((integer)(x + (viconv >> 1)) / viconv)
-#else
-#ifdef __THINK__
-#define  PixRound(x) ((integer)(x +  (iconv >> 1)) /  iconv)
 #define VPixRound(x) ((integer)(x + (viconv >> 1)) / viconv)
 #else
 #define PixRound(x) ((integer)(floor(((x) * conv) + 0.5)))
 #define VPixRound(x) ((integer)(floor(((x) * vconv) + 0.5)))
-#endif
 #endif
 /*
  *   Now we have the dopage procedure.
@@ -27,6 +22,7 @@
  *   verified that the DVI data is OK....except for stack over/underflow.
  */
 struct dvistack stack[STACKSIZE];
+integer dir;
 #ifdef HPS
 integer hhmem, vvmem;
 integer pushcount = 0;
@@ -35,6 +31,7 @@ Boolean NEED_NEW_BOX = 0;
 integer H_BREAK; /* An empirical parameter for guessing line breaks; needs
                      dpi dependence */
 #endif 
+
 void
 dopage(void)
 {
@@ -52,20 +49,12 @@ dopage(void)
    integer roundpos;
    integer thinspace;
    integer vertsmallspace;
-#ifdef XENIX
+#if defined(XENIX) || defined(__THINK__)
    integer iconv;
    integer viconv;
 
    iconv = (integer)(1.0 / conv + 0.5);
    viconv = (integer)(1.0 / vconv + 0.5);
-#else
-#ifdef __THINK__
-   integer  iconv;
-   integer viconv;
-
-    iconv = (integer)(1.0 /  conv + 0.5);
-   viconv = (integer)(1.0 / vconv + 0.5);
-#endif
 #endif
 #ifdef EMTEX
    emclear();
@@ -79,7 +68,7 @@ dopage(void)
    if (HPS_FLAG) pagecounter++;
    H_BREAK = (30 * DPI / 400 ); /* 30 seems to have worked well at 400 dpi */
 #endif 
-   w = x = y = z = 0;
+   w = x = y = z = dir = rdir = fdir = 0;
    h = (integer) (DPI / conv * hoff / 4736286.72);
    v = (integer) (DPI / conv * voff / 4736286.72);
    hh = PixRound(h);
@@ -94,6 +83,20 @@ case 138: goto beginloop; /* nop command does nuttin */
  *   For put1 commands, we subtract the width of the character before
  *   dropping through to the normal character setting routines.  This
  */
+case 135: /* put3 */
+   if (noptex) error("! synch");
+   mychar = dvibyte();
+   mychar = (mychar << 8) + dvibyte();
+   mychar = (mychar << 8) + dvibyte();
+   charmove = 0;
+   goto dochar;
+case 130: /* set3 */
+   if (noptex) error("! synch");
+   mychar = dvibyte();
+   mychar = (mychar << 8) + dvibyte();
+   mychar = (mychar << 8) + dvibyte();
+   charmove = 1;
+   goto dochar;
 case 134: /* put2 */
    if (noomega) error("! synch");
    mychar = dvibyte();
@@ -130,13 +133,26 @@ dochar:
    if (cd->flags & EXISTS) {
       if (curfnt->loaded == 2) { /* virtual character being typeset */
          if (charmove) {
-            sp->hh = hh + cd->pixelwidth;
-            sp->h = h + cd->TFMwidth;
+            if (!dir) {
+               sp->hh = hh + cd->pixelwidth;
+               sp->h = h + cd->TFMwidth;
+            } else {
+               sp->v = v + cd->TFMwidth;
+               sp->vv = PixRound(sp->v);
+            }
+         } else {
+            if (!dir) {
+               sp->hh = hh; sp->h = h;
+            } else {
+               sp->vv = vv; sp->v = v;
+            }
+         }
+         if (!dir) {
+            sp->vv = vv; sp->v = v;
          } else {
             sp->hh = hh; sp->h = h;
          }
-         sp->vv = vv; sp-> v = v;
-         sp->w = w; sp->x = x; sp->y = y; sp->z = z;
+         sp->w = w; sp->x = x; sp->y = y; sp->z = z; sp->dir = dir;
          if (++sp >= &stack[STACKSIZE]) error("! Out of stack space");
          w = x = y = z = 0; /* will be in relative units at new stack level */
          frp->curp = curpos;
@@ -160,13 +176,25 @@ dochar:
       drawchar(cd, mychar);
    }
    if (charmove) {
-      h += cd->TFMwidth;
-      hh += cd->pixelwidth;
+      if (!dir) {
+         h += cd->TFMwidth;
+         hh += cd->pixelwidth;
+      } else {
+         v += cd->TFMwidth;
+         vv += cd->pixelwidth;
+      }
    }
    goto setmotion;
-case 130: case 131: case 135: case 136: case 139: 
-case 247: case 248: case 249: case 250: case 251: case 252: case 253:
-case 254: case 255: /* unimplemented or illegal commands */
+case 255: /* pTeX's dir or undefined */
+   if (!noptex) {
+      dir = dvibyte();
+      cmddir();
+      goto beginloop;
+   }
+/* illegal commands */
+case 131: case 136: case 139: /* set4, put4, bop */
+case 247: case 248: case 249: /* pre, post, post_post */
+case 250: case 251: case 252: case 253: case 254: /* undefined */
    error("! synch");
 case 132: case 137: /* rules */
  { integer ry, rx , rxx, ryy;
@@ -176,13 +204,30 @@ case 132: case 137: /* rules */
          rx = scalewidth(rx, (frp-1)->curf->scaledsize);
          ry = scalewidth(ry, (frp-1)->curf->scaledsize);
       }
-      rxx = (int)(conv * rx + 0.9999999);
-      ryy = (int)(vconv * ry + 0.9999999);
+      if (!dir) {
+        rxx = (int)(conv * rx + 0.9999999);
+        ryy = (int)(vconv * ry + 0.9999999);
+      }
+      else {
+        rxx = (int)(vconv * rx + 0.9999999);
+        ryy = (int)(conv * ry + 0.9999999);
+      }
+      /* Heiko Oberdiek 2001/06/03: synchronisation added for vertical rules
+         because of alignment reasons.
+      */
+      if (ry > rx) {
+        hh = PixRound(h);
+      }
       drawrule(rxx, ryy);
    } else
       rxx = 0;
    if (cmd == 137) goto beginloop;
-   h += rx; hh += rxx;
+   if (!dir) {
+     h += rx; hh += rxx;
+   }
+   else {
+     v += rx; vv += rxx;
+   }
    goto setmotion;
  }
 case 141: /* push */
@@ -200,7 +245,7 @@ case 141: /* push */
     /* printf("push %i, %i\n", pushcount, inHTMLregion); */
 #endif
    sp->hh = hh; sp->vv = vv; sp->h = h; sp->v = v;
-   sp->w = w; sp->x = x; sp->y = y; sp->z = z;
+   sp->w = w; sp->x = x; sp->y = y; sp->z = z; sp->dir = dir;
    if (++sp >= &stack[STACKSIZE]) error("! Out of stack space");
    goto beginloop;
 case 140: /* eop or end of virtual character */
@@ -231,13 +276,14 @@ case 142: /* pop */
       hhmem = hh; vvmem = vv; 
      }
 #endif
-   hh = sp->hh; vv = sp->vv; h = sp->h; v = sp->v; 
-   w = sp->w; x = sp->x; y = sp->y; z = sp->z;
+   hh = sp->hh; vv = sp->vv; h = sp->h; v = sp->v;
+   w = sp->w; x = sp->x; y = sp->y; z = sp->z; dir = sp->dir;
 #ifdef HPS
    if (HPS_FLAG && inHTMLregion && (hhmem - hh > H_BREAK) && (pushcount > 0) &&
        (pushcount < current_pushcount)) 
      end_current_box();
 #endif
+   cmddir();
    goto beginloop;
 case 143: /* right1 */
    p = signedbyte(); goto horizontalmotion;
@@ -348,14 +394,26 @@ verticalmotion:
 /* vertical motion cases */
       if (curpos)
          p = scalewidth(p, (frp-1)->curf->scaledsize);
-      v += p;
-      if (p >= vertsmallspace) vv = VPixRound(v);
-      else if (p <= -vertsmallspace) vv = VPixRound(v);
-      else 
-      { vv += VPixRound(p);
-        roundpos = VPixRound(v);
-        if (roundpos - vv > vmaxdrift) vv = roundpos - vmaxdrift;
-        else if (vv - roundpos > vmaxdrift) vv = roundpos + vmaxdrift;
+      if (!dir) {
+         v += p;
+         if (p >= vertsmallspace) vv = VPixRound(v);
+         else if (p <= -vertsmallspace) vv = VPixRound(v);
+         else 
+         { vv += VPixRound(p);
+           roundpos = VPixRound(v);
+           if (roundpos - vv > vmaxdrift) vv = roundpos - vmaxdrift;
+           else if (vv - roundpos > vmaxdrift) vv = roundpos + vmaxdrift;
+         }
+      } else {
+         h -= p;
+         if (p >= vertsmallspace) hh = VPixRound(h);
+         else if (p <= -vertsmallspace) hh = VPixRound(h);
+         else 
+         { hh -= VPixRound(p);
+           roundpos = VPixRound(h);
+           if (roundpos - hh > vmaxdrift) hh = roundpos - vmaxdrift;
+           else if (hh - roundpos > vmaxdrift) hh = roundpos + vmaxdrift;
+         }
       }
 #ifdef HPS
    /* printf("Doing vertical motion: p = %i, v = %i, vv = %i\n",p,v,vv); */
@@ -373,18 +431,32 @@ horizontalmotion:
 /* horizontal motion cases */
       if (curpos)
          p = scalewidth(p, (frp-1)->curf->scaledsize);
-      h += p;
-      if (p >= thinspace || p <= -6 * thinspace) {
-         hh = PixRound(h); goto beginloop;
+      if (!dir) {
+         h += p;
+         if (p >= thinspace || p <= -6 * thinspace) {
+            hh = PixRound(h); goto beginloop;
+         }
+         else hh += PixRound(p);
+      } else {
+         v += p;
+         if (p >= thinspace || p <= -6 * thinspace) {
+            vv = PixRound(v); goto beginloop;
+         }
+         else vv += PixRound(p);
       }
-      else hh += PixRound(p);
 #ifdef HPS
     /* printf("Doing horizontal motion: p = %i, h = %i, hh = %i\n",p,h,hh); */
 #endif
 setmotion:
-      roundpos = PixRound(h);
-      if (roundpos - hh > maxdrift) { hh = roundpos - maxdrift; }
-      else if (hh - roundpos > maxdrift) { hh = roundpos + maxdrift; }
+      if (!dir) {
+         roundpos = PixRound(h);
+         if (roundpos - hh > maxdrift) { hh = roundpos - maxdrift; }
+         else if (hh - roundpos > maxdrift) { hh = roundpos + maxdrift; }
+      } else {
+         roundpos = PixRound(v);
+         if (roundpos - vv > maxdrift) { vv = roundpos - maxdrift; }
+         else if (vv - roundpos > maxdrift) { vv = roundpos + maxdrift; }
+      }
 goto beginloop;
 
    } /* end of the big switch */

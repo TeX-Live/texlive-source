@@ -21,22 +21,46 @@
 #include <unistd.h>	/* for `isatty' */
 #endif
 
+/* UCS -> UTF-8 */
+#define UCStoUTF8B1(x)  (0xc0 + (((x) >>  6) & 0x1f))
+#define UCStoUTF8B2(x)  (0x80 + (((x)      ) & 0x3f))
+
+#define UCStoUTF8C1(x)  (0xe0 + (((x) >> 12) & 0x0f))
+#define UCStoUTF8C2(x)  (0x80 + (((x) >>  6) & 0x3f))
+#define UCStoUTF8C3(x)  (0x80 + (((x)      ) & 0x3f))
+
+#define UCStoUTF8D1(x)  (0xf0 + (((x) >> 18) & 0x07))
+#define UCStoUTF8D2(x)  (0x80 + (((x) >> 12) & 0x3f))
+#define UCStoUTF8D3(x)  (0x80 + (((x) >>  6) & 0x3f))
+#define UCStoUTF8D4(x)  (0x80 + (((x)      ) & 0x3f))
+
+/* UTF-32 over U+FFFF -> UTF-16 surrogate pair */
+#define UTF32toUTF16HS(x)  (0xd800 + (((x-0x10000) >> 10) & 0x3ff))
+#define UTF32toUTF16LS(x)  (0xdc00 + (  x                 & 0x3ff))
+
 /*
  *   The external declarations:
  */
 #include "protos.h"
 
 char preamblecomment[256]; /* usually "TeX output ..." */
+integer rdir = 0, fdir = 0;
 /*
  *   We need a few statics to take care of things.
  */
+static void chrcmd(char c);
+static void print_composefont(void);
+static void setdir(int d);
+static int JIStoSJIS(int c);
+
+static Boolean any_dir = 0; /* did we output any direction commands? */
+static Boolean jflag = 0;
 static integer rhh, rvv;
 static int instring;
 static Boolean lastspecial = 1;
 static shalfword d;
 static Boolean popened = 0;
-int lastfont; /* exported to dospecial to fix rotate.tex problem */
-static void chrcmd(char c);        /* just a forward declaration */
+static int lastfont;
 static char strbuffer[LINELENGTH + 20], *strbp = strbuffer;
 static struct papsiz *finpapsiz;
 static struct papsiz defpapsiz = {
@@ -46,7 +70,9 @@ static struct papsiz defpapsiz = {
 #if (!defined(VMS) && !defined(MSDOS) && !(defined(OS2) && defined(_MSC_VER)) && !defined(ATARIST))
  /* VAXC/MSDOS don't like/need this !! */
 #include <sys/types.h>
+#ifndef WIN32
 #include <sys/time.h> /* time(), at least on BSD Unix */
+#endif
 #endif
 #include <time.h> /* asctime() and localtime(), at least on BSD Unix */
 static time_t jobtime;
@@ -78,12 +104,7 @@ copyfile_general(const char *s, struct header_list *cur_header)
    int scanningFont = 0;
 
    /* end DOS EPS code */
-#ifdef VMCMS
-   register char *lastdirsep;
-   register char *trunc_s;
-   trunc_s = s;
-#endif
-#ifdef MVSXA
+#if defined(VMCMS) || defined (MVSXA)
    register char *lastdirsep;
    register char *trunc_s;
    trunc_s = s;
@@ -99,21 +120,19 @@ copyfile_general(const char *s, struct header_list *cur_header)
       f = search(figpath, s, READBIN);
       if (f == 0)
          f = search(headerpath, s, READBIN);
-#ifdef VMCMS
+#if defined(VMCMS) || defined (MVSXA)
       lastdirsep = strrchr(s, '/');
       if ( NULL != lastdirsep ) trunc_s = lastdirsep + 1;
+#ifdef VMCMS
       (void)sprintf(errbuf,
    "Couldn't find figure file %s with CMS name %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s, trunc_s);
-#else
-#ifdef MVSXA
-      lastdirsep = strrchr(s, '/');
-      if ( NULL != lastdirsep ) trunc_s = lastdirsep + 1;
+#else /* VMCMS */
       (void)sprintf(errbuf,
     "Couldn't find figure file %s with MVS name %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s, trunc_s);
-#else
+#endif /* VMCMS */
+#else /* VMCMS || MVSXA */
       (void)sprintf(errbuf, "Could not find figure file %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s);
-#endif
-#endif
+#endif /* VMCMS || MVSXA */
       break;
 #ifndef VMCMS
 #ifndef MVSXA
@@ -169,14 +188,10 @@ copyfile_general(const char *s, struct header_list *cur_header)
             fprintf(stderr, "\n");
             prettycolumn = 0;
          }
-#ifdef VMCMS
-         (void)fprintf(stderr, "<%s>", trunc_s);
-#else
-#ifdef MVSXA
+#if defined(VMCMS) || defined (MVSXA)
          (void)fprintf(stderr, "<%s>", trunc_s);
 #else
          (void)fprintf(stderr, "<%s>", realnameoffile);
-#endif
 #endif
          (void)fflush(stderr);
 #if defined(VMCMS) || defined (MVSXA)
@@ -532,14 +547,10 @@ msdosdone:
                      c = '%';
                   }
                }
-#ifdef VMCMS
-               if (c != 0x37  || scanningFont) {
-#else
-#ifdef MVSXA
+#if defined(VMCMS) || defined (MVSXA)
                if (c != 0x37  || scanningFont) {
 #else
                if (c != 4 || scanningFont) {
-#endif
 #endif
                   if (!removingBytes)
                      (void)putc(c, bitfile);
@@ -698,6 +709,7 @@ scout(unsigned char c)   /* string character out */
  *   need room for (, ), and a possible four-byte string \000, for
  *   instance.  If it is too long, we send out the string.
  */
+   jflag = 0;
    if (instring > LINELENGTH-6) {
       stringend();
       chrcmd('p');
@@ -715,12 +727,8 @@ scout(unsigned char c)   /* string character out */
       *strbp++ = '0' + (c & 7);
       instring += 4;
    } else {
-#ifdef VMCMS
+#if defined(VMCMS) || defined (MVSXA)
      c = ascii2ebcdic[c];
-#else
-#ifdef MVSXA
-     c = ascii2ebcdic[c];
-#endif
 #endif
      if (c == '(' || c == ')' || c == '\\') {
        *strbp++ = '\\';
@@ -742,13 +750,52 @@ scout2(int c)
    cmdout(s);
 }
 
+static void
+jscout(int c, char *fs)   /* string character out */
+{
+   char s[64];
+
+   if (!dir) {
+      numout(hh);
+      numout(vv);
+   } else {
+      numout(vv);
+      numout(-hh);
+   }
+   if (strstr(fs,"-UTF32-")!=NULL) {
+      sprintf(s, "a<%08x>p", c);
+   } else if (strstr(fs,"-UTF8-")!=NULL) {
+      if (c<0x80) {
+         sprintf(s, "a<%02x>p", c);
+      } else if (c<0x800) {
+	 sprintf(s, "a<%02x%02x>p", UCStoUTF8B1(c), UCStoUTF8B2(c));
+      } else if (c<0xffff) {
+	 sprintf(s, "a<%02x%02x%02x>p", UCStoUTF8C1(c), UCStoUTF8C2(c), UCStoUTF8C3(c));
+      } else if (c<0x10ffff) {
+	 sprintf(s, "a<%02x%02x%02x%02x>p", UCStoUTF8D1(c), UCStoUTF8D2(c), UCStoUTF8D3(c), UCStoUTF8D4(c));
+      } else {
+         error("warning: Illegal code value.");
+      }
+   } else if (c>0xffff && strstr(fs,"-UTF16-")!=NULL) {
+      sprintf(s, "a<%04x%04x>p", UTF32toUTF16HS(c), UTF32toUTF16LS(c));
+   } else {
+      if ((strstr(fs,"-RKSJ-")!=NULL) || (SJIS && c > 0x2120)) c = JIStoSJIS(c);
+      sprintf(s, "a<%04x>p", c);
+   }
+   cmdout(s);
+   lastspecial = 1;
+   instring = 0;
+   jflag = 1;
+   strbuffer[0] = '\0';
+}
+
 void
 cmdout(const char *s)
 {
    int l;
 
    /* hack added by dorab */
-   if (instring) {
+   if (instring && !jflag) {
         stringend();
         chrcmd('p');
    }
@@ -757,7 +804,6 @@ cmdout(const char *s)
            linepos + l >= LINELENGTH) {
       (void)putc('\n', bitfile);
       linepos = 0;
-      lastspecial = 1;
    } else if (! lastspecial) {
       (void)putc(' ', bitfile);
       linepos++;
@@ -775,7 +821,6 @@ chrcmd(char c)
        linepos + 2 > LINELENGTH) {
       (void)putc('\n', bitfile);
       linepos = 0;
-      lastspecial = 1;
    } else if (! lastspecial) {
       (void)putc(' ', bitfile);
       linepos++;
@@ -841,72 +886,111 @@ mhexout(register unsigned char *p,
    }
 }
 
-void
-fontout(int n)
+static void
+fontout(halfword n)
 {
    char buf[6];
 
-   if (instring) {
+   if (instring && !jflag) {
       stringend();
       chrcmd('p');
    }
    makepsname(buf, n);
    cmdout(buf);
+
+   lastfont = curfnt->psname;
 }
 
 void
 hvpos(void)
 {
-   if (rvv != vv) {
-      if (instring) {
-         stringend();
-         numout(hh);
-         numout(vv);
-         chrcmd('y');
-      } else if (rhh != hh) {
-         numout(hh);
-         numout(vv);
-         chrcmd('a');
-      } else { /* hard to get this case, but it's there when you need it! */
-         numout(vv - rvv);
-         chrcmd('x');
-      }
-      rvv = vv;
-   } else if (rhh != hh) {
-      if (instring) {
-         stringend();
-         if (hh - rhh < 5 && rhh - hh < 5) {
-#ifdef VMCMS /*  should replace 'p' in non-VMCMS line as well */
-            chrcmd(ascii2ebcdic[(char)(112 + hh - rhh)]);
+   if (!dir) {
+      if (rvv != vv || jflag) {
+         if (instring) {
+            stringend();
+            numout(hh);
+            numout(vv);
+            chrcmd('y');
+         } else if (rhh != hh) {
+            numout(hh);
+            numout(vv);
+            chrcmd('a');
+         } else { /* hard to get this case, but it's there when you need it! */
+            numout(vv - rvv);
+            chrcmd('x');
+         }
+         rvv = vv;
+      } else if (rhh != hh || jflag) {
+         if (instring) {
+            stringend();
+            if (hh - rhh < 5 && rhh - hh < 5) {
+#if defined(VMCMS) || defined (MVSXA) /*  should replace 'p' in non-VMCMS, non-MVSXA line as well */
+               chrcmd(ascii2ebcdic[(char)(112 + hh - rhh)]);
 #else
-#ifdef MVSXA /*  should replace 'p' in non-MVSXA line as well */
-            chrcmd(ascii2ebcdic[(char)(112 + hh - rhh)]);
+               chrcmd((char)('p' + hh - rhh));
+#endif
+            } else if (hh - rhh < d + 5 && rhh - hh < 5 - d) {
+#if defined(VMCMS) || defined (MVSXA) /* should replace 'g' in non-VMCMS, non-MVSXA line as well  */
+               chrcmd(ascii2ebcdic[(char)(103 + hh - rhh - d)]);
 #else
-            chrcmd((char)('p' + hh - rhh));
+               chrcmd((char)('g' + hh - rhh - d));
 #endif
-#endif
-         } else if (hh - rhh < d + 5 && rhh - hh < 5 - d) {
-#ifdef VMCMS /* should replace 'g' in non-VMCMS line as well  */
-            chrcmd(ascii2ebcdic[(char)(103 + hh - rhh - d)]);
-#else
-#ifdef MVSXA /* should replace 'g' in non-MVSXA line as well  */
-            chrcmd(ascii2ebcdic[(char)(103 + hh - rhh - d)]);
-#else
-            chrcmd((char)('g' + hh - rhh - d));
-#endif
-#endif
-            d = hh - rhh;
+               d = hh - rhh;
+            } else {
+               numout(hh - rhh);
+               chrcmd('b');
+               d = hh - rhh;
+            }
          } else {
             numout(hh - rhh);
-            chrcmd('b');
-            d = hh - rhh;
+            chrcmd('w');
          }
-      } else {
-         numout(hh - rhh);
-         chrcmd('w');
       }
+      rhh = hh;
+   } else {
+      if (rhh != hh || jflag) {
+         if (instring) {
+            stringend();
+            numout(vv);
+            numout(-hh);
+            chrcmd('y');
+         } else if (rvv != vv) {
+            numout(vv);
+            numout(-hh);
+            chrcmd('a');
+         } else { /* hard to get this case, but it's there when you need it! */
+            numout(rhh - hh);
+            chrcmd('x');
+         }
+         rhh = hh;
+      } else if (rvv != vv || jflag) {
+         if (instring) {
+            stringend();
+            if (vv - rvv < 5 && rvv - vv < 5) {
+#if defined(VMCMS) || defined (MVSXA) /*  should replace 'p' in non-VMCMS, non-MVSXA line as well */
+               chrcmd(ascii2ebcdic[(char)(112 + vv - rvv)]);
+#else
+               chrcmd((char)('p' + vv - rvv));
+#endif
+            } else if (vv - rvv < d + 5 && rvv - vv < 5 - d) {
+#if defined(VMCMS) || defined (MVSXA) /* should replace 'g' in non-VMCMS, non-MVSXA line as well  */
+               chrcmd(ascii2ebcdic[(char)(103 + vv - rvv - d)]);
+#else
+               chrcmd((char)('g' + vv - rvv - d));
+#endif
+               d = vv - rvv;
+            } else {
+               numout(vv - rvv);
+               chrcmd('b');
+               d = vv - rvv;
+            }
+         } else {
+            numout(vv - rvv);
+            chrcmd('w');
+         }
+      }
+      rvv = vv;
    }
-   rhh = hh;
 }
 
 /*
@@ -1190,22 +1274,7 @@ open_output(void) {
  *   point, and popen if so.
  */
       if (*oname == '!' || *oname == '|') {
-#if defined (MSDOS) && !defined (__DJGPP__)
-            error("! can't open output pipe");
-#else
-#ifdef VMS
-            error("! can't open output pipe");
-#else
-#ifdef VMCMS
-            error("! can't open output pipe");
-#else
-#ifdef MVSXA
-            error("! can't open output pipe");
-#else
-#ifdef __THINK__
-            error("! can't open output pipe");
-#else
-#ifdef ATARIST
+#if defined(MSDOS) && !defined(__DJGPP__) || defined(VMS) || defined(VMCMS) || defined(MVSXA) || defined(__THINK__) || defined(ATARIST)
             error("! can't open output pipe");
 #else
 #ifdef OS2
@@ -1239,23 +1308,21 @@ open_output(void) {
             && !__dosexec_find_on_path(oname+1, environ, found))
            pf = fopen("PRN", "w");
 #endif
-	 if (pf == NULL && (pf = popen(oname+1, "w")) != NULL)
+	 if (pf == NULL && (pf = popen(oname+1, "w")) != NULL) {
 	    popened = 1;
+	    (void)SET_BINARY(fileno(pf));
+	 }
          if (pf == NULL)
             error("! couldn't open output pipe");
 	 bitfile = pf;
 #ifdef OS2
          }
 #endif
-#endif
-#endif
-#endif
-#endif
-#endif
-#endif
+#endif /* MSDOS && !__DJGPP__ || VMS || ... */
       } else {
          if ((bitfile=fopen(oname,"w"))==NULL)
             error("! couldn't open PostScript file");
+         (void)SET_BINARY(fileno(bitfile));
       }
    } else {
       bitfile = stdout;
@@ -1362,26 +1429,19 @@ initprinter(sectiontype *sect)
          (void)fprintf(bitfile, ", comments removed");
       (void)fputc('\n', bitfile);
    }
-#ifdef VMCMS  /* convert preamblecomment to ebcdic so we can read it */
+#if defined(VMCMS) || defined (MVSXA)  /* convert preamblecomment to ebcdic so we can read it */
    {
       int i;
       for ( i=0; preamblecomment[i]; i++ )
           preamblecomment[i] = ascii2ebcdic[preamblecomment[i]];
    }
-#else
-#ifdef MVSXA   /* IBM: MVS/XA */
-   {
-      int i;
-      for ( i=0; preamblecomment[i]; i++ )
-          preamblecomment[i] = ascii2ebcdic[preamblecomment[i]];
-   }
-#endif  /* VMCMS */
 #endif
    (void)fprintf(bitfile, "%%DVIPSSource: %s\n", preamblecomment);
    linepos = 0;
    endprologsent = 0;
    if (safetyenclose)
       (void)fprintf(bitfile, "/SafetyEnclosure save def\n");
+   print_composefont();
    if (! headers_off)
       send_headers();
 }
@@ -1536,6 +1596,10 @@ pageend(void)
       stringend();
       chrcmd('p');
    }
+   if (dir)
+      cmdout("-90 rotate");
+   if (any_dir)
+      cmdout("dyy");
    cmdout("eop");
    cmdout("end");
 #ifdef HPS
@@ -1554,8 +1618,13 @@ pageend(void)
 void
 drawrule(integer rw, integer rh)
 {
-   numout((integer)hh);
-   numout((integer)vv);
+   if (!dir) {
+     numout((integer)hh);
+     numout((integer)vv);
+   } else {
+     numout((integer)vv);
+     numout((integer)-hh);
+   }
    if (rw == rulex && rh == ruley)
       chrcmd('V');
    else {
@@ -1573,14 +1642,49 @@ drawrule(integer rw, integer rh)
 void
 drawchar(chardesctype *c, int cc)
 {
-   hvpos();
-   if (lastfont != curfnt->psname) {
-      fontout((int)curfnt->psname);
-      lastfont = curfnt->psname;
+   if (rdir != dir || fdir != curfnt->dir) {
+      if (curfnt->dir == 9)
+         setdir(dir+2);
+      else
+         setdir(dir);
+      rdir = dir;
+      fdir = curfnt->dir;
    }
-   if (curfnt->codewidth==1) scout((unsigned char)cc);
-   else scout2(cc);
-   rhh = hh + c->pixelwidth; /* rvv = rv */
+
+   if (curfnt->iswide == 0 && curfnt->codewidth == 2) {
+      hvpos();
+      if (lastfont != curfnt->psname)
+         fontout(curfnt->psname);
+      scout2(cc);
+   }
+   else if (curfnt->iswide) {
+      if (lastfont != curfnt->psname)
+         fontout(curfnt->psname);
+      jscout(cc, curfnt->resfont->PSname);
+   }
+   else {
+      if (jflag) {
+         if (!dir){
+            numout(hh);
+            numout(vv);
+         }
+         else {
+            numout(vv);
+            numout(-hh);
+         }
+         chrcmd('a');
+         rhh = hh;
+         rvv = vv;
+      }
+      else hvpos();
+      if (lastfont != curfnt->psname)
+         fontout(curfnt->psname);
+      scout((unsigned char)cc);
+   }
+   if (!dir)
+      rhh = hh + c->pixelwidth; /* rvv = rv */
+   else
+      rvv = vv + c->pixelwidth; /* rhh = rh */
 }
 /*
  *   This routine sends out the document fonts comment.
@@ -1607,4 +1711,87 @@ tell_needed_fonts(void) {
       roomleft -= strlen(q) + 1;
    }
    fprintf(bitfile, "\n");
+}
+
+static void print_composefont(void)
+{
+   struct header_list *hl = ps_fonts_used;
+   int  len;
+   char *q, *p;
+
+   if (hl == 0)
+      return;
+   while (0 != (q=get_name(&hl))) {
+     len = strlen(q);
+     if(len > 11 && (!strncmp(q+len-10, "Identity-H", 10) ||
+             !strncmp(q+len-10, "Identity-V", 10))) {
+       fprintf(bitfile, "%%%%BeginFont: %s\n", q);
+       fprintf(bitfile, "/%s ", q);
+       fprintf(bitfile, "/%s ", q+len-10);
+       fprintf(bitfile, "[/");
+       for(p=q; p <= q+len-12; p++)
+          fprintf(bitfile, "%c", *p);
+       fprintf(bitfile, "] composefont pop\n");
+       fprintf(bitfile, "%%%%EndFont\n");
+     }
+   }
+}
+
+static void setdir(int d)
+{
+   if (instring) {
+      stringend();
+      chrcmd('p');
+   }
+   switch(d) {
+   case 1 :
+      cmdout("dyt");
+      break;
+   case 2 :
+      cmdout("dty");
+      break;
+   case 3 :
+      cmdout("dtt");
+      break;
+   default :
+      cmdout("dyy");
+      break;
+   }
+   linepos += 4;
+   any_dir = 1;
+}
+
+void cmddir(void)
+{
+   if (dir != rdir) {
+      if (dir)
+         cmdout("90 rotate");
+      else
+         cmdout("-90 rotate");
+      rdir = dir;
+   }
+}
+
+static int JIStoSJIS(int c)
+{
+    int high, low;
+    int nh,nl;
+
+    high = (c>>8) & 0xff;
+    low = c & 0xff;
+    nh = ((high-0x21)>>1) + 0x81;
+    if (nh>0x9f)
+    nh += 0x40;
+    if (high & 1) {
+        nl = low + 0x1f;
+        if (low>0x5f)
+        nl++;
+    }
+    else
+        nl = low + 0x7e;
+    if (((nh >= 0x81 && nh <= 0x9f) || (nh >= 0xe0 && nh <= 0xfc)) &&
+        (nl >= 0x40 && nl <= 0xfc && nl != 0x7f))
+        return((nh<<8) | nl);
+    else
+        return(0x813f);
 }

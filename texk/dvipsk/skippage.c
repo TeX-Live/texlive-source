@@ -31,10 +31,14 @@ skippage(void)
    bopcolor(0);
    while ((cmd=dvibyte())!=140) {
      switch (cmd) {
-/* illegal options */
-case 130: case 131: case 135: case 136: case 139: 
-case 247: case 248: case 249: case 250: case 251:
-case 252: case 253: case 254: case 255:
+case 255: /* pTeX's dir or undefined */
+   if (!noptex) {
+      cmd = dvibyte();
+      break;
+   }
+/* illegal commands */
+case 139: case 247: case 248: case 249: /* bop, pre, post, post_post */
+case 250: case 251: case 252: case 253: case 254: /* undefined */
          (void)sprintf(errbuf,
             "! DVI file contains unexpected command (%d)",cmd);
          error(errbuf);
@@ -45,18 +49,20 @@ case 132: case 137:
    cmd = dvibyte();
    cmd = dvibyte();
 /* four byte commands */
+case 131: case 136:
 case 146: case 151: case 156: case 160: case 165: case 170: case 238:
    cmd = dvibyte();
 /* three byte commands */
+case 130: case 135:
 case 145: case 150: case 155: case 159: case 164: case 169: case 237:
    cmd = dvibyte();
 /* two byte commands */
-case 129: case 134: case 144: case 149: case 154: case 158: case 163:
-case 168: case 236:
+case 129: case 134:
+case 144: case 149: case 154: case 158: case 163: case 168: case 236:
    cmd = dvibyte();
 /* one byte commands */
-case 128: case 133: case 143: case 148: case 153: case 157: case 162:
-case 167: case 235:
+case 128: case 133:
+case 143: case 148: case 153: case 157: case 162: case 167: case 235:
    cmd = dvibyte();
    break;
 /* specials */
