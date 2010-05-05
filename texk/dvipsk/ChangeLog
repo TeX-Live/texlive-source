@@ -1,5 +1,10 @@
 2010-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	* output.c: rewrite the previous fix not to change the output format
+	for non-pTeX dvi.
+
+2010-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	* output.c: minor fix of the function cmdout(). Without the fix, broken
 	ps is generated for pTeX's dvi.
 
