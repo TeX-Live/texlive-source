@@ -1,11 +1,9 @@
-.TH DVIPS 1 "1 January 2010"
+.TH DVIPS 1 "4 May 2010"
 .SH NAME
 dvips \- convert a TeX DVI file to PostScript
 .SH SYNOPSIS
 .B dvips
-[
-.I options
-]
+.RI [ OPTIONS ]
 .IR file [\fB.dvi\fP]
 .SH DESCRIPTION
 THIS MAN PAGE IS OBSOLETE!
@@ -245,18 +243,33 @@ that try to interpret PostScript comments in weird ways, or on some
 PostScript printers.  Old versions of TranScript in particular cannot
 handle modern Encapsulated PostScript.
 .TP
-.B -noomega
-This will disable the use of Omega extensions when interpreting DVI files.
-By default, the additional opcodes
+.BR -noomega
+This will disable the use of Omega and pTeX extensions when interpreting DVI
+files.  By default, the additional opcodes
 .I 129
 and
 .I 134
 are recognized by dvips as Omega extensions and interpreted as requests to
-set 2-byte characters. The only drawback is that the virtual font array will
-(at least temporarily) require 65536 positions instead of the default 256
-positions, i.e. the memory requirements of dvips will be slightly larger. If
-you find this unacceptable or encounter another problem with the Omega
-extensions, you can switch this extension off by using
+set 2-byte characters.
+.TP
+.BR -noptex
+This will disable the use of pTeX extensions when interpreting DVI files.
+By default, the additional opcodes
+.I 130
+and
+.I 135
+are recognized by dvips as pTeX extensions and interpreted as requests to
+set 3-byte characters, and
+.I 255
+as request to change the typesetting direction.
+.sp
+The only drawback is that the virtual font array will (at least temporarily)
+require 65536 or more positions instead of the default 256 positions, i.e.,
+the memory requirements of dvips will be somewhat larger.  If you find this
+unacceptable or encounter another problem with the Omega or pTeX extensions,
+you can switch off the pTeX extension by using
+.BR -noptex ,
+or both by using
 .B -noomega
 (but please do send a bug report if you find such problems - see the bug
 address in the
