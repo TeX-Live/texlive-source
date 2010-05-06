@@ -48,3 +48,22 @@ dist_man_MANS = \
 	$(CHKTEX_TREE)/chkweb.1 \
 	$(CHKTEX_TREE)/deweb.1
 
+# resource file
+configdir = ${prefix}/texmf/chktex
+
+config_DATA = $(CHKTEX_TREE)/chktexrc
+
+# documentation
+pdfdocdir = ${prefix}/texmf/doc/chktex
+
+pdfdoc_DATA =
+
+# chktex tests
+TESTS = chktex.test
+
+TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE)
+
+EXTRA_DIST += chktex.test
+
+CLEANFILES = chktest
+

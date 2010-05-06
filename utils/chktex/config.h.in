@@ -22,12 +22,6 @@
 /* Define to 1 if you have the `isatty' function. */
 #undef HAVE_ISATTY
 
-/* Define to 1 if you have the `termcap' library (-ltermcap). */
-#undef HAVE_LIBTERMCAP
-
-/* Define to 1 if you have the `termlib' library (-ltermlib). */
-#undef HAVE_LIBTERMLIB
-
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
@@ -90,12 +84,6 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define to 1 if you have the <termcap.h> header file. */
-#undef HAVE_TERMCAP_H
-
-/* Define to 1 if you have the <termlib.h> header file. */
-#undef HAVE_TERMLIB_H
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
@@ -125,6 +113,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Define to 1 for a TeX Live build. */
+#undef TEX_LIVE
 
 /* Version number of package */
 #undef VERSION

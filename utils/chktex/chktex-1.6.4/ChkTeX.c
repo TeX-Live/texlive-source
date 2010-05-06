@@ -85,7 +85,7 @@ static const char *BigBanner =
     "Type \"ChkTeX -h\" for help, \"ChkTeX -i\" for distribution info.\n"
     "Author: Jens Berger, Spektrumvn. 4, N-0666 Oslo, Norway.\n"
     "E-mail: <jensthi@ifi.uio.no>\n"
-    "Press " STDIN_BREAK " to abort stdin input.\n";
+    "Press " STDIN_BREAK " to terminate stdin input.\n";
 
 static const char *Distrib =
     "\n"

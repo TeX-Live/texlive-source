@@ -204,7 +204,6 @@ int SetupVars(void)
                 tackon(ConfigFile, LOCALRCFILE);
             }
             else
-                *ConfigFile = 0;
 #elif defined(__MSDOS__)
 
             strcpy(ConfigFile, PrgName);
@@ -212,17 +211,38 @@ int SetupVars(void)
                 (Ptr = strchr(ConfigFile, ':')))
                 strcpy(++Ptr, RCBASENAME);
             else
-                *ConfigFile = 0;
 #endif
+                *ConfigFile = 0;
 
             break;
         case liSysDir:         /* System dir for resource files */
+#ifdef TEX_LIVE
+            if ((Env = getenv("CHKTEX_CONFIG")))
+            {
+                strcpy(ConfigFile, Env);
+            }
+            else
+            {
+                FILE *f;
+                *ConfigFile = 0;
+                if ((f = popen("kpsewhich -expand-var='$TEXMFMAIN'", "r")))
+                {
+                    if (1 == fscanf(f, "%1024s", ConfigFile))
+                    {
+                        tackon(ConfigFile, "chktex");
+                        tackon(ConfigFile, RCBASENAME);
+                    }
+                    (void)pclose(f);
+                }
+            }
+#else /* TEX_LIVE */
 #if defined(__unix__) || defined(__MSDOS__)
             strcpy(ConfigFile, SYSCONFDIR);
             tackon(ConfigFile, RCBASENAME);
 #else
             *ConfigFile = 0;
 #endif
+#endif /* TEX_LIVE */
 
             break;
         case liNFound:

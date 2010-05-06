@@ -31,15 +31,12 @@ dnl Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-dnl Checks for libraries.
-AC_CHECK_LIB(termlib, tgetent)
-AC_CHECK_LIB(termcap, tgetent)
+dnl No termlib/termcap/ncurses library for TeX Live
 
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS(limits.h stat.h strings.h stdarg.h dnl
-sys/stat.h termcap.h termlib.h unistd.h)
+AC_CHECK_HEADERS([limits.h stat.h strings.h stdarg.h sys/stat.h unistd.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -48,14 +45,16 @@ AC_TYPE_SIZE_T
 
 dnl Checks for library functions.
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS(access closedir fileno isatty opendir readdir stat dnl
-strcasecmp strdup strlwr strtol)
+AC_CHECK_FUNCS([access closedir fileno isatty opendir readdir stat strcasecmp strdup strlwr strtol])
 
 AC_CONFIG_HEADERS([config.h])
+AC_DEFINE([TEX_LIVE], 1, [Define to 1 for a TeX Live build.])
 
-CHKTEX_TREE=[chktex-]chktex_version
-AC_SUBST([CHKTEX_TREE])
+AC_SUBST([CHKTEX_TREE], [chktex-]chktex_version)
+AC_SUBST([PERL5], ['/usr/bin/env perl'])
 
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([ChkTeX.tex:chktex-]chktex_version[/ChkTeX.tex.in])
+AC_CONFIG_FILES([deweb.pl:chktex-]chktex_version[/deweb.in], [chmod +x deweb.pl])
 
 AC_OUTPUT

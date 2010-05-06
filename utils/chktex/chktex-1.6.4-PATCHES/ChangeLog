@@ -1,3 +1,8 @@
+2010-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-bug (new): Bug fix
+	* patch-03-texlive (new): Handle global rc file for TeX Live.
+
 2010-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-const (new): Avoid compiler warnings (const).

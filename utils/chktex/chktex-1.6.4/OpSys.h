@@ -101,6 +101,15 @@
  */
 
 
+#ifdef TEX_LIVE
+#if defined(__MSDOS__) || defined(WIN32)
+#  define SLASH   '\\'
+#  define DIRCHARS ":\\"
+#else
+#  define  SLASH  '/'
+#  define DIRCHARS "/"
+#endif
+#else /* TEX_LIVE */
 #if defined(__unix__)
 #  define  SLASH  '/'
 #elif defined(__MSDOS__)
@@ -112,6 +121,7 @@
 #elif defined(__MSDOS__)
 #  define DIRCHARS ":\\"
 #endif
+#endif /* TEX_LIVE */
 
 /*  -=><=- -=><=- -=><=- -=><=- -=><=- -=><=- -=><=- -=><=- -=><=-  */
 
