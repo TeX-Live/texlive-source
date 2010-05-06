@@ -1,3 +1,10 @@
+2010-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* output.c: correct wrong boundary values of characters.
+	from Takuji Tanaka <KXD02663@nifty.ne.jp>.
+	* protos.h, dvips.c, output.c, resident.c: remove unnecessary SJIS option.
+	from Takuji Tanaka <KXD02663@nifty.ne.jp>.
+
 2010-05-06  Karl Berry  <karl@tug.org>
 
 	* dvips.texi: use p@TeX{} for the manual.

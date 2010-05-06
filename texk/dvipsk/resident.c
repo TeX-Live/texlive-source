@@ -570,9 +570,7 @@ case 'v' : case 'V' :
 #endif
          break;
 case 'S' :
-         if (!strncmp(was_inline, "SJIS", 4))
-           SJIS = (was_inline[4] != '0');
-         else if (sscanf(was_inline+1, "%s", PSname) != 1)
+         if (sscanf(was_inline+1, "%s", PSname) != 1)
            bad_config("missing arg to S");
          else
 #ifdef KPATHSEA

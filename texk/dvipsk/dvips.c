@@ -63,8 +63,6 @@ extern char *strtok(); /* some systems don't have this in strings.h */
     static char ofnme[252],infnme[252],pap[40],thh[20];
 #endif
 
-Boolean SJIS;                /* KANJI code encoding */
-
 /* PS fonts fully downloaded as headers */ 
 char *downloadedpsnames[DOWNLOADEDPSSIZE];  
 
@@ -303,7 +301,6 @@ static const char *helparr[] = {
 #else
 "                                     -Z*  Compress bitmap fonts",
 #endif
-"-SJIS* Shift-JIS encoding",
 /*"-   Interactive query of options", */
 "    # = number   f = file   s = string  * = suffix, `0' to turn off",
 "    c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)",
@@ -474,7 +471,6 @@ initialize(void)
       downloadedpsnames[i] = NULL;
    unused_top_of_psnames = 0;
    morestrings();
-   SJIS = 0;
    maxpages = 100000;
    numcopies = 1;
    iname = fulliname = strings;
@@ -811,13 +807,10 @@ case 'R':
                   secure_option = 1; /* Never used */
                break;
 case 'S':
-               if (strncmp (p, "JIS", 3) == 0) SJIS = (*(p + 3) != '0');
-               else {
-                  if (*p == 0 && argv[i+1])
-                     p = argv[++i];
-                  if (sscanf(p, "%d", &maxsecsize)==0)
-                     error("! Bad section size arg (-S).");
-               }
+               if (*p == 0 && argv[i+1])
+                  p = argv[++i];
+               if (sscanf(p, "%d", &maxsecsize)==0)
+                  error("! Bad section size arg (-S).");
                break;
 case 'm' :
                if (STREQ (p, "ode") && argv[i+1]) {

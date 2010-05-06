@@ -769,9 +769,9 @@ jscout(int c, char *fs)   /* string character out */
          sprintf(s, "a<%02x>p", c);
       } else if (c<0x800) {
 	 sprintf(s, "a<%02x%02x>p", UCStoUTF8B1(c), UCStoUTF8B2(c));
-      } else if (c<0xffff) {
+      } else if (c<0x10000) {
 	 sprintf(s, "a<%02x%02x%02x>p", UCStoUTF8C1(c), UCStoUTF8C2(c), UCStoUTF8C3(c));
-      } else if (c<0x10ffff) {
+      } else if (c<0x110000) {
 	 sprintf(s, "a<%02x%02x%02x%02x>p", UCStoUTF8D1(c), UCStoUTF8D2(c), UCStoUTF8D3(c), UCStoUTF8D4(c));
       } else {
          error("warning: Illegal code value.");
@@ -779,7 +779,7 @@ jscout(int c, char *fs)   /* string character out */
    } else if (c>0xffff && strstr(fs,"-UTF16-")!=NULL) {
       sprintf(s, "a<%04x%04x>p", UTF32toUTF16HS(c), UTF32toUTF16LS(c));
    } else {
-      if ((strstr(fs,"-RKSJ-")!=NULL) || (SJIS && c > 0x2120)) c = JIStoSJIS(c);
+      if ((strstr(fs,"-RKSJ-")!=NULL)) c = JIStoSJIS(c);
       sprintf(s, "a<%04x>p", c);
    }
    cmdout(s);
