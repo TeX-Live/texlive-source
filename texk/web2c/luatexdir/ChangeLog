@@ -1,3 +1,8 @@
+2010-05-06  Taco Hoekwater <taco@luatex.org>
+
+        * luatex.c (calledit): use ifdef __MINGW32__ instead of WIN32.
+	* luatex_svnversion.h: updated to reflect the version of 0.60.x branch
+
 2010-04-28  Taco Hoekwater <taco@luatex.org>
 
         * tex/maincontrol.w: Fixed the error message for improper 

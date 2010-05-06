@@ -15,7 +15,7 @@
 #include "luatex_svnversion.h"
 
 static const char _svn_version[] =
-    "$Id: luatex.c 3637 2010-04-20 13:44:56Z taco $ "
+    "$Id: luatex.c 3678 2010-05-06 08:46:53Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/luatex.c $";
 
 #define TeX
@@ -925,7 +925,7 @@ calledit(packedASCIIcode * filename,
     *temp = 0;
 
     /* Execute the command.  */
-#ifdef WIN32
+#ifdef __MINGW32__
     /* Win32 reimplementation of the system() command
        provides opportunity to call it asynchronously */
     if (win32_system(command, true) != 0)
