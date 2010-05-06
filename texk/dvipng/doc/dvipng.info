@@ -1,6 +1,5 @@
-This is ../../../../tex-live-2010-02-01/texk/dvipng/doc/dvipng.info,
-produced by makeinfo version 4.13 from
-../../../../tex-live-2010-02-01/texk/dvipng/doc/dvipng.texi.
+This is ../../../../texk/dvipng/doc/dvipng.info, produced by makeinfo
+version 4.13 from ../../../../texk/dvipng/doc/dvipng.texi.
 
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
@@ -955,6 +954,70 @@ Ridderstro"m, Ezra Peisach, William H Wheeler, Thomas Klausner, Harald
 Koenig, Adrian Bunk, Kevin Smith, Jason Riedy, Wolfram Krause, Reinhard
 Kotucha, Takeshi Abe, and Waldeck Schutzer.
 
+   Use of the `gd' library requires inclusion of the following
+copyright notice, which applies to the `gd' library:
+
+     Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
+     2002, 2003, 2004 by Cold Spring Harbor Laboratory. Funded under
+     Grant P41-RR02188 by the National Institutes of Health.
+
+     Portions copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
+     2004 by Boutell.Com, Inc.
+
+     Portions relating to GD2 format copyright 1999, 2000, 2001, 2002,
+     2003, 2004 Philip Warner.
+
+     Portions relating to PNG copyright 1999, 2000, 2001, 2002, 2003,
+     2004 Greg Roelofs.
+
+     Portions relating to gdttf.c copyright 1999, 2000, 2001, 2002,
+     2003, 2004 John Ellson (ellson@graphviz.org).
+
+     Portions relating to gdft.c copyright 2001, 2002, 2003, 2004 John
+     Ellson (ellson@graphviz.org).
+
+     Portions relating to JPEG and to color quantization copyright
+     2000, 2001, 2002, 2003, 2004, Doug Becker and copyright (C) 1994,
+     1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004 Thomas
+     G. Lane. This software is based in part on the work of the
+     Independent JPEG Group. See the file README-JPEG.TXT for more
+     information.
+
+     Portions relating to GIF compression copyright 1989 by Jef
+     Poskanzer and David Rowley, with modifications for thread safety
+     by Thomas Boutell.
+
+     Portions relating to GIF decompression copyright 1990, 1991, 1993
+     by David Koblas, with modifications for thread safety by Thomas
+     Boutell.
+
+     Portions relating to WBMP copyright 2000, 2001, 2002, 2003, 2004
+     Maurice Szmurlo and Johan Van den Brande.
+
+     Portions relating to GIF animations copyright 2004 Jaakko
+     Hyva"dtti (jaakko.hyvatti@iki.fi)
+
+     Permission has been granted to copy, distribute and modify gd in
+     any context without fee, including a commercial application,
+     provided that this notice is present in user-accessible supporting
+     documentation.
+
+     This does not affect your ownership of the derived work itself,
+     and the intent is to assure proper credit for the authors of gd,
+     not to interfere with your productive use of gd. If you have
+     questions, ask. "Derived works" includes all programs that utilize
+     the library. Credit must be given in user-accessible documentation.
+
+     This software is provided "AS IS." The copyright holders disclaim
+     all warranties, either express or implied, including but not
+     limited to implied warranties of merchantability and fitness for a
+     particular purpose, with respect to this code and accompanying
+     documentation.
+
+     Although their code does not appear in the current release, the
+     authors also wish to thank Hutchison Avenue Software Corporation
+     for their prior contributions.
+
 
 File: dvipng.info,  Node: Copying,  Next: Index,  Prev: Credits,  Up: Top
 
@@ -1062,29 +1125,29 @@ Index
 
 
 Tag Table:
-Node: Top393
-Node: Introduction1288
-Node: Installation3527
-Node: Prerequisites3874
-Node: Configure6364
-Node: Build/install8403
-Node: Installation outside the texmf tree8871
-Node: Advice for non-privileged users9578
-Node: Basic usage10586
-Node: Command-line options11713
-Node: Option summary12137
-Node: Option details14446
-Node: Graphics29908
-Node: Encapsulated PostScript30473
-Node: Bitmapped graphics31816
-Node: Color33016
-Node: Color specifications33404
-Node: Color specials34503
-Node: Diagnosing problems35915
-Node: Contact information36398
-Node: Debug options37139
-Node: Credits38174
-Node: Copying39378
-Node: Index40158
+Node: Top353
+Node: Introduction1248
+Node: Installation3487
+Node: Prerequisites3834
+Node: Configure6324
+Node: Build/install8363
+Node: Installation outside the texmf tree8831
+Node: Advice for non-privileged users9538
+Node: Basic usage10546
+Node: Command-line options11673
+Node: Option summary12097
+Node: Option details14406
+Node: Graphics29868
+Node: Encapsulated PostScript30433
+Node: Bitmapped graphics31776
+Node: Color32976
+Node: Color specifications33364
+Node: Color specials34463
+Node: Diagnosing problems35875
+Node: Contact information36358
+Node: Debug options37099
+Node: Credits38134
+Node: Copying42135
+Node: Index42915
 
 End Tag Table
