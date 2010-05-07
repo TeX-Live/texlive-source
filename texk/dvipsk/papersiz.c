@@ -66,7 +66,7 @@ myatol(char **s)
 static long scalevals[] = { 1864680L, 65536L, 786432L, 186468L,
                             1L, 65782L, 70124L, 841489L, 4736286L };
 static const char *scalenames = "cmptpcmmspbpddccin";
-long
+static long
 myatodim(char **s)
 {
    register long w, num, den, sc;
@@ -125,7 +125,7 @@ myatodim(char **s)
  */
 void
 handlepapersize(char *p, integer *x, integer *y)
-{ 
+{
    while (*p == ' ')
       p++;
    *x = myatodim(&p);

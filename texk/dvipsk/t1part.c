@@ -65,8 +65,14 @@ int CharCount;
 int GridCount;
 int ind_ref;
 
-int LoadVector(int, CHAR *);
-int Afm(void);
+static unsigned char CDeCrypt(unsigned char, unsigned int *);
+static void CorrectGrid(void);
+static void OutHEX(FILE *);
+static int Afm(void);
+static int LoadVector(int, CHAR *);
+static int ChooseVect(CHAR *);
+static void ErrorOfScan(int err);
+static void NameOfProgram(void);
 
 typedef struct
 {
@@ -281,7 +287,7 @@ struct def_label label[NUM_LABEL];
 
 
 
-int
+static int
 DefTypeFont(unsigned char *name)
 {
     int i;
@@ -294,7 +300,7 @@ DefTypeFont(unsigned char *name)
     return -1;
 }
 
-int
+static int
 GetZeroLine(unsigned char *str)
 {
     int token_type=0;
@@ -316,7 +322,7 @@ GetZeroLine(unsigned char *str)
 
 /* We get token type and its content for ASCII code */
 
-int
+static int
 GetWord(unsigned char *mem)
 {
     int  token_type=0;
@@ -375,7 +381,7 @@ GetWord(unsigned char *mem)
 
 /* We get token type and its content for BINARY code */
 
-int
+static int
 GetToken(void)
 {
     register unsigned char *tmp;
@@ -413,7 +419,7 @@ GetToken(void)
     return(token_type= -1);
 }
 
-int
+static int
 GetNum(void)
 {
     unsigned char *tmp;
@@ -437,7 +443,7 @@ GetNum(void)
 
 /* We pass token without definition its type, it's for speed */
 
-int
+static int
 PassToken(void)
 {
     while(temp < end_of_scan)
@@ -457,7 +463,7 @@ PassToken(void)
 /*  Simple pass off without charstring decrypting */
 /*                                                */
 
-int
+static int
 PassString(unsigned char flg)
 {
     int len_str;
@@ -497,7 +503,7 @@ getmem(unsigned size)
     return tmp;
 }
 
-CHAR *
+static CHAR *
 AddChar(CHAR *TmpChar, unsigned char *CharName, int num)
 {
     int length;
@@ -514,7 +520,7 @@ AddChar(CHAR *TmpChar, unsigned char *CharName, int num)
 }
 
 
-void
+static void
 AddStr(unsigned char *name, int num)
 {
     int length;
@@ -532,7 +538,7 @@ AddStr(unsigned char *name, int num)
 
 /* We prepare own encoding vector for output */
 
-void
+static void
 RevChar(CHAR *TmpChar)
 {
     int i;
@@ -562,7 +568,7 @@ RevChar(CHAR *TmpChar)
 
 /* And here we produce own resulting encoding vector for partial font */
 
-void
+static void
 OutChar(CHAR *TmpChar, FILE *fout)
 {
 
@@ -619,7 +625,7 @@ Reeverse(STRING *TmpStr)
 
 /* And here we post strings to out */
 
-void
+static void
 OutStr(STRING *TmpStr, FILE *fout)
 {
     STRING *ThisStr = TmpStr;
@@ -640,7 +646,7 @@ OutStr(STRING *TmpStr, FILE *fout)
 
 
 
-void
+static void
 PrintChar(CHAR *TmpChar)
 {
     CHAR *ThisChar = TmpChar;
@@ -657,7 +663,7 @@ PrintChar(CHAR *TmpChar)
 }
 
 
-int
+static int
 ClearB(void)
 {
     CHAR *ThisChar = FirstCharB;
@@ -672,7 +678,7 @@ ClearB(void)
 /* We mark chars in encoding vector thanks same names from
 reencoding vector */
 
-int
+static int
 ChooseChar(unsigned char *name, CHAR *TmpChar)
 {
     int length;
@@ -715,7 +721,7 @@ ChooseChar(unsigned char *name, CHAR *TmpChar)
 /* We find index in label array for char, wich is required
 for compose char, if it uses SEAC command */
 
-int
+static int
 FindSeac(int num)
 {
     int i;
@@ -731,9 +737,9 @@ FindSeac(int num)
 }
 
 
-void ClearCW(CHAR *);
+static void ClearCW(CHAR *);
 
-int
+static int
 FindCharW(unsigned char *name, int length)
 {
     CHAR *ThisChar = FirstCharW;
@@ -802,7 +808,7 @@ FindCharW(unsigned char *name, int length)
 }
 
 
-void
+static void
 ClearCW(CHAR *ThisChar)
 {
 
@@ -828,7 +834,7 @@ ClearCW(CHAR *ThisChar)
 /* We build temporary 'work' encoding vector only for searching
 needed chars */
 
-int
+static int
 WorkVect(CHAR *TmpChar)
 {
     while (TmpChar != NULL) {
@@ -848,7 +854,7 @@ WorkVect(CHAR *TmpChar)
 }
 
 
-void
+static void
 UnDefineCharsW(void)
 {
     CHAR *ThisChar = FirstCharW;
@@ -880,7 +886,7 @@ UnDefineChars(CHAR *TmpChar)
 
 
 
-void
+static void
 UnDefineStr(void)
 {
     STRING *ThisStr = FirstStr;
@@ -900,7 +906,7 @@ UnDefineStr(void)
 /* We mark subroutines without charstring decrypting  */
 /*                                                    */
 
-void
+static void
 ScanSubrs(int i)
 {
     int err_num;
@@ -968,7 +974,7 @@ ScanSubrs(int i)
     }
 }
 
-void
+static void
 ViewReturnCall(int num_err, int top, int *pstack,
                int j, int depth)
 {
@@ -1033,7 +1039,7 @@ ViewReturnCall(int num_err, int top, int *pstack,
 /* We decrypt charstring  with recursive descent */
 /*                                               */
 
-int
+static int
 DeCodeStr(int num, int numseac)
 {
     unsigned int loccr;
@@ -1307,7 +1313,7 @@ DeCodeStr(int num, int numseac)
 /*                                        */
 
 
-void
+static void
 ScanChars(int i)
 {
 
@@ -1336,7 +1342,7 @@ ScanChars(int i)
 
                 if(CharCount!=0)
                 {
-                    
+
                     num_err=FindCharW(token, str_len);
 
                     if(num_err==FLG_BINARY)
@@ -1477,7 +1483,7 @@ ScanChars(int i)
     }
 }
 
-void
+static void
 LastLook(void)
 {
     label[number].begin = temp;
@@ -1485,7 +1491,7 @@ LastLook(void)
     number++;
 }
 
-int
+static int
 FindKeyWord(int First_Key, int lastkey)
 {
     int word_type=0;
@@ -1532,7 +1538,7 @@ FindKeyWord(int First_Key, int lastkey)
 
 /* To increase scan speed we use dynamic range of keywords */
 
-int
+static int
 ScanBinary(void)
 {
     int i;
@@ -1591,7 +1597,7 @@ ScanBinary(void)
     }
 }
 
-unsigned char *
+static unsigned char *
 itoasp(int n, unsigned char *s, int len)
 {
     static int i, j;
@@ -1613,7 +1619,7 @@ itoasp(int n, unsigned char *s, int len)
     return NULL;
 }
 
-void
+static void
 SubstNum(void)
 {
     int i, j;
@@ -1630,7 +1636,7 @@ SubstNum(void)
     }
 }
 
-ub4
+static ub4
 little4(ub1 *buff)
 {
     return (ub4) buff[0] +
@@ -1643,7 +1649,7 @@ unsigned short int  c1 = C1, c2 = C2;
 unsigned short int edr;
 
 
-unsigned char
+static unsigned char
 CDeCrypt(unsigned char cipher, unsigned int *lcdr)
 {
     register unsigned char plain;
@@ -1661,7 +1667,7 @@ unsigned short int eer;
 */
 
 
-int
+static int
 EndOfEncoding(int err_num)
 {
 
@@ -1743,7 +1749,7 @@ EndOfEncoding(int err_num)
 in non StandardEncoding */
 
 
-void
+static void
 CorrectGrid(void)
 {
     int i, j, k, imax;
@@ -1764,7 +1770,7 @@ CorrectGrid(void)
 }
  /* We build vector for non StandardEncoding */
 
-int
+static int
 CharEncoding(void)
 {
     int err_token=0;
@@ -1802,7 +1808,7 @@ CharEncoding(void)
            if(keep_flg==1)
            {
                keep_num=FLG_OUT_STR;
-   
+
                if(EndOfEncoding(err_token)<0)
                {
                    return -1;
@@ -1816,7 +1822,7 @@ CharEncoding(void)
 
 
 
-void
+static void
 FindEncoding(void)
 {
     int num_err=0;
@@ -1869,7 +1875,7 @@ FindEncoding(void)
 reencode them if there is reencoding vector for this case and
 build work vector */
 
-void
+static void
 CheckChoosing(void)
 {
 
@@ -1967,7 +1973,7 @@ KillUnique(char *s)
    return s;
 }
 
-void
+static void
 OutASCII(FILE *fout, ub1 *buff, ub4 len)
 {
     ub4 i;
@@ -2009,7 +2015,7 @@ OutASCII(FILE *fout, ub1 *buff, ub4 len)
 
 /* It's eexec decription for PFB format */
 
-void
+static void
 BinEDeCrypt(ub1 *buff, ub4 len)
 {
     ub4 i;
@@ -2024,7 +2030,7 @@ BinEDeCrypt(ub1 *buff, ub4 len)
 /* And  it's eexec decription for PFA format */
 
 
-void
+static void
 HexEDeCrypt(unsigned char *mem)
 {
     int ch1, ch2, cipher;
@@ -2058,7 +2064,7 @@ HexEDeCrypt(unsigned char *mem)
     }
 }
 
-int
+static int
 PartialPFA(FILE *fin, FILE *fout)
 {
     ub1  type;
@@ -2166,7 +2172,7 @@ PartialPFA(FILE *fin, FILE *fout)
 #define NEXT_BINARY     3
 #define NEXT_ASCII      4
 
-int
+static int
 PartialPFB(FILE *fin, FILE *fout)
 {
     ub1  type;
@@ -2269,7 +2275,7 @@ PartialPFB(FILE *fin, FILE *fout)
 
                         OutChar(FirstCharW, fout);
                     }
-                        
+
                     Reeverse(FirstStr);
                     OutStr(RevStr, fout);
                 }
@@ -2306,7 +2312,7 @@ PartialPFB(FILE *fin, FILE *fout)
     }
 }
 
-void
+static void
 OutHEX(FILE *fout)
 {
     int i=0;
@@ -2357,7 +2363,7 @@ OutHEX(FILE *fout)
 /* We parse AFM file only if we've received errors after
 parsing of own vector */
 
-int
+static int
 Afm(void)
 {
     unsigned char afmfile[100];
@@ -2570,7 +2576,7 @@ FontPart(FILE *fout, unsigned char *fontfile,
 
 
 
-int
+static int
 LoadVector(int num, CHAR *TmpChar)
 {
 
@@ -2677,7 +2683,7 @@ LoadVector(int num, CHAR *TmpChar)
     }
 }
 
-int
+static int
 ChooseVect(CHAR *tmpChar)
 {
     CHAR *ThisChar = tmpChar;
@@ -2700,7 +2706,7 @@ ChooseVect(CHAR *tmpChar)
 
 }
 
-void
+static void
 ErrorOfScan(int err)
 {
     switch(err)
@@ -2737,7 +2743,7 @@ ErrorOfScan(int err)
     }
 }
 
-void
+static void
 NameOfProgram(void)
 {
 #ifdef DVIPS

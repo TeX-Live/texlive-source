@@ -14,7 +14,7 @@ static int checkdpi;
 /*
  *   This routine adds some sizes to `existsizes'.
  */
-void
+static void
 addsiz(int rhsize)
 {
    register integer *p;
@@ -30,7 +30,7 @@ addsiz(int rhsize)
       hsize = t;
    } while (hsize);
 }
-void
+static void
 adddpi(int hsize)
 {
    long a, b, c;

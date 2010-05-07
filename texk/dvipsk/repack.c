@@ -39,7 +39,7 @@ static unsigned char *specdata;
 static long tslen = 0;
 static unsigned char *tempstore, *tsp, *tsend;
 
-void
+static void
 putlong(register char *a, long i)
 {
    a[0] = i >> 24;
@@ -321,9 +321,9 @@ dochar(unsigned char *from, short width, short height)
 long mbytesleft;
 quarterword *mraster;
 
-char *
-makecopy(register unsigned char *what, 
-         register long len, 
+static char *
+makecopy(register unsigned char *what,
+         register long len,
 	 register unsigned char *p)
 {
    register unsigned char *q;

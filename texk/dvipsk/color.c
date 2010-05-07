@@ -1,5 +1,5 @@
-/*  
- *  This is a set of routines for dvips that are used to process color 
+/*
+ *  This is a set of routines for dvips that are used to process color
  *  commands in the TeX file (passed by \special commands).  This was
  *  orignally written by J. Hafner, E. Blanz and M. Flickner of IBM
  *  Research, Almaden Research Center.  Contact hafner@almaden.ibm.com.
@@ -47,7 +47,7 @@ static char *cstack, *csp, *cend, *bg;
  *   is a word followed by arguments, we send out the arguments and
  *   then the word prefixed by "TeXcolor".
  */
-void
+static void
 colorcmdout(char *s)
 {
    char *p;

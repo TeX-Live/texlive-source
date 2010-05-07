@@ -11,7 +11,7 @@
  */
 #include "protos.h"
 
-void
+static void
 abortpage(void)
 {
    error("! unexpected eof on DVI file");

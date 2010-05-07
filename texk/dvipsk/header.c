@@ -18,6 +18,9 @@ struct header_list *header_head;
  */
 #include "protos.h"
 
+static int add_name_general(const char *s, struct header_list **what,
+                            char *pre, char *post);
+
 int
 add_name(const char *s, struct header_list **what)
 {
@@ -28,7 +31,7 @@ add_name(const char *s, struct header_list **what)
  *   This more general routine adds a name to a list of unique
  *   names.
  */
-int
+static int
 add_name_general(const char *s, struct header_list **what, char *pre, char *post)
 {
    struct header_list *p, *q;
@@ -68,7 +71,7 @@ checkhmem(const char *s, char *pre, char *post)
    }
    if (f==0) {
       char *msg = concat ("! Couldn't find header file: ", s);
-      
+
       if (secure == 2) {
         msg = concat (msg,
                    "\nAbsolute and ../relative paths are denied in -R2 mode.");

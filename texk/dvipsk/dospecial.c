@@ -264,7 +264,7 @@ Tolower(register char c)
 #endif  /* IBM: VM/CMS */
 #endif
 #endif /* !KPATHSEA */
-int
+static int
 IsSame(const char *a, const char *b)
 {
    for(; *a != '\0'; ) {
@@ -281,7 +281,7 @@ const char *ValStr; /* ... String values found */
 long ValInt; /* Integer value found */
 float ValNum; /* Number or Dimension value found */
 
-char *
+static char *
 GetKeyVal(char *str, int *tno) /* returns NULL if none found, else next scan point */
      /* str : starting point for scan */
      /* tno : table entry number of keyword, or -1 if keyword not found */
@@ -574,7 +574,7 @@ default:
       scanfontcomments(ValStr);
 }
 
-int
+static int
 maccess(char *s)
 {
    FILE *f = search(figpath, s, "r");

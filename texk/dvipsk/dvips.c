@@ -63,8 +63,10 @@ extern char *strtok(); /* some systems don't have this in strings.h */
     static char ofnme[252],infnme[252],pap[40],thh[20];
 #endif
 
-/* PS fonts fully downloaded as headers */ 
-char *downloadedpsnames[DOWNLOADEDPSSIZE];  
+Boolean SJIS;                /* KANJI code encoding */
+
+/* PS fonts fully downloaded as headers */
+char *downloadedpsnames[DOWNLOADEDPSSIZE];
 
 int unused_top_of_psnames;   /* unused top number of downloadedpsnames[#] */
 fontdesctype *fonthead;      /* list of all fonts mentioned so far */
@@ -301,6 +303,7 @@ static const char *helparr[] = {
 #else
 "                                     -Z*  Compress bitmap fonts",
 #endif
+"-SJIS* Shift-JIS encoding",
 /*"-   Interactive query of options", */
 "    # = number   f = file   s = string  * = suffix, `0' to turn off",
 "    c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)",
@@ -349,7 +352,7 @@ error_with_perror(const char *s, const char *fname)
    } else {
      putc ('\n', stderr);
    }
-   
+
    if (*s=='!') {
       freememforpsnames();
       if (bitfile != NULL) {
@@ -372,7 +375,7 @@ error(const char *s)
 #ifndef KPATHSEA
 char *
 concat(char *s1, char *s2)
-{ 
+{
   char *s = malloc(strlen(s1)+strlen(s2)+1);
   if (s == NULL) {
     fprintf(stderr, "Malloc failed to give %d bytes.\nAborting\n",
@@ -390,7 +393,7 @@ concat(char *s1, char *s2)
 void
 check_checksum(unsigned c1, unsigned c2, const char *name)
 {
-  if (c1 && c2 && c1 != c2 
+  if (c1 && c2 && c1 != c2
 #ifdef KPATHSEA
       && !kpse_tex_hush ("checksum")
 #endif
@@ -437,7 +440,7 @@ mymalloc(integer n)
       error("! no memory");
    return p;
 }
-void
+static void
 morestrings(void) {
    strings = mymalloc((integer)STRINGSIZE);
    nextstring = strings;
@@ -452,7 +455,7 @@ checkstrings(void) {
 /*
  *   Initialize sets up all the globals and data structures.
  */
-void
+static void
 initialize(void)
 {
    int i;
@@ -471,6 +474,7 @@ initialize(void)
       downloadedpsnames[i] = NULL;
    unused_top_of_psnames = 0;
    morestrings();
+   SJIS = 0;
    maxpages = 100000;
    numcopies = 1;
    iname = fulliname = strings;
@@ -507,7 +511,7 @@ newstring(const char *s)
    nextstring += l + 1;
    return(q);
 }
-void
+static void
 newoutname(void) {
    static int seq = 0;
    static char *seqptr = 0;
@@ -551,7 +555,7 @@ revlist(VOID *p)
    return (VOID *)qq;
 }
 /* this asks for a new set of arguments from the command line */
-void
+static void
 queryargs(void)
 {
    fputs("Options: ",stdout);
@@ -597,7 +601,7 @@ main(int argc, char **argv)
    kpse_set_program_name (argv[0], "dvips");
    kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
 #endif
-   
+
 #ifdef __THINK__
    argc = dcommand(&argv); /* do I/O stream redirection */
 #endif
@@ -763,15 +767,15 @@ case 'f' :
                break;
 case 'u' :
                {
-                  char PSname[300];               
+                  char PSname[300];
                   if (*p == 0 && argv[i+1])
                      p = argv[++i];
                   strcpy(PSname, p);
-                  if (!strchr(PSname, '.'))        
+                  if (!strchr(PSname, '.'))
                      strcat(PSname, ".map");     /* default extension */
                   if (PSname[0] == '+')
                      getpsinfo(PSname+1);
-                  else 
+                  else
                      psmapfile = strdup(PSname); /* a cute small memory leak (just as in 'p' option handling in resident.c) */
                }
                break;
@@ -807,10 +811,13 @@ case 'R':
                   secure_option = 1; /* Never used */
                break;
 case 'S':
-               if (*p == 0 && argv[i+1])
-                  p = argv[++i];
-               if (sscanf(p, "%d", &maxsecsize)==0)
-                  error("! Bad section size arg (-S).");
+               if (strncmp (p, "JIS", 3) == 0) SJIS = (*(p + 3) != '0');
+               else {
+                  if (*p == 0 && argv[i+1])
+                     p = argv[++i];
+                  if (sscanf(p, "%d", &maxsecsize)==0)
+                     error("! Bad section size arg (-S).");
+               }
                break;
 case 'm' :
                if (STREQ (p, "ode") && argv[i+1]) {
@@ -836,7 +843,7 @@ case 'n' :
                }
                break;
 case 'o' :
-               if (*p == 0 && argv[i+1] && 
+               if (*p == 0 && argv[i+1] &&
                    (STREQ (argv[i+1], "-") || argv[i+1][0] != '-'))
                   p = argv[++i];
                oname_option = 1;
@@ -1076,7 +1083,7 @@ default:
          } else {
             if (*iname == 0) {
                register char *p;
-   
+
                lastext = 0;
                iname = nextstring;
                p = argv[i];
@@ -1157,7 +1164,7 @@ default:
 #ifdef KPATHSEA
    kpse_init_prog ("DVIPS", actualdpi, mfmode, "cmr10");
    kpse_make_tex_discard_errors = quiet;
-#endif   
+#endif
 /*
  *   The logic here is a bit convoluted.  Since all `additional'
  *   PostScript font information files are loaded *before* the master

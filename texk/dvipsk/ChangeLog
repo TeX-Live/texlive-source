@@ -1,9 +1,30 @@
-2010-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2010-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* output.c: correct wrong boundary values of characters.
-	from Takuji Tanaka <KXD02663@nifty.ne.jp>.
-	* protos.h, dvips.c, output.c, resident.c: remove unnecessary SJIS option.
-	from Takuji Tanaka <KXD02663@nifty.ne.jp>.
+	* bbox.c: Declare function used only in this file as static,
+	remove trailing whitespace.
+	* color.c: The same.
+	* dosection.c: The same.
+	* dospecial.c: The same.
+	* dpicheck.c: The same.
+	* drawPS.c: The same.
+	* dviinput.c: The same.
+	* dvips.c: The same.
+	* emspecial.c: The same.
+	* finclude.c: The same.
+	* header.c: The same.
+	* hps.c: The same.
+	* loadfont.c: The same.
+	* output.c: The same.
+	* papersiz.c: The same.
+	* repack.c: The same.
+	* resident.c: The same.
+	* t1part.c: The same.
+	* tfmload.c: The same.
+	* unpack.c: The same.
+	* virtualfont.c: The same.
+	* writet1.c: The same. Skip compilation of unused functions.
+	* protos.h: Remove all these extern declarations.
+	* t1part.h: Remove unused K&R function declarations.
 
 2010-05-06  Karl Berry  <karl@tug.org>
 

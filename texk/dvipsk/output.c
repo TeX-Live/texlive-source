@@ -49,6 +49,7 @@ integer rdir = 0, fdir = 0;
  *   We need a few statics to take care of things.
  */
 static void chrcmd(char c);
+static void tell_needed_fonts(void);
 static void print_composefont(void);
 static void setdir(int d);
 static int JIStoSJIS(int c);
@@ -340,7 +341,7 @@ msdosdone:
                           beyond our present needs.  If we were going
                           to do that much work, this entire chunk of
                           code should probably be
-                          rewritten. [dmj@ams.org, 2007/08/20] */ 
+                          rewritten. [dmj@ams.org, 2007/08/20] */
 
                        scanForEnd = "%%EndFont";
                        scanningFont = 1;
@@ -674,7 +675,7 @@ stringend(void)
 }
 
 #ifdef SHIFTLOWCHARS
-/* 
+/*
  *   moving chars 0-32 and 127 to higher positions
  *   is desirable when using some fonts
  */
@@ -769,9 +770,9 @@ jscout(int c, char *fs)   /* string character out */
          sprintf(s, "a<%02x>p", c);
       } else if (c<0x800) {
 	 sprintf(s, "a<%02x%02x>p", UCStoUTF8B1(c), UCStoUTF8B2(c));
-      } else if (c<0x10000) {
+      } else if (c<0xffff) {
 	 sprintf(s, "a<%02x%02x%02x>p", UCStoUTF8C1(c), UCStoUTF8C2(c), UCStoUTF8C3(c));
-      } else if (c<0x110000) {
+      } else if (c<0x10ffff) {
 	 sprintf(s, "a<%02x%02x%02x%02x>p", UCStoUTF8D1(c), UCStoUTF8D2(c), UCStoUTF8D3(c), UCStoUTF8D4(c));
       } else {
          error("warning: Illegal code value.");
@@ -779,7 +780,7 @@ jscout(int c, char *fs)   /* string character out */
    } else if (c>0xffff && strstr(fs,"-UTF16-")!=NULL) {
       sprintf(s, "a<%04x%04x>p", UTF32toUTF16HS(c), UTF32toUTF16LS(c));
    } else {
-      if ((strstr(fs,"-RKSJ-")!=NULL)) c = JIStoSJIS(c);
+      if ((strstr(fs,"-RKSJ-")!=NULL) || (SJIS && c > 0x2120)) c = JIStoSJIS(c);
       sprintf(s, "a<%04x>p", c);
    }
    cmdout(s);
@@ -1027,7 +1028,7 @@ indelta(integer i)
 /*
  *   A case-irrelevant string compare.
  */
-int
+static int
 mlower(int c)
 {
    if ('A' <= c && c <= 'Z')
@@ -1035,7 +1036,7 @@ mlower(int c)
    else
       return c;
 }
-int
+static int
 ncstrcmp(const char *a, const char *b)
 {
    while (*a && (*a == *b ||
@@ -1049,7 +1050,7 @@ ncstrcmp(const char *a, const char *b)
 /*
  *   Find the paper size.
  */
-void
+static void
 findpapersize(void) {
    if (finpapsiz == 0) {
       struct papsiz *ps;
@@ -1228,7 +1229,7 @@ topoints(integer i)
  *   Send out the special paper stuff.  If `hed' is non-zero, only
  *   send out lines starting with `!' else send all other lines out.
  */
-void
+static void
 paperspec(const char *s, int hed)
 {
    int sendit;
@@ -1253,7 +1254,7 @@ paperspec(const char *s, int hed)
       }
    }
 }
-char *
+static char *
 epsftest(integer bop)
 {
    if (tryepsf && paperfmt == 0 && *iname) {
@@ -1335,7 +1336,6 @@ open_output(void) {
 void
 initprinter(sectiontype *sect)
 {
-   void tell_needed_fonts();
    int n = sect->numpages * pagecopies * collatedcopies;
 #ifdef HPS
    if (!HPS_FLAG)
@@ -1688,7 +1688,7 @@ drawchar(chardesctype *c, int cc)
 /*
  *   This routine sends out the document fonts comment.
  */
-void
+static void
 tell_needed_fonts(void) {
    struct header_list *hl = ps_fonts_used;
    char *q;

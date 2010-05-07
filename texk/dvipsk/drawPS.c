@@ -268,7 +268,7 @@ arc(char *cp, int invis)
  * of a dashed box is solid.
  * The number of inches/dash must be adjusted accordingly.
  */
-void
+static void
 flushDashedPath(int dotted, double inchesPerDash)
 {
   register int i;

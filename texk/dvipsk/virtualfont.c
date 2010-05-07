@@ -17,14 +17,14 @@
  */
 static FILE *vffile;
 static char name[500];
-void
+static void
 badvf(const char *s)
 {
   char *msg = concatn("! Bad VF file ", name, ": ", s, NULL);
   error(msg);
 }
 
-shalfword
+static shalfword
 vfbyte(void)
 {
    register shalfword i;
@@ -34,7 +34,7 @@ vfbyte(void)
    return(i);
 }
 
-integer
+static integer
 vfquad(void)
 {
    register integer i;
@@ -48,7 +48,7 @@ vfquad(void)
    return(i);
 }
 
-integer
+static integer
 vftrio(void)
 {
    register integer i;
@@ -59,7 +59,7 @@ vftrio(void)
    return(i);
 }
 
-int
+static int
 vfopen(register fontdesctype *fd)
 {
    register char *n;
@@ -75,7 +75,7 @@ vfopen(register fontdesctype *fd)
 #endif
    if (strlen(n) + 5 >= sizeof (name)) {
      /* 5 for vf() + null */
-     error("! VF file name too long in vfopen"); 
+     error("! VF file name too long in vfopen");
    }
 #ifdef MVSXA   /* IBM: MVS/XA */
    (void)sprintf(name, "vf(%s)", n);
@@ -101,7 +101,7 @@ vfopen(register fontdesctype *fd)
 /*
  * The following routine is like fontdef, but for local fontdefs in VF files.
  */
-fontmaptype *
+static fontmaptype *
 vfontdef(integer s, int siz)
 {
    register integer i, j, fn;

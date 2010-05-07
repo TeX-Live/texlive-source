@@ -85,55 +85,6 @@ typedef unsigned char typetemp;
 #endif
 
 #include "protos.h"
-#if 0
-struct Char * AddChar ();
-void AddStr();
-void BinEDeCrypt ();
-int  DeCodeStr();
-int  DefTypeFont();
-unsigned
-char CDeCrypt();
-void CorrectGrid();
-int  CharEncoding ();
-void CheckChoosing();
-int  ChooseChar();
-int  ChooseVect();
-int  EndOfEncoding();
-void ErrorOfScan ();
-int FindCharW();
-void FindEncoding ();
-int  FindKeyWord ();
-int  FontPart ();
-void HexEDeCrypt ();
-void *getmem ();
-int  GetNum ();
-int  GetToken ();
-int  GetWord ();
-int  GetZeroLine ();
-unsigned
-char *itoasp ();
-void LastLook ();
-ub4  little4 ();
-void OutASCII ();
-void OutHEX ();
-void OutStr();
-void NameOfProgram ();
-int  PartialPFA ();
-int  PartialPFB ();
-void PrintChar ();
-int  PassString ();
-int  PassToken ();
-void Reverse();
-int  ScanBinary ();
-void ScanChars ();
-void ScanSubrs ();
-void SubstNum ();
-void ViewReturnCall();
-struct Char * UnDefineChars ();
-void UnDefineCharsW();
-void UnDefineStr();
-int WorkVect();
-#endif
 
 #define NUM_LABEL     1024
 #define BASE_MEM     16384

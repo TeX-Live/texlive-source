@@ -27,7 +27,7 @@ typedef struct bbtft {
 
 static bbfontmaptype *bbffont;
 
-void
+static void
 bbtfmload(register fontdesctype *curfnt)
 {
    register integer i, j;
@@ -278,7 +278,7 @@ bbspecial(integer h, integer v, integer dir, int nbytes)
       }
    }
 }
-void
+static void
 bbdopage(void)
 {
    register shalfword cmd;

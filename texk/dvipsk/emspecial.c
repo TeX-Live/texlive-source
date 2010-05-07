@@ -59,6 +59,7 @@ struct emunit emtable[] = {
   {0,0.0}
 };
 
+static void emgraph(char *filename, float emwidth, float emheight);
 
 /* clear the empoints array if necessary */
 void
@@ -72,7 +73,7 @@ emclear(void)
 }
 
 /* put an empoint into the empoints array */
-struct empt *
+static struct empt *
 emptput(shalfword point, integer x, integer y)
 {
    struct empt *p;
@@ -98,7 +99,7 @@ emptput(shalfword point, integer x, integer y)
 }
 
 /* get an empoint from the empoints array */
-struct empt *
+static struct empt *
 emptget(shalfword point)
 {
    struct empt *p;
@@ -120,7 +121,7 @@ emptget(shalfword point)
 
 
 /* convert width into dpi units */
-float
+static float
 emunits(float width, char *unit)
 {
 struct emunit *p;
@@ -143,9 +144,6 @@ struct empt *empoint;
 char emunit[30];
 char emstr[250];
 char *emp;
-#ifndef KPATHSEA
-void emgraph();
-#endif
 
         hvpos();
 	for (emp = p+3; *emp && isspace(*emp); emp++); /* skip blanks */
@@ -159,7 +157,7 @@ void emgraph();
 	      cmdout(emstr);
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-      (void)fprintf(stderr, "em special: Linewidth set to %.1f dots\n", 
+      (void)fprintf(stderr, "em special: Linewidth set to %.1f dots\n",
 		emwidth);
 #endif
 	   } else {
@@ -201,7 +199,7 @@ void emgraph();
         }
 	else if (strncmp(emp, "point", 5) == 0) {
            if (empoints == NULL) {
-              empoints = 
+              empoints =
               (struct empt **)mymalloc((integer)emmax * sizeof(struct empt *));
               emused = TRUE;
               emclear();
@@ -249,7 +247,7 @@ void emgraph();
 	   if (emwidth!=-1.0) {
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-   (void)fprintf(stderr,"em special: Linewidth temporarily set to %.1f dots\n", 
+   (void)fprintf(stderr,"em special: Linewidth temporarily set to %.1f dots\n",
 		emwidth);
 #endif
 	   	strcpy(emstr,"currentlinewidth");
@@ -309,7 +307,7 @@ void emgraph();
 	   }
 	}
 	else {
-           sprintf(errbuf, 
+           sprintf(errbuf,
 	      "Unknown em: command (%s) in \\special will be ignored", p);
            specerror(errbuf);
 	}
@@ -349,7 +347,7 @@ void emgraph();
 /*                                                   8 Oct 92                */
 
 /* Routines to read binary numbers from IBM PC file types */
-integer
+static integer
 readinteger(FILE *f)
 {
    integer i;
@@ -363,12 +361,12 @@ readinteger(FILE *f)
    return(i);
 }
 
-halfword
+static halfword
 readhalfword(FILE *f)
 {
    halfword i;
    int r;
- 
+
    i = 0;
    for (r = 0; r < 2; r++)
    {
@@ -380,7 +378,7 @@ readhalfword(FILE *f)
 #define readquarterword(f) ((unsigned char)fgetc(f))
 #define tobyte(x) ((x/8) + (x%8 ? 1 : 0))
 
-/* These routines will decode PCX files produced by Microsoft 
+/* These routines will decode PCX files produced by Microsoft
  * Windows Paint.  Other programs may not produce files which
  * will be successfully decoded, most notably version 1.xx of
  * PC Paint. */
@@ -390,7 +388,7 @@ readhalfword(FILE *f)
  *   be a sixteen-bit signed; halfword must be a sixteen-bit unsigned;
  *   quarterword must be an eight-bit unsigned.
  */
-typedef struct 
+typedef struct
 {
 	quarterword man;
 	quarterword ver;
@@ -408,7 +406,7 @@ typedef struct
 	halfword byteperline;
 	halfword paltype;
 	quarterword fill[58];
-} PCXHEAD; 
+} PCXHEAD;
 
 static int
 PCXreadhead(FILE *pcxf, PCXHEAD *pcxh)
@@ -439,8 +437,8 @@ PCXreadhead(FILE *pcxf, PCXHEAD *pcxh)
 	return(1);					/* success */
 	}
 
-int
-PCXreadline(FILE *pcxf, 
+static int
+PCXreadline(FILE *pcxf,
 	    unsigned char *pcxbuf,
 	    unsigned int byteperline)
 {
@@ -466,7 +464,7 @@ PCXreadline(FILE *pcxf,
 }
 
 static void
-PCXgetpalette(FILE *pcxf, PCXHEAD *pcxh, 
+PCXgetpalette(FILE *pcxf, PCXHEAD *pcxh,
 	      unsigned char *r,
 	      unsigned char *g,
 	      unsigned char *b)
@@ -557,9 +555,9 @@ PCXgetpalette(FILE *pcxf, PCXHEAD *pcxh,
 	}
 }
 
-void
+static void
 PCXshowpicture(FILE *pcxf, int wide, int high, int bytes,
-	       int cp, int bp, unsigned char *r, 
+	       int cp, int bp, unsigned char *r,
 	       unsigned char *g, unsigned char *b)
 {
 	int x;
@@ -623,7 +621,7 @@ PCXshowpicture(FILE *pcxf, int wide, int high, int bytes,
 			xmod = 7 - (x&7);
 			xbit = 1 << xmod;
 			switch(bp) {
-				case 1: 
+				case 1:
 					for (c = 0; c < cp; c++) {
 						row = rowa[c];
 						p |= ( (unsigned)(row[xdiv] & xbit) >> xmod ) << c;
@@ -637,7 +635,7 @@ PCXshowpicture(FILE *pcxf, int wide, int high, int bytes,
 					row = rowa[0]; /* assume single plane */
 					p = (unsigned) (row[x]);
 					break;
-				default: 
+				default:
 					fprintf(stderr, "em:graph: Unable to Decode this PCX file\n");
 					return;
 			}
@@ -653,8 +651,8 @@ PCXshowpicture(FILE *pcxf, int wide, int high, int bytes,
 	free(rowa[0]);
 }
 
-void
-imagehead(char *filename, int wide, int high, 
+static void
+imagehead(char *filename, int wide, int high,
 	  float emwidth, float emheight)
 {
 	char *fullname = NULL, *name;
@@ -691,17 +689,17 @@ imagehead(char *filename, int wide, int high,
 	cmdout("scale");
 #ifdef DEBUG
 	if (dd(D_SPECIAL)) {
-	  (void)fprintf(stderr, 
+	  (void)fprintf(stderr,
 	    "\nem:graph: %s width  %d pixels scaled to %.1f pixels\n",
 	    filename, wide, emwidth);
-	  (void)fprintf(stderr, 
+	  (void)fprintf(stderr,
 	    "em:graph: %s height %d pixels scaled to %.1f pixels\n",
 	    filename, high, emheight);
    	}
 #endif
 }
 
-void
+static void
 imagetail(void)
 {
 	if (!disablecomments) {
@@ -715,7 +713,7 @@ imagetail(void)
 	}
 }
 
-void
+static void
 pcxgraph(FILE *pcxf, char *filename,
 	 float emwidth, float  emheight /* dimension in pixels */ )
 {
@@ -765,7 +763,7 @@ struct wpnt_1 {
 #define WPAINT_1 1
 #define WPAINT_2 2
 
-void
+static void
 MSP_2_ps(FILE *f, int wide, int high)
 {
 	char *line;
@@ -809,7 +807,7 @@ MSP_2_ps(FILE *f, int wide, int high)
 
 	fseek(f, 32, SEEK_SET);
 
-	/* read in the table of line lengths */	
+	/* read in the table of line lengths */
 	linelen = (halfword *) mymalloc((integer)sizeof(halfword) * high);
 	for (i = 0; i < high; i++) {
 		linelen[i] = readhalfword(f);
@@ -847,7 +845,7 @@ MSP_2_ps(FILE *f, int wide, int high)
 	free(line);
 }
 
-void
+static void
 MSP_1_ps(FILE *f, int wide, int high)
 {
 	char *line;
@@ -890,7 +888,7 @@ MSP_1_ps(FILE *f, int wide, int high)
 }
 
 
-void
+static void
 mspgraph(FILE *f, char *filename, float emwidth, float emheight)
 {
 	struct wpnt_1 head;
@@ -898,22 +896,22 @@ mspgraph(FILE *f, char *filename, float emwidth, float emheight)
 
         /* read the header of the file and figure out what it is */
 	fread(head.id, 1, 4, f);
-	head.width = readhalfword(f); 
-	head.high = readhalfword(f); 
-	head.x_asp = readhalfword(f); 
-	head.y_asp = readhalfword(f); 
-	head.x_asp_prn = readhalfword(f); 
-	head.y_asp_prn = readhalfword(f); 
-	head.width_prn = readhalfword(f); 
-	head.high_prn = readhalfword(f); 
-	head.chk_sum = readinteger(f); 
-	head.chk_head = readhalfword(f); 
+	head.width = readhalfword(f);
+	head.high = readhalfword(f);
+	head.x_asp = readhalfword(f);
+	head.y_asp = readhalfword(f);
+	head.x_asp_prn = readhalfword(f);
+	head.y_asp_prn = readhalfword(f);
+	head.width_prn = readhalfword(f);
+	head.high_prn = readhalfword(f);
+	head.chk_sum = readinteger(f);
+	head.chk_head = readhalfword(f);
 
 	if (feof(f)) {
 		fprintf(stderr, "em:graph: Unable to Read Valid MSP Header\n");
 		return;
 	}
-		
+
         /* check the id bytes */
 	if (!memcmp(head.id, "DanM", 4))
         	paint_type = WPAINT_1;
@@ -976,13 +974,13 @@ struct bitmapfileheader {
 	integer offbits;
 };
 
-void
+static void
 rgbread(FILE *f, int w, int b, char *s)
 {
 	int i;
 
 	/* set the line to white */
-	memset(s, 0xff, ((w*b)/8)+1); 
+	memset(s, 0xff, ((w*b)/8)+1);
 
 	/* read in all the full bytes */
 	for (i = 0; i < (w * b) / 8; i++)
@@ -1005,7 +1003,7 @@ unsigned rle_dx = 0;	/* delta command horizontal offset */
 unsigned rle_dy = 0;	/* delta command vertical offset */
 
 /* checked against output from Borland Resource Workshop */
-void
+static void
 rle4read(FILE *f, int w, int b, char *s)
 {
 	int i;
@@ -1018,7 +1016,7 @@ rle4read(FILE *f, int w, int b, char *s)
 	i = 0;
 	hi = TRUE;
 	/* set the line to white */
-	memset(s, 0xff, limit+1); 
+	memset(s, 0xff, limit+1);
 
 	if (rle_dy) {
 	    rle_dy--;
@@ -1080,9 +1078,9 @@ rle4read(FILE *f, int w, int b, char *s)
 	    }
   	}
 }
-  
+
 /* untested */
-void
+static void
 rle8read(FILE *f, int w, int b, char *s)
 {
 	int i;
@@ -1093,7 +1091,7 @@ rle8read(FILE *f, int w, int b, char *s)
 	limit = (w*b)/8;
 	i = 0;
 	/* set the line to white */
-	memset(s, 0xff, limit+1); 
+	memset(s, 0xff, limit+1);
 
 	if (rle_dy) {
 	    rle_dy--;
@@ -1138,7 +1136,7 @@ rle8read(FILE *f, int w, int b, char *s)
 	}
 }
 
-void
+static void
 bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 {
 	struct bitmapfileheader bmfh;
@@ -1178,7 +1176,7 @@ bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 
 	bmih.size = readinteger(f);
 	if (bmih.size == 12) { /* OS2 bitmap */
-		isOS2 = TRUE;	
+		isOS2 = TRUE;
 		bmih.width = readhalfword(f);
 		bmih.height = readhalfword(f);
 		bmih.planes = readhalfword(f);
@@ -1192,7 +1190,7 @@ bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 		bmih.clrimportant = 0;
 	}
 	else { /* Windows bitmap */
-		isOS2 = FALSE;	
+		isOS2 = FALSE;
 		bmih.width = readinteger(f);
 		bmih.height = readinteger(f);
 		bmih.planes = readhalfword(f);
@@ -1344,7 +1342,7 @@ bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 					c = (rr < 0xff) || (gg < 0xff) || (bb < 0xff);
 					break;
 			}
-			if (c) 
+			if (c)
 			    pshexa[j/8] &= ~omask;
 			else
 			    pshexa[j/8] |= omask;
@@ -1371,7 +1369,7 @@ bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 const char *extarr[]=
 { ".pcx", ".msp", ".bmp", NULL };
 
-void
+static void
 emgraph(char *filename, float emwidth, float emheight)
 {
 	char fname[80];

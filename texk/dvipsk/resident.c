@@ -99,7 +99,7 @@ findPSname(char *name)
 /*
  *   This routine adds an entry.
  */
-void
+static void
 add_entry(char *TeXname, char *PSname, char *Fontfile,
           char *Vectfile, char *specinfo, char *downloadinfo)
 {
@@ -214,7 +214,7 @@ residentfont(register fontdesctype *curfnt)
 #define INLINE_SIZE (2000)
 static char was_inline[INLINE_SIZE];
 static unsigned c_lineno;
-void
+static void
 bad_config(const char *err)
 {
    fprintf (stderr, "%s:%d:", realnameoffile, c_lineno);
@@ -263,7 +263,7 @@ getpath(char *who, char *what)
  *   double quotes with spaces in them.  We also accept strings
  *   with spaces in them, but kill off any spaces at the end.
  */
-char *
+static char *
 configstring(char *s, int nullok)
 {
    char tstr[INLINE_SIZE];
@@ -570,7 +570,9 @@ case 'v' : case 'V' :
 #endif
          break;
 case 'S' :
-         if (sscanf(was_inline+1, "%s", PSname) != 1)
+         if (!strncmp(was_inline, "SJIS", 4))
+           SJIS = (was_inline[4] != '0');
+         else if (sscanf(was_inline+1, "%s", PSname) != 1)
            bad_config("missing arg to S");
          else
 #ifdef KPATHSEA

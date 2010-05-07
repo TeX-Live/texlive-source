@@ -1,7 +1,7 @@
 /* This is the main file for hacking dvips to do HyperPostScript
  * Written by Mark D. Doyle 11/94. It is (C) Copyright 1994 by Mark D. Doyle
  * and the University of California. You may modify and use this program to
- * your heart's content.  
+ * your heart's content.
  */
 #include "dvips.h"
 
@@ -33,7 +33,7 @@
 Boolean inHTMLregion = 0;
 Boolean NO_ERROR = 1;
 Boolean HPS_ERROR = 0;
-integer HREF_COUNT;  
+integer HREF_COUNT;
 Boolean ISHREF = 0;
 Boolean POPPED = 0;
 Boolean PUSHED = 0;
@@ -52,7 +52,7 @@ typedef struct rectangle {
   double lly; /* lower left y coor */
   double urx; /* upper right x coor */
   double ury; /* upper right y coor */
-  } dvipsRectangle; 
+  } dvipsRectangle;
 
 typedef struct hps_link {
   int action; /* GoTo, GoToR, or Launch */
@@ -79,7 +79,7 @@ typedef struct rect_list { /* linked list of rectangles */
 
 Rect_list *current_rect_list;
 
-#define HASHSIZE 1223 
+#define HASHSIZE 1223
 static struct nlist *link_targets[HASHSIZE]; /* names .... */
 static struct nlist *link_sources[HASHSIZE]; /* hrefs .... */
 
@@ -99,13 +99,26 @@ Boolean noprocset; /* Leave out BeginProc and EndProc comments */
 #define HORIZONTAL 1
 #define FUDGE 2.0
 
-/* For later use 
+/* For later use
 * static char *dest_key[9] = {"Fit", "FitB", "FitW", "FitH", "FitBH"
-               "FitR", "FitV", "FitBV", "XYZ"}; 
+               "FitR", "FitV", "FitBV", "XYZ"};
 */
 
 char *hs = NULL; /* html string to be handled */
 char *url_name = NULL; /* url between double quotes */
+
+static int href_or_name(void);
+static int parseref(void);
+static int get_string(void);
+static  int do_link(char *s, int type);
+static struct nlist *lookup_link(char *s, int type);
+static struct nlist *install_link(char *name, struct hps_link *defn, int type);
+static Hps_link *link_dup(struct hps_link *s);
+static double dvi_to_hps_conv(int i, int dir);
+static int href_name_match(char *h, char *n);
+static void stamp_hps(struct hps_link *pl);
+static void stamp_external(char *s, struct hps_link *pl);
+static void print_rect_list(void);
 
 /* parse anchor into link */
 void
@@ -114,7 +127,7 @@ do_html(char *s)
   Hps_link *nl;
   url_name = (char *)malloc(strlen(s)+1);
   hs = s;
-  HREF_COUNT = 0; 
+  HREF_COUNT = 0;
   skip_space(hs); /* skip spaces */
   if ( TOLOWER(*hs) == 'a') { /* valid start */
     POPPED = FALSE;
@@ -129,7 +142,7 @@ do_html(char *s)
     skip_space(hs);
     while(*hs != '\0') {
       /* parse for names and href */
-      if (!href_or_name()) { 
+      if (!href_or_name()) {
 	error("Bad HMTL:");
 	error(s);
 	error("!");
@@ -145,17 +158,17 @@ do_html(char *s)
       inHTMLregion = FALSE;
     }
        if (current_type == HREF && current_name[0] != '#') {
-	 if ((nl = lookup_link(current_name, current_type)->defn)) { 
+	 if ((nl = lookup_link(current_name, current_type)->defn)) {
 	   nl->rect.urx = dvi_to_hps_conv(hh, HORIZONTAL);
-	   nl->rect.ury = dvi_to_hps_conv(vv, VERTICAL)-FUDGE+12.0; 
+	   nl->rect.ury = dvi_to_hps_conv(vv, VERTICAL)-FUDGE+12.0;
 	   stamp_external(current_name,nl); /* Broken lines ? */
 	 } else {
 	   error("!Null lookup");
 	 }
        } else {
-	 if ((nl = lookup_link(current_name, current_type)->defn)) { 
+	 if ((nl = lookup_link(current_name, current_type)->defn)) {
 	   nl->rect.urx = dvi_to_hps_conv(hh, HORIZONTAL);
-	   nl->rect.ury = dvi_to_hps_conv(vv, VERTICAL)-FUDGE+12.0; 
+	   nl->rect.ury = dvi_to_hps_conv(vv, VERTICAL)-FUDGE+12.0;
 	   if (current_type) {
 	     stamp_hps(nl); /* Put link info right where special is */
 	     print_rect_list(); /* print out rectangles */
@@ -163,24 +176,24 @@ do_html(char *s)
 	 } else {
                     error("!Null lookup");
 	 }
-       } 
+       }
   }
   else {
     error( "No A in html special");
     error(s);
     /*error("!");*/
   }
-  
+
   return;
 }
 
-int
+static int
 href_or_name(void) {
   if ((strncmp(hs, "href", 4) == 0) || (strncmp(hs, "HREF", 4) == 0)) {
     ISHREF = TRUE;
-  } else if ((strncmp(hs, "name", 4) == 0) 
+  } else if ((strncmp(hs, "name", 4) == 0)
 	     || (strncmp(hs, "NAME", 4) == 0)) {
-    ISHREF = FALSE; 
+    ISHREF = FALSE;
   } else {
     error("Not valid href or name html reference");
     return(HPS_ERROR);
@@ -197,7 +210,7 @@ href_or_name(void) {
   return(NO_ERROR);
 }
 
-int
+static int
 parseref(void) {
   int i = 0;
   for(i=0; i++ < 4; hs++); /* skip href or name in html string */
@@ -211,11 +224,11 @@ parseref(void) {
   if(!get_string()) return(HPS_ERROR);
   return(NO_ERROR); /* extract stuff between double quotes */
 }
-        
-int
+
+static int
 get_string(void) {
-  char *v = url_name; 
-  
+  char *v = url_name;
+
   skip_space(hs);
   /* hash_name(); */
   if (*hs == '"') {
@@ -234,12 +247,12 @@ get_string(void) {
   }
 }
 
-int
+static int
 do_link(char *s, int type)
 {
 
   Hps_link *p;
-  
+
   if (HREF_COUNT++ > 0) {
     error("!HTML string contains more than one href");
     return(HPS_ERROR);
@@ -249,11 +262,11 @@ do_link(char *s, int type)
   p->title = (char *)malloc(strlen(s)+1);
   p->title = s;
   p->srcpg = pagecounter;
-  p->rect.llx = dvi_to_hps_conv(hh, HORIZONTAL); 
+  p->rect.llx = dvi_to_hps_conv(hh, HORIZONTAL);
   p->rect.lly = dvi_to_hps_conv(vv, VERTICAL)-FUDGE;
   p->rect.urx = -1.0;
   p->rect.ury = -1.0;
-  p->vert_dest = -1; 
+  p->vert_dest = -1;
   p->page = -1;
   p->color[0] = 0;
   p->color[1] = 0; /* Blue links */
@@ -264,16 +277,16 @@ do_link(char *s, int type)
   p->border[3] = 3; /* dash on size */
   p->border[4] = 3;  /* dash off size */
 
-  current_name = (char *)malloc(strlen(s)+1); 
-  current_name = s; 
+  current_name = (char *)malloc(strlen(s)+1);
+  current_name = s;
   current_type = type;
   current_pushcount = pushcount;
   install_link(s, p, type);
   return(NO_ERROR);
 }
-                 
-unsigned int
-hash_string(char *s) 
+
+static unsigned int
+hash_string(char *s)
 {
   unsigned hashval;
   for (hashval = 0; *s != '\0'; s++)
@@ -281,13 +294,13 @@ hash_string(char *s)
   return hashval % HASHSIZE;
 }
 
-/* lookup a hashed name */ 
+/* lookup a hashed name */
 
-struct nlist *
+static struct nlist *
 lookup_link(char *s, int type)
 {
   struct nlist *np;
-  
+
   for(np = type ? link_sources[hash_string(s)] : link_targets[hash_string(s)];
         np != NULL; np = np -> next)
       if (strcmp(s, np->name) == 0)
@@ -295,7 +308,7 @@ lookup_link(char *s, int type)
   return NULL; /* not found */
 }
 
-struct nlist *
+static struct nlist *
 install_link(char *name, Hps_link *defn, int type)
 {
   struct nlist *np;
@@ -307,7 +320,7 @@ install_link(char *name, Hps_link *defn, int type)
     np->next = type ? link_sources[hashval] : link_targets[hashval];
     (type ? link_sources : link_targets)[hashval] = np;
     if ((np->defn = link_dup(defn)) == NULL)
-      return NULL; 
+      return NULL;
   return np;
 }
 
@@ -323,33 +336,33 @@ dup_str(char *w) /* make a duplicate of s */
 }
 #endif
 
-Hps_link *
+static Hps_link *
 link_dup(Hps_link *s) /* make a duplicate link */
 {
   Hps_link *p;
-  
+
   p = (Hps_link *) malloc(sizeof(*p));
   if (p != NULL)
     p = s;
   return p;
 }
 
-double
+static double
 dvi_to_hps_conv(int i, int dir)
 {
   double hps_coor;
   /* Convert dvi integers into proper hps coordinates
      Take into account magnification and resolution that dvi file was
-     produced at */ 
+     produced at */
   hps_coor = dir ? (((i * 72.0) / vactualdpi) +MARGIN) : (PAGESIZE - ((i * 72.0) / (vactualdpi)) - MARGIN  );
   return(hps_coor);
 }
 
-int
+static int
 vert_loc(int i)
 {
   int return_value;
-  return_value = (int) (i + (PAGESIZE / 4) + FUDGE); 
+  return_value = (int) (i + (PAGESIZE / 4) + FUDGE);
   if ( return_value > PAGESIZE) {
     return((int)PAGESIZE);
     } else if (return_value <  (PAGESIZE / 4.0)) {
@@ -357,15 +370,15 @@ vert_loc(int i)
         } else return(return_value);
 }
 
-Hps_link *
+static Hps_link *
 dest_link(char *s)
 {
   /* Assume for now that only one entry with same NAME, i.e.
      Should be true for all legitimate papers.
      Also, assume prepending of # for names. */
-  
+
   struct nlist *np;
-  
+
   s++; /* get rid of hashmark */
   for(np = link_targets[hash_string(s)]; np != NULL; np = np -> next) {
      if ( href_name_match(s, np->name)) {
@@ -378,36 +391,36 @@ dest_link(char *s)
   return NULL; /* not found */
 }
 
-int
+static int
 count_targets(void) {
   int count=0;
   int i;
   struct nlist *np;
-  
-  for (i = 0; i < HASHSIZE; i++) 
-    for(np = link_targets[i]; np != NULL; np = np -> next) 
-      count++; 
-  return count;      
+
+  for (i = 0; i < HASHSIZE; i++)
+    for(np = link_targets[i]; np != NULL; np = np -> next)
+      count++;
+  return count;
 }
 
-void
+static void
 do_targets(void) {
 
   struct nlist *np;
   int i;
   Hps_link *dest;
-  
-  for (i = 0; i < HASHSIZE; i++) 
+
+  for (i = 0; i < HASHSIZE; i++)
     for(np = link_sources[i]; np != NULL; np = np -> next) {
-      if (np->name[0] == '#') { 
+      if (np->name[0] == '#') {
 	dest = dest_link(np->name);
 	np->defn->page = dest->srcpg;
 	np->defn->vert_dest = vert_loc((int) dest->rect.lly);
-      } 
+      }
     }
 }
 
-void
+static void
 do_target_dict(void)
 {
   struct nlist *np;
@@ -415,18 +428,18 @@ do_target_dict(void)
   (void) fprintf(bitfile, "HPSdict begin\n");
   (void)fprintf(bitfile, "/TargetAnchors\n");
   (void)fprintf(bitfile, "%i dict dup begin\n",count_targets());
-  
-  for (i = 0; i < HASHSIZE; i++) 
-    for(np = link_targets[i]; np != NULL; np = np -> next) 
+
+  for (i = 0; i < HASHSIZE; i++)
+    for(np = link_targets[i]; np != NULL; np = np -> next)
       (void)fprintf(bitfile, "(%s) [%i [%.0f %.0f %.0f %.0f] %i] def\n",
-		    np->defn->title, np->defn->srcpg, 
+		    np->defn->title, np->defn->srcpg,
 		    np->defn->rect.llx, np->defn->rect.lly,
 		    np->defn->rect.urx, np->defn->rect.ury,
-		    vert_loc((int) np->defn->rect.lly));  
+		    vert_loc((int) np->defn->rect.lly));
   (void)fprintf(bitfile,"end targetdump-hook def end\n");
 }
 
-int
+static int
 href_name_match(char *h, char *n)
 {
   int count = 0;
@@ -444,54 +457,54 @@ href_name_match(char *h, char *n)
     }
 }
 
-void
+static void
 stamp_hps(Hps_link *pl)
 {
   char * tmpbuf;
   if (pl == NULL) {
     error("stamp_hps: null pl pointer, oh no!");
     return;
-  } 
+  }
   if(pl->title == NULL) {
     error("stamp_hps: null pl->title pointer, oh no!");
     return;
-  } 
+  }
 
   tmpbuf = (char *) xmalloc(strlen(pl->title)+200);
 
-  /* print out the proper pdfm with local page info only 
+  /* print out the proper pdfm with local page info only
    *  target info will be in the target dictionary */
-  (void)sprintf(tmpbuf, 
-		" (%s) [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] pdfm ", 
+  (void)sprintf(tmpbuf,
+		" (%s) [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] pdfm ",
 		pl->title, pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
 		pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
 		pl->color[0], pl->color[1], pl->color[2]);
-  cmdout(tmpbuf); 
+  cmdout(tmpbuf);
   free(tmpbuf);
-  
-  
+
+
 }
 
 /* For external URL's, we just pass them through as a string. The hyperps
  * interpreter can then do what is wants with them.
  */
-void
-stamp_external(char *s, Hps_link *pl) 
+static void
+stamp_external(char *s, Hps_link *pl)
 {
   char *tmpbuf;
   if (pl == NULL) {
     error("stamp_external: null pl pointer, oh no!");
     return;
-  } 
+  }
 
   if (s == NULL) {
     error("stamp_external: null s pointer, oh no!");
     return;
-  } 
+  }
 
   tmpbuf = (char *) xmalloc(strlen(s) + 200);
 
-  /* print out the proper pdfm with local page info only 
+  /* print out the proper pdfm with local page info only
    *  target info will be in the target dictionary */
   (void)sprintf(tmpbuf," [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] (%s) pdfm ",
 		pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
@@ -523,7 +536,7 @@ finish_hps(void) {
 
 void
 set_bitfile(const char *s, int mode)
-{  
+{
 if ((bitfile=fopen(s, mode ? FOPEN_ABIN_MODE : FOPEN_WBIN_MODE))==NULL) {
    error(s);
    error("!couldn't open file");
@@ -532,7 +545,7 @@ if ((bitfile=fopen(s, mode ? FOPEN_ABIN_MODE : FOPEN_WBIN_MODE))==NULL) {
 }
 
 void
-vertical_in_hps(void) { 
+vertical_in_hps(void) {
   Rect_list *rl;
   /*printf("in vertical_in_hps"); */
   if (current_type == NAME) return; /* Handle this case later */
@@ -545,44 +558,44 @@ vertical_in_hps(void) {
     rl->next = current_rect_list;
     current_rect_list = rl;
   }
-  current_rect_list->rect.llx = dvi_to_hps_conv(hh, HORIZONTAL); 
+  current_rect_list->rect.llx = dvi_to_hps_conv(hh, HORIZONTAL);
   current_rect_list->rect.lly = dvi_to_hps_conv(vv, VERTICAL)-FUDGE;
   current_rect_list->rect.urx = dvi_to_hps_conv(hhmem, HORIZONTAL);
-  current_rect_list->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE; 
-  
-  if (POPPED) start_new_box(); 
+  current_rect_list->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE;
+
+  if (POPPED) start_new_box();
 }
 
-void
+static void
 print_rect_list(void) {
   Rect_list *rl, *rln;
-  
+
   for(rl = current_rect_list; rl != NULL; rl = rln) {
-    /* printf("Rectangle is %.0f, %.0f, %.0f, %.0f\n", rl->rect.llx, rl->rect.lly, 
+    /* printf("Rectangle is %.0f, %.0f, %.0f, %.0f\n", rl->rect.llx, rl->rect.lly,
             rl->rect.urx, rl->rect.ury); */
     rln = rl -> next;
     free(rl);
-  } 
-} 
+  }
+}
 
 void
-end_current_box(void) { 
+end_current_box(void) {
   Hps_link *nl;
-  
+
   POPPED = TRUE;
   HREF_COUNT--;
   if (current_type == HREF && current_name[0] != '#') {
-    if ((nl = lookup_link(current_name, current_type)->defn)) { 
+    if ((nl = lookup_link(current_name, current_type)->defn)) {
       nl->rect.urx = dvi_to_hps_conv(hhmem, HORIZONTAL);
-      nl->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE+12.0; 
+      nl->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE+12.0;
       stamp_external(current_name,nl); /* Broken lines ? */
     } else {
       error("!Null lookup");
     }
   } else {
-    if ((nl = lookup_link(current_name, current_type)->defn)) { 
+    if ((nl = lookup_link(current_name, current_type)->defn)) {
       nl->rect.urx = dvi_to_hps_conv(hhmem, HORIZONTAL);
-      nl->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE+12.0; 
+      nl->rect.ury = dvi_to_hps_conv(vvmem, VERTICAL)-FUDGE+12.0;
       if (current_type) {
 	stamp_hps(nl); /* Put link info right where special is */
       }
@@ -596,7 +609,7 @@ end_current_box(void) {
 
 void
 start_new_box(void) {
-  POPPED = FALSE; 
+  POPPED = FALSE;
   do_link(current_name, current_type);
 }
 #else

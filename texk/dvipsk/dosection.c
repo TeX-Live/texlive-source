@@ -198,7 +198,7 @@ InPageList(integer i)
     return 0;
 }
 
-void
+static void
 InstallPL(integer pslow, integer pshigh)
 {
     register struct p_list_str   *pl;

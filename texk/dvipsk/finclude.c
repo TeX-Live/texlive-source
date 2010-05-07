@@ -37,8 +37,8 @@ double atof();
  * no fontmaptype node for the resulting font descriptor until this font is
  * encountered by fontdef() (if that ever happens).
  */
-fontdesctype *
-ifontdef(char *name, char *area, 
+static fontdesctype *
+ifontdef(char *name, char *area,
 	 int scsize, int dssize, char *scname)
 {
    fontdesctype *fp;
@@ -53,7 +53,7 @@ ifontdef(char *name, char *area,
  * When a font appears in an included psfile for the first time, this routine
  * links it into the fonthd[] array.
  */
-void
+static void
 setfamily(fontdesctype *f)
 {
    int i;
@@ -77,7 +77,7 @@ setfamily(fontdesctype *f)
  * The first string is the original value of nextstring; the second
  * string is the return value.
  */
-char*
+static char*
 getname(char *s)
 {
    char *a, *p, sav;
@@ -103,7 +103,7 @@ getname(char *s)
  * we just estimate two usages per character and one string per pair of
  * usages.
  */
-void
+static void
 includechars(fontdesctype *f, char *s)
 {
    int b, c, d;
@@ -146,7 +146,7 @@ includechars(fontdesctype *f, char *s)
  * options like `hscale=' because then the definition of `fshow' would have
  * to change.
  */
-void
+static void
 scan1fontcomment(char *p)
 {
    char *q, *name, *area;
@@ -198,7 +198,7 @@ scan1fontcomment(char *p)
  * book specifies two arguments. This routine will accept one or two arguments;
  * if there are two arguments we take the maximum.
  */
-integer
+static integer
 scanvm(char *p)
 {
    char* q;
@@ -221,7 +221,7 @@ scanvm(char *p)
  * an associated header file (from psfonts.map), the header file
  * is added with add_header.
  */
-void
+static void
 scan_fontnames(char *str, const char *psfile)
 {
   char *p,*pe;
@@ -267,7 +267,7 @@ scan_fontnames(char *str, const char *psfile)
 	/* this code borrowed from residentfont() in resident.c */
 	      char *cp = re->downloadheader;
 	      char *q;
-	 
+
 	      infont = re->PSname;
 	      while (1) {
 	        q = cp;
@@ -316,11 +316,11 @@ scan_fontnames(char *str, const char *psfile)
  */
 static int fc_state = 0;
 /*
- * Do we need to check for information at the end of the postscript file? 
+ * Do we need to check for information at the end of the postscript file?
  */
 static int check_atend = 0;
 
-void
+static void
 scanfontusage(char *p, const char *psfile)
 {
   if (strncmp(p, "%%DocumentFonts: ",17) == 0) {
@@ -423,7 +423,7 @@ scanfontcomments(const char *filename)
 #endif  /* DEBUG */
 
        fc_state = 0;
-       
+
        fseek(f,-4096,2); /* seek to 4096 bytes before EOF. */
        fgets(p,500,f); /* throw away a partial line. */
 
@@ -453,7 +453,7 @@ scanfontcomments(const char *filename)
  * Is string s less than 30 characters long with no special characters
  * that are not allowed in PostScript commands.
  */
-Boolean
+static Boolean
 okascmd(char *ss)
 {
    register int c = 0;
@@ -467,7 +467,7 @@ okascmd(char *ss)
 /*
  * Output font area and font name strings as a literal string
  */
-void
+static void
 nameout(char *area, char *name)
 {
    char buf[30];

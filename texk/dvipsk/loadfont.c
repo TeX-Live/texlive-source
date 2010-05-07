@@ -96,7 +96,7 @@ int dontmakefont = 0; /* if makefont fails once we won't try again */
 #endif  /* IBM: VM/CMS */
 #endif
 
-void
+static void
 lectureuser(void) {
    static int userwarned = 0;
 
@@ -105,7 +105,7 @@ lectureuser(void) {
       userwarned = 1;
    }
 }
-Boolean
+static Boolean
 pkopen(register fontdesctype *fd)
 {
    register char *d, *n;
@@ -159,7 +159,7 @@ pkopen(register fontdesctype *fd)
 
      if (this_name != name_ret)
        free (this_name);
-       
+
      return pkfile != NULL;
    }
 #else
@@ -199,7 +199,7 @@ pkopen(register fontdesctype *fd)
 #ifndef MSDOS
 #ifdef OS2
    if (_osmode == OS2_MODE)
-      dontmakefont = 1;       /* failed so don't try again under OS/2, 
+      dontmakefont = 1;       /* failed so don't try again under OS/2,
                                  but do try for MSDOS */
 #else
 #ifndef ATARIST

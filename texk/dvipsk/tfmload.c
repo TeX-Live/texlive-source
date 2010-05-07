@@ -82,7 +82,7 @@ tfmopen(register fontdesctype *fd)
    error("! I can't find cmr10.tfm; please reinstall me with proper paths");
 }
 
-shalfword
+static shalfword
 tfmbyte(void)
 {
    return(getc(tfmfile));
