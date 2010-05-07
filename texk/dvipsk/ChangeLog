@@ -1,3 +1,11 @@
+2010-05-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* output.c: correct wrong boundary values of characters.
+	(from Takuji Tanaka <KXD02663@nifty.ne.jp>.)
+	* protos.h, dvips.c, output.c, resident.c: remove unnecessary SJIS option.
+	(from Takuji Tanaka <KXD02663@nifty.ne.jp>.)
+	(a commit r18123 seemes to be eliminated, so try again)
+
 2010-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dosection.c (dosection): Add newline before "@start".

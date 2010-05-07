@@ -245,7 +245,6 @@ extern int pagecounter;
 #endif
 
 /* global variables from dvips.c */
-extern Boolean SJIS;
 extern char *downloadedpsnames[];
 extern int unused_top_of_psnames;
 extern fontdesctype *fonthead;
