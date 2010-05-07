@@ -36,7 +36,7 @@ POST_UNINSTALL = :
 bin_PROGRAMS = chktex$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(dist_man_MANS) \
-	$(srcdir)/../../build-aux/depcomp \
+	$(dist_pdfdoc_DATA) $(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -55,7 +55,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = ChkTeX.tex deweb.pl
+CONFIG_CLEAN_FILES = chktex-1.6.4/ChkTeX.tex deweb.pl
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(configdir)" "$(DESTDIR)$(pdfdocdir)"
@@ -98,7 +98,7 @@ am__base_list = \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man_MANS)
-DATA = $(config_DATA) $(pdfdoc_DATA)
+DATA = $(config_DATA) $(dist_pdfdoc_DATA)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -157,6 +157,8 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PDFLATEX = @PDFLATEX@
+PDF_DEPEND = @PDF_DEPEND@
 PERL5 = @PERL5@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -212,7 +214,8 @@ top_srcdir = @top_srcdir@
 #
 #************************************************************************
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES chktex.test
+EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES ChkTeX.tex \
+	chktex.test
 AM_CFLAGS = $(WARNING_CFLAGS)
 chktex_SOURCES = \
 	$(CHKTEX_TREE)/ChkTeX.c \
@@ -239,12 +242,13 @@ config_DATA = $(CHKTEX_TREE)/chktexrc
 
 # documentation
 pdfdocdir = ${prefix}/texmf/doc/chktex
-pdfdoc_DATA = 
+dist_pdfdoc_DATA = ChkTeX.pdf
+CLEANFILES = ChkTeX.aux ChkTeX.log chktest
+DISTCLEANFILES = stamp-tex
 
 # chktex tests
 TESTS = chktex.test
 TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE)
-CLEANFILES = chktest
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -301,7 +305,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-ChkTeX.tex: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/ChkTeX.tex.in
+chktex-1.6.4/ChkTeX.tex: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/ChkTeX.tex.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 deweb.pl: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/deweb.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
@@ -499,10 +503,10 @@ uninstall-configDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(configdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(configdir)" && rm -f $$files
-install-pdfdocDATA: $(pdfdoc_DATA)
+install-dist_pdfdocDATA: $(dist_pdfdoc_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(pdfdocdir)" || $(MKDIR_P) "$(DESTDIR)$(pdfdocdir)"
-	@list='$(pdfdoc_DATA)'; test -n "$(pdfdocdir)" || list=; \
+	@list='$(dist_pdfdoc_DATA)'; test -n "$(pdfdocdir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
@@ -512,9 +516,9 @@ install-pdfdocDATA: $(pdfdoc_DATA)
 	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pdfdocdir)" || exit $$?; \
 	done
 
-uninstall-pdfdocDATA:
+uninstall-dist_pdfdocDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(pdfdoc_DATA)'; test -n "$(pdfdocdir)" || list=; \
+	@list='$(dist_pdfdoc_DATA)'; test -n "$(pdfdocdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(pdfdocdir)' && rm -f" $$files ")"; \
@@ -830,7 +834,7 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(PROGRAMS) $(MANS) $(DATA) config.h
+all-am: Makefile $(PROGRAMS) $(MANS) $(DATA) config.h all-local
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(configdir)" "$(DESTDIR)$(pdfdocdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -857,6 +861,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -884,7 +889,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-configDATA install-man install-pdfdocDATA
+install-data-am: install-configDATA install-dist_pdfdocDATA \
+	install-man
 
 install-dvi: install-dvi-am
 
@@ -931,35 +937,51 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-configDATA uninstall-man \
-	uninstall-pdfdocDATA
+uninstall-am: uninstall-binPROGRAMS uninstall-configDATA \
+	uninstall-dist_pdfdocDATA uninstall-man
 
 uninstall-man: uninstall-man1
 
 .MAKE: all check-am install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
-	clean clean-binPROGRAMS clean-generic ctags dist dist-all \
-	dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar dist-tarZ \
-	dist-xz dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-tags distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-binPROGRAMS \
-	install-configDATA install-data install-data-am install-dvi \
+.PHONY: CTAGS GTAGS all all-am all-local am--refresh check check-TESTS \
+	check-am clean clean-binPROGRAMS clean-generic ctags dist \
+	dist-all dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-compile distclean-generic distclean-hdr \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-configDATA install-data \
+	install-data-am install-dist_pdfdocDATA install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-pdfdocDATA \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-configDATA \
-	uninstall-man uninstall-man1 uninstall-pdfdocDATA
+	install-man1 install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-configDATA uninstall-dist_pdfdocDATA uninstall-man \
+	uninstall-man1
 
 
-# in case of an SVN repository
+# in case of an SVN repository, remove a generated file.
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+	rm -f $(distdir)/$(CHKTEX_TREE)/ChkTeX.tex
+
+ChkTeX.pdf: $(PDF_DEPEND)
+	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
+	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
+
+.PHONY: build-tex
+all-local: stamp-tex
+stamp-tex: $(CHKTEX_TREE)/ChkTeX.tex
+	$(MAKE) $(AM_MAKEFLAGS) build-tex
+	$(MAKE) $(AM_MAKEFLAGS) ChkTeX.pdf
+	echo timestamp >$@
+build-tex:
+	cmp -s $(CHKTEX_TREE)/ChkTeX.tex $(srcdir)/ChkTeX.tex \
+	  || cp $(CHKTEX_TREE)/ChkTeX.tex $(srcdir)/ChkTeX.tex
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -22,9 +22,10 @@ EXTRA_DIST = $(CHKTEX_TREE)
 ##
 EXTRA_DIST += $(CHKTEX_TREE)-PATCHES
 
-# in case of an SVN repository
+# in case of an SVN repository, remove a generated file.
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+	rm -f $(distdir)/$(CHKTEX_TREE)/ChkTeX.tex
 
 AM_CFLAGS = $(WARNING_CFLAGS)
 
@@ -56,7 +57,28 @@ config_DATA = $(CHKTEX_TREE)/chktexrc
 # documentation
 pdfdocdir = ${prefix}/texmf/doc/chktex
 
-pdfdoc_DATA =
+dist_pdfdoc_DATA = ChkTeX.pdf
+
+ChkTeX.pdf: $(PDF_DEPEND)
+	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
+	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
+CLEANFILES = ChkTeX.aux ChkTeX.log
+
+## We distribute ChkTeX.tex (generated from $(CHKTEX_TREE)/ChkTeX.tex.in)
+## and ChkTeX.pdf, but also need rules to create them if missing or
+## (in maintainer-mode) to update them if required.
+.PHONY: build-tex
+all-local: stamp-tex
+stamp-tex: $(CHKTEX_TREE)/ChkTeX.tex
+	$(MAKE) $(AM_MAKEFLAGS) build-tex
+	$(MAKE) $(AM_MAKEFLAGS) ChkTeX.pdf
+	echo timestamp >$@
+DISTCLEANFILES = stamp-tex
+build-tex:
+	cmp -s $(CHKTEX_TREE)/ChkTeX.tex $(srcdir)/ChkTeX.tex \
+	  || cp $(CHKTEX_TREE)/ChkTeX.tex $(srcdir)/ChkTeX.tex
+
+EXTRA_DIST += ChkTeX.tex
 
 # chktex tests
 TESTS = chktex.test
@@ -65,5 +87,5 @@ TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE)
 
 EXTRA_DIST += chktex.test
 
-CLEANFILES = chktest
+CLEANFILES += chktest
 

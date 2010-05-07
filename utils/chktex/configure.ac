@@ -30,6 +30,7 @@ KPSE_COMPILER_WARNINGS
 dnl Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AC_CHECK_PROGS([PDFLATEX], [pdflatex], [no])
 
 dnl No termlib/termcap/ncurses library for TeX Live
 
@@ -47,6 +48,10 @@ dnl Checks for library functions.
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([access closedir fileno isatty opendir readdir stat strcasecmp strdup strlwr strtol])
 
+dnl Rebuild ChkTeX.pdf if required and amintainer-mode is enabled.
+test "x$enable_maintainer_mode" = xyes && PDF_DEPEND=ChkTeX.tex
+AC_SUBST([PDF_DEPEND])
+
 AC_CONFIG_HEADERS([config.h])
 AC_DEFINE([TEX_LIVE], 1, [Define to 1 for a TeX Live build.])
 
@@ -54,7 +59,7 @@ AC_SUBST([CHKTEX_TREE], [chktex-]chktex_version)
 AC_SUBST([PERL5], ['/usr/bin/env perl'])
 
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([ChkTeX.tex:chktex-]chktex_version[/ChkTeX.tex.in])
+AC_CONFIG_FILES([chktex-]chktex_version[/ChkTeX.tex])
 AC_CONFIG_FILES([deweb.pl:chktex-]chktex_version[/deweb.in], [chmod +x deweb.pl])
 
 AC_OUTPUT
