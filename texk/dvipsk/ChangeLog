@@ -1,6 +1,11 @@
 2010-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* bbox.c: Declare function used only in this file as static,
+	* dosection.c (dosection): Add newline before "@start".
+	* testdata/*.pro, testdata/*.xps: Updated.
+
+2010-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bbox.c: Declare functions used only in this file as static,
 	remove trailing whitespace.
 	* color.c: The same.
 	* dosection.c: The same.

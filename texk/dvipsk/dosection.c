@@ -42,6 +42,7 @@ dosection(sectiontype *s, int c)
    numout((integer)VDPI);
    sprintf(buf, "(%.99s)", fulliname);
    cmdout(buf);
+   newline();
    cmdout("@start");
    if (multiplesects)
       cmdout("bos");
