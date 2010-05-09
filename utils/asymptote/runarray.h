@@ -44,7 +44,6 @@ void array3Copy(vm::stack *);
 void array2Transpose(vm::stack *);
 void array3Transpose(vm::stack *);
 void arrayConditional(vm::stack *);
-void diagonal(vm::stack *);
 }
 
 #endif // runarray_H

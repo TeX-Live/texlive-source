@@ -87,6 +87,7 @@ string systemDir=ASYMPTOTE_SYSDIR;
   
 bool msdos=false;
 string HOME="HOME";
+string docdir=ASYMPTOTE_DOCDIR;
 const char pathSeparator=':';
 string defaultPSViewer="gv";
 #ifdef __APPLE__
@@ -97,7 +98,6 @@ string defaultPDFViewer="acroread";
 string defaultGhostscript="gs";
 string defaultDisplay="display";
 string defaultAnimate="animate";
-string docdir=ASYMPTOTE_DOCDIR;
 void queryRegistry() {}
 const string dirsep="/";
   
@@ -105,6 +105,7 @@ const string dirsep="/";
   
 bool msdos=true;
 string HOME="USERPROFILE";
+string docdir="c:\\Program Files\\Asymptote";
 const char pathSeparator=';';
 //string defaultPSViewer="gsview32.exe";
 string defaultPSViewer="cmd";
@@ -115,7 +116,6 @@ string defaultGhostscript="gswin32c.exe";
 string defaultDisplay="cmd";
 //string defaultAnimate="animate";
 string defaultAnimate="cmd";
-string docdir;
 const string dirsep="\\";
   
 #include <dirent.h>
@@ -187,7 +187,9 @@ void queryRegistry()
     defaultPDFViewer;
   if(defaultPSViewer != "cmd")
     defaultPSViewer=getEntry("Ghostgum/GSview/*")+"\\gsview\\"+defaultPSViewer;
-  docdir=getEntry("Microsoft/Windows/CurrentVersion/App Paths/Asymptote/Path");
+  string s;
+  s=getEntry("Microsoft/Windows/CurrentVersion/App Paths/Asymptote/Path");
+  if(!s.empty()) docdir=s;
   // An empty systemDir indicates a TeXLive build
   if(!systemDir.empty() && !docdir.empty())
     systemDir=docdir;
@@ -1593,6 +1595,9 @@ void setOptions(int argc, char *argv[])
   getOptions(argc,argv);
   
   Setting("sysdir")=sysdir;
+  
+  if(docdir.empty())
+    docdir=getSetting<string>("dir");
   
 #ifdef USEGC
   if(verbose == 0 && !getSetting<bool>("debug")) GC_set_warn_proc(no_GCwarn);

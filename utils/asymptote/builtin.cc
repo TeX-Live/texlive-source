@@ -760,6 +760,10 @@ void addCasts(venv &ve)
   addCast(ve, realArray(), IntArray(), arrayToArray<Int,double>);
   addCast(ve, pairArray(), IntArray(), arrayToArray<Int,pair>);
   addCast(ve, pairArray(), realArray(), arrayToArray<double,pair>);
+  
+  addCast(ve, realArray2(), IntArray2(), array2ToArray2<Int,double>);
+  addCast(ve, pairArray2(), IntArray2(), array2ToArray2<Int,pair>);
+  addCast(ve, pairArray2(), realArray2(), array2ToArray2<double,pair>);
 }
 
 void addGuideOperators(venv &ve)
@@ -778,6 +782,24 @@ void addSimpleOperator(venv &ve, bltin f, ty *t, const char *name)
 void addBooleanOperator(venv &ve, bltin f, ty *t, const char *name)
 {
   addFunc(ve,f,primBoolean(),name,formal(t,"a"),formal(t,"b"));
+}
+
+template<class T, template <class S> class op>
+void addArray2Array2Op(venv &ve, ty *t3, const char *name)
+{
+  addFunc(ve,array2Array2Op<T,op>,t3,name,formal(t3,"a"),formal(t3,"b"));
+}
+
+template<class T, template <class S> class op>
+void addOpArray2(venv &ve, ty *t1, const char *name, ty *t3)
+{
+  addFunc(ve,opArray2<T,T,op>,t3,name,formal(t1,"a"),formal(t3,"b"));
+}
+
+template<class T, template <class S> class op>
+void addArray2Op(venv &ve, ty *t1, const char *name, ty *t3)
+{
+  addFunc(ve,array2Op<T,T,op>,t3,name,formal(t3,"a"),formal(t1,"b"));
 }
 
 template<class T, template <class S> class op>
@@ -842,6 +864,15 @@ inline double abs(triple v) {
   return v.length();
 }
 
+inline pair conjugate(pair z) {
+  return conj(z);
+}
+
+template<class T>
+inline T negate(T x) {
+  return -x;
+}
+
 template<class T, template <class S> class op>
 void addBinOps(venv &ve, ty *t1, ty *t2, ty *t3, ty *t4, const char *name)
 {
@@ -877,10 +908,14 @@ void addBasicOps(venv &ve, ty *t1, ty *t2, ty *t3, ty *t4, bool integer=false,
   addOps<T,plus>(ve,t1,"+",t2);
   addOps<T,minus>(ve,t1,"-",t2);
   
+  addArray2Array2Op<T,plus>(ve,t3,"+");
+  addArray2Array2Op<T,minus>(ve,t3,"-");
+
   addFunc(ve,&id,t1,"+",formal(t1,"a"));
   addFunc(ve,&id,t2,"+",formal(t2,"a"));
   addFunc(ve,Negate<T>,t1,"-",formal(t1,"a"));
-  addFunc(ve,arrayNegate<T>,t2,"-",formal(t2,"a"));
+  addFunc(ve,arrayFunc<T,T,negate>,t2,"-",formal(t2,"a"));
+  addFunc(ve,arrayFunc2<T,T,negate>,t3,"-",formal(t3,"a"));
   if(!integer) addFunc(ve,interp<T>,t1,"interp",formal(t1,"a",false,Explicit),
                        formal(t1,"b",false,Explicit),
                        formal(primReal(),"t"));
@@ -894,8 +929,16 @@ void addOps(venv &ve, ty *t1, ty *t2, ty *t3, ty *t4, bool integer=false,
             bool Explicit=false)
 {
   addBasicOps<T>(ve,t1,t2,t3,t4,integer,Explicit);
+  
   addOps<T,times>(ve,t1,"*",t2);
-  if(!integer) addOps<T,run::divide>(ve,t1,"/",t2);
+  addOpArray2<T,times>(ve,t1,"*",t3);
+  addArray2Op<T,times>(ve,t1,"*",t3);
+  
+  if(!integer) {
+    addOps<T,run::divide>(ve,t1,"/",t2);
+    addArray2Op<T,run::divide>(ve,t1,"/",t3);
+  }
+      
   addOps<T,power>(ve,t1,"^",t2);
 }
 
@@ -975,8 +1018,12 @@ void addOperators(venv &ve)
                       tripleArray3());
   addFunc(ve,opArray<double,triple,times>,tripleArray(),"*",
           formal(primReal(),"a"),formal(tripleArray(),"b"));
+  addFunc(ve,opArray2<double,triple,timesR>,tripleArray2(),"*",
+          formal(primReal(),"a"),formal(tripleArray2(),"b"));
   addFunc(ve,arrayOp<triple,double,timesR>,tripleArray(),"*",
           formal(tripleArray(),"a"),formal(primReal(),"b"));
+  addFunc(ve,array2Op<triple,double,timesR>,tripleArray2(),"*",
+          formal(tripleArray2(),"a"),formal(primReal(),"b"));
   addFunc(ve,arrayOp<triple,double,divide>,tripleArray(),"/",
           formal(tripleArray(),"a"),formal(primReal(),"b"));
 
@@ -1001,6 +1048,11 @@ void addOperators(venv &ve)
   addFunc(ve,arrayFunc<double,triple,abs>,realArray(),"abs",
           formal(tripleArray(),"a"));
   
+  addFunc(ve,arrayFunc<pair,pair,conjugate>,pairArray(),"conj",
+          formal(pairArray(),"a"));
+  addFunc(ve,arrayFunc2<pair,pair,conjugate>,pairArray2(),"conj",
+          formal(pairArray2(),"a"));
+  
   addFunc(ve,binaryOp<Int,divide>,primReal(),"/",
           formal(primInt(),"a"),formal(primInt(),"b"));
   addFunc(ve,arrayOp<Int,Int,divide>,realArray(),"/",
@@ -1018,7 +1070,9 @@ void addOperators(venv &ve)
   addOps<Int,mod>(ve,primInt(),"%",IntArray());
   addOps<double,mod>(ve,primReal(),"%",realArray());
   
-  addRestFunc(ve,run::diagonal,realArray2(),"diagonal",realArray());
+  addRestFunc(ve,diagonal<Int>,IntArray2(),"diagonal",IntArray());
+  addRestFunc(ve,diagonal<double>,realArray2(),"diagonal",realArray());
+  addRestFunc(ve,diagonal<pair>,pairArray2(),"diagonal",pairArray());
 }
 
 dummyRecord *createDummyRecord(venv &ve, const char *name)

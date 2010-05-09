@@ -89,39 +89,39 @@ triple intersectionpoint(triple n0, triple P0, triple n1, triple P1)
   }
 }
 
-// Given a real array A, return its partial sums.
-real[] partialsum(real[] A)
+// Given a real array a, return its partial sums.
+real[] partialsum(real[] a)
 {
-  real[] B=new real[A.length];
+  real[] b=new real[a.length];
   real sum=0;
-  for(int i=0; i < A.length; ++i) {
-    sum += A[i];
-    B[i]=sum;
+  for(int i=0; i < a.length; ++i) {
+    sum += a[i];
+    b[i]=sum;
   }
-  return B;
+  return b;
 }
 
-// Given a real array A, return its partial dx-weighted sums.
-real[] partialsum(real[] A, real[] dx)
+// Given a real array a, return its partial dx-weighted sums.
+real[] partialsum(real[] a, real[] dx)
 {
-  real[] B=new real[A.length];
+  real[] b=new real[a.length];
   real sum=0;
-  for(int i=0; i < A.length; ++i) {
-    sum += A[i]*dx[i];
-    B[i]=sum;
+  for(int i=0; i < a.length; ++i) {
+    sum += a[i]*dx[i];
+    b[i]=sum;
   }
-  return B;
+  return b;
 }
 
-// If strict=false, return whether i > j implies x[i] >= x[j]
-// If strict=true, return whether  i > j implies x[i] > x[j]
-bool increasing(real[] x, bool strict=false)
+// If strict=false, return whether i > j implies a[i] >= a[j]
+// If strict=true, return whether  i > j implies a[i] > a[j]
+bool increasing(real[] a, bool strict=false)
 {
-  real[] xp=copy(x);
-  xp.delete(0);
-  xp.push(0);
-  bool[] b=strict ? (xp > x) : (xp >= x);
-  b[x.length-1]=true;
+  real[] ap=copy(a);
+  ap.delete(0);
+  ap.push(0);
+  bool[] b=strict ? (ap > a) : (ap >= a);
+  b[a.length-1]=true;
   return all(b);
 }
 
@@ -155,67 +155,6 @@ real[][] zero(int n, int m)
   for(int i=0; i < n; ++i)
     M[i]=sequence(new real(int) {return 0;},m);
   return M;
-}
-
-real[][] operator +(real[][] a, real[][] b)
-{
-  int n=a.length;
-  real[][] m=new real[n][];
-  for(int i=0; i < n; ++i)
-    m[i]=a[i]+b[i];
-  return m;
-}
-
-real[][] operator -(real[][] a, real[][] b)
-{
-  int n=a.length;
-  real[][] m=new real[n][];
-  for(int i=0; i < n; ++i)
-    m[i]=a[i]-b[i];
-  return m;
-}
-
-real[][] operator *(real[][] a, real b)
-{
-  int n=a.length;
-  real[][] m=new real[n][];
-  for(int i=0; i < n; ++i)
-    m[i]=a[i]*b;
-  return m;
-}
-
-real[][] operator *(real b, real[][] a)
-{
-  return a*b;
-}
-
-real[][] operator /(real[][] a, real b)
-{
-  return a*(1/b);
-}
-
-private string incommensurate=
-  "Multiplication of incommensurate matrices is undefined";
-
-pair[][] operator * (pair[][] a, pair[][] b)
-{
-  int n=a.length;
-  int nb=b.length;
-  int nb0=b[0].length;
-  pair[][] m=new pair[n][nb0];
-  for(int i=0; i < n; ++i) {
-    pair[] ai=a[i];
-    pair[] mi=m[i];
-    if(ai.length != nb) 
-      abort(incommensurate);
-    for(int j=0; j < nb0; ++j) {
-      pair sum;
-      for(int k=0; k < nb; ++k)
-	sum += ai[k]*b[k][j];
-      mi[j]=sum;
-    }
-  }
-  return m;
 }
 
 bool square(real[][] m)

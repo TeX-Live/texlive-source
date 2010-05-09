@@ -31,6 +31,7 @@
 using vm::stack;
 using vm::error;
 using vm::array;
+using vm::read;
 using vm::callable;
 using types::formal;
 using types::function;
@@ -49,12 +50,52 @@ array *copyArray(array *a);
 array *copyArray2(array *a);
 array *copyArray3(array *a);
 
-double *copyArrayC(const array *a, size_t dim=0, GCPlacement placement=NoGC);
-double *copyArray2C(const array *a, bool square=true, size_t dim2=0,
-                    GCPlacement placement=NoGC);
+inline size_t checkdimension(const array *a, size_t dim)
+{
+  size_t size=checkArray(a);
+  if(dim && size != dim) {
+    ostringstream buf;
+    buf << "array of length " << dim << " expected";
+    error(buf);
+  }
+  return size;
+}
 
-triple *copyTripleArrayC(const array *a, size_t dim=0);
-triple *copyTripleArray2C(const array *a, bool square=true, size_t dim2=0);
+template<class T>
+void copyArrayC(T* &dest, const array *a, size_t dim=0,
+                GCPlacement placement=NoGC)
+{
+  size_t size=checkdimension(a,dim);
+  dest=(placement == NoGC) ? new T[size] : new(placement) T[size];
+  for(size_t i=0; i < size; i++) 
+    dest[i]=read<T>(a,i);
+}
+
+template<class T>
+void copyArray2C(T* &dest, const array *a, bool square=true, size_t dim2=0,
+                 GCPlacement placement=NoGC)
+{
+  size_t n=checkArray(a);
+  size_t m=(square || n == 0) ? n : checkArray(read<array*>(a,0));
+  if(n > 0 && dim2 && m != dim2) {
+    ostringstream buf;
+    buf << "second matrix dimension must be " << dim2;
+    error(buf);
+  }
+  
+  dest=(placement == NoGC) ? new T[n*m] : new(placement) T[n*m];
+  for(size_t i=0; i < n; i++) {
+    array *ai=read<array*>(a,i);
+    size_t aisize=checkArray(ai);
+    if(aisize == m) {
+      T *desti=dest+i*m;
+      for(size_t j=0; j < m; j++) 
+        desti[j]=read<T>(ai,j);
+    } else
+      error(square ? "matrix must be square" : "matrix must be rectangular");
+  }
+}
+
 double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0,
                                    GCPlacement placement=NoGC);
 }
@@ -478,7 +519,8 @@ void gen_runpath3d30(stack *Stack)
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
   path3 p=vm::pop<path3>(Stack);
 #line 266 "runpath3d.in"
-  triple *A=copyTripleArray2C(P,true,4);
+  triple *A;
+  copyArray2C(A,P,true,4);
   if(fuzz <= 0) fuzz=BigFuzz*::max(::max(length(p.max()),length(p.min())),
                                    norm(A,16));
   std::vector<real> T,U,V;
@@ -496,49 +538,49 @@ void gen_runpath3d30(stack *Stack)
   {Stack->push<realarray2*>(W); return;} // Sorting will done in asy.
 }
 
-#line 285 "runpath3d.in"
+#line 286 "runpath3d.in"
 // Int size(path3 p);
 void gen_runpath3d31(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 286 "runpath3d.in"
+#line 287 "runpath3d.in"
   {Stack->push<Int>(p.size()); return;}
 }
 
-#line 290 "runpath3d.in"
+#line 291 "runpath3d.in"
 // path3 &(path3 p, path3 q);
 void gen_runpath3d32(stack *Stack)
 {
   path3 q=vm::pop<path3>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 291 "runpath3d.in"
+#line 292 "runpath3d.in"
   {Stack->push<path3>(camp::concat(p,q)); return;}
 }
 
-#line 295 "runpath3d.in"
+#line 296 "runpath3d.in"
 // triple min(path3 p);
 void gen_runpath3d33(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 296 "runpath3d.in"
+#line 297 "runpath3d.in"
   {Stack->push<triple>(p.min()); return;}
 }
 
-#line 300 "runpath3d.in"
+#line 301 "runpath3d.in"
 // triple max(path3 p);
 void gen_runpath3d34(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 301 "runpath3d.in"
+#line 302 "runpath3d.in"
   {Stack->push<triple>(p.max()); return;}
 }
 
-#line 305 "runpath3d.in"
+#line 306 "runpath3d.in"
 // realarray* mintimes(path3 p);
 void gen_runpath3d35(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 306 "runpath3d.in"
+#line 307 "runpath3d.in"
   array *V=new array(3);
   triple v=p.mintimes();
   (*V)[0]=v.getx();
@@ -547,12 +589,12 @@ void gen_runpath3d35(stack *Stack)
   {Stack->push<realarray*>(V); return;}
 }
 
-#line 315 "runpath3d.in"
+#line 316 "runpath3d.in"
 // realarray* maxtimes(path3 p);
 void gen_runpath3d36(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 316 "runpath3d.in"
+#line 317 "runpath3d.in"
   array *V=new array(3);
   triple v=p.maxtimes();
   (*V)[0]=v.getx();
@@ -561,31 +603,31 @@ void gen_runpath3d36(stack *Stack)
   {Stack->push<realarray*>(V); return;}
 }
 
-#line 325 "runpath3d.in"
+#line 326 "runpath3d.in"
 // path3 *(realarray2 *t, path3 g);
 void gen_runpath3d37(stack *Stack)
 {
   path3 g=vm::pop<path3>(Stack);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
-#line 326 "runpath3d.in"
+#line 327 "runpath3d.in"
   {Stack->push<path3>(transformed(*t,g)); return;}
 }
 
-#line 330 "runpath3d.in"
+#line 331 "runpath3d.in"
 // pair minratio(path3 g);
 void gen_runpath3d38(stack *Stack)
 {
   path3 g=vm::pop<path3>(Stack);
-#line 331 "runpath3d.in"
+#line 332 "runpath3d.in"
   {Stack->push<pair>(g.ratio(::min)); return;}
 }
 
-#line 335 "runpath3d.in"
+#line 336 "runpath3d.in"
 // pair maxratio(path3 g);
 void gen_runpath3d39(stack *Stack)
 {
   path3 g=vm::pop<path3>(Stack);
-#line 336 "runpath3d.in"
+#line 337 "runpath3d.in"
   {Stack->push<pair>(g.ratio(::max)); return;}
 }
 
@@ -657,23 +699,23 @@ void gen_runpath3d_venv(venv &ve)
   addFunc(ve, run::gen_runpath3d29, realArray2(), "intersections", formal(primPath3(), "p", false, false), formal(primPath3(), "q", false, false), formal(primReal(), "fuzz", true, false));
 #line 265 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d30, realArray2(), "intersections", formal(primPath3(), "p", false, false), formal(tripleArray2(), "p", false, false), formal(primReal(), "fuzz", true, false));
-#line 285 "runpath3d.in"
+#line 286 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d31, primInt(), "size", formal(primPath3(), "p", false, false));
-#line 290 "runpath3d.in"
+#line 291 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d32, primPath3(), "&", formal(primPath3(), "p", false, false), formal(primPath3(), "q", false, false));
-#line 295 "runpath3d.in"
+#line 296 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d33, primTriple(), "min", formal(primPath3(), "p", false, false));
-#line 300 "runpath3d.in"
+#line 301 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d34, primTriple(), "max", formal(primPath3(), "p", false, false));
-#line 305 "runpath3d.in"
+#line 306 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d35, realArray(), "mintimes", formal(primPath3(), "p", false, false));
-#line 315 "runpath3d.in"
+#line 316 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d36, realArray(), "maxtimes", formal(primPath3(), "p", false, false));
-#line 325 "runpath3d.in"
+#line 326 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d37, primPath3(), "*", formal(realArray2(), "t", false, false), formal(primPath3(), "g", false, false));
-#line 330 "runpath3d.in"
+#line 331 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d38, primPair(), "minratio", formal(primPath3(), "g", false, false));
-#line 335 "runpath3d.in"
+#line 336 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d39, primPair(), "maxratio", formal(primPath3(), "g", false, false));
 }
 

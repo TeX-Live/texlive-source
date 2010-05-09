@@ -1,4 +1,250 @@
 ------------------------------------------------------------------------
+r4903 | jcbowman | 2010-05-04 14:47:23 -0600 (Tue, 04 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Predefine a default docdir for MSWindows.
+
+------------------------------------------------------------------------
+r4902 | jcbowman | 2010-05-04 12:54:30 -0600 (Tue, 04 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/patches/cygwin_xdr.patch
+
+Update CYGWIN xdr patch.
+------------------------------------------------------------------------
+r4901 | jcbowman | 2010-05-04 11:18:57 -0600 (Tue, 04 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_picture.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/examples/filesurface.asy
+
+Document fit3() and remove restriction on projection.center.
+
+------------------------------------------------------------------------
+r4900 | jcbowman | 2010-05-04 01:33:17 -0600 (Tue, 04 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/util.h
+
+Add missing CYGWIN declarations.
+------------------------------------------------------------------------
+r4899 | jcbowman | 2010-05-03 22:52:36 -0600 (Mon, 03 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/plain_paths.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Document pair dir(path, path).
+------------------------------------------------------------------------
+r4898 | jcbowman | 2010-05-03 22:43:55 -0600 (Mon, 03 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/math.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update documentation of math module.
+
+------------------------------------------------------------------------
+r4897 | jcbowman | 2010-05-03 22:08:46 -0600 (Mon, 03 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/slide.asy
+
+Use outprefix().
+
+------------------------------------------------------------------------
+r4896 | jcbowman | 2010-05-03 21:40:17 -0600 (Mon, 03 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/builtin.cc
+
+Implement matrix negation for arithmetic types.
+
+------------------------------------------------------------------------
+r4895 | jcbowman | 2010-05-03 14:45:00 -0600 (Mon, 03 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/base/math.asy
+   M /trunk/asymptote/drawelement.h
+   M /trunk/asymptote/drawpath3.h
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/runarray.in
+   M /trunk/asymptote/runpath3d.in
+   M /trunk/asymptote/runpicture.in
+   M /trunk/asymptote/runtimebase.in
+
+Move pair[][] operator * (pair[][] a, pair[][] b) to C++.
+
+------------------------------------------------------------------------
+r4894 | jcbowman | 2010-05-03 01:56:45 -0600 (Mon, 03 May 2010) | 6 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/README
+   M /trunk/asymptote/doc/FAQ/Makefile
+   M /trunk/asymptote/doc/Makefile.in
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/png/Makefile.in
+   M /trunk/asymptote/examples/slidedemo.asy
+
+Add make cleaner target that runs make clean in the doc directory and make
+distclean everywhere else.
+
+Change make clean in doc directory so that it no longer removes asymptote.pdf
+and CAD.pdf.
+
+------------------------------------------------------------------------
+r4893 | jcbowman | 2010-05-03 01:52:36 -0600 (Mon, 03 May 2010) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_picture.asy
+   M /trunk/asymptote/base/three.asy
+
+Add picture.fit3(projection P=currentprojection) and 
+add(picture dest=currentpicture, frame src, triple position) routines.
+
+------------------------------------------------------------------------
+r4892 | jcbowman | 2010-05-02 23:05:10 -0600 (Sun, 02 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/plain.asy
+
+Avoid redundant mismatched version warnings.
+------------------------------------------------------------------------
+r4891 | jcbowman | 2010-05-02 22:52:40 -0600 (Sun, 02 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/flatguide.cc
+
+Fix guide bug intoduced in r3817.
+
+------------------------------------------------------------------------
+r4890 | jcbowman | 2010-05-02 17:22:14 -0600 (Sun, 02 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runmath.in
+
+Use a larger table for generating random numbers.
+
+------------------------------------------------------------------------
+r4889 | jcbowman | 2010-05-02 01:03:23 -0600 (Sun, 02 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+
+Use accurate roots of unity in FFT shift.
+------------------------------------------------------------------------
+r4888 | jcbowman | 2010-05-01 10:14:10 -0600 (Sat, 01 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+
+Fix fftNormalize.
+
+------------------------------------------------------------------------
+r4887 | jcbowman | 2010-05-01 08:21:08 -0600 (Sat, 01 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update documentation of addViews.
+
+------------------------------------------------------------------------
+r4886 | jcbowman | 2010-04-29 02:30:10 -0600 (Thu, 29 Apr 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+
+Improve fftw interface.
+------------------------------------------------------------------------
+r4885 | jcbowman | 2010-04-27 22:19:50 -0600 (Tue, 27 Apr 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/contour.asy
+
+Make local variables private.
+
+------------------------------------------------------------------------
+r4884 | jcbowman | 2010-04-26 11:31:24 -0600 (Mon, 26 Apr 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_paths.asy
+   M /trunk/asymptote/examples/orthocenter.asy
+
+Make pair dir(path,path) return a unit vector.
+
+------------------------------------------------------------------------
+r4883 | jcbowman | 2010-04-26 11:28:15 -0600 (Mon, 26 Apr 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runpair.in
+
+Fix return type of dot(pair,pair).
+
+------------------------------------------------------------------------
+r4882 | jcbowman | 2010-04-25 22:05:00 -0600 (Sun, 25 Apr 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/fftw++.h
+   M /trunk/asymptote/pair.h
+   M /trunk/asymptote/runarray.in
+   M /trunk/asymptote/runpair.in
+   M /trunk/asymptote/triple.h
+
+Implement pair dot(pair[] a, pair[] b).
+
+------------------------------------------------------------------------
+r4881 | jcbowman | 2010-04-20 10:02:39 -0600 (Tue, 20 Apr 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Work around MSWindows registry problems.
+------------------------------------------------------------------------
+r4880 | jcbowman | 2010-04-20 09:21:34 -0600 (Tue, 20 Apr 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Work around empty docdir.
+------------------------------------------------------------------------
+r4879 | jcbowman | 2010-04-18 10:21:14 -0600 (Sun, 18 Apr 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+
+Move shift variable to Execute.
+
+------------------------------------------------------------------------
+r4878 | jcbowman | 2010-04-18 08:43:11 -0600 (Sun, 18 Apr 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_arrows.asy
+
+Fix SimpleHead.
+
+------------------------------------------------------------------------
+r4877 | jcbowman | 2010-04-17 23:20:54 -0600 (Sat, 17 Apr 2010) | 5 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/base/math.asy
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/castop.h
+
+Move basic matrix operators from math.asy to C++ code and implement int
+and pair versions.
+
+Add vector and matrix conjugate operations.
+
+------------------------------------------------------------------------
+r4876 | jcbowman | 2010-04-17 17:39:05 -0600 (Sat, 17 Apr 2010) | 5 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/castop.h
+   M /trunk/asymptote/runarray.in
+
+Add casts from int[][] to real[][], int[][] to pair[][], and real[][] to
+pair[][].
+
+Implement int[][] diagonal(int[]) and pair[][] diagonal(pair[]).
+
+------------------------------------------------------------------------
+r4875 | jcbowman | 2010-04-17 16:37:44 -0600 (Sat, 17 Apr 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_filldraw.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Implement a RadialShadeDraw filltype.
+
+------------------------------------------------------------------------
+r4874 | jcbowman | 2010-04-17 09:33:56 -0600 (Sat, 17 Apr 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.94svn.
+------------------------------------------------------------------------
 r4873 | jcbowman | 2010-04-16 20:13:15 -0600 (Fri, 16 Apr 2010) | 8 lines
 Changed paths:
    M /trunk/asymptote/base/plain_picture.asy

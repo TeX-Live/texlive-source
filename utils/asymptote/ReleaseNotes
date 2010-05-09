@@ -1,3 +1,13 @@
+Release Notes for Version 1.94
+
+Work arounds for MSWindows registry problems and obsolete runtime libraries
+were implemented. The SimpleHead arrowhead was fixed. Additional matrix
+routines and casts were implemented. The pair dir(path, path) routine now
+returns a unit vector. Variable conflicts coming from the contour module
+were addressed. A RadialShadeDraw filltype was implemented. A guide bug was
+fixed. Redundant mismatched version warnings are avoided. Support for
+fitting one 3D picture within another was added. The documentation was updated.
+
 Release Notes for Version 1.93
 
 Portability issues were addressed. Latticeshading bounds and behaviour
@@ -17,7 +27,7 @@ alignment and pt scalings were fixed. Latticeshading is now properly clipped.
 The normal and true Circle calculations were fixed. The interface to the
 simpson integrator and an array index in contour.asy were fixed. In the
 flowchart module, the implicit cast from a pair to a virtual node was
-removed in favour of a block constructor. The ode integrationg routines now
+removed in favour of a block constructor. The ode integration routines now
 return a structure that includes the sampled time values; dynamic
 timestepping was implemented for solveBVP. New predefined tick modifiers
 were added. The CLZ and CTZ bit functions were implemented. PRC part names
@@ -1605,3 +1615,5 @@ the frame for filling with a background color; they also return the boundary
 as a guide. A workaround was added for a bug in gcc version 3.3 to
 facilitate compilation under Darwin (MacOS). Many internal coding
 improvements were made.
+
+ LocalWords:  arounds

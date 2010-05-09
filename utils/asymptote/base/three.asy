@@ -2610,12 +2610,10 @@ struct scene
 
     if(!P.absolute) {
       this.P=t*P;
-      if(this.P.center) {
-        bool recalculate=false;
+      if(this.P.center && settings.render != 0) {
         triple target=0.5*(m+M);
         this.P.target=target;
-        recalculate=true;
-        if(recalculate) this.P.calculate();
+          this.P.calculate();
       }
       if(this.P.autoadjust || this.P.infinity) 
         adjusted=adjusted | this.P.adjust(m,M);
@@ -2754,7 +2752,7 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
       P=S.T*P;
     }
     if(settings.verbose > 0) {
-      if(P.center || (!P.infinity && P.autoadjust))
+      if((P.center && settings.render != 0) || (!P.infinity && P.autoadjust))
         write("adjusting target to ",tinv*target);
     }
   }
@@ -3090,6 +3088,25 @@ fit=new frame[](string prefix="", picture[] pictures, string format="",
   return all.empty3() ? fit2(pictures,all) :
   fit3(prefix,pictures,all,format,view,options,script,P);
 };
+
+// Add frame src to picture dest about position.
+void add(picture dest=currentpicture, frame src, triple position)
+{
+  if(is3D(src)) {
+    dest.add(new void(frame f, transform3 t, picture, projection) {
+        add(f,shift(t*position)*src);
+      },true);
+  } else {
+    dest.add(new void(frame, transform3 t, picture pic, projection P) {
+        if(pic != null) {
+          pic.add(new void(frame f, transform T) {
+              add(f,T*shift(project(t*position,P))*src);
+            },true);
+        }
+      },true);
+  }
+  dest.addBox(position,position,min3(src),max3(src));
+}
 
 exitfcn currentexitfunction=atexit();
 

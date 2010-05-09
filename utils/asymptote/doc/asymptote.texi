@@ -1867,7 +1867,7 @@ returns @code{z.y};
 @cindex @code{realmult}
 returns the element-by-element product @code{(z.x*w.x,z.y*w.y)};
 
-@item real dot(pair z, pair w)
+@item real dot(explicit pair z, explicit pair w)
 @cindex @code{dot}
 returns the dot product @code{z.x*w.x+z.y*w.y};
 
@@ -2306,6 +2306,12 @@ two directions is returned.
 returns the direction of the tangent to path @code{p} at the point
 between node @code{floor(t)} and @code{floor(t)+1} corresponding to the
 cubic spline parameter @code{t-floor(t)} (@pxref{Bezier curves}).
+
+@item pair dir(path p)
+returns dir(p,length(p)).
+
+@item pair dir(path p, path g)
+returns unit(dir(p)+dir(g)).
 
 @cindex @code{accel}
 @item pair accel(path p, int t, int sign=0);
@@ -3377,7 +3383,7 @@ Here @code{filltype} specifies one of the following fill types:
 Fill the interior and draw the boundary.
 
 @item FillDraw(real xmargin=0, real ymargin=xmargin, pen fillpen=nullpen,
-               @code{pen drawpen=nullpen);}
+               @code{pen drawpen=nullpen)}
 @cindex @code{nullpen}
 If @code{fillpen} is @code{nullpen}, fill with the drawing pen;
 otherwise fill with pen @code{fillpen}. 
@@ -3420,6 +3426,11 @@ Clip the region and surrounding margins @code{xmargin} and @code{ymargin}.
 @item RadialShade(pen penc, pen penr)
 Fill varying radially from @code{penc} at the center of the bounding
 box to @code{penr} at the edge.
+
+@cindex @code{RadialShadeDraw}
+@item RadialShadeDraw(real xmargin=0, real ymargin=xmargin, pen penc,
+                      @code{pen penr, pen drawpen=nullpen)}
+Fill with RadialShade and draw the boundary.
 
 @end table
 
@@ -4989,8 +5000,8 @@ cyclic array never leads to out-of-bounds errors or array resizing.
 The member @code{A.keys} evaluates to an array of integers containing the
 indices of initialized entries in the array in ascending order.  Hence, for an
 array of length @code{n} with all entries initialized, @code{A.keys} evaluates
-to the array of integers from @code{0} to @code{n-1} inclusive.  A new keys
-array is produced each time @code{A.keys} is evaluated.
+to @code{@{0,1,...,n-1@}}.  A new keys array is produced each time
+@code{A.keys} is evaluated.
 
 The functions @code{A.push} and @code{A.append} append their
 arguments onto the end of the array, while @code{A.insert(int i ... T[] x)}
@@ -5222,9 +5233,14 @@ write();
 write(f/n);
 @end verbatim
 
-@cindex @code{solve}
+@cindex @code{dot}
 @item real dot(real[] a, real[] b)
 returns the dot product of the vectors @code{a} and @code{b}.
+
+@cindex @code{dot}
+@item pair dot(pair[] a, pair[] b)
+returns the complex dot product @code{sum(a*conj(b))} of the vectors
+@code{a} and @code{b}.
 
 @anchor{tridiagonal}
 @cindex @code{tridiagonal}
@@ -6054,7 +6070,7 @@ sizing of pictures.
 @section @code{math}
 @cindex @code{math}
 This package extends @code{Asymptote}'s mathematical capabilities with
-matrix arithmetic and intersection algorithms:
+useful functions such as
 
 @table @code
 
@@ -6077,9 +6093,58 @@ respectively. If the planes are parallel, return
 @code{(infinity,infinity,infinity)}.
 
 @cindex @code{quarticroots}
-@item @code{pair[] quarticroots(real a, real b, real c, real d, real e);}
+@item pair[] quarticroots(real a, real b, real c, real d, real e);
 returns the four complex roots of the quartic equation
 @math{ax^4+bx^3+cx^2+dx+e=0}.
+
+@cindex @code{fft}
+@item pair[][] fft(pair[][] a, int sign=1)
+returns the two-dimensional Fourier transform of a using the given
+@code{sign}.
+
+@cindex @code{time}
+@item real time(path g, real x, int n=0)
+returns the @code{n}th intersection time of path @code{g} with the vertical
+line through x.
+
+@cindex @code{time}
+@item real time(path g, explicit pair z, int n=0)
+returns the @code{n}th intersection time of path @code{g} with the horizontal
+line through @code{(0,z.y)}.
+
+@cindex @code{value}
+@item real value(path g, real x, int n=0)
+returns the @code{n}th @code{y} value of @code{g} at @code{x}.
+
+@cindex @code{value}
+@item real value(path g, real x, int n=0)
+returns the @code{n}th @code{x} value of @code{g} at @code{y=z.y}.
+
+@cindex @code{slope}
+@item real slope(path g, real x, int n=0)
+returns the @code{n}th slope of @code{g} at @code{x}.
+
+@cindex @code{slope}
+@item real slope(path g, explicit pair z, int n=0)
+returns the @code{n}th slope of @code{g} at @code{y=z.y}.
+
+@cindex @code{segment}
+int[][] segment(bool[] b)
+returns the indices of consecutive true-element segments of bool[] @code{b}.
+
+@cindex @code{partialsum}
+@item real[] partialsum(real[] a)
+returns the partial sums of a real array @code{a}.
+
+@cindex @code{partialsum}
+@item real[] partialsum(real[] a, real[] dx)
+returns the partial @code{dx}-weighted sums of a real array @code{a}.
+
+@cindex @code{increasing}
+@item bool increasing(real[] a, bool strict=false)
+returns, if @code{strict=false}, whether @code{i > j} implies
+@code{a[i] >= a[j]}, or if @code{strict=true}, whether @code{i > j} implies
+implies @code{a[i] > a[j]}.
 
 @end table
 
@@ -7706,6 +7771,17 @@ to the viewport dimensions corresponding to the usual two-dimensional
 picture @code{size} parameters. The global pair @code{viewportmargin}
 may be used to add horizontal and vertical margins to the viewport
 dimensions. Alternatively, a minimum @code{viewportsize} may be specified.
+A 3D picture @code{pic} can be explicitly fit to a 3D frame by calling
+@cindex @code{fit3}
+@verbatim
+frame pic.fit3(projection P=currentprojection);
+@end verbatim
+@noindent
+and then added to picture @code{dest} about @code{position} with
+@cindex @code{add}
+@verbatim
+void add(picture dest=currentpicture, frame src, triple position=(0,0,0));
+@end verbatim
 
 @cindex @code{O}
 @cindex @code{X}
@@ -7870,23 +7946,46 @@ projection TopView=orthographic(Z,showtarget=true);
 @end verbatim
 @noindent
 The function
+@cindex @code{addViews}
 @verbatim
-void addViews(picture dest=currentpicture, picture src, bool group=true,
-              filltype filltype=NoFill);
+void addViews(picture dest=currentpicture, picture src,
+              projection[][] views=SixViewsUS,
+              bool group=true, filltype filltype=NoFill);
 @end verbatim
 @noindent
-adds picture @code{pic} as seen with @code{FrontView} aligned above the
-projection @code{TopView} and to the right of the projection @code{RightView}. 
-Alternatively, the function
+adds to picture @code{dest} an array of views of picture @code{src}
+using the layout projection[][] @code{views}. The default layout
+@code{SixViewsUS} aligns the projection @code{FrontView} below
+@code{TopView} and above @code{BottomView}, to the right of
+@code{LeftView} and left of @code{RightView} and @code{BackView}. 
+The predefined layouts are:
+@cindex @code{ThreeViewsUS}
+@cindex @code{SixViewsUS}
+@cindex @code{ThreeViewsFR}
+@cindex @code{SixViewsFR}
+@cindex @code{ThreeViews}
+@cindex @code{SixViews}
 @verbatim
-void addAllViews(picture dest=currentpicture, picture src,
-                 real xmargin=0, real ymargin=xmargin,
-                 bool group=true, filltype filltype=NoFill);
+projection[][] ThreeViewsUS={{TopView},
+                             {FrontView,RightView}};
+
+projection[][] SixViewsUS={{null,TopView},
+                           {LeftView,FrontView,RightView,BackView},
+                           {null,BottomView}};
+
+projection[][] ThreeViewsFR={{RightView,FrontView},
+                             {null,TopView}};
+
+projection[][] SixViewsFR={{null,BottomView},
+                           {RightView,FrontView,LeftView,BackView},
+                           {null,TopView}};
+
+projection[][] ThreeViews={{FrontView,TopView,RightView}};
+
+projection[][] SixViews={{FrontView,TopView,RightView},
+                         {BackView,BottomView,LeftView}};
+
 @end verbatim
-@noindent
-may be used to exhibit all six standard views, with FrontView,
-TopView, RightView in the upper row and BackView, BottomView, LeftView
-in the lower row.
 
 A triple or path3 can be projected to a pair or path,
 with @code{project(triple, projection P=currentprojection)} or
@@ -9420,12 +9519,14 @@ Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  nonintegral gettriple enablerepo hexidecimal XeLaTeX xelatex
 @c  LocalWords:  dvipdfmx autoadjust viewportsize viewportwidth viewportheight
 @c  LocalWords:  subregions nonsimply functionshade shader floatingdisk TopView
-@c  LocalWords:  functionshading maxlength LeftView odetest
-@c  LocalWords:  vectorfieldsphere RightView FrontView BackView BottomView
+@c  LocalWords:  functionshading maxlength LeftView odetest RadialShadeDraw CLZ
+@c  LocalWords:  vectorfieldsphere RightView FrontView BackView BottomView CTZ
 @c  LocalWords:  addViews outprefix addAllViews xsplinetype ysplinetype rotateX
 @c  LocalWords:  usplinetype vsplinetype leftbutton middlebutton rightbutton
 @c  LocalWords:  rotateY rotateZ wheelup zoomin wheeldown zoomout TeXLive
 @c  LocalWords:  viewportshift signedint signedness psview multiplatform nowarn
 @c  LocalWords:  singlereal singleint writeoverloaded tubegranularity dvisvg
 @c  LocalWords:  bigdiagonal autobillboard dvisvgm maxtiles hyperrefOptions
-@c  LocalWords:  setpagesize pdfborder controlsystem
+@c  LocalWords:  setpagesize pdfborder controlsystem OmitTickInterval SixViews
+@c  LocalWords:  OmitTickIntervals tickmodifiers autorotated SixViewsUS
+@c  LocalWords:  ThreeViewsUS ThreeViewsFR SixViewsFR ThreeViews partialsum
