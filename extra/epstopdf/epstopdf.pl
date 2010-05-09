@@ -46,6 +46,9 @@ use strict;
 #
 # emacs-page
 # History
+#  2010/05/09
+#    * make --nogs dump edited PostScript to stdout by default
+#      (report from Reinhard Kotucha).
 #  2010/03/19 v2.15 (Karl Berry)
 #    * let --outfile override --filter again.
 #    * recognize MSWin64 as well as MSWin32, just in case.
@@ -334,7 +337,7 @@ if (! $OutputFilename) {
     }
   } else {
     debug "No Ghostscript: will write standard output";
-    $OutputFilename = "-"; # no ghostscript, write to standard output
+    $OutputFilename = "-";
   }
 }
 debug "Output filename:", $OutputFilename;
@@ -408,8 +411,14 @@ if ($::opt_gs) {
   $outname = $GS;
 }
 else {
-  open($OUT, '>', $OutputFilename) or error "Cannot write \"$OutputFilename\"";
-  $outname = $OutputFilename;
+  debug "No Ghostscript: opening $OutputFilename";
+  if ($OutputFilename eq "-") {
+    $OUT = *STDOUT;
+  } else {
+    open($OUT, '>', $OutputFilename)
+    || error ("Cannot write \"$OutputFilename\": $!");
+    $outname = $OutputFilename;
+  }
 }
 binmode $OUT;
 

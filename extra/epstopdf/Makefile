@@ -11,6 +11,7 @@ default: check
 # making sure we don't crash.
 check: check-help check-version \
        check-help-r \
+       check-nogs \
        check-restricted-gscmd \
        check-filter check-filter-outfile check-write-error check-gscmd \
        check-simple check-atend check-binary check-bin2 \
@@ -26,6 +27,11 @@ check-version:
 check-help-r: $(re2p_script)
 	$(re2p_script) --help | grep restricted  # should have default=true
 
+check-nogs:
+	$(e2p) --no-gs test-simple.eps >test-simple.out
+# the two files should be different:
+	cmp -s test-simple.eps test-simple.out || exit 0
+	
 $(re2p_script):
 	ln -s epstopdf.pl $@
 

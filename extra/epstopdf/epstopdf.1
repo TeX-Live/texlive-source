@@ -31,7 +31,9 @@ scan ExactBoundingBox (default: off).
 read standard input and (unless \fB--outfile\fP is given) write standard
 output(default: off).
 .IP "\fB--\fP[\fBno\fP]\fBgs\fP"
-run Ghostscript (default: on).
+run Ghostscript (default: on).  With \fB--nogs\fP, output (to standard
+output by default) the PostScript that would normally be converted; that
+is, the input PostScript as modified by \fBepstopdf\fP.
 .IP "\fB--\fP[\fBno\fP]\fBhires\fP"
 scan HiresBoundingBox (default: off).
 .IP "\fB--gscmd\fP=\fIval\fP"
