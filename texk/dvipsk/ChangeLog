@@ -1,3 +1,10 @@
+2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* all files: Remove more useless casts to void.
+
+	* afm2tfm.c, finclude.c, output.c, search.c: Reintroduce a few
+	casts to void, to avoid warnings (statement has no effect).
+
 2010-05-10  Karl Berry  <karl@tug.org>
 
 	* all files: remove useless casts to void.

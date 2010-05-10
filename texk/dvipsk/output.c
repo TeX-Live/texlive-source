@@ -152,7 +152,7 @@ copyfile_general(const char *s, struct header_list *cur_header)
          sprintf(errbuf, "Execution of  <%s> failed ", s);
          f = popen(s, "r");
          if (f != 0)
-            SET_BINARY(fileno(f));
+            (void)SET_BINARY(fileno(f));
 	}
 	else {
       sprintf(errbuf,"Secure mode is %d so execute <%s> will not run", secure,s);
@@ -1310,7 +1310,7 @@ open_output(void) {
 #endif
 	 if (pf == NULL && (pf = popen(oname+1, "w")) != NULL) {
 	    popened = 1;
-	    SET_BINARY(fileno(pf));
+	    (void)SET_BINARY(fileno(pf));
 	 }
          if (pf == NULL)
             error("! couldn't open output pipe");
@@ -1322,7 +1322,7 @@ open_output(void) {
       } else {
          if ((bitfile=fopen(oname,"w"))==NULL)
             error("! couldn't open PostScript file");
-         SET_BINARY(fileno(bitfile));
+         (void)SET_BINARY(fileno(bitfile));
       }
    } else {
       bitfile = stdout;

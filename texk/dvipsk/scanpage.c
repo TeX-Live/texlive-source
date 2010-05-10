@@ -135,7 +135,7 @@ scanpage(void)
       switch (cmd=dvibyte()) {
 case 255: /* pTeX's dir or undefined */
          if (!noptex) {
-            (void)dvibyte();
+            dvibyte();
             break;
          }
 /* illegal commands */
@@ -146,22 +146,22 @@ case 250: case 251: case 252: case 253: case 254: /* undefined */
             "! DVI file contains unexpected command (%d)",cmd);
          error(errbuf);
 case 132: case 137: /* eight-byte commands setrule, putrule */
-         (void)dvibyte();
-         (void)dvibyte();
-         (void)dvibyte();
-         (void)dvibyte();
+         dvibyte();
+         dvibyte();
+         dvibyte();
+         dvibyte();
 case 146: case 151: case 156: case 160: case 165: case 170:
    /* four-byte commands right4, w4, x4, down4, y4, z4 */
-         (void)dvibyte();
+         dvibyte();
 case 145: case 150: case 155: case 159: case 164: case 169:
    /* three-byte commands right3, w3, x3, down3, y3, z3 */
-         (void)dvibyte();
+         dvibyte();
 case 144: case 149: case 154: case 158: case 163: case 168:
    /* two-byte commands right2, w2, x2, down2, y2, z2 */
-         (void)dvibyte();
+         dvibyte();
 case 143: case 148: case 153: case 157: case 162: case 167:
    /* one-byte commands right1, w1, x1, down1, y1, z1 */
-         (void)dvibyte();
+         dvibyte();
 case 147: case 152: case 161: case 166: /* w0, x0, y0, z0 */
 case 138: case 141: case 142: /* nop, push, pop */
          break;

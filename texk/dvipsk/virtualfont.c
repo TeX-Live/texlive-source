@@ -191,7 +191,7 @@ virtualfont(register fontdesctype *curfnt)
    if (vfbyte()!=202)
       badvf("wrong id byte");
    for(i=vfbyte(); i>0; i--)
-      (void)vfbyte();
+      vfbyte();
    k = vfquad();
    check_checksum (k, curfnt->checksum, curfnt->name);
    k = (integer)(alpha * (real)vfquad());

@@ -112,7 +112,7 @@ fliload(void)
             numfonts = pkdouble();   /* number of fonts */
             len = pkdouble();        /* length of comment */
             for (i=0; i<len; i++)
-               (void)pkbyte();       /* skip comment */
+               pkbyte();       /* skip comment */
 #ifdef DEBUG
    if (dd(D_FONTS))
       fprintf(stderr,"Font library %s has %d font size%s, %d font%s\n",
@@ -138,7 +138,7 @@ fliload(void)
 
             for (;numsizes>0; numsizes--, size++) { 
                /* for each font size in this library */
-               (void)pkdouble();      /* length of size entry - ignore */
+               pkdouble();      /* length of size entry - ignore */
                numfonts = pkdouble(); /* number of fonts */
                dpi = pkquad();        /* DPI (fixed point 16.16) */
 
@@ -152,7 +152,7 @@ fliload(void)
                size->entry   = entry;
                   for (;numfonts > 0; numfonts--, entry++) {
                      /* read each entry */
-                     (void)pkquad();            /* ignore length of font */
+                     pkquad();            /* ignore length of font */
                      entry->offset = pkquad();  /* offset to font */
                      len = pkbyte();            /* length of name */
                      for (i=0; i<len; i++)

@@ -356,7 +356,7 @@ loadfont(register fontdesctype *curfnt)
    if (pkbyte()!=89)
       badpk("wrong id byte");
    for(i=pkbyte(); i>0; i--)
-      (void)pkbyte();
+      pkbyte();
    k = (integer)(alpha * (real)pkquad());
    if (k > curfnt->designsize + fsizetol
        || k < curfnt->designsize - fsizetol) {
@@ -422,7 +422,7 @@ case 7:
             badpk("packet length too small");
          if (dopprescan && ((cd->flags & EXISTS) == 0)) {
             for (length--; length>0; length--)
-               (void)pkbyte();
+               pkbyte();
          } else {
             if (cc > maxcc)
                maxcc = cc;

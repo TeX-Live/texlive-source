@@ -85,5 +85,5 @@ signedquad(void)
 void
 skipover(int i)
 {
-  while (i-->0) (void)dvibyte();
+  while (i-->0) dvibyte();
 }

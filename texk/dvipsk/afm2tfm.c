@@ -479,7 +479,7 @@ handlechar(void) { /* an input line beginning with C */
 /* Ignore vertical metrics information */
    if (*param == 'W' && *(param + 1) == 'Y') {
       expect("WY");
-      (void)paramnum();
+      paramnum();
       expect(";");
    }
    expect("N");
@@ -1687,7 +1687,7 @@ default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
    if ((afmin=fopen(inname, "r"))==NULL)
       error("! can't open afm input file");
 #endif /* KPATHSEA */
-   SET_BINARY(fileno(afmin));
+   (void)SET_BINARY(fileno(afmin));
 
    if (argc>3 || (argc==3 && *argv[2]=='-')) {
      error("! need at most two non-option arguments");
@@ -1979,7 +1979,7 @@ readencoding(char *enc)
 #else
       afmin = fopen(enc, "r");
 #endif
-      SET_BINARY(fileno(afmin));
+      (void)SET_BINARY(fileno(afmin));
       param = 0;
       if (afmin == 0)
 #ifdef KPATHSEA

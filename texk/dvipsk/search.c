@@ -146,7 +146,7 @@ search(kpse_file_format_type format, const char *file, const char *mode)
       char *prog = selfautoloc_prog (GUNZIP);
       cmd = concat3 (prog, " -c ", quoted_name);
       ret = popen (cmd, "r");
-      SET_BINARY(fileno(ret));
+      (void)SET_BINARY(fileno(ret));
       to_close = USE_PCLOSE;
       free (cmd);
       free (quoted_name);
