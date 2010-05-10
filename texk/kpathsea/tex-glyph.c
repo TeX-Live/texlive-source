@@ -152,14 +152,14 @@ try_fontmap (kpathsea kpse, string *fontname_ptr,  unsigned dpi,
              kpse_file_format_type format,
              kpse_glyph_file_type *glyph_file)
 {
-  string *mapped_names;
+  const_string *mapped_names;
   string fontname = *fontname_ptr;
   string ret = NULL;
 
   mapped_names = kpathsea_fontmap_lookup (kpse, fontname);
   if (mapped_names) {
-    string mapped_name;
-    string first_name = *mapped_names;
+    const_string mapped_name;
+    const_string first_name = *mapped_names;
     while (!ret && (mapped_name = *mapped_names++)) {
       kpathsea_xputenv (kpse, "KPATHSEA_NAME", mapped_name);
       ret = try_resolution (kpse, mapped_name, dpi, format, glyph_file);

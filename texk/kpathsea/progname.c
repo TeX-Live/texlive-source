@@ -626,7 +626,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   free (sdir_grandparent);
 
   kpse->invocation_short_name
-    = xstrdup ((string) xbasename (kpse->invocation_name));
+    = xstrdup (xbasename (kpse->invocation_name));
 
   if (progname) {
     kpse->program_name = xstrdup (progname);

@@ -21,13 +21,13 @@
 /* We may or may not return NAME.  It's up to the caller not to assume
    the return value is modifiable.  */
 
-string 
+const_string 
 extend_filename (const_string name, const_string default_suffix)
 {
-  string new_s;
+  const_string new_s;
   const_string suffix = find_suffix (name);
 
   new_s = suffix == NULL ? concat3 (name, ".", default_suffix)
-                         : (string) name;
+                         : name;
   return new_s;
 }

@@ -169,8 +169,8 @@ extern KPSEDLL string make_prefix (string stem_prefix, string name);
 
 /* If NAME has a suffix, simply return it; otherwise, return
    `NAME.SUFFIX'.  */
-extern KPSEDLL string extend_filename (const_string name,
-                                            const_string suffix);
+extern KPSEDLL const_string extend_filename (const_string name,
+                                             const_string suffix);
 
 /* Call putenv with the string `VAR=VALUE' and abort on error.  */
 extern KPSEDLL void kpathsea_xputenv (kpathsea kpse, const_string var,

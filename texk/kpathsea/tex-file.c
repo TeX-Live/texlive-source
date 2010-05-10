@@ -868,10 +868,10 @@ static void
 target_fontmaps (kpathsea kpse, string **target, unsigned *count,
                 const_string name)
 {
-  string *mapped_names = kpathsea_fontmap_lookup (kpse, name);
+  const_string *mapped_names = kpathsea_fontmap_lookup (kpse, name);
   
   if (mapped_names != NULL) {
-    string mapped_name;
+    const_string mapped_name;
     /* We leak mapped_names and its elements, some of the time.  */
     while ((mapped_name = *mapped_names++) != NULL) {
       (*target)[(*count)] = xstrdup (mapped_name);

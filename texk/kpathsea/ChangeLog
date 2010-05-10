@@ -1,3 +1,13 @@
+2010-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* progname.c (kpathsea_set_program_name): Drop superfluous cast.
+
+	* extend-fname.c, lib.h: Change return type of extend_filename()
+	from 'string' to 'const_string'.
+	* fontmap.[ch]: Change return type of kpathsea_fontmap_lookup()
+	from 'string *' to 'const_string *', drop kpse_fontmap_lookup.
+	* tex-file.c (target_fontmaps), tex-glyph.c (try_fontmap): Adjust.
+
 2010-04-27  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
 
 	* texmf.cnf: - s/pdf(lua(la)?tex)/dvi\1/
