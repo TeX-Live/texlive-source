@@ -951,7 +951,7 @@ default:
             if (ValInt-ValNum < 0.001 && ValInt-ValNum > -0.001)
                 numout((integer)ValInt);
             else {
-               (void)sprintf(cmdbuf, "%f", ValNum);
+               snprintf(cmdbuf, sizeof(cmdbuf), "%f", ValNum);
                cmdout(cmdbuf);
             }
          }
