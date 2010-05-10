@@ -8,3 +8,6 @@ Removed:
 	missing
 	stamp-h.in
 
+Added execute permissions:
+	chkweb
+

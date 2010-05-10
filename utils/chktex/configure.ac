@@ -59,7 +59,7 @@ AC_SUBST([CHKTEX_TREE], [chktex-]chktex_version)
 AC_SUBST([PERL5], ['/usr/bin/env perl'])
 
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([chktex-]chktex_version[/ChkTeX.tex])
-AC_CONFIG_FILES([deweb.pl:chktex-]chktex_version[/deweb.in], [chmod +x deweb.pl])
+AC_CONFIG_FILES([ChkTeX.tmp:chktex-]chktex_version[/ChkTeX.tex.in])
+AC_CONFIG_FILES([deweb:chktex-]chktex_version[/deweb.in], [chmod +x deweb])
 
 AC_OUTPUT

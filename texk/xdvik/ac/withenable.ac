@@ -1,16 +1,10 @@
 ## texk/xdvik/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 dnl extra_dirs = texk/xdvik/squeeze
 dnl
 ## configure options and TL libraries required for xdvik
-AS_IF([test "x$with_x" = xno],
-      [AS_CASE([$enable_xdvik],
-               [""], [AC_MSG_NOTICE([`--without-x' -> `--disable-xdvik'])
-                      enable_xdvik=no
-                      ac_configure_args="$ac_configure_args '--disable-xdvik'"],
-               [yes], [AC_MSG_ERROR([Sorry, incompatible options `--without-x' and `--enable-xdvik'])])])
-KPSE_ENABLE_PROG([xdvik], [kpathsea t1lib])
+KPSE_ENABLE_PROG([xdvik], [kpathsea t1lib], [x])
 m4_include(kpse_TL[texk/xdvik/ac/xdvik.ac])

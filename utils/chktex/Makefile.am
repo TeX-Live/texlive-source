@@ -22,10 +22,9 @@ EXTRA_DIST = $(CHKTEX_TREE)
 ##
 EXTRA_DIST += $(CHKTEX_TREE)-PATCHES
 
-# in case of an SVN repository, remove a generated file.
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-	rm -f $(distdir)/$(CHKTEX_TREE)/ChkTeX.tex
 
 AM_CFLAGS = $(WARNING_CFLAGS)
 
@@ -49,6 +48,9 @@ dist_man_MANS = \
 	$(CHKTEX_TREE)/chkweb.1 \
 	$(CHKTEX_TREE)/deweb.1
 
+dist_bin_SCRIPTS = $(CHKTEX_TREE)/chkweb
+nodist_bin_SCRIPTS = deweb
+
 # resource file
 configdir = ${prefix}/texmf/chktex
 
@@ -69,14 +71,14 @@ CLEANFILES = ChkTeX.aux ChkTeX.log
 ## (in maintainer-mode) to update them if required.
 .PHONY: build-tex
 all-local: stamp-tex
-stamp-tex: $(CHKTEX_TREE)/ChkTeX.tex
+stamp-tex: ChkTeX.tmp
 	$(MAKE) $(AM_MAKEFLAGS) build-tex
 	$(MAKE) $(AM_MAKEFLAGS) ChkTeX.pdf
 	echo timestamp >$@
 DISTCLEANFILES = stamp-tex
 build-tex:
-	cmp -s $(CHKTEX_TREE)/ChkTeX.tex $(srcdir)/ChkTeX.tex \
-	  || cp $(CHKTEX_TREE)/ChkTeX.tex $(srcdir)/ChkTeX.tex
+	cmp -s ChkTeX.tmp $(srcdir)/ChkTeX.tex \
+	  || cp ChkTeX.tmp $(srcdir)/ChkTeX.tex
 
 EXTRA_DIST += ChkTeX.tex
 

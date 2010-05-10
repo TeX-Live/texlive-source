@@ -65,9 +65,9 @@ where KPSE_ENABLE_PROG, defined in m4/kpse-setup.m4, has one required
 argument -- the name of the subdirectory -- and three optional arguments: a
 list of required TL libraries (zlib is implied by libpng and need not be
 mentioned), a list of options ('disable' if this program is not to be built
-by default, 'native' if cross compilation is not possible), and a comment
-added to the help text for the disable or enable configure option for this
-program.
+by default, 'native' if cross compilation is not possible, 'x' if this
+program requires X11), and a comment added to the help text for the disable
+or enable configure option for this program.
 
 3.2 Adding a new generic library directory
 ------------------------------------------

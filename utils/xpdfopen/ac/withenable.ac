@@ -4,10 +4,4 @@ dnl Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for xpdfopen
-AS_IF([test "x$with_x" = xno],
-      [AS_CASE([$enable_xpdfopen],
-               [""], [AC_MSG_NOTICE([`--without-x' -> `--disable-xpdfopen'])
-                      enable_xpdfopen=no
-                      ac_configure_args="$ac_configure_args '--disable-xpdfopen'"],
-               [yes], [AC_MSG_ERROR([Sorry, incompatible options `--without-x' and `--enable-xpdfopen'])])])
-KPSE_ENABLE_PROG([xpdfopen])
+KPSE_ENABLE_PROG([xpdfopen], , [x])

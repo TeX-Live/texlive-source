@@ -65,11 +65,16 @@ KPSE_ENABLE_CXX_HACK
 KPSE_ENABLE_LT_HACK
 KPSE_LIBS_PREPARE
 KPSE_WEB2C_PREPARE
-AS_CASE([$with_x],
-        [yes | no], [:],
-        [with_x=yes
-         AC_MSG_NOTICE([Assuming `--with-x'])
-         ac_configure_args="$ac_configure_args '--with-x'"])
+KPSE_CHECK_WIN32
+AS_CASE([$with_x:$kpse_cv_have_win32],
+        [yes:no | no:*], [:],
+        [yes:*], [AC_MSG_ERROR([you can not use `--with-x' for WIN32])],
+        [*:no], [with_x=yes
+                 AC_MSG_NOTICE([Assuming `--with-x'])
+                 ac_configure_args="$ac_configure_args '--with-x'"],
+        [with_x=no
+         AC_MSG_NOTICE([WIN32 -> `--without-x'])
+         ac_configure_args="$ac_configure_args '--without-x'"])
 KPSE_FOR_PKGS([utils], [m4_sinclude(kpse_TL[utils/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([texk], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([libs], [m4_sinclude(kpse_TL[libs/]Kpse_Pkg[/ac/withenable.ac])])
@@ -84,6 +89,7 @@ KPSE_FOR_PKGS([texlibs], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])
 # Options:
 #          disable - do not build by default
 #          native - impossible to cross compile
+#          x - requires X11
 AC_DEFUN([KPSE_ENABLE_PROG],
 [m4_pushdef([Kpse_enable], m4_if(m4_index([ $3 ], [ disable ]), [-1], [yes], [no]))[]dnl
 AC_ARG_ENABLE([$1],
@@ -91,6 +97,13 @@ AC_ARG_ENABLE([$1],
                               m4_if(Kpse_enable, [yes],
                                     [do not ])[build the $1 ]m4_ifval([$4],
                                                                       [($4) ])[package]))[]dnl
+m4_if(m4_index([ $3 ], [ x ]), [-1], , [AS_IF([test "x$with_x" = xno],
+      [AS_CASE([$enable_[]AS_TR_SH($1)],
+               [""], [AC_MSG_NOTICE([`--without-x' -> `--disable-$1'])
+                      enable_[]AS_TR_SH($1)=no
+                      ac_configure_args="$ac_configure_args '--disable-$1'"],
+               [yes], [AC_MSG_ERROR([Sorry, incompatible options `--without-x' and `--enable-$1'])])])
+])[]dnl m4_if
 AS_CASE([$enable_[]AS_TR_SH($1)],
   m4_if(m4_index([ $3 ], [ native ]), [-1],
         [[yes|no], []],
@@ -99,8 +112,9 @@ AS_CASE([$enable_[]AS_TR_SH($1)],
          [no], []]),
   [m4_if(m4_index([ $3 ], [ native ]), [-1], ,
          [if test "x$cross_compiling" = xyes; then
-            enable_[]AS_TR_SH($1)=no
             AC_MSG_NOTICE([Cross compiling -> `--disable-$1'])
+            enable_[]AS_TR_SH($1)=no
+            ac_configure_args="$ac_configure_args '--disable-$1'"
           else])
    enable_[]AS_TR_SH($1)=m4_if(Kpse_enable, [yes], [$enable_all_pkgs], [no])
      AC_MSG_NOTICE([Assuming `--enable-$1=$enable_]AS_TR_SH($1)['])

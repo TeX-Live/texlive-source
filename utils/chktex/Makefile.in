@@ -16,6 +16,7 @@
 @SET_MAKE@
 
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -35,8 +36,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = chktex$(EXEEXT)
 subdir = .
-DIST_COMMON = $(am__configure_deps) $(dist_man_MANS) \
-	$(dist_pdfdoc_DATA) $(srcdir)/../../build-aux/depcomp \
+DIST_COMMON = $(am__configure_deps) $(dist_bin_SCRIPTS) \
+	$(dist_man_MANS) $(dist_pdfdoc_DATA) \
+	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -55,25 +57,16 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = chktex-1.6.4/ChkTeX.tex deweb.pl
+CONFIG_CLEAN_FILES = ChkTeX.tmp deweb
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
+	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(configdir)" "$(DESTDIR)$(pdfdocdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_chktex_OBJECTS = ChkTeX.$(OBJEXT) FindErrs.$(OBJEXT) \
 	OpSys.$(OBJEXT) Resource.$(OBJEXT) Utility.$(OBJEXT)
 chktex_OBJECTS = $(am_chktex_OBJECTS)
 chktex_LDADD = $(LDADD)
-DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(chktex_SOURCES)
-DIST_SOURCES = $(chktex_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -95,6 +88,17 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+SCRIPTS = $(dist_bin_SCRIPTS) $(nodist_bin_SCRIPTS)
+DEFAULT_INCLUDES = -I.@am__isrc@
+depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
+am__depfiles_maybe = depfiles
+am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+SOURCES = $(chktex_SOURCES)
+DIST_SOURCES = $(chktex_SOURCES)
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man_MANS)
@@ -235,6 +239,8 @@ dist_man_MANS = \
 	$(CHKTEX_TREE)/chkweb.1 \
 	$(CHKTEX_TREE)/deweb.1
 
+dist_bin_SCRIPTS = $(CHKTEX_TREE)/chkweb
+nodist_bin_SCRIPTS = deweb
 
 # resource file
 configdir = ${prefix}/texmf/chktex
@@ -305,9 +311,9 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-chktex-1.6.4/ChkTeX.tex: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/ChkTeX.tex.in
+ChkTeX.tmp: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/ChkTeX.tex.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
-deweb.pl: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/deweb.in
+deweb: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/deweb.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
@@ -349,6 +355,74 @@ clean-binPROGRAMS:
 chktex$(EXEEXT): $(chktex_OBJECTS) $(chktex_DEPENDENCIES) 
 	@rm -f chktex$(EXEEXT)
 	$(LINK) $(chktex_OBJECTS) $(chktex_LDADD) $(LIBS)
+install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
+	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-dist_binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	test -n "$$list" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(bindir)" && rm -f $$files
+install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
+	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-nodist_binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	test -n "$$list" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -834,9 +908,10 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(PROGRAMS) $(MANS) $(DATA) config.h all-local
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS) $(DATA) config.h \
+		all-local
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(configdir)" "$(DESTDIR)$(pdfdocdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(configdir)" "$(DESTDIR)$(pdfdocdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -896,7 +971,8 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-binPROGRAMS install-dist_binSCRIPTS \
+	install-nodist_binSCRIPTS
 
 install-html: install-html-am
 
@@ -938,7 +1014,8 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-configDATA \
-	uninstall-dist_pdfdocDATA uninstall-man
+	uninstall-dist_binSCRIPTS uninstall-dist_pdfdocDATA \
+	uninstall-man uninstall-nodist_binSCRIPTS
 
 uninstall-man: uninstall-man1
 
@@ -952,22 +1029,23 @@ uninstall-man: uninstall-man1
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
 	install-binPROGRAMS install-configDATA install-data \
-	install-data-am install-dist_pdfdocDATA install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-configDATA uninstall-dist_pdfdocDATA uninstall-man \
-	uninstall-man1
+	install-data-am install-dist_binSCRIPTS \
+	install-dist_pdfdocDATA install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-nodist_binSCRIPTS install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-configDATA \
+	uninstall-dist_binSCRIPTS uninstall-dist_pdfdocDATA \
+	uninstall-man uninstall-man1 uninstall-nodist_binSCRIPTS
 
 
-# in case of an SVN repository, remove a generated file.
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-	rm -f $(distdir)/$(CHKTEX_TREE)/ChkTeX.tex
 
 ChkTeX.pdf: $(PDF_DEPEND)
 	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
@@ -975,13 +1053,13 @@ ChkTeX.pdf: $(PDF_DEPEND)
 
 .PHONY: build-tex
 all-local: stamp-tex
-stamp-tex: $(CHKTEX_TREE)/ChkTeX.tex
+stamp-tex: ChkTeX.tmp
 	$(MAKE) $(AM_MAKEFLAGS) build-tex
 	$(MAKE) $(AM_MAKEFLAGS) ChkTeX.pdf
 	echo timestamp >$@
 build-tex:
-	cmp -s $(CHKTEX_TREE)/ChkTeX.tex $(srcdir)/ChkTeX.tex \
-	  || cp $(CHKTEX_TREE)/ChkTeX.tex $(srcdir)/ChkTeX.tex
+	cmp -s ChkTeX.tmp $(srcdir)/ChkTeX.tex \
+	  || cp ChkTeX.tmp $(srcdir)/ChkTeX.tex
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
