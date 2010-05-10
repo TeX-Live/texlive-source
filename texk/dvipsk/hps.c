@@ -460,25 +460,28 @@ href_name_match(char *h, char *n)
 static void
 stamp_hps(Hps_link *pl)
 {
-  char * tmpbuf;
+  char *tmpbuf;
+  unsigned tmpsize;
+  
   if (pl == NULL) {
     error("stamp_hps: null pl pointer, oh no!");
     return;
   }
-  if(pl->title == NULL) {
+  if (pl->title == NULL) {
     error("stamp_hps: null pl->title pointer, oh no!");
     return;
   }
 
-  tmpbuf = (char *) xmalloc(strlen(pl->title)+200);
+  tmpsize = strlen(pl->title) + 500;
+  tmpbuf = xmalloc(tmpsize);
 
   /* print out the proper pdfm with local page info only
    *  target info will be in the target dictionary */
-  sprintf(tmpbuf,
-		" (%s) [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] pdfm ",
-		pl->title, pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
-		pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
-		pl->color[0], pl->color[1], pl->color[2]);
+  snprintf(tmpbuf, tmpsize,
+     " (%s) [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] pdfm ",
+     pl->title, pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
+     pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
+     pl->color[0], pl->color[1], pl->color[2]);
   cmdout(tmpbuf);
   free(tmpbuf);
 
@@ -492,24 +495,26 @@ static void
 stamp_external(char *s, Hps_link *pl)
 {
   char *tmpbuf;
+  unsigned tmpsize;
   if (pl == NULL) {
     error("stamp_external: null pl pointer, oh no!");
     return;
   }
-
   if (s == NULL) {
     error("stamp_external: null s pointer, oh no!");
     return;
   }
 
-  tmpbuf = (char *) xmalloc(strlen(s) + 200);
+  tmpsize = strlen(s) + 500;
+  tmpbuf = xmalloc(tmpsize);
 
   /* print out the proper pdfm with local page info only
    *  target info will be in the target dictionary */
-  sprintf(tmpbuf," [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] (%s) pdfm ",
-		pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
-		pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
-		pl->color[0], pl->color[1], pl->color[2], s);
+  snprintf(tmpbuf, tmpsize,
+     " [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] (%s) pdfm ",
+     pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
+     pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
+     pl->color[0], pl->color[1], pl->color[2], s);
   cmdout(tmpbuf);
   free(tmpbuf);
 }

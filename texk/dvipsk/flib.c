@@ -254,7 +254,7 @@ flisearch(char *n, halfword dpi)
                      flib = 1;  /* tell loadfont() not to close it */
                      /* then seek font within library */
                      sprintf(name,"%s %s %ddpi",lib->name, n, dpi1);
-                     if ( fseek(pkfile,entry->offset,0) )
+                     if (fseek(pkfile,entry->offset,0) )
                            badpk("couldn't seek font");
                         /* make sure it is a PK font */
                         if (pkbyte()==247) /* pre byte */

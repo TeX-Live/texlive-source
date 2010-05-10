@@ -293,8 +293,9 @@ scan_fontnames(char *str, const char *psfile)
           }
         } else {
           char eb[1000];
-          sprintf(eb,"Font %s used in file %s is not in the mapping file.",
-                  p,psfile);
+          snprintf(eb, sizeof(eb),
+                   "Font %s used in file %s is not in the mapping file.",
+                    p, psfile);
           error(eb);
         }
      }
@@ -470,11 +471,11 @@ okascmd(char *ss)
 static void
 nameout(char *area, char *name)
 {
-   char buf[30];
+   char buf[500];
    char *s;
 
    if (*area==0 && okascmd(name)) {
-      sprintf(buf, "/%s", name);
+      snprintf(buf, sizeof(buf), "/%s", name);
       cmdout(name);
    } else {
       for (s=area; *s; s++)

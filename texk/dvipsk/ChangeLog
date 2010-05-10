@@ -7,6 +7,14 @@
 
 2010-05-10  Karl Berry  <karl@tug.org>
 
+	* drawPS.c,
+	* flib.c,
+	* finclude.c,
+	* afm2tfm.c,
+	* hps.c,
+	* emspecial.c,
+	* dospecial.c: more snprintf.
+
 	* all files: remove useless casts to void.
 
 	* dosection.c (dosection),

@@ -594,7 +594,7 @@ SetShade(register char *cp)
 void
 shadeLast(char *cp)
 {
-  char tpout[20];
+  char tpout[100];
 
   if (*cp) {
       double tempShadetp;
@@ -613,7 +613,8 @@ shadeLast(char *cp)
   }
 
   shading = GRAY;
-  sprintf(tpout,"%1.3f setgray",shadetp); /* priol@irisa.fr, MJ */
+  snprintf(tpout, sizeof(tpout), "%1.3f setgray", shadetp); 
+    /* priol@irisa.fr, MJ */
   cmdout(tpout);
 }                               /* end of shadeLast */
 

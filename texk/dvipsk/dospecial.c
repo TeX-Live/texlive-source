@@ -955,7 +955,7 @@ default:
                cmdout(cmdbuf);
             }
          }
-      sprintf(cmdbuf, "@%s", KeyStr);
+      snprintf(cmdbuf, sizeof(cmdbuf), "@%s", KeyStr);
       cmdout(cmdbuf);
       }
 

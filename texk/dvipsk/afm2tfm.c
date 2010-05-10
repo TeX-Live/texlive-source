@@ -1247,19 +1247,19 @@ vright(void)
 
 int forceoctal = 0;
 
-char vcharbuf[6];
+char vcharbuf[100];
 static char *
 vchar(int c)
 {
    if (forceoctal == 0 && ISALNUM (c))
-      (void) sprintf(vcharbuf,"C %c",
+      sprintf(vcharbuf,"C %c",
 #ifndef VMCMS
       c);
 #else
       ascii2ebcdic[c]);
 #endif
-   else (void) sprintf(vcharbuf,"O %o", (unsigned)c);
-   return (vcharbuf);
+   else sprintf(vcharbuf,"O %o", (unsigned)c);
+   return vcharbuf;
 }
 
 char vnamebuf[1000];

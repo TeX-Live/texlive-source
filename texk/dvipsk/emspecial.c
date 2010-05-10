@@ -142,7 +142,7 @@ float emwidth, emheight;
 shalfword empoint1, empoint2;
 struct empt *empoint;
 char emunit[30];
-char emstr[250];
+char emstr[500];
 char *emp;
 
         hvpos();
@@ -153,7 +153,7 @@ char *emp;
 	   sscanf(emp, "%f%2s", &emwidth, emunit);
 	   emwidth = emunits(emwidth,emunit);
 	   if (emwidth!=-1.0) {
-	      sprintf(emstr,"%.1f setlinewidth", emwidth);
+	      snprintf(emstr, sizeof(emstr), "%.1f setlinewidth", emwidth);
 	      cmdout(emstr);
 #ifdef DEBUG
    if (dd(D_SPECIAL))
@@ -252,7 +252,7 @@ char *emp;
 #endif
 	   	strcpy(emstr,"currentlinewidth");
 	   	cmdout(emstr);
-	        sprintf(emstr,"%.1f setlinewidth", emwidth);
+	        snprintf(emstr, sizeof(emstr), "%.1f setlinewidth", emwidth);
 	        cmdout(emstr);
 	   }
            empoint = emptget(empoint1);
@@ -1372,7 +1372,7 @@ const char *extarr[]=
 static void
 emgraph(char *filename, float emwidth, float emheight)
 {
-	char fname[80];
+	char fname[500];
 	int filetype;
 	FILE *f;
 	char *env;
@@ -1439,7 +1439,8 @@ emgraph(char *filename, float emwidth, float emheight)
 			bmpgraph(f, fname, emwidth, emheight);
 			break;
 		default:
-			sprintf(fname,"em:graph: %s: File not found", filename);
+			snprintf(fname, sizeof(fname),
+                                 "em:graph: %s: File not found", filename);
 			error(fname);
 	}
 	if (f != (FILE *)NULL)
