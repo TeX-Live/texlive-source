@@ -1,3 +1,9 @@
+2010-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xdv2pdf_main.c, xdv_kpse_formats.h (XDV2PDF_OLD_FORMATS):
+	Remove old code (with partial copies from kpathsea).
+	Move extern declaration of xdv2pdf() to header file.
+
 2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.

@@ -28,20 +28,10 @@ use or other dealings in this Software without prior written
 authorization from SIL International.
 \****************************************************************************/
 
-#ifdef XDV2PDF_OLD_FORMATS
-
-#define xdv_kpse_otf_format		0
-#define xdv_kpse_pfb_format		1
-#define	xdv_kpse_tfm_format		2
-#define	xdv_kpse_font_map_format	3
-#define	xdv_kpse_enc_format		4
-
-#else /* not XDV2PDF_OLD_FORMATS */
-
 #define xdv_kpse_otf_format		kpse_opentype_format
 #define xdv_kpse_pfb_format		kpse_type1_format
 #define xdv_kpse_tfm_format		kpse_tfm_format
 #define xdv_kpse_font_map_format	kpse_fontmap_format
 #define xdv_kpse_enc_format		kpse_enc_format
 
-#endif /* not XDV2PDF_OLD_FORMATS */
+extern int	xdv2pdf(int argc, char** argv);
