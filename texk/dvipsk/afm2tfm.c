@@ -239,14 +239,14 @@ char titlebuf[500];
 static void
 error(const char *s)
 {
-   (void)fprintf(stderr, "%s\n", s);
+   fprintf(stderr, "%s\n", s);
    if (obuffer[0]) {
-      (void)fprintf(stderr, "%s\n", obuffer);
+      fprintf(stderr, "%s\n", obuffer);
       while (param > buffer) {
-         (void)fprintf(stderr, " ");
+         fprintf(stderr, " ");
          param--;
       }
-      (void)fprintf(stderr, "^\n");
+      fprintf(stderr, "^\n");
    }
    if (*s == '!')
       exit(1);
@@ -285,7 +285,7 @@ texlive_getline(void) {
       }
    }
    *p = 0;
-   (void)strcpy(obuffer, buffer);
+   strcpy(obuffer, buffer);
    if (p == buffer && c == EOF)
       return(0);
    else
@@ -337,7 +337,7 @@ static char *
 newstring(char *s)
 {
    char *q = mymalloc((unsigned long)(strlen(s) + 1));
-   (void)strcpy(q, s);
+   strcpy(q, s);
    return q;
 }
 
@@ -457,7 +457,7 @@ static void
 expect(const char *s)
 {
    if (strcmp(paramstring(), s) != 0) {
-      (void)fprintf(stderr, "%s expected: ", s);
+      fprintf(stderr, "%s expected: ", s);
       error("! syntax error");
    }
 }
@@ -881,8 +881,8 @@ int lf, lh, nw, nh, nd, ni, nl, nk, ne, np;
 static void
 write16(register short what)
 {
-   (void)fputc(what >> 8, tfmout);
-   (void)fputc(what & 255, tfmout);
+   fputc(what >> 8, tfmout);
+   fputc(what & 255, tfmout);
 }
 
 static void
@@ -1152,7 +1152,7 @@ writesarr(long *what, int len)
    i = len;
    while (i) {
       *p = scale(*p);
-      (void)scale(*p); /* need this kludge for some compilers */
+      scale(*p); /* need this kludge for some compilers */
       p++;
       i--;
    }
@@ -1545,13 +1545,13 @@ usage(FILE *f)
 static void
 usage(FILE *f)
 {
-   (void)fprintf(f,
+   fprintf(f,
  "afm2tfm 8.1, Copyright 1990-97 by Radical Eye Software\n");
-   (void)fprintf(f,
+   fprintf(f,
  "Usage: afm2tfm foo[.afm] [-O] [-u] [-v|-V bar[.vpl]]\n");
-   (void)fprintf(f,
+   fprintf(f,
  "                 [-e expansion] [-s slant] [-c capheight]\n");
-   (void)fprintf(f,
+   fprintf(f,
  "                 [-p|-t|-T encodingfile] [foo[.tfm]]\n");
 }
 #endif
@@ -1588,10 +1588,10 @@ openfiles(int argc, char **argv)
    snprintf(titlebuf, sizeof(titlebuf), "%s %s", argv[0], argv[1]);
 #endif
 #endif
-   (void)strcpy(inname, argv[1]);
+   strcpy(inname, argv[1]);
 #ifdef KPATHSEA
    if (find_suffix(inname) == NULL)
-       (void)strcat(inname, ".afm");
+       strcat(inname, ".afm");
 #else
    lastext = -1;
    for (i=0; inname[i]; i++)
@@ -1599,7 +1599,7 @@ openfiles(int argc, char **argv)
          lastext = i;
       else if (inname[i] == '/' || inname[i] == ':')
          lastext = -1;
-   if (lastext == -1) (void)strcat(inname, ".afm");
+   if (lastext == -1) strcat(inname, ".afm");
 #endif
    while (argc>2 && *argv[2]=='-') {
       arginc = 2;
@@ -1610,10 +1610,10 @@ openfiles(int argc, char **argv)
 case 'V': makevpl++;
 case 'v': makevpl++;
          CHECKARG3
-         (void)strcpy(outname, argv[3]);
+         strcpy(outname, argv[3]);
 #ifdef KPATHSEA
          if (find_suffix(outname) == NULL)
-            (void)strcat(outname, ".vpl");
+            strcat(outname, ".vpl");
 #else
          lastext = -1;
          for (i=0; outname[i]; i++)
@@ -1621,7 +1621,7 @@ case 'v': makevpl++;
                lastext = i;
             else if (outname[i] == '/' || outname[i] == ':')
                lastext = -1;
-         if (lastext == -1) (void)strcat(outname, ".vpl");
+         if (lastext == -1) strcat(outname, ".vpl");
 #endif
 #ifndef VMCMS
 #ifndef ATARIST
@@ -1687,20 +1687,20 @@ default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
    if ((afmin=fopen(inname, "r"))==NULL)
       error("! can't open afm input file");
 #endif /* KPATHSEA */
-   (void)SET_BINARY(fileno(afmin));
+   SET_BINARY(fileno(afmin));
 
    if (argc>3 || (argc==3 && *argv[2]=='-')) {
      error("! need at most two non-option arguments");
      usage(stderr);
    }
 
-   if (argc == 2) (void)strcpy(outname, inname);
-   else (void)strcpy(outname, argv[2]);
+   if (argc == 2) strcpy(outname, inname);
+   else strcpy(outname, argv[2]);
 
 #ifdef KPATHSEA
    if ((p = find_suffix(outname)) != NULL)
       *(p-1) = 0;
-   (void)strcat(outname, ".tfm");
+   strcat(outname, ".tfm");
    if (tfmout == NULL && (tfmout=fopen(outname, WRITEBIN))==NULL)
       error("! can't open tfm output file");
 /*
@@ -1727,7 +1727,7 @@ default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
    }
    if (lastext == -1) {
       lastext = strlen(outname);
-      (void)strcat(outname, ".tfm");
+      strcat(outname, ".tfm");
    }
    if (tfmout == NULL && (tfmout=fopen(outname, WRITEBIN))==NULL)
       error("! can't open tfm output file");
@@ -1979,7 +1979,7 @@ readencoding(char *enc)
 #else
       afmin = fopen(enc, "r");
 #endif
-      (void)SET_BINARY(fileno(afmin));
+      SET_BINARY(fileno(afmin));
       param = 0;
       if (afmin == 0)
 #ifdef KPATHSEA
@@ -2029,25 +2029,25 @@ readencoding(char *enc)
 static void
 conspsfonts(void) {
 #ifndef VMCMS
-   (void)printf("%s %s", outname,
+   printf("%s %s", outname,
    fontname);
 #else /* VM/CMS: fontname is ascii, so we use ebfontname */
-   (void)printf("%s %s", outname,
+   printf("%s %s", outname,
    ebfontname);
 #endif
    if (slantparam || efactorparam || inenname) {
-      (void)printf(" \"");
+      printf(" \"");
       if (slantparam)
-         (void)printf(" %s SlantFont", slantparam);
+         printf(" %s SlantFont", slantparam);
       if (efactorparam)
-         (void)printf(" %s ExtendFont", efactorparam);
+         printf(" %s ExtendFont", efactorparam);
       if (inenname)
-         (void)printf(" %s ReEncodeFont", inencoding->name);
-      (void)printf(" \"");
+         printf(" %s ReEncodeFont", inencoding->name);
+      printf(" \"");
       if (inenname)
-         (void)printf(" <%s", inenname);
+         printf(" <%s", inenname);
    }
-   (void)printf("\n");
+   printf("\n");
 }
 #ifndef VMS
 int

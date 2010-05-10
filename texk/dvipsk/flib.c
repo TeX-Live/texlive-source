@@ -115,7 +115,7 @@ fliload(void)
                (void)pkbyte();       /* skip comment */
 #ifdef DEBUG
    if (dd(D_FONTS))
-      (void)fprintf(stderr,"Font library %s has %d font size%s, %d font%s\n",
+      fprintf(stderr,"Font library %s has %d font size%s, %d font%s\n",
          name, numsizes , numsizes !=1 ? "s" : "", 
          numfonts, numfonts!=1 ? "s" : "");
 #endif /* DEBUG */
@@ -144,7 +144,7 @@ fliload(void)
 
 #ifdef DEBUG
    if (dd(D_FONTS))
-      (void)fprintf(stderr,"Font library %s size %.5gdpi has %d font%s\n", 
+      fprintf(stderr,"Font library %s size %.5gdpi has %d font%s\n", 
                   name, dpi/65536.0, numfonts, numfonts!=1 ? "s" : "");
 #endif /* DEBUG */
                size->size    = dpi;
@@ -166,7 +166,7 @@ fliload(void)
                fli_cache[numflib]->fp = pkfile;
             }
             else
-               (void)fclose(pkfile);
+               fclose(pkfile);
             numflib++;
          }  /* end if opened library */
       } /* end if (*name) */
@@ -195,11 +195,11 @@ flisearch(char *n, halfword dpi)
 
 #ifdef DEBUG
       if (dd(D_FONTS)) { 
-         (void)fprintf(stderr,"Trying %s at %ddpi\nfli open:", n, dpi);
+         fprintf(stderr,"Trying %s at %ddpi\nfli open:", n, dpi);
           for (i=0; i<FLICSIZE; i++)  /* dump cache contents */
             if (fli_cache[i]->lib != (struct fli_lib *)NULL)
-              (void)fprintf(stderr, "   %s",(fli_cache[i]->lib)->name);
-         (void)fprintf(stderr,"\n");
+              fprintf(stderr, "   %s",(fli_cache[i]->lib)->name);
+         fprintf(stderr,"\n");
       }
 #endif /* DEBUG */
    for (lib = firstlib; lib != (struct fli_lib *)NULL; lib = lib->next ) {
@@ -208,7 +208,7 @@ flisearch(char *n, halfword dpi)
       size = lib->size;
 #ifdef DEBUG
       if (dd(D_FONTS))
-         (void)fprintf(stderr,"  Searching %s\n", lib->name);
+         fprintf(stderr,"  Searching %s\n", lib->name);
 #endif /* DEBUG */
       for (; numsizes>0; numsizes--, size++) { 
          /* for each font size in this library */
@@ -217,7 +217,7 @@ flisearch(char *n, halfword dpi)
             /* if correct size then search for font */
 #ifdef DEBUG
             if (dd(D_FONTS))
-               (void)fprintf(stderr, "    Checking size %ddpi\n",dpi1);
+               fprintf(stderr, "    Checking size %ddpi\n",dpi1);
 #endif /* DEBUG */
             entry = size->entry;
             for (numfonts=size->entries;numfonts > 0; numfonts--, entry++) {
@@ -237,7 +237,7 @@ flisearch(char *n, halfword dpi)
                      }
                      if (!found) { /* if not in cache then re-open it */
                         /* make space at front */
-                        (void)fclose(fli_cache[FLICSIZE-1]->fp); 
+                        fclose(fli_cache[FLICSIZE-1]->fp); 
                         centry = fli_cache[FLICSIZE-1];
                         for (i=FLICSIZE-1; i>0; i--)
                              fli_cache[i] = fli_cache[i-1];
@@ -253,7 +253,7 @@ flisearch(char *n, halfword dpi)
                      }
                      flib = 1;  /* tell loadfont() not to close it */
                      /* then seek font within library */
-                     (void)sprintf(name,"%s %s %ddpi",lib->name, n, dpi1);
+                     sprintf(name,"%s %s %ddpi",lib->name, n, dpi1);
                      if ( fseek(pkfile,entry->offset,0) )
                            badpk("couldn't seek font");
                         /* make sure it is a PK font */
@@ -273,7 +273,7 @@ flisearch(char *n, halfword dpi)
             /* if not correct size then skip */
 #ifdef DEBUG
       if (dd(D_FONTS))
-         (void)fprintf(stderr, "    Skipping size %ddpi\n", dpi1);
+         fprintf(stderr, "    Skipping size %ddpi\n", dpi1);
 #endif /* DEBUG */
          }
       }  /* end for numsizes>0 */

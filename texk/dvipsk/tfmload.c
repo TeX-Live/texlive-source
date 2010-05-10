@@ -48,9 +48,9 @@ tfmopen(register fontdesctype *fd)
         d = ofmpath;
 #endif
 #ifdef MVSXA   /* IBM: MVS/XA */
-      (void)sprintf(name, "ofm(%s)", n);
+      sprintf(name, "ofm(%s)", n);
 #else
-      (void)sprintf(name, "%s.ofm", n);
+      sprintf(name, "%s.ofm", n);
 #endif
       if ((tfmfile=search(d, name, READBIN))!=NULL)
          return;
@@ -63,13 +63,13 @@ tfmopen(register fontdesctype *fd)
      d = tfmpath;
 #endif
 #ifdef MVSXA   /* IBM: MVS/XA */
-   (void)sprintf(name, "tfm(%s)", n);
+   sprintf(name, "tfm(%s)", n);
 #else
-   (void)sprintf(name, "%s.tfm", n);
+   sprintf(name, "%s.tfm", n);
 #endif
    if ((tfmfile=search(d, name, READBIN))!=NULL)
       return;
-   (void)sprintf(errbuf, "Can't open font metric file %s%s",
+   sprintf(errbuf, "Can't open font metric file %s%s",
           fd->area, name);
    error(errbuf);
    error("I will use cmr10.tfm instead, so expect bad output.");
@@ -247,7 +247,7 @@ tfmload(register fontdesctype *curfnt)
    scaled = (integer *) xmalloc(nw*sizeof(integer));
    for (i=0; i<nw; i++)
       scaled[i] = scalewidth(tfm32(), scaledsize);
-   (void)fclose(tfmfile);
+   fclose(tfmfile);
 
    if (id == 9 || id == 11) {
       for (i=0; i<MAX_CODE; i++) {

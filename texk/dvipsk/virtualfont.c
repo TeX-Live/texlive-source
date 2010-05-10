@@ -78,9 +78,9 @@ vfopen(register fontdesctype *fd)
      error("! VF file name too long in vfopen");
    }
 #ifdef MVSXA   /* IBM: MVS/XA */
-   (void)sprintf(name, "vf(%s)", n);
+   sprintf(name, "vf(%s)", n);
 #else
-   (void)sprintf(name, "%s.vf", n);
+   sprintf(name, "%s.vf", n);
 #endif
 #ifdef KPATHSEA
    if (0 != (vffile=search(vfpath, name, READBIN)))
@@ -165,7 +165,7 @@ virtualfont(register fontdesctype *curfnt)
       return (0);
 #ifdef DEBUG
    if (dd(D_FONTS))
-      (void)fprintf(stderr,"Loading virtual font %s at %.1fpt\n",
+      fprintf(stderr,"Loading virtual font %s at %.1fpt\n",
          name, (real)scaledsize/(alpha*0x100000));
 #endif /* DEBUG */
 
@@ -200,7 +200,7 @@ virtualfont(register fontdesctype *curfnt)
       if (!noptex) {
          tfmopen(curfnt); /* We check if parent is jfm or not. */
          id = tfm16();
-         (void)fclose(tfmfile);
+         fclose(tfmfile);
       }
       if (id != 9 && id != 11) {
          char *msg = concat("Design size mismatch in font ", name);
@@ -264,7 +264,7 @@ virtualfont(register fontdesctype *curfnt)
       if (bytesleft < length) {
 #ifdef DEBUG
           if (dd(D_MEM))
-             (void)fprintf(stderr,
+             fprintf(stderr,
 #ifdef SHORTINT
                    "Allocating new raster memory (%ld req, %ld left)\n",
 #else
@@ -296,7 +296,7 @@ virtualfont(register fontdesctype *curfnt)
    } while (cmd < 243);
    if (cmd != 248)
       badvf("missing postamble");
-   (void)fclose(vffile);
+   fclose(vffile);
    curfnt->loaded = 2;
    if (maxcc+1<no_of_chars) {
       curfnt->chardesc = (chardesctype *)

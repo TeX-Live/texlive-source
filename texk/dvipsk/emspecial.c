@@ -157,7 +157,7 @@ char *emp;
 	      cmdout(emstr);
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-      (void)fprintf(stderr, "em special: Linewidth set to %.1f dots\n",
+      fprintf(stderr, "em special: Linewidth set to %.1f dots\n",
 		emwidth);
 #endif
 	   } else {
@@ -169,9 +169,9 @@ char *emp;
 #ifdef DEBUG
    if (dd(D_SPECIAL))
 #ifdef SHORTINT
-      (void)fprintf(stderr, "em special: moveto %ld,%ld\n", hh, vv);
+      fprintf(stderr, "em special: moveto %ld,%ld\n", hh, vv);
 #else
-      (void)fprintf(stderr, "em special: moveto %d,%d\n", hh, vv);
+      fprintf(stderr, "em special: moveto %d,%d\n", hh, vv);
 #endif
 #endif
            emx = hh;
@@ -181,9 +181,9 @@ char *emp;
 #ifdef DEBUG
    if (dd(D_SPECIAL))
 #ifdef SHORTINT
-      (void)fprintf(stderr, "em special: lineto %ld,%ld\n", hh, vv);
+      fprintf(stderr, "em special: lineto %ld,%ld\n", hh, vv);
 #else
-      (void)fprintf(stderr, "em special: lineto %d,%d\n", hh, vv);
+      fprintf(stderr, "em special: lineto %d,%d\n", hh, vv);
 #endif
 #endif
 	   cmdout("np");
@@ -210,9 +210,9 @@ char *emp;
 #ifdef DEBUG
    if (dd(D_SPECIAL))
 #ifdef SHORTINT
-      (void)fprintf(stderr, "em special: Point %d is %ld,%ld\n",
+      fprintf(stderr, "em special: Point %d is %ld,%ld\n",
 #else
-      (void)fprintf(stderr, "em special: Point %d is %d,%d\n",
+      fprintf(stderr, "em special: Point %d is %d,%d\n",
 #endif
 		empoint->point, empoint->x, empoint->y);
 #endif
@@ -240,14 +240,14 @@ char *emp;
 	   emwidth = emunits(emwidth,emunit);
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-      (void)fprintf(stderr, "em special: Line from point %d to point %d\n",
+      fprintf(stderr, "em special: Line from point %d to point %d\n",
 		empoint1, empoint2);
 #endif
 	   cmdout("np");
 	   if (emwidth!=-1.0) {
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-   (void)fprintf(stderr,"em special: Linewidth temporarily set to %.1f dots\n",
+   fprintf(stderr,"em special: Linewidth temporarily set to %.1f dots\n",
 		emwidth);
 #endif
 	   	strcpy(emstr,"currentlinewidth");
@@ -270,7 +270,7 @@ char *emp;
 	   }
 	}
 	else if (strncmp(emp, "message", 7) == 0) {
-           (void)fprintf(stderr, "em message: %s\n", emp+7);
+           fprintf(stderr, "em message: %s\n", emp+7);
 	}
 	else if (strncmp(emp, "graph", 5) == 0) {
 	   int i;
@@ -303,7 +303,7 @@ char *emp;
 	      emgraph(emstr,emwidth,emheight);
 	   }
 	   else {
-              (void)fprintf(stderr, "em:graph: no file given\n");
+              fprintf(stderr, "em:graph: no file given\n");
 	   }
 	}
 	else {
@@ -668,8 +668,8 @@ imagehead(char *filename, int wide, int high,
 		fprintf(stderr,"\n");
 		prettycolumn = 0;
 	    }
-	    (void)fprintf(stderr,"<%s",name);
-	    (void)fflush(stderr);
+	    fprintf(stderr,"<%s",name);
+	    fflush(stderr);
 	    prettycolumn += 2+strlen(name);
 	    if (fullname) free (fullname);
 	}
@@ -689,10 +689,10 @@ imagehead(char *filename, int wide, int high,
 	cmdout("scale");
 #ifdef DEBUG
 	if (dd(D_SPECIAL)) {
-	  (void)fprintf(stderr,
+	  fprintf(stderr,
 	    "\nem:graph: %s width  %d pixels scaled to %.1f pixels\n",
 	    filename, wide, emwidth);
-	  (void)fprintf(stderr,
+	  fprintf(stderr,
 	    "em:graph: %s height %d pixels scaled to %.1f pixels\n",
 	    filename, high, emheight);
    	}
@@ -703,13 +703,13 @@ static void
 imagetail(void)
 {
 	if (!disablecomments) {
-	    (void)fprintf(bitfile, "\n%%%%EndDocument\n");
+	    fprintf(bitfile, "\n%%%%EndDocument\n");
 	    linepos = 0;
 	}
 	nlcmdout("@endspecial");
 	if (!quiet) {
-	    (void)fprintf(stderr,">");
-	    (void)fflush(stderr);
+	    fprintf(stderr,">");
+	    fflush(stderr);
 	}
 }
 
@@ -1054,7 +1054,7 @@ rle4read(FILE *f, int w, int b, char *s)
 			    *s++ = fgetc(f);
 			}
 			if (ch % 4)	/* word align file */
-			    (void)fgetc(f);
+			    fgetc(f);
   		}
 	    }
 	    else {   /* cnt is repeat count */
@@ -1124,7 +1124,7 @@ rle8read(FILE *f, int w, int b, char *s)
 			    *s++ = fgetc(f);
 		        }
 			if (ch % 2)	/* word align file */
-			    (void)fgetc(f);
+			    fgetc(f);
 		}
 	    }
 	    else { /* cnt is repeat count */

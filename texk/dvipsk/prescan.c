@@ -21,7 +21,7 @@ readpreamble(void)
    if (dvibyte()!=2) error("! Bad DVI file: id byte not 2");
    num = signedquad();
    den = signedquad();
-   if (overridemag > 0) (void)signedquad();
+   if (overridemag > 0) signedquad();
    else if (overridemag < 0) mag = (mag * signedquad()) / 1000.0;
    else mag = signedquad();
    conv = (real) num * DPI * mag / ( den * 254000000.0 ); 
@@ -32,17 +32,17 @@ readpreamble(void)
      for (i=dvibyte(),p=preamblecomment;i>0;i--,p++) *p=dvibyte();
      *p='\0';
      if (!quiet) {
-        (void)fprintf(stderr, "'");
+        fprintf(stderr, "'");
 #ifdef VMCMS /* IBM: VM/CMS */
-        for(p=preamblecomment;*p;p++) (void)putc(ascii2ebcdic[*p], stderr);
+        for(p=preamblecomment;*p;p++) putc(ascii2ebcdic[*p], stderr);
 #else
 #ifdef MVSXA /* IBM: MVS/XA */
-        for(p=preamblecomment;*p;p++) (void)putc(ascii2ebcdic[*p], stderr);
+        for(p=preamblecomment;*p;p++) putc(ascii2ebcdic[*p], stderr);
 #else
-        for(p=preamblecomment;*p;p++) (void)putc(*p, stderr);
+        for(p=preamblecomment;*p;p++) putc(*p, stderr);
 #endif  /* IBM: VM/CMS */
 #endif
-        (void)fprintf(stderr, "' -> %s\n", oname);
+        fprintf(stderr, "' -> %s\n", oname);
       }
    } else
       skipover(dvibyte());
@@ -83,9 +83,9 @@ prescanpages(void)
 #ifdef DEBUG
       if (dd(D_PAGE))
 #ifdef SHORTINT
-      (void)fprintf(stderr,"bop at %ld\n", thispageloc);
+      fprintf(stderr,"bop at %ld\n", thispageloc);
 #else   /* ~SHORTINT */
-      (void)fprintf(stderr,"bop at %d\n", (int)thispageloc);
+      fprintf(stderr,"bop at %d\n", (int)thispageloc);
 #endif  /* ~SHORTINT */
 #endif  /* DEBUG */
       pagenum = signedquad();
@@ -127,7 +127,7 @@ prescanpages(void)
  *   be a page that was aborted because the previous section overflowed memory).
  */
       pagecount = 0;
-      (void)fseek(dvifile, (long)thispageloc, 0);
+      fseek(dvifile, (long)thispageloc, 0);
       pagenum = signedquad();
       skipover(40);
       thissecloc = thispageloc;
@@ -177,9 +177,9 @@ prescanpages(void)
 #ifdef DEBUG
          if (dd(D_PAGE))
 #ifdef SHORTINT
-         (void)fprintf(stderr,"bop at %ld\n", thispageloc);
+         fprintf(stderr,"bop at %ld\n", thispageloc);
 #else   /* ~SHORTINT */
-         (void)fprintf(stderr,"bop at %d\n", (int)thispageloc);
+         fprintf(stderr,"bop at %d\n", (int)thispageloc);
 #endif  /* ~SHORTINT */
 #endif  /* DEBUG */
          pagenum = signedquad();
@@ -222,9 +222,9 @@ prescanpages(void)
 #ifdef DEBUG
         if (dd(D_PAGE))
 #ifdef SHORTINT
-         (void)fprintf(stderr,"Have a section: %ld pages at %ld fontmem %ld\n", 
+         fprintf(stderr,"Have a section: %ld pages at %ld fontmem %ld\n", 
 #else   /* ~SHORTINT */
-         (void)fprintf(stderr,"Have a section: %d pages at %d fontmem %d\n", 
+         fprintf(stderr,"Have a section: %d pages at %d fontmem %d\n", 
 #endif  /* ~SHORTINT */
          (integer)pagecount, (integer)thissecloc, (integer)thissectionmem);
 #endif  /* DEBUG */

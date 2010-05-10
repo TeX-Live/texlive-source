@@ -253,7 +253,7 @@ scan_fontnames(char *str, const char *psfile)
      if (1) {
 #ifdef DEBUG
        if (dd(D_FONTS))
-         (void)fprintf(stderr,
+         fprintf(stderr,
 		       "Adding font '%s' from included postscript file '%s'.\n",
 		       p,psfile);
 #endif  /* DEBUG */
@@ -384,7 +384,7 @@ scanfontcomments(const char *filename)
 
 #ifdef DEBUG
       if (dd(D_FONTS))
-         (void)fprintf(stderr,
+         fprintf(stderr,
 		       "Checking for fonts in '%s'\n",filename);
 #endif  /* DEBUG */
 
@@ -393,13 +393,13 @@ scanfontcomments(const char *filename)
  *   Allow scanning of ` commands.  Better return same results both times.
  */
       f = popen(filename+1, "r");
-      (void)SET_BINARY(fileno(f));
+      SET_BINARY(fileno(f));
       to_close = USE_PCLOSE;
    } else {
       f = search(figpath, filename, READ);
    }
    if (f) {
-     (void)SET_BINARY(fileno(f));
+     SET_BINARY(fileno(f));
      fc_state = 0;
      check_atend = 0;
      while (fgets(p,500,f) && p[0]=='%' &&
@@ -418,7 +418,7 @@ scanfontcomments(const char *filename)
      if(check_atend) {
 #ifdef DEBUG
        if (dd(D_FONTS))
-         (void)fprintf(stderr,
+         fprintf(stderr,
 		       "Checking for (atend) fonts in '%s'\n",filename);
 #endif  /* DEBUG */
 
@@ -439,7 +439,7 @@ scanfontcomments(const char *filename)
 #ifdef DEBUG
        else { /* r == NULL */
 	 if (dd(D_FONTS))
-         (void)fprintf(stderr,
+         fprintf(stderr,
 		       "Did not find %%%%Trailer in included file '%s'.\n",
 		       filename);
        }
@@ -474,7 +474,7 @@ nameout(char *area, char *name)
    char *s;
 
    if (*area==0 && okascmd(name)) {
-      (void)sprintf(buf, "/%s", name);
+      sprintf(buf, "/%s", name);
       cmdout(name);
    } else {
       for (s=area; *s; s++)

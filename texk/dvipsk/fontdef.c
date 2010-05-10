@@ -65,7 +65,7 @@ newfontdesc(integer cksum, integer scsize, integer dssize,
    fp->loadeddpi = fp->dpi;
 #ifdef DEBUG
    if (dd(D_FONTS))
-      (void)fprintf(stderr,"Defining font (%s) %s at %.1fpt\n",
+      fprintf(stderr,"Defining font (%s) %s at %.1fpt\n",
          area, name, (real)scsize/(alpha*0x100000));
 #endif /* DEBUG */
    return fp;
@@ -99,7 +99,7 @@ matchfont(char *name, char *area, integer scsize, char *scname)
       }
 #ifdef DEBUG
    if (dd(D_FONTS) && fp)
-      (void)fprintf(stderr,"(Already known.)\n");
+      fprintf(stderr,"(Already known.)\n");
 #endif /* DEBUG */
    return fp;
 }

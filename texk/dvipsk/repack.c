@@ -433,7 +433,7 @@ repack(register chardesctype *cp)
    j = tsp - tempstore;
 #ifdef DEBUG
    if (dd(D_COMPRESS))
-        (void)fprintf(stderr,"PK %ld bytes, unpacked %ld, compressed %ld\n",
+        fprintf(stderr,"PK %ld bytes, unpacked %ld, compressed %ld\n",
        i-(long)startbytes, (long)((width+7L)/8)*height, j-(long)startbytes-4);
 #endif /* DEBUG */
    if ( i < j ) {

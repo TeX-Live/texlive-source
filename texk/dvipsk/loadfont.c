@@ -150,7 +150,7 @@ pkopen(register fontdesctype *fd)
        {
            fd->loadeddpi = dpi_ret;
            fd->alreadyscaled = 0;
-           (void)sprintf(errbuf,
+           sprintf(errbuf,
                    "Font %s at %d not found; scaling %d instead.",
                                      n, fd->dpi, dpi_ret);
            error(errbuf);
@@ -172,9 +172,9 @@ pkopen(register fontdesctype *fd)
                                                        / (2 * actualdpi);
          }
 #ifdef MVSXA
-         (void)sprintf(name, "pk%d(%s)", fd->dpi + del, n);
+         sprintf(name, "pk%d(%s)", fd->dpi + del, n);
 #else
-         (void)sprintf(name, "%s.%dpk", n, fd->dpi + del);
+         sprintf(name, "%s.%dpk", n, fd->dpi + del);
 #endif
          if (0 != (pkfile=pksearch(d, name, READBIN, n, fd->dpi + del, vdpi)))
             return(1);
@@ -188,9 +188,9 @@ pkopen(register fontdesctype *fd)
                                                     / (2 * actualdpi);
       }
 #ifdef MVSXA
-      (void)sprintf(name, "pk%d(%s)", fd->dpi, n);
+      sprintf(name, "pk%d(%s)", fd->dpi, n);
 #else
-      (void)sprintf(name, "%s.%dpk", n, fd->dpi);
+      sprintf(name, "%s.%dpk", n, fd->dpi);
 #endif
       makefont(n, (int)fd->dpi, DPI);
       if (dontmakefont == 0 &&
@@ -230,9 +230,9 @@ pkopen(register fontdesctype *fd)
                                                        / (2 * actualdpi);
             }
 #ifdef MVSXA
-            (void)sprintf(name, "pk%d(%s)", lastresortsizes[j], n);
+            sprintf(name, "pk%d(%s)", lastresortsizes[j], n);
 #else
-            (void)sprintf(name, "%s.%dpk", n, lastresortsizes[j]);
+            sprintf(name, "%s.%dpk", n, lastresortsizes[j]);
 #endif
 #ifdef FONTLIB
             if (0 != (pkfile=flisearch(n,(halfword)lastresortsizes[j]))
@@ -244,7 +244,7 @@ pkopen(register fontdesctype *fd)
 #endif
                fd->loadeddpi = lastresortsizes[j];
                fd->alreadyscaled = 0;
-               (void)sprintf(errbuf,
+               sprintf(errbuf,
                        "Font %s at %d dpi not found; scaling %d instead.",
                                          n, fd->dpi, lastresortsizes[j]);
                error(errbuf);
@@ -259,7 +259,7 @@ pkopen(register fontdesctype *fd)
                vdpi = (2 * ((long)vactualdpi) * lastresortsizes[j] + actualdpi)
                                                        / (2 * actualdpi);
             }
-            (void)sprintf(name, "%s.%dpk", n, lastresortsizes[j]);
+            sprintf(name, "%s.%dpk", n, lastresortsizes[j]);
 #ifdef FONTLIB
             if (0 != (pkfile=flisearch(n, (halfword)lastresortsizes[j]))
                 || 0 != (pkfile=pksearch(d, name, READBIN, n,
@@ -270,7 +270,7 @@ pkopen(register fontdesctype *fd)
 #endif
                fd->loadeddpi = lastresortsizes[j];
                fd->alreadyscaled = 0;
-               (void)sprintf(errbuf,
+               sprintf(errbuf,
                        "Font %s at %d dpi not found; scaling %d instead.",
                                          name, fd->dpi, lastresortsizes[j]);
                error(errbuf);
@@ -281,11 +281,11 @@ pkopen(register fontdesctype *fd)
       }
    }
 #ifdef MVSXA
-   (void)sprintf(name, "%s.pk%d", n, fd->dpi);
+   sprintf(name, "%s.pk%d", n, fd->dpi);
 #else
-   (void)sprintf(name, "%s.%dpk", n, fd->dpi);
+   sprintf(name, "%s.%dpk", n, fd->dpi);
 #endif
-   (void)sprintf(errbuf,
+   sprintf(errbuf,
       "Font %s%s not found, characters will be left blank.",
       fd->area, name);
    error(errbuf);
@@ -343,12 +343,12 @@ loadfont(register fontdesctype *curfnt)
          fprintf(stderr, "\n");
          prettycolumn = 0;
       }
-      (void)fprintf(stderr, "<%s>", realnameoffile);
+      fprintf(stderr, "<%s>", realnameoffile);
       prettycolumn += strlen(realnameoffile) + 2;
    }
 #ifdef DEBUG
    if (dd(D_FONTS))
-      (void)fprintf(stderr,"Loading pk font %s at %.1fpt\n",
+      fprintf(stderr,"Loading pk font %s at %.1fpt\n",
          curfnt->name, (real)scaledsize/(alpha*0x100000));
 #endif /* DEBUG */
    if (pkbyte()!=247)
@@ -429,7 +429,7 @@ case 7:
             if (bytesleft < length || (length > MINCHUNK && compressed)) {
 #ifdef DEBUG
                 if (dd(D_MEM))
-                   (void)fprintf(stderr,
+                   fprintf(stderr,
 #ifdef SHORTINT
                       "Allocating new raster memory (%ld req, %ld left)\n",
                                    length, bytesleft);
@@ -488,7 +488,7 @@ default:
       flib = 0;
    else
 #endif
-   (void)fclose(pkfile);
+   fclose(pkfile);
    curfnt->loaded = 1;
    curfnt->maxchars = maxcc + 1;
    if (munged > 0) {

@@ -72,11 +72,11 @@ dosection(sectiontype *s, int c)
       c--;
       prevptr = s->bos;
       if (! reverse)
-         (void)fseek(dvifile, (long)prevptr, 0);
+         fseek(dvifile, (long)prevptr, 0);
       np = s->numpages;
       while (np-- != 0) {
          if (reverse)
-            (void)fseek(dvifile, (long)prevptr, 0);
+            fseek(dvifile, (long)prevptr, 0);
          pagenum = signedquad();
 	 if ((evenpages && (pagenum & 1)) || (oddpages && (pagenum & 1)==0) ||
 	  (pagelist && !InPageList(pagenum))) {
@@ -113,11 +113,11 @@ dosection(sectiontype *s, int c)
             }
             prettycolumn += i + 1;
 #ifdef SHORTINT
-            (void)fprintf(stderr, "[%ld", pagenum);
+            fprintf(stderr, "[%ld", pagenum);
 #else  /* ~SHORTINT */
-            (void)fprintf(stderr, "[%d", pagenum);
+            fprintf(stderr, "[%d", pagenum);
 #endif /* ~SHORTINT */
-            (void)fflush(stderr);
+            fflush(stderr);
          }
          skipover(36);
          prevptr = signedquad()+1;
@@ -126,34 +126,34 @@ dosection(sectiontype *s, int c)
                if (pagecopies > 1)
                   thispage = ftell(dvifile);
             } else {
-               (void)fseek(dvifile, (long)thispage, 0);
+               fseek(dvifile, (long)thispage, 0);
                if (prettycolumn + 1 > STDOUTSIZE) {
-                  (void)fprintf(stderr, "\n");
+                  fprintf(stderr, "\n");
                   prettycolumn = 0;
                }
-               (void)fprintf(stderr, ".");
-               (void)fflush(stderr);
+               fprintf(stderr, ".");
+               fflush(stderr);
                prettycolumn++;
             }
             dopage();
          }
          if (! quiet) {
-            (void)fprintf(stderr, "] ");
-            (void)fflush(stderr);
+            fprintf(stderr, "] ");
+            fflush(stderr);
             prettycolumn += 2;
          }
          if (! reverse)
-            (void)skipnop();
+            skipnop();
       }
    }
    if (! multiplesects && ! disablecomments) {
       newline();
-      (void)fprintf(bitfile, "%%%%Trailer\n");
+      fprintf(bitfile, "%%%%Trailer\n");
    }
    if (multiplesects) {
       if (! disablecomments) {
          newline();
-         (void)fprintf(bitfile, "%%DVIPSSectionTrailer\n");
+         fprintf(bitfile, "%%DVIPSSectionTrailer\n");
       }
       cmdout("eos");
       cmdout("end");
@@ -163,7 +163,7 @@ dosection(sectiontype *s, int c)
 #endif
    if (multiplesects && ! disablecomments) {
       newline();
-      (void)fprintf(bitfile, "%%DVIPSEndSection\n");
+      fprintf(bitfile, "%%DVIPSEndSection\n");
       linepos = 0;
    }
 }

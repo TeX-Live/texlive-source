@@ -51,12 +51,12 @@ specerror(const char *s)
 static void
 outputstring(register char *p)
 {
-   (void)putc('\n', bitfile);
+   putc('\n', bitfile);
    while(*p) {
-      (void)putc(*p, bitfile);
+      putc(*p, bitfile);
       p++;
    }
-   (void)putc('\n', bitfile);
+   putc('\n', bitfile);
 }
 
 static void
@@ -67,23 +67,23 @@ trytobreakout(register char *p)
    int lastc = 0;
 
    i = 0;
-   (void)putc('\n', bitfile);
+   putc('\n', bitfile);
 
    if(*p == '%') {
       while(*p) {
-         (void)putc(*p, bitfile);
+         putc(*p, bitfile);
          p++;
       }
-      (void)putc('\n', bitfile);
+      putc('\n', bitfile);
       return;
    }
 
    while (*p) {
       if (i > 65 && *p == ' ' && instring == 0) {
-         (void)putc('\n', bitfile);
+         putc('\n', bitfile);
          i = 0;
       } else {
-         (void)putc(*p, bitfile);
+         putc(*p, bitfile);
          i++;
       }
       if (*p == '(' && lastc != '\\')
@@ -93,7 +93,7 @@ trytobreakout(register char *p)
       lastc = *p;
       p++;
    }
-   (void)putc('\n', bitfile);
+   putc('\n', bitfile);
 }
 
 static void
@@ -400,7 +400,7 @@ predospecial(integer numbytes, Boolean scanning)
       p++;
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-      (void)fprintf(stderr, "Preprocessing special: %s\n", p);
+      fprintf(stderr, "Preprocessing special: %s\n", p);
 #endif
 
 /*
@@ -510,7 +510,7 @@ case 'h':
 	    *r = 0;
 	 }
 	 if (strlen(q) > 0)
-	    (void)add_header_general(q, pre, post);
+	    add_header_general(q, pre, post);
       } else {
 	 q = p;  /* we will remove enclosing parentheses */
 	 p = p + strlen(p) - 1;
@@ -518,7 +518,7 @@ case 'h':
 	    p--;
 	 p[1] = 0;
 	 if (p >= q)
-	    (void)add_header(q);
+	    add_header(q);
       }
    }
    break;
@@ -558,7 +558,7 @@ case '!':
       p++;
       q = (struct bangspecial *)mymalloc((integer)
                          (sizeof(struct bangspecial) + strlen(p)));
-      (void)strcpy(q->actualstuff, p);
+      strcpy(q->actualstuff, p);
       q->next = bangspecials;
       bangspecials = q;
       usesspecial = 1;
@@ -628,7 +628,7 @@ if (HPS_FLAG && NEED_NEW_BOX) {
       p++;
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-      (void)fprintf(stderr, "Processing special: %s\n", p);
+      fprintf(stderr, "Processing special: %s\n", p);
 #endif
 
    switch (*p) {
@@ -916,7 +916,7 @@ default:
  case -1: /* for compatability with old conventions, we allow a file name
            * to be given without the 'psfile=' keyword */
          if (!psfile[0] && maccess(KeyStr)==0) /* yes we can read it */
-             (void)strcpy(psfile,KeyStr);
+             strcpy(psfile,KeyStr);
          else {
            if (strlen(KeyStr) < 40) {
               sprintf(errbuf,
@@ -936,7 +936,7 @@ default:
                     "psfile",  ValStr);
            specerror(errbuf);
          }
-         else (void)strcpy(psfile,ValStr);
+         else strcpy(psfile,ValStr);
          task = tasks[j];
          break;
  default: /* most keywords are output as PostScript procedure calls */
@@ -955,7 +955,7 @@ default:
                cmdout(cmdbuf);
             }
          }
-      (void)sprintf(cmdbuf, "@%s", KeyStr);
+      sprintf(cmdbuf, "@%s", KeyStr);
       cmdout(cmdbuf);
       }
 

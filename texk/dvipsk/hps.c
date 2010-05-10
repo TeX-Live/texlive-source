@@ -426,17 +426,17 @@ do_target_dict(void)
   struct nlist *np;
   int i;
   (void) fprintf(bitfile, "HPSdict begin\n");
-  (void)fprintf(bitfile, "/TargetAnchors\n");
-  (void)fprintf(bitfile, "%i dict dup begin\n",count_targets());
+  fprintf(bitfile, "/TargetAnchors\n");
+  fprintf(bitfile, "%i dict dup begin\n",count_targets());
 
   for (i = 0; i < HASHSIZE; i++)
     for(np = link_targets[i]; np != NULL; np = np -> next)
-      (void)fprintf(bitfile, "(%s) [%i [%.0f %.0f %.0f %.0f] %i] def\n",
+      fprintf(bitfile, "(%s) [%i [%.0f %.0f %.0f %.0f] %i] def\n",
 		    np->defn->title, np->defn->srcpg,
 		    np->defn->rect.llx, np->defn->rect.lly,
 		    np->defn->rect.urx, np->defn->rect.ury,
 		    vert_loc((int) np->defn->rect.lly));
-  (void)fprintf(bitfile,"end targetdump-hook def end\n");
+  fprintf(bitfile,"end targetdump-hook def end\n");
 }
 
 static int
@@ -474,7 +474,7 @@ stamp_hps(Hps_link *pl)
 
   /* print out the proper pdfm with local page info only
    *  target info will be in the target dictionary */
-  (void)sprintf(tmpbuf,
+  sprintf(tmpbuf,
 		" (%s) [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] pdfm ",
 		pl->title, pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
 		pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
@@ -506,7 +506,7 @@ stamp_external(char *s, Hps_link *pl)
 
   /* print out the proper pdfm with local page info only
    *  target info will be in the target dictionary */
-  (void)sprintf(tmpbuf," [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] (%s) pdfm ",
+  sprintf(tmpbuf," [[%.0f %.0f %.0f %.0f] [%i %i %i [%i %i]] [%.0f %.0f %.0f]] (%s) pdfm ",
 		pl->rect.llx, pl->rect.lly, pl->rect.urx, pl->rect.ury,
 		pl->border[0], pl->border[1], pl->border[2], pl->border[3],pl->border[4],
 		pl->color[0], pl->color[1], pl->color[2], s);
@@ -520,8 +520,8 @@ finish_hps(void) {
   set_bitfile("head.tmp",1);
   do_targets();
   do_target_dict();
-  (void)fprintf(bitfile, "TeXDict begin\n");
-  (void)fprintf(bitfile, "%%%%EndSetup\n");
+  fprintf(bitfile, "TeXDict begin\n");
+  fprintf(bitfile, "%%%%EndSetup\n");
   fclose(bitfile);
   open_output();
   noprocset = 1;

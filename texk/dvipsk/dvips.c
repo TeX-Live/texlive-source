@@ -342,7 +342,7 @@ error_with_perror(const char *s, const char *fname)
    if (prettycolumn > 0)
         fprintf(stderr,"\n");
    prettycolumn = 0;
-   (void)fprintf(stderr, "%s: %s", progname, s);
+   fprintf(stderr, "%s: %s", progname, s);
    if (fname) {
      putc (' ', stderr);
      perror (fname);
@@ -502,7 +502,7 @@ newstring(const char *s)
       morestrings();
    if (nextstring + l >= maxstring)
       error("! out of string space");
-   (void)strcpy(nextstring, s);
+   strcpy(nextstring, s);
    q = nextstring;
    nextstring += l + 1;
    return(q);
@@ -781,7 +781,7 @@ case 'h' : case 'H' :
                if (strcmp(p, "-") == 0)
                   headers_off = 1;
                else
-                  (void)add_header(p);
+                  add_header(p);
                break;
 case 'i':
                sepfiles = (*p != '0');
@@ -1132,7 +1132,7 @@ default:
       }
       papsizes = (struct papsiz *)revlist((void *)papsizes);
       if (queryoptions != 0) {            /* get new options */
-         (void)fprintf(stderr, "%s %s\n", banner, banner2);
+         fprintf(stderr, "%s %s\n", banner, banner2);
          help(1);
          queryargs();
          if (qargc == 1)
@@ -1171,11 +1171,11 @@ default:
    revpslists();
    if (dvips_debug_flag) {
       if (!quiet)
-         (void)fprintf(stderr, "\n%s %s\n", banner, banner2);
+         fprintf(stderr, "\n%s %s\n", banner, banner2);
       prettycolumn = 0;
    } else {
       if (!quiet)
-         (void)fprintf(stderr, "%s %s\n", banner, banner2);
+         fprintf(stderr, "%s %s\n", banner, banner2);
    }
    if (*iname) {
       dvifile = fopen(iname, READBIN);
@@ -1251,19 +1251,19 @@ default:
 #ifdef DEBUG
    if (dd(D_PATHS)) {
 #ifdef SHORTINT
-        (void)fprintf(stderr,"input file %s output file %s swmem %ld\n",
+        fprintf(stderr,"input file %s output file %s swmem %ld\n",
 #else /* ~SHORTINT */
-           (void)fprintf(stderr,"input file %s output file %s swmem %d\n",
+           fprintf(stderr,"input file %s output file %s swmem %d\n",
 #endif /* ~SHORTINT */
            iname, oname, swmem);
 #ifndef KPATHSEA
-   (void)fprintf(stderr,"tfm path %s\npk path %s\n", tfmpath, pkpath);
-   (void)fprintf(stderr,"fig path %s\nvf path %s\n", figpath, vfpath);
-   (void)fprintf(stderr,"config path %s\nheader path %s\n",
+   fprintf(stderr,"tfm path %s\npk path %s\n", tfmpath, pkpath);
+   fprintf(stderr,"fig path %s\nvf path %s\n", figpath, vfpath);
+   fprintf(stderr,"config path %s\nheader path %s\n",
                   configpath, headerpath);
 #endif
 #ifdef FONTLIB
-   (void)fprintf(stderr,"fli path %s\nfli names %s\n", flipath, fliname);
+   fprintf(stderr,"fli path %s\nfli names %s\n", flipath, fliname);
 #endif
    } /* dd(D_PATHS) */
 #endif /* DEBUG */
@@ -1274,7 +1274,7 @@ default:
       error(warningmsg);
    headersready = 1;
    headerfile = (compressed? CHEADERFILE : HEADERFILE);
-   (void)add_header(headerfile);
+   add_header(headerfile);
    if (*iname != 0) {
       fulliname = nextstring;
 #ifndef IGNORE_CWD
@@ -1349,16 +1349,16 @@ default:
    }
 #endif
    if (includesfonts)
-      (void)add_header(IFONTHEADER);
+      add_header(IFONTHEADER);
    if (usesPSfonts)
-      (void)add_header(PSFONTHEADER);
+      add_header(PSFONTHEADER);
    if (usesspecial)
-      (void)add_header(SPECIALHEADER);
+      add_header(SPECIALHEADER);
    if (usescolor)  /* IBM: color */
-      (void)add_header(COLORHEADER);
+      add_header(COLORHEADER);
 #ifdef HPS
    if (HPS_FLAG)
-      (void)add_header(HPSHEADER);
+      add_header(HPSHEADER);
 #endif
    sects = sections;
    totalpages *= collatedcopies;
@@ -1398,7 +1398,7 @@ default:
                   fprintf(stderr, "\n");
                   prettycolumn = 0;
                }
-               (void)fprintf(stderr, "(-> %s) ", oname);
+               fprintf(stderr, "(-> %s) ", oname);
                prettycolumn += strlen(oname) + 6;
             }
 #ifdef HPS
@@ -1412,10 +1412,10 @@ default:
                fprintf(stderr, "\n");
                prettycolumn = 0;
             }
-            (void)fprintf(stderr, ". ");
+            fprintf(stderr, ". ");
             prettycolumn += 2;
          }
-         (void)fflush(stderr);
+         fflush(stderr);
          dosection(sects, sectioncopies);
          sects = sects->next;
          if (sepfiles) {
@@ -1436,7 +1436,7 @@ default:
       cleanprinter();
    }
    if (! quiet)
-      (void)fprintf(stderr, "\n");
+      fprintf(stderr, "\n");
 #ifdef DEBUG
    if (dd(D_MEM)) {
 #ifdef SHORTINT

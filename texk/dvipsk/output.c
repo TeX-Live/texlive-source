@@ -125,14 +125,14 @@ copyfile_general(const char *s, struct header_list *cur_header)
       lastdirsep = strrchr(s, '/');
       if ( NULL != lastdirsep ) trunc_s = lastdirsep + 1;
 #ifdef VMCMS
-      (void)sprintf(errbuf,
+      sprintf(errbuf,
    "Couldn't find figure file %s with CMS name %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s, trunc_s);
 #else /* VMCMS */
-      (void)sprintf(errbuf,
+      sprintf(errbuf,
     "Couldn't find figure file %s with MVS name %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s, trunc_s);
 #endif /* VMCMS */
 #else /* VMCMS || MVSXA */
-      (void)sprintf(errbuf, "Could not find figure file %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s);
+      sprintf(errbuf, "Could not find figure file %s; continuing.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s);
 #endif /* VMCMS || MVSXA */
       break;
 #ifndef VMCMS
@@ -143,19 +143,19 @@ copyfile_general(const char *s, struct header_list *cur_header)
 #ifndef __THINK__
    case 2:
 #ifdef SECURE
-      (void)sprintf(errbuf, "<%s>: Tick filename execution disabled", s);
+      sprintf(errbuf, "<%s>: Tick filename execution disabled", s);
 #else
 #ifdef OS2
       if (_osmode == OS2_MODE) {
 #endif
       if (secure == 0) {
-         (void)sprintf(errbuf, "Execution of  <%s> failed ", s);
+         sprintf(errbuf, "Execution of  <%s> failed ", s);
          f = popen(s, "r");
          if (f != 0)
-            (void)SET_BINARY(fileno(f));
+            SET_BINARY(fileno(f));
 	}
 	else {
-      (void)sprintf(errbuf,"Secure mode is %d so execute <%s> will not run", secure,s);
+      sprintf(errbuf,"Secure mode is %d so execute <%s> will not run", secure,s);
 	}
 #ifdef OS2
       }
@@ -174,7 +174,7 @@ copyfile_general(const char *s, struct header_list *cur_header)
 	 if(f==NULL)
 	    f = search(figpath, s, READBIN);
       }
-      (void)sprintf(errbuf, "! Could not find header file %s.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s);
+      sprintf(errbuf, "! Could not find header file %s.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s);
       break;
    }
    if (f==NULL)
@@ -190,11 +190,11 @@ copyfile_general(const char *s, struct header_list *cur_header)
             prettycolumn = 0;
          }
 #if defined(VMCMS) || defined (MVSXA)
-         (void)fprintf(stderr, "<%s>", trunc_s);
+         fprintf(stderr, "<%s>", trunc_s);
 #else
-         (void)fprintf(stderr, "<%s>", realnameoffile);
+         fprintf(stderr, "<%s>", realnameoffile);
 #endif
-         (void)fflush(stderr);
+         fflush(stderr);
 #if defined(VMCMS) || defined (MVSXA)
          prettycolumn += 2 + strlen(s);
 #else
@@ -202,7 +202,7 @@ copyfile_general(const char *s, struct header_list *cur_header)
 #endif
       }
       if (linepos != 0)
-         (void)putc('\n', bitfile);
+         putc('\n', bitfile);
 /*
  *   Suggested by Andrew Trevorrow; don't ever BeginFont a file ending in .enc
  */
@@ -210,17 +210,17 @@ copyfile_general(const char *s, struct header_list *cur_header)
          infont = 0;
       if (! disablecomments) {
          if (infigure)
-            (void)fprintf(bitfile, "%%%%BeginDocument: %s\n", s);
+            fprintf(bitfile, "%%%%BeginDocument: %s\n", s);
          else if (infont)
-            (void)fprintf(bitfile, "%%%%BeginFont: %s\n", infont);
+            fprintf(bitfile, "%%%%BeginFont: %s\n", infont);
 #ifdef HPS
          else if (noprocset) {}
 #endif
          else
-            (void)fprintf(bitfile, "%%%%BeginProcSet: %s 0 0\n", s);
+            fprintf(bitfile, "%%%%BeginProcSet: %s 0 0\n", s);
       }
       if (cur_header && cur_header->precode) {
-         (void)fprintf(bitfile, "%s\n", cur_header->precode);
+         fprintf(bitfile, "%s\n", cur_header->precode);
          free(cur_header->precode);
       }
       c = getc(f);
@@ -242,14 +242,14 @@ case 2:
                         len = 0;
                      } else {
 		        if (c == '\r') { /* Mac- or DOS-style text file */
-                           (void)putc('\n', bitfile);
+                           putc('\n', bitfile);
 			   if ((c = getc(f)) == '\n') /* DOS-style text */
 			      len--; /* consume, but don't generate NL */
 			   else
 			      ungetc(c, f);
 			}
                         else
-                           (void)putc(c, bitfile);
+                           putc(c, bitfile);
                         len--;
                      }
                   }
@@ -262,8 +262,8 @@ case 2:
                         error("premature EOF in MS-DOS font file");
                         len = 0;
                      } else {
-                        (void)putc(hxdata[c >> 4], bitfile);
-                        (void)putc(hxdata[c & 15], bitfile);
+                        putc(hxdata[c >> 4], bitfile);
+                        putc(hxdata[c & 15], bitfile);
                         len--;
                         prevc += 2;
                         if (prevc >= 76) {
@@ -327,8 +327,8 @@ msdosdone:
                      *dscLinePointer = 0;
                      *dscLineEnd = 0;
                      if (scanForEnd == 0 && removecomments) {
-                        (void)fputs(possibleDSCLine, bitfile);
-                        (void)putc('\n', bitfile);
+                        fputs(possibleDSCLine, bitfile);
+                        putc('\n', bitfile);
                      }
 
                      if (strncmp(possibleDSCLine, "%%BeginFont:", 12) == 0) {
@@ -380,11 +380,11 @@ msdosdone:
                         p++;
                      while (*p && *p <= ' ')
                         p++;
-                     (void)putc(c, bitfile);
+                     putc(c, bitfile);
                      if (c == '\r') { /* maybe we have a DOS-style text file */
                         c = getc(f);
                         if (c == '\n') {
-                           (void)putc(c, bitfile);
+                           putc(c, bitfile);
                            dosepsend--;
                         } else
                            ungetc(c, f);
@@ -405,7 +405,7 @@ msdosdone:
                               if (c == EOF)
                                  error(
                                  "! premature end of file in binary section");
-                              (void)putc(c, bitfile);
+                              putc(c, bitfile);
                            }
                         } else {
                            /*
@@ -419,7 +419,7 @@ msdosdone:
                               if (c == EOF)
                                  error(
                                     "! premature end of file in binary section");
-                              (void)putc(c, bitfile);
+                              putc(c, bitfile);
                               if (c == '\n')
                                  newlines++;
                               else if (c == '\r')
@@ -441,7 +441,7 @@ msdosdone:
                         c = getc(f);
                         dosepsend--;
                         if (c == '\n' || c == '\r') {
-                           (void)putc(c, bitfile);
+                           putc(c, bitfile);
 			   if (c == '\r') { /* DOS-style text file? */
 			      c = getc(f);
                               dosepsend--;
@@ -467,7 +467,7 @@ msdosdone:
                            error(
                " expected to see %%EndBinary at end of data; struggling on");
                            while (1) {
-                              (void)putc(c, bitfile);
+                              putc(c, bitfile);
                               if (c == '\r' || c == '\n') {
 			         if (c == '\r') { /* DOS-style text file? */
 			            c = getc(f);
@@ -506,14 +506,14 @@ msdosdone:
                            }
                         }
                         while (1) {
-                           (void)putc(c, bitfile);
+                           putc(c, bitfile);
                            if (c == '\r' || c == '\n') {
 			      if (c == '\r') { /* DOS-style text file? */
 			         c = getc(f);
 			         if (c != '\n')
 				    ungetc(c, f);
                                  else {
-                                    (void)putc(c, bitfile);
+                                    putc(c, bitfile);
                                     dosepsend--;
                                  }
 			      }
@@ -554,7 +554,7 @@ msdosdone:
                if (c != 4 || scanningFont) {
 #endif
                   if (!removingBytes)
-                     (void)putc(c, bitfile);
+                     putc(c, bitfile);
                }
                prevc = c;
 /* begin DOS EPS code */
@@ -568,7 +568,7 @@ msdosdone:
                else if (c == '\r' && ! scanningFont) {
 		  c = getc(f);
 		  if (c == '\n') { /* DOS-style text file? */
-		     if (!removingBytes) (void)putc('\r', bitfile);
+		     if (!removingBytes) putc('\r', bitfile);
                      dosepsend--;
 		  } else
 		     ungetc(c, f);
@@ -580,7 +580,7 @@ msdosdone:
          }
       }
       if (prevc != '\n')
-         (void)putc('\n', bitfile);
+         putc('\n', bitfile);
       linepos = 0;
 #ifndef VMCMS
 #ifndef MVSXA
@@ -592,10 +592,10 @@ msdosdone:
 #ifdef OS2
          {
             if (_osmode == OS2_MODE)
-               (void)pclose(f);
+               pclose(f);
          }
 #else
-         (void)pclose(f);
+         pclose(f);
 #endif
       else
 #endif
@@ -604,21 +604,21 @@ msdosdone:
 #endif
 #endif
 #endif
-         (void)fclose(f);
+         fclose(f);
       if (cur_header && cur_header->postcode) {
-         (void)fprintf(bitfile, "\n%s", cur_header->postcode);
+         fprintf(bitfile, "\n%s", cur_header->postcode);
          free(cur_header->postcode);
       }
       if (!disablecomments) {
          if (infigure)
-            (void)fprintf(bitfile, "\n%%%%EndDocument\n");
+            fprintf(bitfile, "\n%%%%EndDocument\n");
          else if (infont)
-            (void)fprintf(bitfile, "\n%%%%EndFont\n");
+            fprintf(bitfile, "\n%%%%EndFont\n");
 #ifdef HPS
          else if (noprocset) {}
 #endif
          else
-            (void)fprintf(bitfile, "\n%%%%EndProcSet\n");
+            fprintf(bitfile, "\n%%%%EndProcSet\n");
       }
    }
 }
@@ -649,10 +649,10 @@ void
 specialout(char c)
 {
    if (linepos >= LINELENGTH) {
-      (void)putc('\n', bitfile);
+      putc('\n', bitfile);
       linepos = 0;
    }
-   (void)putc(c, bitfile);
+   putc(c, bitfile);
    linepos++;
    lastspecial = 1;
 }
@@ -661,13 +661,13 @@ void
 stringend(void)
 {
    if (linepos + instring >= LINELENGTH - 2) {
-      (void)putc('\n', bitfile);
+      putc('\n', bitfile);
       linepos = 0;
    }
-   (void)putc('(', bitfile);
+   putc('(', bitfile);
    *strbp = 0;
-   (void)fputs(strbuffer, bitfile);
-   (void)putc(')', bitfile);
+   fputs(strbuffer, bitfile);
+   putc(')', bitfile);
    linepos += instring + 2;
    lastspecial = 1;
    instring = 0;
@@ -802,13 +802,13 @@ cmdout(const char *s)
    l = strlen(s);
    if ((! lastspecial && linepos >= LINELENGTH - 20) ||
            linepos + l >= LINELENGTH) {
-      (void)putc('\n', bitfile);
+      putc('\n', bitfile);
       linepos = 0;
    } else if (! lastspecial) {
-      (void)putc(' ', bitfile);
+      putc(' ', bitfile);
       linepos++;
    }
-   (void)fputs(s, bitfile);
+   fputs(s, bitfile);
    linepos += l;
    lastspecial = 0;
 }
@@ -819,13 +819,13 @@ chrcmd(char c)
 {
    if ((! lastspecial && linepos >= LINELENGTH - 20) ||
        linepos + 2 > LINELENGTH) {
-      (void)putc('\n', bitfile);
+      putc('\n', bitfile);
       linepos = 0;
    } else if (! lastspecial) {
-      (void)putc(' ', bitfile);
+      putc(' ', bitfile);
       linepos++;
    }
-   (void)putc(c, bitfile);
+   putc(c, bitfile);
    linepos++;
    lastspecial = 0;
 }
@@ -835,7 +835,7 @@ floatout(float n)
 {
    char buf[20];
 
-   (void)sprintf(buf, "%.2f", n);
+   sprintf(buf, "%.2f", n);
    cmdout(buf);
 }
 
@@ -844,7 +844,7 @@ doubleout(double n)
 {
    char buf[40];
 
-   (void)sprintf(buf, "%g", n);
+   sprintf(buf, "%g", n);
    cmdout(buf);
 }
 
@@ -854,9 +854,9 @@ numout(integer n)
    char buf[10];
 
 #ifdef SHORTINT
-   (void)sprintf(buf, "%ld", n);
+   sprintf(buf, "%ld", n);
 #else
-   (void)sprintf(buf, "%d", n);
+   sprintf(buf, "%d", n);
 #endif
    cmdout(buf);
 }
@@ -870,7 +870,7 @@ mhexout(register unsigned char *p,
 
    while (len > 0) {
       if (linepos > LINELENGTH - 2) {
-         (void)putc('\n', bitfile);
+         putc('\n', bitfile);
          linepos = 0;
       }
       k = (LINELENGTH - linepos) >> 1;
@@ -880,8 +880,8 @@ mhexout(register unsigned char *p,
       linepos += (k << 1);
       while (k--) {
          n = *p++;
-         (void)putc(hexchar[n >> 4], bitfile);
-         (void)putc(hexchar[n & 15], bitfile);
+         putc(hexchar[n >> 4], bitfile);
+         putc(hexchar[n & 15], bitfile);
       }
    }
 }
@@ -1001,7 +1001,7 @@ void
 newline(void)
 {
    if (linepos != 0) {
-      (void)fprintf(bitfile, "\n");
+      fprintf(bitfile, "\n");
       linepos = 0;
    }
    lastspecial = 1;
@@ -1246,7 +1246,7 @@ paperspec(const char *s, int hed)
          sendit = ! hed;
       if (sendit) {
          while (*s && *s != '\n')
-            (void)putc(*s++, bitfile);
+            putc(*s++, bitfile);
          putc('\n', bitfile);
       } else {
          while (*s && *s != '\n')
@@ -1310,7 +1310,7 @@ open_output(void) {
 #endif
 	 if (pf == NULL && (pf = popen(oname+1, "w")) != NULL) {
 	    popened = 1;
-	    (void)SET_BINARY(fileno(pf));
+	    SET_BINARY(fileno(pf));
 	 }
          if (pf == NULL)
             error("! couldn't open output pipe");
@@ -1322,7 +1322,7 @@ open_output(void) {
       } else {
          if ((bitfile=fopen(oname,"w"))==NULL)
             error("! couldn't open PostScript file");
-         (void)SET_BINARY(fileno(bitfile));
+         SET_BINARY(fileno(bitfile));
       }
    } else {
       bitfile = stdout;
@@ -1344,29 +1344,29 @@ initprinter(sectiontype *sect)
 
    findpapersize();
    if (disablecomments) {
-      (void)fprintf(bitfile,
+      fprintf(bitfile,
              "%%!PS (but not EPSF; comments have been disabled)\n");
-      (void)fprintf(stderr, "Warning:  no %%%%Page comments generated.\n");
+      fprintf(stderr, "Warning:  no %%%%Page comments generated.\n");
    } else {
       if (multiplesects) {
-         (void)fprintf(bitfile,
+         fprintf(bitfile,
              "%%!PS (but not EPSF because of memory limits)\n");
-         (void)fprintf(stderr, "Warning:  no %%%%Page comments generated.\n");
+         fprintf(stderr, "Warning:  no %%%%Page comments generated.\n");
       } else {
          isepsf = epsftest(sect->bos);
          if (isepsf)
-            (void)fprintf(bitfile, "%%!PS-Adobe-2.0 EPSF-2.0\n");
+            fprintf(bitfile, "%%!PS-Adobe-2.0 EPSF-2.0\n");
          else
-            (void)fprintf(bitfile, "%%!PS-Adobe-2.0\n");
+            fprintf(bitfile, "%%!PS-Adobe-2.0\n");
       }
       if (tryepsf && isepsf == 0)
          error("We tried, but couldn't make it EPSF.");
-      (void)fprintf(bitfile, "%%%%Creator: %s\n", banner + 8);
+      fprintf(bitfile, "%%%%Creator: %s\n", banner + 8);
       if (*iname)
-         (void)fprintf(bitfile, "%%%%Title: %s\n", iname);
+         fprintf(bitfile, "%%%%Title: %s\n", iname);
 #ifdef CREATIONDATE
       jobtime=time(0);
-      (void)fprintf(bitfile, "%%%%CreationDate: %s",
+      fprintf(bitfile, "%%%%CreationDate: %s",
                                  asctime(localtime(&jobtime)));
 #endif
       if (! isepsf) {
@@ -1376,9 +1376,9 @@ initprinter(sectiontype *sect)
  *   644 of the Red book.  But we have to, for many existing
  *   spoolers.
  */
-        (void)fprintf(bitfile, "%%%%Pages: %d%s\n", (sepfiles ? n : totalpages),
+        fprintf(bitfile, "%%%%Pages: %d%s\n", (sepfiles ? n : totalpages),
                                                     (reverse?" -1":""));
-        (void)fprintf(bitfile, "%%%%PageOrder: %sscend\n", reverse?"De":"A");
+        fprintf(bitfile, "%%%%PageOrder: %sscend\n", reverse?"De":"A");
       }
       if (landscape) {
          fprintf(bitfile, "%%%%Orientation: Landscape\n");
@@ -1391,7 +1391,7 @@ initprinter(sectiontype *sect)
               topoints(finpapsiz->xsize), topoints(finpapsiz->ysize));
       tell_needed_fonts();
       paperspec(finpapsiz->specdat, 1);
-      (void)fprintf(bitfile, "%%%%EndComments\n");
+      fprintf(bitfile, "%%%%EndComments\n");
    }
    {
       int i, len;
@@ -1401,8 +1401,8 @@ initprinter(sectiontype *sect)
  *   Here, too, we have to be careful not to exceed the line length
  *   limitation, if possible.
  */
-      (void)fprintf(bitfile, "%%DVIPSWebPage: %s\n", banner2);
-      (void)fprintf(bitfile, "%%DVIPSCommandLine:");
+      fprintf(bitfile, "%%DVIPSWebPage: %s\n", banner2);
+      fprintf(bitfile, "%%DVIPSCommandLine:");
       len = 18;
       for (i=0; i<gargc; i++) {
          p = gargv[i];
@@ -1412,21 +1412,21 @@ initprinter(sectiontype *sect)
             len += 2;
          len += strlen(gargv[i]) + 1;
          if (len > LINELENGTH) {
-            (void)fprintf(bitfile, "\n%%+");
+            fprintf(bitfile, "\n%%+");
             len = strlen(gargv[i]) + 3;
             if (*p)
                len += 2;
          }
-         (void)fprintf(bitfile, (*p ? " \"%s\"" : " %s"), gargv[i]);
+         fprintf(bitfile, (*p ? " \"%s\"" : " %s"), gargv[i]);
       }
-      (void)fprintf(bitfile, "\n%%DVIPSParameters: dpi=%d", actualdpi);
+      fprintf(bitfile, "\n%%DVIPSParameters: dpi=%d", actualdpi);
       if (actualdpi != vactualdpi)
-         (void)fprintf(bitfile, "x%d", vactualdpi);
+         fprintf(bitfile, "x%d", vactualdpi);
       if (compressed)
-         (void)fprintf(bitfile, ", compressed");
+         fprintf(bitfile, ", compressed");
       if (removecomments)
-         (void)fprintf(bitfile, ", comments removed");
-      (void)fputc('\n', bitfile);
+         fprintf(bitfile, ", comments removed");
+      fputc('\n', bitfile);
    }
 #if defined(VMCMS) || defined (MVSXA)  /* convert preamblecomment to ebcdic so we can read it */
    {
@@ -1435,11 +1435,11 @@ initprinter(sectiontype *sect)
           preamblecomment[i] = ascii2ebcdic[preamblecomment[i]];
    }
 #endif
-   (void)fprintf(bitfile, "%%DVIPSSource: %s\n", preamblecomment);
+   fprintf(bitfile, "%%DVIPSSource: %s\n", preamblecomment);
    linepos = 0;
    endprologsent = 0;
    if (safetyenclose)
-      (void)fprintf(bitfile, "/SafetyEnclosure save def\n");
+      fprintf(bitfile, "/SafetyEnclosure save def\n");
    print_composefont();
    if (! headers_off)
       send_headers();
@@ -1448,33 +1448,33 @@ void
 setup(void) {
    newline();
    if (endprologsent == 0 && !disablecomments) {
-      (void)fprintf(bitfile, "%%%%EndProlog\n");
-      (void)fprintf(bitfile, "%%%%BeginSetup\n");
+      fprintf(bitfile, "%%%%EndProlog\n");
+      fprintf(bitfile, "%%%%BeginSetup\n");
       if (vactualdpi == actualdpi)
-         (void)fprintf(bitfile, "%%%%Feature: *Resolution %ddpi\n",
+         fprintf(bitfile, "%%%%Feature: *Resolution %ddpi\n",
                                            actualdpi);
       else
-         (void)fprintf(bitfile, "%%%%Feature: *Resolution %dx%ddpi\n",
+         fprintf(bitfile, "%%%%Feature: *Resolution %dx%ddpi\n",
                                            actualdpi, vactualdpi);
       if (multiplesects && *(finpapsiz->specdat)) {
-         (void)fprintf(bitfile, "TeXDict begin\n");
+         fprintf(bitfile, "TeXDict begin\n");
          paperspec(finpapsiz->specdat, 0);
-         (void)fprintf(bitfile, "end\n");
+         fprintf(bitfile, "end\n");
       }
       if (manualfeed)
-         (void)fprintf(bitfile, "%%%%Feature: *ManualFeed True\n");
+         fprintf(bitfile, "%%%%Feature: *ManualFeed True\n");
 #ifdef HPS
       if (!HPS_FLAG)
 #endif
       if (multiplesects)
-         (void)fprintf(bitfile, "%%%%EndSetup\n");
+         fprintf(bitfile, "%%%%EndSetup\n");
    }
    if (multiplesects && ! disablecomments)
-      (void)fprintf(bitfile, "%%DVIPSBeginSection\n");
+      fprintf(bitfile, "%%DVIPSBeginSection\n");
    cmdout("TeXDict");
    cmdout("begin");
    if (endprologsent || disablecomments || multiplesects == 0) {
-      (void)fprintf(bitfile, "\n");
+      fprintf(bitfile, "\n");
       paperspec(finpapsiz->specdat, 0);
    }
    if (manualfeed) cmdout("@manualfeed");
@@ -1491,7 +1491,7 @@ setup(void) {
       if (!HPS_FLAG)
 #endif
          if (! multiplesects)
-            (void)fprintf(bitfile, "%%%%EndSetup\n");
+            fprintf(bitfile, "%%%%EndSetup\n");
    }
 #ifdef HPS
   if (HPS_FLAG) {
@@ -1506,14 +1506,14 @@ setup(void) {
 void
 cleanprinter(void)
 {
-   (void)fprintf(bitfile, "\n");
-   (void)fprintf(bitfile, "userdict /end-hook known{end-hook}if\n");
+   fprintf(bitfile, "\n");
+   fprintf(bitfile, "userdict /end-hook known{end-hook}if\n");
    if (safetyenclose)
-      (void)fprintf(bitfile, "SafetyEnclosure restore\n");
+      fprintf(bitfile, "SafetyEnclosure restore\n");
    if (!disablecomments)
-      (void)fprintf(bitfile, "%%%%EOF\n");
+      fprintf(bitfile, "%%%%EOF\n");
    if (sendcontrolD)
-      (void)putc(4, bitfile);
+      putc(4, bitfile);
    if (ferror(bitfile))
       error("Problems with file writing; probably disk full.");
 #if !defined(MSDOS) || defined(__DJGPP__)
@@ -1526,7 +1526,7 @@ cleanprinter(void)
    if (_osmode == OS2_MODE)
 #endif
       if (popened)
-         (void)pclose(bitfile);
+         pclose(bitfile);
 #endif
 #endif
 #endif
@@ -1534,7 +1534,7 @@ cleanprinter(void)
 #endif
 #endif
    if (popened == 0)
-      (void)fclose(bitfile);
+      fclose(bitfile);
    bitfile = NULL;
 }
 
@@ -1558,13 +1558,13 @@ pageinit(void)
    if (!disablecomments) {
       if (multiplesects)
 #ifdef SHORTINT
-         (void)fprintf(bitfile, "%%DVIPSSectionPage: %ld\n", pagenum);
+         fprintf(bitfile, "%%DVIPSSectionPage: %ld\n", pagenum);
       else if (! isepsf)
-         (void)fprintf(bitfile, "%%%%Page: %ld %d\n", pagenum, thispage);
+         fprintf(bitfile, "%%%%Page: %ld %d\n", pagenum, thispage);
 #else
-         (void)fprintf(bitfile, "%%DVIPSSectionPage: %d\n", pagenum);
+         fprintf(bitfile, "%%DVIPSSectionPage: %d\n", pagenum);
       else if (! isepsf)
-         (void)fprintf(bitfile, "%%%%Page: %d %d\n", pagenum, thispage);
+         fprintf(bitfile, "%%%%Page: %d %d\n", pagenum, thispage);
 #endif
    }
    linepos = 0;

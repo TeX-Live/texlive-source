@@ -357,7 +357,7 @@ flushPath(int invis)
 
 #ifdef DEBUG
     if (dd(D_SPECIAL))
-        (void)fprintf(stderr,
+        fprintf(stderr,
 #ifdef SHORTINT
             "flushpath(1): hh=%ld, vv=%ld, x=%lg, y=%lg, xPS=%lg, yPS=%lg\n",
 #else   /* ~SHORTINT */
@@ -374,7 +374,7 @@ flushPath(int invis)
       for (i=2; i < pathLen; i++) {
 #ifdef DEBUG
 	if (dd(D_SPECIAL))
-	    (void)fprintf(stderr,
+	    fprintf(stderr,
 #ifdef SHORTINT
 		"flushpath(%ld): hh=%ld, vv=%ld, x=%lg, y=%lg, xPS=%lg, yPS=%lg\n",
 #else   /* ~SHORTINT */

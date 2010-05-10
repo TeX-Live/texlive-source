@@ -1,3 +1,10 @@
+2010-05-10  Karl Berry  <karl@tug.org>
+
+	* all files: remove useless casts to void.
+
+	* dosection.c (dosection),
+	* dospecial.c (dospecial): use snprintf, just in case.
+
 2010-05-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* output.c: correct wrong boundary values of characters.

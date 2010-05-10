@@ -47,9 +47,9 @@ pscanpage(void)
 #ifdef DEBUG
    if (dd(D_PAGE))
 #ifdef SHORTINT
-   (void)fprintf(stderr,"PPrescanning page %ld\n", pagenum);
+   fprintf(stderr,"PPrescanning page %ld\n", pagenum);
 #else   /* ~SHORTINT */
-   (void)fprintf(stderr,"PPrescanning page %d\n", pagenum);
+   fprintf(stderr,"PPrescanning page %d\n", pagenum);
 #endif  /* ~SHORTINT */
 #endif  /* DEBUG */
    curfnt = NULL;
@@ -66,7 +66,7 @@ case 255: /* pTeX's dir or undefined */
 case 131: case 136: case 139: /* set4, put4, bop */
 case 247: case 248: case 249: /* pre, post, post_post */
 case 250: case 251: case 252: case 253: case 254: /* undefined */
-         (void)sprintf(errbuf,
+         sprintf(errbuf,
             "! DVI file contains unexpected command (%d)",cmd);
          error(errbuf);
 case 132: case 137: /* eight-byte commands setrule, putrule */
@@ -91,7 +91,7 @@ case 138: case 141: case 142: /* nop, push, pop */
          break;
 case 130: case 135: /* set3, put3 */
          if (noptex) {
-            (void)sprintf(errbuf,
+            sprintf(errbuf,
                "! DVI file contains unexpected pTeX command (%d)",cmd);
             error(errbuf);
          }
@@ -100,7 +100,7 @@ case 130: case 135: /* set3, put3 */
          goto dochar;
 case 129: case 134: /* set2, put2 */
          if (noomega) {
-            (void)sprintf(errbuf,
+            sprintf(errbuf,
                "! DVI file contains unexpected Omega command (%d)",cmd);
             error(errbuf);
          }
@@ -113,7 +113,7 @@ dochar:
          if (curfnt==NULL)
             error("! Bad DVI file: no font selected");
          if (mychar>=curfnt->maxchars) {
-            (void)sprintf(errbuf,"! invalid char %d from font %s", mychar, curfnt->name);
+            sprintf(errbuf,"! invalid char %d from font %s", mychar, curfnt->name);
             error(errbuf);
          }
          if (curfnt->loaded == 2) { /* scanning a virtual font character */

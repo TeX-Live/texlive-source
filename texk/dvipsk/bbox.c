@@ -171,7 +171,7 @@ bbtfmload(register fontdesctype *curfnt)
    for (i=0; i<ns; i++)
       tfm32();
    slant = tfm32();
-   (void)fclose(tfmfile);
+   fclose(tfmfile);
 
    if (id == 9 || id == 11) {
       for (i=0; i<MAX_2BYTES_CODE+1; i++) {

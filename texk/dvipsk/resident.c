@@ -151,7 +151,7 @@ residentfont(register fontdesctype *curfnt)
    if (p->Fontfile && downloadpspk) {
 #ifdef DEBUG
       if (dd(D_FONTS))
-         (void)fprintf(stderr,"Using PK font %s for <%s>.\n",
+         fprintf(stderr,"Using PK font %s for <%s>.\n",
                                      curfnt->name, p->PSname);
 #endif  /* DEBUG */
       return 0;
@@ -161,7 +161,7 @@ residentfont(register fontdesctype *curfnt)
  */
 #ifdef DEBUG
    if (dd(D_FONTS))
-        (void)fprintf(stderr,"Font %s <%s> is resident.\n",
+        fprintf(stderr,"Font %s <%s> is resident.\n",
                                      curfnt->name, p->PSname);
 #endif  /* DEBUG */
    curfnt->resfont = p;
@@ -381,7 +381,7 @@ getdefaults(const char *s)
          fprintf(stderr, "\n");
          prettycolumn = 0;
       }
-      (void)fprintf(stderr, "{%s}", realnameoffile);
+      fprintf(stderr, "{%s}", realnameoffile);
       prettycolumn += strlen(realnameoffile) + 2;
    }
 #ifdef DEBUG
@@ -660,7 +660,7 @@ case 'E' :
             error("E in config is disabled. To enable E, set z0 before E");
             break;
          }
-         (void)system(was_inline+1);
+         system(was_inline+1);
 #endif
          break;
 case 'K':
@@ -732,7 +732,7 @@ case 'G':
 case 'h' :
          if (sscanf(was_inline+1, "%s", PSname) != 1)
            bad_config("missing arg to h");
-         else (void)add_header(PSname);
+         else add_header(PSname);
          break;
 case 'i' :
          if (sscanf(was_inline+1, "%d", &maxsecsize) != 1)
@@ -769,7 +769,7 @@ default:
          bad_config("strange line");
       }
      }
-     (void)fclose(deffile);
+     fclose(deffile);
    } else {
       if (printer)
         {
@@ -805,7 +805,7 @@ getpsinfo(const char *name)
             fprintf(stderr, "\n");
             prettycolumn = 0;
          }
-         (void)fprintf(stderr, "{%s}", realnameoffile);
+         fprintf(stderr, "{%s}", realnameoffile);
          prettycolumn += strlen(realnameoffile) + 2;
       }
       while (fgets(was_inline, INLINE_SIZE, deffile)!=NULL) {
@@ -914,7 +914,7 @@ getpsinfo(const char *name)
             }
    	 }
       }
-      (void)fclose(deffile);
+      fclose(deffile);
    }
    checkstrings();
 }

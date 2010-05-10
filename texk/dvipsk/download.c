@@ -257,10 +257,10 @@ download(charusetype *p, int psfont)
        *   Sorry this bug has been in here so long.   -tgr
        */
       fontscale = curfnt->scaledsize * conv;
-      (void)sprintf(nextstring, "%g", fontscale);
+      sprintf(nextstring, "%g", fontscale);
       cmdout(nextstring);
-      (void)strcpy(nextstring, "/");
-      (void)strcat(nextstring, rf->PSname);
+      strcpy(nextstring, "/");
+      strcat(nextstring, rf->PSname);
       cmdout(nextstring);
 /* end of changed section - Rob */
       cmdout("rf");
@@ -509,7 +509,7 @@ downpsfont(charusetype *p, charusetype *all)
     if(GridCount!=0 || extraGlyphs) {
         newline();
         if (! disablecomments)
-           (void)fprintf(bitfile, "%%%%BeginFont: %s\n",  rf->PSname);
+           fprintf(bitfile, "%%%%BeginFont: %s\n",  rf->PSname);
 #ifdef DOWNLOAD_USING_PDFTEX
         if (!t1_subset_2(rf->Fontfile, grid, extraGlyphs))
 #else
@@ -521,11 +521,11 @@ downpsfont(charusetype *p, charusetype *all)
               fprintf(stderr, "\n");
               prettycolumn = 0;
            }
-           (void)fprintf(stderr, "<%s>", realnameoffile);
+           fprintf(stderr, "<%s>", realnameoffile);
            prettycolumn += strlen(realnameoffile) + 2;
         }
         if (! disablecomments)
-           (void)fprintf(bitfile, "%%%%EndFont \n");
+           fprintf(bitfile, "%%%%EndFont \n");
    }
 }
 

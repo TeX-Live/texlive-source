@@ -22,9 +22,9 @@ skippage(void)
 #ifdef DEBUG
    if (dd(D_PAGE))
 #ifdef SHORTINT
-   (void)fprintf(stderr,"Skipping page %ld\n", pagenum);
+   fprintf(stderr,"Skipping page %ld\n", pagenum);
 #else   /* ~SHORTINT */
-   (void)fprintf(stderr,"Skipping page %d\n", pagenum);
+   fprintf(stderr,"Skipping page %d\n", pagenum);
 #endif  /* ~SHORTINT */
 #endif  /* DEBUG */
 /* skipover(40); skip rest of bop command? how did this get in here? */
@@ -39,7 +39,7 @@ case 255: /* pTeX's dir or undefined */
 /* illegal commands */
 case 139: case 247: case 248: case 249: /* bop, pre, post, post_post */
 case 250: case 251: case 252: case 253: case 254: /* undefined */
-         (void)sprintf(errbuf,
+         sprintf(errbuf,
             "! DVI file contains unexpected command (%d)",cmd);
          error(errbuf);
 /* eight byte commands */

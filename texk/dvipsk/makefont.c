@@ -67,7 +67,7 @@ mfjobout(char *font, double mag)
       fprintf(mfjobfile,"output=pk[%s];\n",pkout);
    }
    fprintf(mfjobfile,"{font=%s; mag=%f;}\n",font,mag);
-   (void)fprintf(stderr,
+   fprintf(stderr,
         "Appending {font=%s; mag=%f;} to %s\n",font,mag,mfjobname);
 }
 #endif
@@ -152,16 +152,16 @@ makefont(char *name, int dpi, int bdpi)
       else {
          switch (*++p) {
 case 'n' : case 'N' :
-            (void)strcpy(q, name);
+            strcpy(q, name);
             break;
 case 'd' : case 'D' :
-            (void)sprintf(q, "%d", dpi);
+            sprintf(q, "%d", dpi);
             break;
 case 'b' : case 'B' :
-            (void)sprintf(q, "%d", bdpi);
+            sprintf(q, "%d", bdpi);
             break;
 case 'o' : case 'O' :
-            (void)sprintf(q, "%s", mfmode ? mfmode : "default");
+            sprintf(q, "%s", mfmode ? mfmode : "default");
             modegiven = 1;
             break;
 case 'm' : case 'M' :
@@ -219,18 +219,18 @@ case 'm' : case 'M' :
                if (m < 0)
                     t = 1 / t;
             }
-            (void)sprintf(q, "%12.9f", t);
+            sprintf(q, "%12.9f", t);
 #else
 #ifndef ATARIST
             if (m == 9999) {
 #else
             {
 #endif
-               (void)sprintf(q, "%d+%d/%d", dpi/bdpi, dpi%bdpi, bdpi);
+               sprintf(q, "%d+%d/%d", dpi/bdpi, dpi%bdpi, bdpi);
             } else if (m >= 0) {
-               (void)sprintf(q, "magstep\\(%d.%d\\)", m/2, (m&1)*5);
+               sprintf(q, "magstep\\(%d.%d\\)", m/2, (m&1)*5);
             } else {
-               (void)sprintf(q, "magstep\\(-%d.%d\\)", (-m)/2, (m&1)*5);
+               sprintf(q, "magstep\\(-%d.%d\\)", (-m)/2, (m&1)*5);
             }
 #endif
             break;
@@ -249,14 +249,14 @@ default:    *q++ = *p;
    }
 #ifdef OS2
    if ((_osmode == OS2_MODE) && filter)
-      (void)strcat(buf, quiet ? " >nul" : " 1>&2");
+      strcat(buf, quiet ? " >nul" : " 1>&2");
 #else
 #ifndef VMCMS   /* no filters and no need to print to stderr */
 #ifndef MVSXA
 #ifndef MSDOS
 #ifndef ATARIST
    if (filter)
-      (void)strcat(buf, quiet ? " >/dev/null" : " 1>&2");
+      strcat(buf, quiet ? " >/dev/null" : " 1>&2");
 #endif
 #endif
 #endif
@@ -265,18 +265,18 @@ default:    *q++ = *p;
 
 #if defined MSDOS || defined OS2
    if (! quiet && mfjobname == (char *)NULL)
-      (void)fprintf(stderr, "- %s\n", buf);
+      fprintf(stderr, "- %s\n", buf);
    if (dontmakefont == 0) {
       if (mfjobname != (char *)NULL)
          mfjobout(name,t);
       else
-         (void)system(buf);
+         system(buf);
    }
 #else
    if (! quiet)
-      (void)fprintf(stderr, "- %s\n", buf);
+      fprintf(stderr, "- %s\n", buf);
    if (dontmakefont == 0)
-      (void)system(buf);
+      system(buf);
 #endif
    else {
       static FILE *fontlog = 0;
@@ -284,7 +284,7 @@ default:    *q++ = *p;
       if (fontlog == 0) {
          fontlog = fopen("missfont.log", "a");
          if (fontlog != 0) {
-            (void)fprintf(stderr,
+            fprintf(stderr,
 #ifndef VMCMS
                   "Appending font creation commands to missfont.log\n");
 #else
@@ -293,8 +293,8 @@ default:    *q++ = *p;
          }
       }
       if (fontlog != 0) {
-         (void)fprintf(fontlog, "%s\n", buf);
-         (void)fflush(fontlog);
+         fprintf(fontlog, "%s\n", buf);
+         fflush(fontlog);
       }
    }
 }
