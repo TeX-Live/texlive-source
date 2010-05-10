@@ -23,7 +23,7 @@ zinput2ints (integer *a,  integer *b)
     {
       while ((ch = getchar ()) != EOF && ch != '\n');
       if (ch == EOF) return;
-      (void) fprintf (stderr, "Please enter two integers.\n");
+      fprintf (stderr, "Please enter two integers.\n");
     }
 
   while ((ch = getchar ()) != EOF && ch != '\n');
@@ -41,7 +41,7 @@ zinput3ints (integer *a,  integer *b,  integer *c)
     {
       while ((ch = getchar ()) != EOF && ch != '\n');
       if (ch == EOF) return;
-      (void) fprintf (stderr, "Please enter three integers.\n");
+      fprintf (stderr, "Please enter three integers.\n");
     }
 
   while ((ch = getchar ()) != EOF && ch != '\n');

@@ -1,3 +1,8 @@
+2010-05-10  Karl Berry  <karl@tug.org>
+
+	* input2int.c (zinput2ints, zinput3ints): don't bother
+	to cast result of fprintf.
+
 2010-04-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lib.h:
