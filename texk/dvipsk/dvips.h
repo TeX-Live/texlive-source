@@ -330,9 +330,9 @@ struct papsiz {
 #include <fcntl.h>
 #define O_BINARY _O_BINARY
 #define register
-#define SET_BINARY(fd) _setmode((fd), _O_BINARY)
+#define SET_BINARY(fd) (void)_setmode((fd), _O_BINARY)
 #else /* !WIN32 */
-#define SET_BINARY(fd) 0
+#define SET_BINARY(fd) (void)0
 #endif
 
 #if defined(DEVICESEP)

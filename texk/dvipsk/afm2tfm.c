@@ -1687,7 +1687,7 @@ default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
    if ((afmin=fopen(inname, "r"))==NULL)
       error("! can't open afm input file");
 #endif /* KPATHSEA */
-   (void)SET_BINARY(fileno(afmin));
+   SET_BINARY(fileno(afmin));
 
    if (argc>3 || (argc==3 && *argv[2]=='-')) {
      error("! need at most two non-option arguments");
@@ -1979,7 +1979,7 @@ readencoding(char *enc)
 #else
       afmin = fopen(enc, "r");
 #endif
-      (void)SET_BINARY(fileno(afmin));
+      SET_BINARY(fileno(afmin));
       param = 0;
       if (afmin == 0)
 #ifdef KPATHSEA

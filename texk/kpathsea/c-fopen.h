@@ -49,7 +49,8 @@
 
 /* How to switch an already open file handle to binary mode.
    Used on DOSISH systems when we need to switch a standard
-   stream, such as stdin or stdout, to binary mode.  */
+   stream, such as stdin or stdout, to binary mode.
+   We never use the value return by setmode().  */
 #include <fcntl.h>
 #ifdef DOSISH
 #include <io.h>
@@ -60,13 +61,13 @@
 #endif
 #if defined (__i386_pc_gnu__) || \
     defined (WIN32) || defined (__WIN32__) || defined (_WIN32)
-#define SET_BINARY(f) setmode((f), O_BINARY)
+#define SET_BINARY(f) (void)setmode((f), O_BINARY)
 #endif
 #else  /* not DOSISH */
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
-#define SET_BINARY(f) 0
+#define SET_BINARY(f) (void)0
 #endif /* not DOSISH */
 
 #endif /* not C_FOPEN_H */

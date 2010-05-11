@@ -22,7 +22,7 @@
 #else
 #define FOPEN_RBIN_MODE  "r"
 #define FOPEN_RBIN_MODE  "w"
-#define SET_BINARY(x) 0
+#define SET_BINARY(x) (void)0
 extern char *optarg;
 extern int   optind;
 #endif
@@ -429,13 +429,13 @@ Usage: %s [-s signature] [-q] [-i infile] [-o outfile] [infile [outfile]]\n",
 		DVIFileName = "`stdin'";
 		inf = stdin;
 		if (!isatty(fileno(inf)))
-		  (void)SET_BINARY(fileno(inf));
+		  SET_BINARY(fileno(inf));
 	} else if ((inf = fopen(DVIFileName, FOPEN_RBIN_MODE)) == 0)
 		error(1, -1, "cannot read %s", DVIFileName);
 	if (outname == NULL) {
 		outf = stdout;
 		if (!isatty(fileno(outf)))
-		  (void)SET_BINARY(fileno(outf));
+		  SET_BINARY(fileno(outf));
 	}
 	else if ((outf = fopen(outname, FOPEN_WBIN_MODE)) == 0)
 		error(1, -1, "cannot write %s", outname);

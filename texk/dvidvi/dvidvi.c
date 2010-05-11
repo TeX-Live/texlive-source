@@ -817,7 +817,7 @@ default:
    if(!oname) {
      oname="stdout";
      if (!isatty(fileno(stdout)))
-       (void)SET_BINARY(fileno(stdout));
+       SET_BINARY(fileno(stdout));
    }
 
    if (*oname != 0 && !quiet) {

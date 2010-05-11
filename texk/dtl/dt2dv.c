@@ -471,7 +471,7 @@ Void dvi_stdout (VOID)
   dvi_filename = "Standard Output";
   ++ nfile;
   if (!isatty(fileno(dvi_fp)))
-    (void)SET_BINARY(fileno(dvi_fp));
+    SET_BINARY(fileno(dvi_fp));
 }
 
 

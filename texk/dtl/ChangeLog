@@ -1,3 +1,7 @@
+2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dt2dv.c, dv2dt.c (SET_BINARY): Remove casts to void.
+
 2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): Remove '-DNO_DEBUG' ...

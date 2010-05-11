@@ -172,7 +172,7 @@ main
   if (argc > 1)
     open_dvi (argv[1], &dvi);
   else if (!isatty(fileno(dvi)))
-    (void)SET_BINARY(fileno(dvi));
+    SET_BINARY(fileno(dvi));
 
   if (argc > 2)
     open_dtl (argv[2], &dtl);

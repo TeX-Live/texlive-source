@@ -1,3 +1,7 @@
+2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-fopen.h [SET_BINARY]: Add cast to void.
+
 2010-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* progname.c (kpathsea_set_program_name): Drop superfluous cast.

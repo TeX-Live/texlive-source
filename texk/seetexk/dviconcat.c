@@ -20,7 +20,7 @@
 #else
 #define FOPEN_RBIN_MODE  "rb"
 #define FOPEN_RBIN_MODE  "wb"
-#define SET_BINARY(x) 0
+#define SET_BINARY(x) (void)0
 extern char *optarg;
 extern int optind;
 #endif
@@ -414,7 +414,7 @@ usage:
 	if (outf == NULL) {
 		outf = stdout;
 		if (!isatty(fileno(outf)))
-		  (void)SET_BINARY(fileno(outf));
+		  SET_BINARY(fileno(outf));
 	}
 	if ((FontFinder = SCreate(sizeof(struct fontinfo *))) == 0)
 		error(1, 0, "cannot create font finder (out of memory?)");
@@ -426,7 +426,7 @@ usage:
 	 */
 	if (optind >= argc) {
 	  if (!isatty(fileno(stdin)))
-	    (void)SET_BINARY(fileno(stdin));
+	    SET_BINARY(fileno(stdin));
 	  doit("`stdin'", stdin);
 	}
 	else {
@@ -434,7 +434,7 @@ usage:
 			s = argv[c];
 			if (*s == '-' && s[1] == 0) {
 			  if (!isatty(fileno(stdin)))
-			    (void)SET_BINARY(fileno(stdin));
+			    SET_BINARY(fileno(stdin));
 			  doit("`stdin'", stdin);
 			}
 			else if ((f = fopen(s, FOPEN_RBIN_MODE)) == NULL) {

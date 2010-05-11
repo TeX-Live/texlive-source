@@ -1,5 +1,11 @@
 2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* dvips.h [SET_BINARY]: Add cast to void.
+	* afm2tfm.c, finclude.c, output.c, search.c (SET_BINARY): Once
+	again remove casts to void.
+
+2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* all files: Remove more useless casts to void.
 
 	* afm2tfm.c, finclude.c, output.c, search.c: Reintroduce a few
