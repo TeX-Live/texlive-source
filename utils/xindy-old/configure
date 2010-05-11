@@ -3985,8 +3985,8 @@ test -n "$PDFLATEX" || PDFLATEX="no"
 { $as_echo "$as_me:${as_lineno-$LINENO}: Configuring xindy as part of the TeX Live tree" >&5
 $as_echo "$as_me: Configuring xindy as part of the TeX Live tree" >&6;}
 # Include configure options that also appear at the top-level of the TL tree.
-## utils/xindy/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
-## configure options for xindy
+## utils/xindy-old/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy-old/
+## configure options for xindy-old
 # Check whether --enable-xindy-rules was given.
 if test "${enable_xindy_rules+set}" = set; then :
   enableval=$enable_xindy_rules;
