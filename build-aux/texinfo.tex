@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-04-23.06}
+\def\texinfoversion{2010-05-08.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -5875,7 +5875,7 @@ end
 \def\shortpartentry#1#2#3#4{%
   \penalty-300
   \vskip.5\baselineskip plus.15\baselineskip minus.1\baselineskip
-  \shortchapentry{#1}{\numeralbox}{}{}%
+  \shortchapentry{{\bf #1}}{\numeralbox}{}{}%
 }
 
 % Chapters, in the main contents.
