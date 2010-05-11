@@ -669,7 +669,7 @@ enable_psutils
 enable_t1utils
 enable_tpic2pdftex
 enable_vlna
-enable_xindy_new
+enable_xindy
 enable_xindy_rules
 enable_xindy_docs
 with_clisp_runtime
@@ -1469,7 +1469,7 @@ Optional Features:
   --disable-t1utils       do not build the t1utils package
   --disable-tpic2pdftex   do not build the tpic2pdftex package
   --disable-vlna          do not build the vlna package
-  --enable-xindy-new      build the xindy-new package
+  --enable-xindy          build the xindy package
   --enable-xindy-rules      build and install make-rules package
   --enable-xindy-docs       build and install documentation
   --enable-xindy-old      build the xindy-old package
@@ -1572,7 +1572,7 @@ Optional Packages:
                           pathname of clisp runtime to install for `xindy',
                           `default' to derive from clisp, or `system' to use
                           installed version
-  --with-recode           use `recode' instead of `iconv' to build xindy-new
+  --with-recode           use `recode' instead of `iconv' to build xindy
                           [default: no]
   --with-xindy-recode     For `xindy': use `recode' instead of `iconv'
                           (default is NO)
@@ -3297,35 +3297,35 @@ $as_echo "$as_me: Assuming \`--enable-vlna=$enable_vlna'" >&6;}
 esac
 
 
-## utils/xindy-new/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy-new/
-## configure options and TL libraries required for xindy-new
-# Check whether --enable-xindy-new was given.
-if test "${enable_xindy_new+set}" = set; then :
-  enableval=$enable_xindy_new;
+## utils/xindy/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
+## configure options and TL libraries required for xindy
+# Check whether --enable-xindy was given.
+if test "${enable_xindy+set}" = set; then :
+  enableval=$enable_xindy;
 fi
-case $enable_xindy_new in #(
+case $enable_xindy in #(
   yes) :
     if test "x$cross_compiling" = xyes; then :
-  as_fn_error "Unable to cross compile xindy-new" "$LINENO" 5
+  as_fn_error "Unable to cross compile xindy" "$LINENO" 5
 fi ;; #(
   no) :
      ;; #(
   *) :
     if test "x$cross_compiling" = xyes; then
-            { $as_echo "$as_me:${as_lineno-$LINENO}: Cross compiling -> \`--disable-xindy-new'" >&5
-$as_echo "$as_me: Cross compiling -> \`--disable-xindy-new'" >&6;}
-            enable_xindy_new=no
-            ac_configure_args="$ac_configure_args '--disable-xindy-new'"
+            { $as_echo "$as_me:${as_lineno-$LINENO}: Cross compiling -> \`--disable-xindy'" >&5
+$as_echo "$as_me: Cross compiling -> \`--disable-xindy'" >&6;}
+            enable_xindy=no
+            ac_configure_args="$ac_configure_args '--disable-xindy'"
           else
-   enable_xindy_new=no
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xindy-new=$enable_xindy_new'" >&5
-$as_echo "$as_me: Assuming \`--enable-xindy-new=$enable_xindy_new'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-xindy-new=$enable_xindy_new'"
+   enable_xindy=no
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xindy=$enable_xindy'" >&5
+$as_echo "$as_me: Assuming \`--enable-xindy=$enable_xindy'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-xindy=$enable_xindy'"
    fi ;;
 esac
 
-## utils/xindy-new/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy-new/
-## configure options for xindy-new
+## utils/xindy/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
+## configure options for xindy
 # Check whether --enable-xindy-rules was given.
 if test "${enable_xindy_rules+set}" = set; then :
   enableval=$enable_xindy_rules;
@@ -3345,8 +3345,8 @@ if test "${with_xindy_recode+set}" = set; then :
   withval=$with_xindy_recode;
 fi
 
-## utils/xindy-new/ac/clisp.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy-new/
-## configure checks for xindy-new and clisp
+## utils/xindy/ac/clisp.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
+## configure checks for xindy and clisp
 case $with_clisp_runtime in #(
   default) :
      ;; #(

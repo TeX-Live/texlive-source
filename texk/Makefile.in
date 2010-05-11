@@ -73,9 +73,9 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../utils/t1utils/ac/withenable.ac \
 	$(top_srcdir)/../utils/tpic2pdftex/ac/withenable.ac \
 	$(top_srcdir)/../utils/vlna/ac/withenable.ac \
-	$(top_srcdir)/../utils/xindy-new/ac/withenable.ac \
-	$(top_srcdir)/../utils/xindy-new/ac/xindy.ac \
-	$(top_srcdir)/../utils/xindy-new/ac/clisp.ac \
+	$(top_srcdir)/../utils/xindy/ac/withenable.ac \
+	$(top_srcdir)/../utils/xindy/ac/xindy.ac \
+	$(top_srcdir)/../utils/xindy/ac/clisp.ac \
 	$(top_srcdir)/../utils/xindy-old/ac/withenable.ac \
 	$(top_srcdir)/../utils/xindy-old/ac/xindy.ac \
 	$(top_srcdir)/../utils/xpdfopen/ac/withenable.ac \

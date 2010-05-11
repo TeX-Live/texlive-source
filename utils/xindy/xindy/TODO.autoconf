@@ -1,0 +1,51 @@
+
+[Check]		FIXMEs in configure.ac
+
+ -- flex for tex2indy?
+ -- latex must be available
+
+Sat Mar 28 18:07:07 2009   schrod
+----------------------------------------------------------------------
+
+[Problem]	abort while building documentation
+
+Folks on Mac OS X had aborts while make-rules documentation should
+have been created. There exists a ticket from Yannis with logs.
+
+Tue May 11 02:08:07 2010   schrod
+----------------------------------------------------------------------
+
+[Missing]	Changes from Vladimir/Peter for TeX Live
+
+TL install dirs
+Reorg of alphabets Makefile.am
+
+Sun Mar 29 13:50:45 2009   schrod
+----------------------------------------------------------------------
+
+[Change]	strtoul() might not exist
+
+Replace it with function from gnulib.
+AC_REPLACE_FUNCS
+
+Sun Mar 29 13:46:35 2009   schrod
+----------------------------------------------------------------------
+
+[Change]	No need to insist on GNU make any more
+
+pattern rules
+variable subtitutions
+
+OK: src user-commands tex2xindy
+TBD: make-rules
+
+Sat Mar 28 18:18:03 2009   schrod
+----------------------------------------------------------------------
+
+[Change]	Use maintainer mode
+
+autoconf builds are triggered too often without reason...
+
+Tue May 11 02:06:04 2010   schrod
+----------------------------------------------------------------------
+

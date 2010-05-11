@@ -31,8 +31,7 @@ tpic2pdftex 1.97 - checked 9may10
 vlna 1.2 - checked 26jun08
   ftp://math.feld.cvut.cz/pub/olsak/vlna
 
-xindy 2.3 - checked 24mar08
-  (with numerous adaptations for TL by Vladimir)
+xindy 2.4 - checked 11may10
   http://www.ctan.org/indexing/xindy/
 
 After building clisp as described below, run the TL
