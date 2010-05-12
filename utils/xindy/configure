@@ -561,6 +561,7 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+is_TL
 BUILDDOCS_FALSE
 BUILDDOCS_TRUE
 BUILDRULES_FALSE
@@ -4105,6 +4106,14 @@ fi
 ac_config_files="$ac_config_files Makefile xindy/Makefile xindy/src/Makefile xindy/tex2xindy/Makefile xindy/modules/Makefile xindy/modules/base/Makefile xindy/modules/class/Makefile xindy/modules/lang/Makefile xindy/modules/lang/german/Makefile xindy/modules/lang/latin/Makefile xindy/modules/ord/Makefile xindy/modules/rules/Makefile xindy/modules/styles/Makefile xindy/user-commands/Makefile xindy/make-rules/Makefile xindy/make-rules/alphabets/Makefile xindy/make-rules/alphabets/albanian/Makefile xindy/make-rules/alphabets/belarusian/Makefile xindy/make-rules/alphabets/bulgarian/Makefile xindy/make-rules/alphabets/croatian/Makefile xindy/make-rules/alphabets/czech/Makefile xindy/make-rules/alphabets/danish/Makefile xindy/make-rules/alphabets/dutch/Makefile xindy/make-rules/alphabets/english/Makefile xindy/make-rules/alphabets/esperanto/Makefile xindy/make-rules/alphabets/estonian/Makefile xindy/make-rules/alphabets/finnish/Makefile xindy/make-rules/alphabets/french/Makefile xindy/make-rules/alphabets/general/Makefile xindy/make-rules/alphabets/georgian/Makefile xindy/make-rules/alphabets/german/Makefile xindy/make-rules/alphabets/greek/Makefile xindy/make-rules/alphabets/gypsy/Makefile xindy/make-rules/alphabets/hausa/Makefile xindy/make-rules/alphabets/hebrew/Makefile xindy/make-rules/alphabets/hungarian/Makefile xindy/make-rules/alphabets/icelandic/Makefile xindy/make-rules/alphabets/italian/Makefile xindy/make-rules/alphabets/klingon/Makefile xindy/make-rules/alphabets/kurdish/Makefile xindy/make-rules/alphabets/latin/Makefile xindy/make-rules/alphabets/latvian/Makefile xindy/make-rules/alphabets/lithuanian/Makefile xindy/make-rules/alphabets/lower-sorbian/Makefile xindy/make-rules/alphabets/macedonian/Makefile xindy/make-rules/alphabets/mongolian/Makefile xindy/make-rules/alphabets/norwegian/Makefile xindy/make-rules/alphabets/polish/Makefile xindy/make-rules/alphabets/portuguese/Makefile xindy/make-rules/alphabets/romanian/Makefile xindy/make-rules/alphabets/russian/Makefile xindy/make-rules/alphabets/serbian/Makefile xindy/make-rules/alphabets/slovak/Makefile xindy/make-rules/alphabets/slovenian/Makefile xindy/make-rules/alphabets/spanish/Makefile xindy/make-rules/alphabets/swedish/Makefile xindy/make-rules/alphabets/test1/Makefile xindy/make-rules/alphabets/turkish/Makefile xindy/make-rules/alphabets/ukrainian/Makefile xindy/make-rules/alphabets/upper-sorbian/Makefile xindy/make-rules/alphabets/vietnamese/Makefile xindy/make-rules/inputenc/Makefile xindy/make-rules/styles/Makefile xindy/doc/Makefile xindy/doc/style-tutorial/Makefile"
 
 
+# In a TeX Live build enable_texlive_build is yes, otherwise undefined.
+is_TL="$enable_texlive_build"
+
+ac_config_files="$ac_config_files xindy/user-commands/texindy"
+
+ac_config_files="$ac_config_files xindy/user-commands/xindy"
+
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -4917,6 +4926,8 @@ do
     "xindy/make-rules/styles/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/styles/Makefile" ;;
     "xindy/doc/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/doc/Makefile" ;;
     "xindy/doc/style-tutorial/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/doc/style-tutorial/Makefile" ;;
+    "xindy/user-commands/texindy") CONFIG_FILES="$CONFIG_FILES xindy/user-commands/texindy" ;;
+    "xindy/user-commands/xindy") CONFIG_FILES="$CONFIG_FILES xindy/user-commands/xindy" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -5430,6 +5441,8 @@ $as_echo X"$file" |
   done
 }
  ;;
+    "xindy/user-commands/texindy":F) chmod +x xindy/user-commands/texindy ;;
+    "xindy/user-commands/xindy":F) chmod +x xindy/user-commands/xindy ;;
 
   esac
 done # for ac_tag

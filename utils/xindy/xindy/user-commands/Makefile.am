@@ -26,12 +26,14 @@ bin_SCRIPTS =
 
 if TEXLIVE_BUILD
 
+noinst_SCRIPTS = $(scripts)
+
 scriptspath = texmf/scripts/xindy
 scriptsdir = ${prefix}/$(scriptspath)
 install-exec-hook:
 	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
 	@for f in $(scripts); do \
-	  $(INSTALL_SCRIPT) "$(srcdir)/$$f.in" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
+	  $(INSTALL_SCRIPT) "$$f" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 	done
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
@@ -57,17 +59,9 @@ else !TEXLIVE_BUILD
 
 bin_SCRIPTS += $(scripts)
 
-texindy: texindy.in Makefile
-	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/texindy.in >texindy
-
-xindy: xindy.in Makefile
-	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
-
 endif !TEXLIVE_BUILD
 
 man_MANS = texindy.1 xindy.1
 
-EXTRA_DIST = $(man_MANS) texindy.in xindy.in
-
-CLEANFILES = $(scripts)
+EXTRA_DIST = $(man_MANS)
 

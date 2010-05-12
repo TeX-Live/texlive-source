@@ -352,6 +352,7 @@ use Getopt::Long qw(:config bundling);
 
 # Determine environment. Where is our library directory, and our modules?
 
+our $is_TL = ( '@is_TL@' eq 'yes' );
 our $is_w32 = ( $OSNAME =~ /^MSWin/i ) ;
 our $real_cmd = Cwd::realpath($0);
 our $cmd_dir = dirname($real_cmd);
@@ -362,14 +363,8 @@ our $xindy;
 # the actual scripts are in the library directory and have a .pl
 # extension. In standalone installations, user command xindy is
 # expected to be in the same directory as our command.
-#
-# FIXME: This code assumes that on TeX-Live -- and only there! -- the
-# real command has a .pl extension, this is used for detection that we
-# are on TeX-Live. This is blatantly untrue, in a standalone Windows
-# installation, xindy has also a .pl extension. We have to fix this
-# later, cleanup of this issue would delay inclusion in TL 2010.
 
-if ( $real_cmd =~ /\.pl$/ ) { # TeX Live
+if ( $is_TL ) { # TeX Live
 
     if ( $is_w32 ) {
 	$xindy = "$cmd_dir/xindy.pl";

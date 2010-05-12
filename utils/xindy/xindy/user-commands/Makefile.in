@@ -35,7 +35,8 @@ build_triplet = @build@
 host_triplet = @host@
 @TEXLIVE_BUILD_FALSE@am__append_1 = $(scripts)
 subdir = xindy/user-commands
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/texindy.in $(srcdir)/xindy.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/xindy/VERSION $(top_srcdir)/ac/xindy.ac \
@@ -43,7 +44,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = texindy xindy
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -67,7 +68,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
-SCRIPTS = $(bin_SCRIPTS)
+SCRIPTS = $(bin_SCRIPTS) $(noinst_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
 man1dir = $(mandir)/man1
@@ -160,6 +161,7 @@ htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
+is_TL = @is_TL@
 libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
@@ -182,11 +184,11 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 scripts = texindy xindy
 bin_SCRIPTS = $(am__append_1)
+@TEXLIVE_BUILD_TRUE@noinst_SCRIPTS = $(scripts)
 @TEXLIVE_BUILD_TRUE@scriptspath = texmf/scripts/xindy
 @TEXLIVE_BUILD_TRUE@scriptsdir = ${prefix}/$(scriptspath)
 man_MANS = texindy.1 xindy.1
-EXTRA_DIST = $(man_MANS) texindy.in xindy.in
-CLEANFILES = $(scripts)
+EXTRA_DIST = $(man_MANS)
 all: all-am
 
 .SUFFIXES:
@@ -220,6 +222,10 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+texindy: $(top_builddir)/config.status $(srcdir)/texindy.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+xindy: $(top_builddir)/config.status $(srcdir)/xindy.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -366,7 +372,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -465,7 +470,7 @@ uninstall-man: uninstall-man1
 @TEXLIVE_BUILD_TRUE@install-exec-hook:
 @TEXLIVE_BUILD_TRUE@	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
 @TEXLIVE_BUILD_TRUE@	@for f in $(scripts); do \
-@TEXLIVE_BUILD_TRUE@	  $(INSTALL_SCRIPT) "$(srcdir)/$$f.in" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
+@TEXLIVE_BUILD_TRUE@	  $(INSTALL_SCRIPT) "$$f" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 @TEXLIVE_BUILD_TRUE@	done
 @TEXLIVE_BUILD_TRUE@	case "$(bindir)" in \
 @TEXLIVE_BUILD_TRUE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
@@ -486,12 +491,6 @@ uninstall-man: uninstall-man1
 @TEXLIVE_BUILD_TRUE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 @TEXLIVE_BUILD_TRUE@	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 @TEXLIVE_BUILD_TRUE@	done
-
-@TEXLIVE_BUILD_FALSE@texindy: texindy.in Makefile
-@TEXLIVE_BUILD_FALSE@	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/texindy.in >texindy
-
-@TEXLIVE_BUILD_FALSE@xindy: xindy.in Makefile
-@TEXLIVE_BUILD_FALSE@	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

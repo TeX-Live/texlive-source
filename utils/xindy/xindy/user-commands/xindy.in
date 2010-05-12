@@ -337,6 +337,7 @@ use POSIX qw(uname);
 
 # Determine environment. Where is our library directory, and our modules?
 
+our $is_TL = ( '@is_TL@' eq 'yes' );
 our $is_w32 = ( $OSNAME =~ /^MSWin/i ) ;
 our $is_windows = ( $is_w32 || $OSNAME eq 'cygwin' ) ;
 our $clisp = ( $is_windows ? 'clisp.exe' : 'clisp' ) ;
@@ -354,16 +355,10 @@ our ($lib_dir, $modules_dir);
 # images are located in a lib directory, modules are located in a
 # share directory.
 #
-# FIXME: This code assumes that on TeX-Live -- and only there! -- the
-# real command has a .pl extension, this is used for detection that we
-# are on TeX-Live. This is blatantly untrue, in a standalone Windows
-# installation, xindy has also a .pl extension. We have to fix this
-# later, cleanup of this issue would delay inclusion in TL 2010.
-#
 # FIXME: In standalone installations, modules are still placed in lib
 # directory. This is not conformant to FHS.
 
-if ( $real_cmd =~ /\.pl$/ ) { # TeX Live
+if ( $is_TL ) { # TeX Live
 
     $modules_dir = Cwd::realpath("$cmd_dir/../../xindy/modules");
     die "$cmd: Cannot locate xindy modules directory"  unless -d $modules_dir;
@@ -515,8 +510,7 @@ unless ( $interactive ) {
 }
 
 
-# Execution: Obey environment variables, create xindy start
-# expression, and eventually call it.
+# Execution: Create xindy start expression and call it.
 
 my $xindy_expression = xindy_expression(); # accesses global option vars
 my $exit_code = call_xindy ($mem_file, $xindy_expression);

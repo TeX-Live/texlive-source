@@ -162,4 +162,9 @@ AC_CONFIG_FILES([Makefile \
 	    	doc/style-tutorial/Makefile
 ])
 
+# In a TeX Live build enable_texlive_build is yes, otherwise undefined.
+AC_SUBST([is_TL], ["$enable_texlive_build"])
+AC_CONFIG_FILES([user-commands/texindy], [chmod +x user-commands/texindy])
+AC_CONFIG_FILES([user-commands/xindy], [chmod +x user-commands/xindy])
+
 AC_OUTPUT
