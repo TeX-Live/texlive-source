@@ -31,16 +31,14 @@ AS_CASE([$enable_native_texlive_build],
         [yes | no], [:],
         [enable_native_texlive_build=yes
          ac_configure_args="$ac_configure_args '--enable-native-texlive-build'"])
-if test "x$enable_native_texlive_build" = xyes; then
-  AS_CASE([$enable_multiplatform],
-          [yes | no], [:],
-          [enable_multiplatform=yes
-           ac_configure_args="$ac_configure_args '--enable-multiplatform'"])
-  AS_CASE([$enable_cxx_runtime_hack],
-          [yes | no], [:],
-          [enable_cxx_runtime_hack=yes
-           ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack'"])
-fi
+AS_CASE([$enable_multiplatform],
+        [yes | no], [:],
+        [enable_multiplatform=$enable_native_texlive_build
+         ac_configure_args="$ac_configure_args '--enable-multiplatform=$enable_native_texlive_build'"])
+AS_CASE([$enable_cxx_runtime_hack],
+        [yes | no], [:],
+        [enable_cxx_runtime_hack=$enable_native_texlive_build
+         ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack=$enable_native_texlive_build'"])
 AS_CASE([$enable_libtool_hack],
         [yes | no], [:],
         [AS_CASE([$host_os],

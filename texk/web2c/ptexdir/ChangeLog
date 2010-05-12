@@ -1,3 +1,10 @@
+2010-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* nissya.test (new): Shell script for pBibTeX test using kanji.
+	* tests/nissya_bib.aux, tests/nissya.bst, tests/sample.bib
+	(new): Test data for nissya.test from Akira.
+	* am/ptex.am: Add the new test.
+
 2010-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdvitype.ch: Treat kanji chars for put[1-4] as for set[1-4].

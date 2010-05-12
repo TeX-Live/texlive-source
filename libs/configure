@@ -3006,22 +3006,20 @@ case $enable_native_texlive_build in #(
     enable_native_texlive_build=yes
          ac_configure_args="$ac_configure_args '--enable-native-texlive-build'" ;;
 esac
-if test "x$enable_native_texlive_build" = xyes; then
-  case $enable_multiplatform in #(
+case $enable_multiplatform in #(
   yes | no) :
     : ;; #(
   *) :
-    enable_multiplatform=yes
-           ac_configure_args="$ac_configure_args '--enable-multiplatform'" ;;
+    enable_multiplatform=$enable_native_texlive_build
+         ac_configure_args="$ac_configure_args '--enable-multiplatform=$enable_native_texlive_build'" ;;
 esac
-  case $enable_cxx_runtime_hack in #(
+case $enable_cxx_runtime_hack in #(
   yes | no) :
     : ;; #(
   *) :
-    enable_cxx_runtime_hack=yes
-           ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack'" ;;
+    enable_cxx_runtime_hack=$enable_native_texlive_build
+         ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack=$enable_native_texlive_build'" ;;
 esac
-fi
 case $enable_libtool_hack in #(
   yes | no) :
     : ;; #(

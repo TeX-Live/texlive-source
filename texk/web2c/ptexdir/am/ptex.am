@@ -120,7 +120,7 @@ pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
 EXTRA_DIST += ptexdir/pbibtex.ch web2c/cvtbib.sed
 
 ptex_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
-ptex_tests += ptexdir/pbibtex-mem.test
+ptex_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
 
 ## pDVItype
 ## 
@@ -191,6 +191,9 @@ endif PTEX
 
 ## Test data and results
 ##
+## ptexdir/nissya.test
+EXTRA_DIST += ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst ptexdir/tests/sample.bib
+DISTCLEANFILES += tests/nissya_bib.*
 ## ptexdir/pbibtex.test
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
 ## ptexdir/pbibtex-mem.test
