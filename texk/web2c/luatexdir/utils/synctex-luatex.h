@@ -34,7 +34,7 @@ authorization from the copyright holder.
 
 */
 
-/* $Id: synctex-luatex.h 3536 2010-03-22 13:07:39Z taco $ */
+/* $Id: synctex-luatex.h 3685 2010-05-13 07:37:47Z taco $ */
 
 #undef synchronization_field_size
 #define synchronization_field_size 1
@@ -42,7 +42,10 @@ authorization from the copyright holder.
 #undef width_offset
 #undef height_offset
 #undef depth_offset
+
 #undef box_node_size
+#undef rule_node_size
+
 #undef rule_node
 #undef glue_node
 #undef kern_node
@@ -55,6 +58,16 @@ authorization from the copyright holder.
 #undef SYNCTEX_TAG_MODEL
 #undef SYNCTEX_LINE_MODEL
 #undef SYNCTEX_VALUE
+#undef SYNCTEX_CURV
+#undef SYNCTEX_CURH
+#undef SYNCTEX_GET_JOB_NAME
+#undef SYNCTEX_GET_LOG_NAME
+#undef SYNCTEX_RULE_WD
+#undef SYNCTEX_RULE_HT
+#undef SYNCTEX_RULE_DP
+#undef SYNCTEX_CURRENT_TAG
+#undef SYNCTEX_GET_CURRENT_NAME
+#undef SYNCTEX_GET_TOTAL_PAGES
 
 #define SYNCTEX_TAG_MODEL(NODE,SIZE)\
                     vinfo(NODE+SIZE-synchronization_field_size)
@@ -68,22 +81,19 @@ authorization from the copyright holder.
 #define SYNCTEX_HEIGHT(NODE) height(NODE)
 #define SYNCTEX_VALUE int_par(synctex_code)
 
+#define SYNCTEX_CURV (dimen_par(page_height_code)-static_pdf->posstruct->pos.v)
+#define SYNCTEX_CURH static_pdf->posstruct->pos.h
 
-#define CURV (dimen_par(page_height_code)-static_pdf->posstruct->pos.v)
-#define CURH static_pdf->posstruct->pos.h
+#define SYNCTEX_GET_JOB_NAME() makecstring(job_name)
+#define SYNCTEX_GET_LOG_NAME() (char *)xstrdup((const char*)texmf_log_name)
 
-#define GETJOBNAME() makecstring(job_name)
-#define GETLOGNAME() (char *)xstrdup((const char*)texmf_log_name)
-#define gettexstring(a) makecstring(a)
+#define SYNCTEX_RULE_WD width(p)
+#define SYNCTEX_RULE_HT height(p)
+#define SYNCTEX_RULE_DP depth(p)
 
-#define rulewd width(p)
-#define ruleht height(p)
-#define ruledp depth(p)
-
-#define curinput cur_input
-#define totalpages total_pages
-#define synctextagfield synctex_tag_field
-#define namefield name_field
+#define SYNCTEX_CURRENT_TAG (cur_input.synctex_tag_field)
+#define SYNCTEX_GET_CURRENT_NAME() (makecstring(cur_input.name_field))
+#define SYNCTEX_GET_TOTAL_PAGES() (total_pages)
 
 #include "ptexlib.h"
 
@@ -97,3 +107,4 @@ authorization from the copyright holder.
 #define SYNCTEX_OUTPUT ((pdf_output_value>0)?"pdf":"dvi")
 
 #define __SyncTeX__ 1
+

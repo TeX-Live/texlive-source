@@ -1,3 +1,9 @@
+2010-05-13  Taco Hoekwater <taco@luatex.org>
+
+	* utils/synctex.c, utils/synctex-luatex.h: update from Jérome
+	Laurens, bringing luatex in-line with the core synctex distribution
+	* luatex_svnversion.h: updated to reflect the version of 0.60.x branch
+	
 2010-05-06  Taco Hoekwater <taco@luatex.org>
 
         * luatex.c (calledit): use ifdef __MINGW32__ instead of WIN32.
