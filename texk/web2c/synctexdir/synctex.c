@@ -88,6 +88,7 @@ Version 3
 - very minor design change to take luatex into account
 - typo fixed
 - some size_t replaced by int
+- very minor code design change to remove wrong xetex specific warnings
 
 Version 2
 Fri Sep 19 14:55:31 UTC 2008
@@ -418,13 +419,13 @@ static void *synctex_dot_open(void)
        either SYNCTEX_FILE is nonnegative or synchronization is
        definitely disabled. */
     {
-        size_t len;
         char *tmp = SYNCTEX_GET_JOB_NAME();
+        size_t len = strlen(tmp);
         /*  jobname was set by the \jobname command on the *TeX side  */
-        char *the_busy_name = xmalloc((unsigned)
-                                      (strlen(tmp) + strlen(synctex_suffix) +
-                                       strlen(synctex_suffix_gz) +
-                                       strlen(synctex_suffix_busy) + 1));
+        char *the_busy_name = xmalloc((size_t)
+                                      (len + strlen(synctex_suffix)
+                                           + strlen(synctex_suffix_gz)
+                                           + strlen(synctex_suffix_busy) + 1));
         if (!the_busy_name) {
             SYNCTEX_FREE(tmp);
             synctexabort(0);
@@ -434,7 +435,6 @@ static void *synctex_dot_open(void)
         synctex_ctxt.flags.quoted = 0;
         strcpy(the_busy_name, tmp);
 #  else
-        len = strlen(tmp);
         if (len > 0 && tmp[0] == '"' && tmp[len - 1] == '"') {
             /*  We are certainly on a pdftex like engine and the input file name did contain spaces inside.
                Quotes where added around that file name. We prefer to remove the quotes to have a human readable name.
@@ -684,13 +684,13 @@ void synctexterminate(boolean log_opened)
             remove(the_real_syncname);
         }
     } else if ((tmp = SYNCTEX_GET_JOB_NAME())) {
-        size_t len;
+        size_t len = strlen(tmp);
         /*  There was a problem with the output.
            We just try to remove existing synctex output files
            including the busy one. */
-        the_real_syncname = xmalloc((unsigned)
-                                    (strlen(tmp) + strlen(synctex_suffix) +
-                                     strlen(synctex_suffix_gz) + 1));
+        the_real_syncname = xmalloc((size_t)
+                                    (len + strlen(synctex_suffix)
+                                         + strlen(synctex_suffix_gz) + 1));
         if (!the_real_syncname) {
             SYNCTEX_FREE(tmp);
             synctexabort(0);
@@ -699,7 +699,6 @@ void synctexterminate(boolean log_opened)
 #   if defined(XeTeX)
         strcpy(the_real_syncname, tmp);
 #   else
-        len = strlen(tmp);
         if (len > 0 && tmp[0] == '"' && tmp[len - 1] == '"') {
             /*  See above a similar situation. */
             strcpy(the_real_syncname, tmp + 1); /* only copy what follows the leading " character */
