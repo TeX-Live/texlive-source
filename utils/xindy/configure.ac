@@ -203,9 +203,4 @@ AC_CONFIG_FILES([Makefile \
 	    	xindy/doc/style-tutorial/Makefile \
 ])
 
-# In a TeX Live build enable_texlive_build is yes, otherwise undefined.
-AC_SUBST([is_TL], ["$enable_texlive_build"])
-AC_CONFIG_FILES([xindy/user-commands/texindy], [chmod +x xindy/user-commands/texindy])
-AC_CONFIG_FILES([xindy/user-commands/xindy], [chmod +x xindy/user-commands/xindy])
-
 AC_OUTPUT

@@ -1,19 +1,6 @@
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/configure.ac xindy/configure.ac
---- xindy.orig/configure.ac	2010-05-11 01:12:10.000000000 +0200
-+++ xindy/configure.ac	2010-05-12 11:23:08.972502978 +0200
-@@ -162,4 +162,9 @@
- 	    	doc/style-tutorial/Makefile
- ])
- 
-+# In a TeX Live build enable_texlive_build is yes, otherwise undefined.
-+AC_SUBST([is_TL], ["$enable_texlive_build"])
-+AC_CONFIG_FILES([user-commands/texindy], [chmod +x user-commands/texindy])
-+AC_CONFIG_FILES([user-commands/xindy], [chmod +x user-commands/xindy])
-+
- AC_OUTPUT
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
+diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
 --- xindy.orig/user-commands/Makefile.am	2010-05-11 01:15:51.000000000 +0200
-+++ xindy/user-commands/Makefile.am	2010-05-12 11:27:23.459084841 +0200
++++ xindy/user-commands/Makefile.am	2010-05-12 21:23:55.065336668 +0200
 @@ -26,12 +26,14 @@
  
  if TEXLIVE_BUILD
@@ -26,32 +13,41 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.a
  	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
  	@for f in $(scripts); do \
 -	  $(INSTALL_SCRIPT) "$(srcdir)/$$f.in" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
-+	  $(INSTALL_SCRIPT) "$$f" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
++	  $(INSTALL_SCRIPT) $$f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
  	done
  	case "$(bindir)" in \
  	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-@@ -57,17 +59,9 @@
+@@ -53,17 +55,23 @@
+ 	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
+ 	done
+ 
++sed_cmd = sed -e 's:@is_TL\@:yes:'
++
+ else !TEXLIVE_BUILD
  
  bin_SCRIPTS += $(scripts)
  
--texindy: texindy.in Makefile
++sed_cmd = sed -e 's:@libdir\@:$(libdir):'
++
++endif !TEXLIVE_BUILD
++
+ texindy: texindy.in Makefile
 -	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/texindy.in >texindy
--
--xindy: xindy.in Makefile
++	$(sed_cmd) $(srcdir)/$@.in >$@
++	chmod +x $@
+ 
+ xindy: xindy.in Makefile
 -	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
 -
- endif !TEXLIVE_BUILD
+-endif !TEXLIVE_BUILD
++	$(sed_cmd) $(srcdir)/$@.in >$@
++	chmod +x $@
  
  man_MANS = texindy.1 xindy.1
  
--EXTRA_DIST = $(man_MANS) texindy.in xindy.in
--
--CLEANFILES = $(scripts)
-+EXTRA_DIST = $(man_MANS)
- 
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/user-commands/texindy.in xindy/user-commands/texindy.in
+diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/texindy.in xindy/user-commands/texindy.in
 --- xindy.orig/user-commands/texindy.in	2010-05-11 01:39:24.000000000 +0200
-+++ xindy/user-commands/texindy.in	2010-05-12 11:09:38.891995103 +0200
++++ xindy/user-commands/texindy.in	2010-05-12 11:09:39.000000000 +0200
 @@ -352,6 +352,7 @@
  
  # Determine environment. Where is our library directory, and our modules?
@@ -76,9 +72,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/user-commands/texindy.in
  
      if ( $is_w32 ) {
  	$xindy = "$cmd_dir/xindy.pl";
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xindy/user-commands/xindy.in
+diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xindy/user-commands/xindy.in
 --- xindy.orig/user-commands/xindy.in	2010-05-11 01:39:24.000000000 +0200
-+++ xindy/user-commands/xindy.in	2010-05-12 11:09:37.247697554 +0200
++++ xindy/user-commands/xindy.in	2010-05-12 11:09:37.000000000 +0200
 @@ -337,6 +337,7 @@
  
  # Determine environment. Where is our library directory, and our modules?

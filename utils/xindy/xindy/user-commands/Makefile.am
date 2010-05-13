@@ -33,7 +33,7 @@ scriptsdir = ${prefix}/$(scriptspath)
 install-exec-hook:
 	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
 	@for f in $(scripts); do \
-	  $(INSTALL_SCRIPT) "$$f" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
+	  $(INSTALL_SCRIPT) $$f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 	done
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
@@ -55,13 +55,27 @@ uninstall-hook:
 	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 	done
 
+sed_cmd = sed -e 's:@is_TL\@:yes:'
+
 else !TEXLIVE_BUILD
 
 bin_SCRIPTS += $(scripts)
 
+sed_cmd = sed -e 's:@libdir\@:$(libdir):'
+
 endif !TEXLIVE_BUILD
+
+texindy: texindy.in Makefile
+	$(sed_cmd) $(srcdir)/$@.in >$@
+	chmod +x $@
+
+xindy: xindy.in Makefile
+	$(sed_cmd) $(srcdir)/$@.in >$@
+	chmod +x $@
 
 man_MANS = texindy.1 xindy.1
 
-EXTRA_DIST = $(man_MANS)
+EXTRA_DIST = $(man_MANS) texindy.in xindy.in
+
+CLEANFILES = $(scripts)
 
