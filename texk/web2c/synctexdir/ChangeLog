@@ -1,3 +1,13 @@
+2010-05-13  Jerome Laurens  <jerome.laurens@u-bourgogne.fr>
+
+	* synctex.c, change in code design.
+    The macro layer is enhanced to take luatex into account.
+    Luatex can now safely use this file instead of luatexdir/utils/synctex.c,
+    provided luatexdir/utils/synctex-luatex.h is updated accordingly.
+    No change for pdftex not xetex.
+    
+    * synctex.c, typos fixed, some wrong "size_t" causing false warnings replaced by "int".
+
 2010-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex_main.c, synctex_parser_local.h: #include "c-auto.h"
