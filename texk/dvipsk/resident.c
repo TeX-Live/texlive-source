@@ -774,7 +774,8 @@ default:
       if (printer)
         {
           char msg[1000];
-          sprintf (msg, "warning: no config file for `%s'", printer);
+          snprintf (msg, sizeof(msg), "warning: no config file for `%s'",
+          	    printer);
           error(msg);
           return 0;
         }

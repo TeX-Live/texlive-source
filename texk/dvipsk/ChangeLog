@@ -1,3 +1,8 @@
+2010-05-14  Karl Berry  <karl@tug.org>
+
+	* resident.c,
+	* output.c: more sprintf -> snprintf.
+
 2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvips.h [SET_BINARY]: Add cast to void.

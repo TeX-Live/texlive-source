@@ -764,24 +764,27 @@ jscout(int c, char *fs)   /* string character out */
       numout(-hh);
    }
    if (strstr(fs,"-UTF32-")!=NULL) {
-      sprintf(s, "a<%08x>p", c);
+      snprintf(s, sizeof(s), "a<%08x>p", c);
    } else if (strstr(fs,"-UTF8-")!=NULL) {
       if (c<0x80) {
-         sprintf(s, "a<%02x>p", c);
+         snprintf(s, sizeof(s), "a<%02x>p", c);
       } else if (c<0x800) {
-	 sprintf(s, "a<%02x%02x>p", UCStoUTF8B1(c), UCStoUTF8B2(c));
+	 snprintf(s, sizeof(s), "a<%02x%02x>p", UCStoUTF8B1(c), UCStoUTF8B2(c));
       } else if (c<0x10000) {
-	 sprintf(s, "a<%02x%02x%02x>p", UCStoUTF8C1(c), UCStoUTF8C2(c), UCStoUTF8C3(c));
+	 snprintf(s, sizeof(s), "a<%02x%02x%02x>p", UCStoUTF8C1(c),
+                 UCStoUTF8C2(c), UCStoUTF8C3(c));
       } else if (c<0x110000) {
-	 sprintf(s, "a<%02x%02x%02x%02x>p", UCStoUTF8D1(c), UCStoUTF8D2(c), UCStoUTF8D3(c), UCStoUTF8D4(c));
+	 snprintf(s, sizeof(s), "a<%02x%02x%02x%02x>p", UCStoUTF8D1(c),
+		 UCStoUTF8D2(c), UCStoUTF8D3(c), UCStoUTF8D4(c));
       } else {
          error("warning: Illegal code value.");
       }
    } else if (c>0xffff && strstr(fs,"-UTF16-")!=NULL) {
-      sprintf(s, "a<%04x%04x>p", UTF32toUTF16HS(c), UTF32toUTF16LS(c));
+      snprintf(s, sizeof(s), "a<%04x%04x>p",
+	       UTF32toUTF16HS(c), UTF32toUTF16LS(c));
    } else {
       if ((strstr(fs,"-RKSJ-")!=NULL)) c = JIStoSJIS(c);
-      sprintf(s, "a<%04x>p", c);
+      snprintf(s, sizeof(s), "a<%04x>p", c);
    }
    cmdout(s);
    instring = 0;
@@ -833,30 +836,30 @@ chrcmd(char c)
 void
 floatout(float n)
 {
-   char buf[20];
+   char buf[50];
 
-   sprintf(buf, "%.2f", n);
+   snprintf(buf, sizeof(buf), "%.2f", n);
    cmdout(buf);
 }
 
 void
 doubleout(double n)
 {
-   char buf[40];
+   char buf[50];
 
-   sprintf(buf, "%g", n);
+   snprintf(buf, sizeof(buf), "%g", n);
    cmdout(buf);
 }
 
 void
 numout(integer n)
 {
-   char buf[10];
+   char buf[50];
 
 #ifdef SHORTINT
-   sprintf(buf, "%ld", n);
+   snprintf(buf, sizeof(buf), "%ld", n);
 #else
-   sprintf(buf, "%d", n);
+   snprintf(buf, sizeof(buf), "%d", n);
 #endif
    cmdout(buf);
 }
