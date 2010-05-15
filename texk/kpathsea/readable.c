@@ -65,7 +65,7 @@ READABLE(const_string fn, unsigned int st)
 /* POSIX invented the brain-damage of not necessarily truncating
    filename components; the system's behavior is defined by the value of
    the symbol _POSIX_NO_TRUNC, but you can't change it dynamically!
-   
+
    Generic const return warning.  See extend-fname.c.  */
 
 string
@@ -106,7 +106,7 @@ kpathsea_readable_file (kpathsea kpse, const_string name)
 
 #if defined (KPSE_COMPAT_API)
 string
-kpse_readable_file (const_string name) 
+kpse_readable_file (const_string name)
 {
     return kpathsea_readable_file (kpse_def, name);
 }

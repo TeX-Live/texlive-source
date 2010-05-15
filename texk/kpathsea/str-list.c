@@ -28,10 +28,10 @@ str_list_type
 str_list_init (void)
 {
   str_list_type ret;
-  
+
   STR_LIST_LENGTH (ret) = 0;
   STR_LIST (ret) = NULL;
-  
+
   return ret;
 }
 
@@ -47,7 +47,7 @@ str_list_add (str_list_type *l,  string s)
 
 /* May as well save some reallocations and do everything in a chunk
    instead of calling str_list_add on each element.  */
-   
+
 void
 str_list_concat (str_list_type *target,  str_list_type more)
 {
@@ -56,7 +56,7 @@ str_list_concat (str_list_type *target,  str_list_type more)
 
   STR_LIST_LENGTH (*target) += STR_LIST_LENGTH (more);
   XRETALLOC (STR_LIST (*target), STR_LIST_LENGTH (*target), string);
-  
+
   for (e = 0; e < STR_LIST_LENGTH (more); e++)
     STR_LIST_ELT (*target, prev_len + e) = STR_LIST_ELT (more, e);
 }
@@ -126,7 +126,7 @@ str_list_uniqify (str_list_type *l)
 {
   unsigned e;
   str_list_type ret = str_list_init ();
-  
+
   for (e = 0; e < STR_LIST_LENGTH (*l); e++) {
     string elt1 = STR_LIST_ELT (*l, e);
     unsigned f;
@@ -139,14 +139,14 @@ str_list_uniqify (str_list_type *l)
         break;
       }
     }
-    
+
     if (f == STR_LIST_LENGTH (*l)) {
       str_list_add (&ret, elt1); /* not found */
     } else {
       free (elt1);  /* duplicate, forget this one */
     }
   }
-  
+
   /* Replace the passed list with what we constructed.  */
   *l = ret;
 }

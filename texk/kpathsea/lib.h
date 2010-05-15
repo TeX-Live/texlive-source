@@ -49,7 +49,7 @@
 #else
 #define START_FATAL() do { \
   fprintf (stderr, "fatal: ");
-#endif 
+#endif
 
 #define END_FATAL() fputs (".\n", stderr); exit (1); } while (0)
 
@@ -96,7 +96,7 @@
 /* I find this easier to read.  */
 #define STREQ(s1, s2) ((s1) && (s2) && (strcmp (s1, s2) == 0))
 #define STRNEQ(s1, s2, n) ((s1) && (s2) && (strncmp (s1, s2, n) == 0))
-      
+
 /* Support for FAT/ISO-9660 filesystems.  Theoretically this should be
    done at runtime, per filesystem, but that's painful to program.  */
 #ifdef MONOCASE_FILENAMES
@@ -174,9 +174,9 @@ extern KPSEDLL const_string extend_filename (const_string name,
 
 /* Call putenv with the string `VAR=VALUE' and abort on error.  */
 extern KPSEDLL void kpathsea_xputenv (kpathsea kpse, const_string var,
-                                      const_string value); 
+                                      const_string value);
 extern KPSEDLL void kpathsea_xputenv_int (kpathsea kpse, const_string var,
-                                          int value); 
+                                          int value);
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL void xputenv (const_string var, const_string value);
 extern KPSEDLL void xputenv_int (const_string var, int value);
@@ -197,7 +197,7 @@ extern KPSEDLL boolean dir_p (const_string fn);
 extern KPSEDLL int dir_links (const_string fn, long nlinks);
 #endif
 extern KPSEDLL int kpathsea_dir_links (kpathsea kpse, const_string fn,
-                                       long nlinks); 
+                                       long nlinks);
 
 /* Like their stdio counterparts, but abort on error, after calling
    perror(3) with FILENAME as its argument.  */

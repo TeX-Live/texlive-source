@@ -25,10 +25,10 @@ struct stat
 xstat (const_string path)
 {
     struct stat s;
-    
+
     if (stat(path, &s) != 0)
         FATAL_PERROR(path);
-    
+
     return s;
 }
 
@@ -46,9 +46,9 @@ struct stat
 xlstat (const_string path)
 {
     struct stat s;
-  
+
     if (lstat(path, &s) != 0)
-        FATAL_PERROR(path);  
+        FATAL_PERROR(path);
     return s;
 }
 #endif

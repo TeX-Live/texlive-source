@@ -107,7 +107,7 @@
 #include <kpathsea/types.h>    /* <sys/types.h>, boolean, string, etc. */
 #include <kpathsea/progname.h> /* for program_invocation_*name */
 
-   
+
 /* If you want to find subdirectories in a directory with non-Unix
    semantics (specifically, if a directory with no subdirectories does
    not have exactly two links), define this.  */

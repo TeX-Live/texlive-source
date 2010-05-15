@@ -21,7 +21,7 @@
 /* We may or may not return NAME.  It's up to the caller not to assume
    the return value is modifiable.  */
 
-const_string 
+const_string
 extend_filename (const_string name, const_string default_suffix)
 {
   const_string new_s;

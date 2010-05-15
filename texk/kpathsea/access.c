@@ -77,14 +77,14 @@ Try `%s --help' for more information.\n", argv[0], argv[0]);
             fprintf(stderr, "%s: Invalid MODE.\n", argv[0]);
             exit(1);
         }
-    
+
     status = access(argv[2], mode);
-        
+
     /* fail if the access call failed */
     if (status != 0) {
         return 1;
     }
-    
+
     /* otherwise, succeed */
     return 0;
 }

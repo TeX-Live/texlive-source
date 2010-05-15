@@ -141,7 +141,7 @@ StripLast (register char *s)
 
 /* Copy first path element from B to A, removing it from B.  */
 
-static void 
+static void
 CopyFirst (register char *a, char *b)
 {
   register int length = strlen (a);
@@ -271,7 +271,7 @@ remove_dots (kpathsea kpse, string dir)
   string c;
   unsigned len;
   string ret = (string) ""; /* We always reassign.  */
-  
+
   for (c = kpathsea_filename_component (kpse, dir); c;
        c = kpathsea_filename_component (kpse, NULL)) {
     if (STREQ (c, ".")) {
@@ -317,7 +317,7 @@ remove_dots (kpathsea kpse, string dir)
       ret = temp;
     }
   }
-  
+
   /* Remove a trailing /, just in case it snuck in.  */
   len = strlen (ret);
   if (len > 0 && ret[len - 1] == DIR_SEP) {
@@ -336,7 +336,7 @@ kpathsea_selfdir (kpathsea kpse, const_string argv0)
 {
   string ret = NULL;
   string self = NULL;
-  
+
   if (kpathsea_absolute_p (kpse, argv0, true)) {
     self = xstrdup (argv0);
   } else {
@@ -356,7 +356,7 @@ kpathsea_selfdir (kpathsea kpse, const_string argv0)
         *self = '\0';
       } else {
         strcat (self,DIR_SEP_STRING);
-        strcat (self,argv0); 
+        strcat (self,argv0);
       }
       UnLock (lock);
     }
@@ -370,10 +370,10 @@ kpathsea_selfdir (kpathsea kpse, const_string argv0)
     for (elt = kpathsea_path_element (kpse, getenv ("PATH")); !self && elt;
          elt = kpathsea_path_element (kpse, NULL)) {
       string name;
-      
+
       /* UNIX tradition interprets the empty path element as "." */
       if (*elt == 0) elt = ".";
-      
+
       name = concat3 (elt, DIR_SEP_STRING, argv0);
 
       /* In order to do this perfectly, we'd have to check the owner bits only
@@ -385,21 +385,21 @@ kpathsea_selfdir (kpathsea kpse, const_string argv0)
          necessary if we were to do it right.  */
       if (stat (name, &s) == 0 && s.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)) {
         /* Do not stop at directories. */
-        if (!S_ISDIR(s.st_mode)) 
+        if (!S_ISDIR(s.st_mode))
           self = name;
       }
     }
 #endif /* not AMIGA */
   }
-  
+
   /* If argv0 is somehow dir/exename, `self' will still be NULL.  */
   if (!self)
     self = concat3 (".", DIR_SEP_STRING, argv0);
-    
+
   ret = xdirname (remove_dots (kpse, expand_symlinks (kpse, self)));
 
   free (self);
-  
+
   return ret;
 }
 
@@ -477,7 +477,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   string append_debug_output = getenv("KPATHSEA_DEBUG_APPEND");
   int err, olderr;
 #endif
-  
+
   /* Set debugging stuff first, in case we end up doing debuggable stuff
      during this initialization.  */
   if (s) {
@@ -526,7 +526,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
      stuff useless for win32. */
   {
     char short_path[PATH_MAX], path[PATH_MAX], *fp;
-      
+
     /* SearchPath() always gives back an absolute directory */
     if (SearchPath(NULL, argv0, ".exe", PATH_MAX, short_path, &fp) == 0)
         LIB_FATAL1("Can't determine where the executable %s is.\n", argv0);
@@ -643,10 +643,10 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
     }
   }
 
-  /* Some of the utility routines (like atou() and xfopen()) will use 
+  /* Some of the utility routines (like atou() and xfopen()) will use
      FATAL and variations thereof (see lib.h) if there is a problem.
 
-     The next trick makes it possible for that message to report some useful 
+     The next trick makes it possible for that message to report some useful
      name instead of (NULL), if the backward compatible is compiled in. */
 
 #if defined (KPSE_COMPAT_API)
@@ -655,7 +655,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
     kpse_def->invocation_short_name = xstrdup(kpse->invocation_short_name);
   }
 #endif
-  
+
   kpathsea_xputenv (kpse, "progname", kpse->program_name);
 }
 

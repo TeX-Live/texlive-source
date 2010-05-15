@@ -27,18 +27,18 @@
    mess, but still better than repeating the code.  */
 
 void
-kpathsea_init_prog (kpathsea kpse, const_string prefix,  unsigned dpi,  
+kpathsea_init_prog (kpathsea kpse, const_string prefix,  unsigned dpi,
                     const_string mode, const_string fallback)
 {
   string font_var = concat (prefix, "FONTS");
   string header_var = concat (prefix, "HEADERS");
   string makepk_var = concat (prefix, "MAKEPK");
   string size_var = concat (prefix, "SIZES");
-  
+
   /* Do both `pk_format' and `any_glyph_format' for the sake of xdvi; in
      general, mktexpk might apply to either, and the program will ask
      for the one it wants.  */
-     
+
   /* Might have a program-specific name for mktexpk itself.  */
   if (getenv (makepk_var)) {
   /* If we did, we want to enable the program, I think.  */
@@ -65,10 +65,10 @@ kpathsea_init_prog (kpathsea kpse, const_string prefix,  unsigned dpi,
   kpathsea_init_fallback_resolutions (kpse, size_var);
   kpathsea_xputenv_int (kpse, "MAKETEX_BASE_DPI", dpi);
   kpse->fallback_font = fallback;
-  
+
   /* Ugliness.  See comments in kpse_make_tex in kpathsea/tex-make.c.  */
   kpathsea_xputenv (kpse, "MAKETEX_MODE", mode ? mode : DIR_SEP_STRING);
-  
+
   free (font_var);
   free (header_var);
   free (makepk_var);
@@ -77,7 +77,7 @@ kpathsea_init_prog (kpathsea kpse, const_string prefix,  unsigned dpi,
 
 #if defined (KPSE_COMPAT_API)
 void
-kpse_init_prog (const_string prefix,  unsigned dpi,  
+kpse_init_prog (const_string prefix,  unsigned dpi,
                 const_string mode, const_string fallback)
 {
   kpathsea_init_prog(kpse_def,prefix,dpi,mode,fallback);

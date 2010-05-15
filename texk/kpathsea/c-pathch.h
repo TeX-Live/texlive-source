@@ -65,10 +65,10 @@
 #define IS_DIR_SEP(ch) ((ch) == DIR_SEP)
 #endif
 #ifndef IS_DEVICE_SEP /* No `devices' on, e.g., Unix.  */
-#define IS_DEVICE_SEP(ch) 0 
+#define IS_DEVICE_SEP(ch) 0
 #endif
 #ifndef NAME_BEGINS_WITH_DEVICE
-#define NAME_BEGINS_WITH_DEVICE(name) 0 
+#define NAME_BEGINS_WITH_DEVICE(name) 0
 #endif
 #ifndef IS_UNC_NAME /* Unc names are in practice found on Win32 only. */
 #define IS_UNC_NAME(name) 0

@@ -20,7 +20,7 @@
 
 #if _MSC_VER>=1200
    #pragma warning(pop)
-#else 
+#else
    #pragma warning(default: 4668)
    #pragma warning(default: 4255)
 #endif

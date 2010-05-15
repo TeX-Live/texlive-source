@@ -28,15 +28,15 @@ find_suffix (const_string name)
 {
   const_string slash_pos;
   string dot_pos = strrchr (name, '.');
-  
+
   if (dot_pos == NULL)
     return NULL;
-  
+
   for (slash_pos = name + strlen (name);
        slash_pos > dot_pos && !IS_DIR_SEP (*slash_pos);
        slash_pos--)
     ;
-  
+
   return slash_pos > dot_pos ? NULL : dot_pos + 1;
 }
 

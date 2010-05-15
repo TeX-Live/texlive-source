@@ -27,7 +27,7 @@ remove_suffix (const_string s)
 {
   string ret;
   const_string suffix = find_suffix (s);
-  
+
   if (suffix)
     {
       /* Back up to before the dot.  */
@@ -38,6 +38,6 @@ remove_suffix (const_string s)
     }
   else
     ret = (string) s;
-    
+
   return ret;
 }

@@ -39,7 +39,7 @@ xclosedir (DIR *d)
     closedir (d);
 #else
     int ret = closedir(d);
-  
+
     if (ret != 0)
         FATAL("closedir failed");
 #endif

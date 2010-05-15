@@ -24,7 +24,7 @@ void *
 xrealloc (void *old_ptr, size_t size)
 {
     void *new_mem;
-    
+
     if (old_ptr == NULL) {
         new_mem = xmalloc(size);
     } else {
@@ -40,6 +40,6 @@ xrealloc (void *old_ptr, size_t size)
             exit(EXIT_FAILURE);
         }
     }
-    
+
     return new_mem;
 }

@@ -30,11 +30,11 @@ xdirname (const_string name)
 {
     string ret;
     unsigned limit = 0, loc;
-    
+
     /* Ignore a NULL name. */
     if (!name)
         return NULL;
-    
+
     if (NAME_BEGINS_WITH_DEVICE(name)) {
         limit = 2;
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -51,10 +51,10 @@ xdirname (const_string name)
         }
 #endif
     }
-    
+
     for (loc = strlen (name); loc > limit && !IS_DIR_SEP (name[loc-1]); loc--)
         ;
-    
+
     if (loc == limit && limit > 0) {
         if (limit == 2) {
             ret = (string)xmalloc(limit + 2);
@@ -75,7 +75,7 @@ xdirname (const_string name)
         strncpy(ret, name, loc);
         ret[loc] = '\0';
     }
-    
+
     return ret;
 }
 
@@ -98,7 +98,7 @@ char *tab[] = {
     "/usr/kpsewhich.exe",
     "///usr/kpsewhich.exe",
     "///kpsewhich.exe",
-    NULL 
+    NULL
 };
 
 int main()

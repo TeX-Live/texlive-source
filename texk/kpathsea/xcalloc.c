@@ -23,13 +23,13 @@ void *
 xcalloc (size_t nelem,  size_t elsize)
 {
     void *new_mem = (void*)calloc(nelem ? nelem : 1, elsize ? elsize : 1);
-  
+
     if (new_mem == NULL) {
         fprintf(stderr,
                 "xcalloc: request for %lu elements of size %lu failed.\n",
                 (unsigned long)nelem, (unsigned long)elsize);
         exit(EXIT_FAILURE);
     }
-  
+
     return new_mem;
 }

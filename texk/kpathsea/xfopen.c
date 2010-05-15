@@ -26,9 +26,9 @@ FILE *
 xfopen (const_string filename,  const_string mode)
 {
     FILE *f;
-    
+
     assert(filename && mode);
-  
+
     f = fopen(filename, mode);
     if (f == NULL)
         FATAL_PERROR(filename);
@@ -41,7 +41,7 @@ void
 xfclose (FILE *f,  const_string filename)
 {
     assert(f);
-  
+
     if (fclose(f) == EOF)
         FATAL_PERROR(filename);
 

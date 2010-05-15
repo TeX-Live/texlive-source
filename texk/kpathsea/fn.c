@@ -30,10 +30,10 @@ fn_type
 fn_init (void)
 {
   fn_type ret;
-  
+
   FN_ALLOCATED (ret) = FN_LENGTH (ret) = 0;
   FN_STRING (ret) = NULL;
-  
+
   return ret;
 }
 
@@ -42,14 +42,14 @@ fn_type
 fn_copy0 (const_string s,  unsigned len)
 {
   fn_type ret;
-  
+
   FN_ALLOCATED (ret) = CHUNK_SIZE > len ? CHUNK_SIZE : len + 1;
   FN_STRING (ret) = (string)xmalloc (FN_ALLOCATED (ret));
-  
+
   strncpy (FN_STRING (ret), s, len);
   FN_STRING (ret)[len] = 0;
   FN_LENGTH (ret) = len + 1;
-  
+
   return ret;
 }
 

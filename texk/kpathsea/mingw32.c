@@ -13,13 +13,13 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
-   along with this library; if not, see <http://www.gnu.org/licenses/>.  
+   along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
 
 /* Original sources lifted from the distribution of XEmacs for Windows NT,
-   Copyright 1994-1996 Free Software Foundation, later adapted to 
+   Copyright 1994-1996 Free Software Foundation, later adapted to
    fpTeX 0.4 (2000) by Fabrice Popineau <Fabrice.Popineau@supelec.fr>,
-   then simplified and re-adapted to TeXLive (2009) by Taco Hoekwater 
+   then simplified and re-adapted to TeXLive (2009) by Taco Hoekwater
    <taco@luatex.org>.
 */
 
@@ -60,9 +60,9 @@ init_user_info (void)
     putenv ((GetVersion () & 0x80000000) ? "SHELL=command" : "SHELL=cmd");
 
   {
-    /* Win2K problem : we need a specific TEMP directory with 
+    /* Win2K problem : we need a specific TEMP directory with
        full access rights so that any user building a format file
-       or a font file will build it with full access rights. The installer 
+       or a font file will build it with full access rights. The installer
        takes care of defining TEXMFTEMP=$SELFAUTOPARENT/tmp in the environment.
        If it is defined, then use it as the TEMP and TMP variables.
     */
@@ -92,7 +92,7 @@ get_home_directory (void)
 	  goto done;
 	}
   }
-  
+
   {
 	char	*homedrive, *homepath;
 	if ((homedrive = getenv("HOMEDRIVE")) != NULL &&
@@ -101,7 +101,7 @@ get_home_directory (void)
 	  goto done;
 	}
   }
-  
+
   /* This method is the prefered one because even if it requires a more recent shell32.dll,
      it does not need to call SHMalloc()->Free() */
   {
@@ -175,10 +175,10 @@ normalize_filename (char *fp, char path_sep)
 
   /* Remove unneeded double slashes */
   ret = (IS_UNC_NAME(fp) ? 2 :
-	 NAME_BEGINS_WITH_DEVICE(fp) ? 
+	 NAME_BEGINS_WITH_DEVICE(fp) ?
 	 (IS_DIR_SEP(*(fp+2)) ? 3 : 2) : IS_DIR_SEP(*fp) ? 1 : 0);
-  for (i = ret, p = fp+i; 
-       IS_DIR_SEP(*p); 
+  for (i = ret, p = fp+i;
+       IS_DIR_SEP(*p);
        i++, p++);
   if (i > ret) {
     int len = strlen(fp+i);
@@ -199,7 +199,7 @@ normalize_filename (char *fp, char path_sep)
 
 #if 0
     fprintf(stderr, "normalize_filename returned (%d) %s\n", ret, fp);
-#endif  
+#endif
 
   return ret;
 }
@@ -303,7 +303,7 @@ get_long_basename (char * name, char * buf, int size)
 #ifdef PIGSFLY
   char *p;
 
-  /* If the last component of NAME has a wildcard character, 
+  /* If the last component of NAME has a wildcard character,
      return it as the basename.  */
   p = name + strlen (name);
   while (*p != '\\' && *p != ':' && p > name) p--;
@@ -392,11 +392,11 @@ win32_get_long_filename (char * name, char * buf, int size)
 
 /*
   This part looks for the real location of the program invoked
-  by cmd. If it can find the program, that's good. Else 
+  by cmd. If it can find the program, that's good. Else
   command processor is invoked.
 */
 
-BOOL 
+BOOL
 look_for_cmd(const char *cmd, char **app)
 {
   char *env_path;
@@ -564,7 +564,7 @@ get_sym (char *s, char **beg, char **end)
     s++;
 
   *beg = s;
-  
+
   do {
     *end = s + 1;
 
@@ -739,7 +739,7 @@ parse_cmdline(char *line, char **input, char **output)
       narg++;
       cmd[ncmd] = xrealloc(cmd[ncmd], narg * sizeof(char *));
       cmd[ncmd][narg - 1] = NULL;
-      ncmd++; 
+      ncmd++;
       needcmd = TRUE;
       beg = end;
       again = TRUE;
@@ -759,7 +759,7 @@ parse_cmdline(char *line, char **input, char **output)
       cmd[ncmd] = NULL;
       again = FALSE;
       break;
-	  
+	
     case UNMATCHED_QUOTE:
       fprintf(stderr, "Unmatched quote character.");
       errno = EINVAL;
@@ -781,7 +781,7 @@ parse_cmdline(char *line, char **input, char **output)
     char **p;
     /* Need to free everything that was allocated */
     for (i = 0; i < ncmd; i++) {
-      for (p = cmd[i]; *p; p++) 
+      for (p = cmd[i]; *p; p++)
 	free(*p);
       free(cmd[i]);
     }
@@ -797,7 +797,7 @@ parse_cmdline(char *line, char **input, char **output)
 }
 
 static char *
-quote_elt(char *elt) 
+quote_elt(char *elt)
 {
   char *p;
   for (p = elt; *p; p++)
@@ -979,10 +979,10 @@ win32_system(const char *cmd, int async)
       fprintf(stderr, "win32_system(%s) call failed (Error %d).\n", cmd, (int)GetLastError());
       return -1;
     }
-    
+
     /* Only the process handle is needed */
     CloseHandle(pi.hThread);
-    
+
     if (async == 0) {
       if (WaitForSingleObject(pi.hProcess, INFINITE) == WAIT_OBJECT_0) {
 	if (GetExitCodeProcess(pi.hProcess, &ret) == 0) {
@@ -1004,7 +1004,7 @@ win32_system(const char *cmd, int async)
 
   if (new_cmd) free(new_cmd);
   if (app_name) free(app_name);
-    
+
   return ret;
 }
 

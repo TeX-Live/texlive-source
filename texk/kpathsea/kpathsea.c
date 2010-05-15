@@ -27,7 +27,7 @@
 #include <kpathsea/config.h>
 
 kpathsea
-kpathsea_new (void) 
+kpathsea_new (void)
 {
     kpathsea ret;
     ret = xcalloc(1, sizeof(kpathsea_instance));
@@ -51,7 +51,7 @@ str_llist_free (str_llist_type p)
 }
 
 static void
-cache_free (cache_entry *the_cache, int cache_size) 
+cache_free (cache_entry *the_cache, int cache_size)
 {
     int f ;
     for (f=0;f<cache_size;f++) {
@@ -62,7 +62,7 @@ cache_free (cache_entry *the_cache, int cache_size)
 }
 #endif /* KPATHSEA_CAN_FREE */
 
-/* Sadly, quite a lot of the freeing is not safe: 
+/* Sadly, quite a lot of the freeing is not safe:
    it seems there are literals used all over. */
 void
 kpathsea_finish (kpathsea kpse)
@@ -78,7 +78,7 @@ kpathsea_finish (kpathsea kpse)
     hash_free (kpse->cnf_hash);
     hash_free (kpse->db);
     hash_free (kpse->alias_db);
-    str_list_free(&kpse->db_dir_list); 
+    str_list_free(&kpse->db_dir_list);
     hash_free (kpse->link_table);
     cache_free (kpse->the_cache, kpse->cache_length);
     hash_free (kpse->map);
@@ -113,7 +113,7 @@ kpathsea_finish (kpathsea kpse)
         for (i = 0; i != kpse->saved_count; ++i)
             string_free (kpse->saved_env[i]);
         free (kpse->saved_env);
-    }    
+    }
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
     if (kpse->suffixlist != NULL) {
         char **p;

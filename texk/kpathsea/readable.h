@@ -25,9 +25,9 @@
 /* If NAME is readable and is a regular file, return it.  If the error is
    ENAMETOOLONG, truncate any too-long path components, and if the
    result is a readable file, return that.  Otherwise return NULL.  */
-   
+
 extern KPSEDLL string kpathsea_readable_file (kpathsea kpse,
-                                              const_string name); 
+                                              const_string name);
 
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL string kpse_readable_file (const_string name);

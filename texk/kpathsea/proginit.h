@@ -28,7 +28,7 @@
    etc., etc.  See the source.  */
 
 extern KPSEDLL void
-kpathsea_init_prog (kpathsea kpse, const_string prefix, unsigned dpi,  
+kpathsea_init_prog (kpathsea kpse, const_string prefix, unsigned dpi,
                     const_string mode, const_string fallback);
 
 #if defined (KPSE_COMPAT_API)

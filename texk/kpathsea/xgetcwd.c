@@ -49,28 +49,28 @@ xgetcwd (void)
                                        -- Olaf Weber <infovore@xs4all.nl */
 #if defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)
     string path = (string)xmalloc(PATH_MAX + 1);
-  
+
     if (getcwd (path, PATH_MAX + 1) == 0) {
         fprintf(stderr, "getcwd: %s", path);
         exit(EXIT_FAILURE);
     }
-    
+
     return path;
 #elif defined (HAVE_GETWD)
     string path = (string)xmalloc(PATH_MAX + 1);
-    
+
     if (getwd (path) == 0) {
         fprintf(stderr, "getwd: %s", path);
         exit(EXIT_FAILURE);
     }
-  
+
     return path;
 #else /* not HAVE_GETCWD && not HAVE_GETWD */
     struct stat root_stat, cwd_stat;
     string cwd_path = (string)xmalloc(2); /* In case we assign "/" below.  */
-  
+
     *cwd_path = 0;
-  
+
     /* Find the inodes of the root and current directories.  */
     root_stat = xstat("/");
     cwd_stat  = xstat(".");
@@ -81,7 +81,7 @@ xgetcwd (void)
         struct dirent *e;
         DIR *parent_dir;
         boolean found = false;
-        
+
         xchdir("..");
         parent_dir = xopendir(".");
 
@@ -90,16 +90,16 @@ xgetcwd (void)
         while ((e = readdir (parent_dir)) != NULL && !found) {
             struct stat test_stat;
             test_stat = xlstat(e->d_name);
-            
+
             if (SAME_FILE_P(test_stat, cwd_stat)) {
                 /* We've found it.  Prepend the pathname.  */
                 string temp = cwd_path;
                 cwd_path = concat3("/", e->d_name, cwd_path);
                 free(temp);
-              
+
                 /* Set up to test the next parent.  */
                 cwd_stat = xstat(".");
-              
+
                 /* Stop reading this directory.  */
                 found = true;
             }
@@ -107,10 +107,10 @@ xgetcwd (void)
         if (!found)
             LIB_FATAL2("No inode %d/device %d in parent directory",
                    cwd_stat.st_ino, cwd_stat.st_dev);
-      
+
         xclosedir(parent_dir);
     }
-  
+
     /* If the current directory is the root, cwd_path will be the empty
        string, and we will have not gone through the loop.  */
     if (*cwd_path == 0)
@@ -122,7 +122,7 @@ xgetcwd (void)
 #ifdef DOSISH
     /* Prepend the drive letter to CWD_PATH, since this technique
        never tells us what the drive is.
- 
+
        Note that on MS-DOS/MS-Windows, the branch that works around
        missing `getwd' will probably only work for DJGPP (which does
        have `getwd'), because only DJGPP reports meaningful
@@ -130,13 +130,13 @@ xgetcwd (void)
     {
         char drive[3];
         string temp = cwd_path;
-    
+
         /* Make the drive letter lower-case, unless it is beyond Z: (yes,
            there ARE such drives, in case of Novell Netware on MS-DOS).  */
         drive[0] = root_stat.st_dev + (root_stat.st_dev < 26 ? 'a' : 'A');
         drive[1] = ':';
         drive[2] = '\0';
-        
+
         cwd_path = concat(drive, cwd_path);
         free(temp);
     }

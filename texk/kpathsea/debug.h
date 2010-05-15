@@ -43,7 +43,7 @@
      _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDOUT );\
    }
 #else /* ! _DEBUG */
-#define SET_CRT_DEBUG_FIELD(a) 
+#define SET_CRT_DEBUG_FIELD(a)
 #define CLEAR_CRT_DEBUG_FIELD(a)
 #define SETUP_CRTDBG
 #endif /* _DEBUG */

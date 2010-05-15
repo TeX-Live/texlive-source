@@ -38,7 +38,7 @@ main (int argc, char **argv)
     int status;
     char path[PATH_MAX];
 #endif
-    
+
     if (argc > 1 && strcmp (argv[1], "--help") == 0) {
         printf("Usage: %s FILE\n\
   If FILE exists and is a symlink, print the contents of the link and\n\

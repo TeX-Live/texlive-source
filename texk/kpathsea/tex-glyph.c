@@ -52,10 +52,10 @@ try_format (kpathsea kpse, const_string fontname,  unsigned dpi,
   (void)fontname;  /* -Wunused */
   if (!path)
       path = kpathsea_init_format (kpse, format);
-  
+
   /* Set the suffix on the name we'll be searching for.  */
   sfx = kpse->format_info[format].suffix;
-  if (sfx && *sfx) 
+  if (sfx && *sfx)
     kpathsea_xputenv (kpse, "KPATHSEA_FORMAT", *sfx);
 
   /* OK, the limits on this for loop are a little hokey, but it saves
@@ -73,7 +73,7 @@ try_format (kpathsea kpse, const_string fontname,  unsigned dpi,
             free (name);
         }
     }
-    
+
   return ret;
 }
 
@@ -92,7 +92,7 @@ try_size (kpathsea kpse, const_string fontname,  unsigned dpi,
   boolean try_pk = format == kpse_pk_format || format == kpse_any_glyph_format;
 
   kpathsea_xputenv_int (kpse, "KPATHSEA_DPI", dpi);
-  
+
   /* Look for PK first (since it's more likely to be found), then GF.  */
   ret = try_pk ? try_format (kpse, fontname, dpi, kpse_pk_format) : NULL;
   format_found = kpse_pk_format;
@@ -102,14 +102,14 @@ try_size (kpathsea kpse, const_string fontname,  unsigned dpi,
       ret = try_format (kpse, fontname, dpi, kpse_gf_format);
       format_found = kpse_gf_format;
     }
-  
+
   if (ret != NULL && glyph_file)
     { /* Success.  Fill in the return info.  Discard const.  */
       glyph_file->name = (string) fontname;
       glyph_file->dpi = dpi;
       glyph_file->format = format_found;
     }
-    
+
   return ret;
 }
 
@@ -122,7 +122,7 @@ try_resolution (kpathsea kpse, const_string fontname,  unsigned dpi,
                 kpse_glyph_file_type *glyph_file)
 {
   string ret = try_size (kpse, fontname, dpi, format, glyph_file);
-  
+
   if (!ret) {
     unsigned r;
     unsigned tolerance = KPSE_BITMAP_TOLERANCE (dpi);
@@ -172,7 +172,7 @@ try_fontmap (kpathsea kpse, string *fontname_ptr,  unsigned dpi,
     } else if (!kpathsea_fontmap_lookup (kpse, first_name)) {
       *fontname_ptr = xstrdup (first_name);
     }
-  } 
+  }
 
   return ret;
 }
@@ -182,7 +182,7 @@ try_fontmap (kpathsea kpse, string *fontname_ptr,  unsigned dpi,
    along as usual.  Assume `kpse_fallback_resolutions' is sorted.  */
 
 static string
-try_fallback_resolutions (kpathsea kpse, 
+try_fallback_resolutions (kpathsea kpse,
                           const_string fontname,  unsigned dpi,
                           kpse_file_format_type format,
                           kpse_glyph_file_type *glyph_file)
@@ -206,11 +206,11 @@ try_fallback_resolutions (kpathsea kpse,
     }
   if (s == 0)
     return ret; /* If nothing in list, quit now.  */
-  
+
   max_loc = s;
   lower_loc = loc - 1;
   upper_loc = loc + 1;
-  
+
   for (;;)
     {
       unsigned fallback = kpse->fallback_resolutions[loc];
@@ -221,17 +221,17 @@ try_fallback_resolutions (kpathsea kpse,
           if (ret)
             break;
         }
-      
+
       /* That didn't work. How far away are the locs above or below?  */
       lower_diff = lower_loc > -1
                    ? dpi - kpse->fallback_resolutions[lower_loc] : INT_MAX;
       upper_diff = upper_loc < max_loc
                    ? kpse->fallback_resolutions[upper_loc] - dpi : INT_MAX;
-      
+
       /* But if we're at the end in both directions, quit.  */
       if (lower_diff == INT_MAX && upper_diff == INT_MAX)
         break;
-      
+
       /* Go in whichever direction is closest.  */
       if (lower_diff < upper_diff)
         {
@@ -251,7 +251,7 @@ try_fallback_resolutions (kpathsea kpse,
 /* See the .h file for description.  This is the entry point.  */
 
 string
-kpathsea_find_glyph (kpathsea kpse, 
+kpathsea_find_glyph (kpathsea kpse,
                      const_string passed_fontname,  unsigned dpi,
                      kpse_file_format_type format,
                      kpse_glyph_file_type *glyph_file)
@@ -259,12 +259,12 @@ kpathsea_find_glyph (kpathsea kpse,
   string ret;
   kpse_glyph_source_type source;
   string fontname = (string) passed_fontname; /* discard const */
-  
+
   /* Start the search: try the name we're given.  */
   source = kpse_glyph_source_normal;
   kpathsea_xputenv (kpse, "KPATHSEA_NAME", fontname);
   ret = try_resolution (kpse, fontname, dpi, format, glyph_file);
-  
+
   /* Try all the various possibilities in order of preference.  */
   if (!ret) {
     /* Maybe FONTNAME was an alias.  */
@@ -308,7 +308,7 @@ kpathsea_find_glyph (kpathsea kpse,
       }
     }
   }
-  
+
   /* If RET is null, then the caller is not supposed to look at GLYPH_FILE,
      so it doesn't matter if we assign something incorrect.  */
   if (glyph_file)
@@ -319,7 +319,7 @@ kpathsea_find_glyph (kpathsea kpse,
   if (fontname != passed_fontname)
     free (fontname);
   */
-  
+
   return ret;
 }
 
@@ -330,7 +330,7 @@ kpse_find_glyph (const_string passed_fontname,  unsigned dpi,
                  kpse_glyph_file_type *glyph_file)
 {
     return kpathsea_find_glyph (kpse_def, passed_fontname, dpi, format,
-                                glyph_file); 
+                                glyph_file);
 }
 #endif
 
@@ -364,7 +364,7 @@ test_find_glyph (kpathsea kpse, const_string fontname, unsigned dpi)
 {
   string answer;
   kpse_glyph_file_type ret;
-  
+
   printf ("\nSearch for %s@%u:\n\t", fontname, dpi);
 
   answer = kpathsea_find_glyph (kpse, fontname, dpi,
@@ -396,10 +396,10 @@ main (int argc, char **argv)
   test_find_glyph (kpse, "fallback", 300);  /* find fallback font cmr10 */
   kpathsea_init_fallback_resolutions (kpse, "KPATHSEA_TEST_SIZES");
   test_find_glyph (kpse, "fallbackdpi", 759); /* find fallback cmr10@300 */
-  
+
   kpathsea_xputenv (kpse,"GFFONTS", ".");
   test_find_glyph (kpse, "cmr10", 300);     /* different GFFONTS/TEXFONTS */
-  
+
   return 0;
 }
 

@@ -35,7 +35,7 @@ extern void kpathsea_init_db (kpathsea kpse);
    databases can be read, or PATH_ELT is not in any of the databases,
    return NULL.  */
 
-extern str_list_type *kpathsea_db_search (kpathsea kpse, const_string name, 
+extern str_list_type *kpathsea_db_search (kpathsea kpse, const_string name,
                                           const_string path_elt, boolean all);
 
 extern str_list_type *kpathsea_db_search_list (kpathsea kpse,
@@ -55,7 +55,7 @@ extern KPSEDLL void kpathsea_db_insert (kpathsea kpse, const_string fname);
 
 extern void kpse_init_db (void);
 
-extern str_list_type *kpse_db_search (const_string name, 
+extern str_list_type *kpse_db_search (const_string name,
                                       const_string path_elt, boolean all);
 
 extern str_list_type *kpse_db_search_list (const_string* names,

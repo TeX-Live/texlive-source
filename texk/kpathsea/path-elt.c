@@ -37,18 +37,18 @@ element (kpathsea kpse, const_string passed_path,  boolean env_p)
   string ret;
   int brace_level;
   unsigned len;
-  
+
   if (passed_path)
     kpse->path = passed_path;
   /* Check if called with NULL, and no previous path (perhaps we reached
      the end).  */
   else if (!kpse->path)
     return NULL;
-  
+
   /* OK, we have a non-null `path' if we get here.  */
   assert (kpse->path);
   p = kpse->path;
-  
+
   /* Find the next colon not enclosed by braces (or the end of the path).  */
   brace_level = 0;
   while (*p != 0  && !(brace_level == 0
@@ -57,7 +57,7 @@ element (kpathsea kpse, const_string passed_path,  boolean env_p)
     else if (*p == '}') --brace_level;
     ++p;
   }
-   
+
   /* Return the substring starting at `path'.  */
   len = p - kpse->path;
 
@@ -109,13 +109,13 @@ print_path_elements (const_string path)
 {
   string elt;
   printf ("Elements of `%s':", path ? path : "(null)");
-  
+
   for (elt = kpse_path_element (path); elt != NULL;
        elt = kpse_path_element (NULL))
     {
       printf (" %s", *elt ? elt : "`'");
     }
-  
+
   puts (".");
 }
 
@@ -128,10 +128,10 @@ main ()
   print_path_elements ("a");	/* a */
   print_path_elements (ENV_SEP_STRING);	/* "", "" */
   print_path_elements (ENV_SEP_STRING ENV_SEP_STRING);	/* "", "", "" */
-  print_path_elements ("a" ENV_SEP_STRING);	/* a, "" */ 
-  print_path_elements (ENV_SEP_STRING "b");	/* "", b */ 
-  print_path_elements ("a" ENV_SEP_STRING "b");	/* a, b */ 
-  
+  print_path_elements ("a" ENV_SEP_STRING);	/* a, "" */
+  print_path_elements (ENV_SEP_STRING "b");	/* "", b */
+  print_path_elements ("a" ENV_SEP_STRING "b");	/* a, b */
+
   return 0;
 }
 

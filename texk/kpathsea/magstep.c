@@ -66,7 +66,7 @@ magstep (int n,  int bdpi)
    part of Kpathsea now so all the drivers can use it.  The idea is to
    return the true dpi corresponding to DPI with a base resolution of
    BDPI.  If M_RET is non-null, we also set that to the mag value.  */
-   
+
 /* Don't bother trying to use fabs or some other ``standard'' routine
    which can only cause trouble; just roll our own simple-minded
    absolute-value function that is all we need.  */
@@ -83,7 +83,7 @@ kpathsea_magstep_fix (kpathsea kpse, unsigned dpi,  unsigned bdpi,  int *m_ret)
   unsigned real_dpi = 0;
   int sign = dpi < bdpi ? -1 : 1; /* negative or positive magsteps? */
   (void)kpse; /* currenty not used */
-  
+
   for (m = 0; !real_dpi && m < MAGSTEP_MAX; m++) /* don't go forever */
     {
       mdpi = magstep (m * sign, bdpi);
@@ -92,7 +92,7 @@ kpathsea_magstep_fix (kpathsea kpse, unsigned dpi,  unsigned bdpi,  int *m_ret)
       else if ((mdpi - (int) dpi) * sign > 0) /* if gone too far, quit */
         real_dpi = dpi;
     }
-  
+
   /* If requested, return the encoded magstep (the loop went one too far).  */
   /* More unnecessary casts. */
   if (m_ret)

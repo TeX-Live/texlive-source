@@ -30,16 +30,16 @@ xbasename (const_string name)
 {
     const_string base = NULL;
     unsigned len;
-  
+
     for (len = strlen(name); len > 0; len--) {
         if (IS_DIR_SEP(name[len - 1]) || IS_DEVICE_SEP(name[len - 1])) {
             base = name + len;
             break;
         }
     }
-    
+
     if (!base)
         base = name;
-    
+
     return base;
 }

@@ -79,5 +79,5 @@ Subject: ss-921123: using isascii with <ctype.h> macros
   ...
 
   then, use ISDIGIT, etc. instead of isdigit, etc.  */
-  
+
 #endif /* not KPATHSEA_C_CTYPE_H */

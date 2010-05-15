@@ -20,7 +20,7 @@
 #include <kpathsea/c-pathch.h>
 
 /* Return a new string: S suffixed with SUFFIX, regardless of what it
-   was before. This returns a newly allocated string.  */ 
+   was before. This returns a newly allocated string.  */
 
 string
 make_suffix (const_string s,  const_string suffix)
@@ -28,7 +28,7 @@ make_suffix (const_string s,  const_string suffix)
   string new_s;
   const_string dot_pos = strrchr (s, '.');
   const_string slash_pos;
-  
+
   for (slash_pos = s + strlen (s) - 1; slash_pos > dot_pos && slash_pos > s;
        slash_pos--) {
     if (IS_DIR_SEP (*slash_pos))
@@ -40,7 +40,7 @@ make_suffix (const_string s,  const_string suffix)
   else
     {
       unsigned past_dot_index = dot_pos + 1 - s;
-      
+
       new_s = (string)xmalloc (past_dot_index + strlen (suffix) + 1);
       strncpy (new_s, s, dot_pos + 1 - s);
       strcpy (new_s + past_dot_index, suffix);

@@ -27,16 +27,16 @@ str_llist_add (str_llist_type *l,  string str)
 {
   str_llist_elt_type *e;
   str_llist_elt_type *new_elt = XTALLOC1 (str_llist_elt_type);
-  
+
   /* The new element will be at the end of the list.  */
   STR_LLIST (*new_elt) = str;
   STR_LLIST_MOVED (*new_elt) = false;
   STR_LLIST_NEXT (*new_elt) = NULL;
-  
+
   /* Find the current end of the list.  */
   for (e = *l; e && STR_LLIST_NEXT (*e); e = STR_LLIST_NEXT (*e))
     ;
-  
+
   if (!e)
     *l = new_elt;
   else
@@ -52,11 +52,11 @@ void
 str_llist_float (str_llist_type *l,  str_llist_elt_type *mover)
 {
   str_llist_elt_type *last_moved, *unmoved;
-  
+
   /* If we've already moved this element, never mind.  */
   if (STR_LLIST_MOVED (*mover))
     return;
-  
+
   /* Find the first unmoved element (to insert before).  We're
      guaranteed this will terminate, since MOVER itself is currently
      unmoved, and it must be in L (by hypothesis).  */
@@ -70,12 +70,12 @@ str_llist_float (str_llist_type *l,  str_llist_elt_type *mover)
          predecessor to it.  */
       str_llist_elt_type *before_mover;
       str_llist_elt_type *after_mover = STR_LLIST_NEXT (*mover);
-      
+
       /* Find `mover's predecessor.  */
       for (before_mover = unmoved; STR_LLIST_NEXT (*before_mover) != mover;
            before_mover = STR_LLIST_NEXT (*before_mover))
         ;
-      
+
       /* `before_mover' now links to `after_mover'.  */
       STR_LLIST_NEXT (*before_mover) = after_mover;
 

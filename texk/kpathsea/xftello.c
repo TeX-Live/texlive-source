@@ -23,9 +23,9 @@ off_t
 xftello (FILE *f,  const_string filename)
 {
     off_t where = ftello (f);
-    
+
     if (where < 0)
         FATAL_PERROR(filename);
-    
+
     return where;
 }

@@ -29,11 +29,11 @@ read_line (FILE*f)
     unsigned limit = BLOCK_SIZE;
     unsigned loc = 0;
     char *line = (char*)xmalloc(limit);
-  
+
     while ((c = getc (f)) != EOF && c != '\n' && c != '\r') {
         line[loc] = c;
         loc++;
-        
+
         /* By testing after the assignment, we guarantee that we'll always
            have space for the null we append below.  We know we always
            have room for the first char, since we start with BLOCK_SIZE.  */
@@ -42,7 +42,7 @@ read_line (FILE*f)
             line = (char*)xrealloc(line, limit);
         }
     }
-    
+
     /* If we read anything, return it.  This can't represent a last
        ``line'' which doesn't end in a newline, but so what.  */
     if (c != EOF) {
@@ -59,7 +59,7 @@ read_line (FILE*f)
         free(line);
         line = NULL;
     }
-    
+
     return line;
 }
 

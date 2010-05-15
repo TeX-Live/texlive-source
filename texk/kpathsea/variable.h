@@ -32,7 +32,7 @@ extern KPSEDLL string kpathsea_var_value (kpathsea kpse, const_string var);
    ignored.  In the $VAR form, the variable name consists of consecutive
    letters, digits, and underscores.  In the ${VAR} form, the variable
    name consists of whatever is between the braces.
-   
+
    In any case, ``expansion'' means calling `getenv'; if the variable is not
    set, look in texmf.cnf files for a definition.  If not set there, either,
    the expansion is the empty string (no error).  */

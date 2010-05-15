@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 /* The embedded rndnpc.h defines boolean as 'unsigned char',
-   and we do not want that. 
+   and we do not want that.
    This should be safe as long as we don't use npc ourselves. */
 #define boolean saved_boolean
 #include <windows.h>

@@ -114,7 +114,7 @@ Try `%s --help' for more information.\n", argv[0], argv[0]);
         perror(argv[2]);
         return 1;
     }
-   
+
     result = f.st_mode & 07777;
     result |= to_set;
     result |= to_keep & result;

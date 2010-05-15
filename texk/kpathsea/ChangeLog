@@ -1,3 +1,18 @@
+2010-05-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	*absolute.c, access.c, atou.c, c-ctype.h, c-pathch.h, c-std.h, cnf.c,
+	concatn.c, config.h, db.c, db.h, debug.h, default.h, dir.c,
+	elt-dirs.c, expand.c, extend-fname.c, find-suffix.c, fn.c,
+	fontmap.c, getopt.c, kpathsea.c, kpsestat.c, kpsewhich.c, lib.h,
+	line.c, magstep.c, magstep.h, make-suffix.c, mingw32.c, mingw32.h,
+	path-elt.c, pathsearch.c, pathsearch.h, proginit.c, proginit.h,
+	progname.c, readable.c, readable.h, readlink.c, rm-suffix.c,
+	str-list.c, str-llist.c, strstr.c, tex-file.c, tex-glyph.c,
+	tex-glyph.h, tex-hush.c, tex-make.c, tex-make.h, truncate.c,
+	uppercasify.c, variable.h, version.c, win32lib.h, xbasename.c,
+	xcalloc.c, xdirname.c, xfopen.c, xftell.c, xftello.c, xgetcwd.c,
+	xopendir.c, xrealloc.c, xstat.c: remove trailing spaces.
+
 2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* c-fopen.h [SET_BINARY]: Add cast to void.

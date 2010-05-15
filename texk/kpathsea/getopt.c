@@ -8,7 +8,7 @@
    Its master source is NOT part of the C library, however.
    The master source lives in libc.
    This version has been modified for use with libkpathsea.
-   
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either

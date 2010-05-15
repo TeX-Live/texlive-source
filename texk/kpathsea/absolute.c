@@ -61,7 +61,7 @@ kpathsea_absolute_p (kpathsea kpse, const_string filename, boolean relative_ok)
 }
 
 #if defined (KPSE_COMPAT_API)
-boolean 
+boolean
 kpse_absolute_p (const_string filename, boolean relative_ok)
 {
     return kpathsea_absolute_p (kpse_def, filename, relative_ok);

@@ -32,14 +32,14 @@ kpathsea_tex_hush (kpathsea kpse, const_string what)
         return true;
     if (STREQ (hush, "none"))
         return false;
-    for (h = kpathsea_path_element (kpse, hush); h; 
+    for (h = kpathsea_path_element (kpse, hush); h;
          h = kpathsea_path_element (kpse, NULL)) {
       /* Don't do anything special with empty elements.  */
       if (STREQ (h, what))
         return true;
     }
   }
-  
+
   return false;
 }
 

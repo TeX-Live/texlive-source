@@ -2,7 +2,7 @@
 
     Copyright 1993, 1996, 2008, 2009 Karl Berry.
     Copyright 1997, 1999, 2005 Olaf Weber.
-  
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
    License as published by the Free Software Foundation; either
@@ -26,5 +26,5 @@ const char *kpathsea_version_string = KPSEVERSION;
    distribution, please change this address here, among many other
    places.  Thanks.  */
 
-const char *kpathsea_bug_address = 
+const char *kpathsea_bug_address =
   "Email bug reports to tex-k@tug.org.\n";

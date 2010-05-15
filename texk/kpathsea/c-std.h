@@ -22,7 +22,7 @@
 /* Header files that essentially all of our sources need, and
    that all implementations have.  We include these first, to help with
    NULL being defined multiple times.  */
-/* Workaround against a <math.h> MSVC bug : it can't be declared 
+/* Workaround against a <math.h> MSVC bug : it can't be declared
    extern "C" in a c++ source file. */
 #ifndef __cplusplus
 #include <math.h>

@@ -33,9 +33,9 @@ concatn (const_string str1, ...)
 
   if (!str1)
     return NULL;
-  
+
   ret = xstrdup (str1);
-  
+
   va_start (ap, str1);
   while ((arg = va_arg (ap, string)) != NULL)
     {
@@ -44,7 +44,7 @@ concatn (const_string str1, ...)
       ret = temp;
     }
   va_end (ap);
-  
+
   return ret;
 }
 

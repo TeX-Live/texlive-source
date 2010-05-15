@@ -108,7 +108,7 @@ format_abbr (const_string str)
 {
   kpse_file_format_type ret = kpse_last_format;
   unsigned a = 0;
-  
+
   while (format_abbrs[a].abbr != NULL) {
     if (STREQ (str, format_abbrs[a].abbr)) {
       ret = format_abbrs[a].format;
@@ -116,7 +116,7 @@ format_abbr (const_string str)
     }
     a++;
   }
-  
+
   return ret;
 }
 
@@ -130,7 +130,7 @@ find_dpi (string s)
 {
   unsigned dpi_number = 0;
   string extension = find_suffix (s);
-  
+
   if (extension != NULL)
     sscanf (extension, "%u", &dpi_number);
 
@@ -152,10 +152,10 @@ static kpse_file_format_type
 find_format (kpathsea kpse, string name, boolean is_filename)
 {
   kpse_file_format_type ret = kpse_last_format;
-  
+
   if (is_filename && user_format != kpse_last_format) {
     ret = user_format; /* just return what we already computed */
-    
+
   } else if (FILESTRCASEEQ (name, "config.ps")) {
     ret = kpse_dvips_config_format;
   } else if (FILESTRCASEEQ (name, "fmtutil.cnf")) {
@@ -181,7 +181,7 @@ find_format (kpathsea kpse, string name, boolean is_filename)
       /* Look for kpsewhich-specific format abbreviations.  */
       ret = format_abbr (name);
     }
-    
+
     if (ret == kpse_last_format) {
       int f = 0;  /* kpse_file_format_type */
       unsigned name_len = strlen (name);
@@ -210,7 +210,7 @@ find_format (kpathsea kpse, string name, boolean is_filename)
         }
         for (ext = kpse->format_info[f].suffix; !found && ext && *ext; ext++) {
           found = TRY_SUFFIX (*ext);
-        }      
+        }
         for (ext=kpse->format_info[f].alt_suffix; !found && ext && *ext;ext++){
           found = TRY_SUFFIX (*ext);
         }
@@ -232,7 +232,7 @@ find_format (kpathsea kpse, string name, boolean is_filename)
    is, for a string S in MATCHES, its dirname must end with one of the
    elements in SUBDIRS.  For instance, if subdir=foo/bar, that will
    match a string foo/bar/baz or /some/texmf/foo/bar/baz.
-   
+
    We don't reallocate the actual strings, just the list elements.
    Perhaps later we will implement wildcards or // or something.  */
 
@@ -242,7 +242,7 @@ subdir_match (str_list_type subdirs,  string *matches)
   string *ret = XTALLOC1 (string);
   unsigned len = 1;
   unsigned m;
-  
+
   for (m = 0; matches[m]; m++) {
     unsigned loc;
     unsigned e;
@@ -253,7 +253,7 @@ subdir_match (str_list_type subdirs,  string *matches)
       loc--;
     }
     s[loc] = 0;  /* wipe out basename */
-    
+
     for (e = 0; e < STR_LIST_LENGTH (subdirs); e++) {
       string subdir = STR_LIST_ELT (subdirs, e);
       unsigned subdir_len = strlen (subdir);
@@ -284,7 +284,7 @@ lookup (kpathsea kpse, string name)
   int i;
   string ret = NULL;
   string *ret_list = NULL;
-  
+
   if (user_path) {
     /* Translate ; to : if that's our ENV_SEP.  See cnf.c.  */
     if (IS_ENV_SEP (':')) {
@@ -300,7 +300,7 @@ lookup (kpathsea kpse, string name)
     } else {
       ret = kpathsea_path_search (kpse, user_path, name, must_exist);
     }
-    
+
   } else {
     /* No user-specified search path, check user format or guess from NAME.  */
     kpse_file_format_type fmt = find_format (kpse, name, true);
@@ -334,7 +334,7 @@ lookup (kpathsea kpse, string name)
         }
     }
   }
-  
+
   /* Turn single return into a null-terminated list for uniform treatment.  */
   if (ret) {
     ret_list = XTALLOC (2, string);
@@ -357,7 +357,7 @@ lookup (kpathsea kpse, string name)
     ret = ret_list[0];
     free (ret_list);
   }
-  
+
   return ret == NULL;
 }
 
@@ -413,11 +413,11 @@ help_message (kpathsea kpse, string *argv)
     const_string *ext;
     kpathsea_init_format (kpse, (kpse_file_format_type)f);
     printf ("%s", kpse->format_info[f].type);
-    
+
     /* Show abbreviation if we accept one.  We repeatedly go through the
        abbr list here, but it's so short, it doesn't matter.  */
     {
-       unsigned a = 0;      
+       unsigned a = 0;
        while (format_abbrs[a].abbr != NULL) {
          if (f == format_abbrs[a].format) {
            printf (" (%s)", format_abbrs[a].abbr);
@@ -426,14 +426,14 @@ help_message (kpathsea kpse, string *argv)
          a++;
        }
     }
-    
+
     /* Regular suffixes.  */
     putchar (':');
     for (ext = kpse->format_info[f].suffix; ext && *ext; ext++) {
       putchar (' ');
       fputs (*ext, stdout);
     }
-    
+
     if (kpse->format_info[f].alt_suffix) {
       /* leave extra space between default and alt suffixes */
       putchar (' ');
@@ -442,10 +442,10 @@ help_message (kpathsea kpse, string *argv)
       putchar (' ');
       fputs (*ext, stdout);
     }
-    
+
     putchar ('\n');
   }
-  
+
   exit (0);
 }
 
@@ -509,10 +509,10 @@ read_command_line (kpathsea kpse, int argc, string *argv)
 
     } else if (ARGUMENT_IS ("engine")) {
       engine = optarg;
-      
+
     } else if (ARGUMENT_IS ("expand-braces")) {
       braces_to_expand = optarg;
-      
+
     } else if (ARGUMENT_IS ("expand-path")) {
       path_to_expand = optarg;
 
@@ -569,7 +569,7 @@ There is NO WARRANTY, to the extent permitted by law.\n");
 
     /* Else it was just a flag; getopt has already done the assignment.  */
   }
-  
+
   if (user_path && user_format_string) {
     fprintf (stderr, "-path (%s) and -format (%s) are mutually exclusive.\n",
              user_path, user_format_string);
@@ -596,7 +596,7 @@ init_more (kpathsea kpse)
 {
   if (engine)
     kpathsea_xputenv (kpse, "engine", engine);
-  
+
   /* Disable all mktex programs unless they were explicitly enabled on our
      command line.  */
 #define DISABLE_MKTEX(fmt) \
@@ -611,9 +611,9 @@ kpathsea_set_program_enabled (kpse, fmt, false, kpse_src_cmdline - 1)
 
   /* NULL for no fallback font.  */
   kpathsea_init_prog (kpse, uppercasify (kpse->program_name), dpi, mode, NULL);
-  
+
   /* Have to do this after setting the program name.  */
-  if (user_format_string) {  
+  if (user_format_string) {
     user_format = find_format (kpse, user_format_string, false);
     if (user_format == kpse_last_format) {
       WARNING1 ("kpsewhich: Ignoring unknown file type `%s'",
@@ -629,16 +629,16 @@ main (int argc,  string *argv)
 {
   unsigned unfound = 0;
   kpathsea kpse = kpathsea_new();
-  
+
   /* Read options, then dependent initializations.  */
   read_command_line (kpse, argc, argv);
 
   kpathsea_set_program_name (kpse, argv[0], progname);
   init_more (kpse);
-  
+
 
   /* Perform actions.  */
-  
+
   /* Variable expansion.  */
   if (var_to_expand)
     puts (kpathsea_var_expand (kpse, var_to_expand));
@@ -646,7 +646,7 @@ main (int argc,  string *argv)
   /* Brace expansion. */
   if (braces_to_expand)
     puts (kpathsea_brace_expand (kpse, braces_to_expand));
-  
+
   /* Path expansion. */
   if (path_to_expand)
     puts (kpathsea_path_expand (kpse, path_to_expand));
@@ -671,23 +671,23 @@ main (int argc,  string *argv)
     }
     puts (value);
   }
-  
+
   if (safe_in_name) {
     if (!kpathsea_in_name_ok_silent (kpse, safe_in_name))
       unfound++;
   }
-  
+
   if (safe_out_name) {
     if (!kpathsea_out_name_ok_silent (kpse, safe_out_name))
       unfound++;
   }
-  
+
   /* --subdir must imply --all, since we filter here after doing the
      search, rather than inside the search itself.  */
   if (STR_LIST_LENGTH (subdir_paths) > 0) {
     show_all = 1;
   }
-  
+
   /* Usual case: look up each given filename.  */
   for (; optind < argc; optind++) {
     unfound += lookup (kpse, argv[optind]);

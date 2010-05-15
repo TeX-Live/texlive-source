@@ -45,7 +45,7 @@ extern unsigned kpathsea_normalize_path (kpathsea kpse, string elt);
    of the corresponding (existing) directory or directories, with
    trailing slashes, or NULL.  If ELT is the empty string, check the
    current working directory.
-   
+
    It's up to the caller to expand ELT.  This is because this routine is
    most likely only useful to be called from `kpathsea_path_search', which
    has already assumed expansion has been done.  */
@@ -56,19 +56,19 @@ extern KPSEDLL str_llist_type *kpathsea_element_dirs (kpathsea kpse,
 /* Call `kpathsea_expand' on NAME.  If the result is an absolute or
    explicitly relative filename, check whether it is a readable
    (regular) file.
-   
+
    Otherwise, look in each of the directories specified in PATH (also do
    tilde and variable expansion on elements in PATH), using a prebuilt
    db (see db.h) if it's relevant for a given path element.
-   
+
    If the prebuilt db doesn't exist, or if MUST_EXIST is true and NAME
    isn't found in the prebuilt db, look on the filesystem.  (I.e., if
    MUST_EXIST is false, and NAME isn't found in the db, do *not* look on
    the filesystem.)
-   
+
    The caller must expand PATH. This is because it makes more sense to
    do this once, in advance, instead of for every search.
-   
+
    In any case, return a matching filename if found, otherwise NULL.
    If more than one file matches, which one gets returned is
    unspecified.  */

@@ -58,7 +58,7 @@ typedef struct
    NULL.  Also return information about the file found in
    *GLYPH_FILE.  */
 extern KPSEDLL string kpathsea_find_glyph (kpathsea kpse,
-                                  const_string font_name, unsigned dpi, 
+                                  const_string font_name, unsigned dpi,
                                   kpse_file_format_type format,
                                   kpse_glyph_file_type *glyph_file);
 
@@ -69,12 +69,12 @@ extern KPSEDLL string kpathsea_find_glyph (kpathsea kpse,
 #define KPSE_BITMAP_TOLERANCE(r) ((r) / 500.0 + 1)
 
 /* Check whether DPI1 is within KPSE_BITMAP_TOLERANCE of DPI2. */
-extern KPSEDLL boolean kpathsea_bitmap_tolerance (kpathsea kpse, 
+extern KPSEDLL boolean kpathsea_bitmap_tolerance (kpathsea kpse,
                                   double dpi1, double dpi2);
 
 
 #if defined (KPSE_COMPAT_API)
-extern KPSEDLL string kpse_find_glyph (const_string font_name, unsigned dpi, 
+extern KPSEDLL string kpse_find_glyph (const_string font_name, unsigned dpi,
                                   kpse_file_format_type format,
                                   kpse_glyph_file_type *glyph_file);
 

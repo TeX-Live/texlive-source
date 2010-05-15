@@ -28,7 +28,7 @@
    the file is passed through environment variables.  See the mktexpk
    stuff in `tex-make.c' for an example. */
 
-extern KPSEDLL string kpathsea_make_tex (kpathsea kpse, 
+extern KPSEDLL string kpathsea_make_tex (kpathsea kpse,
                                  kpse_file_format_type format,
                                  const_string base_file);
 

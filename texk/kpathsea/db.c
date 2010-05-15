@@ -65,13 +65,13 @@ static boolean
 ignore_dir_p (const_string dirname)
 {
   const_string dot_pos = dirname;
-  
+
   while ((dot_pos = strchr (dot_pos + 1, '.'))) {
     /* If / before and no / after, skip it. */
     if (IS_DIR_SEP (dot_pos[-1]) && dot_pos[1] && !IS_DIR_SEP (dot_pos[1]))
       return true;
   }
-  
+
   return false;
 }
 
@@ -87,10 +87,10 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
   string top_dir = (string)xmalloc (len + 1);
   string cur_dir = NULL; /* First thing in ls-R might be a filename.  */
   FILE *db_file = fopen (db_filename, FOPEN_R_MODE);
-  
+
   strncpy (top_dir, db_filename, len);
   top_dir[len] = 0;
-  
+
   if (db_file) {
     while ((line = read_line (db_file)) != NULL) {
       len = strlen (line);
@@ -204,13 +204,13 @@ kpse_db_insert (const_string passed_fname)
 /* Return true if FILENAME could be in PATH_ELT, i.e., if the directory
    part of FILENAME matches PATH_ELT.  Have to consider // wildcards, but
    $ and ~ expansion have already been done.  */
-     
+
 static boolean
 match (const_string filename,  const_string path_elt)
 {
   const_string original_filename = filename;
   boolean matched = false;
-  
+
   for (; *filename && *path_elt; filename++, path_elt++) {
     if (FILECHARCASEEQ (*filename, *path_elt)) /* normal character match */
       ;
@@ -240,7 +240,7 @@ match (const_string filename,  const_string path_elt)
     else /* normal character nonmatch, quit */
       break;
   }
-  
+
   /* If we've reached the end of PATH_ELT, check that we're at the last
      component of FILENAME, we've matched.  */
   if (!matched && *path_elt == 0) {
@@ -252,12 +252,12 @@ match (const_string filename,  const_string path_elt)
        But if not, that's ok, as long as there are no more dir separators.  */
     if (IS_DIR_SEP (*filename))
       filename++;
-      
+
     while (*filename && !IS_DIR_SEP (*filename))
       filename++;
     matched = *filename == 0;
   }
-  
+
   return matched;
 }
 
@@ -266,12 +266,12 @@ match (const_string filename,  const_string path_elt)
    That is, the question is whether to try the db for a file looked up
    in PATH_ELT.  If PATH_ELT == ".", for example, the answer is no. If
    PATH_ELT == "/usr/local/lib/texmf/fonts//tfm", the answer is yes.
-   
+
    In practice, ls-R is only needed for lengthy subdirectory
    comparisons, but there's no gain to checking PATH_ELT to see if it is
    a subdir match, since the only way to do that is to do a string
    search in it, which is all we do anyway.  */
-   
+
 static boolean
 elt_in_db (const_string db_dir,  const_string path_elt)
 {
@@ -281,7 +281,7 @@ elt_in_db (const_string db_dir,  const_string path_elt)
     /* If we've matched the entire db directory, it's good.  */
     if (*db_dir == 0)
       found = true;
- 
+
     /* If we've reached the end of PATH_ELT, but not the end of the db
        directory, it's no good.  */
     else if (*path_elt == 0)
@@ -315,7 +315,7 @@ alias_build (kpathsea kpse, hash_table_type *table,
         while (*alias && !ISSPACE (*alias))
           alias++;
         *alias++ = 0;
-        while (*alias && ISSPACE (*alias)) 
+        while (*alias && ISSPACE (*alias))
           alias++;
         /* Is the check for errors strong enough?  Should we warn the user
            for potential errors?  */
@@ -361,7 +361,7 @@ kpathsea_init_db (kpathsea kpse)
   db_path = kpathsea_init_format (kpse, kpse_db_format);
   db_files = kpathsea_all_path_search_list (kpse, db_path, db_names);
   orig_db_files = db_files;
-  
+
   /* Must do this after the path searching (which ends up calling
     kpse_db_search recursively), so kpse->db.buckets stays NULL.  */
   kpse->db = hash_create (DB_HASH_SIZE);
@@ -372,7 +372,7 @@ kpathsea_init_db (kpathsea kpse)
     free (*db_files);
     db_files++;
   }
-  
+
   if (!ok) {
     /* If db can't be built, leave `size' nonzero (so we don't
        rebuild it), but clear `buckets' (so we don't look in it).  */
@@ -417,7 +417,7 @@ kpse_init_db (void)
 
 /* Avoid doing anything if this PATH_ELT is irrelevant to the databases. */
 str_list_type *
-kpathsea_db_search (kpathsea kpse, const_string name,  
+kpathsea_db_search (kpathsea kpse, const_string name,
                     const_string orig_path_elt, boolean all)
 {
   string *db_dirs, *orig_dirs, *r;
@@ -428,12 +428,12 @@ kpathsea_db_search (kpathsea kpse, const_string name,
   str_list_type *ret = NULL;
   string *aliases = NULL;
   boolean relevant = false;
-  
+
   /* If we failed to build the database (or if this is the recursive
      call to build the db path), quit.  */
   if (kpse->db.buckets == NULL)
     return NULL;
-  
+
   /* When tex-glyph.c calls us looking for, e.g., dpi600/cmr10.pk, we
      won't find it unless we change NAME to just `cmr10.pk' and append
      `/dpi600' to PATH_ELT.  We are justified in using a literal `/'
@@ -510,12 +510,12 @@ kpathsea_db_search (kpathsea kpse, const_string name,
         string found = NULL;
         if (kpathsea_readable_file (kpse, db_file)) {
           found = db_file;
-          
+
         } else {
           string *a;
-          
+
           free (db_file); /* `db_file' wasn't on disk.  */
-          
+
           /* The hit in the DB doesn't exist in disk.  Now try all its
              aliases.  For example, suppose we have a hierarchy on CD,
              thus `mf.bas', but ls-R contains `mf.base'.  Find it anyway.
@@ -530,7 +530,7 @@ kpathsea_db_search (kpathsea kpse, const_string name,
               free (atry);
           }
         }
-          
+
         /* If we have a real file, add it to the list, maybe done.  */
         if (found) {
           str_list_add (ret, found);
@@ -540,7 +540,7 @@ kpathsea_db_search (kpathsea kpse, const_string name,
       } else { /* no match in the db */
         free (db_file);
       }
-      
+
 
       /* On to the next directory, if any.  */
       db_dirs++;
@@ -550,9 +550,9 @@ kpathsea_db_search (kpathsea kpse, const_string name,
     if (orig_dirs && *orig_dirs)
       free (orig_dirs);
   }
-  
+
   free (aliases);
-  
+
   /* If we had to break up NAME, free the temporary PATH_ELT.  */
   if (path_elt != orig_path_elt)
     free (path_elt);
@@ -570,7 +570,7 @@ kpse_db_search (const_string name,  const_string orig_path_elt,
 #endif
 
 str_list_type *
-kpathsea_db_search_list (kpathsea kpse, const_string* names,  
+kpathsea_db_search_list (kpathsea kpse, const_string* names,
                          const_string path_elt, boolean all)
 {
   string *db_dirs, *orig_dirs, *r;
@@ -581,7 +581,7 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
   int n;
   str_list_type *ret = NULL;
   boolean relevant = false;
-  
+
   /* If we failed to build the database (or if this is the recursive
      call to build the db path), quit.  */
   if (kpse->db.buckets == NULL)
@@ -625,7 +625,7 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
       } else {
           path = path_elt;
       }
-      
+
       /* If we have aliases for this name, use them.  */
       if (kpse->alias_db.buckets)
           aliases = hash_lookup (kpse->alias_db, name);
@@ -635,7 +635,7 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
       if (!aliases) {
           aliases = XTALLOC1 (string);
           aliases[0] = NULL;
-      } 
+      }
       {  /* Push aliases up by one and insert the original name at front.  */
           unsigned i;
           unsigned len = 1; /* Have NULL element already allocated.  */
@@ -653,7 +653,7 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
 
           /* We have an ls-R db.  Look up `try'.  */
           orig_dirs = db_dirs = hash_lookup (kpse->db, ctry);
-          
+
           ret = XTALLOC1 (str_list_type);
           *ret = str_list_init ();
 
@@ -709,18 +709,18 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
           /* On to the next directory, if any.  */
           db_dirs++;
           }
-          
+
           /* This is just the space for the pointers, not the strings.  */
           if (orig_dirs && *orig_dirs)
               free (orig_dirs);
       }
-      
+
       free (aliases);
       if (path != path_elt)
           free((string)path);
   }
   return ret;
-  
+
 }
 
 #if defined(KPSE_COMPAT_API)

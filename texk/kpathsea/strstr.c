@@ -63,7 +63,7 @@ strstr (phaystack, pneedle)
       goto jin;
 
       for (;;)
-        { 
+        {
           register chartype a;
 	  register const unsigned char *rhaystack, *rneedle;
 
