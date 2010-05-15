@@ -25,10 +25,12 @@
 FILE *
 fopen (const char *filename,  const char *mode)
 {
+#if defined (KPSE_COMPAT_API)
+  kpathsea kpse = kpse_def;
+#endif
 #undef fopen
   FILE *ret = fopen (filename, mode);
 #if defined (KPSE_COMPAT_API)
-  kpathsea kpse = kpse_def;
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN))
     DEBUGF3 ("fopen(%s, %s) => 0x%lx\n", filename, mode, (unsigned long) ret);
 #endif
@@ -38,10 +40,12 @@ fopen (const char *filename,  const char *mode)
 int
 fclose (FILE * f)
 {
+#if defined (KPSE_COMPAT_API)
+  kpathsea kpse = kpse_def;
+#endif
 #undef fclose
   int ret = fclose (f);
 #if defined (KPSE_COMPAT_API)
-  kpathsea kpse = kpse_def;
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN))
     DEBUGF2 ("fclose(0x%lx) => %d\n", (unsigned long) f, ret);
 #endif

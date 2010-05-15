@@ -406,8 +406,8 @@ search (kpathsea kpse, const_string path,  const_string original_name,
    contain just NULL.  If ALL is true, the list will be
    terminated with NULL.  */
 static string *
-search_list (kpathsea kpse, const_string path,  const_string* names,
-             boolean must_exist,  boolean all)
+search_list (kpathsea kpse, const_string path, const_string* names,
+             boolean must_exist, boolean all)
 {
   str_list_type ret_list;
   const_string* namep;

@@ -1,5 +1,15 @@
 2010-05-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	*absolute.c: avoid late declaration. add support of UNC names (WIN32).
+	*db.c: try ls-R only on WIN32.
+	*debug.c: avoid late declaration.
+	*elt-dirs.c: remove trailing whitespace.
+	*lib.h: add variables in prototype.
+	*pathsearch.c, tex-file.c: remove some spaces.
+	*tex-glyph.c: add some spaces.
+
+2010-05-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	*absolute.c, access.c, atou.c, c-ctype.h, c-pathch.h, c-std.h, cnf.c,
 	concatn.c, config.h, db.c, db.h, debug.h, default.h, dir.c,
 	elt-dirs.c, expand.c, extend-fname.c, find-suffix.c, fn.c,

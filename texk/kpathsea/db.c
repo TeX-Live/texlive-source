@@ -43,11 +43,19 @@
 #define DB_NAME_LC "ls-r"
 #endif
 
+/* read ls-R only on WIN32 */
+#ifdef WIN32
+static const_string db_names[] = {
+    DB_NAME,
+    NULL
+};
+#else
 static const_string db_names[] = {
     DB_NAME,
     DB_NAME_LC,
     NULL
 };
+#endif
 
 #ifndef ALIAS_NAME
 #define ALIAS_NAME "aliases"

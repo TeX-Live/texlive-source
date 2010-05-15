@@ -185,7 +185,7 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr,  const_string elt,
 	   not affect the leaf-ness.  This is arguably wrong, but
 	   the only alternative I know of is to stat every entry
 	   in the directory, and that is unacceptably slow. */
-	
+
 	if (links == 0 || links > 2)
 	  /* All criteria are met; find subdirectories.  */
         do_subdir (kpse, str_list_ptr, FN_STRING (name),

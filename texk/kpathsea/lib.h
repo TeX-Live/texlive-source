@@ -202,11 +202,11 @@ extern KPSEDLL int kpathsea_dir_links (kpathsea kpse, const_string fn,
 /* Like their stdio counterparts, but abort on error, after calling
    perror(3) with FILENAME as its argument.  */
 extern KPSEDLL FILE *xfopen (const_string filename, const_string mode);
-extern KPSEDLL void xfclose (FILE *, const_string filename);
-extern KPSEDLL void xfseek (FILE *, long, int, const_string filename);
-extern KPSEDLL void xfseeko (FILE *, off_t, int, const_string filename);
-extern KPSEDLL unsigned long xftell (FILE *, const_string filename);
-extern KPSEDLL off_t xftello (FILE *, const_string filename);
+extern KPSEDLL void xfclose (FILE *fp, const_string filename);
+extern KPSEDLL void xfseek (FILE *fp, long offset, int wherefrom, const_string filename);
+extern KPSEDLL void xfseeko (FILE *fp, off_t offset, int wherefrom, const_string filename);
+extern KPSEDLL unsigned long xftell (FILE *fp, const_string filename);
+extern KPSEDLL off_t xftello (FILE *fp, const_string filename);
 
 /* These call the corresponding function in the standard library, and
    abort if those routines fail.  Also, `xrealloc' calls `xmalloc' if

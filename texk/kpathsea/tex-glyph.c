@@ -291,7 +291,7 @@ kpathsea_find_glyph (kpathsea kpse,
     /* If mktex... failed, try any fallback resolutions.  */
     else {
       if (kpse->fallback_resolutions)
-        ret = try_fallback_resolutions (kpse, fontname, dpi,format,glyph_file);
+        ret = try_fallback_resolutions (kpse, fontname, dpi, format, glyph_file);
 
       /* We're down to the font of last resort.  */
       if (!ret && kpse->fallback_font) {

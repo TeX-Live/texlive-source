@@ -180,7 +180,7 @@ kpse_set_program_enabled (kpse_file_format_type fmt,
    as well have a common place.  */
 
 void
-kpathsea_maketex_option (kpathsea kpse,  const_string fmtname,  boolean value)
+kpathsea_maketex_option (kpathsea kpse, const_string fmtname, boolean value)
 {
   kpse_file_format_type fmt = kpse_last_format;
 
@@ -363,7 +363,7 @@ kpse_set_suffixes (kpse_file_format_type format,
 #define FMT_INFO (kpse->format_info[format])
 /* Call kpse_set_add_suffixes.  */
 #define SUFFIXES(args) kpathsea_set_suffixes(kpse, format, false, args, NULL)
-#define ALT_SUFFIXES(args) kpathsea_set_suffixes(kpse, format, true, args,NULL)
+#define ALT_SUFFIXES(args) kpathsea_set_suffixes(kpse, format, true, args, NULL)
 
 /* Call `init_path', including appending the trailing NULL to the envvar
    list. Also initialize the fields not needed in setting the path.  */
@@ -759,7 +759,7 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
       FMT_INFO.suffix_search_only = true;
       break;
     case kpse_fea_format:
-      INIT_FORMAT("font feature files",DEFAULT_FONTFEATURES,FONTFEATURES_ENVS);
+      INIT_FORMAT("font feature files", DEFAULT_FONTFEATURES, FONTFEATURES_ENVS);
       SUFFIXES (".fea");
       FMT_INFO.suffix_search_only = true;
       break;
@@ -939,7 +939,7 @@ target_suffixed_names (kpathsea kpse, string **target, unsigned *count,
 
 string
 kpathsea_find_file (kpathsea kpse, const_string name,
-                    kpse_file_format_type format,  boolean must_exist)
+                    kpse_file_format_type format, boolean must_exist)
 {
   string *ret_list = kpathsea_find_file_generic (kpse, name, format,
                                                  must_exist, false);
@@ -962,7 +962,7 @@ kpse_find_file (const_string name,  kpse_file_format_type format,
 
 string *
 kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
-               kpse_file_format_type format,  boolean must_exist,  boolean all)
+               kpse_file_format_type format, boolean must_exist, boolean all)
 {
   string *target, name;
   const_string *ext;
@@ -1335,7 +1335,7 @@ kpathsea_open_file (kpathsea kpse, const_string name,
       perror (fullname);
       exit (1);
     } else {
-      LIB_FATAL2 ("%s file `%s' not found", kpse->format_info[type].type,name);
+      LIB_FATAL2 ("%s file `%s' not found", kpse->format_info[type].type, name);
     }
   }
 

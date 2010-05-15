@@ -27,22 +27,31 @@
 boolean
 kpathsea_absolute_p (kpathsea kpse, const_string filename, boolean relative_ok)
 {
+#ifndef VMS
+  boolean absolute;
+  boolean explicit_relative;
+#endif
 #ifdef VMS
 #include <string.h>
   (void)kpse; /* currenty not used */
   return strcspn (filename, "]>:") != strlen (filename);
 #else /* not VMS */
-  boolean absolute = IS_DIR_SEP (*filename)
+  absolute = IS_DIR_SEP (*filename)
 #ifdef DOSISH
                      /* Novell allows non-alphanumeric drive letters. */
                      || (*filename && IS_DEVICE_SEP (filename[1]))
 #endif /* DOSISH */
+#ifdef WIN32
+                     /* UNC names */
+                     || (*filename == '\\' && filename[1] == '\\')
+                     || (*filename == '/' && filename[1] == '/')
+#endif
 #ifdef AMIGA
 		     /* Colon anywhere means a device.  */
 		     || strchr (filename, ':')
 #endif /* AMIGA */
 		      ;
-  boolean explicit_relative
+  explicit_relative
     = relative_ok
 #ifdef AMIGA
       /* Leading / is like `../' on Unix and DOS.  Allow Unix syntax,
