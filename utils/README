@@ -42,6 +42,14 @@ xpdfopen 0.80 - checked 5may10
   http://mirror.ctan.org/support/xpdfopen.zip
 
 
+xindy 2.4 - checked 13may10
+  (with adaptations for TL)
+  http://www.ctan.org/indexing/xindy/
+
+After building clisp as described below, run the TL
+  Build --enable-xindy CLISP=$clisp_builddir/clisp
+to include xindy in the build.  It is disabled by default.
+
 Do NOT use nohup when building clisp; this may cause weird build
 problems.  Regular redirections of stdout/stderr seem ok.
 
