@@ -53,9 +53,9 @@
 
 #define END_FATAL() fputs (".\n", stderr); exit (1); } while (0)
 
-#define FATAL(str)							\
+#define FATAL(str)                                                      \
   START_FATAL (); fputs (str, stderr); END_FATAL ()
-#define FATAL1(str, e1)							\
+#define FATAL1(str, e1)                                                 \
   START_FATAL (); fprintf (stderr, str, e1); END_FATAL ()
 #define FATAL2(str, e1, e2)                             \
    START_FATAL (); fprintf (stderr, str, e1, e2); END_FATAL ()
@@ -71,25 +71,25 @@
 #define START_WARNING() do { fputs ("warning: ", stderr)
 #define END_WARNING() fputs (".\n", stderr); fflush (stderr); } while (0)
 
-#define WARNING(str)							\
+#define WARNING(str)                                                    \
   START_WARNING (); fputs (str, stderr); END_WARNING ()
-#define WARNING1(str, e1)						\
+#define WARNING1(str, e1)                                               \
   START_WARNING (); fprintf (stderr, str, e1); END_WARNING ()
-#define WARNING2(str, e1, e2)						\
+#define WARNING2(str, e1, e2)                                           \
   START_WARNING (); fprintf (stderr, str, e1, e2); END_WARNING ()
-#define WARNING3(str, e1, e2, e3)					\
+#define WARNING3(str, e1, e2, e3)                                       \
   START_WARNING (); fprintf (stderr, str, e1, e2, e3); END_WARNING ()
-#define WARNING4(str, e1, e2, e3, e4)					\
+#define WARNING4(str, e1, e2, e3, e4)                                   \
   START_WARNING (); fprintf (stderr, str, e1, e2, e3, e4); END_WARNING ()
 
 #define LIB_START_FATAL() do { \
   fprintf (stderr, "%s: fatal: ", kpse->invocation_name);
 
-#define LIB_FATAL(str)							\
+#define LIB_FATAL(str)                                                  \
   LIB_START_FATAL (); fputs (str, stderr); END_FATAL ()
-#define LIB_FATAL1(str, e1)							\
+#define LIB_FATAL1(str, e1)                                             \
   LIB_START_FATAL (); fprintf (stderr, str, e1); END_FATAL ()
-#define LIB_FATAL2(str, e1, e2)						\
+#define LIB_FATAL2(str, e1, e2)                                         \
   LIB_START_FATAL (); fprintf (stderr, str, e1, e2); END_FATAL ()
 
 

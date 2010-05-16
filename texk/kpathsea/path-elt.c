@@ -123,14 +123,14 @@ int
 main ()
 {
   /* All lists end with NULL.  */
-  print_path_elements (NULL);	/* */
-  print_path_elements ("");	/* "" */
-  print_path_elements ("a");	/* a */
-  print_path_elements (ENV_SEP_STRING);	/* "", "" */
-  print_path_elements (ENV_SEP_STRING ENV_SEP_STRING);	/* "", "", "" */
-  print_path_elements ("a" ENV_SEP_STRING);	/* a, "" */
-  print_path_elements (ENV_SEP_STRING "b");	/* "", b */
-  print_path_elements ("a" ENV_SEP_STRING "b");	/* a, b */
+  print_path_elements (NULL);   /* */
+  print_path_elements ("");     /* "" */
+  print_path_elements ("a");    /* a */
+  print_path_elements (ENV_SEP_STRING); /* "", "" */
+  print_path_elements (ENV_SEP_STRING ENV_SEP_STRING);  /* "", "", "" */
+  print_path_elements ("a" ENV_SEP_STRING);     /* a, "" */
+  print_path_elements (ENV_SEP_STRING "b");     /* "", b */
+  print_path_elements ("a" ENV_SEP_STRING "b"); /* a, b */
 
   return 0;
 }

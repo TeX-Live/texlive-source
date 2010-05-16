@@ -220,11 +220,11 @@ kpse_maketex_option (const_string fmtname,  boolean value)
 
 /* Macro subroutine for `init_path'.  EXPAND_DEFAULT calls
    kpse_expand_default on try_path and the present info->path.  */
-#define EXPAND_DEFAULT(try_path, source_string)			\
-  if (try_path) {						\
-    info->raw_path = try_path;					\
-    info->path = kpathsea_expand_default (kpse, try_path, info->path);	\
-    info->path_source = source_string;				\
+#define EXPAND_DEFAULT(try_path, source_string)                 \
+  if (try_path) {                                               \
+    info->raw_path = try_path;                                  \
+    info->path = kpathsea_expand_default (kpse, try_path, info->path);  \
+    info->path_source = source_string;                          \
   }
 
 /* Find the final search path to use for the format entry INFO, given
@@ -1115,7 +1115,7 @@ static const_string ok_type_name[] = {
 
 static boolean
 kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
-		  const_string default_choice, ok_type action, boolean silent)
+                  const_string default_choice, ok_type action, boolean silent)
 {
   /* We distinguish three cases:
      'a' (any)        allows any file to be opened.

@@ -156,14 +156,14 @@ CopyFirst (register char *a, char *b)
 /* Returns NULL on error.  Prints intermediate results if global
    `ll_verbose' is nonzero.  */
 
-#define EX(s)		(strlen (s) && strcmp (s, "/") ? "/" : "")
-#define EXPOS		EX(post)
-#define EXPRE		EX(pre)
+#define EX(s)           (strlen (s) && strcmp (s, "/") ? "/" : "")
+#define EXPOS           EX(post)
+#define EXPRE           EX(pre)
 
 static char *
 expand_symlinks (kpathsea kpse, char *s)
 {
-  static char pre[BSIZE];	/* return value */
+  static char pre[BSIZE];       /* return value */
   char post[BSIZE], sym[BSIZE], tmp[BSIZE], before[BSIZE];
   char *cp;
   char a;
@@ -207,7 +207,7 @@ expand_symlinks (kpathsea kpse, char *s)
         strcpy (pre, "");
 
       } else {
-        a = pre[0];	/* handle links through the root */
+        a = pre[0];     /* handle links through the root */
         strcpy (tmp, StripLast (pre));
         if (!strlen (pre) && a == '/')
           strcpy (pre, "/");
@@ -220,7 +220,7 @@ expand_symlinks (kpathsea kpse, char *s)
         /* Strip "../" path elements from the front of sym; print
            new result if there were any such elements.  */
         done = 0;
-        a = pre[0];	/* handle links through the root */
+        a = pre[0];     /* handle links through the root */
         while (!strncmp (sym, "..", 2)
                && (sym[2] == 0 || sym[2] == '/')
                && strlen (pre) != 0
@@ -556,39 +556,39 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
       char *fp;
 
       if (long_progname[1] != ':') {
-	/* A complication: `_truename' returns network-specific string at
-	   the beginning of `long_progname' when the program resides on a
-	   networked drive, and DOS calls cannot grok such pathnames.  We
-	   need to convert the filesystem name back to a drive letter.  */
-	char rootname[PATH_MAX], rootdir[4];
+        /* A complication: `_truename' returns network-specific string at
+           the beginning of `long_progname' when the program resides on a
+           networked drive, and DOS calls cannot grok such pathnames.  We
+           need to convert the filesystem name back to a drive letter.  */
+        char rootname[PATH_MAX], rootdir[4];
 
-	if (argv0[0] && argv0[1] == ':')
-	  rootdir[0] = argv0[0]; /* explicit drive in `argv0' */
-	else
-	  rootdir[0] = getdisk () + 'A';
-	rootdir[1] = ':';
-	rootdir[2] = '\\';
-	rootdir[3] = '\0';
-	if (_truename (rootdir, rootname)) {
-	  /* Find out where `rootname' ends in `long_progname' and replace
-	     it with the drive letter.  */
-	  int root_len = strlen (rootname);
+        if (argv0[0] && argv0[1] == ':')
+          rootdir[0] = argv0[0]; /* explicit drive in `argv0' */
+        else
+          rootdir[0] = getdisk () + 'A';
+        rootdir[1] = ':';
+        rootdir[2] = '\\';
+        rootdir[3] = '\0';
+        if (_truename (rootdir, rootname)) {
+          /* Find out where `rootname' ends in `long_progname' and replace
+             it with the drive letter.  */
+          int root_len = strlen (rootname);
 
- 	  if (IS_DIR_SEP (rootname[root_len - 1]))
-            root_len--;	/* keep the trailing slash */
-	  long_progname[0] = rootdir[0];
-	  long_progname[1] = ':';
-	  memmove (long_progname + 2, long_progname + root_len,
-		   strlen (long_progname + root_len) + 1);
-	}
+          if (IS_DIR_SEP (rootname[root_len - 1]))
+            root_len--; /* keep the trailing slash */
+          long_progname[0] = rootdir[0];
+          long_progname[1] = ':';
+          memmove (long_progname + 2, long_progname + root_len,
+                   strlen (long_progname + root_len) + 1);
+        }
       }
 
       /* Convert everything to canonical form.  */
       if (long_progname[0] >= 'A' && long_progname[0] <= 'Z')
-	long_progname[0] += 'a' - 'A'; /* make drive lower case, for beauty */
+        long_progname[0] += 'a' - 'A'; /* make drive lower case, for beauty */
       for (fp = long_progname; *fp; fp++)
-	if (IS_DIR_SEP (*fp))
-	  *fp = DIR_SEP;
+        if (IS_DIR_SEP (*fp))
+          *fp = DIR_SEP;
 
       kpse->invocation_name = xstrdup (long_progname);
     }

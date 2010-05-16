@@ -1,3 +1,12 @@
+2010-05-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	*absolute.c, c-fopen.h, c-stat.h, config.h, debug.h, dir.c,
+	elt-dirs.c, expand.c, getopt.c, getopt.h, getopt1.c, hash.c,
+	kpsewhich.c, lib.h, mingw32.c, path-elt.c, pathsearch.c,
+	progname.c, putenv.c, readable.c, strcasecmp.c, strstr.c,
+	strtol.c, tex-file.c, tex-glyph.h,
+	types.h, win32lib.h: untabify.
+
 2010-05-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	*absolute.c: avoid late declaration. add support of UNC names (WIN32).

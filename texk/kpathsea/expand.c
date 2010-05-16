@@ -368,15 +368,15 @@ main (int argc, char **argv)
       fprintf (stderr, "brace_expand> ");
 
       if ((!fgets (example, 256, stdin)) ||
-	  (strncmp (example, "quit", 4) == 0))
-	break;
+          (strncmp (example, "quit", 4) == 0))
+        break;
 
       if (strlen (example))
-	example[strlen (example) - 1] = 0;
+        example[strlen (example) - 1] = 0;
 
       result = kpse_brace_expand (example);
 
-     	printf ("%s\n", result);
+        printf ("%s\n", result);
 
     }
 }

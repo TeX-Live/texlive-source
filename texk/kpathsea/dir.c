@@ -30,8 +30,8 @@ boolean
 kpathsea_dir_p (kpathsea kpse, const_string fn)
 {
   /* FIXME : using the stat() replacement in gnuw32,
-	 we could avoid this win32 specific code. However,
-	 I wonder if it would be as fast as this one is ?
+         we could avoid this win32 specific code. However,
+         I wonder if it would be as fast as this one is ?
   */
 #ifdef WIN32
   int fa;
@@ -43,11 +43,11 @@ kpathsea_dir_p (kpathsea kpse, const_string fn)
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_STAT)) {
     if (fa == 0xFFFFFFFF) {
       fprintf(stderr, "failed to get file attributes for %s (%d)\n",
-	      fn, (int)(GetLastError()));
+              fn, (int)(GetLastError()));
     } else {
       fprintf(stderr, "path %s %s a directory\n",
-	      fn , (fa & FILE_ATTRIBUTE_DIRECTORY) ?
-	      "is"  : "is not");
+              fn , (fa & FILE_ATTRIBUTE_DIRECTORY) ?
+              "is"  : "is not");
     }
   }
 #endif /* KPSE_DEBUG */
@@ -144,5 +144,3 @@ dir_links (const_string fn, long nlinks)
     return kpathsea_dir_links(kpse_def, fn, nlinks);
 }
 #endif
-
-

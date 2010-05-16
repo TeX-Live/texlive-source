@@ -47,10 +47,10 @@ kpathsea_absolute_p (kpathsea kpse, const_string filename, boolean relative_ok)
                      || (*filename == '/' && filename[1] == '/')
 #endif
 #ifdef AMIGA
-		     /* Colon anywhere means a device.  */
-		     || strchr (filename, ':')
+                     /* Colon anywhere means a device.  */
+                     || strchr (filename, ':')
 #endif /* AMIGA */
-		      ;
+                      ;
   explicit_relative
     = relative_ok
 #ifdef AMIGA

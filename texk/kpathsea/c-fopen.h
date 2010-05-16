@@ -34,7 +34,7 @@
 
 /* How to open a binary file for reading:  */
 #ifndef FOPEN_RBIN_MODE
-#define	FOPEN_RBIN_MODE	"rb"
+#define FOPEN_RBIN_MODE "rb"
 #endif /* not FOPEN_RBIN_MODE */
 
 /* How to open a binary file for writing:  */

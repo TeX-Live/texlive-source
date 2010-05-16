@@ -81,60 +81,60 @@ get_home_directory (void)
     char *found_home_directory = NULL;
 
   if ((found_home_directory = getenv("HOME")) != NULL) {
-	char q[MAXPATHLEN];
-	/* In case it is %HOMEDRIVE%%HOMEPATH% */
-	if (ExpandEnvironmentStrings(found_home_directory, q, sizeof(q)) == 0) {
-	  /* Error */
-	  found_home_directory = NULL;
-	}
-	else {
-	  found_home_directory = xstrdup(q);
-	  goto done;
-	}
+        char q[MAXPATHLEN];
+        /* In case it is %HOMEDRIVE%%HOMEPATH% */
+        if (ExpandEnvironmentStrings(found_home_directory, q, sizeof(q)) == 0) {
+          /* Error */
+          found_home_directory = NULL;
+        }
+        else {
+          found_home_directory = xstrdup(q);
+          goto done;
+        }
   }
 
   {
-	char	*homedrive, *homepath;
-	if ((homedrive = getenv("HOMEDRIVE")) != NULL &&
-		(homepath = getenv("HOMEPATH")) != NULL) {
-	  found_home_directory = concat(homedrive, homepath);
-	  goto done;
-	}
+        char    *homedrive, *homepath;
+        if ((homedrive = getenv("HOMEDRIVE")) != NULL &&
+                (homepath = getenv("HOMEPATH")) != NULL) {
+          found_home_directory = concat(homedrive, homepath);
+          goto done;
+        }
   }
 
   /* This method is the prefered one because even if it requires a more recent shell32.dll,
      it does not need to call SHMalloc()->Free() */
   {
-	/* This will probably give the wrong value */
-	char q [MAXPATHLEN];
-	HINSTANCE h;
+        /* This will probably give the wrong value */
+        char q [MAXPATHLEN];
+        HINSTANCE h;
     pSHGetSpecialFolderPathA p1;
     pGetDesktopWindow p2;
-	HWND hwnd = NULL;
+        HWND hwnd = NULL;
 
-	if ((h = LoadLibrary("user32.dll"))) {
-	  if ((p2 = (pGetDesktopWindow)GetProcAddress(h, "GetDesktopWindow")))
-	    hwnd = (*p2)();
-	  FreeLibrary(h);
-	}
-	
-	if (hwnd && (h = LoadLibrary("shell32.dll"))) {
-	  if ((p1 = (pSHGetSpecialFolderPathA)GetProcAddress(h, "SHGetSpecialFolderPathA")))
-	    if ((*p1)(hwnd, q, CSIDL_PERSONAL, TRUE)) {
-	      found_home_directory = xstrdup(q);
-	    }
-	  FreeLibrary(h);
-	}
-	if (found_home_directory) goto done;
+        if ((h = LoadLibrary("user32.dll"))) {
+          if ((p2 = (pGetDesktopWindow)GetProcAddress(h, "GetDesktopWindow")))
+            hwnd = (*p2)();
+          FreeLibrary(h);
+        }
+        
+        if (hwnd && (h = LoadLibrary("shell32.dll"))) {
+          if ((p1 = (pSHGetSpecialFolderPathA)GetProcAddress(h, "SHGetSpecialFolderPathA")))
+            if ((*p1)(hwnd, q, CSIDL_PERSONAL, TRUE)) {
+              found_home_directory = xstrdup(q);
+            }
+          FreeLibrary(h);
+        }
+        if (found_home_directory) goto done;
   }
 
   if (1) {
-	fprintf(stderr, "kpathsea has been unable to determine a good value for the user's $HOME\n"
-			"	directory, and will be using the value:\n"
-			"		%s\n"
-			"	This is probably incorrect.\n",
-			found_home_directory
-			);
+        fprintf(stderr, "kpathsea has been unable to determine a good value for the user's $HOME\n"
+                        "       directory, and will be using the value:\n"
+                        "               %s\n"
+                        "       This is probably incorrect.\n",
+                        found_home_directory
+                        );
   }
  done:
   return found_home_directory;
@@ -144,8 +144,8 @@ get_home_directory (void)
 /* Consider cached volume information to be stale if older than 10s,
    at least for non-local drives.  Info for fixed drives is never stale.  */
 #define DRIVE_INDEX( c ) ( (c) <= 'Z' ? (c) - 'A' : (c) - 'a' )
-#define VOLINFO_STILL_VALID( root_dir, info )		\
-  ( ( isalpha (root_dir[0]) )				\
+#define VOLINFO_STILL_VALID( root_dir, info )           \
+  ( ( isalpha (root_dir[0]) )                           \
     || GetTickCount () - info->timestamp < 10000 )
 
 
@@ -175,8 +175,8 @@ normalize_filename (char *fp, char path_sep)
 
   /* Remove unneeded double slashes */
   ret = (IS_UNC_NAME(fp) ? 2 :
-	 NAME_BEGINS_WITH_DEVICE(fp) ?
-	 (IS_DIR_SEP(*(fp+2)) ? 3 : 2) : IS_DIR_SEP(*fp) ? 1 : 0);
+         NAME_BEGINS_WITH_DEVICE(fp) ?
+         (IS_DIR_SEP(*(fp+2)) ? 3 : 2) : IS_DIR_SEP(*fp) ? 1 : 0);
   for (i = ret, p = fp+i;
        IS_DIR_SEP(*p);
        i++, p++);
@@ -194,7 +194,7 @@ normalize_filename (char *fp, char path_sep)
   if (path_sep) {
     for (p = fp; *p; p++)
       if (IS_DIR_SEP(*p))
-	*p = path_sep;
+        *p = path_sep;
   }
 
 #if 0
@@ -235,19 +235,19 @@ crlf_to_lf (int n, unsigned char *buf, unsigned *lf_count)
   while (buf < endp - 1)
     {
       if (*buf == 0x0a)
-	(*lf_count)++;
+        (*lf_count)++;
       if (*buf == 0x0d)
-	{
-	  if (*(++buf) != 0x0a)
-	    *np++ = 0x0d;
-	}
+        {
+          if (*(++buf) != 0x0a)
+            *np++ = 0x0d;
+        }
       else
-	*np++ = *buf++;
+        *np++ = *buf++;
     }
   if (buf < endp)
     {
       if (*buf == 0x0a)
-	(*lf_count)++;
+        (*lf_count)++;
     *np++ = *buf++;
     }
   return np - startp;
@@ -270,7 +270,7 @@ _parse_root (char * name, char ** pPath)
       /* skip past drive specifier */
       name += 2;
       if (IS_DIR_SEP (name[0]))
-	name++;
+        name++;
     }
   else if (IS_DIR_SEP (name[0]) && IS_DIR_SEP (name[1]))
     {
@@ -278,13 +278,13 @@ _parse_root (char * name, char ** pPath)
       name += 2;
       do
         {
-	  if (IS_DIR_SEP (*name) && --slashes == 0)
-	    break;
-	  name++;
-	}
+          if (IS_DIR_SEP (*name) && --slashes == 0)
+            break;
+          name++;
+        }
       while ( *name );
       if (IS_DIR_SEP (name[0]))
-	name++;
+        name++;
     }
 
   if (pPath)
@@ -311,9 +311,9 @@ get_long_basename (char * name, char * buf, int size)
   if (strchr (p, '*') || strchr (p, '?'))
     {
       if ((len = strlen (p)) < size)
-	memcpy (buf, p, len + 1);
+        memcpy (buf, p, len + 1);
       else
-	len = 0;
+        len = 0;
       return len;
     }
 #endif
@@ -322,9 +322,9 @@ get_long_basename (char * name, char * buf, int size)
   if (dir_handle != INVALID_HANDLE_VALUE)
     {
       if ((len = strlen (find_data.cFileName)) < size)
-	memcpy (buf, find_data.cFileName, len + 1);
+        memcpy (buf, find_data.cFileName, len + 1);
       else
-	len = 0;
+        len = 0;
       FindClose (dir_handle);
     }
   return len;
@@ -361,21 +361,21 @@ win32_get_long_filename (char * name, char * buf, int size)
       if (p) *p = '\0';
       len = get_long_basename (full, o, size);
       if (len > 0)
-	{
-	  o += len;
-	  size -= len;
-	  if (p != NULL)
-	    {
-	      *p++ = '\\';
-	      if (size < 2)
-		return FALSE;
-	      *o++ = '\\';
-	      size--;
-	      *o = '\0';
-	    }
-	}
+        {
+          o += len;
+          size -= len;
+          if (p != NULL)
+            {
+              *p++ = '\\';
+              if (size < 2)
+                return FALSE;
+              *o++ = '\\';
+              size--;
+              *o = '\0';
+            }
+        }
       else
-	return FALSE;
+        return FALSE;
     }
   while (p != NULL && *p);
 
@@ -453,13 +453,13 @@ look_for_cmd(const char *cmd, char **app)
 
   /* Looking for appname on the path */
   for (s = suffixes, go_on = TRUE; go_on; *s++) {
-    if (SearchPath(env_path,	/* Address of search path */
-		   app_name,	/* Address of filename */
-		   *s,		/* Address of extension */
-		   MAXPATHLEN,	/* Size of destination buffer */
-		   pname,	/* Address of destination buffer */
-		   &fp)		/* File part of app_name */
-	!= 0) {
+    if (SearchPath(env_path,    /* Address of search path */
+                   app_name,    /* Address of filename */
+                   *s,          /* Address of extension */
+                   MAXPATHLEN,  /* Size of destination buffer */
+                   pname,       /* Address of destination buffer */
+                   &fp)         /* File part of app_name */
+        != 0) {
 #ifdef TRACE
       fprintf(stderr, "%s found with suffix %s\nin %s\n", app_name, *s, pname);
 #endif
@@ -516,25 +516,25 @@ __unquote (char *to, const char *beg, const char *end)
   while (s < end)
     {
       switch (*s)
-	{
-	case '"':
-	case '\'':
-	  if (!quote)
-	    quote = *s;
-	  else if (quote == *s)
-	    quote = 0;
-	  s++;
-	  break;
-	case '\\':
-	  if (s[1] == '"' || s[1] == '\''
-	      || (s[1] == ';'
-		  && (__system_allow_multiple_cmds)))
-	    s++;
-	  /* Fall-through.  */
-	default:
-	  *d++ = *s++;
-	  break;
-	}
+        {
+        case '"':
+        case '\'':
+          if (!quote)
+            quote = *s;
+          else if (quote == *s)
+            quote = 0;
+          s++;
+          break;
+        case '\\':
+          if (s[1] == '"' || s[1] == '\''
+              || (s[1] == ';'
+                  && (__system_allow_multiple_cmds)))
+            s++;
+          /* Fall-through.  */
+        default:
+          *d++ = *s++;
+          break;
+        }
     }
 
   *d = 0;
@@ -569,60 +569,60 @@ get_sym (char *s, char **beg, char **end)
     *end = s + 1;
 
     if (in_a_word
-	&& (!*s || strchr ("<>| \t\n", *s)
-	    || ((__system_allow_multiple_cmds) && *s == ';')))
+        && (!*s || strchr ("<>| \t\n", *s)
+            || ((__system_allow_multiple_cmds) && *s == ';')))
       {
-	--*end;
-	return WORDARG;
+        --*end;
+        return WORDARG;
       }
 
     switch (*s)
       {
       case '<':
-	return REDIR_INPUT;
+        return REDIR_INPUT;
       case '>':
-	if (**end == '>')
-	  {
-	    ++*end;
-	    return REDIR_APPEND;
-	  }
-	return REDIR_OUTPUT;
+        if (**end == '>')
+          {
+            ++*end;
+            return REDIR_APPEND;
+          }
+        return REDIR_OUTPUT;
       case '|':
-	return PIPE;
+        return PIPE;
       case ';':
-	if (__system_allow_multiple_cmds)
-	  return SEMICOLON;
-	else
-	  in_a_word = 1;
-	break;
+        if (__system_allow_multiple_cmds)
+          return SEMICOLON;
+        else
+          in_a_word = 1;
+        break;
       case '\0':
-	--*end;
-	return EOL;
+        --*end;
+        return EOL;
       case '\\':
-	if (s[1] == '"' || s[1] == '\''
-	    || (s[1] == ';' && (__system_allow_multiple_cmds)))
-	  s++;
-	in_a_word = 1;
-	break;
+        if (s[1] == '"' || s[1] == '\''
+            || (s[1] == ';' && (__system_allow_multiple_cmds)))
+          s++;
+        in_a_word = 1;
+        break;
       case '\'':
       case '"':
-	{
-	  char quote = *s++;
+        {
+          char quote = *s++;
 
-	  while (*s && *s != quote)
-	    {
-	      if (*s++ == '\\' && (*s == '"' || *s == '\''))
-		s++;
-	    }
-	  *end = s;
-	  if (!*s)
-	    return UNMATCHED_QUOTE;
-	  in_a_word = 1;
-	  break;
-	}
+          while (*s && *s != quote)
+            {
+              if (*s++ == '\\' && (*s == '"' || *s == '\''))
+                s++;
+            }
+          *end = s;
+          if (!*s)
+            return UNMATCHED_QUOTE;
+          in_a_word = 1;
+          break;
+        }
       default:
-	in_a_word = 1;
-	break;
+        in_a_word = 1;
+        break;
       }
 
     s++;
@@ -643,8 +643,8 @@ parse_cmdline(char *line, char **input, char **output)
   int ncmd = 0, narg = 1;
   char **fp = NULL;
   char ***cmd;
-  char *dummy_input;			/* So that we could pass NULL */
-  char *dummy_output;			/* instead of a real ??put */
+  char *dummy_input;                    /* So that we could pass NULL */
+  char *dummy_output;                   /* instead of a real ??put */
 
   if (input == NULL) input = &dummy_input;
   if (output == NULL) output = &dummy_output;
@@ -659,36 +659,36 @@ parse_cmdline(char *line, char **input, char **output)
   do {
     again = FALSE;
     prev_token = token;
-    token = get_sym (beg, &beg, &end);	/* get next symbol */
+    token = get_sym (beg, &beg, &end);  /* get next symbol */
 #ifdef TRACE
     fprintf(stderr, "token = %s\n", beg);
-#endif	
+#endif  
     switch (token) {
     case WORDARG:
       if (prev_token == REDIR_INPUT
-	  || prev_token == REDIR_OUTPUT) {
-	fprintf(stderr, "Ambigous input/output redirect.");
-	bSuccess = FALSE;
-	goto leave;
+          || prev_token == REDIR_OUTPUT) {
+        fprintf(stderr, "Ambigous input/output redirect.");
+        bSuccess = FALSE;
+        goto leave;
       }
       /* First word we see is the program to run.  */
       if (needcmd) {
-	narg = 1;
-	cmd[ncmd] = xmalloc(narg * sizeof(char *));
-	cmd[ncmd][narg - 1] = xmalloc(end - beg + 1);
-	__unquote (cmd[ncmd][narg - 1], beg, end); /* unquote and copy to prog */
-	if (cmd[ncmd][narg - 1][0] == '(') {
-	  fprintf(stderr, "parse_cmdline(%s): Parenthesized groups not allowed.\n", line);
-	  bSuccess = FALSE;
-	  goto leave;
-	}
-	needcmd = FALSE;
+        narg = 1;
+        cmd[ncmd] = xmalloc(narg * sizeof(char *));
+        cmd[ncmd][narg - 1] = xmalloc(end - beg + 1);
+        __unquote (cmd[ncmd][narg - 1], beg, end); /* unquote and copy to prog */
+        if (cmd[ncmd][narg - 1][0] == '(') {
+          fprintf(stderr, "parse_cmdline(%s): Parenthesized groups not allowed.\n", line);
+          bSuccess = FALSE;
+          goto leave;
+        }
+        needcmd = FALSE;
       }
       else {
-	narg++;
-	cmd[ncmd] = xrealloc(cmd[ncmd], narg * sizeof(char *));
-	cmd[ncmd][narg - 1] = xmalloc(end - beg + 1);
-	__unquote (cmd[ncmd][narg - 1], beg, end); /* unquote and copy to prog */
+        narg++;
+        cmd[ncmd] = xrealloc(cmd[ncmd], narg * sizeof(char *));
+        cmd[ncmd][narg - 1] = xmalloc(end - beg + 1);
+        __unquote (cmd[ncmd][narg - 1], beg, end); /* unquote and copy to prog */
       }
       beg = end; /* go forward */
       again = TRUE;
@@ -698,30 +698,30 @@ parse_cmdline(char *line, char **input, char **output)
     case REDIR_OUTPUT:
     case REDIR_APPEND:
       if (token == REDIR_INPUT) {
-	if (*input) {
-	  fprintf(stderr, "Ambiguous input redirect.");
-	  errno = EINVAL;
-	  bSuccess = FALSE;
-	  goto leave;
-	}
-	fp = input;
+        if (*input) {
+          fprintf(stderr, "Ambiguous input redirect.");
+          errno = EINVAL;
+          bSuccess = FALSE;
+          goto leave;
+        }
+        fp = input;
       }
       else if (token == REDIR_OUTPUT || token == REDIR_APPEND) {
-	if (*output) {
-	  fprintf(stderr, "Ambiguous output redirect.");
-	  errno = EINVAL;
-	  bSuccess = FALSE;
-	  goto leave;
-	}
-	fp = output;
-	if (token == REDIR_APPEND)
-	  append_out = TRUE;
+        if (*output) {
+          fprintf(stderr, "Ambiguous output redirect.");
+          errno = EINVAL;
+          bSuccess = FALSE;
+          goto leave;
+        }
+        fp = output;
+        if (token == REDIR_APPEND)
+          append_out = TRUE;
       }
       if (get_sym (end, &end, &new_end) != WORDARG) {
-	fprintf(stderr, "Target of redirect is not a filename.");
-	errno = EINVAL;
-	bSuccess = FALSE;
-	goto leave;
+        fprintf(stderr, "Target of redirect is not a filename.");
+        errno = EINVAL;
+        bSuccess = FALSE;
+        goto leave;
       }
       *fp = (char *)xmalloc (new_end - end + 1);
       memcpy (*fp, end, new_end - end);
@@ -731,10 +731,10 @@ parse_cmdline(char *line, char **input, char **output)
       break;
     case PIPE:
       if (*output) {
-	fprintf(stderr, "Ambiguous output redirect.");
-	errno = EINVAL;
-	bSuccess = FALSE;
-	goto leave;
+        fprintf(stderr, "Ambiguous output redirect.");
+        errno = EINVAL;
+        bSuccess = FALSE;
+        goto leave;
       }
       narg++;
       cmd[ncmd] = xrealloc(cmd[ncmd], narg * sizeof(char *));
@@ -747,10 +747,10 @@ parse_cmdline(char *line, char **input, char **output)
     case SEMICOLON:
     case EOL:
       if (needcmd) {
-	fprintf(stderr, "No command name seen.");
-	errno = EINVAL;
-	bSuccess = FALSE;
-	goto leave;
+        fprintf(stderr, "No command name seen.");
+        errno = EINVAL;
+        bSuccess = FALSE;
+        goto leave;
       }
       narg++;
       cmd[ncmd] = xrealloc(cmd[ncmd], narg * sizeof(char *));
@@ -759,7 +759,7 @@ parse_cmdline(char *line, char **input, char **output)
       cmd[ncmd] = NULL;
       again = FALSE;
       break;
-	
+        
     case UNMATCHED_QUOTE:
       fprintf(stderr, "Unmatched quote character.");
       errno = EINVAL;
@@ -773,7 +773,7 @@ parse_cmdline(char *line, char **input, char **output)
 
     }
 
-  }	while (again);
+  }     while (again);
 
  leave:
   if (!bSuccess) {
@@ -782,12 +782,12 @@ parse_cmdline(char *line, char **input, char **output)
     /* Need to free everything that was allocated */
     for (i = 0; i < ncmd; i++) {
       for (p = cmd[i]; *p; p++)
-	free(*p);
+        free(*p);
       free(cmd[i]);
     }
     if (cmd[ncmd]) {
       for (i = 0; i < narg; i++)
-	free(cmd[ncmd][i]);
+        free(cmd[ncmd][i]);
       free(cmd[ncmd]);
     }
     free(cmd);
@@ -913,45 +913,45 @@ win32_system(const char *cmd, int async)
     /* First time, use red_input if available */
     if (i == 0) {
       if (red_input) {
-	hIn = CreateFile(red_input,
-			 GENERIC_READ,
-			 FILE_SHARE_READ | FILE_SHARE_WRITE,
-			 &sa,
-			 OPEN_EXISTING,
-			 FILE_ATTRIBUTE_NORMAL,
-			 NULL);
-	if (hIn == INVALID_HANDLE_VALUE) {
+        hIn = CreateFile(red_input,
+                         GENERIC_READ,
+                         FILE_SHARE_READ | FILE_SHARE_WRITE,
+                         &sa,
+                         OPEN_EXISTING,
+                         FILE_ATTRIBUTE_NORMAL,
+                         NULL);
+        if (hIn == INVALID_HANDLE_VALUE) {
 #ifdef _TRACE
-	  fprintf(stderr, "system: failed to open hIn (%s) with error %d.\n", red_input, GetLastError());
+          fprintf(stderr, "system: failed to open hIn (%s) with error %d.\n", red_input, GetLastError());
 #endif
-	  errno = EIO;
-	  return -1;
-	}
+          errno = EIO;
+          return -1;
+        }
       }
       else {
-	hIn = GetStdHandle(STD_INPUT_HANDLE);
+        hIn = GetStdHandle(STD_INPUT_HANDLE);
       }
     }
     /* Last time, use red_output if available */
     if (cmd_pipe[i+1] == NULL) {
       if (red_output) {
-	hOut = CreateFile(red_output,
-			  GENERIC_WRITE,
-			  FILE_SHARE_READ | FILE_SHARE_WRITE,
-			  &sa,
-			  OPEN_ALWAYS,
-			  FILE_ATTRIBUTE_NORMAL,
-			  NULL);
-	if (hOut == INVALID_HANDLE_VALUE) {
+        hOut = CreateFile(red_output,
+                          GENERIC_WRITE,
+                          FILE_SHARE_READ | FILE_SHARE_WRITE,
+                          &sa,
+                          OPEN_ALWAYS,
+                          FILE_ATTRIBUTE_NORMAL,
+                          NULL);
+        if (hOut == INVALID_HANDLE_VALUE) {
 #ifdef _TRACE
-	  fprintf(stderr, "system: failed to open hOut (%s) with error %d.\n", red_output, GetLastError());
+          fprintf(stderr, "system: failed to open hOut (%s) with error %d.\n", red_output, GetLastError());
 #endif
-	  errno = EIO;
-	  return -1;
-	}
+          errno = EIO;
+          return -1;
+        }
       }
       else {
-	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        hOut = GetStdHandle(STD_OUTPUT_HANDLE);
       }
     }
 
@@ -967,15 +967,15 @@ win32_system(const char *cmd, int async)
     fprintf(stderr, "Executing: %s\n", new_cmd);
 #endif
     if (CreateProcess(app_name,
-		      new_cmd,
-		      NULL,
-		      NULL,
-		      TRUE,
-		      0,
-		      NULL,
-		      NULL,
-		      &si,
-		      &pi) == 0) {
+                      new_cmd,
+                      NULL,
+                      NULL,
+                      TRUE,
+                      0,
+                      NULL,
+                      NULL,
+                      &si,
+                      &pi) == 0) {
       fprintf(stderr, "win32_system(%s) call failed (Error %d).\n", cmd, (int)GetLastError());
       return -1;
     }
@@ -985,14 +985,14 @@ win32_system(const char *cmd, int async)
 
     if (async == 0) {
       if (WaitForSingleObject(pi.hProcess, INFINITE) == WAIT_OBJECT_0) {
-	if (GetExitCodeProcess(pi.hProcess, &ret) == 0) {
-	  fprintf(stderr, "Failed to retrieve exit code: %s (Error %d)\n", cmd, (int)GetLastError());
-	  ret = -1;
-	}
+        if (GetExitCodeProcess(pi.hProcess, &ret) == 0) {
+          fprintf(stderr, "Failed to retrieve exit code: %s (Error %d)\n", cmd, (int)GetLastError());
+          ret = -1;
+        }
       }
       else {
         fprintf(stderr, "Failed to wait for process termination: %s (Error %d)\n", cmd, (int)GetLastError());
-	ret = -1;
+        ret = -1;
       }
     }
 

@@ -86,7 +86,7 @@ typedef enum
 {
   kpse_gf_format,
   kpse_pk_format,
-  kpse_any_glyph_format,	/* ``any'' meaning gf or pk */
+  kpse_any_glyph_format,        /* ``any'' meaning gf or pk */
   kpse_tfm_format,
   kpse_afm_format,
   kpse_base_format,
@@ -168,21 +168,21 @@ typedef enum
 
 typedef struct
 {
-  const_string type;		/* Human-readable description.  */
-  const_string path;		/* The search path to use.  */
-  const_string raw_path;	/* Pre-$~ (but post-default) expansion.  */
-  const_string path_source;	/* Where the path started from.  */
-  const_string override_path;	/* From client environment variable.  */
-  const_string client_path;	/* E.g., from dvips's config.ps.  */
-  const_string cnf_path;	/* From texmf.cnf.  */
-  const_string default_path;	/* If all else fails.  */
-  const_string *suffix;		/* For kpse_find_file to check for/append.  */
-  const_string *alt_suffix;	/* More suffixes to check for.  */
-  boolean suffix_search_only;	/* Only search with a suffix?  */
-  const_string program;		/* ``mktexpk'', etc.  */
-  int argc;		        /* Count of standard arguments.  */
-  const_string *argv;		/* Standard arguments to `program'.  */
-  boolean program_enabled_p;	/* Invoke `program'?  */
+  const_string type;            /* Human-readable description.  */
+  const_string path;            /* The search path to use.  */
+  const_string raw_path;        /* Pre-$~ (but post-default) expansion.  */
+  const_string path_source;     /* Where the path started from.  */
+  const_string override_path;   /* From client environment variable.  */
+  const_string client_path;     /* E.g., from dvips's config.ps.  */
+  const_string cnf_path;        /* From texmf.cnf.  */
+  const_string default_path;    /* If all else fails.  */
+  const_string *suffix;         /* For kpse_find_file to check for/append.  */
+  const_string *alt_suffix;     /* More suffixes to check for.  */
+  boolean suffix_search_only;   /* Only search with a suffix?  */
+  const_string program;         /* ``mktexpk'', etc.  */
+  int argc;                     /* Count of standard arguments.  */
+  const_string *argv;           /* Standard arguments to `program'.  */
+  boolean program_enabled_p;    /* Invoke `program'?  */
   kpse_src_type program_enable_level; /* Who said to invoke `program'.  */
   boolean binmode;              /* Open files in binary mode?  */
 } kpse_format_info_type;

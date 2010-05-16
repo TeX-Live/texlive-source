@@ -62,9 +62,9 @@
 #include <kpathsea/c-auto.h>
 
 #ifdef __DJGPP__
-#include <fcntl.h>	/* for long filenames' stuff */
-#include <dir.h>	/* for `getdisk' */
-#include <io.h>		/* for `setmode' */
+#include <fcntl.h>      /* for long filenames' stuff */
+#include <dir.h>        /* for `getdisk' */
+#include <io.h>         /* for `setmode' */
 #endif
 
 /* Some drivers have partially integrated kpathsea changes.  */

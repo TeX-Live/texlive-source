@@ -65,28 +65,28 @@
 
 #endif /* KPSE_COMPAT_API */
 
-#define KPSE_DEBUG_STAT 0		/* stat calls */
-#define KPSE_DEBUG_HASH 1		/* hash lookups */
-#define KPSE_DEBUG_FOPEN 2		/* fopen/fclose calls */
-#define KPSE_DEBUG_PATHS 3		/* search path initializations */
-#define KPSE_DEBUG_EXPAND 4		/* path element expansion */
-#define KPSE_DEBUG_SEARCH 5		/* searches */
-#define KPSE_DEBUG_VARS 6		/* variable values */
+#define KPSE_DEBUG_STAT 0               /* stat calls */
+#define KPSE_DEBUG_HASH 1               /* hash lookups */
+#define KPSE_DEBUG_FOPEN 2              /* fopen/fclose calls */
+#define KPSE_DEBUG_PATHS 3              /* search path initializations */
+#define KPSE_DEBUG_EXPAND 4             /* path element expansion */
+#define KPSE_DEBUG_SEARCH 5             /* searches */
+#define KPSE_DEBUG_VARS 6               /* variable values */
 #define KPSE_LAST_DEBUG KPSE_DEBUG_VARS
 
 /* A printf for the debugging.  */
 #define DEBUGF_START() do { fputs ("kdebug:", stderr)
 #define DEBUGF_END()        fflush (stderr); } while (0)
 
-#define DEBUGF(str)							\
+#define DEBUGF(str)                                                     \
   DEBUGF_START (); fputs (str, stderr); DEBUGF_END ()
-#define DEBUGF1(str, e1)						\
+#define DEBUGF1(str, e1)                                                \
   DEBUGF_START (); fprintf (stderr, str, e1); DEBUGF_END ()
-#define DEBUGF2(str, e1, e2)						\
+#define DEBUGF2(str, e1, e2)                                            \
   DEBUGF_START (); fprintf (stderr, str, e1, e2); DEBUGF_END ()
-#define DEBUGF3(str, e1, e2, e3)					\
+#define DEBUGF3(str, e1, e2, e3)                                        \
   DEBUGF_START (); fprintf (stderr, str, e1, e2, e3); DEBUGF_END ()
-#define DEBUGF4(str, e1, e2, e3, e4)					\
+#define DEBUGF4(str, e1, e2, e3, e4)                                    \
   DEBUGF_START (); fprintf (stderr, str, e1, e2, e3, e4); DEBUGF_END ()
 
 #undef fopen

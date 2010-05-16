@@ -44,7 +44,7 @@ strcasecmp (s1, s2)
       c1 = tolower (*p1++);
       c2 = tolower (*p2++);
       if (c1 == '\0')
-	break;
+        break;
     }
   while (c1 == c2);
 
@@ -69,7 +69,7 @@ strncasecmp (s1, s2, n)
       c1 = tolower (*p1++);
       c2 = tolower (*p2++);
       if (c1 == '\0' || c1 != c2)
-	return c1 - c2;
+        return c1 - c2;
     } while (--n > 0);
 
   return c1 - c2;

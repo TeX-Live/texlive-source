@@ -1,11 +1,11 @@
 /****************************************************************/
-/*								*/
-/*	putenv(3)						*/
-/*								*/
-/*		Change or add an environment entry		*/
-/*								*/
+/*                                                              */
+/*      putenv(3)                                               */
+/*                                                              */
+/*              Change or add an environment entry              */
+/*                                                              */
 /****************************************************************/
-/*   origination        1987-Oct-7               T. Holm	*/
+/*   origination        1987-Oct-7               T. Holm        */
 /****************************************************************/
 
 /*
@@ -33,31 +33,31 @@ char  *strchr();
 char  *malloc();
 
 /****************************************************************/
-/*								*/
-/*      int							*/
-/*	putenv( entry )						*/
-/*								*/
-/*		The "entry" should follow the form 		*/
-/*		"NAME=VALUE". This routine will search the 	*/
-/*		user environment for "NAME" and replace its 	*/
-/*		value with "VALUE".				*/
-/*								*/
-/*		Note that "entry" is not copied, it is used 	*/
-/*		as the environment entry. This means that it 	*/
-/*		must not be unallocated or otherwise modifed 	*/
-/*		by the caller, unless it is replaced by a 	*/
-/*		subsequent putenv().				*/
-/*								*/
-/*		If the name is not found in the environment, 	*/
-/*		then a new vector of pointers is allocated, 	*/
-/*		"entry" is put at the end and the global 	*/
-/*		variable "environ" is updated.			*/
-/*								*/
-/*		This function normally returns 0, but -1	*/
-/*		is returned if it can not allocate enough 	*/
-/*		space using malloc(3), or "entry" does not	*/
-/*		contain a '='.					*/
-/*								*/
+/*                                                              */
+/*      int                                                     */
+/*      putenv( entry )                                         */
+/*                                                              */
+/*              The "entry" should follow the form              */
+/*              "NAME=VALUE". This routine will search the      */
+/*              user environment for "NAME" and replace its     */
+/*              value with "VALUE".                             */
+/*                                                              */
+/*              Note that "entry" is not copied, it is used     */
+/*              as the environment entry. This means that it    */
+/*              must not be unallocated or otherwise modifed    */
+/*              by the caller, unless it is replaced by a       */
+/*              subsequent putenv().                            */
+/*                                                              */
+/*              If the name is not found in the environment,    */
+/*              then a new vector of pointers is allocated,     */
+/*              "entry" is put at the end and the global        */
+/*              variable "environ" is updated.                  */
+/*                                                              */
+/*              This function normally returns 0, but -1        */
+/*              is returned if it can not allocate enough       */
+/*              space using malloc(3), or "entry" does not      */
+/*              contain a '='.                                  */
+/*                                                              */
 /****************************************************************/
 
 

@@ -25,7 +25,7 @@
  * I deliberately chose not to comment it.  You should have at least
  * as much fun trying to understand it, as I had to write it :-).
  *
- * Stephen R. van den Berg, berg@pool.informatik.rwth-aachen.de	*/
+ * Stephen R. van den Berg, berg@pool.informatik.rwth-aachen.de */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -47,71 +47,71 @@ strstr (phaystack, pneedle)
   b = *needle;
   if (b != '\0')
     {
-      haystack--;				/* possible ANSI violation */
+      haystack--;                               /* possible ANSI violation */
       do
-	{
-	  c = *++haystack;
-	  if (c == '\0')
-	    goto ret0;
-	}
+        {
+          c = *++haystack;
+          if (c == '\0')
+            goto ret0;
+        }
       while (c != b);
 
       c = *++needle;
       if (c == '\0')
-	goto foundneedle;
+        goto foundneedle;
       ++needle;
       goto jin;
 
       for (;;)
         {
           register chartype a;
-	  register const unsigned char *rhaystack, *rneedle;
+          register const unsigned char *rhaystack, *rneedle;
 
-	  do
-	    {
-	      a = *++haystack;
-	      if (a == '\0')
-		goto ret0;
-	      if (a == b)
-		break;
-	      a = *++haystack;
-	      if (a == '\0')
-		goto ret0;
-shloop:	      ;
+          do
+            {
+              a = *++haystack;
+              if (a == '\0')
+                goto ret0;
+              if (a == b)
+                break;
+              a = *++haystack;
+              if (a == '\0')
+                goto ret0;
+shloop:       ;
             }
           while (a != b);
 
-jin:	  a = *++haystack;
-	  if (a == '\0')
-	    goto ret0;
+jin:      a = *++haystack;
+          if (a == '\0')
+            goto ret0;
 
-	  if (a != c)
-	    goto shloop;
+          if (a != c)
+            goto shloop;
 
-	  rhaystack = haystack-- + 1;
-	  rneedle = needle;
-	  a = *rneedle;
+          rhaystack = haystack-- + 1;
+          rneedle = needle;
+          a = *rneedle;
 
-	  if (*rhaystack == a)
-	    do
-	      {
-		if (a == '\0')
-		  goto foundneedle;
-		++rhaystack;
-		a = *++needle;
-		if (*rhaystack != a)
-		  break;
-		if (a == '\0')
-		  goto foundneedle;
-		++rhaystack;
-		a = *++needle;
-	      }
-	    while (*rhaystack == a);
+          if (*rhaystack == a)
+            do
+              {
+                if (a == '\0')
+                  goto foundneedle;
+                ++rhaystack;
+                a = *++needle;
+                if (*rhaystack != a)
+                  break;
+                if (a == '\0')
+                  goto foundneedle;
+                ++rhaystack;
+                a = *++needle;
+              }
+            while (*rhaystack == a);
 
-	  needle = rneedle;		   /* took the register-poor aproach */
+          needle = rneedle;                /* took the register-poor aproach */
 
-	  if (a == '\0')
-	    break;
+          if (a == '\0')
+            break;
         }
     }
 foundneedle:

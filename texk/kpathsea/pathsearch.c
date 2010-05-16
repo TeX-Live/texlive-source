@@ -31,7 +31,7 @@
 #include <time.h> /* for `time' */
 
 #ifdef __DJGPP__
-#include <sys/stat.h>	/* for stat bits */
+#include <sys/stat.h>   /* for stat bits */
 #endif
 
 /* The very first search is for texmf.cnf, called when someone tries to
@@ -348,7 +348,7 @@ search (kpathsea kpse, const_string path,  const_string original_name,
   unsigned short save_djgpp_flags  = _djstat_flags;
 
   _djstat_flags = _STAT_EXEC_MAGIC | _STAT_EXEC_EXT
-		  | _STAT_ROOT_TIME | _STAT_WRITEBIT;
+                  | _STAT_ROOT_TIME | _STAT_WRITEBIT;
 #endif
 
   /* Make a leading ~ count as an absolute filename, and expand $FOO's.  */
@@ -435,7 +435,7 @@ search_list (kpathsea kpse, const_string path, const_string* names,
   unsigned short save_djgpp_flags  = _djstat_flags;
 
   _djstat_flags = _STAT_EXEC_MAGIC | _STAT_EXEC_EXT
-		  | _STAT_ROOT_TIME | _STAT_WRITEBIT;
+                  | _STAT_ROOT_TIME | _STAT_WRITEBIT;
 #endif
 
   ret_list = str_list_init();

@@ -158,17 +158,17 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr,  const_string elt,
       fn_str_grow (&name, find_file_data.cFileName);
 
       /* Maybe we have cached the leafness of this directory.
-		 The function will return 0 if unknown,
-		 else the actual (Unix-like) value. */
+                 The function will return 0 if unknown,
+                 else the actual (Unix-like) value. */
       links = kpathsea_dir_links (kpse, FN_STRING (name), 0);
 
       if (find_file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-	unsigned potential_len = FN_LENGTH (name);
-	/* in any case, compute the leafness */
-	nlinks++;
+        unsigned potential_len = FN_LENGTH (name);
+        /* in any case, compute the leafness */
+        nlinks++;
 
-	/* It's a directory, so append the separator.  */
-	fn_str_grow (&name, DIR_SEP_STRING);
+        /* It's a directory, so append the separator.  */
+        fn_str_grow (&name, DIR_SEP_STRING);
         if (*post != 0) {
           fn_str_grow (&name, post);
           /* Unfortunately we can't check if the new element is
@@ -179,21 +179,21 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr,  const_string elt,
           expand_elt (kpse, str_list_ptr, FN_STRING (name), potential_len);
           fn_shrink_to (&name, potential_len);
         }
-	/* Should we recurse?  To see if the subdirectory is a
-	   leaf, check if it has two links (one for . and one for
-	   ..).  This means that symbolic links to directories do
-	   not affect the leaf-ness.  This is arguably wrong, but
-	   the only alternative I know of is to stat every entry
-	   in the directory, and that is unacceptably slow. */
+        /* Should we recurse?  To see if the subdirectory is a
+           leaf, check if it has two links (one for . and one for
+           ..).  This means that symbolic links to directories do
+           not affect the leaf-ness.  This is arguably wrong, but
+           the only alternative I know of is to stat every entry
+           in the directory, and that is unacceptably slow. */
 
-	if (links == 0 || links > 2)
-	  /* All criteria are met; find subdirectories.  */
+        if (links == 0 || links > 2)
+          /* All criteria are met; find subdirectories.  */
         do_subdir (kpse, str_list_ptr, FN_STRING (name),
-		     potential_len, post);
-	else if (*post == 0)
-	  /* Nothing to match, no recursive subdirectories to
-	     look for: we're done with this branch.  Add it.  */
-	  dir_list_add (str_list_ptr, FN_STRING (name));
+                     potential_len, post);
+        else if (*post == 0)
+          /* Nothing to match, no recursive subdirectories to
+             look for: we're done with this branch.  Add it.  */
+          dir_list_add (str_list_ptr, FN_STRING (name));
       }
       fn_shrink_to (&name, elt_length);
     }
@@ -317,9 +317,9 @@ expand_elt (kpathsea kpse, str_llist_type * str_list_ptr,  const_string elt,
           /* If two or more consecutive /'s, find subdirectories.  */
           if (IS_DIR_SEP (dir[1]))
             {
-	      for (post = dir + 1; IS_DIR_SEP (*post); post++) ;
+              for (post = dir + 1; IS_DIR_SEP (*post); post++) ;
             do_subdir (kpse, str_list_ptr, elt, dir - elt + 1, post);
-	      return;
+              return;
             }
 
           /* No special stuff at this slash.  Keep going.  */
@@ -478,25 +478,25 @@ main ()
 {
   /* DEBUG_SET (DEBUG_STAT); */
   /* All lists end with NULL.  */
-  print_element_dirs (NULL);	/* */
-  print_element_dirs ("");	/* ./ */
-  print_element_dirs ("/k");	/* */
-  print_element_dirs (".//");	/* ./ ./archive/ */
-  print_element_dirs (".//archive");	/* ./ ./archive/ */
+  print_element_dirs (NULL);    /* */
+  print_element_dirs ("");      /* ./ */
+  print_element_dirs ("/k");    /* */
+  print_element_dirs (".//");   /* ./ ./archive/ */
+  print_element_dirs (".//archive");    /* ./ ./archive/ */
 #ifdef AMIGA
   print_element_dirs ("TeXMF:AmiWeb2c/texmf/fonts//"); /* lots */
   print_element_dirs ("TeXMF:AmiWeb2c/share/texmf/fonts//bakoma"); /*just one*/
   print_element_dirs ("TeXMF:AmiWeb2c/texmf/fonts//"); /* lots again [cache] */
-  print_element_dirs ("TeXMF:");	/* TeXMF: */
-  print_element_dirs ("TeXMF:/");	/* TeXMF: and all subdirs */
+  print_element_dirs ("TeXMF:");        /* TeXMF: */
+  print_element_dirs ("TeXMF:/");       /* TeXMF: and all subdirs */
 #else /* not AMIGA */
-  print_element_dirs ("/tmp/fonts//");	/* no need to stat anything */
+  print_element_dirs ("/tmp/fonts//");  /* no need to stat anything */
   print_element_dirs ("/usr/local/lib/tex/fonts//");      /* lots */
   print_element_dirs ("/usr/local/lib/tex/fonts//times"); /* just one */
   print_element_dirs ("/usr/local/lib/tex/fonts//"); /* lots again [cache] */
-  print_element_dirs ("~karl");		/* tilde expansion */
-  print_element_dirs ("$karl");		/* variable expansion */
-  print_element_dirs ("~${LOGNAME}");	/* both */
+  print_element_dirs ("~karl");         /* tilde expansion */
+  print_element_dirs ("$karl");         /* variable expansion */
+  print_element_dirs ("~${LOGNAME}");   /* both */
 #endif /* not AMIGA */
   return 0;
 }

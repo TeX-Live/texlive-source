@@ -44,18 +44,18 @@ READABLE(const_string fn, unsigned int st)
   } else {
       switch(GetLastError()) {
       case ERROR_BUFFER_OVERFLOW:
-	  errno = ENAMETOOLONG;
-	  break;
+          errno = ENAMETOOLONG;
+          break;
       case ERROR_ACCESS_DENIED:
-	  errno = EACCES;
-	  break;
+          errno = EACCES;
+          break;
       default :
-          errno = EIO;		/* meaningless, will make ret=NULL later */
-	  break;
+          errno = EIO;          /* meaningless, will make ret=NULL later */
+          break;
       }
   }
   return ((st != 0xFFFFFFFF) &&
-		  !(st & FILE_ATTRIBUTE_DIRECTORY));
+                  !(st & FILE_ATTRIBUTE_DIRECTORY));
 }
 #else
 #define READABLE(fn, st) \
@@ -111,4 +111,3 @@ kpse_readable_file (const_string name)
     return kpathsea_readable_file (kpse_def, name);
 }
 #endif
-

@@ -105,9 +105,9 @@ hash_insert (hash_table_type *table,
   else
     {
       hash_element_type *loc = table->buckets[n];
-      while (loc->next)		/* Find the last element.  */
+      while (loc->next)         /* Find the last element.  */
         loc = loc->next;
-      loc->next = new_elt;	/* Insert the new one after.  */
+      loc->next = new_elt;      /* Insert the new one after.  */
     }
 }
 
@@ -131,9 +131,9 @@ hash_insert_normalized (hash_table_type *table,
   else
     {
       hash_element_type *loc = table->buckets[n];
-      while (loc->next)		/* Find the last element.  */
+      while (loc->next)         /* Find the last element.  */
         loc = loc->next;
-      loc->next = new_elt;	/* Insert the new one after.  */
+      loc->next = new_elt;      /* Insert the new one after.  */
     }
 }
 

@@ -15,7 +15,7 @@
 #pragma warning(disable: 4255)
 
 #define boolean donotuse_boolean
-#include <windows.h>	/* Somewhere here WIN32 gets defined */
+#include <windows.h>    /* Somewhere here WIN32 gets defined */
 #undef boolean
 
 #if _MSC_VER>=1200

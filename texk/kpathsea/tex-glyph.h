@@ -35,11 +35,11 @@ typedef enum
 
 typedef struct
 {
-  string name;			/* font name found */
-  unsigned dpi;			/* size found, for glyphs */
-  kpse_file_format_type format;	/* glyph format found */
-  kpse_glyph_source_type source;	/* where we found it */
-} kpse_glyph_file_type;		
+  string name;                  /* font name found */
+  unsigned dpi;                 /* size found, for glyphs */
+  kpse_file_format_type format; /* glyph format found */
+  kpse_glyph_source_type source;        /* where we found it */
+} kpse_glyph_file_type;         
 
 #define KPSE_GLYPH_FILE_NAME(f) ((f).name)
 #define KPSE_GLYPH_FILE_DPI(f) ((f).dpi)

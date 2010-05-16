@@ -132,16 +132,16 @@ INTERNAL (strtol) (nptr, endptr, base, group)
     {
       grouping = _NL_CURRENT (LC_NUMERIC, GROUPING);
       if (*grouping <= 0 || *grouping == CHAR_MAX)
-	grouping = NULL;
+        grouping = NULL;
       else
-	{
-	  /* Figure out the thousands separator character.  */
-	  if (mbtowc (&thousands, _NL_CURRENT (LC_NUMERIC, THOUSANDS_SEP),
-		      strlen (_NL_CURRENT (LC_NUMERIC, THOUSANDS_SEP))) <= 0)
-	    thousands = (wchar_t) *_NL_CURRENT (LC_NUMERIC, THOUSANDS_SEP);
-	  if (thousands == L'\0')
-	    grouping = NULL;
-	}
+        {
+          /* Figure out the thousands separator character.  */
+          if (mbtowc (&thousands, _NL_CURRENT (LC_NUMERIC, THOUSANDS_SEP),
+                      strlen (_NL_CURRENT (LC_NUMERIC, THOUSANDS_SEP))) <= 0)
+            thousands = (wchar_t) *_NL_CURRENT (LC_NUMERIC, THOUSANDS_SEP);
+          if (thousands == L'\0')
+            grouping = NULL;
+        }
     }
   else
     grouping = NULL;
@@ -179,13 +179,13 @@ INTERNAL (strtol) (nptr, endptr, base, group)
   if (base == 0)
     if (*s == '0')
       {
-	if (toupper (s[1]) == 'X')
-	  {
-	    s += 2;
-	    base = 16;
-	  }
-	else
-	  base = 8;
+        if (toupper (s[1]) == 'X')
+          {
+            s += 2;
+            base = 16;
+          }
+        else
+          base = 8;
       }
     else
       base = 10;
@@ -199,13 +199,13 @@ INTERNAL (strtol) (nptr, endptr, base, group)
       /* Find the end of the digit string and check its grouping.  */
       end = s;
       for (c = *end; c != '\0'; c = *++end)
-	if (c != thousands && !isdigit (c) &&
-	    (!isalpha (c) || toupper (c) - 'A' + 10 >= base))
-	  break;
+        if (c != thousands && !isdigit (c) &&
+            (!isalpha (c) || toupper (c) - 'A' + 10 >= base))
+          break;
       if (*s == thousands)
-	end = s;
+        end = s;
       else
-	end = correctly_grouped_prefix (s, end, thousands, grouping);
+        end = correctly_grouped_prefix (s, end, thousands, grouping);
     }
   else
 #endif
@@ -219,23 +219,23 @@ INTERNAL (strtol) (nptr, endptr, base, group)
   for (c = *s; c != '\0'; c = *++s)
     {
       if (s == end)
-	break;
+        break;
       if (isdigit (c))
-	c -= '0';
+        c -= '0';
       else if (isalpha (c))
-	c = toupper (c) - 'A' + 10;
+        c = toupper (c) - 'A' + 10;
       else
-	break;
+        break;
       if (c >= base)
-	break;
+        break;
       /* Check for overflow.  */
       if (i > cutoff || (i == cutoff && c > cutlim))
-	overflow = 1;
+        overflow = 1;
       else
-	{
-	  i *= (unsigned LONG int) base;
-	  i += c;
-	}
+        {
+          i *= (unsigned LONG int) base;
+          i += c;
+        }
     }
 
   /* Check if anything actually happened.  */
@@ -251,7 +251,7 @@ INTERNAL (strtol) (nptr, endptr, base, group)
   /* Check for a value that is within the range of
      `unsigned LONG int', but outside the range of `LONG int'.  */
   if (i > (negative ?
-	   -(unsigned LONG int) LONG_MIN : (unsigned LONG int) LONG_MAX))
+           -(unsigned LONG int) LONG_MIN : (unsigned LONG int) LONG_MAX))
     overflow = 1;
 #endif
 
