@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-05-08.16}
+\def\texinfoversion{2010-05-14.10}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2123,7 +2123,7 @@ end
   \let\tenttsl=\titlettsl
   \def\curfontsize{title}%
   \def\lsize{chap}\def\lllsize{subsec}%
-  \resetmathfonts \setleading{25pt}}
+  \resetmathfonts \setleading{27pt}}
 \def\titlefont#1{{\titlefonts\rmisbold #1}}
 \def\chapfonts{%
   \let\tenrm=\chaprm \let\tenit=\chapit \let\tensl=\chapsl
@@ -4257,6 +4257,7 @@ end
   \definedummyword\registeredsymbol
   \definedummyword\dots
   \definedummyword\enddots
+  \definedummyword\entrybreak
   \definedummyword\equiv
   \definedummyword\error
   \definedummyword\euro
@@ -4699,7 +4700,6 @@ end
 % But this freezes the catcodes in the argument, and can cause problems to
 % @code, which sets - active.  This problem was fixed by a kludge---
 % ``-'' was active throughout whole index, but this isn't really right.
-%
 % The right solution is to prevent \entry from swallowing the whole text.
 %                                 --kasal, 21nov03
 \def\entry{%
@@ -4740,11 +4740,13 @@ end
     % from @* into spaces.  The user might give these in long section
     % titles, for instance.
     \def\*{\unskip\space\ignorespaces}%
+    \def\entrybreak{\hfil\break}%
     %
     % Swallow the left brace of the text (first parameter):
     \afterassignment\doentry
     \let\temp =
 }
+\def\entrybreak{\unskip\space\ignorespaces}%
 \def\doentry{%
     \bgroup % Instead of the swallowed brace.
       \noindent
@@ -5967,9 +5969,9 @@ end
 \message{environments,}
 % @foo ... @end foo.
 
-% @tex ... @end tex    escapes into raw Tex temporarily.
+% @tex ... @end tex    escapes into raw TeX temporarily.
 % One exception: @ is still an escape character, so that @end tex works.
-% But \@ or @@ will get a plain tex @ character.
+% But \@ or @@ will get a plain @ character.
 
 \envdef\tex{%
   \setupmarkupstyle{tex}%
@@ -6192,41 +6194,42 @@ end
 }
 
 % We often define two environments, @foo and @smallfoo.
-% Let's do it by one command:
-\def\makedispenv #1#2{
-  \expandafter\envdef\csname#1\endcsname {\setnormaldispenv #2}
-  \expandafter\envdef\csname small#1\endcsname {\setsmalldispenv #2}
+% Let's do it in one command.  #1 is the env name, #2 the definition.
+\def\makedispenvdef#1#2{%
+  \expandafter\envdef\csname#1\endcsname {\setnormaldispenv #2}%
+  \expandafter\envdef\csname small#1\endcsname {\setsmalldispenv #2}%
   \expandafter\let\csname E#1\endcsname \afterenvbreak
   \expandafter\let\csname Esmall#1\endcsname \afterenvbreak
 }
 
-% Define two synonyms:
-\def\maketwodispenvs #1#2#3{
-  \makedispenv{#1}{#3}
-  \makedispenv{#2}{#3}
+% Define two environment synonyms (#1 and #2) for an environment.
+\def\maketwodispenvdef#1#2#3{%
+  \makedispenvdef{#1}{#3}%
+  \makedispenvdef{#2}{#3}%
 }
-
-% @lisp: indented, narrowed, typewriter font; @example: same as @lisp.
+%
+% @lisp: indented, narrowed, typewriter font;
+% @example: same as @lisp.
 %
 % @smallexample and @smalllisp: use smaller fonts.
 % Originally contributed by Pavel@xerox.
 %
-\maketwodispenvs {lisp}{example}{%
+\maketwodispenvdef{lisp}{example}{%
   \nonfillstart
   \tt\setupmarkupstyle{example}%
   \let\kbdfont = \kbdexamplefont % Allow @kbd to do something special.
-  \gobble       % eat return
+  \gobble % eat return
 }
 % @display/@smalldisplay: same as @lisp except keep current font.
 %
-\makedispenv {display}{%
+\makedispenvdef{display}{%
   \nonfillstart
   \gobble
 }
 
 % @format/@smallformat: same as @display except don't narrow margins.
 %
-\makedispenv{format}{%
+\makedispenvdef{format}{%
   \let\nonarrowing = t%
   \nonfillstart
   \gobble
@@ -6280,6 +6283,8 @@ end
 % we're doing normal filling.  So, when using \aboveenvbreak and
 % \afterenvbreak, temporarily make \parskip 0.
 %
+\makedispenvdef{quotation}{\quotationstart}
+%
 \def\quotationstart{%
   {\parskip=0pt \aboveenvbreak}% because \aboveenvbreak inserts \parskip
   \parindent=0pt
@@ -6295,17 +6300,6 @@ end
   \parsearg\quotationlabel
 }
 
-\envdef\quotation{%
-  \setnormaldispenv
-  \quotationstart
-}
-
-\envdef\smallquotation{%
-  \setsmalldispenv
-  \quotationstart
-}
-\let\Esmallquotation = \Equotation
-
 % We have retained a nonzero parskip for the environment, since we're
 % doing normal filling.
 %
@@ -6317,6 +6311,7 @@ end
   \fi
   {\parskip=0pt \afterenvbreak}%
 }
+\def\Esmallquotation{\Equotation}
 
 % If we're given an argument, typeset it in bold with a colon after.
 \def\quotationlabel#1{%
