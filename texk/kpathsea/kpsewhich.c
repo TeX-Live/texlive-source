@@ -477,7 +477,7 @@ static struct option long_options[]
       { "no-mktex",             1, 0, 0 },
       { "progname",             1, 0, 0 },
       { "safe-in-name",         1, 0, 0 },
-      { "safe-out-name",                1, 0, 0 },
+      { "safe-out-name",        1, 0, 0 },
       { "subdir",               1, 0, 0 },
       { "show-path",            1, 0, 0 },
       { "var-value",            1, 0, 0 },
