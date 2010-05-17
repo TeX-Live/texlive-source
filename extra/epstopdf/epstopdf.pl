@@ -46,7 +46,7 @@ use strict;
 #
 # emacs-page
 # History
-#  2010/05/09
+#  2010/05/09 v2.16 (Karl Berry)
 #    * make --nogs dump edited PostScript to stdout by default
 #      (report from Reinhard Kotucha).
 #  2010/03/19 v2.15 (Karl Berry)
@@ -149,7 +149,7 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id$) 2.15';
+my $ident = '($Id$) 2.16';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2010 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
