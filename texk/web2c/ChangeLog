@@ -1,3 +1,7 @@
+2010-05-18  Karl Berry  <karl@tug.org>
+
+	* configure.ac (web2_version): use /pretest ident.
+
 2010-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h (BIBXRETALLOCSTRING): Need parens around new_size.

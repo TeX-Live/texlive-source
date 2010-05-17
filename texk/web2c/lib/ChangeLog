@@ -1,3 +1,7 @@
+2010-05-18  Karl Berry  <karl@tug.org>
+
+	* printversion.c (printversionandexit): 2010.
+
 2010-05-10  Karl Berry  <karl@tug.org>
 
 	* input2int.c (zinput2ints, zinput3ints): don't bother

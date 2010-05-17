@@ -1,3 +1,9 @@
+2010-05-18  Karl Berry  <karl@tug.org>
+
+	* NEWS,
+	* kpsewhich.c (read_command_line),
+	* texmf.cnf (TEXMFCONFIG, TEXMFVAR): 2010.
+
 2010-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* access.c: Adapt comment to facts.

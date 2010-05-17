@@ -1,5 +1,8 @@
 This file records noteworthy changes.  (Public domain.)
 
+2010 (for TeX Collection 2010)
+* BibTeX line-breaking bug fix.
+
 2009 (for TeX Collection 2009, 13 October 2009)
 * --shell-restricted aka shell_escape=p for restricted shell access.
 * --enable-write18 and --disable-write18 accepted as synonyms for

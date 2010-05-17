@@ -1,3 +1,7 @@
+2010-05-18  Karl Berry  <karl@tug.org>
+
+	* Build (TL_CONF_BANNER): switch ident to /pretest.
+
 2010-04-11  Karl Berry  <karl@tug.org>
 
 	* m4/kpse-pkgs.m4 (KPSE_TEXK_PKGS): add ptexenc, makejvf, mendexk.

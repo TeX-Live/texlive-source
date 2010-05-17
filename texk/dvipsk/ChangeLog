@@ -1,3 +1,10 @@
+2010-05-18  Karl Berry  <karl@tug.org>
+
+	* configure.ac (AC_INIT),
+	* afm2tfm.c: (version),
+	* dvips.c (main), 
+	* dvips.h (BANNER): 5.99/pretest, 2010.
+
 2010-05-14  Karl Berry  <karl@tug.org>
 
 	* resident.c,
