@@ -1,4 +1,4 @@
-.TH PDFETEX 1 "1 February 2010" "pdftex 1.40" "Web2C @VERSION@"
+.TH PDFETEX 1 "14 May 2010" "pdftex 1.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -25,8 +25,8 @@ pdfetex \- PDF output from e-TeX
 .SH SYNOPSIS
 .B pdfetex
 .RI [ options ]
-[\fB&\fR \fIformat\fR ]
-[ \fIfile\fR | \fB\e\fR \fIcommands\fR ]
+.RI [ \fB&\fPformat ]
+.RI [ file | \fB\e\fPcommands ]
 .\"=====================================================================
 .SH DESCRIPTION
 pdfe\*(TX is another name for pdf\*(TX; they behave identically.

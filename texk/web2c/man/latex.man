@@ -1,4 +1,4 @@
-.TH LATEX 1 "7 January 2007" "Web2C @VERSION@"
+.TH LATEX 1 "14 May 2010" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -16,7 +16,7 @@
 latex, elatex, lambda, pdflatex \- structured text formatting and typesetting
 .SH SYNOPSIS
 .B latex
-[ first line ]
+.RI [ first-line ]
 .\"=====================================================================
 .SH DESCRIPTION
 .PP

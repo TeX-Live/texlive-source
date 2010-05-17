@@ -1,5 +1,5 @@
 .\" t
-.TH MF 1 "10 November 2001" "Web2C @VERSION@"
+.TH MF 1 "14 May 2010" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -331,7 +331,8 @@ must be
 .IR mf .
 .TP
 .BI -output-directory \ directory
-.rb Write output files in
+.rb
+Write output files in
 .I directory
 instead of the current directory.  Look up input files in
 .I directory
@@ -379,21 +380,22 @@ searching.  The
 utility can be used to query the values of the variables.
 .PP
 If the environment variable
-TEXMFOUTPUT is set, \*(MF attempts to put its output
+.B TEXMFOUTPUT
+is set, \*(MF attempts to put its output
 files in it, if they cannot be put in the current directory.  Again, see
 .BR tex (1).
 .TP
-MFINPUTS
+.B MFINPUTS
 Search path for
 .I input
 and
 .I openin
 files.
 .TP
-MFEDIT
+.B MFEDIT
 Command template for switching to editor.
 .TP
-MFTERM
+.B MFTERM
 Determines the online graphics display. If MFTERM is not set,
 and DISPLAY is set, the Metafont window support for X is used.
 (DISPLAY must be set to a valid X server specification, as usual.)

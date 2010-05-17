@@ -1,4 +1,4 @@
-.TH MPOST 1 "27 May 2009" "MetaPost 1.201"
+.TH MPOST 1 "14 May 2010" "MetaPost 1.201"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -27,8 +27,8 @@ mpost \- MetaPost, a system for creating graphics
 .PP
 .B mpost 
 .B --dvitomp
-.IR dvifile [.dvi]
-.RI [ mpxfile [.mpx]]
+.IR dvifile [\fB.dvi\fP]
+.RI [ mpxfile [\fB.mpx\fP]]
 
 .\"=====================================================================
 .SH DESCRIPTION
@@ -140,10 +140,11 @@ Addison-Wesley, 1986, ISBN 0-201-13445-4.
 .BR mf (1),
 .BR mptopdf (1),
 .BR tex (1),
-.PP
-.URL "http://foundry.supelec.fr/gf/project/metapost/" "MetaPost source code" .
-.BR
-.URL "http://tug.org/metapost/" "MetaPost home page" .
+.\" FIXME: need to define the macro URL!
+.\" .PP
+.\" .URL "http://foundry.supelec.fr/gf/project/metapost/" "MetaPost source code" .
+.\" .BR
+.\" .URL "http://tug.org/metapost/" "MetaPost home page" .
 .\"=====================================================================
 .SH AUTHORS
 \*(MP was designed by John D. Hobby, incorporating algorithms from 

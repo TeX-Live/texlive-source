@@ -1,4 +1,4 @@
-.TH KPSEACCESS 1 "7 April 2010" "Kpathsea @VERSION@"
+.TH KPSEACCESS 1 "16 May 2010" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -20,14 +20,19 @@
 kpseaccess \- determine whether a file can be accessed
 .SH SYNOPSIS
 .B kpseaccess
-.RB [ \-rwx ]
+.I mode
 .I file
 .\"=====================================================================
 .SH DESCRIPTION
 Exit successfully if
 .I file
-can be accessed with the specified mode.
-The mode is one or more letters of
+can be accessed with the specified
+.IR mode .
+The
+.I mode
+is an optional dash
+.RB (` \- ')
+followed by zero or more letters of
 .BR rwx ,
 where
 .B r

@@ -1,4 +1,4 @@
-.TH LUATEX 1 "2009.04.22" "luatex 0.40" "Web2C @VERSION@"
+.TH LUATEX 1 "14 May 2010" "luatex 0.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -13,18 +13,31 @@ an embedded scripting language
 .\"=====================================================================
 .SH SYNOPSIS
 .B luatex
-[\-\-lua=\fIFILE\fR] [\fIOPTION\fR]... [\fITEXNAME\fR[.tex]] [\fICOMMANDS\fR]
-
+.RB [ \-\-lua=\fIFILE\fP ]
+.RI [ OPTION ].\|.\|.
+.RI [ TEXNAME [ \fB.tex\fP ]]
+.RI [ COMMANDS ]
+.br
 .B luatex
-[\-\-lua=\fIFILE\fR] [\fIOPTION\fR]... \fI\eFIRST\-LINE\fR
-
+.RB [ \-\-lua=\fIFILE\fP ]
+.RI [ OPTION ].\|.\|.
+.BI \e FIRST\-LINE
+.br
 .B luatex
-[\-\-lua=\fIFILE\fR] [\fIOPTION\fR]... \fB&\fIFMT ARGS\fR
+.RB [ \-\-lua=\fIFILE\fP ]
+.RI [ OPTION ].\|.\|.
+.BI & FMT
+.RI [ ARGS ]
 .\"=====================================================================
 .SH DESCRIPTION
-Run the lua\*(TX typesetter on \fITEXNAME\fR, usually creating
-TEXNAME.pdf. Any
-remaining \fICOMMANDS\fR are processed as lua\*(TX input, after TEXNAME
+Run the lua\*(TX typesetter on
+.IR TEXNAME ,
+usually creating
+.IR TEXNAME\fB.pdf\fP .
+Any remaining
+.I COMMANDS
+are processed as lua\*(TX input, after
+.I TEXNAME
 is read.
 
 Alternatively, if the first non\-option argument begins with a backslash,
@@ -234,13 +247,11 @@ Print credits and version details.
 .TP
 The following options are ignored:
 .TP
-.BR "\-\-8bit" ,\  "\-\-etex" ,\  "\-\-parse\-first\-line" ,\
-"\-\-no\-parse\-first\-line"
+.BR \-\-8bit ,\  \-\-etex ,\  \-\-parse\-first\-line ,\  \-\-no\-parse\-first\-line
 .rb
 These are always on.
 .TP
-.BI "\-\-default\-translate\-file=" TCXNAME  , \  "\-\-translate\-file="
-TCXNAME
+.BR \-\-default\-translate\-file=\fITCXNAME\fP  ,\  \-\-translate\-file=\fITCXNAME\fP
 .rb
 These are always off.
 

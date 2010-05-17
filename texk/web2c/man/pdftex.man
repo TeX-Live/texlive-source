@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "1 February 2010" "pdftex 1.40" "Web2C @VERSION@"
+.TH PDFTEX 1 "14 May 2010" "pdftex 1.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -27,8 +27,8 @@ pdftex, pdfinitex, pdfvirtex \- PDF output from TeX
 .SH SYNOPSIS
 .B pdftex
 .RI [ options ]
-[\fB&\fR \fIformat\fR ]
-[ \fIfile\fR | \fB\e\fR \fIcommands\fR ]
+.RI [ \fB&\fPformat ]
+.RI [ file | \fB\e\fPcommands ]
 .\"=====================================================================
 .SH DESCRIPTION
 Run the pdf\*(TX typesetter on
@@ -42,7 +42,7 @@ With a
 .BI & format
 argument pdf\*(TX uses a different set of precompiled commands,
 contained in
-.IR format.fmt ;
+.IR format\fB.fmt\fP ;
 it is usually better to use the
 .B -fmt
 .I format
@@ -242,7 +242,8 @@ in
 mode.
 .TP
 .BI -output-directory \ directory
-.rb Write output files in
+.rb
+Write output files in
 .I directory
 instead of the current directory.  Look up input files in
 .I directory
@@ -364,7 +365,7 @@ expanded, not taken as part of the filename.  Other programs, such as
 \*(MF, do not have this problem.
 .PP
 .TP
-TEXMFOUTPUT
+.B TEXMFOUTPUT
 Normally, pdf\*(TX puts its output files in the current directory.  If
 any output file cannot be opened there, it tries to open it in the
 directory specified in the environment variable TEXMFOUTPUT.
@@ -382,7 +383,7 @@ files, as \*(TX often generates files that need to be subsequently
 read; for input, no suffixes (such as ``.tex'') are added by default,
 the input name is simply checked as given.
 .TP
-TEXINPUTS
+.B TEXINPUTS
 Search path for
 .I \einput
 and
@@ -395,20 +396,20 @@ component will be replaced with the paths defined in the
 file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
 current directory and ``/home/user/tex'' to the standard search path.
 .TP
-TEXFORMATS
+.B TEXFORMATS
 Search path for format files.
 .TP
-TEXPOOL
+.B TEXPOOL
 search path for
 .B pdftex
 internal strings.
 .TP
-TEXEDIT
+.B TEXEDIT
 Command template for switching to editor.  The default, usually
 .BR vi ,
 is set when pdf\*(TX is compiled.
 .TP
-TFMFONTS
+.B TFMFONTS
 Search path for font metric
 .RI ( .tfm )
 files.

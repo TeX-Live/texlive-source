@@ -1,4 +1,4 @@
-.TH EPLAIN 1 "14 December 1993" "Web2C @VERSION@"
+.TH EPLAIN 1 "14 May 2010" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -20,7 +20,7 @@
 eplain \- extended plain TeX
 .SH SYNOPSIS
 .B eplain
-[ first-line ]
+.RI [ first-line ]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete

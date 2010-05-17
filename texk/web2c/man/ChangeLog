@@ -1,3 +1,12 @@
+2010-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* aleph.man, amstex.man, eplain.man, etex.man, latex.man,
+	luatex.man, mf.man, mpost.man, pdfetex.man, pdftex.man, tex.man:
+	Uniform manpage formatting: bold for literals, italic for
+	variable items, roman for meta items.  Adapt to facts.
+
+	* mpost.man: FIXME: need to define the macro URL.
+
 2010-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ctie.man (new): Instead of ../ctiedir/ctie.1.
