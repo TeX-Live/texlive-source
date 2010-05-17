@@ -1,0 +1,13 @@
+#! /bin/sh
+
+# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test "x$LN_S" = 'xln -s' || exit 77
+
+./kpsereadlink $LT_OBJDIR/libkpathsea.lai && exit 1
+
+link=`./kpsereadlink $LT_OBJDIR/libkpathsea.la` || exit 1
+
+test "x$link" = x../libkpathsea.la || exit 1
+

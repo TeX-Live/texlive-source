@@ -75,6 +75,8 @@ KPSE_CHECK_WIN32
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
+AC_SUBST([LT_OBJDIR], ["$lt_cv_objdir"])
+
 dnl Write output here, instead of putting a zillion -D's on the command line.
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
  [sed -e 's/^#define PACKAGE/#define KPSE_PACKAGE/' \

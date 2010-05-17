@@ -1,3 +1,8 @@
+2010-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* access.c: Adapt comment to facts.
+	* man/kpseaccess.man: Adapt to facts.
+
 2010-05-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	*absolute.c, c-fopen.h, c-stat.h, config.h, debug.h, dir.c,
@@ -6,6 +11,13 @@
 	progname.c, putenv.c, readable.c, strcasecmp.c, strstr.c,
 	strtol.c, tex-file.c, tex-glyph.h,
 	types.h, win32lib.h: untabify.
+
+2010-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpseaccess.test, kpsereadlink.test, kpsestat.test,
+	kpsewhich.test: New shell scripts to test the programs.
+	* configure.ac (LT_OBJDIR): AC_SUBST for kpsereadlink.test.
+	* Makefile.am (TESTS, TESTS_ENVIRONMENT): Add the tests.
 
 2010-05-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

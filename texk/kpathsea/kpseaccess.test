@@ -1,0 +1,27 @@
+#! /bin/sh
+
+# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+./kpseaccess '' nonesuch && exit 1
+./kpseaccess - nonesuch && exit 1
+./kpseaccess r nonesuch && exit 1
+./kpseaccess w nonesuch && exit 1
+./kpseaccess x nonesuch && exit 1
+
+./kpseaccess '' access.o || exit 1
+./kpseaccess - access.o || exit 1
+./kpseaccess rw access.o || exit 1
+./kpseaccess x access.o && exit 1
+
+./kpseaccess rwx kpseaccess || exit 1
+
+./kpseaccess r $srcdir/access.c || exit 1
+./kpseaccess x $srcdir/access.c && exit 1
+
+if ./kpseaccess w $srcdir/access.c; then
+  echo 'file "$srcdir/access.c" is writable'
+else
+  echo 'file "$srcdir/access.c" is not writable'
+fi
+

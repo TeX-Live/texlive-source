@@ -1,0 +1,18 @@
+#! /bin/sh
+
+# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir
+export TEXMFCNF
+
+./kpsewhich --var-value=TEXMFMAIN || exit 1
+
+./kpsewhich --expand-var=\$TEXMFMAIN || exit 1
+
+BSTINPUTS=$srcdir/../tests/texmf \
+  ./kpsewhich plain.bst || exit 1
+
+AFMFONTS=$srcdir/../tests/texmf \
+  ./kpsewhich afmtest.afm || exit 1
+

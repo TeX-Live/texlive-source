@@ -309,6 +309,11 @@ uninstall-hook:
 	  else :; fi; \
 	done
 
+## The tests
+TESTS = kpseaccess.test kpsereadlink.test kpsestat.test kpsewhich.test
+TESTS_ENVIRONMENT = LN_S='$(LN_S)' LT_OBJDIR='$(LT_OBJDIR)'
+EXTRA_DIST += $(TESTS)
+
 ## Not used
 ##
 EXTRA_DIST += mktex.cnf

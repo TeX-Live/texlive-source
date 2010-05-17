@@ -61,9 +61,9 @@ Try `%s --help' for more information.\n", argv[0], argv[0]);
         exit(1);
     }
 
-    /* The option parsing is somewhat primitive: '-' need not be the first
-     * character of the mode.  The mode must be specified in a single
-     * option.  Both of these may change.
+    /* The option parsing is somewhat primitive.  The mode must be
+     * specified as a single parameter: an optional '-' followed by
+     * zero or more letters 'r', 'w', or 'x'.  This may change.
      */
     mode = 0;
     i = argv[1];
