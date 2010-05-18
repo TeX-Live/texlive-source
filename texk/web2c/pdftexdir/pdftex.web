@@ -15,12 +15,11 @@
 % pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
 % Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-% e-TeX is copyright (C) 1994,98 by Peter Breitenlohner; all rights are
-% reserved.  Copying of this file is authorized only if (1) you are Peter
-% Breitenlohner, or if (2) you make absolutely no changes to your copy.
-% (Programs such as PATCHWEB, TIE, or WEBMERGE allow the application of
-% several change files to tex.web; the master files tex.web and etex.ch
-% should stay intact.)
+% e-TeX is copyright (C) 1999-2010 by P. Breitenlohner (1994,98 by the NTS
+% team); all rights are reserved. Copying of this file is authorized only if
+% (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
+% your copy. (Programs such as TIE allow the application of several change
+% files to tex.web; the master files tex.web and etex.ch should stay intact.)
 
 % See etex_gen.tex for hints on how to install this program.
 % And see etripman.tex for details about how to validate it.
@@ -101,6 +100,12 @@
 %                 direction typesetting;
 %             fixed a bug in the revised glue rounding code, detected by
 %                 Tigran Aivazian <tigran@@aivazian.fsnet.co.uk>, Oct 2004.
+% Version 2.3 development was started in Feb 2008; released in Mon Year.
+%             fixed a bug in hyph_code handling (\savinghyphcodes)
+%                 reported by Vladimir Volovich <vvv@@vsu.ru>, Feb 2008.
+%             fixed the error messages for improper use of \protected,
+%                 reported by Heiko Oberdiek 
+%                 <heiko.oberdiek@@googlemail.com>, May 2010.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any

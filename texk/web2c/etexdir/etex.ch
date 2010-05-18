@@ -29,7 +29,7 @@
 % (pdftexdir/pdftex.ch). Consequently, changes in these files have to be
 % coordinated.
 
-% e-TeX is copyright (C) 1999-2008 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2010 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -55,12 +55,11 @@
 % TeX is a trademark of the American Mathematical Society.
 % METAFONT is a trademark of Addison-Wesley Publishing Company.
 @y
-% e-TeX is copyright (C) 1994,98 by the NTS team; all rights are reserved.
-% Copying of this file is authorized only if (1) you are a member of the
-% NTS team, or if (2) you make absolutely no changes to your copy.
-% (Programs such as PATCHWEB, TIE, or WEBMERGE allow the application of
-% several change files to tex.web; the master files tex.web and etex.ch
-% should stay intact.)
+% e-TeX is copyright (C) 1999-2010 by P. Breitenlohner (1994,98 by the NTS
+% team); all rights are reserved. Copying of this file is authorized only if
+% (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
+% your copy. (Programs such as TIE allow the application of several change
+% files to tex.web; the master files tex.web and etex.ch should stay intact.)
 
 % See etex_gen.tex for hints on how to install this program.
 % And see etripman.tex for details about how to validate it.
@@ -119,9 +118,9 @@
 % Version 2.3 development was started in Feb 2008; released in Mon Year.
 %             fixed a bug in hyph_code handling (\savinghyphcodes)
 %                 reported by Vladimir Volovich <vvv@@vsu.ru>, Feb 2008.
-%             fixed the error message for improper use of \protected,
+%             fixed the error messages for improper use of \protected,
 %                 reported by Heiko Oberdiek 
-%                 <heiko.oberdiek@@googlemail.com>, Apr 2010.
+%                 <heiko.oberdiek@@googlemail.com>, May 2010.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
