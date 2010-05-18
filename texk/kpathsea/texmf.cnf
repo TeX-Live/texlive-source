@@ -496,7 +496,7 @@ try_std_extension_first = t
 % commands listed in shell_escape_commands are allowed.  Although this
 % is not fully secure either, it is much better, and so useful that we
 % enable it for everything but bare tex.
-shell_escape = f
+shell_escape = p
 
 % No spaces in this command list.  These programs either do not write
 % any output files, respect openout_any, or have hard-coded restrictions similar
@@ -506,28 +506,24 @@ shell_escape = f
 % Unfortunately we found too many problems with shell_escape=p, so it
 % should be treated as though it were just as dangerous as shell_escape=t.
 shell_escape_commands = \
-false
-
-% These programs are our first goal when we can enable it.
-%kpsewhich,fc-match,\
-%repstopdf,\
+bibtex,bibtex8,\
+kpsewhich,\
+makeindex,\
+repstopdf,\
 
 % we'd like to allow:
 % dvips - but external commands can be executed, need at least -R1.
 % epspdf, ps2pdf, pstopdf - need to respect openout_any,
-%   and we need to make sure -dSAFER is used and no injection is possible.
+%   and gs -dSAFER must be used and check for shell injection with filenames.
 % (img)convert (ImageMagick) - delegates.mgk possible misconfig, besides,
 %   without Unix convert it hardly seems worth it, and Windows convert
-%   is something completely different that destroys filesystems, so
-%   skip it.
+%   is something completely different that destroys filesystems, so skip.
 % pygmentize - but is the filter feature insecure?
 % ps4pdf - but it calls an unrestricted latex.
+% rpdfcrop - maybe ok, but let's get experience with repstopdf first.
 % texindy,xindy - but is the module feature insecure?
 % ulqda - but requires optional SHA1.pm, so why bother.
-% tex, latex, etc. - but need to forbid --shell-escape, and inherit openout_any
-% 
-% repstopdf, rpdfcrop - maybe ok
-% bibtex,bibtex8,makeindex - maybe ok
+% tex, latex, etc. - need to forbid --shell-escape, and inherit openout_any.
 
 % plain TeX should remain unenhanced.
 shell_escape.tex = f

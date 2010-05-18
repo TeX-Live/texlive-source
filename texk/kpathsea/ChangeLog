@@ -1,5 +1,10 @@
 2010-05-18  Karl Berry  <karl@tug.org>
 
+	* texmf.cnf (shell_escape): set to p. Trying restricted shells again.
+	(shell_escape_commands): bibtex, bibtex8,
+	kpsewhich, makeindex, repstopdf.  Don't plan to add anything
+	else for TL'10.
+
 	* NEWS,
 	* kpsewhich.c (read_command_line),
 	* texmf.cnf (TEXMFCONFIG, TEXMFVAR): 2010.
