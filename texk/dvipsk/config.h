@@ -31,7 +31,7 @@
 #define vfpath kpse_vf_format
 #define configpath kpse_dvips_config_format
 #define headerpath kpse_tex_ps_header_format
-#define type1 kpse_type1_format
+#define type1path kpse_type1_format
 #define mappath kpse_fontmap_format
 #define encpath kpse_enc_format
 

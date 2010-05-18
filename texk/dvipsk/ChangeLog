@@ -1,5 +1,8 @@
 2010-05-18  Karl Berry  <karl@tug.org>
 
+	* config.h (type1path): rename from type1.
+	* writet1.c (t1_open): use type1path, not headerpath.
+
 	* configure.ac (AC_INIT),
 	* afm2tfm.c: (version),
 	* dvips.c (main), 

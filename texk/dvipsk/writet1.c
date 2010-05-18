@@ -34,7 +34,7 @@ along with this program.  If not, see  <http://www.gnu.org/licenses/>.  */
 #undef  set_cur_file_name
 #define set_cur_file_name(s)    cur_file_name = s
 #define t1_open()           \
-    ((t1_file = search(headerpath, cur_file_name, FOPEN_RBIN_MODE)) != NULL)
+    ((t1_file = search(type1path, cur_file_name, FOPEN_RBIN_MODE)) != NULL)
 #define enc_open()           \
     ((enc_file = search(encpath, cur_file_name, FOPEN_RBIN_MODE)) != NULL)
 #define external_enc()      ext_glyph_names
