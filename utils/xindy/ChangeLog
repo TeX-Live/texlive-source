@@ -1,3 +1,7 @@
+2010-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (LISP_RUN): Better solution, from Joachim Schrod.
+
 2010-05-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac (LISP_RUN): Portability to avoid cygwin problems.

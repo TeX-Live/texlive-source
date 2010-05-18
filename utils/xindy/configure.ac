@@ -83,7 +83,7 @@ fi
 if test "x$with_clisp_runtime" != xsystem; then
   AC_MSG_CHECKING([for clisp runtime])
   if test "x$with_clisp_runtime" = xdefault; then
-    LISP_RUN=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))' | sed 1q`base/$LISP_RUN
+    LISP_RUN=`echo '(format t "~a" *lib-directory*)' | $CLISP -q -norc -`base/$LISP_RUN
   else
     LISP_RUN=$with_clisp_runtime
   fi
