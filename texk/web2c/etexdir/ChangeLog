@@ -1,3 +1,7 @@
+2010-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: More error message with \protected, from Heiko.
+
 2010-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Checked and adjusted tex.web line numbers.

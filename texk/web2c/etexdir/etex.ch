@@ -2650,6 +2650,12 @@ or `\.{\\outer}', and it might or might not be expanded. The prefixes
   if tracing_commands>2 then if eTeX_ex then show_cur_cmd_chr;
 @z
 %---------------------------------------
+@x [49] m.1212 l.22730 - e-TeX protected
+help1("I'll pretend you didn't say \long or \outer or \global.");
+@y
+help1("I'll pretend you didn't say \long or \outer or \global or \protected.");
+@z
+%---------------------------------------
 @x [49] m.1213 l.22735 - e-TeX protected
 if (cur_cmd<>def)and(a mod 4<>0) then
   begin print_err("You can't use `"); print_esc("long"); print("' or `");
@@ -2660,15 +2666,15 @@ if a>=8 then
   end
 else j:=0;
 if (cur_cmd<>def)and((a mod 4<>0)or(j<>0)) then
-  begin print_err("You can't use `"); print_esc("long"); print("', `");
-  print_esc("outer"); print("', or `");
+  begin print_err("You can't use `"); print_esc("long"); print("' or `");
+  print_esc("outer"); print("' or `");
   print_esc("protected"); print("' with `");
 @z
 %---------------------------------------
 @x [49] m.1213 l.22740 - e-TeX protected
   help1("I'll pretend you didn't say \long or \outer here.");
 @y
-  help1("I'll pretend you didn't say \long, \outer, or \protected here.");
+  help1("I'll pretend you didn't say \long or \outer or \protected here.");
 @z
 %---------------------------------------
 @x [49] m.1218 l.22798 - e-TeX protected
