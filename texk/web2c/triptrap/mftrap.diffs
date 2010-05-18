@@ -7,7 +7,7 @@
 1c1
 < This is METAFONT, Version 2.718281 (INIMF)  15 MAR 2008 02:23
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2010/dev) (INIMF)  5 MAR 2010 14:21
+> This is METAFONT, Version 2.718281 (TeX Live 2010/pretest) (INIMF)  18 MAY 2010 13:31
 150c150
 < String usage 26&83 (891&11438 still untouched)
 ---
@@ -16,8 +16,8 @@
 <  (preloaded base=trap 2008.3.15)
 < 1117 strings of total length 20614
 ---
->  (base=trap 2010.3.5)
-> 1122 strings of total length 20565
+>  (base=trap 2010.5.18)
+> 1122 strings of total length 20566
 + ./mf --progname=inimf
 + mv trap.log mftrap.log
 + mv trap.tfm mftrap.tfm
@@ -27,31 +27,31 @@
 < ** &trap  trap 
 < (trap.mf
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2010/dev) (INIMF)
+> This is METAFONT, Version 2.718281 (TeX Live 2010/pretest) (INIMF)
 > **(trap.mf
 39c38
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6301&75642 still untouched)
+> String usage 50&202 (6301&75641 still untouched)
 + diff SRCDIR/triptrap/mftrap.log mftrap.log
 1c1
 < This is METAFONT, Version 2.718281 (preloaded base=trap 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2010/dev) (base=trap 2010.3.5)  5 MAR 2010 14:21
+> This is METAFONT, Version 2.718281 (TeX Live 2010/pretest) (base=trap 2010.5.18)  18 MAY 2010 13:31
 1825c1825
 < String usage 24&92 (858&11309 still untouched)
 ---
-> String usage 30&119 (6347&79310 still untouched)
+> String usage 30&119 (6347&79309 still untouched)
 4235c4235
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6301&75642 still untouched)
+> String usage 50&202 (6301&75641 still untouched)
 4251,4252c4251,4252
 <  68 strings out of 883
 <  3752 string characters out of 11386
 ---
 >  77 strings out of 6378
->  3793 string characters out of 79435
+>  3793 string characters out of 79434
 4254,4255c4254,4255
 <  289 symbolic tokens out of 2100
 <  8i,43n,14r,8p,167b stack positions out of 30i,100n,300r,150p,500b
@@ -69,10 +69,10 @@
 1c1
 < This is GFtype, Version 3.1
 ---
-> This is GFtype, Version 3.1 (TeX Live 2010/dev)
+> This is GFtype, Version 3.1 (TeX Live 2010/pretest)
 3c3
 < ' METAFONT output 2008.03.15:0223'
 ---
-> ' METAFONT output 2010.03.05:1421'
+> ' METAFONT output 2010.05.18:1331'
 + exit 0
 PASS: trap.test

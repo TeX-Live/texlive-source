@@ -1,21 +1,16 @@
-cd /home/texlive/karl/Build/source/Work/texk/web2c/
-make trip
-rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
-rm -f trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
-rm -rf tfm
->>> See ../../../texk/web2c/triptrap/trip.diffs for example of acceptable diffs.
-./pltotf ../../../texk/web2c/triptrap/trip.pl trip.tfm
-./tftopl ./trip.tfm trip.pl
-diff ../../../texk/web2c/triptrap/trip.pl trip.pl
-ln -s ../../../texk/web2c/triptrap/trip.tex . # get same filename in log
-/bin/sh -c 'TEXMFCNF=../../../texk/web2c/triptrap ./tex --progname=initex --ini <../../../texk/web2c/triptrap/trip1.in >tripin.fot'
-make: [trip] Error 1 (ignored)
-mv trip.log tripin.log
-diff ../../../texk/web2c/triptrap/tripin.log tripin.log
+>>> Running TRIP test for TeX.
+>>> See SRCDIR/triptrap/trip.diffs for example of acceptable diffs.
++ ./pltotf SRCDIR/triptrap/trip.pl trip.tfm
++ ./tftopl ./trip.tfm trip.pl
++ diff SRCDIR/triptrap/trip.pl trip.pl
++ ln -s SRCDIR/triptrap/trip.tex .
++ ./tex --progname=initex --ini
++ mv trip.log tripin.log
++ diff SRCDIR/triptrap/tripin.log tripin.log
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is TeX, Version 3.1415926 (Web2C 7.5.6) (INITEX)  25 APR 2008 19:06
+> This is TeX, Version 3.1415926 (TeX Live 2010/pretest) (INITEX)  18 MAY 2010 13:31
 3c3
 < (trip.tex
 ---
@@ -24,29 +19,26 @@ diff ../../../texk/web2c/triptrap/tripin.log tripin.log
 <  (preloaded format=trip 2008.3.15)
 < 1326 strings of total length 23646
 ---
->  (format=trip 2008.4.25)
-> 1366 strings of total length 24430
+>  (format=trip 2010.5.18)
+> 1370 strings of total length 24558
 461c461
 < Hyphenation trie of length 273 has 9 ops out of 500
 ---
 > Hyphenation trie of length 273 has 9 ops out of 35111
-make: [trip] Error 1 (ignored)
-/bin/sh -c 'TEXMFCNF=../../../texk/web2c/triptrap ./tex --progname=tex <../../../texk/web2c/triptrap/trip2.in >trip.fot'
-make: [trip] Error 1 (ignored)
-diff ../../../texk/web2c/triptrap/trip.fot trip.fot
++ ./tex --progname=tex
++ diff SRCDIR/triptrap/trip.fot trip.fot
 1,3c1,2
 < This is TeX, Version 3.1415926 (INITEX)
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is TeX, Version 3.1415926 (Web2C 7.5.6)
+> This is TeX, Version 3.1415926 (TeX Live 2010/pretest)
 > **(./trip.tex ##
-make: [trip] Error 1 (ignored)
-diff  ../../../texk/web2c/triptrap/trip.log trip.log
++ diff SRCDIR/triptrap/trip.log trip.log
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is TeX, Version 3.1415926 (Web2C 7.5.6) (format=trip 2008.4.25)  25 APR 2008 19:06
+> This is TeX, Version 3.1415926 (TeX Live 2010/pretest) (format=trip 2010.5.18)  18 MAY 2010 13:31
 3c3
 < (trip.tex ##
 ---
@@ -100,27 +92,27 @@ diff  ../../../texk/web2c/triptrap/trip.log trip.log
 <  47 strings out of 1674
 <  253 string characters out of 8354
 ---
->  44 strings out of 1634
->  261 string characters out of 15570
+>  44 strings out of 1630
+>  261 string characters out of 15442
 7299c7303
 <  372 multiletter control sequences out of 2100
 ---
->  372 multiletter control sequences out of 10000+0
+>  372 multiletter control sequences out of 15000+0
 7301c7305
 <  2 hyphenation exceptions out of 307
 ---
 >  1 hyphenation exception out of 659
-make: [trip] Error 1 (ignored)
-/bin/sh -c 'TEXMFCNF=../../../texk/web2c/triptrap ./dvitype -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*' trip.dvi >trip.typ'
-diff  ../../../texk/web2c/triptrap/trip.typ trip.typ
++ eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' trip.dvi
+++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' trip.dvi
++ diff SRCDIR/triptrap/trip.typ trip.typ
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (Web2C 7.5.6)
+> This is DVItype, Version 3.6 (TeX Live 2010/pretest)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2008.04.25:1906'
+> ' TeX output 2010.05.18:1331'
 419c419
 < 1121: down4 639342208 
 ---
@@ -131,4 +123,5 @@ diff  ../../../texk/web2c/triptrap/trip.typ trip.typ
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
-make: [trip] Error 1 (ignored)
++ :
+PASS: trip.test

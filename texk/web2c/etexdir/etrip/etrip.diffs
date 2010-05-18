@@ -1,73 +1,59 @@
-make[1]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c'
-cd ../kpathsea && make -w CC='gcc' CFLAGS='-g ' 
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/kpathsea'
-make[2]: Nothing to be done for `default'.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/kpathsea'
-cd lib && make -w CC='gcc' CFLAGS='-g ' LDFLAGS='' 
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/lib'
-make[2]: Nothing to be done for `default'.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/lib'
-cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  fixwrites
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-make[2]: `fixwrites' is up to date.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  splitup
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-make[2]: `splitup' is up to date.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  web2c
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-make[2]: `web2c' is up to date.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
-rm -f ctrip.fot ctrip.log trip.dvi ctrip.typ
-rm -f xtripin.fot xtripin.log
-rm -f xtrip.fot xtrip.log xtrip.typ
-rm -f etrip.tfm etrip.pl etrip.tex etrip.fmt etripin.fot etripin.log
-rm -f etrip.fot etrip.log etrip.dvi etrip.out etrip.typ
-rm -f tripos.tex 8terminal.tex
-rm -rf tfm
+>>> Running e-TRIP test for e-TeX.
+>>> See SRCDIR/etexdir/etrip/etrip.diffs for example of acceptable diffs.
++ echo '*** TRIP test for e-TeX in compatibility mode ***.'
 *** TRIP test for e-TeX in compatibility mode ***.
-./pltotf ./triptrap/trip.pl trip.tfm
-./tftopl ./trip.tfm trip.pl
-diff ./triptrap/trip.pl trip.pl
-ln -s ./triptrap/trip.tex . # get same filename in log
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./etex --progname=einitex --ini <./triptrap/trip1.in >ctripin.fot'
-mv trip.log ctripin.log
-diff ./triptrap/tripin.log ctripin.log
++ ./pltotf SRCDIR/triptrap/trip.pl trip.tfm
++ ./tftopl ./trip.tfm trip.pl
++ diff SRCDIR/triptrap/trip.pl trip.pl
++ ln -s SRCDIR/triptrap/trip.tex .
++ ./etex --progname=einitex --ini
++ mv trip.log ctripin.log
++ diff SRCDIR/triptrap/tripin.log ctripin.log
 1c1
-< This is TeX, Version 3.141592 (INITEX)  20 DEC 2002 20:24
+< This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is e-TeX, Version 3.141592-2.2 (Web2C 7.5.5) (INITEX)  3 AUG 2005 10:50
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest) (INITEX)  18 MAY 2010 13:31
 3c3
 < (trip.tex
 ---
 > (./trip.tex
-450,451c450,451
-<  (preloaded format=trip 2002.12.20)
-< 1320 strings of total length 23539
+450,453c450,453
+<  (preloaded format=trip 2008.3.15)
+< 1326 strings of total length 23646
+< 471 memory locations dumped; current usage is 96&278
+< 341 multiletter control sequences
 ---
->  (format=trip 2005.8.3)
-> 1479 strings of total length 25862
+>  (format=trip 2010.5.18)
+> 1486 strings of total length 26070
+> 479 memory locations dumped; current usage is 104&278
+> 342 multiletter control sequences
 461c461
 < Hyphenation trie of length 273 has 9 ops out of 500
 ---
 > Hyphenation trie of length 273 has 9 ops out of 35111
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./etex --progname=etex <./triptrap/trip2.in >ctrip.fot'
-mv trip.log ctrip.log
-diff ./triptrap/trip.fot ctrip.fot
++ ./etex --progname=etex
++ mv trip.log ctrip.log
++ diff SRCDIR/triptrap/trip.fot ctrip.fot
 1,3c1,2
-< This is TeX, Version 3.141592 (INITEX)
+< This is TeX, Version 3.1415926 (INITEX)
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-TeX, Version 3.141592-2.2 (Web2C 7.5.5)
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest)
 > **(./trip.tex ##
-diff  ./triptrap/trip.log ctrip.log
-1c1
-< This is TeX, Version 3.141592 (preloaded format=trip 2002.12.20)  20 DEC 2002 21:28
+17c16
+< Memory usage before: 159&313; after: 102&278; still untouched: 1613
 ---
-> This is e-TeX, Version 3.141592-2.2 (Web2C 7.5.5) (format=trip 2005.8.3)  3 AUG 2005 10:50
+> Memory usage before: 185&313; after: 112&278; still untouched: 2612
+75c74
+< Memory usage before: 334&431; after: 292&418; still untouched: 175
+---
+> Memory usage before: 434&431; after: 376&418; still untouched: 178
++ diff SRCDIR/triptrap/trip.log ctrip.log
+1c1
+< This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
+---
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest) (format=trip 2010.5.18)  18 MAY 2010 13:31
 3c3
 < (trip.tex ##
 ---
@@ -77,10 +63,34 @@ diff  ./triptrap/trip.log ctrip.log
 > 
 > \openout10 = `tripos.tex'.
 > 
+73c77
+< Memory usage before: 159&313; after: 102&278; still untouched: 1613
+---
+> Memory usage before: 185&313; after: 112&278; still untouched: 2612
+642c646
+< Memory usage before: 747&484; after: 581&481; still untouched: 1492
+---
+> Memory usage before: 1027&484; after: 795&481; still untouched: 1491
+815c819
+< Memory usage before: 475&470; after: 290&466; still untouched: 1473
+---
+> Memory usage before: 653&470; after: 384&466; still untouched: 1472
+915c919
+< Memory usage before: 218&459; after: 149&458; still untouched: 1473
+---
+> Memory usage before: 286&459; after: 181&458; still untouched: 1472
+1070c1074
+< Memory usage before: 118&328; after: 102&328; still untouched: 1473
+---
+> Memory usage before: 132&328; after: 110&328; still untouched: 1472
 1405c1409
 < \vbox(16383.99998+0.0)x1000.0, glue set 16342.0fil
 ---
 > \vbox(16383.99998+0.0)x1000.0, glue set 16341.99998fil
+1511c1515
+< Memory usage before: 990&376; after: 584&370; still untouched: 735
+---
+> Memory usage before: 1396&376; after: 788&370; still untouched: 1472
 1954c1958
 < (tripos.tex
 ---
@@ -89,60 +99,103 @@ diff  ./triptrap/trip.log ctrip.log
 < \vbox(16383.99998+1.0)x100.0, glue set 16239.0fil
 ---
 > \vbox(16383.99998+1.0)x100.0, glue set 16238.99998fil
+2189c2193
+< Memory usage before: 950&531; after: 546&448; still untouched: 706
+---
+> Memory usage before: 1400&531; after: 772&448; still untouched: 1443
 2533c2537
 < \vbox(16383.99998+0.0)x20.0, glue set 16331.0fil
 ---
 > \vbox(16383.99998+0.0)x20.0, glue set 16330.99998fil
+2575c2579
+< Memory usage before: 339&413; after: 236&405; still untouched: 706
+---
+> Memory usage before: 455&413; after: 296&405; still untouched: 1443
 3326c3330
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
 > \vbox(10000.0+2.0)x28.0, glue set 9737.58742fil
+3616c3620
+< Memory usage before: 2170&521; after: 1181&459; still untouched: 175
+---
+> Memory usage before: 3016&521; after: 1607&459; still untouched: 178
 3864c3868
 < \vbox(16383.99998+2.0)x100.0, glue set 16318.0fil
 ---
 > \vbox(16383.99998+2.0)x100.0, glue set 16317.99997fil
+3951c3955
+< Memory usage before: 640&415; after: 397&410; still untouched: 175
+---
+> Memory usage before: 888&415; after: 525&410; still untouched: 178
 4034c4038
 < \vbox(16383.99998+0.0)x8236.0, glue set 16344.0fil
 ---
 > \vbox(16383.99998+0.0)x8236.0, glue set 16343.99998fil
+4053c4057
+< Memory usage before: 235&401; after: 178&399; still untouched: 175
+---
+> Memory usage before: 307&401; after: 218&399; still untouched: 178
 4420c4424
 < \vbox(16383.99998+0.0)x100.0, glue set 16332.0fil
 ---
 > \vbox(16383.99998+0.0)x100.0, glue set 16331.99998fil
+4506c4510
+< Memory usage before: 651&432; after: 417&418; still untouched: 175
+---
+> Memory usage before: 941&432; after: 565&418; still untouched: 178
 4742c4746
 < \vbox(16383.99998+0.0)x205.12613, glue set 16344.0fil
 ---
 > \vbox(16383.99998+0.0)x205.12613, glue set 16343.99998fil
-6370c6374
+4828c4832
+< Memory usage before: 776&458; after: 464&452; still untouched: 175
+---
+> Memory usage before: 1098&458; after: 630&452; still untouched: 178
+4845c4849
+< I'll pretend you didn't say \long or \outer or \global.
+---
+> I'll pretend you didn't say \long or \outer or \global or \protected.
+6380c6384
 < (tripos.tex
 ---
 > (./tripos.tex
-7287,7288c7291,7292
-<  47 strings out of 1674
-<  251 string characters out of 8353
+6595c6599
+< Memory usage before: 819&428; after: 720&426; still untouched: 175
 ---
->  44 strings out of 1821
->  261 string characters out of 8138
-7290c7294
+> Memory usage before: 1155&428; after: 1016&426; still untouched: 178
+7155c7159
+< Memory usage before: 895&439; after: 290&420; still untouched: 175
+---
+> Memory usage before: 1269&439; after: 374&420; still untouched: 178
+7288c7292
+< Memory usage before: 334&431; after: 292&418; still untouched: 175
+---
+> Memory usage before: 434&431; after: 376&418; still untouched: 178
+7296,7299c7300,7303
+<  47 strings out of 1674
+<  253 string characters out of 8354
+<  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  372 multiletter control sequences out of 10000+0
-7292,7293c7296,7297
+>  44 strings out of 1814
+>  261 string characters out of 7930
+>  3821 words of memory out of 3999
+>  373 multiletter control sequences out of 15000+0
+7301c7305
 <  2 hyphenation exceptions out of 307
-<  5i,7n,9p,113b,38s stack positions out of 200i,40n,60p,500b,600s
 ---
 >  1 hyphenation exception out of 659
->  7i,7n,9p,113b,38s stack positions out of 200i,40n,60p,500b,600s
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./dvitype -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*' trip.dvi >ctrip.typ'
-diff  ./triptrap/trip.typ ctrip.typ
++ eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' trip.dvi
+++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' trip.dvi
++ diff SRCDIR/triptrap/trip.typ ctrip.typ
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (Web2C 7.5.5)
+> This is DVItype, Version 3.6 (TeX Live 2010/pretest)
 9c9
-< ' TeX output 2002.12.20:2128'
+< ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2005.08.03:1050'
+> ' TeX output 2010.05.18:1331'
 419c419
 < 1121: down4 639342208 
 ---
@@ -153,12 +206,11 @@ diff  ./triptrap/trip.typ ctrip.typ
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
-1215d1214
-<  
++ echo '*** TRIP test for e-TeX in extended mode ***.'
 *** TRIP test for e-TeX in extended mode ***.
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./etex --progname=einitex --ini <./etexdir/etrip/etrip1.in >xtripin.fot'
-mv trip.log xtripin.log
-diff ctripin.log xtripin.log
++ ./etex --progname=einitex --ini
++ mv trip.log xtripin.log
++ diff ctripin.log xtripin.log
 2c2,3
 < **\input trip
 ---
@@ -172,24 +224,28 @@ diff ctripin.log xtripin.log
 < I changed this one to zero.
 < 
 452,453c447,448
-< 471 memory locations dumped; current usage is 96&278
-< 341 multiletter control sequences
+< 479 memory locations dumped; current usage is 104&278
+< 342 multiletter control sequences
 ---
-> 509 memory locations dumped; current usage is 134&278
-> 407 multiletter control sequences
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./etex --progname=etex <./etexdir/etrip/trip2.in >xtrip.fot'
-mv trip.log xtrip.log
-diff ctrip.fot xtrip.fot
+> 517 memory locations dumped; current usage is 142&278
+> 408 multiletter control sequences
++ ./etex --progname=etex
++ mv trip.log xtrip.log
++ diff ctrip.fot xtrip.fot
 2c2,3
 < **(./trip.tex ##
 ---
 > **entering extended mode
 > ## (./trip.tex
+16c17
+< Memory usage before: 185&313; after: 112&278; still untouched: 2612
+---
+> Memory usage before: 185&313; after: 112&278; still untouched: 1612
 76a78,80
 > 
 > ### semi simple group (level 1) entered at line 429 (begingroup)
 > ### bottom level
-diff  ctrip.log xtrip.log
++ diff ctrip.log xtrip.log
 2,3c2,4
 < ** &trip  trip
 < (./trip.tex ##
@@ -197,6 +253,10 @@ diff  ctrip.log xtrip.log
 > entering extended mode
 > **&trip \toksdef\tokens=0 \input trip
 >  (./trip.tex
+77c78
+< Memory usage before: 185&313; after: 112&278; still untouched: 2612
+---
+> Memory usage before: 185&313; after: 112&278; still untouched: 1612
 1773d1773
 < {restoring \fam=-1}
 1783d1782
@@ -253,32 +313,34 @@ diff  ctrip.log xtrip.log
 < .\hbox(0.0+0.0)x-7127.0, shifted 7227.0
 ---
 > .\hbox(0.0+0.0)x-7127.0, shifted 7227.0, display
-7286a7280,7282
+7295a7289,7291
 > 
 > ### semi simple group (level 1) entered at line 429 (begingroup)
 > ### bottom level
-7294c7290
-<  372 multiletter control sequences out of 10000+0
+7303c7299
+<  373 multiletter control sequences out of 15000+0
 ---
->  438 multiletter control sequences out of 10000+0
-7297c7293
+>  439 multiletter control sequences out of 15000+0
+7306c7302
 <  7i,7n,9p,113b,38s stack positions out of 200i,40n,60p,500b,600s
 ---
 >  7i,7n,9p,136b,40s stack positions out of 200i,40n,60p,500b,600s
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./dvitype -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*' trip.dvi >xtrip.typ'
-diff  ctrip.typ xtrip.typ
++ eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' trip.dvi
+++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' trip.dvi
++ diff ctrip.typ xtrip.typ
++ echo '*** e-TeX specific part of e-TRIP test ***.'
 *** e-TeX specific part of e-TRIP test ***.
-./pltotf ./etexdir/etrip/etrip.pl etrip.tfm
-./tftopl ./etrip.tfm etrip.pl
-diff ./etexdir/etrip/etrip.pl etrip.pl
-ln -s ./etexdir/etrip/etrip.tex . # get same filename in log
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./etex --progname=einitex --ini <./etexdir/etrip/etrip2.in >etripin.fot'
-mv etrip.log etripin.log
-diff ./etexdir/etrip/etripin.log etripin.log
++ ./pltotf SRCDIR/etexdir/etrip/etrip.pl etrip.tfm
++ ./tftopl ./etrip.tfm etrip.pl
++ diff SRCDIR/etexdir/etrip/etrip.pl etrip.pl
++ ln -s SRCDIR/etexdir/etrip/etrip.tex .
++ ./etex --progname=einitex --ini
++ mv etrip.log etripin.log
++ diff SRCDIR/etexdir/etrip/etripin.log etripin.log
 1c1
 < This is e-TeX, Version 3.141592-2.2 (INITEX)  6 SEP 2004 23:13
 ---
-> This is e-TeX, Version 3.141592-2.2 (Web2C 7.5.5) (INITEX)  3 AUG 2005 10:50
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest) (INITEX)  18 MAY 2010 13:31
 4c4,5
 < (etrip.tex This is the e-Trip test [2004-09-06] for e-TeX v3.141592-2.2.
 ---
@@ -288,69 +350,83 @@ diff ./etexdir/etrip/etripin.log etripin.log
 <  (preloaded format=etrip 2004.9.6)
 < 1435 strings of total length 24590
 ---
->  (format=etrip 2005.8.3)
-> 1480 strings of total length 25893
+>  (format=etrip 2010.5.18)
+> 1487 strings of total length 26101
+28c29
+< 407 multiletter control sequences
+---
+> 408 multiletter control sequences
 35c36
 < Hyphenation trie of length 434 has 12 ops out of 500
 ---
 > Hyphenation trie of length 434 has 12 ops out of 35111
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./etex --progname=etex <./etexdir/etrip/etrip3.in >etrip.fot'
-diff ./etexdir/etrip/etrip.fot etrip.fot
++ ./etex --progname=etex
++ diff SRCDIR/etexdir/etrip/etrip.fot etrip.fot
 1,4c1,3
 < This is e-TeX, Version 3.141592-2.2 (INITEX)
 < **&etrip etrip
 < entering extended mode
 < (etrip.tex e-IniTeX: e-Trip format loaded.
 ---
-> This is e-TeX, Version 3.141592-2.2 (Web2C 7.5.5)
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest)
 > **entering extended mode
 > (./etrip.tex e-IniTeX: e-Trip format loaded.
-46a46,47
-> \openout1 = `etrip.out'.
+45a45,46
 > 
-diff  ./etexdir/etrip/etrip.log etrip.log
+> \openout1 = `etrip.out'.
++ diff SRCDIR/etexdir/etrip/etrip.log etrip.log
 1c1
 < This is e-TeX, Version 3.141592-2.2 (preloaded format=etrip 2004.9.6)  6 SEP 2004 23:13
 ---
-> This is e-TeX, Version 3.141592-2.2 (Web2C 7.5.5) (format=etrip 2005.8.3)  3 AUG 2005 10:50
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest) (format=etrip 2010.5.18)  18 MAY 2010 13:31
 4c4
 < (etrip.tex e-IniTeX: e-Trip format loaded.
 ---
 > (./etrip.tex e-IniTeX: e-Trip format loaded.
-670a671,672
-> \openout1 = `etrip.out'.
-> 
-672c674
+671,672c671,674
+< Memory usage before: 50&182; after: 36&176; still untouched: 680
 < (etrip.out) ( 
 ---
+> \openout1 = `etrip.out'.
+> 
+> Memory usage before: 52&182; after: 36&176; still untouched: 1679
 > (./etrip.out) ( 
 764c766
 <                 % end of outer \scantokens) (etrip.out
 ---
 >                 % end of outer \scantokens) (./etrip.out
-4273,4274c4275,4276
+2697c2699
+< Memory usage before: 51&320; after: 44&320; still untouched: 680
+---
+> Memory usage before: 53&320; after: 44&320; still untouched: 838
+2699c2701
+< Memory usage before: 51&320; after: 44&320; still untouched: 680
+---
+> Memory usage before: 53&320; after: 44&320; still untouched: 838
+4273,4276c4275,4278
 <  22 strings out of 1665
 <  132 string characters out of 8410
----
->  18 strings out of 1820
->  140 string characters out of 8107
-4276c4278
+<  2661 words of memory out of 3000
 <  408 multiletter control sequences out of 2100
 ---
->  408 multiletter control sequences out of 10000+0
+>  18 strings out of 1813
+>  140 string characters out of 7899
+>  3161 words of memory out of 3999
+>  409 multiletter control sequences out of 15000+0
 4278c4280
 <  10 hyphenation exceptions out of 307
 ---
 >  9 hyphenation exceptions out of 659
-diff ./etexdir/etrip/etrip.out etrip.out
-/bin/sh -c 'TEXMFCNF=./etexdir/etrip ./dvitype -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*' etrip.dvi >etrip.typ'
-diff  ./etexdir/etrip/etrip.typ etrip.typ
++ eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
+++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
++ diff SRCDIR/etexdir/etrip/etrip.typ etrip.typ
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (Web2C 7.5.5)
+> This is DVItype, Version 3.6 (TeX Live 2010/pretest)
 9c9
 < ' TeX output 2004.09.06:2313'
 ---
-> ' TeX output 2005.08.03:1050'
-make[1]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c'
+> ' TeX output 2010.05.18:1331'
++ :
+PASS: etexdir/etrip.test

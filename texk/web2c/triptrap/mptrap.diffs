@@ -1,621 +1,122 @@
-make[1]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c'
-cd lib && make -w CC='gcc' CFLAGS='-g ' LDFLAGS='' 
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/lib'
-make[2]: Nothing to be done for `default'.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/lib'
-cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  fixwrites
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-make[2]: `fixwrites' is up to date.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  splitup
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-make[2]: `splitup' is up to date.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-cd web2c && make -w CC='gcc' CFLAGS='-g ' LDFLAGS=''  web2c
-make[2]: Entering directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-make[2]: `web2c' is up to date.
-make[2]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c/web2c'
-rm -f mtrap.mp mtrap.mem trapf.tfm
-rm -f mtrap.log mtrap.0 mtrap.1 writeo writeo.log writeo.2
-rm -f trap.mp trap.mpx mptrapin.fot mptrapin.log
-rm -f mptrap.fot mptrap.log mptrap.tfm
-rm -f trap.ps trap.mem trap.0 trap.5 trap.6 trap.95 trap.96 trap.97
-rm -f trap.98 trap.99 trap.100 trap.101 trap.102 trap.103 trap.104
-rm -f trap.105 trap.106 trap.107 trap.108 trap.109 trap.148
-rm -f trap.149 trap.150 trap.151 trap.197 trap.200
-rm -f mptrap.pl
-ln -s ./triptrap/mtrap.mp . # get same filename in log
-./pltotf ./triptrap/trapf.pl trapf.tfm
-/bin/sh -c 'TEXMFCNF=./triptrap ./mpost --progname=inimpost mtrap'
-This is MetaPost, Version 0.901 (Web2C 7.5.5) (INIMP)
-(mtrap.mp
-diff ./triptrap/mtrap.log mtrap.log
-1,2c1,2
-< This is MetaPost, C Version 0.64 (INIMP)  28 JAN 1998 11:18
-< **mtrap 
----
-> This is MetaPost, Version 0.901 (Web2C 7.5.5) (INIMP)  3 AUG 2005 10:46
-> **mtrap
-5c5
-< String usage 4&24 (1306&9877 now untouched)
----
-> String usage 5&29 (1297&17816 now untouched)
-300,306c300,306
-< String usage 8&32 (1302&9869 now untouched)
-< Memory usage 109&13 (3358 still untouched)
-< String usage 10&42 (1300&9859 now untouched)
-< Memory usage 116&13 (3358 still untouched)
-< String usage 11&45 (1299&9856 now untouched)
-< Memory usage 139&56 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> String usage 9&37 (1293&17808 now untouched)
-> Memory usage 120&13 (3358 still untouched)
-> String usage 11&47 (1291&17798 now untouched)
-> Memory usage 127&13 (3358 still untouched)
-> String usage 12&50 (1290&17795 now untouched)
-> Memory usage 150&56 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-316,317c316,317
-< Memory usage 152&59 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 163&59 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-341,342c341,342
-< Memory usage 220&59 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 239&59 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-358,359c358,359
-< Memory usage 245&59 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 267&59 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-374,375c374,375
-< Memory usage 293&72 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 318&72 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-404,405c404,405
-< Memory usage 314&59 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 342&59 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-442,443c442,443
-< Memory usage 339&59 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 370&59 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-480,481c480,481
-< Memory usage 339&59 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 370&59 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-496,497c496,497
-< Memory usage 345&70 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 376&70 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-537,538c537,538
-< Memory usage 364&59 (3358 still untouched)
-< String usage 14&51 (1296&9850 now untouched)
----
-> Memory usage 398&59 (3358 still untouched)
-> String usage 15&56 (1287&17789 now untouched)
-550,551c550,551
-< Memory usage 355&64 (3358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 386&64 (3358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-594,595c594,595
-< Memory usage 365&59 (3358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 396&59 (3358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-610,611c610,611
-< Memory usage 390&73 (3358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 424&73 (3358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-659,660c659,660
-< Memory usage 409&59 (3358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 446&59 (3358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-668,671c668,671
-< Memory usage 409&59 (3358 still untouched)
-< String usage 18&75 (1292&9826 now untouched)
-< Memory usage 308&13 (3358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 446&59 (3358 still untouched)
-> String usage 19&80 (1283&17765 now untouched)
-> Memory usage 339&13 (3358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-721,722c721,722
-< Memory usage 308&13 (3358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 339&13 (3358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-724,725c724,725
-< Memory usage 563&13 (3358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 622&13 (3358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-817,818c817,818
-< Memory usage 747&13 (3358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 826&13 (3358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-847,848c847,848
-< Memory usage 1003&85 (2358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 1110&85 (2358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-872,873c872,873
-< Memory usage 873&85 (2358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 966&85 (2358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-897,898c897,898
-< Memory usage 786&85 (2358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 868&85 (2358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-919,920c919,920
-< Memory usage 773&85 (2358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 852&85 (2358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-942,943c942,943
-< Memory usage 788&85 (2358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 870&85 (2358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-949,950c949,950
-< Memory usage 319&13 (2358 still untouched)
-< String usage 17&64 (1293&9837 now untouched)
----
-> Memory usage 350&13 (2358 still untouched)
-> String usage 18&69 (1284&17776 now untouched)
-952,953c952,953
-< Memory usage 325&13 (2358 still untouched)
-< String usage 20&78 (1287&9809 now untouched)
----
-> Memory usage 356&13 (2358 still untouched)
-> String usage 21&83 (1278&17748 now untouched)
-956c956,957
-< >> "%%Creator: MetaPost"
----
-> >> "%%HiResBoundingBox: -36 -24 84 84"
-> >> "%%Creator: MetaPost 0.901"
-958a960
-> >> "%%BeginProlog"
-988,989c990,991
-< Memory usage 325&13 (2358 still untouched)
-< String usage 22&84 (1247&8769 now untouched)
----
-> Memory usage 356&13 (2358 still untouched)
-> String usage 23&89 (1236&16656 now untouched)
-992,994c994,996
-< >> 40
-< Memory usage 325&13 (2358 still untouched)
-< String usage 22&84 (1206&7603 now untouched)
----
-> >> 42
-> Memory usage 356&13 (2358 still untouched)
-> String usage 23&89 (1193&15438 now untouched)
-998,1002c1000,1008
-< >> "%%Creator: MetaPost"
-< Memory usage 325&13 (2358 still untouched)
-< String usage 24&110 (1197&7522 now untouched)
-< Memory usage 325&13 (2358 still untouched)
-< String usage 26&125 (1148&7358 now untouched)
----
-> >> "%%HiResBoundingBox: -36 -24 84 84"
-> Memory usage 356&13 (2358 still untouched)
-> String usage 25&129 (1184&15343 now untouched)
-> write0 = `writeo'.
-> 
-> write1 = `writeo.2'.
-> 
-> Memory usage 356&13 (2358 still untouched)
-> String usage 27&144 (1135&15179 now untouched)
-1004c1010
-< >> "%%Pages: 1"
----
-> >> "%%CreationDate: 2005.08.03:1046"
-1006c1012
-< >> "%*Font: trapf 9.9628 9.96265 35:c008"
----
-> >> "%%Pages: 1"
-1008,1010c1014,1018
-< >> "%%EndProlog"
-< Memory usage 325&13 (2358 still untouched)
-< String usage 25&135 (1144&7308 now untouched)
----
-> >> "%*Font: trapf 9.9628 9.96265 35:c008"
-> Memory usage 356&13 (2358 still untouched)
-> String usage 26&134 (1131&15135 now untouched)
-> write0 = `writeo'.
-> 
-1013,1014c1021,1022
-< Memory usage 325&13 (2358 still untouched)
-< String usage 26&141 (1195&1840 now untouched)
----
-> Memory usage 356&13 (2358 still untouched)
-> String usage 27&140 (1258&16265 now untouched)
-1038,1039c1046,1047
-< Memory usage 325&13 (2358 still untouched)
-< String usage 26&141 (1195&1840 now untouched)
----
-> Memory usage 356&13 (2358 still untouched)
-> String usage 27&140 (1258&16265 now untouched)
-1048,1049c1056,1057
-< Memory usage 327&13 (2358 still untouched)
-< String usage 27&149 (1194&1832 now untouched)
----
-> Memory usage 358&13 (2358 still untouched)
-> String usage 28&148 (1257&16257 now untouched)
-1097,1098c1105,1106
-< Memory usage 327&13 (2358 still untouched)
-< String usage 27&149 (1193&1824 now untouched)
----
-> Memory usage 358&13 (2358 still untouched)
-> String usage 28&148 (1256&16249 now untouched)
-1101,1102c1109,1110
-<  32 strings out of 1310
-<  561 string characters out of 9901
----
->  33 strings out of 1302
->  560 string characters out of 17845
-1104,1106c1112,1114
-<  237 symbolic tokens out of 2100
-<  5i,33n,6p,100b stack positions out of 30i,100n,150p,500b
-<  3 string compactions (moved 1368 characters, 89 strings)
----
->  238 symbolic tokens out of 9500
->  5i,33n,6p,99b stack positions out of 300i,300n,1500p,500b
->  2 string compactions (moved 880 characters, 63 strings)
-diff ./triptrap/mtrap.0 mtrap.0
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: -36 -24 84 84 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-6a8
-> %%BeginProlog
-diff ./triptrap/mtrap.1 mtrap.1
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: -84 -36 24 84 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-6a8
-> %%BeginProlog
-diff ./triptrap/writeo writeo
-diff ./triptrap/writeo.2 writeo.2
-ln -s ./triptrap/trap.mp .
-ln -s ./triptrap/trap.mpx .
-/bin/sh -c 'TEXMFCNF=./triptrap ./mpost --progname=inimpost <./triptrap/mptrap1.in >mptrapin.fot'
-mv trap.log mptrapin.log
-diff ./triptrap/mptrapin.log mptrapin.log
+>>> Running MPTRAP test for MetaPost.
+>>> See SRCDIR/triptrap/mptrap.diffs for example of acceptable diffs.
++ ./pltotf SRCDIR/triptrap/trapf.pl trapf.tfm
++ ln -s SRCDIR/triptrap/mtrap.mp .
++ ./mpost --progname=inimpost --ini mtrap
+This is MetaPost, version 1.211 (kpathsea version 6.0.0dev) (INIMP)
+(./mtrap.mp
++ diff SRCDIR/triptrap/mtrap.log mtrap.log
 1c1
-< This is MetaPost, C Version 0.632 (INIMP)  24 JAN 1997 11:13
+< This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 ---
-> This is MetaPost, Version 0.901 (Web2C 7.5.5) (INIMP)  3 AUG 2005 10:46
-162c162
-< String usage 28&93 (1282&9362 now untouched)
+> This is MetaPost, version 1.211 (kpathsea version 6.0.0dev) (INIMP)  18 MAY 2010 13:31
+929c929
+< >> "%%Creator: MetaPost 1.203"
 ---
-> String usage 29&97 (1272&17743 now untouched)
-195,198c195,198
-<  (preloaded mem=trap 97.1.24)
-< at most 1226 strings of total length 22670
-< 398 memory locations dumped; current usage is 318&68
-< 279 symbolic tokens
+> >> "%%Creator: MetaPost 1.211"
+978c978
+< >> "%%CreationDate: 2009.05.25:1247"
 ---
->  (mem=trap 2005.8.3)
-> at most 1236 strings of total length 22276
-> 400 memory locations dumped; current usage is 320&68
-> 281 symbolic tokens
-/bin/sh -c 'TEXMFCNF=./triptrap ./mpost --progname=inimpost <./triptrap/mptrap2.in >mptrap.fot'
-mv trap.log mptrap.log
-mv trap.tfm mptrap.tfm
-diff ./triptrap/mptrap.fot mptrap.fot
-0a1
-> This is MetaPost, Version 0.901 (Web2C 7.5.5) (INIMP)
-34,35c35,36
-< Memory usage 2147&536 (39 still untouched)
-< String usage 73&277 (1110&5373 now untouched)
+> >> "%%CreationDate: 2010.05.18:1331"
++ diff SRCDIR/triptrap/mtrap.0 mtrap.0
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.05.25:1247
 ---
-> Memory usage 2315&536 (39 still untouched)
-> String usage 74&281 (1103&13766 now untouched)
-diff ./triptrap/mptrap.log mptrap.log
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/mtrap.1 mtrap.1
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.05.25:1247
+---
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/writeo writeo
++ diff SRCDIR/triptrap/writeo.2 writeo.2
++ ln -s SRCDIR/triptrap/trap.mp .
++ ln -s SRCDIR/triptrap/trap.mpx .
++ ./mpost --progname=inimpost --jobname=trap --ini
++ mv trap.log mptrapin.log
++ diff SRCDIR/triptrap/mptrapin.log mptrapin.log
 1c1
-< This is MetaPost, C Version 0.632 (preloaded mem=trap 97.1.24)  24 JAN 1997 11:13
+< This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 ---
-> This is MetaPost, Version 0.901 (Web2C 7.5.5) (mem=trap 2005.8.3)  3 AUG 2005 10:46
-1621,1622c1621,1622
-< Memory usage 1178&115 (2344 still untouched)
-< String usage 22&84 (1244&9177 now untouched)
+> This is MetaPost, version 1.211 (kpathsea version 6.0.0dev) (INIMP)  18 MAY 2010 13:31
+195c195
+<  (mem=trap 2009.05.25)
 ---
-> Memory usage 1244&115 (2344 still untouched)
-> String usage 23&88 (1236&17569 now untouched)
-2612c2612
-< >> unknown path %CAPSULE1695
+>  (mem=trap 2010.05.18)
++ ./mpost --progname=inimpost --jobname=trap --mem=trap
++ mv trap.log mptrap.log
++ mv trap.tfm mptrap.tfm
++ diff SRCDIR/triptrap/mptrap.fot mptrap.fot
+1c1
+< This is MetaPost, version 1.203 (kpathsea version 3.5.7dev)
 ---
-> >> unknown path %CAPSULE1901
-2665c2665
-< dashed (on 3 off 0) shifted 0
+> This is MetaPost, version 1.211 (kpathsea version 6.0.0dev)
++ diff SRCDIR/triptrap/mptrap.log mptrap.log
+1c1
+< This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (mem=trap 2009.06.02)  2 JUN 2009 22:19
 ---
-> dashed (on 0 off 0) shifted 0
-2816,2818c2816,2818
-< xpart %CAPSULE2512=xx
-< %CAPSULE2520=2yy-2
-< %CAPSULE2528 = 3.3333xx+3.3333
+> This is MetaPost, version 1.211 (kpathsea version 6.0.0dev) (mem=trap 2010.05.18)  18 MAY 2010 13:31
++ diff SRCDIR/triptrap/trap.5 trap.5
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.06.02:2219
 ---
-> xpart %CAPSULE2366=xx
-> %CAPSULE2374=2yy-2
-> %CAPSULE2382 = 3.3333xx+3.3333
-2877,2880c2877,2880
-< %CAPSULE2440 = 3ooo-0.01o3
-< %CAPSULE2460 = 8000o2-4000o1+1000o3+9
-< xpart %CAPSULE2536=xpart '
-< ypart %CAPSULE2536=ypart '
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/trap.6 trap.6
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.06.02:2219
 ---
-> %CAPSULE2294 = 3ooo-0.01o3
-> %CAPSULE2314 = 8000o2-4000o1+1000o3+9
-> xpart %CAPSULE2390=xpart '
-> ypart %CAPSULE2390=ypart '
-2883,2884c2883,2884
-< ### 4000o1 = -%CAPSULE2460+8000o2+1000o3+9
-< ### -4.87383o2 = -oo-0.0004%CAPSULE2460+0.39673o3-17.99643
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/trap.148 trap.148
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.06.02:2230
 ---
-> ### 4000o1 = -%CAPSULE2314+8000o2+1000o3+9
-> ### -4.87383o2 = -oo-0.0004%CAPSULE2314+0.39673o3-17.99643
-2888c2888
-< ### 0.22894o5 = -%CAPSULE2440+0.10689oo+3ooo+1.92412
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/trap.149 trap.149
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.06.02:2238
 ---
-> ### 0.22894o5 = -%CAPSULE2294+0.10689oo+3ooo+1.92412
-2891c2891
-< ### -alfa=-%CAPSULE2428
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/trap.150 trap.150
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.06.02:2235
 ---
-> ### -alfa=-%CAPSULE2282
-2893,2900c2893,2900
-< ### -%CAPSULE2428=-xpart %CAPSULE2426
-< {xpart((xpart %CAPSULE2426,0))}
-< ### -xpart %CAPSULE9=-%CAPSULE2416
-< {endgroup}
-< {(%CAPSULE2440)+(%CAPSULE2416)}
-< ### -%CAPSULE2440=-%CAPSULE2404+%CAPSULE2416
-< ### -%CAPSULE2404=-ypart %CAPSULE2402
-< ### -%CAPSULE2460=-xpart %CAPSULE2402
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/trap.151 trap.151
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.06.02:2234
 ---
-> ### -%CAPSULE2282=-xpart %CAPSULE2280
-> {xpart((xpart %CAPSULE2280,0))}
-> ### -xpart %CAPSULE9=-%CAPSULE2270
-> {endgroup}
-> {(%CAPSULE2294)+(%CAPSULE2270)}
-> ### -%CAPSULE2294=-%CAPSULE2258+%CAPSULE2270
-> ### -%CAPSULE2258=-ypart %CAPSULE2256
-> ### -%CAPSULE2314=-xpart %CAPSULE2256
-2905c2905
-< ### p$=-ypart %CAPSULE2368+1
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/trap.197 trap.197
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.06.02:2231
 ---
-> ### p$=-ypart %CAPSULE2222+1
-2907,2919c2907,2919
-< {(2/3)*((-ypart %CAPSULE2368+1,ypart %CAPSULE2368))}
-< ### ypart %CAPSULE2368=-xpart %CAPSULE2368+1
-< ### -0.66667xpart %CAPSULE2368=-xpart %CAPSULE2360
-< {-((xpart %CAPSULE2360,-xpart %CAPSULE2360+0.66667))}
-< ### xpart %CAPSULE2360=-xpart %CAPSULE2340
-< {((xpart %CAPSULE2402,ypart %CAPSULE2402))=((xpart %CAPSULE2340,-xpart %
-< CAPSULE2340-0.66667))}
-< ## xpart %CAPSULE2340=-ypart %CAPSULE2402-0.66667
-< ## xpart %CAPSULE2402=-ypart %CAPSULE2402-0.66667
-< ### ypart %CAPSULE2402=-xpart %CAPSULE2402-0.66667
-< ### -xpart %CAPSULE2402=-xpart %CAPSULE2340
-< {((xpart ',ypart '))=((xpart %CAPSULE2340,-xpart %CAPSULE2340-0.66667))}
-< ## xpart %CAPSULE2340=-ypart '-0.66667
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ diff SRCDIR/triptrap/trap.200 trap.200
+4,5c4,5
+< %%Creator: MetaPost 1.203
+< %%CreationDate: 2009.06.02:2231
 ---
-> {(2/3)*((-ypart %CAPSULE2222+1,ypart %CAPSULE2222))}
-> ### ypart %CAPSULE2222=-xpart %CAPSULE2222+1
-> ### -0.66667xpart %CAPSULE2222=-xpart %CAPSULE2214
-> {-((xpart %CAPSULE2214,-xpart %CAPSULE2214+0.66667))}
-> ### xpart %CAPSULE2214=-xpart %CAPSULE2194
-> {((xpart %CAPSULE2256,ypart %CAPSULE2256))=((xpart %CAPSULE2194,-xpart %
-> CAPSULE2194-0.66667))}
-> ## xpart %CAPSULE2194=-ypart %CAPSULE2256-0.66667
-> ## xpart %CAPSULE2256=-ypart %CAPSULE2256-0.66667
-> ### ypart %CAPSULE2256=-xpart %CAPSULE2256-0.66667
-> ### -xpart %CAPSULE2256=-xpart %CAPSULE2194
-> {((xpart ',ypart '))=((xpart %CAPSULE2194,-xpart %CAPSULE2194-0.66667))}
-> ## xpart %CAPSULE2194=-ypart '-0.66667
-2925c2925
-< ### -ooo=-%CAPSULE2302
----
-> ### -ooo=-%CAPSULE2156
-2927,2936c2927,2936
-< {(%CAPSULE2302)+(1)}
-< ### -%CAPSULE2302=-%CAPSULE2290+1
-< {(1/2)*(%CAPSULE2290)}
-< ### -0.5%CAPSULE2290=-%CAPSULE2282
-< {-(%CAPSULE2282)}
-< ### %CAPSULE2282=-%CAPSULE2274
-< {(2)*(%CAPSULE2274)}
-< ### -2%CAPSULE2274=-%CAPSULE2266
-< {(-0.5%CAPSULE2266-0.5)=(%CAPSULE2266)}
-< ## %CAPSULE2266=-0.33333
----
-> {(%CAPSULE2156)+(1)}
-> ### -%CAPSULE2156=-%CAPSULE2144+1
-> {(1/2)*(%CAPSULE2144)}
-> ### -0.5%CAPSULE2144=-%CAPSULE2136
-> {-(%CAPSULE2136)}
-> ### %CAPSULE2136=-%CAPSULE2128
-> {(2)*(%CAPSULE2128)}
-> ### -2%CAPSULE2128=-%CAPSULE2120
-> {(-0.5%CAPSULE2120-0.5)=(%CAPSULE2120)}
-> ## %CAPSULE2120=-0.33333
-3509,3510c3509,3510
-< Memory usage 3017&264 (273 still untouched)
-< String usage 68&249 (1155&8794 now untouched)
----
-> Memory usage 3275&264 (273 still untouched)
-> String usage 69&253 (1147&17186 now untouched)
-3520,3521c3520,3521
-< Memory usage 2267&264 (273 still untouched)
-< String usage 66&241 (1154&8790 now untouched)
----
-> Memory usage 2446&264 (273 still untouched)
-> String usage 67&245 (1146&17182 now untouched)
-3990a3991,3992
->  ..(10,10)
->    ..controls (10,10) and (10,10)
-4378,4379c4380,4381
-< Memory usage 2744&607 (39 still untouched)
-< String usage 73&279 (1138&8717 now untouched)
----
-> Memory usage 2959&607 (39 still untouched)
-> String usage 74&283 (1130&17109 now untouched)
-4384,4385c4386,4387
-< Memory usage 2704&536 (39 still untouched)
-< String usage 73&279 (1138&8717 now untouched)
----
-> Memory usage 2919&536 (39 still untouched)
-> String usage 74&283 (1130&17109 now untouched)
-4673,4674c4675,4676
-< Memory usage 2147&536 (39 still untouched)
-< String usage 73&277 (1110&5373 now untouched)
----
-> Memory usage 2315&536 (39 still untouched)
-> String usage 74&281 (1103&13766 now untouched)
-4739,4740c4741,4742
-<  75 strings out of 1277
-<  768 string characters out of 9330
----
->  76 strings out of 1268
->  772 string characters out of 17724
-4742,4743c4744,4745
-<  337 symbolic tokens out of 2100
-<  8i,35n,8p,167b stack positions out of 30i,100n,150p,500b
----
->  339 symbolic tokens out of 9500
->  8i,35n,8p,167b stack positions out of 300i,300n,1500p,500b
-4752c4754
-<   out of 256w,16h,16d,64i,5000l,500k,256e,50p)
----
->   out of 256w,16h,16d,64i,15000l,2500k,256e,50p)
-diff ./triptrap/trap.5 trap.5
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: -150.99219 -2 168.99219 20.00024 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-5a7
-> %%BeginProlog
-diff ./triptrap/trap.6 trap.6
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: 3 0 6 2.25 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-5a7
-> %%BeginProlog
-diff ./triptrap/trap.148 trap.148
-2,4c2,5
-< %%BoundingBox: -5 -5 13 5 
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%BoundingBox: -4 -6 13 6 
-> %%HiResBoundingBox: -3.5 -5.5 12.5 5.5 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-5a7
-> %%BeginProlog
-diff ./triptrap/trap.149 trap.149
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: -27.5 -27.5 51.6906 36.71318 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-5a7
-> %%BeginProlog
-diff ./triptrap/trap.150 trap.150
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: -5 -5 33 25 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-5a7
-> %%BeginProlog
-28c30
-< 15 10 lineto
----
-> 10 5 lineto
-diff ./triptrap/trap.151 trap.151
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: -4095.49998 -101.96362 4095.49998 261 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-5a7
-> %%BeginProlog
-diff ./triptrap/trap.197 trap.197
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: -1.99254 -3.98508 7.97011 3.98506 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-6a8
-> %%BeginProlog
-diff ./triptrap/trap.200 trap.200
-3,4c3,5
-< %%Creator: MetaPost
-< %%CreationDate: 1998.01.28:1118
----
-> %%HiResBoundingBox: -6.2132 -5.9851 36.21318 37.00375 
-> %%Creator: MetaPost 0.901
-> %%CreationDate: 2005.08.03:1046
-7a9
-> %%BeginProlog
-./tftopl ./mptrap.tfm mptrap.pl
-diff ./triptrap/mptrap.pl mptrap.pl
-make[1]: Leaving directory `/home/olaf/web2c/src/texk/texk/web2c'
+> %%Creator: MetaPost 1.211
+> %%CreationDate: 2010.05.18:1331
++ ./tftopl ./mptrap.tfm mptrap.pl
++ diff SRCDIR/triptrap/mptrap.pl mptrap.pl
++ exit 0
+PASS: mplibdir/mptrap.test
