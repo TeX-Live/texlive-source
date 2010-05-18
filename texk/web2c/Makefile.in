@@ -9091,7 +9091,7 @@ pdftexdir/pdftex.version: pdftexdir/pdftex.web
 	  | sed "s/^.*'-//;s/'.*$$//" >pdftexdir/pdftex.version
 pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version pdftexdir/etex.version
 	sed -e s/PDFTEX-VERSION/`cat pdftexdir/pdftex.version`/ \
-	    -e s/ETEX-VERSION/`cat etexdir/etex.version`/ \
+	    -e s/ETEX-VERSION/`cat pdftexdir/etex.version`/ \
 	  $(srcdir)/pdftexdir/pdftexextra.in >$@
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
