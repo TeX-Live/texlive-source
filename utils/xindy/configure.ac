@@ -83,7 +83,9 @@ fi
 if test "x$with_clisp_runtime" != xsystem; then
   AC_MSG_CHECKING([for clisp runtime])
   if test "x$with_clisp_runtime" = xdefault; then
-    LISP_RUN=`echo '(format t "~a" *lib-directory*)' | $CLISP -q -norc -`base/$LISP_RUN
+    # Convert dos line endings from cygwin clisp.
+    LISP_RUN=`echo '(format t "~a" *lib-directory*)' \
+              | $CLISP -q -norc - | tr -d '\r'`base/$LISP_RUN
   else
     LISP_RUN=$with_clisp_runtime
   fi

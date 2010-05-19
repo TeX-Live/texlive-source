@@ -3980,7 +3980,9 @@ if test "x$with_clisp_runtime" != xsystem; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for clisp runtime" >&5
 $as_echo_n "checking for clisp runtime... " >&6; }
   if test "x$with_clisp_runtime" = xdefault; then
-    LISP_RUN=`echo '(format t "~a" *lib-directory*)' | $CLISP -q -norc -`base/$LISP_RUN
+    # Convert dos line endings from cygwin clisp.
+    LISP_RUN=`echo '(format t "~a" *lib-directory*)' \
+              | $CLISP -q -norc - | tr -d '\r'`base/$LISP_RUN
   else
     LISP_RUN=$with_clisp_runtime
   fi

@@ -1,3 +1,7 @@
+2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (LISP_RUN): Convert dos line endings from cygwin.
+
 2010-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac (LISP_RUN): Better solution, from Joachim Schrod.
