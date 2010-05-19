@@ -108,8 +108,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.16';
-$version_details = "$My_name, John Collins, 10 May 2010";
+$version_num = '4.16a';
+$version_details = "$My_name, John Collins, 18 May 2010";
 
 
 use Config;
@@ -178,6 +178,10 @@ else {
 ##
 ##   Modification log from 22 Jan 2010 onwards in detail
 ##
+##     18 May 2010, John Collins  Remove unlink $$Pdest in do_viewfile
+##     17 May 2010, John Collins  Correct sleep time to 1 sec 
+##                                   if s<0 (otherwise infinite delay)
+##                                   or if 0<s<1 (otherwise zero delay)
 ##     10 May 2010, John Collins  Deal with filenames in log file that are 
 ##                                messed up by pdfTeX warnings not preceeded 
 ##                                by a new line
@@ -1550,6 +1554,22 @@ if ( $pdf_mode == 2 ) {
     add_option( \$dvips, " $dvips_pdf_switch" );
 }
 
+# Note sleep has granularity of 1 second.
+# Sleep periods 0 < $sleep_time < 1 give zero delay,
+#    which is probably not what the user intended.
+# Sleep periods less than zero give infinite delay
+if ( $sleep_time < 0 ) {
+     warn "$My_name: Correcting negative sleep_time to 1 sec.\n";
+     $sleep_time = 1;
+}
+elsif ( ($sleep_time < 1) && ( $sleep_time != 0 ) ) {
+     warn "$My_name: Correcting nonzero sleep_time of less than 1 sec to 1 sec.\n";
+     $sleep_time = 1;
+}
+elsif ( $sleep_time == 0 ) {
+     warn "$My_name: sleep_time was configured to zero.\n",
+    "    Do you really want to do this?  It will give 100% CPU usage.";
+}
 
 # Make convenient forms for lookup.
 # Extensions always have period.
@@ -2110,7 +2130,6 @@ sub do_viewfile {
     if ( &view_file_via_temporary ) {
         my $tmpfile = tempfile1( "${root_filename}_tmp", $ext );
         $return = &rdb_ext_cmd1( '', '', $tmpfile );
-        unlink $$Pdest;
         move( $tmpfile, $$Pdest );
     }
     else {
@@ -2417,7 +2436,7 @@ CHANGE:
        &catch_break;
        $have_break = 0;
   WAIT: while (1) {
-           sleep($sleep_time);
+           sleep( $sleep_time );
 	   if ($have_break) { last WAIT; }
            if ( rdb_new_changes(keys %rules_to_watch) ) { 
   	       if (!$silent) {
