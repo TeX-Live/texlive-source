@@ -994,11 +994,13 @@ static int setup_var (int def, const char *var_name, boolean nokpse) {
   mpost_xfree(options->banner);
   options->banner = mpost_xmalloc(strlen(banner)+
                             strlen(mpversion)+
+	                    strlen(WEB2CVERSION)+
                             strlen(kpsebanner_start)+
                             strlen(kpathsea_version_string)+
                             strlen(kpsebanner_stop)+1);
   strcpy (options->banner, banner);
   strcat (options->banner, mpversion);
+  strcat (options->banner, WEB2CVERSION);
   strcat (options->banner, kpsebanner_start);
   strcat (options->banner, kpathsea_version_string);
   strcat (options->banner, kpsebanner_stop);

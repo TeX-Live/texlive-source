@@ -1,3 +1,7 @@
+2010-05-19  Taco Hoekwater  <taco@luatex>
+
+	* mpost.w: add WEB2CVERSION to the banner.
+
 2010-04-13  Taco Hoekwater  <taco@luatex>
 
 	* new import from luatex repository (HEAD of 0.60.x branch)
