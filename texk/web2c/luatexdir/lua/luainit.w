@@ -731,13 +731,13 @@ void lua_initialize(int ac, char **av)
     argv = av;
 
     if (luatex_svn < 0) {
-        if (asprintf(&banner, "This is LuaTeX, Version %s-%d",
-                     luatex_version_string, luatex_date_info) < 0) {
+        if (asprintf(&banner, "This is LuaTeX, Version %s-%d%s",
+                     luatex_version_string, luatex_date_info, WEB2CVERSION) < 0) {
             exit(EXIT_FAILURE);
         }
     } else {
-        if (asprintf(&banner, "This is LuaTeX, Version %s-%d (rev %d)",
-                     luatex_version_string, luatex_date_info, luatex_svn) < 0) {
+        if (asprintf(&banner, "This is LuaTeX, Version %s-%d%s (rev %d)",
+                     luatex_version_string, luatex_date_info, WEB2CVERSION, luatex_svn) < 0) {
             exit(EXIT_FAILURE);
         }
     }
