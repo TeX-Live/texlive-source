@@ -1,3 +1,7 @@
+2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Do not compile lib/type1/bstring.c.
+
 2010-02-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: List all t1lib source files.

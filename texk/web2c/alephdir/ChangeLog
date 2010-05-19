@@ -1,3 +1,8 @@
+2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* aleph.c (new_input_line): Cast integer to long for printing
+	to avoid warning on 64Bit systems.
+
 2010-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eobase.ch: Adapt to ../etexdir/etex.ch:

@@ -93,7 +93,6 @@ lib_type1_sources = \
 	$(T1LIB_TREE)/lib/type1/arith.c \
 	$(T1LIB_TREE)/lib/type1/arith.h \
 	$(T1LIB_TREE)/lib/type1/blues.h \
-	$(T1LIB_TREE)/lib/type1/bstring.c \
 	$(T1LIB_TREE)/lib/type1/cluts.h \
 	$(T1LIB_TREE)/lib/type1/curves.c \
 	$(T1LIB_TREE)/lib/type1/curves.h \
@@ -142,6 +141,7 @@ lib_type1_sources = \
 	$(T1LIB_TREE)/lib/type1/util.h
 
 lib_type1_unused = \
+	$(T1LIB_TREE)/lib/type1/bstring.c \
 	$(T1LIB_TREE)/lib/type1/t1intf.h
 
 if build

@@ -31,7 +31,7 @@ test_str_list_equality(int verbosity, char **str_list1, char **str_list2)
 
 	if (str_list1[i] == NULL || str_list2[i] == NULL) {
 	    if (verbosity) {
-		ERROR((stderr, "Items %d differ: |%s| != |%s|\n", i, str_list1[i], str_list2[i]));
+		ERROR((stderr, "Items %ld differ: |%s| != |%s|\n", (long) i, str_list1[i], str_list2[i]));
 	    }
 	    return False;
 	}
@@ -39,12 +39,12 @@ test_str_list_equality(int verbosity, char **str_list1, char **str_list2)
 	res = strcmp(str_list1[i], str_list2[i]);
 	if (res != 0) {
 	    if (verbosity) {
-		ERROR((stderr, "Items %d differ: |%s| != |%s|\n", i, str_list1[i], str_list2[i]));
+		ERROR((stderr, "Items %ld differ: |%s| != |%s|\n", (long) i, str_list1[i], str_list2[i]));
 	    }
 	    return False;
 	}
 	else if (verbosity) {
-	    INFO((stderr, "Items %d equal: |%s| == |%s|\n", i, str_list1[i], str_list2[i]));
+	    INFO((stderr, "Items %ld equal: |%s| == |%s|\n", (long) i, str_list1[i], str_list2[i]));
 	}
     }
     return True;
@@ -78,7 +78,7 @@ run_all_tests(int verbosity)
     int tests_failed = 0;
     int tests_ok = 0;
 
-    fprintf(stdout, "\nGoing to run %d tests ...\n", m_test_proc_size);
+    fprintf(stdout, "\nGoing to run %ld tests ...\n", (long) m_test_proc_size);
     
     for (i = 0; i < m_test_proc_size; i++) {
 	Boolean retval = m_test_proc_list[i].proc(verbosity);
@@ -89,9 +89,9 @@ run_all_tests(int verbosity)
 	else {
 	    tests_ok++;
 	}
-	fprintf(stdout, "%sTest %d: %s (%s)\n",
+	fprintf(stdout, "%sTest %ld: %s (%s)\n",
 		retval ? "" : "*****",
-		i + 1,
+		(long) i + 1,
 		retval ? "OK" : "FAILURE",
 		m_test_proc_list[i].name);
     }
@@ -102,7 +102,7 @@ run_all_tests(int verbosity)
 	return True;
     }
     else {
-	fprintf(stdout, "Darn, %d of %d tests failed!\n\n", tests_failed, m_test_proc_size);
+	fprintf(stdout, "Darn, %d of %ld tests failed!\n\n", tests_failed, (long) m_test_proc_size);
 	return False;
     }
 }

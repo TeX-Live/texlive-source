@@ -65,12 +65,12 @@ am__objects_1 = parseAFM.$(OBJEXT) t1aaset.$(OBJEXT) \
 	t1enc.$(OBJEXT) t1env.$(OBJEXT) t1finfo.$(OBJEXT) \
 	t1load.$(OBJEXT) t1outline.$(OBJEXT) t1set.$(OBJEXT) \
 	t1subset.$(OBJEXT) t1trans.$(OBJEXT)
-am__objects_2 = arith.$(OBJEXT) bstring.$(OBJEXT) curves.$(OBJEXT) \
-	fontfcn.$(OBJEXT) hints.$(OBJEXT) lines.$(OBJEXT) \
-	objects.$(OBJEXT) paths.$(OBJEXT) regions.$(OBJEXT) \
-	scanfont.$(OBJEXT) spaces.$(OBJEXT) t1io.$(OBJEXT) \
-	t1snap.$(OBJEXT) t1stub.$(OBJEXT) token.$(OBJEXT) \
-	type1.$(OBJEXT) util.$(OBJEXT)
+am__objects_2 = arith.$(OBJEXT) curves.$(OBJEXT) fontfcn.$(OBJEXT) \
+	hints.$(OBJEXT) lines.$(OBJEXT) objects.$(OBJEXT) \
+	paths.$(OBJEXT) regions.$(OBJEXT) scanfont.$(OBJEXT) \
+	spaces.$(OBJEXT) t1io.$(OBJEXT) t1snap.$(OBJEXT) \
+	t1stub.$(OBJEXT) token.$(OBJEXT) type1.$(OBJEXT) \
+	util.$(OBJEXT)
 nodist_libt1_a_OBJECTS = $(am__objects_1) $(am__objects_2)
 libt1_a_OBJECTS = $(nodist_libt1_a_OBJECTS)
 nodist_type1afm_OBJECTS = type1afm.$(OBJEXT)
@@ -258,7 +258,6 @@ lib_type1_sources = \
 	$(T1LIB_TREE)/lib/type1/arith.c \
 	$(T1LIB_TREE)/lib/type1/arith.h \
 	$(T1LIB_TREE)/lib/type1/blues.h \
-	$(T1LIB_TREE)/lib/type1/bstring.c \
 	$(T1LIB_TREE)/lib/type1/cluts.h \
 	$(T1LIB_TREE)/lib/type1/curves.c \
 	$(T1LIB_TREE)/lib/type1/curves.h \
@@ -307,6 +306,7 @@ lib_type1_sources = \
 	$(T1LIB_TREE)/lib/type1/util.h
 
 lib_type1_unused = \
+	$(T1LIB_TREE)/lib/type1/bstring.c \
 	$(T1LIB_TREE)/lib/type1/t1intf.h
 
 @build_TRUE@dist_check_SCRIPTS = type1afm.test
@@ -391,7 +391,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arith.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curves.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontfcn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hints.Po@am__quote@
@@ -631,20 +630,6 @@ arith.obj: $(T1LIB_TREE)/lib/type1/arith.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/arith.c' object='arith.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o arith.obj `if test -f '$(T1LIB_TREE)/lib/type1/arith.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/arith.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/arith.c'; fi`
-
-bstring.o: $(T1LIB_TREE)/lib/type1/bstring.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bstring.o -MD -MP -MF $(DEPDIR)/bstring.Tpo -c -o bstring.o `test -f '$(T1LIB_TREE)/lib/type1/bstring.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/bstring.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/bstring.Tpo $(DEPDIR)/bstring.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/bstring.c' object='bstring.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bstring.o `test -f '$(T1LIB_TREE)/lib/type1/bstring.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/bstring.c
-
-bstring.obj: $(T1LIB_TREE)/lib/type1/bstring.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bstring.obj -MD -MP -MF $(DEPDIR)/bstring.Tpo -c -o bstring.obj `if test -f '$(T1LIB_TREE)/lib/type1/bstring.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/bstring.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/bstring.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/bstring.Tpo $(DEPDIR)/bstring.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1LIB_TREE)/lib/type1/bstring.c' object='bstring.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bstring.obj `if test -f '$(T1LIB_TREE)/lib/type1/bstring.c'; then $(CYGPATH_W) '$(T1LIB_TREE)/lib/type1/bstring.c'; else $(CYGPATH_W) '$(srcdir)/$(T1LIB_TREE)/lib/type1/bstring.c'; fi`
 
 curves.o: $(T1LIB_TREE)/lib/type1/curves.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT curves.o -MD -MP -MF $(DEPDIR)/curves.Tpo -c -o curves.o `test -f '$(T1LIB_TREE)/lib/type1/curves.c' || echo '$(srcdir)/'`$(T1LIB_TREE)/lib/type1/curves.c

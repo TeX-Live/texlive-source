@@ -285,7 +285,7 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
       if ((&(base))[i] < (low) || (&(base))[i] > (high)) {              \
         FATAL5 ("Item %u (=%ld) of .fmt array at %lx <%ld or >%ld",     \
                 i, (unsigned long) (&(base))[i], (unsigned long) &(base),\
-                (unsigned long) low, (integer) high);                   \
+                (unsigned long) low, (unsigned long) high);                   \
       }                                                                 \
     }									\
   } while (0)
@@ -301,7 +301,7 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
       if ((&(base))[i] > (high)) {              			\
         FATAL4 ("Item %u (=%ld) of .fmt array at %lx >%ld",     	\
                 i, (unsigned long) (&(base))[i], (unsigned long) &(base),\
-                (integer) high);                         		\
+                (unsigned long) high);                         		\
       }                                                                 \
     }									\
   } while (0)

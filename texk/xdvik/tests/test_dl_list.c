@@ -34,7 +34,7 @@ static Boolean test_equality(int verbose,
 
     if (list_len != elem_cnt) {
 	if (verbose) {
-	    ERROR((stderr, "List len %d != %d\n", list_len, elem_cnt));
+	    ERROR((stderr, "List len %ld != %ld\n", (long) list_len, (long) elem_cnt));
 	}
 	return False;
     }

@@ -167,8 +167,8 @@ typedef unsigned char *pointertobyte;
    Actually allocate one more than requests, so we can index the last
    entry, as Pascal wants to do.  */
 #define BIBXRETALLOCNOSET(array_name, array_var, type, size_var, new_size) \
-  fprintf (logfile, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
-           array_name, (int) sizeof (type), new_size, size_var); \
+  fprintf (logfile, "Reallocated %s (elt_size=%ld) to %ld items from %ld.\n", \
+           array_name, (long) sizeof (type), (long) new_size, (long) size_var); \
   XRETALLOC (array_var, new_size + 1, type)
 /* Same as above, but also increase SIZE_VAR when no more arrays
    with the same size parameter will be resized.  */
@@ -178,8 +178,8 @@ typedef unsigned char *pointertobyte;
 } while (0)
 /* Same as above, but for the pseudo-TYPE ASCII_code[LENGTH+1].  */
 #define BIBXRETALLOCSTRING(array_name, array_var, length, size_var, new_size) \
-  fprintf (logfile, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
-           array_name, (int) (length + 1), new_size, size_var); \
+  fprintf (logfile, "Reallocated %s (elt_size=%ld) to %ld items from %ld.\n", \
+           array_name, (long) (length + 1), (long) new_size, (long) size_var); \
   XRETALLOC (array_var, (new_size) * (length + 1), ASCIIcode)
   
 /* Need precisely int for getopt, etc. */

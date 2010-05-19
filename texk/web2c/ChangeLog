@@ -1,3 +1,10 @@
+2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h (BIBXRETALLOCNOSET, BIBXRETALLOCSTRING): Cast size_t
+	to long for printing to avoid warnings on 64Bit systems.
+	* texmfmp.h (undumpcheckedthings, undumpuppercheckthings):
+	Cast high limit to unsigned long for printing.
+
 2010-05-18  Karl Berry  <karl@tug.org>
 
 	* configure.ac (web2_version): use /pretest ident.

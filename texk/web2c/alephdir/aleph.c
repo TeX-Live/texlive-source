@@ -179,7 +179,8 @@ new_input_line (FILE *f, halfword themode)
  if (i != EOF && (((themode!=2) && (i != '\n')) || ((themode==2) && (i != 0x25))))
     {
       (void) fprintf (stderr,
-                     "! Unable to read an entire line---ocp_buf_size=%ld.\n",ocpbufsize);
+                     "! Unable to read an entire line---ocp_buf_size=%ld.\n",
+                     (long) ocpbufsize);
       (void) fprintf (stderr, "Please increase ocp_buf_size in texmf.cnf.\n");
       uexit (1);
     }

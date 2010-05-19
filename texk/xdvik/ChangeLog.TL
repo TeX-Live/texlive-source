@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/run_tests.c, test_dl_list.c: Cast size_t to long for
+	printing to avoid warnings on 64Bit systems.
+
 2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.
