@@ -3,6 +3,7 @@
 	* doc/TETEXDOC.dvi,
 	* doc/TETEXDOC.ps: rm files.
 	* doc/Makefile: do not bother remaking .dvi + .ps.
+	* Makefile.am (dist_tetexdoc_DATA): rm.
 
 2010-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

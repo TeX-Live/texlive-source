@@ -67,9 +67,7 @@ dist_man5_MANS = \
 tetexdocdir = ${prefix}/texmf/doc/tetex
 
 dist_tetexdoc_DATA = \
-	doc/TETEXDOC.dvi \
 	doc/TETEXDOC.pdf \
-	doc/TETEXDOC.ps \
 	doc/teTeX-FAQ
 
 texconfdir = ${prefix}
