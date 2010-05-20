@@ -1,3 +1,7 @@
+2010-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpseaccess.test: Allow for unexpected test results.
+
 2010-05-18  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape): set to p. Trying restricted shells again.

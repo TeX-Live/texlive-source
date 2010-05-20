@@ -3,6 +3,18 @@
 # Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+ret=0
+
+pass () {
+  echo "***** unexpected success of './kpseaccess $@'"
+  ret=77
+}
+
+fail () {
+  echo "***** unexpected failure of './kpseaccess $@'"
+  ret=77
+}
+
 ./kpseaccess '' nonesuch && exit 1
 ./kpseaccess - nonesuch && exit 1
 ./kpseaccess r nonesuch && exit 1
@@ -12,16 +24,27 @@
 ./kpseaccess '' access.o || exit 1
 ./kpseaccess - access.o || exit 1
 ./kpseaccess rw access.o || exit 1
-./kpseaccess x access.o && exit 1
+# From the access(3p) POSIX manpage:
+#   If the process has appropriate privileges, an implementation may indicate
+#   success for X_OK even if none of the execute file permission bits are set.
+./kpseaccess x access.o && pass x access.o
 
-./kpseaccess rwx kpseaccess || exit 1
+# Testing write access to kpseaccess itself might fail with ETXTBSY.
+./kpseaccess rwx kpsewhich || {
+  fail rwx kpsewhich
+  ./kpseaccess r kpsewhich || fail r kpsewhich
+  ./kpseaccess w kpsewhich || fail w kpsewhich
+  ./kpseaccess x kpsewhich || fail x kpsewhich
+}
 
 ./kpseaccess r $srcdir/access.c || exit 1
-./kpseaccess x $srcdir/access.c && exit 1
+./kpseaccess x $srcdir/access.c && pass x $srcdir/access.c
 
 if ./kpseaccess w $srcdir/access.c; then
   echo 'file "$srcdir/access.c" is writable'
 else
   echo 'file "$srcdir/access.c" is not writable'
 fi
+
+exit $ret
 
