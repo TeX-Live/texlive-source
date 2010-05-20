@@ -2,6 +2,8 @@
 # mktexupd -- update ls-R with a new entry.
 # 
 # Primarily written by Thomas Esser, Karl Berry, and Olaf Weber.
+# Public domain.
+# $Id$
 
 version='$Id$'
 usage="Usage: $0 DIR FILE.

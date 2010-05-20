@@ -1,3 +1,10 @@
+2010-05-20  Karl Berry  <karl@tug.org>
+
+	* mktexdir,
+	* mktexupd,
+	* mktex.opt,
+	* mktexnam.opt: systematize header comments.
+
 2010-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpseaccess.test: Allow for unexpected test results.

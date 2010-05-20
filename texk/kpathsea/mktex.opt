@@ -1,7 +1,7 @@
 # mktex.opt -- common mktex* options, etc.
 # Meant to be sourced after $usage, $version, and $MT_TEXMFMAIN have been set.
 # 
-# Originally written by Thomas Esser.
+# Originally written by Thomas Esser.  Public domain.
 # $Id$
  
 if test "x$1" = x--help || test "x$1" = x-help; then

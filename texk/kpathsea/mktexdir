@@ -1,5 +1,5 @@
 #!/bin/sh
-# mkinstalldirs --- make directory hierarchy (now mktexdir).
+# mkinstalldirs (now mktexdir) -- make directory hierarchy.
 # Author: Noah Friedman <friedman@prep.ai.mit.edu>, created: 1993-05-16.
 # Public domain.
 # 
