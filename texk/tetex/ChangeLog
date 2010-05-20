@@ -1,3 +1,9 @@
+2010-05-20  Karl Berry  <karl@tug.org>
+
+	* doc/TETEXDOC.dvi,
+	* doc/TETEXDOC.ps: rm files.
+	* doc/Makefile: do not bother remaking .dvi + .ps.
+
 2010-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (run_texlinks, run_texlinks): Respect DESTDIR.

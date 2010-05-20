@@ -1,3 +1,9 @@
+2010-05-20  Karl Berry  <karl@tug.org>
+
+	* Makefile.am [LUATEX]: do not include luatangle.man link,
+	there is no luatangle any more.
+	(man1_links) [ALEPH]: lamed, not lambda.
+
 2010-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* aleph.man, amstex.man, eplain.man, etex.man, latex.man,
