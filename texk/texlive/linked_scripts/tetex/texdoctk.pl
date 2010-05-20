@@ -1,11 +1,13 @@
 #! /usr/bin/env perl
 ###############################################################################
-# texdoctk v.0.6.0 (Nov 5, 2004) - GUI for TeX documentation access
+# texdoctk - GUI for TeX documentation access
 # Copyright (C) 2000-2004  Thomas Ruedas
+# Updated in 2010 by Manuel Pegourie-Gonnard
 # This program is provided under the GNU Public License; see the file
 # README.texdoctk for details about requirements, installation, configuration,
 # and the full disclaimer.
 ###############################################################################
+my ($version, $date) = ("0.6.1", "2004-11-05");
 use strict;
 use Tk;
 use Getopt::Long;
@@ -30,6 +32,7 @@ my @tdcolors;
 my %butcol;
 my $srchentry;
 my $srchflag=0;
+my $srchtype; # 0 = database, 1 = texdoc
 my $tmpfno;
 # system variables
 my ($texmfmain,$texmfdist,$texmfdoc,$texmflocal,$texmfhome,
@@ -192,15 +195,20 @@ my $deffont=$Qbut->cget(-font);
 $deffont='Helvetica -16 bold' if &x_resolution > 1200;
 $Qbut->configure(-font=>$deffont);
 $tlwins{'mainwindow'}{'buttons'}[1]=$cmdframe->Button(
-                              -text=>'Search texdoctk\'s database',
+						      -text=>'Database search',
 						      -font=>$deffont,%butcol,
-						      -command=>\&mksrch
+						      -command=>[\&mksrch, 0]
 						      )->pack(-side=>'left');
-$tlwins{'mainwindow'}{'buttons'}[2]=$cmdframe->Button(-text=>'Help/About',
+$tlwins{'mainwindow'}{'buttons'}[2]=$cmdframe->Button(
+						      -text=>'File search',
+						      -font=>$deffont,%butcol,
+						      -command=>[\&mksrch, 1]
+						      )->pack(-side=>'left');
+$tlwins{'mainwindow'}{'buttons'}[3]=$cmdframe->Button(-text=>'Help/About',
 						      -font=>$deffont,%butcol,
 						      -command=>\&helptext
 						      )->pack(-side=>'right');
-$tlwins{'mainwindow'}{'buttons'}[3]=$cmdframe->Button(-text=>'Settings',
+$tlwins{'mainwindow'}{'buttons'}[4]=$cmdframe->Button(-text=>'Settings',
 						      -font=>$deffont,%butcol,
 						      -command=>\&settings
 						      )->pack(-side=>'right');
@@ -237,7 +245,7 @@ if ($special == 0) {
 } else {
     $ncat=$nbutt;
 }
-for ($i=0,$j=4; $i<@catg; ++$i,++$j) {
+for ($i=0,$j=5; $i<@catg; ++$i,++$j) {
     $tlwins{'mainwindow'}{'buttons'}[$j]=$catg[$i];
 }
 MainLoop;
@@ -268,7 +276,8 @@ sub tpslct {
 	    push @lbitems,$topic[$srchitems[$j]][$srchitems[$k]];
 	    push @lbdocs,$doc[$srchitems[$j]][$srchitems[$k]];
 	}
-	$wtitle="Search results for $spec_wtitle";
+	$wtitle = ($srchtype ? "File" : "Database")
+	    . " search results for $spec_wtitle";
     }
 # toplevel window of category $opt with two frames
     my $tpwin=$main->Toplevel(-title=>$wtitle);
@@ -277,7 +286,7 @@ sub tpslct {
     my $tpslc=$tpwin->Frame()->pack(-side=>'top');
 # selection frame with listbox and buttons
 #   label for listbox
-    my $tplabel=$tpslc->Label(-text=>'Topics',
+    my $tplabel=$tpslc->Label(-text=>($srchtype ? "Files" : "Topics"),
 			      -font=>$deffont)->pack(-anchor=>'w',
 						     -side=>'top');
 #   listbox with optional scrollbar
@@ -755,10 +764,16 @@ sub showpath {
 
 # make or destroy search entry widget
 sub mksrch {
+    my ($type) = @_;
     if ($srchflag == 1) {
-	destroy $srchentry;
-	$srchflag=0;
+	if ($type == $srchtype) {
+	    destroy $srchentry;
+	    $srchflag=0;
+	} else {
+	    $srchtype = $type;
+	}
     } else {
+	$srchtype = $type;
 #       get the search string
 	$srchentry=$cmdframe->Entry(-cursor=>'xterm',
 				    -font=>$deffont,
@@ -769,16 +784,65 @@ sub mksrch {
 	$srchflag=1;
 #       key binding
 	$srchentry->bind('<Control-c>'=>sub{destroy $srchentry; $srchflag=0;});
+	$srchentry->bind('<Escape>'=>sub{destroy $srchentry; $srchflag=0;});
+    }
+}
+
+# call search routine and display results
+sub srchstr {
+    my $string;
+    my @reslist;
+    $string=$srchentry->get();
+# search
+    $main->Busy(-recurse => 1);
+    if ($srchtype == 0) {
+	@reslist = &srchdb($string);
+    } else {
+	@reslist = &srchtd($string);
+    }
+    $main->Unbusy();
+# destroy entry widget and show results
+    destroy $srchentry;
+    $srchflag=0;
+    if (scalar @reslist == 0) {
+	&popmsg(0, ($srchtype == 0 ? 'Database' : 'File').
+	    " search for $string: no matches found.\n".
+	    "You may want to try a ".
+	    ($srchtype == 0 ? 'File' : 'Databse') . " search.\n\n".
+	    "If nothing else works, CTAN offers an online search form:\n".
+	    "http://ctan.org/search.html\n",
+	    $cmdframe);
+    } else {
+	&tpslct(-1, $string, @reslist);
+    }
+}
+
+# search using texdoc
+sub srchtd {
+    my ($string) = @_;
+    my @res;
+    my $tdout = `texdoc -M -l $string`;
+    if ($?) {
+	&popmsg(0,"texdoc failed, sorry: $!\n".
+	    "Please report this problem on the texlive mailing list.\n");
+	return;
+    } else {
+	my $i = 0;
+	for my $line (split /\n/, $tdout) {
+	    my @fields = split /\t/, $line;
+	    $doc[$ncat][$i] = $fields[2];
+	    $topic[$ncat][$i] = basename($fields[2]);
+	    $packname[$ncat][$i] = "no package name";
+	    push @res, ($ncat, $i++);
+	}
+	return @res;
     }
 }
 
 # search a string in @packname, @topic and @keywords
-sub srchstr {
-    my ($i,$j,$string);
-    my (@results,@reslist);
-    $main->configure(-cursor=>'watch');
-    $string=$srchentry->get();
-# search
+sub srchdb {
+    my ($string) = @_;
+    my (@results, @reslist);
     if ($string) {
 	for ($i=0; $i<$ncat; ++$i) {
 	    for ($j=0; $j<$maxind[$i]+1; ++$j) {
@@ -806,13 +870,7 @@ sub srchstr {
 	    for ($j=0; $j<$maxind[$i]+1; ++$j) { push @results,($i,$j); }
 	}
     }
-# destroy entry widget and show results
-    destroy $srchentry;
-    $srchflag=0;
-    if (scalar @results == 0) {
-	&popmsg(0,"Search for $string: no matches found.\n".
-        "Try `texdoc $string' in a command line.",$cmdframe);
-    } else {
+    unless (scalar @results == 0) {
 #       cancel multiple entries
 	my ($omit,$pack1,$pack2);
 	@reslist=($results[0],$results[1]);
@@ -825,10 +883,8 @@ sub srchstr {
 	    }
 	    if ($omit == 0) { push @reslist,($results[$i],$results[$i+1]); }
 	}
-	unshift @reslist,$string;
-	&tpslct(-1,@reslist);
     }
-    $main->configure(-cursor=>$defcursor);
+    return @reslist;
 }
 
 # extract documentation of .sty files; a flag in the @keywords array shows
@@ -1449,7 +1505,7 @@ sub helptext {
     $tlwins{'helptext'}{'addr'}=$help;
     $help->Label(-text=>"texdoctk
 TeX documentation browser
- v.0.6.0a (Nov 5, 2004)",
+v$version ($date)",
 		 -font=>$deffont)->pack(-side=>'top',
 					-ipady=>10,
 					-anchor=>'s');
@@ -1794,3 +1850,4 @@ tr@dlc.ku.dk or tex-k@tug.org
 # mode: perl
 # auto-fill-hook: do-auto-fill
 # End:
+# vim: ts=8 sw=4 noexpandtab
