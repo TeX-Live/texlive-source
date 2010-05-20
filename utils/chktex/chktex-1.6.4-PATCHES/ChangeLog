@@ -1,3 +1,9 @@
+2010-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-strcpy-bug (new): Bug fixes:
+	(GetLTXArg): Avoid strcpy() with overlapping args.
+	(PreProcess): Do not access Buf[-1].
+
 2010-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-bug (new): Bug fix

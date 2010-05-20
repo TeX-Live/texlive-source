@@ -218,7 +218,7 @@ static char *GetLTXArg(char *SrcBuf, char *OrigDest, const int Until,
 
         if (Retval && (*OrigDest == '{') && (Until == GET_STRIP_TOKEN))
         {
-            strcpy(OrigDest, OrigDest + 1);
+            memmove(OrigDest, OrigDest + 1, strlen(OrigDest));
             OrigDest[strlen(OrigDest) - 1] = 0;
         }
         break;
@@ -266,7 +266,7 @@ static char *PreProcess(void)
 
     while ((TmpPtr = strchr(TmpPtr, '%')))
     {
-        if (TmpPtr[-1] != '\\')
+        if ((TmpPtr == Buf) || (TmpPtr[-1] != '\\'))
         {
             PSERR(TmpPtr - Buf, 1, emComment);
             *TmpPtr = 0;
@@ -1317,7 +1317,8 @@ void PrintStatus(unsigned long Lines)
  *  %n  - warning Number
  *  %u  - an Underlining line (like the one which appears when using -v1)
  *  %r  - part of line in front of error ('S' - 1)
- *  %s  - part of line which contains error (String) *  %t  - part of line after error ('S' + 1)
+ *  %s  - part of line which contains error (String)
+ *  %t  - part of line after error ('S' + 1)
  */
 
 
