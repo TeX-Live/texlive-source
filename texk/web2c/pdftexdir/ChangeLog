@@ -1,3 +1,8 @@
+2010-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftoepdf.cc: #include "../config.h" instead of <config.h>,
+	required for Mac OS X Leopard.
+
 2010-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Adapt to ../etexdir/etex.ch:

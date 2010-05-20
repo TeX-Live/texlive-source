@@ -73,7 +73,7 @@ extern "C" {
 #include <kpathsea/lib.h>
 
 #include <c-auto.h>             /* define SIZEOF_LONG */
-#include <config.h>             /* define type integer */
+#include "../config.h"          /* define type integer */
 
 #include <pdftexdir/ptexmac.h>
 #include <pdftexdir/pdftex-common.h>
