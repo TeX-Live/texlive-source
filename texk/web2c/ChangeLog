@@ -1,3 +1,7 @@
+2010-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Fix the lib/libp.a rebuild rule.
+
 2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h (BIBXRETALLOCNOSET, BIBXRETALLOCSTRING): Cast size_t

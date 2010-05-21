@@ -36,7 +36,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(ptexencinclude_HEADERS) \
+DIST_COMMON = README $(am__configure_deps) $(nobase_include_HEADERS) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -64,7 +64,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = c-auto.h
+CONFIG_HEADER = $(top_builddir)/ptexenc/c-auto.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -88,9 +88,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(libdir)" \
-	"$(DESTDIR)$(ptexencincludedir)" \
-	"$(DESTDIR)$(ptexencincludedir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)" \
+	"$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libptexenc_la_LIBADD =
 am_libptexenc_la_OBJECTS = libptexenc_la-kanjicnv.lo \
@@ -100,7 +99,7 @@ libptexenc_la_OBJECTS = $(am_libptexenc_la_OBJECTS)
 libptexenc_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(libptexenc_la_LDFLAGS) $(LDFLAGS) -o $@
-DEFAULT_INCLUDES = -I.@am__isrc@
+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/ptexenc
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -115,7 +114,7 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(libptexenc_la_SOURCES)
 DIST_SOURCES = $(libptexenc_la_SOURCES)
-HEADERS = $(nodist_ptexencinclude_HEADERS) $(ptexencinclude_HEADERS)
+HEADERS = $(nobase_include_HEADERS) $(nobase_nodist_include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -250,7 +249,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = $(KPATHSEA_INCLUDES) -I$(top_builddir)/.. -I$(top_srcdir)/..
+INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libptexenc.la
 libptexenc_la_CPPFLAGS = -DMAKE_KPSE_DLL
@@ -258,17 +257,24 @@ libptexenc_la_LDFLAGS = -version-info $(PTEXENC_LT_VERSINFO)
 
 # Note: jisx0208.h is a copy of ../../libs/gd/gd-2.0.35/jisx0208.h.
 #
-libptexenc_la_SOURCES = jisx0208.h kanjicnv.c ptexenc.c unicode-jp.c unicode.c
-ptexencincludedir = ${includedir}/ptexenc
-nodist_ptexencinclude_HEADERS = c-auto.h
-ptexencinclude_HEADERS = kanjicnv.h ptexenc.h unicode-jp.h unicode.h
-EXTRA_DIST = COPYRIGHT ChangeLog.TL patches/jmpost-0.04b-ptexenc.patch \
-	patches/makejvf-1.1a-ptexenc.patch \
-	patches/mendexk2.6f-ptexenc.patch \
-	patches/ptex-src-3.1.11-ptexenc.patch \
-	patches/texlive2009-ptexenc.patch patches/texlive2009.sh
-all: c-auto.h
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+libptexenc_la_SOURCES = \
+	jisx0208.h \
+	kanjicnv.c \
+	ptexenc.c \
+	unicode-jp.c \
+	unicode.c
+
+nobase_nodist_include_HEADERS = \
+	ptexenc/c-auto.h
+
+nobase_include_HEADERS = \
+	ptexenc/kanjicnv.h \
+	ptexenc/ptexenc.h \
+	ptexenc/unicode-jp.h \
+	ptexenc/unicode.h
+
+EXTRA_DIST = COPYRIGHT ChangeLog.TL
+all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
@@ -307,22 +313,22 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
-c-auto.h: stamp-h1
+ptexenc/c-auto.h: ptexenc/stamp-h1
 	@if test ! -f $@; then \
-	  rm -f stamp-h1; \
-	  $(MAKE) $(AM_MAKEFLAGS) stamp-h1; \
+	  rm -f ptexenc/stamp-h1; \
+	  $(MAKE) $(AM_MAKEFLAGS) ptexenc/stamp-h1; \
 	else :; fi
 
-stamp-h1: $(srcdir)/c-auto.in $(top_builddir)/config.status
-	@rm -f stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status c-auto.h
+ptexenc/stamp-h1: $(srcdir)/c-auto.in $(top_builddir)/config.status
+	@rm -f ptexenc/stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status ptexenc/c-auto.h
 $(srcdir)/c-auto.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
-	rm -f stamp-h1
+	rm -f ptexenc/stamp-h1
 	touch $@
 
 distclean-hdr:
-	-rm -f c-auto.h stamp-h1
+	-rm -f ptexenc/c-auto.h ptexenc/stamp-h1
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(libdir)" || $(MKDIR_P) "$(DESTDIR)$(libdir)"
@@ -425,46 +431,52 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-nodist_ptexencincludeHEADERS: $(nodist_ptexencinclude_HEADERS)
+install-nobase_includeHEADERS: $(nobase_include_HEADERS)
 	@$(NORMAL_INSTALL)
-	test -z "$(ptexencincludedir)" || $(MKDIR_P) "$(DESTDIR)$(ptexencincludedir)"
-	@list='$(nodist_ptexencinclude_HEADERS)'; test -n "$(ptexencincludedir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(ptexencincludedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(ptexencincludedir)" || exit $$?; \
+	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_list) | while read dir files; do \
+	  xfiles=; for file in $$files; do \
+	    if test -f "$$file"; then xfiles="$$xfiles $$file"; \
+	    else xfiles="$$xfiles $(srcdir)/$$file"; fi; done; \
+	  test -z "$$xfiles" || { \
+	    test "x$$dir" = x. || { \
+	      echo "$(MKDIR_P) '$(DESTDIR)$(includedir)/$$dir'"; \
+	      $(MKDIR_P) "$(DESTDIR)$(includedir)/$$dir"; }; \
+	    echo " $(INSTALL_HEADER) $$xfiles '$(DESTDIR)$(includedir)/$$dir'"; \
+	    $(INSTALL_HEADER) $$xfiles "$(DESTDIR)$(includedir)/$$dir" || exit $$?; }; \
 	done
 
-uninstall-nodist_ptexencincludeHEADERS:
+uninstall-nobase_includeHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_ptexencinclude_HEADERS)'; test -n "$(ptexencincludedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
 	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(ptexencincludedir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(ptexencincludedir)" && rm -f $$files
-install-ptexencincludeHEADERS: $(ptexencinclude_HEADERS)
+	echo " ( cd '$(DESTDIR)$(includedir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(includedir)" && rm -f $$files
+install-nobase_nodist_includeHEADERS: $(nobase_nodist_include_HEADERS)
 	@$(NORMAL_INSTALL)
-	test -z "$(ptexencincludedir)" || $(MKDIR_P) "$(DESTDIR)$(ptexencincludedir)"
-	@list='$(ptexencinclude_HEADERS)'; test -n "$(ptexencincludedir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(ptexencincludedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(ptexencincludedir)" || exit $$?; \
+	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
+	@list='$(nobase_nodist_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_list) | while read dir files; do \
+	  xfiles=; for file in $$files; do \
+	    if test -f "$$file"; then xfiles="$$xfiles $$file"; \
+	    else xfiles="$$xfiles $(srcdir)/$$file"; fi; done; \
+	  test -z "$$xfiles" || { \
+	    test "x$$dir" = x. || { \
+	      echo "$(MKDIR_P) '$(DESTDIR)$(includedir)/$$dir'"; \
+	      $(MKDIR_P) "$(DESTDIR)$(includedir)/$$dir"; }; \
+	    echo " $(INSTALL_HEADER) $$xfiles '$(DESTDIR)$(includedir)/$$dir'"; \
+	    $(INSTALL_HEADER) $$xfiles "$(DESTDIR)$(includedir)/$$dir" || exit $$?; }; \
 	done
 
-uninstall-ptexencincludeHEADERS:
+uninstall-nobase_nodist_includeHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(ptexencinclude_HEADERS)'; test -n "$(ptexencincludedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	@list='$(nobase_nodist_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
 	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(ptexencincludedir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(ptexencincludedir)" && rm -f $$files
+	echo " ( cd '$(DESTDIR)$(includedir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(includedir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -667,9 +679,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS) c-auto.h
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(ptexencincludedir)" "$(DESTDIR)$(ptexencincludedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -721,8 +733,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nodist_ptexencincludeHEADERS \
-	install-ptexencincludeHEADERS
+install-data-am: install-nobase_includeHEADERS \
+	install-nobase_nodist_includeHEADERS
 
 install-dvi: install-dvi-am
 
@@ -770,11 +782,10 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-libLTLIBRARIES \
-	uninstall-nodist_ptexencincludeHEADERS \
-	uninstall-ptexencincludeHEADERS
+uninstall-am: uninstall-libLTLIBRARIES uninstall-nobase_includeHEADERS \
+	uninstall-nobase_nodist_includeHEADERS
 
-.MAKE: all install-am install-strip
+.MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-generic clean-libLTLIBRARIES clean-libtool ctags dist \
@@ -786,15 +797,15 @@ uninstall-am: uninstall-libLTLIBRARIES \
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
 	install-info install-info-am install-libLTLIBRARIES \
-	install-man install-nodist_ptexencincludeHEADERS install-pdf \
-	install-pdf-am install-ps install-ps-am \
-	install-ptexencincludeHEADERS install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-man install-nobase_includeHEADERS \
+	install-nobase_nodist_includeHEADERS install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-libLTLIBRARIES \
-	uninstall-nodist_ptexencincludeHEADERS \
-	uninstall-ptexencincludeHEADERS
+	uninstall-nobase_includeHEADERS \
+	uninstall-nobase_nodist_includeHEADERS
 
 
 # Rebuild

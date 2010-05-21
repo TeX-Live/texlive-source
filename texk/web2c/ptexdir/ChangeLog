@@ -1,3 +1,7 @@
+2010-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am: Fix the lib/libp.a rebuild rule.
+
 2010-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* nissya.test (new): Shell script for pBibTeX test using kanji.

@@ -8649,7 +8649,7 @@ web2c/stamp-makecpool: $(web2c_common) ${srcdir}/web2c/makecpool.c
 
 # Rebuild $(proglib)
 $(proglib): ${srcdir}/lib/*.c
-	cd lib && $(MAKE) $(AM_MAKEFLAGS)
+	cd lib && $(MAKE) $(AM_MAKEFLAGS) lib.a
 @KPATHSEA_RULE@
 @ZLIB_RULE@
 @LIBPNG_RULE@
@@ -8986,7 +8986,7 @@ etrip-clean:
 	rm -rf tfm
 # Rebuild $(pproglib)
 $(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
-	cd lib && $(MAKE) $(AM_MAKEFLAGS)
+	cd lib && $(MAKE) $(AM_MAKEFLAGS) libp.a
 @PTEXENC_RULE@
 $(ptex_OBJECTS): $(ptex_prereq)
 

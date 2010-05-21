@@ -74,11 +74,12 @@ AC_CHECK_FUNCS([atexit on_exit], [break])
 fi
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
-AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
+AC_CONFIG_HEADERS([ptexenc/c-auto.h:c-auto.in],
  [sed -e 's/^#define PACKAGE/#define PTEXENC_PACKAGE/' \
-      -e 's/^#define VERSION/#define PTEXENC_VERSION/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h])
+      -e 's/^#define VERSION/#define PTEXENC_VERSION/' ptexenc/c-auto.h >c-auto.tmp \
+    && mv -f c-auto.tmp ptexenc/c-auto.h])
 
-AH_TOP([/* c-auto.h: defines for ptexenc, as determined by configure. */
+AH_TOP([/* ptexenc/c-auto.h: defines for ptexenc, as determined by configure. */
 /* Guard against double inclusion. */
 #ifndef PTEXENC_C_AUTO_H
 #define PTEXENC_C_AUTO_H

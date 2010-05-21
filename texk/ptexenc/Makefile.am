@@ -9,7 +9,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 .PHONY: rebuild
 rebuild: all
 
-INCLUDES = $(KPATHSEA_INCLUDES) -I$(top_builddir)/.. -I$(top_srcdir)/..
+INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 lib_LTLIBRARIES = libptexenc.la
@@ -20,25 +20,24 @@ libptexenc_la_LDFLAGS = -version-info $(PTEXENC_LT_VERSINFO)
 
 # Note: jisx0208.h is a copy of ../../libs/gd/gd-2.0.35/jisx0208.h.
 #
-libptexenc_la_SOURCES = jisx0208.h kanjicnv.c ptexenc.c unicode-jp.c unicode.c
+libptexenc_la_SOURCES = \
+	jisx0208.h \
+	kanjicnv.c \
+	ptexenc.c \
+	unicode-jp.c \
+	unicode.c
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
-ptexencincludedir = ${includedir}/ptexenc
+nobase_nodist_include_HEADERS = \
+	ptexenc/c-auto.h
 
-nodist_ptexencinclude_HEADERS = c-auto.h
-
-ptexencinclude_HEADERS = kanjicnv.h ptexenc.h unicode-jp.h unicode.h
+nobase_include_HEADERS = \
+	ptexenc/kanjicnv.h \
+	ptexenc/ptexenc.h \
+	ptexenc/unicode-jp.h \
+	ptexenc/unicode.h
 
 EXTRA_DIST = COPYRIGHT ChangeLog.TL
 
-## Eventually delete these files
-##
-EXTRA_DIST += \
-	patches/jmpost-0.04b-ptexenc.patch \
-	patches/makejvf-1.1a-ptexenc.patch \
-	patches/mendexk2.6f-ptexenc.patch \
-	patches/ptex-src-3.1.11-ptexenc.patch \
-	patches/texlive2009-ptexenc.patch \
-	patches/texlive2009.sh

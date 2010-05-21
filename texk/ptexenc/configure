@@ -13387,7 +13387,7 @@ done
 
 fi
 
-ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
+ac_config_headers="$ac_config_headers ptexenc/c-auto.h:c-auto.in"
 
 
 
@@ -14369,7 +14369,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
-    "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
+    "ptexenc/c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS ptexenc/c-auto.h:c-auto.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -15691,8 +15691,9 @@ _LT_EOF
   chmod +x "$ofile"
 
  ;;
-    "c-auto.h":H) sed -e 's/^#define PACKAGE/#define PTEXENC_PACKAGE/' \
-      -e 's/^#define VERSION/#define PTEXENC_VERSION/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h ;;
+    "ptexenc/c-auto.h":H) sed -e 's/^#define PACKAGE/#define PTEXENC_PACKAGE/' \
+      -e 's/^#define VERSION/#define PTEXENC_VERSION/' ptexenc/c-auto.h >c-auto.tmp \
+    && mv -f c-auto.tmp ptexenc/c-auto.h ;;
 
   esac
 done # for ac_tag

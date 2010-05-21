@@ -16,9 +16,8 @@
 # LIBS required for the `-lptexenc' library in texk/ptexenc/ of the TL tree.
 AC_DEFUN([KPSE_PTEXENC_FLAGS],
 [_KPSE_TEXLIB_FLAGS([ptexenc], [ptexenc], [lt],
-                    [-IBLD/texk -ISRC/texk], [BLD/texk/ptexenc/libptexenc.la], [],
-                    [${top_srcdir}/../ptexenc/*.[ch]],
-                    [${top_builddir}/../ptexenc/ptexenc.h])[]dnl
+                    [-IBLD/texk/ptexenc -ISRC/texk/ptexenc], [BLD/texk/ptexenc/libptexenc.la], [],
+                    [${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc/*.h])[]dnl
 ]) # KPSE_PTEXENC_FLAGS
 
 # KPSE_PTEXENC_OPTIONS([WITH-SYSTEM])

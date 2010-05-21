@@ -21232,7 +21232,7 @@ if test "x$with_ptexenc_libdir" != x && test "x$with_ptexenc_libdir" != xyes; th
   PTEXENC_LIBS="-L$with_ptexenc_libdir $PTEXENC_LIBS"
 fi
 else
-  PTEXENC_INCLUDES=`echo '-IBLD/texk -ISRC/texk' | sed \
+  PTEXENC_INCLUDES=`echo '-IBLD/texk/ptexenc -ISRC/texk/ptexenc' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   PTEXENC_LIBS=`echo 'BLD/texk/ptexenc/libptexenc.la' | sed \
@@ -21241,9 +21241,7 @@ else
   PTEXENC_DEPEND=`echo 'BLD/texk/ptexenc/libptexenc.la' | sed \
     -e 's,BLD/texk/,${top_builddir}/../,g'`
    PTEXENC_RULE='# Rebuild libptexenc
-$(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.[ch] ${top_builddir}/../ptexenc/ptexenc.h
-	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../ptexenc/ptexenc.h:
+$(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc/*.h
 	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 

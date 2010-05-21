@@ -228,7 +228,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = $(KPATHSEA_INCLUDES) $(PTEXENC_INCLUDES)
+INCLUDES = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 makejvf_SOURCES = \
 	main.c  makejvf.h  tfmread.c  tool.c  write.c

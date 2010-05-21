@@ -3,7 +3,8 @@
 ## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
+INCLUDES = -I$(top_srcdir)
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## Rebuild libkpathsea
@@ -37,7 +38,7 @@ lib_a_SOURCES = \
 
 ## Replacements for pTeX.
 ##
-libp_a_CPPFLAGS = -DPTEX $(ENCTEX_INCLUDES)
+libp_a_CPPFLAGS = -DPTEX $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 libp_a_SOURCES = \
 	openclose.c \
 	printversion.c

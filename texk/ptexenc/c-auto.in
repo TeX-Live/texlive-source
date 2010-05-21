@@ -1,6 +1,6 @@
 /* c-auto.in.  Generated from configure.ac by autoheader.  */
 
-/* c-auto.h: defines for ptexenc, as determined by configure. */
+/* ptexenc/c-auto.h: defines for ptexenc, as determined by configure. */
 /* Guard against double inclusion. */
 #ifndef PTEXENC_C_AUTO_H
 #define PTEXENC_C_AUTO_H

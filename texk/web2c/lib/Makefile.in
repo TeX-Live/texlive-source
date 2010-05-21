@@ -297,7 +297,8 @@ top_srcdir = @top_srcdir@
 wlibs = @wlibs@
 x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
-INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
+INCLUDES = -I$(top_srcdir)
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = lib.a $(am__append_1)
 EXTRA_LIBRARIES = libp.a
@@ -319,7 +320,7 @@ lib_a_SOURCES = \
 	version.c \
 	zround.c
 
-libp_a_CPPFLAGS = -DPTEX $(ENCTEX_INCLUDES)
+libp_a_CPPFLAGS = -DPTEX $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 libp_a_SOURCES = \
 	openclose.c \
 	printversion.c

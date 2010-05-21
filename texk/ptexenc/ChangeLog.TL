@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2010-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Moved headers (except jisx0208.h) to ptexenc/, removed patches/.
+	* Makefile.am, configure.ac: Adjusted.
+
 2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexenc.[ch] (input_line3): Removed.
