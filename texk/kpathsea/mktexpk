@@ -19,14 +19,27 @@ usage="Usage: $progname [OPTIONS] NAME [REDIRECT],
 --mfmode MODE       use MODE as the METAFONT mode.
 --destdir DESTDIR   write fonts in DESTDIR.
 
-Try to create a PK file for NAME at resolution DPI, with an assumed
-device base resolution of BDPI, and a Metafont \`mag' of MAG. Use MODE
-for the METAFONT mode.  Use DESTDIR for the root of where to install
-into, either the absolute directory name to use (if it starts with a
-/) or relative to the default DESTDIR (if not). REDIRECT, if supplied,
-is a string of the form '>&n', where n is the number of the file
-descriptor which is to receive, instead of stdout, the name of the
-newly created pk file."
+Try to create a bitmap PK file for NAME at resolution DPI, with an
+assumed device base resolution of BDPI, and a Metafont \`mag' of
+MAG. Use MODE for the METAFONT mode.  Use DESTDIR for the root of where
+to install into, either the absolute directory name to use (if it starts
+with a /) or relative to the default DESTDIR (if not). REDIRECT, if
+supplied, is a string of the form '>&n', where n is the number of the
+file descriptor which is to receive, instead of stdout, the name of the
+newly created pk file.
+
+If you expected the font to be available as an outline, and thus this
+script does not work and should not have been called, most likely the
+font's .tfm name is missing from the relevant map file (e.g.,
+psfonts.map for dvips, pdftex.map for pdftex).  These map files are
+typically maintained using updmap; q.v.
+
+For step-by-step instructions on making new fonts known to TeX, see
+http://tug.org/fonts/fontinstall.html.
+
+Report bugs to: tex-k@tug.org
+TeX Live home page: <http://tug.org/texlive/>
+"
 
 # Handle non-positional options, except for --version/--help
 while test $# -gt 0; do
@@ -190,6 +203,7 @@ else
       cmd="hbf2gf -q -p $NAME $DPI"
     else
       echo "$progname: don't know how to create bitmap font for $NAME." >&2
+      echo "$progname: perhaps $NAME is missing from the map file." >&2
       exit 1
     fi
   fi

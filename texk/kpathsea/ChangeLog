@@ -1,3 +1,7 @@
+2010-05-21  Karl Berry  <karl@tug.org>
+
+	* mktexpk: help msg, mention map files in error.
+
 2010-05-20  Karl Berry  <karl@tug.org>
 
 	* mktexdir,
