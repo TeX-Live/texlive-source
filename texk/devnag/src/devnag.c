@@ -1644,7 +1644,7 @@ void dnproc(void) {
 	    wrong[2] = '\0';
 	    err_ill(wrong);
 	 }
-	 else put_ch(i+17);
+	 else put_ch((short)(i+17));
 	 break;
        case '~':
 	 savchr = inp_ch();
@@ -1658,7 +1658,7 @@ void dnproc(void) {
 	 }
     else
     if (i == 5) put_ch(47);
-	 else put_ch(i+20);
+	 else put_ch((short)(i+20));
 	 break;
        case end_of_line:
 	 put_ch(end_of_line);
@@ -1802,7 +1802,7 @@ void dnproc(void) {
 	    savchr = inp_ch();
 	    if (savchr == 'h') {
 	       if (i == 9)  put_ch(20);
-	       else put_ch(symbol-32);
+	       else put_ch((short)(symbol-32));
 	    }
 	    else {
 	       put_ch(symbol);
@@ -2133,7 +2133,7 @@ void put_ch(short code) {
 			   }
 			}
 			else {
-			   if(!cons_seen) sendchar(code);
+			   if(!cons_seen) sendchar((char)code);
 			   else {
 			      put_macro(VIRAAM);
 			      put_syll();
@@ -2195,10 +2195,10 @@ void put_ch(short code) {
 	 fputs(outbuf, f_out);
 	 *outbuf = '\0';
       }
-      else if (code != dummy) sendchar(code);
+      else if (code != dummy) sendchar((char)code);
       break;
     case cmr:
-      if (cmr_mode) sendchar(code);
+      if (cmr_mode) sendchar((char)code);
       else {
        cmr_mode = TRUE;
        if (num_mode) {
@@ -2212,11 +2212,11 @@ void put_ch(short code) {
 	  put_syll();
        }
        put_sym(RS);
-       sendchar(code);
+       sendchar((char)code);
     }
       break;
     case numeral:
-      if (num_mode) sendchar(code);
+      if (num_mode) sendchar((char)code);
       else {
 	 num_mode = TRUE;
 	 if (cmr_mode) {
@@ -2230,7 +2230,7 @@ void put_ch(short code) {
 	    put_syll();
 	 }
 	 put_sym(RN);
-	 sendchar(code);
+	 sendchar((char)code);
       }
    }
 }
