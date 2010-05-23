@@ -42,6 +42,7 @@
 % (10/17/2005) ST  pTeX p3.1.9
 % (07/18/2006) ST  pTeX p3.1.10
 % (08/17/2009) ST  pTeX p3.1.11
+% (05/23/2010) AK  Bug fix by Hironori Kitagawa.
 %
 @x [1.2] l.195 - pTeX:
 @d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
@@ -3526,6 +3527,14 @@ mem[kcode_noad(p)].hh:=empty_field;
 new_noad:=p;
 @z
 
+@x [34.687] accent with japanese char
+@d accent_noad_size=5 {number of |mem| words in an accent noad}
+@d accent_chr(#)==#+4 {the |accent_chr| field of an accent noad}
+@y
+@d accent_noad_size=6 {number of |mem| words in an accent noad}
+@d accent_chr(#)==#+5 {the |accent_chr| field of an accent noad}
+@z
+
 @x [34.691] l.14236 - pTeX: print_fam_and_char
 procedure print_fam_and_char(@!p:pointer); {prints family and character}
 begin print_esc("fam"); print_int(fam(p)); print_char(" ");
@@ -4920,6 +4929,7 @@ var @!p,@!q:pointer; {run through the current list}
 @!d:pointer; {last |disp_node|}
 @!disp,@!pdisp:scaled; {displacement}
 @!pp,pnode:pointer;
+@!f:boolean; {will |d| free?}
 @z
 
 @x [47.1080] l.21636 - pTeX: disp_node, check head=tail
@@ -4928,7 +4938,7 @@ else  begin if not is_char_node(tail) then
       @<Remove the last box, unless it's part of a discretionary@>;
   end;
 @y
-else  begin
+else  begin f:=false;
   if (not is_char_node(tail))and(type(tail)=disp_node) then
     begin d:=tail; tail:=prev_node;
     end
@@ -4940,9 +4950,10 @@ else  begin
   if d<>null then
     if (not is_char_node(tail))and(type(tail)=disp_node) then
       begin prev_node:=pnode; prev_disp:=pdisp;
-      if prev_disp=disp_dimen(d) then free_node(tail,small_node_size)
-      else disp_dimen(tail):=disp_dimen(d);
-      free_node(d,small_node_size);
+      {|if prev_disp=disp_dimen(d) then free_node(tail,small_node_size)|}
+      if prev_disp<>disp_dimen(d) then disp_dimen(tail):=disp_dimen(d);
+      if f then free_node(d,small_node_size)
+      else begin prev_node:=tail; tail_append(d); end;
       end
     else tail_append(d);
   end;
@@ -5185,6 +5196,7 @@ var @!p,@!q:pointer; {run through the current list}
 @!d:pointer; {last |disp_node|}
 @!disp,@!pdisp:scaled; {displacement}
 @!pp,pnode:pointer;
+@!f:boolean;  {whether remove disp node d }
 @z
 
 @x [47.1105] l.21937 - pTeX: delete_last: disp_node
@@ -5204,7 +5216,7 @@ exit:end;
 @y
 else  begin
   if (not is_char_node(tail))and(type(tail)=disp_node) then
-    begin d:=tail; tail:=prev_node; link(tail):=null;
+    begin f:=true; d:=tail; tail:=prev_node; link(tail):=null;
     end
   else d:=null;
   if not is_char_node(tail) then if type(tail)=cur_chr then
@@ -5217,6 +5229,7 @@ else  begin
           begin if d<>null then tail_append(d);
           return;
           end
+        else if link(p)=tail then f:=false;
         end
       else  if type(q)=disp_node then
         begin pnode:=pp; pdisp:=disp; disp:=disp_dimen(q);
@@ -5224,14 +5237,17 @@ else  begin
     pp:=q; q:=link(p);
     until q=tail;
     link(p):=null; flush_node_list(tail); tail:=p;
-    end;
+    end
+  else { |tail| will not be deleted }
+    begin if d<>null then tail_append(d); return; end;
     prev_node:=pnode; prev_disp:=pdisp;
     if d<>null then
       if (not is_char_node(tail))and(type(tail)=disp_node) then
         begin if prev_disp=disp_dimen(d) then
-          free_node(tail,small_node_size)
+          {|free_node(tail,small_node_size)|}
           else disp_dimen(tail):=disp_dimen(d);
-        free_node(d,small_node_size)
+        if f then free_node(d,small_node_size) 
+          else begin prev_node:=tail; prev_disp:=disp; tail_append(d) end
         end
       else
         begin prev_node:=tail; prev_disp:=disp; tail_append(d)
@@ -5400,8 +5416,10 @@ if (not is_char_ascii(cur_val)) then
   begin KANJI(cx):=cur_val;
   if direction=dir_tate then f:=cur_tfont else f:=cur_jfont;
   p:=new_character(f,get_jfm_pos(KANJI(cx),f));
-  {DEBUG if p<>null then ...}
-  link(p):=get_avail; info(link(p)):=KANJI(cx);
+  if p<>null then
+    begin
+      link(p):=get_avail; info(link(p)):=KANJI(cx);
+    end;
   end
 else begin f:=cur_font; p:=new_character(f,cur_val);
   end;
@@ -5596,7 +5614,7 @@ else  begin
     p:=nucleus(info(p)); q:=kcode_noad_nucleus(p);
     end;
   math_type(p):=math_jchar; fam(p):=cur_jfam; character(p):=qi(0);
-  info(q):=KANJI(cx);
+  math_kcode(p-1):=KANJI(cx);
   if font_dir[fam_fnt(fam(p)+cur_size)]=dir_default then
     begin print_err("Not two-byte family");
     help1("IGNORE.");@/
