@@ -30,7 +30,8 @@ bibtexu - ?
 cjkutils - Werner Lemberg
   ctan
 
-detex - ?
+detex 2.8 - checked 21may10
+  http://www.cs.purdue.edu/homes/trinkle/detex/
 
 devnag - from devnag package installed in texmf-dist.
 
