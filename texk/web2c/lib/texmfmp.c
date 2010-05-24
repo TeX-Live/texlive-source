@@ -415,14 +415,18 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
           r = *safecmd;
           while (*r && !Isspace(*r))
             r++;
-          *r = '\0';
-          r++;
-          while (*r && Isspace(*r))
-            r++;
-          if (*r)
-            q = (char *) concatn ("\"", p, "/", *safecmd, "\" ", r, NULL);
-          else
+          if (*r == '\0')
             q = (char *) concatn ("\"", p, "/", *safecmd, "\"", NULL);
+          else {
+            *r = '\0';
+            r++;
+            while (*r && Isspace(*r))
+              r++;
+            if (*r)
+              q = (char *) concatn ("\"", p, "/", *safecmd, "\" ", r, NULL);
+            else
+              q = (char *) concatn ("\"", p, "/", *safecmd, "\"", NULL);
+          }
           free (p);
           free (*safecmd);
           *safecmd = q;
