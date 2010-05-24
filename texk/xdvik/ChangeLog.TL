@@ -1,6 +1,13 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2010-05-25  Karl Berry  <karl@tug.org>
+
+	* m4/xdvi-check-iconv.m4 (--with-iconv): new option to
+	completely disable checking for iconv.  Needed due to the local
+	configuration of the machine used to build the sparc-linux
+	binaries (namely, weyl.math.utah.edu).
+
 2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/run_tests.c, test_dl_list.c: Cast size_t to long for

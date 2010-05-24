@@ -1,7 +1,7 @@
 # Autoconf macros for xdvik.
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 # Copyright (C) 2004 - 2009 Stefan Ulrich <xdvi-core@lists.sourceforge.net>
 #               ????    or maybe earlier Copyright by Paul Vojta ??
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -11,7 +11,15 @@
 # ----------------
 # Check for iconv(), <iconv.h>, and for type of iconv() input argument.
 AC_DEFUN([XDVI_CHECK_ICONV],
-[AC_ARG_WITH([iconv-include],
+[
+AC_ARG_WITH([iconv],
+            [AS_HELP_STRING([--with-iconv],
+                         [Use an iconv library @<:@default=check@:>@])],
+            [],
+            [with_iconv=check])dnl
+  
+dnl
+AC_ARG_WITH([iconv-include],
              AS_HELP_STRING([--with-iconv-include=DIR],
                             [Specify the location of <iconv.h> header]))[]dnl
 AC_ARG_WITH([iconv-libdir],
@@ -23,23 +31,26 @@ AS_CASE([$with_iconv_include],
 AS_CASE([$with_iconv_libdir],
         [yes | no | ""], [iconv_libpath=],
         [iconv_libpath="-L$with_iconv_libdir"])
-xdvi_iconv_save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$iconv_includes $CPPFLAGS"
-AC_CHECK_HEADERS([iconv.h])
-# Check if -liconv or -lrecode is needed for iconv()
-_XDVI_ICONV_LIB
-if test "x$xdvi_cv_search_iconv" != xno; then
-  if test "x$xdvi_cv_search_iconv" = "xnone required"; then
-    iconv_libs=
-  else
-    iconv_libs=$xdvi_cv_search_iconv
+dnl
+AS_IF([test "x$with_iconv" != xno],
+ [xdvi_iconv_save_CPPFLAGS=$CPPFLAGS
+  CPPFLAGS="$iconv_includes $CPPFLAGS"
+  AC_CHECK_HEADERS([iconv.h])
+  # Check if -liconv or -lrecode is needed for iconv()
+  _XDVI_ICONV_LIB
+  if test "x$xdvi_cv_search_iconv" != xno; then
+    if test "x$xdvi_cv_search_iconv" = "xnone required"; then
+      iconv_libs=
+    else
+      iconv_libs=$xdvi_cv_search_iconv
+    fi
+    AC_DEFINE([HAVE_ICONV], 1, [Define to 1 if you have the `iconv' function.])
+    if test "x$ac_cv_header_iconv_h" = xyes; then
+      _XDVI_ICONV_CHAR_PPTR_TYPE
+    fi
   fi
-  AC_DEFINE([HAVE_ICONV], 1, [Define to 1 if you have the `iconv' function.])
-  if test "x$ac_cv_header_iconv_h" = xyes; then
-    _XDVI_ICONV_CHAR_PPTR_TYPE
-  fi
-fi
-CPPFLAGS=$xdvi_iconv_save_CPPFLAGS
+  CPPFLAGS=$xdvi_iconv_save_CPPFLAGS
+ ])dnl
 AC_SUBST([iconv_includes])
 AC_SUBST([iconv_libpath])
 AC_SUBST([iconv_libs])

@@ -902,6 +902,7 @@ with_xdvi_x_toolkit
 with_ps
 enable_a4
 with_x
+with_iconv
 with_iconv_include
 with_iconv_libdir
 enable_magick
@@ -1582,6 +1583,7 @@ Optional Packages:
                           [default: Motif if available, else Xaw]
   --with-ps=PS            Use PostScript (PS=no/yes/gs/dps/news, default gs)
   --with-x                use the X Window System
+  --with-iconv            Use an iconv library [default=check]
   --with-iconv-include=DIR
                           Specify the location of <iconv.h> header
   --with-iconv-libdir=DIR Specify the location of iconv (-liconv or -lrecode)
@@ -4848,13 +4850,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4851: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4853: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4854: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4856: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4857: output\"" >&5)
+  (eval echo "\"\$as_me:4859: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -6057,7 +6059,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6060 "configure"' > conftest.$ac_ext
+  echo '#line 6062 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7987,11 +7989,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7990: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7992: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7994: \$? = $ac_status" >&5
+   echo "$as_me:7996: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8326,11 +8328,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8329: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8331: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8333: \$? = $ac_status" >&5
+   echo "$as_me:8335: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8431,11 +8433,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8434: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8436: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8438: \$? = $ac_status" >&5
+   echo "$as_me:8440: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8486,11 +8488,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8489: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8491: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8493: \$? = $ac_status" >&5
+   echo "$as_me:8495: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10853,7 +10855,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10856 "configure"
+#line 10858 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10949,7 +10951,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10952 "configure"
+#line 10954 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14333,6 +14335,15 @@ done
 
 # Checks for iconv
 
+
+# Check whether --with-iconv was given.
+if test "${with_iconv+set}" = set; then :
+  withval=$with_iconv;
+else
+  with_iconv=check
+fi
+
+
 # Check whether --with-iconv-include was given.
 if test "${with_iconv_include+set}" = set; then :
   withval=$with_iconv_include;
@@ -14354,9 +14365,10 @@ case $with_iconv_libdir in #(
   *) :
     iconv_libpath="-L$with_iconv_libdir" ;;
 esac
-xdvi_iconv_save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$iconv_includes $CPPFLAGS"
-for ac_header in iconv.h
+if test "x$with_iconv" != xno; then :
+  xdvi_iconv_save_CPPFLAGS=$CPPFLAGS
+  CPPFLAGS="$iconv_includes $CPPFLAGS"
+  for ac_header in iconv.h
 do :
   ac_fn_c_check_header_mongrel "$LINENO" "iconv.h" "ac_cv_header_iconv_h" "$ac_includes_default"
 if test "x$ac_cv_header_iconv_h" = x""yes; then :
@@ -14368,8 +14380,8 @@ fi
 
 done
 
-# Check if -liconv or -lrecode is needed for iconv()
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing iconv" >&5
+  # Check if -liconv or -lrecode is needed for iconv()
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing iconv" >&5
 $as_echo_n "checking for library containing iconv... " >&6; }
 if test "${xdvi_cv_search_iconv+set}" = set; then :
   $as_echo_n "(cached) " >&6
@@ -14407,17 +14419,17 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $xdvi_cv_search_iconv" >&5
 $as_echo "$xdvi_cv_search_iconv" >&6; }
 
-if test "x$xdvi_cv_search_iconv" != xno; then
-  if test "x$xdvi_cv_search_iconv" = "xnone required"; then
-    iconv_libs=
-  else
-    iconv_libs=$xdvi_cv_search_iconv
-  fi
+  if test "x$xdvi_cv_search_iconv" != xno; then
+    if test "x$xdvi_cv_search_iconv" = "xnone required"; then
+      iconv_libs=
+    else
+      iconv_libs=$xdvi_cv_search_iconv
+    fi
 
 $as_echo "#define HAVE_ICONV 1" >>confdefs.h
 
-  if test "x$ac_cv_header_iconv_h" = xyes; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for iconv input type" >&5
+    if test "x$ac_cv_header_iconv_h" = xyes; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for iconv input type" >&5
 $as_echo_n "checking for iconv input type... " >&6; }
 if test "${xdvi_cv_iconv_char_pptr_type+set}" = set; then :
   $as_echo_n "(cached) " >&6
@@ -14466,10 +14478,11 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+    fi
   fi
-fi
-CPPFLAGS=$xdvi_iconv_save_CPPFLAGS
+  CPPFLAGS=$xdvi_iconv_save_CPPFLAGS
 
+fi
 
 
 
