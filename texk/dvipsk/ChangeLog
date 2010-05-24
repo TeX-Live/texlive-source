@@ -1,3 +1,8 @@
+2010-05-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* search.c: quote command in W32 case to allow path name
+	with spaces.
+
 2010-05-18  Karl Berry  <karl@tug.org>
 
 	* config.h (type1path): rename from type1.

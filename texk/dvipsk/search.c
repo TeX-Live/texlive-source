@@ -75,16 +75,28 @@ selfautoloc_prog (const char *prog)
 {
   char *ret;
 #ifdef WIN32
-  char *p;
+  char *p, *q, *r;
   /* Get value of SELFAUTOLOC, but \ works better for path separator.  */
   char *selfautoloc = kpse_var_value ("SELFAUTOLOC");
   for (p = selfautoloc; *p; p++) {
     if (*p == '/')
       *p = '\\';
   }
-  
-  /* Prepend that to PROG.  */
-  ret = concat3 (selfautoloc, "\\", prog);
+  q = xstrdup (prog);
+  r = q;
+  while (*r && *r != ' ' && *r != '\t')
+    r++;
+  if (*r == '\0')
+    ret = (char *)concatn ("\"", selfautoloc, "\\", q, "\"", NULL);
+  else {
+    *r = '\0';
+    r++;
+    if (*r)
+      ret = (char *)concatn ("\"", selfautoloc, "\\", q, "\" ", r, NULL);
+    else
+      ret = (char *)concatn ("\"", selfautoloc, "\\", q, "\"", NULL);
+  }
+  free (q);
   free (selfautoloc);
   
 #else /* not WIN32 */
