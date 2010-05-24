@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-05-17.17}
+\def\texinfoversion{2010-05-22.17}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4435,6 +4435,9 @@ end
   \def\result{=>}%
   \def\textdegree{o}%
   %
+  \expandafter\ifx\csname SETtxiindexlquoteignore\endcsname\relax
+  \else \indexlquoteignore \fi
+  %
   % We need to get rid of all macros, leaving only the arguments (if present).
   % Of course this is not nearly correct, but it is the best we can do for now.
   % makeinfo does not expand macros in the argument to @deffn, which ends up
@@ -4447,6 +4450,11 @@ end
   %
   \macrolist
 }
+
+% Undocumented (for FSFS 2nd ed.): @set txiindexlquoteignore makes us
+% ignore left quotes in the sort term.
+{\catcode`\`=\active
+ \gdef\indexlquoteignore{\let`=\empty}}
 
 \let\indexbackslash=0  %overridden during \printindex.
 \let\SETmarginindex=\relax % put index entries in margin (undocumented)?
