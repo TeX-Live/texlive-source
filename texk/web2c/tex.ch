@@ -268,7 +268,7 @@ versions of the program.
 @!sup_dvi_buf_size = 65536;
 
 @!inf_font_mem_size = 20000;
-@!sup_font_mem_size = 4000000;
+@!sup_font_mem_size = 147483647; {|integer|-limited, so 2 could be prepended?}
 
 @!sup_font_max = max_font_max;
 @!inf_font_max = 50; {could be smaller, but why?}

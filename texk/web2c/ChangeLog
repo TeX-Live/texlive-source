@@ -1,3 +1,10 @@
+2010-05-24  Karl Berry  <karl@tug.org>
+
+	* tex.ch (sup_font_mem_size): increase from 4,000,000
+	to 147,483,647 (the last nine digits of 2^31 - 1).  It seems to me
+	this is merely an integer, so 2^31-1 itself should be safe, i.e.,
+	a 2 could be prepended, but I just didn't want to go that far.
+
 2010-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Fix the lib/libp.a rebuild rule.

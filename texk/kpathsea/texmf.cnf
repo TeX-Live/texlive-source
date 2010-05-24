@@ -634,7 +634,7 @@ extra_mem_top.context = 2000000
 extra_mem_bot.context = 4000000
 
 % Words of font info for TeX (total size of all TFM files, approximately).
-% Must be >= 20000 and <= 4000000 (without tex.ch changes).
+% Must be >= 20000 and <= 147483647 (without tex.ch changes).
 font_mem_size = 3000000
 
 % Total number of fonts. Must be >= 50 and <= 9000 (without tex.ch changes).
