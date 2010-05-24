@@ -1,3 +1,8 @@
+2010-05-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c: on win32, all restricted shell escape commands are
+	executed by fullpath.
+
 2010-05-18  Karl Berry  <karl@tug.org>
 
 	* printversion.c (printversionandexit): 2010.

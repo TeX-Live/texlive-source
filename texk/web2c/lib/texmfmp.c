@@ -404,6 +404,32 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
       *d++ = QUOTE;
     }
     *d = '\0';
+#ifdef WIN32
+    {
+      char *p, *q, *r;
+      p = *safecmd;
+      if (!(IS_DIR_SEP (p[0]) && IS_DIR_SEP (p[1])) &&
+          !(p[1] == ':' && IS_DIR_SEP (p[2]))) { 
+        p = (char *) kpse_var_value ("SELFAUTOLOC");
+        if (p) {
+          r = *safecmd;
+          while (*r && !Isspace(*r))
+            r++;
+          *r = '\0';
+          r++;
+          while (*r && Isspace(*r))
+            r++;
+          if (*r)
+            q = (char *) concatn ("\"", p, "/", *safecmd, "\" ", r, NULL);
+          else
+            q = (char *) concatn ("\"", p, "/", *safecmd, "\"", NULL);
+          free (p);
+          free (*safecmd);
+          *safecmd = q;
+        }
+      }
+    }
+#endif
   }
 
   return allow;
