@@ -498,15 +498,19 @@ try_std_extension_first = t
 % enable it for everything but bare tex.
 shell_escape = p
 
-% No spaces in this command list.  These programs either do not write
-% any output files, respect openout_any, or have hard-coded restrictions similar
-% or higher to openout_any=p.  And have no features (nor, to the best of our
-% knowledge, obvious security holes) to invoke arbitrary other programs.
+% No spaces in this command list.
 % 
-% Unfortunately we found too many problems with shell_escape=p, so it
-% should be treated as though it were just as dangerous as shell_escape=t.
+% The programs listed here are as safe as any we know: they either do
+% not write any output files, respect openout_any, or have hard-coded
+% restrictions similar or higher to openout_any=p.  They also have no
+% features to invoke arbitrary other programs, and no known exploitable
+% bugs.  All to the best of our knowledge.  They also have practical use
+% for being called from TeX.  (fc-list is used for the Lua(La)TeX system
+% font cache file.)
+% 
 shell_escape_commands = \
 bibtex,bibtex8,\
+fc-list,\
 kpsewhich,\
 makeindex,\
 repstopdf,\
