@@ -1,3 +1,7 @@
+2010-05-25  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_script_SCRIPTS): context scripts for 2010.
+
 2010-04-11  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_scriptx_SCRIPTS): add bundledoc.

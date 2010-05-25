@@ -1,2 +1,0 @@
-#!/bin/sh
-texmfstart mptopdf.pl "$@"

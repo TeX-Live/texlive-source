@@ -182,25 +182,14 @@ nobase_dist_script_SCRIPTS = \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
-	context/lua/luatools.lua \
-	context/lua/mtxrun.lua \
-	context/ruby/texmfstart.rb \
-	context/stubs/unix/context \
-	context/stubs/unix/ctxtools \
-	context/stubs/unix/makempy \
-	context/stubs/unix/mpstools \
-	context/stubs/unix/mptopdf \
-	context/stubs/unix/mtxtools \
-	context/stubs/unix/pdftools \
-	context/stubs/unix/pstopdf \
-	context/stubs/unix/rlxtools \
-	context/stubs/unix/runtools \
-	context/stubs/unix/texexec \
-	context/stubs/unix/texfont \
-	context/stubs/unix/textools \
-	context/stubs/unix/texutil \
-	context/stubs/unix/tmftools \
-	context/stubs/unix/xmltools \
+	context/context \
+	context/ctxtools \
+	context/luatools \
+	context/metatex \
+	context/mtxrun \
+	context/rlxtools \
+	context/texexec \
+	context/texmfstart \
 	de-macro/de-macro \
 	dviasm/dviasm.py \
 	epspdf/epspdf \
