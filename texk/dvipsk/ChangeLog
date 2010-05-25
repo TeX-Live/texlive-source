@@ -1,5 +1,9 @@
 2010-05-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	* config.ps: include cid-base.map.
+
+2010-05-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	* search.c: quote command in W32 case to allow path name
 	with spaces.
 
