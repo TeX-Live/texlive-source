@@ -1,0 +1,532 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: lasse.collin@tukaani.org\n"
+"POT-Creation-Date: 2010-05-26 09:00+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/xz/args.c:310
+#, c-format
+msgid "%s: Unknown file format type"
+msgstr ""
+
+#: src/xz/args.c:333 src/xz/args.c:341
+#, c-format
+msgid "%s: Unsupported integrity check type"
+msgstr ""
+
+#: src/xz/args.c:359
+msgid "Only one file can be specified with `--files' or `--files0'."
+msgstr ""
+
+#: src/xz/args.c:417
+msgid "The environment variable XZ_OPT contains too many arguments"
+msgstr ""
+
+#: src/xz/coder.c:95
+msgid "Maximum number of filters is four"
+msgstr ""
+
+#: src/xz/coder.c:108
+msgid "Memory usage limit is too low for the given filter setup."
+msgstr ""
+
+#: src/xz/coder.c:129
+msgid "Using a preset in raw mode is discouraged."
+msgstr ""
+
+#: src/xz/coder.c:131
+msgid "The exact options of the presets may vary between software versions."
+msgstr ""
+
+#: src/xz/coder.c:159
+msgid "The .lzma format supports only the LZMA1 filter"
+msgstr ""
+
+#: src/xz/coder.c:167
+msgid "LZMA1 cannot be used with the .xz format"
+msgstr ""
+
+#: src/xz/coder.c:184
+msgid "Unsupported filter chain or filter options"
+msgstr ""
+
+#: src/xz/coder.c:245
+#, c-format
+msgid "Adjusted LZMA%c dictionary size from %s MiB to %s MiB to not exceed the memory usage limit of %s MiB"
+msgstr ""
+
+#. TRANSLATORS: When compression or decompression finishes,
+#. and xz is going to remove the source file, xz first checks
+#. if the source file still exists, and if it does, does its
+#. device and inode numbers match what xz saw when it opened
+#. the source file. If these checks fail, this message is
+#. shown, %s being the filename, and the file is not deleted.
+#. The check for device and inode numbers is there, because
+#. it is possible that the user has put a new file in place
+#. of the original file, and in that case it obviously
+#. shouldn't be removed.
+#: src/xz/file_io.c:137
+#, c-format
+msgid "%s: File seems to have been moved, not removing"
+msgstr ""
+
+#: src/xz/file_io.c:144 src/xz/file_io.c:589
+#, c-format
+msgid "%s: Cannot remove: %s"
+msgstr ""
+
+#: src/xz/file_io.c:169
+#, c-format
+msgid "%s: Cannot set the file owner: %s"
+msgstr ""
+
+#: src/xz/file_io.c:175
+#, c-format
+msgid "%s: Cannot set the file group: %s"
+msgstr ""
+
+#: src/xz/file_io.c:194
+#, c-format
+msgid "%s: Cannot set the file permissions: %s"
+msgstr ""
+
+#: src/xz/file_io.c:337 src/xz/file_io.c:419
+#, c-format
+msgid "%s: Is a symbolic link, skipping"
+msgstr ""
+
+#: src/xz/file_io.c:454
+#, c-format
+msgid "%s: Is a directory, skipping"
+msgstr ""
+
+#: src/xz/file_io.c:461
+#, c-format
+msgid "%s: Not a regular file, skipping"
+msgstr ""
+
+#: src/xz/file_io.c:478
+#, c-format
+msgid "%s: File has setuid or setgid bit set, skipping"
+msgstr ""
+
+#: src/xz/file_io.c:485
+#, c-format
+msgid "%s: File has sticky bit set, skipping"
+msgstr ""
+
+#: src/xz/file_io.c:492
+#, c-format
+msgid "%s: Input file has more than one hard link, skipping"
+msgstr ""
+
+#: src/xz/file_io.c:713
+#, c-format
+msgid "Error restoring the O_APPEND flag to standard output: %s"
+msgstr ""
+
+#: src/xz/file_io.c:725
+#, c-format
+msgid "%s: Closing the file failed: %s"
+msgstr ""
+
+#: src/xz/file_io.c:761 src/xz/file_io.c:945
+#, c-format
+msgid "%s: Seeking failed when trying to create a sparse file: %s"
+msgstr ""
+
+#: src/xz/file_io.c:820
+#, c-format
+msgid "%s: Read error: %s"
+msgstr ""
+
+#: src/xz/file_io.c:843
+#, c-format
+msgid "%s: Error seeking the file: %s"
+msgstr ""
+
+#: src/xz/file_io.c:853
+#, c-format
+msgid "%s: Unexpected end of file"
+msgstr ""
+
+#: src/xz/file_io.c:903
+#, c-format
+msgid "%s: Write error: %s"
+msgstr ""
+
+#: src/xz/main.c:76
+#, c-format
+msgid "%s: Error reading filenames: %s"
+msgstr ""
+
+#: src/xz/main.c:83
+#, c-format
+msgid "%s: Unexpected end of input when reading filenames"
+msgstr ""
+
+#: src/xz/main.c:107
+#, c-format
+msgid "%s: Null character found when reading filenames; maybe you meant to use `--files0' instead of `--files'?"
+msgstr ""
+
+#: src/xz/main.c:157
+msgid "Compression and decompression with --robot are not supported yet."
+msgstr ""
+
+#: src/xz/main.c:214
+msgid "Cannot read data from standard input when reading filenames from standard input"
+msgstr ""
+
+#: src/xz/message.c:788 src/xz/message.c:832
+msgid "Internal error (bug)"
+msgstr ""
+
+#: src/xz/message.c:795
+msgid "Cannot establish signal handlers"
+msgstr ""
+
+#: src/xz/message.c:804
+msgid "No integrity check; not verifying file integrity"
+msgstr ""
+
+#: src/xz/message.c:807
+msgid "Unsupported type of integrity check; not verifying file integrity"
+msgstr ""
+
+#: src/xz/message.c:814
+msgid "Memory usage limit reached"
+msgstr ""
+
+#: src/xz/message.c:817
+msgid "File format not recognized"
+msgstr ""
+
+#: src/xz/message.c:820
+msgid "Unsupported options"
+msgstr ""
+
+#: src/xz/message.c:823
+msgid "Compressed data is corrupt"
+msgstr ""
+
+#: src/xz/message.c:826
+msgid "Unexpected end of input"
+msgstr ""
+
+#: src/xz/message.c:872
+#, c-format
+msgid "%s MiB of memory is required. The limit is %s."
+msgstr ""
+
+#: src/xz/message.c:1038
+#, c-format
+msgid "%s: Filter chain: %s\n"
+msgstr ""
+
+#: src/xz/message.c:1049
+#, c-format
+msgid "Try `%s --help' for more information."
+msgstr ""
+
+#: src/xz/message.c:1061
+#, c-format
+msgid "%s MiB (%s bytes)\n"
+msgstr ""
+
+#: src/xz/message.c:1090
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... [FILE]...\n"
+"Compress or decompress FILEs in the .xz format.\n"
+"\n"
+msgstr ""
+
+#: src/xz/message.c:1094
+msgid "Mandatory arguments to long options are mandatory for short options too.\n"
+msgstr ""
+
+#: src/xz/message.c:1098
+msgid " Operation mode:\n"
+msgstr ""
+
+#: src/xz/message.c:1101
+msgid ""
+"  -z, --compress      force compression\n"
+"  -d, --decompress    force decompression\n"
+"  -t, --test          test compressed file integrity\n"
+"  -l, --list          list information about files"
+msgstr ""
+
+#: src/xz/message.c:1107
+msgid ""
+"\n"
+" Operation modifiers:\n"
+msgstr ""
+
+#: src/xz/message.c:1110
+msgid ""
+"  -k, --keep          keep (don't delete) input files\n"
+"  -f, --force         force overwrite of output file and (de)compress links\n"
+"  -c, --stdout        write to standard output and don't delete input files"
+msgstr ""
+
+#: src/xz/message.c:1116
+msgid ""
+"      --no-sparse     do not create sparse files when decompressing\n"
+"  -S, --suffix=.SUF   use the suffix `.SUF' on compressed files\n"
+"      --files=[FILE]  read filenames to process from FILE; if FILE is\n"
+"                      omitted, filenames are read from the standard input;\n"
+"                      filenames must be terminated with the newline character\n"
+"      --files0=[FILE] like --files but use the null character as terminator"
+msgstr ""
+
+#: src/xz/message.c:1124
+msgid ""
+"\n"
+" Basic file format and compression options:\n"
+msgstr ""
+
+#: src/xz/message.c:1126
+msgid ""
+"  -F, --format=FMT    file format to encode or decode; possible values are\n"
+"                      `auto' (default), `xz', `lzma', and `raw'\n"
+"  -C, --check=CHECK   integrity check type: `crc32', `crc64' (default),\n"
+"                      `sha256', or `none' (use with caution)"
+msgstr ""
+
+#: src/xz/message.c:1133
+msgid ""
+"  -0 .. -9            compression preset; 0-2 fast compression, 3-5 good\n"
+"                      compression, 6-9 excellent compression; default is 6"
+msgstr ""
+
+#: src/xz/message.c:1137
+msgid ""
+"  -e, --extreme       use more CPU time when encoding to increase compression\n"
+"                      ratio without increasing memory usage of the decoder"
+msgstr ""
+
+#: src/xz/message.c:1142
+#, no-c-format
+msgid ""
+"  -M, --memory=NUM    use roughly NUM bytes of memory at maximum; 0 indicates\n"
+"                      the default setting, which is 40 % of total RAM"
+msgstr ""
+
+#: src/xz/message.c:1147
+msgid ""
+"\n"
+" Custom filter chain for compression (alternative for using presets):"
+msgstr ""
+
+#: src/xz/message.c:1152
+msgid ""
+"\n"
+"  --lzma1[=OPTS]      LZMA1 or LZMA2; OPTS is a comma-separated list of zero or\n"
+"  --lzma2[=OPTS]      more of the following options (valid values; default):\n"
+"                        preset=NUM reset options to preset number NUM (0-9)\n"
+"                        dict=NUM   dictionary size (4KiB - 1536MiB; 8MiB)\n"
+"                        lc=NUM     number of literal context bits (0-4; 3)\n"
+"                        lp=NUM     number of literal position bits (0-4; 0)\n"
+"                        pb=NUM     number of position bits (0-4; 2)\n"
+"                        mode=MODE  compression mode (fast, normal; normal)\n"
+"                        nice=NUM   nice length of a match (2-273; 64)\n"
+"                        mf=NAME    match finder (hc3, hc4, bt2, bt3, bt4; bt4)\n"
+"                        depth=NUM  maximum search depth; 0=automatic (default)"
+msgstr ""
+
+#: src/xz/message.c:1167
+msgid ""
+"\n"
+"  --x86[=OPTS]        x86 BCJ filter\n"
+"  --powerpc[=OPTS]    PowerPC BCJ filter (big endian only)\n"
+"  --ia64[=OPTS]       IA64 (Itanium) BCJ filter\n"
+"  --arm[=OPTS]        ARM BCJ filter (little endian only)\n"
+"  --armthumb[=OPTS]   ARM-Thumb BCJ filter (little endian only)\n"
+"  --sparc[=OPTS]      SPARC BCJ filter\n"
+"                      Valid OPTS for all BCJ filters:\n"
+"                        start=NUM  start offset for conversions (default=0)"
+msgstr ""
+
+#: src/xz/message.c:1179
+msgid ""
+"\n"
+"  --delta[=OPTS]      Delta filter; valid OPTS (valid values; default):\n"
+"                        dist=NUM   distance between bytes being subtracted\n"
+"                                   from each other (1-256; 1)"
+msgstr ""
+
+#: src/xz/message.c:1187
+msgid ""
+"\n"
+"  --subblock[=OPTS]   Subblock filter; valid OPTS (valid values; default):\n"
+"                        size=NUM   number of bytes of data per subblock\n"
+"                                   (1 - 256Mi; 4Ki)\n"
+"                        rle=NUM    run-length encoder chunk size (0-256; 0)"
+msgstr ""
+
+#: src/xz/message.c:1196
+msgid ""
+"\n"
+" Other options:\n"
+msgstr ""
+
+#: src/xz/message.c:1199
+msgid ""
+"  -q, --quiet         suppress warnings; specify twice to suppress errors too\n"
+"  -v, --verbose       be verbose; specify twice for even more verbose"
+msgstr ""
+
+#: src/xz/message.c:1204
+msgid "  -Q, --no-warn       make warnings not affect the exit status"
+msgstr ""
+
+#: src/xz/message.c:1206
+msgid "      --robot         use machine-parsable messages (useful for scripts)"
+msgstr ""
+
+#: src/xz/message.c:1209
+msgid "      --info-memory   display the memory usage limit and exit"
+msgstr ""
+
+#: src/xz/message.c:1211
+msgid ""
+"  -h, --help          display the short help (lists only the basic options)\n"
+"  -H, --long-help     display this long help and exit"
+msgstr ""
+
+#: src/xz/message.c:1215
+msgid ""
+"  -h, --help          display this short help and exit\n"
+"  -H, --long-help     display the long help (lists also the advanced options)"
+msgstr ""
+
+#: src/xz/message.c:1220
+msgid "  -V, --version       display the version number and exit"
+msgstr ""
+
+#: src/xz/message.c:1222
+msgid ""
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+
+#: src/xz/message.c:1226
+#, c-format
+msgid ""
+"On this system and configuration, this program will use a maximum of roughly\n"
+"%s MiB RAM and "
+msgstr ""
+
+#: src/xz/message.c:1228
+msgid ""
+"one thread.\n"
+"\n"
+msgstr ""
+
+#. TRANSLATORS: This message indicates the bug reporting address
+#. for this package. Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the email or WWW
+#. address for translation bugs. Thanks.
+#: src/xz/message.c:1237
+#, c-format
+msgid "Report bugs to <%s> (in English or Finnish).\n"
+msgstr ""
+
+#: src/xz/message.c:1239
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr ""
+
+#: src/xz/options.c:86
+#, c-format
+msgid "%s: Options must be `name=value' pairs separated with commas"
+msgstr ""
+
+#: src/xz/options.c:93
+#, c-format
+msgid "%s: Invalid option name"
+msgstr ""
+
+#: src/xz/options.c:113
+#, c-format
+msgid "%s: Invalid option value"
+msgstr ""
+
+#: src/xz/options.c:308
+#, c-format
+msgid "Unsupported LZMA1/LZMA2 preset: %s"
+msgstr ""
+
+#: src/xz/options.c:426
+msgid "The sum of lc and lp must be at maximum of 4"
+msgstr ""
+
+#: src/xz/options.c:431
+#, c-format
+msgid "The selected match finder requires at least nice=%<PRIu32>"
+msgstr ""
+
+#: src/xz/suffix.c:79 src/xz/suffix.c:164
+#, c-format
+msgid "%s: With --format=raw, --suffix=.SUF is required unless writing to stdout"
+msgstr ""
+
+#: src/xz/suffix.c:99
+#, c-format
+msgid "%s: Filename has an unknown suffix, skipping"
+msgstr ""
+
+#: src/xz/suffix.c:154
+#, c-format
+msgid "%s: File already has `%s' suffix, skipping"
+msgstr ""
+
+#: src/xz/suffix.c:205
+#, c-format
+msgid "%s: Invalid filename suffix"
+msgstr ""
+
+#: src/xz/util.c:54
+#, c-format
+msgid "%s: Value is not a non-negative decimal integer"
+msgstr ""
+
+#: src/xz/util.c:90
+#, c-format
+msgid "%s: Invalid multiplier suffix"
+msgstr ""
+
+#: src/xz/util.c:92
+msgid "Valid suffixes are `KiB' (2^10), `MiB' (2^20), and `GiB' (2^30)."
+msgstr ""
+
+#: src/xz/util.c:109
+#, c-format
+msgid "Value of the option `%s' must be in the range [%<PRIu64>, %<PRIu64>]"
+msgstr ""
+
+#: src/xz/util.c:283
+msgid "Empty filename, skipping"
+msgstr ""
+
+#: src/xz/util.c:297
+msgid "Compressed data cannot be read from a terminal"
+msgstr ""
+
+#: src/xz/util.c:310
+msgid "Compressed data cannot be written to a terminal"
+msgstr ""

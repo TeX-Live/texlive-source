@@ -1,0 +1,13 @@
+$Id$
+Public domain.  Originally written 2010 by Karl Berry.
+
+This directory contains things which are not part of the TeX Live build,
+but only present for convenience.
+
+djgpp support here is probably obsolete, but just in case.
+
+epstopdf is developed here because I didn't feel like making a separate
+  repository.
+
+xz-* is here so TL builders can easily get it
+  (http://tug.org/texlive/build.html)
