@@ -91,6 +91,12 @@ TEXMFHOME = ~/texmf
 %   TEXMFVAR = ~/.texmf-var  # teTeX 3.0 default
 TEXMFVAR = ~/.texlive2010/texmf-var
 
+% TEXMFCACHE, where luatools (from context) stores cached data.
+% The default setting gives each user a private copy of the
+% cache.  For sharing data between all users:
+%   TEXMFCACHE = $TEXMFSYSVAR
+TEXMFCACHE = $TEXMFVAR
+
 % TEXMFCONFIG, where texconfig stores configuration data.
 % With teTeX-3.0 or later, this must be set.
 % For sharing this tree with $TEXMFMAIN:
