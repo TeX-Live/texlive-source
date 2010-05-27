@@ -1,3 +1,9 @@
+2010-05-27  Karl Berry  <karl@tug.org>
+
+	* getopt.h (getopt) [!__GNU_LIBRARY__]: do not declare at all.
+	Previous conditional on __cplusplus did not work with Sun CC.
+	Maybe all systems we compile on have getopt now?  We'll see.
+
 2010-05-25  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): include fc-list for 
