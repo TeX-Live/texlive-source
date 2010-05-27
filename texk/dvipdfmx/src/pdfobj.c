@@ -2963,7 +2963,7 @@ pdf_open (const char *ident, FILE *file)
       unsigned char minor;
 
       if (!PDF_OBJ_NAMETYPE(new_version) ||
-	  sscanf(pdf_name_value(new_version), "1.%hhu", &minor) != 1) {
+	  sscanf(pdf_name_value(new_version), "1.%hu", &minor) != 1) {
 	pdf_release_obj(new_version);
 	WARN("Illegal Version entry in document catalog. Broken PDF file?");
 	goto error;
@@ -3008,7 +3008,7 @@ check_for_pdf_version (FILE *file)
   rewind(file);
 
   return (ungetc(fgetc(file), file) == '%' &&
-	  fscanf(file, "%%PDF-1.%hhu", &minor) == 1) ? minor : -1;
+	  fscanf(file, "%%PDF-1.%hu", &minor) == 1) ? minor : -1;
 }
 
 int
