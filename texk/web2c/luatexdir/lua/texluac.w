@@ -46,9 +46,15 @@
 
 #include "lua/luatex-api.h"
 
+
 @ @c
 static const char _svn_version[] =
-    "$Id: texluac.w 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/texluac.w $";
+    "$Id: texluac.w 3705 2010-05-28 07:19:20Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/texluac.w $";
+
+/*  fix for non-gcc compilation: */
+#if !defined(__GNUC__) || (__GNUC__ < 2) 
+# define __attribute__(x)
+#endif /* !defined(__GNUC__) || (__GNUC__ < 2) */
 
 @ @c
 #define PROGNAME        "texluac"       /* default program name */

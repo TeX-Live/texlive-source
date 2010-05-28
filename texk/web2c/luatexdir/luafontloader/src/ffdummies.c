@@ -28,9 +28,14 @@
 #include <ustring.h>
 
 static const char _svn_version[] =
-    "$Id: ffdummies.c 3360 2010-01-12 21:12:15Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/luafontloader/src/ffdummies.c $";
+    "$Id: ffdummies.c 3706 2010-05-28 07:21:15Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/luafontloader/src/ffdummies.c $";
 
+
+/* fix for non-gcc compilation: */
+#if !defined(__GNUC__) || (__GNUC__ < 2)
+# define __attribute__(x)
+#endif /* !defined(__GNUC__) || (__GNUC__ < 2) */
 
 char **gww_errors = NULL;
 int gww_error_count = 0;
