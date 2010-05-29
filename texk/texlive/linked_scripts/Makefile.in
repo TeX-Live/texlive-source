@@ -211,6 +211,7 @@ nobase_dist_script_SCRIPTS = \
 	latexdiff/latexdiff-vc.pl \
 	latexdiff/latexrevise.pl \
 	latexmk/latexmk.pl \
+	luaotfload/mkluatexfontdb.lua \
 	listings-ext/listings-ext.sh \
 	mkjobtexmf/mkjobtexmf.pl \
 	mkgrkindex/mkgrkindex \
