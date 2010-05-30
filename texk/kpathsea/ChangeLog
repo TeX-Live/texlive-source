@@ -2,6 +2,7 @@
 
 	* texmf.cnf: relax LUAINPUTS not to require and extra "lua"
 	subdirectory for modules in texmfscripts.
+	* texmf.cnf: enlarge trie_size to fit with latest hyph-utf8 release.
 
 2010-05-27  Karl Berry  <karl@tug.org>
 
