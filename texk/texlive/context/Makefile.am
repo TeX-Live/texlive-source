@@ -13,7 +13,6 @@ bin_SCRIPTS = \
 	context \
 	ctxtools \
 	luatools \
-	metatex \
 	mtxrun \
 	pstopdf \
 	rlxtools \
