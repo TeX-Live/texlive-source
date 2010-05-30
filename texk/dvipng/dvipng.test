@@ -3,20 +3,20 @@
 # Public domain.  Originally written by Peter Breitenlohner, 2009.
 
 get_val () {
-  res=$(kpsewhich "$@") || { echo "\"kpsewhich $@\" failed"; exit 77; }
+  res=`kpsewhich "$@"` || { echo "\"kpsewhich $@\" failed"; exit 77; }
 }
 
 get_val mktex.cnf
-TEXMFCNF=$(dirname $res)
+TEXMFCNF=`dirname $res`
 get_val psfonts.map
-TEXFONTMAPS=$(dirname $(dirname $res))//
+TEXFONTMAPS=`dirname \`dirname $res\``//
 get_val 8r.enc
-ENCFONTS=$(dirname $(dirname $res))//
+ENCFONTS=`dirname \`dirname $res\``//
 get_val --expand-var='$TEXMFMAIN'
 TEXMFMAIN=$res
 get_val --expand-var='$TEXMFDIST'
 TEXMFDIST=$res
-TEXMFLOCAL=$(kpsewhich --expand-var='$TEXMFLOCAL')
+TEXMFLOCAL=`kpsewhich --expand-var='$TEXMFLOCAL'`
 
 export TEXMFCNF TEXFONTMAPS ENCFONTS TEXMFMAIN TEXMFDIST TEXMFLOCAL
 

@@ -11,6 +11,6 @@ tfmpath=`$KPSEWHICH cmbx10.tfm` || exit 77
 testdir=$srcdir/ptexdir/tests
 
 TEXMFCNF=$srcdir/../kpathsea \
-  TFMFONTS=$testdir:$(dirname $(dirname $(dirname $tfmpath)))// \
+  TFMFONTS=$testdir:`dirname \`dirname \\\`dirname $tfmpath\\\`\``// \
   ./pdvitype -show-opcodes $testdir/sample >tests/xsample.typ || exit 1
 
