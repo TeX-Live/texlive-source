@@ -1,3 +1,8 @@
+2010-05-30  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+
+	* texmf.cnf: relax LUAINPUTS not to require and extra "lua"
+	subdirectory for modules in texmfscripts.
+
 2010-05-27  Karl Berry  <karl@tug.org>
 
 	* getopt.h (getopt) [!__GNU_LIBRARY__]: do not declare at all.

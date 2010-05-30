@@ -431,7 +431,7 @@ TW_INIPATH = $TW_LIBPATH
 % Find scripts that are distributed/installed in the texmf tree.
 
 % Lua needs to look in TEXINPUTS for lua scripts distributed with packages.
-LUAINPUTS = .;$TEXMF/scripts/{$progname,$engine,}/lua//;$TEXINPUTS
+LUAINPUTS = .;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXINPUTS
 
 % Lua needs to look for binary lua libraries distributed with packages.
 CLUAINPUTS = .;$SELFAUTOLOC/lib/{$progname,$engine,}/lua//
