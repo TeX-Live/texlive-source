@@ -1,3 +1,8 @@
+2010-05-30  Karl Berry  <karl@tug.org>
+
+	* configure.ac: add context subdir, 2010.
+	* context: new subdir.
+
 2009-12-14  Karl Berry  <karl@tug.org>
 
 	* *.bat, old format scripts: remove, obsolete.

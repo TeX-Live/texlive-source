@@ -33,14 +33,6 @@ nobase_dist_script_SCRIPTS = \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
-	context/context \
-	context/ctxtools \
-	context/luatools \
-	context/metatex \
-	context/mtxrun \
-	context/rlxtools \
-	context/texexec \
-	context/texmfstart \
 	de-macro/de-macro \
 	dviasm/dviasm.py \
 	epspdf/epspdf \

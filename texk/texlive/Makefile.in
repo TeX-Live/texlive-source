@@ -188,7 +188,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-SUBDIRS = linked_scripts
+SUBDIRS = context linked_scripts
 EXTRA_DIST = w32_wrapper
 all: all-recursive
 
