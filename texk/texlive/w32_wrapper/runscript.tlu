@@ -199,6 +199,8 @@ local docstr = [[
           (Adobe Reader crash case)
         - fixed argument processing for direct execution under texlua
         - more doc tweaks
+    2010/05/30
+        - Windows XP or newer required to run TeXworks
 ]]
 
 -- HELPER SUBROUTINES --
