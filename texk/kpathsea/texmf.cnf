@@ -465,9 +465,9 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 %
 TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}
 
-# kpathsea 3.5.3 and later sets these at runtime. To avoid empty
-# expansions from binaries linked against an earlier version of the
-# library, we set $progname and $engine to something non-empty:
+% kpathsea 3.5.3 and later sets these at runtime. To avoid empty
+% expansions from binaries linked against an earlier version of the
+% library, we set $progname and $engine to something non-empty:
 progname = unsetprogname
 engine = unsetengine
 
@@ -505,12 +505,10 @@ shell_escape = p
 % restrictions similar or higher to openout_any=p.  They also have no
 % features to invoke arbitrary other programs, and no known exploitable
 % bugs.  All to the best of our knowledge.  They also have practical use
-% for being called from TeX.  (fc-list is used for the Lua(La)TeX system
-% font cache file.)
+% for being called from TeX.
 % 
 shell_escape_commands = \
 bibtex,bibtex8,\
-fc-list,\
 kpsewhich,\
 makeindex,\
 repstopdf,\
