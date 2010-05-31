@@ -1,4 +1,4 @@
-% $Id: mp.w 1219 2010-04-01 09:05:51Z taco $
+% $Id: mp.w 1242 2010-05-31 08:18:21Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -25953,6 +25953,8 @@ static char *mp_set_output_file_name (MP mp, integer c) {
   unsigned old_setting; /* previous |selector| setting */
   pool_pointer i; /*  indexes into |filename_template|  */
   integer f; /* field width */
+  str_room(1024); /* have to prevent reallocation of the
+               	     string pool during this template processing */
   if ( mp->job_name==NULL ) mp_open_log_file(mp);
   if ( mp->internal[mp_output_template]==0) { 
     char *s; /* a file extension derived from |c| */

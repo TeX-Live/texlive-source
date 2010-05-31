@@ -1,8 +1,12 @@
-2010-05-19  Taco Hoekwater  <taco@luatex>
+2010-05-31  Taco Hoekwater  <taco@luatex.org>
+	* mp.w (mp_set_output_file_name): prevent reallocation of 
+	string pool during output file name generation.
+	
+2010-05-19  Taco Hoekwater  <taco@luatex.org>
 
 	* mpost.w: add WEB2CVERSION to the banner.
 
-2010-04-13  Taco Hoekwater  <taco@luatex>
+2010-04-13  Taco Hoekwater  <taco@luatex.org>
 
 	* new import from luatex repository (HEAD of 0.60.x branch)
 
