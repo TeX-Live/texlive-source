@@ -1,6 +1,10 @@
 2010-05-31  Karl Berry  <karl@tug.org>
 
-	* patch-09-unistd.
+	* Added patch-07-libdvisvgm-uint32.
+	* src/FontEngine.cpp: must cast &glyphindex to (FT_Uint *)
+	for AIX compiler (tlbuild 28 May 2010 15:23:25).
+
+	Added patch-09-unistd.
 	* src/FileSystem.cpp: unconditionally include <unistd.h>.
 	(Needed on AIX, tlbuild 28 May 2010 15:08:06.)
 
