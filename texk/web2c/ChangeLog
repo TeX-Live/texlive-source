@@ -1,5 +1,9 @@
 2010-05-31  Karl Berry  <karl@tug.org>
 
+	* configure.ac (AC_CHECK_FUNCS): remove stat64, since we are not
+	prepared for largefile support in general, and this gives a false
+	positive on AIX.  tlbuild mail from vvv, 27 May 2010 20:15:40.
+
 	* synctex.c [__attribute__]: #define __attribute__ away if it is
 	not defined.  tlbuild mail, 28 May 2010 14:34:53.
 
