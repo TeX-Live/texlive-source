@@ -21,6 +21,9 @@
 #include <zzip/lib.h>           /* exported... */
 #include <zzip/file.h>
 #include <string.h>
+#if defined(_AIX)
+#include <strings.h> /* for strcasecmp */
+#endif
 #include <sys/stat.h>
 
 #define ZZIP_USE_INTERNAL

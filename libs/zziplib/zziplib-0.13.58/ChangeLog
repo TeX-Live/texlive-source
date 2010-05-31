@@ -1,3 +1,8 @@
+2010-05-31  Taco Hoekwater <taco@luatex.org>
+
+	* zzip/stat.c: add loading of <strings.h> under _AIX to bring
+	  in the strcasecmp function.
+
 2009-08-23  guidod  <guidod@gmx.de>
 
 	* Makefile.mk: remove some old stuff related to the compilefarm
