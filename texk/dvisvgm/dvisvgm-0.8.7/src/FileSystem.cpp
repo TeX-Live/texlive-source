@@ -23,9 +23,7 @@
 #include <fstream>
 #include "FileSystem.h"
 
-#ifdef __GNUC__
 #include <unistd.h>
-#endif
 
 
 using namespace std;

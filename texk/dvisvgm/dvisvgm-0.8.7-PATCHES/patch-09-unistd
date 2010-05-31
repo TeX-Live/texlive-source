@@ -1,0 +1,17 @@
+	<unistd.h> is ubiquitious these days.
+	Needed on AIX, tlbuild 28 May 2010 15:08:06.
+
+Index: FileSystem.cpp
+===================================================================
+--- FileSystem.cpp	(revision 18648)
++++ FileSystem.cpp	(working copy)
+@@ -23,9 +23,7 @@
+ #include <fstream>
+ #include "FileSystem.h"
+ 
+-#ifdef __GNUC__
+ #include <unistd.h>
+-#endif
+ 
+ 
+ using namespace std;
