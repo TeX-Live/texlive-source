@@ -672,10 +672,10 @@ parse_line()
 ###############################################################################
 find_hyphenfile()
 {
-  format="$1"; hyphenation="$2"
+  format="$1"; hyphenation="`echo $2 | sed 's/,/ /g'`"
   case $hyphenation in
     -) ;;
-    *) kpsewhich -progname="$format" -format=tex "$hyphenation";;
+    *) kpsewhich -progname="$format" -format=tex $hyphenation;;
   esac
 }
 
@@ -842,7 +842,7 @@ listcfg_loop()
 check_match()
 {
   $need_find_hyphenfile && \
-    this_hyphenfile=`find_hyphenfile "$format" "$hyphenation"`
+    this_hyphenfile="`find_hyphenfile "$format" "$hyphenation"`"
 
   eval $match_cmd && setmatch true
 }
@@ -909,7 +909,7 @@ recreate_by_hyphenfile()
       ;;
   esac
   need_find_hyphenfile=true
-  match_cmd="test x\$this_hyphenfile = x$hyphenfile"
+  match_cmd="echo \"\$this_hyphenfile\" | grep $hyphenfile >/dev/null"
 
   # No match before the loop:
   setmatch false

@@ -1,3 +1,7 @@
+2010-05-31  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+
+	* fmtutil: allow more than one language file per format.
+
 2010-05-20  Karl Berry  <karl@tug.org>
 
 	* doc/TETEXDOC.dvi,
