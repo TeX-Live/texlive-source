@@ -7,6 +7,9 @@
 ## texmf-dist/scripts/context/stubs/unix.  They should be kept in sync.
 ## The scripts here are installed as-is into each Unixish bin directory.
 ##
+## Because mptopdf.pl is not part of the context/stubs directory, it is
+## handled through a symlink, see ../linked_scripts.
+## 
 ACLOCAL_AMFLAGS = -I ../../m4
 
 bin_SCRIPTS = \

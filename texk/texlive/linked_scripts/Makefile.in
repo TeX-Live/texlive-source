@@ -182,6 +182,7 @@ nobase_dist_script_SCRIPTS = \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
+	context/perl/mptopdf.pl \
 	de-macro/de-macro \
 	dviasm/dviasm.py \
 	epspdf/epspdf \
@@ -554,13 +555,13 @@ uninstall-am: uninstall-binSCRIPTS uninstall-nobase_dist_scriptSCRIPTS \
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,
-# ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk space,
-# but much more importantly omit duplication, and most importantly of
-# all make it possible to invoke the same Perl script on Windows (via
-# tl-w32-wrapper).
+# ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk
+# space, but much more importantly omit duplication, and most
+# importantly of all make it possible to invoke the same Perl script on
+# Windows (see ../w32_wrapper).
 #
 # The installation into texmf*/scripts is ideally done with ctan2tl.
-# The copy of the wrapper for Windows is also done by hand, but
+# The copy of the wrapper for Windows is done by hand, but (todo)
 # could/should also be done by ctan2tl.  The check-wrapper-consistency
 # script at least checks after the fact for problems.
 #
@@ -568,7 +569,7 @@ uninstall-am: uninstall-binSCRIPTS uninstall-nobase_dist_scriptSCRIPTS \
 # This is purely for other distro builders, so symlinks are not dangling in
 # the inst/bin dir (it is meaningless in native TL).  We have not yet
 # written the auto-update to ensure linked_scripts is actually up to date
-# with the masters in Master/texmf*/scripts, but it will happen.
+# with the masters in Master/texmf*/scripts, but one day.
 #
 # We support both multiplatform and non-multiplatform builds.
 #
