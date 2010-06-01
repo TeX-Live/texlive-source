@@ -8340,28 +8340,13 @@ local function reset_hashes()
 end
 
 local function check_configuration() -- not yet ok, no time for debugging now
-    local ie, iv = instance.environment, instance.variables
-    local function fix(varname,default)
-        local proname = varname .. "." .. instance.progname or "crap"
-        local p, v = ie[proname], ie[varname] or iv[varname]
-        if not ((p and p ~= "") or (v and v ~= "")) then
-            iv[varname] = default -- or environment?
-        end
-    end
-    local name = os.name
-    if name == "windows" then
-        fix("OSFONTDIR", "c:/windows/fonts//")
-    elseif name == "macosx" then
-        fix("OSFONTDIR", "$HOME/Library/Fonts//;/Library/Fonts//;/System/Library/Fonts//")
-    else
-        -- bad luck
-    end
-    fix("LUAINPUTS"   , ".;$TEXINPUTS;$TEXMFSCRIPTS") -- no progname, hm
-    -- this will go away some day
-    fix("FONTFEATURES", ".;$TEXMF/fonts/{data,fea}//;$OPENTYPEFONTS;$TTFONTS;$T1FONTS;$AFMFONTS")
-    fix("FONTCIDMAPS" , ".;$TEXMF/fonts/{data,cid}//;$OPENTYPEFONTS;$TTFONTS;$T1FONTS;$AFMFONTS")
-    --
-    fix("LUATEXLIBS"  , ".;$TEXMF/luatex/lua//")
+   if os.env["OSFONTDIR"] then
+      -- ok
+   elseif os.type == "windows" then
+      os.setenv("OSFONTDIR","c:/windows/fonts//")
+   elseif os.type == "macosx" then
+      os.setenv("OSFONTDIR","$HOME/Library/Fonts//;/Library/Fonts//;/System/Library/Fonts//")
+   end 
 end
 
 function resolvers.bare_variable(str) -- assumes str is a string

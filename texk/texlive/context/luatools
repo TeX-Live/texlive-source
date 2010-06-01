@@ -516,7 +516,55 @@ local concat, sort, insert, remove = table.concat, table.sort, table.insert, tab
 local format, find, gsub, lower, dump, match = string.format, string.find, string.gsub, string.lower, string.dump, string.match
 local getmetatable, setmetatable = getmetatable, setmetatable
 local type, next, tostring, tonumber, ipairs = type, next, tostring, tonumber, ipairs
-local unpack = unpack or table.unpack
+
+-- Starting with version 5.2 Lua no longer provide ipairs, which makes
+-- sense. As we already used the for loop and # in most places the
+-- impact on ConTeXt was not that large; the remaining ipairs already
+-- have been replaced. In a similar fashio we also hardly used pairs.
+--
+-- Just in case, we provide the fallbacks as discussed in Programming
+-- in Lua (http://www.lua.org/pil/7.3.html):
+
+if not ipairs then
+
+    -- for k, v in ipairs(t) do                ... end
+    -- for k=1,#t            do local v = t[k] ... end
+
+    local function iterate(a,i)
+        i = i + 1
+        local v = a[i]
+        if v ~= nil then
+            return i, v --, nil
+        end
+    end
+
+    function ipairs(a)
+        return iterate, a, 0
+    end
+
+end
+
+if not pairs then
+
+    -- for k, v in pairs(t) do ... end
+    -- for k, v in next, t  do ... end
+
+    function pairs(t)
+        return next, t -- , nil
+    end
+
+end
+
+-- Also, unpack has been moved to the table table, and for compatiility
+-- reasons we provide both now.
+
+if not table.unpack then
+    table.unpack = _G.unpack
+elseif not unpack then
+    _G.unpack = table.unpack
+end
+
+-- extra functions, some might go (when not used)
 
 function table.strip(tab)
     local lst = { }
@@ -703,7 +751,7 @@ end
 table.fastcopy = fastcopy
 table.copy     = copy
 
--- rougly: copy-loop : unpack : sub == 0.9 : 0.4 : 0.45 (so in critical apps, use unpack)
+-- roughly: copy-loop : unpack : sub == 0.9 : 0.4 : 0.45 (so in critical apps, use unpack)
 
 function table.sub(t,i,j)
     return { unpack(t,i,j) }
@@ -726,7 +774,7 @@ function table.one_entry(t) -- obolete, use inline code instead
     return n and not next(t,n)
 end
 
---~ function table.starts_at(t) -- obsolete, not nice
+--~ function table.starts_at(t) -- obsolete, not nice anyway
 --~     return ipairs(t,1)(t,0)
 --~ end
 
@@ -1363,6 +1411,7 @@ function table.insert_after_value(t,value,extra)
     end
     insert(t,#t+1,extra)
 end
+
 
 
 end -- of closure
@@ -3665,6 +3714,10 @@ function aux.accesstable(target)
     return t
 end
 
+--~ function string.commaseparated(str)
+--~     return gmatch(str,"([^,%s]+)")
+--~ end
+
 -- as we use this a lot ...
 
 --~ function aux.cachefunction(action,weak)
@@ -5090,28 +5143,13 @@ local function reset_hashes()
 end
 
 local function check_configuration() -- not yet ok, no time for debugging now
-    local ie, iv = instance.environment, instance.variables
-    local function fix(varname,default)
-        local proname = varname .. "." .. instance.progname or "crap"
-        local p, v = ie[proname], ie[varname] or iv[varname]
-        if not ((p and p ~= "") or (v and v ~= "")) then
-            iv[varname] = default -- or environment?
-        end
-    end
-    local name = os.name
-    if name == "windows" then
-        fix("OSFONTDIR", "c:/windows/fonts//")
-    elseif name == "macosx" then
-        fix("OSFONTDIR", "$HOME/Library/Fonts//;/Library/Fonts//;/System/Library/Fonts//")
-    else
-        -- bad luck
-    end
-    fix("LUAINPUTS"   , ".;$TEXINPUTS;$TEXMFSCRIPTS") -- no progname, hm
-    -- this will go away some day
-    fix("FONTFEATURES", ".;$TEXMF/fonts/{data,fea}//;$OPENTYPEFONTS;$TTFONTS;$T1FONTS;$AFMFONTS")
-    fix("FONTCIDMAPS" , ".;$TEXMF/fonts/{data,cid}//;$OPENTYPEFONTS;$TTFONTS;$T1FONTS;$AFMFONTS")
-    --
-    fix("LUATEXLIBS"  , ".;$TEXMF/luatex/lua//")
+   if os.env["OSFONTDIR"] then
+      -- ok
+   elseif os.type == "windows" then
+      os.setenv("OSFONTDIR","c:/windows/fonts//")
+   elseif os.type == "macosx" then
+      os.setenv("OSFONTDIR","$HOME/Library/Fonts//;/Library/Fonts//;/System/Library/Fonts//")
+   end 
 end
 
 function resolvers.bare_variable(str) -- assumes str is a string
@@ -6078,8 +6116,11 @@ function resolvers.expand_variables()
     local expansions, environment, variables = { }, instance.environment, instance.variables
     local env = resolvers.env
     instance.expansions = expansions
-    if instance.engine   ~= "" then environment['engine']   = instance.engine   end
-    if instance.progname ~= "" then environment['progname'] = instance.progname end
+    local engine, progname = instance.engine, instance.progname
+    if type(engine)   ~= "string" then instance.engine,   engine   = "", "" end
+    if type(progname) ~= "string" then instance.progname, progname = "", "" end
+    if engine   ~= "" then environment['engine']   = engine   end
+    if progname ~= "" then environment['progname'] = progname end
     for k,v in next, environment do
         local a, b = match(k,"^(%a+)%_(.*)%s*$")
         if a and b then
