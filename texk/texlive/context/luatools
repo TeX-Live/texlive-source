@@ -7117,7 +7117,7 @@ caches.more     = caches.more or "context"
 caches.direct   = false -- true is faster but may need huge amounts of memory
 caches.tree     = false
 caches.paths    = caches.paths or nil
-caches.force    = false
+caches.force    = true -- changed for TEXLIVE by TH
 caches.defaults = { "TEXMFCACHE", "TMPDIR", "TEMPDIR", "TMP", "TEMP", "HOME", "HOMEPATH" }
 
 function caches.temp()

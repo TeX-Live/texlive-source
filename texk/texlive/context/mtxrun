@@ -9313,8 +9313,11 @@ function resolvers.expand_variables()
     local expansions, environment, variables = { }, instance.environment, instance.variables
     local env = resolvers.env
     instance.expansions = expansions
-    if instance.engine   ~= "" then environment['engine']   = instance.engine   end
-    if instance.progname ~= "" then environment['progname'] = instance.progname end
+    local engine, progname = instance.engine, instance.progname
+    if type(engine)   ~= "string" then instance.engine,   engine   = "", "" end
+    if type(progname) ~= "string" then instance.progname, progname = "", "" end
+    if engine   ~= "" then environment['engine']   = engine   end
+    if progname ~= "" then environment['progname'] = progname end
     for k,v in next, environment do
         local a, b = match(k,"^(%a+)%_(.*)%s*$")
         if a and b then
@@ -10311,7 +10314,7 @@ caches.more     = caches.more or "context"
 caches.direct   = false -- true is faster but may need huge amounts of memory
 caches.tree     = false
 caches.paths    = caches.paths or nil
-caches.force    = false
+caches.force    = true -- changed for TEXLIVE by TH
 caches.defaults = { "TEXMFCACHE", "TMPDIR", "TEMPDIR", "TMP", "TEMP", "HOME", "HOMEPATH" }
 
 function caches.temp()
