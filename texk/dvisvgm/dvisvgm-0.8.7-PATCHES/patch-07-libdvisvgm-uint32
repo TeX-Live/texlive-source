@@ -1,7 +1,6 @@
-Index: FontEngine.cpp
-===================================================================
---- FontEngine.cpp	(revision 18651)
-+++ FontEngine.cpp	(working copy)
+diff -ur dvisvgm-0.8.7.orig/src/FontEngine.cpp dvisvgm-0.8.7/src/FontEngine.cpp
+--- dvisvgm-0.8.7.orig/src/FontEngine.cpp	2009-11-06 22:17:58.000000000 +0100
++++ dvisvgm-0.8.7/src/FontEngine.cpp	2010-05-31 20:39:11.000000000 +0200
 @@ -59,11 +59,15 @@
   * @param[out] reverseMap the resulting map */
  static void build_reverse_map (FT_Face face, map<UInt32, UInt32> &reverseMap) {

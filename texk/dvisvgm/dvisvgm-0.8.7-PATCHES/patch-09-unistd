@@ -1,10 +1,9 @@
 	<unistd.h> is ubiquitious these days.
 	Needed on AIX, tlbuild 28 May 2010 15:08:06.
 
-Index: FileSystem.cpp
-===================================================================
---- FileSystem.cpp	(revision 18648)
-+++ FileSystem.cpp	(working copy)
+diff -ur dvisvgm-0.8.7.orig/src/FileSystem.cpp dvisvgm-0.8.7/src/FileSystem.cpp
+--- dvisvgm-0.8.7.orig/src/FileSystem.cpp	2009-11-06 22:17:58.000000000 +0100
++++ dvisvgm-0.8.7/src/FileSystem.cpp	2010-05-31 19:29:13.000000000 +0200
 @@ -23,9 +23,7 @@
  #include <fstream>
  #include "FileSystem.h"

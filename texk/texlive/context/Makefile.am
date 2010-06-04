@@ -22,3 +22,5 @@ bin_SCRIPTS = \
 	texexec \
 	texmfstart
 
+EXTRA_DIST = $(bin_SCRIPTS)
+

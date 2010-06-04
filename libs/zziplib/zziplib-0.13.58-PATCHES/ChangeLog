@@ -1,3 +1,9 @@
+2010-06-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-aix-strcasecmp (new): Need to #include <strings.h>
+	under _AIX for declaration of strcasecmp().
+	From Taco.
+
 2010-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-old-style-parameter (new): Avoid compiler warning.
