@@ -1,15 +1,18 @@
 2010-06-04  Taco Hoekwater <taco@luatex.org>
+
 	* luatex.c (shell_cmd_is_allowed): make sure only commands with
 	absolute path names are executed on win32 in restricted mode --
 	patch from Akira Katuto.
 
 2010-05-28  Taco Hoekwater <taco@luatex.org>
+
 	* luamd5/md.5c: bring in a new version from kepler to fix a
 	portability problem with stdint.h.
 	* luafontloader/src/ffdummies.c, lua/texluac.w: guard __attribute__
 	usage, which is a GNUC only feature.
 	    
 2010-05-19  Taco Hoekwater <taco@luatex.org>
+
 	* printing.w (print_banner, log_banner), luainit.w (lua_initialize):
 	add WEB2CVERSION to the banner.
 
