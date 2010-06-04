@@ -272,8 +272,8 @@ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
 #   define SYNCTEX_RULE_HT ruleht
 #   define SYNCTEX_RULE_DP ruledp
 
-/*  Do not worry if the compiler doesn't support __attribute__.  */
-#   ifndef __attribute__
+/*  For non-GCC compilation.  */
+#   if !defined(__GNUC__) || (__GNUC__ < 2)
 #   define __attribute__(A)
 #   endif
 
