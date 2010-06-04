@@ -15,7 +15,7 @@
 #include "luatex_svnversion.h"
 
 static const char _svn_version[] =
-    "$Id: luatex.c 3678 2010-05-06 08:46:53Z taco $ "
+    "$Id: luatex.c 3714 2010-06-04 12:33:50Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/luatex.c $";
 
 #define TeX
@@ -33,6 +33,10 @@ const char *engine_name = "luatex";     /* the name of this engine */
 #include <kpathsea/variable.h>
 #include <kpathsea/absolute.h>
 #include <kpathsea/recorder.h>
+#ifdef WIN32
+#include <kpathsea/concatn.h>
+#endif
+
 
 #include <time.h>               /* For `struct tm'.  */
 #if defined (HAVE_SYS_TIME_H)
@@ -347,6 +351,36 @@ int shell_cmd_is_allowed(const char **cmd, char **safecmd, char **cmdname)
             *d++ = QUOTE;
         }
         *d = '\0';
+#ifdef WIN32
+        {
+          char *p, *q, *r;
+          p = *safecmd;
+          if (!(IS_DIR_SEP (p[0]) && IS_DIR_SEP (p[1])) &&
+              !(p[1] == ':' && IS_DIR_SEP (p[2]))) { 
+            p = (char *) kpse_var_value ("SELFAUTOLOC");
+            if (p) {
+              r = *safecmd;
+              while (*r && !Isspace(*r))
+                r++;
+              if (*r == '\0')
+                q = concatn ("\"", p, "/", *safecmd, "\"", NULL);
+              else {
+                *r = '\0';
+                r++;
+                while (*r && Isspace(*r))
+                  r++;
+                if (*r)
+                  q = concatn ("\"", p, "/", *safecmd, "\" ", r, NULL);
+                else
+                  q = concatn ("\"", p, "/", *safecmd, "\"", NULL);
+              }
+              free (p);
+              free (*safecmd);
+              *safecmd = q;
+            }
+          }
+        }
+#endif
     }
 
     return allow;
