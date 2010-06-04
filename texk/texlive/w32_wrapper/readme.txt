@@ -188,4 +188,7 @@
         - more doc tweaks
     2010/05/30
         - Windows XP or newer required to run TeXworks
+    2010/06/04
+        - added support for Perl scripts starting with eval-exec-perl 
+          construct in place of she-bang (#!)
 

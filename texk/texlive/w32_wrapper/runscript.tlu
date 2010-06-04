@@ -201,6 +201,9 @@ local docstr = [[
         - more doc tweaks
     2010/05/30
         - Windows XP or newer required to run TeXworks
+    2010/06/04
+        - added support for Perl scripts starting with eval-exec-perl 
+          construct in place of she-bang (#!)
 ]]
 
 -- HELPER SUBROUTINES --
@@ -263,7 +266,11 @@ local function shebang_to_argv(progfullname)
   if not fid then return nil, errmsg end
   local fstln = fid:read('*line')
   fid:close()
-  if (string.sub(fstln, 1, 2) ~= '#!') then
+  if string.find(fstln, "eval.*exit.*exec.*perl") then 
+    -- special case of Perl's time-honoured "totally devious construct":
+    -- eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $argv:q'
+    return {"perl"}
+  elseif (string.sub(fstln, 1, 2) ~= '#!') then
     return nil, "don't know how to execute script: "..progfullname
   end
   local argv = string.explode( string.sub(fstln, 3) ) -- split on spaces
