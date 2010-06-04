@@ -1,3 +1,8 @@
+2010-06-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c: include kpathsea/concatn.h and remove cast
+	for concatn ().
+
 2010-05-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: on win32, all restricted shell escape commands are

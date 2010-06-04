@@ -19,6 +19,7 @@
 #include <kpathsea/variable.h>
 #include <kpathsea/absolute.h>
 #include <kpathsea/recorder.h>
+#include <kpathsea/concatn.h>
 
 #include <time.h> /* For `struct tm'.  */
 #if defined (HAVE_SYS_TIME_H)
@@ -416,16 +417,16 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
           while (*r && !Isspace(*r))
             r++;
           if (*r == '\0')
-            q = (char *) concatn ("\"", p, "/", *safecmd, "\"", NULL);
+            q = concatn ("\"", p, "/", *safecmd, "\"", NULL);
           else {
             *r = '\0';
             r++;
             while (*r && Isspace(*r))
               r++;
             if (*r)
-              q = (char *) concatn ("\"", p, "/", *safecmd, "\" ", r, NULL);
+              q = concatn ("\"", p, "/", *safecmd, "\" ", r, NULL);
             else
-              q = (char *) concatn ("\"", p, "/", *safecmd, "\"", NULL);
+              q = concatn ("\"", p, "/", *safecmd, "\"", NULL);
           }
           free (p);
           free (*safecmd);
