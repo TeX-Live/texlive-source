@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2010-06-04  Karl Berry <karl@tug.org>
+	
+	* configure.ac (ptexenc_lib_devel): no more dev.
+
 2010-05-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (nobase_nodist_include_HEADERS): Removed,
