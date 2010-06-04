@@ -1,3 +1,8 @@
+2010-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-const: Change OutputFormat and PipeOutputFormat back
+	to non-const.
+
 2010-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-strcpy-bug (new): Bug fixes:

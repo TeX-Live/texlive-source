@@ -1010,7 +1010,7 @@ enable_largefile
 enable_compiler_warnings
 enable_cxx_runtime_hack
 enable_libtool_hack
-with_tex_banner
+with_banner_add
 with_editor
 enable_auto_core
 enable_dump_share
@@ -1750,7 +1750,7 @@ Optional Packages:
   --with-pic              try to use only PIC/non-PIC objects [default=use
                           both]
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
-  --with-tex-banner=STR   version string appended to banner lines [Web2C YEAR]
+  --with-banner-add=STR   add STR to version string appended to banner lines
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
   --without-mf-x-toolkit  do not use X toolkit for METAFONT
   --with-fontconfig-includes=DIR
@@ -16636,9 +16636,9 @@ fi
 ## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options for TeX and MF
 
-# Check whether --with-tex-banner was given.
-if test "${with_tex_banner+set}" = set; then :
-  withval=$with_tex_banner;
+# Check whether --with-banner-add was given.
+if test "${with_banner_add+set}" = set; then :
+  withval=$with_banner_add;
 fi
 
 # Check whether --with-editor was given.
@@ -16816,16 +16816,13 @@ if test "${enable_web_progs+set}" = set; then :
 fi
 
 
-case $with_tex_banner in #(
-  ''|yes|no) :
-    with_tex_banner="Web2C $WEB2CVERSION" ;; #(
-  *) :
-    if echo "$with_tex_banner" | grep -v "$WEB2CVERSION" >/dev/null; then :
-  as_fn_error "Bad \`--with-tex-banner=$with_tex_banner' version string (must contain \` $WEB2CVERSION')" "$LINENO" 5
-fi ;;
-esac
+if test "x$enable_texlive_build" = xyes; then :
+  banner_pre='TeX Live'
+else
+  banner_pre='Web2C'
+fi
 cat >>confdefs.h <<_ACEOF
-#define WEB2CVERSION " ($with_tex_banner)"
+#define WEB2CVERSION " ($banner_pre $WEB2CVERSION$with_banner_add)"
 _ACEOF
 
 

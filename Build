@@ -65,9 +65,6 @@ cd $TL_WORKDIR || exit 1
 # allow override of configure location, just in case.
 : ${TL_CONFIGURE=../configure}
 
-# banner for TeX et al.
-: ${TL_CONF_BANNER=--with-tex-banner='"TeX Live 2010/pretest"'}
-
 # longinteger and off_t declarations are still inconsistent, do not
 # enable this unless you are testing.
 : ${TL_CONF_LARGEFILE=--disable-largefile}
@@ -82,7 +79,7 @@ cd $TL_WORKDIR || exit 1
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
 # allow adding arbitrary other configure args, such as
-# --with-tex-banner='TeX Live 2009/SomeDistro'.
+# --with-banner-add='/SomeDistro'.
 : ${TL_CONFIGURE_ARGS=}
 
 # allow override of make target.

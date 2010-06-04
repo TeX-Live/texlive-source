@@ -7,6 +7,17 @@
 	* synctex.c [__attribute__]: #define __attribute__ away if it is
 	not defined.  tlbuild mail, 28 May 2010 14:34:53.
 
+2010-05-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/web2c.ac, configure.ac: Use '--with-banner-add' instead of
+	'--with-tex-banner'.
+
+2010-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): Remove metapost.mk.
+	* am/texmf.am (EXTRA_DIST): Remove tmf-pool.h.
+	* metapost.mk, tmf-pool.h (removed): Obsolete.
+
 2010-05-24  Karl Berry  <karl@tug.org>
 
 	* tex.ch (sup_font_mem_size): increase from 4,000,000

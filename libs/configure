@@ -677,7 +677,7 @@ with_xindy_recode
 enable_xindy_old
 enable_xpdfopen
 enable_web2c
-with_tex_banner
+with_banner_add
 with_editor
 enable_auto_core
 enable_dump_share
@@ -1555,7 +1555,7 @@ Optional Packages:
                           [default: no]
   --with-xindy-recode     For `xindy': use `recode' instead of `iconv'
                           (default is NO)
-  --with-tex-banner=STR   version string appended to banner lines [Web2C YEAR]
+  --with-banner-add=STR   add STR to version string appended to banner lines
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
   --without-mf-x-toolkit  do not use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
@@ -3450,9 +3450,9 @@ test "x$enable_web2c" = xno || {
 ## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options for TeX and MF
 
-# Check whether --with-tex-banner was given.
-if test "${with_tex_banner+set}" = set; then :
-  withval=$with_tex_banner;
+# Check whether --with-banner-add was given.
+if test "${with_banner_add+set}" = set; then :
+  withval=$with_banner_add;
 fi
 
 # Check whether --with-editor was given.

@@ -5,9 +5,9 @@ dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options for TeX and MF
 m4_define_default([kpse_indent_26], [26])[]dnl
-AC_ARG_WITH([tex-banner],
-            AS_HELP_STRING([--with-tex-banner=STR],
-                           [version string appended to banner lines @<:@Web2C YEAR@:>@]))[]dnl
+AC_ARG_WITH([banner-add],
+            AS_HELP_STRING([--with-banner-add=STR],
+                           [add STR to version string appended to banner lines]))[]dnl
 AC_ARG_WITH([editor],
             AS_HELP_STRING([--with-editor=CMD],
                            [invoke CMD from the `e' option @<:@vi +%d %s@:>@]))[]dnl

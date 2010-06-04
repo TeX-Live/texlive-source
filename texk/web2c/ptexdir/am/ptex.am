@@ -98,7 +98,7 @@ ptex_ch_srcs = \
 	tex-binpool.ch
 
 EXTRA_DIST += $(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptexextra.in \
-	ptexdir/ptex.defines lib/texmfmp.c tmf-pool.h
+	ptexdir/ptex.defines lib/texmfmp.c
 
 DISTCLEANFILES += $(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c \
 	ptex.p ptex.pool ptex-tangle ptexdir/ptex.version
@@ -224,13 +224,3 @@ ptrip-clean:
 	rm -rf tfm
 DISTCLEANFILES += ptrip.diffs
 
-## Eventually delete these files
-##
-EXTRA_DIST += \
-	ptexdir/Files \
-	ptexdir/pbibtex.defines \
-	ptexdir/ptex.mk \
-	ptexdir/ptex-base.ch.orig \
-	ptexdir/ptex-include.ch \
-	ptexdir/ptexhelp.h \
-	ptexdir/reautoconf

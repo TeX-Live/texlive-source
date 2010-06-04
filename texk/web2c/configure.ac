@@ -46,11 +46,11 @@ dnl Include additional code for web2c.
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
 
-AS_CASE([$with_tex_banner],
-        [''|yes|no], [with_tex_banner="Web2C $WEB2CVERSION"],
-        [AS_IF([echo "$with_tex_banner" | grep -v "$WEB2CVERSION" >/dev/null],
-               [AC_MSG_ERROR([Bad `--with-tex-banner=$with_tex_banner' version string (must contain ` $WEB2CVERSION')])])])
-AC_DEFINE_UNQUOTED([WEB2CVERSION], [" ($with_tex_banner)"])
+AS_IF([test "x$enable_texlive_build" = xyes],
+      [banner_pre='TeX Live'],
+      [banner_pre='Web2C'])
+AC_DEFINE_UNQUOTED([WEB2CVERSION],
+                   [" ($banner_pre $WEB2CVERSION$with_banner_add)"])
 
 dnl For tests
 AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])

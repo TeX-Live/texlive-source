@@ -59,7 +59,7 @@ tex_ch_srcs = \
 	$(tex_ch_synctex) \
 	tex-binpool.ch
 ##
-EXTRA_DIST += $(tex_ch_srcs) lib/texmfmp.c tmf-pool.h
+EXTRA_DIST += $(tex_ch_srcs) lib/texmfmp.c
 
 DISTCLEANFILES += $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
 	tex.p tex.pool tex-tangle
@@ -129,7 +129,6 @@ EXTRA_LIBRARIES += libmf.a
 # Metafont C sources
 mf_c_h = mfini.c mf0.c mfcoerce.h mfd.h
 nodist_libmf_a_SOURCES = $(mf_c_h) mf-pool.c
-libmf_a_CPPFLAGS = -DMETA_FONT
 libmf_a_CFLAGS = $(WARNING_CFLAGS)
 
 # We must create mfd.h before building the libmf_a_OBJECTS.
@@ -153,10 +152,14 @@ mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
 	@$(texmf_tangle) mf mf-final
 
 # Generate mf-final.ch
-mf-final.ch: tie$(EXEEXT) mf.web mf.ch mf-binpool.ch
-	$(tie) -c $@ mf.web mf.ch mf-binpool.ch
+mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
+	$(tie) -c $@ $(mf_ch_src)
+mf_ch_src = \
+	mf.web \
+	mf.ch \
+	mf-binpool.ch
 ##
-EXTRA_DIST += mf.web mf-binpool.ch mf.ch mftalk.h lib/texmfmp.c tmf-pool.h
+EXTRA_DIST += $(mf_ch_src) mftalk.h lib/texmfmp.c
 
 DISTCLEANFILES += $(nodist_libmf_a_SOURCES) mfextra.c mf-final.ch mf-web2c \
 	mf.p mf.pool mf-tangle
@@ -230,8 +233,4 @@ EXTRA_DIST += \
 	triptrap/tripos.tex \
 	triptrap/writeo \
 	triptrap/writeo.2
-
-## Eventually delete these files
-##
-EXTRA_DIST += tmf-pool.h
 

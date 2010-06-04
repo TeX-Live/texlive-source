@@ -1192,29 +1192,29 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	tests/translate tests/uno.dos tests/xampl.bib ctiedir tiedir \
 	lib/mfmpi386.asm lib/mfmpw32.c lib/texmfmp.c texmfmem.h \
 	texmfmp-help.h texmfmp.h $(tex_ch_srcs) lib/texmfmp.c \
-	tmf-pool.h $(tex_tests) tests/write18-quote.tex mf.web \
-	mf-binpool.ch mf.ch mftalk.h lib/texmfmp.c tmf-pool.h \
-	$(mf_tests) triptrap/README triptrap/mftrap.diffs \
-	triptrap/mftrap.fot triptrap/mftrap.log triptrap/mftrap.pl \
-	triptrap/mftrap1.in triptrap/mftrap2.in triptrap/mftrapin.log \
-	triptrap/mptrap.diffs triptrap/mptrap.fot triptrap/mptrap.log \
-	triptrap/mptrap.pl triptrap/mptrap.readme triptrap/mptrap1.in \
-	triptrap/mptrap2.in triptrap/mptrapin.log triptrap/mtrap.0 \
-	triptrap/mtrap.1 triptrap/mtrap.log triptrap/mtrap.mp \
-	triptrap/texmf.cnf triptrap/trap.148 triptrap/trap.149 \
-	triptrap/trap.150 triptrap/trap.151 triptrap/trap.197 \
-	triptrap/trap.200 triptrap/trap.5 triptrap/trap.6 \
-	triptrap/trap.mf triptrap/trap.mp triptrap/trap.mpx \
-	triptrap/trap.typ triptrap/trapf.pl triptrap/trapman.tex \
-	triptrap/trip.diffs triptrap/trip.fot triptrap/trip.log \
-	triptrap/trip.pl triptrap/trip.tex triptrap/trip.typ \
-	triptrap/trip1.in triptrap/trip2.in triptrap/tripin.log \
-	triptrap/tripman.tex triptrap/tripos.tex triptrap/writeo \
-	triptrap/writeo.2 tmf-pool.h mplibdir/ChangeLog $(mpost_web) \
-	$(mp_tests) $(libmplib_web) mplibdir/lmplib.c $(etex_web_srcs) \
-	$(etex_ch_srcs) etexdir/etexextra.in lib/texmfmp.c tmf-pool.h \
-	etexdir/ChangeLog etexdir/INSTALL etexdir/README \
-	etexdir/etex_gen.tex $(etex_tests) etexdir/etrip/etrip.diffs \
+	$(tex_tests) tests/write18-quote.tex $(mf_ch_src) mftalk.h \
+	lib/texmfmp.c $(mf_tests) triptrap/README \
+	triptrap/mftrap.diffs triptrap/mftrap.fot triptrap/mftrap.log \
+	triptrap/mftrap.pl triptrap/mftrap1.in triptrap/mftrap2.in \
+	triptrap/mftrapin.log triptrap/mptrap.diffs \
+	triptrap/mptrap.fot triptrap/mptrap.log triptrap/mptrap.pl \
+	triptrap/mptrap.readme triptrap/mptrap1.in triptrap/mptrap2.in \
+	triptrap/mptrapin.log triptrap/mtrap.0 triptrap/mtrap.1 \
+	triptrap/mtrap.log triptrap/mtrap.mp triptrap/texmf.cnf \
+	triptrap/trap.148 triptrap/trap.149 triptrap/trap.150 \
+	triptrap/trap.151 triptrap/trap.197 triptrap/trap.200 \
+	triptrap/trap.5 triptrap/trap.6 triptrap/trap.mf \
+	triptrap/trap.mp triptrap/trap.mpx triptrap/trap.typ \
+	triptrap/trapf.pl triptrap/trapman.tex triptrap/trip.diffs \
+	triptrap/trip.fot triptrap/trip.log triptrap/trip.pl \
+	triptrap/trip.tex triptrap/trip.typ triptrap/trip1.in \
+	triptrap/trip2.in triptrap/tripin.log triptrap/tripman.tex \
+	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
+	mplibdir/ChangeLog $(mpost_web) $(mp_tests) $(libmplib_web) \
+	mplibdir/lmplib.c $(etex_web_srcs) $(etex_ch_srcs) \
+	etexdir/etexextra.in lib/texmfmp.c etexdir/ChangeLog \
+	etexdir/INSTALL etexdir/README etexdir/etex_gen.tex \
+	$(etex_tests) etexdir/etrip/etrip.diffs \
 	etexdir/etrip/etrip.fot etexdir/etrip/etrip.log \
 	etexdir/etrip/etrip.out etexdir/etrip/etrip.pl \
 	etexdir/etrip/etrip.tex etexdir/etrip/etrip.typ \
@@ -1224,19 +1224,16 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	etexdir/etrip/trip2.in etexdir/etex.mak etexdir/etex.mk \
 	$(ptex_tests) $(ptex_web_srcs) $(ptex_ch_srcs) \
 	ptexdir/ptexextra.in ptexdir/ptex.defines lib/texmfmp.c \
-	tmf-pool.h ptexdir/pbibtex.ch web2c/cvtbib.sed \
-	ptexdir/pdvitype.ch ptexdir/ppltotf.ch ptexdir/ptftopl.ch \
-	ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis ptexdir/ChangeLog \
-	ptexdir/Changes.txt ptexdir/INSTALL.txt ptexdir/README.txt \
+	ptexdir/pbibtex.ch web2c/cvtbib.sed ptexdir/pdvitype.ch \
+	ptexdir/ppltotf.ch ptexdir/ptftopl.ch ptexdir/COPYRIGHT \
+	ptexdir/COPYRIGHT.jis ptexdir/ChangeLog ptexdir/Changes.txt \
+	ptexdir/INSTALL.txt ptexdir/README.txt \
 	ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst \
 	ptexdir/tests/sample.bib tests/memdata1.bst tests/memdata2.bst \
 	tests/memdata3.bst ptexdir/tests/goth10.tfm \
 	ptexdir/tests/sample.dvi ptexdir/tests/min10.pl \
 	ptexdir/tests/min10.tfm ptexdir/tests/tmin10.pl \
-	ptexdir/tests/tmin10.tfm ptexdir/ptrip.diffs ptexdir/Files \
-	ptexdir/pbibtex.defines ptexdir/ptex.mk \
-	ptexdir/ptex-base.ch.orig ptexdir/ptex-include.ch \
-	ptexdir/ptexhelp.h ptexdir/reautoconf $(pdftex_ch_srcs) \
+	ptexdir/tests/tmin10.tfm ptexdir/ptrip.diffs $(pdftex_ch_srcs) \
 	etexdir/etex.ch pdftexdir/pdftex.defines pdftexdir/pdftex.h \
 	pdftexdir/pdftexextra.in pdftexdir/ChangeLog pdftexdir/NEWS \
 	pdftexdir/README pdftexdir/change-files.txt \
@@ -1384,7 +1381,7 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	synctexdir/synctex-e-rec.ch0 synctexdir/synctex-e-rec.ch1 \
 	synctexdir/synctex-pdf-rec.ch2 synctexdir/synctex-xe-mem.ch2 \
 	synctexdir/synctex-xe-rec.ch2 synctexdir/synctex-xe-rec.ch3 \
-	libmd5/md5.test Makefile.in.orig configure.in.orig metapost.mk
+	libmd5/md5.test Makefile.in.orig configure.in.orig
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c tangleboot.c tangleboot.h tangleboot.p \
 	tangleboot-web2c ctangle.c cweb.c cweb.h ctangle-ctangle \
@@ -1562,8 +1559,12 @@ windowlib = window/libwindow.a
 # Metafont C sources
 mf_c_h = mfini.c mf0.c mfcoerce.h mfd.h
 nodist_libmf_a_SOURCES = $(mf_c_h) mf-pool.c
-libmf_a_CPPFLAGS = -DMETA_FONT
 libmf_a_CFLAGS = $(WARNING_CFLAGS)
+mf_ch_src = \
+	mf.web \
+	mf.ch \
+	mf-binpool.ch
+
 
 # Metafont tests
 #
@@ -6311,46 +6312,46 @@ libmd5_a-md5.obj: libmd5/md5.c
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmd5_a_CPPFLAGS) $(CPPFLAGS) $(libmd5_a_CFLAGS) $(CFLAGS) -c -o libmd5_a-md5.obj `if test -f 'libmd5/md5.c'; then $(CYGPATH_W) 'libmd5/md5.c'; else $(CYGPATH_W) '$(srcdir)/libmd5/md5.c'; fi`
 
 libmf_a-mfini.o: mfini.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mfini.o -MD -MP -MF $(DEPDIR)/libmf_a-mfini.Tpo -c -o libmf_a-mfini.o `test -f 'mfini.c' || echo '$(srcdir)/'`mfini.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mfini.o -MD -MP -MF $(DEPDIR)/libmf_a-mfini.Tpo -c -o libmf_a-mfini.o `test -f 'mfini.c' || echo '$(srcdir)/'`mfini.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmf_a-mfini.Tpo $(DEPDIR)/libmf_a-mfini.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mfini.c' object='libmf_a-mfini.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mfini.o `test -f 'mfini.c' || echo '$(srcdir)/'`mfini.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mfini.o `test -f 'mfini.c' || echo '$(srcdir)/'`mfini.c
 
 libmf_a-mfini.obj: mfini.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mfini.obj -MD -MP -MF $(DEPDIR)/libmf_a-mfini.Tpo -c -o libmf_a-mfini.obj `if test -f 'mfini.c'; then $(CYGPATH_W) 'mfini.c'; else $(CYGPATH_W) '$(srcdir)/mfini.c'; fi`
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mfini.obj -MD -MP -MF $(DEPDIR)/libmf_a-mfini.Tpo -c -o libmf_a-mfini.obj `if test -f 'mfini.c'; then $(CYGPATH_W) 'mfini.c'; else $(CYGPATH_W) '$(srcdir)/mfini.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmf_a-mfini.Tpo $(DEPDIR)/libmf_a-mfini.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mfini.c' object='libmf_a-mfini.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mfini.obj `if test -f 'mfini.c'; then $(CYGPATH_W) 'mfini.c'; else $(CYGPATH_W) '$(srcdir)/mfini.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mfini.obj `if test -f 'mfini.c'; then $(CYGPATH_W) 'mfini.c'; else $(CYGPATH_W) '$(srcdir)/mfini.c'; fi`
 
 libmf_a-mf0.o: mf0.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mf0.o -MD -MP -MF $(DEPDIR)/libmf_a-mf0.Tpo -c -o libmf_a-mf0.o `test -f 'mf0.c' || echo '$(srcdir)/'`mf0.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mf0.o -MD -MP -MF $(DEPDIR)/libmf_a-mf0.Tpo -c -o libmf_a-mf0.o `test -f 'mf0.c' || echo '$(srcdir)/'`mf0.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmf_a-mf0.Tpo $(DEPDIR)/libmf_a-mf0.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mf0.c' object='libmf_a-mf0.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mf0.o `test -f 'mf0.c' || echo '$(srcdir)/'`mf0.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mf0.o `test -f 'mf0.c' || echo '$(srcdir)/'`mf0.c
 
 libmf_a-mf0.obj: mf0.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mf0.obj -MD -MP -MF $(DEPDIR)/libmf_a-mf0.Tpo -c -o libmf_a-mf0.obj `if test -f 'mf0.c'; then $(CYGPATH_W) 'mf0.c'; else $(CYGPATH_W) '$(srcdir)/mf0.c'; fi`
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mf0.obj -MD -MP -MF $(DEPDIR)/libmf_a-mf0.Tpo -c -o libmf_a-mf0.obj `if test -f 'mf0.c'; then $(CYGPATH_W) 'mf0.c'; else $(CYGPATH_W) '$(srcdir)/mf0.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmf_a-mf0.Tpo $(DEPDIR)/libmf_a-mf0.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mf0.c' object='libmf_a-mf0.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mf0.obj `if test -f 'mf0.c'; then $(CYGPATH_W) 'mf0.c'; else $(CYGPATH_W) '$(srcdir)/mf0.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mf0.obj `if test -f 'mf0.c'; then $(CYGPATH_W) 'mf0.c'; else $(CYGPATH_W) '$(srcdir)/mf0.c'; fi`
 
 libmf_a-mf-pool.o: mf-pool.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mf-pool.o -MD -MP -MF $(DEPDIR)/libmf_a-mf-pool.Tpo -c -o libmf_a-mf-pool.o `test -f 'mf-pool.c' || echo '$(srcdir)/'`mf-pool.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mf-pool.o -MD -MP -MF $(DEPDIR)/libmf_a-mf-pool.Tpo -c -o libmf_a-mf-pool.o `test -f 'mf-pool.c' || echo '$(srcdir)/'`mf-pool.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmf_a-mf-pool.Tpo $(DEPDIR)/libmf_a-mf-pool.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mf-pool.c' object='libmf_a-mf-pool.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mf-pool.o `test -f 'mf-pool.c' || echo '$(srcdir)/'`mf-pool.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mf-pool.o `test -f 'mf-pool.c' || echo '$(srcdir)/'`mf-pool.c
 
 libmf_a-mf-pool.obj: mf-pool.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mf-pool.obj -MD -MP -MF $(DEPDIR)/libmf_a-mf-pool.Tpo -c -o libmf_a-mf-pool.obj `if test -f 'mf-pool.c'; then $(CYGPATH_W) 'mf-pool.c'; else $(CYGPATH_W) '$(srcdir)/mf-pool.c'; fi`
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -MT libmf_a-mf-pool.obj -MD -MP -MF $(DEPDIR)/libmf_a-mf-pool.Tpo -c -o libmf_a-mf-pool.obj `if test -f 'mf-pool.c'; then $(CYGPATH_W) 'mf-pool.c'; else $(CYGPATH_W) '$(srcdir)/mf-pool.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmf_a-mf-pool.Tpo $(DEPDIR)/libmf_a-mf-pool.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mf-pool.c' object='libmf_a-mf-pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mf-pool.obj `if test -f 'mf-pool.c'; then $(CYGPATH_W) 'mf-pool.c'; else $(CYGPATH_W) '$(srcdir)/mf-pool.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmf_a_CFLAGS) $(CFLAGS) -c -o libmf_a-mf-pool.obj `if test -f 'mf-pool.c'; then $(CYGPATH_W) 'mf-pool.c'; else $(CYGPATH_W) '$(srcdir)/mf-pool.c'; fi`
 
 libmplib_a-avl.o: mplibdir/avl.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(libmplib_a_CFLAGS) $(CFLAGS) -MT libmplib_a-avl.o -MD -MP -MF $(DEPDIR)/libmplib_a-avl.Tpo -c -o libmplib_a-avl.o `test -f 'mplibdir/avl.c' || echo '$(srcdir)/'`mplibdir/avl.c
@@ -8867,8 +8868,8 @@ mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
 	@$(texmf_tangle) mf mf-final
 
 # Generate mf-final.ch
-mf-final.ch: tie$(EXEEXT) mf.web mf.ch mf-binpool.ch
-	$(tie) -c $@ mf.web mf.ch mf-binpool.ch
+mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
+	$(tie) -c $@ $(mf_ch_src)
 
 .PHONY: trap-clean
 clean-local:: trap-clean

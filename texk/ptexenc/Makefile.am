@@ -30,9 +30,6 @@ libptexenc_la_SOURCES = \
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
-nobase_nodist_include_HEADERS = \
-	ptexenc/c-auto.h
-
 nobase_include_HEADERS = \
 	ptexenc/kanjicnv.h \
 	ptexenc/ptexenc.h \

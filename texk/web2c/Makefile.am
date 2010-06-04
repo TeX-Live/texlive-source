@@ -196,5 +196,5 @@ include $(srcdir)/libmd5/am/md5.am
 
 ## Eventually delete these files
 ##
-EXTRA_DIST += Makefile.in.orig configure.in.orig metapost.mk
+EXTRA_DIST += Makefile.in.orig configure.in.orig
 

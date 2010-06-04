@@ -71,7 +71,7 @@ etex_ch_srcs = \
 	tex-binpool.ch
 ##
 EXTRA_DIST += $(etex_web_srcs) $(etex_ch_srcs) etexdir/etexextra.in \
-	lib/texmfmp.c tmf-pool.h
+	lib/texmfmp.c
 
 DISTCLEANFILES += $(nodist_etex_SOURCES) etex.web etex.ch etex-web2c \
 	etex.p etex.pool etex-tangle etexdir/etex.version

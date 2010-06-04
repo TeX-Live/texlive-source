@@ -1331,7 +1331,7 @@ PrintError(const char *File, const char *String,
     char PrintBuffer[BUFSIZ];
     va_list MsgArgs;
 
-    const char *LastNorm = OutputFormat;
+    char *LastNorm = OutputFormat;
     char *of;
     int c;
 

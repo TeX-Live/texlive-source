@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2010-05-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (nobase_nodist_include_HEADERS): Removed,
+	don't install ptexenc/c-auto.h.
+
 2010-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Moved headers (except jisx0208.h) to ptexenc/, removed patches/.

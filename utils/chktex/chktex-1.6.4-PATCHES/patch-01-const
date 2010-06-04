@@ -39,13 +39,11 @@ diff -ur chktex-1.6.4.orig/ChkTeX.h chktex-1.6.4/ChkTeX.h
    DEF(int, HeadErrOut,  TRUE) \
 -  DEF(char *, OutputName, "") \
 -  DEF(char *, PseudoInName, NULL) \
--  DEF(char *, OutputFormat, VerbNormal) \
--  DEF(char *, PipeOutputFormat, NULL) \
--  DEF(char *, Delimit, ":") \
 +  DEF(const char *, OutputName, "") \
 +  DEF(const char *, PseudoInName, NULL) \
-+  DEF(const char *, OutputFormat, VerbNormal) \
-+  DEF(const char *, PipeOutputFormat, NULL) \
+   DEF(char *, OutputFormat, VerbNormal) \
+   DEF(char *, PipeOutputFormat, NULL) \
+-  DEF(char *, Delimit, ":") \
 +  DEF(const char *, Delimit, ":") \
    DEF(long,  DebugLevel, 0)
  
@@ -107,15 +105,6 @@ diff -ur chktex-1.6.4.orig/FindErrs.c chktex-1.6.4/FindErrs.c
  {
      switch (Cnt)
      {
-@@ -1329,7 +1330,7 @@
-     char PrintBuffer[BUFSIZ];
-     va_list MsgArgs;
- 
--    char *LastNorm = OutputFormat;
-+    const char *LastNorm = OutputFormat;
-     char *of;
-     int c;
- 
 @@ -1468,7 +1469,7 @@
  
  static enum ErrNum PerformCommand(const char *Cmd, char *Arg)
@@ -137,15 +126,6 @@ diff -ur chktex-1.6.4.orig/FindErrs.h chktex-1.6.4/FindErrs.h
  };
  
  enum ItState
-@@ -183,7 +183,7 @@
- 
- extern struct ErrMsg LaTeXMsgs[emMaxFault + 1];
- 
--extern char *OutputFormat;
-+extern const char *OutputFormat;
- 
- int FindErr(const char *, const unsigned long);
- void PrintError(const char *, const char *, const long, const long,
 diff -ur chktex-1.6.4.orig/OpSys.c chktex-1.6.4/OpSys.c
 --- chktex-1.6.4.orig/OpSys.c	2007-10-20 09:10:48.000000000 +0200
 +++ chktex-1.6.4/OpSys.c	2010-05-02 22:18:12.805229781 +0200

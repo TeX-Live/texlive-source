@@ -183,7 +183,7 @@ enum DotLevel
 
 extern struct ErrMsg LaTeXMsgs[emMaxFault + 1];
 
-extern const char *OutputFormat;
+extern char *OutputFormat;
 
 int FindErr(const char *, const unsigned long);
 void PrintError(const char *, const char *, const long, const long,

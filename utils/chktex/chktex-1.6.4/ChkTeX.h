@@ -279,8 +279,8 @@ DEBUGBITS(Debug_BIT)
   DEF(int, HeadErrOut,  TRUE) \
   DEF(const char *, OutputName, "") \
   DEF(const char *, PseudoInName, NULL) \
-  DEF(const char *, OutputFormat, VerbNormal) \
-  DEF(const char *, PipeOutputFormat, NULL) \
+  DEF(char *, OutputFormat, VerbNormal) \
+  DEF(char *, PipeOutputFormat, NULL) \
   DEF(const char *, Delimit, ":") \
   DEF(long,  DebugLevel, 0)
 
