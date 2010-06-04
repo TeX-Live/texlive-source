@@ -1,6 +1,11 @@
+2010-06-05  Karl Berry  <karl@tug.org>
+
+	* patch-07-libdvisvgm-uint32: declare glyphIndex as FT_UInt in the
+	first place, instead of casting.  From vvv, confirmed for his AIX.
+
 2010-05-31  Karl Berry  <karl@tug.org>
 
-	* Added patch-07-libdvisvgm-uint32.
+	Added patch-07-libdvisvgm-uint32.
 	* src/FontEngine.cpp: must cast &glyphindex to (FT_Uint *)
 	for AIX compiler (tlbuild 28 May 2010 15:23:25).
 

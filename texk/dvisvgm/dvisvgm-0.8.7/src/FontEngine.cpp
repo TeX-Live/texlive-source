@@ -58,16 +58,12 @@ void FontEngine::setDeviceResolution (int x, int y) {
  * @param[in] face font face to be used
  * @param[out] reverseMap the resulting map */
 static void build_reverse_map (FT_Face face, map<UInt32, UInt32> &reverseMap) {
-	UInt32 glyphIndex;
-	/* The explicit cast is necessary with the AIX compiler,
-	   which considers the dvisvgm definition signed,
-	   and incompatible with the freetype definition.  */
-	UInt32 charcode = FT_Get_First_Char(face, (FT_UInt *) &glyphIndex);
+	FT_UInt glyphIndex;
+	UInt32 charcode = FT_Get_First_Char(face, &glyphIndex);
 	while (glyphIndex) {
 //		if (reverseMap.find(glyphIndex) == reverseMap.end())
 		reverseMap[glyphIndex] = charcode;
-		charcode = FT_Get_Next_Char(face, charcode,
-                                            (FT_UInt *) &glyphIndex);
+		charcode = FT_Get_Next_Char(face, charcode, &glyphIndex);
 	}
 }
 
@@ -115,13 +111,11 @@ void FontEngine::buildTranslationMap (map<UInt32, UInt32> &translationMap) const
 	build_reverse_map(_currentFace, reverseMap);
 
 	FT_Set_Charmap(_currentFace, unicodeMap);
-	UInt32 glyphIndex;
-	UInt32 charcode = FT_Get_First_Char(_currentFace,
-                                            (FT_UInt *) &glyphIndex);
+	FT_UInt glyphIndex;
+	UInt32 charcode = FT_Get_First_Char(_currentFace, &glyphIndex);
 	while (glyphIndex) {
 		translationMap[reverseMap[glyphIndex]] = charcode;
-		charcode = FT_Get_Next_Char(_currentFace, charcode,
-                                            (FT_UInt *) &glyphIndex);
+		charcode = FT_Get_Next_Char(_currentFace, charcode, &glyphIndex);
 	}
 	FT_Set_Charmap(_currentFace, customMap);
 }
