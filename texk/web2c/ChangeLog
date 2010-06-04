@@ -1,3 +1,8 @@
+2010-06-04  Karl Berry  <karl@tug.org>
+
+	* configure.ac (web2_version): remove pretest for
+	TeX Live 2010 (pretest 2, maybe final).
+
 2010-05-31  Karl Berry  <karl@tug.org>
 
 	* configure.ac (AC_CHECK_FUNCS): remove stat64, since we are not

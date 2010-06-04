@@ -1,7 +1,7 @@
 This file records noteworthy changes.  (Public domain.)
 
-6.0.0 (for TeX Collection 2010)
-* Change xmalloc and friends to use size_t, changing the ABI.
+6.0.0 (for TeX Collection 2010, 4 June 2010)
+* Change xmalloc and friends to use size_t, unfortunately changing the ABI.
 
 5.0.0 (for TeX Collection 2009, 13 October 2009)
 * Make shared library version and general package version the same.

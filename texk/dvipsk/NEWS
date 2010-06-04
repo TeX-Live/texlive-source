@@ -3,6 +3,13 @@ This file records noteworthy changes.  (Public domain.)
    Require Kpathsea to build.
    Additional robustness checks.
 
+dvips 5.99 (TeX Live 2010, 4 June 2010):
+   Use the type1 path to search for Type 1 fonts.
+   Support for Japanese pTeX.
+   Numeric overflow and sprintf checks.
+   Reformat sources.
+
+
 dvips 5.86 notes:
    Minor improvements to epsf style file.
    Another patch to t1part.c to make it more liberal in accepting pfb/pfa

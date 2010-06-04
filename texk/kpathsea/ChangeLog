@@ -1,3 +1,8 @@
+2010-06-04  Karl Berry  <karl@tug.org>
+
+	* configure.ac (kpse_lib_devel): empty for TeX Live 2010
+	 (pretest 2, maybe final).
+
 2010-05-30  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): turns out fc-list is not

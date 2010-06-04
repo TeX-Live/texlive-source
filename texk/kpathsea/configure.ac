@@ -23,7 +23,7 @@ dnl   binaries built between releases.
 m4_define([kpse_lib_major], [6])[]dnl
 m4_define([kpse_lib_minor], [0])[]dnl
 m4_define([kpse_lib_micro], [0])[]dnl
-m4_define([kpse_lib_devel], [dev])[]dnl empty or "dev"
+m4_define([kpse_lib_devel], [])[]dnl empty or "dev"
 m4_define([kpse_version], [kpse_lib_major.kpse_lib_minor.kpse_lib_micro[]kpse_lib_devel])[]dnl
 
 AC_INIT([Kpathsea], [kpse_version], [tex-k@tug.org])

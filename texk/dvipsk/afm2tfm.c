@@ -1505,7 +1505,7 @@ writevpl(void)
 static void
 version(FILE *f)
 {
-  fputs ("afm2tfm(k) (dvips(k) 5.99/pretest) 8.1\n", f);
+  fputs ("afm2tfm(k) (dvips(k) 5.99) 8.1\n", f);
   fprintf (f, "%s\n", kpathsea_version_string);
   fputs ("Copyright 2010 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\

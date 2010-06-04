@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([dvipsk], [5.99/pretest], [tex-k@tug.org])
+AC_INIT([dvipsk], [5.99], [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvips.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

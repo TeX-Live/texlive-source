@@ -19,7 +19,7 @@ dnl get these features if you are willing to hack the sources. If not,
 dnl it'll take a good argument to convince me to invest the time to make
 dnl them configurable.
 dnl
-m4_define([web2_version], [2010/pretest])
+m4_define([web2_version], [2010])
 AC_INIT([Web2C], web2_version(), [tex-k@tug.org])
 AC_PREREQ([2.65])
 dnl 

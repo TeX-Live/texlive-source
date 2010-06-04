@@ -1,3 +1,8 @@
+2010-06-04  Karl Berry  <karl@tug.org>
+
+	* afm2tfm.c (version),
+	* dvips.h (BANNER): 5.99 for TeX Live 2010 (pretest 2, maybe final).
+
 2010-05-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* config.ps: include cid-base.map.
