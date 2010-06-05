@@ -22,6 +22,7 @@ T1Wrap_SOURCES = \
 	T1Wrap.m
 
 T1Wrap_LDFLAGS = -framework Cocoa
+T1Wrap_LIBTOOLFLAGS = --tag CXX
 
 xdv2pdf_SOURCES = \
 	DVIops.h \
