@@ -79,7 +79,6 @@ t1utils
 tpic2pdftex
 vlna
 xindy
-xindy-old
 xpdfopen
 ])]) # KPSE_UTILS_PKGS
 

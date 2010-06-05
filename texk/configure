@@ -674,7 +674,6 @@ enable_xindy_rules
 enable_xindy_docs
 with_clisp_runtime
 with_xindy_recode
-enable_xindy_old
 enable_xpdfopen
 enable_web2c
 with_banner_add
@@ -1472,7 +1471,6 @@ Optional Features:
   --enable-xindy          build the xindy package
   --enable-xindy-rules      build and install make-rules package
   --enable-xindy-docs       build and install documentation
-  --enable-xindy-old      build the xindy-old package
   --disable-xpdfopen      do not build the xpdfopen package
   --disable-web2c         do not build the web2c (TeX & Co.) package
   --enable-auto-core        cause TeX&MF to dump core, given a certain
@@ -1574,8 +1572,6 @@ Optional Packages:
                           installed version
   --with-recode           use `recode' instead of `iconv' to build xindy
                           [default: no]
-  --with-xindy-recode     For `xindy': use `recode' instead of `iconv'
-                          (default is NO)
   --with-banner-add=STR   add STR to version string appended to banner lines
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
   --without-mf-x-toolkit  do not use X toolkit for METAFONT
@@ -3366,50 +3362,6 @@ $as_echo "$as_me: Assuming \`--with-clisp-runtime=$with_clisp_runtime'" >&6;}
   as_fn_error "no such file: \"$with_clisp_runtime\"" "$LINENO" 5
 fi ;;
 esac
-
-
-## utils/xindy-old/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy-old/
-## configure options and TL libraries required for xindy-old
-# Check whether --enable-xindy-old was given.
-if test "${enable_xindy_old+set}" = set; then :
-  enableval=$enable_xindy_old;
-fi
-case $enable_xindy_old in #(
-  yes) :
-    if test "x$cross_compiling" = xyes; then :
-  as_fn_error "Unable to cross compile xindy-old" "$LINENO" 5
-fi ;; #(
-  no) :
-     ;; #(
-  *) :
-    if test "x$cross_compiling" = xyes; then
-            { $as_echo "$as_me:${as_lineno-$LINENO}: Cross compiling -> \`--disable-xindy-old'" >&5
-$as_echo "$as_me: Cross compiling -> \`--disable-xindy-old'" >&6;}
-            enable_xindy_old=no
-            ac_configure_args="$ac_configure_args '--disable-xindy-old'"
-          else
-   enable_xindy_old=no
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xindy-old=$enable_xindy_old'" >&5
-$as_echo "$as_me: Assuming \`--enable-xindy-old=$enable_xindy_old'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-xindy-old=$enable_xindy_old'"
-   fi ;;
-esac
-
-## utils/xindy-old/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy-old/
-## configure options for xindy-old
-# Check whether --enable-xindy-rules was given.
-if test "${enable_xindy_rules+set}" = set; then :
-  enableval=$enable_xindy_rules;
-fi
-# Check whether --enable-xindy-docs was given.
-if test "${enable_xindy_docs+set}" = set; then :
-  enableval=$enable_xindy_docs;
-fi
-
-# Check whether --with-xindy-recode was given.
-if test "${with_xindy_recode+set}" = set; then :
-  withval=$with_xindy_recode;
-fi
 
 
 ## utils/xpdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xpdfopen/
