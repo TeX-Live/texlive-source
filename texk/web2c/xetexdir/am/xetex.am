@@ -118,6 +118,7 @@ xetex_web_srcs = \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
 	xetexdir/xetex-latex3.ch \
+	xetexdir/xetex-hz.ch \
 	$(xetex_post_ch_synctex)
 ##
 EXTRA_DIST += $(xetex_web_srcs) xetexdir/xetex.defines xetexdir/xetexextra.in
@@ -163,6 +164,7 @@ libxetex_a_SOURCES = \
 	xetexdir/sfnt.h \
 	xetexdir/trans.c \
 	xetexdir/trans.h \
+	xetexdir/hz.cpp \
 	xetexdir/xetex.h
 
 ## included by xetexdir/XeTeXLayoutInterface.cpp

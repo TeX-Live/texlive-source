@@ -311,9 +311,10 @@ XeTeXFontInst::getGlyphName(LEGlyphID gid, int& nameLen)
 {
     le_uint32	len;
     const char *p = (const char*)readFontTable(LE_POST_TABLE_TAG, len);
-    if (p != NULL) {
+    if (p != NULL)
 		return getGlyphNamePtr(p, len, gid, &nameLen);
-	}
+	else
+		return NULL;
 }
 
 LEUnicode32

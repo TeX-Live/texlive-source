@@ -442,7 +442,7 @@ am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
 	xetexdir/XeTeXOTMath.h xetexdir/XeTeX_ext.c \
 	xetexdir/XeTeX_ext.h xetexdir/XeTeXswap.h xetexdir/cmaps.cpp \
 	xetexdir/cmaps.h xetexdir/sfnt.h xetexdir/trans.c \
-	xetexdir/trans.h xetexdir/xetex.h \
+	xetexdir/trans.h xetexdir/hz.cpp xetexdir/xetex.h \
 	xetexdir/XeTeXFontInst_Mac.cpp xetexdir/XeTeXFontInst_Mac.h \
 	xetexdir/XeTeX_mac.c xetexdir/XeTeXFontMgr_FC.cpp \
 	xetexdir/XeTeXFontMgr_FC.h xetexdir/XeTeX_pic.c \
@@ -473,8 +473,8 @@ am_libxetex_a_OBJECTS = libxetex_a-FontTableCache.$(OBJEXT) \
 	libxetex_a-XeTeXOTLayoutEngine.$(OBJEXT) \
 	libxetex_a-XeTeXOTMath.$(OBJEXT) \
 	libxetex_a-XeTeX_ext.$(OBJEXT) libxetex_a-cmaps.$(OBJEXT) \
-	libxetex_a-trans.$(OBJEXT) $(am__objects_8) $(am__objects_9) \
-	$(am__objects_10)
+	libxetex_a-trans.$(OBJEXT) libxetex_a-hz.$(OBJEXT) \
+	$(am__objects_8) $(am__objects_9) $(am__objects_10)
 libxetex_a_OBJECTS = $(am_libxetex_a_OBJECTS)
 libxetexmm_a_AR = $(AR) $(ARFLAGS)
 libxetexmm_a_LIBADD =
@@ -2210,6 +2210,7 @@ xetex_web_srcs = \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
 	xetexdir/xetex-latex3.ch \
+	xetexdir/xetex-hz.ch \
 	$(xetex_post_ch_synctex)
 
 libxetex_a_CPPFLAGS = $(xetex_cppflags)
@@ -2227,8 +2228,8 @@ libxetex_a_SOURCES = xetexdir/MathTable.h xetexdir/FontTableCache.cpp \
 	xetexdir/XeTeXOTMath.h xetexdir/XeTeX_ext.c \
 	xetexdir/XeTeX_ext.h xetexdir/XeTeXswap.h xetexdir/cmaps.cpp \
 	xetexdir/cmaps.h xetexdir/sfnt.h xetexdir/trans.c \
-	xetexdir/trans.h xetexdir/xetex.h $(am__append_38) \
-	$(am__append_39) $(am__append_40)
+	xetexdir/trans.h xetexdir/hz.cpp xetexdir/xetex.h \
+	$(am__append_38) $(am__append_39) $(am__append_40)
 
 # We must create xetexd.h etc. before building the libxetex_a_OBJECTS.
 libxetex_prereq = xetexd.h $(xetex_dependencies)
@@ -3030,6 +3031,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-XeTeX_pic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-bmpimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-cmaps.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-hz.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-jpegimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-mfileio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-numbers.Po@am__quote@
@@ -7801,6 +7803,20 @@ libxetex_a-cmaps.obj: xetexdir/cmaps.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='xetexdir/cmaps.cpp' object='libxetex_a-cmaps.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o libxetex_a-cmaps.obj `if test -f 'xetexdir/cmaps.cpp'; then $(CYGPATH_W) 'xetexdir/cmaps.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/cmaps.cpp'; fi`
+
+libxetex_a-hz.o: xetexdir/hz.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT libxetex_a-hz.o -MD -MP -MF $(DEPDIR)/libxetex_a-hz.Tpo -c -o libxetex_a-hz.o `test -f 'xetexdir/hz.cpp' || echo '$(srcdir)/'`xetexdir/hz.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libxetex_a-hz.Tpo $(DEPDIR)/libxetex_a-hz.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='xetexdir/hz.cpp' object='libxetex_a-hz.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o libxetex_a-hz.o `test -f 'xetexdir/hz.cpp' || echo '$(srcdir)/'`xetexdir/hz.cpp
+
+libxetex_a-hz.obj: xetexdir/hz.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT libxetex_a-hz.obj -MD -MP -MF $(DEPDIR)/libxetex_a-hz.Tpo -c -o libxetex_a-hz.obj `if test -f 'xetexdir/hz.cpp'; then $(CYGPATH_W) 'xetexdir/hz.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/hz.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libxetex_a-hz.Tpo $(DEPDIR)/libxetex_a-hz.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='xetexdir/hz.cpp' object='libxetex_a-hz.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o libxetex_a-hz.obj `if test -f 'xetexdir/hz.cpp'; then $(CYGPATH_W) 'xetexdir/hz.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/hz.cpp'; fi`
 
 libxetex_a-XeTeXFontInst_Mac.o: xetexdir/XeTeXFontInst_Mac.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -MT libxetex_a-XeTeXFontInst_Mac.o -MD -MP -MF $(DEPDIR)/libxetex_a-XeTeXFontInst_Mac.Tpo -c -o libxetex_a-XeTeXFontInst_Mac.o `test -f 'xetexdir/XeTeXFontInst_Mac.cpp' || echo '$(srcdir)/'`xetexdir/XeTeXFontInst_Mac.cpp

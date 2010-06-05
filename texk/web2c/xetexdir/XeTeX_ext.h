@@ -315,8 +315,10 @@ typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
 	void GetGlyphSidebearings_AAT(ATSUStyle style, UInt16 gid, float* lsb, float* rsb);
 	int MapCharToGlyph_AAT(ATSUStyle style, UInt32 ch);
 	int MapGlyphToIndex_AAT(ATSUStyle style, const char* glyphName);
+	int GetGlyphIDFromCGFont(ATSFontRef atsFontRef, const char* glyphName);
 	float GetGlyphItalCorr_AAT(ATSUStyle style, UInt16 gid);
 	char* GetGlyphName_AAT(ATSUStyle style, UInt16 gid, int* len);
+	char* GetGlyphNameFromCGFont(ATSFontRef atsFontRef, UInt16 gid, int* len);
 	int GetFontCharRange_AAT(ATSUStyle style, int reqFirst);
 	ATSUFontVariationAxis find_axis_by_name(ATSUFontID fontID, const char* name, int nameLength);
 	ATSUFontFeatureType find_feature_by_name(ATSUFontID fontID, const char* name, int nameLength);
@@ -340,5 +342,8 @@ extern "C" {
 #endif
 #endif
 
-#endif /* __XETEX_EXT_H */
+// copied from xetex-hz.ch
+#define LEFT_SIDE  0    
+#define RIGHT_SIDE 1    
 
+#endif /* __XETEX_EXT_H */

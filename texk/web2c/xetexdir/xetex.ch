@@ -1,7 +1,7 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- Copyright (c) 2009, 2010 by Jonathan Kew
- Copyright (c) 1994-2008 by SIL International
+ copyright (c) 1994-2008 by SIL International
+ copyright (c) 2009 by Jonathan Kew
 
  Written by Jonathan Kew
 
@@ -66,8 +66,8 @@ authorization from the copyright holders.
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".9995"
-@d XeTeX_version_string=='-0.9995.3' {current \XeTeX\ version}
+@d XeTeX_revision==".9997"
+@d XeTeX_version_string=='-0.9997.1' {current \XeTeX\ version}
 @z
 
 @x

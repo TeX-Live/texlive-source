@@ -61,6 +61,9 @@ public:
 	virtual void initialize(LEErrorCode &status);
 	
 	virtual void	getGlyphBounds(LEGlyphID gid, GlyphBBox* bbox);
+
+	virtual LEGlyphID	mapGlyphToIndex(const char* glyphName) const;
+	virtual const char* getGlyphName(LEGlyphID gid, int& nameLen);
 };
 
 #endif

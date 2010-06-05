@@ -112,3 +112,21 @@ void XeTeXFontInst_Mac::getGlyphBounds(LEGlyphID gid, GlyphBBox* bbox)
 {
 	GetGlyphBBox_AAT(fStyle, gid, bbox);
 }
+
+LEGlyphID
+XeTeXFontInst_Mac::mapGlyphToIndex(const char* glyphName) const
+{
+	LEGlyphID rval = XeTeXFontInst::mapGlyphToIndex(glyphName);
+	if (rval)
+		return rval;
+	return GetGlyphIDFromCGFont(fFontRef, glyphName);
+}
+
+const char*
+XeTeXFontInst_Mac::getGlyphName(LEGlyphID gid, int& nameLen)
+{
+	const char* rval = XeTeXFontInst::getGlyphName(gid, nameLen);
+	if (rval)
+		return rval;
+	return GetGlyphNameFromCGFont(fFontRef, gid, &nameLen);
+}

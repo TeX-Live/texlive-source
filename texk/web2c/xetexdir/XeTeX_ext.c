@@ -98,6 +98,7 @@ authorization from the copyright holders.
 #include "unicode/ubrk.h"
 #include "unicode/ucnv.h"
 
+#include <assert.h>
 /* 
 #include "sfnt.h"
 	doesn't work in plain C files :(
@@ -3182,3 +3183,38 @@ makeutf16name()
 	namelength16 = t - nameoffile16;
 }
 
+
+int getcpcode(int fontNum, unsigned int code, int side)
+{
+    return get_cp_code(fontNum, code, side);
+}
+
+void setcpcode(int fontNum, unsigned int code, int side, int value)
+{
+    set_cp_code(fontNum, code, side, value);
+}
+
+integer get_native_word_cp(void* pNode, int side)
+{
+	memoryword*	node = (memoryword*)pNode;
+	FixedPoint*	locations = (FixedPoint*)native_glyph_info_ptr(node);
+	UInt16*		glyphIDs = (UInt16*)(locations + native_glyph_count(node));
+    UInt16      glyphCount = native_glyph_count(node);
+    integer     f = native_font(node);
+    UInt16      actual_glyph;
+
+    if (glyphCount == 0)
+        return 0;
+
+    switch (side) {
+    case LEFT_SIDE:
+        actual_glyph = *glyphIDs;
+        break;
+    case RIGHT_SIDE:
+        actual_glyph = glyphIDs[glyphCount - 1];
+        break;
+    default:
+        assert(0); // we should not reach this point
+    }
+    return get_cp_code(f, actual_glyph, side);
+}

@@ -58,6 +58,9 @@ authorization from the copyright holders.
 #define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(mem[p]))
 #define xdvbufferbyte(i)						xdvbuffer[i]
 
+#define getnativewordcp(p,s)					get_native_word_cp(&(mem[p]), s)
+
+
 void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp */
 
 #define pic_node_size		8

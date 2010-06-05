@@ -176,3 +176,7 @@ authorization from the copyright holders.
 @define function wdField();
 @define function htField();
 @define function applymapping();
+
+@define procedure setcpcode();
+@define function getcpcode();
+@define function getnativewordcp();

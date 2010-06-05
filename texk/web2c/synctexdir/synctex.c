@@ -274,8 +274,11 @@ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
 
 /*  For non-GCC compilation.  */
 #   if !defined(__GNUC__) || (__GNUC__ < 2)
-#   define __attribute__(A)
+#       if !defined(__GNUC__) || (__GNUC__ < 2)
+#           define __attribute__(A)
+#       endif /* !defined(__GNUC__) || (__GNUC__ < 2) */
 #   endif
+
 
 /*  In the header file below, TEX-OR-MF-OR-MP is replaced by the real name (tex, etex...)
  *  Some macros will be redefined and additional headers will be imported */
