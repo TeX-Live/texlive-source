@@ -1,3 +1,7 @@
+2010-06-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c: include kpathsea/concatn.h if WIN32 is defined.
+
 2010-06-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: include kpathsea/concatn.h and remove cast

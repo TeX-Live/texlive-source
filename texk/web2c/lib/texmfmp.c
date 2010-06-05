@@ -19,7 +19,9 @@
 #include <kpathsea/variable.h>
 #include <kpathsea/absolute.h>
 #include <kpathsea/recorder.h>
+#ifdef WIN32
 #include <kpathsea/concatn.h>
+#endif
 
 #include <time.h> /* For `struct tm'.  */
 #if defined (HAVE_SYS_TIME_H)
