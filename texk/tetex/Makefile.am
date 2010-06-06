@@ -32,16 +32,10 @@ dist_man1_MANS = \
 	allec.man \
 	allneeded.man \
 	context/ctxtools.man \
-	context/makempy.man \
 	context/mptopdf.man \
-	context/pdftools.man \
 	context/pstopdf.man \
 	context/texexec.man \
-	context/texfind.man \
-	context/texfont.man \
 	context/texmfstart.man \
-	context/textools.man \
-	context/texutil.man \
 	dvi2fax.man \
 	dvired.man \
 	e2pall.man \
