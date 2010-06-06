@@ -1,3 +1,8 @@
+2010-06-06  Karl Berry  <karl@tug.org>
+
+	* getopt.h (getopt) [! __STDC__]: remove decl since AIX/Solaris
+	compilers complain (vvv, tlbuild 07 Jun 2010 01:30:47).
+
 2010-06-04  Karl Berry  <karl@tug.org>
 
 	* configure.ac (kpse_lib_devel): empty for TeX Live 2010

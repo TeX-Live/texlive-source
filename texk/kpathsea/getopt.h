@@ -133,7 +133,6 @@ extern int _getopt_internal (int argc, char *const *argv,
 
 #endif /* MAKE_KPSE_DLL */
 #else /* not __STDC__ */
-extern KPSEDLL int getopt ();
 extern KPSEDLL int getopt_long ();
 extern KPSEDLL int getopt_long_only ();
 
