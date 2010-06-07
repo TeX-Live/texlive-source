@@ -1,3 +1,10 @@
+2010-06-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Added patch-08-static-const-members, from vvv.
+	* src/FontCache.cpp (FontCache::VERSION),
+	src/gzstream.cpp (gzstreambuf::bufferSize): Initialized static
+	const class members need also to be declared (at least for AIX)
+
 2010-06-05  Karl Berry  <karl@tug.org>
 
 	* patch-07-libdvisvgm-uint32: declare glyphIndex as FT_UInt in the

@@ -31,6 +31,7 @@
 
 using namespace std;
 
+const UInt8 FontCache::VERSION;
 
 static UInt32 read_unsigned (int bytes, istream &is) {
 	UInt32 ret = 0;

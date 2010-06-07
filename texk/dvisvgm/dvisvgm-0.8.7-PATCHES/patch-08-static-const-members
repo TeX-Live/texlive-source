@@ -1,0 +1,23 @@
+diff -ur dvisvgm-0.8.7.orig/src/FontCache.cpp dvisvgm-0.8.7/src/FontCache.cpp
+--- dvisvgm-0.8.7.orig/src/FontCache.cpp	2009-11-06 22:17:58.000000000 +0100
++++ dvisvgm-0.8.7/src/FontCache.cpp	2010-06-07 15:36:00.565125189 +0200
+@@ -31,6 +31,7 @@
+ 
+ using namespace std;
+ 
++const UInt8 FontCache::VERSION;
+ 
+ static UInt32 read_unsigned (int bytes, istream &is) {
+ 	UInt32 ret = 0;
+diff -ur dvisvgm-0.8.7.orig/src/gzstream.cpp dvisvgm-0.8.7/src/gzstream.cpp
+--- dvisvgm-0.8.7.orig/src/gzstream.cpp	2009-08-29 22:06:31.000000000 +0200
++++ dvisvgm-0.8.7/src/gzstream.cpp	2010-06-07 15:36:00.565125189 +0200
+@@ -34,6 +34,8 @@
+ namespace GZSTREAM_NAMESPACE {
+ #endif
+ 
++const int gzstreambuf::bufferSize;
++
+ // ----------------------------------------------------------------------------
+ // Internal classes to implement gzstream. See header file for user classes.
+ // ----------------------------------------------------------------------------
