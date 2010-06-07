@@ -381,7 +381,6 @@ local lua_binary = arg[k]
 kpse.set_program_name(lua_binary, progname)
 -- various dir-vars
 local TEXDIR = kpse.var_value('SELFAUTOPARENT')
-print('TEXDIR', TEXDIR)
 local BINDIR = kpse.var_value('SELFAUTOLOC')
 local PATH = os.getenv('PATH') or ''
 -- perl stuff
