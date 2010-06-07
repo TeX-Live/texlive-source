@@ -347,8 +347,6 @@ double good_strtod(const char *nptr, char **endptr);
 
 #ifdef __cplusplus
 }
-/* Get rid of a possible inline macro under C++. */
-# define inline inline
 #endif
 
 #endif /* LCDF_TYPETOOLS_CONFIG_H */])
