@@ -1,4 +1,4 @@
-% Copyright (c) 1996-2009 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh, <thanh@@pdftex.org>
+% Copyright (c) 1996-2010 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh, <thanh@@pdftex.org>
 
 % This file is part of pdfTeX.
 
@@ -294,7 +294,7 @@ known as `\eTeX'.
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
 @d pdftex_revision=="11" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.11-beta' {current \pdfTeX\ version}
+@d pdftex_version_string=='-1.40.11' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
    {printed when \pdfeTeX\ starts}
