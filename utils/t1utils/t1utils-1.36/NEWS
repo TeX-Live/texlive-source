@@ -1,5 +1,10 @@
 T1utils NEWS
 
+Version 1.36   29.May.2010
+
+* Several minor cleanups.
+
+
 Version 1.35   22.Oct.2009
 
 * Don't use "getline" as a symbol (reported by Karl Berry and

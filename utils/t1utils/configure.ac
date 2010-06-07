@@ -12,7 +12,7 @@ dnl  Adapted for TeX Live from t1utils-1.34/configure.in
 dnl
 dnl *********************************************************************
 dnl
-m4_define([t1utils_version], [1.35])[]dnl using unmodified t1utils source tree
+m4_define([t1utils_version], [1.36])[]dnl using unmodified t1utils source tree
 AC_INIT([t1utils for TeX Live], t1utils_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([t1utils-]t1utils_version[/t1ascii.c])

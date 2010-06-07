@@ -8,7 +8,7 @@ extern "C" {
 /* clp.h - Public interface to CLP.
  * This file is part of CLP, the command line parser package.
  *
- * Copyright (c) 1997-2008 Eddie Kohler, ekohler@gmail.com
+ * Copyright (c) 1997-2010 Eddie Kohler, ekohler@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -223,6 +223,9 @@ Clp_ErrorHandler Clp_SetErrorHandler(Clp_Parser *clp, Clp_ErrorHandler errh);
 
 /** @brief Set @a clp's UTF-8 mode. */
 int Clp_SetUTF8(Clp_Parser *clp, int utf8);
+
+/** @brief Return @a clp's treatment of character @a c. */
+int Clp_OptionChar(Clp_Parser *clp, int c);
 
 /** @brief Set @a clp's treatment of character @a c. */
 int Clp_SetOptionChar(Clp_Parser *clp, int c, int type);

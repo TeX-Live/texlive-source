@@ -650,7 +650,7 @@ int main(int argc, char *argv[])
 
      case VERSION_OPT:
       printf("t1asm (LCDF t1utils) %s\n", VERSION);
-      printf("Copyright (C) 1992-2003 I. Lee Hetherington, Eddie Kohler et al.\n\
+      printf("Copyright (C) 1992-2010 I. Lee Hetherington, Eddie Kohler et al.\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

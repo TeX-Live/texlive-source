@@ -1,0 +1,83 @@
+	Avoid compiler warnings (gcc's -Wcast-qual).
+
+diff -ur t1utils-1.36.orig/clp.c t1utils-1.36/clp.c
+--- t1utils-1.36.orig/clp.c	2010-05-30 02:10:51.000000000 +0200
++++ t1utils-1.36/clp.c	2010-06-07 15:19:30.622447605 +0200
+@@ -1074,21 +1074,27 @@
+ parse_int(Clp_Parser *clp, const char *arg, int complain, void *user_data)
+ {
+     const char *val;
++    char *temp;
+     if (*arg == 0 || isspace((unsigned char) *arg)
+ 	|| (user_data != 0 && *arg == '-'))
+ 	val = arg;
+     else if (user_data != 0) {	/* unsigned */
+ #if HAVE_STRTOUL
+-	clp->val.u = strtoul(arg, (char **) &val, 0);
++	clp->val.u = strtoul(arg, &temp, 0);
++	val = temp;
+ #else
+ 	/* don't bother really trying to do it right */
+ 	if (arg[0] == '-')
+ 	    val = arg;
+-	else
+-	    clp->val.u = strtol(arg, (char **) &val, 0);
++	else {
++	    clp->val.u = strtol(arg, &temp, 0);
++	    val = temp;
++	}
+ #endif
+-    } else
+-	clp->val.i = strtol(arg, (char **) &val, 0);
++    } else {
++	clp->val.i = strtol(arg, &temp, 0);
++	val = temp;
++    }
+     if (*arg != 0 && *val == 0)
+ 	return 1;
+     else if (complain) {
+@@ -1104,11 +1110,14 @@
+ parse_double(Clp_Parser *clp, const char *arg, int complain, void *user_data)
+ {
+     const char *val;
++    char *temp;
+     (void)user_data;
+     if (*arg == 0 || isspace((unsigned char) *arg))
+ 	val = arg;
+-    else
+-	clp->val.d = strtod(arg, (char **) &val);
++    else {
++	clp->val.d = strtod(arg, &temp);
++	val = temp;
++    }
+     if (*arg != 0 && *val == 0)
+ 	return 1;
+     else if (complain)
+diff -ur t1utils-1.36.orig/t1disasm.c t1utils-1.36/t1disasm.c
+--- t1utils-1.36.orig/t1disasm.c	2010-05-30 02:26:17.000000000 +0200
++++ t1utils-1.36/t1disasm.c	2010-06-07 13:44:35.000000000 +0200
+@@ -332,11 +332,11 @@
+ /* 23.Feb.2004 - use 'memstr', not strstr, because the strings input to
+    eexec_line aren't null terminated! Reported by Werner Lemberg. */
+ 
+-static const unsigned char *
+-oog_memstr(const unsigned char *line, int line_len, const char *pattern, int pattern_len)
++static unsigned char *
++oog_memstr(unsigned char *line, int line_len, const char *pattern, int pattern_len)
+ {
+-    const unsigned char *try;
+-    const unsigned char *last = line + line_len - pattern_len + 1;
++    unsigned char *try;
++    unsigned char *last = line + line_len - pattern_len + 1;
+     while (line < last
+ 	   && (try = memchr(line, (unsigned char)*pattern, last - line))) {
+ 	if (memcmp(try, pattern, pattern_len) == 0)
+@@ -432,7 +432,7 @@
+        badly: a charstring definition follows "/Charstrings ... begin", ON THE
+        SAME LINE. */
+     {
+-	const char *CharStrings = (const char *)
++	char *CharStrings = (char *)
+ 	    oog_memstr(line, line_len, "/CharStrings ", 13);
+ 	int crap, n;
+ 	char should_be_slash = 0;

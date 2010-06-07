@@ -1,3 +1,9 @@
+2010-06-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to t1utils-1.35.
+	* patch-02-static (removed): Now handled in original sources.
+	* patch-03-warnings: Adapted, now mostly in original sources.
+
 2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to t1utils-1.35.

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(t1ascii.c)
-AM_INIT_AUTOMAKE(t1utils, 1.35)
+AM_INIT_AUTOMAKE(t1utils, 1.36)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 

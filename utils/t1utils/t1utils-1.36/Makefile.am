@@ -22,13 +22,6 @@ LDADD = @LIBOBJS@
 
 EXTRA_DIST = $(man_MANS) t1utils.spec
 
-srclinks:
-	cd $(top_srcdir); test -d include/lcdf || mkdir -p include/lcdf
-	cd $(top_srcdir); for i in clp.h inttypes.h; do \
-	ln -sf ../../../liblcdf/include/lcdf/$$i include/lcdf/$$i; done
-	cd $(top_srcdir); for i in clp.c strerror.c; do \
-	ln -sf ../liblcdf/liblcdf/$$i $$i; done
-
 versionize:
 	perl -pi -e "s/^\\.ds V.*/.ds V $(VERSION)/;" t1ascii.1 t1binary.1 t1disasm.1 t1asm.1 t1unmac.1 t1mac.1
 	perl -pi -e 's/^Version:(\s*).*/Version:$${1}$(VERSION)/; s/$(PACKAGE)-[\w.]+\.tar\.gz/$(PACKAGE)-$(VERSION).tar.gz/;' t1utils.spec
