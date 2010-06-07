@@ -177,6 +177,7 @@ nobase_dist_script_SCRIPTS = \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
+	authorindex/authorindex \
 	bengali/ebong.py \
 	bibexport/bibexport.sh \
 	bundledoc/arlatex \
