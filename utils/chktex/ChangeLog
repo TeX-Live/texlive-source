@@ -1,0 +1,6 @@
+2010-06-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* getopt.c, getopt1.c (new): Copied from ../../texk/kpathsea.
+	* getopt.h (new): Copied from ../../texk/kpathsea, no DLL.
+	* Makefile.am (chktex_SOURCES): Add these new files.
+

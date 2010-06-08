@@ -31,6 +31,9 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 bin_PROGRAMS = chktex
 
 chktex_SOURCES = \
+	getopt.c \
+	getopt.h \
+	getopt1.c \
 	$(CHKTEX_TREE)/ChkTeX.c \
 	$(CHKTEX_TREE)/ChkTeX.h \
 	$(CHKTEX_TREE)/FindErrs.c \

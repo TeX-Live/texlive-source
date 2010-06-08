@@ -47,7 +47,7 @@ DIST_COMMON = $(am__configure_deps) $(dist_bin_SCRIPTS) \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/configure.ac
@@ -63,8 +63,9 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(configdir)" "$(DESTDIR)$(pdfdocdir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_chktex_OBJECTS = ChkTeX.$(OBJEXT) FindErrs.$(OBJEXT) \
-	OpSys.$(OBJEXT) Resource.$(OBJEXT) Utility.$(OBJEXT)
+am_chktex_OBJECTS = getopt.$(OBJEXT) getopt1.$(OBJEXT) \
+	ChkTeX.$(OBJEXT) FindErrs.$(OBJEXT) OpSys.$(OBJEXT) \
+	Resource.$(OBJEXT) Utility.$(OBJEXT)
 chktex_OBJECTS = $(am_chktex_OBJECTS)
 chktex_LDADD = $(LDADD)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -222,6 +223,9 @@ EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES ChkTeX.tex \
 	chktex.test
 AM_CFLAGS = $(WARNING_CFLAGS)
 chktex_SOURCES = \
+	getopt.c \
+	getopt.h \
+	getopt1.c \
 	$(CHKTEX_TREE)/ChkTeX.c \
 	$(CHKTEX_TREE)/ChkTeX.h \
 	$(CHKTEX_TREE)/FindErrs.c \
@@ -435,6 +439,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OpSys.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Resource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Utility.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getopt1.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
