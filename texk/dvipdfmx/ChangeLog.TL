@@ -1,6 +1,14 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2010-06-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Solaris9 doesn't support "%hhu".
+	* src/dpxfile.c (dpx_file_apply_filter):
+	Use (unsigned short) version with "%hu".
+	* src/pdfobj.c (pdf_open, check_for_pdf_version): Declare minor
+	as unsigned short for use with "%hu".
+
 2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.

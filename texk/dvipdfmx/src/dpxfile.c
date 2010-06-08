@@ -726,7 +726,7 @@ if ((l) + (n) >= (m)) { \
         }
       case  'v': /* Version number, e.g. 1.4 */ {
        char buf[6];
-       sprintf(buf, "1.%hu", version);
+       sprintf(buf, "1.%hu", (unsigned short) version);
        need(cmd, n, size, strlen(buf));
        strcpy(cmd + n, buf);  n += strlen(buf);
        break;

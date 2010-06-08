@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2010-06-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dpxfile.c (dpx_file_apply_filter) [Solaris9]:
+	Avoid "%hhu", use "%hu" and (unsigned short) version.
+
 2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.

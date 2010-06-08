@@ -2960,7 +2960,7 @@ pdf_open (const char *ident, FILE *file)
 
     new_version = pdf_deref_obj(pdf_lookup_dict(pf->catalog, "Version"));
     if (new_version) {
-      unsigned char minor;
+      unsigned short minor;
 
       if (!PDF_OBJ_NAMETYPE(new_version) ||
 	  sscanf(pdf_name_value(new_version), "1.%hu", &minor) != 1) {
@@ -3003,7 +3003,7 @@ pdf_files_close (void)
 static int
 check_for_pdf_version (FILE *file) 
 {
-  unsigned char minor;
+  unsigned short minor;
 
   rewind(file);
 
