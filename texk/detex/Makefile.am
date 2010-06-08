@@ -5,6 +5,12 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+EXTRA_DIST = detex-2.7 detex-2.8 detex-2.8-PATCHES
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -31,11 +37,7 @@ dist_check_SCRIPTS = detex.test
 
 TESTS = detex.test
 
-EXTRA_DIST = test.lout test.tex test.tout
+EXTRA_DIST += test.lout test.tex test.tout
 
 CLEANFILES = test.out texmf.cnf
-
-## Not used
-##
-EXTRA_DIST += states.sed
 

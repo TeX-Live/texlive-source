@@ -1,0 +1,195 @@
+Detex - Version 2.8
+
+Detex is a program to remove TeX constructs from a text file.  It recognizes
+the \input command.
+
+This program assumes it is dealing with LaTeX input if it sees the string
+"\begin{document}" in the text.  It recognizes the \include and \includeonly
+commands.
+
+This directory contains the following files:
+
+README -	you're looking at it.
+
+COPYRIGHT -	NCSA/University of Illinois Open Source License
+
+Makefile -	makefile for generating detex on a 4.2BSD Unix system.
+
+detex.1l -	troff source for the detex manual page.
+		Assuming you have the -man macros, use "make man-page" to
+		generate it.
+
+detex.h -	Various global definitions.  These should be modified to suit
+		the local installation.
+
+detex.l -	Lex and C source for the detex program.
+
+lexout.c -	C code generated from detex.l using lex on a Sun (SunOS 4.1.1)
+		This can be useful for DOS, OS/2 or systems that don't have
+		lex.
+
+states.sed -	sed(1) script to munge the state names in detex.l so that
+		reasonable names can be used in the source without causing
+		lex(1) to overflow.
+
+os2 -		subdirectory containing support for compilation on
+		OS/2 and DOS systems
+
+
+This software package is distributed under the NCSA/University of
+Illinois Open Source License.  The latest version is available at
+http://www.cs.purdue.edu/homes/trinkle/detex/ Send comments and fixes
+to me via email.
+
+Daniel Trinkle <trinkle@cs.purdue.edu>
+Department of Computer Sciences
+Purdue University
+West Lafayette, IN 47907-1398
+
+April 26, 1986
+
+Modified -- June 4, 1986
+Changed so that it automatically recognizes LaTeX source and ignores several
+environment modes such as array.
+
+
+Modified (Version 2.0) -- June 30, 1984
+Now handles white space in sequences like "\begin { document }".  Detex is not
+as easily confused by such things as display mode ends and begins that don't
+match up.
+
+
+Modified -- September 19, 1986
+Added the "-e <environment-list>" option to ignore specified LaTeX
+environments.
+
+
+Modified -- June 30, 1987
+Added the "-n" no-follow option, to allow detex to ignore \input and \include
+commands.  Also changed the algorithm for locating the input files.  It now
+interprets the "." more reasonably (i.e. it is not always the beginning of an
+extension).
+
+
+Modified -- December 15, 1988
+Added handling of verbatim environment in LaTeX mode and added it to the list
+of modes ignored by default.  Because of limitations with lex, it was
+necessary to shorten the names of some of the existing start states before
+adding a new one (ugh).
+
+
+Modified -- January 3, 1988
+Added ignore of \$ inside $$ (math) pair.
+
+
+Modified (Version 2.2) -- June 25, 1990
+Control sequences are no longer replaced by space, but just removed.  This
+means accents no longer cause output words to be broken.  The "-c" option was
+added to show the arguments of \cite, \ref, and \pageref macros.  This is
+useful when using something like style on the output.
+
+
+Modified (Version 2.3) -- September 7, 1990
+Fixed the handling of Ctl mode a little better and added an exception
+for \index on suggestions from kcb@hss.caltech.edu (KC Border).  Also
+changed the value for DEFAULTINPUTS to coincide with a local change.
+
+
+Modified -- February 10, 1991
+Added -t option to force TeX mode even when seeing the "\begin{document}"
+string in the input.
+
+
+Modified -- February 23, 1991
+Based on suggestions from pinard@iro.umontreal.ca (Francois Pinard), I
+added support for the SysV string routines (-DUSG), added defines for
+the flex lexical scanner (-DFLEX_SCANNER), changed NULL to '\0' when
+using it as a character (his sys defined NULL as (void *)0), changed
+the Makefile to use ${CC} instead of cc, and added comments about the
+new compile time options.
+
+
+Modified (Version 2.4) -- September 2, 1992
+Corrected the way CITEBEGIN worked.  Due to serious braindeath I had
+the condition wrong in the if test.  It should be (fLatex && !fCite).
+This solves the problem a couple people reported with amstex style
+\ref entries.
+
+Added a preprocessing sed(1) command to replace all the long, easy to
+read state names with short two letter state names (SA-S?) so that lex
+won't overflow and I don't have to keep shortening the state names
+every time I add one.  If a state is added, it must also be added to
+states.sed (order is important) along with its unique S? replacement.
+
+Added \pagestyle, \setcounter, and \verb handling from
+K.Sattar@cs.exeter.ac.uk (Khalid Sattar).  Also allows invocation as
+"delatex" to force LaTeX mode.
+
+Applied patches from queinnec@cenatls.cena.dgac.fr (Philippe Queinnec)
+to handle nested {}s in state <LaMacro2> (\bibitem, \cite, \index).
+
+Added special ligature handling (\aa, \ae, \oe, \l, \o, \i, \j, \ss)
+at the suggestion of gwp@dido.caltech.edu (G. W. Pigman II).
+
+Cleaned up the comments on detex.h, added mathmatica to DEFAULTENV.
+
+
+Modified (Version 2.5) -- January 28, 1993
+Leading spaces in macros are no longer stripped.  This means
+"foo\footnote{ bar}" comes out as "foo bar" instead of "foobar".
+
+Fixed special ligature handling so it works in cases line {\ss} instead of
+just when followed by a space.
+
+
+Modified (Version 2.6) -- July 30, 1993
+Added OS/2 port from hankedr@mail.auburn.edu (Darrel R Hankerson).
+
+Added handling of leading and trailing ':' in TEXINPUTS per the latest
+TeX as suggested by jnp@tfl.dk (J|rgen N|rgaard).
+
+Changed the way the input path is constructed in SetInputPaths() so we
+never try to modify a constant string.
+
+Changed the way the the ignore environment list is contructed in
+SetEnvIgnore() so we never try to modify a constant string.
+
+Changed the USG define to HAVE_STRING_H.
+
+Fixed the states.sed script so it only replaces "Input" in the correct
+places.  I would like to use the \< \> word separator patterns but
+they are not supported by all versions of sed.  This as least works.
+
+Changed the detex.c target in the Makefile to use a temporary file
+because I experienced problems (segmentation fault) with lex on
+Solaris 2.1 when input was from stdin.
+
+
+Modified (Version 2.7) -- September 10, 1997
+Removed line breaks in detex.l between a few patterns and actions.  It
+appears that flex is no longer able to handle this.  Thanks to Anthony
+Harris <harris@hebb.neurology.pitt.edu> and Marty Leisner
+<leisner@sdsp.mc.xerox.com> for reporting this.
+
+
+Porting notes -- March 30, 1992
+When using gcc, or compiling on a NeXT, you should compile with
+-fwritable-strings.  With the change to SetInputPaths() in 2.6 this
+should no longer be necessary.
+
+On a NeXT, it has been reported that lex replaces the '\0' with NULL,
+and then the compiler complains about it.  I think this is an old bug
+that is no longer applicable.
+
+July 30, 1993
+The flex scanner generator does not work because it does not handle
+input buffering the same way as lex.  I don't know of any reasonable
+way to rewrite detex to get around this problem.
+
+May 25, 1995
+According to alain@ia1.u-strasbg.fr (Alain Ketterlin), using flex
+allows 8-bit characters to be handled correctly.
+
+Modified (Version 2.8) -- January 1, 2008
+Added NCSA/University of Illinois Open Source License to facilitate
+free redistribution.

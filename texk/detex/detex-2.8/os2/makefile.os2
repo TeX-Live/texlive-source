@@ -1,0 +1,96 @@
+# Makefile for "detex" (tested with dmake 3.8)                 22 July 1993
+#
+# - for GNU gcc (emx 0.8g kit) under OS/2 (32-bit)
+# - for Microsoft C 6.00 under OS/2 or MSDOS (16-bit)
+
+# To use, enter "{d,n}make -f makefile.os2" (this makefile depends on its
+# name being "makefile.os2").
+
+default:
+	@echo Enter "$(MAKE) -f makefile.os2 emx"
+	@echo Enter "$(MAKE) -f makefile.os2 emxbnd"
+	@echo    or "$(MAKE) -f makefile.os2 msc"
+	@echo    or "$(MAKE) -f makefile.os2 mscbnd"
+
+# See the original Makefile for a complete list of options.
+#
+# Add -DMAXPATHLEN=<length> if it is not defined in /usr/include/sys/param.h
+#
+#MAXPATHLEN = -DMAXPATHLEN=1024
+#
+# Add -DNO_MALLOC_DECL if your system does not like the malloc() declaration
+# in detex.l (reported by pinard@iro.umontreal.ca)
+#
+NO_MALLOC_DECL = -DNO_MALLOC_DECL
+#
+
+emx:
+	$(MAKE) -f makefile.os2 all \
+	CC="gcc -Zomf -Zmtd" O=".obj" \
+	CF="" \
+	LDFLAGS="" \
+	LDFLAGS2="" \
+	DEF="detex-32.def"
+
+emxbnd:
+	$(MAKE) -f makefile.os2 all \
+	CC="gcc" O=".o" \
+	CF="" \
+	LDFLAGS="" \
+	LDFLAGS2="" \
+	DEF="detex-32.def"
+
+msc:
+	$(MAKE) -f makefile.os2 all \
+	CC="cl -AS " O=".obj" \
+	CF="-D__STDC__ -DMAXPATHLEN=1024" \
+	LDFLAGS="-Lp" \
+	LDFLAGS2="setargv.obj -link /NOE" \
+	DEF="detex.def"
+
+mscbnd:
+	$(MAKE) -f makefile.os2 all \
+	CC="cl -AS " O=".obj" \
+	CF="-D__STDC__ -DMAXPATHLEN=1024" \
+	LDFLAGS="-Lp -Fb" \
+	LDFLAGS2="setargv.obj -link /NOE" \
+	DEF="detex.def"
+
+
+CFLAGS = $(CF) -DOS2 -DHAVE_STRING_H $(NO_MALLOC_DECL) -DNOFILE=99
+
+.c$O :
+	$(CC) $(CFLAGS) -c $<
+
+all : detex.exe
+
+detex.exe : detex$O $(DEF)
+		$(CC) $(LDFLAGS) -o $@ $< $(LDFLAGS2)
+
+
+# Use your favorite lexical scanner
+#
+# flex buffered input causes problems--see flexdoc.man.
+LEX	= lex
+LEX_YY = lex.yy
+#LEX	= flex
+#LEX_YY = lexyy
+
+#LFLAGS	= -8 -C
+
+CP = cp
+FMT_CMD = groff -man
+
+# lexout.c obtained from lex output on sparc. 
+
+#detex.c:
+#	sed -f states.sed detex.l | ${LEX} ${LFLAGS}
+#	mv $(LEX_YY).c detex.c
+
+detex.c : lexout.c
+	$(CP) $< $@
+
+man-page:
+	$(FMT_CMD) detex.1l
+
+detex$O : detex.h

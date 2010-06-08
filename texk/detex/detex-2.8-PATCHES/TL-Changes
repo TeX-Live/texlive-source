@@ -1,0 +1,9 @@
+Changes applied to the detex-2.8 tree as obtained from:
+	http://www.cs.purdue.edu/homes/trinkle/detex/
+
+Removed:
+	lexout.c
+
+Renamed:
+	detex.1l -> detex.man
+

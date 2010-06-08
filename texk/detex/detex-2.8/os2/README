@@ -1,0 +1,7 @@
+This directory contains file contributed by hankedr@mail.auburn.edu
+(Darrel R Hankerson) to facilitate compilation on OS/2 and DOS
+systems.  Use the lexout.c provided in the top level directory.
+
+  detex.def     linker definition file (16-bit versions)
+  detex-32.def  linker definition file
+  Makefile.os2  makefile for MSC 6.00A or EMX/gcc (tested with dmake 3.8)
