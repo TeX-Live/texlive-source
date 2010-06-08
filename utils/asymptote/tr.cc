@@ -62,7 +62,6 @@
 #endif
 #include "tr.h"
 
-
 #define DEFAULT_TILE_WIDTH  256
 #define DEFAULT_TILE_HEIGHT 256
 #define DEFAULT_TILE_BORDER 0
@@ -290,7 +289,8 @@ void trPerspective(TRcontext *tr,
                    GLdouble zNear, GLdouble zFar )
 {
    GLdouble xmin, xmax, ymin, ymax;
-   ymax = zNear * tan(fovy * 3.14159265 / 360.0);
+   static const double halfradians=acos(-1.0)/360.0;
+   ymax = zNear * tan(fovy * halfradians);
    ymin = -ymax;
    xmin = ymin * aspect;
    xmax = ymax * aspect;

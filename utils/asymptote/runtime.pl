@@ -70,6 +70,31 @@ sub read_types {
     }
 }
 
+# Scrape the symbol names of the operators from opsymbols.h.
+my %opsymbols = ();
+open(opsyms, "opsymbols.h") ||
+        die("Couldn't open opsymbols.h");
+while (<opsyms>) {
+    if (m/^OPSYMBOL\(\"(.*)\", ([A-Za-z_]+)\);/) {
+        $opsymbols{ $1 } = $2;
+    }
+}
+
+# Turn a name into a symbol.
+sub symbolize {
+    my $name = shift;
+    if ($name =~ /^[A-Za-z0-9_]+$/) {
+        return "SYM($name)";
+    }
+    if ($opsymbols{ $name }) {
+        return $opsymbols{ $name };
+    }
+    if ($name =~ /operator (\w+)/ && $opsymbols{ $1 }) {
+      return $opsymbols{ $1 }
+    }
+    return "symbol::trans(\"" . $name . "\")"
+}
+
 sub asy_params {
     my $params = shift;
     my @params = split m/,\s*/, $params;
@@ -85,7 +110,8 @@ sub asy_params {
         if (not $type_map{$type}) {
             assoc_error($filename, $line, $type);
         }
-        $_ = "formal(" . $type_map{$type} . ", \"" . lc($name) . "\"" . ", " . 
+        $_ = "formal(" . $type_map{$type} . ", " .
+        symbolize(lc($name)) . ", " . 
 	    ($default ? "true" : "false") . ", " . 
 	    ($explicit ? "true" : "false") . ")";
     }
@@ -148,6 +174,7 @@ $header = <>;
 print $header;
 $source_line += ($header =~ tr/\n//);;
 
+print "\n#include \"$prefix.symbols.h\"\n";
 print "\nnamespace run {\n";
 
 read_types($basetypes, "runtimebase.in", $basesource_type_line);
@@ -196,7 +223,7 @@ while (<>) {
   push @builtin, "#line $source_line \"$prefix.in\"\n"
       . "  addFunc(ve, run::" . $cname 
       . ", " . $type_map{$type}
-      . ", " . '"' . $name . '"'
+      . ", " . symbolize($name)
       . ( @params ? ", " . join(", ",@asy_params)
                    : "" )
       . ");\n";

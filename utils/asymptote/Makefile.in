@@ -11,6 +11,8 @@ GCLIBS = $(GCPPLIB) $(GCLIB)
 LFLAGS = @LDFLAGS@
 LIBS = $(LFLAGS) @LIBS@ $(GCLIBS)
 
+vpath %.cc prc
+
 CAMP = camperror path drawpath drawlabel picture psfile texfile util settings \
        guide flatguide knot drawfill path3 drawpath3 drawsurface
 
@@ -18,7 +20,10 @@ RUNTIME_FILES = runtime runbacktrace runpicture runlabel runhistory runarray \
 	runfile runsystem runpair runtriple runpath runpath3d runstring \
 	runmath
 
-PRC =  prc/PRCbitStream prc/oPRCFile prc/PRCdouble prc/writePRC
+# Files to be scanned for pre-translated symbols defined by SYM(name).
+SYMBOL_FILES = types builtin $(RUNTIME_FILES)
+
+PRC =  PRCbitStream oPRCFile PRCdouble writePRC
 
 FILES = $(CAMP) $(RUNTIME_FILES) env genv main stm dec errormsg \
         callable name symbol types entry exp newexp stack camp.tab lex.yy \
@@ -41,8 +46,8 @@ LATEXFILES = asymptote.sty asycolors.sty ocg.sty
 CONTEXTFILES = colo-asy.tex
 ASY = ./asy -dir base -config "" -render=0
 
-DEFS = @DEFS@ @OPTIONS@
-CFLAGS = @CPPFLAGS@ @CFLAGS@ 
+DEFS = @DEFS@ @OPTIONS@ -DPRESYM
+CFLAGS = @CPPFLAGS@ @CFLAGS@
 OPTS = $(DEFS) $(CFLAGS)
 INCL = -I . @INCL@
 
@@ -73,7 +78,7 @@ last = `cat svnrevision.cc | sed -e 's/.*\"\(.*\)\";/\\1/'`
 
 export prefix docdir exampledir mandir infodir INSTALL MAKE DESTDIR TEXI2DVI
 
-asy: $(GCLIB) $(FILES:=.o) prc
+asy: $(GCLIB) $(FILES:=.o)
 	if test "$(revision)" != "$(last)"; then \
 	  echo $(REVISION)\"$(revision)\"\; > svnrevision.cc; \
 	  $(CXX) $(OPTS) $(INCL) -o svnrevision.o -c svnrevision.cc; \
@@ -89,7 +94,7 @@ asy: $(GCLIB) $(FILES:=.o) prc
 svnrevision.cc:
 	echo $(REVISION)\"\"\; > svnrevision.cc;
 
-msdos: $(GCLIB) $(FILES:=.o) prc asy.o
+msdos: $(GCLIB) $(FILES:=.o) asy.o
 	echo string VERSION=\"@VERSION@\"\; > base/version.asy
 	echo @set VERSION @VERSION@ > doc/version.texi
 	echo @set Datadir @datadir@ >> doc/version.texi
@@ -131,8 +136,18 @@ man:	asy
 faq:	asy
 	cd doc && $(MAKE) faq
 
-$(RUNTIME_FILES:=.cc): %.cc: runtime.pl runtimebase.in %.in
+$(RUNTIME_FILES:=.cc): %.cc: runtime.pl opsymbols.h runtimebase.in %.in
 	./runtime.pl $(@:.cc=)
+
+$(SYMBOL_FILES:=.symbols.h): %.symbols.h: findsym.pl %.cc
+	./findsym.pl $@ $(@:.symbols.h=.cc)
+
+$(SYMBOL_FILES:=.o): %.o: %.symbols.h
+
+allsymbols.h: findsym.pl $(SYMBOL_FILES:=.cc)
+	./findsym.pl $@ $(SYMBOL_FILES:=.cc)
+
+symbol.o: opsymbols.h allsymbols.h
 
 camp.tab.cc: camp.y
 	$(BISON) -dvt -b camp camp.y && mv camp.tab.c camp.tab.cc
@@ -144,8 +159,11 @@ lex.yy.cc: camp.l
 
 lex.yy.d: $(GCLIB) lex.yy.cc camp.tab.h
 
-keywords.cc: keywords.pl camp.l
+keywords.cc: keywords.pl camp.l process.cc
 	./keywords.pl
+
+opsymbols.h: opsymbols.pl camp.l
+	./opsymbols.pl
 
 envcompleter.d: keywords.cc
 
@@ -214,10 +232,7 @@ uninstall-asy:
 uninstall-man: 
 	cd doc && $(MAKE) uninstall
 
-prc-clean: FORCE
-	-rm -f prc/*.o prc/*.d 
-
-clean:  FORCE prc-clean
+clean:  FORCE
 	-rm -f asy *.o *.d *mon.out $(CLEAN)
 
 gc-clean: FORCE clean

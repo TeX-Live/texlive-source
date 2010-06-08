@@ -27,7 +27,7 @@ extern void copyArrayC(T* &dest, const vm::array *a, size_t dim,
 
 namespace camp {
 
-enum Entity {LINE=0,CURVE,SURFACE,BILLBOARD_SURFACE,nENTITY};
+enum Interaction {EMBEDDED=0,BILLBOARD};
 
 class box {
   pair p[4];
@@ -100,6 +100,9 @@ typedef mem::vector<box> boxvector;
   
 typedef mem::list<bbox> bboxlist;
   
+typedef mem::map<CONST string,unsigned> groupmap;
+typedef mem::vector<groupmap> groupsmap;
+
 class drawElement : public gc
 {
 public:
@@ -150,7 +153,8 @@ public:
   // Output to a PRC file
   // The array origin contains the points about which to rotate billboard labels
   virtual bool write(prcfile *out, unsigned int *count, vm::array *index,
-                     vm::array *origin) {
+                     vm::array *origin, double compressionlimit,
+                     groupsmap& groups) {
     return false;
   }
 

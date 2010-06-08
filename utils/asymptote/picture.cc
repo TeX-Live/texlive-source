@@ -195,8 +195,8 @@ pair picture::ratio(double (*m)(double, double))
 {
   bool first=true;
   pair b;
-  bbox3 B=bounds3();
-  double fuzz=sqrtFuzz*(B.Max()-B.Min()).length();
+  bounds3();
+  double fuzz=sqrtFuzz*(b3.Max()-b3.Min()).length();
   for(nodelist::const_iterator p=nodes.begin(); p != nodes.end(); ++p) {
     assert(*p);
     (*p)->ratio(b,m,fuzz,first);
@@ -1047,13 +1047,16 @@ bool picture::shipout3(const string& prefix, array *index, array *center)
   
   string prcname=buildname(prefix,"prc");
   prcfile prc(prcname);
-  unsigned int count[nENTITY];
-  for(unsigned int i=0; i < nENTITY; ++i)
-    count[i]=0;
+  
+  static const double limit=2.5*10.0/INT_MAX;
+  double compressionlimit=max(length(b3.Max()),length(b3.Min()))*limit;
+  
+  groups.push_back(groupmap());
   for(nodelist::iterator p=nodes.begin(); p != nodes.end(); ++p) {
     assert(*p);
-    (*p)->write(&prc,count,index,center);
+    (*p)->write(&prc,&billboard,index,center,compressionlimit,groups);
   }
+  groups.pop_back();
   if(status)
     status=prc.finish();
     

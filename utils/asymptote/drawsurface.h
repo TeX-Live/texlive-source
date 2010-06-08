@@ -14,8 +14,6 @@
 
 namespace camp {
 
-enum Interaction {EMBEDDED=0,BILLBOARD};
-
 #ifdef HAVE_GL
 void storecolor(GLfloat *colors, int i, const vm::array &pens, int j);
 #endif  
@@ -33,14 +31,13 @@ protected:
   double opacity;
   double shininess;
   double PRCshininess;
-  double granularity;
   triple normal;
   bool invisible;
   bool lighton;
-  string name;
-  Interaction interaction;
+  int interaction;
   
   triple Min,Max;
+  bool prc;
   
 #ifdef HAVE_GL
   GLfloat *colors;
@@ -53,12 +50,11 @@ public:
 
   drawSurface(const vm::array& g, triple center, bool straight,
               const vm::array&p, double opacity, double shininess,
-              double PRCshininess, double granularity, triple normal,
-              const vm::array &pens, bool lighton, const string& name,
-              Int interaction) :
+              double PRCshininess, triple normal, const vm::array &pens,
+              bool lighton, int interaction, bool prc) :
     center(center), straight(straight), opacity(opacity), shininess(shininess),
-    PRCshininess(PRCshininess), granularity(granularity), normal(unit(normal)),
-    lighton(lighton), name(name), interaction((Interaction) interaction) {
+    PRCshininess(PRCshininess), normal(unit(normal)), lighton(lighton),
+    interaction(interaction), prc(prc) {
     string wrongsize=
       "Bezier surface patch requires 4x4 array of triples and array of 4 pens";
     if(checkArray(&g) != 4 || checkArray(&p) != 4)
@@ -112,8 +108,8 @@ public:
     straight(s->straight), diffuse(s->diffuse), ambient(s->ambient),
     emissive(s->emissive), specular(s->specular), opacity(s->opacity),
     shininess(s->shininess), PRCshininess(s->PRCshininess), 
-    granularity(s->granularity), invisible(s->invisible),
-    lighton(s->lighton), name(s->name), interaction(s->interaction) {
+    invisible(s->invisible), lighton(s->lighton),
+    interaction(s->interaction), prc(s->prc) { 
     
     for(size_t i=0; i < 4; ++i) {
       const double *c=s->vertices[i];
@@ -134,7 +130,7 @@ public:
 #ifdef HAVE_GL
     if(s->colors) {
       colors=new(UseGC) GLfloat[16];
-      for(int i=0; i < 16; ++i)
+      for(size_t i=0; i < 16; ++i)
         colors[i]=s->colors[i];
     } else colors=NULL;
 #endif    
@@ -148,8 +144,8 @@ public:
   
   virtual ~drawSurface() {}
 
-  bool write(prcfile *out, unsigned int *count, vm::array *index,
-             vm::array *origin);
+  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
+             groupsmap&);
   
   void displacement();
   void render(GLUnurbs *nurb, double, const triple& Min, const triple& Max,
@@ -172,11 +168,9 @@ protected:
   double opacity;
   double shininess;
   double PRCshininess;
-  double granularity;
   triple normal;
   bool invisible;
   bool lighton;
-  string name;
   
   triple Min,Max;
   
@@ -190,10 +184,9 @@ protected:
 public:
   drawNurbs(const vm::array& g, const vm::array* uknot, const vm::array* vknot,
             const vm::array* weight, const vm::array&p, double opacity,
-            double shininess, double PRCshininess, double granularity,
-            const vm::array &pens, bool lighton, const string& name) :
-    opacity(opacity), shininess(shininess), PRCshininess(PRCshininess),
-    granularity(granularity), lighton(lighton), name(name) {
+            double shininess, double PRCshininess, const vm::array &pens,
+            bool lighton) : opacity(opacity), shininess(shininess),
+            PRCshininess(PRCshininess), lighton(lighton) {
     size_t weightsize=checkArray(weight);
     
     string wrongsize="Inconsistent NURBS data";
@@ -238,8 +231,8 @@ public:
     udegree=nuknots-nu-1;
     vdegree=nvknots-nv-1;
     
-    run::copyArrayC(uknots,uknot,0,NoGC);
-    run::copyArrayC(vknots,vknot,0,NoGC);
+    run::copyArrayC(uknots,uknot,0,UseGC);
+    run::copyArrayC(vknots,vknot,0,UseGC);
     
     pen surfacepen=vm::read<camp::pen>(p,0);
     invisible=surfacepen.invisible();
@@ -268,8 +261,7 @@ public:
     diffuse(s->diffuse), ambient(s->ambient),
     emissive(s->emissive), specular(s->specular), opacity(s->opacity),
     shininess(s->shininess), PRCshininess(s->PRCshininess), 
-    granularity(s->granularity), invisible(s->invisible), lighton(s->lighton),
-    name(s->name) {
+    invisible(s->invisible), lighton(s->lighton) {
     
     size_t n=nu*nv;
     controls=new(UseGC) Triple[n];
@@ -303,7 +295,7 @@ public:
     Controls=NULL;
     if(s->colors) {
       colors=new(UseGC) GLfloat[16];
-      for(int i=0; i < 16; ++i)
+      for(size_t i=0; i < 16; ++i)
         colors[i]=s->colors[i];
     } else colors=NULL;
 #endif    
@@ -315,8 +307,8 @@ public:
   
   virtual ~drawNurbs() {}
 
-  bool write(prcfile *out, unsigned int *count, vm::array *index,
-             vm::array *origin);
+  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
+             groupsmap&);
   
   void displacement();
   void ratio(pair &b, double (*m)(double, double), double, bool &first);
@@ -328,6 +320,185 @@ public:
   drawElement *transformed(const vm::array& t);
 };
   
+template<class T>
+void copyArray4x4C(T* dest, const vm::array *a)
+{
+  size_t n=checkArray(a);
+  string fourbyfour="4x4 array of doubles expected";
+  if(n != 4) reportError(fourbyfour);
+  
+  for(size_t i=0; i < 4; i++) {
+    vm::array *ai=vm::read<vm::array*>(a,i);
+    size_t aisize=checkArray(ai);
+    if(aisize == 4) {
+      T *desti=dest+4*i;
+      for(size_t j=0; j < 4; j++) 
+        desti[j]=vm::read<T>(ai,j);
+    } else reportError(fourbyfour);
+  }
+}
+
+// Draw a transformed PRC object.
+class drawPRC : public drawElement {
+protected:
+  double T[16];
+  RGBAColour diffuse;
+  RGBAColour ambient;
+  RGBAColour emissive;
+  RGBAColour specular;
+  double opacity;
+  double shininess;
+  bool invisible;
+public:
+  drawPRC(const vm::array& t, const vm::array&p, double opacity,
+             double shininess) : 
+    opacity(opacity), shininess(shininess) {
+    
+    copyArray4x4C<double>(T,&t);
+
+    string needfourpens="array of 4 pens required";
+    if(checkArray(&p) != 4)
+      reportError(needfourpens);
+    
+    pen surfacepen=vm::read<camp::pen>(p,0);
+    invisible=surfacepen.invisible();
+    
+    diffuse=rgba(surfacepen);
+    ambient=rgba(vm::read<camp::pen>(p,1));
+    emissive=rgba(vm::read<camp::pen>(p,2));
+    specular=rgba(vm::read<camp::pen>(p,3));
+  }
+  
+  drawPRC(const vm::array& t, const drawPRC *s) :
+    diffuse(s->diffuse), ambient(s->ambient), emissive(s->emissive),
+    specular(s->specular), opacity(s->opacity),
+    shininess(s->shininess), invisible(s->invisible) {
+    
+    double S[16];
+    copyArray4x4C<double>(S,&t);
+    
+    const double *R=s->T;
+    for(unsigned i=0; i < 16; i += 4) {
+      double s0=S[i+0];
+      double s1=S[i+1];
+      double s2=S[i+2];
+      double s3=S[i+3];
+      T[i]=s0*R[0]+s1*R[4]+s2*R[8]+s3*R[12];
+      T[i+1]=s0*R[1]+s1*R[5]+s2*R[9]+s3*R[13];
+      T[i+2]=s0*R[2]+s1*R[6]+s2*R[10]+s3*R[14];
+      T[i+3]=s0*R[3]+s1*R[7]+s2*R[11]+s3*R[15];
+    }
+  }
+  
+  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
+             groupsmap&) {
+    return true;
+  }
+};
+  
+// Draw a PRC unit sphere.
+class drawSphere : public drawPRC {
+  bool half;
+  int type;
+public:
+  drawSphere(const vm::array& t, bool half, const vm::array&p, double opacity,
+             double shininess, int type) :
+    drawPRC(t,p,opacity,shininess), half(half), type(type) {}
+
+  drawSphere(const vm::array& t, const drawSphere *s) :
+    drawPRC(t,s), half(s->half), type(s->type) {}
+    
+  void P(Triple& t, double x, double y, double z);
+  
+  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
+             groupsmap&);
+  
+  drawElement *transformed(const vm::array& t) {
+      return new drawSphere(t,this);
+  }
+};
+  
+// Draw a PRC unit cylinder.
+class drawCylinder : public drawPRC {
+public:
+  drawCylinder(const vm::array& t, const vm::array&p, double opacity,
+             double shininess) :
+    drawPRC(t,p,opacity,shininess) {}
+
+  drawCylinder(const vm::array& t, const drawCylinder *s) :
+    drawPRC(t,s) {}
+    
+  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
+             groupsmap&);
+  
+  drawElement *transformed(const vm::array& t) {
+      return new drawCylinder(t,this);
+  }
+};
+  
+// Draw a PRC unit disk.
+class drawDisk : public drawPRC {
+public:
+  drawDisk(const vm::array& t, const vm::array&p, double opacity,
+             double shininess) :
+    drawPRC(t,p,opacity,shininess) {}
+
+  drawDisk(const vm::array& t, const drawDisk *s) :
+    drawPRC(t,s) {}
+    
+  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
+             groupsmap&);
+  
+  drawElement *transformed(const vm::array& t) {
+      return new drawDisk(t,this);
+  }
+};
+  
+// Draw a PRC tube.
+class drawTube : public drawElement {
+protected:
+  path3 center;
+  path3 g;
+  double T[16];
+  RGBAColour diffuse;
+  RGBAColour ambient;
+  RGBAColour emissive;
+  RGBAColour specular;
+  double opacity;
+  double shininess;
+  bool invisible;
+public:
+  drawTube(path3 center, path3 g, const vm::array&p, double opacity,
+             double shininess) : 
+    center(center), g(g), opacity(opacity), shininess(shininess) {
+    string needfourpens="array of 4 pens required";
+    if(checkArray(&p) != 4)
+      reportError(needfourpens);
+    
+    pen surfacepen=vm::read<camp::pen>(p,0);
+    invisible=surfacepen.invisible();
+    
+    diffuse=rgba(surfacepen);
+    ambient=rgba(vm::read<camp::pen>(p,1));
+    emissive=rgba(vm::read<camp::pen>(p,2));
+    specular=rgba(vm::read<camp::pen>(p,3));
+  }
+  
+  drawTube(const vm::array& t, const drawTube *s) :
+    center(camp::transformed(t,s->center)), g(camp::transformed(t,s->g)), 
+    diffuse(s->diffuse), ambient(s->ambient), emissive(s->emissive),
+    specular(s->specular), opacity(s->opacity),
+    shininess(s->shininess), invisible(s->invisible) {
+  }
+  
+  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
+             groupsmap&);
+                        
+  drawElement *transformed(const vm::array& t) {
+      return new drawTube(t,this);
+  }
+};
+
 }
 
 #endif

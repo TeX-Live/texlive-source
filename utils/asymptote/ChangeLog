@@ -1,4 +1,631 @@
 ------------------------------------------------------------------------
+r4964 | jcbowman | 2010-06-06 08:19:42 -0600 (Sun, 06 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/algebra3.cc
+   M /trunk/asymptote/algebra3.h
+   M /trunk/asymptote/fftw++.cc
+   M /trunk/asymptote/fftw++.h
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/writePRC.h
+   M /trunk/asymptote/quaternion.cc
+   M /trunk/asymptote/tr.cc
+
+Remove M_PI.
+
+------------------------------------------------------------------------
+r4963 | jcbowman | 2010-06-06 07:40:50 -0600 (Sun, 06 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/examples/100d.views
+   M /trunk/asymptote/examples/BezierSurface.asy
+   M /trunk/asymptote/examples/pdb.asy
+
+Update viewpoint, views, and examples.
+
+------------------------------------------------------------------------
+r4962 | jcbowman | 2010-06-05 19:23:09 -0600 (Sat, 05 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.96svn.
+------------------------------------------------------------------------
+r4961 | jcbowman | 2010-06-05 17:20:23 -0600 (Sat, 05 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/algebra3.h
+   M /trunk/asymptote/prc/writePRC.h
+   M /trunk/asymptote/tr.cc
+
+Define M_PI.
+------------------------------------------------------------------------
+r4960 | jcbowman | 2010-06-05 11:20:07 -0600 (Sat, 05 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/bezulate.asy
+   M /trunk/asymptote/base/embed.asy
+   M /trunk/asymptote/base/geometry.asy
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/labelpath3.asy
+   M /trunk/asymptote/base/lmfit.asy
+   M /trunk/asymptote/base/plain_arrows.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/base/three_tube.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/fftw++.h
+
+Reformat.
+
+------------------------------------------------------------------------
+r4959 | jcbowman | 2010-06-05 10:25:26 -0600 (Sat, 05 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/solids.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/base/three_tube.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/latexusage.tex
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/examples/NURBSsphere.asy
+   M /trunk/asymptote/examples/sphere.asy
+   M /trunk/asymptote/runpicture.in
+
+Improve interace to render options.
+
+------------------------------------------------------------------------
+r4958 | jcbowman | 2010-06-05 02:12:43 -0600 (Sat, 05 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_tube.asy
+
+Remove tubesectors; simplify tube construction.
+
+------------------------------------------------------------------------
+r4957 | jcbowman | 2010-06-05 01:46:06 -0600 (Sat, 05 Jun 2010) | 10 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/solids.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/base/three_tube.asy
+   M /trunk/asymptote/drawgroup.h
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/examples/pipeintersection.asy
+   M /trunk/asymptote/runpicture.in
+
+Implement render structure containing PRC rendering parameters.
+
+Use begingroup3/endgroup3 consistently for both 3D pictures and frames,
+respective default rendering parameters.
+
+Add render(merge=true) to pipeintersection.asy to improve rendering speed.
+
+Improve PRC line capping. Use spheres for curved joints and roundcap.
+Use a higher resolution disk for squarecap/extendcap.
+
+------------------------------------------------------------------------
+r4956 | jcbowman | 2010-06-04 21:41:47 -0600 (Fri, 04 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Fix zoom.
+
+------------------------------------------------------------------------
+r4955 | jcbowman | 2010-06-04 16:46:49 -0600 (Fri, 04 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/drawgroup.h
+   M /trunk/asymptote/examples/pipeintersection.asy
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/oPRCFile.h
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/prc/writePRC.h
+   M /trunk/asymptote/runpicture.in
+
+Expose granularity.
+------------------------------------------------------------------------
+r4954 | jcbowman | 2010-06-04 14:53:45 -0600 (Fri, 04 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/three_arrows.asy
+
+Remove linesectors.
+------------------------------------------------------------------------
+r4953 | jcbowman | 2010-06-04 14:52:15 -0600 (Fri, 04 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_tube.asy
+
+Implement Circular spline type corresponding to Bezier unitcircle approximation.
+
+Rename linesectors to tubesectors and change default value to 4.
+
+------------------------------------------------------------------------
+r4952 | jcbowman | 2010-06-04 12:58:16 -0600 (Fri, 04 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/base/three_tube.asy
+
+Optimize tube spline routines.
+
+------------------------------------------------------------------------
+r4951 | jcbowman | 2010-06-04 01:35:59 -0600 (Fri, 04 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/math.asy
+   M /trunk/asymptote/base/solids.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/drawelement.h
+   M /trunk/asymptote/drawgroup.h
+   M /trunk/asymptote/drawpath3.cc
+   M /trunk/asymptote/drawpath3.h
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/picture.h
+
+Improve group naming.
+
+------------------------------------------------------------------------
+r4950 | hammera | 2010-06-02 19:51:22 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/builtin.cc
+   A /trunk/asymptote/findsym.pl
+   M /trunk/asymptote/opsymbols.pl
+   M /trunk/asymptote/runtime.pl
+   M /trunk/asymptote/symbol.cc
+   M /trunk/asymptote/types.cc
+
+Added pre-translation of runtime symbols.
+
+------------------------------------------------------------------------
+r4949 | hammera | 2010-06-02 15:53:23 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/runtime.pl
+   M /trunk/asymptote/runtimebase.in
+
+Use pre-translated operator symbols in runtime files.
+
+------------------------------------------------------------------------
+r4948 | hammera | 2010-06-02 15:38:52 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/builtin.cc
+
+Use pre-translated operator symbols in builtin.cc.
+
+------------------------------------------------------------------------
+r4947 | hammera | 2010-06-02 15:35:23 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Added var documentation.
+
+------------------------------------------------------------------------
+r4946 | hammera | 2010-06-02 15:25:28 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/TODO
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/builtin.h
+   M /trunk/asymptote/camp.l
+   A /trunk/asymptote/opsymbols.pl
+   M /trunk/asymptote/runtime.pl
+   M /trunk/asymptote/symbol.cc
+   M /trunk/asymptote/symbol.h
+   M /trunk/asymptote/types.cc
+   M /trunk/asymptote/types.h
+
+Pre-translate operator symbols.
+
+------------------------------------------------------------------------
+r4945 | hammera | 2010-06-02 15:23:49 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/errors
+
+Update errors for ambiguous cast to error.
+
+------------------------------------------------------------------------
+r4944 | hammera | 2010-06-02 15:09:17 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/application.cc
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+   M /trunk/asymptote/env.h
+   M /trunk/asymptote/exp.cc
+   M /trunk/asymptote/exp.h
+   M /trunk/asymptote/fundec.cc
+   M /trunk/asymptote/name.cc
+   M /trunk/asymptote/name.h
+   M /trunk/asymptote/newexp.cc
+   M /trunk/asymptote/newexp.h
+
+Added a (disabled) experimental function resolution optimization.
+
+------------------------------------------------------------------------
+r4943 | jcbowman | 2010-06-02 13:48:16 -0600 (Wed, 02 Jun 2010) | 6 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_tube.asy
+   M /trunk/asymptote/doc/join3.asy
+   M /trunk/asymptote/drawsurface.cc
+
+Improve 3D line capping.
+
+Improve tube center calculation.
+
+Remove PRCtube setting.
+
+------------------------------------------------------------------------
+r4942 | jcbowman | 2010-06-02 09:59:36 -0600 (Wed, 02 Jun 2010) | 5 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_tube.asy
+
+Use half sphere for PRC tube connectors.
+
+Revert to NURBSsphere again now that the rendering problems have been fixed
+(by using a nonzero granularity).
+
+------------------------------------------------------------------------
+r4941 | jcbowman | 2010-06-02 02:51:24 -0600 (Wed, 02 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/runpicture.in
+
+Complete last revision.
+------------------------------------------------------------------------
+r4940 | jcbowman | 2010-06-02 02:45:37 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/drawgroup.h
+   M /trunk/asymptote/prc/oPRCFile.h
+   M /trunk/asymptote/runpicture.in
+
+Expose PRCoptions via begingroup.
+
+------------------------------------------------------------------------
+r4939 | jcbowman | 2010-06-02 01:39:39 -0600 (Wed, 02 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/writePRC.cc
+
+Reduce PDF loading time without sacrificing quality by setting granularity=1.0.
+
+------------------------------------------------------------------------
+r4938 | jcbowman | 2010-06-02 01:38:18 -0600 (Wed, 02 Jun 2010) | 10 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/base/three_tube.asy
+   M /trunk/asymptote/drawpath3.cc
+   M /trunk/asymptote/drawpath3.h
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/runpicture.in
+
+Make PRCsphere the default until numerical transform issues with NURBSsphere
+are resolved.
+
+Add half=false option to PRCsphere.
+
+Implement PRCcylinder, PRCdisk, and PRCtube primitives.
+
+Use PRC primitives for drawing thick lines. PRC tubes (which may contain
+cracks) are drawn for curved lines only if PRCtube=true (the default).
+
+------------------------------------------------------------------------
+r4937 | jcbowman | 2010-06-01 14:12:34 -0600 (Tue, 01 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/errors
+
+Update errors.
+------------------------------------------------------------------------
+r4936 | jcbowman | 2010-06-01 14:04:40 -0600 (Tue, 01 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/prc/oPRCFile.cc
+
+Simplify code.
+------------------------------------------------------------------------
+r4935 | hammera | 2010-06-01 11:39:32 -0600 (Tue, 01 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/tests/types/resolve.asy
+
+Added more overloading resolution tests.
+
+------------------------------------------------------------------------
+r4934 | hammera | 2010-06-01 11:30:59 -0600 (Tue, 01 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/dec.cc
+   M /trunk/asymptote/errors
+   M /trunk/asymptote/errortest.asy
+   M /trunk/asymptote/primitives.h
+   A /trunk/asymptote/tests/types/var.asy
+
+Added experimental inferred variable types.
+
+------------------------------------------------------------------------
+r4933 | jcbowman | 2010-06-01 01:59:35 -0600 (Tue, 01 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_light.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/drawelement.h
+   M /trunk/asymptote/drawgroup.h
+   M /trunk/asymptote/drawpath3.cc
+   M /trunk/asymptote/drawpath3.h
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/examples/Klein.asy
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/oPRCFile.h
+   M /trunk/asymptote/prc/test.cc
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/prc/writePRC.h
+   M /trunk/asymptote/runpicture.in
+
+Fix grouping.
+
+Make part names and compression group properties.
+
+------------------------------------------------------------------------
+r4932 | jcbowman | 2010-05-31 14:28:30 -0600 (Mon, 31 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/oPRCFile.h
+
+Remove context list.
+------------------------------------------------------------------------
+r4931 | jcbowman | 2010-05-30 21:07:52 -0600 (Sun, 30 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.nsi
+
+Disable 384MB Cygwin memory limit.
+------------------------------------------------------------------------
+r4930 | jcbowman | 2010-05-30 02:17:21 -0600 (Sun, 30 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/drawelement.h
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/runpicture.in
+
+Implement optimized PRCsphere and NURBsphere.
+
+------------------------------------------------------------------------
+r4929 | jcbowman | 2010-05-29 21:39:38 -0600 (Sat, 29 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/pipestream.h
+
+Replace SIGQUIT by SIGTERM.
+
+------------------------------------------------------------------------
+r4928 | jcbowman | 2010-05-22 22:24:32 -0600 (Sat, 22 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/drawsurface.cc
+
+Fix invalid memory access.
+------------------------------------------------------------------------
+r4927 | jcbowman | 2010-05-19 23:48:25 -0600 (Wed, 19 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/examples/teapot.asy
+
+Fix example.
+------------------------------------------------------------------------
+r4926 | jcbowman | 2010-05-19 22:00:44 -0600 (Wed, 19 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_light.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/doc/cube.asy
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/examples/parametricsurface.asy
+   M /trunk/asymptote/examples/pdb.asy
+   M /trunk/asymptote/examples/teapot.asy
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/oPRCFile.h
+   M /trunk/asymptote/prc/test.cc
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/prc/writePRC.h
+   M /trunk/asymptote/runpicture.in
+
+Remove granularity setting.
+
+------------------------------------------------------------------------
+r4925 | jcbowman | 2010-05-19 13:23:56 -0600 (Wed, 19 May 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/base/math.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Prune duplicate 3D dots.
+
+Implement new functions unique and lexorder in math.asy.
+
+------------------------------------------------------------------------
+r4924 | jcbowman | 2010-05-18 12:35:45 -0600 (Tue, 18 May 2010) | 2 lines
+Changed paths:
+   A /trunk/asymptote/prc/test.asy
+
+Add embedder for PRC test.
+
+------------------------------------------------------------------------
+r4923 | jcbowman | 2010-05-18 12:30:07 -0600 (Tue, 18 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/prc/Makefile
+
+Fix prc dependency.
+
+------------------------------------------------------------------------
+r4922 | jcbowman | 2010-05-18 10:48:08 -0600 (Tue, 18 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/prc/writePRC.h
+
+Remove debugging comments.
+------------------------------------------------------------------------
+r4921 | jcbowman | 2010-05-17 22:53:48 -0600 (Mon, 17 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawsurface.cc
+
+Fix compression limit.
+
+------------------------------------------------------------------------
+r4920 | jcbowman | 2010-05-17 10:47:00 -0600 (Mon, 17 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/GUI/xasyMainWin.py
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update URLs.
+------------------------------------------------------------------------
+r4919 | jcbowman | 2010-05-17 08:55:40 -0600 (Mon, 17 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/oPRCFile.cc
+
+Use Adobe compression factor.
+
+------------------------------------------------------------------------
+r4918 | jcbowman | 2010-05-17 00:46:27 -0600 (Mon, 17 May 2010) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/plain_picture.asy
+   M /trunk/asymptote/base/solids.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/examples/Klein.asy
+
+Distinguish again between the 3D begingroup3/endgroup3 and the 2D
+begingroup/endgroup pairs. 
+
+------------------------------------------------------------------------
+r4917 | jcbowman | 2010-05-16 23:52:15 -0600 (Sun, 16 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/doc/latexusage.tex
+
+Update hyperref comment.
+------------------------------------------------------------------------
+r4916 | jcbowman | 2010-05-16 21:33:37 -0600 (Sun, 16 May 2010) | 3 lines
+Changed paths:
+   M /trunk/asymptote/doc/latexusage.tex
+
+Add example of using rendermargin to avoid rendering residue in included 3D
+images.
+
+------------------------------------------------------------------------
+r4915 | jcbowman | 2010-05-16 19:11:42 -0600 (Sun, 16 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Adjust default tubegranularity; remove spurious line.
+
+------------------------------------------------------------------------
+r4914 | jcbowman | 2010-05-16 17:52:09 -0600 (Sun, 16 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_tube.asy
+
+Use a reduced tubegranularity for constructing tubes.
+
+------------------------------------------------------------------------
+r4913 | jcbowman | 2010-05-16 17:24:07 -0600 (Sun, 16 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/prc/writePRC.cc
+
+Fix floating point exception in PRC compression routines.
+
+------------------------------------------------------------------------
+r4912 | jcbowman | 2010-05-16 02:50:12 -0600 (Sun, 16 May 2010) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/plain_picture.asy
+   M /trunk/asymptote/base/solids.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_light.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/drawelement.h
+   M /trunk/asymptote/drawgroup.h
+   M /trunk/asymptote/drawpath3.cc
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/examples/Klein.asy
+   A /trunk/asymptote/examples/label3zoom.asy
+   M /trunk/asymptote/prc/PRC.h
+   M /trunk/asymptote/prc/PRCdouble.h
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/oPRCFile.h
+   M /trunk/asymptote/prc/test.cc
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/prc/writePRC.h
+   M /trunk/asymptote/prcfile.h
+   M /trunk/asymptote/runpicture.in
+
+Add some of Michail's PRC enhancements, including lossy compression of
+surfaces.
+
+------------------------------------------------------------------------
+r4911 | jcbowman | 2010-05-13 21:03:06 -0600 (Thu, 13 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+
+Fix portability issue.
+------------------------------------------------------------------------
+r4910 | jcbowman | 2010-05-13 12:46:21 -0600 (Thu, 13 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/memory.h
+
+Remove space.
+------------------------------------------------------------------------
+r4909 | jcbowman | 2010-05-12 23:17:46 -0600 (Wed, 12 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/texfile.cc
+
+Only quote filenames where necessary (e.g. to support obsolete versions of asymptote.sty).
+
+------------------------------------------------------------------------
+r4908 | jcbowman | 2010-05-12 11:31:23 -0600 (Wed, 12 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/runmath.in
+
+Always use 256 bytes for random state array.
+------------------------------------------------------------------------
+r4907 | jcbowman | 2010-05-08 23:17:36 -0600 (Sat, 08 May 2010) | 2 lines
+Changed paths:
+   D /trunk/asymptote/Compile
+   M /trunk/asymptote/asymptote.spec
+
+Remove unused file.
+
+------------------------------------------------------------------------
+r4906 | jcbowman | 2010-05-07 14:32:28 -0600 (Fri, 07 May 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fftw++.cc
+   M /trunk/asymptote/fftw++.h
+   M /trunk/asymptote/runarray.in
+
+Use fftwpp namespace.
+
+------------------------------------------------------------------------
+r4905 | jcbowman | 2010-05-07 00:43:32 -0600 (Fri, 07 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+
+Update fftw++.h to v1.06.
+------------------------------------------------------------------------
+r4904 | jcbowman | 2010-05-04 16:53:28 -0600 (Tue, 04 May 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.95svn.
+------------------------------------------------------------------------
 r4903 | jcbowman | 2010-05-04 14:47:23 -0600 (Tue, 04 May 2010) | 2 lines
 Changed paths:
    M /trunk/asymptote/settings.cc

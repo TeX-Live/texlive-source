@@ -18,7 +18,7 @@
 #ifndef __fftwpp_h__
 #define __fftwpp_h__ 1
 
-#define __FFTWPP_H_VERSION__ 1.05
+#define __FFTWPP_H_VERSION__ 1.08svn
 
 #include <cstdlib>
 #include <fstream>
@@ -29,10 +29,6 @@
 #ifndef __Complex_h__
 #include <complex>
 typedef std::complex<double> Complex;
-#endif
-
-#ifndef M_PI
-#define M_PI acos(-1.0)
 #endif
 
 #ifndef HAVE_POSIX_MEMALIGN
@@ -50,17 +46,12 @@ typedef std::complex<double> Complex;
 #endif
 
 #ifdef __Array_h__
-using Array::array1;
-using Array::array2;
-using Array::array3;
 
-static array1<Complex> NULL1;  
-static array2<Complex> NULL2;  
-static array3<Complex> NULL3;
-
-static array1<double> NULL1D;  
-static array2<double> NULL2D;  
-static array3<double> NULL3D;  
+namespace Array {
+static const array1<Complex> NULL1;  
+static const array2<Complex> NULL2;  
+static const array3<Complex> NULL3;
+}
 
 #else
 
@@ -69,6 +60,8 @@ static array3<double> NULL3D;
 extern "C" int posix_memalign(void **memptr, size_t alignment, size_t size);
 #endif
 #else
+namespace Array {
+
 // Adapted from FFTW aligned malloc/free.  Assumes that malloc is at least
 // sizeof(void*)-aligned. Allocated memory must be freed with free0.
 inline int posix_memalign0(void **memptr, size_t alignment, size_t size)
@@ -87,7 +80,11 @@ inline void free0(void *p)
 {
   if(p) free(*((void **) p-1));
 }
+
+}
 #endif
+
+namespace Array {
 
 template<class T>
 inline void newAlign(T *&v, size_t len, size_t align)
@@ -117,20 +114,23 @@ inline void deleteAlign(T *v, size_t len)
   free0(v);
 #endif  
 }
+}
 
 #endif
+
+namespace fftwpp {
 
 inline Complex *ComplexAlign(size_t size)
 {
   Complex *v;
-  newAlign(v,size,sizeof(Complex));
+  Array::newAlign(v,size,sizeof(Complex));
   return v;
 }
 
 inline double *doubleAlign(size_t size)
 {
   double *v;
-  newAlign(v,size,sizeof(Complex));
+  Array::newAlign(v,size,sizeof(Complex));
   return v;
 }
 
@@ -140,7 +140,7 @@ inline void deleteAlign(T *p)
 #ifdef HAVE_POSIX_MEMALIGN
   free(p);
 #else
-  free0(p);
+  Array::free0(p);
 #endif  
 }
 
@@ -193,6 +193,7 @@ protected:
   static std::ifstream ifWisdom;
   static std::ofstream ofWisdom;
   static bool Wise;
+  static const double twopi;
   
 public:
   // Shift the Fourier origin to (nx/2,0).
@@ -208,7 +209,7 @@ public:
     } else {
       if(sign) {
         unsigned int c=nx/2;
-        double arg=2.0*M_PI*c/nx; 
+        double arg=twopi*c/nx; 
         for(unsigned int i=0; i < nx; i++) {
           double iarg=i*arg;
           Complex zeta(cos(iarg),sign*sin(iarg));
@@ -243,9 +244,8 @@ public:
     } else {
       if(sign) {
         unsigned int cx=nx/2;
-        unsigned int cy=ny/2;
-        double twopi=2.0*M_PI;
         double argx=twopi*cx/nx;
+        unsigned int cy=ny/2;
         double argy=twopi*cy/ny;
         for(unsigned i=0; i < nx; i++) {
           double iarg=i*argx;
@@ -302,7 +302,7 @@ public:
       exit(1);
     }
     
-    if(alloc) deleteAlign(in,(doubles+1)/2);
+    if(alloc) Array::deleteAlign(in,(doubles+1)/2);
     SaveWisdom();
   }
   
@@ -326,7 +326,7 @@ public:
     fftw_execute_dft(plan,(fftw_complex *) in,(fftw_complex *) out);
   }
     
-  void Setout(Complex *in, Complex *&out) {
+  Complex *Setout(Complex *in, Complex *out) {
 #ifndef NO_CHECK_ALIGN    
     CheckAlign(in,"input");
     if(out) CheckAlign(out,"output");
@@ -338,10 +338,11 @@ public:
       std::cerr << "ERROR: fft constructor and call must be both in place or both out of place" << std::endl; 
       exit(1);
     }
+    return out;
   }
   
   void fft(Complex *in, Complex *out=NULL) {
-    Setout(in,out);
+    out=Setout(in,out);
     Execute(in,out);
   }
     
@@ -354,7 +355,7 @@ public:
   }
   
   void fft0(Complex *in, Complex *out=NULL) {
-    Setout(in,out);
+    out=Setout(in,out);
     Execute(in,out,true);
   }
     
@@ -376,13 +377,15 @@ public:
   }
   
   virtual void fftNormalized(Complex *in, Complex *out=NULL) {
-    Setout(in,out);
+    out=Setout(in,out);
     Execute(in,out);
     Normalize(out);
   }
   
   void fftNormalized(Complex *in, double *out) {
-    fftNormalized(in,(Complex *) out);
+    out=(double *) Setout(in,(Complex *) out);
+    Execute(in,(Complex *) out);
+    Normalize(out);
   }
   
   void fftNormalized(double *in, Complex *out) {
@@ -390,13 +393,15 @@ public:
   }
   
   void fft0Normalized(Complex *in, Complex *out=NULL) {
-    Setout(in,out);
+    out=Setout(in,out);
     Execute(in,out,true);
     Normalize(out);
   }
   
   void fft0Normalized(Complex *in, double *out) {
-    fft0Normalized(in,(Complex *) out);
+    out=(double *) Setout(in,(Complex *) out);
+    Execute(in,(Complex *) out,true);
+    Normalize(out);
   }
   
   void fft0Normalized(double *in, Complex *out) {
@@ -404,14 +409,14 @@ public:
   }
   
   void fftNormalized(Complex *in, Complex *out,
-                     unsigned int nx, unsigned int m,
+                     unsigned int nx, unsigned int M,
                      unsigned int stride, unsigned int dist) {
     if(stride == 1 && dist == nx) fftw::fftNormalized(in,out);
     else if(stride == nx && dist == 1) fftw::fftNormalized(in,out);
     else {
-      Setout(in,out);
+      out=Setout(in,out);
       Execute(in,out);
-      for(unsigned int k=0; k < m; k++) {
+      for(unsigned int k=0; k < M; k++) {
         for(unsigned int j=0; j < nx; j++) {
           out[j*stride+k*dist] *= norm;
         }
@@ -451,7 +456,8 @@ public:
     : fftw(2*nx,sign), nx(nx) {Setup(in,out);} 
   
 #ifdef __Array_h__
-  fft1d(int sign, const array1<Complex>& in, const array1<Complex>& out=NULL1) 
+  fft1d(int sign, const Array::array1<Complex>& in,
+        const Array::array1<Complex>& out=Array::NULL1) 
     : fftw(2*in.Nx(),sign), nx(in.Nx()) {Setup(in,out);} 
 #endif  
   
@@ -461,19 +467,19 @@ public:
   }
 };
   
-// Compute the complex Fourier transform of m complex vectors, each of
+// Compute the complex Fourier transform of M complex vectors, each of
 // length n.
 // Before calling fft(), the arrays in and out (which may coincide) must be
-// allocated as Complex[m*n].
+// allocated as Complex[M*n].
 //
 // Out-of-place usage: 
 //
-//   mfft1d Forward(n,-1,m,stride,dist,in,out);
+//   mfft1d Forward(n,-1,M,stride,dist,in,out);
 //   Forward.fft(in,out);
 //
 // In-place usage:
 //
-//   mfft1d Forward(n,-1,m,stride,dist);
+//   mfft1d Forward(n,-1,M,stride,dist);
 //   Forward.fft(in);
 //
 // Notes:
@@ -483,26 +489,26 @@ public:
 //
 class mfft1d : public fftw {
   unsigned int nx;
-  unsigned int m;
+  unsigned int M;
   unsigned int stride;
   unsigned int dist;
 public:  
-  mfft1d(unsigned int nx, int sign, unsigned int m=1, unsigned int stride=1,
+  mfft1d(unsigned int nx, int sign, unsigned int M=1, unsigned int stride=1,
          unsigned int dist=0, Complex *in=NULL, Complex *out=NULL) 
-    : fftw(2*((nx-1)*stride+(m-1)*Dist(nx,stride,dist)+1),sign,nx),
-      nx(nx), m(m), stride(stride), dist(Dist(nx,stride,dist))
+    : fftw(2*((nx-1)*stride+(M-1)*Dist(nx,stride,dist)+1),sign,nx),
+      nx(nx), M(M), stride(stride), dist(Dist(nx,stride,dist))
   {Setup(in,out);} 
   
   fftw_plan Plan(Complex *in, Complex *out) {
     int n[1]={nx};
-    return fftw_plan_many_dft(1,n,m,
+    return fftw_plan_many_dft(1,n,M,
                               (fftw_complex *) in,NULL,stride,dist,
                               (fftw_complex *) out,NULL,stride,dist,
                               sign,effort);
   }
   
   void fftNormalized(Complex *in, Complex *out=NULL) {
-    fftw::fftNormalized(in,out,nx,m,stride,dist);
+    fftw::fftNormalized(in,out,nx,M,stride,dist);
   }
 };
   
@@ -535,11 +541,11 @@ public:
     : fftw(realsize(nx,in,out),-1,nx), nx(nx) {Setup(in,out);}
   
 #ifdef __Array_h__
-  rcfft1d(unsigned int nx, const array1<Complex>& out)
+  rcfft1d(unsigned int nx, const Array::array1<Complex>& out)
     : fftw(out.Size(),-1,nx), nx(nx) {Setup(out);} 
   
-  rcfft1d(unsigned int nx, const array1<double>& in, 
-          const array1<Complex>& out=NULL1)
+  rcfft1d(unsigned int nx, const Array::array1<double>& in, 
+          const Array::array1<Complex>& out=Array::NULL1)
     : fftw(realsize(nx,in(),out()),-1,nx), nx(nx) {Setup(in,out);} 
 #endif  
   
@@ -583,12 +589,15 @@ public:
     : fftw(realsize(nx,in,out),1,nx), nx(nx) {Setup(in,out);} 
   
 #ifdef __Array_h__
-  crfft1d(unsigned int nx, const array1<double>& out)
+  crfft1d(unsigned int nx, const Array::array1<double>& out)
     : fftw(out.Size(),1,nx), nx(nx) {Setup(out);}
   
-  crfft1d(unsigned int nx, const array1<Complex>& in,
-          const array1<double>& out=NULL1D)
-    : fftw(2*in.Size(),1,nx), nx(nx) {Setup(in,out);}
+  crfft1d(unsigned int nx, const Array::array1<Complex>& in)
+    : fftw(2*in.Size(),1,nx), nx(nx) {Setup(in);}
+  
+  crfft1d(unsigned int nx, const Array::array1<Complex>& in,
+          const Array::array1<double>& out)
+    : fftw(out.Size(),1,nx), nx(nx) {Setup(in,out);}
 #endif  
   
   fftw_plan Plan(Complex *in, Complex *out) {
@@ -600,20 +609,20 @@ public:
   }
 };
   
-// Compute the real Fourier transform of m real vectors, each of length n,
+// Compute the real Fourier transform of M real vectors, each of length n,
 // using phase sign -1. Before calling fft(), the array in must be
-// allocated as double[m*n] and the array out must be allocated as
-// Complex[m*(n/2+1)]. The arrays in and out may coincide,
-// allocated as Complex[m*(n/2+1)].
+// allocated as double[M*n] and the array out must be allocated as
+// Complex[M*(n/2+1)]. The arrays in and out may coincide,
+// allocated as Complex[M*(n/2+1)].
 //
 // Out-of-place usage: 
 //
-//   mrcfft1d Forward(n,m,stride,dist,in,out);
+//   mrcfft1d Forward(n,M,stride,dist,in,out);
 //   Forward.fft(in,out);
 //
 // In-place usage:
 //
-//   mrcfft1d Forward(n,m,stride,dist);
+//   mrcfft1d Forward(n,M,stride,dist);
 //   Forward.fft(out);
 // 
 // Notes:
@@ -624,23 +633,23 @@ public:
 //
 class mrcfft1d : public fftw {
   unsigned int nx;
-  unsigned int m;
+  unsigned int M;
   unsigned int stride;
   unsigned int dist;
 public:  
-  mrcfft1d(unsigned int nx, unsigned int m=1, unsigned int stride=1,
+  mrcfft1d(unsigned int nx, unsigned int M=1, unsigned int stride=1,
            unsigned int dist=0, Complex *out=NULL) 
-    : fftw(2*(nx/2*stride+(m-1)*Dist(nx,stride,dist)+1),-1,nx), nx(nx), m(m),
+    : fftw(2*(nx/2*stride+(M-1)*Dist(nx,stride,dist)+1),-1,nx), nx(nx), M(M),
       stride(stride), dist(Dist(nx,stride,dist)) {Setup(out);} 
   
-  mrcfft1d(unsigned int nx, unsigned int m=1, unsigned int stride=1,
+  mrcfft1d(unsigned int nx, unsigned int M=1, unsigned int stride=1,
            unsigned int dist=0, double *in=NULL, Complex *out=NULL) 
-    : fftw(2*(nx/2*stride+(m-1)*Dist(nx,stride,dist)+1),-1,nx), nx(nx), m(m),
+    : fftw(2*(nx/2*stride+(M-1)*Dist(nx,stride,dist)+1),-1,nx), nx(nx), M(M),
       stride(stride), dist(Dist(nx,stride,dist)) {Setup(in,out);} 
   
   fftw_plan Plan(Complex *in, Complex *out) {
     const int n[1]={nx};
-    return fftw_plan_many_dft_r2c(1,n,m,
+    return fftw_plan_many_dft_r2c(1,n,M,
                                   (double *) in,NULL,stride,2*dist,
                                   (fftw_complex *) out,NULL,stride,dist,
                                   effort);
@@ -651,25 +660,25 @@ public:
   }
   
   void fftNormalized(Complex *in, Complex *out=NULL) {
-    fftw::fftNormalized(in,out,nx/2+1,m,stride,dist);
+    fftw::fftNormalized(in,out,nx/2+1,M,stride,dist);
   }
 };
   
-// Compute the real inverse Fourier transform of m complex vectors, each of
+// Compute the real inverse Fourier transform of M complex vectors, each of
 // length n/2+1, corresponding to the non-negative parts of the frequency
 // spectra, using phase sign +1. Before calling fft(), the array in must be
-// allocated as Complex[m*(n/2+1)] and the array out must be allocated as
-// double[m*n]. The arrays in and out may coincide,
-// allocated as Complex[m*(n/2+1)].  
+// allocated as Complex[M*(n/2+1)] and the array out must be allocated as
+// double[M*n]. The arrays in and out may coincide,
+// allocated as Complex[M*(n/2+1)].  
 //
 // Out-of-place usage (input destroyed):
 //
-//   mcrfft1d Backward(n,m,stride,dist,in,out);
+//   mcrfft1d Backward(n,M,stride,dist,in,out);
 //   Backward.fft(in,out);
 //
 // In-place usage:
 //
-//   mcrfft1d Backward(n,m,stride,dist);
+//   mcrfft1d Backward(n,M,stride,dist);
 //   Backward.fft(out);
 // 
 // Notes:
@@ -680,18 +689,18 @@ public:
 //
 class mcrfft1d : public fftw {
   unsigned int nx;
-  unsigned int m;
+  unsigned int M;
   unsigned int stride;
   unsigned int dist;
 public:
-  mcrfft1d(unsigned int nx, unsigned int m=1, unsigned int stride=1,
+  mcrfft1d(unsigned int nx, unsigned int M=1, unsigned int stride=1,
            unsigned int dist=0, Complex *in=NULL, double *out=NULL) 
-    : fftw((realsize(nx,in,out)-2)*stride+2*(m-1)*Dist(nx,stride,dist)+2,1,nx),
-      nx(nx), m(m), stride(stride), dist(Dist(nx,stride,dist)) {Setup(in,out);}
+    : fftw((realsize(nx,in,out)-2)*stride+2*(M-1)*Dist(nx,stride,dist)+2,1,nx),
+      nx(nx), M(M), stride(stride), dist(Dist(nx,stride,dist)) {Setup(in,out);}
   
   fftw_plan Plan(Complex *in, Complex *out) {
     const int n[1]={nx};
-    return fftw_plan_many_dft_c2r(1,n,m,
+    return fftw_plan_many_dft_c2r(1,n,M,
                                   (fftw_complex *) in,NULL,stride,dist,
                                   (double *) out,NULL,stride,2*dist,
                                   effort);
@@ -702,7 +711,7 @@ public:
   }
   
   void fftNormalized(Complex *in, Complex *out=NULL) {
-    fftw::fftNormalized(in,out,(nx/2+1),m,stride,dist);
+    fftw::fftNormalized(in,out,(nx/2+1),M,stride,dist);
   }
 };
   
@@ -741,7 +750,8 @@ public:
     : fftw(2*nx*ny,sign), nx(nx), ny(ny) {Setup(in,out);} 
   
 #ifdef __Array_h__
-  fft2d(int sign, const array2<Complex>& in, const array2<Complex>& out=NULL2) 
+  fft2d(int sign, const Array::array2<Complex>& in,
+        const Array::array2<Complex>& out=Array::NULL2) 
     : fftw(2*in.Size(),sign), nx(in.Nx()), ny(in.Ny()) {Setup(in,out);} 
 #endif  
   
@@ -787,11 +797,11 @@ public:
     : fftw(nx*realsize(ny,in,out),-1,nx*ny), nx(nx), ny(ny) {Setup(in,out);} 
   
 #ifdef __Array_h__
-  rcfft2d(unsigned int ny, const array2<Complex>& out)
+  rcfft2d(unsigned int ny, const Array::array2<Complex>& out)
     : fftw(out.Size(),-1,out.Nx()*ny), nx(out.Nx()), ny(ny) {Setup(out);} 
   
-  rcfft2d(unsigned int ny, const array2<double>& in,
-          const array2<Complex>& out=NULL2)
+  rcfft2d(unsigned int ny, const Array::array2<double>& in,
+          const Array::array2<Complex>& out=Array::NULL2)
     : fftw(in.Nx()*realsize(ny,in(),out()),-1,in.Nx()*ny), nx(in.Nx()), ny(ny)
   {Setup(in,out);} 
 #endif
@@ -842,12 +852,15 @@ public:
     fftw(nx*realsize(ny,in,out),1,nx*ny), nx(nx), ny(ny) {Setup(in,out);} 
   
 #ifdef __Array_h__
-  crfft2d(unsigned int ny, const array2<double>& out)
+  crfft2d(unsigned int ny, const Array::array2<double>& out)
     : fftw(out.Size(),1,out.Nx()*ny), nx(out.Nx()), ny(ny) {Setup(out);} 
   
-  crfft2d(unsigned int ny, const array2<Complex>& in,
-          const array2<double>& out=NULL2D)
-    : fftw(2*in.Size(),1,in.Nx()*ny), nx(in.Nx()), ny(ny) {Setup(in,out);}
+  crfft2d(unsigned int ny, const Array::array2<Complex>& in)
+    : fftw(2*in.Size(),1,in.Nx()*ny), nx(in.Nx()), ny(ny) {Setup(in);}
+  
+  crfft2d(unsigned int ny, const Array::array2<Complex>& in,
+          const Array::array2<double>& out)
+    : fftw(out.Size(),1,in.Nx()*ny), nx(in.Nx()), ny(ny) {Setup(in,out);}
 #endif
   
   fftw_plan Plan(Complex *in, Complex *out) {
@@ -898,7 +911,8 @@ public:
     : fftw(2*nx*ny*nz,sign), nx(nx), ny(ny), nz(nz) {Setup(in,out);} 
   
 #ifdef __Array_h__
-  fft3d(int sign, const array3<Complex>& in, const array3<Complex>& out=NULL3)
+  fft3d(int sign, const Array::array3<Complex>& in,
+        const Array::array3<Complex>& out=Array::NULL3)
     : fftw(2*in.Size(),sign), nx(in.Nx()), ny(in.Ny()), nz(in.Nz()) 
   {Setup(in,out);}
 #endif  
@@ -943,12 +957,12 @@ public:
                                nx(nx), ny(ny), nz(nz) {Setup(in,out);} 
   
 #ifdef __Array_h__
-  rcfft3d(unsigned int nz, const array3<Complex>& out)
+  rcfft3d(unsigned int nz, const Array::array3<Complex>& out)
     : fftw(out.Size(),-1,out.Nx()*out.Ny()*nz),
       nx(out.Nx()), ny(out.Ny()), nz(nz) {Setup(out);} 
   
-  rcfft3d(unsigned int nz, const array3<double>& in,
-          const array3<Complex>& out=NULL3)
+  rcfft3d(unsigned int nz, const Array::array3<double>& in,
+          const Array::array3<Complex>& out=Array::NULL3)
     : fftw(in.Nx()*in.Ny()*realsize(nz,in(),out()),-1,in.Size()),
       nx(in.Nx()), ny(in.Ny()), nz(nz) {Setup(in,out);} 
 #endif  
@@ -1001,15 +1015,20 @@ public:
           double *out=NULL) : 
     fftw(nx*ny*(realsize(nz,in,out)),1,nx*ny*nz), nx(nx), ny(ny), nz(nz)
   {Setup(in,out);} 
+  
 #ifdef __Array_h__
-  crfft3d(unsigned int nz, const array3<double>& out) :
-    fftw(out.Size(),1,out.Nx()*out.Ny()*nz),
+  crfft3d(unsigned int nz, const Array::array3<double>& out)
+    : fftw(out.Size(),1,out.Nx()*out.Ny()*nz),
     nx(out.Nx()), ny(out.Ny()), nz(nz) {Setup(out);} 
   
-  crfft3d(unsigned int nz, const array3<Complex>& in,
-          const array3<double>& out=NULL3D) :
-    fftw(2*in.Size(),1,in.Nx()*in.Ny()*nz),
-    nx(in.Nx()), ny(in.Ny()), nz(nz) {Setup(in,out);} 
+  crfft3d(unsigned int nz, const Array::array3<Complex>& in)
+    : fftw(2*in.Size(),1,in.Nx()*in.Ny()*nz),
+    nx(in.Nx()), ny(in.Ny()), nz(nz) {Setup(in);} 
+  
+  crfft3d(unsigned int nz, const Array::array3<Complex>& in,
+          const Array::array3<double>& out)
+    : fftw(out.Size(),1,in.Nx()*in.Ny()*nz),
+      nx(in.Nx()), ny(in.Ny()), nz(nz) {Setup(in,out);} 
 #endif  
   
   fftw_plan Plan(Complex *in, Complex *out) {
@@ -1023,4 +1042,6 @@ public:
   }
 };
   
+}
+
 #endif

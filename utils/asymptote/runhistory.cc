@@ -27,6 +27,7 @@
 #include "array.h"
 #include "triple.h"
 #include "callable.h"
+#include "opsymbols.h"
 
 using vm::stack;
 using vm::error;
@@ -195,6 +196,8 @@ void cleanup()
 
 
 
+#include "runhistory.symbols.h"
+
 namespace run {
 // Return the last n lines of the history named name.
 #line 102 "runhistory.in"
@@ -341,13 +344,13 @@ namespace trans {
 void gen_runhistory_venv(venv &ve)
 {
 #line 101 "runhistory.in"
-  addFunc(ve, run::gen_runhistory0, stringArray(), "history", formal(primString() , "name", false, false), formal(primInt(), "n", true, false));
+  addFunc(ve, run::gen_runhistory0, stringArray(), SYM(history), formal(primString() , SYM(name), false, false), formal(primInt(), SYM(n), true, false));
 #line 134 "runhistory.in"
-  addFunc(ve, run::gen_runhistory1, stringArray(), "history", formal(primInt(), "n", true, false));
+  addFunc(ve, run::gen_runhistory1, stringArray(), SYM(history), formal(primInt(), SYM(n), true, false));
 #line 145 "runhistory.in"
-  addFunc(ve, run::gen_runhistory2, primString() , "readline", formal(primString() , "prompt", true, false), formal(primString() , "name", true, false), formal(primBoolean(), "tabcompletion", true, false));
+  addFunc(ve, run::gen_runhistory2, primString() , SYM(readline), formal(primString() , SYM(prompt), true, false), formal(primString() , SYM(name), true, false), formal(primBoolean(), SYM(tabcompletion), true, false));
 #line 189 "runhistory.in"
-  addFunc(ve, run::gen_runhistory3, primVoid(), "saveline", formal(primString() , "name", false, false), formal(primString() , "value", false, false), formal(primBoolean(), "store", true, false));
+  addFunc(ve, run::gen_runhistory3, primVoid(), SYM(saveline), formal(primString() , SYM(name), false, false), formal(primString() , SYM(value), false, false), formal(primBoolean(), SYM(store), true, false));
 }
 
 } // namespace trans

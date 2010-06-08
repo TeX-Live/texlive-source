@@ -1,6 +1,20 @@
+Release Notes for Version 1.96
+
+The viewpoint function and some examples were updated.
+
+Release Notes for Version 1.95
+
+The PRC driver has been overhauled to support model tree groups, lossy
+compression, efficient representations of elementary geometrical objects,
+and specialized rendering options. More efficient OpenGL thick tubes were
+implemented; the capping of 3D curves was improved. The SIGQUIT signal was
+replaced by SIGTERM. Under MSWindows, the 384MB Cygwin memory limit is now
+automatically disabled by the Asymptote installer. Inferred variable types
+were added and operator symbols are now pretranslated.
+
 Release Notes for Version 1.94
 
-Work arounds for MSWindows registry problems and obsolete runtime libraries
+Workarounds for MSWindows registry problems and obsolete runtime libraries
 were implemented. The SimpleHead arrowhead was fixed. Additional matrix
 routines and casts were implemented. The pair dir(path, path) routine now
 returns a unit vector. Variable conflicts coming from the contour module
@@ -1615,5 +1629,3 @@ the frame for filling with a background color; they also return the boundary
 as a guide. A workaround was added for a bug in gcc version 3.3 to
 facilitate compilation under Darwin (MacOS). Many internal coding
 improvements were made.
-
- LocalWords:  arounds

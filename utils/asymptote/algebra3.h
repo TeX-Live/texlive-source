@@ -86,8 +86,6 @@
 #define MIN(a,b)  ((a)<(b) ? (a) : (b))
 #endif
 
-#define DEG2RAD(x) ((x)/180.0*M_PI)
-#define RAD2DEG(x) ((x)/M_PI*180.0)
 #define FUDGE .00001
 
 // this line defines a new type: pointer to a function which returns a
@@ -99,10 +97,6 @@ class vec3;
 class vec4;
 class mat3;
 class mat4;
-
-#ifndef M_PI
-#define M_PI 3.141592654
-#endif
 
 enum axes {VX, VY, VZ, VW};
 /*

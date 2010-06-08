@@ -28,6 +28,7 @@
 #include "array.h"
 #include "triple.h"
 #include "callable.h"
+#include "opsymbols.h"
 
 using vm::stack;
 using vm::error;
@@ -112,6 +113,8 @@ function *realRealFunction();
 
 
 
+#include "runbacktrace.symbols.h"
+
 namespace run {
 #line 16 "runbacktrace.in"
 // void generate_random_backtrace();
@@ -148,9 +151,9 @@ namespace trans {
 void gen_runbacktrace_venv(venv &ve)
 {
 #line 16 "runbacktrace.in"
-  addFunc(ve, run::gen_runbacktrace0, primVoid(), "generate_random_backtrace");
+  addFunc(ve, run::gen_runbacktrace0, primVoid(), SYM(generate_random_backtrace));
 #line 25 "runbacktrace.in"
-  addFunc(ve, run::gen_runbacktrace1, primVoid(), "print_random_addresses", formal(primInt(), "n", true, false));
+  addFunc(ve, run::gen_runbacktrace1, primVoid(), SYM(print_random_addresses), formal(primInt(), SYM(n), true, false));
 }
 
 } // namespace trans

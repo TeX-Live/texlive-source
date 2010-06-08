@@ -98,8 +98,9 @@ double Xfactor,Yfactor;
 
 int minimumsize=50; // Minimum initial rendering window width and height
 
-const double degrees=180.0/M_PI;
-const double radians=1.0/degrees;
+static const double pi=acos(-1);
+static const double degrees=180.0/pi;
+static const double radians=1.0/degrees;
 
 double Background[4];
 size_t Nlights;
@@ -217,7 +218,7 @@ void setDimensions(int Width, int Height, double X, double Y)
   double Aspect=((double) Width)/Height;
   double xshift=X/Width*lastzoom+Shift.getx()*Xfactor;
   double yshift=Y/Height*lastzoom+Shift.gety()*Yfactor;
-  double Zoominv=1.0/Zoom;
+  double Zoominv=1.0/lastzoom;
   if(orthographic) {
     double xsize=Xmax-Xmin;
     double ysize=Ymax-Ymin;

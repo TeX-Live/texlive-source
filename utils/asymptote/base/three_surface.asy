@@ -4,6 +4,8 @@ private import interpolate;
 int nslice=12;
 real camerafactor=1.2;
 
+string meshname(string name) {return name+" mesh";}
+
 private real Fuzz=10.0*realEpsilon;
 private real nineth=1/9;
 
@@ -1148,22 +1150,53 @@ interaction LabelInteraction()
   return settings.autobillboard ? Billboard : Embedded;
 }
 
-void draw3D(frame f, patch s, triple center=O, material m,
-            light light=currentlight, string name="",
-            interaction interaction=Embedded)
+private material material(material m, light light) 
+{
+  return light.on() || invisible((pen) m) ? m : emissive(m);
+}
+
+void draw3D(frame f, int type=0, patch s, triple center=O, material m,
+            light light=currentlight, interaction interaction=Embedded,
+            bool prc=true)
 {
   if(s.colors.length > 0)
     m=mean(s.colors);
-  bool lighton=light.on();
-  if(!lighton && !invisible((pen) m))
-    m=emissive(m);
+  m=material(m,light);
   real PRCshininess;
   if(prc())
     PRCshininess=PRCshininess(m.shininess);
-  real granularity=m.granularity >= 0 ? m.granularity : defaultgranularity;
+  
   draw(f,s.P,center,s.straight,m.p,m.opacity,m.shininess,PRCshininess,
-       granularity,s.planar ? s.normal(0.5,0.5) : O,s.colors,lighton,name,
-       interaction.type);
+       s.planar ? s.normal(0.5,0.5) : O,s.colors,
+       light.on(),interaction.type,prc);
+}
+
+void drawPRCsphere(frame f, transform3 t=identity4, bool half=false, material m,
+                   light light=currentlight, render render=defaultrender)
+{
+  m=material(m,light);
+  drawPRCsphere(f,t,half,m.p,m.opacity,PRCshininess(m.shininess),render.sphere);
+}
+
+void drawPRCcylinder(frame f, transform3 t=identity4, material m,
+                     light light=currentlight)
+{
+  m=material(m,light);
+  drawPRCcylinder(f,t,m.p,m.opacity,PRCshininess(m.shininess));
+}
+
+void drawPRCdisk(frame f, transform3 t=identity4, material m,
+                 light light=currentlight)
+{
+  m=material(m,light);
+  drawPRCdisk(f,t,m.p,m.opacity,PRCshininess(m.shininess));
+}
+
+void drawPRCtube(frame f, path3 center, path3 g, material m,
+                 light light=currentlight)
+{
+  m=material(m,light);
+  drawPRCtube(f,center,g,m.p,m.opacity,PRCshininess(m.shininess));
 }
 
 void tensorshade(transform t=identity(), frame f, patch s,
@@ -1180,22 +1213,28 @@ nullpens.cyclic=true;
 void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
           light light=currentlight, light meshlight=light, string name="",
-          projection P=currentprojection)
+          render render=defaultrender, projection P=currentprojection)
 {
   if(is3D()) {
+    begingroup3(f,name == "" ? "surface" : name,render);
     for(int i=0; i < s.s.length; ++i)
-      draw3D(f,s.s[i],surfacepen[i],light,partname(name,i));
+      draw3D(f,s.s[i],surfacepen[i],light);
+    endgroup3(f);
     pen modifiers=thin()+squarecap;
     for(int k=0; k < s.s.length; ++k) {
       pen meshpen=meshpen[k];
       if(!invisible(meshpen)) {
+        begingroup3(f,meshname(name),render);
         meshpen=modifiers+meshpen;
         real step=nu == 0 ? 0 : 1/nu;
         for(int i=0; i <= nu; ++i)
-          draw(f,s.s[k].uequals(i*step),meshpen,meshlight);
+          draw(f,s.s[k].uequals(i*step),meshpen,meshlight,partname(i),
+               render);
         step=nv == 0 ? 0 : 1/nv;
         for(int j=0; j <= nv; ++j)
-          draw(f,s.s[k].vequals(j*step),meshpen,meshlight);
+          draw(f,s.s[k].vequals(j*step),meshpen,meshlight,partname(j),
+               render);
+        endgroup3(f);
       }
     }
   } else {
@@ -1232,18 +1271,19 @@ void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
 void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
           light light=currentlight, light meshlight=light, string name="",
-          projection P=currentprojection)
+          render render=defaultrender, projection P=currentprojection)
 {
   material[] surfacepen={surfacepen};
   pen[] meshpen={meshpen};
   surfacepen.cyclic=true;
   meshpen.cyclic=true;
-  draw(t,f,s,nu,nv,surfacepen,meshpen,light,meshlight,name,P);
+  draw(t,f,s,nu,nv,surfacepen,meshpen,light,meshlight,name,render,P);
 }
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
-          light light=currentlight, light meshlight=light, string name="")
+          light light=currentlight, light meshlight=light, string name="",
+          render render=defaultrender)
 {
   if(s.empty()) return;
 
@@ -1257,7 +1297,7 @@ void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
   pic.add(new void(frame f, transform3 t, picture pic, projection P) {
       surface S=t*s;
       if(is3D())
-        draw(f,S,nu,nv,surfacepen,meshpen,light,meshlight,name);
+        draw(f,S,nu,nv,surfacepen,meshpen,light,meshlight,name,render);
       else if(pic != null)
         pic.add(new void(frame f, transform T) {
             draw(T,f,S,nu,nv,surfacepen,meshpen,light,meshlight,P);
@@ -1288,22 +1328,24 @@ void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
-          light light=currentlight, light meshlight=light, string name="")
+          light light=currentlight, light meshlight=light, string name="",
+          render render=defaultrender)
 {
   material[] surfacepen={surfacepen};
   pen[] meshpen={meshpen};
   surfacepen.cyclic=true;
   meshpen.cyclic=true;
-  draw(pic,s,nu,nv,surfacepen,meshpen,light,meshlight,name);
+  draw(pic,s,nu,nv,surfacepen,meshpen,light,meshlight,name,render);
 }
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen meshpen,
-          light light=currentlight, light meshlight=light, string name="")
+          light light=currentlight, light meshlight=light, string name="",
+          render render=defaultrender)
 {
   pen[] meshpen={meshpen};
   meshpen.cyclic=true;
-  draw(pic,s,nu,nv,surfacepen,meshpen,light,meshlight,name);
+  draw(pic,s,nu,nv,surfacepen,meshpen,light,meshlight,name,render);
 }
 
 surface extrude(path3 p, path3 q)
@@ -1376,7 +1418,8 @@ private path[] path(Label L, pair z=0, projection P)
 
 void label(frame f, Label L, triple position, align align=NoAlign,
            pen p=currentpen, light light=nolight,
-           string name=L.s, interaction interaction=LabelInteraction(),
+           string name="", render render=defaultrender,
+           interaction interaction=LabelInteraction(),
            projection P=currentprojection)
 {
   Label L=L.copy();
@@ -1386,10 +1429,10 @@ void label(frame f, Label L, triple position, align align=NoAlign,
     L.T=L.T*scale(abs(P.camera-position)/abs(P.vector()));
   if(L.defaulttransform3)
     L.T3=transform3(P);
+  begingroup3(f,name == "" ? L.s : name,render);
   if(is3D()) {
-    int i=-1;
     for(patch S : surface(L,position).s)
-      draw3D(f,S,position,L.p,light,partname(name,++i),interaction);
+      draw3D(f,S,position,L.p,light,interaction);
   } else {
     pen p=color(L.T3*Z,L.p,light,shiftless(P.T.modelview));
     if(L.defaulttransform3) {
@@ -1404,11 +1447,13 @@ void label(frame f, Label L, triple position, align align=NoAlign,
       for(patch S : surface(L,position).s)
         fill(f,project(S.external(),P,1),p);
   }
+  endgroup3(f);
 }
 
 void label(picture pic=currentpicture, Label L, triple position,
            align align=NoAlign, pen p=currentpen,
-           light light=nolight, string name=L.s,
+           light light=nolight, string name="",
+           render render=defaultrender,
            interaction interaction=LabelInteraction())
 {
   Label L=L.copy();
@@ -1421,18 +1466,18 @@ void label(picture pic=currentpicture, Label L, triple position,
       triple v=t*position;
       if(!align.is3D && L.align.relative && L.align.dir3 != O &&
          determinant(P.t) != 0)
-          L.align(L.align.dir*unit(project(v+L.align.dir3,P.t)-project(v,P.t)));
+        L.align(L.align.dir*unit(project(v+L.align.dir3,P.t)-project(v,P.t)));
       
       if(interaction.targetsize && settings.render != 0)
         L.T=L.T*scale(abs(P.camera-v)/abs(P.vector()));
       if(L.defaulttransform3)
         L.T3=transform3(P);
 
-      if(is3D()) {
-        int i=-1;
+      surface S=surface(L,v);
+      begingroup3(f,name == "" ? L.s : name,render,v,interaction.type);
+      if(is3D())
         for(patch S : surface(L,v).s)
-          draw3D(f,S,v,L.p,light,partname(name,++i),interaction);
-      }
+          draw3D(f,S,v,L.p,light,interaction);
 
       if(pic != null) {
         pen p=color(L.T3*Z,L.p,light,shiftless(P.T.modelview));
@@ -1450,6 +1495,7 @@ void label(picture pic=currentpicture, Label L, triple position,
                 fill(f,T*project(S.external(),P,1),p);
             });
       }
+      endgroup3(f);
       
     },!L.defaulttransform3);
 
@@ -1467,7 +1513,7 @@ void label(picture pic=currentpicture, Label L, triple position,
 }
 
 void label(picture pic=currentpicture, Label L, path3 g, align align=NoAlign,
-           pen p=currentpen, string name=L.s,
+           pen p=currentpen, light light=nolight, string name="",
            interaction interaction=LabelInteraction())
 {
   Label L=L.copy();
@@ -1480,11 +1526,11 @@ void label(picture pic=currentpicture, Label L, path3 g, align align=NoAlign,
   if(L.align.default) {
     align a;
     a.init(-I*(position <= sqrtEpsilon ? S :
-              position >= length(g)-sqrtEpsilon ? N : E),relative=true);
+               position >= length(g)-sqrtEpsilon ? N : E),relative=true);
     a.dir3=dir(g,position); // Pass 3D direction via unused field.
     L.align(a);             
   }
-  label(pic,L,point(g,position),name,interaction);
+  label(pic,L,point(g,position),light,name,interaction);
 }
 
 surface extrude(Label L, triple axis=Z)
@@ -1609,67 +1655,143 @@ restricted surface unitplane=surface(unitplane);
 restricted surface unitdisk=surface(unitcircle3);
 
 void dot(frame f, triple v, material p=currentpen,
-         light light=nolight, string name="", projection P=currentprojection)
+         light light=nolight, string name="",
+         render render=defaultrender, projection P=currentprojection)
 {
   pen q=(pen) p;
   if(is3D()) {
-    material m=material(p,p.granularity >= 0 ? p.granularity : dotgranularity);
-    int i=-1;
+    begingroup3(f,name == "" ? "dot" : name,render);
+    real size=0.5*linewidth(dotsize(q)+q);
+    transform3 T=shift(v)*scale3(size);
     for(patch s : unitsphere.s)
-      draw3D(f,shift(v)*scale3(0.5*linewidth(dotsize(q)+q))*s,m,light,
-             partname(name,++i));
+      draw3D(f,T*s,v,p,light,prc=false);
+    if(prc())
+      drawPRCsphere(f,T,p,light);
+    endgroup3(f);
   } else dot(f,project(v,P.t),q);
 }
 
-void dot(frame f, path3 g, material p=currentpen,
+void dot(frame f, triple[] v, material p=currentpen, light light=nolight,
+         string name="", render render=defaultrender,
          projection P=currentprojection)
 {
-  for(int i=0; i <= length(g); ++i) dot(f,point(g,i),p,P);
+  if(v.length > 0) {
+    // Remove duplicate points.
+    v=sort(v,lexorder);
+
+    triple last=v[0];
+    dot(f,last,p,light,name,P);
+    for(int i=1; i < v.length; ++i) {
+      triple V=v[i];
+      if(V != last) {
+        dot(f,V,p,light,name,render,P);
+        last=V;
+      }
+    }
+  }
 }
 
-void dot(frame f, path3[] g, material p=currentpen,
+void dot(frame f, path3 g, material p=currentpen, light light=nolight,
+         string name="", render render=defaultrender,
          projection P=currentprojection)
 {
-  for(int i=0; i < g.length; ++i) dot(f,g[i],p,P);
+  dot(f,sequence(new triple(int i) {return point(g,i);},size(g)),
+      p,light,name,render,P);
+}
+
+void dot(frame f, path3[] g, material p=currentpen, light light=nolight,
+         string name="", render render=defaultrender,
+         projection P=currentprojection)
+{
+  int sum;
+  for(path3 G : g)
+    sum += size(G);
+  int i,j;
+  dot(f,sequence(new triple(int) {
+        while(j >= size(g[i])) {
+          ++i;
+          j=0;
+        }
+        triple v=point(g[i],j);
+        ++j;
+        return v;
+      },sum),p,light,name,render,P);
 }
 
 void dot(picture pic=currentpicture, triple v, material p=currentpen,
-         light light=nolight, string name="")
+         light light=nolight, string name="", render render=defaultrender)
 {
   pen q=(pen) p;
   real size=0.5*linewidth(dotsize(q)+q);
   pic.add(new void(frame f, transform3 t, picture pic, projection P) {
+      triple V=t*v;
       if(is3D()) {
-        material m=material(p,p.granularity >= 0 ? p.granularity :
-                            dotgranularity);
-        int i=-1;
+        begingroup3(f,name == "" ? "dot" : name,render);
+        transform3 T=shift(V)*scale3(size);
         for(patch s : unitsphere.s)
-          draw3D(f,shift(t*v)*scale3(size)*s,m,light,partname(name,++i));
+          draw3D(f,T*s,V,p,light,prc=false);
+        if(prc())
+          drawPRCsphere(f,T,p,light,render);
+        endgroup3(f);
       }
       if(pic != null)
-        dot(pic,project(t*v,P.t),q);
+        dot(pic,project(V,P.t),q);
     },true);
   triple R=size*(1,1,1);
   pic.addBox(v,v,-R,R);
 }
 
-void dot(picture pic=currentpicture, triple[] v, material p=currentpen)
+void dot(picture pic=currentpicture, triple[] v, material p=currentpen,
+         light light=nolight, string name="", render render=defaultrender)
 {
-  for(int i=0; i < v.length; ++i) dot(pic,v[i],p);
+  if(v.length > 0) {
+    // Remove duplicate points.
+    v=sort(v,lexorder);
+
+    triple last=v[0];
+    begingroup3(pic,name == "" ? "dots" : name,render);
+    dot(pic,last,p,light,partname(0),render);
+    int k=0;
+    for(int i=1; i < v.length; ++i) {
+      triple V=v[i];
+      if(V != last) {
+        dot(pic,V,p,light,partname(++k),render);
+        last=V;
+      }
+    }
+    endgroup3(pic);
+  }
 }
 
-void dot(picture pic=currentpicture, explicit path3 g, material p=currentpen)
+void dot(picture pic=currentpicture, explicit path3 g, material p=currentpen,
+         light light=nolight, string name="",
+         render render=defaultrender)
 {
-  for(int i=0; i <= length(g); ++i) dot(pic,point(g,i),p);
+  dot(pic,sequence(new triple(int i) {return point(g,i);},size(g)),
+      p,light,name,render);
 }
 
-void dot(picture pic=currentpicture, path3[] g, material p=currentpen)
+void dot(picture pic=currentpicture, path3[] g, material p=currentpen,
+         light light=nolight, string name="", render render=defaultrender)
 {
-  for(int i=0; i < g.length; ++i) dot(pic,g[i],p);
+  int sum;
+  for(path3 G : g)
+    sum += size(G);
+  int i,j;
+  dot(pic,sequence(new triple(int) {
+        while(j >= size(g[i])) {
+          ++i;
+          j=0;
+        }
+        triple v=point(g[i],j);
+        ++j;
+        return v;
+      },sum),p,light,name,render);
 }
 
 void dot(picture pic=currentpicture, Label L, triple v, align align=NoAlign,
-         string format=defaultformat, material p=currentpen)
+         string format=defaultformat, material p=currentpen,
+         light light=nolight, string name="", render render=defaultrender)
 {
   Label L=L.copy();
   if(L.s == "") {
@@ -1679,8 +1801,8 @@ void dot(picture pic=currentpicture, Label L, triple v, align align=NoAlign,
   }
   L.align(align,E);
   L.p((pen) p);
-  dot(pic,v,p);
-  label(pic,L,v);
+  dot(pic,v,p,light,name,render);
+  label(pic,L,v,render);
 }
 
 pair minbound(triple[] A, projection P)
@@ -1734,7 +1856,8 @@ triple[][] operator / (triple[][] a, real[][] b)
 
 // Draw a NURBS curve.
 void draw(picture pic=currentpicture, triple[] P, real[] knot,
-          real[] weights=new real[], pen p=currentpen, string name="")
+          real[] weights=new real[], pen p=currentpen, string name="",
+          render render=defaultrender)
 {
   P=copy(P);
   knot=copy(knot);
@@ -1742,7 +1865,9 @@ void draw(picture pic=currentpicture, triple[] P, real[] knot,
   pic.add(new void(frame f, transform3 t, picture pic, projection Q) {
       if(is3D()) {
         triple[] P=t*P;
-        draw(f,P,knot,weights,p,name);
+        begingroup3(f,name == "" ? "curve" : name,render);
+        draw(f,P,knot,weights,p);
+        endgroup3(f);
         if(pic != null)
           pic.addBox(minbound(P,Q),maxbound(P,Q));
       }
@@ -1753,7 +1878,8 @@ void draw(picture pic=currentpicture, triple[] P, real[] knot,
 // Draw a NURBS surface.
 void draw(picture pic=currentpicture, triple[][] P, real[] uknot, real[] vknot,
           real[][] weights=new real[][], material m=currentpen,
-          pen[] colors=new pen[], light light=currentlight, string name="")
+          pen[] colors=new pen[], light light=currentlight, string name="",
+          render render=defaultrender)
 {
   if(colors.length > 0)
     m=mean(colors);
@@ -1765,14 +1891,14 @@ void draw(picture pic=currentpicture, triple[][] P, real[] uknot, real[] vknot,
   colors=copy(colors);
   pic.add(new void(frame f, transform3 t, picture pic, projection Q) {
       if(is3D()) {
+        begingroup3(f,name == "" ? "surface" : name,render);
         triple[][] P=t*P;
-        real granularity=m.granularity >= 0 ? m.granularity :
-          defaultgranularity;
         real PRCshininess;
         if(prc())
           PRCshininess=PRCshininess(m.shininess);
         draw(f,P,uknot,vknot,weights,m.p,m.opacity,m.shininess,PRCshininess,
-             granularity,colors,lighton,name);
+             colors,lighton);
+        endgroup3(f);
         if(pic != null)
           pic.addBox(minbound(P,Q),maxbound(P,Q));
       }

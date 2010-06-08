@@ -11,22 +11,78 @@ if(prc0()) {
   }
 }
 
+// Useful lossy compression values.
+restricted real Zero=0;
+restricted real Low=0.0001;
+restricted real Medium=0.001;
+restricted real High=0.01;
+
+restricted int PRCsphere=0;   // Renders slowly but produces smaller PRC files.
+restricted int NURBSsphere=1; // Renders fast but produces larger PRC files.
+
+struct render
+{
+  // PRC parameters:
+  real compression;     // lossy compression parameter (0=no compression)
+  real granularity;     // PRC rendering granularity
+
+  bool closed;          // use one-sided rendering?
+  bool tessellate;      // use tessellated mesh to store straight patches?
+  bool3 merge;          // merge nodes before rendering, for lower quality
+                        // but faster PRC rendering?
+                        // (default=merge only transparent patches)
+  int sphere;           // PRC sphere type (PRCsphere or NURBSsphere).
+
+  // General parameters:
+  real margin;          // shrink amount for rendered openGL viewport, in bp.
+  real tubegranularity; // granularity for rendering tubes 
+
+  static render defaultrender;
+  
+  void operator init(real compression=defaultrender.compression,
+                     real granularity=defaultrender.granularity,
+                     bool closed=defaultrender.closed,
+                     bool tessellate=defaultrender.tessellate,
+                     bool3 merge=defaultrender.merge,
+                     int sphere=defaultrender.sphere,
+                     real margin=defaultrender.margin,
+                     real tubegranularity=defaultrender.tubegranularity)
+  {
+    this.compression=compression;
+    this.granularity=granularity;
+    this.closed=closed;
+    this.tessellate=tessellate;
+    this.merge=merge;
+    this.sphere=sphere;
+    this.margin=margin;
+    this.tubegranularity=tubegranularity;
+  }
+}
+
+render operator init() {return render();}
+
+render defaultrender=render.defaultrender=new render;
+defaultrender.compression=High;
+defaultrender.granularity=Medium;
+defaultrender.closed=false;
+defaultrender.tessellate=false;
+defaultrender.merge=false;
+defaultrender.margin=0.02;
+defaultrender.tubegranularity=0.005;
+defaultrender.sphere=NURBSsphere;
+
 real defaultshininess=0.25;
-real defaultgranularity=0;
-real linegranularity=0.005;
-int linesectors=8;        // Number of angular sectors.
-real dotgranularity=0.0001;
+
 real angleprecision=1e-5; // Precision for centering perspective projections.
 int maxangleiterations=25;
-real rendermargin=0.02;
 
 string defaultembed3Doptions;
 string defaultembed3Dscript;
 real defaulteyetoview=63mm/1000mm;
 
-string partname(string s, int i=0) 
+string partname(int i=0) 
 {
-  return s == "" ? "" : s+"-"+string(i);
+  return string(i+1);
 }
 
 triple O=(0,0,0);
@@ -733,7 +789,7 @@ struct Controls {
   // 3D extension of John Hobby's control point formula
   // (cf. The MetaFont Book, page 131),
   // as described in John C. Bowman and A. Hammerlindl,
-  // TUGBOAT: The Communications of th TeX Users Group 29:2 (2008).
+  // TUGBOAT: The Communications of the TeX Users Group 29:2 (2008).
 
   void operator init(triple v0, triple v1, triple d0, triple d1, real tout,
                      real tin, bool atLeast) {
@@ -1995,13 +2051,24 @@ path3 plane(triple u, triple v, triple O=O)
 include three_light;
 
 void draw(frame f, path3 g, material p=currentpen, light light=nolight,
-          string name="", projection P=currentprojection);
+          string name="", render render=defaultrender,
+          projection P=currentprojection);
 
-void begingroup3(picture pic=currentpicture, string name="")
+void begingroup3(frame f, string name="", render render=defaultrender,
+                 triple center=O, int interaction=0)
+{
+  _begingroup3(f,name,render.compression,render.granularity,render.closed,
+               render.tessellate,render.merge == false,
+               render.merge == true,center,interaction);
+}
+
+void begingroup3(picture pic=currentpicture, string name="",
+                 render render=defaultrender,
+                 triple center=O, int interaction=0)
 {
   pic.add(new void(frame f, transform3, picture pic, projection) {
       if(is3D())
-        begingroup(f,name);
+        begingroup3(f,name,render,center,interaction);
       if(pic != null)
         begingroup(pic);
     },true);
@@ -2011,7 +2078,7 @@ void endgroup3(picture pic=currentpicture)
 {
   pic.add(new void(frame f, transform3, picture pic, projection) {
       if(is3D())
-        endgroup(f);
+        endgroup3(f);
       if(pic != null)
         endgroup(pic);
     },true);
@@ -2060,13 +2127,14 @@ pair max(frame f, projection P)
 
 void draw(picture pic=currentpicture, Label L="", path3 g,
           align align=NoAlign, material p=currentpen, margin3 margin=NoMargin3,
-          light light=nolight, string name="")
+          light light=nolight, string name="",
+          render render=defaultrender)
 {
   pen q=(pen) p;
   pic.add(new void(frame f, transform3 t, picture pic, projection P) {
       path3 G=margin(t*g,q).g;
       if(is3D()) {
-        draw(f,G,p,light,name,null);
+        draw(f,G,p,light,name,render,null);
         if(pic != null && size(G) > 0)
           pic.addBox(min(G,P),max(G,P),min(q),max(q));
       }
@@ -2086,45 +2154,91 @@ include three_tube;
 
 draw=new void(frame f, path3 g, material p=currentpen,
               light light=nolight, string name="",
+              render render=defaultrender,
               projection P=currentprojection) {
   pen q=(pen) p;
   if(is3D()) {
-    p=material(p,(p.granularity >= 0) ? p.granularity : linegranularity);
+    p=material(p);
     void drawthick(path3 g) {
       if(settings.thick) {
         real width=linewidth(q);
         if(width > 0) {
-          tube T=tube(g,width,linesectors);
+          bool prc=prc();
+          void cylinder(transform3) {};
+          void sphere(transform3, bool half) {};
+          void disk(transform3) {};
+          void tube(path3, path3);
+          if(prc) {
+            cylinder=new void(transform3 t) {drawPRCcylinder(f,t,p,light);};
+            sphere=new void(transform3 t, bool half)
+              {drawPRCsphere(f,t,half,p,light,render);};
+            disk=new void(transform3 t) {draw(f,t*unitdisk,p,light);};
+            tube=new void(path3 center, path3 g)
+              {drawPRCtube(f,center,g,p,light);};
+          }
+          real linecap;
+          real r;
+          bool open=!cyclic(g);
           int L=length(g);
+          triple g0,gL;
+          if(open && L > 0) {
+            g0=point(g,0);
+            gL=point(g,L);
+            linecap=linecap(q);
+            r=0.5*width;
+            if(linecap == 2) {
+              g0 -= r*dir(g,0);
+              gL += r*dir(g,L);
+              g=g0..g..gL;
+              L += 2;
+            }
+          }
+          tube T=tube(g,width,render,cylinder,sphere,tube);
+          path3 c=T.center;
           if(L >= 0) {
-            if(!cyclic(g)) {
-              real r=0.5*width;
-              real linecap=linecap(q);
-              transform3 scale3r=scale3(r);
-              surface cap;
-              triple dirL=dir(g,L);
+            if(open) {
+              int Lc=length(c);
+              triple c0=point(c,0);
+              triple cL=point(c,Lc);
               triple dir0=dir(g,0);
-              if(linecap == 0)
-                cap=scale(r,r,1)*unitdisk;
-              else if(linecap == 1)
-                cap=scale3r*((dir0 == O || dirL == O) ?
-                             unitsphere : unithemisphere);
-              else if(linecap == 2) {
-                cap=scale3r*unitcylinder;
-                cap.append(scale3r*shift(Z)*unitdisk);
+              triple dirL=dir(g,L);
+              triple dirc0=dir(c,0);
+              triple dircL=dir(c,Lc);
+              transform3 t0=shift(g0)*align(-dir0);
+              transform3 tL=shift(gL)*align(dirL);
+              transform3 tc0=shift(c0)*align(-dirc0);
+              transform3 tcL=shift(cL)*align(dircL);
+              if(linecap == 0 || linecap == 2){
+                transform3 scale2r=scale(r,r,1);
+                T.s.append(t0*scale2r*unitdisk);
+                disk(tc0*scale2r);
+                if(L > 0) {
+                  T.s.append(tL*scale2r*unitdisk);
+                  disk(tcL*scale2r);
+                }
+              } else if(linecap == 1) {
+                transform3 scale3r=scale3(r);
+                T.s.append(t0*scale3r*
+                           (dir0 != O ? unithemisphere : unitsphere));
+                sphere(tc0*scale3r,half=straight(c,0));
+                if(L > 0) {
+                  T.s.append(tL*scale3r*
+                             (dirL != O ? unithemisphere : unitsphere));
+                  sphere(tcL*scale3r,half=straight(c,Lc-1));
+                }
               }
-              T.s.append(shift(point(g,0))*align(-dir0)*cap);
-              T.s.append(shift(point(g,L))*align(dirL)*cap);
             }
             if(opacity(q) == 1)
-              _draw(f,T.center,q,name);
+              _draw(f,c,q);
           }
-          for(int i=0; i < T.s.s.length; ++i)
-            draw3D(f,T.s.s[i],p,light,partname(name,i));
-        } else _draw(f,g,q,name);
-      } else _draw(f,g,q,name);
+          for(patch s : T.s.s)
+            draw3D(f,s,p,light,prc=false);
+        } else _draw(f,g,q);
+      } else _draw(f,g,q);
     }
     real[] dash=linetype(adjust(q,arclength(g),cyclic(g)));
+    if(q != nullpen)
+      begingroup3(f,name == "" ? "curve" : name,render);
     if(dash.length == 0) drawthick(g);
     else {
       if(sum(dash) > 0) {
@@ -2144,22 +2258,33 @@ draw=new void(frame f, path3 g, material p=currentpen,
         }
       }
     }
+    if(q != nullpen)
+      endgroup3(f);
   } else draw(f,project(g,P),q);
 };
 
 void draw(frame f, explicit path3[] g, material p=currentpen,
-          light light=nolight, string name="", projection P=currentprojection)
+          light light=nolight, string name="",
+          render render=defaultrender, projection P=currentprojection)
 {
+  if(g.length > 1)
+    begingroup3(f,name == "" ? "curve" : name,render);
   for(int i=0; i < g.length; ++i)
-    draw(f,g[i],p,light,partname(name,i),P);
+    draw(f,g[i],p,light,partname(i),render,P);
+  if(g.length > 1)
+    endgroup3(f);
 }
 
 void draw(picture pic=currentpicture, explicit path3[] g,
           material p=currentpen, margin3 margin=NoMargin3, light light=nolight,
-          string name="")
+          string name="", render render=defaultrender)
 {
+  if(g.length > 1)
+    begingroup3(pic,name == "" ? "curves" : name,render);
   for(int i=0; i < g.length; ++i)
-    draw(pic,g[i],p,margin,light,partname(name,i));
+    draw(pic,g[i],p,margin,light,partname(i),render);
+  if(g.length > 1)
+    endgroup3(pic);
 }
 
 include three_arrows;
@@ -2167,24 +2292,34 @@ include three_arrows;
 void draw(picture pic=currentpicture, Label L="", path3 g, 
           align align=NoAlign, material p=currentpen, arrowbar3 arrow,
           arrowbar3 bar=None, margin3 margin=NoMargin3, light light=nolight,
-          light arrowheadlight=currentlight, string name="")
+          light arrowheadlight=currentlight, string name="",
+          render render=defaultrender)
 {
-  begingroup3(pic);
+  bool group=arrow != None || bar != None;
+  if(group)
+    begingroup3(pic,name,render);
   bool drawpath=arrow(pic,g,p,margin,light,arrowheadlight);
   if(bar(pic,g,p,margin,light,arrowheadlight) && drawpath)
-    draw(pic,L,g,align,p,margin,light,name);
-  endgroup3(pic);
+    draw(pic,L,g,align,p,margin,light);
+  if(group)
+    endgroup3(pic);
   label(pic,L,g,align,(pen) p);
 }
 
 void draw(frame f, path3 g, material p=currentpen, arrowbar3 arrow,
           light light=nolight, light arrowheadlight=currentlight,
-          string name="", projection P=currentprojection)
+          string name="", render render=defaultrender,
+          projection P=currentprojection)
 {
   picture pic;
+  bool group=arrow != None;
+  if(group)
+    begingroup3(f,name,render);
   if(arrow(pic,g,p,NoMargin3,light,arrowheadlight))
-    draw(f,g,p,light,name,P);
+    draw(f,g,p,light,P);
   add(f,pic.fit());
+  if(group)
+    endgroup3(f);
 }
 
 void add(picture pic=currentpicture, void d(picture,transform3),
@@ -2300,14 +2435,38 @@ private struct viewpoint {
   triple target,camera,up;
   real angle;
   void operator init(string s) {
-    s=replace(s,new string[][] {{" ",","},{"}{",","},{"{",""},{"}",""},});
-    string[] S=split(s,",");
-    target=((real) S[0],(real) S[1],(real) S[2])*cm;
-    camera=target+(real) S[6]*((real) S[3],(real) S[4],(real) S[5])*cm;
+    s=replace(s,'\n'," ");
+    string[] S=split(s);
+    int pos(string s, string key) {
+      int pos=find(s,key);
+      if(pos < 0) return -1;
+      pos += length(key);
+      while(substr(s,pos,1) == " ") ++pos;
+      if(substr(s,pos,1) == "=")
+        return pos+1;
+      return -1;
+    }
+    triple C2C=X;
+    real ROO=1;
+    real ROLL=0;
+    angle=30;
+    int pos;
+    for(int k=0; k < S.length; ++k) {
+      if((pos=pos(S[k],"COO")) >= 0)
+        target=((real) substr(S[k],pos),(real) S[++k],(real) S[++k]);
+      else if((pos=pos(S[k],"C2C")) >= 0)
+        C2C=((real) substr(S[k],pos),(real) S[++k],(real) S[++k]);
+      else if((pos=pos(S[k],"ROO")) >= 0)
+        ROO=(real) substr(S[k],pos);
+      else if((pos=pos(S[k],"ROLL")) >= 0)
+        ROLL=(real) substr(S[k],pos);
+      else if((pos=pos(S[k],"AAC")) >= 0)
+        angle=(real) substr(S[k],pos);
+    }
+    camera=target+ROO*C2C;
     triple u=unit(target-camera);
     triple w=unit(Z-u.z*u);
-    up=rotate((real) S[7],O,u)*w;
-    angle=S[8] == "" ? 30 : (real) S[8];
+    up=rotate(ROLL,O,u)*w;
   }
 }
 
@@ -2393,13 +2552,13 @@ private string billboard(int[] index, triple[] center)
   if(index.length == 0) return "";
   string s="
 var zero=new Vector3(0,0,0);
-var meshes=scene.meshes;
-var count=meshes.count;
+var nodes=scene.nodes;
+var count=nodes.count;
 
 var index=new Array();
 for(i=0; i < count; i++) {
-  var mesh=meshes.getByIndex(i); 
-  var name=mesh.name;
+  var node=nodes.getByIndex(i); 
+  var name=node.name;
   end=name.lastIndexOf(\".\")-1;
   if(end > 0) {
     if(name.substr(end,1) == \"\001\") {
@@ -2407,7 +2566,7 @@ for(i=0; i < count; i++) {
       n=end-start;
       if(n > 0) {
         index[name.substr(start,n)]=i;
-        mesh.name=name.substr(0,start-1);
+        node.name=name.substr(0,start-1);
       }
     }
   }
@@ -2416,7 +2575,7 @@ for(i=0; i < count; i++) {
 var center=new Array(
 ";
   for(int i=0; i < center.length; ++i)
-    s += "Vector3("+format(center[i]/cm,",")+"),
+    s += "Vector3("+format(center[i],",")+"),
 ";
   s += ");
 
@@ -2431,12 +2590,12 @@ billboardHandler.onEvent=function(event)
   function f(i,k) {
     j=index[i];
     if(j >= 0) {
-      var mesh=meshes.getByIndex(j);
-      var name=mesh.name;
+      var node=nodes.getByIndex(j);
+      var name=node.name;
       var R=Matrix4x4();
       R.setView(zero,direction,up);
       var c=center[k];
-      var T=mesh.transform;
+      var T=node.transform;
       T.setIdentity();
       T.translateInPlace(c.scale(-1));
       T.multiplyInPlace(R);
@@ -2513,13 +2672,13 @@ string embed3D(string label="", string text=label, string prefix,
   if(script == "") script=defaultembed3Dscript;
 
   // Adobe Reader doesn't appear to support user-specified viewport lights.
-  string lightscript=light.on() && !light.viewport ? lightscript(light) : "";
+  string lightscript=light.on() && light.viewport ? "" : lightscript(light);
 
   real viewplanesize;
   if(P.infinity) {
     triple lambda=max3(f)-min3(f);
     pair margin=viewportmargin((lambda.x,lambda.y));
-    viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/(cm*P.zoom);
+    viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/P.zoom;
   } else
     if(!P.absolute) P.angle=2*aTan(Tan(0.5*P.angle));
 
@@ -2542,7 +2701,7 @@ string embed3D(string label="", string text=label, string prefix,
                P.viewportshift.y*lambda.y/P.zoom,0);
   }
 
-  triple v=P.vector()/cm;
+  triple v=P.vector();
   triple u=unit(v);
   triple w=Z-u.z*u;
   real roll;
@@ -2560,7 +2719,7 @@ string embed3D(string label="", string text=label, string prefix,
     ",toolbar="+(settings.toolbar ? "true" : "false")+
     ",3Daac="+Format(P.angle)+
     ",3Dc2c="+Format(u)+
-    ",3Dcoo="+Format(target/cm)+
+    ",3Dcoo="+Format(target)+
     ",3Droll="+Format(roll)+
     ",3Droo="+Format(abs(v))+
     ",3Dbg="+Format(light.background());
@@ -2613,7 +2772,7 @@ struct scene
       if(this.P.center && settings.render != 0) {
         triple target=0.5*(m+M);
         this.P.target=target;
-          this.P.calculate();
+        this.P.calculate();
       }
       if(this.P.autoadjust || this.P.infinity) 
         adjusted=adjusted | this.P.adjust(m,M);
@@ -2796,7 +2955,7 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
     } else if(M.z >= 0) abort("camera too close");
 
     shipout3(prefix,f,preview ? nativeformat() : format,
-             S.width-rendermargin,S.height-rendermargin,
+             S.width-defaultrender.margin,S.height-defaultrender.margin,
              P.infinity ? 0 : 2aTan(Tan(0.5*P.angle)*P.zoom),
              P.zoom,m,M,P.viewportshift,
              tinv*inverse(modelview)*shift(0,0,zcenter),light.background(),

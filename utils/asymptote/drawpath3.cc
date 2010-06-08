@@ -10,32 +10,22 @@ namespace camp {
 
 using vm::array;
   
-bool drawPath3::write(prcfile *out, unsigned int *count, array *, array *)
+bool drawPath3::write(prcfile *out, unsigned int *count, array *, array *,
+                      double, groupsmap&)
 {
   Int n=g.length();
   if(n == 0 || invisible)
     return true;
 
-  ostringstream buf;
-  
   if(straight) {
-    if(name == "")
-      buf << "line-" << count[LINE]++;
-    else
-      buf << name;
-    
-    controls=new(UseGC) Triple[n+1];
+    Triple *controls=new(UseGC) Triple[n+1];
     for(Int i=0; i <= n; ++i)
       store(controls[i],g.point(i));
-    out->add(new PRCline(out,n+1,controls,color,scale3D,buf.str().c_str()));
-  } else {
-    if(name == "")
-      buf << "curve-" << count[CURVE]++;
-    else
-      buf << name;
     
+    out->addLine(n+1,controls,color);
+  } else {
     int m=3*n+1;
-    controls=new(UseGC) Triple[m];
+    Triple *controls=new(UseGC) Triple[m];
     store(controls[0],g.point((Int) 0));
     store(controls[1],g.postcontrol((Int) 0));
     size_t k=1;
@@ -44,10 +34,11 @@ bool drawPath3::write(prcfile *out, unsigned int *count, array *, array *)
       store(controls[++k],g.point(i));
       store(controls[++k],g.postcontrol(i));
     }
-    store(controls[++k],g.precontrol((Int) n));
-    store(controls[++k],g.point((Int) n));
-    out->add(new PRCBezierCurve(out,3,m,controls,color,buf.str()));
+    store(controls[++k],g.precontrol(n));
+    store(controls[++k],g.point(n));
+    out->addBezierCurve(m,controls,color);
   }
+  
   return true;
 }
 
@@ -102,19 +93,12 @@ drawElement *drawPath3::transformed(const array& t)
 }
   
 bool drawNurbsPath3::write(prcfile *out, unsigned int *count, array *index,
-                           array *origin)
+                           array *origin, double, groupsmap&)
 {
-  ostringstream buf;
-  if(name == "") 
-    buf << "curve-" << count[CURVE]++;
-  else
-    buf << name;
-  
   if(invisible)
     return true;
 
-  out->add(new PRCcurve(out,degree,n,controls,knots,color,scale3D,
-                        weights != NULL,weights,buf.str().c_str()));
+  out->addCurve(degree,n,controls,knots,color,weights);
   
   return true;
 }

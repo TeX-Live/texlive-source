@@ -9,11 +9,11 @@ bool getviews=true;
 currentlight=White;
 //currentlight=nolight;
 
+defaultrender.merge=true;  // Fast low-quality rendering
+//defaultrender.merge=false; // Slow high-quality rendering
+
 size(200);
 currentprojection=perspective(30,30,15);
-
-// Uncomment this line for more accurate (but slower) PDF rendering
-//dotgranularity=0;
 
 pen chainpen=green;
 pen hetpen=purple;
@@ -121,6 +121,7 @@ while(true) {
 write("Number of atomic chains: ",chains.length);
 
 int natoms;
+begingroup3("chained");
 for(chain c : chains) {
   for(int i=0; i < c.a.length-1; ++i)
     draw(c.a[i].v--c.a[i+1].v,chainpen,currentlight);
@@ -128,25 +129,30 @@ for(chain c : chains) {
     dot(a.v,color(a.name),currentlight);
   natoms += c.a.length;
 }
+endgroup3();
 
 write("Number of chained atoms: ",natoms);
 write("Number of hetero atoms: ",atoms.length);
 
+begingroup3("hetero");
 for(atom h : atoms)
   dot(h.v,color(h.name),currentlight);
+endgroup3();
 
 write("Number of hetero bonds: ",bonds.length);
 
+begingroup3("bonds");
 for(bond b : bonds) {
   triple v(int i) {return atoms[find(serials == i)].v;}
   draw(v(b.i)--v(b.j),hetpen,currentlight);
 }
+endgroup3();
 
 string options;
 string viewfilename=prefix+".views";
 
 if(!error(input(viewfilename,check=false)))
-  options="3Dviews="+viewfilename;
+  options="3Dviews2="+viewfilename;
 
 if(getviews) {
   picture pic;
@@ -155,3 +161,4 @@ if(getviews) {
   shipout(prefix,pic,options=options);
 } else
   shipout(prefix,options=options);
+

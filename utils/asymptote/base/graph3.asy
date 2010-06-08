@@ -59,7 +59,7 @@ void drawtick(picture pic, transform3 T, path3 g, path3 g2,
     G=(sign == 0) ?
       locate1.V-Size*locate1.dir--locate1.V+Size*locate1.dir :
       locate1.V--locate1.V+Size*sign*locate1.dir;
-  draw(pic,G,p);
+  draw(pic,G,p,name="tick");
 }
 
 triple ticklabelshift(triple align, pen p=currentpen) 
@@ -216,7 +216,10 @@ ticks3 Ticks3(int sign, Label F="", ticklabel ticklabel=null,
       } else ticklabel=Format(format);
     }
 
-    begingroup3(pic);
+    bool labelaxis=L.s != "" && primary;
+
+    begingroup3(pic,"axis");
+
     if(primary) draw(pic,margin(G,p).g,p,arrow);
     else draw(pic,G,p);
 
@@ -230,8 +233,7 @@ ticks3 Ticks3(int sign, Label F="", ticklabel ticklabel=null,
       if(val >= a && val <= b)
         drawtick(pic,t,g,g2,locate,val,size,sign,ptick,extend);
     }
-    endgroup3(pic);
-    
+
     if(N == 0) N=1;
     if(Size > 0 && primary) {
       for(int i=(beginlabel ? 0 : 1);
@@ -243,8 +245,10 @@ ticks3 Ticks3(int sign, Label F="", ticklabel ticklabel=null,
         }
       }
     }
-    if(L.s != "" && primary) 
+    if(labelaxis)
       labelaxis(pic,t,L,G,locate,Sign,ticklabels);
+
+    endgroup3(pic);
   };
 }
 
@@ -1570,8 +1574,8 @@ surface surface(triple[][] f, bool[][] cond={})
     for(int j=0; j < ny; ++j) {
       if(all || (condi[j] && condi[j+1] && condp[j] && condp[j+1]))
         s.s[++k]=patch(new triple[] {fi[j],fp[j],fp[j+1],fi[j+1]});
-        indexi[j]=k;
-      }
+      indexi[j]=k;
+    }
   }
 
   if(count == nx*ny) {
@@ -1579,6 +1583,123 @@ surface surface(triple[][] f, bool[][] cond={})
     if(vperiodic(f)) s.vcyclic(true);
   }
   
+  return s;
+}
+
+surface bispline(real[][] z, real[][] p, real[][] q, real[][] r,
+                 real[] x, real[] y, bool[][] cond={})
+{ // z[i][j] is the value at (x[i],y[j])
+  // p and q are the first derivatives with respect to x and y, respectively
+  // r is the second derivative ddu/dxdy
+  int n=x.length-1;
+  int m=y.length-1;
+
+  bool all=cond.length == 0;
+
+  int count;
+  if(all)
+    count=n*m;
+  else {
+    count=0;
+    for(int i=0; i < n; ++i) {
+      bool[] condi=cond[i];
+      for(int j=0; j < m; ++j)
+        if(condi[j]) ++count;
+    }
+  }
+
+  surface s=surface(count);
+  s.index=new int[n][m];
+  int k=-1;
+  for(int i=0; i < n; ++i) {
+    bool[] condi=all ? null : cond[i];
+    real xi=x[i];
+    real[] zi=z[i];
+    real[] zp=z[i+1];
+    real[] ri=r[i];
+    real[] rp=r[i+1];
+    real[] pi=p[i];
+    real[] pp=p[i+1];
+    real[] qi=q[i];
+    real[] qp=q[i+1];
+    real xp=x[i+1];
+    real hx=(xp-xi)/3;
+    int[] indexi=s.index[i];
+    for(int j=0; j < m; ++j) {
+      real yj=y[j];
+      real yp=y[j+1];
+      if(all || condi[j]) {
+        triple[][] P=array(4,array(4,O));
+        real hy=(yp-yj)/3;
+        real hxy=hx*hy;
+        // x and y directions
+        for(int k=0; k < 4; ++k) {
+          P[0][k] += xi*X;
+          P[k][0] += yj*Y;
+          P[1][k] += (xp+2*xi)/3*X;
+          P[k][1] += (yp+2*yj)/3*Y;
+          P[2][k] += (2*xp+xi)/3*X;
+          P[k][2] += (2*yp+yj)/3*Y;
+          P[3][k] += xp*X;
+          P[k][3] += yp*Y;
+        }
+        // z: value 
+        P[0][0] += zi[j]*Z;
+        P[3][0] += zp[j]*Z;
+        P[0][3] += zi[j+1]*Z;
+        P[3][3] += zp[j+1]*Z;
+        // z: first derivative
+        P[1][0] += (P[0][0].z+hx*pi[j])*Z;
+        P[1][3] += (P[0][3].z+hx*pi[j+1])*Z;
+        P[2][0] += (P[3][0].z-hx*pp[j])*Z;
+        P[2][3] += (P[3][3].z-hx*pp[j+1])*Z;
+        P[0][1] += (P[0][0].z+hy*qi[j])*Z;
+        P[3][1] += (P[3][0].z+hy*qp[j])*Z;
+        P[0][2] += (P[0][3].z-hy*qi[j+1])*Z;
+        P[3][2] += (P[3][3].z-hy*qp[j+1])*Z;
+        // z: second derivative
+        P[1][1] += (P[0][1].z+P[1][0].z-P[0][0].z+hxy*ri[j])*Z;
+        P[1][2] += (P[0][2].z+P[1][3].z-P[0][3].z-hxy*ri[j+1])*Z;
+        P[2][1] += (P[2][0].z+P[3][1].z-P[3][0].z-hxy*rp[j])*Z;
+        P[2][2] += (P[2][3].z+P[3][2].z-P[3][3].z+hxy*rp[j+1])*Z;
+        s.s[++k]=patch(P);
+        indexi[j]=k;
+      }
+    }
+  }
+  
+  return s;
+}
+
+// return the surface described by a real matrix f, interpolated with
+// xsplinetype and ysplinetype.
+surface surface(real[][] f, real[] x, real[] y,
+                splinetype xsplinetype=null, splinetype ysplinetype=xsplinetype,
+                bool[][] cond={})
+{
+  real epsilon=sqrtEpsilon*norm(y);
+  if(xsplinetype == null)
+    xsplinetype=(abs(x[0]-x[x.length-1]) <= epsilon) ? periodic : notaknot;
+  if(ysplinetype == null)
+    ysplinetype=(abs(y[0]-y[y.length-1]) <= epsilon) ? periodic : notaknot;
+  int n=x.length; int m=y.length;
+  real[][] ft=transpose(f);
+  real[][] tp=new real[m][];
+  for(int j=0; j < m; ++j)
+    tp[j]=xsplinetype(x,ft[j]);
+  real[][] q=new real[n][];
+  for(int i=0; i < n; ++i)
+    q[i]=ysplinetype(y,f[i]);
+  real[][] qt=transpose(q);
+  real[] d1=xsplinetype(x,qt[0]);
+  real[] d2=xsplinetype(x,qt[m-1]);
+  real[][] r=new real[n][];
+  real[][] p=transpose(tp);
+  for(int i=0; i < n; ++i)
+    r[i]=clamped(d1[i],d2[i])(y,p[i]);
+  surface s=bispline(f,p,q,r,x,y,cond);
+  if(xsplinetype == periodic) s.ucyclic(true);
+  if(ysplinetype == periodic) s.vcyclic(true);
   return s;
 }
 
@@ -1730,30 +1851,36 @@ guide3[][] lift(real f(pair z), guide[][] g, interpolate3 join=operator --)
 }
 
 void draw(picture pic=currentpicture, Label[] L=new Label[],
-          guide3[][] g, pen[] p)
+          guide3[][] g, pen[] p, light light=currentlight, string name="",
+          render render=defaultrender,
+          interaction interaction=LabelInteraction())
 {
   pen thin=is3D() ? thin() : defaultpen;
-  begingroup3(pic);
+  if(g.length > 1)
+    begingroup3(pic,name == "" ? "contours" : name,render);
   for(int cnt=0; cnt < g.length; ++cnt) {
     guide3[] gcnt=g[cnt];
     pen pcnt=thin+p[cnt];
     for(int i=0; i < gcnt.length; ++i)
-      draw(pic,gcnt[i],pcnt);
+      draw(pic,gcnt[i],pcnt,light,name);
     if(L.length > 0) {
       Label Lcnt=L[cnt];
       for(int i=0; i < gcnt.length; ++i) {
         if(Lcnt.s != "" && size(gcnt[i]) > 1)
-          label(pic,Lcnt,gcnt[i],pcnt);
+          label(pic,Lcnt,gcnt[i],pcnt,name,interaction);
       }
     }
   }
-  endgroup3(pic);
+  if(g.length > 1)
+    endgroup3(pic);
 }
 
 void draw(picture pic=currentpicture, Label[] L=new Label[],
-          guide3[][] g, pen p=currentpen)
+          guide3[][] g, pen p=currentpen, light light=currentlight,
+          string name="", interaction interaction=LabelInteraction())
 {
-  draw(pic,L,g,sequence(new pen(int) {return p;},g.length));
+  draw(pic,L,g,sequence(new pen(int) {return p;},g.length),light,name,
+       interaction);
 }
 
 real maxlength(triple f(pair z), pair a, pair b, int nu, int nv) 

@@ -13,19 +13,12 @@
 namespace camp {
 
 class drawBegin : public drawElement {
-  string name;
 public:
-  drawBegin(string name="") : name(name) {}
+  drawBegin() {}
   
   virtual ~drawBegin() {}
 
   bool begingroup() {return true;}
-  
-  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *) {
-    out->begingroup(name.c_str());
-    return true;
-  }
-
 };
   
 class drawEnd : public drawElement {
@@ -35,12 +28,88 @@ public:
   virtual ~drawEnd() {}
 
   bool endgroup() {return true;}
+};
+
+class drawBegin3 : public drawElement {
+  string name;
+  double compression;
+  double granularity;
+  bool closed;   // render the surface as one-sided; may yield faster rendering 
+  bool tessellate; // use tessellated mesh to store straight patches
+  bool dobreak; // force breaking
+  bool nobreak; // force grouping for transparent patches
   
-  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *) {
+  triple center;
+  int interaction;
+  
+  groupmap *g;
+public:
+  drawBegin3(string name, double compression, double granularity,
+            bool closed, bool tessellate, bool dobreak, bool nobreak,
+            triple center, int interaction) :
+    name(name), compression(compression), granularity(granularity),
+    closed(closed), tessellate(tessellate), dobreak(dobreak), nobreak(nobreak),
+    center(center), interaction(interaction) {}
+  
+  virtual ~drawBegin3() {}
+
+  bool begingroup() {return true;}
+  
+  bool write(prcfile *out, unsigned int *count, vm::array *index,
+             vm::array *origin, double compressionlimit,
+             groupsmap& groups) {
+    groupmap& group=groups.back();
+    if(name.empty()) name="group";
+    groupmap::const_iterator p=group.find(name);
+    
+    unsigned c=(p != group.end()) ? p->second+1 : 0;
+    group[name]=c;
+    
+    ostringstream buf;
+    buf << name;
+    if(c > 0) buf << "-" << (c+1);
+      
+    if(interaction == BILLBOARD) {
+      buf << "-" << (*count)++ << "\001";
+      index->push((Int) origin->size());
+      origin->push(center);
+    }
+    
+    PRCoptions options(compression > 0.0 ? 
+                       max(compression,compressionlimit) : 0.0,
+                       granularity,closed,tessellate,dobreak,nobreak);
+    
+    groups.push_back(groupmap());
+    out->begingroup(buf.str().c_str(),&options);
+    return true;
+  }
+  
+  drawBegin3(const vm::array& t, const drawBegin3 *s) :
+    name(s->name), compression(s->compression), granularity(s->granularity),
+    closed(s->closed), tessellate(s->tessellate), dobreak(s->dobreak),
+    nobreak(s->nobreak), interaction(s->interaction)  {
+    center=run::operator *(t,s->center);
+  }
+  
+  drawElement *transformed(const array& t) {
+    return new drawBegin3(t,this);
+  }
+};
+
+class drawEnd3 : public drawElement {
+public:
+  drawEnd3() {}
+  
+  virtual ~drawEnd3() {}
+
+  bool endgroup() {return true;}
+  
+  bool write(prcfile *out, unsigned int *, vm::array *, vm::array *, double,
+             groupsmap& groups) {
+    groups.pop_back();
     out->endgroup();
     return true;
   }
-
 };
 
 }

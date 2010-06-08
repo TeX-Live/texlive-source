@@ -141,39 +141,18 @@ void drawSurface::ratio(pair &b, double (*m)(double, double), double fuzz,
   }
 }
 
-bool drawSurface::write(prcfile *out, unsigned int *count, array *index,
-                        array *origin)
+bool drawSurface::write(prcfile *out, unsigned int *, array *, array *, double,
+                       groupsmap&)
 {
-  if(invisible)
+  if(invisible || !prc)
     return true;
 
-  ostringstream buf;
-  if(name == "") 
-    buf << "surface-" << count[SURFACE]++;
-  else
-    buf << name;
-  
-  if(interaction == BILLBOARD) {
-    size_t n=origin->size();
-    
-    if(n == 0 || center != vm::read<triple>(origin,n-1)) {
-      origin->push(center);
-      ++n;
-    }
-    
-    unsigned int i=count[BILLBOARD_SURFACE]++;
-    buf << "-" << i << "\001";
-    index->push((Int) (n-1));
-  }
-  
-  PRCMaterial m(ambient,diffuse,emissive,specular,opacity,PRCshininess);
+  PRCmaterial m(ambient,diffuse,emissive,specular,opacity,PRCshininess);
 
   if(straight)
-    out->add(new PRCBezierSurface(out,1,1,2,2,vertices,m,granularity,
-                                  buf.str()));
+    out->addRectangle(vertices,m);
   else
-    out->add(new PRCBezierSurface(out,3,3,4,4,controls,m,granularity,
-                                  buf.str()));
+    out->addPatch(controls,m);
   
   return true;
 }
@@ -366,8 +345,7 @@ void drawSurface::render(GLUnurbs *nurb, double size2,
   bool havenormal=normal != zero;
   if(havebillboard) BB.init();
 
-  if(!havenormal || (!straight && (fraction(d,size3)*size2 >= pixel || 
-                                   granularity == 0))) {
+  if(!havenormal || (!straight && fraction(d,size3)*size2 >= pixel)) {
     if(lighton) {
       if(havenormal && fraction(dperp,size3)*size2 <= 0.1) {
         if(havebillboard)
@@ -442,22 +420,14 @@ drawElement *drawSurface::transformed(const array& t)
   return new drawSurface(t,this);
 }
   
-bool drawNurbs::write(prcfile *out, unsigned int *count, array *index,
-                      array *origin)
+bool drawNurbs::write(prcfile *out, unsigned int *, array *, array *, double,
+                      groupsmap&)
 {
-  ostringstream buf;
-  if(name == "") 
-    buf << "surface-" << count[SURFACE]++;
-  else
-    buf << name;
-  
   if(invisible)
     return true;
 
-  PRCMaterial m(ambient,diffuse,emissive,specular,opacity,PRCshininess);
-  out->add(new PRCsurface(out,udegree,vdegree,nu,nv,controls,
-                          uknots,vknots,m,scale3D,weights != NULL,
-                          weights,granularity,buf.str().c_str()));
+  PRCmaterial m(ambient,diffuse,emissive,specular,opacity,PRCshininess);
+  out->addSurface(udegree,vdegree,nu,nv,controls,uknots,vknots,m,weights);
   
   return true;
 }
@@ -651,6 +621,197 @@ void drawNurbs::render(GLUnurbs *nurb, double size2,
   if(colors)
     glDisable(GL_COLOR_MATERIAL);
 #endif
+}
+
+void drawSphere::P(Triple& t, double x, double y, double z)
+{
+  if(half) {
+    double temp=z; z=x; x=-temp;
+  }
+  
+  double f=T[12]*x+T[13]*y+T[14]*z+T[15];
+  if(f == 0.0) run::dividebyzero();
+  f=1.0/f;
+  
+  t[0]=(T[0]*x+T[1]*y+T[2]*z+T[3])*f;
+  t[1]=(T[4]*x+T[5]*y+T[6]*z+T[7])*f;
+  t[2]=(T[8]*x+T[9]*y+T[10]*z+T[11])*f;
+}
+
+static const Triple origin={0,0,0};
+static const Triple xaxis={1,0,0};
+static const Triple yaxis={0,1,0};
+static const double Identity4[4][4]={{1.0,0.0,0.0,0.0},
+                                     {0.0,1.0,0.0,0.0},
+                                     {0.0,0.0,1.0,0.0},
+                                     {0.0,0.0,0.0,1.0}};
+
+bool drawSphere::write(prcfile *out, unsigned int *, array *, array *, double,
+                       groupsmap&)
+{
+  if(invisible)
+    return true;
+
+  PRCmaterial m(ambient,diffuse,emissive,specular,opacity,shininess);
+  
+  switch(type) {
+    case 0: // PRCsphere
+    {
+      if(half) 
+        out->addHemisphere(1.0,m,origin,xaxis,yaxis,1.0,(double (*)[4]) T);
+      else
+        out->addSphere(1.0,m,origin,xaxis,yaxis,1.0,(double (*)[4]) T);
+      break;
+    }
+    case 1: // NURBSsphere
+    {
+      static double uknot[]={0.0,0.0,1.0/3.0,0.5,1.0,1.0};
+      static double vknot[]={0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0};
+      static double Weights[12]={2.0/3.0,2.0/9.0,2.0/9.0,2.0/3.0,
+                                 1.0/3.0,1.0/9.0,1.0/9.0,1.0/3.0,
+                                 1.0,1.0/3.0,1.0/3.0,1.0};
+
+// NURBS representation of a sphere using 10 distinct control points
+// K. Qin, J. Comp. Sci. and Tech. 12, 210-216 (1997).
+  
+      Triple N,S,P1,P2,P3,P4,P5,P6,P7,P8;
+  
+      P(N,0.0,0.0,1.0);
+      P(P1,-2.0,-2.0,1.0);
+      P(P2,-2.0,-2.0,-1.0);
+      P(S,0.0,0.0,-1.0);
+      P(P3,2.0,-2.0,1.0);
+      P(P4,2.0,-2.0,-1.0);
+      P(P5,2.0,2.0,1.0);
+      P(P6,2.0,2.0,-1.0);
+      P(P7,-2.0,2.0,1.0);
+      P(P8,-2.0,2.0,-1.0);
+        
+      Triple p0[]=
+        {{N[0],N[1],N[2]},
+         {P1[0],P1[1],P1[2]},
+         {P2[0],P2[1],P2[2]},
+         {S[0],S[1],S[2]},
+     
+         {N[0],N[1],N[2]},
+         {P3[0],P3[1],P3[2]},
+         {P4[0],P4[1],P4[2]},
+         {S[0],S[1],S[2]},
+     
+         {N[0],N[1],N[2]},
+         {P5[0],P5[1],P5[2]},
+         {P6[0],P6[1],P6[2]},
+         {S[0],S[1],S[2]},
+  
+         {N[0],N[1],N[2]},
+         {P7[0],P7[1],P7[2]},
+         {P8[0],P8[1],P8[2]},
+         {S[0],S[1],S[2]},
+     
+         {N[0],N[1],N[2]},
+         {P1[0],P1[1],P1[2]},
+         {P2[0],P2[1],P2[2]},
+         {S[0],S[1],S[2]},
+     
+         {N[0],N[1],N[2]},
+         {P3[0],P3[1],P3[2]},
+         {P4[0],P4[1],P4[2]},
+         {S[0],S[1],S[2]},
+        };
+
+      out->addSurface(2,3,3,4,p0,uknot,vknot,m,Weights);
+      out->addSurface(2,3,3,4,p0+4,uknot,vknot,m,Weights);
+      if(!half) {
+        out->addSurface(2,3,3,4,p0+8,uknot,vknot,m,Weights);
+        out->addSurface(2,3,3,4,p0+12,uknot,vknot,m,Weights);
+      }
+      
+      break;
+    }
+    default:
+      reportError("Invalid sphere type");
+  }
+  
+  return true;
+}
+
+bool drawCylinder::write(prcfile *out, unsigned int *, array *, array *, double,
+                         groupsmap&)
+{
+  if(invisible)
+    return true;
+
+  PRCmaterial m(ambient,diffuse,emissive,specular,opacity,shininess);
+  
+  out->addCylinder(1.0,1.0,m,origin,xaxis,yaxis,1.0,(double (*)[4]) T);
+  
+  return true;
+}
+  
+bool drawDisk::write(prcfile *out, unsigned int *, array *, array *, double,
+                     groupsmap&)
+{
+  if(invisible)
+    return true;
+
+  PRCmaterial m(ambient,diffuse,emissive,specular,opacity,shininess);
+  
+  out->addDisk(1.0,m,origin,xaxis,yaxis,1.0,(double (*)[4]) T);
+  
+  return true;
+}
+  
+bool drawTube::write(prcfile *out, unsigned int *, array *, array *, double,
+                     groupsmap&)
+{
+  if(invisible)
+    return true;
+
+  PRCmaterial m(ambient,diffuse,emissive,specular,opacity,shininess);
+  
+  Int n=center.length();
+  
+  if(center.piecewisestraight()) {
+    Triple *centerControls=new(UseGC) Triple[n+1];
+    for(Int i=0; i <= n; ++i)
+      store(centerControls[i],center.point(i));
+    size_t N=n+1;
+    Triple *controls=new(UseGC) Triple[N];
+    for(Int i=0; i <= n; ++i)
+      store(controls[i],g.point(i));
+    out->addTube(N,centerControls,controls,true,m,origin,xaxis,yaxis,1.0,
+                 Identity4);
+  } else {
+    size_t N=3*n+1;
+    Triple *centerControls=new(UseGC) Triple[N];
+    store(centerControls[0],center.point((Int) 0));
+    store(centerControls[1],center.postcontrol((Int) 0));
+    size_t k=1;
+    for(Int i=1; i < n; ++i) {
+      store(centerControls[++k],center.precontrol(i));
+      store(centerControls[++k],center.point(i));
+      store(centerControls[++k],center.postcontrol(i));
+    }
+    store(centerControls[++k],center.precontrol(n));
+    store(centerControls[++k],center.point(n));
+    
+    Triple *controls=new(UseGC) Triple[N];
+    store(controls[0],g.point((Int) 0));
+    store(controls[1],g.postcontrol((Int) 0));
+    k=1;
+    for(Int i=1; i < n; ++i) {
+      store(controls[++k],g.precontrol(i));
+      store(controls[++k],g.point(i));
+      store(controls[++k],g.postcontrol(i));
+    }
+    store(controls[++k],g.precontrol(n));
+    store(controls[++k],g.point(n));
+    
+    out->addTube(N,centerControls,controls,false,m,origin,xaxis,yaxis,1.0,
+                 Identity4);
+  }
+      
+  return true;
 }
 
 } //namespace camp
