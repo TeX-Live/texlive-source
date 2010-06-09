@@ -65,14 +65,8 @@ gzip -dc libsigsegv-2.8.tar.gz | tar xf -
 cd libsigsegv-2.8
 ./configure --prefix=$clisp_toolsdir && make && make check && make install
 
-cd $clisp_basedir
-wget http://www.haible.de/bruno/gnu/ffcall-1.10.tar.gz
-gzip -dc ffcall-1.10.tar.gz | tar xf -
-cd ffcall-1.10
-./configure --prefix=$clisp_toolsdir && make && make check && make install
-
 # you may need this hack on 64-bit systems
-# if clisp's configure will not find libsigsegv and/or libffcall:
+# if clisp's configure will not find libsigsegv.
 ln -s lib $clisp_toolsdir/lib64
 
 cd $clisp_basedir
@@ -80,8 +74,8 @@ wget http://ftp.gnu.org/gnu/clisp/release/2.48/clisp-2.48.tar.gz
 gzip -dc clisp-2.48.tar.gz | tar xf -
 cd clisp-2.48
 # On FreeBSD/amd64, add --disable-mmap.
-./configure --with-ffcall --with-libffcall-prefix=$clisp_toolsdir \
-  --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
+./configure --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
+  --disable-nls \
   $clisp_builddir \
 && cd $clisp_builddir \
 && make
