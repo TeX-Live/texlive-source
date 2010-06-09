@@ -1,0 +1,186 @@
+diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
+--- detex-2.8.orig/detex.l	2008-02-01 20:55:51.000000000 +0100
++++ detex-2.8/detex.l	2010-06-09 01:42:52.422362498 +0200
+@@ -368,7 +368,8 @@
+ **	If no input files are specified on the command line, process stdin.
+ ******/
+ 
+-main(cArgs,rgsbArgs)
++int
++main(int cArgs, char *rgsbArgs[])
+ int	cArgs;
+ char	*rgsbArgs[];
+ {
+@@ -477,7 +478,8 @@
+ **	return the termination signal for lex.
+ ******/
+ 
+-yywrap()
++int
++yywrap(void)
+ {
+ 	(void)fclose(yyin);
+ #ifdef FLEX_SCANNER
+@@ -501,8 +503,8 @@
+ **	a yyless routine
+ ******/
+ 
+-void yyless(n)
+-int n;
++void
++yyless(int n)
+ {
+ 	int 	i = strlen(yytext);
+ 
+@@ -516,8 +518,8 @@
+ **	sbEnvList.
+ ******/
+ 
+-SetEnvIgnore(sbEnvList)
+-char	*sbEnvList;
++void
++SetEnvIgnore(const char *sbEnvList)
+ {
+ 	char *sb;
+ 
+@@ -533,8 +535,8 @@
+ **	is, sbCurrentEnv is set to sbEnv.
+ ******/
+ 
+-BeginEnv(sbEnv)
+-char	*sbEnv;
++int
++BeginEnv(const char *sbEnv)
+ {
+ 	int	i;
+ 
+@@ -551,8 +553,8 @@
+ ** EndEnv -- checks to see if sbEnv is the current environment being ignored.
+ ******/
+ 
+-EndEnv(sbEnv)
+-char	*sbEnv;
++int
++EndEnv(const char *sbEnv)
+ {
+ 	if (!fLatex) return(0);
+ 	if (strcmp(sbEnv, sbCurrentEnv) == 0)
+@@ -565,8 +567,8 @@
+ **	the sbFile is ignored.
+ ******/
+ 
+-InputFile(sbFile)
+-char	*sbFile;
++void
++InputFile(char *sbFile)
+ {
+ 	FILE	*TexOpen();
+ 
+@@ -589,8 +591,8 @@
+ **	and open sbFile.  If the open fails, the sbFile is ignored.
+ ******/
+ 
+-IncludeFile(sbFile)
+-char	*sbFile;
++void
++IncludeFile(char *sbFile)
+ {
+ 	FILE	*TexOpen();
+ 
+@@ -615,8 +617,8 @@
+ **	If the include list is too long, sbFile is ignored.
+ ******/
+ 
+-AddInclude(sbFile)
+-char	*sbFile;
++void
++AddInclude(char *sbFile)
+ {
+ 	if (!fFollow)
+ 	    return;
+@@ -631,8 +633,8 @@
+ **	no list, all files are assumed to be "in the list".
+ ******/
+ 
+-InList(sbFile)
+-char	*sbFile;
++int
++InList(char *sbFile)
+ {
+ 	char	*pch, sbBase[MAXPATHLEN];
+ 	int	i;
+@@ -658,7 +660,8 @@
+ **	routine does not honor the '//' construct (expand subdirs).
+ ******/
+ 
+-SetInputPaths()
++void
++SetInputPaths(void)
+ {
+ 	char *sb, *sbPaths, *getenv();
+ 	int cchDefaults, cchPaths;
+@@ -698,9 +701,8 @@
+ **	ERROR is returned if there are more than csbMax words.
+ ******/
+ 
+-SeparateList(sbList, rgsbList, chSep, csbMax)
+-char	*sbList, *rgsbList[], chSep;
+-int	csbMax;
++int
++SeparateList(char *sbList, char *rgsbList[], char chSep, int csbMax)
+ {
+ 	int	csbList = 0;
+ 
+@@ -725,8 +727,7 @@
+ ******/
+ 
+ FILE *
+-TexOpen(sbFile)
+-char	*sbFile;
++TexOpen(char *sbFile)
+ {
+ 	char	*pch, *sbNew;
+ 	FILE	*fp;
+@@ -784,9 +785,7 @@
+ ******/
+ 
+ char *
+-SafeMalloc(cch, sbMessage)
+-int cch;
+-char *sbMessage;
++SafeMalloc(int cch, const char *sbMessage)
+ {
+ 	char *sb;
+ 
+@@ -799,8 +798,8 @@
+ ** Warning -- print a warning message preceded by the program name.
+ ******/
+ 
+-Warning(sb1, sb2)
+-char	*sb1, *sb2;
++void
++Warning(const char *sb1, const char *sb2)
+ {
+ 	(void)fprintf(stderr, "%s: warning: %s %s\n", sbProgName, sb1, sb2);
+ }
+@@ -810,8 +809,8 @@
+ **	Stdout is flushed and detex exits.
+ ******/
+ 
+-ErrorExit(sb1)
+-char	*sb1;
++void
++ErrorExit(const char *sb1)
+ {
+ 	(void)fflush(stdout);
+ 	(void)fprintf(stderr, "%s: error: %s\n", sbProgName, sb1);
+@@ -823,7 +822,8 @@
+ ** OS2UsageExit -- print OS/2 usage message and exit.
+ ******/
+ 
+-OS2UsageExit()
++void
++OS2UsageExit(void)
+ {
+ 	(void)printf("\n%s [ -clnstw ] [ -e environment-list ] [ filename[.tex] ... ]\n",
+ 		sbProgName);

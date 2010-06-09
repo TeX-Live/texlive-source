@@ -1,0 +1,6 @@
+Changes applied to the detex-2.7 tree as obtained from:
+	http://www.cs.purdue.edu/homes/trinkle/detex/ ???
+
+Renamed:
+	detex.1l -> detex.man
+

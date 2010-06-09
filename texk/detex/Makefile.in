@@ -36,8 +36,8 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = detex$(EXEEXT)
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
-	$(dist_man1_MANS) $(srcdir)/../../build-aux/config.guess \
+DIST_COMMON = $(am__configure_deps) $(dist_check_SCRIPTS) \
+	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
@@ -118,7 +118,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(dist_man1_MANS)
+MANS = $(man1_MANS)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -150,6 +150,7 @@ CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DETEX_TREE = @DETEX_TREE@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -186,6 +187,7 @@ NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+OTHER_TREE = @OTHER_TREE@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -256,14 +258,19 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = detex-2.7 detex-2.8 detex-2.8-PATCHES test.lout test.tex \
-	test.tout
-INCLUDES = $(KPATHSEA_INCLUDES)
+EXTRA_DIST = $(DETEX_TREE) $(DETEX_TREE)-PATCHES $(OTHER_TREE) \
+	$(OTHER_TREE)-PATCHES test.lout test.tex test.tout
+INCLUDES = -I$(top_srcdir)/$(DETEX_TREE) $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
-detex_SOURCES = detex.h detex.l
+detex_SOURCES = \
+	$(DETEX_TREE)/detex.h \
+	$(DETEX_TREE)/detex.l
+
 LDADD = $(KPATHSEA_LIBS)
-dist_man1_MANS = detex.man
+man1_MANS = \
+	$(DETEX_TREE)/detex.man
+
 dist_check_SCRIPTS = detex.test
 TESTS = detex.test
 CLEANFILES = test.out texmf.cnf
@@ -402,6 +409,11 @@ distclean-compile:
 .l.c:
 	$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
 
+detex.c: $(DETEX_TREE)/detex.l
+	 \
+	$(am__skiplex) \
+	$(SHELL) $(YLWRAP) `test -f '$(DETEX_TREE)/detex.l' || echo '$(srcdir)/'`$(DETEX_TREE)/detex.l $(LEX_OUTPUT_ROOT).c detex.c -- $(LEX) $(LFLAGS) $(AM_LFLAGS)
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -410,10 +422,10 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-man1: $(dist_man1_MANS)
+install-man1: $(man1_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
-	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	{ for i in $$list; do echo "$$i"; done; \
 	} | while read p; do \
 	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
@@ -437,7 +449,7 @@ install-man1: $(dist_man1_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \

@@ -1,14 +1,15 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([detex for TeX Live], [2.6], [tex-k@tug.org])
+m4_define([detex_version], [2.7])[]dnl using unmodified detex source tree
+AC_INIT([detex for TeX Live], detex_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([detex.l])
+AC_CONFIG_SRCDIR([detex-]detex_version[/detex.l])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -21,6 +22,12 @@ AC_HEADER_TIME
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
 KPSE_KPATHSEA_FLAGS
+
+DETEX_TREE=detex-[]detex_version
+AC_SUBST([DETEX_TREE])
+
+OTHER_TREE=`echo $DETEX_TREE | tr 78 87`
+AC_SUBST([OTHER_TREE])
 
 AC_CONFIG_FILES([Makefile])
 
