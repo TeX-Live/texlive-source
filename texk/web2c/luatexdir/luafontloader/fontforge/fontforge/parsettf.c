@@ -3594,7 +3594,7 @@ return;
 }
 
 static void privateaddint(struct psdict *private,char *key,int val) {
-    char buf[10];
+    char buf[20];
     if ( val==0 )
 return;
     sprintf( buf,"%d", val );
@@ -3602,7 +3602,7 @@ return;
 }
 
 static void privateaddintarray(struct psdict *private,char *key,int val) {
-    char buf[10];
+    char buf[20];
     if ( val==0 )
 return;
     sprintf( buf,"[%d]", val );
@@ -3610,7 +3610,7 @@ return;
 }
 
 static void privateaddreal(struct psdict *private,char *key,double val,double def) {
-    char buf[10];
+    char buf[20];
     if ( val==def )
 return;
     sprintf( buf,"%g", val );

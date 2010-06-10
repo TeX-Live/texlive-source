@@ -1430,7 +1430,7 @@ void NameOTLookup(OTLookup *otl,SplineFont *sf) {
 	    if ( fl==NULL )
 		userfriendly = copy(lookuptype);
 	    else {
-		userfriendly = galloc( strlen(lookuptype) + 16);
+		userfriendly = galloc( strlen(lookuptype) + 40);
 #ifdef LUA_FF_LIB
         if ( (otl->lookup_type&0xff)>= 0xf0 ) {
           sprintf( userfriendly, "%s_<%d,%d>", lookuptype,
