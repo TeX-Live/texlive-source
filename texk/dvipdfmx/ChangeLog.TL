@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid using "%hu" with fscanf/sscanf, for older Solaris.
+	* src/pdfobj.c (pdf_open, check_for_pdf_version): Declare minor
+	as unsigned int for use with "%u".
+
 2010-06-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Solaris9 doesn't support "%hhu".
