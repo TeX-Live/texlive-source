@@ -26,6 +26,7 @@ EXTRA_DIST += $(CHKTEX_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
+AM_CPPFLAGS = -DNO_KPSE_DLL
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = chktex

@@ -1,3 +1,8 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* getopt.h [NO_KPSE_DLL]: Allow use of this file for chktex.
+	From Karl Berry, 9 Jun 2010 15:36:44.
+
 2010-06-06  Karl Berry  <karl@tug.org>
 
 	* getopt.h (getopt) [! __STDC__]: remove decl since AIX/Solaris

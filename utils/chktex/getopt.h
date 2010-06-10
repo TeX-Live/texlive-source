@@ -24,7 +24,19 @@
 #ifndef _GETOPT_H
 #define _GETOPT_H 1
 
+#if defined (WIN32) && !defined (__MINGW32__) && !defined (NO_KPSE_DLL)
+#define KPSE_DLL 1
+#endif /* WIN32 && !__MINGW32__ && !NO_KPSE_DLL */
+
+#if defined (KPSE_DLL) && (defined (WIN32) || defined (__CYGWIN__))
+#ifdef MAKE_KPSE_DLL
+#define KPSEDLL __declspec(dllexport)
+#else /* ! MAKE_KPSE_DLL */
+#define KPSEDLL __declspec(dllimport)
+#endif
+#else /* ! (KPSE_DLL && (WIN32 || __CYGWIN__)) */
 #define KPSEDLL
+#endif
 
 #ifdef  __cplusplus
 extern "C" {
@@ -111,18 +123,24 @@ extern KPSEDLL int getopt_long_only (int argc, char *const *argv,
                              const char *shortopts,
                              const struct option *longopts, int *longind);
 
+#if defined (MAKE_KPSE_DLL) || defined (NO_KPSE_DLL) /* libkpathsea internal only */
+
 /* Internal only.  Users should not call this directly.  */
 extern int _getopt_internal (int argc, char *const *argv,
                              const char *shortopts,
                              const struct option *longopts, int *longind,
                              int long_only);
 
+#endif /* MAKE_KPSE_DLL || NO_KPSE_DLL */
 #else /* not __STDC__ */
 extern KPSEDLL int getopt_long ();
 extern KPSEDLL int getopt_long_only ();
 
+#if defined (MAKE_KPSE_DLL) || defined (NO_KPSE_DLL) /* libkpathsea internal only */
+
 extern int _getopt_internal ();
 
+#endif /* MAKE_KPSE_DLL || NO_KPSE_DLL */
 #endif /* __STDC__ */
 
 #ifdef  __cplusplus

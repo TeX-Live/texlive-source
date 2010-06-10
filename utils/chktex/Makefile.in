@@ -221,6 +221,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES ChkTeX.tex \
 	chktex.test
+AM_CPPFLAGS = -DNO_KPSE_DLL
 AM_CFLAGS = $(WARNING_CFLAGS)
 chktex_SOURCES = \
 	getopt.c \
