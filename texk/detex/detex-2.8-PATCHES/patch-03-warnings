@@ -1,0 +1,28 @@
+Only in detex-2.8: detex.c
+diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
+--- detex-2.8.orig/detex.l	2010-06-09 22:11:27.000000000 +0200
++++ detex-2.8/detex.l	2010-06-09 23:21:25.969948651 +0200
+@@ -724,7 +724,7 @@
+ 
+ 	while (sbList && *sbList && csbList < csbMax) {
+ 	    rgsbList[csbList++] = sbList;
+-	    if (sbList = index(sbList, chSep))
++	    if ((sbList = index(sbList, chSep)))
+ 		*sbList++ = '\0';
+ 	}
+ 	return(sbList && *sbList ? ERROR : csbList);
+@@ -769,10 +769,12 @@
+ 	    /* If sbFile ends in .tex then it must be there */
+ 	    if ((pch = rindex(sbFullPath, '.')) != NULL
+ 			&& (strcmp(pch, ".tex") == 0))
++	    {
+ 		if ((fp = fopen(sbFullPath, "r")) != NULL)
+ 		    return(fp);
+ 		else
+ 		    continue;
++	    }
+ 
+ 	    /* if .<ext> then try to open it.  the '.' represents   */
+ 	    /* the beginning of an extension if it is not the first */
+Only in detex-2.8: test.lout
+Only in detex-2.8: test.tout

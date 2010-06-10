@@ -18,7 +18,7 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 INCLUDES = -I$(top_srcdir)/$(DETEX_TREE) $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA -Dlint
+AM_CPPFLAGS = -DNO_MALLOC_DECL -DKPATHSEA -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## The Makefile.in from 2002 by Thomas Esser applied the sed script

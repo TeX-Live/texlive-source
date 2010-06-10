@@ -1,0 +1,167 @@
+diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
+--- detex-2.8.orig/detex.l	2010-06-09 23:21:25.000000000 +0200
++++ detex-2.8/detex.l	2010-06-10 01:09:20.413856795 +0200
+@@ -49,6 +49,8 @@
+  */
+ 
+ #include "detex.h"
++#ifndef KPATHSEA
++
+ #ifdef HAVE_STRING_H
+ #include <string.h>
+ #define	index	strchr
+@@ -59,24 +61,52 @@
+ #ifndef MAXPATHLEN
+ #include <sys/param.h>
+ #endif
++#define PATH_MAX MAXPATHLEN
+ #ifdef OS2
+ #include <stdlib.h>
+ #endif
++#ifndef NO_MALLOC_DECL
++char	*malloc();
++#endif
++#ifndef WIN32
++char *getenv();
++#endif
++
++#else
++
++#include "c-auto.h"
++#include "kpathsea/c-auto.h"
++#include "kpathsea/config.h"
++#include "kpathsea/c-memstr.h"
++#include "kpathsea/c-pathmx.h"
++#include "kpathsea/c-std.h"
++#include "kpathsea/tex-file.h"
++
++#ifdef HAVE_SYS_PARAM_H
++#include <sys/param.h>
++#endif
++
++#endif
+ 
+ #undef IGNORE
+ 
+-int BeginEnv(const char *sbEnv);
+-int EndEnv(const char *sbEnv);
+-void InputFile(char *sbFile);
+-void IncludeFile(char *sbFile);
+-void AddInclude(char *sbFile);
+-void SetInputPaths(void);
+-void SetEnvIgnore(const char *sbEnvList);
+-void Warning(const char *sb1, const char *sb2); 
+-void ErrorExit(const char *sb1);
+-int SeparateList(char *sbList, char *rgsbList[] ,char chSep,int csbMax);
+-int InList(char *sbFile);
+-FILE * TexOpen(char *sbFile);
++int	BeginEnv(const char *sbEnv);
++int	EndEnv(const char *sbEnv);
++void	InputFile(char *sbFile);
++void	IncludeFile(char *sbFile);
++void	AddInclude(char *sbFile);
++void	SetInputPaths(void);
++void	SetEnvIgnore(const char *sbEnvList);
++void	Warning(const char *sb1, const char *sb2); 
++void	ErrorExit(const char *sb1);
++int	SeparateList(char *sbList, char *rgsbList[] ,char chSep,int csbMax);
++int	InList(char *sbFile);
++FILE	*TexOpen(char *sbFile);
++char    *SafeMalloc(int cch, const char *sbMessage);
++#ifdef OS2
++void	yyless(int);
++void	OS2UsageExit(void);
++#endif
+ 
+ #define	LaBEGIN		if (fLatex) BEGIN
+ #define	IGNORE		if (fSpace && !fWord) putchar(' ')
+@@ -87,22 +117,15 @@
+ #define STRIPARGS(x)	cArgs=x; LaBEGIN LaMacro2
+ #define	CITE(x)		if (fLatex && !fCite) KILLARGS(x)
+ 
+-char    *SafeMalloc(int cch, const char *sbMessage);
+-#ifndef NO_MALLOC_DECL
+-char	*malloc();
+-#endif
+-#ifndef WIN32
+-char *getenv();
+-#endif
+-#ifdef OS2
+-void	yyless(int);
+-#endif
+ 
+ char	*rgsbEnvIgnore[MAXENVS];	/* list of environments ignored */
+ char	*rgsbIncList[MAXINCLIST];	/* list of includeonly files */
+ char	*rgsbInputPaths[MAXINPUTPATHS];	/* list of input paths in order */
+ char	sbCurrentEnv[CCHMAXENV];	/* current environment being ignored */
+ char	*sbProgName;			/* name we were invoked with */
++#ifndef NOFILE /* might be defined in <sys/param.h> */
++#define NOFILE 256
++#endif
+ FILE	*rgfp[NOFILE+1];		/* stack of input/include files */
+ int	cfp = 0;			/* count of files in stack */
+ int	cOpenBrace = 0;			/* count of `{' in <LaMacro> and <LaMacro2> */
+@@ -404,6 +427,9 @@
+ 	_splitpath (rgsbArgs[0], drive, dir, fname, ext);
+ 	sbProgName = strlwr(fname);
+ #else
++#ifdef KPATHSEA
++	kpse_set_program_name (rgsbArgs[0], NULL);
++#endif
+ 	if ((sbProgName = rindex(rgsbArgs[0], '/')) != NULL)
+ 	    sbProgName++;
+ 	else
+@@ -411,9 +437,11 @@
+ #endif
+ 	if (strcmp("delatex",sbProgName) == 0)
+ 	    fLatex = 1;
+-	
++
++#ifndef KPATHSEA
+ 	/* set rgsbInputPaths for use with TexOpen() */
+ 	SetInputPaths();
++#endif
+ 
+ 	/* process command line options */
+ 	while (iArgs < cArgs && *(pch = rgsbArgs[iArgs]) == CHOPT) {
+@@ -648,7 +676,7 @@
+ int
+ InList(char *sbFile)
+ {
+-	char	*pch, sbBase[MAXPATHLEN];
++	char	*pch, sbBase[PATH_MAX];
+ 	int	i;
+ 
+ 	if (csbIncList == 0)	/* no list */
+@@ -745,10 +773,12 @@
+ FILE *
+ TexOpen(char *sbFile)
+ {
+-	char	*pch, *sbNew;
++	char	*sbNew;
++#ifndef KPATHSEA
++	char	*pch;
+ 	FILE	*fp;
+ 	int	iPath;
+-	static char	sbFullPath[MAXPATHLEN];
++	static char	sbFullPath[PATH_MAX];
+ 
+ 	for (iPath = 0; iPath < csbInputPaths; iPath++) {
+ #ifdef OS2
+@@ -795,7 +825,15 @@
+ 	    if ((fp = fopen(sbFullPath, "r")) != NULL)
+ 		return(fp);
+ 	}
+-	return((FILE *)NULL);
++	return NULL;
++#else
++	sbNew = kpse_find_file (sbFile, kpse_tex_format, false);
++
++	if (sbNew == NULL)
++	    return NULL;
++
++	return fopen (sbNew, "r");
++#endif
+ }
+ 
+ /******

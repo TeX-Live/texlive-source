@@ -1,0 +1,116 @@
+diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
+--- detex-2.8.orig/detex.l	2010-06-09 13:34:01.000000000 +0200
++++ detex-2.8/detex.l	2010-06-09 22:11:27.086080276 +0200
+@@ -65,15 +65,15 @@
+ 
+ #undef IGNORE
+ 
+-int BeginEnv(char *sbEnv);
+-int EndEnv(char *sbEnv);
++int BeginEnv(const char *sbEnv);
++int EndEnv(const char *sbEnv);
+ void InputFile(char *sbFile);
+ void IncludeFile(char *sbFile);
+ void AddInclude(char *sbFile);
+ void SetInputPaths(void);
+-void SetEnvIgnore(char *sbEnvList);
+-void Warning(char *sb1, char *sb2); 
+-void ErrorExit(char *sb1);
++void SetEnvIgnore(const char *sbEnvList);
++void Warning(const char *sb1, const char *sb2); 
++void ErrorExit(const char *sb1);
+ int SeparateList(char *sbList, char *rgsbList[] ,char chSep,int csbMax);
+ int InList(char *sbFile);
+ FILE * TexOpen(char *sbFile);
+@@ -87,10 +87,13 @@
+ #define STRIPARGS(x)	cArgs=x; LaBEGIN LaMacro2
+ #define	CITE(x)		if (fLatex && !fCite) KILLARGS(x)
+ 
+-char    *SafeMalloc(int cch, char *sbMessage);
++char    *SafeMalloc(int cch, const char *sbMessage);
+ #ifndef NO_MALLOC_DECL
+ char	*malloc();
+ #endif
++#ifndef WIN32
++char *getenv();
++#endif
+ #ifdef OS2
+ void	yyless(int);
+ #endif
+@@ -386,7 +389,8 @@
+ int
+ main(int cArgs, char *rgsbArgs[])
+ {
+-	char	*pch, *sbEnvList = DEFAULTENV, sbBadOpt[2];
++	char	*pch, sbBadOpt[2];
++	const char	*sbEnvList = DEFAULTENV;
+ 	int	fSawFile = 0, iArgs = 1;
+ 	
+ 	/* get base name and decide what we are doing, detex or delatex */
+@@ -531,7 +535,7 @@
+ ******/
+ 
+ void
+-SetEnvIgnore(char *sbEnvList)
++SetEnvIgnore(const char *sbEnvList)
+ {
+ 	char *sb;
+ 
+@@ -548,7 +552,7 @@
+ ******/
+ 
+ int
+-BeginEnv(char *sbEnv)
++BeginEnv(const char *sbEnv)
+ {
+ 	int	i;
+ 
+@@ -566,7 +570,7 @@
+ ******/
+ 
+ int
+-EndEnv(char *sbEnv)
++EndEnv(const char *sbEnv)
+ {
+ 	if (!fLatex) return(0);
+ 	if (strcmp(sbEnv, sbCurrentEnv) == 0)
+@@ -671,7 +675,11 @@
+ void
+ SetInputPaths(void)
+ {
+-	char *sb, *sbPaths, *getenv();
++	const char *sb;
++	char *sbPaths;
++#ifndef WIN32
++	char *getenv();
++#endif
+ 	int cchDefaults, cchPaths;
+ 
+ 	cchDefaults = strlen(DEFAULTINPUTS);
+@@ -793,7 +801,7 @@
+ ******/
+ 
+ char *
+-SafeMalloc(int cch, char *sbMessage)
++SafeMalloc(int cch, const char *sbMessage)
+ {
+ 	char *sb;
+ 
+@@ -807,7 +815,7 @@
+ ******/
+ 
+ void
+-Warning(char *sb1, char *sb2)
++Warning(const char *sb1, const char *sb2)
+ {
+ 	(void)fprintf(stderr, "%s: warning: %s %s\n", sbProgName, sb1, sb2);
+ }
+@@ -818,7 +826,7 @@
+ ******/
+ 
+ void
+-ErrorExit(char *sb1)
++ErrorExit(const char *sb1)
+ {
+ 	(void)fflush(stdout);
+ 	(void)fprintf(stderr, "%s: error: %s\n", sbProgName, sb1);

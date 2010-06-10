@@ -49,6 +49,8 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
  */
 
 #include "detex.h"
+#ifndef KPATHSEA
+
 #ifdef HAVE_STRING_H
 #include <string.h>
 #define	index	strchr
@@ -59,8 +61,51 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 #ifndef MAXPATHLEN
 #include <sys/param.h>
 #endif
+#define PATH_MAX MAXPATHLEN
 #ifdef OS2
 #include <stdlib.h>
+#endif
+#ifndef NO_MALLOC_DECL
+char	*malloc();
+#endif
+#ifndef WIN32
+char *getenv();
+#endif
+
+#else
+
+#include "c-auto.h"
+#include "kpathsea/c-auto.h"
+#include "kpathsea/config.h"
+#include "kpathsea/c-memstr.h"
+#include "kpathsea/c-pathmx.h"
+#include "kpathsea/c-std.h"
+#include "kpathsea/tex-file.h"
+
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
+#endif
+
+#undef IGNORE
+
+int	BeginEnv(const char *sbEnv);
+int	EndEnv(const char *sbEnv);
+void	InputFile(char *sbFile);
+void	IncludeFile(char *sbFile);
+void	AddInclude(char *sbFile);
+void	SetInputPaths(void);
+void	SetEnvIgnore(const char *sbEnvList);
+void	Warning(const char *sb1, const char *sb2); 
+void	ErrorExit(const char *sb1);
+int	SeparateList(char *sbList, char *rgsbList[] ,char chSep,int csbMax);
+int	InList(char *sbFile);
+FILE	*TexOpen(char *sbFile);
+char    *SafeMalloc(int cch, const char *sbMessage);
+#ifdef OS2
+void	yyless(int);
+void	OS2UsageExit(void);
 #endif
 
 #define	LaBEGIN		if (fLatex) BEGIN
@@ -72,19 +117,15 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 #define STRIPARGS(x)	cArgs=x; LaBEGIN LaMacro2
 #define	CITE(x)		if (fLatex && !fCite) KILLARGS(x)
 
-char	*SafeMalloc();
-#ifndef NO_MALLOC_DECL
-char	*malloc();
-#endif
-#ifdef OS2
-void	yyless(int);
-#endif
 
 char	*rgsbEnvIgnore[MAXENVS];	/* list of environments ignored */
 char	*rgsbIncList[MAXINCLIST];	/* list of includeonly files */
 char	*rgsbInputPaths[MAXINPUTPATHS];	/* list of input paths in order */
 char	sbCurrentEnv[CCHMAXENV];	/* current environment being ignored */
 char	*sbProgName;			/* name we were invoked with */
+#ifndef NOFILE /* might be defined in <sys/param.h> */
+#define NOFILE 256
+#endif
 FILE	*rgfp[NOFILE+1];		/* stack of input/include files */
 int	cfp = 0;			/* count of files in stack */
 int	cOpenBrace = 0;			/* count of `{' in <LaMacro> and <LaMacro2> */
@@ -370,11 +411,9 @@ Z	\*?
 
 int
 main(int cArgs, char *rgsbArgs[])
-int	cArgs;
-char	*rgsbArgs[];
 {
-	char	*pch, *sbEnvList = DEFAULTENV, sbBadOpt[2];
-	FILE	*TexOpen();
+	char	*pch, sbBadOpt[2];
+	const char	*sbEnvList = DEFAULTENV;
 	int	fSawFile = 0, iArgs = 1;
 	
 	/* get base name and decide what we are doing, detex or delatex */
@@ -388,6 +427,9 @@ char	*rgsbArgs[];
 	_splitpath (rgsbArgs[0], drive, dir, fname, ext);
 	sbProgName = strlwr(fname);
 #else
+#ifdef KPATHSEA
+	kpse_set_program_name (rgsbArgs[0], NULL);
+#endif
 	if ((sbProgName = rindex(rgsbArgs[0], '/')) != NULL)
 	    sbProgName++;
 	else
@@ -395,9 +437,11 @@ char	*rgsbArgs[];
 #endif
 	if (strcmp("delatex",sbProgName) == 0)
 	    fLatex = 1;
-	
+
+#ifndef KPATHSEA
 	/* set rgsbInputPaths for use with TexOpen() */
 	SetInputPaths();
+#endif
 
 	/* process command line options */
 	while (iArgs < cArgs && *(pch = rgsbArgs[iArgs]) == CHOPT) {
@@ -570,8 +614,6 @@ EndEnv(const char *sbEnv)
 void
 InputFile(char *sbFile)
 {
-	FILE	*TexOpen();
-
 	if (!fFollow)
 	    return;
 	rgfp[cfp++] = yyin;
@@ -594,8 +636,6 @@ InputFile(char *sbFile)
 void
 IncludeFile(char *sbFile)
 {
-	FILE	*TexOpen();
-
 	if (!fFollow)
 	    return;
 	if (!InList(sbFile))
@@ -636,7 +676,7 @@ AddInclude(char *sbFile)
 int
 InList(char *sbFile)
 {
-	char	*pch, sbBase[MAXPATHLEN];
+	char	*pch, sbBase[PATH_MAX];
 	int	i;
 
 	if (csbIncList == 0)	/* no list */
@@ -663,7 +703,11 @@ InList(char *sbFile)
 void
 SetInputPaths(void)
 {
-	char *sb, *sbPaths, *getenv();
+	const char *sb;
+	char *sbPaths;
+#ifndef WIN32
+	char *getenv();
+#endif
 	int cchDefaults, cchPaths;
 
 	cchDefaults = strlen(DEFAULTINPUTS);
@@ -708,7 +752,7 @@ SeparateList(char *sbList, char *rgsbList[], char chSep, int csbMax)
 
 	while (sbList && *sbList && csbList < csbMax) {
 	    rgsbList[csbList++] = sbList;
-	    if (sbList = index(sbList, chSep))
+	    if ((sbList = index(sbList, chSep)))
 		*sbList++ = '\0';
 	}
 	return(sbList && *sbList ? ERROR : csbList);
@@ -729,10 +773,12 @@ SeparateList(char *sbList, char *rgsbList[], char chSep, int csbMax)
 FILE *
 TexOpen(char *sbFile)
 {
-	char	*pch, *sbNew;
+	char	*sbNew;
+#ifndef KPATHSEA
+	char	*pch;
 	FILE	*fp;
 	int	iPath;
-	static char	sbFullPath[MAXPATHLEN];
+	static char	sbFullPath[PATH_MAX];
 
 	for (iPath = 0; iPath < csbInputPaths; iPath++) {
 #ifdef OS2
@@ -753,10 +799,12 @@ TexOpen(char *sbFile)
 	    /* If sbFile ends in .tex then it must be there */
 	    if ((pch = rindex(sbFullPath, '.')) != NULL
 			&& (strcmp(pch, ".tex") == 0))
+	    {
 		if ((fp = fopen(sbFullPath, "r")) != NULL)
 		    return(fp);
 		else
 		    continue;
+	    }
 
 	    /* if .<ext> then try to open it.  the '.' represents   */
 	    /* the beginning of an extension if it is not the first */
@@ -777,7 +825,15 @@ TexOpen(char *sbFile)
 	    if ((fp = fopen(sbFullPath, "r")) != NULL)
 		return(fp);
 	}
-	return((FILE *)NULL);
+	return NULL;
+#else
+	sbNew = kpse_find_file (sbFile, kpse_tex_format, false);
+
+	if (sbNew == NULL)
+	    return NULL;
+
+	return fopen (sbNew, "r");
+#endif
 }
 
 /******
