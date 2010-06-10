@@ -58,6 +58,7 @@ nobase_dist_script_SCRIPTS = \
 	latexmk/latexmk.pl \
 	luaotfload/mkluatexfontdb.lua \
 	listings-ext/listings-ext.sh \
+	mathspic/mathspic.pl \
 	mkjobtexmf/mkjobtexmf.pl \
 	mkgrkindex/mkgrkindex \
 	oberdiek/pdfatfi.pl \
