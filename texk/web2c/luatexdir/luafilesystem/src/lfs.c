@@ -114,15 +114,14 @@ static int change_dir (lua_State *L) {
 **  and a string describing the error
 */
 static int get_dir (lua_State *L) {
-  char *path;
-  if ((path = getcwd(NULL, 0)) == NULL) {
+  char path[500];
+  if (getcwd((char *)path, 500) == NULL) {
     lua_pushnil(L);
     lua_pushstring(L, getcwd_error);
     return 2;
   }
   else {
     lua_pushstring(L, path);
-    free(path);
     return 1;
   }
 }

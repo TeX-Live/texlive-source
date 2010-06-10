@@ -1,3 +1,6 @@
+2010-06-10  Taco Hoekwater <taco@luatex.org>
+	* luafilesystem/src/lfs.c(get_dir): do not assume Gnu C compiler.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am (libluatex_a_CPPFLAGS): Add $(AM_CPPFLAGS).
@@ -5,7 +8,6 @@
 	* am/luatex.am (luatex_CPPFLAGS): Add $(AM_CPPFLAGS).
 
 2010-06-10  Taco Hoekwater <taco@luatex.org>
-
 	* luasocket/src/options.c, luafontloader/fontforge/fontforge/parsettfatt.c,
 	luafontloader/fontforge/fontforge/parsettf.c,
 	luafontloader/fontforge/fontforge/lookups.c: enlarge static buffers
