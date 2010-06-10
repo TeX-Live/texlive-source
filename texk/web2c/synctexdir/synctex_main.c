@@ -61,7 +61,7 @@ This is the command line interface to the synctex_parser.c.
 #define _ISOC99_SOURCE /* to get the fmax() prototype */
 #endif
 
-#   include "c-auto.h" /* for inline && HAVE_xxx */
+#   include <w2c/c-auto.h> /* for inline && HAVE_xxx */
 
 #   include <stdlib.h>
 #   include <stdio.h>

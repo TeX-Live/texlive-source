@@ -23,7 +23,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include <w2c/config.h>
 #endif
 #ifdef KPATHSEA
 #include <kpathsea/config.h>

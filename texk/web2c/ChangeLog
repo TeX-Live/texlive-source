@@ -1,3 +1,25 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS, INCLUDES): Move $(KPATHSEA_INCLUDES).
+	* am/cweb.am (tie_CPPFLAGS): Add $(AM_CPPFLAGS).
+	* am/texmf.am (tex_CPPFLAGS, mf_CPPFLAGS): Add $(AM_CPPFLAGS).
+	(mf_nowin_CPPFLAGS): Use $(mf_CPPFLAGS).
+
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reorganize web2c headers.
+	* config.h (deleted): Moved ...
+	* w2c/config.h (new): ... to here.
+	* configure.ac: Create w2c/c-auto.h instead of c-auto.h.
+	* c-auto.h (new): Temporary file including <w2c/c-auto.h>, to be
+	removed when all luatexdir/ files are changed to directly
+	include <w2c/c-auto.h>.
+	* config.h (new): Temporary file including <w2c/config.h>, to be
+	removed when all mplibdir/ and luatexdir/ files are changed to
+	directly include <w2c/config.h>.
+	* Makefile.am (EXTRA_DIST): Adjust.
+	* cpascal.h: #include <w2c/config.h> instead of "config.h".
+
 2010-06-04  Karl Berry  <karl@tug.org>
 
 	* configure.ac (web2_version): remove pretest for

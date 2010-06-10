@@ -1,4 +1,10 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libmplib.am (libmplib_a_CPPFLAGS): Add $(AM_CPPFLAGS).
+	* am/mplib.am (mpost_CPPFLAGS): Add $(AM_CPPFLAGS).
+
 2010-05-31  Taco Hoekwater  <taco@luatex.org>
+
 	* mp.w (mp_set_output_file_name): prevent reallocation of 
 	string pool during output file name generation.
 	

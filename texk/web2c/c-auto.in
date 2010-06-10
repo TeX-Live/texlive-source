@@ -1,6 +1,6 @@
 /* c-auto.in.  Generated from configure.ac by autoheader.  */
 
-/* c-auto.h: defines for web2c, as determined by configure.
+/* w2c/c-auto.h: defines for web2c, as determined by configure.
 
    Copyright 1994-97, 2008, 2009, 2010 Karl Berry.
    Copyright 1997-99, 2002, 2005 Olaf Weber.

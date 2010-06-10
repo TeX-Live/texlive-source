@@ -49,13 +49,13 @@ DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
 	$(srcdir)/../../../build-aux/ltmain.sh \
 	$(srcdir)/../../../build-aux/missing \
 	$(srcdir)/../../../build-aux/ylwrap $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/configure \
-	$(top_srcdir)/native/kpathsea/c-auto.in \
-	../../../build-aux/config.guess ../../../build-aux/config.sub \
-	../../../build-aux/depcomp ../../../build-aux/install-sh \
-	../../../build-aux/ltmain.sh ../../../build-aux/missing \
-	../../../build-aux/texinfo.tex ../../../build-aux/ylwrap \
-	ChangeLog web2c-lexer.c web2c-parser.c web2c-parser.h
+	$(srcdir)/Makefile.in $(srcdir)/c-auto.in \
+	$(top_srcdir)/configure ../../../build-aux/config.guess \
+	../../../build-aux/config.sub ../../../build-aux/depcomp \
+	../../../build-aux/install-sh ../../../build-aux/ltmain.sh \
+	../../../build-aux/missing ../../../build-aux/texinfo.tex \
+	../../../build-aux/ylwrap ChangeLog web2c-lexer.c \
+	web2c-parser.c web2c-parser.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../../m4/kpse-lex.m4 \
@@ -71,7 +71,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/native/kpathsea/c-auto.h
+CONFIG_HEADER = $(top_builddir)/kpathsea/c-auto.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
@@ -89,7 +89,7 @@ am_web2c_OBJECTS = web2c-parser.$(OBJEXT) web2c-lexer.$(OBJEXT) \
 web2c_OBJECTS = $(am_web2c_OBJECTS)
 web2c_LDADD = $(LDADD)
 SCRIPTS = $(dist_noinst_SCRIPTS)
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/native/kpathsea
+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/kpathsea
 depcomp = $(SHELL) $(top_srcdir)/../../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -251,11 +251,11 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../../m4
-INCLUDES = -Inative -I$(srcdir)/native -I$(srcdir)/../..
+INCLUDES = -I$(srcdir)/../..
 AM_YFLAGS = -d -v
 AM_CFLAGS = $(WARNING_CFLAGS)
-BUILT_SOURCES = native/config.h
-DISTCLEANFILES = native/config.h web2c-parser.output
+BUILT_SOURCES = w2c/config.h
+DISTCLEANFILES = w2c/config.h web2c-parser.output
 noinst_HEADERS = coerce.h
 dist_noinst_SCRIPTS = convert
 dist_noinst_DATA = \
@@ -326,22 +326,22 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
-native/kpathsea/c-auto.h: native/kpathsea/stamp-h1
+kpathsea/c-auto.h: kpathsea/stamp-h1
 	@if test ! -f $@; then \
-	  rm -f native/kpathsea/stamp-h1; \
-	  $(MAKE) $(AM_MAKEFLAGS) native/kpathsea/stamp-h1; \
+	  rm -f kpathsea/stamp-h1; \
+	  $(MAKE) $(AM_MAKEFLAGS) kpathsea/stamp-h1; \
 	else :; fi
 
-native/kpathsea/stamp-h1: $(top_srcdir)/native/kpathsea/c-auto.in $(top_builddir)/config.status
-	@rm -f native/kpathsea/stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status native/kpathsea/c-auto.h
-$(top_srcdir)/native/kpathsea/c-auto.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+kpathsea/stamp-h1: $(srcdir)/c-auto.in $(top_builddir)/config.status
+	@rm -f kpathsea/stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status kpathsea/c-auto.h
+$(srcdir)/c-auto.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
-	rm -f native/kpathsea/stamp-h1
+	rm -f kpathsea/stamp-h1
 	touch $@
 
 distclean-hdr:
-	-rm -f native/kpathsea/c-auto.h native/kpathsea/stamp-h1
+	-rm -f kpathsea/c-auto.h kpathsea/stamp-h1
 
 clean-noinstPROGRAMS:
 	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
@@ -429,11 +429,11 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES) c-auto.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	set x; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) c-auto.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -451,9 +451,9 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+CTAGS:  $(HEADERS) $(SOURCES) c-auto.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) c-auto.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -749,14 +749,15 @@ uninstall-am:
 
 
 # Don't include our <c-auto.h>.
-native/config.h: ../config.h
-	sed -e '/<c-auto\.h>/d' $(srcdir)/../config.h >$@
+w2c/config.h: ../w2c/config.h
+	$(MKDIR_P) w2c
+	sed -e '/c-auto\.h>/d' $(srcdir)/../w2c/config.h >$@
 
-$(web2c_OBJECTS): web2c-parser.h native/config.h
+$(web2c_OBJECTS): web2c-parser.h w2c/config.h
 
-$(fixwrites_OBJECTS): native/config.h
+$(fixwrites_OBJECTS): w2c/config.h
 
-$(splitup_OBJECTS): native/config.h
+$(splitup_OBJECTS): w2c/config.h
 
 stamp-web2c: web2c$(EXEEXT)
 	echo timestamp >$@

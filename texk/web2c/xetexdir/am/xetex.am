@@ -1,6 +1,6 @@
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## XeTeX
@@ -15,7 +15,7 @@ nodist_EXTRA_xetex_SOURCES = dummy.cxx
 
 libxetex = libxetex.a
 
-xetex_cppflags = -I$(srcdir)/xetexdir
+xetex_cppflags = $(AM_CPPFLAGS) -I$(srcdir)/xetexdir
 ## Must add icu first to avoid an installed version.
 xetex_cppflags += $(ICU_INCLUDES)
 ## Must add freetype2 includes early to avoid

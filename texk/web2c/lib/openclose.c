@@ -2,7 +2,7 @@
 
    Written 1995 Karl Berry.  Public domain.  */
 
-#include "config.h"
+#include <w2c/config.h>
 #include "lib.h"
 #include <kpathsea/c-pathch.h>
 #include <kpathsea/tex-file.h>

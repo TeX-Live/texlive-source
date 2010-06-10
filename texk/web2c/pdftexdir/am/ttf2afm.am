@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/ttf2afm.am: Makefile fragment for ttf2afm.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## ttf2afm
@@ -10,7 +10,7 @@ bin_PROGRAMS += ttf2afm
 endif PDFTEX
 EXTRA_PROGRAMS += ttf2afm
 
-ttf2afm_CPPFLAGS = -I$(srcdir)/pdftexdir
+ttf2afm_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/pdftexdir
 ttf2afm_CFLAGS = $(WARNING_CFLAGS)
 
 ttf2afm_SOURCES = pdftexdir/ttf2afm.c

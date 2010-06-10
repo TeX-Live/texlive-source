@@ -22,7 +22,7 @@ cweave.c: ctangle$(EXEEXT) cwebdir/common.h cwebdir/cweave.w cwebdir/prod.w cweb
 DISTCLEANFILES += cweave.c
 
 nodist_tie_SOURCES = tie.c
-tie_CPPFLAGS = -DNOT_WEB2C
+tie_CPPFLAGS = $(AM_CPPFLAGS) -DNOT_WEB2C
 tie_CFLAGS = $(WARNING_CFLAGS)
 ## We install man/tie.man, not tiedir/tie.1
 ## nodist_man_MANS += tiedir/tie.1

@@ -8,7 +8,7 @@
    reconstitute the core dump into a binary (i.e., with undump) is up to
    you.  Perl has some things to say about these days.  */
 
-#include "config.h"
+#include <w2c/config.h>
 
 /* Do not try to compile this Unix-y unportable stuff unless it's needed.  */
 

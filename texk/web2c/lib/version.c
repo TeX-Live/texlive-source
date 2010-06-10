@@ -1,4 +1,4 @@
-#include "c-auto.h"
+#include <w2c/c-auto.h>
 
 /* This string is appended to all the banners and used in --version.  */
 /* Public domain. */

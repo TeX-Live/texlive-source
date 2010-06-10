@@ -3,7 +3,7 @@
    Adapted in 2010 by Peter Breitenlohner.  Public domain.
    Written in 1995 by Karl Berry.  Public domain.  */
 
-#include "config.h"
+#include <w2c/config.h>
 #include "lib.h"
 #include <kpathsea/variable.h>
 

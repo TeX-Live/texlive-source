@@ -1,3 +1,16 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reorganize web2c headers.
+	* native/kpathsea/c-auto.in (deleted): Moved ...
+	* c-auto.in (new): ... to here.
+	* configure.ac: Create kpathsea/c-auto.h instead of
+	native/kpathsea/c-auto.h.
+	* Makefile.am: Create w2c/config.h instead of native/config.h.
+	Adjust INCLUDES, BUILT_SOURCES, DISTCLEANFILES, rules, and
+	dependencies.
+	* fixwrites.c, splitup.c, web2c.h: #include <w2c/config.h>
+	instead of "config.h".
+
 2010-04-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Make sure native/config.h exists before

@@ -13,7 +13,7 @@
 #endif
 
 /* We must include this first, to resolve many C issues.  */
-#include "config.h"
+#include <w2c/config.h>
 
 /* We only use getopt in the applications, not in web2c itself.  */
 #include <kpathsea/getopt.h>

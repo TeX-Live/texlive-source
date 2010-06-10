@@ -21655,7 +21655,7 @@ CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
 
-ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
+ac_config_headers="$ac_config_headers w2c/c-auto.h:c-auto.in"
 
 
 
@@ -23200,7 +23200,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "CXXLD.sh") CONFIG_COMMANDS="$CONFIG_COMMANDS CXXLD.sh" ;;
-    "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
+    "w2c/c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS w2c/c-auto.h:c-auto.in" ;;
     "ff-config.h") CONFIG_HEADERS="$CONFIG_HEADERS ff-config.h:luatexdir/luafontloader/ff-config.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
@@ -24710,8 +24710,9 @@ if test "x$enable_libtool_hack" = xyes; then
 fi
  ;;
     "CXXLD.sh":C) echo "$cxxld_sh" >CXXLD.sh; chmod +x CXXLD.sh ;;
-    "c-auto.h":H) sed -e 's/^#define PACKAGE/#define WEB2C_PACKAGE/' \
-      -e 's/^#define VERSION/#define WEB2C_VERSION/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h ;;
+    "w2c/c-auto.h":H) sed -e 's/^#define PACKAGE/#define WEB2C_PACKAGE/' \
+      -e 's/^#define VERSION/#define WEB2C_VERSION/' w2c/c-auto.h >c-auto.tmp \
+    && mv -f c-auto.tmp w2c/c-auto.h ;;
     "web2c-sh":F) chmod +x web2c-sh ;;
     "tangle-sh":F) chmod +x tangle-sh ;;
     "ctangleboot-sh":F) chmod +x ctangleboot-sh ;;

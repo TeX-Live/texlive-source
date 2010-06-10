@@ -19,7 +19,7 @@ bin_PROGRAMS += tex
 endif TEX
 EXTRA_PROGRAMS += tex
 
-tex_CPPFLAGS =
+tex_CPPFLAGS = $(AM_CPPFLAGS)
 tex_CFLAGS = $(WARNING_CFLAGS)
 
 # With --enable-ipc, TeX may need to link with -lsocket.
@@ -97,11 +97,11 @@ EXTRA_PROGRAMS += mf mf-nowin
 DISTCLEANFILES += mftrap.diffs
 
 nodist_mf_SOURCES = mfextra.c
-mf_CPPFLAGS = $(X_CFLAGS)
+mf_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS)
 mf_CFLAGS = $(WARNING_CFLAGS)
 mf_LDADD = libmf.a $(LDADD) $(windowlib) $(mf_x_libs)
 nodist_mf_nowin_SOURCES = mfextra.c
-mf_nowin_CPPFLAGS = $(X_CFLAGS) -DMFNOWIN
+mf_nowin_CPPFLAGS = $(mf_CPPFLAGS) -DMFNOWIN
 mf_nowin_CFLAGS = $(WARNING_CFLAGS)
 mf_nowin_LDADD = libmf.a $(LDADD) $(windowlib)
 

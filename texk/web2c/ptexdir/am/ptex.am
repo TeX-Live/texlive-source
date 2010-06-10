@@ -3,7 +3,7 @@
 ## Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-ptex_cppflags = $(PTEXENC_INCLUDES)
+ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 ptex_ldadd = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 

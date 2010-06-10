@@ -1,4 +1,11 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am (libluatex_a_CPPFLAGS): Add $(AM_CPPFLAGS).
+	* am/luafontforge.am (libff_a_CPPFLAGS): Add $(AM_CPPFLAGS).
+	* am/luatex.am (luatex_CPPFLAGS): Add $(AM_CPPFLAGS).
+
 2010-06-10  Taco Hoekwater <taco@luatex.org>
+
 	* luasocket/src/options.c, luafontloader/fontforge/fontforge/parsettfatt.c,
 	luafontloader/fontforge/fontforge/parsettf.c,
 	luafontloader/fontforge/fontforge/lookups.c: enlarge static buffers

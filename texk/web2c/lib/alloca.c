@@ -22,7 +22,7 @@
    your main control loop, etc. to force garbage collection.  */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include <w2c/config.h>
 #endif
 
 #ifdef HAVE_STRING_H

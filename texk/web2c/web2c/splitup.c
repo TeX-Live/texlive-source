@@ -6,7 +6,7 @@
 
    Tim Morgan  September 19, 1987.  */
 
-#include "config.h"
+#include <w2c/config.h>
 #include <kpathsea/getopt.h>
 
 #if defined (FATAL)

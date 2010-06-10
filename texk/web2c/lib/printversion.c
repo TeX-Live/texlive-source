@@ -2,7 +2,7 @@
 
    Written in 1996 by Karl Berry.  Public domain.  */
 
-#include "config.h"
+#include <w2c/config.h>
 #include "lib.h"
 #include <kpathsea/version.h>
 #ifdef PTEX

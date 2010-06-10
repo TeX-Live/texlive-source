@@ -12192,7 +12192,7 @@ fi
 done
 
 
-ac_config_headers="$ac_config_headers native/kpathsea/c-auto.h:native/kpathsea/c-auto.in"
+ac_config_headers="$ac_config_headers kpathsea/c-auto.h:c-auto.in"
 
 
 ac_config_files="$ac_config_files Makefile"
@@ -13170,7 +13170,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
-    "native/kpathsea/c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS native/kpathsea/c-auto.h:native/kpathsea/c-auto.in" ;;
+    "kpathsea/c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS kpathsea/c-auto.h:c-auto.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

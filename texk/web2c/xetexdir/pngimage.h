@@ -50,7 +50,7 @@
 #define _PNGIMAGE_H_
 
 #if HAVE_CONFIG_H
-#include "config.h"
+#include <w2c/config.h>
 #endif
 
 #include "mfileio.h"

@@ -1,3 +1,13 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am (xetex_cppflags): Add $(AM_CPPFLAGS).
+
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reorganize web2c headers.
+	* bmpimage.h, pngimage.[ch]: #include <w2c/config.h> instead
+	of "config.h".
+
 2010-05-18  Karl Berry  <karl@tug.org>
 
 	* xetex.ch (XeTeX_version_string): incr to 0.9995.3.

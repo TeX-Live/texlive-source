@@ -1,7 +1,7 @@
 /* eofeoln.c: implement Pascal's ideas for end-of-file and end-of-line
    testing.  Public domain. */
 
-#include "config.h"
+#include <w2c/config.h>
 #include "lib.h"
 
 /* Return true if we're at the end of FILE, else false.  This implements

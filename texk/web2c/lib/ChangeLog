@@ -1,3 +1,13 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reorganize web2c headers.
+	* alloca.c, basechsuffix.c, chartostring.c, coredump.c,
+	eofeoln.c, fprintreal.c, input2int.c, inputint.c, main.c,
+	openclose.c, printversion.c, setupvar.c, uexit.c, usage.c,
+	zround.c:
+	#include <w2c/config.h> instead of <config.h> or "config.h".
+	* version.c: #include <w2c/c-auto.h> instead of "c-auto.h".
+
 2010-06-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: include kpathsea/concatn.h if WIN32 is defined.

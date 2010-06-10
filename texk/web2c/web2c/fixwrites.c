@@ -1,7 +1,7 @@
 /* fixwrites -- convert Pascal write/writeln's into fprintf's or putc's.
    Originally by Tim Morgan, October 10, 1987.  */
 
-#include "config.h"
+#include <w2c/config.h>
 #include <kpathsea/c-pathmx.h>
 
 char buf[BUFSIZ], filename[PATH_MAX], args[100];

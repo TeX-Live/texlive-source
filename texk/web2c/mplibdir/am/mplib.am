@@ -10,7 +10,7 @@ bin_PROGRAMS += mpost
 endif MP
 EXTRA_PROGRAMS += mpost
 
-mpost_CPPFLAGS = -I$(srcdir)/mplibdir
+mpost_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 mpost_CFLAGS = $(WARNING_CFLAGS)
 mpost_DEPENDENCIES = libmplib.a
 mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm

@@ -9,8 +9,8 @@ EXTRA_LIBRARIES += libluatex.a
 
 libluatex_a_DEPENDENCIES = libff.a
 
-libluatex_a_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
-libluatex_a_CPPFLAGS += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
+libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
+libluatex_a_CPPFLAGS += $(XPDF_INCLUDES) $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
 libluatex_a_CPPFLAGS += -Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
 libluatex_a_CPPFLAGS += -DpdfTeX
 libluatex_a_CFLAGS = $(WARNING_CFLAGS)

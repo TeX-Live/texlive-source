@@ -272,11 +272,12 @@ AC_LANG_POP([C++])
 KPSE_RESTORE_FLAGS
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
-AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
+AC_CONFIG_HEADERS([w2c/c-auto.h:c-auto.in],
  [sed -e 's/^#define PACKAGE/#define WEB2C_PACKAGE/' \
-      -e 's/^#define VERSION/#define WEB2C_VERSION/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h])
+      -e 's/^#define VERSION/#define WEB2C_VERSION/' w2c/c-auto.h >c-auto.tmp \
+    && mv -f c-auto.tmp w2c/c-auto.h])
 
-AH_TOP([/* c-auto.h: defines for web2c, as determined by configure.
+AH_TOP([/* w2c/c-auto.h: defines for web2c, as determined by configure.
 
    Copyright 1994-97, 2008, 2009, 2010 Karl Berry.
    Copyright 1997-99, 2002, 2005 Olaf Weber.

@@ -3,9 +3,9 @@
 ## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-pdftex_cppflags = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
-pdftex_cppflags += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
-pdftex_cppflags += -I$(srcdir)/pdftexdir
+pdftex_cppflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
+pdftex_cppflags += $(XPDF_INCLUDES) $(OBSDCOMPAT_INCLUDES)
+pdftex_cppflags += -I$(srcdir)/libmd5 -I$(srcdir)/pdftexdir
 
 # used for both pdftex and pdftosrc.
 pdftex_ldadd = $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)

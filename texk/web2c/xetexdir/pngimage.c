@@ -46,7 +46,7 @@
 */
 
 #if HAVE_CONFIG_H
-#include "config.h"
+#include <w2c/config.h>
 #endif
 
 /*

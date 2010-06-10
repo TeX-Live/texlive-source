@@ -70,7 +70,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/c-auto.h $(top_builddir)/ff-config.h
+CONFIG_HEADER = $(top_builddir)/w2c/c-auto.h \
+	$(top_builddir)/ff-config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 SOURCES =

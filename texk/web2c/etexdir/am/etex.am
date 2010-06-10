@@ -10,7 +10,7 @@ bin_PROGRAMS += etex
 endif ETEX
 EXTRA_PROGRAMS += etex
 
-etex_CPPFLAGS =
+etex_CPPFLAGS = $(AM_CPPFLAGS)
 etex_CFLAGS = $(WARNING_CFLAGS)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.

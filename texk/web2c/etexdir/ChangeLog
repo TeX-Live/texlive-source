@@ -1,3 +1,7 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am (etex_CPPFLAGS): Add $(AM_CPPFLAGS).
+
 2010-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am (EXTRA_DIST): Remove tmf-pool.h.
