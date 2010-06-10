@@ -1,4 +1,9 @@
 2010-06-10  Taco Hoekwater <taco@luatex.org>
+	* luatex.c (swap_items): debugged.
+	* tex/texfileio.w (do_zdump): reswap the swapped items to avoid
+	crashes when called as |dump_things|.
+
+2010-06-10  Taco Hoekwater <taco@luatex.org>
 	* luafilesystem/src/lfs.c(get_dir): do not assume Gnu C compiler.
 
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>

@@ -15,7 +15,7 @@
 #include "luatex_svnversion.h"
 
 static const char _svn_version[] =
-    "$Id: luatex.c 3714 2010-06-04 12:33:50Z taco $ "
+    "$Id: luatex.c 3719 2010-06-10 16:58:16Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/luatex.c $";
 
 #define TeX
@@ -986,7 +986,7 @@ calledit(packedASCIIcode * filename,
 /* This macro is always invoked as a statement.  It assumes a variable
    `temp'.  */
 
-#  define SWAP(x, y) temp = (x); (x) = (y); (y) = temp
+#  define SWAP(x, y) do { temp = x; x = y; y = temp; } while (0)
 
 
 /* Make the NITEMS items pointed at by P, each of size SIZE, be the
@@ -995,9 +995,10 @@ calledit(packedASCIIcode * filename,
 void swap_items(char *pp, int nitems, int size)
 {
     char temp;
-    char *q = xmalloc(nitems*size);
+    unsigned total = nitems*size;
+    char *q = xmalloc(total);
     char *p = q;
-    memcpy(p,pp,nitems*size);
+    memcpy(p,pp,total);
     /* Since `size' does not change, we can write a while loop for each
        case, and avoid testing `size' for each time.  */
     switch (size) {
@@ -1061,7 +1062,8 @@ void swap_items(char *pp, int nitems, int size)
     default:
         FATAL1("Can't swap a %d-byte item for (un)dumping", size);
     }
-    xfree(q);
+    memcpy(pp,q,total);
+    xfree(q); 
 }
 #endif                          /* not WORDS_BIGENDIAN and not NO_DUMP_SHARE */
 
