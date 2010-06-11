@@ -34,7 +34,7 @@ have our customary command-line interface.
 @d false 0
  
 @c
-#include "config.h"
+#include <w2c/config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

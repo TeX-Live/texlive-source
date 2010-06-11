@@ -46,7 +46,7 @@ The local C preprocessor definitions have to come after the C includes
 in order to prevent name clashes.
 
 @c
-#include "config.h"
+#include <w2c/config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

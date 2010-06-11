@@ -17,7 +17,7 @@
    You should have received a copy of the GNU Lesser General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "config.h"
+#include <w2c/config.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>

@@ -69,7 +69,7 @@
 @d max_quarterword 0x3FFF /* largest allowable value in a |quarterword| */
 
 @c
-#include "config.h"
+#include <w2c/config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

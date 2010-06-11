@@ -43,7 +43,7 @@
 @d help3  { mp->help_ptr=3; hlp3 /* use this with three help lines */
 
 @c 
-#include "config.h"
+#include <w2c/config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

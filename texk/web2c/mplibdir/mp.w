@@ -141,7 +141,7 @@ typedef struct MP_instance {
 @<Internal library declarations@>
 
 @ @c 
-#include "config.h"
+#include <w2c/config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
