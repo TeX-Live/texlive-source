@@ -25,7 +25,7 @@
 #  define _SFNT_H_
 
 #  if  HAVE_CONFIG_H
-#    include "config.h"
+#    include <w2c/config.h>
 #  endif                        /* HAVE_CONFIG_H_ */
 
 #  ifndef pdfTeX

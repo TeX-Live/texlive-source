@@ -35,7 +35,7 @@
 #ifdef __MINGW32__
 #define _CTYPE_H_
 #endif
-# include "config.h"
+# include <w2c/config.h>
 #endif
 #define gfree ff_gfree
 #define grealloc ff_grealloc

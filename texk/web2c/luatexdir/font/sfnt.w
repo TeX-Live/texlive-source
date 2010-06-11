@@ -23,7 +23,7 @@
 @c
 
 #if  HAVE_CONFIG_H
-#  include "config.h"
+#  include <w2c/config.h>
 #endif                          /* |HAVE_CONFIG_H_| */
 
 #include <string.h>

@@ -28,7 +28,7 @@
 # include <vms_jackets.h>
 #endif
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <w2c/config.h>
 #endif
 
 #include <gwwiconv.h>
