@@ -1,3 +1,9 @@
+2010-06-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-auto.h, config.h (removed): Obsolete, all mplibdir/ and
+	luatexdir/ files are now changed to directly #include
+	<w2c/c-auto.h> or <w2c/config.h>.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS, INCLUDES): Move $(KPATHSEA_INCLUDES).
