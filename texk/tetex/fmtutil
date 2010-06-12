@@ -86,9 +86,9 @@ help()
   cat <<eof
 $version
 Usage: fmtutil [OPTION]... CMD [ARG]...
-Usage: mktexfmt FMT.fmt|BASE.base|MEM.mem|FMTNAME
+Usage: mktexfmt FORMAT.fmt|BASE.base|MEM.mem|FMTNAME.EXT
 
-Rebuild and manage TeX formats (and Metafont bases and MetaPost mems).
+Rebuild and manage TeX formats, Metafont bases and MetaPost mems.
 
 If the command name ends in mktexfmt, only one format can be created.
 The only options supported are --help and --version, and the command
@@ -100,11 +100,11 @@ nothing else.
 If not operating in mktexfmt mode, the command line can be more general,
 and multiple formats can be generated, as follows.
 
-Valid options for fmtutil:
-  --cnffile FILE
+Optional behavior:
+  --cnffile FILE             read FILE instead of fmtutil.cnf.
   --fmtdir DIRECTORY
   --no-engine-subdir         don't use engine-specific subdir of the fmtdir
-  --quiet                    (not implemented, just for compatibility)
+  --quiet                    be silent
   --test                     (not implemented, just for compatibility)
   --dolinks                  (not implemented, just for compatibility)
   --force                    (not implemented, just for compatibility)
@@ -122,12 +122,16 @@ Valid commands for fmtutil:
                              filtered to available formats
   --catcfg                   output the content of the config file
   --showhyphen FORMATNAME    print name of hyphenfile for format FORMATNAME
-  --edit                     edit config file
+  --edit                     no-op in TeX Live
   --version                  show version info
   --help                     show this message
 
 The config file is named fmtutil.cnf, and
 running  kpsewhich fmtutil.cnf  should show the active file.
+
+For more information about fmt generation in TeX Live, try
+tlmgr --help or see http://tug.org/texlive/doc/tlmgr.html.
+The \`generate' action in tlmgr does the work.
 
 Report bugs to: tex-k@tug.org
 TeX Live home page: <http://tug.org/texlive/>
@@ -479,12 +483,12 @@ main()
           cmd=catcfg;;
       --listcfg)
           cmd=listcfg;;
-      --quiet|-q)
+      --quiet|-q|--silent)
           verboseFlag=false;;
       --test|--dolinks|--force)
           ;;
       "") break;;
-      *) abort "$progname: unknown option \`$1'. Try $progname --help for help";;
+      *) abort "unknown option \`$1'. Try $progname --help for help";;
     esac
   do test $# -gt 0 && shift; done
 
@@ -513,26 +517,24 @@ main()
     fi
   fi
 
-  # showhyphen and edit do not need any temp. directory, so do it here:
+  # these commands need no temp directory, so do them here:
   case "$cmd" in
-    showhyphen)
-      show_hyphen_file "$arg"
-      cleanup $?
-      ;;
-    edit)
-      ${VISUAL-${EDITOR-vi}} $cnf_file
-      ;;
-    enablefmt|disablefmt)
-      $cmd $arg
-      ;;
     catcfg)
       grep -v '^ *#' "$cnf_file" | sed 's@^ *@@; s@ *$@@' | grep . | sort
-      cleanup $?
-      ;;
+      cleanup $? ;;
+    edit)
+      echo "$0: fmtutil --edit is disabled in TeX Live;" >&2
+      echo "$0: use a file fmtutil-local.cnf instead." >&2
+      echo "$0: See tlmgr --help or http://tug.org/texlive/doc/tlmgr.html." >&2
+      cleanup 0 ;;
+    enablefmt|disablefmt)
+      $cmd $arg ;;  # does not return
     listcfg)
       listcfg_loop
-      cleanup $?
-      ;;
+      cleanup $? ;;
+    showhyphen)
+      show_hyphen_file "$arg"
+      cleanup $? ;;
   esac
 
   if test -n "$cfgmaint"; then
