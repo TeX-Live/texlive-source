@@ -1,38 +1,35 @@
 diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
 --- detex-2.8.orig/detex.l	2008-02-01 20:55:51.000000000 +0100
-+++ detex-2.8/detex.l	2010-06-09 13:34:01.456409201 +0200
-@@ -63,6 +63,21 @@
- #include <stdlib.h>
- #endif
- 
-+#undef IGNORE
-+
-+int BeginEnv(char *sbEnv);
-+int EndEnv(char *sbEnv);
-+void InputFile(char *sbFile);
-+void IncludeFile(char *sbFile);
-+void AddInclude(char *sbFile);
-+void SetInputPaths(void);
-+void SetEnvIgnore(char *sbEnvList);
-+void Warning(char *sb1, char *sb2); 
-+void ErrorExit(char *sb1);
-+int SeparateList(char *sbList, char *rgsbList[] ,char chSep,int csbMax);
-+int InList(char *sbFile);
-+FILE * TexOpen(char *sbFile);
-+
- #define	LaBEGIN		if (fLatex) BEGIN
- #define	IGNORE		if (fSpace && !fWord) putchar(' ')
- #define	SPACE		if (!fWord) putchar(' ')
-@@ -72,7 +87,7 @@
++++ detex-2.8/detex.l	2010-06-11 23:12:06.648394135 +0200
+@@ -72,12 +72,26 @@
  #define STRIPARGS(x)	cArgs=x; LaBEGIN LaMacro2
  #define	CITE(x)		if (fLatex && !fCite) KILLARGS(x)
  
 -char	*SafeMalloc();
-+char    *SafeMalloc(int cch, char *sbMessage);
++void AddInclude(char *sbFile);
++void ErrorExit(char *sb1);
++void IncludeFile(char *sbFile);
++void InputFile(char *sbFile);
++void SetEnvIgnore(char *sbEnvList);
++void SetInputPaths(void);
++void Warning(char *sb1, char *sb2); 
++int BeginEnv(char *sbEnv);
++int EndEnv(char *sbEnv);
++int InList(char *sbFile);
++int SeparateList(char *sbList, char *rgsbList[] ,char chSep, int csbMax);
++FILE *TexOpen(char *sbFile);
++char *SafeMalloc(int cch, char *sbMessage);
++char *getenv();
  #ifndef NO_MALLOC_DECL
  char	*malloc();
  #endif
-@@ -368,12 +383,10 @@
+ #ifdef OS2
+ void	yyless(int);
++void	OS2UsageExit(void);
+ #endif
+ 
+ char	*rgsbEnvIgnore[MAXENVS];	/* list of environments ignored */
+@@ -368,12 +382,10 @@
  **	If no input files are specified on the command line, process stdin.
  ******/
  
@@ -47,7 +44,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  	int	fSawFile = 0, iArgs = 1;
  	
  	/* get base name and decide what we are doing, detex or delatex */
-@@ -477,7 +490,8 @@
+@@ -477,7 +489,8 @@
  **	return the termination signal for lex.
  ******/
  
@@ -57,7 +54,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	(void)fclose(yyin);
  #ifdef FLEX_SCANNER
-@@ -501,8 +515,8 @@
+@@ -501,8 +514,8 @@
  **	a yyless routine
  ******/
  
@@ -68,7 +65,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	int 	i = strlen(yytext);
  
-@@ -516,8 +530,8 @@
+@@ -516,8 +529,8 @@
  **	sbEnvList.
  ******/
  
@@ -79,7 +76,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	char *sb;
  
-@@ -533,8 +547,8 @@
+@@ -533,8 +546,8 @@
  **	is, sbCurrentEnv is set to sbEnv.
  ******/
  
@@ -90,7 +87,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	int	i;
  
-@@ -551,8 +565,8 @@
+@@ -551,8 +564,8 @@
  ** EndEnv -- checks to see if sbEnv is the current environment being ignored.
  ******/
  
@@ -101,7 +98,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	if (!fLatex) return(0);
  	if (strcmp(sbEnv, sbCurrentEnv) == 0)
-@@ -565,11 +579,9 @@
+@@ -565,11 +578,9 @@
  **	the sbFile is ignored.
  ******/
  
@@ -115,7 +112,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  	if (!fFollow)
  	    return;
  	rgfp[cfp++] = yyin;
-@@ -589,11 +601,9 @@
+@@ -589,11 +600,9 @@
  **	and open sbFile.  If the open fails, the sbFile is ignored.
  ******/
  
@@ -129,7 +126,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  	if (!fFollow)
  	    return;
  	if (!InList(sbFile))
-@@ -615,8 +625,8 @@
+@@ -615,8 +624,8 @@
  **	If the include list is too long, sbFile is ignored.
  ******/
  
@@ -140,7 +137,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	if (!fFollow)
  	    return;
-@@ -631,8 +641,8 @@
+@@ -631,8 +640,8 @@
  **	no list, all files are assumed to be "in the list".
  ******/
  
@@ -151,7 +148,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	char	*pch, sbBase[MAXPATHLEN];
  	int	i;
-@@ -658,7 +668,8 @@
+@@ -658,9 +667,10 @@
  **	routine does not honor the '//' construct (expand subdirs).
  ******/
  
@@ -159,9 +156,12 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
 +void
 +SetInputPaths(void)
  {
- 	char *sb, *sbPaths, *getenv();
+-	char *sb, *sbPaths, *getenv();
++	char *sb, *sbPaths;
  	int cchDefaults, cchPaths;
-@@ -698,9 +709,8 @@
+ 
+ 	cchDefaults = strlen(DEFAULTINPUTS);
+@@ -698,9 +708,8 @@
  **	ERROR is returned if there are more than csbMax words.
  ******/
  
@@ -173,7 +173,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	int	csbList = 0;
  
-@@ -725,8 +735,7 @@
+@@ -725,8 +734,7 @@
  ******/
  
  FILE *
@@ -183,7 +183,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	char	*pch, *sbNew;
  	FILE	*fp;
-@@ -784,9 +793,7 @@
+@@ -784,9 +792,7 @@
  ******/
  
  char *
@@ -194,7 +194,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	char *sb;
  
-@@ -799,8 +806,8 @@
+@@ -799,8 +805,8 @@
  ** Warning -- print a warning message preceded by the program name.
  ******/
  
@@ -205,7 +205,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	(void)fprintf(stderr, "%s: warning: %s %s\n", sbProgName, sb1, sb2);
  }
-@@ -810,8 +817,8 @@
+@@ -810,8 +816,8 @@
  **	Stdout is flushed and detex exits.
  ******/
  
@@ -216,7 +216,7 @@ diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
  {
  	(void)fflush(stdout);
  	(void)fprintf(stderr, "%s: error: %s\n", sbProgName, sb1);
-@@ -823,7 +830,8 @@
+@@ -823,7 +829,8 @@
  ** OS2UsageExit -- print OS/2 usage message and exit.
  ******/
  

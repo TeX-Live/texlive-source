@@ -49,7 +49,22 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
  */
 
 #include "detex.h"
-#ifndef KPATHSEA
+
+#ifdef KPATHSEA
+
+#include <c-auto.h>
+#include <kpathsea/c-auto.h>
+#include <kpathsea/config.h>
+#include <kpathsea/c-memstr.h>
+#include <kpathsea/c-pathmx.h>
+#include <kpathsea/c-std.h>
+#include <kpathsea/tex-file.h>
+
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+
+#else /* KPATHSEA */
 
 #ifdef HAVE_STRING_H
 #include <string.h>
@@ -65,48 +80,10 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 #ifdef OS2
 #include <stdlib.h>
 #endif
-#ifndef NO_MALLOC_DECL
-char	*malloc();
-#endif
-#ifndef WIN32
-char *getenv();
-#endif
 
-#else
-
-#include "c-auto.h"
-#include "kpathsea/c-auto.h"
-#include "kpathsea/config.h"
-#include "kpathsea/c-memstr.h"
-#include "kpathsea/c-pathmx.h"
-#include "kpathsea/c-std.h"
-#include "kpathsea/tex-file.h"
-
-#ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#endif
-
-#endif
+#endif /* KPATHSEA */
 
 #undef IGNORE
-
-int	BeginEnv(const char *sbEnv);
-int	EndEnv(const char *sbEnv);
-void	InputFile(char *sbFile);
-void	IncludeFile(char *sbFile);
-void	AddInclude(char *sbFile);
-void	SetInputPaths(void);
-void	SetEnvIgnore(const char *sbEnvList);
-void	Warning(const char *sb1, const char *sb2); 
-void	ErrorExit(const char *sb1);
-int	SeparateList(char *sbList, char *rgsbList[] ,char chSep,int csbMax);
-int	InList(char *sbFile);
-FILE	*TexOpen(char *sbFile);
-char    *SafeMalloc(int cch, const char *sbMessage);
-#ifdef OS2
-void	yyless(int);
-void	OS2UsageExit(void);
-#endif
 
 #define	LaBEGIN		if (fLatex) BEGIN
 #define	IGNORE		if (fSpace && !fWord) putchar(' ')
@@ -117,6 +94,31 @@ void	OS2UsageExit(void);
 #define STRIPARGS(x)	cArgs=x; LaBEGIN LaMacro2
 #define	CITE(x)		if (fLatex && !fCite) KILLARGS(x)
 
+void AddInclude(char *sbFile);
+void ErrorExit(const char *sb1);
+void IncludeFile(char *sbFile);
+void InputFile(char *sbFile);
+void SetEnvIgnore(const char *sbEnvList);
+#ifndef KPATHSEA
+void SetInputPaths(void);
+#endif
+void Warning(const char *sb1, const char *sb2); 
+int BeginEnv(const char *sbEnv);
+int EndEnv(const char *sbEnv);
+int InList(char *sbFile);
+int SeparateList(char *sbList, char *rgsbList[] ,char chSep, int csbMax);
+FILE *TexOpen(char *sbFile);
+char *SafeMalloc(int cch, const char *sbMessage);
+#ifndef KPATHSEA
+char *getenv();
+#ifndef NO_MALLOC_DECL
+char	*malloc();
+#endif
+#ifdef OS2
+void	yyless(int);
+void	OS2UsageExit(void);
+#endif
+#endif /* KPATHSEA */
 
 char	*rgsbEnvIgnore[MAXENVS];	/* list of environments ignored */
 char	*rgsbIncList[MAXINCLIST];	/* list of includeonly files */
@@ -413,7 +415,7 @@ int
 main(int cArgs, char *rgsbArgs[])
 {
 	char	*pch, sbBadOpt[2];
-	const char	*sbEnvList = DEFAULTENV;
+	const char *sbEnvList = DEFAULTENV;
 	int	fSawFile = 0, iArgs = 1;
 	
 	/* get base name and decide what we are doing, detex or delatex */
@@ -691,6 +693,7 @@ InList(char *sbFile)
 	return(0);
 }
 
+#ifndef KPATHSEA
 /******
 ** SetInputPaths -- sets rgsbInputPaths to the values indicated by the
 **	TEXINPUTS environment variable if set or else DEFAULTINPUTS.  If
@@ -705,9 +708,6 @@ SetInputPaths(void)
 {
 	const char *sb;
 	char *sbPaths;
-#ifndef WIN32
-	char *getenv();
-#endif
 	int cchDefaults, cchPaths;
 
 	cchDefaults = strlen(DEFAULTINPUTS);
@@ -737,6 +737,7 @@ SetInputPaths(void)
 	    ErrorExit("TEXINPUTS environment variable has too many paths");
 #endif
 }
+#endif
 
 /******
 ** SeparateList -- takes a chSep separated list sbList, replaces the

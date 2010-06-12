@@ -1,0 +1,8 @@
+2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to detex-2.8.
+	* patch-01-ANSI-C (new): ANSI C function declarations and
+	definitions, no nested declarations.
+	* patch-03-warnings (new): Avoid compiler warnings.
+	* patch-04-kpathsea (new): Use kpse_find_file().
+
