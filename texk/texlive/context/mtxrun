@@ -2223,22 +2223,107 @@ end
 
 -- we can hash them weakly
 
-function file.collapse_path(str)
-    str = gsub(str,"\\","/")
-    if find(str,"/") then
-        str = gsub(str,"^%./",(gsub(lfs.currentdir(),"\\","/")) .. "/") -- ./xx in qualified
-        str = gsub(str,"/%./","/")
-        local n, m = 1, 1
-        while n > 0 or m > 0 do
-            str, n = gsub(str,"[^/%.]+/%.%.$","")
-            str, m = gsub(str,"[^/%.]+/%.%./","")
-        end
-        str = gsub(str,"([^/])/$","%1")
-    --  str = gsub(str,"^%./","") -- ./xx in qualified
-        str = gsub(str,"/%.$","")
+
+local insert = table.insert
+
+function file.collapse_path(str,anchor)
+    if anchor and not find(str,"^/") and not find(str,"^%a:") then
+        str = getcurrentdir() .. "/" .. str
     end
-    if str == "" then str = "." end
-    return str
+    if str == "" or str =="." then
+        return "."
+    elseif find(str,"^%.%.") then
+        str = gsub(str,"\\","/")
+        return str
+    elseif not find(str,"%.") then
+        str = gsub(str,"\\","/")
+        return str
+    end
+    str = gsub(str,"\\","/")
+    local starter, rest = match(str,"^(%a+:/*)(.-)$")
+    if starter then
+        str = rest
+    end
+    local oldelements = checkedsplit(str,"/")
+    local newelements = { }
+    local i = #oldelements
+    while i > 0 do
+        local element = oldelements[i]
+        if element == '.' then
+            -- do nothing
+        elseif element == '..' then
+            local n = i -1
+            while n > 0 do
+                local element = oldelements[n]
+                if element ~= '..' and element ~= '.' then
+                    oldelements[n] = '.'
+                    break
+                else
+                    n = n - 1
+                end
+             end
+            if n < 1 then
+               insert(newelements,1,'..')
+            end
+        elseif element ~= "" then
+            insert(newelements,1,element)
+        end
+        i = i - 1
+    end
+    if #newelements == 0 then
+        return starter or "."
+    elseif starter then
+        return starter .. concat(newelements, '/')
+    elseif find(str,"^/") then
+        return "/" .. concat(newelements,'/')
+    else
+        return concat(newelements, '/')
+    end
+end
+function file.xcollapse_path(str)
+    print('collapse', str)
+    if str == "" or str =="." then
+        return "."
+    elseif find(str,"^%.%.") then
+        return str
+    elseif not find(str,"%.") then
+        return str
+    end
+    str = gsub(str,"^%./",lfs.currentdir() .. "/") -- ./xx in qualified
+    str = gsub(str,"\\","/")
+    local oldelements = checkedsplit(str,"/")
+    local newelements = { }
+    local i = #oldelements
+    while i > 0 do
+        local element = oldelements[i]
+        if element == '.' then
+            -- do nothing
+        elseif element == '..' then
+            local n = i -1
+            while n > 0 do
+                local element = oldelements[n]
+                if element ~= '..' and element ~= '.' then
+                    oldelements[n] = '.'
+                    break
+                else
+                    n = n - 1
+                end
+             end
+            if n<1 then
+               insert(newelements,1,'..')
+            end
+        elseif element ~= "" then
+            insert(newelements,1,element)
+        end
+        i = i - 1
+    end
+    if #newelements == 0 then
+        return "."
+    elseif find(str,"^/") then
+        return "/" .. concat(newelements,'/')
+    else
+        return concat(newelements, '/')
+    end
 end
 
 --~ print(file.collapse_path("/a"))
@@ -11866,6 +11951,7 @@ own.list = { '.' }
 if own.path ~= '.' then
     table.insert(own.list,own.path)
 end
+table.insert(own.list,own.path.."/../../texmf-dist/tex/context/base")
 table.insert(own.list,own.path.."/../../../tex/context/base")
 table.insert(own.list,own.path.."/mtx")
 table.insert(own.list,own.path.."/../sources")
