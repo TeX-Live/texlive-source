@@ -126,8 +126,10 @@ Valid commands for fmtutil:
   --version                  show version info
   --help                     show this message
 
-The config file is named fmtutil.cnf, and
+The default config file is named fmtutil.cnf, and
 running  kpsewhich fmtutil.cnf  should show the active file.
+The command  kpsewhich --engine=/ --all foo.fmt  should show the
+locations of any and all foo.fmt files.
 
 For more information about fmt generation in TeX Live, try
 tlmgr --help or see http://tug.org/texlive/doc/tlmgr.html.
@@ -488,12 +490,13 @@ main()
       --test|--dolinks|--force)
           ;;
       "") break;;
-      *) abort "unknown option \`$1'. Try $progname --help for help";;
+      *) abort "unknown option \`$1'; try $progname --help if you need it";;
     esac
   do test $# -gt 0 && shift; done
 
   case "$cmd" in
-    help|"") help;;
+         "") abort "missing command; try $progname --help if you need it";;
+       help) help;;
     version) version;;
   esac
 

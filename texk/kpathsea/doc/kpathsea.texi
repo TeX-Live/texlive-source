@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.0.0
-@set month-year April 2010
+@set month-year July 2010
 
 @copying
 This file documents the Kpathsea library for path searching.

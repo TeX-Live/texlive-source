@@ -24,3 +24,9 @@ Still todo:
   and all) and a Unix machine using TDS, make it be just a `make' away.
 - Improve diagnostics, especially when files not found.
 - Eliminate `extern' declarations; use header files properly
+
+Won't do:
+- would be nice to report the full path of config.ps and psfonts.map,
+etc., if !quiet, but unfortunately these are processed before the banner
+is printed.  Can't move the banner earlier because we have to know if we
+are being quiet or not.  So, leave as debugging output only.
