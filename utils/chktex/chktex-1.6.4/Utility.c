@@ -231,7 +231,7 @@ char *strlwr(char *String)
     char TmpC;
 
     for (Bufptr = String; (TmpC = *Bufptr); Bufptr++)
-        *Bufptr = tolower(TmpC);
+        *Bufptr = tolower((unsigned char)TmpC);
 
     return (String);
 }
@@ -291,10 +291,10 @@ int strcasecmp(const char *a, const char *b)
         aa = *a++;
         bb = *b++;
     }
-    while (aa && (tolower(aa) == tolower(bb)));
+    while (aa && (tolower((unsigned char)aa) == tolower((unsigned char)bb)));
     /* bb != 0 is implicit */
 
-    return (tolower(aa) - tolower(bb));
+    return (tolower((unsigned char)aa) - tolower((unsigned char)bb));
 }
 #endif
 

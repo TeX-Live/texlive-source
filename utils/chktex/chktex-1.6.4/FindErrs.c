@@ -42,7 +42,7 @@ struct ErrMsg LaTeXMsgs[emMaxFault + 1] = {
     ERRMSGS {emMaxFault, etErr, iuOK, 0, INTERNFAULT}
 };
 
-#define istex(c)        (isalpha(c) || (AtLetter && (c == '@')))
+#define istex(c)        (isalpha((unsigned char)c) || (AtLetter && (c == '@')))
 #define CTYPE(func) \
 static int my_##func(int c) \
 { \
@@ -517,7 +517,7 @@ static void PerformBigCmd(char *CmdPtr)
             PSERR(CmdPtr - Buf, CmdLen, emNoArgFound);
     }
 
-    if (HasWord(CmdBuffer, &NotPreSpaced) && isspace(CmdPtr[-1]))
+    if (HasWord(CmdBuffer, &NotPreSpaced) && isspace((unsigned char)CmdPtr[-1]))
         PSERRA(CmdPtr - Buf - 1, 1, emRemPSSpace, CmdBuffer);
 
     if ((TmpPtr = HasWord(CmdBuffer, &NoCharNext)))
@@ -622,7 +622,7 @@ static void CheckAbbrevs(const char *Buffer)
         for (i = Abbrev.MaxLen; i >= 0; i--)
         {
             *--TmpPtr = *AbbPtr--;
-            if (!isalpha(*AbbPtr) && HasWord(TmpPtr, &Abbrev))
+            if (!isalpha((unsigned char)*AbbPtr) && HasWord(TmpPtr, &Abbrev))
                 PSERR(Buffer - Buf + 1, 1, emInterWord);
             if (!*AbbPtr)
                 break;
@@ -702,9 +702,9 @@ static void CheckDash(void)
     {
         if (LATEX_SPACE(*PrePtr) && LATEX_SPACE(*TmpPtr))
             wl = &WordDash;
-        if (isdigit(*PrePtr) && isdigit(*TmpPtr))
+        if (isdigit((unsigned char)*PrePtr) && isdigit((unsigned char)*TmpPtr))
             wl = &NumDash;
-        if (isalpha(*PrePtr) && isalpha(*TmpPtr))
+        if (isalpha((unsigned char)*PrePtr) && isalpha((unsigned char)*TmpPtr))
             wl = &HyphDash;
 
         if (wl)
@@ -845,16 +845,16 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
         {
             PrePtr = BufPtr - 1;
             Char = *BufPtr++;
-            if (isspace(Char))
+            if (isspace((unsigned char)Char))
                 Char = ' ';
 
             switch (Char)
             {
             case '~':
                 TmpPtr = NULL;
-                if (isspace(*PrePtr))
+                if (isspace((unsigned char)*PrePtr))
                     TmpPtr = PrePtr;
-                else if (isspace(*BufPtr))
+                else if (isspace((unsigned char)*BufPtr))
                     TmpPtr = BufPtr;
 
                 if (TmpPtr)
@@ -868,14 +868,14 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 SKIP_BACK(TmpPtr, TmpC,
                           (LATEX_SPACE(TmpC) || strchr("{}$", TmpC)));
 
-                if (isdigit(*TmpPtr))
+                if (isdigit((unsigned char)*TmpPtr))
                 {
                     TmpPtr = BufPtr;
 
                     SKIP_AHEAD(TmpPtr, TmpC,
                                (LATEX_SPACE(TmpC) || strchr("{}$", TmpC)));
 
-                    if (isdigit(*TmpPtr))
+                    if (isdigit((unsigned char)*TmpPtr))
                         HERE(1, emUseTimes);
                 }
                 /* FALLTHRU */
@@ -931,7 +931,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
             case 'W':          /* case 'X': */
             case 'Y':
             case 'Z':
-                if (!isalpha(*PrePtr) && (*PrePtr != '\\') && MathMode)
+                if (!isalpha((unsigned char)*PrePtr) && (*PrePtr != '\\') && MathMode)
                 {
                     TmpPtr = BufPtr;
                     CmdPtr = CmdBuffer;
@@ -940,7 +940,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                         *CmdPtr++ = Char;
                         Char = *TmpPtr++;
                     }
-                    while (isalpha(Char));
+                    while (isalpha((unsigned char)Char));
 
                     *CmdPtr = 0;
 
@@ -978,11 +978,11 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 SKIP_AHEAD(TmpPtr, TmpC, strchr(LTX_GenPunc, TmpC));
                 if (LATEX_SPACE(*TmpPtr))
                 {
-                    if (!isupper(*PrePtr) && (*PrePtr != '@') &&
+                    if (!isupper((unsigned char)*PrePtr) && (*PrePtr != '@') &&
                         (*PrePtr != '.'))
                     {
                         SKIP_AHEAD(TmpPtr, TmpC, LATEX_SPACE(TmpC));
-                        if (islower(*TmpPtr))
+                        if (islower((unsigned char)*TmpPtr))
                             PSERR(BufPtr - Buf, 1, emInterWord);
                         else
                             CheckAbbrevs(&BufPtr[-1]);
@@ -996,14 +996,14 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
             case ';':
                 /* Regexp: "[A-Z][A-Z][.!?:;]\s+" */
 
-                if (isspace(*BufPtr) && isupper(*PrePtr) &&
-                    (isupper(PrePtr[-1]) || (Char != '.')))
+                if (isspace((unsigned char)*BufPtr) && isupper((unsigned char)*PrePtr) &&
+                    (isupper((unsigned char)PrePtr[-1]) || (Char != '.')))
                     HERE(1, emInterSent);
 
                 /* FALLTHRU */
             case ',':
-                if (isspace(*PrePtr) &&
-                    !(isdigit(*BufPtr) &&
+                if (isspace((unsigned char)*PrePtr) &&
+                    !(isdigit((unsigned char)*BufPtr) &&
                       ((BufPtr[-1] == '.') || (BufPtr[-1] == ','))))
                     PSERR(PrePtr - Buf, 1, emSpacePunct);
 
@@ -1050,8 +1050,8 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 switch (Char)
                 {
                 case '\'':
-                    if (isalpha(*TmpPtr) &&
-                        (strchr(LTX_GenPunc, *PrePtr) || isspace(*PrePtr)))
+                    if (isalpha((unsigned char)*TmpPtr) &&
+                        (strchr(LTX_GenPunc, *PrePtr) || isspace((unsigned char)*PrePtr)))
                         HERE(TmpPtr - BufPtr + 1, emBeginQ);
 
                     /* Now check quote style */
@@ -1061,7 +1061,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
 
                     {
                         char *WordPtr = PrePtr;
-                        SKIP_BACK(WordPtr, TmpC, (isalnum(TmpC) ||
+                        SKIP_BACK(WordPtr, TmpC, (isalnum((unsigned char)TmpC) ||
                                                   strchr(LTX_GenPunc, TmpC)));
 
                         if (*WordPtr != '`')
@@ -1080,8 +1080,8 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
 
                     break;
                 case '`':
-                    if (isalpha(*PrePtr) &&
-                        (strchr(LTX_GenPunc, *TmpPtr) || isspace(*TmpPtr)))
+                    if (isalpha((unsigned char)*PrePtr) &&
+                        (strchr(LTX_GenPunc, *TmpPtr) || isspace((unsigned char)*TmpPtr)))
                         HERE(TmpPtr - BufPtr + 1, emEndQ);
                     break;
                 }
@@ -1129,9 +1129,9 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
 
                     ErrPtr = TmpPtr;
 
-                    if (isalpha(*TmpPtr))
+                    if (isalpha((unsigned char)*TmpPtr))
                         pstcb = &my_isalpha;
-                    else if (isdigit(*TmpPtr))
+                    else if (isdigit((unsigned char)*TmpPtr))
                         pstcb = &my_isdigit;
                     else
                         break;
@@ -1164,7 +1164,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 {
                     PSERR(BufPtr - Buf, 1, emSpaceTerm);
                 }
-                else if ((*BufPtr == '\\') && (!isalpha(BufPtr[1])) &&
+                else if ((*BufPtr == '\\') && (!isalpha((unsigned char)BufPtr[1])) &&
                          (!LATEX_SPACE(BufPtr[1])))
                     PSERR(BufPtr - Buf, 2, emNotIntended);
 
@@ -1174,7 +1174,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 break;
 
             case '(':
-                if (!(!*PrePtr || LATEX_SPACE(*PrePtr) || isdigit(*PrePtr)) ||
+                if (!(!*PrePtr || LATEX_SPACE(*PrePtr) || isdigit((unsigned char)*PrePtr)) ||
                     strchr("([{`~", *PrePtr))
                 {
                     if (PrePtr[-1] != '\\')     /* Short cmds */
@@ -1186,16 +1186,16 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                                    "in front of");
                     }
                 }
-                if (isspace(*BufPtr))
+                if (isspace((unsigned char)*BufPtr))
                     PSERRA(BufPtr - Buf, 1, emNoSpaceParen, "after");
                 HandleBracket(Char);
                 break;
 
             case ')':
-                if (isspace(*PrePtr))
+                if (isspace((unsigned char)*PrePtr))
                     PSERRA(BufPtr - Buf - 1, 1, emNoSpaceParen,
                            "in front of");
-                if (isalpha(*BufPtr))
+                if (isalpha((unsigned char)*BufPtr))
                     PSERRA(BufPtr - Buf, 1, emSpaceParen, "after");
                 HandleBracket(Char);
                 break;

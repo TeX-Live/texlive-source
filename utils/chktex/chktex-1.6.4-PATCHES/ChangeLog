@@ -1,3 +1,9 @@
+2010-06-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-ctype-bug (new): Bug fix:
+	Cast all arguments of isalpha() and similar to 'unsigned char'.
+	Patch from Jukka Salmi [tlbuild, 10 Jun 2010].
+
 2010-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-const: Change OutputFormat and PipeOutputFormat back

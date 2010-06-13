@@ -243,11 +243,11 @@ static void SetupLists(void)
 
     FORWL(i, AbbrevCase)
     {
-        if (isalpha(ThisItem[0]))
+        if (isalpha((unsigned char)ThisItem[0]))
         {
-            ThisItem[0] = toupper(ThisItem[0]);
+            ThisItem[0] = toupper((unsigned char)ThisItem[0]);
             InsertWord(ThisItem, &Abbrev);
-            ThisItem[0] = tolower(ThisItem[0]);
+            ThisItem[0] = tolower((unsigned char)ThisItem[0]);
         }
         InsertWord(ThisItem, &Abbrev);
     }
@@ -401,7 +401,7 @@ int main(int argc, char **argv)
             NOCOMMON(Italic, ItalCmd);
             NOCOMMON(LowDots, CenterDots);
 
-            if (TabSize && isdigit(*TabSize))
+            if (TabSize && isdigit((unsigned char)*TabSize))
                 Tab = strtol(TabSize, NULL, 10);
 
             if (OpenOut())
@@ -691,7 +691,7 @@ static int ParseNumArg(long *Dest,      /* Where to put the value */
                        long Default,    /* Value to put in if no in argue */
                        char **Argument) /* optarg or similar */
 {
-    if (Argument && *Argument && isdigit(**Argument))
+    if (Argument && *Argument && isdigit((unsigned char)**Argument))
         *Dest = strtol(*Argument, Argument, 10);
     else
         *Dest = Default;
@@ -838,7 +838,7 @@ static int ParseArgs(int argc, char **argv)
             ErrType = etWarn; InUse = iuOK; LAST(warntype); case 'e':
             ErrType = etErr; InUse = iuOK; LAST(warntype); case 'm':
             ErrType = etMsg; InUse = iuOK; LAST(warntype); case 'n':
-            ErrType = etMsg; InUse = iuNotUser; LAST(warntype);) if (isdigit(*optarg))
+            ErrType = etMsg; InUse = iuNotUser; LAST(warntype);) if (isdigit((unsigned char)*optarg))
                 {
                     nextc = ParseNumArg(&Err, -1, &optarg);
                     if (betw(emMinFault, Err, emMaxFault))

@@ -348,7 +348,7 @@ static enum Token ReadWord(char *Buffer, FILE * fh)
                         while (Cont)
                         {
                             Chr = *String++;
-                            if (isalpha(Chr))
+                            if (isalpha((unsigned char)Chr))
                                 *Ptr++ = Chr;
                             else
                                 Cont = FALSE;
@@ -374,7 +374,7 @@ static enum Token ReadWord(char *Buffer, FILE * fh)
                                 *Ptr++ = Chr;
                                 break;
                             default:
-                                if (!isspace(Chr))
+                                if (!isspace((unsigned char)Chr))
                                     *Ptr++ = Chr;
                                 else
                                     Cont = FALSE;
@@ -417,7 +417,7 @@ static char MapChars(char **String)
 
     Chr = *((char *) (*String)++);
 
-    switch (tolower(Chr))
+    switch (tolower((unsigned char)Chr))
     {
         MAP(QUOTE, QUOTE);
         MAP(ESCAPE, ESCAPE);
@@ -439,12 +439,12 @@ static char MapChars(char **String)
         for (Cnt = 0; Cnt < 2; Cnt++)
         {
             Chr = *((*String)++);
-            if (isxdigit(Chr))
+            if (isxdigit((unsigned char)Chr))
             {
-                Chr = toupper(Chr);
+                Chr = toupper((unsigned char)Chr);
                 Tmp = (Tmp << 4) + Chr;
 
-                if (isdigit(Chr))
+                if (isdigit((unsigned char)Chr))
                     Tmp -= '0';
                 else
                     Tmp -= 'A' - 10;
@@ -490,7 +490,7 @@ static char MapChars(char **String)
     case 'd':
         for (Cnt = 0; Cnt < 3; Cnt++)
         {
-            if (isdigit(Chr = *((*String)++)))
+            if (isdigit((unsigned char)(Chr = *((*String)++))))
                 Tmp = (Tmp * 10) + Chr - '0';
             else
             {
