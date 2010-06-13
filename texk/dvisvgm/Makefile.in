@@ -40,7 +40,7 @@ bin_PROGRAMS = dvisvgm$(EXEEXT)
 @dlloader_TRUE@	$(DVISVGM_TREE)/src/DLLoader.cpp
 
 subdir = .
-DIST_COMMON = README $(am__configure_deps) \
+DIST_COMMON = $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -82,23 +82,23 @@ libdvisvgm_a_LIBADD =
 @dlloader_TRUE@am__objects_1 = DLLoader.$(OBJEXT)
 nodist_libdvisvgm_a_OBJECTS = BgColorSpecialHandler.$(OBJEXT) \
 	Bitmap.$(OBJEXT) BoundingBox.$(OBJEXT) Calculator.$(OBJEXT) \
-	CharmapTranslator.$(OBJEXT) CmdLineParserBase.$(OBJEXT) \
-	Color.$(OBJEXT) ColorSpecialHandler.$(OBJEXT) \
-	CommandLine.$(OBJEXT) Directory.$(OBJEXT) DVIActions.$(OBJEXT) \
-	DVIReader.$(OBJEXT) DvisvgmSpecialHandler.$(OBJEXT) \
-	DVIToSVG.$(OBJEXT) DVIToSVGActions.$(OBJEXT) \
-	EmSpecialHandler.$(OBJEXT) FileFinder.$(OBJEXT) \
-	FileSystem.$(OBJEXT) Font.$(OBJEXT) FontCache.$(OBJEXT) \
-	FontEncoding.$(OBJEXT) FontEngine.$(OBJEXT) \
-	FontGlyph.$(OBJEXT) FontManager.$(OBJEXT) FontMap.$(OBJEXT) \
+	CmdLineParserBase.$(OBJEXT) Color.$(OBJEXT) \
+	ColorSpecialHandler.$(OBJEXT) CommandLine.$(OBJEXT) \
+	Directory.$(OBJEXT) DVIActions.$(OBJEXT) DVIReader.$(OBJEXT) \
+	DvisvgmSpecialHandler.$(OBJEXT) DVIToSVG.$(OBJEXT) \
+	DVIToSVGActions.$(OBJEXT) EmSpecialHandler.$(OBJEXT) \
+	FileFinder.$(OBJEXT) FilePath.$(OBJEXT) FileSystem.$(OBJEXT) \
+	Font.$(OBJEXT) FontCache.$(OBJEXT) FontEncoding.$(OBJEXT) \
+	FontEngine.$(OBJEXT) FontManager.$(OBJEXT) FontMap.$(OBJEXT) \
 	GFReader.$(OBJEXT) GFGlyphTracer.$(OBJEXT) GFTracer.$(OBJEXT) \
 	Ghostscript.$(OBJEXT) InputBuffer.$(OBJEXT) \
 	InputReader.$(OBJEXT) Length.$(OBJEXT) Matrix.$(OBJEXT) \
-	Message.$(OBJEXT) MetafontWrapper.$(OBJEXT) PageSize.$(OBJEXT) \
+	Message.$(OBJEXT) MetafontWrapper.$(OBJEXT) \
+	PageRanges.$(OBJEXT) PageSize.$(OBJEXT) \
 	PSInterpreter.$(OBJEXT) PsSpecialHandler.$(OBJEXT) \
 	SpecialManager.$(OBJEXT) StreamReader.$(OBJEXT) \
-	SVGFontEmitter.$(OBJEXT) SVGFontTraceEmitter.$(OBJEXT) \
-	SVGTree.$(OBJEXT) TFM.$(OBJEXT) TpicSpecialHandler.$(OBJEXT) \
+	StreamWriter.$(OBJEXT) SVGTree.$(OBJEXT) System.$(OBJEXT) \
+	Terminal.$(OBJEXT) TFM.$(OBJEXT) TpicSpecialHandler.$(OBJEXT) \
 	VFReader.$(OBJEXT) XMLDocument.$(OBJEXT) XMLNode.$(OBJEXT) \
 	XMLString.$(OBJEXT) $(am__objects_1)
 libdvisvgm_a_OBJECTS = $(nodist_libdvisvgm_a_OBJECTS)
@@ -343,7 +343,6 @@ nodist_libdvisvgm_a_SOURCES =  \
 	$(DVISVGM_TREE)/src/Bitmap.cpp \
 	$(DVISVGM_TREE)/src/BoundingBox.cpp \
 	$(DVISVGM_TREE)/src/Calculator.cpp \
-	$(DVISVGM_TREE)/src/CharmapTranslator.cpp \
 	$(DVISVGM_TREE)/src/CmdLineParserBase.cpp \
 	$(DVISVGM_TREE)/src/Color.cpp \
 	$(DVISVGM_TREE)/src/ColorSpecialHandler.cpp \
@@ -356,11 +355,11 @@ nodist_libdvisvgm_a_SOURCES =  \
 	$(DVISVGM_TREE)/src/DVIToSVGActions.cpp \
 	$(DVISVGM_TREE)/src/EmSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/FileFinder.cpp \
+	$(DVISVGM_TREE)/src/FilePath.cpp \
 	$(DVISVGM_TREE)/src/FileSystem.cpp \
 	$(DVISVGM_TREE)/src/Font.cpp $(DVISVGM_TREE)/src/FontCache.cpp \
 	$(DVISVGM_TREE)/src/FontEncoding.cpp \
 	$(DVISVGM_TREE)/src/FontEngine.cpp \
-	$(DVISVGM_TREE)/src/FontGlyph.cpp \
 	$(DVISVGM_TREE)/src/FontManager.cpp \
 	$(DVISVGM_TREE)/src/FontMap.cpp \
 	$(DVISVGM_TREE)/src/GFReader.cpp \
@@ -372,14 +371,15 @@ nodist_libdvisvgm_a_SOURCES =  \
 	$(DVISVGM_TREE)/src/Length.cpp $(DVISVGM_TREE)/src/Matrix.cpp \
 	$(DVISVGM_TREE)/src/Message.cpp \
 	$(DVISVGM_TREE)/src/MetafontWrapper.cpp \
+	$(DVISVGM_TREE)/src/PageRanges.cpp \
 	$(DVISVGM_TREE)/src/PageSize.cpp \
 	$(DVISVGM_TREE)/src/PSInterpreter.cpp \
 	$(DVISVGM_TREE)/src/PsSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/SpecialManager.cpp \
 	$(DVISVGM_TREE)/src/StreamReader.cpp \
-	$(DVISVGM_TREE)/src/SVGFontEmitter.cpp \
-	$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp \
-	$(DVISVGM_TREE)/src/SVGTree.cpp $(DVISVGM_TREE)/src/TFM.cpp \
+	$(DVISVGM_TREE)/src/StreamWriter.cpp \
+	$(DVISVGM_TREE)/src/SVGTree.cpp $(DVISVGM_TREE)/src/System.cpp \
+	$(DVISVGM_TREE)/src/Terminal.cpp $(DVISVGM_TREE)/src/TFM.cpp \
 	$(DVISVGM_TREE)/src/TpicSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/VFReader.cpp \
 	$(DVISVGM_TREE)/src/XMLDocument.cpp \
@@ -516,7 +516,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bitmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BoundingBox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Calculator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CharmapTranslator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CmdLineParserBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColorSpecialHandler.Po@am__quote@
@@ -530,12 +529,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DvisvgmSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EmSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileFinder.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FilePath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontEncoding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontEngine.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontGlyph.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFGlyphTracer.Po@am__quote@
@@ -549,14 +548,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MetafontWrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSInterpreter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageRanges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageSize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PsSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGFontEmitter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGFontTraceEmitter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecialManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamReader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamWriter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/System.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TFM.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Terminal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TpicSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLDocument.Po@am__quote@
@@ -722,20 +723,6 @@ Calculator.obj: $(DVISVGM_TREE)/src/Calculator.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/Calculator.cpp' object='Calculator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Calculator.obj `if test -f '$(DVISVGM_TREE)/src/Calculator.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/Calculator.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/Calculator.cpp'; fi`
-
-CharmapTranslator.o: $(DVISVGM_TREE)/src/CharmapTranslator.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CharmapTranslator.o -MD -MP -MF $(DEPDIR)/CharmapTranslator.Tpo -c -o CharmapTranslator.o `test -f '$(DVISVGM_TREE)/src/CharmapTranslator.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/CharmapTranslator.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/CharmapTranslator.Tpo $(DEPDIR)/CharmapTranslator.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/CharmapTranslator.cpp' object='CharmapTranslator.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CharmapTranslator.o `test -f '$(DVISVGM_TREE)/src/CharmapTranslator.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/CharmapTranslator.cpp
-
-CharmapTranslator.obj: $(DVISVGM_TREE)/src/CharmapTranslator.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CharmapTranslator.obj -MD -MP -MF $(DEPDIR)/CharmapTranslator.Tpo -c -o CharmapTranslator.obj `if test -f '$(DVISVGM_TREE)/src/CharmapTranslator.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/CharmapTranslator.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/CharmapTranslator.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/CharmapTranslator.Tpo $(DEPDIR)/CharmapTranslator.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/CharmapTranslator.cpp' object='CharmapTranslator.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CharmapTranslator.obj `if test -f '$(DVISVGM_TREE)/src/CharmapTranslator.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/CharmapTranslator.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/CharmapTranslator.cpp'; fi`
 
 CmdLineParserBase.o: $(DVISVGM_TREE)/src/CmdLineParserBase.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CmdLineParserBase.o -MD -MP -MF $(DEPDIR)/CmdLineParserBase.Tpo -c -o CmdLineParserBase.o `test -f '$(DVISVGM_TREE)/src/CmdLineParserBase.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/CmdLineParserBase.cpp
@@ -905,6 +892,20 @@ FileFinder.obj: $(DVISVGM_TREE)/src/FileFinder.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileFinder.obj `if test -f '$(DVISVGM_TREE)/src/FileFinder.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/FileFinder.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/FileFinder.cpp'; fi`
 
+FilePath.o: $(DVISVGM_TREE)/src/FilePath.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FilePath.o -MD -MP -MF $(DEPDIR)/FilePath.Tpo -c -o FilePath.o `test -f '$(DVISVGM_TREE)/src/FilePath.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/FilePath.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FilePath.Tpo $(DEPDIR)/FilePath.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/FilePath.cpp' object='FilePath.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FilePath.o `test -f '$(DVISVGM_TREE)/src/FilePath.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/FilePath.cpp
+
+FilePath.obj: $(DVISVGM_TREE)/src/FilePath.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FilePath.obj -MD -MP -MF $(DEPDIR)/FilePath.Tpo -c -o FilePath.obj `if test -f '$(DVISVGM_TREE)/src/FilePath.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/FilePath.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/FilePath.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FilePath.Tpo $(DEPDIR)/FilePath.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/FilePath.cpp' object='FilePath.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FilePath.obj `if test -f '$(DVISVGM_TREE)/src/FilePath.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/FilePath.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/FilePath.cpp'; fi`
+
 FileSystem.o: $(DVISVGM_TREE)/src/FileSystem.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileSystem.o -MD -MP -MF $(DEPDIR)/FileSystem.Tpo -c -o FileSystem.o `test -f '$(DVISVGM_TREE)/src/FileSystem.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/FileSystem.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FileSystem.Tpo $(DEPDIR)/FileSystem.Po
@@ -974,20 +975,6 @@ FontEngine.obj: $(DVISVGM_TREE)/src/FontEngine.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/FontEngine.cpp' object='FontEngine.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontEngine.obj `if test -f '$(DVISVGM_TREE)/src/FontEngine.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/FontEngine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/FontEngine.cpp'; fi`
-
-FontGlyph.o: $(DVISVGM_TREE)/src/FontGlyph.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontGlyph.o -MD -MP -MF $(DEPDIR)/FontGlyph.Tpo -c -o FontGlyph.o `test -f '$(DVISVGM_TREE)/src/FontGlyph.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/FontGlyph.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FontGlyph.Tpo $(DEPDIR)/FontGlyph.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/FontGlyph.cpp' object='FontGlyph.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontGlyph.o `test -f '$(DVISVGM_TREE)/src/FontGlyph.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/FontGlyph.cpp
-
-FontGlyph.obj: $(DVISVGM_TREE)/src/FontGlyph.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontGlyph.obj -MD -MP -MF $(DEPDIR)/FontGlyph.Tpo -c -o FontGlyph.obj `if test -f '$(DVISVGM_TREE)/src/FontGlyph.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/FontGlyph.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/FontGlyph.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FontGlyph.Tpo $(DEPDIR)/FontGlyph.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/FontGlyph.cpp' object='FontGlyph.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontGlyph.obj `if test -f '$(DVISVGM_TREE)/src/FontGlyph.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/FontGlyph.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/FontGlyph.cpp'; fi`
 
 FontManager.o: $(DVISVGM_TREE)/src/FontManager.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontManager.o -MD -MP -MF $(DEPDIR)/FontManager.Tpo -c -o FontManager.o `test -f '$(DVISVGM_TREE)/src/FontManager.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/FontManager.cpp
@@ -1157,6 +1144,20 @@ MetafontWrapper.obj: $(DVISVGM_TREE)/src/MetafontWrapper.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MetafontWrapper.obj `if test -f '$(DVISVGM_TREE)/src/MetafontWrapper.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/MetafontWrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/MetafontWrapper.cpp'; fi`
 
+PageRanges.o: $(DVISVGM_TREE)/src/PageRanges.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PageRanges.o -MD -MP -MF $(DEPDIR)/PageRanges.Tpo -c -o PageRanges.o `test -f '$(DVISVGM_TREE)/src/PageRanges.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/PageRanges.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PageRanges.Tpo $(DEPDIR)/PageRanges.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/PageRanges.cpp' object='PageRanges.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PageRanges.o `test -f '$(DVISVGM_TREE)/src/PageRanges.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/PageRanges.cpp
+
+PageRanges.obj: $(DVISVGM_TREE)/src/PageRanges.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PageRanges.obj -MD -MP -MF $(DEPDIR)/PageRanges.Tpo -c -o PageRanges.obj `if test -f '$(DVISVGM_TREE)/src/PageRanges.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/PageRanges.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/PageRanges.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PageRanges.Tpo $(DEPDIR)/PageRanges.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/PageRanges.cpp' object='PageRanges.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PageRanges.obj `if test -f '$(DVISVGM_TREE)/src/PageRanges.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/PageRanges.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/PageRanges.cpp'; fi`
+
 PageSize.o: $(DVISVGM_TREE)/src/PageSize.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PageSize.o -MD -MP -MF $(DEPDIR)/PageSize.Tpo -c -o PageSize.o `test -f '$(DVISVGM_TREE)/src/PageSize.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/PageSize.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PageSize.Tpo $(DEPDIR)/PageSize.Po
@@ -1227,33 +1228,19 @@ StreamReader.obj: $(DVISVGM_TREE)/src/StreamReader.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o StreamReader.obj `if test -f '$(DVISVGM_TREE)/src/StreamReader.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/StreamReader.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/StreamReader.cpp'; fi`
 
-SVGFontEmitter.o: $(DVISVGM_TREE)/src/SVGFontEmitter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SVGFontEmitter.o -MD -MP -MF $(DEPDIR)/SVGFontEmitter.Tpo -c -o SVGFontEmitter.o `test -f '$(DVISVGM_TREE)/src/SVGFontEmitter.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/SVGFontEmitter.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SVGFontEmitter.Tpo $(DEPDIR)/SVGFontEmitter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/SVGFontEmitter.cpp' object='SVGFontEmitter.o' libtool=no @AMDEPBACKSLASH@
+StreamWriter.o: $(DVISVGM_TREE)/src/StreamWriter.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT StreamWriter.o -MD -MP -MF $(DEPDIR)/StreamWriter.Tpo -c -o StreamWriter.o `test -f '$(DVISVGM_TREE)/src/StreamWriter.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/StreamWriter.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/StreamWriter.Tpo $(DEPDIR)/StreamWriter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/StreamWriter.cpp' object='StreamWriter.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SVGFontEmitter.o `test -f '$(DVISVGM_TREE)/src/SVGFontEmitter.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/SVGFontEmitter.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o StreamWriter.o `test -f '$(DVISVGM_TREE)/src/StreamWriter.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/StreamWriter.cpp
 
-SVGFontEmitter.obj: $(DVISVGM_TREE)/src/SVGFontEmitter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SVGFontEmitter.obj -MD -MP -MF $(DEPDIR)/SVGFontEmitter.Tpo -c -o SVGFontEmitter.obj `if test -f '$(DVISVGM_TREE)/src/SVGFontEmitter.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/SVGFontEmitter.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/SVGFontEmitter.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SVGFontEmitter.Tpo $(DEPDIR)/SVGFontEmitter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/SVGFontEmitter.cpp' object='SVGFontEmitter.obj' libtool=no @AMDEPBACKSLASH@
+StreamWriter.obj: $(DVISVGM_TREE)/src/StreamWriter.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT StreamWriter.obj -MD -MP -MF $(DEPDIR)/StreamWriter.Tpo -c -o StreamWriter.obj `if test -f '$(DVISVGM_TREE)/src/StreamWriter.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/StreamWriter.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/StreamWriter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/StreamWriter.Tpo $(DEPDIR)/StreamWriter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/StreamWriter.cpp' object='StreamWriter.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SVGFontEmitter.obj `if test -f '$(DVISVGM_TREE)/src/SVGFontEmitter.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/SVGFontEmitter.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/SVGFontEmitter.cpp'; fi`
-
-SVGFontTraceEmitter.o: $(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SVGFontTraceEmitter.o -MD -MP -MF $(DEPDIR)/SVGFontTraceEmitter.Tpo -c -o SVGFontTraceEmitter.o `test -f '$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SVGFontTraceEmitter.Tpo $(DEPDIR)/SVGFontTraceEmitter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp' object='SVGFontTraceEmitter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SVGFontTraceEmitter.o `test -f '$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp
-
-SVGFontTraceEmitter.obj: $(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SVGFontTraceEmitter.obj -MD -MP -MF $(DEPDIR)/SVGFontTraceEmitter.Tpo -c -o SVGFontTraceEmitter.obj `if test -f '$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SVGFontTraceEmitter.Tpo $(DEPDIR)/SVGFontTraceEmitter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp' object='SVGFontTraceEmitter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SVGFontTraceEmitter.obj `if test -f '$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o StreamWriter.obj `if test -f '$(DVISVGM_TREE)/src/StreamWriter.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/StreamWriter.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/StreamWriter.cpp'; fi`
 
 SVGTree.o: $(DVISVGM_TREE)/src/SVGTree.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SVGTree.o -MD -MP -MF $(DEPDIR)/SVGTree.Tpo -c -o SVGTree.o `test -f '$(DVISVGM_TREE)/src/SVGTree.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/SVGTree.cpp
@@ -1268,6 +1255,34 @@ SVGTree.obj: $(DVISVGM_TREE)/src/SVGTree.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/SVGTree.cpp' object='SVGTree.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SVGTree.obj `if test -f '$(DVISVGM_TREE)/src/SVGTree.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/SVGTree.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/SVGTree.cpp'; fi`
+
+System.o: $(DVISVGM_TREE)/src/System.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT System.o -MD -MP -MF $(DEPDIR)/System.Tpo -c -o System.o `test -f '$(DVISVGM_TREE)/src/System.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/System.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/System.Tpo $(DEPDIR)/System.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/System.cpp' object='System.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o System.o `test -f '$(DVISVGM_TREE)/src/System.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/System.cpp
+
+System.obj: $(DVISVGM_TREE)/src/System.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT System.obj -MD -MP -MF $(DEPDIR)/System.Tpo -c -o System.obj `if test -f '$(DVISVGM_TREE)/src/System.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/System.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/System.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/System.Tpo $(DEPDIR)/System.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/System.cpp' object='System.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o System.obj `if test -f '$(DVISVGM_TREE)/src/System.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/System.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/System.cpp'; fi`
+
+Terminal.o: $(DVISVGM_TREE)/src/Terminal.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Terminal.o -MD -MP -MF $(DEPDIR)/Terminal.Tpo -c -o Terminal.o `test -f '$(DVISVGM_TREE)/src/Terminal.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/Terminal.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Terminal.Tpo $(DEPDIR)/Terminal.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/Terminal.cpp' object='Terminal.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Terminal.o `test -f '$(DVISVGM_TREE)/src/Terminal.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/Terminal.cpp
+
+Terminal.obj: $(DVISVGM_TREE)/src/Terminal.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Terminal.obj -MD -MP -MF $(DEPDIR)/Terminal.Tpo -c -o Terminal.obj `if test -f '$(DVISVGM_TREE)/src/Terminal.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/Terminal.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/Terminal.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Terminal.Tpo $(DEPDIR)/Terminal.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/Terminal.cpp' object='Terminal.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Terminal.obj `if test -f '$(DVISVGM_TREE)/src/Terminal.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/Terminal.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/Terminal.cpp'; fi`
 
 TFM.o: $(DVISVGM_TREE)/src/TFM.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TFM.o -MD -MP -MF $(DEPDIR)/TFM.Tpo -c -o TFM.o `test -f '$(DVISVGM_TREE)/src/TFM.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/TFM.cpp

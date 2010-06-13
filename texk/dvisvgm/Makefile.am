@@ -14,9 +14,6 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 ## We want to re-distribute the whole original dvisvgm source tree.
 ##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
-## Thus nodist_* for all files in $(DVISVGM_TREE).
 EXTRA_DIST = $(DVISVGM_TREE)
 
 ## Patches applied to the original source tree
@@ -57,7 +54,6 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/Bitmap.cpp \
 	$(DVISVGM_TREE)/src/BoundingBox.cpp \
 	$(DVISVGM_TREE)/src/Calculator.cpp \
-	$(DVISVGM_TREE)/src/CharmapTranslator.cpp \
 	$(DVISVGM_TREE)/src/CmdLineParserBase.cpp \
 	$(DVISVGM_TREE)/src/Color.cpp \
 	$(DVISVGM_TREE)/src/ColorSpecialHandler.cpp \
@@ -70,12 +66,12 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/DVIToSVGActions.cpp \
 	$(DVISVGM_TREE)/src/EmSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/FileFinder.cpp \
+	$(DVISVGM_TREE)/src/FilePath.cpp \
 	$(DVISVGM_TREE)/src/FileSystem.cpp \
 	$(DVISVGM_TREE)/src/Font.cpp \
 	$(DVISVGM_TREE)/src/FontCache.cpp \
 	$(DVISVGM_TREE)/src/FontEncoding.cpp \
 	$(DVISVGM_TREE)/src/FontEngine.cpp \
-	$(DVISVGM_TREE)/src/FontGlyph.cpp \
 	$(DVISVGM_TREE)/src/FontManager.cpp \
 	$(DVISVGM_TREE)/src/FontMap.cpp \
 	$(DVISVGM_TREE)/src/GFReader.cpp \
@@ -88,14 +84,16 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/Matrix.cpp \
 	$(DVISVGM_TREE)/src/Message.cpp \
 	$(DVISVGM_TREE)/src/MetafontWrapper.cpp \
+	$(DVISVGM_TREE)/src/PageRanges.cpp \
 	$(DVISVGM_TREE)/src/PageSize.cpp \
 	$(DVISVGM_TREE)/src/PSInterpreter.cpp \
 	$(DVISVGM_TREE)/src/PsSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/SpecialManager.cpp \
 	$(DVISVGM_TREE)/src/StreamReader.cpp \
-	$(DVISVGM_TREE)/src/SVGFontEmitter.cpp \
-	$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp \
+	$(DVISVGM_TREE)/src/StreamWriter.cpp \
 	$(DVISVGM_TREE)/src/SVGTree.cpp \
+	$(DVISVGM_TREE)/src/System.cpp \
+	$(DVISVGM_TREE)/src/Terminal.cpp \
 	$(DVISVGM_TREE)/src/TFM.cpp \
 	$(DVISVGM_TREE)/src/TpicSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/VFReader.cpp \
