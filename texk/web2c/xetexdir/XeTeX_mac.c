@@ -35,9 +35,9 @@ authorization from the copyright holders.
  */
 
 #ifdef __POWERPC__
-#define MAC_OS_X_VERSION_MIN_REQUIRED	MAC_OS_X_VERSION_10_2
+#define MAC_OS_X_VERSION_MIN_REQUIRED	1030
 #else
-#define MAC_OS_X_VERSION_MIN_REQUIRED	MAC_OS_X_VERSION_10_4
+#define MAC_OS_X_VERSION_MIN_REQUIRED	1040
 #endif
 
 #define EXTERN extern
@@ -492,6 +492,7 @@ ats_failed:
 
 int GetGlyphIDFromCGFont(ATSFontRef atsFontRef, const char* glyphName)
 {
+#if defined(MAC_OS_X_VERSION_10_5) && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 	if (&CGFontGetGlyphWithGlyphName == NULL)
 		return 0;
 
@@ -512,6 +513,9 @@ int GetGlyphIDFromCGFont(ATSFontRef atsFontRef, const char* glyphName)
 		}
 	}
 	return rval;
+#else
+    return 0;
+#endif
 }
 
 char*
@@ -562,6 +566,7 @@ GetGlyphNameFromCGFont(ATSFontRef atsFontRef, UInt16 gid, int* len)
 	static char buffer[256];
 	buffer[0] = 0;
 
+#if defined(MAC_OS_X_VERSION_10_5) && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 	if (&CGFontCopyGlyphNameForGlyph == NULL)
 		return &buffer[0];
 
@@ -581,6 +586,8 @@ GetGlyphNameFromCGFont(ATSFontRef atsFontRef, UInt16 gid, int* len)
 			CGFontRelease(cgfont);
 		}
 	}
+#endif
+
 	return &buffer[0];
 }
 

@@ -59,6 +59,7 @@ authorization from the copyright holders.
 
 #ifdef XETEX_MAC
 #undef input /* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
+#undef output
 #include <Carbon/Carbon.h>
 #endif
 

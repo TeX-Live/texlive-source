@@ -10,7 +10,7 @@ AM_CPPFLAGS =
 AM_CFLAGS = $(WARNING_CFLAGS)
 ## Not yet for C++ (too many warnings)
 AM_CXXFLAGS = ## $(WARNING_CXXFLAGS)
-AM_OBJCFLAGS = $(WARNING_OBJCFLAGS)
+AM_OBJCFLAGS = $(WARNING_OBJCFLAGS) -fobjc-exceptions
 
 if build
 bin_PROGRAMS = T1Wrap xdv2pdf

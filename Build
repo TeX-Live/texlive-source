@@ -47,10 +47,14 @@ fi
 
 # For MacOSX PowerPC, we want to keep working on 10.3.
 # For MacOSX Intel, though, the earliest system is 10.4.
-if sh build-aux/config.guess | grep powerpc.*darwin >/dev/null \
-   && test -z "$MACOSX_DEPLOYMENT_TARGET"; then
-  MACOSX_DEPLOYMENT_TARGET=10.3
-  export MACOSX_DEPLOYMENT_TARGET
+if test -z "$MACOSX_DEPLOYMENT_TARGET"; then
+  if sh build-aux/config.guess | grep powerpc.*darwin >/dev/null; then
+    MACOSX_DEPLOYMENT_TARGET=10.3
+    export MACOSX_DEPLOYMENT_TARGET
+  else
+    MACOSX_DEPLOYMENT_TARGET=10.4
+    export MACOSX_DEPLOYMENT_TARGET
+  fi
 fi
 
 : ${TL_BUILD_ENV=}

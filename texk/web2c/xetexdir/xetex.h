@@ -99,6 +99,8 @@ void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp 
 #define Xchr(x)		(x)
 
 #ifdef XETEX_MAC
+#undef input /* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
+#undef output
 #include <Carbon/Carbon.h>	/* for Mac OS X, it's handy to have the Carbon APIs available */
 #endif
 
