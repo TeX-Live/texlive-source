@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: lasse.collin@tukaani.org\n"
-"POT-Creation-Date: 2010-05-26 09:00+0300\n"
+"POT-Creation-Date: 2010-06-11 10:41+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,21 +16,21 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/xz/args.c:310
+#: src/xz/args.c:303
 #, c-format
 msgid "%s: Unknown file format type"
 msgstr ""
 
-#: src/xz/args.c:333 src/xz/args.c:341
+#: src/xz/args.c:326 src/xz/args.c:334
 #, c-format
 msgid "%s: Unsupported integrity check type"
 msgstr ""
 
-#: src/xz/args.c:359
+#: src/xz/args.c:352
 msgid "Only one file can be specified with `--files' or `--files0'."
 msgstr ""
 
-#: src/xz/args.c:417
+#: src/xz/args.c:411
 msgid "The environment variable XZ_OPT contains too many arguments"
 msgstr ""
 
@@ -167,26 +167,26 @@ msgstr ""
 msgid "%s: Write error: %s"
 msgstr ""
 
-#: src/xz/main.c:76
+#: src/xz/main.c:89
 #, c-format
 msgid "%s: Error reading filenames: %s"
 msgstr ""
 
-#: src/xz/main.c:83
+#: src/xz/main.c:96
 #, c-format
 msgid "%s: Unexpected end of input when reading filenames"
 msgstr ""
 
-#: src/xz/main.c:107
+#: src/xz/main.c:120
 #, c-format
 msgid "%s: Null character found when reading filenames; maybe you meant to use `--files0' instead of `--files'?"
 msgstr ""
 
-#: src/xz/main.c:157
+#: src/xz/main.c:174
 msgid "Compression and decompression with --robot are not supported yet."
 msgstr ""
 
-#: src/xz/main.c:214
+#: src/xz/main.c:231
 msgid "Cannot read data from standard input when reading filenames from standard input"
 msgstr ""
 
@@ -372,66 +372,57 @@ msgstr ""
 #: src/xz/message.c:1187
 msgid ""
 "\n"
-"  --subblock[=OPTS]   Subblock filter; valid OPTS (valid values; default):\n"
-"                        size=NUM   number of bytes of data per subblock\n"
-"                                   (1 - 256Mi; 4Ki)\n"
-"                        rle=NUM    run-length encoder chunk size (0-256; 0)"
-msgstr ""
-
-#: src/xz/message.c:1196
-msgid ""
-"\n"
 " Other options:\n"
 msgstr ""
 
-#: src/xz/message.c:1199
+#: src/xz/message.c:1190
 msgid ""
 "  -q, --quiet         suppress warnings; specify twice to suppress errors too\n"
 "  -v, --verbose       be verbose; specify twice for even more verbose"
 msgstr ""
 
-#: src/xz/message.c:1204
+#: src/xz/message.c:1195
 msgid "  -Q, --no-warn       make warnings not affect the exit status"
 msgstr ""
 
-#: src/xz/message.c:1206
+#: src/xz/message.c:1197
 msgid "      --robot         use machine-parsable messages (useful for scripts)"
 msgstr ""
 
-#: src/xz/message.c:1209
+#: src/xz/message.c:1200
 msgid "      --info-memory   display the memory usage limit and exit"
 msgstr ""
 
-#: src/xz/message.c:1211
+#: src/xz/message.c:1202
 msgid ""
 "  -h, --help          display the short help (lists only the basic options)\n"
 "  -H, --long-help     display this long help and exit"
 msgstr ""
 
-#: src/xz/message.c:1215
+#: src/xz/message.c:1206
 msgid ""
 "  -h, --help          display this short help and exit\n"
 "  -H, --long-help     display the long help (lists also the advanced options)"
 msgstr ""
 
-#: src/xz/message.c:1220
+#: src/xz/message.c:1211
 msgid "  -V, --version       display the version number and exit"
 msgstr ""
 
-#: src/xz/message.c:1222
+#: src/xz/message.c:1213
 msgid ""
 "\n"
 "With no FILE, or when FILE is -, read standard input.\n"
 msgstr ""
 
-#: src/xz/message.c:1226
+#: src/xz/message.c:1217
 #, c-format
 msgid ""
 "On this system and configuration, this program will use a maximum of roughly\n"
 "%s MiB RAM and "
 msgstr ""
 
-#: src/xz/message.c:1228
+#: src/xz/message.c:1219
 msgid ""
 "one thread.\n"
 "\n"
@@ -441,12 +432,12 @@ msgstr ""
 #. for this package. Please add _another line_ saying
 #. "Report translation bugs to <...>\n" with the email or WWW
 #. address for translation bugs. Thanks.
-#: src/xz/message.c:1237
+#: src/xz/message.c:1228
 #, c-format
 msgid "Report bugs to <%s> (in English or Finnish).\n"
 msgstr ""
 
-#: src/xz/message.c:1239
+#: src/xz/message.c:1230
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr ""
@@ -466,16 +457,16 @@ msgstr ""
 msgid "%s: Invalid option value"
 msgstr ""
 
-#: src/xz/options.c:308
+#: src/xz/options.c:247
 #, c-format
 msgid "Unsupported LZMA1/LZMA2 preset: %s"
 msgstr ""
 
-#: src/xz/options.c:426
+#: src/xz/options.c:365
 msgid "The sum of lc and lp must be at maximum of 4"
 msgstr ""
 
-#: src/xz/options.c:431
+#: src/xz/options.c:370
 #, c-format
 msgid "The selected match finder requires at least nice=%<PRIu32>"
 msgstr ""

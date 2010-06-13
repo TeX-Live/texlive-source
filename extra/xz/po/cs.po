@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xz-utils\n"
 "Report-Msgid-Bugs-To: lasse.collin@tukaani.org\n"
-"POT-Creation-Date: 2010-05-26 09:00+0300\n"
+"POT-Creation-Date: 2010-06-11 10:41+0300\n"
 "PO-Revision-Date: 2009-12-05 13:51+0100\n"
 "Last-Translator: Marek Černocký <marek@manet.cz>\n"
 "Language-Team: Czech <diskuze@lists.l10n.cz>\n"
@@ -14,22 +14,22 @@ msgstr ""
 "X-Poedit-Language: Czech\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: src/xz/args.c:310
+#: src/xz/args.c:303
 #, c-format
 msgid "%s: Unknown file format type"
 msgstr "%s: Neznámý typ formátu souboru"
 
-#: src/xz/args.c:333 src/xz/args.c:341
+#: src/xz/args.c:326 src/xz/args.c:334
 #, c-format
 msgid "%s: Unsupported integrity check type"
 msgstr "%s: Neznámý typ kontroly integrity"
 
-#: src/xz/args.c:359
+#: src/xz/args.c:352
 #, fuzzy
 msgid "Only one file can be specified with `--files' or `--files0'."
 msgstr "Můžete zadat pouze jeden soubor spolu s přepínači „--files“ nebo „--files0“"
 
-#: src/xz/args.c:417
+#: src/xz/args.c:411
 msgid "The environment variable XZ_OPT contains too many arguments"
 msgstr "Proměnná prostředí XZ_OPT obsahuje příliš mnoho argumentů"
 
@@ -168,26 +168,26 @@ msgstr "Neočekávaný konec vstupu"
 msgid "%s: Write error: %s"
 msgstr "%s: Chyba zápisu: %s"
 
-#: src/xz/main.c:76
+#: src/xz/main.c:89
 #, c-format
 msgid "%s: Error reading filenames: %s"
 msgstr "%s: Chyba při čtení názvů souborů: %s"
 
-#: src/xz/main.c:83
+#: src/xz/main.c:96
 #, c-format
 msgid "%s: Unexpected end of input when reading filenames"
 msgstr "%s: Neočekávaný konec vstupu při čtení názvů souborů"
 
-#: src/xz/main.c:107
+#: src/xz/main.c:120
 #, c-format
 msgid "%s: Null character found when reading filenames; maybe you meant to use `--files0' instead of `--files'?"
 msgstr "%s: Byl nalezen nulový znak při čtení názvů souborů; nechtěli jste náhodou použít „--files0“ místo „--files“?"
 
-#: src/xz/main.c:157
+#: src/xz/main.c:174
 msgid "Compression and decompression with --robot are not supported yet."
 msgstr "Komprimace a dekomprimace s přepínačem --robot není zatím podporovaná."
 
-#: src/xz/main.c:214
+#: src/xz/main.c:231
 msgid "Cannot read data from standard input when reading filenames from standard input"
 msgstr "Ze standardního vstupu nelze číst data, když se ze standardního vstupu načítají názvy souborů"
 
@@ -432,26 +432,12 @@ msgstr ""
 #: src/xz/message.c:1187
 msgid ""
 "\n"
-"  --subblock[=OPTS]   Subblock filter; valid OPTS (valid values; default):\n"
-"                        size=NUM   number of bytes of data per subblock\n"
-"                                   (1 - 256Mi; 4Ki)\n"
-"                        rle=NUM    run-length encoder chunk size (0-256; 0)"
-msgstr ""
-"\n"
-" --subblock[=VOLBY]    Subblokový filtr; platné VOLBY (platné hodnoty; výchozí):\n"
-"                         size=POČ   počet bajtů dat na subblok\n"
-"                                    (1 - 256 Mi; 4 Ki)\n"
-"                         rle=POČ    velikost dávky pro kodér run-length (0-256; 0)"
-
-#: src/xz/message.c:1196
-msgid ""
-"\n"
 " Other options:\n"
 msgstr ""
 "\n"
 " Ostatní přepínače:\n"
 
-#: src/xz/message.c:1199
+#: src/xz/message.c:1190
 msgid ""
 "  -q, --quiet         suppress warnings; specify twice to suppress errors too\n"
 "  -v, --verbose       be verbose; specify twice for even more verbose"
@@ -460,19 +446,19 @@ msgstr ""
 " -v, --verbose         podrobnější zprávy; zadáním dvakrát, budou ještě\n"
 "                       podrobnější"
 
-#: src/xz/message.c:1204
+#: src/xz/message.c:1195
 msgid "  -Q, --no-warn       make warnings not affect the exit status"
 msgstr " -Q, --no-warn         způsobí, že varování neovlivní stav ukončení"
 
-#: src/xz/message.c:1206
+#: src/xz/message.c:1197
 msgid "      --robot         use machine-parsable messages (useful for scripts)"
 msgstr "     --robot           použít strojově analyzovatelné zprávy (užitečné pro skripty)"
 
-#: src/xz/message.c:1209
+#: src/xz/message.c:1200
 msgid "      --info-memory   display the memory usage limit and exit"
 msgstr "     --info-memory     zobrazit omezení využití paměti a skončit"
 
-#: src/xz/message.c:1211
+#: src/xz/message.c:1202
 msgid ""
 "  -h, --help          display the short help (lists only the basic options)\n"
 "  -H, --long-help     display this long help and exit"
@@ -480,7 +466,7 @@ msgstr ""
 " -h, --help            zobrazit krátkou nápovědu (vypíše jen základní přepínače)\n"
 " -H, --long-help       zobrazit tuto úplnou nápovědu a skončit"
 
-#: src/xz/message.c:1215
+#: src/xz/message.c:1206
 msgid ""
 "  -h, --help          display this short help and exit\n"
 "  -H, --long-help     display the long help (lists also the advanced options)"
@@ -488,11 +474,11 @@ msgstr ""
 " -h, --help            zobrazit tuto zkrácenou nápovědu a skončit\n"
 " -H, --long-help       zobrazit úplnou nápovědu (vypíše i pokročilé přepínače)"
 
-#: src/xz/message.c:1220
+#: src/xz/message.c:1211
 msgid "  -V, --version       display the version number and exit"
 msgstr " -V, --version         zobrazit číslo verze a skončit"
 
-#: src/xz/message.c:1222
+#: src/xz/message.c:1213
 msgid ""
 "\n"
 "With no FILE, or when FILE is -, read standard input.\n"
@@ -500,7 +486,7 @@ msgstr ""
 "\n"
 "Pokud SOUBOR není zadán nebo pokud je -, bude se číst ze standardního vstupu.\n"
 
-#: src/xz/message.c:1226
+#: src/xz/message.c:1217
 #, c-format
 msgid ""
 "On this system and configuration, this program will use a maximum of roughly\n"
@@ -509,7 +495,7 @@ msgstr ""
 "Na tomto systému a s tímto nastavením použije tento program maximum ze zhruba\n"
 "%s MiB RAM a "
 
-#: src/xz/message.c:1228
+#: src/xz/message.c:1219
 msgid ""
 "one thread.\n"
 "\n"
@@ -521,12 +507,12 @@ msgstr ""
 #. for this package. Please add _another line_ saying
 #. "Report translation bugs to <...>\n" with the email or WWW
 #. address for translation bugs. Thanks.
-#: src/xz/message.c:1237
+#: src/xz/message.c:1228
 #, c-format
 msgid "Report bugs to <%s> (in English or Finnish).\n"
 msgstr "Chyby hlaste na <%s> (v angličtině nebo finštině).\n"
 
-#: src/xz/message.c:1239
+#: src/xz/message.c:1230
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr "Domovská stránka %s: <%s>\n"
@@ -546,16 +532,16 @@ msgstr "%s: Neplatný název volby"
 msgid "%s: Invalid option value"
 msgstr "%s: Neplatná hodnota volby"
 
-#: src/xz/options.c:308
+#: src/xz/options.c:247
 #, c-format
 msgid "Unsupported LZMA1/LZMA2 preset: %s"
 msgstr "Nepodporované přednastavení LZMA1/LZMA2: %s"
 
-#: src/xz/options.c:426
+#: src/xz/options.c:365
 msgid "The sum of lc and lp must be at maximum of 4"
 msgstr "Součet lc a lp musí být maximálně 4"
 
-#: src/xz/options.c:431
+#: src/xz/options.c:370
 #, c-format
 msgid "The selected match finder requires at least nice=%<PRIu32>"
 msgstr "Vybraný vyhledávač shod vyžaduje minimálně nice=%<PRIu32>"
@@ -615,6 +601,19 @@ msgstr "Komprimovaná data se nezapisují do terminálu, vyjma použití volby �
 
 #~ msgid "Limit was %s MiB, but %s MiB would have been needed"
 #~ msgstr "Limit byl %s MiB, ale bylo by zapotřebí %s MiB"
+
+#~ msgid ""
+#~ "\n"
+#~ "  --subblock[=OPTS]   Subblock filter; valid OPTS (valid values; default):\n"
+#~ "                        size=NUM   number of bytes of data per subblock\n"
+#~ "                                   (1 - 256Mi; 4Ki)\n"
+#~ "                        rle=NUM    run-length encoder chunk size (0-256; 0)"
+#~ msgstr ""
+#~ "\n"
+#~ " --subblock[=VOLBY]    Subblokový filtr; platné VOLBY (platné hodnoty; výchozí):\n"
+#~ "                         size=POČ   počet bajtů dat na subblok\n"
+#~ "                                    (1 - 256 Mi; 4 Ki)\n"
+#~ "                         rle=POČ    velikost dávky pro kodér run-length (0-256; 0)"
 
 #~ msgid "%s: Invalid multiplier suffix. Valid suffixes:"
 #~ msgstr "%s: Neplatná přípona. Platné přípony jsou:"

@@ -1,3 +1,244 @@
+commit 3e49c8acb0f5312948eddb2342dbb5802d4571d0
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-11 10:40:28 +0300
+
+    Put the git commit to the filename in mydist rule.
+
+ Makefile.am |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
+
+commit d8b41eedce486d400f701b757b7b5e4e32276618
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-02 23:13:55 +0300
+
+    Fix compiling with -Werror.
+
+ src/xz/message.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit b5fbab6123a39c9a55cd5d7af410e9aae067d5f8
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-02 23:09:22 +0300
+
+    Silence a bogus Valgrind warning.
+    
+    When using -O2 with GCC, it liked to swap two comparisons
+    in one "if" statement. It's otherwise fine except that
+    the latter part, which is seemingly never executed, got
+    executed (nothing wrong with that) and then triggered
+    warning in Valgrind about conditional jump depending on
+    uninitialized variable. A few people find this annoying
+    so do things a bit differently to avoid the warning.
+
+ src/liblzma/lz/lz_encoder.c |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
+
+commit 29a7b250e685852f2f97615493ec49acaf528623
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-02 21:32:12 +0300
+
+    Fix a Windows-specific FIXME in signal handling code.
+
+ src/xz/main.c    |   40 +++++++++++++++++++++++++++++++++++-----
+ src/xz/private.h |    5 +++++
+ src/xz/signals.c |   16 ++++++++--------
+ 3 files changed, 48 insertions(+), 13 deletions(-)
+
+commit e89d987056cee7d4e279be3ef3a6cc690bfc0e6d
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-02 17:46:58 +0300
+
+    Adjust SA_RESTART workaround.
+    
+    I want to get a bug report if something else than
+    DJGPP lacks SA_RESTART.
+
+ src/xz/message.c |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
+
+commit e243145c84ab5c3be8259fd486ead0de5235b3f0
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-01 16:02:30 +0300
+
+    xz man page updates.
+    
+    - Concatenating .xz files and padding
+    - List mode
+    - Robot mode
+    - A few examples (but many more are needed)
+
+ src/xz/xz.1 |  385 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 files changed, 366 insertions(+), 19 deletions(-)
+
+commit ce6dc3c0a891f23a862f80ec08d3b6f0beb2a562
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-01 15:51:44 +0300
+
+    Major update to xz --list.
+
+ src/xz/list.c |  652 +++++++++++++++++++++++++++++++++++++++++----------------
+ 1 files changed, 471 insertions(+), 181 deletions(-)
+
+commit 905e54804a899e4ad526d38fdba7e803ab9b71bd
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-01 14:13:03 +0300
+
+    Rename message_filters_get() to message_filters_to_str().
+
+ src/xz/message.c |    4 ++--
+ src/xz/message.h |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 4b346ae8af20045027ae5efb068c6d69da3324d2
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-06-01 14:09:12 +0300
+
+    Fix a comment.
+
+ src/liblzma/api/lzma/index.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 07dc34f6da45c9ab757dad7fd5eef522ad27d296
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-27 16:17:42 +0300
+
+    Fix lzma_block_compressed_size().
+
+ src/liblzma/common/block_util.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 44d70cb154225e47eebf15a3cfbdf3794cbb4593
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-27 14:32:51 +0300
+
+    Take Cygwin into account in some #if lines.
+    
+    This change is no-op, but good to have just in case
+    for the future.
+
+ src/xz/signals.c |    2 +-
+ src/xz/signals.h |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit a334348dc02803241cf4e0a539eecdc0e7ad2cc7
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-27 13:42:44 +0300
+
+    Remove references to the Subblock filter in xz and tests.
+    
+    Thanks to Jonathan Nieder.
+
+ src/xz/message.c          |    9 ---------
+ tests/test_filter_flags.c |   23 -----------------------
+ 2 files changed, 0 insertions(+), 32 deletions(-)
+
+commit 70e5e2f6a7084e6af909deee88ceac2f6efa7893
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-27 13:35:36 +0300
+
+    Remove unused chunk_size.c.
+    
+    Thanks to Jonathan Nieder for the reminder.
+
+ src/liblzma/common/chunk_size.c |   67 ---------------------------------------
+ 1 files changed, 0 insertions(+), 67 deletions(-)
+
+commit 01a414eaf4be6352c06b48001b041b47e8202faa
+Author: Jonathan Nieder <jrnieder@gmail.com>
+Date:   2010-05-27 02:31:33 -0500
+
+    Use my_min() instead of MIN() in src/xz/list.c
+    
+    This should have been done in
+    920a69a8d8e4203c5edddd829d932130eac188ea.
+
+ src/xz/list.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 920a69a8d8e4203c5edddd829d932130eac188ea
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-26 10:36:46 +0300
+
+    Rename MIN() and MAX() to my_min() and my_max().
+    
+    This should avoid some minor portability issues.
+
+ debug/full_flush.c                             |    2 +-
+ debug/sync_flush.c                             |    2 +-
+ src/common/sysdefs.h                           |   12 +++++-------
+ src/liblzma/common/block_buffer_encoder.c      |    2 +-
+ src/liblzma/common/common.c                    |    2 +-
+ src/liblzma/common/stream_buffer_encoder.c     |    2 +-
+ src/liblzma/delta/delta_encoder.c              |    2 +-
+ src/liblzma/lz/lz_decoder.c                    |    7 ++++---
+ src/liblzma/lz/lz_decoder.h                    |    2 +-
+ src/liblzma/lz/lz_encoder.c                    |    2 +-
+ src/liblzma/lz/lz_encoder.h                    |    2 +-
+ src/liblzma/lz/lz_encoder_mf.c                 |    4 ++--
+ src/liblzma/lzma/lzma2_encoder.c               |    2 +-
+ src/liblzma/lzma/lzma_encoder_optimum_fast.c   |    2 +-
+ src/liblzma/lzma/lzma_encoder_optimum_normal.c |   14 +++++++-------
+ src/xz/args.c                                  |    3 ++-
+ 16 files changed, 31 insertions(+), 31 deletions(-)
+
+commit 019ae27c24d0c694545a6a46f8b9fb552198b015
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-26 10:30:20 +0300
+
+    Fix compilation of debug/known_sizes.c.
+
+ debug/known_sizes.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 98a4856a6ea84f79c790057a6eb89a25bc45b074
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-26 10:28:54 +0300
+
+    Remove references to Subblock filter in debug/sync_flush.c.
+
+ debug/sync_flush.c |   13 -------------
+ 1 files changed, 0 insertions(+), 13 deletions(-)
+
+commit 703d2c33c095c41ae0693ee8c27c45e3847e4535
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-26 10:16:57 +0300
+
+    Better #error message.
+
+ src/common/sysdefs.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+commit d8a55c48b39703dd83f11089ad01e1ff2ac102e0
+Author: Lasse Collin <lasse.collin@tukaani.org>
+Date:   2010-05-26 09:55:47 +0300
+
+    Remove the Subblock filter code for now.
+    
+    The spec isn't finished and the code didn't compile anymore.
+    It won't be included in XZ Utils 5.0.0. It's easy to get it
+    back once the spec is done.
+
+ configure.ac                                   |    6 +-
+ src/liblzma/Makefile.am                        |    5 -
+ src/liblzma/api/Makefile.am                    |    1 -
+ src/liblzma/api/lzma.h                         |    1 -
+ src/liblzma/api/lzma/subblock.h                |  200 -----
+ src/liblzma/common/common.h                    |    6 -
+ src/liblzma/common/filter_common.c             |    9 -
+ src/liblzma/common/filter_decoder.c            |   16 -
+ src/liblzma/common/filter_encoder.c            |   12 -
+ src/liblzma/subblock/Makefile.inc              |   20 -
+ src/liblzma/subblock/subblock_decoder.c        |  630 ---------------
+ src/liblzma/subblock/subblock_decoder.h        |   22 -
+ src/liblzma/subblock/subblock_decoder_helper.c |   70 --
+ src/liblzma/subblock/subblock_decoder_helper.h |   29 -
+ src/liblzma/subblock/subblock_encoder.c        |  984 ------------------------
+ src/liblzma/subblock/subblock_encoder.h        |   21 -
+ src/xz/args.c                                  |    9 +-
+ src/xz/options.c                               |   61 --
+ src/xz/options.h                               |    7 -
+ 19 files changed, 4 insertions(+), 2105 deletions(-)
+
 commit b6377fc990f9b8651149cae0fecb8b9c5904e26d
 Author: Lasse Collin <lasse.collin@tukaani.org>
 Date:   2010-05-16 18:42:22 +0300

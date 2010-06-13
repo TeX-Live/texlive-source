@@ -121,6 +121,19 @@ DESCRIPTION
        --info-memory  or  near  the  bottom of the output of --long-help.  The
        default limit can be overridden with --memory=limit.
 
+   Concatenation and padding with .xz files
+       It is possible to concatenate .xz files as is.  xz will decompress such
+       files as if they were a single .xz file.
+
+       It  is possible to insert padding between the concenated parts or after
+       the last part. The padding must be null bytes and the size of the  pad-
+       ding  must  be  a multiple of four bytes. This can be useful if the .xz
+       file is stored on a medium that stores  file  sizes  e.g.  as  512-byte
+       blocks.
+
+       Concatenation  and  padding  are  not  allowed  with .lzma files or raw
+       streams.
+
 OPTIONS
    Integer suffixes and special values
        In most places where an integer argument is expected, an optional  suf-
@@ -158,12 +171,22 @@ OPTIONS
               written to standard output.
 
        -l, --list
-              View information about the  compressed  files.  No  uncompressed
-              output is produced, and no files are created or removed. In list
-              mode, the program cannot read the compressed data from  standard
-              input or from other unseekable sources.
+              List information about compressed files.  No uncompressed output
+              is produced, and no files are created or removed.  In list mode,
+              the program cannot read the compressed data from standard  input
+              or from other unseekable sources.
 
-              This feature has not been implemented yet.
+              The  default  listing  shows  basic information about files, one
+              file per line. To get more detailed information,  use  also  the
+              --verbose  option.  For  even  more  information,  use --verbose
+              twice, but note that it may be slow,  because  getting  all  the
+              extra information requires many seeks. The width of verbose out-
+              put exceeds 80 characters, so piping the output to e.g.  less -S
+              may be convenient if the terminal isn't wide enough.
+
+              The  exact  output  may  vary  between xz versions and different
+              locales. To get machine-readable output, --robot  --list  should
+              be used.
 
    Operation modifiers
        -k, --keep
@@ -677,17 +700,13 @@ OPTIONS
               Print messages in a machine-parsable format. This is intended to
               ease writing frontends that want to use xz instead  of  liblzma,
               which may be the case with various scripts. The output with this
-              option enabled is meant to be stable across  xz  releases.  Cur-
-              rently  --robot is implemented only for --info-memory and --ver-
-              sion, but the idea is to make it usable for  actual  compression
-              and decompression too.
+              option enabled is meant to be stable across xz releases. See the
+              section ROBOT MODE for details.
 
        --info-memory
               Display  the current memory usage limit in human-readable format
               on a single line, and exit successfully. To see how much RAM  xz
-              thinks your system has, use --memory=100% --info-memory.  To get
-              machine-parsable output (memory usage  limit  as  bytes  without
-              thousand separators), specify --robot before --info-memory.
+              thinks your system has, use --memory=100% --info-memory.
 
        -h, --help
               Display  a  help  message  describing  the  most  commonly  used
@@ -702,6 +721,191 @@ OPTIONS
               format. To get machine-parsable output, specify  --robot  before
               --version.
 
+ROBOT MODE
+       The  robot mode is activated with the --robot option. It makes the out-
+       put of xz easier to parse by other programs. Currently --robot is  sup-
+       ported  only  together  with  --version, --info-memory, and --list.  It
+       will be supported for  normal  compression  and  decompression  in  the
+       future.
+
+   Version
+       xz --robot --version will print the version number of xz and liblzma in
+       the following format:
+
+       XZ_VERSION=XYYYZZZS
+       LIBLZMA_VERSION=XYYYZZZS
+
+       X      Major version.
+
+       YYY    Minor version. Even numbers are stable.  Odd numbers  are  alpha
+              or beta versions.
+
+       ZZZ    Patch  level  for stable releases or just a counter for develop-
+              ment releases.
+
+       S      Stability.  0 is alpha, 1 is beta, and 2 is stable.  S should be
+              always 2 when YYY is even.
+
+       XYYYZZZS are the same on both lines if xz and liblzma are from the same
+       XZ Utils release.
+
+       Examples: 4.999.9beta is 49990091 and 5.0.0 is 50000002.
+
+   Memory limit information
+       xz --robot --info-memory prints the current memory usage limit as bytes
+       on  a  single  line.   To get the total amount of installed RAM, use xz
+       --robot --memory=100% --info-memory.
+
+   List mode
+       xz --robot --list uses tab-separated output. The first column of  every
+       line  has  a string that indicates the type of the information found on
+       that line:
+
+       name   This is always the first line when starting to list a file.  The
+              second column on the line is the filename.
+
+       file   This  line contains overall information about the .xz file. This
+              line is always printed after the name line.
+
+       stream This line type is used only when --verbose was specified.  There
+              are as many stream lines as there are streams in the .xz file.
+
+       block  This  line type is used only when --verbose was specified. There
+              are as many block lines as there are blocks in the .xz file. The
+              block lines are shown after all the stream lines; different line
+              types are not interleaved.
+
+       summary
+              This line type is used only when --verbose was specified  twice.
+              This  line is printed after all block lines. Like the file line,
+              the summary line contains  overall  information  about  the  .xz
+              file.
+
+       totals This  line  is  always the very last line of the list output. It
+              shows the total counts and sizes.
+
+       The columns of the file lines:
+
+              2.  Number of streams in the file
+
+              3.  Total number of blocks in the stream(s)
+
+              4.  Compressed size of the file
+
+              5.  Uncompressed size of the file
+
+              6.  Compression ratio, for example  0.123.   If  ratio  is  over
+                  9.999,  three  dashes  (---)  are  displayed  instead of the
+                  ratio.
+
+              7.  Comma-separated list of integrity check names. The following
+                  strings  are  used  for  the known check types: None, CRC32,
+                  CRC64, and SHA-256.  For unknown check types,  Unknown-N  is
+                  used,  where  N  is the Check ID as a decimal number (one or
+                  two digits).
+
+              8.  Total size of stream padding in the file
+
+       The columns of the stream lines:
+
+              2.  Stream number (the first stream is 1)
+
+              3.  Number of blocks in the stream
+
+              4.  Compressed start offset
+
+              5.  Uncompressed start offset
+
+              6.  Compressed size (does not include stream padding)
+
+              7.  Uncompressed size
+
+              8.  Compression ratio
+
+              9.  Name of the integrity check
+
+              10. Size of stream padding
+
+       The columns of the block lines:
+
+              2.  Number of the stream containing this block
+
+              3.  Block number relative to the beginning of  the  stream  (the
+                  first block is 1)
+
+              4.  Block number relative to the beginning of the file
+
+              5.  Compressed  start  offset  relative  to the beginning of the
+                  file
+
+              6.  Uncompressed start offset relative to the beginning  of  the
+                  file
+
+              7.  Total compressed size of the block (includes headers)
+
+              8.  Uncompressed size
+
+              9.  Compression ratio
+
+              10. Name of the integrity check
+
+       If  --verbose  was  specified twice, additional columns are included on
+       the block lines. These are  not  displayed  with  a  single  --verbose,
+       because  getting  this  information requires many seeks and can thus be
+       slow:
+
+              11. Value of the integrity check in hexadecimal
+
+              12. Block header size
+
+              13. Block flags: c indicates that compressed  size  is  present,
+                  and  u  indicates that uncompressed size is present.  If the
+                  flag is not set, a dash (-) is shown  instead  to  keep  the
+                  string  length  fixed.  New flags may be added to the end of
+                  the string in the future.
+
+              14. Size of the  actual  compressed  data  in  the  block  (this
+                  excludes the block header, block padding, and check fields)
+
+              15. Amount  of  memory  (as  bytes)  required to decompress this
+                  block with this xz version
+
+              16. Filter chain. Note that most of the options used at compres-
+                  sion time cannot be known, because only the options that are
+                  needed for decompression are stored in the .xz headers.
+
+       The columns of the totals line:
+
+              2.  Number of streams
+
+              3.  Number of blocks
+
+              4.  Compressed size
+
+              5.  Uncompressed size
+
+              6.  Average compression ratio
+
+              7.  Comma-separated list of  integrity  check  names  that  were
+                  present in the files
+
+              8.  Stream padding size
+
+              9.  Number  of files. This is here to keep the order of the ear-
+                  lier columns the same as on file lines.
+
+       If --verbose was specified twice, additional columns  are  included  on
+       the totals line:
+
+              10. Maximum  amount  of memory (as bytes) required to decompress
+                  the files with this xz version
+
+              11. yes or no indicating if all block  headers  have  both  com-
+                  pressed size and uncompressed size stored in them
+
+       Future  versions may add new line types and new columns can be added to
+       the existing line types, but the existing columns won't be changed.
+
 EXIT STATUS
        0      All is good.
 
@@ -714,23 +918,23 @@ EXIT STATUS
        the exit status.
 
 ENVIRONMENT
-       XZ_OPT A  space-separated  list of options is parsed from XZ_OPT before
-              parsing the options given on the command line.  Note  that  only
-              options  are  parsed  from  XZ_OPT; all non-options are silently
-              ignored. Parsing is done with getopt_long(3) which is used  also
+       XZ_OPT A space-separated list of options is parsed from  XZ_OPT  before
+              parsing  the  options  given on the command line. Note that only
+              options are parsed from XZ_OPT;  all  non-options  are  silently
+              ignored.  Parsing is done with getopt_long(3) which is used also
               for the command line arguments.
 
 LZMA UTILS COMPATIBILITY
-       The  command  line  syntax  of  xz  is  practically a superset of lzma,
+       The command line syntax of  xz  is  practically  a  superset  of  lzma,
        unlzma, and lzcat as found from LZMA Utils 4.32.x. In most cases, it is
-       possible  to replace LZMA Utils with XZ Utils without breaking existing
-       scripts. There are some incompatibilities though, which  may  sometimes
+       possible to replace LZMA Utils with XZ Utils without breaking  existing
+       scripts.  There  are some incompatibilities though, which may sometimes
        cause problems.
 
    Compression preset levels
-       The  numbering  of the compression level presets is not identical in xz
-       and LZMA Utils.  The most important difference is how dictionary  sizes
-       are  mapped  to  different presets. Dictionary size is roughly equal to
+       The numbering of the compression level presets is not identical  in  xz
+       and  LZMA Utils.  The most important difference is how dictionary sizes
+       are mapped to different presets. Dictionary size is  roughly  equal  to
        the decompressor memory usage.
 
               Level     xz      LZMA Utils
@@ -745,7 +949,7 @@ LZMA UTILS COMPATIBILITY
                -9      64 MiB     32 MiB
 
        The dictionary size differences affect the compressor memory usage too,
-       but  there  are some other differences between LZMA Utils and XZ Utils,
+       but there are some other differences between LZMA Utils and  XZ  Utils,
        which make the difference even bigger:
 
               Level     xz      LZMA Utils 4.32.x
@@ -759,80 +963,105 @@ LZMA UTILS COMPATIBILITY
                -8     370 MiB        159 MiB
                -9     674 MiB        311 MiB
 
-       The default preset level in LZMA Utils is -7 while in XZ  Utils  it  is
+       The  default  preset  level in LZMA Utils is -7 while in XZ Utils it is
        -6, so both use 8 MiB dictionary by default.
 
    Streamed vs. non-streamed .lzma files
-       Uncompressed  size  of the file can be stored in the .lzma header. LZMA
-       Utils does that when compressing regular files.  The alternative is  to
+       Uncompressed size of the file can be stored in the .lzma  header.  LZMA
+       Utils  does that when compressing regular files.  The alternative is to
        mark that uncompressed size is unknown and use end of payload marker to
-       indicate where the decompressor should  stop.   LZMA  Utils  uses  this
-       method  when uncompressed size isn't known, which is the case for exam-
+       indicate  where  the  decompressor  should  stop.  LZMA Utils uses this
+       method when uncompressed size isn't known, which is the case for  exam-
        ple in pipes.
 
-       xz supports decompressing .lzma files with or without  end  of  payload
-       marker,  but  all  .lzma  files  created  by xz will use end of payload
-       marker and have uncompressed  size  marked  as  unknown  in  the  .lzma
-       header.  This may be a problem in some (uncommon) situations. For exam-
-       ple, a .lzma decompressor in an embedded device might  work  only  with
-       files  that  have known uncompressed size. If you hit this problem, you
-       need to use LZMA Utils or LZMA SDK to create  .lzma  files  with  known
+       xz  supports  decompressing  .lzma files with or without end of payload
+       marker, but all .lzma files created by  xz  will  use  end  of  payload
+       marker  and  have  uncompressed  size  marked  as  unknown in the .lzma
+       header. This may be a problem in some (uncommon) situations. For  exam-
+       ple,  a  .lzma  decompressor in an embedded device might work only with
+       files that have known uncompressed size. If you hit this  problem,  you
+       need  to  use  LZMA  Utils or LZMA SDK to create .lzma files with known
        uncompressed size.
 
    Unsupported .lzma files
-       The  .lzma format allows lc values up to 8, and lp values up to 4. LZMA
+       The .lzma format allows lc values up to 8, and lp values up to 4.  LZMA
        Utils can decompress files with any lc and lp, but always creates files
-       with  lc=3  and  lp=0.  Creating files with other lc and lp is possible
+       with lc=3 and lp=0.  Creating files with other lc and  lp  is  possible
        with xz and with LZMA SDK.
 
        The implementation of the LZMA1 filter in liblzma requires that the sum
-       of  lc  and  lp  must not exceed 4. Thus, .lzma files which exceed this
+       of lc and lp must not exceed 4. Thus, .lzma  files  which  exceed  this
        limitation, cannot be decompressed with xz.
 
-       LZMA Utils creates only .lzma files which have dictionary size  of  2^n
-       (a  power  of  2), but accepts files with any dictionary size.  liblzma
-       accepts only .lzma files which have dictionary size of  2^n  or  2^n  +
-       2^(n-1).   This  is  to  decrease  false positives when detecting .lzma
+       LZMA  Utils  creates only .lzma files which have dictionary size of 2^n
+       (a power of 2), but accepts files with any  dictionary  size.   liblzma
+       accepts  only  .lzma  files  which have dictionary size of 2^n or 2^n +
+       2^(n-1).  This is to decrease  false  positives  when  detecting  .lzma
        files.
 
        These limitations shouldn't be a problem in practice, since practically
-       all  .lzma  files  have been compressed with settings that liblzma will
+       all .lzma files have been compressed with settings  that  liblzma  will
        accept.
 
    Trailing garbage
-       When decompressing, LZMA Utils silently  ignore  everything  after  the
-       first  .lzma stream. In most situations, this is a bug. This also means
+       When  decompressing,  LZMA  Utils  silently ignore everything after the
+       first .lzma stream. In most situations, this is a bug. This also  means
        that LZMA Utils don't support decompressing concatenated .lzma files.
 
-       If there is data left after the first .lzma stream,  xz  considers  the
-       file  to  be corrupt. This may break obscure scripts which have assumed
+       If  there  is  data left after the first .lzma stream, xz considers the
+       file to be corrupt. This may break obscure scripts which  have  assumed
        that trailing garbage is ignored.
 
 NOTES
    Compressed output may vary
-       The exact compressed output produced from the same  uncompressed  input
+       The  exact  compressed output produced from the same uncompressed input
        file may vary between XZ Utils versions even if compression options are
        identical.  This is because the encoder can be improved (faster or bet-
        ter compression) without affecting the file format. The output can vary
-       even between different builds of the same XZ Utils version, if  differ-
+       even  between different builds of the same XZ Utils version, if differ-
        ent build options are used.
 
-       The  above  means that implementing --rsyncable to create rsyncable .xz
-       files is not going to happen without freezing a  part  of  the  encoder
+       The above means that implementing --rsyncable to create  rsyncable  .xz
+       files  is  not  going  to happen without freezing a part of the encoder
        implementation, which can then be used with --rsyncable.
 
    Embedded .xz decompressors
        Embedded .xz decompressor implementations like XZ Embedded don't neces-
-       sarily support files created with  check  types  other  than  none  and
-       crc32.   Since  the default is --check=crc64, you must use --check=none
+       sarily  support  files  created  with  check  types other than none and
+       crc32.  Since the default is --check=crc64, you must  use  --check=none
        or --check=crc32 when creating files for embedded systems.
 
-       Outside embedded systems, all .xz format decompressors support all  the
-       check  types, or at least are able to decompress the file without veri-
+       Outside  embedded systems, all .xz format decompressors support all the
+       check types, or at least are able to decompress the file without  veri-
        fying the integrity check if the particular check is not supported.
 
-       XZ Embedded supports BCJ filters, but only with the default start  off-
+       XZ  Embedded supports BCJ filters, but only with the default start off-
        set.
+
+EXAMPLES
+   Basics
+       A mix of compressed and uncompressed files can be decompressed to stan-
+       dard output with a single command:
+
+              xz -dcf a.txt b.txt.xz c.txt d.txt.xz > abcd.txt
+
+   Parallel compression of many files
+       On  GNU and *BSD, find(1) and xargs(1) can be used to parallellize com-
+       pression of many files:
+
+              find . -type f \! -name '*.xz' -print0 | xargs -0r -P4 -n16 xz
+
+       The -P option sets the number of parallel xz processes. The best  value
+       for the -n option depends on how many files there are to be compressed.
+       If there are only a couple of files, the value should  probably  be  1;
+       with tens of thousands of files, 100 or even more may be appropriate to
+       reduce the number of xz processes that xargs(1) will eventually create.
+
+   Robot mode examples
+       Calculating how many bytes have been saved in total  after  compressing
+       multiple files:
+
+              xz --robot --list *.xz | awk '/^totals/{print $5-$4}'
 
 SEE ALSO
        xzdec(1), gzip(1), bzip2(1)
@@ -843,4 +1072,4 @@ SEE ALSO
 
 
 
-Tukaani                           2010-03-07                             XZ(1)
+Tukaani                           2010-06-01                             XZ(1)

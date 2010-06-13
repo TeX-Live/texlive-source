@@ -142,19 +142,19 @@ message_init(void)
 */
 
 #ifdef SIGALRM
-	// At least DJGPP lacks SA_RESTART. It's not essential for us (the
-	// rest of the code can handle interrupted system calls), so just
-	// define it zero.
-#	ifndef SA_RESTART
+	// DJGPP lacks SA_RESTART, but it shouldn't give EINTR
+	// in most places either.
+#	if defined(__DJGPP__) && !defined(SA_RESTART)
 #		define SA_RESTART 0
 #	endif
+
 	// Establish the signal handlers which set a flag to tell us that
 	// progress info should be updated. Since these signals don't
-	// require any quick action, we set SA_RESTART.
+	// require any quick action, we set SA_RESTART. That way we don't
+	// need to block them either in signals_block() to keep stdio
+	// functions from getting EINTR.
 	static const int sigs[] = {
-#ifdef SIGALRM
 		SIGALRM,
-#endif
 #ifdef SIGINFO
 		SIGINFO,
 #endif
@@ -896,7 +896,7 @@ uint32_to_optstr(uint32_t num)
 
 
 extern const char *
-message_filters_get(const lzma_filter *filters, bool all_known)
+message_filters_to_str(const lzma_filter *filters, bool all_known)
 {
 	static char buf[512];
 
@@ -912,8 +912,8 @@ message_filters_get(const lzma_filter *filters, bool all_known)
 		case LZMA_FILTER_LZMA1:
 		case LZMA_FILTER_LZMA2: {
 			const lzma_options_lzma *opt = filters[i].options;
-			const char *mode;
-			const char *mf;
+			const char *mode = NULL;
+			const char *mf = NULL;
 
 			if (all_known) {
 				switch (opt->mode) {
@@ -1036,7 +1036,7 @@ message_filters_show(enum message_verbosity v, const lzma_filter *filters)
 		return;
 
 	fprintf(stderr, _("%s: Filter chain: %s\n"), progname,
-			message_filters_get(filters, true));
+			message_filters_to_str(filters, true));
 	return;
 }
 
@@ -1180,15 +1180,6 @@ message_help(bool long_help)
 "  --delta[=OPTS]      Delta filter; valid OPTS (valid values; default):\n"
 "                        dist=NUM   distance between bytes being subtracted\n"
 "                                   from each other (1-256; 1)"));
-#endif
-
-#if defined(HAVE_ENCODER_SUBBLOCK) || defined(HAVE_DECODER_SUBBLOCK)
-		puts(_(
-"\n"
-"  --subblock[=OPTS]   Subblock filter; valid OPTS (valid values; default):\n"
-"                        size=NUM   number of bytes of data per subblock\n"
-"                                   (1 - 256Mi; 4Ki)\n"
-"                        rle=NUM    run-length encoder chunk size (0-256; 0)"));
 #endif
 	}
 

@@ -74,9 +74,6 @@
 /* Define to 1 if sparc decoder is enabled. */
 #undef HAVE_DECODER_SPARC
 
-/* Define to 1 if subblock decoder is enabled. */
-#undef HAVE_DECODER_SUBBLOCK
-
 /* Define to 1 if x86 decoder is enabled. */
 #undef HAVE_DECODER_X86
 
@@ -109,9 +106,6 @@
 
 /* Define to 1 if sparc encoder is enabled. */
 #undef HAVE_ENCODER_SPARC
-
-/* Define to 1 if subblock encoder is enabled. */
-#undef HAVE_ENCODER_SUBBLOCK
 
 /* Define to 1 if x86 encoder is enabled. */
 #undef HAVE_ENCODER_X86
