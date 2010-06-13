@@ -209,7 +209,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = unixtex.ftp
 DISTCLEANFILES = $(DVIS) $(PSS)
 info_TEXINFOS = kpathsea.texi
 kpathsea_TEXINFOS = bugs.texi hier.texi install.texi unixtex.texi

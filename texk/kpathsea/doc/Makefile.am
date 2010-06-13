@@ -1,9 +1,7 @@
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/doc/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
-##
-EXTRA_DIST = unixtex.ftp
 
 DISTCLEANFILES = $(DVIS) $(PSS)
 
