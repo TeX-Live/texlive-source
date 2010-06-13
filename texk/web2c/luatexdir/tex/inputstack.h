@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: inputstack.h 3261 2009-12-18 11:38:21Z taco $ */
+/* $Id: inputstack.h 3720 2010-06-13 08:04:27Z taco $ */
 
 #ifndef INPUTSTACK_H
 #  define INPUTSTACK_H 1
@@ -35,8 +35,8 @@ typedef struct in_state_record {
     halfword name_field;
     halfword ocp_lstack_field;  /* used for omega translation processes */
     int synctex_tag_field;      /* stack the tag of the current file */
-    halfword ocp_no_field:16;   /* used for omega translation processes */
-    int cattable_field:16;      /* category table used by the current line (see textoken.c) */
+    signed int ocp_no_field:16;   /* used for omega translation processes */
+    signed int cattable_field:16;      /* category table used by the current line (see textoken.c) */
     quarterword state_field:8;
     quarterword index_field:8;
     boolean partial_field:8;    /* is the current line partial? (see textoken.c) */

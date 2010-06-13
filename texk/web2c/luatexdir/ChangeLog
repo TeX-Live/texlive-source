@@ -1,3 +1,9 @@
+2010-06-13  Taco Hoekwater <taco@luatex.org>
+
+	* tex/inputstack.h (in_state_record): force two bitfields to be signed,
+	after a bug report from Vladimir Volovich <vvv@vsu.ru>
+	* luatex_svnversion.h: new version
+
 2010-06-11  Taco Hoekwater <taco@luatex.org>
 
 	* font/sfnt.w, font/sfnt.h, 
