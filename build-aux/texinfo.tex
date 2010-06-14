@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-05-22.17}
+\def\texinfoversion{2010-06-10.11}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2064,8 +2064,9 @@ end
 %   @fonttextsize 10
 % (or 11) to redefine the text font size.  pt is assumed.
 %
-\def\xword{10}
 \def\xiword{11}
+\def\xword{10}
+\def\xwordpt{10pt}
 %
 \parseargdef\fonttextsize{%
   \def\textsizearg{#1}%
@@ -2785,7 +2786,18 @@ end
 \def\LaTeX{%
   L\kern-.36em
   {\setbox0=\hbox{T}%
-   \vbox to \ht0{\hbox{\selectfonts\lllsize A}\vss}}%
+   \vbox to \ht0{\hbox{%
+     \ifx\textnominalsize\xwordpt
+       % for 10pt running text, \lllsize (8pt) is too small for the A in LaTeX.
+       % Revert to plain's \scriptsize, which is 7pt.
+       \count255=\the\fam $\fam\count255 \scriptstyle A$%
+     \else
+       % For 11pt, we can use our lllsize.
+       \selectfonts\lllsize A%
+     \fi
+     }%
+     \vss
+  }}%
   \kern-.15em
   \TeX
 }
