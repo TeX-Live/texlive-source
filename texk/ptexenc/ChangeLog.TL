@@ -1,6 +1,16 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2010-06-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (libptexenc_la_CPPFLAGS): Define MAKE_PTENC_DLL
+	instead of MAKE_KPSE_DLL.
+	(libptexenc_la_SOURCES, nobase_include_HEADERS): Do not install
+	kanjicnv.h, unicode-jp.h, and unicode.h.
+	* ptexenc/ptexenc.h: Define and use PTENCDLL instead of KPSEDLL.
+	* ptexenc/kanjicnv.h, ptexenc/unicode-jp.h, ptexenc/unicode.h:
+	Remove KPSEDLL, everything is internal to the library.
+
 2010-06-04  Karl Berry <karl@tug.org>
 	
 	* configure.ac (ptexenc_lib_devel): no more dev.

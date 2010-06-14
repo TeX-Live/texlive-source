@@ -7,28 +7,42 @@
 
 #include <kpathsea/types.h>
 
-extern KPSEDLL const char *ptexenc_version_string;
+#if defined (WIN32) && !defined (__MINGW32__) && !defined (NO_PTENC_DLL)
+#define PTENC_DLL 1
+#endif /* WIN32 && !__MINGW32__ && !NO_PTENC_DLL */
+
+#if defined (PTENC_DLL) && (defined (WIN32) || defined (__CYGWIN__))
+#ifdef MAKE_PTENC_DLL
+#define PTENCDLL __declspec(dllexport)
+#else /* ! MAKE_PTENC_DLL */
+#define PTENCDLL __declspec(dllimport)
+#endif
+#else /* ! (PTENC_DLL && (WIN32 || __CYGWIN__)) */
+#define PTENCDLL
+#endif
+
+extern PTENCDLL const char *ptexenc_version_string;
 
 #define KANJI_OPTS "{jis|euc|sjis|utf8}"
 
 /* get/set Kanji encoding by string */
-extern KPSEDLL const_string get_enc_string(void);
-extern KPSEDLL int    set_enc_string(const_string file, const_string inter);
+extern PTENCDLL const_string get_enc_string(void);
+extern PTENCDLL int    set_enc_string(const_string file, const_string inter);
 #define getencstring  get_enc_string
 #define setencstring  set_enc_string
 
 /* decide if internal Kanji encode is SJIS or not */
-extern KPSEDLL boolean  is_internalSJIS(void);
+extern PTENCDLL boolean  is_internalSJIS(void);
 #define isinternalSJIS  is_internalSJIS
 
 /* check char range */
-extern KPSEDLL boolean iskanji1(int c);
-extern KPSEDLL boolean iskanji2(int c);
+extern PTENCDLL boolean iskanji1(int c);
+extern PTENCDLL boolean iskanji2(int c);
 
 /* internal (EUC/SJIS) from/to buffer (EUC/SJIS/UTF-8) code conversion */
-extern KPSEDLL int multistrlen(string s, int len, int pos);
-extern KPSEDLL long fromBUFF(string s, int len, int pos);
-extern KPSEDLL long toBUFF(long inter);
+extern PTENCDLL int multistrlen(string s, int len, int pos);
+extern PTENCDLL long fromBUFF(string s, int len, int pos);
+extern PTENCDLL long toBUFF(long inter);
 
 /* internal (EUC/SJIS) from/to DVI (JIS) code conversion */
 #define fromDVI fromJIS
@@ -36,23 +50,23 @@ extern KPSEDLL long toBUFF(long inter);
 
 /* JIS/EUC/SJIS/KUTN/UCS to internal (EUC/SJIS) code conversion */
 /* (only for \euc primitive, etc.) */
-extern KPSEDLL long toJIS(long kcode);
-extern KPSEDLL long fromJIS(long jis);
-extern KPSEDLL long fromEUC(long euc);
-extern KPSEDLL long fromSJIS(long sjis);
-extern KPSEDLL long fromKUTEN(long kuten);
+extern PTENCDLL long toJIS(long kcode);
+extern PTENCDLL long fromJIS(long jis);
+extern PTENCDLL long fromEUC(long euc);
+extern PTENCDLL long fromSJIS(long sjis);
+extern PTENCDLL long fromKUTEN(long kuten);
 
 /* fputs/putc with encoding conversion */
-extern KPSEDLL int putc2(int c, FILE *fp);
-extern KPSEDLL int fputs2(const char *s, FILE *fp);
+extern PTENCDLL int putc2(int c, FILE *fp);
+extern PTENCDLL int fputs2(const char *s, FILE *fp);
 
 /* input line with encoding conversion */
-extern KPSEDLL long input_line2(FILE *fp, string buff, long pos,
+extern PTENCDLL long input_line2(FILE *fp, string buff, long pos,
 				const long buffsize, int *lastchar);
 
 /* open/close through nkf */
-extern KPSEDLL void nkf_disable(void);
-extern KPSEDLL FILE *nkf_open(const char *path, const char *mode);
-extern KPSEDLL int nkf_close(FILE *fp);
+extern PTENCDLL void nkf_disable(void);
+extern PTENCDLL FILE *nkf_open(const char *path, const char *mode);
+extern PTENCDLL int nkf_close(FILE *fp);
 
 #endif /* PTEXENC_PTEXENC_H */

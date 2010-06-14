@@ -9,12 +9,12 @@
 #include <kpathsea/types.h>
 
 /* determine if UTF-8 character or not */
-extern KPSEDLL boolean isUTF8(int length, int nth, int c);
+extern boolean isUTF8(int length, int nth, int c);
 
-extern KPSEDLL int UTF8length(int first_byte);
-extern KPSEDLL int UTF8Slength(string buff, int buff_len);
-extern KPSEDLL long UTF8StoUCS(string s);
-extern KPSEDLL long UCStoUTF8(long ucs);
+extern int UTF8length(int first_byte);
+extern int UTF8Slength(string buff, int buff_len);
+extern long UTF8StoUCS(string s);
+extern long UCStoUTF8(long ucs);
 
 #define LONG(a,b,c,d) ( ((long)(a)<<24) | ((long)(b)<<16) | ((c)<<8) | (d) )
 #define BYTE1(x) (((x)>>24) & 0xff)

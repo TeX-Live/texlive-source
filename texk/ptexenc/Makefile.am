@@ -14,7 +14,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 
 lib_LTLIBRARIES = libptexenc.la
 
-libptexenc_la_CPPFLAGS = -DMAKE_KPSE_DLL
+libptexenc_la_CPPFLAGS = -DMAKE_PTENC_DLL
 
 libptexenc_la_LDFLAGS = -version-info $(PTEXENC_LT_VERSINFO)
 
@@ -24,6 +24,9 @@ libptexenc_la_SOURCES = \
 	jisx0208.h \
 	kanjicnv.c \
 	ptexenc.c \
+	ptexenc/kanjicnv.h \
+	ptexenc/unicode-jp.h \
+	ptexenc/unicode.h \
 	unicode-jp.c \
 	unicode.c
 
@@ -31,10 +34,7 @@ libptexenc_la_SOURCES = \
 @KPATHSEA_RULE@
 
 nobase_include_HEADERS = \
-	ptexenc/kanjicnv.h \
-	ptexenc/ptexenc.h \
-	ptexenc/unicode-jp.h \
-	ptexenc/unicode.h
+	ptexenc/ptexenc.h
 
 EXTRA_DIST = COPYRIGHT ChangeLog.TL
 

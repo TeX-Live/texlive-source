@@ -9,13 +9,13 @@
 #include <kpathsea/types.h>
 
 /* convert a JIS X 0208 char to UCS-2 */
-extern KPSEDLL int JIStoUCS2(int jis);
+extern int JIStoUCS2(int jis);
 
 /* convert a UCS-2 char to JIS X 0208 */
-extern KPSEDLL int UCS2toJIS(int ucs2);
+extern int UCS2toJIS(int ucs2);
 
 /* for U+3099 or  U+309A */
-extern KPSEDLL int get_voiced_sound(int ucs2, boolean semi);
+extern int get_voiced_sound(int ucs2, boolean semi);
 
 #define U_BOM			0xFEFF
 #define U_REPLACEMENT_CHARACTER	0xFFFD

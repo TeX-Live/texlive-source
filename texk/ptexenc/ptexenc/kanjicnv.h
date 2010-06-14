@@ -11,25 +11,25 @@
 #define LO(x)     ( ((int)(x))       & 0xff)
 #define HILO(x,y) ((LO(x) << 8) | LO(y))
 
-extern KPSEDLL boolean isEUCkanji1(int c);
-extern KPSEDLL boolean isEUCkanji2(int c);
+extern boolean isEUCkanji1(int c);
+extern boolean isEUCkanji2(int c);
 
-extern KPSEDLL boolean isSJISkanji1(int c);
-extern KPSEDLL boolean isSJISkanji2(int c);
+extern boolean isSJISkanji1(int c);
+extern boolean isSJISkanji2(int c);
 
 /* EUC <=> JIS X 0208 code conversion */
-extern KPSEDLL int EUCtoJIS(int);
-extern KPSEDLL int JIStoEUC(int);
+extern int EUCtoJIS(int);
+extern int JIStoEUC(int);
 
 /* Shift JIS <=> JIS Kanji code conversion */
-extern KPSEDLL int SJIStoJIS(int);
-extern KPSEDLL int JIStoSJIS(int);
+extern int SJIStoJIS(int);
+extern int JIStoSJIS(int);
 
 /* Shift JIS <=> EUC Kanji code conversion */
-extern KPSEDLL int SJIStoEUC(int);
-extern KPSEDLL int EUCtoSJIS(int);
+extern int SJIStoEUC(int);
+extern int EUCtoSJIS(int);
 
 /* KUTEN => JIS kanji code conversion */
-extern KPSEDLL int KUTENtoJIS(int);
+extern int KUTENtoJIS(int);
 
 #endif /* PTEXENC_KANJICNV_H */
