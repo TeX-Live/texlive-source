@@ -31,6 +31,85 @@
 
 using namespace std;
 
+// Count leading zeros.
+uint32_t CLZ(uint32_t a) 
+{
+#ifdef __GNUC__
+  return __builtin_clz(a);
+#else
+// find the log base 2 of a 32-bit integer
+  static const int MultiplyDeBruijnBitPosition[32] = {
+    0, 9, 1, 10, 13, 21, 2, 29, 11, 14, 16, 18, 22, 25, 3, 30,
+    8, 12, 20, 28, 15, 17, 24, 7, 19, 27, 23, 6, 26, 5, 4, 31
+  };
+
+  a |= a >> 1; // first round down to one less than a power of 2 
+  a |= a >> 2;
+  a |= a >> 4;
+  a |= a >> 8;
+  a |= a >> 16;
+
+  return 31-MultiplyDeBruijnBitPosition[(unsignedInt)(a * 0x07C4ACDDU) >> 27];
+#endif
+}
+
+// Portable integer implementation of ceil(log2(x)).
+uint32_t Log2(uint32_t x) 
+{
+  assert(x != 0);
+  uint32_t L=31-CLZ(x);
+  return ((uint32_t) 1 << L == x) ? L : L+1;
+}
+
+#define WriteUnsignedInteger( value ) pbs << (uint32_t)(value);
+#define WriteInteger( value ) pbs << (int32_t)(value);
+#define WriteCharacter( value ) pbs << (uint8_t)(value);
+#define WriteDouble( value ) pbs << (double)(value);
+#define WriteBit( value ) pbs << (bool)(value);
+#define WriteBoolean( value ) pbs << (bool)(value);
+#define WriteString( value ) pbs << (value);
+#define SerializeContentPRCBase serializeContentPRCBase(pbs);
+#define SerializeGraphics serializeGraphics(pbs);
+#define SerializePRCBaseWithGraphics { serializeContentPRCBase(pbs); serializeGraphics(pbs); }
+#define SerializeRepresentationItemContent serializeRepresentationItemContent(pbs);
+#define SerializeRepresentationItem( value ) (value)->serializeRepresentationItem(pbs);
+#define SerializeMarkup( value ) (value).serializeMarkup(pbs);
+#define SerializeReferenceUniqueIdentifier( value ) (value).serializeReferenceUniqueIdentifier(pbs);
+#define SerializeContentBaseTessData serializeContentBaseTessData(pbs);
+#define SerializeTessFace( value ) (value)->serializeTessFace(pbs);
+#define SerializeUserData UserData(0,0).write(pbs);
+#define SerializeLineAttr( value ) pbs << (uint32_t)((value)+1);
+#define SerializeVector3d( value ) (value).serializeVector3d(pbs);
+#define SerializeVector2d( value ) (value).serializeVector2d(pbs);
+#define SerializeName( value ) writeName(pbs, (value));
+#define SerializeInterval( value )  (value).serializeInterval(pbs);
+// #define SerializeBoundingBox( value )  (value).serializeBoundingBox(pbs);
+#define SerializeDomain( value )  (value).serializeDomain(pbs);
+#define SerializeParameterization  serializeParameterization(pbs);
+#define SerializeUVParameterization  serializeUVParameterization(pbs);
+#define SerializeTransformation  serializeTransformation(pbs);
+#define SerializeBaseTopology  serializeBaseTopology(pbs);
+#define SerializeBaseGeometry  serializeBaseGeometry(pbs);
+#define SerializePtrCurve( value )    {WriteBoolean( false ); if((value)==NULL) pbs << (uint32_t)PRC_TYPE_ROOT; else (value)->serializeCurve(pbs);}
+#define SerializePtrSurface( value )  {WriteBoolean( false ); if((value)==NULL) pbs << (uint32_t)PRC_TYPE_ROOT; else (value)->serializeSurface(pbs);}
+#define SerializePtrTopology( value ) {WriteBoolean( false ); if((value)==NULL) pbs << (uint32_t)PRC_TYPE_ROOT; else (value)->serializeTopoItem(pbs);}
+#define SerializeContentCurve  serializeContentCurve(pbs);
+#define SerializeContentWireEdge  serializeContentWireEdge(pbs);
+#define SerializeContentBody  serializeContentBody(pbs);
+#define SerializeTopoContext  serializeTopoContext(pbs);
+#define SerializeContextAndBodies( value )  (value).serializeContextAndBodies(pbs);
+#define SerializeBody( value )  (value)->serializeBody(pbs);
+#define ResetCurrentGraphics resetGraphics();
+#define SerializeContentSurface  serializeContentSurface(pbs);
+#define SerializeCompressedUniqueId( value ) (value).serializeCompressedUniqueId(pbs);
+#define SerializeUnit( value ) (value).serializeUnit(pbs);
+#define SerializeBoundingBox serializeBoundingBox(pbs);
+#define SerializeAttributeEntry serializeAttributeEntry(pbs);
+#define SerializeContentSingleAttribute( value ) (value).serializeSingleAttribute(pbs);
+#define SerializeAttribute( value ) (value).serializeAttribute(pbs);
+#define SerializeAttributeData serializeAttributes(pbs);
+
+
 double PRCVector3d::Length()
 {
   return sqrt(x*x+y*y+z*z);
@@ -60,111 +139,77 @@ void UserData::write(PRCbitStream &pbs)
   }
 }
 
-void SingleAttribute::write(PRCbitStream &pbs)
+void PRCAttributeEntry::serializeAttributeEntry(PRCbitStream &pbs) const
 {
-  pbs << titleIsInteger;
-  if(titleIsInteger)
-    pbs << title.integer;
-  else
-    pbs << title.text;
-  pbs << type;
-  switch(type)
+  WriteBoolean (title_is_integer) 
+  if (title_is_integer)
+    WriteUnsignedInteger (title_integer)
+  else	
+    WriteString (title_text)
+}
+
+void PRCSingleAttribute::serializeSingleAttribute(PRCbitStream &pbs) const
+{
+  SerializeAttributeEntry
+  WriteUnsignedInteger (type)
+  switch (type)
   {
     case KEPRCModellerAttributeTypeInt:
-      pbs << data.integer;
+      WriteInteger (value.integer)
       break;
     case KEPRCModellerAttributeTypeReal:
-      pbs << data.real;
+      WriteDouble (value.real)
       break;
     case KEPRCModellerAttributeTypeTime:
-      pbs << data.time;
+      WriteUnsignedInteger (value.time)
       break;
     case KEPRCModellerAttributeTypeString:
-      pbs << data.text;
-      break;
+      WriteString (value_text)
+      break; 
     default:
       break;
   }
 }
 
-void Attribute::write(PRCbitStream &pbs)
+void PRCAttribute::serializeAttribute(PRCbitStream &pbs) const
 {
-  pbs << (uint32_t)PRC_TYPE_MISC_Attribute;
-  pbs << titleIsInteger;
-  if(titleIsInteger)
-    pbs << title.integer;
-  else
-    pbs << title.text;
-  pbs << sizeOfAttributeKeys;
-  for(uint32_t i = 0; i < sizeOfAttributeKeys; ++i)
+  WriteUnsignedInteger (PRC_TYPE_MISC_Attribute) 
+  
+  SerializeAttributeEntry
+  const uint32_t size_of_attribute_keys = attribute_keys.size();
+  WriteUnsignedInteger (size_of_attribute_keys) 
+  for(uint32_t i=0;i<size_of_attribute_keys;i++) 
+    SerializeContentSingleAttribute (attribute_keys[i]) 
+}
+
+void PRCAttributes::serializeAttributes(PRCbitStream &pbs) const
+{
+  if (attributes.empty()) { // shortcut for most typical case
+    const uint32_t number_of_attributes = 0;
+    WriteUnsignedInteger (number_of_attributes) 
+    return;
+  }
+  const uint32_t number_of_attributes = attributes.size();
+  WriteUnsignedInteger (number_of_attributes) 
+  for(PRCAttributeList::const_iterator it = attributes.begin(); it != attributes.end(); ++it)
   {
-    singleAttributes[i].write(pbs);
+    SerializeAttribute(*it)
   }
 }
 
-void Attributes::write(PRCbitStream &pbs)
+void ContentPRCBase::serializeContentPRCBase(PRCbitStream &pbs)
 {
-  pbs << numberOfAttributes;
-  for(uint32_t i = 0; i < numberOfAttributes; ++i)
+  SerializeAttributeData
+
+  SerializeName (name)
+  if (type_eligible_for_reference)
   {
-    attributes[i].write(pbs);
+    WriteUnsignedInteger (CAD_identifier)
+    WriteUnsignedInteger (CAD_persistent_identifier)
+    WriteUnsignedInteger (PRC_unique_identifier)
   }
 }
 
-void ContentPRCBase::write(PRCbitStream &pbs)
-{
-  attributes->write(pbs);
-  writeName(pbs,name);
-  if(eligibleForReference)
-  {
-    pbs << CADID << CADPersistentID << PRCID;
-  }
-}
-
-#define WriteUnsignedInteger( value ) pbs << (uint32_t)(value);
-#define WriteInteger( value ) pbs << (int32_t)(value);
-#define WriteCharacter( value ) pbs << (uint8_t)(value);
-#define WriteDouble( value ) pbs << (double)(value);
-#define WriteBit( value ) pbs << (bool)(value);
-#define WriteBoolean( value ) pbs << (bool)(value);
-#define WriteString( value ) pbs << (value);
-#define SerializeContentPRCBase write(pbs);
-#define SerializeGraphics serializeGraphics(pbs);
-#define SerializePRCBaseWithGraphics { write(pbs); serializeGraphics(pbs); }
-#define SerializeRepresentationItemContent serializeRepresentationItemContent(pbs);
-#define SerializeRepresentationItem( value ) (value)->serializeRepresentationItem(pbs);
-#define SerializeMarkup( value ) (value).serializeMarkup(pbs);
-#define SerializeReferenceUniqueIdentifier( value ) (value).serializeReferenceUniqueIdentifier(pbs);
-#define SerializeContentBaseTessData serializeContentBaseTessData(pbs);
-#define SerializeTessFace( value ) (value)->serializeTessFace(pbs);
-#define SerializeUserData UserData(0,0).write(pbs);
-#define SerializeLineAttr( value ) pbs << (uint32_t)((value)+1);
-#define SerializeVector3d( value ) (value).serializeVector3d(pbs);
-#define SerializeVector2d( value ) (value).serializeVector2d(pbs);
-#define SerializeName( value ) writeName(pbs, (value));
-#define SerializeInterval( value )  (value).serializeInterval(pbs);
-// #define SerializeBoundingBox( value )  (value).serializeBoundingBox(pbs);
-#define SerializeDomain( value )  (value).serializeDomain(pbs);
-#define SerializeParameterization  serializeParameterization(pbs);
-#define SerializeUVParameterization  serializeUVParameterization(pbs);
-#define SerializeTransformation  serializeTransformation(pbs);
-#define SerializeAttributeData  if(attributes) attributes->write(pbs); else  WriteUnsignedInteger (0)
-#define SerializeBaseTopology  serializeBaseTopology(pbs);
-#define SerializeBaseGeometry  serializeBaseGeometry(pbs);
-#define SerializePtrCurve( value )    {WriteBoolean( false ); if((value)==NULL) pbs << (uint32_t)PRC_TYPE_ROOT; else (value)->serializeCurve(pbs);}
-#define SerializePtrSurface( value )  {WriteBoolean( false ); if((value)==NULL) pbs << (uint32_t)PRC_TYPE_ROOT; else (value)->serializeSurface(pbs);}
-#define SerializePtrTopology( value ) {WriteBoolean( false ); if((value)==NULL) pbs << (uint32_t)PRC_TYPE_ROOT; else (value)->serializeTopoItem(pbs);}
-#define SerializeContentCurve  serializeContentCurve(pbs);
-#define SerializeContentWireEdge  serializeContentWireEdge(pbs);
-#define SerializeContentBody  serializeContentBody(pbs);
-#define SerializeTopoContext  serializeTopoContext(pbs);
-#define SerializeContextAndBodies( value )  (value).serializeContextAndBodies(pbs);
-#define SerializeBody( value )  (value)->serializeBody(pbs);
-#define ResetCurrentGraphics resetGraphics();
-#define SerializeContentSurface  serializeContentSurface(pbs);
-#define SerializeCompressedUniqueId( value ) (value).serializeCompressedUniqueId(pbs);
-#define SerializeUnit( value ) (value).serializeUnit(pbs);
-#define SerializeBoundingBox serializeBoundingBox(pbs);
 
 bool IsCompressedType(uint32_t type)
 {
@@ -341,10 +386,7 @@ void PRCStyle::serializeCategory1LineStyle(PRCbitStream &pbs)
      WriteCharacter (additional_3)
 }
 
-AttributeTitle EMPTY_ATTRIBUTE_TITLE = {(char*)""};
-Attribute EMPTY_ATTRIBUTE(false,EMPTY_ATTRIBUTE_TITLE,0,NULL);
-Attributes EMPTY_ATTRIBUTES(0,0);
-ContentPRCBase EMPTY_CONTENTPRCBASE(&EMPTY_ATTRIBUTES);
+ContentPRCBase EMPTY_CONTENTPRCBASE;
 
 std::string currentName;
 void writeName(PRCbitStream &pbs,const std::string &name)
@@ -531,51 +573,52 @@ void  PRCSet::serializeSet(PRCbitStream &pbs)
   SerializeUserData
 }
 
-uint32_t PRCSet::addBrepModel(PRCBrepModel *pBrepModel)
+uint32_t PRCSet::addBrepModel(PRCBrepModel*& pBrepModel)
 {
-  elements.push_back(PRCpRepresentationItem(pBrepModel));
+  elements.push_back(pBrepModel);
+  pBrepModel = NULL;
   return elements.size()-1;
 }
 
-uint32_t PRCSet::addPolyBrepModel(PRCPolyBrepModel *pPolyBrepModel)
+uint32_t PRCSet::addPolyBrepModel(PRCPolyBrepModel*& pPolyBrepModel)
 {
-  elements.push_back(PRCpRepresentationItem(pPolyBrepModel));
+  elements.push_back(pPolyBrepModel);
+  pPolyBrepModel = NULL;
   return elements.size()-1;
 }
 
-uint32_t PRCSet::addPointSet(PRCPointSet *pPointSet)
+uint32_t PRCSet::addPointSet(PRCPointSet*& pPointSet)
 {
-  elements.push_back(PRCpRepresentationItem(pPointSet));
+  elements.push_back(pPointSet);
+  pPointSet  = NULL;
   return elements.size()-1;
 }
 
-uint32_t PRCSet::addSet(PRCSet *pSet)
+uint32_t PRCSet::addSet(PRCSet*& pSet)
 {
-  elements.push_back(PRCpRepresentationItem(pSet));
+  elements.push_back(pSet);
+  pSet = NULL;
   return elements.size()-1;
 }
 
-uint32_t PRCSet::addWire(PRCWire *pWire)
+uint32_t PRCSet::addWire(PRCWire*& pWire)
 {
-  elements.push_back(PRCpRepresentationItem(pWire));
+  elements.push_back(pWire);
+  pWire = NULL;
   return elements.size()-1;
 }
 
-uint32_t PRCSet::addPolyWire(PRCPolyWire *pPolyWire)
+uint32_t PRCSet::addPolyWire(PRCPolyWire*& pPolyWire)
 {
-  elements.push_back(PRCpRepresentationItem(pPolyWire));
+  elements.push_back(pPolyWire);
+  pPolyWire = NULL;
   return elements.size()-1;
 }
 
-uint32_t PRCSet::addRepresentationItem(PRCRepresentationItem *pRepresentationItem)
-{
-  elements.push_back(PRCpRepresentationItem(pRepresentationItem));
-  return elements.size()-1;
-}
-
-uint32_t PRCSet::addRepresentationItem(PRCpRepresentationItem pRepresentationItem)
+uint32_t PRCSet::addRepresentationItem(PRCRepresentationItem*& pRepresentationItem)
 {
   elements.push_back(pRepresentationItem);
+  pRepresentationItem = NULL;
   return elements.size()-1;
 }
 
@@ -850,9 +893,10 @@ void  PRC3DTess::serialize3DTess(PRCbitStream &pbs)
      WriteDouble (texture_coordinate[i])
 }
 
-void PRC3DTess::addTessFace(PRCTessFace *pTessFace)
+void PRC3DTess::addTessFace(PRCTessFace*& pTessFace)
 {
-  face_tessellation.push_back(PRCpTessFace(pTessFace));
+  face_tessellation.push_back(pTessFace);
+  pTessFace = NULL;
 }
 
 void  PRC3DWireTess::serialize3DWireTess(PRCbitStream &pbs)
@@ -1205,13 +1249,13 @@ void  PRCCompressedFace::serializeCompressedNurbs(PRCbitStream &pbs, double brep
 
    const uint32_t number_of_knots_in_u = 4; // 0011 or 00001111 knot vector - just 2 spans
    WriteUnsignedIntegerWithVariableBitNumber (number_of_knots_in_u - 2, 16)
-   uint32_t number_bit = degree_in_u ? ceil( log2( degree_in_u + 2 ) ) : 2;
+   uint32_t number_bit = degree_in_u ? Log2( degree_in_u + 2 ) : 2;
    WriteBoolean (false) // Multiplicity_is_already_stored - no
    WriteUnsignedIntegerWithVariableBitNumber( degree_in_u+1,number_bit)
    WriteBoolean (true) // Multiplicity_is_already_stored - yes
    const uint32_t number_of_knots_in_v = 4; // 0011 or 00001111 knot vector - just 2 spans
    WriteUnsignedIntegerWithVariableBitNumber (number_of_knots_in_v - 2, 16)
-   number_bit = degree_in_v ? ceil( log2( degree_in_v + 2 ) ) : 2;
+   number_bit = degree_in_v ? Log2( degree_in_v + 2 ) : 2;
    WriteBoolean (false) // Multiplicity_is_already_stored - no
    WriteUnsignedIntegerWithVariableBitNumber( degree_in_v+1,number_bit)
    WriteBoolean (true) // Multiplicity_is_already_stored - yes
@@ -1499,15 +1543,10 @@ void PRCShell::serializeShell(PRCbitStream &pbs)
    }
 }
 
-void PRCShell::addFace(PRCFace *pFace, uint8_t orientation)
-{
-  face.push_back(PRCpFace(pFace));
-  orientation_surface_with_shell.push_back(orientation);
-}
-
-void PRCShell::addFace(const PRCpFace &pFace, uint8_t orientation)
+void PRCShell::addFace(PRCFace*& pFace, uint8_t orientation)
 {
   face.push_back(pFace);
+  pFace = NULL;
   orientation_surface_with_shell.push_back(orientation);
 }
 
@@ -1525,9 +1564,10 @@ void PRCConnex::serializeConnex(PRCbitStream &pbs)
    }
 }
 
-void PRCConnex::addShell(PRCShell *pShell)
+void PRCConnex::addShell(PRCShell*& pShell)
 {
-  shell.push_back(PRCpShell(pShell));
+  shell.push_back(pShell);
+  pShell = NULL;
 }
 
 #define have_bbox( behavior ) (behavior!=0)
@@ -1548,9 +1588,10 @@ void PRCBrepData::serializeBrepData(PRCbitStream &pbs)
 }
 #undef have_bbox
 
-void PRCBrepData::addConnex(PRCConnex *pConnex)
+void PRCBrepData::addConnex(PRCConnex*& pConnex)
 {
-  connex.push_back(PRCpConnex(pConnex));
+  connex.push_back(pConnex);
+  pConnex = NULL;
 }
 
 void PRCContentWireEdge::serializeContentWireEdge(PRCbitStream &pbs)
@@ -1699,9 +1740,9 @@ void PRCTopoContext::serializeContextGraphics(PRCbitStream &pbs)
    bool has_graphics = false;
    for (i=0;i<number_of_body;i++)
    {
-        if ( body[i]->topo_item_type == PRC_TYPE_TOPO_BrepData && dynamic_cast<PRCBrepData*>(body[i].get()))
+        if ( body[i]->topo_item_type == PRC_TYPE_TOPO_BrepData && dynamic_cast<PRCBrepData*>(body[i]))
         {
-                PRCBrepData *body_i = dynamic_cast<PRCBrepData*>(body[i].get());
+                PRCBrepData *body_i = dynamic_cast<PRCBrepData*>(body[i]);
                 for (j=0;j<body_i->connex.size();j++)
                 {
                         for(k=0;k<body_i->connex[j]->shell.size();k++)
@@ -1714,9 +1755,9 @@ void PRCTopoContext::serializeContextGraphics(PRCbitStream &pbs)
                         }
                 }
         }
-        else if ( body[i]->topo_item_type == PRC_TYPE_TOPO_BrepDataCompress && dynamic_cast<PRCCompressedBrepData*>(body[i].get()))
+        else if ( body[i]->topo_item_type == PRC_TYPE_TOPO_BrepDataCompress && dynamic_cast<PRCCompressedBrepData*>(body[i]))
         {
-                PRCCompressedBrepData *body_i = dynamic_cast<PRCCompressedBrepData*>(body[i].get());
+                PRCCompressedBrepData *body_i = dynamic_cast<PRCCompressedBrepData*>(body[i]);
              	for( l=0;l<body_i->face.size();l++)
              	{
              		element.push_back( body_i->face[l] );
@@ -1745,27 +1786,25 @@ void PRCTopoContext::serializeContextGraphics(PRCbitStream &pbs)
    }
 }
 
-uint32_t PRCTopoContext::addSingleWireBody(PRCSingleWireBody *pSingleWireBody)
+uint32_t PRCTopoContext::addSingleWireBody(PRCSingleWireBody*& pSingleWireBody)
 {
-  body.push_back(PRCpBody(pSingleWireBody));
+  body.push_back(pSingleWireBody);
+  pSingleWireBody = NULL;
   return body.size()-1;
 }
 
-uint32_t PRCTopoContext::addBrepData(PRCBrepData *pBrepData)
+uint32_t PRCTopoContext::addBrepData(PRCBrepData*& pBrepData)
 {
-  body.push_back(PRCpBody(pBrepData));
+  body.push_back(pBrepData);
+  pBrepData = NULL;
   return body.size()-1;
 }
 
-uint32_t PRCTopoContext::addCompressedBrepData(PRCCompressedBrepData *pCompressedBrepData)
+uint32_t PRCTopoContext::addCompressedBrepData(PRCCompressedBrepData*& pCompressedBrepData)
 {
-  body.push_back(PRCpBody(pCompressedBrepData));
+  body.push_back(pCompressedBrepData);
+  pCompressedBrepData = NULL;
   return body.size()-1;
-}
-
-void PRCSingleWireBody::setWireEdge(PRCWireEdge *wireEdge)
-{
-  wire_edge.reset(wireEdge);
 }
 
 void PRCSingleWireBody::serializeSingleWireBody(PRCbitStream &pbs)
@@ -1824,6 +1863,7 @@ void PRCProductOccurrence::serializeProductOccurrence(PRCbitStream &pbs)
    WriteCharacter (product_information_flags)
    WriteInteger (product_load_status)
 
+   const bool has_location = location != NULL;
    WriteBit (has_location)
    if (has_location)
 	   location->serializeTransformation3d (pbs);
@@ -1845,73 +1885,73 @@ void PRCProductOccurrence::serializeProductOccurrence(PRCbitStream &pbs)
    SerializeUserData
 }
 
-uint32_t PRCPartDefinition::addBrepModel(PRCBrepModel *pBrepModel)
+uint32_t PRCPartDefinition::addBrepModel(PRCBrepModel*& pBrepModel)
 {
-	representation_item.push_back(PRCpRepresentationItem(pBrepModel));
-	return representation_item.size()-1;
+  representation_item.push_back(pBrepModel);
+  pBrepModel = NULL;
+  return representation_item.size()-1;
 }
 
-uint32_t PRCPartDefinition::addPolyBrepModel(PRCPolyBrepModel *pPolyBrepModel)
+uint32_t PRCPartDefinition::addPolyBrepModel(PRCPolyBrepModel*& pPolyBrepModel)
 {
-	representation_item.push_back(PRCpRepresentationItem(pPolyBrepModel));
-	return representation_item.size()-1;
+  representation_item.push_back(pPolyBrepModel);
+  pPolyBrepModel = NULL;
+  return representation_item.size()-1;
 }
 
-uint32_t PRCPartDefinition::addPointSet(PRCPointSet *pPointSet)
+uint32_t PRCPartDefinition::addPointSet(PRCPointSet*& pPointSet)
 {
-	representation_item.push_back(PRCpRepresentationItem(pPointSet));
-	return representation_item.size()-1;
+  representation_item.push_back(pPointSet);
+  pPointSet = NULL;
+  return representation_item.size()-1;
 }
 
-uint32_t PRCPartDefinition::addSet(PRCSet *pSet)
+uint32_t PRCPartDefinition::addSet(PRCSet*& pSet)
 {
-	representation_item.push_back(PRCpRepresentationItem(pSet));
-	return representation_item.size()-1;
+  representation_item.push_back(pSet);
+  pSet = NULL;
+  return representation_item.size()-1;
 }
 
-uint32_t PRCPartDefinition::addWire(PRCWire *pWire)
+uint32_t PRCPartDefinition::addWire(PRCWire*& pWire)
 {
-	representation_item.push_back(PRCpRepresentationItem(pWire));
-	return representation_item.size()-1;
+  representation_item.push_back(pWire);
+  pWire = NULL;
+  return representation_item.size()-1;
 }
 
-uint32_t PRCPartDefinition::addPolyWire(PRCPolyWire *pPolyWire)
+uint32_t PRCPartDefinition::addPolyWire(PRCPolyWire*& pPolyWire)
 {
-	representation_item.push_back(PRCpRepresentationItem(pPolyWire));
-	return representation_item.size()-1;
+  representation_item.push_back(pPolyWire);
+  pPolyWire = NULL;
+  return representation_item.size()-1;
 }
 
-uint32_t PRCPartDefinition::addRepresentationItem(PRCRepresentationItem *pRepresentationItem)
+uint32_t PRCPartDefinition::addRepresentationItem(PRCRepresentationItem*& pRepresentationItem)
 {
-	representation_item.push_back(PRCpRepresentationItem(pRepresentationItem));
-	return representation_item.size()-1;
+  representation_item.push_back(pRepresentationItem);
+  pRepresentationItem = NULL;
+  return representation_item.size()-1;
 }
-
-uint32_t PRCPartDefinition::addRepresentationItem(PRCpRepresentationItem pRepresentationItem)
-{
-	representation_item.push_back(pRepresentationItem);
-	return representation_item.size()-1;
-}
-
 
 void PRCPartDefinition::serializePartDefinition(PRCbitStream &pbs)
 {
-	WriteUnsignedInteger ( PRC_TYPE_ASM_PartDefinition ) 
+  WriteUnsignedInteger ( PRC_TYPE_ASM_PartDefinition ) 
 	
-	SerializePRCBaseWithGraphics
-	SerializeBoundingBox
+  SerializePRCBaseWithGraphics
+  SerializeBoundingBox
 
-	uint32_t number_of_representation_items = representation_item.size();
-	WriteUnsignedInteger (number_of_representation_items)
-	for (uint32_t i=0;i<number_of_representation_items;i++)
-		SerializeRepresentationItem (representation_item[i])
+  uint32_t number_of_representation_items = representation_item.size();
+  WriteUnsignedInteger (number_of_representation_items)
+  for (uint32_t i=0;i<number_of_representation_items;i++)
+    SerializeRepresentationItem (representation_item[i])
 	
-	// SerializeMarkups (markups)
-	WriteUnsignedInteger (0) // number_of_linked_items 
-	WriteUnsignedInteger (0) // number_of_leaders 
-	WriteUnsignedInteger (0) // number_of_markups 
-	WriteUnsignedInteger (0) // number_of_annotation_entities 
+  // SerializeMarkups (markups)
+  WriteUnsignedInteger (0) // number_of_linked_items 
+  WriteUnsignedInteger (0) // number_of_leaders 
+  WriteUnsignedInteger (0) // number_of_markups 
+  WriteUnsignedInteger (0) // number_of_annotation_entities 
 
-	WriteUnsignedInteger (0) // number_of_views
-	SerializeUserData
+  WriteUnsignedInteger (0) // number_of_views
+  SerializeUserData
 }	

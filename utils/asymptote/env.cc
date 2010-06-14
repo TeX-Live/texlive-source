@@ -23,9 +23,9 @@ namespace trans {
 // back to env when checking casting of subtypes.
 class envCaster : public caster {
   protoenv &e;
-  symbol *name;
+  symbol name;
 public:
-  envCaster(protoenv &e, symbol *name)
+  envCaster(protoenv &e, symbol name)
     : e(e), name(name) {}
 
   access *operator() (ty *target, ty *source) {
@@ -37,7 +37,7 @@ public:
   }
 };
   
-access *protoenv::baseLookupCast(ty *target, ty *source, symbol *name) {
+access *protoenv::baseLookupCast(ty *target, ty *source, symbol name) {
   static identAccess id;
 
   assert(target->kind != ty_overloaded &&
@@ -57,7 +57,7 @@ access *protoenv::baseLookupCast(ty *target, ty *source, symbol *name) {
   }
 }
 
-access *protoenv::lookupCast(ty *target, ty *source, symbol *name) {
+access *protoenv::lookupCast(ty *target, ty *source, symbol name) {
   access *a=baseLookupCast(target, source, name);
   if (a)
     return a;
@@ -66,12 +66,12 @@ access *protoenv::lookupCast(ty *target, ty *source, symbol *name) {
   return source->castTo(target, ec);
 }
 
-bool protoenv::castable(ty *target, ty *source, symbol *name) {
+bool protoenv::castable(ty *target, ty *source, symbol name) {
   struct castTester : public tester {
     protoenv &e;
-    symbol *name;
+    symbol name;
 
-    castTester(protoenv &e, symbol *name)
+    castTester(protoenv &e, symbol name)
       : e(e), name(name) {}
 
     bool base(ty *t, ty *s) {
@@ -88,12 +88,57 @@ bool protoenv::castable(ty *target, ty *source, symbol *name) {
   return ct.test(target,source);
 }
 
-ty *protoenv::castTarget(ty *target, ty *source, symbol *name) {
+#ifdef FASTCAST
+bool protoenv::fastCastable(ty *target, ty *source) {
+  assert(target->kind != types::ty_overloaded);
+  assert(target->kind != types::ty_error);
+  assert(source->kind != types::ty_error);
+
+  // To avoid memory allocation, fill one static variable with new parameters
+  // in each call.
+  static types::function castFunc(primVoid(), primVoid());
+  castFunc.result = target;
+
+  if (source->kind == types::ty_overloaded) {
+    bool result = false;
+    types::ty_vector& v = ((overloaded *)source)->sub;
+    for (size_t i = 0; i < v.size(); ++i) {
+      castFunc.sig.formals[0].t = v[i];
+      if (lookupVarByType(symbol::castsym, &castFunc)) {
+        result = true;
+        break;
+      }
+    }
+    //assert(result == castable(target, source, symbol::castsym));
+    //cout << "fc OVERLOADED " << (result ? "CAST" : "FAIL") << endl;
+    return result;
+  }
+  //else cout << "fc SIMPLE" << endl;
+
+  // Don't test for equivalent, as that is already done by the castScore
+  // code.  Assert disabled for speed.
+#if 0
+  assert(!equivalent(target, source));
+#endif
+
+  castFunc.sig.formals[0].t = source;
+
+  if (lookupVarByType(symbol::castsym, &castFunc))
+    return true;
+
+  // Test for generic casts of null.  This should be moved to a types.h
+  // routine.
+  return source->kind == ty_null && target->isReference();
+}
+#endif
+
+
+ty *protoenv::castTarget(ty *target, ty *source, symbol name) {
   struct resolver : public collector {
     protoenv &e;
-    symbol *name;
+    symbol name;
 
-    resolver(protoenv &e, symbol *name)
+    resolver(protoenv &e, symbol name)
       : e(e), name(name) {}
 
     types::ty *base(types::ty *target, types::ty *source) {
@@ -105,12 +150,12 @@ ty *protoenv::castTarget(ty *target, ty *source, symbol *name) {
   return r.collect(target, source);
 } 
 
-ty *protoenv::castSource(ty *target, ty *source, symbol *name) {
+ty *protoenv::castSource(ty *target, ty *source, symbol name) {
   struct resolver : public collector {
     protoenv &e;
-    symbol *name;
+    symbol name;
 
-    resolver(protoenv &e, symbol *name)
+    resolver(protoenv &e, symbol name)
       : e(e), name(name) {}
 
     types::ty *base(types::ty *target, types::ty *source) {
@@ -150,7 +195,7 @@ env::~env()
 {
 }
 
-record *env::getModule(symbol *id, string filename)
+record *env::getModule(symbol id, string filename)
 {
   return ge.getModule(id, filename);
 }

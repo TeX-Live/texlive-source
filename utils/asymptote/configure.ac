@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[1.96],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[1.98],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 
@@ -107,6 +107,7 @@ if test "$GXX" = yes ; then
    if test "$ac_gcc_version" -lt 4; then
        CFLAGS=$CFLAGS" -finline-limit=400"
    fi
+   CFLAGS=$CFLAGS" --no-var-tracking"
 fi
 
 AC_CHECK_HEADER(tr1/unordered_map,,
@@ -134,7 +135,7 @@ OPTIONS="-D_FILE_OFFSET_BITS=64 "
 GCLIB=
 GCPPLIB=
 GCNAME="Boehm Garbage Collector"
-GCOPTIONS=""
+GCOPTIONS="--disable-shared --enable-large-config"
 if test "x$ac_cv_use_gc" != "xno" ; then
    OPTIONS=$OPTIONS"-DUSEGC "
    case $ac_cv_use_gc in
@@ -153,16 +154,17 @@ if test "x$ac_cv_use_gc" != "xno" ; then
 	  LIBS=$LIBS"-lgc "
 	  AC_MSG_NOTICE([enabling system $GCNAME])],[
         GCDIR=$GCVERSION
+        INCL="-I\$(GC)/include"
 	GCLIB="\$(GC)/.libs/libgc.a"
 	AC_MSG_NOTICE($GCNAME library not found)]),
       GCDIR=$GCVERSION
+      GCLIB="\$(GC)/.libs/libgc.a"
       INCL="-I\$(GC)/include"
       AC_MSG_NOTICE($GCNAME header file not found))
       CPPFLAGS=$CPPFLAGS_SAVE
       ;;
    *)
       GCDIR=$ac_cv_use_gc
-      GCOPTIONS="--disable-shared --enable-large-config"
       AC_MSG_NOTICE([enabling local $GCNAME $GCDIR])
       GCLIB="\$(GC)/.libs/libgc.a"
       INCL="-I\$(GC)/include"

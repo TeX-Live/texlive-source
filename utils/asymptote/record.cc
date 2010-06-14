@@ -14,7 +14,7 @@
 
 namespace types {
 
-record::record(symbol *name, frame *level)
+record::record(symbol name, frame *level)
   : ty(ty_record),
     name(name),
     level(level),
@@ -23,19 +23,19 @@ record::record(symbol *name, frame *level)
 {
   assert(init);
 #ifdef DEBUG_STACK
-  init->name = "struct "+string(*name);
+  init->name = "struct "+string(name);
 #endif
 }
 
 record::~record()
 {}
 
-record *record::newRecord(symbol *id, bool statically)
+record *record::newRecord(symbol id, bool statically)
 {
   frame *underlevel = getLevel(statically);
   assert(underlevel);
     
-  frame *level = new frame(*id, underlevel, 0);
+  frame *level = new frame(id, underlevel, 0);
 
   record *r = new record(id, level);
   return r;
@@ -47,8 +47,8 @@ trans::access *record::initializer() {
   return &a;
 }
 
-dummyRecord::dummyRecord(symbol *name) 
-  : record(name, new frame(*name, 0,0))
+dummyRecord::dummyRecord(symbol name) 
+  : record(name, new frame(name, 0,0))
 {
   // Encode the instructions to put an placeholder instance of the record
   // on the stack.

@@ -1,4 +1,466 @@
 ------------------------------------------------------------------------
+r5009 | jcbowman | 2010-06-14 02:39:57 -0600 (Mon, 14 Jun 2010) | 6 lines
+Changed paths:
+   M /trunk/asymptote/array.cc
+   M /trunk/asymptote/array.h
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/common.h
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/item.h
+   M /trunk/asymptote/program.cc
+   M /trunk/asymptote/runarray.in
+   M /trunk/asymptote/runsystem.in
+   M /trunk/asymptote/runtime.in
+
+On C99-compliant machines with 64 bit integers, use compact items for
+the virtual machine, relying on Asymptote's internal type checking (compile
+with -DCOMPACT=0 to re-enable the type_info data field). This change required
+restricting T[] array(int n, T value, int depth=intMax) to 0, 1, or 2
+dimensional arrays.
+
+------------------------------------------------------------------------
+r5008 | jcbowman | 2010-06-14 00:43:24 -0600 (Mon, 14 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/plain_constants.asy
+   M /trunk/asymptote/path.cc
+
+Fix definition of undefined.
+------------------------------------------------------------------------
+r5007 | jcbowman | 2010-06-13 16:47:27 -0600 (Sun, 13 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_tube.asy
+
+Rename tube to pipe.
+
+------------------------------------------------------------------------
+r5006 | jcbowman | 2010-06-13 16:11:19 -0600 (Sun, 13 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runlabel.in
+
+Work around bug in gs 8.71: discard noncyclic stokepaths.
+
+------------------------------------------------------------------------
+r5005 | hammera | 2010-06-13 10:56:15 -0600 (Sun, 13 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/application.cc
+   M /trunk/asymptote/application.h
+
+Half-exact function matching.
+
+------------------------------------------------------------------------
+r5004 | hammera | 2010-06-13 10:55:44 -0600 (Sun, 13 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/base/three_tube.asy
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/camp.y
+   M /trunk/asymptote/exp.cc
+   M /trunk/asymptote/exp.h
+   M /trunk/asymptote/tests/types/constructor.asy
+   M /trunk/asymptote/tests/types/resolve.asy
+
+Handle function equality specially.
+
+------------------------------------------------------------------------
+r5003 | jcbowman | 2010-06-13 10:03:39 -0600 (Sun, 13 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/examples/sinc.asy
+
+Improve example.
+------------------------------------------------------------------------
+r5002 | jcbowman | 2010-06-13 09:24:04 -0600 (Sun, 13 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.nsi
+   M /trunk/asymptote/patches/fixmem.reg
+
+Make heap_chunk_in_mb a multiple of 256MB.
+------------------------------------------------------------------------
+r5001 | jcbowman | 2010-06-12 12:14:19 -0600 (Sat, 12 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/memory.h
+
+Revert -r4971:4973.
+------------------------------------------------------------------------
+r5000 | hammera | 2010-06-12 12:06:29 -0600 (Sat, 12 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/TODO
+   M /trunk/asymptote/application.cc
+   M /trunk/asymptote/application.h
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/drawpath.cc
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+   M /trunk/asymptote/env.cc
+   M /trunk/asymptote/env.h
+   M /trunk/asymptote/exp.cc
+   M /trunk/asymptote/exp.h
+   M /trunk/asymptote/name.cc
+   M /trunk/asymptote/record.cc
+   M /trunk/asymptote/tests/types/resolve.asy
+   M /trunk/asymptote/types.h
+
+Overloading resolution optimizations.
+
+------------------------------------------------------------------------
+r4999 | jcbowman | 2010-06-12 01:24:50 -0600 (Sat, 12 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/examples/basealign.asy
+
+Improve example.
+------------------------------------------------------------------------
+r4998 | jcbowman | 2010-06-12 01:15:54 -0600 (Sat, 12 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_Label.asy
+   M /trunk/asymptote/drawlabel.cc
+   M /trunk/asymptote/transform.h
+
+Align labels with rotational instead of shiftless part of transform.
+
+------------------------------------------------------------------------
+r4997 | jcbowman | 2010-06-12 01:14:29 -0600 (Sat, 12 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/examples/xxsq01y.asy
+
+Update example.
+------------------------------------------------------------------------
+r4996 | jcbowman | 2010-06-11 23:47:28 -0600 (Fri, 11 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/examples/xxsq01.asy
+
+Fix example.
+------------------------------------------------------------------------
+r4995 | jcbowman | 2010-06-11 23:46:51 -0600 (Fri, 11 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.98svn.
+------------------------------------------------------------------------
+r4994 | jcbowman | 2010-06-11 22:19:24 -0600 (Fri, 11 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/prc/test.cc
+   M /trunk/asymptote/prc/writePRC.h
+
+Replace M_PI by pi for portability.
+------------------------------------------------------------------------
+r4993 | jcbowman | 2010-06-11 21:47:41 -0600 (Fri, 11 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/runarray.in
+
+Fix warning message.
+------------------------------------------------------------------------
+r4992 | jcbowman | 2010-06-11 21:27:14 -0600 (Fri, 11 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Fix typo.
+------------------------------------------------------------------------
+r4991 | jcbowman | 2010-06-11 17:26:38 -0600 (Fri, 11 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/writePRC.h
+
+Remove tr1 includes.
+
+Improve local gc detection.
+
+------------------------------------------------------------------------
+r4990 | jcbowman | 2010-06-11 14:59:59 -0600 (Fri, 11 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/writePRC.cc
+
+Rename log2 to Log2.
+
+------------------------------------------------------------------------
+r4989 | jcbowman | 2010-06-11 14:54:47 -0600 (Fri, 11 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/GaussianSurface.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/examples/BezierPatch.asy
+   M /trunk/asymptote/examples/Klein.asy
+   M /trunk/asymptote/examples/RiemannSurface.asy
+   M /trunk/asymptote/examples/RiemannSurfaceRoot.asy
+   M /trunk/asymptote/examples/SierpinskiGasket.asy
+   M /trunk/asymptote/examples/SierpinskiSponge.asy
+   M /trunk/asymptote/examples/cheese.asy
+   M /trunk/asymptote/examples/cyclohexane.asy
+   M /trunk/asymptote/examples/elevation.asy
+   M /trunk/asymptote/examples/epix.asy
+   M /trunk/asymptote/examples/equilchord.asy
+   M /trunk/asymptote/examples/extrudedcontour.asy
+   M /trunk/asymptote/examples/filesurface.asy
+   M /trunk/asymptote/examples/magnetic.asy
+   M /trunk/asymptote/examples/p-orbital.asy
+   M /trunk/asymptote/examples/parametricelevation.asy
+   M /trunk/asymptote/examples/parametricsurface.asy
+   M /trunk/asymptote/examples/pipeintersection.asy
+   M /trunk/asymptote/examples/roll.asy
+   M /trunk/asymptote/examples/shellsqrtx01.asy
+   M /trunk/asymptote/examples/slidedemo.asy
+   M /trunk/asymptote/examples/soccerball.asy
+   M /trunk/asymptote/examples/sphere.asy
+   M /trunk/asymptote/examples/sphericalharmonic.asy
+   M /trunk/asymptote/examples/spiral3.asy
+   M /trunk/asymptote/examples/splitpatch.asy
+   M /trunk/asymptote/examples/sqrtx01.asy
+   M /trunk/asymptote/examples/sqrtx01y1.asy
+   M /trunk/asymptote/examples/stroke3.asy
+   M /trunk/asymptote/examples/threeviews.asy
+   M /trunk/asymptote/examples/torus.asy
+   M /trunk/asymptote/examples/trefoilknot.asy
+   M /trunk/asymptote/examples/trumpet.asy
+   M /trunk/asymptote/examples/truncatedIcosahedron.asy
+   M /trunk/asymptote/examples/twistedtubes.asy
+   M /trunk/asymptote/examples/vectorfieldsphere.asy
+   M /trunk/asymptote/examples/washer.asy
+   M /trunk/asymptote/examples/washermethod.asy
+   M /trunk/asymptote/examples/wedge.asy
+   M /trunk/asymptote/examples/xxsq01.asy
+   M /trunk/asymptote/examples/xxsq01x-1.asy
+
+Update examples to use merge=true for surfaces.
+
+------------------------------------------------------------------------
+r4988 | jcbowman | 2010-06-11 14:53:22 -0600 (Fri, 11 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/item.h
+
+Remove unused preprocessor conditionals.
+
+------------------------------------------------------------------------
+r4987 | jcbowman | 2010-06-11 11:51:54 -0600 (Fri, 11 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/oPRCFile.h
+   M /trunk/asymptote/prc/writePRC.h
+
+Fix more memory leaks.
+
+------------------------------------------------------------------------
+r4986 | jcbowman | 2010-06-11 02:15:51 -0600 (Fri, 11 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/oPRCFile.h
+   M /trunk/asymptote/prc/writePRC.h
+
+Fix more memory leaks.
+
+------------------------------------------------------------------------
+r4985 | jcbowman | 2010-06-11 01:48:05 -0600 (Fri, 11 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/oPRCFile.h
+
+Fix PRC memory leak.
+
+------------------------------------------------------------------------
+r4984 | jcbowman | 2010-06-10 17:09:05 -0600 (Thu, 10 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/PRCbitStream.cc
+   M /trunk/asymptote/prc/oPRCFile.cc
+   M /trunk/asymptote/prc/oPRCFile.h
+   M /trunk/asymptote/prc/test.cc
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/prc/writePRC.h
+
+Remove tr1 (gcc-4.3) dependence, courtesy of Michail.
+
+------------------------------------------------------------------------
+r4983 | jcbowman | 2010-06-10 10:24:59 -0600 (Thu, 10 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/drawpath3.cc
+   M /trunk/asymptote/examples/cos3.asy
+   M /trunk/asymptote/examples/exp3.asy
+   M /trunk/asymptote/examples/gamma3.asy
+   M /trunk/asymptote/examples/sin3.asy
+   M /trunk/asymptote/glrender.cc
+
+Add option (default true) to fill subdivision cracks in unlighted labels.
+
+Update examples.
+
+------------------------------------------------------------------------
+r4982 | jcbowman | 2010-06-10 09:28:59 -0600 (Thu, 10 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/patches/README
+   A /trunk/asymptote/patches/fixmem.reg
+
+Add patch to fix MSWindows memory limit.
+------------------------------------------------------------------------
+r4981 | jcbowman | 2010-06-10 09:24:16 -0600 (Thu, 10 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/camp.l
+
+Add missing include.
+
+------------------------------------------------------------------------
+r4980 | jcbowman | 2010-06-09 23:08:24 -0600 (Wed, 09 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/exp.h
+
+Fix typename of symbol.
+
+------------------------------------------------------------------------
+r4979 | jcbowman | 2010-06-09 22:00:22 -0600 (Wed, 09 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/drawelement.h
+   M /trunk/asymptote/drawpath3.cc
+   M /trunk/asymptote/drawpath3.h
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/glrender.h
+   M /trunk/asymptote/runpicture.in
+
+Add billboard support for Bezier curves.
+
+Fix OpenGL zoom flicker.
+
+------------------------------------------------------------------------
+r4978 | jcbowman | 2010-06-09 21:01:46 -0600 (Wed, 09 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.nsi
+
+Update location of heap_chunk_in_mb in Windows registry.
+
+------------------------------------------------------------------------
+r4977 | jcbowman | 2010-06-09 16:25:20 -0600 (Wed, 09 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/PRC.h
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/runmath.in
+
+Use a portable integer log2 function.
+
+------------------------------------------------------------------------
+r4976 | jcbowman | 2010-06-09 16:22:08 -0600 (Wed, 09 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/interact.cc
+
+Work around missing readline include.
+
+------------------------------------------------------------------------
+r4975 | hammera | 2010-06-09 11:39:07 -0600 (Wed, 09 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/camp.l
+
+Don't print non-printable characters.
+
+------------------------------------------------------------------------
+r4974 | jcbowman | 2010-06-09 11:02:20 -0600 (Wed, 09 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/drawsurface.h
+
+Fix offscreen detection (broken in r4627).
+
+------------------------------------------------------------------------
+r4973 | jcbowman | 2010-06-09 08:57:03 -0600 (Wed, 09 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/memory.h
+
+Fix __GNU_PREREQ.
+
+------------------------------------------------------------------------
+r4972 | jcbowman | 2010-06-08 21:38:12 -0600 (Tue, 08 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/memory.h
+
+Require tr1/unordered_map on systems without __GNUC_PREREQ.
+
+------------------------------------------------------------------------
+r4971 | jcbowman | 2010-06-08 21:26:55 -0600 (Tue, 08 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Support older g++ compilers.
+
+------------------------------------------------------------------------
+r4970 | jcbowman | 2010-06-08 14:50:38 -0600 (Tue, 08 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Avoid g++ informational message and speed up compilation.
+
+------------------------------------------------------------------------
+r4969 | hammera | 2010-06-08 11:39:49 -0600 (Tue, 08 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/TODO
+   M /trunk/asymptote/application.cc
+   M /trunk/asymptote/application.h
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/builtin.h
+   M /trunk/asymptote/camp.l
+   M /trunk/asymptote/camp.y
+   M /trunk/asymptote/coder.cc
+   M /trunk/asymptote/coder.h
+   M /trunk/asymptote/constructor.cc
+   M /trunk/asymptote/dec.cc
+   M /trunk/asymptote/dec.h
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+   M /trunk/asymptote/env.cc
+   M /trunk/asymptote/env.h
+   M /trunk/asymptote/envcompleter.cc
+   M /trunk/asymptote/errors
+   M /trunk/asymptote/exp.cc
+   M /trunk/asymptote/exp.h
+   M /trunk/asymptote/findsym.pl
+   M /trunk/asymptote/fundec.cc
+   M /trunk/asymptote/fundec.h
+   M /trunk/asymptote/genv.cc
+   M /trunk/asymptote/genv.h
+   M /trunk/asymptote/name.cc
+   M /trunk/asymptote/name.h
+   M /trunk/asymptote/opsymbols.pl
+   M /trunk/asymptote/record.cc
+   M /trunk/asymptote/record.h
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/stm.cc
+   M /trunk/asymptote/stm.h
+   M /trunk/asymptote/symbol.cc
+   M /trunk/asymptote/symbol.h
+   M /trunk/asymptote/table.h
+   M /trunk/asymptote/tests/arith/integer.asy
+   M /trunk/asymptote/types.cc
+   M /trunk/asymptote/types.h
+
+Replaced symbol table with custom hash table.
+
+------------------------------------------------------------------------
+r4968 | jcbowman | 2010-06-07 11:29:30 -0600 (Mon, 07 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Emphasize that version 9.0 of Adobe Reader is now required.
+
+------------------------------------------------------------------------
+r4967 | jcbowman | 2010-06-07 10:05:16 -0600 (Mon, 07 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/examples/vectorfieldsphere.asy
+
+Update grouping.
+
+------------------------------------------------------------------------
+r4966 | jcbowman | 2010-06-07 07:55:14 -0600 (Mon, 07 Jun 2010) | 3 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Acknowledge contributions of Michail Vidiassov (coauthor with Orest Shardt of
+current PRC driver).
+
+------------------------------------------------------------------------
+r4965 | jcbowman | 2010-06-06 09:58:38 -0600 (Sun, 06 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.97svn.
+------------------------------------------------------------------------
 r4964 | jcbowman | 2010-06-06 08:19:42 -0600 (Sun, 06 Jun 2010) | 2 lines
 Changed paths:
    M /trunk/asymptote/algebra3.cc

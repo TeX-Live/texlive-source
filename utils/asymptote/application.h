@@ -232,7 +232,7 @@ class application : public gc {
   // Finds the first unmatched formal of the given name, returning the index.
   // The rest formal is not tested.  This function returns FAIL if no formals
   // match.
-  Int find(symbol *name);
+  Int find(symbol name);
 
   // Match the formal at index to its default argument (if it has one).
   bool matchDefault();
@@ -287,6 +287,15 @@ public:
   types::function *getType() {
     return t;
   }
+
+  // This returns true in the special case that the arguments matched without
+  // casting or packing into the rest formal.
+  bool exact();
+
+  // The next best thing (score-wise) to an exact match.  This returns true if
+  // there are two arguments, one of which is cast and one is matched exactly
+  // and neither are packed into the rest argument.
+  bool halfExact();
 };
 
 typedef mem::list<application *> app_list;

@@ -1,3 +1,17 @@
+Release Notes for Version 1.98
+
+Memory usage and garbage collection were greatly improved, and many optimizations were made. Labels are now aligned using the rotational instead of shiftless part of the transform. A portable CYGWIN memory limit fix was implemented. Noncyclic stokepaths are now discarded to work around a bug in gs 8.71.k.
+
+Release Notes for Version 1.97
+
+A new render.labelfill option (enabled by default) fills subdivision cracks in
+unlighted labels. The dependence on gcc-4.3 was removed. Offscreen detection and
+zoom bugs in the OpenGL renderer were fixed. Three-dimensional grouping was
+improved. The symbol table was replaced with a custom hash table. Portability
+updates were made. The Cygwin memory limit fix for MSWindows now works even on
+systems that lack a complete Cygwin installation.  The examples were updated to
+exploit the new PRC rendering options
+
 Release Notes for Version 1.96
 
 The viewpoint function and some examples were updated.

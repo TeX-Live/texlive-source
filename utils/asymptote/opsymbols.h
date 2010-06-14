@@ -8,114 +8,114 @@
 // symbols.
 
 #ifndef OPSYMBOL
-#define OPSYMBOL(str, name) extern symbol *name
+#define OPSYMBOL(str, name) extern sym::symbol name
 #endif
 
 OPSYMBOL("+", SYM_PLUS);
 #ifndef PRESYM
-#define SYM_PLUS symbol::opTrans("+")
+#define SYM_PLUS sym::symbol::opTrans("+")
 #endif
 OPSYMBOL("-", SYM_MINUS);
 #ifndef PRESYM
-#define SYM_MINUS symbol::opTrans("-")
+#define SYM_MINUS sym::symbol::opTrans("-")
 #endif
 OPSYMBOL("*", SYM_TIMES);
 #ifndef PRESYM
-#define SYM_TIMES symbol::opTrans("*")
+#define SYM_TIMES sym::symbol::opTrans("*")
 #endif
 OPSYMBOL("/", SYM_DIVIDE);
 #ifndef PRESYM
-#define SYM_DIVIDE symbol::opTrans("/")
+#define SYM_DIVIDE sym::symbol::opTrans("/")
 #endif
 OPSYMBOL("%", SYM_MOD);
 #ifndef PRESYM
-#define SYM_MOD symbol::opTrans("%")
+#define SYM_MOD sym::symbol::opTrans("%")
 #endif
 OPSYMBOL("^", SYM_CARET);
 #ifndef PRESYM
-#define SYM_CARET symbol::opTrans("^")
+#define SYM_CARET sym::symbol::opTrans("^")
 #endif
 OPSYMBOL("==", SYM_EQ);
 #ifndef PRESYM
-#define SYM_EQ symbol::opTrans("==")
+#define SYM_EQ sym::symbol::opTrans("==")
 #endif
 OPSYMBOL("!=", SYM_NEQ);
 #ifndef PRESYM
-#define SYM_NEQ symbol::opTrans("!=")
+#define SYM_NEQ sym::symbol::opTrans("!=")
 #endif
 OPSYMBOL("<", SYM_LT);
 #ifndef PRESYM
-#define SYM_LT symbol::opTrans("<")
+#define SYM_LT sym::symbol::opTrans("<")
 #endif
 OPSYMBOL("<=", SYM_LE);
 #ifndef PRESYM
-#define SYM_LE symbol::opTrans("<=")
+#define SYM_LE sym::symbol::opTrans("<=")
 #endif
 OPSYMBOL(">", SYM_GT);
 #ifndef PRESYM
-#define SYM_GT symbol::opTrans(">")
+#define SYM_GT sym::symbol::opTrans(">")
 #endif
 OPSYMBOL(">=", SYM_GE);
 #ifndef PRESYM
-#define SYM_GE symbol::opTrans(">=")
+#define SYM_GE sym::symbol::opTrans(">=")
 #endif
 OPSYMBOL("&&", SYM_CAND);
 #ifndef PRESYM
-#define SYM_CAND symbol::opTrans("&&")
+#define SYM_CAND sym::symbol::opTrans("&&")
 #endif
 OPSYMBOL("||", SYM_COR);
 #ifndef PRESYM
-#define SYM_COR symbol::opTrans("||")
+#define SYM_COR sym::symbol::opTrans("||")
 #endif
 OPSYMBOL("!", SYM_LOGNOT);
 #ifndef PRESYM
-#define SYM_LOGNOT symbol::opTrans("!")
+#define SYM_LOGNOT sym::symbol::opTrans("!")
 #endif
 OPSYMBOL("^^", SYM_CARETS);
 #ifndef PRESYM
-#define SYM_CARETS symbol::opTrans("^^")
+#define SYM_CARETS sym::symbol::opTrans("^^")
 #endif
 OPSYMBOL("::", SYM_COLONS);
 #ifndef PRESYM
-#define SYM_COLONS symbol::opTrans("::")
+#define SYM_COLONS sym::symbol::opTrans("::")
 #endif
 OPSYMBOL("++", SYM_INCR);
 #ifndef PRESYM
-#define SYM_INCR symbol::opTrans("++")
+#define SYM_INCR sym::symbol::opTrans("++")
 #endif
 OPSYMBOL("..", SYM_DOTS);
 #ifndef PRESYM
-#define SYM_DOTS symbol::opTrans("..")
+#define SYM_DOTS sym::symbol::opTrans("..")
 #endif
 OPSYMBOL("--", SYM_DASHES);
 #ifndef PRESYM
-#define SYM_DASHES symbol::opTrans("--")
+#define SYM_DASHES sym::symbol::opTrans("--")
 #endif
 OPSYMBOL("---", SYM_LONGDASH);
 #ifndef PRESYM
-#define SYM_LONGDASH symbol::opTrans("---")
+#define SYM_LONGDASH sym::symbol::opTrans("---")
 #endif
 OPSYMBOL("&", SYM_AMPERSAND);
 #ifndef PRESYM
-#define SYM_AMPERSAND symbol::opTrans("&")
+#define SYM_AMPERSAND sym::symbol::opTrans("&")
 #endif
 OPSYMBOL("|", SYM_BAR);
 #ifndef PRESYM
-#define SYM_BAR symbol::opTrans("|")
+#define SYM_BAR sym::symbol::opTrans("|")
 #endif
 OPSYMBOL("controls", SYM_CONTROLS);
 #ifndef PRESYM
-#define SYM_CONTROLS symbol::opTrans("controls")
+#define SYM_CONTROLS sym::symbol::opTrans("controls")
 #endif
 OPSYMBOL("tension", SYM_TENSION);
 #ifndef PRESYM
-#define SYM_TENSION symbol::opTrans("tension")
+#define SYM_TENSION sym::symbol::opTrans("tension")
 #endif
 OPSYMBOL("atleast", SYM_ATLEAST);
 #ifndef PRESYM
-#define SYM_ATLEAST symbol::opTrans("atleast")
+#define SYM_ATLEAST sym::symbol::opTrans("atleast")
 #endif
 OPSYMBOL("curl", SYM_CURL);
 #ifndef PRESYM
-#define SYM_CURL symbol::opTrans("curl")
+#define SYM_CURL sym::symbol::opTrans("curl")
 #endif

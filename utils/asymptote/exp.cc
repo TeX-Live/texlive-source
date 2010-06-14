@@ -10,6 +10,7 @@
 #include "exp.h"
 #include "errormsg.h"
 #include "runtime.h"
+#include "runmath.h"
 #include "runpicture.h"
 #include "runarray.h"
 #include "runpair.h"
@@ -20,6 +21,7 @@
 #include "dec.h"
 #include "stm.h"
 #include "inst.h"
+#include "opsymbols.h"
 
 namespace absyntax {
 
@@ -126,6 +128,10 @@ types::ty *varEntryExp::trans(coenv &e) {
   return getType(e);
 }
 
+trans::varEntry *varEntryExp::getCallee(coenv &e, types::signature *sig) {
+  return equivalent(sig, v->getType()->getSignature()) ? v : 0;
+}
+
 void varEntryExp::transAct(action act, coenv &e, types::ty *target) {
   assert(equivalent(getType(e),target));
   v->encode(act, getPos(), e.c);
@@ -161,7 +167,7 @@ void fieldExp::pseudoName::prettyprint(ostream &out, Int indent)
 void fieldExp::prettyprint(ostream &out, Int indent)
 {
   prettyindent(out, indent);
-  out << "fieldExp '" << *field << "'\n";
+  out << "fieldExp '" << field << "'\n";
 
   object->prettyprint(out, indent+1);
 }
@@ -365,6 +371,126 @@ types::ty *thisExp::getType(coenv &e)
   return e.c.thisType();
 }
 
+void equalityExp::prettyprint(ostream &out, Int indent)
+{
+  prettyname(out, "equalityExp", indent);
+  callExp::prettyprint(out, indent+1);
+}
+
+#ifdef NO_FUNC_OPS
+types::ty *equalityExp::getType(coenv &e) {
+  if (resolved(e)) {
+    assert(ct);
+    return ct;
+  } else {
+    return primBoolean();
+  }
+}
+#endif
+
+// From a possibly overloaded type, if there is a unique function type, return
+// it, otherwise 0.
+types::ty *uniqueFunction(types::ty *t) {
+  if (t->kind == types::ty_function)
+    return t;
+
+  if (t->isOverloaded()) {
+    types::ty *ft = 0;
+    for (ty_iterator i = t->begin(); i != t->end(); ++i)
+    {
+      if ((*i)->kind != types::ty_function) 
+        continue;
+
+      if (ft) {
+        // Multiple function types.
+        return 0;
+      }
+
+      ft = *i;
+    }
+
+    return ft;
+  }
+
+  // Not a function.
+  return 0;
+}
+
+// From two possibly overloaded types, if there is a unique function type
+// common to both, return it, otherwise 0.
+types::ty *uniqueFunction(types::ty *t1, types::ty *t2) {
+  if (t1->kind == types::ty_function)
+    return equivalent(t1, t2) ? t1 : 0;
+
+  if (t1->isOverloaded()) {
+    types::ty *ft = 0;
+    for (ty_iterator i = t1->begin(); i != t1->end(); ++i)
+    {
+      if ((*i)->kind != types::ty_function) 
+        continue;
+
+      if (!equivalent(*i, t2))
+        continue;
+
+      if (ft) {
+        // Multiple function types.
+        return 0;
+      }
+
+      ft = *i;
+    }
+
+    return ft;
+  }
+
+  // Not a function.
+  return 0;
+}
+
+bltin bltinFromName(symbol name) {
+  if (name == SYM_EQ)
+    return run::boolFuncEq;
+  assert(name == SYM_NEQ);
+  return run::boolFuncNeq;
+}
+
+#ifdef NO_FUNC_OPS
+types::ty *equalityExp::trans(coenv &e) {
+  if (resolved(e))
+    return callExp::trans(e);
+
+  exp *left = (*this->args)[0].val;
+  exp *right = (*this->args)[1].val;
+
+  types::ty *lt = left->getType(e);
+  types::ty *rt = right->getType(e);
+
+  // TODO: decide what null == null should do.
+
+  // Check for function == null and null == function
+  types::ty *ft = 0;
+  if (rt->kind == types::ty_null)
+    ft = uniqueFunction(lt);
+  else if (lt->kind == types::ty_null)
+    ft = uniqueFunction(rt);
+  else
+    ft = uniqueFunction(lt, rt);
+
+
+  if (ft) {
+    assert(ft->kind == ty_function);
+
+    left->transToType(e, ft);
+    right->transToType(e, ft);
+    e.c.encode(inst::builtin, bltinFromName(callee->getName()));
+    return primBoolean();
+  } else {
+    // Let callExp report a "no such function" error.
+    return callExp::trans(e);
+  }
+}
+#endif
+
 void scaleExp::prettyprint(ostream &out, Int indent)
 {
   exp *left=getLeft(); exp *right=getRight();
@@ -528,7 +654,7 @@ void argument::prettyprint(ostream &out, Int indent)
   prettyindent(out, indent);
   out << "explist";
   if (name)
-    out << " '" << *name << "'";
+    out << " '" << name << "'";
   out << '\n';
 
   val->prettyprint(out, indent+1);
@@ -591,9 +717,9 @@ application *callExp::resolve(coenv &e, overloaded *o, signature *source,
     if (!tacit) {
       em.error(getPos());
 
-      symbol *s = callee->getName();
+      symbol s = callee->getName();
       if (s)
-        em << "no matching function \'" << *s;
+        em << "no matching function \'" << s;
       else
         em << "no matching function for signature \'";
       em << *source << "\'";
@@ -606,9 +732,9 @@ application *callExp::resolve(coenv &e, overloaded *o, signature *source,
     if (!tacit) {
       em.error(getPos());
 
-      symbol *s = callee->getName();
+      symbol s = callee->getName();
       if(s)
-        em << "call of function \'" << *s;
+        em << "call of function \'" << s;
       else
         em << "call with signature \'";
       em << *source << "\' is ambiguous";
@@ -631,13 +757,13 @@ bool hasNamedParameters(signature *sig) {
 
 void callExp::reportMismatch(function *ft, signature *source)
 {
-  symbol *s = callee->getName();
+  symbol s = callee->getName();
   const char *separator=ft->getSignature()->getNumFormals() > 1 ? "\n" : " ";
 
   em.error(getPos());
   em << "cannot call" << separator << "'" << *ft->getResult() << " ";
   if(s)
-    em << *s;
+    em << s;
   em << *ft->getSignature() << "'" << separator;
 
   if (ft->getSignature()->isOpen && hasNamedParameters(source))
@@ -668,9 +794,9 @@ void callExp::reportArgErrors(coenv &e)
 
 void callExp::reportNonFunction() {
     em.error(getPos());
-    symbol *s = callee->getName();
+    symbol s = callee->getName();
     if (s)
-      em << "\'" << *s << "\' is not a function";
+      em << "\'" << s << "\' is not a function";
     else
       em << "called expression is not a function";
 }
@@ -700,7 +826,7 @@ void callExp::cacheAppOrVarEntry(coenv &e, bool tacit)
 
   // An attempt at speeding up compilation:  See if the source arguments match
   // the (possibly overloaded) function exactly.
-#if 0
+#if CALLEE_SEARCH
   if (searchable) {
     varEntry *ve = callee->getCallee(e, source);
 
@@ -709,13 +835,14 @@ void callExp::cacheAppOrVarEntry(coenv &e, bool tacit)
 #endif
 
     if (ve) {
-#if 0
-      cachedApp = application::match(e.e,
-          (function *)ve->getType(), source, *args);
-#endif
       cachedVarEntry = ve;
+#ifndef DEBUG_CACHE
+      // Normally DEBUG_CACHE is not defined and we return here for efficiency
+      // reasons.  If DEBUG_CACHE is defined, also resolve the function by the
+      // normal techniques and make sure we get the same result.
       ct = ((function *)ve->getType())->getResult();
       return;
+#endif
     }
   }
 #endif
@@ -724,7 +851,8 @@ void callExp::cacheAppOrVarEntry(coenv &e, bool tacit)
   types::ty *ft = callee->cgetType(e);
 
 #ifdef DEBUG_GETAPP
-  string name = callee->getName() ? string(*callee->getName()) : string("unnamed");
+  string name = callee->getName() ? string(*callee->getName()) :
+                                    string("unnamed");
   if (!callee->getName())
     cout << getPos() << endl;
 #endif
@@ -761,6 +889,12 @@ void callExp::cacheAppOrVarEntry(coenv &e, bool tacit)
 #ifdef DEBUG_GETAPP
   cout << name << " " << *source << " --> "
        << *cachedApp->getType()->getSignature() << endl;
+#endif
+
+#if DEBUG_CACHE
+  // Make sure cachedVarEntry is giving us the right function.
+  if (cachedVarEntry)
+    assert(equivalent(cachedVarEntry->getType(), cachedApp->getType()));
 #endif
 
   // Get type relies on this method setting the cached type.
@@ -836,34 +970,14 @@ types::ty *callExp::getType(coenv &e)
 
   assert(ct);
   return ct;
-  
-#if 0
-  // First figure out the signature of what we want to call.
-  signature *source=argTypes(e);
-  if (!source)
-    return types::primError();
-
-  // Figure out what function types we can call.
-  trans::ty *ft = callee->cgetType(e);
-
-  switch (ft->kind) {
-    case ty_function:
-      return ((function *)ft)->result;
-    case ty_overloaded: {
-      application *a=resolve(e, (overloaded *)ft, source, true);
-      if (a) {
-        // Cache the application to avoid calling multimatch again later.
-        ca=a;
-        return ca->getType()->result;
-      }
-      else
-        return primError();
-    }
-    default:
-      return primError();
-  }
-#endif
 }
+
+bool callExp::resolved(coenv &e) {
+  if (cachedApp == 0 && cachedVarEntry == 0)
+    cacheAppOrVarEntry(e, true);
+  return cachedApp || cachedVarEntry;
+}
+  
     
 void pairExp::prettyprint(ostream &out, Int indent)
 {
@@ -938,7 +1052,7 @@ void castExp::prettyprint(ostream &out, Int indent)
 }
 
 types::ty *castExp::tryCast(coenv &e, types::ty *t, types::ty *s,
-                            symbol *csym)
+                            symbol csym)
 {
   types::ty *ss=e.e.castSource(t, s, csym);
   if (ss == 0) {
@@ -1149,7 +1263,7 @@ void joinExp::prettyprint(ostream &out, Int indent)
 void specExp::prettyprint(ostream &out, Int indent)
 {
   prettyindent(out,indent);
-  out << "specExp '" << *op << "' " 
+  out << "specExp '" << op << "' " 
       << (s==camp::OUT ? "out" :
           s==camp::IN  ? "in" :
           "invalid side") << '\n';
@@ -1229,7 +1343,7 @@ types::ty *assignExp::getType(coenv &e)
 void selfExp::prettyprint(ostream &out, Int indent)
 {
   prettyindent(out, indent);
-  out << "selfExp '" << *op << "'\n";
+  out << "selfExp '" << op << "'\n";
 
   dest->prettyprint(out, indent+1);
   value->prettyprint(out, indent+1);
@@ -1239,7 +1353,7 @@ void selfExp::prettyprint(ostream &out, Int indent)
 void prefixExp::prettyprint(ostream &out, Int indent)
 {
   prettyindent(out, indent);
-  out << "prefixExp '" << *op << "'\n";
+  out << "prefixExp '" << op << "'\n";
   
   dest->prettyprint(out, indent+1);
 }
@@ -1266,8 +1380,7 @@ types::ty *prefixExp::getType(coenv &e)
 void postfixExp::prettyprint(ostream &out, Int indent)
 {
   prettyindent(out, indent);
-  out << "postfixExp <illegal>";
-  out << "postfixExp <illegal> '" << *op << "'\n";
+  out << "postfixExp <illegal> '" << op << "'\n";
 
   dest->prettyprint(out, indent+1);
 }

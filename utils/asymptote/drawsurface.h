@@ -16,8 +16,29 @@ namespace camp {
 
 #ifdef HAVE_GL
 void storecolor(GLfloat *colors, int i, const vm::array &pens, int j);
-#endif  
   
+inline void initMatrix(GLfloat *v, double x, double ymin, double zmin,
+                       double ymax, double zmax)
+{
+  v[0]=x;
+  v[1]=ymin;
+  v[2]=zmin;
+  v[3]=1.0;
+  v[4]=x;
+  v[5]=ymin;
+  v[6]=zmax;
+  v[7]=1.0;
+  v[8]=x;
+  v[9]=ymax;
+  v[10]=zmin;
+  v[11]=1.0;
+  v[12]=x;
+  v[13]=ymax;
+  v[14]=zmax;
+  v[15]=1.0;
+}
+#endif  
+
 class drawSurface : public drawElement {
 protected:
   Triple *controls;
@@ -34,7 +55,7 @@ protected:
   triple normal;
   bool invisible;
   bool lighton;
-  int interaction;
+  Interaction interaction;
   
   triple Min,Max;
   bool prc;
@@ -46,12 +67,10 @@ protected:
 #endif  
   
 public:
-  static const triple zero;
-
   drawSurface(const vm::array& g, triple center, bool straight,
               const vm::array&p, double opacity, double shininess,
               double PRCshininess, triple normal, const vm::array &pens,
-              bool lighton, int interaction, bool prc) :
+              bool lighton, Interaction interaction, bool prc) :
     center(center), straight(straight), opacity(opacity), shininess(shininess),
     PRCshininess(PRCshininess), normal(unit(normal)), lighton(lighton),
     interaction(interaction), prc(prc) {
@@ -124,10 +143,10 @@ public:
       }
     } else controls=NULL;
     
+#ifdef HAVE_GL
     center=run::operator *(t,s->center);
     normal=run::multshiftless(t,s->normal);
     
-#ifdef HAVE_GL
     if(s->colors) {
       colors=new(UseGC) GLfloat[16];
       for(size_t i=0; i < 16; ++i)
@@ -148,6 +167,14 @@ public:
              groupsmap&);
   
   void displacement();
+  
+#ifdef HAVE_GL
+  void initMatrix(GLfloat *v1, GLfloat *v2) {
+    camp::initMatrix(v1,Min.getx(),Min.gety(),Min.getz(),Max.gety(),Max.getz());
+    camp::initMatrix(v2,Max.getx(),Min.gety(),Min.getz(),Max.gety(),Max.getz());
+  }
+#endif  
+
   void render(GLUnurbs *nurb, double, const triple& Min, const triple& Max,
               double perspective, bool transparent);
   
@@ -312,7 +339,14 @@ public:
   
   void displacement();
   void ratio(pair &b, double (*m)(double, double), double, bool &first);
-    
+  
+#ifdef HAVE_GL
+  void initMatrix(GLfloat *v1, GLfloat *v2) {
+    camp::initMatrix(v1,Min.getx(),Min.gety(),Min.getz(),Max.gety(),Max.getz());
+    camp::initMatrix(v2,Max.getx(),Min.gety(),Min.getz(),Max.gety(),Max.getz());
+  }
+#endif  
+
   void render(GLUnurbs *nurb, double size2,
               const triple& Min, const triple& Max,
               double perspective, bool transparent);

@@ -58,4 +58,96 @@ assert(g(y=4, 4.4) == 7);
 assert(g(y=4.4, 4) == 8);
 assert(g(y=4.4, 4.4) == 7);
 
+// Test exact matching over casting.
+{
+  void f(int x, real y=0.0, int z=0) {
+    assert(x==1);
+    assert(y==2.0);
+    assert(z==0);
+  }
+  f(1,2);
+}
+{
+  void f() {
+    assert(false);
+  }
+  void f(int x, real y=0.0, int z=0) {
+    assert(x==1);
+    assert(y==2.0);
+    assert(z==0);
+  }
+  f(1,2);
+}
+{
+  void f() {
+    assert(false);
+  }
+  void f(int x, int y) {
+    assert(x==1);
+    assert(y==2);
+  }
+  void f(int x, real y=0.0, int z=0) {
+    assert(false);
+  }
+  f(1,2);
+}
+{
+  struct A {}
+  struct B {}
+  struct C {}
+
+  void f(B);
+  void g(B);
+
+  // Should resolve to void (B).
+  assert(f == g);
+  assert(g == f);
+  assert(!(f != g));
+  assert(!(g != f));
+}
+{
+  struct A {}
+  struct B {}
+  struct C {}
+
+  void f(A), f(B);
+  void g(B), g(C);
+
+  // Should resolve to void (B).
+  assert(f == g);
+  assert(g == f);
+  assert(!(f != g));
+  assert(!(g != f));
+}
+{
+  struct A {}
+  struct B {}
+  struct C {}
+
+  void f(B);
+  void g(B), g(C);
+
+  // Should resolve to void (B).
+  assert(f == g);
+  assert(g == f);
+  assert(!(f != g));
+  assert(!(g != f));
+}
+{
+  struct A {}
+  struct B {}
+  struct C {}
+
+  void f(B);
+  void g(B), g(C);
+
+  // Should resolve to void (B).
+  assert(f == g);
+  assert(g == f);
+  assert(!(f != g));
+  assert(!(g != f));
+}
+
+// TODO: Add packing vs. casting tests.
+
 EndTest();

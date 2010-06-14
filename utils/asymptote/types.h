@@ -53,6 +53,8 @@ enum ty_kind {
 // Forward declarations.
 class ty;
 struct signature;
+typedef mem::vector<ty *> ty_vector;
+typedef ty_vector::iterator ty_iterator;
 
 // Checks if two types are equal in the sense of the language.
 // That is primitive types are equal if they are the same kind.
@@ -79,9 +81,9 @@ public:
   virtual ~ty();
 
   virtual void print (ostream& out) const;
-  virtual void printVar (ostream& out, symbol *name) const {
+  virtual void printVar (ostream& out, symbol name) const {
     print(out);
-    out << " " << *name;
+    out << " " << name;
   }
 
 
@@ -99,6 +101,21 @@ public:
   virtual bool primitive() {
     return false;
   }
+
+  // The following are only used by the overloaded type, but it is so common
+  // to test for an overloaded type then iterate over its types, that this
+  // allows the code:
+  // if (t->isOverloaded()) {
+  //   for (ty_iterator i = t->begin(); i != t->end(); ++i) {
+  //     ...
+  //   }
+  // }
+  // For speed reasons, only begin has an assert to test if t is overloaded.
+  bool isOverloaded() const {
+    return kind == ty_overloaded;
+  }
+  ty_iterator begin();
+  ty_iterator end();
 
   // If a default initializer is not stored in the environment, the abstract
   // syntax asks the type if it has a "default" default initializer, by calling
@@ -125,14 +142,14 @@ public:
   // parameter and returns the necessary result.
   // These should not have public permission, as modifying them would
   // have strange results.
-  virtual trans::varEntry *virtualField(symbol *, signature *) {
+  virtual trans::varEntry *virtualField(symbol, signature *) {
     return 0;
   }
 
   // varGetType for virtual fields.
   // Unless you are using functions for virtual fields, the base implementation
   // should work fine.
-  virtual ty *virtualFieldGetType(symbol *id);
+  virtual ty *virtualFieldGetType(symbol id);
 
 #if 0
   // Returns the type.  In case of functions, return the equivalent type
@@ -170,8 +187,8 @@ public:
     return false;
   }
   
-  ty *virtualFieldGetType(symbol *);
-  trans::varEntry *virtualField(symbol *, signature *);
+  ty *virtualFieldGetType(symbol );
+  trans::varEntry *virtualField(symbol, signature *);
 
   bool equiv(ty *other)
   {
@@ -250,8 +267,8 @@ struct array : public ty {
   // NOTE: General vectorization of casts would be here.
 
   // Add length and push as virtual fields.
-  ty *virtualFieldGetType(symbol *id);
-  trans::varEntry *virtualField(symbol *id, signature *sig);
+  ty *virtualFieldGetType(symbol id);
+  trans::varEntry *virtualField(symbol id, signature *sig);
 };
 
 /* Base types */
@@ -270,12 +287,12 @@ ty *primNull();
 
 struct formal {
   ty *t;
-  symbol *name;
+  symbol name;
   absyntax::varinit *defval;
   bool Explicit;
   
   formal(ty *t,
-         symbol *name=0,
+         symbol name=symbol::nullsym,
          bool optional=false,
          bool Explicit=false)
     : t(t), name(name),
@@ -429,7 +446,7 @@ struct function : public ty {
   void print(ostream& out) const
   { out << *result << sig; }
 
-  void printVar (ostream& out, symbol *name) const {
+  void printVar (ostream& out, symbol name) const {
     result->printVar(out,name);
     out << sig;
   }
@@ -449,8 +466,6 @@ struct function : public ty {
   // Initialized to null.
   trans::access *initializer();
 };
-
-typedef mem::vector<ty *> ty_vector;
 
 // This is used in getType expressions when an overloaded variable is accessed.
 class overloaded : public ty {
@@ -509,8 +524,18 @@ public:
   // True if one of the subtypes is castable.
   bool castable(ty *target, caster &c);
 
+  size_t size() const { return sub.size(); }
+
   // Use default printing for now.
 };
+
+inline ty_iterator ty::begin() {
+  assert(this->isOverloaded());
+  return ((overloaded *)this)->sub.begin();
+}
+inline ty_iterator ty::end() {
+  return ((overloaded *)this)->sub.end();
+}
 
 // This is used to encapsulate iteration over the subtypes of an overloaded
 // type.  The base method need only be implemented to handle non-overloaded

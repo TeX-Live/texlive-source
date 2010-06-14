@@ -936,15 +936,17 @@ void gen_runpicture44(stack *Stack)
 
 // Bezier curve
 #line 580 "runpicture.in"
-// void _draw(picture *f, path3 g, pen p);
+// void _draw(picture *f, path3 g, triple center=Zero, pen p, Int interaction=0);
 void gen_runpicture45(stack *Stack)
 {
+  Int interaction=vm::pop<Int>(Stack,0);
   pen p=vm::pop<pen>(Stack);
+  triple center=vm::pop<triple>(Stack,Zero);
   path3 g=vm::pop<path3>(Stack);
   picture * f=vm::pop<picture *>(Stack);
 #line 581 "runpicture.in"
   if(g.size() > 0)
-    f->append(new drawPath3(g,p));
+    f->append(new drawPath3(g,center,p,(Interaction) intcast(interaction)));
 }
 
 // Bezier patch
@@ -1217,7 +1219,7 @@ void gen_runpicture_venv(venv &ve)
 #line 453 "runpicture.in"
   addFunc(ve, run::gen_runpicture44, primVoid(), SYM(deconstruct), formal(primPicture(), SYM(f), false, false), formal(primPicture(), SYM(preamble), true, false), formal(primReal(), SYM(magnification), true, false), formal(transformFunction(), SYM(xform), false, false));
 #line 576 "runpicture.in"
-  addFunc(ve, run::gen_runpicture45, primVoid(), SYM(_draw), formal(primPicture(), SYM(f), false, false), formal(primPath3(), SYM(g), false, false), formal(primPen(), SYM(p), false, false));
+  addFunc(ve, run::gen_runpicture45, primVoid(), SYM(_draw), formal(primPicture(), SYM(f), false, false), formal(primPath3(), SYM(g), false, false), formal(primTriple(), SYM(center), true, false), formal(primPen(), SYM(p), false, false), formal(primInt(), SYM(interaction), true, false));
 #line 586 "runpicture.in"
   addFunc(ve, run::gen_runpicture46, primVoid(), SYM(draw), formal(primPicture(), SYM(f), false, false), formal(tripleArray2(), SYM(p), false, false), formal(primTriple(), SYM(center), false, false), formal(primBoolean(), SYM(straight), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false), formal(primReal(), SYM(prcshininess), false, false), formal(primTriple(), SYM(normal), false, false), formal(penArray()  , SYM(colors), false, false), formal(primBoolean(), SYM(lighton), false, false), formal(primInt(), SYM(interaction), false, false), formal(primBoolean(), SYM(prc), true, false));
 #line 597 "runpicture.in"

@@ -106,6 +106,7 @@ function *realRealFunction();
 #define CURRENTPEN processData().currentpen
 
 #line 12 "runmath.in"
+#include <inttypes.h>
 #include "mathop.h"
 #include "path.h"
 
@@ -121,6 +122,8 @@ using run::integeroverflow;
 using vm::frame;
 
 const char *invalidargument="invalid argument";
+
+extern uint32_t CLZ(uint32_t a);
 
 // Return the factorial of a non-negative integer using a lookup table.
 Int factorial(Int n)
@@ -170,236 +173,236 @@ void Srand(Int seed)
 #include "runmath.symbols.h"
 
 namespace run {
-#line 72 "runmath.in"
+#line 75 "runmath.in"
 // real ^(real x, Int y);
 void gen_runmath0(stack *Stack)
 {
   Int y=vm::pop<Int>(Stack);
   real x=vm::pop<real>(Stack);
-#line 73 "runmath.in"
+#line 76 "runmath.in"
   {Stack->push<real>(pow(x,y)); return;}
 }
 
-#line 77 "runmath.in"
+#line 80 "runmath.in"
 // pair ^(pair z, Int y);
 void gen_runmath1(stack *Stack)
 {
   Int y=vm::pop<Int>(Stack);
   pair z=vm::pop<pair>(Stack);
-#line 78 "runmath.in"
+#line 81 "runmath.in"
   {Stack->push<pair>(pow(z,y)); return;}
 }
 
-#line 82 "runmath.in"
+#line 85 "runmath.in"
 // Int quotient(Int x, Int y);
 void gen_runmath2(stack *Stack)
 {
   Int y=vm::pop<Int>(Stack);
   Int x=vm::pop<Int>(Stack);
-#line 83 "runmath.in" 
+#line 86 "runmath.in" 
   if(y == 0) dividebyzero();
   if(y == -1) {Stack->push<Int>(Negate(x)); return;}
 // Implementation-independent definition of integer division: round down
   {Stack->push<Int>((x-portableMod(x,y))/y); return;}
 }
 
-#line 90 "runmath.in"
+#line 93 "runmath.in"
 // Int abs(Int x);
 void gen_runmath3(stack *Stack)
 {
   Int x=vm::pop<Int>(Stack);
-#line 91 "runmath.in" 
+#line 94 "runmath.in" 
   {Stack->push<Int>(Abs(x)); return;}
 }
 
-#line 95 "runmath.in"
+#line 98 "runmath.in"
 // Int sgn(real x);
 void gen_runmath4(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 96 "runmath.in" 
+#line 99 "runmath.in" 
   {Stack->push<Int>(sgn(x)); return;}
 }
 
-#line 100 "runmath.in"
+#line 103 "runmath.in"
 // Int rand();
 void gen_runmath5(stack *Stack)
 {
-#line 101 "runmath.in" 
+#line 104 "runmath.in" 
   if(initializeRandom)
     Srand(1);
   {Stack->push<Int>(random()); return;}
 }
 
-#line 107 "runmath.in"
+#line 110 "runmath.in"
 // void srand(Int seed);
 void gen_runmath6(stack *Stack)
 {
   Int seed=vm::pop<Int>(Stack);
-#line 108 "runmath.in" 
+#line 111 "runmath.in" 
   Srand(seed);
 }
 
 // a random number uniformly distributed in the interval [0,1]
-#line 113 "runmath.in"
+#line 116 "runmath.in"
 // real unitrand();
 void gen_runmath7(stack *Stack)
 {
-#line 114 "runmath.in"                         
+#line 117 "runmath.in"                         
   {Stack->push<real>(((real) random())/RAND_MAX); return;}
 }
 
-#line 118 "runmath.in"
+#line 121 "runmath.in"
 // Int ceil(real x);
 void gen_runmath8(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 119 "runmath.in" 
+#line 122 "runmath.in" 
   {Stack->push<Int>(Intcast(ceil(x))); return;}
 }
 
-#line 123 "runmath.in"
+#line 126 "runmath.in"
 // Int floor(real x);
 void gen_runmath9(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 124 "runmath.in" 
+#line 127 "runmath.in" 
   {Stack->push<Int>(Intcast(floor(x))); return;}
 }
 
-#line 128 "runmath.in"
+#line 131 "runmath.in"
 // Int round(real x);
 void gen_runmath10(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 129 "runmath.in" 
+#line 132 "runmath.in" 
   if(validInt(x)) {Stack->push<Int>(Round(x)); return;}
   integeroverflow(0);
 }
 
-#line 134 "runmath.in"
+#line 137 "runmath.in"
 // Int Ceil(real x);
 void gen_runmath11(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 135 "runmath.in" 
+#line 138 "runmath.in" 
   {Stack->push<Int>(Ceil(x)); return;}
 }
 
-#line 139 "runmath.in"
+#line 142 "runmath.in"
 // Int Floor(real x);
 void gen_runmath12(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 140 "runmath.in" 
+#line 143 "runmath.in" 
   {Stack->push<Int>(Floor(x)); return;}
 }
 
-#line 144 "runmath.in"
+#line 147 "runmath.in"
 // Int Round(real x);
 void gen_runmath13(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 145 "runmath.in" 
+#line 148 "runmath.in" 
   {Stack->push<Int>(Round(Intcap(x))); return;}
 }
 
-#line 149 "runmath.in"
+#line 152 "runmath.in"
 // real fmod(real x, real y);
 void gen_runmath14(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 150 "runmath.in"
+#line 153 "runmath.in"
   if (y == 0.0) dividebyzero();
   {Stack->push<real>(fmod(x,y)); return;}
 }
 
-#line 155 "runmath.in"
+#line 158 "runmath.in"
 // real atan2(real y, real x);
 void gen_runmath15(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
   real y=vm::pop<real>(Stack);
-#line 156 "runmath.in" 
+#line 159 "runmath.in" 
   {Stack->push<real>(atan2(y,x)); return;}
 }
 
-#line 160 "runmath.in"
+#line 163 "runmath.in"
 // real hypot(real x, real y);
 void gen_runmath16(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 161 "runmath.in" 
+#line 164 "runmath.in" 
   {Stack->push<real>(hypot(x,y)); return;}
 }
 
-#line 165 "runmath.in"
+#line 168 "runmath.in"
 // real remainder(real x, real y);
 void gen_runmath17(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 166 "runmath.in" 
+#line 169 "runmath.in" 
   {Stack->push<real>(remainder(x,y)); return;}
 }
 
-#line 170 "runmath.in"
+#line 173 "runmath.in"
 // real Jn(Int n, real x);
 void gen_runmath18(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
   Int n=vm::pop<Int>(Stack);
-#line 171 "runmath.in"
+#line 174 "runmath.in"
   {Stack->push<real>(jn(n,x)); return;}
 }
 
-#line 175 "runmath.in"
+#line 178 "runmath.in"
 // real Yn(Int n, real x);
 void gen_runmath19(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
   Int n=vm::pop<Int>(Stack);
-#line 176 "runmath.in"
+#line 179 "runmath.in"
   {Stack->push<real>(yn(n,x)); return;}
 }
 
-#line 180 "runmath.in"
+#line 183 "runmath.in"
 // real erf(real x);
 void gen_runmath20(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 181 "runmath.in"
+#line 184 "runmath.in"
   {Stack->push<real>(erf(x)); return;}
 }
 
-#line 185 "runmath.in"
+#line 188 "runmath.in"
 // real erfc(real x);
 void gen_runmath21(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 186 "runmath.in"
+#line 189 "runmath.in"
   {Stack->push<real>(erfc(x)); return;}
 }
 
-#line 190 "runmath.in"
+#line 193 "runmath.in"
 // Int factorial(Int n);
 void gen_runmath22(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
-#line 191 "runmath.in"
+#line 194 "runmath.in"
   if(n < 0) error(invalidargument);
   {Stack->push<Int>(factorial(n)); return;}
 }
 
-#line 195 "runmath.in"
+#line 198 "runmath.in"
 // Int choose(Int n, Int k);
 void gen_runmath23(stack *Stack)
 {
   Int k=vm::pop<Int>(Stack);
   Int n=vm::pop<Int>(Stack);
-#line 196 "runmath.in"
+#line 199 "runmath.in"
   if(n < 0 || k < 0 || k > n) error(invalidargument);
   Int f=1;
   Int r=n-k;
@@ -410,12 +413,12 @@ void gen_runmath23(stack *Stack)
   {Stack->push<Int>(f); return;}
 }
 
-#line 206 "runmath.in"
+#line 209 "runmath.in"
 // real gamma(real x);
 void gen_runmath24(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 207 "runmath.in"
+#line 210 "runmath.in"
 #ifdef HAVE_TGAMMA
   {Stack->push<real>(tgamma(x)); return;}
 #else
@@ -424,14 +427,14 @@ void gen_runmath24(stack *Stack)
 #endif
 }
 
-#line 216 "runmath.in"
+#line 219 "runmath.in"
 // realarray* quadraticroots(real a, real b, real c);
 void gen_runmath25(stack *Stack)
 {
   real c=vm::pop<real>(Stack);
   real b=vm::pop<real>(Stack);
   real a=vm::pop<real>(Stack);
-#line 217 "runmath.in"
+#line 220 "runmath.in"
   quadraticroots q(a,b,c);
   array *roots=new array(q.roots);
   if(q.roots >= 1) (*roots)[0]=q.t1;
@@ -439,14 +442,14 @@ void gen_runmath25(stack *Stack)
   {Stack->push<realarray*>(roots); return;}
 }
 
-#line 225 "runmath.in"
+#line 228 "runmath.in"
 // pairarray* quadraticroots(explicit pair a, explicit pair b, explicit pair c);
 void gen_runmath26(stack *Stack)
 {
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 226 "runmath.in"
+#line 229 "runmath.in"
   Quadraticroots q(a,b,c);
   array *roots=new array(q.roots);
   if(q.roots >= 1) (*roots)[0]=q.z1;
@@ -454,7 +457,7 @@ void gen_runmath26(stack *Stack)
   {Stack->push<pairarray*>(roots); return;}
 }
 
-#line 234 "runmath.in"
+#line 237 "runmath.in"
 // realarray* cubicroots(real a, real b, real c, real d);
 void gen_runmath27(stack *Stack)
 {
@@ -462,7 +465,7 @@ void gen_runmath27(stack *Stack)
   real c=vm::pop<real>(Stack);
   real b=vm::pop<real>(Stack);
   real a=vm::pop<real>(Stack);
-#line 235 "runmath.in"
+#line 238 "runmath.in"
   cubicroots q(a,b,c,d);
   array *roots=new array(q.roots);
   if(q.roots >= 1) (*roots)[0]=q.t1;
@@ -473,124 +476,108 @@ void gen_runmath27(stack *Stack)
 
 
 // Logical operations
-#line 246 "runmath.in"
+#line 249 "runmath.in"
 // bool !(bool b);
 void gen_runmath28(stack *Stack)
 {
   bool b=vm::pop<bool>(Stack);
-#line 247 "runmath.in"
+#line 250 "runmath.in"
   {Stack->push<bool>(!b); return;}
 }
 
-#line 252 "runmath.in"
+#line 255 "runmath.in"
 void boolMemEq(stack *Stack)
 {
   frame * b=vm::pop<frame *>(Stack);
   frame * a=vm::pop<frame *>(Stack);
-#line 253 "runmath.in"
+#line 256 "runmath.in"
   {Stack->push<bool>(a == b); return;}
 }
 
-#line 257 "runmath.in"
+#line 260 "runmath.in"
 void boolMemNeq(stack *Stack)
 {
   frame * b=vm::pop<frame *>(Stack);
   frame * a=vm::pop<frame *>(Stack);
-#line 258 "runmath.in"
+#line 261 "runmath.in"
   {Stack->push<bool>(a != b); return;}
 }
 
-#line 262 "runmath.in"
+#line 265 "runmath.in"
 void boolFuncEq(stack *Stack)
 {
   callable * b=vm::pop<callable *>(Stack);
   callable * a=vm::pop<callable *>(Stack);
-#line 263 "runmath.in"
+#line 266 "runmath.in"
   {Stack->push<bool>(a->compare(b)); return;}
 }
 
-#line 267 "runmath.in"
+#line 270 "runmath.in"
 void boolFuncNeq(stack *Stack)
 {
   callable * b=vm::pop<callable *>(Stack);
   callable * a=vm::pop<callable *>(Stack);
-#line 268 "runmath.in"
+#line 271 "runmath.in"
   {Stack->push<bool>(!(a->compare(b))); return;}
 }
 
 
 // Bit operations
-#line 274 "runmath.in"
+#line 277 "runmath.in"
 // Int AND(Int a, Int b);
 void gen_runmath33(stack *Stack)
 {
   Int b=vm::pop<Int>(Stack);
   Int a=vm::pop<Int>(Stack);
-#line 275 "runmath.in"
+#line 278 "runmath.in"
   {Stack->push<Int>(a & b); return;}
 }
 
-#line 280 "runmath.in"
+#line 283 "runmath.in"
 // Int OR(Int a, Int b);
 void gen_runmath34(stack *Stack)
 {
   Int b=vm::pop<Int>(Stack);
   Int a=vm::pop<Int>(Stack);
-#line 281 "runmath.in"
+#line 284 "runmath.in"
   {Stack->push<Int>(a | b); return;}
 }
 
-#line 285 "runmath.in"
+#line 288 "runmath.in"
 // Int XOR(Int a, Int b);
 void gen_runmath35(stack *Stack)
 {
   Int b=vm::pop<Int>(Stack);
   Int a=vm::pop<Int>(Stack);
-#line 286 "runmath.in"
+#line 289 "runmath.in"
   {Stack->push<Int>(a ^ b); return;}
 }
 
-#line 290 "runmath.in"
+#line 293 "runmath.in"
 // Int NOT(Int a);
 void gen_runmath36(stack *Stack)
 {
   Int a=vm::pop<Int>(Stack);
-#line 291 "runmath.in"
+#line 294 "runmath.in"
   {Stack->push<Int>(~a); return;}
 }
 
-#line 295 "runmath.in"
+#line 298 "runmath.in"
 // Int CLZ(Int a);
 void gen_runmath37(stack *Stack)
 {
   Int a=vm::pop<Int>(Stack);
-#line 296 "runmath.in"
+#line 299 "runmath.in"
   if((unsignedInt) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
-#ifdef __GNUC__
-  {Stack->push<Int>(__builtin_clz(a)); return;}
-#else
-// find the log base 2 of a 32-bit integer
-  static const int MultiplyDeBruijnBitPosition[32] = {
-    0, 9, 1, 10, 13, 21, 2, 29, 11, 14, 16, 18, 22, 25, 3, 30,
-    8, 12, 20, 28, 15, 17, 24, 7, 19, 27, 23, 6, 26, 5, 4, 31
-  };
-
-  a |= a >> 1; // first round down to one less than a power of 2 
-  a |= a >> 2;
-  a |= a >> 4;
-  a |= a >> 8;
-  a |= a >> 16;
-
-  {Stack->push<Int>(31-MultiplyDeBruijnBitPosition[(unsignedInt)(a * 0x07C4ACDDU) >> 27]); return;}
-#endif
+  {Stack->push<Int>(CLZ((uint32_t) a)); return;}
 }
 
-#line 317 "runmath.in"
+#line 304 "runmath.in"
 // Int CTZ(Int a);
 void gen_runmath38(stack *Stack)
 {
   Int a=vm::pop<Int>(Stack);
-#line 318 "runmath.in"
+#line 305 "runmath.in"
   if((unsignedInt) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
 #ifdef __GNUC__
   {Stack->push<Int>(__builtin_ctz(a)); return;}
@@ -611,83 +598,83 @@ namespace trans {
 
 void gen_runmath_venv(venv &ve)
 {
-#line 72 "runmath.in"
+#line 75 "runmath.in"
   addFunc(ve, run::gen_runmath0, primReal(), SYM_CARET, formal(primReal(), SYM(x), false, false), formal(primInt(), SYM(y), false, false));
-#line 77 "runmath.in"
+#line 80 "runmath.in"
   addFunc(ve, run::gen_runmath1, primPair(), SYM_CARET, formal(primPair(), SYM(z), false, false), formal(primInt(), SYM(y), false, false));
-#line 82 "runmath.in"
+#line 85 "runmath.in"
   addFunc(ve, run::gen_runmath2, primInt(), SYM(quotient), formal(primInt(), SYM(x), false, false), formal(primInt(), SYM(y), false, false));
-#line 90 "runmath.in"
+#line 93 "runmath.in"
   addFunc(ve, run::gen_runmath3, primInt(), SYM(abs), formal(primInt(), SYM(x), false, false));
-#line 95 "runmath.in"
+#line 98 "runmath.in"
   addFunc(ve, run::gen_runmath4, primInt(), SYM(sgn), formal(primReal(), SYM(x), false, false));
-#line 100 "runmath.in"
+#line 103 "runmath.in"
   addFunc(ve, run::gen_runmath5, primInt(), SYM(rand));
-#line 107 "runmath.in"
+#line 110 "runmath.in"
   addFunc(ve, run::gen_runmath6, primVoid(), SYM(srand), formal(primInt(), SYM(seed), false, false));
-#line 112 "runmath.in"
+#line 115 "runmath.in"
   addFunc(ve, run::gen_runmath7, primReal(), SYM(unitrand));
-#line 118 "runmath.in"
+#line 121 "runmath.in"
   addFunc(ve, run::gen_runmath8, primInt(), SYM(ceil), formal(primReal(), SYM(x), false, false));
-#line 123 "runmath.in"
+#line 126 "runmath.in"
   addFunc(ve, run::gen_runmath9, primInt(), SYM(floor), formal(primReal(), SYM(x), false, false));
-#line 128 "runmath.in"
+#line 131 "runmath.in"
   addFunc(ve, run::gen_runmath10, primInt(), SYM(round), formal(primReal(), SYM(x), false, false));
-#line 134 "runmath.in"
+#line 137 "runmath.in"
   addFunc(ve, run::gen_runmath11, primInt(), SYM(Ceil), formal(primReal(), SYM(x), false, false));
-#line 139 "runmath.in"
+#line 142 "runmath.in"
   addFunc(ve, run::gen_runmath12, primInt(), SYM(Floor), formal(primReal(), SYM(x), false, false));
-#line 144 "runmath.in"
+#line 147 "runmath.in"
   addFunc(ve, run::gen_runmath13, primInt(), SYM(Round), formal(primReal(), SYM(x), false, false));
-#line 149 "runmath.in"
+#line 152 "runmath.in"
   addFunc(ve, run::gen_runmath14, primReal(), SYM(fmod), formal(primReal(), SYM(x), false, false), formal(primReal(), SYM(y), false, false));
-#line 155 "runmath.in"
+#line 158 "runmath.in"
   addFunc(ve, run::gen_runmath15, primReal(), SYM(atan2), formal(primReal(), SYM(y), false, false), formal(primReal(), SYM(x), false, false));
-#line 160 "runmath.in"
+#line 163 "runmath.in"
   addFunc(ve, run::gen_runmath16, primReal(), SYM(hypot), formal(primReal(), SYM(x), false, false), formal(primReal(), SYM(y), false, false));
-#line 165 "runmath.in"
+#line 168 "runmath.in"
   addFunc(ve, run::gen_runmath17, primReal(), SYM(remainder), formal(primReal(), SYM(x), false, false), formal(primReal(), SYM(y), false, false));
-#line 170 "runmath.in"
+#line 173 "runmath.in"
   addFunc(ve, run::gen_runmath18, primReal(), SYM(Jn), formal(primInt(), SYM(n), false, false), formal(primReal(), SYM(x), false, false));
-#line 175 "runmath.in"
+#line 178 "runmath.in"
   addFunc(ve, run::gen_runmath19, primReal(), SYM(Yn), formal(primInt(), SYM(n), false, false), formal(primReal(), SYM(x), false, false));
-#line 180 "runmath.in"
+#line 183 "runmath.in"
   addFunc(ve, run::gen_runmath20, primReal(), SYM(erf), formal(primReal(), SYM(x), false, false));
-#line 185 "runmath.in"
+#line 188 "runmath.in"
   addFunc(ve, run::gen_runmath21, primReal(), SYM(erfc), formal(primReal(), SYM(x), false, false));
-#line 190 "runmath.in"
+#line 193 "runmath.in"
   addFunc(ve, run::gen_runmath22, primInt(), SYM(factorial), formal(primInt(), SYM(n), false, false));
-#line 195 "runmath.in"
+#line 198 "runmath.in"
   addFunc(ve, run::gen_runmath23, primInt(), SYM(choose), formal(primInt(), SYM(n), false, false), formal(primInt(), SYM(k), false, false));
-#line 206 "runmath.in"
+#line 209 "runmath.in"
   addFunc(ve, run::gen_runmath24, primReal(), SYM(gamma), formal(primReal(), SYM(x), false, false));
-#line 216 "runmath.in"
+#line 219 "runmath.in"
   addFunc(ve, run::gen_runmath25, realArray(), SYM(quadraticroots), formal(primReal(), SYM(a), false, false), formal(primReal(), SYM(b), false, false), formal(primReal(), SYM(c), false, false));
-#line 225 "runmath.in"
+#line 228 "runmath.in"
   addFunc(ve, run::gen_runmath26, pairArray(), SYM(quadraticroots), formal(primPair(), SYM(a), false, true), formal(primPair(), SYM(b), false, true), formal(primPair(), SYM(c), false, true));
-#line 234 "runmath.in"
+#line 237 "runmath.in"
   addFunc(ve, run::gen_runmath27, realArray(), SYM(cubicroots), formal(primReal(), SYM(a), false, false), formal(primReal(), SYM(b), false, false), formal(primReal(), SYM(c), false, false), formal(primReal(), SYM(d), false, false));
-#line 244 "runmath.in"
+#line 247 "runmath.in"
   addFunc(ve, run::gen_runmath28, primBoolean(), SYM_LOGNOT, formal(primBoolean(), SYM(b), false, false));
-#line 252 "runmath.in"
+#line 255 "runmath.in"
   REGISTER_BLTIN(run::boolMemEq,"boolMemEq");
-#line 257 "runmath.in"
+#line 260 "runmath.in"
   REGISTER_BLTIN(run::boolMemNeq,"boolMemNeq");
-#line 262 "runmath.in"
+#line 265 "runmath.in"
   REGISTER_BLTIN(run::boolFuncEq,"boolFuncEq");
-#line 267 "runmath.in"
+#line 270 "runmath.in"
   REGISTER_BLTIN(run::boolFuncNeq,"boolFuncNeq");
-#line 272 "runmath.in"
+#line 275 "runmath.in"
   addFunc(ve, run::gen_runmath33, primInt(), SYM(AND), formal(primInt(), SYM(a), false, false), formal(primInt(), SYM(b), false, false));
-#line 280 "runmath.in"
+#line 283 "runmath.in"
   addFunc(ve, run::gen_runmath34, primInt(), SYM(OR), formal(primInt(), SYM(a), false, false), formal(primInt(), SYM(b), false, false));
-#line 285 "runmath.in"
+#line 288 "runmath.in"
   addFunc(ve, run::gen_runmath35, primInt(), SYM(XOR), formal(primInt(), SYM(a), false, false), formal(primInt(), SYM(b), false, false));
-#line 290 "runmath.in"
+#line 293 "runmath.in"
   addFunc(ve, run::gen_runmath36, primInt(), SYM(NOT), formal(primInt(), SYM(a), false, false));
-#line 295 "runmath.in"
+#line 298 "runmath.in"
   addFunc(ve, run::gen_runmath37, primInt(), SYM(CLZ), formal(primInt(), SYM(a), false, false));
-#line 317 "runmath.in"
+#line 304 "runmath.in"
   addFunc(ve, run::gen_runmath38, primInt(), SYM(CTZ), formal(primInt(), SYM(a), false, false));
 }
 

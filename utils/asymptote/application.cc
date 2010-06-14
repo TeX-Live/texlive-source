@@ -34,7 +34,11 @@ bool castable(env &e, formal& target, formal& source) {
 score castScore(env &e, formal& target, formal& source) {
   return equivalent(target.t,source.t) ? EXACT :
     (!target.Explicit &&
+#ifdef FASTCAST
+     e.fastCastable(target.t,source.t)) ? CAST : FAIL;
+#else
      e.castable(target.t,source.t, symbol::castsym)) ? CAST : FAIL;
+#endif
 }
 
 
@@ -115,18 +119,26 @@ public:
   }
 };
 
-
-void application::initRest() {
-  types::formal& f=sig->getRest();
+ty *restCellType(signature *sig) {
+  formal& f=sig->getRest();
   if (f.t) {
-    types::array *a=dynamic_cast<types::array *>(f.t);
-    if(!a)
-      vm::error("formal rest argument must be an array");
-
-    static symbol *null=0;
-    rf=types::formal(a->celltype, null, false, f.Explicit);
+    array *a=dynamic_cast<array *>(f.t);
+    if (a)
+      return a->celltype;
   }
 
+  return 0;
+}
+
+void application::initRest() {
+  formal& f=sig->getRest();
+  if (f.t) {
+    ty *ct = restCellType(sig);
+    if (!ct)
+      vm::error("formal rest argument must be an array");
+
+    rf=formal(ct, symbol::nullsym, false, f.Explicit);
+  }
   if (f.t || sig->isOpen) {
     rest=new restArg();
   }
@@ -135,7 +147,7 @@ void application::initRest() {
 //const Int REST=-1; 
 const Int NOMATCH=-2;
 
-Int application::find(symbol *name) {
+Int application::find(symbol name) {
   formal_vector &f=sig->formals;
   for (size_t i=index; i<f.size(); ++i)
     if (f[i].name==name && args[i]==0)
@@ -192,7 +204,7 @@ bool application::matchAtSpot(size_t spot, env &e, formal &source,
 bool application::matchArgument(env &e, formal &source,
                                 varinit *a, size_t evalIndex)
 {
-  assert(source.name==0);
+  assert(!source.name);
 
   if (index==args.size())
     // Try to pack into the rest array.
@@ -207,7 +219,7 @@ bool application::matchArgument(env &e, formal &source,
 bool application::matchNamedArgument(env &e, formal &source,
                                      varinit *a, size_t evalIndex)
 {
-  assert(source.name!=0);
+  assert(source.name);
 
   Int spot=find(source.name);
   return spot!=NOMATCH && matchAtSpot(spot, e, source, a, evalIndex);
@@ -268,20 +280,6 @@ bool application::matchSignature(env &e, types::signature *source,
   return complete();
 }
        
-#if 0
-application *application::matchHelper(env &e,
-                                      application *app,
-                                      signature *source)
-{
-  return app->matchSignature(e, source) ? app : 0;
-}
-
-application *application::match(env &e, signature *target, signature *source) {
-  application *app=new application(target);
-  return matchHelper(e, app, source);
-}
-#endif
-
 bool application::matchOpen(env &e, signature *source, arglist &al) {
   assert(rest);
 
@@ -305,10 +303,13 @@ application *application::match(env &e, function *t, signature *source,
   assert(t->kind==ty_function);
   application *app=new application(t);
 
-  if (t->getSignature()->isOpen)
-    return app->matchOpen(e, source, al) ? app : 0;
-  else
-    return app->matchSignature(e, source, al) ? app : 0;
+  bool success = t->getSignature()->isOpen ?
+                     app->matchOpen(e, source, al) :
+                     app->matchSignature(e, source, al);
+
+  //cout << "MATCH " << success << endl;
+
+  return success ? app : 0;
 }
 
 void application::transArgs(coenv &e) {
@@ -321,34 +322,307 @@ void application::transArgs(coenv &e) {
     rest->trans(e,temps);
 }
 
-app_list multimatch(env &e,
-                    types::overloaded *o,
-                    types::signature *source,
-                    arglist &al)
+bool application::exact() {
+  if (sig->isOpen)
+    return false;
+  for (score_vector::iterator p = scores.begin(); p != scores.end(); ++p)
+    if (*p != EXACT)
+      return false;
+  return true;
+}
+
+bool application::halfExact() {
+  if (sig->isOpen)
+    return false;
+  if (scores.size() != 2)
+    return false;
+  if (scores[0] == EXACT && scores[1] == CAST)
+    return true;
+  if (scores[0] == CAST && scores[1] == EXACT)
+    return true;
+  return false;
+}
+
+// True if any of the formals have names.
+bool namedFormals(signature *sig)
+{
+  formal_vector formals = sig->formals;
+  size_t n = formals.size();
+  for (size_t i = 0; i < n; ++i) {
+    if (formals[i].name)
+      return true;
+  }
+  return false;
+}
+
+// Tests if arguments in the source signature can be matched to the formals
+// in the target signature with no casting or packing.
+// This allows overloaded args, but not named args.
+bool exactlyMatchable(signature *target, signature *source)
+{
+  // Open signatures never exactly match.
+  if (target->isOpen)
+    return false;
+
+#if 0
+  assert(!namedFormals(source));
+#endif
+
+  formal_vector& formals = target->formals;
+  formal_vector& args = source->formals;
+
+  // Sizes of the two lists.
+  size_t fn = formals.size(), an = args.size();
+
+  // Indices for the two lists.
+  size_t fi = 0, ai = 0;
+
+  while (fi < fn && ai < an) {
+    if (equivalent(formals[fi].t, args[ai].t)) {
+      // Arguments match, move to the next.
+      ++fi; ++ai;
+    } else if (formals[fi].defval) {
+      // Match formal to default value.
+      ++fi;
+    } else {
+      // Failed to match formal.
+      return false;
+    }
+  }
+
+  assert(fi == fn || ai == an);
+
+  // Packing array arguments into the rest formal is inexact.  Do not allow it
+  // here.
+  if (ai < an)
+    return false;
+
+  assert(ai == an);
+
+  // Match any remaining formal to defaults.
+  while (fi < fn)
+    if (formals[fi].defval) {
+      // Match formal to default value.
+      ++fi;
+    } else {
+      // Failed to match formal.
+      return false;
+    }
+
+  // Non-rest arguments have matched.
+  assert(fi == fn && ai == an);
+
+  // Try to match the rest argument if given.
+  if (source->hasRest()) {
+    if (!target->hasRest())
+      return false;
+    
+    if (!equivalent(source->getRest().t, target->getRest().t))
+      return false;
+  }
+
+  // All arguments have matched.
+  return true;
+}
+
+// Tries to match applications without casting.  If an application matches
+// here, we need not attempt to match others with the slower, more general
+// techniques.
+app_list exactMultimatch(env &e,
+                         types::overloaded *o,
+                         types::signature *source,
+                         arglist &al)
 {
   assert(source);
 
   app_list l;
 
+  // This can't handle named arguments.
+  if (namedFormals(source))
+    return l; /* empty */
+
+  for (ty_vector::iterator t=o->sub.begin(); t!=o->sub.end(); ++t)
+  {
+    if ((*t)->kind != ty_function)
+      continue;
+
+    function *ft = (function *)*t;
+
+    if (!exactlyMatchable(ft->getSignature(), source))
+      continue;
+
+    application *a=application::match(e, ft, source, al);
+    assert(a);
+
+    // Consider calling
+    //   void f(int x, real y=0.0, int z=0)
+    // with
+    //   f(1,2)
+    // exactlyMatchable will return true, matching 1 to x and 2 to z, but the
+    // application::match will give an inexact match of 1 to x to 2 to y, due
+    // to the cast from int to real.  Therefore, we must test for exactness
+    // even after matching.
+    if (a->exact())
+      l.push_back(a);
+  }
+
+  //cout << "EXACTMATCH " << (!l.empty()) << endl;
+  return l;
+}
+
+bool halfExactMightMatch(signature *target, types::ty *t1, types::ty *t2)
+{
+  formal_vector& formals = target->formals;
+  if (formals.size() < 2)
+    return false;
+  if (formals.size() > 2) {
+    // We should probably abort the whole matching in this case.  For now,
+    // return true and let the usual matching handle it.
+    return true;
+  }
+
+  assert(formals[0].t);
+  assert(formals[1].t);
+
+  // Test if one of the arguments matches exactly.
+  return equivalent(formals[0].t, t1) || equivalent(formals[1].t, t2);
+}
+
+// Most commonly after exact matches are cases such as 2+3.4, that is, binary
+// operations were one of the operands matches exactly and the other does not.
+// This searches for this so-called "half-exact" matches.
+// This should only be called after exactMultimatch has failed.
+app_list halfExactMultimatch(env &e,
+                             types::overloaded *o,
+                             types::signature *source,
+                             arglist &al)
+{
+  assert(source);
+
+  app_list l;
+
+
+  // Half exact is only in the case of two arguments.
+  formal_vector& formals = source->formals;
+  if (formals.size() != 2 || source->hasRest())
+    return l; /* empty */
+
+  // This can't handle named arguments.
+  if (namedFormals(source))
+    return l; /* empty */
+
+  // Alias the two argument types.
+  types::ty *t1 = formals[0].t;
+  types::ty *t2 = formals[1].t;
+
+  assert(t1); assert(t2);
+
+  for (ty_vector::iterator t=o->sub.begin(); t!=o->sub.end(); ++t)
+  {
+    if ((*t)->kind != ty_function)
+      continue;
+
+    function *ft = (function *)*t;
+
+#if 1
+    if (!halfExactMightMatch(ft->getSignature(), t1, t2))
+      continue;
+#endif
+
+    application *a=application::match(e, ft, source, al);
+
+#if 1
+    if (a && a->halfExact())
+      l.push_back(a);
+#endif
+  }
+
+  return l;
+}
+
+// The full overloading resolution system, which handles casting of arguments,
+// packing into rest arguments, named arguments, etc.
+app_list inexactMultimatch(env &e,
+                           types::overloaded *o,
+                           types::signature *source,
+                           arglist &al)
+{
+  assert(source);
+
+  app_list l;
+
+
+#define DEBUG_GETAPP 0
 #if DEBUG_GETAPP
+  //cout << "source: " << *source << endl;
+  //cout << "ARGS: " << source->getNumFormals() << endl;
   bool perfect=false;
+  bool exact=false;
+  bool halfExact=false;
 #endif
 
   for(ty_vector::iterator t=o->sub.begin(); t!=o->sub.end(); ++t) {
     if ((*t)->kind==ty_function) {
 #if DEBUG_GETAPP
       function *ft = dynamic_cast<function *>(*t);
-      if (equivalent(ft->getSignature(), source))
+      signature *target = ft->getSignature();
+      cout << "TOTAL" << endl;
+      cout << "ARGS: source: " << source->getNumFormals()
+           << " target: " << target->getNumFormals() << endl;
+      //cout << "target: " << *target << endl;
+      if (equivalent(target, source))
         perfect = true;
+#if 0
+      cout << "TOTAL" << endl;
+      if (target->getNumFormals() < source->getNumFormals() &&
+          !target->hasRest()) {
+        cout << "TOO MANY ARGS" << endl;
+      } else if (target->getNumFormals() == source->getNumFormals() &&
+          !target->hasRest()) {
+        cout << "EXACT ARGS" << endl;
+      } else {
+        cout << "NOT TOO MANY ARGS" << endl;
+      }
+#endif
 #endif
       application *a=application::match(e, (function *)(*t), source, al);
       if (a)
         l.push_back(a);
+#if DEBUG_GETAPP
+      if (a && !namedFormals(source)) {
+        if (a->exact() != exactlyMatchable(ft->getSignature(), source)) {
+          cout << a->exact() << " != "
+               << exactlyMatchable(ft->getSignature(), source) << endl;
+          cout << "ft = " << *ft << endl;
+          cout << "args = " << *source << endl;
+        }
+        assert(a->exact() == exactlyMatchable(ft->getSignature(), source));
+        if (a->halfExact() && !namedFormals(source)) {
+          if (!halfExactMightMatch(target, source->getFormal(0).t,
+                                           source->getFormal(1).t))
+          {
+            cerr << "target: " << *target << " source: " << *source << endl;
+            cerr.flush();
+          }
+          cerr << "test" << endl;;
+            cerr.flush();
+          assert(halfExactMightMatch(target, source->getFormal(0).t,
+                                             source->getFormal(1).t));
+        }
+          
+      }
+      if (a && a->exact()) exact = true;
+      if (a && a->halfExact()) halfExact = true;
+#endif
     }
   }
 
 #if DEBUG_GETAPP
-  cout << (perfect ? "PERFECT" : "IMPERFECT") << endl;
+  cout << (perfect     ? "PERFECT" :
+           exact       ? "EXACT" :
+           halfExact   ? "HALFEXACT" :
+                         "IMPERFECT")
+       << endl;
 #endif
 
   if (l.size() > 1) {
@@ -364,19 +638,61 @@ app_list multimatch(env &e,
     return l;
 }
 
-#if 0
-app_list resolve(env &e,
-                 types::ty *t,
-                 types::signature *source)
-{
-  if (t->kind == ty_overloaded)
-    return multimatch(e, (overloaded *)t, source);
-  else {
-    overloaded o;
-    o.add(t);
-    return multimatch(e, &o, source);
+enum testExactType {
+  TEST_EXACT,
+  DONT_TEST_EXACT,
+};
+
+// Sanity check for multimatch optimizations.
+void sameApplications(app_list a, app_list b, testExactType te) {
+  assert(a.size() == b.size());
+
+  if (te == TEST_EXACT) {
+    for (app_list::iterator i = a.begin(); i != a.end(); ++i) {
+      if (!(*i)->exact()) {
+        cout << *(*i)->getType() << endl;
+      }
+      assert((*i)->exact());
+    }
+    for (app_list::iterator i = b.begin(); i != b.end(); ++i)
+      assert((*i)->exact());
   }
+
+  if (a.size() == 1)
+    assert(equivalent(a.front()->getType(), b.front()->getType()));
 }
+
+app_list multimatch(env &e,
+                    types::overloaded *o,
+                    types::signature *source,
+                    arglist &al)
+{
+#ifdef EXACT_MATCH
+  app_list a = exactMultimatch(e, o, source, al);
+  if (!a.empty()) {
+#if DEBUG_CACHE
+    // Make sure that exactMultimatch and the fallback return the same
+    // application(s).
+    sameApplications(a, inexactMultimatch(e, o, source, al), TEST_EXACT);
 #endif
+
+    return a;
+  }
+
+  a = halfExactMultimatch(e, o, source, al);
+  if (!a.empty()) {
+#if DEBUG_CACHE
+    // Make sure that exactMultimatch and the fallback return the same
+    // application(s).
+    sameApplications(a, inexactMultimatch(e, o, source, al), DONT_TEST_EXACT);
+#endif
+
+    return a;
+  }
+#endif
+
+  // Slow but most general method.
+  return inexactMultimatch(e, o, source, al);
+}
 
 } // namespace trans
