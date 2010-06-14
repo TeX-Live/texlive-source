@@ -50,8 +50,9 @@ After building clisp as described below, run the TL
   Build --enable-xindy CLISP=$clisp_builddir/clisp
 to include xindy in the build.  It is disabled by default.
 
-Do NOT use nohup when building clisp; this may cause weird build
-problems.  Regular redirections of stdout/stderr seem ok.
+Before clisp 2.48, do not use nohup when building clisp; this may cause
+weird build problems.  Regular redirections of stdout/stderr are ok.
+Fixed in 2.48: http://sourceforge.net/tracker/?func=detail&aid=2805778&group_id=1355&atid=101355
 
 mkdir clisp; cd clisp
 clisp_basedir=`pwd`
