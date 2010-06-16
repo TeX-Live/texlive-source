@@ -1,3 +1,9 @@
+2010-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* char_routines.c (ensure_existence): Avoid OpenBSD Bus error
+	caused by faulty logic.
+	Reported by Edd Barrett, 10 Jun 2010 13:33:03.
+
 2010-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* char_routines.c (check_existence_all_character_fields):

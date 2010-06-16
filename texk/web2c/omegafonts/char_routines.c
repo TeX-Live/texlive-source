@@ -185,7 +185,8 @@ ensure_existence(unsigned c)
     plane = c / PLANE;
     index = c % PLANE;
 
-    if ((plane>plane_max) || (planes[plane]==NULL) || (planes[plane][index]==NULL)) {
+    if ((plane>plane_max) || (planes[plane]==NULL) ||
+        (index>char_max[plane]) || (planes[plane][index]==NULL)) {
         init_character(c, NULL);
         planes[plane][index]->defined = FALSE;
     }
