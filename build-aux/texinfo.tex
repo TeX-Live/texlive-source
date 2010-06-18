@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-06-15.17}
+\def\texinfoversion{2010-06-16.17}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2671,9 +2671,9 @@ end
   }
 }
 % Another complication: we want \\ (and @\) to output a \ character.
-% FYI, plain.tex uses \\ as a temporary control sequence (why?), but
-% this is not advertised and we don't care.  Texinfo does not
-% otherwise define @\.
+% FYI, plain.tex uses \\ as a temporary control sequence (for no
+% particular reason), but this is not advertised and we don't care.
+% Texinfo does not otherwise define @\.
 %
 % The \mathchar is class=0=ordinary, family=7=ttfam, position=5C=\.
 \def\mathbackslash{\ifnum\fam=\ttfam \mathchar"075C \else\backslash \fi}
@@ -6405,7 +6405,6 @@ end
 \newbox\verbbox
 \def\starttabbox{\global\setbox\verbbox=\hbox\bgroup}
 %
-%\def\`#1{\accent18 #1\relax}
 \begingroup
   \catcode`\^^I=\active
   \gdef\tabexpand{%
@@ -6424,9 +6423,10 @@ end
 \def\setupverbatim{%
   \let\nonarrowing = t%
   \nonfillstart
-  % Easiest (and conventionally used) font for verbatim
-  \tt
-  \def\par{\egroup\box\verbbox\endgraf}%
+  \tt % easiest (and conventionally used) font for verbatim
+  % The \leavevmode here is for blank lines.  Otherwise, we would
+  % never \starttabox and the \egroup would end verbatim mode.
+  \def\par{\leavevmode\egroup\box\verbbox\endgraf}%
   \tabexpand
   \setupmarkupstyle{verbatim}%
   % Respect line breaks,
@@ -6948,13 +6948,13 @@ end
 % Macro bodies are absorbed as an argument in a context where
 % all characters are catcode 10, 11 or 12, except \ which is active
 % (as in normal texinfo). It is necessary to change the definition of \.
-
+%
 % Non-ASCII encodings make 8-bit characters active, so un-activate
 % them to avoid their expansion.  Must do this non-globally, to
 % confine the change to the current group.
-
+%
 % It's necessary to have hard CRs when the macro is executed. This is
-% done by  making ^^M (\endlinechar) catcode 12 when reading the macro
+% done by making ^^M (\endlinechar) catcode 12 when reading the macro
 % body, and then making it the \newlinechar in \scanmacro.
 
 \def\scanctxt{%
@@ -6988,13 +6988,15 @@ end
   \scanctxt
   \catcode`\\=\other
 }
+%\def\\{\normalbackslash}%
+%\def\,{,}%
 
 % \mbodybackslash is the definition of \ in @macro bodies.
 % It maps \foo\ => \csname macarg.foo\endcsname => #N
 % where N is the macro parameter number.
 % We define \csname macarg.\endcsname to be \realbackslash, so
 % \\ in macro replacement text gets you a backslash.
-
+%
 {\catcode`@=0 @catcode`@\=@active
  @gdef@usembodybackslash{@let\=@mbodybackslash}
  @gdef@mbodybackslash#1\{@csname macarg.#1@endcsname}
@@ -7005,9 +7007,9 @@ end
 \def\rmacro{\recursivetrue\parsearg\macroxxx}
 
 \def\macroxxx#1{%
-  \getargs{#1}%           now \macname is the macname and \argl the arglist
+  \getargs{#1}% now \macname is the macname and \argl the arglist
   \ifx\argl\empty       % no arguments
-     \paramno=0%
+     \paramno=0
   \else
      \expandafter\parsemargdef \argl;%
   \fi
@@ -7056,24 +7058,28 @@ end
 % an opening brace, and that opening brace is not consumed.
 \def\getargs#1{\getargsxxx#1{}}
 \def\getargsxxx#1#{\getmacname #1 \relax\getmacargs}
-\def\getmacname #1 #2\relax{\macname={#1}}
+\def\getmacname#1 #2\relax{\macname={#1}}
 \def\getmacargs#1{\def\argl{#1}}
 
 % Parse the optional {params} list.  Set up \paramno and \paramlist
 % so \defmacro knows what to do.  Define \macarg.blah for each blah
-% in the params list, to be ##N where N is the position in that list.
+% in the params list to be ##N where N is the position in that list.
 % That gets used by \mbodybackslash (above).
-
+%
 % We need to get `macro parameter char #' into several definitions.
-% The technique used is stolen from LaTeX:  let \hash be something
+% The technique used is stolen from LaTeX: let \hash be something
 % unexpandable, insert that wherever you need a #, and then redefine
 % it to # just before using the token list produced.
 %
 % The same technique is used to protect \eatspaces till just before
 % the macro is used.
 
-\def\parsemargdef#1;{\paramno=0\def\paramlist{}%
-        \let\hash\relax\let\xeatspaces\relax\parsemargdefxxx#1,;,}
+\def\parsemargdef#1;{%
+  \paramno=0\def\paramlist{}%
+  \let\hash\relax
+  \let\xeatspaces\relax
+  \parsemargdefxxx#1,;,%
+}
 \def\parsemargdefxxx#1,{%
   \if#1;\let\next=\relax
   \else \let\next=\parsemargdefxxx
@@ -7085,7 +7091,7 @@ end
 
 % These two commands read recursive and nonrecursive macro bodies.
 % (They're different since rec and nonrec macros end differently.)
-
+%
 \long\def\parsemacbody#1@end macro%
 {\xdef\temp{\eatcr{#1}}\endgroup\defmacro}%
 \long\def\parsermacbody#1@end rmacro%
@@ -7096,6 +7102,7 @@ end
 % Much magic with \expandafter here.
 % \xdef is used so that macro definitions will survive the file
 % they're defined in; @include reads the file inside a group.
+%
 \def\defmacro{%
   \let\hash=##% convert placeholders to macro parameter chars
   \ifrecursive
@@ -7159,7 +7166,8 @@ end
 % \braceorline decides whether the next nonwhitespace character is a
 % {.  If so it reads up to the closing }, if not, it reads the whole
 % line.  Whatever was read is then fed to the next control sequence
-% as an argument (by \parsebrace or \parsearg)
+% as an argument (by \parsebrace or \parsearg).
+% 
 \def\braceorline#1{\let\macnamexxx=#1\futurelet\nchar\braceorlinexxx}
 \def\braceorlinexxx{%
   \ifx\nchar\bgroup\else
@@ -7169,7 +7177,8 @@ end
 
 % @alias.
 % We need some trickery to remove the optional spaces around the equal
-% sign.  Just make them active and then expand them all to nothing.
+% sign.  Make them active and then expand them all to nothing.
+%
 \def\alias{\parseargusing\obeyspaces\aliasxxx}
 \def\aliasxxx #1{\aliasyyy#1\relax}
 \def\aliasyyy #1=#2\relax{%
