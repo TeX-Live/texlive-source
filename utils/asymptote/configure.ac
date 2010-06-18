@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[1.98],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[1.99],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 
@@ -106,8 +106,9 @@ if test "$GXX" = yes ; then
    ac_gcc_version=`echo __GNUC__ | $CC -E - | grep -v ^\#`
    if test "$ac_gcc_version" -lt 4; then
        CFLAGS=$CFLAGS" -finline-limit=400"
+   else
+       CFLAGS=$CFLAGS" --no-var-tracking"
    fi
-   CFLAGS=$CFLAGS" --no-var-tracking"
 fi
 
 AC_CHECK_HEADER(tr1/unordered_map,,

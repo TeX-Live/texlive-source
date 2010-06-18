@@ -1,4 +1,158 @@
 ------------------------------------------------------------------------
+r5029 | jcbowman | 2010-06-18 01:01:53 -0600 (Fri, 18 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/tests/gc/pen.asy
+
+Update test.
+------------------------------------------------------------------------
+r5028 | jcbowman | 2010-06-18 00:56:06 -0600 (Fri, 18 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/examples/xstitch.asy
+
+Reduce example output.
+------------------------------------------------------------------------
+r5027 | jcbowman | 2010-06-18 00:43:38 -0600 (Fri, 18 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/bezulate.asy
+
+Fix bug in bezulate containmentTree.
+------------------------------------------------------------------------
+r5026 | jcbowman | 2010-06-17 14:04:11 -0600 (Thu, 17 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/base/three_tube.asy
+
+Optimize parametric surface generation.
+
+------------------------------------------------------------------------
+r5025 | jcbowman | 2010-06-17 13:39:00 -0600 (Thu, 17 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Remove --no-var-tracking for major g++ versions < 4.
+------------------------------------------------------------------------
+r5024 | jcbowman | 2010-06-16 18:11:49 -0600 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/examples/animations/torusanimation.asy
+
+Fix perspective animations; update example.
+
+------------------------------------------------------------------------
+r5023 | hammera | 2010-06-16 17:08:10 -0600 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+
+Removed TODOs in venv that don't need doing.
+
+------------------------------------------------------------------------
+r5022 | hammera | 2010-06-16 17:03:56 -0600 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+
+Removed value allocation in venv.
+
+------------------------------------------------------------------------
+r5021 | hammera | 2010-06-16 16:39:03 -0600 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/TODO
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+   M /trunk/asymptote/env.cc
+   M /trunk/asymptote/exp.h
+   M /trunk/asymptote/types.h
+
+Removed stack of hash tables from venv.
+
+------------------------------------------------------------------------
+r5020 | hammera | 2010-06-16 16:25:59 -0600 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/tests/types/resolve.asy
+
+Added test based on previous bug.
+
+------------------------------------------------------------------------
+r5019 | hammera | 2010-06-16 16:23:05 -0600 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/knot.cc
+
+Eliminated string copying in knot.cc.
+
+------------------------------------------------------------------------
+r5018 | hammera | 2010-06-16 16:21:11 -0600 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/exp.cc
+   M /trunk/asymptote/exp.h
+
+Fixed bug in equalityExp.
+
+------------------------------------------------------------------------
+r5017 | jcbowman | 2010-06-16 01:48:07 -0600 (Wed, 16 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/settings.cc
+
+Add settings.framedelay for working around OpenGL rendering buffer overflows.
+
+------------------------------------------------------------------------
+r5016 | hammera | 2010-06-15 11:37:52 -0600 (Tue, 15 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+
+Added a (crucial) semi-colon.
+
+------------------------------------------------------------------------
+r5015 | jcbowman | 2010-06-15 08:59:21 -0600 (Tue, 15 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/item.h
+
+Simplify code.
+
+------------------------------------------------------------------------
+r5014 | jcbowman | 2010-06-15 08:56:55 -0600 (Tue, 15 Jun 2010) | 2 lines
+Changed paths:
+   A /trunk/asymptote/examples/xstitch.asy
+
+Add example.
+
+------------------------------------------------------------------------
+r5013 | jcbowman | 2010-06-14 18:16:05 -0600 (Mon, 14 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/item.h
+
+Fix segmentation fault.
+
+------------------------------------------------------------------------
+r5012 | hammera | 2010-06-14 17:10:17 -0600 (Mon, 14 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+
+Avoid allocating in venv::key.
+
+------------------------------------------------------------------------
+r5011 | hammera | 2010-06-14 17:00:42 -0600 (Mon, 14 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/TODO
+   M /trunk/asymptote/application.cc
+   M /trunk/asymptote/camp.l
+   M /trunk/asymptote/env.cc
+   M /trunk/asymptote/env.h
+   M /trunk/asymptote/exp.cc
+   M /trunk/asymptote/types.cc
+
+More optimizations.
+
+------------------------------------------------------------------------
+r5010 | jcbowman | 2010-06-14 03:43:38 -0600 (Mon, 14 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.99svn.
+------------------------------------------------------------------------
 r5009 | jcbowman | 2010-06-14 02:39:57 -0600 (Mon, 14 Jun 2010) | 6 lines
 Changed paths:
    M /trunk/asymptote/array.cc

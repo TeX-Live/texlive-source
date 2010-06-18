@@ -25,7 +25,8 @@ Options (negate by replacing - with -no):
 -embed                Embed rendered preview image [true]
 -exitonEOF            Exit interactive mode on EOF [true]
 -fitscreen            Fit rendered image to screen [true]
--framerate frames/sec Animation speed [30]
+-framedelay ms        Additional frame delay [0]
+-framerate frames/s   Animation speed [30]
 -globalwrite          Allow write to other directory [false]
 -gray                 Convert all colors to grayscale [false]
 -h,-help              Show summary of options; command-line only
@@ -65,7 +66,7 @@ Options (negate by replacing - with -no):
 -rgb                  Convert cmyk colors to rgb [false]
 -safe                 Disable system call [true]
 -scroll n             Scroll standard output n lines at a time [0]
--spinstep deg/sec     Spin speed [60]
+-spinstep deg/s       Spin speed [60]
 -svgemulation         Emulate unimplemented SVG shading [false]
 -tabcompletion        Interactive prompt auto-completion [true]
 -tex engine           latex|pdflatex|xelatex|tex|pdftex|context|none [latex]

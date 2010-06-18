@@ -96,6 +96,7 @@ bool protoenv::fastCastable(ty *target, ty *source) {
 
   // To avoid memory allocation, fill one static variable with new parameters
   // in each call.
+  // Warning: This is not re-entrant if asy ever goes multi-threaded.
   static types::function castFunc(primVoid(), primVoid());
   castFunc.result = target;
 
@@ -129,6 +130,25 @@ bool protoenv::fastCastable(ty *target, ty *source) {
   // Test for generic casts of null.  This should be moved to a types.h
   // routine.
   return source->kind == ty_null && target->isReference();
+}
+
+access *protoenv::fastLookupCast(ty *target, ty *source) {
+  assert(target->kind != types::ty_overloaded);
+  assert(target->kind != types::ty_error);
+  assert(source->kind != types::ty_overloaded);
+  assert(source->kind != types::ty_error);
+
+  // Warning: This is not re-entrant.
+  static types::function castFunc(primVoid(), primVoid());
+  castFunc.result = target;
+  castFunc.sig.formals[0].t = source;
+
+  varEntry *ve = lookupVarByType(symbol::castsym, &castFunc);
+  if (ve)
+    return ve->getLocation();
+
+  // Fall back on slow routine.
+  return lookupCast(target, source, symbol::castsym);
 }
 #endif
 

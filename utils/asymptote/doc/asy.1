@@ -95,7 +95,12 @@ Exit interactive mode on EOF [true].
 .TP
 .B \-fitscreen          
 Fit rendered image to screen [true].
--framerate frames/sec Animation speed [30]
+.TP
+.B \-framedelay ms      
+Additional frame delay [0].
+.TP
+.B \-framerate frames/s 
+Animation speed [30].
 .TP
 .B \-globalwrite        
 Allow write to other directory [false].
@@ -214,7 +219,7 @@ Disable system call [true].
 .B \-scroll n           
 Scroll standard output n lines at a time [0].
 .TP
-.B \-spinstep deg/sec   
+.B \-spinstep deg/s     
 Spin speed [60].
 .TP
 .B \-svgemulation       

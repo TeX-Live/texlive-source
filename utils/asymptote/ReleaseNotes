@@ -1,6 +1,16 @@
+Release Notes for Version 1.99
+
+A segmentation fault was fixed. Perspective animations were fixed. A bug in
+the bezulate topological sorting algorithm was fixed. A settings.framedelay
+parameter was added for working around OpenGL animation rendering buffer
+overruns. Further optimizations were made. A portability issue was addressed.
+
 Release Notes for Version 1.98
 
-Memory usage and garbage collection were greatly improved, and many optimizations were made. Labels are now aligned using the rotational instead of shiftless part of the transform. A portable CYGWIN memory limit fix was implemented. Noncyclic stokepaths are now discarded to work around a bug in gs 8.71.k.
+Memory usage and garbage collection were greatly improved, and many
+optimizations were made. Labels are now aligned using the rotational instead of
+the shiftless part of the transform. A portable CYGWIN memory limit fix was
+implemented. Noncyclic stokepaths are discarded to work around a bug in gs 8.71.
 
 Release Notes for Version 1.97
 
