@@ -16,7 +16,7 @@ FILE *tfmfile;
 /*
  *   Our static variables:
  */
-static char name[50];
+static char name[500];
 
 void
 badtfm(const char *s)
@@ -39,6 +39,10 @@ tfmopen(register fontdesctype *fd)
    register char *d;
 #endif
    n = fd->name;
+   if (strlen(n) + 6 >= sizeof (name)) {
+      /* 6 for tfm() + null */
+      error("! TFM file name too long in tfmopen") ;
+   }
    if (!noomega) {
 #ifdef KPATHSEA
       d = ofmpath;

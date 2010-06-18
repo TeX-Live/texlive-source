@@ -1,3 +1,8 @@
+2010-06-19  Yan Li  <yan.i.li@intel.com>
+
+	* tfmload.c (name): increase size to 500.
+	(badtfm): check for name length overflow.
+
 2010-06-13  Karl Berry  <karl@tug.org>
 
 	* dvips.texi: update for 2010.
