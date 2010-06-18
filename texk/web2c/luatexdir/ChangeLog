@@ -1,3 +1,9 @@
+2010-06-18  Taco Hoekwater <taco@luatex.org>
+
+	* tex/textoken.h (smemory_word): add endiannes test
+	* font/texfont.h (liginfo, kerninfo): add endianness test
+	* luatex_svnversion.h: new version
+
 2010-06-13  Taco Hoekwater <taco@luatex.org>
 
 	* tex/inputstack.h (in_state_record): force two bitfields to be signed,

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfont.h 3482 2010-03-13 11:18:28Z taco $ */
+/* $Id: texfont.h 3723 2010-06-18 09:19:27Z taco $ */
 
 /* Here we have the interface to LuaTeX's font system, as seen from the
    main pascal program. There is a companion list in luatex.defines to
@@ -32,15 +32,28 @@
 
 #  define pointer halfword
 
+/* these are dumped en block, so they need endianness tests */
 typedef struct liginfo {
+#  ifdef WORDS_BIGENDIAN
     int adj;
     int lig;
-    char type;
+    int type;
+#else
+    int type;
+    int lig;
+    int adj;
+#endif
 } liginfo;
 
+/* these are dumped en block, so they need endianness tests */
 typedef struct kerninfo {
+#  ifdef WORDS_BIGENDIAN
     int adj;
     scaled sc;
+#else
+    scaled sc;
+    int adj;
+#endif
 } kerninfo;
 
 typedef struct extinfo {

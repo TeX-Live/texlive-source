@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: textoken.h 3376 2010-01-25 16:50:23Z taco $ */
+/* $Id: textoken.h 3723 2010-06-18 09:19:27Z taco $ */
 
 #ifndef TEXTOKEN_H
 #  define TEXTOKEN_H
@@ -45,8 +45,13 @@
 #  include "tex/stringpool.h"
 
 typedef struct smemory_word_ {
+#  ifdef WORDS_BIGENDIAN
     halfword hhrh;
     halfword hhlh;
+#else
+    halfword hhlh;
+    halfword hhrh;
+#endif
 } smemory_word;
 
 #  define fix_mem_init 10000
