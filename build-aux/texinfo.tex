@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-06-16.17}
+\def\texinfoversion{2010-06-17.11}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2670,10 +2670,9 @@ end
     \def_{\ifnum\fam=\slfam \_\else\sb\fi}%
   }
 }
-% Another complication: we want \\ (and @\) to output a \ character.
+% Another complication: we want \\ (and @\) to output a math (or tt) \.
 % FYI, plain.tex uses \\ as a temporary control sequence (for no
 % particular reason), but this is not advertised and we don't care.
-% Texinfo does not otherwise define @\.
 %
 % The \mathchar is class=0=ordinary, family=7=ttfam, position=5C=\.
 \def\mathbackslash{\ifnum\fam=\ttfam \mathchar"075C \else\backslash \fi}
@@ -6947,7 +6946,8 @@ end
 
 % Macro bodies are absorbed as an argument in a context where
 % all characters are catcode 10, 11 or 12, except \ which is active
-% (as in normal texinfo). It is necessary to change the definition of \.
+% (as in normal texinfo). It is necessary to change the definition of \
+% to recognize macro arguments; this is the job of \mbodybackslash.
 %
 % Non-ASCII encodings make 8-bit characters active, so un-activate
 % them to avoid their expansion.  Must do this non-globally, to
@@ -6956,8 +6956,8 @@ end
 % It's necessary to have hard CRs when the macro is executed. This is
 % done by making ^^M (\endlinechar) catcode 12 when reading the macro
 % body, and then making it the \newlinechar in \scanmacro.
-
-\def\scanctxt{%
+%
+\def\scanctxt{% used as subroutine
   \catcode`\"=\other
   \catcode`\+=\other
   \catcode`\<=\other
@@ -6970,13 +6970,13 @@ end
   \ifx\declaredencoding\ascii \else \setnonasciicharscatcodenonglobal\other \fi
 }
 
-\def\scanargctxt{%
+\def\scanargctxt{% used for copying and captions, not macros.
   \scanctxt
   \catcode`\\=\other
   \catcode`\^^M=\other
 }
 
-\def\macrobodyctxt{%
+\def\macrobodyctxt{% used for @macro definitions
   \scanctxt
   \catcode`\{=\other
   \catcode`\}=\other
@@ -6984,12 +6984,26 @@ end
   \usembodybackslash
 }
 
-\def\macroargctxt{%
+\def\macroargctxt{% used when scanning invocations
   \scanctxt
-  \catcode`\\=\other
+  \catcode`\\=0
 }
-%\def\\{\normalbackslash}%
-%\def\,{,}%
+% why catcode 0 for \ in the above?  To recognize \\ \{ \} as "escapes"
+% for the single characters \ { }.  Thus, we end up with the "commands"
+% that would be written @\ @{ @} in a Texinfo document.
+% 
+% We already have @{ and @}.  For @\, we define it here, and only for
+% this purpose, to produce a typewriter backslash (so, the @\ that we
+% define for @math can't be used with @macro calls):
+%
+\def\\{\normalbackslash}%
+% 
+% We would like to do this for \, too, since that is what makeinfo does.
+% But it is not possible, because Texinfo already has a command @, for a
+% cedilla accent.  Documents must use @comma{} instead.
+%
+% \anythingelse will almost certainly be an error of some kind.
+
 
 % \mbodybackslash is the definition of \ in @macro bodies.
 % It maps \foo\ => \csname macarg.foo\endcsname => #N
@@ -7002,6 +7016,8 @@ end
  @gdef@mbodybackslash#1\{@csname macarg.#1@endcsname}
 }
 \expandafter\def\csname macarg.\endcsname{\realbackslash}
+
+\def\margbackslash#1{\char`\#1 }
 
 \def\macro{\recursivefalse\parsearg\macroxxx}
 \def\rmacro{\recursivetrue\parsearg\macroxxx}
@@ -7083,7 +7099,7 @@ end
 \def\parsemargdefxxx#1,{%
   \if#1;\let\next=\relax
   \else \let\next=\parsemargdefxxx
-    \advance\paramno by 1%
+    \advance\paramno by 1
     \expandafter\edef\csname macarg.\eatspaces{#1}\endcsname
         {\xeatspaces{\hash\the\paramno}}%
     \edef\paramlist{\paramlist\hash\the\paramno,}%
