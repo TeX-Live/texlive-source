@@ -55,21 +55,16 @@ env LD_OPTIONS=-R/usr/local/lib ./Build
 
 
 Build information:
-  amd64-freebsd: built on Freebsd 7.0-RELEASE amd64,
-    --with-fontconfig=/usr/local
-
-  hppa-hpux: built on HP-UX 10.20, gcc 3.3.4
-    --with-fontconfig=/u/tiarno/fc --without-graphite  --without-luatex
-  
-  i386-darwin: MacOSX 10.4 with support for 10.3, 10.4, and 10.5
+  In general, xe(la)tex and xdvipdfmx depend on fontconfig.
+  We cannot statically link it because it varies on different systems.
 
   i386-linux: Debian sarge, gcc 3.3.5, libc 2.3.2, Linux 2.6.9-67.0.4.ELsmp
     chroot /home/texlive/sarge; Build --with-xindy --with-clisp=...
     
-  i386-solaris: Solaris 11
+  universal-darwin, x86_64-darwin: a menagerie of versions.
 
-  powerpc-darwin: like i386-darwin
-  
+  i386-solaris, x86_64-solaris: Solaris 11
+
   powerpc-linux
 2.6.26-2-powerpc64 #1 SMP Fri May 29 00:38:20 UTC 2009 ppc64 GNU/Linux
 /lib/libc.so.6, GNU C Library (EGLIBC) stable release version 2.9
@@ -81,7 +76,6 @@ bison (GNU Bison) 2.3
 flex version 2.5.4
 GNU m4 1.4.5
 GNU Make 3.81
-  xe(la)tex and xdvipdfmx depend on fontconfig.
   Because Solaris 8 does not include fontconfig, we used fontconfig
   package (version 2.3.2) from http://www.blastwave.org/
   (together with its dependencies)
@@ -99,7 +93,6 @@ bison (GNU Bison) 1.34
 flex version 2.5.4
 GNU m4 1.4
 GNU Make 3.79.1
-  xe(la)tex and xdvipdfmx depend on fontconfig.
   You can download fontconfig for AIX from
   http://www-03.ibm.com/servers/aix/products/aixos/linux/download.html
   ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/fontconfig/
@@ -111,7 +104,6 @@ bison (GNU Bison) 2.3
 flex 2.5.33
 GNU M4 1.4.8
 GNU Make 3.81
-  Remarks:
   - you have to set the ulimit high enough before compiling clisp and texlive
       ulimit -s 16384
     did suffice for me
@@ -121,4 +113,3 @@ GNU Make 3.81
   - compilation of clisp needs hand adding -lavcall -lcallback -ltrampoline 
     -lvacall after the -lsigsegv
   - asy compilation with --disable-gsl && make
-
