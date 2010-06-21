@@ -1,10 +1,14 @@
+2010-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-63-win32 (new): Bug fix for Win32 from Akira.
+
 2010-06-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	patch-62-bug-fix (new): Bug fix from Joachim Schrod.
+	* patch-62-bug-fix (new): Bug fix from Joachim Schrod.
 
 2010-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	patch-61-detect-TL (new): Better detection of TL installation.
+	* patch-61-detect-TL (new): Better detection of TL installation.
 
 2010-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

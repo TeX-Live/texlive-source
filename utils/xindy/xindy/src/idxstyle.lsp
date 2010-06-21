@@ -779,6 +779,7 @@ NIL in cases where no switch keyword was found in EXPR.
              (return (push :default paths)))
            (setq pos (position #+UNIX #\:
                                #+OS/2 #\;
+                               #+WIN32 #\;
                                str))
            (if pos
                (progn

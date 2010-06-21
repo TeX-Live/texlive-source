@@ -339,6 +339,7 @@ use POSIX qw(uname);
 
 our $is_TL = ( '@is_TL@' eq 'yes' );
 our $is_w32 = ( $OSNAME =~ /^MSWin/i ) ;
+our $path_sep = ( $is_w32 ? ';' : ':' ) ;
 our $is_windows = ( $is_w32 || $OSNAME eq 'cygwin' ) ;
 our $clisp = ( $is_windows ? 'clisp.exe' : 'clisp' ) ;
 our $real_cmd = Cwd::realpath($0);
@@ -676,7 +677,7 @@ sub filter_index ( $$ ) {
 # Construct final xindy expression, from options.
 
 sub xindy_expression () {
-    my ($logging, $tracing, $trace_level);
+    my ($logging, $tracing, $trace_level, $searchpath);
 
     # Determine language module of make-rules framework. Part of the
     # complexity below is from compatibility with the TLC2
@@ -744,16 +745,18 @@ sub xindy_expression () {
 
     $style_file = quotify($style_file);
     $outfile = quotify($outfile);
+    $raw_index = quotify($raw_index);
     $logging = ':logfile ' . quotify($logfile)  if $logfile;
     $tracing = ':markup-trace :on'  if $debug{markup};
     $trace_level = ":trace-level $debug{trace_level}"  if $debug{trace_level};
+    $searchpath = quotify(join($path_sep, ".", $modules_dir, "$modules_dir/base"));
 
     my $exp = <<_EOT_
 (progn
-  (searchpath ".:$modules_dir:$modules_dir/base")
+  (searchpath $searchpath)
   (xindy:startup
     :idxstyle $style_file
-    :rawindex "$raw_index"
+    :rawindex $raw_index
     :output $outfile
     $logging
     $tracing
@@ -774,6 +777,13 @@ sub call_xindy ( $$ ) {
     my @command = ($clisp, '-M', $mem_file, '-E', 'iso-8859-1');
     if ( $interactive ) {
 	print "Proposed xindy expression:\n\n$xindy_exp\n"  unless $quiet;
+    } elsif ($is_w32) {
+	my ($output, $outfile) = tempfile();
+	push (@temp_files, $outfile);
+	print $output $xindy_exp;
+	close ($output);
+	print "xindy startup file: $outfile\n" if $debug{script};
+	push (@command, "$outfile");
     } else {
 	push (@command, '-x', $xindy_exp);
     }
@@ -835,7 +845,7 @@ sub output_xindy_release () {
 
 sub quotify ( $ ) {
     my $s = shift;
-    $s =~ s:[\\\"]:\\&1:g ;		# quote double-quote and backslash
+    $s =~ s:([\\\"]):\\$1:g ;
     return "\"$s\"";
 }
 
