@@ -1,3 +1,9 @@
+2010-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Prepare for libpng-1.4.x.
+	* writepng.c: Define and use macros to access bit_depth and the
+	other fields of the png_info and png_ptr structs.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/pdftex.am (pdftex_cppflags): Add $(AM_CPPFLAGS).
