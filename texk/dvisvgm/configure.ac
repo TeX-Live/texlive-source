@@ -13,7 +13,7 @@ dnl  Copyright (C) 2005-2009 Martin Gieseking <martin.gieseking@uos.de>
 dnl
 dnl *********************************************************************
 dnl
-m4_define([dvisvgm_version], [1.0.1])[]dnl using unmodified dvisvgm source tree
+m4_define([dvisvgm_version], [1.0.2])[]dnl using unmodified dvisvgm source tree
 AC_INIT([dvisvgm], dvisvgm_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvisvgm-]dvisvgm_version[/src/dvisvgm.cpp])
