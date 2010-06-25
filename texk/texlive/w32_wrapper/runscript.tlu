@@ -256,7 +256,7 @@ end
 local function is_tex4ht_command(progname)
   if (progname == 'ht') then return true end
   for p in string.gmatch('ht xh uxh xhm mz oo es js jm tei teim db dbm w jh jh1', '%S+') do
-    for q in string.gmatch('contex latex tex texi xelatex xetex', '%S+') do
+    for q in string.gmatch('context latex tex texi xelatex xetex', '%S+') do
       if (progname == p..q) then 
         -- we have a hit, but not all combinations are valid
         return (p ~= 'teim' and p ~=  'dbm') or (q ~= 'xelatex' and q~= 'xetex')
