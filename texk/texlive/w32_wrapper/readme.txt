@@ -191,4 +191,10 @@
     2010/06/04
         - added support for Perl scripts starting with eval-exec-perl 
           construct in place of she-bang (#!)
+    2010/06/25
+        - run internal tlperl only with our Perl
+        - added fontinst to alias_table
+        - added support for all tex4ht commands from mk4ht.pl
+        - removed some unsued aliases
+        - some code refactoring and cleanup
 

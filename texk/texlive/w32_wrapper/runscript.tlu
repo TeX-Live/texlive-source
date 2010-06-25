@@ -204,6 +204,12 @@ local docstr = [[
     2010/06/04
         - added support for Perl scripts starting with eval-exec-perl 
           construct in place of she-bang (#!)
+    2010/06/25
+        - run internal tlperl only with our Perl
+        - added fontinst to alias_table
+        - added support for all tex4ht commands from mk4ht.pl
+        - removed some unsued aliases
+        - some code refactoring and cleanup
 ]]
 
 -- HELPER SUBROUTINES --
@@ -244,6 +250,20 @@ local function search_path(fname, PATH, PATHEXT)
     end
   end
   return nil, "file or program not on PATH: "..fname
+end
+
+-- tests for tex4ht command (as given in mk4ht.pl)
+local function is_tex4ht_command(progname)
+  if (progname == 'ht') then return true end
+  for p in string.gmatch('ht xh uxh xhm mz oo es js jm tei teim db dbm w jh jh1', '%S+') do
+    for q in string.gmatch('contex latex tex texi xelatex xetex', '%S+') do
+      if (progname == p..q) then 
+        -- we have a hit, but not all combinations are valid
+        return (p ~= 'teim' and p ~=  'dbm') or (q ~= 'xelatex' and q~= 'xetex')
+      end
+    end
+  end
+  return false
 end
 
 -- locates texmfscript to execute
@@ -303,13 +323,15 @@ local function mkdir_plus(dir)
   if ret == 0 then
     return true
   else
-    return nil, "cannot create directory: " .. dir
+    return nil, string.format("cannot create directory (error code %d): %s", ret, dir)
   end
 end
 
 -- MAIN_CHUNK -- encapsulated in a function for more robust execution with pcall
 
 local function MAIN_CHUNK()
+
+-- preprocess arguments
 
 local guimode = false
 local argline = ''
@@ -328,33 +350,36 @@ else
   for k = #arg, 1, -1 do argline = _q(arg[k]) .. ' ' .. argline end
 end
 
--- special behaviour when called under 'runscript' name
+-- program name
 
--- ( lower arg[0] : get file name part : remove extension ) == 'runscript'
-if (string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', '') == 'runscript') then
+-- lower arg[0] : get file name part : remove extension 
+local progname, substcount = string.lower(arg[0]):gsub('^.*[\\/]', ''):gsub('%.[^.]*$', '')
+-- special behaviour when called under 'runscript' name
+if (progname == 'runscript') then
   -- we are called as: runscript progname ...
   -- or as: runscript --help|-h|--version ...
   -- handle options first (only --help and --version)
-  local opt = { h = false, help = false, v = false, version = false }
-  local param, k
+  local opt, param = {}, nil
   while true do
     -- remove the first argument from the arg table and from the argline string
     -- (this argument should have no embedded spaces!)
     param = table.remove(arg, 1)
     if not param then break end
     argline = string.gsub(argline, '^%S+%s*', '')
-    param, k = string.lower(param):gsub('^%-%-?', '')
-    -- if an option was given
-    if (k > 0) then 
-      if opt[param] == nil then
-        error("unknown option: "..param.."\n"..bannerstr)
-      end
-      opt[param] = true
-    else
+    local optname =  string.lower(param):match('^%-%-?(.*)$')
+    if not optname then
       break
+    elseif (optname == 'h') or (optname == 'help') then
+      opt.help = true
+    elseif (optname == 'v') then
+      opt.v = true
+    elseif (optname == 'version') then
+      opt.version = true
+    else
+      error("unknown option: "..param.."\n"..bannerstr)
     end
   end
-  if opt.help or opt.h then
+  if opt.help then
     print(helpstr)
     if opt.v then print(docstr) end
     os.exit(0)
@@ -362,18 +387,19 @@ if (string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', '') == 'runscript') 
     print(bannerstr)
     os.exit(0)
   end
-  -- make sure we a new arg[0] is given and proceed
+  -- make sure progname is valid 
   arg[0] = assert(param, "not enough arguments!\n"..bannerstr)
+  progname = string.lower(arg[0]):gsub('^.*[\\/]', ''):gsub('%.[^.]*$', '')
+  assert(progname == string.lower(arg[0]), "bad command name: " .. arg[0])
 end
+-- special case of sys programs
+progname, substcount = string.gsub(progname, '%-sys$', '')
+local sysprog = (substcount > 0) -- true if there was a -sys suffix removed
+-- prevent recursive calls to this script
+assert(progname ~= 'runscript', "oops! wrapping the wrapper?")
 
 -- kpse and environment set-up
 
--- program name
-local progname, k = string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', ''):gsub('%-sys$', '')
-local sysprog = (k > 0) -- sys type program/script (there was -sys suffix removed)
-if (progname == 'runscript') then -- prevent recursive calls to this script
-  error("oops! wrapping the wrapper?")
-end
 -- init kpathsea 
 local k = -1 
 while arg[k-1] do k = k - 1 end -- in case of a call: luatex --luaonly ...
@@ -386,6 +412,7 @@ local PATH = os.getenv('PATH') or ''
 -- perl stuff
 local scripts4tlperl = {
   texdoctk = true, 
+  tlperl = true, 
   updmap = true, 
   ['updmap-sys'] = true, 
 }
@@ -423,10 +450,7 @@ os.setenv("USERPROFILE", os.getenv("USERPROFILE"):gsub('/', '\\'))
 
 -- alias table (programs with special needs)
 
-local alias_table = {--[[
-  ['fmtutil-sys'] = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil-sys', argline},
-  ['updmap-sys'] = {[0]=PERLEXE, 'perl', 
-    _q(TEXDIR..'/texmf/scripts/tetex/updmap.pl'), argline},--]]
+local alias_table = {
   asy = 
     function ()
       -- TODO: check if ASYMPTOTE_GS requires quoting of names with spaces
@@ -435,7 +459,6 @@ local alias_table = {--[[
       os.setenv('CYGWIN', 'nodosfilewarning')
       return {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy', argline}
     end,
-  --dvigif = {[0]=BINDIR..'/dvipng.exe', 'dvigif', argline},
   dviout = 
     function ()
       local fontsdir = kpse.var_value('TEXMFVAR') .. '/fonts'
@@ -456,6 +479,8 @@ local alias_table = {--[[
       table.concat(texrt, ';') .. [['"]]
       return {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', dvioutpar, argline}
     end,
+  fontinst = {[0]=BINDIR..'/tex.exe', 'tex', 
+    '-progname=fontinst', '-fmt=tex', argline},
   psv = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
     '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
     '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'), '-sINPUT='..argline},
@@ -465,7 +490,6 @@ local alias_table = {--[[
   rpdfcrop = {[0]=PERLEXE, 'perl', 
     _q(TEXDIR..'/texmf-dist/scripts/pdfcrop/pdfcrop.pl'), 
     '--restricted', argline},
-  sam2p = {[0]=TEXDIR..'/tlpkg/sam2p/sam2p.exe', 'sam2p', argline},
   texworks = 
     function ()
       local winver = tonumber(string.match(os.uname().version, '%D*(%d+\.?%d*)'))
@@ -518,13 +542,18 @@ if program then -- special case (alias)
     program = program() 
   end
 else -- general case (no alias)
-  local progfullname, ext = search_path(progname, BINDIR, ".tlu;.bat;.cmd")
+  local progfullname = search_path(progname, BINDIR, '.tlu;.bat;.cmd')
   if not progfullname then
-    progfullname, ext = assert(find_texmfscript(progname, 
-      ".tlu;.texlua;.lua;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;\0"))
+    progfullname = find_texmfscript(progname, 
+      '.tlu;.texlua;.lua;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;\0')
   end
-  if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then
-    -- lua script
+  if not progfullname and is_tex4ht_command(progname) then
+    argline = progname .. ' ' .. argline
+    progfullname = find_texmfscript('mk4ht', '.pl')
+  end
+  assert(progfullname, "no appropriate script or program found: " .. progname)
+  local ext = string.match(string.lower(progfullname), '%.[^\\/.]*$') or ''
+  if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then -- lua script
     arg[0] = progfullname
     program = progfullname
   else
