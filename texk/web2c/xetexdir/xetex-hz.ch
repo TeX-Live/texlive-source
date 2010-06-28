@@ -31,7 +31,7 @@ end;
 @!hlist_stack:array[0..max_hlist_stack] of pointer; {stack for |find_protchar_left()| and |find_protchar_right()|}
 @!hlist_stack_level:0..max_hlist_stack; {fill level for |hlist_stack|}
 @!first_p: pointer; {to access the first node of the paragraph}
-@!prev_p: pointer; {make |prev_p| global}
+@!global_prev_p: pointer; {to access |prev_p| in |line_break|; should be kept in sync with |prev_p| by |update_prev_p|}
 
 @z
 
@@ -185,7 +185,7 @@ margin_kern_node: begin
 {     fast_get_avail(margin_char(r)); }
 {     font(margin_char(r)) := font(margin_char(p)); }
 {     character(margin_char(r)) := character(margin_char(p)); }
-    words := small_node_size;
+    words := margin_kern_node_size;
   end;
 @z
 
@@ -338,13 +338,6 @@ convert: case chr_code of
 @!i:small_number;
 @!quote_char:UTF16_code;
 p, q: pointer;
-@z
-
-@x
-@!edge:scaled; {right edge of sub-box or leader space}
-@!prev_p:pointer; {one step behind |p|}
-@y
-@!edge:scaled; {right edge of sub-box or leader space}
 @z
 
 @x
@@ -573,7 +566,7 @@ begin
         l := first_p
     else
         l := cur_break(break_node(q));
-    r := prev_rightmost(prev_p, p); {get |link(r)=p|}
+    r := prev_rightmost(global_prev_p, p); {get |link(r)=p|}
     {let's look at the right margin first}
     if (p <> null) and (type(p) = disc_node) and (pre_break(p) <> null) then
     {a |disc_node| with non-empty |pre_break|, protrude the last char of |pre_break|}
@@ -614,18 +607,92 @@ if XeTeX_protrude_chars > 1 then
 @z
 
 @x
-@!auto_breaking:boolean; {is node |cur_p| outside a formula?}
-@!prev_p:pointer; {helps to determine when glue nodes are breakpoints}
+entire paragraph.
+
+@<Find optimal breakpoints@>=
+threshold:=pretolerance;
+if threshold>=0 then
+  begin @!stat if tracing_paragraphs>0 then
+    begin begin_diagnostic; print_nl("@@firstpass");@+end;@;@+tats@;@/
+  second_pass:=false; final_pass:=false;
+  end
+else  begin threshold:=tolerance; second_pass:=true;
+  final_pass:=(emergency_stretch<=0);
+  @!stat if tracing_paragraphs>0 then begin_diagnostic;@+tats@;
+  end;
+loop@+  begin if threshold>inf_bad then threshold:=inf_bad;
+  if second_pass then @<Initialize for hyphenating a paragraph@>;
+  @<Create an active breakpoint representing the beginning of the paragraph@>;
+  cur_p:=link(temp_head); auto_breaking:=true;@/
+  prev_p:=cur_p; {glue at beginning is not a legal breakpoint}
 @y
-@!auto_breaking:boolean; {is node |cur_p| outside a formula?}
+entire paragraph.
+
+@d update_prev_p == begin
+    prev_p := cur_p;
+    global_prev_p := cur_p;
+end
+
+@<Find optimal breakpoints@>=
+threshold:=pretolerance;
+if threshold>=0 then
+  begin @!stat if tracing_paragraphs>0 then
+    begin begin_diagnostic; print_nl("@@firstpass");@+end;@;@+tats@;@/
+  second_pass:=false; final_pass:=false;
+  end
+else  begin threshold:=tolerance; second_pass:=true;
+  final_pass:=(emergency_stretch<=0);
+  @!stat if tracing_paragraphs>0 then begin_diagnostic;@+tats@;
+  end;
+loop@+  begin if threshold>inf_bad then threshold:=inf_bad;
+  if second_pass then @<Initialize for hyphenating a paragraph@>;
+  @<Create an active breakpoint representing the beginning of the paragraph@>;
+  cur_p:=link(temp_head); auto_breaking:=true;@/
+  update_prev_p; {glue at beginning is not a legal breakpoint}
+  first_p := cur_p; {to access the first node of paragraph as the first active
+                     node has |break_node=null|}
 @z
 
 @x
-  prev_p:=cur_p; {glue at beginning is not a legal breakpoint}
+@:this can't happen paragraph}{\quad paragraph@>
+endcases;@/
+prev_p:=cur_p; cur_p:=link(cur_p);
+done5:end
+
+@ The code that passes over the characters of words in a paragraph is
+part of \TeX's inner loop, so it has been streamlined for speed. We use
+the fact that `\.{\\parfillskip}' glue appears at the end of each paragraph;
+it is therefore unnecessary to check if |link(cur_p)=null| when |cur_p| is a
+character node.
+@^inner loop@>
+
+@<Advance \(c)|cur_p| to the node following the present string...@>=
+begin prev_p:=cur_p;
 @y
-  prev_p:=cur_p; {glue at beginning is not a legal breakpoint}
-  first_p := cur_p; {to access the first node of paragraph as the first active
-                     node has |break_node=null|}
+@:this can't happen paragraph}{\quad paragraph@>
+endcases;@/
+update_prev_p; cur_p:=link(cur_p);
+done5:end
+
+@ The code that passes over the characters of words in a paragraph is
+part of \TeX's inner loop, so it has been streamlined for speed. We use
+the fact that `\.{\\parfillskip}' glue appears at the end of each paragraph;
+it is therefore unnecessary to check if |link(cur_p)=null| when |cur_p| is a
+character node.
+@^inner loop@>
+
+@<Advance \(c)|cur_p| to the node following the present string...@>=
+begin update_prev_p;
+@z
+
+@x
+  decr(r); s:=link(s);
+  end;
+prev_p:=cur_p; cur_p:=s; goto done5;
+@y
+  decr(r); s:=link(s);
+  end;
+update_prev_p; cur_p:=s; goto done5;
 @z
 
 @x
@@ -734,30 +801,6 @@ if XeTeX_protrude_chars > 0 then begin
         q := k;
     end;
 end;
-@z
-
-@x
-  {adjust top after page break}
-var prev_p:pointer; {lags one step behind |p|}
-@y
-  {adjust top after page break}
-var
-@z
-
-@x
-label done,not_found,update_heights;
-var prev_p:pointer; {if |p| is a glue node, |type(prev_p)| determines
-  whether |p| is a legal breakpoint}
-@y
-label done,not_found,update_heights;
-var
-@z
-
-@x
-var p,@!q,@!r,@!s:pointer; {nodes being examined and/or changed}
-@!prev_p:pointer; {predecessor of |p|}
-@y
-var p,@!q,@!r,@!s:pointer; {nodes being examined and/or changed}
 @z
 
 @x
