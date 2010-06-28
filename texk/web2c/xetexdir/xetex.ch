@@ -67,7 +67,7 @@ authorization from the copyright holders.
 
 @d XeTeX_version=0
 @d XeTeX_revision==".9997"
-@d XeTeX_version_string=='-0.9997.2' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.9997.3' {current \XeTeX\ version}
 @z
 
 @x
