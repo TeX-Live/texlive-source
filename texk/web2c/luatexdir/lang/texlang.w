@@ -26,8 +26,8 @@
 
 
 static const char _svn_version[] =
-    "$Id: texlang.w 3612 2010-04-13 09:29:42Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lang/texlang.w $";
+    "$Id: texlang.w 3701 2010-05-26 09:57:17Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/lang/texlang.w $";
 
 
 @ Low-level helpers 
@@ -756,6 +756,8 @@ static halfword find_next_wordstart(halfword r)
     int mathlevel = 1;
     while (r != null) {
         switch (type(r)) {
+        case whatsit_node:
+            break;
         case glue_node:
             start_ok = 1;
             break;

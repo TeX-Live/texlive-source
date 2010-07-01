@@ -2,6 +2,36 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.60.2 was released 20100701
+==============================================================
+
+Bugfixes:
+
+* Various small portability fixes, especially for non-gcc
+  compilers.
+
+* Updated synctex from Jerome Laurens.
+
+* fix bug #406: \pdfliteral hinders hyphenation.
+
+* fix pdf overprinting bug (related to \pdfliteral).
+
+* patch from Akira Kakuto that ensures that only absolute commands
+that are inside the %PATH% will be executed in win32's restricted 
+\write18
+
+* fix a buffer overflow in luafontloader.
+
+* fix cross-platform share-ability of generated formats.
+
+* fix a few typos in the manual.
+
+* fix trashing of the null glue spec by attribute reference code.
+
+* documented the deprecated state and brokenness of otp processing.
+
+
+==============================================================
 Luatex beta-0.60.1 was released 20100428
 ==============================================================
 
@@ -1521,7 +1551,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.1/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

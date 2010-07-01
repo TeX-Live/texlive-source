@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lnodelib.c 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/lnodelib.c $";
+    "$Id: lnodelib.c 3726 2010-06-24 12:13:43Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
 #include "lua/luatex-api.h"
 #include "ptexlib.h"
@@ -2163,7 +2163,8 @@ static void nodelib_setattr(lua_State * L, int stackindex, halfword n)
         if (node_attr(n) != null)
             delete_attribute_ref(node_attr(n));
         node_attr(n) = p;
-        attr_list_ref(p)++;
+	if (p != null)
+	    attr_list_ref(p)++;
     }
 }
 

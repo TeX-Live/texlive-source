@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfpage.w 3571 2010-04-02 13:50:45Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfpage.w $";
+    "$Id: pdfpage.w 3703 2010-05-27 07:58:34Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/pdf/pdfpage.w $";
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -101,7 +101,7 @@ void synch_pos_with_cur(posstructure * pos, posstructure * refpos,
 boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
 {
     scaledpos new;
-    int move_pdfpos = FALSE;
+    boolean move_pdfpos = false;
     switch (p->mode) {
     case PMODE_PAGE:
         new.h = lround(pos.h * p->k1);
@@ -109,7 +109,7 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
         p->cm[4].m = new.h - p->pdf.h.m;        /* cm is concatenated */
         p->cm[5].m = new.v - p->pdf.v.m;
         if (new.h != p->pdf.h.m || new.v != p->pdf.v.m)
-            move_pdfpos = TRUE;
+            move_pdfpos = true;
         break;
     case PMODE_TEXT:
         new.h = lround(pos.h * p->k1);
@@ -117,7 +117,7 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
         p->tm[4].m = new.h - p->pdf_bt_pos.h.m; /* Tm replaces */
         p->tm[5].m = new.v - p->pdf_bt_pos.v.m;
         if (new.h != p->pdf.h.m || new.v != p->pdf.v.m)
-            move_pdfpos = TRUE;
+            move_pdfpos = true;
         break;
     case PMODE_CHAR:
     case PMODE_CHARARRAY:
@@ -128,11 +128,11 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
             new.v = lround(pos.v * p->k1);
             p->tj_delta.m = -lround((double)
                                     ((new.h - p->cw.m) / ten_pow[p->cw.e -
-                                                                 p->
-                                                                 tj_delta.e]));
+                                                                 p->tj_delta.
+                                                                 e]));
             p->tm[5].m = new.v - p->pdf_bt_pos.v.m;     /* p->tm[4] is meaningless */
             if (p->tj_delta.m != 0 || new.v != p->pdf.v.m)
-                move_pdfpos = TRUE;
+                move_pdfpos = true;
             break;
         case WMODE_V:
             new.h = lround(pos.h * p->k1);
@@ -141,10 +141,10 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
             p->tm[4].m = new.h - p->pdf_bt_pos.h.m;     /* p->tm[5] is meaningless */
             p->tj_delta.m = -lround((double)
                                     ((new.v - p->cw.m) / ten_pow[p->cw.e -
-                                                                 p->
-                                                                 tj_delta.e]));
+                                                                 p->tj_delta.
+                                                                 e]));
             if (p->tj_delta.m != 0 || new.h != p->pdf.h.m)
-                move_pdfpos = TRUE;
+                move_pdfpos = true;
             break;
         default:
             assert(0);
@@ -207,7 +207,7 @@ void pdf_set_pos(PDF pdf, scaledpos pos)
     pdfstructure *p = pdf->pstruct;
     assert(is_pagemode(p));
     move = calc_pdfpos(p, pos);
-    if (move == TRUE) {
+    if (move) {
         pdf_print_cm(pdf, p->cm);
         p->pdf.h.m += p->cm[4].m;
         p->pdf.v.m += p->cm[5].m;
@@ -221,7 +221,7 @@ void pdf_set_pos_temp(PDF pdf, scaledpos pos)
     pdfstructure *p = pdf->pstruct;
     assert(is_pagemode(p));
     move = calc_pdfpos(p, pos);
-    if (move == TRUE)
+    if (move)
         pdf_print_cm(pdf, p->cm);
 }
 

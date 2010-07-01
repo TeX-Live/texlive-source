@@ -1,3 +1,8 @@
+2010-07-01  Taco Hoekwater <taco@luatex.org>
+
+	* lang/texlang.w, lua/lnodelib.c, luatex.c, luatex_svnversion.h,
+	pdf/pdfglyph.w, pdf/pdfpage.w, NEWS: new versions from released 0.60.2
+	
 2010-06-18  Taco Hoekwater <taco@luatex.org>
 
 	* tex/textoken.h (smemory_word): add endiannes test
