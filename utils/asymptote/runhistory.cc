@@ -51,52 +51,6 @@ array *copyArray(array *a);
 array *copyArray2(array *a);
 array *copyArray3(array *a);
 
-inline size_t checkdimension(const array *a, size_t dim)
-{
-  size_t size=checkArray(a);
-  if(dim && size != dim) {
-    ostringstream buf;
-    buf << "array of length " << dim << " expected";
-    error(buf);
-  }
-  return size;
-}
-
-template<class T>
-void copyArrayC(T* &dest, const array *a, size_t dim=0,
-                GCPlacement placement=NoGC)
-{
-  size_t size=checkdimension(a,dim);
-  dest=(placement == NoGC) ? new T[size] : new(placement) T[size];
-  for(size_t i=0; i < size; i++) 
-    dest[i]=read<T>(a,i);
-}
-
-template<class T>
-void copyArray2C(T* &dest, const array *a, bool square=true, size_t dim2=0,
-                 GCPlacement placement=NoGC)
-{
-  size_t n=checkArray(a);
-  size_t m=(square || n == 0) ? n : checkArray(read<array*>(a,0));
-  if(n > 0 && dim2 && m != dim2) {
-    ostringstream buf;
-    buf << "second matrix dimension must be " << dim2;
-    error(buf);
-  }
-  
-  dest=(placement == NoGC) ? new T[n*m] : new(placement) T[n*m];
-  for(size_t i=0; i < n; i++) {
-    array *ai=read<array*>(a,i);
-    size_t aisize=checkArray(ai);
-    if(aisize == m) {
-      T *desti=dest+i*m;
-      for(size_t j=0; j < m; j++) 
-        desti[j]=read<T>(ai,j);
-    } else
-      error(square ? "matrix must be square" : "matrix must be rectangular");
-  }
-}
-
 double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0,
                                    GCPlacement placement=NoGC);
 }
@@ -109,6 +63,7 @@ function *realRealFunction();
 
 #include "array.h"
 #include "mathop.h"
+#include "builtin.h"
 
 using namespace camp;
 using namespace settings;
@@ -189,6 +144,9 @@ void cleanup()
   }
   history_set_history_state(&history_save);
 #endif
+#ifdef HAVE_LIBGSL
+  trans::GSLrngFree();
+#endif  
 }
 }
 
@@ -196,17 +154,19 @@ void cleanup()
 
 
 
+#ifndef NOSYM
 #include "runhistory.symbols.h"
 
+#endif
 namespace run {
 // Return the last n lines of the history named name.
-#line 102 "runhistory.in"
+#line 106 "runhistory.in"
 // stringarray* history(string name, Int n=1);
 void gen_runhistory0(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack,1);
   string name=vm::pop<string>(Stack);
-#line 103 "runhistory.in"
+#line 107 "runhistory.in"
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   bool newhistory=historyMap.find(name) == historyMap.end();
   
@@ -238,12 +198,12 @@ void gen_runhistory0(stack *Stack)
 }
 
 // Return the last n lines of the interactive history.
-#line 135 "runhistory.in"
+#line 139 "runhistory.in"
 // stringarray* history(Int n=0);
 void gen_runhistory1(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack,0);
-#line 136 "runhistory.in"
+#line 140 "runhistory.in"
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   {Stack->push<stringarray*>(get_history(n)); return;}
 #else
@@ -254,14 +214,14 @@ void gen_runhistory1(stack *Stack)
 
 // Prompt for a string using prompt, the GNU readline library, and a
 // local history named name.
-#line 147 "runhistory.in"
+#line 151 "runhistory.in"
 // string readline(string prompt=emptystring, string name=emptystring,                bool tabcompletion=false);
 void gen_runhistory2(stack *Stack)
 {
   bool tabcompletion=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack,emptystring);
   string prompt=vm::pop<string>(Stack,emptystring);
-#line 149 "runhistory.in"
+#line 153 "runhistory.in"
   if(!(isatty(STDIN_FILENO) || getSetting<bool>("interactive")))
     {Stack->push<string>(emptystring); return;}
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
@@ -303,14 +263,14 @@ void gen_runhistory2(stack *Stack)
 
 // Save a string in a local history named name.
 // If store=true, store the local history in the file historyfilename(name).
-#line 191 "runhistory.in"
+#line 195 "runhistory.in"
 // void saveline(string name, string value, bool store=true);
 void gen_runhistory3(stack *Stack)
 {
   bool store=vm::pop<bool>(Stack,true);
   string value=vm::pop<string>(Stack);
   string name=vm::pop<string>(Stack);
-#line 192 "runhistory.in"
+#line 196 "runhistory.in"
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   store_history(&history_save);
   bool newhistory=historyMap.find(name) == historyMap.end();
@@ -343,13 +303,13 @@ namespace trans {
 
 void gen_runhistory_venv(venv &ve)
 {
-#line 101 "runhistory.in"
+#line 105 "runhistory.in"
   addFunc(ve, run::gen_runhistory0, stringArray(), SYM(history), formal(primString() , SYM(name), false, false), formal(primInt(), SYM(n), true, false));
-#line 134 "runhistory.in"
+#line 138 "runhistory.in"
   addFunc(ve, run::gen_runhistory1, stringArray(), SYM(history), formal(primInt(), SYM(n), true, false));
-#line 145 "runhistory.in"
+#line 149 "runhistory.in"
   addFunc(ve, run::gen_runhistory2, primString() , SYM(readline), formal(primString() , SYM(prompt), true, false), formal(primString() , SYM(name), true, false), formal(primBoolean(), SYM(tabcompletion), true, false));
-#line 189 "runhistory.in"
+#line 193 "runhistory.in"
   addFunc(ve, run::gen_runhistory3, primVoid(), SYM(saveline), formal(primString() , SYM(name), false, false), formal(primString() , SYM(value), false, false), formal(primBoolean(), SYM(store), true, false));
 }
 

@@ -1,4 +1,219 @@
 ------------------------------------------------------------------------
+r5053 | jcbowman | 2010-06-25 13:27:05 -0600 (Fri, 25 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/builtin.cc
+
+Fix warning message.
+
+------------------------------------------------------------------------
+r5052 | jcbowman | 2010-06-25 12:57:35 -0600 (Fri, 25 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/util.h
+
+Port to CYGWIN.
+------------------------------------------------------------------------
+r5051 | jcbowman | 2010-06-25 12:09:33 -0600 (Fri, 25 Jun 2010) | 2 lines
+Changed paths:
+   A /trunk/asymptote/examples/bars3.asy
+   M /trunk/asymptote/examples/pipes.asy
+
+Add 3D bar graph example.
+
+------------------------------------------------------------------------
+r5050 | jcbowman | 2010-06-25 11:49:46 -0600 (Fri, 25 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/cones.asy
+   M /trunk/asymptote/examples/cylinder.asy
+   M /trunk/asymptote/examples/hyperboloid.asy
+   A /trunk/asymptote/examples/pipes.asy
+   M /trunk/asymptote/examples/projectrevolution.asy
+   M /trunk/asymptote/examples/sacone3D.asy
+   M /trunk/asymptote/examples/sacylinder3D.asy
+   M /trunk/asymptote/examples/shellmethod.asy
+   M /trunk/asymptote/examples/teapot.asy
+   M /trunk/asymptote/examples/torus.asy
+   M /trunk/asymptote/examples/workcone.asy
+
+Update examples.
+
+------------------------------------------------------------------------
+r5049 | jcbowman | 2010-06-25 11:44:08 -0600 (Fri, 25 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Fix viewportmargin.
+
+------------------------------------------------------------------------
+r5048 | jcbowman | 2010-06-25 11:14:09 -0600 (Fri, 25 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Fix orthographic sizing.
+
+------------------------------------------------------------------------
+r5047 | jcbowman | 2010-06-25 02:32:04 -0600 (Fri, 25 Jun 2010) | 2 lines
+Changed paths:
+   D /trunk/asymptote/tests/gsl/gsl.asy
+   A /trunk/asymptote/tests/gsl/random.asy (from /trunk/asymptote/tests/gsl/gsl.asy:5046)
+
+Rename GSL test.
+
+------------------------------------------------------------------------
+r5046 | jcbowman | 2010-06-25 02:25:11 -0600 (Fri, 25 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawsurface.cc
+   M /trunk/asymptote/prc/writePRC.cc
+
+Fix displayed PRC units.
+
+------------------------------------------------------------------------
+r5045 | jcbowman | 2010-06-25 01:08:24 -0600 (Fri, 25 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/drawsurface.h
+
+Remove unused array.
+------------------------------------------------------------------------
+r5044 | jcbowman | 2010-06-24 17:01:12 -0600 (Thu, 24 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Fix drawing of 3D thick lines of length 0.
+
+------------------------------------------------------------------------
+r5043 | jcbowman | 2010-06-24 00:57:58 -0600 (Thu, 24 Jun 2010) | 6 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/math.asy
+   M /trunk/asymptote/base/plain_Label.asy
+   M /trunk/asymptote/base/plain_picture.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/examples/splitpatch.asy
+   M /trunk/asymptote/runarray.in
+   M /trunk/asymptote/runlabel.in
+   M /trunk/asymptote/settings.cc
+   A /trunk/asymptote/tests/array/sort.asy
+
+Make lexorder in math.asy a strict partial order.
+
+Implement int search(T[] a, T key, bool less(T i, T j)).
+
+Batch 3D TeX labels.
+
+------------------------------------------------------------------------
+r5042 | jcbowman | 2010-06-23 00:09:35 -0600 (Wed, 23 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Remove unused code.
+------------------------------------------------------------------------
+r5041 | jcbowman | 2010-06-21 08:54:34 -0600 (Mon, 21 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/texfile.cc
+
+Suppress plain TeX page numbers.
+
+------------------------------------------------------------------------
+r5040 | jcbowman | 2010-06-20 12:32:46 -0600 (Sun, 20 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/tests/gsl/gsl.asy
+
+Disable nonportable GSL tests.
+------------------------------------------------------------------------
+r5039 | jcbowman | 2010-06-20 12:20:46 -0600 (Sun, 20 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/tests/Makefile
+
+Make gsl optional by moving it to make check-all.
+------------------------------------------------------------------------
+r5038 | jcbowman | 2010-06-20 11:54:27 -0600 (Sun, 20 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/main.cc
+   M /trunk/asymptote/tests/Makefile
+   M /trunk/asymptote/tests/gsl/gsl.asy
+
+More GSL portability fixes.
+
+------------------------------------------------------------------------
+r5037 | jcbowman | 2010-06-20 09:15:43 -0600 (Sun, 20 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/gsl.cc
+   M /trunk/asymptote/tests/Makefile
+   A /trunk/asymptote/tests/gsl
+   A /trunk/asymptote/tests/gsl/gsl.asy
+
+Fix GSL typos; add tests.
+
+Restrict make check to a single processor.
+
+------------------------------------------------------------------------
+r5036 | jcbowman | 2010-06-19 22:25:10 -0600 (Sat, 19 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/common.h
+
+Fix preprocessor conditional.
+
+------------------------------------------------------------------------
+r5035 | jcbowman | 2010-06-19 22:16:51 -0600 (Sat, 19 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Fix typo.
+------------------------------------------------------------------------
+r5034 | jcbowman | 2010-06-19 22:16:08 -0600 (Sat, 19 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/builtin.h
+   A /trunk/asymptote/gsl.cc
+   M /trunk/asymptote/runhistory.in
+   M /trunk/asymptote/runtime.pl
+   M /trunk/asymptote/runtimebase.in
+   M /trunk/asymptote/types.cc
+
+Move GSL functions to gsl.cc; implement Elmar's contributed GSL functions.
+
+Invoke the C preprocessor in pretranslating symbols.
+
+------------------------------------------------------------------------
+r5033 | jcbowman | 2010-06-19 21:51:07 -0600 (Sat, 19 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/item.h
+
+Add unsigned int constructors.
+
+------------------------------------------------------------------------
+r5032 | jcbowman | 2010-06-19 09:08:34 -0600 (Sat, 19 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/examples/condor.asy
+   M /trunk/asymptote/glrender.cc
+
+Update example.
+
+------------------------------------------------------------------------
+r5031 | jcbowman | 2010-06-18 02:44:57 -0600 (Fri, 18 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.00svn.
+------------------------------------------------------------------------
+r5030 | jcbowman | 2010-06-18 02:07:40 -0600 (Fri, 18 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Fix warning message.
+
+------------------------------------------------------------------------
 r5029 | jcbowman | 2010-06-18 01:01:53 -0600 (Fri, 18 Jun 2010) | 1 line
 Changed paths:
    M /trunk/asymptote/tests/gc/pen.asy

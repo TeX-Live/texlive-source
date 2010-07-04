@@ -51,52 +51,6 @@ array *copyArray(array *a);
 array *copyArray2(array *a);
 array *copyArray3(array *a);
 
-inline size_t checkdimension(const array *a, size_t dim)
-{
-  size_t size=checkArray(a);
-  if(dim && size != dim) {
-    ostringstream buf;
-    buf << "array of length " << dim << " expected";
-    error(buf);
-  }
-  return size;
-}
-
-template<class T>
-void copyArrayC(T* &dest, const array *a, size_t dim=0,
-                GCPlacement placement=NoGC)
-{
-  size_t size=checkdimension(a,dim);
-  dest=(placement == NoGC) ? new T[size] : new(placement) T[size];
-  for(size_t i=0; i < size; i++) 
-    dest[i]=read<T>(a,i);
-}
-
-template<class T>
-void copyArray2C(T* &dest, const array *a, bool square=true, size_t dim2=0,
-                 GCPlacement placement=NoGC)
-{
-  size_t n=checkArray(a);
-  size_t m=(square || n == 0) ? n : checkArray(read<array*>(a,0));
-  if(n > 0 && dim2 && m != dim2) {
-    ostringstream buf;
-    buf << "second matrix dimension must be " << dim2;
-    error(buf);
-  }
-  
-  dest=(placement == NoGC) ? new T[n*m] : new(placement) T[n*m];
-  for(size_t i=0; i < n; i++) {
-    array *ai=read<array*>(a,i);
-    size_t aisize=checkArray(ai);
-    if(aisize == m) {
-      T *desti=dest+i*m;
-      for(size_t j=0; j < m; j++) 
-        desti[j]=read<T>(ai,j);
-    } else
-      error(square ? "matrix must be square" : "matrix must be rectangular");
-  }
-}
-
 double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0,
                                    GCPlacement placement=NoGC);
 }
@@ -105,19 +59,26 @@ function *realRealFunction();
 
 #define CURRENTPEN processData().currentpen
 
-#line 16 "runlabel.in"
+#line 19 "runlabel.in"
 #include "picture.h"
 #include "drawlabel.h"
+#include "locate.h"
 
-using namespace camp;
+  using namespace camp;
 using namespace vm;
 using namespace settings;
 
 typedef array realarray;
+typedef array stringarray;
+typedef array penarray;
 typedef array patharray;
+typedef array patharray2;
 
 using types::realArray;
+using types::stringArray;
+using types::penArray;
 using types::pathArray;
+using types::pathArray2;
 
 void cannotread(const string& s) 
 {
@@ -165,11 +126,10 @@ array *readpath(const string& psname, bool keep,
                 double hscale=1.0, double vsign=1.0)
 {
   double vscale=vsign*hscale;
-  array *P=new array(0);
+  array *PP=new array(0);
   mem::vector<string> cmd;
   cmd.push_back(getSetting<string>("gs"));
   cmd.push_back("-q");
-  cmd.push_back("-dNOPAUSE");
   cmd.push_back("-dBATCH");
   if(safe) cmd.push_back("-dSAFER");
 #ifdef __CYGWIN__
@@ -181,97 +141,112 @@ array *readpath(const string& psname, bool keep,
   cmd.push_back("-sOutputFile="+null);
   cmd.push_back(psname);
   iopipestream gs(cmd,"gs","Ghostscript");
-  stringstream buf;
   while(true) {
-    string out;
-    gs >> out;
-    if(out.empty() && !gs.running()) break;
-    buf << out;
-  }
-  if(verbose > 2) cout << endl;
+    stringstream buf;
+    while(true) {
+      string out;
+      gs >> out;
+      if(out.empty() && !gs.running()) break;
+      buf << out;
+      if(out[out.size()-1] == '\n') {
+        gs << newl;
+        break;
+      }
+    }
+    if(!gs.running()) break;
     
-  mem::vector<solvedKnot> nodes;
-  solvedKnot node;
-  bool cyclic=false;
-  bool active=false;
+    if(verbose > 2) cout << endl;
   
-  while(!buf.eof()) {
-    char c;
-    buf >> c;
-    switch(c) {
-      case 'M':
-      {
-        if(active) {
-          if(cyclic) {
-            if(node.point == nodes[0].point)
-              nodes[0].pre=node.pre;
-            else {
-              pair delta=(nodes[0].point-node.point)*third;
-              node.post=node.point+delta;
-              nodes[0].pre=nodes[0].point-delta;
-              node.straight=true;
+    mem::vector<solvedKnot> nodes;
+    solvedKnot node;
+    bool cyclic=false;
+    bool active=false;
+  
+    array *P=new array(0);
+    PP->push(P);
+    
+    while(!buf.eof()) {
+      char c;
+      buf >> c;
+      if(c == '>') break;
+
+      switch(c) {
+        case 'M':
+        {
+          if(active) {
+            if(cyclic) {
+              if(node.point == nodes[0].point)
+                nodes[0].pre=node.pre;
+              else {
+                pair delta=(nodes[0].point-node.point)*third;
+                node.post=node.point+delta;
+                nodes[0].pre=nodes[0].point-delta;
+                node.straight=true;
+                nodes.push_back(node);
+              }
+            } else {
+              node.post=node.point;
+              node.straight=false;
               nodes.push_back(node);
             }
-          } else {
-            node.post=node.point;
-            node.straight=false;
-            nodes.push_back(node);
+            if(cyclic) // Discard noncyclic paths.
+              P->push(path(nodes,nodes.size(),cyclic));
+            nodes.clear();
           }
-          if(cyclic) // Discard noncyclic paths.
-            P->push(path(nodes,nodes.size(),cyclic));
-          nodes.clear();
+          active=false;
+          cyclic=false;
+          node.pre=node.point=readpair(buf,hscale,vscale);
+          node.straight=false;
+          break;
         }
-        active=false;
-        cyclic=false;
-        node.pre=node.point=readpair(buf,hscale,vscale);
-        node.straight=false;
-        break;
-      }
-      case 'L':
-      {
-        pair point=readpair(buf,hscale,vscale);
-        pair delta=(point-node.point)*third;
-        node.post=node.point+delta;
-        node.straight=true;
-        nodes.push_back(node);
-        active=true;
-        node.pre=point-delta;
-        node.point=point;
-        break;
-      }
-      case 'C':
-      {
-        pair point=readpair(buf,hscale,vscale);
-        pair pre=readpair(buf,hscale,vscale);
-        node.post=readpair(buf,hscale,vscale);
-        node.straight=false;
-        nodes.push_back(node);
-        active=true;
-        node.pre=pre;
-        node.point=point;
-        break;
-      }
-      case 'c':
-      {
-        cyclic=true;
-        break;
+        case 'L':
+        {
+          pair point=readpair(buf,hscale,vscale);
+          pair delta=(point-node.point)*third;
+          node.post=node.point+delta;
+          node.straight=true;
+          nodes.push_back(node);
+          active=true;
+          node.pre=point-delta;
+          node.point=point;
+          break;
+        }
+        case 'C':
+        {
+          pair point=readpair(buf,hscale,vscale);
+          pair pre=readpair(buf,hscale,vscale);
+          node.post=readpair(buf,hscale,vscale);
+          node.straight=false;
+          nodes.push_back(node);
+          active=true;
+          node.pre=pre;
+          node.point=point;
+          break;
+        }
+        case 'c':
+        {
+          cyclic=true;
+          break;
+        }
       }
     }
   }
   
   if(!keep)
     unlink(psname.c_str());
-  return P;
+  return PP;
 }
 
 // Autogenerated routines:
 
 
 
+#ifndef NOSYM
 #include "runlabel.symbols.h"
 
+#endif
 namespace run {
-#line 177 "runlabel.in"
+#line 199 "runlabel.in"
 // void label(picture *f, string *s, string *size, transform t, pair position,           pair align, pen p);
 void gen_runlabel0(stack *Stack)
 {
@@ -282,26 +257,26 @@ void gen_runlabel0(stack *Stack)
   string * size=vm::pop<string *>(Stack);
   string * s=vm::pop<string *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 179 "runlabel.in"
+#line 201 "runlabel.in"
   f->append(new drawLabel(*s,*size,t,position,align,p));
 }
 
-#line 183 "runlabel.in"
+#line 205 "runlabel.in"
 // bool labels(picture *f);
 void gen_runlabel1(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 184 "runlabel.in"
+#line 206 "runlabel.in"
   {Stack->push<bool>(f->havelabels()); return;}
 }
 
-#line 188 "runlabel.in"
+#line 210 "runlabel.in"
 // realarray* texsize(string *s, pen p=CURRENTPEN);
 void gen_runlabel2(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   string * s=vm::pop<string *>(Stack);
-#line 189 "runlabel.in"
+#line 211 "runlabel.in"
   texinit();
   processDataStruct &pd=processData();
   
@@ -311,7 +286,7 @@ void gen_runlabel2(stack *Stack)
   
   double width,height,depth;
   if(!texbounds(width,height,depth,pd.tex,*s,abort,false,true))
-     {Stack->push<realarray*>(new array(0)); return;}
+    {Stack->push<realarray*>(new array(0)); return;}
   
   array *t=new array(3);
   (*t)[0]=width;
@@ -320,15 +295,15 @@ void gen_runlabel2(stack *Stack)
   {Stack->push<realarray*>(t); return;}
 }
 
-#line 208 "runlabel.in"
-// patharray* _texpath(string *s, pen p=CURRENTPEN);
+#line 230 "runlabel.in"
+// patharray2* _texpath(stringarray *s, penarray *p);
 void gen_runlabel3(stack *Stack)
 {
-  pen p=vm::pop<pen>(Stack,CURRENTPEN);
-  string * s=vm::pop<string *>(Stack);
-#line 209 "runlabel.in"
-  array *P=new array(0);
-  if(s->empty()) {Stack->push<patharray*>(P); return;}
+  penarray * p=vm::pop<penarray *>(Stack);
+  stringarray * s=vm::pop<stringarray *>(Stack);
+#line 231 "runlabel.in"
+  size_t n=checkArrays(s,p);
+  if(n == 0) {Stack->push<patharray2*>(new array(0)); return;}
   
   string prefix=cleanpath(outname());
   string psname=auxname(prefix,"ps");
@@ -339,19 +314,24 @@ void gen_runlabel3(stack *Stack)
   bool pdf=settings::pdf(texengine);
   texfile tex(texname,b,true);
   tex.miniprologue();
-  tex.setfont(p);
   
-  if(!pdf) {
-    tex.verbatimline("\\special{ps:");
-    tex.verbatimline(ASYx);
-    tex.verbatimline(ASYy);
-    tex.verbatimline("/ASY1 true def");
-    tex.verbatimline("/v {"+ASY1+"neg exch 4 copy 4 2 roll 2 copy 6 2 roll 2 copy (M) print ASYy ASYx (L) print ASYy add ASYx (L) print add ASYy add ASYx (L) print add ASYy ASYx (c) print} bind def");
-    tex.verbatimline("/show {"+ASY1+
-                     "currentpoint newpath moveto false charpath "+
-                     pathforall+"} bind def}");
+  for(size_t i=0; i < n; ++i) {
+    tex.setfont(read<pen>(p,i));
+    if(i != 0)
+      tex.verbatimline("\\newpage");
+    if(!pdf) {
+      tex.verbatimline("\\special{ps:");
+      tex.verbatimline(ASYx);
+      tex.verbatimline(ASYy);
+      tex.verbatimline("/ASY1 true def");
+      tex.verbatimline("/v {"+ASY1+"neg exch 4 copy 4 2 roll 2 copy 6 2 roll 2 copy (M) print ASYy ASYx (L) print ASYy add ASYx (L) print add ASYy add ASYx (L) print add ASYy ASYx (c) print} bind def");
+      tex.verbatimline("/show {"+ASY1+
+                       "currentpoint newpath moveto false charpath "+
+                       pathforall+"} bind def}");
+    }
+    tex.verbatimline(read<string>(s,i)+"%");
   }
-  tex.verbatimline(*s+"%");
+  
   tex.epilogue(true);
   tex.close();
   
@@ -361,6 +341,7 @@ void gen_runlabel3(stack *Stack)
   if(!status) {
     if(pdf) {
       pdfname=auxname(prefix,"pdf");
+      if(!fs::exists(pdfname)) {Stack->push<patharray2*>(new array(n)); return;}
       std::ofstream ps(psname.c_str());
       if(!ps) cannotwrite(psname);
       
@@ -387,6 +368,7 @@ void gen_runlabel3(stack *Stack)
       }
       ps.close();
     } else {
+      if(!fs::exists(dviname)) {Stack->push<patharray2*>(new array(n)); return;}
       mem::vector<string> dcmd;
       dcmd.push_back(getSetting<string>("dvips"));
       dcmd.push_back("-R");
@@ -419,18 +401,18 @@ void gen_runlabel3(stack *Stack)
       unlink(auxname(prefix,"tui").c_str());
     }
   }
-  {Stack->push<patharray*>(pdf ? readpath(psname,keep,0.1) : readpath(psname,keep,0.12,-1.0)); return;}
+  {Stack->push<patharray2*>(pdf ? readpath(psname,keep,0.1) : readpath(psname,keep,0.12,-1.0)); return;}
 }
 
-#line 305 "runlabel.in"
-// patharray* textpath(string *s, pen p=CURRENTPEN);
+#line 334 "runlabel.in"
+// patharray2* textpath(stringarray *s, penarray *p);
 void gen_runlabel4(stack *Stack)
 {
-  pen p=vm::pop<pen>(Stack,CURRENTPEN);
-  string * s=vm::pop<string *>(Stack);
-#line 306 "runlabel.in"
-  array *P=new array(0);
-  if(s->empty()) {Stack->push<patharray*>(P); return;}
+  penarray * p=vm::pop<penarray *>(Stack);
+  stringarray * s=vm::pop<stringarray *>(Stack);
+#line 335 "runlabel.in"
+  size_t n=checkArrays(s,p);
+  if(n == 0) {Stack->push<patharray2*>(new array(0)); return;}
   
   string prefix=cleanpath(outname());
   string outputname=auxname(prefix,getSetting<string>("textoutformat"));
@@ -440,10 +422,12 @@ void gen_runlabel4(stack *Stack)
   
   if(!text) cannotwrite(textname);
 
-  text << getSetting<string>("textprologue") << newl
-       << p.Font() << newl
-       << *s << newl
-       << getSetting<string>("textepilogue") << endl;
+  for(size_t i=0; i < n; ++i) {
+    text << getSetting<string>("textprologue") << newl
+         << read<pen>(p,i).Font() << newl
+         << read<string>(s,i) << newl
+         << getSetting<string>("textepilogue") << endl;
+  }
   text.close();
   
   string psname=auxname(prefix,"ps");
@@ -494,16 +478,16 @@ void gen_runlabel4(stack *Stack)
   bool keep=getSetting<bool>("keep");
   if(!keep) // Delete temporary files.
     unlink(textname.c_str());
-  {Stack->push<patharray*>(readpath(psname,keep,0.1)); return;}
+  {Stack->push<patharray2*>(readpath(psname,keep,0.1)); return;}
 }
 
-#line 375 "runlabel.in"
+#line 406 "runlabel.in"
 // patharray* _strokepath(path g, pen p=CURRENTPEN);
 void gen_runlabel5(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   path g=vm::pop<path>(Stack);
-#line 376 "runlabel.in"
+#line 407 "runlabel.in"
   array *P=new array(0);
   if(g.size() == 0) {Stack->push<patharray*>(P); return;}
   
@@ -523,7 +507,8 @@ void gen_runlabel5(stack *Stack)
   ps.verbatimline("(M) "+currentpoint);
   ps.epilogue();
   ps.close();
-  {Stack->push<patharray*>(readpath(psname,getSetting<bool>("keep"))); return;}
+  array *a=readpath(psname,getSetting<bool>("keep"));
+  {Stack->push<patharray*>(a->size() > 0 ? read<array *>(a,0) : a); return;}
 }
 
 } // namespace run
@@ -532,18 +517,18 @@ namespace trans {
 
 void gen_runlabel_venv(venv &ve)
 {
-#line 177 "runlabel.in"
+#line 199 "runlabel.in"
   addFunc(ve, run::gen_runlabel0, primVoid(), SYM(label), formal(primPicture(), SYM(f), false, false), formal(primString(), SYM(s), false, false), formal(primString(), SYM(size), false, false), formal(primTransform(), SYM(t), false, false), formal(primPair(), SYM(position), false, false), formal(primPair(), SYM(align), false, false), formal(primPen(), SYM(p), false, false));
-#line 183 "runlabel.in"
+#line 205 "runlabel.in"
   addFunc(ve, run::gen_runlabel1, primBoolean(), SYM(labels), formal(primPicture(), SYM(f), false, false));
-#line 188 "runlabel.in"
+#line 210 "runlabel.in"
   addFunc(ve, run::gen_runlabel2, realArray(), SYM(texsize), formal(primString(), SYM(s), false, false), formal(primPen(), SYM(p), true, false));
-#line 208 "runlabel.in"
-  addFunc(ve, run::gen_runlabel3, pathArray()  , SYM(_texpath), formal(primString(), SYM(s), false, false), formal(primPen(), SYM(p), true, false));
-#line 305 "runlabel.in"
-  addFunc(ve, run::gen_runlabel4, pathArray()  , SYM(textpath), formal(primString(), SYM(s), false, false), formal(primPen(), SYM(p), true, false));
-#line 375 "runlabel.in"
-  addFunc(ve, run::gen_runlabel5, pathArray()  , SYM(_strokepath), formal(primPath(), SYM(g), false, false), formal(primPen(), SYM(p), true, false));
+#line 230 "runlabel.in"
+  addFunc(ve, run::gen_runlabel3, pathArray2() , SYM(_texpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
+#line 334 "runlabel.in"
+  addFunc(ve, run::gen_runlabel4, pathArray2() , SYM(textpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
+#line 406 "runlabel.in"
+  addFunc(ve, run::gen_runlabel5, pathArray() , SYM(_strokepath), formal(primPath(), SYM(g), false, false), formal(primPen(), SYM(p), true, false));
 }
 
 } // namespace trans

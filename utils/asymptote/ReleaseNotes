@@ -1,9 +1,18 @@
+Release Notes for Version 2.00
+
+The construction of 3D TeX labels was sped up greatly. Plain TeX page
+numbers were suppressed. Dotted 3D lines and 3D sizing problems were fixed.
+A general search function for sorted structures was implemented; the
+lexorder functions in math.asy now return strict partial orders. Additional
+GSL functions were added. The correct PRC units (PostScript pt units,
+properly called bp) are now displayed in Adobe Reader.
+
 Release Notes for Version 1.99
 
 A segmentation fault was fixed. Perspective animations were fixed. A bug in
-the bezulate topological sorting algorithm was fixed. A settings.framedelay
-parameter was added for working around OpenGL animation rendering buffer
-overruns. Further optimizations were made. A portability issue was addressed.
+the bezulate topological sorting algorithm was fixed. A framedelay setting
+was added for working around OpenGL animation rendering buffer overruns.
+Further optimizations were made. A portability issue was addressed.
 
 Release Notes for Version 1.98
 

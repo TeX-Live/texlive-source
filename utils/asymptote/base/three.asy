@@ -2162,9 +2162,9 @@ draw=new void(frame f, path3 g, material p=currentpen,
   pen q=(pen) p;
   if(is3D()) {
     p=material(p);
+    real width=linewidth(q);
     void drawthick(path3 g) {
       if(settings.thick) {
-        real width=linewidth(q);
         if(width > 0) {
           bool prc=prc();
           void cylinder(transform3) {};
@@ -2179,16 +2179,13 @@ draw=new void(frame f, path3 g, material p=currentpen,
             pipe=new void(path3 center, path3 g)
               {drawPRCtube(f,center,g,p,light);};
           }
-          real linecap;
-          real r;
+          real linecap=linecap(q);
+          real r=0.5*width;
           bool open=!cyclic(g);
           int L=length(g);
-          triple g0,gL;
+          triple g0=point(g,0);
+          triple gL=point(g,L);
           if(open && L > 0) {
-            g0=point(g,0);
-            gL=point(g,L);
-            linecap=linecap(q);
-            r=0.5*width;
             if(linecap == 2) {
               g0 -= r*dir(g,0);
               gL += r*dir(g,L);
@@ -2239,11 +2236,11 @@ draw=new void(frame f, path3 g, material p=currentpen,
         } else _draw(f,g,q);
       } else _draw(f,g,q);
     }
-    real[] dash=linetype(adjust(q,arclength(g),cyclic(g)));
     if(q != nullpen)
       begingroup3(f,name == "" ? "curve" : name,render);
-    if(dash.length == 0) drawthick(g);
+    if(linetype(q).length == 0) drawthick(g);
     else {
+      real[] dash=linetype(adjust(q,arclength(g),cyclic(g)));
       if(sum(dash) > 0) {
         dash.cyclic=true;
         real offset=offset(q);
@@ -2787,16 +2784,24 @@ struct scene
         adjusted=adjusted | this.P.adjust(m,M);
     }
 
+    bool scale=xsize != 0 || ysize != 0;
+    bool scaleAdjust=scale && this.P.autoadjust;
+    bool noAdjust=(this.P.absolute || !scaleAdjust);
+
+    if(pic.bounds3.exact && noAdjust)
+      this.P.bboxonly=false;
+    
     f=pic.fit3(t,pic.bounds3.exact ? pic2 : null,this.P);
 
     if(!pic.bounds3.exact) {
+      if(noAdjust)
+        this.P.bboxonly=false;
+
       transform3 s=pic.scale3(f,xsize3,ysize3,zsize3,keepAspect);
       t=s*t;
       this.P=s*this.P;
       f=pic.fit3(t,pic2,this.P);
     }
-
-    bool scale=xsize != 0 || ysize != 0;
 
     if(is3D || scale) {
       pic2.bounds.exact=true;
@@ -2810,7 +2815,7 @@ struct scene
       height=ceil(lambda.y+2*viewportmargin.y);
 
       if(!this.P.absolute) {
-        if(scale && this.P.autoadjust) {
+        if(scaleAdjust) {
           pair v=(s.xx,s.yy);
           transform3 T=this.P.t;
           pair x=project(X,T);
@@ -2826,6 +2831,7 @@ struct scene
           s=shift(this.P.target)*s*shift(-this.P.target);
           t=s*t;
           this.P=s*this.P;
+          this.P.bboxonly=false;
           f=pic.fit3(t,is3D ? null : pic2,this.P);
         }
 
@@ -2897,11 +2903,10 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
     if(P.infinity) {
       triple m=min3(S.f);
       triple M=max3(S.f);
-
       triple lambda=M-m;
       S.viewportmargin=viewportmargin((lambda.x,lambda.y));
-      S.width=ceil(max(S.width,lambda.x)+2*S.viewportmargin.x);
-      S.height=ceil(max(S.height,lambda.y)+2*S.viewportmargin.y);
+      S.width=ceil(lambda.x+2*S.viewportmargin.x);
+      S.height=ceil(lambda.y+2*S.viewportmargin.y);
       S.f=shift((-0.5(m.x+M.x),-0.5*(m.y+M.y),0))*S.f; // Eye will be at (0,0,0)
     } else {
       if(P.angle == 0) {

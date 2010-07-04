@@ -39,6 +39,7 @@ void arrayIntArray(vm::stack *);
 void arraySequence(vm::stack *);
 void arrayFunction(vm::stack *);
 void arraySort(vm::stack *);
+void arraySearch(vm::stack *);
 void arrayCopy(vm::stack *);
 void arrayConcat(vm::stack *);
 void array2Copy(vm::stack *);
