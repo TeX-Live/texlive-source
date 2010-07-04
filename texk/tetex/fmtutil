@@ -104,6 +104,8 @@ Optional behavior:
   --cnffile FILE             read FILE instead of fmtutil.cnf.
   --fmtdir DIRECTORY
   --no-engine-subdir         don't use engine-specific subdir of the fmtdir
+  --no-error-if-no-format    do not exit with error code on some format 
+                             related errors
   --quiet                    be silent
   --test                     (not implemented, just for compatibility)
   --dolinks                  (not implemented, just for compatibility)
@@ -244,6 +246,17 @@ abort()
 {
   echo "$progname: $1." >&2
   cleanup 1
+}
+
+###############################################################################
+# maybe_abort(errmsg)
+#   print `errmsg' to stderr and 
+#   unless noAbortFlag is set exit with error code 1
+###############################################################################
+maybe_abort()
+{
+  echo "$progname: $1." >&2
+  $noAbortFlag || cleanup 1
 }
 
 ###############################################################################
@@ -409,6 +422,7 @@ main()
   cfgmaint=
   tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/$progname.$$
   verboseFlag=true
+  noAbortFlag=false
 
   # mktexfmtMode: if called as mktexfmt, set to true. Will echo the
   # first generated filename after successful generation to stdout then
@@ -485,6 +499,8 @@ main()
           cmd=catcfg;;
       --listcfg)
           cmd=listcfg;;
+      --no-error-if-no-format)
+          noAbortFlag=true;;
       --quiet|-q|--silent)
           verboseFlag=false;;
       --test|--dolinks|--force)
@@ -922,7 +938,7 @@ recreate_by_hyphenfile()
   recreate_loop
 
   # Now check if there was at least one match:
-  getmatch || abort "no format depends on hyphen file \`$hyphenfile'"
+  getmatch || maybe_abort "no format depends on hyphen file \`$hyphenfile'"
 }
 
 ###############################################################################
@@ -941,7 +957,7 @@ recreate_by_engine()
   recreate_loop
 
   # Now check if there was at least one match:
-  getmatch || abort "no format depends on engine \`$enginename'"
+  getmatch || maybe_abort "no format depends on engine \`$enginename'"
 }
 
 
