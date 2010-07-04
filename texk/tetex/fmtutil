@@ -104,8 +104,7 @@ Optional behavior:
   --cnffile FILE             read FILE instead of fmtutil.cnf.
   --fmtdir DIRECTORY
   --no-engine-subdir         don't use engine-specific subdir of the fmtdir
-  --no-error-if-no-format    do not exit with error code on some format 
-                             related errors
+  --no-error-if-no-format    exit successfully if no format is selected
   --quiet                    be silent
   --test                     (not implemented, just for compatibility)
   --dolinks                  (not implemented, just for compatibility)
