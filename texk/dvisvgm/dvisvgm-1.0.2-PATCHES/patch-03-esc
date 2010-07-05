@@ -1,0 +1,26 @@
+diff -ur dvisvgm-1.0.2.orig/src/Terminal.cpp dvisvgm-1.0.2/src/Terminal.cpp
+--- dvisvgm-1.0.2.orig/src/Terminal.cpp	2010-06-08 10:40:37.000000000 +0200
++++ dvisvgm-1.0.2/src/Terminal.cpp	2010-07-05 10:40:35.135954475 +0200
+@@ -134,9 +134,9 @@
+ 	}
+ #else
+ 	if (color == DEFAULT)
+-		os << "\e[0m";
++		os << "\x1B[0m";
+ 	else
+-		os << "\e[" << (light ? '1': '0') << ';' << (30+(color & 0x07)) << 'm';
++		os << "\x1B[" << (light ? '1': '0') << ';' << (30+(color & 0x07)) << 'm';
+ #endif
+ }
+ 
+@@ -158,8 +158,8 @@
+ 	}
+ #else
+ 	if (color == DEFAULT)
+-		os << "\e[0m";
++		os << "\x1B[0m";
+ 	else
+-		os << "\e[" << (40+(color & 0x07)) << 'm';
++		os << "\x1B[" << (40+(color & 0x07)) << 'm';
+ #endif
+ }

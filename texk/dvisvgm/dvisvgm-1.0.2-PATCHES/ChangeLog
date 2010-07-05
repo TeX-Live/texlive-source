@@ -1,3 +1,11 @@
+2010-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Portability patches from Martin Gieseking.
+
+	Added patch-01-path, mail from Thu, 24 Jun 2010 09:16:04.
+	Added patch-02-namespace, mail from Thu, 24 Jun 2010 15:49:05.
+	Added patch-03-esc, mail from Thu, 24 Jun 2010 22:41:57.
+
 2010-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported release 1.0.2.
