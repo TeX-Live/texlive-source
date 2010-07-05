@@ -1875,6 +1875,7 @@ void TestCase::SetAttachedClusters(int * stuff, int count)
 		m_attGlyphs[i] = stuff[i];
 }
 
+const int ClickTest::fieldCnt;
 void TestCase::SetClickTests(int clickTestCount, int * clickStuff)
 {
 	const int fc = ClickTest::fieldCnt;

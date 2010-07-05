@@ -1,0 +1,26 @@
+	The Sun Studio C compiler may require a global non-inline
+	definition.
+
+	This function actually ought to be 'static inline'.
+
+diff -ur zziplib-0.13.58.orig/zzip/zip.c zziplib-0.13.58/zzip/zip.c
+--- zziplib-0.13.58.orig/zzip/zip.c	2009-08-23 13:38:22.000000000 +0200
++++ zziplib-0.13.58/zzip/zip.c	2010-07-05 15:10:44.401672730 +0200
+@@ -88,7 +88,7 @@
+                                 struct zzip_dir_hdr **hdr_return,
+                                 zzip_plugin_io_t io);
+ 
+-_zzip_inline char *__zzip_aligned4(char *p);
++char *__zzip_aligned4(char *p);
+ 
+ /* ------------------------  harden routines ------------------------------ */
+ 
+@@ -375,7 +375,7 @@
+  * to pointer types but we do need only the lower bits in this implementation,
+  * so we can just cast the value to a long value.
+  */
+-_zzip_inline char *
++char *
+ __zzip_aligned4(char *p)
+ {
+ #define aligned4   __zzip_aligned4

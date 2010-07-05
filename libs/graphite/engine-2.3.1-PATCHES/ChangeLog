@@ -1,3 +1,9 @@
+2010-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-static-const-members (new): Add a definition for
+	initialized static const class members, required for AIX.
+	From Vladimir Volovich, Fri, 04 Jun 2010 19:46:38.
+
 2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-copy-constr (new): Declare copy constructor's source

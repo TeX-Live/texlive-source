@@ -1,3 +1,8 @@
+2010-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-inline (new): Can't use non-static inline for Sun
+	Studio C, mail from Vladimir Volovich, Wed, 16 Jun 2010 20:18:17.
+
 2010-06-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-aix-strcasecmp (new): Need to #include <strings.h>

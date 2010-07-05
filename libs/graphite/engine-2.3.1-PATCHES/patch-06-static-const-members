@@ -1,0 +1,25 @@
+	Initialized static const class members may need to be defined
+	in the enclosing scope.
+
+diff -ur engine-2.3.1.orig/test/RegressionTest/RegressionTest.cpp engine-2.3.1/test/RegressionTest/RegressionTest.cpp
+--- engine-2.3.1.orig/test/RegressionTest/RegressionTest.cpp	2009-01-21 23:36:42.000000000 +0100
++++ engine-2.3.1/test/RegressionTest/RegressionTest.cpp	2010-07-05 15:28:32.820883982 +0200
+@@ -34,6 +34,7 @@
+ 
+ SegmentMemoryUsage g_smu;
+ FontMemoryUsage g_fmu;
++const int TestCase::kAbsent;
+ 
+ std::string g_fontPath = ".";
+ #ifdef _WIN32
+diff -ur engine-2.3.1.orig/test/RegressionTest/TestCase.cpp engine-2.3.1/test/RegressionTest/TestCase.cpp
+--- engine-2.3.1.orig/test/RegressionTest/TestCase.cpp	2009-01-21 23:36:42.000000000 +0100
++++ engine-2.3.1/test/RegressionTest/TestCase.cpp	2010-07-05 15:27:40.045646923 +0200
+@@ -1875,6 +1875,7 @@
+ 		m_attGlyphs[i] = stuff[i];
+ }
+ 
++const int ClickTest::fieldCnt;
+ void TestCase::SetClickTests(int clickTestCount, int * clickStuff)
+ {
+ 	const int fc = ClickTest::fieldCnt;
