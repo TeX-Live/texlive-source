@@ -55,7 +55,7 @@ void baseExpTrans(coenv &e, exp *expr)
   types::ty_kind kind = expr->trans(e)->kind;
   if (kind != types::ty_void)
     // Remove any value it puts on the stack.
-    e.c.encode(inst::pop);
+    e.c.encodePop();
 }
 
 void expStm::trans(coenv &e) {
@@ -95,7 +95,7 @@ void storeExp(coenv &e, types::ty *t, exp *expr) {
   varEntry *v = makeVarEntry(expr->getPos(), e, 0, t);
   e.e.addVar(symbol::trans("operator answer"), v);
   v->getLocation()->encode(WRITE, expr->getPos(), e.c);
-  e.c.encode(inst::pop);
+  e.c.encodePop();
 }
 
 void storeAndWriteExp(coenv &e, types::ty *t, exp *expr) {
@@ -181,20 +181,28 @@ void ifStm::prettyprint(ostream &out, Int indent)
 
 void ifStm::trans(coenv &e)
 {
-  test->transToType(e, types::primBoolean());
-
   Int elseLabel = e.c.fwdLabel();
   Int end = e.c.fwdLabel();
 
+#ifdef TRANSJUMP
+  test->transConditionalJump(e, false, elseLabel);
+#else
+  test->transToType(e, types::primBoolean());
   e.c.useLabel(inst::njmp,elseLabel);
+#endif
 
   onTrue->markTrans(e);
-  e.c.useLabel(inst::jmp,end);
   
-  e.c.defLabel(elseLabel);
-  // Produces efficient code whether or not there is an else clause.
-  if (onFalse)
+  if (onFalse) {
+    // Encode the jump around the 'else' clause at the end of the 'if' clause
+    e.c.useLabel(inst::jmp,end);
+
+    e.c.defLabel(elseLabel);
     onFalse->markTrans(e);
+  } else {
+    e.c.defLabel(elseLabel);
+  }
+
 
   e.c.defLabel(end);
 }
@@ -216,13 +224,18 @@ void whileStm::prettyprint(ostream &out, Int indent)
 
 void whileStm::trans(coenv &e)
 {
-  Int start = e.c.defLabel();
-  e.c.pushContinue(start);
-  test->transToType(e, types::primBoolean());
-
   Int end = e.c.fwdLabel();
   e.c.pushBreak(end);
+
+  Int start = e.c.defLabel();
+  e.c.pushContinue(start);
+
+#ifdef TRANSJUMP
+  test->transConditionalJump(e, false, end);
+#else
+  test->transToType(e, types::primBoolean());
   e.c.useLabel(inst::njmp,end);
+#endif
 
   transLoopBody(e,body);
 
@@ -254,8 +267,14 @@ void doStm::trans(coenv &e)
   transLoopBody(e,body);  
   
   e.c.defLabel(testLabel);
+
+#ifdef TRANSJUMP
+  test->transConditionalJump(e, true, start);
+#else
   test->transToType(e, types::primBoolean());
   e.c.useLabel(inst::cjmp,start);
+#endif
+
   e.c.defLabel(end);
 
   e.c.popBreak();
@@ -277,7 +296,8 @@ void forStm::trans(coenv &e)
 {
   // Any vardec in the initializer needs its own scope.
   e.e.beginScope();
-  if(init) init->markTrans(e);
+  if (init)
+    init->markTrans(e);
 
   Int ctarget = e.c.fwdLabel();
   e.c.pushContinue(ctarget);
@@ -286,15 +306,20 @@ void forStm::trans(coenv &e)
 
   Int start = e.c.defLabel();
   if(test) {
+#ifdef TRANSJUMP
+    test->transConditionalJump(e, false, end);
+#else
     test->transToType(e, types::primBoolean());
     e.c.useLabel(inst::njmp,end);
+#endif
   }
 
   transLoopBody(e,body);
 
   e.c.defLabel(ctarget);
   
-  if (update) update->markTrans(e);
+  if (update)
+    update->markTrans(e);
   e.c.useLabel(inst::jmp,start);
 
   e.c.defLabel(end);
@@ -329,10 +354,20 @@ void extendedForStm::trans(coenv &e) {
   symbol a=symbol::gensym("a");
   symbol i=symbol::gensym("i");
 
-  // start[] a=set;
-  arrayTy at(pos, start, new dimensions(pos));
-  decid dec1(pos, new decidstart(pos, a), set);
-  vardec(pos, &at, &dec1).trans(e);
+  // Get the start type.  Handle type inference as a special case.
+  types::ty *t = start->trans(e, true);
+  if (t->kind == types::ty_inferred) {
+    // var a=set;
+    tyEntryTy tet(pos, primInferred());
+    decid dec1(pos, new decidstart(pos, a), set);
+    vardec(pos, &tet, &dec1).trans(e);
+  }
+  else {
+    // start[] a=set;
+    arrayTy at(pos, start, new dimensions(pos));
+    decid dec1(pos, new decidstart(pos, a), set);
+    vardec(pos, &at, &dec1).trans(e);
+  }
 
   // { start var=a[i]; body }
   block b(pos);
@@ -343,7 +378,12 @@ void extendedForStm::trans(coenv &e) {
   b.add(new vardec(pos, start, &dec2));
   b.add(body);
 
-
+  // If there are errors already, just report errors in the body and don't try
+  // to translate the for loop.
+  if (em.errors()) {
+    b.trans(e);
+    return;
+  }
 
   // for (int i=0; i < a.length; ++i)
   //   <block>

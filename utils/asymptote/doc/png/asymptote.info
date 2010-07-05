@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 4.13 from
 ../asymptote.texi.
 
-This file documents `Asymptote', version 2.00.
+This file documents `Asymptote', version 2.01.
 
    `http://asymptote.sourceforge.net'
 
@@ -23,7 +23,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Up: (dir)
 Asymptote
 *********
 
-This file documents `Asymptote', version 2.00.
+This file documents `Asymptote', version 2.01.
 
    `http://asymptote.sourceforge.net'
 
@@ -89,7 +89,7 @@ Programming
 * Functions::                   Traditional and high-order functions
 * Arrays::                      Dynamic vectors
 * Casts::                       Implicit and explicit casts
-* Import::                      Importing external `Asymptote' packages
+* Import::                      Importing external `Asymptote' modules
 * Static::                      Where to allocate your variable?
 
 Operators
@@ -1382,7 +1382,7 @@ languages.
 * Functions::                   Traditional and high-order functions
 * Arrays::                      Dynamic vectors
 * Casts::                       Implicit and explicit casts
-* Import::                      Importing external `Asymptote' packages
+* Import::                      Importing external `Asymptote' modules
 * Static::                      Where to allocate your variable?
 
 
@@ -2322,10 +2322,10 @@ number, until it saturates with one or more color components equal to 1.
      lineskip=1.2*size)'.  The default font size, 12pt, may be changed
      with `defaultpen(pen)'.  Nonstandard font sizes may require
      inserting import fontsize;
-      at the beginning of the file (this requires the `fix-cm' package
+      at the beginning of the file (this requires the `type1cm' package
      available from
 
-          `http://www.ctan.org/tex-archive/help/Catalogue/entries/fix-cm'
+          `http://www.ctan.org/tex-archive/help/Catalogue/entries/type1cm'
      and included in recent `LaTeX' distributions). The font size and
      line skip of a pen can be examined with the routines `real
      fontsize(pen p=currentpen)' and `real lineskip(pen p=currentpen)',
@@ -3082,6 +3082,12 @@ var reddash=red+dashed;
 int x=5;
 real y=4.3;
 pen reddash=red+dashed;
+
+   `var' may also be used with the extended `for' loop syntax.
+
+int[] a = {1,2,3};
+for (var x : a)
+  write(x);
 
 
 File: asymptote.info,  Node: Structures,  Next: Operators,  Prev: Variable initializers,  Up: Programming
@@ -4658,7 +4664,11 @@ pdflatex latexusage
 
    To switch between using `latex' and `pdflatex' you may first need to
 remove the files `latexusage-*', `latexusage_.pre', and
-`latexusage.aux'.
+`latexusage.aux'. Version 1.13 of `Asymptote.sty' supports processing
+each figure separately: `asy latexusage' is equivalent to `asy
+latexusage-*.asy'. For example, one may wish to reduce memory usage by
+generating each figure in a separate `UNIX' process:
+/bin/ls latexusage-*.asy | xargs --replace=% asy %
 
    One can specify `width', `height', `viewportwidth',
 `viewportheight', and `attach' `keyval'-style options to the `asy'
@@ -4707,6 +4717,7 @@ and `LaTeX' is available at `http://dario.dse.nl/projects/asylatex/'.
 
 \begin{asydef}
 // Global Asymptote definitions can be put here.
+import three;
 usepackage("bm");
 texpreamble("\def\V#1{\bm{#1}}");
 // One can globally override the default toolbar settings here:
@@ -4771,8 +4782,6 @@ this requires the optional \verb+\usepackage{attachfile2}+ package and
 the \verb+{attach=true}+ option:
 \begin{center}
 \begin{asy}[height=4cm,attach=false]
-import three;
-defaultrender.margin=3pt;
 currentprojection=orthographic(5,4,2);
 draw(unitcube,blue);
 label("$V-E+F=2$",(0,1,0.5),3Y,blue+fontsize(17pt));
@@ -8519,7 +8528,7 @@ Index
                                                               (line   6)
 * atleast:                               Bezier curves.       (line  56)
 * attach <1>:                            graph.               (line 415)
-* attach:                                LaTeX usage.         (line  31)
+* attach:                                LaTeX usage.         (line  35)
 * autoadjust:                            three.               (line 354)
 * autoimport:                            Options.             (line 110)
 * automatic scaling:                     graph.               (line 682)
@@ -8867,7 +8876,6 @@ Index
 * firstcut:                              Paths and guides.    (line 247)
 * fit:                                   Frames and pictures. (line 103)
 * fit3:                                  three.               (line 269)
-* fix-cm:                                Pens.                (line 178)
 * fixedscaling:                          Frames and pictures. (line  74)
 * floor:                                 Mathematical functions.
                                                               (line  26)
@@ -8934,7 +8942,7 @@ Index
 * guide:                                 Paths and guides.    (line 300)
 * guide3:                                three.               (line   6)
 * hatch:                                 Pens.                (line 267)
-* height:                                LaTeX usage.         (line  31)
+* height:                                LaTeX usage.         (line  35)
 * help <1>:                              Debugger.            (line  30)
 * help <2>:                              Help.                (line   6)
 * help:                                  Interactive mode.    (line  44)
@@ -9561,6 +9569,7 @@ Index
 * tube <1>:                              tube.                (line   6)
 * tube:                                  three.               (line 110)
 * tutorial:                              Tutorial.            (line   6)
+* type1cm:                               Pens.                (line 178)
 * typedef <1>:                           Functions.           (line  36)
 * typedef:                               Data types.          (line 344)
 * undefined:                             Paths and guides.    (line 268)
@@ -9603,10 +9612,10 @@ Index
 * verbatim:                              Frames and pictures. (line 271)
 * vertex-dependent colors:               three.               (line  81)
 * Vertical:                              flowchart.           (line  81)
-* viewportheight:                        LaTeX usage.         (line  31)
+* viewportheight:                        LaTeX usage.         (line  35)
 * viewportmargin:                        three.               (line 262)
 * viewportsize:                          three.               (line 262)
-* viewportwidth:                         LaTeX usage.         (line  31)
+* viewportwidth:                         LaTeX usage.         (line  35)
 * views:                                 three.               (line 231)
 * vim:                                   Editing modes.       (line  33)
 * virtual functions:                     Structures.          (line 181)
@@ -9617,7 +9626,7 @@ Index
 * wheel mouse:                           GUI.                 (line   6)
 * while:                                 Programming.         (line  29)
 * white-space string delimiter mode:     Arrays.              (line 359)
-* width:                                 LaTeX usage.         (line  31)
+* width:                                 LaTeX usage.         (line  35)
 * windingnumber:                         Paths and guides.    (line 268)
 * word:                                  Arrays.              (line 359)
 * write <1>:                             Arrays.              (line 399)
@@ -9688,41 +9697,41 @@ Index
 
 Tag Table:
 Node: Top574
-Node: Description6833
-Node: Installation10334
-Node: UNIX binary distributions11387
-Node: MacOS X binary distributions12493
-Node: Microsoft Windows13377
-Ref: psview14087
-Node: Configuring15008
-Node: Search paths19229
-Node: Compiling from UNIX source20026
-Ref: multisampling20615
-Node: Editing modes23025
-Node: Subversion25457
-Node: Uninstall25920
-Node: Tutorial26270
-Ref: unitcircle30496
-Node: Drawing commands32432
-Node: draw34143
-Ref: arrows35291
-Node: fill40534
-Ref: gradient shading41578
-Node: clip45806
-Node: label46398
-Ref: Label47097
-Node: Bezier curves52822
-Node: Programming56399
-Ref: array iteration57213
-Node: Data types58295
-Ref: format67303
-Node: Paths and guides70906
-Ref: circle71160
-Ref: arctime76648
-Ref: extension80503
-Node: Pens87186
-Ref: fillrule94552
-Ref: basealign95449
+Node: Description6832
+Node: Installation10333
+Node: UNIX binary distributions11386
+Node: MacOS X binary distributions12492
+Node: Microsoft Windows13376
+Ref: psview14086
+Node: Configuring15007
+Node: Search paths19228
+Node: Compiling from UNIX source20025
+Ref: multisampling20614
+Node: Editing modes23024
+Node: Subversion25456
+Node: Uninstall25919
+Node: Tutorial26269
+Ref: unitcircle30495
+Node: Drawing commands32431
+Node: draw34142
+Ref: arrows35290
+Node: fill40533
+Ref: gradient shading41577
+Node: clip45805
+Node: label46397
+Ref: Label47096
+Node: Bezier curves52821
+Node: Programming56398
+Ref: array iteration57212
+Node: Data types58293
+Ref: format67301
+Node: Paths and guides70904
+Ref: circle71158
+Ref: arctime76646
+Ref: extension80501
+Node: Pens87184
+Ref: fillrule94550
+Ref: basealign95447
 Ref: transparency98274
 Ref: makepen101717
 Ref: overwrite102555
@@ -9740,93 +9749,93 @@ Node: Files120055
 Ref: cd121020
 Ref: scroll125452
 Node: Variable initializers128525
-Node: Structures131138
-Node: Operators138582
-Node: Arithmetic & logical138896
-Node: Self & prefix operators140870
-Node: User-defined operators141658
-Node: Implicit scaling142569
-Node: Functions143132
-Ref: stack overflow145885
-Node: Default arguments146449
-Node: Named arguments147188
-Node: Rest arguments149350
-Node: Mathematical functions152160
-Node: Arrays156767
-Ref: sort163817
-Ref: tridiagonal166221
-Ref: solve167449
-Node: Slices171642
-Node: Casts175532
-Node: Import177497
-Node: Static182724
-Node: LaTeX usage185618
-Node: Base modules191092
-Node: plain193592
-Node: simplex194244
-Node: math194517
-Node: interpolate197222
-Node: geometry197501
-Node: trembling198095
-Node: stats198446
-Node: patterns198706
-Node: markers198942
-Node: tree200725
-Node: binarytree200913
-Node: drawtree201502
-Node: syzygy201706
-Node: feynman201980
-Node: roundedpath202255
-Node: animation202538
-Ref: animate202955
-Node: embed204094
-Node: slide205883
-Node: MetaPost206223
-Node: unicode206939
-Node: latin1207827
-Node: babel208195
-Node: labelpath208424
-Node: labelpath3209244
-Node: annotate209555
-Node: CAD210026
-Node: graph210336
-Ref: ticks217465
-Ref: pathmarkers230744
-Ref: marker231209
-Ref: markuniform231560
-Ref: errorbars233351
-Ref: automatic scaling237407
-Node: palette248053
-Ref: images248171
-Ref: image252342
-Ref: logimage252820
-Ref: penimage253626
-Node: three254070
-Ref: PostScript3D278612
-Node: obj280304
-Node: graph3280556
-Ref: GaussianSurface285681
-Node: grid3286785
-Node: solids287525
-Node: tube288473
-Node: flowchart290708
-Node: contour295277
-Node: contour3300402
-Node: slopefield300709
-Node: ode302146
-Node: Options302406
-Ref: configuration file308251
-Ref: settings308251
-Ref: convert309452
-Node: Interactive mode312419
-Ref: history314572
-Node: GUI315877
-Node: GUI installation316380
-Node: GUI usage317510
-Node: PostScript to Asymptote318413
-Node: Help319169
-Node: Debugger320905
-Node: Credits322690
-Node: Index323622
+Node: Structures131250
+Node: Operators138694
+Node: Arithmetic & logical139008
+Node: Self & prefix operators140982
+Node: User-defined operators141770
+Node: Implicit scaling142681
+Node: Functions143244
+Ref: stack overflow145997
+Node: Default arguments146561
+Node: Named arguments147300
+Node: Rest arguments149462
+Node: Mathematical functions152272
+Node: Arrays156879
+Ref: sort163929
+Ref: tridiagonal166333
+Ref: solve167561
+Node: Slices171754
+Node: Casts175644
+Node: Import177609
+Node: Static182836
+Node: LaTeX usage185730
+Node: Base modules191468
+Node: plain193968
+Node: simplex194620
+Node: math194893
+Node: interpolate197598
+Node: geometry197877
+Node: trembling198471
+Node: stats198822
+Node: patterns199082
+Node: markers199318
+Node: tree201101
+Node: binarytree201289
+Node: drawtree201878
+Node: syzygy202082
+Node: feynman202356
+Node: roundedpath202631
+Node: animation202914
+Ref: animate203331
+Node: embed204470
+Node: slide206259
+Node: MetaPost206599
+Node: unicode207315
+Node: latin1208203
+Node: babel208571
+Node: labelpath208800
+Node: labelpath3209620
+Node: annotate209931
+Node: CAD210402
+Node: graph210712
+Ref: ticks217841
+Ref: pathmarkers231120
+Ref: marker231585
+Ref: markuniform231936
+Ref: errorbars233727
+Ref: automatic scaling237783
+Node: palette248429
+Ref: images248547
+Ref: image252718
+Ref: logimage253196
+Ref: penimage254002
+Node: three254446
+Ref: PostScript3D278988
+Node: obj280680
+Node: graph3280932
+Ref: GaussianSurface286057
+Node: grid3287161
+Node: solids287901
+Node: tube288849
+Node: flowchart291084
+Node: contour295653
+Node: contour3300778
+Node: slopefield301085
+Node: ode302522
+Node: Options302782
+Ref: configuration file308627
+Ref: settings308627
+Ref: convert309828
+Node: Interactive mode312795
+Ref: history314948
+Node: GUI316253
+Node: GUI installation316756
+Node: GUI usage317886
+Node: PostScript to Asymptote318789
+Node: Help319545
+Node: Debugger321281
+Node: Credits323066
+Node: Index323998
 
 End Tag Table

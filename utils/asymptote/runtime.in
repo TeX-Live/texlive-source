@@ -170,6 +170,9 @@ namespace vm {
 const Int DefaultValue=0x7fffffffffffffffLL;
 const Int Undefined=0x7ffffffffffffffeLL;
 
+const Int BoolTruthValue=0xABABABABABABABACLL;
+const Int BoolFalseValue=0xABABABABABABABABLL;
+
 const item Default=DefaultValue;
 #else
 const item Default=item(default_t());

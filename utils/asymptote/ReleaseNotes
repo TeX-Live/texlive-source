@@ -1,3 +1,12 @@
+Release Notes for Version 2.01
+
+The normal vector for perspective projections was fixed. Individual
+processing of each figure within a LaTeX document is now supported.
+The fontsize package uses type1cm.sty again since fix-cm.sty does not
+appear to work as advertised. Uninitialized item bits are cleared.
+Extended for statements now support the var type. PenMargin is used in
+drawing a binarytree. Minor optimizations were made.
+
 Release Notes for Version 2.00
 
 The construction of 3D TeX labels was sped up greatly. Plain TeX page

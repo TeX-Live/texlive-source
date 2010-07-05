@@ -101,7 +101,7 @@ Programming
 * Functions::                   Traditional and high-order functions
 * Arrays::                      Dynamic vectors
 * Casts::                       Implicit and explicit casts
-* Import::                      Importing external @code{Asymptote} packages
+* Import::                      Importing external @code{Asymptote} modules
 * Static::                      Where to allocate your variable?
 
 Operators
@@ -1735,7 +1735,7 @@ In addition, it supports many features beyond the ones found in those languages.
 * Functions::                   Traditional and high-order functions
 * Arrays::                      Dynamic vectors
 * Casts::                       Implicit and explicit casts
-* Import::                      Importing external @code{Asymptote} packages
+* Import::                      Importing external @code{Asymptote} modules
 * Static::                      Where to allocate your variable?
 @end menu
 
@@ -2923,7 +2923,7 @@ The base align setting of a pen is returned by
 @cindex @code{fontsize}
 @cindex @code{lineskip}
 @cindex @code{defaultpen}
-@cindex @code{fix-cm}
+@cindex @code{type1cm}
 @item The font size is specified in @TeX{} points (1 pt = 1/72.27 inches) with
 the function @code{pen fontsize(real size, real lineskip=1.2*size)}.
 The default font size, 12pt, may be changed with @code{defaultpen(pen)}.
@@ -2931,10 +2931,10 @@ Nonstandard font sizes may require inserting
 @verbatim
 import fontsize;
 @end verbatim
-at the beginning of the file (this requires the @code{fix-cm} package
+at the beginning of the file (this requires the @code{type1cm} package
 available from
 @quotation
-@url{http://www.ctan.org/tex-archive/help/Catalogue/entries/fix-cm}
+@url{http://www.ctan.org/tex-archive/help/Catalogue/entries/type1cm}
 @end quotation
 and included in recent @code{LaTeX} distributions). The font size and line
 skip of a pen can be examined with the routines 
@@ -3938,6 +3938,14 @@ is equivalent to
 int x=5;
 real y=4.3;
 pen reddash=red+dashed;
+@end verbatim
+
+@code{var} may also be used with the extended @code{for} loop syntax.
+
+@verbatim
+int[] a = {1,2,3};
+for (var x : a)
+  write(x);
 @end verbatim
 
 @node Structures
@@ -5953,7 +5961,13 @@ pdflatex latexusage
 
 To switch between using @code{latex} and @code{pdflatex} you may first
 need to remove the files @code{latexusage-*}, @code{latexusage_.pre}, and
-@code{latexusage.aux}.
+@code{latexusage.aux}. Version 1.13 of @code{Asymptote.sty} supports
+processing each figure separately: @code{asy latexusage} is equivalent
+to @code{asy latexusage-*.asy}. For example, one may wish to reduce
+memory usage by generating each figure in a separate @code{UNIX} process:
+@verbatim
+/bin/ls latexusage-*.asy | xargs --replace=% asy %
+@end verbatim
 
 @cindex @code{width}
 @cindex @code{height}

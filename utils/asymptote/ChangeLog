@@ -1,4 +1,220 @@
 ------------------------------------------------------------------------
+r5079 | jcbowman | 2010-07-05 01:23:04 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/png/Makefile.in
+
+Remove invalid option.
+
+------------------------------------------------------------------------
+r5078 | jcbowman | 2010-07-05 01:12:29 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.sty
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/latexusage.tex
+
+Support individual processing of each figure within a LaTeX document.
+
+------------------------------------------------------------------------
+r5077 | jcbowman | 2010-07-05 01:03:52 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/extra/intro.asy
+   A /trunk/asymptote/examples/quilt.asy
+
+Update talk.
+
+------------------------------------------------------------------------
+r5076 | jcbowman | 2010-07-05 00:22:55 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/fontsize.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Revert to type1cm.sty since fix-cm.sty does not work as advertised.
+
+------------------------------------------------------------------------
+r5075 | hammera | 2010-07-03 16:56:38 -0600 (Sat, 03 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+For loop and var documentation.
+
+------------------------------------------------------------------------
+r5074 | hammera | 2010-07-03 16:52:23 -0600 (Sat, 03 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/errors
+   M /trunk/asymptote/errortest.asy
+   M /trunk/asymptote/stm.cc
+   M /trunk/asymptote/tests/array/fields.asy
+
+Allow var in extended for statement.
+
+------------------------------------------------------------------------
+r5073 | jcbowman | 2010-07-03 01:37:08 -0600 (Sat, 03 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain.asy
+
+Delete old aux file.
+
+------------------------------------------------------------------------
+r5072 | jcbowman | 2010-07-03 01:32:58 -0600 (Sat, 03 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/texfile.cc
+
+Use settings.outname().
+
+------------------------------------------------------------------------
+r5071 | hammera | 2010-07-01 17:05:34 -0600 (Thu, 01 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Enabled transConditionalJump.
+
+------------------------------------------------------------------------
+r5070 | hammera | 2010-07-01 17:04:30 -0600 (Thu, 01 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/TODO
+   M /trunk/asymptote/application.cc
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/builtin.h
+   M /trunk/asymptote/coder.cc
+   M /trunk/asymptote/coder.h
+   M /trunk/asymptote/constructor.cc
+   M /trunk/asymptote/dec.cc
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+   M /trunk/asymptote/exp.cc
+   M /trunk/asymptote/exp.h
+   M /trunk/asymptote/fundec.cc
+   M /trunk/asymptote/inst.h
+   M /trunk/asymptote/process.cc
+   M /trunk/asymptote/program.cc
+   M /trunk/asymptote/program.h
+   M /trunk/asymptote/record.cc
+   M /trunk/asymptote/runarray.in
+   M /trunk/asymptote/stack.cc
+   M /trunk/asymptote/stm.cc
+
+Slightly more optimized bytecode.
+
+------------------------------------------------------------------------
+r5069 | jcbowman | 2010-06-30 09:24:59 -0600 (Wed, 30 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/doc/extra/intro.asy
+   M /trunk/asymptote/examples/arrows3.asy
+
+Update example.
+------------------------------------------------------------------------
+r5068 | jcbowman | 2010-06-30 03:51:04 -0600 (Wed, 30 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/doc/extra/intro.asy
+   M /trunk/asymptote/doc/extra/intro_.bbl
+
+Update lecture.
+------------------------------------------------------------------------
+r5067 | jcbowman | 2010-06-30 02:50:12 -0600 (Wed, 30 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/examples/billboard.asy
+
+Fix normal vector for perspective projections.
+
+------------------------------------------------------------------------
+r5066 | jcbowman | 2010-06-30 02:43:26 -0600 (Wed, 30 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runlabel.in
+
+Revert r5061.
+
+------------------------------------------------------------------------
+r5065 | jcbowman | 2010-06-30 02:20:14 -0600 (Wed, 30 Jun 2010) | 2 lines
+Changed paths:
+   A /trunk/asymptote/examples/mergeExample.asy
+   A /trunk/asymptote/examples/partitionExample.asy
+
+Add new examples.
+
+------------------------------------------------------------------------
+r5064 | jcbowman | 2010-06-29 23:55:45 -0600 (Tue, 29 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/configure.ac
+
+Revert docdir changes since they break rpmbuild.
+------------------------------------------------------------------------
+r5063 | jcbowman | 2010-06-29 23:39:30 -0600 (Tue, 29 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Fix docdir.
+
+------------------------------------------------------------------------
+r5062 | jcbowman | 2010-06-29 22:53:02 -0600 (Tue, 29 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/binarytree.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/extra/intro.asy
+
+Use PenMargin in drawing a binarytree.
+
+------------------------------------------------------------------------
+r5061 | jcbowman | 2010-06-29 22:49:17 -0600 (Tue, 29 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runlabel.in
+
+Check for \r as well as \n terminator.
+
+------------------------------------------------------------------------
+r5060 | jcbowman | 2010-06-28 18:45:05 -0600 (Mon, 28 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Support docdir.
+------------------------------------------------------------------------
+r5059 | jcbowman | 2010-06-28 08:44:34 -0600 (Mon, 28 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/examples/xstitch.asy
+
+Improve example.
+------------------------------------------------------------------------
+r5058 | jcbowman | 2010-06-28 08:29:15 -0600 (Mon, 28 Jun 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/basealign.asy
+
+Improve example.
+
+------------------------------------------------------------------------
+r5057 | jcbowman | 2010-06-27 17:57:33 -0600 (Sun, 27 Jun 2010) | 3 lines
+Changed paths:
+   M /trunk/asymptote/runtime.in
+
+Use values for BoolTruthValue and BoolFalseValue less likely confused with
+another type.
+
+------------------------------------------------------------------------
+r5056 | jcbowman | 2010-06-27 16:46:03 -0600 (Sun, 27 Jun 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/item.h
+   M /trunk/asymptote/runtime.in
+
+Add quasi-type checking for bools.
+
+Clear uninitialized item bits.
+
+------------------------------------------------------------------------
+r5055 | jcbowman | 2010-06-25 21:44:33 -0600 (Fri, 25 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/examples/workcone.asy
+
+Update example.
+------------------------------------------------------------------------
+r5054 | jcbowman | 2010-06-25 16:29:44 -0600 (Fri, 25 Jun 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.01svn.
+------------------------------------------------------------------------
 r5053 | jcbowman | 2010-06-25 13:27:05 -0600 (Fri, 25 Jun 2010) | 2 lines
 Changed paths:
    M /trunk/asymptote/builtin.cc
