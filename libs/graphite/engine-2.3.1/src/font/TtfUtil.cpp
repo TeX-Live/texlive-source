@@ -784,12 +784,14 @@ void SwapWString(void * pWStr, size_t nSize /* = 0 */) throw (std::invalid_argum
 	uint16 * pStr = reinterpret_cast<uint16 *>(pWStr);
 	uint16 * const pStrEnd = pStr + (nSize == 0 ? gr::utf16len(pStr) : nSize);
 
+#ifndef USE_STDLIB_WORKAROUNDS
 	std::transform(pStr, pStrEnd, pStr, read<uint16>);
-
-//		for (int i = 0; i < nSize; i++)
-//		{ // swap the wide characters in the string
-//			pStr[i] = gr::utf16(read(uint16(pStr[i])));
-//		}
+#else
+		for (int i = 0; i < nSize; i++)
+		{ // swap the wide characters in the string
+			pStr[i] = gr::utf16(read(uint16(pStr[i])));
+		}
+#endif
 }
 
 /*----------------------------------------------------------------------------------------------

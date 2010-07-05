@@ -6,10 +6,11 @@ diff -ur engine-2.3.1.orig/src/font/FileFont.cpp engine-2.3.1/src/font/FileFont.
  //		}
  #else
 -		m_stuFaceName.assign(rgchwFace);
-+		// m_stuFaceName.assign(rgchwFace);
- 		// VS 2005 needs this:
+-		// VS 2005 needs this:
 -		//for (int cch16 = 0; cch16 < cchw; cch16++)
 -		//	m_stuFaceName.push_back(rgchwFace[cch16]);
++		// m_stuFaceName.assign(rgchwFace);
++		// VS 2005 and MinGW32 need this:
 +		for (int cch16 = 0; cch16 < cchw; cch16++)
 +			m_stuFaceName.push_back(rgchwFace[cch16]);
  #endif

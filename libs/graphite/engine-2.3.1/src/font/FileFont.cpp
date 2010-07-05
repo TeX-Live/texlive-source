@@ -209,7 +209,7 @@ FileFont::initializeFromFace()
 //		}
 #else
 		// m_stuFaceName.assign(rgchwFace);
-		// VS 2005 needs this:
+		// VS 2005, MinGW32, and AIX need this:
 		for (int cch16 = 0; cch16 < cchw; cch16++)
 			m_stuFaceName.push_back(rgchwFace[cch16]);
 #endif

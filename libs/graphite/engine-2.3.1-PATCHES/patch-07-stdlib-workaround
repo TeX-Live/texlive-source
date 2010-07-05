@@ -1,0 +1,35 @@
+diff -ur engine-2.3.1.orig/src/font/FileFont.cpp engine-2.3.1/src/font/FileFont.cpp
+--- engine-2.3.1.orig/src/font/FileFont.cpp	2010-02-19 23:30:05.000000000 +0100
++++ engine-2.3.1/src/font/FileFont.cpp	2010-07-05 17:33:59.065493280 +0200
+@@ -209,7 +209,7 @@
+ //		}
+ #else
+ 		// m_stuFaceName.assign(rgchwFace);
+-		// VS 2005 and MinGW32 need this:
++		// VS 2005, MinGW32, and AIX need this:
+ 		for (int cch16 = 0; cch16 < cchw; cch16++)
+ 			m_stuFaceName.push_back(rgchwFace[cch16]);
+ #endif
+diff -ur engine-2.3.1.orig/src/font/TtfUtil.cpp engine-2.3.1/src/font/TtfUtil.cpp
+--- engine-2.3.1.orig/src/font/TtfUtil.cpp	2009-10-01 22:48:21.000000000 +0200
++++ engine-2.3.1/src/font/TtfUtil.cpp	2010-07-05 17:37:51.200867045 +0200
+@@ -784,12 +784,14 @@
+ 	uint16 * pStr = reinterpret_cast<uint16 *>(pWStr);
+ 	uint16 * const pStrEnd = pStr + (nSize == 0 ? gr::utf16len(pStr) : nSize);
+ 
++#ifndef USE_STDLIB_WORKAROUNDS
+ 	std::transform(pStr, pStrEnd, pStr, read<uint16>);
+-
+-//		for (int i = 0; i < nSize; i++)
+-//		{ // swap the wide characters in the string
+-//			pStr[i] = gr::utf16(read(uint16(pStr[i])));
+-//		}
++#else
++		for (int i = 0; i < nSize; i++)
++		{ // swap the wide characters in the string
++			pStr[i] = gr::utf16(read(uint16(pStr[i])));
++		}
++#endif
+ }
+ 
+ /*----------------------------------------------------------------------------------------------

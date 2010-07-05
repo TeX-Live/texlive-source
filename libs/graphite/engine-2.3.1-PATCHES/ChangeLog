@@ -4,6 +4,10 @@
 	initialized static const class members, required for AIX.
 	From Vladimir Volovich, Fri, 04 Jun 2010 19:46:38.
 
+	* patch-07-stdlib-workaround (new): Work around stdlib problems,
+	requires -DUSE_STDLIB_WORKAROUNDS for AIX (and MinGW32?).
+	From Vladimir Volovich, Mon, 05 Jul 2010 14:05:18.
+
 2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-copy-constr (new): Declare copy constructor's source
