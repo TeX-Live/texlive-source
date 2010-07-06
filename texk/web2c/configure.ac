@@ -19,8 +19,8 @@ dnl get these features if you are willing to hack the sources. If not,
 dnl it'll take a good argument to convince me to invest the time to make
 dnl them configurable.
 dnl
-m4_define([web2_version], [2010])
-AC_INIT([Web2C], web2_version(), [tex-k@tug.org])
+m4_include([../../version.ac])[] dnl define tex_live_version
+AC_INIT([Web2C], tex_live_version(), [tex-k@tug.org])
 AC_PREREQ([2.65])
 dnl 
 dnl We don't use (for example) tex/tex.web because people who only want
@@ -30,7 +30,7 @@ AC_CONFIG_SRCDIR([cpascal.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-WEB2CVERSION=web2_version()
+WEB2CVERSION=tex_live_version()
 AC_SUBST([WEB2CVERSION])
 
 dnl Common code for all programs using libkpathsea.

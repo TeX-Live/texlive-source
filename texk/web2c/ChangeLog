@@ -1,3 +1,7 @@
+2010-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Get version string from ../../version.ac.
+
 2010-06-13  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi (mpost): mention .mps extension.
