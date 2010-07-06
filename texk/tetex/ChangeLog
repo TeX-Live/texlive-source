@@ -1,3 +1,7 @@
+2010-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fmtutil.man: Adapt to fmtutil.
+
 2010-07-04  Norbert Preining  <preining@logic.at>
 
 	* fmtutil: add --no-error-if-no-format, don't abort in some cases of
