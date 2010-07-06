@@ -11741,6 +11741,11 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
+
+
+$as_echo "#define TEX_LIVE_VERSION \"2010\"" >>confdefs.h
+
+
 for ac_header in ctype.h types.h locale.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`

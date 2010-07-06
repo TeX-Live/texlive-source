@@ -17,6 +17,10 @@ KPSE_COMMON([makeindexk], [no-define])
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
+m4_include([../../version.ac])[] dnl define tex_live_version
+AC_DEFINE([TEX_LIVE_VERSION], ["tex_live_version()"],
+          [Define to the current TeX Live version string.])
+
 AC_CHECK_HEADERS([ctype.h types.h locale.h])
 AC_CHECK_FUNCS([strchr strrchr setlocale])
 

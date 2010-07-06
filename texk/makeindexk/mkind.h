@@ -349,7 +349,7 @@ ensuing.
 /*====================================================================*/
 
 #if USE_KPATHSEA
-#define VERSION       "version 2.15 [TeX Live 2009] (kpathsea + Thai support)"
+#define VERSION       "version 2.15 [TeX Live " TEX_LIVE_VERSION "] (kpathsea + Thai support)"
 #else
 #define VERSION       "version 2.15 [20-Nov-2007] (with Thai support)"
 #endif

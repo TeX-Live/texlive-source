@@ -1,3 +1,9 @@
+2010-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac [TEX_LIVE_VERSION]: From ../../version.ac.
+	* mkind.h: Use TEX_LIVE_VERSION.
+	* makeindex.1: Formatting.
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.c: Use kpse_set_program_name() instead of

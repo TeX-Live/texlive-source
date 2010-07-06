@@ -6,29 +6,29 @@
 .if t .ds Uc \fIU\\h'-0.12m'C\\v'0.27m'\\h'-.23m'S\\h'-0.11m'F\\v'-0.27m'\fP
 .if n .ds Uc UCSF
 .ds Et \\f(boE\\h'-0.1667m'\\v'-0.20v'T\\v'0.20v'\\h'-0.125m'T\\fP
-.TH MAKEINDEX 1L "10 December 1991"
+.TH MAKEINDEX 1 "6 July 2010" "TeX Live" "TeX Live"
 .\"=====================================================================
 .SH NAME
 makeindex \- a general purpose, formatter-independent index processor
 .SH SYNOPSIS
 .B makeindex
-.BR [ \-c ]
-.BR [ \-g ]
-.BR [ \-i ]
-.BR [ \-l ]
-.BR [ \-o
+.RB [ \-c ]
+.RB [ \-g ]
+.RB [ \-i ]
+.RB [ \-l ]
+.RB [ \-o
 .IR ind ]
-.BR [ \-p
+.RB [ \-p
 .IR num ]
-.BR [ \-q ]
-.BR [ \-r ]
-.BR [ \-s
+.RB [ \-q ]
+.RB [ \-r ]
+.RB [ \-s
 .IR sfile ]
-.BR [ \-t
+.RB [ \-t
 .IR log ]
-.BR [ \-L ]
-.BR [ \-T ]
-.BI [ idx0
+.RB [ \-L ]
+.RB [ \-T ]
+.RI [ idx0
 .I idx1
 .IR idx2 .\|.\|.]
 .\"=====================================================================
@@ -183,14 +183,14 @@ using explicit range operators; see \s-2SPECIAL EFFECTS\s+2 below.  By
 default, three or more successive pages are automatically abbreviated
 as a range (e.g. 1\(em5).
 .TP 10
-.BR \-s " sty"
+.BI \-s " sty"
 Employ
 .I sty
 as the style file (no default).  The environment
 variable \s-2INDEXSTYLE\s+2 defines the path where the style file
 should be found.
 .TP 10
-.BR \-t " log"
+.BI \-t " log"
 Employ
 .I log
 as the transcript file.  By default, the file name is
