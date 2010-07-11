@@ -21,9 +21,9 @@
 #ifndef __PRC_BIT_STREAM_H
 #define __PRC_BIT_STREAM_H
 
+#include <inttypes.h>
 #include <string>
 #include <stdlib.h>
-#include <stdint.h>
 
 #define CHUNK_SIZE (1024)
 // Is this a reasonable initial size?

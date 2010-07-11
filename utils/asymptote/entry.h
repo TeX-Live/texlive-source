@@ -179,7 +179,7 @@ public:
            tenv& source, varEntry *qualifier, coder &c);
 };
 
-#ifdef NOHASH //{{{
+#if 0 //{{{
  /* This version of venv is provided for compiling on systems which do not
   * have some form of STL hash table.  It will eventually be removed.
   * See the hash version below for documentation on the functions.
@@ -214,53 +214,198 @@ public:
 //}}}
 #else
 
+// For speed reasons, many asserts are only tested when DEBUG_CACHE is set.
+#ifdef DEBUG_CACHE
+#define DEBUG_CACHE_ASSERT(x) assert(x)
+#else
+#define DEBUG_CACHE_ASSERT(x) (void)(x)
+#endif
+
+// The hash table which is at the core of the variable environment venv.
+class core_venv : public gc {
+
+public:
+  // The cells of the table
+  struct cell {
+    symbol name;
+    varEntry *ent;
+
+    bool empty() const {
+      return name == 0;
+    }
+
+    bool isATomb() const {
+      DEBUG_CACHE_ASSERT(!empty());
+      return ent == 0;
+    }
+
+    bool filled() const {
+      return !empty() and !isATomb();
+    }
+
+    bool matches(symbol name, const ty *t) {
+      DEBUG_CACHE_ASSERT(name.special());
+      DEBUG_CACHE_ASSERT(t);
+
+      if (this->name != name)
+        return false;
+      if (!this->ent)
+        return false;
+      return equivalent(this->ent->getType(), t);
+    }
+
+    bool matches(symbol name, const signature *sig) {
+      DEBUG_CACHE_ASSERT(!name.special());
+
+      if (this->name != name)
+        return false;
+      if (!this->ent)
+        return false;
+      return equivalent(this->ent->getSignature(), sig);
+    }
+
+    void storeNew(symbol name, varEntry *ent) {
+      DEBUG_CACHE_ASSERT(empty() || isATomb());
+
+      this->name = name;
+      this->ent = ent;
+    }
+
+    varEntry *replaceWith(symbol name, varEntry *ent) {
+      this->name = name;
+
+      varEntry *old = this->ent;
+      this->ent = ent;
+      return old;
+    }
+
+    void remove() {
+      this->ent = 0;
+    }
+  };
+
+private:
+  size_t capacity;
+  size_t size;
+  size_t mask;
+  cell *table;
+
+  void initTable(size_t capacity);
+
+  void resize();
+
+  cell& cellByIndex(size_t i);
+
+  const cell& cellByIndex(size_t i) const;
+
+  varEntry *storeNew(cell& cell, symbol name, varEntry *ent);
+
+  varEntry *storeNonSpecialAfterTomb(size_t tombIndex,
+                                     symbol name, varEntry *ent);
+  varEntry *storeSpecialAfterTomb(size_t tombIndex,
+                                  symbol name, varEntry *ent);
+
+public:
+  core_venv(size_t capacity) {
+    initTable(capacity);
+  }
+
+  bool empty() const { return size == 0; }
+  void clear();
+
+  void confirm_size();
+
+  // Store an entry into the table.  If this shadows a previous entry, the old
+  // entry is returned, otherwise 0 is returned.
+  varEntry *storeNonSpecial(symbol name, varEntry *ent);
+  varEntry *storeSpecial(symbol name, varEntry *ent);
+  varEntry *store(symbol name, varEntry *ent);
+
+  // Lookup an entry in the table.
+  varEntry *lookupNonSpecial(symbol name, const signature *sig);
+  varEntry *lookupSpecial(symbol name, const ty *t);
+  varEntry *lookup(symbol name, const ty *t);
+
+  // Remove an entry from the table.
+  void removeNonSpecial(symbol name, const signature *sig);
+  void removeSpecial(symbol name, const ty *t);
+  void remove(symbol name, const ty *t);
+
+  // Features for iterating over the entire table.
+  class const_iterator {
+    const core_venv& core;
+    size_t index;
+
+  public:
+    const_iterator(const core_venv& core, size_t index)
+      : core(core), index(index) {}
+
+    const cell& operator * () const {
+      return core.cellByIndex(index);
+    }
+    const cell* operator -> () const {
+      return &core.cellByIndex(index);
+    }
+
+    const_iterator& operator ++ () {
+      // Advance to the next filled cell, or stop at the end of the array.
+      do {
+        ++index;
+      } while (!(*this)->filled() && index < core.capacity);
+
+      DEBUG_CACHE_ASSERT((*this)->filled() || (*this) == core.end());
+
+      return *this;
+    }
+
+    friend bool operator == (const const_iterator& a, const const_iterator& b)
+    {
+      // For speed, we don't compare the hashtables.
+      return a.index == b.index;
+    }
+    friend bool operator != (const const_iterator& a, const const_iterator& b)
+    {
+      // For speed, we don't compare the hashtables.
+      return a.index != b.index;
+    }
+  };
+
+  const_iterator begin() const {
+    size_t index = 0;
+    while (index < capacity && !cellByIndex(index).filled())
+      ++index;
+    return const_iterator(*this, index);
+  }
+
+  const_iterator end() const {
+    return const_iterator(*this, capacity);
+  }
+};
+
+
 // venv implemented with a hash table.
 class venv {
-  struct key : public gc {
+  // A hash table used to quickly look up a variable once its name and type are
+  // known.  Includes all scopes.
+  core_venv core;
+
+  // Record of added variables in the order they were added.
+  struct addition {
     symbol name;
-    bool special;
-    union {
-      ty *t;
-      signature *sig;
-    } u;
+    ty *t;
+    varEntry *shadowed;
 
-    //key(key& k) : name(k.name), special(k.special), u(k.u) {}
-
-    key(symbol name, ty *t)
-      : name(name), special(name.special())
-    {
-      if (special)
-        u.t = t;
-      else
-        u.sig = t->getSignature();
-    }
-
-    /* A fake key used for searching just based on a signature. */
-    key(symbol name, signature *sig)
-      : name(name), special(false)
-    {
-      assert(!name.special());
-      u.sig = sig;
-    }
-
-    key(symbol name, varEntry *v)
-      : name(name), special(name.special())
-    {
-      ty *t = v->getType();
-      if (special)
-        u.t = t;
-      else
-        u.sig = t->getSignature();
-    }
+    addition(symbol name, ty *t, varEntry *shadowed)
+      : name(name), t(t), shadowed(shadowed) {}
   };
-  friend ostream& operator<< (ostream& out, const venv::key &k);
+  typedef mem::stack<addition> addstack;
+  addstack additions;
 
-  struct value : public gc {
-    varEntry *v;
-    value(varEntry *v)
-      : v(v) {}
-    value() : v(0) {}
-  };
+  // A scope can be recorded by the size of the addition stack at the time the
+  // scope began.
+  typedef mem::stack<size_t> scopestack;
+  scopestack scopesizes;
+
 
   struct namehash {
     size_t operator()(const symbol name) const {
@@ -272,49 +417,6 @@ class venv {
       return s==t;
     }
   };
-  struct keyhash {
-    size_t hashSig(signature *sig) const {
-      return sig ? sig->hash() : 0;
-    }
-    size_t operator()(const key k) const {
-      return k.name.hash() * 107 +
-        (k.special ? k.u.t->hash() : hashSig(k.u.sig));
-    }
-  };
-  struct keyeq {
-#define TEST_COLLISION 0
-#if TEST_COLLISION
-    bool base(const key k, const key l) const {
-      return k.name==l.name &&
-        (k.special ? equivalent(k.u.t, l.u.t) :
-         equivalent(k.u.sig, l.u.sig));
-    }
-    bool operator()(const key k, const key l) const;
-#else
-    bool operator()(const key k, const key l) const; 
-#endif
-  };
-
-
-  // A hash table used to quickly look up a variable once its name and type are
-  // known.  Includes all scopes.
-  typedef mem::unordered_map<key, value, keyhash, keyeq> keymap;
-  keymap all;
-
-  // Record of added variables in the order they were added.
-  struct addition {
-    key k;
-    varEntry *shadowed;
-
-    addition(key k, varEntry *shadowed) : k(k), shadowed(shadowed) {}
-  };
-  typedef mem::stack<addition> addstack;
-  addstack additions;
-
-  // A scope can be recorded by the size of the addition stack at the time the
-  // scope began.
-  typedef mem::stack<size_t> scopestack;
-  scopestack scopesizes;
 
   struct namevalue {
 #ifdef CALLEE_SEARCH
@@ -335,37 +437,51 @@ class venv {
 #endif
   };
 
-  // A hash table indexed solely on the name, storing for each name the
+  // A dictionary indexed solely on the name, storing for each name the
   // current (possibly overloaded) type of the name.
+  // The hash table implementation is slightly faster than the std::map binary
+  // tree implementation, so we use it if we can.
+#ifdef NOHASH
+  typedef mem::map<symbol CONST, namevalue> namemap;
+#else
   typedef mem::unordered_map<symbol, namevalue, namehash, nameeq> namemap;
+#endif
   namemap names;
+
 
   // A sanity check.  For a given name, it checks that the type stored in the
   // names hash table exactly matches with all of the entries of that name
   // stored in the full hash table.
   void checkName(symbol name);
 
-  void listValues(symbol name, /*values &vals,*/ record *module);
+  void listValues(symbol name, record *module);
+
 
   // Helper function for endScope.
   void remove(const addition& a);
 
   // These are roughly the size the hashtables will be after loading the
   // builtin functions and plain module.
-  static const size_t fileAllSize=2000;
-  static const size_t namesAllSize=1000;
+  static const size_t fileCoreSize=1 << 13;
+  static const size_t fileNamesSize=1000;
 
   // The number of scopes begun (but not yet ended) when the venv was empty.
   size_t empty_scopes;
 public:
-  venv() : empty_scopes(0) {}
+  venv() :
+    core(1 << 2), empty_scopes(0) {}
 
   // Most file level modules automatically import plain, so allocate hashtables
   // big enough to hold it in advance.
   struct file_env_tag {};
   venv(file_env_tag)
-    : all(fileAllSize), names(namesAllSize), empty_scopes(0) {}
+    : core(fileCoreSize),
+#ifndef NOHASH
+    names(fileNamesSize),
+#endif
+    empty_scopes(0) {}
 
+  // Add a new variable definition.
   void enter(symbol name, varEntry *v);
 
   // Add the entries in one environment to another, if qualifier is
@@ -379,14 +495,9 @@ public:
   bool add(symbol src, symbol dest,
            venv& source, varEntry *qualifier, coder &c);
 
-  varEntry *lookByType(key k) {
-    keymap::const_iterator p=all.find(k);
-    return p!=all.end() ? p->second.v : 0;
-  }
-  
   // Look for a function that exactly matches the type given.
   varEntry *lookByType(symbol name, ty *t) {
-    return lookByType(key(name, t));
+    return core.lookup(name, t);
   }
 
   // An optimization heuristic.  Try to guess the signature of a variable and
@@ -403,13 +514,14 @@ public:
   // avoid such ambiguities.
   varEntry *lookBySignature(symbol name, signature *sig);
 
+  // Get the (possibly overloaded) type of all variables associated to a
+  // particular name.
   ty *getType(symbol name);
 
   void beginScope();
   void endScope();
   
-  // Adds the definitions of the top-level scope to the level underneath,
-  // and then removes the top scope.
+  // Merges the top-level scope with the level immediately underneath it.
   void collapseScope();
 
   // Prints a list of the variables to the standard output.

@@ -1,3 +1,17 @@
+Release Notes for Version 2.02
+
+A global latexusage.asy file is no longer generated, in favour of
+individual latexusage-*.asy files (this is a backwards incompatible
+change). Global and local values can now be given for both the inline and
+attach asymptote.sty (version 1.15) options. Underscores were removed from
+the .pre and .tex file names in inlinetex mode. Latexmk support was added
+for compiling individually only those figures that have changed; this
+requires that the inline option be used for 3D figures.
+The asy() function was fixed. A multiple fraction bar bug in texpath was
+fixed. Warning messages and portability issues were addressed. A frame
+label alignment problem was fixed. PDF animations are now supported with
+the XeLaTeX TeX engine.
+
 Release Notes for Version 2.01
 
 The normal vector for perspective projections was fixed. Individual

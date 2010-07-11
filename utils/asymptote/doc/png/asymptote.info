@@ -1,11 +1,11 @@
 This is asymptote.info, produced by makeinfo version 4.13 from
 ../asymptote.texi.
 
-This file documents `Asymptote', version 2.01.
+This file documents `Asymptote', version 2.02.
 
    `http://asymptote.sourceforge.net'
 
-   Copyright (C) 2004-9 Andy Hammerlindl, John Bowman, and Tom Prince.
+   Copyright (C) 2004-10 Andy Hammerlindl, John Bowman, and Tom Prince.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Lesser General Public License
@@ -23,11 +23,11 @@ File: asymptote.info,  Node: Top,  Next: Description,  Up: (dir)
 Asymptote
 *********
 
-This file documents `Asymptote', version 2.01.
+This file documents `Asymptote', version 2.02.
 
    `http://asymptote.sourceforge.net'
 
-   Copyright (C) 2004-9 Andy Hammerlindl, John Bowman, and Tom Prince.
+   Copyright (C) 2004-10 Andy Hammerlindl, John Bowman, and Tom Prince.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Lesser General Public License
@@ -499,7 +499,7 @@ used; if it is old we recommend first putting
 in the `Asymptote' source directory.
 
 If your graphics card supports multisampling, we recommend using version
-`2.6.0-rc1' (or later) of `freeglut' to support antialiasing in
+`2.6.0' (or later) of `freeglut' to support antialiasing in
 `Asymptote''s adaptive `OpenGL' 3D renderer (`MacOS X' users can skip
 this step since `Asymptote' is configured to use the native glut
 library on that platform). Download
@@ -2325,7 +2325,7 @@ number, until it saturates with one or more color components equal to 1.
       at the beginning of the file (this requires the `type1cm' package
      available from
 
-          `http://www.ctan.org/tex-archive/help/Catalogue/entries/type1cm'
+          `http://www.ctan.org/tex-archive/macros/latex/contrib/type1cm/'
      and included in recent `LaTeX' distributions). The font size and
      line skip of a pen can be examined with the routines `real
      fontsize(pen p=currentpen)' and `real lineskip(pen p=currentpen)',
@@ -4642,60 +4642,66 @@ File: asymptote.info,  Node: LaTeX usage,  Next: Base modules,  Prev: Programmin
 ***************
 
 `Asymptote' comes with a convenient `LaTeX' style file `asymptote.sty'
-that makes `LaTeX' `Asymptote'-aware. Entering `Asymptote' code
-directly into the `LaTeX' source file, at the point where it is needed,
-keeps figures organized and avoids the need to invent new file names
-for each figure. Simply add the line `\usepackage{asymptote}' at the
-beginning of your file and enclose your `Asymptote' code within a
-`\begin{asy}...\end{asy}' environment. As with the `LaTeX' `comment'
-environment, the `\end{asy}' command must appear on a line by itself,
-with no leading spaces or trailing commands/comments.
+(version 1.15 or later) that makes `LaTeX' `Asymptote'-aware. Entering
+`Asymptote' code directly into the `LaTeX' source file, at the point
+where it is needed, keeps figures organized and avoids the need to
+invent new file names for each figure. Simply add the line
+`\usepackage{asymptote}' at the beginning of your file and enclose your
+`Asymptote' code within a `\begin{asy}...\end{asy}' environment. As
+with the `LaTeX' `comment' environment, the `\end{asy}' command must
+appear on a line by itself, with no leading spaces or trailing
+commands/comments.
 
    The sample `LaTeX' file below, named `latexusage.tex', can be run as
 follows:
 latex latexusage
-asy latexusage
+asy latexusage-*.asy
 latex latexusage
 
 or
 pdflatex latexusage
-asy latexusage
+asy latexusage-*.asy
 pdflatex latexusage
+ To switch between using `latex' and `pdflatex' you may first need to
+remove the files `latexusage-*', `latexusage.pre', and `latexusage.aux'.
 
-   To switch between using `latex' and `pdflatex' you may first need to
-remove the files `latexusage-*', `latexusage_.pre', and
-`latexusage.aux'. Version 1.13 of `Asymptote.sty' supports processing
-each figure separately: `asy latexusage' is equivalent to `asy
-latexusage-*.asy'. For example, one may wish to reduce memory usage by
-generating each figure in a separate `UNIX' process:
-/bin/ls latexusage-*.asy | xargs --replace=% asy %
+   An even better method for processing a `LaTeX' file with embedded
+`Asymptote' code is to use the `latexmk' utility from
+
+     `http://www.ctan.org/tex-archive/support/latexmk/'
+   after putting the rules
+
+sub asy {return system("asy '$_[0]'");}
+add_cus_dep("asy","eps",0,"asy");
+add_cus_dep("asy","pdf",0,"asy");
+add_cus_dep("asy","tex",0,"asy");
+in a file `latexmkrc' in the same directory. The command
+latexmk -pdf latexusage
+ will then call `Asymptote' automatically, recompiling only the figures
+that have changed. Since each figure is compiled in a separate system
+process, this method also tends to use less memory.
 
    One can specify `width', `height', `viewportwidth',
-`viewportheight', and `attach' `keyval'-style options to the `asy'
-environment.  The current version of `asymptote.sty' supports the
-embedding of 3D PRC files, either inline or, using the `attach' option
-with the `attachfile2' (or older `attachfile') `LaTeX' package, as
-annotated (but printable) attachments. For many applications, the
-annotated attachment method tends to be more convenient.  The default
-value of `viewportwidth' is `\the\linewidth' for inline 3D figures and
-`0' for attachments.
+`viewportheight', `attach', and `inline'.  `keyval'-style options to
+the `asy' environment.  Three-dimensional PRC files may either be
+embedded within the page (the default) or attached as annotated (but
+printable) attachments, using the `attach' option and the `attachfile2'
+(or older `attachfile') `LaTeX' package. The default value of
+`viewportwidth' is `\the\linewidth' for inline 3D figures and `0' for
+attachments. The `inline' option generates inline `LaTeX' code instead
+of EPS or PDF files. This makes 2D LaTeX symbols visible to the
+`\begin{asy}...\end{asy}' environment.  In this mode, Asymptote
+correctly aligns 2D LaTeX symbols defined outside of
+`\begin{asy}...\end{asy}', but treats their size as zero; an optional
+second string can be given to `Label' to provide an estimate of the
+unknown label size.
 
-   If the `inline' option is given to the `asymptote.sty' package,
-inline `LaTeX' code is generated instead of EPS or PDF files. This
-makes 2D LaTeX symbols visible to the `\begin{asy}...\end{asy}'
-environment.  In this mode, Asymptote correctly aligns 2D LaTeX symbols
-defined outside of `\begin{asy}...\end{asy}', but treats their size as
-zero; an optional second string can be given to `Label' to provide an
-estimate of the unknown label size.
-
-   Note that if `latex' is used with the `inline' option, the labels
-might not show up in DVI viewers that cannot handle raw `PostScript'
-code. One can use `dvips'/`dvipdf' to produce `PostScript'/PDF output
-(we recommend using the modified version of `dvipdf' in the `Asymptote'
-patches directory, which accepts the `dvips -z' hyperdvi option).
-
-   An excellent tutorial by Dario Teixeira on integrating `Asymptote'
-and `LaTeX' is available at `http://dario.dse.nl/projects/asylatex/'.
+   Note that if the `latex' TeX engine is used with the `inline'
+option, labels might not show up in DVI viewers that cannot handle raw
+`PostScript' code. One can use `dvips'/`dvipdf' to produce
+`PostScript'/PDF output (we recommend using the modified version of
+`dvipdf' in the `Asymptote' patches directory, which accepts the `dvips
+-z' hyperdvi option).
 
    Here now is `latexusage.tex':
 
@@ -4704,13 +4710,16 @@ and `LaTeX' is available at `http://dario.dse.nl/projects/asylatex/'.
 % Use this form to include EPS (latex) or PDF (pdflatex) files:
 \usepackage{asymptote}
 
-% Use this form with latex or pdflatex to include inline LaTeX code:
+% Use this form with latex or pdflatex to include inline LaTeX code by default:
 %\usepackage[inline]{asymptote}
 
-% Enable this line to support PDF hyperlinks:
-%\usepackage{hyperref}\hypersetup{setpagesize=false}
+% Use this form with latex or pdflatex to create PDF attachments by default:
+%\usepackage[attach]{asymptote}
 
-% Enable this line for PDF attachments with asy environment option attach=true:
+% Enable this line to support PDF hyperlinks:
+%\usepackage{hyperref}\hypersetup{setpagesize=false,unicode}
+
+% Enable this line to support the attach option:
 %\usepackage[dvips]{attachfile2}
 
 \begin{document}
@@ -4777,11 +4786,12 @@ shipout(bbox(0.25cm));
 Each graph is drawn in its own environment. One can specify the width
 and height to \LaTeX\ explicitly. This 3D example can be viewed
 interactively either with Adobe Reader or Asymptote's fast OpenGL-based
-renderer. It is often desirable to embed such files as annotated attachments;
-this requires the optional \verb+\usepackage{attachfile2}+ package and
-the \verb+{attach=true}+ option:
+renderer. To support {\tt latexmk}, 3D figures should specify
+\verb+inline=true+. It is sometimes desirable to embed 3D files as annotated
+attachments; this requires the optional \verb+\usepackage{attachfile2}+
+package and the \verb+attach=true+ option:
 \begin{center}
-\begin{asy}[height=4cm,attach=false]
+\begin{asy}[height=4cm,inline=true,attach=false]
 currentprojection=orthographic(5,4,2);
 draw(unitcube,blue);
 label("$V-E+F=2$",(0,1,0.5),3Y,blue+fontsize(17pt));
@@ -4790,7 +4800,7 @@ label("$V-E+F=2$",(0,1,0.5),3Y,blue+fontsize(17pt));
 
 One can also scale the figure to the full line width:
 \begin{center}
-\begin{asy}[width=\the\linewidth]
+\begin{asy}[width=\the\linewidth,inline=true]
 pair z0=(0,0);
 pair z1=(2,0);
 pair z2=(5,0);
@@ -5201,20 +5211,18 @@ directory the commands:
 tex ifdraft.dtx
 texhash
 
-   An example of embedding `U3D' code is provided in the file
-`embeddedu3d.asy'.  As of version 7.0.8, `Adobe Reader' supports the
-`U3D' format under Linux.
+   A more portable method for embedding movie files, which should work
+on any platform and does not require the `movie15' or `ifdraft'
+packages, is provided by using the `external' module instead of
+`embed'. An example of these interfaces is provided in the file
+`embeddedmovie.asy' and `externalmovie.asy' in the `animations'
+subdirectory of the examples directory. For a higher quality movie
+generated directly by `Asymptote', use the `animate' module along with
+the `animate.sty' package to embed a portable PDF animation (*note
+animate::).
 
-   Unfortunately, Adobe has not yet made available an embedded movie
-plugin for the Linux version of `Adobe Reader'.  A portable method for
-embedding movie files, which should work on any platform and does not
-require the `movie15' or `ifdraft' packages, is provided by using the
-`external' module instead of `embed'. An example of these interfaces is
-provided in the file `embeddedmovie.asy' and `externalmovie.asy' in the
-`animations' subdirectory of the examples directory. For a higher
-quality movie generated directly by `Asymptote', use the `animate'
-module along with the `animate.sty' package to embed a portable PDF
-animation (*note animate::).
+   An example of embedding `U3D' code is provided in the file
+`embeddedu3d.asy'.
 
 
 File: asymptote.info,  Node: slide,  Next: MetaPost,  Prev: embed,  Up: Base modules
@@ -8528,7 +8536,7 @@ Index
                                                               (line   6)
 * atleast:                               Bezier curves.       (line  56)
 * attach <1>:                            graph.               (line 415)
-* attach:                                LaTeX usage.         (line  35)
+* attach:                                LaTeX usage.         (line  46)
 * autoadjust:                            three.               (line 354)
 * autoimport:                            Options.             (line 110)
 * automatic scaling:                     graph.               (line 682)
@@ -8942,7 +8950,7 @@ Index
 * guide:                                 Paths and guides.    (line 300)
 * guide3:                                three.               (line   6)
 * hatch:                                 Pens.                (line 267)
-* height:                                LaTeX usage.         (line  35)
+* height:                                LaTeX usage.         (line  46)
 * help <1>:                              Debugger.            (line  30)
 * help <2>:                              Help.                (line   6)
 * help:                                  Interactive mode.    (line  44)
@@ -8992,6 +9000,7 @@ Index
 * initialized:                           Arrays.              (line  39)
 * initializers:                          Variable initializers.
                                                               (line   6)
+* inline:                                LaTeX usage.         (line  46)
 * InOutTicks:                            graph3.              (line  34)
 * input <1>:                             Interactive mode.    (line  48)
 * input:                                 Files.               (line  11)
@@ -9054,6 +9063,7 @@ Index
 * latex:                                 Options.             (line 142)
 * LaTeX fonts:                           Pens.                (line 192)
 * LaTeX usage:                           LaTeX usage.         (line   6)
+* latexmk:                               LaTeX usage.         (line  30)
 * latin1:                                latin1.              (line   6)
 * latitude:                              Data types.          (line 134)
 * latticeshade:                          fill.                (line  32)
@@ -9572,6 +9582,7 @@ Index
 * type1cm:                               Pens.                (line 178)
 * typedef <1>:                           Functions.           (line  36)
 * typedef:                               Data types.          (line 344)
+* U3D:                                   embed.               (line  38)
 * undefined:                             Paths and guides.    (line 268)
 * UnFill:                                Frames and pictures. (line 152)
 * unfill:                                fill.                (line 106)
@@ -9612,10 +9623,10 @@ Index
 * verbatim:                              Frames and pictures. (line 271)
 * vertex-dependent colors:               three.               (line  81)
 * Vertical:                              flowchart.           (line  81)
-* viewportheight:                        LaTeX usage.         (line  35)
+* viewportheight:                        LaTeX usage.         (line  46)
 * viewportmargin:                        three.               (line 262)
 * viewportsize:                          three.               (line 262)
-* viewportwidth:                         LaTeX usage.         (line  35)
+* viewportwidth:                         LaTeX usage.         (line  46)
 * views:                                 three.               (line 231)
 * vim:                                   Editing modes.       (line  33)
 * virtual functions:                     Structures.          (line 181)
@@ -9626,7 +9637,7 @@ Index
 * wheel mouse:                           GUI.                 (line   6)
 * while:                                 Programming.         (line  29)
 * white-space string delimiter mode:     Arrays.              (line 359)
-* width:                                 LaTeX usage.         (line  35)
+* width:                                 LaTeX usage.         (line  46)
 * windingnumber:                         Paths and guides.    (line 268)
 * word:                                  Arrays.              (line 359)
 * write <1>:                             Arrays.              (line 399)
@@ -9696,146 +9707,146 @@ Index
 
 
 Tag Table:
-Node: Top574
-Node: Description6832
-Node: Installation10333
-Node: UNIX binary distributions11386
-Node: MacOS X binary distributions12492
-Node: Microsoft Windows13376
-Ref: psview14086
-Node: Configuring15007
-Node: Search paths19228
-Node: Compiling from UNIX source20025
-Ref: multisampling20614
-Node: Editing modes23024
-Node: Subversion25456
-Node: Uninstall25919
-Node: Tutorial26269
-Ref: unitcircle30495
-Node: Drawing commands32431
-Node: draw34142
-Ref: arrows35290
-Node: fill40533
-Ref: gradient shading41577
-Node: clip45805
-Node: label46397
-Ref: Label47096
-Node: Bezier curves52821
-Node: Programming56398
-Ref: array iteration57212
-Node: Data types58293
-Ref: format67301
-Node: Paths and guides70904
-Ref: circle71158
-Ref: arctime76646
-Ref: extension80501
-Node: Pens87184
-Ref: fillrule94550
-Ref: basealign95447
-Ref: transparency98274
-Ref: makepen101717
-Ref: overwrite102555
-Node: Transforms103765
-Node: Frames and pictures105556
-Ref: envelope106697
-Ref: size107780
-Ref: unitsize108767
-Ref: shipout109827
-Ref: filltype112160
-Ref: add115297
-Ref: add about116243
-Ref: tex119181
-Node: Files120055
-Ref: cd121020
-Ref: scroll125452
-Node: Variable initializers128525
-Node: Structures131250
-Node: Operators138694
-Node: Arithmetic & logical139008
-Node: Self & prefix operators140982
-Node: User-defined operators141770
-Node: Implicit scaling142681
-Node: Functions143244
-Ref: stack overflow145997
-Node: Default arguments146561
-Node: Named arguments147300
-Node: Rest arguments149462
-Node: Mathematical functions152272
-Node: Arrays156879
-Ref: sort163929
-Ref: tridiagonal166333
-Ref: solve167561
-Node: Slices171754
-Node: Casts175644
-Node: Import177609
-Node: Static182836
-Node: LaTeX usage185730
-Node: Base modules191468
-Node: plain193968
-Node: simplex194620
-Node: math194893
-Node: interpolate197598
-Node: geometry197877
-Node: trembling198471
-Node: stats198822
-Node: patterns199082
-Node: markers199318
-Node: tree201101
-Node: binarytree201289
-Node: drawtree201878
-Node: syzygy202082
-Node: feynman202356
-Node: roundedpath202631
-Node: animation202914
-Ref: animate203331
-Node: embed204470
-Node: slide206259
-Node: MetaPost206599
-Node: unicode207315
-Node: latin1208203
-Node: babel208571
-Node: labelpath208800
-Node: labelpath3209620
-Node: annotate209931
-Node: CAD210402
-Node: graph210712
-Ref: ticks217841
-Ref: pathmarkers231120
-Ref: marker231585
-Ref: markuniform231936
-Ref: errorbars233727
-Ref: automatic scaling237783
-Node: palette248429
-Ref: images248547
-Ref: image252718
-Ref: logimage253196
-Ref: penimage254002
-Node: three254446
-Ref: PostScript3D278988
-Node: obj280680
-Node: graph3280932
-Ref: GaussianSurface286057
-Node: grid3287161
-Node: solids287901
-Node: tube288849
-Node: flowchart291084
-Node: contour295653
-Node: contour3300778
-Node: slopefield301085
-Node: ode302522
-Node: Options302782
-Ref: configuration file308627
-Ref: settings308627
-Ref: convert309828
-Node: Interactive mode312795
-Ref: history314948
-Node: GUI316253
-Node: GUI installation316756
-Node: GUI usage317886
-Node: PostScript to Asymptote318789
-Node: Help319545
-Node: Debugger321281
-Node: Credits323066
-Node: Index323998
+Node: Top575
+Node: Description6834
+Node: Installation10335
+Node: UNIX binary distributions11388
+Node: MacOS X binary distributions12494
+Node: Microsoft Windows13378
+Ref: psview14088
+Node: Configuring15009
+Node: Search paths19230
+Node: Compiling from UNIX source20027
+Ref: multisampling20616
+Node: Editing modes23022
+Node: Subversion25454
+Node: Uninstall25917
+Node: Tutorial26267
+Ref: unitcircle30493
+Node: Drawing commands32429
+Node: draw34140
+Ref: arrows35288
+Node: fill40531
+Ref: gradient shading41575
+Node: clip45803
+Node: label46395
+Ref: Label47094
+Node: Bezier curves52819
+Node: Programming56396
+Ref: array iteration57210
+Node: Data types58291
+Ref: format67299
+Node: Paths and guides70902
+Ref: circle71156
+Ref: arctime76644
+Ref: extension80499
+Node: Pens87182
+Ref: fillrule94548
+Ref: basealign95445
+Ref: transparency98271
+Ref: makepen101714
+Ref: overwrite102552
+Node: Transforms103762
+Node: Frames and pictures105553
+Ref: envelope106694
+Ref: size107777
+Ref: unitsize108764
+Ref: shipout109824
+Ref: filltype112157
+Ref: add115294
+Ref: add about116240
+Ref: tex119178
+Node: Files120052
+Ref: cd121017
+Ref: scroll125449
+Node: Variable initializers128522
+Node: Structures131247
+Node: Operators138691
+Node: Arithmetic & logical139005
+Node: Self & prefix operators140979
+Node: User-defined operators141767
+Node: Implicit scaling142678
+Node: Functions143241
+Ref: stack overflow145994
+Node: Default arguments146558
+Node: Named arguments147297
+Node: Rest arguments149459
+Node: Mathematical functions152269
+Node: Arrays156876
+Ref: sort163926
+Ref: tridiagonal166330
+Ref: solve167558
+Node: Slices171751
+Node: Casts175641
+Node: Import177606
+Node: Static182833
+Node: LaTeX usage185727
+Node: Base modules191768
+Node: plain194268
+Node: simplex194920
+Node: math195193
+Node: interpolate197898
+Node: geometry198177
+Node: trembling198771
+Node: stats199122
+Node: patterns199382
+Node: markers199618
+Node: tree201401
+Node: binarytree201589
+Node: drawtree202178
+Node: syzygy202382
+Node: feynman202656
+Node: roundedpath202931
+Node: animation203214
+Ref: animate203631
+Node: embed204770
+Node: slide206373
+Node: MetaPost206713
+Node: unicode207429
+Node: latin1208317
+Node: babel208685
+Node: labelpath208914
+Node: labelpath3209734
+Node: annotate210045
+Node: CAD210516
+Node: graph210826
+Ref: ticks217955
+Ref: pathmarkers231234
+Ref: marker231699
+Ref: markuniform232050
+Ref: errorbars233841
+Ref: automatic scaling237897
+Node: palette248543
+Ref: images248661
+Ref: image252832
+Ref: logimage253310
+Ref: penimage254116
+Node: three254560
+Ref: PostScript3D279102
+Node: obj280794
+Node: graph3281046
+Ref: GaussianSurface286171
+Node: grid3287275
+Node: solids288015
+Node: tube288963
+Node: flowchart291198
+Node: contour295767
+Node: contour3300892
+Node: slopefield301199
+Node: ode302636
+Node: Options302896
+Ref: configuration file308741
+Ref: settings308741
+Ref: convert309942
+Node: Interactive mode312909
+Ref: history315062
+Node: GUI316367
+Node: GUI installation316870
+Node: GUI usage318000
+Node: PostScript to Asymptote318903
+Node: Help319659
+Node: Debugger321395
+Node: Credits323180
+Node: Index324112
 
 End Tag Table

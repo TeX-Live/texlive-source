@@ -109,17 +109,26 @@ string currentpoint="print currentpoint ASYy ASYx ";
 string ASYinit="/ASYX currentpoint pop def /ASYY currentpoint exch pop def ";
 string ASY1="ASY1 {"+ASYinit+"/ASY1 false def} if ";
 
-void showpath(std::ofstream& ps) 
+void endpath(std::ostream& ps) 
+{
+  ps << ASY1 << pathforall << " (M) " << currentpoint
+     << "currentpoint newpath moveto} bind def" << endl;
+}
+
+void fillpath(std::ostream& ps)
+{
+  ps << "/fill {closepath ";
+  endpath(ps);
+}
+
+void showpath(std::ostream& ps) 
 {
   ps << ASYx << newl
      << ASYy << newl
      << "/ASY1 true def" << newl
-     << "/fill {" << ASY1
-     << pathforall << " (M) " << currentpoint
-     << "currentpoint newpath moveto } bind def" << newl
-     << "/stroke {" << ASY1 << "strokepath "
-     << pathforall << " (M) " << currentpoint
-     << "currentpoint newpath moveto } bind def" << endl;
+     << "/stroke {strokepath ";
+  endpath(ps);
+  fillpath(ps);
 }
 
 array *readpath(const string& psname, bool keep,
@@ -246,7 +255,7 @@ array *readpath(const string& psname, bool keep,
 
 #endif
 namespace run {
-#line 199 "runlabel.in"
+#line 208 "runlabel.in"
 // void label(picture *f, string *s, string *size, transform t, pair position,           pair align, pen p);
 void gen_runlabel0(stack *Stack)
 {
@@ -257,26 +266,26 @@ void gen_runlabel0(stack *Stack)
   string * size=vm::pop<string *>(Stack);
   string * s=vm::pop<string *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 201 "runlabel.in"
+#line 210 "runlabel.in"
   f->append(new drawLabel(*s,*size,t,position,align,p));
 }
 
-#line 205 "runlabel.in"
+#line 214 "runlabel.in"
 // bool labels(picture *f);
 void gen_runlabel1(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 206 "runlabel.in"
+#line 215 "runlabel.in"
   {Stack->push<bool>(f->havelabels()); return;}
 }
 
-#line 210 "runlabel.in"
+#line 219 "runlabel.in"
 // realarray* texsize(string *s, pen p=CURRENTPEN);
 void gen_runlabel2(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   string * s=vm::pop<string *>(Stack);
-#line 211 "runlabel.in"
+#line 220 "runlabel.in"
   texinit();
   processDataStruct &pd=processData();
   
@@ -295,13 +304,13 @@ void gen_runlabel2(stack *Stack)
   {Stack->push<realarray*>(t); return;}
 }
 
-#line 230 "runlabel.in"
+#line 239 "runlabel.in"
 // patharray2* _texpath(stringarray *s, penarray *p);
 void gen_runlabel3(stack *Stack)
 {
   penarray * p=vm::pop<penarray *>(Stack);
   stringarray * s=vm::pop<stringarray *>(Stack);
-#line 231 "runlabel.in"
+#line 240 "runlabel.in"
   size_t n=checkArrays(s,p);
   if(n == 0) {Stack->push<patharray2*>(new array(0)); return;}
   
@@ -324,10 +333,10 @@ void gen_runlabel3(stack *Stack)
       tex.verbatimline(ASYx);
       tex.verbatimline(ASYy);
       tex.verbatimline("/ASY1 true def");
-      tex.verbatimline("/v {"+ASY1+"neg exch 4 copy 4 2 roll 2 copy 6 2 roll 2 copy (M) print ASYy ASYx (L) print ASYy add ASYx (L) print add ASYy add ASYx (L) print add ASYy ASYx (c) print} bind def");
       tex.verbatimline("/show {"+ASY1+
-                       "currentpoint newpath moveto false charpath "+
-                       pathforall+"} bind def}");
+                       "currentpoint newpath moveto false charpath "+pathforall+
+                       "} bind def");
+      tex.verbatimline("/V {"+ASY1+"Ry neg Rx 4 copy 4 2 roll 2 copy 6 2 roll 2 copy (M) print ASYy ASYx (L) print ASYy add ASYx (L) print add ASYy add ASYx (L) print add ASYy ASYx (c) print} bind def}");
     }
     tex.verbatimline(read<string>(s,i)+"%");
   }
@@ -404,13 +413,13 @@ void gen_runlabel3(stack *Stack)
   {Stack->push<patharray2*>(pdf ? readpath(psname,keep,0.1) : readpath(psname,keep,0.12,-1.0)); return;}
 }
 
-#line 334 "runlabel.in"
+#line 343 "runlabel.in"
 // patharray2* textpath(stringarray *s, penarray *p);
 void gen_runlabel4(stack *Stack)
 {
   penarray * p=vm::pop<penarray *>(Stack);
   stringarray * s=vm::pop<stringarray *>(Stack);
-#line 335 "runlabel.in"
+#line 344 "runlabel.in"
   size_t n=checkArrays(s,p);
   if(n == 0) {Stack->push<patharray2*>(new array(0)); return;}
   
@@ -481,13 +490,13 @@ void gen_runlabel4(stack *Stack)
   {Stack->push<patharray2*>(readpath(psname,keep,0.1)); return;}
 }
 
-#line 406 "runlabel.in"
+#line 415 "runlabel.in"
 // patharray* _strokepath(path g, pen p=CURRENTPEN);
 void gen_runlabel5(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   path g=vm::pop<path>(Stack);
-#line 407 "runlabel.in"
+#line 416 "runlabel.in"
   array *P=new array(0);
   if(g.size() == 0) {Stack->push<patharray*>(P); return;}
   
@@ -517,17 +526,17 @@ namespace trans {
 
 void gen_runlabel_venv(venv &ve)
 {
-#line 199 "runlabel.in"
+#line 208 "runlabel.in"
   addFunc(ve, run::gen_runlabel0, primVoid(), SYM(label), formal(primPicture(), SYM(f), false, false), formal(primString(), SYM(s), false, false), formal(primString(), SYM(size), false, false), formal(primTransform(), SYM(t), false, false), formal(primPair(), SYM(position), false, false), formal(primPair(), SYM(align), false, false), formal(primPen(), SYM(p), false, false));
-#line 205 "runlabel.in"
+#line 214 "runlabel.in"
   addFunc(ve, run::gen_runlabel1, primBoolean(), SYM(labels), formal(primPicture(), SYM(f), false, false));
-#line 210 "runlabel.in"
+#line 219 "runlabel.in"
   addFunc(ve, run::gen_runlabel2, realArray(), SYM(texsize), formal(primString(), SYM(s), false, false), formal(primPen(), SYM(p), true, false));
-#line 230 "runlabel.in"
+#line 239 "runlabel.in"
   addFunc(ve, run::gen_runlabel3, pathArray2() , SYM(_texpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 334 "runlabel.in"
+#line 343 "runlabel.in"
   addFunc(ve, run::gen_runlabel4, pathArray2() , SYM(textpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 406 "runlabel.in"
+#line 415 "runlabel.in"
   addFunc(ve, run::gen_runlabel5, pathArray() , SYM(_strokepath), formal(primPath(), SYM(g), false, false), formal(primPen(), SYM(p), true, false));
 }
 

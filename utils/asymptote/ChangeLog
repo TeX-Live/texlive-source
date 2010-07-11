@@ -1,4 +1,252 @@
 ------------------------------------------------------------------------
+r5107 | jcbowman | 2010-07-11 01:42:54 -0600 (Sun, 11 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/latexmkrc
+
+Quote file argument.
+
+------------------------------------------------------------------------
+r5106 | jcbowman | 2010-07-11 00:38:31 -0600 (Sun, 11 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/latexusage.tex
+
+Fix typo.
+
+------------------------------------------------------------------------
+r5105 | hammera | 2010-07-10 16:33:22 -0600 (Sat, 10 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/errors
+
+Changed extended for statement errors.
+
+------------------------------------------------------------------------
+r5104 | hammera | 2010-07-10 15:06:05 -0600 (Sat, 10 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/stm.cc
+
+Better error reporting for extended for statement.
+
+------------------------------------------------------------------------
+r5103 | jcbowman | 2010-07-10 12:03:58 -0600 (Sat, 10 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/latexmkrc
+
+Add latexmk custom dependency for EPS files.
+
+------------------------------------------------------------------------
+r5102 | jcbowman | 2010-07-10 10:52:15 -0600 (Sat, 10 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/doc/Makefile.in
+   M /trunk/asymptote/doc/asymptote.texi
+
+Fix makefile dependency; clean up files.
+
+------------------------------------------------------------------------
+r5101 | jcbowman | 2010-07-10 02:19:57 -0600 (Sat, 10 Jul 2010) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/plain.asy
+   M /trunk/asymptote/doc/extra/intro.asy
+   D /trunk/asymptote/examples/slidemovies.asy
+
+Fix asy() command.
+
+Delete duplicate example.
+
+------------------------------------------------------------------------
+r5100 | jcbowman | 2010-07-10 01:17:53 -0600 (Sat, 10 Jul 2010) | 14 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/doc/Makefile.in
+   M /trunk/asymptote/doc/asymptote.sty
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/externalprc.tex
+   A /trunk/asymptote/doc/latexmkrc
+   M /trunk/asymptote/doc/latexusage.tex
+   M /trunk/asymptote/examples/animations/inlinemovie.tex
+   M /trunk/asymptote/examples/animations/inlinemovie3.tex
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/runpicture.in
+   M /trunk/asymptote/texfile.cc
+
+Rename *_.pre preamble files to *.pre.
+
+In inlinetex mode, rename *_.tex files to *.tex.
+
+Allow the inline option to be specified for every figure.
+
+Implement a global attach default option.
+
+Do not generate a global latexusage.asy file along with the individual
+latexusage-*.asy files (this is a backwards incompatible change).
+
+Add latexmk support for compiling individually only those figures that have
+changed.
+
+------------------------------------------------------------------------
+r5099 | jcbowman | 2010-07-09 08:41:10 -0600 (Fri, 09 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/washermethod.asy
+
+Fix example.
+
+------------------------------------------------------------------------
+r5098 | jcbowman | 2010-07-08 12:01:55 -0600 (Thu, 08 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runlabel.in
+
+Minor simplification.
+
+------------------------------------------------------------------------
+r5097 | jcbowman | 2010-07-08 11:56:43 -0600 (Thu, 08 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/psfile.h
+   M /trunk/asymptote/runlabel.in
+
+Simplify texpath.
+
+------------------------------------------------------------------------
+r5096 | jcbowman | 2010-07-08 10:54:27 -0600 (Thu, 08 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/psfile.h
+   M /trunk/asymptote/runlabel.in
+
+Fix multiple fraction bar bug.
+
+------------------------------------------------------------------------
+r5095 | jcbowman | 2010-07-08 10:46:59 -0600 (Thu, 08 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_Label.asy
+
+Fix texpath("\relax").
+
+------------------------------------------------------------------------
+r5094 | jcbowman | 2010-07-07 09:54:38 -0600 (Wed, 07 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/runmath.in
+
+More portability fixes.
+
+------------------------------------------------------------------------
+r5093 | jcbowman | 2010-07-07 09:05:00 -0600 (Wed, 07 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/writePRC.cc
+
+Define __GNUC_PREREQ if undefined.
+
+------------------------------------------------------------------------
+r5092 | jcbowman | 2010-07-07 08:58:43 -0600 (Wed, 07 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/memory.h
+   M /trunk/asymptote/prc/PRC.h
+   M /trunk/asymptote/prc/PRCbitStream.h
+   M /trunk/asymptote/prc/writePRC.cc
+   M /trunk/asymptote/runmath.in
+
+More portability fixes.
+
+------------------------------------------------------------------------
+r5091 | hammera | 2010-07-07 07:22:38 -0600 (Wed, 07 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+
+Re-implemented sanity checks in venv.
+
+------------------------------------------------------------------------
+r5090 | jcbowman | 2010-07-06 23:45:57 -0600 (Tue, 06 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   A /trunk/asymptote/examples/cards.asy
+   M /trunk/asymptote/item.h
+   M /trunk/asymptote/path.cc
+   M /trunk/asymptote/path.h
+   M /trunk/asymptote/prc/PRC.h
+   M /trunk/asymptote/prc/PRCbitStream.h
+
+Fix warning messages/portability issues.
+
+------------------------------------------------------------------------
+r5089 | jcbowman | 2010-07-06 15:22:58 -0600 (Tue, 06 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_picture.asy
+
+Remove obsolete infinite coordinates.
+
+------------------------------------------------------------------------
+r5088 | jcbowman | 2010-07-06 14:57:47 -0600 (Tue, 06 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawlabel.cc
+
+Revert r4988 for frames.
+
+------------------------------------------------------------------------
+r5087 | jcbowman | 2010-07-06 11:57:08 -0600 (Tue, 06 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.sty
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/latexusage.tex
+
+Fix conflict between asymptote.sty and changebar package.
+
+------------------------------------------------------------------------
+r5086 | hammera | 2010-07-05 14:30:12 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+
+Minimized the impact of the NOHASH directive.
+
+------------------------------------------------------------------------
+r5085 | hammera | 2010-07-05 13:56:17 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+
+Common sub-expression elimination.
+
+------------------------------------------------------------------------
+r5084 | hammera | 2010-07-05 13:53:15 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+
+Removed 'key' class from venv.
+
+------------------------------------------------------------------------
+r5083 | hammera | 2010-07-05 13:35:19 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+
+Removed dead code.
+
+------------------------------------------------------------------------
+r5082 | hammera | 2010-07-05 11:46:23 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/entry.cc
+   M /trunk/asymptote/entry.h
+   M /trunk/asymptote/record.h
+   M /trunk/asymptote/symbol.cc
+   M /trunk/asymptote/symbol.h
+   M /trunk/asymptote/types.cc
+   M /trunk/asymptote/types.h
+
+Custom hash table in venv.
+
+------------------------------------------------------------------------
+r5081 | jcbowman | 2010-07-05 02:44:07 -0600 (Mon, 05 Jul 2010) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/animation.asy
+
+Support xelatex animations.
+
+------------------------------------------------------------------------
+r5080 | jcbowman | 2010-07-05 02:27:26 -0600 (Mon, 05 Jul 2010) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.02svn.
+------------------------------------------------------------------------
 r5079 | jcbowman | 2010-07-05 01:23:04 -0600 (Mon, 05 Jul 2010) | 2 lines
 Changed paths:
    M /trunk/asymptote/doc/png/Makefile.in

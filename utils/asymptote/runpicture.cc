@@ -541,7 +541,7 @@ void gen_runpicture31(stack *)
 {
 #line 312 "runpicture.in"
   if(getSetting<bool>("inlinetex")) {
-    unlink(auxname(outname(),"pre").c_str());
+    unlink(buildname(outname(),"pre").c_str());
   }
 }
 

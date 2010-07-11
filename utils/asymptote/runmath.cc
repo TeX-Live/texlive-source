@@ -524,7 +524,7 @@ void gen_runmath37(stack *Stack)
 {
   Int a=vm::pop<Int>(Stack);
 #line 299 "runmath.in"
-  if((unsignedInt) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
+  if((uint32_t) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
   {Stack->push<Int>(CLZ((uint32_t) a)); return;}
 }
 
@@ -534,8 +534,8 @@ void gen_runmath38(stack *Stack)
 {
   Int a=vm::pop<Int>(Stack);
 #line 305 "runmath.in"
-  if((unsignedInt) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
-#ifdef __GNUC__
+  if((uint32_t) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
+#if __GNUC_PREREQ(3,4)
   {Stack->push<Int>(__builtin_ctz(a)); return;}
 #else
   // find the number of trailing zeros in a 32-bit number
@@ -543,7 +543,7 @@ void gen_runmath38(stack *Stack)
     0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 
     31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
   };
-  {Stack->push<Int>(MultiplyDeBruijnBitPosition[((unsignedInt)((a & -a) * 0x077CB531U))
+  {Stack->push<Int>(MultiplyDeBruijnBitPosition[((uint32_t)((a & -a) * 0x077CB531U))
                                      >> 27]); return;}
 #endif
 }
