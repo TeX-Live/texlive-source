@@ -1,3 +1,9 @@
+2010-07-12  Taco Hoekwater <taco@luatex.org>
+
+	* luafontloader/src/luafflib.c: quick fix for crashes triggered
+	by invalid panose data in Open/TrueType fonts.
+	* luatex_svnversion.h: new version (rev 3736).
+
 2010-07-01  Taco Hoekwater <taco@luatex.org>
 
 	* lang/texlang.w, lua/lnodelib.c, luatex.c, luatex_svnversion.h,
