@@ -810,8 +810,8 @@ void synctexteehs(void)
 static inline void synctex_record_vlist(halfword p);
 
 /*  This message is sent when a vlist will be shipped out, more precisely at
- *  the beginning of the vliSYNCTEX_out procedure in *TeX.web.  It will be balanced
- *  by a synctex_tsilv, sent at the end of the vliSYNCTEX_out procedure.  p is the
+ *  the beginning of the vlist_out procedure in *TeX.web.  It will be balanced
+ *  by a synctex_tsilv, sent at the end of the vlist_out procedure.  p is the
  *  address of the vlist We assume that p is really a vlist node! */
 void synctexvlist(halfword this_box)
 {
@@ -835,7 +835,7 @@ static inline void synctex_record_tsilv(halfword p);
 
 /*  Recording a "f" line ending a vbox: this message is sent whenever a vlist
  *  has been shipped out. It is used to close the vlist nesting level. It is
- *  sent at the end of the vliSYNCTEX_out procedure in *TeX.web to balance a former
+ *  sent at the end of the vlist_out procedure in *TeX.web to balance a former
  *  synctex_vlist sent at the beginning of that procedure.    */
 void synctextsilv(halfword this_box)
 {
@@ -881,8 +881,8 @@ void synctexvoidvlist(halfword p, halfword this_box __attribute__ ((unused)))
 static inline void synctex_record_hlist(halfword p);
 
 /*  This message is sent when an hlist will be shipped out, more precisely at
- *  the beginning of the hliSYNCTEX_out procedure in *TeX.web.  It will be balanced
- *  by a synctex_tsilh, sent at the end of the hliSYNCTEX_out procedure.  p is the
+ *  the beginning of the hlist_out procedure in *TeX.web.  It will be balanced
+ *  by a synctex_tsilh, sent at the end of the hlist_out procedure.  p is the
  *  address of the hlist We assume that p is really an hlist node! */
 void synctexhlist(halfword this_box)
 {
@@ -906,7 +906,7 @@ static inline void synctex_record_tsilh(halfword p);
 
 /*  Recording a ")" line ending an hbox this message is sent whenever an hlist
  *  has been shipped out it is used to close the hlist nesting level. It is
- *  sent at the end of the hliSYNCTEX_out procedure in *TeX.web to balance a former
+ *  sent at the end of the hlist_out procedure in *TeX.web to balance a former
  *  synctex_hlist sent at the beginning of that procedure.    */
 void synctextsilh(halfword this_box)
 {

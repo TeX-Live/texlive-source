@@ -105,6 +105,10 @@ Note that version 1.7 was delivered privately.
 1.11: Sun Jan  17 09:12:31 UTC 2010
 - Bug fix in synctex_parser.c, function synctex_node_box_visible_v: 'x' replaced by 'y'.
   Only 3rd party tools are concerned.
+1.12: Mon Jul 19 21:52:10 UTC 2010
+- Bug fix in synctex_parser.c, function __synctex_open: the io_mode was modified even in case of a non zero return,
+causing a void .synctex.gz file to be created even if it was not expected. Reported by Marek Kasik concerning a bug on evince.
+  Only 3rd party tools are concerned.
 
 Acknowledgments:
 ----------------
