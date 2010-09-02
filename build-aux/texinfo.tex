@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-06-17.11}
+\def\texinfoversion{2010-08-17.17}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4212,7 +4212,7 @@ end
 \def\commondummies{%
   %
   % \definedummyword defines \#1 as \string\#1\space, thus effectively
-  % preventing its expansion.  This is used only for control% words,
+  % preventing its expansion.  This is used only for control words,
   % not control letters, because the \space would be incorrect for
   % control characters, but is needed to separate the control word
   % from whatever follows.
@@ -4231,6 +4231,7 @@ end
   \commondummiesnofonts
   %
   \definedummyletter\_%
+  \definedummyletter\-%
   %
   % Non-English letters.
   \definedummyword\AA
@@ -4267,6 +4268,7 @@ end
   \definedummyword\TeX
   %
   % Assorted special characters.
+  \definedummyword\arrow
   \definedummyword\bullet
   \definedummyword\comma
   \definedummyword\copyright
@@ -4277,11 +4279,13 @@ end
   \definedummyword\equiv
   \definedummyword\error
   \definedummyword\euro
+  \definedummyword\expansion
+  \definedummyword\geq
   \definedummyword\guillemetleft
   \definedummyword\guillemetright
   \definedummyword\guilsinglleft
   \definedummyword\guilsinglright
-  \definedummyword\expansion
+  \definedummyword\leq
   \definedummyword\minus
   \definedummyword\ogonek
   \definedummyword\pounds
@@ -4338,7 +4342,9 @@ end
   \definedummyword\b
   \definedummyword\i
   \definedummyword\r
+  \definedummyword\sansserif
   \definedummyword\sc
+  \definedummyword\slanted
   \definedummyword\t
   %
   % Commands that take arguments.
@@ -4347,10 +4353,12 @@ end
   \definedummyword\code
   \definedummyword\command
   \definedummyword\dfn
+  \definedummyword\dmn
   \definedummyword\email
   \definedummyword\emph
   \definedummyword\env
   \definedummyword\file
+  \definedummyword\indicateurl
   \definedummyword\kbd
   \definedummyword\key
   \definedummyword\math
@@ -4378,7 +4386,7 @@ end
   \def\definedummyaccent##1{\let##1\asis}%
   % We can just ignore other control letters.
   \def\definedummyletter##1{\let##1\empty}%
-  % Hopefully, all control words can become @asis.
+  % All control words become @asis by default; overrides below.
   \let\definedummyword\definedummyaccent
   %
   \commondummiesnofonts
@@ -4390,8 +4398,14 @@ end
   %
   \def\ { }%
   \def\@{@}%
-  % how to handle braces?
   \def\_{\normalunderscore}%
+  \def\-{}% @- shouldn't affect sorting
+  %
+  % Unfortunately, texindex is not prepared to handle braces in the
+  % content at all.  So for index sorting, we map @{ and @} to strings
+  % starting with |, since that ASCII character is between ASCII { and }.
+  \def\{{|a}%
+  \def\}{|b}%
   %
   % Non-English letters.
   \def\AA{AA}%
@@ -4419,6 +4433,7 @@ end
   %
   % Assorted special characters.
   % (The following {} will end up in the sort string, but that's ok.)
+  \def\arrow{->}%
   \def\bullet{bullet}%
   \def\comma{,}%
   \def\copyright{copyright}%
@@ -4428,10 +4443,12 @@ end
   \def\error{error}%
   \def\euro{euro}%
   \def\expansion{==>}%
+  \def\geq{>=}%
   \def\guillemetleft{<<}%
   \def\guillemetright{>>}%
   \def\guilsinglleft{<}%
   \def\guilsinglright{>}%
+  \def\leq{<=}%
   \def\minus{-}%
   \def\point{.}%
   \def\pounds{pounds}%
@@ -7452,7 +7469,8 @@ end
     \angleleft un\-de\-fined\angleright
     \iflinks
       \ifhavexrefs
-        \message{\linenumber Undefined cross reference `#1'.}%
+        {\toks0 = {#1}% avoid expansion of possibly-complex value
+         \message{\linenumber Undefined cross reference `\the\toks0'.}}%
       \else
         \ifwarnedxrefs\else
           \global\warnedxrefstrue
