@@ -30,7 +30,7 @@ Options:
   
 If standard input is a terminal, --verbose is on by default.
 
-For more information, see the &lsquo;Filename database&rsquo; section of
+For more information, see the \`Filename database' section of
 Kpathsea manual available at http://tug.org/kpathsea.
 
 Report bugs to tex-k@tug.org.
@@ -183,7 +183,7 @@ for TEXMFLS_R in "$@"; do
   # in directory names.
   # 
   echo "./:" >>"$db_file_tmp"
-  vc_dirs='\.\(bzr\|git\|hg\|svn\)\|CVS\|RCS\|_darcs'
+  vc_dirs='\.\(bzr\|git\|hg\|svn\)\|_darcs'
   (cd "$TEXMFLS_R" && \ls -LRa 2>/dev/null) \
    | sed -e '/^$/{n;s%^\./%%;s%^%./%;}; /^\.$/d; /^\.\.$/d; /^'$vc_dirs'$/d;' \
          -e '/^[\.\/]*lsR[0-9]*\.tmp:*$/d' \

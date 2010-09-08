@@ -1,3 +1,9 @@
+2010-09-09  Karl Berry  <karl@tug.org>
+
+	* mktexlsr (vc_dirs): remove CVS and RCS from the list,
+	for compatibility with the corresponding change on Windows,
+	made so that rcs/rcs.sty is not ignored.
+
 2010-06-13  Karl Berry  <karl@tug.org>
 
 	* doc/unixtex.texi: reduce to current reality.
