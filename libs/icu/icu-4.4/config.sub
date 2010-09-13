@@ -4,7 +4,7 @@
 #   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
 #   Free Software Foundation, Inc.
 
-timestamp='2010-09-07'
+timestamp='2010-09-11'
 
 # This file is (in principle) common to ALL GNU software.
 # The presence of a machine in this file suggests that SOME GNU software
@@ -861,6 +861,12 @@ case $basic_machine in
 		;;
 	np1)
 		basic_machine=np1-gould
+		;;
+        neo-tandem)
+		basic_machine=neo-tandem
+		;;
+        nse-tandem)
+		basic_machine=nse-tandem
 		;;
 	nsr-tandem)
 		basic_machine=nsr-tandem
