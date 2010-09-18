@@ -1,3 +1,9 @@
+2010-09-18  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (DVIPDFMXINPUTS): do not include ., so attackers
+	cannot create a dvipdfmx.cfg with, e.g., xetex.
+	Report from Heiko, 16 Sep 2010 22:32:25.
+
 2010-09-09  Karl Berry  <karl@tug.org>
 
 	* mktexlsr (vc_dirs): remove CVS and RCS from the list,

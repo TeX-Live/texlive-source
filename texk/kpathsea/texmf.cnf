@@ -428,6 +428,10 @@ TEX4HTINPUTS = .;$TEXMF/tex4ht/base//;$TEXMF/tex4ht/ht-fonts/{$TEX4HTFONTSET}//
 TW_LIBPATH = $TEXMFCONFIG/texworks
 TW_INIPATH = $TW_LIBPATH
 
+% For security, do not look in . for dvipdfmx.cfg, since the D option
+% would allow command execution.
+DVIPDFMXINPUTS = $TEXMF/dvipdfmx
+
 % Find scripts that are distributed/installed in the texmf tree.
 
 % Lua needs to look in TEXINPUTS for lua scripts distributed with packages.
