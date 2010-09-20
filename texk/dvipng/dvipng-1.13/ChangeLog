@@ -1,3 +1,7 @@
+2010-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+	* special.c: fix WIN32 bug that dvipng.exe waits infinitely for some
+	kind of eps files.
+
 2010-03-17  Jan-Ake Larsson  <jalar@mai.liu.se>
 
 	* Release 1.13

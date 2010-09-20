@@ -290,11 +290,41 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
       fprintf(psstream, "gsave %f %f %f setrgbcolor clippath fill grestore",
 	      bgred/255.0, bggreen/255.0, bgblue/255.0);
     }
+
+/* WIN32
+write the following at the top of an eps:
+
+%!
+/DVIPNGDICT 100 dict def
+DVIPNGDICT begin /showpage {} def end
+DVIPNGDICT begin
+*/
+
+#ifdef WIN32
+    fprintf(psstream, "\n%%!\n/DVIPNGDICT 100 dict def\n");
+    fprintf(psstream, "DVIPNGDICT begin /showpage {} def end\n");
+    fprintf(psstream, "DVIPNGDICT begin\n");
+#endif
     writepscode(pscodep,psstream);
+
+/* WIN32
+write the following at the very end of an eps:
+
+end
+showpage
+*/
+
+#ifdef WIN32
+    fprintf(psstream, "\nend\nshowpage\n");
+#endif
+
+#ifndef WIN32
     if (showpage) {
       DEBUG_PRINT(DEBUG_GS,("\n  PS CODE:\tshowpage"));
       fprintf(psstream, " showpage ");
     }
+#endif
+
     fclose(psstream);
   }
   if (pngstream) {
@@ -323,6 +353,12 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
 
   if (psimage == NULL) {
     DEBUG_PRINT(DEBUG_GS,("\n  GS OUTPUT:\tNO IMAGE "));
+
+/*
+  For WIN32 we always output showpage.
+*/
+
+#ifndef WIN32
     if (!showpage) {
       showpage=true;
       DEBUG_PRINT(DEBUG_GS,("(will try adding \"showpage\") "));
@@ -331,6 +367,8 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
 		     bgred,bggreen,bgblue);
       showpage=false;
     }
+#endif
+
 #ifdef DEBUG
   } else {
     DEBUG_PRINT(DEBUG_GS,("\n  GS OUTPUT:\t%dx%d image ",
