@@ -40,7 +40,7 @@ gsftopk.1: gsftopk1.sed sedscript
 sedscript: mksedscript Makefile
 	$(SHELL) $(srcdir)/mksedscript $(AM_CPPFLAGS) >$@
 
-DISTCLEANFILES = gsftopk.1 sedscript
+DISTCLEANFILES += gsftopk.1 sedscript
 
 EXTRA_DIST = gsftopk1.sed mksedscript
 
