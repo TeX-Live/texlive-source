@@ -1,3 +1,10 @@
+2010-09-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Added patch-04-freetype to allow to build with freetype-2.4.0
+
+	Problem detected and solution inspired by Paul Vojta
+	<vojta@math.berkeley.edu>, mail from Tue, 17 Aug 2010 12:30:13.
+
 2010-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Portability patches from Martin Gieseking.

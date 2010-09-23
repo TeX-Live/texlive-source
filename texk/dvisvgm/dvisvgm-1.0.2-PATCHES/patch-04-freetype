@@ -1,0 +1,12 @@
+diff -ur dvisvgm-1.0.2.orig/src/FontEngine.cpp dvisvgm-1.0.2/src/FontEngine.cpp
+--- dvisvgm-1.0.2.orig/src/FontEngine.cpp	2010-06-16 19:08:12.000000000 +0200
++++ dvisvgm-1.0.2/src/FontEngine.cpp	2010-09-23 17:52:38.000000000 +0200
+@@ -262,7 +262,7 @@
+ 
+ 
+ // handle API change in freetype version 2.2.1
+-#if FREETYPE_MAJOR >= 2 && FREETYPE_MINOR >= 2 && FREETYPE_PATCH >= 1
++#if ((FREETYPE_MAJOR >> 16)|(FREETYPE_MINOR >> 8)|FREETYPE_PATCH) >= ((2>>16)|(2>>8)|1)
+ 	typedef const FT_Vector *FTVectorPtr;
+ #else
+ 	typedef FT_Vector *FTVectorPtr;
