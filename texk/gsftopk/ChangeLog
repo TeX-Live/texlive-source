@@ -1,3 +1,8 @@
+2010-09-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (DISTCLEANFILES): Use += instead of = to add
+	more files.
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* gsftopk.c: Use kpse_set_program_name() instead of

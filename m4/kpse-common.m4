@@ -111,7 +111,7 @@ m4_define([_KPSE_LIB_FLAGS_TL],
 m4_if(m4_index([ $3 ], [ tree ]), [-1],
 [KPSE_]AS_TR_CPP([$1])[_OPTIONS([with-system])[]dnl
 if test "x$with_system_[]AS_TR_SH($1)" = xyes; then
-  AS_TR_CPP([kpse-$1-system-flags])[]dnl
+  ]AS_TR_CPP([kpse-$1-system-flags])[[]dnl
 else
 ])[]dnl m4_if
   AS_TR_CPP($1)[_INCLUDES=`echo '$4' | sed \

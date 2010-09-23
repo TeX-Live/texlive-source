@@ -7,15 +7,17 @@ You may freely use, modify and/or distribute this file.
 1. Currently used versions of Tools
 ===================================
 
-autoconf (GNU Autoconf) 2.65
+autoconf (GNU Autoconf) 2.68
 
 automake (GNU automake) 1.11.1
 
-ltmain.sh (GNU libtool) 2.2.6
+ltmain.sh (GNU libtool) 2.4
 
 bison (GNU Bison) 2.4.1
 
 flex 2.5.35
+
+m4 (GNU M4) 1.4.15
 
 2. Updating the TL build system
 ===============================

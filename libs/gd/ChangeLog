@@ -1,3 +1,7 @@
+2010-09-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Remove unused PNGLIB_* variables.
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): Add -DNONDLL.
