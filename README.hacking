@@ -13,7 +13,7 @@ automake (GNU automake) 1.11.1
 
 ltmain.sh (GNU libtool) 2.4
 
-bison (GNU Bison) 2.4.1
+bison (GNU Bison) 2.4.3
 
 flex 2.5.35
 
