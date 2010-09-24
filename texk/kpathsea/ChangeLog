@@ -1,3 +1,10 @@
+2010-09-24  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TTFONTS): also read opentype//.
+	(OPENTYPEFONTS): also read truetype//.
+	Because common practice is to use .ttf/.ttc for TrueType-flavored
+	OpenType fonts (and .otf only for PostScript-flavored OpenType).
+
 2010-09-18  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (DVIPDFMXINPUTS): do not include ., so attackers

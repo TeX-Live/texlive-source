@@ -345,10 +345,10 @@ T1FONTS = .;$TEXMF/fonts/type1//;$OSFONTDIR//
 AFMFONTS = .;$TEXMF/fonts/afm//;$OSFONTDIR//
 
 % TrueType outline fonts.
-TTFONTS = .;$TEXMF/fonts/truetype//;$OSFONTDIR//
+TTFONTS = .;$TEXMF/fonts/{truetype,opentype}//;$OSFONTDIR//
 
 % Opentype outline fonts.
-OPENTYPEFONTS = .;$TEXMF/fonts/opentype//;$OSFONTDIR//
+OPENTYPEFONTS = .;$TEXMF/fonts/{opentype,truetype}//;$OSFONTDIR//
 
 % Type 42 outline fonts.
 T42FONTS = .;$TEXMF/fonts/type42//
