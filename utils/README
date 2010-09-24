@@ -19,8 +19,11 @@ ps2eps 1.64 - checked 19feb08
   http://www.ipv6.tm.uka.de/~bless/ps2eps
 
 psutils p17 - checked 25nov06
+  http://www.tardis.ed.ac.uk/~ajcd/psutils/index.html
+  -> http://www.ctan.org/support/psutils/
+  https://savannah.nongnu.org/bugs/?30782
+  -> http://www.connochaetos.org/misc/psutils-libre-1.17.tar.gz
   (Fabrice made small modifications for Windows, it seems)
-  http://www.ctan.org/support/psutils/
 
 t1utils 1.36 - checked 7jun10
   http://www.lcdf.org/type/
