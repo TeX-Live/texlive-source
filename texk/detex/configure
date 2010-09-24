@@ -616,7 +616,6 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-OTHER_TREE
 DETEX_TREE
 KPATHSEA_RULE
 KPATHSEA_DEPEND
@@ -14217,9 +14216,6 @@ fi
 
 
 DETEX_TREE=detex-2.8
-
-
-OTHER_TREE=`echo $DETEX_TREE | tr 78 87`
 
 
 ac_config_files="$ac_config_files Makefile"

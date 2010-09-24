@@ -10,9 +10,6 @@ EXTRA_DIST = $(DETEX_TREE)
 ## Patches applied to the original source tree
 EXTRA_DIST += $(DETEX_TREE)-PATCHES
 
-## Prepare for switch detex-2.7 -> detex-2.8
-EXTRA_DIST += $(OTHER_TREE) $(OTHER_TREE)-PATCHES
-
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
