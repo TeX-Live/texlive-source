@@ -32,6 +32,6 @@ teckit 2.5.1 - http://scripts.sil.org/svn-view/teckit/
 xpdf 3.02pl4 - http://www.foolabs.com/xpdf/
   with modifications for pdftex, luatex, and xetex
 
-zlib 1.2.3 - http://www.zlib.net/ - used by many
+zlib 1.2.5 - http://www.zlib.net/ - used by many
 
 zziplib 0.13.58 - http://zziplib.sourceforge.net/ - used by luatex
