@@ -1,3 +1,7 @@
+2010-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpng-1.4.4.
+
 2010-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, libpng-*-PATCHES/TL-Changes: Remove ltmain.sh.

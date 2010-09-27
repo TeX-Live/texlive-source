@@ -1,0 +1,11 @@
+Changes applied to the libpng-1.4.4/ tree as obtained from:
+	http://www.libpng.org/ libpng-1.4.4.tar.xz
+
+Removed:
+	config.guess
+	config.sub
+	depcomp
+	install-sh
+	ltmain.sh
+	missing
+
