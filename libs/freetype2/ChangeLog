@@ -1,3 +1,7 @@
+2010-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import freetype-2.4.2.
+
 2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (ft-libs): Use again '--libs' instead of
