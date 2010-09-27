@@ -1,4 +1,4 @@
-Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	Cross compiling
@@ -34,5 +34,5 @@ and C++ programs required for the build process as configure arguments
 	BUILDLDFLAGS=...
 
 Building the Web2C programs requires sufficiently recent installed versions
-of tangle, ctangle, and tie (and possibly otangle and/or luatangle).
+of tangle, ctangle, and tie (and possibly otangle).
 

@@ -12532,7 +12532,7 @@ ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
 
-$as_echo "#define TEX_LIVE_VERSION \"2010\"" >>confdefs.h
+$as_echo "#define TEX_LIVE_VERSION \"2011/dev\"" >>confdefs.h
 
 
 for ac_header in ctype.h types.h locale.h
