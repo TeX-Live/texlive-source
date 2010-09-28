@@ -33,8 +33,12 @@ if test "x$ac_cv_header_stdc" != xyes; then
   AC_MSG_ERROR([Sorry, can't do anything for you])
 fi
 
+AC_CHECK_HEADER([errno.h],
+                [ZLIB_DEFINES=],
+                [ZLIB_DEFINES="-DNO_ERRNO_H"])
+
 AC_CHECK_HEADERS([unistd.h])
-dnl zlib-1.2.3 has zconf.in.h, whereas zlib-1.2.4 has zconf.h.in
+dnl zlib-1.2.3 has zconf.in.h, whereas zlib-1.2.5 has zconf.h.in
 m4_if(zlib_version, [1.2.3],
       [
 ZCONF_SRC=zlib-[]zlib_version/zconf.in.h
@@ -43,7 +47,7 @@ if test x"$ac_cv_header_unistd_h" = xyes; then
 else
   zconf_sh='cp $srcdir/'"$ZCONF_SRC"
 fi
-AC_SUBST([OTHER_TREE], [zlib-1.2.4])],
+AC_SUBST([OTHER_TREE], [zlib-1.2.5])],
       [
 ZCONF_SRC=zlib-[]zlib_version/zconf.h.in
 if test x"$ac_cv_header_unistd_h" = xyes; then
@@ -51,15 +55,27 @@ if test x"$ac_cv_header_unistd_h" = xyes; then
 else
   zconf_sh='cp $srcdir/'"$ZCONF_SRC"
 fi
+
+AC_SYS_LARGEFILE
+AC_FUNC_FSEEKO
+dnl add to ZLIB_DEFINES
+if test "$enable_largefile" != no; then
+  AS_CASE([$ac_cv_sys_file_offset_bits],
+          [no], [],
+          [unknown], [AS_CASE([$ac_cv_sys_large_files],
+                              [no | unknown], [],
+                              [ZLIB_DEFINES="$ZLIB_DEFINES -D_LARGE_FILES=1"])],
+          [ZLIB_DEFINES="$ZLIB_DEFINES -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE=1"])
+fi
+AS_CASE([$ac_cv_sys_largefile_source],
+        [no | unknown], [],
+        [ZLIB_DEFINES="$ZLIB_DEFINES -D_LARGEFILE_SOURCE=1"])
+
 AC_SUBST([OTHER_TREE], [zlib-1.2.3])])
 AM_CONDITIONAL([ZLIB123], [test "x]zlib_version[" = x1.2.3])
 AC_CONFIG_COMMANDS([zconf.h],
                    [eval "$zconf_sh" zconf.h],
                    [zconf_sh='$zconf_sh'])
-
-AC_CHECK_HEADER([errno.h],
-                [ZLIB_DEFINES=],
-                [ZLIB_DEFINES="-DNO_ERRNO_H"])
 
 AC_MSG_CHECKING([for mmap support])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>

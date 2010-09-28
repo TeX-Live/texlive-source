@@ -7,6 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([tardate.ac])[] dnl define tex_live_tardate
+m4_include([version.ac])[] dnl define tex_live_version
 AC_INIT([TeX Live], tex_live_tardate, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([m4/kpse-pkgs.m4])
@@ -165,7 +166,7 @@ msg_compiling="$msg_compiling
 test "x$srcdir" = x. || msg_compiling="$msg_compiling
       from sources in $kpse_src"
 AC_MSG_RESULT([
-** Configuration summary for $PACKAGE_STRING:
+** Configuration summary for $PACKAGE_STRING (tex_live_version$with_banner_add):
 
    $msg_compiling])
 case $kpse_src$kpse_bld in
