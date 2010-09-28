@@ -1,3 +1,8 @@
+2010-09-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatex.test (new): Just testing 'luatex -credits'.
+	* luatexdir/am/luatex.am: Adjusted.
+
 2010-07-12  Taco Hoekwater <taco@luatex.org>
 
 	* luafontloader/src/luafflib.c: quick fix for crashes triggered

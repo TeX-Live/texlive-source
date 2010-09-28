@@ -1,3 +1,8 @@
+2010-09-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.test (new): Just testing 'xetex -version'.
+	* xetexdir/am/xetex.am: Adjusted.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/xetex.am (xetex_cppflags): Add $(AM_CPPFLAGS).

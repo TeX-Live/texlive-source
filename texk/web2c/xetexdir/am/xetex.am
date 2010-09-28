@@ -233,6 +233,16 @@ EXTRA_DIST += xetexdir/XeTeXFontMgr_Mac.mm
 
 EXTRA_DIST += xetexdir/ChangeLog
 
+# XeTeX Tests
+#
+xetex_tests = xetexdir/xetex.test
+
+EXTRA_DIST += $(xetex_tests)
+
+if XETEX
+TESTS += $(xetex_tests)
+endif XETEX
+
 ## Not used
 ##
 EXTRA_DIST += xetexdir/LICENSE.txt

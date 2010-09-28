@@ -89,6 +89,16 @@ EXTRA_DIST += \
 	pdftexdir/README \
 	pdftexdir/change-files.txt
 
+# pdfTeX Tests
+#
+pdftex_tests = pdftexdir/pdftex.test
+
+EXTRA_DIST += $(pdftex_tests)
+
+if PDFTEX
+TESTS += $(pdftex_tests)
+endif PDFTEX
+
 ## Not used
 ##
 EXTRA_DIST += pdftexdir/pdftex.mak
