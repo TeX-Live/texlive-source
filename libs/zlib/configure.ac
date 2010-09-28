@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([zlib_version], [1.2.3])[]dnl using unmodified zlib source tree
+m4_define([zlib_version], [1.2.5])[]dnl using unmodified zlib source tree
 AC_INIT([zlib for TeX Live], zlib_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([zlib-]zlib_version[/zlib.h])

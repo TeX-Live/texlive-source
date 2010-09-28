@@ -23,7 +23,7 @@ EXTRA_DIST = $(ZLIB_TREE)
 ##
 EXTRA_DIST += $(ZLIB_TREE)-PATCHES
 
-## Prepare for switch zlib-1.2.3 -> zlib-1.2.4
+## Prepare for switch zlib-1.2.3 -> zlib-1.2.5
 EXTRA_DIST += $(OTHER_TREE) $(OTHER_TREE)-PATCHES
 
 # in case of an SVN repository
