@@ -1,3 +1,8 @@
+2010-09-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writeimg.c: Use png_get_*() instead of directly accessing
+	fields of the png_info and png_ptr structs.
+
 2010-09-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.test (new): Just testing 'pdftex -version'.
