@@ -1,3 +1,10 @@
+2010-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported release 1.0.3.
+
+	Removed patch-01-path, patch-02-namespace, and patch-03-esc,
+	now all included in the original source tree.
+
 2010-09-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Added patch-04-freetype to allow to build with freetype-2.4.0

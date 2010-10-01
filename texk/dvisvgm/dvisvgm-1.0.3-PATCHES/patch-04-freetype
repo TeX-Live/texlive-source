@@ -1,6 +1,8 @@
-diff -ur dvisvgm-1.0.2.orig/src/FontEngine.cpp dvisvgm-1.0.2/src/FontEngine.cpp
---- dvisvgm-1.0.2.orig/src/FontEngine.cpp	2010-06-16 19:08:12.000000000 +0200
-+++ dvisvgm-1.0.2/src/FontEngine.cpp	2010-09-23 17:52:38.000000000 +0200
+	Allow to build with, e.g., freetype-2.4.0.
+
+diff -ur dvisvgm-1.0.3.orig/src/FontEngine.cpp dvisvgm-1.0.3/src/FontEngine.cpp
+--- dvisvgm-1.0.3.orig/src/FontEngine.cpp	2010-08-04 10:33:35.000000000 +0200
++++ dvisvgm-1.0.3/src/FontEngine.cpp	2010-10-01 15:57:26.367478311 +0200
 @@ -262,7 +262,7 @@
  
  

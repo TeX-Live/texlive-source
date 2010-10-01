@@ -1,0 +1,11 @@
+Changes applied to the dvisvgm-1.0.3 tree as obtained from:
+	http://downloads.sourceforge.net/dvisvgm/dvisvgm-1.0.3.tar.gz
+
+Removed:
+	config.guess
+	config.rpath
+	config.sub
+	depcomp
+	install-sh
+	missing
+
