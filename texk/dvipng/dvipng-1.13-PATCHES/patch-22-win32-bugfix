@@ -1,0 +1,93 @@
+diff -ur dvipng-1.13.orig/ChangeLog dvipng-1.13/ChangeLog
+--- dvipng-1.13.orig/ChangeLog	2010-03-17 22:59:40.000000000 +0100
++++ dvipng-1.13/ChangeLog	2010-10-02 13:16:12.428050971 +0200
+@@ -1,3 +1,12 @@
++2010-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
++
++	* special.c (ps2png): Drop unused 'bool showpage' for WIN32.
++
++2010-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
++
++	* special.c (ps2png): fix WIN32 bug that dvipng.exe waits
++	infinitely for some kind of eps files.
++
+ 2010-03-17  Jan-Ake Larsson  <jalar@mai.liu.se>
+ 
+ 	* Release 1.13
+diff -ur dvipng-1.13.orig/special.c dvipng-1.13/special.c
+--- dvipng-1.13.orig/special.c	2010-03-18 12:32:01.000000000 +0100
++++ dvipng-1.13/special.c	2010-10-02 13:05:54.952668093 +0200
+@@ -167,7 +167,9 @@
+   char resolution[STRSIZE]; 
+   /*   char devicesize[STRSIZE];  */
+   gdImagePtr psimage=NULL;
++#ifndef WIN32
+   static bool showpage=false;
++#endif
+ 
+   sprintf(resolution, "-r%dx%d",hresolution,vresolution);
+   /* Future extension for \rotatebox
+@@ -290,11 +292,41 @@
+       fprintf(psstream, "gsave %f %f %f setrgbcolor clippath fill grestore",
+ 	      bgred/255.0, bggreen/255.0, bgblue/255.0);
+     }
++
++/* WIN32
++write the following at the top of an eps:
++
++%!
++/DVIPNGDICT 100 dict def
++DVIPNGDICT begin /showpage {} def end
++DVIPNGDICT begin
++*/
++
++#ifdef WIN32
++    fprintf(psstream, "\n%%!\n/DVIPNGDICT 100 dict def\n");
++    fprintf(psstream, "DVIPNGDICT begin /showpage {} def end\n");
++    fprintf(psstream, "DVIPNGDICT begin\n");
++#endif
+     writepscode(pscodep,psstream);
++
++/* WIN32
++write the following at the very end of an eps:
++
++end
++showpage
++*/
++
++#ifdef WIN32
++    fprintf(psstream, "\nend\nshowpage\n");
++#endif
++
++#ifndef WIN32
+     if (showpage) {
+       DEBUG_PRINT(DEBUG_GS,("\n  PS CODE:\tshowpage"));
+       fprintf(psstream, " showpage ");
+     }
++#endif
++
+     fclose(psstream);
+   }
+   if (pngstream) {
+@@ -323,6 +355,12 @@
+ 
+   if (psimage == NULL) {
+     DEBUG_PRINT(DEBUG_GS,("\n  GS OUTPUT:\tNO IMAGE "));
++
++/*
++  For WIN32 we always output showpage.
++*/
++
++#ifndef WIN32
+     if (!showpage) {
+       showpage=true;
+       DEBUG_PRINT(DEBUG_GS,("(will try adding \"showpage\") "));
+@@ -331,6 +369,8 @@
+ 		     bgred,bggreen,bgblue);
+       showpage=false;
+     }
++#endif
++
+ #ifdef DEBUG
+   } else {
+     DEBUG_PRINT(DEBUG_GS,("\n  GS OUTPUT:\t%dx%d image ",

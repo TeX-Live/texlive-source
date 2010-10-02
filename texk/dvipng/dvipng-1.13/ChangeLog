@@ -1,6 +1,11 @@
+2010-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* special.c (ps2png): Drop unused 'bool showpage' for WIN32.
+
 2010-09-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
-	* special.c: fix WIN32 bug that dvipng.exe waits infinitely for some
-	kind of eps files.
+
+	* special.c (ps2png): fix WIN32 bug that dvipng.exe waits
+	infinitely for some kind of eps files.
 
 2010-03-17  Jan-Ake Larsson  <jalar@mai.liu.se>
 

@@ -167,7 +167,9 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
   char resolution[STRSIZE]; 
   /*   char devicesize[STRSIZE];  */
   gdImagePtr psimage=NULL;
+#ifndef WIN32
   static bool showpage=false;
+#endif
 
   sprintf(resolution, "-r%dx%d",hresolution,vresolution);
   /* Future extension for \rotatebox
