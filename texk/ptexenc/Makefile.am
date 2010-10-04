@@ -16,7 +16,7 @@ lib_LTLIBRARIES = libptexenc.la
 
 libptexenc_la_CPPFLAGS = -DMAKE_PTENC_DLL
 
-libptexenc_la_LDFLAGS = -version-info $(PTEXENC_LT_VERSINFO)
+libptexenc_la_LDFLAGS = -no-undefined -version-info $(PTEXENC_LT_VERSINFO)
 
 # Note: jisx0208.h is a copy of ../../libs/gd/gd-2.0.35/jisx0208.h.
 #

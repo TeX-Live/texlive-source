@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2010-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (libptexenc_la_LDFLAGS): Add -no-undefined.
+
 2010-06-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (libptexenc_la_CPPFLAGS): Define MAKE_PTENC_DLL

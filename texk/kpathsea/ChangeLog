@@ -1,3 +1,7 @@
+2010-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (libkpathsea_la_LDFLAGS): Add -no-undefined.
+
 2010-09-24  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TTFONTS): also read opentype//.
