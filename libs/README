@@ -34,4 +34,4 @@ xpdf 3.02pl4 - http://www.foolabs.com/xpdf/
 
 zlib 1.2.5 - http://www.zlib.net/ - used by many
 
-zziplib 0.13.58 - http://zziplib.sourceforge.net/ - used by luatex
+zziplib 0.13.59 - http://zziplib.sourceforge.net/ - used by luatex

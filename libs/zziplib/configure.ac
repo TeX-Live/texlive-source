@@ -9,7 +9,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([zziplib_version], [0.13.58])[]dnl using unmodified zziplib source tree
+m4_define([zziplib_version], [0.13.59])[]dnl using unmodified zziplib source tree
 AC_INIT([zziplib for TeX Live], zziplib_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([zziplib-]zziplib_version[/zziplib.spec])
@@ -47,6 +47,9 @@ case "$enable_mmap" in
 esac
 AC_MSG_RESULT([$enable_mmap])
 AC_SUBST([ZZIPLIB_DEFINES])
+
+AC_SYS_LARGEFILE_SENSITIVE
+AC_FUNC_FSEEKO
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE

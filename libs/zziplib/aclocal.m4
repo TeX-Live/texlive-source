@@ -989,6 +989,7 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
+m4_include([m4/ac_sys_largefile_sensitive.m4])
 m4_include([m4/ax_prefix_config_h.m4])
 m4_include([m4/zziplib-aligned-access.m4])
 m4_include([../../m4/kpse-common.m4])

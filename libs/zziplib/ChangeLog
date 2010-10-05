@@ -1,3 +1,9 @@
+2010-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import zziplib-0.13.59.
+	* configure.ac: Adapted.
+	Added AC_SYS_LARGEFILE_SENSITIVE and AC_FUNC_FSEEKO.
+
 2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Test for <zlib.h> requires to set ZLIB flags.

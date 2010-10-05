@@ -1,0 +1,13 @@
+diff -ur zziplib-0.13.59.orig/zzip/stat.c zziplib-0.13.59/zzip/stat.c
+--- zziplib-0.13.59.orig/zzip/stat.c	2009-08-23 13:38:22.000000000 +0200
++++ zziplib-0.13.59/zzip/stat.c	2010-05-31 21:06:01.000000000 +0200
+@@ -21,6 +21,9 @@
+ #include <zzip/lib.h>           /* exported... */
+ #include <zzip/file.h>
+ #include <string.h>
++#if defined(_AIX)
++#include <strings.h> /* for strcasecmp */
++#endif
+ #include <sys/stat.h>
+ 
+ #define ZZIP_USE_INTERNAL
