@@ -476,13 +476,13 @@ installed_truetype(const String &ttf_filename, bool allow_generate, ErrorHandler
 
     // perhaps generate type 42 in the future, for now just copy
     if (allow_generate && ttf_filename && ttf_filename != "-" && getodir(O_TRUETYPE, errh)) {
-	String ttf_filename = odir[O_TRUETYPE] + "/" + file;
-	if (ttf_filename.find_left('\'') >= 0 || ttf_filename.find_left('\"') >= 0)
+	String installed_ttf_filename = odir[O_TRUETYPE] + "/" + file;
+	if (installed_ttf_filename.find_left('\'') >= 0 || installed_ttf_filename.find_left('\"') >= 0)
 	    return String();
 
 	int retval;
-	if (!same_filename(ttf_filename, ttf_filename)) {
-	    String command = "cp " + shell_quote(ttf_filename) + " " + shell_quote(ttf_filename);
+	if (!same_filename(ttf_filename, installed_ttf_filename)) {
+	    String command = "cp " + shell_quote(ttf_filename) + " " + shell_quote(installed_ttf_filename);
 	    retval = mysystem(command.c_str(), errh);
 	    if (retval == 127)
 		errh->error("could not run %<%s%>", command.c_str());
@@ -492,13 +492,13 @@ installed_truetype(const String &ttf_filename, bool allow_generate, ErrorHandler
 		errh->error("%<%s%> failed", command.c_str());
 	} else {
 	    if (verbose)
-		errh->message("TrueType file %s already located in output directory", ttf_filename.c_str());
+		errh->message("TrueType file %s already located in output directory", installed_ttf_filename.c_str());
 	    retval = 0;
 	}
 
 	if (retval == 0) {
-	    update_odir(O_TRUETYPE, ttf_filename, errh);
-	    return ttf_filename;
+	    update_odir(O_TRUETYPE, installed_ttf_filename, errh);
+	    return installed_ttf_filename;
 	}
     }
 
@@ -605,7 +605,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 	while (!feof(f))
 	    if (char *x = sa.reserve(8192)) {
 		int amt = fread(x, 1, 8192, f);
-		sa.forward(amt);
+		sa.adjust_length(amt);
 	    } else {
 		fclose(f);
 		return errh->error("Out of memory!");

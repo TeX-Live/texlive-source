@@ -1,8 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([lcdf-typetools], [2.83])
+AC_INIT([lcdf-typetools], [2.85])
 AC_CONFIG_SRCDIR([NEWS])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER([autoconf.h])
 AM_MAINTAINER_MODE
 
 AC_PROG_MAKE_SET
@@ -11,7 +11,11 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_CXXCPP
-if test -n "$GCC" ; then CC="$CC -W -Wall" ; CXX="$CXX -W -Wall" ; fi
+
+AC_ARG_ENABLE(warnings, [  --enable-warnings       compile with -Wall],
+[if test "$enableval" = yes ; then
+  CFLAGS="$CFLAGS -W -Wall"
+fi])
 
 dnl AN_MAKEVAR([AR], [AC_PROG_AR])
 dnl AN_PROGRAM([ar], [AC_PROG_AR])
@@ -121,52 +125,39 @@ dnl
 dnl kpathsea
 dnl
 
-AC_ARG_ENABLE(tetex-build, [  --enable-tetex-build    build as part of a teTeX installation], :, enable_tetex_build=no)
 AC_ARG_WITH(kpathsea, [  --with-kpathsea=PREFIX  Kpathsea is installed (under PREFIX)],
   [kpathsea=$withval], [kpathsea=])
 
-if test "x$kpathsea" = xno; then
-    KPSEINTERFACE_O=
-    LIBKPATHSEA=
-else
-    if test "x$enable_tetex_build" = xyes; then
-	if test ! -d $srcdir/../../texk/kpathsea; then
-	    AC_MSG_ERROR([
-=========================================
+KPATHSEA_INCLUDES=
+KPATHSEA_LIBS=
+KPATHSEA_DEPEND=
 
-You specified --enable-tetex-build, but I can't find the kpathsea
-directory.  I expected it to be in $srcdir/../../texk/kpathsea.
-
-=========================================])
-	fi
-	CPPFLAGS="$CPPFLAGS -I\$(top_builddir)/../../texk -I\$(top_srcdir)/../../texk"
-	LDFLAGS="$LDFLAGS -L\$(top_builddir)/../../texk/kpathsea/.libs"
-        AC_MSG_NOTICE([tetex build of lcdf-typetools, CPPFLAGS now: $CPPFLAGS])
-    elif test "x$kpathsea" != x -a "x$kpathsea" != xyes; then
-	CPPFLAGS="$CPPFLAGS -I$kpathsea/include"
-	LDFLAGS="$LDFLAGS -L$kpathsea/lib"
+if test "x$kpathsea" != xno; then
+    SAVE_CPPFLAGS="$CPPFLAGS"; SAVE_LDFLAGS="$LDFLAGS"
+    if test "x$kpathsea" != x -a "x$kpathsea" != xyes; then
+	KPATHSEA_INCLUDES="-I$kpathsea/include"
+	KPATHSEA_LIBS="-L$kpathsea/lib"
     else
 	kpathsea=yes
     fi
 
     dnl check for kpathsea/kpathsea.h
-    if test "x$enable_tetex_build" = xyes; then
-	kpse_header=yes
-    else
+    if true; then
+	CPPFLAGS="$SAVE_CPPFLAGS $KPATHSEA_INCLUDES"
 	AC_CHECK_HEADER(kpathsea/kpathsea.h, [kpse_header=yes], [kpse_header=no])
     fi
 
     dnl if not found and kpathsea prefix not set, check /usr/local
     if test "x$kpse_header" != xyes -a "x$kpathsea" = xyes -a -r /usr/local/include/kpathsea/tex-file.h; then
-	CPPFLAGS="$CPPFLAGS -I/usr/local/include"
-	LDFLAGS="$LDFLAGS -L/usr/local/lib"
+	KPATHSEA_INCLUDES="-I/usr/local/include"
+	KPATHSEA_LIBS="-L/usr/local/lib"
+	CPPFLAGS="$SAVE_CPPFLAGS $KPATHSEA_INCLUDES"
 	AC_CHECK_HEADER(kpathsea/tex-file.h, [kpse_header=yes], [kpse_header=no])
     fi
 
     dnl check for -lkpathsea
-    if test "x$enable_tetex_build" = xyes; then
-	kpse_library=yes
-    else
+    if true; then
+	LDFLAGS="$SAVE_LDFLAGS $KPATHSEA_LIBS"
 	AC_CHECK_LIB(kpathsea, kpse_set_program_name, [kpse_library=yes], [kpse_library=no])
     fi
 
@@ -185,29 +176,28 @@ using --without-kpathsea.
 
     dnl OK, found
     AC_DEFINE(HAVE_KPATHSEA, 1, [Define if you want to use kpathsea.])
-    KPSEINTERFACE_O='kpseinterface.$(OBJEXT)'
-    if test "x$enable_tetex_build" = xyes; then
-	LIBKPATHSEA='$(top_builddir)/../../texk/kpathsea/.libs/libkpathsea.a'
-	LIBKPATHSEA_DEP="$LIBKPATHSEA"
-    else
-	LIBKPATHSEA='-lkpathsea'
-	LIBKPATHSEA_DEP=''
+    if true; then
+	KPATHSEA_LIBS="$KPATHSEA_LIBS -lkpathsea"
     fi
 
     dnl does it have opentype support?
-    if test "x$enable_tetex_build" = xyes; then
+    if false; then
 	AC_DEFINE(HAVE_DECL_KPSE_OPENTYPE_FORMAT)
     else
 	AC_CHECK_DECLS(kpse_opentype_format, :, :, [#include <kpathsea/kpathsea.h>])
     fi
+
+    CPPFLAGS="$SAVE_CPPFLAGS"; LDFLAGS="$SAVE_LDFLAGS"
 fi
-AC_SUBST([KPSEINTERFACE_O])
-AC_SUBST([LIBKPATHSEA])
-AC_SUBST([LIBKPATHSEA_DEP])
+
+AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
+AC_SUBST([KPATHSEA_INCLUDES])
+AC_SUBST([KPATHSEA_LIBS])
+AC_SUBST([KPATHSEA_DEPEND])
 
 AC_ARG_ENABLE(selfauto-set, [  --disable-selfauto-set  disable setting SELFAUTO variables from kpsewhich], :, enable_selfauto_set=yes)
 
-if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno -a "x$enable_tetex_build" != xyes; then
+if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno; then
     kpsewhich='kpsewhich'
     test "x$kpathsea" != xyes -a -x "$kpathsea/bin/kpsewhich" && kpsewhich="$kpathsea/bin/kpsewhich"
     SELFAUTOLOC=`$kpsewhich --expand-var='$SELFAUTOLOC' 2>/dev/null`
@@ -273,15 +263,15 @@ int main(int c, char **v) {
   exit(*endp == 0 ? 1 : 0);
 }], [ac_cv_working_strtod=yes], [ac_cv_working_strtod=no],
 [ac_cv_working_strtod=yes])])
-if test $ac_cv_working_strtod = no; then 
+if test "x$ac_cv_working_strtod" = xno; then
     need_fixlibc=1
     AC_DEFINE(BROKEN_STRTOD, 1, [Define if strtod is broken.])
 fi
 
-AC_CHECK_FUNCS(strtoul ctime mkstemp ftruncate sigaction waitpid)
-AC_CHECK_FUNC(floor, :, [AC_CHECK_LIB(m, floor)])
-AC_CHECK_FUNC(fabs, :, [AC_CHECK_LIB(m, fabs)])
-AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/wait.h)
+AC_CHECK_FUNCS([ctime ftruncate mkstemp sigaction strnlen strtoul waitpid])
+AC_CHECK_FUNC([floor], [:], [AC_CHECK_LIB(m, floor)])
+AC_CHECK_FUNC([fabs], [:], [AC_CHECK_LIB(m, fabs)])
+AC_CHECK_HEADERS([unistd.h fcntl.h sys/time.h sys/wait.h])
 AM_CONDITIONAL([FIXLIBC], [test x$need_fixlibc = x1])
 
 
@@ -352,6 +342,12 @@ AC_COMPILE_IFELSE(
 #elif HAVE_SYS_PARAM_H
 # include <sys/param.h>
 #endif
+#ifdef WIN32
+# ifdef __MSC_VER
+#  pragma warning (disable: 4290)
+# endif
+# include <winsock2.h>
+#endif
 ]], [[(void) ntohs(0x0020), (void) ntohl(0x03040020);]])],
 	[AC_MSG_RESULT(yes)
 ac_ntoh_defined=yes],
@@ -414,38 +410,6 @@ dnl
 AC_DEFINE(HAVE_PERMSTRING, 1, [Define if PermStrings are available.])
 AC_DEFINE(MMAFM_RUN_MMPFB, 1, [Define to 0 if you don't want mmafm to run mmpfb when it needs to get an intermediate master conversion program.])
 dnl PATHNAME_SEPARATOR?
-
-AH_TOP([#ifndef LCDF_TYPETOOLS_CONFIG_H
-#define LCDF_TYPETOOLS_CONFIG_H])
-
-AH_BOTTOM([/* Allow compilation on Windows (thanks, Fabrice Popineau). */
-#ifdef WIN32
-# include <win32lib.h>
-#else
-# define CDECL /* nothing */
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* Prototype strerror if we don't have it. */
-#if !HAVE_STRERROR
-char *strerror(int errno);
-#endif
-
-/* Prototype good_strtod if we need it. */
-#if BROKEN_STRTOD
-double good_strtod(const char *nptr, char **endptr);
-#endif
-
-#ifdef __cplusplus
-}
-/* Get rid of a possible inline macro under C++. */
-# define inline inline
-#endif
-
-#endif /* LCDF_TYPETOOLS_CONFIG_H */])
 
 
 dnl

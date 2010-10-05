@@ -13,6 +13,7 @@ otftotfm_SOURCES = \
 	secondary.cc secondary.hh \
 	uniprop.cc uniprop.hh \
 	util.cc util.hh
+EXTRA_otftotfm_SOURCES = kpseinterface.c kpseinterface.h
 
 otftotfm_LDADD = ../libefont/libefont.a ../liblcdf/liblcdf.a
 otftotfm_DEPENDENCIES = ../libefont/libefont.a ../liblcdf/liblcdf.a

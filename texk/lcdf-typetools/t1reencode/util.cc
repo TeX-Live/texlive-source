@@ -46,7 +46,7 @@ read_file(String filename, ErrorHandler *errh, bool warning)
     while (!feof(f)) {
 	if (char *x = sa.reserve(8192)) {
 	    int amt = fread(x, 1, 8192, f);
-	    sa.forward(amt);
+	    sa.adjust_length(amt);
 	} else {
 	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
 	    break;

@@ -182,7 +182,7 @@ do_file(const char *infn, const char *outfn, ErrorHandler *errh)
     StringAccum sa(150000);
     while (!feof(f)) {
 	int forward = fread(sa.reserve(32768), 1, 32768, f);
-	sa.forward(forward);
+	sa.adjust_length(forward);
     }
     if (f != stdin)
 	fclose(f);

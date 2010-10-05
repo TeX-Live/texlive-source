@@ -11,9 +11,7 @@ class DvipsEncoding { public:
 
     DvipsEncoding();
 
-    static int add_glyphlist(String);
-    static int glyphname_unicode(const String &, bool *more = 0);
-    static void glyphname_unicode(String, Vector<int> &, bool *more = 0);
+    static void add_glyphlist(String);
 
     operator bool() const			{ return _e.size() > 0; }
     const String &name() const			{ return _name; }
@@ -67,7 +65,7 @@ class DvipsEncoding { public:
     Vector<Ligature> _lig;
     Vector<Ligature> _pos;
     HashMap<PermString, int> _unicoding_map;
-    Vector<int> _unicoding;
+    Vector<uint32_t> _unicoding;
 
     mutable Vector<uint32_t> _unicodes;
 
@@ -99,6 +97,8 @@ class DvipsEncoding { public:
     String landmark(int line) const;
 
     static PermString dot_notdef;
+
+    static bool glyphname_unicode(String, Vector<uint32_t> &);
 
     friend inline bool operator==(const Ligature&, const Ligature&);
 

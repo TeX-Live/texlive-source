@@ -26,115 +26,162 @@
 #include <algorithm>
 #include "util.hh"
 
-enum { GLYPHLIST_MORE = 0x40000000,
-       U_EMPTYSLOT = 0xD801, U_ALTSELECTOR = 0xD802 };
-static HashMap<String, int> glyphlist(-1);
+enum { GLYPHLIST_ALTERNATIVE = 0x40000000,
+       GLYPHLIST_USEMAP = GLYPHLIST_ALTERNATIVE,
+       U_EMPTYSLOT = 0xD801,
+       U_ALTSELECTOR = 0xD802 };
+static HashMap<String, uint32_t> glyphlist(-1);
+static Vector<uint32_t> glyphmap;
 static PermString::Initializer perm_initializer;
 PermString DvipsEncoding::dot_notdef(".notdef");
 
 #define NEXT_GLYPH_NAME(gn)	("/" + (gn))
 
-int
+void
 DvipsEncoding::add_glyphlist(String text)
 {
-    // XXX ignores glyph names that map to multiple characters
-    const char *data = text.c_str();
-    int pos = 0, len = text.length();
-    while (1) {
+    const char *s = text.begin(), *end = text.end();
+    while (s != end) {
 	// move to first nonblank
-	while (pos < len && isspace((unsigned char) data[pos]))
-	    pos++;
-	// parse line
-	if (pos >= len)
-	    return 0;
-	else if (data[pos] != '#') {
-	    int first = pos;
-	    for (; pos < len && !isspace((unsigned char) data[pos]) && data[pos] != ';'; pos++)
-		/* nada */;
-	    String glyph_name = text.substring(first, pos - first);
-	    int value;
-	    char *next;
-	  read_uni:
-	    if (first == pos
-		|| pos + 1 >= len
-		|| (data[pos] != ';' && data[pos] != ',')
-		|| !isxdigit((unsigned char) data[pos+1])
-		|| ((value = strtol(data + pos + 1, &next, 16)),
-		    (!isspace((unsigned char) *next) && *next && *next != ';' && *next != ',')))
-		return -1;
-	    while (*next == ' ' || *next == '\t')
-		next++;
-	    if (*next == '\r' || *next == '\n')
-		glyphlist.insert(glyph_name, value);
-	    else if (*next == ';' || *next == ',')
-		glyphlist.insert(glyph_name, value | GLYPHLIST_MORE);
-	    else
-		while (*next != '\r' && *next != '\n' && *next != ';' && *next != ',')
-		    next++;
-	    pos = next - data;
-	    if (*next == ';' || *next == ',') {	// read another possibility
-		glyph_name = NEXT_GLYPH_NAME(glyph_name);
-		// XXX given "DDDD,EEEE EEEE,FFFF", will not store "FFFF"
-		goto read_uni;
+	while (s != end && isspace((unsigned char) *s))
+	    ++s;
+	// ignore comments
+	if (*s == '#') {
+	skip_to_end_of_line:
+	    while (s != end && *s != '\n' && *s != '\r')
+		++s;
+	    continue;
+	}
+	// parse glyph name
+	const char *name_start = s;
+	while (s != end && !isspace((unsigned char) *s) && *s != ';')
+	    ++s;
+	if (s == name_start)
+	    goto skip_to_end_of_line;
+	String glyph_name = text.substring(name_start, s).compact();
+	int map_pos = glyphmap.size();
+	// parse Unicodes
+	while (1) {
+	    while (s != end && (*s == ' ' || *s == '\t'))
+		++s;
+	    if (s == end || *s == '\n' || *s == '\r' || *s == '#'
+		|| (map_pos == glyphmap.size() && *s != ';' && *s != ','))
+		break;
+	    if (*s == ';' || *s == ',') {
+		++s;
+		while (s != end && (*s == ' ' || *s == '\t'))
+		    ++s;
+		if (s == end || !isxdigit((unsigned char) *s))
+		    goto skip_to_end_of_line;
+		if (map_pos != glyphmap.size())
+		    glyphmap.push_back(GLYPHLIST_ALTERNATIVE);
 	    }
-	} else
-	    while (pos < len && data[pos] != '\n' && data[pos] != '\r')
-		pos++;
+	    uint32_t u = 0;
+	    while (s != end && isxdigit((unsigned char) *s)) {
+		if (*s >= '0' && *s <= '9')
+		    u = (u << 4) + *s - '0';
+		else if (*s >= 'A' && *s <= 'F')
+		    u = (u << 4) + *s - 'A' + 10;
+		else
+		    u = (u << 4) + *s - 'a' + 10;
+		++s;
+	    }
+	    if (u == 0 || u > 0x10FFFF)
+		goto skip_to_end_of_line;
+	    glyphmap.push_back(u);
+	    if (s != end && !isspace((unsigned char) *s) && *s != ',' && *s != ';')
+		break;
+	}
+	// store result
+	if (map_pos == glyphmap.size() - 1) {
+	    glyphlist.insert(glyph_name, glyphmap.back());
+	    glyphmap.pop_back();
+	} else {
+	    glyphlist.insert(glyph_name, map_pos | GLYPHLIST_USEMAP);
+	    glyphmap.push_back(0);
+	}
+	goto skip_to_end_of_line;
     }
 }
 
-void
-DvipsEncoding::glyphname_unicode(String gn, Vector<int> &unis, bool *more)
+static void
+unicode_add_suffix(Vector<uint32_t> &prefix,
+		   int prefix_starting_from,
+		   const Vector<uint32_t> &suffix)
 {
-    if (more)
-	*more = false;
+    int prefix_size = prefix.size();
+    for (Vector<uint32_t>::const_iterator it = suffix.begin();
+	 it != suffix.end() && *it != 0;
+	 ++it)
+	if (*it == GLYPHLIST_ALTERNATIVE) {
+	    prefix.push_back(*it);
+	    for (int i = prefix_starting_from; i < prefix_size; ++i)
+		prefix.push_back(prefix[i]);
+	} else
+	    prefix.push_back(*it);
+}
 
-    // first, drop all characters to the right of the first dot
+bool
+DvipsEncoding::glyphname_unicode(String gn, Vector<uint32_t> &unis)
+{
+    int unis_first_size = unis.size();
+
+    // drop all characters to the right of the first dot
     String::iterator dot = std::find(gn.begin(), gn.end(), '.');
     if (dot < gn.end())
 	gn = gn.substring(gn.begin(), dot);
 
-    // then, separate into components
-    while (gn) {
-	String::iterator underscore = std::find(gn.begin(), gn.end(), '_');
-	String component = gn.substring(gn.begin(), underscore);
-	gn = gn.substring(underscore + 1, gn.end());
-
-	// check glyphlist
-	int value = glyphlist[component];
-	uint32_t uval;
-	if (value >= 0) {
-	    unis.push_back(value & ~GLYPHLIST_MORE);
-	    if (more && (value & GLYPHLIST_MORE) && !gn)
-		*more = true;
-	} else if (component.length() >= 7
-		   && (component.length() % 4) == 3
-		   && (memcmp(component.data(), "uni", 3) == 0
-		       // 16.Aug.2008: Some texnansx.enc have incorrect "Uni"
-		       // prefix, but we might as well understand it.
-		       || memcmp(component.data(), "Uni", 3) == 0)) {
-	    int old_size = unis.size();
-	    for (const char* s = component.begin() + 3; s < component.end(); s += 4)
-		if (parse_unicode_number(s, s + 4, -1, uval))
-		    unis.push_back(uval);
-		else {
-		    unis.resize(old_size);
-		    break;
-		}
-	} else if (component.length() >= 5
-		   && component.length() <= 7
-		   && component[0] == 'u'
-		   && parse_unicode_number(component.begin() + 1, component.end(), -1, uval))
-	    unis.push_back(uval);
+    // map the first component, handle later components recursively
+    String::iterator underscore = std::find(gn.begin(), gn.end(), '_');
+    String component = gn.substring(gn.begin(), underscore);
+    int prefix_start = 0;
+    Vector<uint32_t> suffix;
+    if (String gn_suffix = gn.substring(underscore + 1, gn.end())) {
+	if (!glyphname_unicode(gn_suffix, suffix))
+	    return false;
     }
-}
 
-int
-DvipsEncoding::glyphname_unicode(const String &gn, bool *more)
-{
-    Vector<int> unis;
-    glyphname_unicode(gn, unis, more);
-    return (unis.size() == 1 ? unis[0] : -1);
+    // check glyphlist
+    int value = glyphlist[component];
+    uint32_t uval;
+    if (value >= 0 && !(value & GLYPHLIST_USEMAP))
+	unis.push_back(value);
+    else if (value >= 0) {
+	for (int i = (value & ~GLYPHLIST_USEMAP);
+	     glyphmap[i];
+	     ++i)
+	    if (glyphmap[i] == GLYPHLIST_ALTERNATIVE) {
+		unicode_add_suffix(unis, prefix_start, suffix);
+		unis.push_back(GLYPHLIST_ALTERNATIVE);
+		prefix_start = unis.size();
+	    } else
+		unis.push_back(glyphmap[i]);
+    } else if (component.length() >= 7
+	       && (component.length() % 4) == 3
+	       && (memcmp(component.data(), "uni", 3) == 0
+		   // 16.Aug.2008: Some texnansx.enc have incorrect "Uni"
+		   // prefix, but we might as well understand it.
+		   || memcmp(component.data(), "Uni", 3) == 0)) {
+	int old_size = unis.size();
+	for (const char *s = component.begin() + 3;
+	     s < component.end();
+	     s += 4)
+	    if (parse_unicode_number(s, s + 4, -1, uval))
+		unis.push_back(uval);
+	    else {
+		unis.resize(unis_first_size);
+		return false;
+	    }
+    } else if (component.length() >= 5
+	       && component.length() <= 7
+	       && component[0] == 'u'
+	       && parse_unicode_number(component.begin() + 1, component.end(), -1, uval))
+	unis.push_back(uval);
+    else
+	return false;
+
+    unicode_add_suffix(unis, prefix_start, suffix);
+    return true;
 }
 
 
@@ -462,24 +509,19 @@ DvipsEncoding::parse_unicoding_words(Vector<String> &v, int override, ErrorHandl
 	/* no warnings to delete a glyph */;
     else {
 	for (int i = 2; i < v.size(); i++) {
-	    bool more;		// some care to get all possibilities
-	    int uni = glyphname_unicode(v[i], &more);
-	    if (uni < 0) {
-		errh->warning("can't map %<%s%> to Unicode", v[i].c_str());
+	    if (i > 2)
+		_unicoding.push_back(GLYPHLIST_ALTERNATIVE);
+	    if (!glyphname_unicode(v[i], _unicoding)) {
+		errh->warning("can%,t map %<%s%> to Unicode", v[i].c_str());
 		if (i == 2)
 		    errh->warning("target %<%s%> will be deleted from encoding", v[0].c_str());
-	    } else {
-		_unicoding.push_back(uni);
-		while (more) {
-		    v[i] = NEXT_GLYPH_NAME(v[i]);
-		    if ((uni = glyphname_unicode(v[i], &more)) >= 0)
-			_unicoding.push_back(uni);
-		}
+		else
+		    _unicoding.pop_back();
 	    }
 	}
     }
 
-    _unicoding.push_back(-1);
+    _unicoding.push_back(0);
     if (override > 0 || _unicoding_map[v[0]] < 0)
 	_unicoding_map.insert(v[0], original_size);
     return 0;
@@ -688,9 +730,9 @@ DvipsEncoding::bad_codepoint(int code, Metrics &metrics, Vector<String> &unencod
     }
 
     if (_warn_missing) {
-	Vector<uint32_t> unicodes;
-	bool unicodes_explicit = x_unicodes(_e[code], unicodes);
-	if (!unicodes_explicit || unicodes.size() > 0) {
+	Vector<uint32_t> garbage;
+	bool unicodes_explicit = x_unicodes(_e[code], garbage);
+	if (!unicodes_explicit || garbage.size() > 0) {
 	    Vector<Setting> v;
 	    v.push_back(Setting(Setting::RULE, 500, 500));
 	    v.push_back(Setting(Setting::SPECIAL, String("Warning: missing glyph '") + _e[code] + "'"));
@@ -714,21 +756,11 @@ DvipsEncoding::x_unicodes(PermString chname, Vector<uint32_t> &unicodes) const
 {
     int i = _unicoding_map[chname];
     if (i >= 0) {
-	for (; _unicoding[i] >= 0; i++)
+	for (; _unicoding[i] > 0; i++)
 	    unicodes.push_back(_unicoding[i]);
 	return true;
     } else {
-	bool more;
-	if ((i = glyphname_unicode(chname, &more)) >= 0)
-	    unicodes.push_back(i);
-	if (more) {		// might be multiple possibilities
-	    String gn = chname;
-	    do {
-		gn = NEXT_GLYPH_NAME(gn);
-		if ((i = glyphname_unicode(gn, &more)) >= 0)
-		    unicodes.push_back(i);
-	    } while (more);
-	}
+	glyphname_unicode(chname, unicodes);
 	return false;
     }
 }
@@ -745,16 +777,27 @@ DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *
 	if (chname == dot_notdef)
 	    continue;
 
-	// find all Unicodes
-	Vector<uint32_t> unicodes;
-	(void) x_unicodes(chname, unicodes);
-
-	// find first Unicode supported by the font
+	// find first single Unicode glyph supported by the font
 	Efont::OpenType::Glyph glyph = 0;
-	uint32_t glyph_uni = (unicodes.size() ? unicodes[0] : 0);
-	for (uint32_t *u = unicodes.begin(); u < unicodes.end() && !glyph; u++)
-	    if ((glyph = map_uni(*u, *finfo.cmap, metrics)) > 0)
-		glyph_uni = *u;
+	uint32_t glyph_uni = 0;
+	{
+	    Vector<uint32_t> unicodes;
+	    (void) x_unicodes(chname, unicodes);
+	    Vector<uint32_t>::iterator u = unicodes.begin();
+	    while (u != unicodes.end() && glyph <= 0) {
+		uint32_t this_uni = u[0];
+		++u;
+		if (u != unicodes.end()) {
+		    if (*u != GLYPHLIST_ALTERNATIVE)
+			break;
+		    ++u;
+		}
+
+		glyph = map_uni(this_uni, *finfo.cmap, metrics);
+		if (glyph_uni == 0 || glyph > 0)
+		    glyph_uni = this_uni;
+	    }
+	}
 
 	// find named glyph, if any
 	Efont::OpenType::Glyph named_glyph = finfo.glyphid(chname);
@@ -809,9 +852,14 @@ DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *
 	// May need to try secondaries later.  Store this slot.
 	// Try secondaries, if there's explicit unicoding or no named_glyph.
 	if (unicodes_explicit || named_glyph <= 0)
-	    for (uint32_t *u = unicodes.begin(); u < unicodes.end(); u++)
-		if (secondary->encode_uni(code, chname, *u, metrics, errh))
+	    for (uint32_t *u = unicodes.begin(); u != unicodes.end(); ) {
+		uint32_t *endu = u + 1;
+		while (endu != unicodes.end() && *endu != GLYPHLIST_ALTERNATIVE)
+		    ++endu;
+		if (secondary->encode_uni(code, chname, u, endu, metrics, errh))
 		    goto encoded;
+		u = (endu == unicodes.end() ? endu : endu + 1);
+	    }
 
 	// 1. We were not able to find the glyph using Unicode or secondaries.
 	// 2. There might be a named_glyph.
@@ -819,9 +867,14 @@ DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *
 	// which should turn off the character (even if a named_glyph exists),
 	// UNLESS the glyph was explicitly requested.
 	if (named_glyph > 0
-	    && (!unicodes_explicit || unicodes.size() > 0
-		|| (_encoding_required.size() > code && _encoding_required[code])))
-	    metrics.encode(code, unicodes.size() ? unicodes[0] : 0, named_glyph);
+	    && (!unicodes_explicit
+		|| unicodes.size() > 0
+		|| (_encoding_required.size() > code && _encoding_required[code]))) {
+	    uint32_t uni = 0;
+	    if (unicodes.size() == 1 || (unicodes.size() > 0 && unicodes[1] == GLYPHLIST_ALTERNATIVE))
+		uni = unicodes[0];
+	    metrics.encode(code, uni, named_glyph);
+	}
 
       encoded:
 	/* all set */;

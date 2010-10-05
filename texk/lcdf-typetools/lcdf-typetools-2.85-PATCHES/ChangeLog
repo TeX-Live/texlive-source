@@ -1,3 +1,9 @@
+2010-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.85.
+	* configure.ac, Makefile.am: Adapt.
+	* patch-01-otftotfm-Makefile (removed): Now distributed.
+
 2010-06-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Using AC_C_INLINE, there is no need to get rid

@@ -32,51 +32,57 @@
 #include <limits.h>
 #include <algorithm>
 
-enum { U_EXCLAMDOWN = 0x00A1,	// U+00A1 INVERTED EXCLAMATION MARK
-       U_DEGREE = 0x00B0,	// U+00B0 DEGREE SIGN
-       U_QUESTIONDOWN = 0x00BF,	// U+00BF INVERTED QUESTION MARK
-       U_IJ = 0x0132,		// U+0132 LATIN CAPITAL LIGATURE IJ
-       U_ij = 0x0133,		// U+0133 LATIN SMALL LIGATURE IJ
-       U_DOTLESSJ = 0x0237,	// U+0237 LATIN SMALL LETTER DOTLESS J
-       U_RINGABOVE = 0x02DA,	// U+02DA RING ABOVE
-       U_COMBININGRINGABOVE = 0x030A,	// U+030A COMBINING RING ABOVE
-       U_CWM = 0x200C,		// U+200C ZERO WIDTH NON-JOINER
-       U_ENDASH = 0x2013,	// U+2013 EN DASH
-       U_PERTENTHOUSAND = 0x2031, // U+2031 PER TEN THOUSAND SIGN
-       U_INTERROBANG = 0x203D,	// U+203D INTERROBANG
-       U_FRACTION = 0x2044,	// U+2044 FRACTION SLASH
-       U_CENTIGRADE = 0x2103,	// U+2103 DEGREE CELSIUS
-       U_ASTERISKMATH = 0x2217,	// U+2217 ASTERISK OPERATOR
-       U_BARDBL = 0x2225,	// U+2225 PARALLEL TO
-       U_VISIBLESPACE = 0x2423,	// U+2423 OPEN BOX
-       U_DBLBRACKETLEFT = 0x27E6,
-       U_DBLBRACKETRIGHT = 0x27E7,
-       U_SS = 0xD800,		// invalid Unicode
-       U_EMPTYSLOT = 0xD801,	// invalid Unicode (not handled by Secondary)
-       U_ALTSELECTOR = 0xD802,	// invalid Unicode
-       U_SSSMALL = 0xD803,	// invalid Unicode
-       U_FFSMALL = 0xD804,	// invalid Unicode
-       U_FISMALL = 0xD805,	// invalid Unicode
-       U_FLSMALL = 0xD806,	// invalid Unicode
-       U_FFISMALL = 0xD807,	// invalid Unicode
-       U_FFLSMALL = 0xD808,	// invalid Unicode
-       U_CAPITALCWM = 0xD809,	// invalid Unicode
-       U_ASCENDERCWM = 0xD80A,	// invalid Unicode
-       U_INTERROBANGDOWN = 0xD80B, // invalid Unicode
-       U_TWELVEUDASH = 0xD80C,	// invalid Unicode
-       U_RINGFITTED = 0xD80D,	// invalid Unicode
-       U_USE_KERNX = 0xD80E,	// invalid Unicode, not in maps
-       U_VS1 = 0xFE00,
-       U_VS16 = 0xFE0F,
-       U_VS17 = 0xE0100,
-       U_VS256 = 0xE01FF,
-       U_DOTLESSJ_2 = 0xF6BE,
-       U_THREEQUARTERSEMDASH = 0xF6DE,
-       U_FSMALL = 0xF766,
-       U_ISMALL = 0xF769,
-       U_LSMALL = 0xF76C,
-       U_SSMALL = 0xF773,
-       U_MATHDOTLESSJ = 0x1D6A5
+enum {
+    U_EXCLAMDOWN = 0x00A1,	// U+00A1 INVERTED EXCLAMATION MARK
+    U_DEGREE = 0x00B0,		// U+00B0 DEGREE SIGN
+    U_QUESTIONDOWN = 0x00BF,	// U+00BF INVERTED QUESTION MARK
+    U_IJ = 0x0132,		// U+0132 LATIN CAPITAL LIGATURE IJ
+    U_ij = 0x0133,		// U+0133 LATIN SMALL LIGATURE IJ
+    U_DOTLESSJ = 0x0237,	// U+0237 LATIN SMALL LETTER DOTLESS J
+    U_RINGABOVE = 0x02DA,	// U+02DA RING ABOVE
+    U_COMBININGRINGABOVE = 0x030A, // U+030A COMBINING RING ABOVE
+    U_CWM = 0x200C,		// U+200C ZERO WIDTH NON-JOINER
+    U_ENDASH = 0x2013,		// U+2013 EN DASH
+    U_PERTENTHOUSAND = 0x2031,	// U+2031 PER TEN THOUSAND SIGN
+    U_INTERROBANG = 0x203D,	// U+203D INTERROBANG
+    U_FRACTION = 0x2044,	// U+2044 FRACTION SLASH
+    U_CENTIGRADE = 0x2103,	// U+2103 DEGREE CELSIUS
+    U_ASTERISKMATH = 0x2217,	// U+2217 ASTERISK OPERATOR
+    U_BARDBL = 0x2225,		// U+2225 PARALLEL TO
+    U_VISIBLESPACE = 0x2423,	// U+2423 OPEN BOX
+    U_DBLBRACKETLEFT = 0x27E6,	// U+27E6 MATHEMATICAL LEFT WHITE SQUARE BRACKET
+    U_DBLBRACKETRIGHT = 0x27E7,	// U+27E7 MATHEMATICAL RIGHT WHITE SQUARE BRACKET
+    U_INTERROBANGDOWN = 0x2E18, // U+2E18 INVERTED INTERROBANG
+    U_EMPTYSLOT = 0xD801,	// invalid Unicode (not handled by Secondary)
+    U_ALTSELECTOR = 0xD802,	// invalid Unicode
+    U_CAPITALCWM = 0xD809,	// invalid Unicode
+    U_ASCENDERCWM = 0xD80A,	// invalid Unicode
+    U_TWELVEUDASH = 0xD80C,	// invalid Unicode
+    U_RINGFITTED = 0xD80D,	// invalid Unicode
+
+    // BEGIN BACKWARDS COMPATIBILITY -- newer texglyphlist.txt does not include
+    // these code points
+    U_SS = 0xD800,		// invalid Unicode
+    U_SSSMALL = 0xD803,		// invalid Unicode
+    U_FFSMALL = 0xD804,		// invalid Unicode
+    U_FISMALL = 0xD805,		// invalid Unicode
+    U_FLSMALL = 0xD806,		// invalid Unicode
+    U_FFISMALL = 0xD807,	// invalid Unicode
+    U_FFLSMALL = 0xD808,	// invalid Unicode
+    // END BACKWARDS COMPATIBILITY
+
+    U_USE_KERNX = 0xD80E,	// invalid Unicode, not in maps
+    U_VS1 = 0xFE00,
+    U_VS16 = 0xFE0F,
+    U_VS17 = 0xE0100,
+    U_VS256 = 0xE01FF,
+    U_DOTLESSJ_2 = 0xF6BE,
+    U_THREEQUARTERSEMDASH = 0xF6DE,
+    U_FSMALL = 0xF766,
+    U_ISMALL = 0xF769,
+    U_LSMALL = 0xF76C,
+    U_SSMALL = 0xF773,
+    U_MATHDOTLESSJ = 0x1D6A5	// U+1D6A5 MATHEMATICAL ITALIC SMALL DOTLESS J
 };
 
 
@@ -221,6 +227,34 @@ Secondary::~Secondary()
 }
 
 bool
+Secondary::encode_uni(int code, PermString name,
+		      const uint32_t *uni_begin, const uint32_t *uni_end,
+		      Metrics &metrics, ErrorHandler *errh)
+{
+    if (uni_begin + 1 == uni_end)
+	return encode_uni(code, name, *uni_begin, metrics, errh);
+    else {
+	Vector<Setting> v;
+	int max_s = 0;
+	while (uni_begin != uni_end) {
+	    Vector<Setting> subv;
+	    int s = setting(*uni_begin, subv, metrics, errh);
+	    if (s == 0)
+		return false;
+	    if (subv.size() && v.size())
+		v.push_back(Setting(Setting::KERN));
+	    for (Vector<Setting>::const_iterator it = subv.begin();
+		 it != subv.end(); ++it)
+		v.push_back(*it);
+	    max_s = (max_s > s ? max_s : s);
+	    ++uni_begin;
+	}
+	metrics.encode_virtual(code, name, 0, v, max_s > 1);
+	return true;
+    }
+}
+
+bool
 Secondary::encode_uni(int code, PermString name, uint32_t uni, Metrics &metrics, ErrorHandler *errh)
 {
     Vector<Setting> v;
@@ -251,7 +285,7 @@ Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHand
     if (_next)
 	return _next->setting(uni, v, metrics, errh);
     else
-	return false;
+	return 0;
 }
 
 bool
@@ -292,7 +326,9 @@ T1Secondary::char_setting(Vector<Setting> &v, Metrics &metrics, int uni, ...)
 bool
 T1Secondary::encode_uni(int code, PermString name, uint32_t uni, Metrics &metrics, ErrorHandler *errh)
 {
-    if (uni == U_ALTSELECTOR || (uni >= U_VS1 && uni <= U_VS16) || (uni >= U_VS17 && uni <= U_VS256)) {
+    if (uni == U_ALTSELECTOR
+	|| (uni >= U_VS1 && uni <= U_VS16)
+	|| (uni >= U_VS17 && uni <= U_VS256)) {
 	Vector<Setting> v;
 	setting(uni, v, metrics, errh);
 	int which = (uni == U_ALTSELECTOR ? 0 : (uni <= U_VS16 ? uni - U_VS1 + 1 : uni - U_VS17 + 17));
@@ -397,6 +433,9 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
     Transform xform;
     int vsize = v.size();
     extern int letterspace;
+
+    if (char_setting(v, metrics, uni, 0))
+	return 1;
 
     switch (uni) {
 

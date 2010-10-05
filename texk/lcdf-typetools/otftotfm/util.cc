@@ -52,7 +52,7 @@ read_file(String filename, ErrorHandler *errh, bool warning)
     while (!feof(f)) {
 	if (char *x = sa.reserve(8192)) {
 	    int amt = fread(x, 1, 8192, f);
-	    sa.forward(amt);
+	    sa.adjust_length(amt);
 	} else {
 	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
 	    break;
@@ -206,7 +206,8 @@ parse_unicode_number(const char* begin, const char* end, int require_prefix, uin
 	else
 	    return false;
 
-    if (value <= 0xD7FF || (value >= 0xE000 && value <= 0x10FFFF)) {
+    if (value > 0
+	&& (value <= 0xD7FF || (value >= 0xE000 && value <= 0x10FFFF))) {
 	result = value;
 	return true;
     } else
@@ -233,7 +234,7 @@ shell_command_output(String cmdline, const String &input, ErrorHandler *errh, bo
     while (!feof(p) && !ferror(p) && sa.length() < 200000) {
 	int x = fread(sa.reserve(2048), 1, 2048, p);
 	if (x > 0)
-	    sa.forward(x);
+	    sa.adjust_length(x);
 	else if (x < 0 && errno != EAGAIN)
 	    errh->error("%<%s%>: %s", cmdline.c_str(), strerror(errno));
     }

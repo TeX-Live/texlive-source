@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Adapted for TeX Live.
-m4_define([lcdf_typetools_version], [2.83])[]dnl using unmodified lcdf-typetools source tree
+m4_define([lcdf_typetools_version], [2.85])[]dnl using unmodified lcdf-typetools source tree
 AC_INIT([LCDF typetools for TeX Live], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([NEWS])
@@ -13,7 +13,7 @@ KPSE_COMMON([lcdf-typetools], [check-news])
 LCDF_TYPETOOLS_VERSION=lcdf_typetools_version
 AC_SUBST([LCDF_TYPETOOLS_VERSION])
 
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER([autoconf.h])
 
 AC_PROG_CXX
 AC_PROG_CXXCPP
@@ -85,10 +85,10 @@ if test "x$with_kpathsea" != xno; then
     AC_MSG_ERROR([
 =========================================
 
-I can't find the kpathsea header and/or library files. Tell me where to look
-using the --with-kpathsea-includes=DIR option (header files under
-DIR/kpathsea) and --with-kpathsea-libdir=DIR option (library under DIR), or
-disable support using --without-kpathsea.
+I can't find the kpathsea library and/or header files. Tell me where to look
+using the --with-kpathsea-libdir=DIR option (library under DIR) and
+--with-kpathsea-includes=DIR option (header files under DIR/kpathsea), or
+disable kpathsea support using --without-kpathsea.
 
 =========================================])
   fi
@@ -162,15 +162,15 @@ int main(int c, char **v) {
   exit(*endp == 0 ? 1 : 0);
 }], [ac_cv_working_strtod=yes], [ac_cv_working_strtod=no],
 [ac_cv_working_strtod=yes])])
-if test "x$ac_cv_working_strtod" = xno; then 
+if test "x$ac_cv_working_strtod" = xno; then
     need_fixlibc=1
     AC_DEFINE(BROKEN_STRTOD, 1, [Define if strtod is broken.])
 fi
 
-AC_CHECK_FUNCS(strtoul ctime mkstemp ftruncate sigaction waitpid)
-AC_CHECK_FUNC(floor, :, [AC_CHECK_LIB(m, floor)])
-AC_CHECK_FUNC(fabs, :, [AC_CHECK_LIB(m, fabs)])
-AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/wait.h)
+AC_CHECK_FUNCS([ctime ftruncate mkstemp sigaction strnlen strtoul waitpid])
+AC_CHECK_FUNC([floor], [:], [AC_CHECK_LIB(m, floor)])
+AC_CHECK_FUNC([fabs], [:], [AC_CHECK_LIB(m, fabs)])
+AC_CHECK_HEADERS([unistd.h fcntl.h sys/time.h sys/wait.h])
 AM_CONDITIONAL([FIXLIBC], [test x$need_fixlibc = x1])
 
 
@@ -316,41 +316,6 @@ dnl
 AC_DEFINE(HAVE_PERMSTRING, 1, [Define if PermStrings are available.])
 AC_DEFINE(MMAFM_RUN_MMPFB, 1, [Define to 0 if you don't want mmafm to run mmpfb when it needs to get an intermediate master conversion program.])
 dnl PATHNAME_SEPARATOR?
-
-AH_TOP([#ifndef LCDF_TYPETOOLS_CONFIG_H
-#define LCDF_TYPETOOLS_CONFIG_H])
-
-AH_BOTTOM([/* Allow compilation on Windows (thanks, Fabrice Popineau). */
-#ifdef WIN32
-# ifdef __MINGW32__
-#  include <windows.h>
-# else
-#  include <win32lib.h>
-# endif
-#else
-# define CDECL /* nothing */
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* Prototype strerror if we don't have it. */
-#if !HAVE_STRERROR
-char *strerror(int errno);
-#endif
-
-/* Prototype good_strtod if we need it. */
-#if BROKEN_STRTOD
-double good_strtod(const char *nptr, char **endptr);
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* LCDF_TYPETOOLS_CONFIG_H */])
-
 
 dnl
 dnl set path variables

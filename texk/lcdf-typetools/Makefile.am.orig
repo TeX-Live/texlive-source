@@ -9,6 +9,7 @@ pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
 EXTRA_DIST = \
 	ONEWS \
 	lcdf-typetools.spec \
+	include/config.h \
 	include/lcdf/bezier.hh \
 	include/lcdf/clp.h \
 	include/lcdf/error.hh \

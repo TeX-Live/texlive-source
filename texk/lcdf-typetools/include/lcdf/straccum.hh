@@ -31,7 +31,7 @@ class StringAccum { public:
      *
      * If @a capacity <= 0, the StringAccum is created empty.  If @a capacity
      * is too large (so that @a capacity bytes of memory can't be allocated),
-     * the StringAccum is created as out-of-memory. */
+     * the StringAccum falls back to a smaller capacity (possibly zero). */
     explicit inline StringAccum(int capacity);
 
     /** @brief Construct a StringAccum containing the characters in @a s. */
@@ -54,8 +54,8 @@ class StringAccum { public:
 
     /** @brief Destroy a StringAccum, freeing its memory. */
     ~StringAccum() {
-	if (_cap >= 0)
-	    delete[] _s;
+	if (_cap > 0)
+	    delete[] (_s - MEMO_SPACE);
     }
 
 
@@ -154,7 +154,7 @@ class StringAccum { public:
      * @param i character index
      * @pre 0 <= @a i < length() */
     char operator[](int i) const {
-	assert(i>=0 && i<_len);
+	assert((unsigned) i < (unsigned) _len);
 	return static_cast<char>(_s[i]);
     }
 
@@ -162,7 +162,7 @@ class StringAccum { public:
      * @param i character index
      * @pre 0 <= @a i < length() */
     char &operator[](int i) {
-	assert(i>=0 && i<_len);
+	assert((unsigned) i < (unsigned) _len);
 	return reinterpret_cast<char &>(_s[i]);
     }
 
@@ -305,8 +305,6 @@ class StringAccum { public:
     inline void append(const char *s, int len) {
 	if (len < 0)
 	    len = strlen(s);
-	if (len == 0 && s == String::out_of_memory_data())
-	    assign_out_of_memory();
 	append_data(s, len);
     }
     /** @overload */
@@ -321,8 +319,6 @@ class StringAccum { public:
     inline void append(const char *begin, const char *end) {
 	if (begin < end)
 	    append_data(begin, end - begin);
-	else if (begin == String::out_of_memory_data())
-	    assign_out_of_memory();
     }
 
     // word joining
@@ -369,12 +365,11 @@ class StringAccum { public:
 
     // see also operator<< declarations below
 
-    void forward(int n) {
-	assert(n>=0 && _len+n<=_cap);
-	_len += n;
-    }
-
   private:
+
+    enum {
+	MEMO_SPACE = String::MEMO_SPACE
+    };
 
     unsigned char *_s;
     int _len;
@@ -382,23 +377,29 @@ class StringAccum { public:
 
     bool grow(int);
     void assign_out_of_memory();
-    inline void append_safe_data(const char *s, int len) {
+
+    // We must be careful about calls like "sa.append(sa.begin(), sa.end())";
+    // a naive implementation might use sa's data after freeing it.
+    // append_external_data() takes a string guaranteed not to be part of the
+    // current StringAccum; append_internal_data() takes a string that likely
+    // is part of the current StringAccum; append_data() takes either kind.
+    inline void append_external_data(const char *s, int len) {
 	if (char *x = extend(len))
 	    memcpy(x, s, len);
     }
-    void append_unsafe_data(const char *s, int len);
+    void append_internal_data(const char *s, int len);
     inline void append_data(const char *s, int len) {
 	const char *my_s = reinterpret_cast<char *>(_s);
-	if (!(s >= my_s && s + len <= my_s + _len)
-	    || len == 0 || _len + len <= _cap)
-	    append_safe_data(s, len);
+	if (s < my_s || s >= my_s + _cap)
+	    append_external_data(s, len);
 	else
-	    append_unsafe_data(s, len);
+	    append_internal_data(s, len);
     }
     void append_utf8_hard(unsigned ch);
 
 
     friend StringAccum &operator<<(StringAccum &sa, const char *s);
+    friend StringAccum &operator<<(StringAccum &sa, const String &str);
 #if HAVE_PERMSTRING
     friend StringAccum &operator<<(StringAccum &sa, PermString s);
 #endif
@@ -429,9 +430,10 @@ StringAccum::StringAccum(int capacity)
     : _len(0)
 {
     assert(capacity >= 0);
-    if (capacity) {
-	_s = new unsigned char[capacity];
-	_cap = (_s ? capacity : -1);
+    if (capacity
+	&& (_s = new unsigned char[capacity + MEMO_SPACE])) {
+	_s += MEMO_SPACE;
+	_cap = capacity;
     } else {
 	_s = 0;
 	_cap = 0;
@@ -477,7 +479,8 @@ operator<<(StringAccum &sa, const char *cstr)
 inline StringAccum &
 operator<<(StringAccum &sa, bool b)
 {
-    return sa << (b ? "true" : "false");
+    sa.append("truefalse" + (b ? 0 : 4), (b ? 4 : 5));
+    return sa;
 }
 
 /** @relates StringAccum
@@ -522,7 +525,10 @@ operator<<(StringAccum &sa, unsigned u)
 inline StringAccum &
 operator<<(StringAccum &sa, const String &str)
 {
-    sa.append(str.begin(), str.end());
+    if (!str.out_of_memory())
+	sa.append_external_data(str.begin(), str.length());
+    else
+	sa.assign_out_of_memory();
     return sa;
 }
 
@@ -530,11 +536,14 @@ operator<<(StringAccum &sa, const String &str)
 inline StringAccum &
 operator<<(StringAccum &sa, PermString s)
 {
-    sa.append_safe_data(s.c_str(), s.length());
+    sa.append_external_data(s.c_str(), s.length());
     return sa;
 }
 #endif
 
+/** @relates StringAccum
+    @brief Append the contents of @a sb to @a sa.
+    @return @a sa */
 inline StringAccum &
 operator<<(StringAccum &sa, const StringAccum &sb)
 {

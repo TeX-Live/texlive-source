@@ -1184,7 +1184,7 @@ Metrics::shrink_encoding(int size, const DvipsEncoding &dvipsenc, ErrorHandler *
 
 	for (Code c = 0; c < _encoding.size(); c++)
 	    if (VirtualChar *vc = _encoding[c].virtual_char) {
-		/* Make sure that if this virutal character appears, its parts
+		/* Make sure that if this virtual character appears, its parts
 		   will also appear, by scoring the parts less */
 		int score = scores[c] - 1, font_number = 0;
 		for (Setting *s = vc->setting.begin(); s != vc->setting.end(); s++)

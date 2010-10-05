@@ -41,12 +41,12 @@ DIST_COMMON = README $(am__configure_deps) \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
+	$(srcdir)/Makefile.in $(srcdir)/autoconf.h.in \
 	$(top_srcdir)/configure ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap COPYING ChangeLog INSTALL NEWS
+	../../build-aux/ylwrap COPYING INSTALL NEWS
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_template_objs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
@@ -65,7 +65,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = config.h
+CONFIG_HEADER = autoconf.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 SOURCES =
@@ -283,35 +283,36 @@ DISTCLEANFILES = config.force
 @texlive_build_TRUE@encdir = ${prefix}/texmf-dist/fonts/enc/dvips/base
 @texlive_build_TRUE@enc_DATA = 7t.enc
 @texlive_build_FALSE@pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
-EXTRA_DIST = ONEWS lcdf-typetools.spec include/lcdf/bezier.hh \
-	include/lcdf/clp.h include/lcdf/error.hh \
-	include/lcdf/filename.hh include/lcdf/globmatch.hh \
-	include/lcdf/hashcode.hh include/lcdf/hashmap.hh \
-	include/lcdf/hashmap.cc include/lcdf/inttypes.h \
-	include/lcdf/landmark.hh include/lcdf/md5.h \
-	include/lcdf/permstr.hh include/lcdf/point.hh \
-	include/lcdf/slurper.hh include/lcdf/straccum.hh \
-	include/lcdf/string.hh include/lcdf/strtonum.h \
-	include/lcdf/transform.hh include/lcdf/vector.hh \
-	include/lcdf/vector.cc include/efont/afm.hh \
-	include/efont/afmparse.hh include/efont/afmw.hh \
-	include/efont/amfm.hh include/efont/cff.hh \
-	include/efont/encoding.hh include/efont/findmet.hh \
-	include/efont/metrics.hh include/efont/otf.hh \
-	include/efont/otfcmap.hh include/efont/otfdata.hh \
-	include/efont/otfgpos.hh include/efont/otfgsub.hh \
-	include/efont/otfname.hh include/efont/otfos2.hh \
-	include/efont/otfpost.hh include/efont/pairop.hh \
-	include/efont/psres.hh include/efont/t1bounds.hh \
-	include/efont/t1cs.hh include/efont/t1csgen.hh \
-	include/efont/t1font.hh include/efont/t1interp.hh \
-	include/efont/t1item.hh include/efont/t1mm.hh \
-	include/efont/t1rw.hh include/efont/t1unparser.hh \
-	include/efont/ttfcs.hh include/efont/ttfhead.hh \
-	include/efont/ttfkern.hh glyphlist.txt texglyphlist.txt 7t.enc \
+EXTRA_DIST = ONEWS lcdf-typetools.spec include/config.h \
+	include/lcdf/bezier.hh include/lcdf/clp.h \
+	include/lcdf/error.hh include/lcdf/filename.hh \
+	include/lcdf/globmatch.hh include/lcdf/hashcode.hh \
+	include/lcdf/hashmap.hh include/lcdf/hashmap.cc \
+	include/lcdf/inttypes.h include/lcdf/landmark.hh \
+	include/lcdf/md5.h include/lcdf/permstr.hh \
+	include/lcdf/point.hh include/lcdf/slurper.hh \
+	include/lcdf/straccum.hh include/lcdf/string.hh \
+	include/lcdf/strtonum.h include/lcdf/transform.hh \
+	include/lcdf/vector.hh include/lcdf/vector.cc \
+	include/efont/afm.hh include/efont/afmparse.hh \
+	include/efont/afmw.hh include/efont/amfm.hh \
+	include/efont/cff.hh include/efont/encoding.hh \
+	include/efont/findmet.hh include/efont/metrics.hh \
+	include/efont/otf.hh include/efont/otfcmap.hh \
+	include/efont/otfdata.hh include/efont/otfgpos.hh \
+	include/efont/otfgsub.hh include/efont/otfname.hh \
+	include/efont/otfos2.hh include/efont/otfpost.hh \
+	include/efont/pairop.hh include/efont/psres.hh \
+	include/efont/t1bounds.hh include/efont/t1cs.hh \
+	include/efont/t1csgen.hh include/efont/t1font.hh \
+	include/efont/t1interp.hh include/efont/t1item.hh \
+	include/efont/t1mm.hh include/efont/t1rw.hh \
+	include/efont/t1unparser.hh include/efont/ttfcs.hh \
+	include/efont/ttfhead.hh include/efont/ttfkern.hh \
+	glyphlist.txt texglyphlist.txt 7t.enc \
 	lcdf-typetools-$(LCDF_TYPETOOLS_VERSION)-PATCHES \
 	Makefile.am.orig configure.ac.orig
-all: config.h
+all: autoconf.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
@@ -350,22 +351,22 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
-config.h: stamp-h1
+autoconf.h: stamp-h1
 	@if test ! -f $@; then \
 	  rm -f stamp-h1; \
 	  $(MAKE) $(AM_MAKEFLAGS) stamp-h1; \
 	else :; fi
 
-stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
+stamp-h1: $(srcdir)/autoconf.h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status config.h
-$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+	cd $(top_builddir) && $(SHELL) ./config.status autoconf.h
+$(srcdir)/autoconf.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h1
 	touch $@
 
 distclean-hdr:
-	-rm -f config.h stamp-h1
+	-rm -f autoconf.h stamp-h1
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -516,7 +517,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES) autoconf.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	set x; \
 	here=`pwd`; \
@@ -533,7 +534,7 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
 	  fi; \
 	done; \
-	list='$(SOURCES) $(HEADERS) config.h.in $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) autoconf.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -551,9 +552,9 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS: ctags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
+CTAGS: ctags-recursive $(HEADERS) $(SOURCES) autoconf.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS) config.h.in $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) autoconf.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -754,7 +755,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(DATA) config.h all-local
+all-am: Makefile $(DATA) autoconf.h all-local
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(encdir)" "$(DESTDIR)$(glyphlistdir)" "$(DESTDIR)$(pkgdatadir)"; do \

@@ -19,9 +19,9 @@ class Os2 { public:
 		   O_SUBSCRIPTYOFFSET = 16, O_SUPERSCRIPTXSIZE = 18,
 		   O_SUPERSCRIPTYSIZE = 20, O_SUPERSCRIPTXOFFSET = 22,
 		   O_SUPERSCRIPTYOFFSET = 24, O_STRIKEOUTSIZE = 26,
-		   O_STRIKEOUTPOSITION = 28, O_TYPOASCENDER = 68,
-		   O_TYPODESCENDER = 70, O_TYPOLINEGAP = 72,
-		   O_XHEIGHT = 86, O_CAPHEIGHT = 88 };
+		   O_STRIKEOUTPOSITION = 28, O_VENDORID = 58,
+		   O_TYPOASCENDER = 68, O_TYPODESCENDER = 70,
+		   O_TYPOLINEGAP = 72, O_XHEIGHT = 86, O_CAPHEIGHT = 88 };
     enum { HEADER_SIZE = 2 };
 
     inline int16_t typo_ascender() const throw (Bounds);
@@ -29,6 +29,7 @@ class Os2 { public:
     inline int16_t typo_line_gap() const throw (Bounds);
     inline int16_t x_height() const throw (Bounds);
     inline int16_t cap_height() const throw (Bounds);
+    inline String vendor_id() const throw ();
 
   private:
 
@@ -63,6 +64,11 @@ inline int16_t Os2::x_height() const throw (Bounds)
 inline int16_t Os2::cap_height() const throw (Bounds)
 {
     return _data.s16(O_CAPHEIGHT);
+}
+
+inline String Os2::vendor_id() const throw ()
+{
+    return _data.substring(O_VENDORID, 4);
 }
 
 }}

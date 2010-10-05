@@ -140,10 +140,16 @@ Post::parse_header(ErrorHandler *errh)
 	const uint8_t *gni = data + HEADER_SIZE + 2;
 	const uint8_t *names = gni + 2 * _nglyphs;
 	int next_name = N_MAC_GLYPHS, g;
+	bool gni_error_reported = false;
 	for (int i = 0; i < _nglyphs; i++, gni += 2)
-	    if ((g = USHORT_AT(gni)) >= 32768)
-		return errh->error("bad glyph name index in post"), -EINVAL;
-	    else
+	    // Some fonts have more than 32768 glyphs.  Although the 'post'
+	    // spec says name indexes 32768-65535 are reserved, some large
+	    // fonts treat those indexes as valid.
+	    if ((g = USHORT_AT(gni)) >= 32768 && g >= _nglyphs) {
+		if (!gni_error_reported)
+		    errh->error("bad glyph name index in post");
+		gni_error_reported = true;
+	    } else
 		while (g >= next_name) {
 		    if (names - data > len
 			|| (names + 1 + names[0]) - data > len)

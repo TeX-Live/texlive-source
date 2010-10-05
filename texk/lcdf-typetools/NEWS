@@ -1,5 +1,20 @@
 LCDF Typetools NEWS
 
+Version 2.85   26.Sep.2010
+
+* Correct otftotfm bug with glyphlist.txt mappings like I_J.
+
+
+Version 2.84   15.Sep.2010
+
+* otftotfm: Avoid crashes on very large fonts and other odd situations.
+  Bugs reported by Martin Schröder.
+
+* Include new Unicode mappings for glyph names from MSAM and MSBM.
+
+* Bug fixes to texglyphlist.txt Unicode mappings.  Thanks to Clea F. Rees.
+
+
 Version 2.83   23.Apr.2010
 
 * otftotfm: If -fkern loads no GPOS lookups, apply the TTF kern table (if

@@ -18,6 +18,7 @@
 #include <efont/otfgsub.hh>
 #include <efont/otfgpos.hh>
 #include <efont/otfname.hh>
+#include <efont/otfos2.hh>
 #include <efont/cff.hh>
 #include <lcdf/clp.h>
 #include <lcdf/error.hh>
@@ -106,7 +107,7 @@ usage()
 %<Otfinfo%> reports information about an OpenType font to standard output.\n\
 Options specify what information to print.\n\
 \n\
-Usage: %s [-sfzpg] [OTFFILES...]\n\n",
+Usage: %s [-sfzpg | OPTIONS] [OTFFILES...]\n\n",
 	   program_name);
     uerrh.message("\
 Query options:\n\
@@ -151,7 +152,7 @@ read_file(String filename, ErrorHandler *errh, bool warning = false)
     while (!feof(f)) {
 	if (char *x = sa.reserve(8192)) {
 	    int amt = fread(x, 1, 8192, f);
-	    sa.forward(amt);
+	    sa.adjust_length(amt);
 	} else {
 	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
 	    break;
@@ -396,8 +397,20 @@ do_info(const OpenType::Font &otf, ErrorHandler *errh, ErrorHandler *result_errh
 	}
     }
 
+    if (String os2_table = otf.table("OS/2")) {
+	OpenType::Os2 os2(os2_table, errh);
+	if (os2.ok()) {
+	    if (String s = os2.vendor_id()) {
+		while (s.length() && (s.back() == ' ' || s.back() == 0))
+		    s = s.substring(s.begin(), s.end() - 1);
+		if (s)
+		    sa << "Vendor ID:           " << s << "\n";
+	    }
+	}
+    }
+
     if (errh->nerrors() == before_nerrors)
-	result_errh->message("%s", (sa ? sa.c_str() : "no name information"));
+	result_errh->message("%s", (sa ? sa.c_str() : "no information"));
 }
 
 static void

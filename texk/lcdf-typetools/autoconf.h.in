@@ -1,7 +1,4 @@
-/* config.h.in.  Generated from configure.ac by autoheader.  */
-
-#ifndef LCDF_TYPETOOLS_CONFIG_H
-#define LCDF_TYPETOOLS_CONFIG_H
+/* autoconf.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if strtod is broken. */
 #undef BROKEN_STRTOD
@@ -162,6 +159,9 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define to 1 if you have the `strnlen' function. */
+#undef HAVE_STRNLEN
+
 /* Define to 1 if you have the `strrchr' function. */
 #undef HAVE_STRRCHR
 
@@ -291,34 +291,3 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
-
-/* Allow compilation on Windows (thanks, Fabrice Popineau). */
-#ifdef WIN32
-# ifdef __MINGW32__
-#  include <windows.h>
-# else
-#  include <win32lib.h>
-# endif
-#else
-# define CDECL /* nothing */
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* Prototype strerror if we don't have it. */
-#if !HAVE_STRERROR
-char *strerror(int errno);
-#endif
-
-/* Prototype good_strtod if we need it. */
-#if BROKEN_STRTOD
-double good_strtod(const char *nptr, char **endptr);
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* LCDF_TYPETOOLS_CONFIG_H */

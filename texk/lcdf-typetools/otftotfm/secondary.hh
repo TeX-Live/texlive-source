@@ -65,6 +65,7 @@ class Secondary { public:
     virtual ~Secondary();
     void set_next(Secondary *s)		{ _next = s; }
     typedef Efont::OpenType::Glyph Glyph;
+    bool encode_uni(int code, PermString name, const uint32_t *uni_begin, const uint32_t *uni_end, Metrics &metrics, ErrorHandler *errh);
     virtual bool encode_uni(int code, PermString name, uint32_t uni, Metrics &, ErrorHandler *);
     virtual int setting(uint32_t uni, Vector<Setting> &, Metrics &, ErrorHandler *);
   private:
