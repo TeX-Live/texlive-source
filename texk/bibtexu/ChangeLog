@@ -1,3 +1,8 @@
+2010-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/bibtexu.test (new): Just 'bibtexu -version'.
+	* Makefile.am: Add the new test.
+
 2010-05-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bibtex.h: fix a bug in the macro BIB_XRETALLOC_STRING.

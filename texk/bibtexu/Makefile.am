@@ -60,11 +60,11 @@ dist_btdoc_DATA = \
 
 ## Tests.
 ##
-TESTS = tests/bibtex.test
+TESTS = tests/bibtex.test tests/bibtexu.test
 EXTRA_DIST = $(TESTS)
 DISTCLEANFILES =
 
-## bibtex.test
+## tests/bibtex.test
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
 
 ## Not used

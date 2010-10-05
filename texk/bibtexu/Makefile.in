@@ -311,7 +311,7 @@ dist_btdoc_DATA = \
 	csfile.txt \
 	file_id.diz
 
-TESTS = tests/bibtex.test
+TESTS = tests/bibtex.test tests/bibtexu.test
 EXTRA_DIST = $(TESTS) bt371csf.zip dos-dj.mak dos-emx.mak os2.mak \
 	unix.mak csf/00readme.txt csf/COPYING csf/HISTORY \
 	csf/file_id.diz
