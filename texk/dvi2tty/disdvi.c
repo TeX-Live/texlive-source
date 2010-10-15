@@ -54,8 +54,11 @@ FILE * dvifp;
 char * dvi_name;
 long   pc = 0;
 
+int is_ptex = 0;
+int is_xetex = 0;
+const char * dvi_ext = ".dvi";
+
 #ifdef KPATHSEA
-extern int main(int argc,char **argv );
 extern void bop(void);
 extern void postamble(void);
 extern void preamble(void);
@@ -66,6 +69,11 @@ extern const char *fontname(long fntnum);
 extern void printnonprint(int ch);
 extern unsigned long num(int size);
 extern long snum(int size);
+extern void picfile(int opcode);
+extern void natfontdef(int opcode);
+extern void glyphs(int opcode);
+extern void dvidir(int opcode);
+extern void invalid(int opcode);
 #else
 char *          malloc          ();
 
@@ -80,6 +88,11 @@ void            special         ();
 void            printnonprint   ();
 unsigned long   num             ();
 long            snum            ();
+void            picfile         ();
+void            natfontdef      ();
+void            glyphs          ();
+void            dvidir          ();
+void            invalid         ();
 #endif
 
 
@@ -91,26 +104,43 @@ int main(int argc, char **argv)
     register int opcode;                /* dvi opcode                        */
     register int i;
     int fontnum;
+    char * progname;
+
+    progname = *argv;
+
+    if ((argc > 1) && (argv[1][0] == '-')) {
+        if (!strcmp(argv[1], "-p") || !strcmp(argv[1], "--ptex")) {
+            is_ptex = 1;
+        } else if (!strcmp(argv[1], "-x") || !strcmp(argv[1], "--xetex")) {
+            is_xetex = 1;
+            dvi_ext = ".xdv";
+        } else {
+            fprintf(stderr, "Invalid option `%s'\n", argv[1]);
+            fprintf(stderr, "Usage: %s [-p|--ptex|-x|--xetex] [dvi-file]\n", progname);
+            exit(3);
+        }
+        argv++;
+        argc--;
+    }
 
     if (argc > 2) {
         fprintf(stderr, "To many arguments\n");
-        fprintf(stderr, "Usage: %s [dvi-file]\n", *argv);
+        fprintf(stderr, "Usage: %s [-p|--ptex|-x|--xetex] [dvi-file]\n", progname);
         exit(1);
     }
 
     if (argc == 2) {
         if ((i = strlen(argv[1])) == 0) {
             fprintf(stderr, "Illegal empty filename\n");
-            fprintf(stderr, "Usage: %s [dvi-file]\n", *argv);
+            fprintf(stderr, "Usage: %s [-p|--ptex|-x|--xetex] [dvi-file]\n", progname);
             exit(2);
         }
-        if ((i >= 5) && (argv[1][i-4] == '.') && (argv[1][i-3] == 'd') &&
-              (argv[1][i-2] == 'v') && (argv[1][i-1] == 'i'))
+        if ((i >= 5) && !strcmp(argv[1]+(i-4), dvi_ext))
             dvi_name = argv[1];
         else {
             dvi_name = malloc((i+5) * sizeof(char));
             strcpy(dvi_name, argv[1]);
-            strcat(dvi_name, ".dvi");
+            strcat(dvi_name, dvi_ext);
         }
         if ((dvifp = fopen(dvi_name, "r")) == NULL) {
             perror(dvi_name);
@@ -227,6 +257,12 @@ int main(int argc, char **argv)
                 case PRE      : preamble();                     break;
                 case POST     : postamble();                    break;
                 case POST_POST: postpostamble();                break;
+                case PIC_FILE : picfile(opcode);                break;
+                case NAT_FNT  : natfontdef(opcode);             break;
+                case SET_GL_AR:
+                case SET_GL_ST: glyphs(opcode);                 break;
+                case DVI_DIR  : dvidir(opcode);                 break;
+                default       : invalid(opcode);
             }
     }
 
@@ -487,3 +523,147 @@ long snum(register int size)
 
 
 
+void picfile(int opcode)
+{
+    int i;
+
+    if (!is_xetex) {
+        invalid(opcode);
+        return;
+    }
+
+    printf("PIC_FILE  flags            : %ld\n", get1());
+    printf("%06ld:           trans :", pc);
+    for (i=0; i<6; i++)
+        printf(" %ld", sget4());
+    printf("\n%06ld: ", pc);
+    printf("          page              : %ld\n", get2());
+    printf("%06ld: ", pc);
+    i = (int) get1();
+    printf("          path name (%3d)   :", i);
+    while (i-- > 0)
+        putchar((int) get1());
+    putchar('\n');
+} /* picfile */
+
+
+
+void natfontdef(int opcode)
+{
+    register int i;
+    char * name;
+    font * fnt;
+    int flags, namelen, famlen, stylen;
+    long fntnum;
+    int new = 0;
+
+    if (!is_xetex) {
+        invalid(opcode);
+        return;
+    }
+
+    fntnum = num(4);
+    printf("NAT_FNT:  %ld\n", fntnum);
+    printf("%06ld: ", pc);
+    printf("          scale            : %ld\n", get4());
+    printf("%06ld: ", pc);
+    flags = get2();
+    printf("          flags            : %d\n", flags);
+    printf("%06ld: ", pc);
+    printf("          name             : ");
+    namelen = (int) get1();
+    famlen = (int) get1();
+    stylen = (int) get1();
+    fnt = fonts;
+    while (fnt != NULL && fnt->num != fntnum)
+        fnt = fnt->next;
+    if (fnt == NULL) {
+        if ((fnt = (font *) malloc(sizeof(font))) == NULL) {
+            perror("fontdef");
+            exit(1);
+        }
+        fnt->num = fntnum;
+        new = 1;
+    }
+    else
+        free(fnt->name);    /* free old name */
+    if ((name = (char *) malloc((namelen+1) * sizeof(char))) == NULL) {
+        perror("fontdef");
+        exit(1);
+    }
+    
+    for (i = 0; i < namelen; i++)
+        name[i] = get1();
+    name[namelen] = '\0';
+    fnt->name = name;
+    if (new) {
+        fnt->next = fonts;
+        fonts = fnt;
+    }
+
+    printf("%s\n", name);
+
+    if (famlen) {
+        printf("                  family           : ");
+        while (famlen-- > 0)
+            putchar((int) get1());
+        putchar('\n');
+    }
+
+    if (stylen) {
+        printf("                  style            : ");
+        while (stylen-- > 0)
+            putchar((int) get1());
+        putchar('\n');
+    }
+} /* fontdef */
+
+
+
+void glyphs(int opcode)
+{
+    long width;
+    int x, n, i, j;
+    long * xy;
+
+    if (!is_xetex) {
+        invalid(opcode);
+        return;
+    }
+
+    x = SET_GL_ST - opcode + 1;
+    width = sget4();
+    n = get2();
+    printf("GLYPH_%s width            : %ld\n", x == 2 ? "ARR" : "STR", width);
+    if ((xy = (long *) malloc(n * x * sizeof(long))) == NULL) {
+        perror("glyphs");
+        exit(1);
+    }
+    for (j=0; j < n * x; j++)
+        xy[j] = sget4();
+    for (i=0, j=0; i < n; i++) {
+        printf("           x: %ld", xy[j++]);
+        if (x == 2)
+            printf("    y: %ld", xy[j++]);
+        printf("    g: %ld\n", get2());
+    }
+} /* glyphs */
+
+
+
+void dvidir(int opcode)
+{
+    if (!is_ptex) {
+        invalid(opcode);
+        return;
+    }
+
+    printf("DVI_DIR:  %ld\n", get1());
+} /* dvidir */
+
+
+
+void invalid(int opcode)
+{
+    printf("INVALID   %d\n", opcode);
+} /* invalid */

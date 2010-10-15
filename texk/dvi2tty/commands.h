@@ -45,7 +45,7 @@
 #define  Z3             169     /* ??? */
 #define  Z4             170     /* ??? */
 #define  FONT_00        171     /* set current font to 0 */
-#define  FONT_63        234     /* set current font to 0 */
+#define  FONT_63        234     /* set current font to 63 */
 #define  FNT1           235     /* set current font */
 #define  FNT2           236     /* Same as FNT1, except that arg is 2 bytes */
 #define  FNT3           237     /* Same as FNT1, except that arg is 3 bytes */
@@ -65,3 +65,12 @@
 #define  TRAILER        223     /* trailer bytes in dvi file */
 
         /*  undefined_commands           250,251,252,253,254,255 */
+
+/* additional DVI commands for XeTeX extensions */
+#define  PIC_FILE       251
+#define  NAT_FNT        252     /* define a native font */
+#define  SET_GL_AR      253
+#define  SET_GL_ST      254
+
+/* additional DVI command for pTeX extensions */
+#define  DVI_DIR        255     /* set direction */

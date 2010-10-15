@@ -1,3 +1,17 @@
+2010-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Add two disdvi command line options to handle .dvi files as
+	created by pTeX and .xdv files as created by XeTeX.
+
+	* commands.h: Define DVI opcodes for pTeX and XeTeX extensions.
+	* disdvi.c: Add command line options `-p' or `--ptex' and `-x'
+	or `--xetex'; handle DVI opcodes for pTeX and XeTeX extensions.
+
+2010-10-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* commands.h: Correct typo (description of FONT_63).
+	* disdvi.c: Print invalid DVI command bytes.
+
 2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi2tty.c (readable_file) [WIN32]: Remove unused variable err.
