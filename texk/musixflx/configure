@@ -564,11 +564,12 @@ PACKAGE_STRING='musixflx for TeX Live 0.83'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="musixflx.c"
+ac_unique_file="musixflx-0.83/musixflx.c"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+MUSIXFLX_TREE
 WARNING_CFLAGS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
@@ -3350,6 +3351,9 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 ac_config_headers="$ac_config_headers config.h"
+
+
+MUSIXFLX_TREE=musixflx-0.83
 
 
 ac_config_files="$ac_config_files Makefile"

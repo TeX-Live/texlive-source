@@ -1,0 +1,16 @@
+diff -ur musixflx-0.83.orig/musixflx.c musixflx-0.83/musixflx.c
+--- musixflx-0.83.orig/musixflx.c	2010-10-18 11:54:03.000000000 +0200
++++ musixflx-0.83/musixflx.c	2010-10-18 11:58:20.590008308 +0200
+@@ -22,11 +22,11 @@
+ 
+ *****************************************************************************/
+ 
++#include <config.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdlib.h>
+ #include <ctype.h>
+-#include "config.h"
+ 
+ #define TRUE  1
+ #define FALSE 0

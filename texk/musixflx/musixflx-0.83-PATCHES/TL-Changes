@@ -1,0 +1,9 @@
+Changes applied to the musixflx-0.83 tree as obtained from:
+	http://mirror.ctan.org/macros/musixtex/musixflx-0.83.tar.gz as of 28 Sep 2010.
+
+Removed:
+	INSTALL
+	depcomp
+	install-sh
+	missing
+

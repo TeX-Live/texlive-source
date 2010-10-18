@@ -1,50 +1,28 @@
 #define VERSION "0.83"
 #define MYVERSION "/T.63dt+jh.2\0" /* Revision jh.2  jh-2 */
 
-/* Copyright (C) 1992, 1993, 1994, 1995, 1997, 2007 Ross Mitchell.
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 2 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
-
-
 /****************************************************************************
  Line breaking program for MusiXTeX.
- Ross Mitchell, August 1992.
- - enabled endline signature changes, May 1993
- - enabled \zbar, March 1994
- - enabled \leftrightrepeat at eoline, April 1994
- - converted to (TURBO/PURBO/Pure)C, thanks to MiSi for compiling, June 1994
- remark: this is my very first attempt using C, if your harddisk crushes
-         or your computer blows up -> Your problem !
- - MusixFlx now gives back a number to the parent process (batch, shell, o.s.e.)
-    0 -> OK
-    3 -> error (freely be changed in error_exit())
- - introduced \raggedstoppiece, August 1994
- - introduced barno for more transparence of .mx2, September 1994
- - introduced (reluctant) the use of 'hard' offsets, September 1994
-   therefore the computing of mean space factor changed
- - introduced \leftrepeat, September 1994
- - enabled moretimes use of \startpiece, September 1994
- - added logfile for bughunting, September 1994
- - added test of versionnumber from MusiXTeX, September 1994
- - reintroduced \autolines, October 1994
- - renamed MuFlex to musixflx (as suggested by DT), October 1994
- - adapted ANSI coding (as suggested by CLARY Olivier), February 1995
- - added some safeties for weird situations, March 1995
- - fix bug in line breaking when xbars have sign changes - November 1997 jh-1
- - support possible \linegoal instead of \mulooseness - November 1997, jh-2
+ (c) Ross Mitchell 1992-1997 ross.mitchell@csiro.au
+
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
 *****************************************************************************/
 
+#include <config.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -658,8 +636,7 @@ main(int argc, char **argv)
  added correct computing of fill_length
 ****************************************************************/
 
-    for (j=1; j<=lines; ++j, ++line_in_section)
-    {
+    for (j=1; j<=lines; ++j, ++line_in_section) {
       ++line_number;
       fill_length=(lines-j+1)*(linewidth-(clefskip+signskip[sign]));
 
@@ -675,8 +652,7 @@ main(int argc, char **argv)
       if (!eff_softlength[section]) error_exit(5);
       spc_factor=(fill_length-eff_hardlength[section])/eff_softlength[section];
 
-      if ((xbar[mark+1]>1) && (mark>0))
-      { 
+      if ((xbar[mark+1]>1) && (mark>0)) { 
         /* The bar is an bar+xbar with a sign change. jh-1 */
         eff_linewidth=linewidth-(clefskip+signskip[sign-1])-parindent;
       } else { /* This is a normal bar. jh-1 */
@@ -698,8 +674,7 @@ main(int argc, char **argv)
       lastbar = 0.0;
       detect_end= FALSE;
 
-      while (x<eff_linewidth)
-      {
+      while (x<eff_linewidth) {
         if (detect_end) break;
         ++i;
 
@@ -735,8 +710,7 @@ main(int argc, char **argv)
  and shrink the line accordingly.
 *************************************************/
 
-      if ((x-eff_linewidth)<(lastbar/2))
-      {
+      if ((x-eff_linewidth)<(lastbar/2)) {
         barsinline=i-mark;
         mark=i;
         lastbarno=barno[mark];
@@ -747,8 +721,7 @@ main(int argc, char **argv)
  the amount of afterruleskip
 *********************************************/
 
-        if (zbar[mark])
-        {
+        if (zbar[mark]) {
           softbarlength[i+1] += afterrule;
           eff_softlength[section] += afterrule;
         }
@@ -760,8 +733,7 @@ main(int argc, char **argv)
             advance the softwidth of next bar
 *********************************************/
 
-        if (lr_repeat[mark])
-        {
+        if (lr_repeat[mark]) {
 /*          printf("mark=%d\n",mark);
             printf("width_leftright=%f\n",width_leftrightrepeat[i]);
             printf("width_left=%f\n",width_leftrepeat[i]);   */
@@ -781,16 +753,14 @@ main(int argc, char **argv)
             advance the softwidth of next bar
 *********************************************/
 
-        if (l_repeat[mark])
-        {
+        if (l_repeat[mark]) {
           hardlength -= (width_leftrepeat[i]-lthick);
           hardbarlength[i+1] += width_leftrepeat[i];
           softbarlength[i+1] += afterrule/2;
           eff_softlength[section] += afterrule/2;
         }
 
-        if (signchange[sign+1]==mark+1) /* s.b. */
-        {
+        if (signchange[sign+1]==mark+1) { /* s.b. */
           ++sign;
           /* Because the bar is staying here in the line, we look ahead
              to see if the upcoming bar is a sign change, and adjust space
@@ -799,8 +769,7 @@ main(int argc, char **argv)
              sign change bar is really a bar+xbar set, where the sign change
              is buried in the xbar, then we don't do the move because the
              change notice really won't be posted in this line.  jh-1 */
-          if (xbar[mark+1]<2) /* okay to do the move.  jh-1 */
-          {
+          if (xbar[mark+1]<2) { /* okay to do the move.  jh-1 */
             hardlength += oldsignskip[sign];
             hardbarlength[mark+1] -= oldsignskip[sign];
           }
@@ -811,8 +780,7 @@ main(int argc, char **argv)
  Exclude the latest bar, and stretch the line.
 **********************************************/
 
-      else
-      {
+      else {
 
         barsinline=i-1-mark;
         if (barsinline<1) error_exit(2);
@@ -823,8 +791,7 @@ main(int argc, char **argv)
 
         if (zbar[mark]) softbarlength[i] += afterrule;
 
-        if (lr_repeat[mark])
-        {
+        if (lr_repeat[mark]) {
           hardlength -= (width_leftrightrepeat[i-1]-width_leftrepeat[i-1]);
           eff_hardlength[section] +=
                         (width_leftrightrepeat[i-1]-width_leftrepeat[i-1]);
@@ -833,8 +800,7 @@ main(int argc, char **argv)
           eff_softlength[section] += afterrule/2;
         }
 
-        if (l_repeat[mark])
-        {
+        if (l_repeat[mark]) {
           hardlength -= (width_leftrepeat[i-1]-lthick);
           hardbarlength[i] += width_leftrepeat[i-1];
           softbarlength[i] += afterrule/2;
@@ -848,13 +814,11 @@ main(int argc, char **argv)
               reduce next hard barlength by signature change
 **********************************************************************/
 
-        if (signchange[sign]==mark+1)
-        {
+        if (signchange[sign]==mark+1) {
           /* However, if the next bar is a bar+xbar set where the
              sign change comes from the xbar, then don't do this
              move, because the extra skip is not really there! jh-1 */
-          if (xbar[mark+1]<2) /* alright, do the move.   jh-1 */
-          {
+          if (xbar[mark+1]<2) { /* alright, do the move.   jh-1 */
             hardlength += oldsignskip[sign];
             hardbarlength[mark+1] -= oldsignskip[sign];
           }

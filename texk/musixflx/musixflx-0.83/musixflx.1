@@ -1,0 +1,36 @@
+.\" musixflx.1
+.\" Written by Andreas Tille <tille@debian.org> for the Debian GNU/Linux
+.\" distribution but might be useful for others, too.
+.\" This manpage is licensed under the GNU Public License
+.TH MUSIXFLX 1
+
+.SH NAME
+musixflx \- preprocess mx1 files
+
+.SH SYNOPSIS
+.B musixflx
+.I "[debugmode] jobname.mx1"
+
+.SH "DESCRIPTION"
+
+Optionally, you can add a letter to indicate one of the debug modes, which are:
+
+	d	for debug information to screen
+.br
+	f	for debug information to file jobname.mxl
+.br
+	s	to get the computed lines immediately on screen
+
+To allow for ease of use with a batch file, \fB musixflx\fR
+can either be fed with \fI jobname.mx1\fP, \fI jobname.tex\fP
+or only \fI jobname\fP, all of which opens \fI jobname.mx1\fP.
+
+.SH SEE ALSO
+musixtex(1)
+.br
+/usr/share/doc/musixtex/musixdoc.ps on a Debian GNU/Linux system
+
+
+.SH AUTHOR
+This manual page was written by Andreas Tille <tille@debian.org>
+for the Debian GNU/Linux system (but may be used by others).

@@ -1,0 +1,18 @@
+2010-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import musixflx-0.83 source tree from CTAN.
+
+	Changes from pre2006 teTeX repository:
+	* patch-01-filenames (new): Correctly parse file names from the
+	command line; allow backslash as directory separator.
+	* patch-02-FILENAME_MAX (new): Allow longer file names.
+
+	Changes from TeX Live repository (2009):
+	* patch-03-ANSI (new): Use ANSI C function declarations.
+	Declare error_exit as static.
+	* patch-04-lastbar (new): Avoid uninitialized use of 'lastbar'.
+
+	* patch-05-HAVE_CONFIG_H (new): #include <config.h> as
+	recommended in the Autoconf manual.
+	* patch-06-indent (new): Consistent indentation.
+

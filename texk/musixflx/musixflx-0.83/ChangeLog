@@ -1,0 +1,25 @@
+
+ Ross Mitchell, August 1992.
+ - enabled endline signature changes, May 1993
+ - enabled \zbar, March 1994
+ - enabled \leftrightrepeat at eoline, April 1994
+ - converted to (TURBO/PURBO/Pure)C, thanks to MiSi for compiling, June 1994
+ remark: this is my very first attempt using C, if your harddisk crushes
+         or your computer blows up -> Your problem !
+ - MusixFlx now gives back a number to the parent process (batch, shell, o.s.e.)
+    0 -> OK
+    3 -> error (freely be changed in error_exit())
+ - introduced \raggedstoppiece, August 1994
+ - introduced barno for more transparence of .mx2, September 1994
+ - introduced (reluctant) the use of 'hard' offsets, September 1994
+   therefore the computing of mean space factor changed
+ - introduced \leftrepeat, September 1994
+ - enabled moretimes use of \startpiece, September 1994
+ - added logfile for bughunting, September 1994
+ - added test of versionnumber from MusiXTeX, September 1994
+ - reintroduced \autolines, October 1994
+ - renamed MuFlex to musixflx (as suggested by DT), October 1994
+ - adapted ANSI coding (as suggested by CLARY Olivier), February 1995
+ - added some safeties for weird situations, March 1995
+ - fix bug in line breaking when xbars have sign changes - November 1997 jh-1
+ - support possible \linegoal instead of \mulooseness - November 1997, jh-2

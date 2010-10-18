@@ -1,0 +1,36 @@
+diff -ur musixflx-0.83.orig/musixflx.c musixflx-0.83/musixflx.c
+--- musixflx-0.83.orig/musixflx.c	2010-10-18 11:34:37.000000000 +0200
++++ musixflx-0.83/musixflx.c	2010-10-18 11:49:06.934796190 +0200
+@@ -46,9 +46,6 @@
+ 
+ #define GETLINE fgets(linebuf, (int) sizeof(linebuf), infile)
+ 
+-/* ! If next line causes trouble, comment it out ! */
+-void error_exit(int error_number);
+-
+ int zbar[MAX_BARS], lr_repeat[MAX_BARS], raggedline[MAX_BARS],
+     l_repeat[MAX_BARS], barno[MAX_BARS], autolines[MAX_SECTIONS],
+     bars[MAX_SECTIONS], mulooseness[MAX_SECTIONS], signchange[MAX_SIGNS],
+@@ -65,8 +62,8 @@
+ FILE *infile, *outfile, *logfile;
+ char linebuf[128];
+ 
+-void error_exit(error_number)
+-     int error_number;
++static void
++error_exit(int error_number)
+ {
+   switch (error_number){
+ 
+@@ -86,9 +83,8 @@
+   default:
+     printf("!!! Can't go on !!!\n"); exit(3);}}
+ 
+-int main(argc, argv)
+-     int argc;
+-     char **argv;
++int
++main(int argc, char **argv)
+ {
+   register int i, j, bar;
+ 
