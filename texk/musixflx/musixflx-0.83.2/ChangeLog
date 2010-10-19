@@ -23,3 +23,23 @@
  - added some safeties for weird situations, March 1995
  - fix bug in line breaking when xbars have sign changes - November 1997 jh-1
  - support possible \linegoal instead of \mulooseness - November 1997, jh-2
+
+2010-09-27  Bob Tennent <rdt@cs.queensu.ca>
+
+       * musixflx.c: added copyright notice and reference to the GPL license as
+         instructed by e-mail from Ross Mitchell <Ross.Mitchell@csiro.au>
+
+2010-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+        * musixflx.c: use ANSI C function declarations.
+          avoid uninitialized use of 'lastbar'.
+          declare error_exit as static.
+          Correctly parse file names from the command line; allow backslash as directory separator.
+          Allow longer file names.
+          #include <config.h> as recommended in the Autoconf manual.
+          Consistent indentation.
+
+2010-10-18 Bob Tennent <rdt@cs.queensu.ca>
+
+       * musixflx.c:  replaced definition of VERSION by MUSIXFLXVERSION to allow changes
+         that don't affect MusiXTeX 

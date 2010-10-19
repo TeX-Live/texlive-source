@@ -1,0 +1,40 @@
+.\" This manpage is licensed under the GNU Public License
+.TH MUSIXFLX 1 2010-10-19  "musixflx-0.83.2" ""
+
+.SH NAME
+musixflx \- process mx1 files (the second pass of 3-pass MusiXTeX typesetting)
+
+.SH SYNOPSIS
+.B musixflx
+.IR jobname [ .mx1 " | " .tex ] 
+[ 
+.I debugmode 
+] 
+
+where 
+.I debugmode 
+can be
+.br
+	d	for debug information to the screen
+.br
+	m	for line numbers to the screen 
+.br
+	f	for debug information to a log file jobname.mxl (not .mx1)
+.br
+	s	to get the computed lines immediately on the screen
+
+To allow for ease of use with a batch file, \fB musixflx\fR
+can be fed with either \fI jobname.mx1\fP, \fI jobname.tex\fP,
+or just \fI jobname\fP, any of which open \fI jobname.mx1\fP.
+
+.SH SEE ALSO
+.BR musixtex (1)
+.br
+musixdoc.pdf
+
+.SH AUTHOR 
+This manual page was written by Andreas Tille
+<tille@debian.org> for the Debian GNU/Linux system (but may be used
+by others). Corrections to the synopsis were pointed out by Peter
+Breitenlohner <peb@mppmu.mpg.de> and implemented by Bob Tennent
+<rdt@cs.queensu.ca>.

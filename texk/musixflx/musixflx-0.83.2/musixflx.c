@@ -1,9 +1,11 @@
-#define VERSION "0.83"
+#define MUSIXFLXVERSION "0.83"
 #define MYVERSION "/T.63dt+jh.2\0" /* Revision jh.2  jh-2 */
+                   /* Don't know who jh is.  Bob Tennent  */
 
 /****************************************************************************
  Line breaking program for MusiXTeX.
  (c) Ross Mitchell 1992-1997 ross.mitchell@csiro.au
+ (c) Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 
 
 This program is free software; you can redistribute it and/or modify it
@@ -111,7 +113,7 @@ main(int argc, char **argv)
 
   char *p;
 
-  printf("\n <<< musixflex %s%s >>>\n", VERSION, MYVERSION);
+  printf("\n <<< musixflex %s >>>\n", VERSION);
   printf("\n ... decoding command line\n");
 
   if (argc<2 || argc >3) error_exit(1);
@@ -160,7 +162,7 @@ main(int argc, char **argv)
  and stop if they differ
 ************************/
 
-  strcpy(MusiXFlxVersion, VERSION);
+  strcpy(MusiXFlxVersion, MUSIXFLXVERSION);
   strcat(MusiXFlxVersion, "\n");
   printf(" ... testing versionnumber\n");
   ++currentline;

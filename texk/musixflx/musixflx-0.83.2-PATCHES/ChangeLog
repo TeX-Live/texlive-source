@@ -1,3 +1,9 @@
+2010-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import musixflx-0.83.2 source tree from CTAN.
+
+	* patch-0[1-6]-* (removed): Now all in distributed 0.83.2 tree.
+
 2010-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import musixflx-0.83 source tree from CTAN.

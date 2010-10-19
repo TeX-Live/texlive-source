@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([musixflx_version], [0.83])[]dnl using unmodified musixflx source tree
+m4_define([musixflx_version], [0.83.2])[]dnl using unmodified musixflx source tree
 AC_INIT([musixflx for TeX Live], musixflx_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([musixflx-]musixflx_version[/musixflx.c])

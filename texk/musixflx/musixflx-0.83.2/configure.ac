@@ -1,8 +1,9 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
+m4_define([musixflx_version], [0.83.2])[]
 AC_PREREQ(2.59)
-AC_INIT(musixflx, 0.83, ross.mitchell@csiro.au)
+AC_INIT([musixflx], musixflx_version, [ross.mitchell@csiro.au])
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_SRCDIR([musixflx.c])
