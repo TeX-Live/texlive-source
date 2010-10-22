@@ -1,3 +1,8 @@
+2010-10-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* output.c (hvpos): simplify the change 2010-10-22.
+	Many thanks Peter.
+
 2010-10-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* output.c (hvpos): recover the old code in hvpos() for japanese

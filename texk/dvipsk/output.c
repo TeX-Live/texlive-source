@@ -914,19 +914,13 @@ hvpos(void)
             numout(hh);
             numout(vv);
             chrcmd('y');
-         } else if (jflag) {
-            numout(hh) ;
-            numout(vv) ;
+         } else if (rhh != hh || jflag) {
+            numout(hh);
+            numout(vv);
             chrcmd('a') ;
-         } else {
-            if (rhh != hh) {
-               numout(hh);
-               numout(vv);
-               chrcmd('a');
-            } else { /* hard to get this case, but it's there when you need it! */
-               numout(vv - rvv);
-               chrcmd('x');
-            }
+         } else { /* hard to get this case, but it's there when you need it! */
+            numout(vv - rvv);
+            chrcmd('x');
          }
          rvv = vv;
       } else if (rhh != hh || jflag) {
@@ -963,19 +957,13 @@ hvpos(void)
             numout(vv);
             numout(-hh);
             chrcmd('y');
-         } else if (jflag) {
-            numout(vv) ;
-            numout(-hh) ;
-            chrcmd('a') ;
-         } else {
-            if (rvv != vv) {
-               numout(vv);
-               numout(-hh);
-               chrcmd('a');
-            } else { /* hard to get this case, but it's there when you need it! */
-               numout(rhh - hh);
-               chrcmd('x');
-            }
+         } else if (rvv != vv || jflag) {
+            numout(vv);
+            numout(-hh);
+            chrcmd('a');
+         } else { /* hard to get this case, but it's there when you need it! */
+            numout(rhh - hh);
+            chrcmd('x');
          }
          rhh = hh;
       } else if (rvv != vv || jflag) {
