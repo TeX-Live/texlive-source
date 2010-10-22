@@ -914,13 +914,19 @@ hvpos(void)
             numout(hh);
             numout(vv);
             chrcmd('y');
-         } else if (rhh != hh) {
-            numout(hh);
-            numout(vv);
-            chrcmd('a');
-         } else { /* hard to get this case, but it's there when you need it! */
-            numout(vv - rvv);
-            chrcmd('x');
+         } else if (jflag) {
+            numout(hh) ;
+            numout(vv) ;
+            chrcmd('a') ;
+         } else {
+            if (rhh != hh) {
+               numout(hh);
+               numout(vv);
+               chrcmd('a');
+            } else { /* hard to get this case, but it's there when you need it! */
+               numout(vv - rvv);
+               chrcmd('x');
+            }
          }
          rvv = vv;
       } else if (rhh != hh || jflag) {
@@ -957,13 +963,19 @@ hvpos(void)
             numout(vv);
             numout(-hh);
             chrcmd('y');
-         } else if (rvv != vv) {
-            numout(vv);
-            numout(-hh);
-            chrcmd('a');
-         } else { /* hard to get this case, but it's there when you need it! */
-            numout(rhh - hh);
-            chrcmd('x');
+         } else if (jflag) {
+            numout(vv) ;
+            numout(-hh) ;
+            chrcmd('a') ;
+         } else {
+            if (rvv != vv) {
+               numout(vv);
+               numout(-hh);
+               chrcmd('a');
+            } else { /* hard to get this case, but it's there when you need it! */
+               numout(rhh - hh);
+               chrcmd('x');
+            }
          }
          rhh = hh;
       } else if (rvv != vv || jflag) {
@@ -1654,7 +1666,10 @@ drawchar(chardesctype *c, int cc)
    }
 
    if (curfnt->iswide == 0 && curfnt->codewidth == 2) {
+      Boolean savejflag = jflag;
+      jflag = 1;
       hvpos();
+      jflag = savejflag;
       if (lastfont != curfnt->psname)
          fontout(curfnt->psname);
       scout2(cc);

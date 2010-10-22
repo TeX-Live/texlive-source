@@ -1,3 +1,9 @@
+2010-10-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* output.c (hvpos): recover the old code in hvpos() for japanese
+	because the changed code leads to incorrect result in some cases.
+	other cases than japanese are not affected.
+
 2010-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* search.c (selfautoloc_prog): #include <kpathsea/concatn.h>
