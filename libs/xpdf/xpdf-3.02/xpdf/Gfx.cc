@@ -461,6 +461,7 @@ Gfx::Gfx(XRef *xrefA, OutputDev *outA, int pageNum, Dict *resDict,
     baseMatrix[i] = state->getCTM()[i];
   }
   formDepth = 0;
+  parser = NULL;
   abortCheckCbk = abortCheckCbkA;
   abortCheckCbkData = abortCheckCbkDataA;
 
@@ -500,6 +501,7 @@ Gfx::Gfx(XRef *xrefA, OutputDev *outA, Dict *resDict,
     baseMatrix[i] = state->getCTM()[i];
   }
   formDepth = 0;
+  parser = NULL;
   abortCheckCbk = abortCheckCbkA;
   abortCheckCbkData = abortCheckCbkDataA;
 

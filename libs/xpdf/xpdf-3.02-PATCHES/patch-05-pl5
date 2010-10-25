@@ -1,0 +1,43 @@
+diff -ur -N xpdf-3.02.orig/fofi/FoFiType1.cc xpdf-3.02/fofi/FoFiType1.cc
+--- xpdf-3.02.orig/fofi/FoFiType1.cc	2007-02-27 23:05:51.000000000 +0100
++++ xpdf-3.02/fofi/FoFiType1.cc	2010-10-11 06:44:13.000000000 +0200
+@@ -224,7 +224,7 @@
+ 		code = code * 8 + (*p2 - '0');
+ 	      }
+ 	    }
+-	    if (code < 256) {
++	    if (code >= 0 && code < 256) {
+ 	      for (p = p2; *p == ' ' || *p == '\t'; ++p) ;
+ 	      if (*p == '/') {
+ 		++p;
+diff -ur -N xpdf-3.02.orig/xpdf/Gfx.cc xpdf-3.02/xpdf/Gfx.cc
+--- xpdf-3.02.orig/xpdf/Gfx.cc	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/Gfx.cc	2010-10-11 06:39:52.000000000 +0200
+@@ -461,6 +461,7 @@
+     baseMatrix[i] = state->getCTM()[i];
+   }
+   formDepth = 0;
++  parser = NULL;
+   abortCheckCbk = abortCheckCbkA;
+   abortCheckCbkData = abortCheckCbkDataA;
+ 
+@@ -500,6 +501,7 @@
+     baseMatrix[i] = state->getCTM()[i];
+   }
+   formDepth = 0;
++  parser = NULL;
+   abortCheckCbk = abortCheckCbkA;
+   abortCheckCbkData = abortCheckCbkDataA;
+ 
+diff -ur -N xpdf-3.02.orig/xpdf/config.h xpdf-3.02/xpdf/config.h
+--- xpdf-3.02.orig/xpdf/config.h	2009-10-15 13:37:21.000000000 +0200
++++ xpdf-3.02/xpdf/config.h	2010-10-25 11:09:37.000000000 +0200
+@@ -17,7 +17,7 @@
+ //------------------------------------------------------------------------
+ 
+ // xpdf version
+-#define xpdfVersion          "3.02pl4"
++#define xpdfVersion          "3.02pl5"
+ #define xpdfVersionNum       3.02
+ #define xpdfMajorVersion     3
+ #define xpdfMinorVersion     2

@@ -1,0 +1,41 @@
+*** xpdf-3.02.orig/xpdf/Gfx.cc	Tue Feb 27 14:05:52 2007
+--- xpdf-3.02/xpdf/Gfx.cc	Mon Oct 11 15:39:52 2010
+***************
+*** 461,466 ****
+--- 461,467 ----
+      baseMatrix[i] = state->getCTM()[i];
+    }
+    formDepth = 0;
++   parser = NULL;
+    abortCheckCbk = abortCheckCbkA;
+    abortCheckCbkData = abortCheckCbkDataA;
+  
+***************
+*** 500,505 ****
+--- 501,507 ----
+      baseMatrix[i] = state->getCTM()[i];
+    }
+    formDepth = 0;
++   parser = NULL;
+    abortCheckCbk = abortCheckCbkA;
+    abortCheckCbkData = abortCheckCbkDataA;
+  
+*** xpdf-3.02.orig/fofi/FoFiType1.cc	Tue Feb 27 14:05:51 2007
+--- xpdf-3.02/fofi/FoFiType1.cc	Mon Oct 11 15:44:13 2010
+***************
+*** 224,230 ****
+  		code = code * 8 + (*p2 - '0');
+  	      }
+  	    }
+! 	    if (code < 256) {
+  	      for (p = p2; *p == ' ' || *p == '\t'; ++p) ;
+  	      if (*p == '/') {
+  		++p;
+--- 224,230 ----
+  		code = code * 8 + (*p2 - '0');
+  	      }
+  	    }
+! 	    if (code >= 0 && code < 256) {
+  	      for (p = p2; *p == ' ' || *p == '\t'; ++p) ;
+  	      if (*p == '/') {
+  		++p;

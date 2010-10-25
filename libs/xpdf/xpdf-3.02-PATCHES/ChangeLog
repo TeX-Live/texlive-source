@@ -1,3 +1,8 @@
+2010-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-pl5 (new): Official 3.02pl5 patch plus change of
+	xpdfVersion "3.02pl4" -> "3.02pl5"
+
 2010-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-45-getmetadatanf (removed): unnecessary.
