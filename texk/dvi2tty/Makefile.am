@@ -1,12 +1,24 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvi2tty/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+## We want to re-distribute the whole original dvi2tty source tree.
+##
+EXTRA_DIST = $(DVI2TTY_TREE)
+
+## Patches applied to the original source tree
+##
+EXTRA_DIST += $(DVI2TTY_TREE)-PATCHES
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 LDADD = $(KPATHSEA_LIBS)
@@ -14,26 +26,20 @@ LDADD = $(KPATHSEA_LIBS)
 bin_PROGRAMS = disdvi dvi2tty
 
 disdvi_SOURCES = \
-	commands.h \
-	disdvi.c
+	$(DVI2TTY_TREE)/commands.h \
+	$(DVI2TTY_TREE)/disdvi.c
 
 $(disdvi_OBJECTS): $(KPATHSEA_DEPEND)
 
 dvi2tty_SOURCES = \
-	commands.h \
-	dvi2tty.c \
-	dvi2tty.h \
-	dvistuff.c
+	$(DVI2TTY_TREE)/commands.h \
+	$(DVI2TTY_TREE)/dvi2tty.c \
+	$(DVI2TTY_TREE)/dvi2tty.h \
+	$(DVI2TTY_TREE)/dvistuff.c
 	
 $(dvi2tty_OBJECTS): $(KPATHSEA_DEPEND)
 
-dist_man1_MANS = dvi2tty.1
-
-## Not used
-##
-EXTRA_DIST = \
-	DVI.format \
-	MANIFEST \
-	README.ORG \
-	dvi2tty.patch
+man1_MANS = \
+	$(DVI2TTY_TREE)/disdvi.1 \
+	$(DVI2TTY_TREE)/dvi2tty.1
 

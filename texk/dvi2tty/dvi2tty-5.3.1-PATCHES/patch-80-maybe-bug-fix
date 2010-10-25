@@ -1,0 +1,13 @@
+diff -ur dvi2tty-5.3.1.orig/dvistuff.c dvi2tty-5.3.1/dvistuff.c
+--- dvi2tty-5.3.1.orig/dvistuff.c	2010-10-22 14:07:21.000000000 +0200
++++ dvi2tty-5.3.1/dvistuff.c	2010-10-22 14:58:46.000000000 +0200
+@@ -1165,8 +1165,8 @@
+             currentline->charactercount = j;
+         if (j < firstcolumn)
+             firstcolumn = j;
++        h += charwidth;
+     }
+-    h += charwidth;
+ 
+     return;
+ 

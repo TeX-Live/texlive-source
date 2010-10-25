@@ -13,7 +13,7 @@
 
 2009-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	Import musixflx-0.83 from CTAN (as of 28 Sep 2010)..
+	Import musixflx-0.83 from CTAN (as of 28 Sep 2010).
 
 	* Makefile.am, configure.ac: Proxy build system for TeX Live,
 	using the musixflx-0.83 distribution tree.

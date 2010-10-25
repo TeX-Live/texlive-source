@@ -150,7 +150,7 @@ int main(int argc, char **argv)
     else
         dvifp = stdin;
 
-#if defined(MSDOS)
+#if defined(MSDOS) || defined(WIN32)
     setmode(fileno(dvifp), O_BINARY);
 #endif
 

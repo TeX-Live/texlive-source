@@ -1,0 +1,24 @@
+diff -ur dvi2tty-5.3.1.orig/README dvi2tty-5.3.1/README
+--- dvi2tty-5.3.1.orig/README	2003-01-23 04:02:43.000000000 +0100
++++ dvi2tty-5.3.1/README	2009-06-15 00:59:36.000000000 +0200
+@@ -3,7 +3,7 @@
+ 
+ dvi2tty is intended for previewing dvi-files on text-only
+ devices (terminals and lineprinters).
+-The program is basicly an improved C version of the pascal
++The program is basically an improved C version of the pascal
+ program written by Svante Lindahl (see README.ORG).
+ I translated it because I could not find a pascal compiler 
+ on our machine that could compile it.
+diff -ur dvi2tty-5.3.1.orig/commands.h dvi2tty-5.3.1/commands.h
+--- dvi2tty-5.3.1.orig/commands.h	2003-01-23 04:00:22.000000000 +0100
++++ dvi2tty-5.3.1/commands.h	2010-10-19 11:34:16.000000000 +0200
+@@ -65,7 +65,7 @@
+ #define  Z3             169     /* ??? */
+ #define  Z4             170     /* ??? */
+ #define  FONT_00        171     /* set current font to 0 */
+-#define  FONT_63        234     /* set current font to 0 */
++#define  FONT_63        234     /* set current font to 63 */
+ #define  FNT1           235     /* set current font */
+ #define  FNT2           236     /* Same as FNT1, except that arg is 2 bytes */
+ #define  FNT3           237     /* Same as FNT1, except that arg is 3 bytes */

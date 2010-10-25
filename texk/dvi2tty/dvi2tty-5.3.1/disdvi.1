@@ -1,0 +1,27 @@
+.TH DISDVI 1 "23 October 2010" "TeX Live"
+.SH NAME
+disdvi \- `disassemble' a (p)TeX DVI or XeTeX XDV file
+.SH SYNOPSIS
+.B disdvi
+.RB [ \-p ]
+.RI [ dvi_file [ \fB.dvi\fP ]]
+.br
+.B disdvi \-x
+.RI [ xdv_file [ \fB.xdv\fP ]]
+.br
+.B disdvi \-h
+.SH DESCRIPTION
+.I disdvi
+interprets the contents of
+.IR dvi_file
+or
+.IR xdv_file ,
+printing the DVI commands and text in a human-readable ASCII format on
+the standard output.
+.SH "SEE ALSO"
+.BR dvi2tty (1)
+.SH AUTHOR
+Marcel J.E. Mol, Delft University of Technology, The Netherlands
+.br
+marcel@mesa.nl, MESA Consulting
+

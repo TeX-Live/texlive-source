@@ -1,3 +1,12 @@
+2010-10-23  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	Import dvi2tty-5.3.1.
+
+	* Makefile.am, configure.ac: Proxy build system for TeX Live,
+	using the dvi2tty-5.3.1 distribution tree.
+	* dvi2tty-5.3.1-PATCHES: New directory with patches applied to
+	the dvi2tty-5.3.1 distribution.
+
 2010-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Add two disdvi command line options to handle .dvi files as

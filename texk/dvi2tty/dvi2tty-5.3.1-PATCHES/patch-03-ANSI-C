@@ -1,0 +1,59 @@
+diff -ur dvi2tty-5.3.1.orig/disdvi.c dvi2tty-5.3.1/disdvi.c
+--- dvi2tty-5.3.1.orig/disdvi.c	2003-01-23 11:31:00.000000000 +0100
++++ dvi2tty-5.3.1/disdvi.c	2010-10-21 08:07:43.000000000 +0200
+@@ -113,8 +113,6 @@
+ 
+ #if defined(VMS)
+                 main            (int argc, char ** argv);
+-#else
+-void            main            (int argc, char ** argv);
+ #endif
+ void            bop             (void);
+ void            preamble        (void);
+@@ -138,7 +136,7 @@
+ #if defined(VMS)
+      main(int argc, char **argv)
+ #else
+-void main(int argc, char **argv)
++int main(int argc, char **argv)
+ #endif
+ {
+     register int opcode;                /* dvi opcode                        */
+diff -ur dvi2tty-5.3.1.orig/dvi2tty.c dvi2tty-5.3.1/dvi2tty.c
+--- dvi2tty-5.3.1.orig/dvi2tty.c	2003-01-23 11:28:30.000000000 +0100
++++ dvi2tty-5.3.1/dvi2tty.c	2010-10-21 08:31:44.000000000 +0200
+@@ -252,7 +252,6 @@
+  */
+ 
+ #if defined(MSDOS)
+-void    main      (int, char **); 
+ void    setoption (char *);
+ void    getargs   (void);
+ void    getpages  (int, char *);
+@@ -265,8 +264,6 @@
+ 
+ # if defined(VMS)
+         main      (int argc, char ** argv); 
+-# else
+-void    main      (int argc, char ** argv); 
+ # endif
+ void    setoption (char * optarg);
+ void    getargs   (void);
+@@ -288,7 +285,7 @@
+ #if defined(VMS)
+ main(int argc, char **argv)
+ #else
+-void main(int argc, char **argv)
++int main(int argc, char **argv)
+ #endif
+ {
+ 
+@@ -361,7 +358,7 @@
+  * GETARGS -- Process options from command line and from environment.
+  */
+ 
+-void getargs()
++void getargs(void)
+ {
+     char *str, *envp;
+     bool DVIfound;                      /* if a dvi filename found           */

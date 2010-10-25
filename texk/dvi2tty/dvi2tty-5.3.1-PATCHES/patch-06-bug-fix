@@ -1,0 +1,22 @@
+diff -ur dvi2tty-5.3.1.orig/dvistuff.c dvi2tty-5.3.1/dvistuff.c
+--- dvi2tty-5.3.1.orig/dvistuff.c	2010-10-22 11:03:32.000000000 +0200
++++ dvi2tty-5.3.1/dvistuff.c	2010-10-22 13:45:27.000000000 +0200
+@@ -596,7 +596,8 @@
+           currentline = currentline->next) {
+         if (currentline != firstline) {
+             foo = ((currentline->vv - currentline->prev->vv)/lineheight)-1;
+-            foo &= 3;            /* linespacings not too large */
++            if (foo > 3)
++                foo = 3;         /* linespacings not too large */
+             for (i = 1; i <= (int) foo; i++)
+                 putc('\n', output);
+         }
+@@ -1246,7 +1245,7 @@
+     
+     for (i = 0; i < namelen; i++)
+         name[i] = get1();
+-    name[i] = '\0';	/* just to be sure */
++    name[i] = '\0';	/* required */
+     fnt->name = name;
+     if (new) {
+         fnt->next = fonts;

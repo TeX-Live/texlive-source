@@ -10,10 +10,6 @@ on our machine that could compile it.
 The program runs under UNIX and MSDOS without problems
 It should also run under VMS. 
 (you may need some site dependend redefinitions, see below).
-Undocumented option: the -e option can be used to influence
-the width of spaces. With a negative value the number of spaces 
-between words becomes less, with a positive value it becomes more.
-Just play around if you like, -e-11 worked nice with me.
 
 
                 DISDVI
@@ -28,7 +24,7 @@ I'd appreciate any enhancements made, bug reports etc. mailed to me.
 Disdvi is rather simple and does not need any modifications.
 To compile under VMS, you might need to define an extra macro:
 Add a -DVMS on the command line, or add a line
-#define VMS
+    #define VMS
 in the dvi2tty.h file.
 For dvi2tty you may find the following problems:
 
@@ -37,17 +33,25 @@ For dvi2tty you may find the following problems:
       Solution: #define strchr index
  '/usr/bin/pg' program not found.
       Solution: change the DEFPAGER macro in dvi2tty.c
- To compile under VMS, you might need to define an extra macro:
-  Add a -DVMS on the command line, or add a line
-  #define VMS
+
+When set, just type:
+
+	make
+
+to build disdvi and dvi2tty
+
+dvi2tty is licensed under the GPL version 2. It has had a history of many
+authors, I am just one of the latest maintainers.
 
 Thats all, good luck.
 
 
 - Marcel 
------------------------------------------
-| Marcel J.E. Mol                       | They hate you if your're clever
-| Delft University of Technology        | And they despise the fool
-| The Netherlands                       | Till you're so fucking crazy
-| UUCP: marcel (at) mesa dot nl         | You can't follow the rules.
------------------------------------------			 - Lennon
+#########################################
+# Marcel J.E. Mol                       #
+#                                       #
+# MESA Consulting +31-(0)6-54724868     #
+# email: marcel@mesa.nl                 #
+# The Netherlands                       #
+#                                       #
+#########################################

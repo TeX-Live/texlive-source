@@ -67,4 +67,36 @@ deflen1 + deflen2 bytes fontname.
 all bytes in the special command are used as defined in the dvi driver.
 
 
+-Marcel Mol
+
+
 */
+
+From: schrod@iti.informatik.th-darmstadt.de (Joachim Schrod)
+Date: 2 Jan 92 18:26:27 GMT
+
+Since this question comes up often, I post the answer:
+
+The following file format definitions are part of the TUG DVI Driver
+Standards Draft:
+	DVI
+	GF
+	PK
+	TFM
+You can ftp them from ftp.th-darmstadt.de, directory
+pub/tex/dvi-standard/standards.
+
+Take either draft-0.05a.tar.Z (the complete standard) or
+<xxx>.tex+fileform.sty where you have to replace <xxx> by dvi, gf,
+etc.
+   In the latter case -- when you fetch single files -- you'll need
+to add a LaTeX standard frame (\documentstyle{article} +
+\begin{document} + \end{document}) to get a full, LaTeXable document.
+
+--
+Joachim
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+Joachim Schrod			Email: schrod@iti.informatik.th-darmstadt.de
+Secretary of TUG DVI Driver Standards Committee
+

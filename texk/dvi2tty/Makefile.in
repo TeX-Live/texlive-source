@@ -36,7 +36,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = disdvi$(EXEEXT) dvi2tty$(EXEEXT)
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
+DIST_COMMON = $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -116,7 +116,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(dist_man1_MANS)
+MANS = $(man1_MANS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -149,6 +149,7 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
+DVI2TTY_TREE = @DVI2TTY_TREE@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -250,26 +251,24 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
+EXTRA_DIST = $(DVI2TTY_TREE) $(DVI2TTY_TREE)-PATCHES
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 LDADD = $(KPATHSEA_LIBS)
 disdvi_SOURCES = \
-	commands.h \
-	disdvi.c
+	$(DVI2TTY_TREE)/commands.h \
+	$(DVI2TTY_TREE)/disdvi.c
 
 dvi2tty_SOURCES = \
-	commands.h \
-	dvi2tty.c \
-	dvi2tty.h \
-	dvistuff.c
+	$(DVI2TTY_TREE)/commands.h \
+	$(DVI2TTY_TREE)/dvi2tty.c \
+	$(DVI2TTY_TREE)/dvi2tty.h \
+	$(DVI2TTY_TREE)/dvistuff.c
 
-dist_man1_MANS = dvi2tty.1
-EXTRA_DIST = \
-	DVI.format \
-	MANIFEST \
-	README.ORG \
-	dvi2tty.patch
+man1_MANS = \
+	$(DVI2TTY_TREE)/disdvi.1 \
+	$(DVI2TTY_TREE)/dvi2tty.1
 
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -408,6 +407,48 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
+disdvi.o: $(DVI2TTY_TREE)/disdvi.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT disdvi.o -MD -MP -MF $(DEPDIR)/disdvi.Tpo -c -o disdvi.o `test -f '$(DVI2TTY_TREE)/disdvi.c' || echo '$(srcdir)/'`$(DVI2TTY_TREE)/disdvi.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/disdvi.Tpo $(DEPDIR)/disdvi.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(DVI2TTY_TREE)/disdvi.c' object='disdvi.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o disdvi.o `test -f '$(DVI2TTY_TREE)/disdvi.c' || echo '$(srcdir)/'`$(DVI2TTY_TREE)/disdvi.c
+
+disdvi.obj: $(DVI2TTY_TREE)/disdvi.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT disdvi.obj -MD -MP -MF $(DEPDIR)/disdvi.Tpo -c -o disdvi.obj `if test -f '$(DVI2TTY_TREE)/disdvi.c'; then $(CYGPATH_W) '$(DVI2TTY_TREE)/disdvi.c'; else $(CYGPATH_W) '$(srcdir)/$(DVI2TTY_TREE)/disdvi.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/disdvi.Tpo $(DEPDIR)/disdvi.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(DVI2TTY_TREE)/disdvi.c' object='disdvi.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o disdvi.obj `if test -f '$(DVI2TTY_TREE)/disdvi.c'; then $(CYGPATH_W) '$(DVI2TTY_TREE)/disdvi.c'; else $(CYGPATH_W) '$(srcdir)/$(DVI2TTY_TREE)/disdvi.c'; fi`
+
+dvi2tty.o: $(DVI2TTY_TREE)/dvi2tty.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvi2tty.o -MD -MP -MF $(DEPDIR)/dvi2tty.Tpo -c -o dvi2tty.o `test -f '$(DVI2TTY_TREE)/dvi2tty.c' || echo '$(srcdir)/'`$(DVI2TTY_TREE)/dvi2tty.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dvi2tty.Tpo $(DEPDIR)/dvi2tty.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(DVI2TTY_TREE)/dvi2tty.c' object='dvi2tty.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvi2tty.o `test -f '$(DVI2TTY_TREE)/dvi2tty.c' || echo '$(srcdir)/'`$(DVI2TTY_TREE)/dvi2tty.c
+
+dvi2tty.obj: $(DVI2TTY_TREE)/dvi2tty.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvi2tty.obj -MD -MP -MF $(DEPDIR)/dvi2tty.Tpo -c -o dvi2tty.obj `if test -f '$(DVI2TTY_TREE)/dvi2tty.c'; then $(CYGPATH_W) '$(DVI2TTY_TREE)/dvi2tty.c'; else $(CYGPATH_W) '$(srcdir)/$(DVI2TTY_TREE)/dvi2tty.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dvi2tty.Tpo $(DEPDIR)/dvi2tty.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(DVI2TTY_TREE)/dvi2tty.c' object='dvi2tty.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvi2tty.obj `if test -f '$(DVI2TTY_TREE)/dvi2tty.c'; then $(CYGPATH_W) '$(DVI2TTY_TREE)/dvi2tty.c'; else $(CYGPATH_W) '$(srcdir)/$(DVI2TTY_TREE)/dvi2tty.c'; fi`
+
+dvistuff.o: $(DVI2TTY_TREE)/dvistuff.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvistuff.o -MD -MP -MF $(DEPDIR)/dvistuff.Tpo -c -o dvistuff.o `test -f '$(DVI2TTY_TREE)/dvistuff.c' || echo '$(srcdir)/'`$(DVI2TTY_TREE)/dvistuff.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dvistuff.Tpo $(DEPDIR)/dvistuff.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(DVI2TTY_TREE)/dvistuff.c' object='dvistuff.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvistuff.o `test -f '$(DVI2TTY_TREE)/dvistuff.c' || echo '$(srcdir)/'`$(DVI2TTY_TREE)/dvistuff.c
+
+dvistuff.obj: $(DVI2TTY_TREE)/dvistuff.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvistuff.obj -MD -MP -MF $(DEPDIR)/dvistuff.Tpo -c -o dvistuff.obj `if test -f '$(DVI2TTY_TREE)/dvistuff.c'; then $(CYGPATH_W) '$(DVI2TTY_TREE)/dvistuff.c'; else $(CYGPATH_W) '$(srcdir)/$(DVI2TTY_TREE)/dvistuff.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dvistuff.Tpo $(DEPDIR)/dvistuff.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(DVI2TTY_TREE)/dvistuff.c' object='dvistuff.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvistuff.obj `if test -f '$(DVI2TTY_TREE)/dvistuff.c'; then $(CYGPATH_W) '$(DVI2TTY_TREE)/dvistuff.c'; else $(CYGPATH_W) '$(srcdir)/$(DVI2TTY_TREE)/dvistuff.c'; fi`
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -416,10 +457,10 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-man1: $(dist_man1_MANS)
+install-man1: $(man1_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
-	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	{ for i in $$list; do echo "$$i"; done; \
 	} | while read p; do \
 	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
@@ -443,7 +484,7 @@ install-man1: $(dist_man1_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
@@ -548,6 +589,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -774,22 +818,26 @@ uninstall-man: uninstall-man1
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-binPROGRAMS clean-generic clean-libtool ctags dist \
-	dist-all dist-bzip2 dist-gzip dist-lzma dist-shar dist-tarZ \
-	dist-xz dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-man \
-	uninstall-man1
+	dist-all dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-compile distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-man uninstall-man1
 
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
 
 $(disdvi_OBJECTS): $(KPATHSEA_DEPEND)
 

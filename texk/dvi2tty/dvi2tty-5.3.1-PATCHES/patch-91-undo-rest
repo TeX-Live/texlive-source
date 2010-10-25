@@ -1,0 +1,1630 @@
+diff -ur dvi2tty-5.3.1.orig/commands.h dvi2tty-5.3.1/commands.h
+--- dvi2tty-5.3.1.orig/commands.h	2010-10-20 11:34:16.000000000 +0200
++++ dvi2tty-5.3.1/commands.h	2010-10-15 11:34:23.000000000 +0200
+@@ -1,23 +1,3 @@
+-/*
+- * dvi2tty
+- * Copyright (C) 2003 Marcel J.E. Mol <marcel@mesa.nl>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+- *
+- */
+-
+ /* DVI COMMANDS */
+ #define  SETC_000         0     /* typeset character 0 and move right */
+ #define  SETC_127       127     /* typeset character 127 and move right */
+diff -ur dvi2tty-5.3.1.orig/disdvi.c dvi2tty-5.3.1/disdvi.c
+--- dvi2tty-5.3.1.orig/disdvi.c	2010-10-24 14:03:20.000000000 +0200
++++ dvi2tty-5.3.1/disdvi.c	2010-10-15 11:36:32.000000000 +0200
+@@ -3,73 +3,34 @@
+ /*   disdvi  ---  disassembles TeX dvi files.                                */
+ /*                                                                           */
+ /*                                                                           */
+-/*   2.25 23jan2003  M.J.E. Mol  fixed bug in copying font name (name[i])    */
+-/*   2.24 27may96 M.J.E. Mol     A few typecasts added                       */
+-/*   2.23 23jul95 M.J.E. Mol     Cleanups from duz@roxi.ez.fht-mannheim.de   */
+-/*   2.22 13dec90 M.J.E. Mol     Fixed bug in num(). Cleaned up code.        */
+-/*   2.21 03may90 M.J.E. Mol     Created usage().                            */
+-/*    2.2 02may90 M.J.E. Mol     Included port to VAX/VMS VAXC by            */
+-/*                               Robert Schneider.                           */
+-/*    2.1 19jan90 M.J.E. Mol     Maintain a list of fonts and                */
++/*    2.0 23/01/89 M.J.E. Mol (c) 1989              marcel@duteca.tudelft.nl */
++/*    2.1 19/01/90 M.J.E. Mol    Maintain a list of fonts and                */
+ /*                               show fontnames in font changes.             */
+ /*                               Show character code when printing ligatures */
+-/*    2.0 23jan89 M.J.E. Mol (c) 1989                                        */
+-/*                                               marcel@mesa.nl              */
++/*                                                                           */
+ /*                                                                           */
+ /*****************************************************************************/
+ 
+-/*
+- * dvi2tty
+- * Copyright (C) 2003 Marcel J.E. Mol <marcel@mesa.nl>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+- *
+- */
+-
+-char *disdvi = "@(#) disdvi.c  2.25 23jan2003 M.J.E. Mol (c) 1989-1996, marcel@mesa.nl";
+-
+-/*
+- * Include files
+- */
+ 
+-#include <stdio.h>
+-#include <stdlib.h>
+-#if defined(MSDOS)
+-# include <fcntl.h>
+-#else
+-# if !defined(THINK_C)          /* Macintosh */
+-# include <unistd.h>
+-# endif
++#if 0
++char *disdvi = "@(#) disdvi.c  2.1 19/01/90 M.J.E. Mol (c) 1989, 1990";
+ #endif
++
++#include <stdio.h>
+ #include <ctype.h>
+-#include <string.h>
+ #include "commands.h"
+-#if defined(THINK_C)
+-# include "macintosh.h"
+-#endif
+ 
+ #if defined(KPATHSEA)
+ #define NO_DEBUG 1
+ #include <kpathsea/config.h>
+ #include <kpathsea/lib.h>
++#else
++#if defined(MSDOS)
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
++#endif
+ #endif
+-
+-
+-/*
+- * Constant definitions
+- */
+ 
+ #define LASTCHAR        127    /* max dvi character, above are commands    */
+ 
+@@ -82,100 +43,80 @@
+ #define sget3()         snum(3)
+ #define sget4()         snum(4)
+ 
+-
+-
+-/*
+- * Type definitions
+- */
+-
+ typedef struct _font {
+     long    num;
+     struct _font * next;
+     char  * name;
+ } font;
+ 
+-
+-
+-/*
+- * Variable declarations
+- */
+-
+ font * fonts = NULL;
+ FILE * dvifp;
+ char * dvi_name;
+ long   pc = 0;
+ 
+-char * progname;
+-
+ int is_ptex = 0;
+ int is_xetex = 0;
+ const char * dvi_ext = ".dvi";
+ 
+-/*
+- * Function declarations
+- */
+-
+-#if !defined(THINK_C)
++#ifdef KPATHSEA
++extern void bop(void);
++extern void postamble(void);
++extern void preamble(void);
++extern void postpostamble(void);
++extern void special(int x);
++extern void fontdef(int x);
++extern const char *fontname(long fntnum);
++extern void printnonprint(int ch);
++extern unsigned long num(int size);
++extern long snum(int size);
++extern void picfile(int opcode);
++extern void natfontdef(int opcode);
++extern void glyphs(int opcode);
++extern void dvidir(int opcode);
++extern void invalid(int opcode);
++#else
+ char *          malloc          ();
+-#endif
+ 
+-#if defined(VMS)
+-                main            (int argc, char ** argv);
++int             main            ();
++void            bop             ();
++void            preamble        ();
++void            postamble       ();
++void            postpostamble   ();
++void            fontdef         ();
++char *          fontname        ();
++void            special         ();
++void            printnonprint   ();
++unsigned long   num             ();
++long            snum            ();
++void            picfile         ();
++void            natfontdef      ();
++void            glyphs          ();
++void            dvidir          ();
++void            invalid         ();
+ #endif
+-void            bop             (void);
+-void            preamble        (void);
+-void            postamble       (void);
+-void            postpostamble   (void);
+-void            fontdef         (int x);
+-const char *    fontname        (unsigned long fntnum);
+-void            special         (int x);
+-void            printnonprint   (int ch);
+-unsigned long   num             (int size);
+-long            snum            (int size);
+-void            usage           (void);
+-void            picfile         (int opcode);
+-void            natfontdef      (int opcode);
+-void            glyphs          (int opcode);
+-void            dvidir          (int opcode);
+-void            invalid         (int opcode);
+-
+ 
+ 
+ 
+-/*
+- * MAIN --
+- */
++/*---------------------------------------------------------------------------*/
+ 
+-#if defined(VMS)
+-     main(int argc, char **argv)
+-#else
+ int main(int argc, char **argv)
+-#endif
+ {
+     register int opcode;                /* dvi opcode                        */
+     register int i;
+     int fontnum;
++    char * progname;
+ 
+-#if defined(THINK_C)
+-    argc = process_disdvi_command_line(&argv);
+-#endif
+-
++    progname = *argv;
+ 
+-    progname = *argv++;
+-
+-    if ((argc > 1) && (*argv[0] == '-')) {
+-        if (!strcmp(*argv, "-h")) {
+-            usage();
+-            exit(0);
+-        }
+-        if (!strcmp(*argv, "-p"))
++    if ((argc > 1) && (argv[1][0] == '-')) {
++        if (!strcmp(argv[1], "-p") || !strcmp(argv[1], "--ptex")) {
+             is_ptex = 1;
+-        else if (!strcmp(*argv, "-x")) {
++        } else if (!strcmp(argv[1], "-x") || !strcmp(argv[1], "--xetex")) {
+             is_xetex = 1;
+             dvi_ext = ".xdv";
+         } else {
+-            fprintf(stderr, "Invalid option `%s'\n", *argv);
+-            usage();
++            fprintf(stderr, "Invalid option `%s'\n", argv[1]);
++            fprintf(stderr, "Usage: %s [-p|--ptex|-x|--xetex] [dvi-file]\n", progname);
+             exit(3);
+         }
+         argv++;
+@@ -184,21 +125,21 @@
+ 
+     if (argc > 2) {
+         fprintf(stderr, "To many arguments\n");
+-        usage();
++        fprintf(stderr, "Usage: %s [-p|--ptex|-x|--xetex] [dvi-file]\n", progname);
+         exit(1);
+     }
+ 
+     if (argc == 2) {
+-        if ((i = strlen(*argv)) == 0) {
++        if ((i = strlen(argv[1])) == 0) {
+             fprintf(stderr, "Illegal empty filename\n");
+-            usage();
++            fprintf(stderr, "Usage: %s [-p|--ptex|-x|--xetex] [dvi-file]\n", progname);
+             exit(2);
+         }
+-        if ((i >= 5) && (!strcmp(*argv+i-4, dvi_ext)))
+-            dvi_name = *argv;
++        if ((i >= 5) && !strcmp(argv[1]+(i-4), dvi_ext))
++            dvi_name = argv[1];
+         else {
+             dvi_name = malloc((i+5) * sizeof(char));
+-            strcpy(dvi_name, *argv);
++            strcpy(dvi_name, argv[1]);
+             strcat(dvi_name, dvi_ext);
+         }
+         if ((dvifp = fopen(dvi_name, "r")) == NULL) {
+@@ -325,22 +266,19 @@
+             }
+     }
+ 
+-    exit(0);
+-
++    return 0;
+ } /* main */
+ 
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-/*
+- * BOP -- Process beginning of page.
+- */
+ 
+ void bop(void)
+ {
+     int i;
+ 
+     printf("BOP       page number      : %ld", sget4());
+-    for (i=9; i > 0; i--) {
++    for (i=0; i < 9; i++) {
+         if (i % 3 == 0)
+             printf("\n%06ld:         ", pc);
+         printf("  %6ld", sget4()); 
+@@ -348,15 +286,10 @@
+     printf("\n%06ld: ", pc);
+     printf("          prev page offset : %06ld\n", sget4()); 
+ 
+-    return;
+-
+ } /* bop */
+ 
+ 
+-
+-/*
+- * POSTAMBLE -- Process post amble.
+- */
++/*---------------------------------------------------------------------------*/
+ 
+ void postamble(void) 
+ {
+@@ -377,16 +310,8 @@
+     printf("%06ld: ", pc);
+     printf("          number of pages  : %d\n", (int) get2());
+ 
+-    return;
+-
+ } /* postamble */
+ 
+-
+-
+-/*
+- * PREAMBLE -- Process pre amble.
+- */
+-
+ void preamble(void)
+ {
+     register int i;
+@@ -405,16 +330,9 @@
+         putchar((int) get1());
+     putchar('\n');
+ 
+-    return;
+-
+ } /* preamble */
+ 
+ 
+-
+-/*
+- * POSTPOSTAMBLE -- Process post post amble.
+- */
+-
+ void postpostamble(void)
+ {
+     register int i;
+@@ -432,38 +350,27 @@
+         i = (int) get1();
+     }
+ 
+-    return;
+-
+ } /* postpostamble */
+ 
+ 
+ 
+-/*
+- * SPECIAL -- Process special opcode.
+- */
+-
+-void special(int x)
++void special(register int x)
+ {
+     register long len;
++    register long i;
+ 
+     len = num(x);
+     printf("XXX%d:     %ld bytes\n", x, len);
+     printf("%06ld: ", pc);
+-    for (; len>0; len--)           /* a bit dangerous ... */
++    for (i = 0; i < len; i++)      /* a bit dangerous ... */
+         putchar((int) get1());     /*   can be non-printables */
+     putchar('\n');
+ 
+-    return;
+-
+ } /* special */
+ 
+ 
+ 
+-/*
+- * FONTDEF -- Process a font definition.
+- */
+-
+-void fontdef(int x)
++void fontdef(register int x)
+ {
+     register int i;
+     char * name;
+@@ -503,7 +410,7 @@
+     
+     for (i = 0; i < namelen; i++)
+         name[i] = get1();
+-    name[i] = '\0';
++    name[namelen] = '\0';
+     fnt->name = name;
+     if (new) {
+         fnt->next = fonts;
+@@ -512,17 +419,12 @@
+ 
+     printf("%s\n", name);
+ 
+-    return;
+-
+ } /* fontdef */
+ 
+ 
+ 
+-/*
+- * FONTNAME -- Return font name.
+- */
+-
+-const char * fontname(long fntnum)
++const char *
++fontname(long fntnum)
+ {
+     font * fnt;
+ 
+@@ -531,18 +433,14 @@
+         fnt = fnt->next;
+     if (fnt != NULL)
+         return fnt->name;
+-
+-    return "unknown fontname";
++    else
++        return "unknown fontname";
+    
+ } /* fontname */
+ 
+ 
+ 
+-/*
+- * PRINTNONPRINT -- Translate non-printable characters.
+- */
+-
+-void printnonprint(int ch)
++void printnonprint(register int ch)
+ {
+ 
+     printf("Char:     ");
+@@ -590,71 +488,41 @@
+     }
+     putchar('\n');
+ 
+-    return;
+-
+-} /* printnonprint */
++}
+ 
+ 
+ 
+-/*
+- * NUM --
+- */
+-
+-unsigned long num(int size)
++unsigned long num(register int size)
+ {
+     register int i;
+-    register unsigned long x = 0;
++    register long x = 0;
+ 
+     pc += size;
+-    for (i = size; i > 0; i--)
++    for (i = 0; i < size; i++)
+         x = (x << 8) + (unsigned) getc(dvifp);
+-
+     return x;
+ 
+ } /* num */
+ 
+ 
+ 
+-/*
+- * SNUM --
+- */
+-
+-long snum(int size)
++long snum(register int size)
+ {
+     register int i;
+-    register long x;
++    register long x = 0;
+ 
+     pc += size;
+     x = getc(dvifp);
+     if (x & 0x80)
+         x -= 0x100;
+-    for (i = size - 1; i > 0; i--)
++    for (i = 1; i < size; i++)
+         x = (x << 8) + (unsigned) getc(dvifp);
+-
+     return x;
+ 
+ } /* snum */
+ 
+ 
+ 
+-/*
+- * USAGE --
+- */
+-
+-void usage(void)
+-{
+-
+-    fprintf(stderr, "\n%s\n\n", disdvi);
+-    fprintf(stderr, "    disassembles (p)TeX dvi and XeTeX xdv files\n");
+-    fprintf(stderr, "Usage: %s [-h | [-p] [dvi_file[.dvi]]\n", progname);
+-    fprintf(stderr, "              | -x [xdv_file[.xdv]]]\n");
+-
+-    return;
+-
+-} /* usage */
+-
+-
+-
+ void picfile(int opcode)
+ {
+     int i;
+diff -ur dvi2tty-5.3.1.orig/dvi2tty.1 dvi2tty-5.3.1/dvi2tty.1
+--- dvi2tty-5.3.1.orig/dvi2tty.1	2010-10-20 14:21:13.000000000 +0200
++++ dvi2tty-5.3.1/dvi2tty.1	2006-01-17 22:41:51.000000000 +0100
+@@ -1,38 +1,36 @@
+-.TH DVI2TTY 1 "20 October 2010" "TeX Live"
++.TH DVI2TTY Local "7 June 1986"
+ .SH NAME
+-dvi2tty \- preview a TeX DVI\-file on an ordinary ascii terminal
++dvi2tty \- preview a dvi\-file on an ordinary ascii terminal
+ .SH SYNOPSIS
+ .B dvi2tty
+ [ options ] dvi\-file
+ .SH DESCRIPTION
+ .I dvi2tty
+-converts a TeX DVI\-file to a format that is appropriate for terminals
+-and line printers. The program is intended to be used for
++converts a TeX DVI\-file to a format that is apprporiate for terminals
++and lineprinters. The program is intended to be used for
+ preliminary proofreading of TeX-ed documents.
+ By default the output is directed to the terminal,
+ possibly through a pager (depending on how the program was installed),
+ but it can be directed to a file or a pipe.
+ .PP
+ The output leaves much to be desired, but is still
+-useful if you want to avoid walking to the
+-laser printer (or whatever) for each iteration of your
++usefull if you want to avoid walking to the
++laserprinter (or whatever) for each iteration of your
+ document.
+ .br
+ Since
+ .I dvi2tty
+-produces output for terminals and line printers the
++produces output for terminals and lineprinters the
+ representation of documents is naturally quite primitive.
+-In principle Font Changes are totally ignored, but
+-.I dvi2tty
+-recognizes
+-a few mathematical and special symbols that can be be displayed on an
+-ordinary ascii terminal, such as the '+' and '-' symbol.
++Fontchanges are totally ignored, which implies that
++special symbols, such as mathematical symbols, get mapped into the 
++characters at the corresponding positions in the "standard" fonts.
+ .PP
+ If the width of the output text requires more columns than fits
+ in one line (c.f. the \-w option) it is broken into several lines by
+ .I dvi2tty
+ although they will be printed as one line on regular TeX output
+-devices (e.g. laser printers). To show that a broken line is really
++devices (e.g. laserprinters). To show that a broken line is really
+ just one logical line an asterisk (``*'') in the last position
+ means that the logical line is continued on the next physical
+ line output by
+@@ -41,7 +39,7 @@
+ in the first two columns.
+ .PP
+ Options may be specified in the environment variable DVI2TTY.
+-Any option on the command line, conflicting with one in the
++Any option on the commandline, conflicting with one in the
+ environment, will override the one from the environment.
+ .PP
+ .B Options:
+@@ -56,7 +54,7 @@
+ An example of format for list is ``1,3:6,8''
+ to choose pages 1, 3 through 6 and 8.
+ Negative numbers can be used exactly as in TeX,
+-e g \-1 comes before \-4 as in ``\-p\-1:\-4,17''.
++e g \-1 comes before \-4 as in ``\-p-1:-4,17''.
+ .TP
+ .B \-P list
+ Like \-p except that page numbers refer to
+@@ -73,59 +71,35 @@
+ terminal into this mode as output will
+ probably look somewhat better.
+ .TP
+-.B \-v
+-Specify height of lines. Default value 450000. Allows to adjust linespacing.
+-.TP
+ .B \-q
+ Don't pipe the output through a pager.
+ This may be the default on some systems
+-(depending on the whims of the person installing the program).
+-.TP
+-.B \-e n
+-This option can be used to influence the spacing between words.
+-With a negative value the number of spaces 
+-between words becomes less, with a positive value it becomes more.
+-\-e\-11 seems to worked well.
++(depending on the whims of the SA installing the program).
+ .TP
+ .B \-f
+-Pipe through a pager, $PAGER if defined, or whatever the installer of
+-the program compiled
++Pipe through a pager, $PAGER if defined, or whatever your SA compiled
+ in (often ``more''). This may be the default, but it is still okay
+ to redirect output with ``>'', the pager will not be used if output
+ is not going to a terminal.
+ .TP
+ .B \-F
+ Specify the pager program to be used.
+-This overrides the $PAGER and the default pager.
++This overides the $PAGER and the default pager.
+ .TP
+ .B \-Fprog
+ Use ``prog'' as program to pipe output into. Can be used to choose an
+ alternate pager (e g ``-Fless'').
+ .TP
+-.B \-t
+-\\tt fonts were used (instead of cm) to produce dvi file. (screen.sty
+-is a powerfull mean to do that with LaTeX).
+-.TP
+-.B \-a
+-Dvi2tty normally tries to output accented characters. With the -a option,
+-accented characters are output without the accent sign.
+-.TP
+ .B \-l
+-Mark page breaks with the two-character sequence ``^L''. The default is
+-to mark them with a form-feed character.
++Mark pagebreaks with the two-character sequence ``^L''. The default is
++to mark them with a formfeed character.
+ .TP
+-.B \-c
+-Do not attempt to trnaslate any characters (like the Scandinavion mode)
+-except when running in tt-font.
+ .B \-u
+ Don't make any attempts to find special Scandinavian characters.
+ If such characters are in the text they will map to ``a'' and ``o''.
+-This is probably the default outside of Scandinavia. (The installer
+-makes this decision when  the program is installed.)
++This is probably the default outside of Scandinavia. (The SA made
++the decision when  the program was installed.)
+ .TP
+-.B \-bdelim
+-Print the name of fonts when switching to it (and ending it). The delim
+-argument is used to delimit the fontname.
+ .B \-s
+ Try to find the special Scandinavian characters that on most (?)
+ terminals in Scandinavia are mapped to ``{|}[\\]''.
+@@ -139,7 +113,7 @@
+ the pager to use.
+ .br
+ DVI2TTY \ \ \ \ \ \ \ \ \ \ \ 
+-can be set to hold command-line options.
++can be set to hold commandline options.
+ .SH "SEE ALSO"
+ TeX, dvi2ps
+ .SH AUTHOR
+@@ -147,10 +121,11 @@
+ .br
+ Improved C version: Marcel Mol
+ .br
+-marcel@mesa.nl, MESA Consulting
++{seismo, mcvax}!enea!ttds!zap
++.br
++marcel@duteca.UUCP
+ .SH BUGS
+ Blanks between words get lost quite easy. This is less
+ likely if you are using a wider output than the default 80.
+ .PP
+-Only one file may be specified on the command line.
+-
++Only one file may be specified on the commandline.
+diff -ur dvi2tty-5.3.1.orig/dvi2tty.c dvi2tty-5.3.1/dvi2tty.c
+--- dvi2tty-5.3.1.orig/dvi2tty.c	2010-10-24 14:28:11.000000000 +0200
++++ dvi2tty-5.3.1/dvi2tty.c	2010-02-23 13:42:05.000000000 +0100
+@@ -1,60 +1,18 @@
+ /******************************************************************************
+- * Marcel Mol: 22jan2003  (Internet: marcel@mesa.nl)
+- *		 From: jose@monkey.org: clearly state license (GPL).
+- * Marcel Mol: 27may1996  (Internet: marcel@mesa.nl)
+- *               From: mlemos@ua.pt (Manuel Lemos): Port to AMIGA.
+- * Marcel Mol: 24mar1996  (Internet: marcel@mesa.nl)
+- *               From: Alex Viskovatoff <av@mixcom.com>: Port to Macintosh
+- *               From: Anton vd Repe  1995-6-9     (UUCP: arp@neabbs.uucp):
+- *               Added option to skip translation of Scandinavian/Finnish
+- *               and skip the constraint to ASCII characters only.
+- *               Added option to include font name in output when new font
+- *               is chosen.
+- *               Limit line width of 132 expanded to 332.
+- * Marcel Mol: 23jun1995  (Internet: marcel@duteca.et.tudelft.nl)
+- *               Included patch form Hideki ISOZAKI (isozaki@ntt-20.ntt.jp)
+- *               to allow japanese fonts generated by NTT JTeX (March 1992).
+- *               Added cleanups (protoize + includes) by D.U. Zoller
+- *               (1995-07-17 duz@roxi.rz.fht-mannheim.de)
+- *               Version 5.1
+- * Marcel Mol: 09sep1993  (Internet: marcel@duteca.et.tudelft.nl)
+- *               In dvistuff.c: added auto detection for 'ttfont'.
+- *               This make -t flag unneeded, but it is still left in for 
+- *               people who like to force 'verbatim' mode.
+- *               Thanks to: Diomidis Spinellis <dds@doc.imperial.ac.uk>
+- * Marcel Mol: 05sep1993  (Internet: marcel@duteca.et.tudelft.nl)
+- *               In dvistuff.c: put some extra chars arround the 'ttfont'
+- *               flag in the 'normchar' function.
+- * Marcel Mol: 01oct1991  (Internet: marcel@duteca.et.tudelft.nl)
+- *               (From Igor Romanenko, igor@d245.icyb.kiev.ua.)
+- *               Fixed unneccesary * in *envp++.
+- * Marcel Mol: 24jul1991  (Internet: marcel@duteca.et.tudelft.nl)
+- *               Suggestion From: peter@julian.uwo.ca   [uwo]
+- *               vertical bars "|" and the tilde "~" print properly in
+- *               typewriter font.
+- * Marcel Mol: 1990-11-29  (UUCP: marcel@duteca.et.tudelft.nl)
+- *               Fixed bug in option handling. Cleanup of code.
+- *               Other minor changes/optimizations.
+- * Marcel Mol: 1990-11-13  (UUCP: marcel@duteca.et.tudelft.nl)
+- *               Included patches of Bernard Gaulle in my version.
+- *               Version 4.4
+- * Bernard Gaulle: 1990-10-16 (gaulle@murnau.circe.fr)
+- *               Add -t option (assuming tt fonts were used)
+- *               (Version 3.3)
+- * Marcel Mol: 1990-05-03  (UUCP: marcel@duteca.tudelft.nl)
+- *               Now displays accents etc. on characters again. Added option 
+- *               (-a) to switch this off. If switched off it now uses proper
+- *               spacing.
+- *               Cleaned up and show version number in usage();
+- *               Version 4.3
+- * Marcel Mol: 1990-05-02  (UUCP: marcel@duteca.tudelft.nl)
+- *               Included patches for VAX/VMS VAXC, done by Robert Schneider.
+- *               Version 4.2
++ * dvitty - get an ascii representation of a dvi-file, suitable for ttys
++ 
++This program was originally written in Pascal by 
++Svante Lindahl <svante dot lindahl (at) pantor dot com>
++and then converted to C by Marcel Mol <marcel (at) mesa dot nl>.
++Some changes have been made for TeX Live (see ./ChangeLog).
++
++It is released under the GNU GPL, version 2 or any later version.
++(http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=424018)
++
+  * Marcel Mol: 1990-03-27  (UUCP: marcel@duteca.tudelft.nl)
+  *               Fixed bug that causes the program to hang when it finds a
+  *               fontname with an 's' in it not followed by an 'y'.
+  *               Thanks to Paul Orgren (orgren@Stars.Reston.Unisys.COM).
+- *               Version 4.1
+  * Marcel Mol: 1990-02-04  (UUCP: marcel@duteca.tudelft.nl)
+  *               First attempt to recognize symbol fonts, so bullets (in
+  *               itemized lists) are translated to a proper character instead
+@@ -84,9 +42,9 @@
+  *               Fixed a bugs concerning pager programs
+  *               and scanning environment variable DVI2TTY.
+  * Marcel Mol: 1988-10-25  (UUCP: duteca!marcel)
+- *               Renamed to dvi2tty and converted to C.
+- *               Filenames: dvi2tty.c dvi2tty.h dvistuff.c commands.h
+- *               Improved spacing between words/characters.
++ *        dvi2tty.c dvi2tty.h dvistuff.c commands.h
++ *               Converted program to C.
++ *               improved spacing between words/characters.
+  * bogart:/usr/alla/zap/dvitty/dvitty.p  1986-08-15 20:24:31,
+  *               Version to be sent to mod.sources ready.
+  * New option since last version:
+@@ -94,6 +52,24 @@
+  *               pager than the default.
+  * bogart:/usr/alla/zap/dvitty/dvitty.p  1986-01-13 21:49:31,
+  *   Environment variable DVITTY is read and options can be set from it.
++ *   These are the currently implemented options:
++ *      -ofile   Write output to file, else write to stdout,
++ *               possibly piped through a pager if stdout is a tty.
++ *      -plist   Print pages whos TeX-page-number are in list.
++ *               List is on the form  1,3:6,8  to choose pages
++ *               1,3-6 and 8. TeX-nrs can be negative: -p-1:-4,4
++ *      -Plist   Print pages whos sequential number are in list.
++ *      -wn      Print the lines with width n characters, default is
++ *               80. Wider lines gives better results.
++ *      -q       Don't try to pipe to a pager.
++ *      -f       Try to pipe to a pager if output is a tty.
++ *      -Fname   Specify a pager program.                  
++ *               Default of -q and -f is a compile time option, a constant.
++ *      -l       Write '^L' instead of formfeed between pages.
++ *      -u       Don't try to find Scandinavian characters (they will
++ *               print as a:s and o:s if this option is choosen).
++ *      -s       Scandinavian characters printed as }{|][\.
++ *               Default of -s and -u is a compile time option, a constant.
+  * bogart:/usr/alla/zap/dvitty/dvitty.p  1986-01-10 18:51:03,
+  *   Argument parsing, and random access functions (external, in C)
+  *   and other OS-dependent stuff (in C). Removed private 'pager' &
+@@ -117,58 +93,14 @@
+  * VERA::<SVANTE-LINDAHL.DVITTY>DVITTY.PAS.45, 29-Sep-84 18:29:53,
+  *  Edit: Svante Lindahl
+  *
+- * dvitty - get an ascii representation of a dvi-file, suitable for ttys
+- *
+- * This program, and any documentation for it, is copyrighted by Svante
+- * Lindahl. It may be copied for non-commercial use only, provided that
+- * any and all copyright notices are preserved.
+- *
+- *
+- * UUCP: {seismo,mcvax,cernvax,diku,ukc,unido}!enea!ttds!zap
+- * ARPA: enea!ttds!zap@seismo.CSS.GOV
+- *  or   Svante_Lindahl_NADA%QZCOM.MAILNET@MIT-MULTICS.ARPA
+- * EAN:  zap@cs.kth.sunet
+  */
+ 
+ 
+-/*
+- * dvi2tty
+- * Copyright (C) 2003 Marcel J.E. Mol <marcel@mesa.nl>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+- *
+- */
+-
+-/*
+- * Include files 
+- */
+-
+ #include "dvi2tty.h"
+ #if defined(VMS)
+-# include unixio
++#include unixio
+ #endif
+-#if defined(THINK_C)
+-# include <unix.h>
+-# include "macintosh.h"
+-#endif
+-
+ 
+-
+-/* 
+- * Constant definitons
+- */
+     /*-----------------------------------------------------------------------*/
+     /* The following constants may be toggled before compilation to          */
+     /* customize the default behaviour of the program for your site.         */
+diff -ur dvi2tty-5.3.1.orig/dvi2tty.h dvi2tty-5.3.1/dvi2tty.h
+--- dvi2tty-5.3.1.orig/dvi2tty.h	2010-10-24 14:29:23.000000000 +0200
++++ dvi2tty-5.3.1/dvi2tty.h	2010-02-23 13:41:58.000000000 +0100
+@@ -1,25 +1,5 @@
+-/*
+- * dvi2tty
+- * Copyright (C) 2003 Marcel J.E. Mol <marcel@mesa.nl>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+- *
+- */
+-
+-#define Copyright "dvi2tty  Copyright (C) 1984, 1985, 1986 Svante Lindahl.\n\
+-Copyright (C) 1989-1996 M.J.E. Mol"
++#define Copyright "dvi2tty.c  Copyright (C) 1984, 1985, 1986 Svante Lindahl.\n\
++Copyright (C) 1988 M.J.E. Mol 1989, 1990"
+ 
+ #include <stdio.h>
+ #include <string.h>
+diff -ur dvi2tty-5.3.1.orig/dvistuff.c dvi2tty-5.3.1/dvistuff.c
+--- dvi2tty-5.3.1.orig/dvistuff.c	2010-10-24 15:01:30.000000000 +0200
++++ dvi2tty-5.3.1/dvistuff.c	2009-09-01 14:14:47.000000000 +0200
+@@ -1,26 +1,3 @@
+-/*
+- * dvi2tty
+- * Copyright (C) 2003 Marcel J.E. Mol <marcel@mesa.nl>
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * as published by the Free Software Foundation; either version 2
+- * of the License, or (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+- *
+- */
+-
+-/*
+- * Include files
+- */
+ 
+ #include "dvi2tty.h"
+ #include <sys/types.h>
+@@ -34,12 +11,6 @@
+ #endif
+ #include "commands.h"
+ 
+-
+-
+-/*
+- * Constant definitions
+- */
+-
+ #if defined(VMS) 
+ #define mseek vmsseek
+ #define ROUND(a)        (a>=0.0 ?  (int) (a + 0.5) : (int) (a - 0.5) )
+@@ -78,16 +49,12 @@
+ #define sget3()         snum(3)
+ #define sget4()         snum(4)
+ 
+-
+-
+-/*
+- * Structure and variable definitions
+- */
+-
+ #if 0
+-char *dvistuff = "@(#) dvistuff.c  5.12 27may1996 M.J.E. Mol (c) 1989-1996";
++char *dvistuff = "@(#) dvistuff.c  4.1 27/03/90 M.J.E. Mol (c) 1989, 1990";
+ #endif
+ 
++/*---------------------------------------------------------------------------*/
++
+ typedef struct {
+     long hh;
+     long vv;
+@@ -112,6 +79,7 @@
+ } font;
+ 
+ 
++/*---------------------------------------------------------------------------*/
+ 
+ bool        pageswitchon;       /* true if user-set pages to print           */
+ bool        sequenceon;         /* false if pagesw-nrs refers to TeX-nrs     */
+@@ -142,11 +110,7 @@
+ font * fonts = NULL;            /* List of fontnames defined                 */
+ int  symbolfont = FALSE;        /* true if font is a symbol font             */
+ 
+-
+-
+-/*
+- * Function definitions
+- */
++/*---------------------------------------------------------------------------*/
+ 
+ #if defined(KPATHSEA) || defined(MSDOS)
+ void            postamble       (void);
+@@ -205,51 +169,41 @@
+ #endif
+ #endif
+ 
+-
++/*---------------------------------------------------------------------------*/
++/*---------------------------------------------------------------------------*/
+ 
+ /*
+- * DVIMAIN -- The main function for processing the dvi file.
+- *            Here we assume there are to file pointers: DVIfile and output.
+- *            Also we have a list of pages pointed to by 'currentpage',
+- *            which is only used (in 'inlist()') when a page list is given.
++ * The main function for processing the dvi file.
++ * Here we assume there are to file pointers: DVIfile and output.
++ * Also we have a list of pages pointed to by 'currentpage',
++ * which is only used (in 'inlist()') when a page list is given.
+  */
+ 
+ void dvimain(void)
+ {
+ 
+     postamble();                            /* seek and process the postamble */
+-    preamble();                             /* process preamble               */
+     /* note that walkpages *must* immediately follow preamble */
++    preamble();                             /* process preamble               */
+     walkpages();                            /* time to do the actual work!    */
+ 
+--    return;
+--
+ } /* dvimain */
+ 
++/*---------------------------------------------------------------------------*/
+ 
+- /*
+-  * POSTAMBLE -- Find and process postamble, use random access 
+-  */
+-
+-void postamble(void)
++void postamble(void)        /* find and process postamble, use random access */
+ {
+     register long size;
+     register int  count;
+-#if !defined (THINK_C)
+     struct stat st;
+-#endif
+ 
+-#if defined (THINK_C)
+-    size = DVIfile->len;
+-#else
+     fstat (fileno(DVIfile), &st);
+     size = (long) st.st_size;                   /* get size of file          */
+-#endif
+-
+     count = -1;
+     do {              /* back file up past signature bytes (223), to id-byte */
+-        if (size-- == 0)
++        if (size == 0)
+             errorexit(nopst);
++        size--;
+         mseek(DVIfile, size, absolute);
+         opcode = (int) get1();
+         count++;
+@@ -261,7 +215,7 @@
+     if (opcode != VERSIONID)
+         errorexit(badid);
+     mseek(DVIfile, size-4, absolute);       /* back up to back-pointer       */
+-    mseek(DVIfile, sget4(), absolute);      /* and to start of postamble     */
++    mseek(DVIfile, sget4(), absolute);      /* and to start of postamble   */
+     if (get1() != POST)
+         errorexit(nopst);
+     mseek(DVIfile, 20L, relative); /* lastpageoffset, numerator, denominator */
+@@ -275,17 +229,11 @@
+     /* get2() -- totalpages */
+     /* fontdefs  do fontdefs in flight ... */
+ 
+-    return;
+-
+ } /* postamble */
+ 
++/*---------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * PREAMBLE --process preamble, use random access
+- */
+-
+-void preamble(void)
++void preamble(void)             /* process preamble, use random access       */
+ {
+ 
+     mseek(DVIfile, 0L, absolute);       /* read the dvifile from the start   */
+@@ -297,17 +245,11 @@
+     mseek(DVIfile, 12L, relative);  /* numerator, denominator, magnification */
+     mseek(DVIfile, get1(), relative);         /* skip job identification     */
+ 
+-    return;
+-
+ } /* preamble */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * WALKPAGES -- process the pages in the DVI-file
+- */
+-
+-void walkpages(void)
++void walkpages(void)              /* process the pages in the DVI-file */
+ {
+     register bool wantpage;
+ 
+@@ -339,15 +281,9 @@
+         }
+     }
+ 
+-    return;
+-
+ } /* walkpages */
+ 
+-
+-
+-/*
+- * INITPAGE -- Setup a new, empty page.
+- */
++/*---------------------------------------------------------------------------*/
+ 
+ void initpage(void)
+ {
+@@ -361,7 +297,8 @@
+     lastline    = currentline;
+     firstcolumn = rightmargin;
+     if (pageswitchon) {
+-        if ((sequenceon ? pagecounter : pagenr) != firstpage->pag) {
++        if ((sequenceon && (pagecounter != firstpage->pag)) ||
++            (!sequenceon && (pagenr != firstpage->pag))) {
+             if (noffd)
+                 fprintf(output, "^L\n");
+             else
+@@ -369,23 +306,16 @@
+         }
+     }
+     else
+-        if (backpointer != -1) {            /* not FORM at first page   */
++        if (backpointer != -1) {             /* not FORM at first page   */
+             if (noffd)
+                 fprintf(output, "^L\n");
+             else
+                 putc(FORM, output);
+         }
+ 
+-    return;
+-
+ } /* initpage */
+ 
+-
+-
+-/*
+- * DOPAGE -- Process the dvi file until an end-off-page.
+- *           Build up a page image.
+- */
++/*----------------------------------------------------------------------------*/
+ 
+ void dopage(void)
+ {
+@@ -426,8 +356,9 @@
+                                 stack[sptr].zz = z;
+                                 sptr++;
+                                 break;
+-                case POP      : if (sptr-- == 0)                 /* pop */
++                case POP      : if (sptr == 0)                   /* pop */
+                                     errorexit(stkuf);
++                                sptr--;
+                                 h = stack[sptr].hh;
+                                 v = stack[sptr].vv;
+                                 w = stack[sptr].ww;
+@@ -483,18 +414,11 @@
+             }
+     }
+ 
+-    return;
+-
+ } /* dopage */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * SKIPPAGE -- Scan the dvi file until an end-off-page.
+- *             Skip this page.
+- */
+-
+-void skippage(void)
++void skippage(void)            /* skip past one page */
+ {
+     register int opcode;
+ 
+@@ -556,17 +480,11 @@
+         }
+     }
+ 
+-    return;
+-
+ } /* skippage */
+ 
++/*---------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * PRINTPAGE -- 'end of page', writes lines of page to output file 
+- */
+-
+-void printpage(void)
++void printpage(void)   /* 'end of page', writes lines of page to output file */
+ {
+     register int  i, j;
+     register unsigned char ch;
+@@ -607,17 +525,11 @@
+     free(currentline);              /* free last line */
+     currentline = nil;
+ 
+-    return;
+-
+ } /* printpage */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * INLIST -- return true if pagenr is in the list of pages to be printed.
+- */
+-
+-bool inlist(long pagenr)
++bool inlist(register long pagenr)                         /* ret true if in list of pages */
+ {
+ 
+     while ((currentpage->pag < 0) && (currentpage->pag != pagenr) &&
+@@ -632,20 +544,14 @@
+         if (currentpage->pag == pagenr)
+             return TRUE;
+     }
+-
+     return FALSE;
+ 
+ } /* inlist */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * RULE -- Output a rule (vertical or horizontal).
+- *         Increment h if moving is true.
+- */
+- 
+ void rule(bool moving, long rulewt, long ruleht)
+-{
++{   /* output a rule (vertical or horizontal), increment h if moving is true */
+ 
+     register char ch;               /* character to set rule with            */
+     register long saveh = 0, savev;
+@@ -668,17 +574,11 @@
+     if (!moving)
+         h = saveh;
+ 
+-    return;
+-
+ } /* rule */
+ 
+ 
+ 
+-/*
+- * RULEAUX -- do the actual outtput for the rule recursively.
+- */
+-
+-void ruleaux(long rulewt, long ruleht, char ch)
++void ruleaux(long rulewt, long ruleht, char ch)     /* recursive  that does the job */
+ {
+     register long wt, lmh, rmh;
+ 
+@@ -702,21 +602,15 @@
+         h = rmh;                    /* restore right margin                  */
+     }
+ 
+-    return;
+-
+ } /* ruleaux */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * HORIZONTALMOVE -- Move the h pointer by amount.
+- */
+-
+-long horizontalmove(long amount)
++long horizontalmove(register long amount)
+ {
+ 
+-#if defined(MSDOS) || defined(THINK_C)
+-    if (labs(amount) > charwidth / 4L) {    /* } to make vi happy */
++#if defined(MSDOS)
++    if (labs(amount) > charwidth / 4L) {
+ #else
+     if (abs(amount) > charwidth / 4L) {
+ #endif
+@@ -737,29 +631,20 @@
+ 
+ }   /* horizontalmove */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * SKIPNOPS -- Return first non NOP opcode.
+- */
+-
+-int skipnops(void)
++int skipnops(void)                  /* skips by no-op commands  */
+ {
+     register int opcode;
+ 
+     while ((opcode = (int) num(1)) == NOP);
+-
+     return opcode;
+ 
+ } /* skipnops */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * GETLINE -- Returns an initialized line-object 
+- */
+-
+-linetype *texlive_getline(void)
++linetype *texlive_getline(void)         /* returns an initialized line-object */
+ {
+     register int  i;
+     register linetype *temp;
+@@ -772,20 +657,14 @@
+     for (i = 0; i < LINELEN; i++)
+         temp->text[i] = ' ';
+     temp->text[i] = '\0';
+-
+     return temp;
+ 
+ } /* texlive_getline */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * FINDLINE -- Find best fit line were text should go
+- *             and generate new line if needed.
+- */
+-
+-linetype *findline(void)
+-{
++linetype *findline(void)        /* find best fit line were text should go */
++{                               /* and generate new line if needed        */
+     register linetype *temp;
+     register long topd, botd;
+ 
+@@ -832,35 +711,25 @@
+     temp->next->prev = currentline;
+     temp->next = currentline;
+     currentline->vv = v;
+-
+     return currentline;
+ 
+ } /* findline */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * NUM --
+- */
+-
+-unsigned long num(int size)
++unsigned long num(register int size)
+ {
+     register int i;
+-    register unsigned long x = 0;
++    register long x = 0;
+ 
+-    for (i = size; i > 0; i--)
++    for (i = 0; i < size; i++)
+         x = (x << 8) + (unsigned) getc(DVIfile);
+-
+     return x;
+ 
+ } /* num */
+ 
+ 
+-/*
+- * SNUM --
+- */
+-
+-long snum(int size)
++long snum(register int size)
+ {
+     register int i;
+     register long x = 0;
+@@ -868,18 +737,13 @@
+     x = getc(DVIfile);
+     if (x & 0x80)
+         x -= 0x100;
+-    for (i = size - 1; i > 0; i--)
++    for (i = 1; i < size; i++)
+         x = (x << 8) + (unsigned) getc(DVIfile);
+-
+     return x;
+ 
+ } /* snum */
+ 
+-
+-
+-/*
+- * DOCHAR -- Process a character opcode.
+- */
++/*----------------------------------------------------------------------------*/
+ 
+ void dochar(char ch)
+ {
+@@ -895,11 +759,7 @@
+ 
+ 
+ 
+-/*
+- * SYMCHAR -- Process a character opcode for a symbol font.
+- */
+-
+-void symchar(char ch)
++void symchar(char ch)                     /* output ch to appropriate line */
+ {
+ 
+     switch (ch) {       /* can do a lot more on MSDOS machines ... */
+@@ -918,7 +778,6 @@
+        case 106: ch = '|'; break;
+        case 110: ch = '\\'; break;
+     }
+-
+     outchar(ch);
+ 
+     return;
+@@ -927,10 +786,6 @@
+ 
+ 
+ 
+-/*
+- * NORMCHAR -- Process a character opcode for a normal font.
+- */
+-
+ void normchar(char ch)
+ {
+ 
+@@ -992,18 +847,11 @@
+ 
+     return;
+ 
+-} /* normchar */
+-
++} /*normchar */
+ 
+ 
+-/*
+- * OUTCHAR -- Here we put the character into the current page.
+- *            This function includes some code to handle Scandinavian
+- *            characters. I think that code doesn't belong here. IT
+- *            SHOULD BE MOVED OUT.
+- */
+ 
+-void outchar(unsigned char ch)
++void outchar(unsigned char ch)                     /* output ch to appropriate line */
+ {
+     register int i, j;
+ 
+@@ -1024,7 +872,6 @@
+     else if (j < leftmargin)
+         j = leftmargin;
+     foo = leftmargin - 1;
+-
+     /*
+      * This code does not really belong here ...
+      *
+@@ -1095,17 +942,11 @@
+         h += charwidth;
+     }
+ 
+-    return;
+-
+ } /* outchar */
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-
+-/*
+- * PUTCHARACTER -- Output character, don't change h 
+- */
+-
+-void putcharacter(long charnr)
++void putcharacter(register long charnr)            /* output character, don't change h */
+ {
+     register long saveh;
+ 
+@@ -1116,34 +957,23 @@
+         setchar(charnr);
+     h = saveh;
+ 
+-    return;
+-
+ } /* putcharacter */
+ 
+-
+-
+-/*
+- * SETCHAR -- Should print characters with character code>127 from
+- *            current font. Note that the parameter is a dummy, since
+- *            ascii-chars are<=127.
+- */
++/*----------------------------------------------------------------------------*/
+ 
+ void setchar(long charnr)
+-{
++{    /* should print characters with character code>127 from current font */
++     /* note that the parameter is a dummy, since ascii-chars are<=127    */
+ 
+     outchar((unsigned char)(charnr));
+ 
+-    return;
+-
+ } /* setchar */
+ 
+ 
++/*----------------------------------------------------------------------------*/
+ 
+-/*
+- * FONTDEF -- Process a font definition.
+- */
+ 
+-void fontdef(int x)
++void fontdef(register int x)
+ {
+     register int i;
+     char * name;
+@@ -1177,7 +1007,7 @@
+     
+     for (i = 0; i < namelen; i++)
+         name[i] = get1();
+-    name[i] = '\0';	/* required */
++    name[namelen] = '\0';
+     fnt->name = name;
+     if (new) {
+         fnt->next = fonts;
+@@ -1190,13 +1020,6 @@
+ 
+ 
+ 
+-/*
+- * SETFONT -- Switch to specific font. Try to find out if it is a symbol
+- *            font.
+- *            Option -c allchar does not pertain to this portion, so symbols
+- *            are still translated.
+- */
+-
+ void setfont(long fntnum)
+ {
+     font * fnt;
+@@ -1227,9 +1050,8 @@
+    
+ 
+ 
+-/* 
+- * VMS CODE 
+- */
++/*----------------------------------------------------------------------------*/
++
+ 
+ #if defined(VMS)
+ long vmsseek(FILE *fp, long n, long dir)
+@@ -1237,9 +1059,9 @@
+     long k,m,pos,val,oldpos;
+     struct stat buffer;
+ 
+-    for (;;) {                     /* loops only once or twice */
++    for (;;) {                     /*loops only once or twice*/
+         switch (dir) {
+-            case 0:            /* from BOF */
++            case 0:            /*from BOF*/
+                     oldpos = vms_ftell(fp);
+                     k = n & 511;
+                     m = n >> 9;
+@@ -1278,8 +1100,6 @@
+         }
+     }
+ 
+-    /* NOTREACHED */
+-
+ } /* vmsseek */
+         
+ 
+@@ -1289,7 +1109,6 @@
+     char c;
+     long pos;
+     long val;
+-
+     if ((*fp)->_cnt == 0) {
+         c = fgetc(fp);
+         val = vms_ungetc(c, fp);
+@@ -1299,7 +1118,6 @@
+     pos = ftell(fp);
+     if (pos >= 0)
+         pos += ((*fp)->_ptr) - ((*fp)->_base);
+-
+     return (pos);
+ 
+ } /* vms_ftell */
+@@ -1308,18 +1126,16 @@
+ 
+ long vms_ungetc(char c, FILE *fp)
+ {
+-
+     if ((c == EOF) && feof(fp))
+         return (EOF);
+-
+-    if ((*fp)->_cnt >= 512)
++    else if ((*fp)->_cnt >= 512)
+         return (EOF);
+-    
+-    (*fp)->_cnt++;
+-    (*fp)->_ptr--;
+-    *((*fp)->_ptr) = c;
+-
+-    return (c);
++    else {
++        (*fp)->_cnt++;
++        (*fp)->_ptr--;
++        *((*fp)->_ptr) = c;
++        return (c);
++    }
+ 
+ } /*vms_ungetc */
+ #endif

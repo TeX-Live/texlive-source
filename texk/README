@@ -35,11 +35,9 @@ detex 2.8 - checked 21may10
 
 devnag - from devnag package installed in texmf-dist.
 
-djgpp - ?
-
 dtl - ?
 
-dvi2tty 5.3.1 - needs update 18may07
+dvi2tty 5.3.1 - checked 25oct10
   http://www.mesa.nl/pub/dvi2tty/
 
 dvidvi - ?

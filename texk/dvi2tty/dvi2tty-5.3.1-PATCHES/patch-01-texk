@@ -1,0 +1,37 @@
+diff -ur dvi2tty-5.3.1.orig/README.ORG dvi2tty-5.3.1/README.ORG
+--- dvi2tty-5.3.1.orig/README.ORG	1990-11-14 23:36:08.000000000 +0100
++++ dvi2tty-5.3.1/README.ORG	2009-06-15 00:59:36.000000000 +0200
+@@ -16,11 +16,8 @@
+ omization constants" and change them to suit your site.
+ These constants configure default pager and a little more.
+ 
+-Please report complaints, suggestions, bugs and/or fixes to:
+-
++Please report complaints, suggestions, bugs and/or fixes to
++tex-k@tug.org, since this is a modified version of the original, written
++by
+ Svante Lindahl, NADA, KTH            Numerical Analysis & Computer Science 
+-UUCP: {seismo,mcvax}!enea!ttds!zap   Royal Institute of Technology, Sweden
+-ARPA: enea!ttds!zap@seismo.CSS.GOV   EAN: zap@cs.kth.sunet
+-
+-The TOPS-20 version of the program can also be obtained from the above
+-address.
++                                     Royal Institute of Technology, Sweden
+diff -ur dvi2tty-5.3.1.orig/disdvi.1 dvi2tty-5.3.1/disdvi.1
+--- dvi2tty-5.3.1.orig/disdvi.1	1996-03-23 17:07:21.000000000 +0100
++++ dvi2tty-5.3.1/disdvi.1	2010-10-20 14:21:13.000000000 +0200
+@@ -1,4 +1,4 @@
+-.TH DISDVI Local "4 April 1989"
++.TH DISDVI 1 "20 October 2010" "TeX Live"
+ .SH NAME
+ disdvi \- `disassemble' a TeX DVI file
+ .SH SYNOPSIS
+diff -ur dvi2tty-5.3.1.orig/dvi2tty.1 dvi2tty-5.3.1/dvi2tty.1
+--- dvi2tty-5.3.1.orig/dvi2tty.1	1996-03-23 20:45:03.000000000 +0100
++++ dvi2tty-5.3.1/dvi2tty.1	2010-10-20 14:21:13.000000000 +0200
+@@ -1,4 +1,4 @@
+-.TH DVI2TTY Local "13 November 1990"
++.TH DVI2TTY 1 "20 October 2010" "TeX Live"
+ .SH NAME
+ dvi2tty \- preview a TeX DVI\-file on an ordinary ascii terminal
+ .SH SYNOPSIS
