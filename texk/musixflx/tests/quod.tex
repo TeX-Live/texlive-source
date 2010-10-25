@@ -1,0 +1,187 @@
+\input musixtex.tex
+\input musixsty.tex
+
+
+\def\tr#1{\zcharnote{#1}{\ppff tr}}%
+\def\pince#1{\shake{#1}}%
+\vsize9.75in
+\voffset-0.5in
+\hsize7.0in
+\hoffset-0.25in
+\smallmusicsize
+\bigaccid
+\advance\parindent by 10pt
+\def\writebarno{\llap{\ninebf\the\barno\barnoadd}}%
+\def\raisebarno{4\internote}%
+\def\shiftbarno{1.5\Interligne}%
+\nobarnumbers
+\geometricskipscale
+
+\def\omit#1{}%
+
+\def\tql#1#2{\tbl{#1}\qb{#1}{#2}}
+\def\tqu#1#2{\tbu{#1}\qb{#1}{#2}}
+\def\nbbqu#1#2{\nbbu{#1}\qb{#1}{#2}}
+\def\nbbql#1#2{\nbbl{#1}\qb{#1}{#2}}
+
+\def\nqql#1#2{\roffset{0.25}{\tbbl{#1}\tbbl{#1}\qb{#1}{#2}}}
+\def\nqqu#1#2{\roffset{0.25}{\tbbu{#1}\tbbu{#1}\qb{#1}{#2}}}
+\def\tqql#1#2{\roffset{0.25}{\tbbl{#1}\tbl{#1}\qb{#1}{#2}}}
+\def\tqqu#1#2{\roffset{0.25}{\tbbu{#1}\tbu{#1}\qb{#1}{#2}}}
+\def\tqqql#1#2{\roffset{0.25}{\tbbbl{#1}\tbl{#1}\qb{#1}{#2}}}
+\def\tqqqu#1#2{\roffset{0.25}{\tbbbu{#1}\tbu{#1}\qb{#1}{#2}}}
+
+\instrumentnumber4
+\setclef1\bass\setbassclefsymbol1\bassoct
+\setclef4\treble\settrebleclefsymbol4\trebleoct
+\catcodesmusic
+\generalsignature{+1}
+\generalmeter\meterC
+\setname1{B}
+\setname2{T}
+\setname3{A}
+\setname4{S}
+\songtop4
+\songbottom1
+\fulltitle{Quodlibet}
+\subtitle{Variation 30 of the Goldberg Variations for Clavier}
+\title{Quodlibet}
+\author{J. S. Bach (1685-1750)}
+\shortauthor{J. S. Bach}
+\othermention{Arranged for Recorders by R. D. Tennent}
+\maketitle
+\startbarno=0
+\nobarnumbers
+\stafftopmarg=4.0\Interligne%
+\staffbotmarg=4.0\Interligne%
+%\setinterinstrument3{2.5\internote}%
+\startpiece\addspace\afterruleskip%
+\systemnumbers%
+\Notes\ds&\cu d&\ds&\ds\en
+\bar%1
+\Notes\hl N&\ibu1g2\qb1{ghi}\tqu1j&&\hpause\en
+\Notes\hl M&\ibl1k{-2}\qb1k\en
+\notes&\nbbl1\qb1j\tql1i&&\qp\en
+\Notes&\ibu1h0\qb1h&&\ds\en
+\notes&\nbbu1\qb1g\tqu1h&&\cu d\en
+\def\atnextbar{\znotes&&\centerpause&&\en}%
+\bar%2
+\Notes\hl L&\ibu1i{-2}\qb1i\tqu1h&\ql n&\ibu3g2\qb3{gh}\en
+\Notes&\itied1g\qu g&\ql n&\qb3i\tqu3j\en
+\Notes\ql{.K}&\ttie1\qu g&\ql o&\ibl3k{-2}\qb3k\en
+\notes&&&\nbbl3\qb3j\tql3i\en
+\Notes&\ibu1f0\pince{n}\qb1f&\cl o&\cu h\en
+\notes\cu J&\nbbu1\qb1e\tqu1f&\ds&\ds\en
+\bar%3
+\Notes\hu I&\qu g&\ibl2n{-1}\qb2{no}&\ql k\en
+\Notes&\ds\cl k&\qb2{n}\tql2{=m}&\ql k\en
+\Notes\hu J&\ibu1j{-2}\qb1{ji}&\ibl2j{0}\qb2{lk}&\ql l\en
+\Notes&\qb1h\tqu1g&\qb2j\tql2p&\ql l\en
+\bar%4
+\Notes\hl K&\itied1f\pince{n}\qu f&\ibl2o{-1}\qb2{on}&\ibl3k{-1}\qb3{kl}\en
+\notes&\ttie1\ibbu1e{-2}\qb1f\tbbu1\qb1e&\qb2o&\qb3k\en
+%\vnotes1.5\elemskip&\nbbbu1\qb1e\tbbu1\qb1f&&\en
+\Notes&\itied1d\tqu1d&\tql2m&\tql3j\en
+\Notes\qu G&\ttie1\qu d&\ibl2n{-2}\qb2n\tql2m&\ibu3h{-1}\pince{p}\qb3i\tqu3h\en
+\Notes\ds&\qp&\ibl2n{-5}\qb2n&\qu g\en
+\notes\ibbl0b{-1}\qb0b\tql0a&&\tql2k&\en
+\bar%5
+\Notes\ibl0M0\qb0N&\ql n&\ibl2n2\qb2n&\hpause\en
+\notes\nbbl0\qb0M\tql0N&&\qb2o&\en
+\Notes\ibl0K0\qb0L&\ql n&\qb2p&\en
+\notes\nbbl0\qb0K\tql0L&&\tql2q&\en
+\Notes\ql{.M}&\ql o&\ibl2r{-2}\qb2r&\qp\en
+\notes&&\nbbl2\qb2q\tql2p&\en
+\Notes\sk\cu I&\ql o&\ibl2o6\qb2o\itieu2r\tql2r&\ds\cl k\en
+\bar%6
+\Notes\ql{.L}&\ibl1n{-1}\qb1{no}&\ttie2\ibl2r{-2}\qb2r\tql2q&\ibl3n{-2}\qb3{nm}\en
+\Notes&\qb1n&\ql p&\qb3l\en
+\notes\ibbl0M2\qb0M\tql0N&\tql1m&&\tql3k\en
+\Notes\itieu0a\ql a&\ibl1l{-2}\qb1l&\ql{.o}&\pince{n}\ibl3i0\qb3{^j}\en
+\notes&\tql1k&&\nbbl3\qb3i\tql3j\en
+\notes\ttie0\ibbl0a{-2}\qb0{aN}&\cl{^j}&&\cu h\en
+\notes\qb0M\tql0L&\ds&\ibbl2i2\qb2i\qsk\tql2{^j}&\ds\en
+\bar%7
+\Notes\ql M&\ibu1g0\qb1{fg}&\ibl2k0\qb2{kl}&\qu h\en
+\Notes\ql K&\qb1h\tqu1f&\qb2m\tql2k&\qu h\en
+\Notes\ql N&\ibu1g{-2}\qb1{gf}&\ibl2i4\qb2{ik}&\ql i\en
+\Notes\qu G&\qb1e\tqu1d&\qb2n\tql2m&\ql i\en
+\bar%8
+\Notes\qu{.H}&\ibu1c4\qb1{^cd}&\ibl2l{-1}\qb2{.l}\tqql2k\isluru2j&\ibu3i{-1}\qb3{hi}\en
+\notes&\qb1e&\tslur2j\ibbl2j0\qb2k\hqsk\tbbl2\qb2{^j}&\qb3h\en
+\Notes\cu{^J}&\itied1h\tqu1h&\itieu2l\tql2l&\tqu3g\en
+\notes\ql K&\ttie1\ibu1h{-1}\qb1h&\ttie2\ibbl2l{-1}\qb2{lk}&\ibu3f{-1}\qb3f\en
+\notes&\tqu1g&\qb2l\tql2j&\tqu3e\en
+\Notes\cl K&\cu f&\cl k&\cu d\en
+%\nobarnumbers%
+%\setrightrepeat%
+%\alaligne%
+\advance\barno by -1%
+%\leftrepeat%
+%\systemnumbers%
+\leftrightrepeat
+%\advance\barno by -1%
+\Notes\ds&\cl m&\ds&\cl o\en
+\bar%9
+%\notes&&&\lcharnote q{\ninebf \the\barno}\enotes
+\Notes\ql d\sk\ql c&\ibl1k0\qb1{kmk}\tql1{m}&\ql o\sk\ql o&\ibl3m0\qb3{mom}\tql3o\en
+\Notes\ql b&\ibl1k0\qb1n&\ql p&\ibl3k2\qb3k\en
+\notes&\qb1k&&\nbbl3\qb3l\tql3m\en
+\Notes\ql N&\qb1k\tql1n&\ql p&\ibl3n{-4}\qb3n\tql3l\en
+\bar%10
+\Notes\ibl0b{-1}\qb0{cbc}\tql0a&\cl l\ds\qp&\ibl2o{-1}\qb2{opo}\tql2n&\ibl3o{-2}\qb3{onm}\tql3l\en
+\Notes\ql{.b}&\ql m&\ibl2m{-2}\qb2m&\ibl3j0\qb3{^k}\en
+\notes&&\tql2l&\nbbl3\qb3{^j}\tql3k\en
+\Notes\sk\cl a&\ql m&\cl{^k}\ds&\ibl3i8\qb3i\tql3p\en
+\bar%11
+\Notes\ql{N}\sk\ql{N}&\ibl1l0\qb1{nln}\tql1l&\ql p\sk\ql p&\ibl3m0\qb3{lpl}\tql3p\en
+\notes\ql{.a}&\ibl1m{-1}\qb1{m*n}&\ql q&\ibbl3k2\qb3{^klm}\tql3n\en
+\Notes&\qb1m&\ql q&\ibl3o{-2}\qb3o\en
+\notes\cl{^a}&\tql1l&&\nbbl3\qb3n\tql3m\en
+\bar%12
+\Notes\ql b&\ibl1k2\qb1{^k}&\ibl2o{-1}\qb2p&\ibl3n{-2}\qb3n\en
+\notes&\nbbl1\qb1l\tql1m&\qb2q&\nbbl3\qb3m\tql3l\qsk\en
+\notes\qu I&\itied1i\qu i&\qb2p&\ibbl3k0\qb3{^kl}\en
+\notes&&\tql2o&\qb3m\tql3k\en
+\Notes\ql{.L}&\ttie1\ibu1i0\qb1i&\ibl2n0\qb2n&\itieu3l\hl l\en
+\notes&\nbbu1\qb1h\tqu1i&\nbbl2\qb2m\tql2n&\en
+\Notes&\ibu1g2\qb1g&\cl l&\en
+\notes\cl{=K}&\nbbu1\qb1h\tqu1i&\ds&\en
+\bar%13
+\notes\qu J&\ibl1j2\qb1j\sk\qb1k&\hpause&\ttie3\ibbl3k1\isluru3l\qb3l\tslur3k\qb3k\isluru3m\qb3m\tslur3l\tql3l\en
+\notes\ql c&\qb1l\sk\tql1m&&\ibbl3m1\isluru3n\qb3n\tbbl3\tslur3m\qb3m\tql3o\en
+\notes\ql{.b}&\ibl1n{-1}\qb1n\sk\nbbl1\qb1m\tql1l&\ql n&\ql{.k}\en
+\Notes&\cl k&\ibl2k{-4}\qb2n&\en
+\notes\ibbu0J{-2}\qb0J\tqu0I&\ds&\tql2g&\ibbl3j2\qb3j\tql3k\en
+\bar%14
+\Notes\qu{.H}&\ds&\ibl2j1\qb2{.j}&\ibl3l2\qb3l\en
+\notes&\cu h&\qsk\tqql2k&\nbbl3\qb3m\tql3n\en
+\Notes&\ibu1e0\qb1e&\ibl2j{-2}\qb2j&\ibl3o{-2}\qb3o\en
+\notes\ibbu0I2\qb0I\tqu0J&\nbbu1\qb1d\tqu1e&\tql2i&\tql3n\en
+\notes\ql{.K}&\ibu1g1\qb1f&\ibu2h1\qb2h&\ibbl3l{-2}\pince{o}\qb3m\tbbl3\qb3l\en
+%\vnotes1.4\elemskip&&&\nbbbl3\qb3l\tbbl3\qb3m\en
+\Notes&\itied1g\tqu1g&\tqu2i&\tql3k\en
+\Notes&\ttie1\ibu1g{-1}\qb1g&\ibl2j2\qb2j&\ibu3i{-6}\qb3j\en
+\notes\ibbu0J2\qb0J\tqu0K&\tqu1f&\tql2k&\tqu3d\en
+\bar%15
+\Notes\ibu0I0\qb0G&\qu d&\ibu2i0\qb2i&\ibl3i0\qb3i\en
+\notes\qb0H&&\nbbu2\qb2h\tqu2i&\qb3j\en
+\Notes\qb0I&\qu d&\cu g&\qb3k\en
+\Notes\tqu0G&&\ds&\tql3i\en
+\Notes\qu{.J}&\qu e&\ds&\ibu3j{-2}\qb3j\en
+\notes&&\ibbl2l{-2}\qb2l\tql2k&\qb3i\en
+\Notes&\qu e&\ibl2j4\qb2j&\qb3h\en
+\Notes\cu{^J}&&\tql2l&\tqu3g\en
+\bar%16
+\notes\ql K&\ibu1g{1}\qb1d&\ibbl2h1\qb2{hk}&\ibu3f2\qb3f\en
+\notes&\qb1e&\qb2j\tql2i&\tqu3g\en
+\notes\ql K&\qb1d&\ibbl2j0\qb2j\tbbl2\qb2h&\ibu3h{-4}\qb3h\en
+\Notes&\tqu1j&\itieu2k\tql2k&\tqu3f\en
+\Notes\ql N&\ibu1i{-2}\qb1i&\ttie2\ibl2j0\qb2k&\qu g\en
+\notes&\tqu1h&\nbbl2\qb2j\tql2k&\en
+\Notes\cu G&\cu g&\cl i&\cu g\en
+\setrightrepeat
+%\mulooseness=+1%
+\endpiece%
+\eject
+\end

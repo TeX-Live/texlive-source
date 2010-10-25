@@ -1,3 +1,10 @@
+2009-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/musixflx.test (new): Shell script for a test case.
+	* tests/quod.{mx1,mx2,tex} (new): Test data supplied by
+	Bob Tennent <rdt@cs.queensu.ca>, mail from 2009-10-23.
+	* Makefile.am: Adapted. 
+
 2009-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import musixflx-0.83.2 from CTAN.

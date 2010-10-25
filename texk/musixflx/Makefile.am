@@ -27,3 +27,12 @@ nodist_musixflx_SOURCES = \
 nodist_man1_MANS = \
 	$(MUSIXFLX_TREE)/musixflx.1
 
+## Tests.
+##
+TESTS = tests/musixflx.test
+EXTRA_DIST += $(TESTS)
+DISTCLEANFILES =
+## tests/musixflx.test
+EXTRA_DIST += tests/quod.mx1 tests/quod.mx2 tests/quod.tex
+DISTCLEANFILES += quod.mx1 quod.mx2
+
