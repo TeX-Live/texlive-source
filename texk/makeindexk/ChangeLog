@@ -1,3 +1,10 @@
+2010-11-02  Taco Hoekwater  <taco@elvenkind.com>
+
+	* mkind.c (mk_getc): new fn to accept both LF and CRLF.
+	(main): declare as int just for consistency.
+	* mkind.h (mk_getc): declare it.
+	(GET_CHAR): use it.
+
 2010-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac [TEX_LIVE_VERSION]: From ../../version.ac.

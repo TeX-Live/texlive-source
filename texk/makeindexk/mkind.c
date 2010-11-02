@@ -78,6 +78,22 @@ static	void	process_idx (char * *fn,int use_stdin,int sty_given,
 long totmem = 0L;			/* for debugging memory usage */
 #endif /* DEBUG */
 
+/* |mk_getc|: accept either Unix or Windows line endings */
+
+static int lookahead = -2; /* because you can't ungetc(EOF) */
+
+int
+mk_getc(FILE *stream)
+{
+    int ch = (lookahead != -2 ? lookahead : getc(stream));
+    lookahead = (ch == '\r' ? getc(stream) : -2);
+    if (lookahead == LFD) {
+	ch = lookahead;
+	lookahead = -2;
+    }
+    return ch;
+}
+
 int
 main(int argc, char *argv[])
 {

@@ -225,7 +225,8 @@
 #define ODD        "odd"
 #define ANY        "any"
 
-#define GET_CHAR getc
+extern int mk_getc (FILE *str);         /* line endings patch */
+#define GET_CHAR mk_getc
 
 #define TOASCII(i) (char)((i) + 48)
 
