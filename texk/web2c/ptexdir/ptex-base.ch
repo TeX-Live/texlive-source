@@ -6719,7 +6719,7 @@ begin@/
 jc:=toDVI(kcode);
 sp:=1; { start position }
 ep:=font_num_ext[f]-1; { end position }
-if (kchar_code(f)(sp)<=jc)and(jc<=kchar_code(f)(ep)) then
+if (ep>=1)and(kchar_code(f)(sp)<=jc)and(jc<=kchar_code(f)(ep)) then
   begin while (sp <= ep) do
     begin mp:=sp+((ep-sp) div 2);
     if jc<kchar_code(f)(mp) then ep:=mp-1
