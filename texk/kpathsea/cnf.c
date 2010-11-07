@@ -64,6 +64,21 @@ do_line (kpathsea kpse, string line)
   if (*line == 0 || *line == '%' || *line == '#')
     return;
 
+  /* Remove trailing comment: a % or # preceded by whitespace.  Also
+     remove any whitespace before that.  For example, the value for
+       foo = a#b %something
+     is a#b.  */
+  value = line + strlen (line) - 1; /* start at end of line */
+  while (value > line) {            
+    if (*value == '%' || *value == '#') {
+      value--;                      /* move before comment char */
+      while (ISSPACE (*value))
+        *value-- = 0;               /* wipe out as much preceding whitespace
+      continue;                        (and comment) as we find */
+    }
+    value--;                        /* move before the new null byte */
+  }
+
   /* The variable name is everything up to the next space or = or `.'.  */
   start = line;
   while (!ISSPACE (*line) && *line != '=' && *line != '.')

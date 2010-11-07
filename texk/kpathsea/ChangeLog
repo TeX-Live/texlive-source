@@ -1,3 +1,11 @@
+2010-11-07  Karl Berry  <karl@tug.org>
+
+ 	* cnf.c (do_line): remove trailing comment and preceding
+	whitespace, so they do not appear as part of the value.
+	From Akira.
+	* doc/kpathsea.texi (Config files): document this.
+	* texmf.cnf: doc fixes.
+
 2010-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (libkpathsea_la_LDFLAGS): Add -no-undefined.

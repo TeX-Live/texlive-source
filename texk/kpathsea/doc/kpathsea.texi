@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.0.0
-@set month-year July 2010
+@set month-year November 2010
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -453,7 +453,15 @@ mentions most features.  The format of @file{texmf.cnf} files follows:
 @itemize @bullet
 @item
 @cindex comments, in @file{texmf.cnf}
-Comments start with @samp{%} and continue to the end of the line.
+Comments start with @samp{%}, either at the beginning of a line or
+preceded by whitespace, and continue to the end of the line.  That is,
+as with most shells, a @samp{%} in the ``middle'' of a value does not
+start a comment.  Examples:
+
+@example
+% this is a comment
+var = a%b  % but the value of var will be "a%b".
+@end example
 
 @item
 @cindex blank lines, in @file{texmf.cnf}
@@ -484,20 +492,20 @@ The @var{variable} name may contain any character other than whitespace,
 @item If @samp{.@var{progname}} is present, the definition only
 applies if the program that is running is named (i.e., the last
 component of @code{argv[0]} is) @var{progname} or
-@file{@var{progname}.exe}.  This allows different flavors of @TeX{} to
-have different search paths, for example.
+@file{@var{progname}.@{exe,bat,cmd,...@}}.  Most notably, this allows
+different flavors of @TeX{} to have different search paths.
 
 @item
 @cindex right-hand side of variable assignments
 @var{value} may contain any characters except @samp{%} and @samp{@@}.
-(These restrictions are only necessary because of the processing done on
-@file{texmf.cnf} at build time, so you can stick those characters in
-after installation if you have to.)  The @samp{$@var{var}.@var{prog}}
-feature is not available on the right-hand side; instead, you must use
-an additional variable (see below for example).  A @samp{;} in
-@var{value} is translated to @samp{:} if running under Unix; this is
-useful to write a single @file{texmf.cnf} which can be used under both
-Unix and NT.
+(These restrictions are only necessary because of the processing done
+on @file{texmf.cnf} at build time, so you can stick those characters
+in after installation if you have to.)  The
+@samp{$@var{var}.@var{prog}} feature is not available on the
+right-hand side; instead, you must use an additional variable (see
+below for example).  A @samp{;} in @var{value} is translated to
+@samp{:} if running under Unix; this is useful to write a single
+@file{texmf.cnf} which can be used under both Unix and Windows.
 
 @item All definitions are read before anything is expanded, so you can
 use variables before they are defined (like Make, unlike most other
@@ -519,12 +527,12 @@ TEXINPUTS.latex = $latex2e_inputs
 
 @cindex shell scripts as configuration files
 @cindex configuration files as shell scripts.
-Although this format has obvious similarities to Bourne shell
-scripts---change the comment character to @code{#}, disallow spaces
-around the @code{=}, and get rid of the @code{.@var{name}} convention,
-and it could be run through the shell.  But there seemed little
-advantage to doing this, since all the information would have to passed
-back to Kpathsea and parsed there anyway, since the @code{sh} process
+This format has obvious similarities to Bourne shell scripts---change
+the comment character to @code{#}, disallow spaces around the
+@code{=}, and get rid of the @code{.@var{name}} convention, and it
+could be run through the shell.  However, there seemed little
+advantage in this, since all the information would have to passed back
+to Kpathsea and parsed there anyway, since the @code{sh} process
 couldn't affect its parent's environment.
 
 @flindex cnf.c
