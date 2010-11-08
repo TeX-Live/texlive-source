@@ -1,0 +1,12 @@
+diff -ur dvi2tty-5.3.3.orig/dvi2tty.c dvi2tty-5.3.3/dvi2tty.c
+--- dvi2tty-5.3.3.orig/dvi2tty.c	2010-10-30 14:37:14.000000000 +0200
++++ dvi2tty-5.3.3/dvi2tty.c	2010-11-06 18:33:49.064212708 +0100
+@@ -49,7 +49,7 @@
+                               /* have terminals with latin1 chars */
+ #define WANTPAGER   TRUE      /* default: try to pipe through a pager (like  */
+                               /* more) if stdout is tty and no -o switch     */
+-#define DEFPAGER    "/bin/more"   /* CHANGE TO YOUR LOCAL PAGER            */
++#define DEFPAGER    "more"    /* CHANGE TO YOUR LOCAL PAGER                  */
+ 
+     /*------------------ end of customization constants ---------------------*/
+ 

@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([dvi2tty_version], [5.3.1])[]dnl using unmodified dvi2tty source tree
+m4_define([dvi2tty_version], [5.3.3])[]dnl using unmodified dvi2tty source tree
 AC_INIT([dvi2tty for TeX Live], dvi2tty_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvi2tty-]dvi2tty_version[/dvi2tty.c])

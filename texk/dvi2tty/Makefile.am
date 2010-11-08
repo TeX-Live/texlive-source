@@ -43,3 +43,15 @@ man1_MANS = \
 	$(DVI2TTY_TREE)/disdvi.1 \
 	$(DVI2TTY_TREE)/dvi2tty.1
 
+## Tests.
+##
+TESTS = dvi2tty.test
+
+TESTS_ENVIRONMENT = DVI2TTY_TREE=$(DVI2TTY_TREE)
+DISTCLEANFILES =
+EXTRA_DIST += $(TESTS)
+
+## dvi2tty.test
+EXTRA_DIST += ligtest.tty test.tty tests.tty testu.tty
+DISTCLEANFILES += ligtest.out test.out tests.out testu.out
+

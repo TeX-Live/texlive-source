@@ -1,0 +1,16 @@
+Begin2
+Title        = dvi2tty convert TeX dvi output to ascii.
+Author       = Svante Lindahl / Marcel Mol
+Maintainer   = Marcel Mol
+Site1        = ftp.mesa.nl
+Location     = /pub/dvi2tty/...
+File1        = dvi2tty-5.3.3.tgz
+FileSize1    = 
+CopyPolicy1  = Permision to distribute archive only
+CopyPolicy2  = with (c) notice intact
+Keywords     = TeX dvi ascii tty printing
+Entered      = 23jun95
+EnteredBy    = Marcel Mol
+Company	     = MESA Consulting
+CheckedEmail = marcel@@mesa.nl
+End

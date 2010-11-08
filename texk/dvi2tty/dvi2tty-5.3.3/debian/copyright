@@ -1,0 +1,12 @@
+This package was debianized by Kenshi Muto <kmuto@debian.org> on
+Thu,  5 Jun 2003 17:06:08 +0900.
+
+It was downloaded from http://www.mesa.nl/pub/dvi2tty/dvi2tty-5.3.1.tar.gz
+
+Upstream Author(s): many, including Marcel J.E. Mol <marcel@mesa.nl>
+
+Copyright:
+ GNU General Public License.
+
+ On Debian systems, the complete text of the GNU General Public
+ License can be found in /usr/share/common-licenses/GPL file.

@@ -1,0 +1,13 @@
+Source: dvi2tty
+Section: tex
+Priority: optional
+Maintainer: Kenshi Muto <kmuto@debian.org>
+Build-Depends: debhelper (>> 4.0.0)
+Standards-Version: 3.5.8
+
+Package: dvi2tty
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Previewing dvi-files on text-only devices
+ If no options are passed output will be send to the pager defined in
+ PAGER if specified. If no pager specified the output will go to pager.

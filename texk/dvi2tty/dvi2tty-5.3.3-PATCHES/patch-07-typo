@@ -1,0 +1,12 @@
+diff -ur dvi2tty-5.3.3.orig/dvi2tty.1 dvi2tty-5.3.3/dvi2tty.1
+--- dvi2tty-5.3.3.orig/dvi2tty.1	2010-11-06 18:26:37.000000000 +0100
++++ dvi2tty-5.3.3/dvi2tty.1	2010-11-06 19:38:55.404270272 +0100
+@@ -121,7 +121,7 @@
+ .B \-u
+ Toggle option to process certain latin1 characters. Use this if your output
+ devices supports latin1 cahracters.
+-Note this may interfere with -u. Best not to use -u and -s together.
++Note this may interfere with -s. Best not to use -u and -s together.
+ .TP
+ .B \-s
+ Toggle option to process the special Scandinavian characters that on most (?)

@@ -1,3 +1,14 @@
+2010-11-06  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* dvi2tty.test: New shell script for 'make check' test.
+	* ligtest.tty, test{,s,u}.tty (new): Expected test output.
+	* Makefile.am: Add the new test.
+
+2010-11-06  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	Import dvi2tty-5.3.3.
+	* configure.ac: Adapted.
+
 2010-10-23  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	Import dvi2tty-5.3.1.

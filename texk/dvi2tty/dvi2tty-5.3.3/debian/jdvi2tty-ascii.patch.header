@@ -1,0 +1,30 @@
+From: motonori@kutsuda.kuis.kyoto-u.ac.jp (Motonori Nakamura)
+Newsgroups: fj.sources
+Subject: jdvi2tty (patch to dvi2tty)
+Message-ID: <46@boots.kutsuda.kuis.kyoto-u.ac.jp>
+Date: 10 May 90 07:45:29 GMT
+
+中村＠京大情報です。
+
+もう、どなたかやっておられるかも知れませんが、以前
+comp.sources.misc に流れていた dvi2tty を ASCII-JTeX 対応に
+日本語化しました。UNIX で TeX を使おうという人は、X で preview
+するでしょうし、98 上で動く previewer も出ていることですから、
+需要は少ないとは思いますが、TTY 端末でチョコチョコと書いて、
+チラッと確認するのには、なかなか便利だとの評判です。
+(私に、「ね、日本語化しようよ。」と、言った人の弁 :-)
+
+所詮 TTY なので複雑な図は見にくいですし、表も微妙にずれます。
+(ずれるのは元のプログラムの仕様です、念のため :-p )
+
+という訳で、パッチをポストします。
+
+いちおう、JIS,SJIS,EUC には対応してあります。
+dvistuff.c の中の JIS, SJIS の define を変えると(または、
+Makefile で define すると)お望みの漢字コードになるはずです。
+
+ちなみに、元記事は次の通りです。
+(省略)
+=========
+                   中村 素典 ＠京都大学 工学研究科 情報工学専攻 津田研究室
+                                               motonori@kuis.kyoto-u.ac.jp
