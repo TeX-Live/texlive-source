@@ -1,13 +1,14 @@
 # Mensajes en español para dialog.
 # Copyright (C) 2001, 2003, 2004 Thomas Dickey.
-# Santiago Vila Doncel <sanvila@unex.es>, 2001, 2003, 2004.
+# This file is distributed under the same license as the dialog package.
+# Santiago Vila Doncel <sanvila@unex.es>, 2001, 2003, 2004, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: dialog 1.0-20041219\n"
+"Project-Id-Version: dialog 1.1.20080819\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-06-18 18:26-0400\n"
-"PO-Revision-Date: 2004-12-21 17:06+0100\n"
+"PO-Revision-Date: 2010-02-14 14:26+0100\n"
 "Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -66,44 +67,44 @@ msgstr "Ficheros"
 
 #: mixedgauge.c:58
 msgid "Succeeded"
-msgstr ""
+msgstr "Finalizado con éxito"
 
 #: mixedgauge.c:61
-#, fuzzy
 msgid "Failed"
-msgstr "Ficheros"
+msgstr "Falló"
 
+# Esta no me convence mucho. Se admiten sugerencias
 #: mixedgauge.c:64
 msgid "Passed"
-msgstr ""
+msgstr "Pasado"
 
 #: mixedgauge.c:67
 msgid "Completed"
-msgstr ""
+msgstr "Completado"
 
 #: mixedgauge.c:70
 msgid "Checked"
-msgstr ""
+msgstr "Comprobado"
 
 #: mixedgauge.c:73
 msgid "Done"
-msgstr ""
+msgstr "Hecho"
 
 #: mixedgauge.c:76
 msgid "Skipped"
-msgstr ""
+msgstr "Saltado"
 
 #: mixedgauge.c:79
 msgid "In Progress"
-msgstr ""
+msgstr "En progreso"
 
 #: mixedgauge.c:85
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: mixedgauge.c:193
 msgid "Overall Progress"
-msgstr ""
+msgstr "Progreso total"
 
 #: textbox.c:489
 msgid "Search"

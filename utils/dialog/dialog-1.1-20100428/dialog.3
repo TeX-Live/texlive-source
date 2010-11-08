@@ -1,4 +1,4 @@
-.\" $Id: dialog.3,v 1.48 2010/01/18 10:22:47 tom Exp $
+.\" $Id: dialog.3,v 1.49 2010/02/23 10:33:59 tom Exp $
 .\" Copyright 2005-2009,2010  Thomas E. Dickey
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 .\"	Free Software Foundation, Inc.
 .\"	51 Franklin St., Fifth Floor
 .\"	Boston, MA 02110, USA.
-.TH DIALOG 3 "" "$Date: 2010/01/18 10:22:47 $"
+.TH DIALOG 3 "" "$Date: 2010/02/23 10:33:59 $"
 .SH NAME
 dialog \- widgets and utilities for the dialog program
 .SH SYNOPSIS
@@ -37,7 +37,7 @@ are likely to be important to developers using the widgets directly.
 Some hints are also given for developing new widgets.
 .
 .\" ************************************************************************
-.SS DEFINITIONS
+.SH DEFINITIONS
 Exit codes (passed back to the main program for its use)
 are defined with a "\fIDLG_EXIT_\fP prefix.
 The defined constants can be mapped using environment variables
@@ -68,7 +68,7 @@ are used for convenience in building the library or main program.
 These include definitions based on the generated \fI<dlg_config.h>\fP header.
 
 .\" ************************************************************************
-.SS DATA STRUCTURES
+.SH DATA STRUCTURES
 All of the global data for the \fBdialog\fP library is stored in
 a few structures: \fIDIALOG_STATE\fP, \fIDIALOG_VARS\fP and \fIDIALOG_COLORS\fP.
 The corresponding \fIdialog_state\fP, \fIdialog_vars\fP and \fIdlg_color_table\fP
@@ -478,7 +478,7 @@ The given string overrides the label used for "Yes" buttons.
 .
 .\" ************************************************************************
 .\" ************************************************************************
-.SS WIDGETS
+.SH WIDGETS
 Functions that implement major functionality for the command-line \fBdialog\fP
 program, e.g., widgets, have names beginning "\fIdialog_\fP".
 
@@ -496,7 +496,7 @@ the width of the dialog box.
 Other parameters depend on the box type.
 .
 .\" ************************************************************************
-.IP dialog_calendar
+.IP \fBdialog_calendar
 implements the "\fB--calendar\fP" option.
 .RS
 .IP title
@@ -524,7 +524,7 @@ If the value is negative,
 the current year is used.
 .RE
 .\" ************************************************************************
-.IP dialog_checklist
+.IP \fBdialog_checklist
 implements the "\fB--checklist\fP" and "\fB--radiolist\fP" options
 depending on the \fIflag\fP parameter.
 .RS
@@ -560,7 +560,7 @@ is either \fIFLAG_CHECK\fP, for checklists,
 or \fIFLAG_RADIO\fP for radiolists.
 .RE
 .\" ************************************************************************
-.IP dialog_dselect
+.IP \fBdialog_dselect
 implements the "\fB--dselect\fP" option.
 .RS
 .IP title
@@ -576,7 +576,7 @@ is the desired width of the box.
 If zero, the height is based on the screen size.
 .RE
 .\" ************************************************************************
-.IP dialog_editbox
+.IP \fBdialog_editbox
 implements the "\fB--editbox\fP" option.
 .RS
 .IP title
@@ -591,7 +591,7 @@ is the desired width of the box.
 If zero, the height is adjusted to use the available screen size.
 .RE
 .\" ************************************************************************
-.IP dialog_form
+.IP \fBdialog_form
 implements the "\fB--form\fP" option.
 .RS
 .IP title
@@ -623,7 +623,7 @@ or
 depending on whether \fIdialog_vars.item_help\fP is set.
 .RE
 .\" ************************************************************************
-.IP dialog_fselect
+.IP \fBdialog_fselect
 implements the "\fB--fselect\fP" option.
 .RS
 .IP title
@@ -639,7 +639,7 @@ is the desired width of the box.
 If zero, the height is based on the screen size.
 .RE
 .\" ************************************************************************
-.IP dialog_gauge
+.IP \fBdialog_gauge
 implements the "\fB--gauge\fP" option.
 .RS
 .IP title
@@ -656,7 +656,7 @@ If zero, the height is based on the screen size.
 is the percentage to show in the progress bar.
 .RE
 .\" ************************************************************************
-.IP dialog_inputbox
+.IP \fBdialog_inputbox
 implements the "\fB--inputbox\fP" or
 "\fB--password\fP" option, depending on the value of \fIpassword\fP.
 .RS
@@ -677,7 +677,7 @@ when auto-sizing the width of the dialog box.
 if true, causes typed input to be echoed as asterisks.
 .RE
 .\" ************************************************************************
-.IP dialog_menu
+.IP \fBdialog_menu
 implements the "\fB--menu\fP" or "\fB--inputmenu\fP" option
 depending on whether \fIdialog_vars.input_menu\fP is set.
 .RS
@@ -710,7 +710,7 @@ or
 depending on whether \fIdialog_vars.item_help\fP is set.
 .RE
 .\" ************************************************************************
-.IP dialog_mixedform
+.IP \fBdialog_mixedform
 implements the "\fB--mixedform\fP" option.
 .RS
 .IP title
@@ -742,7 +742,7 @@ or
 depending on whether \fIdialog_vars.item_help\fP is set.
 .RE
 .\" ************************************************************************
-.IP dialog_mixedgauge
+.IP \fBdialog_mixedgauge
 implements the "\fB--mixedgauge\fP" option
 .RS
 .IP title
@@ -793,7 +793,7 @@ For example, "-75" is displayed as "75%".
 Other strings are displayed as is.
 .RE
 .\" ************************************************************************
-.IP dialog_msgbox
+.IP \fBdialog_msgbox
 implements the "\fB--msgbox\fP" or "\fB--infobox\fP" option
 depending on whether \fIpauseopt\fP is set.
 .RS
@@ -814,7 +814,7 @@ With an "OK" button, it is denoted a "msgbox",
 without an "OK" button, it is denoted an "infobox".
 .RE
 .\" ************************************************************************
-.IP dialog_pause
+.IP \fBdialog_pause
 implements the "\fB--pause\fP" option.
 .RS
 .IP title
@@ -829,7 +829,7 @@ If zero, the height is based on the screen size.
 is the timeout to use for the progress bar.
 .RE
 .\" ************************************************************************
-.IP dialog_progressbox
+.IP \fBdialog_progressbox
 implements the "\fB--progressbox\fP" option.
 .RS
 .IP title
@@ -845,7 +845,7 @@ is the desired width of the box.
 If zero, the height is based on the screen size.
 .RE
 .\" ************************************************************************
-.IP dialog_tailbox
+.IP \fBdialog_tailbox
 implements the "\fB--tailbox\fP" or "\fB--tailboxbg\fP" option
 depending on whether \fIbg_task\fP is set.
 .RS
@@ -867,7 +867,7 @@ Otherwise an "OK" button is added to the window,
 and it will be closed when the button is activated.
 .RE
 .\" ************************************************************************
-.IP dialog_textbox
+.IP \fBdialog_textbox
 implements the "\fB--textbox\fP" option.
 .RS
 .IP title
@@ -882,7 +882,7 @@ is the desired width of the box.
 If zero, the height is based on the screen size.
 .RE
 .\" ************************************************************************
-.IP dialog_timebox
+.IP \fBdialog_timebox
 implements the "\fB--timebox\fP" option.
 .RS
 .IP title
@@ -909,7 +909,7 @@ If the value is negative,
 the current second is used.
 .RE
 .\" ************************************************************************
-.IP dialog_yesno
+.IP \fBdialog_yesno
 implements the "\fB--yesno\fP" option.
 .RS
 .IP title
@@ -925,7 +925,7 @@ If zero, the height is based on the screen size.
 .RE
 .
 .\" ************************************************************************
-.SS UTILITY FUNCTIONS
+.SH UTILITY FUNCTIONS
 Most functions that implement lower-level
 functionality for the command-line \fBdialog\fP
 program or widgets, have names beginning "\fIdlg_\fP".

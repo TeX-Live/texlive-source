@@ -1,9 +1,9 @@
 /*
- *  $Id: mixedform.c,v 1.7 2008/06/21 12:11:42 tom Exp $
+ *  $Id: mixedform.c,v 1.8 2010/04/28 20:54:11 tom Exp $
  *
  *  formbox.c -- implements the form (i.e, some pairs label/editbox)
  *
- *  Copyright 2007,2008	Thomas E. Dickey
+ *  Copyright 2007-2008,2010	Thomas E. Dickey
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License, version 2.1
@@ -58,24 +58,24 @@ dialog_mixedform(const char *title,
     dlg_save_vars(&save_vars);
     dialog_vars.separate_output = TRUE;
 
-    listitems = dlg_calloc(DIALOG_FORMITEM, item_no + 1);
+    listitems = dlg_calloc(DIALOG_FORMITEM, (size_t) item_no + 1);
     assert_ptr(listitems, "dialog_mixedform");
 
     for (i = 0; i < item_no; ++i) {
 	listitems[i].type = dialog_vars.formitem_type;
 	listitems[i].name = ItemName(i);
-	listitems[i].name_len = strlen(ItemName(i));
+	listitems[i].name_len = (int) strlen(ItemName(i));
 	listitems[i].name_y = dlg_ordinate(ItemNameY(i));
 	listitems[i].name_x = dlg_ordinate(ItemNameX(i));
 	listitems[i].text = ItemText(i);
-	listitems[i].text_len = strlen(ItemText(i));
+	listitems[i].text_len = (int) strlen(ItemText(i));
 	listitems[i].text_y = dlg_ordinate(ItemTextY(i));
 	listitems[i].text_x = dlg_ordinate(ItemTextX(i));
 	listitems[i].text_flen = atoi(ItemTextFLen(i));
 	listitems[i].text_ilen = atoi(ItemTextILen(i));
 	listitems[i].help = (dialog_vars.item_help ? ItemHelp(i) :
 			     dlg_strempty());
-	listitems[i].type = atoi(ItemTypep(i));
+	listitems[i].type = (unsigned) atoi(ItemTypep(i));
     }
 
     result = dlg_form(title,

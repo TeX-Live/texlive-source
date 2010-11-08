@@ -1,5 +1,5 @@
 /*
- *  $Id: editbox.c,v 1.53 2010/01/19 00:59:50 tom Exp $
+ *  $Id: editbox.c,v 1.54 2010/04/28 21:02:01 tom Exp $
  *
  *  editbox.c -- implements the edit box
  *
@@ -37,9 +37,9 @@ static void
 grow_list(char ***list, int *have, int want)
 {
     if (want > *have) {
-	unsigned last = *have;
-	unsigned need = (want | 31) + 3;
-	*have = need;
+	size_t last = (size_t) *have;
+	size_t need = (size_t) (want | 31) + 3;
+	*have = (int) need;
 	(*list) = dlg_realloc(char *, need, *list);
 	if ((*list) == 0) {
 	    fail_list();
@@ -103,7 +103,7 @@ load_list(const char *file, char ***list, int *rows)
 		(*list)[need] = 0;
 	    }
 	} else {
-	    grow_list(list, rows, need + 1);
+	    grow_list(list, rows, (int) need + 1);
 	}
     }
     free(blob);

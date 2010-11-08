@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.56 2010/01/19 10:36:21 tom Exp $
+dnl $Id: configure.in,v 1.57 2010/04/28 20:33:01 tom Exp $
 dnl Process this file with autoconf to produce a configure script.
 dnl
 AC_PREREQ(2.13.20020210)
@@ -181,5 +181,7 @@ CF_MBSTATE_T
 CF_HEADERS_SH(DLG,dlg_config.h)
 
 AC_TRY_LINK([#include <locale.h>],[setlocale(LC_ALL, "")],[AC_DEFINE(HAVE_SETLOCALE)])
+
+CF_DISABLE_RPATH_HACK
 
 AC_OUTPUT(dialog-config makefile $EXTRA_OUTPUT $SUB_MAKEFILE samples/install/makefile,,,sort -u)

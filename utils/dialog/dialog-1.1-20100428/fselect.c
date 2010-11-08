@@ -1,5 +1,5 @@
 /*
- * $Id: fselect.c,v 1.73 2010/01/19 01:11:31 tom Exp $
+ * $Id: fselect.c,v 1.74 2010/04/28 20:45:40 tom Exp $
  *
  * fselect.c -- implements the file-selector box
  *
@@ -142,7 +142,7 @@ add_to_list(LIST * list, char *text)
 {
     unsigned need;
 
-    need = list->length + 1;
+    need = (unsigned) (list->length + 1);
     if (need + 1 > list->allocd) {
 	list->allocd = 2 * (need + 1);
 	if (list->data == 0) {
@@ -347,13 +347,13 @@ compar(const void *a, const void *b)
     return strcmp(*(const char *const *) a, *(const char *const *) b);
 }
 
-static int
+static void
 match(char *name, LIST * d_list, LIST * f_list, MATCH * match_list)
 {
     char *test = leaf_of(name);
-    int test_len = strlen(test);
-    char **matches = dlg_malloc(char *, (d_list->length + f_list->length));
-    int data_len = 0;
+    size_t test_len = strlen(test);
+    char **matches = dlg_malloc(char *, (size_t) (d_list->length + f_list->length));
+    size_t data_len = 0;
     int i;
     for (i = 2; i < d_list->length; i++) {
 	if (strncmp(test, d_list->data[i], test_len) == 0) {
@@ -367,8 +367,7 @@ match(char *name, LIST * d_list, LIST * f_list, MATCH * match_list)
     }
     matches = dlg_realloc(char *, data_len, matches);
     match_list->data = matches;
-    match_list->length = data_len;
-    return data_len;
+    match_list->length = (int) data_len;
 }
 
 static void
@@ -383,14 +382,17 @@ complete(char *name, LIST * d_list, LIST * f_list, char **buff_ptr)
 {
     MATCH match_list;
     char *test;
-    int test_len;
-    int i, j;
+    size_t test_len;
+    size_t i;
+    int j;
     char *buff;
+
     match(name, d_list, f_list, &match_list);
     if (match_list.length == 0) {
 	*buff_ptr = NULL;
 	return 0;
     }
+
     test = match_list.data[0];
     test_len = strlen(test);
     buff = dlg_malloc(char, test_len + 2);
@@ -421,7 +423,7 @@ complete(char *name, LIST * d_list, LIST * f_list, char **buff_ptr)
     free_match(&match_list);
     buff[i] = '\0';
     *buff_ptr = buff;
-    return i;
+    return (i != 0);
 }
 
 static bool
@@ -470,8 +472,14 @@ fill_lists(char *current, char *input, LIST * d_list, LIST * f_list, bool keep)
 	}
 	(void) closedir(dp);
 	/* sort the lists */
-	qsort(d_list->data, d_list->length, sizeof(d_list->data[0]), compar);
-	qsort(f_list->data, f_list->length, sizeof(f_list->data[0]), compar);
+	qsort(d_list->data,
+	      (size_t) d_list->length,
+	      sizeof(d_list->data[0]),
+	      compar);
+	qsort(f_list->data,
+	      (size_t) f_list->length,
+	      sizeof(f_list->data[0]),
+	      compar);
     }
 
     (void) show_both_lists(input, d_list, f_list, FALSE);
@@ -571,7 +579,7 @@ dlg_fselect(const char *title, const char *path, int height, int width, bool dse
 
     /* Set up the initial value */
     input = dlg_set_result(path);
-    offset = strlen(input);
+    offset = (int) strlen(input);
     *current = 0;
 
     dlg_button_layout(buttons, &min_wide);
@@ -775,7 +783,7 @@ dlg_fselect(const char *title, const char *path, int height, int width, bool dse
 		    state = sTEXT;
 		    show_buttons = TRUE;
 		    strcpy(leaf_of(input), completed);
-		    offset = strlen(input);
+		    offset = (int) strlen(input);
 		    dlg_show_string(w_text, input, offset, inputbox_attr,
 				    0, 0, tbox_width, 0, first);
 		    if (partial != NULL)

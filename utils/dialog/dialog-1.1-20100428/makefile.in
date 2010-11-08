@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 1.64 2010/01/18 01:27:42 tom Exp $
+# $Id: makefile.in,v 1.71 2010/04/28 00:45:38 tom Exp $
 # template makefile for DIALOG
 #
 SHELL		= /bin/sh
@@ -46,6 +46,9 @@ RANLIB		= @LIB_PREP@
 RM		= rm -f
 LINT		= lint
 
+CTAGS		= @CTAGS@
+ETAGS		= @ETAGS@
+
 LIBTOOL		= @LIBTOOL@ @ECHO_LT@
 LIBTOOL_OPTS	= @LIBTOOL_OPTS@
 LIBTOOL_CLEAN	= @LIB_CLEAN@
@@ -66,13 +69,25 @@ PACKAGE		= `echo @PACKAGE@ |sed @program_transform_name@`
 #
 # Standard .c to .o compile line.
 #
-.SUFFIXES: .c .i $o
+.SUFFIXES: .c .i $o .html .1 .3 .man .ps .pdf .txt
 .c.i :
 	@RULE_CC@
 	@ECHO_CC@$(CPP) $(CPPFLAGS) -c $< >$@
 .c$o :
 	@RULE_CC@
 	@ECHO_CC@$(LIBTOOL_COMPILE) $(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CPPFLAGS) -c $<
+
+.1.html :
+	GROFF_NO_SGR=stupid $(SHELL) -c "tbl $< | groff -Thtml -man" >$@
+
+.1.ps :
+	$(SHELL) -c "tbl $< | groff -man" >$@
+
+.1.txt :
+	GROFF_NO_SGR=stupid $(SHELL) -c "tbl $< | nroff -Tascii -man | col -bx" >$@
+
+.ps.pdf :
+	ps2pdf $*.ps
 
 EXTRAOBJS = @EXTRAOBJS@
 OBJECTS = $(EXTRAOBJS) \
@@ -146,6 +161,7 @@ clean	::
 	- $(RM) *.*cov *.da *.bb *.bbg
 	- $(LIBTOOL_CLEAN) $(RM) *.i *$o $(ALL)
 	- $(RM) headers.sed
+	- $(RM) *.html *.pdf *.png *.ps *.txt dialog_lib.1
 	- $(RM) core *~ tags TAGS
 
 distclean :: clean
@@ -215,17 +231,49 @@ uninstall-lib ::
 headers.sed : $(srcdir)/headers-sh
 	$(SHELL) $(srcdir)/headers-sh $(INCLUDEDIR) $(srcdir)
 
+################################################################################
+TOP_DOCS = \
+	dialog.html \
+	dialog.pdf \
+	dialog.ps \
+	dialog.txt
+dialog.html : dialog.1
+dialog.pdf : dialog.ps
+dialog.ps : dialog.1
+dialog.txt : dialog.1
+################################################################################
+# rename, to use suffix-rules
+dialog_lib.1 : dialog.3
+	-$(RM) $@
+	cp dialog.3 $@
+
+LIB_DOCS = \
+	dialog_lib.1 \
+	dialog_lib.html \
+	dialog_lib.pdf \
+	dialog_lib.ps \
+	dialog_lib.txt
+dialog_lib.html : dialog_lib.1
+dialog_lib.pdf : dialog_lib.ps
+dialog_lib.ps : dialog_lib.1
+dialog_lib.txt : dialog_lib.1
+################################################################################
+docs: $(TOP_DOCS) $(LIB_DOCS)
+clean-docs:
+	-$(RM) $(TOP_DOCS) $(LIB_DOCS)
+################################################################################
+
 $(MAN1DIR) \
 $(MAN3DIR) \
 $(BINDIR) \
 $(INCLUDEDIR) \
-$(LIBDIR) : ; $(srcdir)/mkdirs.sh $@
+$(LIBDIR) : ; mkdir -p $@
 
 @MAKE_LOWER_TAGS@tags :
-@MAKE_LOWER_TAGS@	ctags $(SRCS) $(HDRS)
+@MAKE_LOWER_TAGS@	$(CTAGS) $(SRCS) $(HDRS)
 
 @MAKE_LOWER_TAGS@TAGS :
-@MAKE_LOWER_TAGS@	etags $(SRCS) $(HDRS)
+@MAKE_LOWER_TAGS@	$(ETAGS) $(SRCS) $(HDRS)
 
 update-po:
 	rsync -Lrtvz  translationproject.org::tp/latest/dialog/  $(PO_DIR)

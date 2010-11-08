@@ -1,9 +1,9 @@
 /*
- *  $Id: tailbox.c,v 1.54 2010/01/12 11:58:43 tom Exp $
+ *  $Id: tailbox.c,v 1.56 2010/04/28 20:52:20 tom Exp $
  *
  * tailbox.c -- implements the tail box
  *
- * Copyright 2000-2007,2009 Thomas E. Dickey
+ * Copyright 2000-2009,2010 Thomas E. Dickey
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License, version 2.1
@@ -106,11 +106,11 @@ static void
 last_lines(MY_OBJ * obj, int target)
 {
     FILE *fp = obj->obj.input;
-    int inx;
+    long inx;
     int count = 0;
     char buf[BUFSIZ + 1];
-    size_t size_to_read;
-    size_t offset = 0;
+    long size_to_read;
+    long offset = 0;
     long fpos = 0;
 
     if (fseek(fp, 0, SEEK_END) == -1
@@ -121,14 +121,14 @@ last_lines(MY_OBJ * obj, int target)
 	++target;
 	for (;;) {
 	    if (fpos >= BUFSIZ) {
-		size_to_read = (size_t) BUFSIZ;
+		size_to_read = BUFSIZ;
 	    } else {
-		size_to_read = ((size_t) fpos);
+		size_to_read = fpos;
 	    }
-	    fpos -= size_to_read;
+	    fpos = fpos - size_to_read;
 	    if (fseek(fp, fpos, SEEK_SET) == -1)
 		dlg_exiterr("Error moving file pointer in last_lines().");
-	    (void) fread(buf, size_to_read, 1, fp);
+	    (void) fread(buf, (size_t) size_to_read, 1, fp);
 	    if (ferror(fp))
 		dlg_exiterr("Error reading file in last_lines().");
 
@@ -228,6 +228,7 @@ handle_my_getc(DIALOG_CALLBACK * cb, int ch, int fkey, int *result)
     } else {
 	switch (ch) {
 	case ERR:
+	    clearerr(cb->input);
 	    ch = getc(cb->input);
 	    (void) ungetc(ch, cb->input);
 	    if ((ch != EOF) || (obj->hscroll != obj->old_hscroll)) {

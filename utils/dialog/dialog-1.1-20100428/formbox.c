@@ -1,5 +1,5 @@
 /*
- *  $Id: formbox.c,v 1.70 2010/01/19 01:16:30 tom Exp $
+ *  $Id: formbox.c,v 1.71 2010/02/24 10:45:57 Samuel.Martin.Moro Exp $
  *
  *  formbox.c -- implements the form (i.e, some pairs label/editbox)
  *
@@ -557,7 +557,7 @@ dlg_form(const char *title,
 			       scrollamt,
 			       scrollamt,
 			       scrollamt + form_height + 1,
-			       item_no,
+			       min_height,
 			       box_x + 1,
 			       box_x + form_width,
 			       box_y,

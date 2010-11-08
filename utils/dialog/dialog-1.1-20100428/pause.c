@@ -1,9 +1,9 @@
 /*
- *  $Id: pause.c,v 1.21 2009/02/22 19:12:47 tom Exp $
+ *  $Id: pause.c,v 1.22 2010/04/28 00:29:50 tom Exp $
  *
  *  pause.c -- implements the pause dialog
  *
- *  Copyright 2004-2008,2009	Thomas E. Dickey
+ *  Copyright 2004-2009,2010	Thomas E. Dickey
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License, version 2.1
@@ -28,6 +28,10 @@
 #include <dlg_keys.h>
 
 #define MY_TIMEOUT 50
+
+#define MIN_HIGH (4)
+#define MIN_WIDE (10 + 2 * (2 + MARGIN))
+#define BTN_HIGH (1 + 2 * MARGIN)
 
 /*
  * This is like gauge, but can be interrupted.
@@ -71,8 +75,11 @@ dialog_pause(const char *title,
     int seconds_orig;
     WINDOW *dialog;
     const char **buttons = dlg_ok_labels();
+    bool have_buttons = (dlg_button_count(buttons) != 0);
     int key = 0, fkey;
     int result = DLG_EXIT_UNKNOWN;
+    int button_high = (have_buttons ? BTN_HIGH : MARGIN);
+    int guage_y;
     char *prompt = dlg_strclone(cprompt);
 
     curs_set(0);
@@ -87,8 +94,17 @@ dialog_pause(const char *title,
     width = old_width;
 #endif
 
-    dlg_auto_size(title, prompt, &height, &width, 0, 0);
-    dlg_button_layout(buttons, &width);
+    if (have_buttons) {
+	dlg_auto_size(title, prompt, &height, &width,
+		      MIN_HIGH,
+		      MIN_WIDE);
+	dlg_button_layout(buttons, &width);
+    } else {
+	dlg_auto_size(title, prompt, &height, &width,
+		      MIN_HIGH + MARGIN - BTN_HIGH,
+		      MIN_WIDE);
+    }
+    guage_y = height - button_high - (1 + 2 * MARGIN);
     dlg_print_size(height, width);
     dlg_ctl_size(height, width);
 
@@ -113,7 +129,7 @@ dialog_pause(const char *title,
 	dlg_print_autowrap(dialog, prompt, height, width);
 
 	dlg_draw_box(dialog,
-		     height - 6, 2 + MARGIN,
+		     guage_y, 2 + MARGIN,
 		     2 + MARGIN, width - 2 * (2 + MARGIN),
 		     dialog_attr,
 		     border_attr);
@@ -123,13 +139,13 @@ dialog_pause(const char *title,
 	 * in the title-attribute, and write the percentage with that
 	 * attribute.
 	 */
-	(void) wmove(dialog, height - 5, 4);
+	(void) wmove(dialog, guage_y + MARGIN, 4);
 	wattrset(dialog, title_attr);
 
 	for (i = 0; i < (width - 2 * (3 + MARGIN)); i++)
 	    (void) waddch(dialog, ' ');
 
-	(void) wmove(dialog, height - 5, (width / 2) - 2);
+	(void) wmove(dialog, guage_y + MARGIN, (width / 2) - 2);
 	(void) wprintw(dialog, "%3d", seconds);
 
 	/*
@@ -143,7 +159,7 @@ dialog_pause(const char *title,
 	} else {
 	    wattrset(dialog, A_REVERSE);
 	}
-	(void) wmove(dialog, height - 5, 4);
+	(void) wmove(dialog, guage_y + MARGIN, 4);
 	for (i = 0; i < x; i++) {
 	    chtype ch = winch(dialog);
 	    if (title_attr & A_REVERSE) {
@@ -152,9 +168,11 @@ dialog_pause(const char *title,
 	    (void) waddch(dialog, ch);
 	}
 
-	dlg_draw_bottom_box(dialog);
 	mouse_mkbutton(height - 2, width / 2 - 4, 6, '\n');
-	dlg_draw_buttons(dialog, height - 2, 0, buttons, button, FALSE, width);
+	if (have_buttons) {
+	    dlg_draw_bottom_box(dialog);
+	    dlg_draw_buttons(dialog, height - 2, 0, buttons, button, FALSE, width);
+	}
 	(void) wrefresh(dialog);
 
 	for (step = 0;

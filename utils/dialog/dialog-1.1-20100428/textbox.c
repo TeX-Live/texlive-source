@@ -1,5 +1,5 @@
 /*
- *  $Id: textbox.c,v 1.96 2010/01/17 18:23:56 tom Exp $
+ *  $Id: textbox.c,v 1.97 2010/04/28 21:03:44 tom Exp $
  *
  * textbox.c -- implements the text box
  *
@@ -53,7 +53,7 @@ static long
 lseek_obj(MY_OBJ * obj, long offset, int mode)
 {
     long fpos;
-    if ((fpos = lseek(obj->fd, offset, mode)) == -1) {
+    if ((fpos = (long) lseek(obj->fd, (off_t) offset, mode)) == -1) {
 	switch (mode) {
 	case SEEK_CUR:
 	    dlg_exiterr("Cannot get file position");
@@ -131,7 +131,7 @@ read_high(MY_OBJ * obj, size_t size_read)
 		obj->buffer_len = obj->bytes_read;
 
 		/* Allocate space for read buffer */
-		obj->buf = xalloc(obj->buffer_len + 1);
+		obj->buf = xalloc((size_t) obj->buffer_len + 1);
 	    }
 
 	} else {
@@ -200,9 +200,9 @@ tabize(MY_OBJ * obj, long val, long *first_pos)
     lseek_obj(obj, fpos - obj->fd_bytes_read, SEEK_SET);
 
     /* Allocate space for read buffer */
-    buftab = xalloc(val + 1);
+    buftab = xalloc((size_t) val + 1);
 
-    if ((read(obj->fd, buftab, val)) == -1)
+    if ((read(obj->fd, buftab, (size_t) val)) == -1)
 	dlg_exiterr("Error reading file in tabize().");
 
     begin_line = count = 0;

@@ -1,5 +1,5 @@
 /*
- *  $Id: arrows.c,v 1.28 2010/01/19 10:07:36 tom Exp $
+ *  $Id: arrows.c,v 1.29 2010/02/24 09:17:00 Samuel.Martin.Moro Exp $
  *
  *  arrows.c -- draw arrows to indicate end-of-range for lists
  *
@@ -134,23 +134,25 @@ dlg_draw_scrollbar(WINDOW *win,
     getyx(win, oldy, oldx);
     getmaxyx(win, maxy, maxx);
 
-    percent = (!total_data
-	       ? 100
-	       : (int) ((next_data * 100)
-			/ total_data));
+    if (bottom_arrow || top_arrow || dialog_state.use_scrollbar) {
+	percent = (!total_data
+		   ? 100
+		   : (int) ((next_data * 100)
+			    / total_data));
 
-    if (percent < 0)
-	percent = 0;
-    if (percent > 100)
-	percent = 100;
+	if (percent < 0)
+	    percent = 0;
+	else if (percent > 100)
+	    percent = 100;
 
-    wattrset(win, position_indicator_attr);
-    (void) sprintf(buffer, "%d%%", percent);
-    (void) wmove(win, bottom, right - 7);
-    (void) waddstr(win, buffer);
-    if ((len = dlg_count_columns(buffer)) < 4) {
-	wattrset(win, border_attr);
-	whline(win, dlg_boxchar(ACS_HLINE), 4 - len);
+	wattrset(win, position_indicator_attr);
+	(void) sprintf(buffer, "%d%%", percent);
+	(void) wmove(win, bottom, right - 7);
+	(void) waddstr(win, buffer);
+	if ((len = dlg_count_columns(buffer)) < 4) {
+	    wattrset(win, border_attr);
+	    whline(win, dlg_boxchar(ACS_HLINE), 4 - len);
+	}
     }
 #define BARSIZE(num) ((all_high * (num)) + all_high - 1) / total_data
 

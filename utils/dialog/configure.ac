@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([dialog_version], [1.1-20100119])[]dnl using unmodified dialog source tree
+m4_define([dialog_version], [1.1-20100428])[]dnl using unmodified dialog source tree
 AC_PREREQ([2.65])
 AC_INIT([dialog for TeX Live], dialog_version, [peb@mppmu.mpg.de])
 AC_CONFIG_SRCDIR([dialog-]dialog_version[/dialog.c])

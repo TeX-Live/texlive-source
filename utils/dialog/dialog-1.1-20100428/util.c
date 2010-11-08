@@ -1,5 +1,5 @@
 /*
- *  $Id: util.c,v 1.200 2010/01/15 23:49:38 tom Exp $
+ *  $Id: util.c,v 1.201 2010/04/28 21:12:42 tom Exp $
  *
  *  util.c -- miscellaneous utilities for dialog
  *
@@ -412,18 +412,18 @@ dlg_color_pair(int foreground, int background)
     bool found = FALSE;
 
     for (pair = 1; pair < defined_colors; ++pair) {
-	if (pair_content(pair, &fg, &bg) != ERR
+	if (pair_content((short) pair, &fg, &bg) != ERR
 	    && fg == foreground
 	    && bg == background) {
-	    result = COLOR_PAIR(pair);
+	    result = (chtype) COLOR_PAIR(pair);
 	    found = TRUE;
 	    break;
 	}
     }
     if (!found && (defined_colors + 1) < COLOR_PAIRS) {
 	pair = defined_colors++;
-	(void) init_pair(pair, foreground, background);
-	result = COLOR_PAIR(pair);
+	(void) init_pair((short) pair, (short) foreground, (short) background);
+	result = (chtype) COLOR_PAIR(pair);
     }
     return result;
 }
@@ -441,7 +441,7 @@ define_color(WINDOW *win, int foreground)
     short fg, bg, background;
 
     if ((pair = PAIR_NUMBER(attrs)) != 0
-	&& pair_content(pair, &fg, &bg) != ERR) {
+	&& pair_content((short) pair, &fg, &bg) != ERR) {
 	background = bg;
     } else {
 	background = COLOR_BLACK;
@@ -558,7 +558,7 @@ dlg_print_text(WINDOW *win, const char *txt, int cols, chtype *attr)
 	 * attribute.
 	 */
 	if ((useattr & A_COLOR) != 0 && (useattr & A_BOLD) == 0) {
-	    short pair = PAIR_NUMBER(useattr);
+	    short pair = (short) PAIR_NUMBER(useattr);
 	    short fg, bg;
 	    if (pair_content(pair, &fg, &bg) != ERR
 		&& fg == bg) {
@@ -925,9 +925,9 @@ auto_size_preformatted(const char *prompt, int *height, int *width)
      */
     if (car > ar) {
 	diff = car / (float) ar;
-	max_x = (int) (wide / diff + 4);
+	max_x = (int) ((float) wide / diff + 4);
 	justify_text((WINDOW *) 0, prompt, max_y, max_x, &high, &wide);
-	car = (float) wide / high;
+	car = (float) wide / (float) high;
     }
 
     /*

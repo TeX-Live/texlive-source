@@ -1,5 +1,5 @@
 /*
- *  $Id: buttons.c,v 1.79 2010/01/14 02:01:36 tom Exp $
+ *  $Id: buttons.c,v 1.81 2010/04/28 20:57:29 tom Exp $
  *
  * buttons.c -- draw buttons, e.g., OK/Cancel
  *
@@ -142,7 +142,7 @@ print_button(WINDOW *win, char *label, int y, int x, int selected)
 	     ? button_active_attr
 	     : button_inactive_attr);
     (void) waddstr(win, ">");
-    (void) wmove(win, y, x + strspn(label, " ") + 1);
+    (void) wmove(win, y, x + ((int) strspn(label, " ")) + 1);
 }
 
 /*
@@ -230,7 +230,7 @@ dlg_button_layout(const char **labels, int *limit)
     int width = 1;
     int gap, margin, step;
 
-    if (labels != 0) {
+    if (labels != 0 && dlg_button_count(labels)) {
 	while (!dlg_button_x_step(labels, width, &gap, &margin, &step))
 	    ++width;
 	width += (4 * MARGIN);
@@ -261,7 +261,7 @@ dlg_draw_buttons(WINDOW *win,
     int final_y;
     int gap;
     int margin;
-    unsigned need;
+    size_t need;
     char *buffer;
 
     dlg_mouse_setbase(getbegx(win), getbegy(win));
@@ -281,7 +281,7 @@ dlg_draw_buttons(WINDOW *win,
     /*
      * Allocate a buffer big enough for any label.
      */
-    need = longest;
+    need = (size_t) longest;
     for (n = 0; labels[n] != 0; ++n) {
 	need += strlen(labels[n]) + 1;
     }
@@ -367,7 +367,7 @@ dlg_char_to_button(int ch, const char **labels)
     if (labels != 0) {
 	int j;
 
-	ch = dlg_toupper(dlg_last_getc());
+	ch = (int) dlg_toupper(dlg_last_getc());
 	for (j = 0; labels[j] != 0; ++j) {
 	    int cmp = dlg_button_to_char(labels[j]);
 	    if (ch == cmp) {

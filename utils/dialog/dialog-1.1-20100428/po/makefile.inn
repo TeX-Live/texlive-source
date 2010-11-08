@@ -114,7 +114,7 @@ install-data-yes: all
 	if test -r "$(MKINSTALLDIRS)"; then \
 	  $(MKINSTALLDIRS) $(DESTDIR)$(datadir); \
 	else \
-	  $(SHELL) $(top_srcdir)/mkdirs.sh $(DESTDIR)$(datadir); \
+	  mkdir -p $(DESTDIR)$(datadir); \
 	fi
 	@catalogs='$(CATALOGS)'; \
 	for cat in $$catalogs; do \
@@ -128,7 +128,7 @@ install-data-yes: all
 	  if test -r "$(MKINSTALLDIRS)"; then \
 	    $(MKINSTALLDIRS) $$dir; \
 	  else \
-	    $(SHELL) $(top_srcdir)/mkdirs.sh $$dir; \
+	    mkdir -p $$dir; \
 	  fi; \
 	  if test -r $$cat; then \
 	    $(INSTALL_DATA) $$cat $$dir/$(PACKAGE)$(INSTOBJEXT); \
@@ -156,7 +156,7 @@ install-data-yes: all
 	  if test -r "$(MKINSTALLDIRS)"; then \
 	    $(MKINSTALLDIRS) $(DESTDIR)$(gettextsrcdir); \
 	  else \
-	    $(SHELL) $(top_srcdir)/mkdirs.sh $(DESTDIR)$(gettextsrcdir); \
+	    mkdir -p $(DESTDIR)$(gettextsrcdir); \
 	  fi; \
 	  $(INSTALL_DATA) $(srcdir)/makefile.inn \
 			  $(DESTDIR)$(gettextsrcdir)/makefile.inn; \

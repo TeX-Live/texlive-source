@@ -1,8 +1,44 @@
--- $Id: CHANGES,v 1.291 2010/01/19 00:33:27 tom Exp $
+-- $Id: CHANGES,v 1.300 2010/04/28 21:27:22 tom Exp $
 -- Thomas E. Dickey <dickey@invisible-island.net>
 
 This version of dialog was originally from a Debian snapshot.  I've done this
 to it:
+
+2010/04/28
+	+ several improvements to configure script:
+	  + modify CF_CURSES_TERM_H to handle cases such as cygwin where
+	    packager has installed curses.h and term.h in different
+	    directories, e.g., to wedge in a termcap library.
+	  + modify CF_XOPEN_SOURCE, adding special case for OpenSolaris
+	  + modify CF_MAKE_TAGS to add check for exctags and exetags, prefer to
+	    ctags and etags to work around pkgsrc (NetBSD) renaming.
+	  + correct CF_FIND_LINKAGE, setting cache variable for library_file in
+	    the special case where no directory search is made.
+	  + improve CF_GCC_VERSION, suppress stderr for c89 alias of gcc.
+	  + improve CF_GCC_WARNINGS, moving -W and -Wall into the list to
+	    check, since c89 alias for gcc complains about these options.
+	  + modify CF_HEADER_PATH, to not search for variations of everything
+	    in the current include-path
+	  + use "mkdir -p", remove mkdirs.sh
+	  + use CF_CURSES_HEADER to fill in possible subdirectory used for
+	    ncurses header filename.
+	  + modify CF_XOPEN_CURSES to work around current ncurse header loss of
+	    predefinition of _XOPEN_SOURCE_EXTENDED
+	  + add "--disable-rpath-hack" option, along with scripting to add
+	    rpath option to libraries found in unusual places.
+	+ modify pause widget to autosize like gauge, and to omit the area for
+	  buttons when none are displayed.
+	+ fix an infinite loop in dlg_button_layout() if there are no buttons
+	  to display (Debian #579390).
+	+ add makefile rules for generating html, etc., documentation from
+	  nroff.
+	> patches by Samuel Martín Moro
+	+ reset errors in tailbox before reading new character.
+	+ modify dlg_draw_scrollbar(), omitting hiding percentages in boxes
+	  when no arrows or scrollbar are needed.
+	+ correct value of row for scrollbars in formbox.
+	+ update es.po from
+		http://translationproject.org/latest/dialog/
 
 2010/01/19
 	+ split up binding tables in inputbox and similar widgets to avoid
@@ -1486,3 +1522,5 @@ The relevant portions of the Debian change log for the original version
 	+ Added '^U' support in input box (Bug #9915, patch by joey@debian.org).
 	+ Wrote patch to fix core-dumping problem (Bug #13170).  Sven Rudolph
 	  <sr1@inf.tu-dresden.de>:
+
+-- vile:fk=8bit

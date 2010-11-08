@@ -1,5 +1,5 @@
 /*
- *  $Id: dialog.h,v 1.213 2010/01/19 10:47:42 tom Exp $
+ *  $Id: dialog.h,v 1.214 2010/04/28 21:11:49 tom Exp $
  *
  * dialog.h -- common declarations for all dialog modules
  *
@@ -161,7 +161,7 @@
 #define A_CHARTEXT 0xff
 #endif
 
-#define CharOf(ch)  ((ch) & A_CHARTEXT)
+#define CharOf(ch)  ((ch) & 0xff)
 
 #ifndef ACS_ULCORNER
 #define ACS_ULCORNER '+'
