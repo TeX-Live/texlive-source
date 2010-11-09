@@ -16,8 +16,11 @@ Before compiling and installing inspect the  "compile-time cust-
 omization constants" and change them to suit your site.
 These constants configure default pager and a little more.
 
-Please report complaints, suggestions, bugs and/or fixes to
-tex-k@tug.org, since this is a modified version of the original, written
-by
+Please report complaints, suggestions, bugs and/or fixes to:
+
 Svante Lindahl, NADA, KTH            Numerical Analysis & Computer Science 
-                                     Royal Institute of Technology, Sweden
+UUCP: {seismo,mcvax}!enea!ttds!zap   Royal Institute of Technology, Sweden
+ARPA: enea!ttds!zap@seismo.CSS.GOV   EAN: zap@cs.kth.sunet
+
+The TOPS-20 version of the program can also be obtained from the above
+address.
