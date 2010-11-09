@@ -1,3 +1,7 @@
+2010-11-09  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* dvi2tty.test: Test input filename without ".dvi".
+
 2010-11-06  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	* dvi2tty.test: New shell script for 'make check' test.

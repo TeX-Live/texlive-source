@@ -533,44 +533,6 @@ void plcnxt(int pagnr)
 
 
 
-#ifdef KPATHSEA
-# ifdef __DJGPP__
-  /* `stat' is way too expensive for such a simple job.  */
-# define READABLE(fn, st) \
-                  (access (fn, R_OK) == 0 && access (fn, D_OK) == -1)
-#else
-# define READABLE(fn, st) \
-                  (access (fn, R_OK) == 0 && stat (fn, &(st)) == 0 && !S_ISDIR (st.st_mode))
-#endif
-
-static char *
-readable_file(char *name)
-{
-    char *ret;
-
-#ifdef WIN32
-    unsigned int fa;
-
-    fa = GetFileAttributes(name);
-    if (fa == 0xFFFFFFFF)
-        ret = NULL;
-    else if ((fa & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
-        ret = NULL;
-    else
-        ret = name;
-#else /* ! WIN32 */
-    struct stat st;
-  
-    if (READABLE (name, st))
-        ret = name;
-    else /* Some other error.  */
-        ret = NULL;
-#endif  
-    return ret;
-}
-#endif
-
-
 
 /*
  * GETFNAME -- {Make sure we have a .dvi filename.
@@ -585,11 +547,11 @@ void getfname(const char *str)
         usage(ign);
     strcpy(DVIfilename, str);
 #ifdef KPATHSEA
-    if (!readable_file(DVIfilename))
+    if (!kpse_readable_file(DVIfilename))
 #else
     if ((i < 5) || strcmp(str+i-4, ".dvi"))
-        strcat(DVIfilename, ".dvi");
 #endif
+        strcat(DVIfilename, ".dvi");
 
     return;
 

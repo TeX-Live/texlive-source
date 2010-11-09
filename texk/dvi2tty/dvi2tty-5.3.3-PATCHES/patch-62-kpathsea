@@ -1,0 +1,68 @@
+diff -ur dvi2tty-5.3.3.orig/dvi2tty.c dvi2tty-5.3.3/dvi2tty.c
+--- dvi2tty-5.3.3.orig/dvi2tty.c	2010-11-09 11:47:09.000000000 +0100
++++ dvi2tty-5.3.3/dvi2tty.c	2010-11-09 11:58:09.742662164 +0100
+@@ -533,44 +533,6 @@
+ 
+ 
+ 
+-#ifdef KPATHSEA
+-# ifdef __DJGPP__
+-  /* `stat' is way too expensive for such a simple job.  */
+-# define READABLE(fn, st) \
+-                  (access (fn, R_OK) == 0 && access (fn, D_OK) == -1)
+-#else
+-# define READABLE(fn, st) \
+-                  (access (fn, R_OK) == 0 && stat (fn, &(st)) == 0 && !S_ISDIR (st.st_mode))
+-#endif
+-
+-static char *
+-readable_file(char *name)
+-{
+-    char *ret;
+-
+-#ifdef WIN32
+-    unsigned int fa;
+-
+-    fa = GetFileAttributes(name);
+-    if (fa == 0xFFFFFFFF)
+-        ret = NULL;
+-    else if ((fa & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
+-        ret = NULL;
+-    else
+-        ret = name;
+-#else /* ! WIN32 */
+-    struct stat st;
+-  
+-    if (READABLE (name, st))
+-        ret = name;
+-    else /* Some other error.  */
+-        ret = NULL;
+-#endif  
+-    return ret;
+-}
+-#endif
+-
+-
+ 
+ /*
+  * GETFNAME -- {Make sure we have a .dvi filename.
+@@ -585,7 +547,7 @@
+         usage(ign);
+     strcpy(DVIfilename, str);
+ #ifdef KPATHSEA
+-    if (!readable_file(DVIfilename))
++    if (!kpse_readable_file(DVIfilename))
+ #else
+     if ((i < 5) || strcmp(str+i-4, ".dvi"))
+ #endif
+diff -ur dvi2tty-5.3.3.orig/dvi2tty.h dvi2tty-5.3.3/dvi2tty.h
+--- dvi2tty-5.3.3.orig/dvi2tty.h	2010-10-30 14:38:49.000000000 +0200
++++ dvi2tty-5.3.3/dvi2tty.h	2010-11-09 11:58:14.187495166 +0100
+@@ -35,6 +35,7 @@
+ #if defined(KPATHSEA)
+ # define NO_DEBUG 1
+ # include <kpathsea/config.h>
++# include <kpathsea/readable.h>
+ # include <sys/types.h>
+ # include <sys/stat.h>
+ #else

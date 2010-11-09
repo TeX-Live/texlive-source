@@ -8,5 +8,5 @@ test_src=$srcdir/$DVI2TTY_TREE/test
 
 ./dvi2tty -u $test_src/test.dvi >testu.out && diff $srcdir/testu.tty testu.out || exit 1
 
-./dvi2tty $test_src/ligtest.dvi >ligtest.out && diff $srcdir/ligtest.tty ligtest.out || exit 1
+./dvi2tty $test_src/ligtest >ligtest.out && diff $srcdir/ligtest.tty ligtest.out || exit 1
 

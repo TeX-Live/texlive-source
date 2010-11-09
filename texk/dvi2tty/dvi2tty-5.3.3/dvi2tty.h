@@ -35,6 +35,7 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 #if defined(KPATHSEA)
 # define NO_DEBUG 1
 # include <kpathsea/config.h>
+# include <kpathsea/readable.h>
 # include <sys/types.h>
 # include <sys/stat.h>
 #else

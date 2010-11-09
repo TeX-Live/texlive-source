@@ -3,6 +3,12 @@
 	* patch-01-texk (removed): Avoid unnecessary modifications.
 	* patch-07-typo: Adapted.
 
+	* patch-61-bug-fix (new): Correctly handle input filenames
+	without ".dvi".
+
+	* patch-62-kpathsea (new): Use kpse_readable_file() function
+	from kpathsea library, replacing duplicated ancient code.
+
 2010-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import dvi2tty-5.3.3.
