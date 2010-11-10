@@ -1,3 +1,10 @@
+2010-11-10  Mathias Kende  <mathias@kende.fr>
+
+	* tex-file.c (kpathsea_set_suffixes_va_list): new fn.
+	(kpse_set_suffixes, kpathsea_set_suffixes): call it.
+	Avoids passing variable argument list, which is not portable.
+	http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=602566
+
 2010-11-07  Karl Berry  <karl@tug.org>
 
  	* cnf.c (do_line): remove trailing comment and preceding

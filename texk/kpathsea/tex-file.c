@@ -320,14 +320,13 @@ init_path (kpathsea kpse, kpse_format_info_type *info,
 /* Some file types have more than one suffix, and sometimes it is
    convenient to modify the list of searched suffixes.  */
 
-void
-kpathsea_set_suffixes (kpathsea kpse, kpse_file_format_type format,
-  boolean alternate, ...)
+static void
+kpathsea_set_suffixes_va_list (kpathsea kpse, kpse_file_format_type format,
+                               boolean alternate, va_list ap)
 {
   const_string **list;
   const_string s;
   int count = 0;
-  va_list ap;
 
   if (alternate) {
     list = &(kpse->format_info[format].alt_suffix);
@@ -335,14 +334,22 @@ kpathsea_set_suffixes (kpathsea kpse, kpse_file_format_type format,
     list = &(kpse->format_info[format].suffix);
   }
 
-  va_start (ap, alternate);
   while ((s = va_arg (ap, string)) != NULL) {
     count++;
     XRETALLOC (*list, count + 1, const_string);
     (*list)[count - 1] = s;
   }
-  va_end (ap);
   (*list)[count] = NULL;
+}
+
+void
+kpathsea_set_suffixes (kpathsea kpse, kpse_file_format_type format,
+  boolean alternate, ...)
+{
+  va_list ap;
+  va_start (ap, alternate);
+  kpathsea_set_suffixes_va_list (kpse, format, alternate, ap);
+  va_end (ap);
 }
 
 
@@ -353,7 +360,7 @@ kpse_set_suffixes (kpse_file_format_type format,
 {
   va_list ap;
   va_start (ap, alternate);
-  kpathsea_set_suffixes (kpse_def, format, alternate, ap);
+  kpathsea_set_suffixes_va_list (kpse_def, format, alternate, ap);
   va_end (ap);
 }
 #endif
