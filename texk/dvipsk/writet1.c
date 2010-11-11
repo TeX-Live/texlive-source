@@ -1417,9 +1417,32 @@ set_subr_max:
                 subr_max = ptr - subr_tab;
 }
 
+static void t1_check_unusual_charstring(void)
+{
+    char *p = strstr(t1_line_array, charstringname) + strlen(charstringname);
+    int i;
+    /* if no number follows "/CharStrings", let's read the next line */
+    if (sscanf(p, "%i", &i) != 1) { 
+        strcpy(t1_buf_array, t1_line_array);
+        t1_getline();
+        strcat(t1_buf_array, t1_line_array);
+        strcpy(t1_line_array, t1_buf_array);
+        t1_line_ptr = eol(t1_line_array);
+    }
+}
+
 static void t1_subset_charstrings(void)
 {
     cs_entry *ptr;
+
+    /* at this point t1_line_array contains "/CharStrings".
+       when we hit a case like this:
+         dup/CharStrings
+         229 dict dup begin
+       we read the next line and concatenate to t1_line_array before moving on
+    */
+    t1_check_unusual_charstring();
+
     cs_size_pos = strstr(t1_line_array, charstringname) + strlen(charstringname)
                   - t1_line_array + 1;
     /* cs_size_pos points to the number indicating

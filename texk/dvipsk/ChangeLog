@@ -1,3 +1,10 @@
+2010-11-11  Thanh Han The  <thanh@river-valley.org>
+
+	* writet1.c (t1_check_unusual_charstring): new fn.
+	(t1_subset_charstrings): call it.  This resolves a bug reported by
+	Knuth when there is a newline between the /CharStrings and the
+	following number (dict size).
+
 2010-10-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* output.c (hvpos): simplify the change 2010-10-22.
