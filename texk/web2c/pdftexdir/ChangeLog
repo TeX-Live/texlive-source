@@ -1,3 +1,10 @@
+2010-11-11  Thanh Han The  <thanh@river-valley.org>
+
+	* writet1.c (t1_check_unusual_charstring): new fn.
+	(t1_subset_charstrings): call it.  This resolves a bug reported by
+	Knuth when there is a newline between the /CharStrings and the
+	following number (dict size).
+
 2010-09-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writeimg.c: Use png_get_*() instead of directly accessing
