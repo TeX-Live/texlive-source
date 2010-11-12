@@ -1,6 +1,6 @@
 2010-11-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* download.c Change i<MAX_CHAR_CODE into i<=MAX_CHAR_CODE, because
+	* download.c: Change i<MAX_CHAR_CODE into i<=MAX_CHAR_CODE, because
 	MAX_CHAR_CODE is 255 now.
 
 2010-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
