@@ -1,3 +1,8 @@
+2010-11-12  Karl Berry  <karl@tug.org>
+
+	* writet1.c: formatting changes only, to reduce diffs against
+	pdftex's writet1.c.
+
 2010-11-11  Thanh Han The  <thanh@river-valley.org>
 
 	* writet1.c (t1_check_unusual_charstring): new fn.
