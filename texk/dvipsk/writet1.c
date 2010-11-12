@@ -32,26 +32,14 @@ along with this program.  If not, see  <http://www.gnu.org/licenses/>.  */
 #define is_included(f)      true
 #undef  set_cur_file_name
 #define set_cur_file_name(s)    cur_file_name = s
-#define t1_open()           \
-    ((t1_file = search(type1path, cur_file_name, FOPEN_RBIN_MODE)) != NULL)
-#define enc_open()           \
-    ((enc_file = search(encpath, cur_file_name, FOPEN_RBIN_MODE)) != NULL)
 #define external_enc()      ext_glyph_names
 #define full_file_name()    cur_file_name
-#define get_length1()
-#define get_length2()
-#define get_length3()
 #define is_used_char(c)     (grid[c] == 1)
-#define out_eexec_char      t1_outhex
-#define save_offset()
 #define end_last_eexec_line()       \
     hexline_length = HEXLINE_WIDTH; \
     end_hexline();                  \
     t1_eexec_encrypt = false
-#define t1_log(s)
 #define t1_scan_only()
-#define t1_include()
-#define t1_putchar(c)       fputc(c, bitfile)
 #define t1_scan_keys()
 #define embed_all_glyphs(tex_font)  false
 #undef pdfmovechars
@@ -70,7 +58,7 @@ static char *dvips_extra_charset;
 static char *cur_file_name;
 static char *cur_enc_name;
 static unsigned char *grid;
-static char *ext_glyph_names[MAX_CHAR_CODE + 1];
+static char *ext_glyph_names[256];
 static char print_buf[PRINTF_BUF_SIZE];
 static int  hexline_length;
 static char notdef[] = ".notdef";
@@ -78,63 +66,108 @@ static size_t last_ptr_index;
 
 #include <stdarg.h>
 
-#define t1_getchar()    getc(t1_file)
-#define t1_ungetchar(c) ungetc(c, t1_file)
-#define t1_eof()        feof(t1_file)
-#define t1_close()      xfclose(t1_file, cur_file_name)
+#define t1_log(str) 
+#define get_length1()
+#define get_length2()
+#define get_length3()
+#define save_offset()
 
-#define enc_getchar()   getc(enc_file)
-#define enc_eof()       feof(enc_file)
-#define enc_close()     xfclose(enc_file, cur_file_name)
+#define t1_open()           \
+    ((t1_file = search(type1path, cur_file_name, FOPEN_RBIN_MODE)) != NULL)
+#define t1_close()       xfclose(t1_file, cur_file_name)
+#define t1_getchar()     getc(t1_file)
+#define t1_putchar(c)    fputc(c, bitfile)
+#define t1_ungetchar(c)  ungetc(c, t1_file)
+#define t1_eof()         feof(t1_file)
 
-#define valid_code(c)   (c >= 0 && c <= MAX_CHAR_CODE)
+#define str_prefix(s1, s2) (strncmp(s1, s2, strlen(s2)) == 0)
+#define t1_prefix(s)     str_prefix(t1_line_array, s)
+#define t1_buf_prefix(s) str_prefix(t1_buf_array, s)
+#define t1_suffix(s)     str_suffix(t1_line_array, t1_line_ptr, s)
+#define t1_buf_suffix(s) str_suffix(t1_buf_array, t1_buf_ptr, s)
+#define t1_charstrings() strstr(t1_line_array, charstringname)
+#define t1_subrs()       t1_prefix("/Subrs")
+#define t1_end_eexec()   t1_suffix("mark currentfile closefile")
+#define t1_cleartomark() t1_prefix("cleartomark")
 
-static const char *standard_glyph_names[MAX_CHAR_CODE + 1] = {
-notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
-notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
-notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
-notdef, notdef, notdef, notdef, notdef, "space", "exclam", "quotedbl",
-"numbersign", "dollar", "percent", "ampersand", "quoteright", "parenleft",
-"parenright", "asterisk", "plus", "comma", "hyphen", "period", "slash",
-"zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
-"nine", "colon", "semicolon", "less", "equal", "greater", "question", "at",
-"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "bracketleft",
-"backslash", "bracketright", "asciicircum", "underscore", "quoteleft", "a",
-"b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
-"q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "braceleft", "bar",
-"braceright", "asciitilde", notdef, notdef, notdef, notdef, notdef, notdef,
-notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
-notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
-notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
-notdef, "exclamdown", "cent", "sterling", "fraction", "yen", "florin",
-"section", "currency", "quotesingle", "quotedblleft", "guillemotleft",
-"guilsinglleft", "guilsinglright", "fi", "fl", notdef, "endash", "dagger",
-"daggerdbl", "periodcentered", notdef, "paragraph", "bullet",
-"quotesinglbase", "quotedblbase", "quotedblright", "guillemotright",
-"ellipsis", "perthousand", notdef, "questiondown", notdef, "grave", "acute",
-"circumflex", "tilde", "macron", "breve", "dotaccent", "dieresis", notdef,
-"ring", "cedilla", notdef, "hungarumlaut", "ogonek", "caron", "emdash",
-notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
-notdef, notdef, notdef, notdef, notdef, notdef, notdef, "AE", notdef,
-"ordfeminine", notdef, notdef, notdef, notdef, "Lslash", "Oslash", "OE",
-"ordmasculine", notdef, notdef, notdef, notdef, notdef, "ae", notdef, notdef,
-notdef, "dotlessi", notdef, notdef, "lslash", "oslash", "oe", "germandbls",
-notdef, notdef, notdef, notdef
+#define enc_open()           \
+    ((enc_file = search(encpath, cur_file_name, FOPEN_RBIN_MODE)) != NULL)
+#define enc_close()      xfclose(enc_file, cur_file_name)
+#define enc_getchar()    getc(enc_file)
+#define enc_eof()        feof(enc_file)
+
+#define valid_code(c)    (c >= 0 && c < 256)
+#define fixedcontent     true  /* false for pdfTeX, true for dvips */
+
+static const char *standard_glyph_names[256] = {
+    /* 0x00 */
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    /* 0x10 */
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    /* 0x20 */
+    "space", "exclam", "quotedbl", "numbersign", "dollar", "percent",
+    "ampersand", "quoteright", "parenleft", "parenright", "asterisk",
+    "plus", "comma", "hyphen", "period", "slash",
+    /* 0x30 */
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+    "nine", "colon", "semicolon", "less", "equal", "greater", "question",
+    /* 0x40 */
+    "at", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
+    "O",
+    /* 0x50 */
+    "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "bracketleft",
+    "backslash", "bracketright", "asciicircum", "underscore",
+    /* 0x60 */
+    "quoteleft", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+    "m", "n", "o",
+    /* 0x70 */
+    "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "braceleft", "bar",
+    "braceright", "asciitilde", notdef,
+    /* 0x80 */
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    /* 0x90 */
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    /* 0xa0 */
+    notdef, "exclamdown", "cent", "sterling", "fraction", "yen", "florin",
+    "section", "currency", "quotesingle", "quotedblleft", "guillemotleft",
+    "guilsinglleft", "guilsinglright", "fi", "fl",
+    /* 0xb0 */
+    notdef, "endash", "dagger", "daggerdbl", "periodcentered", notdef,
+    "paragraph", "bullet", "quotesinglbase", "quotedblbase",
+    "quotedblright", "guillemotright", "ellipsis", "perthousand", notdef,
+    "questiondown",
+    /* 0xc0 */
+    notdef, "grave", "acute", "circumflex", "tilde", "macron", "breve",
+    "dotaccent", "dieresis", notdef,
+    "ring", "cedilla", notdef, "hungarumlaut", "ogonek", "caron",
+    /* 0xd0 */
+    "emdash", notdef, notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    notdef, notdef, notdef, notdef, notdef, notdef, notdef,
+    /* 0xe0 */
+    notdef, "AE", notdef, "ordfeminine", notdef, notdef, notdef, notdef,
+    "Lslash", "Oslash", "OE", "ordmasculine", notdef, notdef, notdef,
+    notdef,
+    /* 0xf0 */
+    notdef, "ae", notdef, notdef, notdef, "dotlessi", notdef, notdef, "lslash",
+    "oslash", "oe", "germandbls", notdef, notdef, notdef, notdef
 };
 
-static char charstringname[] = "/CharStrings";
-
 char **t1_glyph_names;
-char *t1_builtin_glyph_names[MAX_CHAR_CODE + 1];
+char *t1_builtin_glyph_names[256];
 static boolean read_encoding_only;
 static int t1_encoding;
+
+static char charstringname[] = "/CharStrings";
 
 #define ENC_STANDARD  0
 #define ENC_BUILTIN   1
 
-#define T1_BUF_SIZE   0x10
-#define ENC_BUF_SIZE  0x1000
+#define T1_BUF_SIZE      0x10
+#define ENC_BUF_SIZE     0x1000
 
 #define CS_HSTEM         1
 #define CS_VSTEM         3
@@ -228,17 +261,7 @@ static int last_hexbyte;
 static FILE *t1_file;
 static FILE *enc_file;
 
-#define str_prefix(s1, s2)  (strncmp(s1, s2, strlen(s2)) == 0)
-#define t1_prefix(s)        str_prefix(t1_line_array, s)
-#define t1_buf_prefix(s)    str_prefix(t1_buf_array, s)
-#define t1_suffix(s)        str_suffix(t1_line_array, t1_line_ptr, s)
-#define t1_buf_suffix(s)    str_suffix(t1_buf_array, t1_buf_ptr, s)
-#define t1_charstrings()    strstr(t1_line_array, charstringname)
-#define t1_subrs()          t1_prefix("/Subrs")
-#define t1_end_eexec()      t1_suffix("mark currentfile closefile")
-#define t1_cleartomark()    t1_prefix("cleartomark")
-
-static void pdftex_fail(const char *fmt,...)
+static void pdftex_fail(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -253,7 +276,7 @@ static void pdftex_fail(const char *fmt,...)
     exit(-1);
 }
 
-static void pdftex_warn(const char *fmt,...)
+static void pdftex_warn(const char *fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -322,22 +345,22 @@ void load_enc(char *enc_name, const char **glyph_names)
         pdftex_fail("invalid encoding vector (a name or `[' missing): `%s'", enc_line);
     }
     names_count = 0;
-    r++; /* skip '[' */
+    r++;                        /* skip '[' */
     skip(r, ' ');
     for (;;) {
         while (*r == '/') {
-            for (p = buf, r++; *r != ' ' && *r != 10 && *r != ']' && *r != '/'; *p++ = *r++);
+            for (p = buf, r++;
+                 *r != ' ' && *r != 10 && *r != ']' && *r != '/'; *p++ = *r++);
             *p = 0;
             skip(r, ' ');
-            if (names_count > MAX_CHAR_CODE)
-                pdftex_fail("encoding vector contains more than %i names",
-                            (int)(MAX_CHAR_CODE + 1));
+            if (names_count > 255)
+                pdftex_fail("encoding vector contains more than 256 names");
             if (strcmp(buf, notdef) != 0)
                 glyph_names[names_count] = xstrdup(buf);
             names_count++;
         }
         if (*r != 10 && *r != '%') {
-            if (strncmp(r, "] def", strlen("] def")) == 0)
+            if (str_prefix(r, "] def"))
                 goto done;
             else {
                 remove_eol(r, enc_line);
@@ -347,7 +370,7 @@ void load_enc(char *enc_name, const char **glyph_names)
         enc_getline();
         r = enc_line;
     }
-done:
+  done:
     enc_close();
     t1_log("}");
     cur_file_name = NULL;
@@ -530,7 +553,7 @@ static void t1_putline(void)
         return;
     if (t1_eexec_encrypt) {
         while (p < t1_line_ptr)
-            out_eexec_char(eencrypt(*p++));
+            t1_outhex(eencrypt(*p++));
     } else
         while (p < t1_line_ptr)
             t1_putchar(*p++);
@@ -670,7 +693,7 @@ static void t1_builtin_enc(void)
     if (t1_suffix("def")) { /* predefined encoding */
         sscanf(t1_line_array + strlen("/Encoding"), "%256s", t1_buf_array);
         if (strcmp(t1_buf_array, "StandardEncoding") == 0) {
-            for (i = 0; i <= MAX_CHAR_CODE; i++)
+            for (i = 0; i < 256; i++)
                 if (standard_glyph_names[i] == notdef)
                     t1_builtin_glyph_names[i] = (char*) notdef;
                 else
@@ -699,21 +722,20 @@ static void t1_builtin_enc(void)
     *     ...
     *     readonly def
     */
-    for (i = 0; i <= MAX_CHAR_CODE; i++)
+    for (i = 0; i < 256; i++)
         t1_builtin_glyph_names[i] = (char*) notdef;
     if (t1_prefix("/Encoding [") || t1_prefix("/Encoding[")) { /* the first case */
         r = strchr(t1_line_array, '[') + 1;
         skip(r, ' ');
-        for(;;) {
+        for (;;) {
             while (*r == '/') {
                 for (p = t1_buf_array, r++;
                      *r != 32 && *r != 10 && *r != ']' && *r != '/';
                      *p++ = *r++);
                 *p = 0;
                 skip(r, ' ');
-                if (counter > MAX_CHAR_CODE)
-                    pdftex_fail("encoding vector contains more than %i names",
-                            (int)(MAX_CHAR_CODE + 1));
+                if (counter > 255)
+                    pdftex_fail("encoding vector contains more than 256 names");
                 if (strcmp(t1_buf_array, notdef) != 0)
                     t1_builtin_glyph_names[counter] = xstrdup(t1_buf_array);
                 counter++;
@@ -730,8 +752,7 @@ static void t1_builtin_enc(void)
             t1_getline();
             r = t1_line_array;
         }
-    }
-    else { /* the second case */
+    } else {                    /* the second case */
         p = strchr(t1_line_array, 10);
         for (;;) {
             if (*p == 10) {
@@ -739,7 +760,7 @@ static void t1_builtin_enc(void)
                 p = t1_line_array;
             }
             /*
-             check for `dup <index> <glyph> put'
+               check for `dup <index> <glyph> put'
              */
             if (sscanf(p, "dup %i%256s put", &i, t1_buf_array) == 2 &&
                 *t1_buf_array == '/' && valid_code(i)) {
@@ -749,33 +770,33 @@ static void t1_builtin_enc(void)
                 skip(p, ' ');
             }
             /*
-             check for `dup dup <to> exch <from> get put'
+               check for `dup dup <to> exch <from> get put'
              */
-            else if (sscanf(p, "dup dup %i exch %i get put", &b, &a) == 2 &&
-                     valid_code(a) && valid_code(b)) {
+            else if (sscanf(p, "dup dup %i exch %i get put", &b, &a) == 2
+                     && valid_code(a) && valid_code(b)) {
                 copy_glyph_names(t1_builtin_glyph_names, a, b);
                 p = strstr(p, " get put") + strlen(" get put");
                 skip(p, ' ');
             }
             /*
-             check for `dup dup <from> <size> getinterval <to> exch putinterval'
+               check for `dup dup <from> <size> getinterval <to> exch putinterval'
              */
             else if (sscanf(p, "dup dup %i %i getinterval %i exch putinterval",
-                            &a, &c, &b) == 3 &&
-                     valid_code(a) && valid_code(b) && valid_code(c)) {
+                            &a, &c, &b) == 3
+                     && valid_code(a) && valid_code(b) && valid_code(c)) {
                 for (i = 0; i < c; i++)
                     copy_glyph_names(t1_builtin_glyph_names, a + i, b + i);
                 p = strstr(p, " putinterval") + strlen(" putinterval");
                 skip(p, ' ');
             }
             /*
-             check for `def' or `readonly def'
+               check for `def' or `readonly def'
              */
-            else if ((p == t1_line_array || (p > t1_line_array && p[-1] == ' ')) &&
-                     strcmp(p, "def\n") == 0)
+            else if ((p == t1_line_array || (p > t1_line_array && p[-1] == ' '))
+                     && strcmp(p, "def\n") == 0)
                 return;
             /*
-             skip an unrecognizable word
+               skip an unrecognizable word
              */
             else {
                 while (*p != ' ' && *p != 10)
@@ -804,6 +825,8 @@ static boolean t1_open_fontfile(const char *open_name_prefix)
     t1_init_params(open_name_prefix);
     return true;                /* font file found */
 }
+
+#define t1_include()
 
 #define check_subr(subr) \
     if (subr >= subr_size || subr < 0) \
@@ -921,7 +944,7 @@ static void cc_init(void)
     set_cc(CS_RETURN, false, 0, false);
     /*
        set_cc(CS_ESCAPE, false, 0, false);
-    */
+     */
     set_cc(CS_HSBW, true, 2, true);
     set_cc(CS_ENDCHAR, false, 0, true);
     set_cc(CS_RMOVETO, true, 2, true);
@@ -945,7 +968,7 @@ static void cc_init(void)
 #define mark_subr(n)     cs_mark(0, n)
 #define mark_cs(s)       cs_mark(s, 0)
 
-static void cs_warn(const char *cs_name, int subr, const char *fmt,...)
+static void cs_fail(const char *cs_name, int subr, const char *fmt, ...)
 {
     char buf[SMALL_BUF_SIZE];
     va_list args;
@@ -1061,22 +1084,22 @@ static void cs_mark(const char *cs_name, int subr)
                 cs_len--;
             }
             if (b >= CS_MAX) {
-                cs_warn(cs_name, subr, "command value out of range: %i",
+                cs_fail(cs_name, subr, "command value out of range: %i",
                         (int) b);
                 goto cs_error;
             }
             cc = cc_tab + b;
             if (!cc->valid) {
-                cs_warn(cs_name, subr, "command not valid: %i", (int) b);
+                cs_fail(cs_name, subr, "command not valid: %i", (int) b);
                 goto cs_error;
             }
             if (cc->bottom) {
                 if (stack_ptr - cc_stack < cc->nargs)
-                    cs_warn(cs_name, subr,
+                    cs_fail(cs_name, subr,
                             "less arguments on stack (%i) than required (%i)",
                             (int) (stack_ptr - cc_stack), (int) cc->nargs);
                 else if (stack_ptr - cc_stack > cc->nargs)
-                    cs_warn(cs_name, subr,
+                    cs_fail(cs_name, subr,
                             "more arguments on stack (%i) than required (%i)",
                             (int) (stack_ptr - cc_stack), (int) cc->nargs);
             }
@@ -1087,7 +1110,7 @@ static void cs_mark(const char *cs_name, int subr)
                 cc_pop(1);
                 mark_subr(a1);
                 if (!subr_tab[a1].valid) {
-                    cs_warn(cs_name, subr, "cannot call subr (%i)", (int) a1);
+                    cs_fail(cs_name, subr, "cannot call subr (%i)", (int) a1);
                     goto cs_error;
                 }
                 break;
@@ -1156,31 +1179,26 @@ static void t1_subset_ascii_part(void)
         t1_puts("/Encoding StandardEncoding def\n");
     else {
         t1_puts("/Encoding 256 array\n0 1 255 {1 index exch /.notdef put} for\n");
-        for (i = 0, j = 0; i <= MAX_CHAR_CODE; i++) {
+        for (i = 0, j = 0; i < 256; i++) {
             if (is_used_char(i) && t1_glyph_names[i] != notdef) {
                 j++;
                 t1_printf("dup %i /%s put\n", (int)t1_char(i), t1_glyph_names[i]);
             }
         }
-        /* We didn't mark anything for the Encoding array. */
-        /* We add "dup 0 /.notdef put" for compatibility   */
-        /* with Acrobat 5.0.                               */
         if (j == 0)
+            /* We didn't mark anything for the Encoding array. */
+            /* We add "dup 0 /.notdef put" for compatibility   */
+            /* with Acrobat 5.0.                               */
             t1_puts("dup 0 /.notdef put\n");
         t1_puts("readonly def\n");
     }
     do {
         t1_getline();
         t1_scan_param();
-        if (!t1_prefix("/UniqueID")) /* ignore UniqueID for subsetted fonts */
+        if (!t1_prefix("/UniqueID"))    /* ignore UniqueID for subsetted fonts */
             t1_putline();
     } while (t1_in_eexec == 0);
 }
-
-#define t1_subr_flush()  t1_flush_cs(true)
-#define t1_cs_flush()    t1_flush_cs(false)
-
-static void t1_flush_cs(boolean);
 
 static void cs_init(void)
 {
@@ -1202,8 +1220,6 @@ static void init_cs_entry(cs_entry *cs)
     cs->used = false;
     cs->valid = false;
 }
-
-static void t1_mark_glyphs(void);
 
 static void t1_read_subrs(void)
 {
@@ -1278,6 +1294,9 @@ static void t1_read_subrs(void)
     }
 }
 
+#define t1_subr_flush()  t1_flush_cs(true)
+#define t1_cs_flush()    t1_flush_cs(false)
+
 static void t1_flush_cs(boolean is_subr)
 {
     char *p;
@@ -1312,9 +1331,9 @@ static void t1_flush_cs(boolean is_subr)
     t1_putline();
 
     /* create return_cs to replace unused subr's */
-    cs_len = 0;
     if (is_subr) {
         cr = 4330;
+        cs_len = 0;
         /* at this point we have t1_lenIV >= 0;
          * a negative value would be caught in t1_scan_param() */
         return_cs = xtalloc(t1_lenIV + 1, byte);
@@ -1382,7 +1401,7 @@ static void t1_mark_glyphs(void)
         return;
     }
     mark_cs(notdef);
-    for (i = 0; i <= MAX_CHAR_CODE; i++)
+    for (i = 0; i < 256; i++)
         if (is_used_char(i)) {
             if (t1_glyph_names[i] == notdef)
                 pdftex_warn("character %i is mapped to %s", i, notdef);
@@ -1400,7 +1419,7 @@ static void t1_mark_glyphs(void)
         mark_cs(g);
         g = s + 1;
     }
-set_subr_max:
+  set_subr_max:
     if (subr_tab != NULL)
         for (subr_max = -1, ptr = subr_tab; ptr - subr_tab < subr_size; ptr++)
             if (ptr->used && ptr - subr_tab > subr_max)
@@ -1412,7 +1431,7 @@ static void t1_check_unusual_charstring(void)
     char *p = strstr(t1_line_array, charstringname) + strlen(charstringname);
     int i;
     /* if no number follows "/CharStrings", let's read the next line */
-    if (sscanf(p, "%i", &i) != 1) { 
+    if (sscanf(p, "%i", &i) != 1) {
         strcpy(t1_buf_array, t1_line_array);
         t1_getline();
         strcat(t1_buf_array, t1_line_array);
@@ -1478,12 +1497,14 @@ static void t1_subset_end(void)
             t1_putline();
         }
     t1_stop_eexec();
-    while (!t1_cleartomark()) {
-        t1_getline();
-        t1_putline();
+    if (fixedcontent) {         /* copy 512 zeros (not needed for PDF) */
+        while (!t1_cleartomark()) {
+            t1_getline();
+            t1_putline();
+        }
+        if (!t1_synthetic)      /* don't check "{restore}if" for synthetic fonts */
+            t1_check_end();     /* write "{restore}if" if found */
     }
-    if (!t1_synthetic)  /* don't check "{restore}if" for synthetic fonts */
-        t1_check_end(); /* write "{restore}if" if found */
     get_length3();
 }
 
@@ -1517,45 +1538,17 @@ static void writet1(void)
     t1_close_font_file(">");
 }
 
-#if 0 /* unused */
-static void t1_free(void)
-{
-    xfree(t1_line_array);
-    xfree(t1_buf_array);
-}
-#endif /* 0 */
-
-#if 0 /* unused */
-static boolean t1_subset(char *fontfile, char *encfile, unsigned char *g)
-{
-    int i;
-    cur_enc_name = encfile;
-    for (i = 0; i <= MAX_CHAR_CODE; i++)
-        ext_glyph_names[i] = (char*) notdef;
-    if (cur_enc_name != NULL)
-        load_enc(cur_enc_name, (const char **) ext_glyph_names);
-    grid = g;
-    cur_file_name = fontfile;
-    hexline_length = 0;
-    writet1();
-    for (i = 0; i <= MAX_CHAR_CODE; i++)
-        if (ext_glyph_names[i] != notdef)
-            free(ext_glyph_names[i]);
-    return 1; /* note:  there *is* no unsuccessful return */
-}
-#endif /* 0 */
-
 boolean t1_subset_2(char *fontfile, unsigned char *g, char *extraGlyphs)
 {
     int i;
-    for (i = 0; i <= MAX_CHAR_CODE; i++)
+    for (i = 0; i < 256; i++)
         ext_glyph_names[i] = (char*) notdef;
     grid = g;
     cur_file_name = fontfile;
     hexline_length = 0;
     dvips_extra_charset = extraGlyphs;
     writet1();
-    for (i = 0; i <= MAX_CHAR_CODE; i++)
+    for (i = 0; i < 256; i++)
         if (ext_glyph_names[i] != notdef)
             free(ext_glyph_names[i]);
     return 1; /* note:  there *is* no unsuccessful return */

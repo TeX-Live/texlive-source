@@ -1,3 +1,10 @@
+2010-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writet1.c (load_enc_file): Bug fix (using glyph_names[256]).
+
+	* writet1.c: Formatting and other trivial changes, to reduce
+	diffs against dvipsk's writet1.c.
+
 2010-11-11  Thanh Han The  <thanh@river-valley.org>
 
 	* writet1.c (t1_check_unusual_charstring): new fn.

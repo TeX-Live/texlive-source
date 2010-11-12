@@ -338,7 +338,7 @@ static struct seenEncodings {
    const char *name;
    const char **glyphs;
 } *seenEncodings;
-#define MAX_CHAR_CODE 256
+#define MAX_CHAR_CODE 255
 /*
  *   Load a new encoding and return the array of glyphs as a vector.
  *   Linear search.

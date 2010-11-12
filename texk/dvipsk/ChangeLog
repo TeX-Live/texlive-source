@@ -1,3 +1,10 @@
+2010-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* download.c [MAX_CHAR_CODE]: Define as 255 (not 256).
+
+	* writet1.c: More formatting and other trivial changes, to
+	further reduce diffs against pdftex's writet1.c.
+
 2010-11-12  Karl Berry  <karl@tug.org>
 
 	* writet1.c: formatting changes only, to reduce diffs against
