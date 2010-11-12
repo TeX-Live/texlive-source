@@ -744,22 +744,22 @@ static struct script_struct * filterGifScript
                                                    *old_script,
                                                    *new_script;
                                          Q_CHAR *command, *ext;
-   if( script == (struct script_struct *) 0 ){
-       return (struct script_struct *) 0;
-   }
+   filtered_script = NULL_SCRIPT;
+   if( script == NULL_SCRIPT )
+       return filtered_script;
    old_script = script;
    command = old_script->command;
    if( *command != '.' ){
       
-new_script = (struct script_struct *) 0;
-while( old_script != (struct script_struct *) 0 ){
+new_script = NULL_SCRIPT;
+while( old_script != NULL_SCRIPT ){
    command = old_script->command;
    if( *command == '.' ){ return filtered_script; }
    scr = (struct script_struct *)
             m_alloc(struct script_struct, (int) 1);
    scr->command = old_script->command;
-   scr->next = (struct script_struct *) 0;
-   if( new_script == (struct script_struct *) 0 ){
+   scr->next = NULL_SCRIPT;
+   if( new_script == NULL_SCRIPT ){
      filtered_script = new_script = scr;
    } else {
      new_script = new_script->next = scr;
@@ -778,8 +778,8 @@ while( (*ext != '.') && (ext != file) ){ ext--; }
 
 
 while( TRUE ){
-  if( old_script == (struct script_struct *) 0 ){
-     return (struct script_struct *) 0;
+  if( old_script == NULL_SCRIPT ){
+     return NULL_SCRIPT;
   }
   command = old_script->command;
   if(*command != '.') {
@@ -792,15 +792,15 @@ while( TRUE ){
   }
 }
 
-new_script = (struct script_struct *) 0;
-while( old_script != (struct script_struct *) 0 ){
+new_script = NULL_SCRIPT;
+while( old_script != NULL_SCRIPT ){
    command = old_script->command;
    if( *command == '.' ){ return filtered_script; }
    scr = (struct script_struct *)
             m_alloc(struct script_struct, (int) 1);
    scr->command = old_script->command;
-   scr->next = (struct script_struct *) 0;
-   if( new_script == (struct script_struct *) 0 ){
+   scr->next = NULL_SCRIPT;
+   if( new_script == NULL_SCRIPT ){
      filtered_script = new_script = scr;
    } else {
      new_script = new_script->next = scr;
@@ -833,7 +833,7 @@ void free_script
 #endif
 {
                                    struct script_struct *temp;
-  while( script != (struct script_struct *) 0 ){
+  while( script != NULL_SCRIPT ){
     temp = script;
     script = script->next;
     free( temp );
