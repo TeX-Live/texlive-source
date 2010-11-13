@@ -356,7 +356,7 @@ static const char **getEncoding(char *encoding) {
       p->next = seenEncodings;
       seenEncodings = p;
       p->name = xstrdup(encoding);
-      p->glyphs = (const char **)mymalloc((MAX_CHAR_CODE+2) * sizeof(char *));
+      p->glyphs = (const char **)mymalloc((MAX_CHAR_CODE+1) * sizeof(char *));
       for (i=0; i<=MAX_CHAR_CODE; i++)
          p->glyphs[i] = ".notdef";
       load_enc(encoding, p->glyphs);
