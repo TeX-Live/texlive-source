@@ -97,7 +97,7 @@ static size_t last_ptr_index;
 #define enc_eof()        feof(enc_file)
 
 #define valid_code(c)    (c >= 0 && c < 256)
-#define fixedcontent     true  /* false for pdfTeX, true for dvips */
+#define fixedcontent     true /* false for pdfTeX, true for dvips */
 
 static const char *standard_glyph_names[256] = {
     /* 0x00 */
@@ -1346,7 +1346,8 @@ static void t1_flush_cs(boolean is_subr)
     for (ptr = tab; ptr < end_tab; ptr++) {
         if (ptr->used) {
             if (is_subr)
-                sprintf(t1_line_array, "dup %lu %u", (unsigned long) (ptr - tab), ptr->cslen);
+                sprintf(t1_line_array, "dup %lu %u",
+                        (unsigned long) (ptr - tab), ptr->cslen);
             else
                 sprintf(t1_line_array, "/%s %u", ptr->name, ptr->cslen);
             p = strend(t1_line_array);
@@ -1356,8 +1357,8 @@ static void t1_flush_cs(boolean is_subr)
         } else {
             /* replace unsused subr's by return_cs */
             if (is_subr) {
-                sprintf(t1_line_array, "dup %lu %u%s ", (unsigned long) (ptr - tab), cs_len,
-                        cs_token_pair[0]);
+                sprintf(t1_line_array, "dup %lu %u%s ",
+                        (unsigned long) (ptr - tab), cs_len, cs_token_pair[0]);
                 p = strend(t1_line_array);
                 memcpy(p, return_cs, cs_len);
                 t1_line_ptr = p + cs_len;

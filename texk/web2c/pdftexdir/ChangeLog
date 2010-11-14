@@ -1,3 +1,7 @@
+2010-11-14  Karl Berry  <karl@tug.org>
+
+	* writet1.c: endless formatting tweaks.
+
 2010-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c (load_enc_file): Bug fix (using glyph_names[256]).

@@ -1,8 +1,6 @@
 /*
 Copyright 1996-2007, 2009-2010 Han The Thanh <thanh@pdftex.org>
 
-This file is part of pdfTeX.
-
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -250,7 +248,8 @@ char **load_enc_file(char *enc_name)
     enc_getline();
     if (*enc_line != '/' || (r = strchr(enc_line, '[')) == NULL) {
         remove_eol(r, enc_line);
-        pdftex_fail("invalid encoding vector (a name or `[' missing): `%s'", enc_line);
+        pdftex_fail
+           ("invalid encoding vector (a name or `[' missing): `%s'", enc_line);
     }
     names_count = 0;
     r++;                        /* skip '[' */
@@ -272,7 +271,8 @@ char **load_enc_file(char *enc_name)
                 goto done;
             else {
                 remove_eol(r, enc_line);
-                pdftex_fail("invalid encoding vector: a name or `] def' expected: `%s'", enc_line);
+                pdftex_fail
+       ("invalid encoding vector: a name or `] def' expected: `%s'", enc_line);
             }
         }
         enc_getline();
@@ -835,8 +835,8 @@ static char **t1_builtin_enc(void)
                     break;
                 else {
                     remove_eol(r, t1_line_array);
-                    pdftex_fail("a name or `] def' or `] readonly def' expected: `%s'",
-                                t1_line_array);
+                    pdftex_fail
+       ("a name or `] def' or `] readonly def' expected: `%s'", t1_line_array);
                 }
             }
             t1_getline();
@@ -1355,7 +1355,8 @@ static void t1_subset_ascii_part(void)
     if (t1_encoding == ENC_STANDARD)
         t1_puts("/Encoding StandardEncoding def\n");
     else {
-        t1_puts("/Encoding 256 array\n0 1 255 {1 index exch /.notdef put} for\n");
+        t1_puts
+            ("/Encoding 256 array\n0 1 255 {1 index exch /.notdef put} for\n");
         gl_tree = create_t1_glyph_tree(glyph_names);
         avl_t_init(&t, fd_cur->gl_tree);
         j = 0;
@@ -1529,7 +1530,8 @@ static void t1_flush_cs(boolean is_subr)
     for (ptr = tab; ptr < end_tab; ptr++) {
         if (ptr->used) {
             if (is_subr)
-                sprintf(t1_line_array, "dup %lu %u", (unsigned long) (ptr - tab), ptr->cslen);
+                sprintf(t1_line_array, "dup %lu %u",
+                        (unsigned long) (ptr - tab), ptr->cslen);
             else
                 sprintf(t1_line_array, "/%s %u", ptr->name, ptr->cslen);
             p = strend(t1_line_array);
@@ -1539,8 +1541,8 @@ static void t1_flush_cs(boolean is_subr)
         } else {
             /* replace unsused subr's by return_cs */
             if (is_subr) {
-                sprintf(t1_line_array, "dup %lu %u%s ", (unsigned long) (ptr - tab), cs_len,
-                        cs_token_pair[0]);
+                sprintf(t1_line_array, "dup %lu %u%s ",
+                        (unsigned long) (ptr - tab), cs_len, cs_token_pair[0]);
                 p = strend(t1_line_array);
                 memcpy(p, return_cs, cs_len);
                 t1_line_ptr = p + cs_len;
@@ -1676,7 +1678,7 @@ static void t1_subset_end(void)
     get_length3();
 }
 
-void writet1(fd_entry * fd)
+void writet1(fd_entry *fd)
 {
     fd_cur = fd;                /* fd_cur is global inside writet1.c */
     assert(fd_cur->fm != NULL);

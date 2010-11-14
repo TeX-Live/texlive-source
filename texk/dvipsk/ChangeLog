@@ -1,3 +1,7 @@
+2010-11-14  Karl Berry  <karl@tug.org>
+
+	* writet1.c: endless formatting tweaks.
+
 2010-11-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* download.c: Change i<MAX_CHAR_CODE into i<=MAX_CHAR_CODE, because
