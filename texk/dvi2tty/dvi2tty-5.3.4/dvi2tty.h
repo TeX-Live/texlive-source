@@ -18,8 +18,11 @@
  *
  */
 
+#define VERSION "5.3.4"
+
 #define Copyright "dvi2tty  Copyright (C) 1984, 1985, 1986 Svante Lindahl.\n\
 Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
+
 
 #include <stdio.h>
 #include <string.h>

@@ -1,4 +1,13 @@
 /******************************************************************************
+ * Marcel Mol: 20101113  (marcel@mesa.nl)
+ *               Version 5.3.4
+ *               Fix VERSION code
+ *               From TeXLive:
+ *               - DEFPAGER form /bin/more to more
+ *               - kapthsea: fix bbug to handle input filenames without ".dvi".
+ *               - kpathsea - use library function instead of duplicated code.
+ *               - man page fixes
+ *               - const char fixes
  * Marcel Mol: 20101030  (marcel@mesa.nl)
  *               Version 5.3.3
  *               included patches from TexLive and Joerg Prante, and Kenshi Muto

@@ -99,7 +99,7 @@
  * Structure and variable definitions
  */
 
-const char *dvistuff = "@(#) dvistuff.c  5.3.3 20101027 M.J.E. Mol (c) 1989-2010";
+const char *dvistuff = "@(#) dvistuff.c  " VERSION " 20101027 M.J.E. Mol (c) 1989-2010";
 
 typedef struct {
     long hh;

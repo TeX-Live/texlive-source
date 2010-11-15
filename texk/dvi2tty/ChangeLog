@@ -1,3 +1,8 @@
+2010-11-13  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	Import dvi2tty-5.3.4.
+	* configure.ac: Adapted.
+
 2010-11-09  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	* dvi2tty.test: Test input filename without ".dvi".

@@ -1,3 +1,8 @@
+2010-11-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import dvi2tty-5.3.4.
+	* patch-*-* (removed): Now all in distribution.
+
 2010-11-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-texk (removed): Avoid unnecessary modifications.

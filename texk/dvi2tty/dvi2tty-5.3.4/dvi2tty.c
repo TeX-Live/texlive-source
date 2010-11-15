@@ -49,7 +49,7 @@
                               /* have terminals with latin1 chars */
 #define WANTPAGER   TRUE      /* default: try to pipe through a pager (like  */
                               /* more) if stdout is tty and no -o switch     */
-#define DEFPAGER    "more"    /* CHANGE TO YOUR LOCAL PAGER                  */
+#define DEFPAGER    "more"   /* CHANGE TO YOUR LOCAL PAGER            */
 
     /*------------------ end of customization constants ---------------------*/
 
@@ -86,8 +86,7 @@
  * Variable definitions
  */
 
-const char *dvi2tty = "@(#) dvi2tty.c  5.3.3 20101030 M.J.E. Mol (c) 1989-2010";
-#define VERSION 5.3.3
+const char *dvi2tty = "@(#) dvi2tty.c " VERSION " 20101030 M.J.E. Mol (c) 1989-2010";
 
 
 printlisttype * currentpage;    /* current page to print                     */
@@ -530,7 +529,6 @@ void plcnxt(int pagnr)
     return;
 
 } /* plcnxt */
-
 
 
 
