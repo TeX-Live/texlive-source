@@ -553,7 +553,7 @@ static void t1_putline(void)
         return;
     if (t1_eexec_encrypt) {
         while (p < t1_line_ptr)
-            t1_outhex(eencrypt(*p++));
+            t1_outhex(eencrypt(*p++)); /* dvips outputs hex, unlike pdftex */
     } else
         while (p < t1_line_ptr)
             t1_putchar(*p++);
