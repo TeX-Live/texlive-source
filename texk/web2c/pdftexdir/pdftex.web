@@ -18243,7 +18243,7 @@ begin
     end;
     colorstack_pop: literal_mode := colorstackpop(stack_no);
     colorstack_current: literal_mode := colorstackcurrent(stack_no);
-    othercases do_nothing
+    othercases confusion("pdfcolorstack")
     endcases;
     if cur_length > 0 then begin
         s := make_string;

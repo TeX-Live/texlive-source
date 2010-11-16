@@ -521,7 +521,7 @@ static FILE* f_open( ARG_II(const char*,const char*) );
 static FILE* f_home_open( ARG_II(const char*,const char*) );
 
 
-static FILE* open_file( const ARG_II(C_CHAR *, const C_CHAR *) );
+static FILE* open_file( ARG_II(const C_CHAR *, const C_CHAR *) );
 
 
 static void err_i( ARG_I(int) );
@@ -2039,7 +2039,7 @@ if( check_tex4ht_c_err ){
   
 {     
 Q_CHAR *file_name, file_mode[5];
-int i, start_loc, end_loc, addr;
+int i, start_loc, end_loc, addr = 0;
 char rec_op, *ch;
 static struct files_rec *to_rec, *from_rec,
    *opened_files = (struct files_rec *) 0,
@@ -2362,7 +2362,7 @@ if( status ){
 
 
       if( status ){            Q_CHAR *key, *body, *media;
-         body = key = match[1];
+         media = body = key = match[1];
          
 while( *body && (*body != ' ') ){ body++; }
 if( *body == ' ' ){ media = body; *(body++) = '\0'; }
@@ -2404,6 +2404,7 @@ if( debug ){
 }
 
  }
+#if 0 /* unreachable */
   else if( last_rec ){ 
 last_rec->body = (Q_CHAR *)  r_alloc((void *) last_rec->body,
       (size_t) strlen((char *) last_rec->body)
@@ -2416,6 +2417,7 @@ if( debug ){
 }
 
  }
+#endif /* 0, unreachable */
 }
 
 

@@ -1,3 +1,8 @@
+2010-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web (pdf_out_colorstack): There are no 'othercases'.
+	Fix from Heiko Oberdiek <heiko.oberdiek@googlemail.com>.
+
 2010-11-14  Karl Berry  <karl@tug.org>
 
 	* writet1.c: endless formatting tweaks.
