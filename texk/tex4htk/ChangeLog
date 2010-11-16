@@ -5,7 +5,7 @@
 
 2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* t4ht.c (get_env_dir0 [WIN32]: Declare as static.
+	* t4ht.c (get_env_dir) [WIN32]: Declare as static.
 
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

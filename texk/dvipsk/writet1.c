@@ -342,7 +342,8 @@ void load_enc(char *enc_name, const char **glyph_names)
     enc_getline();
     if (*enc_line != '/' || (r = strchr(enc_line, '[')) == NULL) {
         remove_eol(r, enc_line);
-        pdftex_fail("invalid encoding vector (a name or `[' missing): `%s'", enc_line);
+        pdftex_fail
+           ("invalid encoding vector (a name or `[' missing): `%s'", enc_line);
     }
     names_count = 0;
     r++;                        /* skip '[' */
@@ -364,7 +365,8 @@ void load_enc(char *enc_name, const char **glyph_names)
                 goto done;
             else {
                 remove_eol(r, enc_line);
-                pdftex_fail("invalid encoding vector: a name or `] def' expected: `%s'", enc_line);
+                pdftex_fail
+       ("invalid encoding vector: a name or `] def' expected: `%s'", enc_line);
             }
         }
         enc_getline();
@@ -745,8 +747,8 @@ static void t1_builtin_enc(void)
                     break;
                 else {
                     remove_eol(r, t1_line_array);
-                    pdftex_fail("a name or `] def' or `] readonly def' expected: `%s'",
-                                t1_line_array);
+                    pdftex_fail
+       ("a name or `] def' or `] readonly def' expected: `%s'", t1_line_array);
                 }
             }
             t1_getline();

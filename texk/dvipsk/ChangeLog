@@ -1,3 +1,7 @@
+2010-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writet1.c: Still more formatting tweaks.
+
 2010-11-14  Karl Berry  <karl@tug.org>
 
 	* writet1.c: endless formatting tweaks.
