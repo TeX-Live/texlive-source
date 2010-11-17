@@ -1,30 +1,26 @@
 
-/**********************************************************/
-/* t4ht.c                                2009-01-31-07:34 */
-/* Copyright (C) 1998--2009    Eitan M. Gurari            */
-/*                                                        */
-/* This work may be distributed and/or modified under the */
-/* conditions of the LaTeX Project Public License, either */
-/* version 1.3 of this license or (at your option) any    */
-/* later version. The latest version of this license is   */
-/* in                                                     */
-/*   http://www.latex-project.org/lppl.txt                */
-/* and version 1.3 or later is part of all distributions  */
-/* of LaTeX version 2003/12/01 or later.                  */
-/*                                                        */
-/* This work has the LPPL maintenance status "maintained".*/
-/*                                                        */
-/* This Current Maintainer of this work                   */
-/* is Eitan M. Gurari.                                    */
-/*                                                        */
-/* If you modify this program your changing its signature */
-/* with a directive of the following form will be         */
-/* appreciated.                                           */
-/*      #define PLATFORM "signature"                      */
-/*                                                        */
-/*                             gurari@cse.ohio-state.edu  */
-/*                 http://www.cse.ohio-state.edu/~gurari  */
-/**********************************************************/
+/* t4ht.c (2010-11-17-10:44), generated from tex4ht-t4ht.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 1998--2009 Eitan M. Gurari
+
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <http://tug.org/tex4ht>.
+%
+% If you modify this program, changing the
+% version identification would be appreciated.
+
+*/
 
 /* **********************************************
     Compiler options                            *
@@ -498,7 +494,7 @@ static char *  abs_addr( ARG_II( U_CHAR *, U_CHAR *) );
 
 
 static void execute_script(
-  ARG_V(struct script_struct*,const Q_CHAR *,const char *,const Q_CHAR *,const Q_CHAR *) );
+  ARG_V(struct script_struct*,const Q_CHAR *,const Q_CHAR *,const Q_CHAR *,const Q_CHAR *) );
 
 
 static struct script_struct  * filterGifScript(
@@ -932,7 +928,7 @@ static char *get_env_dir
   if(p == NULL)  return NULL;     
   strncpy(p, progname, i+1);                         
   (IGNORED) strcpy((char *) &p[i+1],
-                   "tex4ht.env");            
+                   "tex4ht.env");                    
   return p;
 }
 
@@ -1001,13 +997,13 @@ static FILE* open_file
 #ifdef ANSI
 #define SEP ,
 (
-                         const Q_CHAR *name SEP  const Q_CHAR *ext
+                         const C_CHAR *name SEP  const C_CHAR *ext
 )
 #undef SEP
 #else
 #define SEP ;
 (name,ext)
-                         const Q_CHAR *name SEP  const Q_CHAR *ext
+                         const C_CHAR *name SEP  const C_CHAR *ext
 ;
 #undef SEP
 #endif
@@ -1191,23 +1187,23 @@ static void strct
 #ifdef ANSI
 #define SEP ,
 (
-     Q_CHAR * str1 SEP 
-     const Q_CHAR * str2
+     C_CHAR * str1 SEP 
+     const C_CHAR * str2
 
 )
 #undef SEP
 #else
 #define SEP ;
 ( str1, str2 )
-     Q_CHAR * str1 SEP 
-     const Q_CHAR * str2
+     C_CHAR * str1 SEP 
+     const C_CHAR * str2
 
 ;
 #undef SEP
 #endif
 {   Q_CHAR * ch;
    ch = str1 + (int) strlen((char *) str1);
-   (IGNORED) strcpy((char *)  ch, (const char *) str2 );
+   (IGNORED) strcpy((char *)  ch, str2 );
 }
 
 
@@ -1283,7 +1279,7 @@ static BOOL  scan_until_end_str
 #ifdef ANSI
 #define SEP ,
 (
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1292,7 +1288,7 @@ static BOOL  scan_until_end_str
 #else
 #define SEP ;
 (str,n,flag,file)
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1325,7 +1321,7 @@ static BOOL  scan_until_str
 #ifdef ANSI
 #define SEP ,
 (
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1334,7 +1330,7 @@ static BOOL  scan_until_str
 #else
 #define SEP ;
 (str,n,flag,file)
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1368,7 +1364,7 @@ static BOOL  scan_str
 #ifdef ANSI
 #define SEP ,
 (
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          BOOL   flag SEP 
                          FILE*  file
 )
@@ -1376,7 +1372,7 @@ static BOOL  scan_str
 #else
 #define SEP ;
 (str,flag,file)
-                         const Q_CHAR   *str SEP 
+                         const C_CHAR   *str SEP 
                          BOOL   flag SEP 
                          FILE*  file
 ;
@@ -1459,15 +1455,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2010-11-17-10:44 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34)\n");
+   (IGNORED) printf("t4ht.c (2010-11-17-10:44)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2010-11-17-10:44 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2009-01-31-07:34 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2010-11-17-10:44 kpathsea)\n");
 #endif
 #endif
 
@@ -1740,7 +1736,7 @@ if( !file ){
           (IGNORED) printf("C:/tex4ht.env?\n");
       }
       file = f_open("C:/tex4ht.env",READ_TEXT_FLAGS);
-       (IGNORED) strcpy((char *) &env_loc[0], (char *) "C:/tex4ht.env");
+       (IGNORED) strcpy((char *) &env_loc[0], "C:/tex4ht.env");
       if( debug && file ){
         (IGNORED) printf(".......Open: C:/tex4ht.env\n"); }
    }
@@ -2108,6 +2104,7 @@ to_rec = from_rec;  from_rec = p;
   file_name = match[5];
   strcpy((char *) file_mode, 
 READ_BIN_FLAGS
+
 );
 }
 
