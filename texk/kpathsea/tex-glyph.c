@@ -30,16 +30,15 @@
 
 /* Support both cmr10.300pk and dpi300/cmr10.pk.  (Use the latter
    instead of dpi300\cmr10.pk since DOS supports /'s, but Unix doesn't
-   support \'s.  */
+   support \'s.)  */
 #define UNIX_BITMAP_SPEC "$KPATHSEA_NAME.$KPATHSEA_DPI$KPATHSEA_FORMAT"
 #define DPI_BITMAP_SPEC  "dpi$KPATHSEA_DPI/$KPATHSEA_NAME.$KPATHSEA_FORMAT"
 
-/* Look up FONTNAME at resolution DPI in PATH, with filename suffix
-   EXTENSION.  Return file found or NULL.  */
+/* Look up font $KPATHSEA_NAME at resolution $KPATHSEA_DPI in PATH,
+   with filename suffix EXTENSION.  Return file found or NULL.  */
 
 static string
-try_format (kpathsea kpse, const_string fontname,  unsigned dpi,
-            kpse_file_format_type format)
+try_format (kpathsea kpse, kpse_file_format_type format)
 {
   static const_string bitmap_specs[]
     = { UNIX_BITMAP_SPEC, DPI_BITMAP_SPEC, NULL };
@@ -48,8 +47,6 @@ try_format (kpathsea kpse, const_string fontname,  unsigned dpi,
   const_string *sfx;
   string ret = NULL;
   const_string path = kpse->format_info[format].path;
-  (void)dpi; /* -Wunused */
-  (void)fontname;  /* -Wunused */
   if (!path)
       path = kpathsea_init_format (kpse, format);
 
@@ -94,12 +91,12 @@ try_size (kpathsea kpse, const_string fontname,  unsigned dpi,
   kpathsea_xputenv_int (kpse, "KPATHSEA_DPI", dpi);
 
   /* Look for PK first (since it's more likely to be found), then GF.  */
-  ret = try_pk ? try_format (kpse, fontname, dpi, kpse_pk_format) : NULL;
+  ret = try_pk ? try_format (kpse, kpse_pk_format) : NULL;
   format_found = kpse_pk_format;
 
   if (ret == NULL && try_gf)
     {
-      ret = try_format (kpse, fontname, dpi, kpse_gf_format);
+      ret = try_format (kpse, kpse_gf_format);
       format_found = kpse_gf_format;
     }
 

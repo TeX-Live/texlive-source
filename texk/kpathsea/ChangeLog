@@ -1,3 +1,8 @@
+2010-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-glyph.c (try_format): Drop unused params fontname and dpi;
+	mention the use of $KPATHSEA_{NAME,DPI} from environment.
+
 2010-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update version number to 6.0.1dev.
