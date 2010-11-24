@@ -81,7 +81,7 @@ TEXMFSYSCONFIG = $SELFAUTOPARENT/texmf-config
 
 % User texmf trees are allowed as follows.
 % This used to be HOMETEXMF.
-% ~ expands to $USERPROFILE on Window, $HOME otherwise.
+% ~ expands to %USERPROFILE% on Window, $HOME otherwise.
 TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig stores variable runtime data.
