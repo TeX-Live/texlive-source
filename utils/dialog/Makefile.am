@@ -11,8 +11,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## The dialog-1.1-YYYYMMDD build system is good to build the binary,
 ## but lacks many required targets.
 ##
-## DIALOG_TREE is the unmodified source tree,
-## DIALOG_BUILD is the build tree (renamed after configure).
+## DIALOG_TREE is the unmodified source tree.
 
 # install dialog as tcdialog
 program_transform_name = 's,^,tc,'
