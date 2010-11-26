@@ -34956,40 +34956,41 @@ pdf_start_link_node: begin
     if pdf_action_type(pdf_link_action(p)) = pdf_action_user then begin
         print(" user");
         print_mark(pdf_action_user_tokens(pdf_link_action(p)));
-        return;
-    end;
-    if pdf_action_file(pdf_link_action(p)) <> null then begin
-        print(" file");
-        print_mark(pdf_action_file(pdf_link_action(p)));
-    end;
-    case pdf_action_type(pdf_link_action(p)) of
-    pdf_action_goto: begin
-        if pdf_action_named_id(pdf_link_action(p)) > 0 then begin
-            print(" goto name");
-            print_mark(pdf_action_id(pdf_link_action(p)));
-        end
-        else begin
-            print(" goto num");
-            print_int(pdf_action_id(pdf_link_action(p)))
+    end
+    else begin
+        if pdf_action_file(pdf_link_action(p)) <> null then begin
+            print(" file");
+            print_mark(pdf_action_file(pdf_link_action(p)));
         end;
-    end;
-    pdf_action_page: begin
-        print(" page");
-        print_int(pdf_action_id(pdf_link_action(p)));
-        print_mark(pdf_action_page_tokens(pdf_link_action(p)));
-    end;
-    pdf_action_thread: begin
-        if pdf_action_named_id(pdf_link_action(p)) > 0 then begin
-            print(" thread name");
-            print_mark(pdf_action_id(pdf_link_action(p)));
-        end
-        else begin
-            print(" thread num");
+        case pdf_action_type(pdf_link_action(p)) of
+        pdf_action_goto: begin
+            if pdf_action_named_id(pdf_link_action(p)) > 0 then begin
+                print(" goto name");
+                print_mark(pdf_action_id(pdf_link_action(p)));
+            end
+            else begin
+                print(" goto num");
+                print_int(pdf_action_id(pdf_link_action(p)))
+            end;
+        end;
+        pdf_action_page: begin
+            print(" page");
             print_int(pdf_action_id(pdf_link_action(p)));
+            print_mark(pdf_action_page_tokens(pdf_link_action(p)));
         end;
-    end;
-    othercases pdf_error("displaying", "unknown action type");
-    endcases;
+        pdf_action_thread: begin
+            if pdf_action_named_id(pdf_link_action(p)) > 0 then begin
+                print(" thread name");
+                print_mark(pdf_action_id(pdf_link_action(p)));
+            end
+            else begin
+                print(" thread num");
+                print_int(pdf_action_id(pdf_link_action(p)));
+            end;
+        end;
+        othercases pdf_error("displaying", "unknown action type");
+        endcases;
+    end
 end;
 pdf_end_link_node: print_esc("pdfendlink");
 pdf_dest_node: begin

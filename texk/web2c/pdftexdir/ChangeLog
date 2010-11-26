@@ -1,3 +1,8 @@
+2010-11-26  Heiko Oberdiek  <heiko.oberdiek@googlemail.com>
+
+	* pdftex.web (Display the whatsit...): avoid erroneous return.
+	http://sarovar.org/tracker/?func=detail&group_id=106&aid=4317&atid=493
+
 2010-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web (pdf_out_colorstack): There are no 'othercases'.
