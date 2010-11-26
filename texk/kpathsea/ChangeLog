@@ -1,3 +1,14 @@
+2010-11-27  Taco Hoekwater  <taco@elvenkind.com>
+
+	* db.c (kpathsea_db_search_list): one return list for everything,
+	else kpsewhich --all plain returns nothing, even though
+	kpsewhich plain works.  Report from Paul Isambert,
+	25 Nov 2010 19:09:21.
+
+2010-11-27  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.test: test this.
+
 2010-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex-glyph.c (try_format): Drop unused params fontname and dpi;

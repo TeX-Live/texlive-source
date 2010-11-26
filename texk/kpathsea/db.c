@@ -607,6 +607,9 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
     return NULL;
 
   done = false;
+  ret = XTALLOC1 (str_list_type);
+  *ret = str_list_init ();
+
   /* Handle each name. */
   for (n = 0; !done && names[n]; n++) {
       name = names[n];
@@ -661,9 +664,6 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
 
           /* We have an ls-R db.  Look up `try'.  */
           orig_dirs = db_dirs = hash_lookup (kpse->db, ctry);
-
-          ret = XTALLOC1 (str_list_type);
-          *ret = str_list_init ();
 
           /* For each filename found, see if it matches the path element.  For
              example, if we have .../cx/cmr10.300pk and .../ricoh/cmr10.300pk,
@@ -727,8 +727,8 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
       if (path != path_elt)
           free((string)path);
   }
-  return ret;
 
+  return ret;
 }
 
 #if defined(KPSE_COMPAT_API)

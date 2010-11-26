@@ -10,9 +10,11 @@ export TEXMFCNF
 
 ./kpsewhich --expand-var=\$TEXMFMAIN || exit 1
 
-BSTINPUTS=$srcdir/../tests/texmf \
-  ./kpsewhich plain.bst || exit 1
+TEXINPUTS=$srcdir/../tests/texmf \
+  ./kpsewhich --all plain || exit 1
 
 AFMFONTS=$srcdir/../tests/texmf \
   ./kpsewhich afmtest.afm || exit 1
 
+BSTINPUTS=$srcdir/../tests/texmf \
+  ./kpsewhich plain.bst || exit 1
