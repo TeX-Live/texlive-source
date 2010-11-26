@@ -689,44 +689,39 @@ static void t1_builtin_enc(void)
 {
     int i, a, b, c, counter = 0;
     char *r, *p;
-   /*
-    * At this moment "/Encoding" is the prefix of t1_line_array
-    */
-    if (t1_suffix("def")) { /* predefined encoding */
+    /* At this moment "/Encoding" is the prefix of t1_line_array */
+    for (i = 0; i < 256; i++)
+        t1_builtin_glyph_names[i] = (char *) notdef;
+    if (t1_suffix("def")) {     /* predefined encoding */
         sscanf(t1_line_array + strlen("/Encoding"), "%256s", t1_buf_array);
         if (strcmp(t1_buf_array, "StandardEncoding") == 0) {
-            for (i = 0; i < 256; i++)
-                if (standard_glyph_names[i] == notdef)
-                    t1_builtin_glyph_names[i] = (char*) notdef;
-                else
-                    t1_builtin_glyph_names[i] = xstrdup(standard_glyph_names[i]);
             t1_encoding = ENC_STANDARD;
+            for (i = 0; i < 256; i++) {
+                if (standard_glyph_names[i] != notdef)
+                    t1_builtin_glyph_names[i] = xstrdup(standard_glyph_names[i]);
+            }
+            return;
         }
-        else
-            pdftex_fail("cannot subset font (unknown predefined encoding `%s')",
-                        t1_buf_array);
-        return;
-    } else
-        t1_encoding = ENC_BUILTIN;
-   /*
-    * At this moment "/Encoding" is the prefix of t1_line_array, and the encoding is
-    * not a predefined encoding
-    *
-    * We have two possible forms of Encoding vector. The first case is
-    *
-    *     /Encoding [/a /b /c...] readonly def
-    *
-    * and the second case can look like
-    *
-    *     /Encoding 256 array 0 1 255 {1 index exch /.notdef put} for
-    *     dup 0 /x put
-    *     dup 1 /y put
-    *     ...
-    *     readonly def
-    */
-    for (i = 0; i < 256; i++)
-        t1_builtin_glyph_names[i] = (char*) notdef;
-    if (t1_prefix("/Encoding [") || t1_prefix("/Encoding[")) { /* the first case */
+        pdftex_fail("cannot subset font (unknown predefined encoding `%s')",
+                    t1_buf_array);
+    }
+    /* At this moment "/Encoding" is the prefix of t1_line_array, and the encoding is
+     * not a predefined encoding.
+     *
+     * We have two possible forms of Encoding vector. The first case is
+     *
+     *     /Encoding [/a /b /c...] readonly def
+     *
+     * and the second case can look like
+     *
+     *     /Encoding 256 array 0 1 255 {1 index exch /.notdef put} for
+     *     dup 0 /x put
+     *     dup 1 /y put
+     *     ...
+     *     readonly def
+     */
+    t1_encoding = ENC_BUILTIN;
+    if (t1_prefix("/Encoding [") || t1_prefix("/Encoding[")) {  /* the first case */
         r = strchr(t1_line_array, '[') + 1;
         skip(r, ' ');
         for (;;) {
@@ -1180,7 +1175,8 @@ static void t1_subset_ascii_part(void)
     if (t1_encoding == ENC_STANDARD)
         t1_puts("/Encoding StandardEncoding def\n");
     else {
-        t1_puts("/Encoding 256 array\n0 1 255 {1 index exch /.notdef put} for\n");
+        t1_puts
+            ("/Encoding 256 array\n0 1 255 {1 index exch /.notdef put} for\n");
         for (i = 0, j = 0; i < 256; i++) {
             if (is_used_char(i) && t1_glyph_names[i] != notdef) {
                 j++;
