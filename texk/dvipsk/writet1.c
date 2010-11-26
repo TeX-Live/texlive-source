@@ -1432,10 +1432,19 @@ static void t1_mark_glyphs(void)
 static void t1_check_unusual_charstring(void)
 {
     char *p = strstr(t1_line_array, charstringname) + strlen(charstringname);
+    char *q;
     int i;
     /* if no number follows "/CharStrings", let's read the next line */
     if (sscanf(p, "%i", &i) != 1) {
+        /* pdftex_warn("no number found after `%s', I assume it's on the next line",
+                    charstringname); */
         strcpy(t1_buf_array, t1_line_array);
+
+        /* t1_getline always appends EOL to t1_line_array; let's change it to
+         * space before appending the next line
+         */
+        *(strend(t1_buf_array) - 1) = ' ';
+
         t1_getline();
         strcat(t1_buf_array, t1_line_array);
         strcpy(t1_line_array, t1_buf_array);
@@ -1455,8 +1464,8 @@ static void t1_subset_charstrings(void)
     */
     t1_check_unusual_charstring();
 
-    cs_size_pos = strstr(t1_line_array, charstringname) + strlen(charstringname)
-        - t1_line_array + 1;
+    cs_size_pos = strstr(t1_line_array, charstringname)
+                  + strlen(charstringname) - t1_line_array + 1;
     /* cs_size_pos points to the number indicating
        dict size after "/CharStrings" */
     cs_size = t1_scan_num(t1_line_array + cs_size_pos, 0);

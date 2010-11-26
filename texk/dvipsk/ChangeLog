@@ -1,3 +1,8 @@
+2010-11-26  Thanh Han The  <thanh@river-valley.org>
+
+	* writet1.c (t1_check_unusual_charstring): switch EOL to space
+	before appending.
+
 2010-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c: Still more formatting tweaks.
