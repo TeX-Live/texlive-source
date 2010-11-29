@@ -1,5 +1,16 @@
 2010-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* writet1.c: Further reduce diffs against pdftex's writet1.c.
+	Declare t1_encoding as enum instead of int.
+	Change t1_builtin_enc() from void to char **.
+
+	* writet1.c, protos.h: Replace void load_enc(char *, const char **)
+	by char **load_enc_file(char *).
+	* download.c (getEncoding): Adapt, and change result to non-const.
+	Somewhat better use of DOWNLOAD_USING_PDFTEX.
+
+2010-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* writet1.c (t1_check_unusual_charstring): Drop unused variable.
 
 2010-11-26  Peter Breitenlohner  <peb@mppmu.mpg.de>

@@ -328,6 +328,7 @@ download(charusetype *p, int psfont)
    fprintf(bitfile, "%%EndDVIPSBitmapFont\n");
 }
 
+#ifdef DOWNLOAD_USING_PDFTEX
 /*
  *   Magic code to deal with PostScript font partial downloading.
  *   We track the encodings we've seen so far and keep them in these
@@ -336,14 +337,14 @@ download(charusetype *p, int psfont)
 static struct seenEncodings {
    struct seenEncodings *next;
    const char *name;
-   const char **glyphs;
+   char **glyphs;
 } *seenEncodings;
-#define MAX_CHAR_CODE 255
+
 /*
  *   Load a new encoding and return the array of glyphs as a vector.
  *   Linear search.
  */
-static const char **getEncoding(char *encoding) {
+static char **getEncoding(char *encoding) {
    struct seenEncodings *p = seenEncodings;
    while (p != 0)
       if (strcmp(encoding, p->name) == 0)
@@ -351,15 +352,11 @@ static const char **getEncoding(char *encoding) {
       else
          p = p->next;
    if (p == 0) {
-      int i;
       p = (struct seenEncodings *)mymalloc(sizeof(struct seenEncodings));
       p->next = seenEncodings;
       seenEncodings = p;
       p->name = xstrdup(encoding);
-      p->glyphs = (const char **)mymalloc((MAX_CHAR_CODE+1) * sizeof(char *));
-      for (i=0; i<=MAX_CHAR_CODE; i++)
-         p->glyphs[i] = ".notdef";
-      load_enc(encoding, p->glyphs);
+      p->glyphs = load_enc_file(encoding);
    }
    return p->glyphs;
 }
@@ -375,7 +372,6 @@ static const char **getEncoding(char *encoding) {
  *   the memory allocated for this is in extraGlyphSpace.
  */
 static char *extraGlyphs = 0;
-#ifdef DOWNLOAD_USING_PDFTEX
 static char *extraGlyphSpace = 0;
 static int extraGlyphSize = 0;
 static int glyphSizeUsed = 0;
@@ -423,9 +419,7 @@ static void addGlyph(const char *glyphName) {
 static void
 downpsfont(charusetype *p, charusetype *all)
 {
-#ifdef DOWNLOAD_USING_PDFTEX
     static unsigned char grid[256];
-#endif
     int GridCount;
     register int b;
     register halfword bit;
@@ -470,7 +464,7 @@ downpsfont(charusetype *p, charusetype *all)
         curfnt = all->fd;
 #ifdef DOWNLOAD_USING_PDFTEX
         if (curfnt->resfont->Vectfile) {
-	   const char **glyphs = getEncoding(curfnt->resfont->Vectfile);
+	   char **glyphs = getEncoding(curfnt->resfont->Vectfile);
            c = curfnt->chardesc + 255;
            cc = 255;
            for (b=15; b>=0; b--) {
@@ -506,7 +500,11 @@ downpsfont(charusetype *p, charusetype *all)
             GridCount++;
         }
     }
-    if(GridCount!=0 || extraGlyphs) {
+    if(GridCount!=0
+#ifdef DOWNLOAD_USING_PDFTEX
+       || extraGlyphs
+#endif
+       ) {
         newline();
         if (! disablecomments)
            fprintf(bitfile, "%%%%BeginFont: %s\n",  rf->PSname);

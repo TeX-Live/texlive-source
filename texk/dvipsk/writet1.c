@@ -159,12 +159,10 @@ static const char *standard_glyph_names[256] = {
 char **t1_glyph_names;
 char *t1_builtin_glyph_names[256];
 static boolean read_encoding_only;
-static int t1_encoding;
 
 static char charstringname[] = "/CharStrings";
 
-#define ENC_STANDARD  0
-#define ENC_BUILTIN   1
+enum { ENC_STANDARD, ENC_BUILTIN } t1_encoding;
 
 #define T1_BUF_SIZE      0x10
 #define ENC_BUF_SIZE     0x1000
@@ -327,15 +325,21 @@ static void enc_getline(void)
         goto restart;
 }
 
-void load_enc(char *enc_name, const char **glyph_names)
+/* read encoding from .enc file, return glyph_names array, or pdffail() */
+
+char **load_enc_file(char *enc_name)
 {
     char buf[ENC_BUF_SIZE], *p, *r;
-    int names_count;
+    int i, names_count;
+    char **glyph_names;
     set_cur_file_name(enc_name);
+    glyph_names = (char **) mymalloc(256 * sizeof(char *));
+    for (i = 0; i < 256; i++)
+        glyph_names[i] = (char *) notdef;
     if (!enc_open()) {
         pdftex_warn("cannot open encoding file for reading");
         cur_file_name = NULL;
-        return;
+        return glyph_names;
     }
     t1_log("{");
     t1_log(cur_file_name = full_file_name());
@@ -376,6 +380,7 @@ void load_enc(char *enc_name, const char **glyph_names)
     enc_close();
     t1_log("}");
     cur_file_name = NULL;
+    return glyph_names;
 }
 
 static void t1_check_pfa(void)
@@ -683,24 +688,25 @@ static void copy_glyph_names(char **glyph_names, int a, int b)
     }
 }
 
-/* read encoding from Type1 font file or pdffail() */
+/* read encoding from Type1 font file, return glyph_names array, or pdffail() */
 
-static void t1_builtin_enc(void)
+static char **t1_builtin_enc(void)
 {
     int i, a, b, c, counter = 0;
-    char *r, *p;
+    char *r, *p, **glyph_names;
     /* At this moment "/Encoding" is the prefix of t1_line_array */
+    glyph_names = t1_builtin_glyph_names;
     for (i = 0; i < 256; i++)
-        t1_builtin_glyph_names[i] = (char *) notdef;
+        glyph_names[i] = (char *) notdef;
     if (t1_suffix("def")) {     /* predefined encoding */
         sscanf(t1_line_array + strlen("/Encoding"), "%256s", t1_buf_array);
         if (strcmp(t1_buf_array, "StandardEncoding") == 0) {
             t1_encoding = ENC_STANDARD;
             for (i = 0; i < 256; i++) {
                 if (standard_glyph_names[i] != notdef)
-                    t1_builtin_glyph_names[i] = xstrdup(standard_glyph_names[i]);
+                    glyph_names[i] = xstrdup(standard_glyph_names[i]);
             }
-            return;
+            return glyph_names;
         }
         pdftex_fail("cannot subset font (unknown predefined encoding `%s')",
                     t1_buf_array);
@@ -734,7 +740,7 @@ static void t1_builtin_enc(void)
                 if (counter > 255)
                     pdftex_fail("encoding vector contains more than 256 names");
                 if (strcmp(t1_buf_array, notdef) != 0)
-                    t1_builtin_glyph_names[counter] = xstrdup(t1_buf_array);
+                    glyph_names[counter] = xstrdup(t1_buf_array);
                 counter++;
             }
             if (*r != 10 && *r != '%') {
@@ -762,7 +768,7 @@ static void t1_builtin_enc(void)
             if (sscanf(p, "dup %i%256s put", &i, t1_buf_array) == 2 &&
                 *t1_buf_array == '/' && valid_code(i)) {
                 if (strcmp(t1_buf_array + 1, notdef) != 0)
-                    t1_builtin_glyph_names[i] = xstrdup(t1_buf_array + 1);
+                    glyph_names[i] = xstrdup(t1_buf_array + 1);
                 p = strstr(p, " put") + strlen(" put");
                 skip(p, ' ');
             }
@@ -771,7 +777,7 @@ static void t1_builtin_enc(void)
              */
             else if (sscanf(p, "dup dup %i exch %i get put", &b, &a) == 2
                      && valid_code(a) && valid_code(b)) {
-                copy_glyph_names(t1_builtin_glyph_names, a, b);
+                copy_glyph_names(glyph_names, a, b);
                 p = strstr(p, " get put") + strlen(" get put");
                 skip(p, ' ');
             }
@@ -782,7 +788,7 @@ static void t1_builtin_enc(void)
                             &a, &c, &b) == 3
                      && valid_code(a) && valid_code(b) && valid_code(c)) {
                 for (i = 0; i < c; i++)
-                    copy_glyph_names(t1_builtin_glyph_names, a + i, b + i);
+                    copy_glyph_names(glyph_names, a + i, b + i);
                 p = strstr(p, " putinterval") + strlen(" putinterval");
                 skip(p, ' ');
             }
@@ -791,7 +797,7 @@ static void t1_builtin_enc(void)
              */
             else if ((p == t1_line_array || (p > t1_line_array && p[-1] == ' '))
                      && strcmp(p, "def\n") == 0)
-                return;
+                return glyph_names;
             /*
                skip an unrecognizable word
              */
@@ -802,6 +808,7 @@ static void t1_builtin_enc(void)
             }
         }
     }
+    return glyph_names;
 }
 
 static void t1_check_end(void)
@@ -1163,11 +1170,10 @@ static void t1_subset_ascii_part(void)
         t1_putline();
         t1_getline();
     }
-    t1_builtin_enc();
     if (is_reencoded(fm_cur))
         t1_glyph_names = external_enc();
     else
-        t1_glyph_names = t1_builtin_glyph_names;
+        t1_glyph_names = t1_builtin_enc();
     if (is_included(fm_cur) && is_subsetted(fm_cur)) {
         make_subset_tag(fm_cur, t1_glyph_names);
         update_subset_tag();

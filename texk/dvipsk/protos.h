@@ -225,7 +225,7 @@ extern long unpack(unsigned char *pack, unsigned short *raster,
 extern Boolean virtualfont(fontdesctype *curfnt);
 
 /* prototypes for functions from writet1.c */
-extern void load_enc(char *, const char **);
+extern char **load_enc_file(char *);
 extern boolean t1_subset_2(char *, unsigned char *, char *);
 
 /*********** global variables ***********/
