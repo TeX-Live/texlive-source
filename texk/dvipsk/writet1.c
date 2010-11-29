@@ -1428,7 +1428,6 @@ static void t1_mark_glyphs(void)
 static void t1_check_unusual_charstring(void)
 {
     char *p = strstr(t1_line_array, charstringname) + strlen(charstringname);
-    char *q;
     int i;
     /* if no number follows "/CharStrings", let's read the next line */
     if (sscanf(p, "%i", &i) != 1) {

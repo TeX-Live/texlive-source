@@ -1,3 +1,7 @@
+2010-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writet1.c (t1_check_unusual_charstring): Drop unused variable.
+
 2010-11-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c: Still more minor tweaks.
