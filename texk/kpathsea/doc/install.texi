@@ -1147,7 +1147,7 @@ Sets the resolution of the generated font to @var{num}.
 @item --mfmode @var{name}
 Sets the Metafont mode to @var{name}.
 @item --bdpi @var{num}
-Sets the the ``base dpi'' for the font.  This must match the mode being
+Sets the ``base dpi'' for the font.  This must match the mode being
 used.
 @item --mag @var{string}
 A ``magstep'' string suitable for the Metafont @code{mag} variable.

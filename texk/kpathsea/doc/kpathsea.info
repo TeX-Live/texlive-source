@@ -1063,8 +1063,8 @@ also be passed:
      Sets the Metafont mode to NAME.
 
 `--bdpi NUM'
-     Sets the the "base dpi" for the font.  This must match the mode
-     being used.
+     Sets the "base dpi" for the font.  This must match the mode being
+     used.
 
 `--mag STRING'
      A "magstep" string suitable for the Metafont `mag' variable.  This
@@ -2237,13 +2237,11 @@ to `xA1y:xB1y:xA2y:xB2y'.
    This feature can be used to implement multiple TeX hierarchies, by
 assigning a brace list to `$TEXMF', as mentioned in `texmf.in'.
 
-   You can also use the path separator in stead of the comma.  The last
+   You can also use the path separator instead of the comma.  The last
 example could have been written `x{A:B}{1:2}y'.
 
    Brace expansion is implemented in the source file
-`kpathsea/expand.c'.  It is a modification of the Bash sources, and is
-thus covered by the GNU General Public License, rather than the Library
-General Public License that covers the rest of Kpathsea.
+`kpathsea/expand.c'.
 
 
 File: kpathsea.info,  Node: KPSE_DOT expansion,  Next: Subdirectory expansion,  Prev: Brace expansion,  Up: Path expansion
@@ -4705,58 +4703,58 @@ Node: mktex scripts34055
 Node: mktex configuration35332
 Node: mktex script names41151
 Node: mktex script arguments42542
-Node: Installation testing43432
-Node: Security43796
-Node: TeX directory structure46363
-Node: unixtex.ftp50785
-Node: Reporting bugs52119
-Node: Bug checklist52854
-Node: Mailing lists56551
-Node: Debugging57760
-Node: Logging62838
-Node: Common problems64708
-Node: Unable to find files65539
-Node: Slow path searching67950
-Node: Unable to generate fonts69327
-Node: TeX or Metafont failing71836
-Node: Empty Makefiles73715
-Node: XtStrings74952
-Node: dlopen75788
-Node: ShellWidgetClass76606
-Node: Pointer combination warnings78238
-Node: Path searching78627
-Node: Searching overview79274
-Node: Path sources82670
-Node: Config files83741
-Node: Path expansion87668
-Node: Default expansion88617
-Node: Variable expansion90687
-Node: Tilde expansion92090
-Node: Brace expansion93070
-Node: KPSE_DOT expansion94175
-Node: Subdirectory expansion94688
-Node: Filename database97039
-Node: ls-R98093
-Node: Filename aliases100987
-Node: Database format102165
-Node: Invoking kpsewhich103178
-Node: Path searching options104124
-Node: Specially-recognized files112288
-Node: Auxiliary tasks113644
-Node: Standard options115469
-Node: TeX support115825
-Node: Supported file formats117116
-Node: File lookup124633
-Node: Glyph lookup126382
-Node: Basic glyph lookup127506
-Node: Fontmap128385
-Node: Fallback font131002
-Node: Suppressing warnings131915
-Node: Programming133020
-Node: Programming overview133533
-Node: Calling sequence136227
-Node: Program-specific files142750
-Node: Programming with config files143773
-Node: Index145085
+Node: Installation testing43428
+Node: Security43792
+Node: TeX directory structure46359
+Node: unixtex.ftp50781
+Node: Reporting bugs52115
+Node: Bug checklist52850
+Node: Mailing lists56547
+Node: Debugging57756
+Node: Logging62834
+Node: Common problems64704
+Node: Unable to find files65535
+Node: Slow path searching67946
+Node: Unable to generate fonts69323
+Node: TeX or Metafont failing71832
+Node: Empty Makefiles73711
+Node: XtStrings74948
+Node: dlopen75784
+Node: ShellWidgetClass76602
+Node: Pointer combination warnings78234
+Node: Path searching78623
+Node: Searching overview79270
+Node: Path sources82666
+Node: Config files83737
+Node: Path expansion87664
+Node: Default expansion88613
+Node: Variable expansion90683
+Node: Tilde expansion92086
+Node: Brace expansion93066
+Node: KPSE_DOT expansion93991
+Node: Subdirectory expansion94504
+Node: Filename database96855
+Node: ls-R97909
+Node: Filename aliases100803
+Node: Database format101981
+Node: Invoking kpsewhich102994
+Node: Path searching options103940
+Node: Specially-recognized files112104
+Node: Auxiliary tasks113460
+Node: Standard options115285
+Node: TeX support115641
+Node: Supported file formats116932
+Node: File lookup124449
+Node: Glyph lookup126198
+Node: Basic glyph lookup127322
+Node: Fontmap128201
+Node: Fallback font130818
+Node: Suppressing warnings131731
+Node: Programming132836
+Node: Programming overview133349
+Node: Calling sequence136043
+Node: Program-specific files142566
+Node: Programming with config files143589
+Node: Index144901
 
 End Tag Table
