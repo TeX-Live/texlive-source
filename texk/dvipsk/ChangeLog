@@ -1,6 +1,6 @@
 2010-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* writet1.c: Still more tweaks.
+	* writet1.c: Still more tweaks. Remove unused code and vars.
 
 2010-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -24,15 +24,10 @@ along with this program.  If not, see  <http://www.gnu.org/licenses/>.  */
 #define fm_extend(f)        0
 #undef  fm_slant
 #define fm_slant(f)         0
-#undef  is_reencoded
-#define is_reencoded(f)     (cur_enc_name != NULL)
 #undef  is_subsetted
 #define is_subsetted(f)     true
-#undef  is_included
-#define is_included(f)      true
 #undef  set_cur_file_name
 #define set_cur_file_name(s)    cur_file_name = s
-#define external_enc()      ext_glyph_names
 #define full_file_name()    cur_file_name
 #define is_used_char(c)     (grid[c] == 1)
 #define end_last_eexec_line()       \
@@ -51,14 +46,12 @@ along with this program.  If not, see  <http://www.gnu.org/licenses/>.  */
 #define pdfmovechars 0
 #endif /* SHIFTLOWCHARS */
 #define extra_charset()     dvips_extra_charset
-#define make_subset_tag(a, b)
+#define make_subset_tag(a)
 #define update_subset_tag()
 
 static char *dvips_extra_charset;
 static char *cur_file_name;
-static char *cur_enc_name;
 static unsigned char *grid;
-static char *ext_glyph_names[256];
 static char print_buf[PRINTF_BUF_SIZE];
 static int  hexline_length;
 static char notdef[] = ".notdef";
@@ -623,10 +616,8 @@ static void t1_check_block_len(boolean decrypt)
 static void t1_start_eexec(void)
 {
     int i;
-    if (is_included(fm_cur)) {
-        get_length1();
-        save_offset();
-    }
+    get_length1();
+    save_offset();
     if (!t1_pfa)
         t1_check_block_len(false);
     for (t1_line_ptr = t1_line_array, i = 0; i < 4; i++) {
@@ -634,17 +625,14 @@ static void t1_start_eexec(void)
         *t1_line_ptr++ = 0;
     }
     t1_eexec_encrypt = true;
-    if (is_included(fm_cur))
-        t1_putline(); /* to put the first four bytes */
+    t1_putline();               /* to put the first four bytes */
 }
 
 static void t1_stop_eexec(void)
 {
     int c;
-    if (is_included(fm_cur)) {
-        get_length2();
-        save_offset();
-    }
+    get_length2();
+    save_offset();
     end_last_eexec_line();
     if (!t1_pfa)
         t1_check_block_len(true);
@@ -1168,13 +1156,9 @@ static void t1_subset_ascii_part(void)
         t1_putline();
         t1_getline();
     }
-    if (is_reencoded(fm_cur))
-        t1_glyph_names = external_enc();
-    else
-        t1_glyph_names = t1_builtin_enc();
-    if (is_included(fm_cur) && is_subsetted(fm_cur)) {
-        make_subset_tag(fm_cur, t1_glyph_names);
-        update_subset_tag();
+    t1_glyph_names = t1_builtin_enc();
+    if (is_subsetted(fd_cur->fm)) {
+        make_subset_tag(fd_cur);
     }
     if (t1_encoding == ENC_STANDARD)
         t1_puts("/Encoding StandardEncoding def\n");
@@ -1522,14 +1506,7 @@ static void t1_subset_end(void)
 static void writet1(void)
 {
     read_encoding_only = false;
-    if (!is_included(fm_cur)) { /* scan parameters from font file */
-        if (!t1_open_fontfile("{"))
-            return;
-        t1_scan_only();
-        t1_close_font_file("}");
-        return;
-    }
-    if (!is_subsetted(fm_cur)) { /* include entire font */
+    if (!is_subsetted(fd_cur->fm)) {    /* include entire font */
         if (!t1_open_fontfile("<<"))
             return;
         t1_include();
@@ -1551,16 +1528,10 @@ static void writet1(void)
 
 boolean t1_subset_2(char *fontfile, unsigned char *g, char *extraGlyphs)
 {
-    int i;
-    for (i = 0; i < 256; i++)
-        ext_glyph_names[i] = (char*) notdef;
     grid = g;
     cur_file_name = fontfile;
     hexline_length = 0;
     dvips_extra_charset = extraGlyphs;
     writet1();
-    for (i = 0; i < 256; i++)
-        if (ext_glyph_names[i] != notdef)
-            free(ext_glyph_names[i]);
     return 1; /* note:  there *is* no unsuccessful return */
 }
