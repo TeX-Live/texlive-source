@@ -5,6 +5,9 @@
 // Copyright 2001-2003 Glyph & Cog, LLC
 //
 //========================================================================
+//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
+//  See top-level ChangeLog for a list of all modifications
+//========================================================================
 
 #include <aconf.h>
 
@@ -243,8 +246,11 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
 	}
 	if (!(n1 == 2 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' &&
 	      tok2[0] == '<' && tok2[n2 - 1] == '>')) {
-	  error(-1, "Illegal entry in bfchar block in ToUnicode CMap");
-	  continue;
+	  if (!(n1 == 4 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' && tok1[1] == '0' && tok1[2] == '0' &&
+	        tok2[0] == '<' && tok2[n2 - 1] == '>')) {
+	    error(-1, "Illegal entry in bfchar block in ToUnicode CMap");
+	    continue;
+	  }
 	}
 	tok1[n1 - 1] = tok2[n2 - 1] = '\0';
 	if (sscanf(tok1 + 1, "%x", &code1) != 1) {
@@ -266,8 +272,10 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
 	  error(-1, "Illegal entry in bfrange block in ToUnicode CMap");
 	  break;
 	}
-	if (!(n1 == 2 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' &&
-	      n2 == 2 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>')) {
+	if (!(((n1 == 2 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>') ||
+	       (n1 == 4 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' && tok1[1] == '0' && tok1[2] == '0')) &&
+	      ((n2 == 2 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>') ||
+	       (n2 == 4 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>' && tok1[1] == '0' && tok1[2] == '0')))) {
 	  error(-1, "Illegal entry in bfrange block in ToUnicode CMap");
 	  continue;
 	}

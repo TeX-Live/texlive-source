@@ -1,3 +1,10 @@
+2010-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-60-bug-fix (new): Bug fix for 4-digit bfrange values in
+	ToUnicode CMap; backport from poppler-0.14.5.
+	Mail from Thanh Han The, Wed, 1 Dec 2010 08:57:29, ref:
+	http://sarovar.org/tracker/index.php?func=detail&aid=4321&group_id=106&atid=493
+
 2010-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-pl5 (new): Official 3.02pl5 patch plus change of
