@@ -1,10 +1,10 @@
 pdfTeX
 ======
 
-README for version 3.1415926-1.40.10
+README for version 3.1415926-1.40.11
 ====================================
 
-This directory contains the version 1.40.10 of pdfTeX, an extended version
+This directory contains the version 1.40.11 of pdfTeX, an extended version
 of eTeX that can create PDF directly from TeX source files and enhance the
 result of TeX typesetting with the help of PDF. When PDF output is not
 selected, pdfTeX produces normal DVI output, otherwise it produces PDF
@@ -13,8 +13,9 @@ project is to investigate alternative justification algorithms, optionally
 making use of multiple master fonts.
 
 pdfTeX is based on the original eTeX sources and Web2c, and has been
-successfully compiled on Unix, Win32 and DOS systems. It is still under
-development and features may change; it produces reasonable PDF code.
+successfully compiled on Unix, Win32 and DOS systems. It is no longer
+under active development and only bug fixes are to be expected; it produces
+reasonable PDF code.
 
 See the file NEWS for changes to the program.
 
@@ -33,7 +34,7 @@ http://www.ntg.nl/mailman/listinfo/ntg-pdftex
 LEGAL ISSUES
 ============
 
-pdfTeX is copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
+pdfTeX is copyright (c) 1996-2010 Han The Thanh, <thanh@pdftex.org>
 
 pdfTeX is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software

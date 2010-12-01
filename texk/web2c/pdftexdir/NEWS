@@ -1,4 +1,23 @@
 ---------------------------------------------------
+pdfTeX 3.1415926-1.40.11 was released on 2010-07-28
+---------------------------------------------------
+- bugfixes:
+  - ttf2afm reported wrong ItalicAngle for some fonts
+  - detect/prevent wrong arguments of \pdfsetmatrix [#4301]
+  - check for pdf nodes in dvi mode
+  - whitespace should be inserted when concatenating contents stream [#4307]
+  - pdftex fails to include seemingly good PDF [#4309]
+  - wrong description of \pdfelapsedtime in manual [#4300]
+  - \pdfgentounicode conflicts with cmap+\pdffontattr [#4291]
+  - \rightmarginkern doesn't work for last lines [#4292]
+  - \pdfximagebbox wrong for PDF files with /Rotate != 0 [#939]
+  - \leftmarginkern & \rightmarginkern doesn't work with box registers > 255 [#4312]
+
+- changes:
+  - pdf inclusion: removed the requirement that named resources must be indirect (#4299)
+  - added debug messages for pdftex_fail()
+
+---------------------------------------------------
 pdfTeX 3.1415926-1.40.10 was released on 2009-11-30
 ---------------------------------------------------
 - sync with TL09
