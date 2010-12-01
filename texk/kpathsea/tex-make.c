@@ -195,24 +195,26 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
   }
 #elif defined (MSDOS) && !defined(__DJGPP__)
 #error Implement new MSDOS mktex call interface here
-#elif defined (WIN32)
-  { /* spawnvp(_P_NOWAIT, ...) and pipe --ak 2002/12/15 */
+#else /* WIN32 or Unix */
+  {
+#if defined (WIN32)
+    /* spawnvp(_P_NOWAIT, ...) and pipe --ak 2002/12/15 */
 
-    int nexitcode = STILL_ACTIVE;
+    unsigned long nexitcode = STILL_ACTIVE;
     HANDLE hchild;
     int hstdout, childpipe[2];
-    int hstderr;
+    int hstderr = -1;
     FILE *Hnul = NULL;
+
+    fn = NULL;
 
     if(_pipe(childpipe, 1024, O_TEXT | _O_NOINHERIT) == -1) {
       perror("kpathsea: pipe()");
-      fn = NULL;
       goto labeldone;
     }
 
     hstdout = _dup(fileno(stdout));
     if(_dup2(childpipe[1], fileno(stdout)) != 0) {
-      fn = NULL;
       close(hstdout);
       close(childpipe[0]);
       close(childpipe[1]);
@@ -232,13 +234,12 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
       }
     }
     fprintf(stderr, "\nThe command name is %s\n", fullbin);
-    hchild = (HANDLE)spawnvp(_P_NOWAIT, fullbin, args);
+    hchild = (HANDLE)spawnvp(_P_NOWAIT, fullbin, (const char * const *) args);
 
     _dup2(hstdout, fileno(stdout));
     close(hstdout);
 
     if((int)hchild == -1) {
-      fn = NULL;
       close(childpipe[0]);
       goto labeldone;
     }
@@ -257,7 +258,7 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
           free(fn);
           fn = newfn;
         }
-        if(!GetExitCodeProcess((HANDLE)hchild, (unsigned long*)&nexitcode)) {
+        if(!GetExitCodeProcess(hchild, &nexitcode)) {
           fn = NULL;
           close(childpipe[0]);
           goto labeldone;
@@ -272,31 +273,7 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
        close(hstderr);
        fclose(Hnul);
     }
-
-    if (fn) {
-      len = strlen(fn);
-
-      /* Remove trailing newlines and returns.  */
-      while (len && (fn[len - 1] == '\n' || fn[len - 1] == '\r')) {
-        fn[len - 1] = '\0';
-        len--;
-      }
-
-      ret = len == 0 ? NULL : kpathsea_readable_file (kpse, fn);
-      if (!ret && len > 1) {
-        WARNING2("kpathsea: %s output `%s' instead of a filename",
-                 args[0], fn);
-      }
-
-      /* Free the name if we're not returning it.  */
-      if (fn != ret)
-        free (fn);
-    } else {
-      ret = NULL;
-    }
-  }
-#else
-  {
+#else /* !WIN32 */
     /* Standard input for the child.  Set to /dev/null */
     int childin;
     /* Standard output for the child, what we're interested in. */
@@ -396,6 +373,7 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
       /* We don't really care about the exit status at this point. */
       wait(NULL);
     }
+#endif /* !WIN32 */
 
     if (fn) {
       len = strlen(fn);
@@ -415,11 +393,9 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
       /* Free the name if we're not returning it.  */
       if (fn != ret)
         free (fn);
-    } else {
-      ret = NULL;
     }
   }
-#endif
+#endif /* WIN32 or Unix */
 
   if (ret == NULL)
       misstex (kpse, format, args);
