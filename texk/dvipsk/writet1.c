@@ -333,14 +333,12 @@ char **load_enc_file(char *enc_name)
     int i, names_count;
     char **glyph_names;
     set_cur_file_name(enc_name);
+    if (!enc_open()) {
+        pdftex_fail("cannot open encoding file for reading");
+    }
     glyph_names = (char **) mymalloc(256 * sizeof(char *));
     for (i = 0; i < 256; i++)
         glyph_names[i] = (char *) notdef;
-    if (!enc_open()) {
-        pdftex_warn("cannot open encoding file for reading");
-        cur_file_name = NULL;
-        return glyph_names;
-    }
     t1_log("{");
     t1_log(cur_file_name = full_file_name());
     enc_getline();

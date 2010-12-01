@@ -1,3 +1,7 @@
+2010-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writet1.c: Still more tweaks.
+
 2010-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c: Further reduce diffs against pdftex's writet1.c.

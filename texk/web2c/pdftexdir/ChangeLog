@@ -1,3 +1,8 @@
+2010-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writet1.c: Drop unreachable code (after pdftex_fail).
+	Drop unused free_glyph_names() function.
+
 2010-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c (t1_check_unusual_charstring): Drop unused variable.

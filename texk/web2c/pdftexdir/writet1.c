@@ -237,8 +237,6 @@ char **load_enc_file(char *enc_name)
     set_cur_file_name(enc_name);
     if (!enc_open()) {
         pdftex_fail("cannot open encoding file for reading");
-        cur_file_name = NULL;
-        return NULL;
     }
     glyph_names = xtalloc(256, char *);
     for (i = 0; i < 256; i++)
@@ -284,18 +282,6 @@ char **load_enc_file(char *enc_name)
     cur_file_name = NULL;
     return glyph_names;
 }
-
-#if 0 /* unused */
-static void free_glyph_names(char **glyph_names)
-{
-    int i;
-    assert(glyph_names != NULL);
-    for (i = 0; i < 256; i++)
-        if (glyph_names[i] != notdef)
-            xfree(glyph_names[i]);
-    xfree(glyph_names);
-}
-#endif
 
 static void t1_check_pfa(void)
 {
@@ -916,7 +902,6 @@ static boolean t1_open_fontfile(const char *open_name_prefix)
     } else {
         set_cur_file_name(fd_cur->fm->ff_name);
         pdftex_fail("cannot open Type 1 font file for reading");
-        return false;
     }
     t1_init_params(open_name_prefix);
     return true;                /* font file found */
