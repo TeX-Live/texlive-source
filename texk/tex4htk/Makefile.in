@@ -261,20 +261,20 @@ shell_scripts = ht htcontext htlatex htmex httex httexi htxelatex htxetex
 EXTRA_DIST = $(perl_scripts) $(shell_scripts) dbcontext dblatex \
 	dbmcontext dbmex dbmlatex dbmmex dbmtex dbmtexi dbmxelatex \
 	dbmxetex dbtex dbtexi dbxelatex dbxetex demo.tex escontext \
-	eslatex esmex estex estexi esxelatex esxetex htcmd.c java \
-	jh1context jh1latex jh1mex jh1tex jh1texi jh1xelatex jh1xetex \
-	jhcontext jhlatex jhmex jhtex jhtexi jhxelatex jhxetex \
-	jmcontext jmlatex jmmex jmtex jmtexi jmxelatex jmxetex \
-	jscontext jslatex jsmex jstex jstexi jsxelatex jsxetex \
-	mzcontext mzlatex mzmex mztex mztexi mzxelatex mzxetex \
-	oocontext oolatex oomex ootex ootexi ooxelatex ooxetex \
-	teicontext teilatex teimcontext teimex teimlatex teimmex \
-	teimtex teimtexi teimxelatex teimxetex teitex teitexi \
-	teixelatex teixetex test.tex test1.tex testa.tex testb.tex \
-	uxhcontext uxhlatex uxhmex uxhtex uxhtexi uxhxelatex uxhxetex \
-	wcontext wlatex wmex wtex wtexi wxelatex wxetex xhcontext \
-	xhlatex xhmcontext xhmex xhmlatex xhmmex xhmtex xhmtexi \
-	xhmxelatex xhmxetex xhtex xhtexi xhxelatex xhxetex xv4ht.java
+	eslatex esmex estex estexi esxelatex esxetex java jh1context \
+	jh1latex jh1mex jh1tex jh1texi jh1xelatex jh1xetex jhcontext \
+	jhlatex jhmex jhtex jhtexi jhxelatex jhxetex jmcontext jmlatex \
+	jmmex jmtex jmtexi jmxelatex jmxetex jscontext jslatex jsmex \
+	jstex jstexi jsxelatex jsxetex mzcontext mzlatex mzmex mztex \
+	mztexi mzxelatex mzxetex oocontext oolatex oomex ootex ootexi \
+	ooxelatex ooxetex teicontext teilatex teimcontext teimex \
+	teimlatex teimmex teimtex teimtexi teimxelatex teimxetex \
+	teitex teitexi teixelatex teixetex test.tex test1.tex \
+	testa.tex testb.tex uxhcontext uxhlatex uxhmex uxhtex uxhtexi \
+	uxhxelatex uxhxetex wcontext wlatex wmex wtex wtexi wxelatex \
+	wxetex xhcontext xhlatex xhmcontext xhmex xhmlatex xhmmex \
+	xhmtex xhmtexi xhmxelatex xhmxetex xhtex xhtexi xhxelatex \
+	xhxetex xv4ht.java
 tex4ht_subdir = texmf-dist/scripts/tex4ht
 tex4htdir = ${prefix}/$(tex4ht_subdir)
 tex4ht_SCRIPTS = 
