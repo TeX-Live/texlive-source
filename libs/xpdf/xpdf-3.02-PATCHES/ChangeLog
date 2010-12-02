@@ -1,3 +1,7 @@
+2010-12-02  Karl Berry  <karl@tug.org>
+
+	* patch-60-bug-fix: update with Thanh's comments.
+
 2010-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-60-bug-fix (new): Bug fix for 4-digit bfrange values in

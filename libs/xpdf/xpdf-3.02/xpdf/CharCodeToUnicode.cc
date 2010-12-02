@@ -272,10 +272,19 @@ void CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
 	  error(-1, "Illegal entry in bfrange block in ToUnicode CMap");
 	  break;
 	}
+        /* ref:
+           - http://sarovar.org/tracker/index.php?func=detail&aid=4321&group_id=106&atid=493
+           - http://lists.freedesktop.org/archives/poppler-bugs/2010-April/004931.html
+           original was:
+           if (!(n1 == 2 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' &&
+                 n2 == 2 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>')) {
+        */
 	if (!(((n1 == 2 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>') ||
-	       (n1 == 4 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' && tok1[1] == '0' && tok1[2] == '0')) &&
+	       (n1 == 4 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>'
+	        && tok1[1] == '0' && tok1[2] == '0')) &&
 	      ((n2 == 2 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>') ||
-	       (n2 == 4 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>' && tok1[1] == '0' && tok1[2] == '0')))) {
+	       (n2 == 4 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>'
+	        && tok1[1] == '0' && tok1[2] == '0')))) {
 	  error(-1, "Illegal entry in bfrange block in ToUnicode CMap");
 	  continue;
 	}

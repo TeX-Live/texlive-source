@@ -1,8 +1,9 @@
 	Bug fix, backport from poppler-0.14.5
 
-diff -ur -N xpdf-3.02.orig/xpdf/CharCodeToUnicode.cc xpdf-3.02/xpdf/CharCodeToUnicode.cc
---- xpdf-3.02.orig/xpdf/CharCodeToUnicode.cc	2007-02-27 23:05:52.000000000 +0100
-+++ xpdf-3.02/xpdf/CharCodeToUnicode.cc	2010-12-01 09:25:41.108613277 +0100
+Index: CharCodeToUnicode.cc
+===================================================================
+--- CharCodeToUnicode.cc	(revision 12447)
++++ CharCodeToUnicode.cc	(working copy)
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
  //
@@ -27,16 +28,25 @@ diff -ur -N xpdf-3.02.orig/xpdf/CharCodeToUnicode.cc xpdf-3.02/xpdf/CharCodeToUn
  	}
  	tok1[n1 - 1] = tok2[n2 - 1] = '\0';
  	if (sscanf(tok1 + 1, "%x", &code1) != 1) {
-@@ -266,8 +272,10 @@
+@@ -266,8 +272,19 @@
  	  error(-1, "Illegal entry in bfrange block in ToUnicode CMap");
  	  break;
  	}
 -	if (!(n1 == 2 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' &&
 -	      n2 == 2 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>')) {
++        /* ref:
++           - http://sarovar.org/tracker/index.php?func=detail&aid=4321&group_id=106&atid=493
++           - http://lists.freedesktop.org/archives/poppler-bugs/2010-April/004931.html
++           original was:
++           if (!(n1 == 2 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' &&
++                 n2 == 2 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>')) {
++        */
 +	if (!(((n1 == 2 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>') ||
-+	       (n1 == 4 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>' && tok1[1] == '0' && tok1[2] == '0')) &&
++	       (n1 == 4 + nDigits && tok1[0] == '<' && tok1[n1 - 1] == '>'
++	        && tok1[1] == '0' && tok1[2] == '0')) &&
 +	      ((n2 == 2 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>') ||
-+	       (n2 == 4 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>' && tok1[1] == '0' && tok1[2] == '0')))) {
++	       (n2 == 4 + nDigits && tok2[0] == '<' && tok2[n2 - 1] == '>'
++	        && tok1[1] == '0' && tok1[2] == '0')))) {
  	  error(-1, "Illegal entry in bfrange block in ToUnicode CMap");
  	  continue;
  	}
