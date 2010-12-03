@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([icu_version], [4.4])[]dnl using modified icu/source source tree
+m4_define([icu_version], [4.6])[]dnl using modified icu/source source tree
 AC_INIT([icu for TeX Live], icu_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([icu-]icu_version[/common/unicode/utypes.h])

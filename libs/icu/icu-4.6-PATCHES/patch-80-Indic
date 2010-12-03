@@ -1,0 +1,28 @@
+diff -ur icu-4.6.orig/source/layout/IndicClassTables.cpp icu-4.6/source/layout/IndicClassTables.cpp
+--- icu-4.6.orig/source/layout/IndicClassTables.cpp	2010-10-06 19:44:33.000000000 +0200
++++ icu-4.6/source/layout/IndicClassTables.cpp	2010-12-02 15:51:21.000000000 +0100
+@@ -257,7 +257,7 @@
+ //
+ static const IndicClassTable devaClassTable = {0x0900, 0x0970, 2, DEVA_SCRIPT_FLAGS, devaCharClasses, NULL};
+ 
+-static const IndicClassTable bengClassTable = {0x0980, 0x09FA, 3, BENG_SCRIPT_FLAGS, bengCharClasses, bengSplitTable};
++static const IndicClassTable bengClassTable = {0x0980, 0x09FA, 4, BENG_SCRIPT_FLAGS, bengCharClasses, bengSplitTable};
+ 
+ static const IndicClassTable punjClassTable = {0x0A00, 0x0A74, 2, PUNJ_SCRIPT_FLAGS, punjCharClasses, NULL};
+ 
+@@ -265,13 +265,13 @@
+ 
+ static const IndicClassTable oryaClassTable = {0x0B00, 0x0B71, 3, ORYA_SCRIPT_FLAGS, oryaCharClasses, oryaSplitTable};
+ 
+-static const IndicClassTable tamlClassTable = {0x0B80, 0x0BF2, 3, TAML_SCRIPT_FLAGS, tamlCharClasses, tamlSplitTable};
++static const IndicClassTable tamlClassTable = {0x0B80, 0x0BF2, 4, TAML_SCRIPT_FLAGS, tamlCharClasses, tamlSplitTable};
+ 
+ static const IndicClassTable teluClassTable = {0x0C00, 0x0C6F, 3, TELU_SCRIPT_FLAGS, teluCharClasses, teluSplitTable};
+ 
+ static const IndicClassTable kndaClassTable = {0x0C80, 0x0CEF, 4, KNDA_SCRIPT_FLAGS, kndaCharClasses, kndaSplitTable};
+ 
+-static const IndicClassTable mlymClassTable = {0x0D00, 0x0D6F, 3, MLYM_SCRIPT_FLAGS, mlymCharClasses, mlymSplitTable};
++static const IndicClassTable mlymClassTable = {0x0D00, 0x0D6F, 4, MLYM_SCRIPT_FLAGS, mlymCharClasses, mlymSplitTable};
+ 
+ static const IndicClassTable sinhClassTable = {0x0D80, 0x0DF4, 4, SINH_SCRIPT_FLAGS, sinhCharClasses, sinhSplitTable};
+ 

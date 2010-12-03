@@ -18,7 +18,7 @@ gd 2.0.35 - http://www.libgd.org/releases/
 graphite 2.3.1 - the directory silgraphite-2.3.1/engine/ from
   http://sourceforge.net/projects/silgraphite/
 
-icu 4.4 - http://download.icu-project.org/files/icu4c/
+icu 4.6 - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
 libpng 1.4.4 - http://www.libpng.org/ - used by many

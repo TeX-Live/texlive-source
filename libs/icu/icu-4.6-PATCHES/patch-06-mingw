@@ -1,0 +1,13 @@
+diff -ur icu-4.6.orig/source/configure.in icu-4.6/source/configure.in
+--- icu-4.6.orig/source/configure.in	2010-10-07 05:34:53.000000000 +0200
++++ icu-4.6/source/configure.in	2010-12-02 17:56:45.000000000 +0100
+@@ -1267,7 +1267,8 @@
+ 	*-*-aix*) 	platform=U_AIX ;;
+ 	*-*-hpux*) 	platform=U_HPUX ;;
+ 	*-apple-darwin*|*-apple-rhapsody*)	platform=U_DARWIN ;;
+-	*-*-cygwin*|*-*-mingw*)	platform=U_CYGWIN ;;
++	*-*-cygwin*)	platform=U_CYGWIN ;;
++	*-*-mingw*)	platform=U_WINDOWS ;;
+ 	*-*ibm-openedition*|*-*-os390*)	platform=OS390
+ 			if test "${ICU_ENABLE_ASCII_STRINGS}" != "1"; then
+ 				ICUDATA_CHAR="e"
