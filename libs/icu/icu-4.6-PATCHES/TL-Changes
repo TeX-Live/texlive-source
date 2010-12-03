@@ -1,14 +1,14 @@
-Changes applied to the icu-4.6/ tree as obtained from:
+Changes applied to the icu-4.6/ (icu/source/) tree as obtained from:
 	http://download.icu-project.org/files/icu4c/4.6/icu4c-4_6-src.tgz
 
 Regenerated:
 	configure -- should use autoconf 2.67.
 
 Updated:
-	source/config.guess
-	source/config.sub
-	source/install-sh
-	source/mkinstalldirs
+	config.guess
+	config.sub
+	install-sh
+	mkinstalldirs
 
 Removed empty dirs:
 	layout/unicode
