@@ -608,9 +608,6 @@ LTLIBOBJS
 LIBOBJS
 ZLIB_TREE
 ZLIB_DEFINES
-ZLIB123_FALSE
-ZLIB123_TRUE
-OTHER_TREE
 EGREP
 GREP
 CPP
@@ -4120,7 +4117,6 @@ fi
 
 done
 
-
 ZCONF_SRC=zlib-1.2.5/zconf.h.in
 if test x"$ac_cv_header_unistd_h" = xyes; then
   zconf_sh='sed <$srcdir/'"$ZCONF_SRC"' "/^#ifdef HAVE_UNISTD_H.* may be/s/def HAVE_UNISTD_H\\(.*\\) may be/ 1\\1 was/" >'
@@ -4416,16 +4412,6 @@ case $ac_cv_sys_largefile_source in #(
     ZLIB_DEFINES="$ZLIB_DEFINES -D_LARGEFILE_SOURCE=1" ;;
 esac
 
-OTHER_TREE=zlib-1.2.3
-
- if test "x1.2.5" = x1.2.3; then
-  ZLIB123_TRUE=
-  ZLIB123_FALSE='#'
-else
-  ZLIB123_TRUE='#'
-  ZLIB123_FALSE=
-fi
-
 ac_config_commands="$ac_config_commands zconf.h"
 
 
@@ -4599,10 +4585,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then
   as_fn_error $? "conditional \"build\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${ZLIB123_TRUE}" && test -z "${ZLIB123_FALSE}"; then
-  as_fn_error $? "conditional \"ZLIB123\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

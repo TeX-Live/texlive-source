@@ -38,18 +38,7 @@ AC_CHECK_HEADER([errno.h],
                 [ZLIB_DEFINES="-DNO_ERRNO_H"])
 
 AC_CHECK_HEADERS([unistd.h])
-dnl zlib-1.2.3 has zconf.in.h, whereas zlib-1.2.5 has zconf.h.in
-m4_if(zlib_version, [1.2.3],
-      [
-ZCONF_SRC=zlib-[]zlib_version/zconf.in.h
-if test x"$ac_cv_header_unistd_h" = xyes; then
-  zconf_sh='sed <$srcdir/'"$ZCONF_SRC"' "/HAVE_UNISTD_H/s%0%1%" >'
-else
-  zconf_sh='cp $srcdir/'"$ZCONF_SRC"
-fi
-AC_SUBST([OTHER_TREE], [zlib-1.2.5])],
-      [
-ZCONF_SRC=zlib-[]zlib_version/zconf.h.in
+ZCONF_SRC=[zlib-]zlib_version[/zconf.h.in]
 if test x"$ac_cv_header_unistd_h" = xyes; then
   zconf_sh='sed <$srcdir/'"$ZCONF_SRC"' "/^#ifdef HAVE_UNISTD_H.* may be/s/def HAVE_UNISTD_H\\(.*\\) may be/ 1\\1 was/" >'
 else
@@ -71,8 +60,6 @@ AS_CASE([$ac_cv_sys_largefile_source],
         [no | unknown], [],
         [ZLIB_DEFINES="$ZLIB_DEFINES -D_LARGEFILE_SOURCE=1"])
 
-AC_SUBST([OTHER_TREE], [zlib-1.2.3])])
-AM_CONDITIONAL([ZLIB123], [test "x]zlib_version[" = x1.2.3])
 AC_CONFIG_COMMANDS([zconf.h],
                    [eval "$zconf_sh" zconf.h],
                    [zconf_sh='$zconf_sh'])
@@ -89,7 +76,7 @@ caddr_t hello() {
                   [AC_MSG_RESULT([no])])
 AC_SUBST([ZLIB_DEFINES])
 
-ZLIB_TREE=zlib-[]zlib_version
+ZLIB_TREE=[zlib-]zlib_version
 AC_SUBST([ZLIB_TREE])
 
 if test -f $srcdir/$ZLIB_TREE/zconf.h; then
