@@ -1,3 +1,8 @@
+2010-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-CURR_FULL_DIR: Correctly handle CURR_FULL_DIR when
+	cross compiling.
+
 2010-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported icu-4.6 source tree (icu4c-4_6-src.tgz) from:

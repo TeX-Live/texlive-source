@@ -1,7 +1,7 @@
 	We don't want this for TeX Live cross compilation.
 
 diff -ur icu-4.6.orig/source/config/mh-mingw icu-4.6/source/config/mh-mingw
---- icu-4.6.orig/source/config/mh-mingw	2010-12-02 15:01:44.000000000 +0100
+--- icu-4.6.orig/source/config/mh-mingw	2009-03-30 18:24:17.000000000 +0200
 +++ icu-4.6/source/config/mh-mingw	2010-12-02 15:06:16.000000000 +0100
 @@ -52,21 +52,10 @@
  SO = dll
