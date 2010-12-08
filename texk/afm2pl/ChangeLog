@@ -1,3 +1,7 @@
+2010-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Version 0.7.1 (since 2009-06-21).
+
 2010-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* afm2pl.c (changeadobe): Avoid output of '(SLANT R -0.000000)'

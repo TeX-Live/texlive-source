@@ -1,3 +1,7 @@
+2010-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Version 2.15 (since 2008-07-03).
+
 2010-05-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* devnag.c: cast arguments in order to avoid compiler warnings.
