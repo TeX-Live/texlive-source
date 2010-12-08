@@ -20,8 +20,8 @@
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/getopt.h>
 #else
-#define FOPEN_RBIN_MODE  "r"
-#define FOPEN_RBIN_MODE  "w"
+#define FOPEN_RBIN_MODE  "rb"
+#define FOPEN_WBIN_MODE  "wb"
 #define SET_BINARY(x) (void)0
 extern char *optarg;
 extern int   optind;

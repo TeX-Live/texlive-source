@@ -24,7 +24,7 @@
 #include <kpathsea/getopt.h>
 #else
 #define FOPEN_RBIN_MODE  "rb"
-#define FOPEN_RBIN_MODE  "wb"
+#define FOPEN_WBIN_MODE  "wb"
 #define SET_BINARY(x) (void)0
 extern char *optarg;
 extern int optind;

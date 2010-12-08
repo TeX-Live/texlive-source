@@ -1,6 +1,11 @@
+2010-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dviconcat.c, dviselect.c: Fix typo (RBIN_MODE => WBIN_MODE).
+	* dvibook.c, dvitodvi.c: Ditto; append "b" to BIN_MODEs.
+
 2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c [SET_BINARY}:
+	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c [SET_BINARY]:
 	Add casts to void.  (SET_BINARY): Remove casts to void.
 
 2010-02-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
