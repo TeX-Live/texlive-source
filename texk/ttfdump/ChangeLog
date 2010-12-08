@@ -1,3 +1,7 @@
+2010-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Remove duplicate checks (done by KPSE_COMMON).
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* libttf/tabledir.c (ttfPrintTableDir): Use memcpy, not bcopy.
