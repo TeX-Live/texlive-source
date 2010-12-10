@@ -1,9 +1,18 @@
 ## Makefile.am for the TeX Live subdirectory utils/psutils/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
+
+## We want to re-distribute the whole original psutils source tree.
+EXTRA_DIST = $(PSUTILS_TREE)
+## Patches applied to the original source tree
+EXTRA_DIST += $(PSUTILS_TREE)-PATCHES
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
 
 OS = UNIX
 PAPER = a4
@@ -14,59 +23,55 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 bin_PROGRAMS = epsffit psbook psnup psresize psselect pstops
 
 epsffit_SOURCES = \
-	config.h \
-	epsffit.c \
-	pserror.c \
-	pserror.h
+	$(PSUTILS_TREE)/config.h \
+	$(PSUTILS_TREE)/epsffit.c \
+	$(PSUTILS_TREE)/pserror.c \
+	$(PSUTILS_TREE)/pserror.h
 
 psbook_SOURCES = \
-	config.h \
-	psbook.c \
-	pserror.c \
-	pserror.h \
-	psutil.c \
-	psutil.h
+	$(PSUTILS_TREE)/config.h \
+	$(PSUTILS_TREE)/psbook.c \
+	$(PSUTILS_TREE)/pserror.c \
+	$(PSUTILS_TREE)/pserror.h \
+	$(PSUTILS_TREE)/psutil.c \
+	$(PSUTILS_TREE)/psutil.h
 
 psnup_SOURCES = \
-	config.h \
-	pserror.c \
-	pserror.h \
-	psnup.c \
-	psspec.c \
-	psspec.h \
-	psutil.c \
-	psutil.h
+	$(PSUTILS_TREE)/config.h \
+	$(PSUTILS_TREE)/pserror.c \
+	$(PSUTILS_TREE)/pserror.h \
+	$(PSUTILS_TREE)/psnup.c \
+	$(PSUTILS_TREE)/psspec.c \
+	$(PSUTILS_TREE)/psspec.h \
+	$(PSUTILS_TREE)/psutil.c \
+	$(PSUTILS_TREE)/psutil.h
 
 psresize_SOURCES = \
-	config.h \
-	pserror.c \
-	pserror.h \
-	psresize.c \
-	psspec.c \
-	psspec.h \
-	psutil.c \
-	psutil.h
+	$(PSUTILS_TREE)/config.h \
+	$(PSUTILS_TREE)/pserror.c \
+	$(PSUTILS_TREE)/pserror.h \
+	$(PSUTILS_TREE)/psresize.c \
+	$(PSUTILS_TREE)/psspec.c \
+	$(PSUTILS_TREE)/psspec.h \
+	$(PSUTILS_TREE)/psutil.c \
+	$(PSUTILS_TREE)/psutil.h
 
 psselect_SOURCES = \
-	config.h \
-	pserror.c \
-	pserror.h \
-	psselect.c \
-	psutil.c \
-	psutil.h
+	$(PSUTILS_TREE)/config.h \
+	$(PSUTILS_TREE)/pserror.c \
+	$(PSUTILS_TREE)/pserror.h \
+	$(PSUTILS_TREE)/psselect.c \
+	$(PSUTILS_TREE)/psutil.c \
+	$(PSUTILS_TREE)/psutil.h
 
 pstops_SOURCES = \
-	pserror.c \
-	pserror.h \
-	psspec.c \
-	psspec.h \
-	pstops.c \
-	psutil.c \
-	psutil.h
-
-## 
-EXTRA_DIST = \
-	LICENSE
+	$(PSUTILS_TREE)/pserror.c \
+	$(PSUTILS_TREE)/pserror.h \
+	$(PSUTILS_TREE)/psspec.c \
+	$(PSUTILS_TREE)/psspec.h \
+	$(PSUTILS_TREE)/pstops.c \
+	$(PSUTILS_TREE)/psutil.c \
+	$(PSUTILS_TREE)/psutil.h
 
 perl_scripts = extractres fixdlsrps fixfmps fixmacps fixpsditps fixpspps \
 	fixscribeps fixtpps fixwfwps fixwpps fixwwps includeres psmerge
@@ -77,8 +82,8 @@ nodist_bin_SCRIPTS = $(perl_scripts)
 
 install-exec-hook:
 	@for f in $(shell_scripts); do \
-	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
-	  $(INSTALL_SCRIPT) "$(srcdir)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
+	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
+	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
 	done
 
 uninstall-hook:
@@ -87,56 +92,36 @@ uninstall-hook:
 	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	done
 
-dist_man1_MANS = \
-	fixdlsrps.man \
-	fixfmps.man \
-	fixmacps.man \
-	fixpsditps.man \
-	fixpspps.man \
-	fixscribeps.man \
-	fixtpps.man \
-	fixwfwps.man \
-	fixwpps.man \
-	fixwwps.man \
-	getafm.man \
-	includeres.man \
-	psmerge.man
-
 nodist_man1_MANS = \
 	epsffit.1\
 	extractres.1 \
+	fixdlsrps.1 \
+	fixfmps.1 \
+	fixmacps.1 \
+	fixpsditps.1 \
+	fixpspps.1 \
+	fixscribeps.1 \
+	fixtpps.1 \
+	fixwfwps.1 \
+	fixwpps.1 \
+	fixwwps.1 \
+	getafm.1 \
+	includeres.1 \
 	psbook.1 \
+	psmerge.1 \
 	psnup.1 \
 	psresize.1 \
 	psselect.1 \
 	pstops.1
 
-EXTRA_DIST += $(perl_scripts:=.pl) $(shell_scripts:=.sh) $(nodist_man1_MANS:.1=.man)
-
 CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_man1_MANS)
 
 PERL = /usr/bin/env perl
-MAKETEXT = $(PERL) $(srcdir)/maketext
+MAKETEXT = $(PERL) $(srcdir)/$(PSUTILS_TREE)/maketext
 
-EXTRA_DIST += maketext
-
-%: %.pl
+%: $(PSUTILS_TREE)/%.pl
 	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $< >$@
 
-%.1: %.man
-	$(MAKETEXT) PAPER=$(PAPER) "MAN=$(man1_MANS)" $< >$@
-
-## Not used
-##
-EXTRA_DIST += \
-	Makefile.bcc \
-	Makefile.msc \
-	Makefile.nt \
-	Makefile.os2 \
-	Makefile.sc \
-	Makefile.unix \
-	Makefile.wat \
-	descrip.mms \
-	md68_0.ps \
-	md71_0.ps
+%.1: $(PSUTILS_TREE)/%.man
+	$(MAKETEXT) PAPER=$(PAPER) "MAN=$(nodist_man1_MANS)" $< >$@
 

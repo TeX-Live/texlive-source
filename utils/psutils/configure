@@ -564,11 +564,12 @@ PACKAGE_STRING='psutils for TeX Live 1.17'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="psutil.c"
+ac_unique_file="psutils-1.17/psutil.c"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+PSUTILS_TREE
 WARNING_CFLAGS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
@@ -3350,7 +3351,10 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
-ac_config_files="$ac_config_files Makefile patchlev.h"
+PSUTILS_TREE=psutils-1.17
+
+
+ac_config_files="$ac_config_files Makefile patchlev.h:psutils-1.17/patchlev.h.in"
 
 
 cat >confcache <<\_ACEOF
@@ -4104,7 +4108,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "patchlev.h") CONFIG_FILES="$CONFIG_FILES patchlev.h" ;;
+    "patchlev.h") CONFIG_FILES="$CONFIG_FILES patchlev.h:psutils-1.17/patchlev.h.in" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

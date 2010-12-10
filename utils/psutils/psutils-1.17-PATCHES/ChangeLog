@@ -1,0 +1,10 @@
+2010-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Patches applied to psutils-1.17 as obtained from CTAN.
+	* patch-01-WIN32: Added various #ifdef WIN32.
+	* patch-02-PERL: Handling of perl scripts.
+	* patch-03-main-is-int: Changed return type of main() from void
+	to int; changed exit at end into return.
+	* patch-04-warnings: Avoid various compiler warnings.
+	* patch-05-const: Constify strings.
+	* patch-06-MINGW: Do not #include <win32lib.h> for MinGW32.

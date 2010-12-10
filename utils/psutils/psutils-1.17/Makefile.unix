@@ -38,7 +38,8 @@ INSTALLMAN = install -c -m $(MANMODE)
 MANEXT = 1
 MANDIR = /usr/local/share/man/man$(MANEXT)
 
-CFLAGS = -DPAPER=\"$(PAPER)\" -DUNIX -O 
+CC = gcc
+CFLAGS = -DPAPER=\"$(PAPER)\" -DUNIX -O -Wall
 
 BIN = psbook psselect pstops epsffit psnup \
 	psresize
@@ -98,55 +99,55 @@ showchar:	showchar.sh
 	cp $? $@
 
 psmerge: psmerge.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixfmps: fixfmps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixmacps: fixmacps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" INCLUDE=$(INCLUDEDIR) $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) INCLUDE=$(INCLUDEDIR) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixpsditps: fixpsditps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixpspps: fixpspps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixscribeps: fixscribeps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixtpps: fixtpps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixwfwps: fixwfwps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixwpps: fixwpps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixwwps: fixwwps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 fixdlsrps: fixdlsrps.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 extractres: extractres.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 includeres: includeres.pl
-	$(PERL) maketext OS=$(OS) PERL="$(PERL)" INCLUDE=$(INCLUDEDIR) $? > $@
+	$(PERL) maketext OS=$(OS) PERL=$(PERL) INCLUDE=$(INCLUDEDIR) $? > $@
 	$(CHMOD) $(BINMODE) $@
 
 epsffit.$(MANEXT): epsffit.man
@@ -222,7 +223,6 @@ install.bin: $(BIN)
 	@for i in $(BIN); do \
 		echo Installing $$i; \
 		$(INSTALL) $$i $(BINDIR); \
-		$(CHMOD) u+w $(BINDIR)/$$i; \
 	done
 
 install.script: $(PERLSCRIPTS) $(SHELLSCRIPTS)
@@ -230,7 +230,6 @@ install.script: $(PERLSCRIPTS) $(SHELLSCRIPTS)
 	@for i in $(PERLSCRIPTS) $(SHELLSCRIPTS); do \
 		echo Installing $$i; \
 		$(INSTALL) $$i $(SCRIPTDIR); \
-		$(CHMOD) u+w $(SCRIPTDIR)/$$i; \
 	done
 
 install.include: $(INCLUDES)
@@ -238,7 +237,6 @@ install.include: $(INCLUDES)
 	@for i in $(INCLUDES); do \
 		echo Installing $$i; \
 		$(INSTALLMAN) $$i $(INCLUDEDIR); \
-		$(CHMOD) u+w $(INCLUDEDIR)/$$i; \
 	done
 
 install.man: $(MANPAGES)

@@ -1,14 +1,15 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([psutils for TeX Live], [1.17], [tex-k@tug.org])
+m4_define([psutils_version], [1.17])[]dnl using unmodified psutils source tree
+AC_INIT([psutils for TeX Live], psutils_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([psutil.c])
+AC_CONFIG_SRCDIR([psutils-]psutils_version[/psutil.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -19,6 +20,10 @@ AC_PROG_CC
 
 KPSE_COMPILER_WARNINGS
 
-AC_CONFIG_FILES([Makefile patchlev.h])
+PSUTILS_TREE=psutils-[]psutils_version
+AC_SUBST([PSUTILS_TREE])
+
+AC_CONFIG_FILES([Makefile
+                 patchlev.h:psutils-]psutils_version[/patchlev.h.in])
 
 AC_OUTPUT

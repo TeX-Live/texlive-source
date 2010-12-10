@@ -21,7 +21,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "psutil.h"
 #include "pserror.h"
 #include "patchlev.h"
 #include "config.h"

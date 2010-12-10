@@ -1,12 +1,12 @@
 2010-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Patches applied to lacheck-1.26 as obtained from CTAN.
-	* patch-01-WIN32 (new): #include <win32lib.h> for WIN32, but not
+	* patch-01-WIN32: #include <win32lib.h> for WIN32, but not
 	for __MINGW32__.
-	* patch-02-ANSI (new): ANSI C function protos and definitions.
+	* patch-02-ANSI: ANSI C function protos and definitions.
 	Declare param1 of push() as const.  Avoid ambiguous `else'.
 	Define yywrap() after flex-provided prototype.
-	* patch-03-unsigned-char (new): Change param1 of push() and
+	* patch-03-unsigned-char: Change param1 of push() and
 	member s_name of struct tex_group from 'unsigned char *' to
 	'char *' and drop or adjust casts accordingly.
-	* patch-04-manpage (new): Formatting.  Avoid use of build date.
+	* patch-04-manpage: Formatting.  Avoid use of build date.

@@ -26,7 +26,6 @@ re-arrangement filters such as
 or 
 .I pstops
 safely.
-.SH FILES
 .SH AUTHOR
 Copyright (C) Angus J. C. Duggan 1991-1995
 .SH "SEE ALSO"
