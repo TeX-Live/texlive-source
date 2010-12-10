@@ -575,7 +575,7 @@ PACKAGE_STRING='LaCheck for TeX Live 1.26'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="lacheck.l"
+ac_unique_file="lacheck-1.26/lacheck.l"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>

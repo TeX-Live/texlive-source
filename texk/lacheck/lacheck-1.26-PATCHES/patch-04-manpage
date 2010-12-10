@@ -1,0 +1,18 @@
+diff -ur lacheck-1.26.orig/lacheck.man lacheck-1.26/lacheck.man
+--- lacheck-1.26.orig/lacheck.man	1998-03-07 08:47:31.000000000 +0100
++++ lacheck-1.26/lacheck.man	2010-12-10 11:38:32.032814793 +0100
+@@ -1,12 +1,9 @@
+-.TH "LaCheck" "1" "%%LACHECKDATE%%" "%%LACHECKREV%%"
++.TH "LaCheck" "1" "2010-12-10" "%%LACHECKREV%%"
+ .SH NAME
+ lacheck - A consistency checker for LaTeX documents.
+ .SH SYNOPSIS
+ .B lacheck 
+-.I filename
+-[
+-.I .tex
+-]
++.IR filename [ \fB.tex\fP ]
+ .SH DESCRIPTION
+ LaCheck is a general purpose consistency checker for LaTeX documents.
+ It reads a LaTeX document and displays warning messages, if it finds

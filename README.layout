@@ -69,7 +69,7 @@ m4/kpse-Lib-flags.m4		defines Autoconf macros for configure options
 Several libraries use an (almost) unmodified source tree supplemented by a
 proxy build system (bypassing that of the source tree), e.g.,
 
-libs/zlib/zlib-1.2.3/		(almost) unmodified source tree
+libs/zlib/zlib-1.2.5/		(almost) unmodified source tree
 libs/zlib/Makefile.am		proxy Makefile.am
 libs/zlib/configure.ac		  and configure.ac
 
@@ -105,7 +105,7 @@ required by these programs.
 3. Running `make' at the top-level
 ==================================
 
-First, if texk/kpathsea/ and texk/ptexenc/ are not yet configured, this runs
+First, if texk/kpathsea/ or texk/ptexenc/ is not yet configured, this runs
 `configure' and if required `make all' in that directory.  Then this
 recurses into all required subdirectories texk/kpathsea/, texk/ptexenc/,
 libs/, utils/, and texk/ for the selected Make target: `default' or `all' to

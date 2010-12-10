@@ -1,0 +1,9 @@
+Changes applied to the lacheck-1.26 tree as obtained from:
+	http://mirror.ctan.org/support/lacheck/lacheck-1.26.tar.gz
+
+Renamed:
+	lacheck.lex -> lacheck.l
+
+Removed:
+	lacheck.c
+

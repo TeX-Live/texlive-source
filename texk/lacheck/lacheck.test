@@ -1,10 +1,10 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-./lacheck $srcdir/test.tex | \
-	sed -e "s!$srcdir/test.tex!test.tex!g" >test.xout || exit 1
+./lacheck $srcdir/$LACHECK_TREE/test.tex | \
+	sed -e "s!$srcdir/$LACHECK_TREE/test.tex!./test.tex!g" >test.out || exit 1
 
-diff $srcdir/test.out test.xout || exit 1
+diff $srcdir/$LACHECK_TREE/test.old test.out || exit 1
 

@@ -252,13 +252,15 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
+LACHECK_TREE = lacheck-$(REV)
+EXTRA_DIST = $(LACHECK_TREE) $(LACHECK_TREE)-PATCHES
 AM_CFLAGS = $(WARNING_CFLAGS)
-lacheck_SOURCES = lacheck.l
+lacheck_SOURCES = $(LACHECK_TREE)/lacheck.l
 nodist_man1_MANS = lacheck.1
-EXTRA_DIST = lacheck.man test.tex test.out lacheck.hlp make_vms.com
-CLEANFILES = lacheck.1 test.xout
+CLEANFILES = lacheck.1 test.out
 dist_check_SCRIPTS = lacheck.test
 TESTS = lacheck.test
+TESTS_ENVIRONMENT = LACHECK_TREE=$(LACHECK_TREE)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -393,6 +395,11 @@ distclean-compile:
 
 .l.c:
 	$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
+
+lacheck.c: $(LACHECK_TREE)/lacheck.l
+	 \
+	$(am__skiplex) \
+	$(SHELL) $(YLWRAP) `test -f '$(LACHECK_TREE)/lacheck.l' || echo '$(srcdir)/'`$(LACHECK_TREE)/lacheck.l $(LEX_OUTPUT_ROOT).c lacheck.c -- $(LEX) $(LFLAGS) $(AM_LFLAGS)
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -626,6 +633,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -856,26 +866,29 @@ uninstall-man: uninstall-man1
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
 	clean clean-binPROGRAMS clean-generic clean-libtool ctags dist \
-	dist-all dist-bzip2 dist-gzip dist-lzma dist-shar dist-tarZ \
-	dist-xz dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-man \
-	uninstall-man1
+	dist-all dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-compile distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-man uninstall-man1
 
 
-lacheck.1: lacheck.man
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
+lacheck.1: $(LACHECK_TREE)/lacheck.man
 	sed -e "s!%%LACHECKREV%%!Release $(REV)!" \
-	    -e "s!%%LACHECKDATE%%!`date +%Y-%m-%d`!" \
 	    -e "s!%%LACHECKPATH%%!lacheck!" $< > $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

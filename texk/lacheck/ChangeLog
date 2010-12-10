@@ -1,3 +1,8 @@
+2010-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import original lacheck-1.26, patches in lacheck-1.26-PATCHES.
+	* Makefile.am, configure.ac, lacheck.test: Adapted.
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lacheck.l: Do not #include <win32lib.h> for MinGW32.
@@ -7,7 +12,7 @@
 	Avoid maximal compiler warnings.
 	* lacheck.l (push): Change param1 from 'unsigned char *' to
 	'const char *'.
-	(struct tex_group}: Change member s_name from 'unsigned char *'
+	(struct tex_group): Change member s_name from 'unsigned char *'
 	to 'char *' and drop or adjust casts accordingly.
 
 2009-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
@@ -52,6 +57,7 @@ Tue Jan 27 14:32:25 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
 
 	* configure etc: new configure.in, c-auto.in, Makefile.in from
 	Olaf Weber
+
 Tue Jan 27 13:57:52 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
 
 	* Makefile.in: depend inclusion

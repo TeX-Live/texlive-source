@@ -1,12 +1,9 @@
-.TH "LaCheck" "1" "%%LACHECKDATE%%" "%%LACHECKREV%%"
+.TH "LaCheck" "1" "2010-12-10" "%%LACHECKREV%%"
 .SH NAME
 lacheck - A consistency checker for LaTeX documents.
 .SH SYNOPSIS
 .B lacheck 
-.I filename
-[
-.I .tex
-]
+.IR filename [ \fB.tex\fP ]
 .SH DESCRIPTION
 LaCheck is a general purpose consistency checker for LaTeX documents.
 It reads a LaTeX document and displays warning messages, if it finds

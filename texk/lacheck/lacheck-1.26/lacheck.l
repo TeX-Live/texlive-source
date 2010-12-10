@@ -125,9 +125,6 @@
 
 /* extern char *realloc(); */
 
-#define YY_SKIP_YYWRAP
-static int yywrap(void) { return 1; }
-
 #ifdef NEED_STRSTR
 char *strstr();
 #endif
@@ -822,6 +819,8 @@ int main(int argc, char *argv[])
     }
     return(0);
 }
+
+int yywrap(void) { return 1; }
 
 #ifdef NEED_STRSTR
 char *

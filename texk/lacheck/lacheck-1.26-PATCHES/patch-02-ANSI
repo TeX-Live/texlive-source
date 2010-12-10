@@ -1,0 +1,176 @@
+diff -ur lacheck-1.26.orig/lacheck.l lacheck-1.26/lacheck.l
+--- lacheck-1.26.orig/lacheck.l	2010-02-20 12:35:04.000000000 +0100
++++ lacheck-1.26/lacheck.l	2010-12-09 23:22:45.000000000 +0100
+@@ -125,8 +125,6 @@
+ 
+ /* extern char *realloc(); */
+ 
+-int yywrap() { return 1; }
+-
+ #ifdef NEED_STRSTR
+ char *strstr();
+ #endif
+@@ -144,16 +142,16 @@
+ #define CG_ITALIC gstack[gstackp-1].italic
+ #define CG_FILE gstack[gstackp-1].s_file
+ 
+-char *bg_command();
+-void pop();
+-void push();
+-void linecount();
+-void g_checkend();
+-void e_checkend();
+-void f_checkend();
+-void input_file();
+-void print_bad_match();
+-int check_top_level_end();
++char *bg_command(char *name);
++void pop(void);
++void push(const char *p_name, int p_type, int p_line);
++void linecount(void);
++void g_checkend(int n);
++void e_checkend(int n, char *name);
++void f_checkend(char *name);
++void input_file(char *file_nam);
++void print_bad_match(char *end_command, int type);
++int check_top_level_end(char *end_command, int type);
+ 
+   /* global variables */
+ 
+@@ -764,9 +762,7 @@
+ 
+ . { ; }
+ %%
+-int main( argc, argv )
+-int argc;
+-char *argv[];
++int main(int argc, char *argv[])
+ {
+     /* allocate initial stacks */
+     gstack = (tex_group *)malloc(gstack_size * sizeof(tex_group));
+@@ -824,6 +820,8 @@
+     return(0);
+ }
+ 
++int yywrap(void) { return 1; }
++
+ #ifdef NEED_STRSTR
+ char *
+ strstr(string, substring)
+@@ -860,10 +858,7 @@
+ }
+ #endif /* NEED_STRSTR */
+ 
+-void push(p_name, p_type, p_line)
+-unsigned char *p_name;
+-int p_type;
+-int p_line;
++void push(const unsigned char *p_name, int p_type, int p_line)
+ {
+     if ( gstackp == gstack_size ) {	/* extend stack */
+ 	gstack_size *= 2;
+@@ -895,8 +890,7 @@
+ 
+ }
+ 
+-void input_file(file_nam)
+-char *file_nam;
++void input_file(char *file_nam)
+ {
+     char *tmp_file_name;
+     FILE *tmp_yyin;
+@@ -953,7 +947,7 @@
+ 	 }
+ }
+ 
+-void pop()
++void pop(void)
+ {
+     if ( gstackp == 0 )
+     {
+@@ -966,8 +960,7 @@
+     free(gstack[gstackp].s_file);
+ }
+ 
+-char *bg_command(name)
+-char *name;
++char *bg_command(char *name)
+ {
+     
+     switch (CG_TYPE) {
+@@ -1001,9 +994,7 @@
+     return ((char *)returnval);
+ }
+ 
+-char *eg_command(name,type)
+-int type;
+-char *name;
++static char *eg_command(char *name, int type)
+ {
+     
+     switch (type) {
+@@ -1038,19 +1029,18 @@
+ }
+ 
+ 
+-void g_checkend(n)
+-int n;
++void g_checkend(int n)
+ {
+     if ( check_top_level_end(yytext,n) == 1 ) 
++       {
+        if (  CG_TYPE != n  )
+ 	 print_bad_match(yytext,n);
+        else
+ 	pop();
++       }
+ }
+ 
+-void e_checkend(n, name)
+-int n;
+-char *name;
++void e_checkend(int n, char *name)
+ {
+    if ( check_top_level_end(name,n) == 1 )
+     {
+@@ -1062,8 +1052,7 @@
+     }
+ }
+ 
+-void f_checkend(name)
+-char *name;
++void f_checkend(char *name)
+ {
+     if ( check_top_level_end(name,3) == 1 )
+      {
+@@ -1079,9 +1068,7 @@
+      }
+ }
+ 
+-void print_bad_match(end_command,type)
+-char *end_command;	      
+-int type;
++void print_bad_match(char *end_command, int type)
+ {
+ 	  printf("\"%s\", line %d: <- unmatched \"%s\"\n",
+ 	         file_name, 
+@@ -1095,9 +1082,7 @@
+ 	  warn_count += 2;
+ }
+ 
+-int check_top_level_end(end_command,type)
+-char *end_command;	      
+-int type;
++int check_top_level_end(char *end_command, int type)
+ {
+     if ( gstackp == 0 )
+ 	{
+@@ -1112,7 +1097,7 @@
+     	return(1);
+ }
+ 
+-void linecount()
++void linecount(void)
+ {
+   int i;
+   for (i = 0; i < yyleng; i++)
