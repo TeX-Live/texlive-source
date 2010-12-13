@@ -1,3 +1,9 @@
+2010-12-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-fixmacps (new): Adapt to new kpsewhich semantics and
+	texmf layout.
+	Change basename => dirname and add 'use File::Basename'.
+
 2010-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Patches applied to psutils-1.17 as obtained from CTAN.

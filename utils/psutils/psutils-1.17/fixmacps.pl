@@ -4,9 +4,11 @@
 # Copyright (C) Angus J. C. Duggan 1991-1995
 # See file LICENSE for details.
 
+use File::Basename;
+
 $line = 0;			# keep line count
-$predir = `kpsewhich -progname=psutils md71_0.ps`;
-$dir=`basename $predir`;
+$predir = `kpsewhich -progname=dvips -format="other text files" md71_0.ps`;
+$dir=`dirname $predir`;
 $prefix = "md";
 $default = "md71_0.ps";
 
