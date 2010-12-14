@@ -1,8 +1,12 @@
 % This program is copyright (C) 1985, 1988, 2010 by Oren Patashnik;
-% all rights reserved.
-% Copying of this file is authorized only if (1) you are Oren Patashnik, or if
-% (2) you make absolutely no changes to your copy. (The WEB system provides
-% for alterations via an auxiliary file; the master file should stay intact.)
+% all rights are reserved.
+% 
+% This program, BibTeX, is available under the same terms as
+% Donald Knuth's TeX program.
+% 
+% (Request to implementors: The WEB system provides for alterations via
+% an auxiliary file; the master file should stay intact.)
+% 
 % See Appendix H of the WEB manual for hints on how to install this program.
 
 % Version 0.98f was released in March 1985.
@@ -36,6 +40,8 @@
 % Version 0.99d was released in March 2010.  It made output lines breakable
 %       only at white_space (so that, for example, URLs would not be broken).
 %       Other known bugs (all minor) will be fixed in a subsequent release.
+% Updated bibtex.web was released on 8 December 2010.  Still version
+%       0.99d; this release clarified the license.
 
 % Please report any bugs to biblio@@tug.org
 
@@ -85,7 +91,7 @@
 \def\topofcontents{\null\vfill
  \def\titlepage{F}
  \centerline{\:\titlefont The {\:\ttitlefont \BibTeX} preprocessor}
- \vskip 15pt \centerline{(Version 0.99c---\today)} \vfill}
+ \vskip 15pt \centerline{(Version 0.99d---\today)} \vfill}
 \pageno=\contentspagenumber \advance\pageno by 1
 
 
