@@ -31,7 +31,7 @@
 @x
  \def\titlepage{F}
  \centerline{\:\titlefont The {\:\ttitlefont \BibTeX} preprocessor}
- \vskip 15pt \centerline{(Version 0.99c---\today)} \vfill}
+ \vskip 15pt \centerline{(Version 0.99d---\today)} \vfill}
 @y
  \def\titlepage{F}
  \centerline{\:\titlefont The {\:\ttitlefont J\BibTeX} preprocessor}

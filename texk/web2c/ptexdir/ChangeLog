@@ -1,3 +1,7 @@
+2010-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch: Adapt to latest bibtex.web.
+
 2010-11-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch (get_jfm_pos): Avoid accessing non-existent array
