@@ -1,3 +1,8 @@
+2010-12-14  Karl Berry  <karl@tug.org>
+
+	* bibtex.web: non-functional update to clarify license,
+	version of 8-Dec-10.
+
 2010-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Get version string from ../../version.ac.
