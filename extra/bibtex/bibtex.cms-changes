@@ -1,0 +1,253 @@
+This is BIBTEX.CMS-CHANGES in text format, as of June 9, 1988.
+
+BIBTEX change file for VM/CMS and MVS.
+Created by Nhut Nguyen, IBM Japan. Ltd., Tokyo, Japan. (1986).
+
+
+Mar 14, 1986               made it working
+Mar 14, 1986               changed filetype of the log file to BIBLOG
+Mar 14, 1986               eliminate the prompt for input file
+Jul 14, 1986               made the initialize routine shorter, to avoid
+                           overflow during compilation
+Jul 30, 1986 Alan Spragens broke up |x_format_name| procedure; changed
+                           extensions on aux and bbl files; cleaned up
+                           VM/CMS declarations and procedures at end
+Oct 29, 1986 Agnes Hsu     leave extensions on aux, bib, and bst as in
+                           Web; add '.*' extension before opening those
+                           files
+June 9, 1988 Dean Guenther Removed a few unecessary changes and did
+                           some others for version .99
+                           Note that all tabs (x'05') in BIBTEX.WEB
+                           were replaced by two blanks (x'4040').
+
+@x banner line
+@d banner=='This is BibTeX, Version 0.99c' {printed when the program starts}
+@y
+@d banner=='This is BibTeX, VM/CMS Version 0.99c'
+@z
+
+@x term
+@d term_out == tty
+@d term_in == tty
+@y
+@d term_in==tty_in
+@d term_out==tty_out
+@z
+
+@x otherwise
+@d othercases == others:  {default for cases not listed explicitly}
+@y
+@d othercases == otherwise {default for cases not listed explicitly}
+@z
+
+@x
+begin
+initialize;
+print_ln(banner);@/
+@y
+begin
+  termin(term_in); termout(term_out);
+  initialize;
+  print_ln(banner);@/
+@z
+
+@x compiler directives
+@{@&$C-,A+,D-@}   {no range check, catch arithmetic overflow, no debug overhead}
+@!debug @{@&$C+,D+@}@+ gubed    {but turn everything on when debugging}
+@y
+{It seems impossible to turn CHECK and DEBUG on and off easily given
+ how Tangle and VS/PASCAL work}
+@z
+
+@x
+@!ASCII_code=0..127;  {seven-bit numbers}
+@y
+@!ASCII_code=packed 0..127; {seven-bit numbers}
+@z
+
+@x
+@d last_text_char=127  {ordinal number of the largest element of |text_char|}
+@y
+@d last_text_char=255 {ordinal number of the largest element of |text_char|}
+@d ccat==@=||@>
+@z
+
+@x
+@!alpha_file=packed file of text_char;  {files that contain textual data}
+@y
+@!alpha_file=text; {files that contain textual data}
+@z
+
+@x
+function erstat(var f:file):integer; extern;  {in the runtime library}
+@#@t\2@>
+@y
+@z
+
+@x
+begin reset(f,name_of_file,'/O'); a_open_in:=reset_OK(f);
+@y
+begin okstatus; pack_file_name;
+  reset(f,'NAME='ccat trim(str(name_of_file)));
+  a_open_in:=status;
+@z
+
+@x
+begin rewrite(f,name_of_file,'/O'); a_open_out:=rewrite_OK(f);
+@y
+begin okstatus; pack_file_name;
+  rewrite(f,'NAME='ccat trim(str(name_of_file)));
+  a_open_out:=status;
+@z
+
+
+@x
+function input_ln(var f:alpha_file) : boolean;
+@y
+@<VM/CMS stuff@>
+@#
+function input_ln(var f:alpha_file) : boolean;
+@z
+
+@x
+while (p_ptr < str_start[file_name+1]) do
+    begin
+    name_of_file[name_ptr] := chr (str_pool[p_ptr]);
+@y
+while (p_ptr < str_start[file_name+1]) do
+    begin
+    name_of_file[name_ptr] := xchr[str_pool[p_ptr]];
+@z
+
+@x
+while (p_ptr < str_start[ext+1]) do
+    begin
+    name_of_file[name_ptr] := chr (str_pool[p_ptr]);
+    incr(name_ptr); incr(p_ptr);
+@y
+while (p_ptr < str_start[ext+1]) do
+    begin
+    name_of_file[name_ptr] := xchr[str_pool[p_ptr]];
+    incr(name_ptr); incr(p_ptr);
+@z
+
+@x
+p_ptr := str_start[area];
+while (p_ptr < str_start[area+1]) do
+    begin
+    name_of_file[name_ptr] := chr (str_pool[p_ptr]);
+    incr(name_ptr); incr(p_ptr);
+@y
+p_ptr := str_start[area];
+while (p_ptr < str_start[area+1]) do
+    begin
+    name_of_file[name_ptr] := xchr[str_pool[p_ptr]];
+    incr(name_ptr); incr(p_ptr);
+@z
+
+@x
+@!s_bst_area : str_number;  {\.{texinputs:}}
+@y
+@!s_aux_area : str_number; {\.{.*}}
+@!s_bst_area : str_number; {\.{texinputs:}}
+@z
+
+@x
+pre_define('.blg        ',4,file_ext_ilk);
+s_log_extension := hash_text[pre_def_loc];
+pre_define('.bst        ',4,file_ext_ilk);
+s_bst_extension := hash_text[pre_def_loc];
+pre_define('.bib        ',4,file_ext_ilk);
+s_bib_extension := hash_text[pre_def_loc];
+pre_define('texinputs:  ',10,file_area_ilk);
+s_bst_area := hash_text[pre_def_loc];
+pre_define('texbib:     ',7,file_area_ilk);
+s_bib_area := hash_text[pre_def_loc];
+@y
+pre_define('.biblog     ',7,file_ext_ilk);
+s_log_extension := hash_text[pre_def_loc];
+pre_define('.bst        ',4,file_ext_ilk);
+s_bst_extension := hash_text[pre_def_loc];
+pre_define('.bib        ',4,file_ext_ilk);
+s_bib_extension := hash_text[pre_def_loc];
+pre_define('.*          ',2,file_area_ilk);
+s_aux_area := hash_text[pre_def_loc];
+pre_define('.*          ',2,file_area_ilk);
+s_bst_area := hash_text[pre_def_loc];
+pre_define('.*          ',2,file_area_ilk);
+s_bib_area := hash_text[pre_def_loc];
+@z
+
+@x
+  write (term_out,'Please type input file name (no extension)--');
+  if (eoln(term_in)) then      {so the first |read| works}
+      read_ln (term_in);
+@y
+    get (term_in) ; {so the first |get| works to clear EOL}
+@z
+
+
+
+@x    At line 2563
+@<Add extensions and open files@>=
+begin
+name_length := aux_name_length;    {set to last used position}
+add_extension (s_aux_extension);   {this also sets |name_length|}
+@y
+@<Add extensions and open files@>=
+begin
+name_length := aux_name_length;  {set to last used position}
+add_extension (s_aux_extension);  {this also sets |name_length|}
+add_extension (s_aux_area);  {this also sets |name_length|}
+@z
+
+@x
+add_extension (s_bib_extension);
+@y
+add_extension (s_bib_extension);
+add_extension (s_bib_area);
+@z
+
+@x
+add_extension (s_bst_extension);
+@y
+add_extension (s_bst_extension);
+add_extension (s_bst_area);
+@z
+
+@x
+This section should be replaced, if necessary, by changes to the program
+that are necessary to make \BibTeX\ work at a particular installation.
+It is usually best to design your change file so that all changes to
+previous sections preserve the section numbering; then everybody's version
+will be consistent with the printed program. More extensive changes,
+which introduce new sections, can be inserted here; then only the index
+itself will get a new section number.
+
+@y
+This section contains procedures particular to VM/CMS.
+
+@ Here are extra global variables for VM/CMS routines
+@<Glob...@>=
+
+@!status: boolean; {did the last |reset| or |rewrite| succede?}
+
+@!tty_in, tty_out: text;
+@ @<VM/CMS...@>=
+procedure okstatus; begin status:=true; end;
+procedure pack_file_name;
+var buff : packed array[1..file_name_size] of char;
+    i, j : 1..file_name_size;
+begin  j := 1;
+  for i := 1 to file_name_size do buff[i] := ' ';
+  for i := 1 to file_name_size do
+  begin
+    if name_of_file[i] <> ' ' then
+    begin
+      buff[j] := name_of_file[i];
+      incr(j);
+    end;
+  end;
+  for i := 1 to file_name_size do name_of_file[i] := buff[i];
+end;
+@z

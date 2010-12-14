@@ -1,0 +1,113 @@
+BibTeX change file for TOPS-20, culled from Dave Fuchs's
+TeX change file, with his permission.
+Copyright (C) 1988 by Oren Patashnik.  All rights reserved.
+
+History:
+January 1988---The original version of the TOPS-20 change file, for
+        BibTeX version 0.99a. The only substantive feature allowed
+        specifying the top-level .AUX file in a command line argument.
+February 1988---Changed for BibTeX's new version numbers, 0.99b,c.
+
+
+@x Tell WEAVE to print only the changes:
+\pageno=\contentspagenumber \advance\pageno by 1
+@y
+\pageno=\contentspagenumber \advance\pageno by 1
+\let\maybe=\iffalse
+\def\ttw{{\mc TOPS-20}}
+\def\title{\BibTeX\ changes for \ttw}
+@z
+
+
+@x TOPS-20's banner:
+@d banner=='This is BibTeX, Version 0.99c' {printed when the program starts}
+@y
+@d banner=='This is BibTeX, TOPS-20 Version 0.99c'
+@z
+
+
+@x      Compiler directives:
+@{@&$C-,A+,D-@}  {no range check, catch arithmetic overflow, no debug overhead}
+@!debug @{@&$C+,D+@}@+ gubed            {but turn everything on when debugging}
+@y      The space after the B is due to a compiler bug.
+@{@&$C-,A+,D-,P:520000@&B@= @>@}
+  {no range check, catch arithmetic overflow, no debug overhead,
+  move the code up to make room for the global data in production}
+@!debug @{@&$C+,D+,P:520000@&B@= @>@}@+ gubed
+  {we turn everything on when debugging}
+@z
+
+
+@x Define the compile-time constant |max_rescan| for command-line processing
+@!lit_stk_size=100; {maximum number of literal functions on the stack}
+@y
+@!lit_stk_size=100; {maximum number of literal functions on the stack}
+@!max_rescan=500; {maximum length of the rescan buffer}
+@z
+
+
+@x Set the command-line switch
+check_cmnd_line := false;                       {many systems will change this}
+@y
+check_cmnd_line := true;
+@z
+
+
+@x
+@<Variables for possible command-line processing@>=
+@!check_cmnd_line : boolean;    {|true| if we're to check the command line}
+@y
+
+@d RSCAN=@'500 {ReSCAN buffer JSYS}
+
+@<Variables for possible command-line processing@>=
+@!check_cmnd_line : boolean;    {|true| if we're to check the command line}
+@!ac1: integer; {AC1 from Rescan}
+@!rescan: packed array[1..max_rescan] of char; {rescan buffer}
+@!rescan_len: integer; {amount of |rescan| used}
+@!i: integer; {temporary}
+@z
+
+
+@x And finally, here's the code that handles the command line argument.
+@<Process a possible command line@>=
+begin
+do_nothing;             {the ``default system'' doesn't use the command line}
+end
+@y
+\ttw\ puts the user command line into the so-called rescan buffer
+(actually, we have to use a real hack to see if it's a bogus Execute,
+Start, Continue, Debug, etc.\ command, in which case we should pretend
+there was no command line, since the command line that was there was
+not intended for \BibTeX).  We copy the command line into the input
+buffer, and once we've isolated the (\.{.aux} file-name) argument we
+copy that into the |name_of_file| array.
+
+@<Process a possible command line@>=
+begin
+jsys(RSCAN,1,i;0;ac1); {put the command line into the |TTY| input buffer}
+if (i<>2) or (ac1<=0) then goto aux_not_found; {RSCAN failed, somehow}
+if eoln(term_in) then read_ln(term_in); {for some TOPS-20's}
+read(term_in,rescan:rescan_len); {read in rescan buffer}
+if rescan_len>max_rescan then begin
+  write_ln(term_out,'Command line longer than ',max_rescan:0,
+    ' characters, so I''m ignoring it');
+  read_ln(term_in); goto aux_not_found; end;
+@/{The following line is based upon experimentation with \ttw!}
+if rescan_len=ac1-2 then goto aux_not_found; {EX, ST, DEB commands}
+@#
+i:=1; while rescan[i]>' ' do incr(i); {skip command name, presumably BibTeX}@/
+while (i<=rescan_len) and (rescan[i]=' ') do incr(i); {skip spaces}@/
+if i>rescan_len then goto aux_not_found; {there was no argument}
+@#
+aux_name_length := 0;
+while (rescan[i]>' ') do                {copy the argument into |name_of_file|}
+    begin
+    if (aux_name_length = file_name_size) then
+        sam_you_made_the_file_name_too_long;
+    incr(aux_name_length);
+    name_of_file[aux_name_length] := rescan[i];
+    incr(i);
+    end;
+end
+@z

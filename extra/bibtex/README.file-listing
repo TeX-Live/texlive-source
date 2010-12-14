@@ -1,0 +1,28 @@
+Listing of ftp.cs.stanford.edu:pub/tex/bibtex, with dates:
+
+-rw-r--r-- 1 karl root  20285 Dec  5  1989 abbrv.bst
+-rw-r--r-- 1 karl root  19367 Dec 12  1990 acm.bst
+-rw-r--r-- 1 karl root  23863 Dec  5  1989 alpha.bst
+-rw-r--r-- 1 karl root  21794 Dec 12  1990 apalike.bst
+-rw-r--r-- 1 karl root   2303 Dec 12  1990 apalike.doc
+-rw-r--r-- 1 karl root   1084 Dec 12  1990 apalike.sty
+-rw-r--r-- 1 karl root   5370 Feb 29  1992 apalike.tex
+-rw-r--r-- 1 karl root   1840 Jan 30  1992 bibtex.1
+-rw-r--r-- 1 karl root   6799 Jun 11  1988 bibtex.cms-changes
+-rw-r--r-- 1 karl root   2435 Dec  5  1989 bibtex.ins
+-rw-r--r-- 1 karl root   4037 Dec  5  1989 bibtex.tops20-changes
+-rw-r--r-- 1 karl root   8616 Dec  5  1989 bibtex.vms-changes
+-rw-r--r-- 1 karl root 383409 Dec  5  1989 bibtex.web
+-rw-r--r-- 1 karl root  73045 Dec  5  1989 btxbst.doc
+-rw-r--r-- 1 karl root   1508 Jan 31  1988 btxdoc.aux
+-rw-r--r-- 1 karl root    596 Feb  8  1988 btxdoc.bbl
+-rw-r--r-- 1 karl root   2594 Dec  5  1989 btxdoc.bib
+-rw-r--r-- 1 karl root  41569 Feb  8  1988 btxdoc.tex
+-rw-r--r-- 1 karl root   1398 Jan 31  1988 btxdoc.xua
+-rw-r--r-- 1 karl root  25616 Dec  5  1989 btxhak.tex
+-rw-r--r-- 1 karl root  33524 Nov 13  1995 btxmac.tex
+-rw-r--r-- 1 karl root  16932 Dec 12  1990 ieeetr.bst
+-rw-r--r-- 1 karl root  20569 Dec  5  1989 plain.bst
+-rw-r--r-- 1 karl root  17956 Dec 12  1990 siam.bst
+-rw-r--r-- 1 karl root  17986 Dec  5  1989 unsrt.bst
+-rw-r--r-- 1 karl root   9894 Dec  5  1989 xampl.bib

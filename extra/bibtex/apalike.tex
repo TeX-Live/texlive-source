@@ -1,0 +1,103 @@
+%% @texfile{
+%%   author = "Oren Patashnik",
+%%   version = "0.99b",
+%%   date = "29 Feb 1992",
+%%   filename = "apalike.tex",
+%%   address = "Please use electronic mail",
+%%   checksum = "103     854    5370",
+%%   email = "opbibtex@cs.stanford.edu",
+%%   codetable = "ISO/ASCII",
+%%   supported = "yes",
+%%   docstring = "Defines macros that make apalike work with plain TeX",
+%% }
+% apalike.tex, version 0.99b, for btxmac 0.99i, BibTeX 0.99c, TeX 3.0 or later.
+% Copyright (C) 1990--92; all rights reserved.
+% You may copy this file provided: that it's accompanied by btxmac.tex;
+% and that either you make absolutely no changes to your copy, or if you
+% do make changes, (1) you name the file something other than
+% `apalike.tex' and you remove all occurrences of `apalike.tex' from the
+% file, (2) you put, somewhere in the first twenty lines of the file,
+% your name, along with an electronic address at which others who might
+% use the file may reach you, and (3) you remove each occurrence of
+% Oren's name and electronic address from this file.  These restrictions
+% help ensure that all standard versions of these macros are identical,
+% and that Oren doesn't get deluged with inappropriate e-mail.
+%
+% This file, apalike.tex, contains TeX macros that let you use the
+% apalike bibliography style with plain TeX.  In essence, this file
+% provides the TeX counterpart to apalike.sty, the LaTeX style file
+% required for using the apalike bibliography style.  Please report any
+% bugs (outright goofs, misfeatures, or unclear documentation) to Oren
+% Patashnik (opbibtex@cs.stanford.edu).  These macros will become frozen
+% shortly after BibTeX version 1.00 is released.
+%
+% AMS-TEX WARNING: This style (apalike) doesn't work with AmS-TeX's
+% `amsppt' style, because AmS-TeX redefines the tie character `~' of
+% plain TeX, and the `amsppt' style redefines plain TeX's `\nobreak'
+% macro, so that a multiple-author reference for which `apalike'
+% automatically produces an in-text citation like `(Jones et~al., 1992)'
+% will throw AmS-TeX's `amsppt' style into an infinite loop, exceeding
+% its input stack size.  (I've checked no other AmS-TeX styles for this
+% problem.)  The AmS-TeX warning of btxmac.tex gives more information.
+% END OF AMS-TEX WARNING.
+%
+% Editorial note (i.e., flame):
+% Many journals require a style like `apalike', but I recommend that you
+% not use it if you have a choice---use something like `plain' instead.
+% Mary-Claire van Leunen (A Handbook for Scholars, Knopf, 1979) argues
+% convincingly that a style like `plain' encourages better writing than
+% one like `apalike'.  Furthermore the best argument for using an
+% author-date style like `apalike'---that it's "the most practical"
+% (The Chicago Manual of Style, University of Chicago Press, thirteenth
+% edition, 1982, pages 400--401)---falls flat on its face with the new
+% computer-typesetting technology.  For instance page 401 of the Chicago
+% Manual anachronistically states "The chief disadvantage of [a style
+% like `plain'] is that additions or deletions cannot be made after the
+% manuscript is typed without changing numbers in both text references
+% and list."  With (La)TeX the disadvantage obviously evaporates.
+% Moreover, apalike indulges in what I think is a shortsighted practice:
+% automatically abbreviating first names.  Abbreviating may occasionally
+% make the work a page shorter, but at the cost of a less useful
+% reference list; that's too high a cost for such a marginal benefit.
+% The offense isn't egregious for a name like `Donald E. Knuth'---at
+% least among those familiar with his field---since there aren't many
+% other `D. E. Knuth's floating around.  But referring to `D. E. Smith'
+% in a field having more than one can be quite confusing.  Moreover,
+% with the proliferation of computers and citation indexes nowadays,
+% it's important to indicate in the reference list an author's name
+% exactly as it appears in the work cited.  Automatically abbreviating
+% first names is simply bad scholarship.  (End of flame.)
+%
+% To use these macros you need the btxmac.tex macros, which let you use
+% BibTeX with plain TeX (rather than with LaTeX); the file btxmac.tex
+% explains those macros in detail, and gives examples.  You simply
+% \input apalike right after you \input btxmac to invoke these macros.
+%
+%
+%   HISTORY
+%
+% Oren Patashnik wrote the original version of these macros in December
+% 1990, for use with btxmac.tex.
+%
+%   12-Dec-90  Version 0.99a, first general release.
+%   29-Feb-92  0.99b, changed `\biblabelextrahang' to `\biblabelextraspace',
+%                     to keep up with btxmac.tex version 0.99i.
+%
+%
+% Here, finally (I swear, I thought he was never gonna stop), are the
+% macros.  The first bunch makes the label empty and sets 2em of
+% hanging indentation (via \biblabelextraspace) for each entry.
+%
+\def\biblabelprint#1{\noindent}%
+\def\biblabelcontents#1{}%
+\def\bblhook{\biblabelextraspace = 2em }%
+%
+%
+% And the last bunch formats an in-text citation: parens around the
+% entire citation; semicolons separating individual references; and a
+% comma between a reference and its note (like `page 41') if it exists.
+%
+\def\printcitestart{(}%         left paren
+\def\printcitefinish{)}%        right parent
+\def\printbetweencitations{; }% semicolon, space
+\def\printcitenote#1{, #1}%     comma, space, note (if it exists)

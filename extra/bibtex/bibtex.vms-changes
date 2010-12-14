@@ -1,0 +1,277 @@
+BIBTeX change file for Vax/VMS
+Modified, 12-Feb-88 by Jerry Leichter for Version .99b
+Modified, 15-Apr-88 by Jerry Leichter for Version .99c
+Modified, 27-May-88 by Nelson Beebe.  Fixed some spelling errors and typos
+        that showed up when the code was woven.  Added support for specifying
+        the file name on the command line.
+@x
+\def\title{\BibTeX\ }
+@y
+\pageno=\contentspagenumber \advance\pageno by 1
+\let\maybe=\iffalse
+\def\title{\BibTeX changes for Vax/VMS}
+@z
+
+@x
+@d banner=='This is BibTeX, Version 0.99c' {printed when the program starts}
+@y
+@d banner=='This is BibTeX, Vax/VMS Version 0.99c'
+@z
+
+@x
+@d term_out == tty
+@d term_in == tty
+@y
+@d term_out == output
+@d term_in == input
+@z
+
+@x
+@d print(#) == begin write(log_file,#); write(term_out,#); end
+@d print_ln(#) == begin write_ln(log_file,#); write_ln(term_out,#); end
+@d print_newline == print_a_newline
+                                {making this a procedure saves a little space}
+@#
+@d trace_pr(#) == begin write(log_file,#); end
+@d trace_pr_ln(#) == begin write_ln(log_file,#); end
+@d trace_pr_newline == begin write_ln(log_file); end
+
+@<Procedures and functions for all file I/O, error messages, and such@>=
+procedure print_a_newline;
+begin
+write_ln(log_file);
+write_ln(term_out);
+end;
+@y
+@d print(#) == begin write(log_file,#); write(term_out,#); end
+@d print_ln(#) == begin write_ln(log_file,#,chr(13),chr(10));
+ write_ln(term_out,#,chr(13),chr(10)); end
+@d print_newline == print_a_newline
+                                {making this a procedure saves a little space}
+@#
+@d trace_pr(#) == begin write(log_file,#); end
+@d trace_pr_ln(#) == begin write_ln(log_file,#,chr(13),chr(10)); end
+@d trace_pr_newline == begin write_ln(log_file,chr(13),chr(10)); end
+
+@<Procedures and functions for all file I/O, error messages, and such@>=
+procedure print_a_newline;
+begin
+write_ln(log_file,chr(13),chr(10));
+write_ln(term_out,chr(13),chr(10));
+end;
+@z
+
+@x
+@d othercases == others: {default for cases not listed explicitly}
+@y
+@d othercases == otherwise {Vax/VMS default for cases not listed
+ explicitly}
+@z
+
+@x
+program BibTEX;                 {all files are opened dynamically}
+@y
+program BibTEX(input,output);
+                        {all files are opened dynamically}
+@z
+
+@x
+@<Compiler directives@>=
+@{@&$C-,A+,D-@}  {no range check, catch arithmetic overflow, no debug overhead}
+@!debug @{@&$C+,D+@}@+ gubed            {but turn everything on when debugging}
+@y
+On Vax/VMS, there are no compiler directives that can be introduced in this
+way, but we take this opportunity to include a few system-dependent goodies.
+
+@d VAX_text==@= text @>
+@d VAX_new==@= new @>
+@d VAX_none==@= none @>
+@d VAX_word==@= word @>
+@d VAX_error==@= error @>
+@d VAX_length==@= length @>
+@d VAX_syi_sid==@= syi$_sid @>
+@d VAX_continue==@= continue @>
+@d VAX_external==@= external @>
+@d VAX_readonly==@= readonly @>
+@d VAX_volatile==@= volatile @>
+@d VAX_aligned==@= aligned @>
+@d VAX_unsigned==@= unsigned @>
+@d VAX_carriage_control==@= carriage_control @>
+@d VAX_io_setmode==@= io$_setmode @>
+@d VAX_iom_ctrlcast==@= io$m_ctrlcast @>
+@d VAX_immed==@= %immed @>
+@d VAX_stdescr==@= %stdescr @>
+@d VAX_ref==@= %ref @>
+@d VAX_qiow==@= $qiow @>
+@d VAX_assign==@= $assign @>
+@d VAX_numtim==@= $numtim @>
+@d VAX_getsyi==@= $getsyi @>
+@d VAX_lib_get_foreign==@= lib$get_foreign @>
+@d VAX_disposition==@= disposition @>
+@d VAX_delete==@= delete @>
+@d VAX_save==@= save @>
+@d VAX_varying==@= varying @>
+@d VAX_substr==@= substr @>
+@d VAX_trnlog==@= $trnlog @>
+@d VAX_ss_normal==@= ss$_normal @>
+
+@<Compiler directives@>=
+@=[check(none)]@> {no debug overhead, but...}
+debug @=[check(all)]@> gubed {turn everything on when debugging}
+@z
+
+@x Define the compile-time constant |max_rescan| for command-line processing
+@!lit_stk_size=100; {maximum number of literal functions on the stack}
+@y
+@!lit_stk_size=100; {maximum number of literal functions on the stack}
+@!max_cmdline=500; {maximum length of the rescan buffer}
+@z
+
+@x
+@<Types in the outer block@>=
+@y
+@<Types in the outer block@>=
+@!word_type = [word]-32768..32767;      {16-bit integers}
+@z
+
+@x
+@!alpha_file=packed file of text_char; {files that contain textual data}
+@y
+@!alpha_file=text; {files that contain textual data}
+@z
+
+@x
+@d reset_OK(#)==erstat(#)=0
+@d rewrite_OK(#)==erstat(#)=0
+
+@<Procedures and functions for file-system interacting@>=
+function erstat(var f:file):integer; extern;    {in the runtime library}
+@#@t\2@>
+function a_open_in(var f:alpha_file):boolean;   {open a text file for input}
+begin reset(f,name_of_file,'/O'); a_open_in:=reset_OK(f);
+end;
+@#
+function a_open_out(var f:alpha_file):boolean;  {open a text file for output}
+begin rewrite(f,name_of_file,'/O'); a_open_out:=rewrite_OK(f);
+end;
+@y
+@<Procedures and functions for file-system interacting@>=
+function a_open_in(var f:alpha_file):boolean;   {open a text file for input}
+begin
+open(f,name_of_file,VAX_readonly,VAX_error:=VAX_continue);
+if status(f)>0 then a_open_in:=false
+else begin
+ reset(f,VAX_error:=VAX_continue);
+ a_open_in:=status(f)<=0;
+ end;
+end;
+@#
+function a_open_out(var f:alpha_file):boolean;  {open a text file for output}
+begin
+open(f,name_of_file,VAX_new,16383,{VAX\_disposition:=VAX\_delete,}
+        VAX_error:=VAX_continue);
+if status(f)>0 then a_open_out:=false
+else begin
+ rewrite(f,VAX_error:=VAX_continue);
+ a_open_out:=status(f)<=0;
+ end;
+end;
+@z
+
+@x
+pre_define('texinputs:  ',10,file_area_ilk);
+s_bst_area := hash_text[pre_def_loc];
+pre_define('texbib:     ',7,file_area_ilk);
+s_bib_area := hash_text[pre_def_loc];
+@y
+pre_define('tex$inputs: ',11,file_area_ilk);
+s_bst_area := hash_text[pre_def_loc];
+pre_define('tex$bib:    ',8,file_area_ilk);
+s_bib_area := hash_text[pre_def_loc];
+@z
+
+@x
+check_cmnd_line := false;                       {many systems will change this}
+@y
+check_cmnd_line := true;                        {many systems will change this}
+@z
+
+@x And finally, here's the code that handles the command line argument.
+@<Process a possible command line@>=
+begin
+do_nothing;             {the ``default system'' doesn't use the command line}
+end
+@y
+On VAX/VMS, we can make a program runnable by name by defining a foreign
+command symbol for it; the command line is then accessible via a call to
+\.{lib\$get\_foreign()}.  Since all we need is a single word off the
+command line, and since prompting for the input of that word is both a
+nuisance, and precludes use of nice utilities like \.{Make}, it seems
+simplest to pick up the name from the command line.
+
+The Kellerman and Smith VMS \TeX{} implementation takes this notion a
+step further, and adds code to support running the program in native
+mode, complete with command line switches and fancy parsing; they have
+more ambition than I do just now.
+
+@<Process a possible command line@>=
+begin
+  get_cmdline;
+  if (aux_name_length = file_name_size) then
+    sam_you_made_the_file_name_too_long
+  else if (aux_name_length = 0) then
+    goto aux_not_found
+end
+@
+@<Procedures and functions for all file I/O, error messages, and such@>=
+function VAX_lib_get_foreign(VAX_stdescr s :
+                packed array [a..b : integer] of char;
+        %immed p2 : integer;
+        var p3 : word_type) : integer;
+        fortran;
+@#
+procedure get_cmdline;
+label exit;
+var
+        cmdline : packed array [1..max_cmdline] of char;
+        cmdlength : word_type;
+        i : integer;
+@#
+begin
+        aux_name_length := 0;
+        if not odd (VAX_lib_get_foreign(cmdline,0,cmdlength)) then
+        begin
+                print_ln('Cannot get command line; use "bibtex file"');
+                return
+        end;
+@#
+        i:=1;
+        while (i<=cmdlength) and (cmdline[i]=' ') do incr(i); {skip spaces}@/
+        if i>cmdlength then return; {there was no argument}
+@#
+        while (cmdline[i]>' ') do       {copy the argument into |name_of_file|}
+        begin
+            if (aux_name_length = file_name_size) then
+                return;
+            incr(aux_name_length);
+            name_of_file[aux_name_length] := cmdline[i];
+            incr(i)
+        end;
+exit:
+end;
+@
+@z
+
+@x
+This section should be replaced, if necessary, by changes to the program
+that are necessary to make \BibTeX\ work at a particular installation.
+It is usually best to design your change file so that all changes to
+previous sections preserve the section numbering; then everybody's version
+will be consistent with the printed program. More extensive changes,
+which introduce new sections, can be inserted here; then only the index
+itself will get a new section number.
+@y
+Here are the remaining changes to the program
+that are necessary to make \.{TeX} work on Vax/VMS.
+
+@z

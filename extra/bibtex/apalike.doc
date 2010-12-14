@@ -1,0 +1,60 @@
+% apalike.sty style, used in conjunction with apalike.bst,
+% will produce an apa-like bibliography style:
+%
+% 1) Bibliography entries formatted alphabetically, last name
+%    first, each entry having a hanging indentation and no label.
+% 2) References in the following formats:
+%		(Author, 1986)
+%		(Author and Author, 1986)
+%		(Author et al., 1986).
+% 3) Multiple references in the form (Author1, 1986; Author2, 1987)
+%
+% To be used as an optional argument to the \documentstyle command; for example
+%	\documentstyle[11pt,apalike]{book}
+%
+% 16-Sep-86, original version by Susan King and Oren Patashnik.
+% 13-Oct-87 changes:
+%	Fixed bug in last line by adding the {} that disappeard when
+%		the \hbox{} was removed from the pre-APALIKE definition;
+%	added club and widow penalties;
+%	patched the \newblock LaTeX bug from `-.07em' to simply `.07em';
+%	and made this work for document styles that don't define `chapter'.
+%
+%
+% Use parens instead of brackets for \cite, and no label in the bibliography
+%
+\def\@cite#1#2{(#1\if@tempswa , #2\fi)}
+\def\@biblabel#1{}
+
+% Set length of hanging indentation for bibliography entries
+%
+\newlength{\bibhang}
+\setlength{\bibhang}{2em}
+
+% \thebibliography environment depends on whether or not `chapter's can exist
+%
+\@ifundefined{chapter}{\def\thebibliography#1{\section*{References\@mkboth
+  {REFERENCES}{REFERENCES}}\list
+  {\relax}{\setlength{\labelsep}{0em}
+	\setlength{\itemindent}{-\bibhang}
+	\setlength{\leftmargin}{\bibhang}}
+    \def\newblock{\hskip .11em plus .33em minus .07em}
+    \sloppy\clubpenalty4000\widowpenalty4000
+    \sfcode`\.=1000\relax}}%
+{\def\thebibliography#1{\chapter*{Bibliography\@mkboth
+  {BIBLIOGRAPHY}{BIBLIOGRAPHY}}\list
+  {\relax}{\setlength{\labelsep}{0em}
+	\setlength{\itemindent}{-\bibhang}
+	\setlength{\leftmargin}{\bibhang}}
+    \def\newblock{\hskip .11em plus .33em minus .07em}
+    \sloppy\clubpenalty4000\widowpenalty4000
+    \sfcode`\.=1000\relax}}
+
+% `; ' goes between cites, and there's no \hbox around individual cites
+%
+\def\@citex[#1]#2{\if@filesw\immediate\write\@auxout{\string\citation{#2}}\fi
+  \def\@citea{}\@cite{\@for\@citeb:=#2\do
+    {\@citea\def\@citea{; }\@ifundefined
+       {b@\@citeb}{{\bf ?}\@warning
+       {Citation `\@citeb' on page \thepage \space undefined}}%
+{\csname b@\@citeb\endcsname}}}{#1}}

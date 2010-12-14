@@ -1,0 +1,52 @@
+To get BibTeX running you should: make sure you have all files listed
+below, read the overview section (the first page) of BTXDOC.TEX, and
+(if needed) create or procure a BibTeX change file for your system so
+you can Tangle and compile BibTeX.  To test your implementation,
+follow these simple steps (note: in what follows, the word `match' is
+used loosely, because lines longer than 80 characters have been
+broken manually in BTXDOC.AUX; thus, your system's file-compare
+program may say the files are different even though they match):
+
+(A) Run BTXDOC.TEX through LaTeX. You'll get a bunch of LaTeX warning
+messages, and LaTeX will produce a BTXDOC.AUX file that will NOT match
+the supplied file of that name.  NOTE: Don't let LaTeX "see" a copy of
+the supplied BTXDOC.AUX or BTXDOC.BBL during this run.
+
+(B) Run BibTeX on the BTXDOC.AUX file created in step (A).  BibTeX
+will read in the supplied file BTXDOC.BIB.  This run should produce
+a BTXDOC.BBL file that matches the suppled file of the same name;
+BibTeX will give one warning message (about chicago).
+
+(C) Run BTXDOC.TEX through LaTeX.  Again, you'll get some LaTeX
+warning messages, but this time LaTeX will produce a new BTXDOC.AUX
+file that DOES match the supplied file of that name.  This run will
+read in the BTXDOC.AUX file produced in (A) and the BTXDOC.BBL file
+produced in step (B).
+
+(D) Run BTXDOC.TEX through LaTeX.  By reading the new BTXDOC.AUX file,
+LaTeX will produce no warning messages, and you should get another
+matching copy of the BTXDOC.AUX file.
+
+IMPORTANT NOTE: After you get BibTeX running you should make sure that
+all the documentation files listed below are available on your system,
+and you should state in the _Local Guide_ exactly how to access them.
+
+Here are BibTeX-related files in this directory:
+
+
+BIBTEX.INS      this file
+BIBTEX.WEB      the WEB source file for BibTeX
+BTXDOC.TEX      documentation, and also sample input for BibTeX implementors
+BTXHAK.TEX      documentation for style designers
+BTXDOC.BIB      the bibliography database file for BTXDOC.TEX
+BTXDOC.BBL      a file for comparing your implementation's output
+BTXDOC.AUX      another
+XAMPL.BIB       a database file with an example of every standard entry type
+
+
+BTXBST.DOC      the documentation and template for the four standard
+                  bibliography styles:
+ABBRV.BST       abbreviated
+ALPHA.BST       alphabetic
+PLAIN.BST       plain
+UNSRT.BST       unsorted
