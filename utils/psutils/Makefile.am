@@ -73,55 +73,57 @@ pstops_SOURCES = \
 	$(PSUTILS_TREE)/psutil.c \
 	$(PSUTILS_TREE)/psutil.h
 
-perl_scripts = extractres fixdlsrps fixfmps fixmacps fixpsditps fixpspps \
-	fixscribeps fixtpps fixwfwps fixwpps fixwwps includeres psmerge
+## Omitted fixmacps depending on removed non-free files
+##   $(PSUTILS_TREE)/md{68,71}_0.ps.
+perl_scripts = \
+	extractres \
+	fixdlsrps \
+	fixfmps \
+	fixpsditps \
+	fixpspps \
+	fixscribeps \
+	fixtpps \
+	fixwfwps \
+	fixwpps \
+	fixwwps \
+	includeres \
+	psmerge
 
-shell_scripts = getafm showchar
+shell_scripts = \
+	getafm \
+	showchar
 
 nodist_bin_SCRIPTS = $(perl_scripts)
 
 install-exec-hook:
+if !WIN32
 	@for f in $(shell_scripts); do \
 	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
 	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
 	done
+endif !WIN32
 
 uninstall-hook:
+if !WIN32
 	@for f in $(shell_scripts); do \
 	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	done
+endif !WIN32
 
 nodist_man1_MANS = \
-	epsffit.1\
-	extractres.1 \
-	fixdlsrps.1 \
-	fixfmps.1 \
-	fixmacps.1 \
-	fixpsditps.1 \
-	fixpspps.1 \
-	fixscribeps.1 \
-	fixtpps.1 \
-	fixwfwps.1 \
-	fixwpps.1 \
-	fixwwps.1 \
-	getafm.1 \
-	includeres.1 \
-	psbook.1 \
-	psmerge.1 \
-	psnup.1 \
-	psresize.1 \
-	psselect.1 \
-	pstops.1
+	$(bin_PROGRAMS:$(EXEEXT)=.1) \
+	$(perl_scripts:=.1) \
+	getafm.1
 
 CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_man1_MANS)
 
 PERL = /usr/bin/env perl
 MAKETEXT = $(PERL) $(srcdir)/$(PSUTILS_TREE)/maketext
 
-%: $(PSUTILS_TREE)/%.pl
+%: $(PSUTILS_TREE)/%.pl patchlev.h
 	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $< >$@
 
-%.1: $(PSUTILS_TREE)/%.man
+%.1: $(PSUTILS_TREE)/%.man patchlev.h
 	$(MAKETEXT) PAPER=$(PAPER) "MAN=$(nodist_man1_MANS)" $< >$@
 

@@ -20,6 +20,9 @@ AC_PROG_CC
 
 KPSE_COMPILER_WARNINGS
 
+KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+
 PSUTILS_TREE=psutils-[]psutils_version
 AC_SUBST([PSUTILS_TREE])
 

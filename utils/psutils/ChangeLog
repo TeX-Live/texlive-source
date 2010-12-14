@@ -1,3 +1,11 @@
+2010-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Remove the non-free files psutils-1.17/md{68,71}_0.ps.
+	* Makefile.am (perl_scripts): Remove fixmacps.
+	(nodist_man1_MANS): Derive from bin_PROGRAMS and perl_scripts.
+
+	* Makefile.am, configure.ac: Ignore shell scripts for WIN32.
+
 2010-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Import original psutils-1.17, patches in psutils-1.17-PATCHES.

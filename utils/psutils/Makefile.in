@@ -47,6 +47,7 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/../../build-aux/depcomp \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -274,32 +275,29 @@ pstops_SOURCES = \
 	$(PSUTILS_TREE)/psutil.c \
 	$(PSUTILS_TREE)/psutil.h
 
-perl_scripts = extractres fixdlsrps fixfmps fixmacps fixpsditps fixpspps \
-	fixscribeps fixtpps fixwfwps fixwpps fixwwps includeres psmerge
+perl_scripts = \
+	extractres \
+	fixdlsrps \
+	fixfmps \
+	fixpsditps \
+	fixpspps \
+	fixscribeps \
+	fixtpps \
+	fixwfwps \
+	fixwpps \
+	fixwwps \
+	includeres \
+	psmerge
 
-shell_scripts = getafm showchar
+shell_scripts = \
+	getafm \
+	showchar
+
 nodist_bin_SCRIPTS = $(perl_scripts)
 nodist_man1_MANS = \
-	epsffit.1\
-	extractres.1 \
-	fixdlsrps.1 \
-	fixfmps.1 \
-	fixmacps.1 \
-	fixpsditps.1 \
-	fixpspps.1 \
-	fixscribeps.1 \
-	fixtpps.1 \
-	fixwfwps.1 \
-	fixwpps.1 \
-	fixwwps.1 \
-	getafm.1 \
-	includeres.1 \
-	psbook.1 \
-	psmerge.1 \
-	psnup.1 \
-	psresize.1 \
-	psselect.1 \
-	pstops.1
+	$(bin_PROGRAMS:$(EXEEXT)=.1) \
+	$(perl_scripts:=.1) \
+	getafm.1
 
 CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_man1_MANS)
 PERL = /usr/bin/env perl
@@ -975,21 +973,21 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 install-exec-hook:
-	@for f in $(shell_scripts); do \
-	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
-	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
-	done
+@WIN32_FALSE@	@for f in $(shell_scripts); do \
+@WIN32_FALSE@	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
+@WIN32_FALSE@	done
 
 uninstall-hook:
-	@for f in $(shell_scripts); do \
-	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-	done
+@WIN32_FALSE@	@for f in $(shell_scripts); do \
+@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+@WIN32_FALSE@	done
 
-%: $(PSUTILS_TREE)/%.pl
+%: $(PSUTILS_TREE)/%.pl patchlev.h
 	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $< >$@
 
-%.1: $(PSUTILS_TREE)/%.man
+%.1: $(PSUTILS_TREE)/%.man patchlev.h
 	$(MAKETEXT) PAPER=$(PAPER) "MAN=$(nodist_man1_MANS)" $< >$@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
