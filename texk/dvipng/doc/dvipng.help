@@ -1,4 +1,4 @@
-This is ./dvipng 1.13 Copyright 2002-2010 Jan-Ake Larsson
+This is ./dvipng 1.14 Copyright 2002-2010 Jan-Ake Larsson
 
 Usage: ./dvipng [OPTION]... FILENAME[.dvi]
 Options are chosen to be similar to dvips' options where possible:
@@ -22,12 +22,13 @@ These do not correspond to dvips options:
   --dvinum*    Use TeX page numbers in output filenames
   -fg s        Foreground color (TeX-style color)
   --follow*    Wait for data at end-of-file
-  --freetype*  FreeType font rendering (default on)
+  --freetype*  FreeType font rendering (preferred, default on)
   --gamma #    Control color interpolation
   --gif        Output GIF images (dvigif default)
   --height*    Output the image height on stdout
-  --noghostscript*  Don't use ghostscript for PostScript specials
+  --nogs*      Don't use ghostscript for PostScript specials
   --nogssafer* Don't use -dSAFER in ghostscript calls
+  --norawps*   Don't convert raw PostScript specials
   --palette*   Force palette output
   --picky      When a warning occurs, don't output image
   --png        Output PNG images (dvipng default)
@@ -35,6 +36,7 @@ These do not correspond to dvips options:
   --t1lib*     T1lib font rendering (default on)
   --truecolor* Truecolor output
   -Q #         Quality (T1lib and PK subsampling)
+  --width*     Output the image width on stdout
   -z #         PNG compression level
 
    # = number   f = file   s = string  * = suffix, '0' to turn off

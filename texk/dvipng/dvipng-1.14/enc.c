@@ -59,15 +59,15 @@ static struct encoding* InitEncoding(char* encoding)
   pos=fmmap.data;
   max=fmmap.data+fmmap.size;
   buf=encp->name+strlen(encoding)+1;
-#define SKIPCOMMENT(x) if (*x=='%') while (x<max && *x!='\n') x++;
+#define SKIPCOMMENT(x) if (*x=='%') while (x<max && *x!='\r' && *x!='\n') x++;
   while(pos<max && *pos!='/') {
     SKIPCOMMENT(pos);
     pos++;
   }
   pos++;
   encp->charname[256]=buf;
-  while(pos<max && *pos!='[' 
-	&& *pos!=' ' && *pos!='\t' && *pos!='\n' && *pos!='%') 
+  while(pos<max && *pos!='[' && *pos!='%'
+	&& *pos!=' ' && *pos!='\t' && *pos!='\r' && *pos!='\n')
     *buf++=*pos++;
   *buf++='\0';
   DEBUG_PRINT(DEBUG_ENC,("\n  PS ENCODING '%s'",
@@ -84,7 +84,8 @@ static struct encoding* InitEncoding(char* encoding)
   while(pos<max && *pos!=']') {
     pos++;
     encp->charname[i++]=buf;
-    while(pos<max && *pos!=' ' && *pos!='\t' && *pos!='\n' && *pos!='%') 
+    while(pos<max && *pos!='%' && *pos!=' ' \
+	  && *pos!='\t' && *pos!='\r' && *pos!='\n') 
       *buf++=*pos++;
     *buf++='\0';
     DEBUG_PRINT(DEBUG_ENC,("\n  PS ENCODING %d '%s'",

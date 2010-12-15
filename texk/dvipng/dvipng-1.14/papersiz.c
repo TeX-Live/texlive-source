@@ -52,6 +52,7 @@ static int32_t myatodim(const char ** p)
   while (*q != ',' && *q !='\0')
     q++;
   tmp = tmp*lengthsp[i]*dpi/4736286L; /*   sp * dots/in / (sp/in), convert sp to pixels   */
+  *p=q;
   return((int32_t) tmp);
 }
 

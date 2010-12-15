@@ -47,21 +47,22 @@ static struct subfont* ReadSubfont(char* sfdname, char *infix)
     return(NULL);
   pos=fmmap.data;
   max=fmmap.data+fmmap.size;
-  while(pos<max && (*pos==' ' || *pos=='\n' || *pos=='\t')) pos++;
+  while(pos<max && (*pos==' ' || *pos=='\r' || *pos=='\n' || *pos=='\t')) pos++;
   while (pos<max && *pos=='#') {
-    while(pos<max && *pos!='\n') pos++;
-    while(pos<max && (*pos==' ' || *pos=='\n' || *pos=='\t')) pos++;
+    while(pos<max && *pos!='\r' && *pos!='\n') pos++;
+    while(pos<max && (*pos==' ' || *pos=='\r' || *pos=='\n' || *pos=='\t')) pos++;
   }
   while(pos+strlen(infix)<max 
 	&& (strncmp(pos,infix,strlen(infix))!=0
 	    || (pos[strlen(infix)]!=' ' && pos[strlen(infix)]!='\t'))) {
-    while(pos+1<max && (*(pos+1)!='\n' || *pos=='\\'))
+    /* skip lines, taking line continuation into account */
+    while(pos+1<max && (*(pos+1)!='\r' || *(pos+1)!='\n' || *pos=='\\'))
       pos++;
     pos++;
-    while(pos<max && (*pos==' ' || *pos=='\n' || *pos=='\t')) pos++;
+    while(pos<max && (*pos==' ' || *pos=='\r' || *pos=='\n' || *pos=='\t')) pos++;
     while (pos<max && *pos=='#') {
-      while(pos<max && *pos!='\n') pos++;
-      while(pos<max && (*pos==' ' || *pos=='\n' || *pos=='\t')) pos++;
+      while(pos<max && *pos!='\r' && *pos!='\n') pos++;
+      while(pos<max && (*pos==' ' || *pos=='\r' || *pos=='\n' || *pos=='\t')) pos++;
     }
   }
   pos=pos+strlen(infix);
@@ -79,7 +80,7 @@ static struct subfont* ReadSubfont(char* sfdname, char *infix)
     sfdp->infix=(char*)sfdp+sizeof(struct subfont)+strlen(sfdname)+1;
     strcpy(sfdp->infix,infix);
     sfdp->encoding=FT_ENCODING_UNICODE;
-    while (pos<max && *pos != '\n') {
+    while (pos<max && *pos != '\r' && *pos != '\n') {
       number=strtol(pos,&pos,0);
       while(pos<max && (*pos==' ' || *pos=='\t')) pos++;
       switch(*pos) {
@@ -101,7 +102,9 @@ static struct subfont* ReadSubfont(char* sfdname, char *infix)
 	DEBUG_PRINT(DEBUG_ENC,("\n  SUBFONT MAP %d %d",codepoint,number)); 
       }
       while(pos<max && (*pos==' ' || *pos=='\t')) pos++;
-      while(pos<max && *pos=='\\' && pos+1<max && *(pos+1)=='\n') {
+      /* take line continuation into account */
+      while(pos+1<max && *pos=='\\' && (*(pos+1)=='\r' || *(pos+1)=='\n')) {
+	if (pos+2<max && *(pos+1)=='\r' && *(pos+2)=='\n') pos++;
 	pos+=2;
 	while(pos<max && (*pos==' ' || *pos=='\t')) pos++;
       }

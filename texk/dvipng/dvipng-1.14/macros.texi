@@ -1,0 +1,61 @@
+@ignore
+macros.texi
+
+Part of the dvipng distribution
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this program. If not, see
+<http://www.gnu.org/licenses/>.
+
+Copyright @copyright{} 2002-2008 Jan-@AA{}ke Larsson
+@end ignore
+
+@ifclear macros
+@set macros
+@macro AUCTeX {}
+AUC@TeX{}
+@end macro
+@ifnottex
+@macro LaTeX {}
+La@TeX{}
+@end macro
+@macro previewlatex {}
+preview-latex
+@end macro
+@ifset no-acronym
+@clear no-acronym
+@macro acronym {text}
+@sc{\text\}
+@end macro
+@end ifset
+@ifset no-env
+@clear no-env
+@macro env {text}
+@code{\text\}
+@end macro
+@end ifset
+@ifset no-option
+@clear no-option
+@macro option {text}
+@samp{\text\}
+@end macro
+@end ifset
+@end ifnottex
+@tex
+\gdef\LaTeX{L\kern-.36em\raise.3ex\hbox{\sc{a}}\kern-.15em\TeX}
+\gdef\previewlatex{Preview-\LaTeX}
+\ifx\acronym\undefined \gdef\acronym#1{{\smallcaps \lowercase{#1}}} \fi
+\ifx\env\undefined \global\let\env=\code \fi
+\ifx\option\undefined \global\let\option=\samp \fi
+@end tex
+@end ifclear

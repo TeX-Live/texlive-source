@@ -148,9 +148,9 @@ static struct psfontmap *SearchPSFontMap(char* fontname,
   }
   while(pos<end && (entry==NULL || strcmp(entry->tfmname,fontname)!=0)) {
     while(pos < end 
-	  && (*pos=='\n' || *pos==' ' || *pos=='\t' 
+	  && (*pos=='\r' || *pos=='\n' || *pos==' ' || *pos=='\t' 
 	      || *pos=='%' || *pos=='*' || *pos==';' || *pos=='#')) {
-      while(pos < end && *pos!='\n') pos++; /* skip comments/empty rows */
+      while(pos < end && *pos!='\r' && *pos!='\n') pos++; /* skip comments/empty rows */
       pos++;
     }
     if (pos < end) {
@@ -166,7 +166,7 @@ static struct psfontmap *SearchPSFontMap(char* fontname,
       }
       /* first word is font name */
       entry->tfmname = newword(&pos,end);
-      while(pos < end && *pos!='\n') pos++;
+      while(pos < end && *pos!='\r' && *pos!='\n') pos++;
       entry->end = pos;
     }
     pos++;

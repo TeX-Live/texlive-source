@@ -80,7 +80,7 @@ static struct colorname * NewColor(const char* prefix, int nprefix,
 }
 
 #define FINDWORD(s) while(s<max && \
-                  (*s=='{'||*s==' '||*s=='%'||*s=='\n'||*s==';')) s++
+                  (*s=='{'||*s==' '||*s=='%'||*s==';'||*s=='\r'||*s=='\n')) s++
 #define FINDARG(s) while(s<max && *s!='{') s++; FINDWORD(s)
 #define FINDMODELEND(s,n) n=0; while(s<max && *s!='}' && *s!='/') { s++; n++; }
 #define FINDNAMEEND(s,n) n=0; while(s<max && *s!='}' && *s!=',') { s++; n++; }
@@ -230,7 +230,7 @@ static struct colorname* LoadXColorPrologue(void)
       values=++pos;              /* second argument: color values */
       FINDVALEND(pos,nvalues);
       model=pos+3;               /* third argument: color model, prefixed by 'XC' */
-      while(pos<max && *pos!=' ' && *pos!='\n') pos++;
+      while(pos<max && *pos!=' ' && *pos!='\r' && *pos!='\n') pos++; 
       nmodel=pos-model;
       tmp=NewColor(prefix,nprefix,name,nname,model,nmodel,values,nvalues);
       tmp->next=list;

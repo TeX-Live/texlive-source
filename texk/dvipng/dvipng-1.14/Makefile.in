@@ -95,6 +95,7 @@ dvipng.help: dvipng
 	rm -f dvipng.tmp
 
 www: $(TEXIFILES) dvipng.help
+	mkdir -p www
 	texi2html -split chapter -nosec-nav -subdir html \
 	   -I $(srcdir) $(srcdir)/dvipng.texi
 	(cd html; for i in *; do \

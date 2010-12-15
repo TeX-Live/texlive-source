@@ -112,7 +112,6 @@ typedef int bool;
 # endif
 #endif
 
-
 /*************************************************************/
 /*************************  protos.h  ************************/
 /*************************************************************/
@@ -436,6 +435,7 @@ EXTERN struct internal_state {
 #define BG_TRANSPARENT               (1<<17)
 #define BG_TRANSPARENT_ALPHA         (1<<18)
 #define FORCE_PALETTE                (1<<19)
+#define NO_RAW_PS                    (1<<20)
 EXTERN uint32_t option_flags INIT(BE_NONQUIET | USE_FREETYPE | USE_LIBT1);
 
 #define PAGE_GAVE_WARN               1
