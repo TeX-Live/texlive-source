@@ -35,8 +35,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = bbox$(EXEEXT)
 subdir = .
-DIST_COMMON = $(am__configure_deps) $(dist_bin_SCRIPTS) \
-	$(dist_man1_MANS) $(srcdir)/../../build-aux/depcomp \
+DIST_COMMON = $(am__configure_deps) $(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
@@ -46,6 +45,7 @@ DIST_COMMON = $(am__configure_deps) $(dist_bin_SCRIPTS) \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -81,7 +81,7 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-SCRIPTS = $(dist_bin_SCRIPTS)
+SCRIPTS = $(bin_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -94,7 +94,7 @@ SOURCES = $(bbox_SOURCES)
 DIST_SOURCES = $(bbox_SOURCES)
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(dist_man1_MANS)
+MANS = $(man1_MANS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -146,6 +146,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PS2EPS_TREE = @PS2EPS_TREE@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -194,16 +195,17 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
+EXTRA_DIST = $(PS2EPS_TREE) $(PS2EPS_TREE)-PATCHES
 AM_CFLAGS = $(WARNING_CFLAGS)
-bbox_SOURCES = bbox.c
-dist_bin_SCRIPTS = ps2eps
-dist_man1_MANS = bbox.1 ps2eps.1
-EXTRA_DIST = \
-	Changes.txt  \
-	INSTALL.txt  \
-	LICENSE.txt  \
-	Latest_is_1.64  \
-	README.txt
+bbox_SOURCES = \
+	$(PS2EPS_TREE)/src/C/bbox.c
+
+bin_SCRIPTS = \
+	$(PS2EPS_TREE)/bin/ps2eps
+
+man1_MANS = \
+	$(PS2EPS_TREE)/doc/man/man1/bbox.1 \
+	$(PS2EPS_TREE)/doc/man/man1/ps2eps.1
 
 all: all-am
 
@@ -283,10 +285,10 @@ clean-binPROGRAMS:
 bbox$(EXEEXT): $(bbox_OBJECTS) $(bbox_DEPENDENCIES) 
 	@rm -f bbox$(EXEEXT)
 	$(LINK) $(bbox_OBJECTS) $(bbox_LDADD) $(LIBS)
-install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
+install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
@@ -309,9 +311,9 @@ install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
 	     } \
 	; done
 
-uninstall-dist_binSCRIPTS:
+uninstall-binSCRIPTS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
 	files=`for p in $$list; do echo "$$p"; done | \
 	       sed -e 's,.*/,,;$(transform)'`; \
 	test -n "$$list" || exit 0; \
@@ -339,10 +341,24 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-install-man1: $(dist_man1_MANS)
+
+bbox.o: $(PS2EPS_TREE)/src/C/bbox.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bbox.o -MD -MP -MF $(DEPDIR)/bbox.Tpo -c -o bbox.o `test -f '$(PS2EPS_TREE)/src/C/bbox.c' || echo '$(srcdir)/'`$(PS2EPS_TREE)/src/C/bbox.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/bbox.Tpo $(DEPDIR)/bbox.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PS2EPS_TREE)/src/C/bbox.c' object='bbox.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bbox.o `test -f '$(PS2EPS_TREE)/src/C/bbox.c' || echo '$(srcdir)/'`$(PS2EPS_TREE)/src/C/bbox.c
+
+bbox.obj: $(PS2EPS_TREE)/src/C/bbox.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT bbox.obj -MD -MP -MF $(DEPDIR)/bbox.Tpo -c -o bbox.obj `if test -f '$(PS2EPS_TREE)/src/C/bbox.c'; then $(CYGPATH_W) '$(PS2EPS_TREE)/src/C/bbox.c'; else $(CYGPATH_W) '$(srcdir)/$(PS2EPS_TREE)/src/C/bbox.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/bbox.Tpo $(DEPDIR)/bbox.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PS2EPS_TREE)/src/C/bbox.c' object='bbox.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o bbox.obj `if test -f '$(PS2EPS_TREE)/src/C/bbox.c'; then $(CYGPATH_W) '$(PS2EPS_TREE)/src/C/bbox.c'; else $(CYGPATH_W) '$(srcdir)/$(PS2EPS_TREE)/src/C/bbox.c'; fi`
+install-man1: $(man1_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
-	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	{ for i in $$list; do echo "$$i"; done; \
 	} | while read p; do \
 	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
@@ -366,7 +382,7 @@ install-man1: $(dist_man1_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
@@ -471,6 +487,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -647,7 +666,7 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-dist_binSCRIPTS
+install-exec-am: install-binPROGRAMS install-binSCRIPTS
 
 install-html: install-html-am
 
@@ -688,8 +707,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS \
-	uninstall-man
+uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS uninstall-man
 
 uninstall-man: uninstall-man1
 
@@ -697,12 +715,12 @@ uninstall-man: uninstall-man1
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-binPROGRAMS clean-generic ctags dist dist-all dist-bzip2 \
-	dist-gzip dist-lzma dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-compile distclean-generic \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am \
-	install-dist_binSCRIPTS install-dvi install-dvi-am \
+	dist-gzip dist-hook dist-lzma dist-shar dist-tarZ dist-xz \
+	dist-zip distcheck distclean distclean-compile \
+	distclean-generic distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-binSCRIPTS \
+	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
 	install-info install-info-am install-man install-man1 \
 	install-pdf install-pdf-am install-ps install-ps-am \
@@ -710,8 +728,12 @@ uninstall-man: uninstall-man1
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-dist_binSCRIPTS uninstall-man uninstall-man1
+	uninstall-binSCRIPTS uninstall-man uninstall-man1
 
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

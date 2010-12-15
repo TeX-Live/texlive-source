@@ -1,6 +1,25 @@
 ----------------------------
 Detailed Change Log:
 ----------------------------
+revision 1.68
+date: 2010-05-07 21:42:35 +0200;  author: bless;  state: Exp;  lines: +3 -3; 
+- quoted translate command string
+----------------------------
+revision 1.67
+date: 2009-12-05 23:44:19 +0100;  author: bless;  state: Exp;  lines: +39 -33;
+- quote of tmpfname for coping with spaces in filenames
+- added -a option
+- changed handling of hiresBB (now rounded to hiresprecision, by default 0.5pt)
+----------------------------
+revision 1.66
+date: 2007-10-30 12:04:24 +0100;  author: bless;  state: Exp;  lines: +9 -5;
+- added %%BeginData %%EndData as indicators for Binary Section
+- added new option -b (treat as binary) to prevent filtering CR/LF stuff
+----------------------------
+revision 1.65
+date: 2007-01-24 14:19:42 +0100;  author: bless;  state: Exp;  lines: +3 -3;
+- fixed help/usage formatting output
+----------------------------
 revision 1.64
 date: 2007-01-24 13:32:59 +0100;  author: bless;  state: Exp;  lines: +4 -4;
 - Year (C) update

@@ -1,33 +1,45 @@
 /********************************************************************/
 /** bbox -- calculates Bounding Box of a pbmraw/ppmraw-picture     **/
-/** Created:   Nov. 1997, revised Feb. 1998, Dec. 1999             **/
-/** Author:    Roland Bless <roland@bless.de>                      **/
-/** Copyright (C) 1998-2000 Roland Bless                           **/
+/** Created:   Nov. 1997, revised Feb. 1998, Dec. 1999, June 2009  **/
+/** Author:    Roland Bless <roland -at- bless.de>                 **/
+/** Copyright (C) 1998-2009 Roland Bless                           **/
 /** To compile simply use:                                         **/
 /** "cc bbox.c -o bbox" or "make bbox"                             **/
 /********************************************************************/
-
 /*
- * $Id: bbox.c,v 1.13 2004/01/25 10:15:48 bless Exp $
- *
- * $Log: bbox.c,v $
- * Revision 1.13  2004/01/25 10:15:48  bless
- * - added %%HiResBoundingBox: output (now compatible with bbox device output of ghostscript)
- *
- * Revision 1.12  2003/11/09 18:16:53  bless
- * - print help, license and version to stdout instead of stderr (incorporated patch from Rafael Laboissiere <rafael@debian.org>)
- *
- * Revision 1.11  2003/07/08 11:14:12  bless
- * - added include <string.h> for strcmp()
- * - removed unused argument in fprintf() call
- *
- * Revision 1.10  2000/08/04 08:46:47  bless
- * Incorporated bugfix by Dan Blake <dblake@rose.hp.com>: read
- * unsigned int into unsigned char variable via sscanf caused crash
- * under HP-UX. Thanks, Dan!
- *
- *
+ * $Id: bbox.c,v 1.18 2009-10-13 15:03:49 bless Exp $
  */
+
+/**
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*
+**/
+
+/* Quoting EPSF Spec:
+   http://partners.adobe.com/public/developer/en/ps/5002.EPSF_Spec.pdf
+
+   %!PS-Adobe-3.0 EPSF-3.0
+   %%BoundingBox: llx lly urx ury
+
+   The four arguments of the bounding box comment correspond to the
+   lower-left (llx, lly) and upper-right (urx, ury) corners of the
+   bounding box. They are expressed in the default PostScript
+   coordinate system. For an EPS file, the bounding box is the smallest
+   rectangle that encloses all the marks painted on the single page of
+   the EPS file.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,8 +52,10 @@
 /**********************
 *  global variables   *
 **********************/
-const char *const version= "$Revision: 1.13 $ $Date: 2004/01/25 10:15:48 $";
+const char *const version= "$Revision: 1.18 $ $Date: 2009-10-13 15:03:49 $";
 const char *const prgname= "bbox";
+
+const double round_precision= 1e-6;
 
 unsigned char bitval[8]=
 {
@@ -55,14 +69,14 @@ unsigned char bitval[8]=
   1
 };
 
-static unsigned int
-minus_one(const unsigned x) 
+static
+unsigned int minus_one(const unsigned x)
 {
   return (x == 0) ? x : x-1;
 }
 
-static unsigned int
-plus_one(const unsigned x) 
+static
+unsigned int plus_one(const unsigned x)
 {
   return (x == (unsigned int) ~0U) ? x : x+1;
 }
@@ -83,43 +97,44 @@ plus_one(const unsigned x)
 *       and printed to stdout                                           *
 ************************************************************************/
 /* calculate the bounding box in postscript points, given a resolution in dpi */
-static void
-readppm_and_calcbb(const char *name, 
-                   const unsigned int resolution, 
-                   const unsigned char tight)
+static
+void readppm_and_calcbb(const char *name,
+                        const unsigned int resolution,
+                        const unsigned char tight)
 {
 	FILE 	*inputfile;
         char    inputline[1024];
         unsigned char magic_found= 0;
         int x,y,byte_x,i;
+	const double pt_dpi_dbl= 72.0;
         unsigned int x_min, x_max, y_min, y_max;
         unsigned int llx, lly, urx, ury; /* bounding box */
         double       hllx, hlly, hurx, hury; /* hires bounding box */
         unsigned char   *image_row,	 /* ImageRow */
-                        *tmprowp;
-        unsigned int 	xmax,ymax;	 /* Image Size	*/ 
-        unsigned int    byte_xmax;
+                        *tmpcolumnbytep;
+        unsigned int 	width,height;	 /* Image Size	*/
+        unsigned int    byte_width;
         unsigned char   stepsize;
-        unsigned char   colmax= 0;       /* max color value */
-        unsigned int    ui_colmax= 0;    /* max color value */
-        
- 	if ( name == NULL ) 
+        unsigned char   colormax= 0;       /* max color value */
+        unsigned int    ui_colormax= 0;    /* max color value */
+
+ 	if ( name == NULL )
         {
           inputfile = stdin;
           name = "- STDIN -";
 	}
-	else 	
+	else
         {
           inputfile = fopen(name,"r");
           if ( inputfile == NULL )
           {
-            fprintf(stderr,"%s: ERROR -- could not open file %s\n", 
+            fprintf(stderr,"%s: ERROR -- could not open file %s\n",
                     prgname, name);
             return;
           }
         }
         /** check for magic number **/
-        do 
+        do
         {
           fgets(inputline, 1024, inputfile);
 #ifdef DEBUG
@@ -138,7 +153,7 @@ readppm_and_calcbb(const char *name,
           }
         }
         while ( !feof(inputfile) && !magic_found );
-        
+
         if ( !magic_found )
         {
           fprintf(stderr,"%s: ERROR -- %s is not in ppmraw or pbmraw format\n",
@@ -146,7 +161,7 @@ readppm_and_calcbb(const char *name,
           return;
         }
         /** skip comments **/
-        do 
+        do
         {
           fgets(inputline, 1024, inputfile);
 #ifdef DEBUG
@@ -159,33 +174,37 @@ readppm_and_calcbb(const char *name,
         }
         while ( !feof(inputfile) );
         /** read picture size: width, height **/
-        sscanf(inputline,"%u %u",&xmax,&ymax);
+        sscanf(inputline,"%u %u",&width,&height);
         if ( magic_found == 6 ) /* PPM file has maximum color-component value */
         {
           fgets(inputline, 1024, inputfile);
-          sscanf(inputline,"%u",&ui_colmax);  
-	  colmax = (unsigned char) ui_colmax; /* this is safer */
+          sscanf(inputline,"%u",&ui_colormax);
+	  colormax = (unsigned char) ui_colormax; /* this is safer */
         }
 #ifdef DEBUG
-	fprintf(stderr,"\nreading picture: %s   X: %u   Y: %u\n",name,xmax,ymax);
+	fprintf(stderr,"\nreading picture: %s size X: %u Y: %u\n",name,width,height);
 #endif
-        x = 0;		/* avoid uninitialized warning */
-        x_min= xmax; 
-        x_max= 0; 
-        y_min= ymax; 
+        x = 0; /* avoid uninitialized warning */
+        x_min= width>0 ? width-1 : 0;
+        x_max= 0;
+        y_min= height>0 ? height-1 : 0;
         y_max= 0;
         if ( magic_found == 4 ) /* PBMRAW = Bitmap */
         { /** read raw pbmfile **/
-          byte_xmax= xmax / 8;
-          if (xmax % 8 != 0)
-            byte_xmax++;
+          byte_width= width / 8;
+          if (width % 8 != 0)
+            byte_width++;
         }
         else /** assume ppm raw **/
-        { 
-          byte_xmax= xmax * 3; /* we have RGB, i.e. three bytes for each pixel */
+        {
+          byte_width= width * 3; /* we have RGB, i.e. three bytes for each pixel */
         }
-
-        image_row= malloc(byte_xmax);
+	/*
+	 * Now read a raster of Width * Height pixels, proceeding through the image in normal English reading order,
+         * i.e., starting from top left then moving right
+	 */
+	/* we allocate only one line */
+        image_row= malloc(byte_width);
         if ( image_row )
         {
 #if defined(_WIN32) && !defined(__CYGWIN__)  /* this is really braindead stuff for MSVC */
@@ -193,29 +212,29 @@ readppm_and_calcbb(const char *name,
 	  if (i == -1)
 	    fprintf(stderr,"%s: ERROR - Cannot set binary mode for STDIN\n", prgname);
 #endif
-          for (y= 0; y<ymax-1; y++) /* for every image row */
+          for (y= 0; y<height; y++) /* for every image row 0..height-1 */
           {
-            if (fread(image_row, byte_xmax, 1, inputfile) != 1)
+            if (fread(image_row, byte_width, 1, inputfile) != 1)
             {
               fprintf(stderr,"%s: WARNING -- fread incomplete - file %s seems to be corrupt\n", prgname, name);
               break;
             }
-            tmprowp= image_row;
-            /* inspect this line from the left */
-            for (byte_x= 0; byte_x<byte_xmax; byte_x++,tmprowp++)
+            tmpcolumnbytep= image_row;
+            /* inspect this line from left to right */
+            for (byte_x= 0; byte_x<byte_width; byte_x++,tmpcolumnbytep++)
             {
-              if (*tmprowp != colmax) /* there are pixels not white */
+              if (*tmpcolumnbytep != colormax) /* there are pixels not white */
               {
                 if (magic_found == 4)
                 {
                   for (i= 0; i<8 ; i++)
                   {
-                    if (*tmprowp & bitval[i])
+                    if (*tmpcolumnbytep & bitval[i])
                     {
                       x= byte_x*8+i;
-                      if ( x >= xmax ) break;
+                      if ( x >= width ) break;
 #ifdef DEBUG
-                      printf("(%04d,%04d): <not white>\n",y,x);
+                      printf("(row %04d, %04d): <not white>\n",y,x);
 #endif
                     }
                   } /* end for */
@@ -224,7 +243,7 @@ readppm_and_calcbb(const char *name,
                 { /* assume PPM */
                   x= byte_x/3; /* we have 3 bytes per pixel */
 #ifdef DEBUG
-                      printf("(%04d,%04d)%04d: <not %d>\n",y,x,byte_x,colmax);
+                      printf("(row %04d, col %04d) byte %04d: <not %d>\n",y,x,byte_x,colormax);
 #endif
                 }
                 /* update bounding box */
@@ -233,30 +252,30 @@ readppm_and_calcbb(const char *name,
                 if ( y < y_min ) y_min= y;
                 if ( y > y_max ) y_max= y;
 #ifdef DEBUG
-                printf("ymin,ymax:(%04d,%04d) xmin,xmax:(%04d,%04d)",
+                printf("ymin,height:(%04d,%04d) xmin,width:(%04d,%04d)\n",
                        y_min,y_max,x_min,x_max);
 #endif
-                break; /* stop here */
-              } /* if there are pixels not white */ 
+		break;
+              } /* if there are pixels not white */
             } /* end for byte_x */
-            if ( byte_x != byte_xmax )
+            if ( byte_x != byte_width )
             { /* there was a pixel with no background color */
-              tmprowp= image_row+byte_xmax-1;
+              tmpcolumnbytep= image_row+byte_width-1;
               /* inspect this line from the right */
-              for (byte_x= byte_xmax-1; 
-                   byte_x >= 0; 
-                   byte_x--,tmprowp--)
+              for (byte_x= byte_width-1;
+                   byte_x >= 0;
+                   byte_x--,tmpcolumnbytep--)
               {
-                if ( *tmprowp != colmax ) /* there are pixels not white */
+                if ( *tmpcolumnbytep != colormax ) /* there are pixels not white */
                 {
                   if ( magic_found == 4 )
                   {
                     for (i= 0; i<8 ; i++)
                     {
-                      if ( *tmprowp & bitval[i] )
+                      if ( *tmpcolumnbytep & bitval[i] )
                       {
                         x= byte_x*8+i;
-                        if (x >= xmax) break;
+                        if (x >= width) break;
 #ifdef DEBUG
                         printf("(%04d,%04d): <not white>\n",y,x);
 #endif
@@ -272,22 +291,26 @@ readppm_and_calcbb(const char *name,
                   if ( x > x_max ) x_max= x;
                   if ( y < y_min ) y_min= y;
                   if ( y > y_max ) y_max= y;
+#ifdef DEBUG
+                printf("ymin,height:(%04d,%04d) xmin,width:(%04d,%04d)\n",
+                       y_min,y_max,x_min,x_max);
+#endif
                   break;
-                } /* if there are pixels not white */ 
+                } /* if there are pixels not white */
               } /* end for byte_x */
             } /* if line contained not only background color */
           } /* end for y */
 #ifdef DEBUG_BOX
-          fprintf(stderr,"(%04d,%04d), (%04d,%04d)\n", x_min,ymax-y_max,x_max,ymax-y_min);
+          fprintf(stderr,"(%04d,%04d), (%04d,%04d)\n", x_min,height-y_max,x_max,height-y_min);
 #endif
             /* distance from the left edge to the leftmost point */
-            hllx= (x_min*72.0)/resolution;
+            hllx= (x_min*pt_dpi_dbl)/resolution;
             /* distance from the bottom edge to the bottommost point */
-            hlly= ((ymax-y_max)*72.0)/resolution;
-            /* distance from the left edge to the righmost point  */ 
-            hurx= (x_max*72.0)/resolution;
+            hlly= ((minus_one(height)-y_max)*pt_dpi_dbl)/resolution;
+            /* distance from the left edge to the righmost point  */
+	    hurx= (plus_one(x_max)*pt_dpi_dbl)/resolution;
             /* distance from the bottom edge to the uppermost point */
-            hury= ((ymax-y_min)*72.0)/resolution;
+            hury= ((height-y_min)*pt_dpi_dbl)/resolution;
 
 
           if ( !tight )
@@ -295,25 +318,35 @@ readppm_and_calcbb(const char *name,
             /* distance from the left edge to the leftmost point */
             llx= minus_one((unsigned int) ((unsigned long) x_min*72UL)/resolution);
             /* distance from the bottom edge to the bottommost point */
-            lly= minus_one((unsigned int) ((unsigned long) (ymax-y_max)*72UL)/resolution);
-            /* distance from the left edge to the righmost point  */ 
-            urx= plus_one((unsigned int) ((unsigned long) x_max*72UL)/resolution);
+            lly= minus_one((unsigned int) ((unsigned long) (minus_one(height)-y_max)*72UL)/resolution);
+            /* distance from the left edge to the righmost point  */
+            urx= plus_one((unsigned int) ((unsigned long) plus_one(x_max)*72UL)/resolution);
             /* distance from the bottom edge to the uppermost point */
-            ury= plus_one((unsigned int) ((unsigned long) (ymax-y_min)*72UL)/resolution);
+            ury= plus_one((unsigned int) ((unsigned long) (height-y_min)*72UL)/resolution);
+
+	    /* also loosen hires BBox by default precision */
+	    if (hllx-round_precision >= 0.0)
+		    hllx-=  round_precision;
+	    if (hlly-round_precision >= 0.0)
+		    hlly-=  round_precision;
+
+	    hurx+=  round_precision;
+	    hury+=  round_precision;
           }
           else /* tight bounding box */
           {
             /* distance from the left edge to the leftmost point */
             llx= (unsigned int) ((unsigned long) x_min*72UL)/resolution;
             /* distance from the bottom edge to the bottommost point */
-            lly= (unsigned int) ((unsigned long) (ymax-y_max)*72UL)/resolution;
-            /* distance from the left edge to the righmost point  */ 
-            urx= (unsigned int) ((unsigned long) x_max*72UL)/resolution;
-            if ( (((unsigned long) x_max*72UL) % resolution) != 0 )
+            lly= (unsigned int) ((unsigned long) (minus_one(height)-y_max)*72UL)/resolution;
+            /* distance from the left edge to the righmost point  */
+            urx= (unsigned int) ((unsigned long) plus_one(x_max)*72UL)/resolution;
+	    /* round up if we got a remainder */
+            if ( (((unsigned long) plus_one(x_max)*72UL) % resolution) != 0 )
               urx= plus_one(urx);
             /* distance from the bottom edge to the uppermost point */
-            ury= (unsigned int) ((unsigned long) (ymax-y_min)*72UL)/resolution;
-            if ( (((unsigned long) (y_max-y_min)*72UL) % resolution) != 0 )
+            ury= (unsigned int) ((unsigned long) (height-y_min)*72UL)/resolution;
+            if ( (((unsigned long) (height-y_min)*72UL) % resolution) != 0 )
               ury= plus_one(ury);
           }
           /* skip the rest of the file if any data is still present */
@@ -328,15 +361,15 @@ readppm_and_calcbb(const char *name,
         }
         else
           fprintf(stderr,"%s: ERROR -- not enough memory to read in one row of the picture\n",prgname);
-        
+
 	fclose(inputfile);
         free(image_row);
 }
 
 
-int	
+int
 main(int argc, char **argv)
-{ 
+{
   int i;
   char *filename= NULL;
   unsigned int resolution= 72; /* use 72 dpi as default resolution */

@@ -3,17 +3,17 @@
 .\" <http://shell.ipoline.com/~elmert/comp/docbook2X/> 
 .\" Please send any bug reports, improvements, comments, patches, 
 .\" etc. to Steve Cheng <steve@ggi-project.org>.
-.TH "PS2EPS" "1" "24 Januar 2007" "" ""
+.TH "PS2EPS" "1" "31 August 2010" "" ""
 
 .SH NAME
 ps2eps \- convert PostScript to EPS (Encapsulated PostScript) files
 .SH SYNOPSIS
 
-\fBps2eps\fR [ \fB-f\fR ] [ \fB-q\fR ] [ \fB-N\fR ] [ \fB-O\fR ] [ \fB-n\fR ] [ \fB-P\fR ] [ \fB-c\fR ] [ \fB-C\fR ] [ \fB-m\fR ] [ \fB-B\fR ] [ \fB-E\fR ] [ \fB-s \fIpagedim\fB\fR ] [ \fB-t \fIoffset\fB\fR ] [ \fB-r \fIresolution\fB\fR ] [ \fB-R \fI+|-|^\fB\fR ] [ \fB-l\fR ] [ \fB-g\fR ] [ \fB-H\fR ] [ \fB-d\fR ] [ \fB-h|--help\fR ] [ \fB-W\fR ] [ \fB-L\fR ] [ \fB-V|--version\fR ] [ \fB--\fR ] [ \fB\fIpsfile1\fB\fR ] [ \fB\fIpsfile2\fB\fR ] [ \fB\fI\&...\fB\fR ]
+\fBps2eps\fR [ \fB-f\fR ] [ \fB-q\fR ] [ \fB-N\fR ] [ \fB-O\fR ] [ \fB-n\fR ] [ \fB-P\fR ] [ \fB-c\fR ] [ \fB-C\fR ] [ \fB-m\fR ] [ \fB-B\fR ] [ \fB-E\fR ] [ \fB-s \fIpagedim\fB\fR ] [ \fB-t \fIoffset\fB\fR ] [ \fB-r \fIresolution\fB\fR ] [ \fB-R \fI+|-|^\fB\fR ] [ \fB-l\fR ] [ \fB-g\fR ] [ \fB-H\fR ] [ \fB-d\fR ] [ \fB-h|--help\fR ] [ \fB-a\fR ] [ \fB-W\fR ] [ \fB-L\fR ] [ \fB-V|--version\fR ] [ \fB--\fR ] [ \fB\fIpsfile1\fB\fR ] [ \fB\fIpsfile2\fB\fR ] [ \fB\fI\&...\fB\fR ]
 
 .SH "DESCRIPTION"
 .PP
-This manual page documents \fBps2eps\fR version 1.64.
+This manual page documents \fBps2eps\fR version 1.68.
 .PP
 \fBps2eps\fR is a tool (written in Perl) to produce 
 Encapsulated PostScript Files (EPS/EPSF) from usual one-paged Postscript
@@ -139,6 +139,9 @@ See also environment variable PS2EPS_GSBBOX\&.
 .TP
 \fB-H, --nohires \fR
 do not generate a %%HiResBoundingBox comment for output.
+.TP
+\fB-a, --accuracy \fR
+increase the accuracy by turning subsample antialiasing on (may be slower) 
 .TP
 \fB-L, --license \fR
 show licensing information.
@@ -284,6 +287,10 @@ for using a monochrome image. But this will probably result in wrongly
 determined bounding boxes with colored
 images, because ghostscript has to do black/white dithering and may thus suppress
 objects drawn in light colors.
+.PP
+Another option in case of memory problems and too long run times
+is to use the much more memory efficient internal ghostscript bbox by using the
+\fB-g\fR option.
 .SH "ENVIRONMENT VARIABLES"
 .PP
 Please note that a command line option always takes precedence over
@@ -331,7 +338,9 @@ an additional point of white space around the tight bounding box.
 .PP
 Some people contributed code or suggestions to improve \fBps2eps\fR\&. Here
 are at least some names (sorry if I forgot your name):
-Christophe Druet, Hans Ecke, Berend Hasselman, Erik Joergensen, Koji Nakamaru, Hans Fredrik Nordhaug
+Christophe Druet, Hans Ecke, Berend Hasselman, Erik Joergensen, Koji Nakamaru, Hans Fredrik Nordhaug, Michael Sharpe.
+Special thanks goes to Michael Sharpe from UCSD who suggested a lot of useful features for ps2eps and
+who fixed bbox to become more precise and robust.
 .PP
 An earlier version of this manual page was originally written by 
 Rafael Laboissiere <rafael at debian.org> for

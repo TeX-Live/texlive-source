@@ -1,24 +1,30 @@
 ## Makefile.am for the TeX Live subdirectory utils/ps2eps/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
+
+## We want to re-distribute the whole original ps2eps source tree.
+EXTRA_DIST = $(PS2EPS_TREE)
+## Patches applied to the original source tree
+EXTRA_DIST += $(PS2EPS_TREE)-PATCHES
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
 
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = bbox
 
-bbox_SOURCES = bbox.c
+bbox_SOURCES = \
+	$(PS2EPS_TREE)/src/C/bbox.c
 
-dist_bin_SCRIPTS = ps2eps
+bin_SCRIPTS = \
+	$(PS2EPS_TREE)/bin/ps2eps
 
-dist_man1_MANS = bbox.1 ps2eps.1
-
-EXTRA_DIST = \
-	Changes.txt  \
-	INSTALL.txt  \
-	LICENSE.txt  \
-	Latest_is_1.64  \
-	README.txt
+man1_MANS = \
+	$(PS2EPS_TREE)/doc/man/man1/bbox.1 \
+	$(PS2EPS_TREE)/doc/man/man1/ps2eps.1
 

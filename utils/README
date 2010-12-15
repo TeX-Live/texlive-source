@@ -15,8 +15,8 @@ chktex 1.6.4 - checked 3may10
 dialog 1.1-20100428 - checked 26oct10
   ftp://invisible-island.net/dialog/dialog.tar.gz
 
-ps2eps 1.64 - checked 19feb08
-  http://www.ipv6.tm.uka.de/~bless/ps2eps
+ps2eps 1.68 - checked 15dec10
+  http://tm.uka.de/~bless/ps2eps
 
 psutils p17 - checked 25nov06
   http://www.tardis.ed.ac.uk/~ajcd/psutils/index.html

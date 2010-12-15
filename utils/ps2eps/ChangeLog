@@ -1,3 +1,9 @@
+2010-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import ps2eps-1.68.
+	* Makefile.am, configure.ac: Reformulate in terms of ps2eps-1.68
+	source tree and patches in ps2eps-1.68-PATCHES.
+
 2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bbox.c (readppm_and_calcbb) [WIN32]: Add missing fprintf arg.

@@ -3,9 +3,9 @@
 # {#!/usr/bin/perl}.   
 # ps2eps - convert PostScript to EPS (Encapsulated PostScript) files
 # -------------------------------------------------------------------
-# $Id: ps2eps,v 1.64 2007/01/24 12:32:59 bless Exp $
+# $Id: ps2eps,v 1.68 2010-05-07 19:42:35 bless Exp $
 # -------------------------------------------------------
-# (C)opyright 1999-2007 Roland Bless
+# (C)opyright 1999-2009 Roland Bless
 #
 # This program is free software; you can redistribute it and/or modify     
 # it under the terms of the GNU General Public License as published by     
@@ -16,7 +16,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of           
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            
 # GNU General Public License for more details.                             
-#                                                                          
+#                                                                           
 # You should have received a copy of the GNU General Public License        
 # along with this program; if not, write to the Free Software              
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -57,7 +57,7 @@ else
 
 $bboxver=`bbox >$NULLDEV -V`;
 $bboxname= ($?== -1) ? "" : "bbox";
-$version= '$Id: ps2eps,v 1.64 2007/01/24 12:32:59 bless Exp $'; #'
+$version= '$Id: ps2eps,v 1.68 2010-05-07 19:42:35 bless Exp $'; #'
 $insertPScode= 1;     # Insert surrounding Postscript code
 $infhandle = STDIN;   # Standard input is the default input file
 $outfhandle = STDOUT; # Standard output is default output if STDIN is input
@@ -85,6 +85,9 @@ $PSversion="2.0";     # default Postscript Version
 $PSDSCversion="2.0";  # default Postscript DSC Version
 $translate_x= 0;      # translate by x postscript points
 $translate_y= 0;      # translate by y postscript points
+$allbinary= 0;        # treat postscript as binary do not filter or change stuff
+$alphaopt="";         # rendering option for ghostscript "-dTextAlphaBits=4 -dGraphicsAlphaBits=4"
+$hiresprecision=0.5;  # amount that is changed of HiresBB in case that looseBB was requested
 
 $defaultext = '(ps|prn)';  # default extension
 $defaultoutext = '.eps';   # default output extension
@@ -144,7 +147,7 @@ $licensetxt= "\
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n";
 
 @prgidtxt= ( "$prgname - convert PostScript to EPS (Encapsulated PostScript) files\n",
-	     "(C)opyright 1998-2007 Roland Bless\n\n" );
+	     "(C)opyright 1998-2009 Roland Bless\n\n" );
 
 @helptxt= ("Version: $ver[2]\n",
           "Operation:\n",
@@ -160,7 +163,7 @@ $licensetxt= "\
           " If BoundingBox in output seems to be wrong, please try options --size or --ignoreBB.\n\n" );
 
 @usagetxt= ("Syntax:\n",
-            " $prgname [-f] [-q] [-N] [-O] [-n] [-P] [-c] [-C] [-m] [-B] [-E] [-s <pagedim>] [-R +|-|^] [-t <x,y>] [-l] [-g] [-d] [-H] [-h|--help] [-g] [-W] [-L] [-V|--version] [--] [psfile1] [psfile2] [...]\n",
+            " $prgname [-f] [-q] [-N] [-O] [-n] [-P] [-c] [-b] [-C] [-m] [-B] [-E] [-s <pagedim>] [-R +|-|^] [-t <x,y>] [-l] [-g] [-d] [-H] [-h|--help] [-g] [-a] [-W] [-L] [-V|--version] [--] [psfile1] [psfile2] [...]\n",
             "Options:\n",
             " -f, --force                force overwriting existing files\n",
             " -q, --quiet                quiet operation (no output while processing files)\n",
@@ -170,13 +173,14 @@ $licensetxt= "\
             " -P, --removepreview        remove preview image (smaller file, but no preview)\n",
             " -F, --fixps                fix postscript code unconditionally\n",
             " -c, --comments             preserve document structure comments\n",
+            " -b, --binary               treat postscript as binary, do not modify characters\n",
 	    " -C, --clip                 insert postscript code for clipping\n",
             " -m, --mono                 use black/white bitmap as base for calculation\n",
             " -s, --size=<pagedim>       page size (a0-a10,letter,...) or in format XxY[cm|in] (default:cm), where X and Y are numbers\n",
 	    "                            use --size=list to list pre-defined page sizes\n",
 	    " -R, --rotate=<direction>   rotate resulting EPS. <direction>: +=+90 (clockw.),-=-90 (counter-clockw.) ^=180 degrees\n",
 	    " -t, --translate            specify x,y offset (may be negative) in postscript points (1/72 dpi)\n",
-	    " -r, --resolution           specify dpi resolution to render with ghostscript (default 144)",
+	    " -r, --resolution           specify dpi resolution to render with ghostscript (default 144)\n",
             " -l, --loose                expand the original bounding box by one point in each direction\n",
 	    " -B, --ignoreBB             do not use existing bounding box as page size for rendering\n",
 	    " -E, --ignoreEOF            do not use %%EOF as hint for end of file\n",
@@ -186,6 +190,7 @@ $licensetxt= "\
             " -L, --license              show licensing information\n",
             " -V, --version              show version information\n",
 	    " -d, --debuggs              show ghostscript call\n",
+	    " -a, --accuracy             improve accuracy during rendering (maybe slower)\n",
 	    " -W, --warnings             show warnings about sanity of generated eps file\n",  
             " --     all following arguments are treated as files\n",
             "        (allows filenames starting with -)\n",
@@ -225,6 +230,7 @@ GetOptions('f|force'	=> \$forceoverwrite,
            'O|preserveorientation'  => sub { $filterorientation= 0 },
 	   'P|removepreview'	    => \$removePreview,
 	   'c|comments' => sub { $removeDSC = 0 },
+	   'b|binary'   => sub { $allbinary = 1 },
 	   'C|clip'	=> \$clip,
 	   'l|loose'	=> sub { $looseBB = '-l' },
 	   'B|ignoreBB'	=> \$ignoreBB,
@@ -237,6 +243,7 @@ GetOptions('f|force'	=> \$forceoverwrite,
 	   'H|nohires'  => \$nohires,
 	   'h|help'	=> sub { $stopnow = 1; print @prgidtxt,@helptxt,@usagetxt,"\nAuthor: Roland Bless (roland\@bless.de)\n\n"; },
 	   'L|license'	=> sub { $stopnow = 1; print @prgidtxt,$licensetxt,"\nAuthor: Roland Bless (roland\@bless.de)\n\n"; },
+	   'a|accuracy' => sub { $alphaopt = '-dTextAlphaBits=4 -dGraphicsAlphaBits=4' },
 	   'd|debuggs'  => \$debuggs,
 	   'W|warnings' => \$warnings,
 	   'V|version'	=> sub { $stopnow = 1; print @prgidtxt,"Version: $ver[2]\n"; });exit if ($stopnow);
@@ -385,17 +392,6 @@ while ($infname= (shift @filenames))
     {
         $outfname= $infname . "$defaultoutext";
     }
-    if (!$forceoverwrite and -s "$outfname") 
-      { 
-        die "$prgname: Sorry, file named $outfname already exists,",
-            " will not overwrite it.\n",
-            " You will have to use the -f option, delete it or rename it",
-            " before running $prgname again.\n";   
-      }
-    else
-    {
-      open($outfhandle,">$outfname") or die "Can't open file $outfname for writing: $!\n";
-    }
   } #end else input is not stdin
   
   ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -431,8 +427,8 @@ while ($infname= (shift @filenames))
 	if (int($eBBllx) < 0) { $translate_x= - int($eBBllx-0.5); }
 	if (int($eBBlly) < 0) { $translate_y= - int($eBBlly-0.5); }
 
-	$xpixels= int((($eBBurx-$eBBllx) * $resolution)/72)+1;
-	$ypixels= int((($eBBury-$eBBlly) * $resolution)/72)+1;
+	$xpixels= int((($eBBurx-$eBBllx) * $resolution)/72 + 0.5);
+	$ypixels= int((($eBBury-$eBBlly) * $resolution)/72 + 0.5);
 	if (!$ignoreBB)
 	{
 	    $gpar= "-g${xpixels}x${ypixels}";
@@ -536,7 +532,7 @@ while ($infname= (shift @filenames))
   if ($translate_x!=0 || $translate_y!=0)
   {
     $translation="$translate_x $translate_y translate";
-    $translatecmd="-c $translation";
+    $translatecmd="-c \'$translation\'";
   }
   else
   {
@@ -560,14 +556,14 @@ while ($infname= (shift @filenames))
   }
   if ($bboxname ne '')
   {
-      $cmdline="$ghostscriptname -dSAFER -dNOPAUSE -q $gpar -r$resolution -sDEVICE=$device -sOutputFile=- $translatecmd -f $tmpfname -c showpage -c quit | $bboxname -r $resolution";
+      $cmdline="$ghostscriptname -dSAFER -dNOPAUSE $alphaopt -q $gpar -r$resolution -sDEVICE=$device -sOutputFile=- $translatecmd -f \"$tmpfname\" -c showpage -c quit | $bboxname -r $resolution";
   }
   else
   {
       if (!$quiet) {
 	  print STDERR "...using bbox device of $ghostscriptname...";
       }
-      $cmdline = "$ghostscriptname -dSAFER -dBATCH -dNOPAUSE -q $gpar -r$resolution -sDEVICE=bbox -sOutputFile=- -c \"/setpagedevice {pop} def\" $translatecmd -f $tmpfname -c quit 2>&1";
+      $cmdline = "$ghostscriptname -dSAFER -dBATCH -dNOPAUSE -q $gpar -r$resolution -sDEVICE=bbox -sOutputFile=- -c \"/setpagedevice {pop} def\" $translatecmd -f \"$tmpfname\" -c quit 2>&1";
   }
 
   if ($debuggs) { print STDERR "\nCalling: $cmdline\n"; }
@@ -579,8 +575,8 @@ while ($infname= (shift @filenames))
   # check result of gs call
   if ($boundingbox !~ /^%%BoundingBox/m)
   {
-    print STDERR "Error: Could not determine bounding box!\n",
-    "I suppose $ghostscriptname had some trouble interpreting the postscript-file\n";
+    die "Error: Could not determine bounding box!\n",
+    "I suppose $ghostscriptname had some trouble interpreting the postscript-file $infname. Exiting now.\n";
   }
 
   $boundingbox =~ /^%%HiResBoundingBox:\s*(.*)/m;
@@ -598,20 +594,21 @@ while ($infname= (shift @filenames))
       $boundingbox =~ /^%%.*BoundingBox:\s*(.*)/;
       ($cBBllx,$cBBlly,$cBBurx,$cBBury,$dummy)= split(/\s/,$1);
   }
-  # if loose BB should be performed by ps2eps
+  # if loose BB is requested
   # apply changes to resulting bounding box if needed
   if ($looseBB ne '') 
   {
       if ($cBBllx > 0) { $cBBllx--; }
       if ($cBBlly > 0) { $cBBlly--; }
-      $cBBurx++; $cBBury++;
-  }
-  # extend clipping box by 1 point
-  if ($clip)
-  {
-      if ($cBBllx > 0) { $cBBllx--; }
-      if ($cBBlly > 0) { $cBBlly--; }
-      $cBBurx++; $cBBury++;
+      $cBBurx++; 
+      $cBBury++;
+
+      if ($hcBBllx-$hiresprecision >= 0.0) { $hcBBllx-= $hiresprecision; }
+      if ($hcBBlly-$hiresprecision >= 0.0) { $hcBBlly-= $hiresprecision; }
+      $hcBBurx+= $hiresprecision; 
+      $hcBBury+= $hiresprecision;
+      $hiresboundingbox="%%HiResBoundingBox: $hcBBllx $hcBBlly $hcBBurx $hcBBury\n";
+
   }
   if ($cBBllx < 0 || $cBBlly < 0)
   {
@@ -647,7 +644,19 @@ while ($infname= (shift @filenames))
   ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   ## -- Create output file --
   ## %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  if (!$quiet) { print STDERR "Creating output file $outfname..."; }
+  if (!$quiet) { print STDERR "Creating output file $outfname ... "; }
+  if (!$forceoverwrite and -s "$outfname") 
+  { 
+      die "$prgname: Sorry, file named $outfname already exists,",
+      " will not overwrite it.\n",
+      " You will have to use the -f option, delete it or rename it",
+      " before running $prgname again.\n";   
+  }
+  else
+  {
+      open($outfhandle,">$outfname") or die "Can't open file $outfname for writing: $!\n";
+  }
+
   
   open($tmpfhandle,"<$tmpfname") or die "Cannot open file $tmpfname for reading";
   CREATEOUTPUT: 
@@ -655,7 +664,8 @@ while ($infname= (shift @filenames))
   {
     # check whether we are in a binary section
 
-    $binarysection=(/^(%%BeginBinary)|(beginimage)\r?\n?$/ ... /^(%%EndBinary)|^(endimage)/) || 
+    $binarysection=$allbinary ||
+	           (/^(%%Begin(Binary|Data))|(beginimage)\r?\n?$/ ... /^(%%End(Binary|Data))|^(endimage)/) || 
                    (/^(doNimage)|(doclutimage)\r?\n?$/ ... /(^|~> )Z\r?\n?$/) || # Pscript_Win_Dib_L2 5.0 0
                    (/^beginjpeg / ... /~> endjpeg\r?\n?$/) ||             # Pscript_Win_Dib_L2 5.0 0
 		   (/^pdfIm/ ... /^%-EOD-/);
@@ -770,7 +780,7 @@ while ($infname= (shift @filenames))
               {
 		 if (!defined($nohires))
 		 {
-		     printf $outfhandle "newpath %f %f moveto %f %f lineto %f %f lineto %f %f lineto closepath clip\n",$hcBBllx-0.1,$hcBBlly-0.1,$hcBBurx+0.1,$hcBBlly-0.1,$hcBBurx+0.1,$hcBBury+0.1,$hcBBllx-0.1,$hcBBury+0.1;
+		     printf $outfhandle "newpath %f %f moveto %f %f lineto %f %f lineto %f %f lineto closepath clip\n",$hcBBllx,$hcBBlly,$hcBBurx,$hcBBlly,$hcBBurx,$hcBBury,$hcBBllx,$hcBBury;
 		 }
 		 else
 		 {

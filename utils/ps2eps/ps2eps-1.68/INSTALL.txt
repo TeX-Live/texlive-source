@@ -2,15 +2,17 @@ INSTALLATION
 ------------
 
 * Prerequisites
-you need:
- - perl (an interpreter for the perl language, see http://www.perl.com)
- - ghostscript (an interpreter/raster image processor 
-                for the PostScript language,
-                see http://www.cs.wisc.edu/~ghost/)
- - maybe an ANSI-C compiler if you don't use Linux, Solaris, Digital Unix,
-   HP-UX or Windows 9x/NT/2000. Sorry for the inconvenience, but I tried
-   to write a bbox equivalent in perl and it was terribly slow. Therefore
-   I stick to C, because of much better performance.
+  you need:
+  - perl (an interpreter for the perl language, see http://www.perl.com)
+  - ghostscript (an interpreter/raster image processor 
+                 for the PostScript language,
+                 see http://pages.cs.wisc.edu/~ghost/)
+  - maybe an ANSI-C compiler if the provided binaries for bbox do not work
+    for you. Sorry for the inconvenience, but I tried to write a bbox 
+    equivalent in perl and it was terribly slow. Therefore I stick to C, 
+    because of much better performance.
+    ALTERNATIVELY you can use ps2eps option -g, then no bbox binary is 
+    required.
 
 * How to install
 
@@ -25,6 +27,7 @@ you need:
   into any directory of the system search path. Otherwise, you have
   to compile bbox.c first by invoking 
   cc -o bbox bbox.c. 
+  (sometimes "make bbox" also works).
   Please make sure that bbox is executable (chmod a+x bbox).
   If you already have a working perl and a working ghostscript, you're 
   finished here, else you have to install them first.
@@ -61,4 +64,4 @@ UPDATES
 -------
 Possibly you can find the newest version at the
 following URL:
-http://www.tm.uka.de/~bless/ps2eps
+http://tm.uka.de/~bless/ps2eps

@@ -1,0 +1,9 @@
+Changes applied to the ps2eps-1.68 tree as obtained from:
+	http://www.tm.uka.de/~bless/ps2eps-1.68.tar.gz
+
+Remove:
+	bin/linux/
+	bin/win32/
+	doc/html/
+	doc/pdf/
+
