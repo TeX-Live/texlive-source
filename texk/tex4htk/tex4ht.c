@@ -1,7 +1,7 @@
 
-/* tex4ht.c (2010-11-17-10:41), generated from tex4ht-c.tex
+/* tex4ht.c (2010-12-16-08:39), generated from tex4ht-c.tex
    Copyright (C) 2009-2010 TeX Users Group
-   Copyright (C) 1996--2009 Eitan M. Gurari
+   Copyright (C) 1996-2009 Eitan M. Gurari
 
 %
 % This work may be distributed and/or modified under the
@@ -5906,6 +5906,62 @@ struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
 
 
    
+#ifdef WIN32
+  /* The idea here is to split options apart at spaces: a single argument
+     "-foo -bar" becomes the two options "-foo" and "-bar".  We need to
+     do this for Windows because mk4ht passes this sort of combined
+     option in one string to scripts like htlatex.{unix,bat}.  In the
+     Unix case, the shell resplits words when calling t4ht and tex4ht,
+     so the program see two options.  But this does not happen with the
+     .bat; %4, for instance, remains "-foo -bar".  So we fix it here.  */
+  if (argc > 2) {
+    int  i, nargc;
+    char **nargv, **pnargv, **pargv;
+
+    nargv = (char **) xmalloc (2 * argc * sizeof (char *));
+    pnargv = nargv;
+    pargv = argv;
+    *pnargv++ = xstrdup (*pargv++);
+    *pnargv++ = xstrdup (*pargv++);
+    nargc = 2;
+
+    for (i=2; i < argc; i++) {
+      char *p, *q, *r;
+      p = q = *pargv++;
+      while (*p == ' ' || *p == '\t') {
+        p++;
+        q++;
+      }
+      while (*p != ' ' && *p != '\t' && *p) {
+        p++;
+        if (*p == '\0') {
+          *pnargv++ = xstrdup(q);
+          nargc++;
+        } else if (*p == ' ' || *p == '\t') {
+          r = p;
+          while (*p == ' ' || *p == '\t')
+            p++;
+          if (*p == '-' || *p == '\0') {
+            *r = '\0';
+            *pnargv++ = xstrdup(q);
+            nargc++;
+            q = p;
+          }
+        }
+      }
+    }
+
+    for (i=0; i < argc; i++)
+      free (argv[i]);
+    free (argv);
+    nargv[nargc] = NULL;
+    argv = nargv;
+    argc = nargc;
+  }
+#endif
+
+
+   
 
 #ifdef SIGSEGV
   (void) signal(SIGSEGV,sig_err);
@@ -5927,15 +5983,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2010-11-17-10:41 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2010-11-17-10:41)\n");
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2010-11-17-10:41 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2010-11-17-10:41 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){

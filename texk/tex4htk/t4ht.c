@@ -1,7 +1,7 @@
 
-/* t4ht.c (2010-11-17-10:44), generated from tex4ht-t4ht.tex
+/* t4ht.c (2010-12-16-08:47), generated from tex4ht-t4ht.tex
    Copyright (C) 2009-2010 TeX Users Group
-   Copyright (C) 1998--2009 Eitan M. Gurari
+   Copyright (C) 1998-2009 Eitan M. Gurari
 
 %
 % This work may be distributed and/or modified under the
@@ -1434,6 +1434,56 @@ get_env_dir(argv[0])
 
 
    
+#ifdef WIN32
+  /* See comments in tex4ht */
+  if (argc > 2) {
+    int  i, nargc;
+    char **nargv, **pnargv, **pargv;
+
+    nargv = (char **) xmalloc (2 * argc * sizeof (char *));
+    pnargv = nargv;
+    pargv = argv;
+    *pnargv++ = xstrdup (*pargv++);
+    *pnargv++ = xstrdup (*pargv++);
+    nargc = 2;
+
+    for (i=2; i < argc; i++) {
+      char *p, *q, *r;
+      p = q = *pargv++;
+      while (*p == ' ' || *p == '\t') {
+        p++;
+        q++;
+      }
+      while (*p != ' ' && *p != '\t' && *p) {
+        p++;
+        if (*p == '\0') {
+          *pnargv++ = xstrdup(q);
+          nargc++;
+        } else if (*p == ' ' || *p == '\t') {
+          r = p;
+          while (*p == ' ' || *p == '\t')
+            p++;
+          if (*p == '-' || *p == '\0') {
+            *r = '\0';
+            *pnargv++ = xstrdup(q);
+            nargc++;
+            q = p;
+          }
+        }
+      }
+    }
+
+    for (i=0; i < argc; i++)
+      free (argv[i]);
+    free (argv);
+    nargv[nargc] = NULL;
+    argv = nargv;
+    argc = nargc;
+  }
+#endif
+
+
+   
 
 #ifdef SIGSEGV
   (void) signal(SIGSEGV,sig_err);
@@ -1455,15 +1505,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2010-11-17-10:44 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2010-11-17-10:44)\n");
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2010-11-17-10:44 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2010-11-17-10:44 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2010-12-16-08:47 kpathsea)\n");
 #endif
 #endif
 
