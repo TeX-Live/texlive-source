@@ -1,3 +1,8 @@
+2010-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-whitespace:
+	* src/C/bbox.c: Remove trailing whitespace.
+
 2010-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import ps2eps-1.68, patches in ps2eps-1.68-PATCHES.
@@ -5,7 +10,6 @@
 	* patch-01-warnings: Avoid compiler warnings.
 	* src/C/bbox.c (minus_one, plus_one): Declare as static.
 	(readppm_and_calcbb): Static, avoid uninitialized warning.
-	Also remove trailing whitespace.
 
 	* patch-02-WIN32-bug:
 	* src/C/bbox.c (readppm_and_calcbb): Add missing fprintf arg.

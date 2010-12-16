@@ -1,6 +1,6 @@
-2010-12-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2010-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* patch-07-fixmacps (new): Adapt to new kpsewhich semantics and
+	* patch-02-PERL: Adapt to new kpsewhich semantics and
 	texmf layout.
 	Change basename => dirname and add 'use File::Basename'.
 
