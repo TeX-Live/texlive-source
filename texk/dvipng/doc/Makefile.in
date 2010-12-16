@@ -254,9 +254,12 @@ dvipng_TEXINFOS = \
 	macros.texi \
 	dvipng.help
 
+BUILT_SOURCES = doc-stamp
 dist_noinst_SCRIPTS = texi2pod.pl
 dist_man1_MANS = dvipng.1
-all: all-am
+DISTCLEANFILES = doc-stamp
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .dvi .html .info .pdf .ps .texi
@@ -531,13 +534,15 @@ distdir: $(DISTFILES)
 	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
 	  dist-info
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(INFO_DEPS) $(SCRIPTS) $(MANS)
 installdirs:
 	for dir in "$(DESTDIR)$(infodir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -558,10 +563,12 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 @have_gif_FALSE@install-data-hook:
 @have_gif_FALSE@uninstall-hook:
 clean: clean-am
@@ -713,7 +720,8 @@ uninstall-am: uninstall-dvi-am uninstall-html-am uninstall-info-am \
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
 
-.MAKE: install-am install-data-am install-strip uninstall-am
+.MAKE: all check install install-am install-data-am install-strip \
+	uninstall-am
 
 .PHONY: all all-am check check-am clean clean-aminfo clean-generic \
 	clean-libtool dist-info distclean distclean-generic \
@@ -730,6 +738,19 @@ uninstall-man: uninstall-man1
 	uninstall-hook uninstall-html-am uninstall-info-am \
 	uninstall-man uninstall-man1 uninstall-pdf-am uninstall-ps-am
 
+
+doc-stamp:
+@MAINTAINER_MODE_TRUE@	@for f in dvipng install macros readme; do \
+@MAINTAINER_MODE_TRUE@	  f1="$(top_srcdir)/$(DVIPNG_TREE)/$$f.texi"; \
+@MAINTAINER_MODE_TRUE@	  f2="$(srcdir)/$$f.texi"; \
+@MAINTAINER_MODE_TRUE@	  echo "diff '$$f1' '$$f2'"; \
+@MAINTAINER_MODE_TRUE@	  if diff "$$f1" "$$f2"; then :; \
+@MAINTAINER_MODE_TRUE@	  else \
+@MAINTAINER_MODE_TRUE@	    echo "cp -p '$$f1' '$$f2'"; \
+@MAINTAINER_MODE_TRUE@	    cp -p "$$f1" "$$f2"; \
+@MAINTAINER_MODE_TRUE@	  fi; \
+@MAINTAINER_MODE_TRUE@	done
+	echo timestamp >$@
 dvipng.1: dvipng.texi readme.texi
 	$(srcdir)/texi2pod.pl -D man $(srcdir)/dvipng.texi | \
 	sed -es/@//g -es/previewlatex/preview-latex/g -es/{}//g > dvipng.pod

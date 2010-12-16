@@ -3,7 +3,7 @@
 ## Some affiliation
 ##
 ## Notice:
-## I extracted these macros from aclocal.m4 in the dvipng-1,12 distribution
+## I extracted these macros from aclocal.m4 in the dvipng-1.12 distribution
 ## and renamed one in order not to violate the Autoconf (AC_) namespace.
 ## 26 Mar 2008, Peter Breitenlohner <tex-live@tug.org>
 ##

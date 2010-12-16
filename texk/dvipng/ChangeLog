@@ -1,3 +1,8 @@
+2010-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* doc/Makefile.am: Check that the doc/*.texi files are copies
+	of those in the distributed tree (maintainer mode only).
+
 2010-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.14 from savannah.nongnu.org.
