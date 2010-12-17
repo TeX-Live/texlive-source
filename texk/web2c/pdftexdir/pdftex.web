@@ -17393,7 +17393,7 @@ begin
     vf_z := font_size[f];
     vf_replace_z;
     w := round_xn_over_d(quad(f), e, 2000);
-    if w > 0 then
+    if w >= 0 then
         tmp_b0 := 0
     else begin
         tmp_b0 := 255;
