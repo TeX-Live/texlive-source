@@ -9,15 +9,15 @@ ctangle, cweave \- translate CWEB to C and/or TeX
 .RB [ \-bhp ]
 .RB [ +s ]
 .IR webfile [ \fB.w\fP ]
-.RI [ changefile [ \fB.ch\fP ]
-.RI [ outputfile [ \fB.c\fP ]]]
+.RI [{ changefile [ \fB.ch\fP ]| \fB\-\fP }
+.RI [ outfile [ \fB.c\fP ]]]
 .br
 .B cweave
 .RB [ \-befhpx ]
 .RB [ +s ]
 .IR webfile [ \fB.w\fP ]
-.RI [ changefile [ \fB.ch\fP ]
-.RI [ outputfile [ \fB.tex\fP ]]]
+.RI [{ changefile [ \fB.ch\fP ]| \fB\-\fP }
+.RI [ outfile [ \fB.tex\fP ]]]
 .ad
 .\"=====================================================================
 .SH DESCRIPTION

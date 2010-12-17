@@ -1,3 +1,7 @@
+2010-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cweb.man: Adapt to facts: use '-' to indicate no change file.
+
 2010-05-20  Karl Berry  <karl@tug.org>
 
 	* Makefile.am [LUATEX]: do not include luatangle.man link,
