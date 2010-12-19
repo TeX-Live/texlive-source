@@ -1,3 +1,7 @@
+2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpost.man: Define the macro URL (from Taco).
+
 2010-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cweb.man: Adapt to facts: use '-' to indicate no change file.

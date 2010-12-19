@@ -1,5 +1,9 @@
 .TH MPOST 1 "14 May 2010" "MetaPost 1.201"
 .\"=====================================================================
+.de URL
+\\$2 \(laURL: \\$1 \(ra\\$3
+..
+.if \n[.g] .mso www.tmac
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
 .if n .ds MF Metafont
@@ -140,11 +144,10 @@ Addison-Wesley, 1986, ISBN 0-201-13445-4.
 .BR mf (1),
 .BR mptopdf (1),
 .BR tex (1),
-.\" FIXME: need to define the macro URL!
-.\" .PP
-.\" .URL "http://foundry.supelec.fr/gf/project/metapost/" "MetaPost source code" .
-.\" .BR
-.\" .URL "http://tug.org/metapost/" "MetaPost home page" .
+.PP
+.URL "http://foundry.supelec.fr/gf/project/metapost/" "MetaPost source code" .
+.br
+.URL "http://tug.org/metapost/" "MetaPost home page" .
 .\"=====================================================================
 .SH AUTHORS
 \*(MP was designed by John D. Hobby, incorporating algorithms from 

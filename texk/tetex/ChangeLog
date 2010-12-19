@@ -1,3 +1,7 @@
+2010-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* context/texmfstart.man: Fix typo.
+
 2010-07-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fmtutil.man: Adapt to fmtutil.

@@ -21,8 +21,8 @@ texmfstart \- run ConTeXt scripts, make ConTeXt wrapper scripts, view documents
 \fB texmfstart\fP [ \fIoptions ...\fP ] [ \fIfilename\fP ] [ \fIarguments ...\fP ]
 
 .SH "DESCRIPTION" 
-ConTeXt is a typesetting system based on 
-the .BR tex (1)
+ConTeXt is a typesetting system based on the
+.BR tex (1)
 family of programs.
 .B texmfstart
 is a ConTeXt meta-script that can run subordinate
