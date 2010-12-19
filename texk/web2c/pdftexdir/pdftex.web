@@ -8794,6 +8794,7 @@ procedure@?ins_the_toks; forward;@t\2@>
 procedure expand;
 label reswitch;
 var t:halfword; {token that is being ``expanded after''}
+@!b:boolean; {keep track of nested csnames}
 @!p,@!q,@!r:pointer; {for list manipulation}
 @!j:0..buf_size; {index into |buffer|}
 @!cv_backup:integer; {to save the global quantity |cur_val|}
@@ -8953,12 +8954,13 @@ the variables |p| and |q| are reserved for token-list building.
 
 @ @<Manufacture a control...@>=
 begin r:=get_avail; p:=r; {head of the list of characters}
+b := is_in_csname; is_in_csname := true;
 is_in_csname := true;
 repeat get_x_token;
 if cur_cs=0 then store_new_token(cur_tok);
 until cur_cs<>0;
 if cur_cmd<>end_cs_name then @<Complain about missing \.{\\endcsname}@>;
-is_in_csname := false;
+is_in_csname := b;
 @<Look up the characters of list |r| in the hash table, and set |cur_cs|@>;
 flush_list(r);
 if eq_type(cur_cs)=undefined_cs then
@@ -11687,6 +11689,7 @@ which is a recursive procedure.
 @p procedure conditional;
 label exit,common_ending;
 var b:boolean; {is the condition true?}
+@!e:boolean; {keep track of nested csnames}
 @!r:"<"..">"; {relation to be evaluated}
 @!m,@!n:integer; {to be tested against the second operand}
 @!p,@!q:pointer; {for traversing token lists in \.{\\ifx} tests}
@@ -37918,6 +37921,7 @@ preceding the mandatory \.{\\endcsname} have been expanded).
 
 @<Cases for |conditional|@>=
 if_cs_code:begin n:=get_avail; p:=n; {head of the list of characters}
+ e := is_in_csname; is_in_csname := true;
   repeat get_x_token;
   if cur_cs=0 then store_new_token(cur_tok);
   until cur_cs<>0;
@@ -37925,6 +37929,7 @@ if_cs_code:begin n:=get_avail; p:=n; {head of the list of characters}
   @<Look up the characters of list |n| in the hash table, and set |cur_cs|@>;
   flush_list(n);
   b:=(eq_type(cur_cs)<>undefined_cs);
+  is_in_csname := e;
   end;
 
 @ @<Look up the characters of list |n| in the hash table...@>=
