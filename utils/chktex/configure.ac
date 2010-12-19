@@ -55,6 +55,9 @@ AC_SUBST([PDF_DEPEND])
 AC_CONFIG_HEADERS([config.h])
 AC_DEFINE([TEX_LIVE], 1, [Define to 1 for a TeX Live build.])
 
+KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+
 AC_SUBST([CHKTEX_TREE], [chktex-]chktex_version)
 AC_SUBST([PERL5], ['/usr/bin/env perl'])
 

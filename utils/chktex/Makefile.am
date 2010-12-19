@@ -47,13 +47,15 @@ chktex_SOURCES = \
 	$(CHKTEX_TREE)/Utility.h \
 	$(CHKTEX_TREE)/types.h
 
-dist_man_MANS = \
+man_MANS = \
 	$(CHKTEX_TREE)/chktex.1 \
 	$(CHKTEX_TREE)/chkweb.1 \
 	$(CHKTEX_TREE)/deweb.1
 
-dist_bin_SCRIPTS = $(CHKTEX_TREE)/chkweb
 nodist_bin_SCRIPTS = deweb
+if !WIN32
+nodist_bin_SCRIPTS += $(CHKTEX_TREE)/chkweb
+endif !WIN32
 
 # resource file
 configdir = ${prefix}/texmf/chktex

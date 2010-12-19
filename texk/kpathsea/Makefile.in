@@ -1796,21 +1796,21 @@ kpathsea.h: Makefile paths.h
 	      -e 's,^,#include <kpathsea/,' -e s',$$,>,' >>$@
 
 install-exec-hook:
-	@for f in $(dist_noinst_SCRIPTS); do \
-	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
-	    echo " $(INSTALL_SCRIPT) '$(srcdir)/$$f' '$(DESTDIR)$(bindir)/$$f'"; \
-	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
-	  else :; fi; \
-	done
-	@cd $(DESTDIR)$(bindir) && \
-	  for s in $(bin_links); do \
-	    link=`echo $$s | sed 's,.*:,,'`; \
-	    file=`echo $$s | sed 's,:.*,,'`; \
-	    rm -f $$link; \
-	    echo "creating link '$$link' -> '$$file'"; \
-	    $(LN_S) $$file $$link; \
-	  done
+@WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
+@WIN32_FALSE@	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
+@WIN32_FALSE@	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
+@WIN32_FALSE@	    echo " $(INSTALL_SCRIPT) '$(srcdir)/$$f' '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
+@WIN32_FALSE@	  else :; fi; \
+@WIN32_FALSE@	done
+@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  for s in $(bin_links); do \
+@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
+@WIN32_FALSE@	    rm -f $$link; \
+@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link; \
+@WIN32_FALSE@	  done
 
 install-data-hook:
 	@for f in $(dist_noinst_DATA); do \
@@ -1822,20 +1822,18 @@ install-data-hook:
 	done
 
 uninstall-hook:
-	@for f in $(dist_noinst_SCRIPTS); do \
-	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
-	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
-	  else :; fi; \
-	done
-	@for s in $(bin_links); do \
-	  link=`echo $$s | sed 's,.*:,,'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$link; \
-	done
+@WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
+@WIN32_FALSE@	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1; then \
+@WIN32_FALSE@	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
+@WIN32_FALSE@	  else :; fi; \
+@WIN32_FALSE@	done
+@WIN32_FALSE@	@for s in $(bin_links); do \
+@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
+@WIN32_FALSE@	done
 	@for f in $(dist_noinst_DATA); do \
-	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
+	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1; then \
 	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
 	    rm -f "$(DESTDIR)$(web2cdir)/$$f"; \
 	  else :; fi; \

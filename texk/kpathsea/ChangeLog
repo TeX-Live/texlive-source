@@ -1,3 +1,8 @@
+2010-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am [WIN32]: Skip mktex{lsr,mf,pk,tfm} shell scripts
+	and texhash->mktexlsr symlink.
+
 2010-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex-make.c (maketex): Factor out common WIN32 & Unix code.

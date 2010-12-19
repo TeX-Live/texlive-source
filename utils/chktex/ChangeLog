@@ -1,3 +1,7 @@
+2010-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac [WIN32]: Skip chkweb shell script.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): Added -DNO_KPSE_DLL.

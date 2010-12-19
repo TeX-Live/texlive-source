@@ -263,6 +263,7 @@ bin_links = \
 	mktexlsr:texhash
 
 install-exec-hook:
+if !WIN32
 	@for f in $(dist_noinst_SCRIPTS); do \
 	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
 	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
@@ -278,7 +279,7 @@ install-exec-hook:
 	    echo "creating link '$$link' -> '$$file'"; \
 	    $(LN_S) $$file $$link; \
 	  done
-
+endif !WIN32
 
 install-data-hook:
 	@for f in $(dist_noinst_DATA); do \
@@ -290,9 +291,9 @@ install-data-hook:
 	done
 
 uninstall-hook:
+if !WIN32
 	@for f in $(dist_noinst_SCRIPTS); do \
-	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
+	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1; then \
 	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	  else :; fi; \
@@ -301,9 +302,9 @@ uninstall-hook:
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$link; \
 	done
+endif !WIN32
 	@for f in $(dist_noinst_DATA); do \
-	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
+	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1; then \
 	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
 	    rm -f "$(DESTDIR)$(web2cdir)/$$f"; \
 	  else :; fi; \
