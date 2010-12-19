@@ -3479,7 +3479,7 @@ operation.  The |adjust_ptr| field points to the vlist containing this
 material.
 
 @d adjust_node=5 {|type| of an adjust node}
-@d adjust_pre == subtype  {pre-adjustment?}
+@d adjust_pre == subtype  {<>0 => pre-adjustment}
 @#{|append_list| is used to append a list to |tail|}
 @d append_list(#) == begin link(tail) := link(#); append_list_end
 @d append_list_end(#) == tail := #; end
@@ -20489,7 +20489,7 @@ if p<>null then
   hlist_node,vlist_node,rule_node,unset_node:
     @<Incorporate box dimensions into the dimensions of
       the hbox that will contain~it@>;
-  ins_node,mark_node,adjust_node: if adjust_tail<>null then
+  ins_node,mark_node,adjust_node: if (adjust_tail<>null) or (pre_adjust_tail<> null) then
     @<Transfer node |p| to the adjustment list@>;
   whatsit_node:@<Incorporate a whatsit node into an hbox@>;
   glue_node:@<Incorporate glue into the horizontal totals@>;
@@ -20617,6 +20617,8 @@ pre_adjust_tail := null;
 |pre_adjust_tail| instead of |adjust_tail|.
 
 @d update_adjust_list(#) == begin
+    if # = null then
+        confusion("pre vadjust");
     link(#) := adjust_ptr(p);
     while link(#) <> null do
         # := link(#);
@@ -22935,11 +22937,13 @@ info(p+4):=cur_head; link(p+4):=cur_tail;
 info(p+5):=cur_pre_head; link(p+5):=cur_pre_tail;
 align_ptr:=p;
 cur_head:=get_avail;
+cur_pre_head:=get_avail;
 end;
 @#
 procedure pop_alignment;
 var p:pointer; {the top alignment stack node}
 begin free_avail(cur_head);
+free_avail(cur_pre_head);
 p:=align_ptr;
 cur_tail:=link(p+4); cur_head:=info(p+4);
 cur_pre_tail:=link(p+5); cur_pre_head:=info(p+5);
