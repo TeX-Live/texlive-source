@@ -1,21 +1,22 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([CJK utils for TeX Live], [4.7.0], [tex-k@tug.org])
+m4_define([cjk_version], [4.8.2])[]dnl using unmodified cjk/utils source tree
+AC_INIT([CJK utils for TeX Live], cjk_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([hbf2gf/hbf.h])
+AC_CONFIG_SRCDIR([cjkutils-]cjk_version[/hbf2gf/hbf.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
 dnl Common code for all programs using libkpathsea.
-KPSE_COMMON([cjkutils])
+KPSE_COMMON([cjkutils], [no-define])
 
-AC_CONFIG_HEADERS([hbf2gf/c-auto.h:hbf2gf/c-auto.in])
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
 dnl get Compiler flags right.
 XX_CFLAGS=$WARNING_CFLAGS
@@ -61,6 +62,13 @@ if test x"$do_cweb" = xyes; then
 fi
 AM_CONDITIONAL([do_cweb], [test "x$do_cweb" = xyes])
 
-AC_CONFIG_FILES([Makefile conv/Makefile hbf2gf/Makefile scripts/Makefile])
+KPSE_COMPILER_WARNINGS
+
+KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+
+AC_SUBST([CJKUTILS_TREE], [cjkutils-]cjk_version)
+
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

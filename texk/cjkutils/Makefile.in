@@ -14,6 +14,9 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -33,22 +36,32 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+bin_PROGRAMS = bg5conv$(EXEEXT) cefconv$(EXEEXT) cef5conv$(EXEEXT) \
+	cefsconv$(EXEEXT) extconv$(EXEEXT) sjisconv$(EXEEXT) \
+	hbf2gf$(EXEEXT) $(am__EXEEXT_1)
+@WIN32_TRUE@am__append_1 = \
+@WIN32_TRUE@	gbklatex \
+@WIN32_TRUE@	gbkpdflatex
+
 subdir = .
 DIST_COMMON = $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
+	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/configure \
-	../../build-aux/config.guess ../../build-aux/config.sub \
-	../../build-aux/depcomp ../../build-aux/install-sh \
-	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
+	$(srcdir)/Makefile.in $(srcdir)/c-auto.in \
+	$(top_srcdir)/configure ../../build-aux/config.guess \
+	../../build-aux/config.sub ../../build-aux/depcomp \
+	../../build-aux/install-sh ../../build-aux/ltmain.sh \
+	../../build-aux/missing ../../build-aux/texinfo.tex \
+	../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
@@ -60,26 +73,87 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/hbf2gf/c-auto.h
+CONFIG_HEADER = c-auto.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-SOURCES =
-DIST_SOURCES =
-RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
-	html-recursive info-recursive install-data-recursive \
-	install-dvi-recursive install-exec-recursive \
-	install-html-recursive install-info-recursive \
-	install-pdf-recursive install-ps-recursive install-recursive \
-	installcheck-recursive installdirs-recursive pdf-recursive \
-	ps-recursive uninstall-recursive
-RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
-  distclean-recursive maintainer-clean-recursive
-AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
-	$(RECURSIVE_CLEAN_TARGETS:-recursive=) tags TAGS ctags CTAGS \
-	distdir dist dist-all distcheck
+@WIN32_TRUE@am__EXEEXT_1 = gbklatex$(EXEEXT) gbkpdflatex$(EXEEXT)
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
+	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(hbf2gf_cfgdir)"
+PROGRAMS = $(bin_PROGRAMS)
+bg5conv_SOURCES = bg5conv.c
+bg5conv_OBJECTS = bg5conv.$(OBJEXT)
+bg5conv_LDADD = $(LDADD)
+cef5conv_SOURCES = cef5conv.c
+cef5conv_OBJECTS = cef5conv.$(OBJEXT)
+cef5conv_LDADD = $(LDADD)
+cefconv_SOURCES = cefconv.c
+cefconv_OBJECTS = cefconv.$(OBJEXT)
+cefconv_LDADD = $(LDADD)
+cefsconv_SOURCES = cefsconv.c
+cefsconv_OBJECTS = cefsconv.$(OBJEXT)
+cefsconv_LDADD = $(LDADD)
+extconv_SOURCES = extconv.c
+extconv_OBJECTS = extconv.$(OBJEXT)
+extconv_LDADD = $(LDADD)
+am_gbklatex_OBJECTS = cjklatex.$(OBJEXT)
+gbklatex_OBJECTS = $(am_gbklatex_OBJECTS)
+am__DEPENDENCIES_1 =
+am__objects_1 = gbkpdflatex-cjklatex.$(OBJEXT)
+am_gbkpdflatex_OBJECTS = $(am__objects_1)
+gbkpdflatex_OBJECTS = $(am_gbkpdflatex_OBJECTS)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+am_hbf2gf_OBJECTS = hbf2gf-hbf.$(OBJEXT) hbf2gf-hbf2gf.$(OBJEXT)
+hbf2gf_OBJECTS = $(am_hbf2gf_OBJECTS)
+sjisconv_SOURCES = sjisconv.c
+sjisconv_OBJECTS = sjisconv.$(OBJEXT)
+sjisconv_LDADD = $(LDADD)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+SCRIPTS = $(bin_SCRIPTS)
+DEFAULT_INCLUDES = -I.@am__isrc@
+depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
+am__depfiles_maybe = depfiles
+am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+SOURCES = bg5conv.c cef5conv.c cefconv.c cefsconv.c extconv.c \
+	$(gbklatex_SOURCES) $(gbkpdflatex_SOURCES) $(hbf2gf_SOURCES) \
+	sjisconv.c
+DIST_SOURCES = bg5conv.c cef5conv.c cefconv.c cefsconv.c extconv.c \
+	$(gbklatex_SOURCES) $(gbkpdflatex_SOURCES) $(hbf2gf_SOURCES) \
+	sjisconv.c
+man1dir = $(mandir)/man1
+NROFF = nroff
+MANS = $(man1_MANS)
+DATA = $(hbf2gf_cfg_DATA)
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -87,31 +161,6 @@ am__remove_distdir = \
   { test ! -d "$(distdir)" \
     || { find "$(distdir)" -type d ! -perm -200 -exec chmod u+w {} ';' \
          && rm -fr "$(distdir)"; }; }
-am__relativize = \
-  dir0=`pwd`; \
-  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
-  sed_rest='s,^[^/]*/*,,'; \
-  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
-  sed_butlast='s,/*[^/]*$$,,'; \
-  while test -n "$$dir1"; do \
-    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
-    if test "$$first" != "."; then \
-      if test "$$first" = ".."; then \
-        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
-        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
-      else \
-        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
-        if test "$$first2" = "$$first"; then \
-          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
-        else \
-          dir2="../$$dir2"; \
-        fi; \
-        dir0="$$dir0"/"$$first"; \
-      fi; \
-    fi; \
-    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
-  done; \
-  reldir="$$dir2"
 DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
@@ -127,6 +176,7 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CJKUTILS_TREE = @CJKUTILS_TREE@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CTANGLE = @CTANGLE@
@@ -241,12 +291,85 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-SUBDIRS = . conv hbf2gf scripts
+EXTRA_DIST = $(CJKUTILS_TREE) $(CJKUTILS_TREE)-PATCHES $(CWEB_TEX) \
+	$(CWEB_DVI)
 DISTCLEANFILES = config.force
-EXTRA_DIST = bat
-all: all-recursive
+INCLUDES = $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = $(XX_CPPFLAGS)
+AM_CFLAGS = $(XX_CFLAGS)
+hbf2gf_SOURCES = \
+	$(CJKUTILS_TREE)/hbf2gf/hbf.c \
+	$(CJKUTILS_TREE)/hbf2gf/hbf.h \
+	hbf2gf.c
+
+hbf2gf_CPPFLAGS = -I$(srcdir)/$(CJKUTILS_TREE)/hbf2gf -Dunix -DHAVE_LIBKPATHSEA $(AM_CPPFLAGS)
+hbf2gf_DEPENDENCIES = $(KPATHSEA_DEPEND)
+hbf2gf_LDADD = $(KPATHSEA_LIBS)
+@WIN32_FALSE@HOOK_DST = bg5+
+@WIN32_TRUE@HOOK_DST = bg5 cef5 cef cefs sjis
+@WIN32_FALSE@HOOK_CMD = $(LN_S)
+@WIN32_TRUE@HOOK_CMD = cp
+gbklatex_SOURCES = \
+	$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+
+gbklatex_DEPENDENCIES = $(KPATHSEA_DEPEND)
+gbklatex_LDADD = $(KPATHSEA_LIBS)
+gbkpdflatex_SOURCES = $(gbklatex_SOURCES)
+gbkpdflatex_CPPFLAGS = -DLATEX=\"pdflatex\" $(AM_CPPFLAGS)
+gbkpdflatex_DEPENDENCIES = $(gbklatex_DEPENDENCIES)
+gbkpdflatex_LDADD = $(gbklatex_LDADD)
+@WIN32_FALSE@bin_SCRIPTS = \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/Bg5conv/bg5latex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/Bg5conv/bg5pdflatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/CEFconv/cef5latex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/CEFconv/cef5pdflatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/CEFconv/ceflatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/CEFconv/cefpdflatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/CEFconv/cefslatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/CEFconv/cefspdflatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/SJISconv/sjislatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/SJISconv/sjispdflatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/extconv/gbklatex \
+@WIN32_FALSE@	$(CJKUTILS_TREE)/extconv/gbkpdflatex
+
+@WIN32_TRUE@bin_SCRIPTS = 
+man1_MANS = \
+	$(CJKUTILS_TREE)/Bg5conv/bg5conv.1 \
+	$(CJKUTILS_TREE)/CEFconv/cef5conv.1 \
+	$(CJKUTILS_TREE)/CEFconv/cefconv.1 \
+	$(CJKUTILS_TREE)/CEFconv/cefsconv.1 \
+	$(CJKUTILS_TREE)/SJISconv/sjisconv.1 \
+	$(CJKUTILS_TREE)/extconv/extconv.1 \
+	$(CJKUTILS_TREE)/hbf2gf/hbf2gf.1
+
+hbf2gf_cfgdir = ${prefix}/texmf/hbf2gf
+CFG = $(CJKUTILS_TREE)/hbf2gf/cfg
+hbf2gf_cfg_DATA = \
+	$(CFG)/b5ka12.cfg \
+	$(CFG)/b5kr12.cfg \
+	$(CFG)/b5so12.cfg \
+	$(CFG)/c1so12.cfg \
+	$(CFG)/c2so12.cfg \
+	$(CFG)/c3so12.cfg \
+	$(CFG)/c4so12.cfg \
+	$(CFG)/c5so12.cfg \
+	$(CFG)/c6so12.cfg \
+	$(CFG)/c7so12.cfg \
+	$(CFG)/csso12.cfg \
+	$(CFG)/gsfs14.cfg \
+	$(CFG)/j2so12.cfg \
+	$(CFG)/jsso12.cfg \
+	$(CFG)/ksso17.cfg
+
+CWEB_SRC = $(CJKUTILS_TREE)/hbf2gf/hbf2gf.w
+CWEB_TEX = hbf2gf.tex hbf2gf.idx hbf2gf.scn
+CWEB_DVI = hbf2gf.dvi
+CLEANFILES = hbf2gf.log hbf2gf.toc
+all: c-auto.h
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
+.SUFFIXES: .c .lo .o .obj
 am--refresh:
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -282,6 +405,221 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
+c-auto.h: stamp-h1
+	@if test ! -f $@; then \
+	  rm -f stamp-h1; \
+	  $(MAKE) $(AM_MAKEFLAGS) stamp-h1; \
+	else :; fi
+
+stamp-h1: $(srcdir)/c-auto.in $(top_builddir)/config.status
+	@rm -f stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status c-auto.h
+$(srcdir)/c-auto.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
+	rm -f stamp-h1
+	touch $@
+
+distclean-hdr:
+	-rm -f c-auto.h stamp-h1
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
+	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
+	for p in $$list; do echo "$$p $$p"; done | \
+	sed 's/$(EXEEXT)$$//' | \
+	while read p p1; do if test -f $$p || test -f $$p1; \
+	  then echo "$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
+	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
+	sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
+	    else { print "f", $$3 "/" $$4, $$1; } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	    test -z "$$files" || { \
+	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	    } \
+	; done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
+	      -e 's/$$/$(EXEEXT)/' `; \
+	test -n "$$list" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(bindir)" && rm -f $$files
+
+clean-binPROGRAMS:
+	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
+bg5conv$(EXEEXT): $(bg5conv_OBJECTS) $(bg5conv_DEPENDENCIES) 
+	@rm -f bg5conv$(EXEEXT)
+	$(LINK) $(bg5conv_OBJECTS) $(bg5conv_LDADD) $(LIBS)
+cef5conv$(EXEEXT): $(cef5conv_OBJECTS) $(cef5conv_DEPENDENCIES) 
+	@rm -f cef5conv$(EXEEXT)
+	$(LINK) $(cef5conv_OBJECTS) $(cef5conv_LDADD) $(LIBS)
+cefconv$(EXEEXT): $(cefconv_OBJECTS) $(cefconv_DEPENDENCIES) 
+	@rm -f cefconv$(EXEEXT)
+	$(LINK) $(cefconv_OBJECTS) $(cefconv_LDADD) $(LIBS)
+cefsconv$(EXEEXT): $(cefsconv_OBJECTS) $(cefsconv_DEPENDENCIES) 
+	@rm -f cefsconv$(EXEEXT)
+	$(LINK) $(cefsconv_OBJECTS) $(cefsconv_LDADD) $(LIBS)
+extconv$(EXEEXT): $(extconv_OBJECTS) $(extconv_DEPENDENCIES) 
+	@rm -f extconv$(EXEEXT)
+	$(LINK) $(extconv_OBJECTS) $(extconv_LDADD) $(LIBS)
+gbklatex$(EXEEXT): $(gbklatex_OBJECTS) $(gbklatex_DEPENDENCIES) 
+	@rm -f gbklatex$(EXEEXT)
+	$(LINK) $(gbklatex_OBJECTS) $(gbklatex_LDADD) $(LIBS)
+gbkpdflatex$(EXEEXT): $(gbkpdflatex_OBJECTS) $(gbkpdflatex_DEPENDENCIES) 
+	@rm -f gbkpdflatex$(EXEEXT)
+	$(LINK) $(gbkpdflatex_OBJECTS) $(gbkpdflatex_LDADD) $(LIBS)
+hbf2gf$(EXEEXT): $(hbf2gf_OBJECTS) $(hbf2gf_DEPENDENCIES) 
+	@rm -f hbf2gf$(EXEEXT)
+	$(LINK) $(hbf2gf_OBJECTS) $(hbf2gf_LDADD) $(LIBS)
+sjisconv$(EXEEXT): $(sjisconv_OBJECTS) $(sjisconv_DEPENDENCIES) 
+	@rm -f sjisconv$(EXEEXT)
+	$(LINK) $(sjisconv_OBJECTS) $(sjisconv_LDADD) $(LIBS)
+install-binSCRIPTS: $(bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	test -n "$$list" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(bindir)" && rm -f $$files
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT)
+
+distclean-compile:
+	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bg5conv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cef5conv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cefconv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cefsconv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cjklatex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/extconv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gbkpdflatex-cjklatex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hbf2gf-hbf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hbf2gf-hbf2gf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sjisconv.Po@am__quote@
+
+.c.o:
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+cjklatex.o: $(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cjklatex.o -MD -MP -MF $(DEPDIR)/cjklatex.Tpo -c -o cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cjklatex.Tpo $(DEPDIR)/cjklatex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='cjklatex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+
+cjklatex.obj: $(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT cjklatex.obj -MD -MP -MF $(DEPDIR)/cjklatex.Tpo -c -o cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/cjklatex.Tpo $(DEPDIR)/cjklatex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='cjklatex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
+
+gbkpdflatex-cjklatex.o: $(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gbkpdflatex-cjklatex.o -MD -MP -MF $(DEPDIR)/gbkpdflatex-cjklatex.Tpo -c -o gbkpdflatex-cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gbkpdflatex-cjklatex.Tpo $(DEPDIR)/gbkpdflatex-cjklatex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='gbkpdflatex-cjklatex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gbkpdflatex-cjklatex.o `test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/cjklatex/cjklatex.c
+
+gbkpdflatex-cjklatex.obj: $(CJKUTILS_TREE)/cjklatex/cjklatex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gbkpdflatex-cjklatex.obj -MD -MP -MF $(DEPDIR)/gbkpdflatex-cjklatex.Tpo -c -o gbkpdflatex-cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gbkpdflatex-cjklatex.Tpo $(DEPDIR)/gbkpdflatex-cjklatex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/cjklatex/cjklatex.c' object='gbkpdflatex-cjklatex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(gbkpdflatex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gbkpdflatex-cjklatex.obj `if test -f '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/cjklatex/cjklatex.c'; fi`
+
+hbf2gf-hbf.o: $(CJKUTILS_TREE)/hbf2gf/hbf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf.o -MD -MP -MF $(DEPDIR)/hbf2gf-hbf.Tpo -c -o hbf2gf-hbf.o `test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/hbf2gf/hbf.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hbf2gf-hbf.Tpo $(DEPDIR)/hbf2gf-hbf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/hbf2gf/hbf.c' object='hbf2gf-hbf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf.o `test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c' || echo '$(srcdir)/'`$(CJKUTILS_TREE)/hbf2gf/hbf.c
+
+hbf2gf-hbf.obj: $(CJKUTILS_TREE)/hbf2gf/hbf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf.obj -MD -MP -MF $(DEPDIR)/hbf2gf-hbf.Tpo -c -o hbf2gf-hbf.obj `if test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/hbf2gf/hbf.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hbf2gf-hbf.Tpo $(DEPDIR)/hbf2gf-hbf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CJKUTILS_TREE)/hbf2gf/hbf.c' object='hbf2gf-hbf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf.obj `if test -f '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; then $(CYGPATH_W) '$(CJKUTILS_TREE)/hbf2gf/hbf.c'; else $(CYGPATH_W) '$(srcdir)/$(CJKUTILS_TREE)/hbf2gf/hbf.c'; fi`
+
+hbf2gf-hbf2gf.o: hbf2gf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf2gf.o -MD -MP -MF $(DEPDIR)/hbf2gf-hbf2gf.Tpo -c -o hbf2gf-hbf2gf.o `test -f 'hbf2gf.c' || echo '$(srcdir)/'`hbf2gf.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hbf2gf-hbf2gf.Tpo $(DEPDIR)/hbf2gf-hbf2gf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hbf2gf.c' object='hbf2gf-hbf2gf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf2gf.o `test -f 'hbf2gf.c' || echo '$(srcdir)/'`hbf2gf.c
+
+hbf2gf-hbf2gf.obj: hbf2gf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hbf2gf-hbf2gf.obj -MD -MP -MF $(DEPDIR)/hbf2gf-hbf2gf.Tpo -c -o hbf2gf-hbf2gf.obj `if test -f 'hbf2gf.c'; then $(CYGPATH_W) 'hbf2gf.c'; else $(CYGPATH_W) '$(srcdir)/hbf2gf.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hbf2gf-hbf2gf.Tpo $(DEPDIR)/hbf2gf-hbf2gf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='hbf2gf.c' object='hbf2gf-hbf2gf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hbf2gf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hbf2gf-hbf2gf.obj `if test -f 'hbf2gf.c'; then $(CYGPATH_W) 'hbf2gf.c'; else $(CYGPATH_W) '$(srcdir)/hbf2gf.c'; fi`
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -290,76 +628,60 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
+install-man1: $(man1_MANS)
+	@$(NORMAL_INSTALL)
+	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	{ for i in $$list; do echo "$$i"; done; \
+	} | while read p; do \
+	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; echo "$$p"; \
+	done | \
+	sed -e 'n;s,.*/,,;p;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,' | \
+	sed 'N;N;s,\n, ,g' | { \
+	list=; while read file base inst; do \
+	  if test "$$base" = "$$inst"; then list="$$list $$file"; else \
+	    echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man1dir)/$$inst'"; \
+	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man1dir)/$$inst" || exit $$?; \
+	  fi; \
+	done; \
+	for i in $$list; do echo "$$i"; done | $(am__base_list) | \
+	while read files; do \
+	  test -z "$$files" || { \
+	    echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(man1dir)'"; \
+	    $(INSTALL_DATA) $$files "$(DESTDIR)$(man1dir)" || exit $$?; }; \
+	done; }
 
-# This directory's subdirectories are mostly independent; you can cd
-# into them and run `make' without going through this Makefile.
-# To change the values of `make' variables: instead of editing Makefiles,
-# (1) if the variable is set in `config.status', edit `config.status'
-#     (which will cause the Makefiles to be regenerated when you run `make');
-# (2) otherwise, pass the desired values on the `make' command line.
-$(RECURSIVE_TARGETS):
-	@fail= failcom='exit 1'; \
-	for f in x $$MAKEFLAGS; do \
-	  case $$f in \
-	    *=* | --[!k]*);; \
-	    *k*) failcom='fail=yes';; \
-	  esac; \
-	done; \
-	dot_seen=no; \
-	target=`echo $@ | sed s/-recursive//`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    dot_seen=yes; \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	  || eval $$failcom; \
-	done; \
-	if test "$$dot_seen" = "no"; then \
-	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
-	fi; test -z "$$fail"
+uninstall-man1:
+	@$(NORMAL_UNINSTALL)
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	files=`{ for i in $$list; do echo "$$i"; done; \
+	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
+	test -z "$$files" || { \
+	  echo " ( cd '$(DESTDIR)$(man1dir)' && rm -f" $$files ")"; \
+	  cd "$(DESTDIR)$(man1dir)" && rm -f $$files; }
+install-hbf2gf_cfgDATA: $(hbf2gf_cfg_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(hbf2gf_cfgdir)" || $(MKDIR_P) "$(DESTDIR)$(hbf2gf_cfgdir)"
+	@list='$(hbf2gf_cfg_DATA)'; test -n "$(hbf2gf_cfgdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(hbf2gf_cfgdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(hbf2gf_cfgdir)" || exit $$?; \
+	done
 
-$(RECURSIVE_CLEAN_TARGETS):
-	@fail= failcom='exit 1'; \
-	for f in x $$MAKEFLAGS; do \
-	  case $$f in \
-	    *=* | --[!k]*);; \
-	    *k*) failcom='fail=yes';; \
-	  esac; \
-	done; \
-	dot_seen=no; \
-	case "$@" in \
-	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
-	  *) list='$(SUBDIRS)' ;; \
-	esac; \
-	rev=''; for subdir in $$list; do \
-	  if test "$$subdir" = "."; then :; else \
-	    rev="$$subdir $$rev"; \
-	  fi; \
-	done; \
-	rev="$$rev ."; \
-	target=`echo $@ | sed s/-recursive//`; \
-	for subdir in $$rev; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	  || eval $$failcom; \
-	done && test -z "$$fail"
-tags-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
-	done
-ctags-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) ctags); \
-	done
+uninstall-hbf2gf_cfgDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(hbf2gf_cfg_DATA)'; test -n "$(hbf2gf_cfgdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(hbf2gf_cfgdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(hbf2gf_cfgdir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -371,24 +693,11 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES) c-auto.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	set x; \
 	here=`pwd`; \
-	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
-	  include_option=--etags-include; \
-	  empty_fix=.; \
-	else \
-	  include_option=--include; \
-	  empty_fix=; \
-	fi; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test ! -f $$subdir/TAGS || \
-	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
-	  fi; \
-	done; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) c-auto.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -406,9 +715,9 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS: ctags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+CTAGS:  $(HEADERS) $(SOURCES) c-auto.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) c-auto.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -427,6 +736,19 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
+	@list='$(MANS)'; if test -n "$$list"; then \
+	  list=`for p in $$list; do \
+	    if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	    if test -f "$$d$$p"; then echo "$$d$$p"; else :; fi; done`; \
+	  if test -n "$$list" && \
+	    grep 'ab help2man is required to generate this page' $$list >/dev/null; then \
+	    echo "error: found man pages containing the \`missing help2man' replacement text:" >&2; \
+	    grep -l 'ab help2man is required to generate this page' $$list | sed 's/^/         /' >&2; \
+	    echo "       to fix them, install help2man, remove and regenerate the man pages;" >&2; \
+	    echo "       typically \`make maintainer-clean' will remove them" >&2; \
+	    exit 1; \
+	  else :; fi; \
+	else :; fi
 	$(am__remove_distdir)
 	test -d "$(distdir)" || mkdir "$(distdir)"
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -456,34 +778,6 @@ distdir: $(DISTFILES)
 	    test -f "$(distdir)/$$file" \
 	    || cp -p $$d/$$file "$(distdir)/$$file" \
 	    || exit 1; \
-	  fi; \
-	done
-	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test -d "$(distdir)/$$subdir" \
-	    || $(MKDIR_P) "$(distdir)/$$subdir" \
-	    || exit 1; \
-	  fi; \
-	done
-	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
-	    $(am__relativize); \
-	    new_distdir=$$reldir; \
-	    dir1=$$subdir; dir2="$(top_distdir)"; \
-	    $(am__relativize); \
-	    new_top_distdir=$$reldir; \
-	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
-	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
-	    ($(am__cd) $$subdir && \
-	      $(MAKE) $(AM_MAKEFLAGS) \
-	        top_distdir="$$new_top_distdir" \
-	        distdir="$$new_distdir" \
-		am__remove_distdir=: \
-		am__skip_length_check=: \
-		am__skip_mode_fix=: \
-	        distdir) \
-	      || exit 1; \
 	  fi; \
 	done
 	$(MAKE) $(AM_MAKEFLAGS) \
@@ -605,19 +899,22 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
-check: check-recursive
-all-am: Makefile all-local
-installdirs: installdirs-recursive
-installdirs-am:
-install: install-recursive
-install-exec: install-exec-recursive
-install-data: install-data-recursive
-uninstall: uninstall-recursive
+check: check-am
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS) $(DATA) c-auto.h \
+		all-local
+installdirs:
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(hbf2gf_cfgdir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-recursive
+installcheck: installcheck-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
 	  install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
@@ -626,6 +923,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -635,106 +933,165 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-recursive
+clean: clean-am
 
-clean-am: clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
-distclean: distclean-recursive
+distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-libtool \
-	distclean-tags
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-hdr distclean-libtool distclean-tags
 
-dvi: dvi-recursive
+dvi: dvi-am
 
 dvi-am:
 
-html: html-recursive
+html: html-am
 
 html-am:
 
-info: info-recursive
+info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-hbf2gf_cfgDATA install-man
 
-install-dvi: install-dvi-recursive
+install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am:
-
-install-html: install-html-recursive
+install-exec-am: install-binPROGRAMS install-binSCRIPTS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+install-html: install-html-am
 
 install-html-am:
 
-install-info: install-info-recursive
+install-info: install-info-am
 
 install-info-am:
 
-install-man:
+install-man: install-man1
 
-install-pdf: install-pdf-recursive
+install-pdf: install-pdf-am
 
 install-pdf-am:
 
-install-ps: install-ps-recursive
+install-ps: install-ps-am
 
 install-ps-am:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-recursive
+maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-recursive
+mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-generic mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool
 
-pdf: pdf-recursive
+pdf: pdf-am
 
 pdf-am:
 
-ps: ps-recursive
+ps: ps-am
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
+	uninstall-hbf2gf_cfgDATA uninstall-man
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+uninstall-man: uninstall-man1
 
-.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) ctags-recursive \
-	install-am install-strip tags-recursive
+.MAKE: all install-am install-exec-am install-strip uninstall-am
 
-.PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am all-local am--refresh check check-am clean \
-	clean-generic clean-libtool ctags ctags-recursive dist \
+.PHONY: CTAGS GTAGS all all-am all-local am--refresh check check-am \
+	clean clean-binPROGRAMS clean-generic clean-libtool ctags dist \
 	dist-all dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar \
 	dist-tarZ dist-xz dist-zip distcheck distclean \
-	distclean-generic distclean-libtool distclean-tags \
-	distcleancheck distdir distuninstallcheck dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am
+	distclean-compile distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-binSCRIPTS \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-exec-hook \
+	install-hbf2gf_cfgDATA install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-binSCRIPTS \
+	uninstall-hbf2gf_cfgDATA uninstall-hook uninstall-man \
+	uninstall-man1
 
 
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-all-local: config.force
+@do_cweb_TRUE@all-local: config.force hbf2gf.dvi
+@do_cweb_FALSE@all-local: config.force
 
 config.force: $(KPATHSEA_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
+
+@KPATHSEA_RULE@
+
+install-exec-hook:
+	@cd $(DESTDIR)$(bindir) && \
+	  for p in latex pdflatex; do \
+	    for c in $(HOOK_DST); do \
+	      echo "$(HOOK_CMD) gbk$$p$(EXEEXT) $$c$$p$(EXEEXT)"; \
+	      rm -f $$c$$p$(EXEEXT); $(HOOK_CMD) gbk$$p$(EXEEXT) $$c$$p$(EXEEXT); \
+	    done; \
+	  done
+
+uninstall-hook:
+	@for p in latex pdflatex; do \
+	  for c in $(HOOK_DST); do \
+	    echo "rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT)"; \
+	    rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT); \
+	  done; \
+	done
+
+hbf2gf.dvi: $(CWEB_TEX)
+	TEXINPUTS=.:$(srcdir):$$TEXINPUTS $(TEX) hbf2gf.tex
+
+# Running cweave in order to create hbf2gf.tex generates in addition
+# hbf2gf.idx and hbf2gf.scn; we must rerun cweave when they are not
+# up to date (even if hbf2gf.tex is up to date). Thus the sub-make.
+#
+hbf2gf.tex hbf2gf.idx hbf2gf.scn: $(CWEB_SRC)
+	$(MAKE) $(AM_MAKEFLAGS) do-cweave
+do-cweave: $(CWEB_SRC) .FORCE
+	$(CWEAVE) +ai $<
+.PHONY: do-cweave .FORCE
+
+@do_cweb_TRUE@bg5conv.c: $(CJKUTILS_TREE)/Bg5conv/bg5conv.w
+@do_cweb_TRUE@	$(CTANGLE) $<
+@do_cweb_TRUE@cef5conv.c: $(CJKUTILS_TREE)/CEFconv/cef5conv.w
+@do_cweb_TRUE@	$(CTANGLE) $<
+@do_cweb_TRUE@cefconv.c: $(CJKUTILS_TREE)/CEFconv/cefconv.w
+@do_cweb_TRUE@	$(CTANGLE) $<
+@do_cweb_TRUE@cefsconv.c: $(CJKUTILS_TREE)/CEFconv/cefsconv.w
+@do_cweb_TRUE@	$(CTANGLE) $<
+@do_cweb_TRUE@sjisconv.c: $(CJKUTILS_TREE)/SJISconv/sjisconv.w
+@do_cweb_TRUE@	$(CTANGLE) $<
+@do_cweb_TRUE@extconv.c: $(CJKUTILS_TREE)/extconv/extconv.w
+@do_cweb_TRUE@	$(CTANGLE) $<
+@do_cweb_TRUE@hbf2gf.c: $(CWEB_SRC)
+@do_cweb_TRUE@	$(CTANGLE) $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

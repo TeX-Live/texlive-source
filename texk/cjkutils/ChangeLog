@@ -1,3 +1,10 @@
+2010-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import cjk-4.8.2/utils as cjkutils-4.8.2,
+	patches in cjkutils-4.8.2-PATCHES.
+	* Makefile.am, configure.ac: Adapted to modified layout.
+	[WIN32]: compile gbk{,pdf}latex.exe from Fabrice's cjklatex.c.
+
 2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, hbf2gf/hbf2gf.w: Require recent kpathsea version.

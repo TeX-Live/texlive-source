@@ -27,8 +27,8 @@ bibtex8 - ?
 bibtexu - ?
   http://omega.enstb.org/yannis/bibtexu/
 
-cjkutils - Werner Lemberg
-  ctan
+cjkutils 4.8.2 - checked 18dec10
+  http://cjk.ffii.org/cjk-4.8.2.tar.gz
 
 detex 2.8 - checked 21may10
   http://www.cs.purdue.edu/homes/trinkle/detex/
