@@ -8955,7 +8955,6 @@ the variables |p| and |q| are reserved for token-list building.
 @ @<Manufacture a control...@>=
 begin r:=get_avail; p:=r; {head of the list of characters}
 b := is_in_csname; is_in_csname := true;
-is_in_csname := true;
 repeat get_x_token;
 if cur_cs=0 then store_new_token(cur_tok);
 until cur_cs<>0;
