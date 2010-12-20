@@ -1,3 +1,9 @@
+2010-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ht{,context,latex,mex,tex,texi,xelatex,xetex}.bat:
+	Scripts for WIN32 (copied from Master/bin/win32/).
+	* Makefile.am, configure.ac [WIN32]: Install ht*.bat scripts.
+
 2010-12-02  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (EXTRA_DIST): rm htcmd.c.

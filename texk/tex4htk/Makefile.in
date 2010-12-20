@@ -54,6 +54,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
@@ -278,7 +279,8 @@ EXTRA_DIST = $(perl_scripts) $(shell_scripts) dbcontext dblatex \
 tex4ht_subdir = texmf-dist/scripts/tex4ht
 tex4htdir = ${prefix}/$(tex4ht_subdir)
 tex4ht_SCRIPTS = 
-bin_SCRIPTS = 
+@WIN32_FALSE@bin_SCRIPTS = 
+@WIN32_TRUE@bin_SCRIPTS = $(shell_scripts:=.bat)
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

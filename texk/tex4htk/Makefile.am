@@ -33,6 +33,14 @@ tex4ht_subdir = texmf-dist/scripts/tex4ht
 tex4htdir = ${prefix}/$(tex4ht_subdir)
 tex4ht_SCRIPTS =
 
+if WIN32
+bin_SCRIPTS = $(shell_scripts:=.bat)
+else !WIN32
+## Make sure $(bindir) exists
+##
+bin_SCRIPTS =
+endif !WIN32
+
 # We support both multiplatform and non-multiplatform builds.
 install-data-hook:
 	@for p in $(perl_scripts); do \
@@ -49,10 +57,6 @@ install-data-hook:
 	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 	     exit 1;; \
 	esac
-
-## Make sure $(bindir) exists
-##
-bin_SCRIPTS =
 
 ## Link to the basename, removing the extension,
 .PHONY: install-links
