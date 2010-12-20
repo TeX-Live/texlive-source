@@ -1,3 +1,7 @@
+2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am [WIN32]: Skip mkocp and mkofm shell scripts.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reorganize web2c headers.

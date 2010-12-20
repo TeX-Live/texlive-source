@@ -1,3 +1,7 @@
+2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac [WIN32]: Skip mkindex shell script.
+
 2010-11-02  Taco Hoekwater  <taco@elvenkind.com>
 
 	* mkind.c (mk_getc): new fn to accept both LF and CRLF.

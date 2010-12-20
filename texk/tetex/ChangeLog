@@ -1,3 +1,8 @@
+2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ps4pdf: Removed, replaced by newer version under ../texlive/.
+	* Makefile.am: Adapted.
+
 2010-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* context/texmfstart.man: Fix typo.

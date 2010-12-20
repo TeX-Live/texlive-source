@@ -344,7 +344,7 @@ proglib = ../lib/lib.a
 otps_programs = otp2ocp outocp
 otps_scripts = mkocp mkofm
 noinst_HEADERS = otp.h routines.h yystype.h
-@OTANGLE_TRUE@bin_SCRIPTS = $(otps_scripts)
+@OTANGLE_TRUE@@WIN32_FALSE@bin_SCRIPTS = $(otps_scripts)
 @OTANGLE_TRUE@dist_man1_MANS = $(otps_programs:=.man) $(otps_scripts:=.man)
 EXTRA_DIST = $(otps_scripts) otp2ocp.test outocp.test uni2lat.ocp \
 	uni2lat.otp uni2lat.out bugs.txt

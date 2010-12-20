@@ -16,7 +16,6 @@ dist_bin_SCRIPTS = \
 	kpsetool \
 	kpsewhere \
 	ps2frag \
-	ps4pdf \
 	pslatex \
 	rubibtex \
 	rumakeindex \

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -25,6 +25,9 @@ AC_CHECK_HEADERS([ctype.h types.h locale.h])
 AC_CHECK_FUNCS([strchr strrchr setlocale])
 
 KPSE_KPATHSEA_FLAGS
+
+KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 
 AC_CONFIG_FILES([Makefile])
 
