@@ -37,7 +37,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = t4ht$(EXEEXT) tex4ht$(EXEEXT)
 subdir = .
-DIST_COMMON = $(am__configure_deps) \
+DIST_COMMON = $(am__configure_deps) $(am__dist_bin_SCRIPTS_DIST) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -81,6 +81,8 @@ am_tex4ht_OBJECTS = tex4ht.$(OBJEXT)
 tex4ht_OBJECTS = $(am_tex4ht_OBJECTS)
 tex4ht_LDADD = $(LDADD)
 tex4ht_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__dist_bin_SCRIPTS_DIST = ht.bat htcontext.bat htlatex.bat htmex.bat \
+	httex.bat httexi.bat htxelatex.bat htxetex.bat
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -102,7 +104,7 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-SCRIPTS = $(bin_SCRIPTS) $(tex4ht_SCRIPTS)
+SCRIPTS = $(dist_bin_SCRIPTS) $(tex4ht_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -279,8 +281,8 @@ EXTRA_DIST = $(perl_scripts) $(shell_scripts) dbcontext dblatex \
 tex4ht_subdir = texmf-dist/scripts/tex4ht
 tex4htdir = ${prefix}/$(tex4ht_subdir)
 tex4ht_SCRIPTS = 
-@WIN32_FALSE@bin_SCRIPTS = 
-@WIN32_TRUE@bin_SCRIPTS = $(shell_scripts:=.bat)
+@WIN32_FALSE@dist_bin_SCRIPTS = 
+@WIN32_TRUE@dist_bin_SCRIPTS = $(shell_scripts:=.bat)
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -386,10 +388,10 @@ t4ht$(EXEEXT): $(t4ht_OBJECTS) $(t4ht_DEPENDENCIES)
 tex4ht$(EXEEXT): $(tex4ht_OBJECTS) $(tex4ht_DEPENDENCIES) 
 	@rm -f tex4ht$(EXEEXT)
 	$(LINK) $(tex4ht_OBJECTS) $(tex4ht_LDADD) $(LIBS)
-install-binSCRIPTS: $(bin_SCRIPTS)
+install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
@@ -412,9 +414,9 @@ install-binSCRIPTS: $(bin_SCRIPTS)
 	     } \
 	; done
 
-uninstall-binSCRIPTS:
+uninstall-dist_binSCRIPTS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
 	files=`for p in $$list; do echo "$$p"; done | \
 	       sed -e 's,.*/,,;$(transform)'`; \
 	test -n "$$list" || exit 0; \
@@ -758,7 +760,7 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-binSCRIPTS
+install-exec-am: install-binPROGRAMS install-dist_binSCRIPTS
 
 install-html: install-html-am
 
@@ -800,7 +802,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
+uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS \
 	uninstall-tex4htSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
@@ -813,17 +815,18 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 	distclean-compile distclean-generic distclean-hdr \
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-binSCRIPTS \
-	install-data install-data-am install-data-hook install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip install-tex4htSCRIPTS installcheck \
+	install install-am install-binPROGRAMS install-data \
+	install-data-am install-data-hook install-dist_binSCRIPTS \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip install-tex4htSCRIPTS installcheck \
 	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-binSCRIPTS uninstall-hook uninstall-tex4htSCRIPTS
+	uninstall-dist_binSCRIPTS uninstall-hook \
+	uninstall-tex4htSCRIPTS
 
 
 $(t4ht_OBJECTS) $(tex4ht_OBJECTS): $(KPATHSEA_DEPEND)

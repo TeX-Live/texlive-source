@@ -34,11 +34,11 @@ tex4htdir = ${prefix}/$(tex4ht_subdir)
 tex4ht_SCRIPTS =
 
 if WIN32
-bin_SCRIPTS = $(shell_scripts:=.bat)
+dist_bin_SCRIPTS = $(shell_scripts:=.bat)
 else !WIN32
 ## Make sure $(bindir) exists
 ##
-bin_SCRIPTS =
+dist_bin_SCRIPTS =
 endif !WIN32
 
 # We support both multiplatform and non-multiplatform builds.
