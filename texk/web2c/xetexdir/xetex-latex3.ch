@@ -598,6 +598,14 @@ cur_pre_tail:=link(p+5); cur_pre_head:=info(p+5);
 @z
 
 % \vadjust
+@x
+cur_align:=link(preamble); cur_tail:=cur_head; init_span(cur_align);
+@y
+cur_align:=link(preamble); cur_tail:=cur_head; cur_pre_tail:=cur_pre_head;
+init_span(cur_align);
+@z
+
+% \vadjust
 @x l.17690
   begin adjust_tail:=cur_tail; u:=hpack(link(head),natural); w:=width(u);
   cur_tail:=adjust_tail; adjust_tail:=null;
