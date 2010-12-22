@@ -20,6 +20,9 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
+KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+
 AC_CONFIG_FILES([Makefile context/Makefile linked_scripts/Makefile])
 
 AC_OUTPUT

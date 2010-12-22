@@ -1,3 +1,11 @@
+2010-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Added KPSE_CHECK_WIN32.
+	* context/{ctxtools,mptopdf,pstopdf,texexec,texmfstart}.man:
+	Moved from ../tetex/context/ to here.
+	* context/Makefile.am: Adapted.
+	For WIN32 skip the shell scripts.
+
 2010-05-30  Karl Berry  <karl@tug.org>
 
 	* configure.ac: add context subdir, 2010.

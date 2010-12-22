@@ -34,7 +34,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = .
-DIST_COMMON = $(am__configure_deps) $(dist_bin_SCRIPTS) \
+DIST_COMMON = $(am__configure_deps) $(am__dist_bin_SCRIPTS_DIST) \
 	$(dist_man1_MANS) $(dist_man5_MANS) $(dist_tetexdoc_DATA) \
 	$(dist_texconfig_DATA) $(dist_texconfig_SCRIPTS) \
 	$(dist_web2c_DATA) $(nobase_dist_texconf_DATA) \
@@ -46,7 +46,8 @@ DIST_COMMON = $(am__configure_deps) $(dist_bin_SCRIPTS) \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-win32.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -54,6 +55,10 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+am__dist_bin_SCRIPTS_DIST = allcm allneeded dvi2fax dvired fmtutil \
+	fmtutil-sys fontinst kpsetool kpsewhere ps2frag pslatex \
+	rubibtex rumakeindex texconfig texconfig-dialog texconfig-sys \
+	texlinks updmap updmap-sys
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -185,36 +190,31 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-dist_bin_SCRIPTS = \
-	allcm \
-	allneeded \
-	dvi2fax \
-	dvired \
-	fmtutil \
-	fmtutil-sys \
-	fontinst \
-	kpsetool \
-	kpsewhere \
-	ps2frag \
-	pslatex \
-	rubibtex \
-	rumakeindex \
-	texconfig \
-	texconfig-dialog \
-	texconfig-sys \
-	texlinks \
-	updmap \
-	updmap-sys
+@WIN32_FALSE@dist_bin_SCRIPTS = \
+@WIN32_FALSE@	allcm \
+@WIN32_FALSE@	allneeded \
+@WIN32_FALSE@	dvi2fax \
+@WIN32_FALSE@	dvired \
+@WIN32_FALSE@	fmtutil \
+@WIN32_FALSE@	fmtutil-sys \
+@WIN32_FALSE@	fontinst \
+@WIN32_FALSE@	kpsetool \
+@WIN32_FALSE@	kpsewhere \
+@WIN32_FALSE@	ps2frag \
+@WIN32_FALSE@	pslatex \
+@WIN32_FALSE@	rubibtex \
+@WIN32_FALSE@	rumakeindex \
+@WIN32_FALSE@	texconfig \
+@WIN32_FALSE@	texconfig-dialog \
+@WIN32_FALSE@	texconfig-sys \
+@WIN32_FALSE@	texlinks \
+@WIN32_FALSE@	updmap \
+@WIN32_FALSE@	updmap-sys
 
 dist_man1_MANS = \
 	allcm.man \
 	allec.man \
 	allneeded.man \
-	context/ctxtools.man \
-	context/mptopdf.man \
-	context/pstopdf.man \
-	context/texexec.man \
-	context/texmfstart.man \
 	dvi2fax.man \
 	dvired.man \
 	e2pall.man \
@@ -838,14 +838,14 @@ uninstall-man: uninstall-man1 uninstall-man5
 
 
 install-exec-hook:
-	@cd $(DESTDIR)$(bindir) && \
-	  for s in $(bin_links); do \
-	    link=`echo $$s | sed 's,.*:,,'`; \
-	    file=`echo $$s | sed 's,:.*,,'`; \
-	    rm -f $$link; \
-	    echo "creating link '$$link' -> '$$file'"; \
-	    $(LN_S) $$file $$link; \
-	  done
+@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  for s in $(bin_links); do \
+@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
+@WIN32_FALSE@	    rm -f $$link; \
+@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link; \
+@WIN32_FALSE@	  done
 
 install-data-hook:
 	@cd $(DESTDIR)$(man1dir) && \
@@ -858,10 +858,10 @@ install-data-hook:
 	  done
 
 uninstall-hook:
-	@for s in $(bin_links); do \
-	  link=`echo $$s | sed 's,.*:,,'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$link; \
-	done
+@WIN32_FALSE@	@for s in $(bin_links); do \
+@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
+@WIN32_FALSE@	done
 	@for s in $(man1_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \

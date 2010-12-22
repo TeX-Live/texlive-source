@@ -5,6 +5,7 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+if !WIN32
 dist_bin_SCRIPTS = \
 	allcm \
 	allneeded \
@@ -25,16 +26,12 @@ dist_bin_SCRIPTS = \
 	texlinks \
 	updmap \
 	updmap-sys
+endif !WIN32
 
 dist_man1_MANS = \
 	allcm.man \
 	allec.man \
 	allneeded.man \
-	context/ctxtools.man \
-	context/mptopdf.man \
-	context/pstopdf.man \
-	context/texexec.man \
-	context/texmfstart.man \
 	dvi2fax.man \
 	dvired.man \
 	e2pall.man \
@@ -96,6 +93,7 @@ man1_links = $(bin_links) \
 	updmap:updmap-sys
 
 install-exec-hook:
+if !WIN32
 	@cd $(DESTDIR)$(bindir) && \
 	  for s in $(bin_links); do \
 	    link=`echo $$s | sed 's,.*:,,'`; \
@@ -104,6 +102,7 @@ install-exec-hook:
 	    echo "creating link '$$link' -> '$$file'"; \
 	    $(LN_S) $$file $$link; \
 	  done
+endif !WIN32
 
 install-data-hook:
 	@cd $(DESTDIR)$(man1dir) && \
@@ -116,10 +115,12 @@ install-data-hook:
 	  done
 
 uninstall-hook:
+if !WIN32
 	@for s in $(bin_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$link; \
 	done
+endif !WIN32
 	@for s in $(man1_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \

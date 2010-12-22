@@ -1,3 +1,9 @@
+2010-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Added KPSE_CHECK_WIN32.
+	* context/ (removed): Files moved to ../texlive/context/.
+	* Makefile.am: Adapted.
+
 2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ps4pdf: Removed, replaced by newer version under ../texlive/.

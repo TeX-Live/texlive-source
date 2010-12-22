@@ -9,10 +9,9 @@
 ##
 ## Because mptopdf.pl is not part of the context/stubs directory, it is
 ## handled through a symlink, see ../linked_scripts.
-## 
-ACLOCAL_AMFLAGS = -I ../../m4
 
-bin_SCRIPTS = \
+if !WIN32
+dist_bin_SCRIPTS = \
 	context \
 	ctxtools \
 	luatools \
@@ -21,6 +20,12 @@ bin_SCRIPTS = \
 	rlxtools \
 	texexec \
 	texmfstart
+endif !WIN32
 
-EXTRA_DIST = $(bin_SCRIPTS)
+dist_man1_MANS = \
+	ctxtools.man \
+	mptopdf.man \
+	pstopdf.man \
+	texexec.man \
+	texmfstart.man
 
