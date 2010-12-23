@@ -13,24 +13,45 @@ bin_SCRIPTS =
 # dangling symlinks produced by `make install'.
 # The instances in texmf* are the masters (except when it is CTAN).
 #
-scriptxdir = ${prefix}/texmf/scripts
-nobase_dist_scriptx_SCRIPTS = \
+texmf_scriptsdir = ${prefix}/texmf/scripts
+## We distinguish shell and perl (or lua, python, ruby, ...) scripts.
+texmf_shell_scripts = \
+	simpdftex/simpdftex
+texmf_perl_scripts = \
 	a2ping/a2ping.pl \
-	simpdftex/simpdftex \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
 	texdoc/texdoc.tlu \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
+nobase_dist_texmf_scripts_SCRIPTS = \
+	$(texmf_shell_scripts) \
+	$(texmf_perl_scripts)
 
-scriptdir = ${prefix}/texmf-dist/scripts
-nobase_dist_script_SCRIPTS = \
+texmf_dist_scriptsdir = ${prefix}/texmf-dist/scripts
+texmf_dist_shell_scripts = \
+	bibexport/bibexport.sh \
+	installfont/installfont-tl \
+	listings-ext/listings-ext.sh \
+	pdfjam/pdf180 \
+	pdfjam/pdf270 \
+	pdfjam/pdf90 \
+	pdfjam/pdfbook \
+	pdfjam/pdfflip \
+	pdfjam/pdfjam \
+	pdfjam/pdfjam-pocketmod \
+	pdfjam/pdfjam-slides3up \
+	pdfjam/pdfjam-slides6up \
+	pdfjam/pdfjoin \
+	pdfjam/pdfnup \
+	pdfjam/pdfpun \
+	pst-pdf/ps4pdf
+texmf_dist_perl_scripts = \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
 	authorindex/authorindex \
 	bengali/ebong.py \
-	bibexport/bibexport.sh \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
@@ -51,38 +72,23 @@ nobase_dist_script_SCRIPTS = \
 	fontools/showglyphs \
 	fragmaster/fragmaster.pl \
 	glossaries/makeglossaries \
-	installfont/installfont-tl \
 	latex2man/latex2man \
 	latexdiff/latexdiff.pl \
 	latexdiff/latexdiff-vc.pl \
 	latexdiff/latexrevise.pl \
 	latexmk/latexmk.pl \
 	luaotfload/mkluatexfontdb.lua \
-	listings-ext/listings-ext.sh \
 	mathspic/mathspic.pl \
 	mkjobtexmf/mkjobtexmf.pl \
 	mkgrkindex/mkgrkindex \
 	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
-	pdfjam/pdf180 \
-	pdfjam/pdf270 \
-	pdfjam/pdf90 \
-	pdfjam/pdfbook \
-	pdfjam/pdfflip \
-	pdfjam/pdfjam \
-	pdfjam/pdfjam-pocketmod \
-	pdfjam/pdfjam-slides3up \
-	pdfjam/pdfjam-slides6up \
-	pdfjam/pdfjoin \
-	pdfjam/pdfnup \
-	pdfjam/pdfpun \
 	perltex/perltex.pl \
 	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
 	ppower4/pdfthumb.tlu \
 	ppower4/ppower4.tlu \
-	pst-pdf/ps4pdf \
 	pst2pdf/pst2pdf \
 	purifyeps/purifyeps \
 	splitindex/perl/splitindex.pl \
@@ -94,6 +100,9 @@ nobase_dist_script_SCRIPTS = \
 	thumbpdf/thumbpdf.pl \
 	ulqda/ulqda.pl \
 	vpe/vpe.pl
+nobase_dist_texmf_dist_scripts_SCRIPTS = \
+	$(texmf_dist_shell_scripts) \
+	$(texmf_dist_perl_scripts)
 
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
@@ -120,13 +129,22 @@ bin_links = \
 #
 # We support both multiplatform and non-multiplatform builds.
 #
+runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 install-data-hook:
+if WIN32
+	@for s in $(texmf_perl_scripts) $(texmf_dist_perl_scripts); do \
+	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
+	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
+	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
+	done
+else !WIN32
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
 	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
 	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 	     exit 1;; \
 	esac
+endif !WIN32
 
 ## Name the link as the basename, removing any extension,
 ## except for listings-ext.sh, which is documented as that name.
@@ -134,13 +152,13 @@ install-data-hook:
 .PHONY: install-links
 install-links:
 	@cd $(DESTDIR)$(bindir) && \
-	  for s in $(nobase_dist_scriptx_SCRIPTS); do \
+	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf/scripts/$$s $$target; \
 	  done && \
-	  for s in $(nobase_dist_script_SCRIPTS); do \
+	  for s in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
 	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	    echo "$$s" | grep listings-ext.sh >/dev/null \
 	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
@@ -163,15 +181,17 @@ install-links:
 ## man dir link for those mans which can use it.
 
 uninstall-hook:
-	@for s in $(nobase_dist_scriptx_SCRIPTS) $(nobase_dist_script_SCRIPTS); do \
+	@for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	  echo "$$s" | grep listings-ext.sh >/dev/null \
 	  || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$target; \
+	  rm -f $(DESTDIR)$(bindir)/$$target$(EXEEXT); \
 	done
+if !WIN32
 	@for s in $(bin_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$link; \
 	done
 	rm -f $(DESTDIR)$(bindir)/man
+endif !WIN32
 
