@@ -35,11 +35,20 @@ tex4ht_SCRIPTS =
 
 if WIN32
 dist_bin_SCRIPTS = $(shell_scripts:=.bat)
+if WIN32_WRAP
+## We treat the WIN32 wrappers as SCRIPTS to avoid automatic build rules
+nodist_bin_SCRIPTS = $(perl_scripts:=.exe) $(shell_scripts:=.exe)
+runscript = $(srcdir)/../texlive/w32_wrapper/runscript.exe
+$(nodist_bin_SCRIPTS): $(runscript)
+	$(LN_S) $(runscript) $@
+endif WIN32_WRAP
 else !WIN32
 ## Make sure $(bindir) exists
 ##
 dist_bin_SCRIPTS =
 endif !WIN32
+
+CLEANFILES = $(nodist_bin_SCRIPTS)
 
 # We support both multiplatform and non-multiplatform builds.
 install-data-hook:
@@ -51,12 +60,14 @@ install-data-hook:
 	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.sh'"; \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.sh"; \
 	done
+if !WIN32
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
 	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
 	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 	     exit 1;; \
 	esac
+endif !WIN32
 
 ## Link to the basename, removing the extension,
 .PHONY: install-links
@@ -78,10 +89,12 @@ uninstall-hook:
 	  echo "rm -f '$(DESTDIR)$(tex4htdir)/$$p'"; \
 	  rm -f "$(DESTDIR)$(tex4htdir)/$$p"; \
 	done
+if !WIN32
 	@for p in $(perl_scripts) $(shell_scripts); do \
 	  echo "rm -f '$(DESTDIR)$(bindir)/$$p'"; \
 	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
 	done
+endif !WIN32
 
 ## Not used
 ##

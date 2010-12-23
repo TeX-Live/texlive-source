@@ -1,3 +1,8 @@
+2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac [WIN32]: Install wrapper scripts
+	instead of symlinks to scripts under texmf-dist/scripts/.
+
 2010-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ht{,context,latex,mex,tex,texi,xelatex,xetex}.bat:
