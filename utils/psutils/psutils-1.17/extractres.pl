@@ -27,6 +27,10 @@ while (@ARGV) {
 
 if (defined($ENV{TMPDIR})) {	# set body file name
    $body = "$ENV{TMPDIR}/body$$.ps";
+elsif (defined($ENV{TEMP})) {
+   $body = "$ENV{TEMP}/body$$.ps";
+elsif (defined($ENV{TMP})) {
+   $body = "$ENV{TMP}/body$$.ps";
 } else {
    $body = "body$$.ps";
 }

@@ -41,12 +41,23 @@ diff -ur psutils-1.17.orig/includeres.man psutils-1.17/includeres.man
 diff -ur psutils-1.17.orig/includeres.pl psutils-1.17/includeres.pl
 --- psutils-1.17.orig/includeres.pl	1997-03-11 23:52:58.000000000 +0100
 +++ psutils-1.17/includeres.pl	2006-01-17 22:16:42.000000000 +0100
-@@ -28,7 +28,7 @@
+@@ -4,6 +4,11 @@
+ # Copyright (C) Angus J. C. Duggan 1991-1995
+ # See file LICENSE for details.
+ 
++use File::Basename;
++
++$predir = `kpsewhich -progname=dvips -format="other text files" md71_0.ps`;
++$inc=`dirname $predir`;
++
+ $prog = ($0 =~ s=.*/==);
+ 
+ %extn = ("font", ".pfa", "file", ".ps", "procset", ".ps", # resource extns
+@@ -28,7 +33,6 @@
        local($comment, @res) = split(/\s+/);
        local($type) = defined($type{$comment}) ? $type{$comment} : shift(@res);
        local($name) = &filename(@res);
 -      local($inc) = "@INCLUDE@"; # system include directory
-+      local($inc) = ""; # system include directory
        if (open(RES, $name) || open(RES, "$name$extn{$type}") ||
  	  open(RES, "$inc/$name") || open(RES, "$inc/$name$extn{$type}")) {
  	 while (<RES>) {

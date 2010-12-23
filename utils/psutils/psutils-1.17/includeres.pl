@@ -28,9 +28,7 @@ while (<>) {
       local($comment, @res) = split(/\s+/);
       local($type) = defined($type{$comment}) ? $type{$comment} : shift(@res);
       local($name) = &filename(@res);
-      local($inc) = ""; # system include directory
-      if (open(RES, $name) || open(RES, "$name$extn{$type}") ||
-	  open(RES, "$inc/$name") || open(RES, "$inc/$name$extn{$type}")) {
+      if (open(RES, $name) || open(RES, "$name$extn{$type}")) {
 	 while (<RES>) {
 	    print $_;
 	 }

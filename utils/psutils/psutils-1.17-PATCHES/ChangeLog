@@ -1,3 +1,8 @@
+2010-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-TEMPDIR (new): Honor $TMPDIR, $TEMP, and $TMP.
+	* patch-08-non-free (new): Adapt to removal of non-free files.
+
 2010-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-PERL: Adapt to new kpsewhich semantics and
