@@ -191,6 +191,10 @@ kpseinclude_HEADERS = \
 ##
 paths.h: stamp-paths
 stamp-paths: texmf.cnf bsnl.awk
+# ensure grep is not completely broken, e.g., from GREP_OPTIONS.
+	echo a | grep -v b >/dev/null || { echo "*** grep broken, goodbye."; exit 1; }
+#
+# generate paths.h without build machine directories.
 	echo "/* paths.h: Generated from texmf.cnf. */" >paths.tmp
 	awk -f $(srcdir)/bsnl.awk $(srcdir)/texmf.cnf \
 	| sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' \

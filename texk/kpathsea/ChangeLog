@@ -1,3 +1,9 @@
+2010-12-24  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (stamp-paths): ensure that grep is not completely
+	broken, e.g., from GREP_OPTIONS, in which case we'd generate a
+	useless paths.h.
+
 2010-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [WIN32]: Skip mktex{lsr,mf,pk,tfm} shell scripts
