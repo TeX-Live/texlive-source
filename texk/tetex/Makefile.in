@@ -35,9 +35,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(am__dist_bin_SCRIPTS_DIST) \
-	$(dist_man1_MANS) $(dist_man5_MANS) $(dist_tetexdoc_DATA) \
-	$(dist_texconfig_DATA) $(dist_texconfig_SCRIPTS) \
-	$(dist_web2c_DATA) $(nobase_dist_texconf_DATA) \
+	$(dist_man1_MANS) $(dist_man5_MANS) $(dist_texconfig_DATA) \
+	$(dist_texconfig_SCRIPTS) $(dist_web2c_DATA) \
+	$(nobase_dist_texconf_DATA) \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
@@ -82,8 +82,8 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texconfigdir)" \
 	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" \
-	"$(DESTDIR)$(tetexdocdir)" "$(DESTDIR)$(texconfigdir)" \
-	"$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(texconfdir)"
+	"$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)" \
+	"$(DESTDIR)$(texconfdir)"
 SCRIPTS = $(dist_bin_SCRIPTS) $(dist_texconfig_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
@@ -91,7 +91,7 @@ man1dir = $(mandir)/man1
 man5dir = $(mandir)/man5
 NROFF = nroff
 MANS = $(dist_man1_MANS) $(dist_man5_MANS)
-DATA = $(dist_tetexdoc_DATA) $(dist_texconfig_DATA) $(dist_web2c_DATA) \
+DATA = $(dist_texconfig_DATA) $(dist_web2c_DATA) \
 	$(nobase_dist_texconf_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
@@ -237,11 +237,6 @@ dist_man5_MANS = \
 	fmtutil.cnf.5 \
 	updmap.cfg.5
 
-tetexdocdir = ${prefix}/texmf/doc/tetex
-dist_tetexdoc_DATA = \
-	doc/TETEXDOC.pdf \
-	doc/teTeX-FAQ
-
 texconfdir = ${prefix}
 nobase_dist_texconf_DATA = \
 	texmf/texconfig/README \
@@ -270,9 +265,7 @@ man1_links = $(bin_links) \
 	texconfig:texconfig-sys \
 	updmap:updmap-sys
 
-EXTRA_DIST = README.a2ping README.texdoctk doc/Makefile \
-	doc/TETEXDOC.bib doc/TETEXDOC.tex fontinst.bat pdfetex-pl.pool \
-	updmap.pl
+EXTRA_DIST = README.texdoctk fontinst.bat updmap.pl
 run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
@@ -450,26 +443,6 @@ uninstall-man5:
 	test -z "$$files" || { \
 	  echo " ( cd '$(DESTDIR)$(man5dir)' && rm -f" $$files ")"; \
 	  cd "$(DESTDIR)$(man5dir)" && rm -f $$files; }
-install-dist_tetexdocDATA: $(dist_tetexdoc_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(tetexdocdir)" || $(MKDIR_P) "$(DESTDIR)$(tetexdocdir)"
-	@list='$(dist_tetexdoc_DATA)'; test -n "$(tetexdocdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(tetexdocdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(tetexdocdir)" || exit $$?; \
-	done
-
-uninstall-dist_tetexdocDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dist_tetexdoc_DATA)'; test -n "$(tetexdocdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(tetexdocdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(tetexdocdir)" && rm -f $$files
 install-dist_texconfigDATA: $(dist_texconfig_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(texconfigdir)" || $(MKDIR_P) "$(DESTDIR)$(texconfigdir)"
@@ -704,7 +677,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(SCRIPTS) $(MANS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(tetexdocdir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(texconfdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(texconfdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -753,7 +726,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dist_tetexdocDATA install-dist_texconfigDATA \
+install-data-am: install-dist_texconfigDATA \
 	install-dist_texconfigSCRIPTS install-dist_web2cDATA \
 	install-man install-nobase_dist_texconfDATA
 	@$(NORMAL_INSTALL)
@@ -803,10 +776,9 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dist_binSCRIPTS uninstall-dist_tetexdocDATA \
-	uninstall-dist_texconfigDATA uninstall-dist_texconfigSCRIPTS \
-	uninstall-dist_web2cDATA uninstall-man \
-	uninstall-nobase_dist_texconfDATA
+uninstall-am: uninstall-dist_binSCRIPTS uninstall-dist_texconfigDATA \
+	uninstall-dist_texconfigSCRIPTS uninstall-dist_web2cDATA \
+	uninstall-man uninstall-nobase_dist_texconfDATA
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1 uninstall-man5
@@ -820,20 +792,18 @@ uninstall-man: uninstall-man1 uninstall-man5
 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-data-hook install-dist_binSCRIPTS \
-	install-dist_tetexdocDATA install-dist_texconfigDATA \
-	install-dist_texconfigSCRIPTS install-dist_web2cDATA \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-exec-hook install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-man5 \
-	install-nobase_dist_texconfDATA install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-dist_texconfigDATA install-dist_texconfigSCRIPTS \
+	install-dist_web2cDATA install-dvi install-dvi-am install-exec \
+	install-exec-am install-exec-hook install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-man5 install-nobase_dist_texconfDATA install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-dist_binSCRIPTS uninstall-dist_tetexdocDATA \
-	uninstall-dist_texconfigDATA uninstall-dist_texconfigSCRIPTS \
-	uninstall-dist_web2cDATA uninstall-hook uninstall-man \
-	uninstall-man1 uninstall-man5 \
+	uninstall-dist_binSCRIPTS uninstall-dist_texconfigDATA \
+	uninstall-dist_texconfigSCRIPTS uninstall-dist_web2cDATA \
+	uninstall-hook uninstall-man uninstall-man1 uninstall-man5 \
 	uninstall-nobase_dist_texconfDATA
 
 

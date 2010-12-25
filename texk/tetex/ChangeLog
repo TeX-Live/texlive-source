@@ -1,3 +1,10 @@
+2010-12-25  Karl Berry  <karl@tug.org>
+
+	* doc,
+	* pdfetex-pl.pool,
+	* README.a2ping: remove these seemingly not useful files.
+	* Makefile.am: update accordingly.
+
 2010-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Added KPSE_CHECK_WIN32.

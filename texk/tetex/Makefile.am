@@ -54,12 +54,6 @@ dist_man5_MANS = \
 	fmtutil.cnf.5 \
 	updmap.cfg.5
 
-tetexdocdir = ${prefix}/texmf/doc/tetex
-
-dist_tetexdoc_DATA = \
-	doc/TETEXDOC.pdf \
-	doc/teTeX-FAQ
-
 texconfdir = ${prefix}
 
 nobase_dist_texconf_DATA = \
@@ -127,17 +121,12 @@ endif !WIN32
 	done
 
 EXTRA_DIST = \
-	README.a2ping \
 	README.texdoctk
 
 ## Not used
 ##
 EXTRA_DIST += \
-	doc/Makefile \
-	doc/TETEXDOC.bib \
-	doc/TETEXDOC.tex \
 	fontinst.bat \
-	pdfetex-pl.pool \
 	updmap.pl
 
 ## 
