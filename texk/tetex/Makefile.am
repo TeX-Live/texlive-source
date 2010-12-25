@@ -39,7 +39,6 @@ dist_man1_MANS = \
 	fontinst.man \
 	kpsetool.man \
 	kpsewhere.man \
-	mkjobtexmf.man \
 	ps2frag.man \
 	pslatex.man \
 	rubibtex.man \
