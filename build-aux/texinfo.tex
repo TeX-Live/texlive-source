@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-09-06.17}
+\def\texinfoversion{2010-12-23.17}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -6891,25 +6891,28 @@ end
   }
 \fi
 
-\def\scanmacro#1{%
-  \begingroup
-    \newlinechar`\^^M
-    \let\xeatspaces\eatspaces
-    % Undo catcode changes of \startcontents and \doprintindex
-    % When called from @insertcopying or (short)caption, we need active
-    % backslash to get it printed correctly.  Previously, we had
-    % \catcode`\\=\other instead.  We'll see whether a problem appears
-    % with macro expansion.				--kasal, 19aug04
-    \catcode`\@=0 \catcode`\\=\active \escapechar=`\@
-    % ... and \example
-    \spaceisspace
-    %
-    % Append \endinput to make sure that TeX does not see the ending newline.
-    % I've verified that it is necessary both for e-TeX and for ordinary TeX
-    %							--kasal, 29nov03
-    \scantokens{#1\endinput}%
-  \endgroup
-}
+\def\scanmacro#1{\begingroup
+  \newlinechar`\^^M
+  \let\xeatspaces\eatspaces
+  %
+  % Undo catcode changes of \startcontents and \doprintindex
+  % When called from @insertcopying or (short)caption, we need active
+  % backslash to get it printed correctly.  Previously, we had
+  % \catcode`\\=\other instead.  We'll see whether a problem appears
+  % with macro expansion.				--kasal, 19aug04
+  \catcode`\@=0 \catcode`\\=\active \escapechar=`\@
+  %
+  % ... and for \example:
+  \spaceisspace
+  %
+  % The \empty here causes a following catcode 5 newline to be eaten
+  % as part of reading whitespace after a control sequence.  It does
+  % not eat a catcode 13 newline.  There's no good way to handle the
+  % two cases.  See the Macro Details node in the manual for the
+  % workaround we currently have to recommend for macros and
+  % line-oriented commands.
+  \scantokens{#1\empty}%
+\endgroup}
 
 \def\scanexp#1{%
   \edef\temp{\noexpand\scanmacro{#1}}%
