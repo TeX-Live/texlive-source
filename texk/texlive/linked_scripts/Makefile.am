@@ -58,8 +58,8 @@ texmf_dist_perl_scripts = \
 	context/perl/mptopdf.pl \
 	de-macro/de-macro \
 	dviasm/dviasm.py \
-	epspdf/epspdf \
-	epspdf/epspdftk \
+	epspdf/epspdf.rb \
+	epspdf/epspdftk.tcl \
 	epstopdf/epstopdf.pl \
 	fig4latex/fig4latex \
 	findhyph/findhyph \

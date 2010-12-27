@@ -1,7 +1,0 @@
-#!/bin/sh
-script=`kpsewhich -format=texmfscripts epspdftk.rb`
-if test "x$1" = "x"; then
-  "$script" $HOME
-else
-  "$script" $*
-fi
