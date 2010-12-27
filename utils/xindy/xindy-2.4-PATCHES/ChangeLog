@@ -1,3 +1,7 @@
+2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-64-symlinks (new): Check symlink creation.
+
 2010-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-63-win32 (new): Bug fix for Win32 from Akira.

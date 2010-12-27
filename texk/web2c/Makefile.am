@@ -32,6 +32,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h
 DISTCLEANFILES = $(EXTRA_LIBRARIES)
 CLEANFILES =
 TRIPTRAP =
+bin_links =
 
 # in case of an SVN repository
 dist-hook:
@@ -193,6 +194,24 @@ include $(srcdir)/synctexdir/am/synctex.am
 
 ## libmd5
 include $(srcdir)/libmd5/am/md5.am
+
+# Symlinks within $(bindir): FILE:LINK indicates LINK$(EXEEXT)->FILE$(EXEEXT)
+install-exec-hook:
+	@test -z "$(bin_links)" || { \
+	  cd $(DESTDIR)$(bindir) && \
+	  for s in $(bin_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`$(EXEEXT); \
+	    file=`echo $$s | sed 's,:.*,,'`$(EXEEXT); \
+	    rm -f $$link; \
+	    echo "creating link '$$link' -> '$$file'"; \
+	    $(LN_S) $$file $$link || exit 1; \
+	  done; }
+uninstall-hook:
+	@test -z "$(bin_links)" || \
+	for s in $(bin_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`$(EXEEXT); \
+	  rm -f $(DESTDIR)$(bindir)/$$link; \
+	done  
 
 ## Eventually delete these files
 ##

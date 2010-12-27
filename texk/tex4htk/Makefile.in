@@ -897,12 +897,12 @@ install-links:
 	  for p in $(perl_scripts); do \
 	    rm -f $$p; \
 	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.pl'"; \
-	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p; \
+	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p || exit 1; \
 	  done && \
 	  for p in $(shell_scripts); do \
 	    rm -f $$p; \
 	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.sh'"; \
-	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.sh $$p; \
+	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.sh $$p || exit 1; \
 	  done
 
 uninstall-hook:

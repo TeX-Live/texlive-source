@@ -7,6 +7,7 @@
 ##
 if MP
 bin_PROGRAMS += mpost
+bin_links += mpost:dvitomp
 endif MP
 EXTRA_PROGRAMS += mpost
 
@@ -40,15 +41,6 @@ $(mpost_OBJECTS): $(nodist_mpost_SOURCES) libmplib.a
 EXTRA_DIST += mplibdir/ChangeLog $(mpost_web)
 
 DISTCLEANFILES += $(nodist_mpost_SOURCES) mpxout-tangle
-
-# Double-colon rules since we do something similar in luatexdir (maybe others).
-if MP
-install-exec-hook::
-	cd $(DESTDIR)$(bindir) && rm -f dvitomp$(EXEEXT) \
-	  && $(LN_S) mpost$(EXEEXT) dvitomp$(EXEEXT)
-uninstall-hook::
-	rm -f $(DESTDIR)$(bindir)/dvitomp$(EXEEXT)
-endif MP
 
 ## MetaPost Tests
 ##

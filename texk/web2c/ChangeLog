@@ -1,3 +1,8 @@
+2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (bin_links): New variable for required symlinks.
+	(install-exec-hook, uninstall-hook): Rules for symlinks.
+
 2010-12-14  Karl Berry  <karl@tug.org>
 
 	* bibtex.web: non-functional update to clarify license,

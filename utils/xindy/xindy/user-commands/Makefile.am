@@ -47,7 +47,7 @@ install-links:
 	for f in $(scripts); do \
 	  rm -f $$f; \
 	  echo "creating link '$$f' -> '$(REL)/$(scriptspath)/$$f.pl'"; \
-	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f; \
+	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f || exit 1; \
 	done
 uninstall-hook:
 	@for f in $(scripts); do \

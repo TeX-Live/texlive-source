@@ -1,3 +1,7 @@
+2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (install-data-hook): Check symlink creation.
+
 2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mpost.man: Define the macro URL (from Taco).

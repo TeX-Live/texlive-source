@@ -1,3 +1,8 @@
+2010-12-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (install-exec-hook): Check symlink creation.
+	* man/Makefile.am (install-data-hook): The same.
+
 2010-12-24  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (stamp-paths): ensure that grep is not completely

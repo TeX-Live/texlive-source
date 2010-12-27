@@ -612,7 +612,7 @@ install-links:
 	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf/scripts/$$s'"; \
-	    $(LN_S) $(REL)/texmf/scripts/$$s $$target; \
+	    $(LN_S) $(REL)/texmf/scripts/$$s $$target || exit 1; \
 	  done && \
 	  for s in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
 	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
@@ -620,14 +620,14 @@ install-links:
 	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
-	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target; \
+	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target || exit 1; \
 	  done && \
 	  for s in $(bin_links); do \
 	    link=`echo $$s | sed 's,.*:,,'`; \
 	    file=`echo $$s | sed 's,:.*,,'`; \
 	    rm -f $$link; \
 	    echo "creating link '$$link' -> '$$file'"; \
-	    $(LN_S) $$file $$link; \
+	    $(LN_S) $$file $$link || exit 1; \
 	  done && \
 	  rm -f man && \
 	  if test -d $(REL)/texmf/doc/man; then \

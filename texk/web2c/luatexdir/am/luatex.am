@@ -7,6 +7,7 @@
 ##
 if LUATEX
 bin_PROGRAMS += luatex
+bin_links += luatex:texlua luatex:texluac
 endif LUATEX
 EXTRA_PROGRAMS += luatex
 
@@ -35,18 +36,6 @@ luatex_DEPENDENCIES += $(OBSDCOMPAT_DEPEND) libmd5.a libmplib.a
 $(luatex_OBJECTS): libluatex.a
 
 luatex_SOURCES = luatexdir/luatex_svnversion.h luatexdir/luatex.c luatexdir/luatex.h
-
-# Double-colon rules since we do something similar in mplibdir (maybe others).
-if LUATEX
-install-exec-hook::
-	cd $(DESTDIR)$(bindir) && rm -f texlua$(EXEEXT) \
-	  && $(LN_S) luatex$(EXEEXT) texlua$(EXEEXT)
-	cd $(DESTDIR)$(bindir) && rm -f texluac$(EXEEXT) \
-	  && $(LN_S) luatex$(EXEEXT) texluac$(EXEEXT)
-uninstall-hook::
-	rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
-	rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
-endif LUATEX
 
 EXTRA_DIST += luatexdir/ptexlib.h
 

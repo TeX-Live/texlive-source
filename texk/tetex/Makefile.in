@@ -813,7 +813,7 @@ install-exec-hook:
 @WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
 @WIN32_FALSE@	    rm -f $$link; \
 @WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
-@WIN32_FALSE@	    $(LN_S) $$file $$link; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
 @WIN32_FALSE@	  done
 
 install-data-hook:
@@ -823,7 +823,7 @@ install-data-hook:
 	    file=`echo $$s | sed 's,:.*,,'`; \
 	    rm -f $$link.1; \
 	    echo "creating link '$$link.1' -> '$$file.1'"; \
-	    $(LN_S) $$file.1 $$link.1; \
+	    $(LN_S) $$file.1 $$link.1 || exit 1; \
 	  done
 
 uninstall-hook:

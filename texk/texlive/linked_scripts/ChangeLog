@@ -1,5 +1,9 @@
 2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* Makefile.am (install-links): Check symlink creation.
+
+2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* Makefile.am: Distinguish shell and perl (or lus, ...) scripts.
 	[WIN32]: Skip symlinks from bindir to texmf*/scripts/; install
 	wrapper binaries for perl scripts.

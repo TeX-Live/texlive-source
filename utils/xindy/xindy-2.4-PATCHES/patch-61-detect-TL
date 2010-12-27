@@ -1,6 +1,6 @@
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
 --- xindy.orig/user-commands/Makefile.am	2010-05-11 01:15:51.000000000 +0200
-+++ xindy/user-commands/Makefile.am	2010-05-12 21:23:55.065336668 +0200
++++ xindy/user-commands/Makefile.am	2010-05-12 21:23:55.000000000 +0200
 @@ -26,12 +26,14 @@
  
  if TEXLIVE_BUILD

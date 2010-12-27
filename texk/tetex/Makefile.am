@@ -93,7 +93,7 @@ if !WIN32
 	    file=`echo $$s | sed 's,:.*,,'`; \
 	    rm -f $$link; \
 	    echo "creating link '$$link' -> '$$file'"; \
-	    $(LN_S) $$file $$link; \
+	    $(LN_S) $$file $$link || exit 1; \
 	  done
 endif !WIN32
 
@@ -104,7 +104,7 @@ install-data-hook:
 	    file=`echo $$s | sed 's,:.*,,'`; \
 	    rm -f $$link.1; \
 	    echo "creating link '$$link.1' -> '$$file.1'"; \
-	    $(LN_S) $$file.1 $$link.1; \
+	    $(LN_S) $$file.1 $$link.1 || exit 1; \
 	  done
 
 uninstall-hook:

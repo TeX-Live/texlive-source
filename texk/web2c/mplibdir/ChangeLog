@@ -1,3 +1,8 @@
+2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mplib.am: install-exec-hook and uninstall-hook rules now
+	in ../Makefile.am; append required symlink to bin_links.
+
 2010-06-11  Taco Hoekwater  <taco@luatex.org>
 
 	* *.w, lmplib.h: change include of "config.h" to <w2c/config.h>.

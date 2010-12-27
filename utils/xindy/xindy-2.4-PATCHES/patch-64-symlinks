@@ -1,0 +1,12 @@
+diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
+--- xindy.orig/user-commands/Makefile.am	2010-05-12 21:23:55.000000000 +0200
++++ xindy/user-commands/Makefile.am	2010-12-23 19:32:15.000000000 +0100
+@@ -47,7 +47,7 @@
+ 	for f in $(scripts); do \
+ 	  rm -f $$f; \
+ 	  echo "creating link '$$f' -> '$(REL)/$(scriptspath)/$$f.pl'"; \
+-	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f; \
++	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f || exit 1; \
+ 	done
+ uninstall-hook:
+ 	@for f in $(scripts); do \

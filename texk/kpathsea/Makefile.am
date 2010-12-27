@@ -281,7 +281,7 @@ if !WIN32
 	    file=`echo $$s | sed 's,:.*,,'`; \
 	    rm -f $$link; \
 	    echo "creating link '$$link' -> '$$file'"; \
-	    $(LN_S) $$file $$link; \
+	    $(LN_S) $$file $$link || exit 1; \
 	  done
 endif !WIN32
 
