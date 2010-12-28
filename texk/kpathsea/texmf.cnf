@@ -610,6 +610,12 @@ TEX = etex
 % given as command line option or environment variable.
 BIBTEX_CSFILE = 88591lat.csf
 
+% This variable is Windows platform specific and allows script wrappers
+% to use an already installed Perl interpreter (if found on the search path)
+% instead of the one shipped with TeX Live. It must be set to 0 or 1.
+%
+% TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL = 0
+
 %  Part 3: Array and other sizes for TeX (and Metafont).
 %
 % If you want to change some of these sizes only for a certain TeX
