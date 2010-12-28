@@ -197,4 +197,11 @@
         - added support for all tex4ht commands from mk4ht.pl
         - removed some unsued aliases
         - some code refactoring and cleanup
+    2010/12/28
+        - use of external Perl now requires kpathsea variable
+          TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL to be explicitly set to 1
+        - alias_table replaced with if-elseif-end tests to streamline 
+          special cases and to avoid hardcoding of texmf* file paths
+        - added a2ping to special cases (requires -x switch to Perl)
+        - set ASYMPTOTE_GS (for asy) to full path to tlgs
 

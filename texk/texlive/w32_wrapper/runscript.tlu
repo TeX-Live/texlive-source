@@ -210,6 +210,13 @@ local docstr = [[
         - added support for all tex4ht commands from mk4ht.pl
         - removed some unsued aliases
         - some code refactoring and cleanup
+    2010/12/28
+        - use of external Perl now requires kpathsea variable
+          TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL to be explicitly set to 1
+        - alias_table replaced with if-elseif-end tests to streamline 
+          special cases and to avoid hardcoding of texmf* file paths
+        - added a2ping to special cases (requires -x switch to Perl)
+        - set ASYMPTOTE_GS (for asy) to full path to tlgs
 ]]
 
 -- HELPER SUBROUTINES --
@@ -268,6 +275,7 @@ end
 
 -- locates texmfscript to execute
 local function find_texmfscript(progname, ext_list)
+  ext_list = ext_list or '\0'
   for ext in string.gmatch(ext_list, '[^;]+') do
     local progfullname = kpse.find_file(progname..ext, 'texmfscripts')
     if progfullname then return progfullname, ext end
@@ -409,21 +417,28 @@ kpse.set_program_name(lua_binary, progname)
 local TEXDIR = kpse.var_value('SELFAUTOPARENT')
 local BINDIR = kpse.var_value('SELFAUTOLOC')
 local PATH = os.getenv('PATH') or ''
+-- restricted programs
+local shell_escape_commands = string.lower(kpse.var_value('shell_escape_commands') or '')
+local is_restricted_progname = string.find( ','..shell_escape_commands..',', 
+                                            ','..progname..',', 1, true)
+if is_restricted_progname then
+  -- limit search path to the restricted (system) trees 
+  -- (not really necessary for entries in the alias_table, 
+  -- because they are not searched for with kpathsea)
+  os.setenv('TEXMFSCRIPTS', kpse.var_value('TEXMF_RESTRICTED_SCRIPTS'))
+end
 -- perl stuff
 local scripts4tlperl = {
-  texdoctk = true, 
   tlperl = true, 
   updmap = true, 
   ['updmap-sys'] = true, 
 }
-local PERLEXE = search_path('perl.exe', PATH)
-if not PERLEXE or guimode or scripts4tlperl[progname] then 
+local try_extern_perl = (kpse.var_value('TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL') == '1') and 
+                        not (guimode or is_restricted_progname or scripts4tlperl[progname])
+PERLEXE = try_extern_perl and search_path('perl.exe', PATH)
+if not PERLEXE then 
   PERLEXE = TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
-  os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')--[[
-  local PERL5SHELL = os.getenv('COMSPEC')
-  PERL5SHELL = string.gsub(PERL5SHELL, '\\', '\\\\') 
-  PERL5SHELL = string.gsub(PERL5SHELL, ' ', '\\ ') 
-  os.setenv('PERL5SHELL', PERL5SHELL..' /x /c')--]]
+  os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')
   PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlperl/bin')
 end
 -- gs stuff
@@ -437,76 +452,8 @@ if sysprog then
   os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
   os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
 end
--- restricted programs
-local shell_escape_commands = string.lower(kpse.var_value('shell_escape_commands'))
-if string.find(','..shell_escape_commands..',', ','..progname..',', 1, true) then
-  -- limit search path to the restricted (system) trees 
-  -- (not really necessary for entries in the alias_table, 
-  -- because they are not searched for with kpathsea)
-  os.setenv('TEXMFSCRIPTS', kpse.var_value('TEXMF_RESTRICTED_SCRIPTS'))
-end
 -- Adobe Reader crash case: make sure USERPROFILE is not "slashed"
 os.setenv("USERPROFILE", os.getenv("USERPROFILE"):gsub('/', '\\'))
-
--- alias table (programs with special needs)
-
-local alias_table = {
-  asy = 
-    function ()
-      -- TODO: check if ASYMPTOTE_GS requires quoting of names with spaces
-      --os.setenv('ASYMPTOTE_GS', _q(TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'))
-      os.setenv('ASYMPTOTE_GS', 'gswin32c.exe')
-      os.setenv('CYGWIN', 'nodosfilewarning')
-      return {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy', argline}
-    end,
-  dviout = 
-    function ()
-      local fontsdir = kpse.var_value('TEXMFVAR') .. '/fonts'
-      if (lfs.attributes(fontsdir, 'mode') ~= 'directory') then 
-        assert(mkdir_plus(fontsdir))
-      end
-      local tfmpath = kpse.show_path('tfm')
-      tfmpath = string.gsub(tfmpath, '!!', '')
-      tfmpath = string.gsub(tfmpath, '/', '\\')
-      local texrt = {}
-      for d in string.gmatch(tfmpath, '([^;]+\\fonts)\\tfm[^;]*') do
-        if (lfs.attributes(d, 'mode') == 'directory') then 
-          table.insert(texrt, d)
-        end
-      end
-      local dvioutpar = [[-NULL -dpi=600 "-gen=']] .. string.gsub(TEXDIR, '/', '\\') .. [[\tlpkg\dviout\gen_pk'" ]] ..
-      [["-TEXPK=^r\pk\\^s.^dpk;^r\tfm\\^s^tfm;^r\vf\\^s.vf;^r\ovf\\^s.ovf;^r\tfm\\^s.tfm" "-TEXROOT=']] ..
-      table.concat(texrt, ';') .. [['"]]
-      return {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', dvioutpar, argline}
-    end,
-  fontinst = {[0]=BINDIR..'/tex.exe', 'tex', 
-    '-progname=fontinst', '-fmt=tex', argline},
-  psv = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
-    '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
-    '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'), '-sINPUT='..argline},
-  repstopdf = {[0]=PERLEXE, 'perl', 
-    _q(TEXDIR..'/texmf-dist/scripts/epstopdf/epstopdf.pl'), 
-    '--restricted', argline},
-  rpdfcrop = {[0]=PERLEXE, 'perl', 
-    _q(TEXDIR..'/texmf-dist/scripts/pdfcrop/pdfcrop.pl'), 
-    '--restricted', argline},
-  texworks = 
-    function ()
-      local winver = tonumber(string.match(os.uname().version, '%D*(%d+\.?%d*)'))
-      assert(winver >= 5.01, "Windows XP or newer required to run TeXworks")
-      local TW_LIBPATH = kpse.var_value('TW_LIBPATH') or 
-                         kpse.var_value('TEXMFCONFIG')..'/texworks'
-      local TW_INIPATH = kpse.var_value('TW_INIPATH') or TW_LIBPATH
-      os.setenv('TW_LIBPATH', TW_LIBPATH)
-      os.setenv('TW_INIPATH', TW_INIPATH)
-      if (TW_INIPATH and lfs.attributes(TW_INIPATH, 'mode') ~= 'directory') then
-        assert(mkdir_plus(TW_INIPATH))
-      end
-      return {[0]=TEXDIR..'/tlpkg/texworks/texworks.exe', 'texworks', argline}
-    end,
-  tlgs = {[0]=TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe', 'gswin32c', argline},
-  tlperl = {[0]=PERLEXE, 'perl', argline},
-}
 
 -- extension to interpeter mapping
 
@@ -536,52 +483,101 @@ extension_map['.js']  = extension_map['.vbs']
 
 -- set up argv table
 
-local program = alias_table[progname]
-if program then -- special case (alias)
-  if (type(program) == 'function') then 
-    program = program() 
+local ARGV = nil
+
+-- special cases
+
+if is_tex4ht_command(progname) then
+  argline = progname .. ' ' .. argline
+  progname = 'mk4ht'
+elseif progname == 'a2ping' then 
+  table.insert(extension_map['.pl'], '-x')
+elseif progname == 'asy' then
+  os.setenv('ASYMPTOTE_GS', TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe')
+  os.setenv('CYGWIN', 'nodosfilewarning')
+  ARGV = {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy'}
+elseif progname == 'dviout' then
+  local fontsdir = kpse.var_value('TEXMFVAR') .. '/fonts'
+  if (lfs.attributes(fontsdir, 'mode') ~= 'directory') then 
+    assert(mkdir_plus(fontsdir))
   end
-else -- general case (no alias)
-  local progfullname = search_path(progname, BINDIR, '.tlu;.bat;.cmd')
-  if not progfullname then
-    progfullname = find_texmfscript(progname, 
-      '.tlu;.texlua;.lua;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;\0')
+  local tfmpath = kpse.show_path('tfm')
+  tfmpath = string.gsub(tfmpath, '!!', '')
+  tfmpath = string.gsub(tfmpath, '/', '\\')
+  local texrt = {}
+  for d in string.gmatch(tfmpath, '([^;]+\\fonts)\\tfm[^;]*') do
+    if (lfs.attributes(d, 'mode') == 'directory') then 
+      table.insert(texrt, d)
+    end
   end
-  if not progfullname and is_tex4ht_command(progname) then
-    argline = progname .. ' ' .. argline
-    progfullname = find_texmfscript('mk4ht', '.pl')
+  local par = [[-NULL -dpi=600 "-gen=']] .. string.gsub(TEXDIR, '/', '\\') .. 
+              [[\tlpkg\dviout\gen_pk'" "-TEXPK=^r\pk\\^s.^dpk;^r\tfm\\^s^tfm;]] ..
+              [[^r\vf\\^s.vf;^r\ovf\\^s.ovf;^r\tfm\\^s.tfm" "-TEXROOT=']] ..
+              table.concat(texrt, ';') .. [['"]]
+  ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
+elseif progname == 'fontinst' then
+  ARGV = {[0]=BINDIR..'/tex.exe', 'tex', '-progname=fontinst', '-fmt=tex'}
+elseif progname == 'psv' then
+  argline = '-sINPUT='..argline
+  ARGV = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
+          '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
+          '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps')}
+elseif progname == 'repstopdf' or progname == 'rpdfcrop' then
+  argline = '--restricted ' .. argline
+  progname = string.sub(progname, 2, -1)
+elseif progname == 'texworks' then
+  local winver = tonumber(string.match(os.uname().version, '%D*(%d+\.?%d*)'))
+  assert(winver >= 5.01, "Windows XP or newer required to run TeXworks")
+  local TW_LIBPATH = kpse.var_value('TW_LIBPATH') or 
+                     kpse.var_value('TEXMFCONFIG')..'/texworks'
+  local TW_INIPATH = kpse.var_value('TW_INIPATH') or TW_LIBPATH
+  os.setenv('TW_LIBPATH', TW_LIBPATH)
+  os.setenv('TW_INIPATH', TW_INIPATH)
+  if (TW_INIPATH and lfs.attributes(TW_INIPATH, 'mode') ~= 'directory') then
+    -- TeXworks needs directory holding its configuration to exist
+    assert(mkdir_plus(TW_INIPATH))
   end
-  assert(progfullname, "no appropriate script or program found: " .. progname)
+  ARGV = {[0]=TEXDIR..'/tlpkg/texworks/texworks.exe', 'texworks'}
+elseif progname == 'tlgs' then
+  ARGV = {[0]=TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe', 'gswin32c'}
+elseif progname == 'tlperl' then
+  ARGV = {[0]=PERLEXE, 'perl'}
+end
+
+-- general case
+
+if not ARGV then
+  local extlist = '.tlu;.texlua;.lua;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;\0'
+  local progfullname = search_path(progname, BINDIR, '.tlu;.bat;.cmd') or
+                       assert(find_texmfscript(progname, extlist))
   local ext = string.match(string.lower(progfullname), '%.[^\\/.]*$') or ''
   if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then -- lua script
     arg[0] = progfullname
-    program = progfullname
   else
-    program = extension_map[ext] or assert(shebang_to_argv(progfullname)) 
-    table.insert(program, _q(progfullname))
-    table.insert(program, argline)
-    if not program[0] then
-      program[0], program[1] = assert(check_command(program[1], PATH))
+    ARGV = extension_map[ext] or assert(shebang_to_argv(progfullname)) 
+    table.insert(ARGV, _q(progfullname))
+    if not ARGV[0] then
+      ARGV[0], ARGV[1] = assert(check_command(ARGV[1], PATH))
     end
   end
 end
 
 -- run the program/script
 
-if (type(program) == 'table') then
-  local ret = assert(os.spawn(program))
+if ARGV then
+  table.insert(ARGV, argline) -- pass through original arguments
+  local ret = assert(os.spawn(ARGV))
   if ret ~= 0 then
     local dbginfo = debug.getinfo(1)
     local errormsg = string.format("%s:%d: command failed with exit code %d:\n%s",  
-      dbginfo.short_src, dbginfo.currentline - 2, ret, table.concat(program, ' ') )
+                                   dbginfo.short_src, dbginfo.currentline - 2, 
+                                   ret, table.concat(ARGV, ' ') )
     os.setenv('RUNSCRIPT_ERROR_MESSAGE', errormsg)
     io.stderr:write(errormsg, '\n')
   end
   os.exit(ret)
-elseif (type(program) == 'string') then
-  dofile(program)
-else
-  error("unexpected argument type: " .. type(program))
+else -- must be a lua script
+  dofile(arg[0])
 end
 
 end -- MAIN_CHUNK
