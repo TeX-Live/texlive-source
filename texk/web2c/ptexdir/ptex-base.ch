@@ -43,6 +43,7 @@
 % (07/18/2006) ST  pTeX p3.1.10
 % (08/17/2009) ST  pTeX p3.1.11
 % (05/23/2010) AK  Bug fix by Hironori Kitagawa.
+% (31/12/2010) AK  Bug fix and accent Kanji by Hironori Kitagawa.
 %
 @x [1.2] l.195 - pTeX:
 @d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
@@ -5458,10 +5459,10 @@ else if cur_cmd=char_given then
     end
   else if cur_cmd=char_num then
     begin scan_char_num;
-    if is_char_ascii(cur_chr) then q:=new_character(f,cur_val)
+    if is_char_ascii(cur_val) then q:=new_character(f,cur_val)
     else  begin
       if direction=dir_tate then f:=cur_tfont else f:=cur_jfont;
-      KANJI(cx):=cur_chr
+      KANJI(cx):=cur_val
     end
   end
 else back_input;
@@ -5477,7 +5478,7 @@ else  begin if font_dir[f]=dir_yoko then disp:=0
 @<Append |disp_node| at begin of displace area@>;
 if KANJI(cx)<>empty then
   begin q:=new_character(f,get_jfm_pos(KANJI(cx),f));
-  link(q):=get_avail; info(link(q)):=KANJI(cx);
+  link(q):=get_avail; info(link(q)):=KANJI(cx); last_jchr:=q;
   end;
 @z
 
@@ -5492,6 +5493,18 @@ if h<>x then {the accent must be shifted up or down}
   add_glue_ref(cur_kanji_skip); add_glue_ref(cur_xkanji_skip);
   p:=hpack(p,natural); shift_amount(p):=x-h;
   end;
+@z
+
+@x [47.1125] pTeX: make accent Kanji
+tail:=new_kern(-a-delta); subtype(tail):=acc_kern; link(p):=tail; p:=q;
+@y
+tail:=new_kern(-a-delta); subtype(tail):=acc_kern;
+if h=x then begin
+  if font_dir[font(p)]<>dir_default then link(link(p)):=tail 
+  else link(p):=tail; end
+else link(p):=tail;
+{ bugfix: if |p| is KANJI char, |link(p)|:=|tail| collapses |p| and kern after accent. }
+p:=q;
 @z
 
 @x l.22334 - pTeX
@@ -7175,6 +7188,7 @@ procedure adjust_hlist(p:pointer;pf:boolean);
 label exit;
 var q,s,t,u,v,x,z:pointer;
   i,k:halfword;
+  a: pointer; { temporary pointer for accent }
   insert_skip:no_skip..after_wchar;
   cx:KANJI_code; {temporaly register for KANJI character}
   ax:ASCII_code; {temporaly register for ASCII character}
@@ -7212,8 +7226,33 @@ while p<>null do
     hlist_node: @<Insert hbox surround spacing@>;
     ligature_node: @<Insert ligature surround spacing@>;
     penalty_node,disp_node: @<Insert penalty or displace surround spacing@>;
-    kern_node: if (insert_skip=after_schar)and(subtype(p)<>explicit) then
-      do_nothing else insert_skip:=no_skip;
+    kern_node: if (subtype(p)=explicit) then insert_skip:=no_skip
+      else if (subtype(p)=acc_kern) then begin 
+        { When we insert \.{\\xkanjiskip}, we first ignore accent (and kerns) and
+          insert \.{\\xkanjiskip}, then we recover the accent. }
+        if q=p then begin t:=link(p);
+          { if p is beginning on the list, we have only to ignore nodes. }
+          if is_char_node(t) then 
+            if font_dir[font(t)]<>dir_default then t:=link(t);
+          p:=link(link(t)); 
+	  if font_dir[font(p)]<>dir_default then 
+            begin p:=link(p); insert_skip:=after_wchar; end
+          else  insert_skip:=after_schar;
+          end
+        else begin
+          a:=p; t:=link(p);
+          if is_char_node(t) then 
+            if font_dir[font(t)]<>dir_default then t:=link(t);
+          t:=link(link(t)); link(q):=t; p:=t;
+          @<Insert a space around the character |p|@>; incr(i);
+          if (i>5)and(pf) then
+            begin if is_char_node(v) then
+            if font_dir[font(v)]<>dir_default then v:=link(v);
+            v:=link(v);
+            end;
+          if link(q)<>t then link(link(q)):=a else link(q):=a;
+          end;
+        end;
     math_node: @<Insert math surround spacing@>;
     mark_node,adjust_node,ins_node,whatsit_node:
       {These nodes are vanished when typeset is done}
