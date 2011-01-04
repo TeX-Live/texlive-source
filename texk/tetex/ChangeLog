@@ -1,3 +1,8 @@
+2011-01-04  Karl Berry  <karl@tug.org>
+
+	* updmap: add many more verbose messages, to help understand what
+	files are being created from what sources.
+
 2010-12-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (install-exec-hook, install-data-hook): Check

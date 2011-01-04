@@ -282,6 +282,7 @@ setupSymlinks()
 ###############################################################################
 transLW35()
 {
+  verboseMsg "$progname:   transLW35 according to: $mode"
   case $mode in
     ""|URWkb)
       cat ${1+"$@"}
@@ -632,7 +633,7 @@ locateMap()
       verboseMsg "$progname: using map file \`$file'"
       echo "$file"
     else
-      warn "map file \`$map' not found."
+      warn "map file not found: \`$map'"
     fi
   done
 }
@@ -1177,7 +1178,7 @@ $outputLinks"
   $notfound || texhashEnabled=false
 
   verboseCat <<-eof
-	updmap is creating new map files using the following configuration:
+	updmap: creating new map files using the following configuration:
 
 	  config file: \`$cnfFile'
 	  dvips output directory: \`$dvipsoutputdir'
@@ -1205,11 +1206,11 @@ eof
   fi
   
   verboseMsg
-  verboseMsg "$progname: Scanning for MixedMap entries:"
+  verboseMsg "$progname: scanning for MixedMap entries:"
   catMaps '^MixedMap' > $tmp1 || cleanup 1
 
   verboseMsg
-  verboseMsg "$progname: Scanning for Map entries:"
+  verboseMsg "$progname: scanning for Map entries:"
   catMaps '^Map' > $tmp2 || cleanup 1
   verboseMsg
 
@@ -1233,16 +1234,20 @@ eof
   done
   IFS=$OLDIFS
 
-  verboseMsg "$progname: Generating output for ps2pk..."
+  verboseMsg "$progname: generating output for ps2pk..."
   { transLW35 "$ps2pk35"; cat $tmp1 $tmp2; } \
     | normalizeLines >> "$dvipsoutputdir/ps2pk.map"
+  verboseMsg "$progname:   $ps2pk35 -> ps2pk.map"
 
-  verboseMsg "$progname: Generating output for dvips..."
+  verboseMsg "$progname: generating output for dvips..."
   { transLW35 "$ps2pk35"; } \
     | normalizeLines >> "$dvipsoutputdir/download35.map"
+  verboseMsg "$progname:   $ps2pk35 -> download35.map"
+  #
   { transLW35 "$dvips35"; } \
     | normalizeLines >> "$dvipsoutputdir/builtin35.map"
-
+  verboseMsg "$progname:   $dvips35 -> builtin35.map"
+  #
   if test "x$dvipsDownloadBase35" = xtrue; then
     dftdvips=$ps2pk35
   else
@@ -1250,38 +1255,47 @@ eof
   fi
   { transLW35 "$dftdvips"; cat $tmp1 $tmp2; } \
     | normalizeLines >> "$dvipsoutputdir/psfonts_t1.map"
+  verboseMsg "$progname:   $dftdvips -> psfonts_t1.map"
+  #
   { transLW35 "$dftdvips"; cat $tmp2; } \
     | normalizeLines >> "$dvipsoutputdir/psfonts_pk.map"
+  verboseMsg "$progname:   $dftdvips -> psfonts_pk.map"
 
-  verboseMsg "$progname: Generating output for pdftex..."
+  verboseMsg "$progname: generating output for pdftex..."
   # remove PaintType due to Sebastian's request
   { transLW35 "$pdftex35"; cat $tmp1 $tmp2; } \
     | grep -v PaintType | grep . > $tmp3
-  { transLW35 "$dvipdfm35"; cat $tmp1 $tmp2; } \
-    | grep -v PaintType | grep . > $tmp6
+  verboseMsg "$progname:   $pdftex35 -> pdftex_ndl14.map"
+  <$tmp3 normalizeLines >> "$pdftexoutputdir/pdftex_ndl14.map"
+
   { transLW35 "$ps2pk35"; cat $tmp1 $tmp2; } \
     | grep -v PaintType | grep . > $tmp7
-
-  <$tmp3 normalizeLines >> "$pdftexoutputdir/pdftex_ndl14.map"
+  verboseMsg "$progname:   $ps2pk35 -> pdftex_dl14.map"
   <$tmp7 normalizeLines >> "$pdftexoutputdir/pdftex_dl14.map"
 
-  verboseMsg "$progname: Generating output for dvipdfm..."
+  verboseMsg "$progname: generating output for dvipdfm..."
+  verboseMsg "$progname:   $ps2pk35 -> dvipdfm_dl14.map"
   <$tmp7 normalizeLines | dvips2dvipdfm | normalizeLines >> "$dvipdfmoutputdir/dvipdfm_dl14.map"
+
+  { transLW35 "$dvipdfm35"; cat $tmp1 $tmp2; } \
+    | grep -v PaintType | grep . > $tmp6
+  verboseMsg "$progname:   $dvipdfm35 -> dvipdfm_ndl14.map"
   <$tmp6 normalizeLines | dvips2dvipdfm | normalizeLines >> "$dvipdfmoutputdir/dvipdfm_ndl14.map"
-  verboseMsg "$progname: All output generated."
+
+  verboseMsg "$progname: all output generated."
   verboseMsg
 
   setupSymlinks
   $texhashEnabled && { $verbose && texhash || texhash >/dev/null 2>&1; }
 
   verboseMsg
-  verboseMsg "$progname: Files generated:"
+  verboseMsg "$progname: files generated:"
   OLDIFS=$IFS; IFS=$newline
   ls -l $outputFiles | verboseCat
   IFS=$OLDIFS
   verboseMsg
 
-  verboseMsg "$progname: Map file links or copies:"
+  verboseMsg "$progname: map file links or copies:"
   ls -l "$dvipsoutputdir"/psfonts.map \
          "$pdftexoutputdir"/pdftex.map \
          "$dvipdfmoutputdir"/dvipdfm.map | verboseCat
@@ -1315,7 +1329,7 @@ eof
   fi
 
   verboseMsg
-  verboseMsg "$progname: Done."
+  verboseMsg "$progname: done."
   return 0
 }
 
