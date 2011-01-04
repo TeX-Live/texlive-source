@@ -619,6 +619,23 @@ init_span(cur_align);
 @z
 
 % \vadjust
+@x
+  pop_nest; append_to_vlist(p);
+  if cur_head<>cur_tail then
+    begin link(tail):=link(cur_head); tail:=cur_tail;
+    end;
+  end
+@y
+  pop_nest;
+  if cur_pre_head <> cur_pre_tail then
+      append_list(cur_pre_head)(cur_pre_tail);
+  append_to_vlist(p);
+  if cur_head <> cur_tail then
+      append_list(cur_head)(cur_tail);
+  end
+@z
+
+% \vadjust
 @x l.19508
 append_to_vlist(just_box);
 if adjust_head<>adjust_tail then
