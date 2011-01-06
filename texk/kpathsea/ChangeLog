@@ -1,3 +1,8 @@
+2011-01-06  Karl Berry  <karl@tug.org>
+
+	* tex-file.c (LUA_SUFFIXES): add .tlu,
+	luatex mail from t34www, 6 Jan 2011 22:04:45.
+
 2011-01-01  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL): doc fixes.

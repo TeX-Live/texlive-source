@@ -761,7 +761,8 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
       break;
     case kpse_lua_format:
       INIT_FORMAT ("lua", DEFAULT_LUAINPUTS, LUA_ENVS);
-#define LUA_SUFFIXES ".luc", ".luctex", ".texluc", ".lua", ".luatex", ".texlua"
+#define LUA_SUFFIXES \
+  ".lua", ".luatex", ".luc", ".luctex", ".texlua", ".texluc", ".tlu"
       SUFFIXES (LUA_SUFFIXES);
       FMT_INFO.suffix_search_only = true;
       break;
