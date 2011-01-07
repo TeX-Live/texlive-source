@@ -286,6 +286,7 @@ bin_links = \
 # We support both multiplatform and non-multiplatform builds.
 #
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
+@WIN32_TRUE@WINEXT = $(EXEEXT)
 all: all-am
 
 .SUFFIXES:
@@ -598,6 +599,11 @@ install-data-hook:
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 @WIN32_TRUE@	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
 @WIN32_TRUE@	done
+@WIN32_TRUE@	@for s in $(bin_links); do \
+@WIN32_TRUE@	  link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$link.exe'"; \
+@WIN32_TRUE@	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$link.exe || exit 1; \
+@WIN32_TRUE@	done
 @WIN32_FALSE@	case "$(bindir)" in \
 @WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
 @WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
@@ -640,12 +646,12 @@ uninstall-hook:
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	  echo "$$s" | grep listings-ext.sh >/dev/null \
 	  || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$target$(EXEEXT); \
+	  rm -f $(DESTDIR)$(bindir)/$$target$(WINEXT); \
 	done
-@WIN32_FALSE@	@for s in $(bin_links); do \
-@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
-@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
-@WIN32_FALSE@	done
+	@for s in $(bin_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(bindir)/$$link$(WINEXT); \
+	done
 @WIN32_FALSE@	rm -f $(DESTDIR)$(bindir)/man
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

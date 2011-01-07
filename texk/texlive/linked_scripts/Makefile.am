@@ -137,6 +137,11 @@ if WIN32
 	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
 	done
+	@for s in $(bin_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$link.exe'"; \
+	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$link.exe || exit 1; \
+	done
 else !WIN32
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
@@ -180,18 +185,24 @@ install-links:
 	  else :; fi
 ## man dir link for those mans which can use it.
 
+## For WIN32 (MinGW or native) we have wrapper binaries with .exe,
+## for Cygwin and Unix we have symlinks without .exe.
+if WIN32
+WINEXT = $(EXEEXT)
+endif WIN32
+
 uninstall-hook:
 	@for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	  echo "$$s" | grep listings-ext.sh >/dev/null \
 	  || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$target$(EXEEXT); \
+	  rm -f $(DESTDIR)$(bindir)/$$target$(WINEXT); \
 	done
-if !WIN32
 	@for s in $(bin_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$link; \
+	  rm -f $(DESTDIR)$(bindir)/$$link$(WINEXT); \
 	done
+if !WIN32
 	rm -f $(DESTDIR)$(bindir)/man
 endif !WIN32
 
