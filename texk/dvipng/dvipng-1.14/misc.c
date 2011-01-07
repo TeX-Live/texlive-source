@@ -34,7 +34,7 @@
 #endif
 #include <sys/stat.h>
 
-static char *programname;
+static const char *programname = PACKAGE_NAME; /* just in case */
 
 /*-->DecodeArgs*/
 /*********************************************************************/
@@ -50,17 +50,17 @@ bool DecodeArgs(int argc, char ** argv)
 
   if (argv[0]) {
 #ifdef HAVE_GDIMAGEGIF
-    programname=strrchr(argv[0],'/');
-    if (programname!=NULL)
-      programname++;
-    else
-      programname=argv[0];
+    programname=basename(argv[0]);
+# if defined(HAVE_STRCASECMP) || defined(HAVE_LIBKPATHSEA)
+    if (!strcmp(programname,"dvigif") || !strcasecmp(programname,"dvigif.exe"))
+# else
     if (strncmp(programname,"dvigif",6)==0)
+# endif
       option_flags |= GIF_OUTPUT;
 #endif
     programname=argv[0];
     Message(BE_NONQUIET,"This is %s",programname);
-    if (strcmp(basename(programname),PACKAGE_NAME)!=0)
+    if (strcmp(basename(argv[0]),PACKAGE_NAME)!=0)
       Message(BE_NONQUIET," (%s)", PACKAGE_NAME);
     Message(BE_NONQUIET," %s Copyright 2002-2010 Jan-Ake Larsson\n",
 	    PACKAGE_VERSION);

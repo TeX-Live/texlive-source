@@ -1,11 +1,21 @@
+2010-12-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-programname (new): Use basename() as defined in
+	<libgen.h> or xbasename() from kpathsea to extract programname
+	from argv[0].  Avoid uninitialized use of programname.
+
+	* patch-04-dvigif (new): Check for argv[0] with .exe via
+	strcasecmp(), if possible.
+
 2010-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.14 from savannah.nongnu.org.
-	* patch-[2]?-* (removed): Included in 1.14.
+	* patch-2?-* (removed): Included in 1.14.
 
 	* patch-01-gd-copyright (new): Include full gd copyright notice
 	into dvipng.texi; seems the safe thing to do.
-	patch-02-const (new): Avoid compiler warnings.
+
+	* patch-02-const (new): Avoid compiler warnings.
 
 2010-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

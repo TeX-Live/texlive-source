@@ -1,0 +1,27 @@
+diff -ur dvipng-1.14.orig/configure.ac dvipng-1.14/configure.ac
+--- dvipng-1.14.orig/configure.ac	2010-10-22 20:15:24.000000000 +0200
++++ dvipng-1.14/configure.ac	2010-12-30 18:18:32.000000000 +0100
+@@ -127,7 +127,7 @@
+ AC_FUNC_MMAP
+ AC_FUNC_STRTOD
+ AC_FUNC_VPRINTF
+-AC_CHECK_FUNCS([dup2 memset munmap pow putenv strchr strrchr strtol strstr])
++AC_CHECK_FUNCS([dup2 memset munmap pow putenv strcasecmp strchr strrchr strtol strstr])
+ if test "$enable_timing" = "yes"; then
+   AC_CHECK_FUNCS([ftime gettimeofday])
+ fi
+diff -ur dvipng-1.14.orig/misc.c dvipng-1.14/misc.c
+--- dvipng-1.14.orig/misc.c	2010-12-30 17:41:20.000000000 +0100
++++ dvipng-1.14/misc.c	2010-12-30 18:26:39.000000000 +0100
+@@ -51,7 +51,11 @@
+   if (argv[0]) {
+ #ifdef HAVE_GDIMAGEGIF
+     programname=basename(argv[0]);
++# if defined(HAVE_STRCASECMP) || defined(HAVE_LIBKPATHSEA)
++    if (!strcmp(programname,"dvigif") || !strcasecmp(programname,"dvigif.exe"))
++# else
+     if (strncmp(programname,"dvigif",6)==0)
++# endif
+       option_flags |= GIF_OUTPUT;
+ #endif
+     programname=argv[0];
