@@ -1,11 +1,15 @@
 ## Makefile.am for the TeX Live subdirectory utils/tpic2pdftex/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
+ACLOCAL_AMFLAGS = -I ../../m4
+
+if !WIN32
 dist_bin_SCRIPTS = tpic2pdftex
 
 dist_man1_MANS = tpic2pdftex.1
+endif !WIN32
 
 pic_files = beamerexample.pic example.pic
 tpic_files = $(pic_files:.pic=.tpic)
@@ -30,7 +34,9 @@ $(tpic_files): Makefile
 
 dist_check_SCRIPTS = tpic2pdftex.test
 
+if !WIN32
 TESTS = tpic2pdftex.test
+endif !WIN32
 
 ## Expected test output
 ##

@@ -33,9 +33,9 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(dist_bin_SCRIPTS) \
-	$(dist_check_SCRIPTS) $(dist_man1_MANS) \
-	$(srcdir)/../../build-aux/install-sh \
+DIST_COMMON = README $(am__configure_deps) \
+	$(am__dist_bin_SCRIPTS_DIST) $(dist_check_SCRIPTS) \
+	$(dist_man1_MANS) $(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
 	../../build-aux/config.guess ../../build-aux/config.sub \
@@ -43,7 +43,8 @@ DIST_COMMON = README $(am__configure_deps) $(dist_bin_SCRIPTS) \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-win32.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -51,6 +52,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+am__dist_bin_SCRIPTS_DIST = tpic2pdftex
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -98,22 +100,30 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+CC = @CC@
+CCDEPMODE = @CCDEPMODE@
+CFLAGS = @CFLAGS@
+CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
+DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
+EXEEXT = @EXEEXT@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
+OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -130,7 +140,10 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_CC = @ac_ct_CC@
+am__include = @am__include@
 am__leading_dot = @am__leading_dot@
+am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
@@ -165,14 +178,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dist_bin_SCRIPTS = tpic2pdftex
-dist_man1_MANS = tpic2pdftex.1
+ACLOCAL_AMFLAGS = -I ../../m4
+@WIN32_FALSE@dist_bin_SCRIPTS = tpic2pdftex
+@WIN32_FALSE@dist_man1_MANS = tpic2pdftex.1
 pic_files = beamerexample.pic example.pic
 tpic_files = $(pic_files:.pic=.tpic)
 tex_files = $(pic_files:.pic=.tex)
 pdf_files = $(pic_files:.pic=.pdf)
 dist_check_SCRIPTS = tpic2pdftex.test
-TESTS = tpic2pdftex.test
+@WIN32_FALSE@TESTS = tpic2pdftex.test
 exp_files = $(pic_files:.pic=.exp)
 CLEANFILES = $(pic_files:.pic=.log) *.aux *.nav *.out *.snm *.toc
 DISTCLEANFILES = $(pdf_files) $(tex_files) $(tpic_files)

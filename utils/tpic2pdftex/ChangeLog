@@ -1,3 +1,8 @@
+2010-12-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Version 1.97 (as in tpic2pdftex).
+	* Makefile.am, configure.ac: Ignore shell script for WIN32.
+
 2010-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tpic2pdftex: Add missing '#' in comment line.
