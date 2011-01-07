@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 pdftex_cppflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
@@ -36,17 +36,18 @@ pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
-# We must create libpdftex.a before building the pdftex_OBJECTS.
-$(pdftex_OBJECTS): libpdftex.a
+# We must create libpdftex.a etc before building the pdftex_OBJECTS.
+pdftex_prereq = libpdftex.a pdftexdir/etex_version.h pdftexdir/pdftex_version.h
+$(pdftex_OBJECTS): $(pdftex_prereq)
 
 pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
-nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c pdftexdir/pdftexextra.h
+nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c \
+	pdftexdir/etex_version.h pdftexdir/pdftex_version.h
+dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h
 $(pdftex_c_h): pdftex-web2c
 	@$(web2c) pdftex
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
 	@$(web2c) pdftex
-pdftexextra.c: pdftexd.h pdftexdir/pdftexextra.h lib/texmfmp.c pdftexd.h
-	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/lib/texmfmp.c >$@
 pdftex.p pdftex.pool: pdftex-tangle
 	@$(pdf_tangle) pdftex pdftex
 pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
@@ -54,19 +55,15 @@ pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 # Extract etex version
-pdftexdir/etex.version: etexdir/etex.ch
+pdftexdir/etex_version.h: etexdir/etex.ch
 	$(MKDIR_P) pdftexdir
 	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-//;s/'.*$$//" >$@
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 # Extract pdftex version
-pdftexdir/pdftex.version: pdftexdir/pdftex.web
+pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
 	$(MKDIR_P) pdftexdir
 	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
-	  | sed "s/^.*'-//;s/'.*$$//" >pdftexdir/pdftex.version
-pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version pdftexdir/etex.version
-	sed -e s/PDFTEX-VERSION/`cat pdftexdir/pdftex.version`/ \
-	    -e s/ETEX-VERSION/`cat pdftexdir/etex.version`/ \
-	  $(srcdir)/pdftexdir/pdftexextra.in >$@
+	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
@@ -78,10 +75,10 @@ pdftex_ch_srcs = \
 	pdftexdir/pdftex.ch
 ##
 EXTRA_DIST += $(pdftex_ch_srcs) etexdir/etex.ch \
-	pdftexdir/pdftex.defines pdftexdir/pdftex.h pdftexdir/pdftexextra.in
+	pdftexdir/pdftex.defines pdftexdir/pdftex.h
 
 DISTCLEANFILES += $(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c \
-	pdftex.p pdftex.pool pdftex-tangle pdftexdir/pdftex.version pdftexdir/etex.version
+	pdftex.p pdftex.pool pdftex-tangle
 
 EXTRA_DIST += \
 	pdftexdir/ChangeLog \

@@ -19,13 +19,15 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
 
-/* pdftexextra.in: banner etc. for pdfTeX.
+/* pdftexextra.h: banner etc. for pdfTeX.
 
-   This is included by pdfTeX, from ../pdftexextra.c
-   (generated from ../lib/texmfmp.c).
+   This is included by pdfTeX, from pdftexextra.c.
 */
 
-#define BANNER "This is pdfTeX, Version 3.1415926-PDFTEX-VERSION-ETEX-VERSION"
+#include <pdftexdir/pdftex_version.h> /* for PDFTEX_VERSION */
+#include <pdftexdir/etex_version.h> /* for ETEX_VERSION */
+
+#define BANNER "This is pdfTeX, Version 3.1415926-" PDFTEX_VERSION "-" ETEX_VERSION
 #define COPYRIGHT_HOLDER "Peter Breitenlohner (eTeX)/Han The Thanh (pdfTeX)"
 #define AUTHOR NULL
 #define PROGRAM_HELP PDFTEXHELP

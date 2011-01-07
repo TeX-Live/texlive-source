@@ -1,8 +1,7 @@
 /****************************************************************************\
-   xetexextra.in: banner etc. for XeTeX.
+   xetexextra.h: banner etc. for XeTeX.
 
-   This is included by XeTeX, from ../xetexextra.c
-   (generated from ../lib/texmfmp.c).
+   This is included by XeTeX, from xetexextra.c.
 
  Part of the XeTeX typesetting system
  copyright (c) 1994-2008 by SIL International
@@ -54,7 +53,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-#define BANNER "This is XeTeX, Version 3.1415926-ETEX-VERSION-XETEX-VERSION"
+#include <xetexdir/etex_version.h> /* for ETEX_VERSION */
+#include <xetexdir/xetex_version.h> /* for XETEX_VERSION */
+
+#define BANNER "This is XeTeX, Version 3.1415926-" ETEX_VERSION "-" XETEX_VERSION
 #define COPYRIGHT_HOLDER "SIL International and Jonathan Kew"
 #define AUTHOR "Jonathan Kew"
 #define PROGRAM_HELP XETEXHELP

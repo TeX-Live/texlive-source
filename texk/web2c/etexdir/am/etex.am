@@ -1,6 +1,6 @@
 ## texk/web2c/etexdir/am/etex.am: Makefile fragment for e-TeX.
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-TeX
@@ -18,10 +18,11 @@ etex_LDADD = $(LDADD) $(ipc_socketlibs)
 
 # e-TeX C sources
 etex_c_h = etexini.c etex0.c etexcoerce.h etexd.h
-nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexextra.c etexdir/etexextra.h
+nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexdir/etex_version.h
+dist_etex_SOURCES = etexdir/etexextra.c etexdir/etexextra.h
 
-# We must create etexd.h before building the etex_OBJECTS.
-etex_prereq = etexd.h
+# We must create etexd.h and etexdir/etex_version.h before building the etex_OBJECTS.
+etex_prereq = etexd.h etexdir/etex_version.h
 $(etex_OBJECTS): $(etex_prereq)
 
 $(etex_c_h): etex-web2c
@@ -32,13 +33,6 @@ etex-web2c: etex.p $(web2c_texmf)
 etex-pool.c: etex.pool etexd.h $(makecpool_stamp)
 	$(makecpool) etex >$@ || rm -f $@
 
-etexextra.c: etexdir/etexextra.h lib/texmfmp.c etexd.h
-	sed s/TEX-OR-MF-OR-MP/etex/ $(srcdir)/lib/texmfmp.c >$@
-
-etexdir/etexextra.h: etexdir/etexextra.in etexdir/etex.version
-	sed s/ETEX-VERSION/`cat etexdir/etex.version`/ \
-	  $(srcdir)/etexdir/etexextra.in >$@
-
 # Tangling e-TeX
 etex.p etex.pool: etex-tangle
 	@$(texmf_tangle) etex etex
@@ -46,10 +40,10 @@ etex-tangle: tangle$(EXEEXT) etex.web etex.ch tangle-sh
 	@$(texmf_tangle) etex etex
 
 # Extract etex version
-etexdir/etex.version: etexdir/etex.ch
+etexdir/etex_version.h: etexdir/etex.ch
 	$(MKDIR_P) etexdir
 	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-//;s/'.*$$//" >etexdir/etex.version
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate etex.web
 etex.web: tie$(EXEEXT) $(etex_web_srcs)
@@ -70,11 +64,10 @@ etex_ch_srcs = \
 	etexdir/tex.ech \
 	tex-binpool.ch
 ##
-EXTRA_DIST += $(etex_web_srcs) $(etex_ch_srcs) etexdir/etexextra.in \
-	lib/texmfmp.c
+EXTRA_DIST += $(etex_web_srcs) $(etex_ch_srcs)
 
 DISTCLEANFILES += $(nodist_etex_SOURCES) etex.web etex.ch etex-web2c \
-	etex.p etex.pool etex-tangle etexdir/etex.version
+	etex.p etex.pool etex-tangle
 
 EXTRA_DIST += \
 	etexdir/ChangeLog \

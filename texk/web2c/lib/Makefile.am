@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/lib/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES = -I$(top_srcdir)
@@ -16,7 +16,7 @@ noinst_LIBRARIES += libp.a
 endif PTEX
 EXTRA_LIBRARIES = libp.a
 
-## We don't compile `texmfmp.c'; this file is converted into 'texextra.c'
+## We don't compile `texmfmp.c'; this file is included from 'texextra.c'
 ## for TeX, 'mfextra.c' for Metafont, ...
 lib_a_SOURCES = \
 	basechsuffix.c \

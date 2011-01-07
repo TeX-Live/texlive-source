@@ -1,17 +1,16 @@
-/* texmf.c: Hand-coded routines for TeX or Metafont in C.  Originally
+/* texmfmp.c: Hand-coded routines for TeX or Metafont in C.  Originally
    written by Tim Morgan, drawing from other Unix ports of TeX.  This is
    a collection of miscellany, everything that's easier (or only
    possible) to do in C.
    
    This file is public domain.  */
 
-#define	EXTERN /* Instantiate data from {tex,mf,mp}d.h here.  */
-
-/* This file is used to create texextra.c etc., with this line
-   changed to include texd.h or mfd.h.  The ?d.h file is what
+/* This file is included from, e.g., texextra,c after
+      #define EXTERN
+      #include <texd.h>
+   to instantiate data from texd.h here.  The ?d.h file is what
    #defines TeX or MF, which avoids the need for a special
    Makefile rule.  */
-#include "TEX-OR-MF-OR-MPd.h"
 
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/line.h>
@@ -789,7 +788,7 @@ main (int ac, string *av)
   
   return EXIT_SUCCESS;
 } 
-#endif /* !(WIN32 || __MINGW32__) */
+#endif /* !WIN32 || __MINGW32__ */
 
 
 /* This is supposed to ``open the terminal for input'', but what we

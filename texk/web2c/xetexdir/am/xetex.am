@@ -1,6 +1,6 @@
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## XeTeX
@@ -62,12 +62,15 @@ xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 ## With --enable-ipc, XeTeX may need to link with -lsocket.
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
 
-xetex_prereq = $(libxetex)
+# We must create libxetex.a etc before building the xetex_OBJECTS
+xetex_prereq = $(libxetex) xetexdir/etex_version.h xetexdir/xetex_version.h
 $(xetex_OBJECTS): $(xetex_prereq)
 
 ## XeTeX C sources
 xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
-nodist_xetex_SOURCES = $(xetex_c_h) xetex_pool.c xetexextra.c xetexdir/xetexextra.h
+nodist_xetex_SOURCES = $(xetex_c_h) xetex_pool.c \
+	xetexdir/etex_version.h xetexdir/xetex_version.h
+dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h
 
 $(xetex_c_h): xetex-web2c
 	@$(web2c) xetex
@@ -77,15 +80,6 @@ xetex-web2c: xetex.p $(web2c_texmf) xetexdir/xetex.defines
 xetex_pool.c: xetex.pool xetexd.h
 	perl $(srcdir)/xetexdir/pool2c.pl $< $@
 
-xetexextra.c: xetexdir/xetexextra.h lib/texmfmp.c xetexd.h
-	sed s/TEX-OR-MF-OR-MP/xetex/ $(srcdir)/lib/texmfmp.c >$@
-
-xetexdir/xetexextra.h: xetexdir/xetexextra.in xetexdir/xetex.version xetexdir/etex.version
-	$(MKDIR_P) xetexdir
-	sed -e s/XETEX-VERSION/`cat xetexdir/xetex.version`/ \
-	    -e s/ETEX-VERSION/`cat xetexdir/etex.version`/ \
-	  $(srcdir)/xetexdir/xetexextra.in >$@
-
 ## Tangling XeTeX
 xetex.p xetex.pool: xetex-tangle
 	@$(o_tangle) xetex
@@ -93,16 +87,16 @@ xetex-tangle: ./otangle$(EXEEXT) xetex.web tangle-sh
 	@$(o_tangle) xetex
 
 ## Extract etex version
-xetexdir/etex.version: etexdir/etex.ch
+xetexdir/etex_version.h: etexdir/etex.ch
 	$(MKDIR_P) xetexdir
 	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-//;s/'.*$$//" >$@
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 ## Extract xetex version
-xetexdir/xetex.version: xetexdir/xetex.ch
+xetexdir/xetex_version.h: xetexdir/xetex.ch
 	$(MKDIR_P) xetexdir
 	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.ch \
-	  | sed "s/^.*'-//;s/'.*$$//" >$@
+	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 ## Generate xetex.web
 xetex.web: tie$(EXEEXT) $(xetex_web_srcs)
@@ -121,10 +115,10 @@ xetex_web_srcs = \
 	xetexdir/xetex-hz.ch \
 	$(xetex_post_ch_synctex)
 ##
-EXTRA_DIST += $(xetex_web_srcs) xetexdir/xetex.defines xetexdir/xetexextra.in
+EXTRA_DIST += $(xetex_web_srcs) xetexdir/xetex.defines
 
 DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex-web2c \
-	xetex.p xetex.pool xetex-tangle xetexdir/etex.version xetexdir/xetex.version
+	xetex.p xetex.pool xetex-tangle
 
 EXTRA_DIST += \
 	xetexdir/pool2c.pl \
@@ -246,8 +240,4 @@ endif XETEX
 ## Not used
 ##
 EXTRA_DIST += xetexdir/LICENSE.txt
-
-## Eventually delete these files
-##
-EXTRA_DIST += xetexdir/xetex.mk
 

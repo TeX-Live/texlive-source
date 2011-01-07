@@ -1,3 +1,13 @@
+2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* alephextra.c (new): #include <alephd.h> and <lib/texmfmp.c>.
+
+	* am/aleph.am: alephextra.c is now distributed.
+
+2010-12-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/aleph.am (alephextra.c): Uniform dependencies and rules.
+
 2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* aleph.c (new_input_line): Cast integer to long for printing

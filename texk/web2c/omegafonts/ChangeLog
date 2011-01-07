@@ -1,3 +1,7 @@
+2010-12-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* omfonts.c: Check for argv[0] with .exe via strcasecmp().
+
 2010-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* char_routines.c (ensure_existence): Avoid OpenBSD Bus error

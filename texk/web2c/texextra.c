@@ -1,0 +1,11 @@
+/* texextra.c: Hand-coded routines for TeX.
+
+   This file is public domain.  */
+
+#define	EXTERN /* Instantiate data from texd.h here.  */
+
+/* This file defines TeX.  */
+#include <texd.h>
+
+/* Hand-coded routines for TeX or Metafont in C.  */
+#include <lib/texmfmp.c>

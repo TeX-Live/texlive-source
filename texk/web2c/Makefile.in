@@ -172,23 +172,43 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 @TEX_SYNCTEX_TRUE@am__append_53 = $(ZLIB_LIBS)
 @TEX_SYNCTEX_TRUE@am__append_54 = $(ZLIB_DEPEND)
 @TEX_SYNCTEX_TRUE@am__append_55 = \
+@TEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
+@TEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
+@TEX_SYNCTEX_TRUE@	synctexdir/synctex-tex.h
+
+@TEX_SYNCTEX_TRUE@am__append_56 = \
 @TEX_SYNCTEX_TRUE@	synctex.c
 
-@ETEX_SYNCTEX_TRUE@am__append_56 = -I$(srcdir)/synctexdir \
+@ETEX_SYNCTEX_TRUE@am__append_57 = -I$(srcdir)/synctexdir \
 @ETEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__
-@ETEX_SYNCTEX_TRUE@am__append_57 = $(ZLIB_LIBS)
-@ETEX_SYNCTEX_TRUE@am__append_58 = $(ZLIB_DEPEND)
-@ETEX_SYNCTEX_TRUE@am__append_59 = \
+@ETEX_SYNCTEX_TRUE@am__append_58 = $(ZLIB_LIBS)
+@ETEX_SYNCTEX_TRUE@am__append_59 = $(ZLIB_DEPEND)
+@ETEX_SYNCTEX_TRUE@am__append_60 = \
+@ETEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
+@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
+@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-etex.h
+
+@ETEX_SYNCTEX_TRUE@am__append_61 = \
 @ETEX_SYNCTEX_TRUE@	synctex-e.c
 
-@PDFTEX_SYNCTEX_TRUE@am__append_60 = -I$(srcdir)/synctexdir \
+@PDFTEX_SYNCTEX_TRUE@am__append_62 = -I$(srcdir)/synctexdir \
 @PDFTEX_SYNCTEX_TRUE@	-D__SyncTeX__
-@PDFTEX_SYNCTEX_TRUE@am__append_61 = \
+@PDFTEX_SYNCTEX_TRUE@am__append_63 = \
+@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
+@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
+@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-pdftex.h
+
+@PDFTEX_SYNCTEX_TRUE@am__append_64 = \
 @PDFTEX_SYNCTEX_TRUE@	synctex-pdf.c
 
-@XETEX_SYNCTEX_TRUE@am__append_62 = -I$(srcdir)/synctexdir \
+@XETEX_SYNCTEX_TRUE@am__append_65 = -I$(srcdir)/synctexdir \
 @XETEX_SYNCTEX_TRUE@	-D__SyncTeX__
-@XETEX_SYNCTEX_TRUE@am__append_63 = \
+@XETEX_SYNCTEX_TRUE@am__append_66 = \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xetex.h
+
+@XETEX_SYNCTEX_TRUE@am__append_67 = \
 @XETEX_SYNCTEX_TRUE@	synctex-xe.c
 
 subdir = .
@@ -525,11 +545,11 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 @PTEX_TRUE@	tftopl$(EXEEXT)
 @OTANGLE_TRUE@am__EXEEXT_25 = pltotf$(EXEEXT) tftopl$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
-am_aleph_OBJECTS = aleph-aleph.$(OBJEXT) aleph-alephbis.$(OBJEXT)
-am__objects_11 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
-nodist_aleph_OBJECTS = $(am__objects_11) aleph-aleph-pool.$(OBJEXT) \
+dist_aleph_OBJECTS = aleph-aleph.$(OBJEXT) aleph-alephbis.$(OBJEXT) \
 	aleph-alephextra.$(OBJEXT)
-aleph_OBJECTS = $(am_aleph_OBJECTS) $(nodist_aleph_OBJECTS)
+am__objects_11 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
+nodist_aleph_OBJECTS = $(am__objects_11) aleph-aleph-pool.$(OBJEXT)
+aleph_OBJECTS = $(dist_aleph_OBJECTS) $(nodist_aleph_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(proglib) $(am__DEPENDENCIES_1)
 aleph_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
@@ -573,13 +593,15 @@ nodist_dvitype_OBJECTS = dvitype.$(OBJEXT)
 dvitype_OBJECTS = $(nodist_dvitype_OBJECTS)
 dvitype_LDADD = $(LDADD)
 dvitype_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__dist_etex_SOURCES_DIST = synctexdir/synctex.h \
-	synctexdir/synctex-common.h synctexdir/synctex-etex.h
-dist_etex_OBJECTS =
-am__objects_12 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
-@ETEX_SYNCTEX_TRUE@am__objects_13 = etex-synctex-e.$(OBJEXT)
-nodist_etex_OBJECTS = $(am__objects_12) etex-etex-pool.$(OBJEXT) \
-	etex-etexextra.$(OBJEXT) $(am__objects_13)
+am__dist_etex_SOURCES_DIST = etexdir/etexextra.c etexdir/etexextra.h \
+	synctexdir/synctex.h synctexdir/synctex-common.h \
+	synctexdir/synctex-etex.h
+am__objects_12 =
+dist_etex_OBJECTS = etex-etexextra.$(OBJEXT) $(am__objects_12)
+am__objects_13 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
+@ETEX_SYNCTEX_TRUE@am__objects_14 = etex-synctex-e.$(OBJEXT)
+nodist_etex_OBJECTS = $(am__objects_13) etex-etex-pool.$(OBJEXT) \
+	$(am__objects_14)
 etex_OBJECTS = $(dist_etex_OBJECTS) $(nodist_etex_OBJECTS)
 @ETEX_SYNCTEX_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
 etex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -615,8 +637,8 @@ md5main_DEPENDENCIES = libmd5.a
 md5main_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(md5main_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-nodist_mf_OBJECTS = mf-mfextra.$(OBJEXT)
-mf_OBJECTS = $(nodist_mf_OBJECTS)
+dist_mf_OBJECTS = mf-mfextra.$(OBJEXT)
+mf_OBJECTS = $(dist_mf_OBJECTS)
 @WIN32_FALSE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1) \
 @WIN32_FALSE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 @WIN32_FALSE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -626,8 +648,8 @@ mf_DEPENDENCIES = libmf.a $(am__DEPENDENCIES_2) $(windowlib) \
 mf_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(mf_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-nodist_mf_nowin_OBJECTS = mf_nowin-mfextra.$(OBJEXT)
-mf_nowin_OBJECTS = $(nodist_mf_nowin_OBJECTS)
+dist_mf_nowin_OBJECTS = mf_nowin-mfextra.$(OBJEXT)
+mf_nowin_OBJECTS = $(dist_mf_nowin_OBJECTS)
 mf_nowin_DEPENDENCIES = libmf.a $(am__DEPENDENCIES_2) $(windowlib)
 mf_nowin_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(mf_nowin_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -636,8 +658,8 @@ nodist_mft_OBJECTS = mft.$(OBJEXT)
 mft_OBJECTS = $(nodist_mft_OBJECTS)
 mft_LDADD = $(LDADD)
 mft_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_14 = mpost-mpxout.$(OBJEXT)
-nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_14)
+am__objects_15 = mpost-mpxout.$(OBJEXT)
+nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_15)
 mpost_OBJECTS = $(nodist_mpost_OBJECTS)
 mpost_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(mpost_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -680,13 +702,14 @@ pbibtex_OBJECTS = $(am_pbibtex_OBJECTS) $(nodist_pbibtex_OBJECTS)
 am__DEPENDENCIES_6 = $(pproglib) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 pbibtex_DEPENDENCIES = $(am__DEPENDENCIES_6)
-am__dist_pdftex_SOURCES_DIST = synctexdir/synctex.h \
+am__dist_pdftex_SOURCES_DIST = pdftexdir/pdftexextra.c \
+	pdftexdir/pdftexextra.h synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-pdftex.h
-dist_pdftex_OBJECTS =
-am__objects_15 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
-@PDFTEX_SYNCTEX_TRUE@am__objects_16 = pdftex-synctex-pdf.$(OBJEXT)
-nodist_pdftex_OBJECTS = $(am__objects_15) pdftex-pdftex-pool.$(OBJEXT) \
-	pdftex-pdftexextra.$(OBJEXT) $(am__objects_16)
+dist_pdftex_OBJECTS = pdftex-pdftexextra.$(OBJEXT) $(am__objects_12)
+am__objects_16 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
+@PDFTEX_SYNCTEX_TRUE@am__objects_17 = pdftex-synctex-pdf.$(OBJEXT)
+nodist_pdftex_OBJECTS = $(am__objects_16) pdftex-pdftex-pool.$(OBJEXT) \
+	$(am__objects_17)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
 am__DEPENDENCIES_7 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libmd5.a
@@ -722,11 +745,10 @@ am_ppltotf_OBJECTS =
 nodist_ppltotf_OBJECTS = ppltotf-ppltotf.$(OBJEXT)
 ppltotf_OBJECTS = $(am_ppltotf_OBJECTS) $(nodist_ppltotf_OBJECTS)
 ppltotf_DEPENDENCIES = $(am__DEPENDENCIES_6)
-am_ptex_OBJECTS = ptex-kanji.$(OBJEXT)
-am__objects_17 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
-nodist_ptex_OBJECTS = $(am__objects_17) ptex-ptex-pool.$(OBJEXT) \
-	ptex-ptexextra.$(OBJEXT)
-ptex_OBJECTS = $(am_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
+dist_ptex_OBJECTS = ptex-ptexextra.$(OBJEXT) ptex-kanji.$(OBJEXT)
+am__objects_18 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
+nodist_ptex_OBJECTS = $(am__objects_18) ptex-ptex-pool.$(OBJEXT)
+ptex_OBJECTS = $(dist_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
 ptex_DEPENDENCIES = $(am__DEPENDENCIES_6) $(am__DEPENDENCIES_1)
 ptex_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(ptex_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -750,13 +772,13 @@ tangle_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 nodist_tangleboot_OBJECTS = tangleboot.$(OBJEXT)
 tangleboot_OBJECTS = $(nodist_tangleboot_OBJECTS)
 tangleboot_LDADD = $(LDADD)
-am__dist_tex_SOURCES_DIST = synctexdir/synctex.h \
+am__dist_tex_SOURCES_DIST = texextra.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-tex.h
-dist_tex_OBJECTS =
-am__objects_18 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
-@TEX_SYNCTEX_TRUE@am__objects_19 = tex-synctex.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_18) tex-tex-pool.$(OBJEXT) \
-	tex-texextra.$(OBJEXT) $(am__objects_19)
+dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_12)
+am__objects_19 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
+@TEX_SYNCTEX_TRUE@am__objects_20 = tex-synctex.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_19) tex-tex-pool.$(OBJEXT) \
+	$(am__objects_20)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_8 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -793,13 +815,14 @@ nodist_weave_OBJECTS = weave.$(OBJEXT)
 weave_OBJECTS = $(nodist_weave_OBJECTS)
 weave_LDADD = $(LDADD)
 weave_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__dist_xetex_SOURCES_DIST = synctexdir/synctex.h \
+am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
+	xetexdir/xetexextra.h synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-xetex.h
-dist_xetex_OBJECTS =
-am__objects_20 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-@XETEX_SYNCTEX_TRUE@am__objects_21 = xetex-synctex-xe.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_20) xetex-xetex_pool.$(OBJEXT) \
-	xetex-xetexextra.$(OBJEXT) $(am__objects_21)
+dist_xetex_OBJECTS = xetex-xetexextra.$(OBJEXT) $(am__objects_12)
+am__objects_21 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
+@XETEX_SYNCTEX_TRUE@am__objects_22 = xetex-synctex-xe.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_21) xetex-xetex_pool.$(OBJEXT) \
+	$(am__objects_22)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_9 = $(am__DEPENDENCIES_1) \
 @XETEX_MACOSX_FALSE@	$(am__DEPENDENCIES_1) \
@@ -842,7 +865,7 @@ SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(nodist_libmf_a_SOURCES) $(libmplib_a_SOURCES) \
 	$(nodist_libmplib_a_SOURCES) $(libpdftex_a_SOURCES) \
 	$(EXTRA_libpdftex_a_SOURCES) $(libxetex_a_SOURCES) \
-	$(libxetexmm_a_SOURCES) $(aleph_SOURCES) \
+	$(libxetexmm_a_SOURCES) $(dist_aleph_SOURCES) \
 	$(nodist_aleph_SOURCES) $(nodist_bibtex_SOURCES) \
 	$(nodist_ctangle_SOURCES) $(nodist_ctangleboot_SOURCES) \
 	$(nodist_ctie_SOURCES) $(nodist_cweave_SOURCES) \
@@ -851,7 +874,7 @@ SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(nodist_gftodvi_SOURCES) $(nodist_gftopk_SOURCES) \
 	$(nodist_gftype_SOURCES) $(luatex_SOURCES) \
 	$(nodist_EXTRA_luatex_SOURCES) $(md5main_SOURCES) \
-	$(nodist_mf_SOURCES) $(nodist_mf_nowin_SOURCES) \
+	$(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
 	$(nodist_mft_SOURCES) $(nodist_mpost_SOURCES) \
 	$(nodist_odvicopy_SOURCES) $(nodist_odvitype_SOURCES) \
 	$(nodist_ofm2opl_SOURCES) $(nodist_opl2ofm_SOURCES) \
@@ -864,7 +887,7 @@ SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(nodist_pdvitype_SOURCES) $(nodist_pktogf_SOURCES) \
 	$(nodist_pktype_SOURCES) $(nodist_pltotf_SOURCES) \
 	$(nodist_pooltype_SOURCES) $(ppltotf_SOURCES) \
-	$(nodist_ppltotf_SOURCES) $(ptex_SOURCES) \
+	$(nodist_ppltotf_SOURCES) $(dist_ptex_SOURCES) \
 	$(nodist_ptex_SOURCES) $(ptftopl_SOURCES) \
 	$(nodist_ptftopl_SOURCES) $(synctex_SOURCES) \
 	$(nodist_tangle_SOURCES) $(nodist_tangleboot_SOURCES) \
@@ -880,11 +903,12 @@ DIST_SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(libmd5_a_SOURCES) $(libmplib_a_SOURCES) \
 	$(am__libpdftex_a_SOURCES_DIST) $(EXTRA_libpdftex_a_SOURCES) \
 	$(am__libxetex_a_SOURCES_DIST) $(libxetexmm_a_SOURCES) \
-	$(aleph_SOURCES) $(am__dist_etex_SOURCES_DIST) \
+	$(dist_aleph_SOURCES) $(am__dist_etex_SOURCES_DIST) \
 	$(gftodvi_SOURCES) $(luatex_SOURCES) $(md5main_SOURCES) \
-	$(pbibtex_SOURCES) $(am__dist_pdftex_SOURCES_DIST) \
-	$(pdftosrc_SOURCES) $(pdvitype_SOURCES) $(ppltotf_SOURCES) \
-	$(ptex_SOURCES) $(ptftopl_SOURCES) $(synctex_SOURCES) \
+	$(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) $(pbibtex_SOURCES) \
+	$(am__dist_pdftex_SOURCES_DIST) $(pdftosrc_SOURCES) \
+	$(pdvitype_SOURCES) $(ppltotf_SOURCES) $(dist_ptex_SOURCES) \
+	$(ptftopl_SOURCES) $(synctex_SOURCES) \
 	$(am__dist_tex_SOURCES_DIST) $(ttf2afm_SOURCES) \
 	$(EXTRA_ttf2afm_SOURCES) $(am__dist_xetex_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -1200,27 +1224,26 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	tests/testex.mp tests/testex.tex tests/translate tests/uno.dos \
 	tests/xampl.bib ctiedir tiedir lib/mfmpi386.asm lib/mfmpw32.c \
 	lib/texmfmp.c texmfmem.h texmfmp-help.h texmfmp.h \
-	$(tex_ch_srcs) lib/texmfmp.c $(tex_tests) \
-	tests/write18-quote.tex $(mf_ch_src) mftalk.h lib/texmfmp.c \
-	$(mf_tests) triptrap/README triptrap/mftrap.diffs \
-	triptrap/mftrap.fot triptrap/mftrap.log triptrap/mftrap.pl \
-	triptrap/mftrap1.in triptrap/mftrap2.in triptrap/mftrapin.log \
-	triptrap/mptrap.diffs triptrap/mptrap.fot triptrap/mptrap.log \
-	triptrap/mptrap.pl triptrap/mptrap.readme triptrap/mptrap1.in \
-	triptrap/mptrap2.in triptrap/mptrapin.log triptrap/mtrap.0 \
-	triptrap/mtrap.1 triptrap/mtrap.log triptrap/mtrap.mp \
-	triptrap/texmf.cnf triptrap/trap.148 triptrap/trap.149 \
-	triptrap/trap.150 triptrap/trap.151 triptrap/trap.197 \
-	triptrap/trap.200 triptrap/trap.5 triptrap/trap.6 \
-	triptrap/trap.mf triptrap/trap.mp triptrap/trap.mpx \
-	triptrap/trap.typ triptrap/trapf.pl triptrap/trapman.tex \
-	triptrap/trip.diffs triptrap/trip.fot triptrap/trip.log \
-	triptrap/trip.pl triptrap/trip.tex triptrap/trip.typ \
-	triptrap/trip1.in triptrap/trip2.in triptrap/tripin.log \
-	triptrap/tripman.tex triptrap/tripos.tex triptrap/writeo \
-	triptrap/writeo.2 mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
-	$(libmplib_web) mplibdir/lmplib.c $(etex_web_srcs) \
-	$(etex_ch_srcs) etexdir/etexextra.in lib/texmfmp.c \
+	$(tex_ch_srcs) $(tex_tests) tests/write18-quote.tex \
+	$(mf_ch_src) mftalk.h $(mf_tests) triptrap/README \
+	triptrap/mftrap.diffs triptrap/mftrap.fot triptrap/mftrap.log \
+	triptrap/mftrap.pl triptrap/mftrap1.in triptrap/mftrap2.in \
+	triptrap/mftrapin.log triptrap/mptrap.diffs \
+	triptrap/mptrap.fot triptrap/mptrap.log triptrap/mptrap.pl \
+	triptrap/mptrap.readme triptrap/mptrap1.in triptrap/mptrap2.in \
+	triptrap/mptrapin.log triptrap/mtrap.0 triptrap/mtrap.1 \
+	triptrap/mtrap.log triptrap/mtrap.mp triptrap/texmf.cnf \
+	triptrap/trap.148 triptrap/trap.149 triptrap/trap.150 \
+	triptrap/trap.151 triptrap/trap.197 triptrap/trap.200 \
+	triptrap/trap.5 triptrap/trap.6 triptrap/trap.mf \
+	triptrap/trap.mp triptrap/trap.mpx triptrap/trap.typ \
+	triptrap/trapf.pl triptrap/trapman.tex triptrap/trip.diffs \
+	triptrap/trip.fot triptrap/trip.log triptrap/trip.pl \
+	triptrap/trip.tex triptrap/trip.typ triptrap/trip1.in \
+	triptrap/trip2.in triptrap/tripin.log triptrap/tripman.tex \
+	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
+	mplibdir/ChangeLog $(mpost_web) $(mp_tests) $(libmplib_web) \
+	mplibdir/lmplib.c $(etex_web_srcs) $(etex_ch_srcs) \
 	etexdir/ChangeLog etexdir/INSTALL etexdir/README \
 	etexdir/etex_gen.tex $(etex_tests) etexdir/etrip/etrip.diffs \
 	etexdir/etrip/etrip.fot etexdir/etrip/etrip.log \
@@ -1231,11 +1254,10 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	etexdir/etrip/etripman.tex etexdir/etrip/texmf.cnf \
 	etexdir/etrip/trip2.in etexdir/etex.mak etexdir/etex.mk \
 	$(ptex_tests) $(ptex_web_srcs) $(ptex_ch_srcs) \
-	ptexdir/ptexextra.in ptexdir/ptex.defines lib/texmfmp.c \
-	ptexdir/pbibtex.ch web2c/cvtbib.sed ptexdir/pdvitype.ch \
-	ptexdir/ppltotf.ch ptexdir/ptftopl.ch ptexdir/COPYRIGHT \
-	ptexdir/COPYRIGHT.jis ptexdir/ChangeLog ptexdir/Changes.txt \
-	ptexdir/INSTALL.txt ptexdir/README.txt \
+	ptexdir/ptex.defines ptexdir/pbibtex.ch web2c/cvtbib.sed \
+	ptexdir/pdvitype.ch ptexdir/ppltotf.ch ptexdir/ptftopl.ch \
+	ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis ptexdir/ChangeLog \
+	ptexdir/Changes.txt ptexdir/INSTALL.txt ptexdir/README.txt \
 	ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst \
 	ptexdir/tests/sample.bib tests/memdata1.bst tests/memdata2.bst \
 	tests/memdata3.bst ptexdir/tests/goth10.tfm \
@@ -1243,8 +1265,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/tests/min10.tfm ptexdir/tests/tmin10.pl \
 	ptexdir/tests/tmin10.tfm ptexdir/ptrip.diffs $(pdftex_ch_srcs) \
 	etexdir/etex.ch pdftexdir/pdftex.defines pdftexdir/pdftex.h \
-	pdftexdir/pdftexextra.in pdftexdir/ChangeLog pdftexdir/NEWS \
-	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
+	pdftexdir/ChangeLog pdftexdir/NEWS pdftexdir/README \
+	pdftexdir/change-files.txt $(pdftex_tests) \
 	pdftexdir/pdftex.mak pdftexdir/pdftex.mk \
 	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
 	luatexdir/ptexlib.h luatexdir/getluatexsvnversion.sh \
@@ -1345,11 +1367,10 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/plugins/Makefile.in \
 	$(libluatex_web) luatexdir/ChangeLog luatexdir/NEWS \
 	luatexdir/font/subfont.txt $(xetex_web_srcs) \
-	xetexdir/xetex.defines xetexdir/xetexextra.in \
-	xetexdir/pool2c.pl xetexdir/unicode-char-prep.pl \
-	xetexdir/appleGlyphNames.c xetexdir/XeTeXFontMgr_Mac.mm \
-	xetexdir/ChangeLog $(xetex_tests) xetexdir/LICENSE.txt \
-	xetexdir/xetex.mk omegaware/README omegaware/ChangeLog \
+	xetexdir/xetex.defines xetexdir/pool2c.pl \
+	xetexdir/unicode-char-prep.pl xetexdir/appleGlyphNames.c \
+	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/ChangeLog $(xetex_tests) \
+	xetexdir/LICENSE.txt omegaware/README omegaware/ChangeLog \
 	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
 	$(opl2ofm_sources) $(otangle_sources) $(ovf2ovp_sources) \
 	$(ovp2ovf_sources) $(OTANGLE_tests) $(OMFONTS_tests) \
@@ -1374,13 +1395,12 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	omegaware/tests/Cherokee.pl omegaware/tests/OCherokee.ovp \
 	omegaware/tests/repeat.opl omegaware/tests/repeated.opl \
 	omegaware/tests/specialhex.ovp $(aleph_web_srcs) \
-	$(aleph_ch_srcs) lib/texmfmp.c alephdir/ChangeLog \
-	alephdir/Makefile alephdir/aleph.defines \
-	alephdir/aleph.version alephdir/eomega.ech alephdir/etex.ch \
-	alephdir/omega.ch0 alephdir/omega.ch1 alephdir/omega.ch2 \
-	alephdir/omxml.ch alephdir/aleph-pool.h alephdir/aleph.mk \
-	synctexdir/ChangeLog synctexdir/README.txt \
-	synctexdir/synctex_parser_readme.txt \
+	$(aleph_ch_srcs) alephdir/ChangeLog alephdir/Makefile \
+	alephdir/aleph.defines alephdir/aleph.version \
+	alephdir/eomega.ech alephdir/etex.ch alephdir/omega.ch0 \
+	alephdir/omega.ch1 alephdir/omega.ch2 alephdir/omxml.ch \
+	alephdir/aleph-pool.h alephdir/aleph.mk synctexdir/ChangeLog \
+	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \
@@ -1409,36 +1429,34 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	common.tex common.scn common.idx tie.outc tie.outm \
 	$(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p tex.pool \
 	tex-tangle trip.diffs mftrap.diffs $(nodist_libmf_a_SOURCES) \
-	mfextra.c mf-final.ch mf-web2c mf.p mf.pool mf-tangle \
+	mf-final.ch mf-web2c mf.p mf.pool mf-tangle \
 	$(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs ptmr.mpx \
 	tests/xptmr.mpx tests/xstory.mpx $(nodist_libmplib_a_SOURCES) \
 	memio-tangle mp-tangle psout-tangle svgout-tangle tfmin-tangle \
 	$(nodist_etex_SOURCES) etex.web etex.ch etex-web2c etex.p \
-	etex.pool etex-tangle etexdir/etex.version etrip.diffs \
-	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
+	etex.pool etex-tangle etrip.diffs $(pweb_programs:=.c) \
+	$(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
-	ptex.pool ptex-tangle ptexdir/ptex.version tests/nissya_bib.* \
-	tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
-	tests/memtest* tests/xstory.dvityp tests/xpagenum.typ \
-	tests/xcmr10.tfm tests/xcmr10.pl tests/xsample.typ \
-	tests/x*min10.* ptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch \
-	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle \
-	pdftexdir/pdftex.version pdftexdir/etex.version \
-	$(nodist_libluatex_a_SOURCES) $(nodist_xetex_SOURCES) \
-	xetex.web xetex-web2c xetex.p xetex.pool xetex-tangle \
-	xetexdir/etex.version xetexdir/xetex.version \
-	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
-	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
-	omegaware/tests/xlevel1.ofm omegaware/tests/xlevel1.opl \
-	ofont*vf omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
-	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
-	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
-	omegaware/tests/xOCherokee.* cftest.p \
-	omegaware/tests/xrepeated.* omegaware/tests/specialhex.ofm \
-	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
-	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
-	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
+	ptex.pool ptex-tangle tests/nissya_bib.* tests/xexampl.aux \
+	tests/xexampl.bbl tests/xexampl.blg tests/memtest* \
+	tests/xstory.dvityp tests/xpagenum.typ tests/xcmr10.tfm \
+	tests/xcmr10.pl tests/xsample.typ tests/x*min10.* ptrip.diffs \
+	$(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c pdftex.p \
+	pdftex.pool pdftex-tangle $(nodist_libluatex_a_SOURCES) \
+	$(nodist_xetex_SOURCES) xetex.web xetex-web2c xetex.p \
+	xetex.pool xetex-tangle $(omegaware_programs:=.c) \
+	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
+	$(omegaware_programs:=-web2c) omegaware/tests/xlevel1.ofm \
+	omegaware/tests/xlevel1.opl ofont*vf omegaware/tests/xofont* \
+	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
+	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
+	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
+	cftest.p omegaware/tests/xrepeated.* \
+	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
+	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
+	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
+	aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP = $(am__append_6) $(am__append_9) $(am__append_16) \
 	$(am__append_20) $(am__append_25)
@@ -1534,7 +1552,8 @@ tex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_53)
 
 # TeX C sources
 tex_c_h = texini.c tex0.c texcoerce.h texd.h
-nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c $(am__append_55)
+nodist_tex_SOURCES = $(tex_c_h) tex-pool.c $(am__append_56)
+dist_tex_SOURCES = texextra.c $(am__append_55)
 
 # We must create texd.h before building the tex_OBJECTS.
 tex_prereq = texd.h $(am__append_54)
@@ -1548,11 +1567,11 @@ tex_ch_srcs = \
 # TeX tests
 #
 tex_tests = trip.test tests/write18-quote-test.pl
-nodist_mf_SOURCES = mfextra.c
+dist_mf_SOURCES = mfextra.c
 mf_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS)
 mf_CFLAGS = $(WARNING_CFLAGS)
 mf_LDADD = libmf.a $(LDADD) $(windowlib) $(mf_x_libs)
-nodist_mf_nowin_SOURCES = mfextra.c
+dist_mf_nowin_SOURCES = mfextra.c
 mf_nowin_CPPFLAGS = $(mf_CPPFLAGS) -DMFNOWIN
 mf_nowin_CFLAGS = $(WARNING_CFLAGS)
 mf_nowin_LDADD = libmf.a $(LDADD) $(windowlib)
@@ -1604,19 +1623,21 @@ svgout_c_h = mplibsvg.h mpsvgout.h svgout.c
 tfmin_c_h = mptfmin.h tfmin.c
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w \
 	mplibdir/memio.w mplibdir/tfmin.w
-etex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_56)
+etex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_57)
 etex_CFLAGS = $(WARNING_CFLAGS)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
-etex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_57)
+etex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_58)
 
 # e-TeX C sources
 etex_c_h = etexini.c etex0.c etexcoerce.h etexd.h
-nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexextra.c \
-	etexdir/etexextra.h $(am__append_59)
+nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexdir/etex_version.h \
+	$(am__append_61)
+dist_etex_SOURCES = etexdir/etexextra.c etexdir/etexextra.h \
+	$(am__append_60)
 
-# We must create etexd.h before building the etex_OBJECTS.
-etex_prereq = etexd.h $(am__append_58)
+# We must create etexd.h and etexdir/etex_version.h before building the etex_OBJECTS.
+etex_prereq = etexd.h etexdir/etex_version.h $(am__append_59)
 etex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -1655,11 +1676,13 @@ ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
-nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h
-ptex_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
+nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexdir/ptex_version.h
+dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h \
+	ptexdir/kanji.c ptexdir/kanji.h
 
-# We must create ptexd.h before building the ptex_OBJECTS.
-ptex_prereq = ptexd.h
+
+# We must create ptexd.h and ptexdir/ptex_version.h before building the ptex_OBJECTS.
+ptex_prereq = ptexd.h ptexdir/ptex_version.h
 ptex_web_srcs = \
 	tex.web \
 	tex.ch
@@ -1697,16 +1720,22 @@ pdftex_dependencies = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) \
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(SHELL) ./tangle-sh $@ $(TANGLE)
-pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_60)
+pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_62)
 pdftex_CFLAGS = $(WARNING_CFLAGS)
 pdftex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 # With --enable-ipc, pdfTeX may need to link with -lsocket.
 pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
+
+# We must create libpdftex.a etc before building the pdftex_OBJECTS.
+pdftex_prereq = libpdftex.a pdftexdir/etex_version.h pdftexdir/pdftex_version.h
 pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
-nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c \
-	pdftexdir/pdftexextra.h $(am__append_61)
+nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c \
+	pdftexdir/etex_version.h pdftexdir/pdftex_version.h \
+	$(am__append_64)
+dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h \
+	$(am__append_63)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
@@ -2212,14 +2241,19 @@ xetex_dependencies = $(proglib) $(KPATHSEA_DEPEND) $(ICU_DEPEND) \
 	$(TECKIT_DEPEND) $(am__append_38) $(am__append_41) \
 	$(FREETYPE2_DEPEND) $(ZLIB_DEPEND)
 @XETEX_MACOSX_TRUE@xetex_LDFLAGS = -framework Carbon -framework Cocoa -framework QuickTime
-xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_62)
+xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_65)
 xetex_CFLAGS = # $(WARNING_CFLAGS)
 xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
-xetex_prereq = $(libxetex)
+
+# We must create libxetex.a etc before building the xetex_OBJECTS
+xetex_prereq = $(libxetex) xetexdir/etex_version.h xetexdir/xetex_version.h
 xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
-nodist_xetex_SOURCES = $(xetex_c_h) xetex_pool.c xetexextra.c \
-	xetexdir/xetexextra.h $(am__append_63)
+nodist_xetex_SOURCES = $(xetex_c_h) xetex_pool.c \
+	xetexdir/etex_version.h xetexdir/xetex_version.h \
+	$(am__append_67)
+dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h \
+	$(am__append_66)
 xetex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -2296,10 +2330,11 @@ aleph_CFLAGS = $(WARNING_CFLAGS)
 
 # Aleph C sources
 aleph_c_h = alephini.c aleph0.c alephcoerce.h alephd.h
-nodist_aleph_SOURCES = $(aleph_c_h) aleph-pool.c alephextra.c
-aleph_SOURCES = \
+nodist_aleph_SOURCES = $(aleph_c_h) aleph-pool.c
+dist_aleph_SOURCES = \
 	alephdir/aleph.c \
 	alephdir/alephbis.c \
+	alephdir/alephextra.c \
 	alephdir/alephextra.h \
 	alephdir/alephmem.h
 
@@ -2365,11 +2400,6 @@ synctex_LDADD = $(ZLIB_LIBS)
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch1 \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch2
 
-@TEX_SYNCTEX_TRUE@dist_tex_SOURCES = \
-@TEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
-@TEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
-@TEX_SYNCTEX_TRUE@	synctexdir/synctex-tex.h
-
 @ETEX_SYNCTEX_TRUE@etex_ch_synctex = \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch1 \
@@ -2379,11 +2409,6 @@ synctex_LDADD = $(ZLIB_LIBS)
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch1 \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch1
-
-@ETEX_SYNCTEX_TRUE@dist_etex_SOURCES = \
-@ETEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
-@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
-@ETEX_SYNCTEX_TRUE@	synctexdir/synctex-etex.h
 
 @PDFTEX_SYNCTEX_TRUE@pdftex_ch_synctex = \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
@@ -2396,11 +2421,6 @@ synctex_LDADD = $(ZLIB_LIBS)
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch1 \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-pdf-rec.ch2
 
-@PDFTEX_SYNCTEX_TRUE@dist_pdftex_SOURCES = \
-@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
-@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
-@PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-pdftex.h
-
 @XETEX_SYNCTEX_TRUE@xetex_ch_synctex = \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
@@ -2412,11 +2432,6 @@ synctex_LDADD = $(ZLIB_LIBS)
 
 @XETEX_SYNCTEX_TRUE@xetex_post_ch_synctex = \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch3
-
-@XETEX_SYNCTEX_TRUE@dist_xetex_SOURCES = \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
-@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xetex.h
 
 libmd5_a_CPPFLAGS = -I$(srcdir)/libmd5
 libmd5_a_CFLAGS = $(WARNING_CFLAGS)
@@ -6953,6 +6968,20 @@ aleph-alephbis.obj: alephdir/alephbis.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -c -o aleph-alephbis.obj `if test -f 'alephdir/alephbis.c'; then $(CYGPATH_W) 'alephdir/alephbis.c'; else $(CYGPATH_W) '$(srcdir)/alephdir/alephbis.c'; fi`
 
+aleph-alephextra.o: alephdir/alephextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -MT aleph-alephextra.o -MD -MP -MF $(DEPDIR)/aleph-alephextra.Tpo -c -o aleph-alephextra.o `test -f 'alephdir/alephextra.c' || echo '$(srcdir)/'`alephdir/alephextra.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/aleph-alephextra.Tpo $(DEPDIR)/aleph-alephextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='alephdir/alephextra.c' object='aleph-alephextra.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -c -o aleph-alephextra.o `test -f 'alephdir/alephextra.c' || echo '$(srcdir)/'`alephdir/alephextra.c
+
+aleph-alephextra.obj: alephdir/alephextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -MT aleph-alephextra.obj -MD -MP -MF $(DEPDIR)/aleph-alephextra.Tpo -c -o aleph-alephextra.obj `if test -f 'alephdir/alephextra.c'; then $(CYGPATH_W) 'alephdir/alephextra.c'; else $(CYGPATH_W) '$(srcdir)/alephdir/alephextra.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/aleph-alephextra.Tpo $(DEPDIR)/aleph-alephextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='alephdir/alephextra.c' object='aleph-alephextra.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -c -o aleph-alephextra.obj `if test -f 'alephdir/alephextra.c'; then $(CYGPATH_W) 'alephdir/alephextra.c'; else $(CYGPATH_W) '$(srcdir)/alephdir/alephextra.c'; fi`
+
 aleph-alephini.o: alephini.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -MT aleph-alephini.o -MD -MP -MF $(DEPDIR)/aleph-alephini.Tpo -c -o aleph-alephini.o `test -f 'alephini.c' || echo '$(srcdir)/'`alephini.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/aleph-alephini.Tpo $(DEPDIR)/aleph-alephini.Po
@@ -6994,20 +7023,6 @@ aleph-aleph-pool.obj: aleph-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='aleph-pool.c' object='aleph-aleph-pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -c -o aleph-aleph-pool.obj `if test -f 'aleph-pool.c'; then $(CYGPATH_W) 'aleph-pool.c'; else $(CYGPATH_W) '$(srcdir)/aleph-pool.c'; fi`
-
-aleph-alephextra.o: alephextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -MT aleph-alephextra.o -MD -MP -MF $(DEPDIR)/aleph-alephextra.Tpo -c -o aleph-alephextra.o `test -f 'alephextra.c' || echo '$(srcdir)/'`alephextra.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/aleph-alephextra.Tpo $(DEPDIR)/aleph-alephextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='alephextra.c' object='aleph-alephextra.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -c -o aleph-alephextra.o `test -f 'alephextra.c' || echo '$(srcdir)/'`alephextra.c
-
-aleph-alephextra.obj: alephextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -MT aleph-alephextra.obj -MD -MP -MF $(DEPDIR)/aleph-alephextra.Tpo -c -o aleph-alephextra.obj `if test -f 'alephextra.c'; then $(CYGPATH_W) 'alephextra.c'; else $(CYGPATH_W) '$(srcdir)/alephextra.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/aleph-alephextra.Tpo $(DEPDIR)/aleph-alephextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='alephextra.c' object='aleph-alephextra.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -c -o aleph-alephextra.obj `if test -f 'alephextra.c'; then $(CYGPATH_W) 'alephextra.c'; else $(CYGPATH_W) '$(srcdir)/alephextra.c'; fi`
 
 ctangle-ctangle.o: ctangle.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ctangle_CFLAGS) $(CFLAGS) -MT ctangle-ctangle.o -MD -MP -MF $(DEPDIR)/ctangle-ctangle.Tpo -c -o ctangle-ctangle.o `test -f 'ctangle.c' || echo '$(srcdir)/'`ctangle.c
@@ -7079,6 +7094,20 @@ cweave-cweb.obj: cweb.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(cweave_CFLAGS) $(CFLAGS) -c -o cweave-cweb.obj `if test -f 'cweb.c'; then $(CYGPATH_W) 'cweb.c'; else $(CYGPATH_W) '$(srcdir)/cweb.c'; fi`
 
+etex-etexextra.o: etexdir/etexextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -MT etex-etexextra.o -MD -MP -MF $(DEPDIR)/etex-etexextra.Tpo -c -o etex-etexextra.o `test -f 'etexdir/etexextra.c' || echo '$(srcdir)/'`etexdir/etexextra.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/etex-etexextra.Tpo $(DEPDIR)/etex-etexextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='etexdir/etexextra.c' object='etex-etexextra.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -c -o etex-etexextra.o `test -f 'etexdir/etexextra.c' || echo '$(srcdir)/'`etexdir/etexextra.c
+
+etex-etexextra.obj: etexdir/etexextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -MT etex-etexextra.obj -MD -MP -MF $(DEPDIR)/etex-etexextra.Tpo -c -o etex-etexextra.obj `if test -f 'etexdir/etexextra.c'; then $(CYGPATH_W) 'etexdir/etexextra.c'; else $(CYGPATH_W) '$(srcdir)/etexdir/etexextra.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/etex-etexextra.Tpo $(DEPDIR)/etex-etexextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='etexdir/etexextra.c' object='etex-etexextra.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -c -o etex-etexextra.obj `if test -f 'etexdir/etexextra.c'; then $(CYGPATH_W) 'etexdir/etexextra.c'; else $(CYGPATH_W) '$(srcdir)/etexdir/etexextra.c'; fi`
+
 etex-etexini.o: etexini.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -MT etex-etexini.o -MD -MP -MF $(DEPDIR)/etex-etexini.Tpo -c -o etex-etexini.o `test -f 'etexini.c' || echo '$(srcdir)/'`etexini.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/etex-etexini.Tpo $(DEPDIR)/etex-etexini.Po
@@ -7120,20 +7149,6 @@ etex-etex-pool.obj: etex-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='etex-pool.c' object='etex-etex-pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -c -o etex-etex-pool.obj `if test -f 'etex-pool.c'; then $(CYGPATH_W) 'etex-pool.c'; else $(CYGPATH_W) '$(srcdir)/etex-pool.c'; fi`
-
-etex-etexextra.o: etexextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -MT etex-etexextra.o -MD -MP -MF $(DEPDIR)/etex-etexextra.Tpo -c -o etex-etexextra.o `test -f 'etexextra.c' || echo '$(srcdir)/'`etexextra.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/etex-etexextra.Tpo $(DEPDIR)/etex-etexextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='etexextra.c' object='etex-etexextra.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -c -o etex-etexextra.o `test -f 'etexextra.c' || echo '$(srcdir)/'`etexextra.c
-
-etex-etexextra.obj: etexextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -MT etex-etexextra.obj -MD -MP -MF $(DEPDIR)/etex-etexextra.Tpo -c -o etex-etexextra.obj `if test -f 'etexextra.c'; then $(CYGPATH_W) 'etexextra.c'; else $(CYGPATH_W) '$(srcdir)/etexextra.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/etex-etexextra.Tpo $(DEPDIR)/etex-etexextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='etexextra.c' object='etex-etexextra.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -c -o etex-etexextra.obj `if test -f 'etexextra.c'; then $(CYGPATH_W) 'etexextra.c'; else $(CYGPATH_W) '$(srcdir)/etexextra.c'; fi`
 
 etex-synctex-e.o: synctex-e.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(etex_CPPFLAGS) $(CPPFLAGS) $(etex_CFLAGS) $(CFLAGS) -MT etex-synctex-e.o -MD -MP -MF $(DEPDIR)/etex-synctex-e.Tpo -c -o etex-synctex-e.o `test -f 'synctex-e.c' || echo '$(srcdir)/'`synctex-e.c
@@ -7247,6 +7262,20 @@ pbibtex-pbibtex.obj: pbibtex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pbibtex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pbibtex-pbibtex.obj `if test -f 'pbibtex.c'; then $(CYGPATH_W) 'pbibtex.c'; else $(CYGPATH_W) '$(srcdir)/pbibtex.c'; fi`
 
+pdftex-pdftexextra.o: pdftexdir/pdftexextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -MT pdftex-pdftexextra.o -MD -MP -MF $(DEPDIR)/pdftex-pdftexextra.Tpo -c -o pdftex-pdftexextra.o `test -f 'pdftexdir/pdftexextra.c' || echo '$(srcdir)/'`pdftexdir/pdftexextra.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pdftex-pdftexextra.Tpo $(DEPDIR)/pdftex-pdftexextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pdftexdir/pdftexextra.c' object='pdftex-pdftexextra.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -c -o pdftex-pdftexextra.o `test -f 'pdftexdir/pdftexextra.c' || echo '$(srcdir)/'`pdftexdir/pdftexextra.c
+
+pdftex-pdftexextra.obj: pdftexdir/pdftexextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -MT pdftex-pdftexextra.obj -MD -MP -MF $(DEPDIR)/pdftex-pdftexextra.Tpo -c -o pdftex-pdftexextra.obj `if test -f 'pdftexdir/pdftexextra.c'; then $(CYGPATH_W) 'pdftexdir/pdftexextra.c'; else $(CYGPATH_W) '$(srcdir)/pdftexdir/pdftexextra.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pdftex-pdftexextra.Tpo $(DEPDIR)/pdftex-pdftexextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pdftexdir/pdftexextra.c' object='pdftex-pdftexextra.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -c -o pdftex-pdftexextra.obj `if test -f 'pdftexdir/pdftexextra.c'; then $(CYGPATH_W) 'pdftexdir/pdftexextra.c'; else $(CYGPATH_W) '$(srcdir)/pdftexdir/pdftexextra.c'; fi`
+
 pdftex-pdftexini.o: pdftexini.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -MT pdftex-pdftexini.o -MD -MP -MF $(DEPDIR)/pdftex-pdftexini.Tpo -c -o pdftex-pdftexini.o `test -f 'pdftexini.c' || echo '$(srcdir)/'`pdftexini.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pdftex-pdftexini.Tpo $(DEPDIR)/pdftex-pdftexini.Po
@@ -7289,20 +7318,6 @@ pdftex-pdftex-pool.obj: pdftex-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -c -o pdftex-pdftex-pool.obj `if test -f 'pdftex-pool.c'; then $(CYGPATH_W) 'pdftex-pool.c'; else $(CYGPATH_W) '$(srcdir)/pdftex-pool.c'; fi`
 
-pdftex-pdftexextra.o: pdftexextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -MT pdftex-pdftexextra.o -MD -MP -MF $(DEPDIR)/pdftex-pdftexextra.Tpo -c -o pdftex-pdftexextra.o `test -f 'pdftexextra.c' || echo '$(srcdir)/'`pdftexextra.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pdftex-pdftexextra.Tpo $(DEPDIR)/pdftex-pdftexextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pdftexextra.c' object='pdftex-pdftexextra.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -c -o pdftex-pdftexextra.o `test -f 'pdftexextra.c' || echo '$(srcdir)/'`pdftexextra.c
-
-pdftex-pdftexextra.obj: pdftexextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -MT pdftex-pdftexextra.obj -MD -MP -MF $(DEPDIR)/pdftex-pdftexextra.Tpo -c -o pdftex-pdftexextra.obj `if test -f 'pdftexextra.c'; then $(CYGPATH_W) 'pdftexextra.c'; else $(CYGPATH_W) '$(srcdir)/pdftexextra.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pdftex-pdftexextra.Tpo $(DEPDIR)/pdftex-pdftexextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pdftexextra.c' object='pdftex-pdftexextra.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -c -o pdftex-pdftexextra.obj `if test -f 'pdftexextra.c'; then $(CYGPATH_W) 'pdftexextra.c'; else $(CYGPATH_W) '$(srcdir)/pdftexextra.c'; fi`
-
 pdftex-synctex-pdf.o: synctex-pdf.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(pdftex_CFLAGS) $(CFLAGS) -MT pdftex-synctex-pdf.o -MD -MP -MF $(DEPDIR)/pdftex-synctex-pdf.Tpo -c -o pdftex-synctex-pdf.o `test -f 'synctex-pdf.c' || echo '$(srcdir)/'`synctex-pdf.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pdftex-synctex-pdf.Tpo $(DEPDIR)/pdftex-synctex-pdf.Po
@@ -7344,6 +7359,20 @@ ppltotf-ppltotf.obj: ppltotf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ppltotf.c' object='ppltotf-ppltotf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ppltotf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ppltotf-ppltotf.obj `if test -f 'ppltotf.c'; then $(CYGPATH_W) 'ppltotf.c'; else $(CYGPATH_W) '$(srcdir)/ppltotf.c'; fi`
+
+ptex-ptexextra.o: ptexdir/ptexextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-ptexextra.o -MD -MP -MF $(DEPDIR)/ptex-ptexextra.Tpo -c -o ptex-ptexextra.o `test -f 'ptexdir/ptexextra.c' || echo '$(srcdir)/'`ptexdir/ptexextra.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-ptexextra.Tpo $(DEPDIR)/ptex-ptexextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexdir/ptexextra.c' object='ptex-ptexextra.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-ptexextra.o `test -f 'ptexdir/ptexextra.c' || echo '$(srcdir)/'`ptexdir/ptexextra.c
+
+ptex-ptexextra.obj: ptexdir/ptexextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-ptexextra.obj -MD -MP -MF $(DEPDIR)/ptex-ptexextra.Tpo -c -o ptex-ptexextra.obj `if test -f 'ptexdir/ptexextra.c'; then $(CYGPATH_W) 'ptexdir/ptexextra.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/ptexextra.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-ptexextra.Tpo $(DEPDIR)/ptex-ptexextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexdir/ptexextra.c' object='ptex-ptexextra.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-ptexextra.obj `if test -f 'ptexdir/ptexextra.c'; then $(CYGPATH_W) 'ptexdir/ptexextra.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/ptexextra.c'; fi`
 
 ptex-kanji.o: ptexdir/kanji.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-kanji.o -MD -MP -MF $(DEPDIR)/ptex-kanji.Tpo -c -o ptex-kanji.o `test -f 'ptexdir/kanji.c' || echo '$(srcdir)/'`ptexdir/kanji.c
@@ -7401,20 +7430,6 @@ ptex-ptex-pool.obj: ptex-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-ptex-pool.obj `if test -f 'ptex-pool.c'; then $(CYGPATH_W) 'ptex-pool.c'; else $(CYGPATH_W) '$(srcdir)/ptex-pool.c'; fi`
 
-ptex-ptexextra.o: ptexextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-ptexextra.o -MD -MP -MF $(DEPDIR)/ptex-ptexextra.Tpo -c -o ptex-ptexextra.o `test -f 'ptexextra.c' || echo '$(srcdir)/'`ptexextra.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-ptexextra.Tpo $(DEPDIR)/ptex-ptexextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexextra.c' object='ptex-ptexextra.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-ptexextra.o `test -f 'ptexextra.c' || echo '$(srcdir)/'`ptexextra.c
-
-ptex-ptexextra.obj: ptexextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-ptexextra.obj -MD -MP -MF $(DEPDIR)/ptex-ptexextra.Tpo -c -o ptex-ptexextra.obj `if test -f 'ptexextra.c'; then $(CYGPATH_W) 'ptexextra.c'; else $(CYGPATH_W) '$(srcdir)/ptexextra.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-ptexextra.Tpo $(DEPDIR)/ptex-ptexextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexextra.c' object='ptex-ptexextra.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-ptexextra.obj `if test -f 'ptexextra.c'; then $(CYGPATH_W) 'ptexextra.c'; else $(CYGPATH_W) '$(srcdir)/ptexextra.c'; fi`
-
 ptftopl-ptftopl.o: ptftopl.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptftopl_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ptftopl-ptftopl.o -MD -MP -MF $(DEPDIR)/ptftopl-ptftopl.Tpo -c -o ptftopl-ptftopl.o `test -f 'ptftopl.c' || echo '$(srcdir)/'`ptftopl.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptftopl-ptftopl.Tpo $(DEPDIR)/ptftopl-ptftopl.Po
@@ -7471,6 +7486,20 @@ synctex-synctex_parser_utils.obj: synctexdir/synctex_parser_utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(synctex_CFLAGS) $(CFLAGS) -c -o synctex-synctex_parser_utils.obj `if test -f 'synctexdir/synctex_parser_utils.c'; then $(CYGPATH_W) 'synctexdir/synctex_parser_utils.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_parser_utils.c'; fi`
 
+tex-texextra.o: texextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -MT tex-texextra.o -MD -MP -MF $(DEPDIR)/tex-texextra.Tpo -c -o tex-texextra.o `test -f 'texextra.c' || echo '$(srcdir)/'`texextra.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tex-texextra.Tpo $(DEPDIR)/tex-texextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='texextra.c' object='tex-texextra.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -c -o tex-texextra.o `test -f 'texextra.c' || echo '$(srcdir)/'`texextra.c
+
+tex-texextra.obj: texextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -MT tex-texextra.obj -MD -MP -MF $(DEPDIR)/tex-texextra.Tpo -c -o tex-texextra.obj `if test -f 'texextra.c'; then $(CYGPATH_W) 'texextra.c'; else $(CYGPATH_W) '$(srcdir)/texextra.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tex-texextra.Tpo $(DEPDIR)/tex-texextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='texextra.c' object='tex-texextra.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -c -o tex-texextra.obj `if test -f 'texextra.c'; then $(CYGPATH_W) 'texextra.c'; else $(CYGPATH_W) '$(srcdir)/texextra.c'; fi`
+
 tex-texini.o: texini.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -MT tex-texini.o -MD -MP -MF $(DEPDIR)/tex-texini.Tpo -c -o tex-texini.o `test -f 'texini.c' || echo '$(srcdir)/'`texini.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tex-texini.Tpo $(DEPDIR)/tex-texini.Po
@@ -7512,20 +7541,6 @@ tex-tex-pool.obj: tex-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tex-pool.c' object='tex-tex-pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -c -o tex-tex-pool.obj `if test -f 'tex-pool.c'; then $(CYGPATH_W) 'tex-pool.c'; else $(CYGPATH_W) '$(srcdir)/tex-pool.c'; fi`
-
-tex-texextra.o: texextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -MT tex-texextra.o -MD -MP -MF $(DEPDIR)/tex-texextra.Tpo -c -o tex-texextra.o `test -f 'texextra.c' || echo '$(srcdir)/'`texextra.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tex-texextra.Tpo $(DEPDIR)/tex-texextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='texextra.c' object='tex-texextra.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -c -o tex-texextra.o `test -f 'texextra.c' || echo '$(srcdir)/'`texextra.c
-
-tex-texextra.obj: texextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -MT tex-texextra.obj -MD -MP -MF $(DEPDIR)/tex-texextra.Tpo -c -o tex-texextra.obj `if test -f 'texextra.c'; then $(CYGPATH_W) 'texextra.c'; else $(CYGPATH_W) '$(srcdir)/texextra.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tex-texextra.Tpo $(DEPDIR)/tex-texextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='texextra.c' object='tex-texextra.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -c -o tex-texextra.obj `if test -f 'texextra.c'; then $(CYGPATH_W) 'texextra.c'; else $(CYGPATH_W) '$(srcdir)/texextra.c'; fi`
 
 tex-synctex.o: synctex.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(tex_CFLAGS) $(CFLAGS) -MT tex-synctex.o -MD -MP -MF $(DEPDIR)/tex-synctex.Tpo -c -o tex-synctex.o `test -f 'synctex.c' || echo '$(srcdir)/'`synctex.c
@@ -7583,6 +7598,20 @@ ttf2afm-macnames.obj: pdftexdir/macnames.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ttf2afm_CPPFLAGS) $(CPPFLAGS) $(ttf2afm_CFLAGS) $(CFLAGS) -c -o ttf2afm-macnames.obj `if test -f 'pdftexdir/macnames.c'; then $(CYGPATH_W) 'pdftexdir/macnames.c'; else $(CYGPATH_W) '$(srcdir)/pdftexdir/macnames.c'; fi`
 
+xetex-xetexextra.o: xetexdir/xetexextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetexextra.o -MD -MP -MF $(DEPDIR)/xetex-xetexextra.Tpo -c -o xetex-xetexextra.o `test -f 'xetexdir/xetexextra.c' || echo '$(srcdir)/'`xetexdir/xetexextra.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetexextra.Tpo $(DEPDIR)/xetex-xetexextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetexdir/xetexextra.c' object='xetex-xetexextra.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetexextra.o `test -f 'xetexdir/xetexextra.c' || echo '$(srcdir)/'`xetexdir/xetexextra.c
+
+xetex-xetexextra.obj: xetexdir/xetexextra.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetexextra.obj -MD -MP -MF $(DEPDIR)/xetex-xetexextra.Tpo -c -o xetex-xetexextra.obj `if test -f 'xetexdir/xetexextra.c'; then $(CYGPATH_W) 'xetexdir/xetexextra.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/xetexextra.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetexextra.Tpo $(DEPDIR)/xetex-xetexextra.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetexdir/xetexextra.c' object='xetex-xetexextra.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetexextra.obj `if test -f 'xetexdir/xetexextra.c'; then $(CYGPATH_W) 'xetexdir/xetexextra.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/xetexextra.c'; fi`
+
 xetex-xetexini.o: xetexini.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetexini.o -MD -MP -MF $(DEPDIR)/xetex-xetexini.Tpo -c -o xetex-xetexini.o `test -f 'xetexini.c' || echo '$(srcdir)/'`xetexini.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetexini.Tpo $(DEPDIR)/xetex-xetexini.Po
@@ -7624,20 +7653,6 @@ xetex-xetex_pool.obj: xetex_pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetex_pool.c' object='xetex-xetex_pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetex_pool.obj `if test -f 'xetex_pool.c'; then $(CYGPATH_W) 'xetex_pool.c'; else $(CYGPATH_W) '$(srcdir)/xetex_pool.c'; fi`
-
-xetex-xetexextra.o: xetexextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetexextra.o -MD -MP -MF $(DEPDIR)/xetex-xetexextra.Tpo -c -o xetex-xetexextra.o `test -f 'xetexextra.c' || echo '$(srcdir)/'`xetexextra.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetexextra.Tpo $(DEPDIR)/xetex-xetexextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetexextra.c' object='xetex-xetexextra.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetexextra.o `test -f 'xetexextra.c' || echo '$(srcdir)/'`xetexextra.c
-
-xetex-xetexextra.obj: xetexextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetexextra.obj -MD -MP -MF $(DEPDIR)/xetex-xetexextra.Tpo -c -o xetex-xetexextra.obj `if test -f 'xetexextra.c'; then $(CYGPATH_W) 'xetexextra.c'; else $(CYGPATH_W) '$(srcdir)/xetexextra.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetexextra.Tpo $(DEPDIR)/xetex-xetexextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetexextra.c' object='xetex-xetexextra.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetexextra.obj `if test -f 'xetexextra.c'; then $(CYGPATH_W) 'xetexextra.c'; else $(CYGPATH_W) '$(srcdir)/xetexextra.c'; fi`
 
 xetex-synctex-xe.o: synctex-xe.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-synctex-xe.o -MD -MP -MF $(DEPDIR)/xetex-synctex-xe.Tpo -c -o xetex-synctex-xe.o `test -f 'synctex-xe.c' || echo '$(srcdir)/'`synctex-xe.c
@@ -8862,9 +8877,6 @@ tex-web2c: tex.p $(web2c_texmf)
 tex-pool.c: tex.pool texd.h $(makecpool_stamp)
 	$(makecpool) tex >$@ || rm -f $@
 
-texextra.c: lib/texmfmp.c texd.h
-	sed s/TEX-OR-MF-OR-MP/tex/ $(srcdir)/lib/texmfmp.c >$@
-
 # Tangling TeX
 tex.p tex.pool: tex-tangle
 	@$(texmf_tangle) tex tex-final
@@ -8882,6 +8894,9 @@ trip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
 	rm -f trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
 	rm -rf tfm
+
+# We must create mfd.h before compiling mfextra.c.
+$(mf_OBJECTS) $(mf_nowin_OBJECTS): mfd.h
 $(windowlib): mfd.h $(srcdir)/window/*.c
 	cd window && $(MAKE) $(AM_MAKEFLAGS) libwindow.a
 
@@ -8895,9 +8910,6 @@ mf-web2c: mf.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed
 
 mf-pool.c: mf.pool mfd.h $(makecpool_stamp)
 	$(makecpool) mf >$@ || rm -f $@
-
-mfextra.c: lib/texmfmp.c mfd.h
-	sed s/TEX-OR-MF-OR-MP/mf/ $(srcdir)/lib/texmfmp.c >$@
 
 # Tangling Metafont
 mf.p mf.pool: mf-tangle
@@ -8977,13 +8989,6 @@ etex-web2c: etex.p $(web2c_texmf)
 etex-pool.c: etex.pool etexd.h $(makecpool_stamp)
 	$(makecpool) etex >$@ || rm -f $@
 
-etexextra.c: etexdir/etexextra.h lib/texmfmp.c etexd.h
-	sed s/TEX-OR-MF-OR-MP/etex/ $(srcdir)/lib/texmfmp.c >$@
-
-etexdir/etexextra.h: etexdir/etexextra.in etexdir/etex.version
-	sed s/ETEX-VERSION/`cat etexdir/etex.version`/ \
-	  $(srcdir)/etexdir/etexextra.in >$@
-
 # Tangling e-TeX
 etex.p etex.pool: etex-tangle
 	@$(texmf_tangle) etex etex
@@ -8991,10 +8996,10 @@ etex-tangle: tangle$(EXEEXT) etex.web etex.ch tangle-sh
 	@$(texmf_tangle) etex etex
 
 # Extract etex version
-etexdir/etex.version: etexdir/etex.ch
+etexdir/etex_version.h: etexdir/etex.ch
 	$(MKDIR_P) etexdir
 	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-//;s/'.*$$//" >etexdir/etex.version
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate etex.web
 etex.web: tie$(EXEEXT) $(etex_web_srcs)
@@ -9030,13 +9035,6 @@ ptex-web2c: ptex.p $(web2c_texmf) ptexdir/ptex.defines
 ptex-pool.c: ptex.pool ptexd.h $(makecpool_stamp)
 	$(makecpool) ptex >$@ || rm -f $@
 
-ptexextra.c: ptexdir/ptexextra.h lib/texmfmp.c ptexd.h
-	sed s/TEX-OR-MF-OR-MP/ptex/ $(srcdir)/lib/texmfmp.c >$@
-
-ptexdir/ptexextra.h: ptexdir/ptexextra.in ptexdir/ptex.version
-	sed s/PTEX-VERSION/`cat ptexdir/ptex.version`/ \
-	  $(srcdir)/ptexdir/ptexextra.in >$@
-
 # Tangling pTeX
 ptex.p ptex.pool: ptex-tangle
 	@$(texmf_tangle) ptex ptex
@@ -9044,10 +9042,10 @@ ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
 	@$(texmf_tangle) ptex ptex
 
 # Extract ptex version
-ptexdir/ptex.version: ptexdir/ptex-base.ch
+ptexdir/ptex_version.h: ptexdir/ptex-base.ch
 	$(MKDIR_P) ptexdir
 	grep "^@d TeX_banner=='This is pTeX" $(srcdir)/ptexdir/ptex-base.ch \
-	  | sed "s/^.*-//;s/'.*$$//" >ptexdir/ptex.version
+	  | sed "s/^.*-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate ptex.web
 ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
@@ -9096,15 +9094,11 @@ ptrip-clean:
 	rm -f ptrip.fot ptrip.log ptrip.dvi ptrip.typ
 	rm -f tripos.tex 8terminal.tex
 	rm -rf tfm
-
-# We must create libpdftex.a before building the pdftex_OBJECTS.
-$(pdftex_OBJECTS): libpdftex.a
+$(pdftex_OBJECTS): $(pdftex_prereq)
 $(pdftex_c_h): pdftex-web2c
 	@$(web2c) pdftex
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
 	@$(web2c) pdftex
-pdftexextra.c: pdftexd.h pdftexdir/pdftexextra.h lib/texmfmp.c pdftexd.h
-	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/lib/texmfmp.c >$@
 pdftex.p pdftex.pool: pdftex-tangle
 	@$(pdf_tangle) pdftex pdftex
 pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
@@ -9112,19 +9106,15 @@ pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 # Extract etex version
-pdftexdir/etex.version: etexdir/etex.ch
+pdftexdir/etex_version.h: etexdir/etex.ch
 	$(MKDIR_P) pdftexdir
 	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-//;s/'.*$$//" >$@
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 # Extract pdftex version
-pdftexdir/pdftex.version: pdftexdir/pdftex.web
+pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
 	$(MKDIR_P) pdftexdir
 	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
-	  | sed "s/^.*'-//;s/'.*$$//" >pdftexdir/pdftex.version
-pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version pdftexdir/etex.version
-	sed -e s/PDFTEX-VERSION/`cat pdftexdir/pdftex.version`/ \
-	    -e s/ETEX-VERSION/`cat pdftexdir/etex.version`/ \
-	  $(srcdir)/pdftexdir/pdftexextra.in >$@
+	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
@@ -9413,29 +9403,20 @@ xetex-web2c: xetex.p $(web2c_texmf) xetexdir/xetex.defines
 xetex_pool.c: xetex.pool xetexd.h
 	perl $(srcdir)/xetexdir/pool2c.pl $< $@
 
-xetexextra.c: xetexdir/xetexextra.h lib/texmfmp.c xetexd.h
-	sed s/TEX-OR-MF-OR-MP/xetex/ $(srcdir)/lib/texmfmp.c >$@
-
-xetexdir/xetexextra.h: xetexdir/xetexextra.in xetexdir/xetex.version xetexdir/etex.version
-	$(MKDIR_P) xetexdir
-	sed -e s/XETEX-VERSION/`cat xetexdir/xetex.version`/ \
-	    -e s/ETEX-VERSION/`cat xetexdir/etex.version`/ \
-	  $(srcdir)/xetexdir/xetexextra.in >$@
-
 xetex.p xetex.pool: xetex-tangle
 	@$(o_tangle) xetex
 xetex-tangle: ./otangle$(EXEEXT) xetex.web tangle-sh
 	@$(o_tangle) xetex
 
-xetexdir/etex.version: etexdir/etex.ch
+xetexdir/etex_version.h: etexdir/etex.ch
 	$(MKDIR_P) xetexdir
 	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-//;s/'.*$$//" >$@
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
-xetexdir/xetex.version: xetexdir/xetex.ch
+xetexdir/xetex_version.h: xetexdir/xetex.ch
 	$(MKDIR_P) xetexdir
 	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.ch \
-	  | sed "s/^.*'-//;s/'.*$$//" >$@
+	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 xetex.web: tie$(EXEEXT) $(xetex_web_srcs)
 	$(tie) -m xetex.web $(xetex_web_srcs)
@@ -9492,8 +9473,6 @@ aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines
 	@$(web2c) aleph
 aleph-pool.c: aleph.pool alephd.h $(makecpool_stamp)
 	$(makecpool) aleph >$@ || rm -f $@
-alephextra.c: lib/texmfmp.c alephdir/alephextra.h alephd.h
-	sed s/TEX-OR-MF-OR-MP/aleph/ $(srcdir)/lib/texmfmp.c >$@
 
 # Tangling Aleph
 aleph.p aleph.pool: aleph-tangle

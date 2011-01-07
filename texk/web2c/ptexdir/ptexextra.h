@@ -1,9 +1,11 @@
-/* ptexextra.in: banner etc. for pTeX.
+/* ptexextra.h: banner etc. for pTeX.
 
    This is included by pTeX, from ptexextra.c
 */
 
-#define BANNER "This is pTeX, Version 3.1415926-PTEX-VERSION"
+#include <ptexdir/ptex_version.h> /* for PTEX_VERSION */
+
+#define BANNER "This is pTeX, Version 3.1415926-" PTEX_VERSION
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR NULL
 #define PROGRAM_HELP PTEXHELP

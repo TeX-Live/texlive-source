@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -49,11 +49,12 @@ ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
-nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h
-ptex_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
+nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexdir/ptex_version.h
+dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h \
+	ptexdir/kanji.c ptexdir/kanji.h
 
-# We must create ptexd.h before building the ptex_OBJECTS.
-ptex_prereq = ptexd.h
+# We must create ptexd.h and ptexdir/ptex_version.h before building the ptex_OBJECTS.
+ptex_prereq = ptexd.h ptexdir/ptex_version.h
 $(ptex_OBJECTS): $(ptex_prereq)
 
 $(ptex_c_h): ptex-web2c
@@ -64,13 +65,6 @@ ptex-web2c: ptex.p $(web2c_texmf) ptexdir/ptex.defines
 ptex-pool.c: ptex.pool ptexd.h $(makecpool_stamp)
 	$(makecpool) ptex >$@ || rm -f $@
 
-ptexextra.c: ptexdir/ptexextra.h lib/texmfmp.c ptexd.h
-	sed s/TEX-OR-MF-OR-MP/ptex/ $(srcdir)/lib/texmfmp.c >$@
-
-ptexdir/ptexextra.h: ptexdir/ptexextra.in ptexdir/ptex.version
-	sed s/PTEX-VERSION/`cat ptexdir/ptex.version`/ \
-	  $(srcdir)/ptexdir/ptexextra.in >$@
-
 # Tangling pTeX
 ptex.p ptex.pool: ptex-tangle
 	@$(texmf_tangle) ptex ptex
@@ -78,10 +72,10 @@ ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
 	@$(texmf_tangle) ptex ptex
 
 # Extract ptex version
-ptexdir/ptex.version: ptexdir/ptex-base.ch
+ptexdir/ptex_version.h: ptexdir/ptex-base.ch
 	$(MKDIR_P) ptexdir
 	grep "^@d TeX_banner=='This is pTeX" $(srcdir)/ptexdir/ptex-base.ch \
-	  | sed "s/^.*-//;s/'.*$$//" >ptexdir/ptex.version
+	  | sed "s/^.*-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate ptex.web
 ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
@@ -97,11 +91,10 @@ ptex_ch_srcs = \
 	ptexdir/ptex-base.ch \
 	tex-binpool.ch
 
-EXTRA_DIST += $(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptexextra.in \
-	ptexdir/ptex.defines lib/texmfmp.c
+EXTRA_DIST += $(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptex.defines
 
 DISTCLEANFILES += $(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c \
-	ptex.p ptex.pool ptex-tangle ptexdir/ptex.version
+	ptex.p ptex.pool ptex-tangle
 
 ## pBibTeX
 ## 

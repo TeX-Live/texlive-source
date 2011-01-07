@@ -1,3 +1,14 @@
+2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lib/texmfmp.c: Removed the initial two #includes;
+	this file is now #included from texextra.c for TeX,
+	from mfextra.c for Metafont, ...
+
+	* texextra.c (new): #include <texd.h> and <lib/texmfmp.c>.
+	* mfextra.c (new): #include <mfd.h> and <lib/texmfmp.c>.
+
+	* am/texmf.am: {tex,mf}extra.c are now distributed.
+
 2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (bin_links): New variable for required symlinks.

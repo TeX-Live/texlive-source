@@ -1,6 +1,6 @@
 ## texk/web2c/alephdir/am/aleph.am: Makefile fragment for Aleph.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Aleph
@@ -18,10 +18,11 @@ aleph_CFLAGS = $(WARNING_CFLAGS)
 
 # Aleph C sources
 aleph_c_h = alephini.c aleph0.c alephcoerce.h alephd.h
-nodist_aleph_SOURCES = $(aleph_c_h) aleph-pool.c alephextra.c
-aleph_SOURCES = \
+nodist_aleph_SOURCES = $(aleph_c_h) aleph-pool.c
+dist_aleph_SOURCES = \
 	alephdir/aleph.c \
 	alephdir/alephbis.c \
+	alephdir/alephextra.c \
 	alephdir/alephextra.h \
 	alephdir/alephmem.h
 
@@ -34,8 +35,6 @@ aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines
 	@$(web2c) aleph
 aleph-pool.c: aleph.pool alephd.h $(makecpool_stamp)
 	$(makecpool) aleph >$@ || rm -f $@
-alephextra.c: lib/texmfmp.c alephdir/alephextra.h alephd.h
-	sed s/TEX-OR-MF-OR-MP/aleph/ $(srcdir)/lib/texmfmp.c >$@
 
 # Tangling Aleph
 aleph.p aleph.pool: aleph-tangle
@@ -89,7 +88,7 @@ aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)
 	$(tie) -c aleph.ch aleph.web $(aleph_ch_srcs)
 
 ##
-EXTRA_DIST += $(aleph_web_srcs) $(aleph_ch_srcs) lib/texmfmp.c
+EXTRA_DIST += $(aleph_web_srcs) $(aleph_ch_srcs)
 
 DISTCLEANFILES += $(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c \
 	aleph.p aleph.pool aleph-tangle

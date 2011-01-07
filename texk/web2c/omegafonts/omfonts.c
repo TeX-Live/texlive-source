@@ -123,21 +123,17 @@ main (int argc, string *argv)
     int option_index = 0;
 
     name_program = xbasename(argv[0]);
-    if (!strcmp(name_program, "ofm2opl") ||
-        !strcmp(name_program, "OFM2OPL.EXE")) {
+#define PROG_IS(s) !strcmp(name_program, s) || !strcasecmp(name_program, s ".exe")
+    if (PROG_IS("ofm2opl"))
         program = PROG_OFM2OPL;
-    } else if (!strcmp(name_program, "opl2ofm") ||
-               !strcmp(name_program, "OPL2OFM.EXE")) {
+    else if (PROG_IS("opl2ofm"))
         program = PROG_OPL2OFM;
-    } else if (!strcmp(name_program, "ovf2ovp") ||
-               !strcmp(name_program, "OVF2OVP.EXE")) {
+    else if (PROG_IS("ovf2ovp"))
         program = PROG_OVF2OVP;
-    } else if (!strcmp(name_program, "ovp2ovf") ||
-               !strcmp(name_program, "OVP2OVF.EXE")) {
+    else if (PROG_IS("ovp2ovf"))
         program = PROG_OVP2OVF;
-    } else {
+    else
         program = PROG_OMFONTS;
-    }
 
     do {
         getopt_return_val =

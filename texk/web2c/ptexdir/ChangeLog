@@ -1,3 +1,14 @@
+2011-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptexextra.in: Renamed ...
+	* ptexextra.h: into this; #include ptex_version.h
+	for PTEX_VERSION.
+
+	* ptexextra.c (new): #include <ptexd.h> and <lib/texmfmp.c>.
+
+	* am/ptex.am: ptexextra.[ch] are now distributed;
+	create ptex_version.h instead of ptex.version. 
+
 2010-12-31  Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Bug fix and accent Kanji.
