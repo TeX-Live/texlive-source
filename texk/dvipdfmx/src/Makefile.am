@@ -8,7 +8,9 @@ AM_CPPFLAGS =
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = dvipdfmx
+if !WIN32
 dist_bin_SCRIPTS = dvipdft
+endif !WIN32
 
 dvipdfmx_SOURCES = \
 	agl.c bmpimage.c cff.c cff_dict.c cid.c cidtype0.c cidtype2.c \

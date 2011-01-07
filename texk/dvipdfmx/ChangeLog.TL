@@ -1,6 +1,14 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2010-12-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dvipdfmx.c: Check for argv[0] with .exe via strcasecmp().
+
+2010-12-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, src/Makefile.am: Ignore shell script for WIN32.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid using "%hu" with fscanf/sscanf, for older Solaris.

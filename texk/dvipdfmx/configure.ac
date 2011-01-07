@@ -76,6 +76,9 @@ if test "x$enable_texlive_build" != xyes || test ! -d $srdir/../kpathsea; then
   CHO_CHECK_LIBPAPER
 fi
 
+KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+
 AC_CONFIG_FILES([Makefile data/Makefile src/Makefile])
 
 AC_OUTPUT
