@@ -1,3 +1,8 @@
+2011-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import zziplib-0.13.60.
+	* configure.ac: Adapted.
+
 2010-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import zziplib-0.13.59.
