@@ -569,6 +569,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+WIN32_WRAP_FALSE
+WIN32_WRAP_TRUE
 WIN32_FALSE
 WIN32_TRUE
 LN_S
@@ -3379,6 +3381,14 @@ else
   WIN32_FALSE=
 fi
 
+ if test -r $srcdir/../texlive/w32_wrapper/runscript.exe; then
+  WIN32_WRAP_TRUE=
+  WIN32_WRAP_FALSE='#'
+else
+  WIN32_WRAP_TRUE='#'
+  WIN32_WRAP_FALSE=
+fi
+
 
 ac_config_files="$ac_config_files Makefile"
 
@@ -3550,6 +3560,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${WIN32_TRUE}" && test -z "${WIN32_FALSE}"; then
   as_fn_error $? "conditional \"WIN32\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${WIN32_WRAP_TRUE}" && test -z "${WIN32_WRAP_FALSE}"; then
+  as_fn_error $? "conditional \"WIN32_WRAP\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

@@ -5,8 +5,7 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-if !WIN32
-dist_bin_SCRIPTS = \
+shell_scripts = \
 	allcm \
 	allneeded \
 	dvi2fax \
@@ -26,7 +25,25 @@ dist_bin_SCRIPTS = \
 	texlinks \
 	updmap \
 	updmap-sys
+
+## Handled as alias by runscript.tlu
+win32_aliases = \
+	fontinst.exe
+
+if WIN32
+if WIN32_WRAP
+## We treat the WIN32 aliases as SCRIPTS to avoid automatic build rules
+nodist_bin_SCRIPTS = $(win32_aliases)
+runscript = $(srcdir)/../texlive/w32_wrapper/runscript.exe
+$(win32_aliases): $(runscript)
+	$(LN_S) $(runscript) $@
+endif WIN32_WRAP
+else !WIN32
+nodist_bin_SCRIPTS = $(shell_scripts)
 endif !WIN32
+
+EXTRA_DIST = $(shell_scripts)
+CLEANFILES = $(win32_aliases)
 
 dist_man1_MANS = \
 	allcm.man \
@@ -119,7 +136,7 @@ endif !WIN32
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
 	done
 
-EXTRA_DIST = \
+EXTRA_DIST += \
 	README.texdoctk
 
 ## Not used

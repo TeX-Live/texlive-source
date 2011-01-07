@@ -1150,19 +1150,11 @@ $formatsForHyphenFmt"
       ;;
 
     init)
-      if test -n "$texconfig_sys"; then  # set by texconfig-sys
-        fmtutil=fmtutil-sys
-        updmap=updmap-sys
-      else
-        fmtutil=fmtutil
-        updmap=updmap
-      fi
-      
       case $2 in
         "")
-          if $fmtutil --all \
+          if fmtutil --all \
              && texlinks --multiplatform \
-             && $updmap; then
+             && updmap; then
             :
           else
             rc=1
@@ -1171,7 +1163,7 @@ $formatsForHyphenFmt"
         *)
           shift 1
           for i in "$@"; do
-            $fmtutil --byfmt "$i" || rc=1
+            fmtutil --byfmt "$i" || rc=1
           done
           ;;
       esac

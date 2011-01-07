@@ -1,3 +1,11 @@
+2011-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac [WIN32]: Install wrapper binary for
+	fontinst (handled as alias by runscript.tlu).
+
+	* texconfig, texconfig-sys: Drop texconfig_sys shell variable;
+	now done via TEXMFVAR and TEXMFCONFIG in the environment.
+
 2011-01-04  Karl Berry  <karl@tug.org>
 
 	* updmap: add many more verbose messages, to help understand what
