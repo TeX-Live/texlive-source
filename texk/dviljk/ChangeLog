@@ -1,3 +1,7 @@
+2010-12-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Ignore shell script for WIN32.
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi2xx.c (mkdtemp): Declare as static.  [WIN32] Define mkdir
