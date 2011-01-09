@@ -204,4 +204,10 @@
           special cases and to avoid hardcoding of texmf* file paths
         - added a2ping to special cases (requires -x switch to Perl)
         - set ASYMPTOTE_GS (for asy) to full path to tlgs
+    2011/01/09
+        - removed tex4ht commands starting with ht from mk4ht aliases; 
+          they have their own scripts and mk4ht calls them internally, 
+          so aliasing results in an infinite recursion
+        - removed alias for fontinst (no fontinst.exe any more)
+        - fixed GUI-mode interpreter for Ruby
 

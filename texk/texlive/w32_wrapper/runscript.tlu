@@ -217,6 +217,12 @@ local docstr = [[
           special cases and to avoid hardcoding of texmf* file paths
         - added a2ping to special cases (requires -x switch to Perl)
         - set ASYMPTOTE_GS (for asy) to full path to tlgs
+    2011/01/09
+        - removed tex4ht commands starting with ht from mk4ht aliases; 
+          they have their own scripts and mk4ht calls them internally, 
+          so aliasing results in an infinite recursion
+        - removed alias for fontinst (no fontinst.exe any more)
+        - fixed GUI-mode interpreter for Ruby
 ]]
 
 -- HELPER SUBROUTINES --
@@ -260,10 +266,12 @@ local function search_path(fname, PATH, PATHEXT)
 end
 
 -- tests for tex4ht command (as given in mk4ht.pl)
+-- except for commands starting with 'ht' (they have their own scripts)
 local function is_tex4ht_command(progname)
-  if (progname == 'ht') then return true end
-  for p in string.gmatch('ht xh uxh xhm mz oo es js jm tei teim db dbm w jh jh1', '%S+') do
-    for q in string.gmatch('context latex tex texi xelatex xetex', '%S+') do
+  local prefixes = 'xh uxh xhm mz oo es js jm tei teim db dbm w jh jh1'
+  local formats = 'context latex tex texi xelatex xetex'
+  for p in string.gmatch(prefixes, '%S+') do
+    for q in string.gmatch(formats, '%S+') do
       if (progname == p..q) then 
         -- we have a hit, but not all combinations are valid
         return (p ~= 'teim' and p ~=  'dbm') or (q ~= 'xelatex' and q~= 'xetex')
@@ -474,7 +482,7 @@ if guimode then
   extension_map['.jar'][1] = 'javaw.exe '   .. extension_map['.jar'][1]
   extension_map['.pl' ][1] = 'wperl.exe '   .. extension_map['.pl' ][1]
   extension_map['.py' ][1] = 'pythonw.exe ' .. extension_map['.py' ][1]
-  extension_map['.py' ][1] = 'rubyw.exe '   .. extension_map['.py' ][1]
+  extension_map['.rb' ][1] = 'rubyw.exe '   .. extension_map['.rb' ][1]
   extension_map['.tcl'][1] = 'wish.exe wish85.exe wish84.exe ' .. extension_map['.tcl'][1]
   extension_map['.vbs'][1] = 'wscript.exe ' .. extension_map['.vbs'][1]
 end
@@ -485,7 +493,7 @@ extension_map['.js']  = extension_map['.vbs']
 
 local ARGV = nil
 
--- special cases
+-- special cases (aliases)
 
 if is_tex4ht_command(progname) then
   argline = progname .. ' ' .. argline
@@ -515,8 +523,6 @@ elseif progname == 'dviout' then
               [[^r\vf\\^s.vf;^r\ovf\\^s.ovf;^r\tfm\\^s.tfm" "-TEXROOT=']] ..
               table.concat(texrt, ';') .. [['"]]
   ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
-elseif progname == 'fontinst' then
-  ARGV = {[0]=BINDIR..'/tex.exe', 'tex', '-progname=fontinst', '-fmt=tex'}
 elseif progname == 'psv' then
   argline = '-sINPUT='..argline
   ARGV = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
