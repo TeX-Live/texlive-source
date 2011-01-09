@@ -1,3 +1,8 @@
+2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* enctex.ch (new): Split enc\TeX off tex.ch (not for pTeX).
+	* am/texmf.am (tex_ch_srcs): Added enctex.ch.
+
 2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lib/texmfmp.c: Removed the initial two #includes;

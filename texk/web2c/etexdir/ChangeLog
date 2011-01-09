@@ -1,3 +1,9 @@
+2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am (etex_web_srcs): Removed etex.fix.
+	(etex_ch_srcs): Added enctex.ch.
+	* etex.fix: Deleted.
+
 2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etexextra.in: Renamed ...

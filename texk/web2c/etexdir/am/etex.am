@@ -50,8 +50,7 @@ etex.web: tie$(EXEEXT) $(etex_web_srcs)
 	$(tie) -m etex.web $(etex_web_srcs)
 etex_web_srcs = \
 	tex.web \
-	etexdir/etex.ch \
-	etexdir/etex.fix
+	etexdir/etex.ch
 
 # Generate etex.ch
 etex.ch: tie$(EXEEXT) etex.web $(etex_ch_srcs)
@@ -59,6 +58,7 @@ etex.ch: tie$(EXEEXT) etex.web $(etex_ch_srcs)
 etex_ch_srcs = \
 	etexdir/tex.ch0 \
 	tex.ch \
+	enctex.ch \
 	$(etex_ch_synctex) \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \

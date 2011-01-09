@@ -1,3 +1,7 @@
+2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptex-base.ch: Adapt to removal of encTeX changes from tex.ch.
+
 2011-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexextra.in: Renamed ...

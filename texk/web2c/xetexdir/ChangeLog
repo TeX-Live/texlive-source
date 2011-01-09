@@ -1,3 +1,7 @@
+2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am (xetex_web_srcs): Added enctex.ch.
+
 2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xetexextra.in: Renamed ...

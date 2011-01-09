@@ -1560,6 +1560,7 @@ tex_prereq = texd.h $(am__append_54)
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
+	enctex.ch \
 	$(tex_ch_synctex) \
 	tex-binpool.ch
 
@@ -1640,12 +1641,12 @@ dist_etex_SOURCES = etexdir/etexextra.c etexdir/etexextra.h \
 etex_prereq = etexd.h etexdir/etex_version.h $(am__append_59)
 etex_web_srcs = \
 	tex.web \
-	etexdir/etex.ch \
-	etexdir/etex.fix
+	etexdir/etex.ch
 
 etex_ch_srcs = \
 	etexdir/tex.ch0 \
 	tex.ch \
+	enctex.ch \
 	$(etex_ch_synctex) \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
@@ -1740,6 +1741,7 @@ pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
 	tex.ch \
+	enctex.ch \
 	$(pdftex_ch_synctex) \
 	pdftexdir/pdftex.ch
 
@@ -2259,6 +2261,7 @@ xetex_web_srcs = \
 	etexdir/etex.ch \
 	etexdir/tex.ch0 \
 	tex.ch \
+	enctex.ch \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
 	$(xetex_ch_synctex) \
