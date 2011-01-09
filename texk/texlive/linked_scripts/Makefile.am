@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## TeX Live's extra scripts.
@@ -51,7 +51,7 @@ texmf_dist_perl_scripts = \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
 	authorindex/authorindex \
-	bengali/ebong.py \
+	ebong/ebong.py \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
