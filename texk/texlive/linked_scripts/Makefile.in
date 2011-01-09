@@ -204,7 +204,7 @@ texmf_dist_perl_scripts = \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
 	authorindex/authorindex \
-	bengali/ebong.py \
+	ebong/ebong.py \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
