@@ -4,7 +4,8 @@
 # Copyright (C) Angus J. C. Duggan 1991-1995
 # See file LICENSE for details.
 
-$prog = ($0 =~ s=.*/==);
+$0 =~ s=.*/==;
+$prog = $0;
 
 %resources = ();		# list of resources included
 %merge = ();			# list of resources extracted this time
@@ -27,9 +28,9 @@ while (@ARGV) {
 
 if (defined($ENV{TMPDIR})) {	# set body file name
    $body = "$ENV{TMPDIR}/body$$.ps";
-elsif (defined($ENV{TEMP})) {
+} elsif (defined($ENV{TEMP})) {
    $body = "$ENV{TEMP}/body$$.ps";
-elsif (defined($ENV{TMP})) {
+} elsif (defined($ENV{TMP})) {
    $body = "$ENV{TMP}/body$$.ps";
 } else {
    $body = "body$$.ps";

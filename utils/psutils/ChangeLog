@@ -1,3 +1,7 @@
+2011-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Install linked perl scripts.
+
 2010-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Remove the non-free files psutils-1.17/md{68,71}_0.ps.

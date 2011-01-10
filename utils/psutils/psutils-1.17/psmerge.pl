@@ -5,7 +5,8 @@
 # Copyright (C) Angus J. C. Duggan 1991-1995
 # See file LICENSE for details.
 
-$prog = ($0 =~ s=.*/==);
+$0 =~ s=.*/==;
+$prog = $0;
 
 while ($ARGV[0] =~ /^-/) {
    $_ = shift;

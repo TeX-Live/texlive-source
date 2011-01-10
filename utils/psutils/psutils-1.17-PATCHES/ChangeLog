@@ -1,3 +1,10 @@
+2011-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-TEMPDIR: Fix broken perl syntax.
+	* patch-09-PERL (new): Avoid problems with Akira's perl.
+
+	Mail from Akira Sat, 08 Jan 2011 14:43:53.
+
 2010-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-07-TEMPDIR (new): Honor $TMPDIR, $TEMP, and $TMP.

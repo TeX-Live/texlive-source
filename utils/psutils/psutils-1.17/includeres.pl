@@ -4,7 +4,8 @@
 # Copyright (C) Angus J. C. Duggan 1991-1995
 # See file LICENSE for details.
 
-$prog = ($0 =~ s=.*/==);
+$0 =~ s=.*/==;
+$prog = $0;
 
 %extn = ("font", ".pfa", "file", ".ps", "procset", ".ps", # resource extns
 	 "pattern", ".pat", "form", ".frm", "encoding", ".enc");
