@@ -1,3 +1,7 @@
+2011-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Install linked perl script.
+
 2010-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import ps2eps-1.68.

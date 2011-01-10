@@ -1,3 +1,8 @@
+2011-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Renamed bin/ps2eps => bin/ps2eps.pl.
+	* patch-03-PERL: Adapted.
+
 2010-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-whitespace:
