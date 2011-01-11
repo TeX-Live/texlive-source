@@ -31,6 +31,13 @@ $(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
 ## Rebuild libptexenc
 @PTEXENC_RULE@
 
+## libkanji.a for pTeX and e-pTeX
+##
+EXTRA_LIBRARIES += libkanji.a
+libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
+libkanji_a_CPPFLAGS = $(ptex_cppflags)
+libkanji_a_CFLAGS = $(WARNING_CFLAGS)
+
 ## pTeX
 ##
 if PTEX
@@ -45,13 +52,12 @@ ptex_CPPFLAGS = $(ptex_cppflags)
 ptex_CFLAGS = $(WARNING_CFLAGS)
 
 # With --enable-ipc, pTeX may need to link with -lsocket.
-ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs)
+ptex_LDADD = libkanji.a $(ptex_ldadd) $(ipc_socketlibs)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
 nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexdir/ptex_version.h
-dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h \
-	ptexdir/kanji.c ptexdir/kanji.h
+dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h
 
 # We must create ptexd.h and ptexdir/ptex_version.h before building the ptex_OBJECTS.
 ptex_prereq = ptexd.h ptexdir/ptex_version.h

@@ -4,7 +4,7 @@
 
 #define	EXTERN /* Instantiate data from texd.h here.  */
 
-/* This file defines TeX.  */
+/* This file defines TeX and onlyTeX.  */
 #include <texd.h>
 
 /* Hand-coded routines for TeX or Metafont in C.  */

@@ -1,0 +1,8 @@
+% Just temprarily
+
+@x
+@!def_ref : pointer; {reference count of token list being defined}
+@y
+@!def_ref : pointer; {reference count of token list being defined}
+@!etex_p : boolean;
+@z

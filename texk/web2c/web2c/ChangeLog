@@ -1,3 +1,8 @@
+2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert, splitup.c: Add e-pTeX.
+	* splitup.c: #define onlyTeX in texd.h.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reorganize web2c headers.

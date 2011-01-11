@@ -1,3 +1,7 @@
+2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am: Build libkanji.c from kanji.c, for pTeX and e-pTeX.
+
 2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Adapt to removal of encTeX changes from tex.ch.

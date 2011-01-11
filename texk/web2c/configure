@@ -713,6 +713,10 @@ ALEPH_SYNCTEX_FALSE
 ALEPH_SYNCTEX_TRUE
 ALEPH_FALSE
 ALEPH_TRUE
+EPTEX_SYNCTEX_FALSE
+EPTEX_SYNCTEX_TRUE
+EPTEX_FALSE
+EPTEX_TRUE
 PTEX_SYNCTEX_FALSE
 PTEX_SYNCTEX_TRUE
 PTEX_FALSE
@@ -891,6 +895,7 @@ enable_omfonts
 enable_tex
 enable_etex
 enable_ptex
+enable_eptex
 enable_aleph
 enable_pdftex
 enable_luatex
@@ -1604,6 +1609,7 @@ Optional Features:
   --disable-tex           do not compile and install TeX
   --enable-etex           compile and install e-TeX
   --disable-ptex          do not compile and install pTeX
+  --enable-eptex          compile and install e-pTeX
   --disable-aleph         do not compile and install Aleph
   --disable-pdftex        do not compile and install pdfTeX
   --disable-luatex        do not compile and install luaTeX
@@ -17333,6 +17339,20 @@ esac
 test "x$enable_web2c:$enable_ptex" = xyes:yes && {
   need_ptexenc=yes
 }
+# Check whether --enable-eptex was given.
+if test "${enable_eptex+set}" = set; then :
+  enableval=$enable_eptex;
+fi
+case $enable_eptex in #(
+  yes|no) :
+     ;; #(
+  *) :
+    enable_eptex=no ;;
+esac
+
+test "x$enable_web2c:$enable_eptex" = xyes:yes && {
+  need_ptexenc=yes
+}
 # Check whether --enable-aleph was given.
 if test "${enable_aleph+set}" = set; then :
   enableval=$enable_aleph;
@@ -18351,6 +18371,20 @@ fi
 else
   PTEX_SYNCTEX_TRUE='#'
   PTEX_SYNCTEX_FALSE=
+fi
+ if test "x$enable_eptex" = xyes; then
+  EPTEX_TRUE=
+  EPTEX_FALSE='#'
+else
+  EPTEX_TRUE='#'
+  EPTEX_FALSE=
+fi
+ if false; then
+  EPTEX_SYNCTEX_TRUE=
+  EPTEX_SYNCTEX_FALSE='#'
+else
+  EPTEX_SYNCTEX_TRUE='#'
+  EPTEX_SYNCTEX_FALSE=
 fi
  if test "x$enable_aleph" = xyes; then
   ALEPH_TRUE=
@@ -22849,6 +22883,14 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PTEX_SYNCTEX_TRUE}" && test -z "${PTEX_SYNCTEX_FALSE}"; then
   as_fn_error $? "conditional \"PTEX_SYNCTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${EPTEX_TRUE}" && test -z "${EPTEX_FALSE}"; then
+  as_fn_error $? "conditional \"EPTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${EPTEX_SYNCTEX_TRUE}" && test -z "${EPTEX_SYNCTEX_FALSE}"; then
+  as_fn_error $? "conditional \"EPTEX_SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ALEPH_TRUE}" && test -z "${ALEPH_FALSE}"; then
