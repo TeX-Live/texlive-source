@@ -97,12 +97,3 @@ if PDFTEX
 TESTS += $(pdftex_tests)
 endif PDFTEX
 
-## Not used
-##
-EXTRA_DIST += pdftexdir/pdftex.mak
-
-## Eventually delete these files
-##
-EXTRA_DIST += \
-	pdftexdir/pdftex.mk
-

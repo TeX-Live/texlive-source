@@ -107,5 +107,5 @@ EXTRA_DIST += \
 
 ## Eventually delete these files
 ##
-EXTRA_DIST += alephdir/aleph-pool.h alephdir/aleph.mk
+EXTRA_DIST += alephdir/aleph-pool.h
 

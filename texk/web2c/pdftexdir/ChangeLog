@@ -1,3 +1,7 @@
+2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.mak, pdftex.mk (removed): Obsolete.
+
 2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/pdftex.am (pdftex_ch_srcs): Added enctex.ch.

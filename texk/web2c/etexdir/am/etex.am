@@ -119,11 +119,3 @@ EXTRA_DIST += \
 	etexdir/etrip/texmf.cnf \
 	etexdir/etrip/trip2.in
 
-## Not used
-##
-EXTRA_DIST += etexdir/etex.mak
-
-## Eventually delete these files
-##
-EXTRA_DIST += etexdir/etex.mk
-

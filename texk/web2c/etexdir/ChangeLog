@@ -1,3 +1,7 @@
+2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.mak, etex.mk (removed): Obsolete.
+
 2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am (etex_web_srcs): Removed etex.fix.

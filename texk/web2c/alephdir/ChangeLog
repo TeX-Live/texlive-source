@@ -1,3 +1,7 @@
+2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* aleph.mk (removed): Obsolete.
+
 2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* alephextra.c (new): #include <alephd.h> and <lib/texmfmp.c>.
