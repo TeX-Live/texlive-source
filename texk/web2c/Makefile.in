@@ -1282,8 +1282,9 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/tests/min10.pl ptexdir/tests/min10.tfm \
 	ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm \
 	ptexdir/ptrip.diffs $(eptex_web_srcs) $(eptex_ch_srcs) \
-	eptexdir/eptex.defines eptexdir/ChangeLog $(pdftex_ch_srcs) \
-	etexdir/etex.ch pdftexdir/pdftex.defines pdftexdir/pdftex.h \
+	eptexdir/eptex.defines eptexdir/ChangeLog \
+	eptexdir/ChangeLog.TL $(pdftex_ch_srcs) etexdir/etex.ch \
+	pdftexdir/pdftex.defines pdftexdir/pdftex.h \
 	pdftexdir/ChangeLog pdftexdir/NEWS pdftexdir/README \
 	pdftexdir/change-files.txt $(pdftex_tests) \
 	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \

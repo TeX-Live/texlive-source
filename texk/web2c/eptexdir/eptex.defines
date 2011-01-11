@@ -1,4 +1,8 @@
 { defined at kanji.c, kanji.h, ptexenc/ptexenc.h }
+@define function BYTE1 ();
+@define function BYTE2 ();
+@define function BYTE3 ();
+@define function BYTE4 ();
 @define function Hi ();
 @define function Lo ();
 
@@ -19,6 +23,8 @@
 @define function fromEUC ();
 @define function fromSJIS ();
 @define function fromKUTEN ();
+@define function UCStoUTF8 ();
+@define function toUCS ();
 
 @define function checkkanji ();
 @define function iskanji ();
@@ -27,3 +33,6 @@
 @define function ismultiprn ();
 @define function calcpos ();
 @define function kcatcodekey ();
+
+@define function getintone ();
+@define procedure setintone ();

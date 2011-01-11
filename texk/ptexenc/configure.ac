@@ -21,8 +21,8 @@ dnl   After a release, set ptexenc_lib_dev to "dev", to distinguish
 dnl   binaries built between releases.
 
 m4_define([ptexenc_lib_major], [1])[]dnl
-m4_define([ptexenc_lib_minor], [1])[]dnl
-m4_define([ptexenc_lib_micro], [1])[]dnl
+m4_define([ptexenc_lib_minor], [2])[]dnl
+m4_define([ptexenc_lib_micro], [0])[]dnl
 m4_define([ptexenc_lib_devel], [])[]dnl or "dev"
 m4_define([ptexenc_version], [ptexenc_lib_major.ptexenc_lib_minor.ptexenc_lib_micro[]ptexenc_lib_devel])[]dnl
 

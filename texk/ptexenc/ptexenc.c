@@ -264,7 +264,7 @@ static long fromUCS(long kcode)
 }
 
 /* internal (EUC/SJIS) to UCS code conversion */
-static long toUCS(long kcode)
+long toUCS(long kcode)
 {
     return JIStoUCS2(toJIS(kcode));
 }
