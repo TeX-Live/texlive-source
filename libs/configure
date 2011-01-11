@@ -783,8 +783,6 @@ with_system_t1lib
 with_t1lib_includes
 with_t1lib_libdir
 with_system_libpng
-with_libpng_includes
-with_libpng_libdir
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
@@ -1604,11 +1602,8 @@ Optional Packages:
   --with-t1lib-includes=DIR
                           t1lib headers installed in DIR
   --with-t1lib-libdir=DIR t1lib library installed in DIR
-  --with-system-libpng    use installed libpng headers and library
-  --with-libpng-includes=DIR
-                          libpng headers installed in DIR
-  --with-libpng-libdir=DIR
-                          libpng library installed in DIR
+  --with-system-libpng    use installed libpng headers and library (requires
+                          pkg-config)
   --with-system-zlib      use installed zlib headers and library
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
@@ -4784,16 +4779,6 @@ fi
 # Check whether --with-system-libpng was given.
 if test "${with_system_libpng+set}" = set; then :
   withval=$with_system_libpng;
-fi
-
-# Check whether --with-libpng-includes was given.
-if test "${with_libpng_includes+set}" = set; then :
-  withval=$with_libpng_includes;
-fi
-
-# Check whether --with-libpng-libdir was given.
-if test "${with_libpng_libdir+set}" = set; then :
-  withval=$with_libpng_libdir;
 fi
 if test "x$with_system_libpng" = x; then
   if test -f $srcdir/../libs/libpng/configure; then

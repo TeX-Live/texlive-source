@@ -621,6 +621,7 @@ LIBPNG_RULE
 LIBPNG_DEPEND
 LIBPNG_LIBS
 LIBPNG_INCLUDES
+PKG_CONFIG
 ZLIB_RULE
 ZLIB_DEPEND
 ZLIB_LIBS
@@ -763,8 +764,6 @@ with_system_zlib
 with_zlib_includes
 with_zlib_libdir
 with_system_libpng
-with_libpng_includes
-with_libpng_libdir
 with_paper
 '
       ac_precious_vars='build_alias
@@ -1428,11 +1427,8 @@ Optional Packages:
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
   --with-zlib-libdir=DIR  zlib library installed in DIR
-  --with-system-libpng    use installed libpng headers and library
-  --with-libpng-includes=DIR
-                          libpng headers installed in DIR
-  --with-libpng-libdir=DIR
-                          libpng library installed in DIR
+  --with-system-libpng    use installed libpng headers and library (requires
+                          pkg-config)
   --with-paper=DIR        use paper include/library files from DIR
 
 Some influential environment variables:
@@ -15042,29 +15038,110 @@ ${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_PKG_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$PKG_CONFIG"; then
+  ac_cv_prog_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_PKG_CONFIG="${ac_tool_prefix}pkg-config"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+PKG_CONFIG=$ac_cv_prog_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
+$as_echo "$PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_PKG_CONFIG"; then
+  ac_ct_PKG_CONFIG=$PKG_CONFIG
+  # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_PKG_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_PKG_CONFIG"; then
+  ac_cv_prog_ac_ct_PKG_CONFIG="$ac_ct_PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_PKG_CONFIG="pkg-config"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_PKG_CONFIG=$ac_cv_prog_ac_ct_PKG_CONFIG
+if test -n "$ac_ct_PKG_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_PKG_CONFIG" >&5
+$as_echo "$ac_ct_PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_PKG_CONFIG" = x; then
+    PKG_CONFIG="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    PKG_CONFIG=$ac_ct_PKG_CONFIG
+  fi
+else
+  PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
+fi
+
 ## _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags
 
 # Check whether --with-system-libpng was given.
 if test "${with_system_libpng+set}" = set; then :
   withval=$with_system_libpng;
 fi
-
-# Check whether --with-libpng-includes was given.
-if test "${with_libpng_includes+set}" = set; then :
-  withval=$with_libpng_includes;
-fi
-
-# Check whether --with-libpng-libdir was given.
-if test "${with_libpng_libdir+set}" = set; then :
-  withval=$with_libpng_libdir;
-fi
 if test "x$with_system_libpng" = xyes; then
-  if test "x$with_libpng_includes" != x && test "x$with_libpng_includes" != xyes; then
-  LIBPNG_INCLUDES="-I$with_libpng_includes"
-fi
-LIBPNG_LIBS="-lpng"
-if test "x$with_libpng_libdir" != x && test "x$with_libpng_libdir" != xyes; then
-  LIBPNG_LIBS="-L$with_libpng_libdir $LIBPNG_LIBS"
+  if $PKG_CONFIG libpng; then
+  LIBPNG_INCLUDES=`$PKG_CONFIG libpng --cflags`
+  LIBPNG_LIBS=`$PKG_CONFIG libpng --libs`
+elif test "x$need_libpng:$with_system_libpng" = xyes:yes; then
+  as_fn_error $? "did not find libpng" "$LINENO" 5
 fi
 else
   LIBPNG_INCLUDES=`echo '-IBLD/libs/libpng/include' | sed \
