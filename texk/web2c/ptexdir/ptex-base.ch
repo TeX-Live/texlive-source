@@ -66,7 +66,7 @@
 @!KANJI_code=0..65535; {sixteen-bit numbers}
 @z
 
-@x [4.??] l.870 - pTeX:
+@x [3.??] l.870 - pTeX:
 @!eight_bits=0..255; {unsigned one-byte quantity}
 @y
 @!eight_bits=0..255; {unsigned one-byte quantity}
@@ -2589,24 +2589,18 @@ else if cur_cmd=def_tfont then f:=cur_tfont
 else if cur_cmd=def_font then f:=cur_font
 @z
 
-@x
+@x [30.581]
 @p procedure char_warning(@!f:internal_font_number;@!c:eight_bits);
-begin if tracing_lost_chars>0 then
-  begin begin_diagnostic;
-  print_nl("Missing character: There is no ");
-@.Missing character@>
-  print_ASCII(c); print(" in font ");
-  slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
 @y
 @d print_lc_hex(#)==l:=#;
   if l<10 then print_char(l+"0")@+else print_char(l-10+"a")
 
 @p procedure char_warning(@!f:internal_font_number;@!c:eight_bits);
 var @!l:0..255; {small indices or counters}
-begin if tracing_lost_chars>0 then
-  begin begin_diagnostic;
-  print_nl("Missing character: There is no ");
-@.Missing character@>
+@z
+@x [30.581]
+  print_ASCII(c); print(" in font ");
+@y
   if (c<" ")or(c>"~") then
     begin print_char("^"); print_char("^");
     if c<64 then print_char(c+64)
@@ -2615,7 +2609,6 @@ begin if tracing_lost_chars>0 then
     end
   else print_ASCII(c);
   print(" in font ");
-  slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
 @z
 
 @x [31.586] l.12189 - pTeX: define set2
@@ -3029,11 +3022,18 @@ var r:pointer; {the box node that will be returned}
 @!disp:scaled; {displacement}
 @z
 
-@x [33.649] l.13533 - pTeX: hpack
-begin last_badness:=0; r:=get_node(box_node_size); type(r):=hlist_node;
-subtype(r):=min_quarterword; shift_amount(r):=0;
+@x [33.649] l.13535 - pTeX: hpack
 q:=r+list_offset; link(q):=p;@/
 h:=0; @<Clear dimensions to zero@>;
+@y
+space_ptr(r):=cur_kanji_skip; xspace_ptr(r):=cur_xkanji_skip;
+add_glue_ref(cur_kanji_skip); add_glue_ref(cur_xkanji_skip);
+k:=cur_kanji_skip;
+q:=r+list_offset; link(q):=p;@/
+h:=0; @<Clear dimensions to zero@>;
+disp:=0;
+@z
+@x [33.649] l.13537 - pTeX: hpack
 while p<>null do @<Examine node |p| in the hlist, taking account of its effect
   on the dimensions of the new box, or moving it to the adjustment list;
   then advance |p| to the next node@>;
@@ -3046,14 +3046,6 @@ common_ending: @<Finish issuing a diagnostic message
 exit: hpack:=r;
 end;
 @y
-begin last_badness:=0; r:=get_node(box_node_size); type(r):=hlist_node;
-subtype(r):=min_quarterword; shift_amount(r):=0;
-space_ptr(r):=cur_kanji_skip; xspace_ptr(r):=cur_xkanji_skip;
-add_glue_ref(cur_kanji_skip); add_glue_ref(cur_xkanji_skip);
-k:=cur_kanji_skip;
-q:=r+list_offset; link(q):=p;@/
-h:=0; @<Clear dimensions to zero@>;
-disp:=0;
 while p<>null do @<Examine node |p| in the hlist, taking account of its effect
   on the dimensions of the new box, or moving it to the adjustment list;
   then advance |p| to the next node@>;
@@ -3081,15 +3073,6 @@ if p<>null then
   ins_node,mark_node,adjust_node: if adjust_tail<>null then
     @<Transfer node |p| to the adjustment list@>;
   whatsit_node:@<Incorporate a whatsit node into an hbox@>;
-  glue_node:@<Incorporate glue into the horizontal totals@>;
-  kern_node,math_node: x:=x+width(p);
-  ligature_node: @<Make node |p| look like a |char_node|
-    and |goto reswitch|@>;
-  othercases do_nothing
-  endcases;@/
-  p:=link(p);
-  end;
-end
 @y
 @ @<Examine node |p| in the hlist, taking account of its effect...@>=
 @^inner loop@>
@@ -3106,14 +3089,6 @@ if p<>null then
     if adjust_tail<>null then @<Transfer node |p| to the adjustment list@>;
   whatsit_node:@<Incorporate a whatsit node into an hbox@>;
   disp_node:disp:=disp_dimen(p);
-  glue_node:@<Incorporate glue into the horizontal totals@>;
-  kern_node,math_node:x:=x+width(p);
-  ligature_node:@<Make node |p| look like a |char_node| and |goto reswitch|@>;
-  othercases do_nothing
-  endcases;@/
-  p:=link(p);
-  end;
-end
 @z
 
 @x [33.653] l.13589 - pTeX: displacement
@@ -4031,8 +4006,6 @@ if q<>null then {|q| cannot be a |char_node|}
   else  begin if type(q)=disc_node then
       @<Change discretionary to compulsory and set
         |disc_break:=true|@>
-    else if (type(q)=math_node)or(type(q)=kern_node) then width(q):=0;
-    end
 @y
 if q<>null then {|q| may be a |char_node|}
   begin if not is_char_node(q) then
@@ -4045,7 +4018,10 @@ if q<>null then {|q| may be a |char_node|}
     else  begin if type(q)=disc_node then
         @<Change discretionary to compulsory and set
           |disc_break:=true|@>
-      else if (type(q)=math_node)or(type(q)=kern_node) then width(q):=0;
+@z
+@x [39.881] l.17961 - pTeX: |q| may be a |char_node|
+    end
+@y
       end
   end
 @z
@@ -4614,12 +4590,10 @@ end
 var @!p,@!q:pointer; {run through the current list}
 @!m:quarterword; {the length of a replacement list}
 @!k:halfword; {0 or |vmode| or |hmode|}
-@!n:eight_bits; {a box number}
 @y
 var @!p,@!q:pointer; {run through the current list}
 @!m:quarterword; {the length of a replacement list}
 @!k:halfword; {0 or |vmode| or |hmode|}
-@!n:eight_bits; {a box number}
 @!a_dir:eight_bits; {adjust direction}
 @!d:pointer; {last |disp_node|}
 @!disp,@!pdisp:scaled; {displacement}
@@ -4974,7 +4948,6 @@ if c=copy_code then link(tail):=copy_node_list(list_ptr(p))
 else  begin link(tail):=list_ptr(p); box(cur_val):=null;
   free_node(p,box_node_size);
   end;
-while link(tail)<>null do tail:=link(tail);
 @y
 if type(p)=dir_node then p:=list_ptr(p);
 if (abs(mode)=mmode)or((abs(mode)=vmode)and(type(p)<>vlist_node))or@|
@@ -5009,6 +4982,10 @@ else
   delete_glue_ref(xspace_ptr(p));
   free_node(p,box_node_size);
   end;
+@z
+@x [47.1110] l.22014 - pTeX: free box node, delete kanji_skip
+while link(tail)<>null do tail:=link(tail);
+@y
 while link(tail)<>null do
   begin p:=tail; tail:=link(tail);
   if not is_char_node(tail) then
@@ -5637,17 +5614,16 @@ else if cur_chr=kcat_code_base then n:=max_char_code
 @x [49.1247] l.24083 - pTeX: alter_box_dimen : box_dir
 procedure alter_box_dimen;
 var c:small_number; {|width_offset| or |height_offset| or |depth_offset|}
-@!b:eight_bits; {box number}
-begin c:=cur_chr; scan_eight_bit_int; b:=cur_val; scan_optional_equals;
+@y
+procedure alter_box_dimen;
+var c:small_number; {|width_offset| or |height_offset| or |depth_offset|}
+@!p,q:pointer; {temporary registers}
+@z
+@x [49.1247] l.24087 - pTeX: alter_box_dimen : box_dir
 scan_normal_dimen;
 if box(b)<>null then mem[box(b)+c].sc:=cur_val;
 end;
 @y
-procedure alter_box_dimen;
-var c:small_number; {|width_offset| or |height_offset| or |depth_offset|}
-@!b:eight_bits; {box number}
-@!p,q:pointer; {temporary registers}
-begin c:=cur_chr; scan_eight_bit_int; b:=cur_val; scan_optional_equals;
 scan_normal_dimen;
 if box(b)<>null then
   begin q:=box(b); p:=link(q);

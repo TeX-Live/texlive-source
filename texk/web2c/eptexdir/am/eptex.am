@@ -65,8 +65,9 @@ eptex_web_srcs = \
 eptex.ch: tie$(EXEEXT) eptex.web $(eptex_ch_srcs)
 	$(tie) -c eptex.ch eptex.web $(eptex_ch_srcs)
 eptex_ch_srcs = \
-	eptexdir/etex.ch0 \
 	eptexdir/eptex-base.ch \
+	eptexdir/etex.ch0 \
+	ptexdir/ptex-base.ch \
 	eptexdir/eptex.ech \
 	eptexdir/etex.ch1 \
 	eptexdir/fam256.ch \

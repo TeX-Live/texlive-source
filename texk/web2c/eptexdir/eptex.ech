@@ -1,3 +1,5 @@
+% eptexdir/eptex.ech: changefile used to build e-pTeX, see eptexdir/eptex-base.ch for details.
+% Public domain. Originally written by Peter Breitenlohner <tex-live@tug.org>.
 
 @x e-pTeX: logo
 \def\eTeX{$\varepsilon$-\TeX}

@@ -1752,8 +1752,9 @@ eptex_web_srcs = \
 	etexdir/tex.ech
 
 eptex_ch_srcs = \
-	eptexdir/etex.ch0 \
 	eptexdir/eptex-base.ch \
+	eptexdir/etex.ch0 \
+	ptexdir/ptex-base.ch \
 	eptexdir/eptex.ech \
 	eptexdir/etex.ch1 \
 	eptexdir/fam256.ch \

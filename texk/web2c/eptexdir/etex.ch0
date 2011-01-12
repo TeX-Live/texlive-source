@@ -1,35 +1,32 @@
+% eptexdir/etex.ch0: changefile used to build e-pTeX, see eptexdir/eptex-base.ch for details.
+% Public domain. Originally written by Peter Breitenlohner <tex-live@tug.org>.
 
-@x
+@x [15.208]
   {( or \.{\\pagediscards}, \.{\\splitdiscards} )}
 @y
 @z
-
-@x
+@x [15.208]
   {or text direction directives ( \.{\\beginL}, etc.~)}
 @y
 @z
-
-@x
+@x [15.208]
   {( or \.{\\middle} )}
 @y
 @z
 
-@x
+@x [15.209]
   {( or \.{\\interactionmode} )}
 @y
 @z
-
-@x
+@x [15.209]
   {(or \.{\\interlinepenalties}, etc.~)}
 @y
 @z
-
-@x
+@x [15.209]
   {( or \.{\\protected} )}
 @y
 @z
-
-@x
+@x [15.209]
   {( or \.{\\readline} )}
 @y
 @z
@@ -43,13 +40,13 @@
 @d count_base=int_base+int_pars {256 user \.{\\count} registers}
 @z
 
-@x
+@x [26.420]
 if q=null then cur_val:=0 @+else cur_val:=mem[q+m].sc;
 @y
 if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @z
 
-@x
+@x [27.468]
 @d etex_convert_base=5 {base for \eTeX's command codes}
 @d eTeX_revision_code=etex_convert_base {command code for \.{\\eTeXrevision}}
 @d etex_convert_codes=etex_convert_base+1 {end of \eTeX's command codes}
@@ -58,7 +55,12 @@ if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @d job_name_code=5 {command code for \.{\\jobname}}
 @z
 
-@x
+@x [30.581]
+var old_setting: integer; {saved value of |tracing_online|}
+@y
+@z
+
+@x [32.619]
 save_loc:=dvi_offset+dvi_ptr; base_line:=cur_v;
 prev_p:=this_box+list_offset;
 @<Initialize |hlist_out| for mixed direction typesetting@>;
@@ -67,12 +69,25 @@ left_edge:=cur_h;
 save_loc:=dvi_offset+dvi_ptr; base_line:=cur_v; left_edge:=cur_h;
 @z
 
-@x
+@x [32.620]
   prev_p:=link(prev_p); {N.B.: not |prev_p:=p|, |p| might be |lig_trick|}
 @y
 @z
 
-@x
+@x [32.624] l.13005 - pTeX: output a box(and dir_node) with disp
+  cur_h:=edge; cur_v:=base_line;
+@y
+  cur_h:=edge+width(p); cur_v:=base_line;
+@z
+
+@x [33.649]
+exit: if TeXXeT_en then @<Check for LR anomalies at the end of |hpack|@>;
+hpack:=r;
+@y
+exit: hpack:=r;
+@z
+
+@x [44.977]
 q:=prune_page_top(q,saving_vdiscards>0);
 p:=list_ptr(v); free_node(v,box_node_size);
 if q<>null then q:=vpack(q,natural);
@@ -83,25 +98,24 @@ if q=null then box(n):=null {the |eq_level| of the box stays the same}
 else box(n):=vpack(q,natural);
 @z
 
-@x
+@x [47.1080]
     begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
       remove_end_M;
 @y
 @z
-
-@x
+@x [47.1080]
     if LR_temp<>null then insert_end_M;
     end;
 @y
 @z
 
-@x
+@x [47.1096]
   else line_break(false);
 @y
   else line_break(widow_penalty);
 @z
 
-@x
+@x [47.1105]
 else  begin if not is_char_node(tail) then
   begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
     remove_end_M;
@@ -109,22 +123,27 @@ else  begin if not is_char_node(tail) then
 @y
 else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
 @z
-
-@x
+@x [47.1105]
   if LR_temp<>null then insert_end_M;
   end;
 @y
 @z
 
-@x
+@x [47.1110]
 else  begin link(tail):=list_ptr(p); change_box(null);
 @y
 else  begin link(tail):=list_ptr(p); box(cur_val):=null;
 @z
 
-@x
+@x [48.1145]
 else  begin line_break(true);@/
 @y
 else  begin line_break(display_widow_penalty);@/
+@z
+
+@x [49.1247]
+if b<>null then mem[b+c].sc:=cur_val;
+@y
+if box(b)<>null then mem[box(b)+c].sc:=cur_val;
 @z
 

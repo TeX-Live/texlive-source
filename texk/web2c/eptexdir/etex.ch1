@@ -1,5 +1,7 @@
+% eptexdir/etex.ch1: changefile used to build e-pTeX, see eptexdir/eptex-base.ch for details.
+% Public domain. Originally written by Peter Breitenlohner <tex-live@tug.org>.
 
-@x
+@x [1.2]
 @d banner==pTeX_banner
 @d banner_k==pTeX_banner_k
 @y
@@ -7,28 +9,32 @@
 @d banner_k==epTeX_banner_k
 @z
 
-@x
+@x [12.184]
+    begin print(", "); print_direction(box_dir(p));
+@y
+    begin print_direction_alt(box_dir(p));
+@z
+
+@x [15.208]
 @d un_vbox=un_hbox+1 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
 @y
 @d un_vbox=un_hbox+1 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
   {( or \.{\\pagediscards}, \.{\\splitdiscards} )}
 @z
-
-@x
+@x [15.208]
 @d valign=halign+1 {vertical table alignment ( \.{\\valign} )}
 @y
 @d valign=halign+1 {vertical table alignment ( \.{\\valign} )}
   {or text direction directives ( \.{\\beginL}, etc.~)}
 @z
-
-@x
+@x [15.208]
 @d left_right=eq_no+1 {variable delimiter ( \.{\\left}, \.{\\right} )}
 @y
 @d left_right=eq_no+1 {variable delimiter ( \.{\\left}, \.{\\right} )}
   {( or \.{\\middle} )}
 @z
 
-@x
+@x [15.209]
 @d set_box_dimen=set_page_int+1 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
 @d set_shape=set_box_dimen+1 {specify fancy paragraph shape ( \.{\\parshape} )}
 @y
@@ -37,8 +43,7 @@
 @d set_shape=set_box_dimen+1 {specify fancy paragraph shape ( \.{\\parshape} )}
   {(or \.{\\interlinepenalties}, etc.~)}
 @z
-
-@x
+@x [15.209]
 @d let=prefix+1 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
 @d shorthand_def=let+1 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @d read_to_cs=shorthand_def+1 {read into a control sequence ( \.{\\read} )}
@@ -50,7 +55,7 @@
   {( or \.{\\readline} )}
 @z
 
-@x
+@x [17.236]
 @d int_pars=60 {total number of integer parameters}
 @d count_base=int_base+int_pars {256 user \.{\\count} registers}
 @y
@@ -59,13 +64,13 @@
 @d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
 @z
 
-@x
+@x [26.413]
 @!q:halfword; {general purpose index}
 @y
 @!qx:halfword; {general purpose index}
 @z
 
-@x
+@x [26.420]
 if box(cur_val)=null then cur_val:=0
 else
    begin q:=box(cur_val);
@@ -81,7 +86,7 @@ else
     begin q:=new_dir_node(qx,abs(direction));
 @z
 
-@x
+@x [27.468]
 @d job_name_code=10 {command code for \.{\\jobname}}
 @y
 @d etex_convert_base=10 {base for \eTeX's command codes}
@@ -90,7 +95,14 @@ else
 @d job_name_code=etex_convert_codes {command code for \.{\\jobname}}
 @z
 
-@x
+@x [30.581]
+var @!l:0..255; {small indices or counters}
+@y
+var @!l:0..255; {small indices or counters}
+old_setting: integer; {saved value of |tracing_online|}
+@z
+
+@x [32.619]
 base_line:=cur_v; left_edge:=cur_h; disp:=0;
 @y
 base_line:=cur_v; disp:=0; revdisp:=0;
@@ -99,7 +111,59 @@ prev_p:=this_box+list_offset;
 left_edge:=cur_h;
 @z
 
-@x
+@x [32.622]
+@<Output node |p| for |hlist_out|...@>=
+@y
+@<Output node |p| for |hlist_out|...@>=
+@z
+@x [32.622]
+    p:=link(p);
+@y
+    prev_p:=link(prev_p); {N.B.: not |prev_p:=p|, |p| might be |lig_trick|}
+    p:=link(p);
+@z
+
+@x [32.623]
+disp_node: begin disp:=disp_dimen(p); cur_v:=base_line+disp; end;
+@y
+disp_node: begin disp:=disp_dimen(p); revdisp:=disp; cur_v:=base_line+disp; end;
+@z
+
+@x [32.624]
+  cur_h:=edge+width(p); cur_v:=base_line+disp; cur_dir_hv:=save_dir;
+@y
+  cur_h:=edge; cur_v:=base_line+disp; cur_dir_hv:=save_dir;
+@z
+
+@x [33.649]
+exit: last_disp:=disp; hpack:=r;
+@y
+exit: last_disp:=disp;
+if TeXXeT_en then @<Check for LR anomalies at the end of |hpack|@>; 
+hpack:=r;
+@z
+
+@x [33.651]
+  disp_node:disp:=disp_dimen(p);
+@y
+  disp_node:begin disp:=disp_dimen(p); revdisp:=disp; end;
+@z
+
+@x [44.977]
+q:=prune_page_top(q); p:=list_ptr(v);
+if q=null then box(n):=null {the |eq_level| of the box stays the same}
+else begin
+  box(n):=vpack(q,natural); box_dir(box(n)):=box_dir(v);
+  end;
+@y
+q:=prune_page_top(q,saving_vdiscards>0); p:=list_ptr(v);
+if q<>null then begin
+    q:=vpack(q,natural); box_dir(q):=box_dir(v);
+  end;
+change_box(q);
+@z
+
+@x [47.1080]
     if (type(tail)=hlist_node)or(type(tail)=vlist_node)
           or(type(tail)=dir_node) then
       @<Remove the last box, unless it's part of a discretionary@>;
@@ -113,19 +177,67 @@ left_edge:=cur_h;
     end;
 @z
 
-@x
+@x [47.1096]
   else begin adjust_hlist(head,true); line_break(widow_penalty)
 @y
   else begin adjust_hlist(head,true); line_break(false)
 @z
 
-@x
+@x [47.1105]
+  if not is_char_node(tail) then if type(tail)=cur_chr then
+@y
+  if not is_char_node(tail) then
+  begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
+    remove_end_M;
+  if type(tail)=cur_chr then
+@z
+@x [47.1105]
+        begin prev_node:=tail; prev_disp:=disp; tail_append(d)
+        end
+@y
+        begin prev_node:=tail; prev_disp:=disp; tail_append(d)
+        end;
+  if LR_temp<>null then insert_end_M;
+  end;
+@z
+
+@x [47.1110]
+  begin if type(box(cur_val))=dir_node then
+    begin delete_glue_ref(space_ptr(box(cur_val)));
+    delete_glue_ref(xspace_ptr(box(cur_val)));
+    free_node(box(cur_val),box_node_size);
+@y
+  begin if type(p)=dir_node then
+    begin delete_glue_ref(space_ptr(p));
+    delete_glue_ref(xspace_ptr(p));
+    free_node(p,box_node_size);
+@z
+@x [47.1110]
+  link(tail):=list_ptr(p); box(cur_val):=null;
+@y
+  link(tail):=list_ptr(p); change_box(null);
+@z
+
+@x [48.1145]
 else  begin adjust_hlist(head,true); line_break(display_widow_penalty);@/
 @y
 else  begin adjust_hlist(head,true); line_break(true);@/
 @z
 
-@x
+@x [49.1247]
+if box(b)<>null then
+  begin q:=box(b); p:=link(q);
+@y
+if b<>null then
+  begin q:=b; p:=link(q);
+@z
+@x [49.1247]
+    link(q):=link(box(b)); link(box(b)):=q;
+@y
+    link(q):=link(b); link(b):=q;
+@z
+
+@x [49.1291]
 @d show_mode=4 { \.{\\showmode} }
 @y
 @d show_mode=7 { \.{\\showmode} }
