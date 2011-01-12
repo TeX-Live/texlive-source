@@ -1,0 +1,230 @@
+
+@x e-pTeX: logo
+\def\eTeX{$\varepsilon$-\TeX}
+@y
+\def\eTeX{$\varepsilon$-\TeX}
+\def\epTeX{$\varepsilon$-p\TeX}
+@z
+
+@x
+  {printed when p\TeX\ starts}
+@y
+  {printed when p\TeX\ starts}
+@#
+@d epTeX_version==pTeX_version_string,eTeX_version_string
+@d epTeX_banner_k=='This is epTeXk, Version 3.1415926',epTeX_version
+@d epTeX_banner=='This is epTeX, Version 3.1415926',epTeX_version
+  {printed when \epTeX\ starts}
+@z
+
+@x
+@d max_quarterword=255 {largest allowable value in a |quarterword|}
+@y
+@d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
+@z
+
+@x
+    last_node_type_code:
+      if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
+        if type(tail)<=unset_node then cur_val:=type(tail)+1
+        else cur_val:=unset_node+2;
+    end; {there are no other cases}
+    if LR_temp<>null then insert_end_M;
+@y
+    last_node_type_code:
+      if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
+        if type(tail)<=unset_node then begin
+          if type(tail)<dir_node then cur_val:=type(tail)+1
+          else if type(tail)=dir_node then cur_val:=unset_node+1
+          else if type(tail)<disp_node then cur_val:=type(tail)
+          else if type(tail)=disp_node then cur_val:=unset_node+2
+          else cur_val:=type(tail)-1;
+          end
+        else cur_val:=unset_node;
+    end; {there are no other cases}
+    if LR_temp<>null then insert_end_M;
+@z
+
+@x e-pTeX: if primitives l.27294
+current_if_type_code: if cond_ptr=null then cur_val:=0
+  else if cur_if<unless_code then cur_val:=cur_if+1
+  else cur_val:=-(cur_if-unless_code+1);
+@y
+current_if_type_code: begin if cond_ptr=null then cur_val:=0
+  else if cur_if<unless_code then cur_val:=cur_if+1
+  else cur_val:=cur_if-unless_code+1;
+  @<Fix |if_type_code| @>;
+  end;
+@z
+
+@x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306
+    begin i:=char_info(q)(qi(cur_val));
+@y
+    begin i:=orig_char_info(q)(qi(cur_val));
+@z
+
+@x e-pTeX: displacement value when typesetting right-to-left l.27798
+@<Glob...@>=
+@!LR_temp:pointer; {holds a temporarily removed \.{\\endM} node}
+@y
+@<Glob...@>=
+@!revdisp:scaled; {temporary value of displacement}
+@!LR_temp:pointer; {holds a temporarily removed \.{\\endM} node}
+@z
+
+@x e-pTeX: reverse nodes of an hlist l.28010
+function reverse(@!this_box,@!t:pointer; var cur_g:scaled;
+  var cur_glue:real):pointer;
+label reswitch,next_p,done;
+var l:pointer; {the new list}
+@!p:pointer; {the current node}
+@!q:pointer; {the next node}
+@!g_order: glue_ord; {applicable order of infinity for glue}
+@!g_sign: normal..shrinking; {selects type of glue}
+@!glue_temp:real; {glue value before rounding}
+@!m,@!n:halfword; {count of unmatched math nodes}
+begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
+l:=t; p:=temp_ptr; m:=min_halfword; n:=min_halfword;
+loop@+  begin while p<>null do
+    @<Move node |p| to the new list and go to the next node;
+    or |goto done| if the end of the reflected segment has been reached@>;
+  if (t=null)and(m=min_halfword)and(n=min_halfword) then goto done;
+  p:=new_math(0,info(LR_ptr)); LR_problems:=LR_problems+10000;
+    {manufacture one missing math node}
+  end;
+done:reverse:=l;
+end;
+
+@ @<Move node |p| to the new list...@>=
+reswitch: if is_char_node(p) then
+  repeat f:=font(p); c:=character(p);
+  cur_h:=cur_h+char_width(f)(char_info(f)(c));
+  q:=link(p); link(p):=l; l:=p; p:=q;
+  until not is_char_node(p)
+else @<Move the non-|char_node| |p| to the new list@>
+
+@ @<Move the non-|char_node| |p| to the new list@>=
+begin q:=link(p);
+case type(p) of
+hlist_node,vlist_node,rule_node,kern_node: rule_wd:=width(p);
+@t\4@>@<Cases of |reverse| that need special treatment@>@;
+edge_node: confusion("LR2");
+@:this can't happen LR2}{\quad LR2@>
+othercases goto next_p
+endcases;@/
+@y
+function reverse(@!this_box,@!t:pointer; var cur_g:scaled;
+  var cur_glue:real):pointer;
+label reswitch,next_p,done;
+var l,la:pointer; {the new list}
+disp,disp2: scaled; { displacement } disped: boolean;
+@!p:pointer; {the current node}
+@!q:pointer; {the next node}
+@!g_order: glue_ord; {applicable order of infinity for glue}
+@!g_sign: normal..shrinking; {selects type of glue}
+@!glue_temp:real; {glue value before rounding}
+@!m,@!n:halfword; {count of unmatched math nodes}
+begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
+disp:=revdisp; disped:=false;
+l:=t; p:=temp_ptr; m:=min_halfword; n:=min_halfword;
+loop@+  begin while p<>null do
+    @<Move node |p| to the new list and go to the next node;
+    or |goto done| if the end of the reflected segment has been reached@>;
+  if (t=null)and(m=min_halfword)and(n=min_halfword) then goto done;
+  p:=new_math(0,info(LR_ptr)); LR_problems:=LR_problems+10000;
+    {manufacture one missing math node}
+  end;
+done:
+{if the beginning node of the new list isn't |disp_node|, }
+{we insert |disp_node| to fix.}
+if (l<>null)and(type(l)<>disp_node) then begin
+  p:=get_node(small_node_size);type(p):=disp_node;
+  disp_dimen(p):=disp; link(p):=l; reverse:=p;
+  end
+else reverse:=l;
+end;
+
+@ @<Move node |p| to the new list...@>=
+reswitch: if is_char_node(p) then
+  repeat f:=font(p); c:=character(p);
+  cur_h:=cur_h+char_width(f)(char_info(f)(c));
+  if font_dir[f]<>dir_default then begin
+    q:=link(p); la:=l; l:=p; p:=link(q); link(q):=la;
+    end
+  else begin q:=link(p); link(p):=l; l:=p; p:=q; end;
+  until not is_char_node(p)
+else @<Move the non-|char_node| |p| to the new list@>
+
+@ @<Move the non-|char_node| |p| to the new list@>=
+begin q:=link(p);
+case type(p) of
+hlist_node,vlist_node,rule_node,kern_node: rule_wd:=width(p);
+@t\4@>@<Cases of |reverse| that need special treatment@>@;
+edge_node: confusion("LR2");
+@:this can't happen LR2}{\quad LR2@>
+disp_node: begin
+  disp2:=disp_dimen(p); disp_dimen(p):=disp; disp:=disp2;
+  { print_nl("ep TeXXeT:"); print_int(disp_dimen(p)); }
+  { print(" -> "); print_int(disp); }
+  { if not disped then begin disped:=true; print(" NL"); end; end; }
+  if not disped then disped:=true; end;
+othercases goto next_p
+endcases;@/
+@z
+
+@x e-pTeX: if primitives l.28545
+@d if_def_code=17 { `\.{\\ifdefined}' }
+@d if_cs_code=18 { `\.{\\ifcsname}' }
+@d if_font_char_code=19 { `\.{\\iffontchar}' }
+@y
+@d if_def_code=22 { `\.{\\ifdefined}' }
+@d if_cs_code=23 { `\.{\\ifcsname}' }
+@d if_font_char_code=24 { `\.{\\iffontchar}' }
+@z
+
+@x e-pTeX: ifcsname l.28620
+  buffer[m]:=info(p) mod @'400; incr(m); p:=link(p);
+@y
+  if check_kanji(info(p)) then {wchar_token}
+    begin buffer[m]:=Hi(info(p)); incr(m);
+    end;
+  buffer[m]:=Lo(info(p)); incr(m); p:=link(p);
+@z
+
+@x e-pTeX: if_font_char_code l.28633
+    b:=char_exists(char_info(n)(qi(cur_val)))
+@y
+    b:=char_exists(orig_char_info(n)(qi(cur_val)))
+@z
+
+@x e-pTeX: fix if_type l.28637
+@ The |protected| feature of \eTeX\ defines the \.{\\protected} prefix
+@y
+@ @<Fix |if_type_code| @>=
+  if (cur_val>=if_def_code+1)and(cur_val<=if_font_char_code+1) then
+      cur_val:=cur_val-5
+  else if (cur_val<if_def_code+1)and(cur_val>if_case_code+1) then
+      cur_val:=cur_val+3;
+  if cur_if>=unless_code then cur_val:=-cur_val;
+
+@ The |protected| feature of \eTeX\ defines the \.{\\protected} prefix
+@z
+
+@x
+procedure print_direction(@!d:integer); {print the direction represented by d}
+@y
+procedure print_direction_alt(@!d:integer);
+var x: boolean;
+begin x:=false;
+case abs(d) of
+dir_yoko: begin print(", yoko"); x:=true; end;
+dir_tate: begin print(", tate"); x:=true; end;
+dir_dtou: begin print(", dtou"); x:=true; end;
+end;
+if x then begin if d<0 then print("(math)");
+print(" direction"); end;
+end;
+@#
+procedure print_direction(@!d:integer); {print the direction represented by d}
+@z
+

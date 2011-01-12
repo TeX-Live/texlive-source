@@ -26,7 +26,6 @@ libptexenc_la_SOURCES = \
 	ptexenc.c \
 	ptexenc/kanjicnv.h \
 	ptexenc/unicode-jp.h \
-	ptexenc/unicode.h \
 	unicode-jp.c \
 	unicode.c
 
@@ -34,7 +33,8 @@ libptexenc_la_SOURCES = \
 @KPATHSEA_RULE@
 
 nobase_include_HEADERS = \
-	ptexenc/ptexenc.h
+	ptexenc/ptexenc.h \
+	ptexenc/unicode.h
 
 EXTRA_DIST = COPYRIGHT ChangeLog.TL
 

@@ -33,7 +33,7 @@ m4_define([kpse_tex_progs], [dnl
 [[tex],    [yes], [no],  [TeX],    []],
 [[etex],   [no],  [yes], [e-TeX],  []],
 [[ptex],   [yes], [no],  [pTeX],   [ptexenc]],
-[[eptex],  [no],  [no],  [e-pTeX], [ptexenc]],
+[[eptex],  [yes], [no],  [e-pTeX], [ptexenc]],
 [[aleph],  [yes], [no],  [Aleph],  []],
 [[pdftex], [yes], [yes], [pdfTeX], [xpdf libpng obsdcompat]],
 [[luatex], [yes], [no],  [luaTeX], [xpdf libpng obsdcompat zziplib]],

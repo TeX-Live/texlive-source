@@ -1579,7 +1579,7 @@ Optional Features:
   --disable-tex             do not compile and install TeX
   --enable-etex             compile and install e-TeX
   --disable-ptex            do not compile and install pTeX
-  --enable-eptex            compile and install e-pTeX
+  --disable-eptex           do not compile and install e-pTeX
   --disable-aleph           do not compile and install Aleph
   --disable-pdftex          do not compile and install pdfTeX
   --disable-luatex          do not compile and install luaTeX
@@ -4158,7 +4158,7 @@ case $enable_eptex in #(
   yes|no) :
      ;; #(
   *) :
-    enable_eptex=no ;;
+    enable_eptex=yes ;;
 esac
 
 test "x$enable_web2c:$enable_eptex" = xyes:yes && {

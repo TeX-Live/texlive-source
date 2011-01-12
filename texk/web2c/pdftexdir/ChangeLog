@@ -9,7 +9,7 @@
 2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftexextra.in: Renamed ...
-	* pdftexextra.h: into this; #include {e,pdf}tex_version.h
+	* pdftexextra.h: ... into this; #include {e,pdf}tex_version.h
 	for {E,PDF}TEX_VERSION.
 
 	* pdftexextra.c (new): #include <pdftexd.h> and <lib/texmfmp.c>.

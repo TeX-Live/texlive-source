@@ -6,7 +6,7 @@
 ## e-pTeX
 ##
 if EPTEX
-# bin_PROGRAMS += eptex
+bin_PROGRAMS += eptex
 endif EPTEX
 EXTRA_PROGRAMS += eptex
 
@@ -48,22 +48,29 @@ eptexdir/etex_version.h: etexdir/etex.ch
 # Extract ptex version
 eptexdir/ptex_version.h: ptexdir/ptex-base.ch
 	$(MKDIR_P) eptexdir
-	grep "^@d TeX_banner=='This is pTeX" $(srcdir)/ptexdir/ptex-base.ch \
-	  | sed "s/^.*-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
+	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
+	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate eptex.web
 eptex.web: tie$(EXEEXT) $(eptex_web_srcs)
 	$(tie) -m eptex.web $(eptex_web_srcs)
 eptex_web_srcs = \
 	tex.web \
-	tex.ch
+	etexdir/etex.ch \
+	etexdir/tex.ch0 \
+	tex.ch \
+	etexdir/tex.ech
 
 # Generate eptex.ch
 eptex.ch: tie$(EXEEXT) eptex.web $(eptex_ch_srcs)
 	$(tie) -c eptex.ch eptex.web $(eptex_ch_srcs)
 eptex_ch_srcs = \
-	ptexdir/ptex-base.ch \
+	eptexdir/etex.ch0 \
+	eptexdir/eptex-base.ch \
+	eptexdir/eptex.ech \
 	eptexdir/etex.ch1 \
+	eptexdir/fam256.ch \
+	eptexdir/pdfstrcmp.ch \
 	tex-binpool.ch
 
 EXTRA_DIST += $(eptex_web_srcs) $(eptex_ch_srcs) eptexdir/eptex.defines
@@ -74,5 +81,6 @@ DISTCLEANFILES += $(nodist_eptex_SOURCES) eptex.web eptex.ch eptex-web2c \
 ## 
 EXTRA_DIST += \
 	eptexdir/ChangeLog \
-	eptexdir/ChangeLog.TL
+	eptexdir/ChangeLog.TL \
+	eptexdir/README.txt
 

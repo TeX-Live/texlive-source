@@ -1,0 +1,130 @@
+
+@x
+  {( or \.{\\pagediscards}, \.{\\splitdiscards} )}
+@y
+@z
+
+@x
+  {or text direction directives ( \.{\\beginL}, etc.~)}
+@y
+@z
+
+@x
+  {( or \.{\\middle} )}
+@y
+@z
+
+@x
+  {( or \.{\\interactionmode} )}
+@y
+@z
+
+@x
+  {(or \.{\\interlinepenalties}, etc.~)}
+@y
+@z
+
+@x
+  {( or \.{\\protected} )}
+@y
+@z
+
+@x
+  {( or \.{\\readline} )}
+@y
+@z
+
+@x [17.236] l.4960 - first web2c, then e-TeX additional integer parameters
+@d int_pars=web2c_int_pars {total number of integer parameters}
+@#
+@d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
+@y
+@d int_pars=web2c_int_pars {total number of integer parameters}
+@d count_base=int_base+int_pars {256 user \.{\\count} registers}
+@z
+
+@x
+if q=null then cur_val:=0 @+else cur_val:=mem[q+m].sc;
+@y
+if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
+@z
+
+@x
+@d etex_convert_base=5 {base for \eTeX's command codes}
+@d eTeX_revision_code=etex_convert_base {command code for \.{\\eTeXrevision}}
+@d etex_convert_codes=etex_convert_base+1 {end of \eTeX's command codes}
+@d job_name_code=etex_convert_codes {command code for \.{\\jobname}}
+@y
+@d job_name_code=5 {command code for \.{\\jobname}}
+@z
+
+@x
+save_loc:=dvi_offset+dvi_ptr; base_line:=cur_v;
+prev_p:=this_box+list_offset;
+@<Initialize |hlist_out| for mixed direction typesetting@>;
+left_edge:=cur_h;
+@y
+save_loc:=dvi_offset+dvi_ptr; base_line:=cur_v; left_edge:=cur_h;
+@z
+
+@x
+  prev_p:=link(prev_p); {N.B.: not |prev_p:=p|, |p| might be |lig_trick|}
+@y
+@z
+
+@x
+q:=prune_page_top(q,saving_vdiscards>0);
+p:=list_ptr(v); free_node(v,box_node_size);
+if q<>null then q:=vpack(q,natural);
+change_box(q); {the |eq_level| of the box stays the same}
+@y
+q:=prune_page_top(q); p:=list_ptr(v); free_node(v,box_node_size);
+if q=null then box(n):=null {the |eq_level| of the box stays the same}
+else box(n):=vpack(q,natural);
+@z
+
+@x
+    begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
+      remove_end_M;
+@y
+@z
+
+@x
+    if LR_temp<>null then insert_end_M;
+    end;
+@y
+@z
+
+@x
+  else line_break(false);
+@y
+  else line_break(widow_penalty);
+@z
+
+@x
+else  begin if not is_char_node(tail) then
+  begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
+    remove_end_M;
+  if type(tail)=cur_chr then
+@y
+else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
+@z
+
+@x
+  if LR_temp<>null then insert_end_M;
+  end;
+@y
+@z
+
+@x
+else  begin link(tail):=list_ptr(p); change_box(null);
+@y
+else  begin link(tail):=list_ptr(p); box(cur_val):=null;
+@z
+
+@x
+else  begin line_break(true);@/
+@y
+else  begin line_break(display_widow_penalty);@/
+@z
+

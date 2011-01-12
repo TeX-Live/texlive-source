@@ -3,9 +3,11 @@ ChangeLog.TL: TeX Live (TL) changes for ptexenc
 
 2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* ptexenc.c, ptexenc/ptexenc.h: Export toUCS for e-pTeX.
-	From eptex-110102.tar.xz by Hironori Kitagawa.
+	For e-pTeX, adapted from eptex-110102.tar.xz by Hironori Kitagawa.
+	* ptexenc.c, ptexenc/ptexenc.h: Export toUCS().
+	* ptexenc/unicode.h: Export UCStoUTF8().
 	* ptexenc.c: Change version string "ptetex" => "ptexenc".
+	* Makefile.am: Install ptexenc/unicode.h.
 
 	* configure.ac: Version 1.2.0.
 

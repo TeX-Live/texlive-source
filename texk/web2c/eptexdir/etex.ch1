@@ -1,8 +1,145 @@
-% Just temprarily
 
 @x
-@!def_ref : pointer; {reference count of token list being defined}
+@d banner==pTeX_banner
+@d banner_k==pTeX_banner_k
 @y
-@!def_ref : pointer; {reference count of token list being defined}
-@!etex_p : boolean;
+@d banner==epTeX_banner
+@d banner_k==epTeX_banner_k
 @z
+
+@x
+@d un_vbox=un_hbox+1 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
+@y
+@d un_vbox=un_hbox+1 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
+  {( or \.{\\pagediscards}, \.{\\splitdiscards} )}
+@z
+
+@x
+@d valign=halign+1 {vertical table alignment ( \.{\\valign} )}
+@y
+@d valign=halign+1 {vertical table alignment ( \.{\\valign} )}
+  {or text direction directives ( \.{\\beginL}, etc.~)}
+@z
+
+@x
+@d left_right=eq_no+1 {variable delimiter ( \.{\\left}, \.{\\right} )}
+@y
+@d left_right=eq_no+1 {variable delimiter ( \.{\\left}, \.{\\right} )}
+  {( or \.{\\middle} )}
+@z
+
+@x
+@d set_box_dimen=set_page_int+1 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
+@d set_shape=set_box_dimen+1 {specify fancy paragraph shape ( \.{\\parshape} )}
+@y
+  {( or \.{\\interactionmode} )}
+@d set_box_dimen=set_page_int+1 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
+@d set_shape=set_box_dimen+1 {specify fancy paragraph shape ( \.{\\parshape} )}
+  {(or \.{\\interlinepenalties}, etc.~)}
+@z
+
+@x
+@d let=prefix+1 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
+@d shorthand_def=let+1 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
+@d read_to_cs=shorthand_def+1 {read into a control sequence ( \.{\\read} )}
+@y
+  {( or \.{\\protected} )}
+@d let=prefix+1 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
+@d shorthand_def=let+1 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
+@d read_to_cs=shorthand_def+1 {read into a control sequence ( \.{\\read} )}
+  {( or \.{\\readline} )}
+@z
+
+@x
+@d int_pars=60 {total number of integer parameters}
+@d count_base=int_base+int_pars {256 user \.{\\count} registers}
+@y
+@d tex_int_pars=60 {total number of \TeX's integer parameters}
+@#
+@d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
+@z
+
+@x
+@!q:halfword; {general purpose index}
+@y
+@!qx:halfword; {general purpose index}
+@z
+
+@x
+if box(cur_val)=null then cur_val:=0
+else
+   begin q:=box(cur_val);
+  while (q<>null)and(box_dir(q)<>abs(direction)) do q:=link(q);
+  if q=null then
+    begin q:=new_dir_node(box(cur_val),abs(direction));
+@y
+if q=null then cur_val:=0
+else
+   begin qx:=q;
+  while (q<>null)and(box_dir(q)<>abs(direction)) do q:=link(q);
+  if q=null then
+    begin q:=new_dir_node(qx,abs(direction));
+@z
+
+@x
+@d job_name_code=10 {command code for \.{\\jobname}}
+@y
+@d etex_convert_base=10 {base for \eTeX's command codes}
+@d eTeX_revision_code=etex_convert_base {command code for \.{\\eTeXrevision}}
+@d etex_convert_codes=etex_convert_base+1 {end of \eTeX's command codes}
+@d job_name_code=etex_convert_codes {command code for \.{\\jobname}}
+@z
+
+@x
+base_line:=cur_v; left_edge:=cur_h; disp:=0;
+@y
+base_line:=cur_v; disp:=0; revdisp:=0;
+prev_p:=this_box+list_offset;
+@<Initialize |hlist_out| for mixed direction typesetting@>;
+left_edge:=cur_h;
+@z
+
+@x
+    if (type(tail)=hlist_node)or(type(tail)=vlist_node)
+          or(type(tail)=dir_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+@y
+    begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
+      remove_end_M;
+    if (type(tail)=hlist_node)or(type(tail)=vlist_node)
+          or(type(tail)=dir_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+    if LR_temp<>null then insert_end_M;
+    end;
+@z
+
+@x
+  else begin adjust_hlist(head,true); line_break(widow_penalty)
+@y
+  else begin adjust_hlist(head,true); line_break(false)
+@z
+
+@x
+else  begin adjust_hlist(head,true); line_break(display_widow_penalty);@/
+@y
+else  begin adjust_hlist(head,true); line_break(true);@/
+@z
+
+@x
+@d show_mode=4 { \.{\\showmode} }
+@y
+@d show_mode=7 { \.{\\showmode} }
+@z
+
+@x
+@* \[55/p\TeX] System-dependent changes for p\TeX.
+@y
+@* \[54/p\TeX] System-dependent changes for p\TeX.
+@z
+
+@x
+@* \[56] System-dependent changes.
+@y
+@* \[54] System-dependent changes.
+@z
+

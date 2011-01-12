@@ -63,7 +63,7 @@
 */
 
 /* Aleph is sufficiently different to separate the definition. */
-#if !defined(Aleph)
+#if !defined(Aleph) && !defined(epTeX)
 
 typedef union
 {

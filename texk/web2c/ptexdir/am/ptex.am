@@ -80,8 +80,8 @@ ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
 # Extract ptex version
 ptexdir/ptex_version.h: ptexdir/ptex-base.ch
 	$(MKDIR_P) ptexdir
-	grep "^@d TeX_banner=='This is pTeX" $(srcdir)/ptexdir/ptex-base.ch \
-	  | sed "s/^.*-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
+	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
+	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate ptex.web
 ptex.web: tie$(EXEEXT) $(ptex_web_srcs)

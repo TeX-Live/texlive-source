@@ -11,7 +11,7 @@
 2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etexextra.in: Renamed ...
-	* etexextra.h: into this; #include etex_version.h
+	* etexextra.h: ... into this; #include etex_version.h
 	for ETEX_VERSION.
 
 	* etexextra.c (new): #include <etexd.h> and <lib/texmfmp.c>.

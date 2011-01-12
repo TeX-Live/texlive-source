@@ -1,6 +1,21 @@
+2011-01-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Somewhat rearrange to simplify building e-pTeX:
+
+	* ptex-base.ch: @d pTeX_version_string, use it for pTeX_banner
+	but keep definition of TeX_banner.
+	* am/ptex.am (ptex_version.h): Adapted.
+
+	* ptex-base.ch: Rename cur_dir => cur_dir_hv to avoid conflict
+	with cur_dir from e-TeX.
+	Shorten or split the individual change sets to avoid conflicts.
+
 2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am: Build libkanji.c from kanji.c, for pTeX and e-pTeX.
+
+	* kanji.h (epTeX): #define getintone(w) and setintone(w,a),
+	and #include <ptexenc/unicode.h>,
 
 2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -9,7 +24,7 @@
 2011-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexextra.in: Renamed ...
-	* ptexextra.h: into this; #include ptex_version.h
+	* ptexextra.h: ... into this; #include ptex_version.h
 	for PTEX_VERSION.
 
 	* ptexextra.c (new): #include <ptexd.h> and <lib/texmfmp.c>.

@@ -5,6 +5,8 @@
 	* texmfmp-help.h: Modernize PTEXHELP and add EPTEXHELP.
 	Avoid to include TEXHELP for all TeX-like engines.
 
+	* texmfmem.h: ep-TeX uses Aleph-type memory words.
+
 2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* enctex.ch (new): Split enc\TeX off tex.ch (not for pTeX).

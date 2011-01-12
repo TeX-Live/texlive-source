@@ -5,7 +5,7 @@
 2011-01-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xetexextra.in: Renamed ...
-	* xetexextra.h: into this; #include {e,xe}tex_version.h
+	* xetexextra.h: ... into this; #include {e,xe}tex_version.h
 	for {E,XE}TEX_VERSION.
 
 	* xetexextra.c (new): #include <xetexd.h> and <lib/texmfmp.c>.

@@ -1,17 +1,22 @@
-% This is a change file for pTeX 3.1.11
-% By Sadayuki Tanaka and ASCII MEDIA WORKS.
+% This is a change file for e-pTeX,
+% essentialy same for that of e-pTeX 090309.
+% Based on change file for 
+%   pTeX 3.1.10 (by Sadayuki Tanaka (sada-t@ascii.co.jp),
+%                   Ken Nakano (ken-na@ascii.co.jp) and ASCII Corporation).
+% e-pTeX is developed by Hironori Kitagawa.
 %
-% Thanks for :
-%    Ryoichi Kurasawa (us009185@interramp.com),
-%    Hisato Hamano,
-%    Hiroto Kagotani (kagotani@in.it.okayama-u.ac.jp),
-%    Takashi Kakiuchi (kakiuchi@sy6.isl.mei.co.jp),
-%    Yoichi Kawabata (kawabata@canon.co.jp),
-%    Makoto Kobayashi (makoto@lloem.fujidenki.co.jp),
-%    Yoshihiro Aoki (aoki@tokyo-shoseki-ptg.co.jp),
-%    Akira Kakuto (kakuto@fsci.fuk.kindai.ac.jp).
-%    Koich Inoue (inoue@ma.ns.musashi-tech.ac.jp).
+% Thanks for:
+%   Noriyuki Abe, Akira Kakuto, Takuji Tanaka, Takayuki Yato,
+%   Yusuke Kuroki.
 %
+% compile:
+% etex.web  := tex.web + etexdir/etex.ch + etexdir/etex.fix
+% etex.ch   := etexdir/tex.ch0 + tex.ch  + etexdir/tex.ch1 
+%              + etexdir/tex.ech + etexdir/etex-binpool.ch
+% eptex.web := eptex-base.ch + eptexdir/ptex-include.ch + eptexdir/fp.ch
+%  ^^^^^^^  please tangle eptex.web.
+%
+% ---------- pTeX history ----------
 % (??/??/87) RKS jTeX 2.9 -- j1.0
 % (??/??/89) RKS jTeX 2.93 -- j1.3
 % (12/ 9/89) H_2 pTeX 2.93 j1.3 p1.0.1
@@ -617,7 +622,7 @@ begin case type(p) of
   end;
 @y
   if box_dir(p)<>dir_default then
-    begin print(", "); print_direction(box_dir(p));
+    begin print_direction_alt(box_dir(p));
     end;
   end;
 @z
@@ -2591,19 +2596,26 @@ else if cur_cmd=def_font then f:=cur_font
 
 @x
 @p procedure char_warning(@!f:internal_font_number;@!c:eight_bits);
+var old_setting: integer; {saved value of |tracing_online|}
 begin if tracing_lost_chars>0 then
+ begin old_setting:=tracing_online;
+ if eTeX_ex and(tracing_lost_chars>1) then tracing_online:=1;
   begin begin_diagnostic;
   print_nl("Missing character: There is no ");
 @.Missing character@>
   print_ASCII(c); print(" in font ");
   slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
+  end;
 @y
 @d print_lc_hex(#)==l:=#;
   if l<10 then print_char(l+"0")@+else print_char(l-10+"a")
 
 @p procedure char_warning(@!f:internal_font_number;@!c:eight_bits);
 var @!l:0..255; {small indices or counters}
+old_setting: integer; {saved value of |tracing_online|}
 begin if tracing_lost_chars>0 then
+ begin old_setting:=tracing_online;
+ if eTeX_ex and(tracing_lost_chars>1) then tracing_online:=1;
   begin begin_diagnostic;
   print_nl("Missing character: There is no ");
 @.Missing character@>
@@ -2616,6 +2628,7 @@ begin if tracing_lost_chars>0 then
   else print_ASCII(c);
   print(" in font ");
   slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
+  end;
 @z
 
 @x [31.586] l.12189 - pTeX: define set2
@@ -2762,6 +2775,7 @@ continue:
         end;
       synch_h;
       end;
+    prev_p:=link(prev_p); {N.B.: not |prev_p:=p|, |p| might be |lig_trick|}
     p:=link(p);
 	jc:=toDVI(KANJI(info(p)));
     dvi_out(set2); dvi_out(Hi(jc)); dvi_out(Lo(jc));
@@ -2791,7 +2805,7 @@ rule_node: begin rule_ht:=height(p); rule_dp:=depth(p); rule_wd:=width(p);
   goto fin_rule;
   end;
 whatsit_node: @<Output the whatsit node |p| in an hlist@>;
-disp_node: begin disp:=disp_dimen(p); cur_v:=base_line+disp; end;
+disp_node: begin disp:=disp_dimen(p); revdisp:=disp; cur_v:=base_line+disp; end;
 @z
 
 @x [32.624] l.13000 - pTeX: output a box(and dir_node) with disp
@@ -2808,7 +2822,7 @@ else  begin save_h:=dvi_h; save_v:=dvi_v; save_dir:=dvi_dir;
 @x [32.624] l.13005 - pTeX: output a box(and dir_node) with disp
   if type(p)=vlist_node then vlist_out@+else hlist_out;
   dvi_h:=save_h; dvi_v:=save_v;
-  cur_h:=edge+width(p); cur_v:=base_line;
+  cur_h:=edge; cur_v:=base_line;
   end
 @y
   case type(p) of
@@ -2817,7 +2831,7 @@ else  begin save_h:=dvi_h; save_v:=dvi_v; save_dir:=dvi_dir;
     dir_node:dir_out;
   endcases;
   dvi_h:=save_h; dvi_v:=save_v; dvi_dir:=save_dir;
-  cur_h:=edge+width(p); cur_v:=base_line+disp; cur_dir_hv:=save_dir;
+  cur_h:=edge; cur_v:=base_line+disp; cur_dir_hv:=save_dir;
   end
 @z
 
@@ -3034,6 +3048,7 @@ begin last_badness:=0; r:=get_node(box_node_size); type(r):=hlist_node;
 subtype(r):=min_quarterword; shift_amount(r):=0;
 q:=r+list_offset; link(q):=p;@/
 h:=0; @<Clear dimensions to zero@>;
+if TeXXeT_en then @<Initialize the LR stack@>;
 while p<>null do @<Examine node |p| in the hlist, taking account of its effect
   on the dimensions of the new box, or moving it to the adjustment list;
   then advance |p| to the next node@>;
@@ -3043,7 +3058,8 @@ height(r):=h; depth(r):=d;@/
   then |return| or |goto common_ending|@>;
 common_ending: @<Finish issuing a diagnostic message
       for an overfull or underfull hbox@>;
-exit: hpack:=r;
+exit: if TeXXeT_en then @<Check for LR anomalies at the end of |hpack|@>;
+hpack:=r;
 end;
 @y
 begin last_badness:=0; r:=get_node(box_node_size); type(r):=hlist_node;
@@ -3054,6 +3070,7 @@ k:=cur_kanji_skip;
 q:=r+list_offset; link(q):=p;@/
 h:=0; @<Clear dimensions to zero@>;
 disp:=0;
+if TeXXeT_en then @<Initialize the LR stack@>;
 while p<>null do @<Examine node |p| in the hlist, taking account of its effect
   on the dimensions of the new box, or moving it to the adjustment list;
   then advance |p| to the next node@>;
@@ -3063,7 +3080,9 @@ height(r):=h; depth(r):=d;@/
   then |return| or |goto common_ending|@>;
 common_ending:
   @<Finish issuing a diagnostic message for an overfull or underfull hbox@>;
-exit: last_disp:=disp; hpack:=r;
+exit: last_disp:=disp;
+if TeXXeT_en then @<Check for LR anomalies at the end of |hpack|@>; 
+hpack:=r;
 end;
 @z
 
@@ -3082,7 +3101,10 @@ if p<>null then
     @<Transfer node |p| to the adjustment list@>;
   whatsit_node:@<Incorporate a whatsit node into an hbox@>;
   glue_node:@<Incorporate glue into the horizontal totals@>;
-  kern_node,math_node: x:=x+width(p);
+  kern_node: x:=x+width(p);
+  math_node: begin x:=x+width(p);
+    if TeXXeT_en then @<Adjust \(t)the LR stack for the |hpack| routine@>;
+    end;
   ligature_node: @<Make node |p| look like a |char_node|
     and |goto reswitch|@>;
   othercases do_nothing
@@ -3105,9 +3127,12 @@ if p<>null then
   ins_node,mark_node,adjust_node:
     if adjust_tail<>null then @<Transfer node |p| to the adjustment list@>;
   whatsit_node:@<Incorporate a whatsit node into an hbox@>;
-  disp_node:disp:=disp_dimen(p);
+  disp_node:begin disp:=disp_dimen(p); revdisp:=disp; end;
   glue_node:@<Incorporate glue into the horizontal totals@>;
-  kern_node,math_node:x:=x+width(p);
+  kern_node: x:=x+width(p);
+  math_node: begin x:=x+width(p);
+    if TeXXeT_en then @<Adjust \(t)the LR stack for the |hpack| routine@>;
+    end;
   ligature_node:@<Make node |p| look like a |char_node| and |goto reswitch|@>;
   othercases do_nothing
   endcases;@/
@@ -4031,7 +4056,11 @@ if q<>null then {|q| cannot be a |char_node|}
   else  begin if type(q)=disc_node then
       @<Change discretionary to compulsory and set
         |disc_break:=true|@>
-    else if (type(q)=math_node)or(type(q)=kern_node) then width(q):=0;
+    else if type(q)=kern_node then width(q):=0
+    else if type(q)=math_node then
+      begin width(q):=0;
+      if TeXXeT_en then @<Adjust \(t)the LR stack for the |p...@>;
+      end;
     end
 @y
 if q<>null then {|q| may be a |char_node|}
@@ -4045,7 +4074,11 @@ if q<>null then {|q| may be a |char_node|}
     else  begin if type(q)=disc_node then
         @<Change discretionary to compulsory and set
           |disc_break:=true|@>
-      else if (type(q)=math_node)or(type(q)=kern_node) then width(q):=0;
+      else if type(q)=kern_node then width(q):=0
+      else if type(q)=math_node then
+        begin width(q):=0;
+        if TeXXeT_en then @<Adjust \(t)the LR stack for the |p...@>;
+        end;
       end
   end
 @z
@@ -4114,11 +4147,11 @@ if q=null then box(n):=null {the |eq_level| of the box stays the same}
 else box(n):=vpack(q,natural);
 vsplit:=vpackage(p,h,exactly,split_max_depth);
 @y
-q:=prune_page_top(q); p:=list_ptr(v);
-if q=null then box(n):=null {the |eq_level| of the box stays the same}
-else begin
-  box(n):=vpack(q,natural); box_dir(box(n)):=box_dir(v);
+q:=prune_page_top(q,saving_vdiscards>0); p:=list_ptr(v);
+if q<>null then begin
+    q:=vpack(q,natural); box_dir(q):=box_dir(v);
   end;
+change_box(q);
 q:=vpackage(p,h,exactly,split_max_depth);
 box_dir(q):=box_dir(v);
 delete_glue_ref(space_ptr(v)); delete_glue_ref(xspace_ptr(v));
@@ -4614,12 +4647,12 @@ end
 var @!p,@!q:pointer; {run through the current list}
 @!m:quarterword; {the length of a replacement list}
 @!k:halfword; {0 or |vmode| or |hmode|}
-@!n:eight_bits; {a box number}
+@!n:halfword; {a box number}
 @y
 var @!p,@!q:pointer; {run through the current list}
 @!m:quarterword; {the length of a replacement list}
 @!k:halfword; {0 or |vmode| or |hmode|}
-@!n:eight_bits; {a box number}
+@!n:halfword; {a box number}
 @!a_dir:eight_bits; {adjust direction}
 @!d:pointer; {last |disp_node|}
 @!disp,@!pdisp:scaled; {displacement}
@@ -4914,7 +4947,10 @@ else  begin
     begin f:=true; d:=tail; tail:=prev_node; link(tail):=null;
     end
   else d:=null;
-  if not is_char_node(tail) then if type(tail)=cur_chr then
+  if not is_char_node(tail) then
+  begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
+    remove_end_M;
+  if type(tail)=cur_chr then
     begin q:=head; pp:=null; disp:=0; pdisp:=0;
     repeat p:=q;
     if not is_char_node(q) then
@@ -4946,7 +4982,9 @@ else  begin
         end
       else
         begin prev_node:=tail; prev_disp:=disp; tail_append(d)
-        end
+        end;
+  if LR_temp<>null then insert_end_M;
+  end;
   end;
 exit:end;
 @z
@@ -4974,7 +5012,9 @@ if c=copy_code then link(tail):=copy_node_list(list_ptr(p))
 else  begin link(tail):=list_ptr(p); box(cur_val):=null;
   free_node(p,box_node_size);
   end;
+done:
 while link(tail)<>null do tail:=link(tail);
+exit:end;
 @y
 if type(p)=dir_node then p:=list_ptr(p);
 if (abs(mode)=mmode)or((abs(mode)=vmode)and(type(p)<>vlist_node))or@|
@@ -4998,17 +5038,18 @@ endcases;
 disp:=0;
 if c=copy_code then link(tail):=copy_node_list(list_ptr(p))
 else
-  begin if type(box(cur_val))=dir_node then
-    begin delete_glue_ref(space_ptr(box(cur_val)));
-    delete_glue_ref(xspace_ptr(box(cur_val)));
-    free_node(box(cur_val),box_node_size);
+  begin if type(p)=dir_node then
+    begin delete_glue_ref(space_ptr(p));
+    delete_glue_ref(xspace_ptr(p));
+    free_node(p,box_node_size);
     end;
   flush_node_list(link(p));
-  link(tail):=list_ptr(p); box(cur_val):=null;
+  link(tail):=list_ptr(p); change_box(null);
   delete_glue_ref(space_ptr(p));
   delete_glue_ref(xspace_ptr(p));
   free_node(p,box_node_size);
   end;
+done:
 while link(tail)<>null do
   begin p:=tail; tail:=link(tail);
   if not is_char_node(tail) then
@@ -5030,6 +5071,7 @@ while link(tail)<>null do
       end;
     endcases;
   end;
+exit:end;
 @z
 
 @x [47.1113] l.22028 - pTeX: italic correction, ita_kern
@@ -5637,27 +5679,27 @@ else if cur_chr=kcat_code_base then n:=max_char_code
 @x [49.1247] l.24083 - pTeX: alter_box_dimen : box_dir
 procedure alter_box_dimen;
 var c:small_number; {|width_offset| or |height_offset| or |depth_offset|}
-@!b:eight_bits; {box number}
-begin c:=cur_chr; scan_eight_bit_int; b:=cur_val; scan_optional_equals;
+@!b:pointer; {box register}
+begin c:=cur_chr; scan_register_num; fetch_box(b); scan_optional_equals;
 scan_normal_dimen;
-if box(b)<>null then mem[box(b)+c].sc:=cur_val;
+if b<>null then mem[b+c].sc:=cur_val;
 end;
 @y
 procedure alter_box_dimen;
 var c:small_number; {|width_offset| or |height_offset| or |depth_offset|}
-@!b:eight_bits; {box number}
+@!b:pointer; {box register}
 @!p,q:pointer; {temporary registers}
-begin c:=cur_chr; scan_eight_bit_int; b:=cur_val; scan_optional_equals;
+begin c:=cur_chr; scan_register_num; fetch_box(b); scan_optional_equals;
 scan_normal_dimen;
-if box(b)<>null then
-  begin q:=box(b); p:=link(q);
+if b<>null then
+  begin q:=b; p:=link(q);
   while p<>null do
     begin if abs(direction)=box_dir(p) then q:=p;
     p:=link(p);
     end;
   if box_dir(q)<>abs(direction) then
     begin q:=new_dir_node(q,abs(direction)); list_ptr(q):=null;
-    link(q):=link(box(b)); link(box(b)):=q;
+    link(q):=link(b); link(b):=q;
     end;
     mem[q+c].sc:=cur_val;
   end;
