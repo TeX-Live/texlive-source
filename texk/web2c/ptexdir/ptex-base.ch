@@ -729,6 +729,18 @@ kern_node,disp_node,math_node,penalty_node:
 @d vmove=22 {vertical motion ( \.{\\raise}, \.{\\lower} )}
 @d un_hbox=23 {unglue a box ( \.{\\unhbox}, \.{\\unhcopy} )}
 @d un_vbox=24 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
+@y
+@d char_num=max_char_code+1 {character specified numerically ( \.{\\char} )}
+@d math_char_num=char_num+1 {explicit math code ( \.{\\mathchar} )}
+@d mark=math_char_num+1 {mark definition ( \.{\\mark} )}
+@d xray=mark+1 {peek inside of \TeX\ ( \.{\\show}, \.{\\showbox}, etc.~)}
+@d make_box=xray+1 {make a box ( \.{\\box}, \.{\\copy}, \.{\\hbox}, etc.~)}
+@d hmove=make_box+1 {horizontal motion ( \.{\\moveleft}, \.{\\moveright} )}
+@d vmove=hmove+1 {vertical motion ( \.{\\raise}, \.{\\lower} )}
+@d un_hbox=vmove+1 {unglue a box ( \.{\\unhbox}, \.{\\unhcopy} )}
+@d un_vbox=un_hbox+1 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
+@z
+@x [15.208] l.4207 - pTeX: Add inhibit_glue, chg_dir.
 @d remove_item=25 {nullify last item ( \.{\\unpenalty},
   \.{\\unkern}, \.{\\unskip} )}
 @d hskip=26 {horizontal glue ( \.{\\hskip}, \.{\\hfil}, etc.~)}
@@ -739,6 +751,19 @@ kern_node,disp_node,math_node,penalty_node:
 @d leader_ship=31 {use a box ( \.{\\shipout}, \.{\\leaders}, etc.~)}
 @d halign=32 {horizontal table alignment ( \.{\\halign} )}
 @d valign=33 {vertical table alignment ( \.{\\valign} )}
+@y
+@d remove_item=un_vbox+1 {nullify last item ( \.{\\unpenalty},
+  \.{\\unkern}, \.{\\unskip} )}
+@d hskip=remove_item+1 {horizontal glue ( \.{\\hskip}, \.{\\hfil}, etc.~)}
+@d vskip=hskip+1 {vertical glue ( \.{\\vskip}, \.{\\vfil}, etc.~)}
+@d mskip=vskip+1 {math glue ( \.{\\mskip} )}
+@d kern=mskip+1 {fixed space ( \.{\\kern})}
+@d mkern=kern+1 {math kern ( \.{\\mkern} )}
+@d leader_ship=mkern+1 {use a box ( \.{\\shipout}, \.{\\leaders}, etc.~)}
+@d halign=leader_ship+1 {horizontal table alignment ( \.{\\halign} )}
+@d valign=halign+1 {vertical table alignment ( \.{\\valign} )}
+@z
+@x [15.208] l.4207 - pTeX: Add inhibit_glue, chg_dir.
 @d no_align=34 {temporary escape from alignment ( \.{\\noalign} )}
 @d vrule=35 {vertical rule ( \.{\\vrule} )}
 @d hrule=36 {horizontal rule ( \.{\\hrule} )}
@@ -755,6 +780,25 @@ kern_node,disp_node,math_node,penalty_node:
 @d discretionary=47 {discretionary texts ( \.{\\-}, \.{\\discretionary} )}
 @d eq_no=48 {equation number ( \.{\\eqno}, \.{\\leqno} )}
 @d left_right=49 {variable delimiter ( \.{\\left}, \.{\\right} )}
+@y
+@d no_align=valign+1 {temporary escape from alignment ( \.{\\noalign} )}
+@d vrule=no_align+1 {vertical rule ( \.{\\vrule} )}
+@d hrule=vrule+1 {horizontal rule ( \.{\\hrule} )}
+@d insert=hrule+1 {vlist inserted in box ( \.{\\insert} )}
+@d vadjust=insert+1 {vlist inserted in enclosing paragraph ( \.{\\vadjust} )}
+@d ignore_spaces=vadjust+1 {gobble |spacer| tokens ( \.{\\ignorespaces} )}
+@d after_assignment=ignore_spaces+1 {save till assignment is done ( \.{\\afterassignment} )}
+@d after_group=after_assignment+1 {save till group is done ( \.{\\aftergroup} )}
+@d break_penalty=after_group+1 {additional badness ( \.{\\penalty} )}
+@d start_par=break_penalty+1 {begin paragraph ( \.{\\indent}, \.{\\noindent} )}
+@d ital_corr=start_par+1 {italic correction ( \.{\\/} )}
+@d accent=ital_corr+1 {attach accent in text ( \.{\\accent} )}
+@d math_accent=accent+1 {attach accent in math ( \.{\\mathaccent} )}
+@d discretionary=math_accent+1 {discretionary texts ( \.{\\-}, \.{\\discretionary} )}
+@d eq_no=discretionary+1 {equation number ( \.{\\eqno}, \.{\\leqno} )}
+@d left_right=eq_no+1 {variable delimiter ( \.{\\left}, \.{\\right} )}
+@z
+@x [15.208] l.4207 - pTeX: Add inhibit_glue, chg_dir.
 @d math_comp=50 {component of formula ( \.{\\mathbin}, etc.~)}
 @d limit_switch=51 {diddle limit conventions ( \.{\\displaylimits}, etc.~)}
 @d above=52 {generalized fraction ( \.{\\above}, \.{\\atop}, etc.~)}
@@ -780,41 +824,6 @@ kern_node,disp_node,math_node,penalty_node:
   \.{\\lastkern}, \.{\\lastskip} )}
 @d max_non_prefixed_command=70 {largest command code that can't be \.{\\global}}
 @y
-@d char_num=max_char_code+1 {character specified numerically ( \.{\\char} )}
-@d math_char_num=char_num+1 {explicit math code ( \.{\\mathchar} )}
-@d mark=math_char_num+1 {mark definition ( \.{\\mark} )}
-@d xray=mark+1 {peek inside of \TeX\ ( \.{\\show}, \.{\\showbox}, etc.~)}
-@d make_box=xray+1 {make a box ( \.{\\box}, \.{\\copy}, \.{\\hbox}, etc.~)}
-@d hmove=make_box+1 {horizontal motion ( \.{\\moveleft}, \.{\\moveright} )}
-@d vmove=hmove+1 {vertical motion ( \.{\\raise}, \.{\\lower} )}
-@d un_hbox=vmove+1 {unglue a box ( \.{\\unhbox}, \.{\\unhcopy} )}
-@d un_vbox=un_hbox+1 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
-@d remove_item=un_vbox+1 {nullify last item ( \.{\\unpenalty},
-  \.{\\unkern}, \.{\\unskip} )}
-@d hskip=remove_item+1 {horizontal glue ( \.{\\hskip}, \.{\\hfil}, etc.~)}
-@d vskip=hskip+1 {vertical glue ( \.{\\vskip}, \.{\\vfil}, etc.~)}
-@d mskip=vskip+1 {math glue ( \.{\\mskip} )}
-@d kern=mskip+1 {fixed space ( \.{\\kern})}
-@d mkern=kern+1 {math kern ( \.{\\mkern} )}
-@d leader_ship=mkern+1 {use a box ( \.{\\shipout}, \.{\\leaders}, etc.~)}
-@d halign=leader_ship+1 {horizontal table alignment ( \.{\\halign} )}
-@d valign=halign+1 {vertical table alignment ( \.{\\valign} )}
-@d no_align=valign+1 {temporary escape from alignment ( \.{\\noalign} )}
-@d vrule=no_align+1 {vertical rule ( \.{\\vrule} )}
-@d hrule=vrule+1 {horizontal rule ( \.{\\hrule} )}
-@d insert=hrule+1 {vlist inserted in box ( \.{\\insert} )}
-@d vadjust=insert+1 {vlist inserted in enclosing paragraph ( \.{\\vadjust} )}
-@d ignore_spaces=vadjust+1 {gobble |spacer| tokens ( \.{\\ignorespaces} )}
-@d after_assignment=ignore_spaces+1 {save till assignment is done ( \.{\\afterassignment} )}
-@d after_group=after_assignment+1 {save till group is done ( \.{\\aftergroup} )}
-@d break_penalty=after_group+1 {additional badness ( \.{\\penalty} )}
-@d start_par=break_penalty+1 {begin paragraph ( \.{\\indent}, \.{\\noindent} )}
-@d ital_corr=start_par+1 {italic correction ( \.{\\/} )}
-@d accent=ital_corr+1 {attach accent in text ( \.{\\accent} )}
-@d math_accent=accent+1 {attach accent in math ( \.{\\mathaccent} )}
-@d discretionary=math_accent+1 {discretionary texts ( \.{\\-}, \.{\\discretionary} )}
-@d eq_no=discretionary+1 {equation number ( \.{\\eqno}, \.{\\leqno} )}
-@d left_right=eq_no+1 {variable delimiter ( \.{\\left}, \.{\\right} )}
 @d math_comp=left_right+1 {component of formula ( \.{\\mathbin}, etc.~)}
 @d limit_switch=math_comp+1 {diddle limit conventions ( \.{\\displaylimits}, etc.~)}
 @d above=limit_switch+1 {generalized fraction ( \.{\\above}, \.{\\atop}, etc.~)}
@@ -857,28 +866,6 @@ kern_node,disp_node,math_node,penalty_node:
 @d set_prev_graf=80 {specify state info ( \.{\\prevgraf} )}
 @d set_page_dimen=81 {specify state info ( \.{\\pagegoal}, etc.~)}
 @d set_page_int=82 {specify state info ( \.{\\deadcycles},
-  \.{\\insertpenalties} )}
-@d set_box_dimen=83 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
-@d set_shape=84 {specify fancy paragraph shape ( \.{\\parshape} )}
-@d def_code=85 {define a character code ( \.{\\catcode}, etc.~)}
-@d def_family=86 {declare math fonts ( \.{\\textfont}, etc.~)}
-@d set_font=87 {set current font ( font identifiers )}
-@d def_font=88 {define a font file ( \.{\\font} )}
-@d register=89 {internal register ( \.{\\count}, \.{\\dimen}, etc.~)}
-@d max_internal=89 {the largest code that can follow \.{\\the}}
-@d advance=90 {advance a register or parameter ( \.{\\advance} )}
-@d multiply=91 {multiply a register or parameter ( \.{\\multiply} )}
-@d divide=92 {divide a register or parameter ( \.{\\divide} )}
-@d prefix=93 {qualify a definition ( \.{\\global}, \.{\\long}, \.{\\outer} )}
-@d let=94 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
-@d shorthand_def=95 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
-  {or \.{\\charsubdef}}
-@d read_to_cs=96 {read into a control sequence ( \.{\\read} )}
-@d def=97 {macro definition ( \.{\\def}, \.{\\gdef}, \.{\\xdef}, \.{\\edef} )}
-@d set_box=98 {set a box ( \.{\\setbox} )}
-@d hyph_data=99 {hyphenation data ( \.{\\hyphenation}, \.{\\patterns} )}
-@d set_interaction=100 {define level of interaction ( \.{\\batchmode}, etc.~)}
-@d max_command=100 {the largest command code seen at |big_switch|}
 @y
 @d toks_register=max_non_prefixed_command+1 {token list register ( \.{\\toks} )}
 @d assign_toks=toks_register+1
@@ -904,9 +891,26 @@ kern_node,disp_node,math_node,penalty_node:
 @d set_prev_graf=set_aux+1 {specify state info ( \.{\\prevgraf} )}
 @d set_page_dimen=set_prev_graf+1 {specify state info ( \.{\\pagegoal}, etc.~)}
 @d set_page_int=set_page_dimen+1 {specify state info ( \.{\\deadcycles},
-  \.{\\insertpenalties} )}
+@z
+@x [15.209] l.4272 - pTeX: def_jfont, def_tfont, set_auto_spacing
+@d set_box_dimen=83 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
+@d set_shape=84 {specify fancy paragraph shape ( \.{\\parshape} )}
+@y
 @d set_box_dimen=set_page_int+1 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
 @d set_shape=set_box_dimen+1 {specify fancy paragraph shape ( \.{\\parshape} )}
+@z
+@x [15.209] l.4272 - pTeX: def_jfont, def_tfont, set_auto_spacing
+@d def_code=85 {define a character code ( \.{\\catcode}, etc.~)}
+@d def_family=86 {declare math fonts ( \.{\\textfont}, etc.~)}
+@d set_font=87 {set current font ( font identifiers )}
+@d def_font=88 {define a font file ( \.{\\font} )}
+@d register=89 {internal register ( \.{\\count}, \.{\\dimen}, etc.~)}
+@d max_internal=89 {the largest code that can follow \.{\\the}}
+@d advance=90 {advance a register or parameter ( \.{\\advance} )}
+@d multiply=91 {multiply a register or parameter ( \.{\\multiply} )}
+@d divide=92 {divide a register or parameter ( \.{\\divide} )}
+@d prefix=93 {qualify a definition ( \.{\\global}, \.{\\long}, \.{\\outer} )}
+@y
 @d def_code=set_shape+1 {define a character code ( \.{\\catcode}, etc.~)}
 @d def_family=def_code+1 {declare math fonts ( \.{\\textfont}, etc.~)}
 @d set_font=def_family+1 {set current font ( font identifiers )}
@@ -919,15 +923,31 @@ kern_node,disp_node,math_node,penalty_node:
 @d multiply=advance+1 {multiply a register or parameter ( \.{\\multiply} )}
 @d divide=multiply+1 {divide a register or parameter ( \.{\\divide} )}
 @d prefix=divide+1 {qualify a definition ( \.{\\global}, \.{\\long}, \.{\\outer} )}
+@z
+@x [15.209] l.4272 - pTeX: def_jfont, def_tfont, set_auto_spacing
+@d let=94 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
+@d shorthand_def=95 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
+  {or \.{\\charsubdef}}
+@d read_to_cs=96 {read into a control sequence ( \.{\\read} )}
+@y
 @d let=prefix+1 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
 @d shorthand_def=let+1 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
+  {or \.{\\charsubdef}}
 @d read_to_cs=shorthand_def+1 {read into a control sequence ( \.{\\read} )}
+@z
+@x [15.209] l.4272 - pTeX: def_jfont, def_tfont, set_auto_spacing
+@d def=97 {macro definition ( \.{\\def}, \.{\\gdef}, \.{\\xdef}, \.{\\edef} )}
+@d set_box=98 {set a box ( \.{\\setbox} )}
+@d hyph_data=99 {hyphenation data ( \.{\\hyphenation}, \.{\\patterns} )}
+@d set_interaction=100 {define level of interaction ( \.{\\batchmode}, etc.~)}
+@d max_command=100 {the largest command code seen at |big_switch|}
+@y
 @d def=read_to_cs+1 {macro definition ( \.{\\def}, \.{\\gdef}, \.{\\xdef}, \.{\\edef} )}
 @d set_box=def+1 {set a box ( \.{\\setbox} )}
 @d hyph_data=set_box+1 {hyphenation data ( \.{\\hyphenation}, \.{\\patterns} )}
 @d set_interaction=hyph_data+1 {define level of interaction ( \.{\\batchmode}, etc.~)}
 @d set_auto_spacing=set_interaction+1 {set auto spaceing mode
-  ( \.{\\autospacing}, \.{\\noautospacing}, ( \.{\\autospacing}, \.{\\noautospacing} )}
+  ( \.{\\autospacing}, \.{\\noautospacing}, ( \.{\\autoxspacing}, \.{\\noautoxspacing} )}
 @d max_command=set_auto_spacing {the largest command code seen at |big_switch|}
 @z
 

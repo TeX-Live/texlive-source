@@ -1,36 +1,6 @@
 % eptexdir/etex.ch0: changefile used to build e-pTeX, see eptexdir/eptex-base.ch for details.
 % Public domain. Originally written by Peter Breitenlohner <tex-live@tug.org>.
 
-@x [15.208]
-  {( or \.{\\pagediscards}, \.{\\splitdiscards} )}
-@y
-@z
-@x [15.208]
-  {or text direction directives ( \.{\\beginL}, etc.~)}
-@y
-@z
-@x [15.208]
-  {( or \.{\\middle} )}
-@y
-@z
-
-@x [15.209]
-  {( or \.{\\interactionmode} )}
-@y
-@z
-@x [15.209]
-  {(or \.{\\interlinepenalties}, etc.~)}
-@y
-@z
-@x [15.209]
-  {( or \.{\\protected} )}
-@y
-@z
-@x [15.209]
-  {( or \.{\\readline} )}
-@y
-@z
-
 @x [17.236] l.4960 - first web2c, then e-TeX additional integer parameters
 @d int_pars=web2c_int_pars {total number of integer parameters}
 @#

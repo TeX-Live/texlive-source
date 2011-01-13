@@ -15,46 +15,6 @@
     begin print_direction_alt(box_dir(p));
 @z
 
-@x [15.208]
-@d un_vbox=un_hbox+1 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
-@y
-@d un_vbox=un_hbox+1 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
-  {( or \.{\\pagediscards}, \.{\\splitdiscards} )}
-@z
-@x [15.208]
-@d valign=halign+1 {vertical table alignment ( \.{\\valign} )}
-@y
-@d valign=halign+1 {vertical table alignment ( \.{\\valign} )}
-  {or text direction directives ( \.{\\beginL}, etc.~)}
-@z
-@x [15.208]
-@d left_right=eq_no+1 {variable delimiter ( \.{\\left}, \.{\\right} )}
-@y
-@d left_right=eq_no+1 {variable delimiter ( \.{\\left}, \.{\\right} )}
-  {( or \.{\\middle} )}
-@z
-
-@x [15.209]
-@d set_box_dimen=set_page_int+1 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
-@d set_shape=set_box_dimen+1 {specify fancy paragraph shape ( \.{\\parshape} )}
-@y
-  {( or \.{\\interactionmode} )}
-@d set_box_dimen=set_page_int+1 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
-@d set_shape=set_box_dimen+1 {specify fancy paragraph shape ( \.{\\parshape} )}
-  {(or \.{\\interlinepenalties}, etc.~)}
-@z
-@x [15.209]
-@d let=prefix+1 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
-@d shorthand_def=let+1 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
-@d read_to_cs=shorthand_def+1 {read into a control sequence ( \.{\\read} )}
-@y
-  {( or \.{\\protected} )}
-@d let=prefix+1 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
-@d shorthand_def=let+1 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
-@d read_to_cs=shorthand_def+1 {read into a control sequence ( \.{\\read} )}
-  {( or \.{\\readline} )}
-@z
-
 @x [17.236]
 @d int_pars=60 {total number of integer parameters}
 @d count_base=int_base+int_pars {256 user \.{\\count} registers}

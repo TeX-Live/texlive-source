@@ -8,7 +8,7 @@
 \def\epTeX{$\varepsilon$-p\TeX}
 @z
 
-@x
+@x e-pTeX: banner
   {printed when p\TeX\ starts}
 @y
   {printed when p\TeX\ starts}
@@ -25,13 +25,11 @@
 @d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
 @z
 
-@x
+@x e-pTeX: node types
     last_node_type_code:
       if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
         if type(tail)<=unset_node then cur_val:=type(tail)+1
         else cur_val:=unset_node+2;
-    end; {there are no other cases}
-    if LR_temp<>null then insert_end_M;
 @y
     last_node_type_code:
       if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
@@ -43,8 +41,6 @@
           else cur_val:=type(tail)-1;
           end
         else cur_val:=unset_node;
-    end; {there are no other cases}
-    if LR_temp<>null then insert_end_M;
 @z
 
 @x e-pTeX: if primitives l.27294
@@ -66,76 +62,27 @@ current_if_type_code: begin if cond_ptr=null then cur_val:=0
 @z
 
 @x e-pTeX: displacement value when typesetting right-to-left l.27798
-@<Glob...@>=
 @!LR_temp:pointer; {holds a temporarily removed \.{\\endM} node}
 @y
-@<Glob...@>=
 @!revdisp:scaled; {temporary value of displacement}
 @!LR_temp:pointer; {holds a temporarily removed \.{\\endM} node}
 @z
 
 @x e-pTeX: reverse nodes of an hlist l.28010
-function reverse(@!this_box,@!t:pointer; var cur_g:scaled;
-  var cur_glue:real):pointer;
-label reswitch,next_p,done;
 var l:pointer; {the new list}
-@!p:pointer; {the current node}
-@!q:pointer; {the next node}
-@!g_order: glue_ord; {applicable order of infinity for glue}
-@!g_sign: normal..shrinking; {selects type of glue}
-@!glue_temp:real; {glue value before rounding}
-@!m,@!n:halfword; {count of unmatched math nodes}
-begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
-l:=t; p:=temp_ptr; m:=min_halfword; n:=min_halfword;
-loop@+  begin while p<>null do
-    @<Move node |p| to the new list and go to the next node;
-    or |goto done| if the end of the reflected segment has been reached@>;
-  if (t=null)and(m=min_halfword)and(n=min_halfword) then goto done;
-  p:=new_math(0,info(LR_ptr)); LR_problems:=LR_problems+10000;
-    {manufacture one missing math node}
-  end;
-done:reverse:=l;
-end;
-
-@ @<Move node |p| to the new list...@>=
-reswitch: if is_char_node(p) then
-  repeat f:=font(p); c:=character(p);
-  cur_h:=cur_h+char_width(f)(char_info(f)(c));
-  q:=link(p); link(p):=l; l:=p; p:=q;
-  until not is_char_node(p)
-else @<Move the non-|char_node| |p| to the new list@>
-
-@ @<Move the non-|char_node| |p| to the new list@>=
-begin q:=link(p);
-case type(p) of
-hlist_node,vlist_node,rule_node,kern_node: rule_wd:=width(p);
-@t\4@>@<Cases of |reverse| that need special treatment@>@;
-edge_node: confusion("LR2");
-@:this can't happen LR2}{\quad LR2@>
-othercases goto next_p
-endcases;@/
 @y
-function reverse(@!this_box,@!t:pointer; var cur_g:scaled;
-  var cur_glue:real):pointer;
-label reswitch,next_p,done;
 var l,la:pointer; {the new list}
 disp,disp2: scaled; { displacement } disped: boolean;
-@!p:pointer; {the current node}
-@!q:pointer; {the next node}
-@!g_order: glue_ord; {applicable order of infinity for glue}
-@!g_sign: normal..shrinking; {selects type of glue}
-@!glue_temp:real; {glue value before rounding}
-@!m,@!n:halfword; {count of unmatched math nodes}
+@z
+@x e-pTeX: reverse nodes of an hlist l.28010
+begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
+@y 
 begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
 disp:=revdisp; disped:=false;
-l:=t; p:=temp_ptr; m:=min_halfword; n:=min_halfword;
-loop@+  begin while p<>null do
-    @<Move node |p| to the new list and go to the next node;
-    or |goto done| if the end of the reflected segment has been reached@>;
-  if (t=null)and(m=min_halfword)and(n=min_halfword) then goto done;
-  p:=new_math(0,info(LR_ptr)); LR_problems:=LR_problems+10000;
-    {manufacture one missing math node}
-  end;
+@z
+@x e-pTeX: reverse nodes of an hlist l.28010
+done:reverse:=l;
+@y
 done:
 {if the beginning node of the new list isn't |disp_node|, }
 {we insert |disp_node| to fix.}
@@ -144,26 +91,18 @@ if (l<>null)and(type(l)<>disp_node) then begin
   disp_dimen(p):=disp; link(p):=l; reverse:=p;
   end
 else reverse:=l;
-end;
-
-@ @<Move node |p| to the new list...@>=
-reswitch: if is_char_node(p) then
-  repeat f:=font(p); c:=character(p);
-  cur_h:=cur_h+char_width(f)(char_info(f)(c));
+@z
+@x e-pTeX: reverse nodes of an hlist l.28010
+  q:=link(p); link(p):=l; l:=p; p:=q;
+@y
   if font_dir[f]<>dir_default then begin
     q:=link(p); la:=l; l:=p; p:=link(q); link(q):=la;
     end
   else begin q:=link(p); link(p):=l; l:=p; p:=q; end;
-  until not is_char_node(p)
-else @<Move the non-|char_node| |p| to the new list@>
-
-@ @<Move the non-|char_node| |p| to the new list@>=
-begin q:=link(p);
-case type(p) of
-hlist_node,vlist_node,rule_node,kern_node: rule_wd:=width(p);
-@t\4@>@<Cases of |reverse| that need special treatment@>@;
-edge_node: confusion("LR2");
-@:this can't happen LR2}{\quad LR2@>
+@z
+@x e-pTeX: reverse nodes of an hlist l.28010
+othercases goto next_p
+@y
 disp_node: begin
   disp2:=disp_dimen(p); disp_dimen(p):=disp; disp:=disp2;
   { print_nl("ep TeXXeT:"); print_int(disp_dimen(p)); }
@@ -171,7 +110,6 @@ disp_node: begin
   { if not disped then begin disped:=true; print(" NL"); end; end; }
   if not disped then disped:=true; end;
 othercases goto next_p
-endcases;@/
 @z
 
 @x e-pTeX: if primitives l.28545
