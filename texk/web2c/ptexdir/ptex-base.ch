@@ -2182,11 +2182,12 @@ string_code:if cur_cs<>0 then sprint_cs(cur_cs)
 @d if_case_code=16 { `\.{\\ifcase}' }
 @y
 @d if_case_code=16 { `\.{\\ifcase}' }
-@d if_tdir_code=17 { `\.{\\iftdir}' }
-@d if_ydir_code=18 { `\.{\\ifydir}' }
-@d if_mdir_code=19 { `\.{\\ifmdir}' }
-@d if_tbox_code=20 { `\.{\\iftbox}' }
-@d if_ybox_code=21 { `\.{\\ifybox}' }
+@#
+@d if_tdir_code=if_case_code+1 { `\.{\\iftdir}' }
+@d if_ydir_code=if_tdir_code+1 { `\.{\\ifydir}' }
+@d if_mdir_code=if_ydir_code+1 { `\.{\\ifmdir}' }
+@d if_tbox_code=if_mdir_code+1 { `\.{\\iftbox}' }
+@d if_ybox_code=if_tbox_code+1 { `\.{\\ifybox}' }
 @z
 
 @x [28.487] l.9887 - pTeX: iftdir, ifydir, iftbox, ifybox

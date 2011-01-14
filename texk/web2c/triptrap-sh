@@ -1,7 +1,7 @@
 #! /bin/sh
 # shell script to run TRIP and TRAP tests and create diffs.
 #
-#   Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -24,6 +24,7 @@ do
   mptrap.diffs) tst=mplibdir/mptrap; msg='MPTRAP test for MetaPost';;
   etrip.diffs) tst=etexdir/etrip; msg='e-TRIP test for e-TeX';;
   ptrip.diffs) tst=ptexdir/ptrip; msg='TRIP test for pTeX';;
+  eptrip.diffs) tst=eptexdir/eptrip; msg='e-TRIP test for e-pTeX';;
   *) echo "$me: Bad argument \`$file'"; exit 1;;
   esac
   echo ">>> Running $msg."
@@ -36,6 +37,7 @@ do
       -e "s%$srcdir/triptrap%SRCDIR/triptrap%" \
       -e "s%$srcdir/etexdir%SRCDIR/etexdir%" \
       -e "s%$srcdir/ptexdir%SRCDIR/ptexdir%" \
+      -e "s%$srcdir/eptexdir%SRCDIR/eptexdir%" \
       $tmp >>$file
   echo "PASS: $tst.test" >>$file
   rm -f $tmp

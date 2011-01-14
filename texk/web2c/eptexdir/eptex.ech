@@ -43,16 +43,10 @@
         else cur_val:=unset_node;
 @z
 
-@x e-pTeX: if primitives l.27294
-current_if_type_code: if cond_ptr=null then cur_val:=0
-  else if cur_if<unless_code then cur_val:=cur_if+1
-  else cur_val:=-(cur_if-unless_code+1);
+@x e-pTeX: if primitives - leave room for three e-TeX codes
+@d if_tdir_code=if_case_code+1 { `\.{\\iftdir}' }
 @y
-current_if_type_code: begin if cond_ptr=null then cur_val:=0
-  else if cur_if<unless_code then cur_val:=cur_if+1
-  else cur_val:=cur_if-unless_code+1;
-  @<Fix |if_type_code| @>;
-  end;
+@d if_tdir_code=if_case_code+4 { `\.{\\iftdir}' }
 @z
 
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306
@@ -83,11 +77,10 @@ disp:=revdisp; disped:=false;
 @x e-pTeX: reverse nodes of an hlist l.28010
 done:reverse:=l;
 @y
-done:
-{if the beginning node of the new list isn't |disp_node|, }
-{we insert |disp_node| to fix.}
+done: {if the beginning node of the new list isn't |disp_node|,
+       we insert |disp_node| to fix.}
 if (l<>null)and(type(l)<>disp_node) then begin
-  p:=get_node(small_node_size);type(p):=disp_node;
+  p:=get_node(small_node_size); type(p):=disp_node;
   disp_dimen(p):=disp; link(p):=l; reverse:=p;
   end
 else reverse:=l;
@@ -112,16 +105,6 @@ disp_node: begin
 othercases goto next_p
 @z
 
-@x e-pTeX: if primitives l.28545
-@d if_def_code=17 { `\.{\\ifdefined}' }
-@d if_cs_code=18 { `\.{\\ifcsname}' }
-@d if_font_char_code=19 { `\.{\\iffontchar}' }
-@y
-@d if_def_code=22 { `\.{\\ifdefined}' }
-@d if_cs_code=23 { `\.{\\ifcsname}' }
-@d if_font_char_code=24 { `\.{\\iffontchar}' }
-@z
-
 @x e-pTeX: ifcsname l.28620
   buffer[m]:=info(p) mod @'400; incr(m); p:=link(p);
 @y
@@ -135,19 +118,6 @@ othercases goto next_p
     b:=char_exists(char_info(n)(qi(cur_val)))
 @y
     b:=char_exists(orig_char_info(n)(qi(cur_val)))
-@z
-
-@x e-pTeX: fix if_type l.28637
-@ The |protected| feature of \eTeX\ defines the \.{\\protected} prefix
-@y
-@ @<Fix |if_type_code| @>=
-  if (cur_val>=if_def_code+1)and(cur_val<=if_font_char_code+1) then
-      cur_val:=cur_val-5
-  else if (cur_val<if_def_code+1)and(cur_val>if_case_code+1) then
-      cur_val:=cur_val+3;
-  if cur_if>=unless_code then cur_val:=-cur_val;
-
-@ The |protected| feature of \eTeX\ defines the \.{\\protected} prefix
 @z
 
 @x

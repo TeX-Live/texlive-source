@@ -1,3 +1,7 @@
+2011-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* triptrap-sh: Add support for e-pTRIP test.
+
 2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, ac/web2c.ac, texmfmp.h, lib/texmfmp.c: 

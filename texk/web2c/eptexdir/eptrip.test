@@ -1,0 +1,117 @@
+#! /bin/sh
+
+# Copyright (C) 2010 Hironori Kitagawa <tex-live@tug.org>
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+testdir=$srcdir/triptrap
+etestdir=$srcdir/etexdir/etrip
+
+TEXMFCNF=$testdir; export TEXMFCNF
+
+dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
+
+echo ">>> Running e-TRIP test for e-pTeX." >&2
+echo ">>> See $srcdir/eptexdir/eptrip.diffs for example of acceptable diffs." >&2
+
+rm -f trip.tfm trip.pl trip.tex trip.log trip.fmt trip.log trip.dvi \
+  cptripin.fot cptripin.log cptrip.fot cptrip.log cptrip.typ \
+  xptripin.fot xptripin.log xptrip.fot xptrip.log xptrip.typ \
+  eptripin.fot eptripin.log eptrip.fot eptrip.log eptrip.typ \
+  etrip.tfm etrip.pl etrip.tex etrip.log etrip.fmt etrip.dvi etrip.out \
+  tripos.tex 8terminal.tex
+rm -rf tfm
+
+# pTeX outputs direction of boxes.
+P_SED1='s/, yoko direction//;s/yoko direction, //'
+P_SED2='s/yoko(math) direction, //'
+
+is_OK=:
+
+set -x
+
+echo "*** TRIP test for e-pTeX in compatibility mode ***."
+
+./pltotf $testdir/trip.pl trip.tfm || exit 1
+
+./tftopl ./trip.tfm trip.pl || exit 1
+
+diff $testdir/trip.pl trip.pl || is_OK=false
+
+# get same filename in log
+$LN_S $testdir/trip.tex .
+
+rm -f trip.log
+./eptex --progname=epinitex --ini <$testdir/trip1.in >cptripin.fot
+sed "$P_SED1" trip.log >  cptripin.log || exit 1
+diff $testdir/tripin.log cptripin.log
+
+# May as well test non-ini second time through.
+rm -f trip.log
+./eptex --progname=eptex <$testdir/trip2.in >cptrip.fot
+sed "$P_SED1;$P_SED2" trip.log > cptrip.log
+diff $testdir/trip.fot cptrip.fot
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $testdir/trip.log cptrip.log 
+
+eval ./dvitype $dvitype_args trip.dvi >cptrip.typ || exit 1
+$DIFF $DIFFFLAGS $testdir/trip.typ cptrip.typ
+
+# =================================
+
+echo "*** TRIP test for e-pTeX in extended mode ***."
+
+rm -f trip.log
+./eptex --progname=epinitex --ini <$etestdir/etrip1.in >xptripin.fot
+sed "$P_SED1" trip.log >  xptripin.log || exit 1
+diff $testdir/tripin.log xptripin.log
+
+# May as well test non-ini second time through.
+rm -f trip.log
+./eptex --progname=eptex <$etestdir/trip2.in >xptrip.fot
+sed "$P_SED1;$P_SED2" trip.log > xptrip.log
+diff $testdir/trip.fot xptrip.fot
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $testdir/trip.log xptrip.log 
+
+eval ./dvitype $dvitype_args trip.dvi >xptrip.typ || exit 1
+$DIFF $DIFFFLAGS $testdir/trip.typ xptrip.typ
+
+# =================================
+
+echo "*** e-TeX specific part of e-TRIP test for e-pTeX ***."
+
+./pltotf $etestdir/etrip.pl etrip.tfm || exit 1
+
+./tftopl ./etrip.tfm etrip.pl || exit 1
+
+diff $etestdir/etrip.pl etrip.pl || is_OK=false
+
+# get same filename in log
+$LN_S $etestdir/etrip.tex .
+
+./eptex --progname=epinitex --ini <$etestdir/etrip2.in >eptripin.fot
+sed "$P_SED1" etrip.log > eptripin.log || exit 1
+diff $etestdir/etripin.log eptripin.log
+
+# May as well test non-ini second time through.
+./eptex --progname=eptex <$etestdir/etrip3.in >eptrip.fot
+sed "$P_SED1;$P_SED2" etrip.log > eptrip.log
+diff $etestdir/etrip.fot eptrip.fot
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $etestdir/etrip.log eptrip.log
+
+eval ./dvitype $dvitype_args etrip.dvi >eptrip.typ || exit 1
+$DIFF $DIFFFLAGS $etestdir/etrip.typ eptrip.typ
+
+$is_OK || {
+  echo ">>> There were some errors." >&2
+  exit 1
+}
+

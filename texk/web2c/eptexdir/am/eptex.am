@@ -10,6 +10,12 @@ bin_PROGRAMS += eptex
 endif EPTEX
 EXTRA_PROGRAMS += eptex
 
+# e-pTeX Tests
+#
+eptex_tests = eptexdir/eptrip.test
+
+EXTRA_DIST += $(eptex_tests)
+
 eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 eptex_CFLAGS = $(WARNING_CFLAGS)
 
@@ -84,4 +90,26 @@ EXTRA_DIST += \
 	eptexdir/ChangeLog \
 	eptexdir/ChangeLog.TL \
 	eptexdir/README.txt
+
+if EPTEX
+TESTS += $(eptex_tests)
+check_PROGRAMS += dvitype pltotf tftopl
+TRIPTRAP += eptrip.diffs
+endif EPTEX
+
+## Test data and results
+##
+## eptexdir/eptrip.test
+EXTRA_DIST += eptexdir/eptrip.diffs
+.PHONY: eptrip-clean
+clean-local:: eptrip-clean
+eptrip-clean:
+	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi
+	rm -f cptripin.fot cptripin.log cptrip.fot cptrip.log cptrip.typ
+	rm -f xptripin.fot xptripin.log xptrip.fot xptrip.log xptrip.typ
+	rm -f eptripin.fot eptripin.log eptrip.fot eptrip.log eptrip.typ
+	rm -f etrip.tfm etrip.pl etrip.tex etrip.log etrip.fmt etrip.dvi etrip.out
+	rm -f tripos.tex 8terminal.tex
+	rm -rf tfm
+DISTCLEANFILES += eptrip.diffs
 
