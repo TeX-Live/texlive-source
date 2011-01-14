@@ -1,3 +1,9 @@
+2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Mention \protected in error and help messages only
+	when in extended mode.
+	* etrip/etrip.tex: Fixed a typo currentgroup{type => level}.
+
 2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.mak, etex.mk (removed): Obsolete.

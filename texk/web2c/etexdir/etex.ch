@@ -2652,7 +2652,9 @@ or `\.{\\outer}', and it might or might not be expanded. The prefixes
 @x [49] m.1212 l.22730 - e-TeX protected
 help1("I'll pretend you didn't say \long or \outer or \global.");
 @y
-help1("I'll pretend you didn't say \long or \outer or \global or \protected.");
+help1("I'll pretend you didn't say \long or \outer or \global.");
+if eTeX_ex then help_line[0]:=@|
+  "I'll pretend you didn't say \long or \outer or \global or \protected.";
 @z
 %---------------------------------------
 @x [49] m.1213 l.22735 - e-TeX protected
@@ -2666,14 +2668,19 @@ if a>=8 then
 else j:=0;
 if (cur_cmd<>def)and((a mod 4<>0)or(j<>0)) then
   begin print_err("You can't use `"); print_esc("long"); print("' or `");
-  print_esc("outer"); print("' or `");
-  print_esc("protected"); print("' with `");
+  print_esc("outer");
+  help1("I'll pretend you didn't say \long or \outer here.");
+  if eTeX_ex then
+    begin  help_line[0]:=@|
+      "I'll pretend you didn't say \long or \outer or \protected here.";
+    print("' or `"); print_esc("protected");
+    end;
+  print("' with `");
 @z
 %---------------------------------------
 @x [49] m.1213 l.22740 - e-TeX protected
   help1("I'll pretend you didn't say \long or \outer here.");
 @y
-  help1("I'll pretend you didn't say \long or \outer or \protected here.");
 @z
 %---------------------------------------
 @x [49] m.1218 l.22798 - e-TeX protected

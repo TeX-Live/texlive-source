@@ -12,7 +12,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest) (INITEX)  18 MAY 2010 13:31
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2011/dev/MPP) (INITEX)  14 JAN 2011 11:24
 3c3
 < (trip.tex
 ---
@@ -23,8 +23,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2010.5.18)
-> 1486 strings of total length 26070
+>  (format=trip 2011.1.14)
+> 1488 strings of total length 26174
 > 479 memory locations dumped; current usage is 104&278
 > 342 multiletter control sequences
 461c461
@@ -39,7 +39,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest)
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2011/dev/MPP)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -53,7 +53,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest) (format=trip 2010.5.18)  18 MAY 2010 13:31
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2011/dev/MPP) (format=trip 2011.1.14)  14 JAN 2011 11:24
 3c3
 < (trip.tex ##
 ---
@@ -151,10 +151,6 @@
 < Memory usage before: 776&458; after: 464&452; still untouched: 175
 ---
 > Memory usage before: 1098&458; after: 630&452; still untouched: 178
-4845c4849
-< I'll pretend you didn't say \long or \outer or \global.
----
-> I'll pretend you didn't say \long or \outer or \global or \protected.
 6380c6384
 < (tripos.tex
 ---
@@ -177,8 +173,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1814
->  261 string characters out of 7930
+>  44 strings out of 1812
+>  261 string characters out of 7826
 >  3821 words of memory out of 3999
 >  373 multiletter control sequences out of 15000+0
 7301c7305
@@ -191,11 +187,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2010/pretest)
+> This is DVItype, Version 3.6 (TeX Live 2011/dev/MPP)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2010.05.18:1331'
+> ' TeX output 2011.01.14:1124'
 419c419
 < 1121: down4 639342208 
 ---
@@ -313,6 +309,10 @@
 < .\hbox(0.0+0.0)x-7127.0, shifted 7227.0
 ---
 > .\hbox(0.0+0.0)x-7127.0, shifted 7227.0, display
+4849c4842
+< I'll pretend you didn't say \long or \outer or \global.
+---
+> I'll pretend you didn't say \long or \outer or \global or \protected.
 7295a7289,7291
 > 
 > ### semi simple group (level 1) entered at line 429 (begingroup)
@@ -340,7 +340,7 @@
 1c1
 < This is e-TeX, Version 3.141592-2.2 (INITEX)  6 SEP 2004 23:13
 ---
-> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest) (INITEX)  18 MAY 2010 13:31
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2011/dev/MPP) (INITEX)  14 JAN 2011 11:24
 4c4,5
 < (etrip.tex This is the e-Trip test [2004-09-06] for e-TeX v3.141592-2.2.
 ---
@@ -350,8 +350,8 @@
 <  (preloaded format=etrip 2004.9.6)
 < 1435 strings of total length 24590
 ---
->  (format=etrip 2010.5.18)
-> 1487 strings of total length 26101
+>  (format=etrip 2011.1.14)
+> 1489 strings of total length 26205
 28c29
 < 407 multiletter control sequences
 ---
@@ -368,7 +368,7 @@
 < entering extended mode
 < (etrip.tex e-IniTeX: e-Trip format loaded.
 ---
-> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest)
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2011/dev/MPP)
 > **entering extended mode
 > (./etrip.tex e-IniTeX: e-Trip format loaded.
 45a45,46
@@ -378,7 +378,7 @@
 1c1
 < This is e-TeX, Version 3.141592-2.2 (preloaded format=etrip 2004.9.6)  6 SEP 2004 23:13
 ---
-> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2010/pretest) (format=etrip 2010.5.18)  18 MAY 2010 13:31
+> This is e-TeX, Version 3.1415926-2.2 (TeX Live 2011/dev/MPP) (format=etrip 2011.1.14)  14 JAN 2011 11:24
 4c4
 < (etrip.tex e-IniTeX: e-Trip format loaded.
 ---
@@ -409,8 +409,8 @@
 <  2661 words of memory out of 3000
 <  408 multiletter control sequences out of 2100
 ---
->  18 strings out of 1813
->  140 string characters out of 7899
+>  18 strings out of 1811
+>  140 string characters out of 7795
 >  3161 words of memory out of 3999
 >  409 multiletter control sequences out of 15000+0
 4278c4280
@@ -423,10 +423,10 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2010/pretest)
+> This is DVItype, Version 3.6 (TeX Live 2011/dev/MPP)
 9c9
 < ' TeX output 2004.09.06:2313'
 ---
-> ' TeX output 2010.05.18:1331'
+> ' TeX output 2011.01.14:1124'
 + :
 PASS: etexdir/etrip.test

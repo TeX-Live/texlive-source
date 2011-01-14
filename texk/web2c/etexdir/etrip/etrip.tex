@@ -279,7 +279,7 @@
 \typeout{Checking \string\currentgrouptype,
    \string\currentgrouplevel, and \string\lastnodetype:}
 \typeout{current group level (l.\number\inputlineno):
-  \ifcase\currentgrouptype outer level\else BAD!\fi}
+  \ifcase\currentgrouplevel outer level\else BAD!\fi}
 \typeout{current group type (l.\number\inputlineno):
   \ifcase\currentgrouptype bottom level\else BAD!\fi}
 \begingroup

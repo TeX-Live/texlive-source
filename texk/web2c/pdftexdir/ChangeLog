@@ -1,3 +1,9 @@
+2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web: Adapt to ../etexdir/etex.ch:
+	Mention \protected in error and help messages only when in
+	in extended mode.
+
 2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.mak, pdftex.mk (removed): Obsolete.
