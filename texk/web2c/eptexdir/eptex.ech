@@ -8,6 +8,12 @@
 \def\epTeX{$\varepsilon$-p\TeX}
 @z
 
+@x [1.2] l.200 - pTeX:
+@d pTeX_version_string=='-p3.1.11' {current p\TeX\ version}
+@y
+@d  pTeX_version_string=='-p3.1.11-110102' {current \epTeX\ version}
+@z
+
 @x e-pTeX: banner
   {printed when p\TeX\ starts}
 @y

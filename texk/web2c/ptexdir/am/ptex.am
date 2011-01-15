@@ -186,6 +186,7 @@ if PTEX
 TESTS += $(ptex_tests)
 check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += ptrip.diffs
+TRIPTRAP_CLEAN += ptrip-clean
 endif PTEX
 
 ## Test data and results
@@ -214,7 +215,6 @@ DISTCLEANFILES += tests/x*min10.*
 ## ptexdir/ptrip.test
 EXTRA_DIST += ptexdir/ptrip.diffs
 .PHONY: ptrip-clean
-clean-local:: ptrip-clean
 ptrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt ptripin.fot ptripin.log
 	rm -f ptrip.fot ptrip.log trip.log trip.dvi trip.typ

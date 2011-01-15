@@ -85,12 +85,12 @@ if ETEX
 TESTS += $(etex_tests)
 check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += etrip.diffs
+TRIPTRAP_CLEAN += etrip-clean
 endif ETEX
 DISTCLEANFILES += etrip.diffs
 
-.PHONY: etrip-clean
-clean-local:: etrip-clean
 # etrip.test
+.PHONY: etrip-clean
 etrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
 	rm -f ctrip.fot ctrip.log trip.dvi ctrip.typ

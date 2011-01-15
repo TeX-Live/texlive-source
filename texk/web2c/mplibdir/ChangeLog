@@ -1,3 +1,7 @@
+2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mplib.am (mptrap-clean): Use TRIPTRAP_CLEAN.
+
 2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mplib.am: install-exec-hook and uninstall-hook rules now

@@ -52,9 +52,9 @@ eptexdir/etex_version.h: etexdir/etex.ch
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Extract ptex version
-eptexdir/ptex_version.h: ptexdir/ptex-base.ch
+eptexdir/ptex_version.h: eptexdir/eptex.ech
 	$(MKDIR_P) eptexdir
-	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
+	grep '^@d  pTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
 	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate eptex.web
@@ -95,6 +95,7 @@ if EPTEX
 TESTS += $(eptex_tests)
 check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += eptrip.diffs
+TRIPTRAP_CLEAN += eptrip-clean
 endif EPTEX
 
 ## Test data and results
@@ -102,7 +103,6 @@ endif EPTEX
 ## eptexdir/eptrip.test
 EXTRA_DIST += eptexdir/eptrip.diffs
 .PHONY: eptrip-clean
-clean-local:: eptrip-clean
 eptrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi
 	rm -f cptripin.fot cptripin.log cptrip.fot cptrip.log cptrip.typ

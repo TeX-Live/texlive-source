@@ -1,3 +1,11 @@
+2011-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etrip/etrip.tex: Fixed 'wrong last node type' diagnostic.
+
+2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am (etrip-clean): Use TRIPTRAP_CLEAN.
+
 2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Mention \protected in error and help messages only

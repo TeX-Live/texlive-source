@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/eptex.am (eptrip-clean): Use TRIPTRAP_CLEAN.
+
 2011-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptrip.test (new): Shell script for e-pTRIP test,

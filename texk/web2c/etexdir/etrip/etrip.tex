@@ -302,8 +302,8 @@
       \ifnum-1=\lastnodetype empty\else UNKNOWN!\fi\fi}%
     \typeout{last node type (l.\number\inputlineno): \6}}
   \def\2 #1 {\relax\ifnum#1=\lastnodetype \5\else
-    \typeout{wrong last node type:
-             \number\lastnodetype\space should be #1!}\fi}
+    \edef\6{\number\lastnodetype}%
+    \typeout{wrong last node type: \6 should be #1!}\fi}
   \def\3 #1 {\relax\ifnum#1=\currentgrouplevel \else
     \typeout{wrong current group level:
              \number\currentgrouplevel\space should be #1!}\fi}

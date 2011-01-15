@@ -1,3 +1,9 @@
+2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (clean-local, triptrap-clean): Use TRIPTRAP_CLEAN
+	and drop double-colon rules.
+	* am/texmf.am (trip-clean, trap-clean): Use TRIPTRAP_CLEAN.
+
 2011-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* triptrap-sh: Add support for e-pTRIP test.

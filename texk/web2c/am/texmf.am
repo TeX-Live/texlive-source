@@ -72,12 +72,12 @@ if TEX
 TESTS += $(tex_tests)
 check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += trip.diffs
+TRIPTRAP_CLEAN += trip-clean
 endif TEX
 DISTCLEANFILES += trip.diffs
 
-.PHONY: trip-clean
-clean-local:: trip-clean
 # trip.test
+.PHONY: trip-clean
 trip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
 	rm -f trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
@@ -90,7 +90,6 @@ bin_PROGRAMS += mf
 if MFN
 bin_PROGRAMS += mf-nowin
 endif MFN
-TRIPTRAP += mftrap.diffs
 endif MF
 EXTRA_PROGRAMS += mf mf-nowin
 DISTCLEANFILES += mftrap.diffs
@@ -170,11 +169,12 @@ EXTRA_DIST += $(mf_tests)
 if MF
 TESTS += $(mf_tests)
 check_PROGRAMS += gftype tftopl
+TRIPTRAP += mftrap.diffs
+TRIPTRAP_CLEAN += trap-clean
 endif MF
 
-.PHONY: trap-clean
-clean-local:: trap-clean
 # trap.test
+.PHONY: trap-clean
 trap-clean:
 	rm -f trap.mf trap.base
 	rm -f mftrapin.fot mftrapin.log

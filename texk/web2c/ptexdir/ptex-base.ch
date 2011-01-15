@@ -1953,7 +1953,7 @@ if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @y
 if box(cur_val)=null then cur_val:=0
 else
-   begin q:=box(cur_val);
+  begin q:=box(cur_val);
   while (q<>null)and(box_dir(q)<>abs(direction)) do q:=link(q);
   if q=null then
     begin q:=new_dir_node(box(cur_val),abs(direction));

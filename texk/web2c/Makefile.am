@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
@@ -31,6 +31,7 @@ EXTRA_LIBRARIES =
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h
 DISTCLEANFILES = $(EXTRA_LIBRARIES)
 CLEANFILES =
+TRIPTRAP_CLEAN =
 TRIPTRAP =
 bin_links =
 
@@ -123,6 +124,10 @@ triptrap:
 	srcdir=$(srcdir) MAKE=$(MAKE) \
 	  $(SHELL) $(srcdir)/triptrap-sh $(TRIPTRAP)
 EXTRA_DIST += triptrap-sh
+
+clean-local: triptrap-clean
+.PHONY: triptrap-clean
+triptrap-clean: $(TRIPTRAP_CLEAN)
 
 # The environment for making dumps.
 # No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain

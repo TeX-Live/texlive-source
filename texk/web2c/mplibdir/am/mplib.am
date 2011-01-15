@@ -1,6 +1,6 @@
 ## texk/web2c/mplibdir/am/mplib.am: Makefile fragment for MetaPost.
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## MetaPost
@@ -52,14 +52,14 @@ if MP
 TESTS += $(mp_tests)
 check_PROGRAMS += pltotf tftopl
 TRIPTRAP += mptrap.diffs
+TRIPTRAP_CLEAN += mptrap-clean
 endif MP
 DISTCLEANFILES += mptrap.diffs
 
-.PHONY: mptrap-clean
-clean-local:: mptrap-clean
 ## dvitomp.test
 DISTCLEANFILES += ptmr.mpx tests/xptmr.mpx tests/xstory.mpx
 ## mptrap.test
+.PHONY: mptrap-clean
 mptrap-clean:
 	rm -f mtrap.mp mtrap.mem trapf.tfm
 	rm -f mtrap.log mtrap.0 mtrap.1 writeo writeo.log writeo.2
