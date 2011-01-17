@@ -1,3 +1,11 @@
+2011-01-17  Karl Berry  <karl@tug.org>
+
+	* XeTeX_ext.h: #include <w2c/c-auto.h> for SIZEOF_LONG and
+	NO_DUMP_SHARE, else segfaults/stretchy math problems on
+	x86_64-linux, at least sometimes.  Contributed by Paul Vojta,
+	confirmed by Thanh.
+	https://sourceforge.net/tracker/index.php?func=detail&aid=3053287&group_id=194926&atid=951385
+
 2011-01-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/xetex.am (xetex_web_srcs): Added enctex.ch.

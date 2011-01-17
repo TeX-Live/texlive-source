@@ -33,6 +33,7 @@ authorization from the copyright holders.
 #ifndef __XETEXEXT_H
 #define __XETEXEXT_H
 
+#include <w2c/c-auto.h>  /* needed for SIZEOF_LONG and NO_DUMP_SHARE */
 /***** copied from TeX/texk/web2c/config.h -- difficult to include in C++ source files ******/
 #ifndef INTEGER_TYPE
 
