@@ -20,8 +20,8 @@
   {printed when p\TeX\ starts}
 @#
 @d epTeX_version==pTeX_version_string,eTeX_version_string
-@d epTeX_banner_k=='This is epTeXk, Version 3.1415926',epTeX_version
 @d epTeX_banner=='This is epTeX, Version 3.1415926',epTeX_version
+@d epTeX_banner_k==epTeX_banner
   {printed when \epTeX\ starts}
 @z
 
