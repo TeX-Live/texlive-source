@@ -5,6 +5,8 @@ ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 
 	* eptex.ech: banner_k==banner for e-pTeX.
 
+	* am/eptex.am (eptrip.diffs): Use $(triptrap_diffs).
+
 2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/eptex.am (eptrip-clean): Use TRIPTRAP_CLEAN.

@@ -1,3 +1,9 @@
+2011-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (triptrap_diffs): Recipe fragment for trip/trap,
+	used for $(TRIPTRAP).
+	* am/texmf.am (trip.diffs, mftrap.diffs): Use $(triptrap_diffs).
+
 2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (clean-local, triptrap-clean): Use TRIPTRAP_CLEAN

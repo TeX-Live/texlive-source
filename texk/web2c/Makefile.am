@@ -118,11 +118,11 @@ o_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 DIFF = diff
 DIFFFLAGS =
 TESTS_ENVIRONMENT = DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
+triptrap_diffs = srcdir=$(srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
 
 .PHONY: triptrap
 triptrap:
-	srcdir=$(srcdir) MAKE=$(MAKE) \
-	  $(SHELL) $(srcdir)/triptrap-sh $(TRIPTRAP)
+	$(triptrap_diffs) $(TRIPTRAP)
 EXTRA_DIST += triptrap-sh
 
 clean-local: triptrap-clean

@@ -59,6 +59,8 @@ DISTCLEANFILES += mptrap.diffs
 ## dvitomp.test
 DISTCLEANFILES += ptmr.mpx tests/xptmr.mpx tests/xstory.mpx
 ## mptrap.test
+mptrap.diffs: mpost$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: mptrap-clean
 mptrap-clean:
 	rm -f mtrap.mp mtrap.mem trapf.tfm

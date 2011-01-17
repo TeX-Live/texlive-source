@@ -102,6 +102,8 @@ endif EPTEX
 ##
 ## eptexdir/eptrip.test
 EXTRA_DIST += eptexdir/eptrip.diffs
+eptrip.diffs: eptex$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: eptrip-clean
 eptrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi

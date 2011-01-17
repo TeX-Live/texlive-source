@@ -90,6 +90,8 @@ endif ETEX
 DISTCLEANFILES += etrip.diffs
 
 # etrip.test
+etrip.diffs: etex$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: etrip-clean
 etrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log

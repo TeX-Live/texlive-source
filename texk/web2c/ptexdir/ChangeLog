@@ -2,6 +2,8 @@
 
 	* ptex-base.ch: banner_k==banner for pTeX.
 
+	* am/ptex.am (ptrip.diffs): Use $(triptrap_diffs).
+
 2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am (ptrip-clean): Use TRIPTRAP_CLEAN.

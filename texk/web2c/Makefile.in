@@ -1535,6 +1535,7 @@ o_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 DIFF = diff
 DIFFFLAGS = 
 TESTS_ENVIRONMENT = DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
+triptrap_diffs = srcdir=$(srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
 
 # The environment for making dumps.
 # No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain
@@ -8858,8 +8859,7 @@ $(proglib): ${srcdir}/lib/*.c
 
 .PHONY: triptrap
 triptrap:
-	srcdir=$(srcdir) MAKE=$(MAKE) \
-	  $(SHELL) $(srcdir)/triptrap-sh $(TRIPTRAP)
+	$(triptrap_diffs) $(TRIPTRAP)
 
 clean-local: triptrap-clean
 .PHONY: triptrap-clean
@@ -9033,6 +9033,8 @@ tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
 	$(tie) -c $@ $(tex_ch_srcs)
 
 # trip.test
+trip.diffs: tex$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: trip-clean
 trip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
@@ -9066,6 +9068,8 @@ mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
 	$(tie) -c $@ $(mf_ch_src)
 
 # trap.test
+mftrap.diffs: mf$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: trap-clean
 trap-clean:
 	rm -f trap.mf trap.base
@@ -9082,6 +9086,8 @@ mpxout-tangle: ctangle$(EXEEXT) mplibdir/mpxout.w tangle-sh
 	@$(mp_ctangle_sh) mpxout
 
 $(mpost_OBJECTS): $(nodist_mpost_SOURCES) libmplib.a
+mptrap.diffs: mpost$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: mptrap-clean
 mptrap-clean:
 	rm -f mtrap.mp mtrap.mem trapf.tfm
@@ -9151,6 +9157,8 @@ etex.ch: tie$(EXEEXT) etex.web $(etex_ch_srcs)
 	$(tie) -c etex.ch etex.web $(etex_ch_srcs)
 
 # etrip.test
+etrip.diffs: etex$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: etrip-clean
 etrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
@@ -9226,6 +9234,8 @@ ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
 	$(p_tangle) ptftopl ptftopl
 ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie) -m ptftopl.web tftopl.web tftopl.ch
+ptrip.diffs: ptex$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: ptrip-clean
 ptrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt ptripin.fot ptripin.log
@@ -9268,6 +9278,8 @@ eptex.web: tie$(EXEEXT) $(eptex_web_srcs)
 # Generate eptex.ch
 eptex.ch: tie$(EXEEXT) eptex.web $(eptex_ch_srcs)
 	$(tie) -c eptex.ch eptex.web $(eptex_ch_srcs)
+eptrip.diffs: eptex$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: eptrip-clean
 eptrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi

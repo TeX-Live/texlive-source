@@ -77,6 +77,8 @@ endif TEX
 DISTCLEANFILES += trip.diffs
 
 # trip.test
+trip.diffs: tex$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: trip-clean
 trip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
@@ -174,6 +176,8 @@ TRIPTRAP_CLEAN += trap-clean
 endif MF
 
 # trap.test
+mftrap.diffs: mf$(EXEEXT)
+	$(triptrap_diffs) $@
 .PHONY: trap-clean
 trap-clean:
 	rm -f trap.mf trap.base
