@@ -1,6 +1,13 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech, etex.ch0: Adapt to modified ../ptexdir/ptex-base.ch.
+
+	* eptex.ech: Make \lastnodetype consistent with e-TeX, based on
+	code from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>.
+
 2011-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech: banner_k==banner for e-pTeX.

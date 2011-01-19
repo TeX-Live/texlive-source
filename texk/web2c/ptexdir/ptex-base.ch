@@ -44,6 +44,7 @@
 % (08/17/2009) ST  pTeX p3.1.11
 % (05/23/2010) AK  Bug fix by Hironori Kitagawa.
 % (31/12/2010) AK  Bug fix and accent Kanji by Hironori Kitagawa.
+% (19/01/2011) PB  Let \lastkern etc act through disp node.
 %
 @x [1.2] l.200 - pTeX:
 @d banner==TeX_banner
@@ -337,10 +338,10 @@ if last<>first then for k:=first to last-1 do print(buffer[k]);
 @d box_node_size=8 {number of words to allocate for a box node}
 @#
 @d box_dir(#) == subtype(#) {direction mode of a box}
-@d dir_default == qi(0) {direction of the box, default Left to Right}
-@d dir_dtou == qi(1) {direction of the box, Bottom to Top}
-@d dir_tate == qi(3) {direction of the box, Top to Bottom}
-@d dir_yoko == qi(4) {direction of the box, equal default}
+@d dir_default = 0 {direction of the box, default Left to Right}
+@d dir_dtou = 1 {direction of the box, Bottom to Top}
+@d dir_tate = 3 {direction of the box, Top to Bottom}
+@d dir_yoko = 4 {direction of the box, equal default}
 @d any_dir == dir_yoko,dir_tate,dir_dtou
 @#
 @d width_offset=1 {position of |width| field in a box node}
@@ -958,7 +959,7 @@ kern_node,disp_node,math_node,penalty_node:
 @y
 @<Types...@>=
 @!list_state_record=record@!mode_field:-mmode..mmode;@+
-  @!dir_field,@!adj_dir_field: -dir_dtou..dir_dtou;
+  @!dir_field,@!adj_dir_field: -dir_yoko..dir_yoko;
   @!pdisp_field: scaled;
   @!head_field,@!tail_field,@!pnode_field,@!last_jchr_field: pointer;
 @z
@@ -1963,6 +1964,32 @@ else
     end
   else cur_val:=mem[q+m].sc;
   end;
+@z
+
+@x [26.424] l.8690 - pTeX: Fetch an item ...: disp_node
+    case cur_chr of
+    int_val: if type(tail)=penalty_node then cur_val:=penalty(tail);
+    dimen_val: if type(tail)=kern_node then cur_val:=width(tail);
+    glue_val: if type(tail)=glue_node then
+      begin cur_val:=glue_ptr(tail);
+      if subtype(tail)=mu_glue then cur_val_level:=mu_val;
+      end;
+@y
+    begin if (type(tail)=disp_node)and not is_char_node(prev_node) then q:=prev_node
+      else q:=tail;
+      case cur_chr of
+      int_val: if type(q)=penalty_node then cur_val:=penalty(q);
+      dimen_val: if type(q)=kern_node then cur_val:=width(q);
+      glue_val: if type(q)=glue_node then
+        begin cur_val:=glue_ptr(q);
+        if subtype(q)=mu_glue then cur_val_level:=mu_val;
+        end;
+@z
+@x [26.424] l.8690 - pTeX: Fetch an item ...: disp_node
+    end {there are no other cases}
+@y
+      end; {there are no other cases}
+    end
 @z
 
 @x [26.435] l.8940 - pTeX: scan_char_num
@@ -4520,29 +4547,8 @@ q:pointer;
 @z
 
 @x [47.1076] l.21553 - pTeX: box_dir adjust
-begin if cur_box<>null then
   begin shift_amount(cur_box):=box_context;
-  if abs(mode)=vmode then
-    begin append_to_vlist(cur_box);
-    if adjust_tail<>null then
-      begin if adjust_head<>adjust_tail then
-        begin link(tail):=link(adjust_head); tail:=adjust_tail;
-        end;
-      adjust_tail:=null;
-      end;
-    if mode>0 then build_page;
-    end
-  else  begin if abs(mode)=hmode then space_factor:=1000
-    else  begin p:=new_noad;
-      math_type(nucleus(p)):=sub_box;
-      info(nucleus(p)):=cur_box; cur_box:=p;
-      end;
-    link(tail):=cur_box; tail:=cur_box;
-    end;
-  end;
-end
 @y
-begin if cur_box<>null then
   begin p:=link(cur_box); link(cur_box):=null;
   while p<>null do begin
     q:=p; p:=link(p);
@@ -4558,27 +4564,6 @@ begin if cur_box<>null then
   if box_dir(cur_box)<>abs(direction) then
     cur_box:=new_dir_node(cur_box,abs(direction));
   shift_amount(cur_box):=box_context;
-  if abs(mode)=vmode then
-    begin append_to_vlist(cur_box);
-    if adjust_tail<>null then
-      begin if adjust_head<>adjust_tail then
-        begin link(tail):=link(adjust_head); tail:=adjust_tail;
-        end;
-      adjust_tail:=null;
-      end;
-    if mode>0 then build_page;
-    end
-  else begin
-    if abs(mode)=hmode then
-      space_factor:=1000
-    else  begin p:=new_noad;
-      math_type(nucleus(p)):=sub_box;
-      info(nucleus(p)):=cur_box; cur_box:=p;
-      end;
-    link(tail):=cur_box; tail:=cur_box;
-  end;
-end;
-end
 @z
 
 @x [47.1078] l.21585 - pTeX: box_dir adjust
@@ -4620,6 +4605,14 @@ var @!p,@!q:pointer; {run through the current list}
 @!disp,@!pdisp:scaled; {displacement}
 @!pp,pnode:pointer;
 @!f:boolean; {will |d| free?}
+@z
+
+@x [47.1080] l.21625 - pTeX: disp_node, check head=tail
+@ Note that the condition |not is_char_node(tail)| implies that |head<>tail|,
+since |head| is a one-word node.
+@y
+@ Note that in \TeX\ the condition |not is_char_node(tail)| implies that
+|head<>tail|, since |head| is a one-word node; this is not so for p\TeX.
 @z
 
 @x [47.1080] l.21636 - pTeX: disp_node, check head=tail
@@ -4936,7 +4929,7 @@ else  begin
         begin if prev_disp=disp_dimen(d) then
           {|free_node(tail,small_node_size)|}
           else disp_dimen(tail):=disp_dimen(d);
-        if f then free_node(d,small_node_size) 
+        if f then free_node(d,small_node_size)
           else begin prev_node:=tail; prev_disp:=disp; tail_append(d) end
         end
       else
@@ -5192,7 +5185,7 @@ tail:=new_kern(-a-delta); subtype(tail):=acc_kern; link(p):=tail; p:=q;
 @y
 tail:=new_kern(-a-delta); subtype(tail):=acc_kern;
 if h=x then begin
-  if font_dir[font(p)]<>dir_default then link(link(p)):=tail 
+  if font_dir[font(p)]<>dir_default then link(link(p)):=tail
   else link(p):=tail; end
 else link(p):=tail;
 { bugfix: if |p| is KANJI char, |link(p)|:=|tail| collapses |p| and kern after accent. }
@@ -6327,21 +6320,21 @@ while p<>null do
     ligature_node: @<Insert ligature surround spacing@>;
     penalty_node,disp_node: @<Insert penalty or displace surround spacing@>;
     kern_node: if (subtype(p)=explicit) then insert_skip:=no_skip
-      else if (subtype(p)=acc_kern) then begin 
+      else if (subtype(p)=acc_kern) then begin
         { When we insert \.{\\xkanjiskip}, we first ignore accent (and kerns) and
           insert \.{\\xkanjiskip}, then we recover the accent. }
         if q=p then begin t:=link(p);
           { if p is beginning on the list, we have only to ignore nodes. }
-          if is_char_node(t) then 
+          if is_char_node(t) then
             if font_dir[font(t)]<>dir_default then t:=link(t);
-          p:=link(link(t)); 
-	  if font_dir[font(p)]<>dir_default then 
+          p:=link(link(t));
+	  if font_dir[font(p)]<>dir_default then
             begin p:=link(p); insert_skip:=after_wchar; end
           else  insert_skip:=after_schar;
           end
         else begin
           a:=p; t:=link(p);
-          if is_char_node(t) then 
+          if is_char_node(t) then
             if font_dir[font(t)]<>dir_default then t:=link(t);
           t:=link(link(t)); link(q):=t; p:=t;
           @<Insert a space around the character |p|@>; incr(i);

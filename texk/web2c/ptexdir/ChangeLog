@@ -1,3 +1,10 @@
+2011-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptex-base.ch: Let \lastkern etc act through disp node.
+	Define dir_yoko as 4 and not qi(4); dir_field and adj_dir_field
+	are -dir_yoko..dir_yoko and not -dir_dtou..dir_dtou.
+	Shorten change sets. Remove trailing blanks.
+
 2011-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: banner_k==banner for pTeX.

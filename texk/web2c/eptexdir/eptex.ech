@@ -31,22 +31,25 @@
 @d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
 @z
 
-@x e-pTeX: node types
+@x [26.424] e-pTeX: node types
     last_node_type_code:
       if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
         if type(tail)<=unset_node then cur_val:=type(tail)+1
         else cur_val:=unset_node+2;
+      end; {there are no other cases}
+    end
 @y
-    last_node_type_code:
-      if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
-        if type(tail)<=unset_node then begin
-          if type(tail)<dir_node then cur_val:=type(tail)+1
-          else if type(tail)=dir_node then cur_val:=unset_node+1
-          else if type(tail)<disp_node then cur_val:=type(tail)
-          else if type(tail)=disp_node then cur_val:=unset_node+2
-          else cur_val:=type(tail)-1;
-          end
-        else cur_val:=unset_node;
+      last_node_type_code:
+        if ((type(q)<>math_node)or(subtype(q)<>end_M_code))and(head<>tail) then
+          if type(q)<=unset_node then begin
+            if type(q)=dir_node then q:=list_ptr(q);
+            cur_val:=type(q);
+            if cur_val<dir_node then cur_val:=cur_val+1
+            else if cur_val>disp_node then cur_val:=cur_val-1;
+            end
+          else cur_val:=unset_node; {\epTeX's |unset_node| is \eTeX's |unset_node+2|}
+      end; {there are no other cases}
+    end;
 @z
 
 @x e-pTeX: if primitives - leave room for three e-TeX codes

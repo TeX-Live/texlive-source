@@ -16,6 +16,14 @@ if q=null then cur_val:=0 @+else cur_val:=mem[q+m].sc;
 if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @z
 
+@x [26.424]
+        else cur_val:=unset_node+2;
+    end; {there are no other cases}
+@y
+        else cur_val:=unset_node+2;
+    end {there are no other cases}
+@z
+
 @x [27.468]
 @d etex_convert_base=5 {base for \eTeX's command codes}
 @d eTeX_revision_code=etex_convert_base {command code for \.{\\eTeXrevision}}
