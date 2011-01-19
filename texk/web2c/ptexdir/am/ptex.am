@@ -213,7 +213,7 @@ EXTRA_DIST += ptexdir/tests/min10.pl ptexdir/tests/min10.tfm
 EXTRA_DIST += ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm
 DISTCLEANFILES += tests/x*min10.*
 ## ptexdir/ptrip.test
-EXTRA_DIST += ptexdir/ptrip.diffs
+EXTRA_DIST += ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf
 ptrip.diffs: ptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: ptrip-clean

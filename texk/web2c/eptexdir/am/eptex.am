@@ -101,7 +101,11 @@ endif EPTEX
 ## Test data and results
 ##
 ## eptexdir/eptrip.test
-EXTRA_DIST += eptexdir/eptrip.diffs
+EXTRA_DIST += \
+	eptexdir/eptrip/eptrip.diffs \
+	eptexdir/eptrip/etrip.log \
+	eptexdir/eptrip/etrip.tex \
+	eptexdir/eptrip/texmf.cnf
 eptrip.diffs: eptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: eptrip-clean

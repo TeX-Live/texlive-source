@@ -8,6 +8,8 @@ ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 	* eptex.ech: Make \lastnodetype consistent with e-TeX, based on
 	code from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>.
 
+	* fam256.ch (max_reg_help_line): Use correct max_reg_num value.
+
 2011-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech: banner_k==banner for e-pTeX.

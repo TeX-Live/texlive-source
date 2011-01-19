@@ -1,16 +1,17 @@
 #! /bin/sh
 
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 testdir=$srcdir/triptrap
+ptestdir=$srcdir/ptexdir/ptrip
 
-TEXMFCNF=$testdir; export TEXMFCNF
+TEXMFCNF=$ptestdir; export TEXMFCNF
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running TRIP test for pTeX." >&2
-echo ">>> See $srcdir/ptexdir/ptrip.diffs for example of acceptable diffs." >&2
+echo ">>> See $ptestdir/ptrip.diffs for example of acceptable diffs." >&2
 
 rm -f trip.tfm trip.pl trip.tex trip.fmt trip.dvi \
   ptripin.fot ptripin.log ptrip.fot ptrip.log ptrip.typ  \

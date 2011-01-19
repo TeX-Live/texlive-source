@@ -6,13 +6,14 @@
 
 testdir=$srcdir/triptrap
 etestdir=$srcdir/etexdir/etrip
+eptestdir=$srcdir/eptexdir/eptrip
 
-TEXMFCNF=$testdir; export TEXMFCNF
+TEXMFCNF=$eptestdir; export TEXMFCNF
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running e-TRIP test for e-pTeX." >&2
-echo ">>> See $srcdir/eptexdir/eptrip.diffs for example of acceptable diffs." >&2
+echo ">>> See $eptestdir/eptrip.diffs for example of acceptable diffs." >&2
 
 rm -f trip.tfm trip.pl trip.tex trip.log trip.fmt trip.log trip.dvi \
   cptripin.fot cptripin.log cptrip.fot cptrip.log cptrip.typ \
@@ -92,7 +93,7 @@ echo "*** e-TeX specific part of e-TRIP test for e-pTeX ***."
 diff $etestdir/etrip.pl etrip.pl || is_OK=false
 
 # get same filename in log
-$LN_S $etestdir/etrip.tex .
+$LN_S $eptestdir/etrip.tex .
 
 ./eptex --progname=epinitex --ini <$etestdir/etrip2.in >eptripin.fot
 sed "$P_SED1" etrip.log > eptripin.log || exit 1
@@ -105,7 +106,7 @@ diff $etestdir/etrip.fot eptrip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
-$DIFF $DIFFFLAGS $etestdir/etrip.log eptrip.log
+$DIFF $DIFFFLAGS $eptestdir/etrip.log eptrip.log
 
 eval ./dvitype $dvitype_args etrip.dvi >eptrip.typ || exit 1
 $DIFF $DIFFFLAGS $etestdir/etrip.typ eptrip.typ

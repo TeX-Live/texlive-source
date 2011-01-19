@@ -1315,8 +1315,10 @@ not exceed 255 in compatibility mode resp.\ 65535 in extended mode.
 %-----------------------------------------------
 @x
 max_reg_num:=32767;
+max_reg_help_line:="A register number must be between 0 and 32767.";
 @y
 max_reg_num:=65535;
+max_reg_help_line:="A register number must be between 0 and 65535.";
 @z
 %-----------------------------------------------
 @x

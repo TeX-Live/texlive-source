@@ -1,4 +1,4 @@
-% etexdir/etrip/texmf.cnf -- configuration for the e-trip test.
+% eptexdir/eptrip/texmf.cnf -- configuration for the e-ptrip test.
 
 % These values apply to all the programs, and they are necessary for any
 % kind of reasonable diff.
@@ -6,13 +6,12 @@ error_line = 64
 half_error_line = 32
 max_print_line = 72
 		
-% e-TeX.
+% e-pTeX.
 main_memory     = 3999 % can't change mem_bot, it stays 0
 max_strings     = 3300
-pool_size       = 34000
+pool_size       = 36000
 
 string_vacancies = 8000
-pool_size = 32000
 
 % TeX end e-TeX.
 font_mem_size = 20000
