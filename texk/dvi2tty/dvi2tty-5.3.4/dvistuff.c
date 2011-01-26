@@ -441,7 +441,7 @@ void dopage(void)
 
     while ((opcode = (int) get1()) != EOP) {    /* process page until eop */
         if (opcode <= LASTCHAR)
-            dochar((char) opcode);
+            dochar((unsigned char) opcode);
         else if ((opcode >= FONT_00) && (opcode <= FONT_63)) 
             setfont((long) opcode - FONT_00);
         else if (opcode > POST_POST)

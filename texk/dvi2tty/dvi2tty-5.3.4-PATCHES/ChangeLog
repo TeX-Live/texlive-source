@@ -1,3 +1,8 @@
+2011-01-26  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* dvistuff.c (dopage): Typecast dochar() argument to the
+	parameter type 'unsigned char', not to 'char'.
+
 2010-11-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import dvi2tty-5.3.4.
