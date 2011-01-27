@@ -1,6 +1,8 @@
 2011-01-26  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	* dvi2tty.test: Unset DVI2TTY to nullify dvi2tty options.
+	Additional testcase with '-c'.
+	* testc.tty: Expected output.
 
 2010-11-13  Peter Breitenlohner   <peb@mppmu.mpg.de>
 

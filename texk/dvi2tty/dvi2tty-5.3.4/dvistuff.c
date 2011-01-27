@@ -1419,6 +1419,8 @@ void fontdef(int x)
     }
     if (japan)
         fonts->fontnum = getjsubfont(name);
+    else
+        fonts->fontnum = 0;
 
     if ((strstr(name, "sy")) != NULL)
             fonts->flags |= SYMFONT;

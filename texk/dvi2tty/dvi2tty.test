@@ -4,11 +4,17 @@ test_src=$srcdir/$DVI2TTY_TREE/test
 
 unset DVI2TTY	# nullify dvi2tty options (if any)
 
-./dvi2tty $test_src/test.dvi >test.out && diff $srcdir/test.tty test.out || exit 1
+rc=0
 
-./dvi2tty -s $test_src/test.dvi >tests.out && diff $srcdir/tests.tty tests.out || exit 1
+./dvi2tty $test_src/test.dvi >test.out && diff $srcdir/test.tty test.out || rc=1
 
-./dvi2tty -u $test_src/test.dvi >testu.out && diff $srcdir/testu.tty testu.out || exit 1
+./dvi2tty -c $test_src/test.dvi >testc.out && diff $srcdir/testc.tty testc.out || rc=1
 
-./dvi2tty $test_src/ligtest >ligtest.out && diff $srcdir/ligtest.tty ligtest.out || exit 1
+./dvi2tty -s $test_src/test.dvi >tests.out && diff $srcdir/tests.tty tests.out || rc=1
+
+./dvi2tty -u $test_src/test.dvi >testu.out && diff $srcdir/testu.tty testu.out || rc=1
+
+./dvi2tty $test_src/ligtest >ligtest.out && diff $srcdir/ligtest.tty ligtest.out || rc=1
+
+exit $rc
 

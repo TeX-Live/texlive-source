@@ -54,21 +54,21 @@ so far not in verbatim (tt font)
 
 
 now in verbatim (tt font)
-accents: "'-e"
-{L TeX
-now inline: bla"'-e" test
-now inline: bla "'-e"test
-now inline: bla "'-e" test
-real spaces"""xxx
-tildes  accent "|
+accents: \'{e}
+\LaTeX
+now inline: bla\'{e} test
+now inline: bla \'{e}test
+now inline: bla \'{e} test
+real spaces~~~xxx
+tildes  accent \~o
 horizontal 2 -  is --
 horizontal 3 -  is ---
 ligatures: ffl fi fl Yp
-what about vertical bars _
+what about vertical bars |
 horizontal bar -
-and tildes "
+and tildes ~
 < funny carrots >
-or other symbols: "" - " [ ] ` ^ ? = ; / . , + * ( ) ' & % $ # " !
+or other symbols: \\ { } [ ] _ ^ ? = ; / . , + * ( ) ' & % $ # " !
 
 
 
