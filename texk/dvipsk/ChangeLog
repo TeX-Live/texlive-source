@@ -1,3 +1,9 @@
+2011-01-28  Karl Berry  <karl@tug.org>
+
+	* quotecmd-test.pl, testdata/quotecmd.tex: doc fixes.
+	* testdata/quotecmd.dvi: add to repo, since the test relies on
+	this file existing.
+
 2010-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c: Still more tweaks. Remove unused code and vars.
