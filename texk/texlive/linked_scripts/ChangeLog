@@ -1,3 +1,7 @@
+2011-01-29  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_dist_perl_scripts): add sty2dtx.pl.
+
 2010-12-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [WIN32]: Install wrapper binary for bin_links

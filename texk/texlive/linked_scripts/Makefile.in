@@ -245,6 +245,7 @@ texmf_dist_perl_scripts = \
 	pst2pdf/pst2pdf \
 	purifyeps/purifyeps \
 	splitindex/perl/splitindex.pl \
+	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
 	texcount/texcount.pl \
 	texdiff/texdiff \
