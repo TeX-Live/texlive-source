@@ -1,3 +1,7 @@
+2011-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Add testdata/quotecmd.dvi to EXTRA_DIST.
+
 2011-01-28  Karl Berry  <karl@tug.org>
 
 	* quotecmd-test.pl, testdata/quotecmd.tex: doc fixes.

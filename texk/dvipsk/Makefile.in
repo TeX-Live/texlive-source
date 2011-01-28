@@ -395,15 +395,15 @@ EXTRA_DIST = $(dist_prologues) texc.script NEWS TODO afm2tfm-test.pl \
 	testdata/pfbincl.tex testdata/pfbincl.xdv testdata/pfbincl.xps \
 	testdata/psfonts.map testdata/ptmbi.vf testdata/ptmbi8r.tfm \
 	testdata/ptmr.vf testdata/ptmr8r.tfm testdata/ptmri.vf \
-	testdata/ptmri8r.tfm testdata/quotecmd.tex \
-	testdata/special.pro testdata/texc.pro testdata/texps.pro \
-	testdata/vfnameoverflow.dvi atari cmfonts.map config.ps \
-	contrib/PSTricks contrib/afm-extra contrib/colorsep.lpro \
-	contrib/configs contrib/crop.lpr contrib/latex209 \
-	contrib/treen.sh contrib/treen2.sh contrib/volker \
-	contrib/whichinpath cyrfonts.map eufonts.map flib.c \
-	hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map makefont.c \
-	mvs psfonts.map tex vmcms vms
+	testdata/ptmri8r.tfm testdata/quotecmd.dvi \
+	testdata/quotecmd.tex testdata/special.pro testdata/texc.pro \
+	testdata/texps.pro testdata/vfnameoverflow.dvi atari \
+	cmfonts.map config.ps contrib/PSTricks contrib/afm-extra \
+	contrib/colorsep.lpro contrib/configs contrib/crop.lpr \
+	contrib/latex209 contrib/treen.sh contrib/treen2.sh \
+	contrib/volker contrib/whichinpath cyrfonts.map eufonts.map \
+	flib.c hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map \
+	makefont.c mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro dvipstst.ps missfont.log mtest.ps \
 	pfbincl.ps
 TESTS = afm2tfm-test.pl beginfontk1.test dvips.test pfbincl.test \
