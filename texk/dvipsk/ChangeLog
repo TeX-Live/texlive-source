@@ -1,3 +1,10 @@
+2011-01-29  Karl Berry  <karl@tug.org>
+
+	* search.c (search): report the actual popen call if D_FILES.
+	* quotecmd.tex: make test filename match quotecmd-test.pl.
+	* quotecmd.dvi: regenerate.
+	* quotecmd-test.pl: doc fixes.
+
 2011-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Add testdata/quotecmd.dvi to EXTRA_DIST.

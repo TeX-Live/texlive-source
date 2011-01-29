@@ -11,10 +11,13 @@ exit (&main ());
 sub main
 {
   # create the weirdly-named file which dvips executes with popen.
-  # quotecmd.tex itself also creates it, but we don't want to run TeX in
+  # quotecmd.tex also creates it, but we don't want to run TeX in
   # this test, nor do we want such a weirdly-named file in our
-  # repository, so create it here.  Leave it in place, so we can run the
-  # program under the debugger if we need to.
+  # repository, so create it here.  The names here and in quotecmd.tex
+  # must match exactly or the test won't be testing what it should.
+  # 
+  # Leave the file in place, so we can conveniently run dvips under the
+  # debugger if we need to.
   my $weirdf = ' 2>&1 | echo badnews >pwned.txt #.gz';
   unlink ($weirdf);  # ensure no leftover
   open (WEIRDF, ">", $weirdf);
