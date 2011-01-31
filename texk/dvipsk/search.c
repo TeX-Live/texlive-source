@@ -164,7 +164,7 @@ search(kpse_file_format_type format, const char *file, const char *mode)
       ret = popen (cmd, "r");
       if (dd(D_FILES)) {
         fprintf(stderr, "popen(%s) %s\n", cmd,
-                         popen == NULL ? "failed" : "succeeded");
+                         ret == NULL ? "failed" : "succeeded");
       }
       SET_BINARY(fileno(ret));
       to_close = USE_PCLOSE;
