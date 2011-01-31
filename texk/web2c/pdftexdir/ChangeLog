@@ -1,3 +1,13 @@
+2011-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writepng.c: Remove png-1.2 cruft.
+
+2011-01-31  Thomas Klausner  <tk@giga.or.at>
+
+	* writepng.c: Fix to build with png-1.5 (and avoid `deprecated'
+	warnings with png-1.4). The transformations part is removed on
+	recommendation by John Bowler (a png developer).
+
 2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Adapt to ../etexdir/etex.ch:
