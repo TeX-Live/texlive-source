@@ -1,3 +1,8 @@
+2011-02-02  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFROOT): new variable, $SELFAUTOPARENT by default,
+	to minimize redistributors' patches with a new Perl updmap.
+
 2011-01-06  Karl Berry  <karl@tug.org>
 
 	* tex-file.c (LUA_SUFFIXES): add .tlu,
