@@ -1,3 +1,7 @@
+2011-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): read.me has been renamed README.
+
 2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvidvi.c (SET_BINARY): Remove casts to void.

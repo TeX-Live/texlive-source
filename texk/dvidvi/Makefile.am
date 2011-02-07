@@ -30,6 +30,5 @@ EXTRA_DIST = \
 	doubside.com \
 	doubside.hlp \
 	dvidvi.kohm-patch \
-	dvisamp.tex \
-	read.me
+	dvisamp.tex
 

@@ -36,7 +36,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvidvi$(EXEEXT)
 subdir = .
-DIST_COMMON = $(am__configure_deps) $(dist_man1_MANS) \
+DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -259,8 +259,7 @@ EXTRA_DIST = \
 	doubside.com \
 	doubside.hlp \
 	dvidvi.kohm-patch \
-	dvisamp.tex \
-	read.me
+	dvisamp.tex
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
