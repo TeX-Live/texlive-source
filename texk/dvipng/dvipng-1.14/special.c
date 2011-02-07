@@ -26,7 +26,7 @@
 
 #ifndef MIKTEX
 #ifndef WIN32
-#include <wait.h>
+#include <sys/wait.h>
 #else /* WIN32 */
 #include <fcntl.h>
 #include <io.h>
