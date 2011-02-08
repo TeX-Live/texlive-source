@@ -1,3 +1,7 @@
+2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* doc/Makefile.am: Use ../am/man1_links.am for manpage links.
+
 2010-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* doc/Makefile.am: Check that the doc/*.texi files are copies

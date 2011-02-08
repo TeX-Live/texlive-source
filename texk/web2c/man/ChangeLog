@@ -1,3 +1,7 @@
+2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../../am/man1_links.am for manpage links.
+
 2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (install-data-hook): Check symlink creation.

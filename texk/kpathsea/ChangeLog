@@ -1,3 +1,7 @@
+2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* man/Makefile.am: Use ../am/man1_links.am for manpage links.
+
 2011-02-02  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFROOT): new variable, $SELFAUTOPARENT by default,

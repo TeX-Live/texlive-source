@@ -1,3 +1,7 @@
+2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/man1_links.am: New Makefile fragments for manpage links.
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): Distribute the whole tests/ tree.

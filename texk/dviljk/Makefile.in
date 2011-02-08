@@ -38,7 +38,6 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvilj$(EXEEXT) dvilj2p$(EXEEXT) dvilj4$(EXEEXT) \
 	dvilj4l$(EXEEXT)
-subdir = .
 DIST_COMMON = README $(am__configure_deps) \
 	$(am__dist_bin_SCRIPTS_DIST) $(dist_man1_MANS) \
 	$(srcdir)/../../build-aux/config.guess \
@@ -48,11 +47,13 @@ DIST_COMMON = README $(am__configure_deps) \
 	$(srcdir)/../../build-aux/ltmain.sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/c-auto.in \
-	$(top_srcdir)/configure ../../build-aux/config.guess \
-	../../build-aux/config.sub ../../build-aux/depcomp \
-	../../build-aux/install-sh ../../build-aux/ltmain.sh \
-	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap AUTHORS ChangeLog INSTALL NEWS
+	$(top_srcdir)/../am/man1_links.am $(top_srcdir)/configure \
+	../../build-aux/config.guess ../../build-aux/config.sub \
+	../../build-aux/depcomp ../../build-aux/install-sh \
+	../../build-aux/ltmain.sh ../../build-aux/missing \
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap AUTHORS \
+	ChangeLog INSTALL NEWS
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
@@ -313,7 +314,14 @@ dvilj4l_SOURCES = \
 
 LDADD = libdvilj.a $(KPATHSEA_LIBS)	
 dist_man1_MANS = dvihp.man dvilj.man
-man1_links = dvilj2p.1 dvilj4.1 dvilj4l.1 dvilj6.1
+
+# Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
+man1_links = \
+	dvilj:dvilj2p \
+	dvilj:dvilj4 \
+	dvilj:dvilj4l \
+	dvilj:dvilj6
+
 EXTRA_DIST = dvilj.pod
 DISTCLEANFILES = dvilj.ps
 all: c-auto.h
@@ -323,7 +331,7 @@ all: c-auto.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -961,19 +969,33 @@ $(dvilj4_OBJECTS): libdvilj.a
 $(dvilj4l_OBJECTS): libdvilj.a
 
 @KPATHSEA_RULE@
+.PHONY: install-man1-links uninstall-man1-links
+
+install-man1-links:
+	@cd $(DESTDIR)$(man1dir) && \
+	  for s in $(man1_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`; \
+	    file=`echo $$s | sed 's,:.*,,'`; \
+	    rm -f $$link.1; \
+	    echo "creating link '$$link.1' -> '$$file.1'"; \
+	    $(LN_S) $$file.1 $$link.1 || exit 1; \
+	  done
+
+uninstall-man1-links:
+	@for s in $(man1_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
+	done
 
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
 	  rm -f dvilj6$(EXEEXT) && \
 	  $(LN_S) dvilj4$(EXEEXT) dvilj6$(EXEEXT)
 
-install-data-hook:
-	cd $(DESTDIR)$(man1dir) && \
-	  for f in $(man1_links); do rm -f $$f; $(LN_S) dvilj.1 $$f; done
+install-data-hook: install-man1-links
 
-uninstall-hook:
+uninstall-hook: uninstall-man1-links
 	rm -f $(DESTDIR)$(bindir)/dvilj6$(EXEEXT)
-	for f in $(man1_links); do rm -f $(DESTDIR)$(man1dir)/$$f; done
 @MAINTAINER_MODE_TRUE@dvilj.man: dvilj.pod dvi2xx.c
 @MAINTAINER_MODE_TRUE@	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
 dvilj.ps: dvilj.man

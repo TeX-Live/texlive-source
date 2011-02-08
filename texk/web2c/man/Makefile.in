@@ -48,7 +48,8 @@ host_triplet = @host@
 @ALEPH_TRUE@am__append_13 = aleph.man
 @ALEPH_TRUE@am__append_14 = aleph:lamed
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(top_srcdir)/../am/man.am ChangeLog
+	$(top_srcdir)/../am/man.am $(top_srcdir)/../am/man1_links.am \
+	ChangeLog
 subdir = man
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
@@ -343,7 +344,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .1 .man .ps .dvi
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/man.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/man.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -613,8 +614,9 @@ sedscript: $(KPATHSEA_PATHS_H)/kpathsea/paths.h
 
 .1.ps:
 	$(DITROFF) -Tps -man $< >$@
+.PHONY: install-man1-links uninstall-man1-links
 
-install-data-hook:
+install-man1-links:
 	@cd $(DESTDIR)$(man1dir) && \
 	  for s in $(man1_links); do \
 	    link=`echo $$s | sed 's,.*:,,'`; \
@@ -624,11 +626,15 @@ install-data-hook:
 	    $(LN_S) $$file.1 $$link.1 || exit 1; \
 	  done
 
-uninstall-hook:
+uninstall-man1-links:
 	@for s in $(man1_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
 	done
+
+install-data-hook: install-man1-links
+
+uninstall-hook:uninstall-man1-links
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

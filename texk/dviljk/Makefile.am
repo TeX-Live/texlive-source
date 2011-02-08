@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dviljk/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -70,20 +70,24 @@ LDADD = libdvilj.a $(KPATHSEA_LIBS)
 
 dist_man1_MANS = dvihp.man dvilj.man
 
-man1_links = dvilj2p.1 dvilj4.1 dvilj4l.1 dvilj6.1
+# Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
+man1_links = \
+	dvilj:dvilj2p \
+	dvilj:dvilj4 \
+	dvilj:dvilj4l \
+	dvilj:dvilj6
+
+include $(top_srcdir)/../am/man1_links.am
 
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
 	  rm -f dvilj6$(EXEEXT) && \
 	  $(LN_S) dvilj4$(EXEEXT) dvilj6$(EXEEXT)
 
-install-data-hook:
-	cd $(DESTDIR)$(man1dir) && \
-	  for f in $(man1_links); do rm -f $$f; $(LN_S) dvilj.1 $$f; done
+install-data-hook: install-man1-links
 
-uninstall-hook:
+uninstall-hook: uninstall-man1-links
 	rm -f $(DESTDIR)$(bindir)/dvilj6$(EXEEXT)
-	for f in $(man1_links); do rm -f $(DESTDIR)$(man1dir)/$$f; done
 
 VERSION = `grep 'define VERSION' $(srcdir)/dvi2xx.c | sed -e 's/^.*version //' -e 's/).*//'`
 if MAINTAINER_MODE

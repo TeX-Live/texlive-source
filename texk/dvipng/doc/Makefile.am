@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/doc/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 #
 info_TEXINFOS = \
@@ -39,13 +39,14 @@ dvipng.1: dvipng.texi readme.texi
 		dvipng.pod > dvipng.1
 	rm dvipng.pod
 
+# Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
+man1_links = dvipng:dvigif
+
+include $(top_srcdir)/../am/man1_links.am
+
 if have_gif
-install-data-hook:
-	cd $(DESTDIR)$(man1dir) && \
-	  rm -f dvigif.1 && \
-	  $(LN_S) dvipng.1 dvigif.1
-uninstall-hook:
-	rm -f $(DESTDIR)$(man1dir)/dvigif.1
+install-data-hook: install-man1-links
+uninstall-hook: uninstall-man1-links
 endif have_gif
 
 DISTCLEANFILES = doc-stamp

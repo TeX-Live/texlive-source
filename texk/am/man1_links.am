@@ -1,0 +1,26 @@
+## texk/am/man1_links.am: Makefile fragment for manual page links.
+##
+## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+## requires $(man1_links)
+## Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
+.PHONY: install-man1-links uninstall-man1-links
+
+install-man1-links:
+	@cd $(DESTDIR)$(man1dir) && \
+	  for s in $(man1_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`; \
+	    file=`echo $$s | sed 's,:.*,,'`; \
+	    rm -f $$link.1; \
+	    echo "creating link '$$link.1' -> '$$file.1'"; \
+	    $(LN_S) $$file.1 $$link.1 || exit 1; \
+	  done
+
+uninstall-man1-links:
+	@for s in $(man1_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
+	done
+
+

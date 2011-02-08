@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/tetex/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -102,6 +102,8 @@ man1_links = $(bin_links) \
 	texconfig:texconfig-sys \
 	updmap:updmap-sys
 
+include $(top_srcdir)/../am/man1_links.am
+
 install-exec-hook:
 if !WIN32
 	@cd $(DESTDIR)$(bindir) && \
@@ -114,27 +116,15 @@ if !WIN32
 	  done
 endif !WIN32
 
-install-data-hook:
-	@cd $(DESTDIR)$(man1dir) && \
-	  for s in $(man1_links); do \
-	    link=`echo $$s | sed 's,.*:,,'`; \
-	    file=`echo $$s | sed 's,:.*,,'`; \
-	    rm -f $$link.1; \
-	    echo "creating link '$$link.1' -> '$$file.1'"; \
-	    $(LN_S) $$file.1 $$link.1 || exit 1; \
-	  done
+install-data-hook: install-man1-links
 
-uninstall-hook:
+uninstall-hook: uninstall-man1-links
 if !WIN32
 	@for s in $(bin_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$link; \
 	done
 endif !WIN32
-	@for s in $(man1_links); do \
-	  link=`echo $$s | sed 's,.*:,,'`; \
-	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
-	done
 
 EXTRA_DIST += \
 	README.texdoctk

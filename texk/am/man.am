@@ -1,4 +1,8 @@
 ## texk/am/man.am: Makefile fragment for kpathsea and web2c manual pages.
+##
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
 ## requires $(man_sources)
 ## requires $(KPATHSEA_PATHS_H) giving the directory of kpathsea/paths.h
 
