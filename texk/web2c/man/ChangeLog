@@ -1,3 +1,7 @@
+2011-02-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (man1_links): Add texlua and texluac.
+
 2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../../am/man1_links.am for manpage links.

@@ -50,6 +50,7 @@ pdftex_man_sources = pdftex.man pdftosrc.man ttf2afm.man
 
 if LUATEX
 man_sources += luatex.man
+man1_links += luatex:texlua luatex:texluac
 endif LUATEX
 EXTRA_DIST += luatex.man
 
