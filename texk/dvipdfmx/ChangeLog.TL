@@ -1,6 +1,15 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2010-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* man: New directory with manual pages (from Master).
+	man/dvipdft.1 needs to be updated and man/dvipdfm.1 replaced by
+	man/dvipdfmx.1 (with a link to dvipdfm.1).
+	* Makefile.am, configure.ac: Adapted.
+
+	* man/extractbb.1, man/dvipdfm.1: Formatting.
+
 2010-12-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dvipdfmx.c: Check for argv[0] with .exe via strcasecmp().

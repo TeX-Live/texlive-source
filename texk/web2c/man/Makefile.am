@@ -86,7 +86,7 @@ include $(top_srcdir)/../am/man1_links.am
 
 install-data-hook: install-man1-links
 
-uninstall-hook:uninstall-man1-links
+uninstall-hook: uninstall-man1-links
 
 ## Obsolete ?
 ##
