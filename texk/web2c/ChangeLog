@@ -1,3 +1,7 @@
+2011-02-08  Karl Berry  <karl@tug.org>
+
+	* texmfmp-help.h (MFHELP): -output-dir must be an existing dir.
+
 2011-01-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (triptrap_diffs): Recipe fragment for trip/trap,
