@@ -1,3 +1,7 @@
+2011-02-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* output.c: print R2 mode message only when secure == 2.
+
 2011-01-29  Karl Berry  <karl@tug.org>
 
 	* search.c (search): report the actual popen call if D_FILES.
