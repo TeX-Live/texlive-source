@@ -97,7 +97,7 @@ cd $TL_WORKDIR || exit 1
 # configure && make.  Keep the tee outside, so that we can detect
 # failure at either step.
 {
-  echo starting `date`
+  echo starting `date` on `uname -a`
   echo "$0 $*"
   echo
   set -vx  # show the configure and make commands in the log.
@@ -129,6 +129,7 @@ if test -d "$bindir"; then
     echo "$0: $count executables in $bindir."
   else
     echo "$0: Build failed, no executables under $bindir."
+    echo "$0: Full log in `pwd`/build.log."
     exit 1
   fi | tee -a build.log
 # if no bindir, perhaps they specified --prefix; don't worry.

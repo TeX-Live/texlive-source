@@ -1,6 +1,10 @@
+2011-02-16  Karl Berry  <karl@tug.org>
+
+	* Build: include uname -a in log, mention log if failure.
+
 2011-01-19  Karl Berry  <karl@tug.org>
 
-	* Build (bindir): don't try to count binaries if no bindir.	
+	* Build: don't try to count binaries if no bindir.	
 
 2010-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
