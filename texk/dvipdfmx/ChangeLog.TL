@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/Makefile.am [WIN32]: Add dvipdfmx.exe, ebb.exe, and
+	extractbb.exe wrappers for MinGW.
+
 2010-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* man: New directory with manual pages (from Master).

@@ -1,14 +1,15 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipdfmx/src/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-INCLUDES = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
-AM_CPPFLAGS =
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = dvipdfmx
-if !WIN32
+if WIN32
+noinst_PROGRAMS = call_dvipdfmx
+else !WIN32
 dist_bin_SCRIPTS = dvipdft
 endif !WIN32
 
@@ -54,6 +55,12 @@ dvipdfmx_DEPENDENCIES = $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) $(ZLIB_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 
+call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
+
+call_dvipdfmx_SOURCES = $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+
+call_dvipdfmx_LDADD =
+
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 ## Rebuild libpng
@@ -62,13 +69,19 @@ LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 @ZLIB_RULE@
 
 install-exec-hook:
+if WIN32
+	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
+	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
+	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+else !WIN32
 	cd $(DESTDIR)$(bindir) && \
 	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) dvipdfm$(EXEEXT) && \
+	  $(LN_S) dvipdfmx$(EXEEXT) dvipdfm$(EXEEXT) && \
 	  $(LN_S) dvipdfmx$(EXEEXT) ebb$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) dvipdfm$(EXEEXT)
+	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT)
+endif !WIN32
 
 uninstall-hook:
+	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
-	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)

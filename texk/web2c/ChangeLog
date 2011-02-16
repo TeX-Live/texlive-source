@@ -1,3 +1,8 @@
+2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (install_exe_links, uninstall_exe_links): Hooks to
+	install and uninstall MinGW wrappers.
+
 2011-02-14  Karl Berry  <karl@tug.org>
 
 	* texmfmp-help.h: propagate -output-dir wording change to other msgs. 

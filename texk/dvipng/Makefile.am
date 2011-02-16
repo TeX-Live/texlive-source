@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -27,9 +27,9 @@ EXTRA_DIST += $(DVIPNG_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-INCLUDES = -I$(top_srcdir)/$(DVIPNG_TREE)
-INCLUDES += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(GD_INCLUDES)
-INCLUDES +=  $(T1LIB_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
+AM_CPPFLAGS = -I$(top_srcdir)/$(DVIPNG_TREE)
+AM_CPPFLAGS += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(GD_INCLUDES)
+AM_CPPFLAGS +=  $(T1LIB_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 DVIPS = dvips -Ppdf
@@ -90,6 +90,12 @@ DISTCLEANFILES = config.force
 LDADD = $(KPATHSEA_LIBS) $(GD_LIBS) $(FREETYPE2_LIBS)
 LDADD += $(T1LIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 
+dvigif_CPPFLAGS = -DEXEPROG=\"dvipng.exe\"
+
+dvigif_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+
+dvigif_LDADD =
+
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 ## Rebuild libfreetype
@@ -104,12 +110,16 @@ LDADD += $(T1LIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 @ZLIB_RULE@
 
 if have_gif
+if WIN32
+bin_PROGRAMS += dvigif
+else !WIN32
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
 	  rm -f dvigif$(EXEEXT) && \
 	  $(LN_S) dvipng$(EXEEXT) dvigif$(EXEEXT)
 uninstall-hook:
 	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
+endif !WIN32
 endif have_gif
 
 TESTS = dvipng.test

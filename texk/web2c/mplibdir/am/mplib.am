@@ -7,7 +7,11 @@
 ##
 if MP
 bin_PROGRAMS += mpost
+if WIN32
+bin_PROGRAMS += dvitomp
+else !WIN32
 bin_links += mpost:dvitomp
+endif !WIN32
 endif MP
 EXTRA_PROGRAMS += mpost
 
@@ -15,6 +19,10 @@ mpost_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 mpost_CFLAGS = $(WARNING_CFLAGS)
 mpost_DEPENDENCIES = libmplib.a
 mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm
+
+dvitomp_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
+dvitomp_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+dvitomp_LDADD =
 
 # Creating one file: just one rule
 mp_ctangle = CWEBINPUTS=$(srcdir)/mplibdir $(ctangle)

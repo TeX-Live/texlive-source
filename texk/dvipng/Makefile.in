@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = dvipng$(EXEEXT)
+bin_PROGRAMS = dvipng$(EXEEXT) $(am__EXEEXT_1)
 @have_t1_TRUE@am__append_1 = \
 @have_t1_TRUE@	$(DVIPNG_TREE)/t1.c
 
@@ -47,6 +47,7 @@ bin_PROGRAMS = dvipng$(EXEEXT)
 @have_ft2_or_t1_TRUE@	$(DVIPNG_TREE)/fontmap.c \
 @have_ft2_or_t1_TRUE@	$(DVIPNG_TREE)/tfm.c
 
+@WIN32_TRUE@@have_gif_TRUE@am__append_4 = dvigif
 subdir = .
 DIST_COMMON = $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
@@ -71,6 +72,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/gs-device.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-t1lib-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
@@ -86,8 +88,12 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+@WIN32_TRUE@@have_gif_TRUE@am__EXEEXT_1 = dvigif$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am_dvigif_OBJECTS = dvigif-callexe.$(OBJEXT)
+dvigif_OBJECTS = $(am_dvigif_OBJECTS)
+dvigif_DEPENDENCIES =
 @have_t1_TRUE@am__objects_1 = t1.$(OBJEXT)
 @have_ft2_TRUE@am__objects_2 = ft.$(OBJEXT) sfd.$(OBJEXT)
 @have_ft2_or_t1_TRUE@am__objects_3 = enc.$(OBJEXT) fontmap.$(OBJEXT) \
@@ -116,8 +122,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(nodist_dvipng_SOURCES)
-DIST_SOURCES =
+SOURCES = $(dvigif_SOURCES) $(nodist_dvipng_SOURCES)
+DIST_SOURCES = $(dvigif_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -323,7 +329,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 EXTRA_DIST = $(DVIPNG_TREE) $(DVIPNG_TREE)-PATCHES dvipng.test \
 	dvipng-test.dvi
-INCLUDES = -I$(top_srcdir)/$(DVIPNG_TREE) $(KPATHSEA_INCLUDES) \
+AM_CPPFLAGS = -I$(top_srcdir)/$(DVIPNG_TREE) $(KPATHSEA_INCLUDES) \
 	$(FREETYPE2_INCLUDES) $(GD_INCLUDES) $(T1LIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -347,6 +353,9 @@ dvipng_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) \
 DISTCLEANFILES = config.force
 LDADD = $(KPATHSEA_LIBS) $(GD_LIBS) $(FREETYPE2_LIBS) $(T1LIB_LIBS) \
 	$(LIBPNG_LIBS) $(ZLIB_LIBS)
+dvigif_CPPFLAGS = -DEXEPROG=\"dvipng.exe\"
+dvigif_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+dvigif_LDADD = 
 TESTS = dvipng.test
 CLEANFILES = missfont.log test_dvipng.aux test_dvipng.dvi test_dvipng.log test_dvipng*.png
 all: config.h
@@ -448,6 +457,9 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+dvigif$(EXEEXT): $(dvigif_OBJECTS) $(dvigif_DEPENDENCIES) 
+	@rm -f dvigif$(EXEEXT)
+	$(LINK) $(dvigif_OBJECTS) $(dvigif_LDADD) $(LIBS)
 dvipng$(EXEEXT): $(dvipng_OBJECTS) $(dvipng_DEPENDENCIES) 
 	@rm -f dvipng$(EXEEXT)
 	$(LINK) $(dvipng_OBJECTS) $(dvipng_LDADD) $(LIBS)
@@ -461,6 +473,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/color.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvigif-callexe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipng.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/font.Po@am__quote@
@@ -497,6 +510,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+dvigif-callexe.o: $(srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvigif-callexe.o -MD -MP -MF $(DEPDIR)/dvigif-callexe.Tpo -c -o dvigif-callexe.o `test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dvigif-callexe.Tpo $(DEPDIR)/dvigif-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../texlive/w32_wrapper/callexe.c' object='dvigif-callexe.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvigif-callexe.o `test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../texlive/w32_wrapper/callexe.c
+
+dvigif-callexe.obj: $(srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvigif-callexe.obj -MD -MP -MF $(DEPDIR)/dvigif-callexe.Tpo -c -o dvigif-callexe.obj `if test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dvigif-callexe.Tpo $(DEPDIR)/dvigif-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../texlive/w32_wrapper/callexe.c' object='dvigif-callexe.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvigif_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvigif-callexe.obj `if test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
 
 color.o: $(DVIPNG_TREE)/color.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT color.o -MD -MP -MF $(DEPDIR)/color.Tpo -c -o color.o `test -f '$(DVIPNG_TREE)/color.c' || echo '$(srcdir)/'`$(DVIPNG_TREE)/color.c
@@ -1200,7 +1227,9 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@WIN32_TRUE@install-exec-hook:
 @have_gif_FALSE@install-exec-hook:
+@WIN32_TRUE@uninstall-hook:
 @have_gif_FALSE@uninstall-hook:
 clean: clean-recursive
 
@@ -1318,13 +1347,12 @@ config.force: $(dvipng_dependencies)
 @T1LIB_RULE@
 @LIBPNG_RULE@
 @ZLIB_RULE@
-
-@have_gif_TRUE@install-exec-hook:
-@have_gif_TRUE@	cd $(DESTDIR)$(bindir) && \
-@have_gif_TRUE@	  rm -f dvigif$(EXEEXT) && \
-@have_gif_TRUE@	  $(LN_S) dvipng$(EXEEXT) dvigif$(EXEEXT)
-@have_gif_TRUE@uninstall-hook:
-@have_gif_TRUE@	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
+@WIN32_FALSE@@have_gif_TRUE@install-exec-hook:
+@WIN32_FALSE@@have_gif_TRUE@	cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@@have_gif_TRUE@	  rm -f dvigif$(EXEEXT) && \
+@WIN32_FALSE@@have_gif_TRUE@	  $(LN_S) dvipng$(EXEEXT) dvigif$(EXEEXT)
+@WIN32_FALSE@@have_gif_TRUE@uninstall-hook:
+@WIN32_FALSE@@have_gif_TRUE@	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

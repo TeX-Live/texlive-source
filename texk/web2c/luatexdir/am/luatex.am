@@ -7,7 +7,13 @@
 ##
 if LUATEX
 bin_PROGRAMS += luatex
+if WIN32
+noinst_PROGRAMS += call_luatex
+install_exe_links += install-luatex-links
+uninstall_exe_links += uninstall-luatex-links
+else !WIN32
 bin_links += luatex:texlua luatex:texluac
+endif !WIN32
 endif LUATEX
 EXTRA_PROGRAMS += luatex
 
@@ -40,6 +46,22 @@ luatex_SOURCES = luatexdir/luatex_svnversion.h luatexdir/luatex.c luatexdir/luat
 EXTRA_DIST += luatexdir/ptexlib.h
 
 EXTRA_DIST += luatexdir/getluatexsvnversion.sh
+
+call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
+
+call_luatex_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+
+call_luatex_LDADD =
+
+.PHONY: install-luatex-links uninstall-luatex-links
+if WIN32
+install-luatex-links: call_luatex$(EXEEXT)
+	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+	$(INSTALL_PROGRAM) call_luatex$(EXEEXT) $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+uninstall-luatex-links:
+	rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+endif WIN32
 
 # luaTeX Tests
 #

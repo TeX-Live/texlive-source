@@ -1,3 +1,7 @@
+2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am [WIN32]: Add o??2o??.exe wrappers.
+
 2010-12-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* omfonts.c: Check for argv[0] with .exe via strcasecmp().

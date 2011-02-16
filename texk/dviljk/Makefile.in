@@ -37,7 +37,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvilj$(EXEEXT) dvilj2p$(EXEEXT) dvilj4$(EXEEXT) \
-	dvilj4l$(EXEEXT)
+	dvilj4l$(EXEEXT) $(am__EXEEXT_1)
+@WIN32_TRUE@am__append_1 = dvilj6
 DIST_COMMON = README $(am__configure_deps) \
 	$(am__dist_bin_SCRIPTS_DIST) $(dist_man1_MANS) \
 	$(srcdir)/../../build-aux/config.guess \
@@ -79,6 +80,7 @@ libdvilj_a_AR = $(AR) $(ARFLAGS)
 libdvilj_a_LIBADD =
 am_libdvilj_a_OBJECTS = tfm.$(OBJEXT)
 libdvilj_a_OBJECTS = $(am_libdvilj_a_OBJECTS)
+@WIN32_TRUE@am__EXEEXT_1 = dvilj6$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
@@ -99,6 +101,9 @@ am_dvilj4l_OBJECTS = dvilj4l-dvi2xx.$(OBJEXT)
 dvilj4l_OBJECTS = $(am_dvilj4l_OBJECTS)
 dvilj4l_LDADD = $(LDADD)
 dvilj4l_DEPENDENCIES = libdvilj.a $(am__DEPENDENCIES_1)
+am_dvilj6_OBJECTS = dvilj6-callexe.$(OBJEXT)
+dvilj6_OBJECTS = $(am_dvilj6_OBJECTS)
+dvilj6_DEPENDENCIES =
 am__dist_bin_SCRIPTS_DIST = dvihp
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -136,9 +141,10 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(libdvilj_a_SOURCES) $(dvilj_SOURCES) $(dvilj2p_SOURCES) \
-	$(dvilj4_SOURCES) $(dvilj4l_SOURCES)
+	$(dvilj4_SOURCES) $(dvilj4l_SOURCES) $(dvilj6_SOURCES)
 DIST_SOURCES = $(libdvilj_a_SOURCES) $(dvilj_SOURCES) \
-	$(dvilj2p_SOURCES) $(dvilj4_SOURCES) $(dvilj4l_SOURCES)
+	$(dvilj2p_SOURCES) $(dvilj4_SOURCES) $(dvilj4l_SOURCES) \
+	$(dvilj6_SOURCES)
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man1_MANS)
@@ -313,6 +319,9 @@ dvilj4l_SOURCES = \
 	dvi2xx.h
 
 LDADD = libdvilj.a $(KPATHSEA_LIBS)	
+dvilj6_CPPFLAGS = -DEXEPROG=\"dvilj4.exe\"
+dvilj6_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+dvilj6_LDADD = 
 dist_man1_MANS = dvihp.man dvilj.man
 
 # Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
@@ -442,6 +451,9 @@ dvilj4$(EXEEXT): $(dvilj4_OBJECTS) $(dvilj4_DEPENDENCIES)
 dvilj4l$(EXEEXT): $(dvilj4l_OBJECTS) $(dvilj4l_DEPENDENCIES) 
 	@rm -f dvilj4l$(EXEEXT)
 	$(LINK) $(dvilj4l_OBJECTS) $(dvilj4l_LDADD) $(LIBS)
+dvilj6$(EXEEXT): $(dvilj6_OBJECTS) $(dvilj6_DEPENDENCIES) 
+	@rm -f dvilj6$(EXEEXT)
+	$(LINK) $(dvilj6_OBJECTS) $(dvilj6_LDADD) $(LIBS)
 install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -487,6 +499,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvilj2p-dvi2xx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvilj4-dvi2xx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvilj4l-dvi2xx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvilj6-callexe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfm.Po@am__quote@
 
 .c.o:
@@ -565,6 +578,20 @@ dvilj4l-dvi2xx.obj: dvi2xx.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dvi2xx.c' object='dvilj4l-dvi2xx.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj4l_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvilj4l-dvi2xx.obj `if test -f 'dvi2xx.c'; then $(CYGPATH_W) 'dvi2xx.c'; else $(CYGPATH_W) '$(srcdir)/dvi2xx.c'; fi`
+
+dvilj6-callexe.o: $(srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvilj6-callexe.o -MD -MP -MF $(DEPDIR)/dvilj6-callexe.Tpo -c -o dvilj6-callexe.o `test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dvilj6-callexe.Tpo $(DEPDIR)/dvilj6-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../texlive/w32_wrapper/callexe.c' object='dvilj6-callexe.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvilj6-callexe.o `test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(srcdir)/../texlive/w32_wrapper/callexe.c
+
+dvilj6-callexe.obj: $(srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT dvilj6-callexe.obj -MD -MP -MF $(DEPDIR)/dvilj6-callexe.Tpo -c -o dvilj6-callexe.obj `if test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/dvilj6-callexe.Tpo $(DEPDIR)/dvilj6-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(srcdir)/../texlive/w32_wrapper/callexe.c' object='dvilj6-callexe.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dvilj6_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o dvilj6-callexe.obj `if test -f '$(srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -988,14 +1015,14 @@ uninstall-man1-links:
 	done
 
 install-exec-hook:
-	cd $(DESTDIR)$(bindir) && \
-	  rm -f dvilj6$(EXEEXT) && \
-	  $(LN_S) dvilj4$(EXEEXT) dvilj6$(EXEEXT)
+@WIN32_FALSE@	cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  rm -f dvilj6$(EXEEXT) && \
+@WIN32_FALSE@	  $(LN_S) dvilj4$(EXEEXT) dvilj6$(EXEEXT)
 
 install-data-hook: install-man1-links
 
 uninstall-hook: uninstall-man1-links
-	rm -f $(DESTDIR)$(bindir)/dvilj6$(EXEEXT)
+@WIN32_FALSE@	rm -f $(DESTDIR)$(bindir)/dvilj6$(EXEEXT)
 @MAINTAINER_MODE_TRUE@dvilj.man: dvilj.pod dvi2xx.c
 @MAINTAINER_MODE_TRUE@	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
 dvilj.ps: dvilj.man

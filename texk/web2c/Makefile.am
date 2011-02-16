@@ -34,6 +34,8 @@ CLEANFILES =
 TRIPTRAP_CLEAN =
 TRIPTRAP =
 bin_links =
+install_exe_links =
+uninstall_exe_links =
 
 # in case of an SVN repository
 dist-hook:
@@ -204,7 +206,7 @@ include $(srcdir)/synctexdir/am/synctex.am
 include $(srcdir)/libmd5/am/md5.am
 
 # Symlinks within $(bindir): FILE:LINK indicates LINK$(EXEEXT)->FILE$(EXEEXT)
-install-exec-hook:
+install-exec-hook: $(install_exe_links)
 	@test -z "$(bin_links)" || { \
 	  cd $(DESTDIR)$(bindir) && \
 	  for s in $(bin_links); do \
@@ -214,7 +216,7 @@ install-exec-hook:
 	    echo "creating link '$$link' -> '$$file'"; \
 	    $(LN_S) $$file $$link || exit 1; \
 	  done; }
-uninstall-hook:
+uninstall-hook: $(uninstall_exe_links)
 	@test -z "$(bin_links)" || \
 	for s in $(bin_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`$(EXEEXT); \

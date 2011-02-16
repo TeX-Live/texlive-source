@@ -36,6 +36,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvipdfmx$(EXEEXT)
+@WIN32_TRUE@noinst_PROGRAMS = call_dvipdfmx$(EXEEXT)
 subdir = src
 DIST_COMMON = $(am__dist_bin_SCRIPTS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -60,7 +61,10 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
-PROGRAMS = $(bin_PROGRAMS)
+PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
+am_call_dvipdfmx_OBJECTS = call_dvipdfmx-callexe.$(OBJEXT)
+call_dvipdfmx_OBJECTS = $(am_call_dvipdfmx_OBJECTS)
+call_dvipdfmx_DEPENDENCIES =
 am_dvipdfmx_OBJECTS = agl.$(OBJEXT) bmpimage.$(OBJEXT) cff.$(OBJEXT) \
 	cff_dict.$(OBJEXT) cid.$(OBJEXT) cidtype0.$(OBJEXT) \
 	cidtype2.$(OBJEXT) cmap.$(OBJEXT) cmap_read.$(OBJEXT) \
@@ -123,8 +127,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(dvipdfmx_SOURCES)
-DIST_SOURCES = $(dvipdfmx_SOURCES)
+SOURCES = $(call_dvipdfmx_SOURCES) $(dvipdfmx_SOURCES)
+DIST_SOURCES = $(call_dvipdfmx_SOURCES) $(dvipdfmx_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -254,8 +258,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-INCLUDES = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
-AM_CPPFLAGS = 
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 @WIN32_FALSE@dist_bin_SCRIPTS = dvipdft
 dvipdfmx_SOURCES = \
@@ -298,6 +301,9 @@ dvipdfmx_SOURCES = \
 
 dvipdfmx_DEPENDENCIES = $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) $(ZLIB_DEPEND)
 LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
+call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
+call_dvipdfmx_SOURCES = $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+call_dvipdfmx_LDADD = 
 all: all-am
 
 .SUFFIXES:
@@ -375,6 +381,18 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+
+clean-noinstPROGRAMS:
+	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
+call_dvipdfmx$(EXEEXT): $(call_dvipdfmx_OBJECTS) $(call_dvipdfmx_DEPENDENCIES) 
+	@rm -f call_dvipdfmx$(EXEEXT)
+	$(LINK) $(call_dvipdfmx_OBJECTS) $(call_dvipdfmx_LDADD) $(LIBS)
 dvipdfmx$(EXEEXT): $(dvipdfmx_OBJECTS) $(dvipdfmx_DEPENDENCIES) 
 	@rm -f dvipdfmx$(EXEEXT)
 	$(LINK) $(dvipdfmx_OBJECTS) $(dvipdfmx_LDADD) $(LIBS)
@@ -421,6 +439,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/agl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmpimage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/call_dvipdfmx-callexe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cff_dict.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cid.Po@am__quote@
@@ -509,6 +528,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+call_dvipdfmx-callexe.o: $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT call_dvipdfmx-callexe.o -MD -MP -MF $(DEPDIR)/call_dvipdfmx-callexe.Tpo -c -o call_dvipdfmx-callexe.o `test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(top_srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/call_dvipdfmx-callexe.Tpo $(DEPDIR)/call_dvipdfmx-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/../texlive/w32_wrapper/callexe.c' object='call_dvipdfmx-callexe.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_dvipdfmx-callexe.o `test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(top_srcdir)/../texlive/w32_wrapper/callexe.c
+
+call_dvipdfmx-callexe.obj: $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT call_dvipdfmx-callexe.obj -MD -MP -MF $(DEPDIR)/call_dvipdfmx-callexe.Tpo -c -o call_dvipdfmx-callexe.obj `if test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/call_dvipdfmx-callexe.Tpo $(DEPDIR)/call_dvipdfmx-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/../texlive/w32_wrapper/callexe.c' object='call_dvipdfmx-callexe.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_dvipdfmx_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_dvipdfmx-callexe.obj `if test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -632,7 +665,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool \
+	clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -705,19 +739,20 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS
 .MAKE: install-am install-exec-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool ctags distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am \
-	install-dist_binSCRIPTS install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-hook install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-dist_binSCRIPTS uninstall-hook
+	clean-generic clean-libtool clean-noinstPROGRAMS ctags \
+	distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dist_binSCRIPTS \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-exec-hook install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-dist_binSCRIPTS uninstall-hook
 
 
 @KPATHSEA_RULE@
@@ -725,16 +760,19 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS
 @ZLIB_RULE@
 
 install-exec-hook:
-	cd $(DESTDIR)$(bindir) && \
-	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) dvipdfm$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) ebb$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) dvipdfm$(EXEEXT)
+@WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
+@WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
+@WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+@WIN32_FALSE@	cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) dvipdfm$(EXEEXT) && \
+@WIN32_FALSE@	  $(LN_S) dvipdfmx$(EXEEXT) dvipdfm$(EXEEXT) && \
+@WIN32_FALSE@	  $(LN_S) dvipdfmx$(EXEEXT) ebb$(EXEEXT) && \
+@WIN32_FALSE@	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT)
 
 uninstall-hook:
+	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
-	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

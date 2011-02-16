@@ -1,3 +1,7 @@
+2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac [WIN32]: Add dvigif.exe wrapper.
+
 2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* doc/Makefile.am: Use ../am/man1_links.am for manpage links.

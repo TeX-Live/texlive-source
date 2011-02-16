@@ -1,9 +1,9 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/omegafonts/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-INCLUDES =  -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
+AM_CPPFLAGS =  -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_YFLAGS = -d -v
 
@@ -20,6 +20,9 @@ bin_PROGRAMS =
 if OTANGLE
 if OMFONTS
 bin_PROGRAMS += omfonts
+if WIN32
+noinst_PROGRAMS = call_omfonts
+endif WIN32
 endif OMFONTS
 endif OTANGLE
 EXTRA_PROGRAMS = omfonts
@@ -62,6 +65,12 @@ omfonts_SOURCES = \
 LDADD = $(proglib) $(KPATHSEA_LIBS)
 omfonts_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND)
 
+call_omfonts_CPPFLAGS = -DEXEPROG=\"omfonts.exe\"
+
+call_omfonts_SOURCES = $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+
+call_omfonts_LDADD =
+
 DISTCLEANFILES = pl-parser.output
 
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
@@ -69,11 +78,17 @@ linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 if OTANGLE
 if OMFONTS
 install-exec-hook:
+if WIN32
+	for f in $(linked_programs); do \
+	  $(INSTALL_PROGRAM) call_omfonts$(EXEEXT) $(DESTDIR)$(bindir)/$$f$(EXEEXT) || exit 1; \
+	done
+else !WIN32
 	cd $(DESTDIR)$(bindir) && \
 	  for f in $(linked_programs); do \
 	    rm -f $$f$(EXEEXT) && \
 	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
 	  done
+endif !WIN32
 uninstall-hook:
 	for f in $(linked_programs); do \
 	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \

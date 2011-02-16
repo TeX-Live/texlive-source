@@ -36,6 +36,8 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = $(am__EXEEXT_1)
 @OMFONTS_TRUE@@OTANGLE_TRUE@am__append_1 = omfonts
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@noinst_PROGRAMS =  \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	call_omfonts$(EXEEXT)
 EXTRA_PROGRAMS = omfonts$(EXEEXT)
 subdir = omegafonts
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in ChangeLog \
@@ -81,7 +83,10 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 @OMFONTS_TRUE@@OTANGLE_TRUE@am__EXEEXT_1 = omfonts$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
-PROGRAMS = $(bin_PROGRAMS)
+PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
+am_call_omfonts_OBJECTS = call_omfonts-callexe.$(OBJEXT)
+call_omfonts_OBJECTS = $(am_call_omfonts_OBJECTS)
+call_omfonts_DEPENDENCIES =
 am_omfonts_OBJECTS = char_routines.$(OBJEXT) dimen_routines.$(OBJEXT) \
 	error_routines.$(OBJEXT) extra_routines.$(OBJEXT) \
 	font_routines.$(OBJEXT) header_routines.$(OBJEXT) \
@@ -115,8 +120,8 @@ YLWRAP = $(top_srcdir)/../../build-aux/ylwrap
 YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
 LTYACCCOMPILE = $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=compile $(YACC) $(YFLAGS) $(AM_YFLAGS)
-SOURCES = $(omfonts_SOURCES)
-DIST_SOURCES = $(omfonts_SOURCES)
+SOURCES = $(call_omfonts_SOURCES) $(omfonts_SOURCES)
+DIST_SOURCES = $(call_omfonts_SOURCES) $(omfonts_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -311,7 +316,7 @@ top_srcdir = @top_srcdir@
 wlibs = @wlibs@
 x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
-INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
+AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_YFLAGS = -d -v
 proglib = ../lib/lib.a
@@ -352,6 +357,9 @@ omfonts_SOURCES = \
 
 LDADD = $(proglib) $(KPATHSEA_LIBS)
 omfonts_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND)
+call_omfonts_CPPFLAGS = -DEXEPROG=\"omfonts.exe\"
+call_omfonts_SOURCES = $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+call_omfonts_LDADD = 
 DISTCLEANFILES = pl-parser.output tests/charwdr.* tests/charwdv.* \
 	tests/xlevel1.ofm tests/xlevel1.opl tests/Cherokee.tfm \
 	tests/OCherokee.ofm tests/OCherokee.opl tests/OCherokee.ovf \
@@ -441,6 +449,18 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+
+clean-noinstPROGRAMS:
+	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
+call_omfonts$(EXEEXT): $(call_omfonts_OBJECTS) $(call_omfonts_DEPENDENCIES) 
+	@rm -f call_omfonts$(EXEEXT)
+	$(LINK) $(call_omfonts_OBJECTS) $(call_omfonts_LDADD) $(LIBS)
 pl-parser.h: pl-parser.c
 	@if test ! -f $@; then \
 	  rm -f pl-parser.c; \
@@ -456,6 +476,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/call_omfonts-callexe.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/char_routines.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dimen_routines.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/error_routines.Po@am__quote@
@@ -493,6 +514,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+call_omfonts-callexe.o: $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT call_omfonts-callexe.o -MD -MP -MF $(DEPDIR)/call_omfonts-callexe.Tpo -c -o call_omfonts-callexe.o `test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(top_srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/call_omfonts-callexe.Tpo $(DEPDIR)/call_omfonts-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/../texlive/w32_wrapper/callexe.c' object='call_omfonts-callexe.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_omfonts-callexe.o `test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c' || echo '$(srcdir)/'`$(top_srcdir)/../texlive/w32_wrapper/callexe.c
+
+call_omfonts-callexe.obj: $(top_srcdir)/../texlive/w32_wrapper/callexe.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT call_omfonts-callexe.obj -MD -MP -MF $(DEPDIR)/call_omfonts-callexe.Tpo -c -o call_omfonts-callexe.obj `if test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/call_omfonts-callexe.Tpo $(DEPDIR)/call_omfonts-callexe.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/../texlive/w32_wrapper/callexe.c' object='call_omfonts-callexe.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(call_omfonts_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o call_omfonts-callexe.obj `if test -f '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; then $(CYGPATH_W) '$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/../texlive/w32_wrapper/callexe.c'; fi`
 
 .l.c:
 	$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
@@ -723,7 +758,8 @@ maintainer-clean-generic:
 @OTANGLE_FALSE@uninstall-hook:
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool \
+	clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -796,19 +832,19 @@ uninstall-am: uninstall-binPROGRAMS
 .MAKE: check-am install-am install-exec-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
-	clean-binPROGRAMS clean-generic clean-libtool ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-exec-hook install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-hook
+	clean-binPROGRAMS clean-generic clean-libtool \
+	clean-noinstPROGRAMS ctags distclean distclean-compile \
+	distclean-generic distclean-libtool distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-exec-hook \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-hook
 
 
 # Rebuild $(proglib)
@@ -818,11 +854,14 @@ $(proglib): ${top_srcdir}/lib/*.c
 @KPATHSEA_RULE@
 
 @OMFONTS_TRUE@@OTANGLE_TRUE@install-exec-hook:
-@OMFONTS_TRUE@@OTANGLE_TRUE@	cd $(DESTDIR)$(bindir) && \
-@OMFONTS_TRUE@@OTANGLE_TRUE@	  for f in $(linked_programs); do \
-@OMFONTS_TRUE@@OTANGLE_TRUE@	    rm -f $$f$(EXEEXT) && \
-@OMFONTS_TRUE@@OTANGLE_TRUE@	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
-@OMFONTS_TRUE@@OTANGLE_TRUE@	  done
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	for f in $(linked_programs); do \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	  $(INSTALL_PROGRAM) call_omfonts$(EXEEXT) $(DESTDIR)$(bindir)/$$f$(EXEEXT) || exit 1; \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	done
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	cd $(DESTDIR)$(bindir) && \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	  for f in $(linked_programs); do \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	    rm -f $$f$(EXEEXT) && \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	  done
 @OMFONTS_TRUE@@OTANGLE_TRUE@uninstall-hook:
 @OMFONTS_TRUE@@OTANGLE_TRUE@	for f in $(linked_programs); do \
 @OMFONTS_TRUE@@OTANGLE_TRUE@	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
