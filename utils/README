@@ -64,9 +64,9 @@ clisp_builddir=$clisp_basedir/clisp-build
 mkdir $clisp_toolsdir
 
 cd $clisp_basedir
-wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.8.tar.gz
-gzip -dc libsigsegv-2.8.tar.gz | tar xf -
-cd libsigsegv-2.8
+wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.9.tar.gz
+gzip -dc libsigsegv-2.9.tar.gz | tar xf -
+cd libsigsegv-2.9
 ./configure --prefix=$clisp_toolsdir && make && make check && make install
 
 # you may need this hack on 64-bit systems
@@ -74,9 +74,9 @@ cd libsigsegv-2.8
 ln -s lib $clisp_toolsdir/lib64
 
 cd $clisp_basedir
-wget http://ftp.gnu.org/gnu/clisp/release/2.48/clisp-2.48.tar.gz
-gzip -dc clisp-2.48.tar.gz | tar xf -
-cd clisp-2.48
+wget http://ftp.gnu.org/gnu/clisp/release/2.49/clisp-2.49.tar.gz
+gzip -dc clisp-2.49.tar.gz | tar xf -
+cd clisp-2.49
 # On FreeBSD/amd64, add --disable-mmap.
 ./configure --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
   --disable-nls \
