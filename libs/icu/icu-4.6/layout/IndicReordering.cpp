@@ -235,13 +235,13 @@ public:
 
 		for ( i = beginSyllable ; i < nextSyllable ; i++ ) {
 			if ( classTable->isMatra(fOutChars[i+inv_count])) {
-				IndicClassTable::CharClass matraClass = classTable->getCharClass(fOutChars[i+inv_count]);	
+				IndicClassTable::CharClass matraClass = classTable->getCharClass(fOutChars[i+inv_count]);
 				if ( classTable->isSplitMatra(matraClass)) {
 					le_int32 saveIndex = fGlyphStorage.getCharIndex(i+inv_count,success);
 					le_uint32 saveAuxData = fGlyphStorage.getAuxData(i+inv_count,success);
                     const SplitMatra *splitMatra = classTable->getSplitMatra(matraClass);
                     int j;
-                    for (j = 0 ; *(splitMatra)[j] != 0 ; j++) {
+                    for (j = 0 ; j < SM_MAX_PIECES && *(splitMatra)[j] != 0 ; j++) {
                         LEUnicode piece = (*splitMatra)[j];
 						if ( j == 0 ) {
 							fOutChars[i+inv_count] = piece;
@@ -252,7 +252,7 @@ public:
 						}
  				    }
 				}
-				
+
 				if ((matraClass & CF_POS_MASK) == CF_POS_BEFORE) {
                     moveCharacter(i+inv_count,beginSyllable+inv_count);
 				}
@@ -332,7 +332,7 @@ public:
                 const SplitMatra *splitMatra = classTable->getSplitMatra(matraClass);
                 int i;
 
-                for (i = 0; i < 3 && (*splitMatra)[i] != 0; i += 1) {
+                for (i = 0; i < SM_MAX_PIECES && (*splitMatra)[i] != 0; i += 1) {
                     LEUnicode piece = (*splitMatra)[i];
                     IndicClassTable::CharClass pieceClass = classTable->getCharClass(piece);
 

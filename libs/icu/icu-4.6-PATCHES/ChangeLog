@@ -1,3 +1,7 @@
+2011-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-81-Indic (new): IndicReordering.*: Respect array bounds.
+
 2010-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-11-CURR_FULL_DIR: Correctly handle CURR_FULL_DIR when
