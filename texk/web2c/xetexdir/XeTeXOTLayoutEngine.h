@@ -35,14 +35,9 @@ authorization from the copyright holders.
 
 #include "layout/OpenTypeLayoutEngine.h"
 
-#include "unicode/uversion.h"
-#define U_ICU_VERSION_CODE (U_ICU_VERSION_MAJOR_NUM*10+U_ICU_VERSION_MINOR_NUM)
-/* ICU-4.2 added 'success' as last parameter to LayoutEngine constructors.  */
-#if U_ICU_VERSION_CODE >= 42
-#define XeTeX_success , success
-#else
-#define XeTeX_success
-#endif
+//  /* ICU-4.2 added 'success' as last parameter to LayoutEngine constructors.  */
+//  #include "unicode/uversion.h"
+//  #define U_ICU_VERSION_CODE (U_ICU_VERSION_MAJOR_NUM*10+U_ICU_VERSION_MINOR_NUM)
 
 #include "XeTeXFontInst.h"
 
@@ -53,11 +48,7 @@ public:
                             const GlyphSubstitutionTableHeader* gsubTable,
                             const GlyphPositioningTableHeader* gposTable,
 							const LETag* addFeatures, const le_int32* addParams,
-							const LETag* removeFeatures
-#if U_ICU_VERSION_CODE >= 42
-				, LEErrorCode &success
-#endif
-			);
+							const LETag* removeFeatures, LEErrorCode &success);
 
     virtual ~XeTeXOTLayoutEngine();
 
