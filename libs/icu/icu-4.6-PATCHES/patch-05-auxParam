@@ -56,7 +56,7 @@ diff -ur icu-4.6.orig/source/layout/GlyphIterator.cpp icu-4.6/source/layout/Glyp
      destIndex = that.destIndex;
      lookupFlags = that.lookupFlags;
      featureMask = newFeatureMask;
-+    featureParam = that.featureParam;
++    featureParam = newFeatureParam;
      glyphGroup  = 0;
      glyphClassDefinitionTable = that.glyphClassDefinitionTable;
      markAttachClassDefinitionTable = that.markAttachClassDefinitionTable;

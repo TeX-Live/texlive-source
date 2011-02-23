@@ -2,6 +2,8 @@
 
 	* patch-81-Indic (new): IndicReordering.*: Respect array bounds.
 
+	* patch-05-auxParam: Fix a bug introduced when importing icu-4.6.
+
 2010-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-11-CURR_FULL_DIR: Correctly handle CURR_FULL_DIR when

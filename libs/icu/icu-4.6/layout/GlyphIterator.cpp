@@ -72,7 +72,7 @@ GlyphIterator::GlyphIterator(GlyphIterator &that, FeatureMask newFeatureMask, le
     destIndex = that.destIndex;
     lookupFlags = that.lookupFlags;
     featureMask = newFeatureMask;
-    featureParam = that.featureParam;
+    featureParam = newFeatureParam;
     glyphGroup  = 0;
     glyphClassDefinitionTable = that.glyphClassDefinitionTable;
     markAttachClassDefinitionTable = that.markAttachClassDefinitionTable;
