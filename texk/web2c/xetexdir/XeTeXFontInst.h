@@ -57,7 +57,7 @@ authorization from the copyright holders.
 #include "XeTeX_ext.h"
 
 extern "C" {
-	void *xmalloc(unsigned);	// from kpathsea
+	void *xmalloc(size_t);	// from kpathsea
 };
 
 // Abstract superclass that XeTeXOTLayoutEngine uses;

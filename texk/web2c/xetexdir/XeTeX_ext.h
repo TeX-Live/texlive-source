@@ -212,6 +212,12 @@ extern const UInt32 byteMark;
 extern const char *papersize;
 extern const char *outputdriver;
 
+/* gFreeTypeLibrary is defined in XeTeXFontInst_FT2.cpp,
+ * also used in XeTeXFontMgr_FC.cpp and XeTeX_ext.c.  */
+#include <ft2build.h>
+#include FT_FREETYPE_H
+extern FT_Library gFreeTypeLibrary;
+
 #include <stdio.h> /* for FILE */
 
 #include "trans.h"

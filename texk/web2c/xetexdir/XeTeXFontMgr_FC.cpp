@@ -52,8 +52,6 @@ static UConverter*	macRomanConv = NULL;
 static UConverter*	utf16beConv = NULL;
 static UConverter*	utf8Conv = NULL;
 
-extern FT_Library	gFreeTypeLibrary; /* shared with XeTeXFontInst_FT2 */
-
 static char*
 convertToUtf8(UConverter* conv, const unsigned char* name, int len)
 {

@@ -65,9 +65,6 @@ authorization from the copyright holders.
 
 #include "XeTeX_ext.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 #include <teckit/TECkit_Engine.h>
 
 #include <kpathsea/c-ctype.h>
@@ -193,7 +190,6 @@ void initversionstring(char **versions)
 #ifdef XETEX_OTHER
 	int	fc_version = FcGetVersion();
 #endif
-	extern FT_Library	gFreeTypeLibrary; /* in XeTeXFontInst_FT2 */
 	FT_Int	ftMajor, ftMinor, ftPatch;
 
 	const_string fmt =

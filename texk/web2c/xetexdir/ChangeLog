@@ -1,3 +1,11 @@
+2011-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXFontInst.h: Fix prototype for xmalloc().
+
+	* XeTeXFontMgr_FC.cpp, XeTeX_ext.c: Move (nested) extern
+	declaration of gFreeTypeLibrary from here ...
+	* XeTeX_ext.h: ... to here.
+
 2011-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXOTLayoutEngine.{cpp,h}: Drop support for ICU < 4.2.
