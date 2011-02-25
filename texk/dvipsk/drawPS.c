@@ -289,7 +289,7 @@ flushDashedPath(int dotted, double inchesPerDash)
       integer dy = vconvPS(yy[i-1]) - vconvPS(yy[i]);
       /* Cast to double before multiplying; otherwise, can result in
          integer overflow and thus a negative result (eepic-nan.test).  */
-      double delta = sqrt((double) (dx) * dx + (double) dy * dy);
+      double delta = sqrt(((double) dx) * dx + ((double) dy) * dy);
       double ipd;
       int ndashes;
 
