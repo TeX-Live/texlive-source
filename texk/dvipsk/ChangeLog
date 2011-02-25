@@ -1,3 +1,18 @@
+2011-02-25  Karl Berry  <karl@tug.org>
+
+	* drawPS.c (flushDashedPath): cast to double before squaring,
+	to avoid integer overflow.  (I guess this was hidden before by the
+	assignment cast to float?  Said to work in 2009, failed in 2010.)
+	* eepic-nan.test,
+	* testdata/eepic-nan.tex,
+	* testdata/eepic-nan.dvi,
+	* testdata/config.pdf,
+	* testdata/alt-rule.pro,
+	* testdata/tex.pro: new files to test.  Report from Stefan Moser
+	to mactex-support, 20 Oct 2010 02:37:45.
+	* Makefile.am (tests): add eepic-nan,
+	(EXTRA_DIST): add new files.
+
 2011-02-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* output.c: print R2 mode message only when secure == 2.

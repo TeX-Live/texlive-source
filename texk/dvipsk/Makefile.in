@@ -383,34 +383,37 @@ prologdir = ${prefix}/texmf/dvips/base
 prologues = $(dist_prologues:.lpro=.pro) texc.pro
 SUFFIXES = .pro .lpro
 EXTRA_DIST = $(dist_prologues) texc.script NEWS TODO afm2tfm-test.pl \
-	beginfontk1.test dvips.test pfbincl.test quotecmd-test.pl \
-	testdata/8r.enc testdata/ad.enc testdata/beginfontk1.dvi \
+	beginfontk1.test dvips.test eepic-nan.test pfbincl.test \
+	quotecmd-test.pl testdata/8r.enc testdata/ad.enc \
+	testdata/alt-rule.pro testdata/beginfontk1.dvi \
 	testdata/beginfontk1.eps testdata/beginfontk1.tex \
 	testdata/cmex10.pfb testdata/cmex10.tfm testdata/cmmi10.pfb \
 	testdata/cmmi10.tfm testdata/cmr10.pfb testdata/cmr10.tfm \
 	testdata/cmsy10.pfb testdata/cmsy10.tfm testdata/cmtt10.pfb \
-	testdata/cmtt10.tfm testdata/config.ps testdata/dvipstst.tex \
-	testdata/dvipstst.xdv testdata/dvipstst.xps \
-	testdata/intoverflow.dvi testdata/pfbincl.eps \
-	testdata/pfbincl.tex testdata/pfbincl.xdv testdata/pfbincl.xps \
-	testdata/psfonts.map testdata/ptmbi.vf testdata/ptmbi8r.tfm \
-	testdata/ptmr.vf testdata/ptmr8r.tfm testdata/ptmri.vf \
-	testdata/ptmri8r.tfm testdata/quotecmd.dvi \
-	testdata/quotecmd.tex testdata/special.pro testdata/texc.pro \
-	testdata/texps.pro testdata/vfnameoverflow.dvi atari \
-	cmfonts.map config.ps contrib/PSTricks contrib/afm-extra \
-	contrib/colorsep.lpro contrib/configs contrib/crop.lpr \
-	contrib/latex209 contrib/treen.sh contrib/treen2.sh \
-	contrib/volker contrib/whichinpath cyrfonts.map eufonts.map \
-	flib.c hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map \
-	makefont.c mvs psfonts.map tex vmcms vms
+	testdata/cmtt10.tfm testdata/config.pdf testdata/config.ps \
+	testdata/dvipstst.tex testdata/dvipstst.xdv \
+	testdata/dvipstst.xps testdata/eepic-nan.dvi \
+	testdata/eepic-nan.tex testdata/intoverflow.dvi \
+	testdata/pfbincl.eps testdata/pfbincl.tex testdata/pfbincl.xdv \
+	testdata/pfbincl.xps testdata/psfonts.map testdata/ptmbi.vf \
+	testdata/ptmbi8r.tfm testdata/ptmr.vf testdata/ptmr8r.tfm \
+	testdata/ptmri.vf testdata/ptmri8r.tfm testdata/quotecmd.dvi \
+	testdata/quotecmd.tex testdata/special.pro testdata/tex.pro \
+	testdata/texc.pro testdata/texps.pro \
+	testdata/vfnameoverflow.dvi atari cmfonts.map config.ps \
+	contrib/PSTricks contrib/afm-extra contrib/colorsep.lpro \
+	contrib/configs contrib/crop.lpr contrib/latex209 \
+	contrib/treen.sh contrib/treen2.sh contrib/volker \
+	contrib/whichinpath cyrfonts.map eufonts.map flib.c \
+	hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map makefont.c \
+	mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro dvipstst.ps missfont.log mtest.ps \
 	pfbincl.ps
-TESTS = afm2tfm-test.pl beginfontk1.test dvips.test pfbincl.test \
-	quotecmd-test.pl
+TESTS = afm2tfm-test.pl beginfontk1.test dvips.test eepic-nan.test \
+	pfbincl.test quotecmd-test.pl
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
 	TEXCONFIG=$(srcdir)/testdata TEXFONTS=$(srcdir)/testdata \
-	TEXPSHEADERS=$(srcdir)/testdata
+	TEXFONTMAPS=$(srcdir)/testdata TEXPSHEADERS=$(srcdir)/testdata
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

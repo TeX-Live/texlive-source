@@ -111,10 +111,13 @@ CLEANFILES = $(prologues) texc.lpro
 
 ## dvips tests
 TESTS = afm2tfm-test.pl
-TESTS += beginfontk1.test dvips.test pfbincl.test quotecmd-test.pl
+TESTS += beginfontk1.test dvips.test eepic-nan.test \
+         pfbincl.test quotecmd-test.pl
 
-TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea TEXCONFIG=$(srcdir)/testdata
+TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea
+TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata
 TESTS_ENVIRONMENT += TEXFONTS=$(srcdir)/testdata
+TESTS_ENVIRONMENT += TEXFONTMAPS=$(srcdir)/testdata
 TESTS_ENVIRONMENT += TEXPSHEADERS=$(srcdir)/testdata
 
 EXTRA_DIST += \
@@ -123,10 +126,12 @@ EXTRA_DIST += \
 	afm2tfm-test.pl \
 	beginfontk1.test \
 	dvips.test \
+	eepic-nan.test \
 	pfbincl.test \
 	quotecmd-test.pl \
 	testdata/8r.enc \
 	testdata/ad.enc \
+	testdata/alt-rule.pro \
 	testdata/beginfontk1.dvi \
 	testdata/beginfontk1.eps \
 	testdata/beginfontk1.tex \
@@ -140,10 +145,13 @@ EXTRA_DIST += \
 	testdata/cmsy10.tfm \
 	testdata/cmtt10.pfb \
 	testdata/cmtt10.tfm \
+	testdata/config.pdf \
 	testdata/config.ps \
 	testdata/dvipstst.tex \
 	testdata/dvipstst.xdv \
 	testdata/dvipstst.xps \
+	testdata/eepic-nan.dvi \
+	testdata/eepic-nan.tex \
 	testdata/intoverflow.dvi \
 	testdata/pfbincl.eps \
 	testdata/pfbincl.tex \
@@ -159,6 +167,7 @@ EXTRA_DIST += \
 	testdata/quotecmd.dvi \
 	testdata/quotecmd.tex \
 	testdata/special.pro \
+	testdata/tex.pro \
 	testdata/texc.pro \
 	testdata/texps.pro \
 	testdata/vfnameoverflow.dvi
