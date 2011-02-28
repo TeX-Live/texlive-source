@@ -223,7 +223,3 @@ uninstall-hook: $(uninstall_exe_links)
 	  rm -f $(DESTDIR)$(bindir)/$$link; \
 	done  
 
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
-

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -322,8 +322,4 @@ EXTRA_DIST += $(TESTS)
 ## Not used
 ##
 EXTRA_DIST += mktex.cnf
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig common.ac.orig withenable.ac
 

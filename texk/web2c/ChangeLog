@@ -1,3 +1,8 @@
+2011-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.in.orig, configure.in.orig: Remove ancient files.
+	* Makefile.am (EXTRA_DIST): Adapt.
+
 2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (install_exe_links, uninstall_exe_links): Hooks to

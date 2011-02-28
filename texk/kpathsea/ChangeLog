@@ -1,3 +1,9 @@
+2011-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.in.orig, common.ac.orig, withenable.ac: Remove
+	ancient files.
+	* Makefile.am (EXTRA_DIST): Adapt.
+
 2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* man/Makefile.am: Use ../am/man1_links.am for manpage links.

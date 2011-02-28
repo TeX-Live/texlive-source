@@ -1461,7 +1461,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	synctexdir/synctex-e-rec.ch0 synctexdir/synctex-e-rec.ch1 \
 	synctexdir/synctex-pdf-rec.ch2 synctexdir/synctex-xe-mem.ch2 \
 	synctexdir/synctex-xe-rec.ch2 synctexdir/synctex-xe-rec.ch3 \
-	libmd5/md5.test Makefile.in.orig configure.in.orig
+	libmd5/md5.test
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c tangleboot.c tangleboot.h tangleboot.p \
 	tangleboot-web2c ctangle.c cweb.c cweb.h ctangle-ctangle \
