@@ -6,15 +6,16 @@
 ##
 ##  Author David Firth (http://go.warwick.ac.uk/dfirth)
 ##
-##  This is a simple wrapper for (three runs of) pdfjam, version 2.01
+##  This is a simple wrapper for (three runs of) pdfjam, version 2.08
 ##
 ##
 ##  It's hard (?) to set up this particular script to read from /dev/stdin, 
 ##  so we'll just insist that the first argument is a file:
 ##
 E_USAGE=64           ##  for a command line usage error
-for arg in "$@";  do
-    case "$arg" in
+for arg
+do
+    case $arg in
 	--batch)
 	    printf "pdfjam-pocketmod ERROR: the --batch option is not allowed\n" 1>&2 ; 
 	    exit "$E_USAGE" ;;
@@ -22,6 +23,8 @@ for arg in "$@";  do
 	    n='--no-tidy' ;;
 	--quiet | -q)
 	    q='-q' ;;
+	--vanilla)
+	    v='--vanilla' ;;
 	--checkfiles)
 	    c='--checkfiles' ;;
 	*) 
@@ -43,12 +46,12 @@ fi
 ##  That's all the argument checking!
 ##
 pageSpec="1-8"            ## the default page spec
-case "${1}" in
+case ${1} in
     --* | "")             ## no page spec was given
 	;;
     *)                    ## a page spec was given, so use it
 	pageSpec="$1" ;
 	shift ;;
 esac
-pdfjam $n $q $c -o /dev/stdout "$sourceFile" "$pageSpec" | pdfjam --angle 180 $n $q -o /dev/stdout /dev/stdin '1,8,7,6' | pdfjam --nup 4x2 --landscape --frame true  "$sourceFile" '2-5' /dev/stdin "$@"
+pdfjam $n $q $c $v -o /dev/stdout "$sourceFile" "$pageSpec" | pdfjam --angle 180 $n $q $v -o /dev/stdout /dev/stdin '1,8,7,6' | pdfjam --nup 4x2 --landscape --frame true  "$sourceFile" '2-5' /dev/stdin "$@"
 

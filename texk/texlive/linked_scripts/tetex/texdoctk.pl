@@ -14,6 +14,10 @@ use Getopt::Long;
 Getopt::Long::config('bundling');
 use File::Basename;
 
+BEGIN {
+    Win32::SetChildShowWindow(0) if defined &Win32::SetChildShowWindow;
+}
+
 my $IsWin32 = ($^O =~ /MSWin32/i);
 
 if ($IsWin32) {

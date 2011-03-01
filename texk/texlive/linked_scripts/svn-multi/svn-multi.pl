@@ -6,9 +6,9 @@
 #
 # Copyright (C) 2006-2009 Martin Scharrer
 # E-mail: martin@scharrer-online.de
-# WWW: http://www.scharrer-online.de/latex/svn-multi/
+# WWW: http://latex.scharrer-online.de/svn-multi/
 #
-# $Id: svn-multi-pl.dtx 692 2009-03-27 21:38:45Z martin $
+# $Id: svn-multi-pl.dtx 1873 2010-07-26 15:31:45Z martin $
 #
 # This program works only in combination with the LaTeX package 'svn-multi' and
 # generates .svx files with '\svnidlong' macros holding Subversion keywords for
@@ -57,7 +57,7 @@ use warnings;
 use File::Basename;
 my $VERSION = "0.2";
 my ($REV,$DATE) =
-  (split ' ','$Id: svn-multi-pl.dtx 692 2009-03-27 21:38:45Z martin $')[2,3];
+  (split ' ','$Id: svn-multi-pl.dtx 1873 2010-07-26 15:31:45Z martin $')[2,3];
 
 my $dollar  = '$';
 my @PATH;
@@ -133,8 +133,8 @@ my $resvnexternal = qr/
         $                   # end of line
    /x;
 
-if (-e "$jobname.svn" and open( my $svnfh, '<', "$jobname.svn")) {
-  print STDOUT "Reading '$jobname.svn'.\n";
+if (-e "$jobname.aux" and open( my $svnfh, '<', "$jobname.aux")) {
+  print STDOUT "Reading '$jobname.aux'.\n";
   while (<$svnfh>) {
     chomp;
     if  (/$resvnexternalpath/) {
@@ -149,7 +149,7 @@ if (-e "$jobname.svn" and open( my $svnfh, '<', "$jobname.svn")) {
   close ($svnfh);
 }
 else {
-  warn "No .svn file found for '$jobname'!\n";
+  warn "No .aux file found for '$jobname'!\n";
 }
 
 # Add TEXINPUTS to path
@@ -329,7 +329,7 @@ Usage:
 Description:
  This LaTeX helper script collects Subversion keywords from non-(La)TeX files
  and provides it to the 'svn-multi' package using '.svx' files.  It will first
- scan the file '<jobname>.svn' for files declared by the '\svnextern' macro but
+ scan the file '<jobname>.aux' for files declared by the '\svnextern' macro but
  also allows to provide additional files including the corresponding groups. The
  keywords for the additional files will be written in the file '<jobname>.svx'.
 

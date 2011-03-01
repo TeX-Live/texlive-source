@@ -55,7 +55,7 @@ if ($argc == 0 || $argc > 4 ) # no command line arguments or more than 3
 }
 else
 {
-   print "This is mkgrkindex (previously known as mkindex) version 2.0\n";
+   print "This is mkgrkindex (previously known as mkindex) version 2.2\n";
    
       $style = 0;
       $is_latin = 0;
@@ -116,14 +116,14 @@ $old_file="$index_file.old";
 if ($is_latin == 0)
 {
    rename $index_file, $old_file;
-   open(OLD, "$old_file") || die "Can't open file $old_file\n";
+   open(OLD, "<$old_file") || die "Can't open file $old_file\n";
    open(NEW, ">$index_file") || die "Can't open file $index_file\n";
    
    while (<OLD>)
    {
        #\x7B = {, \x7D = },\x40 = @, \x7C = |, \x21 = !, \x28 = (, \x29 = )
        chomp;
-       #Nikos Platis has suggested to replace the original code with a better
+       #Nikos Platis has suggested the replacement of the original code with a better
        #parsing method. The code that follows is essentially Nikos's code with
        #some minnor modifications, as explained in the documentation.
        $newentry = "";
@@ -159,7 +159,7 @@ if ($is_latin == 0)
 } 
 
 rename $index_file, $old_file;
-open(OLD, "$old_file") || die "Can't open file $old_file\n";
+open(OLD, "<$old_file") || die "Can't open file $old_file\n";
 open(NEW, ">$index_file") || die "Can't open file $index_file\n";
 
 while(<OLD>)
@@ -183,11 +183,11 @@ unlink $old_file;
 
 if ($style < 0)
 {
-   system("$makeindex -s alpha.ist $file");
+   system("$makeindex -s lowercase-headers.ist $file");
 }
 elsif ($style > 0)
 {
-   system("$makeindex -s Alpha.ist $file");
+   system("$makeindex -s uppercase-headers.ist $file");
 }
 else
 {
@@ -231,7 +231,7 @@ if ($style != 0)
    if ($is_latin == 0)
    {
       rename $ind_file, $old_file;
-      open(OLD, "$old_file") || die "Can't open file $old_file\n";
+      open(OLD, "<$old_file") || die "Can't open file $old_file\n";
       open(NEW, ">$ind_file") || die "Can't open file $ind_file\n";
       
       while (<OLD>)
@@ -253,7 +253,7 @@ if ($style != 0)
    }
 
    rename $ind_file, $old_file;
-   open(OLD, "$old_file") || die "Can't open file $old_file\n";
+   open(OLD, "<$old_file") || die "Can't open file $old_file\n";
    open(NEW, ">$ind_file") || die "Can't open file $ind_file\n";
    
    while (<OLD>)

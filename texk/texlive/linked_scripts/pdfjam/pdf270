@@ -4,8 +4,8 @@
 ##
 ##  Author David Firth (http://go.warwick.ac.uk/dfirth)
 ##
-##  This is a simple wrapper for pdfjam, version 2.01
-##
-pdfjam --suffix rotated270 --angle 270 --fitpaper true --rotateoversize true "$@"
+##  This is a simple wrapper for pdfjam, version 2.08
+##.
+exec pdfjam --suffix rotated270 --angle 270 --fitpaper true --rotateoversize true "$@"
 
 

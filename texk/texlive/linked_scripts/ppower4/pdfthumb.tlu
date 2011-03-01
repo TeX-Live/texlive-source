@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 --*-Lua-*-
--- $Id: pdfthumb.texlua 8373 2008-05-28 02:00:59Z vvv $
+-- $Id$
 
 -- Copyright (C) 2008 Reinhard Kotucha.
 -- You may freely use, modify and/or distribute this file.
@@ -20,7 +20,7 @@ function fixwin(args_unix)
    end
 end
 
-kpse.set_program_name('pdfthumb.texlua', 'pdfthumb')
+kpse.set_program_name(arg[-1], 'pdfthumb')
 
 jarfile=kpse.find_file('pp4p.jar', 'texmfscripts')
 
@@ -41,4 +41,3 @@ os.exit(ret)
 
 ret=os.spawn(command)
 os.exit(ret)
-ft

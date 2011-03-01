@@ -3,7 +3,7 @@
 # Descr:	Latex -->  MAN-page (groff -man), HTML and TexInfo;
 # Language:	PERL (>= 5.0)
 # Author:	Dr. Jürgen Vollmer, Juergen.Vollmer@informatik-vollmer.de
-# $Id: latex2man,v 1.151 2008/11/11 07:21:14 vollmer Exp $
+# $Id: latex2man,v 1.156 2010/12/22 12:44:30 vollmer Exp $
 #
 # Copyright (C) 1998 Dr. Juergen Vollmer
 #                    Viktoriastrasse 15, D-76133 Karlsruhe, Germany
@@ -26,8 +26,8 @@ $CMD=`basename $0`; chop ($CMD);
 $gen_date = `date`; chomp $gen_date;       # date when the output was generated
 
 sub date2str;
-$VERSION = "1.23";
-$DATE    = date2str ('$Date: 2008/11/11 07:21:14 $' =~ m|(\d+/\d+/\d+)|);
+$VERSION = "1.24";
+$DATE    = date2str ('$Date: 2010/12/22 12:44:30 $' =~ m|(\d+/\d+/\d+)|);
 
 $tmp = "/tmp/$CMD.$$";
 
@@ -35,17 +35,19 @@ $tmp = "/tmp/$CMD.$$";
 # check option and arguments
 ##################################################################
 
-getopts('o:t:VhMHTLC:D:a:'); # -D1: write each read line -D2: write each word
+getopts('o:t:c:VhMHTLC:D:a:'); # -D1: write each read line -D2: write each word
 
 sub usage
 {
 print <<'END';
-usage: latex2man [-t transfile]  [-HTML] [-C name] [-h] [-V] infile outfile.
+usage: latex2man [-t transfile] [-c cssfile] [-HTML] [-C name] [-h] [-V] infile outfile.
   A tool to translate UNIX manual pages written with LaTeX into a format
   understood by the UNIX man(1)-command.
   Reads infile, writes outfile.
 
   -t transfile:  Translation for user defined LaTeX macros.
+  -c CSSfile:    If -H is given, add a link to the \`CSSfile\' and use those
+                 CSS definitions.
   -M:            Produce output suitable for the man(1) command (default).
   -H:            Instead of producing output suitable for the man(1) command,
                  HTML code is produced (despite of the name of the command).
@@ -396,68 +398,133 @@ $htmlMacro1a{'verb'} 		= '<tt>';
 	$htmlMacro1b{'verb'} 	= '</tt>';
 $htmlMacro1a{'underline'} 	= '<u>';
 	$htmlMacro1b{'underline'}  = '</u>';
-$htmlMacro1a{'section'}   	= '\n<h2>';
-	$htmlMacro1b{'section'} = '</h2>\n';
-$htmlMacro1a{'subsection'}	= '\n<h4>';
-	$htmlMacro1b{'subsection'} = '</h4>\n';
-$htmlMacro1a{'subsubsection'}	= '\n<h5>';
-	$htmlMacro1b{'subsubsection'} = '</h5>\n';
-$htmlMacro1a{'Email'}		= '\n<tt>';
-	$htmlMacro1b{'Email'}	= '</tt>';
-$htmlMacro1a{'URL'}		= '\n<tt>';
-	$htmlMacro1b{'URL'}	= '</tt>';
+  $htmlMacro1a{'section'}   	= '\n<h2>';
+	  $htmlMacro1b{'section'} = '</h2>\n';
+  $htmlMacro1a{'subsection'}	= '\n<h4>';
+	  $htmlMacro1b{'subsection'} = '</h4>\n';
+  $htmlMacro1a{'subsubsection'}	= '\n<h5>';
+	  $htmlMacro1b{'subsubsection'} = '</h5>\n';
+if ($opt_c) {
+  # use CSS
+  # thanks to Tom Brand <tbrand@manumit-systems.com>
+  $htmlMacro1a{'Email'}		= '\n<font class="emailstyle">';
+	  $htmlMacro1b{'Email'}	= '</font>';
+  $htmlMacro1a{'URL'}		= '\n<font class="urlstyle">';
+	  $htmlMacro1b{'URL'}	= '</font>';
 
-$htmlMacro1a{'Prog'} 		= '<tt>';
-	$htmlMacro1b{'Prog'} 	= '</tt>';
-$htmlMacro1a{'File'} 		= '<tt>';
-	$htmlMacro1b{'File'} 	= '</tt>';
-$htmlMacro1a{'Opt'} 		= '<b>';
-	$htmlMacro1b{'Opt'} 	= '</b>';
-$htmlMacro1a{'oOpt'} 		= '[<b>';
-	$htmlMacro1b{'oOpt'} 	= '</b>]';
-$htmlMacro1a{'Arg'} 		= '<i>';
-	$htmlMacro1b{'Arg'} 	= '</i>';
-$htmlMacro1a{'oArg'} 		= '[<i>';
-	$htmlMacro1b{'oArg'}    = '</i>]';
+  $htmlMacro1a{'Prog'} 		= '<font class="progname">';
+	  $htmlMacro1b{'Prog'} 	= '</font>';
+  $htmlMacro1a{'File'} 		= '<font class="filename">';
+	  $htmlMacro1b{'File'} 	= '</font>';
+  $htmlMacro1a{'Opt'} 		= '<font class="optstyle">';
+	  $htmlMacro1b{'Opt'} 	= '</font>';
+  $htmlMacro1a{'oOpt'} 		= '[<font class="optstyle">';
+	  $htmlMacro1b{'oOpt'} 	= '</font>]';
+  $htmlMacro1a{'Arg'} 		= '<font class="argstyle">';
+	  $htmlMacro1b{'Arg'} 	= '</font>';
+  $htmlMacro1a{'oArg'} 		= '[<font class="argstyle">';
+	  $htmlMacro1b{'oArg'}    = '</font>]';
+} else {
+  # don't use CSS
+  $htmlMacro1a{'Email'}		= '\n<tt>';
+	  $htmlMacro1b{'Email'}	= '</tt>';
+  $htmlMacro1a{'URL'}		= '\n<tt>';
+	  $htmlMacro1b{'URL'}	= '</tt>';
+
+  $htmlMacro1a{'Prog'} 		= '<tt>';
+	  $htmlMacro1b{'Prog'} 	= '</tt>';
+  $htmlMacro1a{'File'} 		= '<tt>';
+	  $htmlMacro1b{'File'} 	= '</tt>';
+  $htmlMacro1a{'Opt'} 		= '<b>';
+	  $htmlMacro1b{'Opt'} 	= '</b>';
+  $htmlMacro1a{'oOpt'} 		= '[<b>';
+	  $htmlMacro1b{'oOpt'} 	= '</b>]';
+  $htmlMacro1a{'Arg'} 		= '<i>';
+	  $htmlMacro1b{'Arg'} 	= '</i>';
+  $htmlMacro1a{'oArg'} 		= '[<i>';
+	  $htmlMacro1b{'oArg'}    = '</i>]';
+}
 
 # LaTeX macros with two arguments
-$htmlMacro2a{'Cmd'} 		  = '<em>';
-	$htmlMacro2b{'Cmd'} 	  = '</em>(';
-	$htmlMacro2c{'Cmd'} 	  = ')';
-$htmlMacro2a{'OptArg'} 		  = '<b>';
-	$htmlMacro2b{'OptArg'} 	  = '</b><i>';
-	$htmlMacro2c{'OptArg'} 	  = '</i>';
-$htmlMacro2a{'OptoArg'} 	  = '<b>';
-	$htmlMacro2b{'OptoArg'}	  = '</b>[<i>';
-	$htmlMacro2c{'OptoArg'}	  = '</i>]';
-$htmlMacro2a{'oOptArg'} 	  = '[<b>';
-	$htmlMacro2b{'oOptArg'}   = '</b><i>';
-	$htmlMacro2c{'oOptArg'}   = '</i>]';
-$htmlMacro2a{'oOptoArg'} 	  = '[<b>';
-	$htmlMacro2b{'oOptoArg'}  = '</b>[<i>';
-	$htmlMacro2c{'oOptoArg'}  = '</i>]]';
+if (opt_c) {
+  $htmlMacro2a{'Cmd'} 		  = '<font class="commandname">';
+	  $htmlMacro2b{'Cmd'} 	  = '</font>(';
+	  $htmlMacro2c{'Cmd'} 	  = ')';
+  $htmlMacro2a{'OptArg'} 		  = '<font class="optstyle">';
+	  $htmlMacro2b{'OptArg'} 	  = '</font><font class="argstyle">';
+	  $htmlMacro2c{'OptArg'} 	  = '</font>';
+  $htmlMacro2a{'OptoArg'} 	  = '<font class="optstyle">';
+	  $htmlMacro2b{'OptoArg'}	  = '</font>[<font class="argstyle">';
+	  $htmlMacro2c{'OptoArg'}	  = '</font>]';
+  $htmlMacro2a{'oOptArg'} 	  = '[<font class="optstyle">';
+	  $htmlMacro2b{'oOptArg'}   = '</font><font class="argstyle">';
+	  $htmlMacro2c{'oOptArg'}   = '</font>]';
+  $htmlMacro2a{'oOptoArg'} 	  = '[<font class="optstyle">';
+	  $htmlMacro2b{'oOptoArg'}  = '</font>[<font class="argstyle">';
+	  $htmlMacro2c{'oOptoArg'}  = '</font>]]';
+} else {
+  $htmlMacro2a{'Cmd'} 		  = '<em>';
+	  $htmlMacro2b{'Cmd'} 	  = '</em>(';
+	  $htmlMacro2c{'Cmd'} 	  = ')';
+  $htmlMacro2a{'OptArg'} 		  = '<b>';
+	  $htmlMacro2b{'OptArg'} 	  = '</b><i>';
+	  $htmlMacro2c{'OptArg'} 	  = '</i>';
+  $htmlMacro2a{'OptoArg'} 	  = '<b>';
+	  $htmlMacro2b{'OptoArg'}	  = '</b>[<i>';
+	  $htmlMacro2c{'OptoArg'}	  = '</i>]';
+  $htmlMacro2a{'oOptArg'} 	  = '[<b>';
+	  $htmlMacro2b{'oOptArg'}   = '</b><i>';
+	  $htmlMacro2c{'oOptArg'}   = '</i>]';
+  $htmlMacro2a{'oOptoArg'} 	  = '[<b>';
+	  $htmlMacro2b{'oOptoArg'}  = '</b>[<i>';
+	  $htmlMacro2c{'oOptoArg'}  = '</i>]]';
+}
 $htmlMacro2a{'setlength'}	  = '';
 	$htmlMacro2b{'setlength'} = '';
 	$htmlMacro2c{'setlength'} = '';
 
 # we handle sections in HTML as having two arguments, 1. the number, 2. the name
-$htmlMacro2a{'section'}   	   = '\n<h2><a name="section_';
-	$htmlMacro2b{'section'}    = '">';
-	$htmlMacro2c{'section'}    = '</a></h2>\n';
-$htmlMacro2a{'subsection'}   	   = '\n<h4><a name="section_';
-	$htmlMacro2b{'subsection'} = '">';
-	$htmlMacro2c{'subsection'} = '</a></h4>\n';
-$htmlMacro2a{'subsubsection'}         = '\n<h5><a name="section_';
-	$htmlMacro2b{'subsubsection'} = '">';
-	$htmlMacro2c{'subsubsection'} = '</a></h5>\n';
+if ($opt_c) {
+  # use CSS
+  # thanks to Tom Brand <tbrand@manumit-systems.com>
+  $htmlMacro2a{'section'}   	   = '\n<h2 class="sectionname"><a name="section_';
+	  $htmlMacro2b{'section'}    = '">';
+	  $htmlMacro2c{'section'}    = '</a></h2>\n';
+  $htmlMacro2a{'subsection'}   	   = '\n<h4 class="subsectionname"><a name="section_';
+	  $htmlMacro2b{'subsection'} = '">';
+	  $htmlMacro2c{'subsection'} = '</a></h4>\n';
+  $htmlMacro2a{'subsubsection'}         = '\n<h5 class="subsubsectionname"><a name="section_';
+	  $htmlMacro2b{'subsubsection'} = '">';
+	  $htmlMacro2c{'subsubsection'} = '</a></h5>\n';
 
-# we handle Email and URL special in HTML, the LaTeX argument is doubled.
-$htmlMacro2a{'Email'}		= '<a href ="mailto:';
-	$htmlMacro2b{'Email'}	= '"><tt>';
-	$htmlMacro2c{'Email'}	= '</tt></a>';
-$htmlMacro2a{'URL'}		= '<a href ="';
-	$htmlMacro2b{'URL'}	= '"><tt>';
-	$htmlMacro2c{'URL'}	= '</tt></a>';
+  # we handle Email and URL special in HTML, the LaTeX argument is doubled.
+  $htmlMacro2a{'Email'}		= '<a class="emailstyle" href ="mailto:';
+	  $htmlMacro2b{'Email'}	= '">';
+	  $htmlMacro2c{'Email'}	= '</a>';
+  $htmlMacro2a{'URL'}		= '<a class="urlstyle" href ="';
+	  $htmlMacro2b{'URL'}	= '"><tt>';
+	  $htmlMacro2c{'URL'}	= '</tt></a>';
+
+}else{
+  # don't use CSS
+  $htmlMacro2a{'section'}   	   = '\n<h2><a name="section_';
+	  $htmlMacro2b{'section'}    = '">';
+	  $htmlMacro2c{'section'}    = '</a></h2>\n';
+  $htmlMacro2a{'subsection'}   	   = '\n<h4><a name="section_';
+	  $htmlMacro2b{'subsection'} = '">';
+	  $htmlMacro2c{'subsection'} = '</a></h4>\n';
+  $htmlMacro2a{'subsubsection'}         = '\n<h5><a name="section_';
+	  $htmlMacro2b{'subsubsection'} = '">';
+	  $htmlMacro2c{'subsubsection'} = '</a></h5>\n';
+
+  # we handle Email and URL special in HTML, the LaTeX argument is doubled.
+  $htmlMacro2a{'Email'}		= '<a href ="mailto:';
+	  $htmlMacro2b{'Email'}	= '"><tt>';
+	  $htmlMacro2c{'Email'}	= '</tt></a>';
+  $htmlMacro2a{'URL'}		= '<a href ="';
+	  $htmlMacro2b{'URL'}	= '"><tt>';
+	  $htmlMacro2c{'URL'}	= '</tt></a>';
+}
 
 ########################################################################
 # Translation for LaTeX macros for TexInfo
@@ -768,18 +835,31 @@ sub manVerbatimLine
 sub htmlStart
 {
     Print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">"; 	NL;
-    Print "<!-- Manual page created with $CMD on $gen_date --"; 	NL;
-    Print "  -- Author of $CMD: Juergen.Vollmer\@informatik-vollmer.de --";NL;
-    Print "  -- NOTE: This file is generated, DO NOT EDIT. -->"; 	NL;
+    Print "<!-- Manual page created with $CMD on $gen_date"; 		NL;
+    Print "  ** Author of $CMD: Juergen.Vollmer\@informatik-vollmer.de";NL;
+    Print "  ** NOTE: This file is generated, DO NOT EDIT. -->"; 	NL;
     Print "<html>";							NL;
-    Print "<head><title>$Name</title></head>"; 				NL;
-    Print "<body bgcolor=\"white\">"; 					NL;
-    Print "<h1 align=center>";						NL;
+    Print "<head><title>$Name</title>"; 				NL;
+
+  if ($opt_c) {
+    Print '<link href="'.$opt_c.'" rel="stylesheet" type="text/css">';  NL;
+    Print "</head><body>"; 						NL;
+    Print '<h1 class="titlehead">';	                                NL;
+    interpret_line $title;
+    Print '</h1>'; 							NL;
+    Print '<h4 class="authorhead">'; interpret_word $author; Print '</h4>'; NL;
+    Print "<h4 class=\"datehead\">$date</h4>"; 				    NL;
+    Print "<h4 class=\"versionhead\">Version $version</h4>"; 		    NL;
+  } else {
+    Print "</head><body bgcolor=\"white\">"; 					NL;
+
+    Print "<h1 align=center>"; NL;
     interpret_line $title;
     Print "</h1>"; 							NL;
     Print "<h4 align=center>"; interpret_word $author; Print "</h4>"; 	NL;
     Print "<h4 align=center>$date</h4>"; 				NL;
     Print "<h4 align=center>Version $version</h4>"; 			NL;
+  }
 }
 sub htmlEnd
 {
@@ -873,14 +953,24 @@ sub htmlTableStart
 {
     my $columns = $_[0];
     my $width   = $_[1];
-    NL; Print "<table>"; NL:
+    NL;
+    if ($opt_c) {
+	Print '<table summary="table" class="tablestyle">';
+    } else{
+	Print '<table summary="table">';
+    }
+    NL;
 }
 sub htmlTableSep
 {
     if ($first_column == 0) {
 	Print '</td>\n';
     }
-    Print '<td>';
+    if ($opt_c) {
+	Print '<td class="cellstyle">';
+    } else {
+	Print '<td>';
+    }
 }
 sub htmlTableEnd
 {
@@ -1120,9 +1210,17 @@ sub interpret_word
 		  return;
 	      }
 	      if (/^\\hline/) {
-		  Print '\n<tr><td colspan=' . $columns . '><hr></td></tr>\n';
+		     if ($opt_c) {
+			 Print '\n<tr class="rowstyle"><td  class="cellstyle" colspan=' . $columns . '><hr></td></tr>\n';
+		     } else {
+			 Print '\n<tr><td colspan=' . $columns . '><hr></td></tr>\n';
+		     }
 	      }
-	      Print '\n<tr>\n<td>';
+	      if ($opt_c) {
+		  Print '\n<tr class="rowstyle">\n<td class="cellstyle">';
+	      } else {
+		  Print '\n<tr>\n<td>';
+	      }
 	  }
 	  $first_column = 0;
       }

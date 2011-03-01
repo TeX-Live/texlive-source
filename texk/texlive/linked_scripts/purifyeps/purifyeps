@@ -7,7 +7,7 @@
 # By Scott Pakin <scott+peps@pakin.org>                        #
 ################################################################
 
-our $VERSION = "1.0a";
+our $VERSION = "1.1";
 require 5.006_001;
 use English;
 use Getopt::Long;
@@ -15,6 +15,7 @@ use FindBin qw($Script);
 use File::Basename;
 use File::Temp qw(tempfile);
 use File::Spec;
+use File::Which;
 use Pod::Usage;
 use Pod::Man;
 use Cwd qw(cwd chdir);
@@ -28,15 +29,18 @@ my %TeX_to_PS;              # Hash table representing the contents of the above
 my $infile = "-";           # Input file (default: stdin)
 my $outfile = "-";          # Output file (default: stdout)
 my $tempbase;               # Base name of temporary files
+my @fontmappath = (         # Where to look for $fontmap
+    "/usr/share/pstoedit/",
+    "/usr/local/share/pstoedit/");
 
 ########################################################################
 
 # At the end of the program's execution, delete all of our temporary files.
 END {
     if (defined $tempbase) {
-	foreach my $tempfile ($tempbase, <$tempbase.*>) {
-	    unlink $tempfile;
-	}
+        foreach my $tempfile ($tempbase, <$tempbase.*>) {
+            unlink $tempfile;
+        }
     }
 }
 
@@ -55,11 +59,11 @@ sub extractName (@)
     # Extract the first word from the token list.
     $firstWord = shift @tokens;
     if (substr ($firstWord, 0, 1) eq '"') {
-	while (substr ($firstWord, length($firstWord)-1, 1) ne '"') {
-	    return (undef, @tokens) if $#tokens==-1;
-	    $firstWord .= " " . shift @tokens;
-	}
-	$firstWord = substr ($firstWord, 1, length($firstWord)-2);
+        while (substr ($firstWord, length($firstWord)-1, 1) ne '"') {
+            return (undef, @tokens) if $#tokens==-1;
+            $firstWord .= " " . shift @tokens;
+        }
+        $firstWord = substr ($firstWord, 1, length($firstWord)-2);
     }
 
     # Return the word plus the remaining tokens.
@@ -72,7 +76,7 @@ sub executeCommand ($)
 {
     my $command = $_[0];
     if (system "$command 1>&2") {
-	die "${Script}: The following command failed with exit code @{[int($?/256)]}:\n    $command\n";
+        die "${Script}: The following command failed with exit code @{[int($?/256)]}:\n    $command\n";
     }
 }
 
@@ -86,8 +90,8 @@ sub createManPage ($$$)
 
     # Produce a (*roff) man page.
     my $parser = Pod::Man->new (center  => "",
-				release => "v$VERSION",
-				section => $section);
+                                release => "v$VERSION",
+                                section => $section);
     $parser->parse_from_file ($PROGRAM_NAME, $manfile);
 
     # Touch up the man page, and use groff to write
@@ -98,9 +102,9 @@ sub createManPage ($$$)
     close MANFILE;
     open (MANFILE, "|groff -man > $manfile") or die "${Script}: $! ($manfile)\n";
     foreach (@manlines) {
-	s/LaTeX/L\\h'-0.36m'\\v'-0.15'\\s-2A\\s+2\\v'0.15'\\h'-0.15m'TeX/g;
-	s/TeX/T\\h'-0.1667m'\\v'0.20'E\\v'-0.20'\\h'-0.125m'X/g;
-	s/\\\*\(--/--/g;
+        s/LaTeX/L\\h'-0.36m'\\v'-0.15'\\s-2A\\s+2\\v'0.15'\\h'-0.15m'TeX/g;
+        s/TeX/T\\h'-0.1667m'\\v'0.20'E\\v'-0.20'\\h'-0.125m'X/g;
+        s/\\\*\(--/--/g;
         print MANFILE $_;
     }
     close MANFILE;
@@ -111,11 +115,20 @@ sub createManPage ($$$)
 # Initialize our base temporary filename.
 (undef, $tempbase) = tempfile ($Script . "-XXXXXXXX", DIR => File::Spec->tmpdir());
 
+# Try to determine the full filename of the font-map file.
+foreach my $dir (@fontmappath) {
+    my $newfontmap = File::Spec->catfile($dir, $fontmap);
+    if (-e $newfontmap) {
+        $fontmap = $newfontmap;
+        last;
+    }
+}
+
 # Process the command line.
 my ($wanthelp, $wantman, $wantps, $wantversion);
 my $versionmsg = "purifyeps version $VERSION
 
-Copyright (C) 2009 Scott Pakin
+Copyright (C) 2010 Scott Pakin
 
 This program may be distributed and/or modified under the conditions
 of the LaTeX Project Public License, either version 1.3c of this
@@ -130,18 +143,18 @@ version 2006/05/20 or later.
 ";
 my $man_section = 1;                      # Section number of man page
 GetOptions ("fontmap=s"     => \$fontmap,
-	    "make-man:s"    => \$wantman,
-	    "make-ps-man:s" => \$wantps,
-	    "section=s"     => \$man_section,
-	    "V|version"     => \$wantversion,
-	    "help"          => \$wanthelp) || pod2usage(2);
+            "make-man:s"    => \$wantman,
+            "make-ps-man:s" => \$wantps,
+            "section=s"     => \$man_section,
+            "V|version"     => \$wantversion,
+            "help"          => \$wanthelp) || pod2usage(2);
 do {print $versionmsg; exit 1} if $wantversion;
 pod2usage(1) if $wanthelp;
 if (defined $wantman) {
     # Create a troff manual page.
     my $filename = ($wantman eq "" ?
-		    basename ($PROGRAM_NAME, ".pl") . ".$man_section" :
-		    $wantman);
+                    basename ($PROGRAM_NAME, ".pl") . ".$man_section" :
+                    $wantman);
     createManPage ($filename, 0, $man_section);
     print STDERR "Wrote $filename\n";
     exit 0;
@@ -149,8 +162,8 @@ if (defined $wantman) {
 if (defined $wantps) {
     # Create a PostScript manual page.
     my $filename = ($wantps eq "" ?
-		    basename ($PROGRAM_NAME, ".pl") . ".ps" :
-		    $wantps);
+                    basename ($PROGRAM_NAME, ".pl") . ".ps" :
+                    $wantps);
     createManPage ($filename, 1, $man_section);
     print STDERR "Wrote $filename\n";
     exit 0;
@@ -159,46 +172,51 @@ $infile = shift @ARGV if $#ARGV!=-1;
 $outfile = shift @ARGV if $#ARGV!=-1;
 pod2usage(2) if $#ARGV!=-1;                # Too many arguments.
 
+# Ensure that pstoedit is installed.  Give a helpful error message if it isn't.
+if (!defined which("pstoedit")) {
+    die "${Script}: pstoedit must be installed and must appear in the executable search path\n";
+}
+
 # Read the font map file into a hash table.
-open (FONTMAP, "<$fontmap") || die "${Script}: $! ($fontmap)\n";
+open (FONTMAP, "<$fontmap") || die "${Script}: $! ($fontmap); specify an alternative with --fontmap\n";
 FONTMAP_LINE:
     while (<FONTMAP>) {
-	# Clean up the line.
-	chomp;
-	s/\%.*//;
-	my $origLine = $_;
-	next if /^\s*$/;
-	my @tokens = split " ";
+        # Clean up the line.
+        chomp;
+        s/\%.*//;
+        my $origLine = $_;
+        next if /^\s*$/;
+        my @tokens = split " ";
 
-	# Extract the PostScript name, which may be quoted and contain spaces.
-	my $PSname;
-	($PSname, @tokens) = extractName @tokens;
-	if (!defined $PSname) {
-	    warn "${fontmap}:$NR: warning: incorrect format -- ignoring line\n";
-	    next FONTMAP_LINE;
-	}
+        # Extract the PostScript name, which may be quoted and contain spaces.
+        my $PSname;
+        ($PSname, @tokens) = extractName @tokens;
+        if (!defined $PSname) {
+            warn "${fontmap}:$NR: warning: incorrect format -- ignoring line\n";
+            next FONTMAP_LINE;
+        }
 
-	# Extract the TeX name, which may also be quoted and contain spaces.
-	my $TeXname;
-	($TeXname, @tokens) = extractName @tokens;
-	if (!defined $TeXname) {
-	    warn "${fontmap}:$NR: warning: incorrect format -- ignoring line\n";
-	    next FONTMAP_LINE;
-	}
+        # Extract the TeX name, which may also be quoted and contain spaces.
+        my $TeXname;
+        ($TeXname, @tokens) = extractName @tokens;
+        if (!defined $TeXname) {
+            warn "${fontmap}:$NR: warning: incorrect format -- ignoring line\n";
+            next FONTMAP_LINE;
+        }
 
-	# That should be the end of the line.
-	if ($#tokens != -1) {
-	    warn "${fontmap}:$NR: warning: incorrect format -- ignoring line\n";
-	    next FONTMAP_LINE;
-	}
+        # That should be the end of the line.
+        if ($#tokens != -1) {
+            warn "${fontmap}:$NR: warning: incorrect format -- ignoring line\n";
+            next FONTMAP_LINE;
+        }
 
-	# Store the mapping in a hash table.
-	# HEURISTIC: If the mapping is not unique, map the TeX
+        # Store the mapping in a hash table.
+        # HEURISTIC: If the mapping is not unique, map the TeX
         #            name to the *shortest* PostScript name.
-	if (!defined $TeX_to_PS{$TeXname} ||
-	    length $PSname < length $TeX_to_PS{$TeXname}) {
-	    $TeX_to_PS{$TeXname} = $PSname;
-	}
+        if (!defined $TeX_to_PS{$TeXname} ||
+            length $PSname < length $TeX_to_PS{$TeXname}) {
+            $TeX_to_PS{$TeXname} = $PSname;
+        }
     }
 close FONTMAP;
 
@@ -222,33 +240,33 @@ while (<MPSFILE>) {
     chomp;
     my @tokens = split " ";
     if ($#tokens == -1) {
-	push @purified_eps, "$_\n";
-	next;
+        push @purified_eps, "$_\n";
+        next;
     }
 
     # Convert the list of document fonts.
     if ($tokens[0] eq "%%DocumentFonts:") {
-	my $outputLine = shift @tokens;
-	foreach my $TeXname (@tokens) {
-	    my $PSname = $TeX_to_PS{$TeXname};
-	    if (!defined $PSname) {
-		warn "${outfile_clean}:$NR: warning: TeX font \"$TeXname\" does not appear in $fontmap\n";
-		$outputLine .= " $TeXname";
-	    }
-	    else {
-		$outputLine .= " $PSname";
-	    }
-	}
-	push @purified_eps, "$outputLine\n";
-	next;
+        my $outputLine = shift @tokens;
+        foreach my $TeXname (@tokens) {
+            my $PSname = $TeX_to_PS{$TeXname};
+            if (!defined $PSname) {
+                warn "${outfile_clean}:$NR: warning: TeX font \"$TeXname\" does not appear in $fontmap\n";
+                $outputLine .= " $TeXname";
+            }
+            else {
+                $outputLine .= " $PSname";
+            }
+        }
+        push @purified_eps, "$outputLine\n";
+        next;
     }
 
     # Convert the font name definitions.
-    if ($#tokens == 2 && 
-	$tokens[0] eq $tokens[1] &&
-	$tokens[2] eq "def") {
-	push @purified_eps, sprintf " %s /%s def\n", $tokens[0], $TeX_to_PS{substr($tokens[1],1)};
-	next;
+    if ($#tokens == 2 &&
+        $tokens[0] eq $tokens[1] &&
+        $tokens[2] eq "def") {
+        push @purified_eps, sprintf " %s /%s def\n", $tokens[0], $TeX_to_PS{substr($tokens[1],1)};
+        next;
     }
 
     # By default, output the line as is.
@@ -289,10 +307,10 @@ purifyeps
 [I<.eps input file> [I<.eps output file>]]
 
 purifyeps
-B<--make-man> [=I<filename>] [B<--section>=I<section>]
+B<--make-man>[=I<filename>] [B<--section>=I<section>]
 
 purifyeps
-B<--make-ps-man> [=I<filename>] [B<--section>=I<section>]
+B<--make-ps-man>[=I<filename>] [B<--section>=I<section>]
 
 
 =head1 DESCRIPTION
@@ -497,7 +515,7 @@ preamble tells B<pdflatex> that all F<.eps> files are in MPS format:
     \ifpdf
       \DeclareGraphicsRule{.eps}{mps}{*}{}
       \makeatletter
-	\g@addto@macro\Gin@extensions{,.eps}
+        \g@addto@macro\Gin@extensions{,.eps}
       \makeatother
     \fi
 

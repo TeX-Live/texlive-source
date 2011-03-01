@@ -26,10 +26,10 @@ $^W=1; # turn warning on
 #
 my $file        = "thumbpdf.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "3.10";
-my $date        = "2008/04/16";
+my $version     = "3.11";
+my $date        = "2010/07/07";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 1999-2008 by $author.";
+my $copyright   = "Copyright (c) 1999-2010 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -145,6 +145,8 @@ my $copyright   = "Copyright (c) 1999-2008 by $author.";
 #   2007/11/07 v3.9:
 #    * Deprecation warning of perl 5.8.8 fixed.
 #   2008/04/16 v3.10
+#   2010/07/07 v3.11
+#    * \input is used with file name extension for "thumbpdf.tex".
 #
 
 ### program identification
@@ -180,7 +182,7 @@ my $thumbprefix  = "thb";
 my $envvar       = "THUMBPDF";
 my $pdffile      = "thumbpdf.pdf";
 my $logfile      = "thumbpdf.log";
-my $texfile      = "thumbpdf";
+my $texfile      = "thumbpdf.tex";
 my $package      = "thumbpdf.sty";
 my $readme       = "readme.txt";
 my $gscnffile    = "thumbpdf.gs";

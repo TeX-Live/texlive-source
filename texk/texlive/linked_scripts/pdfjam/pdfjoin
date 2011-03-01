@@ -4,11 +4,12 @@
 ##
 ##  Author David Firth (http://go.warwick.ac.uk/dfirth)
 ##
-##  This is a simple wrapper for pdfjam, version 2.01
+##  This is a simple wrapper for pdfjam, version 2.08
 ##
 E_USAGE=64           ##  for a command line usage error
-for arg in "$@";  do
-    case "$arg" in
+for arg
+do
+    case $arg in
 	--batch)
 	    printf "pdfjoin ERROR: the --batch option is not allowed\n" 1>&2; 
 	    exit "$E_USAGE" ;;
@@ -20,6 +21,6 @@ for arg in "$@";  do
 	*) continue ;;
     esac
 done
-pdfjam --fitpaper true --rotateoversize true --suffix joined "$@"
+exec pdfjam --fitpaper true --rotateoversize true --suffix joined "$@"
 
 

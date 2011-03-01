@@ -2,7 +2,7 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
   if 0;
 use strict;
 
-# $Id: epstopdf.pl 17496 2010-03-18 17:57:31Z karl $
+# $Id: epstopdf.pl 18319 2010-05-17 16:34:21Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,9 @@ use strict;
 #
 # emacs-page
 # History
+#  2010/05/09 v2.16 (Karl Berry)
+#    * make --nogs dump edited PostScript to stdout by default
+#      (report from Reinhard Kotucha).
 #  2010/03/19 v2.15 (Karl Berry)
 #    * let --outfile override --filter again.
 #    * recognize MSWin64 as well as MSWin32, just in case.
@@ -146,7 +149,7 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 17496 2010-03-18 17:57:31Z karl $) 2.15';
+my $ident = '($Id: epstopdf.pl 18319 2010-05-17 16:34:21Z karl $) 2.16';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2010 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -334,7 +337,7 @@ if (! $OutputFilename) {
     }
   } else {
     debug "No Ghostscript: will write standard output";
-    $OutputFilename = "-"; # no ghostscript, write to standard output
+    $OutputFilename = "-";
   }
 }
 debug "Output filename:", $OutputFilename;
@@ -408,8 +411,14 @@ if ($::opt_gs) {
   $outname = $GS;
 }
 else {
-  open($OUT, '>', $OutputFilename) or error "Cannot write \"$OutputFilename\"";
-  $outname = $OutputFilename;
+  debug "No Ghostscript: opening $OutputFilename";
+  if ($OutputFilename eq "-") {
+    $OUT = *STDOUT;
+  } else {
+    open($OUT, '>', $OutputFilename)
+    || error ("Cannot write \"$OutputFilename\": $!");
+    $outname = $OutputFilename;
+  }
 }
 binmode $OUT;
 

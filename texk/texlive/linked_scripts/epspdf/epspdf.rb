@@ -3,7 +3,7 @@
 # epspdf conversion utility, main source
 
 #####
-# Copyright (C) 2006, 2008, 2009, 2010 Siep Kroonenberg
+# Copyright (C) 2006, 2008, 2009, 2010, 2011 Siep Kroonenberg
 # n dot s dot kroonenberg at rug dot nl
 #
 # This program is free software, licensed under the GNU GPL, >=2.0.

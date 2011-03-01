@@ -1,12 +1,16 @@
 #!/usr/bin/perl
 
-=begin COPYRIGHT -------------------------------------------------------------
+=begin COPYRIGHT
 
-    Copyright (c) 2005-2009 Marc Penninga.
+----------------------------------------------------------------------------
+
+    Copyright (C) 2005, 2006, 2007, 2009, 2010 Marc Penninga.
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of version 2 of the GNU General Public License 
-    as published by the Free Software Foundation.
+    it under the terms of the GNU General Public License 
+    as published by the Free Software Foundation,
+    either version 2 of the License, or (at your option)
+    any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +25,9 @@
         Boston, MA 02111-1307, 
         USA
 
-=end -------------------------------------------------------------------------
+----------------------------------------------------------------------------
+
+=end COPYRIGHT
 
 =cut
 
@@ -64,7 +70,7 @@ Please report any bugs or suggestions to <marc@penninga.info>.
 END_USAGE
 
 
-=begin Comment ---------------------------------------------------------------
+=begin Comment
 
     The next three tables map the names of weights, widths and shapes 
     to NFSS codes. New entries can be added without problems, 
@@ -78,7 +84,7 @@ END_USAGE
     families that have both italic and oblique shapes, but I doubt
     whether these exist (apart from Computer Modern, of course).
     
-=end
+=end Comment
 
 =cut
 
@@ -106,6 +112,7 @@ my %FD_WIDTH = (
     ultracondensed => 'uc',
     extracondensed => 'ec',
     condensed      => 'c',
+    cond           => 'c',
     semicondensed  => 'sc',
     regular        => '',
     semiextended   => 'sx',
@@ -121,7 +128,7 @@ my %FD_SHAPE = (
     romanii => 'it',    # Map one of Silentium Pro's two roman shapes to 'it'
 );
 
-=begin Comment ---------------------------------------------------------------
+=begin Comment
 
     The following tables are used for deciding which font families and shapes 
     to generate. Each hash governs one of these aspects:
@@ -165,7 +172,7 @@ my %FD_SHAPE = (
         name    A string added to the name of the generated font, 
                 to make it unique.
         
-=end
+=end Comment
 
 =cut
 
@@ -324,7 +331,7 @@ END_PARSE_ERROR
         else {
             $already_seen{$unique} = $filename;
         }
-        
+
         FIGURE_STYLE:
         for my $figure_style (keys %FIGURE_STYLE) {
             
@@ -410,6 +417,15 @@ END_PARSE_ERROR
                                       . "\"$CODING_SCHEME{$enc_name}\""
                                     : ''),
                                (map { "--feature=$_" } @features),
+                               # if there's no 'liga' feature, 
+                               # add ligkern commands for common ligatures
+                               ((grep { $_ eq 'liga' } @features)
+                                    ? ''
+                                    : '--ligkern="f i =: fi" '
+                                      . '--ligkern="f l =: fl" '
+                                      . '--ligkern="f f =: ff" '
+                                      . '--ligkern="ff i =: ffi" '
+                                      . '--ligkern="ff l =: ffl" '),
                                $FIGURE_STYLE{$figure_style}{extra},
                                $SHAPE{$shape}{extra},
                                $ARGV{extra},
@@ -489,12 +505,25 @@ END_GENERAL_PARSE_ERROR
     my $FD;
     for my $fd_line_ref (@fd_data) {
         my @fd_line = @{$fd_line_ref};
-        
-        write_style_file($fd_line[0], @fd_data) if $fd_line[0] ne $fd_prev[0];
+
+        my $safe = $fd_line[0];
+        $safe =~ s/1/One/xmsg;
+        $safe =~ s/2/Two/xmsg;
+        $safe =~ s/3/Three/xmsg;
+        $safe =~ s/4/Four/xmsg;
+        $safe =~ s/5/Five/xmsg;
+        $safe =~ s/6/Six/xmsg;
+        $safe =~ s/7/Seven/xmsg;
+        $safe =~ s/8/Eight/xmsg;
+        $safe =~ s/9/Nine/xmsg;
+        $safe =~ s/0/Zero/xmsg;
+    
+        write_style_file($fd_line[0], $safe, @fd_data) 
+            if $fd_line[0] ne $fd_prev[0];
         
         if (grep { $fd_line[$_] ne $fd_prev[$_] } 0 .. 2) {
             end_fd_file($FD) if $fd_prev[0];
-            $FD = start_fd_file(@fd_line[0 .. 2]);
+            $FD = start_fd_file(@fd_line[0 .. 2], $safe);
         }
         
         if (grep { $fd_line[$_] ne $fd_prev[$_] } 0 .. 4) {
@@ -509,7 +538,7 @@ END_GENERAL_PARSE_ERROR
         # Write fontshape entry
         printf {$FD} "        %s \\%s\@\@scale %s\n",
                      sprintf("%5s-%-5s", '<' . $fd_line[5], $fd_line[6] . '>'),
-                     $fd_line[0],
+                     $safe,
                      $fd_line[7],
                      ;
                      
@@ -518,19 +547,19 @@ END_GENERAL_PARSE_ERROR
     
     end_fd_file($FD) if $fd_prev[0];
 
-    # Remove the --no-updmap option from the last command for each family
-    map { $_->[-1] =~ s/--no-updmap//xms } values %commands;
-    
     # Print or execute the generated commands
     if ($ARGV{manual}) {
         while (my ($fam, $cmds_ref) = each %commands) {
             open my $BAT, '>', "$fam.bat"
                 or die "ERROR: can't create '$fam.bat' - $!";
-            map { print {$BAT} "$_\n" } @{$cmds_ref};
+            print {$BAT} "$_\n" for @{$cmds_ref};
             close $BAT;
         }
     }
     else {
+        # Remove the --no-updmap option from the last command for each family
+        map { $_->[-1] =~ s/--no-updmap//xms } values %commands;
+
         for my $cmds_ref (values %commands) {
             for my $cmd (@{$cmds_ref}) {
                 print "$cmd\n";
@@ -756,6 +785,17 @@ sub read_font_info {
     }
     close $OTFINFO;
     
+    # Check if there's a "kern" table
+    open $OTFINFO, '-|',"otfinfo --tables \"$fontfile\""
+        or die "ERROR: 'otfinfo --tables \"$fontfile\"' failed";
+    for my $line (<$OTFINFO>) {
+        if ($line =~ m/\d+ \s+ (\w{4}) \s+/xms && $1 eq 'kern') {
+            $fontinfo{features}{kern} = 1;
+            last;
+        }
+    }
+    close $OTFINFO;
+    
     if ($ARGV{verbose}) {
         print <<"END_FONT_INFO";
 
@@ -780,14 +820,14 @@ END_FONT_INFO
 }
 
 
-=begin Comment ---------------------------------------------------------------
+=begin Comment
 
     Ornament glyph names vary across fonts, so we generate font-specific 
     encoding vectors. 
     This is skipped if a file `<family>_orn.enc' is found in the current 
     directory, so the user can provide her own vector if she wants to.
 
-=end
+=end Comment
 
 =cut
 
@@ -834,17 +874,18 @@ sub make_ornament_encoding {
 #   ------------------------------------------------------------------------
 
 sub write_style_file {
-    my ($family, @fd_data) = @_;
-    
-    my (%seen_enc, %seen_style, %seen_series);
+    my ($family, $safe, @fd_data) = @_;
+
+    my (%seen_enc, %seen_style, %seen_series, %seen_shape);
     
     LINE:
     for my $line_ref (@fd_data) {
-        my ($fam, $enc, $style, $series) = @{$line_ref}[0 .. 3];
+        my ($fam, $enc, $style, $series, $shape) = @{$line_ref}[0 .. 4];
         next LINE if $fam ne $family;
         $seen_enc{$enc}       = 1;
         $seen_style{$style}   = 1;
         $seen_series{$series} = 1;
+        $seen_shape{$shape}   = 1;
     }
     
     open my $STYLE, '>', "$family.sty"
@@ -863,9 +904,13 @@ END_STY_HEADER
     print {$STYLE} "\\RequirePackage[$textenc]{fontenc}\n" if $textenc;
     print {$STYLE} "\\RequirePackage{textcomp}\n" if $seen_enc{TS1};
     
-    print {$STYLE} <<'END_STY_FONTAXES';
+    print {$STYLE} <<'END_STY_FONTAXES_START';
 \IfFileExists{fontaxes.sty}{
     \RequirePackage{fontaxes}
+END_STY_FONTAXES_START
+
+    if ($seen_shape{tl} || $seen_shape{tlit}) {
+        print {$STYLE} <<'END_STY_FONTAXES_TL';
     \providecommand{\tldefault}{tl}
     \DeclareRobustCommand\tlshape{\not@math@alphabet\tlshape\relax
         \fontsecondaryshape\tldefault\selectfont}
@@ -874,11 +919,21 @@ END_STY_HEADER
     \fa@naming@exception{shape}{{n}{tl}}{tl}
     \fa@naming@exception{shape}{{it}{tl}}{tlit}
     
+END_STY_FONTAXES_TL
+    }
+
+    if ($seen_shape{nw} || $seen_shape{sw}) {
+        print {$STYLE} <<'END_STY_FONTAXES_SW';
     \DeclareRobustCommand\swshape{\not@math@alphabet\swshape\relax
         \fontprimaryshape\itdefault\fontsecondaryshape\swdefault\selectfont}
     \fa@naming@exception{shape}{{n}{sw}}{nw}
     \fa@naming@exception{shape}{{it}{sw}}{sw}
     
+END_STY_FONTAXES_SW
+    }
+
+    if ($seen_style{Sup}) {
+        print {$STYLE} <<'END_STY_FONTAXES_SUP';
     \fa@naming@exception{figures}{{superior}{proportional}}{Sup}
     \fa@naming@exception{figures}{{superior}{tabular}}{Sup}
     \def\sufigures{\@nomath\sufigures
@@ -886,6 +941,11 @@ END_STY_HEADER
     \DeclareTextFontCommand{\textsu}{\sufigures}
     \let\textsuperior\textsu
     
+END_STY_FONTAXES_SUP
+    }
+
+    if ($seen_style{Inf}) {
+        print {$STYLE} <<'END_STY_FONTAXES_INF';
     \fa@naming@exception{figures}{{inferior}{proportional}}{Inf}
     \fa@naming@exception{figures}{{inferior}{tabular}}{Inf}
     \def\infigures{\@nomath\infigures
@@ -893,6 +953,11 @@ END_STY_HEADER
     \DeclareTextFontCommand{\textin}{\infigures}
     \let\textinferior\textin
     
+END_STY_FONTAXES_INF
+    }
+
+    if ($seen_style{Orn}) {
+        print {$STYLE} <<'END_STY_FONTAXES_ORN';
     \fa@naming@exception{figures}{{ornament}{proportional}}{Orn}
     \fa@naming@exception{figures}{{ornament}{tabular}}{Orn}
     \def\ornaments{\@nomath\ornaments
@@ -900,20 +965,35 @@ END_STY_HEADER
     \DeclareTextFontCommand{\textornaments}{\ornaments}
     \providecommand{\ornament}[1]{\textornaments{\char##1}}
     
+END_STY_FONTAXES_ORN
+    }
+
+    if ($seen_style{Numr}) {
+        print {$STYLE} <<'END_STY_FONTAXES_NUMR';
     \fa@naming@exception{figures}{{numerators}{proportional}}{Numr}
     \fa@naming@exception{figures}{{numerators}{tabular}}{Numr}
 
+END_STY_FONTAXES_NUMR
+    }
+
+    if ($seen_style{Dnom}) {
+        print {$STYLE} <<'END_STY_FONTAXES_DNOM';
     \fa@naming@exception{figures}{{denominators}{proportional}}{Dnom}
     \fa@naming@exception{figures}{{denominators}{tabular}}{Dnom}
+
+END_STY_FONTAXES_DNOM
+    }
+
+    print {$STYLE} <<'END_STY_FONTAXES_END';
 }{}
 
-END_STY_FONTAXES
+END_STY_FONTAXES_END
 
     print {$STYLE} <<"END_STY_XKEYVAL";
 \\IfFileExists{xkeyval.sty}{
-    \\newcommand*{\\$family\@scale}{1}
+    \\newcommand*{\\$safe\@scale}{1}
     \\RequirePackage{xkeyval}
-    \\DeclareOptionX{scaled}{\\renewcommand*{\\$family\@scale}{##1}}
+    \\DeclareOptionX{scaled}{\\renewcommand*{\\$safe\@scale}{##1}}
 }{
     \\let\\DeclareOptionX\\DeclareOption
     \\let\\ExecuteOptionsX\\ExecuteOptions
@@ -924,19 +1004,19 @@ END_STY_XKEYVAL
     
     if ($seen_style{LF} or $seen_style{TLF}) {
         print {$STYLE} 
-            "\\DeclareOptionX{lining}{\\edef\\$family\@figurestyle{LF}}\n";
+            "\\DeclareOptionX{lining}{\\edef\\$safe\@figurestyle{LF}}\n";
     }
     if ($seen_style{OsF} or $seen_style{TOsF}) {
         print {$STYLE} 
-            "\\DeclareOptionX{oldstyle}{\\edef\\$family\@figurestyle{OsF}}\n";
+            "\\DeclareOptionX{oldstyle}{\\edef\\$safe\@figurestyle{OsF}}\n";
     }
     if ($seen_style{TLF} or $seen_style{TOsF}) {
         print {$STYLE} 
-            "\\DeclareOptionX{tabular}{\\edef\\$family\@figurealign{T}}\n";
+            "\\DeclareOptionX{tabular}{\\edef\\$safe\@figurealign{T}}\n";
     }
     if ($seen_style{LF} or $seen_style{OsF}) {
         print {$STYLE} 
-            "\\DeclareOptionX{proportional}{\\edef\\$family\@figurealign{}}\n";
+            "\\DeclareOptionX{proportional}{\\edef\\$safe\@figurealign{}}\n";
     }
     
     my $defaults
@@ -977,7 +1057,7 @@ END_STY_XKEYVAL
 
 \\renewcommand*
     {\\$ARGV{nfss}default}
-    {$family-\\$family\@figurealign\\$family\@figurestyle}
+    {$family-\\$safe\@figurealign\\$safe\@figurestyle}
 \\renewcommand*{\\familydefault}{\\$ARGV{nfss}default}
 
 \\endinput
@@ -989,7 +1069,7 @@ END_STYLE_REST
 #   ------------------------------------------------------------------------
 
 sub start_fd_file {
-    my ($fam, $enc, $fig) = @_;
+    my ($fam, $enc, $fig, $safe) = @_;
     
     open my $FD, '>', "$enc$fam-$fig.fd"
         or die "ERROR: can't create '$enc$fam-$fig.fd' - $!";
@@ -1000,10 +1080,10 @@ sub start_fd_file {
 \\ProvidesFile{$enc$fam-$fig.fd}
     [$date (autoinst)  Font definitions for $enc/$fam-$fig.]
 
-\\expandafter\\ifx\\csname $fam\@scale\\endcsname\\relax
-    \\let\\$fam\@\@scale\\\@empty
+\\expandafter\\ifx\\csname $safe\@scale\\endcsname\\relax
+    \\let\\$safe\@\@scale\\\@empty
 \\else
-    \\edef\\$fam\@\@scale{s*[\\csname $fam\@scale\\endcsname]}%
+    \\edef\\$safe\@\@scale{s*[\\csname $safe\@scale\\endcsname]}%
 \\fi
     
 \\DeclareFontFamily{$enc}{$fam-$fig}{}
@@ -1056,10 +1136,12 @@ automatic mode) is quite complicated because it needs lots of long
 command lines and doesn't generate the F<fd> and F<sty> files LaTeX needs. 
 B<autoinst> simplifies the font installation 
 process by generating and executing all commands for F<otftotfm> 
-and by creating all necessary F<fd> and F<sty> files. All the user then needs
+and by creating all necessary F<fd> and F<sty> files. 
+
+All the user then needs
 to do is move these files to a suitable location 
-(C<< $LOCALTEXMF/tex/latex/<Supplier>/<FontFamily>/ >> being the
-canonical choice) and update TeX's filename database.
+(F<< $LOCALTEXMF/tex/latex/<Supplier>/<FontFamily>/ >> is the
+official choice) and update TeX's filename database.
 
 Given a family of font files (in either F<.ttf> or F<.otf> format), 
 B<autoinst> will create several LaTeX font families:
@@ -1198,8 +1280,7 @@ A typical name in this scheme is F<MinionPro-Regular-osf-sc-ly1>.
 By default, all text families use the LY1 encoding. This has been chosen 
 over T1 (Cork) because many OpenType fonts contain additional ligatures 
 such as fj and Th, and LY1 has a number of empty slots to accommodate these.
-
-A different encoding can be selected using the B< --encoding> 
+Different encodings can be selected using the B< --encoding> 
 command line option (see below).
 
 
@@ -1249,8 +1330,8 @@ shapes and styles. This package can be downloaded from the project's homepage
 (F<http://developer.berlios.de/projects/minionpro>) or directly through 
 the CVS web interface 
 (F<http://cvs.berlios.de/cgi-bin/viewcvs.cgi/minionpro/MinionPro/tex/>),
-and is also available from CTAN as part of the archive F<base-v2.zip>
-(F<http://www.ctan.org/tex-archive/fonts/minionpro/base-v2.zip>).
+and is also available from CTAN as part of the archive F<metrics-base.zip>
+(F<http://www.ctan.org/tex-archive/fonts/minionpro/metrics-base.zip>).
 
 Using the machinery set up by F<fontaxes>, the generated style file
 also defines a few commands (which take the text to be typeset as argument) 
@@ -1286,11 +1367,14 @@ running LaTeX on the file F<nfssfont.tex> (part of a standard
 LaTeX installation) and specifying the ornament font 
 (e.g., I<MinionPro-Regular-orn-u>).
 
+These commands are only generated for shapes and number styles
+that actually exist; no commands are generated for shapes and styles 
+that don't exist, or whose generation has been turned off.
+
 This whole machinery builds on F<fontaxes>; if that package cannot be found,
 the style file doesn't provide high-level access to the more `exotic' 
 font shapes and styles. In that case, you're limited to using the lower-level 
-commands from standard NFSS, or even plain TeX's C<\font> primitive
-(and it's called `primitive' for a reason!)
+commands from standard NFSS.
 
 
 =head2 Using multiple font families in one document
@@ -1305,8 +1389,6 @@ of B<autoinst> may not be able to coexist peacefully.
 =head2 NFSS codes
 
 In NFSS, weight and width are concatenated into a single `series' attribute.
-(I<Note:> versions of B<autoinst> before 2007-07-27 erroneously formed
-the series as `width plus weight' instead of the reverse.)
 B<autoinst> maps widths, weights and shapes to NFSS codes using 
 the following tables. These are based on the tables in Lehman's 
 F<Font Installation Guide>, but some changes had to be made to avoid 
@@ -1367,11 +1449,10 @@ cannot find a writable F<texmf> directory and leave all generated F<tfm>,
 F<vf>, F<enc> and F<map> files in the current working directory. 
 In that case, you need to move these to their correct destinations. 
 You also need to tell the dvi-driver (F<dvips>, F<dvipdfm>, F<pdfTeX> etc.)
-about the new font map files; this usually means editing some 
-configuration file.
+about the new font map files; see the documentation for how this is done.
 
-Furthermore, some OpenType fonts lead to F<pl> and F<vpl> files that are too 
-big for MiKTeX's F<pltotf> and F<vptovf>; the versions that come with TeXLive 
+Also, some OpenType fonts lead to F<pl> and F<vpl> files that are too 
+big for MiKTeX's F<pltotf> and F<vptovf>; the versions from TeXLive 
 (F<http://tug.org/ftp/texlive/Contents/live/bin/win32/>) don't have this 
 problem.
 
@@ -1487,24 +1568,22 @@ being interpreted as options to B<autoinst>, it should be properly quoted.
 Eddie Kohler's TypeTools (F<http://www.lcdf.org/type>).
 
 Perl is usually pre-installed on Linux and Unix systems;
-for Windows, good (and free) Perl implementations are 
-Strawberry Perl (F<http://strawberryperl.com>) and
-ActivePerl (available from F<http://www.activestate.com>); 
+on Windows, try ActivePerl (available from F<http://www.activestate.com>)
+or Strawberry Perl (F<http://strawberryperl.com>). 
 
-John Owens' F<otfinst> (F<http://www.ece.ucdavis.edu/~jowens/code/otfinst/>;
-also available from CTAN) is another wrapper around F<otftotfm>, 
-and may work for you when B<autoinst> doesn't.
+XeTeX (F<http://www.tug.org/xetex>) is an extension of TeX 
+that can natively use any font installed in the operating system 
+(including both flavours of OpenType fonts) 
+without additional support files.
 
-Ready-made support files for MinionPro, providing more options and features
-than B<autoinst> ever will (including math), are available from 
-F<http://developer.berlios.de/projects/minionpro/>.
+John Owens' F<otfinst> (available from CTAN) is another wrapper 
+around F<otftotfm>, and may work when B<autoinst> doesn't.
 
-XeTeX (F<http://scripts.sil.org/xetex>) is a TeX extension that can use 
-any font installed in the operating system (including both flavours of
-OpenType fonts) without additional support files.
-It also isn't hindered by standard TeX's limitation to 8-bit fonts,
-so it is especially well suited to fonts with many ligatures and 
-alternate glyphs, such as Bickham, Poetica and Zapfino.
+The MinionPro for LaTeX project 
+(F<http://developer.berlios.de/projects/minionpro/>, also on CTAN) 
+developed very complete support files for Minion Pro (including math), 
+but the project appears to have been abandoned;
+these files don't work with recent versions of Minion Pro.
 
 
 =head1 AUTHOR
@@ -1517,20 +1596,21 @@ running B<autoinst> with the B< --verbose> option.
 Please make sure that this output includes all error messages (if any);
 this can be done using the command
 
-    autoinst I<(... all options and files ...)>  >autoinst.log 2>&1
+C<< autoinst I<(... all options and files ...)>  E<gt>autoinst.log 2>&1 >>
 
 
 =head1 COPYRIGHT
 
-Copyright (c) 2005-2009 Marc Penninga. 
+Copyright (C) 2005, 2006, 2007, 2009, 2010 Marc Penninga. 
 
 
 =head1 LICENSE
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of version 2 of the GNU General Public License 
-as published by the Free Software Foundation.
-
+it under the terms of the GNU General Public License 
+as published by the Free Software Foundation,
+either version 2 of the License, or (at your option)
+any later version.
 A copy of the GNU General Public License is included with the I<fontools> 
 collection; see the file F<GPLv2.txt>.
 
@@ -1550,14 +1630,36 @@ GNU General Public License for more details.
 
 =over 12
 
+=item I<2010-04-29>
+
+The C< --feature=kern> option is only used for fonts that 
+contain either a I<kern> feature or a I<kern> table.
+Font feature selection commands in the F<.sty> file are only
+generated for shapes and figure styles that are supported 
+by the current font, and whose generation has not been
+turned off using the command line options.
+Fixed the font info parsing to work with the Condensed fonts
+in the Minion Pro family.
+
+=item I<2010-04-23>
+
+Always provide the C< --feature=kern> option to F<otftotfm>,
+even if the font doesn't have a I<kern> feature; 
+this will make F<otftotfm> use the I<kern> table if present.
+For fonts without a I<liga> feature, add C< --ligkern>
+options for the common f-ligatures to the F<otftotfm> command line,
+so that any ligatures present in the font will still be used.
+Bug fix: the generated F<.sty> files now work for font families
+with names containing digits. 
+
 =item I<2009-04-09>
 
 Prefixed the filenames of  the included encoding files with
-`fontools_', to prevent name clashes with other packages.
+I<fontools_>, to prevent name clashes with other packages.
 
 =item I<2009-04-06>
 
-A small patch to the make_ornament_encoding subroutine;
+A small patch to the C<make_ornament_encoding> subroutine;
 it now also recognises the I<bullet.xxx> ornament glyphs 
 in Adobe's Kepler Pro.
 

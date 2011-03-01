@@ -3,9 +3,10 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
 
 use strict;				# to be sure, that all is safe ... :-)
 
-# v. 0.10				simplify the use of PSTricks with pdf
-# 2010-01-04	(c) Herbert Voss <hvoss@tug.org> 
+# v. 0.11				simplify the use of PSTricks with pdf
+# 2011-01-18	(c) Herbert Voss <hvoss@tug.org> 
 # $Id: pst2pdf.pl 239 2010-01-01 17:23:13Z herbert $
+# Thanks to Pablo Gonzales Luengo
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +32,9 @@ use Getopt::Long;			# read parameter
 #----------------------- User part begin ------------------------
 my $imageDir = "images";		# where to save the images
 my @imageType = ("eps","pdf");		# all image types
-push (@imageType, "png") if $^O ne 'MSWin32';
+my $machine = "Linux";
+if ($^O eq 'MSWin32') { $machine = "Windows"; }
+else                  { push (@imageType, "png"); }
 my $Iext = ".pdf";			# leave empty, if not a special one
 my $tempDir = ".";			# temporary directory
 my $verbose = 1;			# 0 or 1, logfile  
@@ -39,6 +42,8 @@ my $clear = 0;				# 0 or 1, clears all temporary files
 my $DPI = 75;				# very low value for the png's
 my $Iscale = 1;				# for \includegraphics
 my $noImages = 0;			# 1->create no images
+my $runBibTeX = 0;			# 1->runs bibtex
+my $runBiber = 0;			# 1->runs biber and sets $runBibTeX=0
 #----------------------- User part end ---------------------------
 
 @ARGV == 0 && die "file name expected!\n";
@@ -57,6 +62,8 @@ my $result = GetOptions ("DPI=i"      => \$DPI,      	# numeric
                          "Iext=s"     => \$Iext,     	# string
                          "clear"      => \$clear,    	# flag
                          "noImages"   => \$noImages, 	# flag
+                         "runBibTeX"  => \$runBibTeX, 	# flag
+                         "runBiber"   => \$runBiber, 	# flag
                          "verbose"    => \$verbose); 	# flag
 
 LOG ("Parameters:"); 
@@ -68,6 +75,14 @@ LOG ("==> tempDir  = $tempDir");
 LOG ("==> verbose  = $verbose"); 
 LOG ("==> clear    = $clear"); 
 LOG ("==> noImages = $noImages"); 
+LOG ("==> runBibTeX= $runBibTeX"); 
+LOG ("==> runBiber = $runBiber"); 
+
+if ($runBibTeX && $runBiber) {
+  LOG ("!!! you cannot run BibTeX and Biber at the same document ...");
+  LOG ("!!! Assuming to run Biber");
+  $runBibTeX = 0;
+}
 
 my $imgNo = 0;				# internal image counter
 my $pstExaLoaded = 0;			# Document loads pst-exa
@@ -228,6 +243,11 @@ sub runTeX {
       system("convert $imageDir/-1.ppm  $imageDir/$filename-$imgNo.png"); 
       system("rm $imageDir/-1.ppm"); 
     }
+    if ($Itype eq "jpg") { 
+      system("pdftoppm -f 1 -l 1 -r $DPI $imageDir/$filename-$imgNo.pdf $imageDir/"); 
+      system("convert $imageDir/-1.ppm  $imageDir/$filename-$imgNo.jpg"); 
+      system("rm $imageDir/-1.ppm"); 
+    }
     if ($Itype eq "eps") { system("pdftops -f 1 -l 1 -eps $imageDir/$filename-$imgNo.pdf $imageDir/$filename-$imgNo.eps"); }
   }
   $imgNo++;
@@ -251,7 +271,7 @@ sub runFile {
     my @PS = @$aref;
     open (FILEp, "<$tempDir/$filename.preamble") or die "cannot open $tempDir/$filename.preamble!";
     open (FILEsub, ">$tempDir/$filename-tmp.tex") or die "cannot open $tempDir/$filename-tmp.tex!";
-#    print FILEsub "\\RequirePackage{listings}\n";
+    #print FILEsub "\\RequirePackage{listings}\n";
     while (<FILEp>) { print FILEsub $_; }
     print FILEsub "\\pagestyle{empty}\n";
     print FILEsub "\\newenvironment{postscript}{}{}\n";
@@ -271,11 +291,11 @@ sub runpdfTeX() {
   open (PDF, ">$tempDir/$pdfname-pdf.tex") or die "cannot open $tempDir/$pdfname-pdf.tex!";
   open (FILE, "<$name.tex") or die "cannot open $name!";
   print PDF "\\RequirePackage{graphicx}\n";
-  if ($pstExaLoaded < 1) {
-    print PDF "\\let\\IncludeGraphics\\includegraphics\n"; }
+  #if ($pstExaLoaded < 1) {
+   print PDF "\\let\\IncludeGraphics\\includegraphics\n"; #}
 #  print PDF "\\setkeys{Gin}{scale=0.25}\n";
 #  print PDF "\\providecommand\\psset[1]{}\n";
-#  print PDF "\\graphicspath{{$imageDir/}}\n";
+  print PDF "\\graphicspath{{$imageDir/}}\n"; #uncomment
   my $ignore = 0;
   my $IMGno = 0;
   my $depth = -1;
@@ -295,7 +315,7 @@ sub runpdfTeX() {
           $type = 2; 
           $ignore = 1; 
           if ($iPS > 1) { print PDF substr($_,0,--$iPS); }	# add preceeding text
-          print PDF "\\IncludeGraphics[scale=$Iscale]{$imageDir/$name-tmp-$IMGno$Iext}"; 
+         print PDF "\\IncludeGraphics[scale=$Iscale]{$pdfname-tmp-$IMGno$Iext}"; #change name x pdfname
           $IMGno++;
         }		# postscript env
         if ( $type < 2 ) {
@@ -309,8 +329,8 @@ sub runpdfTeX() {
 	    LOG("Increase depth: $depth");
 	    if ( $depth == 0 ) {
               if ($iPST > 1) { print PDF substr($_,0,--$iPST); }# add preceeding text
-              print PDF "\\IncludeGraphics[scale=$Iscale]{$imageDir/$name-tmp-$IMGno$Iext}"; 
-#              print PDF "\\IncludeGraphics{$name-tmp-$IMGno$Iext}"; 	# use \graphicspath
+         #     print PDF "\\IncludeGraphics[scale=$Iscale]{$imageDir/$pdfname-tmp-$IMGno$Iext}"; #change name x pdfname
+              print PDF "\\IncludeGraphics[scale=$Iscale]{$pdfname-tmp-$IMGno$Iext}"; 	# use \graphicspath
               $IMGno++;
 	      LOG("Increase Image counter: $IMGno");
             }
@@ -345,10 +365,12 @@ sub runpdfTeX() {
   } # while (<FILE>)
   close (FILE);
   close (PDF);
-  system("pdflatex $tempDir/$pdfname-pdf");	
-  system("makeindex $tempDir/$pdfname-pdf.idx");	
-  system("bibtex $tempDir/$pdfname-pdf");	
+  my $runAgain = 0;
   system("pdflatex $tempDir/$pdfname-pdf");
+  if (-e "$tempDir/$pdfname-pdf.idx") { system("makeindex $tempDir/$pdfname-pdf.idx"); $runAgain++; }
+  if ($runBibTeX && -e "$tempDir/$pdfname-pdf.aux") { system("bibtex $tempDir/$pdfname-pdf");  $runAgain++; }
+  if ($runBiber && -e "$tempDir/$pdfname-pdf.bcf") { system("biber $tempDir/$pdfname-pdf");  $runAgain++; }
+  if ($runAgain) { system("pdflatex $tempDir/$pdfname-pdf"); }
   if ( $clear ) {
     unlink "$tempDir/$pdfname-pdf.log";
     unlink "$tempDir/$pdfname-pdf.aux";
@@ -374,7 +396,7 @@ TODO
 
 =head1 DESCRIPTION
 
-runs latex and pdflatex on the TeX 
+runs latex and pdflatex on the TeX source file
 
 =head1 OPTIONS
 
@@ -396,6 +418,10 @@ runs latex and pdflatex on the TeX
 
 =item --noImages      - create no images, build only pdf
 
+=item --runBibTeX     - run bibtex on the aux file, if exists
+
+=item --runBiber      - run biber on the bcf file, if exists
+
 =back
 
 =head1 AUTHORS
@@ -404,7 +430,7 @@ Herbert Voss <hvoss@tug.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2007-2009  Herbert Voss <hvoss@tug.org>
+Copyright (c) 2007-2011  Herbert Voss <hvoss@tug.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

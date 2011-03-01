@@ -24,7 +24,6 @@ use warnings;
 
 #=======================================
 
-
 #??  Force mode doesn't appear to do force (if error in latex file)
 #??? Get banner back in.
 #??  CORRECT DIAGNOSTICS ON CHANGED FILES IF THEY DIDN'T EXIST BEFORE
@@ -33,7 +32,7 @@ use warnings;
 #??  logfile w/o fdb file: don't set changed file, perhaps for generated exts.
 #    Reconsider
 #??  Do proper run-stuff for bibtex, makeindex, cus-deps.  OK I think
-#    Parse and correctly find bst and ist files
+#    Parse and correctly find ist files
 
 
 # ATTEMPT TO ALLOW FILENAMES WITH SPACES:
@@ -108,8 +107,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.16a';
-$version_details = "$My_name, John Collins, 18 May 2010";
+$version_num = '4.22e';
+$version_details = "$My_name, John Collins, 3 February 2011";
 
 
 use Config;
@@ -176,40 +175,61 @@ else {
 ##     5.  Parsing of log file instead of source file is used to
 ##         obtain dependencies, by default.
 ##
-##   Modification log from 22 Jan 2010 onwards in detail
+##   Modification log from 23 Jun 2010 onwards in detail
 ##
-##     18 May 2010, John Collins  Remove unlink $$Pdest in do_viewfile
-##     17 May 2010, John Collins  Correct sleep time to 1 sec 
-##                                   if s<0 (otherwise infinite delay)
-##                                   or if 0<s<1 (otherwise zero delay)
-##     10 May 2010, John Collins  Deal with filenames in log file that are 
-##                                messed up by pdfTeX warnings not preceeded 
-##                                by a new line
-##     18 Apr 2010, John Collins  Clean up comment from previous mod.
-##     16 Apr 2010, John Collins  V. 4.15c.  Correct line wrapping issue.
-##     12 Apr 2010, John Collins  V. 4.15b.  Change 
-##                            use Digest;
-##                        to 
-##                            use Digest::MD5;
-##                        for TeX Live compatibility. Needed also to change 
-##                            my $md5 = Digest->MD5;
-##                        to
-##                            my $md5 = Digest::MD5->new;
-##
-##      8 Apr 2010, John Collins  V. 4.15a.  Better defaults for system
-##                                  configuration file under cygwin
-##      7 Apr 2010, John Collins  V. 4.15: Change defaults on 
-##                           $latex_silent_switch and $pdflatex_silent_switch
-##                                to make them TeXLive compatible always
-##     26 Mar 2010, John Collins  V. 4.14b.  Make sure md5 calc
-##                                doesn't bomb out on directory
-##                                Parse log file: if apparent dependent
-##                                is directory, remove it from list.
-##     27 Feb 2010, John Collins  V. 4.14a.  List failed primaries
-##     22 Jan 2010, John Collins  V. 4.14.  Try to fix problem that with -pvc
-##                                failure on latex should force a wait until
-##                                a user file is changed.  But latexmk keeps 
-##                                doing dvips, dvipdf, etc.
+##      3 Feb 2011, John Collins  Correct handling of errors in rc files
+##     23 Jan 2011, John Collins  Fix detection of makeindex files with
+##                                   MiKTeX v >= 2.8
+##     23 Jan 2011, John Collins  Fix detection of biber use with MiKTeX 
+##                            (which doesn't put openout lines in log file).
+##      9 Jan 2011, John Collins  Correct parsing of blg file for biber 0.7.2
+##      3 Jan 2011, John Collins  Small correction on reading .fdb_file
+##      1 Jan 2011, John Collins  Biber implementation
+##     30 Dec 2010, John Collins  Version number to 4.22
+##                                Start for biber
+##     28 Dec 2010, John Collins  Version number to 4.21
+##                1.  Improved handling of quotes in filenames in log file:
+##                    a. Clean double quotes in names from messages about files.
+##                    b. In ("..." construct, as in MiKTeX, the only character
+##                       prohibited is ".  Previously I disallowed ( and ), 
+##                       which are allowed special characters.
+##                2.  Reversed deletion and reinsertion in dependents list
+##                    of name found by kpsewhich.  Otherwise sometimes a name
+##                    could be deleted in error
+##     12 Nov 2010, John Collins  Version number to 4.20
+##     11 Nov 2010, John Collins  Fix problem that when bibtex finds no
+##                                citations, this is treated by bibtex as an 
+##                                error, but latexmk should only treat it as
+##                                a warning but not an error                                
+##      8,9 Nov 2010, John Collins  Get .bst file in source file list for bibtex
+##     30 Oct 2010, John Collins  Allow clean-up to delete destination files of 
+##                                  custom-dependencies
+##                                Configuration variable $cleanup_includes_cusdep_generated to
+##                                  whether this is done
+##     20 Sep 2010, John Collins  First attempt to deal with no citations warning
+##                   Still have the problem that bibtex gives non-zero exit code
+##     19 Sep 2010, John Collins  Orthogonalize option and command specification
+##                                  a la Manuel Pegourie-Gonnard (email of 19 Sep 2010,
+##                                  "[latexmk] latex engine and default options".)
+##                                  Still needs documentation.
+##     19 Sep 2010, John Collins  More general pattern for files to clean up,
+##                                  Thanks to Manuel Pegourie-Gonnard for the code
+##                                  Must check the use of %generated_exts_all in
+##                                  sub rdb_file_change1.  
+##     30 Aug 2010, John Collins  Remove double quotes (if any) surrounding
+##                                  output filename read from .log file.
+##                                  (Avoids wrong diagnostic message.)
+##     19 Aug 2010, John Collins  Remove use of --width option on $pscmd
+##                                  on linux.  It's no longer needed.
+##     30 Jul 2010, John Collins  Timing information
+##     27 Jul 2010, John Collins  Clean up some comments.  
+##                                This is release version for 4.18.
+##     23 Jul 2010, John Collins  Only produce "Removing no-longer-needed
+##                                  dependent" messages when diagnostics are
+##                                  on.
+##     23 Jun 2010, John Collins  Add test in log file for natbib's
+##                                citation-undefined warning
+##     23 Jun 2010, John Collins  V. 4.18
 ##
 ##   1998-2010, John Collins.  Many improvements and fixes.
 ##       See CHANGE-log.txt for full list, and CHANGES for summary
@@ -356,6 +376,11 @@ $log_wrap = 79;
 ## Commands to invoke latex, pdflatex
 $latex  = 'latex %O %S';
 $pdflatex = 'pdflatex %O %S';
+
+## Default switches:
+$latex_default_switches = '';
+$pdflatex_default_switches = '';
+
 ## Switch(es) to make them silent:
 $latex_silent_switch  = '-interaction=batchmode';
 $pdflatex_silent_switch  = '-interaction=batchmode';
@@ -371,9 +396,11 @@ add_input_ext( 'latex', 'tex', 'eps' );
 add_input_ext( 'pdflatex', 'tex', 'jpg', 'pdf' );
 #show_input_ext( 'latex' ); show_input_ext( 'pdflatex' );
 
-## Command to invoke bibtex
+## Command to invoke biber & bibtex
+$biber  = 'biber %O %B';
 $bibtex  = 'bibtex %O %B';
-# Switch(es) to make bibtex silent:
+# Switch(es) to make biber & bibtex silent:
+$biber_silent_switch  = '--onlylog';
 $bibtex_silent_switch  = '-terse';
 $bibtex_use = 1;   # Whether to actually run bibtex to update bbl files
                    # 0:  Never run bibtex
@@ -751,7 +778,10 @@ else {
         #    for SUSE 7.2). 
         # However the option is not available under other UNIX-type 
         #    systems, e.g., Solaris 8.
-        $pscmd = "ps --width 200 -f -u $ENV{USER}"; 
+        # But (19 Aug 2010), the truncation doesn't happen on RHEL4 and 5,
+        #    unless the output is written to a terminal.  So the --width 
+        #    option is now unnecessary
+        # $pscmd = "ps --width 200 -f -u $ENV{USER}"; 
     }
     elsif ( $^O eq "darwin" ) {
         # OS-X on Macintosh
@@ -873,19 +903,25 @@ $cleanup_fdb  = 0;      # No removal of file for latexmk's file-database
 $cleanup_only = 0;      # When doing cleanup, do not go-on to making files
 $cleanup_includes_generated = 0; 
                         # Determines whether cleanup deletes files generated by
+                        #    custom dependencies
+$cleanup_includes_cusdep_generated = 0;
+                        # Determines whether cleanup deletes files generated by
                         #    (pdf)latex (found from \openout lines in log file).
 $diagnostics = 0;
 $dvi_filter = '';	# DVI filter command
 $ps_filter = '';	# Postscript filter command
 
 $force_mode = 0;        # =1 to force processing past errors
-$force_include_mode = 0;# =1 to ignore non-existent files when testing
-                        # for dependency.  (I.e., don't treat them as error)
 $go_mode = 0;           # =1 to force processing regardless of time-stamps
                         # =2 full clean-up first
 $preview_mode = 0;
 $preview_continuous_mode  = 0;
 $printout_mode = 0;     # Don't print the file
+
+$show_time = 0;
+@timings = ();
+$processing_time1 = processing_time();
+
 
 # Do we make view file in temporary then move to final destination?
 #  (To avoid premature updating by viewer).
@@ -1222,8 +1258,6 @@ while ($_ = $ARGV[0])
   elsif (/^-nodependents$/ || /^-dependents-$/) { $dependents_list = 0; }
   elsif (/^-dvi$/)   { $dvi_mode = 1; }
   elsif (/^-dvi-$/)  { $dvi_mode = 0; }
-  elsif (/^-F$/)     { $force_include_mode = 1; }
-  elsif (/^-F-$/)    { $force_include_mode = 0; }
   elsif (/^-f$/)     { $force_mode = 1; }
   elsif (/^-f-$/)    { $force_mode = 0; }
   elsif (/^-g$/)     { $go_mode = 1; }
@@ -1238,6 +1272,12 @@ while ($_ = $ARGV[0])
   }
   elsif (/^-l$/)     { $landscape_mode = 1; }
   elsif (/^-l-$/)    { $landscape_mode = 0; }
+  elsif (/^-latex=(.*)$/) {
+      $latex = $1;
+  }
+  elsif (/^-pdflatex=(.*)$/) {
+      $pdflatex = $1;
+  }
   elsif (/^-new-viewer$/) {
                        $new_viewer_always = 1; 
   }
@@ -1277,6 +1317,8 @@ while ($_ = $ARGV[0])
                      }
   elsif (/^-pvc-$/)  { $preview_continuous_mode = 0; }
   elsif (/^-silent$/ || /^-quiet$/ ){ $silent = 1; }
+  elsif (/^-time$/) { $show_time = 1;}
+  elsif (/^-time-$/) { $show_time = 0;}
   elsif (/^-v$/ || /^-version$/)   { 
       print "\n$version_details. Version $version_num\n"; 
       exit; 
@@ -1302,7 +1344,6 @@ while ($_ = $ARGV[0])
 	process_rc_file( $ARGV[0] );
      } 
      else {
-	$! = 11;
 	die "$My_name: RC file [$ARGV[0]] does not exist\n"; 
      }
      shift; 
@@ -1481,6 +1522,11 @@ if ( ($jobname ne '') && ($num_files > 1) ) {
 # Normalize the commands, to have place-holders for source, dest etc:
 &fix_cmds;
 
+# Add common options
+add_option( \$latex, $latex_default_switches );
+add_option( \$pdflatex, $pdflatex_default_switches );
+
+
 # If landscape mode, change dvips processor, and the previewers:
 if ( $landscape_mode )
 {
@@ -1492,6 +1538,7 @@ if ( $landscape_mode )
 if ( $silent ) { 
     add_option( \$latex, " $latex_silent_switch" ); 
     add_option( \$pdflatex, " $pdflatex_silent_switch" ); 
+    add_option( \$biber, " $biber_silent_switch" ); 
     add_option( \$bibtex, " $bibtex_silent_switch" ); 
     add_option( \$makeindex, " $makeindex_silent_switch" ); 
     add_option( \$dvips, " $dvips_silent_switch" ); 
@@ -1568,7 +1615,7 @@ elsif ( ($sleep_time < 1) && ( $sleep_time != 0 ) ) {
 }
 elsif ( $sleep_time == 0 ) {
      warn "$My_name: sleep_time was configured to zero.\n",
-    "    Do you really want to do this?  It will give 100% CPU usage.";
+    "    Do you really want to do this?  It will give 100% CPU usage.\n";
 }
 
 # Make convenient forms for lookup.
@@ -1584,11 +1631,6 @@ foreach (@generated_exts ) {
 $quell_uptodate_msgs = $silent; 
    # Whether to quell informational messages when files are uptodate
    # Will turn off in -pvc mode
-
-# Process for each file.
-# The value of $bibtex_mode set in an initialization file may get
-# overridden, during file processing, so save it:
-#?? Unneeded now: $save_bibtex_mode = $bibtex_mode;
 
 $failure_count = 0;
 @failed_primaries = ();
@@ -1646,8 +1688,16 @@ foreach $filename ( @file_list )
         local %conversions = ();   # (pdf)latex-performed conversions.
                      # Maps output file created and read by (pdf)latex
                      #    to source file of conversion.
+
         print "$My_name: Examining log file for generated files...\n";
         &parse_logB;
+
+        print "$My_name: Examining fdb file for rules ...\n";
+        # Needed for cleanup of files generated by custom dependencies
+        if ( -e $fdb_file ) {
+            $rdb_errors = rdb_read( $fdb_file );
+            $have_fdb = ($rdb_errors == 0);
+        }
 
         my @index_bibtex_generated = ();
         my @aux_files = ();
@@ -1692,6 +1742,9 @@ foreach $filename ( @file_list )
                 keys %aux_files );
         if ($cleanup_includes_generated) {
 	    unlink( keys %other_generated );
+	}
+        if ( $cleanup_includes_cusdep_generated) {
+	    &cleanup_cusdep_generated;
 	}
         if ( $cleanup_mode == 1 ) { 
             &cleanup1( 'dvi', 'dviF', 'ps', 'psF', 'pdf',
@@ -1824,6 +1877,16 @@ continue {
     }
     &ifcd_popd;
 }
+
+if ($show_time) { show_timing();}
+
+sub show_timing {
+    my $processing_time = processing_time() - $processing_time1;
+    print @timings, "Accumulated processing time = $processing_time\n"; 
+    @timings = (); 
+    $processing_time1 = processing_time();
+}
+
 # If we get here without going through the continue section:
 if ( $do_cd && ($#dir_stack > -1) ) {
    # Just in case we did an abnormal exit from the loop
@@ -1861,7 +1924,7 @@ sub fix_cmds {
         # Source only
         if ( $_ && ! /%/ ) { $_ .= " %O %S"; }
     }
-    foreach ($bibtex) {
+    foreach ($biber, $bibtex) {
         # Base only
         if ( $_ && ! /%/ ) { $_ .= " %O %B"; }
     }
@@ -2019,9 +2082,14 @@ sub rdb_make_links {
 #??    foreach (sort keys %from_rules) {print "D='$_' F='$from_rules{$_}\n";}
     rdb_for_all( 
         0,
-        sub{ 
-            if ( exists $from_rules{$file} ) { $$Pfrom_rule = $from_rules{$file}; }
-#??            print "$rule: $file, $$Pfrom_rule\n";
+        sub{
+            # Set from_rule, but only if it isn't set or is invalid.
+            # Don't forget the biber v. bibtex issue
+            if ( exists $from_rules{$file}
+                 && ( (!$$Pfrom_rule) || (! exists $rule_db{$$Pfrom_rule} ) )
+               ) 
+            { $$Pfrom_rule = $from_rules{$file}; 
+            }
 	}
     );
     rdb_for_all( 
@@ -2288,7 +2356,6 @@ sub find_basename
 #************************************************************
 
 sub make_preview_continuousB {
-  # Version for use with makeB
     local @changed = ();
     local @disappeared = ();
     local @no_dest = ();       # Non-existent destination files
@@ -2370,6 +2437,43 @@ CHANGE:
         if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
             $SIG{BREAK} = $SIG{INT} = 'DEFAULT';
         }
+        # Start viewer if needed.
+        if ( ($failure > 0) && (! $force_mode) ) {
+            # No viewer yet
+	}
+        elsif ( ($view_file ne '') && (-e $view_file) && $updated && $viewer_running ) {
+            # A viewer is running.  Explicitly get it to update screen if we have to do it:
+            rdb_one_rule( 'update_view', \&rdb_run1 );
+        }
+        elsif ( ($view_file ne '') && (-e $view_file) && !$viewer_running ) {
+            # Start the viewer
+	    if ( !$silent ) {
+                if ($new_viewer_always) {
+                    warn "$My_name: starting previewer for '$view_file'\n",
+                         "------------\n";
+  	        }
+                else {
+                    warn "$My_name: I have not found a previewer that ",
+                         "is already running. \n",
+                         "   So I will start it for '$view_file'\n",
+                         "------------\n";
+ 	       }
+	    }
+            local $retcode = 0;
+            rdb_one_rule( 'view', sub { $retcode = &rdb_run1;} );
+            if ( $retcode != 0 ) {
+                if ($force_mode) {
+                    warn "$My_name: I could not run previewer\n";
+                }
+                else {
+                    &exit_msg1( "I could not run previewer", $retcode);
+                }
+            }
+            else {
+                $viewer_running = 1;
+                $$Pneed_to_get_viewer_process = 1;
+	    } # end analyze result of trying to run viewer
+        } # end start viewer
         if ( $failure > 0 ) {
             if ( !$failure_msg ) {
 	        $failure_msg = 'Failure to make the files correctly';
@@ -2394,47 +2498,14 @@ CHANGE:
             warn "$My_name: $failure_msg\n",
     "    ==> You will need to change a source file before I do another run <==\n";
 	}
-        elsif ( ($view_file ne '') && (-e $view_file) && $updated && $viewer_running ) {
-            # A viewer is running.  Explicitly get it to update screen if we have to do it:
-            rdb_one_rule( 'update_view', \&rdb_run1 );
+        rdb_show_rule_errors();
+        if ($show_time && ! $first_time) { show_timing(); }
+        if ( $first_time || $updated || $failure ) {
+            print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
         }
-        elsif ( ($view_file ne '') && (-e $view_file) && !$viewer_running ) {
-            # Start the viewer
-	    if ( !$silent ) {
-                if ($new_viewer_always) {
-                    warn "$My_name: starting previewer for '$view_file'\n",
-                         "------------\n";
-  	        }
-                else {
-                    warn "$My_name: I have not found a previewer that ",
-                         "is already running. \n",
-                         "   So I will start it for '$view_file'\n",
-                         "------------\n";
- 	       }
-	    }
-            local $retcode = 0;
-            rdb_one_rule( 'view', sub { $retcode = &rdb_run1;} );
-# PREVIOUS            local $retcode = rdb_makeB ( 'view' );
-            if ( $retcode != 0 ) {
-                if ($force_mode) {
-                    warn "$My_name: I could not run previewer\n";
-                }
-                else {
-                    &exit_msg1( "I could not run previewer", $retcode);
-                }
-            }
-            else {
-                $viewer_running = 1;
-                $$Pneed_to_get_viewer_process = 1;
-	    } # end analyze result of trying to run viewer
-       } # end start viewer
-       rdb_show_rule_errors();
-       if ( $first_time || $updated || $failure ) {
-          print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
-       }
-       $waiting = 1; if ($diagnostics) { warn "WAITING\n"; }
-       &catch_break;
-       $have_break = 0;
+        $waiting = 1; if ($diagnostics) { warn "WAITING\n"; }
+        &catch_break;
+        $have_break = 0;
   WAIT: while (1) {
            sleep( $sleep_time );
 	   if ($have_break) { last WAIT; }
@@ -2445,6 +2516,8 @@ CHANGE:
 	       }
                last WAIT;
 	   }
+           #  Don't count waiting time in processing:
+           $processing_time1 = processing_time();
         # Does this do this job????
            local $new_files = 0;
            rdb_for_some( [keys %current_primaries], sub{ $new_files += &rdb_find_new_filesB } );
@@ -2467,57 +2540,37 @@ CHANGE:
 
 sub process_rc_file {
     # Usage process_rc_file( filename )
+    # NEW VERSION
     # Run rc_file whose name is given in first argument
-    #    Exit with code 11 if file could not be read.  
-    #      (In general this is not QUITE the right error)
-    #    Exit with code 13 if there is a syntax error or other problem.
-    # ???Should I leave the exiting to the caller (perhaps as an option)?
-    #     But I can always catch it with an eval if necessary.
-    #     That confuses ctrl/C and ctrl/break handling.
+    #    Exit with code 0 on success
+    #    Exit with code 1 if file could not be read.
+    #    Stop if there is a syntax error or other problem.
     my $rc_file = $_[0];
-    warn "$My_name: Executing PERL code in file '$rc_file'...\n" 
+    my $ret_code = 0;
+    warn "$My_name: Executing Perl code in file '$rc_file'...\n" 
         if  $diagnostics;
+    if ( ! -r $rc_file ) {
+        return 1;
+    }
     do( $rc_file );
-    # The return value from the do is not useful, since it is the value of 
-    #    the last expression evaluated, which could be anything.
-    # The correct test of errors is on the values of $! and $@.
-
-# This is not entirely correct.  On gluon2:
-#      rc_file does open of file, and $! has error, apparently innocuous
-#      See ~/proposal/06/latexmkrc-effect
-
-    my $OK = 1;
-    if ( $! ) {
-        # Get both numeric error and its string, by forcing numeric and 
-        #   string contexts:
-        my $err_no = $!+0;
-        my $err_string = "$!";
-        warn "$My_name: Initialization file '$rc_file' could not be read,\n",
-             "   or it gave some other problem. Error code \$! = $err_no.\n",
-             "   Error string = '$err_string'\n";
-	$! = 256;
-        $OK = 0;
-    }
     if ( $@ ) {
-	$! = 256;
-        # Indent the error message to make it easier to locate
-        my $indented = prefix( $@, "    " );
-        $@ = "";
+        # Indent each line of possibly multiline message:
+        my $message = prefix( $@, "     " );
         warn "$My_name: Initialization file '$rc_file' gave an error:\n",
-            "$indented";
-        $OK = 0;
+             "$message\n";
+        die "$My_name: Stopping because of problem with rc file\n";
+        # Use the following if want non-fatal error.
+        return 2;
     }
-    if ( ! $OK ) { 
-        die "$My_name: Stopping because of problem with rc file\n"; 
-    }
+    return 0;
 } #END process_rc_file
 
 #************************************************************
 
 sub execute_code_string {
     # Usage execute_code_string( string_of_code )
-    # Run the PERL code contained in first argument
-    #    Exit with code 13 if there is a syntax error or other problem.
+    # Run the perl code contained in first argument
+    #    Halt if there is a syntax error or other problem.
     # ???Should I leave the exiting to the caller (perhaps as an option)?
     #     But I can always catch it with an eval if necessary.
     #     That confuses ctrl/C and ctrl/break handling.
@@ -2528,18 +2581,16 @@ sub execute_code_string {
     eval $code;
     # The return value from the eval is not useful, since it is the value of 
     #    the last expression evaluated, which could be anything.
-    # The correct test of errors is on the values of $! and $@.
+    # The correct test of errors is on the value of $@.
 
     if ( $@ ) {
-	$! = 256;
-        my $message = $@;
-        $@ = "";
-        $message =~ s/\s*$//;
+        # Indent each line of possibly multiline message:
+        my $message = prefix( $@, "    " );
         die "$My_name: ",
             "Stopping because executing following code from command line\n",
             "    $code\n",
             "gave an error:\n",
-            "    $message\n";
+            "$message\n";
     }
 } #END execute_code_string
 
@@ -2547,8 +2598,40 @@ sub execute_code_string {
 
 sub cleanup1 {
     # Usage: cleanup1( exts_without_period, ... )
-    foreach (@_) { unlink("$root_filename.$_"); }
+    foreach (@_) { 
+        (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$root_filename/;
+        unlink("$name");
+    }
 } #END cleanup1
+
+#************************************************************
+
+sub cleanup_cusdep_generated {
+    # Remove files generated by custom dependencies
+    rdb_for_all( \&cleanup_one_cusdep_generated );
+} #END cleanup_cusdep_generated
+
+#************************************************************
+
+sub cleanup_one_cusdep_generated {
+    # Remove destination file generated by one custom dependency
+    # Assume rule context, but not that the rule is a custom dependency.
+    # Only delete destination file if source file exists (so destination 
+    #   file can be recreated)
+    if ( $$Pcmd_type ne 'cusdep' ) {
+       # NOT cusdep
+       return;
+    }
+    if ( (-e $$Pdest) && (-e $$Psource) ) {
+        unlink $$Pdest;
+    }
+    elsif ( (-e $$Pdest) && (!-e $$Psource) ) {
+        warn "$My_name: For custom dependency '$rule',\n",
+             "    I won't delete destination file '$$Pdest'\n",
+             "    because the source file '$$Psource' doesn't exist,\n",
+             "    so the destination file may not be able to be recreated\n";
+    }
+} #END cleanup_one_cusdep_generated
 
 #************************************************************
 #************************************************************
@@ -2659,8 +2742,6 @@ sub print_help
   "   -e <code> - Execute specified PERL code\n",
   "   -f     - force continued processing past errors\n",
   "   -f-    - turn off forced continuing processing past errors\n",
-  "   -F     - Ignore non-existent files when testing for dependencies\n",
-  "   -F-    - Turn off -F\n",
   "   -gg    - Super go mode: clean out generated files (-CA), and then\n",
   "            process files regardless of file timestamps\n",
   "   -g     - process regardless of file timestamps\n",
@@ -2672,12 +2753,16 @@ sub print_help
   "            implementations of latex/pdflatex.)\n",
   "   -l     - force landscape mode\n",
   "   -l-    - turn off -l\n",
+  "   -latex=<program> - set program used for latex.\n",
+  "                      (replace '<program>' by the program name)\n",
   "   -new-viewer    - in -pvc mode, always start a new viewer\n",
   "   -new-viewer-   - in -pvc mode, start a new viewer only if needed\n",
   "   -nobibtex      - never use bibtex\n",
   "   -nodependents  - Do not show list of dependent files after processing\n",
   "   -pdf   - generate pdf by pdflatex\n",
   "   -pdfdvi - generate pdf by dvipdf\n",
+  "   -pdflatex=<program> - set program used for pdflatex.\n",
+  "                      (replace '<program>' by the program name)\n",
   "   -pdfps - generate pdf by ps2pdf\n",
   "   -pdf-  - turn off pdf\n",
   "   -ps    - generate postscript\n",
@@ -2696,7 +2781,9 @@ sub print_help
   "   -pvc-  - turn off -pvc\n",
   "   -r <file> - Read custom RC file\n",
   "   -silent  - silence progress messages from called programs\n",
-  "   -v     - display program version\n",
+  "   -time    - show CPU time used\n",
+  "   -time-   - don't show CPU time used\n",
+  "   -v       - display program version\n",
   "   -verbose - display usual progress messages from called programs\n",
   "   -version      - display program version\n",
   "   -view=default - viewer is default (dvi, ps, pdf)\n",
@@ -2721,6 +2808,7 @@ sub print_commands
   warn "Commands used by $my_name:\n",
        "   To run latex, I use \"$latex\"\n",
        "   To run pdflatex, I use \"$pdflatex\"\n",
+       "   To run biber, I use \"$biber\"\n",
        "   To run bibtex, I use \"$bibtex\"\n",
        "   To run makeindex, I use \"$makeindex\"\n",
        "   To make a ps file from a dvi file, I use \"$dvips\"\n",
@@ -2758,12 +2846,71 @@ sub view_file_via_temporary {
 #************************************************************
 #### Tex-related utilities
 
+#**************************************************
+
+sub check_biber_log {
+    # Check for biber warnings:
+    # Usage: check_biber_log( base_of_biber_run[, \@biber_source )
+    # return 0: OK, 1: biber warnings, 2: biber errors, 
+    #        3: could not open .blg file.
+    #       10: only error is missing \citation commands.
+    # Side effect: add source files @biber_source
+    my $base = $_[0];
+    my $Pbiber_source = $_[1];
+    my $log_name = "$base.blg";
+    my $log_file = new FileHandle;
+    open( $log_file, "<$log_name" )
+      or return 3;
+    my $have_warning = 0;
+    my $have_error = 0;
+    my $missing_citations = 0;
+    my $no_citations = 0;
+    my $error_count = 0;
+    my $warning_count = 0;
+    while (<$log_file>) {
+        if (/> WARN /) { 
+            print "Biber warning: $_"; 
+            $have_warning = 1;
+            $warning_count ++;
+        }
+        elsif (/> FATAL /) {
+            print "Biber error: $_"; 
+            $have_error = 1;
+            $error_count ++;
+            if ( /> FATAL - The file '[^']+' does not contain any citations!/ ) {
+                $no_citations++;
+            }
+        }
+        elsif ( /> INFO - Found .* '([^']+)'\s*$/
+                || /> INFO - Found '([^']+)'\s*$/
+              ) {
+	    if ( defined $Pbiber_source ) {
+                push @$Pbiber_source, $1;
+	    }
+        }
+    }
+    close $log_file;
+#    print "$My_name: #Biber errors = $error_count, warning messages = $warning_count,\n  ",
+#          "missing citation messages = $missing_citations, no_citations = $no_citations\n";
+    if ( ! $have_error && $no_citations ) {
+        # If the only errors are missing citations, or lack of citations, that should
+        # count as a warning.
+        # HOWEVER: biber doesn't generate a new bbl.  So it is an error condition.
+        return 10;
+    }
+    if ($have_error) {return 2;}
+    if ($have_warning) {return 1;}
+    return 0;
+} #END check_biber_log
+
+#**************************************************
 
 sub check_bibtex_log {
     # Check for bibtex warnings:
     # Usage: check_bibtex_log( base_of_bibtex_run )
     # return 0: OK, 1: bibtex warnings, 2: bibtex errors, 
     #        3: could not open .blg file.
+    #       10: only error is missing \citation commands.
 
     my $base = $_[0];
     my $log_name = "$base.blg";
@@ -2772,17 +2919,35 @@ sub check_bibtex_log {
       or return 3;
     my $have_warning = 0;
     my $have_error = 0;
+    my $missing_citations = 0;
+    my $error_count = 0;
     while (<$log_file>) {
-        if (/Warning--/) { 
+        if (/^Warning--/) { 
             #print "Bibtex warning: $_"; 
             $have_warning = 1;
         }
-        if (/error message/) { 
-            #print "Bibtex error: $_"; 
+        elsif ( /^I found no \\citation commands---while reading file/ ) {
+            $missing_citations++; 
+	}
+        elsif (/There (were|was) (\d+) error message/) { 
+            $error_count = $2;
+            #print "Bibtex error: count=$error_count $_"; 
             $have_error = 1;
         }
     }
     close $log_file;
+    #print "Bibtex errors = $error_count, missing citations = $missing_citations\n";
+    if ($have_error && ($error_count <= $missing_citations ) 
+        && ($missing_citations > 0) ) {
+        # If the only error is a missing citation line, that should only 
+        # count as a warning.
+        # But have to deal with the problem that bibtex gives a non-zero 
+        # exit code.  So leave things as they are so that the user gets
+        # a better diagnostic ??????????????????????????
+#        $have_error = 0;
+#        $have_warning = 1;
+        return 10;
+    }
     if ($have_error) {return 2;}
     if ($have_warning) {return 1;}
     return 0;
@@ -2790,18 +2955,23 @@ sub check_bibtex_log {
 
 #**************************************************
 
-sub clean_file_name{
-    # Convert filename found in log file to true filename.
-    # Used normally only by parse_logB, below
-    # 1. For names of form 
-    #    `"string".ext', which arises e.g., from \jobname.bbl:
+sub clean_file_name {
+    # Convert quoted filename as found in log file to filename without quotes
+    # Allows arbitrarily embedded double-quoted substrings, includes the
+    # cases
+    # 1. `"string".ext', which arises e.g., from \jobname.bbl:
     #    when the base filename contains spaces, \jobname has quotes.
     #    and from \includegraphics with basename specified.
+    #    Also deals with filenames written by asymptote.sty
     # 2. Or "string.ext" from \includegraphcs with basename and ext specified.
+    #    and from MiKTeX logfile for input files with spaces. 
+    # Doubled quotes (e.g., A""B) don't get converted.
+    # Neither do unmatched quotes.
     my $filename = $_[0];
-    $filename =~ s/^\"([^\"]*)\"(.*)$/$1$2/;
+    while ( $filename =~ s/^([^\"]*)\"([^\"]+)\"(.*)$/$1$2$3/ ) {}
     return $filename;
 }
+
 # ------------------------------
 
 sub parse_logB {
@@ -2983,6 +3153,10 @@ LINE:
 	    warn "$My_name: $1 \n";
 	    $bad_citation = 1;
 	}
+        if (/Package natbib Warning: (Citation[^\001]*undefined)./) {
+            warn "$My_name: $1 \n";
+            $bad_citation = 1;
+	}
 	if ( /^Document Class: / ) {
 	    # Class sign-on line
 	    next LINE;
@@ -2997,8 +3171,8 @@ LINE:
 	    next LINE;
 	}
 	if ( /^Output written on\s+(.*)\s+\(\d+\s+page/ ) {
-            $primary_out = $1;
-	    warn "$My_name: Log file says output to '$1'\n"
+            $primary_out = clean_file_name($1);
+	    warn "$My_name: Log file says output to '$primary_out'\n"
 	       unless $silent;
 	    next LINE;
 	}
@@ -3011,15 +3185,15 @@ LINE:
 	    next LINE;
 	}
         if ( /^\\openout\d+\s*=\s*\`([^\']+)\'\.$/ ) {
-            $generated_log{$1} = 1;
+            $generated_log{clean_file_name($1)} = 1;
 	    next LINE;
 	}
         # Test for conversion produced by package:
 	if ( /^Package (\S+) Info: Source file: <([^>]+)>/ ) {
 	    # Info. produced by epstopdf (and possibly others) 
             #    about file conversion
-            $current_pkg = $1;
-            $delegated_source = $2;
+            $current_pkg = clean_file_name($1);
+            $delegated_source = clean_file_name($2);
             $block_type = 'conversion';
 	    next LINE;
 	}
@@ -3088,9 +3262,9 @@ LINE:
 		next LINE;
 	    }
 	}
-	if ( /^File: ([^\s\[]*) Graphic file \(type / ) {
+	if ( /^File: (.+) Graphic file \(type / ) {
 	    # First line of message from includegraphics/x
-	    $dependents{$1} = 1;
+	    $dependents{clean_file_name($1)} = 1;
 	    next LINE;
 	}
 	# Now test for generic lines to ignore, only after special cases!
@@ -3149,29 +3323,36 @@ LINE:
 	#    filename (on VAX/VMS) may include '[' and ']' (directory
 	#             separators) 
 	#    filenames (on MS-Win) commonly include space.
+        #    filenames on UNIX can included space.
+        #    Miktex quotes filenames
+        #    But web2c doesn't.  Then 
+        #       (string  message
+        #    is ambiguous: is the filename "string" or "string message".
+        #    Allow both as candidates, since user filenames with spaces 
+        #    are rare.  System filenames with spaces are common, but
+        #    they are normally followed by a newline rather than messages. 
 
 	# First step: replace $_ by whole of line after the '('
 	#             Thus $_ is putative filename followed by other stuff.
             $_ = $1; 
-            if ( /^\"([^\(^\)^\"]+)\"/ ) {
+            # Array of new candidate include files; sometimes more than one.
+            my @new_includes = ();
+            my $quoted = 0;
+            if ( /^\"([^\"]+)\"/ ) {
                # Quoted file name, as from MikTeX
+		$quoted = 1;
             }
-            elsif ( /^([^\(^\)]*?)\s\[/ ) {
-                # Terminator: space then '['
-                # Use *? in condition: to pick up first ' [' as terminator
-                # 'file [' should give good filename.
+            elsif ( /^([^\(^\)]*?)\s+[\[\{\<]/ ) {
+                # Terminator: space then '[' or '{' or '<'
+                # Use *? in condition: to pick up first ' [' (etc) 
+                # as terminator
             }
-            elsif ( /^([^\(^\)]*)\s(?=\()/ ) {
+            elsif ( /^([^\(^\)]*)\s+(?=\()/ ) {
                 # Terminator is ' (', but '(' isn't in matched string,
                 # so we keep the '(' ready for the next match
             }
             elsif  ( /^([^\(^\)]*)(\))/ ) {
                 # Terminator is ')'
-            }
-            elsif ( /^([^\(^\)]*?)\s*\{/ ) {
-                # Terminator: arbitrary space then '{'
-                # Use *? in condition: to pick up first ' [' as terminator
-                # 'file [' should give good filename.
             }
 	    else {
                 #Terminator is end-of-string
@@ -3179,6 +3360,12 @@ LINE:
             $_ = $';       # Put $_ equal to the unmatched tail of string '
             my $include_candidate = $1;
             $include_candidate =~ s/\s*$//;   # Remove trailing space.
+            if ( !$quoted && ($include_candidate =~ /(\S+)\s/ ) ){
+                # Non-space-containing filename-candidate
+                # followed by space followed by message
+                # (Common)
+                push @new_includes, $1;
+	    }
             if ( $include_candidate eq "[]" ) {
                 # Part of overfull hbox message
                 next INCLUDE_CANDIDATE;
@@ -3191,14 +3378,13 @@ LINE:
             # treated this as a special case.  For safety check here:
             $include_candidate =~ s/^\"(.*)\"$/$1/;
 
-            # Make list of new include files; sometimes more than one.
-            my @new_includes = ($include_candidate);
+            push @new_includes, $include_candidate;
             if ( $include_candidate =~ /^(.+)\[([^\]]+)\]$/ ) {
                 # Construct of form 'file1[file2]', as produced by pdflatex
                 if ( -e $1 ) {
                     # If the first component exists, we probably have the
                     #   pdflatex form
-                    @new_includes = ($1, $2);
+                    push @new_includes, $1, $2;
 	        }
                 else {
                     # We have something else.
@@ -3266,8 +3452,8 @@ CANDIDATE:
             # If the file still is not found, assume non-existent;
             my @kpse_result = kpsewhich( $candidate );
             if ($#kpse_result > -1) {
-                $dependents{$kpse_result[0]} = 4;
 		delete $dependents{$candidate};
+                $dependents{$kpse_result[0]} = 4;
 		next CANDIDATE;
 	    }
 	    else {
@@ -3372,7 +3558,6 @@ CANDIDATE_PAIR:
         foreach (@dependents) { 
             print "   '$_' "; 
             if ( $dependents{$_} == 6 ) { print " written by (pdf)latex";}
-	    print "\n";
             if ( $dependents{$_} == 7 ) { print " converted by (pdf)latex";}
 	    print "\n";
         }
@@ -3390,8 +3575,7 @@ CANDIDATE_PAIR:
         }
 
         if ( $misparse > 0 ) {
-	    print "$misparse\n";
-            print "Apparent input files apparently from misunderstood lines in .log file:\n";
+            print "Possible input files, perhaps from misunderstood lines in .log file:\n";
             foreach ( @misparse ) { print "   $_\n"; }
         }
     }
@@ -3401,8 +3585,8 @@ CANDIDATE_PAIR:
 #************************************************************
 
 sub parse_aux {
-    #Usage: parse_aux( $aux_file, \@new_bib_files, \@new_aux_files )
-    # Parse aux_file (recursively) for bib files.  
+    #Usage: parse_aux( $aux_file, \@new_bib_files, \@new_aux_files, \@new_bst_files )
+    # Parse aux_file (recursively) for bib files, and bst files.  
     # If can't open aux file, then
     #    Return 0 and leave @new_bib_files empty
     # Else set @new_bib_files from information in the aux files
@@ -3416,8 +3600,10 @@ sub parse_aux {
     my $aux_file = $_[0];
     local $Pbib_files = $_[1];
     local $Paux_files = $_[2];
+    local $Pbst_files = $_[3];
    
     @$Pbib_files = ();
+    @$Pbst_files = ();
     @$Paux_files = ();
 
     parse_aux1( $aux_file );
@@ -3425,6 +3611,7 @@ sub parse_aux {
        return 0;
     }
     @$Pbib_files = uniqs( @$Pbib_files );
+    @$Pbst_files = uniqs( @$Pbst_files );
 
     if ( $#{$Pbib_files} == -1 ) {
         warn "$My_name: No .bib files listed in .aux file '$aux_file' \n",
@@ -3433,6 +3620,8 @@ sub parse_aux {
     my $bibret = &find_file_list1( $Pbib_files, $Pbib_files,
                                   '.bib', \@BIBINPUTS );
     @$Pbib_files = uniqs( @$Pbib_files );
+    &find_file_list1( $Pbst_files, $Pbst_files, '.bst' );
+    @$Pbst_files = uniqs( @$Pbst_files );
     if ($bibret == 0) {
         warn "$My_name: Found bibliography file(s) [@$Pbib_files]\n" 
         unless $silent;
@@ -3479,6 +3668,11 @@ AUX_LINE:
           # \\bibdata{comma_separated_list_of_bib_file_names}
           # (Without the '.bib' extension)
           push( @$Pbib_files, split /,/, $1 ); 
+      }
+      elsif ( /^\\bibstyle\{(.*)\}/ ) { 
+          # \\bibstyle{bst_file_name}
+          # (Without the '.bst' extension)
+          push( @$Pbst_files, $1 ); 
       }
       elsif ( /^\\\@input\{(.*)\}/ ) { 
           # \\@input{next_aux_file_name}
@@ -3665,7 +3859,7 @@ LINE:
                 rdb_create_rule( $rule, 'cusdep', '', $PAnew_cmd, 1, 
                                  $source, $dest, $base, 0, $run_time, 1 );
 	    }
-            elsif ( $rule =~ /^(makeindex|bibtex)\s*(.*)$/ ) {
+            elsif ( $rule =~ /^(makeindex|bibtex|biber)\s*(.*)$/ ) {
                 my $rule_generic = $1;
                 if ( ! $source ) {
                     # If fdb_file was old-style (v. 1)
@@ -3680,6 +3874,10 @@ LINE:
                     elsif ($rule_generic eq 'bibtex') {
                         $dest = "$base.bbl";
                         $source = "$base.aux";
+		    }
+                    elsif ($rule_generic eq 'biber') {
+                        $dest = "$base.bbl";
+                        $source = "$base.bcf";
 		    }
 	        }
   	        warn "$My_name: File-database '$in_name': setting rule '$rule'\n"
@@ -3932,6 +4130,7 @@ sub rdb_set_from_logB {
     # $reference_changed, $bad_reference $bad_citation
 
     &parse_logB;
+# ?? !! Should also deal with .run.xml file
 
     # Handle result on output file:
     #   1.  Non-existent output file, which is because of no content.
@@ -3969,6 +4168,12 @@ sub rdb_set_from_logB {
                   if ($diagnostics > -1);
             rdb_ensure_file( $rule, $ind_file, $from_rule );
 	}
+        # Make sure the .ind file is treated as a detected source file;
+        # otherwise if the log file has it under a different name (as
+        # with MiKTeX which gives full directory information), there
+        # will be problems with the clean-up of the rule concerning
+        # no-longer-in-use source files:
+        $dependents{$ind_file} = 4;
         if ( ! -e $ind_file ) { 
             # Failure was non-existence of makable file
             # Leave failure issue to other rules.
@@ -3980,31 +4185,50 @@ sub rdb_set_from_logB {
     foreach my $bbl_file ( uniqs( @bbl_files ) ) {
 	my ($bbl_base, $bbl_path, $bbl_ext) = fileparseA( $bbl_file );
         $bbl_base = $bbl_path.$bbl_base;
-        my @new_bib_files;
-        my @new_aux_files;
-        &parse_aux( "$bbl_base.aux", \@new_bib_files, \@new_aux_files );
-        my $from_rule = "bibtex $bbl_base";
-        print "!!!===Dealing with rule '$from_rule'\n"
-            if ($diagnostics);
+        my @new_bib_files = ();
+        my @new_aux_files = ();
+        my @new_bst_files = ();
+        my @biber_source = ( "$bbl_base.bcf" );
+        my $bib_program = 'bibtex';
+        if ( test_gen_file( "$bbl_base.bcf" ) ) {
+             $bib_program = 'biber';
+	}
+        my $from_rule = "$bib_program $bbl_base";
+        print "=======  Dealing with '$from_rule'\n" if ($diagnostics);
+        if ($bib_program eq 'biber') {
+            check_biber_log( $bbl_base, \@biber_source );
+            # Remove OPPOSITE kind of bbl generation:
+            rdb_remove_rule( "bibtex $bbl_base" );
+        }
+        else {
+            parse_aux( "$bbl_base.aux", \@new_bib_files, \@new_aux_files, \@new_bst_files );
+            # Remove OPPOSITE kind of bbl generation:
+            rdb_remove_rule( "biber $bbl_base" );
+        }
         if ( ! rdb_rule_exists( $from_rule ) ){
-            print "   ===Creating rule '$from_rule'\n"
-              if ($diagnostics);
-            rdb_create_rule( $from_rule, 'external', $bibtex, '', 1, 
-                             "$bbl_base.aux", $bbl_file, $bbl_base, 1, 0);
+            print "   ===Creating rule '$from_rule'\n" if ($diagnostics);
+            if ( $bib_program eq 'biber' ) {
+                rdb_create_rule( $from_rule, 'external', $biber, '', 1,
+                                 "$bbl_base.bcf", $bbl_file, $bbl_base, 1, 0);
+	     }
+             else {
+                 rdb_create_rule( $from_rule, 'external', $bibtex, '', 1,
+                                  "$bbl_base.aux", $bbl_file, $bbl_base, 1, 0);
+	       }
 	}
         local %old_sources = ();
         rdb_one_rule( $from_rule, sub { %old_sources = %$PHsource; } );
-        foreach my $source ( @new_bib_files, @new_aux_files ) {
+        foreach my $source ( @new_bib_files, @new_aux_files, @new_bst_files, @biber_source ) {
             print "  === Source file '$source' for '$from_rule'\n"
                if ($diagnostics);
             rdb_ensure_file( $from_rule, $source );
             delete $old_sources{$source};
         }
-        if ($diagnostics>-1 ) {
+        if ($diagnostics) {
             foreach ( keys %old_sources ) {
                 print "Removing no-longer-needed dependent '$_' from rule '$from_rule'\n";
             }
-        }        
+        }
         rdb_remove_files( $from_rule, keys %old_sources );
         print "  ===Source file '$bbl_file' for '$rule'\n"
             if ($diagnostics);
@@ -4075,18 +4299,35 @@ NEW_SOURCE:
 	    print "No new source files for rule '$rule':\n";
 	}
     }
-
     my @files_not_needed = ();
     foreach (keys %$PHsource) { 
         if ( ! exists $dependents{$_} ) {
             print "Removing no-longer-needed dependent '$_' from rule '$rule'\n"
-              if $diagnostics>-1;
+              if $diagnostics;
             push @files_not_needed, $_;
 	}
     }
     rdb_remove_files( $rule, @files_not_needed );
 
 } # END rdb_set_from_logB
+
+#************************************************************
+
+sub test_gen_file {
+    # Usage: test_gen_file( filename )
+    # Tests whether the file was generated during a run of (pdf)latex.
+    # Used by rdb_set_from_logB.
+    # Assumes context for primary rule, and that %generated_log is set.
+    # The generated_log test works with TeXLive's tex, because it puts
+    #   \openout lines in log file.
+    # But it doesn't work with MikTeX, which does NOT put \openout lines
+    #   in log file.
+    # So we have a back up test: bcf file exists and is at least as new as
+    #   the run time (so it should have been generated on the current run).
+    my $file = shift;
+    return exists $generated_log{$file}
+           || ( -e $file && ( get_mtime( $file ) >= $$Prun_time ));
+}
 
 #************************************************************
 
@@ -4546,7 +4787,7 @@ sub rdb_makeB {
                           "make new source files\n";
                     next PASS;
 		}
-                elsif ( ! $failure ) {
+                elsif ( $force_mode || (! $failure) ) {
                     next PASS;
 		}
             }
@@ -4647,7 +4888,7 @@ sub rdb_makeB1 {
     # Carries out make at level of given rule (all data available).
     # Assumes contexts for recursion, make, and rule, and
     # assumes that source files for the rule are to be considered
-    # up-to-date. 
+    # up-to-date.
     if ($diagnostics) { print "  MakeB1 $rule\n"; }
     if ($failure & ! $force_mode) {return;}
     if ( ! defined $pass{$rule} ) {$pass{$rule} = 0; } 
@@ -4663,7 +4904,7 @@ sub rdb_makeB1 {
         #           (and setting to do this test)
         #   2 => don't run bibtex because of setting
     my @missing_bib_files = ();
-    if ( $rule =~ /^bibtex/ ) {
+    if ( $rule =~ /^(bibtex|biber)/ ) {
         $bibtex_not_run = 0;
         if ($bibtex_use == 0) {
            $bibtex_not_run = 2;
@@ -4903,7 +5144,6 @@ sub rdb_classify1 {
     # Helper routine for rdb_classify_rules
     # Applied as rule_act1 in recursion over rules
     # Assumes rule context, and local variables from rdb_classify_rules
-    #print "??======= '$rule' $depth $state ========== \n";
     push @classify_stack, [$state];
     if ( exists $possible_one_time{$rule} ) {
         # Normally, we will have already extracted the one_time rules,
@@ -4980,6 +5220,27 @@ sub rdb_run1 {
         $$Plast_result = 2;
         $$Plast_message = "Bug or configuration error; incorrect command type";
     }
+    if ( $rule =~ /^biber/ ) {
+        my $retcode = check_biber_log($$Pbase);
+        if ($retcode == 3) {
+            $$Plast_result = 2;
+            $$Plast_message = "Could not open biber log file for '$$Pbase'";
+            push @warnings, $$Plast_message;
+        }
+        elsif ($retcode == 2) {
+            $$Plast_message = "Biber errors: See file '$$Pbase.blg'";
+            push @warnings, $$Plast_message;
+        }
+        elsif ($retcode == 1) {
+            push @warnings, "Biber warnings for '$$Pbase'";
+        }
+        elsif ($retcode == 10) {
+            push @warnings, "Biber found no citations for '$$Pbase'";
+            # Biber doesn't generate a bbl file in this situation.  So I cannot
+            #   ignore the error the way I do with bibtex.
+            #$return = 0;
+        }
+    }
     if ( $rule =~ /^bibtex/ ) {
         my $retcode = check_bibtex_log($$Pbase);
         if ($retcode == 3) {
@@ -4993,6 +5254,11 @@ sub rdb_run1 {
         }
         elsif ($retcode == 1) {
             push @warnings, "Bibtex warnings for '$$Pbase'";
+        }
+        elsif ($retcode == 10) {
+            push @warnings, "Bibtex found no citations for '$$Pbase'";
+            # But this is an innocuous error, so fix return code
+            $return = 0;
         }
     }
 
@@ -5590,6 +5856,15 @@ sub rdb_one_file {
 
 #************************************************************
 
+sub rdb_remove_rule {
+    # rdb_remove_rule( rule, ...  )
+    foreach my $key (@_) {
+       delete $rule_db{$key};
+    }
+}
+
+#************************************************************
+
 sub rdb_create_rule {
     # rdb_create_rule( rule, command_type, ext_cmd, int_cmd, test_kind,
     #                  source, dest, base, 
@@ -5998,6 +6273,13 @@ sub get_time_size_raw
 
 #************************************************************
 
+sub processing_time
+{  my ($user, $system, $cuser, $csystem) = times();
+   return $user + $system + $cuser + $csystem;
+}
+
+#************************************************************
+
 sub get_checksum_md5 {
     my $source = shift;
     my $input = new FileHandle;
@@ -6052,38 +6334,41 @@ sub find_file1 {
     # On success: full_name = full name with path, retcode = 0
     # On failure: full_name = given name, retcode = 1
 
-  my $name = $_[0];
-  # Make local copy of path, since we may rewrite it!
-  my @path = @{$_[1]};
-  if ( $name =~ /^\// ) {
-     # Absolute path (if under UNIX)
-     # This needs fixing, in general
-     if (-e $name) { return( $name, 0 );}
-     else { return( $name, 1 );}
-  }
-  foreach my $dir ( @path ) {
-      #??print "-------------dir='$dir',  ";
-      # Make $dir concatenatable, and empty for current dir:
-      if ( $dir eq '.' ) { 
-          $dir = ''; 
-      }
-      elsif ( $dir =~ /[\/\\:]$/ ) { 
-          #OK if dir ends in / or \ or :
-      }
-      elsif ( $dir ne '' ) { 
-          #Append directory separator only to non-empty dir
-          $dir = "$dir/"; 
-      }
-      #?? print " newdir='$dir'\n";
-      if (-e "$dir$name") {
-          return("$dir$name", 0);
-      }
-  }
-  my @kpse_result = kpsewhich( $name );
-  if ($#kpse_result > -1) {
-      return( $kpse_result[0], 0);
-  }
-  return("$name" , 1);
+    my $name = $_[0];
+    # Make local copy of path, since we may rewrite it!
+    my @path = ();
+    if ($_[1]) {
+        @path = @{$_[1]};
+    }
+    if ( $name =~ /^\// ) {
+        # Absolute path (if under UNIX)
+        # This needs fixing, in general
+        if (-e $name) { return( $name, 0 );}
+        else { return( $name, 1 );}
+    }
+    foreach my $dir ( @path ) {
+        #??print "-------------dir='$dir',  ";
+        # Make $dir concatenatable, and empty for current dir:
+        if ( $dir eq '.' ) { 
+            $dir = ''; 
+        }
+        elsif ( $dir =~ /[\/\\:]$/ ) { 
+            #OK if dir ends in / or \ or :
+        }
+        elsif ( $dir ne '' ) { 
+            #Append directory separator only to non-empty dir
+            $dir = "$dir/"; 
+        }
+        #?? print " newdir='$dir'\n";
+        if (-e "$dir$name") {
+            return("$dir$name", 0);
+        }
+    }
+    my @kpse_result = kpsewhich( $name );
+    if ($#kpse_result > -1) {
+        return( $kpse_result[0], 0);
+    }
+    return("$name" , 1);
 } #END find_file1
 
 #************************************************************
@@ -6431,7 +6716,11 @@ sub tempfile1 {
 sub Run_msg {
     # Same as Run, but give message about my running
     warn_running( "Running '$_[0]'" );
-    Run($_[0]);
+    my $time1 = processing_time();
+    my ($pid, $return) = Run($_[0]);
+    my $time = processing_time() - $time1;
+    push @timings, "'$_[0]': time = $time\n"; 
+    return ($pid, $return);
 }
 
 sub Run {

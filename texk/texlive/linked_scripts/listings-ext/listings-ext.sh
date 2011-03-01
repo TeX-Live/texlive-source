@@ -1,10 +1,10 @@
 #! /bin/sh
 ### listings-ext.sh ---
 
-## Author: Dr. Jobst Hoffmann <j.hoffmann@fh-aachen.de>
-## Version: $Id: listings-ext.dtx 48 2009-08-31 18:30:48Z ax006ho $
+## Author: Dr. Jobst Hoffmann <j.hoffmann_(at)_fh-aachen.de>
+## Version: $Id: listings-ext.dtx 67 2010-06-29 16:38:12Z ax006ho $
 ## Keywords: LaTeX, listings
-## Copyright: (C) 2008-2009 Jobst Hoffmann, <j.hoffmann@fh-aachen.de>
+## Copyright: (C) 2008-2010 Jobst Hoffmann, <j.hoffmann_(at)_fh-aachen.de>
 ##-------------------------------------------------------------------
 ##
 ## This file may be distributed and/or modified under the
@@ -26,56 +26,52 @@
 ## with the distribution package.
 ERR_HELP=1
 ME=$(basename $0)
-USAGE="usage:\n\t${ME} [-c|--command] [-h|--help] [-g|--debug] \\\\\n \
-\t\t[-n|--no-header] \\\\\n \
-\t\t[{-o|--output-file} [<output filename>]] <filename>, ...\n \
-\t-c:\tgenerate commands, which can be input and later used by\n \
-\t\t\\\\lstuse, optional\n \
-\t-g:\tdebug mode, create some additional output, optional\n \
-\t-h:\tshow this help, optional\n \
-\t-n:\twrite no header into the LaTeX code, optional; valid only,\n \
-\t\tif -c isn't used\n \
-\t-o [<output filename>]: if this argument is present, the output will\n \
-\t\tbe written into a file <output filename>; if the\n \
-\t\t<output filename> is omitted, the output is redirected\n \
-\t\tinto a file with a basename, which corresponds to the name\n \
-\t\tof the current directory, it has an extension of \".lst\".\n\n \
-remark:\n\tIf <filename> contains characters others than lower \
-and upper\n\tcase characters, \"-\" and \"_\", <output filename> can't be\
- directly\n\tprocessed by TeX.\n \
+USAGE="usage:\n\t${ME} [-c|--command] [-e|--ext] [-g|--debug] \\\\\n\
+\t\t[-h|--help] [-n|--no-header] \\\\\n\
+\t\t[{-o|--output-file} [<output filename>]] <filename>, ...\n\
+\t-c:\tgenerate commands, which can be input and later used by\n\
+\t\t\\\\lstuse, optional\n\
+\t-e:\tinclude file name extension into the identifier\n\
+\t-g:\tdebug mode, create some additional output, optional\n\
+\t-h:\tshow this help, optional\n\
+\t-n:\twrite no header into the LaTeX code, optional; valid only,\n\
+\t\tif -c isn't used\n\
+\t-o [<output filename>]: if this argument is present, the output will\n\
+\t\tbe written into a file <output filename>; if the\n\
+\t\t<output filename> is omitted, the output is redirected\n\
+\t\tinto a file with a basename corresponding to the name\n\
+\t\tof the current directory, it has an extension of \".lst\".\n\
 "
+DEBUG_MODE=0
+EXTENSION=0
 HEADER=1
-DEBUGMODE=0
 
-show_usage() # display help massage
-{
-      echo -e ${USAGE}
+show_usage() { # display help massage
+      printf "${USAGE}"
       exit ${ERR_HELP}
 }
-print_header()
-{
+print_header() {
     FILE=$1
-    echo "%% -- file $1 generated on $(date) by ${ME}"
+    printf "%%%% -- file $1 generated on $(date) by ${ME}\n"
     FILE=$(echo $(basename $1 .lst) | sed -e s/[_\-]//g)
-    echo "\\csname ${FILE}LstLoaded\\endcsname"
-    echo "\\let\\${FILE}LstLoaded\\endinput"
+    printf "\\\\csname ${FILE}LstLoaded\\\\endcsname\n"
+    printf "\\\\expandafter\\\\let\\\\csname ${FILE}LstLoaded\\\\endcsname\\\\endinput\n"
 }
-do_the_job()
-{
+do_the_job() {
     PATHCOMPONENT=$(pwd)
     SOURCEFILE=$1
 
     if [ ! -f ${SOURCEFILE} ]
     then
-        echo ${SOURCEFILE} is no valid file
+        printf "${SOURCEFILE} is no valid file\n"
         return $ERR_NOFILE
     fi
     SOURCEFILE=${SOURCEFILE##${PATHCOMPONENT}/}
 
-    grep -n "[/%;#!][/\* ;]\ *[cbe]e:" $1 | \
-     awk -v pathcomponent="$PATHCOMPONENT" -v file="$SOURCEFILE" \
-         -v header="$HEADER" -v command="$COMMAND" -v application="${ME}" \
-         -v debugmode="$DEBUG_MODE" \
+    grep -n "^[[:space:]]*[/%;#!][/\* ;][[:space:]]*[cbe]e:" $1 | \
+     awk -v pathcomponent="${PATHCOMPONENT}" -v file="${SOURCEFILE}" \
+         -v header="${HEADER}" -v command="${COMMAND}" -v application="${ME}" \
+         -v debugmode="${DEBUG_MODE}" -v respect_extension="${EXTENSION}"\
            -F : \
 '
 BEGIN {
@@ -95,24 +91,23 @@ BEGIN {
 
     if ( debugmode ) printf("path: %s\n",  pathcomponent) > "/dev/stderr"
     if ( debugmode ) printf("file: %s\n", file) > "/dev/stderr"
-    n = split(pathcomponent, parts, "/");
+    n = split(pathcomponent, partsa, "/");
     curr_dir = parts[n]
     n++;
-    parts[n] = file;
-    inputfile = "/" parts[2];
+    partsa[n] = file;
+    inputfile = "/" partsa[2];
     for ( i = 3; i <= n; i++ ) {
-        if ( length(inputfile) + length(parts[i]) < linelen - 1) {
-            inputfile = inputfile "/" parts[i];
-        } else {
-            inputfile = inputfile "%\n      /" parts[i];
-        }
+        inputfile = inputfile "/" partsa[i];
     }
-    n = split(file, parts, "/")
-    n = split(parts[n], parts, ".")
-    identifier = parts[1]
-    for ( i = 2; i < n; i++ )
-    {
-        identifier = identifier parts[i]
+    if ( debugmode ) printf("inputfile: %s\n",  inputfile) > "/dev/stderr"
+    n = split(file, partsa, "/")
+    n = split(partsa[n], partsb, ".")
+    identifier = partsb[1]
+    for ( i = 2; i < n; i++ ) {
+        identifier = identifier partsb[i]
+    }
+    if ( respect_extension ) {
+        identifier = identifier partsb[n]
     }
     identifier = replace_characters(identifier)
     if ( debugmode ) printf("identifier: %s\n", identifier) > "/dev/stderr"
@@ -127,10 +122,9 @@ BEGIN {
             } else if ( match(text[1], "combine") ) {
                 combine = 1;
             }
-            for ( i = 2; i <= n; i++ ) {
-            }
         } else if ( match($2, /be/) > 0 ) {
             opening_tag = $(NF)
+            gsub(/\r/, "", opening_tag);
             is_opened = 1
             start = $1 + 1; # entry $1 is the line number
         } else if ( match($2, /ee/) > 0 ) {
@@ -145,12 +139,14 @@ BEGIN {
                 " not closed")
             } else {
                 opening_tag = $(NF)
+                gsub(/\r/, "", opening_tag);
                 is_opened = 1
                 start = $1 + 1; # entry $1 is the line number
             }
         } else {
             if ( match($2, /ee/) > 0 ) {
                 closing_tag = $(NF)
+                gsub(/\r/, "", closing_tag);
                 if ( !is_opened ) {
                     print_error($1, "missing \"be\" declaration")
                 } else if ( opening_tag == closing_tag ) {
@@ -163,7 +159,7 @@ BEGIN {
 
                     # setup the prefixes
                     len = linelen - addchars - length(caption);
-                    begin_prefix = "%";
+                    begin_prefix = "%%";
                     cnt = 0;
                     while ( cnt < len) {
                         begin_prefix = begin_prefix "=";
@@ -171,7 +167,7 @@ BEGIN {
                     };
                     begin_prefix = begin_prefix ">";
                     end_prefix = begin_prefix;
-                    sub(/%/, "%==", end_prefix);
+                    sub(/%%/, "%%==", end_prefix);
                     if ( join ) {
                         linerange = linerange ", " start "-" $1-1;
                     } else if ( combine ) {
@@ -182,7 +178,8 @@ BEGIN {
                             combine_array[closing_tag] = \
                             combine_array[closing_tag] ", " start "-" $1-1
                         }
-                        if ( debugmode ) printf("combine_array: >%s<\n", combine_array[closing_tag]) > "/dev/stderr"
+                        if ( debugmode ) printf("combine_array: >%s<\n",\
+                                combine_array[closing_tag]) > "/dev/stderr"
                     } else {
                         linerange = start "-" $1-1;
                         if ( command ) {
@@ -205,6 +202,9 @@ BEGIN {
     }
 }
 END {
+    if ( is_opened ) {
+        print_error($1, "missing \"ee\" declaration")
+    }
     caption = "\\lstinline|" file "|";
     if ( join ) {
         sub(/, /, "", linerange);
@@ -218,7 +218,7 @@ END {
         for ( range in combine_array ) {
             if ( debugmode ) printf("range: %s, combine_array[range]: >%s<\n", \
                     range, combine_array[range]) > "/dev/stderr"
-            printf "%%-->> %s <<--\n", range
+            printf("%%%%-->> %s <<--\n", range)
             if ( command ) {
                 print_command((identifier toB26(idPt++)), \
                         combine_array[range]);
@@ -229,8 +229,7 @@ END {
         }
     }
 }
-function replace_characters(identifier)
-{
+function replace_characters(identifier) {
     tmp = ""
     toUppercase = 0
     n = split(identifier, sequence, "") # split the string into an array
@@ -251,16 +250,14 @@ function replace_characters(identifier)
     }
     return tmp
 }
-function print_command(identifier, linerange)
-{
+function print_command(identifier, linerange) {
     if ( debugmode ) printf("print_command.linerange: >%s<\n", linerange) > "/dev/stderr"
     print break_line("\\lstdef{" identifier "}{" inputfile "}{" \
             linerange "}", linelen)
 }
-function print_linerange(identifier, caption, linerange)
-{
-    print begin_prefix "begin{" \
-        identifier"}\n{%\n  \\def\\inputfile{%\n    " inputfile "\n  }";
+function print_linerange(identifier, caption, linerange) {
+    print break_line(begin_prefix "begin{" \
+        identifier"}\n{%\n  \\def\\inputfile{%\n    " inputfile "%\n  }");
     local_style = "";
     if ( header )
     {
@@ -271,7 +268,7 @@ function print_linerange(identifier, caption, linerange)
         local_style="style=localStyle, "
     }
     print "  \\lstinputlisting[" local_style "linerange={" linerange "}]" \
-        "%\n  {%\n    \\inputfile\n  }\n" \
+        "{%\n    \\inputfile\n  }\n" \
         "}%\n" end_prefix "end{"identifier"}";
 }
 function print_error(linenumber, error_message)
@@ -279,8 +276,7 @@ function print_error(linenumber, error_message)
     printf "%--> error (line number %d): %s\n", \
         linenumber, error_message > "/dev/stderr"
 }
-function break_line(input_line, line_len)
-{
+function break_line(input_line, line_len) {
     n = split(input_line, parts, "/");
     output_line = parts[1];
     len_curr = length(output_line)
@@ -288,24 +284,21 @@ function break_line(input_line, line_len)
         len_next = length(parts[i])
         if ( len_curr + len_next + 1 < linelen ) {
             output_line = output_line "/" parts[i];
-            len_curr += len_next + 1
+            len_curr += len_next + 1 # continue current line
         } else {
             output_line = output_line "%\n      /" parts[i];
-            len_curr = len_next + 7
+            len_curr = len_next + 7 # start a new line
         }
     }
     return output_line
 }
-function toB26(n10)
-{
+function toB26(n10) {
     v26 = ""
-
     do {
       remainder = n10%26
       v26 = idArray[remainder+1] v26
       n10 = int(n10/26)
     } while ( n10 != 0 )
-
     return v26
 }
 '
@@ -316,8 +309,8 @@ if [ $# -eq 0 ]
 then
     show_usage
 fi
-GETOPT=$(getopt -o cghno:: \
-    --longoptions command,debug-mode,help,no-header,output-file:: \
+GETOPT=$(getopt -o ceghno:: \
+    --longoptions command,debug-mode,ext,help,no-header,output-file:: \
     -n ${ME} -- "$@")
 
 if [ $? -ne 0 ] # no success
@@ -331,6 +324,7 @@ while true
 do
     case "$1" in
       -c|--command) COMMAND=1; HEADER=0; shift;;
+      -e|--ext) EXTENSION=1; shift;;
       -g|--debug-mode) DEBUG_MODE=1; shift;;
       -h|--help) show_usage ;;
       -n|--no-header) HEADER=0; shift;;
@@ -347,7 +341,7 @@ if [ -n "${OUTFILE}" ]
 then
     if [ -f "${OUTFILE}" ]
     then
-        echo -e "%--> file \"${OUTFILE}\" already exists, creating backup"
+        printf "%s\n" "%--> file \"${OUTFILE}\" already exists, creating backup"
         mv ${OUTFILE} ${OUTFILE}~
     fi
     exec > ${OUTFILE}           # redirect stdout to ${OUTFILE}
@@ -357,8 +351,8 @@ fi
 
 # now take all remaining arguments (should be all filenames) and do the job
 for arg do
-    echo -e "%-->" processing file \"$arg\" 1>&2  # echo the current
-                                                  # filename to stderr
+    printf "%s\n" "%%--> processing file \"$arg\"" 1>&2 # echo the current
+                                                        # filename to stderr
     do_the_job $arg
 done
 
