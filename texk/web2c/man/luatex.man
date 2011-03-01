@@ -1,4 +1,4 @@
-.TH LUATEX 1 "14 May 2010" "luatex 0.40" "Web2C @VERSION@"
+.TH LUATEX 1 "1 March 2011" "luatex 0.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -85,13 +85,11 @@ Here is the list of possibly affected switches/functionality, and why:
 ..
 .TP
 .BI "\-\-lua=" FILE
-.rb
 The lua initialization file.
 .PP
 The following two options alter the executable behaviour:
 .TP
 .B \-\-luaonly
-.rb
 Start Lua\*(TX as a Lua interpreter. In this mode, it will set Lua's
 \fIarg[0]\fR to the found script name, pushing preceding options in
 negative values and the rest of the commandline in the positive values,
@@ -99,7 +97,6 @@ just like the Lua interpreter. Lua\*(TX will exit immediately after
 executing the specified Lua script.
 .TP
 .BI \-\-luaconly
-.rb
 Start Lua\*(TX as a Lua byte compiler. In this mode, Lua\*(TX is exactly
 like \fBluac\fR from the standalone Lua distribution, except that it
 does not have the \fB\-l\fR switch, and that it accepts (but ignores)
@@ -112,7 +109,6 @@ Then the regular web2c options:
 Debug format loading.
 .TP
 .B \-\-draftmode
-.rb
 Sets \epdfdraftmode so lua\*(TX doesn't write a PDF and doesn't read
 any included images, thus speeding up execution.
 .TP
@@ -141,37 +137,30 @@ construct and the other Lua functions, even if it is enabled in the
 \fItexmf.cnf\fR file.
 .TP
 .B \-\-shell-restricted
-.rb
 Enable restricted version of \fB\ewrite18\fR, \fBos.execute()\fR,
 \fBos.exec()\fR, \fBos.spawn()\fR, and \fBio.popen()\fR, only commands
 listed in \fItexmf.cnf\fR file are allowed.
 .TP
 .B \-\-file\-line\-error
-.rb
 Print error messages in the form \fIfile:line:error\fR which is similar
 to the way many compilers format them.
 .TP
 .B \-\-no\-file\-line\-error
-.rb
 Disable printing error messages in the \fIfile:line:error\fR style.
 .TP
 .BI "\-\-fmt=" FORMAT
-.rb
 Use \fIFORMAT\fR as the name of the format to be used, instead of the
 name by which lua\*(TX was called or a \fI%&\fR line.
 .TP
 .B \-\-help
-.rb
 Print help message and exit.
 .TP
 .B \-\-ini
-.rb
 Start in \fIINI\fR mode, which is used to dump formats.  The \fIINI\fR
 mode can be used for typesetting, but no format is preloaded, and basic
 initializations like setting catcodes may be required.
 .TP
 .BI "\-\-interaction=" MODE
-.rb
 Sets the interaction mode.  The \fIMODE\fR can be either
 .IR batchmode ,
 .IR nonstopmode ,
@@ -182,77 +171,62 @@ The meaning of these modes is the same as that of the corresponding
 \ecommands.
 .TP
 .BI "\-\-jobname=" NAME
-.rb
 Use \fINAME\fR for the job name, instead of deriving it from the name
 of the input file.
 .TP
 .BI "\-\-kpathsea-debug=" BITMASK
-.rb
 Sets path searching debugging flags according to the \fIBITMASK\fR.
 See the \fIKpathsea\fR manual for details.
 .TP
 .BI "\-\-mktex=" FMT
-.rb
 Enable mktex\fIFMT\fR generation, where \fIFMT\fR must be either \fItex\fR
 or \fItfm\fR.
 .TP
 .B \-\-nosocket
-.rb
 Disable the luasocket (network) library.
 .TP
 .TP
 .BI "\-\-output\-comment=" STRING
-.rb
 In \fIDVI\fR mode, use \fISTRING\fR for the \fIDVI\fR file comment
 instead of the date.  This option is ignored in\fIPDF\fR mode.
 .TP
 .BI "\-\-output\-directory=" DIRECTORY
-.rb
 Write output files in \fIDIRECTORY\fR instead of the current directory.
 Look up input files in \fIDIRECTORY\fR first, then along the normal
 search path.
 .TP
 .BI "\-\-output\-format=" FORMAT
-.rb
 Set the output format mode, where \fIFORMAT\fR must be either \fIpdf\fR
 or \fIdvi\fR.
 This also influences the set of graphics formats understood by lua\*(TX.
 .TP
 .BI "\-\-progname=" NAME
-.rb
 Pretend to be program \fINAME\fR (only for kpathsea).
 .TP
 .B \-\-recorder
-.rb
 Enable the filename recorder.
 This leaves a trace of the files opened for input and output
 in a file with extension \fI.fls\fR.
 .TP
 .B \-\-safer
-.rb
 Disable some Lua commands that can easily be abused by a malicious
 document.
 .TP
 .BI "\-\-synctex=" NUMBER
-.rb
 Enable/disable Sync\*(TX extension.
 .TP
 .B \-\-version
-.rb
 Print version information and exit.
 .TP
 .B \-\-credits
-.rb
 Print credits and version details.
 .TP
 The following options are ignored:
 .TP
 .BR \-\-8bit ,\  \-\-etex ,\  \-\-parse\-first\-line ,\  \-\-no\-parse\-first\-line
-.rb
 These are always on.
 .TP
 .BR \-\-default\-translate\-file=\fITCXNAME\fP  ,\  \-\-translate\-file=\fITCXNAME\fP
-.rb
 These are always off.
 
 .\"=====================================================================

@@ -1,5 +1,5 @@
 .\" t
-.TH MF 1 "14 May 2010" "Web2C @VERSION@"
+.TH MF 1 "1 March 2011" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -247,7 +247,6 @@ where graphics support is a nuisance rather than something helpful.
 This version of \*(MF understands the following command line options.
 .TP
 .BI -base \ base
-.rb
 Use
 .I base
 as the name of the base to be used, instead of the name by which
@@ -256,33 +255,27 @@ as the name of the base to be used, instead of the name by which
 line.
 .TP
 .B -file-line-error
-.rb
 Print error messages in the form
 .I file:line:error
 which is similar to the way many compilers format them.
 .TP
 .B -no-file-line-error
-.rb
 Disable printing error messages in the
 .I file:line:error
 style.
 .TP
 .B -file-line-error-style
-.rb
 This is the old name of the
 .B -file-line-error
 option.
 .TP
 .B -halt-on-error
-.rb
 Exit with an error code when an error is encountered during processing.
 .TP
 .B -help
-.rb
 Print help message and exit.
 .TP
 .B -ini
-.rb
 Be
 .BR inimf ,
 for dumping bases; this is implicitly true if the program is called
@@ -290,7 +283,6 @@ as
 .BR inimf .
 .TP
 .BI -interaction \ mode
-.rb
 Sets the interaction mode.  The mode can be one of
 .IR batchmode ,
 .IR nonstopmode ,
@@ -301,19 +293,16 @@ The meaning of these modes is the same as that of the corresponding
 commands.
 .TP
 .BI -jobname \ name
-.rb
 Use
 .I name
 for the job name, instead of deriving it from the name of the input file.
 .TP
 .BI -kpathsea-debug \ bitmask
-.rb
 Sets path searching debugging flags according to the bitmask.  See the
 .I Kpathsea
 manual for details.
 .TP
 .BI -maketex \ fmt
-.rb
 Enable
 .RI mktex fmt ,
 where
@@ -322,7 +311,6 @@ must be
 .IR mf .
 .TP
 .BI -no-maketex \ fmt
-.rb
 Disable
 .RI mktex fmt ,
 where
@@ -331,7 +319,6 @@ must be
 .IR mf .
 .TP
 .BI -output-directory \ directory
-.rb
 Write output files in
 .I directory
 instead of the current directory.  Look up input files in
@@ -339,7 +326,6 @@ instead of the current directory.  Look up input files in
 first, the along the normal search path.
 .TP
 .B -parse-first-line
-.rb
 If the first line of the main input file begins with
 .I %&
 parse it to look for a dump name or a
@@ -347,29 +333,24 @@ parse it to look for a dump name or a
 option.
 .TP
 .B -no-parse-first-line
-.rb
 Disable parsing of the first line of the main input file.
 .TP
 .BI -progname \ name
-.rb
 Pretend to be program
 .IR name .
 This affects both the format used and the search paths.
 .TP
 .B -recorder
-.rb
 Enable the filename recorder.  This leaves a trace of the files opened
 for input and output in a file with extension
 .IR .fls .
 .TP
 .BI -translate-file \ tcxname
-.rb
 Use the
 .I tcxname
 translation table.
 .TP
 .B -version
-.rb
 Print version information and exit.
 .\"=====================================================================
 .SH ENVIRONMENT

@@ -1,4 +1,4 @@
-.TH MKTEXTFM 1 "7 April 2010" "Kpathsea @VERSION@"
+.TH MKTEXTFM 1 "1 March 2011" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -50,17 +50,14 @@ line.
 accepts the following options:
 .TP
 .BI --destdir \ dir
-.rb
 A directory name. If the directory is absolute, it is used as-is.
 Otherwise, it is appended to the root destination directory set in the
 script.
 .TP
 .B --help
-.rb
 Print help message and exit.
 .TP
 .B --version
-.rb
 Print version information and exit.
 .\"=====================================================================
 .SH "SEE ALSO"

@@ -1,3 +1,8 @@
+2011-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* aleph.man, etex.man, luatex.man, mf.man, pdftex.man,
+	tangle.man, tex.man: Drop useless '.rb' macros.
+
 2011-02-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (man1_links): Add texlua and texluac.

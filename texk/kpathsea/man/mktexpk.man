@@ -1,4 +1,4 @@
-.TH MKTEXPK 1 "7 April 2010" "Kpathsea @VERSION@"
+.TH MKTEXPK 1 "1 March 2011" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -56,15 +56,12 @@ accepts the following options:
 .TP
 .BI --bdpi \ num
 Set the base device resolution.
-.rb
 .TP
 .BI --dpi \ num
 Generate the font at resolution
 .IR num .
-.rb
 .TP
 .B --help
-.rb
 Print help message and exit.
 .TP
 .BI --mag \ mag
@@ -73,20 +70,16 @@ The \*(MF magnification that corresponds to the combination of
 and
 .I dpi
 that has been specified.
-.rb
 .TP
 .BI --mfmode \ mode
 The \*(MF mode to use.
-.rb
 .TP
 .BI --destdir \ dir
 A directory name. If the directory is absolute, it is used as-is.
 Otherwise, it is appended to the root destination directory set in the
 script.
-.rb
 .TP
 .B --version
-.rb
 Print version information and exit.
 .\"=====================================================================
 .SH BUGS

@@ -1,4 +1,4 @@
-.TH MKTEXMF 1 "4 January 1998" "Kpathsea @VERSION@"
+.TH MKTEXMF 1 "1 March 2011" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -47,11 +47,9 @@ line.
 accepts the following options:
 .TP
 .B --help
-.rb
 Print help message and exit.
 .TP
 .B --version
-.rb
 Print version information and exit.
 .\"=====================================================================
 .SH "SEE ALSO"

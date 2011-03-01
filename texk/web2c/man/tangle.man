@@ -1,4 +1,4 @@
-.TH TANGLE 1 "7 April 2010" "Web2C @VERSION@"
+.TH TANGLE 1 "1 March 2011" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -73,11 +73,9 @@ understands the following options.  Note that some of these options
 may render the output unsuitable for processing by a Pascal compiler.
 .TP
 .B --help
-.rb
 Print help message and exit.
 .TP
 .BI --length \ number
-.rb
 Compare only the first
 .I number
 characters of identifiers when checking for collisions.  The default
@@ -86,7 +84,6 @@ is 32, the original
 used 7.
 .TP
 .B --loose
-.rb
 When checking for collisions between identifiers, honor the settings
 of the
 .BR --lowercase ,
@@ -97,30 +94,24 @@ and
 options. This is the default.
 .TP
 .B --lowercase
-.rb
 Convert all identifiers to lowercase.
 .TP
 .B --mixedcase
-.rb
 Retain the case of identifiers.  This is the default.
 .TP
 .B --strict
-.rb
 When checking for collisions between identifiers, strip underlines and
 convert all identifiers to uppercase first.
 .TP
 .B --underline
-.rb
 Retain underlines (also known as underscores) in identifiers.
 .TP
 .B --uppercase
-.rb
 Convert all identifiers to uppercase.  This is the behaviour of the
 original
 .BR tangle .
 .TP
 .B --version
-.rb
 Print version information and exit.
 .\"=====================================================================
 .SH ENVIRONMENT

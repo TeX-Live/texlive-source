@@ -1,3 +1,10 @@
+2011-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* man/{kpsewhich,mktexlsr,mktexmf,mktexpk,mktextfm}.man: Drop
+	useless '.rb' macros.
+	* man/{kpseaccess,kpsereadlink,kpsestat}.man: The same.
+	Also remove `additional' from `following additional options'.
+
 2011-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in.orig, common.ac.orig, withenable.ac: Remove

@@ -1,4 +1,4 @@
-.TH KPSEWHICH 1 "7 January 2007" "Kpathsea @VERSION@"
+.TH KPSEWHICH 1 "1 March 2011" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -43,11 +43,9 @@ used.
 accepts the following options:
 .TP
 .BI -debug \ num
-.rb
 Set debugging flags.
 .TP
 .BI -D \ num
-.rb
 Use a base resolution of
 .IR num ;
 the default, set by the installer, is typically 600.
@@ -57,28 +55,23 @@ As
 .BR -D.
 .TP
 .BI -engine \ string
-.rb
 Set
 .I $engine
 in the environment, which is used in some search paths.
 .TP
 .BI -expand-braces \ string
-.rb
 Print variable and brace expansion of
 .IR string .
 .TP
 .BI -expand-path \ string
-.rb
 Print complete path expansion of
 .IR string .
 .TP
 .BI -expand-var \ string
-.rb
 Print variable expansion of
 .IR string .
 .TP
 .BI -format \ name
-.rb
 Use file type
 .IR name .
 See the info manual for a list of valid names, or use the
@@ -86,22 +79,18 @@ See the info manual for a list of valid names, or use the
 option to print the list.
 .TP
 .B -help
-.rb
 Print help message and exit.
 .TP
 .B -interactive
-.rb
 Ask for additional filenames to look up.
 .TP
 .BI -mktex \ fmt
-.rb
 enable
 .RI mktex fmt
 generation.
 .RI ( fmt =pk/mf/tex/tfm)
 .TP
 .BI -mode \ string
-.rb
 Set device name for
 .I $MAKETEX_MODE
 to
@@ -109,11 +98,9 @@ to
 no default.
 .TP
 .B -must-exist
-.rb
 Search the disk as well as ls-R if necessary.
 .TP
 .BI -no-mktex \ fmt
-.rb
 disable
 .RI mktex fmt
 generation.
@@ -124,7 +111,6 @@ Search in the path
 .IR string .
 .TP
 .BI -progname \ string
-.rb
 Set program name to
 .IR string .
 .\" .TP
@@ -138,7 +124,6 @@ Set program name to
 .\" on UNIX systems.
 .TP
 .BI -show-path \ name
-.rb
 Output search path for file type
 .IR name .
 See the info manual for a list of valid names, or use the
@@ -146,12 +131,10 @@ See the info manual for a list of valid names, or use the
 option to print the list.
 .TP
 .BI -var-value \ variable
-.rb
 Print the expansion of
 .IR variable .
 .TP
 .B -version
-.rb
 Print version information and exit.
 .\"=====================================================================
 .SH "SEE ALSO"

@@ -1,4 +1,4 @@
-.TH KPSEACCESS 1 "16 May 2010" "Kpathsea @VERSION@"
+.TH KPSEACCESS 1 "1 March 2011" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -54,14 +54,12 @@ mounted read-only.
 .\"=====================================================================
 .SH OPTIONS
 .B kpseaccess
-accepts the following additional options:
+accepts the following options:
 .TP
 .B --help
-.rb
 Print help message and exit.
 .TP
 .B --version
-.rb
 Print version information and exit.
 .\"=====================================================================
 .SH "SEE ALSO"
