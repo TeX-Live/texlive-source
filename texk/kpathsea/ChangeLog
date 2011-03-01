@@ -1,5 +1,10 @@
 2011-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* mingw32.[ch]: Drop win32_system(); this was a workaround for a
+	bug in system() under Win9x.
+
+2011-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* man/{kpsewhich,mktexlsr,mktexmf,mktexpk,mktextfm}.man: Drop
 	useless '.rb' macros.
 	* man/{kpseaccess,kpsereadlink,kpsestat}.man: The same.

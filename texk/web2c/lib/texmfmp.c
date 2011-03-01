@@ -2058,13 +2058,7 @@ calledit (packedASCIIcode *filename,
   *temp = 0;
 
   /* Execute the command.  */
-#ifdef __MINGW32__
-  /* Win32 reimplementation of the system() command
-     provides opportunity to call it asynchronously */
-  if (win32_system(command, true) != 0 )
-#else
   if (system (command) != 0)
-#endif
     fprintf (stderr, "! Trouble executing `%s'.\n", command);
 
   /* Quit, since we found an error.  */
