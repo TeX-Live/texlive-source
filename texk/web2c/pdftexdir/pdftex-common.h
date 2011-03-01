@@ -48,6 +48,7 @@ extern integer pdfbufsize;
 extern boolean pdfosmode;
 extern eightbits pdflastbyte;
 extern integer fixedinclusioncopyfont;
+extern integer pdfpagegroupval;
 
 /* pdftexcoerce.h - generated from pdftex.web */
 extern integer pdfnewobjnum(void);
@@ -114,5 +115,6 @@ extern int epdf_selected_page;
 extern int epdf_num_pages;
 extern int epdf_page_box;
 extern void *epdf_doc;
+extern int epdf_has_page_group;
 
 #endif /* PDFTEX_COMMON_H */

@@ -41,6 +41,7 @@ int epdf_selected_page;
 int epdf_num_pages;
 int epdf_page_box;
 void *epdf_doc;
+int epdf_has_page_group;
 
 static integer new_image_entry(void)
 {
@@ -322,6 +323,7 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
         pdf_ptr(img)->orig_y = bp2int(epdf_orig_y);
         pdf_ptr(img)->selected_page = page_num;
         pdf_ptr(img)->doc = epdf_doc;
+        img_group_ref(img) = epdf_has_page_group;
         break;
     case IMAGE_TYPE_PNG:
         img_pages(img) = 1;

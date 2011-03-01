@@ -141,8 +141,6 @@ struct UsedEncoding {
 static InObj *inObjList;
 static UsedEncoding *encodingList;
 static GBool isInit = gFalse;
-static bool groupIsIndirect;
-static PdfObject lastGroup;
 
 // --------------------------------------------------------------------
 // Maintain list of open embedded PDF files
@@ -809,6 +807,12 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
     if (epdf_rotate < 0)
         epdf_rotate += 360;
 
+    // page group
+    if (page->getGroup() != NULL)
+        epdf_has_page_group = 1;    // only flag that page group is present;
+                                    // the actual object number will be
+                                    // generated in pdftex.web
+
     pdf_doc->xref = pdf_doc->doc->getXRef();
     return page_num;
 }
@@ -823,6 +827,8 @@ void write_epdf(void)
     Ref *pageRef;
     Dict *pageDict;
     PdfObject contents, obj1, obj2, pageObj, dictObj;
+    PdfObject groupDict;
+    bool writeSepGroup = false;
     Object info;
     char *key;
     char s[256];
@@ -830,12 +836,12 @@ void write_epdf(void)
     int rotate;
     double scale[6] = { 0, 0, 0, 0, 0, 0 };
     bool writematrix = false;
-    static char *pageDictKeys[] = { 
-        "Group",
+    static char *pageDictKeys[] = {
         "LastModified",
         "Metadata",
         "PieceInfo",
         "SeparationInfo",
+//         "Group",
 //         "Resources",
         NULL
     };
@@ -920,13 +926,30 @@ void write_epdf(void)
     if (!dictObj->isNull() && !dictObj->isRef())
         pdftex_warn("PDF inclusion: /Metadata must be indirect object");
 
-    // copy selected items in Page dictionary except Resources
+    // copy selected items in Page dictionary except Resources & Group
     for (i = 0; pageDictKeys[i] != NULL; i++) {
         pageDict->lookupNF(pageDictKeys[i], &dictObj);
         if (!dictObj->isNull()) {
             pdf_newline();
             pdf_printf("/%s ", pageDictKeys[i]);
             copyObject(&dictObj); // preserves indirection
+        }
+    } 
+
+    // handle page group
+    pageDict->lookupNF("Group", &dictObj);
+    if (!dictObj->isNull()) {
+        if (pdfpagegroupval == 0) { 
+            // another pdf with page group was included earlier on the same page;
+            // copy the Group entry as is
+            pdf_newline();
+            pdf_puts("/Group ");
+            copyObject(&dictObj);
+        } else {
+            // write Group dict as a separate object, since the Page dict also refers to it
+            writeSepGroup = true;
+            initDictFromDict(groupDict, page->getGroup());
+            pdf_printf("/Group %d 0 R\n", pdfpagegroupval);
         }
     }
 
@@ -1008,10 +1031,22 @@ void write_epdf(void)
         pdfbeginstream();
         pdfendstream();
     }
+
     // write out all indirect objects
     writeRefs();
+
     // write out all used encodings (and delete list)
     writeEncodings();
+
+    // write the Group dict if needed
+    if (writeSepGroup) {
+        pdfbeginobj(pdfpagegroupval, 2);
+        copyObject(&groupDict);
+        pdfendobj();
+        pdfpagegroupval = 0;    // only the 1st included pdf on a page gets its
+                                // Group included in the Page dict
+    }
+
     // save object list, xref
     pdf_doc->inObjList = inObjList;
     pdf_doc->xref = xref;

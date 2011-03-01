@@ -15224,7 +15224,6 @@ zip_write_state := no_zip;
 pdf_minor_version_written := false;
 fixed_pdfoutput_set := false;
 fixed_pdf_draftmode_set := false;
-pdf_page_group_val := -1;
 
 
 @ @p
@@ -18743,6 +18742,7 @@ fix_pdfoutput;
 temp_ptr:=p;
 prepare_mag;
 pdf_last_resources := pdf_new_objnum;
+pdf_page_group_val := 0;
 @<Reset resource lists@>;
 if not shipping_page then begin
     pdf_xform_width := width(p);
@@ -18969,7 +18969,6 @@ if pdf_page_group_val > 0 then begin
     pdf_print("/Group ");
     pdf_print_int(pdf_page_group_val);
     pdf_print_ln(" 0 R");
-    pdf_page_group_val := -1;
 end;
 @<Generate array of annotations or beads in page@>;
 pdf_end_dict
@@ -36027,9 +36026,9 @@ begin
         pdf_append_list(pdf_ximage_objnum(p))(pdf_ximage_list);
     if not is_pdf_image(image) then begin
         if is_png_image(image) then begin
-           groupref := image_group_ref (image);
-           if (groupref>0) and (pdf_page_group_val<1) then 
-              pdf_page_group_val := groupref;
+            groupref := image_group_ref(image);
+            if (groupref > 0) and (pdf_page_group_val = 0) then 
+                pdf_page_group_val := groupref;
         end;
         pdf_print_real(ext_xn_over_d(pdf_width(p),
                        ten_pow[6], one_hundred_bp), 4);
@@ -36041,7 +36040,11 @@ begin
         pdf_print_bp(pdf_y(cur_v));
     end
     else begin
-        if pdf_page_group_val<1 then pdf_page_group_val := image_group_ref (image);
+        {for pdf images we generate the page group object number here}
+        groupref := image_group_ref(image); {this is only a flag whether page group is present}
+        if (groupref > 0) and (pdf_page_group_val = 0) then begin
+            pdf_page_group_val := pdf_new_objnum;
+        end;
         pdf_print_real(ext_xn_over_d(pdf_width(p),
                        ten_pow[6], img_w), 6);
         pdf_print(" 0 0 ");
@@ -36063,7 +36066,6 @@ begin
     pdf_print_ln(" Do");
     pdf_print_ln("Q");
 end;
-
 
 function gap_amount(p: pointer; cur_pos: scaled): scaled; {find the gap between
 the position of the current snap node |p| and the nearest point on the grid}
