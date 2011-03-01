@@ -45,11 +45,14 @@
 % This is the parent directory of our several trees, i.e.,
 % /usr/local/texlive/YYYY in the original TeX Live distribution.
 %
+% All trees must be organized according to the TeX Directory Structure
+% (http://tug.org/tds), or files may not be found.
+%
 % Redistributors will probably want $SELFAUTODIR/share, i.e., /usr/share.
 TEXMFROOT = $SELFAUTOPARENT
 
 % The tree containing runtime files related to the specific
-% distribution and version:
+% distribution and version.
 TEXMFMAIN = $TEXMFROOT/texmf
 
 % The main tree of packages, distribution-agnostic:
@@ -64,10 +67,10 @@ TEXMFSYSVAR = $TEXMFROOT/texmf-var
 % TEXMFSYSCONFIG, where *-sys store configuration data.
 TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 
-% Per-user texmf trees.  To define more than one per-user tree, set this
-% to a list of directories in braces, as described above.
-% (This used to be HOMETEXMF.)
-% ~ expands to %USERPROFILE% on Window, $HOME otherwise.
+% Per-user texmf tree(s) -- organized per the TDS, as usual.  To define
+% more than one per-user tree, set this to a list of directories in
+% braces, as described above.  (This used to be HOMETEXMF.)  ~ expands
+% to %USERPROFILE% on Window, $HOME otherwise.
 TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.

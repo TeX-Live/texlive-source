@@ -1,3 +1,8 @@
+2011-03-01  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf: be more explicit that all trees, including TEXMFHOME,
+	must follow the TDS>
+
 2011-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.[ch]: Drop win32_system(); this was a workaround for a
