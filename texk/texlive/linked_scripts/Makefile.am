@@ -5,6 +5,23 @@
 ##
 ## TeX Live's extra scripts.
 
+## Build lists of texmf and texmf-dist scripts.
+##
+if MAINTAINER_MODE
+all-local: scripts.tmp
+scripts.tmp: Makefile
+	echo "Create $@"
+	@echo "texmf_scripts='$(nobase_dist_texmf_scripts_SCRIPTS)'" >$@
+	@echo "texmf_dist_scripts='$(nobase_dist_texmf_dist_scripts_SCRIPTS)'" >>$@
+	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+else !MAINTAINER_MODE
+all-local:
+endif !MAINTAINER_MODE
+
+DISTCLEANFILES = scripts.tmp
+
+EXTRA_DIST = scripts.lst
+
 ## Make sure $(bindir) exists
 ##
 bin_SCRIPTS =
@@ -51,13 +68,13 @@ texmf_dist_perl_scripts = \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
 	authorindex/authorindex \
-	ebong/ebong.py \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	context/perl/mptopdf.pl \
 	de-macro/de-macro \
 	dviasm/dviasm.py \
+	ebong/ebong.py \
 	epspdf/epspdf.rb \
 	epspdf/epspdftk.tcl \
 	epstopdf/epstopdf.pl \

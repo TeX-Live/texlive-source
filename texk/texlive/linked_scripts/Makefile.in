@@ -158,6 +158,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+DISTCLEANFILES = scripts.tmp
+EXTRA_DIST = scripts.lst
 bin_SCRIPTS = 
 
 # Copies of these scripts exist here for the sake of avoiding
@@ -204,13 +206,13 @@ texmf_dist_perl_scripts = \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
 	authorindex/authorindex \
-	ebong/ebong.py \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	context/perl/mptopdf.pl \
 	de-macro/de-macro \
 	dviasm/dviasm.py \
+	ebong/ebong.py \
 	epspdf/epspdf.rb \
 	epspdf/epspdftk.tcl \
 	epstopdf/epstopdf.pl \
@@ -476,7 +478,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(SCRIPTS)
+all-am: Makefile $(SCRIPTS) all-local
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmf_dist_scriptsdir)" "$(DESTDIR)$(texmf_scriptsdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -502,6 +504,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -579,12 +582,12 @@ uninstall-am: uninstall-binSCRIPTS \
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 .MAKE: install-am install-data-am install-strip uninstall-am
 
-.PHONY: all all-am check check-am clean clean-generic distclean \
-	distclean-generic distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binSCRIPTS install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man \
+.PHONY: all all-am all-local check check-am clean clean-generic \
+	distclean distclean-generic distdir dvi dvi-am html html-am \
+	info info-am install install-am install-binSCRIPTS \
+	install-data install-data-am install-data-hook install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
 	install-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	install-nobase_dist_texmf_scriptsSCRIPTS install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
@@ -594,6 +597,14 @@ uninstall-am: uninstall-binSCRIPTS \
 	uninstall-hook uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	uninstall-nobase_dist_texmf_scriptsSCRIPTS
 
+
+@MAINTAINER_MODE_TRUE@all-local: scripts.tmp
+@MAINTAINER_MODE_TRUE@scripts.tmp: Makefile
+@MAINTAINER_MODE_TRUE@	echo "Create $@"
+@MAINTAINER_MODE_TRUE@	@echo "texmf_scripts='$(nobase_dist_texmf_scripts_SCRIPTS)'" >$@
+@MAINTAINER_MODE_TRUE@	@echo "texmf_dist_scripts='$(nobase_dist_texmf_dist_scripts_SCRIPTS)'" >>$@
+@MAINTAINER_MODE_TRUE@	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+@MAINTAINER_MODE_FALSE@all-local:
 install-data-hook:
 @WIN32_TRUE@	@for s in $(texmf_perl_scripts) $(texmf_dist_perl_scripts); do \
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
