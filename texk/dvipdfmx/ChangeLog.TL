@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2011-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/pngimage.c (create_cspace_ICCBased): Avoid libpng-1.5.x
+	compiler warning.
+
 2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/Makefile.am [WIN32]: Add dvipdfmx.exe, ebb.exe, and

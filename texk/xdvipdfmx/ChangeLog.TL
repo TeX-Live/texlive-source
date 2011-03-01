@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/pngimage.c (create_cspace_ICCBased): Avoid libpng-1.5.x
+	compiler warning.
+
 2010-06-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dpxfile.c (dpx_file_apply_filter) [Solaris9]:

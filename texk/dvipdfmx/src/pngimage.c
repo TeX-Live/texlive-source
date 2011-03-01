@@ -536,7 +536,11 @@ create_cspace_ICCBased (png_structp png_ptr, png_infop info_ptr)
   int        compression_type;  /* Manual page for libpng does not
 				 * clarify whether profile data is inflated by libpng.
 				 */
-  png_charp   profile;          /* Might be switched to png_bytep */
+#if PNG_LIBPNG_VER_MINOR < 5
+  png_charp   profile;
+#else
+  png_bytep   profile;
+#endif
   png_uint_32 proflen;
 
   if (!png_get_valid(png_ptr, info_ptr, PNG_INFO_iCCP) ||
