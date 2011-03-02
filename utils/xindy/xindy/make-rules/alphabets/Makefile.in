@@ -279,8 +279,7 @@ DISTCLEANFILES = albanian/utf8.pl belarusian/utf8.pl bulgarian/utf8.pl \
 	slovak/large-utf8.pl slovak/small-utf8.pl slovenian/utf8.pl \
 	spanish/modern-utf8.pl spanish/traditional-utf8.pl \
 	swedish/utf8.pl turkish/utf8.pl ukrainian/utf8.pl \
-	upper-sorbian/utf8.pl vietnamese/utf8.pl romanian/latin2.pl \
-	romanian/cp1250.pl
+	upper-sorbian/utf8.pl vietnamese/utf8.pl romanian/cp1250.pl
 albaniandir = $(langdir)/albanian
 ALBANIAN = \
 	albanian/latin1-lang.xdy \
@@ -2477,7 +2476,7 @@ uninstall-am: uninstall-docDATA uninstall-nodist_albanianDATA \
 	sed -e 's/@.{\([^}]*\)}//g;' <$< | \
 	$(CONVERT_FROM_UTF8)CP850 >$@
 
-romanian/latin2.pl : romanian/utf8.pl
+romanian/latin2.pl : romanian/utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
 	$(CONVERT_FROM_UTF8)ISO8859-2 >$@
 

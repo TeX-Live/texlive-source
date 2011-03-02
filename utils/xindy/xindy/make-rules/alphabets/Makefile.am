@@ -814,12 +814,9 @@ DISTCLEANFILES += \
 	sed -e 's/@.{\([^}]*\)}//g;' <$< | \
 	$(CONVERT_FROM_UTF8)CP850 >$@
 
-romanian/latin2.pl : romanian/utf8.pl
+romanian/latin2.pl : romanian/utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
 	$(CONVERT_FROM_UTF8)ISO8859-2 >$@
-
-DISTCLEANFILES += \
-	romanian/latin2.pl
 
 %latin2.pl : %utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \

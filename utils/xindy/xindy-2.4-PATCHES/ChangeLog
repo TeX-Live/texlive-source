@@ -1,3 +1,8 @@
+2011-03-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-64-do_not_rebuild (new): Do not rebuild the distributed
+	file romanian/latin2.pl again and again.
+
 2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-64-symlinks (new): Check symlink creation.
