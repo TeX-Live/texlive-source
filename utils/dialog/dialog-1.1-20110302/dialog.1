@@ -1,5 +1,5 @@
 '\" t
-.\" $Id: dialog.1,v 1.125 2011/01/18 00:40:47 tom Exp $
+.\" $Id: dialog.1,v 1.126 2011/03/02 01:24:21 tom Exp $
 .\" Copyright 2005-2010,2011  Thomas E. Dickey
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -36,7 +36,7 @@
 .RE
 ..
 .
-.TH \*D 1 "" "$Date: 2011/01/18 00:40:47 $"
+.TH \*D 1 "" "$Date: 2011/03/02 01:24:21 $"
 .SH NAME
 \*p \- display dialog boxes from shell scripts
 .SH SYNOPSIS
@@ -76,6 +76,8 @@ These types of dialog boxes are implemented
 .BR passwordbox ", "
 .BR passwordform ", "
 .BR pause ", "
+.BR prgbox ", "
+.BR programbox ", "
 .BR progressbox ", "
 .BR radiolist ", "
 .BR tailbox ", "
@@ -862,6 +864,36 @@ On exit, the input string will be printed on \fB\*p\fP's output.
 .fi
 This is identical to \fB--form\fP except that all text fields are
 treated as \fBpassword\fP widgets rather than \fBinputbox\fP widgets.
+.
+.
+.IP "\fB--prgbox \fItext command height width"
+.IP "\fB--prgbox \fIcommand height width"
+A \fBprgbox\fP is very similar to a \fBprogrambox\fP.
+.IP
+This dialog box is used to display the output of a command that is
+specified as an argument to \fBprgbox\fP.
+.IP
+After the command completes, the user can press the \fIENTER\fP key so that
+\fBdialog\fP will exit and the calling shell script can continue its operation.
+.IP
+If three parameters are given, it displays the text under the title,
+delineated from the scrolling file's contents.
+If only two parameters are given, this text is omitted.
+.
+.
+.IP "\fB--programbox \fItext height width"
+.IP "\fB--programbox \fIheight width"
+A \fBprogrambox\fP is very similar to a \fBprogressbox\fP.
+The only difference between a \fBprogram\fP box and a \fBprogress\fP
+box is that a \fBprogram\fP box displays an \fBOK\fP button.
+.IP
+This dialog box is used to display the piped output of a command.
+After the command completes, the user can press the \fIENTER\fP key so that
+\fBdialog\fP will exit and the calling shell script can continue its operation.
+.IP
+If three parameters are given, it displays the text under the title,
+delineated from the scrolling file's contents.
+If only two parameters are given, this text is omitted.
 .
 .
 .IP "\fB--progressbox \fItext height width"

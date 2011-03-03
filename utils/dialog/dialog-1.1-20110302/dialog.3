@@ -1,4 +1,4 @@
-.\" $Id: dialog.3,v 1.58 2011/01/19 00:55:45 tom Exp $
+.\" $Id: dialog.3,v 1.60 2011/03/02 10:19:12 tom Exp $
 .\" Copyright 2005-2010,2011  Thomas E. Dickey
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 .de bP
 .IP \(bu 4
 ..
-.TH \*D 3 "" "$Date: 2011/01/19 00:55:45 $"
+.TH \*D 3 "" "$Date: 2011/03/02 10:19:12 $"
 .SH NAME
 \*l \- widgets and utilities for the \*p program
 .SH SYNOPSIS
@@ -864,6 +864,27 @@ If zero, the height is based on the screen size.
 is the timeout to use for the progress bar.
 .RE
 .\" ************************************************************************
+.IP \fBdialog_prgbox
+implements the "\fB--prgbox\fP" option.
+.RS
+.IP title
+is the title on the top of the widget.
+.IP cprompt
+is the prompt text shown within the widget.
+If empty or null, no prompt is shown.
+.IP command
+is the name of the command to execute.
+.IP height
+is the desired height of the box.
+If zero, the height is based on the screen size.
+.IP width
+is the desired width of the box.
+If zero, the height is based on the screen size.
+.IP pauseopt
+if true, an "OK" button will be shown,
+and the dialog will wait for it to complete.
+.RE
+.\" ************************************************************************
 .IP \fBdialog_progressbox
 implements the "\fB--progressbox\fP" option.
 .RS
@@ -1452,6 +1473,15 @@ Return the number of colors that can be configured in \fB\*p\fP.
 Initialize the color pairs used in \fB\*p\fP.
 .\" ---------------------------------------------------------------------------
 .TP 5
+.B dlg_count_argv
+Count the entries in an argument vector.
+.RS
+.TP 5
+.B argv
+Points to the argument vector.
+.RE
+.\" ---------------------------------------------------------------------------
+.TP 5
 .B dlg_count_columns
 Returns the number of columns used for a string.
 This is not necessarily the number of bytes in a string.
@@ -1764,6 +1794,21 @@ e.g., as part of \fBdlg_create_rc\fP.
 .TP 5
 .B FILE * \fIfp
 is the stream on which to write the bindings.
+.RE
+.\" ---------------------------------------------------------------------------
+.TP 5
+.B dlg_eat_argv
+Remove one or more items from an argument vector.
+.RS
+.TP 5
+.B int *argcp
+in/out parameter giving the length of the argument vector.
+.B char ***argvp
+in/out parameter pointing to the argument vector.
+.B int start
+starting index.
+.B int count
+number of arguments to remove.
 .RE
 .\" ---------------------------------------------------------------------------
 .TP 5
@@ -2439,7 +2484,7 @@ is the current button index
 .RE
 .\" ---------------------------------------------------------------------------
 .TP 5
-dlg_print_scrolled
+.B dlg_print_scrolled
 This is a wrapper for \fBdlg_print_autowrap\fP which allows the user
 to scroll too-long prompt text up/down.
 .IP
@@ -2565,6 +2610,29 @@ is the column limit
 .B chtype * \fIattr
 holds the starting attributes, and is updated to reflect the final attributes
 applied to the string.
+.RE
+.\" ---------------------------------------------------------------------------
+.B dlg_progressbox
+implements the "\fB--prgbox\fP" and "\fB--progressbox\fP" options.
+.RS
+.IP title
+is the title on the top of the widget.
+.IP cprompt
+is the prompt text shown within the widget.
+If empty or null, no prompt is shown.
+.IP height
+is the desired height of the box.
+If zero, the height is based on the screen size.
+.IP width
+is the desired width of the box.
+If zero, the height is based on the screen size.
+.IP pauseopt
+if true, an "OK" button will be shown,
+and the dialog will wait for it to complete.
+With an "OK" button, it is denoted a "programbox",
+without an "OK" button, it is denoted a "progressbox".
+.IP fp
+is the file pointer, which may be a pipe or a regular file.
 .RE
 .\" ---------------------------------------------------------------------------
 .TP 5
@@ -2731,6 +2799,17 @@ is one string
 .TP 5
 .B const char \fI* b
 is the other string
+.RE
+.\" ---------------------------------------------------------------------------
+.TP 5
+.B dlg_string_to_argv
+Convert a string to an argument vector
+returning an index (which must be freed by the caller).
+The string is modified (replacing gaps between tokens with nulls).
+.RS
+.TP 5
+.B char *\fIblob
+is the string to convert.
 .RE
 .\" ---------------------------------------------------------------------------
 .TP 5

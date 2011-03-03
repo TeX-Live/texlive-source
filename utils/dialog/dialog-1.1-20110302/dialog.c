@@ -1,5 +1,5 @@
 /*
- * $Id: dialog.c,v 1.184 2011/01/18 00:35:08 tom Exp $
+ * $Id: dialog.c,v 1.186 2011/03/02 09:58:29 tom Exp $
  *
  *  cdialog - Display simple dialog boxes from shell scripts
  *
@@ -106,9 +106,11 @@ typedef enum {
     ,o_passwordbox
     ,o_passwordform
     ,o_pause
+    ,o_prgbox
     ,o_print_maxsize
     ,o_print_size
     ,o_print_version
+    ,o_programbox
     ,o_progressbox
     ,o_quoted
     ,o_radiolist
@@ -248,10 +250,12 @@ static const Options options[] = {
     { "passwordbox",	o_passwordbox,		2, "<text> <height> <width> [<init>]" },
     { "passwordform",	o_passwordform,		2, "<text> <height> <width> <form height> <label1> <l_y1> <l_x1> <item1> <i_y1> <i_x1> <flen1> <ilen1>..." },
     { "pause",		o_pause,		2, "<text> <height> <width> <seconds>" },
+    { "prgbox",		o_prgbox,		2, "<text> <command> <height> <width>" },
     { "print-maxsize",	o_print_maxsize,	1, "" },
     { "print-size",	o_print_size,		1, "" },
     { "print-version",	o_print_version,	5, "" },
-    { "progressbox",	o_progressbox,		2, "<height> <width>" },
+    { "programbox",	o_programbox,		2, "<text> <height> <width>" },
+    { "progressbox",	o_progressbox,		2, "<text> <height> <width>" },
     { "quoted",		o_quoted,		1, "" },
     { "radiolist",	o_radiolist,		2, "<text> <height> <width> <list height> <tag1> <item1> <status1>..." },
     { "screen-center",	o_screen_center,	1, NULL },
@@ -289,109 +293,6 @@ static const Options options[] = {
 /* *INDENT-ON* */
 
 /*
- * Convert a string to an argv[], returning a char** index (which must be
- * freed by the caller).  The string is modified (replacing gaps between
- * tokens with nulls).
- */
-static char **
-string_to_argv(char *blob)
-{
-    size_t n;
-    int pass;
-    size_t length = strlen(blob);
-    char **result = 0;
-
-    for (pass = 0; pass < 2; ++pass) {
-	bool inparm = FALSE;
-	bool quoted = FALSE;
-	char *param = blob;
-	size_t count = 0;
-
-	for (n = 0; n < length; ++n) {
-	    if (quoted && blob[n] == '"') {
-		quoted = FALSE;
-	    } else if (blob[n] == '"') {
-		quoted = TRUE;
-		if (!inparm) {
-		    if (pass)
-			result[count] = param;
-		    ++count;
-		    inparm = TRUE;
-		}
-	    } else if (blob[n] == '\\') {
-		if (quoted && !isspace(UCH(blob[n + 1]))) {
-		    if (!inparm) {
-			if (pass)
-			    result[count] = param;
-			++count;
-			inparm = TRUE;
-		    }
-		    if (pass) {
-			*param++ = blob[n];
-			*param++ = blob[n + 1];
-		    }
-		}
-		++n;
-	    } else if (!quoted && isspace(UCH(blob[n]))) {
-		inparm = FALSE;
-		if (pass) {
-		    *param++ = '\0';
-		}
-	    } else {
-		if (!inparm) {
-		    if (pass)
-			result[count] = param;
-		    ++count;
-		    inparm = TRUE;
-		}
-		if (pass) {
-		    *param++ = blob[n];
-		}
-	    }
-	}
-
-	if (!pass) {
-	    if (count) {
-		result = dlg_calloc(char *, count + 1);
-		assert_ptr(result, "string_to_argv");
-	    } else {
-		break;		/* no tokens found */
-	    }
-	} else {
-	    *param = '\0';
-	}
-    }
-    return result;
-}
-
-/*
- * Count the entries in an argv list.
- */
-static int
-count_argv(char **argv)
-{
-    int result = 0;
-
-    if (argv != 0) {
-	while (argv[result] != 0)
-	    ++result;
-    }
-    return result;
-}
-
-static int
-eat_argv(int *argcp, char ***argvp, int start, int count)
-{
-    int k;
-
-    *argcp -= count;
-    for (k = start; k <= *argcp; k++)
-	(*argvp)[k] = (*argvp)[k + count];
-    (*argvp)[*argcp] = 0;
-    return TRUE;
-}
-
-/*
  * Make an array showing which argv[] entries are options.  Use "--" as a
  * special token to escape the next argument, allowing it to begin with "--".
  * When we find a "--" argument, also remove it from argv[] and adjust argc.
@@ -421,13 +322,13 @@ unescape_argv(int *argcp, char ***argvp)
 	bool escaped = FALSE;
 	if (!strcmp((*argvp)[j], "--")) {
 	    escaped = TRUE;
-	    changed = eat_argv(argcp, argvp, j, 1);
+	    changed = dlg_eat_argv(argcp, argvp, j, 1);
 	} else if (!strcmp((*argvp)[j], "--args")) {
 	    fprintf(stderr, "Showing arguments at arg%d\n", j);
 	    for (k = 0; k < *argcp; ++k) {
 		fprintf(stderr, " arg%d:%s\n", k, (*argvp)[k]);
 	    }
-	    changed = eat_argv(argcp, argvp, j, 1);
+	    changed = dlg_eat_argv(argcp, argvp, j, 1);
 	} else if (!strcmp((*argvp)[j], "--file")) {
 	    if (++count_includes > limit_includes)
 		dlg_exiterr("Too many --file options");
@@ -465,8 +366,8 @@ unescape_argv(int *argcp, char ***argvp)
 
 		    blob[length] = '\0';
 
-		    list = string_to_argv(blob);
-		    if ((added = count_argv(list)) != 0) {
+		    list = dlg_string_to_argv(blob);
+		    if ((added = dlg_count_argv(list)) != 0) {
 			if (added > 2) {
 			    size_t need = (size_t) (*argcp + added + 1);
 			    if (doalloc) {
@@ -971,6 +872,53 @@ call_mixed_gauge(CALLARGS)
 }
 #endif
 
+static int
+call_prgbox(CALLARGS)
+{
+    *offset_add = arg_rest(av);
+    /* the original version does not accept a prompt string, but for
+     * consistency we allow it.
+     */
+    return ((*offset_add == 5)
+	    ? dialog_prgbox(t,
+			    av[1],
+			    av[2],
+			    numeric_arg(av, 3),
+			    numeric_arg(av, 4), TRUE)
+	    : dialog_prgbox(t,
+			    "",
+			    av[1],
+			    numeric_arg(av, 2),
+			    numeric_arg(av, 3), TRUE));
+}
+
+#ifdef HAVE_DLG_GAUGE
+static int
+call_programbox(CALLARGS)
+{
+    int result;
+
+    *offset_add = arg_rest(av);
+    /* this function is a compromise between --prgbox and --progressbox.
+     */
+    result = ((*offset_add == 4)
+	      ? dlg_progressbox(t,
+				av[1],
+				numeric_arg(av, 2),
+				numeric_arg(av, 3),
+				TRUE,
+				dialog_state.pipe_input)
+	      : dlg_progressbox(t,
+				"",
+				numeric_arg(av, 1),
+				numeric_arg(av, 2),
+				TRUE,
+				dialog_state.pipe_input));
+    dialog_state.pipe_input = 0;
+    return result;
+}
+#endif
+
 #ifdef HAVE_DLG_GAUGE
 static int
 call_progressbox(CALLARGS)
@@ -1030,6 +978,8 @@ static const Mode modes[] =
 #ifdef HAVE_DLG_GAUGE
     {o_gauge,           4, 5, call_gauge},
     {o_pause,           5, 5, call_pause},
+    {o_prgbox,          4, 5, call_prgbox},
+    {o_programbox,      3, 4, call_programbox},
     {o_progressbox,     3, 4, call_progressbox},
 #endif
 #ifdef HAVE_DLG_FORMBOX
@@ -1474,8 +1424,8 @@ init_result(char *buffer)
 	if (env != 0)
 	    env = dlg_strclone(env);
 	if (env != 0) {
-	    special_argv = string_to_argv(env);
-	    special_argc = count_argv(special_argv);
+	    special_argv = dlg_string_to_argv(env);
+	    special_argc = dlg_count_argv(special_argv);
 	}
     }
     if (special_argv != 0) {

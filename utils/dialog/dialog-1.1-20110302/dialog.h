@@ -1,5 +1,5 @@
 /*
- *  $Id: dialog.h,v 1.220 2011/01/19 00:26:01 tom Exp $
+ *  $Id: dialog.h,v 1.223 2011/03/02 10:04:09 tom Exp $
  *
  *  dialog.h -- common declarations for all dialog modules
  *
@@ -26,6 +26,7 @@
 
 #ifndef DIALOG_H_included
 #define DIALOG_H_included 1
+/* *INDENT-OFF* */
 
 #include <dlg_config.h>
 
@@ -535,6 +536,7 @@ extern int dialog_mixedform(const char * /*title*/, const char * /*cprompt*/, in
 extern int dialog_mixedgauge(const char * /*title*/, const char * /*cprompt*/, int /*height*/, int /*width*/, int /*percent*/, int /*item_no*/, char ** /*items*/);
 extern int dialog_msgbox(const char * /*title*/, const char * /*cprompt*/, int /*height*/, int /*width*/, int /*pauseopt*/);
 extern int dialog_pause(const char * /*title*/, const char * /*cprompt*/, int /*height*/, int /*width*/, int /*seconds*/);
+extern int dialog_prgbox(const char * /*title*/, const char * /*cprompt*/, const char * /*command*/, int /*height*/, int /*width*/, int /*pauseopt*/);
 extern int dialog_progressbox(const char * /*title*/, const char * /*cprompt*/, int /*height*/, int /*width*/);
 extern int dialog_tailbox(const char * /*title*/, const char * /*file*/, int /*height*/, int /*width*/, int /*bg_task*/);
 extern int dialog_textbox(const char * /*title*/, const char * /*file*/, int /*height*/, int /*width*/);
@@ -572,6 +574,12 @@ typedef	int (DIALOG_INPUTMENU) (DIALOG_LISTITEM * /*items*/, int /*current*/, ch
 extern int dlg_checklist(const char * /*title*/, const char * /*cprompt*/, int /*height*/, int /*width*/, int /*list_height*/, int /*item_no*/, DIALOG_LISTITEM * /*items*/, const char * /*states*/, int /*flag*/, int * /*current_item*/);
 extern int dlg_form(const char * /*title*/, const char * /*cprompt*/, int /*height*/, int /*width*/, int /*form_height*/, int /*item_no*/, DIALOG_FORMITEM * /*items*/, int * /*current_item*/);
 extern int dlg_menu(const char * /*title*/, const char * /*cprompt*/, int /*height*/, int /*width*/, int /*menu_height*/, int /*item_no*/, DIALOG_LISTITEM * /*items*/, int * /*current_item*/, DIALOG_INPUTMENU /*rename_menu*/);
+extern int dlg_progressbox(const char * /*title*/, const char * /*cprompt*/, int /*height*/, int /*width*/, int /*pauseopt*/, FILE * /* fp */);
+
+/* argv.c */
+extern char ** dlg_string_to_argv(char * /* blob */);
+extern int dlg_count_argv(char ** /* argv */);
+extern int dlg_eat_argv(int * /* argcp */, char *** /* argvp */, int /* start */, int /* count */);
 
 /* arrows.c */
 extern void dlg_draw_arrows(WINDOW * /*dialog*/, int /*top_arrow*/, int /*bottom_arrow*/, int /*x*/, int /*top*/, int /*bottom*/);
@@ -802,5 +810,6 @@ extern void _nc_free_and_exit(int);	/* nc_alloc.h normally not installed */
 #ifdef __cplusplus
 }
 #endif
+/* *INDENT-ON* */
 
 #endif /* DIALOG_H_included */

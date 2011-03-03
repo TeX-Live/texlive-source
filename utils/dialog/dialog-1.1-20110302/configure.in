@@ -1,4 +1,4 @@
-dnl $Id: configure.in,v 1.63 2011/01/19 00:24:46 tom Exp $
+dnl $Id: configure.in,v 1.64 2011/03/01 00:59:50 tom Exp $
 dnl Process this file with autoconf to produce a configure script.
 dnl ---------------------------------------------------------------------------
 dnl Copyright 1999-2010,2011 -- Thomas E. Dickey
@@ -152,7 +152,7 @@ CF_ARG_MSG_ENABLE([if you want the form dialog],
 CF_ARG_MSG_ENABLE([if you want the gauge dialog],
 	gauge,
 	[  --disable-gauge         do not include the gauge dialogs],
-	[EXTRAOBJS="$EXTRAOBJS guage\$o pause\$o progressbox\$o"
+	[EXTRAOBJS="$EXTRAOBJS guage\$o pause\$o prgbox\$o progressbox\$o"
 	 AC_DEFINE(HAVE_DLG_GAUGE)],,$cf_all_widgets)
 
 CF_ARG_MSG_ENABLE([if you want the tailbox dialog],

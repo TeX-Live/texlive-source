@@ -1,4 +1,4 @@
-# $Id: makefile.in,v 1.77 2011/01/19 00:39:53 tom Exp $
+# $Id: makefile.in,v 1.78 2011/03/02 09:57:24 tom Exp $
 # template makefile for DIALOG
 ##############################################################################
 # Copyright (c) 1999-2010,2011 Thomas E. Dickey                              #
@@ -127,6 +127,7 @@ PROG		= dialog$x
 
 EXTRAOBJS = @EXTRAOBJS@
 OBJECTS = $(EXTRAOBJS) \
+	argv$o \
 	arrows$o \
 	buttons$o \
 	checklist$o \
