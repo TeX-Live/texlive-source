@@ -1,6 +1,6 @@
 /* lib.h: declarations for common, low-level routines in kpathsea.
 
-   Copyright 1992, 1993, 1994, 1995, 1996, 2008, 2009, 2010 Karl Berry.
+   Copyright 1992, 1993, 1994, 1995, 1996, 2008, 2009, 2010, 2011 Karl Berry.
    Copyright 1999, 2000, 2003, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -205,7 +205,7 @@ extern KPSEDLL FILE *xfopen (const_string filename, const_string mode);
 extern KPSEDLL void xfclose (FILE *fp, const_string filename);
 extern KPSEDLL void xfseek (FILE *fp, long offset, int wherefrom, const_string filename);
 extern KPSEDLL void xfseeko (FILE *fp, off_t offset, int wherefrom, const_string filename);
-extern KPSEDLL unsigned long xftell (FILE *fp, const_string filename);
+extern KPSEDLL long xftell (FILE *fp, const_string filename);
 extern KPSEDLL off_t xftello (FILE *fp, const_string filename);
 
 /* These call the corresponding function in the standard library, and

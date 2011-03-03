@@ -1,6 +1,6 @@
 /* xftell.c: ftell with error checking.
 
-   Copyright 1992, 1993, 1995, 2008 Karl Berry.
+   Copyright 1992, 1993, 1995, 2008, 2011 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -19,10 +19,10 @@
 #include <kpathsea/config.h>
 
 
-unsigned long
+long
 xftell (FILE *f,  const_string filename)
 {
-    long where = ftello (f);
+    long where = ftell (f);
 
     if (where < 0)
         FATAL_PERROR(filename);

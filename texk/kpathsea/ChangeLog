@@ -1,3 +1,8 @@
+2011-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lib.h, xftell.c (xftell): Change return type from unsigned to
+	signed and use ftell() instead of ftello().
+
 2011-03-01  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf: be more explicit that all trees, including TEXMFHOME,
