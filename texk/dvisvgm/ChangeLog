@@ -1,3 +1,9 @@
+2011-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.0.5.
+	* configure.ac: Adapted.
+	* Makefile.am: Added CRC32.cpp to libdvisvgm.a sources.
+
 2010-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.0.3.

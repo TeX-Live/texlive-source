@@ -81,14 +81,15 @@ libdvisvgm_a_AR = $(AR) $(ARFLAGS)
 libdvisvgm_a_LIBADD =
 @dlloader_TRUE@am__objects_1 = DLLoader.$(OBJEXT)
 nodist_libdvisvgm_a_OBJECTS = BgColorSpecialHandler.$(OBJEXT) \
-	Bitmap.$(OBJEXT) BoundingBox.$(OBJEXT) Calculator.$(OBJEXT) \
-	CmdLineParserBase.$(OBJEXT) Color.$(OBJEXT) \
-	ColorSpecialHandler.$(OBJEXT) CommandLine.$(OBJEXT) \
-	Directory.$(OBJEXT) DVIActions.$(OBJEXT) DVIReader.$(OBJEXT) \
-	DvisvgmSpecialHandler.$(OBJEXT) DVIToSVG.$(OBJEXT) \
-	DVIToSVGActions.$(OBJEXT) EmSpecialHandler.$(OBJEXT) \
-	FileFinder.$(OBJEXT) FilePath.$(OBJEXT) FileSystem.$(OBJEXT) \
-	Font.$(OBJEXT) FontCache.$(OBJEXT) FontEncoding.$(OBJEXT) \
+	Bitmap.$(OBJEXT) BoundingBox.$(OBJEXT) CRC32.$(OBJEXT) \
+	Calculator.$(OBJEXT) CmdLineParserBase.$(OBJEXT) \
+	Color.$(OBJEXT) ColorSpecialHandler.$(OBJEXT) \
+	CommandLine.$(OBJEXT) Directory.$(OBJEXT) DVIActions.$(OBJEXT) \
+	DVIReader.$(OBJEXT) DvisvgmSpecialHandler.$(OBJEXT) \
+	DVIToSVG.$(OBJEXT) DVIToSVGActions.$(OBJEXT) \
+	EmSpecialHandler.$(OBJEXT) FileFinder.$(OBJEXT) \
+	FilePath.$(OBJEXT) FileSystem.$(OBJEXT) Font.$(OBJEXT) \
+	FontCache.$(OBJEXT) FontEncoding.$(OBJEXT) \
 	FontEngine.$(OBJEXT) FontManager.$(OBJEXT) FontMap.$(OBJEXT) \
 	GFReader.$(OBJEXT) GFGlyphTracer.$(OBJEXT) GFTracer.$(OBJEXT) \
 	Ghostscript.$(OBJEXT) InputBuffer.$(OBJEXT) \
@@ -343,6 +344,7 @@ nodist_libdvisvgm_a_SOURCES =  \
 	$(DVISVGM_TREE)/src/BgColorSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/Bitmap.cpp \
 	$(DVISVGM_TREE)/src/BoundingBox.cpp \
+	$(DVISVGM_TREE)/src/CRC32.cpp \
 	$(DVISVGM_TREE)/src/Calculator.cpp \
 	$(DVISVGM_TREE)/src/CmdLineParserBase.cpp \
 	$(DVISVGM_TREE)/src/Color.cpp \
@@ -516,6 +518,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BgColorSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bitmap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BoundingBox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CRC32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Calculator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CmdLineParserBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Color.Po@am__quote@
@@ -710,6 +713,20 @@ BoundingBox.obj: $(DVISVGM_TREE)/src/BoundingBox.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/BoundingBox.cpp' object='BoundingBox.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BoundingBox.obj `if test -f '$(DVISVGM_TREE)/src/BoundingBox.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/BoundingBox.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/BoundingBox.cpp'; fi`
+
+CRC32.o: $(DVISVGM_TREE)/src/CRC32.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CRC32.o -MD -MP -MF $(DEPDIR)/CRC32.Tpo -c -o CRC32.o `test -f '$(DVISVGM_TREE)/src/CRC32.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/CRC32.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/CRC32.Tpo $(DEPDIR)/CRC32.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/CRC32.cpp' object='CRC32.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CRC32.o `test -f '$(DVISVGM_TREE)/src/CRC32.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/CRC32.cpp
+
+CRC32.obj: $(DVISVGM_TREE)/src/CRC32.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CRC32.obj -MD -MP -MF $(DEPDIR)/CRC32.Tpo -c -o CRC32.obj `if test -f '$(DVISVGM_TREE)/src/CRC32.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/CRC32.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/CRC32.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/CRC32.Tpo $(DEPDIR)/CRC32.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/CRC32.cpp' object='CRC32.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CRC32.obj `if test -f '$(DVISVGM_TREE)/src/CRC32.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/CRC32.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/CRC32.cpp'; fi`
 
 Calculator.o: $(DVISVGM_TREE)/src/Calculator.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Calculator.o -MD -MP -MF $(DEPDIR)/Calculator.Tpo -c -o Calculator.o `test -f '$(DVISVGM_TREE)/src/Calculator.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/Calculator.cpp

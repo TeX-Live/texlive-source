@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvisvgm/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -53,6 +53,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/BgColorSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/Bitmap.cpp \
 	$(DVISVGM_TREE)/src/BoundingBox.cpp \
+	$(DVISVGM_TREE)/src/CRC32.cpp \
 	$(DVISVGM_TREE)/src/Calculator.cpp \
 	$(DVISVGM_TREE)/src/CmdLineParserBase.cpp \
 	$(DVISVGM_TREE)/src/Color.cpp \

@@ -1,0 +1,26 @@
+	Change return type of potrace_version() from 'char *' to
+	'const char *' in order to avoid compiler warning.
+
+diff -ur dvisvgm-1.0.5.orig/potracelib/potracelib.c dvisvgm-1.0.5/potracelib/potracelib.c
+--- dvisvgm-1.0.5.orig/potracelib/potracelib.c	2011-02-21 19:47:53.000000000 +0100
++++ dvisvgm-1.0.5/potracelib/potracelib.c	2011-03-04 09:47:22.000000000 +0100
+@@ -109,6 +109,6 @@
+   free(p);
+ }
+ 
+-char *potrace_version(void) {
++const char *potrace_version(void) {
+   return "potracelib 1.9";
+ }
+diff -ur dvisvgm-1.0.5.orig/potracelib/potracelib.h dvisvgm-1.0.5/potracelib/potracelib.h
+--- dvisvgm-1.0.5.orig/potracelib/potracelib.h	2011-02-21 19:47:53.000000000 +0100
++++ dvisvgm-1.0.5/potracelib/potracelib.h	2011-03-04 09:47:20.000000000 +0100
+@@ -130,7 +130,7 @@
+ 
+ /* return a static plain text version string identifying this version
+    of potracelib */
+-char *potrace_version(void);
++const char *potrace_version(void);
+ 
+ #ifdef  __cplusplus
+ } /* end of extern "C" */
