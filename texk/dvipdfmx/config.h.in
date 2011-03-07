@@ -95,10 +95,6 @@
 /* Define to 1 if you have the `png_get_image_width' function. */
 #undef HAVE_PNG_GET_IMAGE_WIDTH
 
-/* Define to 1 if you are using GNU libc or otherwise have global variables
-   `program_invocation_name' and `program_invocation_short_name'. */
-#undef HAVE_PROGRAM_INVOCATION_NAME
-
 /* Define to 1 if you have the `putenv' function. */
 #undef HAVE_PUTENV
 

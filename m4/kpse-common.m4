@@ -257,20 +257,6 @@ if test "x$kb_cv_c_prototypes" = xno; then
   AC_MSG_ERROR([Sorry, your compiler does not understand prototypes.])
 fi
 dnl
-dnl This is a GNU libc invention.
-AC_CACHE_CHECK([whether program_invocation_name is predefined],
-               [kb_cv_var_program_inv_name],
-               [AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],
-                                                [[extern char *program_invocation_name;
-                                                  program_invocation_name = "love";]])],
-                               [kb_cv_var_program_inv_name=yes],
-                               [kb_cv_var_program_inv_name=no])])
-if test "x$kb_cv_var_program_inv_name" = xyes; then
-  AC_DEFINE([HAVE_PROGRAM_INVOCATION_NAME], 1,
-            [Define to 1 if you are using GNU libc or otherwise have global variables
-             `program_invocation_name' and `program_invocation_short_name'.])
-fi
-dnl
 dnl Enable flags for compiler warnings
 KPSE_COMPILER_WARNINGS
 ]) # KPSE_COMMON

@@ -98,10 +98,6 @@
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
-/* Define to 1 if you are using GNU libc or otherwise have global variables
-   `program_invocation_name' and `program_invocation_short_name'. */
-#undef HAVE_PROGRAM_INVOCATION_NAME
-
 /* Define to 1 if you have the `putenv' function. */
 #undef HAVE_PUTENV
 

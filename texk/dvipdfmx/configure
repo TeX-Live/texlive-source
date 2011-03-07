@@ -12697,38 +12697,6 @@ $as_echo "$kb_cv_c_prototypes" >&6; }
 if test "x$kb_cv_c_prototypes" = xno; then
   as_fn_error $? "Sorry, your compiler does not understand prototypes." "$LINENO" 5
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether program_invocation_name is predefined" >&5
-$as_echo_n "checking whether program_invocation_name is predefined... " >&6; }
-if ${kb_cv_var_program_inv_name+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main ()
-{
-extern char *program_invocation_name;
-                                                  program_invocation_name = "love";
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  kb_cv_var_program_inv_name=yes
-else
-  kb_cv_var_program_inv_name=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kb_cv_var_program_inv_name" >&5
-$as_echo "$kb_cv_var_program_inv_name" >&6; }
-if test "x$kb_cv_var_program_inv_name" = xyes; then
-
-$as_echo "#define HAVE_PROGRAM_INVOCATION_NAME 1" >>confdefs.h
-
-fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C compiler" >&5
 $as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
 if ${kpse_cv_warning_cflags+:} false; then :
