@@ -222,7 +222,7 @@ static int exec_spawn (char *cmd)
   }
   *qv = NULL;
 #ifdef WIN32
-  ret = spawnvp (_P_WAIT, *cmdv, cmdv);
+  ret = spawnvp (_P_WAIT, *cmdv, (const char* const*) cmdv);
 #else
   i = fork ();
   if (i < 0)

@@ -1,6 +1,6 @@
 diff -ur dvipdfmx-20110305.orig/src/dpxfile.c dvipdfmx-20110305/src/dpxfile.c
 --- dvipdfmx-20110305.orig/src/dpxfile.c	2011-03-06 04:06:59.000000000 +0100
-+++ dvipdfmx-20110305/src/dpxfile.c	2011-03-07 17:34:53.000000000 +0100
++++ dvipdfmx-20110305/src/dpxfile.c	2011-03-07 18:31:04.000000000 +0100
 @@ -36,7 +36,6 @@
  #include "dpxfile.h"
  
@@ -21,6 +21,15 @@ diff -ur dvipdfmx-20110305.orig/src/dpxfile.c dvipdfmx-20110305/src/dpxfile.c
  #endif
      } else {
        *qv = concat (buf, "");
+@@ -223,7 +222,7 @@
+   }
+   *qv = NULL;
+ #ifdef WIN32
+-  ret = spawnvp (_P_WAIT, *cmdv, cmdv);
++  ret = spawnvp (_P_WAIT, *cmdv, (const char* const*) cmdv);
+ #else
+   i = fork ();
+   if (i < 0)
 @@ -765,14 +764,14 @@
  #  define __TMPDIR     "/tmp"
  #  define TEMPLATE     "/dvipdfmx.XXXXXX"
