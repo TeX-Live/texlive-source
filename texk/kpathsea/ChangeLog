@@ -1,3 +1,13 @@
+2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* types.h: Rename the variables program_invocation_name and
+	program_invocation_short_name into kpse_invocation_name and
+	kpse_invocation_short_name repectively, (1) in order to avoid
+	conflicts with /usr/include/sys/errno.h from Cygwin, and (2)
+	because they are not the same as those from the GNU C library.
+
+	Problem reported by Ken Brown <kbrow1i@gmail.com>.
+
 2011-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lib.h, xftell.c (xftell): Change return type from unsigned to
@@ -6,7 +16,7 @@
 2011-03-01  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf: be more explicit that all trees, including TEXMFHOME,
-	must follow the TDS>
+	must follow the TDS.
 
 2011-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

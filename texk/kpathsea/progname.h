@@ -30,7 +30,7 @@ extern KPSEDLL string kpathsea_selfdir (kpathsea kpse, const_string argv0);
 /* Set the first two variables above (if they're not predefined) to a copy
    of ARGV0 and everything in ARGV0 after the last directory separator,
    respectively.  Set kpse_program_name to a copy of PROGNAME or the
-   value of program_invocation_short_name if PROGNAME is NULL.
+   value of kpse_invocation_short_name if PROGNAME is NULL.
    This function also determines the AUTO* variables. */
 
 extern KPSEDLL void kpathsea_set_program_name (kpathsea kpse,

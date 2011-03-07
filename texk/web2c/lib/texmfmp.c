@@ -628,7 +628,7 @@ maininit (int ac, string *av)
   if (!user_progname)
     user_progname = dump_name;
   
-  /* Do this early so we can inspect program_invocation_name and
+  /* Do this early so we can inspect kpse_invocation_name and
      kpse_program_name below, and because we have to do this before
      any path searching.  */
   kpse_set_program_name (argv[0], user_progname);

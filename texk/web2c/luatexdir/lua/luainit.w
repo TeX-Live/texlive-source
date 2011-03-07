@@ -43,7 +43,7 @@ does much more, making it hard to use for our purpose.
 
 In fact, it sets three C variables:
 
-  |program_invocation_name|  |program_invocation_short_name|  |kpse->program_name|
+  |kpse_invocation_name|  |kpse_invocation_short_name|  |kpse->program_name|
 
 and four environment variables:
 
@@ -743,11 +743,11 @@ void lua_initialize(int ac, char **av)
     }
     ptexbanner = banner;
 
-    program_invocation_name = cleaned_invocation_name(argv[0]);
+    kpse_invocation_name = cleaned_invocation_name(argv[0]);
 
     /* be 'luac' */
     if (argc > 1 &&
-        (STREQ(program_invocation_name, "texluac") ||
+        (STREQ(kpse_invocation_name, "texluac") ||
          STREQ(argv[1], "--luaconly") || STREQ(argv[1], "--luac"))) {
         exit(luac_main(ac, av));
     }

@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* hypertex.c (launch_xdvi): `program_invocation_name' has been
+	renamed into `kpse_invocation_name'.
+
 2010-05-25  Karl Berry  <karl@tug.org>
 
 	* m4/xdvi-check-iconv.m4 (--with-iconv): new option to

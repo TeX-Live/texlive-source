@@ -1,3 +1,8 @@
+2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c (setup_bound_variable): `program_invocation_name' has
+	been renamed into `kpse_invocation_name'.
+
 2010-05-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bibtex.h: fix a bug in the macro BIB_XRETALLOC_STRING.

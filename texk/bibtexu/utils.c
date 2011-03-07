@@ -1261,7 +1261,7 @@ static void setup_bound_variable (Integer_T *var, const char *name,
 {
 #ifdef KPATHSEA
     char *expansion = kpse_var_value (name);
-    const char *me = program_invocation_name;
+    const char *me = kpse_invocation_name;
     const char *src = " or texmf.cnf";
 #else
     char *expansion = getenv (name);

@@ -278,10 +278,10 @@ extern KPSEDLL kpathsea kpse_def;
 #define kpse_format_info             kpse_def_inst.format_info
 #define kpse_debug_hash_lookup_int   kpse_def_inst.debug_hash_lookup_int
 
-#undef program_invocation_name
-#define program_invocation_name      kpse_def_inst.invocation_name
-#undef program_invocation_short_name
-#define program_invocation_short_name kpse_def_inst.invocation_short_name
+#undef kpse_invocation_name
+#define kpse_invocation_name         kpse_def_inst.invocation_name
+#undef kpse_invocation_short_name
+#define kpse_invocation_short_name   kpse_def_inst.invocation_short_name
 
 #endif /* KPSE_COMPAT_API */
 

@@ -239,7 +239,7 @@ void pdftex_fail(const char *fmt, ...)
     va_start(args, fmt);
     println();
     safe_print("!pdfTeX error: ");
-    safe_print(program_invocation_name);
+    safe_print(kpse_invocation_name);
     if (cur_file_name) {
         safe_print(" (file ");
         safe_print(cur_file_name);
@@ -271,7 +271,7 @@ void pdftex_warn(const char *fmt, ...)
     va_start(args, fmt);
     println();
     println();
-    tex_printf("pdfTeX warning: %s", program_invocation_name);
+    tex_printf("pdfTeX warning: %s", kpse_invocation_name);
     if (cur_file_name)
         tex_printf(" (file %s)", cur_file_name);
     tex_printf(": ");

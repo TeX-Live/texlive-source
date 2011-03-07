@@ -1906,7 +1906,7 @@ launch_xdvi(const char *filename, const char *anchor_name)
 
     ASSERT(filename != NULL, "filename argument to launch_xdvi() mustn't be NULL");
 
-    argv[i++] = program_invocation_name;
+    argv[i++] = kpse_invocation_name;
     /* FIXME: there's something broken with this and invoking xdvi.bin.
        To reproduce the problem, invoke from the shell:
        xdvi.bin -geometry 829x1172 /usr/share/texmf/doc/programs/kpathsea.dvi

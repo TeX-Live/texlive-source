@@ -1,3 +1,8 @@
+2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* setupvar.c (setupboundvariable): `program_invocation_name' has
+	been renamed into `kpse_invocation_name'.
+
 2011-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (calledit): [__MINGW32__] Drop win32_system() and

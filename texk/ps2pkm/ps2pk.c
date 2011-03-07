@@ -423,19 +423,19 @@ int argc; char *argv[];
        free(altname);
      }
      if (!psfile)
-       fatal("%s: PS file %s not found!\n", program_invocation_name,
+       fatal("%s: PS file %s not found!\n", kpse_invocation_name,
 	     psname);
      if (afmname == NULL)
        afmname = newname(psname, ".afm");
      afmfile = kpse_find_file(afmname,kpse_afm_format,0);
      if (!afmfile)
-       fatal("%s: AFM file %s not found!\n", program_invocation_name,
+       fatal("%s: AFM file %s not found!\n", kpse_invocation_name,
 	     afmname);
      
      if (encname) {
        encfile = kpse_find_file(encname,kpse_enc_format,0);
        if (!encfile)
-	 fatal("%s: enc file %s not found!\n", program_invocation_name,
+	 fatal("%s: enc file %s not found!\n", kpse_invocation_name,
 	       encname);
      }
      else

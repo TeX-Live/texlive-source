@@ -1,3 +1,8 @@
+2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c (setup_bound_variable): `program_invocation_name' has
+	been renamed into `kpse_invocation_name'.
+
 2010-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/bibtexu.test (new): Just 'bibtexu -version'.

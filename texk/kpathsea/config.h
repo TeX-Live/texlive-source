@@ -105,7 +105,7 @@
 #include <kpathsea/debug.h>    /* Runtime tracing.  */
 #include <kpathsea/lib.h>      /* STREQ, etc. */
 #include <kpathsea/types.h>    /* <sys/types.h>, boolean, string, etc. */
-#include <kpathsea/progname.h> /* for program_invocation_*name */
+#include <kpathsea/progname.h> /* for kpse_invocation_*name */
 
 
 /* If you want to find subdirectories in a directory with non-Unix
