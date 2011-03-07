@@ -6,9 +6,10 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([dvipdfmx], [20100328], [dvipdfmx@project.ktug.or.kr])
+m4_define([dvipdfmx_version], [20110305])[]dnl using unmodified dvipdfmx source tree
+AC_INIT([dvipdfmx], dvipdfmx_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([src/dvipdfmx.c])
+AC_CONFIG_SRCDIR([dvipdfmx-]dvipdfmx_version[/src/dvipdfmx.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -70,15 +71,21 @@ KPSE_RESTORE_FLAGS
 echo timestamp >config.force
 fi
 
+dnl We always have this in TeX Live
+AC_DEFINE([__TDS_VERSION__], [0x200406L],
+          [Define to 0x200406L if your libkpathsea supports enc formats.])
+
 dnl Check for additional libraries.
 
 if test "x$enable_texlive_build" != xyes || test ! -d $srdir/../kpathsea; then
   CHO_CHECK_LIBPAPER
 fi
 
+AC_SUBST([DVIPDFMX_TREE], [dvipdfmx-]dvipdfmx_version)
+
 KPSE_CHECK_WIN32
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 
-AC_CONFIG_FILES([Makefile data/Makefile man/Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT
