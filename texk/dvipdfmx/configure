@@ -765,7 +765,6 @@ with_system_zlib
 with_zlib_includes
 with_zlib_libdir
 with_system_libpng
-with_paper
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1430,7 +1429,6 @@ Optional Packages:
   --with-zlib-libdir=DIR  zlib library installed in DIR
   --with-system-libpng    use installed libpng headers and library (requires
                           pkg-config)
-  --with-paper=DIR        use paper include/library files from DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -12866,7 +12864,7 @@ $as_echo "#define STDC_HEADERS 1" >>confdefs.h
 
 fi
 
-for ac_header in stdint.h inttypes.h sys/types.h
+for ac_header in stdint.h inttypes.h sys/types.h sys/wait.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -12942,7 +12940,7 @@ test $ac_cv_func_memcmp_working = no && case " $LIBOBJS " in
 esac
 
 
-for ac_func in open close system getenv mkstemp basename
+for ac_func in open close getenv mkstemp basename
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -15143,6 +15141,9 @@ fi
 
 
 
+$as_echo "#define __TDS_VERSION__ 0x200406L" >>confdefs.h
+
+
 eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$ZLIB_LIBS \$LIBS\"
 
@@ -15253,106 +15254,6 @@ LIBS=$kpse_save_LIBS
 
 
 echo timestamp >config.force
-fi
-
-
-$as_echo "#define __TDS_VERSION__ 0x200406L" >>confdefs.h
-
-
-
-if test "x$enable_texlive_build" != xyes || test ! -d $srdir/../kpathsea; then
-  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
-
-# Check whether --with-paper was given.
-if test "${with_paper+set}" = set; then :
-  withval=$with_paper; if test -d "$withval"; then
-     CPPFLAGS="$CPPFLAGS -I$withval/include"
-     LDFLAGS="$LDFLAGS -L$withval/lib"
-   fi
-fi
-
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking for paper header files" >&5
-$as_echo_n "checking for paper header files... " >&6; }
- cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <paper.h>
-int
-main ()
-{
-struct paper *p;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing paperpswidth" >&5
-$as_echo_n "checking for library containing paperpswidth... " >&6; }
-if ${ac_cv_search_paperpswidth+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_func_search_save_LIBS=$LIBS
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char paperpswidth ();
-int
-main ()
-{
-return paperpswidth ();
-  ;
-  return 0;
-}
-_ACEOF
-for ac_lib in '' paper; do
-  if test -z "$ac_lib"; then
-    ac_res="none required"
-  else
-    ac_res=-l$ac_lib
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-  fi
-  if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_search_paperpswidth=$ac_res
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext
-  if ${ac_cv_search_paperpswidth+:} false; then :
-  break
-fi
-done
-if ${ac_cv_search_paperpswidth+:} false; then :
-
-else
-  ac_cv_search_paperpswidth=no
-fi
-rm conftest.$ac_ext
-LIBS=$ac_func_search_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_paperpswidth" >&5
-$as_echo "$ac_cv_search_paperpswidth" >&6; }
-ac_res=$ac_cv_search_paperpswidth
-if test "$ac_res" != no; then :
-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-
-$as_echo "#define HAVE_LIBPAPER 1" >>confdefs.h
-
-fi
-
-else
-  CPPFLAGS=$_cppflags
-   LDDFLAGS=$_ldflags
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
 fi
 
 DVIPDFMX_TREE=dvipdfmx-20110305

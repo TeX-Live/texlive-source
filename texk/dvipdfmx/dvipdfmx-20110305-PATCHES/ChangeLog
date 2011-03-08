@@ -1,3 +1,8 @@
+2011-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-sys_wait_h (new): Check for sys/wait.h, in order to
+	define HAVE_SYS_WAIT_H (required for src/dpxfile.c).
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported snapshot 20110305.

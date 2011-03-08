@@ -20,11 +20,11 @@ AC_CONFIG_HEADERS([config.h])
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([stdint.h inttypes.h sys/types.h])
+AC_CHECK_HEADERS([stdint.h inttypes.h sys/types.h sys/wait.h])
 
 dnl Checks for library functions.
 AC_FUNC_MEMCMP
-AC_CHECK_FUNCS([open close system getenv mkstemp basename])
+AC_CHECK_FUNCS([open close getenv mkstemp basename])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
@@ -59,6 +59,8 @@ if test "x$enable_build" != xno || test -f config.force; then
 KPSE_ADD_FLAGS([kpathsea])
 AC_CHECK_HEADER([kpathsea/version.h], [],
                 [AC_MSG_ERROR([Sorry, kpathsea too old])])
+AC_DEFINE([__TDS_VERSION__], [0x200406L],
+          [Define to 0x200406L if your libkpathsea supports enc formats.])
 
 KPSE_ADD_FLAGS([zlib])
 CHO_CHECK_ZLIB
@@ -69,16 +71,6 @@ CHO_CHECK_LIBPNG
 KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
-fi
-
-dnl We always have this in TeX Live
-AC_DEFINE([__TDS_VERSION__], [0x200406L],
-          [Define to 0x200406L if your libkpathsea supports enc formats.])
-
-dnl Check for additional libraries.
-
-if test "x$enable_texlive_build" != xyes || test ! -d $srdir/../kpathsea; then
-  CHO_CHECK_LIBPAPER
 fi
 
 AC_SUBST([DVIPDFMX_TREE], [dvipdfmx-]dvipdfmx_version)
