@@ -1,3 +1,8 @@
+2011-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-warnings (new): Remove unused variables; add explicit
+	cast for `-1' used as `uint32_t'.
+
 2010-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import lcdf-typetools-2.85.

@@ -139,7 +139,6 @@ StringAccum::append_internal_data(const char *s, int len)
     else {
 	unsigned char *old_s = _s;
 	int old_len = _len;
-	int old_cap = _cap;
 
 	_s = 0;
 	_len = 0;

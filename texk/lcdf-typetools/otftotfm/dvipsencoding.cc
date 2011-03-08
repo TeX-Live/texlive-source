@@ -30,7 +30,7 @@ enum { GLYPHLIST_ALTERNATIVE = 0x40000000,
        GLYPHLIST_USEMAP = GLYPHLIST_ALTERNATIVE,
        U_EMPTYSLOT = 0xD801,
        U_ALTSELECTOR = 0xD802 };
-static HashMap<String, uint32_t> glyphlist(-1);
+static HashMap<String, uint32_t> glyphlist((uint32_t)-1);
 static Vector<uint32_t> glyphmap;
 static PermString::Initializer perm_initializer;
 PermString DvipsEncoding::dot_notdef(".notdef");
@@ -162,7 +162,6 @@ DvipsEncoding::glyphname_unicode(String gn, Vector<uint32_t> &unis)
 		   // 16.Aug.2008: Some texnansx.enc have incorrect "Uni"
 		   // prefix, but we might as well understand it.
 		   || memcmp(component.data(), "Uni", 3) == 0)) {
-	int old_size = unis.size();
 	for (const char *s = component.begin() + 3;
 	     s < component.end();
 	     s += 4)
