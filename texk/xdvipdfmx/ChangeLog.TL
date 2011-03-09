@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-03-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* src/dvipdfmx.c, src/pdfencrypt.c and src/pdfencrypt.h:
+	recover compute_id_string() for the consistency with dvipdfmx
+	as much as possible.
+
 2011-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check for <sys/wait.h>, drop check for system().

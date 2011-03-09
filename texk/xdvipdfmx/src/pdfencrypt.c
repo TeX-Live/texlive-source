@@ -78,6 +78,36 @@ void pdf_enc_set_verbose (void)
   if (verbose < 255) verbose++;
 }
 
+#define PRODUCER "%s-%s, Copyright \251 2002-2010 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata"
+void compute_id_string (char *dviname, char *pdfname)
+{
+  char *date_string, *producer;
+  time_t current_time;
+  struct tm *bd_time;
+
+  MD5_init(&md5_ctx);
+
+  date_string = NEW (15, char);
+  time(&current_time);
+  bd_time = localtime(&current_time);
+  sprintf (date_string, "%04d%02d%02d%02d%02d%02d",
+	   bd_time -> tm_year+1900, bd_time -> tm_mon+1, bd_time -> tm_mday,
+	   bd_time -> tm_hour, bd_time -> tm_min, bd_time -> tm_sec);
+  MD5_write(&md5_ctx, (unsigned char *)date_string, strlen(date_string));
+  RELEASE (date_string);
+
+  producer = NEW (strlen(PRODUCER)+strlen(PACKAGE)+strlen(VERSION), char);
+  sprintf(producer, PRODUCER, PACKAGE, VERSION);
+  MD5_write(&md5_ctx, (unsigned char *)producer, strlen(producer));
+  RELEASE (producer);
+
+  if (dviname)
+    MD5_write(&md5_ctx, (unsigned char *)dviname, strlen(dviname));
+  if (pdfname)
+    MD5_write(&md5_ctx, (unsigned char *)pdfname, strlen(pdfname));
+  MD5_final(id_string, &md5_ctx);
+}
+
 static void passwd_padding (unsigned char *src, unsigned char *dst)
 {
   register int len = strlen((char *)src);
