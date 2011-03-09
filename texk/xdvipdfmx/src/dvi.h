@@ -73,7 +73,8 @@ extern void  dvi_do_page  (long page_no,
 extern void  dvi_scan_specials (long page_no,
 				double *width, double *height,
 				double *x_offset, double *y_offset,
-				char *landscape, unsigned *minorversion);
+				char *landscape, unsigned *minorversion,
+				int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw);
 extern int   dvi_locate_font   (const char *name, spt_t ptsize);
 
 /* link or nolink:

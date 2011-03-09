@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-03-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+	* src/dpxfile.c: Avoid to use system().
+	* src/dvi.c, src/dvi.h, src/dvipdfmx.c, src/pdfencript.c,
+	src/pdfencrypt.h, src/spc_pdfm.c: new special pdf:encrypt
+	by Matthias Franz.
+
 2011-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/pngimage.c (create_cspace_ICCBased): Avoid libpng-1.5.x

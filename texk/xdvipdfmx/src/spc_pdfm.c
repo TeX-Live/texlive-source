@@ -2054,6 +2054,7 @@ static struct spc_handler pdfm_handlers[] = {
   {"code",       spc_handler_pdfm_code},
 
   {"minorversion", spc_handler_pdfm_do_nothing},
+  {"encrypt",      spc_handler_pdfm_do_nothing},
 };
 
 int

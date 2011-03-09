@@ -45,6 +45,7 @@
 #include "pdfdev.h"
 #include "pdfdoc.h"
 #include "pdfparse.h"
+#include "pdfencrypt.h"
 
 #include "fontmap.h"
 
@@ -2490,7 +2491,10 @@ read_length (double *vp, double mag, const char **pp, const char *endptr)
 
 
 static int
-scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, unsigned *minorversion, const char *buf, UNSIGNED_QUAD size)
+scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
+	      unsigned *minorversion,
+	      int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw,
+	      const char *buf, UNSIGNED_QUAD size)
 {
   char  *q;
   const char *p =  buf, *endptr;
@@ -2597,6 +2601,48 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, unsigned
         *minorversion = (unsigned)strtol(kv, NULL, 10);
         RELEASE(kv);
       }
+    } else if (ns_pdf && !strcmp(q, "encrypt") && do_enc) {
+      *do_enc = 1;
+      *owner_pw = *user_pw = 0;
+      while (!error && p < endptr) {
+        char  *kp = parse_c_ident(&p, endptr);
+        if (!kp)
+          break;
+        else {
+	  pdf_obj *obj;
+          skip_white(&p, endptr);
+          if (!strcmp(kp, "ownerpw")) {
+            if ((obj = parse_pdf_string(&p, endptr))) {
+	      strncpy(owner_pw, pdf_string_value(obj), MAX_PWD_LEN); 
+	      pdf_release_obj(obj);
+	    } else
+	      error = -1;
+          } else if (!strcmp(kp, "userpw")) {
+            if ((obj = parse_pdf_string(&p, endptr))) {
+	      strncpy(user_pw, pdf_string_value(obj), MAX_PWD_LEN);
+	      pdf_release_obj(obj);
+	    } else
+	      error = -1;
+          } else if (!strcmp(kp, "length")) {
+            if ((obj = parse_pdf_number(&p, endptr)) && PDF_OBJ_NUMBERTYPE(obj)) {
+	      *key_bits = (unsigned) pdf_number_value(obj);
+	    } else
+	      error = -1;
+	    if (obj)
+	      pdf_release_obj(obj);
+          } else if (!strcmp(kp, "perm")) {
+            if ((obj = parse_pdf_number(&p, endptr)) && PDF_OBJ_NUMBERTYPE(obj)) {
+	      *permission = (unsigned) pdf_number_value(obj);
+	    } else
+	      error = -1;
+	    if (obj)
+	      pdf_release_obj(obj);
+          } else
+	    error = -1;
+          RELEASE(kp);
+        }
+        skip_white(&p, endptr);
+      }
     }
     RELEASE(q);
   }
@@ -2609,7 +2655,8 @@ void
 dvi_scan_specials (long page_no,
                    double *page_width, double *page_height,
                    double *x_offset, double *y_offset, char *landscape,
-                   unsigned *minorversion)
+                   unsigned *minorversion,
+		   int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw)
 {
   FILE          *fp = dvi_file;
   long           offset;
@@ -2649,8 +2696,10 @@ dvi_scan_specials (long page_no,
       }
       if (fread(dvi_page_buffer + dvi_page_buf_index, sizeof(char), size, fp) != size)
         ERROR("Reading DVI file failed!");
-      scan_special(page_width, page_height, x_offset, y_offset, landscape, minorversion,
-                   (char*)dvi_page_buffer + dvi_page_buf_index, size);
+      if (scan_special(page_width, page_height, x_offset, y_offset, landscape, minorversion,
+                   do_enc, key_bits, permission, owner_pw, user_pw,
+                   (char*)dvi_page_buffer + dvi_page_buf_index, size))
+        WARN("Reading special command failed: \"%.*s\"", size, (char*)dvi_page_buffer + dvi_page_buf_index);
       dvi_page_buf_index += size;
       continue;
     }
