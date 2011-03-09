@@ -1,0 +1,77 @@
+diff -ur dvipdfmx-20110305.orig/src/dpxfile.c dvipdfmx-20110305/src/dpxfile.c
+--- dvipdfmx-20110305.orig/src/dpxfile.c	2011-03-06 04:06:59.000000000 +0100
++++ dvipdfmx-20110305/src/dpxfile.c	2011-03-07 18:31:04.000000000 +0100
+@@ -36,7 +36,6 @@
+ #include "dpxfile.h"
+ 
+ #include <kpathsea/lib.h>
+-#include <kpathsea/concatn.h>
+ #include <string.h>
+ #ifdef WIN32
+ #include <io.h>
+@@ -210,9 +209,9 @@
+     *pp = '\0';
+     if ((pp = strchr (buf, ' ')) || (pp = strchr (buf, '\t'))) {
+ #ifdef WIN32
+-      *qv = concatn ("\"", buf, "\"", NULL);
++      *qv = concat3 ("\"", buf, "\"");
+ #else
+-      *qv = concatn ("'", buf, "'", NULL);
++      *qv = concat3 ("'", buf, "'");
+ #endif
+     } else {
+       *qv = concat (buf, "");
+@@ -223,7 +222,7 @@
+   }
+   *qv = NULL;
+ #ifdef WIN32
+-  ret = spawnvp (_P_WAIT, *cmdv, cmdv);
++  ret = spawnvp (_P_WAIT, *cmdv, (const char* const*) cmdv);
+ #else
+   i = fork ();
+   if (i < 0)
+@@ -765,14 +764,14 @@
+ #  define __TMPDIR     "/tmp"
+ #  define TEMPLATE     "/dvipdfmx.XXXXXX"
+   {
+-    char *_tmpd;
++    const char *_tmpd;
+     int   _fd = -1;
+ #  ifdef  HAVE_GETENV
+     _tmpd = getenv("TMPDIR");
+     if (!_tmpd)
+-      _tmpd = (char *) __TMPDIR;
++      _tmpd = __TMPDIR;
+ #  else
+-    _tmpd = (char *) __TMPDIR;
++    _tmpd = __TMPDIR;
+ #  endif /* HAVE_GETENV */
+     tmp = NEW(strlen(_tmpd) + strlen(TEMPLATE) + 1, char);
+     strcpy(tmp, _tmpd);
+@@ -825,7 +824,7 @@
+                       unsigned char version)
+ {
+   char   *cmd = NULL;
+-  char   *p, *q;
++  const char   *p, *q;
+   size_t  n, size;
+   int     error = 0;
+ 
+@@ -837,7 +836,7 @@
+   size = strlen(cmdtmpl) + strlen(input) + strlen(output) + 3;
+   cmd  = NEW(size, char);
+   memset(cmd, 0, size);
+-  for (n = 0, p = (char *) cmdtmpl; *p != 0; p++) {
++  for (n = 0, p = cmdtmpl; *p != 0; p++) {
+ #define need(s,l,m,n) \
+ if ((l) + (n) >= (m)) { \
+   (m) += (n) + 128; \
+@@ -865,7 +864,7 @@
+         }
+       case  'v': /* Version number, e.g. 1.4 */ {
+        char buf[16];
+-       sprintf(buf, "1.%hu", version);
++       sprintf(buf, "1.%hu", (unsigned short) version);
+        need(cmd, n, size, strlen(buf));
+        strcpy(cmd + n, buf);  n += strlen(buf);
+        break;
