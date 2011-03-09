@@ -1,6 +1,6 @@
 /* util.{cc,hh} -- various bits
  *
- * Copyright (c) 2003-2010 Eddie Kohler
+ * Copyright (c) 2003-2011 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -49,15 +49,16 @@ read_file(String filename, ErrorHandler *errh, bool warning)
     }
 
     StringAccum sa;
-    while (!feof(f)) {
+    int amt;
+    do {
 	if (char *x = sa.reserve(8192)) {
-	    int amt = fread(x, 1, 8192, f);
+	    amt = fread(x, 1, 8192, f);
 	    sa.adjust_length(amt);
-	} else {
-	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
-	    break;
-	}
-    }
+	} else
+	    amt = 0;
+    } while (amt != 0);
+    if (!feof(f) || ferror(f))
+	errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
     if (f != stdin)
 	fclose(f);
     return sa.take_string();
@@ -231,15 +232,18 @@ shell_command_output(String cmdline, const String &input, ErrorHandler *errh, bo
 	errh->fatal("%<%s%>: %s", cmdline.c_str(), strerror(errno));
 
     StringAccum sa;
-    while (!feof(p) && !ferror(p) && sa.length() < 200000) {
-	int x = fread(sa.reserve(2048), 1, 2048, p);
-	if (x > 0)
-	    sa.adjust_length(x);
-	else if (x < 0 && errno != EAGAIN)
-	    errh->error("%<%s%>: %s", cmdline.c_str(), strerror(errno));
-    }
-    if (!feof(p) && !ferror(p))
+    int amt;
+    do {
+	if (char *x = sa.reserve(2048)) {
+	    amt = fread(x, 1, 2048, p);
+	    sa.adjust_length(amt);
+	} else
+	    amt = 0;
+    } while (amt != 0 && sa.length() < 200000);
+    if (amt != 0)
 	errh->warning("%<%s%> output too long, truncated", cmdline.c_str());
+    else if (!feof(p) || ferror(p))
+	errh->error("%<%s%>: %s", cmdline.c_str(), strerror(errno));
 
     fclose(f);
     pclose(p);

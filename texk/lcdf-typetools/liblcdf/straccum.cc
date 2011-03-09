@@ -4,7 +4,7 @@
  * Eddie Kohler
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
- * Copyright (c) 2001-2010 Eddie Kohler
+ * Copyright (c) 2001-2011 Eddie Kohler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <errno.h>
 
 /** @class StringAccum
  * @brief Efficiently build up Strings from pieces.
@@ -70,8 +71,10 @@ bool
 StringAccum::grow(int want)
 {
     // can't append to out-of-memory strings
-    if (_cap < 0)
+    if (_cap < 0) {
+	errno = ENOMEM;
 	return false;
+    }
 
     int ncap = (_cap ? (_cap + MEMO_SPACE) * 2 : 128) - MEMO_SPACE;
     while (ncap <= want)
@@ -80,6 +83,7 @@ StringAccum::grow(int want)
     unsigned char *n = new unsigned char[ncap + MEMO_SPACE];
     if (!n) {
 	assign_out_of_memory();
+	errno = ENOMEM;
 	return false;
     }
     n += MEMO_SPACE;

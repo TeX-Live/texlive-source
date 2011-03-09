@@ -2,7 +2,7 @@
 
 /* otfos2.{cc,hh} -- OpenType OS/2 table
  *
- * Copyright (c) 2005-2010 Eddie Kohler
+ * Copyright (c) 2005-2011 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -37,11 +37,10 @@ Os2::parse_header(ErrorHandler *errh)
 {
     // HEADER FORMAT:
     // USHORT	version
-    // USHORT	numTables
     if (HEADER_SIZE > _data.length())
 	return errh->error("OTF OS/2 too small for header"), -EFAULT;
-    if (_data.u16(0) > 3)
-	return errh->error("bad OS/2 version number"), -ERANGE;
+    if (_data.u16(0) > 4)
+	return errh->error("unexpected OS/2 version number %d", _data.u16(0)), -ERANGE;
     return 0;
 }
 

@@ -215,7 +215,9 @@ class StringAccum { public:
      * In a frequent usage pattern, code calls reserve(), passing an upper
      * bound on the characters that could be written by a series of
      * operations.  After writing into the returned buffer, adjust_length() is
-     * called to account for the number of characters actually written. */
+     * called to account for the number of characters actually written.
+     *
+     * On failure, null is returned and errno is set to ENOMEM. */
     inline char *reserve(int n) {
 	assert(n >= 0);
 	if (_len + n <= _cap || grow(_len + n))

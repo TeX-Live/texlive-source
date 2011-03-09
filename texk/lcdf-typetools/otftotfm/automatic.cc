@@ -1,6 +1,6 @@
 /* automatic.{cc,hh} -- code for automatic mode and interfacing with kpathsea
  *
- * Copyright (c) 2003-2010 Eddie Kohler
+ * Copyright (c) 2003-2011 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -578,7 +578,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 
 	int fd = open(map_file.c_str(), O_RDWR | O_CREAT, 0666);
 	if (fd < 0)
-	    return errh->error("%s: %s", map_file.c_str(), strerror(errno));
+	    return errh->lerror(map_file, "%s", strerror(errno));
 	FILE *f = fdopen(fd, "r+");
 	// NB: also change encoding logic if you change this code
 
@@ -602,14 +602,16 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 
 	// read old data from map file
 	StringAccum sa;
-	while (!feof(f))
+	int amt;
+	do {
 	    if (char *x = sa.reserve(8192)) {
-		int amt = fread(x, 1, 8192, f);
+		amt = fread(x, 1, 8192, f);
 		sa.adjust_length(amt);
-	    } else {
-		fclose(f);
-		return errh->error("Out of memory!");
-	    }
+	    } else
+		amt = 0;
+	} while (amt != 0);
+	if (!feof(f))
+	    return errh->error("%s: %s", map_file.c_str(), strerror(errno));
 	String text = sa.take_string();
 
 	// add comment if necessary

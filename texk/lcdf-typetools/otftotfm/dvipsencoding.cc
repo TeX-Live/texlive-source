@@ -1,6 +1,6 @@
 /* dvipsencoding.{cc,hh} -- store a DVIPS encoding
  *
- * Copyright (c) 2003-2010 Eddie Kohler
+ * Copyright (c) 2003-2011 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -30,7 +30,7 @@ enum { GLYPHLIST_ALTERNATIVE = 0x40000000,
        GLYPHLIST_USEMAP = GLYPHLIST_ALTERNATIVE,
        U_EMPTYSLOT = 0xD801,
        U_ALTSELECTOR = 0xD802 };
-static HashMap<String, uint32_t> glyphlist((uint32_t)-1);
+static HashMap<String, uint32_t> glyphlist((uint32_t) -1);
 static Vector<uint32_t> glyphmap;
 static PermString::Initializer perm_initializer;
 PermString DvipsEncoding::dot_notdef(".notdef");

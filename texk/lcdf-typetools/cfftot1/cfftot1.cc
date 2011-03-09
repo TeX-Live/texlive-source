@@ -1,6 +1,6 @@
 /* cfftot1.cc -- driver for translating CFF fonts to Type 1 fonts
  *
- * Copyright (c) 2002-2010 Eddie Kohler
+ * Copyright (c) 2002-2011 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -125,10 +125,16 @@ do_file(const char *infn, const char *outfn, PermString name, ErrorHandler *errh
 	errh->fatal("%s: empty file", infn);
     if (c == 1 || c == 'O') {
 	StringAccum sa(150000);
-	while (!feof(f)) {
-	    int forward = fread(sa.reserve(32768), 1, 32768, f);
-	    sa.adjust_length(forward);
-	}
+	int amt;
+	do {
+	    if (char *x = sa.reserve(32768)) {
+		amt = fread(x, 1, 32768, f);
+		sa.adjust_length(amt);
+	    } else
+		amt = 0;
+	} while (amt != 0);
+	if (!feof(f) || ferror(f))
+	    errh->lerror(infn, "%s", strerror(errno));
 	if (f != stdin)
 	    fclose(f);
 
@@ -210,7 +216,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("cfftot1 (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2002-2010 Eddie Kohler\n\
+	    printf("Copyright (C) 2002-2011 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

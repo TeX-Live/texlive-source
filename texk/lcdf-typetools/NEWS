@@ -1,5 +1,21 @@
 LCDF Typetools NEWS
 
+Version 2.88   8.Mar.2011
+
+* Warning reduction.
+
+
+Version 2.87   27.Jan.2011
+
+* Avoid double-free error in t1testpage.  Reported by Kurt Pfeifle.
+
+
+Version 2.86   16.Dec.2010
+
+* Support version 4 of the OpenType OS/2 table.  Reported by Thomas
+  Zumbrunn.
+
+
 Version 2.85   26.Sep.2010
 
 * Correct otftotfm bug with glyphlist.txt mappings like I_J.

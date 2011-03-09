@@ -1,6 +1,6 @@
 /* otftotfm.cc -- driver for translating OpenType fonts to TeX metrics
  *
- * Copyright (c) 2003-2010 Eddie Kohler
+ * Copyright (c) 2003-2011 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -956,14 +956,16 @@ write_encoding_file(String &filename, const String &encoding_name,
 
     // read old data from encoding file
     StringAccum sa;
-    while (!feof(f))
+    int amt;
+    do {
 	if (char *x = sa.reserve(8192)) {
-	    int amt = fread(x, 1, 8192, f);
+	    amt = fread(x, 1, 8192, f);
 	    sa.adjust_length(amt);
-	} else {
-	    fclose(f);
-	    return errh->error("Out of memory!");
-	}
+	} else
+	    amt = 0;
+    } while (amt != 0);
+    if (!feof(f) || ferror(f))
+	return errh->error("%s: %s", filename.c_str(), strerror(errno));
     String old_encodings = sa.take_string();
     bool created = (!old_encodings);
 
@@ -2092,7 +2094,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otftotfm (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2002-2010 Eddie Kohler\n\
+	    printf("Copyright (C) 2002-2011 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

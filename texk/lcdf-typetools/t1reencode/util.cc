@@ -43,15 +43,16 @@ read_file(String filename, ErrorHandler *errh, bool warning)
     }
 
     StringAccum sa;
-    while (!feof(f)) {
+    int amt;
+    do {
 	if (char *x = sa.reserve(8192)) {
-	    int amt = fread(x, 1, 8192, f);
+	    amt = fread(x, 1, 8192, f);
 	    sa.adjust_length(amt);
-	} else {
-	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
-	    break;
-	}
-    }
+	} else
+	    amt = 0;
+    } while (amt != 0);
+    if (!feof(f) || ferror(f))
+	errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
     if (f != stdin)
 	fclose(f);
     return sa.take_string();

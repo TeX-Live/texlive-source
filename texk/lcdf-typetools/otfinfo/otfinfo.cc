@@ -1,6 +1,6 @@
 /* otfinfo.cc -- driver for reporting information about OpenType fonts
  *
- * Copyright (c) 2003-2010 Eddie Kohler
+ * Copyright (c) 2003-2011 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -136,6 +136,7 @@ String
 read_file(String filename, ErrorHandler *errh, bool warning = false)
 {
     FILE *f;
+    int f_errno;
     if (!filename || filename == "-") {
 	filename = "<stdin>";
 	f = stdin;
@@ -143,21 +144,28 @@ read_file(String filename, ErrorHandler *errh, bool warning = false)
 	// Set the file mode to binary
 	_setmode(_fileno(f), _O_BINARY);
 #endif
-    } else if (!(f = fopen(filename.c_str(), "rb"))) {
-	errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
+    } else {
+	f = fopen(filename.c_str(), "rb");
+	f_errno = errno;
+    }
+
+    String error_anno = (warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename);
+    if (!f) {
+	errh->xmessage(error_anno, strerror(f_errno));
 	return String();
     }
 
     StringAccum sa;
-    while (!feof(f)) {
+    int amt;
+    do {
 	if (char *x = sa.reserve(8192)) {
-	    int amt = fread(x, 1, 8192, f);
+	    amt = fread(x, 1, 8192, f);
 	    sa.adjust_length(amt);
-	} else {
-	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
-	    break;
-	}
-    }
+	} else
+	    amt = 0;
+    } while (amt != 0);
+    if (!feof(f) || ferror(f))
+	errh->xmessage(error_anno, strerror(errno));
     if (f != stdin)
 	fclose(f);
     return sa.take_string();
@@ -409,7 +417,7 @@ do_info(const OpenType::Font &otf, ErrorHandler *errh, ErrorHandler *result_errh
 	}
     }
 
-    if (errh->nerrors() == before_nerrors)
+    if (sa || errh->nerrors() == before_nerrors)
 	result_errh->message("%s", (sa ? sa.c_str() : "no information"));
 }
 
@@ -550,7 +558,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otfinfo (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2003-2010 Eddie Kohler\n\
+	    printf("Copyright (C) 2003-2011 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

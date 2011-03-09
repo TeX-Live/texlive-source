@@ -1,6 +1,6 @@
 /* t1testpage.cc -- driver for generating Type 1 fonts' test pages
  *
- * Copyright (c) 1999-2010 Eddie Kohler
+ * Copyright (c) 1999-2011 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -119,7 +119,6 @@ class Testpager { public:
     virtual void font(Type1Font *font, const Vector<PermString>& glyph_names) = 0;
     virtual void epilog() {
 	fprintf(_f, "%%%%EOF\n");
-	fclose(_f);
     }
   protected:
     FILE *_f;
@@ -625,7 +624,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("t1testpage (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 1999-2010 Eddie Kohler\n\
+	    printf("Copyright (C) 1999-2011 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
