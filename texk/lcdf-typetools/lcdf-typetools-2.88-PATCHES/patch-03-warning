@@ -1,0 +1,14 @@
+	Avoid `uninitialized' warning (the compiler may not realize
+	that this actually can't happen).
+
+diff -ur lcdf-typetools-2.88.orig/otfinfo/otfinfo.cc lcdf-typetools-2.88/otfinfo/otfinfo.cc
+--- lcdf-typetools-2.88.orig/otfinfo/otfinfo.cc	2011-01-27 18:44:40.000000000 +0100
++++ lcdf-typetools-2.88/otfinfo/otfinfo.cc	2011-03-09 13:36:08.000000000 +0100
+@@ -140,6 +140,7 @@
+     if (!filename || filename == "-") {
+ 	filename = "<stdin>";
+ 	f = stdin;
++	f_errno = 0;
+ #if defined(_MSDOS) || defined(_WIN32)
+ 	// Set the file mode to binary
+ 	_setmode(_fileno(f), _O_BINARY);

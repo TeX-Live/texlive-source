@@ -140,6 +140,7 @@ read_file(String filename, ErrorHandler *errh, bool warning = false)
     if (!filename || filename == "-") {
 	filename = "<stdin>";
 	f = stdin;
+	f_errno = 0;
 #if defined(_MSDOS) || defined(_WIN32)
 	// Set the file mode to binary
 	_setmode(_fileno(f), _O_BINARY);
