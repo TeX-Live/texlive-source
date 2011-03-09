@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.42 2011/03/06 03:14:14 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.44 2011/03/08 20:25:52 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -40,6 +40,7 @@
 #include "pdfdev.h"
 #include "pdfdoc.h"
 #include "pdfparse.h"
+#include "pdfencrypt.h"
 
 #include "fontmap.h"
 
@@ -1688,7 +1689,10 @@ read_length (double *vp, double mag, const char **pp, const char *endptr)
 
 
 static int
-scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, unsigned *minorversion, const char *buf, UNSIGNED_QUAD size)
+scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
+	      unsigned *minorversion,
+	      int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw,
+	      const char *buf, UNSIGNED_QUAD size)
 {
   char  *q;
   const char *p = buf, *endptr;
@@ -1771,6 +1775,48 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, unsigned
         *minorversion = (unsigned)strtol(kv, NULL, 10);
         RELEASE(kv);
       }
+    } else if (ns_pdf && !strcmp(q, "encrypt") && do_enc) {
+      *do_enc = 1;
+      *owner_pw = *user_pw = 0;
+      while (!error && p < endptr) {
+        char  *kp = parse_c_ident(&p, endptr);
+        if (!kp)
+          break;
+        else {
+	  pdf_obj *obj;
+          skip_white(&p, endptr);
+          if (!strcmp(kp, "ownerpw")) {
+            if ((obj = parse_pdf_string(&p, endptr))) {
+	      strncpy(owner_pw, pdf_string_value(obj), MAX_PWD_LEN); 
+	      pdf_release_obj(obj);
+	    } else
+	      error = -1;
+          } else if (!strcmp(kp, "userpw")) {
+            if ((obj = parse_pdf_string(&p, endptr))) {
+	      strncpy(user_pw, pdf_string_value(obj), MAX_PWD_LEN);
+	      pdf_release_obj(obj);
+	    } else
+	      error = -1;
+          } else if (!strcmp(kp, "length")) {
+            if ((obj = parse_pdf_number(&p, endptr)) && PDF_OBJ_NUMBERTYPE(obj)) {
+	      *key_bits = (unsigned) pdf_number_value(obj);
+	    } else
+	      error = -1;
+	    if (obj)
+	      pdf_release_obj(obj);
+          } else if (!strcmp(kp, "perm")) {
+            if ((obj = parse_pdf_number(&p, endptr)) && PDF_OBJ_NUMBERTYPE(obj)) {
+	      *permission = (unsigned) pdf_number_value(obj);
+	    } else
+	      error = -1;
+	    if (obj)
+	      pdf_release_obj(obj);
+          } else
+	    error = -1;
+          RELEASE(kp);
+        }
+        skip_white(&p, endptr);
+      }
     }
     RELEASE(q);
   }
@@ -1783,7 +1829,8 @@ void
 dvi_scan_specials (unsigned page_no,
                    double *page_width, double *page_height,
                    double *x_offset, double *y_offset, char *landscape,
-                   unsigned *minorversion)
+                   unsigned *minorversion,
+		   int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw)
 {
   FILE          *fp = dvi_file;
   long           offset;
@@ -1812,7 +1859,9 @@ dvi_scan_specials (unsigned page_no,
       size = MIN(size, 1024);
       if (fread(buf, sizeof(char), size, fp) != size)
         ERROR("Reading DVI file failed!");
-      scan_special(page_width, page_height, x_offset, y_offset, landscape, minorversion, buf, size);
+      if (scan_special(page_width, page_height, x_offset, y_offset, landscape,
+		       minorversion, do_enc, key_bits, permission, owner_pw, user_pw, buf, size))
+	WARN("Reading special command failed: \"%.*s\"", size, buf);
       continue;
     }
 

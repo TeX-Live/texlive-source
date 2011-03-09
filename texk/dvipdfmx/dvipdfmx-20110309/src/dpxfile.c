@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.28 2011/03/06 03:06:59 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.29 2011/03/09 07:55:19 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

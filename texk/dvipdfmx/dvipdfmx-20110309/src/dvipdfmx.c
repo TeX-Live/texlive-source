@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.84 2011/03/06 03:31:47 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.85 2011/03/08 00:20:51 matthias Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -171,7 +171,7 @@ show_usage (void)
   fprintf(stdout, "\t\tAnd negative values replace old values.\n");
   fprintf(stdout, "-D template\tPS->PDF conversion command line template [none]\n");
   fprintf(stdout, "-E \t\tEnable DVIPDFM emulation mode\n");
-  fprintf(stdout, "-K number\tEncryption key bits [40]\n");
+  fprintf(stdout, "-K number\tEncryption key length [40]\n");
   fprintf(stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
   fprintf(stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
   fprintf(stdout, "-S \t\tEnable PDF encryption\n");
@@ -522,10 +522,10 @@ do_args (int argc, char *argv[])
         do_encryption = 1;
         break;
       case 'K': 
-        CHECK_ARG(1, "encryption key bits");
+        CHECK_ARG(1, "encryption key length");
         key_bits = (unsigned) atoi(argv[1]);
-        if (key_bits < 40 || key_bits > 128)
-          ERROR("Invalid encryption key bits specified: %s", argv[1]);
+        if (key_bits < 40 || key_bits > 128 || (key_bits & 0x7))
+          ERROR("Invalid encryption key length specified: %s", argv[1]);
         POP_ARG();
         break;
       case 'P': 
@@ -730,7 +730,7 @@ do_dvi_pages (void)
         /* Users want to change page size even after page is started! */
         w = page_width; h = page_height; lm = landscape_mode;
         xo = x_offset; yo = y_offset;
-        dvi_scan_specials(page_no, &w, &h, &xo, &yo, &lm, NULL);
+        dvi_scan_specials(page_no, &w, &h, &xo, &yo, &lm, NULL, NULL, NULL, NULL, NULL, NULL);
         if (lm != landscape_mode) {
           SWAP(w, h);
           landscape_mode = lm;
@@ -902,7 +902,7 @@ main (int argc, char *argv[])
     if (key_bits > 40 && pdf_get_version() < 4)
       ERROR("Chosen key length requires at least PDF 1.4. "
 	    "Use \"-V 4\" to change.");
-    pdf_enc_set_passwd(key_bits, permission, dvi_filename, pdf_filename);
+    pdf_enc_set_passwd(key_bits, permission, NULL, NULL);
   }
 
   if (mp_mode) {
@@ -911,6 +911,7 @@ main (int argc, char *argv[])
     dvi2pts  = 0.01; /* dvi2pts controls accuracy. */
   } else {
     unsigned ver_minor = 0;
+    char owner_pw[MAX_PWD_LEN], user_pw[MAX_PWD_LEN];
     /* Dependency between DVI and PDF side is rather complicated... */
     dvi2pts = dvi_init(dvi_filename, mag);
     if (dvi2pts == 0.0)
@@ -918,7 +919,23 @@ main (int argc, char *argv[])
 
     pdf_doc_set_creator(dvi_comment());
 
-    dvi_scan_specials(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode, &ver_minor);
+    if (do_encryption)
+      /* command line takes precedence */
+      dvi_scan_specials(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode,
+			&ver_minor, NULL, NULL, NULL, NULL, NULL);
+    else {
+      dvi_scan_specials(0, &paper_width, &paper_height, &x_offset, &y_offset, &landscape_mode,
+			&ver_minor, &do_encryption, &key_bits, &permission, owner_pw, user_pw);
+      if (do_encryption) {
+	if (key_bits < 40 || key_bits > 128 || (key_bits & 0x7))
+	  ERROR("Invalid encryption key length specified: %u", key_bits);
+	else if (key_bits > 40 && pdf_get_version() < 4)
+	  ERROR("Chosen key length requires at least PDF 1.4. "
+		"Use \"-V 4\" to change.");
+	do_encryption = 1;
+	pdf_enc_set_passwd(key_bits, permission, owner_pw, user_pw);
+      }
+    }
     if (ver_minor >= PDF_VERSION_MIN && ver_minor <= PDF_VERSION_MAX) {
       pdf_set_version(ver_minor);
     }

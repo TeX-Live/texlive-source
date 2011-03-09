@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.53 2011/03/06 03:14:15 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.54 2011/03/08 00:20:51 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1953,6 +1953,7 @@ static struct spc_handler pdfm_handlers[] = {
   {"code",       spc_handler_pdfm_code},
 
   {"minorversion", spc_handler_pdfm_do_nothing},
+  {"encrypt",      spc_handler_pdfm_do_nothing},
 };
 
 int

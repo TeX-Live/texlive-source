@@ -1,3 +1,8 @@
+2011-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported snapshot 20110309.
+	* configure.ac: Adapted.
+
 2011-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check for sys/wait.h, in order to define

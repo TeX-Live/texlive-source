@@ -1,7 +1,21 @@
-$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.286 2011/03/05 02:07:33 chofchof Exp $
+$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.289 2011/03/09 07:58:12 chofchof Exp $
 
 ChangeLog: Changes for DVIPDFMx
 ===============================
+
+2011-03-09  Jin-Hwan Cho
+
+	* dpxfile.c, configure.in, man/extractbb.1:
+          Applied the patches for TeX Live 2011 by Peter Breitenlohner.
+
+2011-03-07  Matthias Franz
+
+	* dvi.c, dvi.h, dvipdfmx.c, pdfencrypt.c, pdfencrypt.h, spc_pdfm.c:
+          Added special pdf:encrypt to turn on document encryption from
+          within the DVI file (suggested by Michael Joyner). Format:
+            \special{pdf:encrypt ownerpw (abc) userpw (xyz) length 128 perm 252}
+          If a parameter is omitted, the default value / empty password
+          is used. The special must appear at the beginning of the file.
 
 2011-03-05  Jin-Hwan Cho
 	* dpxfile.c:
