@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for <sys/wait.h>, drop check for system().
+	* src/pdfencrypt.c (compute_id_string): Drop unused function.
+
 2011-03-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 	* src/dpxfile.c: Avoid to use system().
 	* src/dvi.c, src/dvi.h, src/dvipdfmx.c, src/pdfencript.c,

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -21,11 +21,11 @@ KPSE_LT_HACK
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([stdint.h inttypes.h sys/types.h])
+AC_CHECK_HEADERS([stdint.h inttypes.h sys/types.h sys/wait.h])
 
 dnl Checks for library functions.
 AC_FUNC_MEMCMP
-AC_CHECK_FUNCS([open close system getenv mkstemp basename])
+AC_CHECK_FUNCS([open close getenv mkstemp basename])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
