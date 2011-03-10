@@ -79,7 +79,7 @@ void pdf_enc_set_verbose (void)
 }
 
 #define PRODUCER "%s-%s, Copyright \251 2002-2010 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata"
-void compute_id_string (char *dviname, char *pdfname)
+void pdf_enc_compute_id_string (char *dviname, char *pdfname)
 {
   char *date_string, *producer;
   time_t current_time;

@@ -858,7 +858,7 @@ main (int argc, char *argv[])
   if (pdf_filename == NULL && dvi_filename != NULL)
     set_default_pdf_filename();
 
-  compute_id_string (dvi_filename, pdf_filename);
+  pdf_enc_compute_id_string(dvi_filename, pdf_filename);
   if (do_encryption) {
     pdf_enc_set_passwd(key_bits, permission, NULL, NULL);
     if (key_bits > 40 && pdf_get_version() < 4)
