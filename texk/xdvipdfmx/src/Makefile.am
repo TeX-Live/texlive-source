@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/xdvipdfmx/src/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES = $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
@@ -22,7 +22,7 @@ xdvipdfmx_SOURCES = \
 	tt_aux.c tt_cmap.c tt_glyf.c tt_gsub.c tt_post.c tt_table.c truetype.c \
 	type0.c t1_char.c t1_load.c type1.c type1c.c \
 	unicode.c vf.c xbb.c \
-	agl.h bmpimage.h asl_charset.h cff.h cff_dict.h cff_limits.h cff_stdstr.h cff_types.h \
+	agl.h bmpimage.h cff.h cff_dict.h cff_limits.h cff_stdstr.h cff_types.h \
 	cid.h cid_basefont.h cid_p.h cidtype0.h cidtype2.h cmap.h cmap_p.h cmap_read.h cmap_write.h \
 	cs_type2.h dpxconf.h dpxcrypt.h dpxutil.h dpxfile.h dvi.h dvicodes.h epdf.h error.h fontmap.h \
 	jpegimage.h mem.h mfileio.h mpost.h numbers.h otl_conf.h otl_opt.h pdfcolor.h pdfdev.h \
@@ -54,5 +54,5 @@ endif !build_MacOsX
 ## Rebuild libz
 @ZLIB_RULE@
 
-EXTRA_DIST = mk_agl_standard_c.pl
+EXTRA_DIST = asl_charset.h mk_agl_standard_c.pl
 

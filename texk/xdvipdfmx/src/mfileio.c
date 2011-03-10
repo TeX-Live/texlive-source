@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mfileio.c,v 1.3 2002/10/30 02:27:11 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mfileio.c,v 1.4 2011/03/06 03:14:14 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

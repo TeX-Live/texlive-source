@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cmap_write.c,v 1.6 2004/09/05 13:30:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cmap_write.c,v 1.7 2011/03/06 03:14:13 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

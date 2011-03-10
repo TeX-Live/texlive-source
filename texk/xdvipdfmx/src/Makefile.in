@@ -259,7 +259,7 @@ xdvipdfmx_SOURCES = \
 	tt_aux.c tt_cmap.c tt_glyf.c tt_gsub.c tt_post.c tt_table.c truetype.c \
 	type0.c t1_char.c t1_load.c type1.c type1c.c \
 	unicode.c vf.c xbb.c \
-	agl.h bmpimage.h asl_charset.h cff.h cff_dict.h cff_limits.h cff_stdstr.h cff_types.h \
+	agl.h bmpimage.h cff.h cff_dict.h cff_limits.h cff_stdstr.h cff_types.h \
 	cid.h cid_basefont.h cid_p.h cidtype0.h cidtype2.h cmap.h cmap_p.h cmap_read.h cmap_write.h \
 	cs_type2.h dpxconf.h dpxcrypt.h dpxutil.h dpxfile.h dvi.h dvicodes.h epdf.h error.h fontmap.h \
 	jpegimage.h mem.h mfileio.h mpost.h numbers.h otl_conf.h otl_opt.h pdfcolor.h pdfdev.h \
@@ -275,7 +275,7 @@ xdvipdfmx_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBPNG_FREETYPE2) $(K
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) \
 	$(am__append_2)
 @build_MacOsX_TRUE@AM_LDFLAGS = -framework ApplicationServices
-EXTRA_DIST = mk_agl_standard_c.pl
+EXTRA_DIST = asl_charset.h mk_agl_standard_c.pl
 all: all-am
 
 .SUFFIXES:

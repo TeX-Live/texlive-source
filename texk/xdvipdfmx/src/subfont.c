@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.c,v 1.22 2008/01/13 21:25:31 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/subfont.c,v 1.23 2011/03/06 03:14:15 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

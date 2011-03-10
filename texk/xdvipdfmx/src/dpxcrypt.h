@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxcrypt.h,v 1.1 2003/08/05 07:09:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxcrypt.h,v 1.2 2011/03/06 03:14:13 chofchof Exp $
  
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 

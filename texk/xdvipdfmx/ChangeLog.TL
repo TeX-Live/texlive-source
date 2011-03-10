@@ -1,6 +1,16 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/cff_dict.h, src/cff_types.h, src/cmap.c, src/cmap_write.c,
+	src/dpxcrypt.[ch], src/mfileio.c, src/mpost.h, src/otl_conf.c,
+	src/otl_opt.c, src/pdfencoding.[ch], src/pdflimits.h,
+	src/pdfparse.h, src/specials.h, src/subfont.c, src/t1_char.c,
+	src/tt_post.h, src/vf.c: Remove trivial diffs with dvipdfmx.
+
+	* src/Makefile.am: Mark asl_charset.h as unused.
+
 2011-03-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* src/dvipdfmx.c, src/pdfencrypt.c and src/pdfencrypt.h:

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/otl_opt.c,v 1.3 2004/08/22 10:26:24 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/otl_opt.c,v 1.4 2011/03/06 03:14:14 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

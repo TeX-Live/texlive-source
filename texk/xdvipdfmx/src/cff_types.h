@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff_types.h,v 1.3 2002/10/30 02:27:05 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff_types.h,v 1.4 2011/03/06 03:14:13 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 

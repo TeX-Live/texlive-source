@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.h,v 1.4 2007/11/14 03:12:21 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencoding.h,v 1.5 2011/03/06 03:14:14 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
