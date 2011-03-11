@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pst_obj.c,v 1.8 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pst_obj.c,v 1.10 2011/03/06 03:14:15 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -594,6 +594,7 @@ pst_name_release (pst_name *obj)
   RELEASE(obj);
 }
 
+#if 0
 int
 pst_name_is_valid (const char *name)
 {
@@ -633,6 +634,7 @@ pst_name_encode (const char *name)
 
   return encoded_name;
 }
+#endif
 
 pst_obj *
 pst_parse_name (unsigned char **inbuf, unsigned char *inbufend) /* / is required */

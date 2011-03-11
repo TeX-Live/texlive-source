@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.h,v 1.7 2007/02/14 05:56:43 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.h,v 1.8 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -175,7 +175,9 @@ extern char  *tt_pack_maxp_table (struct tt_maxp_table *table);
 extern struct tt_maxp_table *tt_read_maxp_table (sfnt *sfont);
 
 /* vhea */
+#if 0
 extern char  *tt_pack_vhea_table (struct tt_vhea_table *table);
+#endif
 extern struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont);
 
 /* VORG */
@@ -183,7 +185,7 @@ extern struct tt_VORG_table *tt_read_VORG_table (sfnt *sfont);
 
 /* hmtx and vmtx */
 extern struct tt_longMetrics *tt_read_longMetrics (sfnt *sfont,
-	USHORT numGlyphs, USHORT numLongMetrics, USHORT numExSideBearings);
+						   USHORT numGlyphs, USHORT numLongMetrics, USHORT numExSideBearings);
 
 /* OS/2 table */
 extern struct tt_os2__table *tt_read_os2__table (sfnt *sfont);

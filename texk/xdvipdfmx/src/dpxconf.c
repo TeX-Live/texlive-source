@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxconf.c,v 1.2 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxconf.c,v 1.4 2009/05/10 16:39:53 matthias Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -94,6 +94,7 @@ paperinfo (const char *ppformat)
 
 #endif /* HAVE_LIBPAPER */
 
+#if 0
 void
 dumppaperinfo (void)
 {
@@ -108,4 +109,4 @@ dumppaperinfo (void)
     ppinfo = papernext(ppinfo);
   }  
 }
-
+#endif

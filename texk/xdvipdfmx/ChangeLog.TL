@@ -5,6 +5,10 @@ ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 
 	* src/dpxcrypt.c: Sync with dvipdfmx.
 
+	* src/dpxconf.[ch], src/numbers.[ch], src/pdfresource.[ch],
+	src/pst_obj.[ch], src/tfm.[ch], src/tt_table.h: Remove more
+	trivial diffs with dvipdfmx (unused functions).
+
 2011-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/cff_dict.h, src/cff_types.h, src/cmap.c, src/cmap_write.c,
