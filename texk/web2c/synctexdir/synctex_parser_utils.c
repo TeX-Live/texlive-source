@@ -295,13 +295,13 @@ char * _synctex_merge_strings(const char * first,...) {
  *  There is a list of possible filenames from which we return the most recent one and try to remove all the others.
  *  With two runs of pdftex or xetex we are sure the the synctex file is really the most appropriate.
  */
-int _synctex_get_name(const char * output, const char * build_directory, char ** synctex_name_ref, synctex_compress_mode_t * compress_mode_ref)
+int _synctex_get_name(const char * output, const char * build_directory, char ** synctex_name_ref, synctex_io_mode_t * io_mode_ref)
 {
-	if(output && synctex_name_ref && compress_mode_ref) {
+	if(output && synctex_name_ref && io_mode_ref) {
 		/*  If output is already absolute, we just have to manage the quotes and the compress mode */
 		size_t size = 0;
         char * synctex_name = NULL;
-        synctex_io_mode_type compress_mode = *compress_mode_ref;
+        synctex_io_mode_t io_mode = *io_mode_ref;
 		const char * base_name = _synctex_last_path_component(output); /*  do not free, output is the owner. base name of output*/
 		/*  Do we have a real base name ? */
 		if(strlen(base_name)>0) {
@@ -416,9 +416,9 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
                     the_time=buf.st_mtime; \
                     synctex_name = FILENAME; \
                     if (COMPRESS_MODE) { \
-                        compress_mode |= synctex_io_gz_mask; \
+                        io_mode |= synctex_io_gz_mask; \
                     } else { \
-                        compress_mode &= ~synctex_io_gz_mask; \
+                        io_mode &= ~synctex_io_gz_mask; \
                     } \
 				} \
 			}
@@ -450,7 +450,7 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 #			undef CLEAN_AND_REMOVE
             /* set up the returned values */
             * synctex_name_ref = synctex_name;
-            * compress_mode_ref = compress_mode;
+            * io_mode_ref = io_mode;
 			return 0;
 		}
 		return -1;/*  bad argument */
@@ -458,7 +458,7 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 	return -2;
 }
 
-const char * _synctex_get_io_mode_name(synctex_io_mode_type io_mode) {
+const char * _synctex_get_io_mode_name(synctex_io_mode_t io_mode) {
     static const char * synctex_io_modes[4] = {"r","rb","a","ab"}; 
     unsigned index = (io_mode & synctex_io_gz_mask) + 2 * (io_mode & synctex_io_append_mask);
     return synctex_io_modes[index];

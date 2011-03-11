@@ -2555,14 +2555,14 @@ bail:
 	goto next_sheet;
 }
 
-int _synctex_open(const char * output, const char * build_directory, char ** synctex_name_ref, gzFile * file_ref, synctex_bool_t add_quotes, synctex_io_mode_type * io_modeRef);
+int _synctex_open(const char * output, const char * build_directory, char ** synctex_name_ref, gzFile * file_ref, synctex_bool_t add_quotes, synctex_io_mode_t * io_modeRef);
 
 /*  Where the synctex scanner is created. */
 synctex_scanner_t synctex_scanner_new_with_output_file(const char * output, const char * build_directory, int parse) {
 	gzFile file = NULL;
 	char * synctex = NULL;
 	synctex_scanner_t scanner = NULL;
-	synctex_io_mode_type io_mode = 0;
+	synctex_io_mode_t io_mode = 0;
 	/*  Here we assume that int are smaller than void * */
 	if (sizeof(int)>sizeof(void*)) {
 		_synctex_error("INTERNAL INCONSISTENCY: int's are unexpectedly bigger than pointers, bailing out.");
@@ -2602,7 +2602,7 @@ synctex_scanner_t synctex_scanner_new_with_output_file(const char * output, cons
 	return parse? synctex_scanner_parse(scanner):scanner;
 }
 
-int __synctex_open(const char * output, char ** synctex_name_ref, gzFile * file_ref, synctex_bool_t add_quotes, synctex_io_mode_type * io_mode_ref);
+int __synctex_open(const char * output, char ** synctex_name_ref, gzFile * file_ref, synctex_bool_t add_quotes, synctex_io_mode_t * io_mode_ref);
 
 /*	This functions opens the file at the "output" given location.
  *  It manages the problem of quoted filenames that appear with pdftex and filenames containing the space character.
@@ -2610,14 +2610,14 @@ int __synctex_open(const char * output, char ** synctex_name_ref, gzFile * file_
  *	This function will remove them if possible.
  *  All the reference arguments will take a value on return. They must be non NULL.
  *	0 on success, non 0 on error. */
-int __synctex_open(const char * output, char ** synctex_name_ref, gzFile * file_ref, synctex_bool_t add_quotes, synctex_io_mode_type * io_mode_ref) {
+int __synctex_open(const char * output, char ** synctex_name_ref, gzFile * file_ref, synctex_bool_t add_quotes, synctex_io_mode_t * io_mode_ref) {
 	if (synctex_name_ref && file_ref && io_mode_ref) {
         /*  1 local variables that uses dynamic memory */
         char * synctex_name = NULL;
         gzFile the_file = NULL;
         char * quoteless_synctex_name = NULL;
 		size_t size = 0;
-        synctex_io_mode_type io_mode = *io_mode_ref;
+        synctex_io_mode_t io_mode = *io_mode_ref;
 		const char * mode = _synctex_get_io_mode_name(io_mode);
 		/*  now create the synctex file name */
 		size = strlen(output)+strlen(synctex_suffix)+strlen(synctex_suffix_gz)+1;
@@ -2731,7 +2731,7 @@ return_on_error:
 
 /*	Opens the ouput file, taking into account the eventual build_directory.
  *	0 on success, non 0 on error. */
-int _synctex_open(const char * output, const char * build_directory, char ** synctex_name_ref, gzFile * file_ref, synctex_bool_t add_quotes, synctex_io_mode_type * io_mode_ref) {
+int _synctex_open(const char * output, const char * build_directory, char ** synctex_name_ref, gzFile * file_ref, synctex_bool_t add_quotes, synctex_io_mode_t * io_mode_ref) {
 #	define synctex_name (*synctex_name_ref)
 #	define the_file (*file_ref)
 	int result = __synctex_open(output,synctex_name_ref,file_ref,add_quotes,io_mode_ref);
@@ -4157,7 +4157,7 @@ struct __synctex_updater_t {
 synctex_updater_t synctex_updater_new_with_output_file(const char * output, const char * build_directory) {
 	synctex_updater_t updater = NULL;
 	char * synctex = NULL;
-	synctex_io_mode_type io_mode = synctex_io_mode_read;
+	synctex_io_mode_t io_mode = synctex_io_mode_read;
 	const char * mode = NULL;
 	/*  prepare the updater, the memory is the only one dynamically allocated */
 	updater = (synctex_updater_t)_synctex_malloc(sizeof(synctex_updater_t));

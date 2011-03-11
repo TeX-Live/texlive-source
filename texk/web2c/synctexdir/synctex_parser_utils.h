@@ -109,7 +109,7 @@ int _synctex_copy_with_quoting_last_path_component(const char * src, char ** des
 static const char * synctex_suffix = ".synctex";
 static const char * synctex_suffix_gz = ".gz";
 
-typedef unsigned int synctex_io_mode_type;
+typedef unsigned int synctex_io_mode_t;
 
 typedef enum {
 	synctex_io_append_mask = 1,
@@ -120,10 +120,10 @@ enum {
     synctex_io_mode_read = 0
 };
 
-int _synctex_get_name(const char * output, const char * build_directory, char ** synctex_name_ref, synctex_io_mode_type * compress_mode_ref);
+int _synctex_get_name(const char * output, const char * build_directory, char ** synctex_name_ref, synctex_io_mode_t * io_mode_ref);
 
 /*  returns the correct mode required by fopen and gzopen from the given io_mode */
-const char * _synctex_get_io_mode_name(synctex_io_mode_type io_mode);
+const char * _synctex_get_io_mode_name(synctex_io_mode_t io_mode);
 
 #ifdef __cplusplus
 }
