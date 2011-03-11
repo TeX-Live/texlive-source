@@ -108,6 +108,9 @@ Note that version 1.7 was delivered privately.
 1.12: Mon Jul 19 21:52:10 UTC 2010
 - Bug fix in synctex_parser.c, function __synctex_open: the io_mode was modified even in case of a non zero return,
 causing a void .synctex.gz file to be created even if it was not expected. Reported by Marek Kasik concerning a bug on evince.
+1.13: Fri Mar 11 07:39:12 UTC 2011
+- Bug fix in synctex_parser.c, better synchronization as suggested by Jan Sundermeyer (near line 3388).
+- Stronger code design in synctex_parser_utils.c, function _synctex_get_name (really neutral behavior).
   Only 3rd party tools are concerned.
 
 Acknowledgments:
@@ -120,5 +123,5 @@ Nota Bene:
 If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
-Copyright (c) 2008-2009 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008-2011 jerome DOT laurens AT u-bourgogne DOT fr
 
