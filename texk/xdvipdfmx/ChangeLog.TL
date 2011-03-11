@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/dpxcrypt.c: Sync with dvipdfmx.
+
 2011-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/cff_dict.h, src/cff_types.h, src/cmap.c, src/cmap_write.c,

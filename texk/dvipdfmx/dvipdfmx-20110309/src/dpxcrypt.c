@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxcrypt.c,v 1.3 2011/03/06 03:14:13 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxcrypt.c,v 1.4 2011/03/11 03:12:23 chofchof Exp $
  
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -24,6 +24,7 @@
 #include "config.h"
 #endif
 
+#include <stdint.h>
 #include <string.h>
 
 #include "dpxcrypt.h"
@@ -89,12 +90,12 @@ void MD5_init (MD5_CONTEXT *ctx)
 /* transform n*64 bytes */
 static void transform (MD5_CONTEXT *ctx, const unsigned char *data)
 {
-  unsigned long correct_words[16];
-  register unsigned long A = ctx->A;
-  register unsigned long B = ctx->B;
-  register unsigned long C = ctx->C;
-  register unsigned long D = ctx->D;
-  unsigned long *cwp = correct_words;
+  uint32_t correct_words[16];
+  register uint32_t A = ctx->A;
+  register uint32_t B = ctx->B;
+  register uint32_t C = ctx->C;
+  register uint32_t D = ctx->D;
+  uint32_t *cwp = correct_words;
 
 #ifdef WORDS_BIGENDIAN
   { int i; const unsigned char *p1; unsigned char *p2;
@@ -103,7 +104,7 @@ static void transform (MD5_CONTEXT *ctx, const unsigned char *data)
     }
   }
 #else
-  memcpy(correct_words, data, 64);
+  memcpy(correct_words, data, sizeof(uint32_t) * 16);
 #endif
 
 #define OP(a, b, c, d, s, T) \

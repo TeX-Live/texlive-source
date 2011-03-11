@@ -1,7 +1,12 @@
-$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.289 2011/03/09 07:58:12 chofchof Exp $
+$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.290 2011/03/11 03:15:31 chofchof Exp $
 
 ChangeLog: Changes for DVIPDFMx
 ===============================
+
+2011-03-11  Jin-Hwan Cho
+
+	* dpxcrypt.c:
+          Applied the patch for 64bit systems; suggested by Akira Kakuto.
 
 2011-03-09  Jin-Hwan Cho
 

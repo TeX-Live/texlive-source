@@ -1,0 +1,86 @@
+diff -ur dvipdfmx-20110309.orig/ChangeLog dvipdfmx-20110309/ChangeLog
+--- dvipdfmx-20110309.orig/ChangeLog	2011-03-09 08:58:12.000000000 +0100
++++ dvipdfmx-20110309/ChangeLog	2011-03-11 04:15:31.000000000 +0100
+@@ -1,8 +1,13 @@
+-$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.289 2011/03/09 07:58:12 chofchof Exp $
++$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.290 2011/03/11 03:15:31 chofchof Exp $
+ 
+ ChangeLog: Changes for DVIPDFMx
+ ===============================
+ 
++2011-03-11  Jin-Hwan Cho
++
++	* dpxcrypt.c:
++          Applied the patch for 64bit systems; suggested by Akira Kakuto.
++
+ 2011-03-09  Jin-Hwan Cho
+ 
+ 	* dpxfile.c, configure.in, man/extractbb.1:
+diff -ur dvipdfmx-20110309.orig/configure dvipdfmx-20110309/configure
+--- dvipdfmx-20110309.orig/configure	2011-03-09 08:48:47.000000000 +0100
++++ dvipdfmx-20110309/configure	2011-03-11 04:14:39.000000000 +0100
+@@ -2321,7 +2321,7 @@
+ 
+ # Define the identity of the package.
+  PACKAGE=dvipdfmx
+- VERSION=20110309
++ VERSION=20110311
+ 
+ 
+ cat >>confdefs.h <<_ACEOF
+diff -ur dvipdfmx-20110309.orig/configure.in dvipdfmx-20110309/configure.in
+--- dvipdfmx-20110309.orig/configure.in	2011-03-09 08:48:39.000000000 +0100
++++ dvipdfmx-20110309/configure.in	2011-03-11 04:14:28.000000000 +0100
+@@ -1,6 +1,6 @@
+ dnl Process this file with autoconf to produce a configure script.
+ AC_INIT(src/dvipdfmx.c)
+-AM_INIT_AUTOMAKE(dvipdfmx, 20110309)
++AM_INIT_AUTOMAKE(dvipdfmx, 20110311)
+ AM_CONFIG_HEADER(config.h)
+ AM_MAINTAINER_MODE
+ 
+diff -ur dvipdfmx-20110309.orig/src/dpxcrypt.c dvipdfmx-20110309/src/dpxcrypt.c
+--- dvipdfmx-20110309.orig/src/dpxcrypt.c	2011-03-06 04:14:13.000000000 +0100
++++ dvipdfmx-20110309/src/dpxcrypt.c	2011-03-11 04:12:23.000000000 +0100
+@@ -1,4 +1,4 @@
+-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxcrypt.c,v 1.3 2011/03/06 03:14:13 chofchof Exp $
++/*  $Header: /home/cvsroot/dvipdfmx/src/dpxcrypt.c,v 1.4 2011/03/11 03:12:23 chofchof Exp $
+  
+     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
+ 
+@@ -24,6 +24,7 @@
+ #include "config.h"
+ #endif
+ 
++#include <stdint.h>
+ #include <string.h>
+ 
+ #include "dpxcrypt.h"
+@@ -89,12 +90,12 @@
+ /* transform n*64 bytes */
+ static void transform (MD5_CONTEXT *ctx, const unsigned char *data)
+ {
+-  unsigned long correct_words[16];
+-  register unsigned long A = ctx->A;
+-  register unsigned long B = ctx->B;
+-  register unsigned long C = ctx->C;
+-  register unsigned long D = ctx->D;
+-  unsigned long *cwp = correct_words;
++  uint32_t correct_words[16];
++  register uint32_t A = ctx->A;
++  register uint32_t B = ctx->B;
++  register uint32_t C = ctx->C;
++  register uint32_t D = ctx->D;
++  uint32_t *cwp = correct_words;
+ 
+ #ifdef WORDS_BIGENDIAN
+   { int i; const unsigned char *p1; unsigned char *p2;
+@@ -103,7 +104,7 @@
+     }
+   }
+ #else
+-  memcpy(correct_words, data, 64);
++  memcpy(correct_words, data, sizeof(uint32_t) * 16);
+ #endif
+ 
+ #define OP(a, b, c, d, s, T) \
