@@ -1,6 +1,6 @@
-diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
---- xindy.orig/user-commands/Makefile.am	2010-05-11 01:15:51.000000000 +0200
-+++ xindy/user-commands/Makefile.am	2010-05-12 21:23:55.000000000 +0200
+diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/user-commands/Makefile.am xindy-2.4/user-commands/Makefile.am
+--- xindy-2.4.orig/user-commands/Makefile.am	2010-05-11 01:15:51.000000000 +0200
++++ xindy-2.4/user-commands/Makefile.am	2010-05-12 21:23:55.000000000 +0200
 @@ -26,12 +26,14 @@
  
  if TEXLIVE_BUILD
@@ -45,9 +45,9 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am x
  
  man_MANS = texindy.1 xindy.1
  
-diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/texindy.in xindy/user-commands/texindy.in
---- xindy.orig/user-commands/texindy.in	2010-05-11 01:39:24.000000000 +0200
-+++ xindy/user-commands/texindy.in	2010-05-12 11:09:39.000000000 +0200
+diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/user-commands/texindy.in xindy-2.4/user-commands/texindy.in
+--- xindy-2.4.orig/user-commands/texindy.in	2010-05-11 01:39:24.000000000 +0200
++++ xindy-2.4/user-commands/texindy.in	2010-05-12 11:09:39.000000000 +0200
 @@ -352,6 +352,7 @@
  
  # Determine environment. Where is our library directory, and our modules?
@@ -72,9 +72,9 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/texindy.in xi
  
      if ( $is_w32 ) {
  	$xindy = "$cmd_dir/xindy.pl";
-diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xindy/user-commands/xindy.in
---- xindy.orig/user-commands/xindy.in	2010-05-11 01:39:24.000000000 +0200
-+++ xindy/user-commands/xindy.in	2010-05-12 11:09:37.000000000 +0200
+diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/user-commands/xindy.in xindy-2.4/user-commands/xindy.in
+--- xindy-2.4.orig/user-commands/xindy.in	2010-05-11 01:39:24.000000000 +0200
++++ xindy-2.4/user-commands/xindy.in	2010-05-12 11:09:37.000000000 +0200
 @@ -337,6 +337,7 @@
  
  # Determine environment. Where is our library directory, and our modules?

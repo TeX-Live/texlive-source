@@ -47,8 +47,7 @@ DIST_COMMON = $(am__configure_deps) \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/xindy/VERSION $(top_srcdir)/ac/xindy.ac \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/ac/xindy.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -74,7 +73,6 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 	distdir dist dist-all distcheck
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -166,6 +164,7 @@ STRIP = @STRIP@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 XINDY_RUN = @XINDY_RUN@
+XINDY_TREE = @XINDY_TREE@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -218,13 +217,16 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = README-clisp xindy-$(VERSION)-PATCHES xindy/AUTHORS \
-	xindy/COPYING xindy/INSTALL xindy/Makefile.am xindy/README \
-	xindy/NEWS xindy/m4 xindy/configure.ac \
-	xindy/make-rules/alphabets/Makefile.am.not-yet \
-	xindy/make-rules/alphabets/lang.defs \
-	xindy/make-rules/alphabets/mk-lang.sh
-SUBDIRS = . xindy
+EXTRA_DIST = README-clisp $(XINDY_TREE)-PATCHES $(XINDY_TREE)/AUTHORS \
+	$(XINDY_TREE)/COPYING $(XINDY_TREE)/INSTALL \
+	$(XINDY_TREE)/Makefile.am $(XINDY_TREE)/README \
+	$(XINDY_TREE)/NEWS $(XINDY_TREE)/VERSION $(XINDY_TREE)/m4 \
+	$(XINDY_TREE)/configure.ac \
+	$(XINDY_TREE)/make-rules/alphabets/Makefile.am.not-yet \
+	$(XINDY_TREE)/make-rules/alphabets/lang.defs \
+	$(XINDY_TREE)/make-rules/alphabets/mk-lang.sh
+SUBDIRS = . $(XINDY_TREE)
+DIST_SUBDIRS = $(SUBDIRS)
 all: all-recursive
 
 .SUFFIXES:

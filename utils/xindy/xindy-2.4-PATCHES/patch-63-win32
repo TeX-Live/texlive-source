@@ -1,6 +1,6 @@
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/src/idxstyle.lsp xindy/src/idxstyle.lsp
---- xindy.orig/src/idxstyle.lsp	2009-03-23 19:28:30.000000000 +0100
-+++ xindy/src/idxstyle.lsp	2010-06-21 10:22:18.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/src/idxstyle.lsp xindy-2.4/src/idxstyle.lsp
+--- xindy-2.4.orig/src/idxstyle.lsp	2009-03-23 19:28:30.000000000 +0100
++++ xindy-2.4/src/idxstyle.lsp	2010-06-21 10:22:18.000000000 +0200
 @@ -779,6 +779,7 @@
               (return (push :default paths)))
             (setq pos (position #+UNIX #\:
@@ -9,9 +9,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/src/idxstyle.lsp xindy/s
                                 str))
             (if pos
                 (progn
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xindy/user-commands/xindy.in
---- xindy.orig/user-commands/xindy.in	2010-05-12 11:09:37.000000000 +0200
-+++ xindy/user-commands/xindy.in	2010-06-21 10:22:40.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/user-commands/xindy.in xindy-2.4/user-commands/xindy.in
+--- xindy-2.4.orig/user-commands/xindy.in	2010-05-12 11:09:37.000000000 +0200
++++ xindy-2.4/user-commands/xindy.in	2010-06-21 10:22:40.000000000 +0200
 @@ -339,6 +339,7 @@
  
  our $is_TL = ( '@is_TL@' eq 'yes' );

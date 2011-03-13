@@ -1,6 +1,6 @@
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/danish/Makefile.am xindy/make-rules/alphabets/danish/Makefile.am
---- xindy.orig/make-rules/alphabets/danish/Makefile.am	2008-01-09 15:01:28.000000000 +0100
-+++ xindy/make-rules/alphabets/danish/Makefile.am	2010-05-11 14:24:32.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/danish/Makefile.am xindy-2.4/make-rules/alphabets/danish/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/danish/Makefile.am	2008-01-09 15:01:28.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/danish/Makefile.am	2010-05-11 14:24:32.000000000 +0200
 @@ -20,9 +20,7 @@
  ## Boston, MA 02110-1301 USA.
  
@@ -12,9 +12,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/dan
  
  CLEANFILES = \
  	cp1252.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/dutch/Makefile.am xindy/make-rules/alphabets/dutch/Makefile.am
---- xindy.orig/make-rules/alphabets/dutch/Makefile.am	2008-01-09 15:01:27.000000000 +0100
-+++ xindy/make-rules/alphabets/dutch/Makefile.am	2010-05-11 14:28:44.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/dutch/Makefile.am xindy-2.4/make-rules/alphabets/dutch/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/dutch/Makefile.am	2008-01-09 15:01:27.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/dutch/Makefile.am	2010-05-11 14:28:44.000000000 +0200
 @@ -20,8 +20,7 @@
  ## Boston, MA 02110-1301 USA.
  
@@ -25,9 +25,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/dut
  
  CLEANFILES = \
  	ij-as-ij-latin1.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/english/Makefile.am xindy/make-rules/alphabets/english/Makefile.am
---- xindy.orig/make-rules/alphabets/english/Makefile.am	2008-01-09 15:01:27.000000000 +0100
-+++ xindy/make-rules/alphabets/english/Makefile.am	2010-05-11 14:29:01.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/english/Makefile.am xindy-2.4/make-rules/alphabets/english/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/english/Makefile.am	2008-01-09 15:01:27.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/english/Makefile.am	2010-05-11 14:29:01.000000000 +0200
 @@ -20,8 +20,7 @@
  ## Boston, MA 02110-1301 USA.
  
@@ -38,9 +38,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/eng
  
  CLEANFILES = \
  	cp1252.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/finnish/Makefile.am xindy/make-rules/alphabets/finnish/Makefile.am
---- xindy.orig/make-rules/alphabets/finnish/Makefile.am	2008-01-09 15:01:26.000000000 +0100
-+++ xindy/make-rules/alphabets/finnish/Makefile.am	2010-05-11 14:24:54.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/finnish/Makefile.am xindy-2.4/make-rules/alphabets/finnish/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/finnish/Makefile.am	2008-01-09 15:01:26.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/finnish/Makefile.am	2010-05-11 14:24:54.000000000 +0200
 @@ -20,9 +20,7 @@
  ## Boston, MA 02110-1301 USA.
  
@@ -52,9 +52,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/fin
  
  CLEANFILES = \
  	cp1252.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/general/Makefile.am xindy/make-rules/alphabets/general/Makefile.am
---- xindy.orig/make-rules/alphabets/general/Makefile.am	2008-01-09 15:01:25.000000000 +0100
-+++ xindy/make-rules/alphabets/general/Makefile.am	2010-05-11 14:29:22.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/general/Makefile.am xindy-2.4/make-rules/alphabets/general/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/general/Makefile.am	2008-01-09 15:01:25.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/general/Makefile.am	2010-05-11 14:29:22.000000000 +0200
 @@ -20,8 +20,7 @@
  ## Boston, MA 02110-1301 USA.
  
@@ -65,9 +65,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/gen
  
  CLEANFILES = \
  	cp1252.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/german/Makefile.am xindy/make-rules/alphabets/german/Makefile.am
---- xindy.orig/make-rules/alphabets/german/Makefile.am	2008-01-09 15:01:22.000000000 +0100
-+++ xindy/make-rules/alphabets/german/Makefile.am	2010-05-11 14:25:18.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/german/Makefile.am xindy-2.4/make-rules/alphabets/german/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/german/Makefile.am	2008-01-09 15:01:22.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/german/Makefile.am	2010-05-11 14:25:18.000000000 +0200
 @@ -21,8 +21,7 @@
  
  EXTRA_DIST = \
@@ -78,9 +78,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/ger
  
  CLEANFILES = \
  	braille-utf8.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/greek/Makefile.am xindy/make-rules/alphabets/greek/Makefile.am
---- xindy.orig/make-rules/alphabets/greek/Makefile.am	2008-01-09 15:01:22.000000000 +0100
-+++ xindy/make-rules/alphabets/greek/Makefile.am	2010-05-11 14:25:32.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/greek/Makefile.am xindy-2.4/make-rules/alphabets/greek/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/greek/Makefile.am	2008-01-09 15:01:22.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/greek/Makefile.am	2010-05-11 14:25:32.000000000 +0200
 @@ -21,9 +21,7 @@
  
  EXTRA_DIST = \
@@ -92,9 +92,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/gre
  
  CLEANFILES = \
  	iso88597.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/icelandic/Makefile.am xindy/make-rules/alphabets/icelandic/Makefile.am
---- xindy.orig/make-rules/alphabets/icelandic/Makefile.am	2008-01-09 15:01:20.000000000 +0100
-+++ xindy/make-rules/alphabets/icelandic/Makefile.am	2010-05-11 14:25:40.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/icelandic/Makefile.am xindy-2.4/make-rules/alphabets/icelandic/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/icelandic/Makefile.am	2008-01-09 15:01:20.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/icelandic/Makefile.am	2010-05-11 14:25:40.000000000 +0200
 @@ -20,9 +20,7 @@
  ## Boston, MA 02110-1301 USA.
  
@@ -106,9 +106,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/ice
  
  CLEANFILES = \
  	cp1252.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/kurdish/Makefile.am xindy/make-rules/alphabets/kurdish/Makefile.am
---- xindy.orig/make-rules/alphabets/kurdish/Makefile.am	2008-01-09 15:01:18.000000000 +0100
-+++ xindy/make-rules/alphabets/kurdish/Makefile.am	2010-05-11 14:25:47.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/kurdish/Makefile.am xindy-2.4/make-rules/alphabets/kurdish/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/kurdish/Makefile.am	2008-01-09 15:01:18.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/kurdish/Makefile.am	2010-05-11 14:25:47.000000000 +0200
 @@ -21,8 +21,7 @@
  
  EXTRA_DIST = \
@@ -119,9 +119,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/kur
  
  CLEANFILES = \
  	bedirxan-latin5.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/russian/Makefile.am xindy/make-rules/alphabets/russian/Makefile.am
---- xindy.orig/make-rules/alphabets/russian/Makefile.am	2008-01-09 15:01:13.000000000 +0100
-+++ xindy/make-rules/alphabets/russian/Makefile.am	2010-05-11 14:25:58.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/russian/Makefile.am xindy-2.4/make-rules/alphabets/russian/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/russian/Makefile.am	2008-01-09 15:01:13.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/russian/Makefile.am	2010-05-11 14:25:58.000000000 +0200
 @@ -20,8 +20,7 @@
  ## Boston, MA 02110-1301 USA.
  
@@ -132,9 +132,9 @@ diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/rus
  
  CLEANFILES = \
  	cp1251.raw \
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/swedish/Makefile.am xindy/make-rules/alphabets/swedish/Makefile.am
---- xindy.orig/make-rules/alphabets/swedish/Makefile.am	2008-01-09 15:01:11.000000000 +0100
-+++ xindy/make-rules/alphabets/swedish/Makefile.am	2010-05-11 14:26:06.000000000 +0200
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/swedish/Makefile.am xindy-2.4/make-rules/alphabets/swedish/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/swedish/Makefile.am	2008-01-09 15:01:11.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/swedish/Makefile.am	2010-05-11 14:26:06.000000000 +0200
 @@ -20,8 +20,7 @@
  ## Boston, MA 02110-1301 USA.
  

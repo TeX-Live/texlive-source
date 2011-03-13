@@ -1,9 +1,9 @@
 	Do not rebuild the distributed file romanian/latin2.pl
 	again and again.
 
-diff -ur -N -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefile.am xindy/make-rules/alphabets/Makefile.am
---- xindy.orig/make-rules/alphabets/Makefile.am	2010-05-02 10:31:37.000000000 +0200
-+++ xindy/make-rules/alphabets/Makefile.am	2011-03-02 18:03:12.000000000 +0100
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Makefile.am xindy-2.4/make-rules/alphabets/Makefile.am
+--- xindy-2.4.orig/make-rules/alphabets/Makefile.am	2010-05-02 10:31:37.000000000 +0200
++++ xindy-2.4/make-rules/alphabets/Makefile.am	2011-03-02 18:03:12.000000000 +0100
 @@ -814,13 +814,10 @@
  	sed -e 's/@.{\([^}]*\)}//g;' <$< | \
  	$(CONVERT_FROM_UTF8)CP850 >$@

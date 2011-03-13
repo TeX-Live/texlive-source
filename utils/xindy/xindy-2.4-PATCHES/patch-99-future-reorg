@@ -14,9 +14,9 @@
 
 	Drop unused files (from TL2008 and more).
 
-diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefile.am.not-yet xindy/make-rules/alphabets/Makefile.am.not-yet
---- xindy.orig/make-rules/alphabets/Makefile.am.not-yet	1970-01-01 01:00:00.000000000 +0100
-+++ xindy/make-rules/alphabets/Makefile.am.not-yet	2010-01-13 13:01:37.000000000 +0100
+diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Makefile.am.not-yet xindy-2.4/make-rules/alphabets/Makefile.am.not-yet
+--- xindy-2.4.orig/make-rules/alphabets/Makefile.am.not-yet	1970-01-01 01:00:00.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/Makefile.am.not-yet	2010-01-13 13:01:37.000000000 +0100
 @@ -0,0 +1,310 @@
 +## Use `autoreconf' in top-level directory to recreate all
 +## autoconf/automake files.
@@ -328,9 +328,9 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefi
 +
 +CLEANFILES += $(nobase_nodist_lang_DATA) $(DOCS) $(DOC_CLEAN)
 +
-diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/lang.defs xindy/make-rules/alphabets/lang.defs
---- xindy.orig/make-rules/alphabets/lang.defs	1970-01-01 01:00:00.000000000 +0100
-+++ xindy/make-rules/alphabets/lang.defs	2010-01-10 22:08:23.000000000 +0100
+diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/lang.defs xindy-2.4/make-rules/alphabets/lang.defs
+--- xindy-2.4.orig/make-rules/alphabets/lang.defs	1970-01-01 01:00:00.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/lang.defs	2010-01-10 22:08:23.000000000 +0100
 @@ -0,0 +1,45 @@
 +albanian UTF8_LAT LATIN1
 +belarusian UTF8_CYR CYR_ISO88595 CYR_ISOIR111 CYR_1251
@@ -377,9 +377,9 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/lang.d
 +upper-sorbian UTF8_LAT CP1250 LATIN2
 +ukrainian UTF8_CYR CYR_KOI8_U CYR_1251
 +vietnamese UTF8_LAT
-diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/mk-lang.sh xindy/make-rules/alphabets/mk-lang.sh
---- xindy.orig/make-rules/alphabets/mk-lang.sh	1970-01-01 01:00:00.000000000 +0100
-+++ xindy/make-rules/alphabets/mk-lang.sh	2010-01-13 13:51:57.000000000 +0100
+diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/mk-lang.sh xindy-2.4/make-rules/alphabets/mk-lang.sh
+--- xindy-2.4.orig/make-rules/alphabets/mk-lang.sh	1970-01-01 01:00:00.000000000 +0100
++++ xindy-2.4/make-rules/alphabets/mk-lang.sh	2010-01-13 13:51:57.000000000 +0100
 @@ -0,0 +1,213 @@
 +#! /bin/sh
 +

@@ -1,6 +1,6 @@
-diff -ur xindy.orig/modules/base/tex.xdy xindy/modules/base/tex.xdy
---- xindy.orig/modules/base/tex.xdy	2005-05-09 22:21:11.000000000 +0200
-+++ xindy/modules/base/tex.xdy	2010-06-11 13:03:40.000000000 +0200
+diff -ur xindy-2.4.orig/modules/base/tex.xdy xindy-2.4/modules/base/tex.xdy
+--- xindy-2.4.orig/modules/base/tex.xdy	2005-05-09 22:21:11.000000000 +0200
++++ xindy-2.4/modules/base/tex.xdy	2010-06-11 13:03:40.000000000 +0200
 @@ -1,4 +1,4 @@
 -;; $Id: tex.xdy,v 1.2 2005/05/09 20:21:11 jschrod Exp $
 +;; $Id: tex.xdy,v 1.3 2010/06/11 11:01:46 jschrod Exp $

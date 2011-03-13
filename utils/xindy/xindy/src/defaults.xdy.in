@@ -1,5 +1,0 @@
-;; defaults.xdy.in			29 Mar 09  -*- Lisp -*-
-;;------------------------------------------------------------
-
-(setq *load-paths* (list (pathname ".")
-			 (pathname "@MODULEDIR@")))

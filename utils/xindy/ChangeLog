@@ -1,3 +1,7 @@
+2011-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Renamed xindy source tree 'xindy' -> 'xindy-2.4'.
+
 2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac (LISP_RUN): Convert dos line endings from cygwin.
