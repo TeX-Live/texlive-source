@@ -1,0 +1,37 @@
+;; $Id: duden.xdy,v 1.1 1996/07/03 18:44:46 kehr Exp $
+;;
+;; This file contains the basic sort-rules that are necessary to sort
+;; a german index.
+
+;; Dieses Modul definiert die Regeln zum Sortieren eines Wörterbuchs.
+;; Die folgenden Regeln wurden dem Duden entnommen und bilden die
+;; Sortierregeln des Dudens selbst.
+;;
+;; (1) ä wird wie a, ö wie o, ü wie u und äu wie au einsortiert.
+
+(sort-rule "ä" "a")
+(sort-rule "ö" "o")
+(sort-rule "ü" "u")
+
+;; (2) Die Schreibungen ae, oe und ue (in Namen) werden nach ad usw.
+;;     eingeordnet. [Dies k"onnen wir nicht leisten, da das Programm
+;;     nicht weiß, was ein Name ist.]
+;; (3) Der Buchstabe ß (es-zett) wird wie ss (i), bei gleichnamigen
+;;     Wörtern vor ss (ii) eigeordnet. Punkt (ii) ist ebenfalls
+;;     nicht spezifizierbar, daher hier nur Regel (3i).
+
+(sort-rule "ß" "ss")
+
+;; Da beim Index die Groß- und Kleinschreibung ohne Bedeutung ist,
+;; bilden wir beim Sort-Mapping die Großbuchstaben auf die
+;; Kleinbuchstaben ab.
+
+(require "lang/latin/caseisrt.xdy")
+
+;; Analog bilden wir noch die Großbuchtaben-Umlaute ab.
+
+(sort-rule "Ä" "a")
+(sort-rule "Ö" "o")
+(sort-rule "Ü" "u")
+
+;; End

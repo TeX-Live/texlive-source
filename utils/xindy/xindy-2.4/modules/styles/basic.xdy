@@ -1,0 +1,36 @@
+;; $Id: basic.xdy,v 1.2 2008/01/09 15:13:54 jschrod Exp $ -*- Lisp -*-
+;; ------------------------------------------------------------
+;; (history at end)
+;; Licensed under GPL, see README and LICENSE.
+
+
+;;;
+;;; Very basic xindy style, to get some TeX-like output at all.
+;;; Useful for testing without the whole texindy framework.
+;;; It assumes the alphabets to be handled elsewhere, by language modules.
+;;;
+
+(define-location-class "page-numbers" ("arabic-numbers"))
+(define-attributes ("default"))
+
+(markup-letter-group :open-head "~n~n  \textbf{" :close-head "}~n"
+                     :capitalize)
+
+(markup-indexentry :open "~n  \item "           :depth 0)
+(markup-indexentry :open "~n    \subitem "      :depth 1)
+(markup-indexentry :open "~n      \subsubitem " :depth 2)
+
+(markup-locclass-list :open "\quad ")
+(markup-locref-list :sep ", ")
+(markup-range :sep "--")
+
+
+;======================================================================
+;;
+;; $Log: basic.xdy,v $
+;; Revision 1.2  2008/01/09 15:13:54  jschrod
+;;     Add another newline in front of letter groups.
+;;
+;; Revision 1.1  2006/08/05 15:58:11  jschrod
+;;     Initial revision.
+;;

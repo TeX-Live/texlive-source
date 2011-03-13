@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.9">
+ <TITLE>XINDY FAQ: xindy and LaTeX</TITLE>
+ <LINK HREF="faq-4.html" REL=next>
+ <LINK HREF="faq-2.html" REL=previous>
+ <LINK HREF="faq.html#toc3" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="faq-4.html">Next</A>
+<A HREF="faq-2.html">Previous</A>
+<A HREF="faq.html#toc3">Contents</A>
+<HR>
+<H2><A NAME="s3">3. <SF>xindy</SF> and LaTeX</A></H2>
+
+<H2><A NAME="ss3.1">3.1 What is <CODE>tex2xindy</CODE>?</A>
+</H2>
+
+<P>
+<P><CODE>tex2xindy</CODE> is a filter that parses `<CODE>.idx</CODE>' or similar files
+and converts the <CODE>\indexentry</CODE> macros into a form readable by
+<SF>xindy</SF>.
+<P>The parser of <CODE>makeindex</CODE> can be configured to recognize different
+quoting characters, etc. (see the man-page for <CODE>makeindex</CODE>, section
+<EM>input style specifiers</EM> for further details). We have tried to
+extract the parser from <CODE>makeindex</CODE> but due to several probems we
+have finally rewritten the parser using <CODE>lex</CODE>. Scanners written
+with <CODE>lex</CODE> are usually fixed to a specific character set used in
+the regular expressions. Our parser, <CODE>tex2xindy</CODE> is therefore not
+configurable. If one uses a different configuration of the
+<CODE>makeindex</CODE> input style specifiers, one can change the source
+(<CODE>tex2xindy.l</CODE>) to generate a completely new parser. From our
+personal experience we have rarely used more than two different
+parsers in practice so we have written <CODE>tex2xindy</CODE> in a form that
+is easily maintainable. The input specifiers are stored symbolically
+in the source. The definiton section looks like this:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+KEYWORD  \\indexentry
+ENCAP    \|
+ACTUAL   @
+ESCAPE   \\
+LEVEL    !
+QUOTE    \"
+ROPEN    \(
+RCLOSE   \)
+ARGOPEN  \{
+ARGCLOSE \}
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>These definitions are essentially the input style specifiers as can be
+found in the man-page of <CODE>makeindex</CODE>. Changing this section
+according to your needs and recompiling <CODE>tex2xindy</CODE> should be an
+easy task. Maybe we will include more pre-defined parsers in future
+releases if necessary.
+<P>
+<P>
+<P>
+<H2><A NAME="ss3.2">3.2 What LaTeX-package should I use in conjunction with xindy?</A>
+</H2>
+
+<P>
+<P>We strongly recommend using the LaTeX2e-package <CODE>index</CODE> written
+by David M. Jones, which is available at CTAN. It supports multiple
+indexes as well as several shortcuts to easily index terms in a
+document. Multiple indexes support the generation of several indexes
+for one document. For instance, one can make an author or command
+index in addition to a global index.
+<P>Another option is to use the <CODE>xindy.sty</CODE> from Andreas Schlechte
+that comes with the <SF>xindy</SF> distribution. Take a look at the
+<CODE>contrib</CODE> directory that should contain a version.
+<P>
+<P>
+<P>
+<P>
+<HR>
+<A HREF="faq-4.html">Next</A>
+<A HREF="faq-2.html">Previous</A>
+<A HREF="faq.html#toc3">Contents</A>
+</BODY>
+</HTML>

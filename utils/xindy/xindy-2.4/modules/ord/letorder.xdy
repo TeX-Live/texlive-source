@@ -1,0 +1,8 @@
+;; $Id$
+;;
+;; This module defined the letter ordering scheme.
+;;
+
+(sort-rule " " "")
+
+;; End

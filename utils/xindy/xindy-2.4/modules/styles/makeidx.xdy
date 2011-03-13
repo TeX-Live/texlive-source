@@ -1,0 +1,148 @@
+;; $Id: makeidx.xdy,v 1.1 1997/02/07 14:17:31 kehr Exp $
+;;
+;; This file implements the Output Style Specifiers for plain
+;; makeindex (see manpage of makeindex 2.x) in conjuction with
+;; TeX/LaTeX.
+;;
+;; The Input Style Specifiers of makeindex cannot de defined in a
+;; `xindy' style file. Use an appropriate version of the program
+;; `tex2xindy' which should be included with this distribution.
+;;
+;; Since `xindy' uses a different specification language than
+;; makeindex and some of the command-line options of makeindex are now
+;; only available as style-file commands, this file can only serve as
+;; a template that produces the default-markup of makeindex. However,
+;; it may be used as a starting point for further modification and
+;; specialization.
+;;
+;; The following values are taken from the source of the makeindex
+;; distribution (see file scanst.h and the manpage) for further
+;; details.
+;;
+
+;; Define all attributes appearing in your document. Your attributes
+;; are all encapsulators you use in your \index commands following the
+;; vertical bar sign `|'. For example `foo' is the attribute in the
+;; command \index{...|foo}. Here you specify the set of attributes
+;; that appear in your document, the order in which they appear in the
+;; index and which one superdes the other.
+;;
+;; Example: a) (define-attibutes (("default") ("bf") ("it")))
+;;          b) (define-attibutes (("bf" "default")))
+;;
+;; The initial command is (change it accordingly):
+
+(define-attributes ("default"))
+
+;; The description of the location-classes.
+;; Add more location classes as needed.
+
+(define-location-class "arabic-page-numbers" ("arabic-numbers"))
+(define-location-class "roman-page-numbers"  ("roman-numbers-lowercase"))
+(define-location-class "Roman-page-numbers"  ("roman-numbers-uppercase"))
+(define-location-class "alpha-page-numbers"  ("alpha"))
+(define-location-class "Alpha-page-numbers"  ("ALPHA"))
+
+;; The most frequently used cross reference class "see". Add more, if
+;; necessary.
+
+(define-crossref-class "see")
+(markup-crossref-list :open "\see{" :close "}{}" :class "see")
+
+;; In makeindex: page_precedence <string>  "rnaRA"
+;; List all location classes appearing in your document.
+
+(define-location-class-order ("roman-page-numbers"
+			      "arabic-page-numbers"
+			      "alpha-page-numbers"
+			      "Roman-page-numbers"
+			      "Alpha-page-numbers"
+			      "see"))
+
+
+;; preamble <string>        "\\begin{theindex}\n"
+;; postamble <string>       "\n\n\\end{theindex}\n"
+
+(markup-index :open  "\begin{theindex}~n"
+	      :close "~n~n\end{theindex}~n"
+	      :tree)
+
+;; These specifiers are not directly supported via a command-line
+;; switch as in makeindex. Add the appropriate markup-commands into
+;; the preamble.
+
+;; setpage_prefix <string>  "~n  \setcounter{page}{"
+;; setpage_suffix <string>  "}~n"
+
+;; group_skip <string>      "~n~n  \indexspace~n"
+
+(markup-letter-group-list :sep "~n~n  \indexspace~n")
+
+;; The indexentries (item_<..> specifiers)
+
+(markup-indexentry :open "~n  \item "           :depth 0)
+(markup-indexentry :open "~n    \subitem "      :depth 1)
+(markup-indexentry :open "~n      \subsubitem " :depth 2)
+
+;; Location-references
+
+;; delim_0 <string>         ", "
+;; delim_1 <string>         ", "
+;; delim_2 <string>         ", "
+
+(markup-locclass-list :open ", " :sep ", ")
+
+;; delim_n <string>         ", "
+
+(markup-locref-list   :sep ", ")
+
+;; delim_r <string>         "--"
+
+(markup-range :sep "--")
+
+;; Here follow all letter-groups. The short-cut notation is used here.
+
+(define-letter-groups
+    ("a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
+     "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"))
+
+;;
+;; The sort-rules map all letters to their lowercase counterpart.
+;;
+
+(sort-rule "A" "a")
+(sort-rule "B" "b")
+(sort-rule "C" "c")
+(sort-rule "D" "d")
+(sort-rule "E" "e")
+(sort-rule "F" "f")
+(sort-rule "G" "g")
+(sort-rule "H" "h")
+(sort-rule "I" "i")
+(sort-rule "J" "j")
+(sort-rule "K" "k")
+(sort-rule "L" "l")
+(sort-rule "M" "m")
+(sort-rule "N" "n")
+(sort-rule "O" "o")
+(sort-rule "P" "p")
+(sort-rule "Q" "q")
+(sort-rule "R" "r")
+(sort-rule "S" "s")
+(sort-rule "T" "t")
+(sort-rule "U" "u")
+(sort-rule "V" "v")
+(sort-rule "W" "w")
+(sort-rule "X" "x")
+(sort-rule "Y" "y")
+(sort-rule "Z" "z")
+
+
+;; That's all ;-)
+
+
+;; End
+
+;; Local Variables:
+;; mode: lisp
+;; End:

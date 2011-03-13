@@ -1,0 +1,52 @@
+;; isolatin1-tolower			Roger Kehr	 14 Jan 98
+;;----------------------------------------------------------------------
+
+;; This style maps all uppercase letters of the ISO Latin1 alphabet
+;; in the range 160-255 to their lowercase counterparts.
+
+(require "rules/latin-tolower.xdy")
+
+(define-rule-set "isolatin1-tolower"
+
+  :inherit-from ("latin-tolower")
+
+  :rules (("À" "à" :string :again)
+	  ("Á" "á" :string :again)
+	  ("Â" "â" :string :again)
+	  ("Ã" "ã" :string :again)
+	  ("Ä" "ä" :string :again)
+	  ("Å" "å" :string :again)
+	  ("Æ" "æ" :string :again)
+
+	  ("Ç" "ç" :string :again)
+
+	  ("È" "è" :string :again)
+	  ("É" "é" :string :again)
+	  ("Ê" "ê" :string :again)
+	  ("Ë" "ë" :string :again)
+
+	  ("Ì" "ì" :string :again)
+	  ("Í" "í" :string :again)
+	  ("Î" "î" :string :again)
+	  ("Ï" "ï" :string :again)
+
+	  ("Ð" "ð" :string :again)
+	  ("Ñ" "ñ" :string :again)
+
+	  ("Ò" "ò" :string :again)
+	  ("Ó" "ó" :string :again)
+	  ("Ô" "ô" :string :again)
+	  ("Õ" "õ" :string :again)
+	  ("Ö" "ö" :string :again)
+	  ("Ø" "ø" :string :again)
+
+	  ("Ù" "ù" :string :again)
+	  ("Ú" "ú" :string :again)
+	  ("Û" "û" :string :again)
+	  ("Ü" "ü" :string :again)
+
+	  ("Ý" "ý" :string :again)
+	  ("Þ" "þ" :string :again)
+	  ))
+
+;; End

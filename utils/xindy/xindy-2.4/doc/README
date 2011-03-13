@@ -1,0 +1,14 @@
+$Id: README.distrib,v 1.3 2008/01/09 11:11:46 jschrod Exp $
+------------------------------------------------------------
+
+This directory contains documentation of `xindy'.
+
+Manual pages for the commands are created during installation and are
+placed in appropriate man directories.
+PDF versions of the manual pages have been added here for your convenience.
+
+The subdirectory ./style-tutorial/ contains the examples that are used
+in the xindy style tutorial.
+
+FAQ and style tutorial are out of date. (Updates are welcome, of course.)
+You find more documentation at the xindy Web Site, at http://www.xindy.org/.

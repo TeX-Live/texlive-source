@@ -1,0 +1,7 @@
+;; $Id: pagenums.xdy,v 1.1 1996/07/03 18:44:40 kehr Exp $
+;;
+;; This module defines the location-class "page-numbers"
+
+(define-location-class "page-numbers" ("arabic-numbers"))
+
+;; End

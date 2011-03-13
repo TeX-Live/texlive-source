@@ -1,0 +1,20 @@
+;; $Id: texindy.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; all auto modules of texindy.
+;;;
+
+(require "numeric-sort.xdy")
+(require "latex.xdy")
+(require "latex-loc-fmts.xdy")
+(require "makeindex.xdy")
+(require "latin-lettergroups.xdy")
+
+
+;;======================================================================
+;;
+;; $Log: texindy.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

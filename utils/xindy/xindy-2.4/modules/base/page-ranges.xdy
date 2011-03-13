@@ -1,0 +1,18 @@
+;; $Id: page-ranges.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; page ranges
+;;;
+;;; More than two consecutive pages are listed as a range.
+;;;
+
+(markup-range :sep "--")
+
+
+;;======================================================================
+;;
+;; $Log: page-ranges.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;
