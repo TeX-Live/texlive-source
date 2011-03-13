@@ -1,3 +1,17 @@
+2011-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid compiler warnings (redo changes from 2010-01-22).
+
+	* synctex_parser_utils.h: Declare synctex_suffix{,_gz} extern ...
+	* synctex_parser.c: ... and instantiate here.
+	* synctex_parser_utils.[ch]: Constify _synctex_last_path_component()
+	return type.
+	* synctex_parser.c (__synctex_scanner_t): Change type of struct
+	members buffer_{cur,start,end} from 'unsigned char *' to 'char *'
+	and remove the casts.
+	(_synctex_class_t synctex_class_*): Declare as non-const.
+	(_synctex_scan_named): Constify string param `name'.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reorganize web2c headers.

@@ -186,24 +186,24 @@ synctex_bool_t _synctex_path_is_absolute(const char * name) {
 }
 
 /*  We do not take care of UTF-8 */
-char * _synctex_last_path_component(const char * name) {
+const char * _synctex_last_path_component(const char * name) {
 	const char * c = name+strlen(name);
 	if(c>name) {
 		if(!SYNCTEX_IS_PATH_SEPARATOR(*c)) {
 			do {
 				--c;
 				if(SYNCTEX_IS_PATH_SEPARATOR(*c)) {
-					return (char *)c+1;
+					return c+1;
 				}
 			} while(c>name);
 		}
-		return (char *)c;/* the last path component is the void string*/
+		return c;/* the last path component is the void string*/
 	}
-	return (char *)c;
+	return c;
 }
 
 int _synctex_copy_with_quoting_last_path_component(const char * src, char ** dest_ref, size_t size) {
-  char * lpc;
+  const char * lpc;
   if(src && dest_ref) {
 #		define dest (*dest_ref)
 		dest = NULL;	/*	Default behavior: no change and sucess. */
@@ -306,7 +306,7 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 		/*  Do we have a real base name ? */
 		if(strlen(base_name)>0) {
 			/*  Yes, we do. */
-			char * temp = NULL;
+			const char * temp = NULL;
 			char * core_name = NULL; /*  base name of output without path extension. */
 			char * dir_name = NULL; /*  dir name of output */
 			char * quoted_core_name = NULL;
@@ -380,7 +380,7 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 				}
 			}
 			if(!_synctex_path_is_absolute(output) && build_directory && (size = strlen(build_directory))) {
-				temp = (char *)build_directory + size - 1;
+				temp = build_directory + size - 1;
 				if(_synctex_path_is_absolute(temp)) {
 					build_name = _synctex_merge_strings(build_directory,basic_name,NULL);
 					if(quoted_core_name && strlen(quoted_core_name)>0) {
