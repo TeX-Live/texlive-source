@@ -57,19 +57,14 @@ tex_ch_synctex = \
 	synctexdir/synctex-rec.ch2
 
 dist_tex_SOURCES += \
+	synctexdir/synctex.c \
 	synctexdir/synctex.h \
 	synctexdir/synctex-common.h \
 	synctexdir/synctex-tex.h
 
-nodist_tex_SOURCES += \
-	synctex.c
-
-tex_CPPFLAGS += -D__SyncTeX__
+tex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-tex.h\"
 
 endif TEX_SYNCTEX
-
-synctex.c: texd.h synctexdir/synctex.c $(dist_tex_SOURCES)
-	sed s/TEX-OR-MF-OR-MP/tex/ $(srcdir)/synctexdir/synctex.c >$@
 
 EXTRA_DIST += \
 	synctexdir/synctex-mem.ch0 \
@@ -99,19 +94,14 @@ etex_ch_synctex = \
 	synctexdir/synctex-e-rec.ch1
 
 dist_etex_SOURCES += \
+	synctexdir/synctex.c \
 	synctexdir/synctex.h \
 	synctexdir/synctex-common.h \
 	synctexdir/synctex-etex.h
 
-nodist_etex_SOURCES += \
-	synctex-e.c
-
-etex_CPPFLAGS += -D__SyncTeX__
+etex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-etex.h\"
 
 endif ETEX_SYNCTEX
-
-synctex-e.c: etexd.h synctexdir/synctex.c $(dist_etex_SOURCES)
-	sed s/TEX-OR-MF-OR-MP/etex/ $(srcdir)/synctexdir/synctex.c >$@
 
 EXTRA_DIST += \
 	synctexdir/synctex-e-mem.ch0 \
@@ -137,19 +127,14 @@ pdftex_ch_synctex = \
 	synctexdir/synctex-pdf-rec.ch2
 
 dist_pdftex_SOURCES += \
+	synctexdir/synctex.c \
 	synctexdir/synctex.h \
 	synctexdir/synctex-common.h \
 	synctexdir/synctex-pdftex.h
 
-nodist_pdftex_SOURCES += \
-	synctex-pdf.c
-
-pdftex_CPPFLAGS += -D__SyncTeX__
+pdftex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-pdftex.h\"
 
 endif PDFTEX_SYNCTEX
-
-synctex-pdf.c: pdftexd.h synctexdir/synctex.c $(dist_pdftex_SOURCES)
-	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/synctexdir/synctex.c >$@
 
 EXTRA_DIST += \
 	synctexdir/synctex-pdf-rec.ch2
@@ -173,19 +158,14 @@ xetex_post_ch_synctex = \
 	synctexdir/synctex-xe-rec.ch3
 
 dist_xetex_SOURCES += \
+	synctexdir/synctex.c \
 	synctexdir/synctex.h \
 	synctexdir/synctex-common.h \
 	synctexdir/synctex-xetex.h
 
-nodist_xetex_SOURCES += \
-	synctex-xe.c
-
-xetex_CPPFLAGS += -D__SyncTeX__
+xetex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-xetex.h\"
 
 endif XETEX_SYNCTEX
-
-synctex-xe.c: xetexd.h synctexdir/synctex.c $(dist_xetex_SOURCES)
-	sed s/TEX-OR-MF-OR-MP/xetex/ $(srcdir)/synctexdir/synctex.c >$@
 
 EXTRA_DIST += \
 	synctexdir/synctex-xe-mem.ch2 \

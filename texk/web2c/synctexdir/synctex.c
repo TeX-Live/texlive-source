@@ -277,9 +277,9 @@ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
 #   define __attribute__(A)
 #   endif
 
-/*  In the header file below, TEX-OR-MF-OR-MP is replaced by the real name (tex, etex...)
+/*  The header file SYNCTEX_ENGINE_H below is "synctex-tex.h" for TeX, ...
  *  Some macros will be redefined and additional headers will be imported */
-#   include "synctex-TEX-OR-MF-OR-MP.h"
+#   include SYNCTEX_ENGINE_H
 
 #   include "synctex.h"
 

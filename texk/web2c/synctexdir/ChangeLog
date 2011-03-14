@@ -1,3 +1,11 @@
+2011-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex.c: Instead of sed-substituting TEX-OR-MF-OR-MP in
+	#include "synctex-TEX-OR-MF-OR-MP.h", #include SYNCTEX_ENGINE_H
+	and add -DSYNCTEX_ENGINE_H=\"synctex-tex.h\" to CPPFLAGS for TeX
+	and similarly for e-TeX, pdfTeX, and XeTeX.
+	* am/synctex.am: Adapt.
+
 2011-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid compiler warnings (redo changes from 2010-01-22).
