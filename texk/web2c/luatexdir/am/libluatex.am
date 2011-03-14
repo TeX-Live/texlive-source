@@ -13,7 +13,7 @@ libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 libluatex_a_CPPFLAGS += $(XPDF_INCLUDES) $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
 libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
 libluatex_a_CPPFLAGS += -DpdfTeX
-libluatex_a_CPPFLAGS += -DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
+libluatex_a_CPPFLAGS += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
 libluatex_a_CFLAGS = $(WARNING_CFLAGS)
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 

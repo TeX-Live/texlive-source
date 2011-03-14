@@ -1874,6 +1874,7 @@ luatex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) \
 	$(XPDF_INCLUDES) $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5 \
 	-I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51 \
 	-I$(srcdir)/mplibdir -Dextra_version_info=`date +-%Y%m%d%H` \
+	-I$(srcdir)/synctexdir \
 	-DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
 luatex_CFLAGS = $(WARNING_CFLAGS)
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
@@ -2132,7 +2133,7 @@ libluatex_a_DEPENDENCIES = libff.a
 libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(XPDF_INCLUDES) $(OBSDCOMPAT_INCLUDES) \
 	-I$(srcdir)/libmd5 -I$(srcdir)/luatexdir \
-	-I$(srcdir)/luatexdir/lua51 -DpdfTeX \
+	-I$(srcdir)/luatexdir/lua51 -DpdfTeX -I$(srcdir)/synctexdir \
 	-DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
 libluatex_a_CFLAGS = $(WARNING_CFLAGS)
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
