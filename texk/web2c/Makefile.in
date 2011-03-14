@@ -1872,8 +1872,9 @@ pdftosrc_DEPENDENCIES = $(pdftex_dependencies)
 nodist_EXTRA_luatex_SOURCES = dummy.cxx
 luatex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) \
 	$(XPDF_INCLUDES) $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5 \
-	-Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51 \
-	-I$(srcdir)/mplibdir -Dextra_version_info=`date +-%Y%m%d%H`
+	-I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51 \
+	-I$(srcdir)/mplibdir -Dextra_version_info=`date +-%Y%m%d%H` \
+	-DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
 luatex_CFLAGS = $(WARNING_CFLAGS)
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
 luatex_ldadd = libluatex.a libff.a libluamisc.a libluasocket.a \
@@ -2130,8 +2131,9 @@ libff_a_SOURCES = \
 libluatex_a_DEPENDENCIES = libff.a
 libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(XPDF_INCLUDES) $(OBSDCOMPAT_INCLUDES) \
-	-I$(srcdir)/libmd5 -Iluatexdir -I$(srcdir)/luatexdir \
-	-I$(srcdir)/luatexdir/lua51 -DpdfTeX
+	-I$(srcdir)/libmd5 -I$(srcdir)/luatexdir \
+	-I$(srcdir)/luatexdir/lua51 -DpdfTeX \
+	-DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
 libluatex_a_CFLAGS = $(WARNING_CFLAGS)
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 luatex_dvi_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/dvi $(ctangle)
@@ -2316,8 +2318,8 @@ libluatex_a_SOURCES = \
 	luatexdir/utils/managed-sa.h \
 	luatexdir/utils/synctex-common.h \
 	luatexdir/utils/synctex-luatex.h \
-	luatexdir/utils/synctex.h \
 	luatexdir/utils/synctex.c \
+	luatexdir/utils/synctex.h \
 	luatexdir/utils/utils.h
 
 

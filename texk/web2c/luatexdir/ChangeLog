@@ -1,3 +1,12 @@
+2011-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am (libluatex_a_CPPFLAGS): Remove `-Iluatexdir'
+	and add `-DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>''.
+	* am/luatex.am (luatex_CPPFLAGS): The same.
+
+	* utils/synctex.c: Fix several typos in comments to reduce diffs
+	between files in synctexdir/ and luatexdir/utils/.
+
 2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/luatex.am [WIN32]: Add texlua.exe and texluac.exe wrappers

@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/libluatex.am: Makefile fragment for libluatex.
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libluatex
@@ -11,8 +11,9 @@ libluatex_a_DEPENDENCIES = libff.a
 
 libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 libluatex_a_CPPFLAGS += $(XPDF_INCLUDES) $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
-libluatex_a_CPPFLAGS += -Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
+libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
 libluatex_a_CPPFLAGS += -DpdfTeX
+libluatex_a_CPPFLAGS += -DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
 libluatex_a_CFLAGS = $(WARNING_CFLAGS)
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
@@ -617,8 +618,8 @@ libluatex_a_SOURCES = \
 	luatexdir/utils/managed-sa.h \
 	luatexdir/utils/synctex-common.h \
 	luatexdir/utils/synctex-luatex.h \
-	luatexdir/utils/synctex.h \
 	luatexdir/utils/synctex.c \
+	luatexdir/utils/synctex.h \
 	luatexdir/utils/utils.h
 
 nodist_libluatex_a_SOURCES += \
