@@ -1,3 +1,14 @@
+2011-03-16  Karl Berry  <karl@tug.org>
+
+	* configure.ac (BIBER_EXE): AC_SUBST this, after detecting it.
+	Call AC_CANONICAL_HOST and AC_EXEEXT to prepare for
+	cross-compilation, maybe.
+	* Makefile.am (bin_SCRIPTS): simplify to defining this
+	as $(BIBER_EXE), which requires also defining this:
+	(EXTRA_SCRIPTS): as empty, in our case.
+	(EXTRA_DIST): TeXLive bin.
+	* bin: new directory for binaries.
+
 2011-03-11  Karl Berry  <karl@tug.org>
 
 	* directory created.

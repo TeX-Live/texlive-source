@@ -7,14 +7,11 @@
 #   with or without modifications, as long as this notice is preserved.
 
 if TL_HAVE_BIBER_BINARY
-#
-bin_SCRIPTS = biber
-tl_platform = $(TL_PLATFORM)
-#
-biber: biber.$(tl_platform)
-	rm -f biber
-	cp "$(srcdir)/biber.$(tl_platform)" biber
+bin_SCRIPTS = $(BIBER_EXE)
 
-# if the biber binary for the current platform is not present,
-# nothing to do.
+# this EXTRA_ variable must be defined when bin_SCRIPTS refers to a
+# configure-substituted value.
+EXTRA_SCRIPTS =
 endif
+
+EXTRA_DIST = TeXLive bin
