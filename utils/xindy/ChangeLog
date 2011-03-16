@@ -1,3 +1,8 @@
+2011-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use KPSE_CHECK_PERL, KPSE_CHECK_LATEX, and
+	KPSE_CHECK_PDFLATEX Autoconf macros.
+
 2011-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Renamed xindy source tree 'xindy' -> 'xindy-2.4'.

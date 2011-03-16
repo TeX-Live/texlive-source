@@ -714,8 +714,8 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
-CPP
-CPPFLAGS'
+PDFLATEX
+CPP'
 
 
 # Initialize some variables set by options.
@@ -1349,6 +1349,7 @@ Some influential environment variables:
   LIBS        libraries to pass to the linker, e.g. -l<library>
   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
               you have headers in a nonstandard directory <include dir>
+  PDFLATEX    pdfLaTeX command
   CPP         C preprocessor
 
 Use these variables to override the choices made by `configure' or to help
@@ -3812,6 +3813,7 @@ else
 $as_echo "no" >&6; }
   SET_MAKE="MAKE=${MAKE-make}"
 fi
+
 
 for ac_prog in pdflatex
 do

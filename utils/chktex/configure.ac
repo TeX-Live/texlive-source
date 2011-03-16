@@ -31,7 +31,7 @@ dnl Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_CHECK_PROGS([PDFLATEX], [pdflatex], [no])
+KPSE_CHECK_PDFLATEX
 
 dnl No termlib/termcap/ncurses library for TeX Live
 

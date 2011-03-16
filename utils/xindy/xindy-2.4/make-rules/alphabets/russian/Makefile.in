@@ -35,7 +35,8 @@ host_triplet = @host@
 subdir = xindy-2.4/make-rules/alphabets/russian
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-progs.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/ac/xindy.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)

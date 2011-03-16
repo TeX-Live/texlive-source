@@ -698,7 +698,10 @@ CC
 CFLAGS
 LDFLAGS
 LIBS
-CPPFLAGS'
+CPPFLAGS
+PERL
+LATEX
+PDFLATEX'
 
 
 # Initialize some variables set by options.
@@ -1348,6 +1351,9 @@ Some influential environment variables:
   LIBS        libraries to pass to the linker, e.g. -l<library>
   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
               you have headers in a nonstandard directory <include dir>
+  PERL        Perl interpreter command
+  LATEX       LaTeX command
+  PDFLATEX    pdfLaTeX command
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -3850,7 +3856,8 @@ fi
 done
 test -n "$CLISP" || CLISP="no"
 
-for ac_prog in perl
+
+for ac_prog in perl perl5
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -3892,6 +3899,7 @@ fi
   test -n "$PERL" && break
 done
 test -n "$PERL" || PERL="no"
+
 
 for ac_prog in latex elatex lambda
 do
@@ -3935,6 +3943,7 @@ fi
   test -n "$LATEX" && break
 done
 test -n "$LATEX" || LATEX="no"
+
 
 for ac_prog in pdflatex
 do

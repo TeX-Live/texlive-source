@@ -1,3 +1,7 @@
+2011-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use KPSE_CHECK_PDFLATEX Autoconf macro.
+
 2011-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Install linked perl script.

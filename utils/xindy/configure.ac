@@ -57,9 +57,9 @@ AC_CANONICAL_HOST
 KPSE_COMPILER_WARNINGS
 
 AC_CHECK_PROGS([CLISP], [clisp], [no])
-AC_CHECK_PROGS([PERL], [perl], [no])
-AC_CHECK_PROGS([LATEX], [latex elatex lambda], [no])
-AC_CHECK_PROGS([PDFLATEX], [pdflatex], [no])
+KPSE_CHECK_PERL
+KPSE_CHECK_LATEX
+KPSE_CHECK_PDFLATEX
 
 if test "x$enable_build" != xno || test -f config.force; then
 
