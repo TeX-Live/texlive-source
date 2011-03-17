@@ -16,12 +16,8 @@ AC_ARG_VAR([TL_PLATFORM], [TeX Live platform name [autodetected]])
 AC_MSG_CHECKING([for TeX Live platform name])
 if test "X$TL_PLATFORM" = X; then
   if test "x$kpse_cv_have_win32" = xno; then
-    # we need this variable in the Perl (current).
-    export ac_aux_dir
-    # we need this variable in the Perl (future).
-    export ac_cv_host
     TL_PLATFORM=`$PERL -I"$srcdir" -MTeXLive::TLUtils -e '
-      print TeXLive::TLUtils::platform();'`
+      print TeXLive::TLUtils::platform_name("'"$ac_cv_host"'");'`
     if test -z "$TL_PLATFORM"; then
       AC_MSG_ERROR([cannot determine TeX Live platform name])
     fi

@@ -30,6 +30,7 @@ C<TeXLive::TLUtils> -- utilities used in the TeX Live infrastructure
 =head2 Platform Detection
 
   TeXLive::TLUtils::platform();
+  TeXLive::TLUtils::platform_name($canonical_host);
   TeXLive::TLUtils::platform_desc($platform);
   TeXLive::TLUtils::win32();
   TeXLive::TLUtils::unix();
@@ -122,6 +123,7 @@ BEGIN {
   @ISA = qw(Exporter);
   @EXPORT_OK = qw(
     &platform
+    &platform_name
     &platform_desc
     &unix
     &getenv
@@ -202,8 +204,41 @@ $::opt_verbosity = 0;  # see process_logging_options
 
 If C<$^O=~/MSWin(32|64)$/i> is true we know that we're on
 Windows and we set the global variable C<$::_platform_> to C<win32>.
-Otherwise we call C<config.guess>.  The output of C<config.guess>
-is filtered as described below.
+Otherwise we call C<platform_name> with the output of C<config.guess>
+as argument.
+
+The result is stored in a global variable C<$::_platform_>, and
+subsequent calls just return that value.
+
+=cut
+
+sub platform {
+  unless (defined $::_platform_) {
+    if ($^O =~ /^MSWin/i) {
+      $::_platform_ = "win32";
+    } else {
+      my $config_guess = "$::installerdir/tlpkg/installer/config.guess";
+
+      # We cannot rely on #! in config.guess but have to call /bin/sh
+      # explicitly because sometimes the 'noexec' flag is set in
+      # /etc/fstab for ISO9660 file systems.
+      chomp (my $guessed_platform = `/bin/sh $config_guess`);
+
+      # For example, if the disc or reader has hardware problems.
+      die "$0: could not run $config_guess, cannot proceed, sorry"
+        if ! $guessed_platform;
+
+      $::_platform_ = platform_name($guessed_platform);
+    }
+  }
+  return $::_platform_;
+}
+
+
+=item C<platform_name($canonical_host)>
+
+Convert a canonical host names as returned by C<config.guess> into
+TeX Live platform names.
 
 CPU type is determined by a regexp, and any C</^i.86/> name is replaced
 by C<i386>.
@@ -216,29 +251,10 @@ supported.
 If a particular platform is not found in this list we use the regexp
 C</.*-(.*$)/> as a last resort and hope it provides something useful.
 
-The result is stored in a global variable C<$::_platform_>, and
-subsequent calls just return that value.
-
 =cut
 
-sub platform {
-  unless (defined $::_platform_) {
-    if ($^O =~ /^MSWin/i) {
-      $::_platform_ = "win32";
-    } else {
-      # the copy of this file in biber uses a different config.guess dir.
-      my $config_guess_dir = $TeXLive::TLConfig::Config_Guess_Dir
-                             || "$::installerdir/tlpkg/installer";
-      my $config_guess = "$config_guess_dir/config.guess";
-
-      # We cannot rely on #! in config.guess but have to call /bin/sh
-      # explicitly because sometimes the 'noexec' flag is set in
-      # /etc/fstab for ISO9660 file systems.
-      chomp (my $guessed_platform = `/bin/sh $config_guess`);
-
-      # For example, if the disc or reader has hardware problems.
-      die "$0: could not run $config_guess, cannot proceed, sorry"
-        if ! $guessed_platform;
+sub platform_name {
+      my ($guessed_platform) = @_;
 
       $guessed_platform =~ s/^x86_64-(.*-k?)freebsd/amd64-$1freebsd/;
       my $CPU; # CPU type as reported by config.guess.
@@ -269,12 +285,8 @@ sub platform {
         ($OS = $guessed_platform) =~ s/.*-(.*)/$1/;
       }
 
-      $::_platform_ = "$CPU-$OS";
-    }
-  }
-  return $::_platform_;
+      return "$CPU-$OS";
 }
-
 
 =item C<platform_desc($platform)>
 

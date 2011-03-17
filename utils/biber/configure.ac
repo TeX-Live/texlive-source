@@ -19,10 +19,10 @@ dnl Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
-dnl Determine the TeX Live platform name (not yet, just prepare)
+dnl Determine the TeX Live platform name.
 KPSE_TL_PLATFORM
 
-dnl Check if we have an executable for the current platform.
+dnl Check if we have an executable for this platform.
 AC_MSG_CHECKING([for a biber binary])
 biber_bin="bin/$TL_PLATFORM/biber"
 if test -r "$srcdir/$biber_bin"; then

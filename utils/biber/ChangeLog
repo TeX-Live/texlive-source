@@ -1,3 +1,10 @@
+2011-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac: new directory, required for the TeX Live build system.
+	* Makefile.am, configure.ac: Drop TL_HAVE_BIBER_BINARY.
+	* configure.ac, m4/kpse-tl-platform.m4, TeXLive/*.pm:
+	New strategy to determine TeX Live platform names.
+
 2011-03-16  Karl Berry  <karl@tug.org>
 
 	* configure.ac (BIBER_EXE): AC_SUBST this, after detecting it.
