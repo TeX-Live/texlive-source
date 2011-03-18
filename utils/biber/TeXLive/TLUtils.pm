@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 21714 2011-03-14 21:27:26Z karl $
+# $Id: TLUtils.pm 21755 2011-03-18 08:36:58Z peter $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 21714 $';
+my $svnrev = '$Revision: 21755 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;

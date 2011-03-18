@@ -11,7 +11,7 @@
 @x [1.2] l.200 - pTeX:
 @d pTeX_version_string=='-p3.1.11' {current p\TeX\ version}
 @y
-@d  pTeX_version_string=='-p3.1.11-110102' {current \epTeX\ version}
+@d  pTeX_version_string=='-p3.1.11-110315' {current \epTeX\ version}
 @z
 
 @x e-pTeX: banner
@@ -20,7 +20,7 @@
   {printed when p\TeX\ starts}
 @#
 @d epTeX_version==pTeX_version_string,eTeX_version_string
-@d epTeX_banner=='This is epTeX, Version 3.1415926',epTeX_version
+@d epTeX_banner=='This is e-pTeX, Version 3.1415926',epTeX_version
 @d epTeX_banner_k==epTeX_banner
   {printed when \epTeX\ starts}
 @z
@@ -29,6 +29,14 @@
 @d max_quarterword=255 {largest allowable value in a |quarterword|}
 @y
 @d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
+@z
+
+@x
+@d box_dir(#) == subtype(#) {direction mode of a box}
+@d set_box_dir(#) == subtype(#):=set_box_dir_end
+@y
+@d box_dir(#) == (subtype(#)mod 8) {direction mode of a box}
+@d set_box_dir(#) == subtype(#):=(subtype(#)div 8)*8+set_box_dir_end 
 @z
 
 @x [26.424] e-pTeX: node types
@@ -56,6 +64,16 @@
 @d if_tdir_code=if_case_code+1 { `\.{\\iftdir}' }
 @y
 @d if_tdir_code=if_case_code+4 { `\.{\\iftdir}' }
+@z
+
+@x
+@d box_lrstat(#) == subtype(#) {direction mode of a box}
+@d set_box_lrstat(#) ==  subtype(#):=set_box_lrstat_end
+@d set_box_lrstat_end(#) == #
+@y
+@d box_lrstat(#) == (subtype(#)div 8) {direction mode of a box}
+@d set_box_lrstat(#) == subtype(#):=(subtype(#)mod 8)+8*set_box_lrstat_end
+@d set_box_lrstat_end(#) == (#)
 @z
 
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306

@@ -1,6 +1,21 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	e-pTeX update eptex-110315_tlsvn110318.diff [ptex:00248]
+	from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>.
+
+	* eptex.ech: Update pTeX_version_string.
+	Redefine box_dir and set_box_dir from pTeX as well as box_lrstat
+	and set_box_lrstat from e-TeX to avoid interference.
+
+	* pdfsavepos.ch (new): Implement \pdfsavepos primitive.
+	* am/eptex.am (eptex_ch_srcs): Add pdfsavepos.ch.
+
+	* etex.ch1: Adapt to use of set_box_dir in ../ptexdir/ptex-base.ch.
+	Adapt to "setting/reading a box register dimension" bug fix.
+
 2011-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech, etex.ch0: Adapt to modified ../ptexdir/ptex-base.ch.

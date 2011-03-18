@@ -121,6 +121,9 @@
 %             fixed the error messages for improper use of \protected,
 %                 reported by Heiko Oberdiek 
 %                 <heiko.oberdiek@@googlemail.com>, May 2010.
+%             some trivial rearrangements to reduce interferences between
+%                 e-TeX and pTeX, suggested by Hironori Kitagawa
+%                 <h_kitagawa2001@yahoo.co.jp>, Mar 2011.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -1524,9 +1527,12 @@ changes; the subtype of an an |hlist_node| inside R-text is changed to
 @x [32] m.616 l.12259 - e-TeX TeXXeT
 @d synch_h==if cur_h<>dvi_h then
 @y
-@d reversed=min_quarterword+1 {subtype for an |hlist_node| whose hlist
-  has been reversed}
-@d dlist=min_quarterword+2 {subtype for an |hlist_node| from display math mode}
+@d reversed=1 {subtype for an |hlist_node| whose hlist has been reversed}
+@d dlist=2 {subtype for an |hlist_node| from display math mode}
+@d box_lrstat(#) == subtype(#) {direction mode of a box}
+@d set_box_lrstat(#) ==  subtype(#):=set_box_lrstat_end
+@d set_box_lrstat_end(#) == #
+@#
 @d left_to_right=0
 @d right_to_left=1
 @d reflected==1-cur_dir {the opposite of |cur_dir|}
@@ -1775,14 +1781,14 @@ until cur_cmd<>spacer;
   begin type(q):=hlist_node; width(q):=width(p);
 @y
   begin type(q):=hlist_node; width(q):=width(p);
-  if nest[nest_ptr-1].mode_field=mmode then subtype(q):=dlist; {for |ship_out|}
+  if nest[nest_ptr-1].mode_field=mmode then set_box_lrstat(q)(dlist); {for |ship_out|}
 @z
 %---------------------------------------
 @x [37] m.808 l.15886 - e-TeX TeXXeT
 n:=span_count(r); t:=width(s); w:=t; u:=hold_head;
 @y
 n:=span_count(r); t:=width(s); w:=t; u:=hold_head;
-subtype(r):=min_quarterword; {for |ship_out|}
+set_box_lrstat(r)(0); {for |ship_out|}
 @z
 %---------------------------------------
 @x [38] m.814 l.16009 - e-TeX penalties
@@ -2569,7 +2575,7 @@ begin danger:=false;
   mlist_to_hlist; a:=hpack(link(temp_head),natural);
 @y
   mlist_to_hlist; a:=hpack(link(temp_head),natural);
-  subtype(a):=dlist;
+  set_box_lrstat(a)(dlist);
 @z
 %---------------------------------------
 @x [48] m.1194 l.22397 after_math - e-TeX TeXXeT
@@ -2596,7 +2602,7 @@ resume_after_display
 @x [48] m.1202 l.22541 - e-TeX TeXXeT
 d:=half(z-w);
 @y
-subtype(b):=dlist;
+set_box_lrstat(b)(dlist);
 d:=half(z-w);
 @z
 %---------------------------------------
@@ -3785,7 +3791,7 @@ else
 in right-to-left text.
 
 @<Display if this box is never to be reversed@>=
-if (type(p)=hlist_node)and(subtype(p)=dlist) then print(", display")
+if (type(p)=hlist_node)and(box_lrstat(p)=dlist) then print(", display")
 
 @ A number of routines are based on a stack of one-word nodes whose
 |info| fields contain |end_M_code|, |end_L_code|, or |end_R_code|.  The
@@ -3918,19 +3924,19 @@ end
 @ @<Initialize |hlist_out| for mixed...@>=
 if eTeX_ex then
   begin @<Initialize the LR stack@>;
-  if subtype(this_box)=dlist then
+  if box_lrstat(this_box)=dlist then
     if cur_dir=right_to_left then
       begin cur_dir:=left_to_right; cur_h:=cur_h-width(this_box);
       end
     else subtype(this_box):=min_quarterword;
-  if (cur_dir=right_to_left)and(subtype(this_box)<>reversed) then
+  if (cur_dir=right_to_left)and(box_lrstat(this_box)<>reversed) then
     @<Reverse the complete hlist and set the subtype to |reversed|@>;
   end
 
 @ @<Finish |hlist_out| for mixed...@>=
 if eTeX_ex then
   begin @<Check for LR anomalies at the end of |hlist_out|@>;
-  if subtype(this_box)=dlist then cur_dir:=right_to_left;
+  if box_lrstat(this_box)=dlist then cur_dir:=right_to_left;
   end
 
 @ @<Handle a math node in |hlist_out|@>=
@@ -3991,7 +3997,7 @@ append the reversed list, and set the width of the kern node.
 @<Reverse the complete hlist...@>=
 begin save_h:=cur_h; temp_ptr:=p; p:=new_kern(0); link(prev_p):=p;
 cur_h:=0; link(p):=reverse(this_box,null,cur_g,cur_glue); width(p):=-cur_h;
-cur_h:=save_h; subtype(this_box):=reversed;
+cur_h:=save_h; set_box_lrstat(this_box)(reversed);
 end
 
 @ We detach the remainder of the hlist, replace the math node by
@@ -4342,7 +4348,7 @@ if j<>null then
   begin b:=copy_node_list(j); height(b):=height(p); depth(b):=depth(p);
   s:=s-shift_amount(b); d:=d+s; e:=e+width(b)-z-s;
   end;
-if subtype(p)=dlist then q:=p {display or equation number}
+if box_lrstat(p)=dlist then q:=p {display or equation number}
 else  begin {display and equation number}
   r:=list_ptr(p); free_node(p,box_node_size);
   if r=null then confusion("LR4");

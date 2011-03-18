@@ -1,3 +1,14 @@
+2011-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	e-pTeX update eptex-110315_tlsvn110318.diff [ptex:00248]
+	from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Define and use the Web macro set_box_dir
+	to reduce interferences between e-TeX and pTeX.
+	Fixed a bug around \radical with Japanese character.
+	Fixed a bug in setting/reading a dimension of a box register in
+	"different" directions.
+
 2011-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Let \lastkern etc act through disp node.

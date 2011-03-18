@@ -338,6 +338,9 @@ if last<>first then for k:=first to last-1 do print(buffer[k]);
 @d box_node_size=8 {number of words to allocate for a box node}
 @#
 @d box_dir(#) == subtype(#) {direction mode of a box}
+@d set_box_dir(#) == subtype(#):=set_box_dir_end
+@d set_box_dir_end(#) == #
+@#
 @d dir_default = 0 {direction of the box, default Left to Right}
 @d dir_dtou = 1 {direction of the box, Bottom to Top}
 @d dir_tate = 3 {direction of the box, Top to Bottom}
@@ -388,7 +391,7 @@ add_glue_ref(zero_glue); add_glue_ref(zero_glue);
 @p function new_dir_node(b:pointer; dir:eight_bits):pointer;
 var p:pointer; {the new node}
 begin if type(b)>vlist_node then confusion("new_dir_node:not box");
-p:=new_null_box; type(p):=dir_node; box_dir(p):=dir;
+p:=new_null_box; type(p):=dir_node; set_box_dir(p)(dir);
 case box_dir(b) of
   dir_yoko: @<Yoko to other direction@>;
   dir_tate: @<Tate to other direction@>;
@@ -1924,7 +1927,7 @@ def_code: @<Fetch a character code from some table@>;
 toks_register,assign_toks,def_family,set_font,def_font: @<Fetch a token list or
   font identifier, provided that |level=tok_val|@>;
 @y
-@!q:pointer;
+@!q,@!r:pointer;
 begin m:=cur_chr;
 case cur_cmd of
 assign_kinsoku: @<Fetch breaking penalty from some table@>;
@@ -1957,7 +1960,8 @@ else
   begin q:=box(cur_val);
   while (q<>null)and(box_dir(q)<>abs(direction)) do q:=link(q);
   if q=null then
-    begin q:=new_dir_node(box(cur_val),abs(direction));
+    begin r:=link(box(cur_val)); link(box(cur_val)):=null;
+    q:=new_dir_node(box(cur_val),abs(direction)); link(box(cur_val)):=r;
     cur_val:=mem[q+m].sc;
     delete_glue_ref(space_ptr(q)); delete_glue_ref(xspace_ptr(q));
     free_node(q,box_node_size);
@@ -3236,6 +3240,18 @@ internal kanji code number.
 @d math_text_jchar=6
 @z
 
+@x [34.683] radical with japanese char
+@d left_delimiter(#)==#+4 {first delimiter field of a noad}
+@d right_delimiter(#)==#+5 {second delimiter field of a fraction noad}
+@d radical_noad=inner_noad+1 {|type| of a noad for square roots}
+@d radical_noad_size=5 {number of |mem| words in a radical noad}
+@y
+@d left_delimiter(#)==#+5 {first delimiter field of a noad}
+@d right_delimiter(#)==#+4 {second delimiter field of a fraction noad}
+@d radical_noad=inner_noad+1 {|type| of a noad for square roots}
+@d radical_noad_size=6 {number of |mem| words in a radical noad}
+@z
+
 @x [34.686] l.14129 - pTeX: new_noad
 mem[supscr(p)].hh:=empty_field;
 new_noad:=p;
@@ -3705,7 +3721,7 @@ glue_order(q):=glue_order(p); glue_sign(q):=glue_sign(p);
 glue_set(q):=glue_set(p); shift_amount(q):=o;
 r:=link(list_ptr(q)); s:=link(list_ptr(p));
 @y
-box_dir(q):=abs(direction);
+set_box_dir(q)(abs(direction));
 glue_order(q):=glue_order(p); glue_sign(q):=glue_sign(p);
 glue_set(q):=glue_set(p); shift_amount(q):=o;
 r:=link(list_ptr(q)); s:=link(list_ptr(p));
@@ -3721,7 +3737,7 @@ s:=link(s); link(u):=new_null_box; u:=link(u); t:=t+width(s);
 if mode=-vmode then width(u):=width(s)@+else
   begin type(u):=vlist_node; height(u):=width(s);
   end;
-box_dir(u):=abs(direction)
+set_box_dir(u)(abs(direction))
 @z
 
 @x [37.810] l.16564 - pTeX: unset box -> BOX
@@ -3729,7 +3745,7 @@ width(r):=w; type(r):=hlist_node;
 end
 @y
 width(r):=w; type(r):=hlist_node;
-box_dir(r):=abs(direction);
+set_box_dir(r)(abs(direction));
 end
 @z
 
@@ -3737,7 +3753,7 @@ end
 height(r):=w; type(r):=vlist_node;
 @y
 height(r):=w; type(r):=vlist_node;
-box_dir(r):=abs(direction);
+set_box_dir(r)(abs(direction));
 @z
 
 @x [38.816] l.16687 - pTeX: init chain, delete disp_node
@@ -4141,10 +4157,10 @@ vsplit:=vpackage(p,h,exactly,split_max_depth);
 q:=prune_page_top(q); p:=list_ptr(v);
 if q=null then box(n):=null {the |eq_level| of the box stays the same}
 else begin
-  box(n):=vpack(q,natural); box_dir(box(n)):=box_dir(v);
+  box(n):=vpack(q,natural); set_box_dir(box(n))(box_dir(v));
   end;
 q:=vpackage(p,h,exactly,split_max_depth);
-box_dir(q):=box_dir(v);
+set_box_dir(q)(box_dir(v));
 delete_glue_ref(space_ptr(v)); delete_glue_ref(xspace_ptr(v));
 free_node(v,box_node_size);
 vsplit:=q;
@@ -4227,7 +4243,7 @@ else
 box(255):=vpackage(link(page_head),best_size,exactly,page_max_depth);
 @y
 box(255):=vpackage(link(page_head),best_size,exactly,page_max_depth);
-box_dir(box(255)):=page_dir;
+set_box_dir(box(255))(page_dir);
 @z
 
 @x [45.1020] l.20513 - pTeX: check ins_dir
@@ -4249,7 +4265,7 @@ else  begin wait:=false;
         box(n):=new_null_box; last_ins_ptr(r):=box(n)+list_offset;
       end;
     othercases
-      box_dir(box(n)):=ins_dir(p);
+      set_box_dir(box(n))(ins_dir(p));
   endcases;
   s:=last_ins_ptr(r); link(s):=ins_ptr(p);
 @z
@@ -4270,7 +4286,7 @@ delete_glue_ref(space_ptr(box(n)));
 delete_glue_ref(xspace_ptr(box(n)));
 flush_node_list(link(box(n)));
 free_node(box(n),box_node_size);
-box(n):=vpack(temp_ptr,natural); box_dir(box(n)):=ins_dir(p);
+box(n):=vpack(temp_ptr,natural); set_box_dir(box(n))(ins_dir(p));
 @z
 
 @x [46.1030] l.20687 -  pTeX:main_control
@@ -4677,7 +4693,7 @@ if type(cur_box)=dir_node then
   list_ptr(link(cur_box)):=null;
   end
 else
-  if box_dir(cur_box)=dir_default then box_dir(cur_box):=abs(direction);
+  if box_dir(cur_box)=dir_default then set_box_dir(cur_box)(abs(direction));
 done:end
 @z
 
@@ -4739,10 +4755,10 @@ begin d:=box_max_depth;
   unsave; save_ptr:=save_ptr-3;
   if mode=-hmode then begin
     cur_box:=hpack(link(head),saved(2),saved(1));
-    box_dir(cur_box):=abs(direction); pop_nest;
+    set_box_dir(cur_box)(abs(direction)); pop_nest;
   end else begin
     cur_box:=vpackage(link(head),saved(2),saved(1),d);
-    box_dir(cur_box):=abs(direction); pop_nest;
+    set_box_dir(cur_box)(abs(direction)); pop_nest;
     if c=vtop_code then
       @<Readjust the height and depth of |cur_box|, for \.{\\vtop}@>;
   end;
@@ -4814,7 +4830,7 @@ insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
 insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
   d:=split_max_depth; f:=floating_penalty; unsave; decr(save_ptr);
   {now |saved(0)| is the insertion number, or 255 for |vadjust|}
-  p:=vpack(link(head),natural); box_dir(p):=abs(direction); pop_nest;
+  p:=vpack(link(head),natural); set_box_dir(p)(abs(direction)); pop_nest;
   if saved(0)<255 then
     begin r:=get_node(ins_node_size);
     type(r):=ins_node; subtype(r):=qi(saved(0));
@@ -4930,11 +4946,12 @@ else  begin
           {|free_node(tail,small_node_size)|}
           else disp_dimen(tail):=disp_dimen(d);
         if f then free_node(d,small_node_size)
-          else begin prev_node:=tail; prev_disp:=disp; tail_append(d) end
+        else begin prev_node:=tail; prev_disp:=disp; tail_append(d);
+          end;
         end
       else
-        begin prev_node:=tail; prev_disp:=disp; tail_append(d)
-        end
+        begin prev_node:=tail; prev_disp:=disp; tail_append(d);
+        end;
   end;
 exit:end;
 @z
@@ -5383,7 +5400,7 @@ vcenter_group: begin end_graf; unsave; save_ptr:=save_ptr-2;
 @y
 vcenter_group: begin end_graf; unsave; save_ptr:=save_ptr-2;
   p:=vpack(link(head),saved(1),saved(0));
-  box_dir(p):=abs(direction); pop_nest;
+  set_box_dir(p)(abs(direction)); pop_nest;
   if box_dir(p)<>abs(direction) then p:=new_dir_node(p,abs(direction));
   tail_append(new_noad); type(tail):=vcenter_noad;
   math_type(nucleus(tail)):=sub_box; info(nucleus(tail)):=p;
@@ -5646,8 +5663,9 @@ if box(b)<>null then
     p:=link(p);
     end;
   if box_dir(q)<>abs(direction) then
-    begin q:=new_dir_node(q,abs(direction)); list_ptr(q):=null;
-    link(q):=link(box(b)); link(box(b)):=q;
+    begin p:=link(box(b)); link(box(b)):=null;
+    q:=new_dir_node(q,abs(direction)); list_ptr(q):=null;
+    link(q):=p; link(box(b)):=q;
     end;
     mem[q+c].sc:=cur_val;
   end;

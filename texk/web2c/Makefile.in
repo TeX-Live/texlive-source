@@ -1793,6 +1793,7 @@ eptex_ch_srcs = \
 	eptexdir/etex.ch1 \
 	eptexdir/fam256.ch \
 	eptexdir/pdfstrcmp.ch \
+	eptexdir/pdfsavepos.ch \
 	tex-binpool.ch
 
 pdftex_cppflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) \
