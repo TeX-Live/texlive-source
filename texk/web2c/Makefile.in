@@ -1441,10 +1441,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	omegaware/tests/specialhex.ovp $(aleph_web_srcs) \
 	$(aleph_ch_srcs) alephdir/ChangeLog alephdir/Makefile \
 	alephdir/aleph.defines alephdir/aleph.version \
-	alephdir/eomega.ech alephdir/etex.ch alephdir/omega.ch0 \
-	alephdir/omega.ch1 alephdir/omega.ch2 alephdir/omxml.ch \
-	alephdir/aleph-pool.h synctexdir/ChangeLog \
-	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
+	synctexdir/ChangeLog synctexdir/README.txt \
+	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \

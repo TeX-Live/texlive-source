@@ -97,15 +97,5 @@ EXTRA_DIST += \
 	alephdir/ChangeLog \
 	alephdir/Makefile \
 	alephdir/aleph.defines \
-	alephdir/aleph.version \
-	alephdir/eomega.ech \
-	alephdir/etex.ch \
-	alephdir/omega.ch0 \
-	alephdir/omega.ch1 \
-	alephdir/omega.ch2 \
-	alephdir/omxml.ch
-
-## Eventually delete these files
-##
-EXTRA_DIST += alephdir/aleph-pool.h
+	alephdir/aleph.version
 

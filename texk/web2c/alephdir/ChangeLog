@@ -1,3 +1,9 @@
+2011-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* aleph-pool.h, eomega.ech, etex.ch, omega.ch[012], omxml.ch
+	(removed): Obsolete.
+	* am/aleph.am (EXTRA_DIST): Adapt.
+
 2011-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eobase.ch: Adapt to ../etexdir/etex.ch:
