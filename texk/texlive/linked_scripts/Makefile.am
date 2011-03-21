@@ -112,6 +112,7 @@ texmf_dist_perl_scripts = \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
 	texcount/texcount.pl \
+	texdef/texdef.pl \
 	texdiff/texdiff \
 	texdirflatten/texdirflatten \
 	texloganalyser/texloganalyser \
