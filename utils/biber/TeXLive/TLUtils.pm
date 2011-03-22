@@ -1,12 +1,12 @@
-# $Id: TLUtils.pm 21755 2011-03-18 08:36:58Z peter $
+# $Id: TLUtils.pm 21770 2011-03-20 18:34:02Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007, 2008, 2009, 2010 Norbert Preining, Reinhard Kotucha
+# Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 21755 $';
+my $svnrev = '$Revision: 21770 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -3111,7 +3111,7 @@ sub process_logging_options {
 
 =pod
 
-This function returns a "windowsified" version of its single argument
+This function returns a "Windows-ized" version of its single argument
 I<path>, i.e., replaces all forward slashes with backslashes, and adds
 an additional C<"> at the beginning and end if I<path> contains any
 spaces.  It also makes the path absolute. So if $path does not start
