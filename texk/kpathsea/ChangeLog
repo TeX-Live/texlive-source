@@ -1,3 +1,8 @@
+2011-03-22  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.eptex, TEXINPUTS.eplatex): define,
+	same as .p(la)tex.  From Akira.
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* types.h: Rename the variables program_invocation_name and

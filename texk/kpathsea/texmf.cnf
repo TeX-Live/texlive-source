@@ -208,18 +208,22 @@ TEXINPUTS.lambda        = .;$TEXMF/tex/{lambda,latex,generic,}//
 TEXINPUTS.lamed         = .;$TEXMF/tex/{lamed,lambda,latex,generic,}//
 TEXINPUTS.omega         = .;$TEXMF/tex/{plain,generic,}//
 
-% pTeX
+% p(La)TeX.
 TEXINPUTS.ptex          = .;$TEXMF/tex/{ptex,ptexgeneric,plain,generic,}//
 TEXINPUTS.platex        = .;$TEXMF/tex/{platex,ptexgeneric,latex,generic,}//
 
-% pBibTeX bibliographies and style files
+% ep(La)TeX.
+TEXINPUTS.eptex         = .;$TEXMF/tex/{ptex,ptexgeneric,plain,generic,}//
+TEXINPUTS.eplatex       = .;$TEXMF/tex/{platex,ptexgeneric,latex,generic,}//
+
+% pBibTeX bibliographies and style files.
 BIBINPUTS.pbibtex       = .;$TEXMF/{pbibtex,bibtex}/bib//
 BSTINPUTS.pbibtex       = .;$TEXMF/{pbibtex,bibtex}/bst//
 
 % ConTeXt.
 TEXINPUTS.context       = .;$TEXMF/tex/{context,plain,generic,}//
 
-% jadetex
+% jadetex.
 TEXINPUTS.jadetex       = .;$TEXMF/tex/{jadetex,latex,generic,}//
 TEXINPUTS.pdfjadetex    = .;$TEXMF/tex/{jadetex,latex,generic,}//
 
