@@ -25,10 +25,10 @@ KPSE_TL_PLATFORM
 dnl Check if we have an executable for this platform.
 AC_MSG_CHECKING([for a biber binary])
 biber_bin="bin/$TL_PLATFORM/biber"
-if test -r "$srcdir/$biber_bin"; then
+if test -n "$ac_exeext" && test -r "$srcdir/$biber_bin$ac_exeext"; then
+  BIBER_BINARY="$biber_bin$ac_exeext"
+elif test -r "$srcdir/$biber_bin"; then
   BIBER_BINARY="$biber_bin"
-elif test -r "$srcdir/$biber_bin.exe"; then
-  BIBER_BINARY="$biber_bin.exe"
 else
   BIBER_BINARY=
 fi

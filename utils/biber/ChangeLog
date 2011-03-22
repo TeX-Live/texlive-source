@@ -1,3 +1,8 @@
+2011-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Correctly distinguish `biber' and `biber.exe' on
+	Cygwin.  Problem reported by Ken Brown <kbrow1i@gmail.com>.
+
 2011-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac: new directory, required for the TeX Live build system.

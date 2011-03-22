@@ -3511,10 +3511,10 @@ $as_echo "$TL_PLATFORM" >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for a biber binary" >&5
 $as_echo_n "checking for a biber binary... " >&6; }
 biber_bin="bin/$TL_PLATFORM/biber"
-if test -r "$srcdir/$biber_bin"; then
+if test -n "$ac_exeext" && test -r "$srcdir/$biber_bin$ac_exeext"; then
+  BIBER_BINARY="$biber_bin$ac_exeext"
+elif test -r "$srcdir/$biber_bin"; then
   BIBER_BINARY="$biber_bin"
-elif test -r "$srcdir/$biber_bin.exe"; then
-  BIBER_BINARY="$biber_bin.exe"
 else
   BIBER_BINARY=
 fi
