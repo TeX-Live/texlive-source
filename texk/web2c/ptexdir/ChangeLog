@@ -1,3 +1,8 @@
+2011-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptex-base.ch: Reformulate @<Fetch an item in the current
+	node...@> to reduce interferences between e-TeX and pTeX.
+
 2011-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	e-pTeX update eptex-110315_tlsvn110318.diff [ptex:00248]

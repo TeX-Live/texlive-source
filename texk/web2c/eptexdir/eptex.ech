@@ -39,25 +39,43 @@
 @d set_box_dir(#) == subtype(#):=(subtype(#)div 8)*8+set_box_dir_end 
 @z
 
-@x [26.424] e-pTeX: node types
-    last_node_type_code:
-      if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
-        if type(tail)<=unset_node then cur_val:=type(tail)+1
-        else cur_val:=unset_node+2;
-      end; {there are no other cases}
-    end
+@x [26.424] l.8510 - e-pTeX: last node
+@d set_effective_tail==set_effective_tail_pTeX
 @y
-      last_node_type_code:
-        if ((type(q)<>math_node)or(subtype(q)<>end_M_code))and(head<>tail) then
-          if type(q)<=unset_node then begin
-            if type(q)=dir_node then q:=list_ptr(q);
-            cur_val:=type(q);
-            if cur_val<dir_node then cur_val:=cur_val+1
-            else if cur_val>disp_node then cur_val:=cur_val-1;
-            end
-          else cur_val:=unset_node; {\epTeX's |unset_node| is \eTeX's |unset_node+2|}
-      end; {there are no other cases}
-    end;
+@d set_effective_tail_epTeX(#)== {Ignore final |disp_node| and\slash or \.{\\endM} node}
+set_effective_tail_pTeX(#);
+if (type(tx)=math_node)and(subtype(tx)=end_M_code) then
+  begin r:=head;
+  repeat q:=r; r:=link(q); until link(r)=tx;
+  if is_char_node(r) then #;
+  if (type(r)=disp_node) then
+    if is_char_node(q)or(q=head) then #
+    else tx:=q
+  else tx:=r;
+  end
+@#
+@d set_effective_tail==set_effective_tail_epTeX
+@z
+
+@x [26.424] l.8517 - e-pTeX: node types
+    if (tail=head)or(mode=0) then cur_val:=-1;
+@y
+    if (tail=head)or(mode=0)or@|
+       ((tail=link(head))and not is_char_node(tail)and(type(tail)=disp_node))
+      then cur_val:=-1;
+@z
+
+@x [26.424] e-pTeX: node types
+      last_node_type_code: if type(tx)<=unset_node then cur_val:=type(tx)+1
+        else cur_val:=unset_node+2;
+@y
+      last_node_type_code: if type(tx)<=unset_node then
+          begin if type(tx)=dir_node then tx:=list_ptr(tx);
+          cur_val:=type(tx);
+          if cur_val<dir_node then cur_val:=cur_val+1
+          else if cur_val>disp_node then cur_val:=cur_val-1;
+          end
+        else cur_val:=unset_node; {\epTeX's |unset_node| is \eTeX's |unset_node+2|}
 @z
 
 @x e-pTeX: if primitives - leave room for three e-TeX codes

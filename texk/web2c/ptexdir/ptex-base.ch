@@ -1914,13 +1914,20 @@ if cur_cs=0 then
 else cur_tok:=cs_token_flag+cur_cs;
 @z
 
-@x [26.413] l.8659 - pTeX: scan_somthing_internal
+@x [26.413] l.8341 - pTeX: scan_somthing_internal
 @p procedure scan_something_internal(@!level:small_number;@!negative:boolean);
 @y
 @p @t\4@>@<Declare procedures needed in |scan_something|@>@t@>@/
 procedure scan_something_internal(@!level:small_number;@!negative:boolean);
 @z
-@x [26.413] l.8663 - pTeX: scan_somthing_internal
+@x [26.413] l.8343 - pTeX: scan_somthing_internal
+var m:halfword; {|chr_code| part of the operand token}
+@y
+label exit;
+var m:halfword; {|chr_code| part of the operand token}
+@!tx:pointer; {effective tail node}
+@z
+@x [26.413] l.8345 - pTeX: scan_somthing_internal
 begin m:=cur_chr;
 case cur_cmd of
 def_code: @<Fetch a character code from some table@>;
@@ -1937,7 +1944,7 @@ toks_register,assign_toks,def_family,set_font,def_font,def_jfont,def_tfont:
   @<Fetch a token list or font identifier, provided that |level=tok_val|@>;
 @z
 
-@x [26.414] l.8693 - pTeX:
+@x [26.414] l.8373 - pTeX:
 if m=math_code_base then scanned_result(ho(math_code(cur_val)))(int_val)
 else if m<math_code_base then scanned_result(equiv(m+cur_val))(int_val)
 else scanned_result(eqtb[m+cur_val].int)(int_val);
@@ -1952,7 +1959,7 @@ else if m<math_code_base then
 else scanned_result(eqtb[m+cur_val].int)(int_val);
 @z
 
-@x [26.420] l.8799 - pTeX: Fetch a box dimension: dir_node
+@x [26.420] l.8475 - pTeX: Fetch a box dimension: dir_node
 if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @y
 if box(cur_val)=null then cur_val:=0
@@ -1970,7 +1977,22 @@ else
   end;
 @z
 
-@x [26.424] l.8690 - pTeX: Fetch an item ...: disp_node
+@x [26.424] l.8510 - pTeX: disp_node
+@<Fetch an item in the current node...@>=
+@y
+@d set_effective_tail_pTeX(#)== {Ignore final |disp_node|}
+if (type(tail)=disp_node) then
+  if is_char_node(prev_node)or(prev_node=head) then #
+  else tx:=prev_node
+else tx:=tail
+@#
+@d set_effective_tail==set_effective_tail_pTeX
+
+@<Fetch an item in the current node...@>=
+@z
+
+@x [26.424] l.8518 - pTeX: Fetch an item ...: disp_node
+  if not is_char_node(tail)and(mode<>0) then
     case cur_chr of
     int_val: if type(tail)=penalty_node then cur_val:=penalty(tail);
     dimen_val: if type(tail)=kern_node then cur_val:=width(tail);
@@ -1979,17 +2001,17 @@ else
       if subtype(tail)=mu_glue then cur_val_level:=mu_val;
       end;
 @y
-    begin if (type(tail)=disp_node)and not is_char_node(prev_node) then q:=prev_node
-      else q:=tail;
+  if not is_char_node(tail)and(tail<>head)and(mode<>0) then
+    begin set_effective_tail(return);
       case cur_chr of
-      int_val: if type(q)=penalty_node then cur_val:=penalty(q);
-      dimen_val: if type(q)=kern_node then cur_val:=width(q);
-      glue_val: if type(q)=glue_node then
-        begin cur_val:=glue_ptr(q);
-        if subtype(q)=mu_glue then cur_val_level:=mu_val;
+      int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
+      dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
+      glue_val: if type(tx)=glue_node then
+        begin cur_val:=glue_ptr(tx);
+        if subtype(tx)=mu_glue then cur_val_level:=mu_val;
         end;
 @z
-@x [26.424] l.8690 - pTeX: Fetch an item ...: disp_node
+@x [26.424] l.8526 - pTeX: Fetch an item ...: disp_node
     end {there are no other cases}
 @y
       end; {there are no other cases}

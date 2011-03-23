@@ -10,6 +10,22 @@
 @d count_base=int_base+int_pars {256 user \.{\\count} registers}
 @z
 
+@x [26.413]
+  {fetch an internal parameter}
+label exit;
+var m:halfword; {|chr_code| part of the operand token}
+@!tx:pointer; {effective tail node}
+@y
+  {fetch an internal parameter}
+var m:halfword; {|chr_code| part of the operand token}
+@z
+
+@x [26.413]
+exit:end;
+@y
+end;
+@z
+
 @x [26.420]
 if q=null then cur_val:=0 @+else cur_val:=mem[q+m].sc;
 @y
@@ -17,10 +33,34 @@ if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @z
 
 @x [26.424]
-        else cur_val:=unset_node+2;
-    end; {there are no other cases}
+@d set_effective_tail==set_effective_tail_eTeX
+
 @y
-        else cur_val:=unset_node+2;
+@z
+
+@x [26.424]
+    begin set_effective_tail(return);
+      case cur_chr of
+      int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
+      dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
+      glue_val: if type(tx)=glue_node then
+        begin cur_val:=glue_ptr(tx);
+        if subtype(tx)=mu_glue then cur_val_level:=mu_val;
+        end;
+@y
+    case cur_chr of
+    int_val: if type(tail)=penalty_node then cur_val:=penalty(tail);
+    dimen_val: if type(tail)=kern_node then cur_val:=width(tail);
+    glue_val: if type(tail)=glue_node then
+      begin cur_val:=glue_ptr(tail);
+      if subtype(tail)=mu_glue then cur_val_level:=mu_val;
+      end;
+@z
+
+@x [26.424]
+      end; {there are no other cases}
+    end
+@y
     end {there are no other cases}
 @z
 

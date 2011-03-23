@@ -3,33 +3,7 @@
 % to be applied to tex.web in order to define the
 % e-TeX program.
  
-% Note: This file defines etex.web in terms of changes to be applied to
-% tex.web; in terms of a program such as TIE (or equivalent), directories
-% may vary:
-%
-%	tex.web			)
-%	   +			)   =>   tie -m ...   =>   etex.web
-%	etexdir/etex.ch		)
-%
-% In addition, this file is used to define pdfetex.web, a combination
-% of e-TeX and pdfTeX as follows:
-%
-%	tex.web			)
-%	   +			)
-%	etexdir/etex.ch		)
-%	   +			)
-%	pdfetexdir/pdfetex.ch1	)   =>   tie -m ...   =>   pdfetex.web
-%	   +			)
-%	pdftexdir/pdftex.ch	)
-%	   +			)
-%	pdfetexdir/pdfetex.ch2	)
-%
-% where the two (small) files pdfetexdir/pdfetex.ch[12] take care of
-% interferences between e-Tex changes (etexdir/etex.ch) and pdfTeX changes
-% (pdftexdir/pdftex.ch). Consequently, changes in these files have to be
-% coordinated.
-
-% e-TeX is copyright (C) 1999-2010 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -55,7 +29,7 @@
 % TeX is a trademark of the American Mathematical Society.
 % METAFONT is a trademark of Addison-Wesley Publishing Company.
 @y
-% e-TeX is copyright (C) 1999-2010 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -121,8 +95,8 @@
 %             fixed the error messages for improper use of \protected,
 %                 reported by Heiko Oberdiek 
 %                 <heiko.oberdiek@@googlemail.com>, May 2010.
-%             some trivial rearrangements to reduce interferences between
-%                 e-TeX and pTeX, suggested by Hironori Kitagawa
+%             some rearrangements to reduce interferences between
+%                 e-TeX and pTeX, in part suggested by Hironori Kitagawa
 %                 <h_kitagawa2001@yahoo.co.jp>, Mar 2011.
 
 % Although considerable effort has been expended to make the e-TeX program
@@ -1109,6 +1083,7 @@ var m:halfword; {|chr_code| part of the operand token}
 @y
 label exit;
 var m:halfword; {|chr_code| part of the operand token}
+@!tx:pointer; {effective tail node}
 @!q:halfword; {general purpose index}
 @!i:four_quarters; {character info}
 @z
@@ -1197,11 +1172,27 @@ begin if m>par_shape_loc then @<Fetch a penalties array element@>
 else if par_shape_ptr=null then cur_val:=0
 @z
 %---------------------------------------
-@x [26] m.424 l.8505 - e-TeX TeXXeT
-implemented. The reference count for \.{\\lastskip} will be updated later.
+@x [26] m.424 l.8504 - e-TeX \lastnodetype
+@ Here is where \.{\\lastpenalty}, \.{\\lastkern}, and \.{\\lastskip} are
 @y
-implemented. The reference count for \.{\\lastskip} will be updated later.
-A final \.{\\endM} node is temporarily removed.
+@ Here is where \.{\\lastpenalty}, \.{\\lastkern}, \.{\\lastskip}, and
+\.{\\lastnodetype} are
+@z
+%---------------------------------------
+@x [26] m.424 l.8510 - e-TeX TeXXeT
+@<Fetch an item in the current node...@>=
+@y
+@d set_effective_tail_eTeX(#)== {Ignore final \.{\\endM} node}
+if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
+  begin tx:=head;
+  while link(tx)<>tail do tx:=link(tx);
+  if is_char_node(tx) then #;
+  end
+else tx:=tail
+@#
+@d set_effective_tail==set_effective_tail_eTeX
+
+@<Fetch an item in the current node...@>=
 @z
 %---------------------------------------
 @x [26] m.424 l.8511 - e-TeX basic
@@ -1238,29 +1229,27 @@ if m>=input_line_no_code then
   else cur_val_level:=cur_chr;
 @z
 %---------------------------------------
-@x [26] m.424 l.8519 - e-TeX TeXXeT
+@x [26] m.424 l.8519 - e-TeX TeXXeT, last_node_type
     case cur_chr of
-@y
-    begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-      remove_end_M;
-    case cur_chr of
-@z
-%---------------------------------------
-@x [26] m.424 l.8525 - e-TeX last_node_type
+    int_val: if type(tail)=penalty_node then cur_val:=penalty(tail);
+    dimen_val: if type(tail)=kern_node then cur_val:=width(tail);
+    glue_val: if type(tail)=glue_node then
+      begin cur_val:=glue_ptr(tail);
+      if subtype(tail)=mu_glue then cur_val_level:=mu_val;
       end;
-@y
-      end;
-    last_node_type_code:
-      if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
-        if type(tail)<=unset_node then cur_val:=type(tail)+1
-        else cur_val:=unset_node+2;
-@z
-%---------------------------------------
-@x [26] m.424 l.8526 - e-TeX TeXXeT
     end {there are no other cases}
 @y
-    end; {there are no other cases}
-    if LR_temp<>null then insert_end_M;
+    begin set_effective_tail(return);
+      case cur_chr of
+      int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
+      dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
+      glue_val: if type(tx)=glue_node then
+        begin cur_val:=glue_ptr(tx);
+        if subtype(tx)=mu_glue then cur_val_level:=mu_val;
+        end;
+      last_node_type_code: if type(tx)<=unset_node then cur_val:=type(tx)+1
+        else cur_val:=unset_node+2;
+      end; {there are no other cases}
     end
 @z
 %---------------------------------------
