@@ -236,66 +236,6 @@ In addition there is a |mark_class| field that contains the mark class.
   {vertical list to be moved out of horizontal list}
 @z
 %---------------------------------------
-% @x [10] m.147 l.3069 - e-TeX TeXXeT
-% the amount of surrounding space inserted by \.{\\mathsurround}.
-% @y
-% the amount of surrounding space inserted by \.{\\mathsurround}.
-% 
-% In addition a |math_node| with |subtype>after| and |width=0| will be
-% (ab)used to record a regular |math_node| reinserted after being
-% discarded at a line break or one of the text direction primitives (
-% \.{\\beginL}, \.{\\endL}, \.{\\beginR}, and \.{\\endR} ).
-% @z
-%---------------------------------------
-% @x [10] m.147 l.3073 - e-TeX TeXXeT
-% @d after=1 {|subtype| for math node that winds up a formula}
-% @y
-% @d after=1 {|subtype| for math node that winds up a formula}
-% @#
-% @d M_code=2
-% @d begin_M_code=M_code+before {|subtype| for \.{\\beginM} node}
-% @d end_M_code=M_code+after {|subtype| for \.{\\endM} node}
-% @d L_code=4
-% @d begin_L_code=L_code+begin_M_code {|subtype| for \.{\\beginL} node}
-% @d end_L_code=L_code+end_M_code {|subtype| for \.{\\endL} node}
-% @d R_code=L_code+L_code
-% @d begin_R_code=R_code+begin_M_code {|subtype| for \.{\\beginR} node}
-% @d end_R_code=R_code+end_M_code {|subtype| for \.{\\endR} node}
-% @#
-% @d end_LR(#)==odd(subtype(#))
-% @d end_LR_type(#)==(L_code*(subtype(#) div L_code)+end_M_code)
-% @d begin_LR_type(#)==(#-after+before)
-% @z
-%---------------------------------------
-% @x [12] m.175 l.3546 - e-TeX TeXXeT
-% math_node: print_char("$");
-% @y
-% math_node: if subtype(p)>=L_code then print("[]")
-%   else print_char("$");
-% @z
-%---------------------------------------
-% @x [12] m.184 l.3713 - e-TeX TeXXeT
-%     begin print(", shifted "); print_scaled(shift_amount(p));
-%     end;
-% @y
-%     begin print(", shifted "); print_scaled(shift_amount(p));
-%     end;
-%   if eTeX_ex then @<Display if this box is never to be reversed@>;
-% @z
-%---------------------------------------
-% @x [12] m.192 l.3811 - e-TeX TeXXeT
-% begin print_esc("math");
-% @y
-% if subtype(p)>after then
-%   begin if end_LR(p) then print_esc("end")
-%   else print_esc("begin");
-%   if subtype(p)>R_code then print_char("R")
-%   else if subtype(p)>L_code then print_char("L")
-%   else print_char("M");
-%   end else
-% begin print_esc("math");
-% @z
-%---------------------------------------
 @x [12] m.196 l.3844 - e-TeX marks
 begin print_esc("mark"); print_mark(mark_ptr(p));
 @y
@@ -312,13 +252,6 @@ print_mark(mark_ptr(p));
 @d un_vbox=24 {unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )}
   {( or \.{\\pagediscards}, \.{\\splitdiscards} )}
 @z
-%---------------------------------------
-% @x [15] m.208 l.4091 - e-TeX TeXXeT
-% @d valign=33 {vertical table alignment ( \.{\\valign} )}
-% @y
-% @d valign=33 {vertical table alignment ( \.{\\valign} )}
-%   {or text direction directives ( \.{\\beginL}, etc.~)}
-% @z
 %---------------------------------------
 @x [15] m.208 l.4107 - e-TeX middle
 @d left_right=49 {variable delimiter ( \.{\\left}, \.{\\right} )}
@@ -455,15 +388,6 @@ eTeX_aux:=null;
   @/@<Cases of |assign_toks| for |print_cmd_chr|@>@/
   othercases print_esc("errhelp")
 @z
-%---------------------------------------
-% FIXME moved to init_eqtb_entry --see later
-% @x [17] m.232 l.4805 - e-TeX penalties
-% eq_level(par_shape_loc):=level_one;@/
-% @y
-% eq_level(par_shape_loc):=level_one;@/
-% for k:=par_shape_loc+1 to token_base-1 do
-%   eqtb[k]:=eqtb[par_shape_loc];
-% @z
 %---------------------------------------
 @x [17] m.233 l.4833 - e-TeX penalties
 if n=par_shape_loc then
@@ -624,13 +548,6 @@ toks_register: print_esc("toks");
 @y
 toks_register: @<Cases of |toks_register| for |print_cmd_chr|@>;
 @z
-%---------------------------------------
-% @x [18] m.266 l.5766 - e-TeX TeXXeT
-% valign: print_esc("valign");
-% @y
-% valign: if chr_code=0 then print_esc("valign")@/
-%   @<Cases of |valign| for |print_cmd_chr|@>;
-% @z
 %---------------------------------------
 @x [19] m.268 l.5800 - e-TeX sparse arrays
 interpreted in one of four ways:
@@ -1197,13 +1114,6 @@ begin if m>par_shape_loc then @<Fetch a penalties array element@>
 else if par_shape_ptr=null then cur_val:=0
 @z
 %---------------------------------------
-% @x [26] m.424 l.8493 - e-TeX TeXXeT
-% implemented. The reference count for \.{\\lastskip} will be updated later.
-% @y
-% implemented. The reference count for \.{\\lastskip} will be updated later.
-% A final \.{\\endM} node is temporarily removed.
-% @z
-%---------------------------------------
 @x [26] m.424 l.8499 - e-TeX basic
 if cur_chr>glue_val then
   begin if cur_chr=input_line_no_code then cur_val:=line
@@ -1234,14 +1144,6 @@ if m>last_node_type_code then
   else cur_val_level:=cur_chr;
 @z
 %---------------------------------------
-% @x [26] m.424 l.8507 - e-TeX TeXXeT
-%     case cur_chr of
-% @y
-%     begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-%       remove_end_M;
-%     case cur_chr of
-% @z
-%---------------------------------------
 @x [26] m.424 l.8513 - e-TeX last_node_type
       end;
 @y
@@ -1251,14 +1153,6 @@ if m>last_node_type_code then
         if type(tail)<=unset_node then cur_val:=type(tail)+1
         else cur_val:=unset_node+2;
 @z
-%---------------------------------------
-% @x [26] m.424 l.8514 - e-TeX TeXXeT
-%     end {there are no other cases}
-% @y
-%     end; {there are no other cases}
-%     if LR_temp<>null then insert_end_M;
-%     end
-% @z
 %---------------------------------------
 @x [26] m.424 l.8519 - e-TeX last_node_type
     glue_val: if last_glue<>max_halfword then cur_val:=last_glue;
@@ -1493,257 +1387,6 @@ end;
 end;
 @z
 %---------------------------------------
-% @x [32] m.616 l.12238 - e-TeX TeXXeT
-% this is essentially the depth of |push| commands in the \.{DVI} output.
-% @y
-% this is essentially the depth of |push| commands in the \.{DVI} output.
-% 
-% For mixed direction text (\TeXXeT) the current text direction is called
-% |cur_dir|. As the box being shipped out will never be used again and
-% soon be recycled, we can simply reverse any R-text (i.e., right-to-left)
-% segments of hlist nodes as well as complete hlist nodes embedded in such
-% segments. Moreover this can be done iteratively rather than recursively.
-% There are, however, two complications related to leaders that require
-% some additional bookkeeping: (1)~One and the same hlist node might be
-% used more than once (but never inside both L- and R-text); and
-% (2)~leader boxes inside hlists must be aligned with respect to the left
-% edge of the original hlist.
-% 
-% A math node is changed into a kern node whenever the text direction
-% remains the same, it is replaced by an |edge_node| if the text direction
-% changes; the subtype of an an |hlist_node| inside R-text is changed to
-% |reversed| once its hlist has been reversed.
-% @!@^data structure assumptions@>
-% @z
-%---------------------------------------
-% @x [32] m.616 l.12240 - e-TeX TeXXeT
-% @d synch_h==if cur_h<>dvi_h then
-% @y
-% @d reversed=min_quarterword+1 {subtype for an |hlist_node| whose hlist
-%   has been reversed}
-% @d dlist=min_quarterword+2 {subtype for an |hlist_node| from display math mode}
-% @d left_to_right=0
-% @d right_to_left=1
-% @d reflected==1-cur_dir {the opposite of |cur_dir|}
-% @#
-% @d synch_h==if cur_h<>dvi_h then
-% @z
-%---------------------------------------
-% @x [32] m.619 l.12300 hlist_out - e-TeX add_glue
-% @!g_order: glue_ord; {applicable order of infinity for glue}
-% @y
-% @z
-%---------------------------------------
-% @x [32] m.619 l.12308 hlist_out - e-TeX TeXXeT
-% @!edge:scaled; {left edge of sub-box, or right edge of leader space}
-% @y
-% @!edge:scaled; {right edge of sub-box or leader space}
-% @!prev_p:pointer; {one step behind |p|}
-% @z
-%---------------------------------------
-% @x [32] m.619 l.12309 hlist_out - e-TeX add_glue
-% @!glue_temp:real; {glue value before rounding}
-% begin this_box:=temp_ptr; g_order:=glue_order(this_box);
-% @y
-% begin this_box:=temp_ptr;
-% @z
-%---------------------------------------
-% @x [32] m.619 l.12315 hlist_out - e-TeX TeXXeT
-% save_loc:=dvi_offset+dvi_ptr; base_line:=cur_v; left_edge:=cur_h;
-% @y
-% save_loc:=dvi_offset+dvi_ptr; base_line:=cur_v;
-% prev_p:=this_box+list_offset;
-% if eTeX_ex then
-%   begin @<Initialize the LR stack@>;
-%   if subtype(this_box)=dlist then
-%     if cur_dir=right_to_left then
-%       begin cur_dir:=left_to_right; cur_h:=cur_h-width(this_box);
-%       end
-%     else subtype(this_box):=min_quarterword;
-%   if (cur_dir=right_to_left)and(subtype(this_box)<>reversed) then
-%     @<Reverse the complete hlist and set the subtype to |reversed|@>;
-%   end;
-% left_edge:=cur_h;
-% @z
-%---------------------------------------
-% @x [32] m.619 l.12318 hlist_out - e-TeX TeXXeT
-% prune_movements(save_loc);
-% @y
-% if eTeX_ex then
-%   begin @<Check for LR anomalies at the end of |hlist_out|@>;
-%   if subtype(this_box)=dlist then cur_dir:=right_to_left;
-%   end;
-% prune_movements(save_loc);
-% @z
-%---------------------------------------
-% @x [32] m.620 l.12337 - e-TeX TeXXeT
-%   p:=link(p);
-% @y
-%   prev_p:=link(prev_p); {N.B.: not |prev_p:=p|, |p| might be |lig_trick|}
-%   p:=link(p);
-% @z
-%---------------------------------------
-% @x [32] m.622 l.12362 - e-TeX TeXXeT
-% kern_node,math_node:cur_h:=cur_h+width(p);
-% @y
-% kern_node:cur_h:=cur_h+width(p);
-% math_node:begin if eTeX_ex then
-%     @<Adjust \(t)the LR stack for the |hlist_out| routine; if necessary
-%       reverse an hlist segment and |goto reswitch|@>;
-%   cur_h:=cur_h+width(p);
-%   end;
-% @z
-%---------------------------------------
-% @x [32] m.622 l.12364 - e-TeX TeXXeT
-% othercases do_nothing
-% @y
-% @/@<Cases of |hlist_out| that arise in mixed direction text only@>@;
-% othercases do_nothing
-% @z
-%---------------------------------------
-% @x [32] m.622 l.12369 - e-TeX TeXXeT
-% next_p:p:=link(p);
-% @y
-% next_p:prev_p:=p; p:=link(p);
-% @z
-%---------------------------------------
-% @x [32] m.623 l.12376 - e-TeX TeXXeT
-%   temp_ptr:=p; edge:=cur_h;
-% @y
-%   temp_ptr:=p; edge:=cur_h+width(p);
-%   if cur_dir=right_to_left then cur_h:=edge;
-% @z
-%---------------------------------------
-% @x [32] m.623 l.12379 - e-TeX TeXXeT
-%   cur_h:=edge+width(p); cur_v:=base_line;
-% @y
-%   cur_h:=edge; cur_v:=base_line;
-% @z
-%---------------------------------------
-% @x [32] m.625 l.12401 - e-TeX add_glue
-%   begin if g_sign=stretching then
-%     begin if stretch_order(g)=g_order then
-%       begin vet_glue(float(glue_set(this_box))*stretch(g));
-% @^real multiplication@>
-%       rule_wd:=rule_wd+round(glue_temp);
-%       end;
-%     end
-%   else if shrink_order(g)=g_order then
-%     begin vet_glue(float(glue_set(this_box))*shrink(g));
-%       rule_wd:=rule_wd-round(glue_temp);
-%     end;
-%   end;
-% @y
-%   add_glue(rule_wd);
-% @z
-%---------------------------------------
-% @x [32] m.626 l.12428 - e-TeX TeXXeT
-%   edge:=cur_h+rule_wd; lx:=0;
-% @y
-%   if cur_dir=right_to_left then cur_h:=cur_h-10;
-%   edge:=cur_h+rule_wd; lx:=0;
-% @z
-%---------------------------------------
-% @x [32] m.626 l.12434 - e-TeX TeXXeT
-%   cur_h:=edge-10; goto next_p;
-% @y
-%   if cur_dir=right_to_left then cur_h:=edge
-%   else cur_h:=edge-10;
-%   goto next_p;
-% @z
-%---------------------------------------
-% @x [32] m.628 l.12473 - e-TeX TeXXeT
-% synch_h; save_h:=dvi_h; temp_ptr:=leader_box;
-% @y
-% synch_h; save_h:=dvi_h; temp_ptr:=leader_box;
-% if cur_dir=right_to_left then cur_h:=cur_h+leader_wd;
-% @z
-%---------------------------------------
-% @x [32] m.629 l.12489 vlist_out - e-TeX add_glue
-% @!g_order: glue_ord; {applicable order of infinity for glue}
-% @y
-% @z
-%---------------------------------------
-% @x [32] m.629 l.12498 vlist_out - e-TeX add_glue
-% @!glue_temp:real; {glue value before rounding}
-% begin this_box:=temp_ptr; g_order:=glue_order(this_box);
-% @y
-% begin this_box:=temp_ptr;
-% @z
-%---------------------------------------
-% @x [32] m.632 l.12544 - e-TeX TeXXeT
-%   cur_h:=left_edge+shift_amount(p); {shift the box right}
-% @y
-%   if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
-%   else cur_h:=left_edge+shift_amount(p); {shift the box right}
-% @z
-%---------------------------------------
-% @x [32] m.633 l.12556 - e-TeX TeXXeT
-%   begin synch_h; synch_v;
-%   dvi_out(put_rule); dvi_four(rule_ht); dvi_four(rule_wd);
-% @y
-%   begin if cur_dir=right_to_left then cur_h:=cur_h-rule_wd;
-%   synch_h; synch_v;
-%   dvi_out(put_rule); dvi_four(rule_ht); dvi_four(rule_wd);
-%   cur_h:=left_edge;
-% @z
-%---------------------------------------
-% @x [32] m.634 l.12564 - e-TeX add_glue
-%   begin if g_sign=stretching then
-%     begin if stretch_order(g)=g_order then
-%       begin vet_glue(float(glue_set(this_box))*stretch(g));
-% @^real multiplication@>
-%       rule_ht:=rule_ht+round(glue_temp);
-%       end;
-%     end
-%   else if shrink_order(g)=g_order then
-%     begin vet_glue(float(glue_set(this_box))*shrink(g));
-%     rule_ht:=rule_ht-round(glue_temp);
-%     end;
-%   end;
-% @y
-%   add_glue(rule_ht);
-% @z
-%---------------------------------------
-% @x [32] m.637 l.12619 - e-TeX TeXXeT
-% begin cur_h:=left_edge+shift_amount(leader_box); synch_h; save_h:=dvi_h;@/
-% @y
-% begin if cur_dir=right_to_left then
-%   cur_h:=left_edge-shift_amount(leader_box)
-%   else cur_h:=left_edge+shift_amount(leader_box);
-% synch_h; save_h:=dvi_h;@/
-% @z
-%---------------------------------------
-% @x [32] m.638 l.12656 ship_out - e-TeX TeXXeT
-% @<Ship box |p| out@>;
-% @y
-% @<Ship box |p| out@>;
-% if eTeX_ex then @<Check for LR anomalies at the end of |ship_out|@>;
-% @z
-%---------------------------------------
-% @x [33] m.649 l.12876 hpack - e-TeX TeXXeT
-% h:=0; @<Clear dimensions to zero@>;
-% @y
-% h:=0; @<Clear dimensions to zero@>;
-% if TeXXeT_en then @<Initialize the LR stack@>;
-% @z
-%---------------------------------------
-% @x [33] m.649 l.12886 hpack - e-TeX TeXXeT
-% exit: hpack:=r;
-% @y
-% exit: if TeXXeT_en then @<Check for LR anomalies at the end of |hpack|@>;
-% hpack:=r;
-% @z
-%---------------------------------------
-% @x [33] m.651 l.12910 - e-TeX TeXXeT
-%   kern_node,math_node: x:=x+width(p);
-% @y
-%   kern_node: x:=x+width(p);
-%   math_node: begin x:=x+width(p);
-%     if TeXXeT_en then @<Adjust \(t)the LR stack for the |hpack| routine@>;
-%     end;
-% @z
-%---------------------------------------
 @x [34] m.687 l.13480 - e-TeX middle
 \TeX's \.{\\left} and \.{\\right}. The |nucleus| of such noads is
 @y
@@ -1818,20 +1461,6 @@ align_state:=1000000;
 repeat get_x_or_protected;
 until cur_cmd<>spacer;
 @z
-%---------------------------------------
-% @x [37] m.807 l.15834 - e-TeX TeXXeT
-%   begin type(q):=hlist_node; width(q):=width(p);
-% @y
-%   begin type(q):=hlist_node; width(q):=width(p);
-%   if nest[nest_ptr-1].mode_field=mmode then subtype(q):=dlist; {for |ship_out|}
-% @z
-%---------------------------------------
-% @x [37] m.808 l.15852 - e-TeX TeXXeT
-% n:=span_count(r); t:=width(s); w:=t; u:=hold_head;
-% @y
-% n:=span_count(r); t:=width(s); w:=t; u:=hold_head;
-% subtype(r):=min_quarterword; {for |ship_out|}
-% @z
 %---------------------------------------
 @x [38] m.814 l.15975 - e-TeX penalties
 There is one explicit parameter:  |final_widow_penalty| is the amount of
@@ -1944,13 +1573,6 @@ if do_last_line_fit then
   @<Initialize additional fields of the first active node@>;
 @z
 %---------------------------------------
-% @x [39] m.866 l.17030 - e-TeX TeXXeT
-% math_node: begin auto_breaking:=(subtype(cur_p)=after); kern_break;
-% @y
-% math_node: begin if subtype(cur_p)<L_code then auto_breaking:=end_LR(cur_p);
-%   kern_break;
-% @z
-%---------------------------------------
 @x [39] m.876 l.17192 - e-TeX penalties
 post_line_break(final_widow_penalty)
 @y
@@ -1962,51 +1584,6 @@ procedure post_line_break(@!final_widow_penalty:integer);
 @y
 procedure post_line_break(@!d:boolean);
 @z
-%---------------------------------------
-% @x [39] m.877 l.17216 post_line_break - e-TeX TeXXeT
-% begin @<Reverse the links of the relevant passive nodes, setting |cur_p| to the
-% @y
-% @!LR_ptr:pointer; {stack of LR codes}
-% begin LR_ptr:=LR_save;
-% @<Reverse the links of the relevant passive nodes, setting |cur_p| to the
-% @z
-%---------------------------------------
-% @x [39] m.877 l.17229 post_line_break - e-TeX TeXXeT
-% prev_graf:=best_line-1;
-% @y
-% prev_graf:=best_line-1;
-% LR_save:=LR_ptr;
-% @z
-%---------------------------------------
-% @x [39] m.879 l.17259 - e-TeX TeXXeT
-%   r:=q; {now |type(q)=glue_node|, |kern_node|, |math_node| or |penalty_node|}
-% @y
-%   r:=q; {now |type(q)=glue_node|, |kern_node|, |math_node| or |penalty_node|}
-%   if type(q)=math_node then if TeXXeT_en then
-%     @<Adjust \(t)the LR stack for the |post_line_break| routine@>;
-% @z
-%---------------------------------------
-% @x [39] m.880 l.17276 - e-TeX TeXXeT
-% @<Modify the end of the line to reflect the nature of the break and to include
-%   \.{\\rightskip}; also set the proper value of |disc_break|@>;
-% @y
-% if TeXXeT_en then
-%   @<Insert LR nodes at the beginning of the current line and adjust
-%     the LR stack based on LR nodes in this line@>;
-% @<Modify the end of the line to reflect the nature of the break and to include
-%   \.{\\rightskip}; also set the proper value of |disc_break|@>;
-% if TeXXeT_en then @<Insert LR nodes at the end of the current line@>;
-% @z
-%---------------------------------------
-% @x [39] m.881 l.17299 - e-TeX TeXXeT
-%     else if (type(q)=math_node)or(type(q)=kern_node) then width(q):=0;
-% @y
-%     else if type(q)=kern_node then width(q):=0
-%     else if type(q)=math_node then
-%       begin width(q):=0;
-%       if TeXXeT_en then @<Adjust \(t)the LR stack for the |p...@>;
-%       end;
-% @z
 %---------------------------------------
 % FIXME possible conflict
 @x [39] m.890 l.17395 - e-TeX penalties
@@ -2325,21 +1902,6 @@ if inter_line_penalties_ptr<>null then
   eq_define(inter_line_penalties_loc,shape_ref,null);
 @z
 %---------------------------------------
-% FIXME incompatible?
-% @x [47] m.1071 l.20718 - e-TeX sparse arrays
-% |box_flag+255| represent `\.{\\setbox0}' through `\.{\\setbox255}';
-% codes |box_flag+256| through |box_flag+511| represent `\.{\\global\\setbox0}'
-% through `\.{\\global\\setbox255}';
-% code |box_flag+512| represents `\.{\\shipout}'; and codes |box_flag+513|
-% through |box_flag+515| represent `\.{\\leaders}', `\.{\\cleaders}',
-% @y
-% |global_box_flag-1| represent `\.{\\setbox0}' through `\.{\\setbox32767}';
-% codes |global_box_flag| through |ship_out_flag-1| represent
-% `\.{\\global\\setbox0}' through `\.{\\global\\setbox32767}';
-% code |ship_out_flag| represents `\.{\\shipout}'; and codes |leader_flag|
-% through |leader_flag+2| represent `\.{\\leaders}', `\.{\\cleaders}',
-% @z
-%---------------------------------------
 @x [47] m.1071 l.20732 - e-TeX sparse arrays
 @d ship_out_flag==box_flag+(number_regs+number_regs)
    {context code for `\.{\\shipout}'}
@@ -2389,39 +1951,11 @@ box_code: begin scan_register_num; fetch_box(cur_box);
 copy_code: begin scan_register_num; fetch_box(q); cur_box:=copy_node_list(q);
 @z
 %---------------------------------------
-% @x [47] m.1080 l.20901 - e-TeX TeXXeT
-% since |head| is a one-word node.
-% @y
-% since |head| is a one-word node.
-% A final \.{\\endM} node is temporarily removed.
-% @z
-%---------------------------------------
-% @x [47] m.1080 l.20914 - e-TeX TeXXeT
-%     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
-%       @<Remove the last box, unless it's part of a discretionary@>;
-% @y
-%     begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-%       remove_end_M;
-%     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
-%       @<Remove the last box, unless it's part of a discretionary@>;
-%     if LR_temp<>null then insert_end_M;
-%     end;
-% @z
-%---------------------------------------
 @x [47] m.1082 l.20935 - e-TeX sparse arrays
 begin scan_eight_bit_int; n:=cur_val;
 @y
 begin scan_register_num; n:=cur_val;
 @z
-%---------------------------------------
-% @x [47] m.1096 l.21119 - e-TeX penalties, TeXXeT
-%   else line_break(widow_penalty);
-% @y
-%   else line_break(false);
-%   if LR_save<>null then
-%     begin flush_list(LR_save); LR_save:=null;
-%     end;
-% @z
 %---------------------------------------
 @x [47] m.1101 l.21175 make_mark - e-TeX marks
 begin p:=scan_toks(false,true); p:=get_node(small_node_size);
@@ -2433,30 +1967,6 @@ else  begin scan_register_num; c:=cur_val;
 p:=scan_toks(false,true); p:=get_node(small_node_size);
 mark_class(p):=c;
 @z
-%---------------------------------------
-% @x [47] m.1105 l.21203 - e-TeX TeXXeT
-% will be deleted, if present.
-% @y
-% will be deleted, if present.
-% A final \.{\\endM} node is temporarily removed.
-% @z
-%---------------------------------------
-% @x [47] m.1105 l.21213 delete_last - e-TeX TeXXeT
-% else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
-% @y
-% else  begin if not is_char_node(tail) then
-%   begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-%     remove_end_M;
-%   if type(tail)=cur_chr then
-% @z
-%---------------------------------------
-% @x [47] m.1105 l.21224 delete_last - e-TeX TeXXeT
-%   end;
-% @y
-%   if LR_temp<>null then insert_end_M;
-%   end;
-%   end;
-% @z
 %---------------------------------------
 @x [47] m.1108 l.21262 - e-TeX saved_items
 un_vbox: if chr_code=copy_code then print_esc("unvcopy")
@@ -2493,67 +2003,6 @@ while link(tail)<>null do tail:=link(tail);
 done:
 while link(tail)<>null do tail:=link(tail);
 @z
-%---------------------------------------
-% @x [47] m.1130 l.21562 - e-TeX TeXXeT
-% vmode+halign,hmode+valign:init_align;
-% @y
-% vmode+halign:init_align;
-% hmode+valign:@<Cases of |main_control| for |hmode+valign|@>@; init_align;
-% @z
-%---------------------------------------
-% @x [48] m.1138 l.21629 init_math - e-TeX TeXXeT
-% procedure init_math;
-% label reswitch,found,not_found,done;
-% var w:scaled; {new or partial |pre_display_size|}
-% @y
-% @t\4@>@<Declare subprocedures for |init_math|@>@;
-% procedure init_math;
-% label reswitch,found,not_found,done;
-% var w:scaled; {new or partial |pre_display_size|}
-% @!j:pointer; {prototype box for display}
-% @!x:integer; {new |pre_display_direction|}
-% @z
-%---------------------------------------
-% @x [48] m.1145 l.21687 - e-TeX TeXXeT, penalties
-% begin if head=tail then {`\.{\\noindent\$\$}' or `\.{\$\${ }\$\$}'}
-%   begin pop_nest; w:=-max_dimen;
-%   end
-% else  begin line_break(display_widow_penalty);@/
-% @y
-% begin j:=null; w:=-max_dimen;
-% if head=tail then {`\.{\\noindent\$\$}' or `\.{\$\${ }\$\$}'}
-%   @<Prepare for display after an empty paragraph@>
-% else  begin line_break(true);@/
-% @z
-%---------------------------------------
-% @x [48] m.1145 l.21700 - e-TeX TeXXeT
-% eq_word_define(dimen_base+pre_display_size_code,w);
-% @y
-% eq_word_define(dimen_base+pre_display_size_code,w);
-% LR_box:=j;
-% if eTeX_ex then eq_word_define(int_base+pre_display_direction_code,x);
-% @z
-%---------------------------------------
-% @x [48] m.1146 l.21708 - e-TeX TeXXeT
-% v:=shift_amount(just_box)+2*quad(cur_font); w:=-max_dimen;
-% p:=list_ptr(just_box);
-% @y
-% @<Prepare for display after a non-empty paragraph@>;
-% @z
-%---------------------------------------
-% @x [48] m.1146 l.21723 - e-TeX TeXXeT
-% done:
-% @y
-% done:
-% @<Finish the natural width computation@>
-% @z
-%---------------------------------------
-% @x [48] m.1147 l.21734 - e-TeX TeXXeT
-% kern_node,math_node: d:=width(p);
-% @y
-% kern_node: d:=width(p);
-% @t\4@>@<Cases of `Let |d| be the natural width' that need special treatment@>@;
-% @z
 %---------------------------------------
 @x [48] m.1185 l.22243 - e-TeX middle
   if type(q)<>left_noad then confusion("right");
@@ -2627,81 +2076,6 @@ if (t<>left_noad)and(cur_group<>math_left_group) then
     help1("I'm ignoring a \right that had no matching \left.");
     end;
 @z
-%---------------------------------------
-% @x [48] m.1194 l.22331 after_math - e-TeX TeXXeT
-% procedure after_math;
-% @y
-% @t\4@>@<Declare subprocedures for |after_math|@>@;
-% procedure after_math;
-% @z
-%---------------------------------------
-% @x [48] m.1194 l.22338 after_math - e-TeX TeXXeT
-% begin danger:=false;
-% @y
-% begin danger:=false;
-% @<Retrieve the prototype box@>;
-% @z
-%---------------------------------------
-% @x [48] m.1194 l.22345 after_math - e-TeX TeXXeT
-%   mlist_to_hlist; a:=hpack(link(temp_head),natural);
-% @y
-%   mlist_to_hlist; a:=hpack(link(temp_head),natural);
-%   subtype(a):=dlist;
-% @z
-%---------------------------------------
-% @x [48] m.1194 l.22348 after_math - e-TeX TeXXeT
-%   danger:=false;
-% @y
-%   danger:=false;
-%   @<Retrieve the prototype box@>;
-% @z
-%---------------------------------------
-% @x [48] m.1199 l.22435 - e-TeX TeXXeT
-% w:=width(b); z:=display_width; s:=display_indent;
-% @y
-% w:=width(b); z:=display_width; s:=display_indent;
-% if pre_display_direction<0 then s:=-s-z;
-% @z
-%---------------------------------------
-% @x [48] m.1199 l.22450 - e-TeX TeXXeT
-% resume_after_display
-% @y
-% @<Flush the prototype box@>;
-% resume_after_display
-% @z
-%---------------------------------------
-% @x [48] m.1202 l.22492 - e-TeX TeXXeT
-% d:=half(z-w);
-% @y
-% subtype(b):=dlist;
-% d:=half(z-w);
-% @z
-%---------------------------------------
-% @x [48] m.1203 l.22513 - e-TeX TeXXeT
-%   begin shift_amount(a):=s; append_to_vlist(a);
-% @y
-%   begin app_display(j,a,0);
-% @z
-%---------------------------------------
-% @x [48] m.1204 l.22528 - e-TeX TeXXeT
-% shift_amount(b):=s+d; append_to_vlist(b)
-% @y
-% app_display(j,b,d)
-% @z
-%---------------------------------------
-% @x [48] m.1205 l.22533 - e-TeX TeXXeT
-%   shift_amount(a):=s+z-width(a);
-%   append_to_vlist(a);
-% @y
-%   app_display(j,a,z-width(a));
-% @z
-%---------------------------------------
-% @x [48] m.1206 l.22552 - e-TeX TeXXeT
-% pop_nest;
-% @y
-% flush_node_list(LR_box);
-% pop_nest;
-% @z
 %---------------------------------------
 @x [49] m.1208 l.22577 - e-TeX protected
 control sequence can be defined to be `\.{\\long}' or `\.{\\outer}', and

@@ -1,3 +1,8 @@
+2011-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Reformulate begin_box and delete_last to reduce
+	interferences between e-TeX and pTeX.
+
 2011-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Reformulate @<Fetch an item in the current node...@>

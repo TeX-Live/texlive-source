@@ -33,13 +33,13 @@ if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @z
 
 @x [26.424]
-@d set_effective_tail==set_effective_tail_eTeX
+@d find_effective_tail==find_effective_tail_eTeX
 
 @y
 @z
 
 @x [26.424]
-    begin set_effective_tail(return);
+    begin find_effective_tail(return);
       case cur_chr of
       int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
       dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
@@ -116,15 +116,44 @@ if q=null then box(n):=null {the |eq_level| of the box stays the same}
 else box(n):=vpack(q,natural);
 @z
 
+@x [47.1079]
+@!r:pointer; {running behind |p|}
+@!fm:boolean; {a final \.{\\beginM} \.{\\endM} node pair?}
+@!tx:pointer; {effective tail node}
+@y
+@z
+
 @x [47.1080]
-    begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-      remove_end_M;
+@d fetch_effective_tail==fetch_effective_tail_eTeX
+
 @y
 @z
 @x [47.1080]
-    if LR_temp<>null then insert_end_M;
-    end;
+    begin find_effective_tail(goto done);
+    if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+    done:end;
 @y
+    if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+@z
+
+@x [47.1081]
+begin fetch_effective_tail(goto done);
+cur_box:=tx; shift_amount(cur_box):=0;
+end
+@y
+begin q:=head;
+repeat p:=q;
+if not is_char_node(q) then if type(q)=disc_node then
+  begin for m:=1 to replace_count(q) do p:=link(p);
+  if p=tail then goto done;
+  end;
+q:=link(p);
+until q=tail;
+cur_box:=tail; shift_amount(cur_box):=0;
+tail:=p; link(p):=null;
+done:end
 @z
 
 @x [47.1096]
@@ -134,17 +163,30 @@ else box(n):=vpack(q,natural);
 @z
 
 @x [47.1105]
-else  begin if not is_char_node(tail) then
-  begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-    remove_end_M;
-  if type(tail)=cur_chr then
+@!r:pointer; {running behind |p|}
+@!fm:boolean; {a final \.{\\beginM} \.{\\endM} node pair?}
+@!tx:pointer; {effective tail node}
+@y
+@z
+
+@x [47.1105]
+else if not is_char_node(tail) then
+  begin find_effective_tail(return);
+  if type(tx)<>cur_chr then return;
+  fetch_effective_tail(return);
+  flush_node_list(tx);
 @y
 else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
-@z
-@x [47.1105]
-  if LR_temp<>null then insert_end_M;
-  end;
-@y
+    begin q:=head;
+    repeat p:=q;
+    if not is_char_node(q) then if type(q)=disc_node then
+      begin for m:=1 to replace_count(q) do p:=link(p);
+      if p=tail then return;
+      end;
+    q:=link(p);
+    until q=tail;
+    link(p):=null; flush_node_list(tail); tail:=p;
+    end;
 @z
 
 @x [47.1110]

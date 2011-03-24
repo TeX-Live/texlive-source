@@ -1182,7 +1182,7 @@ else if par_shape_ptr=null then cur_val:=0
 @x [26] m.424 l.8510 - e-TeX TeXXeT
 @<Fetch an item in the current node...@>=
 @y
-@d set_effective_tail_eTeX(#)== {Ignore final \.{\\endM} node}
+@d find_effective_tail_eTeX(#)== {Ignore final \.{\\endM} node}
 if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
   begin tx:=head;
   while link(tx)<>tail do tx:=link(tx);
@@ -1190,7 +1190,7 @@ if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
   end
 else tx:=tail
 @#
-@d set_effective_tail==set_effective_tail_eTeX
+@d find_effective_tail==find_effective_tail_eTeX
 
 @<Fetch an item in the current node...@>=
 @z
@@ -1239,7 +1239,7 @@ if m>=input_line_no_code then
       end;
     end {there are no other cases}
 @y
-    begin set_effective_tail(return);
+    begin find_effective_tail(return);
       case cur_chr of
       int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
       dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
@@ -2297,6 +2297,15 @@ else sa_def_box;
 end
 @z
 %---------------------------------------
+@x [47] m.1079 l.20920 begin_box - e-TeX TeXXeT
+@!m:quarterword; {the length of a replacement list}
+@y
+@!r:pointer; {running behind |p|}
+@!fm:boolean; {a final \.{\\beginM} \.{\\endM} node pair?}
+@!tx:pointer; {effective tail node}
+@!m:quarterword; {the length of a replacement list}
+@z
+%---------------------------------------
 @x [47] m.1079 l.20922 begin_box - e-TeX sparse arrays
 @!n:eight_bits; {a box number}
 begin case cur_chr of
@@ -2313,23 +2322,57 @@ box_code: begin scan_register_num; fetch_box(cur_box);
 copy_code: begin scan_register_num; fetch_box(q); cur_box:=copy_node_list(q);
 @z
 %---------------------------------------
-@x [47] m.1080 l.20938 - e-TeX TeXXeT
-since |head| is a one-word node.
+@x [47] m.1080 l.20940 - e-TeX TeXXeT
+@<If the current list ends with a box node, delete it...@>=
 @y
-since |head| is a one-word node.
-A final \.{\\endM} node is temporarily removed.
+@d fetch_effective_tail_eTeX(#)==
+q:=head; p:=null;
+repeat r:=p; p:=q; fm:=false;
+if not is_char_node(q) then
+  if type(q)=disc_node then
+    begin for m:=1 to replace_count(q) do p:=link(p);
+    if p=tx then #;
+    end
+  else if (type(q)=math_node)and(subtype(q)=begin_M_code) then fm:=true;
+q:=link(p);
+until q=tx;
+q:=link(tx); link(p):=q; link(tx):=null;
+if q=null then tail:=p
+else if fm then
+  begin tail:=r; link(r):=null; flush_node_list(p);
+  end
+@#
+@d fetch_effective_tail==fetch_effective_tail_eTeX
+
+@<If the current list ends with a box node, delete it...@>=
 @z
 %---------------------------------------
 @x [47] m.1080 l.20951 - e-TeX TeXXeT
     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
       @<Remove the last box, unless it's part of a discretionary@>;
 @y
-    begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-      remove_end_M;
-    if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
+    begin find_effective_tail(goto done);
+    if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
       @<Remove the last box, unless it's part of a discretionary@>;
-    if LR_temp<>null then insert_end_M;
-    end;
+    done:end;
+@z
+%---------------------------------------
+@x [47] m.1081 l.20957 - e-TeX TeXXeT
+begin q:=head;
+repeat p:=q;
+if not is_char_node(q) then if type(q)=disc_node then
+  begin for m:=1 to replace_count(q) do p:=link(p);
+  if p=tail then goto done;
+  end;
+q:=link(p);
+until q=tail;
+cur_box:=tail; shift_amount(cur_box):=0;
+tail:=p; link(p):=null;
+done:end
+@y
+begin fetch_effective_tail(goto done);
+cur_box:=tx; shift_amount(cur_box):=0;
+end
 @z
 %---------------------------------------
 @x [47] m.1082 l.20972 - e-TeX sparse arrays
@@ -2358,28 +2401,33 @@ p:=scan_toks(false,true); p:=get_node(small_node_size);
 mark_class(p):=c;
 @z
 %---------------------------------------
-@x [47] m.1105 l.21240 - e-TeX TeXXeT
-will be deleted, if present.
+@x [47] m.1105 l.21246 delete_last - e-TeX TeXXeT
+@!m:quarterword; {the length of a replacement list}
 @y
-will be deleted, if present.
-A final \.{\\endM} node is temporarily removed.
+@!r:pointer; {running behind |p|}
+@!fm:boolean; {a final \.{\\beginM} \.{\\endM} node pair?}
+@!tx:pointer; {effective tail node}
+@!m:quarterword; {the length of a replacement list}
 @z
 %---------------------------------------
 @x [47] m.1105 l.21250 delete_last - e-TeX TeXXeT
 else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
+    begin q:=head;
+    repeat p:=q;
+    if not is_char_node(q) then if type(q)=disc_node then
+      begin for m:=1 to replace_count(q) do p:=link(p);
+      if p=tail then return;
+      end;
+    q:=link(p);
+    until q=tail;
+    link(p):=null; flush_node_list(tail); tail:=p;
+    end;
 @y
-else  begin if not is_char_node(tail) then
-  begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-    remove_end_M;
-  if type(tail)=cur_chr then
-@z
-%---------------------------------------
-@x [47] m.1105 l.21261 delete_last - e-TeX TeXXeT
-  end;
-@y
-  if LR_temp<>null then insert_end_M;
-  end;
-  end;
+else if not is_char_node(tail) then
+  begin find_effective_tail(return);
+  if type(tx)<>cur_chr then return;
+  fetch_effective_tail(return);
+  flush_node_list(tx);
 @z
 %---------------------------------------
 @x [47] m.1108 l.21299 - e-TeX saved_items

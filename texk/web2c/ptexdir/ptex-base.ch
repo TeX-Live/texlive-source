@@ -1980,13 +1980,13 @@ else
 @x [26.424] l.8510 - pTeX: disp_node
 @<Fetch an item in the current node...@>=
 @y
-@d set_effective_tail_pTeX(#)== {Ignore final |disp_node|}
+@d find_effective_tail_pTeX(#)== {Ignore final |disp_node|}
 if (type(tail)=disp_node) then
   if is_char_node(prev_node)or(prev_node=head) then #
   else tx:=prev_node
 else tx:=tail
 @#
-@d set_effective_tail==set_effective_tail_pTeX
+@d find_effective_tail==find_effective_tail_pTeX
 
 @<Fetch an item in the current node...@>=
 @z
@@ -2002,7 +2002,7 @@ else tx:=tail
       end;
 @y
   if not is_char_node(tail)and(tail<>head)and(mode<>0) then
-    begin set_effective_tail(return);
+    begin find_effective_tail(return);
       case cur_chr of
       int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
       dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
@@ -4630,22 +4630,18 @@ q:pointer;
   end
 @z
 
-@x [47.1079] l.21605  - pTeX: disp_node, adjust direction
-var @!p,@!q:pointer; {run through the current list}
+@x [47.1079] l.20920  - pTeX: disp_node, adjust direction
 @!m:quarterword; {the length of a replacement list}
-@!k:halfword; {0 or |vmode| or |hmode|}
 @y
-var @!p,@!q:pointer; {run through the current list}
-@!m:quarterword; {the length of a replacement list}
-@!k:halfword; {0 or |vmode| or |hmode|}
+@!r:pointer; {running behind |p|}
 @!a_dir:eight_bits; {adjust direction}
-@!d:pointer; {last |disp_node|}
 @!disp,@!pdisp:scaled; {displacement}
-@!pp,pnode:pointer;
-@!f:boolean; {will |d| free?}
+@!fd:boolean; {a final |disp_node| pair?}
+@!tx:pointer; {effective tail node}
+@!m:quarterword; {the length of a replacement list}
 @z
 
-@x [47.1080] l.21625 - pTeX: disp_node, check head=tail
+@x [47.1080] l.20937 - pTeX: disp_node, check head=tail
 @ Note that the condition |not is_char_node(tail)| implies that |head<>tail|,
 since |head| is a one-word node.
 @y
@@ -4653,35 +4649,48 @@ since |head| is a one-word node.
 |head<>tail|, since |head| is a one-word node; this is not so for p\TeX.
 @z
 
-@x [47.1080] l.21636 - pTeX: disp_node, check head=tail
+@x [47.1080] l.20940 - pTeX: disp_node
+@<If the current list ends with a box node, delete it...@>=
+@y
+@d fetch_effective_tail_pTeX(#)==
+q:=head; p:=null; disp:=0; pdisp:=0;
+repeat r:=p; p:=q; fd:=false;
+if not is_char_node(q) then
+  if type(q)=disc_node then
+    begin for m:=1 to replace_count(q) do p:=link(p);
+    if p=tx then #;
+    end
+  else if type(q)=disp_node then
+    begin pdisp:=disp; disp:=disp_dimen(q); fd:=true;
+    end;
+q:=link(p);
+until q=tx;
+q:=link(tx); link(p):=q; link(tx):=null;
+if q=null then tail:=p
+else if fd then
+  begin prev_node:=r; prev_disp:=pdisp; link(p):=null; tail:=p;
+  disp_dimen(p):=disp_dimen(q); free_node(q,small_node_size);
+  end
+else prev_node:=p
+@#
+@d fetch_effective_tail==fetch_effective_tail_pTeX
+
+@<If the current list ends with a box node, delete it...@>=
+@z
+
+@x [47.1080] l.20950 - pTeX: disp_node, check head=tail
 else  begin if not is_char_node(tail) then
     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
       @<Remove the last box, unless it's part of a discretionary@>;
-  end;
 @y
-else  begin f:=false;
-  if (not is_char_node(tail))and(type(tail)=disp_node) then
-    begin d:=tail; tail:=prev_node;
-    end
-  else d:=null;
-  if (not is_char_node(tail))and(head<>tail) then
-    if (type(tail)=hlist_node)or(type(tail)=vlist_node)
-          or(type(tail)=dir_node) then
+else  begin if not is_char_node(tail)and(head<>tail) then
+    begin find_effective_tail(goto done);
+    if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
       @<Remove the last box, unless it's part of a discretionary@>;
-  if d<>null then
-    if (not is_char_node(tail))and(type(tail)=disp_node) then
-      begin prev_node:=pnode; prev_disp:=pdisp;
-      {|if prev_disp=disp_dimen(d) then free_node(tail,small_node_size)|}
-      if prev_disp<>disp_dimen(d) then disp_dimen(tail):=disp_dimen(d);
-      if f then free_node(d,small_node_size)
-      else begin prev_node:=tail; tail_append(d); end;
-      end
-    else tail_append(d);
-  end;
+    done:end;
 @z
 
-@x [47.1081] l.21642 - pTeX: disp_node
-@ @<Remove the last box...@>=
+@x [47.1081] l.20957 - pTeX: disp_node
 begin q:=head;
 repeat p:=q;
 if not is_char_node(q) then if type(q)=disc_node then
@@ -4694,21 +4703,8 @@ cur_box:=tail; shift_amount(cur_box):=0;
 tail:=p; link(p):=null;
 done:end
 @y
-@ @<Remove the last box...@>=
-begin q:=head; disp:=0; pdisp:=0;
-repeat p:=q;
-if not is_char_node(q) then
-  if type(q)=disc_node then
-    begin for m:=1 to replace_count(q) do p:=link(p);
-    if p=tail then goto done;
-    end
-  else if type(q)=disp_node then
-    begin pnode:=pp; pdisp:=disp; disp:=disp_dimen(q);
-    end;
-pp:=q; q:=link(p);
-until q=tail;
-cur_box:=tail; shift_amount(cur_box):=0;
-tail:=p; link(p):=null;
+begin fetch_effective_tail(goto done);
+cur_box:=tx; shift_amount(cur_box):=0;
 if type(cur_box)=dir_node then
   begin link(list_ptr(cur_box)):=cur_box;
   cur_box:=list_ptr(cur_box);
@@ -4716,10 +4712,10 @@ if type(cur_box)=dir_node then
   end
 else
   if box_dir(cur_box)=dir_default then set_box_dir(cur_box)(abs(direction));
-done:end
+end
 @z
 
-@x [47.1083] l.21675 - pTeX: adjust_dir
+@x [47.1083] l.20989 - pTeX: adjust_dir
 if k=hmode then
   if (box_context<box_flag)and(abs(mode)=vmode) then
     scan_spec(adjusted_hbox_group,true)
@@ -4745,7 +4741,7 @@ else  begin if k=vmode then scan_spec(vbox_group,true)
 push_nest; mode:=-k; adjust_dir:=a_dir;
 @z
 
-@x [47.1085] l.21717 - pTeX: end of box, call adjust_hlist
+@x [47.1085] l.21031 - pTeX: end of box, call adjust_hlist
 hbox_group: package(0);
 adjusted_hbox_group: begin adjust_tail:=adjust_head; package(0);
   end;
@@ -4757,7 +4753,7 @@ adjusted_hbox_group: begin adjust_hlist(head,false);
   end;
 @z
 
-@x [47.1086] l.21730 - pTeX: set cur_kanji_skip, cur_xkanji_skip
+@x [47.1086] l.21044 - pTeX: set cur_kanji_skip, cur_xkanji_skip
 begin d:=box_max_depth; unsave; save_ptr:=save_ptr-3;
 if mode=-hmode then cur_box:=hpack(link(head),saved(2),saved(1))
 else  begin cur_box:=vpackage(link(head),saved(2),saved(1),d);
@@ -4788,7 +4784,7 @@ begin d:=box_max_depth;
 end;
 @z
 
-@x [47.1090] l.21765 - pTeX: apend vmode case
+@x [47.1090] l.21079 - pTeX: apend vmode case
 vmode+letter,vmode+other_char,vmode+char_num,vmode+char_given,
    vmode+math_shift,vmode+un_hbox,vmode+vrule,
    vmode+accent,vmode+discretionary,vmode+hskip,vmode+valign,
@@ -4805,14 +4801,14 @@ vmode+letter,vmode+other_char,vmode+char_num,vmode+char_given,
   end;
 @z
 
-@x [47.1091] l.21782 - pTeX: new_graf, adjust direction
+@x [47.1091] l.21096 - pTeX: new_graf, adjust direction
 push_nest; mode:=hmode; space_factor:=1000; set_cur_lang; clang:=cur_lang;
 @y
 push_nest; adjust_dir:=abs(direction);
 mode:=hmode; space_factor:=1000; set_cur_lang; clang:=cur_lang;
 @z
 
-@x [47.1096] l.21842 - pTeX: end_graf, call adjust_hlist
+@x [47.1096] l.21155 - pTeX: end_graf, call adjust_hlist
   begin if head=tail then pop_nest {null paragraphs are ignored}
   else line_break(widow_penalty);
 @y
@@ -4821,7 +4817,7 @@ mode:=hmode; space_factor:=1000; set_cur_lang; clang:=cur_lang;
        end;
 @z
 
-@x [47.1099] l.21871 - pTeX: insert and adjust
+@x [47.1099] l.21184 - pTeX: insert and adjust
 new_save_level(insert_group); scan_left_brace; normal_paragraph;
 push_nest; mode:=-vmode; prev_depth:=ignore_depth;
 @y
@@ -4829,7 +4825,7 @@ new_save_level(insert_group); scan_left_brace; normal_paragraph;
 push_nest; mode:=-vmode; direction:=adjust_dir; prev_depth:=ignore_depth;
 @z
 
-@x [47.1100] l.21876 - pTeX: free box node, ins_dir
+@x [47.1100] l.21189 - pTeX: free box node, ins_dir
 insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
   d:=split_max_depth; f:=floating_penalty; unsave; decr(save_ptr);
   {now |saved(0)| is the insertion number, or 255 for |vadjust|}
@@ -4884,7 +4880,7 @@ insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
   end;
 @z
 
-@x [47.1101] l.21901 - pTeX: mark_node, prev_append
+@x [47.1101] l.21214 - pTeX: mark_node, prev_append
 mark_ptr(p):=def_ref; link(tail):=p; tail:=p;
 @y
 mark_ptr(p):=def_ref;
@@ -4893,7 +4889,7 @@ if (not is_char_node(tail))and(type(tail)=disp_node) then
 else tail_append(p);
 @z
 
-@x [47.1103] l.21911 - pTeX: penalty, prev_append
+@x [47.1103] l.21224 - pTeX: penalty, prev_append
 procedure append_penalty;
 begin scan_int; tail_append(new_penalty(cur_val));
 if mode=vmode then build_page;
@@ -4908,19 +4904,17 @@ begin scan_int;
 end;
 @z
 
-@x [47.1105] l.21932 - pTeX: delete_last: disp_node
-var @!p,@!q:pointer; {run through the current list}
+@x [47.1105] l.21246 - pTeX: delete_last: disp_node
 @!m:quarterword; {the length of a replacement list}
 @y
-var @!p,@!q:pointer; {run through the current list}
-@!m:quarterword; {the length of a replacement list}
-@!d:pointer; {last |disp_node|}
+@!r:pointer; {running behind |p|}
 @!disp,@!pdisp:scaled; {displacement}
-@!pp,pnode:pointer;
-@!f:boolean;  {whether remove disp node d }
+@!fd:boolean; {a final |disp_node| pair?}
+@!tx:pointer; {effective tail node}
+@!m:quarterword; {the length of a replacement list}
 @z
 
-@x [47.1105] l.21937 - pTeX: delete_last: disp_node
+@x [47.1105] l.21250 - pTeX: delete_last: disp_node
 else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
     begin q:=head;
     repeat p:=q;
@@ -4932,53 +4926,15 @@ else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
     until q=tail;
     link(p):=null; flush_node_list(tail); tail:=p;
     end;
-  end;
-exit:end;
 @y
-else  begin
-  if (not is_char_node(tail))and(type(tail)=disp_node) then
-    begin f:=true; d:=tail; tail:=prev_node; link(tail):=null;
-    end
-  else d:=null;
-  if not is_char_node(tail) then if type(tail)=cur_chr then
-    begin q:=head; pp:=null; disp:=0; pdisp:=0;
-    repeat p:=q;
-    if not is_char_node(q) then
-      if type(q)=disc_node then
-        begin for m:=1 to replace_count(q) do p:=link(p);
-        if p=tail then
-          begin if d<>null then tail_append(d);
-          return;
-          end
-        else if link(p)=tail then f:=false;
-        end
-      else  if type(q)=disp_node then
-        begin pnode:=pp; pdisp:=disp; disp:=disp_dimen(q);
-        end;
-    pp:=q; q:=link(p);
-    until q=tail;
-    link(p):=null; flush_node_list(tail); tail:=p;
-    end
-  else { |tail| will not be deleted }
-    begin if d<>null then tail_append(d); return; end;
-    prev_node:=pnode; prev_disp:=pdisp;
-    if d<>null then
-      if (not is_char_node(tail))and(type(tail)=disp_node) then
-        begin if prev_disp=disp_dimen(d) then
-          {|free_node(tail,small_node_size)|}
-          else disp_dimen(tail):=disp_dimen(d);
-        if f then free_node(d,small_node_size)
-        else begin prev_node:=tail; prev_disp:=disp; tail_append(d);
-          end;
-        end
-      else
-        begin prev_node:=tail; prev_disp:=disp; tail_append(d);
-        end;
-  end;
-exit:end;
+else if not is_char_node(tail) then
+  begin find_effective_tail(return);
+  if type(tx)<>cur_chr then return;
+  fetch_effective_tail(return);
+  flush_node_list(tx);
 @z
 
-@x [47.1110] l.21997 -pTeX:  free box node, delete kanji_skip
+@x [47.1110] l.21310 -pTeX:  free box node, delete kanji_skip
 var p:pointer; {the box}
 @!c:box_code..copy_code; {should we copy?}
 @y
@@ -4987,7 +4943,7 @@ var p:pointer; {the box}
 @!disp:scaled; {displacement}
 @z
 
-@x [47.1110] l.22001 - pTeX: free box node, delete kanji_skip
+@x [47.1110] l.21314 - pTeX: free box node, delete kanji_skip
 if (abs(mode)=mmode)or((abs(mode)=vmode)and(type(p)<>vlist_node))or@|
    ((abs(mode)=hmode)and(type(p)<>hlist_node)) then
   begin print_err("Incompatible list can't be unboxed");

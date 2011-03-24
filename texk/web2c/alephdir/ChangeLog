@@ -1,3 +1,7 @@
+2011-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	eobase.ch: Remove unused (commented) e-TeX changes.
+
 2011-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* aleph-pool.h, eomega.ech, etex.ch, omega.ch[012], omxml.ch

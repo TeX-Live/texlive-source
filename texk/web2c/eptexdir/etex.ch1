@@ -154,11 +154,11 @@ change_box(q);
   if type(tail)=cur_chr then
 @z
 @x [47.1105]
-        begin prev_node:=tail; prev_disp:=disp; tail_append(d);
-        end;
+    link(p):=null; flush_node_list(tail); tail:=p;
+    end;
 @y
-        begin prev_node:=tail; prev_disp:=disp; tail_append(d);
-        end;
+    link(p):=null; flush_node_list(tail); tail:=p;
+    end;
   if LR_temp<>null then insert_end_M;
   end;
 @z
