@@ -42,13 +42,13 @@
 @x [26.424] l.8510 - e-pTeX: last node
 @d find_effective_tail==find_effective_tail_pTeX
 @y
-@d find_effective_tail_epTeX(#)== {Ignore final |disp_node| and\slash or \.{\\endM} node}
+@d find_effective_tail_epTeX(#)== {sets |tx| to last non-\.{\\endM} non-|disp_node|}
 find_effective_tail_pTeX(#);
 if (type(tx)=math_node)and(subtype(tx)=end_M_code) then
   begin r:=head;
   repeat q:=r; r:=link(q); until link(r)=tx;
   if is_char_node(r) then #;
-  if (type(r)=disp_node) then
+  if type(r)=disp_node then
     if is_char_node(q)or(q=head) then #
     else tx:=q
   else tx:=r;
@@ -95,149 +95,103 @@ if (type(tx)=math_node)and(subtype(tx)=end_M_code) then
 @z
 
 @x [47.1079] l.20920
-@!r:pointer; {running behind |p|}
-@!a_dir:eight_bits; {adjust direction}
-@!disp,@!pdisp:scaled; {displacement}
 @!fd:boolean; {a final |disp_node| pair?}
-@!tx:pointer; {effective tail node}
-@!m:quarterword; {the length of a replacement list}
 @y
-@!a_dir:eight_bits; {adjust direction}
-@!d:pointer; {last |disp_node|}
-@!disp,@!pdisp:scaled; {displacement}
-@!pp,@!pnode:pointer;
-@!f:boolean; {will |d| free?}
-@!m:quarterword; {the length of a replacement list}
+@!s:pointer; {running behind |r|}
+@!t:pointer;
+@!fm:integer; {1: if |r|, 2: if |p| is a \.{\\beginM} node}
+@!gm:integer; {1: if |link(q)|, 2: if |q| is an  \.{\\endM} node}
+@!fd,@!gd:integer; {same for |disp_node|}
 @z
 
 @x [47.1080] l.20940
 @d fetch_effective_tail==fetch_effective_tail_pTeX
 @y
-@d fetch_effective_tail_epTeX(#)==
+@d fetch_effective_tail_epTeX(#)== {extract |tx|,
+  drop \.{\\beginM} \.{\\endM} pair and\slash or merge |disp_node| pair}
+q:=head; p:=null; r:=null; fm:=0; fd:=0; disp:=0; pdisp:=0;
+repeat s:=r; r:=p; p:=q; fm:=fm div 2; fd:=fd div 2;
+if not is_char_node(q) then  
+  if type(q)=disc_node then  
+    begin for m:=1 to replace_count(q) do p:=link(p);
+    if p=tx then #;
+    end
+  else if (type(q)=math_node)and(subtype(q)=begin_M_code) then fm:=2
+  else if type(q)=disp_node then
+    begin pdisp:=disp; disp:=disp_dimen(q); fd:=2;@+end;
+q:=link(p);
+until q=tx; {found |s|$\to$|r|$\to$|p|$\to$|q=tx|}
+q:=link(tx); link(p):=q; link(tx):=null;
+if q=null then  begin tail:=p; gm:=0; gd:=0;@+end
+else  begin if type(q)=math_node then
+    begin gm:=2;
+    if link(q)=null then gd:=0
+    else if type(link(q))=disp_node then gd:=1
+    else confusion("tail3");
+@:this can't happen tail3}{\quad tail3@>
+    end
+  else if type(q)=disp_node then
+    begin prev_node:=p; gd:=2;
+    if link(q)=null then gm:=0
+    else if type(link(q))=math_node then gm:=1
+    else confusion("tail4");
+@:this can't happen tail4}{\quad tail4@>
+    end
+  else confusion("tail5");
+@:this can't happen tail5}{\quad tail5@>
+  end;
+if gm=0 then if fm=2 then confusion("tail1")
+@:this can't happen tail1}{\quad tail1@>
+  else if fm=1 then confusion("tail2");
+@:this can't happen tail2}{\quad tail2@>
+if (fm+fd)=1 then begin fm:=0; fd:=0;@+end;
+if gm=0 then fm:=0;
+if gd=0 then fd:=0;
+@#
+if fd>0 then {merge a |disp_node| pair}
+  begin if gm=0 then {|p|$\to$|q=disp_node|$to$|null|}
+    begin t:=q; q:=null; link(p):=q; tail:=p;@+end
+  else if gm=1 then {|p|$\to$|q=disp_node|$to$|end_M|$to$|null|}
+    begin t:=q; q:=link(q); link(p):=q; gm:=2;@+end
+  else {|p|$\to$|q=end_M|$\to$|disp_node|$to$|null|}
+    begin t:=link(q); link(q):=null; tail:=q;@+end;
+@#
+  if fd=1 then {|s|$\to$|r=disp_node|}
+    begin prev_node:=s; disp_dimen(r):=disp_dimen(t);@+end
+  else {|r|$\to$|p=disp_node|}
+    begin prev_node:=r; disp_dimen(p):=disp_dimen(t);@+end;
+  prev_disp:=pdisp; free_node(t,small_node_size); gd:=0;
+  end;
+@#
+if fm>0 then {drop \.{\\beginM} \.{\\endM} pair}
+  begin if gd=0 then {|p|$\to$|q=end_M|$to$|null|}
+    begin t:=q; q:=null; link(p):=q; tail:=p;@+end
+  else if gd=1 then {|p|$\to$|q=end_M|$to$|disp_node|$to$|null|}
+    begin t:=q; q:=link(q); link(p):=q; prev_node:=p; link(t):=null
+    end
+  else {|p|$\to$|q=disp_node|$\to$|end_M|$to$|null|}
+    begin t:=link(q); link(q):=null; tail:=q;@+end;
+@#
+  if fm=1 then {|s|$\to$|r=begin_M|$\to$|p=disp_node|}
+    begin link(s):=p; link(r):=t; t:=r; prev_node:=s;@+end
+  else {|r|$\to$|p=begin_M|$\to$|q|}
+    begin link(r):=q; link(p):=t; t:=p;
+    if q=null then tail:=r@+else prev_node:=r;
+    end;
+  flush_node_list(t);
+  end
 @#
 @d fetch_effective_tail==fetch_effective_tail_epTeX
 @z
 
-@x [47.1080] l.20950
-else  begin if not is_char_node(tail)and(head<>tail) then
-    begin find_effective_tail(goto done);
-    if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
-      @<Remove the last box, unless it's part of a discretionary@>;
-    done:end;
-@y
-else  begin f:=false;
-  if (not is_char_node(tail))and(type(tail)=disp_node) then
-    begin d:=tail; tail:=prev_node;
-    end
-  else d:=null;
-  if (not is_char_node(tail))and(head<>tail) then
-    if (type(tail)=hlist_node)or(type(tail)=vlist_node)
-          or(type(tail)=dir_node) then
-      @<Remove the last box, unless it's part of a discretionary@>;
-  if d<>null then
-    if (not is_char_node(tail))and(type(tail)=disp_node) then
-      begin prev_node:=pnode; prev_disp:=pdisp;
-      {|if prev_disp=disp_dimen(d) then free_node(tail,small_node_size)|}
-      if prev_disp<>disp_dimen(d) then disp_dimen(tail):=disp_dimen(d);
-      if f then free_node(d,small_node_size)
-      else begin prev_node:=tail; tail_append(d); end;
-      end
-    else tail_append(d);
-@z
-
-@x [47.1081] l.20957
-begin fetch_effective_tail(goto done);
-cur_box:=tx; shift_amount(cur_box):=0;
-if type(cur_box)=dir_node then
-  begin link(list_ptr(cur_box)):=cur_box;
-  cur_box:=list_ptr(cur_box);
-  list_ptr(link(cur_box)):=null;
-  end
-else
-  if box_dir(cur_box)=dir_default then set_box_dir(cur_box)(abs(direction));
-end
-@y
-begin q:=head; pp:=null; pnode:=null; disp:=0; pdisp:=0;
-repeat p:=q;
-if not is_char_node(q) then
-  if type(q)=disc_node then
-    begin for m:=1 to replace_count(q) do p:=link(p);
-    if p=tail then goto done;
-    end
-  else if type(q)=disp_node then
-    begin pnode:=pp; pdisp:=disp; disp:=disp_dimen(q);
-    end;
-pp:=q; q:=link(p);
-until q=tail;
-cur_box:=tail; shift_amount(cur_box):=0;
-tail:=p; link(p):=null;
-if type(cur_box)=dir_node then
-  begin link(list_ptr(cur_box)):=cur_box;
-  cur_box:=list_ptr(cur_box);
-  list_ptr(link(cur_box)):=null;
-  end
-else
-  if box_dir(cur_box)=dir_default then set_box_dir(cur_box)(abs(direction));
-done:end
-@z
-
 @x [47.1105] l.21246
-@!r:pointer; {running behind |p|}
-@!disp,@!pdisp:scaled; {displacement}
 @!fd:boolean; {a final |disp_node| pair?}
-@!tx:pointer; {effective tail node}
-@!m:quarterword; {the length of a replacement list}
 @y
-@!d:pointer; {last |disp_node|}
-@!disp,@!pdisp:scaled; {displacement}
-@!pp,@!pnode:pointer;
-@!f:integer;
-  {0: not append |d|, 1: append |d| (|tail| is removed)}
-  {2: |tail| is not removed }
-@!m:quarterword; {the length of a replacement list}
-@z
-
-@x [47.1105] l.21250
-else if not is_char_node(tail) then
-  begin find_effective_tail(return);
-  if type(tx)<>cur_chr then return;
-  fetch_effective_tail(return);
-  flush_node_list(tx);
-@y
-else  begin
-  if (not is_char_node(tail))and(type(tail)=disp_node) then
-    begin f:=2; d:=tail; tail:=prev_node; link(tail):=null;
-    end
-  else d:=null;
-  if not is_char_node(tail) then if type(tail)=cur_chr then
-    begin q:=head; pp:=null; pnode:=null; disp:=0; pdisp:=0; f:=0;
-    repeat p:=q;
-    if not is_char_node(q) then
-      if type(q)=disc_node then
-        begin for m:=1 to replace_count(q) do p:=link(p);
-        if p=tail then
-          begin if d<>null then tail_append(d);
-          return;
-          end
-        else if link(p)=tail then f:=1;
-        end
-      else if type(q)=disp_node then
-        begin pnode:=pp; pdisp:=disp; disp:=disp_dimen(q);
-        end;
-    pp:=q; q:=link(p);
-    until q=tail;
-    link(p):=null; flush_node_list(tail); tail:=p;
-    end;
-  if d<>null then
-    if f<=1 then
-      begin prev_node:=pnode; prev_disp:=pdisp;
-      if (f=0)and(not is_char_node(tail))and(type(tail)=disp_node) then
-        begin disp_dimen(tail):=disp_dimen(d); free_node(d,small_node_size)
-        end
-      else begin prev_node:=tail; prev_disp:=disp; tail_append(d);
-        end;
-      end
-    else tail_append(d);
+@!s:pointer; {running behind |r|}
+@!t:pointer;
+@!fm:integer; {1: if |r|, 2: if |p| is a \.{\\beginM} node}
+@!gm:integer; {1: if |link(q)|, 2: if |q| is an  \.{\\endM} node}
+@!fd,@!gd:integer; {same for |disp_node|}
 @z
 
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306

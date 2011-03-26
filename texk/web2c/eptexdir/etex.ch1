@@ -125,42 +125,10 @@ if q<>null then begin
 change_box(q);
 @z
 
-@x [47.1080]
-    if (type(tail)=hlist_node)or(type(tail)=vlist_node)
-          or(type(tail)=dir_node) then
-      @<Remove the last box, unless it's part of a discretionary@>;
-@y
-    begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-      remove_end_M;
-    if (type(tail)=hlist_node)or(type(tail)=vlist_node)
-          or(type(tail)=dir_node) then
-      @<Remove the last box, unless it's part of a discretionary@>;
-    if LR_temp<>null then insert_end_M;
-    end;
-@z
-
 @x [47.1096]
   else begin adjust_hlist(head,true); line_break(widow_penalty)
 @y
   else begin adjust_hlist(head,true); line_break(false)
-@z
-
-@x [47.1105]
-  if not is_char_node(tail) then if type(tail)=cur_chr then
-@y
-  if not is_char_node(tail) then
-  begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-    remove_end_M;
-  if type(tail)=cur_chr then
-@z
-@x [47.1105]
-    link(p):=null; flush_node_list(tail); tail:=p;
-    end;
-@y
-    link(p):=null; flush_node_list(tail); tail:=p;
-    end;
-  if LR_temp<>null then insert_end_M;
-  end;
 @z
 
 @x [47.1110]

@@ -34,7 +34,9 @@ we have to create a temporary string that is destroyed immediately after.
 @y
 @!save_scanner_status:small_number; {|scanner_status| upon entry}
 @!save_def_ref: pointer; {|def_ref| upon entry, important if inside `\.{\\message}'}
+@{
 @!save_warning_index: pointer;
+@}
 @!u: str_number; {saved current string string}
 @z
 

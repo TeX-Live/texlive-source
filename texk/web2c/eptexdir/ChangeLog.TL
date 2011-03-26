@@ -1,10 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
-2011-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2011-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* eptex.ech, etex.ch0: Reformulate begin_box and delete_last to
-	reduce interferences between e-TeX and pTeX.
+	* eptex.ech, etex.ch[01]: Reformulate begin_box and delete_last
+	to reduce interferences between e-TeX and pTeX.
+
+	* pdfstrcmp.ch (save_warning_index): Drop unused variable.
 
 2011-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -1182,7 +1182,7 @@ else if par_shape_ptr=null then cur_val:=0
 @x [26] m.424 l.8510 - e-TeX TeXXeT
 @<Fetch an item in the current node...@>=
 @y
-@d find_effective_tail_eTeX(#)== {Ignore final \.{\\endM} node}
+@d find_effective_tail_eTeX(#)== {sets |tx| to last non-\.{\\endM} node}
 if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
   begin tx:=head;
   while link(tx)<>tail do tx:=link(tx);
@@ -2325,7 +2325,8 @@ copy_code: begin scan_register_num; fetch_box(q); cur_box:=copy_node_list(q);
 @x [47] m.1080 l.20940 - e-TeX TeXXeT
 @<If the current list ends with a box node, delete it...@>=
 @y
-@d fetch_effective_tail_eTeX(#)==
+@d fetch_effective_tail_eTeX(#)== {extract |tx|,
+  drop \.{\\beginM} \.{\\endM} pair}
 q:=head; p:=null;
 repeat r:=p; p:=q; fm:=false;
 if not is_char_node(q) then
@@ -2335,12 +2336,13 @@ if not is_char_node(q) then
     end
   else if (type(q)=math_node)and(subtype(q)=begin_M_code) then fm:=true;
 q:=link(p);
-until q=tx;
+until q=tx; {found |r|$\to$|p|$\to$|q=tx|}
 q:=link(tx); link(p):=q; link(tx):=null;
-if q=null then tail:=p
-else if fm then
-  begin tail:=r; link(r):=null; flush_node_list(p);
-  end
+if q=null then if fm then confusion("tail1")
+@:this can't happen tail1}{\quad tail1@>
+  else tail:=p
+else if fm then {|r|$\to$|p=begin_M|$\to$|q=end_M|}
+  begin tail:=r; link(r):=null; flush_node_list(p);@+end
 @#
 @d fetch_effective_tail==fetch_effective_tail_eTeX
 

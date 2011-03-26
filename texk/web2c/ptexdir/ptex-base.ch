@@ -1538,7 +1538,7 @@ begin switch: if loc<=limit then {current line not yet finished}
 @^inner loop@>
 begin switch: if loc<=limit then {current line not yet finished}
   begin cur_chr:=buffer[loc]; incr(loc);
-    if (multistrlen(buffer, limit+1, loc-1)=2) then
+    if multistrlen(buffer, limit+1, loc-1)=2 then
       begin cur_chr:=fromBUFF(buffer, limit+1, loc-1);
       cur_cmd:=kcat_code(kcatcodekey(cur_chr));
       incr(loc);
@@ -1628,7 +1628,7 @@ end
 @<Scan a control...@>=
 begin if loc>limit then cur_cs:=null_cs {|state| is irrelevant in this case}
 else  begin k:=loc; cur_chr:=buffer[k]; incr(k);
-  if (multistrlen(buffer, limit+1, k-1)=2) then
+  if multistrlen(buffer, limit+1, k-1)=2 then
     begin cat:=kcat_code(kcatcodekey(fromBUFF(buffer, limit+1, k-1))); incr(k);
     end
   else cat:=cat_code(cur_chr);
@@ -1712,7 +1712,7 @@ end
 @y
 @ @<Scan ahead in the buffer...@>=
 begin repeat cur_chr:=buffer[k]; incr(k);
-  if (multistrlen(buffer, limit+1, k-1)=2) then
+  if multistrlen(buffer, limit+1, k-1)=2 then
     begin cat:=kcat_code(kcatcodekey(fromBUFF(buffer, limit+1, k-1))); incr(k);
     end
   else cat:=cat_code(cur_chr);
@@ -1980,8 +1980,8 @@ else
 @x [26.424] l.8510 - pTeX: disp_node
 @<Fetch an item in the current node...@>=
 @y
-@d find_effective_tail_pTeX(#)== {Ignore final |disp_node|}
-if (type(tail)=disp_node) then
+@d find_effective_tail_pTeX(#)== {sets |tx| to last non-|disp_node|}
+if type(tail)=disp_node then
   if is_char_node(prev_node)or(prev_node=head) then #
   else tx:=prev_node
 else tx:=tail
@@ -2031,7 +2031,7 @@ end;
 @y
 procedure scan_char_num;
 begin scan_int;
-if (not is_char_ascii(cur_val))and(not check_kanji(cur_val)) then {wchar_token}
+if not is_char_ascii(cur_val)and not check_kanji(cur_val) then {wchar_token}
   begin print_err("Bad character code");
 @.Bad character code@>
   help2("A character number must be between 0 and 255, or KANJI code.")@/
@@ -2122,7 +2122,7 @@ else if scan_keyword("sp") then goto done
   if t=" " then t:=space_token
   else t:=other_token+t;
 @y
-  if (multistrlen(str_pool, pool_ptr, k)=2) then
+  if multistrlen(str_pool, pool_ptr, k)=2 then
     begin t:=fromBUFF(str_pool, pool_ptr, k); incr(k);
     end
   else if t=" " then t:=space_token
@@ -3788,7 +3788,7 @@ delete_glue_ref(cur_kanji_skip); delete_glue_ref(cur_xkanji_skip);
 cur_kanji_skip:=space_ptr(head); cur_xkanji_skip:=xspace_ptr(head);
 add_glue_ref(cur_kanji_skip); add_glue_ref(cur_xkanji_skip);
 link(temp_head):=link(head);
-if (not is_char_node(tail))and(type(tail)=disp_node) then
+if not is_char_node(tail)and(type(tail)=disp_node) then
   begin free_node(tail,small_node_size); tail:=prev_node; link(tail):=null
   end;
 if is_char_node(tail) then tail_append(new_penalty(inf_penalty))
@@ -4015,7 +4015,7 @@ end
   else if (type(prev_p)=kern_node)and(subtype(prev_p)<>explicit) then
     try_break(0,unhyphenated);
 @y
-  else if (type(prev_p)=kern_node) then
+  else if type(prev_p)=kern_node then
     if (subtype(prev_p)<>explicit)and(subtype(prev_p)<>ita_kern) then
     try_break(0,unhyphenated);
 @z
@@ -4221,7 +4221,7 @@ if p<>null then if type(p)=hlist_node then
   begin print_err("Insertions can only be added to a vbox");
 @y
 begin p:=box(n);
-if p<>null then if (type(p)=dir_node) then
+if p<>null then if type(p)=dir_node then
   begin p:=list_ptr(p);
   delete_glue_ref(space_ptr(box(n)));
   delete_glue_ref(xspace_ptr(box(n)));
@@ -4485,7 +4485,7 @@ end
 @x [46.1041] l.20999 - pTeX: disp_node
 link(tail):=temp_ptr; tail:=temp_ptr;
 @y
-if (not is_char_node(tail))and(type(tail)=disp_node) then
+if not is_char_node(tail)and(type(tail)=disp_node) then
   begin link(prev_node):=temp_ptr; link(temp_ptr):=tail; prev_node:=temp_ptr;
   end
 else begin link(tail):=temp_ptr; tail:=temp_ptr;
@@ -4495,7 +4495,7 @@ else begin link(tail):=temp_ptr; tail:=temp_ptr;
 @x [46.1043] l.21029 - pTeX: disp_node
 link(tail):=q; tail:=q;
 @y
-if (not is_char_node(tail))and(type(tail)=disp_node) then
+if not is_char_node(tail)and(type(tail)=disp_node) then
   begin link(prev_node):=q; link(q):=tail; prev_node:=q;
   end
 else begin link(tail):=q; tail:=q;
@@ -4508,7 +4508,7 @@ tail_append(new_kern(cur_val)); subtype(tail):=s;
 end;
 @y
 begin s:=cur_chr; scan_dimen(s=mu_glue,false,false);
-if (not is_char_node(tail))and(type(tail)=disp_node) then
+if not is_char_node(tail)and(type(tail)=disp_node) then
   begin prev_append(new_kern(cur_val)); subtype(prev_node):=s;
   end
 else
@@ -4634,9 +4634,9 @@ q:pointer;
 @!m:quarterword; {the length of a replacement list}
 @y
 @!r:pointer; {running behind |p|}
-@!a_dir:eight_bits; {adjust direction}
-@!disp,@!pdisp:scaled; {displacement}
 @!fd:boolean; {a final |disp_node| pair?}
+@!disp,@!pdisp:scaled; {displacement}
+@!a_dir:eight_bits; {adjust direction}
 @!tx:pointer; {effective tail node}
 @!m:quarterword; {the length of a replacement list}
 @z
@@ -4652,7 +4652,7 @@ since |head| is a one-word node.
 @x [47.1080] l.20940 - pTeX: disp_node
 @<If the current list ends with a box node, delete it...@>=
 @y
-@d fetch_effective_tail_pTeX(#)==
+@d fetch_effective_tail_pTeX(#)== {extract |tx|, merge |disp_node| pair}
 q:=head; p:=null; disp:=0; pdisp:=0;
 repeat r:=p; p:=q; fd:=false;
 if not is_char_node(q) then
@@ -4661,13 +4661,12 @@ if not is_char_node(q) then
     if p=tx then #;
     end
   else if type(q)=disp_node then
-    begin pdisp:=disp; disp:=disp_dimen(q); fd:=true;
-    end;
+    begin pdisp:=disp; disp:=disp_dimen(q); fd:=true;@+end;
 q:=link(p);
-until q=tx;
+until q=tx; {found |r|$\to$|p|$\to$|q=tx|}
 q:=link(tx); link(p):=q; link(tx):=null;
 if q=null then tail:=p
-else if fd then
+else if fd then {|r|$\to$|p=disp_node|$\to$|q=disp_node|} 
   begin prev_node:=r; prev_disp:=pdisp; link(p):=null; tail:=p;
   disp_dimen(p):=disp_dimen(q); free_node(q,small_node_size);
   end
@@ -4685,7 +4684,8 @@ else  begin if not is_char_node(tail) then
 @y
 else  begin if not is_char_node(tail)and(head<>tail) then
     begin find_effective_tail(goto done);
-    if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
+    if (type(tx)=hlist_node)or(type(tx)=vlist_node)
+       or(type(tx)=dir_node) then
       @<Remove the last box, unless it's part of a discretionary@>;
     done:end;
 @z
@@ -4855,7 +4855,7 @@ insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
     height(r):=height(p)+depth(p); ins_ptr(r):=list_ptr(p);
     split_top_ptr(r):=q; depth(r):=d; float_cost(r):=f;
     ins_dir(r):=box_dir(p);
-    if (not is_char_node(tail))and(type(tail)=disp_node) then
+    if not is_char_node(tail)and(type(tail)=disp_node) then
       prev_append(r)
     else tail_append(r);
     end
@@ -4868,7 +4868,7 @@ insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
     else  begin
       r:=get_node(small_node_size); type(r):=adjust_node;@/
       adjust_ptr(r):=list_ptr(p); delete_glue_ref(q);
-      if (not is_char_node(tail))and(type(tail)=disp_node) then
+      if not is_char_node(tail)and(type(tail)=disp_node) then
         prev_append(r)
       else tail_append(r);
       end;
@@ -4884,7 +4884,7 @@ insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
 mark_ptr(p):=def_ref; link(tail):=p; tail:=p;
 @y
 mark_ptr(p):=def_ref;
-if (not is_char_node(tail))and(type(tail)=disp_node) then
+if not is_char_node(tail)and(type(tail)=disp_node) then
   prev_append(p)
 else tail_append(p);
 @z
@@ -4897,7 +4897,7 @@ end;
 @y
 procedure append_penalty;
 begin scan_int;
-  if (not is_char_node(tail))and(type(tail)=disp_node) then
+  if not is_char_node(tail)and(type(tail)=disp_node) then
     prev_append(new_penalty(cur_val))
   else tail_append(new_penalty(cur_val));
   if mode=vmode then build_page;
@@ -4908,8 +4908,8 @@ end;
 @!m:quarterword; {the length of a replacement list}
 @y
 @!r:pointer; {running behind |p|}
-@!disp,@!pdisp:scaled; {displacement}
 @!fd:boolean; {a final |disp_node| pair?}
+@!disp,@!pdisp:scaled; {displacement}
 @!tx:pointer; {effective tail node}
 @!m:quarterword; {the length of a replacement list}
 @z
@@ -5039,7 +5039,7 @@ var p:pointer; {|char_node| at the tail of the current list}
 @!d:pointer; {|disp_node|}
 begin if tail<>head then
   begin
-  if (not is_char_node(tail))and(type(tail)=disp_node) then
+  if not is_char_node(tail)and(type(tail)=disp_node) then
     begin d:=tail; tail:=prev_node;
     end
   else d:=null;
@@ -5093,7 +5093,7 @@ var s,@!t: real; {amount of slant}
 begin scan_char_num; f:=cur_font; p:=new_character(f,cur_val);
 @y
 begin scan_char_num;
-if (not is_char_ascii(cur_val)) then
+if not is_char_ascii(cur_val) then
   begin KANJI(cx):=cur_val;
   if direction=dir_tate then f:=cur_tfont else f:=cur_jfont;
   p:=new_character(f,get_jfm_pos(KANJI(cx),f));
@@ -6076,7 +6076,7 @@ end;
 @ @<Assignments@>=
 assign_kinsoku:
 begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if (is_char_ascii(n) or check_kanji(n)) then
+if is_char_ascii(n) or check_kanji(n) then
   begin j:=get_kinsoku_pos(tokanji(n),new_pos);
   if j=no_entry then
     begin print_err("KINSOKU table is full!!");
@@ -6092,8 +6092,8 @@ if (is_char_ascii(n) or check_kanji(n)) then
   end
 else
   begin print_err("Invalid KANJI code for ");
-  if (p=pre_break_penalty_code) then print("pre")
-  else if (p=post_break_penalty_code) then print("post")
+  if p=pre_break_penalty_code then print("pre")
+  else if p=post_break_penalty_code then print("post")
   else print_char("?");
   print("breakpenalty ("); print_hex(n); print_char(")");
 @.Invalid KANJI code@>
@@ -6113,16 +6113,16 @@ end
 
 @<Insert kinsoku penalty@>=
 begin kp:=get_kinsoku_pos(cx,cur_pos);
-if (kp<>no_entry) then
-  begin if (kinsoku_type(kp)=pre_break_penalty_code) then
-    begin if (not is_char_node(cur_q))and(type(cur_q)=penalty_node) then
+if kp<>no_entry then
+  begin if kinsoku_type(kp)=pre_break_penalty_code then
+    begin if not is_char_node(cur_q)and(type(cur_q)=penalty_node) then
       penalty(cur_q):=penalty(cur_q)+kinsoku_penalty(kp)
     else
       begin main_p:=link(cur_q); link(cur_q):=new_penalty(kinsoku_penalty(kp));
       subtype(link(cur_q)):=kinsoku_pena; link(link(cur_q)):=main_p;
       end;
     end
-  else if (kinsoku_type(kp)=post_break_penalty_code) then
+  else if kinsoku_type(kp)=post_break_penalty_code then
     begin tail_append(new_penalty(kinsoku_penalty(kp)));
     subtype(tail):=kinsoku_pena;
     end;
@@ -6131,9 +6131,9 @@ end;
 
 @ @<Insert |pre_break_penalty| of |cur_chr|@>=
 begin kp:=get_kinsoku_pos(cur_chr,cur_pos);
-if (kp<>no_entry) then
-  begin if (kinsoku_type(kp)=pre_break_penalty_code) then
-    if (not is_char_node(tail))and(type(tail)=penalty_node) then
+if kp<>no_entry then
+  begin if kinsoku_type(kp)=pre_break_penalty_code then
+    if not is_char_node(tail)and(type(tail)=penalty_node) then
       penalty(tail):=penalty(tail)+kinsoku_penalty(kp)
     else
       begin tail_append(new_penalty(kinsoku_penalty(kp)));
@@ -6144,8 +6144,8 @@ end;
 
 @ @<Insert |post_break_penalty|@>=
 begin kp:=get_kinsoku_pos(cx,cur_pos);
-if (kp<>no_entry) then
-  begin if (kinsoku_type(kp)=post_break_penalty_code) then
+if kp<>no_entry then
+  begin if kinsoku_type(kp)=post_break_penalty_code then
     begin tail_append(new_penalty(kinsoku_penalty(kp)));
     subtype(tail):=kinsoku_pena;
     end;
@@ -6293,7 +6293,7 @@ if auto_xspacing>0 then
   end;
 u:=space_ptr(p); add_glue_ref(u);
 s:=xspace_ptr(p); add_glue_ref(s);
-if (not is_char_node(link(p))) {p1.0.9d}
+if not is_char_node(link(p)) {p1.0.9d}
     and(type(link(p))=glue_node)and(subtype(link(p))=jfm_skip+1) then
   begin v:=link(p); link(p):=link(v);
   fast_delete_glue_ref(glue_ptr(v)); free_node(v,small_node_size);
@@ -6303,7 +6303,7 @@ while p<>null do
   begin if is_char_node(p) then
     begin repeat @<Insert a space around the character |p|@>;
       q:=p; p:=link(p); incr(i);
-      if (i>5)and(pf) then
+      if (i>5)and pf then
         begin if is_char_node(v) then
         if font_dir[font(v)]<>dir_default then v:=link(v);
         v:=link(v);
@@ -6315,8 +6315,8 @@ while p<>null do
     hlist_node: @<Insert hbox surround spacing@>;
     ligature_node: @<Insert ligature surround spacing@>;
     penalty_node,disp_node: @<Insert penalty or displace surround spacing@>;
-    kern_node: if (subtype(p)=explicit) then insert_skip:=no_skip
-      else if (subtype(p)=acc_kern) then begin
+    kern_node: if subtype(p)=explicit then insert_skip:=no_skip
+      else if subtype(p)=acc_kern then begin
         { When we insert \.{\\xkanjiskip}, we first ignore accent (and kerns) and
           insert \.{\\xkanjiskip}, then we recover the accent. }
         if q=p then begin t:=link(p);
@@ -6334,7 +6334,7 @@ while p<>null do
             if font_dir[font(t)]<>dir_default then t:=link(t);
           t:=link(link(t)); link(q):=t; p:=t;
           @<Insert a space around the character |p|@>; incr(i);
-          if (i>5)and(pf) then
+          if (i>5)and pf then
             begin if is_char_node(v) then
             if font_dir[font(v)]<>dir_default then v:=link(v);
             v:=link(v);
@@ -6351,12 +6351,12 @@ while p<>null do
     q:=p; p:=link(p);
     end;
   end;
-if (not is_char_node(q))and(type(q)=glue_node)and(subtype(q)=jfm_skip+1) then
+if not is_char_node(q)and(type(q)=glue_node)and(subtype(q)=jfm_skip+1) then
   begin fast_delete_glue_ref(glue_ptr(q));
   glue_ptr(q):=zero_glue; add_glue_ref(zero_glue);
   end;
 delete_glue_ref(u); delete_glue_ref(s);
-if (v<>null)and(pf)and(i>5) then @<Make |jchr_widow_penalty| node@>;
+if (v<>null)and pf and(i>5) then @<Make |jchr_widow_penalty| node@>;
 exit:
 end;
 
@@ -6375,7 +6375,7 @@ else
 
 @ @<Insert hbox surround spacing@>=
 begin find_first_char:=true; first_char:=null; last_char:=null;
-if (shift_amount(p)=0) then
+if shift_amount(p)=0 then
   begin if check_box(list_ptr(p)) then
     begin if first_char<>null then @<Insert a space before the |first_char|@>;
     if last_char<>null then
@@ -6402,7 +6402,7 @@ else
 @ @<Insert a space after the |last_char|@>=
 if font_dir[font(last_char)]<>dir_default then
   begin insert_skip:=after_wchar;
-  if (is_char_node(link(p)))and(font_dir[font(link(p))]<>dir_default) then
+  if is_char_node(link(p))and(font_dir[font(link(p))]<>dir_default) then
     begin @<Append KANJI-KANJI spacing@>; p:=link(p);
     end;
   end
@@ -6417,7 +6417,7 @@ begin if (subtype(p)=before)and(insert_skip=after_wchar) then
   begin ax:=qo("0"); @<Insert KANJI-ASCII spacing@>;
   insert_skip:=no_skip;
   end
-else if (subtype(p)=after) then
+else if subtype(p)=after then
   begin ax:=qo("0"); insert_skip:=after_schar;
   end
 else insert_skip:=no_skip;
@@ -6498,16 +6498,16 @@ end
 
 @ @<Make |jchr_widow_penalty| node@>=
 begin q:=v; p:=link(v);
-if (is_char_node(v))and(font_dir[font(v)]<>dir_default) then
+if is_char_node(v)and(font_dir[font(v)]<>dir_default) then
   begin q:=p; p:=link(p);
   end;
 t:=q; s:=null;
 @<Seek list and make |t| pointing widow penalty position@>;
-if (s<>null) then
+if s<>null then
   begin s:=link(t);
-    if (not is_char_node(s))and(type(s)=penalty_node) then
+    if not is_char_node(s)and(type(s)=penalty_node) then
       penalty(s):=penalty(s)+jchr_widow_penalty
-    else if (jchr_widow_penalty<>0) then
+    else if jchr_widow_penalty<>0 then
       begin s:=new_penalty(jchr_widow_penalty); subtype(s):=widow_pena;
       link(s):=link(t); link(t):=s; t:=link(s);
       while(not is_char_node(t)) do
@@ -6688,9 +6688,9 @@ again_2:
 main_loop_j+3:
   if ins_kp=true then @<Insert |pre_break_penalty| of |cur_chr|@>;
   @<Look ahead for glue or kerning@>;
-  if (ins_kp=false) then begin { Kanji -> Kanji }
+  if ins_kp=false then begin { Kanji -> Kanji }
     goto main_loop_j+1;
-  end else if (ins_kp=true) then begin { Kanji -> Ascii }
+  end else if ins_kp=true then begin { Kanji -> Ascii }
     {@<Append |disp_node| at begin of displace area@>;}
     ins_kp:=false; goto main_loop;
   end else begin { Kanji -> cs }
@@ -6699,7 +6699,7 @@ main_loop_j+3:
   end;
 
 @ @<Append |disp_node| at begin ...@>=
-begin if (not is_char_node(tail))and(type(tail)=disp_node) then
+begin if not is_char_node(tail)and(type(tail)=disp_node) then
   begin if prev_disp=disp then
     begin free_node(tail,small_node_size); tail:=prev_node; link(tail):=null;
     end
@@ -6714,7 +6714,7 @@ end;
 
 @ @<Append |disp_node| at end ...@>=
 if disp<>0 then
-begin if (not is_char_node(tail))and(type(tail)=disp_node) then
+begin if not is_char_node(tail)and(type(tail)=disp_node) then
   begin disp_dimen(tail):=0;
   end
 else

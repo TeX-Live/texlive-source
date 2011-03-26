@@ -733,7 +733,7 @@ sub showOptions {
     if ($item eq "LW35") {
       print "URWkb URW ADOBE ADOBEkb\n";
     }
-    elsif ($item =~ m/"(dvipsPreferOutline|pdftexDownloadBase14|dvipdfmDownloadBase14|dvipsDownloadBase35)"/) {
+    elsif ($item =~ m/(dvipsPreferOutline|pdftexDownloadBase14|dvipdfmDownloadBase14|dvipsDownloadBase35)/) {
       print "true false\n";
     }
     else {
