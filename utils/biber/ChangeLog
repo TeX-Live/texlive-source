@@ -1,3 +1,9 @@
+2011-03-29  Karl Berry  <karl@tug.org>
+
+	* configure.ac: only install the freebsd binary if the current
+	freebsd system is new enough.  From Nikola Lecic,
+	http://tug.org/pipermail/tlbuild/2011q1/001826.html.
+
 2011-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Correctly distinguish `biber' and `biber.exe' on
