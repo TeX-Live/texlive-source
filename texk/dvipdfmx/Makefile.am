@@ -24,7 +24,7 @@ bin_PROGRAMS = dvipdfmx
 if WIN32
 noinst_PROGRAMS = call_dvipdfmx
 else !WIN32
-dist_bin_SCRIPTS = src/dvipdft
+dist_bin_SCRIPTS = dvipdft
 endif !WIN32
 
 dvipdfmx_SOURCES = \

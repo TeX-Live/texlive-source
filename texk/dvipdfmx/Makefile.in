@@ -120,7 +120,7 @@ am_dvipdfmx_OBJECTS = dvipdfmx-agl.$(OBJEXT) \
 	dvipdfmx-vf.$(OBJEXT) dvipdfmx-xbb.$(OBJEXT)
 dvipdfmx_OBJECTS = $(am_dvipdfmx_OBJECTS)
 am__DEPENDENCIES_1 =
-am__dist_bin_SCRIPTS_DIST = src/dvipdft
+am__dist_bin_SCRIPTS_DIST = dvipdft
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -306,7 +306,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 AM_CFLAGS = $(WARNING_CFLAGS)
 EXTRA_DIST = $(DVIPDFMX_TREE) $(DVIPDFMX_TREE)-PATCHES
-@WIN32_FALSE@dist_bin_SCRIPTS = src/dvipdft
+@WIN32_FALSE@dist_bin_SCRIPTS = dvipdft
 dvipdfmx_SOURCES = \
 	$(DVIPDFMX_TREE)/src/agl.c \
 	$(DVIPDFMX_TREE)/src/agl.h \
