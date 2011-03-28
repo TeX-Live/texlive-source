@@ -1,3 +1,7 @@
+2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: Use AM_CFLAGS instead of etex_CFLAGS.
+
 2011-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Reformulate @<Fetch an item in the current node...@>,

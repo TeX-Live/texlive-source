@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/eptex.am: Use AM_CFLAGS instead of eptex_CFLAGS.
+
 2011-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech, etex.ch[01]: Reformulate @<Fetch an item in the

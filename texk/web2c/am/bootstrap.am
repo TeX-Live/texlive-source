@@ -1,6 +1,6 @@
 ## texk/web2c/am/bootstrap.am: Makefile fragment for tangle and ctangle.
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 # Bootstrapping tangle requires making it with itself.  We use the opportunity
@@ -49,7 +49,6 @@ DISTCLEANFILES += tangleboot.c tangleboot.h tangleboot.p tangleboot-web2c
 bin_PROGRAMS += ctangle
 nodist_ctangle_SOURCES = ctangle.c cweb.c
 $(ctangle_OBJECTS): cweb.h
-ctangle_CFLAGS = $(WARNING_CFLAGS)
 # ctangle.c and cweb.[ch] are special cases, since they are needed to compile
 # themselves.  We depend on ctangleboot, even though we might not use it.
 ctangleboot = $(SHELL) ./ctangleboot-sh $@

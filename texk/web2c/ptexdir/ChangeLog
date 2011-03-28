@@ -1,3 +1,7 @@
+2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am: Use AM_CFLAGS instead of {libkanji_a,ptex}_CFLAGS.
+
 2011-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Reformulate @<Fetch an item in the current

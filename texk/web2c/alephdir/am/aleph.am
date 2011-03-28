@@ -14,7 +14,6 @@ EXTRA_PROGRAMS += aleph
 aleph_LDADD = $(LDADD) $(ipc_socketlibs)
 
 aleph_CPPFLAGS = -I$(srcdir)/alephdir $(AM_CPPFLAGS)
-aleph_CFLAGS = $(WARNING_CFLAGS)
 
 # Aleph C sources
 aleph_c_h = alephini.c aleph0.c alephcoerce.h alephd.h

@@ -1,3 +1,8 @@
+2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am: Use AM_CFLAGS instead of libluatex_a_CFLAGS.
+	* am/luatex.am: Use AM_CFLAGS instead of luatex_CFLAGS.
+
 2011-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am (libluatex_a_CPPFLAGS): Remove `-Iluatexdir'

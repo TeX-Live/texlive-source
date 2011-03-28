@@ -1,3 +1,8 @@
+2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libmplib.am: Use AM_CFLAGS instead of libmplib_a_CFLAGS.
+	* am/mplib.am: Use AM_CFLAGS instead of mpost_CFLAGS.
+
 2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mplib.am [WIN32]: Add dvitomp.exe wrapper for MinGW.

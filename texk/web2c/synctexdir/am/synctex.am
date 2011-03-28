@@ -16,7 +16,6 @@ synctex_SOURCES = \
 	synctexdir/synctex_parser_utils.c
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
-synctex_CFLAGS = $(WARNING_CFLAGS)
 
 synctex_LDADD = $(ZLIB_LIBS)
 

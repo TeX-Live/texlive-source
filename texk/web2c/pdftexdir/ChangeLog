@@ -1,3 +1,9 @@
+2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libpdftex.am: Use AM_CFLAGS instead of libpdftex_a_CFLAGS.
+	* am/pdftex.am: Use AM_CFLAGS instead of pdftex_CFLAGS.
+	* am/ttf2afm.am: Use AM_CFLAGS instead of ttf2afm_CFLAGS.
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c (pdftex_fail, pdftex_warn): `program_invocation_name'

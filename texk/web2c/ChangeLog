@@ -1,3 +1,13 @@
+2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/texmf.am: Install symbolic links initex->tex and inimf->mf
+	or equivalent MinGW wrappers.
+
+	* am/bootstrap.am: Use AM_CFLAGS instead of ctangle_CFLAGS.
+	* am/cweb.am: Use AM_CFLAGS instead of *_CFLAGS.
+	* am/texmf.am: Use AM_CFLAGS instead of *_CFLAGS.
+	* libmd5/am/md5.am: Use AM_CFLAGS instead of *_CFLAGS.
+
 2011-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in.orig, configure.in.orig: Remove ancient files.

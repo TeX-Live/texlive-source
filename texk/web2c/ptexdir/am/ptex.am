@@ -36,7 +36,6 @@ $(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
 EXTRA_LIBRARIES += libkanji.a
 libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
 libkanji_a_CPPFLAGS = $(ptex_cppflags)
-libkanji_a_CFLAGS = $(WARNING_CFLAGS)
 
 ## pTeX
 ##
@@ -49,7 +48,6 @@ endif PTEX
 EXTRA_PROGRAMS += ptex $(pweb_programs)
 
 ptex_CPPFLAGS = $(ptex_cppflags)
-ptex_CFLAGS = $(WARNING_CFLAGS)
 
 # With --enable-ipc, pTeX may need to link with -lsocket.
 ptex_LDADD = libkanji.a $(ptex_ldadd) $(ipc_socketlibs)

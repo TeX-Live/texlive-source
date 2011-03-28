@@ -16,11 +16,19 @@ EXTRA_DIST += \
 ##
 if TEX
 bin_PROGRAMS += tex
+if WIN32
+bin_PROGRAMS += initex
+else !WIN32
+bin_links += tex:initex
+endif !WIN32
 endif TEX
 EXTRA_PROGRAMS += tex
 
+initex_CPPFLAGS = -DEXEPROG=\"tex.exe\"
+initex_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+initex_LDADD =
+
 tex_CPPFLAGS = $(AM_CPPFLAGS)
-tex_CFLAGS = $(WARNING_CFLAGS)
 
 # With --enable-ipc, TeX may need to link with -lsocket.
 tex_LDADD = $(LDADD) $(ipc_socketlibs)
@@ -92,17 +100,24 @@ bin_PROGRAMS += mf
 if MFN
 bin_PROGRAMS += mf-nowin
 endif MFN
+if WIN32
+bin_PROGRAMS += inimf
+else !WIN32
+bin_links += mf:inimf
+endif !WIN32
 endif MF
 EXTRA_PROGRAMS += mf mf-nowin
 DISTCLEANFILES += mftrap.diffs
 
+inimf_CPPFLAGS = -DEXEPROG=\"mf.exe\"
+inimf_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+inimf_LDADD =
+
 dist_mf_SOURCES = mfextra.c
 mf_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS)
-mf_CFLAGS = $(WARNING_CFLAGS)
 mf_LDADD = libmf.a $(LDADD) $(windowlib) $(mf_x_libs)
 dist_mf_nowin_SOURCES = mfextra.c
 mf_nowin_CPPFLAGS = $(mf_CPPFLAGS) -DMFNOWIN
-mf_nowin_CFLAGS = $(WARNING_CFLAGS)
 mf_nowin_LDADD = libmf.a $(LDADD) $(windowlib)
 
 # We must create mfd.h before compiling mfextra.c.
@@ -132,7 +147,6 @@ EXTRA_LIBRARIES += libmf.a
 # Metafont C sources
 mf_c_h = mfini.c mf0.c mfcoerce.h mfd.h
 nodist_libmf_a_SOURCES = $(mf_c_h) mf-pool.c
-libmf_a_CFLAGS = $(WARNING_CFLAGS)
 
 # We must create mfd.h before building the libmf_a_OBJECTS.
 $(libmf_a_OBJECTS): mfd.h
