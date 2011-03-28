@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech, etex.ch[01]: Reformulate @<Fetch an item in the
+	current node...@>, begin_box, and delete_last to fix a bug in
+	\lastpenalty & Co; further reduce e-pTeX interferences.
+
 2011-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech, etex.ch[01]: Reformulate begin_box and delete_last

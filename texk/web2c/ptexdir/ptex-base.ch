@@ -1914,20 +1914,20 @@ if cur_cs=0 then
 else cur_tok:=cs_token_flag+cur_cs;
 @z
 
-@x [26.413] l.8341 - pTeX: scan_somthing_internal
+@x [26.413] l.8341 - pTeX: scan_something_internal
 @p procedure scan_something_internal(@!level:small_number;@!negative:boolean);
 @y
-@p @t\4@>@<Declare procedures needed in |scan_something|@>@t@>@/
+@p @t\4@>@<Declare procedures needed in |scan_something_internal|@>@t@>@/
 procedure scan_something_internal(@!level:small_number;@!negative:boolean);
 @z
-@x [26.413] l.8343 - pTeX: scan_somthing_internal
+@x [26.413] l.8343 - pTeX: scan_something_internal
 var m:halfword; {|chr_code| part of the operand token}
 @y
-label exit;
 var m:halfword; {|chr_code| part of the operand token}
 @!tx:pointer; {effective tail node}
+@!qx:halfword; {general purpose index}
 @z
-@x [26.413] l.8345 - pTeX: scan_somthing_internal
+@x [26.413] l.8345 - pTeX: scan_something_internal
 begin m:=cur_chr;
 case cur_cmd of
 def_code: @<Fetch a character code from some table@>;
@@ -1959,16 +1959,17 @@ else if m<math_code_base then
 else scanned_result(eqtb[m+cur_val].int)(int_val);
 @z
 
-@x [26.420] l.8475 - pTeX: Fetch a box dimension: dir_node
+@x [26.420] l.8474 - pTeX: Fetch a box dimension: dir_node
+begin scan_eight_bit_int;
 if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @y
-if box(cur_val)=null then cur_val:=0
-else
-  begin q:=box(cur_val);
+begin scan_eight_bit_int; q:=box(cur_val);
+if q=null then cur_val:=0
+else  begin qx:=q;
   while (q<>null)and(box_dir(q)<>abs(direction)) do q:=link(q);
   if q=null then
-    begin r:=link(box(cur_val)); link(box(cur_val)):=null;
-    q:=new_dir_node(box(cur_val),abs(direction)); link(box(cur_val)):=r;
+    begin r:=link(qx); link(qx):=null;
+    q:=new_dir_node(qx,abs(direction)); link(qx):=r;
     cur_val:=mem[q+m].sc;
     delete_glue_ref(space_ptr(q)); delete_glue_ref(xspace_ptr(q));
     free_node(q,box_node_size);
@@ -1980,17 +1981,21 @@ else
 @x [26.424] l.8510 - pTeX: disp_node
 @<Fetch an item in the current node...@>=
 @y
-@d find_effective_tail_pTeX(#)== {sets |tx| to last non-|disp_node|}
-if type(tail)=disp_node then
-  if is_char_node(prev_node)or(prev_node=head) then #
-  else tx:=prev_node
-else tx:=tail
+@d find_effective_tail_pTeX== {sets |tx| to last non-|disp_node|}
+tx:=tail;
+if not is_char_node(tx) then if type(tx)=disp_node then tx:=prev_node
 @#
 @d find_effective_tail==find_effective_tail_pTeX
 
 @<Fetch an item in the current node...@>=
 @z
 
+@x [26.424] l.8516 - pTeX: Fetch an item ...: disp_node
+else begin if cur_chr=glue_val then cur_val:=zero_glue@+else cur_val:=0;
+@y
+else begin if cur_chr=glue_val then cur_val:=zero_glue@+else cur_val:=0;
+  find_effective_tail;
+@z
 @x [26.424] l.8518 - pTeX: Fetch an item ...: disp_node
   if not is_char_node(tail)and(mode<>0) then
     case cur_chr of
@@ -2001,21 +2006,19 @@ else tx:=tail
       if subtype(tail)=mu_glue then cur_val_level:=mu_val;
       end;
 @y
-  if not is_char_node(tail)and(tail<>head)and(mode<>0) then
-    begin find_effective_tail(return);
-      case cur_chr of
-      int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
-      dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
-      glue_val: if type(tx)=glue_node then
-        begin cur_val:=glue_ptr(tx);
-        if subtype(tx)=mu_glue then cur_val_level:=mu_val;
-        end;
+  if not is_char_node(tx)and(tx<>head)and(mode<>0) then
+    case cur_chr of
+    int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
+    dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
+    glue_val: if type(tx)=glue_node then
+      begin cur_val:=glue_ptr(tx);
+      if subtype(tx)=mu_glue then cur_val_level:=mu_val;
+      end;
 @z
-@x [26.424] l.8526 - pTeX: Fetch an item ...: disp_node
-    end {there are no other cases}
+@x [26.424] l.8527 - pTeX: Fetch an item ...: disp_node
+  else if (mode=vmode)and(tail=head) then
 @y
-      end; {there are no other cases}
-    end
+  else if (mode=vmode)and(tx=head) then
 @z
 
 @x [26.435] l.8940 - pTeX: scan_char_num
@@ -4680,14 +4683,11 @@ else prev_node:=p
 @x [47.1080] l.20950 - pTeX: disp_node, check head=tail
 else  begin if not is_char_node(tail) then
     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
-      @<Remove the last box, unless it's part of a discretionary@>;
 @y
-else  begin if not is_char_node(tail)and(head<>tail) then
-    begin find_effective_tail(goto done);
+else  begin find_effective_tail;
+  if not is_char_node(tx)and(head<>tx) then
     if (type(tx)=hlist_node)or(type(tx)=vlist_node)
        or(type(tx)=dir_node) then
-      @<Remove the last box, unless it's part of a discretionary@>;
-    done:end;
 @z
 
 @x [47.1081] l.20957 - pTeX: disp_node
@@ -4712,7 +4712,7 @@ if type(cur_box)=dir_node then
   end
 else
   if box_dir(cur_box)=dir_default then set_box_dir(cur_box)(abs(direction));
-end
+done:end
 @z
 
 @x [47.1083] l.20989 - pTeX: adjust_dir
@@ -4925,13 +4925,11 @@ else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
     q:=link(p);
     until q=tail;
     link(p):=null; flush_node_list(tail); tail:=p;
-    end;
 @y
-else if not is_char_node(tail) then
-  begin find_effective_tail(return);
-  if type(tx)<>cur_chr then return;
-  fetch_effective_tail(return);
-  flush_node_list(tx);
+else  begin find_effective_tail;
+  if not is_char_node(tx) then if type(tx)=cur_chr then
+    begin fetch_effective_tail(return);
+    flush_node_list(tx);
 @z
 
 @x [47.1110] l.21310 -pTeX:  free box node, delete kanji_skip
@@ -5885,7 +5883,7 @@ end;
 
 @ |print_kansuji| procedure converts a number to KANJI number.
 
-@ @<Declare procedures needed in |scan_something|@>=
+@ @<Declare procedures needed in |scan_something_internal|@>=
 procedure print_kansuji(@!n:integer);
 var @!k:0..23; {index to current digit; we assume that $|n|<10^{23}$}
 @!cx: KANJI_code; {temporary register for KANJI}
@@ -5977,7 +5975,7 @@ primitive("inhibitxspcode",assign_inhibit_xsp_code,inhibit_xsp_code_base);
 inhibit_glue: print_esc("inhibitglue");
 assign_inhibit_xsp_code: print_esc("inhibitxspcode");
 
-@ @<Declare procedures needed in |scan_something|@>=
+@ @<Declare procedures needed in |scan_something_internal|@>=
 function get_inhibit_pos(c:KANJI_code; n:small_number):pointer;
 label done, done1;
 var p,s:pointer;
@@ -6044,7 +6042,7 @@ assign_kinsoku: case chr_code of
   post_break_penalty_code: print_esc("postbreakpenalty");
   endcases;
 
-@ @<Declare procedures needed in |scan_something|@>=
+@ @<Declare procedures needed in |scan_something_internal|@>=
 function get_kinsoku_pos(c:KANJI_code; n:small_number):pointer;
 label done, done1;
 var p,s:pointer;

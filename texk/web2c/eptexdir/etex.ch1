@@ -24,30 +24,6 @@
 @d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
 @z
 
-@x [26.413]
-@!q:halfword; {general purpose index}
-@y
-@!qx:halfword; {general purpose index}
-@z
-
-@x [26.420]
-if box(cur_val)=null then cur_val:=0
-else
-  begin q:=box(cur_val);
-  while (q<>null)and(box_dir(q)<>abs(direction)) do q:=link(q);
-  if q=null then
-    begin r:=link(box(cur_val)); link(box(cur_val)):=null;
-    q:=new_dir_node(box(cur_val),abs(direction)); link(box(cur_val)):=r;
-@y
-if q=null then cur_val:=0
-else
-  begin qx:=q;
-  while (q<>null)and(box_dir(q)<>abs(direction)) do q:=link(q);
-  if q=null then
-    begin r:=link(qx); link(qx):=null;
-    q:=new_dir_node(qx,abs(direction)); link(qx):=r;
-@z
-
 @x [27.468]
 @d job_name_code=10 {command code for \.{\\jobname}}
 @y

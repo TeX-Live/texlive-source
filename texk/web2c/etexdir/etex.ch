@@ -1083,8 +1083,8 @@ var m:halfword; {|chr_code| part of the operand token}
 @y
 label exit;
 var m:halfword; {|chr_code| part of the operand token}
+@!q,@!r:pointer; {general purpose indices}
 @!tx:pointer; {effective tail node}
-@!q:halfword; {general purpose index}
 @!i:four_quarters; {character info}
 @z
 %---------------------------------------
@@ -1182,13 +1182,15 @@ else if par_shape_ptr=null then cur_val:=0
 @x [26] m.424 l.8510 - e-TeX TeXXeT
 @<Fetch an item in the current node...@>=
 @y
-@d find_effective_tail_eTeX(#)== {sets |tx| to last non-\.{\\endM} node}
-if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-  begin tx:=head;
-  while link(tx)<>tail do tx:=link(tx);
-  if is_char_node(tx) then #;
-  end
-else tx:=tail
+@d find_effective_tail_eTeX== {sets |tx| to last non-\.{\\endM} node}
+tx:=tail;
+if not is_char_node(tx) then
+  if (type(tx)=math_node)and(subtype(tx)=end_M_code) then
+    begin r:=head;
+    repeat q:=r; r:=link(q);
+    until r=tx;
+    tx:=q;
+    end
 @#
 @d find_effective_tail==find_effective_tail_eTeX
 
@@ -1221,15 +1223,7 @@ if m>=input_line_no_code then
 %---------------------------------------
 @x [26] m.424 l.8517 - e-TeX last_node_type
   cur_val_level:=cur_chr;
-@y
-  if cur_chr=last_node_type_code then
-    begin cur_val_level:=int_val;
-    if (tail=head)or(mode=0) then cur_val:=-1;
-    end
-  else cur_val_level:=cur_chr;
-@z
-%---------------------------------------
-@x [26] m.424 l.8519 - e-TeX TeXXeT, last_node_type
+  if not is_char_node(tail)and(mode<>0) then
     case cur_chr of
     int_val: if type(tail)=penalty_node then cur_val:=penalty(tail);
     dimen_val: if type(tail)=kern_node then cur_val:=width(tail);
@@ -1238,19 +1232,26 @@ if m>=input_line_no_code then
       if subtype(tail)=mu_glue then cur_val_level:=mu_val;
       end;
     end {there are no other cases}
+  else if (mode=vmode)and(tail=head) then
 @y
-    begin find_effective_tail(return);
-      case cur_chr of
-      int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
-      dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
-      glue_val: if type(tx)=glue_node then
-        begin cur_val:=glue_ptr(tx);
-        if subtype(tx)=mu_glue then cur_val_level:=mu_val;
-        end;
-      last_node_type_code: if type(tx)<=unset_node then cur_val:=type(tx)+1
-        else cur_val:=unset_node+2;
-      end; {there are no other cases}
+  find_effective_tail;
+  if cur_chr=last_node_type_code then
+    begin cur_val_level:=int_val;
+    if (tx=head)or(mode=0) then cur_val:=-1;
     end
+  else cur_val_level:=cur_chr;
+  if not is_char_node(tx)and(mode<>0) then
+    case cur_chr of
+    int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
+    dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
+    glue_val: if type(tx)=glue_node then
+      begin cur_val:=glue_ptr(tx);
+      if subtype(tx)=mu_glue then cur_val_level:=mu_val;
+      end;
+    last_node_type_code: if type(tx)<=unset_node then cur_val:=type(tx)+1
+      else cur_val:=unset_node+2;
+    end {there are no other cases}
+  else if (mode=vmode)and(tx=head) then
 @z
 %---------------------------------------
 @x [26] m.424 l.8531 - e-TeX last_node_type
@@ -2349,14 +2350,13 @@ else if fm then {|r|$\to$|p=begin_M|$\to$|q=end_M|}
 @<If the current list ends with a box node, delete it...@>=
 @z
 %---------------------------------------
-@x [47] m.1080 l.20951 - e-TeX TeXXeT
+@x [47] m.1080 l.20950 - e-TeX TeXXeT
+else  begin if not is_char_node(tail) then
     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
-      @<Remove the last box, unless it's part of a discretionary@>;
 @y
-    begin find_effective_tail(goto done);
+else  begin find_effective_tail;
+  if not is_char_node(tx) then
     if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
-      @<Remove the last box, unless it's part of a discretionary@>;
-    done:end;
 @z
 %---------------------------------------
 @x [47] m.1081 l.20957 - e-TeX TeXXeT
@@ -2370,11 +2370,9 @@ q:=link(p);
 until q=tail;
 cur_box:=tail; shift_amount(cur_box):=0;
 tail:=p; link(p):=null;
-done:end
 @y
 begin fetch_effective_tail(goto done);
 cur_box:=tx; shift_amount(cur_box):=0;
-end
 @z
 %---------------------------------------
 @x [47] m.1082 l.20972 - e-TeX sparse arrays
@@ -2423,13 +2421,11 @@ else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
     q:=link(p);
     until q=tail;
     link(p):=null; flush_node_list(tail); tail:=p;
-    end;
 @y
-else if not is_char_node(tail) then
-  begin find_effective_tail(return);
-  if type(tx)<>cur_chr then return;
-  fetch_effective_tail(return);
-  flush_node_list(tx);
+else  begin find_effective_tail;
+  if not is_char_node(tx) then if type(tx)=cur_chr then
+    begin fetch_effective_tail(return);
+    flush_node_list(tx);
 @z
 %---------------------------------------
 @x [47] m.1108 l.21299 - e-TeX saved_items
