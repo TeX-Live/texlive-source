@@ -1,3 +1,8 @@
+2011-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Rename box_lrstat into box_lr and define to also work
+	for min_quarterword<0.
+
 2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am: Use AM_CFLAGS instead of etex_CFLAGS.

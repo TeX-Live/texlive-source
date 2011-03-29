@@ -313,7 +313,14 @@ if last<>first then for k:=first to last-1 do print(buffer[k]);
 @d tonum(#)==# {pTeX: to put an KANJI code into a halfword}
 @z
 
-@x [10.135] l.3008 - pTeX: box_dir, space_ptr, xspace_ptr
+@x [10.135] l.2895 - pTeX: box_dir
+|fil|, |fill|, or |filll|). The |subtype| field is not used.
+@y
+|fil|, |fill|, or |filll|). The |subtype| field is not used in \TeX.
+In p\TeX\ the |subtype| field records the box direction |box_dir|.
+@z
+
+@x [10.135] l.2897 - pTeX: box_dir, space_ptr, xspace_ptr
 @d hlist_node=0 {|type| of hlist nodes}
 @d box_node_size=7 {number of words to allocate for a box node}
 @d width_offset=1 {position of |width| field in a box node}
@@ -337,9 +344,9 @@ if last<>first then for k:=first to last-1 do print(buffer[k]);
 @d hlist_node=0 {|type| of hlist nodes}
 @d box_node_size=8 {number of words to allocate for a box node}
 @#
-@d box_dir(#) == subtype(#) {direction mode of a box}
+@d box_dir(#) == (qo(subtype(#))) {direction of a box}
 @d set_box_dir(#) == subtype(#):=set_box_dir_end
-@d set_box_dir_end(#) == #
+@d set_box_dir_end(#) == (qi(#))
 @#
 @d dir_default = 0 {direction of the box, default Left to Right}
 @d dir_dtou = 1 {direction of the box, Bottom to Top}

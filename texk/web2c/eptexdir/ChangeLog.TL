@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech, etex.ch0: Redefine box_dir and box_lr to also work
+	for min_quarterword<0.
+
 2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/eptex.am: Use AM_CFLAGS instead of eptex_CFLAGS.

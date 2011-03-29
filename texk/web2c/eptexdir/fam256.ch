@@ -25,10 +25,10 @@
 %-----------------------------------------------
 @x
 specifies the order of infinity to which glue setting applies (|normal|,
-|fil|, |fill|, or |filll|). The |subtype| field is not used.
+|fil|, |fill|, or |filll|). The |subtype| field is not used in \TeX.
 @y
 specifies the order of infinity to which glue setting applies (|normal|,
-|sfi|, |fil|, |fill|, or |filll|). The |subtype| field is not used.
+|sfi|, |fil|, |fill|, or |filll|). The |subtype| field is not used in \TeX.
 @z
 %-----------------------------------------------
 @x

@@ -31,12 +31,19 @@
 @d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
 @z
 
+@x [10.135] l.2895 - e-pTeX: box_lr and box_dir
+In \eTeX\ the |subtype| field records the box direction mode |box_lr|.
+@y
+In \eTeX\ the |subtype| field records the box direction mode |box_lr|.
+In \epTeX\ the |subtype| field is |qi(8*box_lr+box_dir)|.
+@z
+
 @x
-@d box_dir(#) == subtype(#) {direction mode of a box}
+@d box_dir(#) == (qo(subtype(#))) {direction of a box}
 @d set_box_dir(#) == subtype(#):=set_box_dir_end
 @y
-@d box_dir(#) == (subtype(#)mod 8) {direction mode of a box}
-@d set_box_dir(#) == subtype(#):=(subtype(#)div 8)*8+set_box_dir_end 
+@d box_dir(#) == ((qo(subtype(#)))mod 8) {direction of a box}
+@d set_box_dir(#) == subtype(#):=box_lr(#)*8+set_box_dir_end 
 @z
 
 @x [26.413] l.8343 - e-pTeX: scan_something_internal
@@ -93,13 +100,11 @@ if not is_char_node(tx) then
 @z
 
 @x
-@d box_lrstat(#) == subtype(#) {direction mode of a box}
-@d set_box_lrstat(#) ==  subtype(#):=set_box_lrstat_end
-@d set_box_lrstat_end(#) == #
+@d box_lr(#) == (qo(subtype(#))) {direction mode of a box}
+@d set_box_lr(#) ==  subtype(#):=set_box_lr_end
 @y
-@d box_lrstat(#) == (subtype(#)div 8) {direction mode of a box}
-@d set_box_lrstat(#) == subtype(#):=(subtype(#)mod 8)+8*set_box_lrstat_end
-@d set_box_lrstat_end(#) == (#)
+@d box_lr(#) == ((qo(subtype(#)))div 8) {direction mode of a box}
+@d set_box_lr(#) == subtype(#):=box_dir(#)+8*set_box_lr_end
 @z
 
 @x [45.996] l.19420
