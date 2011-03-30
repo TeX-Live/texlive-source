@@ -59,23 +59,31 @@ begin scan_eight_bit_int; q:=box(cur_val);
 begin scan_register_num; fetch_box(q);
 @z
 
+@x [26.424] l.8508 - e-pTeX: TeXXeT and disp_node
+node of the current list.
+@y
+node of the current list.
+The macro |find_effective_tail_epTeX| sets |tx| to the last non-\.{\\endM}
+non-|disp_node| of the current list.
+@z
+
 @x [26.424] l.8510 - e-pTeX: last node
 @d find_effective_tail==find_effective_tail_pTeX
 @y
-@d find_effective_tail_epTeX== {sets |tx| to last non-\.{\\endM} non-|disp_node|}
+@d find_effective_tail_epTeX==
 tx:=tail;
+if not is_char_node(tx) then if type(tx)=disp_node then tx:=prev_node;
 if not is_char_node(tx) then
-  begin if type(tx)=disp_node then tx:=prev_node;
-  if not is_char_node(tx) then
-    if (type(tx)=math_node)and(subtype(tx)=end_M_code) then
-      begin r:=head;
-      repeat q:=r; r:=link(q);
-      until r=tx;
-      tx:=q;
+  if (type(tx)=disp_node)or
+    ((type(tx)=math_node)and(subtype(tx)=end_M_code)) then
+    begin tx:=head; q:=link(head);
+    while q<>prev_node do
+      begin if is_char_node(q) then tx:=q
+      else if (type(q)<>disp_node)and
+        ((type(tx)<>math_node)or(subtype(tx)<>end_M_code)) then tx:=q;
       end;
-  if not is_char_node(tx) then
-    if type(tx)=disp_node then tx:=prev_node;
-  end
+    q:=link(q);
+    end
 @#
 @d find_effective_tail==find_effective_tail_epTeX
 @z
@@ -102,15 +110,20 @@ if not is_char_node(tx) then
 @x
 @d box_lr(#) == (qo(subtype(#))) {direction mode of a box}
 @d set_box_lr(#) ==  subtype(#):=set_box_lr_end
+@d set_box_lr_end(#) == qi(#)
 @y
 @d box_lr(#) == ((qo(subtype(#)))div 8) {direction mode of a box}
-@d set_box_lr(#) == subtype(#):=box_dir(#)+8*set_box_lr_end
+@d set_box_lr(#) == subtype(#):=box_dir(#)+set_box_lr_end
+@d set_box_lr_end(#) == qi(8*(#))
 @z
 
 @x [45.996] l.19420
 last_node_type:=type(p)+1;
 @y
-last_node_type:=type(p)+1;
+if type(p)<dir_node then last_node_type:=type(p)+1
+else if type(p)=dir_node then last_node_type:=type(list_ptr(p))+1
+else if type(p)<disp_node then last_node_type:=type(p)
+else last_node_type:=type(p)-1; {no |disp_node| in a vertical list}
 @z
 
 @x [47.1079] l.20920
@@ -124,6 +137,7 @@ last_node_type:=type(p)+1;
 @z
 
 @x [47.1080] l.20940
+@d check_effective_tail==check_effective_tail_pTeX
 @d fetch_effective_tail==fetch_effective_tail_pTeX
 @y
 @d fetch_effective_tail_epTeX(#)== {extract |tx|,
@@ -200,6 +214,7 @@ if fm>0 then {drop \.{\\beginM} \.{\\endM} pair}
   flush_node_list(t);
   end
 @#
+@d check_effective_tail(#)==find_effective_tail_epTeX
 @d fetch_effective_tail==fetch_effective_tail_epTeX
 @z
 

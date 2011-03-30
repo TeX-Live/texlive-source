@@ -1,3 +1,7 @@
+2011-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptex-base.ch: Handle disp_node from discretionary.
+
 2011-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Redefine box_dir to also work for

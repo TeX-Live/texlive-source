@@ -1,3 +1,7 @@
+2011-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Further reduce e-pTeX interferences.
+
 2011-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Rename box_lrstat into box_lr and define to also work

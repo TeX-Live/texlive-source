@@ -42,6 +42,13 @@ if box(cur_val)=null then cur_val:=0 @+else cur_val:=mem[box(cur_val)+m].sc;
 @z
 
 @x [26.424]
+legal in similar contexts.
+
+@y
+legal in similar contexts.
+@z
+
+@x [26.424]
 @d find_effective_tail==find_effective_tail_eTeX
 
 @y
@@ -136,22 +143,28 @@ else box(n):=vpack(q,natural);
 @z
 
 @x [47.1080]
+@d check_effective_tail(#)==find_effective_tail_eTeX
 @d fetch_effective_tail==fetch_effective_tail_eTeX
 
 @y
 @z
 @x [47.1080]
-else  begin find_effective_tail;
+else  begin check_effective_tail(goto done);
   if not is_char_node(tx) then
     if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+  done:end;
 @y
 else  begin if not is_char_node(tail) then
     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+  end;
 @z
 
 @x [47.1081]
 begin fetch_effective_tail(goto done);
 cur_box:=tx; shift_amount(cur_box):=0;
+end
 @y
 begin q:=head;
 repeat p:=q;
@@ -163,6 +176,7 @@ q:=link(p);
 until q=tail;
 cur_box:=tail; shift_amount(cur_box):=0;
 tail:=p; link(p):=null;
+done:end
 @z
 
 @x [47.1096]
@@ -179,7 +193,7 @@ tail:=p; link(p):=null;
 @z
 
 @x [47.1105]
-else  begin find_effective_tail;
+else  begin check_effective_tail(return);
   if not is_char_node(tx) then if type(tx)=cur_chr then
     begin fetch_effective_tail(return);
     flush_node_list(tx);

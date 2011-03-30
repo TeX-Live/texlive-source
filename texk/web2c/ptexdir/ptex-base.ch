@@ -346,7 +346,7 @@ In p\TeX\ the |subtype| field records the box direction |box_dir|.
 @#
 @d box_dir(#) == (qo(subtype(#))) {direction of a box}
 @d set_box_dir(#) == subtype(#):=set_box_dir_end
-@d set_box_dir_end(#) == (qi(#))
+@d set_box_dir_end(#) == qi(#)
 @#
 @d dir_default = 0 {direction of the box, default Left to Right}
 @d dir_dtou = 1 {direction of the box, Bottom to Top}
@@ -1985,12 +1985,33 @@ else  begin qx:=q;
   end;
 @z
 
+@x [26.424] l.8508 - pTeX: disp_node
+legal in similar contexts.
+@y
+legal in similar contexts.
+
+The macro |find_effective_tail_pTeX| sets |tx| to the last non-|disp_node|
+of the current list.
+@z
+
 @x [26.424] l.8510 - pTeX: disp_node
 @<Fetch an item in the current node...@>=
 @y
-@d find_effective_tail_pTeX== {sets |tx| to last non-|disp_node|}
+@d find_effective_tail_pTeX==
 tx:=tail;
-if not is_char_node(tx) then if type(tx)=disp_node then tx:=prev_node
+if not is_char_node(tx) then
+  if type(tx)=disp_node then
+    begin tx:=prev_node;
+    if not is_char_node(tx) then
+      if type(tx)=disp_node then {|disp_node| from a discretionary}
+        begin tx:=head; q:=link(head);
+        while q<>prev_node do
+          begin if is_char_node(q) then tx:=q
+          else if type(q)<>disp_node then tx:=q;
+          end;
+        q:=link(q);
+        end;
+    end
 @#
 @d find_effective_tail==find_effective_tail_pTeX
 
@@ -4662,6 +4683,15 @@ since |head| is a one-word node.
 @x [47.1080] l.20940 - pTeX: disp_node
 @<If the current list ends with a box node, delete it...@>=
 @y
+@d check_effective_tail_pTeX(#)==
+tx:=tail;
+if not is_char_node(tx) then
+  if type(tx)=disp_node then
+    begin tx:=prev_node;
+    if not is_char_node(tx) then
+      if type(tx)=disp_node then #; {|disp_node| from a discretionary}
+    end
+@#
 @d fetch_effective_tail_pTeX(#)== {extract |tx|, merge |disp_node| pair}
 q:=head; p:=null; disp:=0; pdisp:=0;
 repeat r:=p; p:=q; fd:=false;
@@ -4682,6 +4712,7 @@ else if fd then {|r|$\to$|p=disp_node|$\to$|q=disp_node|}
   end
 else prev_node:=p
 @#
+@d check_effective_tail==check_effective_tail_pTeX
 @d fetch_effective_tail==fetch_effective_tail_pTeX
 
 @<If the current list ends with a box node, delete it...@>=
@@ -4690,11 +4721,15 @@ else prev_node:=p
 @x [47.1080] l.20950 - pTeX: disp_node, check head=tail
 else  begin if not is_char_node(tail) then
     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+  end;
 @y
-else  begin find_effective_tail;
+else  begin check_effective_tail(goto done);
   if not is_char_node(tx)and(head<>tx) then
     if (type(tx)=hlist_node)or(type(tx)=vlist_node)
        or(type(tx)=dir_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+  done:end;
 @z
 
 @x [47.1081] l.20957 - pTeX: disp_node
@@ -4719,7 +4754,7 @@ if type(cur_box)=dir_node then
   end
 else
   if box_dir(cur_box)=dir_default then set_box_dir(cur_box)(abs(direction));
-done:end
+end
 @z
 
 @x [47.1083] l.20989 - pTeX: adjust_dir
@@ -4933,7 +4968,7 @@ else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
     until q=tail;
     link(p):=null; flush_node_list(tail); tail:=p;
 @y
-else  begin find_effective_tail;
+else  begin check_effective_tail(return);
   if not is_char_node(tx) then if type(tx)=cur_chr then
     begin fetch_effective_tail(return);
     flush_node_list(tx);

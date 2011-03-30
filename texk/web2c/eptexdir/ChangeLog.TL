@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech, etex.ch0: Handle disp_node from discretionary.
+	Set correct last_node_type from main vertical list.
+
 2011-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech, etex.ch0: Redefine box_dir and box_lr to also work

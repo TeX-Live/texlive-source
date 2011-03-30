@@ -1186,10 +1186,19 @@ else if par_shape_ptr=null then cur_val:=0
 \.{\\lastnodetype} are
 @z
 %---------------------------------------
+@x [26] m.424 l.8508 - e-TeX TeXXeT
+legal in similar contexts.
+@y
+legal in similar contexts.
+
+The macro |find_effective_tail_eTeX| sets |tx| to the last non-\.{\\endM}
+node of the current list.
+@z
+%---------------------------------------
 @x [26] m.424 l.8510 - e-TeX TeXXeT
 @<Fetch an item in the current node...@>=
 @y
-@d find_effective_tail_eTeX== {sets |tx| to last non-\.{\\endM} node}
+@d find_effective_tail_eTeX==
 tx:=tail;
 if not is_char_node(tx) then
   if (type(tx)=math_node)and(subtype(tx)=end_M_code) then
@@ -1528,7 +1537,7 @@ changes; the subtype of an an |hlist_node| inside R-text is changed to
 @d dlist=2 {subtype for an |hlist_node| from display math mode}
 @d box_lr(#) == (qo(subtype(#))) {direction mode of a box}
 @d set_box_lr(#) ==  subtype(#):=set_box_lr_end
-@d set_box_lr_end(#) == (qi(#))
+@d set_box_lr_end(#) == qi(#)
 @#
 @d left_to_right=0
 @d right_to_left=1
@@ -2352,6 +2361,7 @@ if q=null then if fm then confusion("tail1")
 else if fm then {|r|$\to$|p=begin_M|$\to$|q=end_M|}
   begin tail:=r; link(r):=null; flush_node_list(p);@+end
 @#
+@d check_effective_tail(#)==find_effective_tail_eTeX
 @d fetch_effective_tail==fetch_effective_tail_eTeX
 
 @<If the current list ends with a box node, delete it...@>=
@@ -2360,10 +2370,14 @@ else if fm then {|r|$\to$|p=begin_M|$\to$|q=end_M|}
 @x [47] m.1080 l.20950 - e-TeX TeXXeT
 else  begin if not is_char_node(tail) then
     if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+  end;
 @y
-else  begin find_effective_tail;
+else  begin check_effective_tail(goto done);
   if not is_char_node(tx) then
     if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
+      @<Remove the last box, unless it's part of a discretionary@>;
+  done:end;
 @z
 %---------------------------------------
 @x [47] m.1081 l.20957 - e-TeX TeXXeT
@@ -2377,9 +2391,11 @@ q:=link(p);
 until q=tail;
 cur_box:=tail; shift_amount(cur_box):=0;
 tail:=p; link(p):=null;
+done:end
 @y
 begin fetch_effective_tail(goto done);
 cur_box:=tx; shift_amount(cur_box):=0;
+end
 @z
 %---------------------------------------
 @x [47] m.1082 l.20972 - e-TeX sparse arrays
@@ -2429,7 +2445,7 @@ else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
     until q=tail;
     link(p):=null; flush_node_list(tail); tail:=p;
 @y
-else  begin find_effective_tail;
+else  begin check_effective_tail(return);
   if not is_char_node(tx) then if type(tx)=cur_chr then
     begin fetch_effective_tail(return);
     flush_node_list(tx);
