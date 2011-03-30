@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id$
+# $Id: tlmgr.pl 21563 2011-03-01 09:20:55Z peter $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision$';
-my $datrev = '$Date$';
+my $svnrev = '$Revision: 21563 $';
+my $datrev = '$Date: 2011-03-01 10:20:55 +0100 (Tue, 01 Mar 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
