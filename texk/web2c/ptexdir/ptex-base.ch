@@ -1184,7 +1184,7 @@ for k:="A" to "Z" do
 @+@t\1@>for k:=3 to 6 do kcat_code(@"20+k):=kana; {3 ku ... 6 ku}
 @+@t\1@>for k:=7 to 8 do kcat_code(@"20+k):=other_kchar; {7 ku ... 8 ku}
 @+@t\1@>for k:=16 to 84 do kcat_code(@"20+k):=kanji; {16 ku ... 84 ku}
-{ @"20+k = kcatcodekey(fromKUTEN(HILO(k,1)) }
+{ $\.{@@"20}+|k| = |kcatcodekey|(|fromKUTEN|(|HILO|(k,1))$ }
 @z
 
 @x [17.236] l.5092 - pTeX: cur_jfam_code, jchr_widow_penalty
@@ -1390,9 +1390,9 @@ if (p<hi_mem_min) or (p>mem_end) then
   begin print_esc("CLOBBERED."); return;
 @.CLOBBERED@>
   end;
-if info(p)>=cs_token_flag then print_cs(info(p)-cs_token_flag) {wchar_token}
+if info(p)>=cs_token_flag then print_cs(info(p)-cs_token_flag) {|wchar_token|}
 else  begin
-  if check_kanji(info(p)) then {wchar_token}
+  if check_kanji(info(p)) then {|wchar_token|}
     begin m:=kcat_code(kcatcodekey(info(p))); c:=info(p);
     end
   else  begin m:=Hi(info(p)); c:=Lo(info(p));
@@ -1511,7 +1511,7 @@ else show_token_list(link(start),loc,100000) {avoid reference count}
 begin_pseudoprint;
 if token_type<macro then
   begin  if (token_type=backed_up)and(loc<>null) then
-    begin  if (link(start)=null)and(check_kanji(info(start))) then {wchar_token}
+    begin  if (link(start)=null)and(check_kanji(info(start))) then {|wchar_token|}
       begin cur_input:=input_stack[base_ptr-1];
       s:=get_avail; info(s):=Lo(buffer[loc]);
       cur_input:=input_stack[base_ptr];
@@ -1795,7 +1795,7 @@ if loc<>null then {list not exhausted}
         @<Get the next token, suppressing expansion@>
       else check_outer_validity;
     end
-  else if check_kanji(t) then {wchar_token}
+  else if check_kanji(t) then {|wchar_token|}
     begin cur_chr:=t; cur_cmd:=kcat_code(kcatcodekey(t));
     end
   else
@@ -1825,7 +1825,7 @@ end;
 begin no_new_control_sequence:=false; get_next; no_new_control_sequence:=true;
 @^inner loop@>
 if cur_cs=0 then
-  if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {wchar_token}
+  if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {|wchar_token|}
     cur_tok:=cur_chr
   else cur_tok:=(cur_cmd*@'400)+cur_chr
 else cur_tok:=cs_token_flag+cur_cs;
@@ -1854,7 +1854,7 @@ while p<>null do
       overflow("buffer size",buf_size);
 @:TeX capacity exceeded buffer size}{\quad buffer size@>
     end;
-  if check_kanji(info(p)) then {wchar_token}
+  if check_kanji(info(p)) then {|wchar_token|}
     begin buffer[j]:=Hi(info(p)); incr(j);
     end;
   buffer[j]:=Lo(info(p)); incr(j); p:=link(p);
@@ -2062,7 +2062,7 @@ end;
 @y
 procedure scan_char_num;
 begin scan_int;
-if not is_char_ascii(cur_val)and not check_kanji(cur_val) then {wchar_token}
+if not is_char_ascii(cur_val)and not check_kanji(cur_val) then {|wchar_token|}
   begin print_err("Bad character code");
 @.Bad character code@>
   help2("A character number must be between 0 and 255, or KANJI code.")@/
@@ -2096,7 +2096,7 @@ end
 @<Scan an alphabetic character code into |cur_val|@>=
 begin get_token; {suppress macro expansion}
 if cur_tok<cs_token_flag then
-  if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {wchar_token}
+  if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {|wchar_token|}
     begin skip_mode:=false; cur_val:=tonum(cur_chr);
     end
   else begin cur_val:=cur_chr;
@@ -2234,7 +2234,7 @@ number_code,roman_numeral_code,
 kansuji_code,euc_code,sjis_code,jis_code,kuten_code: scan_int;
 string_code, meaning_code: begin save_scanner_status:=scanner_status;
   scanner_status:=normal; get_token;
-  if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {wchar_token}
+  if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {|wchar_token|}
     KANJI(cx):=cur_tok;
   scanner_status:=save_scanner_status;
   end;
@@ -6731,10 +6731,10 @@ main_loop_j+3:
   if ins_kp=false then begin { Kanji -> Kanji }
     goto main_loop_j+1;
   end else if ins_kp=true then begin { Kanji -> Ascii }
-    {@<Append |disp_node| at begin of displace area@>;}
+    {@@<Append |disp_node| at begin of displace area@@>;}
     ins_kp:=false; goto main_loop;
   end else begin { Kanji -> cs }
-    {@<Append |disp_node| at begin of displace area@>;}
+    {@@<Append |disp_node| at begin of displace area@@>;}
     goto reswitch;
   end;
 

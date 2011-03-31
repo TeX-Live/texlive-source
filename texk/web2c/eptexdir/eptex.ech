@@ -147,8 +147,9 @@ q:=head; p:=null; r:=null; fm:=0; fd:=0; disp:=0; pdisp:=0;
 repeat s:=r; r:=p; p:=q; fm:=fm div 2; fd:=fd div 2;
 if not is_char_node(q) then  
   if type(q)=disc_node then  
-    begin for m:=1 to replace_count(q) do p:=link(p);
-    if p=tx then #;
+    begin for m:=1 to replace_count(q) do 
+      begin p:=link(p); if p=tx then #; end 
+      { |tx| might be a part of discretionary; in this case, nothing will be removed}
     end
   else if (type(q)=math_node)and(subtype(q)=begin_M_code) then fm:=2
   else if type(q)=disp_node then
@@ -278,9 +279,6 @@ othercases goto next_p
 @y
 disp_node: begin
   disp2:=disp_dimen(p); disp_dimen(p):=disp; disp:=disp2;
-  { print_nl("ep TeXXeT:"); print_int(disp_dimen(p)); }
-  { print(" -> "); print_int(disp); }
-  { if not disped then begin disped:=true; print(" NL"); end; end; }
   if not disped then disped:=true; end;
 othercases goto next_p
 @z
@@ -288,7 +286,7 @@ othercases goto next_p
 @x e-pTeX: ifcsname l.28620
   buffer[m]:=info(p) mod @'400; incr(m); p:=link(p);
 @y
-  if check_kanji(info(p)) then {wchar_token}
+  if check_kanji(info(p)) then {|wchar_token|}
     begin buffer[m]:=Hi(info(p)); incr(m);
     end;
   buffer[m]:=Lo(info(p)); incr(m); p:=link(p);

@@ -97,7 +97,7 @@
 %                 <heiko.oberdiek@@googlemail.com>, May 2010.
 %             some rearrangements to reduce interferences between
 %                 e-TeX and pTeX, in part suggested by Hironori Kitagawa
-%                 <h_kitagawa2001@yahoo.co.jp>, Mar 2011.
+%                 <h_kitagawa2001@@yahoo.co.jp>, Mar 2011.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any

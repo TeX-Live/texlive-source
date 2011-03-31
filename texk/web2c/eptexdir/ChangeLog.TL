@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-03-31  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech: Bug fix and TeX formatting.
+	* pdfsavepos.ch, pdfstrcmp.ch: TeX formatting.
+
 2011-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech, etex.ch0: Handle disp_node from discretionary.

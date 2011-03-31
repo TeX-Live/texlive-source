@@ -228,7 +228,7 @@ end
 A \.{DVI} file does not have the information of the page height,
 which is needed to implement \.{\\pdflastypos} correctly.
 To keep the information of the page height, I (H.~Kitagawa) 
-adopted \.{\\pdfpageheight} primitive from pdf\TeX. However, in \pTeX (and \epTeX), 
+adopted \.{\\pdfpageheight} primitive from pdf\TeX. However, in p\TeX (and \hbox{\epTeX}), 
 the papersize special \.{\\special\{papersize=|width|,|height|\}} is commonly used 
 for specifying page width/height. Hence, I decided that the papersize special also 
 changes the value of \.{\\pdfpagewidth} and \.{\\pdfpageheight}. 
@@ -236,8 +236,8 @@ The following routine does this.
 
 In present implementation, the ``valid'' papersize special, which can be interpreted by
 this routine, is in the following form:
-$$\hbox{.{\\special\{papersize=$x$pt,$y$pt\}}}$$
-where $x$\,pt and $y$\, pt are positive dimensions which \TeX\ can comprehend.
+$$\hbox{\.{\\special\char"7Bpapersize=}$x$\.{pt,}$y$\.{pt\char"7D}}$$
+where $x$\thinspace pt and $y$\thinspace pt are positive dimensions which \TeX\ can comprehend.
 No spaces are allowed in the above form, and only ``pt'' is allowed for unit, for simplicity.
 
 @d ifps==if k=pool_ptr then goto done else if

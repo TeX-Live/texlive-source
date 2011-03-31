@@ -54,12 +54,10 @@ eTeX_revision_code: do_nothing;
 pdf_strcmp_code:
   begin
     save_scanner_status := scanner_status;
-    { save_warning_index := warning_index;}
     save_def_ref := def_ref;
     save_cur_string;
     compare_strings;
     def_ref := save_def_ref;
-    { warning_index := save_warning_index;}
     scanner_status := save_scanner_status;
     restore_cur_string;
   end;
@@ -116,7 +114,7 @@ end;
 @x
 @* \[54] System-dependent changes.
 @y
-@* \[54/pdf\TeX] System-dependent changes for \.{\\pdfstrcmp}
+@* \[54/pdf\TeX] System-dependent changes for {\tt\char"5Cpdfstrcmp}.
 @d call_func(#) == begin if # <> 0 then do_nothing end
 @d flushable(#) == (# = str_ptr - 1)
 
