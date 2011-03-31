@@ -74,15 +74,16 @@ non-|disp_node| of the current list.
 tx:=tail;
 if not is_char_node(tx) then if type(tx)=disp_node then tx:=prev_node;
 if not is_char_node(tx) then
-  if (type(tx)=disp_node)or
-    ((type(tx)=math_node)and(subtype(tx)=end_M_code)) then
-    begin tx:=head; q:=link(head);
-    while q<>prev_node do
-      begin if is_char_node(q) then tx:=q
+  if (type(tx)=disp_node) {|disp_node| from a discretionary}
+    or((type(tx)=math_node)and(subtype(tx)=end_M_code)) then
+    begin r:=head; q:=link(head);
+    while q<>tx do
+      begin if is_char_node(q) then r:=q
       else if (type(q)<>disp_node)and
-        ((type(tx)<>math_node)or(subtype(tx)<>end_M_code)) then tx:=q;
+        ((type(tx)<>math_node)or(subtype(tx)<>end_M_code)) then r:=q;
+      q:=link(q);
       end;
-    q:=link(q);
+    tx:=r;
     end
 @#
 @d find_effective_tail==find_effective_tail_epTeX
