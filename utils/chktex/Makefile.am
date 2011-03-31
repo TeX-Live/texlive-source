@@ -53,48 +53,19 @@ man_MANS = \
 	$(CHKTEX_TREE)/deweb.1
 
 perl_scripts = deweb
-
 scriptsdir = texmf/scripts/chktex
+nodist_bin_SCRIPTS =
+
+include $(srcdir)/../../texk/am/script_links.am
+
 texmfdir = ${prefix}/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 
-if WIN32
-if WIN32_WRAP
-## We treat the WIN32 wrappers as SCRIPTS to avoid automatic build rules
-nodist_bin_SCRIPTS = $(perl_scripts:=.exe)
-runscript = $(srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
-$(nodist_bin_SCRIPTS): $(runscript)
-	$(LN_S) $(runscript) $@
-endif WIN32_WRAP
-else !WIN32
+install-data-hook: install-perl-links
+uninstall-hook: uninstall-perl-links
+
+if !WIN32
 bin_SCRIPTS = $(CHKTEX_TREE)/chkweb
-endif !WIN32
-
-install-data-hook:
-if !WIN32
-	case "$(bindir)" in \
-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
-	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-	     exit 1;; \
-	esac
-endif !WIN32
-
-.PHONY: install-links
-install-links:
-	@cd $(DESTDIR)$(bindir) && \
-	  for f in $(perl_scripts); do \
-	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.pl'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
-	  done  
-
-uninstall-hook:
-if !WIN32
-	@for f in $(perl_scripts); do \
-	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-	done
 endif !WIN32
 
 # resource file

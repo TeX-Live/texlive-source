@@ -23,4 +23,3 @@ uninstall-man1-links:
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
 	done
 
-

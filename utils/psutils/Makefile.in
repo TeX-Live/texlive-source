@@ -35,16 +35,18 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = epsffit$(EXEEXT) psbook$(EXEEXT) psnup$(EXEEXT) \
 	psresize$(EXEEXT) psselect$(EXEEXT) pstops$(EXEEXT)
-subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
-	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
+	$(srcdir)/../../build-aux/missing \
+	$(srcdir)/../../texk/am/script_links.am $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
 	$(top_srcdir)/psutils-1.17/patchlev.h.in \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
+@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(perl_wrappers)
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
@@ -295,10 +297,11 @@ shell_scripts = \
 	showchar
 
 scriptsdir = texmf/scripts/psutils
+nodist_bin_SCRIPTS = $(am__append_1)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@perl_wrappers = $(perl_scripts:=.exe)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 texmfdir = ${prefix}/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@nodist_bin_SCRIPTS = $(perl_scripts:=.exe)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 nodist_man1_MANS = \
 	$(bin_PROGRAMS:$(EXEEXT)=.1) \
 	$(perl_scripts:=.1) \
@@ -313,7 +316,7 @@ all: all-am
 .SUFFIXES: .c .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../texk/am/script_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1014,25 +1017,19 @@ uninstall-man: uninstall-man1
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-@WIN32_TRUE@@WIN32_WRAP_TRUE@$(nodist_bin_SCRIPTS): $(runscript)
+.PHONY: install-perl-links make-perl-links uninstall-perl-links
+@WIN32_TRUE@@WIN32_WRAP_TRUE@$(perl_wrappers): $(runscript)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
 
-install-exec-hook:
-@WIN32_FALSE@	@for f in $(shell_scripts); do \
-@WIN32_FALSE@	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	done
-
-install-data-hook:
+install-perl-links:
 @WIN32_FALSE@	case "$(bindir)" in \
-@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
+@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-perl-links;; \
+@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-perl-links;; \
 @WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 @WIN32_FALSE@	     exit 1;; \
 @WIN32_FALSE@	esac
 
-.PHONY: install-links
-install-links:
+make-perl-links:
 	@cd $(DESTDIR)$(bindir) && \
 	  for f in $(perl_scripts); do \
 	    rm -f $$f; \
@@ -1040,8 +1037,22 @@ install-links:
 	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
 	  done  
 
-uninstall-hook:
-@WIN32_FALSE@	@for f in $(shell_scripts) $(perl_scripts); do \
+uninstall-perl-links:
+@WIN32_FALSE@	@for f in $(perl_scripts); do \
+@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+@WIN32_FALSE@	done
+
+install-data-hook: install-perl-links
+
+install-exec-hook:
+@WIN32_FALSE@	@for f in $(shell_scripts); do \
+@WIN32_FALSE@	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
+@WIN32_FALSE@	done
+
+uninstall-hook: uninstall-perl-links
+@WIN32_FALSE@	@for f in $(shell_scripts); do \
 @WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 @WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 @WIN32_FALSE@	done

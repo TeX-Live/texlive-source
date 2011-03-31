@@ -1,0 +1,48 @@
+## texk/am/perl_links.am: Makefile fragment for perl script links.
+##
+## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+## requires conditionals WIN32 and WIN32_WRAP
+## requires $(scriptsdir): e.g., texmf/scripts/chktex
+## requires $(perl_scripts): e.g., deweb
+## appends to $(nodist_bin_SCRIPTS)
+.PHONY: install-perl-links make-perl-links uninstall-perl-links
+
+if WIN32
+if WIN32_WRAP
+## We treat the WIN32 wrappers as SCRIPTS to avoid automatic build rules
+perl_wrappers = $(perl_scripts:=.exe)
+nodist_bin_SCRIPTS += $(perl_wrappers)
+runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
+$(perl_wrappers): $(runscript)
+	$(LN_S) $(runscript) $@
+endif WIN32_WRAP
+endif WIN32
+
+install-perl-links:
+if !WIN32
+	case "$(bindir)" in \
+	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-perl-links;; \
+	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-perl-links;; \
+	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
+	     exit 1;; \
+	esac
+endif !WIN32
+
+make-perl-links:
+	@cd $(DESTDIR)$(bindir) && \
+	  for f in $(perl_scripts); do \
+	    rm -f $$f; \
+	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.pl'"; \
+	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
+	  done  
+
+uninstall-perl-links:
+if !WIN32
+	@for f in $(perl_scripts); do \
+	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	done
+endif !WIN32
+
