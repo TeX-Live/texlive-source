@@ -991,3 +991,4 @@ AC_SUBST([am__untar])
 
 m4_include([../../m4/kpse-progs.m4])
 m4_include([../../m4/kpse-warnings.m4])
+m4_include([../../m4/kpse-win32.m4])

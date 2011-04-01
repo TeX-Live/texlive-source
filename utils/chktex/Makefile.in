@@ -47,7 +47,7 @@ DIST_COMMON = $(am__configure_deps) $(dist_pdfdoc_DATA) \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
-@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(perl_wrappers)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(wrappers)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-progs.m4 \
@@ -251,7 +251,8 @@ man_MANS = \
 perl_scripts = deweb
 scriptsdir = texmf/scripts/chktex
 nodist_bin_SCRIPTS = $(am__append_1)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@perl_wrappers = $(perl_scripts:=.exe)
+all_scripts = $(perl_scripts) $(shell_scripts)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 texmfdir = ${prefix}/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
@@ -1102,14 +1103,24 @@ uninstall-man: uninstall-man1
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-.PHONY: install-perl-links make-perl-links uninstall-perl-links
-@WIN32_TRUE@@WIN32_WRAP_TRUE@$(perl_wrappers): $(runscript)
+.PHONY: install-perl-links make-perl-links \
+	install-shell-links make-shell-links uninstall-links
+@WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
 
+# We support both multiplatform and non-multiplatform builds.
 install-perl-links:
 @WIN32_FALSE@	case "$(bindir)" in \
 @WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-perl-links;; \
 @WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-perl-links;; \
+@WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
+@WIN32_FALSE@	     exit 1;; \
+@WIN32_FALSE@	esac
+
+install-shell-links:
+@WIN32_FALSE@	case "$(bindir)" in \
+@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-shell-links;; \
+@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-shell-links;; \
 @WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 @WIN32_FALSE@	     exit 1;; \
 @WIN32_FALSE@	esac
@@ -1122,14 +1133,22 @@ make-perl-links:
 	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
 	  done  
 
-uninstall-perl-links:
-@WIN32_FALSE@	@for f in $(perl_scripts); do \
+make-shell-links:
+	@cd $(DESTDIR)$(bindir) && \
+	  for f in $(shell_scripts); do \
+	    rm -f $$f; \
+	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.sh'"; \
+	    $(LN_S) $(REL)/$(scriptsdir)/$$f.sh $$f || exit 1; \
+	  done
+
+uninstall-links:
+@WIN32_FALSE@	@for f in $(all_scripts); do \
 @WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 @WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 @WIN32_FALSE@	done
 
 install-data-hook: install-perl-links
-uninstall-hook: uninstall-perl-links
+uninstall-hook: uninstall-links
 
 ChkTeX.pdf: $(PDF_DEPEND)
 	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex

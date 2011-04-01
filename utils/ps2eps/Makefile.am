@@ -35,7 +35,7 @@ texmfdir = ${prefix}/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(PS2EPS_TREE)/bin/ps2eps.pl
 
 install-data-hook: install-perl-links
-uninstall-hook: uninstall-perl-links
+uninstall-hook: uninstall-links
 
 CLEANFILES = $(nodist_bin_SCRIPTS)
 

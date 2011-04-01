@@ -39,7 +39,8 @@ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-progs.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/ac/xindy.ac $(top_srcdir)/configure.ac
+	$(top_srcdir)/../../m4/kpse-win32.m4 $(top_srcdir)/ac/xindy.ac \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -67,7 +68,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
-SCRIPTS = $(bin_SCRIPTS) $(noinst_SCRIPTS)
+SCRIPTS = $(bin_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
 man1dir = $(mandir)/man1
@@ -183,11 +184,6 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 scripts = texindy xindy
 bin_SCRIPTS = $(am__append_1)
-@TEXLIVE_BUILD_TRUE@noinst_SCRIPTS = $(scripts)
-@TEXLIVE_BUILD_TRUE@scriptspath = texmf/scripts/xindy
-@TEXLIVE_BUILD_TRUE@scriptsdir = ${prefix}/$(scriptspath)
-@TEXLIVE_BUILD_FALSE@sed_cmd = sed -e 's:@libdir\@:$(libdir):'
-@TEXLIVE_BUILD_TRUE@sed_cmd = sed -e 's:@is_TL\@:yes:'
 man_MANS = texindy.1 xindy.1
 EXTRA_DIST = $(man_MANS) texindy.in xindy.in
 CLEANFILES = $(scripts)
@@ -379,8 +375,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-@TEXLIVE_BUILD_FALSE@install-exec-hook:
-@TEXLIVE_BUILD_FALSE@uninstall-hook:
 clean: clean-am
 
 clean-am: clean-generic mostlyclean-am
@@ -408,8 +402,7 @@ install-dvi: install-dvi-am
 install-dvi-am:
 
 install-exec-am: install-binSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+
 install-html: install-html-am
 
 install-html-am:
@@ -447,57 +440,29 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binSCRIPTS uninstall-man
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+
 uninstall-man: uninstall-man1
 
-.MAKE: install-am install-exec-am install-strip uninstall-am
+.MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-binSCRIPTS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-exec-hook install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-binSCRIPTS uninstall-hook uninstall-man \
-	uninstall-man1
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am uninstall-binSCRIPTS \
+	uninstall-man uninstall-man1
 
-@TEXLIVE_BUILD_TRUE@install-exec-hook:
-@TEXLIVE_BUILD_TRUE@	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
-@TEXLIVE_BUILD_TRUE@	@for f in $(scripts); do \
-@TEXLIVE_BUILD_TRUE@	  $(INSTALL_SCRIPT) $$f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
-@TEXLIVE_BUILD_TRUE@	done
-@TEXLIVE_BUILD_TRUE@	case "$(bindir)" in \
-@TEXLIVE_BUILD_TRUE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-@TEXLIVE_BUILD_TRUE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
-@TEXLIVE_BUILD_TRUE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-@TEXLIVE_BUILD_TRUE@	     exit 1;; \
-@TEXLIVE_BUILD_TRUE@	esac
-@TEXLIVE_BUILD_TRUE@.PHONY: install-links
-@TEXLIVE_BUILD_TRUE@install-links:
-@TEXLIVE_BUILD_TRUE@	@cd "$(DESTDIR)$(bindir)" && \
-@TEXLIVE_BUILD_TRUE@	for f in $(scripts); do \
-@TEXLIVE_BUILD_TRUE@	  rm -f $$f; \
-@TEXLIVE_BUILD_TRUE@	  echo "creating link '$$f' -> '$(REL)/$(scriptspath)/$$f.pl'"; \
-@TEXLIVE_BUILD_TRUE@	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f || exit 1; \
-@TEXLIVE_BUILD_TRUE@	done
-@TEXLIVE_BUILD_TRUE@uninstall-hook:
-@TEXLIVE_BUILD_TRUE@	@for f in $(scripts); do \
-@TEXLIVE_BUILD_TRUE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-@TEXLIVE_BUILD_TRUE@	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
-@TEXLIVE_BUILD_TRUE@	done
 
-texindy: texindy.in Makefile
-	$(sed_cmd) $(srcdir)/$@.in >$@
-	chmod +x $@
+@TEXLIVE_BUILD_FALSE@texindy: texindy.in Makefile
+@TEXLIVE_BUILD_FALSE@	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/texindy.in >texindy
 
-xindy: xindy.in Makefile
-	$(sed_cmd) $(srcdir)/$@.in >$@
-	chmod +x $@
+@TEXLIVE_BUILD_FALSE@xindy: xindy.in Makefile
+@TEXLIVE_BUILD_FALSE@	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

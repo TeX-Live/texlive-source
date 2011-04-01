@@ -62,7 +62,7 @@ texmfdir = ${prefix}/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 
 install-data-hook: install-perl-links
-uninstall-hook: uninstall-perl-links
+uninstall-hook: uninstall-links
 
 if !WIN32
 bin_SCRIPTS = $(CHKTEX_TREE)/chkweb

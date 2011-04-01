@@ -36,20 +36,22 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = t4ht$(EXEEXT) tex4ht$(EXEEXT)
-subdir = .
 DIST_COMMON = $(am__configure_deps) $(am__dist_bin_SCRIPTS_DIST) \
-	$(srcdir)/../../build-aux/config.guess \
+	$(dist_texmf_SCRIPTS) $(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
-	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
+	$(srcdir)/../../build-aux/missing \
+	$(srcdir)/../am/script_links.am $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/c-auto.in \
 	$(top_srcdir)/configure ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
 	../../build-aux/ylwrap ChangeLog
+@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(wrappers)
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
@@ -70,7 +72,7 @@ CONFIG_HEADER = c-auto.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(tex4htdir)"
+	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_t4ht_OBJECTS = t4ht.$(OBJEXT)
 t4ht_OBJECTS = $(am_t4ht_OBJECTS)
@@ -104,7 +106,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-SCRIPTS = $(dist_bin_SCRIPTS) $(nodist_bin_SCRIPTS) $(tex4ht_SCRIPTS)
+SCRIPTS = $(dist_bin_SCRIPTS) $(dist_texmf_SCRIPTS) \
+	$(nodist_bin_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -261,31 +264,129 @@ tex4ht_SOURCES = tex4ht.c
 LDADD = $(KPATHSEA_LIBS)
 perl_scripts = mk4ht
 shell_scripts = ht htcontext htlatex htmex httex httexi htxelatex htxetex
-EXTRA_DIST = $(perl_scripts) $(shell_scripts) dbcontext dblatex \
-	dbmcontext dbmex dbmlatex dbmmex dbmtex dbmtexi dbmxelatex \
-	dbmxetex dbtex dbtexi dbxelatex dbxetex demo.tex escontext \
-	eslatex esmex estex estexi esxelatex esxetex java jh1context \
-	jh1latex jh1mex jh1tex jh1texi jh1xelatex jh1xetex jhcontext \
-	jhlatex jhmex jhtex jhtexi jhxelatex jhxetex jmcontext jmlatex \
-	jmmex jmtex jmtexi jmxelatex jmxetex jscontext jslatex jsmex \
-	jstex jstexi jsxelatex jsxetex mzcontext mzlatex mzmex mztex \
-	mztexi mzxelatex mzxetex oocontext oolatex oomex ootex ootexi \
-	ooxelatex ooxetex teicontext teilatex teimcontext teimex \
-	teimlatex teimmex teimtex teimtexi teimxelatex teimxetex \
-	teitex teitexi teixelatex teixetex test.tex test1.tex \
-	testa.tex testb.tex uxhcontext uxhlatex uxhmex uxhtex uxhtexi \
-	uxhxelatex uxhxetex wcontext wlatex wmex wtex wtexi wxelatex \
-	wxetex xhcontext xhlatex xhmcontext xhmex xhmlatex xhmmex \
-	xhmtex xhmtexi xhmxelatex xhmxetex xhtex xhtexi xhxelatex \
-	xhxetex xv4ht.java
-tex4ht_subdir = texmf-dist/scripts/tex4ht
-tex4htdir = ${prefix}/$(tex4ht_subdir)
-tex4ht_SCRIPTS = 
-@WIN32_FALSE@dist_bin_SCRIPTS = 
+scriptsdir = texmf-dist/scripts/tex4ht
+nodist_bin_SCRIPTS = $(am__append_1)
+all_scripts = $(perl_scripts) $(shell_scripts)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
+texmfdir = ${prefix}/$(scriptsdir)
+dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
 @WIN32_TRUE@dist_bin_SCRIPTS = $(shell_scripts:=.bat)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@nodist_bin_SCRIPTS = $(perl_scripts:=.exe) $(shell_scripts:=.exe)
-@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(srcdir)/../texlive/w32_wrapper/runscript.exe
 CLEANFILES = $(nodist_bin_SCRIPTS)
+EXTRA_DIST = \
+	dbcontext \
+	dblatex \
+	dbmcontext \
+	dbmex \
+	dbmlatex \
+	dbmmex \
+	dbmtex \
+	dbmtexi \
+	dbmxelatex \
+	dbmxetex \
+	dbtex \
+	dbtexi \
+	dbxelatex \
+	dbxetex \
+	demo.tex \
+	escontext \
+	eslatex \
+	esmex \
+	estex \
+	estexi \
+	esxelatex \
+	esxetex \
+	java \
+	jh1context \
+	jh1latex \
+	jh1mex \
+	jh1tex \
+	jh1texi \
+	jh1xelatex \
+	jh1xetex \
+	jhcontext \
+	jhlatex \
+	jhmex \
+	jhtex \
+	jhtexi \
+	jhxelatex \
+	jhxetex \
+	jmcontext \
+	jmlatex \
+	jmmex \
+	jmtex \
+	jmtexi \
+	jmxelatex \
+	jmxetex \
+	jscontext \
+	jslatex \
+	jsmex \
+	jstex \
+	jstexi \
+	jsxelatex \
+	jsxetex \
+	mzcontext \
+	mzlatex \
+	mzmex \
+	mztex \
+	mztexi \
+	mzxelatex \
+	mzxetex \
+	oocontext \
+	oolatex \
+	oomex \
+	ootex \
+	ootexi \
+	ooxelatex \
+	ooxetex \
+	teicontext \
+	teilatex \
+	teimcontext \
+	teimex \
+	teimlatex \
+	teimmex \
+	teimtex \
+	teimtexi \
+	teimxelatex \
+	teimxetex \
+	teitex \
+	teitexi \
+	teixelatex \
+	teixetex \
+	test.tex \
+	test1.tex \
+	testa.tex \
+	testb.tex \
+	uxhcontext \
+	uxhlatex \
+	uxhmex \
+	uxhtex \
+	uxhtexi \
+	uxhxelatex \
+	uxhxetex \
+	wcontext \
+	wlatex \
+	wmex \
+	wtex \
+	wtexi \
+	wxelatex \
+	wxetex \
+	xhcontext \
+	xhlatex \
+	xhmcontext \
+	xhmex \
+	xhmlatex \
+	xhmmex \
+	xhmtex \
+	xhmtexi \
+	xhmxelatex \
+	xhmxetex \
+	xhtex \
+	xhtexi \
+	xhxelatex \
+	xhxetex \
+	xv4ht.java
+
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -293,7 +394,7 @@ all: c-auto.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/script_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -425,6 +526,40 @@ uninstall-dist_binSCRIPTS:
 	test -n "$$list" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(bindir)" && rm -f $$files
+install-dist_texmfSCRIPTS: $(dist_texmf_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(texmfdir)" || $(MKDIR_P) "$(DESTDIR)$(texmfdir)"
+	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-dist_texmfSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	test -n "$$list" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(texmfdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(texmfdir)" && rm -f $$files
 install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -459,40 +594,6 @@ uninstall-nodist_binSCRIPTS:
 	test -n "$$list" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-install-tex4htSCRIPTS: $(tex4ht_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	test -z "$(tex4htdir)" || $(MKDIR_P) "$(DESTDIR)$(tex4htdir)"
-	@list='$(tex4ht_SCRIPTS)'; test -n "$(tex4htdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(tex4htdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(tex4htdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-tex4htSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(tex4ht_SCRIPTS)'; test -n "$(tex4htdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(tex4htdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(tex4htdir)" && rm -f $$files
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -739,7 +840,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) c-auto.h
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(tex4htdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -791,7 +892,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-tex4htSCRIPTS
+install-data-am: install-dist_texmfSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
@@ -842,7 +943,7 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS \
-	uninstall-nodist_binSCRIPTS uninstall-tex4htSCRIPTS
+	uninstall-dist_texmfSCRIPTS uninstall-nodist_binSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 .MAKE: all install-am install-data-am install-strip uninstall-am
@@ -856,64 +957,68 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-data-hook install-dist_binSCRIPTS \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-nodist_binSCRIPTS install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	install-tex4htSCRIPTS installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-dist_binSCRIPTS uninstall-hook \
-	uninstall-nodist_binSCRIPTS uninstall-tex4htSCRIPTS
+	install-dist_texmfSCRIPTS install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man \
+	install-nodist_binSCRIPTS install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-dist_binSCRIPTS uninstall-dist_texmfSCRIPTS \
+	uninstall-hook uninstall-nodist_binSCRIPTS
 
 
 $(t4ht_OBJECTS) $(tex4ht_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
-@WIN32_TRUE@@WIN32_WRAP_TRUE@$(nodist_bin_SCRIPTS): $(runscript)
+.PHONY: install-perl-links make-perl-links \
+	install-shell-links make-shell-links uninstall-links
+@WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
 
 # We support both multiplatform and non-multiplatform builds.
-install-data-hook:
-	@for p in $(perl_scripts); do \
-	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.pl'"; \
-	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.pl"; \
-	done
-	@for p in $(shell_scripts); do \
-	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.sh'"; \
-	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.sh"; \
-	done
+install-perl-links:
 @WIN32_FALSE@	case "$(bindir)" in \
-@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
+@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-perl-links;; \
+@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-perl-links;; \
 @WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 @WIN32_FALSE@	     exit 1;; \
 @WIN32_FALSE@	esac
 
-.PHONY: install-links
-install-links:
+install-shell-links:
+@WIN32_FALSE@	case "$(bindir)" in \
+@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-shell-links;; \
+@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-shell-links;; \
+@WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
+@WIN32_FALSE@	     exit 1;; \
+@WIN32_FALSE@	esac
+
+make-perl-links:
 	@cd $(DESTDIR)$(bindir) && \
-	  for p in $(perl_scripts); do \
-	    rm -f $$p; \
-	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.pl'"; \
-	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p || exit 1; \
-	  done && \
-	  for p in $(shell_scripts); do \
-	    rm -f $$p; \
-	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.sh'"; \
-	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.sh $$p || exit 1; \
+	  for f in $(perl_scripts); do \
+	    rm -f $$f; \
+	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.pl'"; \
+	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
+	  done  
+
+make-shell-links:
+	@cd $(DESTDIR)$(bindir) && \
+	  for f in $(shell_scripts); do \
+	    rm -f $$f; \
+	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.sh'"; \
+	    $(LN_S) $(REL)/$(scriptsdir)/$$f.sh $$f || exit 1; \
 	  done
 
-uninstall-hook:
-	@for p in $(perl_scripts:=.pl) $(shell_scripts:=.sh); do \
-	  echo "rm -f '$(DESTDIR)$(tex4htdir)/$$p'"; \
-	  rm -f "$(DESTDIR)$(tex4htdir)/$$p"; \
-	done
-@WIN32_FALSE@	@for p in $(perl_scripts) $(shell_scripts); do \
-@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$p'"; \
-@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
+uninstall-links:
+@WIN32_FALSE@	@for f in $(all_scripts); do \
+@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 @WIN32_FALSE@	done
+
+install-data-hook: install-perl-links install-shell-links
+uninstall-hook: uninstall-links
 
 # in case of an SVN repository
 dist-hook:

@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# mk4ht                                 2008-06-28-19:09 %
-# Copyright (C) 2003--2008               Eitan M. Gurari %
-#                                                        %
+# mk4ht                                 Version 1.1      %
+# Copyright (C) 2003--2009               Eitan M. Gurari %
+# Copyright 2009 TeX Users Group                         %
 #                                                        %
 # This work may be distributed and/or modified under the %
 # conditions of the LaTeX Project Public License, either %
@@ -15,11 +15,11 @@
 #                                                        %
 # This work has the LPPL maintenance status "maintained".%
 #                                                        %
-# This Current Maintainer of this work                   %
-# is Eitan M. Gurari.                                    %
+# The Current Maintainer of this work                    %
+# is the TeX4ht Project.                                 %
 #                                                        %
-#                             gurari@cse.ohio-state.edu  %
-#                 http://www.cse.ohio-state.edu/~gurari  %
+#                                        tex4ht@tug.org  %
+#                             http://www.tug.org/tex4ht  %
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 use strict;
@@ -216,7 +216,7 @@ print "  clean.htlatex     lg tmp\n";
 
 }
 
-print "mk4ht (2008-06-28-19:09)\n";
+print "mk4ht (Version 1.1)\n";
 if(  !@ARGV  ){
   print "improper command\n";
   showInstrucions(); exit(1);

@@ -89,7 +89,7 @@ perl_scripts = \
 	includeres \
 	psmerge
 
-shell_scripts = \
+sh_scripts = \
 	getafm \
 	showchar
 
@@ -105,15 +105,15 @@ install-data-hook: install-perl-links
 
 install-exec-hook:
 if !WIN32
-	@for f in $(shell_scripts); do \
+	@for f in $(sh_scripts); do \
 	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
 	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
 	done
 endif !WIN32
 
-uninstall-hook: uninstall-perl-links
+uninstall-hook: uninstall-links
 if !WIN32
-	@for f in $(shell_scripts); do \
+	@for f in $(sh_scripts); do \
 	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	done

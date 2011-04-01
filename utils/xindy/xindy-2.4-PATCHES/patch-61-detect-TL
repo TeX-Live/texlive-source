@@ -1,49 +1,43 @@
-diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/user-commands/Makefile.am xindy-2.4/user-commands/Makefile.am
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/user-commands/Makefile.am xindy-2.4/user-commands/Makefile.am
 --- xindy-2.4.orig/user-commands/Makefile.am	2010-05-11 01:15:51.000000000 +0200
-+++ xindy-2.4/user-commands/Makefile.am	2010-05-12 21:23:55.000000000 +0200
-@@ -26,12 +26,14 @@
++++ xindy-2.4/user-commands/Makefile.am	2011-03-31 19:05:38.000000000 +0200
+@@ -24,36 +24,7 @@
  
- if TEXLIVE_BUILD
+ bin_SCRIPTS =
  
-+noinst_SCRIPTS = $(scripts)
-+
- scriptspath = texmf/scripts/xindy
- scriptsdir = ${prefix}/$(scriptspath)
- install-exec-hook:
- 	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
- 	@for f in $(scripts); do \
+-if TEXLIVE_BUILD
+-
+-scriptspath = texmf/scripts/xindy
+-scriptsdir = ${prefix}/$(scriptspath)
+-install-exec-hook:
+-	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
+-	@for f in $(scripts); do \
 -	  $(INSTALL_SCRIPT) "$(srcdir)/$$f.in" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
-+	  $(INSTALL_SCRIPT) $$f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
- 	done
- 	case "$(bindir)" in \
- 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-@@ -53,17 +55,23 @@
- 	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
- 	done
- 
-+sed_cmd = sed -e 's:@is_TL\@:yes:'
-+
- else !TEXLIVE_BUILD
+-	done
+-	case "$(bindir)" in \
+-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
+-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
+-	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
+-	     exit 1;; \
+-	esac
+-.PHONY: install-links
+-install-links:
+-	@cd "$(DESTDIR)$(bindir)" && \
+-	for f in $(scripts); do \
+-	  rm -f $$f; \
+-	  echo "creating link '$$f' -> '$(REL)/$(scriptspath)/$$f.pl'"; \
+-	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f; \
+-	done
+-uninstall-hook:
+-	@for f in $(scripts); do \
+-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+-	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
+-	done
+-
+-else !TEXLIVE_BUILD
++if !TEXLIVE_BUILD
  
  bin_SCRIPTS += $(scripts)
- 
-+sed_cmd = sed -e 's:@libdir\@:$(libdir):'
-+
-+endif !TEXLIVE_BUILD
-+
- texindy: texindy.in Makefile
--	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/texindy.in >texindy
-+	$(sed_cmd) $(srcdir)/$@.in >$@
-+	chmod +x $@
- 
- xindy: xindy.in Makefile
--	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
--
--endif !TEXLIVE_BUILD
-+	$(sed_cmd) $(srcdir)/$@.in >$@
-+	chmod +x $@
- 
- man_MANS = texindy.1 xindy.1
  
 diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/user-commands/texindy.in xindy-2.4/user-commands/texindy.in
 --- xindy-2.4.orig/user-commands/texindy.in	2010-05-11 01:39:24.000000000 +0200

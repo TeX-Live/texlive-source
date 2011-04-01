@@ -1,3 +1,9 @@
+2011-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reneame ht{,context,latex,mex,tex,texi,xelatex,xetex} => ht*.sh.
+	Rename mk4ht => mk4ht.pl and update from TeX4ht repository.
+	* Makefile.am: Use the ../am/script_links.am fragment.
+
 2010-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (install-links): Check symlink creation.

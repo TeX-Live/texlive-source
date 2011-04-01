@@ -47,11 +47,30 @@ config.force:
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
-bin_PROGRAMS =
-if CLISP_RUNTIME
+perl_scripts = texindy xindy
+scriptsdir = texmf/scripts/xindy
+nodist_bin_SCRIPTS =
+
+include $(srcdir)/../../texk/am/script_links.am
+
+install-data-hook: install-perl-links
+
 install-exec-hook:
+if CLISP_RUNTIME
 	$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) "$(LISP_RUN)" "$(DESTDIR)$(bindir)/$(XINDY_RUN)"
-uninstall-hook:
+endif CLISP_RUNTIME
+
+uninstall-hook: uninstall-links
+if CLISP_RUNTIME
 	rm -f "$(DESTDIR)$(bindir)/$(XINDY_RUN)"
 endif CLISP_RUNTIME
+
+texmfdir = ${prefix}/$(scriptsdir)
+nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
+
+%.pl: $(XINDY_TREE)/user-commands/%.in
+	sed -e 's:@is_TL\@:yes:' $< >$@
+	chmod +x $@
+
+CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS)
 

@@ -24,54 +24,17 @@ scripts = texindy xindy
 
 bin_SCRIPTS =
 
-if TEXLIVE_BUILD
-
-noinst_SCRIPTS = $(scripts)
-
-scriptspath = texmf/scripts/xindy
-scriptsdir = ${prefix}/$(scriptspath)
-install-exec-hook:
-	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
-	@for f in $(scripts); do \
-	  $(INSTALL_SCRIPT) $$f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
-	done
-	case "$(bindir)" in \
-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
-	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-	     exit 1;; \
-	esac
-.PHONY: install-links
-install-links:
-	@cd "$(DESTDIR)$(bindir)" && \
-	for f in $(scripts); do \
-	  rm -f $$f; \
-	  echo "creating link '$$f' -> '$(REL)/$(scriptspath)/$$f.pl'"; \
-	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f || exit 1; \
-	done
-uninstall-hook:
-	@for f in $(scripts); do \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
-	done
-
-sed_cmd = sed -e 's:@is_TL\@:yes:'
-
-else !TEXLIVE_BUILD
+if !TEXLIVE_BUILD
 
 bin_SCRIPTS += $(scripts)
 
-sed_cmd = sed -e 's:@libdir\@:$(libdir):'
-
-endif !TEXLIVE_BUILD
-
 texindy: texindy.in Makefile
-	$(sed_cmd) $(srcdir)/$@.in >$@
-	chmod +x $@
+	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/texindy.in >texindy
 
 xindy: xindy.in Makefile
-	$(sed_cmd) $(srcdir)/$@.in >$@
-	chmod +x $@
+	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
+
+endif !TEXLIVE_BUILD
 
 man_MANS = texindy.1 xindy.1
 

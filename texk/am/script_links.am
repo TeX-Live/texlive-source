@@ -6,25 +6,40 @@
 ## requires conditionals WIN32 and WIN32_WRAP
 ## requires $(scriptsdir): e.g., texmf/scripts/chktex
 ## requires $(perl_scripts): e.g., deweb
+## optional $(shell_scripts): e.g. htlatex
 ## appends to $(nodist_bin_SCRIPTS)
-.PHONY: install-perl-links make-perl-links uninstall-perl-links
+.PHONY: install-perl-links make-perl-links \
+	install-shell-links make-shell-links uninstall-links
+
+all_scripts = $(perl_scripts) $(shell_scripts)
 
 if WIN32
 if WIN32_WRAP
 ## We treat the WIN32 wrappers as SCRIPTS to avoid automatic build rules
-perl_wrappers = $(perl_scripts:=.exe)
-nodist_bin_SCRIPTS += $(perl_wrappers)
+wrappers = $(all_scripts:=.exe)
+nodist_bin_SCRIPTS += $(wrappers)
 runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
-$(perl_wrappers): $(runscript)
+$(wrappers): $(runscript)
 	$(LN_S) $(runscript) $@
 endif WIN32_WRAP
 endif WIN32
 
+# We support both multiplatform and non-multiplatform builds.
 install-perl-links:
 if !WIN32
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-perl-links;; \
 	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-perl-links;; \
+	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
+	     exit 1;; \
+	esac
+endif !WIN32
+
+install-shell-links:
+if !WIN32
+	case "$(bindir)" in \
+	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-shell-links;; \
+	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-shell-links;; \
 	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 	     exit 1;; \
 	esac
@@ -38,9 +53,17 @@ make-perl-links:
 	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
 	  done  
 
-uninstall-perl-links:
+make-shell-links:
+	@cd $(DESTDIR)$(bindir) && \
+	  for f in $(shell_scripts); do \
+	    rm -f $$f; \
+	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.sh'"; \
+	    $(LN_S) $(REL)/$(scriptsdir)/$$f.sh $$f || exit 1; \
+	  done
+
+uninstall-links:
 if !WIN32
-	@for f in $(perl_scripts); do \
+	@for f in $(all_scripts); do \
 	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	done

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/tex4htk/
 ##
-## Copyright (C) 2009-2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -24,81 +24,26 @@ LDADD = $(KPATHSEA_LIBS)
 
 perl_scripts = mk4ht
 shell_scripts = ht htcontext htlatex htmex httex httexi htxelatex htxetex
+scriptsdir = texmf-dist/scripts/tex4ht
+nodist_bin_SCRIPTS =
 
-EXTRA_DIST = $(perl_scripts) $(shell_scripts)
+include $(srcdir)/../am/script_links.am
 
-## Make sure $(tex4htdir) exists
-##
-tex4ht_subdir = texmf-dist/scripts/tex4ht
-tex4htdir = ${prefix}/$(tex4ht_subdir)
-tex4ht_SCRIPTS =
+texmfdir = ${prefix}/$(scriptsdir)
+dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
+
+install-data-hook: install-perl-links install-shell-links
+uninstall-hook: uninstall-links
 
 if WIN32
 dist_bin_SCRIPTS = $(shell_scripts:=.bat)
-if WIN32_WRAP
-## We treat the WIN32 wrappers as SCRIPTS to avoid automatic build rules
-nodist_bin_SCRIPTS = $(perl_scripts:=.exe) $(shell_scripts:=.exe)
-runscript = $(srcdir)/../texlive/w32_wrapper/runscript.exe
-$(nodist_bin_SCRIPTS): $(runscript)
-	$(LN_S) $(runscript) $@
-endif WIN32_WRAP
-else !WIN32
-## Make sure $(bindir) exists
-##
-dist_bin_SCRIPTS =
-endif !WIN32
+endif WIN32
 
 CLEANFILES = $(nodist_bin_SCRIPTS)
 
-# We support both multiplatform and non-multiplatform builds.
-install-data-hook:
-	@for p in $(perl_scripts); do \
-	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.pl'"; \
-	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.pl"; \
-	done
-	@for p in $(shell_scripts); do \
-	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.sh'"; \
-	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.sh"; \
-	done
-if !WIN32
-	case "$(bindir)" in \
-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
-	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-	     exit 1;; \
-	esac
-endif !WIN32
-
-## Link to the basename, removing the extension,
-.PHONY: install-links
-install-links:
-	@cd $(DESTDIR)$(bindir) && \
-	  for p in $(perl_scripts); do \
-	    rm -f $$p; \
-	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.pl'"; \
-	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p || exit 1; \
-	  done && \
-	  for p in $(shell_scripts); do \
-	    rm -f $$p; \
-	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.sh'"; \
-	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.sh $$p || exit 1; \
-	  done
-
-uninstall-hook:
-	@for p in $(perl_scripts:=.pl) $(shell_scripts:=.sh); do \
-	  echo "rm -f '$(DESTDIR)$(tex4htdir)/$$p'"; \
-	  rm -f "$(DESTDIR)$(tex4htdir)/$$p"; \
-	done
-if !WIN32
-	@for p in $(perl_scripts) $(shell_scripts); do \
-	  echo "rm -f '$(DESTDIR)$(bindir)/$$p'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
-	done
-endif !WIN32
-
 ## Not used
 ##
-EXTRA_DIST += \
+EXTRA_DIST = \
 	dbcontext \
 	dblatex \
 	dbmcontext \

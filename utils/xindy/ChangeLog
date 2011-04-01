@@ -1,3 +1,8 @@
+2011-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use the ../../texk/am/script_links.am fragment
+	to build and install the user commands here.
+
 2011-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Use KPSE_CHECK_PERL, KPSE_CHECK_LATEX, and
