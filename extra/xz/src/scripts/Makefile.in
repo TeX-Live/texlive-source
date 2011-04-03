@@ -34,6 +34,15 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@COND_LZMALINKS_TRUE@am__append_1 = \
+@COND_LZMALINKS_TRUE@	xzdiff-lzdiff \
+@COND_LZMALINKS_TRUE@	xzdiff-lzcmp \
+@COND_LZMALINKS_TRUE@	xzgrep-lzgrep \
+@COND_LZMALINKS_TRUE@	xzgrep-lzegrep \
+@COND_LZMALINKS_TRUE@	xzgrep-lzfgrep \
+@COND_LZMALINKS_TRUE@	xzmore-lzmore \
+@COND_LZMALINKS_TRUE@	xzless-lzless
+
 subdir = src/scripts
 DIST_COMMON = $(dist_man_MANS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/xzdiff.in $(srcdir)/xzgrep.in \
@@ -50,6 +59,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/tuklib_common.m4 \
 	$(top_srcdir)/m4/tuklib_cpucores.m4 \
 	$(top_srcdir)/m4/tuklib_integer.m4 \
+	$(top_srcdir)/m4/tuklib_mbstr.m4 \
 	$(top_srcdir)/m4/tuklib_physmem.m4 \
 	$(top_srcdir)/m4/tuklib_progname.m4 \
 	$(top_srcdir)/m4/visibility.m4 $(top_srcdir)/configure.ac
@@ -112,8 +122,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DYNAMIC_CPPFLAGS = @DYNAMIC_CPPFLAGS@
-DYNAMIC_LDFLAGS = @DYNAMIC_LDFLAGS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -146,6 +154,7 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -175,8 +184,6 @@ RC = @RC@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-STATIC_CPPFLAGS = @STATIC_CPPFLAGS@
-STATIC_LDFLAGS = @STATIC_LDFLAGS@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
@@ -186,6 +193,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 acx_pthread_config = @acx_pthread_config@
@@ -237,6 +245,7 @@ top_srcdir = @top_srcdir@
 xz = @xz@
 nodist_bin_SCRIPTS = xzdiff xzgrep xzmore xzless
 dist_man_MANS = xzdiff.1 xzgrep.1 xzmore.1 xzless.1
+links = xzdiff-xzcmp xzgrep-xzegrep xzgrep-xzfgrep $(am__append_1)
 all: all-am
 
 .SUFFIXES:
@@ -529,57 +538,31 @@ uninstall-man: uninstall-man1
 
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
-	target=`echo xzdiff | sed '$(transform)'` && \
-	for name in xzcmp lzdiff lzcmp; do \
-		link=`echo $$name | sed '$(transform)'` && \
-		rm -f $$link && \
-		$(LN_S) $$target $$link; \
-	done && \
-	target=`echo xzgrep | sed '$(transform)'` && \
-	for name in xzegrep xzfgrep lzgrep lzegrep lzfgrep; do \
-		link=`echo $$name | sed '$(transform)'` && \
-		rm -f $$link && \
-		$(LN_S) $$target $$link; \
-	done && \
-	for name in xzmore xzless; do \
-		target=`echo $$name | sed '$(transform)'` && \
-		link=`echo $$name | sed 's/xz/lz/;$(transform)'` && \
+	for pair in $(links); do \
+		target=`echo $$pair | sed 's/-.*$$//' | sed '$(transform)'` && \
+		link=`echo $$pair | sed 's/^.*-//' | sed '$(transform)'` && \
 		rm -f $$link && \
 		$(LN_S) $$target $$link; \
 	done
 
 install-data-hook:
 	cd $(DESTDIR)$(mandir)/man1 && \
-	target=`echo xzdiff | sed '$(transform)'` && \
-	for name in xzcmp lzdiff lzcmp; do \
-		link=`echo $$name | sed '$(transform)'` && \
-		rm -f $$link.1 && \
-		$(LN_S) $$target.1 $$link.1; \
-	done && \
-	target=`echo xzgrep | sed '$(transform)'` && \
-	for name in xzegrep xzfgrep lzgrep lzegrep lzfgrep; do \
-		link=`echo $$name | sed '$(transform)'` && \
-		rm -f $$link.1 && \
-		$(LN_S) $$target.1 $$link.1; \
-	done && \
-	for name in xzmore xzless; do \
-		target=`echo $$name | sed '$(transform)'` && \
-		link=`echo $$name | sed 's/xz/lz/;$(transform)'` && \
+	for pair in $(links); do \
+		target=`echo $$pair | sed 's/-.*$$//' | sed '$(transform)'` && \
+		link=`echo $$pair | sed 's/^.*-//' | sed '$(transform)'` && \
 		rm -f $$link.1 && \
 		$(LN_S) $$target.1 $$link.1; \
 	done
 
 uninstall-hook:
 	cd $(DESTDIR)$(bindir) && \
-	for name in xzcmp lzdiff lzcmp xzegrep xzfgrep \
-			lzgrep lzegrep lzfgrep lzmore lzless; do \
-		link=`echo $$name | sed '$(transform)'` && \
+	for pair in $(links); do \
+		link=`echo $$pair | sed 's/^.*-//' | sed '$(transform)'` && \
 		rm -f $$link; \
 	done
 	cd $(DESTDIR)$(mandir)/man1 && \
-	for name in xzcmp lzdiff lzcmp xzegrep xzfgrep \
-			lzgrep lzegrep lzfgrep lzmore lzless; do \
-		link=`echo $$name | sed '$(transform)'` && \
+	for pair in $(links); do \
+		link=`echo $$pair | sed 's/^.*-//' | sed '$(transform)'` && \
 		rm -f $$link.1; \
 	done
 

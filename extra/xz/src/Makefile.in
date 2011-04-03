@@ -33,6 +33,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@COND_XZ_TRUE@am__append_1 = xz
+@COND_LZMAINFO_TRUE@am__append_2 = lzmainfo
+@COND_SCRIPTS_TRUE@am__append_3 = scripts
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -47,6 +50,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/tuklib_common.m4 \
 	$(top_srcdir)/m4/tuklib_cpucores.m4 \
 	$(top_srcdir)/m4/tuklib_integer.m4 \
+	$(top_srcdir)/m4/tuklib_mbstr.m4 \
 	$(top_srcdir)/m4/tuklib_physmem.m4 \
 	$(top_srcdir)/m4/tuklib_progname.m4 \
 	$(top_srcdir)/m4/visibility.m4 $(top_srcdir)/configure.ac
@@ -72,7 +76,7 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 	distdir
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = liblzma xzdec xz lzmainfo scripts
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -123,8 +127,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DYNAMIC_CPPFLAGS = @DYNAMIC_CPPFLAGS@
-DYNAMIC_LDFLAGS = @DYNAMIC_LDFLAGS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -157,6 +159,7 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -186,8 +189,6 @@ RC = @RC@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-STATIC_CPPFLAGS = @STATIC_CPPFLAGS@
-STATIC_LDFLAGS = @STATIC_LDFLAGS@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
@@ -197,6 +198,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 acx_pthread_config = @acx_pthread_config@
@@ -246,7 +248,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 xz = @xz@
-SUBDIRS = liblzma xz xzdec lzmainfo scripts
+SUBDIRS = liblzma xzdec $(am__append_1) $(am__append_2) \
+	$(am__append_3)
 EXTRA_DIST = common
 all: all-recursive
 

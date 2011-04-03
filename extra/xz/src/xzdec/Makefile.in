@@ -34,10 +34,12 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = xzdec$(EXEEXT) lzmadec$(EXEEXT)
 @COND_W32_TRUE@am__append_1 = xzdec_w32res.rc
 @COND_GNULIB_TRUE@am__append_2 = $(top_builddir)/lib/libgnu.a
 @COND_W32_TRUE@am__append_3 = lzmadec_w32res.rc
+bin_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2)
+@COND_XZDEC_TRUE@am__append_4 = xzdec
+@COND_LZMADEC_TRUE@am__append_5 = lzmadec
 subdir = src/xzdec
 DIST_COMMON = $(dist_man_MANS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -53,6 +55,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/tuklib_common.m4 \
 	$(top_srcdir)/m4/tuklib_cpucores.m4 \
 	$(top_srcdir)/m4/tuklib_integer.m4 \
+	$(top_srcdir)/m4/tuklib_mbstr.m4 \
 	$(top_srcdir)/m4/tuklib_physmem.m4 \
 	$(top_srcdir)/m4/tuklib_progname.m4 \
 	$(top_srcdir)/m4/visibility.m4 $(top_srcdir)/configure.ac
@@ -62,6 +65,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+@COND_XZDEC_TRUE@am__EXEEXT_1 = xzdec$(EXEEXT)
+@COND_LZMADEC_TRUE@am__EXEEXT_2 = lzmadec$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__lzmadec_SOURCES_DIST = xzdec.c \
@@ -89,9 +94,6 @@ am_xzdec_OBJECTS = xzdec-xzdec.$(OBJEXT) \
 xzdec_OBJECTS = $(am_xzdec_OBJECTS)
 xzdec_DEPENDENCIES = $(top_builddir)/src/liblzma/liblzma.la \
 	$(am__append_2) $(am__DEPENDENCIES_1)
-xzdec_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(xzdec_LDFLAGS) \
-	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -158,8 +160,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DYNAMIC_CPPFLAGS = @DYNAMIC_CPPFLAGS@
-DYNAMIC_LDFLAGS = @DYNAMIC_LDFLAGS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -192,6 +192,7 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -221,8 +222,6 @@ RC = @RC@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-STATIC_CPPFLAGS = @STATIC_CPPFLAGS@
-STATIC_LDFLAGS = @STATIC_LDFLAGS@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
@@ -232,6 +231,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 acx_pthread_config = @acx_pthread_config@
@@ -287,10 +287,8 @@ xzdec_CPPFLAGS = \
 	-DTUKLIB_GETTEXT=0 \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/liblzma/api \
-	-I$(top_builddir)/lib \
-	$(STATIC_CPPFLAGS)
+	-I$(top_builddir)/lib
 
-xzdec_LDFLAGS = $(STATIC_LDFLAGS)
 xzdec_LDADD = $(top_builddir)/src/liblzma/liblzma.la $(am__append_2) \
 	$(LTLIBINTL)
 lzmadec_SOURCES = xzdec.c $(top_srcdir)/src/common/tuklib_progname.c \
@@ -298,7 +296,7 @@ lzmadec_SOURCES = xzdec.c $(top_srcdir)/src/common/tuklib_progname.c \
 lzmadec_CPPFLAGS = $(xzdec_CPPFLAGS) -DLZMADEC
 lzmadec_LDFLAGS = $(xzdec_LDFLAGS)
 lzmadec_LDADD = $(xzdec_LDADD)
-dist_man_MANS = xzdec.1
+@COND_XZDEC_TRUE@dist_man_MANS = xzdec.1
 all: all-am
 
 .SUFFIXES:
@@ -381,7 +379,7 @@ lzmadec$(EXEEXT): $(lzmadec_OBJECTS) $(lzmadec_DEPENDENCIES)
 	$(lzmadec_LINK) $(lzmadec_OBJECTS) $(lzmadec_LDADD) $(LIBS)
 xzdec$(EXEEXT): $(xzdec_OBJECTS) $(xzdec_DEPENDENCIES) 
 	@rm -f xzdec$(EXEEXT)
-	$(xzdec_LINK) $(xzdec_OBJECTS) $(xzdec_LDADD) $(LIBS)
+	$(LINK) $(xzdec_OBJECTS) $(xzdec_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -672,6 +670,8 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@COND_LZMADEC_FALSE@install-data-hook:
+@COND_LZMADEC_FALSE@uninstall-hook:
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
@@ -770,17 +770,18 @@ uninstall-man: uninstall-man1
 	$(RC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 		$(xzdec_CPPFLAGS) $(CPPFLAGS) $(RCFLAGS) -i $< -o $@
 
-install-data-hook:
-	cd $(DESTDIR)$(mandir)/man1 && \
-	target=`echo xzdec | sed '$(transform)'` && \
-	link=`echo lzmadec | sed '$(transform)'` && \
-	rm -f $$link.1 && \
-	$(LN_S) $$target.1 $$link.1
+# FIXME: If xzdec is disabled, this will create a dangling symlink.
+@COND_LZMADEC_TRUE@install-data-hook:
+@COND_LZMADEC_TRUE@	cd $(DESTDIR)$(mandir)/man1 && \
+@COND_LZMADEC_TRUE@	target=`echo xzdec | sed '$(transform)'` && \
+@COND_LZMADEC_TRUE@	link=`echo lzmadec | sed '$(transform)'` && \
+@COND_LZMADEC_TRUE@	rm -f $$link.1 && \
+@COND_LZMADEC_TRUE@	$(LN_S) $$target.1 $$link.1
 
-uninstall-hook:
-	cd $(DESTDIR)$(mandir)/man1 && \
-	link=`echo lzmadec | sed '$(transform)'` && \
-	rm -f $$link.1
+@COND_LZMADEC_TRUE@uninstall-hook:
+@COND_LZMADEC_TRUE@	cd $(DESTDIR)$(mandir)/man1 && \
+@COND_LZMADEC_TRUE@	link=`echo lzmadec | sed '$(transform)'` && \
+@COND_LZMADEC_TRUE@	rm -f $$link.1
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

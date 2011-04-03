@@ -14,12 +14,12 @@ SYNOPSIS
 DESCRIPTION
        xzcmp  and  xzdiff  invoke  cmp(1)  or diff(1) on files compressed with
        xz(1), lzma(1), gzip(1), or bzip2(1).  All options specified are passed
-       directly to cmp or diff.  If only one file is specified, then the files
-       compared are file1 (which must have a suffix of a supported compression
-       format)  and  file1  from  which the compression format suffix has been
-       stripped.  If two files are specified, then they  are  uncompressed  if
-       necessary  and  fed  to cmp(1) or diff(1).  The exit status from cmp or
-       diff is preserved.
+       directly to cmp(1) or diff(1).  If only one file is specified, then the
+       files compared are file1 (which must have a suffix of a supported  com-
+       pression format) and file1 from which the compression format suffix has
+       been stripped.  If two files are specified, then they are  uncompressed
+       if necessary and fed to cmp(1) or diff(1).  The exit status from cmp(1)
+       or diff(1) is preserved.
 
        The names lzcmp and lzdiff are provided for backward compatibility with
        LZMA Utils.
@@ -33,4 +33,4 @@ BUGS
 
 
 
-Tukaani                           2009-07-05                         XZDIFF(1)
+Tukaani                           2010-09-27                         XZDIFF(1)

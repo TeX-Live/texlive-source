@@ -19,11 +19,12 @@
 
 
 /// \brief      Safe realloc() that never returns NULL
-extern void *xrealloc(void *ptr, size_t size);
+extern void *xrealloc(void *ptr, size_t size)
+		lzma_attribute((malloc)) lzma_attr_alloc_size(2);
 
 
 /// \brief      Safe strdup() that never returns NULL
-extern char *xstrdup(const char *src);
+extern char *xstrdup(const char *src) lzma_attribute((malloc));
 
 
 /// \brief      Fancy version of strtoull()
@@ -94,13 +95,6 @@ enum nicestr_unit {
 extern const char *uint64_to_nicestr(uint64_t value,
 		enum nicestr_unit unit_min, enum nicestr_unit unit_max,
 		bool always_also_bytes, uint32_t slot);
-
-
-/// \brief      Convert double to a string with one decimal place
-///
-/// This is like uint64_to_str() except that this converts a double and
-/// uses exactly one decimal place.
-extern const char *double_to_str(double value);
 
 
 /// \brief      Wrapper for snprintf() to help constructing a string in pieces

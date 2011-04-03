@@ -52,6 +52,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/tuklib_common.m4 \
 	$(top_srcdir)/m4/tuklib_cpucores.m4 \
 	$(top_srcdir)/m4/tuklib_integer.m4 \
+	$(top_srcdir)/m4/tuklib_mbstr.m4 \
 	$(top_srcdir)/m4/tuklib_physmem.m4 \
 	$(top_srcdir)/m4/tuklib_progname.m4 \
 	$(top_srcdir)/m4/visibility.m4 $(top_srcdir)/configure.ac
@@ -142,8 +143,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DYNAMIC_CPPFLAGS = @DYNAMIC_CPPFLAGS@
-DYNAMIC_LDFLAGS = @DYNAMIC_LDFLAGS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -176,6 +175,7 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -205,8 +205,6 @@ RC = @RC@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-STATIC_CPPFLAGS = @STATIC_CPPFLAGS@
-STATIC_LDFLAGS = @STATIC_LDFLAGS@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
@@ -216,6 +214,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 acx_pthread_config = @acx_pthread_config@
@@ -267,10 +266,8 @@ top_srcdir = @top_srcdir@
 xz = @xz@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/common \
-	-I$(top_srcdir)/src/liblzma/api \
-	$(STATIC_CPPFLAGS)
+	-I$(top_srcdir)/src/liblzma/api
 
-AM_LDFLAGS = $(STATIC_LDFLAGS)
 LDADD = $(top_builddir)/src/liblzma/liblzma.la $(am__append_1) \
 	$(LTLIBINTL)
 all: all-am

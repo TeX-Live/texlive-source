@@ -27,18 +27,24 @@ dist_doc_DATA = \
 	doc/xz-file-format.txt \
 	doc/lzma-file-format.txt
 
+examplesdir = $(docdir)/examples
+dist_examples_DATA = \
+	doc/examples/xz_pipe_comp.c \
+	doc/examples/xz_pipe_decomp.c
+
 EXTRA_DIST = \
 	extra \
 	dos \
 	windows \
 	autogen.sh \
-	version.sh \
 	Doxyfile.in \
 	COPYING.GPLv2 \
 	COPYING.GPLv3 \
 	COPYING.LGPLv2.1 \
 	INSTALL.generic \
-	PACKAGERS
+	PACKAGERS \
+	build-aux/manconv.sh \
+	build-aux/version.sh
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -64,19 +70,21 @@ dist-hook:
 		$(MKDIR_P) "$$dest/pdf-a4" "$$dest/pdf-letter" "$$dest/txt" && \
 		for FILE in $(manfiles); do \
 			BASE=`basename $$FILE .1` && \
-			groff -man -t -Tps -P-pa4 < "$(srcdir)/$$FILE" \
-				| ps2pdf - - \
+			sh "$(srcdir)/build-aux/manconv.sh" pdf a4 \
+				< "$(srcdir)/$$FILE" \
 				> "$$dest/pdf-a4/$$BASE-a4.pdf" && \
-			groff -man -t -Tps -P-pletter < "$(srcdir)/$$FILE" \
-				| ps2pdf - - \
+			sh "$(srcdir)/build-aux/manconv.sh" pdf letter \
+				< "$(srcdir)/$$FILE" \
 				> "$$dest/pdf-letter/$$BASE-letter.pdf" && \
-			groff -man -t -Tascii < "$(srcdir)/$$FILE" \
-				| col -bx > "$$dest/txt/$$BASE.txt"; \
+			sh "$(srcdir)/build-aux/manconv.sh" ascii \
+				< "$(srcdir)/$$FILE" \
+				> "$$dest/txt/$$BASE.txt"; \
 		done; \
 	fi
 
 # This works with GNU tar and gives cleaner package than normal 'make dist'.
 mydist:
+	VERSION=$(VERSION); \
 	if test -d "$(srcdir)/.git" && type git > /dev/null 2>&1; then \
 		SNAPSHOT=`cd "$(srcdir)" && git describe --abbrev=4 | cut -b2-`; \
 		test -n "$$SNAPSHOT" && VERSION=$$SNAPSHOT; \

@@ -47,9 +47,6 @@
    to 0 if you don't. */
 #undef HAVE_DECL_PROGRAM_INVOCATION_NAME
 
-/* Define to 1 if decoder components are enabled. */
-#undef HAVE_DECODER
-
 /* Define to 1 if arm decoder is enabled. */
 #undef HAVE_DECODER_ARM
 
@@ -79,9 +76,6 @@
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
-
-/* Define to 1 if encoder components are enabled. */
-#undef HAVE_ENCODER
 
 /* Define to 1 if arm encoder is enabled. */
 #undef HAVE_ENCODER_ARM
@@ -139,6 +133,9 @@
 
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
+
+/* Define to 1 if mbrtowc and mbstate_t are properly declared. */
+#undef HAVE_MBRTOWC
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -230,6 +227,9 @@
 /* Define to 1 or 0, depending whether the compiler supports simple visibility
    declarations. */
 #undef HAVE_VISIBILITY
+
+/* Define to 1 if you have the `wcwidth' function. */
+#undef HAVE_WCWIDTH
 
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL

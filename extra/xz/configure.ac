@@ -17,7 +17,7 @@
 
 AC_PREREQ([2.64])
 
-AC_INIT([XZ Utils], m4_esyscmd([/bin/sh version.sh]),
+AC_INIT([XZ Utils], m4_esyscmd([/bin/sh build-aux/version.sh]),
 	[lasse.collin@tukaani.org], [xz], [http://tukaani.org/xz/])
 AC_CONFIG_SRCDIR([src/liblzma/common/common.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -93,8 +93,6 @@ enable_encoders=`echo "$enable_encoders" | sed 's/,/ /g'`
 if test "x$enable_encoders" = xno || test "x$enable_encoders" = x; then
 	AC_MSG_RESULT([(none)])
 else
-	AC_DEFINE([HAVE_ENCODER], [1],
-		[Define to 1 if encoder components are enabled.])
 	for arg in $enable_encoders
 	do
 		case $arg in m4_foreach([NAME], [SUPPORTED_FILTERS], [
@@ -122,8 +120,6 @@ enable_decoders=`echo "$enable_decoders" | sed 's/,/ /g'`
 if test "x$enable_decoders" = xno || test "x$enable_decoders" = x; then
 	AC_MSG_RESULT([(none)])
 else
-	AC_DEFINE([HAVE_DECODER], [1],
-		[Define to 1 if decoder components are enabled.])
 	for arg in $enable_decoders
 	do
 		case $arg in m4_foreach([NAME], [SUPPORTED_FILTERS], [
@@ -287,7 +283,7 @@ if test "x$enable_assembler" = xyes; then
 	case $host_os in
 		# Darwin should work too but only if not creating universal
 		# binaries. Solaris x86 could work too but I cannot test.
-		linux* | *bsd* | mingw* | cygwin*)
+		linux* | *bsd* | mingw* | cygwin* | *djgpp*)
 			case $host_cpu in
 				i?86)   enable_assembler=x86 ;;
 				x86_64) enable_assembler=x86_64 ;;
@@ -369,39 +365,42 @@ AC_DEFINE_UNQUOTED([ASSUME_RAM], [$enable_assume_ram],
 		be determined.])
 
 
-############################################
-# xz/xzdec/lzmadec linkage against liblzma #
-############################################
+#########################
+# Components to install #
+#########################
 
-# Link the xz, xzdec, and lzmadec command line tools against static liblzma
-# unless using --enable-dynamic. Using static liblzma gives a little bit
-# faster executable on x86, because no register is wasted for PIC. We also
-# have one dependency less, which allows users to more freely copy the xz
-# binary to other boxes. However, I wouldn't be surprised if distro
-# maintainers still prefer dynamic linking, so let's make it easy for them.
+AC_ARG_ENABLE([xz], [AC_HELP_STRING([--disable-xz],
+		[do not build the xz tool])],
+	[], [enable_xz=yes])
+AM_CONDITIONAL([COND_XZ], [test x$enable_xz != xno])
 
-AC_MSG_CHECKING([how programs should be linked against liblzma])
-AC_ARG_ENABLE([dynamic], [AC_HELP_STRING([--enable-dynamic=TYPE],
-			[Set how command line tools are linked against liblzma.
-			TYPE can be mixed, yes, or no. The default is mixed.])],
-		[], [enable_dynamic=mixed])
-case $enable_dynamic in
-	mixed)
-		AC_MSG_RESULT([mixed (some dynamically, some statically)])
-		;;
-	yes)
-		AC_MSG_RESULT([dynamically])
-		;;
-	no)
-		AC_MSG_RESULT([statically])
-		;;
-	*)
-		AC_MSG_RESULT([])
-		AC_MSG_ERROR([--enable-dynamic accepts only \`mixed', \`yes', or \`no'])
-		;;
-esac
-# We use the actual results later, because we don't know yet
-# if --disable-shared or --disable-static was used.
+AC_ARG_ENABLE([xzdec], [AC_HELP_STRING([--disable-xzdec],
+		[do not build xzdec])],
+	[], [enable_xzdec=yes])
+AM_CONDITIONAL([COND_XZDEC], [test x$enable_xzdec != xno])
+
+AC_ARG_ENABLE([lzmadec], [AC_HELP_STRING([--disable-lzmadec],
+		[do not build lzmadec
+		(it exists primarily for LZMA Utils compatibility)])],
+	[], [enable_lzmadec=yes])
+AM_CONDITIONAL([COND_LZMADEC], [test x$enable_lzmadec != xno])
+
+AC_ARG_ENABLE([lzmainfo], [AC_HELP_STRING([--disable-lzmainfo],
+		[do not build lzmainfo
+		(it exists primarily for LZMA Utils compatibility)])],
+	[], [enable_lzmainfo=yes])
+AM_CONDITIONAL([COND_LZMAINFO], [test x$enable_lzmainfo != xno])
+
+AC_ARG_ENABLE([lzma-links], [AC_HELP_STRING([--disable-lzma-links],
+		[do not create symlinks for LZMA Utils compatibility])],
+	[], [enable_lzma_links=yes])
+AM_CONDITIONAL([COND_LZMALINKS], [test x$enable_lzma_links != xno])
+
+AC_ARG_ENABLE([scripts], [AC_HELP_STRING([--disable-scripts],
+		[do not install the scripts xzdiff, xzgrep, xzless, xzmore,
+		and their symlinks])],
+	[], [enable_scripts=yes])
+AM_CONDITIONAL([COND_SCRIPTS], [test x$enable_scripts != xno])
 
 
 ###############################################################################
@@ -522,6 +521,7 @@ TUKLIB_PROGNAME
 TUKLIB_INTEGER
 TUKLIB_PHYSMEM
 TUKLIB_CPUCORES
+TUKLIB_MBSTR
 
 
 ###############################################################################
@@ -578,7 +578,7 @@ if test "$GCC" = yes ; then
 		AC_MSG_CHECKING([if $CC accepts $NEW_FLAG])
 		OLD_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS $NEW_FLAG"
-		AC_COMPILE_IFELSE([void foo(void) { }], [
+		AC_COMPILE_IFELSE([AC_LANG_SOURCE([void foo(void) { }])], [
 			AM_CFLAGS="$AM_CFLAGS $NEW_FLAG"
 			AC_MSG_RESULT([yes])
 		], [
@@ -609,45 +609,6 @@ AM_CONDITIONAL([COND_GNULIB], test -n "$LIBOBJS")
 
 # Add default AM_CFLAGS.
 AC_SUBST([AM_CFLAGS])
-
-# Set additional flags for static/dynamic linking. The idea is that every
-# program (not library) being built will use either STATIC_{CPPFLAGS,LDFLAGS}
-# or DYNAMIC_{CPPFLAGS,LDFLAGS} depending on which type of linkage is
-# preferred. These preferences get overridden by use of --disable-static,
-# --disable-shared, or --enable-dynamic.
-#
-# This is quite messy, because we want to use LZMA_API_STATIC when linking
-# against static liblzma. It's needed on Windows.
-if test "x$enable_static" = xno; then
-	enable_dynamic=yes
-fi
-if test "x$enable_shared" = xno; then
-	enable_dynamic=no
-fi
-case $enable_dynamic in
-	yes)
-		STATIC_CPPFLAGS=
-		STATIC_LDFLAGS=
-		DYNAMIC_CPPFLAGS=
-		DYNAMIC_LDFLAGS=
-		;;
-	mixed)
-		STATIC_CPPFLAGS="-DLZMA_API_STATIC"
-		STATIC_LDFLAGS="-static"
-		DYNAMIC_CPPFLAGS=
-		DYNAMIC_LDFLAGS=
-		;;
-	no)
-		STATIC_CPPFLAGS="-DLZMA_API_STATIC"
-		STATIC_LDFLAGS="-static"
-		DYNAMIC_CPPFLAGS="-DLZMA_API_STATIC"
-		DYNAMIC_LDFLAGS="-static"
-		;;
-esac
-AC_SUBST([STATIC_CPPFLAGS])
-AC_SUBST([STATIC_LDFLAGS])
-AC_SUBST([DYNAMIC_CPPFLAGS])
-AC_SUBST([DYNAMIC_LDFLAGS])
 
 # This is needed for src/scripts.
 xz=`echo xz | sed "$program_transform_name"`

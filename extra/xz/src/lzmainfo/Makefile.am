@@ -12,14 +12,16 @@ lzmainfo_SOURCES = \
 	$(top_srcdir)/src/common/tuklib_progname.c \
 	$(top_srcdir)/src/common/tuklib_exit.c
 
+if COND_W32
+lzmainfo_SOURCES += lzmainfo_w32res.rc
+endif
+
 lzmainfo_CPPFLAGS = \
 	-DLOCALEDIR=\"$(localedir)\" \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/liblzma/api \
-	-I$(top_builddir)/lib \
-	$(DYNAMIC_CPPFLAGS)
+	-I$(top_builddir)/lib
 
-lzmainfo_LDFLAGS = $(DYNAMIC_LDFLAGS)
 lzmainfo_LDADD = $(top_builddir)/src/liblzma/liblzma.la
 
 if COND_GNULIB
@@ -30,3 +32,8 @@ lzmainfo_LDADD += $(LTLIBINTL)
 
 
 dist_man_MANS = lzmainfo.1
+
+# Windows resource compiler support
+.rc.o:
+	$(RC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+		$(lzmainfo_CPPFLAGS) $(CPPFLAGS) $(RCFLAGS) -i $< -o $@

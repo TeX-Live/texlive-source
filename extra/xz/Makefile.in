@@ -37,13 +37,13 @@ host_triplet = @host@
 @COND_GNULIB_TRUE@am__append_1 = lib
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(dist_doc_DATA) \
-	$(srcdir)/Doxyfile.in $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure ABOUT-NLS AUTHORS COPYING ChangeLog \
-	INSTALL NEWS THANKS TODO build-aux/compile \
-	build-aux/config.guess build-aux/config.rpath \
-	build-aux/config.sub build-aux/depcomp build-aux/install-sh \
-	build-aux/ltmain.sh build-aux/missing
+	$(dist_examples_DATA) $(srcdir)/Doxyfile.in \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/config.h.in $(top_srcdir)/configure ABOUT-NLS \
+	AUTHORS COPYING ChangeLog INSTALL NEWS THANKS TODO \
+	build-aux/compile build-aux/config.guess \
+	build-aux/config.rpath build-aux/config.sub build-aux/depcomp \
+	build-aux/install-sh build-aux/ltmain.sh build-aux/missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
 	$(top_srcdir)/m4/getopt.m4 $(top_srcdir)/m4/gettext.m4 \
@@ -56,6 +56,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/tuklib_common.m4 \
 	$(top_srcdir)/m4/tuklib_cpucores.m4 \
 	$(top_srcdir)/m4/tuklib_integer.m4 \
+	$(top_srcdir)/m4/tuklib_mbstr.m4 \
 	$(top_srcdir)/m4/tuklib_physmem.m4 \
 	$(top_srcdir)/m4/tuklib_progname.m4 \
 	$(top_srcdir)/m4/visibility.m4 $(top_srcdir)/configure.ac
@@ -97,8 +98,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(docdir)"
-DATA = $(dist_doc_DATA)
+am__installdirs = "$(DESTDIR)$(docdir)" "$(DESTDIR)$(examplesdir)"
+DATA = $(dist_doc_DATA) $(dist_examples_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -166,8 +167,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DYNAMIC_CPPFLAGS = @DYNAMIC_CPPFLAGS@
-DYNAMIC_LDFLAGS = @DYNAMIC_LDFLAGS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -200,6 +199,7 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -229,8 +229,6 @@ RC = @RC@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-STATIC_CPPFLAGS = @STATIC_CPPFLAGS@
-STATIC_LDFLAGS = @STATIC_LDFLAGS@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
@@ -240,6 +238,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 acx_pthread_config = @acx_pthread_config@
@@ -304,18 +303,24 @@ dist_doc_DATA = \
 	doc/xz-file-format.txt \
 	doc/lzma-file-format.txt
 
+examplesdir = $(docdir)/examples
+dist_examples_DATA = \
+	doc/examples/xz_pipe_comp.c \
+	doc/examples/xz_pipe_decomp.c
+
 EXTRA_DIST = \
 	extra \
 	dos \
 	windows \
 	autogen.sh \
-	version.sh \
 	Doxyfile.in \
 	COPYING.GPLv2 \
 	COPYING.GPLv3 \
 	COPYING.LGPLv2.1 \
 	INSTALL.generic \
-	PACKAGERS
+	PACKAGERS \
+	build-aux/manconv.sh \
+	build-aux/version.sh
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -415,6 +420,26 @@ uninstall-dist_docDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(docdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(docdir)" && rm -f $$files
+install-dist_examplesDATA: $(dist_examples_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(examplesdir)" || $(MKDIR_P) "$(DESTDIR)$(examplesdir)"
+	@list='$(dist_examples_DATA)'; test -n "$(examplesdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(examplesdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(examplesdir)" || exit $$?; \
+	done
+
+uninstall-dist_examplesDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_examples_DATA)'; test -n "$(examplesdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(examplesdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(examplesdir)" && rm -f $$files
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -739,7 +764,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(docdir)"; do \
+	for dir in "$(DESTDIR)$(docdir)" "$(DESTDIR)$(examplesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -789,7 +814,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-dist_docDATA
+install-data-am: install-dist_docDATA install-dist_examplesDATA
 
 install-dvi: install-dvi-recursive
 
@@ -835,7 +860,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-dist_docDATA
+uninstall-am: uninstall-dist_docDATA uninstall-dist_examplesDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all \
 	ctags-recursive install-am install-strip tags-recursive
@@ -848,14 +873,15 @@ uninstall-am: uninstall-dist_docDATA
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am \
-	install-dist_docDATA install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-dist_docDATA
+	install-dist_docDATA install-dist_examplesDATA install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am \
+	uninstall-dist_docDATA uninstall-dist_examplesDATA
 
 
 # Create ChangeLog from output of "git log --date=iso --stat".
@@ -870,19 +896,21 @@ dist-hook:
 		$(MKDIR_P) "$$dest/pdf-a4" "$$dest/pdf-letter" "$$dest/txt" && \
 		for FILE in $(manfiles); do \
 			BASE=`basename $$FILE .1` && \
-			groff -man -t -Tps -P-pa4 < "$(srcdir)/$$FILE" \
-				| ps2pdf - - \
+			sh "$(srcdir)/build-aux/manconv.sh" pdf a4 \
+				< "$(srcdir)/$$FILE" \
 				> "$$dest/pdf-a4/$$BASE-a4.pdf" && \
-			groff -man -t -Tps -P-pletter < "$(srcdir)/$$FILE" \
-				| ps2pdf - - \
+			sh "$(srcdir)/build-aux/manconv.sh" pdf letter \
+				< "$(srcdir)/$$FILE" \
 				> "$$dest/pdf-letter/$$BASE-letter.pdf" && \
-			groff -man -t -Tascii < "$(srcdir)/$$FILE" \
-				| col -bx > "$$dest/txt/$$BASE.txt"; \
+			sh "$(srcdir)/build-aux/manconv.sh" ascii \
+				< "$(srcdir)/$$FILE" \
+				> "$$dest/txt/$$BASE.txt"; \
 		done; \
 	fi
 
 # This works with GNU tar and gives cleaner package than normal 'make dist'.
 mydist:
+	VERSION=$(VERSION); \
 	if test -d "$(srcdir)/.git" && type git > /dev/null 2>&1; then \
 		SNAPSHOT=`cd "$(srcdir)" && git describe --abbrev=4 | cut -b2-`; \
 		test -n "$$SNAPSHOT" && VERSION=$$SNAPSHOT; \

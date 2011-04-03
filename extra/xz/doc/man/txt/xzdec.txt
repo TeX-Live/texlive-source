@@ -18,11 +18,11 @@ DESCRIPTION
        lzmadec supports .lzma files instead of .xz files.
 
        To reduce the size of the  executable,  xzdec  doesn't  support  multi-
-       threading  or  localization, and doesn't read options from XZ_OPT envi-
-       ronment  variable.   xzdec  doesn't  support  displaying   intermediate
-       progress  information: sending SIGINFO to xzdec does nothing, but send-
-       ing SIGUSR1 terminates  the  process  instead  of  displaying  progress
-       information.
+       threading  or  localization,  and doesn't read options from XZ_DEFAULTS
+       and XZ_OPT environment variables.   xzdec  doesn't  support  displaying
+       intermediate  progress information: sending SIGINFO to xzdec does noth-
+       ing, but sending SIGUSR1 terminates the process instead  of  displaying
+       progress information.
 
 OPTIONS
        -d, --decompress, --uncompress
@@ -36,27 +36,6 @@ OPTIONS
        -c, --stdout, --to-stdout
               Ignored for xz(1) compatibility.  xzdec always writes the decom-
               pressed data to standard output.
-
-       -M limit, --memory=limit
-              Set the memory usage limit.  If this option is specified  multi-
-              ple times, the last one takes effect. The limit can be specified
-              in multiple ways:
-
-              o  The limit can be an absolute value in bytes. Using an integer
-                 suffix like MiB can be useful. Example: --memory=80MiB
-
-              o  The  limit  can be specified as a percentage of physical RAM.
-                 Example: --memory=70%
-
-              o  The limit can be reset back to its default value  by  setting
-                 it to 0.
-
-              o  The memory usage limiting can be effectively disabled by set-
-                 ting limit to max.  This isn't recommended. It's usually bet-
-                 ter to use, for example, --memory=90%.
-
-              The  current  limit can be seen near the bottom of the output of
-              the --help option.
 
        -q, --quiet
               Specifying this once does nothing since xzdec never displays any
@@ -81,10 +60,14 @@ EXIT STATUS
        status 2 is not used by xzdec.
 
 NOTES
-       xzdec  and  lzmadec  are not really that small. The size can be reduced
+       Use  xz(1)  instead of xzdec or lzmadec for normal everyday use.  xzdec
+       or lzmadec are meant only for situations where it is important to  have
+       a smaller decompressor than the full-featured xz(1).
+
+       xzdec  and  lzmadec are not really that small.  The size can be reduced
        further by dropping features from liblzma at  compile  time,  but  that
        shouldn't  usually  be done for executables distributed in typical non-
-       embedded operating system distributions. If you need a truly small  .xz
+       embedded operating system distributions.  If you need a truly small .xz
        decompressor, consider using XZ Embedded.
 
 SEE ALSO
@@ -94,4 +77,4 @@ SEE ALSO
 
 
 
-Tukaani                           2010-03-07                          XZDEC(1)
+Tukaani                           2010-09-27                          XZDEC(1)

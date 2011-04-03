@@ -35,7 +35,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = lzmainfo$(EXEEXT)
-@COND_GNULIB_TRUE@am__append_1 = $(top_builddir)/lib/libgnu.a
+@COND_W32_TRUE@am__append_1 = lzmainfo_w32res.rc
+@COND_GNULIB_TRUE@am__append_2 = $(top_builddir)/lib/libgnu.a
 subdir = src/lzmainfo
 DIST_COMMON = $(dist_man_MANS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -51,6 +52,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acx_pthread.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/tuklib_common.m4 \
 	$(top_srcdir)/m4/tuklib_cpucores.m4 \
 	$(top_srcdir)/m4/tuklib_integer.m4 \
+	$(top_srcdir)/m4/tuklib_mbstr.m4 \
 	$(top_srcdir)/m4/tuklib_physmem.m4 \
 	$(top_srcdir)/m4/tuklib_progname.m4 \
 	$(top_srcdir)/m4/visibility.m4 $(top_srcdir)/configure.ac
@@ -62,16 +64,17 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__lzmainfo_SOURCES_DIST = lzmainfo.c \
+	$(top_srcdir)/src/common/tuklib_progname.c \
+	$(top_srcdir)/src/common/tuklib_exit.c lzmainfo_w32res.rc
+@COND_W32_TRUE@am__objects_1 = lzmainfo_w32res.$(OBJEXT)
 am_lzmainfo_OBJECTS = lzmainfo-lzmainfo.$(OBJEXT) \
 	lzmainfo-tuklib_progname.$(OBJEXT) \
-	lzmainfo-tuklib_exit.$(OBJEXT)
+	lzmainfo-tuklib_exit.$(OBJEXT) $(am__objects_1)
 lzmainfo_OBJECTS = $(am_lzmainfo_OBJECTS)
 am__DEPENDENCIES_1 =
 lzmainfo_DEPENDENCIES = $(top_builddir)/src/liblzma/liblzma.la \
-	$(am__append_1) $(am__DEPENDENCIES_1)
-lzmainfo_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(lzmainfo_LDFLAGS) \
-	$(LDFLAGS) -o $@
+	$(am__append_2) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -86,7 +89,7 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(lzmainfo_SOURCES)
-DIST_SOURCES = $(lzmainfo_SOURCES)
+DIST_SOURCES = $(am__lzmainfo_SOURCES_DIST)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -138,8 +141,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DYNAMIC_CPPFLAGS = @DYNAMIC_CPPFLAGS@
-DYNAMIC_LDFLAGS = @DYNAMIC_LDFLAGS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -172,6 +173,7 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -201,8 +203,6 @@ RC = @RC@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
-STATIC_CPPFLAGS = @STATIC_CPPFLAGS@
-STATIC_LDFLAGS = @STATIC_LDFLAGS@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
@@ -212,6 +212,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 acx_pthread_config = @acx_pthread_config@
@@ -261,26 +262,22 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 xz = @xz@
-lzmainfo_SOURCES = \
-	lzmainfo.c \
+lzmainfo_SOURCES = lzmainfo.c \
 	$(top_srcdir)/src/common/tuklib_progname.c \
-	$(top_srcdir)/src/common/tuklib_exit.c
-
+	$(top_srcdir)/src/common/tuklib_exit.c $(am__append_1)
 lzmainfo_CPPFLAGS = \
 	-DLOCALEDIR=\"$(localedir)\" \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/liblzma/api \
-	-I$(top_builddir)/lib \
-	$(DYNAMIC_CPPFLAGS)
+	-I$(top_builddir)/lib
 
-lzmainfo_LDFLAGS = $(DYNAMIC_LDFLAGS)
 lzmainfo_LDADD = $(top_builddir)/src/liblzma/liblzma.la \
-	$(am__append_1) $(LTLIBINTL)
+	$(am__append_2) $(LTLIBINTL)
 dist_man_MANS = lzmainfo.1
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .lo .o .obj .rc
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -356,7 +353,7 @@ clean-binPROGRAMS:
 	rm -f $$list
 lzmainfo$(EXEEXT): $(lzmainfo_OBJECTS) $(lzmainfo_DEPENDENCIES) 
 	@rm -f lzmainfo$(EXEEXT)
-	$(lzmainfo_LINK) $(lzmainfo_OBJECTS) $(lzmainfo_LDADD) $(LIBS)
+	$(LINK) $(lzmainfo_OBJECTS) $(lzmainfo_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -691,6 +688,11 @@ uninstall-man: uninstall-man1
 	uninstall-am uninstall-binPROGRAMS uninstall-man \
 	uninstall-man1
 
+
+# Windows resource compiler support
+.rc.o:
+	$(RC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+		$(lzmainfo_CPPFLAGS) $(CPPFLAGS) $(RCFLAGS) -i $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
