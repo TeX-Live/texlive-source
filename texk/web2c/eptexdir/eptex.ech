@@ -80,7 +80,7 @@ if not is_char_node(tx) then
     while q<>tx do
       begin if is_char_node(q) then r:=q
       else if (type(q)<>disp_node)and
-        ((type(tx)<>math_node)or(subtype(tx)<>end_M_code)) then r:=q;
+        ((type(q)<>math_node)or(subtype(q)<>end_M_code)) then r:=q;
       q:=link(q);
       end;
     tx:=r;
