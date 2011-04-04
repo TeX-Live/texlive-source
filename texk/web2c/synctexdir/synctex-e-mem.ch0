@@ -55,19 +55,6 @@ So it might not apply as is to pdftex.web due to some typographical changes.
 In the building process, one may have to apply some suitable tex.ch0 first.
 See pdftexdir for details.
 
-@x etex.ch l.3852
-  begin free_node(LR_temp,small_node_size); p:=head;
-  while link(p)<>tail do p:=link(p);
-  free_node(tail,small_node_size); link(p):=null; tail:=p; goto done;
-  end;
-@y
-  begin free_node(LR_temp,medium_node_size); p:=head;
-        {{\sl SyncTeX}: |LR_temp| is a math node}
-  while link(p)<>tail do p:=link(p);
-  free_node(tail,medium_node_size); link(p):=null; tail:=p; goto done;
-  end;
-@z
-
 @x etex.ch l.3976
 @<Reverse an hlist segment...@>=
 begin save_h:=cur_h; temp_ptr:=link(p); rule_wd:=width(p);

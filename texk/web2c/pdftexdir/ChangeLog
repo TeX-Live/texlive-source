@@ -1,3 +1,10 @@
+2011-04-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web: Adapt to ../etexdir/etex.ch: simplify e-pTeX.
+
+	* am/pdftex.am (etex_version.h): Derive from pdftex.web instead
+	of ../etexdir/etex.ch.
+
 2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libpdftex.am: Use AM_CFLAGS instead of libpdftex_a_CFLAGS.

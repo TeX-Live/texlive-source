@@ -1,3 +1,7 @@
+2011-04-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex-e-mem.ch0: Adapt to ../etexdir/etex.ch.
+
 2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/synctex.am: Use AM_CFLAGS instead of synctex_CFLAGS.

@@ -15,7 +15,7 @@
 % pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
 % Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-% e-TeX is copyright (C) 1999-2010 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -104,8 +104,11 @@
 %             fixed a bug in hyph_code handling (\savinghyphcodes)
 %                 reported by Vladimir Volovich <vvv@@vsu.ru>, Feb 2008.
 %             fixed the error messages for improper use of \protected,
-%                 reported by Heiko Oberdiek 
+%                 reported by Heiko Oberdiek
 %                 <heiko.oberdiek@@googlemail.com>, May 2010.
+%             some rearrangements to reduce interferences between
+%                 e-TeX and pTeX, in part suggested by Hironori Kitagawa
+%                 <h_kitagawa2001@@yahoo.co.jp>, Mar 2011.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -3380,7 +3383,8 @@ the proportionality constant for glue setting; |glue_sign(p)| is
 |stretching| or |shrinking| or |normal| depending on whether or not the
 glue should stretch or shrink or remain rigid; and |glue_order(p)|
 specifies the order of infinity to which glue setting applies (|normal|,
-|fil|, |fill|, or |filll|). The |subtype| field is not used.
+|fil|, |fill|, or |filll|). The |subtype| field is not used in \TeX.
+In \eTeX\ the |subtype| field records the box direction mode |box_lr|.
 
 @d hlist_node=0 {|type| of hlist nodes}
 @d box_node_size=7 {number of words to allocate for a box node}
@@ -9581,7 +9585,8 @@ the internal quantity to be scanned; an error will be signalled if
 label exit, restart;
 var m:halfword; {|chr_code| part of the operand token}
     n, k: integer; {accumulators}
-@!q:halfword; {general purpose index}
+@!q,@!r:pointer; {general purpose indices}
+@!tx:pointer; {effective tail node}
 @!i:four_quarters; {character info}
 @!p:0..nest_size; {index into |nest|}
 begin restart: m:=cur_chr;
@@ -9827,12 +9832,27 @@ else cur_val:=info(par_shape_ptr);
 cur_val_level:=int_val;
 end
 
-@ Here is where \.{\\lastpenalty}, \.{\\lastkern}, and \.{\\lastskip} are
+@ Here is where \.{\\lastpenalty}, \.{\\lastkern}, \.{\\lastskip}, and
+\.{\\lastnodetype} are
 implemented. The reference count for \.{\\lastskip} will be updated later.
-A final \.{\\endM} node is temporarily removed.
 
 We also handle \.{\\inputlineno} and \.{\\badness} here, because they are
 legal in similar contexts.
+
+The macro |find_effective_tail_eTeX| sets |tx| to the last non-\.{\\endM}
+node of the current list.
+
+@d find_effective_tail_eTeX==
+tx:=tail;
+if not is_char_node(tx) then
+  if (type(tx)=math_node)and(subtype(tx)=end_M_code) then
+    begin r:=head;
+    repeat q:=r; r:=link(q);
+    until r=tx;
+    tx:=q;
+    end
+@#
+@d find_effective_tail==find_effective_tail_eTeX
 
 @<Fetch an item in the current node...@>=
 if m>=input_line_no_code then
@@ -9872,29 +9892,24 @@ if m>=input_line_no_code then
   cur_val_level:=int_val;
   end
 else begin if cur_chr=glue_val then cur_val:=zero_glue@+else cur_val:=0;
+  find_effective_tail;
   if cur_chr=last_node_type_code then
     begin cur_val_level:=int_val;
-    if (tail=head)or(mode=0) then cur_val:=-1;
+    if (tx=head)or(mode=0) then cur_val:=-1;
     end
   else cur_val_level:=cur_chr;
-  if not is_char_node(tail)and(mode<>0) then
-    begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-      remove_end_M;
+  if not is_char_node(tx)and(mode<>0) then
     case cur_chr of
-    int_val: if type(tail)=penalty_node then cur_val:=penalty(tail);
-    dimen_val: if type(tail)=kern_node then cur_val:=width(tail);
-    glue_val: if type(tail)=glue_node then
-      begin cur_val:=glue_ptr(tail);
-      if subtype(tail)=mu_glue then cur_val_level:=mu_val;
+    int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
+    dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
+    glue_val: if type(tx)=glue_node then
+      begin cur_val:=glue_ptr(tx);
+      if subtype(tx)=mu_glue then cur_val_level:=mu_val;
       end;
-    last_node_type_code:
-      if (type(tail)<>math_node)or(subtype(tail)<>end_M_code) then
-        if type(tail)<=unset_node then cur_val:=type(tail)+1
-        else cur_val:=unset_node+2;
-    end; {there are no other cases}
-    if LR_temp<>null then insert_end_M;
-    end
-  else if (mode=vmode)and(tail=head) then
+    last_node_type_code: if type(tx)<=unset_node then cur_val:=type(tx)+1
+      else cur_val:=unset_node+2;
+    end {there are no other cases}
+  else if (mode=vmode)and(tx=head) then
     case cur_chr of
     int_val: cur_val:=last_penalty;
     dimen_val: cur_val:=last_kern;
@@ -14347,9 +14362,12 @@ changes; the subtype of an an |hlist_node| inside R-text is changed to
 |reversed| once its hlist has been reversed.
 @!@^data structure assumptions@>
 
-@d reversed=min_quarterword+1 {subtype for an |hlist_node| whose hlist
-  has been reversed}
-@d dlist=min_quarterword+2 {subtype for an |hlist_node| from display math mode}
+@d reversed=1 {subtype for an |hlist_node| whose hlist has been reversed}
+@d dlist=2 {subtype for an |hlist_node| from display math mode}
+@d box_lr(#) == (qo(subtype(#))) {direction mode of a box}
+@d set_box_lr(#) ==  subtype(#):=set_box_lr_end
+@d set_box_lr_end(#) == qi(#)
+@#
 @d left_to_right=0
 @d right_to_left=1
 @d reflected==1-cur_dir {the opposite of |cur_dir|}
@@ -21357,7 +21375,7 @@ left_noad: begin print_esc("left"); print_delimiter(delimiter(p));
   end;
 right_noad: begin if subtype(p)=normal then print_esc("right")
   else print_esc("middle");
-  print_delimiter(delimiter(p))
+  print_delimiter(delimiter(p));
   end;
 end;
 if type(p)<left_noad then
@@ -23542,7 +23560,7 @@ depending on how soon \.{\\cr} occurred in that row.
 @<Set the unset box |q| and the unset boxes in it@>=
 begin if mode=-vmode then
   begin type(q):=hlist_node; width(q):=width(p);
-  if nest[nest_ptr-1].mode_field=mmode then subtype(q):=dlist; {for |ship_out|}
+  if nest[nest_ptr-1].mode_field=mmode then set_box_lr(q)(dlist); {for |ship_out|}
   end
 else  begin type(q):=vlist_node; height(q):=height(p);
   end;
@@ -23561,7 +23579,7 @@ arithmetic from entering into the dimensions of any boxes.
 
 @<Set the glue in node |r|...@>=
 n:=span_count(r); t:=width(s); w:=t; u:=hold_head;
-subtype(r):=min_quarterword; {for |ship_out|}
+set_box_lr(r)(0); {for |ship_out|}
 while n>min_quarterword do
   begin decr(n);
   @<Append tabskip glue and an empty box to list |u|,
@@ -26043,7 +26061,7 @@ done:
     if # then if lig_stack=null then
       begin incr(subtype(p)); rt_hit:=false;
       end;
-        link(cur_q):=p; t:=p; ligature_present:=false;
+    link(cur_q):=p; t:=p; ligature_present:=false;
     end
 @d pop_lig_stack==begin if lig_ptr(lig_stack)>null then
     begin link(t):=lig_ptr(lig_stack); {this is a charnode for |hu[j+1]|}
@@ -29218,6 +29236,9 @@ box desired, and |cur_cmd=make_box|.
 procedure begin_box(@!box_context:integer);
 label exit, done;
 var @!p,@!q:pointer; {run through the current list}
+@!r:pointer; {running behind |p|}
+@!fm:boolean; {a final \.{\\beginM} \.{\\endM} node pair?}
+@!tx:pointer; {effective tail node}
 @!m:quarterword; {the length of a replacement list}
 @!k:halfword; {0 or |vmode| or |hmode|}
 @!n:halfword; {a box number}
@@ -29237,7 +29258,28 @@ exit:end;
 
 @ Note that the condition |not is_char_node(tail)| implies that |head<>tail|,
 since |head| is a one-word node.
-A final \.{\\endM} node is temporarily removed.
+
+@d fetch_effective_tail_eTeX(#)== {extract |tx|,
+  drop \.{\\beginM} \.{\\endM} pair}
+q:=head; p:=null;
+repeat r:=p; p:=q; fm:=false;
+if not is_char_node(q) then
+  if type(q)=disc_node then
+    begin for m:=1 to replace_count(q) do p:=link(p);
+    if p=tx then #;
+    end
+  else if (type(q)=math_node)and(subtype(q)=begin_M_code) then fm:=true;
+q:=link(p);
+until q=tx; {found |r|$\to$|p|$\to$|q=tx|}
+q:=link(tx); link(p):=q; link(tx):=null;
+if q=null then if fm then confusion("tail1")
+@:this can't happen tail1}{\quad tail1@>
+  else tail:=p
+else if fm then {|r|$\to$|p=begin_M|$\to$|q=end_M|}
+  begin tail:=r; link(r):=null; flush_node_list(p);@+end
+@#
+@d check_effective_tail(#)==find_effective_tail_eTeX
+@d fetch_effective_tail==fetch_effective_tail_eTeX
 
 @<If the current list ends with a box node, delete it...@>=
 begin cur_box:=null;
@@ -29249,28 +29291,17 @@ else if (mode=vmode)and(head=tail) then
   help2("Sorry...I usually can't take things from the current page.")@/
     ("This \lastbox will therefore be void."); error;
   end
-else  begin if not is_char_node(tail) then
-    begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-      remove_end_M;
-    if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
+else  begin check_effective_tail(goto done);
+  if not is_char_node(tx) then
+    if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
       @<Remove the last box, unless it's part of a discretionary@>;
-    if LR_temp<>null then insert_end_M;
-    end;
-  end;
+    done:end;
 end
 
 @ @<Remove the last box...@>=
-begin q:=head;
-repeat p:=q;
-if not is_char_node(q) then if type(q)=disc_node then
-  begin for m:=1 to replace_count(q) do p:=link(p);
-  if p=tail then goto done;
-  end;
-q:=link(p);
-until q=tail;
-cur_box:=tail; shift_amount(cur_box):=0;
-tail:=p; link(p):=null;
-done:end
+begin fetch_effective_tail(goto done);
+cur_box:=tx; shift_amount(cur_box):=0;
+end
 
 @ Here we deal with things like `\.{\\vsplit 13 to 100pt}'.
 
@@ -29565,32 +29596,23 @@ any_mode(remove_item): delete_last;
 
 @ When |delete_last| is called, |cur_chr| is the |type| of node that
 will be deleted, if present.
-A final \.{\\endM} node is temporarily removed.
 
 @<Declare action...@>=
 procedure delete_last;
 label exit;
 var @!p,@!q:pointer; {run through the current list}
+@!r:pointer; {running behind |p|}
+@!fm:boolean; {a final \.{\\beginM} \.{\\endM} node pair?}
+@!tx:pointer; {effective tail node}
 @!m:quarterword; {the length of a replacement list}
 begin if (mode=vmode)and(tail=head) then
   @<Apologize for inability to do the operation now,
     unless \.{\\unskip} follows non-glue@>
-else  begin if not is_char_node(tail) then
-  begin if (type(tail)=math_node)and(subtype(tail)=end_M_code) then
-    remove_end_M;
-  if type(tail)=cur_chr then
-    begin q:=head;
-    repeat p:=q;
-    if not is_char_node(q) then if type(q)=disc_node then
-      begin for m:=1 to replace_count(q) do p:=link(p);
-      if p=tail then return;
-      end;
-    q:=link(p);
-    until q=tail;
-    link(p):=null; flush_node_list(tail); tail:=p;
+else  begin check_effective_tail(return);
+  if not is_char_node(tx) then if type(tx)=cur_chr then
+    begin fetch_effective_tail(return);
+    flush_node_list(tx);
     end;
-  if LR_temp<>null then insert_end_M;
-  end;
   end;
 exit:end;
 
@@ -30763,7 +30785,7 @@ if mode=-m then {end of equation number}
   begin @<Check that another \.\$ follows@>;
   cur_mlist:=p; cur_style:=text_style; mlist_penalties:=false;
   mlist_to_hlist; a:=hpack(link(temp_head),natural);
-  subtype(a):=dlist;
+  set_box_lr(a)(dlist);
   unsave; decr(save_ptr); {now |cur_group=math_shift_group|}
   if saved(0)=1 then l:=true;
   danger:=false;
@@ -30916,7 +30938,7 @@ is taken only if the display begins with glue, since we assume that the
 user put glue there to control the spacing precisely.
 
 @<Determine the displacement, |d|, of the left edge of the equation...@>=
-subtype(b):=dlist;
+set_box_lr(b)(dlist);
 d:=half(z-w);
 if (e>0)and(d<2*e) then {too close}
   begin d:=half(z-w-e);
@@ -37090,7 +37112,7 @@ else
 in right-to-left text.
 
 @<Display if this box is never to be reversed@>=
-if (type(p)=hlist_node)and(subtype(p)=dlist) then print(", display")
+if (type(p)=hlist_node)and(box_lr(p)=dlist) then print(", display")
 
 @ A number of routines are based on a stack of one-word nodes whose
 |info| fields contain |end_M_code|, |end_L_code|, or |end_R_code|.  The
@@ -37111,13 +37133,12 @@ and |ship_out|, or might be local to |post_line_break|.
   end
 
 @<Glob...@>=
-@!LR_temp:pointer; {holds a temporarily removed \.{\\endM} node}
 @!LR_ptr:pointer; {stack of LR codes for |hpack|, |ship_out|, and |init_math|}
 @!LR_problems:integer; {counts missing begins and ends}
 @!cur_dir:small_number; {current text direction}
 
 @ @<Set init...@>=
-LR_temp:=null; LR_ptr:=null; LR_problems:=0; cur_dir:=left_to_right;
+LR_ptr:=null; LR_problems:=0; cur_dir:=left_to_right;
 
 @ @<Insert LR nodes at the beg...@>=
 begin q:=link(temp_head);
@@ -37157,37 +37178,6 @@ if LR_ptr<>null then
   link(s):=q;
   end
 
-@ Special \.{\\beginM} and \.{\\endM} nodes are inserted in cases where
-math nodes are discarded during line breaking or end up in different
-lines.  When the current lists ends with an \.{\\endM} node that node is
-temporarily removed and later reinserted when the last node is to be
-inspected or removed.  A final \.{\\endM} preceded by a |char_node| will
-not be removed.
-
-@<Declare \eTeX\ procedures for sc...@>=
-procedure remove_end_M;
-var @!p:pointer; {runs through the current list}
-begin p:=head;
-while link(p)<>tail do p:=link(p);
-if not is_char_node(p) then
-  begin LR_temp:=tail; link(p):=null; tail:=p;
-  end;
-end;
-
-@ @<Declare \eTeX\ procedures for sc...@>=
-procedure insert_end_M;
-label done;
-var @!p:pointer; {runs through the current list}
-begin if not is_char_node(tail) then
- if (type(tail)=math_node)and(subtype(tail)=begin_M_code) then
-  begin free_node(LR_temp,small_node_size); p:=head;
-  while link(p)<>tail do p:=link(p);
-  free_node(tail,small_node_size); link(p):=null; tail:=p; goto done;
-  end;
-link(tail):=LR_temp; tail:=LR_temp;
-done: LR_temp:=null;
-end;
-
 @ @<Initialize the LR stack@>=
 put_LR(before) {this will never match}
 
@@ -37223,19 +37213,19 @@ end
 @ @<Initialize |hlist_out| for mixed...@>=
 if eTeX_ex then
   begin @<Initialize the LR stack@>;
-  if subtype(this_box)=dlist then
+  if box_lr(this_box)=dlist then
     if cur_dir=right_to_left then
       begin cur_dir:=left_to_right; cur_h:=cur_h-width(this_box);
       end
-    else subtype(this_box):=min_quarterword;
-  if (cur_dir=right_to_left)and(subtype(this_box)<>reversed) then
+    else set_box_lr(this_box)(0);
+  if (cur_dir=right_to_left)and(box_lr(this_box)<>reversed) then
     @<Reverse the complete hlist and set the subtype to |reversed|@>;
   end
 
 @ @<Finish |hlist_out| for mixed...@>=
 if eTeX_ex then
   begin @<Check for LR anomalies at the end of |hlist_out|@>;
-  if subtype(this_box)=dlist then cur_dir:=right_to_left;
+  if box_lr(this_box)=dlist then cur_dir:=right_to_left;
   end
 
 @ @<Handle a math node in |hlist_out|@>=
@@ -37296,7 +37286,7 @@ append the reversed list, and set the width of the kern node.
 @<Reverse the complete hlist...@>=
 begin save_h:=cur_h; temp_ptr:=p; p:=new_kern(0); link(prev_p):=p;
 cur_h:=0; link(p):=reverse(this_box,null,cur_g,cur_glue); width(p):=-cur_h;
-cur_h:=save_h; subtype(this_box):=reversed;
+cur_h:=save_h; set_box_lr(this_box)(reversed);
 end
 
 @ We detach the remainder of the hlist, replace the math node by
@@ -37558,9 +37548,7 @@ while q<>null do
     until not is_char_node(q)
   else  begin p:=q; q:=link(p);
     if type(p)=math_node then
-      begin
       @<Adjust \(t)the LR stack for the |just_reverse| routine@>;
-      end;
     link(p):=l; l:=p;
     end;
 goto done;
@@ -37649,7 +37637,7 @@ if j<>null then
   begin b:=copy_node_list(j); height(b):=height(p); depth(b):=depth(p);
   s:=s-shift_amount(b); d:=d+s; e:=e+width(b)-z-s;
   end;
-if subtype(p)=dlist then q:=p {display or equation number}
+if box_lr(p)=dlist then q:=p {display or equation number}
 else  begin {display and equation number}
   r:=list_ptr(p); free_node(p,box_node_size);
   if r=null then confusion("LR4");
@@ -39286,7 +39274,7 @@ fields in the active nodes.
 @!best_pl_glue:array[very_loose_fit..tight_fit] of scaled; {corresponding
   glue stretch or shrink}
 
-@ The new algorithm for the last line requires that the stretchability
+@ The new algorithm for the last line requires that the stretchability of
 |par_fill_skip| is infinite and the stretchability of |left_skip| plus
 |right_skip| is finite.
 
@@ -39337,10 +39325,10 @@ if arith_error then
   if active_short(r)>0 then g:=max_dimen@+else g:=-max_dimen;
 if g>0 then
   @<Set the value of |b| to the badness of the last line for stretching,
-    compute the corresponding |fit_class, and |goto found||@>
+    compute the corresponding |fit_class|, and |goto found||@>
 else if g<0 then
   @<Set the value of |b| to the badness of the last line for shrinking,
-    compute the corresponding |fit_class, and |goto found||@>;
+    compute the corresponding |fit_class|, and |goto found||@>;
 not_found:end
 
 @ These badness computations are rather similar to those of the standard

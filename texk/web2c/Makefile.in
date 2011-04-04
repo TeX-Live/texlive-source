@@ -9232,9 +9232,9 @@ pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 # Extract etex version
-pdftexdir/etex_version.h: etexdir/etex.ch
+pdftexdir/etex_version.h: pdftexdir/pdftex.web
 	$(MKDIR_P) pdftexdir
-	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
+	grep '^@d eTeX_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 # Extract pdftex version
 pdftexdir/pdftex_version.h: pdftexdir/pdftex.web

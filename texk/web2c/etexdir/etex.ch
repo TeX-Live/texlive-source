@@ -93,7 +93,7 @@
 %             fixed a bug in hyph_code handling (\savinghyphcodes)
 %                 reported by Vladimir Volovich <vvv@@vsu.ru>, Feb 2008.
 %             fixed the error messages for improper use of \protected,
-%                 reported by Heiko Oberdiek 
+%                 reported by Heiko Oberdiek
 %                 <heiko.oberdiek@@googlemail.com>, May 2010.
 %             some rearrangements to reduce interferences between
 %                 e-TeX and pTeX, in part suggested by Hironori Kitagawa
@@ -3870,13 +3870,12 @@ and |ship_out|, or might be local to |post_line_break|.
   end
 
 @<Glob...@>=
-@!LR_temp:pointer; {holds a temporarily removed \.{\\endM} node}
 @!LR_ptr:pointer; {stack of LR codes for |hpack|, |ship_out|, and |init_math|}
 @!LR_problems:integer; {counts missing begins and ends}
 @!cur_dir:small_number; {current text direction}
 
 @ @<Set init...@>=
-LR_temp:=null; LR_ptr:=null; LR_problems:=0; cur_dir:=left_to_right;
+LR_ptr:=null; LR_problems:=0; cur_dir:=left_to_right;
 
 @ @<Insert LR nodes at the beg...@>=
 begin q:=link(temp_head);
@@ -3915,37 +3914,6 @@ if LR_ptr<>null then
     end;
   link(s):=q;
   end
-
-@ Special \.{\\beginM} and \.{\\endM} nodes are inserted in cases where
-math nodes are discarded during line breaking or end up in different
-lines.  When the current lists ends with an \.{\\endM} node that node is
-temporarily removed and later reinserted when the last node is to be
-inspected or removed.  A final \.{\\endM} preceded by a |char_node| will
-not be removed.
-
-@<Declare \eTeX\ procedures for sc...@>=
-procedure remove_end_M;
-var @!p:pointer; {runs through the current list}
-begin p:=head;
-while link(p)<>tail do p:=link(p);
-if not is_char_node(p) then
-  begin LR_temp:=tail; link(p):=null; tail:=p;
-  end;
-end;
-
-@ @<Declare \eTeX\ procedures for sc...@>=
-procedure insert_end_M;
-label done;
-var @!p:pointer; {runs through the current list}
-begin if not is_char_node(tail) then
- if (type(tail)=math_node)and(subtype(tail)=begin_M_code) then
-  begin free_node(LR_temp,small_node_size); p:=head;
-  while link(p)<>tail do p:=link(p);
-  free_node(tail,small_node_size); link(p):=null; tail:=p; goto done;
-  end;
-link(tail):=LR_temp; tail:=LR_temp;
-done: LR_temp:=null;
-end;
 
 @ @<Initialize the LR stack@>=
 put_LR(before) {this will never match}
@@ -3986,7 +3954,7 @@ if eTeX_ex then
     if cur_dir=right_to_left then
       begin cur_dir:=left_to_right; cur_h:=cur_h-width(this_box);
       end
-    else subtype(this_box):=min_quarterword;
+    else set_box_lr(this_box)(0);
   if (cur_dir=right_to_left)and(box_lr(this_box)<>reversed) then
     @<Reverse the complete hlist and set the subtype to |reversed|@>;
   end
