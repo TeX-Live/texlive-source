@@ -64,9 +64,9 @@ clisp_builddir=$clisp_basedir/clisp-build
 mkdir $clisp_toolsdir
 
 cd $clisp_basedir
-wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.9.tar.gz
-gzip -dc libsigsegv-2.9.tar.gz | tar xf -
-cd libsigsegv-2.9
+wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.10.tar.gz
+gzip -dc libsigsegv-2.10.tar.gz | tar xf -
+cd libsigsegv-2.10
 ./configure --prefix=$clisp_toolsdir && make && make check && make install
 
 # you may need this hack on 64-bit systems
