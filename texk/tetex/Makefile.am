@@ -5,7 +5,13 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+perl_scripts = \
+	updmap
+
 shell_scripts = \
+	updmap-sys
+
+sh_scripts = \
 	allcm \
 	allneeded \
 	dvi2fax \
@@ -22,28 +28,21 @@ shell_scripts = \
 	texconfig \
 	texconfig-dialog \
 	texconfig-sys \
-	texlinks \
-	updmap \
-	updmap-sys
+	texlinks
 
-## Handled as alias by runscript.tlu
-win32_aliases = \
-	fontinst.exe
+scriptsdir = texmf/scripts/tetex
+nodist_bin_SCRIPTS =
 
-if WIN32
-if WIN32_WRAP
-## We treat the WIN32 aliases as SCRIPTS to avoid automatic build rules
-nodist_bin_SCRIPTS = $(win32_aliases)
-runscript = $(srcdir)/../texlive/w32_wrapper/runscript.exe
-$(win32_aliases): $(runscript)
-	$(LN_S) $(runscript) $@
-endif WIN32_WRAP
-else !WIN32
-nodist_bin_SCRIPTS = $(shell_scripts)
+include $(srcdir)/../am/script_links.am
+
+texmfdir = ${prefix}/$(scriptsdir)
+dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
+
+if !WIN32
+dist_bin_SCRIPTS = $(sh_scripts)
 endif !WIN32
 
-EXTRA_DIST = $(shell_scripts)
-CLEANFILES = $(win32_aliases)
+CLEANFILES = $(nodist_bin_SCRIPTS)
 
 dist_man1_MANS = \
 	allcm.man \
@@ -104,6 +103,8 @@ man1_links = $(bin_links) \
 
 include $(top_srcdir)/../am/man1_links.am
 
+install-data-hook: install-perl-links install-shell-links install-man1-links
+
 install-exec-hook:
 if !WIN32
 	@cd $(DESTDIR)$(bindir) && \
@@ -116,9 +117,7 @@ if !WIN32
 	  done
 endif !WIN32
 
-install-data-hook: install-man1-links
-
-uninstall-hook: uninstall-man1-links
+uninstall-hook: uninstall-links uninstall-man1-links
 if !WIN32
 	@for s in $(bin_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
@@ -126,14 +125,14 @@ if !WIN32
 	done
 endif !WIN32
 
-EXTRA_DIST += \
+EXTRA_DIST = \
 	README.texdoctk
 
 ## Not used
 ##
 EXTRA_DIST += \
 	fontinst.bat \
-	updmap.pl
+	updmap
 
 ## 
 ## This target is invoked by the top-level make,

@@ -1,3 +1,9 @@
+2011-04-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Rename updmap-sys => updmap-sys.sh.
+	* Makefile.am: Install updmap and updmap-sys as linked scripts
+	and use the ../am/script_links.am fragment.
+
 2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../am/man1_links.am for manpage links.
