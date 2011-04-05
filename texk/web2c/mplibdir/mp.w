@@ -1,6 +1,6 @@
-% $Id: mp.w 1429 2010-10-21 13:59:22Z taco $
+% $Id: mp.w 1599 2011-04-05 14:15:45Z taco $
 %
-% Copyright 2008-2009 Taco Hoekwater.
+% Copyright 2008-2011 Taco Hoekwater.
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU Lesser General Public License as published by
@@ -88,12 +88,12 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 1.503" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 1.504" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @(mpmp.h@>=
-#define metapost_version "1.503"
+#define metapost_version "1.504"
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
 few typedefs and the header defintions for the externally used
@@ -1119,7 +1119,7 @@ static int comp_strings_entry (void *p, const void *pa, const void *pb) {
        return STRCMP_RESULT(*s-*t); 
     s++; t++;
   }
-  return STRCMP_RESULT(a->len-b->len);
+  return STRCMP_RESULT((int)(a->len)-(int)(b->len));
 }
 static void *copy_strings_entry (const void *p) {
   str_number ff;
@@ -2399,6 +2399,7 @@ integer interrupt;      /* should \MP\ pause for instructions? */
 boolean OK_to_interrupt;        /* should interrupts be observed? */
 integer run_state;      /* are we processing input ? */
 boolean finished;       /* set true by |close_files_and_terminate| */
+boolean reading_preload;
 
 @ @<Allocate or ...@>=
 mp->OK_to_interrupt = true;
@@ -4447,6 +4448,7 @@ mp_sym frozen_right_delimiter;
 mp_sym frozen_semicolon;
 mp_sym frozen_slash;
 mp_sym frozen_undefined;
+mp_sym frozen_dump;
 
 
 @ Here are the functions needed for the avl construction.
@@ -14132,7 +14134,7 @@ by analogy with |line_stack|.
 @<Glob...@>=
 integer in_open;        /* the number of lines in the buffer, less one */
 integer in_open_max;    /* highest value of |in_open| ever seen */
-unsigned int open_parens;       /* the number of open text files */
+int open_parens;       /* the number of open text files */
 void **input_file;
 integer *line_stack;    /* the line number for each file */
 char **inext_stack;     /* used for naming \.{MPX} files */
@@ -14742,18 +14744,15 @@ void mp_begin_file_reading (MP mp) {
 
 @ Conversely, the variables must be downdated when such a level of input
 is finished.  Any associated \.{MPX} file must also be closed and popped
-off the file stack.
+off the file stack. While finishing preloading, it is possible that the file
+does not actually end with 'dump', so we capture that case here as well.
 
 @c
 static void mp_end_file_reading (MP mp) {
-  if (mp->in_open <= file_bottom) {
-    print_err ("Attempt to close the bottom level file!");
-    help3 ("You attempted to close the bottommost file input level.",
-           "The most likely cause of this error is that your preload",
-           "file did not end with 'dump' or 'end'. MP will exit now.");
-    mp_error (mp);
-    mp->history = mp_fatal_error_stop;
-    mp_jump_out (mp);
+  if (mp->reading_preload && mp->input_ptr == 0) {
+      mp->cur_sym = mp->frozen_dump;
+      mp_back_input (mp);
+      return;
   }
   if (mp->in_open > iindex) {
     if ((mp->mpx_name[mp->in_open] == absent) || (name <= max_spec_src)) {
@@ -16072,12 +16071,12 @@ a \&{vardef}, because the user may want to redefine `\.{endgroup}'.
 if (m == start_def) {
   mp_link (p) = mp_scan_toks (mp, macro_def, r, NULL, (quarterword) n);
 } else {
-  q = mp_get_symbolic_node (mp);
-  set_mp_sym_sym (q, mp->bg_loc);
-  mp_link (p) = q;
+  mp_node qq = mp_get_symbolic_node (mp);
+  set_mp_sym_sym (qq, mp->bg_loc);
+  mp_link (p) = qq;
   p = mp_get_symbolic_node (mp);
   set_mp_sym_sym (p, mp->eg_loc);
-  mp_link (q) = mp_scan_toks (mp, macro_def, r, p, (quarterword) n);
+  mp_link (qq) = mp_scan_toks (mp, macro_def, r, p, (quarterword) n);
 }
 if (mp->warning_info_node == mp->bad_vardef)
   mp_flush_token_list (mp, value_node (mp->bad_vardef))
@@ -18600,24 +18599,36 @@ recovery.
 @d cur_exp_knot() mp->cur_exp.data.p
 
 @d set_cur_exp_value(A) do {
+    if (cur_exp_str()) {
+        delete_str_ref(cur_exp_str());
+    }
     cur_exp_value() = (A);
     cur_exp_node() = NULL;
     cur_exp_str() = NULL;
     cur_exp_knot() = NULL;
   } while (0)
 @d set_cur_exp_node(A) do {
+    if (cur_exp_str()) {
+        delete_str_ref(cur_exp_str());
+    }
     cur_exp_node() = A;
     cur_exp_str() = NULL;
     cur_exp_knot() = NULL;
     cur_exp_value() = 0;
   } while (0)
 @d set_cur_exp_str(A) do {
+    if (cur_exp_str()) {
+        delete_str_ref(cur_exp_str());
+    }
     cur_exp_str() = A;
     cur_exp_node() = NULL;
     cur_exp_knot() = NULL;
     cur_exp_value() = 0;
   } while (0)
 @d set_cur_exp_knot(A) do {
+    if (cur_exp_str()) {
+        delete_str_ref(cur_exp_str());
+    }
     cur_exp_knot() = A;
     cur_exp_node() = NULL;
     cur_exp_str() = NULL;
@@ -24986,6 +24997,7 @@ static void mp_cat (MP mp, mp_node p) {
   mp->cur_string[needed] = '\0';
   set_cur_exp_str (mp_make_string (mp));
   delete_str_ref (b);
+  xfree(mp->cur_string); /* created by |mp_make_string| */
   mp->cur_length = saved_cur_length;
   mp->cur_string = saved_cur_string;
   mp->cur_string_size = saved_cur_string_size;
@@ -26733,6 +26745,7 @@ char *mp_metapost_version (void);
 mp_primitive (mp, "end", stop, 0);
 @:end_}{\&{end} primitive@>;
 mp_primitive (mp, "dump", stop, 1);
+mp->frozen_dump = mp_frozen_primitive (mp, "dump", stop, 1);
 @:dump_}{\&{dump} primitive@>
  
 
@@ -29997,12 +30010,12 @@ for (k = 1; k <= (int) mp->last_fnum; k++) {
   xfree (mp->font_name[k]);
   xfree (mp->font_ps_name[k]);
 }
-for (k = 0; k < TFM_ITEMS; k++) {
-  mp_xfree (mp->tfm_width[k]);
-  mp_xfree (mp->tfm_height[k]);
-  mp_xfree (mp->tfm_depth[k]);
-  mp_xfree (mp->tfm_ital_corr[k]);
-}
+
+mp_xfree (mp->tfm_width[0]);
+mp_xfree (mp->tfm_height[0]);
+mp_xfree (mp->tfm_depth[0]);
+mp_xfree (mp->tfm_ital_corr[0]);
+
 xfree (mp->font_info);
 xfree (mp->font_enc_name);
 xfree (mp->font_ps_name_fixed);
@@ -31010,9 +31023,12 @@ interfere with the actual job.
 @c
 boolean mp_load_preload_file (MP mp) {
   size_t k;
-  in_state_record old_state = mp->cur_input;
+  in_state_record old_state;
+  integer old_in_open = mp->in_open;
+  void *old_cur_file = cur_file;
   char *fname = xstrdup (mp->name_of_file);
   size_t l = strlen (fname);
+  old_state = mp->cur_input;
   str_room (l);
   for (k = 0; k < l; k++) {
     append_char (*(fname + k));
@@ -31041,15 +31057,18 @@ boolean mp_load_preload_file (MP mp) {
     mp->first = (size_t) (limit + 1);
     loc = start;
   }
+  mp->reading_preload = true;
   do {
     mp_do_statement (mp);
-  } while (!(mp->cur_cmd == stop));     /* "dump" or "end" or EOF */
+  } while (!(mp->cur_cmd == stop && mp->cur_mod == 1));     /* "dump" or EOF */
+  mp->reading_preload = false;
   mp_primitive (mp, "dump", relax, 0); /* reset |dump| */
   mp_print_char (mp, xord (')'));
   decr (mp->open_parens);
-  (mp->close_file) (mp, mp->mem_file);
-  cur_file = NULL;
-  mp->cur_input = old_state;
+/*  |(mp->close_file) (mp, mp->mem_file);| */
+  cur_file = old_cur_file;
+  mp->cur_input  = old_state;
+  mp->in_open = old_in_open;
   return true;
 }
 

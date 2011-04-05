@@ -1,4 +1,4 @@
-% $Id: mpost.w 1422 2010-10-19 07:26:52Z taco $
+% $Id: mpost.w 1598 2011-04-05 14:14:16Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -1217,8 +1217,12 @@ int main (int argc, char **argv) { /* |start_here| */
   options = mp_options();
   options->ini_version       = (int)false;
   options->print_found_names = (int)true;
-  if (strstr(argv[0], "dvitomp") != NULL) {
-    dvitomp_only=1;
+  {
+    const char *base = xbasename(argv[0]);
+    if (!strcmp(base, "dvitomp") || !strcasecmp(base, "dvitomp.exe"))
+      dvitomp_only=1;
+  }
+  if (dvitomp_only) {
     @<Read and set dvitomp command line options@>;
   } else {
     @<Read and set command line options@>;

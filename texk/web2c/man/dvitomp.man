@@ -1,4 +1,4 @@
-.TH DVITOMP 1 "27 May 2009" "dvitomp 1.201"
+.TH DVITOMP 1 "5 April 2011" "dvitomp 1.504"
 .\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
 .SH NAME
 dvitomp \- convert a TeX DVI file to a MetaPost MPXFILE

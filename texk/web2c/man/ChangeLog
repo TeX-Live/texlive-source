@@ -1,5 +1,10 @@
 2011-04-05  Taco Hoekwater  <taco@metapost.org>
 
+	* mpost.man: update to version 1.504
+	* dvitomp.man: update to version 1.504
+
+2011-04-05  Taco Hoekwater  <taco@metapost.org>
+
 	* mpost.man: update to version 1.503
 
 2011-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
