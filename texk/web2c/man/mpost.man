@@ -1,4 +1,4 @@
-.TH MPOST 1 "14 May 2010" "MetaPost 1.201"
+.TH MPOST 1 "5 April 2011" "MetaPost 1.503"
 .\"=====================================================================
 .de URL
 \\$2 \(laURL: \\$1 \(ra\\$3
@@ -44,19 +44,17 @@ or
 .BR troff (1)
 commands and accessing features of PostScript not found in \*(MF. 
 .PP
-Like \*(TX and \*(MF, \*(MP is normally used with a large body of
-precompiled macros.  When the
-.B --ini
-option is given, it can be used to precompile macros into a
-.I .mem
-file.  When called without that option, \*(MP will use its executable name as
-the name of the mem to use.   For example, when called as
+\*(MP is normally used with some preloaded macros, and it 
+will use its executable name as the name of the preload 
+file to use.   For example, when called as
 .B mpost
 the
-.I mpost
-mem is used, which is identical to the
-.I plain
-mem.  
+.I mpost.mp
+file is used, which is identical to
+.I plain.mp.
+When the
+.B --ini
+option is given, preloading does not happen.  
 .PP
 The
 .I commands
@@ -96,14 +94,11 @@ output commands or \*(MF's online display mechanism.
 .\"=====================================================================
 .SH FILES
 .TP
-.I *.mem
-Predigested \*(MP mem files.
-.TP
 .I plain.mp
-The standard mem file.
+The standard preload file.
 .TP
 .I mfplain.mp
-The \*(MF-compatible mem file. 
+The \*(MF-compatible preload file. 
 .TP
 .I $TEXMFMAIN/metapost/base/*.mp
 The standard \*(MP macros included in the original distribution.

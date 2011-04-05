@@ -20,7 +20,9 @@
 #include <w2c/config.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <math.h> /* temporary */
 
 #ifndef pdfTeX
@@ -56,7 +58,7 @@ int luaopen_mplib(lua_State * L); /* forward */
 
 #define mplib_init_S(a) do {                                            \
     lua_pushliteral(L,#a);                                              \
-    mplib_##a##_ptr = lua_tostring(L,-1);                       \
+    mplib_##a##_ptr = lua_tostring(L,-1);				\
     mplib_##a##_index = luaL_ref (L,LUA_REGISTRYINDEX);                 \
   } while (0)
 
@@ -238,7 +240,7 @@ static char *mplib_find_file(MP mp, const char *fname, const char *fmode, int ft
     lua_getfield(L, LUA_REGISTRYINDEX, "mplib_file_finder");
     if (lua_isfunction(L, -1)) {
         char *s = NULL;
-	const char *x = NULL;
+        const char *x = NULL;
         lua_pushstring(L, fname);
         lua_pushstring(L, fmode);
         if (ftype >= mp_filetype_text) {
@@ -247,8 +249,7 @@ static char *mplib_find_file(MP mp, const char *fname, const char *fmode, int ft
             lua_pushstring(L, mplib_filetype_names[ftype]);
         }
         if (lua_pcall(L, 3, 1, 0) != 0) {
-            fprintf(stdout, "Error in mp.find_file: %s\n",
-                    lua_tostring(L, -1));
+            fprintf(stdout, "Error in mp.find_file: %s\n", lua_tostring(L, -1));
             return NULL;
         }
         x = lua_tostring(L, -1);
@@ -306,18 +307,6 @@ static int mplib_new(lua_State * L)
                 case P_MAX_LINE:
                     options->max_print_line = (int)lua_tointeger(L, -1);
                     if (options->max_print_line<60) options->max_print_line = 60;
-                    break;
-                case P_MAIN_MEMORY:
-                    options->main_memory = (int)lua_tointeger(L, -1);
-                    break;
-                case P_HASH_SIZE:
-                    options->hash_size = (unsigned)lua_tointeger(L, -1);
-                    break;
-                case P_PARAM_SIZE:
-                    options->param_size = (int)lua_tointeger(L, -1);
-                    break;
-                case P_IN_OPEN:
-                    options->max_in_open = (int)lua_tointeger(L, -1);
                     break;
                 case P_RANDOM_SEED:
                   options->random_seed = (int)lua_tointeger(L, -1);
@@ -386,16 +375,16 @@ static int mplib_wrapresults(lua_State * L, mp_run_data *res, int status)
 {
     lua_checkstack(L, 5);
     lua_newtable(L);
-    if (res->term_out.size != 0) {
-        lua_pushstring(L, res->term_out.data);
+    if (res->term_out.used != 0) {
+        lua_pushlstring(L, res->term_out.data, res->term_out.used);
         lua_setfield(L, -2, "term");
     }
-    if (res->error_out.size != 0) {
-        lua_pushstring(L, res->error_out.data);
+    if (res->error_out.used != 0) {
+        lua_pushlstring(L, res->error_out.data, res->error_out.used);
         lua_setfield(L, -2, "error");
     }
-    if (res->log_out.size != 0) {
-        lua_pushstring(L, res->log_out.data);
+    if (res->log_out.used != 0) {
+        lua_pushlstring(L, res->log_out.data, res->log_out.used);
         lua_setfield(L, -2, "log");
     }
     if (res->edges != NULL) {
@@ -433,7 +422,7 @@ static int mplib_execute(lua_State * L)
         char *s = xstrdup(lua_tolstring(L, 2, &l));
         int h = mp_execute(*mp_ptr, s, l);
         mp_run_data *res = mp_rundata(*mp_ptr);
-	xfree(s);
+        free(s);
         return mplib_wrapresults(L, res, h);
     } else {
         lua_pushnil(L);
@@ -469,7 +458,7 @@ static int mplib_char_dimension(lua_State * L, int t)
     } else {
       lua_pushnumber(L,(lua_Number)mp_get_char_dimension(*mp_ptr,fname,charnum,t));
     }
-    xfree(fname);
+    free(fname);
   } else {
     lua_pushnumber(L, (lua_Number)0);
   }
@@ -721,10 +710,10 @@ static int mplib_gr_tostring(lua_State * L)
 
 static double eps  = 0.0001;
 
-static double coord_range_x (mp_knot *h, double dz) {
+static double coord_range_x (mp_knot h, double dz) {
   double z;
   double zlo = 0.0, zhi = 0.0;
-  mp_knot *f = h; 
+  mp_knot f = h; 
   while (h != NULL) {
     z = (double)h->x_coord;
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
@@ -739,10 +728,10 @@ static double coord_range_x (mp_knot *h, double dz) {
   return (zhi - zlo <= dz ? aspect_bound : aspect_default);
 }
 
-static double coord_range_y (mp_knot *h, double dz) {
+static double coord_range_y (mp_knot h, double dz) {
   double z;
   double zlo = 0.0, zhi = 0.0;
-  mp_knot *f = h; 
+  mp_knot f = h; 
   while (h != NULL) {
     z = (double)h->y_coord;
     if (z < zlo) zlo = z; else if (z > zhi) zhi = z;
@@ -764,7 +753,7 @@ static int mplib_gr_peninfo(lua_State * L) {
     double rx = 1.0, sx = 0.0, sy = 0.0, ry = 1.0, tx = 0.0, ty = 0.0;
     double divider = 1.0;
     double width = 1.0;
-    mp_knot *p = NULL, *path = NULL;
+    mp_knot p = NULL, path = NULL;
     struct mp_graphic_object **hh = is_gr_object(L, -1);
     if (!*hh) {
       lua_pushnil(L);
@@ -877,9 +866,9 @@ static int mplib_gr_fields(lua_State * L)
 #define MPLIB_PATH 0
 #define MPLIB_PEN 1
 
-static void mplib_push_path(lua_State * L, struct mp_knot *h, int is_pen)
+static void mplib_push_path(lua_State * L, struct mp_knot_data *h, int is_pen)
 {
-    struct mp_knot *p;          /* for scanning the path */
+    struct mp_knot_data *p;          /* for scanning the path */
     int i = 1;
     p = h;
     if (p != NULL) {
@@ -887,14 +876,14 @@ static void mplib_push_path(lua_State * L, struct mp_knot *h, int is_pen)
         do {
             lua_createtable(L, 0, 6);
             if (!is_pen) {
-                if (p->left_type != mp_explicit) {
+                if (p->data.types.left_type != mp_explicit) {
                     mplib_push_S(left_type);
-                    lua_pushstring(L, knot_type_enum[p->left_type]);
+                    lua_pushstring(L, knot_type_enum[p->data.types.left_type]);
                     lua_rawset(L, -3);
                 }
-                if (p->right_type != mp_explicit) {
+                if (p->data.types.right_type != mp_explicit) {
                     mplib_push_S(right_type);
-                    lua_pushstring(L, knot_type_enum[p->right_type]);
+                    lua_pushstring(L, knot_type_enum[p->data.types.right_type]);
                     lua_rawset(L, -3);
                 }
             }
@@ -918,7 +907,7 @@ static void mplib_push_path(lua_State * L, struct mp_knot *h, int is_pen)
             lua_rawset(L, -3);
             lua_rawseti(L, -2, i);
             i++;
-            if (p->right_type == mp_endpoint) {
+            if (p->data.types.right_type == mp_endpoint) {
                 return;
             }
             p = p->next;
@@ -931,9 +920,9 @@ static void mplib_push_path(lua_State * L, struct mp_knot *h, int is_pen)
 /* this assumes that the top of the stack is a table 
    or nil already in the case
  */
-static void mplib_push_pentype(lua_State * L, struct mp_knot *h)
+static void mplib_push_pentype(lua_State * L, mp_knot h)
 {
-    struct mp_knot *p;          /* for scanning the path */
+    mp_knot p;          /* for scanning the path */
     p = h;
     if (p == NULL) {
         /* do nothing */

@@ -26,7 +26,7 @@ set -x
 # get same filename in log
 $LN_S $testdir/mtrap.mp . || exit 1
 
-./mpost --progname=inimpost --ini mtrap
+./mpost --ini mtrap
 diff $testdir/mtrap.log mtrap.log
 diff $testdir/mtrap.0 mtrap.0
 diff $testdir/mtrap.1 mtrap.1
@@ -37,31 +37,9 @@ $LN_S $testdir/trap.mp . || exit 1
 $LN_S $testdir/trap.mpx . || exit 1
 
 ## Why is --jobname required? And why --ini?
-./mpost --progname=inimpost --jobname=trap --ini <$testdir/mptrap1.in >mptrapin.fot
+./mpost --ini --jobname=trap <$testdir/mptrap1.in >mptrapin.fot
 mv trap.log mptrapin.log || exit 1
 diff $testdir/mptrapin.log mptrapin.log
-
-# Must run inimpost or font_name[null_font] is not initialized, leading to diffs.
-./mpost --progname=inimpost --jobname=trap --mem=trap \
-  <$testdir/mptrap2.in >mptrap.fot
-
-## Here the test fails, but we just exit or 'make distcheck' would fail
-
-mv trap.log mptrap.log || exit 1
-mv trap.tfm mptrap.tfm || exit 1
-diff $testdir/mptrap.fot mptrap.fot
-diff $testdir/mptrap.log mptrap.log
-diff $testdir/trap.5 trap.5
-diff $testdir/trap.6 trap.6
-diff $testdir/trap.148 trap.148
-diff $testdir/trap.149 trap.149
-diff $testdir/trap.150 trap.150
-diff $testdir/trap.151 trap.151
-diff $testdir/trap.197 trap.197
-diff $testdir/trap.200 trap.200
-
-./tftopl ./mptrap.tfm mptrap.pl || exit 1
-diff $testdir/mptrap.pl mptrap.pl
 
 exit 0
 

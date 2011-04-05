@@ -14,7 +14,7 @@
 const void *
 avl_default_item_copy (const void *item)
 {
-  return item;
+  return (const void *) item;
 }
 
 void *
@@ -574,13 +574,13 @@ node_find_index (avl_size_t idx, avl_tree t)
   if (idx == t->count)
 	return node_last (a);
 
-  while ((c = idx - get_rank (a)) != 0)
+  while ((c = (int)(idx - get_rank (a))) != 0)
 	{
 	  if (c < 0)
 		a = sub_left (a);
 	  else
 		{
-		  idx = c;
+		    idx = (avl_size_t)c;
 		  a = sub_right (a);
 		}
 	}
@@ -601,7 +601,7 @@ rebalance_ins (avl_node * a, int dir, avl_tree t)
 
 	  while (1)
 		{
-		  incr_rank (a, !dir);
+		    incr_rank (a, (rbal_t)(!dir));
 		  if (get_bal (a))
 			break;
 		  set_skew (a, dir);
@@ -748,7 +748,7 @@ rebalance_ins (avl_node * a, int dir, avl_tree t)
 
 	  while ((p = a->up) != NULL)
 		{
-		  incr_rank (p, (a == sub_left (p)));
+		  incr_rank (p, (rbal_t)(a == sub_left (p)));
 		  a = p;
 		}
 
@@ -766,8 +766,9 @@ static avl_code_t
 rebalance_del (avl_node * p, avl_tree t, void **backup)
 {
   avl_node **r, *a, *c;
-  int dir, bal;
-  dir = 0; /* for -W */
+  rbal_t bal;
+  int dir = 0;
+
   a = p->up;
   if (a == NULL)
 	r = &t->root;
@@ -819,7 +820,7 @@ rebalance_del (avl_node * p, avl_tree t, void **backup)
 	  if (a == NULL)
 		return 2;
 
-	  decr_rank (a, !dir);
+	  decr_rank (a, (rbal_t)(!dir));
 	  bal = get_bal (a);
 
 	  if (0 == dir)
@@ -990,7 +991,7 @@ rebalance_del (avl_node * p, avl_tree t, void **backup)
   /* Finish adjusting ranks */
   while ((p = a->up) != NULL)
 	{
-	  decr_rank (p, (a == sub_left (p)));
+          decr_rank (p, (rbal_t)(a == sub_left (p)));
 	  a = p;
 	}
 
@@ -1255,8 +1256,8 @@ avl_ins (void *item, avl_tree t, avl_bool_t allow_duplicates)
 #endif
 	avl_compare_func cmp = t->compare;
 	avl_node **r, *a;
-	int dir;
-	dir = 0; /* for -W */
+	int dir = 0;
+
 	for (r = &t->root, a = NULL; *r != NULL; r = &a->sub[dir = dir > 0])
 	  {
 		a = *r;
@@ -1298,7 +1299,7 @@ static avl_code_t
 node_del_first (avl_tree t, struct ptr_handler *h)
 {
   avl_node *p, *a, *c;
-  int bal;
+  rbal_t bal;
 
   p = node_first (t->root);
   a = p->up;
@@ -1412,7 +1413,7 @@ node_del_last (avl_tree t, struct ptr_handler *h)
 {
 
   avl_node *p, *a, *c;
-  int bal;
+  rbal_t bal;
 
   p = node_last (t->root);
   a = p->up;
@@ -1528,7 +1529,7 @@ join_left (avl_node * p, avl_node ** r0, avl_node * r1, int delta, int n)
 	  while (*r != NULL)
 		{
 		  a = *r;
-		  n -= get_rank (a);
+		  n -= (int)get_rank (a);
 		  r = &sub_right (a);
 		}
 	}
@@ -1537,8 +1538,8 @@ join_left (avl_node * p, avl_node ** r0, avl_node * r1, int delta, int n)
 	  while (delta < -1)
 		{
 		  a = *r;
-		  delta += is_lskew (a) + 1;
-		  n -= get_rank (a);
+		  delta += (int)(is_lskew (a) + 1);
+		  n -= (int)get_rank (a);
 		  r = &sub_right (a);
 		}
 	  r1->up = p;
@@ -1645,7 +1646,7 @@ join_right (avl_node * p, avl_node * r0, avl_node ** r1, int delta, int n)
 	  while (*r != NULL)
 		{
 		  a = *r;
-		  incr_rank (a, n);
+		  incr_rank (a, (rbal_t)n);
 		  r = &sub_left (a);
 		}
 	  n = 1;
@@ -1655,8 +1656,8 @@ join_right (avl_node * p, avl_node * r0, avl_node ** r1, int delta, int n)
 	  while (delta > +1)
 		{
 		  a = *r;
-		  delta -= is_rskew (a) + 1;
-		  incr_rank (a, n);
+		  delta -= (int)(is_rskew (a) + 1);
+		  incr_rank (a, (rbal_t)n);
 		  r = &sub_left (a);
 		}
 	  r0->up = p;
@@ -1819,7 +1820,7 @@ avl_ins_index (void *item, avl_size_t idx, avl_tree t)
   else if (idx == t->count)
 	{
 	  return
-		join_left (p, &t->root, (avl_node *) NULL, /*delta= */ 0, t->count);
+	      join_left (p, &t->root, (avl_node *) NULL, /*delta= */ 0, (int)t->count);
 	}
   else
 	{
@@ -1897,14 +1898,14 @@ avl_cat (avl_tree t0, avl_tree t1)
 		  if (node_del_first (t1, &h) == 2)
 			--delta;
 		  (void) join_left ((avl_node *) h.ptr, &t0->root, t1->root, delta,
-							t0->count + 1);
+				    (int)(t0->count + 1));
 		}
 	  else
 		{
 		  if (node_del_last (t0, &h) == 2)
 			++delta;
 		  (void) join_right ((avl_node *) h.ptr, t0->root, &t1->root, delta,
-							 t0->count + 1);
+				     (int)(t0->count + 1));
 		  t0->root = t1->root;
 		}
 
@@ -1941,7 +1942,7 @@ avl_split (const void *item, avl_tree t, avl_tree t0, avl_tree t1)
 
 	/* invariant: [na]= size of tree rooted at [a] plus one */
 
-	for (a = t->root, na = t->count + 1, k = 0;;)
+	for (a = t->root, na = (int)(t->count + 1), k = 0;;)
 	  {
 		d_ = Item_Compare (cmp, t, item, get_item (a));
 		CMPERR_CHECK__SPLIT (t->param);
@@ -1952,9 +1953,9 @@ avl_split (const void *item, avl_tree t, avl_tree t0, avl_tree t1)
 		  return 0;
 		an[k++] = na;
 		if (d_)
-		  na -= get_rank (a);
+		    na -= (int)get_rank (a);
 		else
-		  na = get_rank (a);
+		    na = (int)get_rank (a);
 		a = p;
 	  }
 
@@ -1988,7 +1989,7 @@ avl_split (const void *item, avl_tree t, avl_tree t0, avl_tree t1)
 		h[0] = ha - (is_rskew (a) ? 2 : 1);
 		h[1] = ha - (is_lskew (a) ? 2 : 1);
 		n[0] = get_rank (a);	/* size of r[0] plus one */
-		n[1] = na - n[0];		/* size of r[1] plus one */
+		n[1] = (avl_size_t)na - n[0];		/* size of r[1] plus one */
 
 		for (p = a->up, d_ = a != sub_left (p);;)
 		  {
@@ -2002,7 +2003,7 @@ avl_split (const void *item, avl_tree t, avl_tree t0, avl_tree t1)
 				ha += (is_rskew (a) ? 2 : 1);
 				h[1] = ha - (is_lskew (a) ? 2 : 1);
 				nn = n[1];
-				n[1] += an[k - 1] - get_rank (a);
+				n[1] += (avl_size_t)(an[k - 1] - (int)get_rank (a));
 				if (p != NULL)
 				  d_ = a != sub_left (p);
 				rbal (a) = 0;
@@ -2013,14 +2014,14 @@ avl_split (const void *item, avl_tree t, avl_tree t0, avl_tree t1)
 					r[1] = sub_right (a);
 					if (r[1] != NULL)
 					  r[1]->up = NULL;
-					h[1] += (2 == join_right (a, rr, r + 1, h[1] - hh, nn));
+					h[1] += (2 == join_right (a, rr, r + 1, h[1] - hh, (int)nn));
 				  }
 				else
 				  {
 					h[1] =
 					  hh + (2 ==
 							join_left (a, r + 1, sub_right (a), h[1] - hh,
-									   nn));
+								   (int)nn));
 				  }
 			  }
 			else
@@ -2040,13 +2041,13 @@ avl_split (const void *item, avl_tree t, avl_tree t0, avl_tree t1)
 					r[0] = sub_left (a);
 					if (r[0] != NULL)
 					  r[0]->up = NULL;
-					h[0] += (2 == join_left (a, r, rr, hh - h[0], nn));
+					h[0] += (2 == join_left (a, r, rr, hh - h[0], (int)nn));
 				  }
 				else
 				  {
 					h[0] =
 					  hh + (2 ==
-							join_right (a, sub_left (a), r, hh - h[0], nn));
+						join_right (a, sub_left (a), r, hh - h[0], (int)nn));
 				  }
 			  }
 

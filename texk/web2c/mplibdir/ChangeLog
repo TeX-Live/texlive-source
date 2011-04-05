@@ -1,3 +1,11 @@
+2011-04-05  Taco Hoekwater  <taco@luatex.org>
+
+	* Import of MetaPost 1.503, updating the .w files as well
+	as lmplib.c and avl.c, and adding mpmath.w and removing memio.w
+	* am/libmplib.am: add support for mpmath.w, remove memio.w
+	* mptrap.test: remove the second part as metapost no longer
+	uses .mem files at all
+
 2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libmplib.am: Use AM_CFLAGS instead of libmplib_a_CFLAGS.

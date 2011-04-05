@@ -438,11 +438,11 @@ libmf_a_OBJECTS = $(nodist_libmf_a_OBJECTS)
 libmplib_a_AR = $(AR) $(ARFLAGS)
 libmplib_a_LIBADD =
 am_libmplib_a_OBJECTS = libmplib_a-avl.$(OBJEXT)
-am__objects_2 = libmplib_a-memio.$(OBJEXT)
-am__objects_3 = libmplib_a-mp.$(OBJEXT)
-am__objects_4 = libmplib_a-psout.$(OBJEXT)
-am__objects_5 = libmplib_a-svgout.$(OBJEXT)
-am__objects_6 = libmplib_a-tfmin.$(OBJEXT)
+am__objects_2 = libmplib_a-mp.$(OBJEXT)
+am__objects_3 = libmplib_a-psout.$(OBJEXT)
+am__objects_4 = libmplib_a-svgout.$(OBJEXT)
+am__objects_5 = libmplib_a-tfmin.$(OBJEXT)
+am__objects_6 = libmplib_a-mpmath.$(OBJEXT)
 nodist_libmplib_a_OBJECTS = $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4) $(am__objects_5) $(am__objects_6)
 libmplib_a_OBJECTS = $(am_libmplib_a_OBJECTS) \
@@ -1442,10 +1442,10 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	mf-final.ch mf-web2c mf.p mf.pool mf-tangle \
 	$(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs ptmr.mpx \
 	tests/xptmr.mpx tests/xstory.mpx $(nodist_libmplib_a_SOURCES) \
-	memio-tangle mp-tangle psout-tangle svgout-tangle tfmin-tangle \
-	$(nodist_etex_SOURCES) etex.web etex.ch etex-web2c etex.p \
-	etex.pool etex-tangle etrip.diffs $(pweb_programs:=.c) \
-	$(pweb_programs:=.h) $(pweb_programs:=.p) \
+	mpmath-tangle mp-tangle psout-tangle svgout-tangle \
+	tfmin-tangle $(nodist_etex_SOURCES) etex.web etex.ch \
+	etex-web2c etex.p etex.pool etex-tangle etrip.diffs \
+	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
 	ptex.pool ptex-tangle tests/nissya_bib.* tests/xexampl.aux \
@@ -1632,14 +1632,14 @@ mpost_web = mplibdir/mpost.w mplibdir/mpxout.w
 mp_tests = mplibdir/dvitomp.test mplibdir/mptrap.test
 libmplib_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 libmplib_a_SOURCES = mplibdir/avl.h mplibdir/avl.c
-nodist_libmplib_a_SOURCES = $(memio_c_h) $(mp_c_h) $(psout_c_h) $(svgout_c_h) $(tfmin_c_h)
-memio_c_h = memio.c mpmemio.h
+nodist_libmplib_a_SOURCES = $(mp_c_h) $(psout_c_h) $(svgout_c_h) $(tfmin_c_h)  $(mpmath_c_h)
 mp_c_h = mp.c mplib.h mpmp.h
 psout_c_h = mppsout.h psout.c mplibps.h
 svgout_c_h = mplibsvg.h mpsvgout.h svgout.c
+mpmath_c_h = mpmath.h mpmath.c
 tfmin_c_h = mptfmin.h tfmin.c
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w \
-	mplibdir/memio.w mplibdir/tfmin.w
+	mplibdir/mpmath.w mplibdir/tfmin.w
 etex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_74)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
@@ -3096,8 +3096,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libluatex_a-writetype2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmd5_a-md5.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-avl.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-memio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-mp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-mpmath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-psout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-svgout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplib_a-tfmin.Po@am__quote@
@@ -6453,20 +6453,6 @@ libmplib_a-avl.obj: mplibdir/avl.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-avl.obj `if test -f 'mplibdir/avl.c'; then $(CYGPATH_W) 'mplibdir/avl.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/avl.c'; fi`
 
-libmplib_a-memio.o: memio.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplib_a-memio.o -MD -MP -MF $(DEPDIR)/libmplib_a-memio.Tpo -c -o libmplib_a-memio.o `test -f 'memio.c' || echo '$(srcdir)/'`memio.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmplib_a-memio.Tpo $(DEPDIR)/libmplib_a-memio.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='memio.c' object='libmplib_a-memio.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-memio.o `test -f 'memio.c' || echo '$(srcdir)/'`memio.c
-
-libmplib_a-memio.obj: memio.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplib_a-memio.obj -MD -MP -MF $(DEPDIR)/libmplib_a-memio.Tpo -c -o libmplib_a-memio.obj `if test -f 'memio.c'; then $(CYGPATH_W) 'memio.c'; else $(CYGPATH_W) '$(srcdir)/memio.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmplib_a-memio.Tpo $(DEPDIR)/libmplib_a-memio.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='memio.c' object='libmplib_a-memio.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-memio.obj `if test -f 'memio.c'; then $(CYGPATH_W) 'memio.c'; else $(CYGPATH_W) '$(srcdir)/memio.c'; fi`
-
 libmplib_a-mp.o: mp.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplib_a-mp.o -MD -MP -MF $(DEPDIR)/libmplib_a-mp.Tpo -c -o libmplib_a-mp.o `test -f 'mp.c' || echo '$(srcdir)/'`mp.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmplib_a-mp.Tpo $(DEPDIR)/libmplib_a-mp.Po
@@ -6522,6 +6508,20 @@ libmplib_a-tfmin.obj: tfmin.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tfmin.c' object='libmplib_a-tfmin.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-tfmin.obj `if test -f 'tfmin.c'; then $(CYGPATH_W) 'tfmin.c'; else $(CYGPATH_W) '$(srcdir)/tfmin.c'; fi`
+
+libmplib_a-mpmath.o: mpmath.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplib_a-mpmath.o -MD -MP -MF $(DEPDIR)/libmplib_a-mpmath.Tpo -c -o libmplib_a-mpmath.o `test -f 'mpmath.c' || echo '$(srcdir)/'`mpmath.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmplib_a-mpmath.Tpo $(DEPDIR)/libmplib_a-mpmath.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpmath.c' object='libmplib_a-mpmath.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-mpmath.o `test -f 'mpmath.c' || echo '$(srcdir)/'`mpmath.c
+
+libmplib_a-mpmath.obj: mpmath.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplib_a-mpmath.obj -MD -MP -MF $(DEPDIR)/libmplib_a-mpmath.Tpo -c -o libmplib_a-mpmath.obj `if test -f 'mpmath.c'; then $(CYGPATH_W) 'mpmath.c'; else $(CYGPATH_W) '$(srcdir)/mpmath.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmplib_a-mpmath.Tpo $(DEPDIR)/libmplib_a-mpmath.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpmath.c' object='libmplib_a-mpmath.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplib_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplib_a-mpmath.obj `if test -f 'mpmath.c'; then $(CYGPATH_W) 'mpmath.c'; else $(CYGPATH_W) '$(srcdir)/mpmath.c'; fi`
 
 libpdftex_a-avl.o: pdftexdir/avl.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libpdftex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libpdftex_a-avl.o -MD -MP -MF $(DEPDIR)/libpdftex_a-avl.Tpo -c -o libpdftex_a-avl.o `test -f 'pdftexdir/avl.c' || echo '$(srcdir)/'`pdftexdir/avl.c
@@ -9031,10 +9031,10 @@ mptrap-clean:
 	rm -f trap.149 trap.150 trap.151 trap.197 trap.200
 	rm -f mptrap.pl
 
-$(memio_c_h): memio-tangle
-	@$(mp_ctangle_sh) memio
-memio-tangle: ctangle$(EXEEXT) mplibdir/memio.w tangle-sh
-	@$(mp_ctangle_sh) memio
+$(mpmath_c_h): mpmath-tangle
+	@$(mp_ctangle_sh) mpmath
+mpmath-tangle: ctangle$(EXEEXT) mplibdir/mpmath.w tangle-sh
+	@$(mp_ctangle_sh) mpmath
 
 $(mp_c_h): mp-tangle
 	@$(mp_ctangle_sh) mp

@@ -11,17 +11,17 @@ libmplib_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 
 ## libmplib C sources
 libmplib_a_SOURCES = mplibdir/avl.h mplibdir/avl.c
-nodist_libmplib_a_SOURCES = $(memio_c_h) $(mp_c_h) $(psout_c_h) $(svgout_c_h) $(tfmin_c_h)
-memio_c_h = memio.c mpmemio.h
+nodist_libmplib_a_SOURCES = $(mp_c_h) $(psout_c_h) $(svgout_c_h) $(tfmin_c_h)  $(mpmath_c_h)
 mp_c_h =  mp.c mplib.h mpmp.h
 psout_c_h = mppsout.h psout.c mplibps.h
 svgout_c_h = mplibsvg.h mpsvgout.h svgout.c
+mpmath_c_h = mpmath.h mpmath.c
 tfmin_c_h = mptfmin.h tfmin.c
 
-$(memio_c_h): memio-tangle
-	@$(mp_ctangle_sh) memio
-memio-tangle: ctangle$(EXEEXT) mplibdir/memio.w tangle-sh
-	@$(mp_ctangle_sh) memio
+$(mpmath_c_h): mpmath-tangle
+	@$(mp_ctangle_sh) mpmath
+mpmath-tangle: ctangle$(EXEEXT) mplibdir/mpmath.w tangle-sh
+	@$(mp_ctangle_sh) mpmath
 
 $(mp_c_h): mp-tangle
 	@$(mp_ctangle_sh) mp
@@ -45,14 +45,14 @@ tfmin-tangle: ctangle$(EXEEXT) mplibdir/tfmin.w tangle-sh
 
 ## libmplib CWeb sources
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w
-libmplib_web += mplibdir/memio.w mplibdir/tfmin.w
+libmplib_web += mplibdir/mpmath.w mplibdir/tfmin.w
 
 $(libmplib_a_OBJECTS): $(nodist_libmplib_a_SOURCES)
 
 EXTRA_DIST += $(libmplib_web)
 
 DISTCLEANFILES += $(nodist_libmplib_a_SOURCES) \
-	memio-tangle mp-tangle psout-tangle svgout-tangle tfmin-tangle
+	mpmath-tangle mp-tangle psout-tangle svgout-tangle tfmin-tangle
 
 ## only used by luaTeX
 EXTRA_DIST += mplibdir/lmplib.c
