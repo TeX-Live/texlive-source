@@ -25,7 +25,7 @@ dvitomp_LDADD =
 
 # Creating one file: just one rule
 mp_ctangle = CWEBINPUTS=$(srcdir)/mplibdir $(ctangle)
-# Creating several files: need stamp file and two identical rules
+# Creating several files: need stamp file and two rules with identical recipes
 mp_ctangle_sh = CWEBINPUTS=$(srcdir)/mplibdir $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 ## MetaPost C sources

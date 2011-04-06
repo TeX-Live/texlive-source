@@ -11,22 +11,26 @@ libmplib_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 
 ## libmplib C sources
 libmplib_a_SOURCES = mplibdir/avl.h mplibdir/avl.c
-nodist_libmplib_a_SOURCES = $(mp_c_h) $(psout_c_h) $(svgout_c_h) $(tfmin_c_h)  $(mpmath_c_h)
+nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(psout_c_h) $(svgout_c_h) $(tfmin_c_h)
 mp_c_h =  mp.c mplib.h mpmp.h
+mpmath_c_h = mpmath.h mpmath.c
 psout_c_h = mppsout.h psout.c mplibps.h
 svgout_c_h = mplibsvg.h mpsvgout.h svgout.c
-mpmath_c_h = mpmath.h mpmath.c
-tfmin_c_h = mptfmin.h tfmin.c
+
+# Creating one file: just one rule
+tfmin.c: ctangle$(EXEEXT) mplibdir/tfmin.w
+	$(mp_ctangle) tfmin.w
+
+# Creating several files: need stamp file and two rules with identical recipes
+$(mp_c_h): mp-tangle
+	@$(mp_ctangle_sh) mp
+mp-tangle: ctangle$(EXEEXT) mplibdir/mp.w tangle-sh
+	@$(mp_ctangle_sh) mp
 
 $(mpmath_c_h): mpmath-tangle
 	@$(mp_ctangle_sh) mpmath
 mpmath-tangle: ctangle$(EXEEXT) mplibdir/mpmath.w tangle-sh
 	@$(mp_ctangle_sh) mpmath
-
-$(mp_c_h): mp-tangle
-	@$(mp_ctangle_sh) mp
-mp-tangle: ctangle$(EXEEXT) mplibdir/mp.w tangle-sh
-	@$(mp_ctangle_sh) mp
 
 $(psout_c_h): psout-tangle
 	@$(mp_ctangle_sh) psout
@@ -37,11 +41,6 @@ $(svgout_c_h): svgout-tangle
 	@$(mp_ctangle_sh) svgout
 svgout-tangle: ctangle$(EXEEXT) mplibdir/svgout.w tangle-sh
 	@$(mp_ctangle_sh) svgout
-
-$(tfmin_c_h): tfmin-tangle
-	@$(mp_ctangle_sh) tfmin
-tfmin-tangle: ctangle$(EXEEXT) mplibdir/tfmin.w tangle-sh
-	@$(mp_ctangle_sh) tfmin
 
 ## libmplib CWeb sources
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w

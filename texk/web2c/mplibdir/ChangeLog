@@ -1,3 +1,7 @@
+2011-04-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libmplib.am: Only one rule for tfmin.w => tfmin.c.
+
 2011-04-05  Taco Hoekwater  <taco@luatex.org>
 
 	* mp.w, mpost.w: import metapost 1.504
