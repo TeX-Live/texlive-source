@@ -51,7 +51,7 @@ $(libmplib_a_OBJECTS): $(nodist_libmplib_a_SOURCES)
 EXTRA_DIST += $(libmplib_web)
 
 DISTCLEANFILES += $(nodist_libmplib_a_SOURCES) \
-	mpmath-tangle mp-tangle psout-tangle svgout-tangle tfmin-tangle
+	mp-tangle mpmath-tangle psout-tangle svgout-tangle
 
 ## only used by luaTeX
 EXTRA_DIST += mplibdir/lmplib.c

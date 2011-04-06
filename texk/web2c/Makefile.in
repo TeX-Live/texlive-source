@@ -1442,10 +1442,10 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	mf-final.ch mf-web2c mf.p mf.pool mf-tangle \
 	$(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs ptmr.mpx \
 	tests/xptmr.mpx tests/xstory.mpx $(nodist_libmplib_a_SOURCES) \
-	mpmath-tangle mp-tangle psout-tangle svgout-tangle \
-	tfmin-tangle $(nodist_etex_SOURCES) etex.web etex.ch \
-	etex-web2c etex.p etex.pool etex-tangle etrip.diffs \
-	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
+	mp-tangle mpmath-tangle psout-tangle svgout-tangle \
+	$(nodist_etex_SOURCES) etex.web etex.ch etex-web2c etex.p \
+	etex.pool etex-tangle etrip.diffs $(pweb_programs:=.c) \
+	$(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
 	ptex.pool ptex-tangle tests/nissya_bib.* tests/xexampl.aux \
