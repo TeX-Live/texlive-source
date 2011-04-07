@@ -1,3 +1,7 @@
+2011-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.ch: Reformulate to not depend on eTeX_version_string.
+
 2011-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXFontInst.h: Fix prototype for xmalloc().

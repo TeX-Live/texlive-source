@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptrip/etrip.tex, eptrip/etrip.log, eptrip/eptrip.diffs:
+	Adapted to e-TeX Version 2.3.
+
 2011-04-01  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.ech: Yet an other Bug fix.

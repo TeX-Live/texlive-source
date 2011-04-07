@@ -1,9 +1,8 @@
-This is e-TeX, Version 3.141592-2.2 (INITEX)
-**&etrip etrip
-entering extended mode
-(etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2004-09-06] for e-TeX v3.141592-2.2.
-(You are using e-TeX version/revision 2.2)
+This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev)
+**entering extended mode
+(./etrip.tex e-IniTeX: e-Trip format loaded.
+This is the e-Trip test [2011-04-07] for e-TeX v3.1415926-2.3.
+(You are using e-TeX version/revision 2.3)
 Missing character: There is no c in font nullfont!
 
 
@@ -43,4 +42,6 @@ current interactionmode (l.247): errorstop
 current interactionmode (l.247): scroll
 
 current interactionmode (l.247): nonstop
+
+\openout1 = `etrip.out'.
 

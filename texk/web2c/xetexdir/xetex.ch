@@ -61,30 +61,23 @@ authorization from the copyright holders.
 @z
 
 @x
-@d eTeX_version_string=='-2.2' {current \eTeX\ version}
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
-@d eTeX_version_string=='-2.2' {current \eTeX\ version}
-
+@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+@#
 @d XeTeX_version=0
 @d XeTeX_revision==".9997"
 @d XeTeX_version_string=='-0.9997.4' {current \XeTeX\ version}
-@z
-
-@x
-@d eTeX_banner_k=='This is e-TeXk, Version 3.1415926',eTeX_version_string
-@d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
-  {printed when \eTeX\ starts}
 @#
-@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
-@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
-@#
-@d banner==eTeX_banner
-@d banner_k==eTeX_banner_k
-@y
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
 @d XeTeX_banner_k==XeTeX_banner
-@#
+@z
+
+@x
+@d banner==eTeX_banner
+@d banner_k==eTeX_banner_k
+@y
 @d banner==XeTeX_banner
 @d banner_k==XeTeX_banner_k
 @z

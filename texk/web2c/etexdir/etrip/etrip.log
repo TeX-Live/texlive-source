@@ -1,9 +1,9 @@
-This is e-TeX, Version 3.141592-2.2 (preloaded format=etrip 2004.9.6)  6 SEP 2004 23:13
+This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (format=etrip 2011.4.7)  7 APR 2011 11:46
 entering extended mode
 **&etrip etrip
-(etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2004-09-06] for e-TeX v3.141592-2.2.
-(You are using e-TeX version/revision 2.2)
+(./etrip.tex e-IniTeX: e-Trip format loaded.
+This is the e-Trip test [2011-04-07] for e-TeX v3.1415926-2.3.
+(You are using e-TeX version/revision 2.3)
 Missing character: There is no b in font nullfont!
 
 Missing character: There is no c in font nullfont!
@@ -668,8 +668,10 @@ Completed box being shipped out [1]
 .\write1{\unexpanded \expandafter {\1}}
 .\closeout1
 
-Memory usage before: 50&182; after: 36&176; still untouched: 680
-(etrip.out) ( 
+\openout1 = `etrip.out'.
+
+Memory usage before: 52&183; after: 36&177; still untouched: 1673
+(./etrip.out) ( 
 Warning: end of semi simple group (level 3) entered at line 431 of a dif
 ferent file
 Warning: end of \iftrue entered on line 431 of a different file
@@ -761,7 +763,7 @@ Warning: end of file when \ifnum entered on line 6 is incomplete
 l.9 \fi
        
 l.444         }
-                % end of outer \scantokens) (etrip.out
+                % end of outer \scantokens) (./etrip.out
 ! Undefined control sequence.
 \endgroup ->\9\9
                 
@@ -2694,9 +2696,9 @@ since the result is out of range.
 
 Expr fraction rounding 3 OK
 [1]
-Memory usage before: 51&320; after: 44&320; still untouched: 680
+Memory usage before: 53&321; after: 44&321; still untouched: 835
 [1]
-Memory usage before: 51&320; after: 44&320; still untouched: 680
+Memory usage before: 53&321; after: 44&321; still untouched: 835
 Checking \mutoglue and \gluetomu:
 ! You can't use `\mutoglue' in vertical mode.
 l.903   \mutoglue
@@ -4270,12 +4272,12 @@ laywidowpenalties:
 {restoring \interlinepenalties=0}
  ) 
 Here is how much of TeX's memory you used:
- 22 strings out of 1665
- 132 string characters out of 8410
- 2661 words of memory out of 3000
- 408 multiletter control sequences out of 2100
+ 18 strings out of 1810
+ 140 string characters out of 7791
+ 3164 words of memory out of 3999
+ 409 multiletter control sequences out of 15000+0
  2286 words of font info for 3 fonts, out of 20000 for 75
- 10 hyphenation exceptions out of 307
+ 9 hyphenation exceptions out of 659
  10i,15n,8p,137b,78s stack positions out of 200i,40n,60p,500b,600s
 
 Output written on etrip.dvi (3 pages, 220 bytes).

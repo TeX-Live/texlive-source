@@ -1,8 +1,9 @@
-This is e-TeX, Version 3.141592-2.2 (INITEX)  6 SEP 2004 23:13
+This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (INITEX)  7 APR 2011 11:46
 entering extended mode
 ***etrip
-(etrip.tex This is the e-Trip test [2004-09-06] for e-TeX v3.141592-2.2.
-(You are using e-TeX version/revision 2.2)
+(./etrip.tex
+This is the e-Trip test [2011-04-07] for e-TeX v3.1415926-2.3.
+(You are using e-TeX version/revision 2.3)
 e-IniTeX: Assigning category codes, tracing switches, other codes,
 definitions for e-VirTeX e-Trip test run, constants and registers,
 fonts, some math characters, some math parameters, hyphenation,
@@ -22,17 +23,17 @@ Proceed; I'll ignore the character I just read.
 enable e-TeX enhancements (TeXXeT),
 prepare saved items (not to be dumped), everyjob ...dumped. )
 Beginning to dump on file etrip.fmt
- (preloaded format=etrip 2004.9.6)
-1435 strings of total length 24590
-279 memory locations dumped; current usage is 36&165
-407 multiletter control sequences
+ (format=etrip 2011.4.7)
+1490 strings of total length 26209
+280 memory locations dumped; current usage is 36&166
+408 multiletter control sequences
 \font\nullfont=nullfont
 \font\trip=etrip
 \font\smalltrip=etrip at 5.0pt
 \font\bigtrip=etrip at 20.0pt
 2279 words of font info for 3 preloaded fonts
 2 hyphenation exceptions
-Hyphenation trie of length 434 has 12 ops out of 500
+Hyphenation trie of length 434 has 12 ops out of 35111
   3 for language 3
   3 for language 2
   3 for language 1

@@ -1,3 +1,9 @@
+2011-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Version 2.3, dated April 7, 2011.
+	* etrip/etrip.tex, etrip/etripin.log, etrip/etrip.log,
+	etrip/etrip.fot, etrip/etrip.typ, etrip/etrip.diffs: Adapted.
+
 2011-04-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Remove  remove_end_M and insert_end_M (now unused).

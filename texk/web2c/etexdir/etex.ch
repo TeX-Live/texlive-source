@@ -89,7 +89,7 @@
 %                 direction typesetting;
 %             fixed a bug in the revised glue rounding code, detected by
 %                 Tigran Aivazian <tigran@@aivazian.fsnet.co.uk>, Oct 2004.
-% Version 2.3 development was started in Feb 2008; released in Mon Year.
+% Version 2.3 development was started in Feb 2008; released in Apr 2011.
 %             fixed a bug in hyph_code handling (\savinghyphcodes)
 %                 reported by Vladimir Volovich <vvv@@vsu.ru>, Feb 2008.
 %             fixed the error messages for improper use of \protected,
@@ -183,8 +183,8 @@ known as `\eTeX'.
 @d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
 @d eTeX_version=2 { \.{\\eTeXversion} }
-@d eTeX_revision==".2" { \.{\\eTeXrevision} }
-@d eTeX_version_string=='-2.2' {current \eTeX\ version}
+@d eTeX_revision==".3" { \.{\\eTeXrevision} }
+@d eTeX_version_string=='-2.3' {current \eTeX\ version}
 @#
 @d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}
