@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 21770 2011-03-20 18:34:02Z karl $
+# $Id: TLUtils.pm 22010 2011-04-07 12:49:51Z siepo $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 21770 $';
+my $svnrev = '$Revision: 22010 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -1170,7 +1170,7 @@ the TLPDB given by C<$to_tlpdb>. Information on files are taken from
 the TLPDB C<$from_tlpdb>.
 
 C<$opt_src> and C<$opt_doc> specify whether srcfiles and docfiles should be
-installed (currently implemented only for installation from DVD).
+installed (currently implemented only for installation from uncompressed media).
 
 Returns 1 on success and 0 on error.
 
@@ -1194,7 +1194,7 @@ sub install_packages {
     if (!defined($tlpobjs{$p})) {
       die "STRANGE: $p not to be found in ", $fromtlpdb->root;
     }
-    if ($media ne 'DVD') {
+    if ($media ne 'local_uncompressed') {
       # we use the container size as the measuring unit since probably
       # downloading will be the limiting factor
       $tlpsizes{$p} = $tlpobjs{$p}->containersize;
@@ -1233,9 +1233,9 @@ sub install_packages {
     push @installfiles, $tlpobj->allbinfiles;
     push @installfiles, $tlpobj->srcfiles if ($opt_src);
     push @installfiles, $tlpobj->docfiles if ($real_opt_doc);
-    if ($media eq 'DVD') {
+    if ($media eq 'local_uncompressed') {
       $container = [ $root, @installfiles ];
-    } elsif ($media eq 'CD') {
+    } elsif ($media eq 'local_compressed') {
       if (-r "$root/$Archive/$package.zip") {
         $container = "$root/$Archive/$package.zip";
       } elsif (-r "$root/$Archive/$package.tar.xz") {
@@ -1254,9 +1254,9 @@ sub install_packages {
       # so only return here
       return 0;
     }
-    # if we are installing from CD or NET we have to fetch the respective
+    # if we are installing from compressed media we have to fetch the respective
     # source and doc packages $pkg.source and $pkg.doc and install them, too
-    if (($media eq 'NET') || ($media eq 'CD')) {
+    if (($media eq 'NET') || ($media eq 'local_compressed')) {
       # we install split containers under the following conditions:
       # - the container were split generated
       # - src/doc files should be installed
@@ -1301,7 +1301,7 @@ sub install_packages {
     }
     $totlpdb->add_tlpobj($tlpobj);
     # we have to write out the tlpobj file since it is contained in the
-    # archives (.tar.xz) but at DVD install time we don't have them
+    # archives (.tar.xz) but at uncompressed-media install time we don't have them
     my $tlpod = $totlpdb->root . "/tlpkg/tlpobj";
     mkdirhier( $tlpod );
     open(TMP,">$tlpod/".$tlpobj->name.".tlpobj") ||
@@ -1326,7 +1326,7 @@ This function installs the files given in @$filelistref from C<$what>
 into C<$target>.
 
 C<$size> gives the size in bytes of the container, or -1 if we are
-installing from DVD, i.e., from a list of files to be copied.
+installing from uncompressed media, i.e., from a list of files to be copied.
 
 If C<$what> is a reference to a list of files then these files are
 assumed to be readable and are copied to C<$target>, creating dirs on
@@ -1343,7 +1343,7 @@ file on the system and is likewise piped through C<xzdec> and C<tar>.
 In both of these cases currently the list C<$@filelistref> currently
 is not taken into account (should be fixed!).
 
-if C<$reloc> is true the container (NET or CD mode) is packaged in a way
+if C<$reloc> is true the container (NET or local_compressed mode) is packaged in a way
 that the initial texmf-dist is missing.
 
 Returns 1 on success and 0 on error.
@@ -1365,7 +1365,7 @@ sub install_package {
     return 0;
   }
   if (ref $what) {
-    # we are getting a ref to a list of files, so install from DVD
+    # we are getting a ref to a list of files, so install from uncompressed media
     my ($root, @files) = @$what;
     foreach my $file (@files) {
       # @what is taken, not @filelist!
@@ -1375,7 +1375,7 @@ sub install_package {
       copy "$root/$file", "$target/$dn";
     }
   } elsif ($what =~ m,\.tar.xz$,) {
-    # this is the case when we install from CD or the NET
+    # this is the case when we install from compressed media
     #
     # in all other cases we create temp files .tar.xz (or use the present
     # one), xzdec them, and then call tar
@@ -1452,7 +1452,7 @@ sub install_package {
           return 0;
         }
       } else {
-        # we are installing from CD
+        # we are installing from local compressed media
         # copy it to temp
         copy($what, $tempdir);
       }
@@ -1475,7 +1475,7 @@ sub install_package {
     if ($what =~ m,http://|ftp://,) {
       # we downloaded the original .tar.lzma from the net, so we keep it
     } else {
-      # we are downloading it from CD, so we can unlink it to save
+      # we are downloading it from local compressed media, so we can unlink it to save
       # disk space
       unlink($xzfile);
     }
@@ -2115,7 +2115,7 @@ sub setup_programs {
     }
   } else {
     if (!defined($platform) || ($platform eq "")) {
-      # we assume that we run from the DVD, so we can call platform() and
+      # we assume that we run from uncompressed media, so we can call platform() and
       # thus also the config.guess script
       # but we have to setup $::installerdir because the platform script
       # relies on it
@@ -2180,7 +2180,7 @@ sub setup_unix_one {
       #
       # create tmp dir only when necessary
       $tmp = TeXLive::TLUtils::tl_tmpdir() unless defined($tmp);
-      # probably we are running from DVD and want to copy it to
+      # probably we are running from uncompressed media and want to copy it to
       # some temporary location
       copy($def, $tmp);
       my $bn = basename($def);
