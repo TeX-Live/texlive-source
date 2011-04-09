@@ -4,16 +4,18 @@
 Neenie Billawala.
 Write-white printing engines and tuning fonts with Metafont.
 @cite{TUGboat}, 8(1):29--32, April 1987.
+@url{http://tug.org/TUGboat/tb08-1/tb17billawala.pdf}.
 
 @item [GMS94]
 Michel Goossens, Frank Mittelbach, and Alexander Samarin.
-@cite{The La@TeX{} Companion}.
+@cite{The @LaTeX{} Companion}.
 Addison-Wesley, Reading, MA, USA, 1994.
 
 @item [Hob89]
 John D. Hobby.
 A Metafont-like system with PS output.
 @cite{TUGboat}, 10(4):505--512, December 1989.
+@url{http://tug.org/metapost}.
 
 @item [Hob92]
 John D. Hobby.
@@ -87,6 +89,7 @@ This is an updated version of Knuth:1988:ET.
 Donald Knuth.
 Virtual Fonts: More Fun for Grand Wizards.
 @cite{TUGboat}, 11(1):13--23, April 1990.
+@url{http://tug.org/TUGboat/tb11-1/tb27knut.pdf}.
 
 @item [Knu92]
 Donald E. Knuth.
@@ -96,7 +99,7 @@ CSLI Lecture Notes Number 27. Stanford University Center for the Study of
 
 @item [Lam94]
 Leslie Lamport.
-@cite{La@TeX{}: A Document Preparation System: User's Guide and Reference
+@cite{@LaTeX{}: A Document Preparation System: User's Guide and Reference
   Manual}.
 Addison-Wesley, Reading, MA, USA, second edition, 1994.
 Reprinted with corrections in 1996.
@@ -105,6 +108,7 @@ Reprinted with corrections in 1996.
 Franklin Mark Liang.
 Word hy-phen-a-tion by com-pu-ter.
 Technical Report STAN-CS-83-977, Stanford University, August 1983.
+@url{http://tug.org/docs/liang/liang-thesis.pdf}.
 
 @item [Mac91]
 Pierre A. MacKay.

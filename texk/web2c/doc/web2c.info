@@ -3408,12 +3408,14 @@ Appendix B References
 
   7. [Bil87] Neenie Billawala.  Write-white printing engines and tuning
      fonts with Metafont.  `TUGboat', 8(1):29-32, April 1987.
+     `http://tug.org/TUGboat/tb08-1/tb17billawala.pdf'.
 
   8. [GMS94] Michel Goossens, Frank Mittelbach, and Alexander Samarin.
      `The LaTeX Companion'.  Addison-Wesley, Reading, MA, USA, 1994.
 
   9. [Hob89] John D. Hobby.  A Metafont-like system with PS output.
      `TUGboat', 10(4):505-512, December 1989.
+     `http://tug.org/metapost'.
 
  10. [Hob92] John D. Hobby.  A User's Manual for MetaPost.  Technical
      Report CSTR-162, AT&T Bell Laboratories, 1992.
@@ -3463,6 +3465,7 @@ Appendix B References
 
  22. [Knu90] Donald Knuth.  Virtual Fonts: More Fun for Grand Wizards.
      `TUGboat', 11(1):13-23, April 1990.
+     `http://tug.org/TUGboat/tb11-1/tb27knut.pdf'.
 
  23. [Knu92] Donald E. Knuth.  `Literate Programming'.  CSLI Lecture
      Notes Number 27. Stanford University Center for the Study of
@@ -3474,6 +3477,7 @@ Appendix B References
 
  25. [Lia83] Franklin Mark Liang.  Word hy-phen-a-tion by com-pu-ter.
      Technical Report STAN-CS-83-977, Stanford University, August 1983.
+     `http://tug.org/docs/liang/liang-thesis.pdf'.
 
  26. [Mac91] Pierre A. MacKay.  Looking at the pixels: Quality control
      for 300 dpi laser printer fonts,   especially Metafonts.  In
@@ -4542,6 +4546,6 @@ Node: vptovf invocation133444
 Node: Font utilities available elsewhere134498
 Node: Legalisms136906
 Node: References139077
-Node: Index143459
+Node: Index143649
 
 End Tag Table
