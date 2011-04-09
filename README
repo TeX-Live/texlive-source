@@ -67,9 +67,10 @@ Build information:
 
   i386-solaris, x86_64-solaris: Solaris 11
 
-  powerpc-linux
-2.6.26-2-powerpc64 #1 SMP Fri May 29 00:38:20 UTC 2009 ppc64 GNU/Linux
-/lib/libc.so.6, GNU C Library (EGLIBC) stable release version 2.9
+  powerpc-linux (Debian Squeeze)
+Linux homer 2.6.32-5-powerpc64 #1 SMP Tue Mar 8 02:01:42 UTC 2011
+ppc64 Debian GNU/Linux 6.0
+(only the kernel is 64bit, the entire userland is 32bit.)
 
   sparc-solaris
 OS: Sun Solaris 8
