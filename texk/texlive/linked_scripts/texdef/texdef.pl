@@ -233,7 +233,7 @@ if ($FINDDEF && !$ISLATEX) { die "Error: The --find / -f option is only implemen
 my $cwd = getcwd();
 $ENV{TEXINPUTS} = $cwd . ':' . ($ENV{TEXINPUTS} || '');
 
-my $TMPDIR  = 'temp';#tempdir( 'texdef_XXXXXX', CLEANUP => 1, TMPDIR => 1 );
+my $TMPDIR  = tempdir( 'texdef_XXXXXX', CLEANUP => 1, TMPDIR => 1 );
 chdir $TMPDIR or die;
 my $TMPFILE = 'texdef.tex';
 
