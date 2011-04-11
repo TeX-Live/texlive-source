@@ -1,6 +1,6 @@
 ## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 dnl
-dnl Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options for TeX and MF
@@ -10,7 +10,8 @@ AC_ARG_WITH([banner-add],
                            [add STR to version string appended to banner lines]))[]dnl
 AC_ARG_WITH([editor],
             AS_HELP_STRING([--with-editor=CMD],
-                           [invoke CMD from the `e' option @<:@vi +%d %s@:>@]))[]dnl
+                           [invoke CMD from the `e' option @<:@vi +%d '%s'@:>@
+                            or @<:@texworks --position=%d "%s"@:>@]))[]dnl
 AC_ARG_ENABLE([auto-core],
               AS_HELP_STRING([--enable-auto-core],
                              [cause TeX&MF to dump core, given a certain filename],

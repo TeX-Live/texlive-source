@@ -1231,6 +1231,7 @@ Isspace (char c)
 static boolean
 executable_filep (kpathsea kpse, const_string fname, boolean silent)
 {
+    const_string fn;
     string p, q, base;
     string *pp;
 
@@ -1241,17 +1242,15 @@ executable_filep (kpathsea kpse, const_string fname, boolean silent)
 /* get base name
    we cannot use xbasename() for abnormal names.
 */
-      base = xstrdup (fname);
       p = strrchr (fname, '/');
-      if (p) {
-        p++;
-        strcpy (base, p);
-      }
-      p = strrchr (base, '\\');
-      if (p) {
-        p++;
-        strcpy (base, p);
-      }
+      if (p)
+        fn = p + 1;
+      else
+        fn = fname;
+      p = strrchr (fn, '\\');
+      if (p)
+        fn = p + 1;
+      base = xstrdup (fn);
 #if defined(__CYGWIN__)
       for (p = base; *p; p++)
         *p = TOLOWER (*p);

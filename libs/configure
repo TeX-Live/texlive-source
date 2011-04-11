@@ -747,8 +747,6 @@ enable_t1rawafm
 enable_t1reencode
 enable_t1testpage
 enable_ttftotype42
-enable_cfftot1
-enable_ttftotype42
 enable_updmap
 enable_makeindexk
 enable_makejvf
@@ -1565,7 +1563,8 @@ Optional Packages:
   --with-recode           use `recode' instead of `iconv' to build xindy
                           [default: no]
   --with-banner-add=STR   add STR to version string appended to banner lines
-  --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
+  --with-editor=CMD       invoke CMD from the `e' option [vi +%d '%s'] or
+                          [texworks --position=%d "%s"]
   --without-mf-x-toolkit  do not use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
   --with-system-libgs     build dvisvgm with installed gs headers and library

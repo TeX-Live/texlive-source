@@ -1629,7 +1629,8 @@ Optional Packages:
   --with-sysroot=DIR Search for dependent libraries within DIR
                         (or the compiler's sysroot if not specified).
   --with-banner-add=STR   add STR to version string appended to banner lines
-  --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
+  --with-editor=CMD       invoke CMD from the `e' option [vi +%d '%s'] or
+                          [texworks --position=%d "%s"]
   --without-mf-x-toolkit  do not use X toolkit for METAFONT
   --with-fontconfig-includes=DIR
                           fontconfig headers installed in DIR
@@ -17529,38 +17530,6 @@ $as_echo "#define ASM_NEEDS_UNDERSCORE 1" >>confdefs.h
 
 fi
 
-
-case $with_editor in #(
-  ''|yes|no) :
-    with_editor='vi +%d %s' ;; #(
-  *) :
-     ;;
-esac
-
-cat >>confdefs.h <<_ACEOF
-#define EDITOR "$with_editor"
-_ACEOF
-
-
-if test "x$enable_auto_core" = xyes; then :
-
-$as_echo "#define FUNNY_CORE_DUMP 1" >>confdefs.h
-
-fi
-
-if test "x$enable_dump_share" = xno; then :
-
-$as_echo "#define NO_DUMP_SHARE 1" >>confdefs.h
-
-fi
-
-case $enable_ipc in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_ipc=yes ;;
-esac
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
 $as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
 if ${kpse_cv_have_win32+:} false; then :
@@ -17606,6 +17575,42 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
 $as_echo "$kpse_cv_have_win32" >&6; }
+
+
+case $with_editor in #(
+  ''|yes|no) :
+    if test "x$kpse_cv_have_win32" = xno; then :
+  with_editor="vi +%d '%s'"
+else
+  with_editor='texworks --position=%d \"%s\"'
+fi ;; #(
+  *) :
+     ;;
+esac
+
+cat >>confdefs.h <<_ACEOF
+#define EDITOR "$with_editor"
+_ACEOF
+
+
+if test "x$enable_auto_core" = xyes; then :
+
+$as_echo "#define FUNNY_CORE_DUMP 1" >>confdefs.h
+
+fi
+
+if test "x$enable_dump_share" = xno; then :
+
+$as_echo "#define NO_DUMP_SHARE 1" >>confdefs.h
+
+fi
+
+case $enable_ipc in #(
+  yes|no) :
+     ;; #(
+  *) :
+    enable_ipc=yes ;;
+esac
 
  if test "x$kpse_cv_have_win32" != xno; then
   WIN32_TRUE=
@@ -19752,18 +19757,18 @@ else
 /* end confdefs.h.  */
 
   /* For now, do not test the preprocessor; as of 2007 there are too many
-	 implementations with broken preprocessors.  Perhaps this can
-	 be revisited in 2012.  In the meantime, code should not expect
-	 #if to work with literals wider than 32 bits.  */
+         implementations with broken preprocessors.  Perhaps this can
+         be revisited in 2012.  In the meantime, code should not expect
+         #if to work with literals wider than 32 bits.  */
       /* Test literals.  */
       long long int ll = 9223372036854775807ll;
       long long int nll = -9223372036854775807LL;
       unsigned long long int ull = 18446744073709551615ULL;
       /* Test constant expressions.   */
       typedef int a[((-9223372036854775807LL < 0 && 0 < 9223372036854775807ll)
-		     ? 1 : -1)];
+                     ? 1 : -1)];
       typedef int b[(18446744073709551615ULL <= (unsigned long long int) -1
-		     ? 1 : -1)];
+                     ? 1 : -1)];
       int i = 63;
 int
 main ()
@@ -19772,40 +19777,40 @@ main ()
       long long int llmax = 9223372036854775807ll;
       unsigned long long int ullmax = 18446744073709551615ull;
       return ((ll << 63) | (ll >> 63) | (ll < i) | (ll > i)
-	      | (llmax / ll) | (llmax % ll)
-	      | (ull << 63) | (ull >> 63) | (ull << i) | (ull >> i)
-	      | (ullmax / ull) | (ullmax % ull));
+              | (llmax / ll) | (llmax % ll)
+              | (ull << 63) | (ull >> 63) | (ull << i) | (ull >> i)
+              | (ullmax / ull) | (ullmax % ull));
   ;
   return 0;
 }
 
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  			if test "$cross_compiling" = yes; then :
+                          if test "$cross_compiling" = yes; then :
   ac_cv_type_long_long_int=yes
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <limits.h>
-	       #ifndef LLONG_MAX
-	       # define HALF \
-			(1LL << (sizeof (long long int) * CHAR_BIT - 2))
-	       # define LLONG_MAX (HALF - 1 + HALF)
-	       #endif
+               #ifndef LLONG_MAX
+               # define HALF \
+                        (1LL << (sizeof (long long int) * CHAR_BIT - 2))
+               # define LLONG_MAX (HALF - 1 + HALF)
+               #endif
 int
 main ()
 {
 long long int n = 1;
-	       int i;
-	       for (i = 0; ; i++)
-		 {
-		   long long int m = n << i;
-		   if (m >> i != n)
-		     return 1;
-		   if (LLONG_MAX / 2 < m)
-		     break;
-		 }
-	       return 0;
+               int i;
+               for (i = 0; ; i++)
+                 {
+                   long long int m = n << i;
+                   if (m >> i != n)
+                     return 1;
+                   if (LLONG_MAX / 2 < m)
+                     break;
+                 }
+               return 0;
   ;
   return 0;
 }
@@ -23332,9 +23337,9 @@ esac
 
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
-config_files="`echo $ac_config_files`"
-config_headers="`echo $ac_config_headers`"
-config_commands="`echo $ac_config_commands`"
+config_files="$ac_config_files"
+config_headers="$ac_config_headers"
+config_commands="$ac_config_commands"
 
 _ACEOF
 

@@ -580,7 +580,8 @@ TEX = etex
 % interactive `e' option.  %d is replaced by the line number and %s by
 % the current filename.  The default is specified at compile-time, and
 % we let that stay in place since different platforms like different values.
-%TEXEDIT = vi +%d "%s"
+%TEXEDIT = vi +%d '%s'                    % default for Unix
+%TEXEDIT = texworks --position=+%d "%s"   % default for Windows
 %MFEDIT = ${TEXEDIT}
 %MPEDIT = ${TEXEDIT}
 

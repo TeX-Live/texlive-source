@@ -1,3 +1,10 @@
+2011-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf (TEXEDIT): Document Unix and Windows defaults.
+
+	* tex-file.c (executable_filep): Avoid using strcpy() for
+	overlapping strings.
+
 2011-03-22  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.eptex, TEXINPUTS.eplatex): define,

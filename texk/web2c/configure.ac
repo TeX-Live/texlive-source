@@ -56,9 +56,12 @@ dnl For tests
 AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])
 
 KPSE_ASM_UNDERSCORE
+KPSE_CHECK_WIN32
 
 AS_CASE([$with_editor],
-        [''|yes|no], [with_editor='vi +%d %s'])
+        [''|yes|no], [AS_IF([test "x$kpse_cv_have_win32" = xno],
+                            [with_editor="vi +%d '%s'"],
+                            [with_editor='texworks --position=%d \"%s\"'])])
 AC_DEFINE_UNQUOTED([EDITOR], ["$with_editor"],
                    [web2c: Default editor for interactive `e' option.])
 
@@ -75,7 +78,6 @@ AS_CASE([$enable_ipc],
         [yes|no], [],
             [enable_ipc=yes])
 
-KPSE_CHECK_WIN32
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
