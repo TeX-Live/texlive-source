@@ -1,3 +1,7 @@
+2011-04-11  Karl Berry  <karl@tug.org>
+
+	* xetex.ch (XeTeX_version_string): bump to .5.
+
 2011-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xetex.ch: Reformulate to not depend on eTeX_version_string.
