@@ -1,10 +1,10 @@
 #! /bin/sh
 # depcomp - compile a program generating dependencies as side-effects
 
-scriptversion=2010-10-07.20; # UTC
+scriptversion=2011-04-09-11; # UTC
 
-# Copyright (C) 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009, 2010
-# Free Software Foundation, Inc.
+# Copyright (C) 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009, 2010,
+# 2011 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -557,7 +557,9 @@ makedepend)
   touch "$tmpdepfile"
   ${MAKEDEPEND-makedepend} -o"$obj_suffix" -f"$tmpdepfile" "$@"
   rm -f "$depfile"
-  cat < "$tmpdepfile" > "$depfile"
+  # makedepend may prepend the VPATH from the source file name to the object.
+  # No need to regex-escape $object, excess matching of '.' is harmless.
+  sed "s|^.*\($object *:\)|\1|" "$tmpdepfile" > "$depfile"
   sed '1,2d' "$tmpdepfile" | tr ' ' '
 ' | \
 ## Some versions of the HPUX 10.20 sed can't process this invocation
