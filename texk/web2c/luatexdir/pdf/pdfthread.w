@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfthread.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfthread.w $";
+    "$Id: pdfthread.w 3905 2010-10-02 20:29:20Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfthread.w $";
 
 #include "ptexlib.h"
 
@@ -34,7 +34,7 @@ static const char _svn_version[] =
 void append_bead(PDF pdf, halfword p)
 {
     int a, b, c, t;
-    if (!is_shipping_page)
+    if (global_shipping_mode == SHIPPING_FORM)
         pdf_error("ext4", "threads cannot be inside an XForm");
     t = get_obj(pdf, obj_type_thread, pdf_thread_id(p), pdf_thread_named_id(p));
     b = pdf_new_objnum(pdf);
@@ -166,8 +166,7 @@ void pdf_fix_thread(PDF pdf, int t)
     tprint(" has been referenced but does not exist, replaced by a fixed one");
     print_ln();
     print_ln();
-    pdf_new_dict(pdf, obj_type_others, 0, 0);
-    a = pdf->obj_ptr;
+    a = pdf_new_dict(pdf, obj_type_others, 0, 0);
     pdf_indirect_ln(pdf, "T", t);
     pdf_indirect_ln(pdf, "V", a);
     pdf_indirect_ln(pdf, "N", a);
@@ -254,35 +253,21 @@ void check_running_thread(PDF pdf, halfword this_box, scaledpos cur)
 }
 
 @ @c
-void print_beads_list(PDF pdf)
-{
-    pdf_object_list *k;
-    if ((k = get_page_resources_list(pdf, obj_type_bead)) != NULL) {
-        pdf_printf(pdf, "/B [ ");
-        while (k != NULL) {
-            pdf_print_int(pdf, k->info);
-            pdf_printf(pdf, " 0 R ");
-            k = k->link;
-        }
-        pdf_printf(pdf, "]\n");
-    }
-}
-
-@ @c
 void print_bead_rectangles(PDF pdf)
 {
     halfword i;
     pdf_object_list *k;
+    int l;
     if ((k = get_page_resources_list(pdf, obj_type_bead)) != NULL) {
         while (k != NULL) {
-            pdf_new_obj(pdf, obj_type_others, 0, 1);
+            l = pdf_new_obj(pdf, obj_type_others, 0, 1);
             pdf_out(pdf, '[');
             i = obj_bead_data(pdf, k->info);    /* pointer to a whatsit or whatsit-like node */
             pdf_print_rect_spec(pdf, i);
             if (subtype(i) == pdf_thread_data_node)     /* thanh says it mis be destroyed here */
                 flush_node(i);
             pdf_printf(pdf, "]\n");
-            set_obj_bead_rect(pdf, k->info, pdf->obj_ptr);      /* rewrite |obj_bead_data| */
+            set_obj_bead_rect(pdf, k->info, l); /* rewrite |obj_bead_data| */
             pdf_end_obj(pdf);
             k = k->link;
         }

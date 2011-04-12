@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: conditional.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/conditional.w $";
+    "$Id: conditional.w 3955 2010-11-12 13:28:03Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/conditional.w $";
 
 @ @c
 #define box(A) eqtb[box_base+(A)].hh.rh
@@ -187,7 +187,7 @@ static boolean test_for_cs(void)
     while (p != null) {
         if (m >= max_buf_stack) {
             max_buf_stack = m + 4;
-            if (max_buf_stack == buf_size)
+            if (max_buf_stack >= buf_size)
                 check_buffer_overflow(max_buf_stack);
         }
         s = token_chr(token_info(p));

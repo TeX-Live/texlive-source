@@ -56,8 +56,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: hyphen.w 3612 2010-04-13 09:29:42Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lang/hyphen.w $";
+    "$Id: hyphen.w 3831 2010-08-25 04:35:34Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lang/hyphen.w $";
 
 @ TODO: should be moved to separate library
 
@@ -324,7 +324,7 @@ static char *hyppat_lookup(HashTab * hashtab, const unsigned char *chars, int l)
 {
     int i;
     HashEntry *e;
-    unsigned char key[128];     /* should be ample */
+    unsigned char key[256];     /* should be ample */
     strncpy((char *) key, (const char *) chars, (size_t) l);
     key[l] = 0;
     i = (int) (hnj_string_hash(key) % HASH_SIZE);
@@ -604,6 +604,12 @@ void hnj_hyphen_load(HyphenDict * dict, const unsigned char *f)
     char *org;
     while ((format = next_pattern(&l, &f)) != NULL) {
         int i, j, e;
+        if (l>=255) {
+           help1("Individual patterns should not be longer than 254 bytes total.");
+           print_err("Pattern of enormous length ignored");
+           error();
+           continue;
+        }
 #if 0
            printf("%s\n",format);
            char* repl = strnchr(format, '/',l);

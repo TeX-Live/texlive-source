@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfsaverestore.w 3571 2010-04-02 13:50:45Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfsaverestore.w $";
+    "$Id: pdfsaverestore.w 3676 2010-05-02 20:04:49Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfsaverestore.w $";
 
 #include "ptexlib.h"
 
@@ -44,7 +44,7 @@ static void checkpdfsave(scaledpos pos)
     }
     pos_stack[pos_stack_used].pos.h = pos.h;
     pos_stack[pos_stack_used].pos.v = pos.v;
-    if (page_mode) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         pos_stack[pos_stack_used].matrix_stack = matrix_stack_used;
     }
     pos_stack_used++;
@@ -65,7 +65,7 @@ static void checkpdfrestore(scaledpos pos)
         pdftex_warn("Misplaced \\pdfrestore by (%dsp, %dsp)", (int) diff.h,
                     (int) diff.v);
     }
-    if (page_mode) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         matrix_stack_used = pos_stack[pos_stack_used].matrix_stack;
     }
 }

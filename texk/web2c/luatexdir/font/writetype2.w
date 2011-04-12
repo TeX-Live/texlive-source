@@ -27,7 +27,7 @@
 #include "font/tt_glyf.h"
 
 static const char _svn_version[] =
-    "$Id: writetype2.w 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writetype2.w $";
+    "$Id: writetype2.w 3848 2010-09-01 08:34:37Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writetype2.w $";
 
 @ forward declaration
 @c
@@ -152,7 +152,7 @@ void writetype2(PDF pdf, fd_entry * fd)
     cur_file_name =
         luatex_find_file(fd_cur->fm->ff_name, find_opentype_file_callback);
     if (cur_file_name == NULL) {
-        pdftex_fail("cannot find OpenType font file for reading");
+        pdftex_fail("cannot find OpenType font file for reading (%s)", fd_cur->fm->ff_name);
     }
     callback_id = callback_defined(read_opentype_file_callback);
     if (callback_id > 0) {
@@ -160,11 +160,11 @@ void writetype2(PDF pdf, fd_entry * fd)
                          &file_opened, &ttf_buffer, &ttf_size) &&
             file_opened && ttf_size > 0) {
         } else {
-            pdftex_fail("cannot open OpenType font file for reading");
+            pdftex_fail("cannot open OpenType font file for reading (%s)", cur_file_name);
         }
     } else {
         if (!otf_open(cur_file_name)) {
-            pdftex_fail("cannot open OpenType font file for reading");
+            pdftex_fail("cannot open OpenType font file for reading (%s)", cur_file_name);
         }
         ttf_read_file();
         ttf_close();
@@ -259,11 +259,12 @@ static unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
 
 @ Creating the subset.
 @c
+extern int cidset;
 void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buffer, int buflen)
 {
 
     long i, cid;
-    unsigned int last_cid;
+    unsigned int last_cid = 0;
     glw_entry *found;
     struct avl_traverser t;
     unsigned char *cidtogidmap;
@@ -395,6 +396,26 @@ void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buffer, int buflen)
 
     pdf_release_obj(fontfile);
 
+    /* CIDSet: a table of bits indexed by cid, bytes with high order bit first, 
+       each (set) bit is a (present) CID. */	
+    if (is_subsetted(fd->fm)) {
+      cidset = pdf_new_objnum(pdf);
+      if (cidset != 0) {
+       size_t l = (last_cid/8)+1;
+       char *stream = xmalloc(l);
+       memset(stream, 0, l);
+       for (cid = 1; cid <= (long) last_cid; cid++) {
+           if (used_chars[cid]) {
+	      stream[(cid / 8)] |= (1 << (7 - (cid % 8)));
+           }
+       }
+       pdf_begin_dict(pdf, cidset, 0);
+       pdf_begin_stream(pdf);
+       pdf_out_block(pdf, stream, l);
+       pdf_end_stream(pdf);
+      }
+    }
+
     /* TODO other stuff that needs fixing: */
 
     /* DW, W, DW2, and W2 */
@@ -408,19 +429,7 @@ void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buffer, int buflen)
        add_TTCIDVMetrics(font->fontdict, glyphs, used_chars, cidtogidmap, last_cid);
        }
 #endif
-    /* CIDSet */
-#if 0
-       {
-       pdf_obj *cidset;
 
-       cidset = pdf_new_stream(STREAM_COMPRESS);
-       pdf_add_stream(cidset, used_chars, last_cid/8 + 1);
-       pdf_add_dict(font->descriptor,
-       pdf_new_name("CIDSet"),
-       pdf_ref_obj(cidset));
-       pdf_release_obj(cidset);
-       }
-#endif
     xfree(used_chars);
     sfnt_close(sfont);
     return;

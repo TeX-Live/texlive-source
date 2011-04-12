@@ -21,7 +21,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: lcallbacklib.c 3404 2010-01-28 11:17:10Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
+    "$Id: lcallbacklib.c 3965 2010-11-22 12:38:45Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
 int callback_count = 0;
 int saved_callback_count = 0;
@@ -35,7 +35,6 @@ static const char *const callbacknames[] = {
     "find_image_file",
     "find_format_file",
     "find_read_file", "open_read_file",
-    "find_ocp_file", "read_ocp_file",
     "find_vf_file", "read_vf_file",
     "find_data_file", "read_data_file",
     "find_font_file", "read_font_file",
@@ -63,10 +62,18 @@ static const char *const callbacknames[] = {
     "linebreak_filter",
     "post_linebreak_filter",
     "mlist_to_hlist",
+    "finish_pdffile",
+    "pre_dump",
     NULL
 };
 
 int callback_callbacks_id = 0;
+
+int debug_callback_defined(int i) 
+{
+    printf ("callback_defined(%s)\n", callbacknames[i]);
+    return callback_set[i];
+}
 
 void get_lua_boolean(const char *table, const char *name, boolean * target)
 {

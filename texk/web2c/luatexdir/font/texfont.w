@@ -33,8 +33,8 @@ problematic |if 0 != null|.
 
 @c
 static const char _svn_version[] =
-    "$Id: texfont.w 3634 2010-04-19 19:52:48Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/texfont.w $";
+    "$Id: texfont.w 3997 2010-11-28 10:37:21Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/texfont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -115,6 +115,8 @@ int new_font(void)
     font_tables[id]->_right_boundary = NULL;
     font_tables[id]->_param_base = NULL;
     font_tables[id]->_math_param_base = NULL;
+    font_tables[id]->_pdf_font_blink = null_font;
+    font_tables[id]->_pdf_font_elink = null_font;
 
     set_font_bc(id, 1);         /* ec = 0 */
     set_hyphen_char(id, '-');
@@ -1124,10 +1126,10 @@ int copy_font(int f)
     if (font_cidordering(f) != NULL)
         set_font_cidordering(k, xstrdup(font_cidordering(f)));
 
-    i = (int) (sizeof(*param_base(f)) * (unsigned) font_params(f));
+    i = (int) (sizeof(*param_base(f)) * (unsigned) (font_params(f)+1));
     font_bytes += i;
-    param_base(k) = xmalloc((unsigned) i);
-    memcpy(param_base(k), param_base(f), (size_t) i);
+    param_base(k) = xmalloc((unsigned) (i+1));
+    memcpy(param_base(k), param_base(f), (size_t) (i));
 
     if (font_math_params(f) > 0) {
         i = (int) (sizeof(*math_param_base(f)) *
@@ -1151,6 +1153,8 @@ int copy_font(int f)
         ci = copy_charinfo(right_boundary(f));
         set_charinfo(k, right_boundarychar, ci);
     }
+    /* not updated yet: */
+    font_tables[k]->charinfo_count = font_tables[f]->charinfo_count;
     return k;
 }
 

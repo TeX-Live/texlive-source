@@ -764,7 +764,6 @@ with_sysroot
 enable_libtool_lock
 enable_largefile
 enable_compiler_warnings
-with_gnu_ld
 enable_cxx_runtime_hack
 enable_cfftot1
 enable_mmafm
@@ -776,8 +775,6 @@ enable_t1lint
 enable_t1rawafm
 enable_t1reencode
 enable_t1testpage
-enable_ttftotype42
-enable_cfftot1
 enable_ttftotype42
 enable_updmap
 with_kpathsea
@@ -795,12 +792,8 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
-CPPFLAGS
 CXX
 CXXFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
 CCC
 CXXCPP'
 
@@ -20438,9 +20431,9 @@ esac
 
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
-config_files="$ac_config_files"
-config_headers="$ac_config_headers"
-config_commands="$ac_config_commands"
+config_files="`echo $ac_config_files`"
+config_headers="`echo $ac_config_headers`"
+config_commands="`echo $ac_config_commands`"
 
 _ACEOF
 

@@ -1,7 +1,8 @@
 % writejbig2.w
 
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2009 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2003-2011 Hartmut Henkel <hartmut@@luatex.org>
 
 % This file is part of LuaTeX.
 
@@ -80,8 +81,8 @@ object exists, reference it. Else create fresh one.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writejbig2.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/image/writejbig2.w $";
+    "$Id: writejbig2.w 4058 2011-01-10 20:44:28Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/writejbig2.w $";
 
 #undef DEBUG
 
@@ -347,14 +348,14 @@ static SEGINFO *find_seginfo(LIST * slp, unsigned long segnum)
 }
 
 @ @c
-static unsigned int read2bytes(FILE * f)
+unsigned int read2bytes(FILE * f)
 {
     unsigned int c = (unsigned int) ygetc(f);
     return (c << 8) + (unsigned int) ygetc(f);
 }
 
 @ @c
-static unsigned long read4bytes(FILE * f)
+unsigned int read4bytes(FILE * f)
 {
     unsigned int l = read2bytes(f);
     return (l << 16) + read2bytes(f);
@@ -503,7 +504,7 @@ static boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
     }
     /* 7.2.6 Segment page association */
     if (sip->pageassocsizeflag)
-        sip->segpage = (long int) read4bytes(fip->file);
+        sip->segpage = read4bytes(fip->file);
     else
         sip->segpage = ygetc(fip->file);
     /* 7.2.7 Segment data length */
@@ -683,17 +684,17 @@ static void rd_jbig2_info(FILEINFO * fip)
         /* 7.4.8 Page information segment syntax */
         if (sip->pageinfoflag) {
             pip->pagenum = (unsigned long) sip->segpage;
-            pip->width = (unsigned) read4bytes(fip->file);
-            pip->height = (unsigned) read4bytes(fip->file);
-            pip->xres = (unsigned) read4bytes(fip->file);
-            pip->yres = (unsigned) read4bytes(fip->file);
+            pip->width = read4bytes(fip->file);
+            pip->height = read4bytes(fip->file);
+            pip->xres = read4bytes(fip->file);
+            pip->yres = read4bytes(fip->file);
             pip->pagesegmentflags = (unsigned) ygetc(fip->file);
             /* 7.4.8.6 Page striping information */
             pip->stripinginfo = read2bytes(fip->file);
             seekdist -= 19;
         }
         if (sip->endofstripeflag) {
-            pip->stripedheight = (unsigned) read4bytes(fip->file);
+            pip->stripedheight = read4bytes(fip->file);
             seekdist -= 4;
         }
         if (!fip->sequentialaccess
@@ -732,8 +733,8 @@ static void wr_jbig2(PDF pdf, FILEINFO * fip, unsigned long page)
         pdf_puts(pdf, "/Filter [/JBIG2Decode]\n");
         if (fip->page0.last != NULL) {
             if (fip->pdfpage0objnum == 0) {
-                pdf_create_obj(pdf, obj_type_others, 0);
-                fip->pdfpage0objnum = (unsigned long) pdf->obj_ptr;
+                fip->pdfpage0objnum =
+                    (unsigned long) pdf_create_obj(pdf, obj_type_others, 0);
             }
             pdf_printf(pdf, "/DecodeParms [<< /JBIG2Globals %lu 0 R >>]\n",
                        fip->pdfpage0objnum);

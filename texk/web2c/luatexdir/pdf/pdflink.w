@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdflink.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdflink.w $";
+    "$Id: pdflink.w 3891 2010-09-14 23:02:24Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdflink.w $";
 
 #include "ptexlib.h"
 
@@ -37,7 +37,7 @@ void push_link_level(PDF pdf, halfword p)
     if (pdf->link_stack_ptr >= pdf_max_link_level)
         overflow("pdf link stack size", pdf_max_link_level);
     assert(((type(p) == whatsit_node) && (subtype(p) == pdf_start_link_node)));
-    incr(pdf->link_stack_ptr);
+    pdf->link_stack_ptr++;
     pdf->link_stack[pdf->link_stack_ptr].nesting_level = cur_s;
     pdf->link_stack[pdf->link_stack_ptr].link_node = copy_node_list(p);
     pdf->link_stack[pdf->link_stack_ptr].ref_link_node = p;
@@ -48,7 +48,7 @@ void pop_link_level(PDF pdf)
 {
     assert(pdf->link_stack_ptr > 0);
     flush_node_list(pdf->link_stack[pdf->link_stack_ptr].link_node);
-    decr(pdf->link_stack_ptr);
+    pdf->link_stack_ptr--;
 }
 
 @ @c
@@ -57,7 +57,7 @@ void do_link(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
     scaled_whd alt_rule;
     if (type(p) == vlist_node)
         pdf_error("ext4", "\\pdfstartlink ended up in vlist");
-    if (!is_shipping_page)
+    if (global_shipping_mode == SHIPPING_FORM)
         pdf_error("ext4", "link annotations cannot be inside an XForm");
     assert(type(parent_box) == hlist_node);
     if (is_obj_scheduled(pdf, pdf_link_objnum(p)))
@@ -90,7 +90,7 @@ void end_link(PDF pdf, halfword p)
 
     if (is_running(width(pdf->link_stack[pdf->link_stack_ptr].link_node))) {
         q = pdf->link_stack[pdf->link_stack_ptr].ref_link_node;
-        if (is_shipping_page && matrixused()) {
+        if (global_shipping_mode == SHIPPING_PAGE && matrixused()) {
             matrixrecalculate(pos.h + pdf_link_margin);
             pdf_ann_left(q) = getllx() - pdf_link_margin;
             pdf_ann_top(q) = cur_page_size.v - getury() - pdf_link_margin;
@@ -128,6 +128,7 @@ node, in order to use |flush_node_list| to do the job.
 void append_link(PDF pdf, halfword parent_box, scaledpos cur, small_number i)
 {
     halfword p;
+    int k;
     scaled_whd alt_rule;
     assert(type(parent_box) == hlist_node);
     p = copy_node(pdf->link_stack[(int) i].link_node);
@@ -137,9 +138,9 @@ void append_link(PDF pdf, halfword parent_box, scaledpos cur, small_number i)
     alt_rule.ht = height(p);
     alt_rule.dp = depth(p);
     set_rect_dimens(pdf, p, parent_box, cur, alt_rule, pdf_link_margin);
-    pdf_create_obj(pdf, obj_type_others, 0);
-    obj_annot_ptr(pdf, pdf->obj_ptr) = p;
-    addto_page_resources(pdf, obj_type_link, pdf->obj_ptr);
+    k = pdf_create_obj(pdf, obj_type_others, 0);
+    obj_annot_ptr(pdf, k) = p;
+    addto_page_resources(pdf, obj_type_link, k);
 }
 
 @ @c

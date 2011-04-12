@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: equivalents.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/equivalents.w $";
+    "$Id: equivalents.w 3849 2010-09-01 09:10:48Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/equivalents.w $";
 
 @ @c
 #define par_shape_ptr equiv(par_shape_loc)
@@ -1017,7 +1017,6 @@ void show_eqtb(halfword n)
                 print_int(vinfo(par_shape_ptr + 1));
             }
         } else if (n < toks_base) {
-            /* TODO make extra cases for ocps here!  */
             print_cmd_chr(assign_toks_cmd, n);
             print_char('=');
             if (equiv(n) != null)
@@ -1130,7 +1129,6 @@ void show_eqtb_meaning(halfword n)
             else
                 print_cmd_chr(set_etex_shape_cmd, n);
         } else if (n < toks_base) {
-            /* TODO make extra cases for ocps here!  */
             print_cmd_chr(assign_toks_cmd, n);
         } else if (n < box_base) {
             tprint_esc("toks");

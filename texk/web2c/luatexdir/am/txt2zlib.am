@@ -1,0 +1,19 @@
+## texk/web2c/luatexdir/am/txt2zlib.am: Makefile fragment for txt2zlib.
+##
+## Copyright (C) 2010 Hartmut Henkel <hartmut@luatex.org>
+## You may freely use, modify and/or distribute this file.
+##
+## $Id: txt2zlib.am 3958 2010-11-12 22:57:13Z hhenkel $
+
+noinst_PROGRAMS += txt2zlib
+
+nodist_txt2zlib_SOURCES = txt2zlib.c
+txt2zlib_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
+txt2zlib_DEPENDENCIES = $(ZLIB_DEPEND)
+txt2zlib_CFLAGS = $(WARNING_CFLAGS)
+txt2zlib_LDADD = $(ZLIB_LIBS) $(LDADD)
+DISTCLEANFILES += txt2zlib.c
+
+txt2zlib.c: ctangle$(EXEEXT) luatexdir/luascripts/txt2zlib.w
+	$(luatex_luascripts_ctangle) txt2zlib.w
+

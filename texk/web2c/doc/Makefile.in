@@ -52,6 +52,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
 	$(top_srcdir)/../../m4/kpse-obsdcompat-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-poppler-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-ptexenc-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-teckit-flags.m4 \
@@ -207,6 +208,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+POPPLER_DEPEND = @POPPLER_DEPEND@
+POPPLER_INCLUDES = @POPPLER_INCLUDES@
+POPPLER_LIBS = @POPPLER_LIBS@
 PTEXENC_DEPEND = @PTEXENC_DEPEND@
 PTEXENC_INCLUDES = @PTEXENC_INCLUDES@
 PTEXENC_LIBS = @PTEXENC_LIBS@
@@ -221,6 +225,7 @@ TECKIT_DEPEND = @TECKIT_DEPEND@
 TECKIT_INCLUDES = @TECKIT_INCLUDES@
 TECKIT_LIBS = @TECKIT_LIBS@
 TIE = @TIE@
+TXTTOZLIB = @TXTTOZLIB@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 WARNING_CXXFLAGS = @WARNING_CXXFLAGS@

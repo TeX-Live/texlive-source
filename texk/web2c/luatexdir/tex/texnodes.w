@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texnodes.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/texnodes.w $";
+    "$Id: texnodes.w 4139 2011-04-12 08:37:27Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/texnodes.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -72,14 +72,14 @@ int copy_error(halfword p);     /* define below */
 
 const char *node_fields_list[] =
     { "attr", "width", "depth", "height", "dir", "shift",
-    "glue_order", "glue_sign", "glue_set", "list", NULL
+    "glue_order", "glue_sign", "glue_set", "head", NULL
 };
 const char *node_fields_rule[] =
     { "attr", "width", "depth", "height", "dir", NULL };
 const char *node_fields_insert[] =
-    { "attr", "cost", "depth", "height", "spec", "list", NULL };
+    { "attr", "cost", "depth", "height", "spec", "head", NULL };
 const char *node_fields_mark[] = { "attr", "class", "mark", NULL };
-const char *node_fields_adjust[] = { "attr", "list", NULL };
+const char *node_fields_adjust[] = { "attr", "head", NULL };
 const char *node_fields_disc[] = { "attr", "pre", "post", "replace", NULL };
 const char *node_fields_math[] = { "attr", "surround", NULL };
 const char *node_fields_glue[] = { "attr", "spec", "leader", NULL };
@@ -88,7 +88,7 @@ const char *node_fields_penalty[] = { "attr", "penalty", NULL };
 
 const char *node_fields_unset[] =
     { "attr", "width", "depth", "height", "dir", "shrink",
-    "glue_order", "glue_sign", "stretch", "span", "list", NULL
+    "glue_order", "glue_sign", "stretch", "span", "head", NULL
 };
 const char *node_fields_margin_kern[] = { "attr", "width", "glyph", NULL };
 
@@ -118,8 +118,8 @@ const char *node_fields_accent[] =
     { "attr", "nucleus", "sub", "sup", "accent", "bot_accent", NULL };
 const char *node_fields_fence[] = { "attr", "delim", NULL };
 const char *node_fields_math_char[] = { "attr", "fam", "char", NULL };
-const char *node_fields_sub_box[] = { "attr", "list", NULL };
-const char *node_fields_sub_mlist[] = { "attr", "list", NULL };
+const char *node_fields_sub_box[] = { "attr", "head", NULL };
+const char *node_fields_sub_mlist[] = { "attr", "head", NULL };
 const char *node_fields_math_text_char[] = { "attr", "fam", "char", NULL };
 const char *node_fields_delim[] =
     { "attr", "small_fam", "small_char", "large_fam", "large_char", NULL };
@@ -186,7 +186,7 @@ const char *node_fields_whatsit_pdf_start_thread[] =
 const char *node_fields_whatsit_pdf_end_thread[] = { "attr", NULL };
 const char *node_fields_whatsit_pdf_save_pos[] = { "attr", NULL };
 const char *node_fields_whatsit_late_lua[] =
-    { "attr", "reg", "data", "name", NULL };
+    { "attr", "reg", "data", "name", "string", NULL };
 const char *node_fields_whatsit_close_lua[] = { "attr", "reg", NULL };
 const char *node_fields_whatsit_pdf_colorstack[] =
     { "attr", "stack", "cmd", "data", NULL };
@@ -232,11 +232,9 @@ node_info node_data[] = {
     {math_char_node, math_kernel_node_size, node_fields_math_char, "math_char"},
     {sub_box_node, math_kernel_node_size, node_fields_sub_box, "sub_box"},
     {sub_mlist_node, math_kernel_node_size, node_fields_sub_mlist, "sub_mlist"},
-    {math_text_char_node, math_kernel_node_size, node_fields_math_text_char,
-     "math_text_char"},
+    {math_text_char_node, math_kernel_node_size, node_fields_math_text_char, "math_text_char"},
     {delim_node, math_shield_node_size, node_fields_delim, "delim"},
-    {margin_kern_node, margin_kern_node_size, node_fields_margin_kern,
-     "margin_kern"},
+    {margin_kern_node, margin_kern_node_size, node_fields_margin_kern, "margin_kern"},
     {glyph_node, glyph_node_size, node_fields_glyph, "glyph"},
     {align_record_node, box_node_size, NULL, "align_record"},
     {pseudo_file_node, pseudo_file_node_size, NULL, "pseudo_file"},
@@ -248,8 +246,7 @@ node_info node_data[] = {
     {span_node, span_node_size, NULL, "span"},
     {attribute_node, attribute_node_size, node_fields_attribute, "attribute"},
     {glue_spec_node, glue_spec_size, node_fields_glue_spec, "glue_spec"},
-    {attribute_list_node, attribute_node_size, node_fields_attribute_list,
-     "attribute_list"},
+    {attribute_list_node, attribute_node_size, node_fields_attribute_list, "attribute_list"},
     {action_node, pdf_action_size, node_fields_action, "action"},
     {temp_node, temp_node_size, NULL, "temp"},
     {align_stack_node, align_stack_node_size, NULL, "align_stack"},
@@ -390,10 +387,12 @@ halfword new_node(int i, int j)
          but the overall allocation faster then an explicit test
          at the top of |new_node()|.
          */
-        free_node(n, variable_node_size);
-        n = slow_get_node(j);
-        (void) memset((void *) (varmem + n + 1), 0,
+        if (j>0) {
+          free_node(n, variable_node_size);
+          n = slow_get_node(j);
+          (void) memset((void *) (varmem + n + 1), 0,
                       (sizeof(memory_word) * ((unsigned) j - 1)));
+        }
         break;
     default:
         break;
@@ -660,9 +659,7 @@ halfword copy_node(const halfword p)
             add_token_ref(pdf_setmatrix_data(p));
             break;
         case late_lua_node:
-            if (late_lua_name(p) > 0)
-                add_token_ref(late_lua_name(p));
-            add_token_ref(late_lua_data(p));
+            copy_late_lua(r, p);
             break;
         case pdf_annot_node:
             add_token_ref(pdf_annot_data(p));
@@ -957,9 +954,7 @@ void flush_node(halfword p)
             delete_token_ref(pdf_setmatrix_data(p));
             break;
         case late_lua_node:
-            if (late_lua_name(p) > 0)
-                delete_token_ref(late_lua_name(p));
-            delete_token_ref(late_lua_data(p));
+            free_late_lua(p);
             break;
         case pdf_annot_node:
             delete_token_ref(pdf_annot_data(p));
@@ -1194,7 +1189,8 @@ void check_node(halfword p)
         case late_lua_node:
             if (late_lua_name(p) > 0)
                 check_token_ref(late_lua_name(p));
-            check_token_ref(late_lua_data(p));
+            if (late_lua_type(p) == normal)
+                check_token_ref(late_lua_data(p));
             break;
         case pdf_annot_node:
             check_token_ref(pdf_annot_data(p));
@@ -1575,33 +1571,43 @@ void init_node_mem(int t)
     shrink_order(fil_neg_glue) = normal;
     /* initialize node list heads */
     vinfo(page_ins_head) = 0;
+    type(page_ins_head) = temp_node;
     vlink(page_ins_head) = null;
     alink(page_ins_head) = null;
     vinfo(contrib_head) = 0;
+    type(contrib_head) = temp_node;
     vlink(contrib_head) = null;
     alink(contrib_head) = null;
     vinfo(page_head) = 0;
+    type(page_head) = temp_node;
     vlink(page_head) = null;
     alink(page_head) = null;
     vinfo(temp_head) = 0;
+    type(temp_head) = temp_node;
     vlink(temp_head) = null;
     alink(temp_head) = null;
     vinfo(hold_head) = 0;
+    type(hold_head) = temp_node;
     vlink(hold_head) = null;
     alink(hold_head) = null;
     vinfo(adjust_head) = 0;
+    type(adjust_head) = temp_node;
     vlink(adjust_head) = null;
     alink(adjust_head) = null;
     vinfo(pre_adjust_head) = 0;
+    type(pre_adjust_head) = temp_node;
     vlink(pre_adjust_head) = null;
     alink(pre_adjust_head) = null;
     vinfo(active) = 0;
+    type(active) = unhyphenated_node;
     vlink(active) = null;
     alink(active) = null;
     vinfo(align_head) = 0;
+    type(align_head) = temp_node;
     vlink(align_head) = null;
     alink(align_head) = null;
     vinfo(end_span) = 0;
+    type(end_span) = span_node;
     vlink(end_span) = null;
     alink(end_span) = null;
     type(begin_point) = glyph_node;
@@ -2334,9 +2340,7 @@ static void show_whatsit_node(int p)
         tprint_esc("noboundary");
         break;
     case late_lua_node:
-        tprint_esc("latelua");
-        print_int(late_lua_reg(p));
-        print_mark(late_lua_data(p));
+        show_late_lua(p);
         break;
     case close_lua_node:
         tprint_esc("closelua");
@@ -2811,6 +2815,11 @@ void show_node_list(int p)
                 if (adjust_pre(p) != 0)
                     tprint(" pre ");
                 node_list_display(adjust_ptr(p));       /* recursive call */
+                break;
+            case glue_spec_node:
+                tprint("<glue_spec ");
+                print_spec(p, NULL);
+                tprint(">");
                 break;
             default:
                 show_math_node(p);

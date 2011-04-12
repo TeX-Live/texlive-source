@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex-api.h 3612 2010-04-13 09:29:42Z taco $ */
+/* $Id: luatex-api.h 4001 2010-11-28 15:49:46Z taco $ */
 
 #ifndef LUATEX_API_H
 #  define LUATEX_API_H 1
@@ -30,7 +30,7 @@
 #  include "lua51/lualib.h"
 
 typedef struct LoadS {
-    const char *s;
+    char *s;
     size_t size;
 } LoadS;
 
@@ -75,6 +75,7 @@ extern int luaopen_epdf(lua_State * L);
 extern int luaopen_mplib(lua_State * L);
 
 extern void open_oslibext(lua_State * L, int safer_option);
+extern void open_lfslibext(lua_State * L);
 
 extern void initfilecallbackids(int max);
 extern void setinputfilecallbackid(int n, int i);
@@ -167,12 +168,10 @@ extern int program_name_set;    /* in lkpselib.c */
 extern char **argv;
 extern int argc;
 
-
 extern int loader_C_luatex(lua_State * L, const char *name,
                            const char *filename);
-extern int loader_Call_luatex (lua_State *L, const char *name,
-			       const char *filename);
-
+extern int loader_Call_luatex(lua_State * L, const char *name,
+                              const char *filename);
 
 extern void init_tex_table(lua_State * L);
 
@@ -198,6 +197,6 @@ extern char charsetstr[];       /* from mpdir/psout.w */
 
 extern char **environ;
 
-extern int luac_main(int argc, char *argv[]); /* texluac.w */
+extern int luac_main(int argc, char *argv[]);   /* texluac.w */
 
-#endif
+#endif                          /* LUATEX_API_H */

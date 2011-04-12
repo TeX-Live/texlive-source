@@ -17,14 +17,14 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfshipout.h 2977 2009-08-08 12:49:35Z hhenkel $ */
+/* $Id: pdfshipout.h 3853 2010-09-03 18:05:14Z oneiros $ */
 
 #ifndef PDFSHIPOUT_H
 #  define PDFSHIPOUT_H
 
-extern boolean is_shipping_page;        /* set to |shipping_page| when |ship_out| starts */
+extern shipping_mode_e global_shipping_mode;    /* set to |shipping_mode| when |ship_out| starts */
 extern scaledpos shipbox_refpos;        /* for \gleaders */
 
-extern void ship_out(PDF pdf, halfword p, boolean shipping_page);
+extern void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode);
 
 #endif

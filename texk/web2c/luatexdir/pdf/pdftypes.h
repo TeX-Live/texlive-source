@@ -17,12 +17,13 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdftypes.h 3341 2010-01-08 19:52:54Z hhenkel $ */
+/* $Id: pdftypes.h 3949 2010-11-07 00:09:19Z hhenkel $ */
 
 #ifndef PDFTYPES_H
 #  define PDFTYPES_H
 
 #  include <zlib.h>
+#  include "lua/luatex-api.h"
 
 /* This stucture holds everything that is needed for the actual pdf generation.
 
@@ -109,6 +110,7 @@ typedef struct {
     writing_mode wmode;         /* PDF writing mode WMode (horizontal/vertical) */
     pos_mode mode;              /* current positioning mode */
     int ishex;                  /* Whether the current char string is <> or () */
+    int need_tm;                /* flag whether Tm needs to be set */
 } pdfstructure;
 
 typedef struct obj_entry_ {
@@ -131,7 +133,7 @@ typedef struct dest_name_entry_ {
     int objnum;                 /* destination object number */
 } dest_name_entry;
 
-#  define pdf_max_link_level  10        /* maximum depth of link nesting */
+#  define pdf_max_link_level  10/* maximum depth of link nesting */
 
 typedef struct pdf_link_stack_record {
     int nesting_level;
@@ -153,17 +155,21 @@ typedef enum {
     /* |obj_type_thread| is the highest entry in |head_tab|, but there are a few
        more linked lists that are handy: */
     obj_type_pagestream = 7,    /* Page stream objects */
-    obj_type_page = 8,          /* Page objects */
-    obj_type_pages = 9,         /* Pages objects */
-    obj_type_link = 10,         /* link objects */
-    obj_type_bead = 11,         /* thread bead objects */
-    obj_type_annot = 12,        /* annotation objects */
-    obj_type_objstm = 13,       /* /ObjStm objects */
-    obj_type_others = 14        /* any other objects (also not linked in any list) */
+    obj_type_page = 8,          /* /Page objects */
+    obj_type_pages = 9,         /* /Pages objects */
+    obj_type_catalog = 10,      /* /Catalog object */
+    obj_type_info = 11,         /* /Info object */
+    obj_type_link = 12,         /* link objects */
+    obj_type_annot = 13,        /* annotation objects */
+    obj_type_annots = 14,       /* /Annots objects */
+    obj_type_bead = 15,         /* thread bead objects */
+    obj_type_beads = 16,        /* /B objects (array of bead objects) */
+    obj_type_objstm = 17,       /* /ObjStm objects */
+    obj_type_others = 18        /* any other objects (also not linked in any list) */
 } pdf_obj_type;
 
 #  define HEAD_TAB_MAX      6   /* obj_type_thread */
-#  define PDF_OBJ_TYPE_MAX 14   /* obj_type_others */
+#  define PDF_OBJ_TYPE_MAX 18   /* obj_type_others */
 
 typedef struct pdf_resource_struct_ {
     struct avl_table *resources_tree;
@@ -223,7 +229,7 @@ typedef struct pdf_output_file_ {
     size_t fb_limit;
 
     char *zipbuf;
-    z_stream c_stream;          /* compression stream */
+    z_stream *c_stream;         /* compression stream pointer */
     int zip_write_state;        /* which state of compression we are in */
 
     int pk_scale_factor;        /* this is just a preprocessed value that depends on
@@ -245,8 +251,7 @@ typedef struct pdf_output_file_ {
     struct avl_table *obj_tree[PDF_OBJ_TYPE_MAX + 1];   /* this is useful for finding the objects back */
 
     int pages_tail;
-    int obj_ptr;                /* user objects counter */
-    int sys_obj_ptr;            /* system objects counter, including object streams */
+    int obj_ptr;                /* objects counter */
     int last_pages;             /* pointer to most recently generated pages object */
     int last_page;              /* pointer to most recently generated page object */
     int last_stream;            /* pointer to most recently generated stream */
@@ -284,6 +289,7 @@ typedef struct pdf_output_file_ {
     int thread_level;           /* depth of nesting of box containing the last thread */
 
     int f_cur;                  /* TeX font number */
+    int pdflua_ref;
 } pdf_output_file;
 
 typedef pdf_output_file *PDF;

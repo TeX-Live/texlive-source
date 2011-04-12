@@ -19,15 +19,15 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfpage.w 3703 2010-05-27 07:58:34Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/pdf/pdfpage.w $";
+    "$Id: pdfpage.w 4131 2011-04-11 13:41:26Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfpage.w $";
+
+#include "ptexlib.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
-
-#include "ptexlib.h"
 
 #define lround(a) (long) floor((a) + 0.5)
 
@@ -68,6 +68,7 @@ void init_pdf_pagecalculations(PDF pdf)
     p->wmode = WMODE_H;
     p->mode = PMODE_PAGE;
     p->ishex = 0;
+    p->need_tm = 0;
     p->k1 = ten_pow[p->pdf.h.e] / one_bp;
 }
 

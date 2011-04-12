@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: packaging.h 3261 2009-12-18 11:38:21Z taco $ */
+/* $Id: packaging.h 4044 2010-12-18 09:23:06Z taco $ */
 
 #ifndef PACKAGING_H
 #  define PACKAGING_H
@@ -57,10 +57,12 @@ extern void do_subst_font(halfword p, int ex_ratio);
 extern scaled char_pw(halfword p, int side);
 extern halfword new_margin_kern(scaled w, halfword p, int side);
 
-#  define update_adjust_list(A) do {		\
-	vlink(A) = adjust_ptr(p);		\
-	while (vlink(A) != null)		\
-	    A = vlink(A);			\
+#  define update_adjust_list(A) do {					\
+	if (A == null)							\
+	    pdf_error("pre vadjust", "adjust_tail or pre_adjust_tail is null");	\
+	vlink(A) = adjust_ptr(p);					\
+	while (vlink(A) != null)					\
+	    A = vlink(A);						\
     } while (0)
 
 extern halfword hpack(halfword p, scaled w, int m, int d);

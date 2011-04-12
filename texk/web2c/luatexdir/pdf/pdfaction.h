@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfaction.h 2801 2009-07-10 13:12:59Z taco $ */
+/* $Id: pdfaction.h 3891 2010-09-14 23:02:24Z hhenkel $ */
 
 #ifndef PDFACTION_H
 #  define PDFACTION_H
@@ -59,7 +59,7 @@ typedef enum {
         if (pdf_action_refcount(a) == null) {                           \
             delete_action_node(a);                                      \
         } else {                                                        \
-            decr(pdf_action_refcount(a));                               \
+            pdf_action_refcount(a)--;                                   \
         }                                                               \
     }
 

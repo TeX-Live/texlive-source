@@ -34,7 +34,7 @@ authorization from the copyright holder.
 
 */
 
-/* $Id: synctex-luatex.h 3685 2010-05-13 07:37:47Z taco $ */
+/* $Id: synctex-luatex.h 4064 2011-01-12 22:12:22Z hhenkel $ */
 
 #undef synchronization_field_size
 #define synchronization_field_size 1
@@ -85,7 +85,7 @@ authorization from the copyright holder.
 #define SYNCTEX_CURH static_pdf->posstruct->pos.h
 
 #define SYNCTEX_GET_JOB_NAME() makecstring(job_name)
-#define SYNCTEX_GET_LOG_NAME() (char *)xstrdup((const char*)texmf_log_name)
+#define SYNCTEX_GET_LOG_NAME() get_full_log_name()
 
 #define SYNCTEX_RULE_WD width(p)
 #define SYNCTEX_RULE_HT height(p)
@@ -97,14 +97,13 @@ authorization from the copyright holder.
 
 #include "ptexlib.h"
 
-/*   We observe pdfoutputvalue in order to determine whether output mode is
+/*   We observe static_pdf->o_mode in order to determine whether output mode is
  *   pdf or dvi.
- *   We will assume that pdf_output_value equals pdf_output before entering
+ *   We will assume that pdf->o_mode is set before entering
  *   the synctex_sheet function below.  */
 #undef  SYNCTEX_OFFSET_IS_PDF
-#define SYNCTEX_OFFSET_IS_PDF (pdf_output_value>0)
+#define SYNCTEX_OFFSET_IS_PDF (static_pdf->o_mode==OMODE_PDF)
 #undef  SYNCTEX_OUTPUT
-#define SYNCTEX_OUTPUT ((pdf_output_value>0)?"pdf":"dvi")
+#define SYNCTEX_OUTPUT ((static_pdf->o_mode==OMODE_PDF)?"pdf":"dvi")
 
 #define __SyncTeX__ 1
-

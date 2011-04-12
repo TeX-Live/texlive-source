@@ -2,6 +2,354 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.66.0 was released 20110512
+==============================================================
+
+News:
+
+* fixed: linebreak_filter doesn't do its default job when 
+  tex.linebreak is used
+
+* fixed: \escapechar ignored by \meaning
+
+* fixed: wrong px default
+
+* fixed: font kern attribute inheritance
+
+* fixed: "nop" unrecognized in virtual fonts
+
+* fixed: assertion failure in dviluatex when font ptmr8t used
+
+* fixed: tex.settoks for with strings with embedded zeroes
+
+* fixed: an indexing problem with nonexistent font glyphs
+
+* fixed: some crashes and other bugs on the 'subtype' and 'prev' 
+  fields (not all node types have those fields)
+
+* fixed: crash on  token.csname_id ("")
+
+* fixed: initialize the statically allocated node's type ids
+
+* fixed: fencepost error in math parameter counting
+
+* fixed: math family numbers > 255 are allowed
+
+* fixed: compilation failure on Hurd
+
+* fixed: a small bug leading to displacements when reading 
+  the AccentTop table
+
+* fixed: \directlua followed by \pdfximage generates error if 
+  draft mode is active
+
+* fixed: a problem with \vadjust pre in alignments
+
+* fixed: a lua stack growing problem in the backend in 0.65.0,
+  resulting in an inability to create more than a few thousand 
+  generated pages
+
+* fixed: inclusion of Scribus-generated pdfs
+
+* adapt: the default form margin is now zero (was 1bp before) 
+
+* adapt: libpng 1.4.4, zzuplib 0.13.60, mplib 1.504
+
+* adapt: small changes to the build system and new imports from
+  the texlive repository
+
+* feature: new function node.currentattr() queries the current
+  active attribute list
+
+* feature: Lua font loading; ignore unknown enumeration keys in 
+  MathConstants
+
+* feature: JPEG 2000 image support
+
+* feature: continuing work on the 'epdf' library
+
+* doc: the 'epdf' lua library is now documented
+
+* doc: various other manual corrections
+
+
+==============================================================
+Luatex beta-0.65.0 was released 20101213
+==============================================================
+
+News:
+
+* The Aleph and Omega version primitives are deprecated.
+
+* The Apple Snow Leopard Truetype font collections now work
+  properly.
+
+* Libpng has been updated to 1.4.4, and zlib to 1.2.5.
+
+* New lua functions node.next() and node.prev().
+
+* The already deprecated for some time node.protrusion_skipable()
+  function has been removed.
+
+* fontloader.apply_featurefile() and fontloader.apply_afmfile()
+  now return nil,<errortable> on failure.
+
+* The various node list fields in the lua node interface have
+  been renamed from 'list' to 'head', e.g. tex.box[0].head,
+  and the 'list' name is deprecated. For now, the deprecation 
+  is silent, as 'list' will stay for quite some time. Please
+  update your lua source as soon as possible, though.
+
+* The call node.type(<node>) now returns "node". The existing
+  functionality is otherwise unchanged.
+
+* Luafilesystem has been updated to 1.5.0. NOTE: there is an
+  incompatible change in the directory iterator method.
+
+* The restriction on linebreak_filter has been eased: at least one 
+  horizontal box should be returned, but that is not necessarily 
+  the last node any more.
+
+* Backward compatibility has been restored for \meaning\mathchar
+
+* node.first_character() has been renamed to node.first_glyph()
+  to better match its actual functionality.
+
+* The \Umathaccent primitive now supports both/bottom keywords,
+  and \Umathbotaccent / \Umathaccents are now deprecated.
+
+* The \Umathaccent primitive now also supports the fixed keyword,
+  which supports non-growing math accents even if the font says
+  there are extensible variants.
+
+* Ongoing work on the epdf library.
+
+Bugfixes:
+
+* Assignment to \dimen65535 was broken earlier.
+
+* <box>.head.prev is now always initialized to null (0).
+
+* luatex -lua=<script> '\relax' no longer exits immediately, 
+  instead going into interactive mode as it should.
+
+* The \jobname was initialized wrongly for input file names
+  with multiple dots in them.
+
+* The synctex file is now written in the right place when 
+  --output-directory is given.
+
+* \letterspacefont could cause crashes, especially when combined
+  with font expansion.
+
+* Luatex would crash on linux32 systems if it was build in an 
+  environment where LFS (>2GB files) was enabled by default.
+
+* Node lists created by node.copy_list() could not be hyphenated
+  due to an assertion error.
+
+* Synctex support was partially broken since 0.60.0.
+
+* With OpenType math fonts, accents with multiple parts 
+  (like the \vec arrow) forgot to include all parts if the
+  accentee was too narrow.
+
+* With OpenType math fonts, accents over any class except 0 and 7 
+  were misplaced.
+
+* kpse.lookup("plain", {all = true}) was broken in kpathsea
+  itself (no extension given as well as --all specified).
+
+* A FontForge bug made Cambria Math accents look bad, and the
+  placement of math top accents did not allow a marker at the
+  origin (patches by Stefan Philipp)
+
+* Cut&Paste from PDF was sometimes broken due to bad ToUnicode map.
+
+* Many small manual improvements (thanks to Paul Isambert)
+
+* An other bugfix to lpeg 0.9 (from Roberto Ierusalimsky)
+
+* Some small fixes to writet1.w (from Han The Thanh)
+
+* A build failure because of bad libz configuration on Win32
+
+==============================================================
+Luatex beta-0.64.0 was released 20101112
+==============================================================
+
+News:
+
+* New lua functions pdf.refobj(), pdf.maxobjnum() and pdf.objtype()
+
+* New lua function node.is_node()
+
+* The max_strings configuration variable's maximum value is
+  raised to be identical to texlive's maximum (2097151), and
+  same for param_size (32767).
+
+* The embedded mplib is now 1.503.
+
+* Minor cleanups in the output of fontloader.to_table():
+
+  - removed out-of-range altuni's from the output
+  - don't dump the extra encodings, just the actual font encoding
+  - export the encoding's name also as 'enc_name' at one level up
+  - no longer exporting unset macstyles, nor zero uniqueids
+  - fix creationtime and modification time
+
+* Ongoing work on the epdf library
+
+Bugfixes:
+
+* Fix a bug where an explicit hyphen prevented hyphenation for the 
+  whole rest of the paragraph
+
+* Internal font copying forgot to copy the last font dimen
+
+* os.selfdir() is now documented
+
+* patch quad (\fontdimen6) in \letterspacefont to be compatible
+  with pdftex
+
+* Multi-page pdf inclusion was very slow in 0.63.0
+
+* Some extra checks added to the handling of glue_spec node 
+  objects in lua code.
+
+* Some node.prev pointers have been corrected (but this is not
+  quite finished).
+
+* A small fix to lpeg 0.9.
+
+
+==============================================================
+Luatex beta-0.63.0 was released 20100909
+==============================================================
+
+News:
+
+* Drop tex.ht[], tex.wd[], tex.dp[].
+
+* Drop OCP support (and associated primitives).
+
+* Add tex.catcode[], tex.lccode[], tex.sfcode[], tex.uccode[],
+  tex.mathcode[] and tex.delcode[] and associated functions.
+
+* Add CIDset tables to the output pdf where appropriate.
+
+* Added a 'string' field to late_lua nodes on the lua side. This 
+  field does not convert the assigned string to a tokenlist.
+
+* The result of fontloader.open() now has some virtual accessors
+  (as well as fontloader.to_table).
+
+* There is now a `short reference' in the manual folder
+  (functionref.pdf)
+
+Bugfixes:
+
+* Fix a crash on an empty font (bugreport #468).
+
+* Fix a crash for extremely long pattern arguments.
+
+* Fix a crash on bad virtual character arguments in lua.
+
+* Fix hyphenation exceptions.
+
+* Prevent linebreak between initial local_par paragraph whatsit 
+  and a following skip (bugreport #437).
+
+* Fix placement of scripts on textstyle big operators in MATH
+  fonts (bugreport #466).
+
+* Fix a crash on the return value of MPlib's 'postscript' 
+  operation on images.
+
+* Fix a crash on \leftghost & \rightghost in math mode.
+
+==============================================================
+Luatex beta-0.62.0 was released 20100823
+==============================================================
+
+News:
+
+* LuaTeX now uses libpoppler (0.12.4) instead of xpdf.
+
+* All backend functions now report what file they were searching
+  for whenever a file cannot be found.
+
+* Input-ed lua files are now mentioned in the fls file if
+  the --recorder switch is specified on the command line.
+
+* Paragraph indentation hlist nodes and hlist and vlist nodes 
+  generated by alignment rows and cells now have a subtype
+  (3 for indent box, 4 for rows/columns, 5 for cells).
+
+* The 'epdf' lib is in active development and still growing.
+
+* The 'fontforge' table is finally removed (was deprecated
+  since 0.40).
+
+Bugfixes:
+
+* A new mplib import fixes two bad bugs in mplib:
+  - string equality test was wrong
+  - type declarations could delete pre-existing variables
+
+* PNG images with transparency could create random size
+  differences in the generated PDF.
+
+* In some special cases, font expansion could cause wrong
+  spacing in the generated PDF.
+
+* \letterspacefont was broken since a very long time.
+
+* The node subtype of the \leftskip and \rightskip glues was 
+  wrong.
+
+* Some memory leaks have been removed.
+
+* Various manual fixes.
+
+==============================================================
+Luatex beta-0.61.0 was released 20100728
+==============================================================
+
+New features:
+
+* New lua library 'epdf' for introspection of PDF inclusions,
+  see the manual for details.
+
+* Mplib version 1.502 is now included (which is still beta, 
+  so be careful).
+
+* new "finish_pdffile" and "pre_dump" callbacks.
+
+* new function pdf.pageref()
+
+* In the lua 'tex' library: assignment to internal glue 
+  parameters is now allowed.
+
+* New lua function tex.error().
+
+Bugfixes:
+
+* Fix for crashes on fonts with bad Panose values.
+
+* Fix for a box placement bug that could sometimes cause text
+  to overlap.
+
+* Fix for a few small PDF/A1-a compatibility bugs.
+
+* Fix \letterspacefont.
+
+* Fix \Ustopdisplaymath in combination with aligned displays.
+
+* In math delimiters, the last of a chain of predefined sizes
+  was always ignored if there were also extensible parts.
+
+==============================================================
 Luatex beta-0.60.2 was released 20100701
 ==============================================================
 
@@ -1551,7 +1899,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

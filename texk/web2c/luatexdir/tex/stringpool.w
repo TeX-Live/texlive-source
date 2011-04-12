@@ -22,7 +22,7 @@
 
 static const char _svn_version[] =
     "$Id: stringpool.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/stringpool.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/stringpool.w $";
 
 @ Control sequence names and diagnostic messages are variable-length strings
 of eight-bit characters. Since PASCAL did not have a well-developed string

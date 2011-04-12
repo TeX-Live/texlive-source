@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writet3.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writet3.w $";
+    "$Id: writet3.w 3882 2010-09-13 22:29:18Z hhenkel $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writet3.w $";
 
 #include "ptexlib.h"
 #include <kpathsea/tex-glyph.h>
@@ -187,8 +187,7 @@ static boolean writepk(PDF pdf, internal_font_number f)
         ury = cd.cheight + lly;
         update_bbox(llx, lly, urx, ury, t3_glyph_num == 0);
         t3_glyph_num++;
-        pdf_new_dict(pdf, obj_type_others, 0, 0);
-        t3_char_procs[cd.charcode] = pdf->obj_ptr;
+        t3_char_procs[cd.charcode] = pdf_new_dict(pdf, obj_type_others, 0, 0);
         pdf_begin_stream(pdf);
         pdf_print_real(pdf, (int) t3_char_widths[cd.charcode], 2);
         pdf_printf(pdf, " 0 %i %i %i %i d1\n",

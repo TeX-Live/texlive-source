@@ -25,8 +25,8 @@
 #include "lua/luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: mlist.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/mlist.w $";
+    "$Id: mlist.w 3985 2010-11-26 15:08:32Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/mlist.w $";
 
 @ @c
 #define delimiter_factor     int_par(delimiter_factor_code)
@@ -1237,7 +1237,12 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
        |(num_extenders*with_extenders)+num_normal|
      */
     /* create an array of maximum shrinks and fill it */
-    num_total = ((num_extenders * with_extenders) + num_normal);
+    if (with_extenders) {
+        num_total = ((num_extenders * with_extenders) + num_normal);
+    } else {
+	/* make sure we take at least the extenders that are needed to complete the built-up glyph */
+        num_total = (num_extenders + num_normal);
+    }
     if (num_total == 1) {
         /* weird, but could happen */
         cc = ext->glyph;
@@ -1451,11 +1456,13 @@ static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
     int z;                      /* runs through font family members */
     boolean large_attempt;      /* are we trying the ``large'' variant? */
     pointer att;                /* to save the current attribute list */
+    boolean do_parts;
     extinfo *ext;
     att = null;
     f = null_font;
     c = 0;
     w = 0;
+    do_parts = false;
     large_attempt = false;
     if (d == null)
         goto FOUND;
@@ -1473,11 +1480,6 @@ static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
               CONTINUE:
                 i++;
                 if (char_exists(g, y)) {
-                    if (char_tag(g, y) == ext_tag) {
-                        f = g;
-                        c = y;
-                        goto FOUND;
-                    }
                     if (flat)
                         u = char_width(g, y);
                     else
@@ -1488,6 +1490,12 @@ static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
                         w = u;
                         if (u >= v)
                             goto FOUND;
+                    }
+                    if (char_tag(g, y) == ext_tag) {
+                        f = g;
+                        c = y;
+                        do_parts = true;
+                        goto FOUND;
                     }
                     if (i > 10000) {
                         /* endless loop */
@@ -1514,11 +1522,11 @@ static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
         flush_node(d);
     }
     if (f != null_font) {
-        /* When the following code is executed, |char_tag(q)| will be equal to
-           |ext_tag| if and only if a built-up symbol is supposed to be returned.
+        /* When the following code is executed, |do_parts| will be true
+           if a built-up symbol is supposed to be returned.
          */
         ext = NULL;
-        if ((char_tag(f, c) == ext_tag) &&
+        if ((do_parts) &&
             ((!flat
               && (ext = get_charinfo_vert_variants(char_info(f, c))) != NULL)
              || (flat
@@ -2123,9 +2131,11 @@ respect to the size of the final box.
 @c
 #define TOP_CODE 1
 #define BOT_CODE 2
+#define TOP_OR_BOT_MASK ((TOP_CODE) | (BOT_CODE))
+#define STRETCH_ACCENT_CODE 4
 
 static void do_make_math_accent(pointer q, internal_font_number f, int c,
-                                int top_or_bot, int cur_style)
+                                int flags, int cur_style)
 {
     pointer p, r, x, y;         /* temporary registers for box construction */
     scaled s;                   /* amount to skew the accent to the right */
@@ -2135,6 +2145,8 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
     boolean s_is_absolute;      /* will be true if a top-accent is placed in |s| */
     extinfo *ext;
     pointer attr_p;
+    const int compat_mode = radical_rule(cur_style) == undefined_math_parameter;
+    const int top_or_bot = flags & TOP_OR_BOT_MASK;
     attr_p = (top_or_bot == TOP_CODE ? accent_chr(q) : bot_accent_chr(q));
     s_is_absolute = false;
     c = cur_c;
@@ -2143,29 +2155,40 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
     s = 0;
     if (type(nucleus(q)) == math_char_node) {
         fetch(nucleus(q));
+        if (compat_mode) {
+          if (top_or_bot == TOP_CODE) {
+            s = get_kern(cur_f, cur_c, skew_char(cur_f));
+          } else {
+            s = 0;
+          }
+        } else {
         if (top_or_bot == TOP_CODE) {
             s = char_top_accent(cur_f, cur_c);
-            if (s != 0) {
+            if (s != INT_MIN) {
                 s_is_absolute = true;
-            } else {
-                s = get_kern(cur_f, cur_c, skew_char(cur_f));
             }
         } else {                /* new skewchar madness for bot accents */
             s = char_bot_accent(cur_f, cur_c);
-            if (s == 0) {       /* better than nothing: */
+            if (s == INT_MIN) {       /* better than nothing: */
                 s = char_top_accent(cur_f, cur_c);
             }
-            if (s != 0) {
+            if (s != INT_MIN) {
                 s_is_absolute = true;
             }
+        }
         }
     }
     x = clean_box(nucleus(q), cramped_style(cur_style), cur_style);
     w = width(x);
     h = height(x);
+    if (!compat_mode && !s_is_absolute && type(nucleus(q)) == math_char_node) {
+      s = half(w);
+      s_is_absolute = true;
+    }
     /* Switch to a larger accent if available and appropriate */
     y = null;
-    while (1) {
+    if (flags & STRETCH_ACCENT_CODE) {
+      while (1) {
         ext = NULL;
         if ((char_tag(f, c) == ext_tag) &&
             ((ext = get_charinfo_hor_variants(char_info(f, c))) != NULL)) {
@@ -2184,6 +2207,7 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
                 break;
             c = yy;
         }
+      }
     }
     if (y == null) {
         y = char_box(f, c, node_attr(attr_p));
@@ -2220,12 +2244,16 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
             sa = char_top_accent(f, c);
         else
             sa = char_bot_accent(f, c);
-        if (sa == 0) {
+        if (sa == INT_MIN) {
             sa = half(width(y));        /* just take the center */
         }
         shift_amount(y) = s - sa;
     } else {
-        shift_amount(y) = s + half(w - width(y));
+        if (width(y)== 0) {
+            shift_amount(y) = s + w;
+        } else {
+            shift_amount(y) = s + half(w - width(y));
+        }
     }
     width(y) = 0;
     if (top_or_bot == TOP_CODE) {
@@ -2264,10 +2292,13 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
 
 static void make_math_accent(pointer q, int cur_style)
 {
+    int topstretch = !(subtype(q) % 2);
+    int botstretch = !(subtype(q) / 2);
+
     if (accent_chr(q) != null) {
         fetch(accent_chr(q));
         if (char_exists(cur_f, cur_c)) {
-            do_make_math_accent(q, cur_f, cur_c, TOP_CODE, cur_style);
+          do_make_math_accent(q, cur_f, cur_c, TOP_CODE | (topstretch ? STRETCH_ACCENT_CODE : 0), cur_style);
         }
         flush_node(accent_chr(q));
         accent_chr(q) = null;
@@ -2275,7 +2306,7 @@ static void make_math_accent(pointer q, int cur_style)
     if (bot_accent_chr(q) != null) {
         fetch(bot_accent_chr(q));
         if (char_exists(cur_f, cur_c)) {
-            do_make_math_accent(q, cur_f, cur_c, BOT_CODE, cur_style);
+          do_make_math_accent(q, cur_f, cur_c, BOT_CODE | (botstretch ? STRETCH_ACCENT_CODE : 0), cur_style);
         }
         flush_node(bot_accent_chr(q));
         bot_accent_chr(q) = null;
@@ -2432,6 +2463,7 @@ static scaled make_op(pointer q, int cur_style)
                 x = clean_box(nucleus(q), cur_style, cur_style);
                 if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits))
                     width(x) = width(x) - delta;        /* remove italic correction */
+
                 shift_amount(x) =
                     half(height(x) - depth(x)) - math_axis(cur_size);
                 /* center vertically */
@@ -2444,6 +2476,19 @@ static scaled make_op(pointer q, int cur_style)
             x = clean_box(nucleus(q), cur_style, cur_style);
             if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits))
                 width(x) = width(x) - delta;    /* remove italic correction */
+
+            /* For an OT MATH font, we may have to get rid of yet another italic
+               correction because |make_scripts()| will add one.
+               This test is somewhat more complicated because |x| can be a null 
+               delimiter */
+            if ((subscr(q) != null || supscr(q) != null)
+                && (subtype(q) != op_noad_type_limits)
+                && ((list_ptr(x) != null)
+                    && (type(list_ptr(x)) == glyph_node)
+                    && is_new_mathfont(font(list_ptr(x))))) {
+                width(x) -= delta;  /* remove another italic correction */
+	    }
+
             shift_amount(x) = half(height(x) - depth(x)) - math_axis(cur_size);
             /* center vertically */
             type(nucleus(q)) = sub_box_node;
@@ -3400,7 +3445,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 make_radical(q, cur_style);
             break;
         case accent_noad:
-            make_math_accent(q, cur_style);
+          make_math_accent(q, cur_style);
             break;
         case style_node:
             cur_style = subtype(q);

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: directions.h 3523 2010-03-19 13:28:08Z taco $ */
+/* $Id: directions.h 3853 2010-09-03 18:05:14Z oneiros $ */
 
 #ifndef DIRECTIONS_H
 #  define DIRECTIONS_H
@@ -33,7 +33,7 @@
 #  define dir_RTT  24
 
 
-/* #  define dir_array_size  25 */ /* |dir_RTT + 1| */
+                                   /* #  define dir_array_size  25 *//* |dir_RTT + 1| */
 
 /* inv(primary) == tertiary */
 /*
@@ -44,7 +44,7 @@ _is_mirrored[dir_LTL] = 0;
 _is_mirrored[dir_RTT] = 0;
 */
 
-#define is_mirrored(a) 0
+#  define is_mirrored(a) 0
 
 /* secondary == tertiary */
 /*
@@ -55,7 +55,7 @@ _is_rotated[dir_LTL] = 0;
 _is_rotated[dir_RTT] = 1;
 */
 
-#define is_rotated(a) (a == dir_RTT)
+#  define is_rotated(a) (a == dir_RTT)
 
 /* secondary == secondary */
 /*
@@ -78,7 +78,7 @@ _textdir_parallel[dir_RTT][dir_LTL] = 1;
 _textdir_parallel[dir_RTT][dir_RTT] = 1;
 */
 
-#define textdir_parallel(a,b)  (((a == dir_TLT || a == dir_TRT)&&(b == dir_TLT || b == dir_TRT)) || \
+#  define textdir_parallel(a,b)  (((a == dir_TLT || a == dir_TRT)&&(b == dir_TLT || b == dir_TRT)) || \
 				((a == dir_LTL || a == dir_RTT)&&(b == dir_LTL || b == dir_RTT)))
 
 
@@ -104,7 +104,7 @@ _pardir_parallel[dir_RTT][dir_RTT] = 1;
 */
 
 
-#define pardir_parallel(a,b) (((a == dir_TLT || a == dir_TRT)&&(b == dir_TLT || b == dir_TRT)) || \
+#  define pardir_parallel(a,b) (((a == dir_TLT || a == dir_TRT)&&(b == dir_TLT || b == dir_TRT)) || \
 			      ((a == dir_LTL || a == dir_RTT)&&(b == dir_LTL || b == dir_RTT)))
 
 
@@ -129,7 +129,7 @@ _pardir_opposite[dir_RTT][dir_LTL] = 1;
 _pardir_opposite[dir_RTT][dir_RTT] = 0;
 */
 
-#define pardir_opposite(a,b) ((a == dir_LTL && b == dir_RTT)||(a == dir_RTT && b == dir_LTL))
+#  define pardir_opposite(a,b) ((a == dir_LTL && b == dir_RTT)||(a == dir_RTT && b == dir_LTL))
 
 
 /* inv(secondary) == secondary */
@@ -153,7 +153,7 @@ _textdir_opposite[dir_RTT][dir_LTL] = 0;
 _textdir_opposite[dir_RTT][dir_RTT] = 0;
 */
 
-#define textdir_opposite(a,b) ((a == dir_TLT && b == dir_TRT)||(a == dir_TRT && b == dir_TLT))
+#  define textdir_opposite(a,b) ((a == dir_TLT && b == dir_TRT)||(a == dir_TRT && b == dir_TLT))
 
 
 /* inv(tertiary) == tertiary */
@@ -177,7 +177,7 @@ _glyphdir_opposite[dir_RTT][dir_LTL] = 0;
 _glyphdir_opposite[dir_RTT][dir_RTT] = 0;
 */
 
-#define glyphdir_opposite(a,b) 0
+#  define glyphdir_opposite(a,b) 0
 
 
 /* primary == primary */
@@ -201,7 +201,7 @@ _pardir_eq[dir_RTT][dir_LTL] = 0;
 _pardir_eq[dir_RTT][dir_RTT] = 1;
 */
 
-#define pardir_eq(a,b) (((a == dir_TLT || a == dir_TRT)&&(b == dir_TLT || b == dir_TRT))|| \
+#  define pardir_eq(a,b) (((a == dir_TLT || a == dir_TRT)&&(b == dir_TLT || b == dir_TRT))|| \
 			(a == dir_LTL && b == dir_LTL) ||		\
 			(a == dir_RTT && b == dir_RTT))
 
@@ -226,7 +226,7 @@ _textdir_eq[dir_RTT][dir_LTL] = 1;
 _textdir_eq[dir_RTT][dir_RTT] = 1;
 */
 
-#define textdir_eq(a,b) ((a == dir_TLT && b == dir_TLT) || \
+#  define textdir_eq(a,b) ((a == dir_TLT && b == dir_TLT) || \
 			 (a == dir_TRT && b == dir_TRT) || \
 			 (a == dir_LTL && (b == dir_LTL || b == dir_RTT)) || \
 			 (a == dir_RTT && (b == dir_LTL || b == dir_RTT))
@@ -253,9 +253,9 @@ _glyphdir_eq[dir_RTT][dir_LTL] = 0;
 _glyphdir_eq[dir_RTT][dir_RTT] = 1;
 */
 
-#define glyphdir_eq(a,b) ((a != dir_LTL && b != dir_LTL) || \
+#  define glyphdir_eq(a,b) ((a != dir_LTL && b != dir_LTL) || \
 			  (a == dir_LTL && b == dir_LTL))
-			  
+
 
 /* primary == secondary */
 /*
@@ -278,7 +278,7 @@ _partextdir_eq[dir_RTT][dir_LTL] = 0;
 _partextdir_eq[dir_RTT][dir_RTT] = 0;
 */
 
-#define partextdir_eq(a,b) (((a == dir_TLT || a == dir_TRT)&&(b == dir_LTL || b == dir_RTT)) || \
+#  define partextdir_eq(a,b) (((a == dir_TLT || a == dir_TRT)&&(b == dir_LTL || b == dir_RTT)) || \
 			    (a == dir_LTL && b == dir_TLT) ||		\
 			    (a == dir_RTT && b == dir_TRT))
 
@@ -292,7 +292,7 @@ _textglyphdir_orthogonal[dir_LTL] = 1;
 _textglyphdir_orthogonal[dir_RTT] = 0;
 */
 
-#define textglyphdir_orthogonal(a) (a != dir_RTT)
+#  define textglyphdir_orthogonal(a) (a != dir_RTT)
 
 /* secondary == L */
 /*

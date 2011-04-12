@@ -624,6 +624,7 @@ CTANGLE
 CTANGLEBOOT
 TANGLE
 TANGLEBOOT
+TXTTOZLIB
 OBSDCOMPAT_RULE
 OBSDCOMPAT_DEPEND
 OBSDCOMPAT_LIBS
@@ -649,6 +650,10 @@ ZZIPLIB_RULE
 ZZIPLIB_DEPEND
 ZZIPLIB_LIBS
 ZZIPLIB_INCLUDES
+POPPLER_RULE
+POPPLER_DEPEND
+POPPLER_LIBS
+POPPLER_INCLUDES
 XPDF_RULE
 XPDF_DEPEND
 XPDF_LIBS
@@ -927,6 +932,7 @@ with_zlib_includes
 with_zlib_libdir
 with_system_libpng
 with_system_xpdf
+with_system_poppler
 with_system_zziplib
 with_system_graphite
 with_system_freetype2
@@ -1655,6 +1661,8 @@ Optional Packages:
                           pkg-config)
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf (requires pkg-config)
+  --with-system-poppler   use installed poppler headers and library instead of
+                          poppler (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
   --with-system-graphite  use installed silgraphite headers and library
@@ -17347,7 +17355,7 @@ case $enable_luatex in #(
 esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
-  need_xpdf=yes
+  need_poppler=yes
   need_libpng=yes
   need_obsdcompat=yes
   need_zziplib=yes
@@ -19757,18 +19765,18 @@ else
 /* end confdefs.h.  */
 
   /* For now, do not test the preprocessor; as of 2007 there are too many
-         implementations with broken preprocessors.  Perhaps this can
-         be revisited in 2012.  In the meantime, code should not expect
-         #if to work with literals wider than 32 bits.  */
+	 implementations with broken preprocessors.  Perhaps this can
+	 be revisited in 2012.  In the meantime, code should not expect
+	 #if to work with literals wider than 32 bits.  */
       /* Test literals.  */
       long long int ll = 9223372036854775807ll;
       long long int nll = -9223372036854775807LL;
       unsigned long long int ull = 18446744073709551615ULL;
       /* Test constant expressions.   */
       typedef int a[((-9223372036854775807LL < 0 && 0 < 9223372036854775807ll)
-                     ? 1 : -1)];
+		     ? 1 : -1)];
       typedef int b[(18446744073709551615ULL <= (unsigned long long int) -1
-                     ? 1 : -1)];
+		     ? 1 : -1)];
       int i = 63;
 int
 main ()
@@ -19777,40 +19785,40 @@ main ()
       long long int llmax = 9223372036854775807ll;
       unsigned long long int ullmax = 18446744073709551615ull;
       return ((ll << 63) | (ll >> 63) | (ll < i) | (ll > i)
-              | (llmax / ll) | (llmax % ll)
-              | (ull << 63) | (ull >> 63) | (ull << i) | (ull >> i)
-              | (ullmax / ull) | (ullmax % ull));
+	      | (llmax / ll) | (llmax % ll)
+	      | (ull << 63) | (ull >> 63) | (ull << i) | (ull >> i)
+	      | (ullmax / ull) | (ullmax % ull));
   ;
   return 0;
 }
 
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-                          if test "$cross_compiling" = yes; then :
+  			if test "$cross_compiling" = yes; then :
   ac_cv_type_long_long_int=yes
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <limits.h>
-               #ifndef LLONG_MAX
-               # define HALF \
-                        (1LL << (sizeof (long long int) * CHAR_BIT - 2))
-               # define LLONG_MAX (HALF - 1 + HALF)
-               #endif
+	       #ifndef LLONG_MAX
+	       # define HALF \
+			(1LL << (sizeof (long long int) * CHAR_BIT - 2))
+	       # define LLONG_MAX (HALF - 1 + HALF)
+	       #endif
 int
 main ()
 {
 long long int n = 1;
-               int i;
-               for (i = 0; ; i++)
-                 {
-                   long long int m = n << i;
-                   if (m >> i != n)
-                     return 1;
-                   if (LLONG_MAX / 2 < m)
-                     break;
-                 }
-               return 0;
+	       int i;
+	       for (i = 0; ; i++)
+		 {
+		   long long int m = n << i;
+		   if (m >> i != n)
+		     return 1;
+		   if (LLONG_MAX / 2 < m)
+		     break;
+		 }
+	       return 0;
   ;
   return 0;
 }
@@ -21994,6 +22002,36 @@ ${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
 	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+## _KPSE_LIB_FLAGS: Setup poppler (-lpoppler) flags
+
+# Check whether --with-system-poppler was given.
+if test "${with_system_poppler+set}" = set; then :
+  withval=$with_system_poppler;
+fi
+if test "x$with_system_poppler" = xyes; then
+  if $PKG_CONFIG poppler --atleast-version=0.10; then
+  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+  POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
+  POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
+elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
+  as_fn_error $? "did not find poppler-0.10 or better" "$LINENO" 5
+fi
+else
+  POPPLER_INCLUDES=`echo '-DPDF_PARSER_ONLY -IBLD/libs/poppler -IBLD/libs/poppler/goo -IBLD/libs/poppler/poppler' | sed \
+    -e "s,SRC/,$kpse_SRC/,g" \
+    -e "s,BLD/,$kpse_BLD/,g"`
+  POPPLER_LIBS=`echo 'BLD/libs/poppler/libpoppler.a' | sed \
+    -e "s,BLD/,$kpse_BLD/,g"`
+
+  POPPLER_DEPEND=`echo 'BLD/libs/poppler/libpoppler.a' | sed \
+    -e 's,BLD/,${top_builddir}/../../,g'`
+   POPPLER_RULE='# Rebuild libpoppler
+$(POPPLER_DEPEND): ${top_builddir}/../../libs/poppler/poppler/Stream.h
+	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/poppler/poppler/Stream.h:
+	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
 ## _KPSE_LIB_FLAGS: Setup zziplib (-lzzip) flags
 
 # Check whether --with-system-zziplib was given.
@@ -22297,6 +22335,58 @@ CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
 
+# Checks for xpdf (libpoppler) features.
+eval CPPFLAGS=\"$POPPLER_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$POPPLER_LIBS \$LIBS\"
+
+ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+ac_link="./libtool --mode=link --tag=CXX $ac_link"
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for PDFDoc::getPDFMajorVersion" >&5
+$as_echo_n "checking for PDFDoc::getPDFMajorVersion... " >&6; }
+if ${kpse_cv_have_getPDFMajorVersion+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <PDFDoc.h>
+int
+main ()
+{
+PDFDoc *pdfDoc; pdfDoc->getPDFMajorVersion();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  kpse_cv_have_getPDFMajorVersion=yes
+else
+  kpse_cv_have_getPDFMajorVersion=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_getPDFMajorVersion" >&5
+$as_echo "$kpse_cv_have_getPDFMajorVersion" >&6; }
+if test "x$kpse_cv_have_getPDFMajorVersion" = xyes; then :
+
+$as_echo "#define HAVE_GETPDFMAJORVERSION 1" >>confdefs.h
+
+fi
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ac_link="./libtool --mode=link --tag=CC $ac_link"
+
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
+
 ac_config_headers="$ac_config_headers w2c/c-auto.h:c-auto.in"
 
 
@@ -22304,6 +22394,55 @@ ac_config_headers="$ac_config_headers w2c/c-auto.h:c-auto.in"
 
 
 ac_config_headers="$ac_config_headers ff-config.h:luatexdir/luafontloader/ff-config.in"
+
+if test "x$cross_compiling" = xyes; then
+# Extract the first word of "txt2zlib", so it can be a program name with args.
+set dummy txt2zlib; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_TXTTOZLIB+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $TXTTOZLIB in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_TXTTOZLIB="$TXTTOZLIB" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_TXTTOZLIB="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+TXTTOZLIB=$ac_cv_path_TXTTOZLIB
+if test -n "$TXTTOZLIB"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $TXTTOZLIB" >&5
+$as_echo "$TXTTOZLIB" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+if test -z "${TXTTOZLIB}"; then
+  as_fn_error $? "txt2zlib was not found but is required when cross-compiling.
+  Install txt2zlib or set \$TXTTOZLIB to the full pathname." "$LINENO" 5
+fi
+else
+  TXTTOZLIB=./txt2zlib
+fi
 
 
 # For cross-compilation.  Put at the end so there is a fair chance
@@ -23337,9 +23476,9 @@ esac
 
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
-config_files="$ac_config_files"
-config_headers="$ac_config_headers"
-config_commands="$ac_config_commands"
+config_files="`echo $ac_config_files`"
+config_headers="`echo $ac_config_headers`"
+config_commands="`echo $ac_config_commands`"
 
 _ACEOF
 

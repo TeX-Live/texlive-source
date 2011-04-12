@@ -772,7 +772,6 @@ enable_compiler_warnings
 with_system_libgs
 with_libgs_includes
 with_libgs_libdir
-with_gnu_ld
 enable_cxx_runtime_hack
 with_system_kpathsea
 with_kpathsea_includes
@@ -791,12 +790,8 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
-CPPFLAGS
 CXX
 CXXFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
 CCC
 CXXCPP'
 
@@ -19498,9 +19493,9 @@ esac
 
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
-config_files="$ac_config_files"
-config_headers="$ac_config_headers"
-config_commands="$ac_config_commands"
+config_files="`echo $ac_config_files`"
+config_headers="`echo $ac_config_headers`"
+config_commands="`echo $ac_config_commands`"
 
 _ACEOF
 

@@ -19,33 +19,16 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdftables.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdftables.w $";
+    "$Id: pdftables.w 3908 2010-10-13 19:22:02Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdftables.w $";
 
 #include "ptexlib.h"
 
-@ One AVL tree each for a few |obj_type| out of |0...PDF_OBJ_TYPE_MAX|
-
-@c
-/* mark which objects should be searchable through AVL tree */
-
-static int obj_in_tree[PDF_OBJ_TYPE_MAX + 1] = {
-    0,                          /* |obj_type_font = 0|,       */
-    0,                          /* |obj_type_outline = 1|,    */
-    1,                          /* |obj_type_dest = 2|,       */
-    0,                          /* |obj_type_obj = 3|,        */
-    0,                          /* |obj_type_xform = 4|,      */
-    0,                          /* |obj_type_ximage = 5|,     */
-    1,                          /* |obj_type_thread = 6|,     */
-    /* the ones below don't go into a linked list */
-    0,                          /* |obj_type_pagestream = 7|, */
-    1,                          /* |obj_type_page = 8|,       */
-    0,                          /* |obj_type_pages = 9|,      */
-    0,                          /* |obj_type_link = 10|,      */
-    0,                          /* |obj_type_bead = 11|,      */
-    0,                          /* |obj_type_annot = 12|,     */
-    0,                          /* |obj_type_objstm = 13|,    */
-    0                           /* |obj_type_others = 14|     */
+@ @c
+const char *pdf_obj_typenames[PDF_OBJ_TYPE_MAX + 1] =
+    { "font", "outline", "dest", "obj", "xform", "ximage", "thread",
+    "pagestream", "page", "pages", "catalog", "info", "link", "annot", "annots",
+    "bead", "beads", "objstm", "others"
 };
 
 @ AVL sort oentry into |avl_table[]| 
@@ -71,7 +54,7 @@ static int compare_info(const void *pa, const void *pb, void *param)
 static void avl_put_obj(PDF pdf, int t, oentry * oe)
 {
     void **pp;
-    assert(t >= 0 || t <= PDF_OBJ_TYPE_MAX || obj_in_tree[t] == 1);
+    assert(t >= 0 && t <= PDF_OBJ_TYPE_MAX);
     if (pdf->obj_tree[t] == NULL) {
         pdf->obj_tree[t] = avl_create(compare_info, NULL, &avl_xallocator);
         if (pdf->obj_tree[t] == NULL)
@@ -106,7 +89,7 @@ static int avl_find_int_obj(PDF pdf, int t, int i)
 {
     oentry *p;
     oentry tmp;
-    assert(t >= 0 || t <= PDF_OBJ_TYPE_MAX || obj_in_tree[t] == 1);
+    assert(t >= 0 && t <= PDF_OBJ_TYPE_MAX);
     tmp.u.int0 = i;
     tmp.u_type = union_type_int;
     if (pdf->obj_tree[t] == NULL)
@@ -121,7 +104,7 @@ static int avl_find_str_obj(PDF pdf, int t, char *s)
 {
     oentry *p;
     oentry tmp;
-    assert(t >= 0 || t <= PDF_OBJ_TYPE_MAX || obj_in_tree[t] == 1);
+    assert(t >= 0 && t <= PDF_OBJ_TYPE_MAX);
     tmp.u.str0 = s;
     tmp.u_type = union_type_cstring;
     if (pdf->obj_tree[t] == NULL)
@@ -135,13 +118,13 @@ static int avl_find_str_obj(PDF pdf, int t, char *s)
 @ Create an object with type |t| and identifier |i| 
 
 @c
-void pdf_create_obj(PDF pdf, int t, int i)
+int pdf_create_obj(PDF pdf, int t, int i)
 {
     int a;
     char *ss = NULL;
-    if (pdf->sys_obj_ptr == sup_obj_tab_size)
+    if (pdf->obj_ptr == sup_obj_tab_size)
         overflow("indirect objects table size", (unsigned) pdf->obj_tab_size);
-    if (pdf->sys_obj_ptr == pdf->obj_tab_size) {
+    if (pdf->obj_ptr == pdf->obj_tab_size) {
         a = pdf->obj_tab_size / 5;
         if (pdf->obj_tab_size < sup_obj_tab_size - a)
             pdf->obj_tab_size = pdf->obj_tab_size + a;
@@ -151,8 +134,7 @@ void pdf_create_obj(PDF pdf, int t, int i)
             xreallocarray(pdf->obj_tab, obj_entry,
                           (unsigned) pdf->obj_tab_size);
     }
-    incr(pdf->sys_obj_ptr);
-    pdf->obj_ptr = pdf->sys_obj_ptr;
+    pdf->obj_ptr++;
     obj_info(pdf, pdf->obj_ptr) = i;
     obj_type(pdf, pdf->obj_ptr) = t;
     set_obj_fresh(pdf, pdf->obj_ptr);
@@ -169,7 +151,9 @@ void pdf_create_obj(PDF pdf, int t, int i)
             append_dest_name(pdf, makecstring(-obj_info(pdf, pdf->obj_ptr)),
                              pdf->obj_ptr);
     }
+    return pdf->obj_ptr;
 }
+
 @ @c
 int find_obj(PDF pdf, int t, int i, boolean byname)
 {
@@ -209,12 +193,11 @@ int get_obj(PDF pdf, int t, int i, boolean byname)
     }
     if (r == 0) {
         if (byname > 0) {
-            pdf_create_obj(pdf, t, -s);
+            r = pdf_create_obj(pdf, t, -s);
             s = 0;
         } else {
-            pdf_create_obj(pdf, t, i);
+            r = pdf_create_obj(pdf, t, i);
         }
-        r = pdf->obj_ptr;
         if (t == obj_type_dest)
             set_obj_dest_ptr(pdf, r, null);
     }
@@ -228,16 +211,30 @@ int get_obj(PDF pdf, int t, int i, boolean byname)
 @c
 int pdf_new_objnum(PDF pdf)
 {
-    pdf_create_obj(pdf, obj_type_others, 0);
-    return pdf->obj_ptr;
+    int k = pdf_create_obj(pdf, obj_type_others, 0);
+    return k;
 }
 
-void check_obj_exists(PDF pdf, int t, int objnum)
+void check_obj_exists(PDF pdf, int objnum)
 {
     if (objnum < 0 || objnum > pdf->obj_ptr)
         pdf_error("ext1", "cannot find referenced object");
-    if (t != obj_type(pdf, objnum))
-        pdf_error("ext1", "referenced object has wrong type");
+}
+
+void check_obj_type(PDF pdf, int t, int objnum)
+{
+    int u;
+    char *s;
+    check_obj_exists(pdf, objnum);
+    u = obj_type(pdf, objnum);
+    if (t != u) {
+        assert(t >= 0 && t <= PDF_OBJ_TYPE_MAX);
+        assert(u >= 0 && u <= PDF_OBJ_TYPE_MAX);
+        s = (char *) xtalloc(128, char);
+        snprintf(s, 127, "referenced object has wrong type %s; should be %s",
+                 pdf_obj_typenames[u], pdf_obj_typenames[t]);
+        pdf_error("ext1", s);
+    }
 }
 
 @ @c
@@ -277,7 +274,7 @@ void set_rect_dimens(PDF pdf, halfword p, halfword parent_box, scaledpos cur,
         pos_ll.v = pos_ur.v;
         pos_ur.v = tmp.v;
     }
-    if (is_shipping_page && matrixused()) {
+    if (global_shipping_mode == SHIPPING_PAGE && matrixused()) {
         matrixtransformrect(pos_ll.h, pos_ll.v, pos_ur.h, pos_ur.v);
         pos_ll.h = getllx();
         pos_ll.v = getlly();
@@ -333,9 +330,7 @@ void dump_pdftex_data(PDF pdf)
     dump_int(x);
     x = pdf->obj_ptr;
     dump_int(x);
-    x = pdf->sys_obj_ptr;
-    dump_int(x);
-    for (k = 1; k <= pdf->sys_obj_ptr; k++) {
+    for (k = 1; k <= pdf->obj_ptr; k++) {
         x = obj_info(pdf, k);
         dump_int(x);
         x = obj_link(pdf, k);
@@ -348,7 +343,7 @@ void dump_pdftex_data(PDF pdf)
         dump_int(x);
     }
     print_ln();
-    print_int(pdf->sys_obj_ptr);
+    print_int(pdf->obj_ptr);
     tprint(" indirect objects");
     dump_int(pdf->obj_count);
     dump_int(pdf->xform_count);
@@ -405,9 +400,7 @@ void undump_pdftex_data(PDF pdf)
     pdf->obj_tab_size = x;
     undump_int(x);
     pdf->obj_ptr = x;
-    undump_int(x);
-    pdf->sys_obj_ptr = x;
-    for (k = 1; k <= pdf->sys_obj_ptr; k++) {
+    for (k = 1; k <= pdf->obj_ptr; k++) {
         undump_int(x);
         obj_info(pdf, k) = x;
         undump_int(x);

@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfglyph.w 3703 2010-05-27 07:58:34Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/pdf/pdfglyph.w $";
+    "$Id: pdfglyph.w 4131 2011-04-11 13:41:26Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfglyph.w $";
 
 #include "ptexlib.h"
 
@@ -107,16 +107,17 @@ static void print_tm(PDF pdf, pdffloat * tm)
 }
 
 @ @c
-static void set_textmatrix(PDF pdf, scaledpos pos, boolean force)
+static void set_textmatrix(PDF pdf, scaledpos pos)
 {
     boolean move;
     pdfstructure *p = pdf->pstruct;
     assert(is_textmode(p));
     move = calc_pdfpos(p, pos);
-    if (force || move) {
+    if (p->need_tm == 1 || move) {
         print_tm(pdf, p->tm);
         p->pdf.h.m = p->pdf_bt_pos.h.m + p->tm[4].m;    /* Tm replaces */
         p->pdf.v.m = p->pdf_bt_pos.v.m + p->tm[5].m;
+        p->need_tm = 0;
     }
 }
 
@@ -183,9 +184,9 @@ void pdf_place_glyph(PDF pdf, internal_font_number f, int c)
             setup_fontparameters(pdf, f);
         if (p->f_pdf != p->f_pdf_cur || p->fs.m != p->fs_cur.m) {
             set_font(pdf);
-            set_textmatrix(pdf, pos, true);     /* force Tm setting */
-        } else
-            set_textmatrix(pdf, pos, false);
+            p->need_tm = 1;     /* force Tm setting */
+        }
+        set_textmatrix(pdf, pos);
         begin_chararray(pdf);
     }
     assert(is_charmode(p) || is_chararraymode(p));
@@ -197,7 +198,7 @@ void pdf_place_glyph(PDF pdf, internal_font_number f, int c)
                 && (p->pdf_bt_pos.h.m + p->tm[4].m) != p->pdf.h.m)
             || abs(p->tj_delta.m) >= 1000000) {
             pdf_goto_textmode(pdf);
-            set_textmatrix(pdf, pos, false);
+            set_textmatrix(pdf, pos);
             begin_chararray(pdf);
             move = calc_pdfpos(p, pos);
         }

@@ -16,12 +16,12 @@
 % License for more details.
 %
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writet1.w 3612 2010-04-13 09:29:42Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writet1.w $";
+    "$Id: writet1.w 3960 2010-11-13 07:34:49Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writet1.w $";
 
 #include "ptexlib.h"
 #include <string.h>
@@ -231,8 +231,8 @@ static cs_entry *subr_tab;
 static char *subr_array_start, *subr_array_end;
 static int subr_max, subr_size, subr_size_pos;
 
-@ This list contains the begin/end tokens commonly used in the 
-/Subrs array of a Type 1 font. 
+@ This list contains the begin/end tokens commonly used in the
+/Subrs array of a Type 1 font.
 
 @c
 static const char *cs_token_pairs_list[][2] = {
@@ -286,7 +286,7 @@ char **load_enc_file(char *enc_name)
     cur_file_name = luatex_find_file(enc_name, find_enc_file_callback);
 
     if (cur_file_name == NULL) {
-        pdftex_fail("cannot find encoding file for reading");
+        pdftex_fail("cannot find encoding file '%s' for reading", enc_name);
     }
     callback_id = callback_defined(read_enc_file_callback);
     enc_curbyte = 0;
@@ -295,12 +295,12 @@ char **load_enc_file(char *enc_name)
         if (run_callback(callback_id, "S->bSd", cur_file_name,
                          &file_opened, &enc_buffer, &enc_size)) {
             if ((!file_opened) || enc_size == 0) {
-                pdftex_fail("cannot open encoding file for reading");
+                pdftex_fail("cannot open encoding file '%s' for reading", cur_file_name);
             }
         }
     } else {
         if (!enc_open(cur_file_name)) {
-            pdftex_fail("cannot open encoding file for reading");
+            pdftex_fail("cannot open encoding file '%s' for reading", cur_file_name);
         }
         enc_read_file();
         enc_close();
@@ -326,7 +326,7 @@ char **load_enc_file(char *enc_name)
                  *r != ' ' && *r != 10 && *r != ']' && *r != '/'; *p++ = *r++);
             *p = 0;
             skip(r, ' ');
-            if (names_count > 256)
+            if (names_count >= 256)
                 pdftex_fail("encoding vector contains more than 256 names");
             if (strcmp(buf, notdef) != 0)
                 glyph_names[names_count] = xstrdup(buf);
@@ -652,7 +652,7 @@ static void t1_stop_eexec(PDF pdf)
     t1_in_eexec = 2;
 }
 
-@ macros for various transforms; unused, left for reference 
+@ macros for various transforms; unused, left for reference
 
 @c
 #ifdef T1TRANSFORMMACROS
@@ -785,13 +785,13 @@ static char **t1_builtin_enc(void)
     }
     /* At this moment \.{/Encoding} is the prefix of |t1_line_array|, and the encoding is
      not a predefined encoding.
-     
+
       We have two possible forms of Encoding vector. The first case is
-     
+
           \.{/Encoding [/a /b /c...] readonly def}
-     
+
       and the second case can look like
-     
+
       {\obeylines
           \.{/Encoding 256 array 0 1 255 {1 index exch /.notdef put} for}
           \.{dup 0 /x put}
@@ -1297,7 +1297,7 @@ static void cs_mark(const char *cs_name, int subr)
     ptr->used = false;
 }
 
-@ AVL search tree for glyph code by glyph name 
+@ AVL search tree for glyph code by glyph name
 @c
 static int comp_t1_glyphs(const void *pa, const void *pb, void *p
                           __attribute__ ((unused)))
@@ -1622,11 +1622,36 @@ static void t1_mark_glyphs(void)
 }
 
 
-@
+@ When |t1_subset_charstrings| is called, the |t1_line_array| contains \.{/CharStrings}.
+When we hit a case like this:
+{\obeylines \tt
+         dup/CharStrings
+         229 dict dup begin
+}
+we read the next line and concatenate to |t1_line_array| before moving on. That is
+what |t1_check_unusual_charstring| is for.
+
 @c
+static void t1_check_unusual_charstring(void)
+{
+    char *p = strstr(t1_line_array, charstringname) + strlen(charstringname);
+    int i;
+    /* if no number follows "/CharStrings", let's read the next line */
+    if (sscanf(p, "%i", &i) != 1) { 
+        strcpy(t1_buf_array, t1_line_array);
+        t1_getline();
+        strcat(t1_buf_array, t1_line_array);
+        strcpy(t1_line_array, t1_buf_array);
+        t1_line_ptr = eol(t1_line_array);
+    }
+}
+
 static void t1_subset_charstrings(PDF pdf)
 {
     cs_entry *ptr;
+
+    t1_check_unusual_charstring();
+
     cs_size_pos = (int) (strstr(t1_line_array,
                                 charstringname) + strlen(charstringname) -
                          t1_line_array + 1);

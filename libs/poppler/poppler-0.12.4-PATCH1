@@ -1,0 +1,71 @@
+Index: poppler-0.12.4/poppler/Page.cc
+===================================================================
+--- poppler-0.12.4/poppler/Page.cc	(revision 3771)
++++ poppler-0.12.4/poppler/Page.cc	(working copy)
+@@ -45,13 +45,11 @@
+ #include "XRef.h"
+ #include "Link.h"
+ #include "OutputDev.h"
+-#ifndef PDF_PARSER_ONLY
+ #include "Gfx.h"
+ #include "GfxState.h"
+ #include "Annot.h"
+ #include "TextOutputDev.h"
+ #include "Form.h"
+-#endif
+ #include "Error.h"
+ #include "Page.h"
+ #include "Catalog.h"
+Index: poppler-0.12.4/poppler/GlobalParams.cc
+===================================================================
+--- poppler-0.12.4/poppler/GlobalParams.cc	(revision 3771)
++++ poppler-0.12.4/poppler/GlobalParams.cc	(working copy)
+@@ -140,6 +140,7 @@
+   }
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ #ifdef _WIN32
+ 
+ //------------------------------------------------------------------------
+@@ -384,6 +385,7 @@
+ }
+ 
+ #endif // _WIN32
++#endif // PDF_PARSER_ONLY
+ 
+ //------------------------------------------------------------------------
+ // PSFontParam
+@@ -557,10 +559,12 @@
+   UnicodeMap *map;
+   int i;
+ 
++#ifndef PDF_PARSER_ONLY
+ #ifndef _MSC_VER  
+   FcInit();
+   FCcfg = FcConfigGetCurrent();
+ #endif
++#endif
+ 
+ #if MULTITHREADED
+   gInitMutex(&mutex);
+@@ -1110,6 +1114,11 @@
+ /* if you can't or don't want to use Fontconfig, you need to implement
+    this function for your platform. For Windows, it's in GlobalParamsWin.cc
+ */
++#ifdef PDF_PARSER_ONLY
++DisplayFontParam *GlobalParams::getDisplayFont(GfxFont *font) {
++  return (DisplayFontParam * )NULL;
++}
++#else
+ #ifndef _MSC_VER
+ DisplayFontParam *GlobalParams::getDisplayFont(GfxFont *font) {
+   DisplayFontParam *dfp;
+@@ -1170,6 +1179,7 @@
+   return dfp;
+ }
+ #endif
++#endif
+ 
+ GBool GlobalParams::getPSExpandSmaller() {
+   GBool f;

@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writejpg.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/image/writejpg.w $";
+    "$Id: writejpg.w 4095 2011-03-31 21:14:27Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/writejpg.w $";
 
 #include <assert.h>
 #include "ptexlib.h"
@@ -41,18 +41,18 @@ typedef enum {                  /* JPEG marker codes                    */
 
     M_SOF5 = 0xc5,              /* differential sequential DCT          */
     M_SOF6 = 0xc6,              /* differential progressive DCT         */
-    M_SOF7 = 0xc7,              /* differential lossless                */
+    M_SOF7 = 0xc7,              /* differential lossless (sequential)   */
 
-    M_JPG = 0xc8,               /* JPEG extensions                      */
+    M_JPG = 0xc8,               /* reserved for JPEG extensions         */
     M_SOF9 = 0xc9,              /* extended sequential DCT              */
     M_SOF10 = 0xca,             /* progressive DCT                      */
     M_SOF11 = 0xcb,             /* lossless (sequential)                */
 
     M_SOF13 = 0xcd,             /* differential sequential DCT          */
     M_SOF14 = 0xce,             /* differential progressive DCT         */
-    M_SOF15 = 0xcf,             /* differential lossless                */
+    M_SOF15 = 0xcf,             /* differential lossless (sequential)   */
 
-    M_DHT = 0xc4,               /* define Huffman tables                */
+    M_DHT = 0xc4,               /* define Huffman table(s)              */
 
     M_DAC = 0xcc,               /* define arithmetic conditioning table */
 
@@ -101,13 +101,6 @@ typedef enum {                  /* JPEG marker codes                    */
 } JPEG_MARKER;
 
 @ @c
-static JPG_UINT16 read2bytes(FILE * f)
-{
-    int c = xgetc(f);
-    return (JPG_UINT16) ((c << 8) + (int) xgetc(f));
-}
-
-@ @c
 static void close_and_cleanup_jpg(image_dict * idict)
 {
     assert(idict != NULL);
@@ -117,7 +110,6 @@ static void close_and_cleanup_jpg(image_dict * idict)
     img_file(idict) = NULL;
     assert(img_jpg_ptr(idict) != NULL);
     xfree(img_jpg_ptr(idict));
-    img_jpg_ptr(idict) = NULL;
 }
 
 @ @c
@@ -137,17 +129,17 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
     xfseek(img_file(idict), 0, SEEK_END, img_filepath(idict));
     img_jpg_ptr(idict)->length = xftell(img_file(idict), img_filepath(idict));
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
-    if (read2bytes(img_file(idict)) != 0xFFD8)
+    if ((unsigned int) read2bytes(img_file(idict)) != 0xFFD8)
         pdftex_fail("reading JPEG image failed (no JPEG header found)");
     /* currently only true JFIF files allow extracting |img_xres| and |img_yres| */
-    if (read2bytes(img_file(idict)) == 0xFFE0) {        /* check for JFIF */
+    if ((unsigned int) read2bytes(img_file(idict)) == 0xFFE0) { /* check for JFIF */
         (void) read2bytes(img_file(idict));
         for (i = 0; i < 5; i++) {
             if (xgetc(img_file(idict)) != jpg_id[i])
                 break;
         }
         if (i == 5) {           /* it's JFIF */
-            read2bytes(img_file(idict));
+            (void) read2bytes(img_file(idict));
             units = xgetc(img_file(idict));
             img_xres(idict) = (int) read2bytes(img_file(idict));
             img_yres(idict) = (int) read2bytes(img_file(idict));
@@ -177,23 +169,25 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
             pdftex_fail("reading JPEG image failed (premature file end)");
         if (fgetc(img_file(idict)) != 0xFF)
             pdftex_fail("reading JPEG image failed (no marker found)");
-        switch (xgetc(img_file(idict))) {
+        i = xgetc(img_file(idict));
+        switch (i) {
+        case M_SOF3:           /* lossless */
         case M_SOF5:
         case M_SOF6:
-        case M_SOF7:
+        case M_SOF7:           /* lossless */
         case M_SOF9:
         case M_SOF10:
-        case M_SOF11:
+        case M_SOF11:          /* lossless */
         case M_SOF13:
         case M_SOF14:
-        case M_SOF15:
-            pdftex_fail("unsupported type of compression");
+        case M_SOF15:          /* lossless */
+            pdftex_fail("unsupported type of compression (SOF_%d)", i - M_SOF0);
+            break;
         case M_SOF2:
             if (pdf->minor_version <= 2)
                 pdftex_fail("cannot use progressive DCT with PDF-1.2");
         case M_SOF0:
         case M_SOF1:
-        case M_SOF3:
             (void) read2bytes(img_file(idict)); /* read segment length  */
             img_colordepth(idict) = xgetc(img_file(idict));
             img_ysize(idict) = (int) read2bytes(img_file(idict));
@@ -230,7 +224,7 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
         case M_RST7:
             break;
         default:               /* skip variable length markers */
-            xfseek(img_file(idict), read2bytes(img_file(idict)) - 2,
+            xfseek(img_file(idict), (int) read2bytes(img_file(idict)) - 2,
                    SEEK_CUR, img_filepath(idict));
             break;
         }

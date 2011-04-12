@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: pdfcolorstack.w 3612 2010-04-13 09:29:42Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfcolorstack.w $";
+    "$Id: pdfcolorstack.w 3891 2010-09-14 23:02:24Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfcolorstack.w $";
 
 
 @* Color Stack and Matrix Transformation Support.
@@ -53,9 +53,6 @@ They have the following properties:
 #define SET_ORIGIN 0
 #define DIRECT_PAGE 1
 #define DIRECT_ALWAYS 2
-
-/* remember shipout mode: page/form */
-boolean page_mode;
 
 typedef struct {
     char **page_stack;
@@ -176,7 +173,7 @@ static int colorstackset(int colstack_no, str_number s)
 {
     colstack_type *colstack = get_colstack(colstack_no);
 
-    if (page_mode) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         xfree(colstack->page_current);
         colstack->page_current = makecstring(s);
     } else {
@@ -191,7 +188,7 @@ int colorstackcurrent(int colstack_no)
 {
     colstack_type *colstack = get_colstack(colstack_no);
 
-    if (page_mode) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         put_cstring_on_str_pool(colstack->page_current);
     } else {
         put_cstring_on_str_pool(colstack->form_current);
@@ -204,7 +201,7 @@ static int colorstackpush(int colstack_no, str_number s)
 {
     colstack_type *colstack = get_colstack(colstack_no);
     char *str;
-    if (page_mode) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         if (colstack->page_used == colstack->page_size) {
             colstack->page_size += STACK_INCREMENT;
             colstack->page_stack = xretalloc(colstack->page_stack,
@@ -243,7 +240,7 @@ int colorstackpop(int colstack_no)
 {
     colstack_type *colstack = get_colstack(colstack_no);
 
-    if (page_mode) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         if (colstack->page_used == 0) {
             pdftex_warn("pop empty color page stack %u",
                         (unsigned int) colstack_no);
@@ -271,7 +268,7 @@ void colorstackpagestart(void)
     int i, j;
     colstack_type *colstack;
 
-    if (page_mode) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         /* see procedure |pdf_out_colorstack_startpage| */
         return;
     }
@@ -381,6 +378,6 @@ void pdf_out_colorstack_startpage(PDF pdf)
                 flush_str(s);
             }
         }
-        incr(i);
+        i++;
     }
 }

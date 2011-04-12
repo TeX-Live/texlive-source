@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: packaging.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/packaging.w $";
+    "$Id: packaging.w 4044 2010-12-18 09:23:06Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/packaging.w $";
 
 @ @c
 #define scan_normal_dimen() scan_dimen(false,false,false)
@@ -115,7 +115,6 @@ void scan_full_spec(group_code c, int spec_direction)
     int v;
     int spec_code;
     halfword attr_list;
-    s = 0;
     if (attr_list_cache == cache_disabled)
         update_attribute_cache();
     attr_list = attr_list_cache;
@@ -423,7 +422,6 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
     scaled s;                   /* shift amount */
     halfword g;                 /* points to a glue specification */
     int o;                      /* order of infinity */
-    internal_font_number f;     /* the font in a |char_node| */
     halfword dir_ptr;           /* for managing the direction stack */
     /* BEWARE: this shadows a global |dir_ptr| */
     int hpack_dir;              /* the current direction */
@@ -438,7 +436,6 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
         box_dir(r) = text_direction;
     } else {
         box_dir(r) = pack_direction;
-        pack_direction = -1;
     }
     hpack_dir = box_dir(r);
     dir_ptr = null;
@@ -493,7 +490,6 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                     do_subst_font(p, font_expand_ratio);
                 }
             }
-            f = font(p);
             whd = pack_width_height_depth(hpack_dir, dir_TRT, p, true);
             x += whd.wd;
             if (whd.ht > h)
@@ -533,7 +529,7 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
             case ins_node:
             case mark_node:
             case adjust_node:
-                if (adjust_tail != null) {
+                if (adjust_tail != null || pre_adjust_tail != null) {
                     /* Transfer node |p| to the adjustment list */
                     /*
                        Although node |q| is not necessarily the immediate predecessor of node |p|,
@@ -852,7 +848,6 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
 {
     scaled s;                   /* shift amount */
     halfword g;                 /* points to a glue specification */
-    internal_font_number f;     /* the font in a |char_node| */
     int hpack_dir;
     scaled_whd xx;              /* for recursion */
     scaled_whd whd, siz = { 0, 0, 0 };
@@ -863,7 +858,6 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
     }
     while (p != pp && p != null) {
         while (is_char_node(p) && p != pp) {
-            f = font(p);
             whd = pack_width_height_depth(hpack_dir, dir_TRT, p, true);
             siz.wd += whd.wd;
             if (whd.ht > siz.ht)

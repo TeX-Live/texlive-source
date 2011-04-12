@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfont.h 3723 2010-06-18 09:19:27Z taco $ */
+/* $Id: texfont.h 3853 2010-09-03 18:05:14Z oneiros $ */
 
 /* Here we have the interface to LuaTeX's font system, as seen from the
    main pascal program. There is a companion list in luatex.defines to
@@ -38,11 +38,11 @@ typedef struct liginfo {
     int adj;
     int lig;
     int type;
-#else
+#  else
     int type;
     int lig;
     int adj;
-#endif
+#  endif
 } liginfo;
 
 /* these are dumped en block, so they need endianness tests */
@@ -50,10 +50,10 @@ typedef struct kerninfo {
 #  ifdef WORDS_BIGENDIAN
     int adj;
     scaled sc;
-#else
+#  else
     scaled sc;
     int adj;
-#endif
+#  endif
 } kerninfo;
 
 typedef struct extinfo {
@@ -172,7 +172,7 @@ typedef struct texfont {
     int ligatures_disabled;
 
     int _pdf_font_num;          /* maps to a PDF resource ID */
-    internal_font_number _pdf_font_blink;       /* link to  base font for expanded fonts */
+    internal_font_number _pdf_font_blink;       /* link to base font for expanded fonts */
     internal_font_number _pdf_font_elink;       /* link to expanded fonts for base font */
     str_number _pdf_font_attr;  /* pointer to additional attributes */
 } texfont;

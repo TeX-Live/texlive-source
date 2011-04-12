@@ -998,6 +998,12 @@ static inline void synctex_record_rule(halfword p);
 #   define SYNCTEX_IGNORE_RULE(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE \
                                 || (0 >= SYNCTEX_TAG_MODEL(NODE,rule_node_size)) \
                                 || (0 >= SYNCTEX_LINE_MODEL(NODE,rule_node_size))
+#   define SYNCTEX_IGNORE_GLUE(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE \
+                                || (0 >= SYNCTEX_TAG_MODEL(NODE,glue_node_size)) \
+                                || (0 >= SYNCTEX_LINE_MODEL(NODE,glue_node_size))
+#   define SYNCTEX_IGNORE_KERN(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE \
+                                || (0 >= SYNCTEX_TAG_MODEL(NODE,kern_node_size)) \
+                                || (0 >= SYNCTEX_LINE_MODEL(NODE,kern_node_size))
 void synctexhorizontalruleorglue(halfword p, halfword this_box
                                  __attribute__ ((unused)))
 {
@@ -1009,8 +1015,12 @@ void synctexhorizontalruleorglue(halfword p, halfword this_box
         if (SYNCTEX_IGNORE_RULE(p)) {
             return;
         }
-    } else {
-        if (SYNCTEX_IGNORE(p)) {
+    } else if (SYNCTEX_TYPE(p) == glue_node) {
+        if (SYNCTEX_IGNORE_GLUE(p)) {
+            return;
+        }
+    } else if (SYNCTEX_TYPE(p) == kern_node) {
+        if (SYNCTEX_IGNORE_KERN(p)) {
             return;
         }
     }
@@ -1025,13 +1035,13 @@ void synctexhorizontalruleorglue(halfword p, halfword this_box
         synctex_record_rule(p); /*  always record synchronously: maybe some text is outside the box  */
         break;
     case glue_node:
-        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
+        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, glue_node_size);
+        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, glue_node_size);
         synctex_record_glue(p); /*  always record synchronously: maybe some text is outside the box  */
         break;
     case kern_node:
-        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
+        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, kern_node_size);
+        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, kern_node_size);
         synctex_record_kern(p); /*  always record synchronously: maybe some text is outside the box  */
         break;
     default:
@@ -1049,7 +1059,7 @@ void synctexkern(halfword p, halfword this_box)
 #   if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexkern\n");
 #   endif
-    if (SYNCTEX_IGNORE(p)) {
+    if (SYNCTEX_IGNORE_KERN(p)) {
         return;
     }
     if (SYNCTEX_CONTEXT_DID_CHANGE(p)) {
@@ -1061,13 +1071,13 @@ void synctexkern(halfword p, halfword this_box)
         if (synctex_ctxt.node == this_box) {
             /* first node in the list */
             synctex_ctxt.node = p;
-            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
+            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, kern_node_size);
+            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, kern_node_size);
             synctex_ctxt.recorder = &synctex_kern_recorder;
         } else {
             synctex_ctxt.node = p;
-            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
+            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, kern_node_size);
+            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, kern_node_size);
             synctex_ctxt.recorder = NULL;
             /*  always record when the context has just changed
              *  and when not the first node  */
@@ -1076,8 +1086,8 @@ void synctexkern(halfword p, halfword this_box)
     } else {
         /*  just update the geometry and type (for future improvements)  */
         synctex_ctxt.node = p;
-        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
+        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, kern_node_size);
+        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, kern_node_size);
         synctex_ctxt.recorder = &synctex_kern_recorder;
     }
 }
@@ -1455,8 +1465,8 @@ static inline void synctex_record_glue(halfword p)
     printf("\nSynchronize DEBUG: synctex_glue_recorder\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "g%i,%i:%i,%i\n",
-                          SYNCTEX_TAG_MODEL(p, medium_node_size),
-                          SYNCTEX_LINE_MODEL(p, medium_node_size),
+                          SYNCTEX_TAG_MODEL(p, glue_node_size),
+                          SYNCTEX_LINE_MODEL(p, glue_node_size),
                           synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
@@ -1475,8 +1485,8 @@ static inline void synctex_record_kern(halfword p)
     printf("\nSynchronize DEBUG: synctex_kern_recorder\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "k%i,%i:%i,%i:%i\n",
-                          SYNCTEX_TAG_MODEL(p, medium_node_size),
-                          SYNCTEX_LINE_MODEL(p, medium_node_size),
+                          SYNCTEX_TAG_MODEL(p, kern_node_size),
+                          SYNCTEX_LINE_MODEL(p, kern_node_size),
                           synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
                           SYNCTEX_WIDTH(p) UNIT);
     if (len > 0) {
@@ -1517,8 +1527,8 @@ void synctex_math_recorder(halfword p)
     printf("\nSynchronize DEBUG: synctex_math_recorder\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "$%i,%i:%i,%i\n",
-                          SYNCTEX_TAG_MODEL(p, medium_node_size),
-                          SYNCTEX_LINE_MODEL(p, medium_node_size),
+                          SYNCTEX_TAG_MODEL(p, math_node_size),
+                          SYNCTEX_LINE_MODEL(p, math_node_size),
                           synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
@@ -1537,8 +1547,8 @@ void synctex_kern_recorder(halfword p)
     printf("\nSynchronize DEBUG: synctex_kern_recorder\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "k%i,%i:%i,%i:%i\n",
-                          SYNCTEX_TAG_MODEL(p, medium_node_size),
-                          SYNCTEX_LINE_MODEL(p, medium_node_size),
+                          SYNCTEX_TAG_MODEL(p, kern_node_size),
+                          SYNCTEX_LINE_MODEL(p, kern_node_size),
                           synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
                           SYNCTEX_WIDTH(p) UNIT);
     if (len > 0) {

@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfshipout.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfshipout.w $";
+    "$Id: pdfshipout.w 3891 2010-09-14 23:02:24Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfshipout.w $";
 
 #include "ptexlib.h"
 
@@ -44,11 +44,11 @@ static const char _svn_version[] =
 scaledpos shipbox_refpos;
 
 @ |ship_out| is used to shipout a box to PDF or DVI mode.
-If |shipping_page| is not set then the output will be a Form object
-(only PDF), otherwise it will be a Page object.
+If |shipping_mode| is set to |SHIPPING_FORM| then the output will be a Form object
+(only PDF), and if it is set to |SHIPPING_PAGE| it will be a Page object.
 
 @c
-void ship_out(PDF pdf, halfword p, boolean shipping_page)
+void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
 {
     /* output the box |p| */
     int j, k;                   /* indices to first ten count registers */
@@ -77,8 +77,8 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
         print_ln();
         tprint("Completed box being shipped out");
     }
-    is_shipping_page = shipping_page;
-    if (shipping_page) {
+    global_shipping_mode = shipping_mode;
+    if (shipping_mode == SHIPPING_PAGE) {
         if (pre_callback_id > 0)
             (void) run_callback(pre_callback_id, "->");
         else if (pre_callback_id == 0) {
@@ -89,7 +89,7 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
             print_char('[');
             j = 9;
             while ((count(j) == 0) && (j > 0))
-                decr(j);
+                j--;
             for (k = 0; k <= j; k++) {
                 print_int(count(k));
                 if (k < j)
@@ -97,7 +97,7 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
             }
         }
     }
-    if ((tracing_output > 0) && shipping_page) {
+    if ((tracing_output > 0) && shipping_mode == SHIPPING_PAGE) {
         print_char(']');
         update_terminal();
         begin_diagnostic();
@@ -106,7 +106,7 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
     }
 
     /* Ship box |p| out */
-    if (shipping_page && box_dir(p) != page_direction)
+    if (shipping_mode == SHIPPING_PAGE && box_dir(p) != page_direction)
         pdf_warning("\\shipout",
                     "\\pagedir != \\bodydir; "
                     "\\box\\outputbox may be placed wrongly on the page.", true,
@@ -139,7 +139,7 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
         max_h = width(p) + h_offset;
 
     /* Calculate page dimensions and margins */
-    if (is_shipping_page) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         if (page_width > 0)
             cur_page_size.h = page_width;
         else {
@@ -256,14 +256,14 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
 
     switch (pdf->o_mode) {
     case OMODE_DVI:
-        assert(shipping_page);
+        assert(shipping_mode == SHIPPING_PAGE);
         dvi_begin_page(pdf);
         break;
     case OMODE_PDF:
-        pdf_begin_page(pdf, shipping_page);
+        pdf_begin_page(pdf);
         break;
     case OMODE_LUA:
-        assert(shipping_page);
+        assert(shipping_mode == SHIPPING_PAGE);
         lua_begin_page(pdf);
         break;
     default:
@@ -281,8 +281,8 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
         assert(0);
     }
 
-    if (shipping_page)
-        incr(total_pages);
+    if (shipping_mode == SHIPPING_PAGE)
+        total_pages++;
     cur_s = -1;
 
     /* Finish shipping */
@@ -292,7 +292,7 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
         dvi_end_page(pdf);
         break;
     case OMODE_PDF:
-        pdf_end_page(pdf, shipping_page);
+        pdf_end_page(pdf);
         break;
     case OMODE_LUA:
         lua_end_page(pdf);
@@ -302,7 +302,8 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
     }
 
   DONE:
-    if ((tracing_output <= 0) && (post_callback_id == 0) && shipping_page) {
+    if ((tracing_output <= 0) && (post_callback_id == 0)
+        && shipping_mode == SHIPPING_PAGE) {
         print_char(']');
         update_terminal();
     }
@@ -323,10 +324,12 @@ void ship_out(PDF pdf, halfword p, boolean shipping_page)
         print_int(dyn_used);
         print_ln();
     }
-    if (shipping_page && (post_callback_id > 0))
+    if (shipping_mode == SHIPPING_PAGE && (post_callback_id > 0))
         (void) run_callback(post_callback_id, "->");
 
     /* Finish sheet {\sl Sync\TeX} information record */
     if (int_par(synctex_code))
         synctexteehs();
+
+    global_shipping_mode = NOT_SHIPPING;
 }

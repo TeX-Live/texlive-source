@@ -21,8 +21,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdffont.w 3638 2010-04-20 14:00:47Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.1/source/texk/web2c/luatexdir/pdf/pdffont.w $";
+    "$Id: pdffont.w 4098 2011-04-07 21:01:11Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdffont.w $";
 
 #include "ptexlib.h"
 
@@ -64,7 +64,6 @@ void output_one_char(PDF pdf, internal_font_number ffi, int c)
         break;
     }
     if (has_packet(ffi, c)) {
-        assert(pdf->o_mode == OMODE_PDF);
         do_vf_packet(pdf, ffi, c);
     } else
         backend_out[glyph_node] (pdf, ffi, c);  /* |pdf_place_glyph(pdf, ffi, c);| */
@@ -91,7 +90,7 @@ indicates that the corresponding font shares the font resource with the font
 static boolean font_shareable(internal_font_number f, internal_font_number k)
 {
     int ret = 0;
-    internal_font_number b;
+    internal_font_number b;     /* possible base font */
     /* For some lua-loaded (for instance AFM) fonts, it is normal to have
        a zero cidregistry,  and such fonts do not have a fontmap entry yet
        at this point, so the test should use the other branch  */
@@ -101,7 +100,7 @@ static boolean font_shareable(internal_font_number f, internal_font_number k)
             font_map(f) != NULL &&
             (same(font_name, k, f) ||
              (font_auto_expand(f) &&
-              (b = pdf_font_blink(f)) != 0 && same(font_name, k, b)))) {
+              (b = pdf_font_blink(k)) != null_font && same(font_name, k, b)))) {
             ret = 1;
         }
 #ifdef DEBUG
@@ -111,7 +110,8 @@ static boolean font_shareable(internal_font_number f, internal_font_number k)
     } else {
         if ((same(font_filename, k, f) && same(font_fullname, k, f))
             || (font_auto_expand(f)
-                && (b = pdf_font_blink(f)) != 0 && same(font_name, k, b))) {
+                && (b = pdf_font_blink(k)) != null_font
+                && same(font_name, k, b))) {
             ret = 1;
         }
 #ifdef DEBUG
@@ -129,12 +129,12 @@ void pdf_init_font(PDF pdf, internal_font_number f)
 {
     internal_font_number k, b;
     fm_entry *fm;
-    int i;
+    int i, l;
     assert(!font_used(f));
 
     /* if |f| is auto expanded then ensure the base font is initialized */
 
-    if (font_auto_expand(f) && ((b = pdf_font_blink(f)) != 0)) {
+    if (font_auto_expand(f) && ((b = pdf_font_blink(f)) != null_font)) {
         if (!font_used(b))
             pdf_init_font(pdf, b);
         set_font_map(f, font_map(b));
@@ -173,8 +173,8 @@ void pdf_init_font(PDF pdf, internal_font_number f)
         i = obj_link(pdf, i);
     }
     /* create a new font object for |f| */
-    pdf_create_obj(pdf, obj_type_font, f);
-    pdf_use_font(f, pdf->obj_ptr);
+    l = pdf_create_obj(pdf, obj_type_font, f);
+    pdf_use_font(f, l);
 }
 
 @ set the actual font on PDF page 
@@ -418,6 +418,7 @@ void new_letterspaced_font(small_number a)
     pointer u;                  /* user's font identifier */
     str_number t;               /* name for the frozen font identifier */
     internal_font_number f, k;
+    boolean nolig = false;
     get_r_token();
     u = cur_cs;
     if (u >= hash_base)
@@ -429,7 +430,9 @@ void new_letterspaced_font(small_number a)
     scan_font_ident();
     k = cur_val;
     scan_int();
-    f = letter_space_font(u, k, fix_int(cur_val, -1000, 1000));
+    if (scan_keyword("nolig"))
+       nolig=true;
+    f = letter_space_font(k, fix_int(cur_val, -1000, 1000), nolig);
     equiv(u) = f;
     eqtb[font_id_base + f] = eqtb[u];
     font_id_text(f) = t;

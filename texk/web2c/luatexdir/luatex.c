@@ -15,16 +15,16 @@
 #include "luatex_svnversion.h"
 
 static const char _svn_version[] =
-    "$Id: luatex.c 3730 2010-07-01 07:12:12Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/luatex.c $";
+    "$Id: luatex.c 4117 2011-04-11 07:58:32Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/luatex.c $";
 
 #define TeX
 
 int luatex_svn = luatex_svn_revision;
-int luatex_version = 60;        /* \.{\\luatexversion}  */
-int luatex_revision = '2';      /* \.{\\luatexrevision}  */
+int luatex_version = 66;        /* \.{\\luatexversion}  */
+int luatex_revision = '0';      /* \.{\\luatexrevision}  */
 int luatex_date_info = -extra_version_info;     /* the compile date is negated */
-const char *luatex_version_string = "beta-0.60.2";
+const char *luatex_version_string = "beta-0.66.0";
 const char *engine_name = "luatex";     /* the name of this engine */
 
 #include <kpathsea/c-ctype.h>
@@ -879,99 +879,6 @@ boolean input_line(FILE * f)
 }
 
 
-/* This string specifies what the `e' option does in response to an
-   error message.  */
-#if 0
-static const_string edit_value = EDITOR;
-#endif
-
-/* This procedure originally due to sjc@s1-c.  TeX & Metafont call it when
-   the user types `e' in response to an error, invoking a text editor on
-   the erroneous source file.  FNSTART is how far into FILENAME the
-   actual filename starts; FNLENGTH is how long the filename is.  */
-
-#if 0
-void
-calledit(packedASCIIcode * filename,
-         poolpointer fnstart, int fnlength, int linenumber)
-{
-    char *temp, *command;
-    char c;
-    int sdone, ddone, i;
-
-    sdone = ddone = 0;
-    filename += fnstart;
-
-    /* Close any open input files, since we're going to kill the job.  */
-    for (i = 1; i <= in_open; i++)
-        xfclose(input_file[i], "inputfile");
-
-    /* Replace the default with the value of the appropriate environment
-       variable or config file value, if it's set.  */
-    temp = kpse_var_value(edit_var);
-    if (temp != NULL)
-        edit_value = temp;
-
-    /* Construct the command string.  The `11' is the maximum length an
-       integer might be.  */
-    command =
-        (string) xmalloc((unsigned) strlen(edit_value) + (unsigned) fnlength +
-                         11);
-
-    /* So we can construct it as we go.  */
-    temp = command;
-
-    while ((c = *edit_value++) != 0) {
-        if (c == '%') {
-            switch (c = *edit_value++) {
-            case 'd':
-                if (ddone)
-                    FATAL("call_edit: `%%d' appears twice in editor command");
-                sprintf(temp, "%ld", (long int) linenumber);
-                while (*temp != '\0')
-                    temp++;
-                ddone = 1;
-                break;
-
-            case 's':
-                if (sdone)
-                    FATAL("call_edit: `%%s' appears twice in editor command");
-                for (i = 0; i < fnlength; i++)
-                    *temp++ = (char) Xchr(filename[i]);
-                sdone = 1;
-                break;
-
-            case '\0':
-                *temp++ = '%';
-                /* Back up to the null to force termination.  */
-                edit_value--;
-                break;
-
-            default:
-                *temp++ = '%';
-                *temp++ = c;
-                break;
-            }
-        } else
-            *temp++ = c;
-    }
-
-    *temp = 0;
-
-    /* Execute the command.  */
-#ifdef __MINGW32__
-    /* Win32 reimplementation of the system() command
-       provides opportunity to call it asynchronously */
-    if (win32_system(command, true) != 0)
-#else
-    if (system(command) != 0)
-#endif
-        fprintf(stderr, "! Trouble executing `%s'.\n", command);
-
-    /* Quit, since we found an error.  */
-    uexit(1);
-}
-#endif
 
 /* Read and write dump files.  As distributed, these files are
    architecture dependent; specifically, BigEndian and LittleEndian
@@ -995,7 +902,7 @@ calledit(packedASCIIcode * filename,
 void swap_items(char *pp, int nitems, int size)
 {
     char temp;
-    unsigned total = nitems*size;
+    unsigned total = (unsigned) (nitems * size);
     char *q = xmalloc(total);
     char *p = q;
     memcpy(p,pp,total);
@@ -1067,48 +974,6 @@ void swap_items(char *pp, int nitems, int size)
 }
 #endif                          /* not WORDS_BIGENDIAN and not NO_DUMP_SHARE */
 
-
-#if 0
-/* Here we write NITEMS items, each item being ITEM_SIZE bytes long.
-   The pointer to the stuff to write is P, and we write to the file
-   OUT_FILE.  */
-
-void do_dump(char *p, int item_size, int nitems, FILE * out_file)
-{
-#if !defined (WORDS_BIGENDIAN) && !defined (NO_DUMP_SHARE)
-    swap_items(p, nitems, item_size);
-#endif
-
-    if (fwrite(p, (size_t) item_size, (size_t) nitems, out_file) !=
-        (unsigned) nitems) {
-        fprintf(stderr, "! Could not write %d %d-byte item(s).\n", nitems,
-                item_size);
-        uexit(1);
-    }
-
-    /* Have to restore the old contents of memory, since some of it might
-       get used again.  */
-#if !defined (WORDS_BIGENDIAN) && !defined (NO_DUMP_SHARE)
-    swap_items(p, nitems, item_size);
-#endif
-}
-#endif
-
-
-
-/* Here is the dual of the writing routine.  */
-#if 0
-void do_undump(char *p, int item_size, int nitems, FILE * in_file)
-{
-    if (fread(p, (size_t) item_size, (size_t) nitems, in_file) !=
-        (size_t) nitems)
-        FATAL2("Could not undump %d %d-byte item(s)", nitems, item_size);
-
-#if !defined (WORDS_BIGENDIAN) && !defined (NO_DUMP_SHARE)
-    swap_items(p, nitems, item_size);
-#endif
-}
-#endif
 
 
 /* Get the job name to be used, which may have been set from the

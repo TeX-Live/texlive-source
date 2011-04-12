@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfxform.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfxform.w $";
+    "$Id: pdfxform.w 3908 2010-10-13 19:22:02Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfxform.w $";
 
 #include "ptexlib.h"
 
@@ -72,9 +72,8 @@ void scan_pdfxform(PDF pdf)
 {
     int k;
     halfword p;
-    incr(pdf->xform_count);
-    pdf_create_obj(pdf, obj_type_xform, pdf->xform_count);
-    k = pdf->obj_ptr;
+    pdf->xform_count++;
+    k = pdf_create_obj(pdf, obj_type_xform, pdf->xform_count);
     set_obj_data_ptr(pdf, k, pdf_get_mem(pdf, pdfmem_xform_size));
     if (scan_keyword("attr")) {
         scan_pdf_ext_toks();
@@ -109,7 +108,7 @@ void scan_pdfrefxform(PDF pdf)
     scaled_whd alt_rule, dim, nat;
     alt_rule = scan_alt_rule(); /* scans |<rule spec>| to |alt_rule| */
     scan_int();
-    check_obj_exists(pdf, obj_type_xform, cur_val);
+    check_obj_type(pdf, obj_type_xform, cur_val);
     new_whatsit(pdf_refxform_node);
     nat.wd = obj_xform_width(pdf, cur_val);
     nat.ht = obj_xform_height(pdf, cur_val);

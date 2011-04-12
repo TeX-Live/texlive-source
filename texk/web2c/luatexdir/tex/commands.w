@@ -23,8 +23,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: commands.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/commands.w $";
+    "$Id: commands.w 3849 2010-09-01 09:10:48Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/commands.w $";
 
 @ The symbolic names for glue parameters are put into \TeX's hash table
 by using the routine called |primitive|, defined below. Let us enter them
@@ -537,18 +537,6 @@ void initialize_commands(void)
     primitive_tex("nullfont", set_font_cmd, null_font, 0);
     cs_text(frozen_null_font) = maketexstring("nullfont");
     eqtb[frozen_null_font] = eqtb[cur_val];
-    /* $\Omega$ always knows at least one ocp, namely the null ocp.
-       It does nothing. */
-    primitive_omega("nullocp", set_ocp_cmd, null_ocp, 0);
-    cs_text(frozen_null_ocp) = maketexstring("nullocp");
-    eqtb[frozen_null_ocp] = eqtb[cur_val];
-    geq_define(ocp_active_number_base, data_cmd, 0);
-    geq_define(ocp_active_min_ptr_base, data_cmd, 0);
-    geq_define(ocp_active_max_ptr_base, data_cmd, 0);
-    /* $\Omega$ always knows at least one ocp list, namely the null ocp list. */
-    primitive_omega("nullocplist", set_ocp_list_cmd, null_ocp_list, 0);
-    cs_text(frozen_null_ocp_list) = maketexstring("nullocplist");
-    eqtb[frozen_null_ocp_list] = eqtb[cur_val];
 
     primitive_tex("span", tab_mark_cmd, span_code, tab_mark_cmd_code);
     primitive_luatex("aligntab", tab_mark_cmd, tab_mark_cmd_code,
@@ -1036,20 +1024,6 @@ void initialize_commands(void)
     primitive_pdftex("pdffontexpand", extension_cmd, pdf_font_expand_code, 0);
     primitive_pdftex("pdfglyphtounicode", extension_cmd,
                      pdf_glyph_to_unicode_code, 0);
-
-    primitive_omega("ocp", def_ocp_cmd, 0, 0);
-    primitive_omega("externalocp", def_ocp_cmd, 1, 0);
-    primitive_omega("ocplist", def_ocp_list_cmd, 0, 0);
-    primitive_omega("pushocplist", push_ocp_list_cmd, 0, 0);
-    primitive_omega("popocplist", pop_ocp_list_cmd, 0, 0);
-    primitive_omega("clearocplists", clear_ocp_lists_cmd, 0, 0);
-    primitive_omega("addbeforeocplist", ocp_list_op_cmd, add_before_op, 0);
-    primitive_omega("addafterocplist", ocp_list_op_cmd, add_after_op, 0);
-    primitive_omega("removebeforeocplist", ocp_list_op_cmd, remove_before_op,
-                    0);
-    primitive_omega("removeafterocplist", ocp_list_op_cmd, remove_after_op, 0);
-    primitive_omega("ocptracelevel", ocp_trace_level_cmd, 0, 0);
-    set_equiv(ocp_trace_level_base, 0);
 
     /* some of the internal integer parameters are not associated with actual
        primitives at all. */

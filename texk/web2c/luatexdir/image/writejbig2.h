@@ -18,12 +18,15 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writejbig2.h 2579 2009-06-23 14:12:23Z taco $ */
+/* $Id: writejbig2.h 4051 2011-01-09 22:41:33Z hhenkel $ */
 
 #ifndef WRITEJBIG2_H
 #  define WRITEJBIG2_H
 
 #  include "image.h"
+
+unsigned int read2bytes(FILE * f);
+unsigned int read4bytes(FILE * f);
 
 void flush_jbig2_page0_objects(PDF);
 void read_jbig2_info(image_dict *);

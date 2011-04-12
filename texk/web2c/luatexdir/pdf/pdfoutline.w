@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: pdfoutline.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfoutline.w $";
+    "$Id: pdfoutline.w 3891 2010-09-14 23:02:24Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfoutline.w $";
 
 @ Data structure of outlines; it's not able to write out outline entries
 before all outline entries are defined, so memory allocated for outline
@@ -64,7 +64,7 @@ static int open_subentries(PDF pdf, halfword p)
     if (obj_outline_first(pdf, p) != 0) {
         l = obj_outline_first(pdf, p);
         do {
-            incr(k);
+            k++;
             c = open_subentries(pdf, l);
             if (obj_outline_count(pdf, l) > 0)
                 k = k + c;
@@ -89,7 +89,7 @@ static int outline_list_count(PDF pdf, pointer p)
 {
     int k = 1;
     while (obj_outline_prev(pdf, p) != 0) {
-        incr(k);
+        k++;
         p = obj_outline_prev(pdf, p);
     }
     return k;
@@ -99,7 +99,7 @@ static int outline_list_count(PDF pdf, pointer p)
 void scan_pdfoutline(PDF pdf)
 {
     halfword p, q, r;
-    int i, j, k;
+    int i, j, k, l;
     if (scan_keyword("attr")) {
         scan_pdf_ext_toks();
         r = def_ref;
@@ -115,17 +115,15 @@ void scan_pdfoutline(PDF pdf)
     }
     scan_pdf_ext_toks();
     q = def_ref;
-    pdf_new_obj(pdf, obj_type_others, 0, 1);
-    j = pdf->obj_ptr;
+    j = pdf_new_obj(pdf, obj_type_others, 0, 1);
     write_action(pdf, p);
     pdf_end_obj(pdf);
     delete_action_ref(p);
-    pdf_create_obj(pdf, obj_type_outline, 0);
-    k = pdf->obj_ptr;
+    k = pdf_create_obj(pdf, obj_type_outline, 0);
     set_obj_outline_ptr(pdf, k, pdf_get_mem(pdf, pdfmem_outline_size));
     set_obj_outline_action_objnum(pdf, k, j);
     set_obj_outline_count(pdf, k, i);
-    pdf_new_obj(pdf, obj_type_others, 0, 1);
+    l = pdf_new_obj(pdf, obj_type_others, 0, 1);
     {
         char *s = tokenlist_to_cstring(q, true, NULL);
         pdf_print_str_ln(pdf, s);
@@ -133,7 +131,7 @@ void scan_pdfoutline(PDF pdf)
     }
     delete_token_ref(q);
     pdf_end_obj(pdf);
-    set_obj_outline_title(pdf, k, pdf->obj_ptr);
+    set_obj_outline_title(pdf, k, l);
     set_obj_outline_prev(pdf, k, 0);
     set_obj_outline_next(pdf, k, 0);
     set_obj_outline_first(pdf, k, 0);
@@ -182,12 +180,11 @@ int print_outlines(PDF pdf)
     int k, l, a;
     int outlines;
     if (pdf->first_outline != 0) {
-        pdf_new_dict(pdf, obj_type_others, 0, 1);
-        outlines = pdf->obj_ptr;
+        outlines = pdf_new_dict(pdf, obj_type_others, 0, 1);
         l = pdf->first_outline;
         k = 0;
         do {
-            incr(k);
+            k++;
             a = open_subentries(pdf, l);
             if (obj_outline_count(pdf, l) > 0)
                 k = k + a;

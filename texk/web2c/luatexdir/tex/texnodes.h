@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texnodes.h 3552 2010-03-26 15:30:08Z taco $ */
+/* $Id: texnodes.h 4090 2011-02-28 08:51:20Z taco $ */
 
 #include <stdarg.h>
 
@@ -183,13 +183,16 @@ typedef enum {
 #  define acc_kern 2            /*|subtype| of kern nodes from accents */
 #  define synctex_tag_kern(a)  vinfo((a)+3)
 #  define synctex_line_kern(a) vlink((a)+3)
-#  define ex_kern(a)           vinfo((a)+4) /* expansion factor (hz) */
+#  define ex_kern(a)           vinfo((a)+4)     /* expansion factor (hz) */
 
 #  define box_node_size 9
 
 #  define HLIST_SUBTYPE_UNKNOWN 0
-#  define HLIST_SUBTYPE_LINE 1
-#  define HLIST_SUBTYPE_HBOX 2
+#  define HLIST_SUBTYPE_LINE 1  /* paragraph lines */
+#  define HLIST_SUBTYPE_HBOX 2  /* \.{\\hbox} */
+#  define HLIST_SUBTYPE_INDENT 3        /* indentation box */
+#  define HLIST_SUBTYPE_ALIGNROW 4      /* row from a \.{\\halign} or \.{\\valign} */
+#  define HLIST_SUBTYPE_ALIGNCELL 5     /* cell from a \.{\\halign} or \.{\\valign} */
 
 #  define width(a)            varmem[(a)+2].cint
 #  define depth(a)            varmem[(a)+3].cint
@@ -352,6 +355,9 @@ typedef enum {
 #  define pseudo_lines(a) vlink((a)+1)
 
 #  define nodetype_has_attributes(t) (((t)<=glyph_node) && ((t)!=unset_node))
+
+#  define nodetype_has_subtype(t) ((t)!=action_node && (t)!=attribute_list_node && (t)!=attribute_node && (t)!=glue_spec_node)
+#  define nodetype_has_prev(t)   nodetype_has_subtype((t))
 
 /* style and choice nodes */
 /* style nodes can be smaller, the information is encoded in |subtype|,
@@ -538,6 +544,7 @@ typedef enum {
 #  define late_lua_data(a)        vlink((a)+2)
 #  define late_lua_reg(a)         vinfo((a)+2)
 #  define late_lua_name(a)        vlink((a)+3)
+#  define late_lua_type(a)        subtype((a)+3)
 
 #  define local_par_size 6
 
@@ -687,7 +694,8 @@ extern pointer actual_box_width(pointer r, scaled base_width);
 /* TH: these two defines still need checking. The node ordering in luatex is not 
    quite the same as in tex82 */
 
-#  define precedes_break(a) (type((a))<math_node && (type(a)!=whatsit_node || subtype(a)!=dir_node))
+#  define precedes_break(a) (type((a))<math_node && \
+                            (type(a)!=whatsit_node || (subtype(a)!=dir_node && subtype(a)!=local_par_node)))
 #  define non_discardable(a) (type((a))<math_node)
 
 /* from luanode.c */

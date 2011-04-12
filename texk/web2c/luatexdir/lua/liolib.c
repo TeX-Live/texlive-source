@@ -1,5 +1,5 @@
 /*
-** $Id: liolib.c 3404 2010-01-28 11:17:10Z taco $
+** $Id: liolib.c 3794 2010-08-03 07:02:06Z taco $
 ** Standard I/O (and system) library
 ** See Copyright Notice in lua.h
 */
@@ -165,7 +165,13 @@ static int io_open(lua_State * L)
     const char *mode = luaL_optstring(L, 2, "r");
     FILE **pf = newfile(L);
     *pf = fopen(filename, mode);
-    return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
+    if (*pf == NULL)
+        return pushresult(L, 0, filename);
+    if (mode[0]=='r') 
+        recorder_record_input(filename);
+    else
+        recorder_record_output(filename);
+    return 1;
 }
 
 static int io_open_ro(lua_State * L)
@@ -177,7 +183,10 @@ static int io_open_ro(lua_State * L)
         return pushresult(L, 0, filename);
     pf = newfile(L);
     *pf = fopen(filename, mode);
-    return (*pf == NULL) ? pushresult(L, 0, filename) : 1;
+    if (*pf == NULL)
+        return pushresult(L, 0, filename);
+    recorder_record_input(filename);
+    return 1;
 }
 
 
@@ -250,8 +259,14 @@ static int g_iofile(lua_State * L, int f, const char *mode)
         if (filename) {
             FILE **pf = newfile(L);
             *pf = fopen(filename, mode);
-            if (*pf == NULL)
+            if (*pf == NULL) {
                 fileerror(L, 1, filename);
+            } else {
+              if (mode[0]=='r') 
+                recorder_record_input(filename);
+              else
+                recorder_record_output(filename);
+            }
         } else {
             tofile(L);          /* check that it's a valid file handle */
             lua_pushvalue(L, 1);
@@ -307,6 +322,8 @@ static int io_lines(lua_State * L)
         *pf = fopen(filename, "r");
         if (*pf == NULL)
             fileerror(L, 1, filename);
+        else
+            recorder_record_input(filename);
         aux_lines(L, lua_gettop(L), 1);
         return 1;
     }

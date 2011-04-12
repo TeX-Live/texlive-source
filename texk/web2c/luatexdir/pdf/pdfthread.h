@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfthread.h 3261 2009-12-18 11:38:21Z taco $ */
+/* $Id: pdfthread.h 3905 2010-10-02 20:29:20Z hhenkel $ */
 
 #ifndef PDFTHREAD_H
 #  define PDFTHREADH
@@ -64,7 +64,6 @@ extern void pdf_fix_thread(PDF pdf, int t);
 extern void out_thread(PDF pdf, int t);
 
 extern void check_running_thread(PDF pdf, halfword this_box, scaledpos cur);
-extern void print_beads_list(PDF pdf);
 extern void print_bead_rectangles(PDF pdf);
 extern void flush_beads_list(void);
 

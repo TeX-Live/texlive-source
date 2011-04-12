@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfobj.h 3261 2009-12-18 11:38:21Z taco $ */
+/* $Id: pdfobj.h 3874 2010-09-11 22:22:05Z hhenkel $ */
 
 #ifndef PDFOBJ_H
 #  define PDFOBJ_H
@@ -61,6 +61,8 @@ extern void init_obj_obj(PDF pdf, int k);
 extern void pdf_write_obj(PDF pdf, int n);
 extern void scan_obj(PDF pdf);
 extern void scan_refobj(PDF pdf);
+extern void scan_refobj_lua(PDF pdf, int k);
 extern void pdf_ref_obj(PDF pdf, halfword p);
+extern void pdf_ref_obj_lua(PDF pdf, int k);
 
 #endif

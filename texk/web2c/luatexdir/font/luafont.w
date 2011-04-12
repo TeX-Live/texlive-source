@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luafont.w 3612 2010-04-13 09:29:42Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/luafont.w $";
+    "$Id: luafont.w 4125 2011-04-11 09:06:59Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/luafont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -102,6 +102,24 @@ const char *MATH_param_names[] = {
     "FractionDelimiterDisplayStyleSize",
     NULL,
 };
+
+/* here for now, may be useful elsewhere */
+
+int ff_checkoption (lua_State *L, int narg, const char *def,
+                                 const char *const lst[]);
+
+int ff_checkoption (lua_State *L, int narg, const char *def,
+                                 const char *const lst[]) {
+  const char *name = (def) ? luaL_optstring(L, narg, def) :
+                             luaL_checkstring(L, narg);
+  int i;
+  for (i=0; lst[i]; i++)
+    if (strcmp(lst[i], name) == 0)
+      return i;
+  return -1;
+}
+
+
 
 static void dump_intfield(lua_State * L, const char *n, int c)
 {
@@ -368,7 +386,7 @@ static void write_lua_math_parameters(lua_State * L, int f)
 {
     int k;
     lua_newtable(L);
-    for (k = 1; k < font_math_params(f); k++) {
+    for (k = 1; k <= font_math_params(f); k++) {
         lua_pushnumber(L, font_math_param(f, k));
         if (k <= MATH_param_max) {
             lua_setfield(L, -2, MATH_param_names[k]);
@@ -455,11 +473,11 @@ int font_to_lua(lua_State * L, int f)
        lua_pushnumber(L,pdf_font_num(f));
        lua_setfield(L,-2,"pdf_num");
        }
-       if (pdf_font_blink(f) != 0) {
+       if (pdf_font_blink(f) != null_font) {
        lua_pushnumber(L,pdf_font_blink(f));
        lua_setfield(L,-2,"pdf_blink");
        }
-       if (pdf_font_elink(f) != 0) {
+       if (pdf_font_elink(f) != null_font) {
        lua_pushnumber(L,pdf_font_elink(f));
        lua_setfield(L,-2,"pdf_elink");
        }
@@ -708,6 +726,7 @@ make_luaS_index(font);
 make_luaS_index(char);
 make_luaS_index(slot);
 make_luaS_index(comment);
+make_luaS_index(nop);
 make_luaS_index(push);
 make_luaS_index(pop);
 make_luaS_index(rule);
@@ -763,6 +782,7 @@ static void init_font_string_pointers(lua_State * L)
     init_luaS_index(char);
     init_luaS_index(slot);
     init_luaS_index(comment);
+    init_luaS_index(nop);
     init_luaS_index(push);
     init_luaS_index(pop);
     init_luaS_index(rule);
@@ -823,7 +843,8 @@ static int count_char_packet_bytes(lua_State * L)
                 } else if (luaS_ptr_eq(s, slot)) {
                     l += 10;
                     ff = 1;
-                } else if (luaS_ptr_eq(s, comment)) {;
+                } else if (luaS_ptr_eq(s, comment) || luaS_ptr_eq(s, nop)) {
+                    ;
                 } else if (luaS_ptr_eq(s, push) || luaS_ptr_eq(s, pop)) {
                     l++;
                 } else if (luaS_ptr_eq(s, rule)) {
@@ -834,10 +855,15 @@ static int count_char_packet_bytes(lua_State * L)
                 } else if (luaS_ptr_eq(s, special)) {
                     size_t len;
                     lua_rawgeti(L, -2, 2);
-                    (void) lua_tolstring(L, -1, &len);
-                    lua_pop(L, 1);
-                    if (len > 0) {
-                        l = (int) (l + 5 + (int) len);
+                    if (lua_isstring(L, -1)) {
+                        (void) lua_tolstring(L, -1, &len);
+                        lua_pop(L, 1);
+                        if (len > 0) {
+                            l = (int) (l + 5 + (int) len);
+                        }  
+                    } else {
+                        lua_pop(L, 1);
+                        fprintf(stdout, "invalid packet special!\n");
                     }
                 } else if (luaS_ptr_eq(s, image)) {
                     l += 5;
@@ -905,16 +931,16 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
                 } else if (luaS_ptr_eq(s, slot)) {
                     cmd = packet_nop_code;
                     lua_rawgeti(L, -2, 2);
-                    n = (int) lua_tointeger(L, -1);
+                    n = (int) luaL_checkinteger(L, -1);
                     ff = (n > max_f ? l_fonts[1] : l_fonts[n]);
                     lua_rawgeti(L, -3, 3);
-                    n = (int) lua_tointeger(L, -1);
+                    n = (int) luaL_checkinteger(L, -1);
                     lua_pop(L, 2);
                     append_packet(packet_font_code);
                     do_store_four(ff);
                     append_packet(packet_char_code);
                     do_store_four(n);
-                } else if (luaS_ptr_eq(s, comment)) {
+                } else if (luaS_ptr_eq(s, comment) || luaS_ptr_eq(s, nop)) {
                     cmd = packet_nop_code;
                 } else if (luaS_ptr_eq(s, node)) {
                     cmd = packet_node_code;
@@ -942,7 +968,7 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
                 case packet_font_code:
                     append_packet(cmd);
                     lua_rawgeti(L, -2, 2);
-                    n = (int) lua_tointeger(L, -1);
+                    n = (int) luaL_checkinteger(L, -1);
                     ff = (n > max_f ? l_fonts[1] : l_fonts[n]);
                     do_store_four(ff);
                     lua_pop(L, 1);
@@ -957,7 +983,7 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
                 case packet_char_code:
                     append_packet(cmd);
                     lua_rawgeti(L, -2, 2);
-                    n = (int) lua_tointeger(L, -1);
+                    n = (int) luaL_checkinteger(L, -1);
                     do_store_four(n);
                     lua_pop(L, 1);
                     break;
@@ -965,24 +991,24 @@ read_char_packets(lua_State * L, int *l_fonts, charinfo * co, int atsize)
                 case packet_down_code:
                     append_packet(cmd);
                     lua_rawgeti(L, -2, 2);
-                    n = (int) lua_tointeger(L, -1);
+                    n = (int) luaL_checkinteger(L, -1);
                     do_store_four(sp_to_dvi(n, atsize));
                     lua_pop(L, 1);
                     break;
                 case packet_rule_code:
                     append_packet(cmd);
                     lua_rawgeti(L, -2, 2);
-                    n = (int) lua_tointeger(L, -1);
+                    n = (int) luaL_checkinteger(L, -1);
                     do_store_four(sp_to_dvi(n, atsize));
                     lua_rawgeti(L, -3, 3);
-                    n = (int) lua_tointeger(L, -1);
+                    n = (int) luaL_checkinteger(L, -1);
                     do_store_four(sp_to_dvi(n, atsize));
                     lua_pop(L, 2);
                     break;
                 case packet_special_code:
                     append_packet(cmd);
                     lua_rawgeti(L, -2, 2);
-                    s = lua_tolstring(L, -1, &l);
+                    s = luaL_checklstring(L, -1, &l);
                     if (l > 0) {
                         do_store_four(l);
                         m = (int) l;
@@ -1125,10 +1151,10 @@ static void read_lua_math_parameters(lua_State * L, int f)
             if (lua_isnumber(L, -2)) {
                 lua_number2int(i, lua_tonumber(L, -2));
             } else if (lua_isstring(L, -2)) {
-                i = luaL_checkoption(L, -2, NULL, MATH_param_names);
+                i = ff_checkoption(L, -2, NULL, MATH_param_names);
             }
             lua_number2int(n, lua_tonumber(L, -1));
-            if (i != 0) {
+            if (i > 0) {
                 set_font_math_param(f, i, n);
             }
             lua_pop(L, 1);      /* pop value */
@@ -1221,9 +1247,9 @@ font_char_from_lua(lua_State * L, internal_font_number f, int i,
             set_charinfo_tounicode(co, NULL);
 
         if (has_math) {
-            j = n_numeric_field(L, luaS_top_accent_index, 0);
+            j = n_numeric_field(L, luaS_top_accent_index, INT_MIN);
             set_charinfo_top_accent(co, j);
-            j = n_numeric_field(L, luaS_bot_accent_index, 0);
+            j = n_numeric_field(L, luaS_bot_accent_index, INT_MIN);
             set_charinfo_bot_accent(co, j);
             k = n_numeric_field(L, luaS_next_index, -1);
             if (k >= 0) {
@@ -2221,6 +2247,10 @@ static void add_kern_before(halfword left, halfword right)
             assert(vlink(prev) == right);
             couple_nodes(prev, kern);
             couple_nodes(kern, right);
+            /* update the attribute list (inherit from left) */
+            delete_attribute_ref(node_attr(kern));
+            add_node_attr_ref(node_attr(left));
+            node_attr(kern) = node_attr(left);
         }
     }
 }
@@ -2237,6 +2267,10 @@ static void add_kern_after(halfword left, halfword right, halfword aft)
             assert(next == null || alink(next) == aft);
             couple_nodes(aft, kern);
             try_couple_nodes(kern, next);
+            /* update the attribute list (inherit from left == aft) */
+            delete_attribute_ref(node_attr(kern));
+            add_node_attr_ref(node_attr(aft));
+            node_attr(kern) = node_attr(aft);
         }
     }
 }
@@ -2341,22 +2375,25 @@ static halfword
 run_lua_ligkern_callback(halfword head, halfword tail, int callback_id)
 {
     lua_State *L = Luas;
+    int i;
+    int top = lua_gettop(L);
     if (!get_callback(L, callback_id)) {
         lua_pop(L, 2);
         return tail;
     }
     nodelist_to_lua(L, head);
     nodelist_to_lua(L, tail);
-    if (lua_pcall(L, 2, 1, 0) != 0) {
-        fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
-        lua_pop(L, 2);
-        lua_error(L);
+    if ((i=lua_pcall(L, 2, 0, 0)) != 0) {
+        luatex_error(L, (i == LUA_ERRRUN ? 0 : 1));
         return tail;
     }
+    /* next two lines disabled to be compatible with the manual */
+#if 0
     tail = nodelist_from_lua(L);
     if (fix_node_lists)
+#endif
         fix_node_list(head);
-    lua_pop(L, 2);
+    lua_settop(L, top);
     return tail;
 }
 

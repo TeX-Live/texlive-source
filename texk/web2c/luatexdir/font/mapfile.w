@@ -20,8 +20,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: mapfile.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/mapfile.w $";
+    "$Id: mapfile.w 3786 2010-08-02 15:25:12Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/mapfile.w $";
 
 #include <math.h>
 #include "ptexlib.h"
@@ -528,14 +528,14 @@ static void fm_read_info(void)
                             fm_file = NULL;
                         }
                     } else {
-                        pdftex_warn("cannot open font map file");
+                        pdftex_warn("cannot open font map file (%s)", cur_file_name);
                     }
                 } else {
-                    pdftex_warn("cannot open font map file");
+                    pdftex_warn("cannot open font map file (%s)", cur_file_name);
                 }
             } else {
                 if (!fm_open(cur_file_name)) {
-                    pdftex_warn("cannot open font map file");
+                    pdftex_warn("cannot open font map file (%s)", cur_file_name);
                 } else {
                     fm_read_file();
                     tex_printf("{%s", cur_file_name);

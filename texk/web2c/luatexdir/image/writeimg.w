@@ -22,8 +22,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writeimg.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/image/writeimg.w $";
+    "$Id: writeimg.w 4055 2011-01-10 19:52:50Z oneiros $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/writeimg.w $";
 
 #include <assert.h>
 #include "ptexlib.h"
@@ -33,6 +33,7 @@ static const char _svn_version[] =
 @ @c
 #include "image/image.h"
 #include "image/writejpg.h"
+#include "image/writejp2.h"
 #include "image/writepng.h"
 #include "image/writejbig2.h"
 
@@ -122,6 +123,7 @@ static const char _svn_version[] =
 #define HEADER_JPG "\xFF\xD8"
 #define HEADER_PNG "\x89PNG\r\n\x1A\n"
 #define HEADER_JBIG2 "\x97\x4A\x42\x32\x0D\x0A\x1A\x0A"
+#define HEADER_JP2 "\x6A\x50\x20\x20"
 #define HEADER_PDF "%PDF-1."
 #define MAX_HEADER (sizeof(HEADER_PNG)-1)
 
@@ -145,6 +147,8 @@ static void check_type_by_header(image_dict * idict)
     /* tests */
     if (strncmp(header, HEADER_JPG, sizeof(HEADER_JPG) - 1) == 0)
         img_type(idict) = IMG_TYPE_JPG;
+    else if (strncmp(header + 4, HEADER_JP2, sizeof(HEADER_JP2) - 1) == 0)
+        img_type(idict) = IMG_TYPE_JP2;
     else if (strncmp(header, HEADER_PNG, sizeof(HEADER_PNG) - 1) == 0)
         img_type(idict) = IMG_TYPE_PNG;
     else if (strncmp(header, HEADER_JBIG2, sizeof(HEADER_JBIG2) - 1) == 0)
@@ -169,6 +173,8 @@ static void check_type_by_extension(image_dict * idict)
     else if (strcasecmp(image_suffix, ".jpg") == 0 ||
              strcasecmp(image_suffix, ".jpeg") == 0)
         img_type(idict) = IMG_TYPE_JPG;
+    else if (strcasecmp(image_suffix, ".jp2") == 0)
+        img_type(idict) = IMG_TYPE_JP2;
     else if (strcasecmp(image_suffix, ".jbig2") == 0 ||
              strcasecmp(image_suffix, ".jb2") == 0)
         img_type(idict) = IMG_TYPE_JBIG2;
@@ -257,6 +263,9 @@ void free_image_dict(image_dict * p)
     case IMG_TYPE_JPG:         /* assuming |IMG_CLOSEINBETWEEN| */
         assert(img_jpg_ptr(p) == NULL);
         break;
+    case IMG_TYPE_JP2:         /* */
+        assert(img_jp2_ptr(p) == NULL);
+        break;
     case IMG_TYPE_JBIG2:       /* todo: writejbig2.w cleanup */
         break;
     case IMG_TYPE_PDFSTREAM:
@@ -295,7 +304,7 @@ void read_img(PDF pdf,
             img_filepath(idict) =
                 kpse_find_file(img_filename(idict), kpse_tex_format, true);
         if (img_filepath(idict) == NULL)
-            pdftex_fail("cannot find image file");
+            pdftex_fail("cannot find image file '%s'", img_filename(idict));
     }
     recorder_record_input(img_filename(idict));
     /* type checks */
@@ -313,6 +322,9 @@ void read_img(PDF pdf,
         break;
     case IMG_TYPE_JPG:
         read_jpg_info(pdf, idict, IMG_CLOSEINBETWEEN);
+        break;
+    case IMG_TYPE_JP2:
+        read_jp2_info(idict, IMG_CLOSEINBETWEEN);
         break;
     case IMG_TYPE_JBIG2:
         if (minor_version < 4) {
@@ -338,9 +350,8 @@ static image_dict *read_image(PDF pdf, char *file_name, int page_num,
 {
     image *a = new_image();
     image_dict *idict = img_dict(a) = new_image_dict();
-    incr(pdf->ximage_count);
-    pdf_create_obj(pdf, obj_type_ximage, pdf->ximage_count);
-    img_objnum(idict) = pdf->obj_ptr;
+    pdf->ximage_count++;
+    img_objnum(idict) = pdf_create_obj(pdf, obj_type_ximage, pdf->ximage_count);
     img_index(idict) = pdf->ximage_count;
     set_obj_data_ptr(pdf, img_objnum(idict), img_index(idict));
     idict_to_array(idict);
@@ -429,7 +440,7 @@ void scan_pdfrefximage(PDF pdf)
     scaled_whd alt_rule, dim;
     alt_rule = scan_alt_rule(); /* scans |<rule spec>| to |alt_rule| */
     scan_int();
-    check_obj_exists(pdf, obj_type_ximage, cur_val);
+    check_obj_type(pdf, obj_type_ximage, cur_val);
     new_whatsit(pdf_refximage_node);
     idict = idict_array[obj_data_ptr(pdf, cur_val)];
     if (alt_rule.wd != null_flag || alt_rule.ht != null_flag
@@ -576,6 +587,9 @@ void write_img(PDF pdf, image_dict * idict)
             break;
         case IMG_TYPE_JPG:
             write_jpg(pdf, idict);
+            break;
+        case IMG_TYPE_JP2:
+            write_jp2(pdf, idict);
             break;
         case IMG_TYPE_JBIG2:
             write_jbig2(pdf, idict);
@@ -777,8 +791,8 @@ void undumpimagemeta(PDF pdf, int pdfversion, int pdfinclusionerrorlevel)
             undumpinteger(img_pagenum(idict));
             break;
         case IMG_TYPE_PNG:
-            break;
         case IMG_TYPE_JPG:
+        case IMG_TYPE_JP2:
             break;
         case IMG_TYPE_JBIG2:
             if (pdfversion < 4) {

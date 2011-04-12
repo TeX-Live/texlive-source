@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: linebreak.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/linebreak.w $";
+    "$Id: linebreak.w 3995 2010-11-28 09:49:37Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/linebreak.w $";
 
 @ We come now to what is probably the most interesting algorithm of \TeX:
 the mechanism for choosing the ``best possible'' breakpoints that yield
@@ -139,14 +139,21 @@ void line_break(boolean d, int line_break_context)
             lua_linebreak_callback(d, temp_head,
                                    addressof(cur_list.tail_field));
         if (callback_id > 0) {
-            just_box = cur_list.tail_field;
-            if (just_box != null)
-                while (vlink(just_box) != null)
-                    just_box = vlink(just_box);
-            if ((just_box == null) || (type(just_box) != hlist_node)) {
+            /* find the correct value for the |just_box| */
+	    halfword box_search = cur_list.tail_field;
+            just_box  = null;
+	    if (box_search != null) {
+                do {
+	            if (type(box_search) == hlist_node) {
+                       just_box = box_search;
+                    }
+                    box_search = vlink(box_search);
+                } while (box_search != null);
+	    }
+            if (just_box == null) {
                 help3
                     ("A linebreaking routine should return a non-empty list of nodes",
-                     "and the last one of those has to be a \\hbox.",
+                     "and at least one of those has to be a \\hbox.",
                      "Sorry, I cannot recover from this.");
                 print_err("Invalid linebreak_filter");
                 succumb();
@@ -898,8 +905,6 @@ compute_break_width(int break_type, int line_break_dir, int pdf_adjust_spacing,
         } else {
             s = null;
         }
-    } else {
-        s = p;                  /* unhyphenated: we need to 'skip' any 'whitespace' following */
     }
     while (s != null) {
         switch (type(s)) {
@@ -1781,7 +1786,7 @@ ext_do_line_break(int paragraph_dir,
         /* LOCAL: Initialize with first |local_paragraph| node */
         if ((cur_p != null) && (type(cur_p) == whatsit_node)
             && (subtype(cur_p) == local_par_node)) {
-            assert(alink(cur_p) == temp_head);
+	    alink(cur_p) = temp_head; /* this used to be an assert, but may as well force it */
             internal_pen_inter = local_pen_inter(cur_p);
             internal_pen_broken = local_pen_broken(cur_p);
             init_internal_left_box = local_box_left(cur_p);

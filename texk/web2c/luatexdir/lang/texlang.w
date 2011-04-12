@@ -26,13 +26,14 @@
 
 
 static const char _svn_version[] =
-    "$Id: texlang.w 3701 2010-05-26 09:57:17Z taco $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.2/source/texk/web2c/luatexdir/lang/texlang.w $";
+    "$Id: texlang.w 3907 2010-10-04 09:02:29Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lang/texlang.w $";
 
 
 @ Low-level helpers 
 
 @c
+#define ex_hyphen_char int_par(ex_hyphen_char_code)
 static char *uni2string(char *utf8_text, unsigned ch)
 {
     /* Increment and deposit character */
@@ -245,64 +246,82 @@ void load_tex_patterns(int curlang, halfword head)
 
 @ @c
 #define STORE_CHAR(x) do {                          \
-        word[w] = (unsigned char)x;                 \
-        if (w<MAX_WORD_LEN) w++;                    \
+	unsigned xx = get_lc_code(x);               \
+        if (!xx) xx = x;                            \
+        uindex = uni2string(uindex, xx);            \
     } while (0)
 
-/* todo change this! */
+/* Cleans one word which is returned in |cleaned|,
+   returns the new offset into |buffer| */
 
 const char *clean_hyphenation(const char *buffer, char **cleaned)
 {
-    int items;
-    unsigned char word[MAX_WORD_LEN + 1];
-    int w = 0;
+    int items = 0;
+    unsigned char word[MAX_WORD_LEN + 1]; /* work buffer for bytes */
+    unsigned uword[MAX_WORD_LEN + 1] = { 0 };  /* work buffer for unicode */
+    int u = 0; /* unicode buffer value */
+    int i = 0; /* index into buffer */
+    char *uindex = (char *)word;
     const char *s = buffer;
+
     while (*s && !isspace(*s)) {
-        if (*s == '-') {        /* skip */
-        } else if (*s == '=') {
+	word[i++] = (unsigned)*s;
+	s++;
+        if ((s-buffer)>MAX_WORD_LEN) {
+            /* todo: this is too strict, should count unicode, not bytes */
+    	    *cleaned = NULL;
+            tex_error("exception too long", NULL);
+            return s;
+        }
+    }
+    /* now convert the input to unicode */	
+    word[i] = '\0';
+    utf82u_strcpy(uword, (const char *)word);
+
+    /* build the new word string */
+    i = 0;
+    while (uword[i]>0) {
+	u = uword[i++];
+        if (u == '-') {        /* skip */
+        } else if (u == '=') {
             STORE_CHAR('-');
-        } else if (*s == '{') {
-            s++;
+        } else if (u == '{') {
+            u = uword[i++];
             items = 0;
-            while (*s && *s != '}') {
-                s++;
+            while (u && u != '}') {
+                u = uword[i++];
             }
-            if (*s == '}') {
+            if (u == '}') {
                 items++;
-                s++;
+                u = uword[i++];
             }
-            while (*s && *s != '}') {
-                s++;
+            while (u && u != '}') {
+                u = uword[i++];
             }
-            if (*s == '}') {
+            if (u == '}') {
                 items++;
-                s++;
+                u = uword[i++];;
             }
-            if (*s == '{') {
-                s++;
+            if (u == '{') {
+                u = uword[i++];;
             }
-            while (*s && *s != '}') {
-                STORE_CHAR(*s);
-                s++;
+            while (u && u != '}') {
+                STORE_CHAR(u);
+                u = uword[i++];
             }
-            if (*s == '}') {
-                items++;
-            } else {
-                s--;
+            if (u == '}') {
+	        items++;
             }
             if (items != 3) {   /* syntax error */
                 *cleaned = NULL;
-                while (*s && !isspace(*s)) {
-                    s++;
-                }
+                tex_error("exception syntax error", NULL);
                 return s;
             }
         } else {
-            STORE_CHAR(*s);
+            STORE_CHAR(u);
         }
-        s++;
     }
-    word[w] = 0;
+    *uindex = '\0';
     *cleaned = xstrdup((char *) word);
     return s;
 }
@@ -824,6 +843,7 @@ void hnj_hyphenation(halfword head, halfword tail)
     int wordlen = 0;
     char *hy = utf8word;
     char *replacement = NULL;
+    boolean explicit_hyphen = false;
     halfword s, r = head, wordstart = null, save_tail = null, left =
         null, right = null;
 
@@ -866,7 +886,11 @@ void hnj_hyphenation(halfword head, halfword tail)
                type(r) == glyph_node &&
                is_simple_character(r) &&
                clang == char_lang(r) &&
-               (lchar = get_lc_code(character(r))) > 0) {
+               (((lchar = get_lc_code(character(r))) > 0)
+                ||
+                (character(r) == ex_hyphen_char && (lchar = ex_hyphen_char)))) {
+            if (character(r) == ex_hyphen_char)
+    	        explicit_hyphen = true;
             wordlen++;
             hy = uni2string(hy, (unsigned) lchar);
             /* this should not be needed  any more */
@@ -886,6 +910,28 @@ void hnj_hyphenation(halfword head, halfword tail)
 #endif
                 do_exception(wordstart, r, replacement);
                 free(replacement);
+            } else if (explicit_hyphen == true) {
+                /* insert an explicit discretionary after each of the last in a 
+	           set of explicit hyphens */
+                halfword rr = r;
+                halfword t = null;
+#ifdef VERBOSE
+                fprintf(stderr, "explicit hyphen(s) found in %s (c=%d)\n", utf8word, clang);
+#endif
+                while (rr != wordstart) {
+	            if (is_simple_character(rr)) {
+                        if (character(rr) == ex_hyphen_char) {
+                            t = compound_word_break(rr, clang);
+                            subtype(t) = automatic_disc;
+	                    while(character(alink(rr)) == ex_hyphen_char) 
+	                       rr = alink(rr);
+	                    if (rr == wordstart) 
+	                       break;
+                        }
+                    }
+                    rr = alink(rr);
+                }
+
             } else if (lang->patterns != NULL) {
 
                 left = wordstart;
@@ -910,6 +956,7 @@ void hnj_hyphenation(halfword head, halfword tail)
                                             wordlen, left, right, &langdata);
             }
         }
+	explicit_hyphen = false;
         wordlen = 0;
         hy = utf8word;
         if (r == null)

@@ -28,7 +28,7 @@
 #include <kpathsea/tex-file.h>
 
 static const char _svn_version[] =
-    "$Id: lkpselib.c 3551 2010-03-26 14:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/lkpselib.c $";
+    "$Id: lkpselib.c 4020 2010-11-30 13:43:25Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lkpselib.c $";
 
 static const unsigned filetypes[] = {
     kpse_gf_format,
@@ -564,7 +564,7 @@ static int do_lua_kpathsea_lookup(lua_State * L, kpathsea kpse, int idx)
         lua_pop(L, 1);
 
 
-        lua_pushstring(L, "must-exist");
+        lua_pushstring(L, "mustexist");
         lua_gettable(L, idx + 1);
         if (lua_type(L, -1) == LUA_TBOOLEAN) {
             must_exist = lua_toboolean(L, -1);
@@ -756,7 +756,7 @@ static int readable_file(lua_State * L)
 {
     const char *name = luaL_checkstring(L, 1);
     TEST_PROGRAM_NAME_SET;
-    lua_pushstring(L, (char *) kpse_readable_file(name));
+    lua_pushstring(L, kpse_readable_file(name));
     return 1;
 }
 
@@ -764,7 +764,7 @@ static int lua_kpathsea_readable_file(lua_State * L)
 {
     kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *name = luaL_checkstring(L, 2);
-    lua_pushstring(L, (char *) kpathsea_readable_file(*kp, name));
+    lua_pushstring(L, kpathsea_readable_file(*kp, name));
     return 1;
 }
 

@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: textoken.w 3612 2010-04-13 09:29:42Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/textoken.w $";
+    "$Id: textoken.w 4032 2010-12-11 09:38:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/textoken.w $";
 
 #include "ptexlib.h"
 
@@ -480,45 +480,37 @@ boolean scan_keyword(const char *s)
     halfword q;                 /* new node being added to the token list via |store_new_token| */
     const char *k;              /* index into |str_pool| */
     halfword save_cur_cs = cur_cs;
-    if (strlen(s) == 1) {
-        /* Get the next non-blank non-call token; */
-        do {
-            get_x_token();
-        } while ((cur_cmd == spacer_cmd) || (cur_cmd == relax_cmd));
-        if ((cur_cs == 0) && ((cur_chr == *s) || (cur_chr == *s - 'a' + 'A'))) {
-            return true;
-        } else {
+    int saved_align_state = align_state;
+    assert (strlen(s) > 1);
+    p = backup_head;
+    token_link(p) = null;
+    k = s;
+    while (*k) {
+        get_x_token();      /* recursion is possible here */
+        if ((cur_cs == 0) &&
+            ((cur_chr == *k) || (cur_chr == *k - 'a' + 'A'))) {
+            store_new_token(cur_tok);
+            k++;
+        } else if ((cur_cmd != spacer_cmd) || (p != backup_head)) {
+            if (p != backup_head) {
+                q = get_avail();
+                token_info(q) = cur_tok;
+                token_link(q) = null;
+                token_link(p) = q;
+                begin_token_list(token_link(backup_head), backed_up);
+                if (cur_cmd != endv_cmd) 
+   	           align_state = saved_align_state;
+            } else {
+                back_input();
+            }
             cur_cs = save_cur_cs;
-            back_input();
             return false;
         }
-    } else {
-        p = backup_head;
-        token_link(p) = null;
-        k = s;
-        while (*k) {
-            get_x_token();      /* recursion is possible here */
-            if ((cur_cs == 0) &&
-                ((cur_chr == *k) || (cur_chr == *k - 'a' + 'A'))) {
-                store_new_token(cur_tok);
-                k++;
-            } else if ((cur_cmd != spacer_cmd) || (p != backup_head)) {
-                if (p != backup_head) {
-                    q = get_avail();
-                    token_info(q) = cur_tok;
-                    token_link(q) = null;
-                    token_link(p) = q;
-                    begin_token_list(token_link(backup_head), backed_up);
-                } else {
-                    back_input();
-                }
-                cur_cs = save_cur_cs;
-                return false;
-            }
-        }
-        flush_list(token_link(backup_head));
     }
+    flush_list(token_link(backup_head));
     cur_cs = save_cur_cs;
+    if (cur_cmd != endv_cmd)
+        align_state = saved_align_state;
     return true;
 }
 
@@ -949,10 +941,6 @@ static boolean get_next_file(void)
             break;
         }
     } else {
-        if (current_ocp_lstack > 0) {
-            pop_input();
-            return false;
-        }
         if (iname != 21)
             istate = new_line;
 
@@ -1812,7 +1800,7 @@ void conv_toks(void)
         break;
     case pdf_xform_name_code:
         scan_int();
-        check_obj_exists(static_pdf, obj_type_xform, cur_val);
+        check_obj_type(static_pdf, obj_type_xform, cur_val);
         break;
     case pdf_creation_date_code:
         ins_list(string_to_toks(getcreationdate(static_pdf)));
@@ -1920,7 +1908,7 @@ void conv_toks(void)
         break;
     case pdf_ximage_bbox_code:
         scan_int();
-        check_obj_exists(static_pdf, obj_type_ximage, cur_val);
+        check_obj_type(static_pdf, obj_type_ximage, cur_val);
         i = obj_data_ptr(static_pdf, cur_val);
         scan_int();
         j = cur_val;

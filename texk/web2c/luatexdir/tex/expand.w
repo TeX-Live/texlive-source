@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: expand.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/expand.w $";
+    "$Id: expand.w 3802 2010-08-07 12:03:08Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/expand.w $";
 
 
 @ Only a dozen or so command codes |>max_command| can possibly be returned by
@@ -344,7 +344,7 @@ void manufacture_csname(void)
     } else {
         cur_cs = null_cs;       /* the list is empty */
     }
-    xfree(ss->s);
+    free_lstring(ss);
     flush_list(r);
     if (eq_type(cur_cs) == undefined_cs_cmd) {
         eq_define(cur_cs, relax_cmd, too_big_char);     /* N.B.: The |save_stack| might change */

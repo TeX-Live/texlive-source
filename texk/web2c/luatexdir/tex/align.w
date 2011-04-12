@@ -23,8 +23,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: align.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/align.w $";
+    "$Id: align.w 4044 2010-12-18 09:23:06Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/align.w $";
 
 @ @c
 void fin_align(void);
@@ -239,12 +239,14 @@ static void push_alignment(void)
     vlink(p + 5) = cur_pre_tail;
     align_ptr = p;
     cur_head = new_node(temp_node, 0);
+    cur_pre_head = new_node(temp_node, 0);
 }
 
 static void pop_alignment(void)
 {
     pointer p;                  /* the top alignment stack node */
     flush_node(cur_head);
+    flush_node(cur_pre_head);
     p = align_ptr;
     cur_pre_tail = vlink(p + 5);
     cur_pre_head = vinfo(p + 5);
@@ -953,11 +955,11 @@ value is changed to zero and so is the next tabskip.
 
                 if (cur_list.mode_field == -vmode) {
                     type(q) = hlist_node;
-                    subtype(q) = 0;
+                    subtype(q) = HLIST_SUBTYPE_ALIGNROW;
                     width(q) = width(p);
                 } else {
                     type(q) = vlist_node;
-                    subtype(q) = 0;
+                    subtype(q) = HLIST_SUBTYPE_ALIGNROW;
                     height(q) = height(p);
                 }
                 glue_order(q) = glue_order(p);
@@ -1004,6 +1006,7 @@ value is changed to zero and so is the next tabskip.
                         vlink(u) = rr;
                         u = vlink(u);
                         t = t + width(s);
+                        subtype(u) = HLIST_SUBTYPE_ALIGNCELL;
                         if (cur_list.mode_field == -vmode) {
                             width(u) = width(s);
                         } else {
@@ -1045,6 +1048,7 @@ value is changed to zero and so is the next tabskip.
                         }
                         width(r) = w;
                         type(r) = hlist_node;
+                        subtype(r) = HLIST_SUBTYPE_ALIGNCELL;
 
                     } else {
                         /* Make the unset node |r| into a |vlist_node| of height |w|,
@@ -1076,9 +1080,10 @@ value is changed to zero and so is the next tabskip.
                         }
                         height(r) = w;
                         type(r) = vlist_node;
+                        subtype(r) = HLIST_SUBTYPE_ALIGNCELL;
 
                     }
-                    subtype(r) = 0;
+                    /* subtype(r) = 0; */
                     shift_amount(r) = 0;
                     if (u != hold_head) {       /* append blank boxes to account for spanned nodes */
                         vlink(u) = vlink(r);
@@ -1104,6 +1109,7 @@ value is changed to zero and so is the next tabskip.
                     vlink(q) = null;
                     q = hpack(q, 0, additional, -1);
                     shift_amount(q) = o;
+                    subtype(q) = HLIST_SUBTYPE_ALIGNCELL;
                     vlink(q) = r;
                     vlink(s) = q;
                 }

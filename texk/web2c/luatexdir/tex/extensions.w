@@ -22,8 +22,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: extensions.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/extensions.w $";
+    "$Id: extensions.w 3851 2010-09-03 11:55:16Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/extensions.w $";
 
 #include "ptexlib.h"
 
@@ -208,7 +208,7 @@ void do_extension(PDF pdf)
                                  true);
                     do_extension(pdf);  /* scan form and set |pdf_last_xform| */
                     pdf_cur_form = pdf_last_xform;
-                    ship_out(pdf, obj_xform_box(pdf, pdf_last_xform), false);
+                    ship_out(pdf, obj_xform_box(pdf, pdf_last_xform), SHIPPING_FORM);
                     break;
                 case pdf_ximage_code:
                     check_o_mode(pdf, "\\immediate\\pdfximage", 1 << OMODE_PDF,
@@ -500,7 +500,7 @@ void do_extension(PDF pdf)
         break;
     case late_lua_node:
         /* Implement \.{\\latelua} */
-        new_whatsit(late_lua_node);
+        new_whatsit(late_lua_node); /* type == normal */
         late_lua_name(tail) = scan_lua_state();
         (void) scan_toks(false, false);
         late_lua_data(tail) = def_ref;

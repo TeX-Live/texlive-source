@@ -22,8 +22,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: tounicode.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/tounicode.w $";
+    "$Id: tounicode.w 3967 2010-11-24 13:41:45Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/tounicode.w $";
 
 @ @c
 #define isXdigit(c) (isdigit(c) || ('A' <= (c) && (c) <= 'F'))
@@ -141,7 +141,7 @@ static long check_unicode_value(char *s, boolean multiple_value)
 {
     int l = (int) strlen(s);
     int i;
-    long code;
+    long code = 0; /* anything that is not |UNI_UNDEF| will do */
 
     if (l == 0)
         return UNI_UNDEF;
@@ -538,9 +538,11 @@ int write_cid_tounicode(PDF pdf, fo_entry * fo, internal_font_number f)
             i++;
         } else {                /* |gtab[i].code >= 0| */
             j = i;
-            while (i < 65536 && gtab[i + 1].code >= 0 &&
-                   gtab[i].code + 1 == gtab[i + 1].code)
-                i++;
+            k = i % 256;
+            while (i < 65536 && k<255 && gtab[i + 1].code >= 0 &&
+                   gtab[i].code + 1 == gtab[i + 1].code) {
+                i++; k++;
+            }
             /* at this point i is the last entry of the subrange */
             i++;                /* move i to the next entry */
             range_size[j] = i - j;

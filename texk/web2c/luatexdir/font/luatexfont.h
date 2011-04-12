@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatexfont.h 3433 2010-02-20 10:03:04Z hhenkel $ */
+/* $Id: luatexfont.h 3790 2010-08-02 20:00:17Z oneiros $ */
 
 #ifndef LUATEXFONT_H
 #  define LUATEXFONT_H
@@ -200,8 +200,8 @@ extern char notdef[];
 
 /* vfovf.c */
 void vf_expand_local_fonts(internal_font_number f);
-internal_font_number letter_space_font(halfword u, internal_font_number f,
-                                       int e);
+internal_font_number letter_space_font(internal_font_number f,
+                                       int e, boolean nolig);
 internal_font_number auto_expand_font(internal_font_number f, int e);
 void pdf_check_vf(internal_font_number f);
 internal_font_number copy_font_info(internal_font_number f);

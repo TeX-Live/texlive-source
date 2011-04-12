@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfcolorstack.h 3261 2009-12-18 11:38:21Z taco $ */
+/* $Id: pdfcolorstack.h 3676 2010-05-02 20:04:49Z hhenkel $ */
 
 #ifndef PDFCOLORSTACK_H
 #  define PDFCOLORSTACK_H
@@ -25,9 +25,6 @@
 #  define set_pdf_colorstack_stack(A,B) pdf_colorstack_stack(A)=B
 #  define set_pdf_colorstack_cmd(A,B) pdf_colorstack_cmd(A)=B
 #  define set_pdf_colorstack_data(A,B) pdf_colorstack_data(A)=B
-
-/* remember shipout mode: page/form */
-extern boolean page_mode;
 
 #  define STACK_INCREMENT 8
 

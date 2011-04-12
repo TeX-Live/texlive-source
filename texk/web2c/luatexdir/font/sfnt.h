@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: sfnt.h 3404 2010-01-28 11:17:10Z taco $ */
+/* $Id: sfnt.h 3765 2010-07-29 07:10:21Z taco $ */
 
 #ifndef _SFNT_H_
 #  define _SFNT_H_

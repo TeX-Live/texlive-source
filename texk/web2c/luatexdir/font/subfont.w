@@ -23,8 +23,8 @@
 #include <string.h>
 
 static const char _svn_version[] =
-    "$Id: subfont.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/subfont.w $";
+    "$Id: subfont.w 3786 2010-08-02 15:25:12Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/subfont.w $";
 
 @ @c
 static struct avl_table *sfd_tree = NULL;
@@ -149,13 +149,13 @@ static sfd_entry *read_sfd(char *sfd_name)
             if (!(run_callback(callback_id, "S->bSd", cur_file_name,
                                &file_opened, &sfd_buffer, &sfd_size) &&
                   file_opened && sfd_size > 0)) {
-                pdftex_warn("cannot open SFD file for reading");
+                pdftex_warn("cannot open SFD file for reading (%s)", cur_file_name);
                 cur_file_name = NULL;
                 return NULL;
             }
         } else {
             if (!sfd_open(cur_file_name)) {
-                pdftex_warn("cannot open SFD file for reading");
+                pdftex_warn("cannot open SFD file for reading (%s)", cur_file_name);
                 cur_file_name = NULL;
                 return NULL;
             }

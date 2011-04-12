@@ -22,8 +22,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: vfovf.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/vfovf.w $";
+    "$Id: vfovf.w 3898 2010-09-22 06:03:03Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/vfovf.w $";
 
 @ @c
 /* this is a hack! */
@@ -1507,26 +1507,20 @@ void vf_expand_local_fonts(internal_font_number f)
 
 @ @c
 internal_font_number
-letter_space_font(halfword u, internal_font_number f, int e)
+letter_space_font(internal_font_number f, int e, boolean nolig)
 {
     internal_font_number k;
-    scaled w, r;
-
+    scaled w;
+    int c;
+    charinfo *co;
     char *new_font_name;
-    int vf_z;
-    int vf_alpha;
-    int vf_beta;
-    memory_word tmp_w;          /* accumulator */
-
 
     /* read a new font and expand the character widths */
-    k = read_font_info(u, font_name(f), font_size(f), font_natural_dir(f));
-    set_no_ligatures(k);        /* disable ligatures for letter-spaced fonts */
-#if 0
-  for (i = 0;i <= font_widths(k);i++) {
-    set_font_width(k,i,font_width(f,i)+round_xn_over_d(quad(k), e, 1000));
-  }
-#endif
+    k = copy_font(f);
+
+    if (nolig)
+      set_no_ligatures(k);        /* disable ligatures for letter-spaced fonts */
+
     /* append eg '+100ls' to font name */
     new_font_name = xmalloc((unsigned) (strlen(font_name(k)) + 8));     /* |abs(e) <= 1000| */
     if (e > 0) {
@@ -1539,85 +1533,44 @@ letter_space_font(halfword u, internal_font_number f, int e)
 
     /* create the corresponding virtual font */
     set_font_type(k, virtual_font_type);
+   
+    for (c=font_bc(k);c<=font_ec(k);c++) {
+       if (quick_char_exists(k, c)) {
+           int half_w;
+           int vf_np = 0;
+           eight_bits *vpackets = xmalloc((unsigned) (10+10+1));
+           if (e<0) {
+             half_w = -round_xn_over_d(quad(k), -e, 2000);
+           } else {
+             half_w  = round_xn_over_d(quad(k), e, 2000);
+           }
+           co = get_charinfo(k, c);
+           w = char_width(k, c)+2*half_w;
+           set_charinfo_width(co, w);
 
-    vf_z = font_size(f);
-    vf_replace_z();
-    w = round_xn_over_d(quad(f), e, 2000);
-    if (w > 0) {
-        tmp_b0 = 0;
-    } else {
-        tmp_b0 = 255;
-        w = vf_alpha + w;
-    }
-    r = w * vf_beta;
-    tmp_b1 = (quarterword) (r / vf_z);
-    r = r % vf_z;
-    if (r == 0) {
-        tmp_b2 = 0;
-    } else {
-        r = r * 256;
-        tmp_b2 = (quarterword) (r / vf_z);
-        r = r % vf_z;
-    }
-    if (r == 0) {
-        tmp_b3 = 0;
-    } else {
-        r = r * 256;
-        tmp_b3 = (quarterword) (r / vf_z);
-    }
-#if 0
-       vf_packet_base[k] = new_vf_packet(k);
+           append_packet(packet_right_code);
+           append_four(half_w);
+           append_fnt_set(f);
+           append_packet(packet_char_code);
+           append_four(c);
+           append_packet(packet_right_code);
+           append_four(half_w);
+           append_packet(packet_end_code);
 
-       for (c=font_bc(k);c<=font_ec(k);c++) {
-       string_room(17);
-       append_fnt_set(f);
-       append_packet(right1 + 3);
-       append_packet(tmp_b0);
-       append_packet(tmp_b1);
-       append_packet(tmp_b2);
-       append_packet(tmp_b3);
-
-       append_packet(set1);
-       append_packet(c);
-
-       append_packet(right1 + 3);
-       append_packet(tmp_b0);
-       append_packet(tmp_b1);
-       append_packet(tmp_b2);
-       append_packet(tmp_b3);
-       s = make_string();
-       store_packet(k, c, s);
-       flush_str(s);
+           set_charinfo_packets(co, vpackets);
        }
+    }
+    /* now patch the quad size */
+    /* Patch 20100922:  do not do this, to remain compatible with pdftex */
+#if 0
+    if (e<0) {
+       set_font_param(k, quad_code, -round_xn_over_d(quad(k), 1000-e, 1000));
+    } else {
+       set_font_param(k, quad_code, round_xn_over_d(quad(k), 1000+e, 1000));
+    } 
 #endif
     return k;
 }
-
-@ the fontname has [+-]\d+ls at the end 
-@c
-#if 0
-static boolean is_letterspaced_font(internal_font_number f)
-{
-    char *i, *j;
-    if (font_type(f) != virtual_font_type)
-        return false;
-    j = font_name(f);
-    i = j + strlen(j);
-    if ((*(i - 1) != 'l') || (*i != 's'))
-        return false;
-    i = i - 2;
-    while (i >= j) {
-        if ((*i < '0') || (*i > '9'))
-            break;
-        i--;
-    }
-    if (i < j)
-        return false;
-    if ((*i != '+') && (*i != '-'))
-        return false;
-    return true;
-}
-#endif
 
 @ @c
 internal_font_number copy_font_info(internal_font_number f)

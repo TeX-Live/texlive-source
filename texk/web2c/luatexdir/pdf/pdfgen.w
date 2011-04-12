@@ -19,14 +19,15 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 3638 2010-04-20 14:00:47Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.1/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
+    "$Id: pdfgen.w 4126 2011-04-11 09:34:50Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
 
 @ @c
 #include <kpathsea/c-dir.h>
 #include <kpathsea/c-ctype.h>
+#include "lua/luatex-api.h"
 #include "md5.h"
 
 #define is_hex_char isxdigit
@@ -51,10 +52,7 @@ halfword pdf_catalog_toks;      /* additional keys of Catalog dictionary */
 halfword pdf_catalog_openaction;
 halfword pdf_names_toks;        /* additional keys of Names dictionary */
 halfword pdf_trailer_toks;      /* additional keys of Trailer dictionary */
-halfword pdf_pageattributes_toks;       /* additional keys of Page dictionary */
-halfword pdf_pageresources_toks;        /* additional keys of Resources dictionary */
-halfword pdf_pagesattributes_toks;      /* additional keys of Pages dictionary */
-boolean is_shipping_page;       /* set to |shipping_page| when |ship_out| starts */
+shipping_mode_e global_shipping_mode = NOT_SHIPPING;       /* set to |shipping_mode| when |ship_out| starts */
 
 @ |init_pdf_struct()| is called early, only once, from maincontrol.w
 
@@ -62,17 +60,17 @@ boolean is_shipping_page;       /* set to |shipping_page| when |ship_out| starts
 PDF init_pdf_struct(PDF pdf)
 {
     assert(pdf == NULL);
-    pdf = xmalloc(sizeof(pdf_output_file));
+    pdf = xtalloc(1, pdf_output_file);
     memset(pdf, 0, sizeof(pdf_output_file));
 
     pdf->o_mode = OMODE_NONE;   /* will be set by |fix_o_mode()| */
     pdf->o_state = ST_INITIAL;
 
-    pdf->os_obj = xmalloc(pdf_os_max_objs * sizeof(os_obj_data));
+    pdf->os_obj = xtalloc(pdf_os_max_objs, os_obj_data);
     pdf->os_buf_size = inf_pdf_os_buf_size;
-    pdf->os_buf = xmalloc((unsigned) pdf->os_buf_size * sizeof(unsigned char));
+    pdf->os_buf = xtalloc(pdf->os_buf_size, unsigned char);
     pdf->op_buf_size = inf_pdf_op_buf_size;
-    pdf->op_buf = xmalloc((unsigned) pdf->op_buf_size * sizeof(unsigned char));
+    pdf->op_buf = xtalloc(pdf->op_buf_size, unsigned char);
 
     pdf->buf_size = pdf->op_buf_size;
     pdf->buf = pdf->op_buf;
@@ -80,20 +78,18 @@ PDF init_pdf_struct(PDF pdf)
     /* Sometimes it is neccesary to allocate memory for PDF output that cannot
        be deallocated then, so we use |mem| for this purpose. */
     pdf->mem_size = inf_pdf_mem_size;   /* allocated size of |mem| array */
-    pdf->mem = xmalloc((unsigned) ((unsigned) pdf->mem_size * sizeof(int)));
+    pdf->mem = xtalloc(pdf->mem_size, int);
     pdf->mem_ptr = 1;           /* the first word is not used so we can use zero as a value for testing
                                    whether a pointer to |mem| is valid  */
     pdf->pstruct = NULL;
 
-    pdf->posstruct = xmalloc(sizeof(posstructure));
+    pdf->posstruct = xtalloc(1, posstructure);
     pdf->posstruct->pos.h = 0;
     pdf->posstruct->pos.v = 0;
     pdf->posstruct->dir = dir_TLT;
 
     pdf->obj_tab_size = (unsigned) inf_obj_tab_size;    /* allocated size of |obj_tab| array */
-    pdf->obj_tab = xmalloc((unsigned)
-                           ((unsigned) (pdf->obj_tab_size + 1) *
-                            sizeof(obj_entry)));
+    pdf->obj_tab = xtalloc(pdf->obj_tab_size + 1, obj_entry);
     memset(pdf->obj_tab, 0, sizeof(obj_entry));
 
     pdf->minor_version = -1;    /* unset */
@@ -114,27 +110,27 @@ PDF init_pdf_struct(PDF pdf)
     pdf->page_resources = NULL;
 
     init_pdf_pagecalculations(pdf);
+    pdf->pdflua_ref = new_pdflua();
 
     return pdf;
 }
 
 @ @c
-static void pdf_shipout_begin(boolean shipping_page)
+static void pdf_shipout_begin()
 {
     pos_stack_used = 0;         /* start with empty stack */
 
-    page_mode = shipping_page;
-    if (shipping_page) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         colorstackpagestart();
     }
 }
 
-static void pdf_shipout_end(boolean shipping_page)
+static void pdf_shipout_end()
 {
     if (pos_stack_used > 0) {
         pdftex_fail("%u unmatched \\pdfsave after %s shipout",
                     (unsigned int) pos_stack_used,
-                    ((shipping_page) ? "page" : "form"));
+                    ((global_shipping_mode == SHIPPING_PAGE) ? "page" : "form"));
     }
 }
 
@@ -163,32 +159,35 @@ int pdf_get_mem(PDF pdf, int s)
     return ret;
 }
 
+@ |get_o_mode| translates from |pdf_output| to |o_mode|.
+
+@c
+static output_mode get_o_mode()
+{
+    output_mode o_mode;
+    if (pdf_output > 0) {
+        if (pdf_output == 2009)
+            o_mode = OMODE_LUA;
+        else
+            o_mode = OMODE_PDF;
+    } else
+        o_mode = OMODE_DVI;
+    return o_mode;
+}
 
 @ |fix_o_mode| freezes |pdf->o_mode| as soon as anything goes through
 the backend, be it \.{PDF}, \.{DVI}, or \.{Lua}.
 
 @c
-#define pdf_output int_par(pdf_output_code)
-
 void fix_o_mode(PDF pdf)
 {
-    static int fixed_pdf_output = 0;
-    if (pdf->o_mode == OMODE_NONE) {
-        if (pdf_output > 0) {
-            if (pdf_output == 2009)
-                pdf->o_mode = OMODE_LUA;
-            else
-                pdf->o_mode = OMODE_PDF;
-        } else
-            pdf->o_mode = OMODE_DVI;
-        fixed_pdf_output = pdf_output;
-        pdf_output_value = pdf_output;
-    } else if (pdf_output != fixed_pdf_output) {
+    output_mode o_mode = get_o_mode();
+    if (pdf->o_mode == OMODE_NONE)
+        pdf->o_mode = o_mode;
+    else if (pdf->o_mode != o_mode)
         pdf_error("setup",
                   "\\pdfoutput can only be changed before anything is written to the output");
-    }
 }
-
 
 @ This ensures that |pdfminorversion| is set only before any bytes have
 been written to the generated \.{PDF} file. Here also all variables for
@@ -214,10 +213,10 @@ void fix_pdf_minorversion(PDF pdf)
         pdf->minor_version = pdf_minor_version;
     } else {
         /* Check that variables for \.{PDF} output are unchanged */
-        if (pdf->minor_version != int_par(pdf_minor_version_code))
+        if (pdf->minor_version != pdf_minor_version)
             pdf_error("setup",
                       "\\pdfminorversion cannot be changed after data is written to the PDF file");
-        if (pdf->draftmode != int_par(pdf_draftmode_code))
+        if (pdf->draftmode != pdf_draftmode)
             pdf_error("setup",
                       "\\pdfdraftmode cannot be changed after data is written to the PDF file");
     }
@@ -227,19 +226,91 @@ void fix_pdf_minorversion(PDF pdf)
     }
 }
 
+@ @c
+#define ZIP_BUF_SIZE  32768
+
+#define check_err(f, fn)                        \
+  if (f != Z_OK)                                \
+    pdftex_fail("zlib: %s() failed (error code %d)", fn, f)
+
+@ @c
+static void write_zip(PDF pdf)
+{
+    int flush, err = Z_OK;
+    uInt zip_len;
+    z_stream *s = pdf->c_stream;
+    boolean finish = pdf->zip_write_state == zip_finish;
+    assert(pdf->compress_level > 0);
+    /* This was just to suppress the filename report in |pdftex_fail|
+       but zlib errors are rare enough (especially now that the
+       compress level is fixed) that I don't care about the slightly
+       ugly error message that could result.
+     */
+#if 0
+    cur_file_name = NULL;
+#endif
+    if (pdf->stream_length == 0) {
+        if (s == NULL) {
+            s = pdf->c_stream = xtalloc(1, z_stream);
+            s->zalloc = (alloc_func) 0;
+            s->zfree = (free_func) 0;
+            s->opaque = (voidpf) 0;
+            check_err(deflateInit(s, pdf->compress_level), "deflateInit");
+            assert(pdf->zipbuf == NULL);
+            pdf->zipbuf = xtalloc(ZIP_BUF_SIZE, char);
+        } else
+            check_err(deflateReset(s), "deflateReset");
+        s->next_out = (Bytef *) pdf->zipbuf;
+        s->avail_out = ZIP_BUF_SIZE;
+    }
+    assert(s != NULL);
+    assert(pdf->zipbuf != NULL);
+    s->next_in = pdf->buf;
+    s->avail_in = (uInt) pdf->ptr;
+    while (true) {
+        if (s->avail_out == 0 || (finish && s->avail_out < ZIP_BUF_SIZE)) {
+            zip_len = ZIP_BUF_SIZE - s->avail_out;
+            pdf->gone += (off_t) xfwrite(pdf->zipbuf, 1, zip_len, pdf->file);
+            pdf->last_byte = pdf->zipbuf[zip_len - 1];
+            s->next_out = (Bytef *) pdf->zipbuf;
+            s->avail_out = ZIP_BUF_SIZE;
+        }
+        if (finish) {
+            if (err == Z_STREAM_END) {
+                assert(s->avail_in == 0);
+                assert(s->avail_out == ZIP_BUF_SIZE);
+                xfflush(pdf->file);
+                break;
+            }
+            flush = Z_FINISH;
+        } else {
+            if (s->avail_in == 0)
+                break;
+            flush = Z_NO_FLUSH;
+        }
+        err = deflate(s, flush);
+        if (err != Z_OK && err != Z_STREAM_END)
+            pdftex_fail("zlib: deflate() failed (error code %d)", err);
+    }
+    pdf->stream_length = (off_t) s->total_out;
+}
+
+@ @c
+void zip_free(PDF pdf)
+{
+    if (pdf->zipbuf != NULL) {
+        check_err(deflateEnd(pdf->c_stream), "deflateEnd");
+        xfree(pdf->zipbuf);
+    }
+    xfree(pdf->c_stream);
+}
+
 @ The PDF buffer is flushed by calling |pdf_flush|, which checks the
 variable |zip_write_state| and will compress the buffer before flushing if
 neccesary. We call |pdf_begin_stream| to begin a stream  and |pdf_end_stream|
 to finish it. The stream contents will be compressed if compression is turn on.
 
 @c
-static void write_pdf(PDF pdf, int a, int b)
-{
-    (void) fwrite((char *) &pdf->buf[a], sizeof(pdf->buf[a]),
-                  (size_t) ((b) - (a) + 1), pdf->file);
-}
-
-@ @c
 void pdf_flush(PDF pdf)
 {                               /* flush out the |pdf_buf| */
 
@@ -250,18 +321,19 @@ void pdf_flush(PDF pdf)
         case no_zip:
             if (pdf->ptr > 0) {
                 if (pdf->draftmode == 0)
-                    write_pdf(pdf, 0, pdf->ptr - 1);
+                    (void) xfwrite((char *) pdf->buf, sizeof(char),
+                                   (size_t) pdf->ptr, pdf->file);
                 pdf->gone += pdf->ptr;
                 pdf->last_byte = pdf->buf[pdf->ptr - 1];
             }
             break;
         case zip_writing:
             if (pdf->draftmode == 0)
-                write_zip(pdf, false);
+                write_zip(pdf);
             break;
         case zip_finish:
             if (pdf->draftmode == 0)
-                write_zip(pdf, true);
+                write_zip(pdf);
             pdf->zip_write_state = no_zip;
             break;
         }
@@ -275,7 +347,7 @@ void pdf_flush(PDF pdf)
 @ switch between PDF stream and object stream mode 
 
 @c
-void pdf_os_switch(PDF pdf, boolean pdf_os)
+static void pdf_os_switch(PDF pdf, boolean pdf_os)
 {
     if (pdf_os && pdf->os_enable) {
         if (!pdf->os_mode) {    /* back up PDF stream variables */
@@ -299,15 +371,14 @@ void pdf_os_switch(PDF pdf, boolean pdf_os)
 @ create new \.{/ObjStm} object if required, and set up cross reference info 
 
 @c
-void pdf_os_prepare_obj(PDF pdf, int i, int pdf_os_level)
+static void pdf_os_prepare_obj(PDF pdf, int i, int pdf_os_level)
 {
     pdf_os_switch(pdf, ((pdf_os_level > 0)
                         && (pdf->objcompresslevel >= pdf_os_level)));
     if (pdf->os_mode) {
         if (pdf->os_cur_objnum == 0) {
-            pdf_create_obj(pdf, obj_type_objstm, pdf->sys_obj_ptr + 1);
-            pdf->os_cur_objnum = pdf->sys_obj_ptr;
-            pdf->obj_ptr--;     /* object stream is not accessible to user */
+            pdf->os_cur_objnum =
+                pdf_create_obj(pdf, obj_type_objstm, pdf->obj_ptr + 1);
             pdf->os_cntr++;     /* only for statistics */
             pdf->os_idx = 0;
             pdf->ptr = 0;       /* start fresh object stream */
@@ -385,30 +456,27 @@ void pdf_print_char(PDF pdf, int c)
     pdf_print_escaped(c);
 }
 
+@ @c
+void pdf_out_block(PDF pdf, const char *s, size_t n)
+{
+    size_t l;
+    do {
+        l = n;
+        if ((int) l > pdf->buf_size)
+            l = (size_t) pdf->buf_size;
+        pdf_room(pdf, (int) l);
+        (void) memcpy(pdf->buf + pdf->ptr, s, l);
+        pdf->ptr += (int) l;
+        s += l;
+        n -= l;
+    } while (n > 0);
+}
+
 void pdf_print_wide_char(PDF pdf, int c)
 {
     char hex[5];
     snprintf(hex, 5, "%04X", c);
-    pdf_room(pdf, 4);
-    pdf_quick_out(pdf, (unsigned char) hex[0]);
-    pdf_quick_out(pdf, (unsigned char) hex[1]);
-    pdf_quick_out(pdf, (unsigned char) hex[2]);
-    pdf_quick_out(pdf, (unsigned char) hex[3]);
-}
-
-@ @c
-void pdf_puts(PDF pdf, const char *s)
-{
-
-    size_t l = strlen(s);
-    if (l < (size_t) pdf->buf_size) {
-        pdf_room(pdf, (int) l);
-        while (*s != '\0')
-            pdf_quick_out(pdf, *s++);
-    } else {
-        while (*s != '\0')
-            pdf_out(pdf, *s++);
-    }
+    pdf_out_block(pdf, (const char *) hex, 4);
 }
 
 @ @c
@@ -429,15 +497,15 @@ void pdf_printf(PDF pdf, const char *fmt, ...)
 @c
 void pdf_print(PDF pdf, str_number s)
 {
-    if (s < number_chars) {
+    const char *ss;
+    size_t l;
+    if (s >= STRING_OFFSET) {
+        ss = (const char *) str_string(s);
+        l = str_length(s);
+        pdf_out_block(pdf, ss, l);
+    } else {
         assert(s < 256);
         pdf_out(pdf, s);
-    } else {
-        unsigned char *k, *j;
-        j = str_string(s) + str_length(s);
-        for (k = str_string(s); k < j; k++) {
-            pdf_out(pdf, *k);
-        }
     }
 }
 
@@ -467,7 +535,7 @@ void pdf_print_int(PDF pdf, longinteger n)
     }
     do {
         dig[k++] = (int) (n % 10);
-        n = n / 10;
+        n /= 10;
     } while (n != 0);
     pdf_room(pdf, k);
     while (k-- > 0) {
@@ -493,7 +561,7 @@ void pdf_print_real(PDF pdf, int m, int d)
             d--;
         }
         while (m % 10 == 0)
-            m = m / 10;
+            m /= 10;
         pdf_print_int(pdf, m);
     }
 }
@@ -554,6 +622,18 @@ void pdf_begin_stream(PDF pdf)
     }
 }
 
+@ @c
+static void write_stream_length(PDF pdf, int length, longinteger offset)
+{
+    if (jobname_cstr == NULL)
+        jobname_cstr = makecstring(job_name);
+    if (pdf->draftmode == 0) {
+        xfseeko(pdf->file, (off_t) offset, SEEK_SET, jobname_cstr);
+        fprintf(pdf->file, "%li", (long int) length);
+        xfseeko(pdf->file, pdf_offset(pdf), SEEK_SET, jobname_cstr);
+    }
+}
+
 @ end a stream 
 @c
 void pdf_end_stream(PDF pdf)
@@ -567,8 +647,8 @@ void pdf_end_stream(PDF pdf)
         write_stream_length(pdf, (int) pdf->stream_length,
                             pdf->stream_length_offset);
     pdf->seek_write_length = false;
-    if (pdf->last_byte != pdf_new_line_char)
-        pdf_out(pdf, pdf_new_line_char);
+    if (pdf->last_byte != pdf_newline_char)
+        pdf_out(pdf, pdf_newline_char);
     pdf_puts(pdf, "endstream\n");
     pdf_end_obj(pdf);
 }
@@ -578,7 +658,6 @@ void pdf_remove_last_space(PDF pdf)
     if ((pdf->ptr > 0) && (pdf->buf[pdf->ptr - 1] == ' '))
         pdf->ptr--;
 }
-
 
 @ To print |scaled| value to PDF output we need some subroutines to ensure
 accurary.
@@ -592,14 +671,16 @@ scaled one_hundred_inch = 7227 * 65536;
 /* scaled value corresponds to 1in (rounded to 4736287) */
 scaled one_inch = (7227 * 65536 + 50) / 100;
 
-    /* scaled value corresponds to 1truein (rounded!) */
+/* scaled value corresponds to 1truein (rounded!) */
 scaled one_true_inch = (7227 * 65536 + 50) / 100;
 
 /* scaled value corresponds to 100bp */
 scaled one_hundred_bp = (7227 * 65536) / 72;
 
 /* scaled value corresponds to 1bp (rounded to 65782) */
-scaled one_bp = ((7227 * 65536) / 72 + 50) / 100;
+/* changed on 20110411 to be exactly 65781, as in tex itself,
+  because this value is also used for \pdfpxdimen */
+scaled one_bp = 65781;
 
 /* $10^0..10^9$ */
 int ten_pow[10] = {
@@ -612,7 +693,7 @@ digits of precision. It is defined in C because it is a good candidate
 for optimizations that are not possible in pascal.
 
 @c
-scaled round_xn_over_d(scaled x, int n, int d)
+scaled round_xn_over_d(scaled x, int n, unsigned int d)
 {
     boolean positive;           /* was |x>=0|? */
     unsigned t, u, v;           /* intermediate quantities */
@@ -630,7 +711,7 @@ scaled round_xn_over_d(scaled x, int n, int d)
     else
         u = 0100000 * (u / d) + (v / d);
     v = v % d;
-    if (2 * v >= (unsigned) d)
+    if (2 * v >= d)
         u++;
     if (positive)
         return (scaled) u;
@@ -703,7 +784,6 @@ void addto_page_resources(PDF pdf, pdf_obj_type t, int k)
     void **pp;
     pdf_object_list *p, *item = NULL;
     assert(pdf != NULL);
-    /* assert(obj_type(pdf, k) == t); *//* TODO, not yet strictly true */
     re = pdf->page_resources;
     assert(re != NULL);
     assert(t <= PDF_OBJ_TYPE_MAX);
@@ -726,19 +806,21 @@ void addto_page_resources(PDF pdf, pdf_obj_type t, int k)
                 ("addto_page_resources(): avl_probe() out of memory in insertion");
     }
     if (pr->list == NULL) {
-        item = xmalloc(sizeof(pdf_object_list));
+        item = xtalloc(1, pdf_object_list);
         item->link = NULL;
         item->info = k;
         pr->list = item;
-        set_obj_scheduled(pdf, k);      /* k is an object number */
+        if (obj_type(pdf, k) == (int)t)
+            set_obj_scheduled(pdf, k);  /* k is an object number */
     } else {
         for (p = pr->list; p->info != k && p->link != NULL; p = p->link);
         if (p->info != k) {
-            item = xmalloc(sizeof(pdf_object_list));
+            item = xtalloc(1, pdf_object_list);
             item->link = NULL;
             item->info = k;
             p->link = item;
-            set_obj_scheduled(pdf, k);
+            if (obj_type(pdf, k) == (int)t)
+                set_obj_scheduled(pdf, k);
         }
     }
 }
@@ -797,38 +879,34 @@ static void destroy_page_resources_tree(PDF pdf)
 
 @* Subroutines to print out various PDF objects.
 
-@ print out an integer with fixed width; used for outputting cross-reference table 
+@ print out an integer |n| with fixed width |w|; used for outputting cross-reference table 
 @c
-void pdf_print_fw_int(PDF pdf, longinteger n, int w)
+static void pdf_print_fw_int(PDF pdf, longinteger n, size_t w)
 {
     int k;                      /* $0\le k\le23$ */
-    int dig[24];
-    k = 0;
+    unsigned char digits[24];
+    k = (int) w;
     do {
-        dig[k] = (int) (n % 10);
-        n = n / 10;
-        k++;
-    } while (k != w);
-    pdf_room(pdf, k);
-    while (k-- > 0)
-        pdf_quick_out(pdf, (unsigned char) ('0' + dig[k]));
+        k--;
+        digits[k] = (unsigned char) ('0' + (n % 10));
+        n /= 10;
+    } while (k != 0);
+    pdf_out_block(pdf, (const char *) digits, w);
 }
 
-@ print out an integer as a number of bytes; used for outputting \.{/XRef} cross-reference stream 
+@ print out an integer |n| as a fixed number |w| of bytes; used for outputting \.{/XRef} cross-reference stream 
 @c
-void pdf_out_bytes(PDF pdf, longinteger n, int w)
+static void pdf_out_bytes(PDF pdf, longinteger n, size_t w)
 {
     int k;
-    int bytes[8];               /* digits in a number being output */
-    k = 0;
+    unsigned char bytes[8];     /* digits in a number being output */
+    k = (int) w;
     do {
-        bytes[k] = (int) (n % 256);
-        n = n / 256;
-        k++;
-    } while (k != w);
-    pdf_room(pdf, k);
-    while (k-- > 0)
-        pdf_quick_out(pdf, bytes[k]);
+        k--;
+        bytes[k] = (unsigned char) (n % 256);
+        n /= 256;
+    } while (k != 0);
+    pdf_out_block(pdf, (const char *) bytes, w);
 }
 
 @ print out an entry in dictionary with integer value to PDF buffer 
@@ -1062,42 +1140,6 @@ void ensure_output_state(PDF pdf, output_state s)
     }
 }
 
-@ begin a PDF dictionary object
-@c
-void pdf_begin_dict(PDF pdf, int i, int pdf_os_level)
-{
-    ensure_output_state(pdf, ST_HEADER_WRITTEN);
-    pdf_os_prepare_obj(pdf, i, pdf_os_level);
-    if (!pdf->os_mode) {
-        pdf_printf(pdf, "%d 0 obj <<\n", (int) i);
-    } else {
-        if (pdf->compress_level == 0)
-            pdf_printf(pdf, "%% %d 0 obj\n", (int) i);  /* debugging help */
-        pdf_puts(pdf, "<<\n");
-    }
-}
-
-@ begin a new PDF dictionary object 
-@c
-void pdf_new_dict(PDF pdf, int t, int i, int pdf_os)
-{
-    pdf_create_obj(pdf, t, i);
-    pdf_begin_dict(pdf, pdf->obj_ptr, pdf_os);
-}
-
-@ end a PDF dictionary object
-@c
-void pdf_end_dict(PDF pdf)
-{
-    if (pdf->os_mode) {
-        pdf_puts(pdf, ">>\n");
-        if (pdf->os_idx == pdf_os_max_objs - 1)
-            pdf_os_write_objstream(pdf);
-    } else {
-        pdf_puts(pdf, ">> endobj\n");
-    }
-}
-
 @ Write out an accumulated object stream.
 
 First the object number and byte offset pairs are generated
@@ -1108,7 +1150,7 @@ copied to the PDF output buffer, where also compression is done.
 When calling this procedure, |pdf_os_mode| must be |true|.
 
 @c
-void pdf_os_write_objstream(PDF pdf)
+static void pdf_os_write_objstream(PDF pdf)
 {
     halfword i, j, p, q;
     if (pdf->os_cur_objnum == 0)        /* no object stream started */
@@ -1120,7 +1162,7 @@ void pdf_os_write_objstream(PDF pdf)
         pdf_printf(pdf, "%d %d", (int) pdf->os_obj[i].num,
                    (int) pdf->os_obj[i].off);
         if (j == 9) {           /* print out in groups of ten for better readability */
-            pdf_out(pdf, pdf_new_line_char);
+            pdf_out(pdf, pdf_newline_char);
             j = 0;
         } else {
             pdf_out(pdf, ' ');
@@ -1128,19 +1170,16 @@ void pdf_os_write_objstream(PDF pdf)
         }
         i++;
     }
-    pdf->buf[pdf->ptr - 1] = pdf_new_line_char; /* no risk of flush, as we are in |pdf_os_mode| */
+    pdf->buf[pdf->ptr - 1] = pdf_newline_char;  /* no risk of flush, as we are in |pdf_os_mode| */
     q = pdf->ptr;
     pdf_begin_dict(pdf, pdf->os_cur_objnum, 0); /* switch to PDF stream writing */
     pdf_puts(pdf, "/Type /ObjStm\n");
     pdf_printf(pdf, "/N %d\n", (int) (pdf->os_idx + 1));
     pdf_printf(pdf, "/First %d\n", (int) (q - p));
     pdf_begin_stream(pdf);
-    pdf_room(pdf, q - p);       /* should always fit into the PDF output buffer */
-    i = p;
-    while (i < q) {             /* write object number and byte offset pairs */
-        pdf_quick_out(pdf, pdf->os_buf[i]);
-        i++;
-    }
+    /* write object number and byte offset pairs;
+       |q - p| should always fit into the PDF output buffer */
+    pdf_out_block(pdf, (const char *) (pdf->os_buf + p), (size_t) (q - p));
     i = 0;
     while (i < p) {
         q = i + pdf->buf_size;
@@ -1154,6 +1193,43 @@ void pdf_os_write_objstream(PDF pdf)
     }
     pdf_end_stream(pdf);
     pdf->os_cur_objnum = 0;     /* to force object stream generation next time */
+}
+
+@ begin a PDF dictionary object
+@c
+void pdf_begin_dict(PDF pdf, int i, int pdf_os_level)
+{
+    ensure_output_state(pdf, ST_HEADER_WRITTEN);
+    pdf_os_prepare_obj(pdf, i, pdf_os_level);
+    if (!pdf->os_mode) {
+        pdf_printf(pdf, "%d 0 obj\n<<\n", (int) i);
+    } else {
+        if (pdf->compress_level == 0)
+            pdf_printf(pdf, "%% %d 0 obj\n", (int) i);  /* debugging help */
+        pdf_puts(pdf, "<<\n");
+    }
+}
+
+@ begin a new PDF dictionary object 
+@c
+int pdf_new_dict(PDF pdf, int t, int i, int pdf_os_level)
+{
+    int k = pdf_create_obj(pdf, t, i);
+    pdf_begin_dict(pdf, k, pdf_os_level);
+    return k;
+}
+
+@ end a PDF dictionary object
+@c
+void pdf_end_dict(PDF pdf)
+{
+    if (pdf->os_mode) {
+        pdf_puts(pdf, ">>\n");
+        if (pdf->os_idx == pdf_os_max_objs - 1)
+            pdf_os_write_objstream(pdf);
+    } else {
+        pdf_puts(pdf, ">>\nendobj\n");
+    }
 }
 
 @ begin a PDF object 
@@ -1171,10 +1247,11 @@ void pdf_begin_obj(PDF pdf, int i, int pdf_os_level)
 
 @ begin a new PDF object
 @c
-void pdf_new_obj(PDF pdf, int t, int i, int pdf_os)
+int pdf_new_obj(PDF pdf, int t, int i, int pdf_os_level)
 {
-    pdf_create_obj(pdf, t, i);
-    pdf_begin_obj(pdf, pdf->obj_ptr, pdf_os);
+    int k = pdf_create_obj(pdf, t, i);
+    pdf_begin_obj(pdf, k, pdf_os_level);
+    return k;
 }
 
 @ end a PDF object 
@@ -1186,18 +1263,6 @@ void pdf_end_obj(PDF pdf)
             pdf_os_write_objstream(pdf);
     } else {
         pdf_puts(pdf, "endobj\n");      /* end a PDF object */
-    }
-}
-
-@ @c
-void write_stream_length(PDF pdf, int length, longinteger offset)
-{
-    if (jobname_cstr == NULL)
-        jobname_cstr = makecstring(job_name);
-    if (pdf->draftmode == 0) {
-        xfseeko(pdf->file, (off_t) offset, SEEK_SET, jobname_cstr);
-        fprintf(pdf->file, "%li", (long int) length);
-        xfseeko(pdf->file, pdf_offset(pdf), SEEK_SET, jobname_cstr);
     }
 }
 
@@ -1297,7 +1362,7 @@ static void convertStringToHexString(const char *in, char *out, int lin)
   implementation using just the first two items.
 
 @c
-void print_ID(PDF pdf, const char *file_name)
+static void print_ID(PDF pdf, const char *file_name)
 {
     time_t t;
     size_t size;
@@ -1440,14 +1505,14 @@ void init_start_time(PDF pdf)
 }
 
 @ @c
-void print_creation_date(PDF pdf)
+static void print_creation_date(PDF pdf)
 {
     init_start_time(pdf);
     pdf_printf(pdf, "/CreationDate (%s)\n", pdf->start_time_str);
 }
 
 @ @c
-void print_mod_date(PDF pdf)
+static void print_mod_date(PDF pdf)
 {
     init_start_time(pdf);
     pdf_printf(pdf, "/ModDate (%s)\n", pdf->start_time_str);
@@ -1534,82 +1599,6 @@ void fb_free(PDF pdf)
 }
 
 @ @c
-#define ZIP_BUF_SIZE  32768
-
-#define check_err(f, fn)                        \
-  if (f != Z_OK)                                \
-    pdftex_fail("zlib: %s() failed (error code %d)", fn, f)
-
-@ @c
-void write_zip(PDF pdf, boolean finish)
-{
-    int err;
-    int level = pdf->compress_level;
-    assert(level > 0);
-    /* This was just to suppress the filename report in |pdftex_fail|
-       but zlib errors are rare enough (especially now that the
-       compress level is fixed) that I don't care about the slightly
-       ugly error message that could result.
-     */
-#if 0
-    cur_file_name = NULL;
-#endif
-    if (pdf->stream_length == 0) {
-        if (pdf->zipbuf == NULL) {
-            pdf->zipbuf = xtalloc(ZIP_BUF_SIZE, char);
-            pdf->c_stream.zalloc = (alloc_func) 0;
-            pdf->c_stream.zfree = (free_func) 0;
-            pdf->c_stream.opaque = (voidpf) 0;
-            check_err(deflateInit(&pdf->c_stream, level), "deflateInit");
-        } else {
-            check_err(deflateReset(&pdf->c_stream), "deflateReset");
-        }
-        pdf->c_stream.next_out = (Bytef *) pdf->zipbuf;
-        pdf->c_stream.avail_out = ZIP_BUF_SIZE;
-    }
-    assert(pdf->zipbuf != NULL);
-    pdf->c_stream.next_in = pdf->buf;
-    pdf->c_stream.avail_in = (uInt) pdf->ptr;
-    for (;;) {
-        if (pdf->c_stream.avail_out == 0) {
-            pdf->gone =
-                pdf->gone + (off_t) xfwrite(pdf->zipbuf, 1, ZIP_BUF_SIZE,
-                                            pdf->file);
-            pdf->last_byte = pdf->zipbuf[ZIP_BUF_SIZE - 1];     /* not needed */
-            pdf->c_stream.next_out = (Bytef *) pdf->zipbuf;
-            pdf->c_stream.avail_out = ZIP_BUF_SIZE;
-        }
-        err = deflate(&pdf->c_stream, finish ? Z_FINISH : Z_NO_FLUSH);
-        if (finish && err == Z_STREAM_END)
-            break;
-        check_err(err, "deflate");
-        if (!finish && pdf->c_stream.avail_in == 0)
-            break;
-    }
-    if (finish) {
-        if (pdf->c_stream.avail_out < ZIP_BUF_SIZE) {   /* at least one byte has been output */
-            pdf->gone = pdf->gone +
-                (off_t) xfwrite(pdf->zipbuf, 1,
-                                (size_t) (ZIP_BUF_SIZE -
-                                          pdf->c_stream.avail_out), pdf->file);
-            pdf->last_byte =
-                pdf->zipbuf[ZIP_BUF_SIZE - pdf->c_stream.avail_out - 1];
-        }
-        xfflush(pdf->file);
-    }
-    pdf->stream_length = (off_t) pdf->c_stream.total_out;
-}
-
-@ @c
-void zip_free(PDF pdf)
-{
-    if (pdf->zipbuf != NULL) {
-        check_err(deflateEnd(&pdf->c_stream), "deflateEnd");
-        free(pdf->zipbuf);
-    }
-}
-
-@ @c
 void pdf_error(const char *t, const char *p)
 {
     normalize_selector();
@@ -1661,15 +1650,9 @@ void check_o_mode(PDF pdf, const char *s, int o_mode_bitpattern, boolean strict)
        in possibly wrong state until real output, ok.
      */
 
-    if (pdf->o_mode == OMODE_NONE) {
-        if (pdf_output > 0) {
-            if (pdf_output == 2009)
-                o_mode = OMODE_LUA;
-            else
-                o_mode = OMODE_PDF;
-        } else
-            o_mode = OMODE_DVI;
-    } else
+    if (pdf->o_mode == OMODE_NONE)
+        o_mode = get_o_mode();
+    else
         o_mode = pdf->o_mode;
     if (!((1 << o_mode) & o_mode_bitpattern)) { /* warning or error */
         switch (o_mode) {
@@ -1750,26 +1733,27 @@ char *get_resname_prefix(PDF pdf)
 #define pdf_xform_attr equiv(pdf_xform_attr_loc)
 #define pdf_xform_resources equiv(pdf_xform_resources_loc)
 
-void pdf_begin_page(PDF pdf, boolean shipping_page)
+void pdf_begin_page(PDF pdf)
 {
-    scaled form_margin = one_bp;
+    scaled form_margin = 0;     /* was one_bp until SVN4066 */
     ensure_output_state(pdf, ST_HEADER_WRITTEN);
     init_pdf_pagecalculations(pdf);
 
     if (pdf->page_resources == NULL) {
-        pdf->page_resources = xmalloc(sizeof(pdf_resource_struct));
+        pdf->page_resources = xtalloc(1, pdf_resource_struct);
         pdf->page_resources->resources_tree = NULL;
     }
     pdf->page_resources->last_resources = pdf_new_objnum(pdf);
     reset_page_resources(pdf);
 
-    if (shipping_page) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         pdf->last_page = get_obj(pdf, obj_type_page, total_pages + 1, 0);
         set_obj_aux(pdf, pdf->last_page, 1);    /* mark that this page has been created */
-        pdf_new_dict(pdf, obj_type_pagestream, 0, 0);
-        pdf->last_stream = pdf->obj_ptr;
+        pdf->last_stream = pdf_new_dict(pdf, obj_type_pagestream, 0, 0);
         pdf->last_thread = null;
+        pdflua_begin_page(pdf);
     } else {
+        assert(global_shipping_mode == SHIPPING_FORM);
         pdf_begin_dict(pdf, pdf_cur_form, 0);
         pdf->last_stream = pdf_cur_form;
 
@@ -1798,7 +1782,7 @@ void pdf_begin_page(PDF pdf, boolean shipping_page)
     }
     /* Start stream of page/form contents */
     pdf_begin_stream(pdf);
-    if (shipping_page) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         /* Adjust transformation matrix for the magnification ratio */
         if (mag != 1000) {
             pdf_print_real(pdf, mag, 3);
@@ -1807,35 +1791,52 @@ void pdf_begin_page(PDF pdf, boolean shipping_page)
             pdf_puts(pdf, " 0 0 cm\n");
         }
     }
-    pdf_shipout_begin(shipping_page);
+    pdf_shipout_begin();
 
-    if (shipping_page)
+    if (global_shipping_mode == SHIPPING_PAGE)
         pdf_out_colorstack_startpage(pdf);
+}
+
+@ @c
+void print_pdf_table_string(PDF pdf, const char *s)
+{
+    size_t len;
+    const char *ls;
+    lua_getglobal(Luas, "pdf");     /* t ... */
+    lua_pushstring(Luas, s);    /* s t ... */
+    lua_gettable(Luas, -2);     /* s? t ... */
+    if (lua_isstring(Luas, -1)) {       /* s t ... */
+        ls = lua_tolstring(Luas, -1, &len);
+        pdf_out_block(pdf, ls, len);
+        pdf_out(pdf, '\n');
+    }
+    lua_pop(Luas, 2);           /* ... */
 }
 
 @ @c
 #define pdf_page_attr equiv(pdf_page_attr_loc)
 #define pdf_page_resources equiv(pdf_page_resources_loc)
 
-void pdf_end_page(PDF pdf, boolean shipping_page)
+void pdf_end_page(PDF pdf)
 {
-    int j;
+    int j, annots = 0, beads = 0;
     pdf_resource_struct *res_p = pdf->page_resources;
     pdf_resource_struct local_page_resources;
-    pdf_object_list *ol, *ol1;
+    pdf_object_list *annot_list, *bead_list, *link_list, *ol, *ol1;
     scaledpos save_cur_page_size;       /* to save |cur_page_size| during flushing pending forms */
+    shipping_mode_e save_shipping_mode;
     int procset = PROCSET_PDF;
 
     /* Finish stream of page/form contents */
     pdf_goto_pagemode(pdf);
-    pdf_shipout_end(shipping_page);
+    pdf_shipout_end();
     pdf_end_stream(pdf);
 
-    if (shipping_page) {
-        /* Write out page object */
-
-        pdf_begin_dict(pdf, pdf->last_page, 1);
+    if (global_shipping_mode == SHIPPING_PAGE) {
         pdf->last_pages = pdf_do_page_divert(pdf, pdf->last_page, 0);
+
+        /* Write out /Page object */
+        pdf_begin_dict(pdf, pdf->last_page, 1);
         pdf_puts(pdf, "/Type /Page\n");
         pdf_indirect_ln(pdf, "Contents", pdf->last_stream);
         pdf_indirect_ln(pdf, "Resources", res_p->last_resources);
@@ -1846,33 +1847,57 @@ void pdf_end_page(PDF pdf, boolean shipping_page)
         pdf_puts(pdf, "]\n");
         if (pdf_page_attr != null)
             pdf_print_toks_ln(pdf, pdf_page_attr);
-        if (pdf_pageattributes_toks != null)    /* from Lua */
-            pdf_print_toks_ln(pdf, pdf_pageattributes_toks);
+        print_pdf_table_string(pdf, "pageattributes");
         pdf_indirect_ln(pdf, "Parent", pdf->last_pages);
-        if (pdf->img_page_group_val > 0) {
+        if (pdf->img_page_group_val != 0) {
+            assert(pdf->img_page_group_val > 0);
             pdf_printf(pdf, "/Group %d 0 R\n", pdf->img_page_group_val);
-            pdf->img_page_group_val = 0;
         }
+        annot_list = get_page_resources_list(pdf, obj_type_annot);
+        link_list = get_page_resources_list(pdf, obj_type_link);
+        if (annot_list != NULL || link_list != NULL) {
+            annots = pdf_create_obj(pdf, obj_type_annots, 0);
+            pdf_indirect_ln(pdf, "Annots", annots);
+        }
+        bead_list = get_page_resources_list(pdf, obj_type_bead);
+        if (bead_list != NULL) {
+            beads = pdf_create_obj(pdf, obj_type_beads, 0);
+            pdf_indirect_ln(pdf, "B", beads);
+        }
+        pdf_end_dict(pdf);
+        pdflua_end_page(pdf, annots, beads);
+
+        pdf->img_page_group_val = 0;
+
         /* Generate array of annotations or beads in page */
-        ol = get_page_resources_list(pdf, obj_type_annot);
-        ol1 = get_page_resources_list(pdf, obj_type_link);
-        if (ol != NULL || ol1 != NULL) {
-            pdf_puts(pdf, "/Annots [ ");
-            while (ol != NULL) {
-                assert(ol->info > 0);
-                pdf_print_int(pdf, ol->info);
+        if (annot_list != NULL || link_list != NULL) {
+            pdf_begin_obj(pdf, annots, 1);
+            pdf_puts(pdf, "[");
+            while (annot_list != NULL) {
+                assert(annot_list->info > 0);
+                pdf_print_int(pdf, annot_list->info);
                 pdf_puts(pdf, " 0 R ");
-                ol = ol->link;
+                annot_list = annot_list->link;
             }
-            while (ol1 != NULL) {
-                pdf_print_int(pdf, ol1->info);
+            while (link_list != NULL) {
+                pdf_print_int(pdf, link_list->info);
                 pdf_puts(pdf, " 0 R ");
-                ol1 = ol1->link;
+                link_list = link_list->link;
             }
             pdf_puts(pdf, "]\n");
+            pdf_end_obj(pdf);
         }
-        print_beads_list(pdf);
-        pdf_end_dict(pdf);
+        if (bead_list != NULL) {
+            pdf_begin_dict(pdf, beads, 1);
+            pdf_puts(pdf, "[");
+            while (bead_list != NULL) {
+                pdf_print_int(pdf, bead_list->info);
+                pdf_printf(pdf, " 0 R ");
+                bead_list = bead_list->link;
+            }
+            pdf_printf(pdf, "]\n");
+            pdf_end_dict(pdf);
+        }
     }
 
     /* Write out resource lists */
@@ -1894,11 +1919,13 @@ void pdf_end_page(PDF pdf, boolean shipping_page)
         if (!is_obj_written(pdf, ol->info)) {
             pdf_cur_form = ol->info;
             save_cur_page_size = cur_page_size;
+            save_shipping_mode = global_shipping_mode;
             pdf->page_resources = &local_page_resources;
             local_page_resources.resources_tree = NULL;
-            ship_out(pdf, obj_xform_box(pdf, pdf_cur_form), false);
+            ship_out(pdf, obj_xform_box(pdf, pdf_cur_form), SHIPPING_FORM);
             /* Restore page size and page resources */
             cur_page_size = save_cur_page_size;
+            global_shipping_mode = save_shipping_mode;
             destroy_page_resources_tree(pdf);
             pdf->page_resources = res_p;
         }
@@ -1913,12 +1940,12 @@ void pdf_end_page(PDF pdf, boolean shipping_page)
         ol = ol->link;
     }
 
-    if (shipping_page) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         /* Write out pending PDF marks */
         /* Write out PDF annotations */
         ol = get_page_resources_list(pdf, obj_type_annot);
         while (ol != NULL) {
-            if (ol->info > 0) {
+            if (ol->info > 0 && obj_type(pdf, ol->info) == obj_type_annot) {
                 j = obj_annot_ptr(pdf, ol->info);       /* |j| points to |pdf_annot_node| */
                 pdf_begin_dict(pdf, ol->info, 1);
                 pdf_puts(pdf, "/Type /Annot\n");
@@ -1967,11 +1994,10 @@ void pdf_end_page(PDF pdf, boolean shipping_page)
     /* Write out resources dictionary */
     pdf_begin_dict(pdf, res_p->last_resources, 1);
     /* Print additional resources */
-    if (shipping_page) {
+    if (global_shipping_mode == SHIPPING_PAGE) {
         if (pdf_page_resources != null)
             pdf_print_toks_ln(pdf, pdf_page_resources);
-        if (pdf_pageresources_toks != null)     /* from Lua */
-            pdf_print_toks_ln(pdf, pdf_pageresources_toks);
+        print_pdf_table_string(pdf, "pageresources");
     } else {
         if (pdf_xform_resources != null)
             pdf_print_toks_ln(pdf, pdf_xform_resources);
@@ -2045,9 +2071,6 @@ void pdf_end_page(PDF pdf, boolean shipping_page)
 
 @* Finishing the PDF output file. 
 
-@ @c
-#define pdf_gen_tounicode int_par(pdf_gen_tounicode_code)
-
 @ Destinations that have been referenced but don't exists have
 |obj_dest_ptr=null|. Leaving them undefined might cause troubles for
 PDF browsers, so we need to fix them; they point to the last page.
@@ -2111,13 +2134,14 @@ static boolean substr_of_str(const char *s, const char *t)
     return true;
 }
 
-static void pdf_print_info(PDF pdf, int luatex_version, str_number luatex_revision)
+static int pdf_print_info(PDF pdf, int luatex_version,
+                          str_number luatex_revision)
 {                               /* print info object */
     boolean creator_given, producer_given, creationdate_given, moddate_given,
         trapped_given;
     char *s = NULL;
-    int len = 0;
-    pdf_new_dict(pdf, obj_type_others, 0, 3);   /* keep Info readable unless explicitely forced */
+    int k, len = 0;
+    k = pdf_new_dict(pdf, obj_type_info, 0, 3); /* keep Info readable unless explicitely forced */
     creator_given = false;
     producer_given = false;
     creationdate_given = false;
@@ -2140,7 +2164,6 @@ static void pdf_print_info(PDF pdf, int luatex_version, str_number luatex_revisi
         pdf_out(pdf, '.');
         pdf_print(pdf, luatex_revision);
         pdf_puts(pdf, ")\n");
-
     }
     if (pdf_info_toks != null) {
         if (len > 0) {
@@ -2164,6 +2187,7 @@ static void pdf_print_info(PDF pdf, int luatex_version, str_number luatex_revisi
     }
     pdf_str_entry_ln(pdf, "PTEX.Fullbanner", pdftex_banner);
     pdf_end_dict(pdf);
+    return k;
 }
 
 static void build_free_object_list(PDF pdf)
@@ -2171,7 +2195,7 @@ static void build_free_object_list(PDF pdf)
     int k, l;
     l = 0;
     set_obj_fresh(pdf, l);      /* null object at begin of list of free objects */
-    for (k = 1; k <= pdf->sys_obj_ptr; k++) {
+    for (k = 1; k <= pdf->obj_ptr; k++) {
         if (!is_obj_written(pdf, k)) {
             set_obj_link(pdf, l, k);
             l = k;
@@ -2188,9 +2212,10 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
 {
     boolean res;
     int i, j, k;
-    int root, outlines, threads, names_tree;
-    int xref_offset_width;
+    int root, info, xref_stm = 0, outlines, threads, names_tree;
+    size_t xref_offset_width;
     int callback_id = callback_defined(stop_run_callback);
+    int callback_id1 = callback_defined(finish_pdffile_callback);
 
     if (total_pages == 0) {
         if (callback_id == 0) {
@@ -2204,6 +2229,8 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
         if (pdf->draftmode == 0) {
             pdf_flush(pdf);     /* to make sure that the output file name has been already created */
             flush_jbig2_page0_objects(pdf);     /* flush page 0 objects from JBIG2 images, if any */
+            if (callback_id1 > 0)
+                res = run_callback(callback_id1, "->");
 
             check_nonexisting_pages(pdf);
             check_nonexisting_destinations(pdf);
@@ -2250,6 +2277,7 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
             write_fontstuff(pdf);
 
             pdf->last_pages = output_pages_tree(pdf);
+            pdflua_output_pages_tree(pdf);
             /* Output outlines */
             outlines = print_outlines(pdf);
 
@@ -2265,8 +2293,7 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
 
             /* Output article threads */
             if (pdf->head_tab[obj_type_thread] != 0) {
-                pdf_new_obj(pdf, obj_type_others, 0, 1);
-                threads = pdf->obj_ptr;
+                threads = pdf_new_obj(pdf, obj_type_others, 0, 1);
                 pdf_out(pdf, '[');
                 k = pdf->head_tab[obj_type_thread];
                 while (k != 0) {
@@ -2286,9 +2313,8 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
                 threads = 0;
             }
 
-            /* Output the catalog object */
-            pdf_new_dict(pdf, obj_type_others, 0, 1);
-            root = pdf->obj_ptr;
+            /* Output the /Catalog object */
+            root = pdf_new_dict(pdf, obj_type_catalog, 0, 1);
             pdf_puts(pdf, "/Type /Catalog\n");
             pdf_indirect_ln(pdf, "Pages", pdf->last_pages);
             if (threads != 0)
@@ -2306,7 +2332,8 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
                 pdf_indirect_ln(pdf, "OpenAction", pdf_catalog_openaction);
             pdf_end_dict(pdf);
 
-            pdf_print_info(pdf, luatex_version, luatex_revision);       /* last candidate for object stream */
+            /* last candidate for object stream */
+            info = pdf_print_info(pdf, luatex_version, luatex_revision);        /* final object for pdf->os_enable == false */
 
             if (pdf->os_enable) {
                 pdf_os_switch(pdf, true);
@@ -2314,12 +2341,12 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
                 pdf_flush(pdf);
                 pdf_os_switch(pdf, false);
                 /* Output the cross-reference stream dictionary */
-                pdf_new_dict(pdf, obj_type_others, 0, 0);
-                if ((obj_offset(pdf, pdf->sys_obj_ptr) / 256) > 16777215)
+                xref_stm = pdf_new_dict(pdf, obj_type_others, 0, 0);    /* final object for pdf->os_enable == true */
+                if ((obj_offset(pdf, pdf->obj_ptr) / 256) > 16777215)
                     xref_offset_width = 5;
-                else if (obj_offset(pdf, pdf->sys_obj_ptr) > 16777215)
+                else if (obj_offset(pdf, pdf->obj_ptr) > 16777215)
                     xref_offset_width = 4;
-                else if (obj_offset(pdf, pdf->sys_obj_ptr) > 65535)
+                else if (obj_offset(pdf, pdf->obj_ptr) > 65535)
                     xref_offset_width = 3;
                 else
                     xref_offset_width = 2;
@@ -2331,10 +2358,10 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
                 pdf_puts(pdf, "]\n");
                 pdf_int_entry_ln(pdf, "Size", pdf->obj_ptr + 1);
                 pdf_puts(pdf, "/W [1 ");
-                pdf_print_int(pdf, xref_offset_width);
+                pdf_print_int(pdf, (int) xref_offset_width);
                 pdf_puts(pdf, " 1]\n");
                 pdf_indirect_ln(pdf, "Root", root);
-                pdf_indirect_ln(pdf, "Info", pdf->obj_ptr - 1);
+                pdf_indirect_ln(pdf, "Info", info);
                 if (pdf_trailer_toks != null) {
                     pdf_print_toks_ln(pdf, pdf_trailer_toks);
                     delete_token_ref(pdf_trailer_toks);
@@ -2343,7 +2370,7 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
                 print_ID(pdf, pdf->file_name);
                 pdf_print_nl(pdf);
                 pdf_begin_stream(pdf);
-                for (k = 0; k <= pdf->sys_obj_ptr; k++) {
+                for (k = 0; k <= pdf->obj_ptr; k++) {
                     if (!is_obj_written(pdf, k)) {      /* a free object */
                         pdf_out(pdf, 0);
                         pdf_out_bytes(pdf, obj_link(pdf, k), xref_offset_width);
@@ -2391,9 +2418,9 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
             if (!pdf->os_enable) {
                 pdf_puts(pdf, "trailer\n");
                 pdf_puts(pdf, "<< ");
-                pdf_int_entry_ln(pdf, "Size", pdf->sys_obj_ptr + 1);
+                pdf_int_entry_ln(pdf, "Size", pdf->obj_ptr + 1);
                 pdf_indirect_ln(pdf, "Root", root);
-                pdf_indirect_ln(pdf, "Info", pdf->sys_obj_ptr);
+                pdf_indirect_ln(pdf, "Info", info);
                 if (pdf_trailer_toks != null) {
                     pdf_print_toks_ln(pdf, pdf_trailer_toks);
                     delete_token_ref(pdf_trailer_toks);
@@ -2404,7 +2431,7 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
             }
             pdf_puts(pdf, "startxref\n");
             if (pdf->os_enable)
-                pdf_print_int_ln(pdf, obj_offset(pdf, pdf->sys_obj_ptr));
+                pdf_print_int_ln(pdf, obj_offset(pdf, xref_stm));
             else
                 pdf_print_int_ln(pdf, pdf_saved_offset(pdf));
             pdf_puts(pdf, "%%EOF\n");
@@ -2470,8 +2497,7 @@ void scan_pdfcatalog(PDF pdf)
         } else {
             check_o_mode(pdf, "\\pdfcatalog", 1 << OMODE_PDF, true);
             p = scan_action(pdf);
-            pdf_new_obj(pdf, obj_type_others, 0, 1);
-            pdf_catalog_openaction = pdf->obj_ptr;
+            pdf_catalog_openaction = pdf_new_obj(pdf, obj_type_others, 0, 1);
             write_action(pdf, p);
             pdf_end_obj(pdf);
             delete_action_ref(p);

@@ -1,6 +1,6 @@
 /* luafflib.c
    
-   Copyright 2007-2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2007-2010 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -30,10 +30,11 @@
 
 #include "pfaedit.h"
 #include "ustring.h"
+#include "lib/lib.h"            /* web2c's lib, for recorder_record_input */
 
 static const char _svn_version[] =
-    "$Id: luafflib.c 3736 2010-07-12 15:42:56Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
+    "$Id: luafflib.c 4094 2011-03-28 12:24:59Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
 
 extern char **gww_errors;
 extern int gww_error_count;
@@ -43,6 +44,9 @@ extern struct ui_interface luaui_interface;
 extern int readbinfile(FILE * f, unsigned char **b, int *s);
 
 #define FONT_METATABLE "fontloader.splinefont"
+#define FONT_SUBFONT_METATABLE "fontloader.splinefont.subfont"
+#define FONT_GLYPHS_METATABLE "fontloader.splinefont.glyphs"
+#define FONT_GLYPH_METATABLE "fontloader.splinefont.glyph"
 
 #define LUA_OTF_VERSION "0.3"
 
@@ -140,6 +144,7 @@ static char *uni_interp_enum[9] = {
 };
 
 #define check_isfont(L,b) (SplineFont **)luaL_checkudata(L,b,FONT_METATABLE)
+#define check_isglyph(L,b) (struct splinechar **)luaL_checkudata(L,b,FONT_GLYPH_METATABLE)
 
 void handle_generic_pst(lua_State * L, struct generic_pst *pst);        /* forward */
 void handle_generic_fpst(lua_State * L, struct generic_fpst *fpst);     /* forward */
@@ -147,6 +152,28 @@ void handle_generic_asm(lua_State * L, struct generic_asm *sm);
 void handle_kernclass(lua_State * L, struct kernclass *kerns);
 void handle_anchorclass(lua_State * L, struct anchorclass *anchor);
 void handle_splinefont(lua_State * L, struct splinefont *sf);
+void handle_kernpair(lua_State * L, struct kernpair *kp);
+void handle_splinecharlist(lua_State * L, struct splinecharlist *scl);
+void handle_liglist(lua_State * L, struct liglist *ligofme);
+void handle_anchorpoint(lua_State * L, struct anchorpoint *anchor);
+void handle_glyphvariants(lua_State * L, struct glyphvariants *vars);
+void handle_mathkern(lua_State * L, struct mathkern *mk);
+int handle_altuni(lua_State * L, struct altuni *au);
+
+int is_userdata(lua_State *L, int b, char *utype) 
+{
+    if (lua_type(L,b) == LUA_TUSERDATA) {
+        lua_getmetatable(L, b);
+        luaL_getmetatable(L, utype);
+        if (lua_equal(L, -2, -1)) {
+            lua_pop(L,2);
+            return 1;
+        } 
+        lua_pop(L,2);
+    }
+    return 0;
+}
+
 
 
 void lua_ff_pushfont(lua_State * L, SplineFont * sf)
@@ -163,6 +190,34 @@ void lua_ff_pushfont(lua_State * L, SplineFont * sf)
     return;
 }
 
+void lua_ff_pushsubfont(lua_State * L, SplineFont * sf)
+{
+    SplineFont **a;
+    if (sf == NULL) {
+        lua_pushnil(L);
+    } else {
+        a = lua_newuserdata(L, sizeof(SplineFont *));
+        *a = sf;
+        luaL_getmetatable(L, FONT_SUBFONT_METATABLE);
+        lua_setmetatable(L, -2);
+    }
+    return;
+}
+
+void lua_ff_pushglyph(lua_State * L, struct splinechar *sc)
+{
+    struct splinechar **a;
+    if (sc == NULL) {
+        lua_pushnil(L);
+    } else {
+        a = lua_newuserdata(L, sizeof(struct splinechar *));
+        *a = sc;
+        luaL_getmetatable(L, FONT_GLYPH_METATABLE);
+        lua_setmetatable(L, -2);
+    }
+    return;
+}
+
 
 static int ff_open(lua_State * L)
 {
@@ -172,10 +227,11 @@ static int ff_open(lua_State * L)
     char s[511];
     size_t len;
     int args, i;
-    int openflags = 1;
+    int openflags = 1 + 4;
     fontname = luaL_checkstring(L, 1);
     /* test fontname for existance */
     if ((l = fopen(fontname, "r"))) {
+        recorder_record_input(fontname);
         fclose(l);
     } else {
         lua_pushnil(L);
@@ -237,7 +293,7 @@ static int ff_close(lua_State * L)
     /*fputs("ff_close called",stderr); */
     sf = check_isfont(L, 1);
     if (*sf != NULL) {
-        if ((*sf)->fv) { // condition might be improved
+        if ((*sf)->fv) {        // condition might be improved
             FontViewClose((*sf)->fv);
         } else {
             EncMapFree((*sf)->map);
@@ -248,6 +304,22 @@ static int ff_close(lua_State * L)
     return 0;
 }
 
+static int notdef_loc(SplineFont * sf)
+{
+    int k;
+    int l = -1;
+    for (k = 0; k < sf->glyphcnt; k++) {
+        if (sf->glyphs[k]) {
+            if (strcmp(sf->glyphs[k]->name, ".notdef") == 0) {
+                l = k;
+            }
+        }
+    }
+    if (l == -1)
+        l = sf->glyphcnt;
+    return l;
+}
+
 static int ff_apply_featurefile(lua_State * L)
 {
     SplineFont **sf;
@@ -255,7 +327,18 @@ static int ff_apply_featurefile(lua_State * L)
     sf = check_isfont(L, 1);
     fname = (char *) luaL_checkstring(L, 2);
     SFApplyFeatureFilename(*sf, fname);
-    return 0;
+    if (gww_error_count > 0) {
+	int i;
+	lua_newtable(L);
+	for (i = 0; i < gww_error_count; i++) {
+	    lua_pushstring(L, gww_errors[i]);
+	    lua_rawseti(L, -2, (i + 1));
+	}
+	gwwv_errors_free();
+    } else {
+	lua_pushnil(L);
+    }
+    return 1;
 }
 
 static int ff_apply_afmfile(lua_State * L)
@@ -265,13 +348,31 @@ static int ff_apply_afmfile(lua_State * L)
     sf = check_isfont(L, 1);
     fname = (char *) luaL_checkstring(L, 2);
     CheckAfmOfPostscript(*sf, fname, (*sf)->map);
-
-    return 0;
+    if (gww_error_count > 0) {
+	int i;
+	lua_newtable(L);
+	for (i = 0; i < gww_error_count; i++) {
+	    lua_pushstring(L, gww_errors[i]);
+	    lua_rawseti(L, -2, (i + 1));
+	}
+	gwwv_errors_free();
+    } else {
+	lua_pushnil(L);
+    }
+    return 1;
 }
 
 
 
 static void dump_intfield(lua_State * L, char *name, long int field)
+{
+    lua_checkstack(L, 2);
+    lua_pushstring(L, name);
+    lua_pushnumber(L, field);
+    lua_rawset(L, -3);
+}
+
+static void dump_uintfield(lua_State * L, char *name, unsigned int field)
 {
     lua_checkstack(L, 2);
     lua_pushstring(L, name);
@@ -629,20 +730,25 @@ void handle_splinecharlist(lua_State * L, struct splinecharlist *scl)
 /*  variant shape. The specifics depend on the selector and script */
 /*  fid is currently unused, but may, someday, be used to do ttcs */
 /* NOTE: GlyphInfo displays vs==-1 as vs==0, and fixes things up */
-void handle_altuni(lua_State * L, struct altuni *au)
+int handle_altuni(lua_State * L, struct altuni *au)
 {
     struct altuni *next = au;
+    int i = 0;
     int k = 1;
     lua_checkstack(L, 3);
     while (next != NULL) {
-        lua_newtable(L);
-        dump_intfield(L, "unicode", next->unienc);
-        if (next->vs != -1)
-            dump_intfield(L, "variant", next->vs);
-        /* dump_intfield(L, "fid", next->fid); */
-        lua_rawseti(L, -2, k++);
+	if (next->unienc<0x10FFF) {
+	    lua_newtable(L);
+	    dump_intfield(L, "unicode", next->unienc);
+	    i++;
+	    if (next->vs != -1)
+		dump_intfield(L, "variant", next->vs);
+	    /* dump_intfield(L, "fid", next->fid); */
+	    lua_rawseti(L, -2, k++);
+	}
         next = next->next;
     }
+    return i;
 }
 
 
@@ -770,6 +876,7 @@ void do_handle_liglist(lua_State * L, struct liglist *ligofme)
     dump_intfield(L, "ccnt", ligofme->ccnt);
 }
 
+
 void handle_liglist(lua_State * L, struct liglist *ligofme)
 {
     struct liglist *next;
@@ -834,6 +941,7 @@ void do_handle_anchorpoint(lua_State * L, struct anchorpoint *anchor)
     }
     lua_pop(L, 1);
 }
+
 
 void handle_anchorpoint(lua_State * L, struct anchorpoint *anchor)
 {
@@ -1015,9 +1123,14 @@ void handle_splinechar(lua_State * L, struct splinechar *glyph, int hasvmetrics)
     }
 
     if (glyph->altuni != NULL) {
+	int i;
         lua_newtable(L);
-        handle_altuni(L, glyph->altuni);
-        lua_setfield(L, -2, "altuni");
+        i = handle_altuni(L, glyph->altuni);
+	if (i>0) {
+	    lua_setfield(L, -2, "altuni");
+	} else {
+	    lua_pop(L,1);
+	}
     }
 
     if (glyph->tex_height != TEX_UNDEF)
@@ -1148,16 +1261,31 @@ void handle_pfminfo(lua_State * L, struct pfminfo pfm)
     dump_intfield(L, "firstchar", pfm.firstchar);
     dump_intfield(L, "lastchar", pfm.lastchar);
     lua_createtable(L, 0, 10);
-    dump_enumfield(L, "familytype", fix_range(panose_values_0_max, pfm.panose[0]), panose_values_0);
-    dump_enumfield(L, "serifstyle", fix_range(panose_values_1_max, pfm.panose[1]), panose_values_1);
-    dump_enumfield(L, "weight",     fix_range(panose_values_2_max, pfm.panose[2]), panose_values_2);
-    dump_enumfield(L, "proportion", fix_range(panose_values_3_max, pfm.panose[3]), panose_values_3);
-    dump_enumfield(L, "contrast",   fix_range(panose_values_4_max, pfm.panose[4]), panose_values_4);
-    dump_enumfield(L, "strokevariation", fix_range(panose_values_5_max, pfm.panose[5]), panose_values_5);
-    dump_enumfield(L, "armstyle",   fix_range(panose_values_6_max, pfm.panose[6]), panose_values_6);
-    dump_enumfield(L, "letterform", fix_range(panose_values_7_max, pfm.panose[7]), panose_values_7);
-    dump_enumfield(L, "midline",    fix_range(panose_values_8_max, pfm.panose[8]), panose_values_8);
-    dump_enumfield(L, "xheight",    fix_range(panose_values_9_max, pfm.panose[9]), panose_values_9);
+    dump_enumfield(L, "familytype",
+                   fix_range(panose_values_0_max, pfm.panose[0]),
+                   panose_values_0);
+    dump_enumfield(L, "serifstyle",
+                   fix_range(panose_values_1_max, pfm.panose[1]),
+                   panose_values_1);
+    dump_enumfield(L, "weight", fix_range(panose_values_2_max, pfm.panose[2]),
+                   panose_values_2);
+    dump_enumfield(L, "proportion",
+                   fix_range(panose_values_3_max, pfm.panose[3]),
+                   panose_values_3);
+    dump_enumfield(L, "contrast", fix_range(panose_values_4_max, pfm.panose[4]),
+                   panose_values_4);
+    dump_enumfield(L, "strokevariation",
+                   fix_range(panose_values_5_max, pfm.panose[5]),
+                   panose_values_5);
+    dump_enumfield(L, "armstyle", fix_range(panose_values_6_max, pfm.panose[6]),
+                   panose_values_6);
+    dump_enumfield(L, "letterform",
+                   fix_range(panose_values_7_max, pfm.panose[7]),
+                   panose_values_7);
+    dump_enumfield(L, "midline", fix_range(panose_values_8_max, pfm.panose[8]),
+                   panose_values_8);
+    dump_enumfield(L, "xheight", fix_range(panose_values_9_max, pfm.panose[9]),
+                   panose_values_9);
     lua_setfield(L, -2, "panose");
 
     dump_intfield(L, "fstype", pfm.fstype);
@@ -1210,10 +1338,10 @@ void handle_pfminfo(lua_State * L, struct pfminfo pfm)
 }
 
 
-void do_handle_enc(lua_State * L, struct enc *enc)
+char *do_handle_enc(lua_State * L, struct enc *enc)
 {
     int i;
-
+    char *ret = enc->enc_name;
     dump_stringfield(L, "enc_name", enc->enc_name);
     dump_intfield(L, "char_cnt", enc->char_cnt);
 
@@ -1262,6 +1390,7 @@ void do_handle_enc(lua_State * L, struct enc *enc)
     dump_stringfield(L, "iconv_name", enc->iconv_name);
 
     dump_intfield(L, "char_max", enc->char_max);
+    return ret;
 }
 
 void handle_enc(lua_State * L, struct enc *enc)
@@ -1320,9 +1449,12 @@ void handle_encmap(lua_State * L, struct encmap *map, int notdef_loc)
     }
 
     if (map->enc != NULL) {
+	char *encname;
         lua_newtable(L);
-        handle_enc(L, map->enc);
+        encname = do_handle_enc(L, map->enc);
         lua_setfield(L, -2, "enc");
+	lua_pushstring(L, encname);
+        lua_setfield(L, -2, "enc_name");
     }
 }
 
@@ -2062,7 +2194,9 @@ void handle_splinefont(lua_State * L, struct splinefont *sf)
     dump_floatfield(L, "uwidth", sf->uwidth);
     dump_intfield(L, "ascent", sf->ascent);
     dump_intfield(L, "descent", sf->descent);
-    dump_intfield(L, "uniqueid", sf->uniqueid);
+    if (sf->uniqueid!=0) {
+	dump_intfield(L, "uniqueid", sf->uniqueid);
+    }
     dump_intfield(L, "glyphcnt", sf->glyphcnt);
     dump_intfield(L, "glyphmax", sf->glyphmax);
     dump_intfield(L, "units_per_em", sf->units_per_em);
@@ -2267,7 +2401,9 @@ void handle_splinefont(lua_State * L, struct splinefont *sf)
     }
     dump_stringfield(L, "chosenname", sf->chosenname);
 
-    dump_intfield(L, "macstyle", sf->macstyle);
+    if (sf->macstyle!=-1) {
+	dump_intfield(L, "macstyle", sf->macstyle);
+    }
     dump_stringfield(L, "fondname", sf->fondname);
 
     dump_intfield(L, "design_size", sf->design_size);
@@ -2295,8 +2431,8 @@ void handle_splinefont(lua_State * L, struct splinefont *sf)
         lua_setfield(L, -2, "mark_classes");
     }
 
-    dump_intfield(L, "creationtime", sf->creationtime);
-    dump_intfield(L, "modificationtime", sf->modificationtime);
+    dump_uintfield(L, "creationtime", sf->creationtime);
+    dump_uintfield(L, "modificationtime", sf->modificationtime);
 
     dump_intfield(L, "os2_version", sf->os2_version);
     dump_intfield(L, "sfd_version", sf->sfd_version);
@@ -2393,6 +2529,902 @@ void do_ff_info(lua_State * L, SplineFont * sf)
 
 }
 
+typedef enum {
+    FK_table_version = 0,
+    FK_fontname,
+    FK_fullname,
+    FK_familyname,
+    FK_weight,
+    FK_copyright,
+    FK_filename,
+    FK_version,
+    FK_italicangle,
+    FK_upos,
+    FK_uwidth,
+    FK_ascent,
+    FK_descent,
+    FK_uniqueid,
+    FK_glyphcnt,
+    FK_glyphmax,
+    FK_units_per_em,
+    FK_lookups,
+    FK_glyphs,
+    FK_hasvmetrics,
+    FK_onlybitmaps,
+    FK_serifcheck,
+    FK_isserif,
+    FK_issans,
+    FK_encodingchanged,
+    FK_strokedfont,
+    FK_use_typo_metrics,
+    FK_weight_width_slope_only,
+    FK_head_optimized_for_cleartype,
+    FK_uni_interp,
+    FK_map,
+    FK_origname,
+    FK_private,
+    FK_xuid,
+    FK_pfminfo,
+    FK_names,
+    FK_cidinfo,
+    FK_subfonts,
+    FK_comments,
+    FK_fontlog,
+    FK_cvt_names,
+    FK_ttf_tables,
+    FK_ttf_tab_saved,
+    FK_texdata,
+    FK_anchor_classes,
+    FK_kerns,
+    FK_vkerns,
+    FK_gsub,
+    FK_gpos,
+    FK_sm,
+    FK_features,
+    FK_mm,
+    FK_chosenname,
+    FK_macstyle,
+    FK_fondname,
+    FK_design_size,
+    FK_fontstyle_id,
+    FK_fontstyle_name,
+    FK_design_range_bottom,
+    FK_design_range_top,
+    FK_strokewidth,
+    FK_mark_classes,
+    FK_creationtime,
+    FK_modificationtime,
+    FK_os2_version,
+    FK_sfd_version,
+    FK_math,
+    FK_validation_state,
+    FK_horiz_base,
+    FK_vert_base,
+    FK_extrema_bound,
+} font_key_values;
+
+const char *font_keys[] = {
+    "table_version",
+    "fontname",
+    "fullname",
+    "familyname",
+    "weight",
+    "copyright",
+    "filename",
+    "version",
+    "italicangle",
+    "upos",
+    "uwidth",
+    "ascent",
+    "descent",
+    "uniqueid",
+    "glyphcnt",
+    "glyphmax",
+    "units_per_em",
+    "lookups",
+    "glyphs",
+    "hasvmetrics",
+    "onlybitmaps",
+    "serifcheck",
+    "isserif",
+    "issans",
+    "encodingchanged",
+    "strokedfont",
+    "use_typo_metrics",
+    "weight_width_slope_only",
+    "head_optimized_for_cleartype",
+    "uni_interp",
+    "map",
+    "origname",
+    "private",
+    "xuid",
+    "pfminfo",
+    "names",
+    "cidinfo",
+    "subfonts",
+    "comments",
+    "fontlog",
+    "cvt_names",
+    "ttf_tables",
+    "ttf_tab_saved",
+    "texdata",
+    "anchor_classes",
+    "kerns",
+    "vkerns",
+    "gsub",
+    "gpos",
+    "sm",
+    "features",
+    "mm",
+    "chosenname",
+    "macstyle",
+    "fondname",
+    "design_size",
+    "fontstyle_id",
+    "fontstyle_name",
+    "design_range_bottom",
+    "design_range_top",
+    "strokewidth",
+    "mark_classes",
+    "creationtime",
+    "modificationtime",
+    "os2_version",
+    "sfd_version",
+    "math",
+    "validation_state",
+    "horiz_base",
+    "vert_base",
+    "extrema_bound",
+    NULL
+};
+
+
+typedef enum {
+    GK_name = 0,
+    GK_unicode,
+    GK_boundingbox,
+    GK_vwidth,
+    GK_width,
+    GK_lsidebearing,
+    GK_class,
+    GK_kerns,
+    GK_vkerns,
+    GK_dependents,
+    GK_lookups,
+    GK_ligatures,
+    GK_comment,
+    GK_anchors,
+    GK_altuni,
+    GK_tex_height,
+    GK_tex_depth,
+    GK_is_extended_shape,
+    GK_italic_correction,
+    GK_top_accent,
+    GK_vert_variants,
+    GK_horiz_variants,
+    GK_mathkern,
+} font_glyph_key_values;
+
+const char *font_glyph_keys[] = {
+    "name",
+    "unicode",
+    "boundingbox",
+    "vwidth",
+    "width",
+    "lsidebearing",
+    "class",
+    "kerns",
+    "vkerns",
+    "dependents",
+    "lookups",
+    "ligatures",
+    "comment",
+    "anchors",
+    "altuni",
+    "tex_height",
+    "tex_depth",
+    "is_extended_shape",
+    "italic_correction",
+    "top_accent",
+    "vert_variants",
+    "horiz_variants",
+    "mathkern",
+    NULL
+};
+
+
+static int ff_fields(lua_State * L)
+{
+    int i;
+    const char **fields = NULL;
+    if (is_userdata(L, 1, FONT_METATABLE) ||
+	is_userdata(L, 1, FONT_SUBFONT_METATABLE)) {
+        fields = font_keys;
+    } else if (is_userdata(L, 1, FONT_GLYPH_METATABLE)) {
+        fields = font_glyph_keys;
+    }
+    if (fields != NULL) {
+        lua_newtable(L);
+        for (i = 0; fields[i] != NULL; i++) {
+            lua_pushstring(L, fields[i]);
+            lua_rawseti(L, -2, (i + 1));
+        }
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+
+
+static int ff_glyphs_index(lua_State * L)
+{
+
+    SplineFont *sf;
+    int gid = 0;
+    int l = -1;
+    int fix_notdef = 0;
+    lua_pushstring(L, "__sf");
+    lua_rawget(L, 1);
+    /* sf = *check_isfont(L, -1); */
+    if (!(is_userdata(L, -1, FONT_METATABLE) ||
+	  is_userdata(L, -1, FONT_SUBFONT_METATABLE))) {
+        return luaL_error(L,
+                          "fontloader.__index: expected a (sub)font userdata object\n");
+    }
+    sf = *((SplineFont **)lua_touserdata(L, -1));
+
+    lua_pop(L, 1);
+    gid = luaL_checkinteger(L, 2);
+    if (gid < 0 || gid >= sf->glyphmax) {
+        return luaL_error(L, "fontloader.glyphs.__index: index is invalid\n");
+    }
+    /* This after-the-fact type discovery is not brilliant,
+       I should really add a 'format' key in the structure */
+    if ((sf->origname != NULL) &&
+        (strmatch(sf->origname + strlen(sf->origname) - 4, ".pfa") == 0 ||
+         strmatch(sf->origname + strlen(sf->origname) - 4, ".pfb") == 0)) {
+        fix_notdef = 1;
+    }
+    /* some code to ensure that the .notdef ends up in slot 0 
+       (this will actually be enforced by the CFF writer) */
+    if (fix_notdef) {
+        l = notdef_loc(sf);
+        /* now l is the .notdef location, adjust gid if needed */
+        if (l == sf->glyphcnt) {        /* no .notdef at all, will be created at zero */
+            if (gid == 0) {
+                gid = l;        /* .notdef was added at end */
+            } else {
+                gid--;          /* f.glyphs[gid] == sf->glyphs[gid-1] */
+            }
+        } else if (l != 0) {
+            if (gid == 0) {
+                gid = l;
+            } else if (gid < l) {
+                gid--;
+            }
+        }
+    }
+    /* push the glyph */
+    if (sf->glyphs[gid] && sf->glyphs[gid] != (struct splinechar *)-1) {
+        lua_ff_pushglyph(L, sf->glyphs[gid]);
+    } else {
+	lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int ff_glyph_index(lua_State * L)
+{
+    struct splinechar *glyph;
+    int key;
+    glyph = *check_isglyph(L, 1);
+    if (glyph == NULL) {
+        return luaL_error(L,
+                          "fontloader.glyph.__index: glyph is nonexistent\n");
+    }
+    if (!lua_isstring(L, 2)) {  /* 1 == 'font' */
+        return luaL_error(L,
+                          "fontloader.glyph.__index: can only be indexed by string\n");
+    }
+    key = luaL_checkoption(L, 2, NULL, font_glyph_keys);
+    switch (key) {
+    case GK_name:
+        lua_pushstring(L, glyph->name);
+        break;
+    case GK_unicode:
+        lua_pushnumber(L, glyph->unicodeenc);
+        break;
+    case GK_boundingbox:
+        if (glyph->xmax == 0 && glyph->ymax == 0 && glyph->xmin == 0
+            && glyph->ymin == 0) {
+            DBounds bb;
+            SplineCharFindBounds(glyph, &bb);
+            glyph->xmin = bb.minx;
+            glyph->ymin = bb.miny;
+            glyph->xmax = bb.maxx;
+            glyph->ymax = bb.maxy;
+        }
+        lua_createtable(L, 4, 0);
+        lua_pushnumber(L, 1);
+        lua_pushnumber(L, glyph->xmin);
+        lua_rawset(L, -3);
+        lua_pushnumber(L, 2);
+        lua_pushnumber(L, glyph->ymin);
+        lua_rawset(L, -3);
+        lua_pushnumber(L, 3);
+        lua_pushnumber(L, glyph->xmax);
+        lua_rawset(L, -3);
+        lua_pushnumber(L, 4);
+        lua_pushnumber(L, glyph->ymax);
+        lua_rawset(L, -3);
+        break;
+    case GK_vwidth:
+        lua_pushnumber(L, glyph->vwidth);
+        break;
+    case GK_width:
+        lua_pushnumber(L, glyph->width);
+        break;
+    case GK_lsidebearing:
+        lua_pushnumber(L, glyph->lsidebearing);
+        break;
+    case GK_class:
+        if (glyph->glyph_class > 0) {
+            lua_pushstring(L, glyph_class_enum[glyph->glyph_class]);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_kerns:
+        if (glyph->kerns != NULL) {
+            lua_newtable(L);
+            handle_kernpair(L, glyph->kerns);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_vkerns:
+        if (glyph->vkerns != NULL) {
+            lua_newtable(L);
+            handle_kernpair(L, glyph->vkerns);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_dependents:
+        if (glyph->dependents != NULL) {
+            lua_newtable(L);
+            handle_splinecharlist(L, glyph->dependents);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_lookups:
+        if (glyph->possub != NULL) {
+            lua_newtable(L);
+            handle_generic_pst(L, glyph->possub);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_ligatures:
+        if (glyph->ligofme != NULL) {
+            lua_newtable(L);
+            handle_liglist(L, glyph->ligofme);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_comment:
+        lua_pushstring(L, glyph->comment);
+        break;
+    case GK_anchors:
+        if (glyph->anchor != NULL) {
+            lua_newtable(L);
+            handle_anchorpoint(L, glyph->anchor);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_altuni:
+        if (glyph->altuni != NULL) {
+            lua_newtable(L);
+            handle_altuni(L, glyph->altuni);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_tex_height:
+        if (glyph->tex_height != TEX_UNDEF) {
+            lua_pushnumber(L, glyph->tex_height);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_tex_depth:
+        if (glyph->tex_height != TEX_UNDEF) {
+            lua_pushnumber(L, glyph->tex_depth);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_is_extended_shape:
+        lua_pushnumber(L, glyph->is_extended_shape);
+        break;
+    case GK_italic_correction:
+        if (glyph->italic_correction != TEX_UNDEF) {
+            lua_pushnumber(L, glyph->italic_correction);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_top_accent:
+        if (glyph->top_accent_horiz != TEX_UNDEF) {
+            lua_pushnumber(L, glyph->top_accent_horiz);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_vert_variants:
+        if (glyph->vert_variants != NULL) {
+            lua_newtable(L);
+            handle_glyphvariants(L, glyph->vert_variants);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_horiz_variants:
+        if (glyph->horiz_variants != NULL) {
+            lua_newtable(L);
+            handle_glyphvariants(L, glyph->horiz_variants);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case GK_mathkern:
+        if (glyph->mathkern != NULL) {
+            lua_newtable(L);
+            handle_mathkern(L, glyph->mathkern);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    default:
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+
+static int ff_index(lua_State * L)
+{
+    SplineFont *sf;
+    int k, key;
+    /* sf = *check_isfont(L, 1); */
+    if (!(is_userdata(L, 1, FONT_METATABLE) ||
+	  is_userdata(L, 1, FONT_SUBFONT_METATABLE))) {
+        return luaL_error(L,
+                          "fontloader.__index: expected a (sub)font userdata object\n");
+    }
+    sf = *((SplineFont **)lua_touserdata(L, 1));
+  
+    if (sf == NULL) {
+        return luaL_error(L,
+                          "fontloader.__index: font is nonexistent or freed already\n");
+    }
+    if (!lua_isstring(L, 2)) {  /* 1 == 'font' */
+        return luaL_error(L,
+                          "fontloader.__index: can only be indexed by string\n");
+    }
+    key = luaL_checkoption(L, 2, NULL, font_keys);
+    switch (key) {
+    case FK_table_version:
+        lua_pushstring(L, LUA_OTF_VERSION);
+        break;
+    case FK_fontname:
+        lua_pushstring(L, sf->fontname);
+        break;
+    case FK_fullname:
+        lua_pushstring(L, sf->fullname);
+        break;
+    case FK_familyname:
+        lua_pushstring(L, sf->familyname);
+        break;
+    case FK_weight:
+        lua_pushstring(L, sf->weight);
+        break;
+    case FK_copyright:
+        lua_pushstring(L, sf->copyright);
+        break;
+    case FK_filename:
+        lua_pushstring(L, sf->filename);
+        break;
+    case FK_version:
+        lua_pushstring(L, sf->version);
+        break;
+    case FK_italicangle:
+        lua_pushnumber(L, sf->italicangle);
+        break;
+    case FK_upos:
+        lua_pushnumber(L, sf->upos);
+        break;
+    case FK_uwidth:
+        lua_pushnumber(L, sf->uwidth);
+        break;
+    case FK_ascent:
+        lua_pushnumber(L, sf->ascent);
+        break;
+    case FK_descent:
+        lua_pushnumber(L, sf->descent);
+        break;
+    case FK_uniqueid:
+        lua_pushnumber(L, sf->uniqueid);
+        break;
+    case FK_glyphcnt:
+        lua_pushnumber(L, sf->glyphcnt);
+        break;
+    case FK_glyphmax:
+        lua_pushnumber(L, sf->glyphmax);
+        break;
+    case FK_units_per_em:
+        lua_pushnumber(L, sf->units_per_em);
+        break;
+    case FK_lookups:
+        if (sf->possub != NULL) {
+            lua_newtable(L);
+            handle_generic_fpst(L, sf->possub);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_glyphs:
+        lua_newtable(L);        /* the virtual glyph table */
+        lua_pushstring(L, "__sf");
+        lua_pushvalue(L, 1);    /* that is our font */
+        lua_rawset(L, -3);
+        luaL_getmetatable(L, FONT_GLYPHS_METATABLE);
+        lua_setmetatable(L, -2);        /* assign the metatable */
+        break;
+    case FK_hasvmetrics:
+        lua_pushnumber(L, sf->hasvmetrics);
+        break;
+    case FK_onlybitmaps:
+        lua_pushnumber(L, sf->onlybitmaps);
+        break;
+    case FK_serifcheck:
+        lua_pushnumber(L, sf->serifcheck);
+        break;
+    case FK_isserif:
+        lua_pushnumber(L, sf->isserif);
+        break;
+    case FK_issans:
+        lua_pushnumber(L, sf->issans);
+        break;
+    case FK_encodingchanged:
+        lua_pushnumber(L, sf->encodingchanged);
+        break;
+    case FK_strokedfont:
+        lua_pushnumber(L, sf->strokedfont);
+        break;
+    case FK_use_typo_metrics:
+        lua_pushnumber(L, sf->use_typo_metrics);
+        break;
+    case FK_weight_width_slope_only:
+        lua_pushnumber(L, sf->weight_width_slope_only);
+        break;
+    case FK_head_optimized_for_cleartype:
+        lua_pushnumber(L, sf->head_optimized_for_cleartype);
+        break;
+    case FK_uni_interp:
+        lua_pushstring(L, uni_interp_enum[(sf->uni_interp + 1)]);
+        break;
+    case FK_map:
+        if (sf->map != NULL) {
+            lua_newtable(L);
+            handle_encmap(L, sf->map, notdef_loc(sf));
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_origname:
+        lua_pushstring(L, sf->origname);
+        break;
+    case FK_private:
+        if (sf->private != NULL) {
+            lua_newtable(L);
+            handle_psdict(L, sf->private);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_xuid:
+        lua_pushstring(L, sf->xuid);
+        break;
+    case FK_pfminfo:
+        lua_createtable(L, 0, 40);
+        handle_pfminfo(L, sf->pfminfo);
+        break;
+    case FK_names:
+        if (sf->names != NULL) {
+            lua_newtable(L);
+            handle_ttflangname(L, sf->names);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_cidinfo:
+        lua_createtable(L, 0, 4);
+        dump_stringfield(L, "registry", sf->cidregistry);
+        dump_stringfield(L, "ordering", sf->ordering);
+        dump_intfield(L, "version", sf->cidversion);
+        dump_intfield(L, "supplement", sf->supplement);
+        break;
+    case FK_subfonts:
+        if (sf->subfontcnt > 0) {
+            lua_createtable(L, sf->subfontcnt, 0);
+            for (k = 0; k < sf->subfontcnt; k++) {
+                lua_ff_pushsubfont(L, sf->subfonts[k]);
+                lua_rawseti(L, -2, (k + 1));
+            }
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_comments:
+        lua_pushstring(L, sf->comments);
+        break;
+    case FK_fontlog:
+        lua_pushstring(L, sf->fontlog);
+        break;
+    case FK_cvt_names:
+        if (sf->cvt_names != NULL) {
+            lua_newtable(L);
+            for (k = 0; sf->cvt_names[k] != END_CVT_NAMES; ++k) {
+                lua_pushstring(L, sf->cvt_names[k]);
+                lua_rawseti(L, -2, (k + 1));
+            }
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_ttf_tables:
+        if (sf->ttf_tables != NULL) {
+            lua_newtable(L);
+            handle_ttf_table(L, sf->ttf_tables);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_ttf_tab_saved:
+        if (sf->ttf_tab_saved != NULL) {
+            lua_newtable(L);
+            handle_ttf_table(L, sf->ttf_tab_saved);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_texdata:
+        if (sf->texdata.type != tex_unset) {
+            lua_newtable(L);
+            dump_enumfield(L, "type", sf->texdata.type, tex_type_enum);
+            lua_newtable(L);
+            for (k = 0; k < 22; k++) {
+                lua_pushnumber(L, k);
+                lua_pushnumber(L, sf->texdata.params[k]);
+                lua_rawset(L, -3);
+            }
+            lua_setfield(L, -2, "params");
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_anchor_classes:
+        if (sf->anchor != NULL) {
+            lua_newtable(L);
+            handle_anchorclass(L, sf->anchor);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_kerns:
+        if (sf->kerns != NULL) {
+            lua_newtable(L);
+            handle_kernclass(L, sf->kerns);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_vkerns:
+        if (sf->vkerns != NULL) {
+            lua_newtable(L);
+            handle_kernclass(L, sf->vkerns);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_gsub:
+        if (sf->gsub_lookups != NULL) {
+            lua_newtable(L);
+            handle_lookup(L, sf->gsub_lookups, sf);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_gpos:
+        if (sf->gpos_lookups != NULL) {
+            lua_newtable(L);
+            handle_lookup(L, sf->gpos_lookups, sf);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_sm:
+        if (sf->sm != NULL) {
+            lua_newtable(L);
+            handle_generic_asm(L, sf->sm);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_features:
+        if (sf->features != NULL) {
+            lua_newtable(L);
+            handle_macfeat(L, sf->features);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_mm:
+        if (sf->mm != NULL) {
+            lua_newtable(L);
+            handle_mmset(L, sf->mm);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_chosenname:
+        lua_pushstring(L, sf->chosenname);
+        break;
+    case FK_macstyle:
+        lua_pushnumber(L, sf->macstyle);
+        break;
+    case FK_fondname:
+        lua_pushstring(L, sf->fondname);
+        break;
+    case FK_design_size:
+        lua_pushnumber(L, sf->design_size);
+        break;
+    case FK_fontstyle_id:
+        lua_pushnumber(L, sf->fontstyle_id);
+        break;
+    case FK_fontstyle_name:
+        if (sf->fontstyle_name != NULL) {
+            lua_newtable(L);
+            handle_otfname(L, sf->fontstyle_name);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_design_range_bottom:
+        lua_pushnumber(L, sf->design_range_bottom);
+        break;
+    case FK_design_range_top:
+        lua_pushnumber(L, sf->design_range_top);
+        break;
+    case FK_strokewidth:
+        lua_pushnumber(L, sf->strokewidth);
+        break;
+    case FK_mark_classes:
+        if (sf->mark_class_cnt > 0) {
+            lua_newtable(L);
+            for (k = 0; k < sf->mark_class_cnt; k++) {
+                if (sf->mark_class_names[k] != NULL) {
+                    lua_pushstring(L, sf->mark_class_names[k]);
+                    lua_pushstring(L, sf->mark_classes[k]);
+                    lua_rawset(L, -3);
+                }
+            }
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_creationtime:
+        lua_pushnumber(L, sf->creationtime);
+        break;
+    case FK_modificationtime:
+        lua_pushnumber(L, sf->modificationtime);
+        break;
+    case FK_os2_version:
+        lua_pushnumber(L, sf->os2_version);
+        break;
+    case FK_sfd_version:
+        lua_pushnumber(L, sf->sfd_version);
+        break;
+    case FK_math:
+        if (sf->MATH != NULL) {
+            lua_newtable(L);
+            handle_MATH(L, sf->MATH);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_validation_state:
+        if (sf->loadvalidation_state != 0) {
+            int val, st;
+            lua_newtable(L);
+            val = 1;
+            st = sf->loadvalidation_state;
+            if (st & lvs_bad_ps_fontname) {
+                lua_pushliteral(L, "bad_ps_fontname");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_glyph_table) {
+                lua_pushliteral(L, "bad_glyph_table");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_cff_table) {
+                lua_pushliteral(L, "bad_cff_table");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_metrics_table) {
+                lua_pushliteral(L, "bad_metrics_table");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_cmap_table) {
+                lua_pushliteral(L, "bad_cmap_table");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_bitmaps_table) {
+                lua_pushliteral(L, "bad_bitmaps_table");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_gx_table) {
+                lua_pushliteral(L, "bad_gx_table");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_ot_table) {
+                lua_pushliteral(L, "bad_ot_table");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_os2_version) {
+                lua_pushliteral(L, "bad_os2_version");
+                lua_rawseti(L, -2, val++);
+            }
+            if (st & lvs_bad_sfnt_header) {
+                lua_pushliteral(L, "bad_sfnt_header");
+                lua_rawseti(L, -2, val++);
+            }
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_horiz_base:
+        if (sf->horiz_base != NULL) {
+            lua_newtable(L);
+            handle_base(L, sf->horiz_base);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_vert_base:
+        if (sf->vert_base != NULL) {
+            lua_newtable(L);
+            handle_base(L, sf->vert_base);
+        } else {
+            lua_pushnil(L);
+        }
+        break;
+    case FK_extrema_bound:
+        lua_pushnumber(L, sf->extrema_bound);
+        break;
+    default:                   /* can't actually happen, |luaL_checkoption| raises an error instead */
+        lua_pushnil(L);
+        break;
+    }
+    return 1;
+}
+
+
 static int ff_info(lua_State * L)
 {
     SplineFont *sf;
@@ -2409,6 +3441,7 @@ static int ff_info(lua_State * L)
     }
     /* test fontname for existance */
     if ((l = fopen(fontname, "r"))) {
+        recorder_record_input(fontname);
         fclose(l);
     } else {
         lua_pushnil(L);
@@ -2458,6 +3491,7 @@ static void ff_do_cff(SplineFont * sf, char *filename, unsigned char **buf,
         (filename, sf, ff_cff, bsizes, bf_none, flags, map, ly_fore)) {
         /* success */
         f = fopen(filename, "rb");
+        recorder_record_input(filename);
         readbinfile(f, buf, bufsiz);
         /*fprintf(stdout,"\n%s => CFF, size: %d\n", sf->filename, *bufsiz); */
         fclose(f);
@@ -2509,50 +3543,20 @@ int ff_get_ttc_index(char *ffname, char *psname)
     while (sf != NULL) {
         if (strcmp(sf->fontname, psname) == 0) {
             index = i;
-            break;
         }
         i++;
         sf = sf->next;
     }
-    return index;
+    if (index>=0)
+	return (i-index-1);
+    return -1;
 }
-
-static int warning_given = 0;
-
-static int ffold_info(lua_State * L)
-{
-    if (warning_given < 5) {
-        fprintf(stderr,
-                "Warning: The 'fontforge' table has been renamed to 'fontloader'.\n");
-        fprintf(stderr, "  Please update your source file(s) accordingly.\n");
-        warning_given++;
-    }
-    return ff_info(L);
-}
-
-static int ffold_open(lua_State * L)
-{
-    fprintf(stderr,
-            "Warning: The 'fontforge' table has been renamed to 'fontloader'.\n");
-    fprintf(stderr, "  Please update your source file(s) accordingly.\n");
-    return ff_open(L);
-}
-
-
-static struct luaL_reg fflib[] = {
-    {"open", ffold_open},
-    {"info", ffold_info},
-    {"close", ff_close},
-    {"apply_afmfile", ff_apply_afmfile},
-    {"apply_featurefile", ff_apply_featurefile},
-    {"to_table", ff_make_table},
-    {NULL, NULL}
-};
 
 static struct luaL_reg fllib[] = {
     {"open", ff_open},
     {"info", ff_info},
     {"close", ff_close},
+    {"fields", ff_fields},
     {"apply_afmfile", ff_apply_afmfile},
     {"apply_featurefile", ff_apply_featurefile},
     {"to_table", ff_make_table},
@@ -2561,6 +3565,7 @@ static struct luaL_reg fllib[] = {
 
 static const struct luaL_reg fflib_m[] = {
     {"__gc", ff_close},         /* doesnt work yet! */
+    {"__index", ff_index},
     {NULL, NULL}                /* sentinel */
 };
 
@@ -2577,7 +3582,28 @@ int luaopen_ff(lua_State * L)
     SaveTablesPref = "VORG,JSTF,acnt,bsln,fdsc,fmtx,hsty,just,trak,Zapf,LINO";
     luaL_newmetatable(L, FONT_METATABLE);
     luaL_register(L, NULL, fflib_m);
-    luaL_openlib(L, "fontforge", fflib, 0);
+
+    /* virtual subfont table */
+    luaL_newmetatable(L, FONT_SUBFONT_METATABLE);
+    lua_pushstring(L, "__index");
+    lua_pushcfunction(L, ff_index);
+    lua_rawset(L, -3);
+    lua_pop(L, 1);
+    /* virtual glyphs table */
+    luaL_newmetatable(L, FONT_GLYPHS_METATABLE);
+    lua_pushstring(L, "__index");
+    lua_pushcfunction(L, ff_glyphs_index);
+    lua_rawset(L, -3);
+    lua_pop(L, 1);
+    /* virtual glyph table */
+    luaL_newmetatable(L, FONT_GLYPH_METATABLE);
+    lua_pushstring(L, "__index");
+    lua_pushcfunction(L, ff_glyph_index);
+    lua_rawset(L, -3);
+    lua_pop(L, 1);
+
+
     luaL_openlib(L, "fontloader", fllib, 0);
+
     return 1;
 }

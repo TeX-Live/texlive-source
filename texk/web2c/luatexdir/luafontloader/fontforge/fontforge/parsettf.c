@@ -5005,7 +5005,7 @@ return;
 			} else {
 			    if ( dounicode )
 				info->chars[startglyph+i-start]->unicodeenc = i;
-			    if ( map!=NULL && i < map->enccount )
+			    if ( map!=NULL && i < map->enccount && i>=0)
 				map->map[i] = startglyph+i-start;
 			}
 		    }
@@ -5263,7 +5263,7 @@ static void readttfpostnames(FILE *ttf,struct ttfinfo *info) {
 	free(info->chars[i]->name);	/* If it's a null string get rid of it */
 	if ( i==0 )
 	    name = ".notdef";
-	else if ( info->chars[i]->unicodeenc==-1 ) {
+	else if ( info->chars[i]->unicodeenc<0 ) {
 	    /* Do this later */;
 	    name = NULL;
 	} else {

@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: postlinebreak.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/postlinebreak.w $";
+    "$Id: postlinebreak.w 3904 2010-10-01 07:42:12Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/postlinebreak.w $";
 
 @ So far we have gotten a little way into the |line_break| routine, having
 covered its important |try_break| subroutine. Now let's consider the
@@ -323,8 +323,8 @@ void ext_post_line_break(int paragraph_dir,
                 delete_attribute_ref(node_attr(k));
                 node_attr(k) = node_attr(p);
                 add_node_attr_ref(node_attr(k));
-                vlink(k) = vlink(ptmp);
-                vlink(ptmp) = k;
+                try_couple_nodes(k, vlink(ptmp));
+                couple_nodes(ptmp,k);
                 if (ptmp == q)
                     q = vlink(q);
             }
@@ -335,13 +335,12 @@ void ext_post_line_break(int paragraph_dir,
             /* Put the \.{\\rightskip} glue after node |q|; */
             halfword r = new_glue((right_skip == null ? null : copy_node(right_skip)));
 	    glue_ref_count(glue_ptr(r)) = null;
-	    subtype(r) = right_skip_code;
-            vlink(r) = vlink(q);
+	    subtype(r) = right_skip_code+1;
+            try_couple_nodes(r,vlink(q));
             delete_attribute_ref(node_attr(r));
             node_attr(r) = node_attr(q);
             add_node_attr_ref(node_attr(r));
-            vlink(q) = r;
-            alink(r) = q;
+            couple_nodes(q,r);
             q = r;
         }
 
@@ -361,14 +360,14 @@ void ext_post_line_break(int paragraph_dir,
             /* omega bits: */
             r = copy_node_list(passive_left_box(cur_p));
             s = vlink(q);
-            vlink(r) = q;
+            couple_nodes(r,q);
             q = r;
             if ((cur_line == cur_list.pg_field + 1) && (s != null)) {
                 if (type(s) == hlist_node) {
                     if (list_ptr(s) == null) {
                         q = vlink(q);
-                        vlink(r) = vlink(s);
-                        vlink(s) = r;
+                        try_couple_nodes(r,vlink(s));
+                        try_couple_nodes(s, r);
                     }
                 }
             }
@@ -383,19 +382,18 @@ void ext_post_line_break(int paragraph_dir,
                 delete_attribute_ref(node_attr(k));
                 node_attr(k) = node_attr(q);
                 add_node_attr_ref(node_attr(k));
-                vlink(k) = q;
+                couple_nodes(k,q);
                 q = k;
             }
-        };
+        }
         if (left_skip != zero_glue) {
             r = new_glue(copy_node(left_skip));
 	    glue_ref_count(glue_ptr(r)) = null;
-	    subtype(r) = left_skip_code;
+	    subtype(r) = left_skip_code+1;
             delete_attribute_ref(node_attr(r));
             node_attr(r) = node_attr(q);
             add_node_attr_ref(node_attr(r));
-            vlink(r) = q;
-            alink(q) = r;
+            couple_nodes(r,q);
             q = r;
         }
         /* /Put the \.{\\leftskip} glue at the left and detach this line; */
@@ -541,7 +539,7 @@ void ext_post_line_break(int paragraph_dir,
                         break;
                 }
                 r = q;
-            };
+            }
             if (r != temp_head) {
                 vlink(r) = null;
                 flush_node_list(vlink(temp_head));

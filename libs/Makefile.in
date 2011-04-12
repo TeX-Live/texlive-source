@@ -57,6 +57,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../m4/kpse-options.m4 \
 	$(top_srcdir)/../m4/kpse-pkgs.m4 \
+	$(top_srcdir)/../m4/kpse-poppler-flags.m4 \
 	$(top_srcdir)/../m4/kpse-ptexenc-flags.m4 \
 	$(top_srcdir)/../m4/kpse-setup.m4 \
 	$(top_srcdir)/../m4/kpse-t1lib-flags.m4 \
@@ -122,6 +123,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../libs/graphite/ac/withenable.ac \
 	$(top_srcdir)/../libs/zziplib/ac/withenable.ac \
 	$(top_srcdir)/../libs/xpdf/ac/withenable.ac \
+	$(top_srcdir)/../libs/poppler/ac/withenable.ac \
 	$(top_srcdir)/../libs/gd/ac/withenable.ac \
 	$(top_srcdir)/../libs/freetype2/ac/withenable.ac \
 	$(top_srcdir)/../libs/freetype/ac/withenable.ac \

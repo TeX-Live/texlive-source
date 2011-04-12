@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfileio.h 3395 2010-01-27 11:40:08Z taco $ */
+/* $Id: texfileio.h 4005 2010-11-29 11:52:43Z taco $ */
 
 #ifndef TEXFILEIO_H
 #  define TEXFILEIO_H
@@ -116,6 +116,7 @@ extern boolean log_opened;      /* has the transcript file been opened? */
 extern unsigned char *texmf_log_name;   /* full name of the log file */
 
 extern void open_log_file(void);
+extern char *get_full_log_name (void);
 extern void start_input(void);
 
 extern int open_outfile(FILE ** f, const char *name, const char *mode);
@@ -129,7 +130,6 @@ extern int readbinfile(FILE * f, unsigned char **b, int *s);
 
 #  define read_tfm_file  readbinfile
 #  define read_vf_file   readbinfile
-#  define read_ocp_file  readbinfile
 #  define read_data_file readbinfile
 
 extern boolean openinnameok(const_string);

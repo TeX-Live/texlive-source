@@ -28,14 +28,14 @@
 #include <ustring.h>
 
 static const char _svn_version[] =
-    "$Id: ffdummies.c 3706 2010-05-28 07:21:15Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/luafontloader/src/ffdummies.c $";
+    "$Id: ffdummies.c 3738 2010-07-13 10:28:24Z oneiros $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/luafontloader/src/ffdummies.c $";
 
 
 /* fix for non-gcc compilation: */
 #if !defined(__GNUC__) || (__GNUC__ < 2)
-# define __attribute__(x)
-#endif /* !defined(__GNUC__) || (__GNUC__ < 2) */
+#  define __attribute__(x)
+#endif                          /* !defined(__GNUC__) || (__GNUC__ < 2) */
 
 char **gww_errors = NULL;
 int gww_error_count = 0;
@@ -62,7 +62,7 @@ static void LUAUI_IError(const char *format, ...)
     l = strlen("Internal Error: ");
     snprintf(buffer, sizeof(buffer), "Internal Error: ");
     va_start(ap, format);
-    vsnprintf(buffer+l, sizeof(buffer)-l, format, ap);
+    vsnprintf(buffer + l, sizeof(buffer) - l, format, ap);
     va_end(ap);
     str = xstrdup((char *) buffer);
     gww_errors = realloc(gww_errors, (gww_error_count + 2) * sizeof(char *));

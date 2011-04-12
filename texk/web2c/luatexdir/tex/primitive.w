@@ -22,8 +22,8 @@
 
 
 static const char _svn_version[] =
-    "$Id: primitive.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/primitive.w $";
+    "$Id: primitive.w 4130 2011-04-11 13:27:56Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/primitive.w $";
 
 
 @ Control sequences are stored and retrieved by means of a fairly standard hash
@@ -127,9 +127,9 @@ void ini_init_primitives(void)
 static halfword compute_hash(const char *j, unsigned int l,
                              halfword prime_number)
 {
-    unsigned int k;
+    int k;
     halfword h = (unsigned char) *j;
-    for (k = 1; k <= l - 1; k++) {
+    for (k = 1; k <= (int)(l - 1); k++) {
         h = h + h + (unsigned char) *(j + k);
         while (h >= prime_number)
             h = h - prime_number;
@@ -389,6 +389,7 @@ static halfword insert_id(halfword p, const unsigned char *j, unsigned int l)
         append_char(*k);
     cs_text(p) = make_string();
     cur_length = saved_cur_length;
+    xfree(cur_string);
     cur_string = saved_cur_string;
     cur_string_size = saved_cur_string_size;
     incr(cs_count);
@@ -491,7 +492,7 @@ static void prim_cmd_chr(quarterword cmd, halfword chr_code)
     if (cmd <= last_cmd &&
         idx >= 0 && idx < prim_data[cmd].subids &&
         prim_data[cmd].names != NULL && prim_data[cmd].names[idx] != 0) {
-        tprint("\\");
+        tprint_esc("");
         print(prim_data[cmd].names[idx]);
     } else {
         /* TEX82 didn't print the |cmd,idx| information, but it may be useful */
@@ -608,13 +609,6 @@ void print_cmd_chr(quarterword cmd, halfword chr_code)
             tprint(")]");
 
         }
-        break;
-    case set_ocp_cmd:
-        tprint("select ocp ");
-        slow_print(ocp_name(chr_code));
-        break;
-    case set_ocp_list_cmd:
-        tprint("select ocp list ");
         break;
     case assign_glue_cmd:
     case assign_mu_glue_cmd:

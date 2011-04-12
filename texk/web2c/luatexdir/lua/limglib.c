@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: limglib.c 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/limglib.c $";
+    "$Id: limglib.c 4051 2011-01-09 22:41:33Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/limglib.c $";
 
 #include <stdio.h>
 #include <string.h>
@@ -94,9 +94,9 @@ static const parm_struct img_parms[] = {
     {NULL, P__SENTINEL}
 };
 
-#define imgtype_max 5
+#define imgtype_max 6
 const char *imgtype_s[] =
-    { "none", "pdf", "png", "jpg", "jbig2", "stream", NULL };
+    { "none", "pdf", "png", "jpg", "jp2", "jbig2", "stream", NULL };
 
 #define pagebox_max 5
 const char *pdfboxspec_s[] =
@@ -558,8 +558,8 @@ static void setup_image(PDF pdf, image * a, wrtype_e writetype)
     read_scale_img(a);
     if (img_objnum(ad) == 0) {  /* latest needed just before out_img() */
         pdf->ximage_count++;
-        pdf_create_obj(pdf, obj_type_ximage, pdf->ximage_count);
-        img_objnum(ad) = pdf->obj_ptr;
+        img_objnum(ad) =
+            pdf_create_obj(pdf, obj_type_ximage, pdf->ximage_count);
         img_index(ad) = pdf->ximage_count;
         idict_to_array(ad);     /* now ad is read-only */
         obj_data_ptr(pdf, pdf->obj_ptr) = img_index(ad);
@@ -609,6 +609,8 @@ static int l_write_image(lua_State * L)
 static int l_immediatewrite_image(lua_State * L)
 {
     check_o_mode(static_pdf, "img.immediatewrite()", 1 << OMODE_PDF, true);
+    if (global_shipping_mode != NOT_SHIPPING)
+        luaL_error(L, "pdf.immediatewrite() can not be used with \\latelua");
     write_image_or_node(L, WR_IMMEDIATEWRITE);
     return 1;                   /* image */
 }

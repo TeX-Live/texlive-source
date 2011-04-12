@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: equivalents.h 3385 2010-01-26 05:45:55Z taco $ */
+/* $Id: equivalents.h 3853 2010-09-03 18:05:14Z oneiros $ */
 
 #ifndef EQUIVALENTS_H
 #  define EQUIVALENTS_H
@@ -36,11 +36,6 @@ emphasize this distinction.
 */
 
 #  define font_base 0           /* smallest internal font number; must not be less than |min_quarterword| */
-#  define ocp_base 0
-#  define number_ocps 32768
-#  define ocp_list_base 0
-#  define number_ocp_lists 32768
-#  define max_active_ocp_lists 32768
 #  define biggest_reg 65535     /* the largest allowed register number; must be |< max_quarterword| */
 #  define number_regs 65536     /* |biggest_reg+1| */
 #  define number_attrs 65536    /* total numbeer of attributes */
@@ -145,12 +140,7 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define frozen_special (frozen_control_sequence+12 )  /* permanent `\.{\\special}' */
 #  define frozen_null_font (frozen_control_sequence+13 )        /* permanent `\.{\\nullfont}' */
 #  define font_id_base (frozen_null_font-font_base )    /* begins table of |number_fonts| permanent font identifiers */
-#  define frozen_null_ocp (frozen_null_font+number_fonts )      /* permanent `\.{\\nullocp}' */
-#  define ocp_id_base (frozen_null_ocp-ocp_base )
-                                                /* begins table of |number_ocps| permanent ocp identifiers */
-#  define frozen_null_ocp_list (frozen_null_ocp+number_ocps )   /* permanent `\.{\\nullocplist}' */
-#  define ocp_list_id_base (frozen_null_ocp_list-ocp_list_base )        /* begins table of |number_ocp_lists| permanent ocp list identifiers */
-#  define undefined_control_sequence (frozen_null_ocp_list+number_ocp_lists)
+#  define undefined_control_sequence (frozen_null_font+number_fonts)
 #  define glue_base (undefined_control_sequence+1)      /* beginning of region 3 */
 
 #  define line_skip_code 0      /* interline glue if |baseline_skip| is infeasible */
@@ -200,12 +190,7 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define pdf_xform_resources_loc (pdftex_first_loc + 4)        /* points to token list for \.{\\pdfxformresources} */
 #  define pdf_pk_mode_loc (pdftex_first_loc + 5)        /* points to token list for \.{\\pdfpkmode} */
 #  define pdf_toks (pdftex_first_loc+6) /* end of \pdfTeX's token list parameters */
-#  define ocp_trace_level_base (pdf_toks)
-#  define ocp_active_number_base (ocp_trace_level_base+1)
-#  define ocp_active_min_ptr_base (ocp_active_number_base+1)
-#  define ocp_active_max_ptr_base (ocp_active_min_ptr_base+1)
-#  define ocp_active_base (ocp_active_max_ptr_base+1)
-#  define toks_base (ocp_active_base+max_active_ocp_lists)      /* table of |number_regs| token list registers */
+#  define toks_base (pdf_toks)  /* table of |number_regs| token list registers */
 #  define etex_pen_base (toks_base+number_regs) /* start of table of \eTeX's penalties */
 #  define inter_line_penalties_loc (etex_pen_base)      /* additional penalties between lines */
 #  define club_penalties_loc (etex_pen_base+1)  /* penalties for creating club lines */

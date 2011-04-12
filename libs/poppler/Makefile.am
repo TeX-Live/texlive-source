@@ -1,0 +1,123 @@
+## Proxy Makefile.am to build poppler for TeX Live.
+##
+##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##
+##   This file is free software; the copyright holder
+##   gives unlimited permission to copy and/or distribute it,
+##   with or without modifications, as long as this notice is preserved.
+##
+#========================================================================
+##
+## Main poppler Makefile.
+## Goo library Makefile
+## FoFi library Makefile
+## poppler Makefile
+##
+## Copyright 1996-2003 Glyph & Cog, LLC
+##
+#========================================================================
+##
+ACLOCAL_AMFLAGS = -I ../../m4
+
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
+## We want to re-distribute the whole original poppler source tree.
+##
+## With current automake (1.10.2) 'make distcheck' fails when
+## DISTFILES contains a directory and files in that directory.
+## Thus nodist_* for all files in $(POPPLER_TREE).
+EXTRA_DIST = $(POPPLER_TREE)
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+	rm -f $(distdir)/$(POPPLER_TREE)/install-sh
+
+SUBDIRS = goo fofi poppler
+
+GOO_SRC = $(top_srcdir)/$(POPPLER_TREE)/goo
+FOFI_SRC = $(top_srcdir)/$(POPPLER_TREE)/fofi
+POPPLER_SRC = $(top_srcdir)/$(POPPLER_TREE)/poppler
+
+INCLUDES = -Igoo -Ifofi -Ipoppler -I$(GOO_SRC) -I$(FOFI_SRC) -I$(POPPLER_SRC)
+AM_CPPFLAGS = -DPDF_PARSER_ONLY -DPOPPLER_DATADIR='"."'
+
+noinst_LIBRARIES = libpoppler.a
+
+nodist_libpoppler_a_SOURCES = \
+	$(goo_libGoo_a_sources) \
+	$(fofi_libfofi_a_sources) \
+	$(poppler_libpoppler_a_sources)
+
+goo_libGoo_a_sources = \
+	$(GOO_SRC)/FixedPoint.cc \
+	$(GOO_SRC)/gfile.cc \
+	$(GOO_SRC)/gmem.cc \
+	$(GOO_SRC)/gmempp.cc \
+	$(GOO_SRC)/GooHash.cc \
+	$(GOO_SRC)/GooList.cc \
+	$(GOO_SRC)/GooString.cc \
+	$(GOO_SRC)/GooTimer.cc \
+	$(GOO_SRC)/gstrtod.cc \
+	$(GOO_SRC)/PNGWriter.cc
+
+
+fofi_libfofi_a_sources = \
+	$(FOFI_SRC)/FoFiBase.cc \
+	$(FOFI_SRC)/FoFiEncodings.cc \
+	$(FOFI_SRC)/FoFiTrueType.cc \
+	$(FOFI_SRC)/FoFiType1.cc \
+	$(FOFI_SRC)/FoFiType1C.cc
+
+poppler_libpoppler_a_sources = \
+	$(POPPLER_SRC)/Annot.cc \
+	$(POPPLER_SRC)/Array.cc \
+	$(POPPLER_SRC)/BuiltinFont.cc \
+	$(POPPLER_SRC)/BuiltinFontTables.cc \
+	$(POPPLER_SRC)/CMap.cc \
+	$(POPPLER_SRC)/Catalog.cc \
+	$(POPPLER_SRC)/CharCodeToUnicode.cc \
+	$(POPPLER_SRC)/DateInfo.cc \
+	$(POPPLER_SRC)/Decrypt.cc \
+	$(POPPLER_SRC)/Dict.cc \
+	$(POPPLER_SRC)/Error.cc \
+	$(POPPLER_SRC)/FileSpec.cc \
+	$(POPPLER_SRC)/FontEncodingTables.cc \
+	$(POPPLER_SRC)/FontInfo.cc \
+	$(POPPLER_SRC)/Form.cc \
+	$(POPPLER_SRC)/Function.cc \
+	$(POPPLER_SRC)/Gfx.cc \
+	$(POPPLER_SRC)/GfxFont.cc \
+	$(POPPLER_SRC)/GfxState.cc \
+	$(POPPLER_SRC)/GlobalParams.cc \
+	$(POPPLER_SRC)/JArithmeticDecoder.cc \
+	$(POPPLER_SRC)/JBIG2Stream.cc \
+	$(POPPLER_SRC)/JPXStream.cc \
+	$(POPPLER_SRC)/Lexer.cc \
+	$(POPPLER_SRC)/Link.cc \
+	$(POPPLER_SRC)/Movie.cc \
+	$(POPPLER_SRC)/NameToCharCode.cc \
+	$(POPPLER_SRC)/Object.cc \
+	$(POPPLER_SRC)/OptionalContent.cc \
+	$(POPPLER_SRC)/Outline.cc \
+	$(POPPLER_SRC)/OutputDev.cc \
+	$(POPPLER_SRC)/PDFDoc.cc \
+	$(POPPLER_SRC)/PDFDocEncoding.cc \
+	$(POPPLER_SRC)/PSOutputDev.cc \
+	$(POPPLER_SRC)/PSTokenizer.cc \
+	$(POPPLER_SRC)/Page.cc \
+	$(POPPLER_SRC)/PageLabelInfo.cc \
+	$(POPPLER_SRC)/PageTransition.cc \
+	$(POPPLER_SRC)/Parser.cc \
+	$(POPPLER_SRC)/PopplerCache.cc \
+	$(POPPLER_SRC)/PreScanOutputDev.cc \
+	$(POPPLER_SRC)/ProfileData.cc \
+	$(POPPLER_SRC)/SecurityHandler.cc \
+	$(POPPLER_SRC)/Sound.cc \
+	$(POPPLER_SRC)/Stream.cc \
+	$(POPPLER_SRC)/UnicodeMap.cc \
+	$(POPPLER_SRC)/UnicodeTypeTable.cc \
+	$(POPPLER_SRC)/XRef.cc \
+	$(POPPLER_SRC)/XpdfPluginAPI.cc

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: maincontrol.h 3354 2010-01-11 08:49:33Z taco $ */
+/* $Id: maincontrol.h 3752 2010-07-27 10:18:24Z taco $ */
 
 #ifndef MAINCONTROL_H
 #  define MAINCONTROL_H
@@ -157,6 +157,7 @@ extern void fixup_directions(void);
 
 #  define is_int_assign(cmd) (cmd==assign_int_cmd)
 #  define is_dim_assign(cmd) (cmd==assign_dimen_cmd)
+#  define is_glue_assign(cmd) (cmd==assign_glue_cmd)
 #  define is_toks_assign(cmd) (cmd==assign_toks_cmd)
 
 #  define show_code 0           /* \.{\\show} */

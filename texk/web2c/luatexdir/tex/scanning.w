@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: scanning.w 3596 2010-04-05 10:12:46Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/scanning.w $";
+    "$Id: scanning.w 3713 2010-06-04 10:47:19Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/scanning.w $";
 
 
 @ @c
@@ -1556,7 +1556,6 @@ void scan_scaled(void)
     arith_error = false;
     negative = false;
     /* Get the next non-blank non-sign... */
-    negative = false;
     do {
         /* Get the next non-blank non-call token */
         do {

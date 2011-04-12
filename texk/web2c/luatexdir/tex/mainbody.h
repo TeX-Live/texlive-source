@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: mainbody.h 3612 2010-04-13 09:29:42Z taco $ */
+/* $Id: mainbody.h 3911 2010-10-16 07:28:11Z taco $ */
 
 #ifndef MAINBODY_H
 #  define MAINBODY_H
@@ -37,7 +37,7 @@ in production versions of \TeX.
 @^system dependencies@>
 */
 
-#  define ssup_max_strings 262143
+#  define ssup_max_strings 2097151
 
 #  define inf_max_strings   100000
 #  define sup_max_strings   ssup_max_strings
@@ -54,7 +54,7 @@ in production versions of \TeX.
 #  define sup_max_in_open   127
 
 #  define inf_param_size   60
-#  define sup_param_size   6000
+#  define sup_param_size   32767
 
 #  define inf_save_size   600
 #  define sup_save_size   80000
@@ -68,15 +68,8 @@ in production versions of \TeX.
 #  define sup_hash_extra   sup_max_strings
 #  define inf_hash_extra   0
 
-#  define sup_ocp_list_size    1000000
-#  define inf_ocp_list_size    1000
-#  define sup_ocp_buf_size     100000000
-#  define inf_ocp_buf_size     1000
-#  define sup_ocp_stack_size   1000000
-#  define inf_ocp_stack_size   1000
-
 #  define inf_expand_depth   100
-#  define sup_expand_depth   1000000
+#  define sup_expand_depth   10000000
 
 
 #  include <stdio.h>
@@ -136,9 +129,6 @@ extern char *bound_name;
 extern int error_line;
 extern int half_error_line;
 extern int max_print_line;
-extern int ocp_list_size;
-extern int ocp_buf_size;
-extern int ocp_stack_size;
 extern int max_strings;
 extern int strings_free;
 extern int font_k;

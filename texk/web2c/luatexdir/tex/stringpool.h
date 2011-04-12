@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: stringpool.h 3395 2010-01-27 11:40:08Z taco $ */
+/* $Id: stringpool.h 3802 2010-08-07 12:03:08Z taco $ */
 
 #ifndef STRINGPOOL_H
 #  define STRINGPOOL_H
@@ -115,6 +115,7 @@ extern void reset_cur_string(void);
 
 #  define restore_cur_string(u) if (u!=0) {                   \
         unsigned l = (unsigned)str_length(u);		      \
+	xfree(cur_string);                                  \
         reset_cur_string();                                 \
         str_room(l);                                        \
         memcpy(cur_string, str_string(u),l);                \

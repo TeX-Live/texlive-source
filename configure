@@ -860,6 +860,7 @@ with_graphite
 with_system_graphite
 with_system_zziplib
 with_system_xpdf
+with_system_poppler
 with_system_gd
 with_gd_includes
 with_gd_libdir
@@ -1699,6 +1700,8 @@ Optional Packages:
                           pkg-config)
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf (requires pkg-config)
+  --with-system-poppler   use installed poppler headers and library instead of
+                          poppler (requires pkg-config)
   --with-system-gd        use installed gd headers and library
   --with-gd-includes=DIR  gd headers installed in DIR
   --with-gd-libdir=DIR    gd library installed in DIR
@@ -4216,7 +4219,7 @@ case $enable_luatex in #(
 esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
-  need_xpdf=yes
+  need_poppler=yes
   need_libpng=yes
   need_obsdcompat=yes
   need_zziplib=yes
@@ -5352,6 +5355,37 @@ $as_echo "$as_me: Using \`xpdf' headers and library from TL tree" >&6;}
   if test "x$with_system_xpdf" != xno; then
     with_system_xpdf=no
     ac_configure_args="$ac_configure_args '--without-system-xpdf'"
+  fi
+fi
+
+
+## libs/poppler/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/poppler/
+## configure options and TL libraries required for poppler
+
+# Check whether --with-system-poppler was given.
+if test "${with_system_poppler+set}" = set; then :
+  withval=$with_system_poppler;
+fi
+if test "x$with_system_poppler" = x; then
+  if test -f $srcdir/libs/poppler/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`poppler' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`poppler' headers and library from TL tree" >&6;}
+    with_system_poppler=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`poppler' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`poppler' headers and library" >&6;}
+    with_system_poppler=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-poppler=$with_system_poppler'"
+elif test "x$with_system_poppler" = xyes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`poppler' headers and library" >&5
+$as_echo "$as_me: Using installed \`poppler' headers and library" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`poppler' headers and library from TL tree" >&5
+$as_echo "$as_me: Using \`poppler' headers and library from TL tree" >&6;}
+  if test "x$with_system_poppler" != xno; then
+    with_system_poppler=no
+    ac_configure_args="$ac_configure_args '--without-system-poppler'"
   fi
 fi
 
@@ -19766,6 +19800,14 @@ elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
   as_fn_error $? "did not find poppler-0.10 or better" "$LINENO" 5
 fi
 
+if $PKG_CONFIG poppler --atleast-version=0.10; then
+  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+  POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
+  POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
+elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
+  as_fn_error $? "did not find poppler-0.10 or better" "$LINENO" 5
+fi
+
 if $PKG_CONFIG zziplib --atleast-version=0.12; then
   ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
   ZZIPLIB_LIBS=`$PKG_CONFIG zziplib --libs`
@@ -20139,6 +20181,46 @@ rm -f core conftest.err conftest.$ac_objext \
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
 $as_echo "$kpse_res" >&6; }
 fi
+
+
+## libs/poppler/ac/poppler.ac: configure.ac fragment for the TeX Live subdirectory libs/poppler/
+## basic check of system poppler (poppler)
+ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+if test "x$need_poppler:$with_system_poppler" = xyes:yes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`poppler' library" >&5
+$as_echo_n "checking requested system \`poppler' library... " >&6; }
+  CPPFLAGS="$POPPLER_INCLUDES $CPPFLAGS"
+  LIBS="$POPPLER_LIBS $LIBS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <GfxFont.h>
+int
+main ()
+{
+GfxFont *gfxFont; gfxFont->decRefCnt();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  syslib_used=yes kpse_res=ok
+else
+  syslib_status=no kpse_res=failed
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
+$as_echo "$kpse_res" >&6; }
+fi
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 ## libs/xpdf/ac/xpdf.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
@@ -20963,8 +21045,8 @@ esac
 
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
-config_files="$ac_config_files"
-config_commands="$ac_config_commands"
+config_files="`echo $ac_config_files`"
+config_commands="`echo $ac_config_commands`"
 
 _ACEOF
 

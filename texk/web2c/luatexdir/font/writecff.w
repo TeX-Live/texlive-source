@@ -23,9 +23,11 @@
 
 #include "font/writecff.h"
 
+extern int cidset;
+
 static const char _svn_version[] =
-    "$Id: writecff.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writecff.w $";
+    "$Id: writecff.w 3848 2010-09-01 08:34:37Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/writecff.w $";
 
 @ @c
 #define get_offset(s,n) get_unsigned(s, (n))
@@ -3162,6 +3164,28 @@ void write_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
         }
     }
 
+    /* CIDSet: a table of bits indexed by cid, bytes with high order bit first, 
+       each (set) bit is a (present) CID. */	
+    if (1) {
+      int cid;
+      cidset = pdf_new_objnum(pdf);
+      if (cidset != 0) {
+       size_t l = (last_cid/8)+1;
+       char *stream = xmalloc(l);
+       memset(stream, 0, l);
+       for (cid = 1; cid <= (long) last_cid; cid++) {
+           glyph->id = cid;
+           if (avl_find(fd->gl_tree,glyph) != NULL) {
+	      stream[(cid / 8)] |= (1 << (7 - (cid % 8)));
+           }
+       }
+       pdf_begin_dict(pdf, cidset, 0);
+       pdf_begin_stream(pdf);
+       pdf_out_block(pdf, stream, l);
+       pdf_end_stream(pdf);
+      }
+    }
+
     /* this happens if the internal metrics do not agree with the actual disk font */
     if (gid < num_glyphs) {
         WARN("embedded subset is smaller than expected: %d instead of %d glyphs.", gid, num_glyphs);
@@ -3283,7 +3307,6 @@ card16 cff_charsets_lookup(cff_font * cff, card16 cid)
 @ @c
 #define is_cidfont(a) ((a)->flag & FONTTYPE_CIDFONT)
 #define CID_MAX 65535
-
 void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
 {
     cff_index *charstrings, *cs_idx;
@@ -3335,7 +3358,6 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
         glyph = xtalloc(1, glw_entry);
     }
 
-    cid = 0;
     last_cid = 0;
     num_glyphs = 0;
     for (cid = 0; cid <= CID_MAX; cid++) {
@@ -3348,6 +3370,27 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
             num_glyphs++;
         }
     }
+
+    /* CIDSet: a table of bits indexed by cid, bytes with high order bit first, 
+       each (set) bit is a (present) CID. */	
+    if (1) {
+      cidset = pdf_new_objnum(pdf);
+      if (cidset != 0) {
+       size_t l = (last_cid/8)+1;
+       char *stream = xmalloc(l);
+       memset(stream, 0, l);
+       for (cid = 1; cid <= (long) last_cid; cid++) {
+           if (CIDToGIDMap[2 * cid] || CIDToGIDMap[2 * cid + 1]) {
+	      stream[(cid / 8)] |= (1 << (7 - (cid % 8)));
+           }
+       }
+       pdf_begin_dict(pdf, cidset, 0);
+       pdf_begin_stream(pdf);
+       pdf_out_block(pdf, stream, l);
+       pdf_end_stream(pdf);
+      }
+    }
+
 
     cff_read_fdselect(cffont);
     cff_read_fdarray(cffont);

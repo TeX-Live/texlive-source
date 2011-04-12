@@ -46,7 +46,7 @@ static void NOUI__LogError(const char *format,va_list ap) {
     fprintf(stderr,"%s",str);
     if ( str[strlen(str)-1]!='\n' )
 	putc('\n',stderr);
-    free(str);
+/*    free(str);*/
 }
 
 static void NOUI_LogError(const char *format,...) {

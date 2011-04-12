@@ -25,12 +25,14 @@ libpng 1.4.4 - http://www.libpng.org/ - used by many
 
 obsdcompat - used by pdftex and luatex
 
+poppler 0.12.4 - http://poppler.freedesktop.org/ - used by luatex
+
 t1lib 5.1.2 - ftp://sunsite.unc.edu/pub/Linux/libs/graphics/
 
 teckit 2.5.1 - http://scripts.sil.org/svn-view/teckit/
 
 xpdf 3.02pl4 - http://www.foolabs.com/xpdf/
-  with modifications for pdftex, luatex, and xetex
+  with modifications for pdftex and xetex
 
 zlib 1.2.5 - http://www.zlib.net/ - used by many
 

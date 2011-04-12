@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writepng.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/image/writepng.w $";
+    "$Id: writepng.w 4133 2011-04-11 16:54:11Z oneiros $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/writepng.w $";
 
 #include <assert.h>
 #include "ptexlib.h"
@@ -42,7 +42,6 @@ static void close_and_cleanup_png(image_dict * idict)
     png_destroy_read_struct(&(img_png_png_ptr(idict)),
                             &(img_png_info_ptr(idict)), NULL);
     xfree(img_png_ptr(idict));
-    img_png_ptr(idict) = NULL;
 }
 
 @ @c
@@ -115,7 +114,7 @@ void read_png_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
         img_procset(idict) |= PROCSET_IMAGE_C;
         break;
     default:
-        pdftex_fail("unsupported type of color_type <%i>", png_get_color_type(png_p, info_p));
+        pdftex_fail("unsupported type of color_type <%i>", (int)png_get_color_type (png_p, info_p));
     }
     img_colordepth(idict) = png_get_bit_depth(png_p, info_p);
     if (readtype == IMG_CLOSEINBETWEEN)
@@ -187,10 +186,9 @@ static void write_png_palette(PDF pdf, image_dict * idict)
     if (img_colorspace(idict) != 0) {
         pdf_printf(pdf, "%i 0 R\n", (int) img_colorspace(idict));
     } else {
-        pdf_create_obj(pdf, obj_type_others, 0);
-        palette_objnum = pdf->obj_ptr;
+        palette_objnum = pdf_create_obj(pdf, obj_type_others, 0);
         pdf_printf(pdf, "[/Indexed /DeviceRGB %i %i 0 R]\n",
-                   num_palette - 1, (int) palette_objnum);
+                   (int) (num_palette - 1), (int) palette_objnum);
     }
     pdf_begin_stream(pdf);
     if (png_get_interlace_type(png_p, info_p) == PNG_INTERLACE_NONE) {
@@ -212,7 +210,7 @@ static void write_png_palette(PDF pdf, image_dict * idict)
     if (palette_objnum > 0) {
         pdf_begin_dict(pdf, palette_objnum, 0);
         pdf_begin_stream(pdf);
-        for (i = 0; (unsigned) i < num_palette; i++) {
+        for (i = 0; i < num_palette; i++) {
             pdf_room(pdf, 3);
             pdf_quick_out(pdf, palette[i].red);
             pdf_quick_out(pdf, palette[i].green);
@@ -264,14 +262,13 @@ static void write_png_gray_alpha(PDF pdf, image_dict * idict)
     png_bytep smask;
     int smask_ptr = 0;
     int smask_size = 0;
-    int bitdepth;
+    png_byte bitdepth;
     if (img_colorspace(idict) != 0) {
         pdf_printf(pdf, "%i 0 R\n", (int) img_colorspace(idict));
     } else {
         pdf_puts(pdf, "/DeviceGray\n");
     }
-    pdf_create_obj(pdf, obj_type_others, 0);
-    smask_objnum = pdf->obj_ptr;
+    smask_objnum = pdf_create_obj(pdf, obj_type_others, 0);
     pdf_printf(pdf, "/SMask %i 0 R\n", (int) smask_objnum);
     smask_size = (int) ((png_get_rowbytes(png_p, info_p) / 2) * png_get_image_height (png_p, info_p));
     smask = xtalloc((unsigned) smask_size, png_byte);
@@ -302,7 +299,7 @@ static void write_png_gray_alpha(PDF pdf, image_dict * idict)
     pdf_end_stream(pdf);
     pdf_flush(pdf);
     /* now write the Smask object */
-    bitdepth = (int) png_get_bit_depth(png_p, info_p);
+    bitdepth = png_get_bit_depth (png_p, info_p);
     pdf_begin_dict(pdf, smask_objnum, 0);
     pdf_puts(pdf, "/Type /XObject\n/Subtype /Image\n");
     if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
@@ -366,16 +363,15 @@ static void write_png_rgb_alpha(PDF pdf, image_dict * idict)
     png_bytep smask;
     int smask_ptr = 0;
     int smask_size = 0;
-    int bitdepth;
+    png_byte bitdepth;
     if (img_colorspace(idict) != 0) {
         pdf_printf(pdf, "%i 0 R\n", (int) img_colorspace(idict));
     } else {
         pdf_puts(pdf, "/DeviceRGB\n");
     }
-    pdf_create_obj(pdf, obj_type_others, 0);
-    smask_objnum = pdf->obj_ptr;
+    smask_objnum = pdf_create_obj(pdf, obj_type_others, 0);
     pdf_printf(pdf, "/SMask %i 0 R\n", (int) smask_objnum);
-    smask_size = (int) ((png_get_rowbytes(png_p, info_p) / 2) * png_get_image_height (png_p, info_p));
+    smask_size = (int) ((png_get_rowbytes (png_p, info_p) / 4) * png_get_image_height (png_p, info_p));
     smask = xtalloc((unsigned) smask_size, png_byte);
     pdf_begin_stream(pdf);
     if (png_get_interlace_type(png_p, info_p) == PNG_INTERLACE_NONE) {
@@ -405,7 +401,7 @@ static void write_png_rgb_alpha(PDF pdf, image_dict * idict)
     pdf_flush(pdf);
     /* now write the Smask object */
     if (smask_objnum > 0) {
-        bitdepth = (int) png_get_bit_depth(png_p, info_p);
+        bitdepth = png_get_bit_depth (png_p, info_p);
         pdf_begin_dict(pdf, smask_objnum, 0);
         pdf_puts(pdf, "/Type /XObject\n/Subtype /Image\n");
         if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
@@ -483,12 +479,12 @@ static void copy_png(PDF pdf, image_dict * idict)
                "/Filter/FlateDecode\n"
                "/DecodeParms<<"
                "/Colors %d"
-               "/Columns %d"
+               "/Columns %u"
                "/BitsPerComponent %i"
                "/Predictor 10>>\n>>\nstream\n", streamlength,
-               png_get_color_type(png_p, info_p) == 2 ? 3 : 1,
-               (int) png_get_image_width (png_p, info_p),
-               png_get_bit_depth(png_p, info_p));
+               png_get_color_type (png_p, info_p) == 2 ? 3 : 1,
+               png_get_image_width (png_p, info_p), 
+               png_get_bit_depth (png_p, info_p));
     /* 2nd pass to copy data */
     endflag = false;
     if (fseek(fp, 8, SEEK_SET) != 0)
@@ -575,10 +571,12 @@ void write_png(PDF pdf, image_dict * idict)
     }
     /* the switching between |info_p| and |png_p| queries has been trial and error.
      */
-    if (pdf->minor_version > 1 && png_get_interlace_type(png_p, info_p) == PNG_INTERLACE_NONE
-        &&!(png_get_color_type(png_p, info_p) == PNG_COLOR_TYPE_GRAY_ALPHA ||
-            png_get_color_type(png_p, info_p) == PNG_COLOR_TYPE_RGB_ALPHA)
-        && ((pdf->image_hicolor != 0) || (png_get_bit_depth(png_p, info_p) <= 8))
+    if (pdf->minor_version > 1 
+           && png_get_interlace_type (png_p, info_p) == PNG_INTERLACE_NONE 
+           && (png_p->transformations == 0 || png_p->transformations == 0x2000)     /* gamma */
+        &&!(png_get_color_type (png_p, info_p) == PNG_COLOR_TYPE_GRAY_ALPHA ||
+            png_get_color_type (png_p, info_p) == PNG_COLOR_TYPE_RGB_ALPHA)
+        && ((pdf->image_hicolor != 0) || (png_get_bit_depth (png_p, info_p) <= 8))
         && (checked_gamma <= 1.01 && checked_gamma > 0.99)
         ) {
         png_colorp palette;
@@ -590,8 +588,7 @@ void write_png(PDF pdf, image_dict * idict)
         } else {
             switch (png_get_color_type(png_p, info_p)) {
             case PNG_COLOR_TYPE_PALETTE:
-                pdf_create_obj(pdf, obj_type_others, 0);
-                palette_objnum = pdf->obj_ptr;
+                palette_objnum = pdf_create_obj(pdf, obj_type_others, 0);
                 pdf_printf(pdf, "[/Indexed /DeviceRGB %i %i 0 R]\n",
                            num_palette - 1, (int) palette_objnum);
                 break;
@@ -608,7 +605,7 @@ void write_png(PDF pdf, image_dict * idict)
         if (palette_objnum > 0) {
             pdf_begin_dict(pdf, palette_objnum, 0);
             pdf_begin_stream(pdf);
-            for (i = 0; (unsigned) i < num_palette; i++) {
+            for (i = 0; i < num_palette; i++) {
                 pdf_room(pdf, 3);
                 pdf_quick_out(pdf, palette[i].red);
                 pdf_quick_out(pdf, palette[i].green);
@@ -622,9 +619,11 @@ void write_png(PDF pdf, image_dict * idict)
             if ((pdf->image_apply_gamma != 0) &&
                 (checked_gamma > 1.01 || checked_gamma < 0.99))
                 tex_printf("gamma delta=%lf ", checked_gamma);
-            if ((png_get_color_type(png_p, info_p) != PNG_COLOR_TYPE_GRAY)
-                && (png_get_color_type(png_p, info_p) != PNG_COLOR_TYPE_RGB)
-                && (png_get_color_type(png_p, info_p) != PNG_COLOR_TYPE_PALETTE))
+            if (png_p->transformations != PNG_TRANSFORM_IDENTITY)
+                tex_printf("transform=%lu", (long) png_p->transformations);
+            if ((png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_GRAY)
+                && (png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_RGB)
+                && (png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_PALETTE))
                 tex_printf("colortype ");
             if (pdf->minor_version <= 1)
                 tex_printf("version=%d ", pdf->minor_version);

@@ -22,7 +22,7 @@
 
 static const char _svn_version[] =
     "$Id: errors.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/errors.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/errors.w $";
 
 @ @c
 #define new_line_char int_par(new_line_char_code)

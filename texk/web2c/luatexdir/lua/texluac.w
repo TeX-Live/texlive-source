@@ -49,7 +49,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texluac.w 3705 2010-05-28 07:19:20Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/texluac.w $";
+    "$Id: texluac.w 3707 2010-05-28 13:24:16Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/texluac.w $";
 
 /*  fix for non-gcc compilation: */
 #if !defined(__GNUC__) || (__GNUC__ < 2) 

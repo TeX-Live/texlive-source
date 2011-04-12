@@ -17,15 +17,15 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: arithmetic.h 3477 2010-03-12 13:59:34Z taco $ */
+/* $Id: arithmetic.h 3853 2010-09-03 18:05:14Z oneiros $ */
 
 #ifndef ARITHMETIC_H
 #  define ARITHMETIC_H
 
 /* |incr| and |decr| are in texmfmp.h */
 
-                                                                                                                                        /* #define incr(A) (A)++ *//* increase a variable by unity */
-                                                                                                                                        /* #define decr(A) (A)-- *//* decrease a variable by unity */
+                                                                                                                                                                   /* #define incr(A) (A)++ *//* increase a variable by unity */
+                                                                                                                                                                   /* #define decr(A) (A)-- *//* decrease a variable by unity */
 
 #  define negate(A) (A)=-(A)    /* change the sign of a variable */
 

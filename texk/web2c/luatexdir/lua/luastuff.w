@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luastuff.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luastuff.w $";
+    "$Id: luastuff.w 4001 2010-11-28 15:49:46Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/luastuff.w $";
 
 #include "lua/luatex-api.h"
 #include "ptexlib.h"
@@ -189,6 +189,7 @@ void luainterpreter(void)
     luatex_md5_lua_open(L);
 
     open_oslibext(L, safer_option);
+    open_lfslibext(L);
 
     /* luasockets */
     /* socket and mime are a bit tricky to open because
@@ -344,24 +345,35 @@ int lua_traceback(lua_State * L)
 }
 
 @ @c
-static void luacall(int p, int nameptr)
+static void luacall(int p, int nameptr, boolean is_string)
 {
     LoadS ls;
-    int i, l;
+    int i;
+    size_t ll = 0;
     char *lua_id;
     char *s = NULL;
 
     if (Luas == NULL) {
         luainterpreter();
     }
-    l = 0;
     lua_active++;
-    s = tokenlist_to_cstring(p, 1, &l);
+    if (is_string) {
+       const char *ss = NULL;
+       lua_rawgeti(Luas, LUA_REGISTRYINDEX, p);
+       ss = lua_tolstring(Luas, -1, &ll);
+       s = xmalloc(ll+1);
+       memcpy(s,ss,ll+1);       
+       lua_pop(Luas,1);
+    } else {
+       int l = 0;
+       s = tokenlist_to_cstring(p, 1, &l);
+       ll = (size_t)l;
+    }
     ls.s = s;
-    ls.size = (size_t) l;
-
+    ls.size = ll;
     if (ls.size > 0) {
         if (nameptr > 0) {
+            int l = 0; /* not used */
             lua_id = tokenlist_to_cstring(nameptr, 1, &l);
         } else if (nameptr < 0) {
             char *tmp = get_lua_name((nameptr + 65536));
@@ -390,6 +402,7 @@ static void luacall(int p, int nameptr)
             }
         }
         xfree(lua_id);
+        xfree(ls.s);
     }
     lua_active--;
 }
@@ -398,9 +411,13 @@ static void luacall(int p, int nameptr)
 void late_lua(PDF pdf, halfword p)
 {
     (void) pdf;
-    expand_macros_in_tokenlist(p);      /* sets |def_ref| */
-    luacall(def_ref, late_lua_name(p));
-    flush_list(def_ref);
+    if (late_lua_type(p)==normal) {
+        expand_macros_in_tokenlist(p);      /* sets |def_ref| */
+        luacall(def_ref, late_lua_name(p), false);
+        flush_list(def_ref);
+    } else {
+        luacall(late_lua_data(p), late_lua_name(p), true);
+    }
 }
 
 @ @c

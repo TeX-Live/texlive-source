@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: buildpage.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/buildpage.w $";
+    "$Id: buildpage.w 4132 2011-04-11 14:04:10Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/buildpage.w $";
 
 #include "ptexlib.h"
 
@@ -387,8 +387,8 @@ void build_page(void)
                     else
                         width(temp_ptr) = 0;
                 }
-                vlink(q) = p;
-                vlink(contrib_head) = q;
+                couple_nodes(q, p);
+                couple_nodes(contrib_head, q);
                 goto CONTINUE;
 
             } else {
@@ -462,8 +462,8 @@ void build_page(void)
                    or extremely lucky, or both. */
 
                 q = new_node(inserting_node, n);
-                vlink(q) = vlink(r);
-                vlink(r) = q;
+                try_couple_nodes(q, vlink(r));
+                couple_nodes(r, q);
                 r = q;
                 ensure_vbox(n);
                 if (box(n) == null)
@@ -569,6 +569,7 @@ void build_page(void)
 
             break;
         default:
+            fprintf(stderr, "type(p)=%d\n", type(p));
             confusion("page");
             break;
         }
@@ -691,20 +692,21 @@ void build_page(void)
         }
 
         /* Link node |p| into the current page and |goto done| */
-        vlink(page_tail) = p;
+        couple_nodes(page_tail, p);
         page_tail = p;
-        vlink(contrib_head) = vlink(p);
+        try_couple_nodes(contrib_head,vlink(p));
         vlink(p) = null;
         goto DONE;
       DONE1:
         /* Recycle node |p| */
-        vlink(contrib_head) = vlink(p);
+        try_couple_nodes(contrib_head,vlink(p));
         vlink(p) = null;
         if (int_par(saving_vdiscards_code) > 0) {
-            if (page_disc == null)
+            if (page_disc == null) {
                 page_disc = p;
-            else
-                vlink(tail_page_disc) = p;
+            } else {
+                couple_nodes(tail_page_disc, p);
+            }
             tail_page_disc = p;
         } else {
             flush_node_list(p);
@@ -871,10 +873,10 @@ void fire_up(halfword c)
                 }
                 /* Either append the insertion node |p| after node |q|, and remove it
                    from the current page, or delete |node(p)| */
-                vlink(prev_p) = vlink(p);
+                try_couple_nodes(prev_p, vlink(p));
                 vlink(p) = null;
                 if (wait) {
-                    vlink(q) = p;
+                    couple_nodes(q, p);
                     q = p;
                     incr(insert_penalties);
                 } else {
@@ -917,8 +919,8 @@ void fire_up(halfword c)
         if (vlink(contrib_head) == null) {
             contrib_tail = page_tail;
         }
-        vlink(page_tail) = vlink(contrib_head);
-        vlink(contrib_head) = p;
+        couple_nodes(page_tail,vlink(contrib_head));
+        couple_nodes(contrib_head, p);
         vlink(prev_p) = null;
     }
     save_vbadness = vbadness;
@@ -997,7 +999,7 @@ void fire_up(halfword c)
     }
     flush_node_list(page_disc);
     page_disc = null;
-    ship_out(static_pdf, box(output_box), true);
+    ship_out(static_pdf, box(output_box), SHIPPING_PAGE);
     box(output_box) = null;
 }
 
@@ -1037,14 +1039,14 @@ void resume_after_output(void)
     }
 
     if (tail != head) {         /* current list goes after heldover insertions */
-        vlink(page_tail) = vlink(head);
+        try_couple_nodes(page_tail, vlink(head));
         page_tail = tail;
     }
     if (vlink(page_head) != null) {     /* and both go before heldover contributions */
         if (vlink(contrib_head) == null)
             contrib_tail = page_tail;
-        vlink(page_tail) = vlink(contrib_head);
-        vlink(contrib_head) = vlink(page_head);
+        try_couple_nodes(page_tail, vlink(contrib_head));
+        try_couple_nodes(contrib_head, vlink(page_head));
         vlink(page_head) = null;
         page_tail = page_head;
     }

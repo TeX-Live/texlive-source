@@ -1,7 +1,7 @@
 % vfpacket.w
 
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2009 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2011 Taco Hoekwater <taco@@luatex.org>
 
 % This file is part of LuaTeX.
 
@@ -22,8 +22,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: vfpacket.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/vfpacket.w $";
+    "$Id: vfpacket.w 4098 2011-04-07 21:01:11Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/font/vfpacket.w $";
 
 
 @ The |do_vf_packet| procedure is called in order to interpret the
@@ -189,7 +189,7 @@ void do_vf_packet(PDF pdf, internal_font_number vf_f, int c)
                 if (has_packet(lf, (int) k))
                     do_vf_packet(pdf, lf, (int) k);
                 else
-                    pdf_place_glyph(pdf, lf, (int) k);
+                    backend_out[glyph_node] (pdf, lf, (int) k);
             }
             cur.h = cur.h + char_width(lf, (int) k);
             break;

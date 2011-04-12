@@ -24,7 +24,7 @@
 
 static const char _svn_version[] =
     "$Id: arithmetic.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/arithmetic.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/arithmetic.w $";
 
 
 @ The principal computations performed by \TeX\ are done entirely in terms of

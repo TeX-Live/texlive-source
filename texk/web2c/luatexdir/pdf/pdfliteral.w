@@ -1,5 +1,5 @@
 % pdfliteral.w
-% 
+%
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
 
 % This file is part of LuaTeX.
@@ -15,14 +15,14 @@
 % License for more details.
 
 % You should have received a copy of the GNU General Public License along
-% with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: pdfliteral.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfliteral.w $";
+    "$Id: pdfliteral.w 3733 2010-07-06 22:14:07Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfliteral.w $";
 
 @ @c
 void pdf_special(PDF pdf, halfword p)
@@ -49,6 +49,7 @@ void pdf_out_literal(PDF pdf, halfword p)
 {
     int old_setting;            /* holds print |selector| */
     str_number s;
+    pdfstructure *ps = pdf->pstruct;
     if (pdf_literal_type(p) == normal) {
         old_setting = selector;
         selector = new_string;
@@ -69,6 +70,7 @@ void pdf_out_literal(PDF pdf, halfword p)
             break;
         case direct_always:
             pdf_end_string_nl(pdf);
+            ps->need_tm = 1;
             break;
         default:
             confusion("literal1");
@@ -78,7 +80,7 @@ void pdf_out_literal(PDF pdf, halfword p)
     }
 }
 
-@ test equality of start of strings 
+@ test equality of start of strings
 @c
 static boolean str_in_cstr(str_number s, const char *r, unsigned i)
 {
@@ -97,7 +99,10 @@ static boolean str_in_cstr(str_number s, const char *r, unsigned i)
 @ @c
 void pdf_literal(PDF pdf, str_number s, int literal_mode, boolean warn)
 {
+    unsigned char *ss;
+    size_t l;
     pool_pointer j = 0;         /* current character code position, initialized to make the compiler happy */
+    pdfstructure *p = pdf->pstruct;
     if (s >= STRING_OFFSET) {   /* needed for |out_save| */
         j = 0;
         if (literal_mode == scan_special) {
@@ -131,21 +136,16 @@ void pdf_literal(PDF pdf, str_number s, int literal_mode, boolean warn)
         break;
     case direct_always:
         pdf_end_string_nl(pdf);
+        p->need_tm = 1;
         break;
     default:
         confusion("literal1");
         break;
     }
     if (s >= STRING_OFFSET) {
-        unsigned char *ss = str_string(s);
-        size_t l = str_length(s) - (size_t) j;
-        if (l < max_single_pdf_print) {
-            pdf_out_block(pdf, (ss + j), l);
-        } else {
-
-            while (l--)
-                pdf_out(pdf, *(ss + j++));
-        }
+        ss = str_string(s);
+        l = str_length(s) - (size_t) j;
+        pdf_out_block(pdf, (const char *) (ss + j), l);
     } else {
         assert(s < 256);
         pdf_out(pdf, s);

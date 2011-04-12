@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: commands.h 2899 2009-07-21 23:03:53Z oneiros $ */
+/* $Id: commands.h 4000 2010-11-28 13:58:35Z taco $ */
 
 #ifndef COMMANDS_H
 #  define COMMANDS_H
@@ -143,14 +143,14 @@ typedef enum {
     super_sub_script_cmd,       /* explicit super- or subscript */
     math_shift_cs_cmd,          /* start- and endmath */
     end_cs_name_cmd,            /* end control sequence ( \.{\\endcsname} ) */
-    char_ghost_cmd,             /* \.{\\ghostleft}, \.{\\ghostright} character for kerning */
+    char_ghost_cmd,             /* \.{\\leftghost}, \.{\\rightghost} character for kerning */
     assign_local_box_cmd,       /* box for guillemets \.{\\localleftbox} or \.{\\localrightbox} */
     char_given_cmd,             /* character code defined by \.{\\chardef} */
 #  define min_internal_cmd char_given_cmd
     /* the smallest code that can follow \.{\\the} */
     math_given_cmd,             /* math code defined by \.{\\mathchardef} */
     omath_given_cmd,            /* math code defined by \.{\\omathchardef} */
-    xmath_given_cmd,            /* math code defined by \.{\\LuaTeXmathchardef} */
+    xmath_given_cmd,            /* math code defined by \.{\\Umathchardef} */
     last_item_cmd,              /* most recent item ( \.{\\lastpenalty}, \.{\\lastkern}, \.{\\lastskip} ) */
 #  define max_non_prefixed_command_cmd last_item_cmd    /* largest command code that can't be \.{\\global} */
     toks_register_cmd,          /* token list register ( \.{\\toks} ) */
@@ -195,15 +195,6 @@ typedef enum {
     set_interaction_cmd,        /* define level of interaction ( \.{\\batchmode}, etc.~) */
     letterspace_font_cmd,       /* letterspace a font ( \.{\\letterspacefont} ) */
     pdf_copy_font_cmd,          /* create a new font instance ( \.{\\pdfcopyfont} ) */
-    set_ocp_cmd,                /* Place a translation process in the stream */
-    def_ocp_cmd,                /* Define and load a translation process */
-    set_ocp_list_cmd,           /* Place a list of OCPs in the stream */
-    def_ocp_list_cmd,           /* Define a list of OCPs */
-    clear_ocp_lists_cmd,        /* Remove all active OCP lists */
-    push_ocp_list_cmd,          /* Add to the sequence of active OCP lists */
-    pop_ocp_list_cmd,           /* Remove from the sequence of active OCP lists */
-    ocp_list_op_cmd,            /* Operations for building a list of OCPs */
-    ocp_trace_level_cmd,        /* Tracing of active OCPs, either 0 or 1 */
     undefined_cs_cmd,           /* initial state of most |eq_type| fields */
     expand_after_cmd,           /* special expansion ( \.{\\expandafter} ) */
     no_expand_cmd,              /* special nonexpansion ( \.{\\noexpand} ) */
@@ -227,7 +218,7 @@ typedef enum {
     data_cmd,                   /* the equivalent is simply a halfword number */
 } tex_command_code;
 
-#  define max_command_cmd ocp_trace_level_cmd   /* the largest command code seen at |big_switch| */
+#  define max_command_cmd pdf_copy_font_cmd     /* the largest command code seen at |big_switch| */
 #  define last_cmd data_cmd
 #  define max_non_prefixed_command last_item_cmd
 

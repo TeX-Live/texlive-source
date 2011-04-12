@@ -22,8 +22,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: printing.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/printing.w $";
+    "$Id: printing.w 3885 2010-09-14 19:24:08Z oneiros $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/printing.w $";
 
 @ @c
 #define font_id_text(A) cs_text(font_id_base+(A))
@@ -361,10 +361,10 @@ void print_banner(const char *v, int e, int ver)
     callback_id = callback_defined(start_run_callback);
     if (callback_id == 0) {
         if (ver < 0)
-            fprintf(term_out, "This is LuaTeX, Version %s-%d%s ", v, e, WEB2CVERSION);
+            fprintf(term_out, "This is LuaTeX, Version %s-%d ", v, e);
         else
-            fprintf(term_out, "This is LuaTeX, Version %s-%d%s (rev %d) ", v, e,
-                    WEB2CVERSION, ver);
+            fprintf(term_out, "This is LuaTeX, Version %s-%d (rev %d) ", v, e,
+                    ver);
         if (format_ident > 0)
             slow_print(format_ident);
         print_ln();
@@ -390,9 +390,9 @@ void log_banner(const char *v, int e, int ver)
     if (month > 12)
         month = 0;
     if (ver < 0)
-        fprintf(log_file, "This is LuaTeX, Version %s-%d%s ", v, e, WEB2CVERSION);
+        fprintf(log_file, "This is LuaTeX, Version %s-%d ", v, e);
     else
-        fprintf(log_file, "This is LuaTeX, Version %s-%d%s (rev %d) ", v, e, WEB2CVERSION, ver);
+        fprintf(log_file, "This is LuaTeX, Version %s-%d (rev %d) ", v, e, ver);
     slow_print(format_ident);
     print_char(' ');
     print_char(' ');
@@ -543,14 +543,14 @@ works; therefore no explanation will be given. Notice that 1990 yields
 void print_roman_int(int n)
 {
     char *j, *k;                /* mysterious indices */
-    nonnegative_integer u, v;   /* mysterious numbers */
+    int u, v;                   /* mysterious numbers */
     char mystery[] = "m2d5c2l5x2v5i";
     j = (char *) mystery;
     v = 1000;
     while (1) {
-        while (n >= (int) v) {
+        while (n >= v) {
             print_char(*j);
-            n = n - (int) v;
+            n = n - v;
         }
         if (n <= 0)
             return;             /* nonpositive input produces no output */
@@ -560,9 +560,9 @@ void print_roman_int(int n)
             k = k + 2;
             u = u / (*(k - 1) - '0');
         }
-        if (n + (int) u >= (int) v) {
+        if (n + u >= v) {
             print_char(*k);
-            n = n + (int) u;
+            n = n + u;
         } else {
             j = j + 2;
             v = v / (*(j - 1) - '0');

@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: pagetree.w 3573 2010-04-02 14:10:54Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pagetree.w $";
+    "$Id: pagetree.w 3887 2010-09-14 21:32:23Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pagetree.w $";
 
 @* Page diversions.
 
@@ -71,8 +71,7 @@ static pages_entry *new_pages_entry(PDF pdf)
     for (i = 0; i < PAGES_TREE_KIDSMAX; i++)
         p->kids[i] = 0;
     p->next = NULL;
-    pdf_create_obj(pdf, obj_type_pages, 0);
-    p->objnum = pdf->obj_ptr;
+    p->objnum = pdf_create_obj(pdf, obj_type_pages, 0);
     return p;
 }
 
@@ -223,8 +222,7 @@ static void write_pages(PDF pdf, pages_entry * p, int parent)
     if (parent == 0) {          /* it's root */
         if (pdf_pages_attr != null)
             pdf_print_toks_ln(pdf, pdf_pages_attr);
-        if (pdf_pagesattributes_toks != null)   /* from Lua */
-            pdf_print_toks_ln(pdf, pdf_pagesattributes_toks);
+        print_pdf_table_string(pdf, "pagesattributes");
     } else
         pdf_printf(pdf, "/Parent %d 0 R\n", parent);
     pdf_printf(pdf, "/Count %d\n/Kids [", (int) p->number_of_pages);

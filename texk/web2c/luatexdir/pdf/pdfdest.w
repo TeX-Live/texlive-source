@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfdest.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfdest.w $";
+    "$Id: pdfdest.w 3889 2010-09-14 22:21:57Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfdest.w $";
 
 #include "ptexlib.h"
 
@@ -88,7 +88,7 @@ void do_dest(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
     scaledpos pos = pdf->posstruct->pos;
     scaled_whd alt_rule;
     int k;
-    if (!is_shipping_page)
+    if (global_shipping_mode == SHIPPING_FORM)
         pdf_error("ext4", "destinations cannot be inside an XForm");
     if (doing_leaders)
         return;
@@ -321,6 +321,7 @@ int output_name_tree(PDF pdf)
     int k = 0;                  /* index of current child of |l|; if |k < pdf_dest_names_ptr|
                                    then this is pointer to |dest_names| array;
                                    otherwise it is the pointer to |obj_tab| (object number) */
+    int m;
     int dests = 0;
     int names_head = 0, names_tail = 0;
     if (pdf->dest_names_ptr == 0) {
@@ -329,10 +330,8 @@ int output_name_tree(PDF pdf)
     sort_dest_names(pdf);
 
     while (true) {
-
         do {
-            pdf_create_obj(pdf, obj_type_others, 0);    /* create a new node */
-            l = pdf->obj_ptr;
+            l = pdf_create_obj(pdf, obj_type_others, 0);        /* create a new node */
             if (b == 0)
                 b = l;          /* first in this level */
             if (names_head == 0) {
@@ -401,7 +400,7 @@ int output_name_tree(PDF pdf)
 
   DONE:
     if ((dests != 0) || (pdf_names_toks != null)) {
-        pdf_new_dict(pdf, obj_type_others, 0, 1);
+        m = pdf_new_dict(pdf, obj_type_others, 0, 1);
         if (dests != 0)
             pdf_indirect_ln(pdf, "Dests", dests);
         if (pdf_names_toks != null) {
@@ -410,7 +409,7 @@ int output_name_tree(PDF pdf)
             pdf_names_toks = null;
         }
         pdf_end_dict(pdf);
-        return pdf->obj_ptr;
+        return m;
     } else {
         return 0;
     }

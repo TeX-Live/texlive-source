@@ -22,8 +22,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: luatoken.w 3583 2010-04-02 17:40:44Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luatoken.w $";
+    "$Id: luatoken.w 3849 2010-09-01 09:10:48Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/luatoken.w $";
 
 @ @c
 command_item command_names[] = {
@@ -144,15 +144,6 @@ command_item command_names[] = {
     {"set_interaction", set_interaction_cmd, NULL},
     {"letterspace_font", letterspace_font_cmd, NULL},
     {"pdf_copy_font", pdf_copy_font_cmd, NULL},
-    {"set_ocp", set_ocp_cmd, NULL},
-    {"def_ocp", def_ocp_cmd, NULL},
-    {"set_ocp_list", set_ocp_list_cmd, NULL},
-    {"def_ocp_list", def_ocp_list_cmd, NULL},
-    {"clear_ocp_lists", clear_ocp_lists_cmd, NULL},
-    {"push_ocp_list", push_ocp_list_cmd, NULL},
-    {"pop_ocp_list", pop_ocp_list_cmd, NULL},
-    {"ocp_list_op", ocp_list_op_cmd, NULL},
-    {"ocp_trace_level", ocp_trace_level_cmd, NULL},
     {"undefined_cs", undefined_cs_cmd, NULL},
     {"expand_after", expand_after_cmd, NULL},
     {"no_expand", no_expand_cmd, NULL},

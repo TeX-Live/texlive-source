@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: scanning.h 3376 2010-01-25 16:50:23Z taco $ */
+/* $Id: scanning.h 4085 2011-02-10 09:21:57Z taco $ */
 
 #ifndef SCANNING_H
 #  define SCANNING_H
@@ -50,7 +50,7 @@ extern void scan_limited_int(int max, const char *name);
 #  define scan_mark_num() scan_limited_int(65535,"marks code")
 #  define scan_char_num() scan_limited_int(biggest_char,"character code")
 #  define scan_four_bit_int() scan_limited_int(15,NULL)
-#  define scan_math_family_int() scan_limited_int(265,"math family")
+#  define scan_math_family_int() scan_limited_int(255,"math family")
 #  define scan_real_fifteen_bit_int() scan_limited_int(32767,"mathchar")
 #  define scan_big_fifteen_bit_int() scan_limited_int(0x7FFFFFF,"extended mathchar")
 #  define scan_twenty_seven_bit_int() scan_limited_int(0777777777,"delimiter code")

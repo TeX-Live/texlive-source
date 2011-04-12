@@ -251,6 +251,7 @@ KPSE_PTEXENC_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_XPDF_FLAGS
+KPSE_POPPLER_FLAGS
 KPSE_ZZIPLIB_FLAGS
 KPSE_GRAPHITE_FLAGS
 KPSE_FREETYPE2_FLAGS
@@ -260,6 +261,21 @@ KPSE_OBSDCOMPAT_FLAGS
 
 # Checks for xpdf (libpoppler) features.
 KPSE_ADD_FLAGS([xpdf])
+AC_LANG_PUSH([C++])
+AC_CACHE_CHECK([for PDFDoc::getPDFMajorVersion],
+               [kpse_cv_have_getPDFMajorVersion],
+               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <PDFDoc.h>]],
+                                                   [[PDFDoc *pdfDoc; pdfDoc->getPDFMajorVersion();]])],
+                                  [kpse_cv_have_getPDFMajorVersion=yes],
+                                  [kpse_cv_have_getPDFMajorVersion=no])])
+AS_IF([test "x$kpse_cv_have_getPDFMajorVersion" = xyes],
+      [AC_DEFINE([HAVE_GETPDFMAJORVERSION], 1,
+                 [Define to 1 if class `PDFDoc' has the `getPDFMajorVersion' member.])])
+AC_LANG_POP([C++])
+KPSE_RESTORE_FLAGS
+
+# Checks for xpdf (libpoppler) features.
+KPSE_ADD_FLAGS([poppler])
 AC_LANG_PUSH([C++])
 AC_CACHE_CHECK([for PDFDoc::getPDFMajorVersion],
                [kpse_cv_have_getPDFMajorVersion],
@@ -307,6 +323,8 @@ AH_BOTTOM([#endif /* !WEB2C_C_AUTO_H */])
 
 dnl Additional config header for luaTeX
 AC_CONFIG_HEADERS([ff-config.h:luatexdir/luafontloader/ff-config.in])
+dnl This is also for luatex
+KPSE_CROSS_PATH_PROG([TXTTOZLIB],   [txt2zlib],  [./txt2zlib])
 
 # For cross-compilation.  Put at the end so there is a fair chance
 # these are still visible when the configure script has finished.

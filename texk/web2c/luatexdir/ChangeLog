@@ -1,3 +1,7 @@
+2011-04-12  Taco Hoekwater  <taco@luatex.org>
+
+	* import of luatex 0.66.0, released version
+
 2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am: Use AM_CFLAGS instead of libluatex_a_CFLAGS.

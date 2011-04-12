@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: image.h 3388 2010-01-26 10:59:04Z taco $ */
+/* $Id: image.h 4051 2011-01-09 22:41:33Z hhenkel $ */
 
 #ifndef IMAGE_H
 #  define IMAGE_H
@@ -30,7 +30,8 @@
 #  define JPG_UINT32      unsigned long
 #  define JPG_UINT8       unsigned char
 
-extern int do_zround(double r); /* from utils.c */
+extern int do_zround(double r); /* from utils.w */
+extern scaled one_hundred_bp;   /* from pdfgen.w */
 #  define bp2int(p)       do_zround(p * (one_hundred_bp / 100.0))
 #  define int2bp(i)       (i * 100.0 / one_hundred_bp)
 
@@ -53,6 +54,10 @@ typedef struct {
     JPG_UINT32 length;          /* length of file/data */
 } jpg_img_struct;
 
+typedef struct {
+    int length;                 /* length of file/data */
+} jp2_img_struct;
+
 #  if 0
 typedef struct {                /* currently unused */
 } jb2_img_struct;
@@ -67,7 +72,7 @@ typedef enum { DICT_NEW,        /* fresh dictionary */
 } dict_state;
 
 typedef enum { IMG_TYPE_NONE, IMG_TYPE_PDF, IMG_TYPE_PNG, IMG_TYPE_JPG,
-    IMG_TYPE_JBIG2, IMG_TYPE_PDFSTREAM, IMG_TYPE_SENTINEL
+        IMG_TYPE_JP2, IMG_TYPE_JBIG2, IMG_TYPE_PDFSTREAM, IMG_TYPE_SENTINEL
 } imgtype_e;
 
 typedef enum { IMG_KEEPOPEN, IMG_CLOSEINBETWEEN } img_readtype_e;
@@ -111,6 +116,7 @@ typedef struct {
         pdf_stream_struct *pdfstream;
         png_img_struct *png;
         jpg_img_struct *jpg;
+        jp2_img_struct *jp2;
         /* jb2_img_struct *jb2; */
     } img_struct;
 } image_dict;
@@ -155,6 +161,8 @@ typedef struct {
 
 #  define img_jpg_ptr(N)        ((N)->img_struct.jpg)
 #  define img_jpg_color(N)      ((N)->img_struct.jpg->color_space)
+
+#  define img_jp2_ptr(N)        ((N)->img_struct.jp2)
 
 #  define img_jb2_ptr(N)        ((N)->img_struct.jb2)
 

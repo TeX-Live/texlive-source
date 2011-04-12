@@ -21,8 +21,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdflistout.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdflistout.w $";
+    "$Id: pdflistout.w 3891 2010-09-14 23:02:24Z hhenkel $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdflistout.w $";
 
 #include "ptexlib.h"
 
@@ -221,9 +221,9 @@ static halfword calculate_width_to_enddir(halfword p, real cur_glue,
             case whatsit_node:
                 if (subtype(q) == dir_node) {
                     if (dir_dir(q) >= 0)
-                        incr(dir_nest);
+                        dir_nest++;
                     else
-                        decr(dir_nest);
+                        dir_nest--;
                     if (dir_nest == 0) {
                         enddir_ptr = q;
                         dir_cur_h(enddir_ptr) = w;
@@ -347,7 +347,7 @@ void hlist_out(PDF pdf, halfword this_box)
     localpos.pos = refpos->pos;
     localpos.dir = box_dir(this_box);
 
-    incr(cur_s);
+    cur_s++;
     if (cur_s > max_push)
         max_push = cur_s;
 
@@ -782,7 +782,7 @@ void hlist_out(PDF pdf, halfword this_box)
             dvi = save_dvi;     /* DVI! */
         }
     }
-    decr(cur_s);
+    cur_s--;
     pdf->posstruct = refpos;
 }
 
@@ -825,7 +825,7 @@ void vlist_out(PDF pdf, halfword this_box)
     localpos.dir = box_dir(this_box);
     synch_pos_with_cur(pdf->posstruct, refpos, cur);
 
-    incr(cur_s);
+    cur_s++;
     if (cur_s > max_push)
         max_push = cur_s;
 
@@ -1134,6 +1134,6 @@ void vlist_out(PDF pdf, halfword this_box)
             dvi = save_dvi;     /* DVI! */
         }
     }
-    decr(cur_s);
+    cur_s--;
     pdf->posstruct = refpos;
 }

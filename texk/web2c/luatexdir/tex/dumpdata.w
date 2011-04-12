@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: dumpdata.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/dumpdata.w $";
+    "$Id: dumpdata.w 3849 2010-09-01 09:10:48Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/dumpdata.w $";
 
 #define font_id_text(A) cs_text(font_id_base+(A))
 #define prev_depth cur_list.prev_depth_field
@@ -62,6 +62,7 @@ void store_fmt_file(void)
     halfword p;                 /* all-purpose pointer */
     int x;                      /* something to dump */
     char *format_engine;
+    int callback_id;            /* |pre_dump| callback */
     char *fmtname = NULL;
     /* If dumping is not allowed, abort */
     /* The user is not allowed to dump a format file unless |save_ptr=0|.
@@ -75,6 +76,10 @@ void store_fmt_file(void)
 
     /* Create the |format_ident|, open the format file, and inform the user 
        that dumping has begun */
+    callback_id = callback_defined(pre_dump_callback);
+    if (callback_id > 0) {
+        (void) run_callback(callback_id, "->");
+    }
     selector = new_string;
     tprint(" (format=");
     print(job_name);
@@ -284,11 +289,6 @@ void store_fmt_file(void)
         print_char('s');
     dump_math_data();
 
-    /* Dump the ocp information */
-    dump_active_ocp_info();
-    dump_ocp_info();
-    dump_ocplist_info();
-
     /* Dump the hyphenation tables */
     dump_language_data();
 
@@ -492,11 +492,6 @@ boolean load_fmt_file(const char *fmtname)
     }
     undump_math_data();
     make_pdftex_banner();
-
-    /* Undump the ocp information */
-    undump_active_ocp_info();
-    undump_ocp_info();
-    undump_ocplist_info();
 
     /* Undump the hyphenation tables */
     undump_language_data();

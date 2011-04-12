@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: mathcodes.w 3612 2010-04-13 09:29:42Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/mathcodes.w $";
+    "$Id: mathcodes.w 3992 2010-11-28 08:24:21Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/mathcodes.w $";
 
 @ math codes 
 @c
@@ -97,9 +97,18 @@ void show_mathcode_value(mathcodeval c)
         print_int(m);
     } else {
         print_char('"');
-        print_hex_digit(c.class_value);
-        print_hex_digit(c.family_value);
-        two_hex(c.character_value);
+	if (c.class_value) {
+	    print_hex_digit(c.class_value);
+            print_hex_digit(c.family_value);
+            two_hex(c.character_value);
+        } else if (c.family_value) {
+            print_hex_digit(c.family_value);
+            two_hex(c.character_value);
+        } else if (c.character_value >= 16) {
+            two_hex(c.character_value);
+        } else {
+            print_hex_digit(c.character_value);
+        }
     }
 }
 

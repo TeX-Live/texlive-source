@@ -27,14 +27,14 @@
 #  define EXTERN extern
 #  include "luatex.h"
 
-#   include "lib/lib.h"
+#  include "lib/lib.h"
 
 #  ifdef MSVC
 extern double rint(double x);
 #  endif
 
 #  if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
-extern char **suffixlist; /* in luainit.w */
+extern char **suffixlist;       /* in luainit.w */
 #  endif
 
 
@@ -189,6 +189,7 @@ size_t          T##_limit
 #  include "pdf/pdflink.h"
 #  include "pdf/pdflistout.h"
 #  include "pdf/pdfliteral.h"
+#  include "pdf/pdfluaapi.h"
 #  include "pdf/pdfobj.h"
 #  include "pdf/pdfoutline.h"
 #  include "pdf/pdfrule.h"
@@ -200,16 +201,13 @@ size_t          T##_limit
 
 #  include "lua/luagen.h"
 
+#  include "luascripts/pdflua.h"
+
 #  include "font/luatexfont.h"
 #  include "font/mapfile.h"
 #  include "utils/utils.h"
 #  include "image/writejbig2.h"
 #  include "image/pdftoepdf.h"
-
-#  include "ocp/ocp.h"
-#  include "ocp/ocplist.h"
-#  include "ocp/runocp.h"
-#  include "ocp/readocp.h"
 
 #  include "lang/texlang.h"
 
@@ -271,6 +269,10 @@ void copy_pdf_literal(pointer r, pointer p);
 void free_pdf_literal(pointer p);
 void show_pdf_literal(pointer p);
 
+void copy_late_lua(pointer r, pointer p);
+void free_late_lua(pointer p);
+void show_late_lua(pointer p);
+
 void load_tex_patterns(int curlang, halfword head);
 void load_tex_hyphenation(int curlang, halfword head);
 
@@ -319,7 +321,6 @@ typedef enum {
     find_image_file_callback,
     find_format_file_callback,
     find_read_file_callback, open_read_file_callback,
-    find_ocp_file_callback, read_ocp_file_callback,
     find_vf_file_callback, read_vf_file_callback,
     find_data_file_callback, read_data_file_callback,
     find_font_file_callback, read_font_file_callback,
@@ -347,6 +348,8 @@ typedef enum {
     linebreak_filter_callback,
     post_linebreak_filter_callback,
     mlist_to_hlist_callback,
+    finish_pdffile_callback,
+    pre_dump_callback,
     total_callbacks
 } callback_callback_types;
 
@@ -354,6 +357,9 @@ extern int callback_set[];
 extern int lua_active;
 
 #  define callback_defined(a) callback_set[a]
+/* #  define callback_defined(a) debug_callback_defined(a) */
+
+extern int debug_callback_defined(int i);
 
 extern int run_callback(int i, const char *values, ...);
 extern int run_saved_callback(int i, const char *name, const char *values, ...);
@@ -414,8 +420,7 @@ extern void topenin(void);
 extern str_number getjobname(str_number);
 extern str_number makefullnamestring(void);
 
-
-extern KPSEDLL string kpathsea_version_string;  /* from kpathsea/version.c */
+#include <kpathsea/version.h>
 
 extern PDF static_pdf;
 

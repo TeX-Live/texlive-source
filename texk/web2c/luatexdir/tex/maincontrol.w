@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: maincontrol.w 3659 2010-04-28 15:10:32Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/maincontrol.w $";
+    "$Id: maincontrol.w 4023 2010-12-05 15:10:06Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/maincontrol.w $";
 
 #include "ptexlib.h"
 
@@ -178,716 +178,737 @@ is very welcome, which is why I need to have the next two globals:
 internal_font_number space_spec_font;
 halfword space_spec_cache;
 
-@ for mode-independent commands, the following macros is useful: 
+@ To handle the execution state of |main_control|'s eternal loop,
+an extra global variable is used, along with a macro to define
+its values.
 
 @c
-#define any_mode(A) vmode+(A): case hmode+(A): case mmode+(A)
+#define goto_next 0
+#define goto_skip_token 1
+#define goto_return 2
+
+static int main_control_state;
 
 
-@ There is a list of cases where the user has probably gotten into or out of math
-mode by mistake. \TeX\ will insert a dollar sign and rescan the current token.
+@* Main control helpers.
+
+Here are all the functions that are called from |main_control| that
+are not already defined elsewhere. For the moment, this list simply
+in the order that the appear in |init_main_control|, below.
+
+@ 
+@c
+static void run_char_num (void) {
+    scan_char_num();
+    cur_chr = cur_val;
+    adjust_space_factor();
+    tail_append(new_char(cur_font, cur_chr));
+} 
+
+static void run_char (void) {
+    adjust_space_factor();
+    tail_append(new_char(cur_font, cur_chr));
+}
+
+@ 
+The occurrence of blank spaces is almost part of \TeX's inner loop,
+since we usually encounter about one space for every five non-blank characters.
+Therefore |main_control| gives second-highest priority to ordinary spaces.
+
+When a glue parameter like \.{\\spaceskip} is set to `\.{0pt}', we will
+see to it later that the corresponding glue specification is precisely
+|zero_glue|, not merely a pointer to some specification that happens
+to be full of zeroes. Therefore it is simple to test whether a glue parameter
+is zero or~not.
+
 
 @c
-#define non_math(A) vmode+(A): case hmode+(A)
+static void run_app_space (void) {
+    if ((abs(mode) + cur_cmd == hmode + spacer_cmd)
+        && (!(space_factor == 1000))) {
+        app_space();
+    } else {
+        /* Append a normal inter-word space to the current list */
+        if (space_skip == zero_glue) {
+            /* Find the glue specification, |main_p|, for
+               text spaces in the current font */
+            if (cur_font != space_spec_font) {
+                if (space_spec_cache != zero_glue)
+                    delete_glue_ref(space_spec_cache);
+                space_spec_cache = new_spec(zero_glue);
+                width(space_spec_cache) = space(cur_font);
+                stretch(space_spec_cache) = space_stretch(cur_font);
+                shrink(space_spec_cache) = space_shrink(cur_font);
+                space_spec_font = cur_font;
+            }
+            main_p = space_spec_cache;
+
+            temp_ptr = new_glue(main_p);
+        } else {
+            temp_ptr = new_param_glue(space_skip_code);
+        }
+        couple_nodes(tail,temp_ptr);
+        tail = temp_ptr;
+
+    }
+}
+
+@ Append a |cancel_boundary_node|
+@c
+static void run_no_boundary (void) {
+    new_whatsit(cancel_boundary_node);
+}
 
 @ @c
-void main_control(void)
-{                               /* governs \TeX's activities */
-    int t;                      /* general-purpose temporary variable */
-    halfword p;                 /* for whatsit nodes and testing whether an auto kern should be inserted */
-    int chr_stack;              /* to temporarily save an |cur_chr| to be appended */
+static void run_char_ghost (void) {
+    int t;
+    t = cur_chr;
+    get_x_token();
+    if ((cur_cmd == letter_cmd) || (cur_cmd == other_char_cmd)
+        || (cur_cmd == char_given_cmd) || (cur_cmd == char_num_cmd)) {
+        halfword p = new_glyph(get_cur_font(), cur_chr);
+        if (t == 0) {
+            set_is_leftghost(p);
+        } else {
+            set_is_rightghost(p);
+        }
+        tail_append(p);
+    }
+}
+
+@ @c
+static void run_relax (void) {
+    return;
+}
+
+@ |ignore_spaces| is a special case: after it has acted, |get_x_token| has already 
+fetched the next token from the input, so that operation in |main_control|
+should be skipped. 
+
+@c
+static void run_ignore_spaces (void) {
+    if (cur_chr == 0) {
+        /* Get the next non-blank non-call... */
+        do {
+            get_x_token();
+        } while (cur_cmd == spacer_cmd);
+
+        main_control_state = goto_skip_token;
+    } else {
+        int t = scanner_status;
+        scanner_status = normal;
+        get_token_lua();
+        scanner_status = t;
+        cur_cs = prim_lookup(cs_text(cur_cs));
+        if (cur_cs != undefined_primitive) {
+            cur_cmd = get_prim_eq_type(cur_cs);
+            cur_chr = get_prim_equiv(cur_cs);
+            cur_tok = (cur_cmd * STRING_OFFSET) + cur_chr;
+            main_control_state = goto_skip_token;
+        }
+    }
+}
+
+@ |stop| is the second special case. We want |main_control| to return to its caller
+if there is nothing left to do.
+
+@c
+static void run_stop (void) {
+    if (its_all_over())
+       main_control_state= goto_return; /* this is the only way out */
+}
+
+@ @c
+static void run_non_math_math (void) {
+    back_input();
+    new_graf(true);
+}
+
+@ @c
+static void run_math_char_num (void) {
     mathcodeval mval;           /* to build up an argument to |set_math_char| */
-    t = 0;                      /* for -Wall */
-    chr_stack = -1;
+    if (cur_chr == 0)
+        mval = scan_mathchar(tex_mathcode);
+    else if (cur_chr == 1)
+        mval = scan_mathchar(aleph_mathcode);
+    else if (cur_chr == 2)
+        mval = scan_mathchar(xetex_mathcode);
+    else
+        mval = scan_mathchar(xetexnum_mathcode);
+    math_char_in_text(mval);
+}
+
+@ @c
+static void run_math_given (void) {
+    mathcodeval mval;           /* to build up an argument to |set_math_char| */
+    mval = mathchar_from_integer(cur_chr, tex_mathcode);
+    math_char_in_text(mval);
+}
+
+static void run_omath_given (void) {
+    mathcodeval mval;           /* to build up an argument to |set_math_char| */
+    mval = mathchar_from_integer(cur_chr, aleph_mathcode);
+    math_char_in_text(mval);
+}
+
+static void run_xmath_given (void) {
+    mathcodeval mval;           /* to build up an argument to |set_math_char| */
+    mval = mathchar_from_integer(cur_chr, xetex_mathcode);
+    math_char_in_text(mval);
+}
+
+@  The most important parts of |main_control| are concerned with \TeX's
+chief mission of box-making. We need to control the activities that put
+entries on vlists and hlists, as well as the activities that convert
+those lists into boxes. All of the necessary machinery has already been
+developed; it remains for us to ``push the buttons'' at the right times.
+
+As an introduction to these routines, let's consider one of the simplest
+cases: What happens when `\.{\\hrule}' occurs in vertical mode, or
+`\.{\\vrule}' in horizontal mode or math mode? The code in |main_control|
+is short, since the |scan_rule_spec| routine already does most of what is
+required; thus, there is no need for a special action procedure.
+
+Note that baselineskip calculations are disabled after a rule in vertical
+mode, by setting |prev_depth:=pdf_ignored_dimen|.
+
+@c
+static void run_rule (void) {
+    tail_append(scan_rule_spec());
+    if (abs(mode) == vmode)
+        prev_depth = pdf_ignored_dimen;
+    else if (abs(mode) == hmode)
+        space_factor = 1000;
+}
+
+@
+Many of the actions related to box-making are triggered by the appearance
+of braces in the input. For example, when the user says `\.{\\hbox}
+\.{to} \.{100pt\{$\langle\,\hbox{hlist}\,\rangle$\}}' in vertical mode,
+the information about the box size (100pt, |exactly|) is put onto |save_stack|
+with a level boundary word just above it, and |cur_group:=adjusted_hbox_group|;
+\TeX\ enters restricted horizontal mode to process the hlist. The right
+brace eventually causes |save_stack| to be restored to its former state,
+at which time the information about the box size (100pt, |exactly|) is
+available once again; a box is packaged and we leave restricted horizontal
+mode, appending the new box to the current list of the enclosing mode
+(in this case to the current list of vertical mode), followed by any
+vertical adjustments that were removed from the box by |hpack|.
+
+The next few sections of the program are therefore concerned with the
+treatment of left and right curly braces.
+
+If a left brace occurs in the middle of a page or paragraph, it simply
+introduces a new level of grouping, and the matching right brace will not have
+such a drastic effect. Such grouping affects neither the mode nor the
+current list.
+
+@c
+static void run_left_brace (void) {
+    new_save_level(simple_group);
+    eq_word_define(int_base + no_local_whatsits_code, 0);
+    eq_word_define(int_base + no_local_dirs_code, 0);
+}
+
+static void run_begin_group (void) {
+    new_save_level(semi_simple_group);
+    eq_word_define(int_base + no_local_whatsits_code, 0);
+    eq_word_define(int_base + no_local_dirs_code, 0);
+}
+
+static void run_end_group (void) {
+    if (cur_group == semi_simple_group) {
+        fixup_directions();
+    } else {
+        off_save();
+    }
+}
+
+@ Constructions that require a box are started by calling |scan_box| with
+a specified context code. The |scan_box| routine verifies
+that a |make_box| command comes next and then it calls |begin_box|.
+
+@c
+static void run_move (void) {
+    int t = cur_chr;
+    scan_normal_dimen();
+    if (t == 0)
+        scan_box(cur_val);
+    else
+        scan_box(-cur_val);
+}
+
+@ @c
+static void run_leader_ship (void) {
+    scan_box(leader_flag - a_leaders + cur_chr);
+}
+
+@ @c
+static void run_make_box (void) {
+    begin_box(0);
+}
+
+@ @c
+static void run_box_dir (void) {
+    scan_register_num();
+    cur_box = box(cur_val);
+    scan_optional_equals();
+    scan_direction();
+    if (cur_box != null)
+        box_dir(cur_box) = cur_val;
+}
+
+@ There is a really small patch to add a new primitive called
+\.{\\quitvmode}. In vertical modes, it is identical to \.{\\indent},
+but in horizontal and math modes it is really a no-op (as opposed to
+\.{\\indent}, which executes the |indent_in_hmode| procedure).
+
+A paragraph begins when horizontal-mode material occurs in vertical mode,
+or when the paragraph is explicitly started by `\.{\\quitvmode}',
+`\.{\\indent}' or `\.{\\noindent}'.
+
+@c
+static void run_start_par_vmode (void) {
+    new_graf((cur_chr > 0));
+}
+
+@ @c
+static void run_start_par (void) {
+   if (cur_chr != 2)
+       indent_in_hmode();
+}
+
+@ @c
+static void run_new_graf (void) {
+   back_input();
+   new_graf(true);
+}
+
+@ A paragraph ends when a |par_end| command is sensed, or when we are in
+horizontal mode when reaching the right brace of vertical-mode routines
+like \.{\\vbox}, \.{\\insert}, or \.{\\output}. 
+ 
+@c
+static void run_par_end_vmode (void) {
+    normal_paragraph();
+    if (mode > 0) {
+        check_filter("vmode_par");
+        build_page();
+    }
+}
+
+@ @c
+static void run_par_end_hmode (void) {
+    if (align_state < 0)
+        off_save();         /* this tries to  recover from an alignment that didn't end properly */
+    end_graf(bottom_level); /* this takes us to the enclosing mode, if |mode>0| */
+    if (mode == vmode) {
+        check_filter("hmode_par");
+        build_page();
+    }
+}
+
+@ @c
+static void append_italic_correction_mmode (void) {
+    tail_append(new_kern(0));
+}
+
+@ @c
+static void run_local_box (void) {
+    append_local_box(cur_chr);
+}
+
+@ @c
+static void run_halign_mmode (void) {
+    if (privileged()) {
+        if (cur_group == math_shift_group)
+            init_align();
+        else
+            off_save();
+    }
+}
+
+@ @c
+static void run_eq_no (void) {
+    if (privileged()) {
+        if (cur_group == math_shift_group)
+            start_eq_no();
+        else
+            off_save();
+    }
+}
+
+@ @c
+static void run_letter_mmode (void) {
+   set_math_char(get_math_code(cur_chr));
+}
+
+@ @c
+static void run_char_num_mmode (void) {
+    scan_char_num();
+    cur_chr = cur_val;
+    set_math_char(get_math_code(cur_chr));
+}
+
+@ @c
+static void run_math_char_num_mmode (void) {
+    mathcodeval mval;           /* to build up an argument to |set_math_char| */
+    if (cur_chr == 0)
+        mval = scan_mathchar(tex_mathcode);
+    else if (cur_chr == 1)
+        mval = scan_mathchar(aleph_mathcode);
+    else if (cur_chr == 2)
+        mval = scan_mathchar(xetex_mathcode);
+    else
+        mval = scan_mathchar(xetexnum_mathcode);
+    set_math_char(mval);
+}
+
+@ @c
+static void run_math_given_mmode (void) {
+    mathcodeval mval;           /* to build up an argument to |set_math_char| */
+    mval = mathchar_from_integer(cur_chr, tex_mathcode);
+    set_math_char(mval);
+}
+
+static void run_omath_given_mmode (void) {
+    mathcodeval mval;           /* to build up an argument to |set_math_char| */
+    mval = mathchar_from_integer(cur_chr, aleph_mathcode);
+    set_math_char(mval);
+}
+
+static void run_xmath_given_mmode (void) {
+    mathcodeval mval;           /* to build up an argument to |set_math_char| */
+    mval = mathchar_from_integer(cur_chr, xetex_mathcode);
+    set_math_char(mval);
+}
+
+@ @c
+static void run_delim_num (void) {
+    mathcodeval mval;           /* to build up an argument to |set_math_char| */
+    if (cur_chr == 0)
+        mval = scan_delimiter_as_mathchar(tex_mathcode);
+    else if (cur_chr == 1)
+        mval = scan_delimiter_as_mathchar(aleph_mathcode);
+    else
+        mval = scan_delimiter_as_mathchar(xetex_mathcode);
+    set_math_char(mval);
+
+}
+
+@ @c
+static void run_vcenter (void) {
+    scan_spec(vcenter_group);
+    normal_paragraph();
+    push_nest();
+    mode = -vmode;
+    prev_depth = pdf_ignored_dimen;
+    if (every_vbox != null)
+        begin_token_list(every_vbox, every_vbox_text);
+}
+
+@ @c
+static void run_math_style (void) {
+    tail_append(new_style((small_number) cur_chr));
+}
+
+@ @c
+static void run_non_script (void) {
+    tail_append(new_glue(zero_glue));
+    subtype(tail) = cond_math_glue;
+}
+
+@ @c
+static void run_math_choice (void) {
+    if (cur_chr == 0)
+        append_choices();
+    else
+        setup_math_style();
+}
+
+@ @c
+static void run_math_shift (void) {
+    if (cur_group == math_shift_group)
+        after_math();
+    else
+        off_save();
+}
+
+@ @c
+static void run_after_assignment (void) {
+    get_token();
+    after_token = cur_tok;
+}
+
+@ @c
+static void run_after_group (void) {
+    get_token();
+    save_for_after(cur_tok);
+}
+
+@ @c
+static void run_extension (void) {
+    do_extension(static_pdf);
+}
+
+
+@ For mode-independent commands, the following macro is useful.
+
+Also, there is a list of cases where the user has probably gotten into or out of math
+mode by mistake. \TeX\ will insert a dollar sign and rescan the current token, and
+it makes sense ot have a macro for that as well.
+
+@c
+#define any_mode(A,B) jump_table[vmode+(A)]=B; jump_table[hmode+(A)]=B; jump_table[mmode+(A)]=B
+#define non_math(A,B) jump_table[vmode+(A)]=B; jump_table[hmode+(A)]=B; 
+
+
+@ The |main_control| uses a jump table, and |init_main_control| sets that table up.
+@c
+typedef void (*main_control_function) (void);
+main_control_function *jump_table;
+
+static void init_main_control (void) {
+    jump_table = xmalloc((mmode+max_command_cmd+1) * sizeof(main_control_function)) ;
+
+    jump_table[hmode + char_num_cmd] = run_char_num;
+    jump_table[hmode + letter_cmd] = run_char;
+    jump_table[hmode + other_char_cmd] = run_char;
+    jump_table[hmode + char_given_cmd] = run_char;
+    jump_table[hmode + spacer_cmd] = run_app_space;
+    jump_table[hmode + ex_space_cmd] = run_app_space;
+    jump_table[mmode + ex_space_cmd] = run_app_space;
+    jump_table[hmode + no_boundary_cmd] = run_no_boundary;
+    jump_table[hmode + char_ghost_cmd] = run_char_ghost;
+    jump_table[mmode + char_ghost_cmd] = run_char_ghost;
+    any_mode(relax_cmd, run_relax);
+    jump_table[vmode + spacer_cmd] = run_relax;
+    jump_table[mmode + spacer_cmd] = run_relax;
+    jump_table[mmode + no_boundary_cmd] = run_relax;
+    any_mode(ignore_spaces_cmd,run_ignore_spaces);
+    jump_table[vmode + stop_cmd] = run_stop;
+    jump_table[vmode + math_char_num_cmd] = run_non_math_math;
+    jump_table[vmode + math_given_cmd] = run_non_math_math;
+    jump_table[vmode + omath_given_cmd] = run_non_math_math;
+    jump_table[vmode + xmath_given_cmd] = run_non_math_math;
+    jump_table[hmode + math_char_num_cmd] = run_math_char_num;
+    jump_table[hmode + math_given_cmd] = run_math_given;
+    jump_table[hmode + omath_given_cmd] = run_omath_given;
+    jump_table[hmode + xmath_given_cmd] = run_xmath_given;
+
+    jump_table[vmode + vmove_cmd] = report_illegal_case;
+    jump_table[hmode + hmove_cmd] = report_illegal_case;
+    jump_table[mmode + hmove_cmd] = report_illegal_case;
+    any_mode(last_item_cmd, report_illegal_case);
+    jump_table[vmode + vadjust_cmd] = report_illegal_case;
+    jump_table[vmode + ital_corr_cmd] = report_illegal_case;
+    non_math(eq_no_cmd,report_illegal_case);
+    any_mode(mac_param_cmd,report_illegal_case);
+
+    non_math(sup_mark_cmd, insert_dollar_sign);
+    non_math(sub_mark_cmd, insert_dollar_sign);
+    non_math(super_sub_script_cmd, insert_dollar_sign);
+    non_math(math_comp_cmd, insert_dollar_sign);
+    non_math(delim_num_cmd, insert_dollar_sign);
+    non_math(left_right_cmd, insert_dollar_sign);
+    non_math(above_cmd, insert_dollar_sign);
+    non_math(radical_cmd, insert_dollar_sign);
+    non_math(math_style_cmd, insert_dollar_sign);
+    non_math(math_choice_cmd, insert_dollar_sign);
+    non_math(vcenter_cmd, insert_dollar_sign);
+    non_math(non_script_cmd, insert_dollar_sign);
+    non_math(mkern_cmd, insert_dollar_sign);
+    non_math(limit_switch_cmd, insert_dollar_sign);
+    non_math(mskip_cmd, insert_dollar_sign);
+    non_math(math_accent_cmd, insert_dollar_sign);
+    jump_table[mmode + endv_cmd] =  insert_dollar_sign;
+    jump_table[mmode + par_end_cmd] =  insert_dollar_sign;
+    jump_table[mmode + stop_cmd] =  insert_dollar_sign;
+    jump_table[mmode + vskip_cmd] =  insert_dollar_sign;
+    jump_table[mmode + un_vbox_cmd] =  insert_dollar_sign;
+    jump_table[mmode + valign_cmd] =  insert_dollar_sign;
+    jump_table[mmode + hrule_cmd] =  insert_dollar_sign;
+    jump_table[vmode + hrule_cmd] = run_rule;
+    jump_table[hmode + vrule_cmd] = run_rule;
+    jump_table[mmode + vrule_cmd] = run_rule;
+    jump_table[vmode + vskip_cmd] = append_glue;
+    jump_table[hmode + hskip_cmd] = append_glue;
+    jump_table[mmode + hskip_cmd] = append_glue;
+    jump_table[mmode + mskip_cmd] = append_glue;
+    any_mode(kern_cmd, append_kern);
+    jump_table[mmode + mkern_cmd] = append_kern;
+    non_math(left_brace_cmd, run_left_brace);
+    any_mode(begin_group_cmd,run_begin_group);
+    any_mode(end_group_cmd, run_end_group);
+    any_mode(right_brace_cmd, handle_right_brace);
+    jump_table[vmode + hmove_cmd] = run_move;
+    jump_table[hmode + vmove_cmd] = run_move;
+    jump_table[mmode + vmove_cmd] = run_move;
+    any_mode(leader_ship_cmd, run_leader_ship);
+    any_mode(make_box_cmd, run_make_box);
+    any_mode(assign_box_dir_cmd, run_box_dir);
+    jump_table[vmode + start_par_cmd] = run_start_par_vmode;
+    jump_table[hmode + start_par_cmd] = run_start_par;
+    jump_table[mmode + start_par_cmd] = run_start_par;
+    jump_table[vmode + letter_cmd] = run_new_graf;
+    jump_table[vmode + other_char_cmd] = run_new_graf;
+    jump_table[vmode + char_num_cmd] = run_new_graf;
+    jump_table[vmode + char_given_cmd] = run_new_graf;
+    jump_table[vmode + char_ghost_cmd] = run_new_graf;
+    jump_table[vmode + math_shift_cmd] = run_new_graf;
+    jump_table[vmode + math_shift_cs_cmd] = run_new_graf;
+    jump_table[vmode + un_hbox_cmd] = run_new_graf;
+    jump_table[vmode + vrule_cmd] = run_new_graf;
+    jump_table[vmode + accent_cmd] = run_new_graf;
+    jump_table[vmode + discretionary_cmd] = run_new_graf;
+    jump_table[vmode + hskip_cmd] = run_new_graf;
+    jump_table[vmode + valign_cmd] = run_new_graf;
+    jump_table[vmode + ex_space_cmd] = run_new_graf;
+    jump_table[vmode + no_boundary_cmd] = run_new_graf;
+    jump_table[vmode + par_end_cmd] = run_par_end_vmode;
+    jump_table[hmode + par_end_cmd] = run_par_end_hmode;
+    jump_table[hmode + stop_cmd] = head_for_vmode;
+    jump_table[hmode + vskip_cmd] = head_for_vmode;
+    jump_table[hmode + hrule_cmd] = head_for_vmode;
+    jump_table[hmode + un_vbox_cmd] = head_for_vmode;
+    jump_table[hmode + halign_cmd] = head_for_vmode;
+    any_mode(insert_cmd,begin_insert_or_adjust);
+    jump_table[hmode + vadjust_cmd] = begin_insert_or_adjust;
+    jump_table[mmode + vadjust_cmd] = begin_insert_or_adjust;
+    any_mode(mark_cmd, handle_mark);
+    any_mode(break_penalty_cmd, append_penalty);
+    any_mode(remove_item_cmd, delete_last);
+    jump_table[vmode + un_vbox_cmd] = unpackage;
+    jump_table[hmode + un_hbox_cmd] = unpackage;
+    jump_table[mmode + un_hbox_cmd] = unpackage;
+    jump_table[hmode + ital_corr_cmd] = append_italic_correction;
+    jump_table[mmode + ital_corr_cmd] = append_italic_correction_mmode;
+    jump_table[hmode + discretionary_cmd] = append_discretionary;
+    jump_table[mmode + discretionary_cmd] = append_discretionary;
+    any_mode(assign_local_box_cmd, run_local_box);
+    jump_table[hmode + accent_cmd] = make_accent;
+    any_mode(car_ret_cmd,align_error);
+    any_mode(tab_mark_cmd,align_error);
+    any_mode(no_align_cmd,no_align_error);
+    any_mode(omit_cmd, omit_error);
+    jump_table[vmode + halign_cmd] = init_align;
+    jump_table[hmode + valign_cmd] = init_align;
+    jump_table[mmode + halign_cmd] = run_halign_mmode;
+    jump_table[vmode + endv_cmd] = do_endv;
+    jump_table[hmode + endv_cmd] = do_endv;
+    any_mode(end_cs_name_cmd, cs_error);
+    jump_table[hmode + math_shift_cmd] = init_math;
+    jump_table[hmode + math_shift_cs_cmd] = init_math;
+    jump_table[mmode + eq_no_cmd] = run_eq_no;
+    jump_table[mmode + left_brace_cmd] = math_left_brace;
+    jump_table[mmode + letter_cmd] = run_letter_mmode;
+    jump_table[mmode + other_char_cmd] = run_letter_mmode;
+    jump_table[mmode + char_given_cmd] = run_letter_mmode;
+    jump_table[mmode + char_num_cmd] = run_char_num_mmode;
+    jump_table[mmode + math_char_num_cmd] = run_math_char_num_mmode;
+    jump_table[mmode + math_given_cmd] = run_math_given_mmode;
+    jump_table[mmode + omath_given_cmd] = run_omath_given_mmode;
+    jump_table[mmode + xmath_given_cmd] = run_xmath_given_mmode;
+    jump_table[mmode + delim_num_cmd] = run_delim_num;
+    jump_table[mmode + math_comp_cmd] = math_math_comp;
+    jump_table[mmode + limit_switch_cmd] = math_limit_switch;
+    jump_table[mmode + radical_cmd] = math_radical;
+    jump_table[mmode + accent_cmd] = math_ac;
+    jump_table[mmode + math_accent_cmd] = math_ac;
+    jump_table[mmode + vcenter_cmd] = run_vcenter;
+    jump_table[mmode + math_style_cmd] = run_math_style;
+    jump_table[mmode + non_script_cmd] = run_non_script;
+    jump_table[mmode + math_choice_cmd] = run_math_choice;
+    jump_table[mmode + above_cmd] = math_fraction;
+    jump_table[mmode + sub_mark_cmd] = sub_sup;
+    jump_table[mmode + sup_mark_cmd] = sub_sup;
+    jump_table[mmode + super_sub_script_cmd] = sub_sup;
+    jump_table[mmode + left_right_cmd] = math_left_right;
+    jump_table[mmode + math_shift_cmd] = run_math_shift;
+    jump_table[mmode + math_shift_cs_cmd] = run_math_shift;
+    any_mode(toks_register_cmd, prefixed_command);
+    any_mode(assign_toks_cmd, prefixed_command);
+    any_mode(assign_int_cmd, prefixed_command);
+    any_mode(assign_attr_cmd, prefixed_command);
+    any_mode(assign_dir_cmd, prefixed_command);
+    any_mode(assign_dimen_cmd, prefixed_command);
+    any_mode(assign_glue_cmd, prefixed_command);
+    any_mode(assign_mu_glue_cmd, prefixed_command);
+    any_mode(assign_font_dimen_cmd, prefixed_command);
+    any_mode(assign_font_int_cmd, prefixed_command);
+    any_mode(set_aux_cmd, prefixed_command);
+    any_mode(set_prev_graf_cmd, prefixed_command);
+    any_mode(set_page_dimen_cmd, prefixed_command);
+    any_mode(set_page_int_cmd, prefixed_command);
+    any_mode(set_box_dimen_cmd, prefixed_command);
+    any_mode(set_tex_shape_cmd, prefixed_command);
+    any_mode(set_etex_shape_cmd, prefixed_command);
+    any_mode(def_char_code_cmd, prefixed_command);
+    any_mode(def_del_code_cmd, prefixed_command);
+    any_mode(extdef_math_code_cmd, prefixed_command);
+    any_mode(extdef_del_code_cmd, prefixed_command);
+    any_mode(def_family_cmd, prefixed_command);
+    any_mode(set_math_param_cmd, prefixed_command);
+    any_mode(set_font_cmd, prefixed_command);
+    any_mode(def_font_cmd, prefixed_command);
+    any_mode(letterspace_font_cmd, prefixed_command);
+    any_mode(pdf_copy_font_cmd, prefixed_command);
+    any_mode(register_cmd, prefixed_command);
+    any_mode(advance_cmd, prefixed_command);
+    any_mode(multiply_cmd, prefixed_command);
+    any_mode(divide_cmd, prefixed_command);
+    any_mode(prefix_cmd, prefixed_command);
+    any_mode(let_cmd, prefixed_command);
+    any_mode(shorthand_def_cmd, prefixed_command);
+    any_mode(read_to_cs_cmd, prefixed_command);
+    any_mode(def_cmd, prefixed_command);
+    any_mode(set_box_cmd, prefixed_command);
+    any_mode(hyph_data_cmd, prefixed_command);
+    any_mode(set_interaction_cmd, prefixed_command);
+    any_mode(after_assignment_cmd,run_after_assignment);
+    any_mode(after_group_cmd,run_after_group);
+    any_mode(in_stream_cmd,open_or_close_in);
+    any_mode(message_cmd,issue_message);
+    any_mode(case_shift_cmd, shift_case);
+    any_mode(xray_cmd, show_whatever);
+    any_mode(extension_cmd, run_extension);
+}
+
+@ And here is |main_control| itself.  It is quite short nowadays.
+
+@c
+void main_control(void)
+{
+    main_control_state = goto_next;
+    init_main_control () ;
+
     if (equiv(every_job_loc) != null)
         begin_token_list(equiv(every_job_loc), every_job_text);
 
-  BIG_SWITCH:
-    get_x_token();
+    while (1) {
+	if (main_control_state == goto_skip_token)
+            main_control_state = goto_next; /* reset */
+        else
+            get_x_token();
 
-  RESWITCH:
-    /* Give diagnostic information, if requested */
-    /* When a new token has just been fetched at |big_switch|, we have an
-       ideal place to monitor \TeX's activity. */
-    if (interrupt != 0) {
-        if (OK_to_interrupt) {
+        /* Give diagnostic information, if requested */
+        /* When a new token has just been fetched at |big_switch|, we have an
+           ideal place to monitor \TeX's activity. */
+        if (interrupt != 0 && OK_to_interrupt) {
             back_input();
             check_interrupt();
-            goto BIG_SWITCH;
+            continue;
+        }
+        if (int_par(tracing_commands_code) > 0)
+            show_cur_cmd_chr();
+
+        (jump_table[(abs(mode) + cur_cmd)])(); /* run the command */
+        
+        if (main_control_state == goto_return) {
+	    return;
         }
     }
-    if (int_par(tracing_commands_code) > 0)
-        show_cur_cmd_chr();
-
-    switch (abs(mode) + cur_cmd) {
-    case hmode + letter_cmd:
-    case hmode + other_char_cmd:
-    case hmode + char_given_cmd:
-    case hmode + char_num_cmd:
-        if (abs(mode) + cur_cmd == hmode + char_num_cmd) {
-            scan_char_num();
-            cur_chr = cur_val;
-        }
-        if (is_last_ocp(current_ocp_lstack, current_ocp_no)) {
-            /* Append character |cur_chr| and the following characters (if~any)
-               to the current hlist in the current font; |goto reswitch| when
-               a non-character has been fetched */
-          CONTINUE:
-            adjust_space_factor();
-            chr_stack = cur_chr;
-            tail_append(new_char(cur_font, chr_stack));
-            get_x_token();
-            if ((cur_cmd == letter_cmd) || (cur_cmd == other_char_cmd) ||
-                (cur_cmd == char_given_cmd) || (cur_cmd == char_num_cmd)) {
-                if (cur_cmd == char_num_cmd) {
-                    scan_char_num();
-                    cur_chr = cur_val;
-                }
-                if ((chr_stack == ex_hyphen_char) && (cur_chr != ex_hyphen_char)
-                    && (mode > 0)) {
-                    tail = compound_word_break(tail, cur_lang);
-                    subtype(tail) = automatic_disc;
-                }
-                goto CONTINUE;
-            } else {
-                if ((chr_stack == ex_hyphen_char) && (mode > 0)) {
-                    tail = compound_word_break(tail, cur_lang);
-                    subtype(tail) = automatic_disc;
-                }
-                chr_stack = -1;
-                goto RESWITCH;
-            }
-
-        } else {
-            /* Create a buffer with character |cur_chr| and the following
-               characters (if~any) and then apply the current active OCP filter
-               to this buffer */
-            run_ocp();
-            goto BIG_SWITCH;
-
-        }
-        break;
-    case hmode + spacer_cmd:
-    case hmode + ex_space_cmd:
-    case mmode + ex_space_cmd:
-        if ((abs(mode) + cur_cmd == hmode + spacer_cmd)
-            && (!(space_factor == 1000))) {
-            app_space();
-        } else {
-            /* Append a normal inter-word space to the current list */
-            /* The occurrence of blank spaces is almost part of \TeX's inner loop,
-               since we usually encounter about one space for every five non-blank characters.
-               Therefore |main_control| gives second-highest priority to ordinary spaces.
-
-               When a glue parameter like \.{\\spaceskip} is set to `\.{0pt}', we will
-               see to it later that the corresponding glue specification is precisely
-               |zero_glue|, not merely a pointer to some specification that happens
-               to be full of zeroes. Therefore it is simple to test whether a glue parameter
-               is zero or~not.
-             */
-            if (space_skip == zero_glue) {
-                /* Find the glue specification, |main_p|, for
-                   text spaces in the current font */
-                if (cur_font != space_spec_font) {
-                    if (space_spec_cache != zero_glue)
-                        delete_glue_ref(space_spec_cache);
-                    space_spec_cache = new_spec(zero_glue);
-                    width(space_spec_cache) = space(cur_font);
-                    stretch(space_spec_cache) = space_stretch(cur_font);
-                    shrink(space_spec_cache) = space_shrink(cur_font);
-                    space_spec_font = cur_font;
-                }
-                main_p = space_spec_cache;
-
-                temp_ptr = new_glue(main_p);
-            } else {
-                temp_ptr = new_param_glue(space_skip_code);
-            }
-            vlink(tail) = temp_ptr;
-            tail = temp_ptr;
-
-        }
-        break;
-
-    case hmode + no_boundary_cmd:
-        /* Append a |cancel_boundary_node| */
-        new_whatsit(cancel_boundary_node);
-        break;
-    case hmode + char_ghost_cmd:
-        t = cur_chr;
-        get_x_token();
-        if ((cur_cmd == letter_cmd) || (cur_cmd == other_char_cmd)
-            || (cur_cmd == char_given_cmd) || (cur_cmd == char_num_cmd)) {
-            p = new_glyph(get_cur_font(), cur_chr);
-            if (t == 0) {
-                set_is_leftghost(p);
-            } else {
-                set_is_rightghost(p);
-            }
-            tail_append(p);
-        }
-        break;
-        /* Cases of |main_control| that are not part of the inner loop */
-    case any_mode(relax_cmd):
-    case vmode + spacer_cmd:
-    case mmode + spacer_cmd:
-    case mmode + no_boundary_cmd:
-        break;
-    case any_mode(ignore_spaces_cmd):
-        if (cur_chr == 0) {
-            /* Get the next non-blank non-call... */
-            do {
-                get_x_token();
-            } while (cur_cmd == spacer_cmd);
-
-            goto RESWITCH;
-        } else {
-            t = scanner_status;
-            scanner_status = normal;
-            get_token_lua();
-            scanner_status = t;
-            cur_cs = prim_lookup(cs_text(cur_cs));
-            if (cur_cs != undefined_primitive) {
-                cur_cmd = get_prim_eq_type(cur_cs);
-                cur_chr = get_prim_equiv(cur_cs);
-                cur_tok = (cur_cmd * STRING_OFFSET) + cur_chr;
-                goto RESWITCH;
-            }
-        }
-        break;
-    case vmode + stop_cmd:
-        if (its_all_over())
-            return;             /* this is the only way out */
-        break;
-        /* Math cases in non-math modes */
-    case vmode + math_char_num_cmd:
-    case vmode + math_given_cmd:
-    case vmode + omath_given_cmd:
-    case vmode + xmath_given_cmd:
-        back_input();
-        new_graf(true);
-        break;
-    case hmode + math_char_num_cmd:
-        if (cur_chr == 0)
-            mval = scan_mathchar(tex_mathcode);
-        else if (cur_chr == 1)
-            mval = scan_mathchar(aleph_mathcode);
-        else if (cur_chr == 2)
-            mval = scan_mathchar(xetex_mathcode);
-        else
-            mval = scan_mathchar(xetexnum_mathcode);
-        math_char_in_text(mval);
-        break;
-    case hmode + math_given_cmd:
-        mval = mathchar_from_integer(cur_chr, tex_mathcode);
-        math_char_in_text(mval);
-        break;
-    case hmode + omath_given_cmd:
-        mval = mathchar_from_integer(cur_chr, aleph_mathcode);
-        math_char_in_text(mval);
-        break;
-    case hmode + xmath_given_cmd:
-        mval = mathchar_from_integer(cur_chr, xetex_mathcode);
-        math_char_in_text(mval);
-        break;
-
-        /* Forbidden cases detected in |main_control| */
-    case vmode + vmove_cmd:
-    case hmode + hmove_cmd:
-    case mmode + hmove_cmd:
-    case any_mode(last_item_cmd):
-    case vmode + vadjust_cmd:
-    case vmode + ital_corr_cmd:
-    case non_math(eq_no_cmd):
-    case any_mode(mac_param_cmd):
-        /* When erroneous situations arise, \TeX\ usually issues an error message
-           specific to the particular error. For example, `\.{\\noalign}' should
-           not appear in any mode, since it is recognized by the |align_peek| routine
-           in all of its legitimate appearances; a special error message is given
-           when `\.{\\noalign}' occurs elsewhere. But sometimes the most appropriate
-           error message is simply that the user is not allowed to do what he or she
-           has attempted. For example, `\.{\\moveleft}' is allowed only in vertical mode,
-           and `\.{\\lower}' only in non-vertical modes.  Such cases are enumerated
-           here and in the other sections referred to under `See also \dots.'
-         */
-        report_illegal_case();
-        break;
-
-        /* Math-only cases in non-math modes, or vice versa */
-    case non_math(sup_mark_cmd):
-    case non_math(sub_mark_cmd):
-    case non_math(super_sub_script_cmd):
-    case non_math(math_comp_cmd):
-    case non_math(delim_num_cmd):
-    case non_math(left_right_cmd):
-    case non_math(above_cmd):
-    case non_math(radical_cmd):
-    case non_math(math_style_cmd):
-    case non_math(math_choice_cmd):
-    case non_math(vcenter_cmd):
-    case non_math(non_script_cmd):
-    case non_math(mkern_cmd):
-    case non_math(limit_switch_cmd):
-    case non_math(mskip_cmd):
-    case non_math(math_accent_cmd):
-    case mmode + endv_cmd:
-    case mmode + par_end_cmd:
-    case mmode + stop_cmd:
-    case mmode + vskip_cmd:
-    case mmode + un_vbox_cmd:
-    case mmode + valign_cmd:
-    case mmode + hrule_cmd:
-        insert_dollar_sign();
-        break;
-        /* Cases of |main_control| that build boxes and lists */
-    case vmode + hrule_cmd:
-    case hmode + vrule_cmd:
-    case mmode + vrule_cmd:
-        /* The most important parts of |main_control| are concerned with \TeX's
-           chief mission of box-making. We need to control the activities that put
-           entries on vlists and hlists, as well as the activities that convert
-           those lists into boxes. All of the necessary machinery has already been
-           developed; it remains for us to ``push the buttons'' at the right times.
-
-           As an introduction to these routines, let's consider one of the simplest
-           cases: What happens when `\.{\\hrule}' occurs in vertical mode, or
-           `\.{\\vrule}' in horizontal mode or math mode? The code in |main_control|
-           is short, since the |scan_rule_spec| routine already does most of what is
-           required; thus, there is no need for a special action procedure.
-
-           Note that baselineskip calculations are disabled after a rule in vertical
-           mode, by setting |prev_depth:=pdf_ignored_dimen|.
-         */
-        tail_append(scan_rule_spec());
-        if (abs(mode) == vmode)
-            prev_depth = pdf_ignored_dimen;
-        else if (abs(mode) == hmode)
-            space_factor = 1000;
-        break;
-
-    case vmode + vskip_cmd:
-    case hmode + hskip_cmd:
-    case mmode + hskip_cmd:
-    case mmode + mskip_cmd:
-        /* The processing of things like \.{\\hskip} and \.{\\vskip} is slightly
-           more complicated. But the code in |main_control| is very short, since
-           it simply calls on the action routine |append_glue|. Similarly, \.{\\kern}
-           activates |append_kern|. */
-        append_glue();
-        break;
-    case any_mode(kern_cmd):
-    case mmode + mkern_cmd:
-        append_kern();
-        break;
-
-    case non_math(left_brace_cmd):
-        /* Many of the actions related to box-making are triggered by the appearance
-           of braces in the input. For example, when the user says `\.{\\hbox}
-           \.{to} \.{100pt\{$\langle\,\hbox{hlist}\,\rangle$\}}' in vertical mode,
-           the information about the box size (100pt, |exactly|) is put onto |save_stack|
-           with a level boundary word just above it, and |cur_group:=adjusted_hbox_group|;
-           \TeX\ enters restricted horizontal mode to process the hlist. The right
-           brace eventually causes |save_stack| to be restored to its former state,
-           at which time the information about the box size (100pt, |exactly|) is
-           available once again; a box is packaged and we leave restricted horizontal
-           mode, appending the new box to the current list of the enclosing mode
-           (in this case to the current list of vertical mode), followed by any
-           vertical adjustments that were removed from the box by |hpack|.
-
-           The next few sections of the program are therefore concerned with the
-           treatment of left and right curly braces.
-
-           If a left brace occurs in the middle of a page or paragraph, it simply
-           introduces a new level of grouping, and the matching right brace will not have
-           such a drastic effect. Such grouping affects neither the mode nor the
-           current list. */
-        new_save_level(simple_group);
-        eq_word_define(int_base + no_local_whatsits_code, 0);
-        eq_word_define(int_base + no_local_dirs_code, 0);
-        break;
-    case any_mode(begin_group_cmd):
-        new_save_level(semi_simple_group);
-        eq_word_define(int_base + no_local_whatsits_code, 0);
-        eq_word_define(int_base + no_local_dirs_code, 0);
-        break;
-    case any_mode(end_group_cmd):
-        if (cur_group == semi_simple_group) {
-            fixup_directions();
-        } else {
-            off_save();
-        }
-        break;
-    case any_mode(right_brace_cmd):
-        handle_right_brace();
-        break;
-
-    case vmode + hmove_cmd:
-    case hmode + vmove_cmd:
-    case mmode + vmove_cmd:
-        /* Constructions that require a box are started by calling |scan_box| with
-           a specified context code. The |scan_box| routine verifies
-           that a |make_box| command comes next and then it calls |begin_box|.
-         */
-        t = cur_chr;
-        scan_normal_dimen();
-        if (t == 0)
-            scan_box(cur_val);
-        else
-            scan_box(-cur_val);
-        break;
-    case any_mode(leader_ship_cmd):
-        scan_box(leader_flag - a_leaders + cur_chr);
-        break;
-    case any_mode(make_box_cmd):
-        begin_box(0);
-        break;
-    case any_mode(assign_box_dir_cmd):
-        scan_register_num();
-        cur_box = box(cur_val);
-        scan_optional_equals();
-        scan_direction();
-        if (cur_box != null)
-            box_dir(cur_box) = cur_val;
-        break;
-
-    case vmode + start_par_cmd:
-        /* There is a really small patch to add a new primitive called
-           \.{\\quitvmode}. In vertical modes, it is identical to \.{\\indent},
-           but in horizontal and math modes it is really a no-op (as opposed to
-           \.{\\indent}, which executes the |indent_in_hmode| procedure).
-         */
-        /* A paragraph begins when horizontal-mode material occurs in vertical mode,
-           or when the paragraph is explicitly started by `\.{\\quitvmode}',
-           `\.{\\indent}' or `\.{\\noindent}'.
-         */
-        new_graf((cur_chr > 0));
-        break;
-    case hmode + start_par_cmd:
-    case mmode + start_par_cmd:
-        if (cur_chr != 2)
-            indent_in_hmode();
-        break;
-    case vmode + letter_cmd:
-    case vmode + other_char_cmd:
-    case vmode + char_num_cmd:
-    case vmode + char_given_cmd:
-    case vmode + char_ghost_cmd:
-    case vmode + math_shift_cmd:
-    case vmode + math_shift_cs_cmd:
-    case vmode + un_hbox_cmd:
-    case vmode + vrule_cmd:
-    case vmode + accent_cmd:
-    case vmode + discretionary_cmd:
-    case vmode + hskip_cmd:
-    case vmode + valign_cmd:
-    case vmode + ex_space_cmd:
-    case vmode + no_boundary_cmd:
-        back_input();
-        new_graf(true);
-        break;
-
-    case vmode + par_end_cmd:
-        /* A paragraph ends when a |par_end| command is sensed, or when we are in
-           horizontal mode when reaching the right brace of vertical-mode routines
-           like \.{\\vbox}, \.{\\insert}, or \.{\\output}. */
-        normal_paragraph();
-        if (mode > 0) {
-            check_filter("vmode_par");
-            build_page();
-        }
-        break;
-    case hmode + par_end_cmd:
-        if (align_state < 0)
-            off_save();         /* this tries to  recover from an alignment that didn't end properly */
-        end_graf(bottom_level); /* this takes us to the enclosing mode, if |mode>0| */
-        if (mode == vmode) {
-            check_filter("hmode_par");
-            build_page();
-        }
-        break;
-    case hmode + stop_cmd:
-    case hmode + vskip_cmd:
-    case hmode + hrule_cmd:
-    case hmode + un_vbox_cmd:
-    case hmode + halign_cmd:
-        head_for_vmode();
-        break;
-    case any_mode(insert_cmd):
-    case hmode + vadjust_cmd:
-    case mmode + vadjust_cmd:
-        /* Insertion and adjustment and mark nodes are constructed by the following
-           pieces of the program. */
-        begin_insert_or_adjust();
-        break;
-    case any_mode(mark_cmd):
-        handle_mark();
-        break;
-    case any_mode(break_penalty_cmd):
-        /* Penalty nodes get into a list via the |break_penalty| command. */
-        append_penalty();
-        break;
-    case any_mode(remove_item_cmd):
-        /* The |remove_item| command removes a penalty, kern, or glue node if it
-           appears at the tail of the current list, using a brute-force linear scan.
-           Like \.{\\lastbox}, this command is not allowed in vertical mode (except
-           internal vertical mode), since the current list in vertical mode is sent
-           to the page builder.  But if we happen to be able to implement it in
-           vertical mode, we do. */
-        delete_last();
-        break;
-    case vmode + un_vbox_cmd:
-    case hmode + un_hbox_cmd:
-    case mmode + un_hbox_cmd:
-        /* The |un_hbox| and |un_vbox| commands unwrap one of the |number_regs|
-           current boxes. */
-        unpackage();
-        break;
-    case hmode + ital_corr_cmd:
-        /* Italic corrections are converted to kern nodes when the |ital_corr| command
-           follows a character. In math mode the same effect is achieved by appending
-           a kern of zero here, since italic corrections are supplied later. */
-        append_italic_correction();
-        break;
-    case mmode + ital_corr_cmd:
-        tail_append(new_kern(0));
-        break;
-    case hmode + discretionary_cmd:
-    case mmode + discretionary_cmd:
-        append_discretionary();
-        break;
-    case any_mode(assign_local_box_cmd):
-        append_local_box(cur_chr);
-        break;
-    case hmode + accent_cmd:
-        /* We need only one more thing to complete the horizontal mode routines, namely
-           the \.{\\accent} primitive. */
-        make_accent();
-        break;
-    case any_mode(car_ret_cmd):
-    case any_mode(tab_mark_cmd):
-        align_error();
-        break;
-    case any_mode(no_align_cmd):
-        no_align_error();
-        break;
-    case any_mode(omit_cmd):
-        omit_error();
-        break;
-    case vmode + halign_cmd:
-    case hmode + valign_cmd:
-        init_align();
-        break;
-    case mmode + halign_cmd:
-        if (privileged()) {
-            if (cur_group == math_shift_group)
-                init_align();
-            else
-                off_save();
-        }
-        break;
-    case vmode + endv_cmd:
-    case hmode + endv_cmd:
-        do_endv();
-        break;
-    case any_mode(end_cs_name_cmd):
-        cs_error();
-        break;
-    case hmode + math_shift_cmd:
-    case hmode + math_shift_cs_cmd:
-        init_math();
-        break;
-    case mmode + eq_no_cmd:
-        if (privileged()) {
-            if (cur_group == math_shift_group)
-                start_eq_no();
-            else
-                off_save();
-        }
-        break;
-    case mmode + left_brace_cmd:
-        math_left_brace();
-        break;
-    case mmode + letter_cmd:
-    case mmode + other_char_cmd:
-    case mmode + char_given_cmd:
-        set_math_char(get_math_code(cur_chr));
-        break;
-    case mmode + char_num_cmd:
-        scan_char_num();
-        cur_chr = cur_val;
-        set_math_char(get_math_code(cur_chr));
-        break;
-    case mmode + math_char_num_cmd:
-        if (cur_chr == 0)
-            mval = scan_mathchar(tex_mathcode);
-        else if (cur_chr == 1)
-            mval = scan_mathchar(aleph_mathcode);
-        else if (cur_chr == 2)
-            mval = scan_mathchar(xetex_mathcode);
-        else
-            mval = scan_mathchar(xetexnum_mathcode);
-        set_math_char(mval);
-        break;
-    case mmode + math_given_cmd:
-        mval = mathchar_from_integer(cur_chr, tex_mathcode);
-        set_math_char(mval);
-        break;
-    case mmode + omath_given_cmd:
-        mval = mathchar_from_integer(cur_chr, aleph_mathcode);
-        set_math_char(mval);
-        break;
-    case mmode + xmath_given_cmd:
-        mval = mathchar_from_integer(cur_chr, xetex_mathcode);
-        set_math_char(mval);
-        break;
-    case mmode + delim_num_cmd:
-        if (cur_chr == 0)
-            mval = scan_delimiter_as_mathchar(tex_mathcode);
-        else if (cur_chr == 1)
-            mval = scan_delimiter_as_mathchar(aleph_mathcode);
-        else
-            mval = scan_delimiter_as_mathchar(xetex_mathcode);
-        set_math_char(mval);
-        break;
-    case mmode + math_comp_cmd:
-        math_math_comp();
-        break;
-    case mmode + limit_switch_cmd:
-        math_limit_switch();
-        break;
-    case mmode + radical_cmd:
-        math_radical();
-        break;
-    case mmode + accent_cmd:
-    case mmode + math_accent_cmd:
-        math_ac();
-        break;
-    case mmode + vcenter_cmd:
-        scan_spec(vcenter_group);
-        normal_paragraph();
-        push_nest();
-        mode = -vmode;
-        prev_depth = pdf_ignored_dimen;
-        if (every_vbox != null)
-            begin_token_list(every_vbox, every_vbox_text);
-        break;
-    case mmode + math_style_cmd:
-        tail_append(new_style((small_number) cur_chr));
-        break;
-    case mmode + non_script_cmd:
-        tail_append(new_glue(zero_glue));
-        subtype(tail) = cond_math_glue;
-        break;
-    case mmode + math_choice_cmd:
-        if (cur_chr == 0)
-            append_choices();
-        else
-            setup_math_style();
-        break;
-    case mmode + above_cmd:
-        math_fraction();
-        break;
-    case mmode + sub_mark_cmd:
-    case mmode + sup_mark_cmd:
-    case mmode + super_sub_script_cmd:
-        sub_sup();
-        break;
-    case mmode + left_right_cmd:
-        math_left_right();
-        break;
-    case mmode + math_shift_cmd:
-    case mmode + math_shift_cs_cmd:
-        if (cur_group == math_shift_group)
-            after_math();
-        else
-            off_save();
-        break;
-
-        /* Cases of |main_control| that do not depend on |mode| */
-        /*
-           The long |main_control| procedure has now been fully specified, except for
-           certain activities that are independent of the current mode. These activities
-           do not change the current vlist or hlist or mlist; if they change anything,
-           it is the value of a parameter or the meaning of a control sequence.
-         */
-    case any_mode(toks_register_cmd):
-    case any_mode(assign_toks_cmd):
-    case any_mode(assign_int_cmd):
-    case any_mode(assign_attr_cmd):
-    case any_mode(assign_dir_cmd):
-    case any_mode(assign_dimen_cmd):
-    case any_mode(assign_glue_cmd):
-    case any_mode(assign_mu_glue_cmd):
-    case any_mode(assign_font_dimen_cmd):
-    case any_mode(assign_font_int_cmd):
-    case any_mode(set_aux_cmd):
-    case any_mode(set_prev_graf_cmd):
-    case any_mode(set_page_dimen_cmd):
-    case any_mode(set_page_int_cmd):
-    case any_mode(set_box_dimen_cmd):
-    case any_mode(set_tex_shape_cmd):
-    case any_mode(set_etex_shape_cmd):
-    case any_mode(def_char_code_cmd):
-    case any_mode(def_del_code_cmd):
-    case any_mode(extdef_math_code_cmd):
-    case any_mode(extdef_del_code_cmd):
-    case any_mode(def_family_cmd):
-    case any_mode(set_math_param_cmd):
-    case any_mode(set_font_cmd):
-    case any_mode(def_font_cmd):
-    case any_mode(letterspace_font_cmd):
-    case any_mode(pdf_copy_font_cmd):
-    case any_mode(register_cmd):
-    case any_mode(advance_cmd):
-    case any_mode(multiply_cmd):
-    case any_mode(divide_cmd):
-    case any_mode(prefix_cmd):
-    case any_mode(let_cmd):
-    case any_mode(shorthand_def_cmd):
-    case any_mode(read_to_cs_cmd):
-    case any_mode(def_cmd):
-    case any_mode(set_box_cmd):
-    case any_mode(hyph_data_cmd):
-    case any_mode(set_interaction_cmd):
-    case any_mode(set_ocp_cmd):
-    case any_mode(def_ocp_cmd):
-    case any_mode(set_ocp_list_cmd):
-    case any_mode(def_ocp_list_cmd):
-    case any_mode(clear_ocp_lists_cmd):
-    case any_mode(push_ocp_list_cmd):
-    case any_mode(pop_ocp_list_cmd):
-    case any_mode(ocp_list_op_cmd):
-    case any_mode(ocp_trace_level_cmd):
-        prefixed_command();
-        break;
-    case any_mode(after_assignment_cmd):
-        get_token();
-        after_token = cur_tok;
-        break;
-    case any_mode(after_group_cmd):
-        get_token();
-        save_for_after(cur_tok);
-        break;
-    case any_mode(in_stream_cmd):
-        open_or_close_in();
-        break;
-    case any_mode(message_cmd):
-        issue_message();
-        break;
-    case any_mode(case_shift_cmd):
-        shift_case();
-        break;
-    case any_mode(xray_cmd):
-        show_whatever();
-        break;
-
-        /* Cases of |main_control| that are for extensions to \TeX */
-    case any_mode(extension_cmd):
-        do_extension(static_pdf);
-        break;
-    }                           /* end of the big |switch| statement */
-
-    goto BIG_SWITCH;            /* restart */
+    return; /* not reached */
 }
 
 @ @c
@@ -941,6 +962,18 @@ void you_cant(void)
     print_in_mode(mode);
 }
 
+@ 
+When erroneous situations arise, \TeX\ usually issues an error message
+specific to the particular error. For example, `\.{\\noalign}' should
+not appear in any mode, since it is recognized by the |align_peek| routine
+in all of its legitimate appearances; a special error message is given
+when `\.{\\noalign}' occurs elsewhere. But sometimes the most appropriate
+error message is simply that the user is not allowed to do what he or she
+has attempted. For example, `\.{\\moveleft}' is allowed only in vertical mode,
+and `\.{\\lower}' only in non-vertical modes.  Such cases are enumerated
+here and in the other sections referred to under `See also \dots.'
+
+@c
 void report_illegal_case(void)
 {
     you_cant();
@@ -1324,7 +1357,7 @@ void box_end(int box_context)
                     space_factor = 1000;
                 else
                     cur_box = new_sub_box(cur_box);
-                vlink(tail) = cur_box;
+                couple_nodes(tail, cur_box);
                 tail = cur_box;
             }
         }
@@ -1362,7 +1395,7 @@ void box_end(int box_context)
             }
 
         } else
-            ship_out(static_pdf, cur_box, true);
+            ship_out(static_pdf, cur_box, SHIPPING_PAGE);
     }
 }
 
@@ -1410,6 +1443,7 @@ void new_graf(boolean indented)
         p = new_null_box();
         box_dir(p) = par_direction;
         width(p) = par_indent;
+        subtype(p) = HLIST_SUBTYPE_INDENT;
         q = tail;
         tail_append(p);
     } else {
@@ -1419,8 +1453,8 @@ void new_graf(boolean indented)
     while (dir_rover != null) {
         if ((vlink(dir_rover) != null) || (dir_dir(dir_rover) != par_direction)) {
             dir_graf_tmp = new_dir(dir_dir(dir_rover));
-            vlink(dir_graf_tmp) = vlink(q);
-            vlink(q) = dir_graf_tmp;
+            try_couple_nodes(dir_graf_tmp,vlink(q));
+            couple_nodes(q,dir_graf_tmp);
         }
         dir_rover = vlink(dir_rover);
     }
@@ -1578,6 +1612,13 @@ void append_penalty(void)
 @ When |delete_last| is called, |cur_chr| is the |type| of node that
 will be deleted, if present.
 
+The |remove_item| command removes a penalty, kern, or glue node if it
+appears at the tail of the current list, using a brute-force linear scan.
+Like \.{\\lastbox}, this command is not allowed in vertical mode (except
+internal vertical mode), since the current list in vertical mode is sent
+to the page builder.  But if we happen to be able to implement it in
+vertical mode, we do. 
+
 @c
 void delete_last(void)
 {
@@ -1635,7 +1676,7 @@ void unpackage(void)
     halfword s;                 /* for varmem assignment */
     if (cur_chr > copy_code) {
         /* Handle saved items and |goto done| */
-        vlink(tail) = disc_ptr[cur_chr];
+        try_couple_nodes(tail, disc_ptr[cur_chr]);
         disc_ptr[cur_chr] = null;
         goto DONE;
     }
@@ -1656,9 +1697,9 @@ void unpackage(void)
     }
     if (c == copy_code) {
         s = copy_node_list(list_ptr(p));
-        vlink(tail) = s;
+        try_couple_nodes(tail,s);
     } else {
-        vlink(tail) = list_ptr(p);
+        try_couple_nodes(tail,list_ptr(p));
         box(cur_val) = null;
         list_ptr(p) = null;
         flush_node(p);
@@ -1667,14 +1708,19 @@ void unpackage(void)
     while (vlink(tail) != null) {
         r = vlink(tail);
         if (!is_char_node(r) && (type(r) == margin_kern_node)) {
-            vlink(tail) = vlink(r);
+            try_couple_nodes(tail,vlink(r));
             flush_node(r);
         }
         tail = vlink(tail);
     }
 }
 
-@ @c
+@ 
+Italic corrections are converted to kern nodes when the |ital_corr| command
+follows a character. In math mode the same effect is achieved by appending
+a kern of zero here, since italic corrections are supplied later.
+
+@c
 void append_italic_correction(void)
 {
     halfword p;                 /* |char_node| at the tail of the current list */
@@ -2662,40 +2708,6 @@ void prefixed_command(void)
     case set_interaction_cmd:
         new_interaction();
         break;
-    case set_ocp_cmd:
-        print_err("To use ocps, use the \\pushocplist  primitive");
-        print_ln();
-        break;
-    case def_ocp_cmd:
-        new_ocp((small_number) a);
-        break;
-    case set_ocp_list_cmd:
-        print_err("To use ocp lists, use the \\pushocplist primitive");
-        print_ln();
-        break;
-    case def_ocp_list_cmd:
-        new_ocp_list((small_number) a);
-        break;
-    case push_ocp_list_cmd:
-        do_push_ocp_list((small_number) a);
-        break;
-    case pop_ocp_list_cmd:
-        do_pop_ocp_list((small_number) a);
-        break;
-    case clear_ocp_lists_cmd:
-        do_clear_ocp_lists((small_number) a);
-        break;
-    case ocp_list_op_cmd:
-        print_err("To build ocp lists, use the \\ocplist primitive");
-        print_ln();
-        break;
-    case ocp_trace_level_cmd:
-        scan_optional_equals();
-        scan_int();
-        if (cur_val != 0)
-            cur_val = 1;
-        define(ocp_trace_level_base, data_cmd, cur_val);
-        break;
     default:
         confusion("prefix");
         break;
@@ -2854,7 +2866,7 @@ void assign_internal_value(int a, halfword p, int cur_val)
                            no_local_whatsits + 1);
         }
 
-    } else if ((p >= dimen_base) && (p < eqtb_size)) {
+    } else if ((p >= dimen_base) && (p <= eqtb_size)) {
         if (p == (dimen_base + page_left_offset_code)) {
             n = cur_val - one_true_inch;
             word_define(dimen_base + h_offset_code, n);
@@ -3582,8 +3594,6 @@ void initialize(void)
         cs_text(frozen_primitive) = maketexstring("primitive");
         create_null_font();
         font_bytes = 0;
-        init_null_ocp(get_nullstr(), maketexstring("nullocp"));
-        initialize_init_ocplists();
         pdf_h_origin = one_inch;
         pdf_v_origin = one_inch;
         pdf_compress_level = 9;

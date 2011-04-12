@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfobj.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfobj.w $";
+    "$Id: pdfobj.w 4093 2011-03-16 16:17:06Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfobj.w $";
 
 #include "ptexlib.h"
 
@@ -36,7 +36,7 @@ void pdf_write_obj(PDF pdf, int k)
 {
     lstring data;
     const_lstring st;
-    size_t i, li;               /* index into |data.s| */
+    size_t li;                  /* index into |data.s| */
     int saved_compress_level = pdf->compress_level;
     int os_level = 1;           /* gives compressed objects for \.{\\pdfobjcompresslevel} $>$ 0 */
     int l = 0;                  /* possibly a lua registry reference */
@@ -54,8 +54,7 @@ void pdf_write_obj(PDF pdf, int k)
             assert(lua_isstring(Luas, -1));
             st.s = lua_tolstring(Luas, -1, &li);
             st.l = li;
-            for (i = 0; i < st.l; i++)
-                pdf_out(pdf, st.s[i]);
+            pdf_out_block(pdf, st.s, st.l);
             if (st.s[st.l - 1] != '\n')
                 pdf_out(pdf, '\n');
             luaL_unref(Luas, LUA_REGISTRYINDEX, l);
@@ -69,6 +68,7 @@ void pdf_write_obj(PDF pdf, int k)
     assert(lua_isstring(Luas, -1));
     st.s = lua_tolstring(Luas, -1, &li);
     st.l = li;
+    lua_pop(Luas,1);
     if (obj_obj_is_file(pdf, k)) {
         boolean res = false;    /* callback status value */
         const char *fnam = NULL;        /* callback found filename */
@@ -100,15 +100,13 @@ void pdf_write_obj(PDF pdf, int k)
             pdf_error("ext5", "error reading file for embedding");
         tprint("<<");
         tprint(st.s);
-        for (i = 0; i < data.l; i++)
-            pdf_out(pdf, data.s[i]);
+        pdf_out_block(pdf, (const char *) data.s, data.l);
         if (!obj_obj_is_stream(pdf, k) && data.s[data.l - 1] != '\n')
             pdf_out(pdf, '\n');
         xfree(data.s);
         tprint(">>");
     } else {
-        for (i = 0; i < st.l; i++)
-            pdf_out(pdf, st.s[i]);
+        pdf_out_block(pdf, st.s, st.l);
         if (!obj_obj_is_stream(pdf, k) && st.s[st.l - 1] != '\n')
             pdf_out(pdf, '\n');
     }
@@ -149,20 +147,18 @@ void scan_obj(PDF pdf)
         get_x_token();
         if (cur_cmd != spacer_cmd)
             back_input();
-        incr(pdf->obj_count);
-        pdf_create_obj(pdf, obj_type_obj, pdf->sys_obj_ptr + 1);
-        k = pdf->sys_obj_ptr;
+        pdf->obj_count++;
+        k = pdf_create_obj(pdf, obj_type_obj, pdf->obj_ptr + 1);
     } else {
         if (scan_keyword("useobjnum")) {
             scan_int();
             k = cur_val;
-            check_obj_exists(pdf, obj_type_obj, k);
+            check_obj_type(pdf, obj_type_obj, k);
             if (is_obj_scheduled(pdf, k) || obj_data_ptr(pdf, k) != 0)
                 luaL_error(Luas, "object in use");
         } else {
-            incr(pdf->obj_count);
-            pdf_create_obj(pdf, obj_type_obj, pdf->sys_obj_ptr + 1);
-            k = pdf->sys_obj_ptr;
+            pdf->obj_count++;
+            k = pdf_create_obj(pdf, obj_type_obj, pdf->obj_ptr + 1);
         }
         obj_data_ptr(pdf, k) = pdf_get_mem(pdf, pdfmem_obj_size);
         init_obj_obj(pdf, k);
@@ -201,9 +197,16 @@ void scan_obj(PDF pdf)
 void scan_refobj(PDF pdf)
 {
     scan_int();
-    check_obj_exists(pdf, obj_type_obj, cur_val);
+    check_obj_type(pdf, obj_type_obj, cur_val);
     new_whatsit(pdf_refobj_node);
     pdf_obj_objnum(tail) = cur_val;
+}
+
+void scan_refobj_lua(PDF pdf, int k)
+{
+    check_obj_type(pdf, obj_type_obj, k);
+    new_whatsit(pdf_refobj_node);
+    pdf_obj_objnum(tail) = k;
 }
 
 @ @c
@@ -211,4 +214,11 @@ void pdf_ref_obj(PDF pdf, halfword p)
 {
     if (!is_obj_scheduled(pdf, pdf_obj_objnum(p)))
         addto_page_resources(pdf, obj_type_obj, pdf_obj_objnum(p));
+}
+
+@ @c
+void pdf_ref_obj_lua(PDF pdf, int k)
+{
+    if (!is_obj_scheduled(pdf, k))
+        addto_page_resources(pdf, obj_type_obj, k);
 }
