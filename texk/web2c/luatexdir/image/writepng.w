@@ -573,7 +573,6 @@ void write_png(PDF pdf, image_dict * idict)
      */
     if (pdf->minor_version > 1 
            && png_get_interlace_type (png_p, info_p) == PNG_INTERLACE_NONE 
-           && (png_p->transformations == 0 || png_p->transformations == 0x2000)     /* gamma */
         &&!(png_get_color_type (png_p, info_p) == PNG_COLOR_TYPE_GRAY_ALPHA ||
             png_get_color_type (png_p, info_p) == PNG_COLOR_TYPE_RGB_ALPHA)
         && ((pdf->image_hicolor != 0) || (png_get_bit_depth (png_p, info_p) <= 8))
@@ -619,8 +618,6 @@ void write_png(PDF pdf, image_dict * idict)
             if ((pdf->image_apply_gamma != 0) &&
                 (checked_gamma > 1.01 || checked_gamma < 0.99))
                 tex_printf("gamma delta=%lf ", checked_gamma);
-            if (png_p->transformations != PNG_TRANSFORM_IDENTITY)
-                tex_printf("transform=%lu", (long) png_p->transformations);
             if ((png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_GRAY)
                 && (png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_RGB)
                 && (png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_PALETTE))
