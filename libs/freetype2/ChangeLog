@@ -1,3 +1,9 @@
+2011-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import freetype-2.4.4.
+
+	* configure.ac: Adjust.
+
 2010-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import freetype-2.4.2.
