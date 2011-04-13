@@ -1,0 +1,22 @@
+diff -ur poppler-0.12.4.orig/goo/PNGWriter.h poppler-0.12.4/goo/PNGWriter.h
+--- poppler-0.12.4.orig/goo/PNGWriter.h	2011-04-12 16:17:47.000000000 +0200
++++ poppler-0.12.4/goo/PNGWriter.h	2011-04-12 22:16:31.489535918 +0200
+@@ -40,4 +40,4 @@
+ 
+ #endif
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff -ur poppler-0.12.4.orig/poppler/Movie.cc poppler-0.12.4/poppler/Movie.cc
+--- poppler-0.12.4.orig/poppler/Movie.cc	2011-04-12 16:17:47.000000000 +0200
++++ poppler-0.12.4/poppler/Movie.cc	2011-04-12 22:19:34.797833201 +0200
+@@ -227,7 +227,7 @@
+     if (tmp.dictLookup("S", &oname)->isName()) {
+       char* name = oname.getName();
+       if (!strcmp(name, "F"))
+-	duration.units = -1; // infinity
++	duration.units = (Gulong)(-1); // infinity
+       else if (!strcmp(name, "T")) {
+ 	if (tmp.dictLookup("T", &ddict)->isDict()) {
+ 	  if (ddict.dictLookup("V", &tmp2)->isNum()) {

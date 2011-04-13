@@ -227,7 +227,7 @@ void MovieParameters::parseMediaPlayParameters(Object* obj) {
     if (tmp.dictLookup("S", &oname)->isName()) {
       char* name = oname.getName();
       if (!strcmp(name, "F"))
-	duration.units = -1; // infinity
+	duration.units = (Gulong)(-1); // infinity
       else if (!strcmp(name, "T")) {
 	if (tmp.dictLookup("T", &ddict)->isDict()) {
 	  if (ddict.dictLookup("V", &tmp2)->isNum()) {

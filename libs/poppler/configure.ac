@@ -50,12 +50,12 @@ AC_PROG_LN_S
 
 dnl **** Checks for header files ****
 
-AC_CHECK_HEADERS([strings.h sys/select.h time.h])
+AC_CHECK_HEADERS([strings.h sys/select.h time.h sys/time.h])
 AC_HEADER_DIRENT
 
 dnl **** Checks for library functions ****
 
-AC_CHECK_FUNCS([popen mkstemp mkstemps])
+AC_CHECK_FUNCS([popen mkstemp mkstemps gettimeofday])
 AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO
 
@@ -78,11 +78,10 @@ AH_TOP([/*
 #undef USE_EXCEPTIONS])
 AH_BOTTOM([#endif])
 
-POPPLER_TREE=poppler-[]poppler_version
-AC_SUBST([POPPLER_TREE])
+AC_CONFIG_HEADERS([config.h:poppler-]poppler_version[/config.h.in])
+
+AC_SUBST([POPPLER_TREE], [poppler-]poppler_version)
 
 AC_CONFIG_FILES([Makefile poppler/Makefile goo/Makefile fofi/Makefile])
-
-AC_CONFIG_HEADERS([poppler-]poppler_version[/config.h])
 
 AC_OUTPUT

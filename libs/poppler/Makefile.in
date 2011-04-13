@@ -50,7 +50,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = aconf.h $(top_builddir)/poppler-0.12.4/config.h
+CONFIG_HEADER = aconf.h config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
@@ -87,7 +87,7 @@ am__objects_3 = Annot.$(OBJEXT) Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 nodist_libpoppler_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3)
 libpoppler_a_OBJECTS = $(nodist_libpoppler_a_OBJECTS)
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/poppler-0.12.4
+DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -247,7 +247,7 @@ top_srcdir = @top_srcdir@
 #========================================================================
 #========================================================================
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(POPPLER_TREE)
+EXTRA_DIST = $(POPPLER_TREE) $(POPPLER_TREE)-PATCHES
 SUBDIRS = goo fofi poppler
 GOO_SRC = $(top_srcdir)/$(POPPLER_TREE)/goo
 FOFI_SRC = $(top_srcdir)/$(POPPLER_TREE)/fofi
@@ -330,7 +330,7 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/XRef.cc \
 	$(POPPLER_SRC)/XpdfPluginAPI.cc
 
-all: aconf.h
+all: aconf.h config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
@@ -384,18 +384,18 @@ $(srcdir)/aconf.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	rm -f stamp-h1
 	touch $@
 
-poppler-0.12.4/config.h: poppler-0.12.4/stamp-h2
+config.h: stamp-h2
 	@if test ! -f $@; then \
-	  rm -f poppler-0.12.4/stamp-h2; \
-	  $(MAKE) $(AM_MAKEFLAGS) poppler-0.12.4/stamp-h2; \
+	  rm -f stamp-h2; \
+	  $(MAKE) $(AM_MAKEFLAGS) stamp-h2; \
 	else :; fi
 
-poppler-0.12.4/stamp-h2: $(top_srcdir)/poppler-0.12.4/config.h.in $(top_builddir)/config.status
-	@rm -f poppler-0.12.4/stamp-h2
-	cd $(top_builddir) && $(SHELL) ./config.status poppler-0.12.4/config.h
+stamp-h2: $(top_srcdir)/poppler-0.12.4/config.h.in $(top_builddir)/config.status
+	@rm -f stamp-h2
+	cd $(top_builddir) && $(SHELL) ./config.status config.h
 
 distclean-hdr:
-	-rm -f aconf.h stamp-h1 poppler-0.12.4/config.h poppler-0.12.4/stamp-h2
+	-rm -f aconf.h stamp-h1 config.h stamp-h2
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
@@ -1700,7 +1700,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LIBRARIES) aconf.h
+all-am: Makefile $(LIBRARIES) aconf.h config.h
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -1828,7 +1828,6 @@ rebuild: all
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-	rm -f $(distdir)/$(POPPLER_TREE)/install-sh
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

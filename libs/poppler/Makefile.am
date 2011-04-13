@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build poppler for TeX Live.
 ##
-##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -25,15 +25,15 @@ rebuild: all
 
 ## We want to re-distribute the whole original poppler source tree.
 ##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
-## Thus nodist_* for all files in $(POPPLER_TREE).
 EXTRA_DIST = $(POPPLER_TREE)
+
+## Patches applied to the original source tree
+##
+EXTRA_DIST += $(POPPLER_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-	rm -f $(distdir)/$(POPPLER_TREE)/install-sh
 
 SUBDIRS = goo fofi poppler
 
@@ -121,3 +121,4 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/UnicodeTypeTable.cc \
 	$(POPPLER_SRC)/XRef.cc \
 	$(POPPLER_SRC)/XpdfPluginAPI.cc
+
