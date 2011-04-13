@@ -1,25 +1,6 @@
-Index: poppler-0.12.4/poppler/Page.cc
-===================================================================
---- poppler-0.12.4/poppler/Page.cc	(revision 3771)
-+++ poppler-0.12.4/poppler/Page.cc	(working copy)
-@@ -45,13 +45,11 @@
- #include "XRef.h"
- #include "Link.h"
- #include "OutputDev.h"
--#ifndef PDF_PARSER_ONLY
- #include "Gfx.h"
- #include "GfxState.h"
- #include "Annot.h"
- #include "TextOutputDev.h"
- #include "Form.h"
--#endif
- #include "Error.h"
- #include "Page.h"
- #include "Catalog.h"
-Index: poppler-0.12.4/poppler/GlobalParams.cc
-===================================================================
---- poppler-0.12.4/poppler/GlobalParams.cc	(revision 3771)
-+++ poppler-0.12.4/poppler/GlobalParams.cc	(working copy)
+diff -ur poppler-0.12.4.orig/poppler/GlobalParams.cc poppler-0.12.4/poppler/GlobalParams.cc
+--- poppler-0.12.4.orig/poppler/GlobalParams.cc	2010-01-17 01:06:58.000000000 +0100
++++ poppler-0.12.4/poppler/GlobalParams.cc	2011-04-12 16:17:47.000000000 +0200
 @@ -140,6 +140,7 @@
    }
  }
@@ -36,20 +17,32 @@ Index: poppler-0.12.4/poppler/GlobalParams.cc
  
  //------------------------------------------------------------------------
  // PSFontParam
-@@ -557,10 +559,12 @@
+@@ -557,7 +559,7 @@
    UnicodeMap *map;
    int i;
  
-+#ifndef PDF_PARSER_ONLY
- #ifndef _MSC_VER  
+-#ifndef _MSC_VER  
++#if !defined(PDF_PARSER_ONLY) && !defined(_MSC_VER)
    FcInit();
    FCcfg = FcConfigGetCurrent();
  #endif
-+#endif
+@@ -944,6 +946,7 @@
+   return NULL;
+ }
  
- #if MULTITHREADED
-   gInitMutex(&mutex);
-@@ -1110,6 +1114,11 @@
++#if !defined(PDF_PARSER_ONLY) && !defined(_MSC_VER)
+ static GBool findModifier(const char *name, const char *modifier, const char **start)
+ {
+   const char *match;
+@@ -962,7 +965,6 @@
+   }
+ }
+ 
+-#ifndef _MSC_VER
+ static FcPattern *buildFcPattern(GfxFont *font)
+ {
+   int weight = -1,
+@@ -1110,6 +1112,11 @@
  /* if you can't or don't want to use Fontconfig, you need to implement
     this function for your platform. For Windows, it's in GlobalParamsWin.cc
  */
@@ -61,7 +54,7 @@ Index: poppler-0.12.4/poppler/GlobalParams.cc
  #ifndef _MSC_VER
  DisplayFontParam *GlobalParams::getDisplayFont(GfxFont *font) {
    DisplayFontParam *dfp;
-@@ -1170,6 +1179,7 @@
+@@ -1170,6 +1177,7 @@
    return dfp;
  }
  #endif
@@ -69,3 +62,50 @@ Index: poppler-0.12.4/poppler/GlobalParams.cc
  
  GBool GlobalParams::getPSExpandSmaller() {
    GBool f;
+diff -ur poppler-0.12.4.orig/poppler/GlobalParams.h poppler-0.12.4/poppler/GlobalParams.h
+--- poppler-0.12.4.orig/poppler/GlobalParams.h	2010-01-17 01:06:58.000000000 +0100
++++ poppler-0.12.4/poppler/GlobalParams.h	2011-04-12 16:17:47.000000000 +0200
+@@ -37,7 +37,7 @@
+ #include <assert.h>
+ #include "poppler-config.h"
+ #include <stdio.h>
+-#ifndef _MSC_VER
++#if !defined(PDF_PARSER_ONLY) && !defined(_MSC_VER)
+ #include <fontconfig/fontconfig.h>
+ #endif
+ #include "goo/gtypes.h"
+@@ -169,7 +169,7 @@
+ 
+   void setBaseDir(char *dir);
+ 
+-#ifdef _MSC_VER
++#if !defined(PDF_PARSER_ONLY) && !defined(_MSC_VER)
+   void setupBaseFonts(char *dir);
+ #endif
+ 
+@@ -352,7 +352,7 @@
+   UnicodeMapCache *unicodeMapCache;
+   CMapCache *cMapCache;
+   
+-#ifndef _MSC_VER
++#if !defined (PDF_PARSER_ONLY) && !defined(_MSC_VER)
+   FcConfig *FCcfg;
+ #endif
+ 
+diff -ur poppler-0.12.4.orig/poppler/Page.cc poppler-0.12.4/poppler/Page.cc
+--- poppler-0.12.4.orig/poppler/Page.cc	2010-01-17 01:06:57.000000000 +0100
++++ poppler-0.12.4/poppler/Page.cc	2011-04-12 16:17:47.000000000 +0200
+@@ -45,13 +45,11 @@
+ #include "XRef.h"
+ #include "Link.h"
+ #include "OutputDev.h"
+-#ifndef PDF_PARSER_ONLY
+ #include "Gfx.h"
+ #include "GfxState.h"
+ #include "Annot.h"
+ #include "TextOutputDev.h"
+ #include "Form.h"
+-#endif
+ #include "Error.h"
+ #include "Page.h"
+ #include "Catalog.h"

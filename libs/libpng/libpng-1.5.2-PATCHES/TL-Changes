@@ -1,0 +1,16 @@
+Changes applied to the libpng-1.5.2/ tree as obtained from:
+	http://www.libpng.org/ libpng-1.5.2.tar.xz
+
+Removed:
+	config.guess
+	config.sub
+	depcomp
+	install-sh
+	ltmain.sh
+	missing
+
+Converted Dos/Win line ends to native:
+	projects/visualc71/libpng.sln
+	projects/visualc71/libpng.vcproj
+	projects/visualc71/pngtest.vcproj
+	projects/visualc71/zlib.vcproj
