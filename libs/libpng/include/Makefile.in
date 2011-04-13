@@ -146,7 +146,8 @@ top_srcdir = @top_srcdir@
 LIBPNG_SRC = $(top_srcdir)/$(LIBPNG_TREE)
 LIBPNG_HDRS = \
 	$(LIBPNG_SRC)/png.h \
-	$(LIBPNG_SRC)/pngconf.h
+	$(LIBPNG_SRC)/pngconf.h \
+	$(LIBPNG_SRC)/pnglibconf.h
 
 all: all-am
 

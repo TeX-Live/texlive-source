@@ -1,6 +1,9 @@
 Changes applied to the libpng-1.5.2/ tree as obtained from:
 	http://www.libpng.org/ libpng-1.5.2.tar.xz
 
+Copied:
+	scripts/pnglibconf.h.prebuilt -> pnglibconf.h
+
 Removed:
 	config.guess
 	config.sub
