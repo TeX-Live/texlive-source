@@ -7,7 +7,7 @@
 ##
 EXTRA_LIBRARIES += liblua51.a
 
-liblua51_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/luatexdir/lua51
+liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51
 if !MINGW32
 liblua51_a_CPPFLAGS += -DLUA_USE_POSIX
 endif !MINGW32

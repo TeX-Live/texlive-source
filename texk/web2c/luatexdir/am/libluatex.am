@@ -130,12 +130,13 @@ nodist_libluatex_a_SOURCES += luagen.c luainit.c luanode.c luastuff.c luatoken.c
 ##**********************************************************************
 
 luatex_luascripts_txt2zlib = $(TXTTOZLIB)
-luatex_luascripts_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/luascripts $(ctangle)
 
 pdflua.c: txt2zlib$(EXEEXT) luatexdir/luascripts/pdflua.lua
 	$(luatex_luascripts_txt2zlib) $(srcdir)/luatexdir/luascripts/pdflua.lua pdflua.c
 
 nodist_libluatex_a_SOURCES += pdflua.c
+
+EXTRA_DIST += luatexdir/luascripts/pdflua.lua
 
 ##**********************************************************************
 
@@ -614,8 +615,8 @@ libluatex_a_SOURCES = \
 	luatexdir/utils/managed-sa.h \
 	luatexdir/utils/synctex-common.h \
 	luatexdir/utils/synctex-luatex.h \
-	luatexdir/utils/synctex.h \
 	luatexdir/utils/synctex.c \
+	luatexdir/utils/synctex.h \
 	luatexdir/utils/utils.h
 
 nodist_libluatex_a_SOURCES += \

@@ -1,9 +1,16 @@
-2011-04-312  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2011-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/writepng.w: Fix to build with png-1.5 (and avoid
 	`deprecated' warnings with png-1.4). The transformations part
 	is removed on recommendation by John Bowler (a png developer).
 	Mail from Thomas Klausner <tk@giga.or.at>, Sun, 30 Jan 2011.
+
+	* pdf/pdfgen.w: ANSI C function definitions.
+
+	* pdf/pdfluaapi.w (new_pdflua): Declare zp as const.
+
+	* am/libluatex.am (EXTRA_DIST): Distribute luascripts/pdflua.lua.
+	* am/txt2zlib.am (EXTRA_DIST): Distribute luascripts/txt2zlib.w.
 
 2011-04-12  Taco Hoekwater  <taco@luatex.org>
 

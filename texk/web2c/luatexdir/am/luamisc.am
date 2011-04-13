@@ -12,7 +12,7 @@ libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a
 
 $(libluamisc_a_OBJECTS): $(libluamisc_a_DEPENDENCIES)
 
-libluamisc_a_CPPFLAGS = $(AM_CPPFLAGS) \
+libluamisc_a_CPPFLAGS = \
 	$(ZLIB_INCLUDES) \
 	$(ZZIPLIB_INCLUDES) \
 	-I$(top_srcdir)/luatexdir/lua51

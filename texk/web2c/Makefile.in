@@ -1390,8 +1390,9 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/gutils/Makefile.in \
 	luatexdir/luafontloader/fontforge/inc/config.h.in \
 	luatexdir/luafontloader/fontforge/plugins/Makefile.in \
-	$(libluatex_web) luatexdir/ChangeLog luatexdir/NEWS \
-	luatexdir/font/subfont.txt $(xetex_web_srcs) \
+	luatexdir/luascripts/pdflua.lua $(libluatex_web) \
+	luatexdir/ChangeLog luatexdir/NEWS luatexdir/font/subfont.txt \
+	luatexdir/luascripts/txt2zlib.w $(xetex_web_srcs) \
 	xetexdir/xetex.defines xetexdir/pool2c.pl \
 	xetexdir/unicode-char-prep.pl xetexdir/appleGlyphNames.c \
 	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/ChangeLog $(xetex_tests) \
@@ -1863,8 +1864,7 @@ call_luatex_LDADD =
 # luaTeX Tests
 #
 luatex_tests = luatexdir/luatex.test
-liblua51_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/luatexdir/lua51 \
-	$(am__append_50)
+liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51 $(am__append_50)
 liblua51_a_CFLAGS = # $(WARNING_CFLAGS)
 liblua51_a_SOURCES = \
 	luatexdir/lua51/lapi.c \
@@ -1922,7 +1922,7 @@ liblua51_a_SOURCES = \
 	luatexdir/lua51/lzio.h
 
 libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND) liblua51.a
-libluasocket_a_CPPFLAGS = $(AM_CPPFLAGS) \
+libluasocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket -I$(srcdir)/luatexdir/lua51
 
 libluasocket_a_CFLAGS = # $(WARNING_CFLAGS)
@@ -1957,7 +1957,7 @@ libluasocket_a_SOURCES = \
 	luatexdir/luasocket/src/usocket.h
 
 libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a
-libluamisc_a_CPPFLAGS = $(AM_CPPFLAGS) \
+libluamisc_a_CPPFLAGS = \
 	$(ZLIB_INCLUDES) \
 	$(ZZIPLIB_INCLUDES) \
 	-I$(top_srcdir)/luatexdir/lua51
@@ -2176,7 +2176,6 @@ luatex_font_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/font $(ctangle)
 luatex_image_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/image $(ctangle)
 luatex_lua_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/lua $(ctangle)
 luatex_luascripts_txt2zlib = $(TXTTOZLIB)
-luatex_luascripts_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/luascripts $(ctangle)
 luatex_lang_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/lang $(ctangle)
 luatex_pdf_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/pdf $(ctangle)
 luatex_tex_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/tex $(ctangle)
@@ -2285,15 +2284,16 @@ libluatex_a_SOURCES = \
 	luatexdir/utils/managed-sa.h \
 	luatexdir/utils/synctex-common.h \
 	luatexdir/utils/synctex-luatex.h \
-	luatexdir/utils/synctex.h \
 	luatexdir/utils/synctex.c \
+	luatexdir/utils/synctex.h \
 	luatexdir/utils/utils.h
 
 nodist_txt2zlib_SOURCES = txt2zlib.c
-txt2zlib_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
+txt2zlib_CPPFLAGS = $(ZLIB_INCLUDES)
 txt2zlib_DEPENDENCIES = $(ZLIB_DEPEND)
 txt2zlib_CFLAGS = $(WARNING_CFLAGS)
-txt2zlib_LDADD = $(ZLIB_LIBS) $(LDADD)
+txt2zlib_LDADD = $(ZLIB_LIBS)
+luatex_luascripts_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/luascripts $(ctangle)
 
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_xetex_SOURCES = dummy.cxx

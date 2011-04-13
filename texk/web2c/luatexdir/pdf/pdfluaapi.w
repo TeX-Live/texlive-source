@@ -29,7 +29,7 @@ int new_pdflua(void)
 {
     int i, err;
     Byte *uncompr;
-    zlib_struct *zp = (zlib_struct *) pdflua_zlib_struct_ptr;
+    const zlib_struct *zp = pdflua_zlib_struct_ptr;
     uLong uncomprLen = zp->uncomprLen;
     if ((uncompr = xtalloc(zp->uncomprLen, Byte)) == NULL)
         pdftex_fail("new_pdflua(): xtalloc()");

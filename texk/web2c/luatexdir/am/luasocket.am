@@ -11,7 +11,7 @@ libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND) liblua51.a
 
 $(libluasocket_a_OBJECTS): liblua51.a
 
-libluasocket_a_CPPFLAGS = $(AM_CPPFLAGS) \
+libluasocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket -I$(srcdir)/luatexdir/lua51
 libluasocket_a_CFLAGS = # $(WARNING_CFLAGS)
 

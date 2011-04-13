@@ -116,7 +116,7 @@ PDF init_pdf_struct(PDF pdf)
 }
 
 @ @c
-static void pdf_shipout_begin()
+static void pdf_shipout_begin(void)
 {
     pos_stack_used = 0;         /* start with empty stack */
 
@@ -125,7 +125,7 @@ static void pdf_shipout_begin()
     }
 }
 
-static void pdf_shipout_end()
+static void pdf_shipout_end(void)
 {
     if (pos_stack_used > 0) {
         pdftex_fail("%u unmatched \\pdfsave after %s shipout",
@@ -162,7 +162,7 @@ int pdf_get_mem(PDF pdf, int s)
 @ |get_o_mode| translates from |pdf_output| to |o_mode|.
 
 @c
-static output_mode get_o_mode()
+static output_mode get_o_mode(void)
 {
     output_mode o_mode;
     if (pdf_output > 0) {
