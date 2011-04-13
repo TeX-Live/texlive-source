@@ -1,7 +1,7 @@
 #! /bin/sh
 # depcomp - compile a program generating dependencies as side-effects
 
-scriptversion=2011-04-09-11; # UTC
+scriptversion=2011-04-11-05; # UTC
 
 # Copyright (C) 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009, 2010,
 # 2011 Free Software Foundation, Inc.
@@ -166,10 +166,12 @@ gcc)
 ' < "$tmpdepfile" |
 ## Some versions of gcc put a space before the `:'.  On the theory
 ## that the space means something, we add a space to the output as
-## well.
+## well.  hp depmode also adds that space, but also prefixes the VPATH
+## to the object.  Take care to not repeat it in the output.
 ## Some versions of the HPUX 10.20 sed can't process this invocation
 ## correctly.  Breaking it into two sed invocations is a workaround.
-    sed -e 's/^\\$//' -e '/^$/d' -e '/:$/d' | sed -e 's/$/ :/' >> "$depfile"
+    sed -e 's/^\\$//' -e '/^$/d' -e -e "s|.*$object$||" '/:$/d' \
+      | sed -e 's/$/ :/' >> "$depfile"
   rm -f "$tmpdepfile"
   ;;
 
