@@ -61,8 +61,10 @@ struct XpdfSecurityHandler;
 class GlobalParams;
 class GfxFont;
 class Stream;
+#ifndef PDF_PARSER_ONLY
 #ifdef _WIN32
 class WinFontList;
+#endif
 #endif
 
 //------------------------------------------------------------------------
@@ -303,9 +305,11 @@ private:
   GooList *toUnicodeDirs;		// list of ToUnicode CMap dirs [GooString]
   GooHash *displayFonts;		// display font info, indexed by font name
 				//   [DisplayFontParam]
+#ifndef PDF_PARSER_ONLY
 #ifdef _WIN32
   GBool baseFontsInitialized;
   WinFontList *winFontList;	// system TrueType fonts
+#endif
 #endif
   GBool psExpandSmaller;	// expand smaller pages to fill paper
   GBool psShrinkLarger;		// shrink larger pages to fit paper

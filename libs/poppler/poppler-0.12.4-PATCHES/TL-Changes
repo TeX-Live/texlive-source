@@ -8,6 +8,7 @@ Removed:
 	install-sh
 	ltmain.sh
 	missing
+	poppler/poppler-config.h
 
 Removed unused dirs:
 	cmake

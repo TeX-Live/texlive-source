@@ -50,6 +50,9 @@
 #define popplerCopyright "Copyright 2005-2009 The Poppler Developers - http://poppler.freedesktop.org"
 #define xpdfCopyright "Copyright 1996-2004 Glyph & Cog, LLC"
 
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
 //------------------------------------------------------------------------
 // popen
 //------------------------------------------------------------------------

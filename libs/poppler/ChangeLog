@@ -1,0 +1,10 @@
+2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, ac/poppler.ac, ac/withenable.ac, configure.ac:
+	Better integration into the TeX Live build system.
+
+2011-04-12  Taco Hoekwater  <taco@luatex.org>
+
+	Imported poppler-0.12.4 source tree from:
+	  http://poppler.freedesktop.org/
+

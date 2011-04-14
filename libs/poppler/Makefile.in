@@ -36,21 +36,23 @@ subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/aconf.h.in \
-	$(top_srcdir)/configure \
-	$(top_srcdir)/poppler-0.12.4/config.h.in \
-	../../build-aux/config.guess ../../build-aux/config.sub \
-	../../build-aux/depcomp ../../build-aux/install-sh \
-	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap
+	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
+	$(top_srcdir)/configure ../../build-aux/config.guess \
+	../../build-aux/config.sub ../../build-aux/depcomp \
+	../../build-aux/install-sh ../../build-aux/ltmain.sh \
+	../../build-aux/missing ../../build-aux/texinfo.tex \
+	../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = aconf.h config.h
+CONFIG_HEADER = config.h $(top_builddir)/poppler/poppler-config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
@@ -69,13 +71,14 @@ am__objects_3 = Annot.$(OBJEXT) Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 	BuiltinFontTables.$(OBJEXT) CMap.$(OBJEXT) Catalog.$(OBJEXT) \
 	CharCodeToUnicode.$(OBJEXT) DateInfo.$(OBJEXT) \
 	Decrypt.$(OBJEXT) Dict.$(OBJEXT) Error.$(OBJEXT) \
-	FileSpec.$(OBJEXT) FontEncodingTables.$(OBJEXT) \
-	FontInfo.$(OBJEXT) Form.$(OBJEXT) Function.$(OBJEXT) \
-	Gfx.$(OBJEXT) GfxFont.$(OBJEXT) GfxState.$(OBJEXT) \
-	GlobalParams.$(OBJEXT) JArithmeticDecoder.$(OBJEXT) \
-	JBIG2Stream.$(OBJEXT) JPXStream.$(OBJEXT) Lexer.$(OBJEXT) \
-	Link.$(OBJEXT) Movie.$(OBJEXT) NameToCharCode.$(OBJEXT) \
-	Object.$(OBJEXT) OptionalContent.$(OBJEXT) Outline.$(OBJEXT) \
+	FileSpec.$(OBJEXT) FlateStream.$(OBJEXT) \
+	FontEncodingTables.$(OBJEXT) FontInfo.$(OBJEXT) Form.$(OBJEXT) \
+	Function.$(OBJEXT) Gfx.$(OBJEXT) GfxFont.$(OBJEXT) \
+	GfxState.$(OBJEXT) GlobalParams.$(OBJEXT) \
+	JArithmeticDecoder.$(OBJEXT) JBIG2Stream.$(OBJEXT) \
+	JPXStream.$(OBJEXT) Lexer.$(OBJEXT) Link.$(OBJEXT) \
+	Movie.$(OBJEXT) NameToCharCode.$(OBJEXT) Object.$(OBJEXT) \
+	OptionalContent.$(OBJEXT) Outline.$(OBJEXT) \
 	OutputDev.$(OBJEXT) PDFDoc.$(OBJEXT) PDFDocEncoding.$(OBJEXT) \
 	PSOutputDev.$(OBJEXT) PSTokenizer.$(OBJEXT) Page.$(OBJEXT) \
 	PageLabelInfo.$(OBJEXT) PageTransition.$(OBJEXT) \
@@ -87,7 +90,7 @@ am__objects_3 = Annot.$(OBJEXT) Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 nodist_libpoppler_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3)
 libpoppler_a_OBJECTS = $(nodist_libpoppler_a_OBJECTS)
-DEFAULT_INCLUDES = -I.@am__isrc@
+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/poppler
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -200,6 +203,11 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
+ZLIB_DEPEND = @ZLIB_DEPEND@
+ZLIB_INCLUDES = @ZLIB_INCLUDES@
+ZLIB_LIBS = @ZLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -243,17 +251,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-
-#========================================================================
-#========================================================================
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(POPPLER_TREE) $(POPPLER_TREE)-PATCHES
 SUBDIRS = goo fofi poppler
 GOO_SRC = $(top_srcdir)/$(POPPLER_TREE)/goo
 FOFI_SRC = $(top_srcdir)/$(POPPLER_TREE)/fofi
 POPPLER_SRC = $(top_srcdir)/$(POPPLER_TREE)/poppler
-INCLUDES = -Igoo -Ifofi -Ipoppler -I$(GOO_SRC) -I$(FOFI_SRC) -I$(POPPLER_SRC)
+INCLUDES = -Igoo -Ifofi -Ipoppler -I$(GOO_SRC) -I$(FOFI_SRC) -I$(POPPLER_SRC) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DPDF_PARSER_ONLY -DPOPPLER_DATADIR='"."'
+AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libpoppler.a
 nodist_libpoppler_a_SOURCES = \
 	$(goo_libGoo_a_sources) \
@@ -292,6 +298,7 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/Dict.cc \
 	$(POPPLER_SRC)/Error.cc \
 	$(POPPLER_SRC)/FileSpec.cc \
+	$(POPPLER_SRC)/FlateStream.cc \
 	$(POPPLER_SRC)/FontEncodingTables.cc \
 	$(POPPLER_SRC)/FontInfo.cc \
 	$(POPPLER_SRC)/Form.cc \
@@ -330,7 +337,8 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/XRef.cc \
 	$(POPPLER_SRC)/XpdfPluginAPI.cc
 
-all: aconf.h config.h
+DISTCLEANFILES = config.force
+all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
@@ -370,32 +378,22 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
-aconf.h: stamp-h1
+config.h: stamp-h1
 	@if test ! -f $@; then \
 	  rm -f stamp-h1; \
 	  $(MAKE) $(AM_MAKEFLAGS) stamp-h1; \
 	else :; fi
 
-stamp-h1: $(srcdir)/aconf.h.in $(top_builddir)/config.status
+stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status aconf.h
-$(srcdir)/aconf.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+	cd $(top_builddir) && $(SHELL) ./config.status config.h
+$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h1
 	touch $@
 
-config.h: stamp-h2
-	@if test ! -f $@; then \
-	  rm -f stamp-h2; \
-	  $(MAKE) $(AM_MAKEFLAGS) stamp-h2; \
-	else :; fi
-
-stamp-h2: $(top_srcdir)/poppler-0.12.4/config.h.in $(top_builddir)/config.status
-	@rm -f stamp-h2
-	cd $(top_builddir) && $(SHELL) ./config.status config.h
-
 distclean-hdr:
-	-rm -f aconf.h stamp-h1 config.h stamp-h2
+	-rm -f config.h stamp-h1
 
 clean-noinstLIBRARIES:
 	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
@@ -423,6 +421,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileSpec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FixedPoint.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FlateStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiEncodings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiTrueType.Po@am__quote@
@@ -866,6 +865,20 @@ FileSpec.obj: $(POPPLER_SRC)/FileSpec.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/FileSpec.cc' object='FileSpec.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileSpec.obj `if test -f '$(POPPLER_SRC)/FileSpec.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/FileSpec.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/FileSpec.cc'; fi`
+
+FlateStream.o: $(POPPLER_SRC)/FlateStream.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FlateStream.o -MD -MP -MF $(DEPDIR)/FlateStream.Tpo -c -o FlateStream.o `test -f '$(POPPLER_SRC)/FlateStream.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/FlateStream.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FlateStream.Tpo $(DEPDIR)/FlateStream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/FlateStream.cc' object='FlateStream.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FlateStream.o `test -f '$(POPPLER_SRC)/FlateStream.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/FlateStream.cc
+
+FlateStream.obj: $(POPPLER_SRC)/FlateStream.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FlateStream.obj -MD -MP -MF $(DEPDIR)/FlateStream.Tpo -c -o FlateStream.obj `if test -f '$(POPPLER_SRC)/FlateStream.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/FlateStream.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/FlateStream.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FlateStream.Tpo $(DEPDIR)/FlateStream.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/FlateStream.cc' object='FlateStream.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FlateStream.obj `if test -f '$(POPPLER_SRC)/FlateStream.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/FlateStream.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/FlateStream.cc'; fi`
 
 FontEncodingTables.o: $(POPPLER_SRC)/FontEncodingTables.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontEncodingTables.o -MD -MP -MF $(DEPDIR)/FontEncodingTables.Tpo -c -o FontEncodingTables.o `test -f '$(POPPLER_SRC)/FontEncodingTables.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/FontEncodingTables.cc
@@ -1465,7 +1478,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES) aconf.h.in $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	set x; \
 	here=`pwd`; \
@@ -1482,7 +1495,7 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) aconf.h.in $(TAGS_DEPENDENCIES) \
 	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
 	  fi; \
 	done; \
-	list='$(SOURCES) $(HEADERS) aconf.h.in $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) config.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -1500,9 +1513,9 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES) aconf.h.in $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS: ctags-recursive $(HEADERS) $(SOURCES) aconf.h.in $(TAGS_DEPENDENCIES) \
+CTAGS: ctags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS) aconf.h.in $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) config.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -1700,7 +1713,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LIBRARIES) aconf.h config.h
+all-am: Makefile $(LIBRARIES) config.h
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -1724,6 +1737,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1828,6 +1842,14 @@ rebuild: all
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+
+$(libpoppler_a_OBJECTS): config.force
+
+config.force: $(ZLIB_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+@ZLIB_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

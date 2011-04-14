@@ -5388,6 +5388,20 @@ $as_echo "$as_me: Using \`poppler' headers and library from TL tree" >&6;}
     ac_configure_args="$ac_configure_args '--without-system-poppler'"
   fi
 fi
+if test "x$with_system_poppler" = xyes; then
+  if test "x$with_system_zlib" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`zlib' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`zlib' headers and library" >&6;}
+    with_system_zlib=yes
+    ac_configure_args="$ac_configure_args '--with-system-zlib'"
+  elif test "x$with_system_zlib" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-poppler' requires \`--with-system-zlib'" "$LINENO" 5
+  fi
+fi
+
+test "x$need_poppler" = xyes && {
+  need_zlib=yes
+}
 
 
 ## libs/gd/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
@@ -20184,7 +20198,7 @@ fi
 
 
 ## libs/poppler/ac/poppler.ac: configure.ac fragment for the TeX Live subdirectory libs/poppler/
-## basic check of system poppler (poppler)
+## basic check of system poppler
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'

@@ -50,11 +50,9 @@ static const char _svn_version[] =
 
 #include "png.h"
 
+/* POPPLER_VERSION is defined in poppler-config.h for poppler from
+ * the TeX Live tree, or in the Makefile for an installed version.  */
 #include "poppler-config.h"
-#ifndef POPPLER_VERSION
-#  include "aconf.h"
-#  define POPPLER_VERSION POPPLER_PACKAGE_VERSION
-#endif
 
 @ @c
 #define check_nprintf(size_get, size_want) \

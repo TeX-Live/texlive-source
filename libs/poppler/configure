@@ -607,9 +607,17 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 POPPLER_TREE
+build_FALSE
+build_TRUE
+ZLIB_RULE
+ZLIB_DEPEND
+ZLIB_LIBS
+ZLIB_INCLUDES
 EGREP
 GREP
 CPP
+WARNING_CXXFLAGS
+WARNING_CFLAGS
 LN_S
 RANLIB
 am__fastdepCXX_FALSE
@@ -702,11 +710,16 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
-enable_a4_paper
+enable_dependency_tracking
+enable_compiler_warnings
 enable_opi
 enable_multithreaded
-enable_dependency_tracking
+enable_exceptions
+enable_fixedpoint
 enable_largefile
+with_system_zlib
+with_zlib_includes
+with_zlib_libdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1339,13 +1352,25 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
-  --enable-a4-paper       use A4 paper size instead of Letter for PostScript
-                          output
-  --enable-opi            include support for OPI comments
-  --enable-multithreaded  include support for multithreading
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
+  --enable-compiler-warnings=[no|min|yes|max|all]
+                          Turn on compiler warnings [default: yes if
+                          maintainer-mode, min otherwise]
+  --enable-opi            include support for OPI comments
+  --enable-multithreaded  include support for multithreading
+  --enable-exceptions     use C++ exceptions
+  --enable-fixedpoint     use fixed point (instead of floating point)
+                          arithmetic
   --disable-largefile     omit support for large files
+
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-system-zlib      use installed zlib headers and library
+  --with-zlib-includes=DIR
+                          zlib headers installed in DIR
+  --with-zlib-libdir=DIR  zlib library installed in DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -2703,40 +2728,6 @@ else
 fi
 
   MAINT=$MAINTAINER_MODE_TRUE
-
-
-
-# Check whether --enable-a4-paper was given.
-if test "${enable_a4_paper+set}" = set; then :
-  enableval=$enable_a4_paper; if test "x$enableval" = xyes; then
-
-$as_echo "#define A4_PAPER 1" >>confdefs.h
-
-fi
-
-fi
-
-
-# Check whether --enable-opi was given.
-if test "${enable_opi+set}" = set; then :
-  enableval=$enable_opi; if test "x$enableval" = xyes; then
-
-$as_echo "#define OPI_SUPPORT 1" >>confdefs.h
-
-fi
-
-fi
-
-
-# Check whether --enable-multithreaded was given.
-if test "${enable_multithreaded+set}" = set; then :
-  enableval=$enable_multithreaded; if test "x$enableval" = xyes; then
-
-$as_echo "#define MULTITHREADED 1" >>confdefs.h
-
-fi
-
-fi
 
 
 
@@ -4207,6 +4198,150 @@ $as_echo "no, using $LN_S" >&6; }
 fi
 
 
+# Check whether --enable-compiler-warnings was given.
+if test "${enable_compiler_warnings+set}" = set; then :
+  enableval=$enable_compiler_warnings;
+fi
+case $enable_compiler_warnings in #(
+  no | min | yes | max | all) :
+     ;; #(
+  *) :
+    if test "x$enable_maintainer_mode" = xyes; then :
+  enable_compiler_warnings=yes
+else
+  enable_compiler_warnings=min
+fi ;;
+esac
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
+if ${kpse_cv_warning_cflags+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
+elif test "x$GCC" = xyes; then
+  kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
+case `$CC -dumpversion` in #(
+  3.4.* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
+  *) :
+     ;;
+esac
+case `$CC -dumpversion` in #(
+  3.[234].* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;; #(
+  *) :
+     ;;
+esac
+if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
+  kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+  if test "x$enable_compiler_warnings" != xyes; then
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+    case `$CC -dumpversion` in #(
+  3.4.* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;; #(
+  *) :
+     ;;
+esac
+    if test "x$enable_compiler_warnings" != xmax; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
+    fi
+  fi
+fi
+else
+  kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cflags" >&5
+$as_echo "$kpse_cv_warning_cflags" >&6; }
+WARNING_CFLAGS=$kpse_cv_warning_cflags
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C++ compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
+if ${kpse_cv_warning_cxxflags+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cxxflags=
+elif test "x$GXX" = xyes; then
+  kpse_cv_warning_cxxflags="-Wimplicit -Wreturn-type"
+case `$CXX -dumpversion` in #(
+  3.[234].* | 4.*) :
+    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas" ;; #(
+  *) :
+     ;;
+esac
+if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_cxxflags="-Wall -Wunused $kpse_cv_warning_cxxflags"
+  if test "x$enable_compiler_warnings" != xyes; then
+    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
+  fi
+    if test "x$enable_compiler_warnings" != xmax; then
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wshadow"
+    fi
+fi
+else
+  kpse_cv_warning_cxxflags= # FIXME: warning flags for non-GNU C++ compilers
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cxxflags" >&5
+$as_echo "$kpse_cv_warning_cxxflags" >&6; }
+WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
+
+
+
+
+
+
+# Check whether --enable-opi was given.
+if test "${enable_opi+set}" = set; then :
+  enableval=$enable_opi; if test "x$enableval" = xyes; then
+
+$as_echo "#define OPI_SUPPORT 1" >>confdefs.h
+
+fi
+
+fi
+
+
+# Check whether --enable-multithreaded was given.
+if test "${enable_multithreaded+set}" = set; then :
+  enableval=$enable_multithreaded; if test "x$enableval" = xyes; then
+
+$as_echo "#define MULTITHREADED 1" >>confdefs.h
+
+fi
+
+fi
+
+
+# Check whether --enable-exceptions was given.
+if test "${enable_exceptions+set}" = set; then :
+  enableval=$enable_exceptions; if test "x$enableval" = xyes; then
+
+$as_echo "#define USE_EXCEPTIONS 1" >>confdefs.h
+
+fi
+
+fi
+
+
+# Check whether --enable-fixedpoint was given.
+if test "${enable_fixedpoint+set}" = set; then :
+  enableval=$enable_fixedpoint; if test "x$enableval" = xyes; then
+
+$as_echo "#define USE_FIXEDPOINT 1" >>confdefs.h
+
+fi
+
+fi
+
+
 
 
 ac_ext=c
@@ -4606,13 +4741,12 @@ fi
 done
 
 
-for ac_header in strings.h sys/select.h time.h sys/time.h
+for ac_header in strings.h
 do :
-  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
-ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
-if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  ac_fn_c_check_header_mongrel "$LINENO" "strings.h" "ac_cv_header_strings_h" "$ac_includes_default"
+if test "x$ac_cv_header_strings_h" = xyes; then :
   cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+#define HAVE_STRINGS_H 1
 _ACEOF
 
 fi
@@ -4779,7 +4913,7 @@ fi
 
 
 
-for ac_func in popen mkstemp mkstemps gettimeofday
+for ac_func in gettimeofday gmtime_r popen mkstemp
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -5058,14 +5192,104 @@ $as_echo "#define HAVE_FSEEKO 1" >>confdefs.h
 fi
 
 
-ac_config_headers="$ac_config_headers aconf.h"
+ac_config_headers="$ac_config_headers config.h"
 
 
+ac_config_headers="$ac_config_headers poppler/poppler-config.h:poppler-0.12.4/poppler/poppler-config.h.in"
 
 
+## _KPSE_INIT: Initialize TL infrastructure
+kpse_BLD=`(cd "./../../." && pwd)`
+kpse_SRC=`(cd "$srcdir/../../." && pwd)`
 
-ac_config_headers="$ac_config_headers config.h:poppler-0.12.4/config.h.in"
+## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
 
+# Check whether --with-system-zlib was given.
+if test "${with_system_zlib+set}" = set; then :
+  withval=$with_system_zlib;
+fi
+
+# Check whether --with-zlib-includes was given.
+if test "${with_zlib_includes+set}" = set; then :
+  withval=$with_zlib_includes;
+fi
+
+# Check whether --with-zlib-libdir was given.
+if test "${with_zlib_libdir+set}" = set; then :
+  withval=$with_zlib_libdir;
+fi
+if test "x$with_system_zlib" = xyes; then
+  if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
+  ZLIB_INCLUDES="-I$with_zlib_includes"
+fi
+ZLIB_LIBS="-lz"
+if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
+  ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
+fi
+else
+  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
+    -e "s,SRC/,$kpse_SRC/,g" \
+    -e "s,BLD/,$kpse_BLD/,g"`
+  ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
+    -e "s,BLD/,$kpse_BLD/,g"`
+
+  ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
+    -e 's,BLD/,${top_builddir}/../../,g'`
+   ZLIB_RULE='# Rebuild libz
+$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
+	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/zlib/include/zconf.h:
+	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
+
+ if test "x$enable_build" != xno; then
+  build_TRUE=
+  build_FALSE='#'
+else
+  build_TRUE='#'
+  build_FALSE=
+fi
+
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+kpse_save_CPPFLAGS=$CPPFLAGS
+kpse_save_LIBS=$LIBS
+
+eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$ZLIB_LIBS \$LIBS\"
+
+ac_fn_c_check_func "$LINENO" "inflate" "ac_cv_func_inflate"
+if test "x$ac_cv_func_inflate" = xyes; then :
+
+else
+  as_fn_error $? "zlib not found" "$LINENO" 5
+fi
+
+for ac_header in zlib.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "zlib.h" "ac_cv_header_zlib_h" "$ac_includes_default"
+if test "x$ac_cv_header_zlib_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_ZLIB_H 1
+_ACEOF
+
+else
+  as_fn_error $? "zlib not found" "$LINENO" 5
+fi
+
+done
+
+
+$as_echo "#define ENABLE_ZLIB 1" >>confdefs.h
+
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
+
+echo timestamp >config.force
+fi
 
 POPPLER_TREE=poppler-0.12.4
 
@@ -5204,6 +5428,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then
+  as_fn_error $? "conditional \"build\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
@@ -5811,8 +6039,8 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
-    "aconf.h") CONFIG_HEADERS="$CONFIG_HEADERS aconf.h" ;;
-    "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h:poppler-0.12.4/config.h.in" ;;
+    "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
+    "poppler/poppler-config.h") CONFIG_HEADERS="$CONFIG_HEADERS poppler/poppler-config.h:poppler-0.12.4/poppler/poppler-config.h.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "poppler/Makefile") CONFIG_FILES="$CONFIG_FILES poppler/Makefile" ;;
     "goo/Makefile") CONFIG_FILES="$CONFIG_FILES goo/Makefile" ;;
@@ -6507,8 +6735,8 @@ $as_echo X"$file" |
   done
 }
  ;;
-    "aconf.h":H) sed -e 's/^#define PACKAGE/#define POPPLER_PACKAGE/' \
-      -e 's/^#define VERSION/#define POPPLER_VERSION/' aconf.h >aconf.tmp && mv -f aconf.tmp aconf.h ;;
+    "poppler/poppler-config.h":H) sed -e 's/^#define PACKAGE_/#define POPPLER_/' poppler/poppler-config.h >config.tmp \
+    && mv -f config.tmp poppler/poppler-config.h ;;
 
   esac
 done # for ac_tag

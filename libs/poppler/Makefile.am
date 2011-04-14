@@ -6,17 +6,6 @@
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-#========================================================================
-##
-## Main poppler Makefile.
-## Goo library Makefile
-## FoFi library Makefile
-## poppler Makefile
-##
-## Copyright 1996-2003 Glyph & Cog, LLC
-##
-#========================================================================
-##
 ACLOCAL_AMFLAGS = -I ../../m4
 
 # Rebuild
@@ -41,8 +30,9 @@ GOO_SRC = $(top_srcdir)/$(POPPLER_TREE)/goo
 FOFI_SRC = $(top_srcdir)/$(POPPLER_TREE)/fofi
 POPPLER_SRC = $(top_srcdir)/$(POPPLER_TREE)/poppler
 
-INCLUDES = -Igoo -Ifofi -Ipoppler -I$(GOO_SRC) -I$(FOFI_SRC) -I$(POPPLER_SRC)
+INCLUDES = -Igoo -Ifofi -Ipoppler -I$(GOO_SRC) -I$(FOFI_SRC) -I$(POPPLER_SRC) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DPDF_PARSER_ONLY -DPOPPLER_DATADIR='"."'
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libpoppler.a
 
@@ -84,6 +74,7 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/Dict.cc \
 	$(POPPLER_SRC)/Error.cc \
 	$(POPPLER_SRC)/FileSpec.cc \
+	$(POPPLER_SRC)/FlateStream.cc \
 	$(POPPLER_SRC)/FontEncodingTables.cc \
 	$(POPPLER_SRC)/FontInfo.cc \
 	$(POPPLER_SRC)/Form.cc \
@@ -121,4 +112,15 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/UnicodeTypeTable.cc \
 	$(POPPLER_SRC)/XRef.cc \
 	$(POPPLER_SRC)/XpdfPluginAPI.cc
+
+$(libpoppler_a_OBJECTS): config.force
+
+config.force: $(ZLIB_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
+
+## Rebuild zlib
+@ZLIB_RULE@
 

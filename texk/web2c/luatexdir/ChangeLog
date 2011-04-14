@@ -1,5 +1,11 @@
 2011-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* utils/utils.w (POPPLER_VERSION): Now defined in
+	poppler-config.h for poppler from the TeX Live tree, or in the
+	Makefile for an installed version.
+
+2011-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* am/libluatex.am, am/txt2zlib.am: When cross compiling skip
 	txt2zlib and use installed luascripts/pdflua.c.
 

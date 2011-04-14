@@ -643,9 +643,11 @@ GlobalParams::GlobalParams(const char *customPopplerDataDir)
   unicodeMapCache = new UnicodeMapCache();
   cMapCache = new CMapCache();
 
+#ifndef PDF_PARSER_ONLY
 #ifdef _WIN32
   baseFontsInitialized = gFalse;
   winFontList = NULL;
+#endif
 #endif
 
 #ifdef ENABLE_PLUGINS
@@ -808,8 +810,10 @@ GlobalParams::~GlobalParams() {
   deleteGooHash(unicodeMaps, GooString);
   deleteGooList(toUnicodeDirs, GooString);
   deleteGooHash(displayFonts, DisplayFontParam);
+#ifndef PDF_PARSER_ONLY
 #ifdef _WIN32
   delete winFontList;
+#endif
 #endif
   deleteGooHash(psFonts, PSFontParam);
   deleteGooList(psNamedFonts16, PSFontParam);
@@ -1114,10 +1118,9 @@ static FcPattern *buildFcPattern(GfxFont *font)
 */
 #ifdef PDF_PARSER_ONLY
 DisplayFontParam *GlobalParams::getDisplayFont(GfxFont *font) {
-  return (DisplayFontParam * )NULL;
+  return NULL;
 }
-#else
-#ifndef _MSC_VER
+#elif !defined(_MSC_VER)
 DisplayFontParam *GlobalParams::getDisplayFont(GfxFont *font) {
   DisplayFontParam *dfp;
   FcPattern *p=0;
@@ -1176,7 +1179,6 @@ fin:
   unlockGlobalParams;
   return dfp;
 }
-#endif
 #endif
 
 GBool GlobalParams::getPSExpandSmaller() {

@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([poppler_version], [0.12.4])[]dnl using unmodified poppler-0.12.4 source tree
+m4_define([poppler_version], [0.12.4])[]dnl using unmodified poppler source tree
 AC_INIT([poppler for TeX Live], poppler_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([poppler-]poppler_version[/poppler/Array.cc])
@@ -16,20 +16,19 @@ AC_CONFIG_MACRO_DIR([../../m4])
 AM_INIT_AUTOMAKE([foreign no-define])
 AM_MAINTAINER_MODE
 
-dnl ##### Optional features.
-AC_ARG_ENABLE([a4-paper],
-              AS_HELP_STRING([--enable-a4-paper],
-                             [use A4 paper size instead of Letter for PostScript output]),
-              [if test "x$enableval" = xyes; then
-AC_DEFINE([A4_PAPER], 1, [Use A4 paper size instead of Letter for PostScript output])
-fi
-])
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_RANLIB
+AC_PROG_LN_S
 
+KPSE_COMPILER_WARNINGS
+
+dnl ##### Optional features.
 AC_ARG_ENABLE([opi],
               AS_HELP_STRING([--enable-opi],
                              [include support for OPI comments]),
               [if test "x$enableval" = xyes; then
-AC_DEFINE([OPI_SUPPORT], 1, [Include support for OPI comments])
+  AC_DEFINE([OPI_SUPPORT], 1, [Generate OPI comments in PS output.])
 fi
 ])
 
@@ -37,48 +36,57 @@ AC_ARG_ENABLE([multithreaded],
               AS_HELP_STRING([--enable-multithreaded],
                              [include support for multithreading]),
               [if test "x$enableval" = xyes; then
-AC_DEFINE([MULTITHREADED], 1, [Enable multithreading support])
+  AC_DEFINE([MULTITHREADED], 1, [Enable multithreading support.])
 fi
 ])
 
-dnl **** Check for some programs and libraries ****
+AC_ARG_ENABLE([exceptions],
+              AS_HELP_STRING([--enable-exceptions],
+                             [use C++ exceptions]),
+              [if test "x$enableval" = xyes; then
+  AC_DEFINE([USE_EXCEPTIONS], 1, [Throw exceptions to deal with not enough memory and similar problems])
+fi
+])
 
-AC_PROG_CC
-AC_PROG_CXX
-AC_PROG_RANLIB
-AC_PROG_LN_S
+AC_ARG_ENABLE([fixedpoint],
+              AS_HELP_STRING([--enable-fixedpoint],
+                             [use fixed point (instead of floating point) arithmetic]),
+              [if test "x$enableval" = xyes; then
+  AC_DEFINE([USE_FIXEDPOINT], 1, [Use fixed point arithmetic])
+fi
+])
 
 dnl **** Checks for header files ****
 
-AC_CHECK_HEADERS([strings.h sys/select.h time.h sys/time.h])
+AC_CHECK_HEADERS([strings.h])
 AC_HEADER_DIRENT
 
 dnl **** Checks for library functions ****
 
-AC_CHECK_FUNCS([popen mkstemp mkstemps gettimeofday])
+AC_CHECK_FUNCS([gettimeofday gmtime_r popen mkstemp])
 AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO
 
-AC_CONFIG_HEADERS([aconf.h],
- [sed -e 's/^#define PACKAGE/#define POPPLER_PACKAGE/' \
-      -e 's/^#define VERSION/#define POPPLER_VERSION/' aconf.h >aconf.tmp && mv -f aconf.tmp aconf.h])
+AC_CONFIG_HEADERS([config.h])
 
-AH_TOP([/*
- * aconf.h
- *
- * Copyright 2002-2003 Glyph & Cog, LLC
- */
+AC_CONFIG_HEADERS([poppler/poppler-config.h:poppler-]poppler_version[/poppler/poppler-config.h.in],
+  [sed -e 's/^#define PACKAGE_/#define POPPLER_/' poppler/poppler-config.h >config.tmp \
+    && mv -f config.tmp poppler/poppler-config.h])
 
-#ifndef ACONF_H
-#define ACONF_H
+KPSE_ZLIB_FLAGS
 
-/*
- * Enable C++ exceptions.
- */
-#undef USE_EXCEPTIONS])
-AH_BOTTOM([#endif])
+AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-AC_CONFIG_HEADERS([config.h:poppler-]poppler_version[/config.h.in])
+if test "x$enable_build" != xno || test -f config.force; then
+
+KPSE_ADD_FLAGS([zlib])
+AC_CHECK_FUNC([inflate], , [AC_ERROR([zlib not found])])
+AC_CHECK_HEADERS([zlib.h], , [AC_ERROR([zlib not found])])
+AC_DEFINE([ENABLE_ZLIB], 1, [Use zlib instead of builtin zlib decoder.])
+KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
 
 AC_SUBST([POPPLER_TREE], [poppler-]poppler_version)
 
