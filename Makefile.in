@@ -354,10 +354,10 @@ EXTRA_DIST = \
 CONFIG_AUX = subsubdir-conf.cmd
 SUBDIRS = . $(TEXLIBS) libs utils texk
 DIST_SUBDIRS = auxdir/auxsub $(DIST_TEXLIBS) libs utils texk
-@cross_compiling_FALSE@check_target = check
+@cross_FALSE@check_target = check
 
 # Allow for skipping make check if needed.
-@cross_compiling_TRUE@check_target = skip
+@cross_TRUE@check_target = skip
 all: all-recursive
 
 .SUFFIXES:

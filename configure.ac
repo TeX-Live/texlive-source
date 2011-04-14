@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -136,10 +136,7 @@ if test "x$syslib_used:$enable_native_texlive_build" = xyes:yes; then
 fi
 KPSE_RESTORE_FLAGS
 
-dnl AM_CONDITIONAL([build_kpathsea],
-dnl                [test "x$need_kpathsea" = xyes && test "x$with_system_kpathsea" != xyes])
-
-AM_CONDITIONAL([cross_compiling], [test "x$cross_compiling" = xyes])
+AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
 
 AC_CONFIG_SUBDIRS([auxdir/auxsub libs utils texk])
 

@@ -1700,8 +1700,8 @@ Optional Packages:
                           pkg-config)
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf (requires pkg-config)
-  --with-system-poppler   use installed poppler headers and library instead of
-                          poppler (requires pkg-config)
+  --with-system-poppler   use installed poppler headers and library (requires
+                          pkg-config)
   --with-system-gd        use installed gd headers and library
   --with-gd-includes=DIR  gd headers installed in DIR
   --with-gd-libdir=DIR    gd library installed in DIR

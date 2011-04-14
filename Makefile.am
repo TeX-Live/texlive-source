@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live top-level
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Use 'aclocal --force' (for "computed m4_sinclude")
@@ -95,11 +95,11 @@ world: all
 	@echo "make $@ done."
 
 # Allow for skipping make check if needed.
-if cross_compiling
+if cross
 check_target = skip
-else !cross_compiling
+else !cross
 check_target = check
-endif !cross_compiling
+endif !cross
 skip:
 .PHONY: skip
 

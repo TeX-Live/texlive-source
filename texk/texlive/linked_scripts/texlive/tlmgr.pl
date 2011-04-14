@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 21563 2011-03-01 09:20:55Z peter $
+# $Id: tlmgr.pl 22010 2011-04-07 12:49:51Z siepo $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 21563 $';
-my $datrev = '$Date: 2011-03-01 10:20:55 +0100 (Tue, 01 Mar 2011) $';
+my $svnrev = '$Revision: 22010 $';
+my $datrev = '$Date: 2011-04-07 14:49:51 +0200 (Thu, 07 Apr 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -1727,8 +1727,8 @@ sub write_w32_updater {
   my $repo = $mediatlpdb->root . "/$Archive";
   TeXLive::TLUtils::mkdirhier($temp);
   tlwarn("Backup option not implemented for infrastructure update.\n") if ($opts{"backup"});
-  if ($media eq 'DVD') {
-    tlwarn("Creating updater from DVD currently not implemented!\n");
+  if ($media eq 'local_uncompressed') {
+    tlwarn("Creating updater from local_uncompressed currently not implemented!\n");
     tlwarn("But it should not be necessary!\n");
     return 1; # abort
   }
@@ -1760,7 +1760,7 @@ sub write_w32_updater {
       return 1; # backup failed? abort
     }
     foreach my $pkg_part (@pkg_parts) {
-      if ($media eq 'CD') {
+      if ($media eq 'local_compressed') {
         copy("$repo/$pkg_part.tar.xz", "$temp");
       } else { # net
         TeXLive::TLUtils::download_file("$repo/$pkg_part.tar.xz", "$temp/$pkg_part.tar.xz");
@@ -3862,6 +3862,7 @@ sub check_files {
     install-tl.log
     tlpkg/texlive.profile
     tlpkg/installer
+    tlpkg/backups/
   !;
   my %tltreefiles = %{$tltree->{'_allfiles'}};
   my @tlpdbfiles = keys %filetopacks;
@@ -3893,9 +3894,8 @@ sub check_files {
   return($ret);
 }
 
-# check runfiles
-#
-# Check there are no duplicated runtimes files
+# Check for runtime files with the same name but different contents.
+# 
 sub check_runfiles {
   my $Master = $localtlpdb->root;
   # build a list of all runtime files associated to 'normal' packages
@@ -3944,16 +3944,16 @@ sub check_runfiles {
     next if $f =~ /^(libertine\.sty|m-tex4ht\.tex|metatex\.tex)$/;
     next if $f =~ /^(kinsoku\.tex|luatools\.lua|cid2code\.txt|etex\.src)$/;
     next if $f =~ /^(ps2mfbas\.mf|pstricks\.con|tex4ht\.env)$/;
-    next if $f =~ /^(texutil\.rb|tlmgrgui\.pl)$/;
+    next if $f =~ /^(texutil\.rb|tlmgrgui\.pl|language\.def)$/;
     #
     my @copies = grep (/\/$f$/, @runtime_files);
-    # map files can be duplicated as long as copies don't concern the same engine
+    # map files can be duplicated between (but not within) formats.
     if ($f =~ /\.map$/) {
       my $need_check = 0;
       my $prev_dir = "";
       my @cop = @copies; # don't break the outside list
       map { s#^texmf-dist/fonts/map/(.*?)/.*#$1# } @cop;
-      foreach my $dir (sort  @cop ) {
+      foreach my $dir (sort @cop ) {
         last if ($need_check = ($dir eq $prev_dir));
         $prev_dir = $dir;
       }
@@ -4927,19 +4927,19 @@ with C<tlmgr>:
 
 =over 4
 
-=item C<tlmgr update --all>
+=item C<tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet>
 
-Make your local TeX installation correspond to what is in the package
-repository (typically on CTAN).
+Tell C<tlmgr> to use a nearby CTAN mirror for future updates; useful if
+you want continuing updates, and installed TeX Live from the DVD image.
 
 =item C<tlmgr update --list>
 
 Report what would be updated without actually updating anything.
 
-=item C<tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet>
+=item C<tlmgr update --all>
 
-Tell C<tlmgr> to use a nearby CTAN mirror for future updates; useful if
-you installed TeX Live from the DVD image.
+Make your local TeX installation correspond to what is in the package
+repository (typically useful when updating from CTAN).
 
 =item C<tlmgr show> I<pkgname>
 

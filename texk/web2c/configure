@@ -1661,8 +1661,8 @@ Optional Packages:
                           pkg-config)
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf (requires pkg-config)
-  --with-system-poppler   use installed poppler headers and library instead of
-                          poppler (requires pkg-config)
+  --with-system-poppler   use installed poppler headers and library (requires
+                          pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
   --with-system-graphite  use installed silgraphite headers and library

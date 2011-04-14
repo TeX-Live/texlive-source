@@ -1,3 +1,14 @@
+2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Conditional cross_compiling => cross
+	as in libs/icu, texk/dvipng, and texk/web2c.
+
+	* version.ac: Switch 2011/dev => 2011.
+
+2011-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2011-04-12.
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* m4/kpse-common.m4 (KPSE_COMMON): Remove check for

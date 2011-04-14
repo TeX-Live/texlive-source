@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -11,8 +11,8 @@
 # ---------------
 # Provide the configure option '--with-system-poppler' (if in the TL tree).
 #
-# Set the make variables XPDF_INCLUDES and XPDF_LIBS to the CPPFLAGS and
-# LIBS required for the `-lxpdf' library in libs/poppler/ of the TL tree.
+# Set the make variables POPPLER_INCLUDES and POPPLER_LIBS to the CPPFLAGS and
+# LIBS required for the `-lpoppler' library in libs/poppler/ of the TL tree.
 AC_DEFUN([KPSE_POPPLER_FLAGS],
 [_KPSE_LIB_FLAGS([poppler], [poppler], [],
                  [-DPDF_PARSER_ONLY -IBLD/libs/poppler -IBLD/libs/poppler/goo -IBLD/libs/poppler/poppler],
@@ -26,8 +26,7 @@ AC_DEFUN([KPSE_POPPLER_OPTIONS],
 [m4_ifval([$1],
           [AC_ARG_WITH([system-poppler],
                        AS_HELP_STRING([--with-system-poppler],
-                                      [use installed poppler headers and library instead of poppler
-                                       (requires pkg-config)]))])[]dnl
+                                      [use installed poppler headers and library (requires pkg-config)]))])[]dnl
 ]) # KPSE_POPPLER_OPTIONS
 
 # KPSE_POPPLER_SYSTEM_FLAGS

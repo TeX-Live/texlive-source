@@ -1,3 +1,7 @@
+2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Update version number 6.0.1dev => 6.0.1.
+
 2011-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf (TEXEDIT): Document Unix and Windows defaults.
@@ -113,7 +117,7 @@
 
 2010-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	Update version number to 6.0.1dev.
+	* configure.ac: Update version number to 6.0.1dev.
 
 2010-11-10  Mathias Kende  <mathias@kende.fr>
 
