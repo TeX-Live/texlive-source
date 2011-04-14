@@ -25,7 +25,6 @@ static const char _svn_version[] =
 // define DEBUG
 
 #include "epdf.h"
-#define HAVE_GETPDFMAJORVERSION 1
 
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.
@@ -534,11 +533,7 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
     Page *page;
     int rotate;
     PDFRectangle *pagebox;
-#ifdef HAVE_GETPDFMAJORVERSION
     int pdf_major_version_found, pdf_minor_version_found;
-#else
-    float pdf_version_found, pdf_version_wanted;
-#endif
     float xsize, ysize, xorig, yorig;
     assert(idict != NULL);
     assert(img_type(idict) == IMG_TYPE_PDF);
@@ -555,7 +550,6 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
     // this works only for PDF 1.x -- but since any versions of PDF newer
     // than 1.x will not be backwards compatible to PDF 1.x, pdfTeX will
     // then have to changed drastically anyway.
-#ifdef HAVE_GETPDFMAJORVERSION
     pdf_major_version_found = pdf_doc->doc->getPDFMajorVersion();
     pdf_minor_version_found = pdf_doc->doc->getPDFMinorVersion();
     if ((pdf_major_version_found > 1)
@@ -570,19 +564,6 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
                         minor_pdf_version_wanted);
         }
     }
-#else
-    pdf_version_found = pdf_doc->doc->getPDFVersion();
-    pdf_version_wanted = 1 + (minor_pdf_version_wanted * 0.1);
-    if (pdf_version_found > pdf_version_wanted + 0.01) {
-        char msg[] =
-            "PDF inclusion: found PDF version <%.1f>, but at most version <%.1f> allowed";
-        if (pdf_inclusion_errorlevel > 0) {
-            pdftex_fail(msg, pdf_version_found, pdf_version_wanted);
-        } else {
-            pdftex_warn(msg, pdf_version_found, pdf_version_wanted);
-        }
-    }
-#endif
     img_totalpages(idict) = pdf_doc->doc->getCatalog()->getNumPages();
     if (img_pagename(idict)) {
         // get page by name

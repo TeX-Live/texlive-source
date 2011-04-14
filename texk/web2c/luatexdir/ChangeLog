@@ -1,3 +1,11 @@
+2011-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am, am/txt2zlib.am: When cross compiling skip
+	txt2zlib and use installed luascripts/pdflua.c.
+
+	Need poppler at least 0.12 for PDFDoc::getPDF*Version().
+	* image/pdftoepdf.cc: Remove code for older poppler versions.
+
 2011-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/writepng.w: Fix to build with png-1.5 (and avoid
