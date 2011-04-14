@@ -1,0 +1,6 @@
+2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-buffer-limit (new): Avoid buffer overflow in
+	lib/t1lib/parseAFM.c token() and linetoken().
+	http://secunia.com/advisories/43491/
+

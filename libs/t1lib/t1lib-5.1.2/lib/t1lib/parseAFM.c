@@ -179,6 +179,8 @@ static char *keyStrings[] = {
 
 /*************************** PARSING ROUTINES **************/ 
   
+#define MAX_NAME_1 MAX_NAME-1   /* check for buffer overflow */
+
 /*************************** token *************************/
 
 /*  A "AFM File Conventions" tokenizer. That means that it will
@@ -198,7 +200,8 @@ static char *token(stream)
     
     idx = 0;
     
-    while (ch != EOF && ch != ' ' && ch != CR  && ch != LF &&
+    while (idx < MAX_NAME_1 &&
+	   ch != EOF && ch != ' ' && ch != CR  && ch != LF &&
 	   ch != CTRL_Z && ch != '\t' && ch != ':' && ch != ';'){
       ident[idx++] = ch;
       ch = fgetc(stream);
@@ -235,7 +238,7 @@ static char *linetoken(stream)
     while ((ch = fgetc(stream)) == ' ' || ch == '\t' ); 
     
     idx = 0;
-    while (ch != EOF && ch != CR  && ch != LF && ch != CTRL_Z) 
+    while (idx < MAX_NAME_1 && ch != EOF && ch != CR  && ch != LF && ch != CTRL_Z) 
     {
         ident[idx++] = ch;
         ch = fgetc(stream);
