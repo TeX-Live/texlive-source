@@ -1,120 +1,126 @@
 /* 
-Copyright (c) 2008, 2009, 2010 jerome DOT laurens AT u-bourgogne DOT fr
-
-This file is part of the SyncTeX package.
-
-Latest Revision: Wed May 12 12:08:40 UTC 2010
-
-License:
---------
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE
-
-Except as contained in this notice, the name of the copyright holder  
-shall not be used in advertising or otherwise to promote the sale,  
-use or other dealings in this Software without prior written  
-authorization from the copyright holder.
-
-Important notice:
------------------
-This file is named "synctex.c", it may or may not have a header counterpart
-depending on its use.  It aims to provide basic components useful for the
-input/output synchronization technology for TeX.
-The purpose of the implementation is threefold
-- firstly, it defines a new input/output synchronization technology named
-  "synchronize texnology", "SyncTeX" or "synctex"
-- secondly, it defines the naming convention and format of the auxiliary file
-  used by this technology
-- thirdly, it defines the API of a controller and a controller, used in
-  particular by the pdfTeX and XeTeX programs to prepare synchronization.
-
-All these are up to a great extent de facto definitions, which means that they
-are partly defined by the implementation itself.
-
-This technology was first designed for pdfTeX, an extension of TeX managing the
-pdf output file format, but it can certainly be adapted to other programs built
-from TeX as long as the extensions do not break too much the core design.
-Moreover, the synchronize texnology only relies on code concept and not
-implementation details, so it can be ported to other TeX systems.  In order to
-support SyncTeX, one can start reading the dedicated section in synctex.ch,
-sync-pdftex.ch and sync-xetex.ch. Actually, support is provided for TeX, e-TeX,
-pdfTeX and XeTeX.
-
-Other existing public synchronization technologies are defined by srcltx.sty -
-also used by source specials - and pdfsync.sty.  Like them, the synchronize
-texnology is meant to be shared by various text editors, viewers and TeX
-engines.  A centralized reference and source of information is available in TeX-Live.
-
-Versioning:
------------
-As synctex is embedded into different TeX implementation, there is an independent
-versionning system.
-For TeX implementations, the actual version is: 3
-For .synctex file format, the actual version is SYNCTEX_VERSION below
-
-Please, do not remove these explanations.
-
-Acknowledgments:
-----------------
-The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
-and significant help from XeTeX developer Jonathan Kew
-
-Nota Bene:
-----------
-If you include or use a significant part of the synctex package into a software,
-I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
-
-History:
---------
-Version 3
-- very minor design change to take luatex into account
-- typo fixed
-- some size_t replaced by int
-- very minor code design change to remove wrong xetex specific warnings
-
-Version 2
-Fri Sep 19 14:55:31 UTC 2008
-- support for file names containing spaces.
-  This is one thing that xetex and pdftex do not manage the same way.
-  When the input file name contains a space character ' ',
-  pdftex will automatically enclose this name between two quote characters '"',
-  making programs believe that these quotes are really part of the name.
-  xetex does nothing special.
-  For that reason, running the command line
-  xetex --synctex=-1 "my file.tex"
-  is producing the expected file named <my file.synctex>, (the '<' and '>' are not part of the name)
-  whereas running the command line
-  pdftex --synctex=-1 "my file.tex"
-  was producing the unexpected file named <"my file".synctex> where the two '"' chracters were part of the name.
-  Of course, that was breaking the typesetting mechanism when pdftex was involved.
-  To solve this problem, we prefer to rely on the output_file_name instead of the jobname.
-  In the case when no output_file_name is available, we use jobname and test if the file name
-  starts and ends with a quote character. Every synctex output file is removed because we consider
-  TeX encontered a problem.
-  There is some conditional coding.
-
-Version 1
-Latest Revision: Wed Jul  1 08:15:44 UTC 2009
-
-*/
+ Copyright (c) 2008, 2009, 2010, 2011 jerome DOT laurens AT u-bourgogne DOT fr
+ 
+ This file is part of the SyncTeX package.
+ 
+ Latest Revision: Fri Apr 15 19:10:57 UTC 2011
+ 
+ License:
+ --------
+ Permission is hereby granted, free of charge, to any person
+ obtaining a copy of this software and associated documentation
+ files (the "Software"), to deal in the Software without
+ restriction, including without limitation the rights to use,
+ copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following
+ conditions:
+ 
+ The above copyright notice and this permission notice shall be
+ included in all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ OTHER DEALINGS IN THE SOFTWARE
+ 
+ Except as contained in this notice, the name of the copyright holder  
+ shall not be used in advertising or otherwise to promote the sale,  
+ use or other dealings in this Software without prior written  
+ authorization from the copyright holder.
+ 
+ Important notice:
+ -----------------
+ This file is named "synctex.c", it may or may not have a header counterpart
+ depending on its use.  It aims to provide basic components useful for the
+ input/output synchronization technology for TeX.
+ The purpose of the implementation is threefold
+ - firstly, it defines a new input/output synchronization technology named
+ "synchronize texnology", "SyncTeX" or "synctex"
+ - secondly, it defines the naming convention and format of the auxiliary file
+ used by this technology
+ - thirdly, it defines the API of a controller and a controller, used in
+ particular by the pdfTeX and XeTeX programs to prepare synchronization.
+ 
+ All these are up to a great extent de facto definitions, which means that they
+ are partly defined by the implementation itself.
+ 
+ This technology was first designed for pdfTeX, an extension of TeX managing the
+ pdf output file format, but it can certainly be adapted to other programs built
+ from TeX as long as the extensions do not break too much the core design.
+ Moreover, the synchronize texnology only relies on code concept and not
+ implementation details, so it can be ported to other TeX systems.  In order to
+ support SyncTeX, one can start reading the dedicated section in synctex.ch,
+ sync-pdftex.ch and sync-xetex.ch. Actually, support is provided for TeX, e-TeX,
+ pdfTeX and XeTeX.
+ 
+ Other existing public synchronization technologies are defined by srcltx.sty -
+ also used by source specials - and pdfsync.sty.  Like them, the synchronize
+ texnology is meant to be shared by various text editors, viewers and TeX
+ engines.  A centralized reference and source of information is available in TeX-Live.
+ 
+ Versioning:
+ -----------
+ As synctex is embedded into different TeX implementation, there is an independent
+ versionning system.
+ For TeX implementations, the actual version is: 3
+ For .synctex file format, the actual version is SYNCTEX_VERSION below
+ 
+ Please, do not remove these explanations.
+ 
+ Acknowledgments:
+ ----------------
+ The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
+ and significant help from XeTeX developer Jonathan Kew
+ 
+ Nota Bene:
+ ----------
+ If you include or use a significant part of the synctex package into a software,
+ I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
+ 
+ History:
+ --------
+ Version 1.14
+ Fri Apr 15 19:10:57 UTC 2011
+ - taking output_directory into account
+ - Replaced FOPEN_WBIN_MODE by FOPEN_W_MODE when opening the text version of the .synctex file.
+ - Merging with LuaTeX's version of synctex.c
+ 
+ Version 3
+ - very minor design change to take luatex into account
+ - typo fixed
+ - some size_t replaced by int
+ - very minor code design change to remove wrong xetex specific warnings
+ 
+ Version 2
+ Fri Sep 19 14:55:31 UTC 2008
+ - support for file names containing spaces.
+ This is one thing that xetex and pdftex do not manage the same way.
+ When the input file name contains a space character ' ',
+ pdftex will automatically enclose this name between two quote characters '"',
+ making programs believe that these quotes are really part of the name.
+ xetex does nothing special.
+ For that reason, running the command line
+ xetex --synctex=-1 "my file.tex"
+ is producing the expected file named <my file.synctex>, (the '<' and '>' are not part of the name)
+ whereas running the command line
+ pdftex --synctex=-1 "my file.tex"
+ was producing the unexpected file named <"my file".synctex> where the two '"' chracters were part of the name.
+ Of course, that was breaking the typesetting mechanism when pdftex was involved.
+ To solve this problem, we prefer to rely on the output_file_name instead of the jobname.
+ In the case when no output_file_name is available, we use jobname and test if the file name
+ starts and ends with a quote character. Every synctex output file is removed because we consider
+ TeX encontered a problem.
+ There is some conditional coding.
+ 
+ Version 1
+ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
+ 
+ */
 
 #   define SYNCTEX_VERSION 1
 
@@ -134,6 +140,11 @@ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
 #       define SYNCTEX_FREE(x) free(x)
 #   endif
 
+/*  The header file SYNCTEX_ENGINE_H below is "synctex-tex.h" for TeX, ...
+ *  Some macros are defined and additional headers will be imported.
+ *  The macros below can be defined there, prior to their default definition given afterwards. */
+#   include SYNCTEX_ENGINE_H
+
 /*  the macros defined below do the same job than their almost eponym
  *  counterparts of *tex.web, the memory access is sometimes more direct
  *  because *tex.web won't share its own constants the main purpose is to
@@ -141,24 +152,188 @@ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
  *  portability and not modifying to much the original code.  see texmfmem.h
  *  and *tex.web for details, the synctex_ prefix prevents name conflicts, it
  *  is some kind of namespace
-*/
+ */
 #   warning These structures MUST be kept in synchronization with the main program
 /*  synctexoption is a global integer variable defined in *tex.web
  *  it is set to 1 by texmfmp.c if the command line has the '-synctex=1'
  *  option.  */
-#   define synctex_options synctexoption
-#   define SYNCTEX_NO_OPTION INT_MAX
+#   if !defined(synctex_options)
+#       define synctex_options synctexoption
+#   endif
+#   if !defined(SYNCTEX_NO_OPTION)
+#       define SYNCTEX_NO_OPTION INT_MAX
+#   endif
 /*  if synctex_options is set to SYNCTEX_NO_OPTION, no command line option was provided.  */
 
 /*  glue code: really define the main memory,
  *  this is exactly the same "mem" as in *tex.web.  */
-#   define mem zmem
+#   if !defined(mem)
+#       define mem zmem
+#   endif
 /*  glue code: synctexoffset is a global integer variable defined in *tex.web
  *  it is set to the offset where the primitive \synctex reads and writes its
  *  value.  */
-#   define SYNCTEX_VALUE zeqtb[synctexoffset].cint
+#   if !defined(SYNCTEX_VALUE)
+#       define SYNCTEX_VALUE zeqtb[synctexoffset].cint
+#   endif
 /*  if there were a mean to share the value of synctex_code between *tex.web
  *  and this file, it would be great.  */
+
+/*  WARNING:
+ The 9 definitions below must be in sync with their eponym declarations in
+ the proper synctex-*.ch* file or equivalent.
+ Since version 1.14, the definitions are moved after the include directive above
+ and we adopted a conservative policy. The forthcoming definitions apply only if
+ when the macros are not already defined in SYNCTEX_ENGINE_H.
+ If the default values below do not fit with your requirements,
+ you can define them in the above mentionned header file.
+ */
+#   if !defined(synchronization_field_size)
+#       define synchronization_field_size 2
+#   endif
+/*  The default value is 2, it is suitable for original TeX and alike,
+ *  but it is too big for XeTeX.
+ *  The tag and the line are just the two last words of the node.  This is a
+ *  very handy design but this is not strictly required by the concept.  If
+ *  really necessary, one can define other storage rules.
+ *  XeTeX already defined synchronization_field_size,
+ *  SYNCTEX_TAG_MODEL and SYNCTEX_LINE_MODEL
+ *  All the default values are targeted to TeX or e-TeX.  */
+#   if !defined(SYNCTEX_TAG_MODEL)
+#       define SYNCTEX_TAG_MODEL(NODE,TYPE)\
+mem[NODE+TYPE##_node_size-synchronization_field_size].cint
+#   endif
+#   if !defined(SYNCTEX_LINE_MODEL)
+#       define SYNCTEX_LINE_MODEL(NODE,TYPE)\
+mem[NODE+TYPE##_node_size-synchronization_field_size+1].cint
+#   endif
+/*  SYNCTEX_TAG_MODEL and SYNCTEX_LINE_MODEL are used to define
+ *  SYNCTEX_TAG and SYNCTEX_LINE in a model independant way
+ *  Both are tag and line accessors.
+ *  TYPE takes one of the prefixes in the ???_node_size definition below. */
+/*  see: @d box_node_size=...  
+ *  There should be an automatic process here because these definitions
+ *  are redundant. However, this process would certainly be overcomplicated
+ *  (building then parsing the *tex.web file would be a pain) */
+#   if !defined(box_node_size)
+#       define box_node_size (7+synchronization_field_size)
+#   endif
+/*  glue code: node sizes  */
+#   if !defined(small_node_size)
+#       define small_node_size 2
+#   endif
+/*  see: @d small_node_size=2 {number of words to allocate for most node types}  */
+#   if !defined(medium_node_size)
+#       define medium_node_size (small_node_size+synchronization_field_size)
+#   endif
+/*  see: @d rule_node_size=4  */
+#   if !defined(rule_node_size)
+#       define rule_node_size (4+synchronization_field_size)
+#   endif
+/*  see: luatex  */
+#   if !defined(glue_node_size)
+#       define glue_node_size medium_node_size
+#   endif
+#   if !defined(kern_node_size)
+#       define kern_node_size medium_node_size
+#   endif
+#   if !defined(math_node_size)
+#       define math_node_size medium_node_size
+#   endif
+#   if !defined(width_offset)
+#       define width_offset 1
+#   endif
+/*  see: @d width_offset=...  */
+#   if !defined( depth_offset)
+#       define depth_offset 2
+#   endif
+/*  see: @d depth_offset=...  */
+#   if !defined(height_offset)
+#       define height_offset 3
+#   endif
+/*  see: @d height_offset=...  */
+
+/*  Now define the local version of width(##), height(##) and depth(##) macros
+ These only depend on the 3 macros above.  */
+#   if !defined(SYNCTEX_TYPE)
+#       define SYNCTEX_TYPE(NODE) mem[NODE].hh.b0
+#   endif
+#   if !defined(SYNCTEX_SUBTYPE)
+#       define SYNCTEX_SUBTYPE(NODE) mem[NODE].hh.b1
+#   endif
+#   if !defined(SYNCTEX_WIDTH)
+#       define SYNCTEX_WIDTH(NODE) mem[NODE+width_offset].cint
+#   endif
+#   if !defined(SYNCTEX_DEPTH)
+#       define SYNCTEX_DEPTH(NODE) mem[NODE+depth_offset].cint
+#   endif
+#   if !defined(SYNCTEX_HEIGHT)
+#       define SYNCTEX_HEIGHT(NODE) mem[NODE+height_offset].cint
+#   endif
+#   if !defined(rule_node)
+#       define rule_node 2
+#   endif
+#   if !defined(glue_node)
+#       define glue_node 10
+#   endif
+#   if !defined(kern_node)
+#       define kern_node 11
+#   endif
+
+/*  Some parts of the code may differ depending on the ouput mode,
+ *  dvi or xdv vs pdf, in particular the management of magnification.
+ *  The default is dvi mode.
+ *  Also, if pdftex is used, the origin of the coordinates is at 0, not at 1in
+ *  Default values are suitable for TeX  */
+#   if !defined(SYNCTEX_OUTPUT)
+#       define SYNCTEX_OUTPUT "dvi"
+#   endif
+#   if !defined(SYNCTEX_OFFSET_IS_PDF)
+#       define SYNCTEX_OFFSET_IS_PDF 0
+#   endif
+
+/*  This macro layer was added to take luatex into account as suggested by T. Hoekwater. */
+#   if !defined(SYNCTEX_GET_JOB_NAME)
+#       define SYNCTEX_GET_JOB_NAME() (gettexstring(jobname))
+#   endif
+#   if !defined(SYNCTEX_GET_LOG_NAME)
+#       define SYNCTEX_GET_LOG_NAME() (gettexstring(texmflogname))
+#   endif
+#   if !defined(SYNCTEX_CURRENT_TAG)
+#       define SYNCTEX_CURRENT_TAG (curinput.synctextagfield)
+#   endif
+#   if !defined(SYNCTEX_GET_CURRENT_NAME)
+#       define SYNCTEX_GET_CURRENT_NAME() (gettexstring(curinput.namefield))
+#   endif
+#   if !defined(SYNCTEX_GET_TOTAL_PAGES)
+#       define SYNCTEX_GET_TOTAL_PAGES() (totalpages)
+#   endif
+#   if !defined(SYNCTEX_CURH)
+#       define SYNCTEX_CURH curh
+#   endif
+#   if !defined(SYNCTEX_CURV)
+#       define SYNCTEX_CURV curv
+#   endif
+#   if !defined(SYNCTEX_RULE_WD)
+#       define SYNCTEX_RULE_WD rulewd
+#   endif
+#   if !defined(SYNCTEX_RULE_HT)
+#       define SYNCTEX_RULE_HT ruleht
+#   endif
+#   if !defined(SYNCTEX_RULE_DP)
+#       define SYNCTEX_RULE_DP ruledp
+#   endif
+
+/*  For non-GCC compilation.  */
+#   if !defined(__GNUC__) || (__GNUC__ < 2)
+#       define __attribute__(A)
+#   endif
+
+#   include "synctex.h"
+
+#   define SYNCTEX_YES (-1)
+#   define SYNCTEX_NO  (0)
+#   define SYNCTEX_NO_ERROR  (0)
 
 #   define SYNCTEX_UNIT_FACTOR 1
 #   define UNIT / synctex_ctxt.unit
@@ -182,106 +357,7 @@ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
  *  the top left corner of the page.  For pdf mode, it is straightforward, but
  *  for dvi mode, we'll have to record the 1in offset in both directions,
  *  eventually modified by the magnification.
-*/
-
-/*  WARNING:
-    The 9 definitions below must be in sync with their eponym declarations in
-    the proper synctex-*.ch* file or equivalent.
-*/
-#   define synchronization_field_size 2
-/*  The default value is 2, it is suitable for original TeX and alike,
- *  but it is too big for XeTeX.
- *  The tag and the line are just the two last words of the node.  This is a
- *  very handy design but this is not strictly required by the concept.  If
- *  really necessary, one can define other storage rules.
- *  XeTeX redefines synchronization_field_size,
- *  SYNCTEX_TAG_MODEL and SYNCTEX_LINE_MODEL
- *  All the default values are targeted to TeX or e-TeX.  */
-#   define SYNCTEX_TAG_MODEL(NODE,SIZE)\
-                    mem[NODE+SIZE-synchronization_field_size].cint
-#   define SYNCTEX_LINE_MODEL(NODE,SIZE)\
-                    mem[NODE+SIZE-synchronization_field_size+1].cint
-/*  SYNCTEX_TAG_MODEL and SYNCTEX_LINE_MODEL are used to define
- *  SYNCTEX_TAG and SYNCTEX_LINE in a model independant way
- *  Both are tag and line accessors */
-#   define box_node_size (7+synchronization_field_size)
-/*  see: @d box_node_size=...  
- *  There should be an automatic process here because these definitions
- *  are redundant. However, this process would certainly be overcomplicated
- *  (building then parsing the *tex.web file would be a pain) */
-#   define width_offset 1
-/*  see: @d width_offset=...  */
-#   define depth_offset 2
-/*  see: @d depth_offset=...  */
-#   define height_offset 3
-/*  see: @d height_offset=...  */
-
-/*  glue code: these only work with nodes of size medium_node_size  */
-#   define small_node_size 2
-/*  see: @d small_node_size=2 {number of words to allocate for most node types}  */
-#   define medium_node_size (small_node_size+synchronization_field_size)
-/*  see: @d rule_node_size=4  */
-#   define rule_node_size (4+synchronization_field_size)
-
-/*  Now define the local version of width(##), height(##) and depth(##) macros
-        These only depend on the 3 macros above.  */
-#   define SYNCTEX_TYPE(NODE) mem[NODE].hh.b0
-#   define rule_node 2
-#   define glue_node 10
-#   define kern_node 11
-
-#   define SYNCTEX_SUBTYPE(NODE) mem[NODE].hh.b1
-#   define SYNCTEX_WIDTH(NODE) mem[NODE+width_offset].cint
-#   define SYNCTEX_DEPTH(NODE) mem[NODE+depth_offset].cint
-#   define SYNCTEX_HEIGHT(NODE) mem[NODE+height_offset].cint
-
-/*  When an hlist ships out, it can contain many different kern/glue nodes with
- *  exactly the same sync tag and line.  To reduce the size of the .synctex
- *  file, we only display a kern node sync info when either the sync tag or the
- *  line changes.  Also, we try ro reduce the distance between the chosen nodes
- *  in order to improve accuracy.  It means that we display information for
- *  consecutive nodes, as far as possible.  This tricky part uses a "recorder",
- *  which is the address of the routine that knows how to write the
- *  synchronization info to the .synctex file.  It also uses criteria to detect
- *  a change in the context, this is the macro SYNCTEX_CONTEXT_DID_CHANGE. The
- *  SYNCTEX_IGNORE macro is used to detect unproperly initialized nodes.  See
- *  details in the implementation of the functions below.  */
-#   define SYNCTEX_IGNORE(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE || !SYNCTEX_FILE
-
-/*  Some parts of the code may differ depending on the ouput mode,
- *  dvi or xdv vs pdf, in particular the management of magnification.
- *  The default is dvi mode.
- *  Also, if pdftex is used, the origin of the coordinates is at 0, not at 1in
- *  Default values are suitable for TeX  */
-#   define SYNCTEX_OUTPUT "dvi"
-#   define SYNCTEX_OFFSET_IS_PDF 0
-
-#   define SYNCTEX_YES (-1)
-#   define SYNCTEX_NO  (0)
-#   define SYNCTEX_NO_ERROR  (0)
-
-/*  This macro layer was added to take luatex into account as suggested by T. Hoekwater. */
-#   define SYNCTEX_GET_JOB_NAME() (gettexstring(jobname))
-#   define SYNCTEX_GET_LOG_NAME() (gettexstring(texmflogname))
-#   define SYNCTEX_CURRENT_TAG (curinput.synctextagfield)
-#   define SYNCTEX_GET_CURRENT_NAME() (gettexstring(curinput.namefield))
-#   define SYNCTEX_GET_TOTAL_PAGES() (totalpages)
-#   define SYNCTEX_CURH curh
-#   define SYNCTEX_CURV curv
-#   define SYNCTEX_RULE_WD rulewd
-#   define SYNCTEX_RULE_HT ruleht
-#   define SYNCTEX_RULE_DP ruledp
-
-/*  For non-GCC compilation.  */
-#   if !defined(__GNUC__) || (__GNUC__ < 2)
-#   define __attribute__(A)
-#   endif
-
-/*  The header file SYNCTEX_ENGINE_H below is "synctex-tex.h" for TeX, ...
- *  Some macros will be redefined and additional headers will be imported */
-#   include SYNCTEX_ENGINE_H
-
-#   include "synctex.h"
+ */
 
 #   if defined(__SyncTeX__)
 
@@ -298,7 +374,7 @@ typedef int (*synctex_fprintf_t) (void *, const char *, ...);   /* print formatt
 static struct {
     void *file;                 /*  the foo.synctex or foo.synctex.gz I/O identifier  */
     synctex_fprintf_t fprintf;  /*  either fprintf or gzprintf */
-    char *busy_name;            /*  the real "foo.synctex(busy)" or "foo.synctex.gz(busy)" name  */
+    char *busy_name;            /*  the real "foo.synctex(busy)" or "foo.synctex.gz(busy)" name, with output_directory  */
     char *root_name;            /*  in general jobname.tex  */
     integer count;              /*  The number of interesting records in "foo.synctex"  */
     /*  next concern the last sync record encountered  */
@@ -319,10 +395,11 @@ static struct {
         unsigned int not_void:1;    /*  Whether it really contains synchronization material */
         unsigned int warn:1;        /*  One shot warning flag */
         unsigned int quoted:1;      /*  Whether the input file name was quoted by tex or not, for example "\"my input file.tex\"", unused by XeTeX */
-        unsigned int reserved:SYNCTEX_BITS_PER_BYTE*sizeof(int)-6; /* Align */
+        unsigned int output:1;      /*  Whether the output_directory is used */
+        unsigned int reserved:SYNCTEX_BITS_PER_BYTE*sizeof(int)-7; /* Align */
     } flags;
 } synctex_ctxt = {
-NULL, NULL, NULL, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0, 0, {0,0,0,0,0,0,0}};
+    NULL, NULL, NULL, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0, 0, {0,0,0,0,0,0,0,0}};
 
 #   define SYNCTEX_FILE synctex_ctxt.file
 #   define SYNCTEX_IS_OFF (synctex_ctxt.flags.off)
@@ -394,6 +471,11 @@ static const char *synctex_suffix = ".synctex";
 static const char *synctex_suffix_gz = ".gz";
 static const char *synctex_suffix_busy = "(busy)";
 
+/*  for DIR_SEP_STRING */
+#   include <kpathsea/c-pathch.h>
+/*  for kpse_absolute_p */
+#   include <kpathsea/absolute.h>
+
 /*  synctex_dot_open ensures that the foo.synctex file is open.
  *  In case of problem, it definitely disables synchronization.
  *  Now all the output synchronization info is gathered in only one file.
@@ -401,7 +483,7 @@ static const char *synctex_suffix_busy = "(busy)";
  *  plus 1 for the control but the overall benefits are not so clear.
  *  For example foo-i.synctex would contain input synchronization
  *  information for page i alone.
-*/
+ */
 static void *synctex_dot_open(void)
 {
     SYNCTEX_RETURN_IF_DISABLED;
@@ -420,97 +502,112 @@ static void *synctex_dot_open(void)
     printf("\nwarning: Synchronize DEBUG: synctex_dot_open 1\n");
 #   endif
     /*  this is the first time we are asked to open the file
-       this part of code is executed only once:
-       either SYNCTEX_FILE is nonnegative or synchronization is
-       definitely disabled. */
+     this part of code is executed only once:
+     either SYNCTEX_FILE is nonnegative or synchronization is
+     definitely disabled. */
     {
         char *tmp = SYNCTEX_GET_JOB_NAME();
         size_t len = strlen(tmp);
-        /*  jobname was set by the \jobname command on the *TeX side  */
-        char *the_busy_name = xmalloc((size_t)
-                                      (len + strlen(synctex_suffix)
+        if (len>0) {
+            /*  jobname was set by the \jobname command on the *TeX side  */
+            char *the_busy_name = xmalloc((size_t)
+                                          ( len
+                                           + strlen(synctex_suffix)
                                            + strlen(synctex_suffix_gz)
-                                           + strlen(synctex_suffix_busy) + 1));
-        if (!the_busy_name) {
-            SYNCTEX_FREE(tmp);
-            synctexabort(0);
-            return NULL;
-        }
-#  if defined(XeTeX)
-        synctex_ctxt.flags.quoted = 0;
-        strcpy(the_busy_name, tmp);
-#  else
-        if (len > 0 && tmp[0] == '"' && tmp[len - 1] == '"') {
-            /*  We are certainly on a pdftex like engine and the input file name did contain spaces inside.
-               Quotes where added around that file name. We prefer to remove the quotes to have a human readable name.
-               As of Fri Sep 19 14:00:01 UTC 2008, the file names containing quotes are not supported by pdfTeX
-               nor SyncTeX. */
-            synctex_ctxt.flags.quoted = 1;      /* we will have to add quotes around the file name in the log file. */
-            strcpy(the_busy_name, tmp + 1);     /* only copy what follows the leading " character */
-            len = strlen(the_busy_name);
-            if ((len > 0) && (the_busy_name[len - 1] == '"')) {
-                the_busy_name[len - 1] = '\0';
-            }
-        } else {
-            synctex_ctxt.flags.quoted = 0;
-            strcpy(the_busy_name, tmp);
-        }
-#  endif
-        SYNCTEX_FREE(tmp);
-        tmp = NULL;
-        strcat(the_busy_name, synctex_suffix);
-        /*  Initialize SYNCTEX_NO_GZ with the content of \synctex to let the user choose the format. */
-        SYNCTEX_NO_GZ = SYNCTEX_VALUE < 0 ? SYNCTEX_YES : SYNCTEX_NO;
-        if (!SYNCTEX_NO_GZ) {
-            strcat(the_busy_name, synctex_suffix_gz);
-        }
-        strcat(the_busy_name, synctex_suffix_busy);
-        if (SYNCTEX_NO_GZ) {
-            SYNCTEX_FILE = xfopen(the_busy_name, FOPEN_WBIN_MODE);
-            synctex_ctxt.fprintf = (synctex_fprintf_t) (&fprintf);
-        } else {
-            SYNCTEX_FILE = gzopen(the_busy_name, FOPEN_WBIN_MODE);
-            synctex_ctxt.fprintf = (synctex_fprintf_t) (&gzprintf);
-        }
-#   if SYNCTEX_DEBUG
-        printf("\nwarning: Synchronize DEBUG: synctex_dot_open 2\n");
-#   endif
-        if (SYNCTEX_FILE) {
-            if (SYNCTEX_NO_ERROR != synctex_record_preamble()) {
+                                           + strlen(synctex_suffix_busy)
+                                           + 1
+                                           + (output_directory?strlen(output_directory) + strlen(DIR_SEP_STRING):0)));
+            if (!the_busy_name) {
+                SYNCTEX_FREE(tmp);
+                tmp = NULL;
                 synctexabort(0);
                 return NULL;
             }
-            /*  Initialization of the context */
-            synctex_ctxt.magnification = 1000;
-            synctex_ctxt.unit = SYNCTEX_UNIT_FACTOR;
-            /*  synctex_ctxt.busy_name was NULL before, it now owns the_busy_name */
-            synctex_ctxt.busy_name = the_busy_name;
-            the_busy_name = NULL;
-            /*  print the preamble, this is an quite an UTF8 file  */
-            if (NULL != synctex_ctxt.root_name) {
-                synctex_record_input(1, synctex_ctxt.root_name);
-                SYNCTEX_FREE(synctex_ctxt.root_name);
-                synctex_ctxt.root_name = NULL;
+            /* Initialize the_busy_name to the void string */
+            the_busy_name[0] = (char)0;
+            /* If an output directory was specified, use it instead of cwd.  */
+            if (output_directory && !kpse_absolute_p(tmp, false)) {
+                synctex_ctxt.flags.output = 1;
+                strcat(the_busy_name, output_directory);
+                strcat(the_busy_name, DIR_SEP_STRING);
             }
-            synctex_ctxt.count = 0;
+#  if defined(XeTeX)
+            synctex_ctxt.flags.quoted = 0;
+            strcat(the_busy_name, tmp);
+#  else
+            if (tmp[0] == '"' && tmp[len - 1] == '"') {
+                /*  We are certainly on a pdftex like engine and the input file name did contain spaces inside.
+                 Quotes where added around that file name. We prefer to remove the quotes to have a human readable name.
+                 As of Fri Sep 19 14:00:01 UTC 2008, the file names containing quotes are not supported by pdfTeX
+                 nor SyncTeX. */
+                synctex_ctxt.flags.quoted = 1;      /* we will have to add quotes around the file name in the log file. */
+                tmp[len - 1] = (char)0;             /* Remove the trailing " in order not to copy it */
+                strcat(the_busy_name, tmp + 1);     /* only copy what follows the leading " character */
+            } else {
+                synctex_ctxt.flags.quoted = 0;
+                strcat(the_busy_name, tmp);
+            }
+#  endif
+            SYNCTEX_FREE(tmp);
+            tmp = NULL;
+            strcat(the_busy_name, synctex_suffix);
+            /*  Initialize SYNCTEX_NO_GZ with the content of \synctex to let the user choose the format. */
+            SYNCTEX_NO_GZ = SYNCTEX_VALUE < 0 ? SYNCTEX_YES : SYNCTEX_NO;
+            if (!SYNCTEX_NO_GZ) {
+                strcat(the_busy_name, synctex_suffix_gz);
+            }
+            strcat(the_busy_name, synctex_suffix_busy);
+            if (SYNCTEX_NO_GZ) {
+                SYNCTEX_FILE = fopen(the_busy_name, FOPEN_W_MODE);
+                synctex_ctxt.fprintf = (synctex_fprintf_t) (&fprintf);
+            } else {
+                SYNCTEX_FILE = gzopen(the_busy_name, FOPEN_WBIN_MODE);
+                synctex_ctxt.fprintf = (synctex_fprintf_t) (&gzprintf);
+            }
 #   if SYNCTEX_DEBUG
-            fprintf(stdout,
-                    "\nwarning: Synchronize DEBUG: synctex_dot_open SYNCTEX AVAILABLE\n");
+            printf("\nwarning: Synchronize DEBUG: synctex_dot_open 2\n");
 #   endif
-        } else {
-            /*  no .synctex file available, so disable synchronization  */
-            SYNCTEX_IS_OFF = SYNCTEX_YES;
-            SYNCTEX_VALUE = 0;
-            printf("\nSyncTeX warning: no synchronization, problem with %s\n",
-                   the_busy_name);
-            /* and free the_busy_name */
+            if (SYNCTEX_FILE) {
+                if (SYNCTEX_NO_ERROR == synctex_record_preamble()) {
+                    /*  Initialization of the context */
+                    synctex_ctxt.magnification = 1000;
+                    synctex_ctxt.unit = SYNCTEX_UNIT_FACTOR;
+                    /*  synctex_ctxt.busy_name was NULL before, it now owns the_busy_name */
+                    synctex_ctxt.busy_name = the_busy_name;
+                    the_busy_name = NULL;
+                    /*  print the preamble, this is quite an UTF8 file  */
+                    if (NULL != synctex_ctxt.root_name) {
+                        synctex_record_input(1, synctex_ctxt.root_name);
+                        SYNCTEX_FREE(synctex_ctxt.root_name);
+                        synctex_ctxt.root_name = NULL;
+                    }
+                    synctex_ctxt.count = 0;
+#   if SYNCTEX_DEBUG
+                    fprintf(stdout,
+                            "\nwarning: Synchronize DEBUG: synctex_dot_open SYNCTEX AVAILABLE\n");
+#   endif
+                    SYNCTEX_FREE(the_busy_name);
+                    the_busy_name = NULL;
+                    return SYNCTEX_FILE;
+                } else {
+                    printf("\nSyncTeX warning: no synchronization, problem with %s\n",
+                           the_busy_name);
+                }
+            }
             SYNCTEX_FREE(the_busy_name);
             the_busy_name = NULL;
-#   if SYNCTEX_DEBUG
-            fprintf(stdout,
-                    "\nwarning: Synchronize DEBUG: synctex_dot_open SYNCTEX DISABLED\n");
-#   endif
+        } else {
+            printf("\nSyncTeX information: no synchronization with keyboard input\n");
         }
+        /*  no .synctex file available, so disable synchronization  */
+        SYNCTEX_FREE(tmp);
+        tmp = NULL;
+        synctexabort(0);
+        return NULL;
+#   if SYNCTEX_DEBUG
+        fprintf(stdout,
+                "\nwarning: Synchronize DEBUG: synctex_dot_open SYNCTEX DISABLED\n");
+#   endif
     }
     return SYNCTEX_FILE;
 }
@@ -532,11 +629,11 @@ static void *synctex_dot_open(void)
  *  it.  This function does not make any difference between the files, it
  *  treats the same way .tex, .aux, .sty ... files, even if many of them do not
  *  contain any material meant to be typeset.
-*/
+ */
 void synctexstartinput(void)
 {
     static unsigned int synctex_tag_counter = 0;
-
+    
     SYNCTEX_RETURN_IF_DISABLED;
 #   if SYNCTEX_DEBUG
     printf("\nwarning: Synchronize DEBUG: synctexstartinput %i",
@@ -544,7 +641,7 @@ void synctexstartinput(void)
     printf("\nwarning: SYNCTEX_VALUE=%i", SYNCTEX_VALUE);
     printf("\nwarning: synctex_options=%0X", synctex_options);
 #   endif
-
+    
     if (SYNCTEX_IS_OFF) {
         return;
     }
@@ -568,18 +665,18 @@ void synctexstartinput(void)
          *  to store the file name, because we will need it later.
          *  This is necessary because \jobname can be different */
         synctex_ctxt.root_name = SYNCTEX_GET_CURRENT_NAME();
-        /* we could initialize the unit field to 1 to avoid floating point exception
-         * when accidentaly dividing by the unit.
-         * This occurs when some SYNCTEX_IGNORE macro is not used.
-         * But this must not happen unexpectedly, so we leave the unit to 0 */
+        if (!strlen(synctex_ctxt.root_name)) {
+            synctex_ctxt.root_name = "texput";
+        }
 #   if SYNCTEX_DEBUG
         printf("\nwarning: Synchronize DEBUG: synctexstartinput first END\n");
 #   endif
         return;
     }
     if (SYNCTEX_FILE
-        || (SYNCTEX_VALUE && (SYNCTEX_NO_ERROR != synctex_dot_open()))) {
+        || (SYNCTEX_NO_ERROR != synctex_dot_open())) {
         char *tmp = SYNCTEX_GET_CURRENT_NAME();
+        /* Always record the input, even if SYNCTEX_VALUE is 0 */
         synctex_record_input(SYNCTEX_CURRENT_TAG,tmp);
         SYNCTEX_FREE(tmp);
     }
@@ -636,7 +733,7 @@ void synctexterminate(boolean log_opened)
         while (tmp > the_real_syncname) {
             --tmp;
             if (*tmp == '.') {
-                *tmp = '\0';    /* end the string here */
+                *tmp = (char)0;    /* end the string here */
                 break;
             }
         }
@@ -665,7 +762,15 @@ void synctexterminate(boolean log_opened)
                 /*  renaming the working synctex file */
                 if (0 == rename(synctex_ctxt.busy_name, the_real_syncname)) {
                     if (log_opened) {
-                        printf((synctex_ctxt.flags.quoted ? "\nSyncTeX written on \"%s\"" : "\nSyncTeX written on %s"), the_real_syncname);     /* SyncTeX also refers to the contents */
+                        tmp = the_real_syncname;
+#                       if SYNCTEX_DO_NOT_LOG_OUTPUT_DIRECTORY
+                        if (synctex_ctxt.flags.output) {
+                            tmp += strlen(output_directory) + strlen(DIR_SEP_STRING);
+                        }
+#                       endif
+                        printf((synctex_ctxt.flags.quoted ? "\nSyncTeX written on \"%s\"" : "\nSyncTeX written on %s."),
+                               tmp);
+                        tmp = NULL;
                     }
                 } else {
                     fprintf(stderr, "SyncTeX: Can't rename %s to %s\n",
@@ -691,11 +796,11 @@ void synctexterminate(boolean log_opened)
     } else if ((tmp = SYNCTEX_GET_JOB_NAME())) {
         size_t len = strlen(tmp);
         /*  There was a problem with the output.
-           We just try to remove existing synctex output files
-           including the busy one. */
+         We just try to remove existing synctex output files
+         including the busy one. */
         the_real_syncname = xmalloc((size_t)
                                     (len + strlen(synctex_suffix)
-                                         + strlen(synctex_suffix_gz) + 1));
+                                     + strlen(synctex_suffix_gz) + 1));
         if (!the_real_syncname) {
             SYNCTEX_FREE(tmp);
             synctexabort(0);
@@ -746,7 +851,7 @@ static inline int synctex_record_sheet(integer sheet);
 
 /*  Recording the "{..." line.  In *tex.web, use synctex_sheet(pdf_output) at
  *  the very beginning of the ship_out procedure.
-*/
+ */
 void synctexsheet(integer mag)
 {
     SYNCTEX_RETURN_IF_DISABLED;
@@ -757,7 +862,7 @@ void synctexsheet(integer mag)
         if (SYNCTEX_VALUE && !SYNCTEX_WARNING_DISABLE) {
             SYNCTEX_WARNING_DISABLE = SYNCTEX_YES;
             printf
-                ("\nSyncTeX warning: Synchronization was disabled from\nthe command line with -synctex=0\nChanging the value of \\synctex has no effect.");
+            ("\nSyncTeX warning: Synchronization was disabled from\nthe command line with -synctex=0\nChanging the value of \\synctex has no effect.");
         }
         return;
     }
@@ -790,7 +895,7 @@ static inline int synctex_record_teehs(integer sheet);
 
 /*  Recording the "}..." line.  In *tex.web, use synctex_teehs at
  *  the very end of the ship_out procedure.
-*/
+ */
 void synctexteehs(void)
 {
     SYNCTEX_RETURN_IF_DISABLED;
@@ -809,6 +914,20 @@ void synctexteehs(void)
 
 static inline void synctex_record_vlist(halfword p);
 
+/*  When an hlist ships out, it can contain many different kern/glue nodes with
+ *  exactly the same sync tag and line.  To reduce the size of the .synctex
+ *  file, we only display a kern node sync info when either the sync tag or the
+ *  line changes.  Also, we try ro reduce the distance between the chosen nodes
+ *  in order to improve accuracy.  It means that we display information for
+ *  consecutive nodes, as far as possible.  This tricky part uses a "recorder",
+ *  which is the address of the routine that knows how to write the
+ *  synchronization info to the .synctex file.  It also uses criteria to detect
+ *  a change in the context, this is the macro SYNCTEX_???_CONTEXT_DID_CHANGE. The
+ *  SYNCTEX_IGNORE macro is used to detect unproperly initialized nodes.  See
+ *  details in the implementation of the functions below.  */
+#   define SYNCTEX_IGNORE(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE || !SYNCTEX_FILE
+
+
 /*  This message is sent when a vlist will be shipped out, more precisely at
  *  the beginning of the vlist_out procedure in *TeX.web.  It will be balanced
  *  by a synctex_tsilv, sent at the end of the vlist_out procedure.  p is the
@@ -824,8 +943,8 @@ void synctexvlist(halfword this_box)
     }
     synctex_ctxt.node = this_box;   /*  0 to reset  */
     synctex_ctxt.recorder = NULL;   /*  reset  */
-    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(this_box,box_node_size);
-    synctex_ctxt.line = SYNCTEX_LINE_MODEL(this_box,box_node_size);
+    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(this_box,box);
+    synctex_ctxt.line = SYNCTEX_LINE_MODEL(this_box,box);
     synctex_ctxt.curh = SYNCTEX_CURH;
     synctex_ctxt.curv = SYNCTEX_CURV;
     synctex_record_vlist(this_box);
@@ -848,8 +967,8 @@ void synctextsilv(halfword this_box)
     }
     /*  Ignoring any pending info to be recorded  */
     synctex_ctxt.node = this_box; /*  0 to reset  */
-    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(this_box,box_node_size);
-    synctex_ctxt.line = SYNCTEX_LINE_MODEL(this_box,box_node_size);
+    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(this_box,box);
+    synctex_ctxt.line = SYNCTEX_LINE_MODEL(this_box,box);
     synctex_ctxt.curh = SYNCTEX_CURH;
     synctex_ctxt.curv = SYNCTEX_CURV;
     synctex_ctxt.recorder = NULL;
@@ -870,8 +989,8 @@ void synctexvoidvlist(halfword p, halfword this_box __attribute__ ((unused)))
         return;
     }
     synctex_ctxt.node = p;          /*  reset  */
-    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, box_node_size);
-    synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, box_node_size);
+    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,box);
+    synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,box);
     synctex_ctxt.curh = SYNCTEX_CURH;
     synctex_ctxt.curv = SYNCTEX_CURV;
     synctex_ctxt.recorder = NULL;   /*  reset  */
@@ -894,8 +1013,8 @@ void synctexhlist(halfword this_box)
         return;
     }
     synctex_ctxt.node = this_box;   /*  0 to reset  */
-    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(this_box,box_node_size);
-    synctex_ctxt.line = SYNCTEX_LINE_MODEL(this_box,box_node_size);
+    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(this_box,box);
+    synctex_ctxt.line = SYNCTEX_LINE_MODEL(this_box,box);
     synctex_ctxt.curh = SYNCTEX_CURH;
     synctex_ctxt.curv = SYNCTEX_CURV;
     synctex_ctxt.recorder = NULL;   /*  reset  */
@@ -919,8 +1038,8 @@ void synctextsilh(halfword this_box)
     }
     /*  Ignoring any pending info to be recorded  */
     synctex_ctxt.node = this_box;     /*  0 to force next node to be recorded!  */
-    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(this_box,box_node_size);
-    synctex_ctxt.line = SYNCTEX_LINE_MODEL(this_box,box_node_size);
+    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(this_box,box);
+    synctex_ctxt.line = SYNCTEX_LINE_MODEL(this_box,box);
     synctex_ctxt.curh = SYNCTEX_CURH;
     synctex_ctxt.curv = SYNCTEX_CURV;
     synctex_ctxt.recorder = NULL;   /*  reset  */
@@ -946,32 +1065,30 @@ void synctexvoidhlist(halfword p, halfword this_box __attribute__ ((unused)))
         (*synctex_ctxt.recorder) (synctex_ctxt.node);
     }
     synctex_ctxt.node = p;          /*  0 to reset  */
-    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, box_node_size);
-    synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, box_node_size);
+    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,box);
+    synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,box);
     synctex_ctxt.curh = SYNCTEX_CURH;
     synctex_ctxt.curv = SYNCTEX_CURV;
     synctex_ctxt.recorder = NULL;   /*  reset  */
     synctex_record_void_hlist(p);
 }
 
-/* IN THE SEQUEL, ALL NODE ARE medium_node_size'd, UNTIL THE CONTRARY IS MENTIONNED */
-#   undef SYNCTEX_IGNORE
-#   define SYNCTEX_IGNORE(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE \
-                                || (0 >= SYNCTEX_TAG_MODEL(NODE,medium_node_size)) \
-                                || (0 >= SYNCTEX_LINE_MODEL(NODE,medium_node_size))
-
+/* With LuaTeX we have to consider other node sizes than medium ones */
+#   define SYNCTEX_IGNORE_NODE(NODE,TYPE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE \
+|| (0 >= SYNCTEX_TAG_MODEL(NODE,TYPE)) \
+|| (0 >= SYNCTEX_LINE_MODEL(NODE,TYPE))
 /*  This macro will detect a change in the synchronization context.  As long as
  *  the synchronization context remains the same, there is no need to write
  *  synchronization info: it would not help more.  The synchronization context
  *  has changed when either the line number or the file tag has changed.  */
-#   define SYNCTEX_CONTEXT_DID_CHANGE(NODE) ((0 == synctex_ctxt.node)\
-                || (SYNCTEX_TAG_MODEL(NODE,medium_node_size) != synctex_ctxt.tag)\
-                || (SYNCTEX_LINE_MODEL(NODE,medium_node_size) != synctex_ctxt.line))
+#   define SYNCTEX_CONTEXT_DID_CHANGE(NODE,TYPE) ((0 == synctex_ctxt.node)\
+|| (SYNCTEX_TAG_MODEL(NODE,TYPE) != synctex_ctxt.tag)\
+|| (SYNCTEX_LINE_MODEL(NODE,TYPE) != synctex_ctxt.line))
 
 void synctex_math_recorder(halfword p);
 
-/*  glue code this message is sent whenever an inline math node will ship out
-        See: @ @<Output the non-|char_node| |p| for...  */
+/*  glue code, this message is sent whenever an inline math node will ship out
+ See: @ @<Output the non-|char_node| |p| for...  */
 void synctexmath(halfword p, halfword this_box __attribute__ ((unused)))
 {
     SYNCTEX_RETURN_IF_DISABLED;
@@ -981,13 +1098,13 @@ void synctexmath(halfword p, halfword this_box __attribute__ ((unused)))
     if (SYNCTEX_IGNORE(p)) {
         return;
     }
-    if ((synctex_ctxt.recorder != NULL) && SYNCTEX_CONTEXT_DID_CHANGE(p)) {
+    if ((synctex_ctxt.recorder != NULL) && SYNCTEX_CONTEXT_DID_CHANGE(p,math)) {
         /*  the sync context did change  */
         (*synctex_ctxt.recorder) (synctex_ctxt.node);
     }
     synctex_ctxt.node = p;
-    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,medium_node_size);
-    synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,medium_node_size);
+    synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,math);
+    synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,math);
     synctex_ctxt.curh = SYNCTEX_CURH;
     synctex_ctxt.curv = SYNCTEX_CURV;
     synctex_ctxt.recorder = NULL;/*  no need to record once more  */
@@ -999,10 +1116,11 @@ static inline void synctex_record_kern(halfword p);
 static inline void synctex_record_rule(halfword p);
 
 /*  this message is sent whenever an horizontal glue node or rule node ships out
-        See: move_past:...    */
-#   define SYNCTEX_IGNORE_RULE(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE \
-                                || (0 >= SYNCTEX_TAG_MODEL(NODE,rule_node_size)) \
-                                || (0 >= SYNCTEX_LINE_MODEL(NODE,rule_node_size))
+ See: move_past:...    */
+#   undef SYNCTEX_IGNORE
+#   define SYNCTEX_IGNORE(NODE,TYPE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE \
+|| (0 >= SYNCTEX_TAG_MODEL(NODE,TYPE)) \
+|| (0 >= SYNCTEX_LINE_MODEL(NODE,TYPE))
 void synctexhorizontalruleorglue(halfword p, halfword this_box
                                  __attribute__ ((unused)))
 {
@@ -1010,54 +1128,64 @@ void synctexhorizontalruleorglue(halfword p, halfword this_box
 #   if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexglue\n");
 #   endif
-    if (SYNCTEX_TYPE(p) == rule_node) { /* not medium_node_size so we can't use SYNCTEX_IGNORE */
-        if (SYNCTEX_IGNORE_RULE(p)) {
-            return;
-        }
-    } else {
-        if (SYNCTEX_IGNORE(p)) {
-            return;
-        }
+    switch (SYNCTEX_TYPE(p)) {
+        case rule_node:
+            if (SYNCTEX_IGNORE(p,rule)) {
+                return;
+            }
+            break;
+        case glue_node:
+            if (SYNCTEX_IGNORE(p,glue)) {
+                return;
+            }
+            break;
+        case kern_node:
+            if (SYNCTEX_IGNORE(p,kern)) {
+                return;
+            }
+            break;
+        default:
+            printf("\nSynchronize ERROR: unknown node type %i\n", SYNCTEX_TYPE(p));
     }
     synctex_ctxt.node = p;
     synctex_ctxt.curh = SYNCTEX_CURH;
     synctex_ctxt.curv = SYNCTEX_CURV;
     synctex_ctxt.recorder = NULL;
     switch (SYNCTEX_TYPE(p)) {
-    case rule_node:
-        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, rule_node_size);
-        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, rule_node_size);
-        synctex_record_rule(p); /*  always record synchronously: maybe some text is outside the box  */
-        break;
-    case glue_node:
-        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
-        synctex_record_glue(p); /*  always record synchronously: maybe some text is outside the box  */
-        break;
-    case kern_node:
-        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
-        synctex_record_kern(p); /*  always record synchronously: maybe some text is outside the box  */
-        break;
-    default:
-        printf("\nSynchronize ERROR: unknown node type %i\n", SYNCTEX_TYPE(p));
+        case rule_node:
+            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,rule);
+            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,rule);
+            synctex_record_rule(p); /*  always record synchronously: maybe some text is outside the box  */
+            break;
+        case glue_node:
+            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,glue);
+            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,glue);
+            synctex_record_glue(p); /*  always record synchronously: maybe some text is outside the box  */
+            break;
+        case kern_node:
+            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,kern);
+            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,kern);
+            synctex_record_kern(p); /*  always record synchronously: maybe some text is outside the box  */
+            break;
+        default:
+            printf("\nSynchronize ERROR: unknown node type %i\n", SYNCTEX_TYPE(p));
     }
 }
 
 void synctex_kern_recorder(halfword p);
 
 /*  this message is sent whenever a kern node ships out
-        See: @ @<Output the non-|char_node| |p| for...    */
+ See: @ @<Output the non-|char_node| |p| for...    */
 void synctexkern(halfword p, halfword this_box)
 {
     SYNCTEX_RETURN_IF_DISABLED;
 #   if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexkern\n");
 #   endif
-    if (SYNCTEX_IGNORE(p)) {
+    if (SYNCTEX_IGNORE(p,kern)) {
         return;
     }
-    if (SYNCTEX_CONTEXT_DID_CHANGE(p)) {
+    if (SYNCTEX_CONTEXT_DID_CHANGE(p,kern)) {
         /*  the sync context has changed  */
         if (synctex_ctxt.recorder != NULL) {
             /*  but was not yet recorded  */
@@ -1066,13 +1194,13 @@ void synctexkern(halfword p, halfword this_box)
         if (synctex_ctxt.node == this_box) {
             /* first node in the list */
             synctex_ctxt.node = p;
-            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
+            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,kern);
+            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,kern);
             synctex_ctxt.recorder = &synctex_kern_recorder;
         } else {
             synctex_ctxt.node = p;
-            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
+            synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,kern);
+            synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,kern);
             synctex_ctxt.recorder = NULL;
             /*  always record when the context has just changed
              *  and when not the first node  */
@@ -1081,8 +1209,8 @@ void synctexkern(halfword p, halfword this_box)
     } else {
         /*  just update the geometry and type (for future improvements)  */
         synctex_ctxt.node = p;
-        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p, medium_node_size);
-        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p, medium_node_size);
+        synctex_ctxt.tag = SYNCTEX_TAG_MODEL(p,kern);
+        synctex_ctxt.line = SYNCTEX_LINE_MODEL(p,kern);
         synctex_ctxt.recorder = &synctex_kern_recorder;
     }
 }
@@ -1091,7 +1219,7 @@ void synctexkern(halfword p, halfword this_box)
  *  but not for direct synchronization. */
 #   undef SYNCTEX_IGNORE
 #   define SYNCTEX_IGNORE(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE || !SYNCTEX_FILE \
-                                || (synctex_ctxt.count>2000)
+|| (synctex_ctxt.count>2000)
 
 void synctex_char_recorder(halfword p);
 
@@ -1123,7 +1251,7 @@ void synctex_node_recorder(halfword p);
 #   define SYNCTEX_IGNORE(NODE) (SYNCTEX_IS_OFF || !SYNCTEX_VALUE || !SYNCTEX_FILE)
 
 /*  this message should be sent to record information
-         for a node of an unknown type    */
+ for a node of an unknown type    */
 void synctexnode(halfword p, halfword this_box __attribute__ ((unused)))
 {
     SYNCTEX_RETURN_IF_DISABLED;
@@ -1138,7 +1266,7 @@ void synctexnode(halfword p, halfword this_box __attribute__ ((unused)))
 }
 
 /*  this message should be sent to record information
-         synchronously for the current location    */
+ synchronously for the current location    */
 void synctexcurrent(void)
 {
     SYNCTEX_RETURN_IF_DISABLED;
@@ -1149,8 +1277,8 @@ void synctexcurrent(void)
         return;
     } else {
         int len = SYNCTEX_fprintf(SYNCTEX_FILE, "x%i,%i:%i,%i\n",
-                                    synctex_ctxt.tag,synctex_ctxt.line,
-                                    SYNCTEX_CURH UNIT,SYNCTEX_CURV UNIT);
+                                  synctex_ctxt.tag,synctex_ctxt.line,
+                                  SYNCTEX_CURH UNIT,SYNCTEX_CURV UNIT);
         if (len > 0) {
             synctex_ctxt.total_length += len;
             return;
@@ -1171,9 +1299,9 @@ static inline int synctex_record_settings(void)
     }
     if (SYNCTEX_FILE) {
         int len = SYNCTEX_fprintf(SYNCTEX_FILE, "Output:%s\nMagnification:%i\nUnit:%i\nX Offset:%i\nY Offset:%i\n",
-            SYNCTEX_OUTPUT,synctex_ctxt.magnification,synctex_ctxt.unit,
-            ((SYNCTEX_OFFSET_IS_PDF != 0) ? 0 : 4736287 UNIT),
-            ((SYNCTEX_OFFSET_IS_PDF != 0) ? 0 : 4736287 UNIT));
+                                  SYNCTEX_OUTPUT,synctex_ctxt.magnification,synctex_ctxt.unit,
+                                  ((SYNCTEX_OFFSET_IS_PDF != 0) ? 0 : 4736287 UNIT),
+                                  ((SYNCTEX_OFFSET_IS_PDF != 0) ? 0 : 4736287 UNIT));
         if (len > 0) {
             synctex_ctxt.total_length += len;
             return SYNCTEX_NOERR;
@@ -1191,7 +1319,7 @@ static inline int synctex_record_preamble(void)
     printf("\nSynchronize DEBUG: synctex_record_preamble\n");
 #   endif
     len =
-        SYNCTEX_fprintf(SYNCTEX_FILE, "SyncTeX Version:%i\n", SYNCTEX_VERSION);
+    SYNCTEX_fprintf(SYNCTEX_FILE, "SyncTeX Version:%i\n", SYNCTEX_VERSION);
     if (len > 0) {
         synctex_ctxt.total_length = len;
         return SYNCTEX_NOERR;
@@ -1293,12 +1421,12 @@ static inline void synctex_record_void_vlist(halfword p)
     printf("\nSynchronize DEBUG: synctex_record_void_vlist\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "v%i,%i:%i,%i:%i,%i,%i\n",
-                SYNCTEX_TAG_MODEL(p, box_node_size),
-                SYNCTEX_LINE_MODEL(p, box_node_size),
-                synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
-                SYNCTEX_WIDTH(p) UNIT,
-                SYNCTEX_HEIGHT(p) UNIT,
-                SYNCTEX_DEPTH(p) UNIT);
+                          SYNCTEX_TAG_MODEL(p,box),
+                          SYNCTEX_LINE_MODEL(p,box),
+                          synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
+                          SYNCTEX_WIDTH(p) UNIT,
+                          SYNCTEX_HEIGHT(p) UNIT,
+                          SYNCTEX_DEPTH(p) UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
         ++synctex_ctxt.count;
@@ -1317,12 +1445,12 @@ static inline void synctex_record_vlist(halfword p)
     printf("\nSynchronize DEBUG: synctex_record_vlist\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "[%i,%i:%i,%i:%i,%i,%i\n",
-                SYNCTEX_TAG_MODEL(p, box_node_size),
-                SYNCTEX_LINE_MODEL(p, box_node_size),
-                synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
-                SYNCTEX_WIDTH(p) UNIT,
-                SYNCTEX_HEIGHT(p) UNIT,
-                SYNCTEX_DEPTH(p) UNIT);
+                          SYNCTEX_TAG_MODEL(p,box),
+                          SYNCTEX_LINE_MODEL(p,box),
+                          synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
+                          SYNCTEX_WIDTH(p) UNIT,
+                          SYNCTEX_HEIGHT(p) UNIT,
+                          SYNCTEX_DEPTH(p) UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
         ++synctex_ctxt.count;
@@ -1356,12 +1484,12 @@ static inline void synctex_record_void_hlist(halfword p)
     printf("\nSynchronize DEBUG: synctex_record_void_hlist\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "h%i,%i:%i,%i:%i,%i,%i\n",
-                SYNCTEX_TAG_MODEL(p, box_node_size),
-                SYNCTEX_LINE_MODEL(p, box_node_size),
-                synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
-                SYNCTEX_WIDTH(p) UNIT,
-                SYNCTEX_HEIGHT(p) UNIT,
-                SYNCTEX_DEPTH(p) UNIT);
+                          SYNCTEX_TAG_MODEL(p,box),
+                          SYNCTEX_LINE_MODEL(p,box),
+                          synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
+                          SYNCTEX_WIDTH(p) UNIT,
+                          SYNCTEX_HEIGHT(p) UNIT,
+                          SYNCTEX_DEPTH(p) UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
         ++synctex_ctxt.count;
@@ -1380,12 +1508,12 @@ static inline void synctex_record_hlist(halfword p)
     printf("\nSynchronize DEBUG: synctex_record_hlist\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "(%i,%i:%i,%i:%i,%i,%i\n",
-                SYNCTEX_TAG_MODEL(p, box_node_size),
-                SYNCTEX_LINE_MODEL(p, box_node_size),
-                synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
-                SYNCTEX_WIDTH(p) UNIT,
-                SYNCTEX_HEIGHT(p) UNIT,
-                SYNCTEX_DEPTH(p) UNIT);
+                          SYNCTEX_TAG_MODEL(p,box),
+                          SYNCTEX_LINE_MODEL(p,box),
+                          synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
+                          SYNCTEX_WIDTH(p) UNIT,
+                          SYNCTEX_HEIGHT(p) UNIT,
+                          SYNCTEX_DEPTH(p) UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
         ++synctex_ctxt.count;
@@ -1460,8 +1588,8 @@ static inline void synctex_record_glue(halfword p)
     printf("\nSynchronize DEBUG: synctex_glue_recorder\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "g%i,%i:%i,%i\n",
-                          SYNCTEX_TAG_MODEL(p, medium_node_size),
-                          SYNCTEX_LINE_MODEL(p, medium_node_size),
+                          SYNCTEX_TAG_MODEL(p,glue),
+                          SYNCTEX_LINE_MODEL(p,glue),
                           synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
@@ -1480,8 +1608,8 @@ static inline void synctex_record_kern(halfword p)
     printf("\nSynchronize DEBUG: synctex_kern_recorder\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "k%i,%i:%i,%i:%i\n",
-                          SYNCTEX_TAG_MODEL(p, medium_node_size),
-                          SYNCTEX_LINE_MODEL(p, medium_node_size),
+                          SYNCTEX_TAG_MODEL(p,glue),
+                          SYNCTEX_LINE_MODEL(p,glue),
                           synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
                           SYNCTEX_WIDTH(p) UNIT);
     if (len > 0) {
@@ -1501,10 +1629,10 @@ static inline void synctex_record_rule(halfword p)
     printf("\nSynchronize DEBUG: synctex_record_tsilh\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "r%i,%i:%i,%i:%i,%i,%i\n",
-                SYNCTEX_TAG_MODEL(p,rule_node_size),
-                SYNCTEX_LINE_MODEL(p,rule_node_size),
-                synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
-                SYNCTEX_RULE_WD UNIT, SYNCTEX_RULE_HT UNIT, SYNCTEX_RULE_DP UNIT);
+                          SYNCTEX_TAG_MODEL(p,rule),
+                          SYNCTEX_LINE_MODEL(p,rule),
+                          synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
+                          SYNCTEX_RULE_WD UNIT, SYNCTEX_RULE_HT UNIT, SYNCTEX_RULE_DP UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
         ++synctex_ctxt.count;
@@ -1522,8 +1650,8 @@ void synctex_math_recorder(halfword p)
     printf("\nSynchronize DEBUG: synctex_math_recorder\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "$%i,%i:%i,%i\n",
-                          SYNCTEX_TAG_MODEL(p, medium_node_size),
-                          SYNCTEX_LINE_MODEL(p, medium_node_size),
+                          SYNCTEX_TAG_MODEL(p, math),
+                          SYNCTEX_LINE_MODEL(p, math),
                           synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT);
     if (len > 0) {
         synctex_ctxt.total_length += len;
@@ -1542,8 +1670,8 @@ void synctex_kern_recorder(halfword p)
     printf("\nSynchronize DEBUG: synctex_kern_recorder\n");
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "k%i,%i:%i,%i:%i\n",
-                          SYNCTEX_TAG_MODEL(p, medium_node_size),
-                          SYNCTEX_LINE_MODEL(p, medium_node_size),
+                          SYNCTEX_TAG_MODEL(p, kern),
+                          SYNCTEX_LINE_MODEL(p, kern),
                           synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
                           SYNCTEX_WIDTH(p) UNIT);
     if (len > 0) {
@@ -1581,8 +1709,8 @@ void synctex_node_recorder(halfword p)
     printf("\nSynchronize DEBUG: synctex_node_recorder(0x%x)\n", p);
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "?%i,%i:%i,%i\n",
-                synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
-                SYNCTEX_TYPE(p), SYNCTEX_SUBTYPE(p));
+                          synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
+                          SYNCTEX_TYPE(p), SYNCTEX_SUBTYPE(p));
     if (len > 0) {
         synctex_ctxt.total_length += len;
         ++synctex_ctxt.count;

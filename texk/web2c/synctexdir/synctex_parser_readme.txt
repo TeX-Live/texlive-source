@@ -112,6 +112,10 @@ causing a void .synctex.gz file to be created even if it was not expected. Repor
 - Bug fix in synctex_parser.c, better synchronization as suggested by Jan Sundermeyer (near line 3388).
 - Stronger code design in synctex_parser_utils.c, function _synctex_get_name (really neutral behavior).
   Only 3rd party tools are concerned.
+1.14: Fri Apr 15 19:10:57 UTC 2011
+- taking output_directory into account
+- Replaced FOPEN_WBIN_MODE by FOPEN_W_MODE when opening the text version of the .synctex file.
+- Merging with LuaTeX's version of synctex.c
 
 Acknowledgments:
 ----------------

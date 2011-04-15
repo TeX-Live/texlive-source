@@ -54,20 +54,17 @@ Thu Jun 19 09:39:21 UTC 2008
 
 /* We observe nopdfoutput in order to determine whether output mode is
  * pdf or xdv. */
-#  undef  SYNCTEX_OUTPUT
+#  define SYNCTEX_OFFSET_IS_PDF (nopdfoutput==0)
 #  define SYNCTEX_OUTPUT (nopdfoutput!=0?"xdv":"pdf")
 
 /*  WARNING:
     The definition below must be in sync with their eponym declarations in synctex-xetex.ch1
 */
-#  undef  synchronization_field_size
 #  define synchronization_field_size 1
 
 /* in XeTeX, "halfword" fields are at least 32 bits, so we'll use those for
  * tag and line so that the sync field size is only one memory_word. */
-#  undef  SYNCTEX_TAG_MODEL
-#  define SYNCTEX_TAG_MODEL(NODE,SIZE)\
-                mem[NODE+SIZE-synchronization_field_size].hh.lhfield
-#  undef  SYNCTEX_LINE_MODEL
-#  define SYNCTEX_LINE_MODEL(NODE,SIZE)\
-                mem[NODE+SIZE-synchronization_field_size].hh.rh
+#  define SYNCTEX_TAG_MODEL(NODE,TYPE)\
+                mem[NODE+TYPE##_node_size-synchronization_field_size].hh.lhfield
+#  define SYNCTEX_LINE_MODEL(NODE,TYPE)\
+                mem[NODE+TYPE##_node_size-synchronization_field_size].hh.rh

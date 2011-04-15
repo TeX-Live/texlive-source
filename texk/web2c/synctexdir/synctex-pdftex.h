@@ -1,9 +1,9 @@
 /* 
-Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008, 2009, 2010, 2011 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Wed Jul  1 11:16:42 UTC 2009
+Latest Revision: Fri Apr 15 19:10:57 UTC 2011
 
 License:
 --------
@@ -53,9 +53,7 @@ Thu Jun 19 09:39:21 UTC 2008
 /*   We observe pdfoutputvalue in order to determine whether output mode is
  *   pdf or dvi.
  *   We will assume that pdf_output_value equals pdf_output before entering
- *   the synctex_sheet function below.  */
-#    undef  SYNCTEX_OFFSET_IS_PDF
+ *   the synctex_sheet function below, in the including synctex.c file.  */
 #    define SYNCTEX_OFFSET_IS_PDF (pdfoutputvalue>0)
-#    undef  SYNCTEX_OUTPUT
 #    define SYNCTEX_OUTPUT ((pdfoutputvalue>0)?"pdf":"dvi")
 

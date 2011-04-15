@@ -36,43 +36,10 @@ authorization from the copyright holder.
 
 /* $Id: synctex-luatex.h 4064 2011-01-12 22:12:22Z hhenkel $ */
 
-#undef synchronization_field_size
-#define synchronization_field_size 1
-
-#undef width_offset
-#undef height_offset
-#undef depth_offset
-
-#undef box_node_size
-#undef rule_node_size
-
-#undef rule_node
-#undef glue_node
-#undef kern_node
-
-#undef SYNCTEX_TYPE
-#undef SYNCTEX_SUBTYPE
-#undef SYNCTEX_WIDTH
-#undef SYNCTEX_DEPTH
-#undef SYNCTEX_HEIGHT
-#undef SYNCTEX_TAG_MODEL
-#undef SYNCTEX_LINE_MODEL
-#undef SYNCTEX_VALUE
-#undef SYNCTEX_CURV
-#undef SYNCTEX_CURH
-#undef SYNCTEX_GET_JOB_NAME
-#undef SYNCTEX_GET_LOG_NAME
-#undef SYNCTEX_RULE_WD
-#undef SYNCTEX_RULE_HT
-#undef SYNCTEX_RULE_DP
-#undef SYNCTEX_CURRENT_TAG
-#undef SYNCTEX_GET_CURRENT_NAME
-#undef SYNCTEX_GET_TOTAL_PAGES
-
-#define SYNCTEX_TAG_MODEL(NODE,SIZE)\
-                    vinfo(NODE+SIZE-synchronization_field_size)
-#define SYNCTEX_LINE_MODEL(NODE,SIZE)\
-                    vlink(NODE+SIZE-synchronization_field_size)
+#define SYNCTEX_TAG_MODEL(NODE,TYPE)\
+                    vinfo(NODE+TYPE##_node_size-synchronization_field_size)
+#define SYNCTEX_LINE_MODEL(NODE,TYPE)\
+                    vlink(NODE+TYPE##_node_size-synchronization_field_size)
 
 #define SYNCTEX_TYPE(NODE) type(NODE)
 #define SYNCTEX_SUBTYPE(NODE) subtype(NODE)
@@ -101,9 +68,8 @@ authorization from the copyright holder.
  *   pdf or dvi.
  *   We will assume that pdf->o_mode is set before entering
  *   the synctex_sheet function below.  */
-#undef  SYNCTEX_OFFSET_IS_PDF
 #define SYNCTEX_OFFSET_IS_PDF (static_pdf->o_mode==OMODE_PDF)
-#undef  SYNCTEX_OUTPUT
 #define SYNCTEX_OUTPUT ((static_pdf->o_mode==OMODE_PDF)?"pdf":"dvi")
 
 #define __SyncTeX__ 1
+#define SYNCTEX_DO_NOT_LOG_OUTPUT_DIRECTORY 1
