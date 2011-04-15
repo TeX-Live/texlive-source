@@ -21,7 +21,7 @@
 !!! and greater flexibility for shrink values. Generating MF fonts shouldn't be an
 !!! issue when using T1lib.
 !*mfMode: ljfour
-!*paper: a4
+*paper: a4
 
 !!! This should be the best choice for modern displays with large color depth.
 *thorough: true
