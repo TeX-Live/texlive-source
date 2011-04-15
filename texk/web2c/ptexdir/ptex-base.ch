@@ -1,4 +1,4 @@
-% This is a change file for pTeX 3.1.11
+% This is a change file for pTeX 3.2
 % By Sadayuki Tanaka and ASCII MEDIA WORKS.
 %
 % Thanks for :
@@ -45,12 +45,13 @@
 % (05/23/2010) AK  Bug fix by Hironori Kitagawa.
 % (31/12/2010) AK  Bug fix and accent Kanji by Hironori Kitagawa.
 % (19/01/2011) PB  Let \lastkern etc act through disp node.
+% (15/04/2011) PB  pTeX p3.2 Add \ifdbox and \ifddir
 %
 @x [1.2] l.200 - pTeX:
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
 @y
-@d pTeX_version_string=='-p3.1.11' {current p\TeX\ version}
+@d pTeX_version_string=='-p3.2' {current p\TeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.1415926',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
@@ -2262,19 +2263,21 @@ string_code:if cur_cs<>0 then sprint_cs(cur_cs)
   else print_kanji(cx);
 @z
 
-@x [28.487] l.9852 - pTeX: iftdir, ifydir, iftbox, ifybox
+@x [28.487] l.9852 - pTeX: iftdir, ifydir, ifddir, iftbox, ifybox, ifdbox
 @d if_case_code=16 { `\.{\\ifcase}' }
 @y
 @d if_case_code=16 { `\.{\\ifcase}' }
 @#
 @d if_tdir_code=if_case_code+1 { `\.{\\iftdir}' }
 @d if_ydir_code=if_tdir_code+1 { `\.{\\ifydir}' }
-@d if_mdir_code=if_ydir_code+1 { `\.{\\ifmdir}' }
+@d if_ddir_code=if_ydir_code+1 { `\.{\\ifddir}' }
+@d if_mdir_code=if_ddir_code+1 { `\.{\\ifmdir}' }
 @d if_tbox_code=if_mdir_code+1 { `\.{\\iftbox}' }
 @d if_ybox_code=if_tbox_code+1 { `\.{\\ifybox}' }
+@d if_dbox_code=if_ybox_code+1 { `\.{\\ifdbox}' }
 @z
 
-@x [28.487] l.9887 - pTeX: iftdir, ifydir, iftbox, ifybox
+@x [28.487] l.9887 - pTeX: iftdir, ifydir, ifddir, iftbox, ifybox, ifdbox
 primitive("ifcase",if_test,if_case_code);
 @!@:if_case_}{\.{\\ifcase} primitive@>
 @y
@@ -2284,36 +2287,43 @@ primitive("iftdir",if_test,if_tdir_code);
 @!@:if_tdir_}{\.{\\iftdir} primitive@>
 primitive("ifydir",if_test,if_ydir_code);
 @!@:if_ydir_}{\.{\\ifydir} primitive@>
+primitive("ifddir",if_test,if_ddir_code);
+@!@:if_ddir_}{\.{\\ifddir} primitive@>
 primitive("ifmdir",if_test,if_mdir_code);
 @!@:if_mdir_}{\.{\\ifmdir} primitive@>
 primitive("iftbox",if_test,if_tbox_code);
 @!@:if_tbox_}{\.{\\iftbox} primitive@>
 primitive("ifybox",if_test,if_ybox_code);
 @!@:if_ybox_}{\.{\\ifybox} primitive@>
+primitive("ifdbox",if_test,if_dbox_code);
+@!@:if_dbox_}{\.{\\ifdbox} primitive@>
 @z
 
-@x [28.488] l.9907 - pTeX: iftdir, ifydir, iftbox, ifybox
+@x [28.488] l.9907 - pTeX: iftdir, ifydir, ifddir, iftbox, ifybox, ifdbox
   if_case_code:print_esc("ifcase");
 @y
   if_case_code:print_esc("ifcase");
   if_tdir_code:print_esc("iftdir");
   if_ydir_code:print_esc("ifydir");
+  if_ddir_code:print_esc("ifddir");
   if_mdir_code:print_esc("ifmdir");
   if_tbox_code:print_esc("iftbox");
   if_ybox_code:print_esc("ifybox");
+  if_dbox_code:print_esc("ifdbox");
 @z
 
-@x [28.501] l.10073 - pTeX: iftdir, ifydir, iftbox, ifybox
+@x [28.501] l.10073 - pTeX: iftdir, ifydir, ifddir, iftbox, ifybox, ifdbox
 if_void_code, if_hbox_code, if_vbox_code: @<Test box register status@>;
 @y
 if_tdir_code: b:=(abs(direction)=dir_tate);
 if_ydir_code: b:=(abs(direction)=dir_yoko);
+if_ddir_code: b:=(abs(direction)=dir_dtou);
 if_mdir_code: b:=(direction<0);
-if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code:
+if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code:
   @<Test box register status@>;
 @z
 
-@x [28.505] l.10118 - pTeX: Test box register status : iftbox, ifybox
+@x [28.505] l.10118 - pTeX: Test box register status : iftbox, ifybox, ifdbox
 if this_if=if_void_code then b:=(p=null)
 else if p=null then b:=false
 else if this_if=if_hbox_code then b:=(type(p)=hlist_node)
@@ -2326,7 +2336,8 @@ else begin
   if this_if=if_hbox_code then b:=(type(p)=hlist_node)
   else if this_if=if_vbox_code then b:=(type(p)=vlist_node)
   else if this_if=if_tbox_code then b:=(box_dir(p)=dir_tate)
-  else b:=(box_dir(p)=dir_yoko);
+  else if this_if=if_ybox_code then b:=(box_dir(p)=dir_yoko)
+  else b:=(box_dir(p)=dir_dtou);
   end
 @z
 

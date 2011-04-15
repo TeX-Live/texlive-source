@@ -9,9 +9,9 @@
 @z
 
 @x [1.2] l.200 - pTeX:
-@d pTeX_version_string=='-p3.1.11' {current p\TeX\ version}
+@d pTeX_version_string=='-p3.2' {current p\TeX\ version}
 @y
-@d  pTeX_version_string=='-p3.1.11-110315' {current \epTeX\ version}
+@d  pTeX_version_string=='-p3.2-110415' {current \epTeX\ version}
 @z
 
 @x e-pTeX: banner

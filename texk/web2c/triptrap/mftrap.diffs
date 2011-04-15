@@ -7,7 +7,7 @@
 1c1
 < This is METAFONT, Version 2.718281 (INIMF)  15 MAR 2008 02:23
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2010/pretest) (INIMF)  18 MAY 2010 13:31
+> This is METAFONT, Version 2.718281 (TeX Live 2011) (INIMF)  15 APR 2011 13:04
 150c150
 < String usage 26&83 (891&11438 still untouched)
 ---
@@ -16,7 +16,7 @@
 <  (preloaded base=trap 2008.3.15)
 < 1117 strings of total length 20614
 ---
->  (base=trap 2010.5.18)
+>  (base=trap 2011.4.15)
 > 1122 strings of total length 20566
 + ./mf --progname=inimf
 + mv trap.log mftrap.log
@@ -27,7 +27,7 @@
 < ** &trap  trap 
 < (trap.mf
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2010/pretest) (INIMF)
+> This is METAFONT, Version 2.718281 (TeX Live 2011) (INIMF)
 > **(trap.mf
 39c38
 < String usage 41&161 (815&7634 still untouched)
@@ -37,7 +37,7 @@
 1c1
 < This is METAFONT, Version 2.718281 (preloaded base=trap 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2010/pretest) (base=trap 2010.5.18)  18 MAY 2010 13:31
+> This is METAFONT, Version 2.718281 (TeX Live 2011) (base=trap 2011.4.15)  15 APR 2011 13:04
 1825c1825
 < String usage 24&92 (858&11309 still untouched)
 ---
@@ -69,10 +69,10 @@
 1c1
 < This is GFtype, Version 3.1
 ---
-> This is GFtype, Version 3.1 (TeX Live 2010/pretest)
+> This is GFtype, Version 3.1 (TeX Live 2011)
 3c3
 < ' METAFONT output 2008.03.15:0223'
 ---
-> ' METAFONT output 2010.05.18:1331'
+> ' METAFONT output 2011.04.15:1304'
 + exit 0
 PASS: trap.test

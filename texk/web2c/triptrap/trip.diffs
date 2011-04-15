@@ -10,7 +10,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2010/pretest) (INITEX)  18 MAY 2010 13:31
+> This is TeX, Version 3.1415926 (TeX Live 2011) (INITEX)  15 APR 2011 13:03
 3c3
 < (trip.tex
 ---
@@ -19,7 +19,7 @@
 <  (preloaded format=trip 2008.3.15)
 < 1326 strings of total length 23646
 ---
->  (format=trip 2010.5.18)
+>  (format=trip 2011.4.15)
 > 1370 strings of total length 24558
 461c461
 < Hyphenation trie of length 273 has 9 ops out of 500
@@ -32,13 +32,13 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2010/pretest)
+> This is TeX, Version 3.1415926 (TeX Live 2011)
 > **(./trip.tex ##
 + diff SRCDIR/triptrap/trip.log trip.log
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2010/pretest) (format=trip 2010.5.18)  18 MAY 2010 13:31
+> This is TeX, Version 3.1415926 (TeX Live 2011) (format=trip 2011.4.15)  15 APR 2011 13:03
 3c3
 < (trip.tex ##
 ---
@@ -108,11 +108,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2010/pretest)
+> This is DVItype, Version 3.6 (TeX Live 2011)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2010.05.18:1331'
+> ' TeX output 2011.04.15:1303'
 419c419
 < 1121: down4 639342208 
 ---

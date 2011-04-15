@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech: Adapted to pTeX Version p3.2.
+
 2011-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptrip/etrip.tex, eptrip/etrip.log, eptrip/eptrip.diffs:
