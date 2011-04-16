@@ -1,3 +1,16 @@
+2011-04-16  Taco Hoekwater  <taco@luatex.org>
+
+	* synctex.c: Rename flags member output => output_p to avoid
+	conflict with macro defined for MinGW32.
+
+2011-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex-luatex.h (new): moved from ../luatexdir/utils to here.
+
+	* synctex.c (synctexstartinput): When SYNCTEX_GET_CURRENT_NAME()
+	returns "", don't assign "texput" which might later get freed
+	but rather xrealloc and strcpy.
+
 2011-04-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex-e-mem.ch0: Adapt to ../etexdir/etex.ch.

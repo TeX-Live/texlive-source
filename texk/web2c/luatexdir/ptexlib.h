@@ -167,7 +167,7 @@ size_t          T##_limit
 #  include "pdf/pdftypes.h"
 
 /* synctex */
-#  include "utils/synctex.h"
+#  include "synctex.h"
 
 #  include "utils/avlstuff.h"
 #  include "utils/managed-sa.h"

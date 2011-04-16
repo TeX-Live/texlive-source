@@ -395,7 +395,7 @@ static struct {
         unsigned int not_void:1;    /*  Whether it really contains synchronization material */
         unsigned int warn:1;        /*  One shot warning flag */
         unsigned int quoted:1;      /*  Whether the input file name was quoted by tex or not, for example "\"my input file.tex\"", unused by XeTeX */
-        unsigned int output:1;      /*  Whether the output_directory is used */
+        unsigned int output_p:1;    /*  Whether the output_directory is used */
         unsigned int reserved:SYNCTEX_BITS_PER_BYTE*sizeof(int)-7; /* Align */
     } flags;
 } synctex_ctxt = {
@@ -527,7 +527,7 @@ static void *synctex_dot_open(void)
             the_busy_name[0] = (char)0;
             /* If an output directory was specified, use it instead of cwd.  */
             if (output_directory && !kpse_absolute_p(tmp, false)) {
-                synctex_ctxt.flags.output = 1;
+                synctex_ctxt.flags.output_p = 1;
                 strcat(the_busy_name, output_directory);
                 strcat(the_busy_name, DIR_SEP_STRING);
             }
@@ -641,7 +641,7 @@ void synctexstartinput(void)
     printf("\nwarning: SYNCTEX_VALUE=%i", SYNCTEX_VALUE);
     printf("\nwarning: synctex_options=%0X", synctex_options);
 #   endif
-    
+
     if (SYNCTEX_IS_OFF) {
         return;
     }
@@ -666,7 +666,8 @@ void synctexstartinput(void)
          *  This is necessary because \jobname can be different */
         synctex_ctxt.root_name = SYNCTEX_GET_CURRENT_NAME();
         if (!strlen(synctex_ctxt.root_name)) {
-            synctex_ctxt.root_name = "texput";
+            synctex_ctxt.root_name = xrealloc(synctex_ctxt.root_name, strlen("texput") + 1);
+            strcpy(synctex_ctxt.root_name, "texput");
         }
 #   if SYNCTEX_DEBUG
         printf("\nwarning: Synchronize DEBUG: synctexstartinput first END\n");
@@ -764,7 +765,7 @@ void synctexterminate(boolean log_opened)
                     if (log_opened) {
                         tmp = the_real_syncname;
 #                       if SYNCTEX_DO_NOT_LOG_OUTPUT_DIRECTORY
-                        if (synctex_ctxt.flags.output) {
+                        if (synctex_ctxt.flags.output_p) {
                             tmp += strlen(output_directory) + strlen(DIR_SEP_STRING);
                         }
 #                       endif

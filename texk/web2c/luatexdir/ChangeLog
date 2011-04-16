@@ -1,3 +1,10 @@
+2011-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils/synctex{-common.h,.c,.h} (removed): Use copies from
+	../synctexdir.
+	* synctex-luatex.h: Moved from here to ../../synctexdir.
+	* ptexlib.h, am/libluatex.am, am/luatex.am: Adapted. 
+
 2011-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils/utils.w (POPPLER_VERSION): Now defined in

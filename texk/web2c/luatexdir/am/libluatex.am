@@ -13,7 +13,7 @@ libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 libluatex_a_CPPFLAGS += $(POPPLER_INCLUDES) $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
 libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
 libluatex_a_CPPFLAGS += -DpdfTeX
-libluatex_a_CPPFLAGS += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
+libluatex_a_CPPFLAGS += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 ## from luatexdir
@@ -471,11 +471,15 @@ libluatex_a_SOURCES += \
 	luatexdir/utils/avl.h \
 	luatexdir/utils/avlstuff.h \
 	luatexdir/utils/managed-sa.h \
-	luatexdir/utils/synctex-common.h \
-	luatexdir/utils/synctex-luatex.h \
-	luatexdir/utils/synctex.c \
-	luatexdir/utils/synctex.h \
 	luatexdir/utils/utils.h
+
+## from ../synctexdir
+##
+libluatex_a_SOURCES += \
+	synctexdir/synctex-common.h \
+	synctexdir/synctex-luatex.h \
+	synctexdir/synctex.c \
+	synctexdir/synctex.h
 
 ## from mplibdir
 ##

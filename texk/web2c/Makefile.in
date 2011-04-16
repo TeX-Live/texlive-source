@@ -1841,8 +1841,7 @@ luatex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) \
 	$(POPPLER_INCLUDES) $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5 \
 	-I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51 \
 	-I$(srcdir)/mplibdir -Dextra_version_info=`date +-%Y%m%d%H` \
-	-I$(srcdir)/synctexdir \
-	-DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
+	-I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
 luatex_ldadd = libluatex.a libff.a libluamisc.a libluasocket.a \
 	liblua51.a $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) \
@@ -2099,7 +2098,7 @@ libluatex_a_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(POPPLER_INCLUDES) $(OBSDCOMPAT_INCLUDES) \
 	-I$(srcdir)/libmd5 -I$(srcdir)/luatexdir \
 	-I$(srcdir)/luatexdir/lua51 -DpdfTeX -I$(srcdir)/synctexdir \
-	-DSYNCTEX_ENGINE_H='<utils/synctex-luatex.h>'
+	-DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
 libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libluatex_web = luatexdir/dvi/dvigen.w luatexdir/font/dofont.w \
 	luatexdir/font/luafont.w luatexdir/font/mapfile.w \
@@ -2219,9 +2218,9 @@ libluatex_a_SOURCES = luatexdir/luatex.h luatexdir/dvi/dvigen.h \
 	luatexdir/tex/texnodes.h luatexdir/tex/textoken.h \
 	luatexdir/tex/textcodes.h luatexdir/utils/avl.c \
 	luatexdir/utils/avl.h luatexdir/utils/avlstuff.h \
-	luatexdir/utils/managed-sa.h luatexdir/utils/synctex-common.h \
-	luatexdir/utils/synctex-luatex.h luatexdir/utils/synctex.c \
-	luatexdir/utils/synctex.h luatexdir/utils/utils.h
+	luatexdir/utils/managed-sa.h luatexdir/utils/utils.h \
+	synctexdir/synctex-common.h synctexdir/synctex-luatex.h \
+	synctexdir/synctex.c synctexdir/synctex.h
 luatex_dvi_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/dvi $(ctangle)
 luatex_font_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/font $(ctangle)
 luatex_image_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/image $(ctangle)
@@ -5013,19 +5012,19 @@ libluatex_a-avl.obj: luatexdir/utils/avl.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-avl.obj `if test -f 'luatexdir/utils/avl.c'; then $(CYGPATH_W) 'luatexdir/utils/avl.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/utils/avl.c'; fi`
 
-libluatex_a-synctex.o: luatexdir/utils/synctex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-synctex.o -MD -MP -MF $(DEPDIR)/libluatex_a-synctex.Tpo -c -o libluatex_a-synctex.o `test -f 'luatexdir/utils/synctex.c' || echo '$(srcdir)/'`luatexdir/utils/synctex.c
+libluatex_a-synctex.o: synctexdir/synctex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-synctex.o -MD -MP -MF $(DEPDIR)/libluatex_a-synctex.Tpo -c -o libluatex_a-synctex.o `test -f 'synctexdir/synctex.c' || echo '$(srcdir)/'`synctexdir/synctex.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libluatex_a-synctex.Tpo $(DEPDIR)/libluatex_a-synctex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/utils/synctex.c' object='libluatex_a-synctex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='synctexdir/synctex.c' object='libluatex_a-synctex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-synctex.o `test -f 'luatexdir/utils/synctex.c' || echo '$(srcdir)/'`luatexdir/utils/synctex.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-synctex.o `test -f 'synctexdir/synctex.c' || echo '$(srcdir)/'`synctexdir/synctex.c
 
-libluatex_a-synctex.obj: luatexdir/utils/synctex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-synctex.obj -MD -MP -MF $(DEPDIR)/libluatex_a-synctex.Tpo -c -o libluatex_a-synctex.obj `if test -f 'luatexdir/utils/synctex.c'; then $(CYGPATH_W) 'luatexdir/utils/synctex.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/utils/synctex.c'; fi`
+libluatex_a-synctex.obj: synctexdir/synctex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-synctex.obj -MD -MP -MF $(DEPDIR)/libluatex_a-synctex.Tpo -c -o libluatex_a-synctex.obj `if test -f 'synctexdir/synctex.c'; then $(CYGPATH_W) 'synctexdir/synctex.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libluatex_a-synctex.Tpo $(DEPDIR)/libluatex_a-synctex.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/utils/synctex.c' object='libluatex_a-synctex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='synctexdir/synctex.c' object='libluatex_a-synctex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-synctex.obj `if test -f 'luatexdir/utils/synctex.c'; then $(CYGPATH_W) 'luatexdir/utils/synctex.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/utils/synctex.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-synctex.obj `if test -f 'synctexdir/synctex.c'; then $(CYGPATH_W) 'synctexdir/synctex.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex.c'; fi`
 
 libluatex_a-dvigen.o: dvigen.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-dvigen.o -MD -MP -MF $(DEPDIR)/libluatex_a-dvigen.Tpo -c -o libluatex_a-dvigen.o `test -f 'dvigen.c' || echo '$(srcdir)/'`dvigen.c
