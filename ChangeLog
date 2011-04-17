@@ -9,6 +9,10 @@
 
 	* tardate.ac: Switch to 2011-04-12.
 
+2011-04-09  Karl Berry  <karl@tug.org>
+
+	* Build (MACOSX_DEPLOYMENT_TARGET): no longer needed per koch.
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* m4/kpse-common.m4 (KPSE_COMMON): Remove check for
