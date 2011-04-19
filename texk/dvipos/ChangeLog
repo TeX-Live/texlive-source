@@ -1,3 +1,10 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	dvicore.c (struct a_bbox): Don't declare member tag as unsigned.
+	(new_bbox): Don't declare param tag as unsigned.
+	(do_pos_special): Casts from 'unsigned char *' to 'char *'.
+
 2010-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.h: Revert the last changes from Feb 20 and 23.

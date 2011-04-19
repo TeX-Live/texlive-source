@@ -1,3 +1,8 @@
+2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* t1funcs.c (Type1OpenScalable): Cast ev[i] to 'unsigned char *'
+	to avoid 'differ in signedness' warning.
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ps2pk.c (main): `program_invocation_name' has been renamed

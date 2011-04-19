@@ -2660,7 +2660,7 @@ if j=18 then
         outside_string_array[d]:=xchr[str_pool[str_start(str_ptr)+d]];
         end;
       outside_string_array[cur_length]:=null_code;
-      runsystem_ret := runsystem(outside_string_array);
+      runsystem_ret := runsystem(stringcast(outside_string_array));
       if runsystem_ret = -1 then print("quotation error in system command")
       else if runsystem_ret = 0 then print("disabled (restricted)")
       else if runsystem_ret = 1 then print("executed")

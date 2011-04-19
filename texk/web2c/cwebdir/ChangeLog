@@ -1,3 +1,8 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* cweav-w2c.ch: cast strcpy() arg collate to 'char *'.
+
 2010-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* {comm,ctang,cweav}-w2c.ch: Move extern declaration of

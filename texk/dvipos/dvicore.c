@@ -60,7 +60,7 @@ static SIGNED_PAIR max_s_so_far, page_count;
 typedef struct a_bbox {
   SIGNED_QUAD h1, v1, h2, v2, fb, cb; /* first and current baseline */
   int type, lev_s;
-  unsigned char *tag;
+  char *tag;
   struct a_bbox *next;
 } BBOX;
 static BBOX page_bbox;
@@ -189,7 +189,7 @@ static void clear_bbox (int init)
   }
 }
 
-static void new_bbox (unsigned char *tag, int type)
+static void new_bbox (char *tag, int type)
 {
   BBOX *bb = &page_bbox;
 
@@ -918,7 +918,7 @@ static void do_pos_special (unsigned char *buffer, SIGNED_QUAD buffer_len)
 
   for (p = buffer; p - buffer < buffer_len && isspace(*p); p++)
     ; /* skip white chars */
-  if (strncmp(p, "pos:", 4)) return;
+  if (strncmp((char *)p, "pos:", 4)) return;
 
   for (cmd = p; p - buffer < buffer_len && !isspace(*p); p++)
     ; /* retrieve POS command */
@@ -938,7 +938,7 @@ static void do_pos_special (unsigned char *buffer, SIGNED_QUAD buffer_len)
   if (p - buffer < buffer_len)
     {
       /* hangafter is a number, not a dimension, hence its %ld */
-      parsed = sscanf(p, "%lfpt %lfpt %lfpt %lfpt,%lfpt,%lfpt,%lfpt,%ld,%lfpt",
+      parsed = sscanf((char *)p, "%lfpt %lfpt %lfpt %lfpt,%lfpt,%lfpt,%lfpt,%ld,%lfpt",
 		      &w_pt, &h_pt, &d_pt,
 		      &list.hsize, &list.leftskip, &list.rightskip,
 		      &list.hangindent, &list.hangafter, &list.parindent);
@@ -951,11 +951,11 @@ static void do_pos_special (unsigned char *buffer, SIGNED_QUAD buffer_len)
   x = dvi_state.h + denominator / 100;
   y = max_v - dvi_state.v;
 
-  if (strcmp(cmd, "pos:pxy") == 0)
+  if (strcmp((char *)cmd, "pos:pxy") == 0)
     fprintf(outfp, "\\pospxy{%s}{%d}{%ldsp}{%ldsp}\n", tag, current_page, x, y);
-  else if (strcmp(cmd, "pos:pxywhd") == 0)
+  else if (strcmp((char *)cmd, "pos:pxywhd") == 0)
     fprintf(outfp, "\\pospxywhd{%s}{%d}{%ldsp}{%ldsp}{%ldsp}{%ldsp}{%ldsp}\n", tag, current_page, x, y, w, h, d);
-  else if (strcmp(cmd, "pos:pxyplus") == 0) {
+  else if (strcmp((char *)cmd, "pos:pxyplus") == 0) {
     if (parsed < 9)
       fprintf(stderr, "dvipos: only %d conversions for \\pospxyplus but 9 are needed\nBeward: Coordinates in the output may therefore be junk.  Continuing anyway...", parsed);
     fprintf(outfp, "\\pospxyplus{%s}{%d}{%ldsp}{%ldsp}{%ldsp}{%ldsp}{%ldsp}", tag, current_page, x, y, w, h, d);
@@ -963,14 +963,14 @@ static void do_pos_special (unsigned char *buffer, SIGNED_QUAD buffer_len)
 	    list.hsize, list.leftskip, list.rightskip,
 	    list.hangindent, list.hangafter, list.parindent);
   }
-  else if (strcmp(cmd, "pos:begbox") == 0)
-    new_bbox(tag, BOX_TYPE);
-  else if (strcmp(cmd, "pos:endbox") == 0)
-    close_bbox(tag);
-  else if (strcmp(cmd, "pos:beglines") == 0)
-    new_bbox(tag, LINES_TYPE);
-  else if (strcmp(cmd, "pos:endlines") == 0)
-    close_bbox(tag);
+  else if (strcmp((char *)cmd, "pos:begbox") == 0)
+    new_bbox((char *)tag, BOX_TYPE);
+  else if (strcmp((char *)cmd, "pos:endbox") == 0)
+    close_bbox((char *)tag);
+  else if (strcmp((char *)cmd, "pos:beglines") == 0)
+    new_bbox((char *)tag, LINES_TYPE);
+  else if (strcmp((char *)cmd, "pos:endlines") == 0)
+    close_bbox((char *)tag);
 }
 
 static void do_xxx (UNSIGNED_BYTE opcode)

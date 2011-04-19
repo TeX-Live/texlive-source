@@ -1,3 +1,25 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* cpascal.h: Define ucharcast().
+
+	* bibtex.ch (pds_type): Do not declare as unsigned.
+	(pre_define): Apply ucharcast() to xord[] index.
+
+	* dvicopy.ch (comment): Do not declare as unsigned.
+	(do_pre): Apply ucharcast() to xord[] index.
+
+	* gftodvi.ch (start_gf): Do not declare arg_buffer as unsigned
+	and apply ucharcast() to xord[] index.
+
+	* mf.ch (MF_base_default): Do not declare as unsigned.
+	(pack_buffered_name): Apply ucharcast() to xord[] index.
+	(storebasefile, loadbasefile): cast base_engine to string.
+
+	* tex.ch (TEX_format_default): Do not declare as unsigned.
+	(pack_buffered_name): Apply ucharcast() to xord[] index.
+	(storefmtfile, loadfmtfile): Cast format_engine to string.
+
 2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: LuaTeX needs poppler at least 0.12, no reason

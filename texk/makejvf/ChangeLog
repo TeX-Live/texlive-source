@@ -1,3 +1,8 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* tfmread.c (header, char_type, char_info): Declare as unsigned.
+
 2010-05-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* makejvf.test (new): Shell script for 'make check' test.

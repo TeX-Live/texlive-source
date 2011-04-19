@@ -3045,8 +3045,8 @@ BEGIN
   ptr1 = (arg1 * num_ent_strs) + sort_key_num;
   ptr2 = (arg2 * num_ent_strs) + sort_key_num;
 	
-	lenk1= strlen(&ENTRY_STRS(ptr1, 0));
-	lenk2= strlen(&ENTRY_STRS(ptr2, 0));
+	lenk1= strlen((char *)&ENTRY_STRS(ptr1, 0));
+	lenk2= strlen((char *)&ENTRY_STRS(ptr2, 0));
 
 
 	uchlen1 = icu_toUChars(entry_strs, (ptr1 * (ENT_STR_SIZE+1)), lenk1, uch1, ucap);
@@ -3180,7 +3180,7 @@ BEGIN
 	BEGIN
 		printf("1there is a error: U_ZERO_ERROR");
 	END
-	tarlen = ucnv_toUChars(ucon1, target, tarcap, &buf[bf_ptr], len, &err1);
+	tarlen = ucnv_toUChars(ucon1, target, tarcap, (char *)&buf[bf_ptr], len, &err1);
 	if (!U_SUCCESS(err1))
 	BEGIN
 		printf("2there is a error: U_ZERO_ERROR");
@@ -3243,7 +3243,7 @@ BEGIN
 	BEGIN
 		printf("5there is a error: U_ZERO_ERROR");
 	END
-	tblen=ucnv_fromUChars(ucon2, dest, destcap, src, srclen, &err2);
+	tblen=ucnv_fromUChars(ucon2, (char *)dest, destcap, src, srclen, &err2);
 	if (!U_SUCCESS(err2))
 	BEGIN
 		printf("6there is a error: U_ZERO_ERROR");

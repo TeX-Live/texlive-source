@@ -1767,11 +1767,11 @@ int c8read_csf (void)
     */
     free (name_of_file);
     name_of_file = (unsigned char *) mymalloc (strlen (Str_csfile) + 5, "name_of_file");
-    strcpy (name_of_file, Str_csfile);
+    strcpy ((char *)name_of_file, Str_csfile);
 
-    if (strchr (name_of_file, '.') == NULL)
-        strcat (name_of_file, ".csf");
-    name_length = strlen (name_of_file);
+    if (strchr ((char *)name_of_file, '.') == NULL)
+        strcat ((char *)name_of_file, ".csf");
+    name_length = strlen ((char *)name_of_file);
 
     debug_msg (DBG_CSF, "c8read_csf: trying to open CS file `%s' ...",
                name_of_file);

@@ -1,3 +1,8 @@
+2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* common.defines: Define ucharcast().
+
 2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* convert, splitup.c: Add e-pTeX.

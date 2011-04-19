@@ -1,3 +1,16 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* ptex-base.ch: Cast buffer and str_pool to string when used as
+	arg of multistrlen() or fromBUFF().
+	(pack_buffered_name): Drop change already done in ../tex.ch.
+
+	* pbibtex.ch: Cast buffer to string when used as a arg of
+	input_line2().
+
+	* ppltotf.ch: Cast buffer to string when used as a arg of
+	input_line2() or multistrlen().
+
 2011-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Add \ifdbox and \ifddir,

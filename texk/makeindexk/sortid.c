@@ -167,7 +167,7 @@ compare_string(unsigned char *a, unsigned char *b)
     int     al;
     int     bl;
 
-    if (locale_sort) return strcoll(a, b);
+    if (locale_sort) return strcoll((char *)a, (char *)b);
 
     while ((a[i] != NUL) || (b[j] != NUL)) {
 	if (a[i] == NUL)

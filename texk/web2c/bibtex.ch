@@ -642,7 +642,7 @@ if (str_num>0) then             {it's an already encountered string}
 @x [74] Pascal Web's char
 @!pds_type = packed array [pds_loc] of char;
 @y
-@!pds_type = const_w2c_u_string;
+@!pds_type = const_cstring;
 @z
 
 @x [78] C strings start at zero instead of one.
@@ -650,7 +650,7 @@ for i:=1 to len do
     buffer[i] := xord[pds[i]];
 @y
 for i:=1 to len do
-    buffer[i] := xord[pds[i-1]];
+    buffer[i] := xord[ucharcast(pds[i-1])];
 @z
 
 @x [98] Can't do this tangle-time arithmetic with file_name_size.

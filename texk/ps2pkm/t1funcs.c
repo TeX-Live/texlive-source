@@ -216,7 +216,7 @@ int Type1OpenScalable (ev, ppFont, flags, entry, fileName, vals, format,
                currentchar = i;
 
                rc = 0;
-	       area = fontfcnB(S, ev[i], &len, &rc);
+	       area = fontfcnB(S, (unsigned char *)ev[i], &len, &rc);
                if (rc < 0) {
                        rc = BadFontName;
                        break;

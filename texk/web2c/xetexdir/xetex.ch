@@ -3201,14 +3201,14 @@ for j:=str_start_macro(e) to str_start_macro(e+1)-1 do append_to_name(so(str_poo
 
 @x
 name_of_file := xmalloc_array (ASCII_code, n+(b-a+1)+format_ext_length+1);
-for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
+for j:=1 to n do append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @y
 name_of_file := xmalloc_array (UTF8_code, n+(b-a+1)+format_ext_length+1);
 for j:=1 to n do append_to_name(TEX_format_default[j]);
 @z
 
 @x
-  append_to_name(xord[TEX_format_default[j]]);
+  append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @y
   append_to_name(TEX_format_default[j]);
 @z
@@ -3428,7 +3428,7 @@ pack_file_name(nom,aire,cur_ext);
 if XeTeX_tracing_fonts_state>0 then begin
   begin_diagnostic;
   print_nl("Requested font """);
-  print_c_string(name_of_file+1);
+  print_c_string(stringcast(name_of_file+1));
   print('"');
   if s < 0 then begin
     print(" scaled ");
@@ -3477,7 +3477,7 @@ if XeTeX_tracing_fonts_state>0 then begin
   end else if file_opened then begin
     begin_diagnostic;
     print_nl(" -> ");
-    print_c_string(name_of_file+1);
+    print_c_string(stringcast(name_of_file+1));
     end_diagnostic(false);
   end;
 end;

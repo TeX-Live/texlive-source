@@ -1546,8 +1546,8 @@ begin switch: if loc<=limit then {current line not yet finished}
 @^inner loop@>
 begin switch: if loc<=limit then {current line not yet finished}
   begin cur_chr:=buffer[loc]; incr(loc);
-    if multistrlen(buffer, limit+1, loc-1)=2 then
-      begin cur_chr:=fromBUFF(buffer, limit+1, loc-1);
+    if multistrlen(stringcast(buffer), limit+1, loc-1)=2 then
+      begin cur_chr:=fromBUFF(stringcast(buffer), limit+1, loc-1);
       cur_cmd:=kcat_code(kcatcodekey(cur_chr));
       incr(loc);
       end
@@ -1636,8 +1636,8 @@ end
 @<Scan a control...@>=
 begin if loc>limit then cur_cs:=null_cs {|state| is irrelevant in this case}
 else  begin k:=loc; cur_chr:=buffer[k]; incr(k);
-  if multistrlen(buffer, limit+1, k-1)=2 then
-    begin cat:=kcat_code(kcatcodekey(fromBUFF(buffer, limit+1, k-1))); incr(k);
+  if multistrlen(stringcast(buffer), limit+1, k-1)=2 then
+    begin cat:=kcat_code(kcatcodekey(fromBUFF(stringcast(buffer), limit+1, k-1))); incr(k);
     end
   else cat:=cat_code(cur_chr);
 start_cs:
@@ -1720,8 +1720,8 @@ end
 @y
 @ @<Scan ahead in the buffer...@>=
 begin repeat cur_chr:=buffer[k]; incr(k);
-  if multistrlen(buffer, limit+1, k-1)=2 then
-    begin cat:=kcat_code(kcatcodekey(fromBUFF(buffer, limit+1, k-1))); incr(k);
+  if multistrlen(stringcast(buffer), limit+1, k-1)=2 then
+    begin cat:=kcat_code(kcatcodekey(fromBUFF(stringcast(buffer), limit+1, k-1))); incr(k);
     end
   else cat:=cat_code(cur_chr);
   while (buffer[k]=cur_chr)and(cat=sup_mark)and(k<limit) do
@@ -2154,8 +2154,8 @@ else if scan_keyword("sp") then goto done
   if t=" " then t:=space_token
   else t:=other_token+t;
 @y
-  if multistrlen(str_pool, pool_ptr, k)=2 then
-    begin t:=fromBUFF(str_pool, pool_ptr, k); incr(k);
+  if multistrlen(stringcast(str_pool), pool_ptr, k)=2 then
+    begin t:=fromBUFF(stringcast(str_pool), pool_ptr, k); incr(k);
     end
   else if t=" " then t:=space_token
   else t:=other_token+t;
@@ -2367,20 +2367,6 @@ if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
 else if (cur_cmd>active_char)or(cur_chr>255) then
   begin cur_cmd:=relax; cur_chr:=256;
   end;
-@z
-
-@x [29.523] l.10571 - pTeX: xord
-for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
-for j:=a to b do append_to_name(buffer[j]);
-for j:=format_default_length-format_ext_length+1 to format_default_length do
-  append_to_name(xord[TEX_format_default[j]]);
-@y
-if name_of_file then libc_free (name_of_file);
-name_of_file := xmalloc (1 + n + (b - a + 1) + format_ext_length + 1);
-for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
-for j:=a to b do append_to_name(buffer[j]);
-for j:=format_default_length-format_ext_length+1 to format_default_length do
-  append_to_name(xord[TEX_format_default[j]]);
 @z
 
 @x [29.526] l.10668 - pTeX: scan file name

@@ -508,13 +508,13 @@ rewrite(out_file); {prepares to write packed bytes to |out_file|}
 @x [250] String declaration.
 @!comment:packed array[1..comm_length] of char; {preamble comment prefix}
 @y
-@!comment:const_w2c_u_string; {preamble comment prefix}
+@!comment:const_c_string; {preamble comment prefix}
 @z
 
 @x [251] Output the string from 0 to len-1, not 1 to len.
 for k:=1 to comm_length do append_byte(xord[comment[k]]);
 @y
-for k:=0 to comm_length - 1 do append_byte(xord[comment[k]]);
+for k:=0 to comm_length - 1 do append_byte(xord[ucharcast(comment[k])]);
 @z
 
 @x [] System-dependent changes.

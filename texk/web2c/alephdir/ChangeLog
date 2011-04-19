@@ -1,3 +1,8 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* com16bit.ch: Cast runsystem() arg to string.
+
 2011-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/aleph.am: Use AM_CFLAGS instead of aleph_CFLAGS.

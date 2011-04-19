@@ -1924,7 +1924,7 @@ input_line (FILE *f)
 
   /* Recognize either LF or CR as a line terminator.  */
 #if defined(pTeX) || defined(epTeX)
-  last = input_line2(f, buffer, first, bufsize, &i);
+  last = input_line2(f, (char *)buffer, first, bufsize, &i);
 #else /* pTeX || epTeX */
   last = first;
   while (last < bufsize && (i = getc (f)) != EOF && i != '\n' && i != '\r')

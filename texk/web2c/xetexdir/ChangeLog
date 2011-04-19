@@ -1,3 +1,9 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* xetex.ch (pack_buffered_name): Adapt to modified ../tex.ch.
+	(read_font_info): Cast print_c_string() arg to string.
+
 2011-04-11  Karl Berry  <karl@tug.org>
 
 	* xetex.ch (XeTeX_version_string): bump to .5.

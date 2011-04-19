@@ -1,3 +1,8 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	texmfmp.c (input_line): Caat input_line2() arg2 to 'char *'.
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* setupvar.c (setupboundvariable): `program_invocation_name' has

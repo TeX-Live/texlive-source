@@ -1,3 +1,9 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* odvicopy.ch (comment): Do not declare as unsigned.
+	(do_pre): Apply ucharcast() to xord[] index.
+
 2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* opl2ofm.ch, ovp2ovf.ch: Bug fix, from ../ptexdir/ppltotf.ch by

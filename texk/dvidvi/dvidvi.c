@@ -995,7 +995,7 @@ static void writepreamble(void) {
    fseek(infile,0L,SEEK_SET);
    putbuf(14L) ;
 /*   and put our identifier. */
-   putstr("\015dvidvi output") ;
+   putstr((unsigned const char *)"\015dvidvi output") ;
 }
 /*
  *   This routine writes out a font definition.

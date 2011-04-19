@@ -380,7 +380,7 @@ BEGIN
      * Unlike the WEB, the string in `pds' will occupy the positions
      * pds[0] ... pds[len-1], rather than pds[1] ... pds[len].
      *----------------------------------------------------------------------*/
-    buffer[i] = xord[pds[i-1]];
+    buffer[i] = xord[(UChar_T)pds[i-1]];
   END
   pre_def_loc = str_lookup (buffer, 1, len, ilk, DO_INSERT);
 END

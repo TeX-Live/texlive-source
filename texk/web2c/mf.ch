@@ -1601,7 +1601,7 @@ name_of_file[name_length + 1] := 0;
 MF_base_default:='MFbases:plain.base';
 @y
 @!base_default_length: integer;
-@!MF_base_default: w2c_u_string;
+@!MF_base_default: cstring;
 
 @ We set the name of the default format file and the length of that name
 in \.{texmfmp.c}, since we want them to depend on the name of the
@@ -1610,21 +1610,19 @@ program.
 
 @x [38.778] Change to pack_buffered_name as with pack_file_name.
 for j:=1 to n do append_to_name(xord[MF_base_default[j]]);
+for j:=a to b do append_to_name(buffer[j]);
+for j:=base_default_length-base_ext_length+1 to base_default_length do
+  append_to_name(xord[MF_base_default[j]]);
+if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
+for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 if name_of_file then libc_free (name_of_file);
 name_of_file := xmalloc_array (ASCII_code,  n + (b-a+1) + base_ext_length + 1);
-for j:=1 to n do append_to_name(xord[MF_base_default[j]]);
-@z
-% @x [38.778] Set program name to match format.
-% for j:=a to b do append_to_name(buffer[j]);
-% @y
-% for j:=a to b do append_to_name(buffer[j]);
-% name_of_file[k+1]:=0;
-% kpse_reset_program_name(name_of_file+1);
-% @z
-@x [38.778] Change to pack_buffered_name as with pack_file_name.
-for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
-@y
+for j:=1 to n do append_to_name(xord[ucharcast(MF_base_default[j])]);
+for j:=a to b do append_to_name(buffer[j]);
+for j:=base_default_length-base_ext_length+1 to base_default_length do
+  append_to_name(xord[ucharcast(MF_base_default[j])]);
+if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
 name_of_file[name_length + 1] := 0;
 @z
 
@@ -2021,7 +2019,7 @@ dump_int(@"57324D46);  {Web2C \MF's magic constant: "W2MF"}
 {Align engine to 4 bytes with one or more trailing NUL}
 x:=strlen(engine_name);
 base_engine:=xmalloc_array(text_char,x+4);
-strcpy(base_engine, engine_name);
+strcpy(stringcast(base_engine), engine_name);
 for k:=x to x+3 do base_engine[k]:=0;
 x:=x+4-(x mod 4);
 dump_int(x);dump_things(base_engine[0], x);
@@ -2045,7 +2043,7 @@ if (x<0) or (x>256) then goto off_base; {corrupted base file}
 base_engine:=xmalloc_array(text_char, x);
 undump_things(base_engine[0], x);
 base_engine[x-1]:=0; {force string termination, just in case}
-if strcmp(engine_name, base_engine) then
+if strcmp(engine_name, stringcast(base_engine)) then
   begin wake_up_terminal;
   wterm_ln('---! ', stringcast(name_of_file+1), ' was written by ', base_engine);
   libc_free(base_engine);

@@ -1,3 +1,8 @@
+2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* sortid.c (compare_string): Cast strcoll() args to 'char *' to
+	avoid 'differ in signedness' warnings.
+
 2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac [WIN32]: Skip mkindex shell script.

@@ -7,7 +7,7 @@
 
 int nt,unit,zh,zw,jfm_id;
 int *width,*height,*depth,*italic,*glue_kern,*kern,*glue,*param;
-char *header,*char_type,*char_info;
+unsigned char *header,*char_type,*char_info;
 
 int jfmread(int kcode)
 {

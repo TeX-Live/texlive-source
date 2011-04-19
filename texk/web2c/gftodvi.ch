@@ -435,14 +435,14 @@ some input is present; then it opens the output file.
 
 @p procedure start_gf;
 label done;
-var arg_buffer: w2c_u_string;
+var arg_buffer: c_string;
     arg_buf_ptr: integer;
 begin
   arg_buffer := cmdline (optind);
   arg_buf_ptr := 0;
   while (line_length < terminal_line_length)
         and (arg_buffer[arg_buf_ptr] <> 0) do begin
-    buffer[line_length] := xord[arg_buffer[arg_buf_ptr]];
+    buffer[line_length] := xord[ucharcast(arg_buffer[arg_buf_ptr])];
     incr(line_length);
     incr(arg_buf_ptr);
   end;

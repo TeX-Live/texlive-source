@@ -1828,7 +1828,7 @@ length will be set in the main program.
 TEX_format_default:='TeXformats:plain.fmt';
 @y
 @!format_default_length: integer;
-@!TEX_format_default: w2c_u_string;
+@!TEX_format_default: cstring;
 
 @ We set the name of the default format file and the length of that name
 in C, instead of Pascal, since we want them to depend on the name of the
@@ -1837,23 +1837,19 @@ program.
 
 @x [29.523] l.10095 - Change to pack_buffered_name as with pack_file_name.
 for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
+for j:=a to b do append_to_name(buffer[j]);
+for j:=format_default_length-format_ext_length+1 to format_default_length do
+  append_to_name(xord[TEX_format_default[j]]);
+if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
+for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 if name_of_file then libc_free (name_of_file);
 name_of_file := xmalloc_array (ASCII_code, n+(b-a+1)+format_ext_length+1);
-for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
-@z
-
-% @x [29.523] l.10097 - Set program name to match format.
-% for j:=a to b do append_to_name(buffer[j]);
-% @y
-% for j:=a to b do append_to_name(buffer[j]);
-% name_of_file[k+1]:=0;
-% kpse_reset_program_name(name_of_file+1);
-% @z
-
-@x [29.523] l.10100 - Change to pack_buffered_name as with pack_file_name.
-for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
-@y
+for j:=1 to n do append_to_name(xord[ucharcast(TEX_format_default[j])]);
+for j:=a to b do append_to_name(buffer[j]);
+for j:=format_default_length-format_ext_length+1 to format_default_length do
+  append_to_name(xord[ucharcast(TEX_format_default[j])]);
+if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
 name_of_file[name_length+1]:=0;
 @z
 
@@ -3481,7 +3477,7 @@ dump_int(@"57325458);  {Web2C \TeX's magic constant: "W2TX"}
 {Align engine to 4 bytes with one or more trailing NUL}
 x:=strlen(engine_name);
 format_engine:=xmalloc_array(text_char,x+4);
-strcpy(format_engine, engine_name);
+strcpy(stringcast(format_engine), engine_name);
 for k:=x to x+3 do format_engine[k]:=0;
 x:=x+4-(x mod 4);
 dump_int(x);dump_things(format_engine[0], x);
@@ -3516,7 +3512,7 @@ if (x<0) or (x>256) then goto bad_fmt; {corrupted format file}
 format_engine:=xmalloc_array(text_char, x);
 undump_things(format_engine[0], x);
 format_engine[x-1]:=0; {force string termination, just in case}
-if strcmp(engine_name, format_engine) then
+if strcmp(engine_name, stringcast(format_engine)) then
   begin wake_up_terminal;
   wterm_ln('---! ', stringcast(name_of_file+1), ' was written by ', format_engine);
   libc_free(format_engine);
