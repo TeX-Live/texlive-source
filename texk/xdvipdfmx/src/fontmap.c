@@ -43,6 +43,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include "ft2build.h"
 #include FT_FREETYPE_H
+#include FT_MAC_H
 #else
 #include "fontconfig/fontconfig.h"
 #include "fontconfig/fcfreetype.h"

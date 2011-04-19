@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/fontmap.c [OS X]: #include FT_MAC_H to get prototype for
+	FT_GetFilePath_From_Mac_ATS_Name().
+
 2011-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/dpxcrypt.c: Sync with dvipdfmx.
