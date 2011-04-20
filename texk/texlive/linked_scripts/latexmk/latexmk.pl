@@ -107,8 +107,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.23';
-$version_details = "$My_name, John Collins, 21 March 2011";
+$version_num = '4.23a';
+$version_details = "$My_name, John Collins, 24 March 2011";
 
 
 use Config;
@@ -177,6 +177,8 @@ else {
 ##
 ##   Modification log from 1 Jan 2011 onwards in detail
 ##
+##     24 Mar 2011, John Collins  Correct bug in detection of source files
+##                                   listed in .fls
 ##     21 Mar 2011, John Collins  Add 'bcf' to list of generated extensions
 ##                                Deal with case that fls files are latex.fls and pdflatex.fls
 ##     19--21 Mar 2011, John Collins  -deps and -rules options
@@ -4140,11 +4142,14 @@ sub rdb_set_latex_deps {
     my $fls_file = "$root_filename.fls";
     if ($recorder && test_gen_file($fls_file) ) {
         parse_fls( $fls_file, \%source_fls, \%generated_fls );
-        foreach (keys %source_fls) { 
-            rdb_ensure_file( $rule, $_ );
+        foreach (keys %source_fls) {
+            $dependents{$_} = 4;
 	}
         foreach (keys %generated_fls) {
             rdb_add_generated( $_ );
+            if ( exists($dependents{$_}) ) {
+               $dependents{$_} = 6;
+	    }
         }
     }
 # ?? !! Should also deal with .run.xml file
@@ -4262,7 +4267,8 @@ NEW_SOURCE:
         print "  ===Source file for rule '$rule': '$new_source'\n"
 	    if ($diagnostics);
 	if ( ($dependents{$new_source} == 5) 
-             || ($dependents{$new_source} == 6) ) {
+             || ($dependents{$new_source} == 6) 
+           ) {
             # (a) File was detected in "No file..." line in log file. 
             #     Typically file was searched for early in run of 
             #     latex/pdflatex, was not found, and then was written 
@@ -4294,6 +4300,11 @@ NEW_SOURCE:
             #    (or for files that are generated outside of latex/pdflatex). 
             rdb_ensure_file( $rule, $new_source );
 	}
+	if ( ($dependents{$new_source} == 6) 
+             || ($dependents{$new_source} == 7) 
+           ) {
+	    rdb_add_generated($new_source);
+        }
     }
 
     my @more_sources = &rdb_set_dependentsA( $rule );
@@ -6067,7 +6078,7 @@ sub rdb_add_generated {
     foreach (@_) {
         $$PHdest{$_} = 1;
     }
-} #END rdb_initialize_generated
+} #END rdb_add_generated
 
 #************************************************************
 
