@@ -31,10 +31,10 @@ bin_SCRIPTS =
 # The instances in texmf* are the masters (except when it is CTAN).
 #
 texmf_scriptsdir = ${prefix}/texmf/scripts
-## We distinguish shell and perl (or lua, python, ruby, ...) scripts.
+## We distinguish shell and other (perl, lua, python, ruby, ...) scripts.
 texmf_shell_scripts = \
 	simpdftex/simpdftex
-texmf_perl_scripts = \
+texmf_other_scripts = \
 	a2ping/a2ping.pl \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
@@ -43,7 +43,7 @@ texmf_perl_scripts = \
 	texlive/tlmgr.pl
 nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_shell_scripts) \
-	$(texmf_perl_scripts)
+	$(texmf_other_scripts)
 
 texmf_dist_scriptsdir = ${prefix}/texmf-dist/scripts
 texmf_dist_shell_scripts = \
@@ -63,7 +63,7 @@ texmf_dist_shell_scripts = \
 	pdfjam/pdfnup \
 	pdfjam/pdfpun \
 	pst-pdf/ps4pdf
-texmf_dist_perl_scripts = \
+texmf_dist_other_scripts = \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
@@ -98,6 +98,8 @@ texmf_dist_perl_scripts = \
 	mathspic/mathspic.pl \
 	mkjobtexmf/mkjobtexmf.pl \
 	mkgrkindex/mkgrkindex \
+	musixtex/musixflx.lua \
+	musixtex/musixtex.lua \
 	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
@@ -121,7 +123,7 @@ texmf_dist_perl_scripts = \
 	vpe/vpe.pl
 nobase_dist_texmf_dist_scripts_SCRIPTS = \
 	$(texmf_dist_shell_scripts) \
-	$(texmf_dist_perl_scripts)
+	$(texmf_dist_other_scripts)
 
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
@@ -151,7 +153,7 @@ bin_links = \
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 install-data-hook:
 if WIN32
-	@for s in $(texmf_perl_scripts) $(texmf_dist_perl_scripts); do \
+	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \

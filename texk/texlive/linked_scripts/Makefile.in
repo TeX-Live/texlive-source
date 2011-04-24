@@ -170,7 +170,7 @@ texmf_scriptsdir = ${prefix}/texmf/scripts
 texmf_shell_scripts = \
 	simpdftex/simpdftex
 
-texmf_perl_scripts = \
+texmf_other_scripts = \
 	a2ping/a2ping.pl \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
@@ -180,7 +180,7 @@ texmf_perl_scripts = \
 
 nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_shell_scripts) \
-	$(texmf_perl_scripts)
+	$(texmf_other_scripts)
 
 texmf_dist_scriptsdir = ${prefix}/texmf-dist/scripts
 texmf_dist_shell_scripts = \
@@ -201,7 +201,7 @@ texmf_dist_shell_scripts = \
 	pdfjam/pdfpun \
 	pst-pdf/ps4pdf
 
-texmf_dist_perl_scripts = \
+texmf_dist_other_scripts = \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
@@ -236,6 +236,8 @@ texmf_dist_perl_scripts = \
 	mathspic/mathspic.pl \
 	mkjobtexmf/mkjobtexmf.pl \
 	mkgrkindex/mkgrkindex \
+	musixtex/musixflx.lua \
+	musixtex/musixtex.lua \
 	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
@@ -260,7 +262,7 @@ texmf_dist_perl_scripts = \
 
 nobase_dist_texmf_dist_scripts_SCRIPTS = \
 	$(texmf_dist_shell_scripts) \
-	$(texmf_dist_perl_scripts)
+	$(texmf_dist_other_scripts)
 
 
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
@@ -607,7 +609,7 @@ uninstall-am: uninstall-binSCRIPTS \
 @MAINTAINER_MODE_TRUE@	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
 @MAINTAINER_MODE_FALSE@all-local:
 install-data-hook:
-@WIN32_TRUE@	@for s in $(texmf_perl_scripts) $(texmf_dist_perl_scripts); do \
+@WIN32_TRUE@	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 @WIN32_TRUE@	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
