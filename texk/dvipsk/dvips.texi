@@ -2,8 +2,8 @@
 @setfilename dvips.info
 @settitle Dvips: A DVI-to-PostScript translator
 
-@set version 5.99
-@set month-year July 2010
+@set version 5.991
+@set month-year April 2011
 
 @copying
 This manual documents Dvips version @value{version}
@@ -574,14 +574,19 @@ environment variables, and command-line options.
 @node Basic usage
 @section Basic usage of Dvips
 
+@cindex usage, basic
+
 To use Dvips at its simplest, simply type
+
 @example
 dvips foo
 @end example
+
 @noindent
-where @file{foo.dvi} is the output of @TeX{} that you want to print.  If
-Dvips has been installed correctly, the document will probably roll out
-of your default printer.
+where @file{foo.dvi} is the output of @TeX{} that you want to print.
+The default output is to a corresponding file @file{foo.ps}; Dvips may
+also have been locally configured to output directly to a printer by
+default.
 
 If you use fonts that have not been used on your system before, they may
 be automatically generated; this process can take a few minutes, so
@@ -593,6 +598,7 @@ same fonts over and over again, it hasn't been installed properly.
 
 Many options are available (see the next section).  For a brief summary
 of available options, just type
+
 @example
 dvips --help
 @end example

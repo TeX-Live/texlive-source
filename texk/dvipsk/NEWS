@@ -3,6 +3,10 @@ This file records noteworthy changes.  (Public domain.)
    Require Kpathsea to build.
    Additional robustness checks.
 
+dvips 5.991 (TeX Live 2011):
+  Type 1 parsing bug fixes.
+  Integer overflow bug fix.
+
 dvips 5.99 (TeX Live 2010, 4 June 2010):
    Use the type1 path to search for Type 1 fonts.
    Support for Japanese pTeX.

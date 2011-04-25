@@ -1,3 +1,11 @@
+2011-04-25  Karl Berry  <karl@tug.org>
+
+	* afm2tfm.c (version),
+	* dvips.h (BANNER): 5.991 for TeX Live 2011.
+	
+	* dvips.texi,
+	* dvips.1: do not suggest that the default output is to lpr.
+
 2011-02-25  Karl Berry  <karl@tug.org>
 
 	* drawPS.c (flushDashedPath): cast to double before squaring,
