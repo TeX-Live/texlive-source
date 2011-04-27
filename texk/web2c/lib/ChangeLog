@@ -1,3 +1,8 @@
+2011-04-27  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (initscreen): do not mention mfw, which is no more.
+	Suggestion from Reinhard Kotucha, tex-k mail 21 Jul 2010 11:40:36.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

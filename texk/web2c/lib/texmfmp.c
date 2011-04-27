@@ -2752,21 +2752,6 @@ initscreen (void)
     }
   }
   
-  /* We disable X support by default, since most sites don't use it, and
-     variations in X configurations seem impossible to overcome
-     automatically. Too frustrating for everyone involved.  */
-  if (STREQ (tty_type, "xterm")) {
-    fputs ("\nmf: Window support for X was not compiled into this binary.\n",
-           stderr);
-    fputs ("mf: There may be a binary called `mfw' on your system which\n",
-           stderr);
-    fputs ("mf: does contain X window support.\n\n", stderr);
-    fputs ("mf: If you need to recompile, remember to give the --with-x\n",
-           stderr);
-    fputs ("mf: option to configure\n\n", stderr);
-    fputs ("mf: (Or perhaps you just failed to specify the mode.)\n", stderr);
-  }
-
   /* The current terminal type wasn't found in any of the entries, or
      initalization failed, so silently give up, assuming that the user
      isn't on a terminal that supports graphic output.  */

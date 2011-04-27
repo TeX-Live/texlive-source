@@ -1933,9 +1933,9 @@ default.  You can make your own by copying one of the existing files,
 such as `.../fonts/source/public/misc/slantlj4.mf' and then running
 `mf' on it.
 
-   For testing purposes, you may it useful to run `mf rtest' (hit
-RETURN when it stops) to get a `gf' file of a thorn glyph.  Or use
-`mfw' instead of `mf' to have the glyph(s) displayed on the screen.
+   For testing purposes, you may it useful to run `mf-nowin rtest' (hit
+RETURN when it stops) to get a `gf' file of a thorn glyph.  Or use `mf'
+instead of `mf-nowin' to have the glyph(s) displayed on the screen.
 After that, `gftodvi rtest.2602gf' should produce `rtest.dvi', which
 you process as usual.
 
@@ -4517,35 +4517,35 @@ Node: Initial Metafont70906
 Node: Modes72659
 Node: Online Metafont graphics74915
 Node: gftodvi invocation78330
-Node: mft invocation81152
-Node: MetaPost85207
-Node: mpost invocation85969
-Node: Initial MetaPost91227
-Node: dvitomp invocation93038
-Node: BibTeX93703
-Node: bibtex invocation94064
-Node: Basic BibTeX style files96389
-Node: WEB97731
-Node: tangle invocation98939
-Node: weave invocation101062
-Node: pooltype invocation102470
-Node: DVI utilities103600
-Node: dvicopy invocation104544
-Node: dvitype invocation105842
-Node: dvitype output example108197
-Node: Font utilities111248
-Node: Font file formats112428
-Node: gftopk invocation115727
-Node: pktogf invocation116931
-Node: pktype invocation118110
-Node: gftype invocation120945
-Node: tftopl invocation125461
-Node: pltotf invocation130095
-Node: vftovp invocation131160
-Node: vptovf invocation133444
-Node: Font utilities available elsewhere134498
-Node: Legalisms136906
-Node: References139077
-Node: Index143649
+Node: mft invocation81163
+Node: MetaPost85218
+Node: mpost invocation85980
+Node: Initial MetaPost91238
+Node: dvitomp invocation93049
+Node: BibTeX93714
+Node: bibtex invocation94075
+Node: Basic BibTeX style files96400
+Node: WEB97742
+Node: tangle invocation98950
+Node: weave invocation101073
+Node: pooltype invocation102481
+Node: DVI utilities103611
+Node: dvicopy invocation104555
+Node: dvitype invocation105853
+Node: dvitype output example108208
+Node: Font utilities111259
+Node: Font file formats112439
+Node: gftopk invocation115738
+Node: pktogf invocation116942
+Node: pktype invocation118121
+Node: gftype invocation120956
+Node: tftopl invocation125472
+Node: pltotf invocation130106
+Node: vftovp invocation131171
+Node: vptovf invocation133455
+Node: Font utilities available elsewhere134509
+Node: Legalisms136917
+Node: References139088
+Node: Index143660
 
 End Tag Table
