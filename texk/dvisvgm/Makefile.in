@@ -97,11 +97,12 @@ nodist_libdvisvgm_a_OBJECTS = BgColorSpecialHandler.$(OBJEXT) \
 	Message.$(OBJEXT) MetafontWrapper.$(OBJEXT) \
 	PageRanges.$(OBJEXT) PageSize.$(OBJEXT) \
 	PSInterpreter.$(OBJEXT) PsSpecialHandler.$(OBJEXT) \
-	SpecialManager.$(OBJEXT) StreamReader.$(OBJEXT) \
-	StreamWriter.$(OBJEXT) SVGTree.$(OBJEXT) System.$(OBJEXT) \
-	Terminal.$(OBJEXT) TFM.$(OBJEXT) TpicSpecialHandler.$(OBJEXT) \
-	VFReader.$(OBJEXT) XMLDocument.$(OBJEXT) XMLNode.$(OBJEXT) \
-	XMLString.$(OBJEXT) $(am__objects_1)
+	SignalHandler.$(OBJEXT) SpecialManager.$(OBJEXT) \
+	StreamReader.$(OBJEXT) StreamWriter.$(OBJEXT) \
+	SVGTree.$(OBJEXT) System.$(OBJEXT) Terminal.$(OBJEXT) \
+	TFM.$(OBJEXT) TpicSpecialHandler.$(OBJEXT) VFReader.$(OBJEXT) \
+	XMLDocument.$(OBJEXT) XMLNode.$(OBJEXT) XMLString.$(OBJEXT) \
+	$(am__objects_1)
 libdvisvgm_a_OBJECTS = $(nodist_libdvisvgm_a_OBJECTS)
 libpotrace_a_AR = $(AR) $(ARFLAGS)
 libpotrace_a_LIBADD =
@@ -322,7 +323,7 @@ top_srcdir = @top_srcdir@
 #
 #************************************************************************
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(DVISVGM_TREE) $(DVISVGM_TREE)-PATCHES
+EXTRA_DIST = $(DVISVGM_TREE)
 INCLUDES = -I$(top_srcdir)/$(DVISVGM_TREE)/src \
 	-I$(top_srcdir)/$(DVISVGM_TREE)/potracelib \
 	$(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) \
@@ -378,6 +379,7 @@ nodist_libdvisvgm_a_SOURCES =  \
 	$(DVISVGM_TREE)/src/PageSize.cpp \
 	$(DVISVGM_TREE)/src/PSInterpreter.cpp \
 	$(DVISVGM_TREE)/src/PsSpecialHandler.cpp \
+	$(DVISVGM_TREE)/src/SignalHandler.cpp \
 	$(DVISVGM_TREE)/src/SpecialManager.cpp \
 	$(DVISVGM_TREE)/src/StreamReader.cpp \
 	$(DVISVGM_TREE)/src/StreamWriter.cpp \
@@ -556,6 +558,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageSize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PsSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGTree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SignalHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecialManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamWriter.Po@am__quote@
@@ -1218,6 +1221,20 @@ PsSpecialHandler.obj: $(DVISVGM_TREE)/src/PsSpecialHandler.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PsSpecialHandler.obj `if test -f '$(DVISVGM_TREE)/src/PsSpecialHandler.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/PsSpecialHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/PsSpecialHandler.cpp'; fi`
 
+SignalHandler.o: $(DVISVGM_TREE)/src/SignalHandler.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SignalHandler.o -MD -MP -MF $(DEPDIR)/SignalHandler.Tpo -c -o SignalHandler.o `test -f '$(DVISVGM_TREE)/src/SignalHandler.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/SignalHandler.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SignalHandler.Tpo $(DEPDIR)/SignalHandler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/SignalHandler.cpp' object='SignalHandler.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SignalHandler.o `test -f '$(DVISVGM_TREE)/src/SignalHandler.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/SignalHandler.cpp
+
+SignalHandler.obj: $(DVISVGM_TREE)/src/SignalHandler.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SignalHandler.obj -MD -MP -MF $(DEPDIR)/SignalHandler.Tpo -c -o SignalHandler.obj `if test -f '$(DVISVGM_TREE)/src/SignalHandler.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/SignalHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/SignalHandler.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SignalHandler.Tpo $(DEPDIR)/SignalHandler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/SignalHandler.cpp' object='SignalHandler.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SignalHandler.obj `if test -f '$(DVISVGM_TREE)/src/SignalHandler.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/SignalHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/SignalHandler.cpp'; fi`
+
 SpecialManager.o: $(DVISVGM_TREE)/src/SpecialManager.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpecialManager.o -MD -MP -MF $(DEPDIR)/SpecialManager.Tpo -c -o SpecialManager.o `test -f '$(DVISVGM_TREE)/src/SpecialManager.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/SpecialManager.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SpecialManager.Tpo $(DEPDIR)/SpecialManager.Po
@@ -1819,6 +1836,8 @@ uninstall-man: uninstall-man1
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-man uninstall-man1
 
+
+#EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

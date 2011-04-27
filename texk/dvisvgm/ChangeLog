@@ -1,3 +1,9 @@
+2011-04-27  Karl Berry  <karl@tug.org>
+
+	* Imported release 1.06.
+	* configure.ac: Adapted.
+	* dvisvgm-1.0.5-PATCHES: removed dir, all patches applies.
+
 2011-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.0.5.

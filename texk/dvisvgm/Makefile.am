@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvisvgm/
 ##
-## Copyright (C) 2009 - 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -17,8 +17,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(DVISVGM_TREE)
 
 ## Patches applied to the original source tree
-##
-EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
+## (as of 1.0.6, all have been applied.)
+#EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
@@ -89,6 +89,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/PageSize.cpp \
 	$(DVISVGM_TREE)/src/PSInterpreter.cpp \
 	$(DVISVGM_TREE)/src/PsSpecialHandler.cpp \
+	$(DVISVGM_TREE)/src/SignalHandler.cpp \
 	$(DVISVGM_TREE)/src/SpecialManager.cpp \
 	$(DVISVGM_TREE)/src/StreamReader.cpp \
 	$(DVISVGM_TREE)/src/StreamWriter.cpp \
