@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([vlna for TeX Live], [1.3], [tex-live@tug.org])
+AC_INIT([vlna for TeX Live], [1.5], [tex-live@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([vlna.w])
 AC_CONFIG_AUX_DIR([../../build-aux])

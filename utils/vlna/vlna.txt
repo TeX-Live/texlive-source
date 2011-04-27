@@ -1,7 +1,7 @@
 
                                Program VLNA
                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    verze 1.2                  Petr Ol¹ák
+                    verze 1.4                  Petr Ol¹ák
 
 Program vlna pøidává vlnky (místo pùvodních mezer) za neslabièné pøedlo¾ky
 ve vstupních souborech pro TeX. To zabrání zlomu øádku v ne¾ádoucím místì.
@@ -45,6 +45,16 @@ PØEPÍNAÈE:
 -v znaky : Definice znakù, které budeme pova¾ovat za neslabièné pøedlo¾ky,
      tj. k ovlnkování. Implicitní hodnota -v KkSsVvZzOoUuAI je pou¾itím
      tohoto parametru pøepsána. Mezi -v a skupinou znakù musí být mezera.
+-x kód : Vyhledané  místo se implicitnì nahrazuje vlnkou.  Místo toho jej
+     mù¾ete nechat nahrazovat libovolným stringem.  Kód za parametrem
+     -x  je  hexadecimálnì  vyjádøený  string,  nula  je  ve  stringu
+     povoleným znakem.  Tak¾e -x C2A0  vymezuje  dvouznakový  string:
+     místo  ka¾dé  vlnky  budou  vlo¾eny dva byty, první s kódem C2 a
+     druhý s kódem A0. Podle unicodové  tabulky  tento  p¾íklad  tedy
+     zpùsobí  nahrazování  znakem  NO-BREAK  SPACE pøi kódování UTF8.
+     Jine pøíklady: -x 00A0 nahrazování  znakem  NO-BREAK  SPACE  pøi
+     kódování  UTF16, -x 41484F4A nahrazování textem AHOJ.  Mezi -x a
+     kódem musí být mezera.
 -m : Ignoruje pøechody do matematického re¾imu ($...$ a $$...$$) a vlnkuje
      i v tìchto prostøedích. Imlicitnì v matematických prostøedích nevlnkuje.
 -n : Ignoruje pøechody do verbatim re¾imu (\verb<zn>...<zn>, \begtt...\endtt)

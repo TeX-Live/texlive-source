@@ -32,7 +32,7 @@ v~kódu programu, cestinou v~/* komentáøích */ a èe¹tinou jinde.
 Tu cestinu si vynutil fakt, ¾e DOS-ovská varianta \.{tangle} a
 \.{weave} se nesná¹í s~akcentovanými písmeny v~/* komentáøích */.
 A~nyní u¾ slíbený (vícejazyèný) |BANNER|.
-@d BANNER "This is program vlna, version 1.2, (c) 1995, 2002 Petr Olsak\n"
+@d BANNER "This is program vlna, version 1.5, (c) 1995, 2002, 2009, 2010 Petr Olsak\n"
 
 @ V programu jsou pou¾ity knihovní funkce, jejích¾ prototypy jsou
 definovány ve tøech standardních hlavièkových souborech.
@@ -89,6 +89,10 @@ souborù.
   interpretovány jako neslabièné pøedlo¾ky.
   Napø. \.{-v KkSsVvZzOoUuAI}. Pokud není parametr uveden, je pou¾ita
   skupina uvedená v tomto pøíkladì.
+* \.{-x} \dots\ parametr vymezuje pomocí hexadecimálního zápisu string,
+  který program vkládá na vyhledaná místa. Implicitnì vkládá vlnku.
+  Napøíklad \.{-x C2A0} zpùsobí, ¾e program bude vkládat místo vlnky dva byty,
+  první s kódem \.{C2} a druhý s kódem \.{A0}.
 * \.{-m} \dots\ program neprovádí kontrolu math/text módù, tj. vlnkuje i
   uvnitø matematického módu \TeX{}u. (Implicite tam nevlnkuje).
 * \.{-n} \dots\ prorgram neprovádí kontrolu verbatim módu, tj. vlnkuje i
@@ -101,7 +105,7 @@ souborù.
   vlnkuje dokumentaèní èást ka¾dé sekce, ale nikoli kód.
 \enditems
 
-Definujeme funkci |printusage|, které tiskne (pøi chybì) struèný pøehled
+Definujeme funkci |printusage|, která tiskne (pøi chybì) struèný pøehled
 mo¾ných parametrù. Nepodaøilo se mi zjistit, jak se ve WEBu napí¹e
 kulturnì dlouhý string obsahující \.{\char92n} s formátovacími
 po¾adavky. Byl jsem nucen to takto nehezky zapsat.
@@ -117,6 +121,7 @@ static void printusage (void)
     "      -s :  silent: no messages to stderr\n"
     "      -r :  rmbackup: if nofilter, removes temporary files\n"
     "      -v charset :  set of lettres to add tie, default: KkSsVvZzOoUuAI\n" 
+    "      -x code : code for tie symbol, default: 7E, example -x C2A0\n"
     "      -m :  nomath: ignores math modes\n"
     "      -n :  noverb: ignores verbatim modes\n"
     "      -l :  LaTeX mode\n"
@@ -133,7 +138,18 @@ int isfilter=0, silent=0, rmbackup=0, nomath=0, noverb=0, web=0, latex=0;
 char charsetdefault[]="KkSsVvZzOoUuAI";
 char *charset=charsetdefault;
 
+@ String |tiestr| obsahuje string, kterým se má nahradit vyhledané 
+místo. Pokud není pou¾it parametr \.{-u}, je tento string jadnoznakový 
+a obsahuje vlnku. Jinak obsahuje string konvertovaný z parametru \.{-u}.
+String má délku |tiestrlen| bez ohledu na to, zda obsahuje nebo 
+neobsahuje nulové znaky (C-èková konvence pro stringy není pou¾ita).
+@<Globální deklarace@>=
+unsigned char tiestr[MAXLEN];
+int tiestrlen;
+
 @ @<Naètení parametrù ...@>=
+tiestr[0] = '~';
+tiestrlen = 1;
 while (argc>1 && argv[1][0] == '-') {
   if (argv[1][2] != 0) printusage (), exit (BAD_OPTIONS);
   switch(argv[1][1]) {
@@ -142,6 +158,8 @@ while (argc>1 && argv[1][0] == '-') {
   case 'r': rmbackup = 1; break;
   case 'v': if (argc<2) printusage (), exit (BAD_OPTIONS);
     argv++; argc--; charset = argv[1]; break;
+  case 'x': if (argc<2) printusage (), exit (BAD_OPTIONS);
+    argv++; argc--; settiestr(argv[1]); break;
   case 'm': nomath = 1; break;
   case 'n': noverb = 1; break;
   case 'l': latex = 1; break;
@@ -150,6 +168,26 @@ while (argc>1 && argv[1][0] == '-') {
           /* nezn\'am\'y parametr */
   }
   argc--; argv++;
+}
+
+@ Vyøe¹íme konverzi kódu zapsaného za parametrem \.{-x} na string |tiestr|.
+@<Pomocné funkce@>=
+unsigned char hexnum(char c) {
+  if (c >= '0' && c <= '9') return c - '0';
+  if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+  if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+  printusage (), exit (BAD_OPTIONS);  
+} 
+void settiestr(char *s) {
+  int i, j, c;
+  i = strlen(s);
+  if ((i > 2*MAXLEN) || i%2 == 1) printusage (), exit (BAD_OPTIONS);
+  tiestrlen = i/2;
+  j = 0;
+  for (i=0; i<tiestrlen; i++) {
+     tiestr[i] = hexnum(s[j++]) << 4;
+     tiestr[i] += hexnum(s[j++]); 
+  }
 }
 
 @* Zpracování souborù.  Parametr |MAXLEN| definuje maximální mo¾nou
@@ -347,6 +385,20 @@ char c;             /* zrovna nacetny znak */
 char buff[MAXBUFF]; /* prechodny buffer */
 int ind;            /* aktualni pozice prechodneho bufferu */
 
+@ Dne 30. 4. 2009 jsem pøidal mo¾nost ètení vstupu, který obsahuje nulové byty.
+Takové nuly se pøepisují do výstupu, ale program si jich nev¹ímá pøi
+procházení patternù. Tím je mo¾no program pou¾ít na soubory kódované
+v UTF16, aèkoli patterny obsahují jen jednobytové ASCII znaky.
+Buffer |buff| mù¾e obsahovat i nulové byty, které je tøeba pøepsat do výstupu.
+Na druhé stranì buffer |buffnz| obsahuje jen nenulové byty, na které se
+nìkdy ptáme pøi pohledu dozadu. Nejdel¹í pohled dozadu je o ètyøi byty.
+Udìlám tedy |buffnz| osmibytový, zaènu jej plnit od |buffnz|[4]
+a kdykoli je buffer zcela zaplnìn, pøesunu horní ètyøi byty na spodní a dále 
+pokraèuji v plnìní bufferu od pozice |buffnz|[4].
+@<Globální deklarace@>=
+char buffnz[8];
+int inz;
+
 @ Nyní definujeme pomocné funkce |setpattern|, |setpi| a |normalpattern|.
 Tyto funkce alokují pamì» pomocí standardní funkce |malloc|. Abychom mohli
 ohlídat pøípadnou chybu pøi alokaci, budeme allokovat pamì» zprostøedkovanì
@@ -514,8 +566,8 @@ static void tie (FILE *input, FILE *output)
   @<Inicializace promìnných pøi startu funkce |tie|@>;
 
   while (!feof(input)) {
-    @<Otevøi nové patterny@>;
     if (ap == 0  && ind > BUFI && c !='\\') @<Vyprázdni buffer@>;
+    @<Otevøi nové patterny@>;  /* 1. 2. 2010: prohozene poradi */
     if (ind >= MAXBUFF) {
       fprintf (stderr, "Operating buffer overflow, is anything wrong?\n");
       exit (BAD_PROGRAM);
@@ -523,8 +575,14 @@ static void tie (FILE *input, FILE *output)
     if ((ic = getc(input)) == EOF)  /* opravil Cejka Rudolf */
       break;
     buff[ind++] = c = ic;
+    if (c == 0) continue;     /* 30. 4. 2009 */
+    if (inz>=8) {
+      for (inz=0; inz<4; inz++) buffnz[inz] = buffnz[inz+4];
+      inz=4;
+    }
+    buffnz[inz++] = c;
     if (c == '\n') numline++, listpatt = normallist;
-    if (c == '%' && mode!=VERBMODE && buff[ind-2] != '\\') listpatt = commentlist;
+    if (c == '%' && mode!=VERBMODE && buffnz[inz-2] != '\\') listpatt = commentlist;
     @<Projdi otevøené patterny@>;
   }
   @<Vyprázdni buffer@>;
@@ -535,7 +593,9 @@ static void tie (FILE *input, FILE *output)
 @ @<Inicializace promìnných pøi ...@>=
 for (k=0; k<MAXPATT; k++) lapi[k] = NULL;
 c = '\n';
-buff[0] = mode = ap = 0;  ind = 1;
+buff[0] = 1; mode = ap = 0;  ind = 1;
+for(inz=0; inz<4; inz++) buffnz[inz] = 0;
+inz = 4;
 numline = 1; numchanges = 0;
 mode = TEXTMODE;
 
@@ -546,11 +606,11 @@ zda tam není symbol \uv{\.{\char92}} (napøíklad na výskyt sekvence
 \.{\char92\char37} je tøeba reagovat jinak, ne¾ na výskyt obyèejného
 procenta). Kdybychm zazaèali od |buff[0]|, v nìkterých situacích
 bychom se ptali, zda |buff[-1]=='\\'|, tj. sahali bychom na neo¹etøené
-místo v pamìti.
+místo v pamìti. Od 30. 4. 2009 tento problém pominul, proto¾e se ptáme dozadu pouze 
+v~|buffnz|, ale vlastnost døíve implementovanou v |buff| jsem ponechal beze zmìny.
 @<Vyprázdni buffer@>=
 {
-  buff[ind] = 0;
-  fputs (&buff[1], output);
+  fwrite (&buff[1], ind-1, 1, output);
   ind = 1;
 }
 
@@ -579,7 +639,7 @@ typu |FOUND| nebo |NOFOUND|. V takových pøípadech ani nezaná¹íme ukazatel
 na pozici do pole |lapi|.
 @<Otevøi nové patterny@>=
 pp = listpatt;
-while (pp != NULL) {
+if (c) while (pp != NULL) {
   switch (m = match (pp->patt)) {
   case FOUND:    (*pp->proc)();   /* spustit proceduru */
   case NOFOUND: break;
@@ -656,15 +716,28 @@ setpi (nochar,    ONE_NOT);
 @ @<Inicializace promìnných pøi ...@>=
 listpatt = normallist = vlnkalist;
 
-@ @<Pomocné funkce@>=
+@ Vlo¾ení vlnky znamená vykonat následující práci: Zapamatovat si znak za skupinou mezer
+(do promìnné |p|). Pokud pøed tímto znakem pøedchází nulový byte, pou¾ijeme ho pozdìji, proto
+si jej ulo¾íme do promìnné |z|. Dále se posuneme v bufferu vlevo pøes v¹echny mezery, tabelátory
+(pøesnìji |blanks|) a pøeskakujeme pøitom v¹echny nulové byty. Index |ind| se zastaví 
+na pøedlo¾ce. Posuneme jej doprava za pøedlo¾ku (++|ind|) a pokud tam je nulový byte a první znak 
+|tiestr| není nulový, posuneme se a¾ za tento nulový byte. Dále vlo¾íme string |tiestr|, 
+neboli vlnku. Nakonec pøipojíme zapamatovaný znak |p|, ov¹em pokud pøed ním byla nula, 
+vlo¾íme ji je¹tì pøed znak |p|.
+@<Pomocné funkce@>=
 static void vlnkain(void)
 {
-  char p;
+  int i;
+  char p, z;
   ind--;
   p = buff[ind--];
-  while (strchr(blanks, buff[ind]) !=NULL) ind--;
-  ind++;
-  buff[ind++] = '~';
+  z = buff[ind];
+  while (!buff[ind] || (strchr(blanks, buff[ind]) !=NULL)) ind--;
+  if (!buff[++ind] && tiestr[0]) ind++; 
+  for (i=0; i<tiestrlen; i++) buff[ind++] = tiestr[i];
+  i = tiestrlen;                     /* nulu pred p vlozime, pokud je z==0 a */
+  if (!tiestr[0]) i--;               /* pocet vlozenych znaku z tiestr */
+  if (!z && (i%2)) buff[ind++] = 0;  /* je sudy */
   buff[ind++] = p;
   numchanges++;
 }
@@ -698,20 +771,24 @@ nebudeme vytváøet nové. Na výstupu bude soubor o jeden øádek krat¹í.
 @<Pomocné funkce@>=
 static void vlnkacr(void)
 {
-  char p;
+  char p, z;
   int i, j;
   ind--;
   p = buff[ind--];
-  while (strchr(blankscr, buff[ind]) !=NULL) ind--;
+  z = buff[ind];
+  while (!buff[ind] || (strchr(blankscr, buff[ind]) !=NULL)) ind--;
   i = ind;  /* misto predlozky, kterou chceme vazat */
   while (i >= 0 && (strchr(blankscr, buff[i]) == NULL)) i--;
   j = i;
-  while (i >= 0 && (strchr(blanks, buff[i]) != NULL)) i--;
+  while (i >= 0 && (!buff[ind] || (strchr(blanks, buff[i]) != NULL))) i--;
   if (i >= 0 && buff[i] == '\n') j = -1;
   if (j >= 0)  buff[j] = '\n';
   else numline--;
-  ind++;
-  buff[ind++] = '~';
+  if (!buff[++ind] && tiestr[0]) ind++;
+  for (i=0; i<tiestrlen; i++) buff[ind++] = tiestr[i];
+  i = tiestrlen;
+  if (!tiestr[0]) i--;
+  if (!z && (i%2)) buff[ind++] = 0;
   buff[ind++] = p;
   numchanges++;
 }
@@ -757,7 +834,7 @@ normalpattern (tielock, "\\LaTeX");
 setpi (blankscr, ONE);
 
 @ Procedura |tielock| obsahuje neèistý trik. Pøi provádìní procedury je
-právì naèten znak z |blankscr| a je ulo¾en do buff. Testy na otevírání
+právì naèten znak z |blankscr| a je ulo¾en do |buff|. Testy na otevírání
 nových patternù pro tento znak teprve budou následovat a testují se na
 hodnotu promìnné |c|. Staèí tedy zmìnit hodnotu |c| a vlnkovací patterny se
 neotevøou.
@@ -816,7 +893,7 @@ display módu. V takovém pøípadì také nic nedìláme.
 @<Pomocné funkce@>=
 static void onedollar (void)
 {
-  if (buff[ind-3]=='\\' || (buff[ind-3]=='$' && buff[ind-4]!='\\')) return;
+  if (buffnz[inz-3]=='\\' || (buffnz[inz-3]=='$' && buffnz[inz-4]!='\\')) return;
   if (mode==DISPLAYMODE) printwarning ();
   else {
     if (mode==TEXTMODE) mathin();
@@ -871,7 +948,7 @@ static void displayout (void)
 }
 static void twodollars (void)
 {
-  if (buff[ind-3]=='\\') return;
+  if (buffnz[inz-3]=='\\') return;
   if (mode==DISPLAYMODE) displayout ();
   else displayin ();
 }
@@ -939,7 +1016,7 @@ static void verbin (void)
   case 'm': i = 2; break;
   case '<': ;
   case 'd': i = 3; 
-       if (buff[ind-3]=='@@') return;  /* dvojity @@ ignorovat */ 
+       if (buffnz[inz-3]=='@@') return;  /* dvojity @@ ignorovat */ 
        break;
   }
   listpatt = normallist = verboutlist[i]; 
@@ -952,7 +1029,7 @@ static void verbin (void)
 static void verbout (void)
 {
   if (mode!=VERBMODE) return;
-  if (web && buff[ind-2] == '@@' && buff[ind-3] == '@@') return;
+  if (web && buffnz[inz-2] == '@@' && buffnz[inz-3] == '@@') return;
   mode = prevmode;
   normallist->next = prevlist;
   switch (mode) {

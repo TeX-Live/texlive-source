@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/vlna/
 ##
-## Copyright (C) 2008, 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2008-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -15,7 +15,7 @@ CSMAC = csmac.tex
 CWEB_TEX = vlna.tex vlna.idx vlna.scn
 CWEB_DVI = vlna.dvi
 
-DOCS = README README.en vlna.txt
+DOCS = README README.en vlna.txt vlna-cz.man
 
 EXTRA_DIST = $(CWEB_SRC) $(CSMAC) $(CWEB_TEX) $(CWEB_DVI) $(DOCS)
 

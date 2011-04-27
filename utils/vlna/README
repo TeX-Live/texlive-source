@@ -1,5 +1,5 @@
 
-VLNA v1.2
+VLNA v1.3
 =========
 
 Program vlna pøidává vlnky (místo pùvodních mezer) za neslabièné pøedlo¾ky
@@ -59,8 +59,15 @@ Dìkuji panu Rudolfu Èejkovi za vytvoøení Makefile a manuálové stranky
 k programu. Rovnì¾ mu dìkuji za odstranìní drobných chyb programu, které
 se vyskytly ve verzi 1.0.
 
-28. 2. 1995       Petr Ol¹ák
+Dìkuji pánùm Peteru Breitenlohnerovi a Zdeòku Wagnerovi za úpravu
+nástojù k sestavení programu a za dal¹í dokumentaci, co¾ pomohlo zaøadit
+program do TexLive.
 
+18. 7. 2008       Petr Ol¹ák
+
+
+verze 1.3 (18. 7. 2008):
+          viz Changelog
 verze 1.2 (20. 5. 2002): 
           oprava chyby "v<space><cr>lese" -> "v~~lese"
           a pøidání patternu pro "\uv{v lese}" -> "\uv{v~lese}".
