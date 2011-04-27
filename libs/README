@@ -11,29 +11,42 @@ See also comments in ../texk/README.
 
 freetype 1.5 - ?
 
-freetype2 2.4.4 - http://savannah.nongnu.org/download/freetype/
+freetype2 2.4.4 - checked 25apr11
+  http://savannah.nongnu.org/download/freetype/
 
-gd 2.0.35 - http://www.libgd.org/releases/
+gd 2.0.35 - unchecked 25apr11, site down
+  http://www.libgd.org/releases/
+  http://www.boutell.com/gd/
+  https://bitbucket.org/pierrejoye/gd-libgd/overview
 
-graphite 2.3.1 - the directory silgraphite-2.3.1/engine/ from
-  http://sourceforge.net/projects/silgraphite/
+graphite 2.3.1 - checked 25apr11
+  the directory silgraphite-2.3.1/engine/ from
+  http://sourceforge.net/projects/silgraphite/files/silgraphite/
 
 icu 4.6 - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
-libpng 1.5.2 - http://www.libpng.org/ - used by many
+libpng 1.5.2 - checked 25apr11
+  http://www.libpng.org/ - used by many
+  http://www.libpng.org/pub/png/pngcode.html
 
 obsdcompat - used by pdftex and luatex
 
 poppler 0.12.4 - http://poppler.freedesktop.org/ - used by luatex
 
-t1lib 5.1.2 - ftp://sunsite.unc.edu/pub/Linux/libs/graphics/
+t1lib 5.1.2 - checked 25apr11
+  (apparently unmaintained)
+  ftp://sunsite.unc.edu/pub/Linux/libs/graphics/
 
-teckit 2.5.1 - http://scripts.sil.org/svn-view/teckit/
+teckit 2.5.1 - checked 25apr11
+  http://scripts.sil.org/svn-view/teckit/
 
 xpdf 3.02pl4 - http://www.foolabs.com/xpdf/
   with modifications for pdftex and xetex
 
-zlib 1.2.5 - http://www.zlib.net/ - used by many
+zlib 1.2.5 - checked 25apr11
+  http://www.zlib.net/ - used by many
+  http://www.libpng.org/pub/png/pngcode.html
 
-zziplib 0.13.60 - http://zziplib.sourceforge.net/ - used by luatex
+zziplib 0.13.60 - checked 25apr11
+  http://zziplib.sourceforge.net/ - used by luatex

@@ -9,40 +9,35 @@ asymptote 2.02 - checked 12jul10
   see http://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy
 
-chktex 1.6.4 - checked 3may10
+chktex 1.6.4 - checked 25apr11
   http://baruch.ev-en.org/proj/chktex/chktex-1.6.4.tar.gz
 
-dialog 1.1-20110302 - checked 2mar11
+dialog 1.1-20110302 - checked 25apr11
   ftp://invisible-island.net/dialog/dialog.tar.gz
 
-ps2eps 1.68 - checked 15dec10
+ps2eps 1.68 - checked 25apr11
   http://tm.uka.de/~bless/ps2eps
 
-psutils p17 - checked 25nov06
+psutils p17 - checked 25apr11
   http://www.tardis.ed.ac.uk/~ajcd/psutils/index.html
-  -> http://www.ctan.org/support/psutils/
+  -> http://mirror.ctan.org/support/psutils/
   https://savannah.nongnu.org/bugs/?30782
   -> http://www.connochaetos.org/misc/psutils-libre-1.17.tar.gz
   (Fabrice made small modifications for Windows, it seems)
 
-t1utils 1.36 - checked 7jun10
+t1utils 1.36 - checked 25apr11
   http://www.lcdf.org/type/
 
-tpic2pdftex 1.97 - checked 9may10
-  http://www.ctan.org/graphics/tpic2pdftex
+tpic2pdftex 1.97 - checked 25apr11
+  http://mirror.ctan.org/graphics/tpic2pdftex/
 
-vlna 1.2 - checked 26jun08
-  ftp://math.feld.cvut.cz/pub/olsak/vlna
+vlna 1.2 - checked 25apr11, need 1.5
+  ftp://math.feld.cvut.cz/pub/olsak/vlna/
 
-xindy 2.4 - checked 11may10
-  http://www.ctan.org/indexing/xindy/
+xindy - see just below
 
-After building clisp as described below, run the TL
-  Build --enable-xindy CLISP=$clisp_builddir/clisp
-to include xindy in the build.  It is disabled by default.
-
-xpdfopen 0.80 - checked 5may10
-  http://mirror.ctan.org/support/xpdfopen.zip
+xpdfopen 0.80 - checked 25apr11
+  http://mirror.ctan.org/support/xpdfopen/
 
 
 xindy 2.4 - checked 13may10

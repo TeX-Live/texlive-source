@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006, 2007, 2008, 2009, 2010 TeX Users Group.
+Copyright 2006, 2007, 2008, 2009, 2010, 2011 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -30,14 +30,14 @@ bibtexu - ?
 cjkutils 4.8.2 - checked 18dec10
   http://cjk.ffii.org/cjk-4.8.2.tar.gz
 
-detex 2.8 - checked 21may10
+detex 2.8 - checked 25apr11
   http://www.cs.purdue.edu/homes/trinkle/detex/
 
 devnag - from devnag package installed in texmf-dist.
 
 dtl - ?
 
-dvi2tty 5.3.4 - checked 13nov10
+dvi2tty 5.3.4 - checked 25apr11
   http://www.mesa.nl/pub/dvi2tty/
   ftp://ftp.mesa.nl/pub/dvi2tty/
 
@@ -45,30 +45,30 @@ dvidvi - ?
 
 dviljk - maintained here, by Joachim Schrod
 
-dvipdfmx - checked 9mar11
+dvipdfmx - checked 25apr11, need 0311
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/
-  http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20110309.tar.gz
+  http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20110311.tar.gz
   dvipdfmx@project.ktug.or.kr (ChoF, Matthias, Hirata)
 
-dvipng 1.14 - checked 15dec10
-  http://www.ctan.org/tex-archive/dviware/dvipng/ (but maybe stale)
+dvipng 1.14 - checked 25apr11
+  http://mirror.ctan.org/dviware/dvipng/ (but maybe stale)
   http://savannah.nongnu.org/files/?group=dvipng
 
 dvipos - ?
 
 dvipsk - maintained here by Tom Rokicki, Karl Berry, Akira Kakuto, ...
 
-dvisvgm - checked 4mar11
-  http://downloads.sourceforge.net/dvisvgm/dvisvgm-1.0.5.tar.gz
+dvisvgm - checked 25apr11, need 1.06
+  http://sourceforge.net/projects/dvisvgm/files/dvisvgm/
 
 gsftopk - from Paul Vojta's xdvi?
 
-kpathsea - maintained here by Karl Berry, Akira Kakuto, ...
+kpathsea - maintained here by Karl Berry, et al.
 
-lacheck - checked 10dec10
+lacheck - checked 25apr11
   http://mirror.ctan.org/support/lacheck/lacheck-1.26.tar.gz
 
-lcdf-typetools - checked 9mar11
+lcdf-typetools 2.88 - checked 25apr11
   http://www.lcdf.org/type/
   http://www.lcdf.org/type/lcdf-typetools-2.88.tar.bz2
 
@@ -78,8 +78,8 @@ ps2pkm - ?
 
 seetexk - ?
 
-tex4htk 
-  http://www.cse.ohio-state.edu/~gurari/TeX4ht/
+tex4htk - checked 25apr11
+  http://tug.org/tex4ht/
 
 texlive - maintained here, scripts
 
@@ -87,13 +87,13 @@ ttf2pk - maintained here, by us
 
 ttfdump - ?
 
-web2c - maintained here by Karl Berry et al. - core web2c, plain tex, omega.
+web2c - maintained here by Karl Berry et al. - core web2c, plain tex, etc.
         The TeX variant dirs (pdftexdir, xetexdir, etc.)
         updated here by their respective maintainers.
 
 xdv2pdf - Jonathan Kew
 
-xdvik 22.84.16 - checked 18may09
+xdvik 22.84.16 - checked 25apr11
   ftp://tug.org/tex/
 
 xdvipdfmx - Jonathan Kew
