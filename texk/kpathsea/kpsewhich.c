@@ -139,11 +139,47 @@ find_dpi (string s)
 
 
 
+/* Return true if FTRY (the candidate suffix) matches NAME.  If
+   IS_FILENAME is true, the check is simply that FTRY is a suffix of
+   NAME.  If false (that is, NAME is a format), then FTRY and NAME must
+   be entirely equal.  */
+
+static boolean
+try_suffix (boolean is_filename, string name, unsigned name_len,
+            const_string ftry)
+{
+  unsigned try_len;
+  
+  if (!ftry || ! *ftry) {
+    return false;
+  }
+  
+  try_len = strlen (ftry);
+  if (try_len > name_len) {
+    /* Candidate is longer than what we're looking for.  */
+    return false;
+  }
+  if (!is_filename && try_len < name_len) {
+    /* We're doing format names, not file names, and candidate is
+       shorter than what we're looking for.  E.g., do not find `lua'
+       when looking for `clua'.  */
+    return false;
+  }
+  
+  if (FILESTRCASEEQ (name + name_len - try_len, ftry)) {
+    return true;
+  }
+  
+  return false;
+}
+
+
+
 /* Use the file type from -format if that was previously determined
    (i.e., the user_format global variable), else guess dynamically from
    NAME.  Return kpse_last_format if undeterminable.  This function is
-   also used to parse the -format string, a case which we distinguish by
-   setting is_filename to false.
+   also used to parse the -format string, a case we distinguish via
+   is_filename being false.
 
    A few filenames have been hard-coded for format types that
    differ from what would be inferred from their extensions. */
@@ -186,13 +222,6 @@ find_format (kpathsea kpse, string name, boolean is_filename)
       int f = 0;  /* kpse_file_format_type */
       unsigned name_len = strlen (name);
 
-/* Have to rely on `try_len' being declared here, since we can't assume
-   GNU C and statement expressions.  */
-#define TRY_SUFFIX(ftry) (\
-  try_len = (ftry) ? strlen (ftry) : 0, \
-  (ftry) && try_len <= name_len \
-     && FILESTRCASEEQ (ftry, name + name_len - try_len))
-
       while (f != kpse_last_format) {
         unsigned try_len;
         const_string *ext;
@@ -202,8 +231,11 @@ find_format (kpathsea kpse, string name, boolean is_filename)
         if (!kpse->format_info[f].type)
           kpathsea_init_format (kpse, (kpse_file_format_type) f);
 
+/* Just to abbreviate this lengthy call.  */
+#define TRY_SUFFIX(ftry) try_suffix (is_filename, name, name_len, (ftry))
+
         if (!is_filename) {
-          /* Allow the long name, but only in the -format option.  We don't
+          /* Allow the long name, but only in the format options.  We don't
              want a filename confused with a format name.  */
           ftry = kpse->format_info[f].type;
           found = TRY_SUFFIX (ftry);

@@ -1,3 +1,10 @@
+2011-04-28  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (try_suffix): new fn, checking entire string for
+	format names.
+	(TRY_SUFFIX): change macro to just call the fn.
+	Report from Philipp Stephani, tex-live mail 25 Apr 2011 16:38:47.
+
 2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Update version number 6.0.1dev => 6.0.1.
