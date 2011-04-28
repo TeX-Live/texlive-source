@@ -4,6 +4,11 @@
 	format names.
 	(TRY_SUFFIX): change macro to just call the fn.
 	Report from Philipp Stephani, tex-live mail 25 Apr 2011 16:38:47.
+	
+	* NEWS,
+	* kpsewhich.c (read_command_line),
+	* doc/kpathsea.texi,
+	* texmf.cnf: 2011.
 
 2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

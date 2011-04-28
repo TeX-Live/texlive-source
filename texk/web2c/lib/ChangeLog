@@ -1,3 +1,7 @@
+2011-04-28  Karl Berry  <karl@tug.org>
+
+	* printversion.c (printversionandexit): 2011
+
 2011-04-27  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (initscreen): do not mention mfw, which is no more.
