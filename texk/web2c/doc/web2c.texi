@@ -382,13 +382,7 @@ to get all available output.
 @cindex output directory, specifying
 Specify the directory @var{dirname} to which output files are written.
 Also look for input files in @var{dirname} first, before looking along
-the normal search path.  This is useful when you are in some read-only
-distribution directory, perhaps on a CD-ROM, and want to @TeX{} some
-documentation, for example.
-@c FIXME: caveat to -output-directory
-Note that for input files the ``search'' in @var{dirname} does
-not use the full generality of the search mechanism.  This means that
-some files are not found there even though you might expect them to be.
+the normal search path.  @xref{Output file location}.
 
 @item -parse-first-line
 @opindex -parse-first-line
@@ -416,6 +410,14 @@ name.  @xref{Memory dumps}.
 Enable the filename recorder.  This makes the program save a list of the
 opened files into a file with (by default) extension @samp{.fls}.  For
 Aleph, this option is always on, and the file has extension @samp{.ofl}.
+
+Ordinarily, the @samp{.fls} file is written to the same location as
+the @samp{.log} file, for example, respecting
+@option{-output-directory} if it is given (@pxref{Output file
+location}).  However, if @TeX{} processing is done on the command line
+(or in response to the @samp{**} prompt), the @samp{.fls} might be
+written to the current directory, or include an integer (the current
+pid), as in @file{texput1234.fls}.
 
 @item -translate-file=@var{tcxfile}
 @opindex -translate-file=@var{tcxfile}
@@ -499,15 +501,17 @@ written in the specified directory instead.  @xref{Common options}.
 @cindex readonly directory, running @TeX{} in
 If the current directory is not writable, and @samp{-output-directory}
 is not specified, the main programs (@TeX{}, Metafont, MetaPost, and
-Bib@TeX{}) make an exception: if the config file value
-@code{TEXMFOUTPUT} is set (it is not by default), output files are
-written to the directory specified. 
+Bib@TeX{}) make an exception: if the config file or environment
+variable value @code{TEXMFOUTPUT} is set (it is not by default),
+output files are written to the directory specified.
 
 @vindex TEXMFOUTPUT@r{, used for reading}
 @code{TEXMFOUTPUT} is also checked for input files, as @TeX{} often
 generates files that need to be subsequently read; for input, no
-suffixes (such as @samp{.tex}) are added by default, the input name is
+suffixes (such as @samp{.tex}) are added by default and no exhaustive
+path searching is done, the input name is
 simply checked as given.
+
 
 @node Three programs
 @section Three programs: Metafont, MetaPost, and @TeX{}

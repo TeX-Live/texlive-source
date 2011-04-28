@@ -1,3 +1,9 @@
+2011-04-28  Karl Berry  <karl@tug.org>
+
+	* doc/web2c.texi (Common options): caveats about the -recorder
+	.fls file name not following the .log in unusual usage.
+	Philipp Stephani, 21 Sep 2010 16:28:58, and my reply 28apr11.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.
