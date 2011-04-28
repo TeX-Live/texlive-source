@@ -1,9 +1,9 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.2"
+VERSION = "0.3"
 
 --[[
-     musixtex.lua: runs [pdf]etex -> musixflx -> [pdfe]tex [ -> dvips -> ps2pdf ]
+     musixtex.lua: processes a MusiXTeX file and then deletes intermediate files
 
      (c) Copyright 2011 Bob Tennent rdt@cs.queensu.ca
 
@@ -27,6 +27,9 @@ VERSION = "0.2"
 
   ChangeLog:
 
+     version 0.3  2011-04-25 RDT
+       Add -d (dvipdfm)  and -s (stop at dvi) options.
+
      version 0.2  2011-04-21 RDT
        Allow basename.tex as filename.
        Add -p option for pdfetex processing.
@@ -34,14 +37,13 @@ VERSION = "0.2"
 
 --]]
 
-
-tex = "etex"  
-musixflx = "musixflx"
-dvips = "dvips -q"
-ps2pdf = "ps2pdf"
-
 function usage()
-  print("Usage:  [texlua] musixtex.lua [options] basename[.tex]")
+  print("Usage:  [texlua] musixtex.lua [option] [basename[.tex]]")
+  print("options: -v  version")
+  print("         -h  help")
+  print("         -p  pdfetex")
+  print("         -d  dvipdfm")
+  print("         -s  stop at dvi")
 end
 
 function whoami ()
@@ -49,8 +51,9 @@ function whoami ()
 end
 
 if #arg == 0 then
+  whoami()
   usage()
-  os.exit(1)
+  os.exit(0)
 end
 
 narg = 1
@@ -63,9 +66,19 @@ elseif arg[narg] == "-h" then
   os.exit(0)
 end
 
-while narg ~= #arg do
+-- defaults:
+tex = "etex"  
+musixflx = "musixflx"
+dvi = "dvips -q"
+ps2pdf = "ps2pdf"
+
+if narg < #arg then
   if arg[narg] == "-p" then
-    tex = "pdfetex"
+    tex = "pdfetex"; dvi = ""; ps2pdf = ""
+  elseif arg[narg] == "-d" then
+    tex = "etex"; dvi = "dvipdfm"; ps2pdf = ""
+  elseif arg[narg] == "-s" then
+    tex = "etex"; dvi = ""; ps2pdf = ""
   else
     print("Argument \"".. arg[narg] .. "\" ignored.")
   end
@@ -94,21 +107,32 @@ end
 whoami()
 print("Processing ".. basename .. ".tex")
 os.remove( basename .. ".mx2" )
-if 
-  (os.execute(tex .. " " .. basename) == 0) 
-  and (os.execute(musixflx .. " " .. basename) == 0) 
-  and (os.execute(tex .. " " .. basename) == 0) 
-  and (tex == "pdfetex" or (os.execute(dvips .. " -o " .. basename ..".ps " .. basename) == 0) )
-  and (tex == "pdfetex" or (os.execute(ps2pdf .. " " .. basename .. ".ps " .. basename .. ".pdf") == 0) )
+if (os.execute(tex .. " " .. basename) == 0) and
+   (os.execute(musixflx .. " " .. basename) == 0) and
+   (os.execute(tex .. " " .. basename) == 0) and
+   (dvi == "" or  (os.execute(dvi .. " " .. basename) == 0)) and
+   (ps2pdf == "" or (os.execute(ps2pdf .. " " .. basename .. ".ps") == 0) )
 then
-  print(basename .. ".pdf generated.")
+  if dvi ~= "" then
+    print(basename .. ".pdf generated.")
+  end
   exit_code = 0
 else
-  print("musixtex processing fails.")
+  print("Musixtex processing fails.")
+--[[ uncomment for debugging
+  print("tex = ", tex)
+  print("dvi = ", dvi)
+  print("ps2pdf = ", ps2pdf)
+--]]
   exit_code = 3
 end
+
+-- clean-up:
 os.remove( basename .. ".mx1" )
 os.remove( basename .. ".mx2" )
-os.remove( basename .. ".dvi" )
+if dvi ~= "" then 
+  os.remove( basename .. ".dvi" )
+end
 os.remove( basename .. ".ps" )
+
 os.exit( exit_code )
