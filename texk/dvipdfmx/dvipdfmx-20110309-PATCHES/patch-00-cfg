@@ -1,0 +1,18 @@
+--- data/dvipdfmx.cfg	2011-03-07 18:11:26.000000000 +0100
++++ /home/texlive/trunk/Master/texmf/dvipdfmx/dvipdfmx.cfg	2011-04-29 00:25:40.000000000 +0200
+@@ -139,3 +139,8 @@
+ %%
+-D  "ps2pdf -dCompatibilityLevel=%v -sPAPERSIZE=a0 -dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode -dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode '%i' '%o'"
++%% We use the rungs wrapper instead of ps2pdf, becuse we cannot use the
++%% -dSAFER which ps2pdf does: when used with pstricks,
++%% /usr/local/texlive/*/texmf-dist/dvips/pstricks/pstricks.pro (for
++%% example) needs to be accessed.
++%%
++D  "rungs -q -dNOPAUSE -dBATCH -sPAPERSIZE=a0 -sDEVICE=pdfwrite -dCompatibilityLevel=%v -dAutoFilterGrayImages=false -dGrayImageFilter=/FlateEncode -dAutoFilterColorImages=false -dColorImageFilter=/FlateEncode -sOutputFile='%o' '%i' -c quit"
+ 
+@@ -144,5 +149,2 @@
+ 
+-%% Adobe Acrobat Distiller:
+-%D  "/usr/local/bin/distill -quiet -pairs '%i' '%o'"
+-
+ %% Batik + Fop (SVG-to-PDF):

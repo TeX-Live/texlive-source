@@ -1,6 +1,11 @@
 Changes applied to the dvipdfmx-20110309 tree as obtained from:
 	http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20110309.tar.gz
 
+patch-00-cfg changes dvipdfmx.cfg to use rungs instead of the default
+ps2pdf -dSAFER, to avoid complete pstricks failure with xetex.  There is
+no need to apply this in the source tree, but it must be applied in the
+runtime (Master/texmf/dvipdfmx).
+
 Removed:
 	NEWS
 	compile
