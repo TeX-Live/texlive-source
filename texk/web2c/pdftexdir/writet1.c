@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2007, 2009-2010 Han The Thanh <thanh@pdftex.org>
+Copyright 1996-2011 Han The Thanh <thanh@pdftex.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2004-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright 2004-2011 Han The Thanh, <thanh@pdftex.org>
 
 This file is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by Free
@@ -12,9 +12,7 @@ FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
 for more details.
 
 You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
-Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "avl.h"

@@ -1,6 +1,10 @@
 /* Produced by texiweb from libavl.w. */
 
 /* libavl - library for manipulation of binary trees.
+   Copyright (C) 2004-2011 Han The Thanh, <thanh@pdftex.org>
+   Modified for pdfTeX, contact pdfTeX maintainers with any problems or
+   questions, not the original authors.
+   
    Copyright (C) 1998-2002, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or
@@ -14,13 +18,9 @@
    See the GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-   02111-1307, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-   The author may be contacted at <blp@gnu.org> on the Internet, or
-   write to Ben Pfaff, Stanford University, Computer Science Dept., 353
-   Serra Mall, Stanford CA 94305, USA.
+   Original author: Ben Pfaff.
 */
 
 #include <assert.h>

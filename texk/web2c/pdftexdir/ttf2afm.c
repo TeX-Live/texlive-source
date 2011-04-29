@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996-2007 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -14,8 +14,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
-Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /*
@@ -1046,7 +1045,7 @@ int main(int argc, char **argv)
         case 'v':
             fprintf(stderr,
                     "ttf2afm version " VERSION "\n"
-                    "Copyright (C) 1997-2005 Han The Thanh.\n"
+                    "Copyright (C) 1997-2011 Han The Thanh.\n"
                     "There is NO warranty.  Redistribution of this software is\n"
                     "covered by the terms of both the pdfTeX copyright and\n"
                     "the GNU General Public License.\n"

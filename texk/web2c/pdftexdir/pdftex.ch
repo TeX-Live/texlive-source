@@ -1,5 +1,5 @@
 %
-% Copyright (c) 1996-2008 Han The Thanh, <thanh@pdftex.org>
+% Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
 %
 % This file is part of pdfTeX.
 %
@@ -14,8 +14,7 @@
 % GNU General Public License for more details.
 %
 % You should have received a copy of the GNU General Public License along with
-% pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
-% Street, Fifth Floor, Boston, MA 02110-1301 USA.
+% this program.  If not, see <http://www.gnu.org/licenses/>.
 %
 @x [0.0] l.83 - WEAVE: we want the whole file
   \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}
