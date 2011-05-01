@@ -112,6 +112,5 @@ GNU Make 3.81
   - compiling of texk/web2c/pdftexdir/writezip.c is broken and triggers a 
     compiler error with the above gcc. Disabling optimization -O2 using
     Build --debug ... resolved this problem.
-  - compilation of clisp needs hand adding -lavcall -lcallback -ltrampoline 
-    -lvacall after the -lsigsegv
+  - compilation of clisp needs --disable-mmap
   - asy compilation with --disable-gsl && make
