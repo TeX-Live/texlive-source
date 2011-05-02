@@ -139,14 +139,14 @@ fprintf(stderr,
 /*:6*//*10:*/
 #line 174 "./vlna.w"
 
-unsigned char hexnum(char c){
+static unsigned char hexnum(char c){
 if(c>='0'&&c<='9')return c-'0';
 if(c>='A'&&c<='F')return c-'A'+10;
 if(c>='a'&&c<='f')return c-'a'+10;
 printusage(),exit(BAD_OPTIONS);
 }
-void settiestr(char*s){
-int i,j,c;
+static void settiestr(char*s){
+int i,j;
 i= strlen(s);
 if((i> 2*MAXLEN)||i%2==1)printusage(),exit(BAD_OPTIONS);
 tiestrlen= i/2;
