@@ -1,6 +1,13 @@
+2011-05-02  Karl Berry  <karl@tug.org>
+
+	* openclose.c (recorder_change_filename): take output_directory
+	into account.  Report/patch from 
+	Philipp Stephani, 30 Apr 2011 16:11:53,
+	http://tracker.luatex.org/view.php?id=615
+
 2011-04-28  Karl Berry  <karl@tug.org>
 
-	* printversion.c (printversionandexit): 2011
+	* printversion.c (printversionandexit): it is 2011.
 
 2011-04-27  Karl Berry  <karl@tug.org>
 
