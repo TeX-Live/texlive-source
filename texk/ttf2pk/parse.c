@@ -126,7 +126,7 @@ readencoding(char **enc, Font *fnt, Boolean ignoreligkern)
   FILE *enc_file;
   char *p, *q, c;
   char *buffer;
-  char numbuf[9];
+  char numbuf[11];
   size_t offset;
   int i;
   long l;

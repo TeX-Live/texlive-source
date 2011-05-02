@@ -133,7 +133,7 @@ static int setup_dir (struct emtex_dir *dst, char *path,
 }
 
 
-/*static */int setup_list (struct emtex_dir *dst, char *path,
+int setup_list (struct emtex_dir *dst, char *path,
 		       const char *list, unsigned flags)
 {
   const char *end;

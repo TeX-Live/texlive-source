@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ttf2pk/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -11,7 +11,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = ttf2pk ttf2tfm
 
-ttf2pk_SOURCES = \
+common_sources = \
 	errormsg.c \
 	errormsg.h \
 	filesrch.c \
@@ -22,43 +22,31 @@ ttf2pk_SOURCES = \
 	newobj.h \
 	parse.c \
 	parse.h \
-	pklib.c \
-	pklib.h \
 	subfont.c \
 	subfont.h \
 	texenc.c \
 	texenc.h \
-	ttf2pk.c \
 	ttfenc.c \
-	ttfenc.h \
+	ttfenc.h
+
+ttf2pk_SOURCES = \
+	$(common_sources) \
+	pklib.c \
+	pklib.h \
+	ttf2pk.c \
 	ttflib.c \
 	ttflib.h
 
 ttf2tfm_SOURCES = \
+	$(common_sources) \
 	case.c \
 	case.h \
-	errormsg.c \
-	errormsg.h \
-	filesrch.c \
-	filesrch.h \
-	ligkern.c \
-	ligkern.h \
-	newobj.c \
-	newobj.h \
-	parse.c \
-	parse.h \
-	subfont.c \
-	subfont.h \
-	texenc.c \
-	texenc.h \
 	tfmaux.c \
 	tfmaux.h \
 	ttf2tfm.c \
 	ttf2tfm.h \
 	ttfaux.c \
 	ttfaux.h \
-	ttfenc.c \
-	ttfenc.h \
 	vplaux.c \
 	vplaux.h
 
@@ -79,10 +67,23 @@ LDADD = $(KPATHSEA_LIBS) $(FREETYPE_LIBS)
 
 dist_man1_MANS = ttf2pk.1 ttf2tfm.1
 
+EXTRA_DIST = data
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
+## Tests.
+##
+TESTS = tests/ttf2pk.test
+EXTRA_DIST += $(TESTS)
+## tests/ttf2pk.test
+EXTRA_DIST += tests/GenR102.ttf tests/gentium-ec.enc tests/ttf2pk.cfg tests/ttfonts.map
+DISTCLEANFILES += GenR-ec.vpl GenR102-ec.*
+
 ## Not used
 ##
-EXTRA_DIST = \
-	data \
+EXTRA_DIST += \
 	BUGS \
 	MakeSub.in \
 	Makefile.dm \
@@ -93,8 +94,4 @@ EXTRA_DIST = \
 	emtexdir.c \
 	emtexdir.h \
 	ttf2pk.doc
-
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
 

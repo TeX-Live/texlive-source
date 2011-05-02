@@ -41,6 +41,9 @@ struct emtex_dir
 
 extern void (*emtex_dir_find_callback)(const char *name, int ok);
 
+extern int setup_list(struct emtex_dir *dst, char *path,
+                      const char *list, unsigned flags);
+
 int emtex_dir_setup (struct emtex_dir *ed, const char *env, const char *dir,
     unsigned flags);
 

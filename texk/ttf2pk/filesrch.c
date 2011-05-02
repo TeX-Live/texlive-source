@@ -123,9 +123,6 @@ TeX_search_ttf_file(char **name)
 #include "emtexdir.h"
 #include "errormsg.h"
 
-extern int setup_list(struct emtex_dir *dst, char *path,
-                      const char *list, unsigned flags);
-
 char emtex_version_string[] = "emTeXdir";
 
 struct emtex_dir tfm_path,

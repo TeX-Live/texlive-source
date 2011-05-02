@@ -1,3 +1,24 @@
+2011-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* parse.c, ttfenc.c: Bug fix. Increase buffer size for increased
+	code/glyph range.
+
+2011-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ttf2pk.test (new): Shell script for a test case.
+	* tests/GenR102.ttf, tests/gentium-ec.enc, tests/ttf2pk.cfg,
+	tests/ttfonts.map (new}: Test input.
+	* Makefile.am: Adapted.
+
+2011-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* errormsg.c, ttfaux.c: Move 'extern progname' from here ...
+	* errormsg.h: ... to here and make it const.
+	* ttf2pk.c, ttf2tfm.c: Define 'const char *progname'.
+
+	* filesrch.c: Move 'extern setup_list' from here ...
+	* emtexdir..h: ... to here.
+
 2009-11-27  Karl Berry  <karl@tug.org>
 
 	* ttf2pk.c (USAGE): mention email address, update copyrights.

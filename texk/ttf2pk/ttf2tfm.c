@@ -43,7 +43,7 @@
 
 
 char ident[] = "ttf2tfm version 1.5";
-char progname[] = "ttf2tfm";            /* for error/warning messages */
+const char *progname = "ttf2tfm";            /* for error/warning messages */
 
 /* command line options */
 

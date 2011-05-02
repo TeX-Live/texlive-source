@@ -1053,7 +1053,7 @@ code_to_adobename(long code)
 
   if (current_encoding_scheme == encFontSpecific)
   {
-    p = (char *)mymalloc(9);
+    p = (char *)mymalloc(11);
     sprintf(p, ".%c0x%lx", (code >= 0x1000000) ? 'g' : 'c',
                            (code & 0xFFFFFF));
     return p;
@@ -1070,7 +1070,7 @@ code_to_adobename(long code)
       return current_table[n].adobename;
   }
 
-  p = (char *)mymalloc(9);
+  p = (char *)mymalloc(11);
   sprintf(p, ".%c0x%lx", (code >= 0x1000000) ? 'g' : 'c',
                          (code & 0xFFFFFF));
   return p;    

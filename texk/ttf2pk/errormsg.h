@@ -31,6 +31,8 @@
 #endif
 
 
+extern const char *progname;         /* the origin of the error/warning message */
+
 void oops(const char *message,
           ...);
 void boops(const char *buffer,

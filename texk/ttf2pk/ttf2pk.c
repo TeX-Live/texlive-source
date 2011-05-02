@@ -33,7 +33,7 @@
 
 
 char ident[] = "ttf2pk version 1.5";
-char progname[] = "ttf2pk";             /* for error/warning messages */
+const char *progname = "ttf2pk";             /* for error/warning messages */
 
 static const char *cfg_filename = "ttf2pk.cfg";
 char *mapfiles;

@@ -20,9 +20,6 @@
 #endif
 
 
-extern char progname[];         /* the origin of the error/warning message */
-
-
 /*
  *   Print error message and quit.
  */

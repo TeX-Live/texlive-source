@@ -44,8 +44,6 @@
 #define FEATURE_vert MAKE_TT_TAG('v', 'e', 'r', 't')
 
 
-extern char progname[];
-
 char *real_ttfname;
 
 TT_Engine   engine;
