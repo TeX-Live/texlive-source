@@ -1,3 +1,7 @@
+2011-05-02  Akira Kakuto <kakuto@fuk.kindai.ac.jp>  <peb@mppmu.mpg.de>
+
+	* pdftex.web: Append eTeX_version_string to pdfTeX_banner.
+
 2011-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid "deprecated conversion from string constant to 'char*'"
