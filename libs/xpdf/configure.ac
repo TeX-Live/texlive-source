@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([xpdf_version], [3.02])[]dnl using unmodified xpdf-3.02 (pl2) source tree
+m4_define([xpdf_version], [3.02])[]dnl using unmodified xpdf source tree
 AC_INIT([xpdf for TeX Live], xpdf_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xpdf-]xpdf_version[/xpdf/Array.cc])
@@ -15,6 +15,16 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 AM_INIT_AUTOMAKE([foreign no-define])
 AM_MAINTAINER_MODE
+
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_RANLIB
+AC_PROG_LN_S
+
+KPSE_COMPILER_WARNINGS
+
+test "x$GXX" = xyes && NO_WARN_CXXFLAGS='-Wno-write-strings'
+AC_SUBST([NO_WARN_CXXFLAGS])  
 
 dnl ##### Optional features.
 AC_ARG_ENABLE([a4-paper],
@@ -40,13 +50,6 @@ AC_ARG_ENABLE([multithreaded],
 AC_DEFINE([MULTITHREADED], 1, [Enable multithreading support])
 fi
 ])
-
-dnl **** Check for some programs and libraries ****
-
-AC_PROG_CC
-AC_PROG_CXX
-AC_PROG_RANLIB
-AC_PROG_LN_S
 
 dnl **** Checks for header files ****
 

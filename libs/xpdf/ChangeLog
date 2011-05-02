@@ -1,3 +1,18 @@
+2011-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (goo_libGoo_a_sources): Omit parsearg.c.
+
+2011-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Suppress "deprecated conversion from string constant to 'char*'"
+	warnings from g++-4.4.
+	Unfortunately xpdf declares lots of function parameters as
+	'char *' that should actually be 'const char *'.
+	Compiling with the g++-4.4 default '-Wwrite-strings' would yield
+	>10000 such warnings.
+
+	* Makefile.am, configure.ac: Define and use NO_WARN_CXXFLAGS.
+
 2009-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

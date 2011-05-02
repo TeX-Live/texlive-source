@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build xpdf for TeX Live.
 ##
-##   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -51,6 +51,8 @@ XPDF_SRC = $(top_srcdir)/$(XPDF_TREE)/xpdf
 
 INCLUDES = -Igoo -Ifofi -Ixpdf -I$(GOO_SRC) -I$(FOFI_SRC) -I$(XPDF_SRC)
 AM_CPPFLAGS = -DPDF_PARSER_ONLY
+AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CXXFLAGS = $(NO_WARN_CXXFLAGS)
 
 noinst_LIBRARIES = libxpdf.a
 
@@ -66,8 +68,7 @@ goo_libGoo_a_sources = \
 	$(GOO_SRC)/GString.cc \
 	$(GOO_SRC)/gmem.cc \
 	$(GOO_SRC)/gmempp.cc \
-	$(GOO_SRC)/gfile.cc \
-	$(GOO_SRC)/parseargs.c
+	$(GOO_SRC)/gfile.cc
 
 fofi_libfofi_a_sources = \
 	$(FOFI_SRC)/FoFiBase.cc \

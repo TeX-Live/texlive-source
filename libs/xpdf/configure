@@ -610,6 +610,9 @@ XPDF_TREE
 EGREP
 GREP
 CPP
+NO_WARN_CXXFLAGS
+WARNING_CXXFLAGS
+WARNING_CFLAGS
 LN_S
 RANLIB
 am__fastdepCXX_FALSE
@@ -702,10 +705,11 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
+enable_dependency_tracking
+enable_compiler_warnings
 enable_a4_paper
 enable_opi
 enable_multithreaded
-enable_dependency_tracking
 enable_largefile
 '
       ac_precious_vars='build_alias
@@ -718,9 +722,6 @@ LIBS
 CPPFLAGS
 CXX
 CXXFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
 CCC
 CPP'
 
@@ -1342,12 +1343,15 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
+  --disable-dependency-tracking  speeds up one-time build
+  --enable-dependency-tracking   do not reject slow dependency extractors
+  --enable-compiler-warnings=[no|min|yes|max|all]
+                          Turn on compiler warnings [default: yes if
+                          maintainer-mode, min otherwise]
   --enable-a4-paper       use A4 paper size instead of Letter for PostScript
                           output
   --enable-opi            include support for OPI comments
   --enable-multithreaded  include support for multithreading
-  --disable-dependency-tracking  speeds up one-time build
-  --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-largefile     omit support for large files
 
 Some influential environment variables:
@@ -2706,40 +2710,6 @@ else
 fi
 
   MAINT=$MAINTAINER_MODE_TRUE
-
-
-
-# Check whether --enable-a4-paper was given.
-if test "${enable_a4_paper+set}" = set; then :
-  enableval=$enable_a4_paper; if test "x$enableval" = xyes; then
-
-$as_echo "#define A4_PAPER 1" >>confdefs.h
-
-fi
-
-fi
-
-
-# Check whether --enable-opi was given.
-if test "${enable_opi+set}" = set; then :
-  enableval=$enable_opi; if test "x$enableval" = xyes; then
-
-$as_echo "#define OPI_SUPPORT 1" >>confdefs.h
-
-fi
-
-fi
-
-
-# Check whether --enable-multithreaded was given.
-if test "${enable_multithreaded+set}" = set; then :
-  enableval=$enable_multithreaded; if test "x$enableval" = xyes; then
-
-$as_echo "#define MULTITHREADED 1" >>confdefs.h
-
-fi
-
-fi
 
 
 
@@ -4207,6 +4177,142 @@ $as_echo "yes" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no, using $LN_S" >&5
 $as_echo "no, using $LN_S" >&6; }
+fi
+
+
+# Check whether --enable-compiler-warnings was given.
+if test "${enable_compiler_warnings+set}" = set; then :
+  enableval=$enable_compiler_warnings;
+fi
+case $enable_compiler_warnings in #(
+  no | min | yes | max | all) :
+     ;; #(
+  *) :
+    if test "x$enable_maintainer_mode" = xyes; then :
+  enable_compiler_warnings=yes
+else
+  enable_compiler_warnings=min
+fi ;;
+esac
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
+if ${kpse_cv_warning_cflags+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
+elif test "x$GCC" = xyes; then
+  kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
+case `$CC -dumpversion` in #(
+  3.4.* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
+  *) :
+     ;;
+esac
+case `$CC -dumpversion` in #(
+  3.[234].* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;; #(
+  *) :
+     ;;
+esac
+if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
+  kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+  if test "x$enable_compiler_warnings" != xyes; then
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+    case `$CC -dumpversion` in #(
+  3.4.* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;; #(
+  *) :
+     ;;
+esac
+    if test "x$enable_compiler_warnings" != xmax; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
+    fi
+  fi
+fi
+else
+  kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cflags" >&5
+$as_echo "$kpse_cv_warning_cflags" >&6; }
+WARNING_CFLAGS=$kpse_cv_warning_cflags
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C++ compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
+if ${kpse_cv_warning_cxxflags+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cxxflags=
+elif test "x$GXX" = xyes; then
+  kpse_cv_warning_cxxflags="-Wimplicit -Wreturn-type"
+case `$CXX -dumpversion` in #(
+  3.[234].* | 4.*) :
+    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas" ;; #(
+  *) :
+     ;;
+esac
+if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_cxxflags="-Wall -Wunused $kpse_cv_warning_cxxflags"
+  if test "x$enable_compiler_warnings" != xyes; then
+    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
+  fi
+    if test "x$enable_compiler_warnings" != xmax; then
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wshadow"
+    fi
+fi
+else
+  kpse_cv_warning_cxxflags= # FIXME: warning flags for non-GNU C++ compilers
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cxxflags" >&5
+$as_echo "$kpse_cv_warning_cxxflags" >&6; }
+WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
+
+
+
+
+
+
+test "x$GXX" = xyes && NO_WARN_CXXFLAGS='-Wno-write-strings'
+
+
+# Check whether --enable-a4-paper was given.
+if test "${enable_a4_paper+set}" = set; then :
+  enableval=$enable_a4_paper; if test "x$enableval" = xyes; then
+
+$as_echo "#define A4_PAPER 1" >>confdefs.h
+
+fi
+
+fi
+
+
+# Check whether --enable-opi was given.
+if test "${enable_opi+set}" = set; then :
+  enableval=$enable_opi; if test "x$enableval" = xyes; then
+
+$as_echo "#define OPI_SUPPORT 1" >>confdefs.h
+
+fi
+
+fi
+
+
+# Check whether --enable-multithreaded was given.
+if test "${enable_multithreaded+set}" = set; then :
+  enableval=$enable_multithreaded; if test "x$enableval" = xyes; then
+
+$as_echo "#define MULTITHREADED 1" >>confdefs.h
+
+fi
+
 fi
 
 

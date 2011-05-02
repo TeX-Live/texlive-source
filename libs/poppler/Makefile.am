@@ -33,6 +33,7 @@ POPPLER_SRC = $(top_srcdir)/$(POPPLER_TREE)/poppler
 INCLUDES = -Igoo -Ifofi -Ipoppler -I$(GOO_SRC) -I$(FOFI_SRC) -I$(POPPLER_SRC) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DPDF_PARSER_ONLY -DPOPPLER_DATADIR='"."'
 AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CXXFLAGS = $(NO_WARN_CXXFLAGS)
 
 noinst_LIBRARIES = libpoppler.a
 
@@ -50,9 +51,7 @@ goo_libGoo_a_sources = \
 	$(GOO_SRC)/GooList.cc \
 	$(GOO_SRC)/GooString.cc \
 	$(GOO_SRC)/GooTimer.cc \
-	$(GOO_SRC)/gstrtod.cc \
-	$(GOO_SRC)/PNGWriter.cc
-
+	$(GOO_SRC)/gstrtod.cc
 
 fofi_libfofi_a_sources = \
 	$(FOFI_SRC)/FoFiBase.cc \

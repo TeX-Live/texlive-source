@@ -62,8 +62,7 @@ libpoppler_a_AR = $(AR) $(ARFLAGS)
 libpoppler_a_LIBADD =
 am__objects_1 = FixedPoint.$(OBJEXT) gfile.$(OBJEXT) gmem.$(OBJEXT) \
 	gmempp.$(OBJEXT) GooHash.$(OBJEXT) GooList.$(OBJEXT) \
-	GooString.$(OBJEXT) GooTimer.$(OBJEXT) gstrtod.$(OBJEXT) \
-	PNGWriter.$(OBJEXT)
+	GooString.$(OBJEXT) GooTimer.$(OBJEXT) gstrtod.$(OBJEXT)
 am__objects_2 = FoFiBase.$(OBJEXT) FoFiEncodings.$(OBJEXT) \
 	FoFiTrueType.$(OBJEXT) FoFiType1.$(OBJEXT) \
 	FoFiType1C.$(OBJEXT)
@@ -188,6 +187,7 @@ LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
+NO_WARN_CXXFLAGS = @NO_WARN_CXXFLAGS@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -260,6 +260,7 @@ POPPLER_SRC = $(top_srcdir)/$(POPPLER_TREE)/poppler
 INCLUDES = -Igoo -Ifofi -Ipoppler -I$(GOO_SRC) -I$(FOFI_SRC) -I$(POPPLER_SRC) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DPDF_PARSER_ONLY -DPOPPLER_DATADIR='"."'
 AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CXXFLAGS = $(NO_WARN_CXXFLAGS)
 noinst_LIBRARIES = libpoppler.a
 nodist_libpoppler_a_SOURCES = \
 	$(goo_libGoo_a_sources) \
@@ -275,8 +276,7 @@ goo_libGoo_a_sources = \
 	$(GOO_SRC)/GooList.cc \
 	$(GOO_SRC)/GooString.cc \
 	$(GOO_SRC)/GooTimer.cc \
-	$(GOO_SRC)/gstrtod.cc \
-	$(GOO_SRC)/PNGWriter.cc
+	$(GOO_SRC)/gstrtod.cc
 
 fofi_libfofi_a_sources = \
 	$(FOFI_SRC)/FoFiBase.cc \
@@ -452,7 +452,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OutputDev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFDoc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFDocEncoding.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PNGWriter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSOutputDev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSTokenizer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Page.Po@am__quote@
@@ -613,20 +612,6 @@ gstrtod.obj: $(GOO_SRC)/gstrtod.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/gstrtod.cc' object='gstrtod.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gstrtod.obj `if test -f '$(GOO_SRC)/gstrtod.cc'; then $(CYGPATH_W) '$(GOO_SRC)/gstrtod.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/gstrtod.cc'; fi`
-
-PNGWriter.o: $(GOO_SRC)/PNGWriter.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PNGWriter.o -MD -MP -MF $(DEPDIR)/PNGWriter.Tpo -c -o PNGWriter.o `test -f '$(GOO_SRC)/PNGWriter.cc' || echo '$(srcdir)/'`$(GOO_SRC)/PNGWriter.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PNGWriter.Tpo $(DEPDIR)/PNGWriter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/PNGWriter.cc' object='PNGWriter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PNGWriter.o `test -f '$(GOO_SRC)/PNGWriter.cc' || echo '$(srcdir)/'`$(GOO_SRC)/PNGWriter.cc
-
-PNGWriter.obj: $(GOO_SRC)/PNGWriter.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PNGWriter.obj -MD -MP -MF $(DEPDIR)/PNGWriter.Tpo -c -o PNGWriter.obj `if test -f '$(GOO_SRC)/PNGWriter.cc'; then $(CYGPATH_W) '$(GOO_SRC)/PNGWriter.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/PNGWriter.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PNGWriter.Tpo $(DEPDIR)/PNGWriter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/PNGWriter.cc' object='PNGWriter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PNGWriter.obj `if test -f '$(GOO_SRC)/PNGWriter.cc'; then $(CYGPATH_W) '$(GOO_SRC)/PNGWriter.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/PNGWriter.cc'; fi`
 
 FoFiBase.o: $(FOFI_SRC)/FoFiBase.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiBase.o -MD -MP -MF $(DEPDIR)/FoFiBase.Tpo -c -o FoFiBase.o `test -f '$(FOFI_SRC)/FoFiBase.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiBase.cc

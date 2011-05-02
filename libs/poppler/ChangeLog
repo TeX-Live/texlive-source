@@ -1,3 +1,18 @@
+2011-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (goo_libGoo_a_sources): Omit PNGWriter.cc.
+
+2011-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Suppress "deprecated conversion from string constant to 'char*'"
+	warnings from g++-4.4.
+	Unfortunately poppler declares lots of function parameters as
+	'char *' that should actually be 'const char *'.
+	Compiling with the g++-4.4 default '-Wwrite-strings' would yield
+	>10000 such warnings.
+
+	* Makefile.am, configure.ac: Define and use NO_WARN_CXXFLAGS.
+
 2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, ac/poppler.ac, ac/withenable.ac, configure.ac:

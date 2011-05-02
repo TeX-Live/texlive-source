@@ -616,6 +616,7 @@ ZLIB_INCLUDES
 EGREP
 GREP
 CPP
+NO_WARN_CXXFLAGS
 WARNING_CXXFLAGS
 WARNING_CFLAGS
 LN_S
@@ -4296,6 +4297,9 @@ WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
 
 
 
+
+
+test "x$GXX" = xyes && NO_WARN_CXXFLAGS='-Wno-write-strings'
 
 
 # Check whether --enable-opi was given.

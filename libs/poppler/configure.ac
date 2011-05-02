@@ -23,6 +23,9 @@ AC_PROG_LN_S
 
 KPSE_COMPILER_WARNINGS
 
+test "x$GXX" = xyes && NO_WARN_CXXFLAGS='-Wno-write-strings'
+AC_SUBST([NO_WARN_CXXFLAGS])  
+
 dnl ##### Optional features.
 AC_ARG_ENABLE([opi],
               AS_HELP_STRING([--enable-opi],

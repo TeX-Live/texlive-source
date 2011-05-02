@@ -751,11 +751,11 @@ enable_updmap
 enable_makeindexk
 enable_makejvf
 enable_mendexk
-enable_musixflx
 enable_ps2pkm
 enable_seetexk
 enable_tex4htk
 enable_ttf2pk
+enable_ttf2pk2
 enable_ttfdump
 enable_xdv2pdf
 enable_xdvik
@@ -1532,11 +1532,11 @@ Optional Features:
   --disable-makeindexk    do not build the makeindexk package
   --disable-makejvf       do not build the makejvf package
   --disable-mendexk       do not build the mendexk package
-  --disable-musixflx      do not build the musixflx package
   --disable-ps2pkm        do not build the ps2pkm package
   --disable-seetexk       do not build the seetexk package
   --disable-tex4htk       do not build the tex4htk package
   --disable-ttf2pk        do not build the ttf2pk package
+  --enable-ttf2pk2        build the ttf2pk2 package
   --disable-ttfdump       do not build the ttfdump package
   --disable-xdv2pdf       do not build the xdv2pdf package
   --disable-xdvik         do not build the xdvik package
@@ -4227,25 +4227,6 @@ test "x$enable_mendexk" = xno || {
 }
 
 
-## texk/musixflx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/musixflx/
-## configure options and TL libraries required for musixflx
-# Check whether --enable-musixflx was given.
-if test "${enable_musixflx+set}" = set; then :
-  enableval=$enable_musixflx;
-fi
-case $enable_musixflx in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_musixflx=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-musixflx=$enable_musixflx'" >&5
-$as_echo "$as_me: Assuming \`--enable-musixflx=$enable_musixflx'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-musixflx=$enable_musixflx'"
-    ;;
-esac
-
-
 ## texk/ps2pkm/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ps2pkm/
 ## configure options and TL libraries required for ps2pkm
 # Check whether --enable-ps2pkm was given.
@@ -4336,6 +4317,30 @@ esac
 test "x$enable_ttf2pk" = xno || {
   need_kpathsea=yes
   need_freetype=yes
+}
+
+
+## texk/ttf2pk2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttf2pk2/
+## configure options and TL libraries required for ttf2pk
+# Check whether --enable-ttf2pk2 was given.
+if test "${enable_ttf2pk2+set}" = set; then :
+  enableval=$enable_ttf2pk2;
+fi
+case $enable_ttf2pk2 in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_ttf2pk2=no
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ttf2pk2=$enable_ttf2pk2'" >&5
+$as_echo "$as_me: Assuming \`--enable-ttf2pk2=$enable_ttf2pk2'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-ttf2pk2=$enable_ttf2pk2'"
+    ;;
+esac
+
+test "x$enable_ttf2pk2" = xno || {
+  need_kpathsea=yes
+  need_freetype2=yes
 }
 
 
