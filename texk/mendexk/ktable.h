@@ -1,6 +1,6 @@
-unsigned char hiragana[200];
-unsigned char katakana[200];
-unsigned char kanatable[]={
+char hiragana[200];
+char katakana[200];
+char kanatable[]={
 	0xa4,0xa2, /* あ */
 	0xa4,0xa2, /* あ */
 	0xa4,0xa4, /* い */
@@ -89,7 +89,7 @@ unsigned char kanatable[]={
 	0xa4,0xab, /* か */
 	0
 };
-unsigned char symboltable[]={
+char symboltable[]={
 	0xa1,0xa1, /* スペース */
 	0xa1,0xaa, /* ！ */
 	0xa1,0xc9, /* ” */
@@ -187,7 +187,7 @@ unsigned char symboltable[]={
 	0xa1,0xc1, /* 〜 */
 	0
 };
-unsigned char btable[6][21]={
+char btable[6][21]={
 	{0xa4,0xa2, /* あ */
 	0xa4,0xab, /* か */
 	0xa4,0xb5, /* さ */

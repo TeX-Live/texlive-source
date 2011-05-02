@@ -1,12 +1,12 @@
-extern unsigned char AKASATANA[];
-extern unsigned char *akasatana;
-extern unsigned char AIUEO[];
-extern unsigned char *aiueo;
+extern char AKASATANA[];
+extern char *akasatana;
+extern char AIUEO[];
+extern char *aiueo;
 
-extern unsigned char ONBIKI[];
-extern unsigned char SPACE[];
-extern unsigned char ALPHAEND[];
-extern unsigned char HIRATOP[];
-extern unsigned char HIRAEND[];
-extern unsigned char KATATOP[];
-extern unsigned char KATAEND[];
+extern char ONBIKI[];
+extern char SPACE[];
+extern char ALPHAEND[];
+extern char HIRATOP[];
+extern char HIRAEND[];
+extern char KATATOP[];
+extern char KATAEND[];

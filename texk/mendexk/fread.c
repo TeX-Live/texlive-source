@@ -12,14 +12,14 @@
 
 #define BUFSIZE 65535
 
-static int getestr(unsigned char *buff, unsigned char *estr);
+static int getestr(char *buff, char *estr);
 static void chkpageattr(struct page *p);
 
 /*   read idx file   */
 int idxread(char *filename, int start)
 {
 	int i,j,k,l,m,n,cc,indent,wflg,flg=0,bflg=0,nest,esc,quo,eflg=0,pacc,preject;
-	unsigned char buff[BUFSIZE],wbuff[BUFSIZE],estr[256],table[BUFSIZE],*tmp1,*tmp2;
+	char buff[BUFSIZE],wbuff[BUFSIZE],estr[256],table[BUFSIZE],*tmp1,*tmp2;
 	FILE *fp;
 
 	pacc=acc;
@@ -119,7 +119,7 @@ LOOP:
 							n++;
 							goto LOOP;
 						}
-						ind[i].idx[indent]=(unsigned char *)malloc(k+1);
+						ind[i].idx[indent]=malloc(k+1);
 						if (ind[i].idx[indent]==NULL) {
 							fprintf(stderr,"Malloc error.(ind[%d].idx[%d])\n",i,indent);
 							exit(-1);
@@ -142,7 +142,7 @@ LOOP:
 							n++;
 							goto LOOP;
 						}
-						ind[i].org[indent]=(unsigned char *)malloc(k+1);
+						ind[i].org[indent]=malloc(k+1);
 						if (ind[i].org[indent]==NULL) {
 							fprintf(stderr,"Malloc error.(ind[%d].org[%d])\n",i,indent);
 							exit(-1);
@@ -170,7 +170,7 @@ LOOP:
 						}
 						else estr[0]='\0';
 
-						ind[i].idx[indent]=(unsigned char *)malloc(k+1);
+						ind[i].idx[indent]=malloc(k+1);
 						if (ind[i].idx[indent]==NULL) {
 							fprintf(stderr,"Malloc error.(ind[%d].idx[%d])\n",i,indent);
 							exit(-1);
@@ -219,7 +219,7 @@ LOOP:
 
 			wbuff[k]=buff[j];
 			if (buff[j]!=escape) esc=0;
-			if (buff[j]>=0x80) {
+			if ((unsigned char)buff[j]>=0x80) {
 				wbuff[k+1]=buff[j+1];
 				j++;
 				k++;
@@ -240,7 +240,7 @@ LOOP:
 					n++;
 					goto LOOP;
 				}
-				ind[i].dic[k]=(unsigned char *)malloc(strlen(table)+1);
+				ind[i].dic[k]=malloc(strlen(table)+1);
 				if (ind[i].dic[k]==NULL) {
 					fprintf(stderr,"Malloc error.(ind[%d].dic[%d])\n",i,k);
 					exit(-1);
@@ -257,7 +257,7 @@ LOOP:
 					n++;
 					goto LOOP;
 				}
-				ind[i].dic[k]=(unsigned char *)malloc(strlen(table)+1);
+				ind[i].dic[k]=malloc(strlen(table)+1);
 				if (ind[i].dic[k]==NULL) {
 					fprintf(stderr,"Malloc error.(ind[%d].dic[%d])\n",i,k);
 					exit(-1);
@@ -271,7 +271,7 @@ LOOP:
 
 		if (i==0) {
 			ind[0].num=0;
-			ind[0].p=(struct page *)malloc(sizeof(struct page)*16);
+			ind[0].p=malloc(sizeof(struct page)*16);
 			for (;buff[j]!=arg_open && buff[j]!='\n' && buff[j]!='\0';j++);
 			if (buff[j]=='\n' || buff[j]=='\0') {
 				verb_printf(efp,"\nWarning: Missing second argument in %s, line %d.",filename,ind[i].lnum);
@@ -306,7 +306,7 @@ LOOP:
 					}
 					else nest--;
 				}
-				else if (buff[j]>=0x80) {
+				else if ((unsigned char)buff[j]>=0x80) {
 					table[k]=buff[j];
 					j++;
 					k++;
@@ -378,7 +378,7 @@ LOOP:
 						if (nest==0) break;
 						else nest--;
 					}
-					else if (buff[j]>=0x80) {
+					else if ((unsigned char)buff[j]>=0x80) {
 						table[k]=buff[j];
 						j++;
 						k++;
@@ -408,7 +408,7 @@ LOOP:
 			}
 			else {
 				ind[i].num=0;
-				ind[i].p=(struct page *)malloc(sizeof(struct page)*16);
+				ind[i].p=malloc(sizeof(struct page)*16);
 				for (;buff[j]!=arg_open && buff[j]!='\n' && buff[j]!='\0';j++);
 				if (buff[j]=='\n' || buff[j]=='\0') {
 					verb_printf(efp,"\nWarning: Missing second argument in %s, line %d.",filename,ind[i].lnum);
@@ -439,7 +439,7 @@ LOOP:
 						}
 						else nest--;
 					}
-					else if (buff[j]>=0x80) {
+					else if ((unsigned char)buff[j]>=0x80) {
 						table[k]=buff[j];
 						j++;
 						k++;
@@ -460,14 +460,14 @@ LOOP:
 }
 
 /*   pic up encap string   */
-static int getestr(unsigned char *buff, unsigned char *estr)
+static int getestr(char *buff, char *estr)
 {
 	int i,nest=0;
 
 	for (i=0;i<strlen(buff);i++) {
 		if (buff[i]==encap) {
 			if (i>0) {
-				if (buff[i-1]<0x80) {
+				if ((unsigned char)buff[i-1]<0x80) {
 					estr[i]=buff[i];
 					i++;
 				}
@@ -484,7 +484,7 @@ static int getestr(unsigned char *buff, unsigned char *estr)
 		if (buff[i]==arg_open) nest++;
 		else if (buff[i]==arg_close) nest--;
 		estr[i]=buff[i];
-		if (buff[i]>0x80) {
+		if ((unsigned char)buff[i]>0x80) {
 			i++;
 			estr[i]=buff[i];
 		}

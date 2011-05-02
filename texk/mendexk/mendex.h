@@ -7,16 +7,16 @@ struct page {
 struct index {
 	int num;
 	char words;
-	unsigned char *org[3];
-	unsigned char *dic[3];
-	unsigned char *idx[3];
+	char *org[3];
+	char *dic[3];
+	char *idx[3];
 	struct page *p;
 	int lnum;
 };
 
 /* convert.c */
 void initkanatable(void);
-int convert(unsigned char *buff1, unsigned char *buff2);
+int convert(char *buff1, char *buff2);
 int pnumconv(char *page, int attr);
 int dicread(const char *filename);
 
@@ -26,10 +26,10 @@ int lastpage(const char *filename);
 /* sort.c */
 void wsort(struct index *ind, int num);
 void pagesort(struct index *ind, int num);
-int alphanumeric(unsigned char c);
-int alphabet(unsigned char c);
-int numeric(unsigned char c);
-int japanese(unsigned char *buff);
+int alphanumeric(char c);
+int alphabet(char c);
+int numeric(char c);
+int japanese(char *buff);
 int chkcontinue(struct page *p, int num);
 
 /* styfile.c */

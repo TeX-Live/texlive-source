@@ -17,11 +17,11 @@
 #endif
 
 struct dictionary{
-unsigned char dic[2][50];
+char dic[2][50];
 };
 
-struct dictionary *dictable,*envdic;
-int dlines=0,elines=0;
+static struct dictionary *dictable,*envdic;
+static int dlines=0,elines=0;
 
 static int dicvalread(const char *filename, struct dictionary *dicval, int line);
 
@@ -32,15 +32,15 @@ void initkanatable(void)
 
 	for (i=0xa4a1;i<=0xa4f3;i++) {
 		cc=i-0xa4a1;
-		hiragana[cc*2]=(unsigned char)((i>>8)&0xff);
-		hiragana[cc*2+1]=(unsigned char)(i&0xff);
+		hiragana[cc*2]=((i>>8)&0xff);
+		hiragana[cc*2+1]=(i&0xff);
 	}
 	hiragana[(i-0xa4a1)*2]=0;
 
 	for (i=0xa5a1;i<=0xa5f6;i++) {
 		cc=i-0xa5a1;
-		katakana[cc*2]=(unsigned char)((i>>8)&0xff);
-		katakana[cc*2+1]=(unsigned char)(i&0xff);
+		katakana[cc*2]=((i>>8)&0xff);
+		katakana[cc*2+1]=(i&0xff);
 	}
 	katakana[(i-0xa5a1)*2]=0;
 
@@ -87,7 +87,7 @@ int dicread(const char *filename)
 		}
 		nkf_close(fp);
 
-		dictable=(struct dictionary *)malloc(sizeof(struct dictionary)*i);
+		dictable=malloc(sizeof(struct dictionary)*i);
 
 		dlines=dicvalread(filename,dictable,i);
 
@@ -124,7 +124,7 @@ ENV:
 		}
 		nkf_close(fp);
 
-		envdic=(struct dictionary *)malloc(sizeof(struct dictionary)*i);
+		envdic=malloc(sizeof(struct dictionary)*i);
 
 		elines=dicvalread(envfile,envdic,i);
 
@@ -140,7 +140,7 @@ static int dcomp(const void *bf1, const void *bf2);
 static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 {
 	int i,j,k;
-	unsigned char buff[256];
+	char buff[256];
 	FILE *fp;
 
 	if(kpse_in_name_ok(filename))
@@ -195,14 +195,14 @@ static int dcomp(const void *bf1, const void *bf2)
 		if (((*buff1).dic[0][i]=='\0')&&((*buff2).dic[0][i]=='\0')) return 0;
 		else if (((*buff1).dic[0][i]=='\0')&&((*buff2).dic[0][i]!='\0')) return 1;
 		else if (((*buff1).dic[0][i]!='\0')&&((*buff2).dic[0][i]=='\0')) return -1;
-		else if ((*buff1).dic[0][i]<(*buff2).dic[0][i]) return 1;
-		else if ((*buff1).dic[0][i]>(*buff2).dic[0][i]) return -1;
+		else if ((unsigned char)(*buff1).dic[0][i]<(unsigned char)(*buff2).dic[0][i]) return 1;
+		else if ((unsigned char)(*buff1).dic[0][i]>(unsigned char)(*buff2).dic[0][i]) return -1;
 	}
 	return 0;
 }
 
 /*   convert to capital-hiragana character   */
-int convert(unsigned char *buff1, unsigned char *buff2)
+int convert(char *buff1, char *buff2)
 {
 	int i=0,j=0,k,l;
 	char errbuff[4096];
@@ -223,7 +223,7 @@ int convert(unsigned char *buff1, unsigned char *buff2)
 				i++;
 			}
 
-			else if (buff1[i]<0x80) {
+			else if ((unsigned char)buff1[i]<0x80) {
 				buff2[j]=buff1[i];
 				i++;
 				j++;
@@ -284,7 +284,7 @@ MATCH3:
 				j+=2;
 			}
 
-			else if (buff1[i]>=0x80) {
+			else if ((unsigned char)buff1[i]>=0x80) {
 				if ((strncmp(&buff1[i],SPACE,2)>=0)&&(strncmp(&buff1[i],ALPHAEND,2)<=0)) {
 /*   alpha-numeric,symbols   */
 					for (k=0;k<strlen(symboltable);k+=2) {
@@ -526,10 +526,3 @@ int pnumconv(char *page, int attr)
 	}
 	return cc;
 }
-
-#if 0 /* unused */
-int nbyte(unsigned char *str, int n)
-{
-	return (unsigned int)str[n];
-}
-#endif /* 0 */

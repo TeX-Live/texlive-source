@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/mendexk/
 ##
-## Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -42,9 +42,7 @@ dist_man1_MANS = mendex.1
 EXTRA_DIST = \
 	COPYRIGHT \
 	COPYRIGHT.jis \
-	ChangeLog \
-	ChangeLog.TL \
-	README
+	ChangeLog.TL
 
 ## Eventually delete these files
 ##

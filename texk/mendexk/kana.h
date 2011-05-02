@@ -1,6 +1,6 @@
 #include "exkana.h"
 
-unsigned char AKASATANA[]={
+char AKASATANA[]={
 	0xa4,0xa2, /* あ */
 	0xa4,0xab, /* か */
 	0xa4,0xb5, /* さ */
@@ -13,9 +13,9 @@ unsigned char AKASATANA[]={
 	0xa4,0xef, /* わ */
 	0
 };
-unsigned char *akasatana;
+char *akasatana;
 
-unsigned char AIUEO[]={
+char AIUEO[]={
 	0xa4,0xa2, /* あ */
 	0xa4,0xa4, /* い */
 	0xa4,0xa6, /* う */
@@ -66,12 +66,12 @@ unsigned char AIUEO[]={
 	0xa4,0xf3, /* ん */
 	0
 };
-unsigned char *aiueo;
+char *aiueo;
 
-unsigned char ONBIKI[]={0xa1,0xbc,0}; /* ー */
-unsigned char SPACE[]={0xa1,0xa1,0}; /* 全角スペース */
-unsigned char ALPHAEND[]={0xa3,0xfa,0}; /* ｚ */
-unsigned char HIRATOP[]={0xa4,0xa1,0}; /* ぁ */
-unsigned char HIRAEND[]={0xa4,0xf3,0}; /* ん */
-unsigned char KATATOP[]={0xa5,0xa1,0}; /* ァ */
-unsigned char KATAEND[]={0xa5,0xf6,0}; /* ヶ */
+char ONBIKI[]={0xa1,0xbc,0}; /* ー */
+char SPACE[]={0xa1,0xa1,0}; /* 全角スペース */
+char ALPHAEND[]={0xa3,0xfa,0}; /* ｚ */
+char HIRATOP[]={0xa4,0xa1,0}; /* ぁ */
+char HIRAEND[]={0xa4,0xf3,0}; /* ん */
+char KATATOP[]={0xa5,0xa1,0}; /* ァ */
+char KATAEND[]={0xa5,0xf6,0}; /* ヶ */

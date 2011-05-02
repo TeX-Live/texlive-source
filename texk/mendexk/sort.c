@@ -11,7 +11,7 @@ int sym,number,alpha,kana;
 
 static int wcomp(const void *p, const void *q);
 static int pcomp(const void *p, const void *q);
-static int ordering(unsigned char *buff);
+static int ordering(char *buff);
 
 /*   sort index   */
 void wsort(struct index *ind, int num)
@@ -121,15 +121,15 @@ static int wcomp(const void *p, const void *q)
 				return 1;
 
 /*   simple compare   */
-			if ((*index1).dic[j][i]<(*index2).dic[j][i]) return -1;
-			else if ((*index1).dic[j][i]>(*index2).dic[j][i]) return 1;
+			if ((unsigned char)(*index1).dic[j][i]<(unsigned char)(*index2).dic[j][i]) return -1;
+			else if ((unsigned char)(*index1).dic[j][i]>(unsigned char)(*index2).dic[j][i]) return 1;
 
 /*   2byte character   */
-			if (((*index1).dic[j][i]>=0x80)&&((*index2).dic[j][i]>=0x80)) {
+			if (((unsigned char)(*index1).dic[j][i]>=0x80)&&((unsigned char)(*index2).dic[j][i]>=0x80)) {
 				prechar=1;
 				i++;
-				if ((*index1).dic[j][i]<(*index2).dic[j][i]) return -1;
-				else if ((*index1).dic[j][i]>(*index2).dic[j][i]) return 1;
+				if ((unsigned char)(*index1).dic[j][i]<(unsigned char)(*index2).dic[j][i]) return -1;
+				else if ((unsigned char)(*index1).dic[j][i]>(unsigned char)(*index2).dic[j][i]) return 1;
 			}
 			else prechar=0;
 		}
@@ -139,8 +139,8 @@ static int wcomp(const void *p, const void *q)
 			if (((*index1).idx[j][i]=='\0')&&((*index2).idx[j][i]=='\0')) break;
 			else if ((*index1).idx[j][i]=='\0') return -1;
 			else if ((*index2).idx[j][i]=='\0') return 1;
-			else if ((*index1).idx[j][i]<(*index2).idx[j][i]) return -1;
-			else if ((*index1).idx[j][i]>(*index2).idx[j][i]) return 1;
+			else if ((unsigned char)(*index1).idx[j][i]<(unsigned char)(*index2).idx[j][i]) return -1;
+			else if ((unsigned char)(*index1).idx[j][i]>(unsigned char)(*index2).idx[j][i]) return 1;
 		}
 	}
 	return 0;
@@ -155,7 +155,7 @@ void pagesort(struct index *ind, int num)
 	for (i=0;i<num;i++) {
 		if (ind[i].num==0) continue;
 
-		buff=(struct page *)malloc(sizeof(struct page)*(ind[i].num+1));
+		buff=malloc(sizeof(struct page)*(ind[i].num+1));
 		for (j=0;j<=ind[i].num;j++) {
 			buff[j]=ind[i].p[j];
 		}
@@ -210,9 +210,9 @@ static int pcomp(const void *p, const void *q)
 	return 0;
 }
 
-static int ordering(unsigned char *buff)
+static int ordering(char *buff)
 {
-	if ((*buff)<0x80) {
+	if ((unsigned char)(*buff)<0x80) {
 		if (alphabet(*buff)) return alpha; 
 		else if (numeric(*buff)) return number; 
 		else return sym;
@@ -223,26 +223,26 @@ static int ordering(unsigned char *buff)
 	}
 }
 
-int alphanumeric(unsigned char c)
+int alphanumeric(char c)
 {
 	if (((c>='A')&&(c<='Z'))||((c>='a')&&(c<='z'))||((c>='0')&&(c<='9')))
 		return 1;
 	else return 0;
 }
 
-int alphabet(unsigned char c)
+int alphabet(char c)
 {
 	if (((c>='A')&&(c<='Z'))||((c>='a')&&(c<='z'))) return 1;
 	else return 0;
 }
 
-int numeric(unsigned char c)
+int numeric(char c)
 {
 	if ((c>='0')&&(c<='9')) return 1;
 	else return 0;
 }
 
-int japanese(unsigned char *buff)
+int japanese(char *buff)
 {
 	if (strncmp(buff,HIRATOP,2)>=0) return 1; 
 	else return 0;

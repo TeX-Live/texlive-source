@@ -1,6 +1,34 @@
 ChangeLog.TL: TeX Live (TL) changes for mendexk
 ===============================================
 
+2011-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): No need to mention ChangeLog, README.
+	* configure.ac: Drop useless check for <strings.h>.
+
+	* convert.c, fread.c, main.c, sort.c: Do not typecast the
+	result of malloc().
+
+2011-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	The string functions strlen(), strcmp(), strncmp(), strcpy(),
+	and strncpy() all expect 'char *' arguments and gcc-4.x will
+	create warnings for 'signed char *' and 'unsigned char *' args.
+	Moreover strcmp() and strncmp() will always compare string bytes
+	interpreted as 'unsigned char'.  Finally initializing plain char
+	array elements with, e.g., '0x80' always does the right thing.
+
+	* convert.c, exkana.h, exvar.h, fread.c, fwrite.c, kana.h,
+	ktable.h, mendex.h, sort.c, var.h: Change type of all global and
+	local vars, function params, and struct members from 'unsigned
+	char' or 'unsigned char *' to plain 'char' or 'char *', but
+	always cast string bytes to 'unsigned char' when tested for '<',
+	'<=', '>', or '>='.
+
+	* convert.c, fread.c, main.c, sort.c: Do not typecast the
+	result of malloc().
+
 2010-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* convert.c (dicread, dicvalread), fread.c (idxread),

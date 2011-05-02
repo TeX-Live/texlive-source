@@ -74,7 +74,7 @@ int verb_printf(FILE *fp, const char *format, ...)
 void indwrite(char *filename, struct index *ind, int pagenum)
 {
 	int i,j,hpoint=0;
-	unsigned char datama[256],lbuff[4096];
+	char datama[256],lbuff[4096];
 	FILE *fp;
 
 	if (filename[0]!='\0' && kpse_out_name_ok(filename)) fp=fopen(filename,"w");
@@ -116,7 +116,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				if (lethead_flag) {
 					fputs(lethead_prefix,fp);
 					for (j=hpoint;j<(strlen(datama)/2);j++) {
-						if (ind[i].dic[0][1]<datama[j*2+1]) {
+						if ((unsigned char)ind[i].dic[0][1]<(unsigned char)datama[j*2+1]) {
 							fprintf(fp,"%c%c",atama[(j-1)*2],atama[(j-1)*2+1]);
 							hpoint=j;
 							break;
@@ -129,7 +129,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				}
 				sprintf(lbuff,"%s%s",item_0,ind[i].idx[0]);
 				for (hpoint=0;hpoint<(strlen(datama)/2);hpoint++) {
-					if (ind[i].dic[0][1]<datama[hpoint*2+1]) {
+					if ((unsigned char)ind[i].dic[0][1]<(unsigned char)datama[hpoint*2+1]) {
 						break;
 					}
 				}
@@ -177,7 +177,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 			}
 			else if (japanese(ind[i].dic[0])) {
 				for (j=hpoint;j<(strlen(datama)/2);j++) {
-					if ((ind[i].dic[0][0]<=datama[j*2])&&(ind[i].dic[0][1]<datama[j*2+1])) {
+					if ((unsigned char)(ind[i].dic[0][0]<=(unsigned char)datama[j*2])&&((unsigned char)ind[i].dic[0][1]<(unsigned char)datama[j*2+1])) {
 						break;
 					}
 				}

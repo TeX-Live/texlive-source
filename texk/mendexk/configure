@@ -762,8 +762,7 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
-CPP
-CPPFLAGS'
+CPP'
 
 
 # Initialize some variables set by options.
@@ -12501,31 +12500,6 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
-
-
-for ac_header in strings.h
-do :
-  ac_fn_c_check_header_mongrel "$LINENO" "strings.h" "ac_cv_header_strings_h" "$ac_includes_default"
-if test "x$ac_cv_header_strings_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_STRINGS_H 1
-_ACEOF
-
-fi
-
-done
-
-for ac_func
-do :
-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
-ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
-  cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
-_ACEOF
-
-fi
-done
 
 
 kpse_save_CPPFLAGS=$CPPFLAGS

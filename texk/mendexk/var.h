@@ -32,6 +32,6 @@ char symhead_positive[2048]={"Symbols"},symhead_negative[2048]={"symbols"};
 char numhead_positive[2048]={"Numbers"},numhead_negative[2048]={"numbers"};
 int symbol_flag=1;
 int letter_head=1;
-unsigned char atama[2048];
-unsigned char page_compositor[2048]={"-"},page_precedence[2048]={"rnaRA"};
+char atama[2048];
+char page_compositor[2048]={"-"},page_precedence[2048]={"rnaRA"};
 char character_order[2048]={"SNEJ"};

@@ -296,7 +296,7 @@ int main(int argc, char **argv)
 
 	lines=0;
 	ecount=0;
-	ind=(struct index *)malloc(sizeof(struct index));
+	ind=malloc(sizeof(struct index));
 
 	for (i=0;i<idxcount-fsti;i++) {
 		ecount+=idxread(idxfile[i],lines);
