@@ -230,7 +230,7 @@ ${}\\{argv}\PP;{}$\6
 \M{10}Vyøe¹íme konverzi kódu zapsaného za parametrem \.{-x} na string \PB{%
 \\{tiestr}}.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{unsigned} \&{char} \\{hexnum}(\&{char} \|c)\1\1\2\2\6
+\&{static} \&{unsigned} \&{char} \\{hexnum}(\&{char} \|c)\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\|c\G\.{'0'}\W\|c\Z\.{'9'}){}$\1\5
 \&{return} \|c${}-\.{'0'};{}$\2\6
@@ -240,9 +240,9 @@ ${}\{{}$\1\6
 \&{return} \|c${}-\.{'a'}+\T{10};{}$\2\6
 ${}\\{printusage}(\,),\39\\{exit}(\.{BAD\_OPTIONS});{}$\6
 \4${}\}{}$\2\7
-\&{void} \\{settiestr}(\&{char} ${}{*}\|s){}$\1\1\2\2\6
+\&{static} \&{void} \\{settiestr}(\&{char} ${}{*}\|s){}$\1\1\2\2\6
 ${}\{{}$\1\6
-\&{int} \|i${},{}$ \|j${},{}$ \|c;\7
+\&{int} \|i${},{}$ \|j;\7
 ${}\|i\K\\{strlen}(\|s);{}$\6
 \&{if} ${}((\|i>\T{2}*\.{MAXLEN})\V\|i\MOD\T{2}\E\T{1}){}$\1\5
 ${}\\{printusage}(\,),\39\\{exit}(\.{BAD\_OPTIONS});{}$\2\6
