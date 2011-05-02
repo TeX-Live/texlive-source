@@ -104,11 +104,11 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/texk/makeindexk/ac/withenable.ac \
 	$(top_srcdir)/texk/makejvf/ac/withenable.ac \
 	$(top_srcdir)/texk/mendexk/ac/withenable.ac \
-	$(top_srcdir)/texk/musixflx/ac/withenable.ac \
 	$(top_srcdir)/texk/ps2pkm/ac/withenable.ac \
 	$(top_srcdir)/texk/seetexk/ac/withenable.ac \
 	$(top_srcdir)/texk/tex4htk/ac/withenable.ac \
 	$(top_srcdir)/texk/ttf2pk/ac/withenable.ac \
+	$(top_srcdir)/texk/ttf2pk2/ac/withenable.ac \
 	$(top_srcdir)/texk/ttfdump/ac/withenable.ac \
 	$(top_srcdir)/texk/xdv2pdf/ac/withenable.ac \
 	$(top_srcdir)/texk/xdvik/ac/withenable.ac \

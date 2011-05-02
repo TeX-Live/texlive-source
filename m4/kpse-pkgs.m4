@@ -113,11 +113,11 @@ lcdf-typetools
 makeindexk
 makejvf
 mendexk
-musixflx
 ps2pkm
 seetexk
 tex4htk
 ttf2pk
+ttf2pk2
 ttfdump
 xdv2pdf
 xdvik

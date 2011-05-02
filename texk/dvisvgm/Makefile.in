@@ -323,7 +323,7 @@ top_srcdir = @top_srcdir@
 #
 #************************************************************************
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(DVISVGM_TREE)
+EXTRA_DIST = $(DVISVGM_TREE) $(DVISVGM_TREE)-PATCHES
 INCLUDES = -I$(top_srcdir)/$(DVISVGM_TREE)/src \
 	-I$(top_srcdir)/$(DVISVGM_TREE)/potracelib \
 	$(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) \
@@ -1836,8 +1836,6 @@ uninstall-man: uninstall-man1
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-man uninstall-man1
 
-
-#EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

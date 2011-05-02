@@ -1,7 +1,9 @@
-2011-04-29  Karl Berry  <karl@tug.org>
+2011-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* patch-00-cfg: new file, to use rungs instead of ps2pdf.
-	
+	* patch-00-cfg (new): Change dvipdfmx.cfg to use rungs instead of
+	the default ps2pdf -dSAFER, to avoid complete pstricks failure with
+	xetex.
+
 2011-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-dvipdfmx-20110311 (new): From upstream.

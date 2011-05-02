@@ -17,8 +17,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(DVISVGM_TREE)
 
 ## Patches applied to the original source tree
-## (as of 1.0.6, all have been applied.)
-#EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
+##
+EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

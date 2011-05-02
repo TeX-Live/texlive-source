@@ -1,6 +1,11 @@
+2011-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvisvgm-1.0.6-PATCHES/TL-Changes: Recreated this, documenting
+	changes applied to the original source.
+
 2011-04-27  Karl Berry  <karl@tug.org>
 
-	* Imported release 1.06.
+	* Imported release 1.0.6.
 	* configure.ac: Adapted.
 	* dvisvgm-1.0.5-PATCHES: removed dir, all patches applies.
 

@@ -222,7 +222,7 @@ sh_scripts = \
 
 scriptsdir = texmf/scripts/tetex
 nodist_bin_SCRIPTS = $(am__append_1)
-all_scripts = $(perl_scripts) $(shell_scripts)
+all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 texmfdir = ${prefix}/$(scriptsdir)
@@ -896,43 +896,38 @@ uninstall-man: uninstall-man1 uninstall-man5
 	uninstall-man1 uninstall-man5 \
 	uninstall-nobase_dist_texconfDATA uninstall-nodist_binSCRIPTS
 
-.PHONY: install-perl-links make-perl-links \
-	install-shell-links make-shell-links uninstall-links
+
+#
+.PHONY: install-lua-links install-perl-links install-shell-links \
+	install-links make-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
 
-# We support both multiplatform and non-multiplatform builds.
+install-lua-links:
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
+
 install-perl-links:
-@WIN32_FALSE@	case "$(bindir)" in \
-@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-perl-links;; \
-@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-perl-links;; \
-@WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-@WIN32_FALSE@	     exit 1;; \
-@WIN32_FALSE@	esac
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=perl EXT=pl install-links
 
 install-shell-links:
-@WIN32_FALSE@	case "$(bindir)" in \
-@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-shell-links;; \
-@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-shell-links;; \
-@WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-@WIN32_FALSE@	     exit 1;; \
-@WIN32_FALSE@	esac
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
 
-make-perl-links:
+# We support both multiplatform and non-multiplatform builds.
+install-links:
+	case "$(bindir)" in \
+	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
+	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
+	  *) echo "strange directory '$(bindir)' for linked $(TYPE) scripts" >&2; \
+	     exit 1;; \
+	esac
+
+make-links:
 	@cd $(DESTDIR)$(bindir) && \
-	  for f in $(perl_scripts); do \
+	  for f in $($(TYPE)_scripts); do \
 	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.pl'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
+	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.$(EXT)'"; \
+	    $(LN_S) $(REL)/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
 	  done  
-
-make-shell-links:
-	@cd $(DESTDIR)$(bindir) && \
-	  for f in $(shell_scripts); do \
-	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.sh'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.sh $$f || exit 1; \
-	  done
 
 uninstall-links:
 @WIN32_FALSE@	@for f in $(all_scripts); do \
