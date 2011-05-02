@@ -1,0 +1,20 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -f GenR-ec.vpl GenR102-ec.*
+
+TEXMFCNF=$srcdir/../kpathsea \
+  TEXFONTS=$srcdir/tests \
+  ./ttf2tfm GenR102 -u -q -N -T gentium-ec -v GenR-ec GenR102-ec >GenR102-ec.map || exit 1
+diff $srcdir/tests/ttfonts.map GenR102-ec.map || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea \
+  TEXFONTS=.:$srcdir/tests \
+  TTF2PKINPUTS=$srcdir/tests \
+  ./ttf2pk -q GenR102-ec 100 || exit 1
+
+tftopl GenR102-ec GenR102-ec || exit 77
+pktype GenR102-ec.100pk >GenR102-ec.typ || exit 77
+

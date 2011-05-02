@@ -1,0 +1,98 @@
+2011-05-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttfaux.c (readttf): Skip unused vars.
+	Arg3 of FT_Get_Glyph_Name() is 'char *', not 'char **'.
+
+	* ttflib.c (TTFget_first_glyphs, TTFsearch_PS_name),
+	ttfaux.c (readttf): FT_Get_Glyph_Name() fills glyph name into
+	buffer, may need to copy because next call will overwrite it.
+
+2011-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import changes from http://chem.skku.ac.kr/~wkpark/project/
+	ktug/ttf2pk-freetype2_20030314.tgz to use libfreetype instead
+	of libttf.
+
+	* ttfaux.c: FIXME: Kerning, Post, GSUB? Collection? rotate?
+
+	* ttflib.c: FIXME: Post, GSUB? rotate?
+
+	* vplaux.c: FIXME: boundary char and more.
+
+2011-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* parse.c, ttfenc.c: Bug fix. Increase buffer size for increased
+	code/glyph range.
+
+2011-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ttf2pk.test (new): Shell script for a test case.
+	* tests/GenR102.ttf, tests/gentium-ec.enc, tests/ttf2pk.cfg,
+	tests/ttfonts.map (new}: Test input.
+	* Makefile.am: Adapted.
+
+2011-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* errormsg.c, ttfaux.c: Move 'extern progname' from here ...
+	* errormsg.h: ... to here and make it const.
+	* ttf2pk.c, ttf2tfm.c: Define 'const char *progname'.
+
+	* filesrch.c: Move 'extern setup_list' from here ...
+	* emtexdir..h: ... to here.
+
+2009-11-27  Karl Berry  <karl@tug.org>
+
+	* ttf2pk.c (USAGE): mention email address, update copyrights.
+
+2009-11-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ttf2pk.c (main): do not dereference argv[1] if it's nonexistent.
+
+2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, filesrch.c: Require recent kpathsea version.
+
+2009-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* case.h, filesrch.[ch], newobj.[ch], texenc.[ch], tfmaux.c,
+	ttf2pk.c, ttf2tfm.[ch], ttfaux.c, ttfenc.[ch], ttflib.c,
+	vplaux.c: Constify many global, struct member, param, and local
+	strings.
+	ttfaux.c (readttf), ttflib.c (TTFget_first_glyphs): Use new
+	non-const string, not to modify const string.
+
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for <kpathsea/version.h> and ...
+	* filesrch.c: ... skip extern decls if found.
+
+2009-07-27  Karl Berry  <karl@tug.org>
+
+	* data/ttfonts.map: new version from zhmetrics package.
+
+2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* pklib.c (xgetc): declare as static.
+	* tfmaux.c (write16, writearr, writesarr): declare as static.
+
+2009-06-12  Francois Charette  <firmicus@ankabut.net>
+
+	* newobj.c, newobj.h, parse.c: rename getline to texlive_getline.
+
+2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.in: added AC_CONFIG_HEADERS (moved
+	from ../kpathsea/common.ac to here).
+
+2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in: Add @configure_input@ line.
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
