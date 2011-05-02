@@ -1,0 +1,14 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -rf FonetikaDaniaIwonaeRegular.ttf ttfdump.glyf ttfdump.head
+cp $srcdir/tests/FonetikaDaniaIwonaeRegular.ttf .
+
+./ttfdump -t head FonetikaDaniaIwonaeRegular.ttf -o ttfdump.head || exit 1
+diff $srcdir/tests/ttfdump.head ttfdump.head || exit 1
+
+./ttfdump -t glyf -g 1 FonetikaDaniaIwonaeRegular.ttf -o ttfdump.glyf || exit 1
+diff $srcdir/tests/ttfdump.glyf ttfdump.glyf || exit 1
+

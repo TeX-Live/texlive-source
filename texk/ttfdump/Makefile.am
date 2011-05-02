@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ttfdump/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -64,6 +64,15 @@ nodist_ttfdump_SOURCES = src/ttfdump.c
 LDADD = libttf.a
 
 nodist_man1_MANS = docs/ttfdump.1
+
+## Tests.
+##
+TESTS = tests/ttfdump.test
+EXTRA_DIST += $(TESTS)
+DISTCLEANFILES =
+## tests/ttfdump.test
+EXTRA_DIST += tests/FonetikaDaniaIwonaeRegular.ttf tests/ttfdump.glyf tests/ttfdump.head
+DISTCLEANFILES += FonetikaDaniaIwonaeRegular.ttf ttfdump.glyf ttfdump.head
 
 ## Not used
 ##

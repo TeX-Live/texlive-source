@@ -1,3 +1,14 @@
+2011-04-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ttfdump.test (new): Shell script for a test case.
+	* tests/FonetikaDaniaIwonaeRegular.ttf (new): Test input.
+	* tests/ttfdump.{glyf,head} (new): Expected output.
+	* Makefile.am: Adapted.
+
+2011-04-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* libttf/tabledir.c: Fix typo "chechsum" -> "checksum".
+
 2010-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Remove duplicate checks (done by KPSE_COMMON).

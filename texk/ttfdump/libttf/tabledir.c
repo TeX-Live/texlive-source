@@ -71,7 +71,7 @@ void ttfPrintTableDir(FILE *fp,TableDirPtr p)
     FourByteSwap((unsigned char *)tagname,4);
 #endif
 
-    fprintf(fp,"'%s' - chechsum = 0x%08x, offset = 0x%08x, len = %9u \n",
+    fprintf(fp,"'%s' - checksum = 0x%08x, offset = 0x%08x, len = %9u \n",
 	    tagname,p->checksum,p->offset,p->length);
 }
 
