@@ -2727,7 +2727,6 @@ extern void *mp_xrealloc (MP mp, void *p, size_t nmem, size_t size);
 extern void *mp_xmalloc (MP mp, size_t nmem, size_t size);
 extern char *mp_xstrdup (MP mp, const char *s);
 extern char *mp_xstrldup (MP mp, const char *s, size_t l);
-extern void mp_do_snprintf (char *str, int size, const char *fmt, ...);
 
 @ Some care has to be taken while copying strings 
 
@@ -2813,12 +2812,13 @@ char *mp_xstrdup (MP mp, const char *s) {
 #ifdef HAVE_SNPRINTF
 #  define mp_snprintf (void)snprintf
 #else
-#  define mp_snprintf mp_do_snprintf
+static void mp_snprintf (char *str, int size, const char *fmt, ...);
 #endif
 
 @ This internal version is rather stupid, but good enough for its purpose.
 
 @c
+#ifndef HAVE_SNPRINTF
 static char *mp_itoa (int i) {
   char res[32];
   unsigned idx = 30;
@@ -2847,7 +2847,7 @@ static char *mp_utoa (unsigned v) {
   res[idx--] = (char) (v + '0');
   return mp_strdup ((res + idx + 1));
 }
-void mp_do_snprintf (char *str, int size, const char *format, ...) {
+static void mp_snprintf (char *str, int size, const char *format, ...) {
   const char *fmt;
   char *res;
   int fw, pad;
@@ -2964,6 +2964,7 @@ void mp_do_snprintf (char *str, int size, const char *format, ...) {
   *res = '\0';
   va_end (ap);
 }
+#endif
 
 
 @* Dynamic memory allocation.

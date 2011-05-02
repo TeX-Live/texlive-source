@@ -1,3 +1,10 @@
+2011-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mp.w (mp_do_snprintf): Removed, instead declare and define
+	static internal version of mp_snprintf().
+	Compare change from 2009-12-05:
+	FIXME: Should unconditionally assume snprintf() exists.
+
 2011-04-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libmplib.am: Only one rule for tfmin.w => tfmin.c.
