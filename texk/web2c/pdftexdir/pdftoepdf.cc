@@ -407,22 +407,22 @@ static void copyFont(char *tag, Object * fontRef)
     // Only handle included Type1 (and Type1C) fonts; anything else will be copied.
     // Type1C fonts are replaced by Type1 fonts, if REPLACE_TYPE1C is true.
     if (!fixedinclusioncopyfont && fontRef->fetch(xref, &fontdict)->isDict()
-        && fontdict->dictLookup("Subtype", &subtype)->isName()
+        && fontdict->dictLookup((char *)"Subtype", &subtype)->isName()
         && !strcmp(subtype->getName(), "Type1")
-        && fontdict->dictLookup("BaseFont", &basefont)->isName()
-        && fontdict->dictLookupNF("FontDescriptor", &fontdescRef)->isRef()
+        && fontdict->dictLookup((char *)"BaseFont", &basefont)->isName()
+        && fontdict->dictLookupNF((char *)"FontDescriptor", &fontdescRef)->isRef()
         && fontdescRef->fetch(xref, &fontdesc)->isDict()
-        && (fontdesc->dictLookup("FontFile", &fontfile)->isStream()
+        && (fontdesc->dictLookup((char *)"FontFile", &fontfile)->isStream()
             || (REPLACE_TYPE1C
-                && fontdesc->dictLookup("FontFile3", &fontfile)->isStream()
-                && fontfile->streamGetDict()->lookup("Subtype",
+                && fontdesc->dictLookup((char *)"FontFile3", &fontfile)->isStream()
+                && fontfile->streamGetDict()->lookup((char *)"Subtype",
                                                      &ffsubtype)->isName()
                 && !strcmp(ffsubtype->getName(), "Type1C")))
         && (fontmap = lookup_fontmap(basefont->getName())) != NULL) {
         // copy the value of /StemV
-        fontdesc->dictLookup("StemV", &stemV);
+        fontdesc->dictLookup((char *)"StemV", &stemV);
         fd = epdf_create_fontdescriptor(fontmap, stemV->getInt());
-        if (fontdesc->dictLookup("CharSet", &charset) &&
+        if (fontdesc->dictLookup((char *)"CharSet", &charset) &&
             charset->isString() && is_subsetable(fontmap))
             epdf_mark_glyphs(fd, charset->getString()->getCString());
         else
@@ -835,7 +835,7 @@ void write_epdf(void)
     int rotate;
     double scale[6] = { 0, 0, 0, 0, 0, 0 };
     bool writematrix = false;
-    static char *pageDictKeys[] = {
+    static const char *pageDictKeys[] = {
         "LastModified",
         "Metadata",
         "PieceInfo",
@@ -921,13 +921,13 @@ void write_epdf(void)
     pdf_puts(stripzeros(s));
 
     // Metadata validity check (as a stream it must be indirect)
-    pageDict->lookupNF("Metadata", &dictObj);
+    pageDict->lookupNF((char *)"Metadata", &dictObj);
     if (!dictObj->isNull() && !dictObj->isRef())
         pdftex_warn("PDF inclusion: /Metadata must be indirect object");
 
     // copy selected items in Page dictionary except Resources & Group
     for (i = 0; pageDictKeys[i] != NULL; i++) {
-        pageDict->lookupNF(pageDictKeys[i], &dictObj);
+        pageDict->lookupNF((char *)pageDictKeys[i], &dictObj);
         if (!dictObj->isNull()) {
             pdf_newline();
             pdf_printf("/%s ", pageDictKeys[i]);
@@ -936,7 +936,7 @@ void write_epdf(void)
     } 
 
     // handle page group
-    pageDict->lookupNF("Group", &dictObj);
+    pageDict->lookupNF((char *)"Group", &dictObj);
     if (!dictObj->isNull()) {
         if (pdfpagegroupval == 0) { 
             // another pdf with page group was included earlier on the same page;
@@ -992,21 +992,21 @@ void write_epdf(void)
 
         // Variant B: copy stream without recompressing
         //
-        contents->streamGetDict()->lookup("F", &obj1);
+        contents->streamGetDict()->lookup((char *)"F", &obj1);
         if (!obj1->isNull()) {
             pdftex_fail("PDF inclusion: Unsupported external stream");
         }
-        contents->streamGetDict()->lookup("Length", &obj1);
+        contents->streamGetDict()->lookup((char *)"Length", &obj1);
         assert(!obj1->isNull());
         pdf_puts("/Length ");
         copyObject(&obj1);
         pdf_puts("\n");
-        contents->streamGetDict()->lookup("Filter", &obj1);
+        contents->streamGetDict()->lookup((char *)"Filter", &obj1);
         if (!obj1->isNull()) {
             pdf_puts("/Filter ");
             copyObject(&obj1);
             pdf_puts("\n");
-            contents->streamGetDict()->lookup("DecodeParms", &obj1);
+            contents->streamGetDict()->lookup((char *)"DecodeParms", &obj1);
             if (!obj1->isNull()) {
                 pdf_puts("/DecodeParms ");
                 copyObject(&obj1);

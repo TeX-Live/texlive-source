@@ -1,3 +1,15 @@
+2011-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid "deprecated conversion from string constant to 'char*'"
+	warnings from g++-4.4.
+	Unfortunately both xpdf and poppler declare lots of function
+	parameters as 'char *' that should actually be 'const char *'.
+	Compiling just the parts required for TeX Live with g++-4.4
+	yields >10000 such warnings for each of xpdf and poppler.
+
+	* pdftoepdf.cc, pdftosrc.cc: Cast string constants to 'char *'
+	in order to avoid more such warnings when compiling pdfTeX.
+
 2011-04-29  Karl Berry  <karl@tug.org>
 
 	* all files: update copyright notices.
