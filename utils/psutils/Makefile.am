@@ -90,8 +90,8 @@ perl_scripts = \
 	psmerge
 
 sh_scripts = \
-	getafm \
-	showchar
+	$(PSUTILS_TREE)/getafm \
+	$(PSUTILS_TREE)/showchar
 
 scriptsdir = texmf/scripts/psutils
 nodist_bin_SCRIPTS =
@@ -101,23 +101,13 @@ include $(srcdir)/../../texk/am/script_links.am
 texmfdir = ${prefix}/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 
+if !WIN32
+bin_SCRIPTS = $(sh_scripts)
+endif !WIN32
+
 install-data-hook: install-perl-links
 
-install-exec-hook:
-if !WIN32
-	@for f in $(sh_scripts); do \
-	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
-	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
-	done
-endif !WIN32
-
 uninstall-hook: uninstall-links
-if !WIN32
-	@for f in $(sh_scripts); do \
-	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-	done
-endif !WIN32
 
 nodist_man1_MANS = \
 	$(bin_PROGRAMS:$(EXEEXT)=.1) \

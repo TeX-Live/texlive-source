@@ -1,10 +1,19 @@
+2011-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/script_links.am: Add support for lua scripts; reorganize.
+
+2011-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/script_links.am: New Makefile fragment for linked perl and
+	shell scripts.
+
 2011-02-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/man1_links.am: Install manpage links as .so requests.
 
 2011-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* am/man1_links.am: New Makefile fragments for manpage links.
+	* am/man1_links.am: New Makefile fragment for manpage links.
 
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

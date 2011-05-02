@@ -3,15 +3,24 @@
 ## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
+## Install/uninstall 'linked scripts' or win32 wrappers
+## to use it, add prerequisite uninstall-links to uninstall-hook and
+##  one ore more of install-{lua,perl,shell}-scripts to install-data-hook
+##
 ## requires conditionals WIN32 and WIN32_WRAP
 ## requires $(scriptsdir): e.g., texmf/scripts/chktex
-## requires $(perl_scripts): e.g., deweb
-## optional $(shell_scripts): e.g. htlatex
 ## appends to $(nodist_bin_SCRIPTS)
-.PHONY: install-perl-links make-perl-links \
-	install-shell-links make-shell-links uninstall-links
+#
+## install-lua-scripts requires $(lua_scripts), e.g., musixflx
+## install-perl-scripts requires $(perl_scripts), e.g., deweb
+## install-shell-scripts requires $(shell_scripts), e.g. htlatex
+##
+## shell_scripts are somewhat special because win32 needs
+## additional .bat scripts or similar
+.PHONY: install-lua-links install-perl-links install-shell-links \
+	install-links make-links uninstall-links
 
-all_scripts = $(perl_scripts) $(shell_scripts)
+all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 
 if WIN32
 if WIN32_WRAP
@@ -24,42 +33,37 @@ $(wrappers): $(runscript)
 endif WIN32_WRAP
 endif WIN32
 
-# We support both multiplatform and non-multiplatform builds.
+install-lua-links:
+if !WIN32
+	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
+endif !WIN32
+
 install-perl-links:
 if !WIN32
-	case "$(bindir)" in \
-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-perl-links;; \
-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-perl-links;; \
-	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-	     exit 1;; \
-	esac
+	$(MAKE) $(AM_MAKEFLAGS) TYPE=perl EXT=pl install-links
 endif !WIN32
 
 install-shell-links:
 if !WIN32
-	case "$(bindir)" in \
-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-shell-links;; \
-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-shell-links;; \
-	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-	     exit 1;; \
-	esac
+	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
 endif !WIN32
 
-make-perl-links:
-	@cd $(DESTDIR)$(bindir) && \
-	  for f in $(perl_scripts); do \
-	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.pl'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
-	  done  
+# We support both multiplatform and non-multiplatform builds.
+install-links:
+	case "$(bindir)" in \
+	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
+	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
+	  *) echo "strange directory '$(bindir)' for linked $(TYPE) scripts" >&2; \
+	     exit 1;; \
+	esac
 
-make-shell-links:
+make-links:
 	@cd $(DESTDIR)$(bindir) && \
-	  for f in $(shell_scripts); do \
+	  for f in $($(TYPE)_scripts); do \
 	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.sh'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.sh $$f || exit 1; \
-	  done
+	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.$(EXT)'"; \
+	    $(LN_S) $(REL)/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
+	  done  
 
 uninstall-links:
 if !WIN32

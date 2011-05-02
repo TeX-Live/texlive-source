@@ -59,7 +59,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES = patchlev.h
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"
+	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" \
+	"$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_epsffit_OBJECTS = epsffit.$(OBJEXT) pserror.$(OBJEXT)
 epsffit_OBJECTS = $(am_epsffit_OBJECTS)
@@ -105,7 +106,7 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-SCRIPTS = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS)
+SCRIPTS = $(bin_SCRIPTS) $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -293,16 +294,17 @@ perl_scripts = \
 	psmerge
 
 sh_scripts = \
-	getafm \
-	showchar
+	$(PSUTILS_TREE)/getafm \
+	$(PSUTILS_TREE)/showchar
 
 scriptsdir = texmf/scripts/psutils
 nodist_bin_SCRIPTS = $(am__append_1)
-all_scripts = $(perl_scripts) $(shell_scripts)
+all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 texmfdir = ${prefix}/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
+@WIN32_FALSE@bin_SCRIPTS = $(sh_scripts)
 nodist_man1_MANS = \
 	$(bin_PROGRAMS:$(EXEEXT)=.1) \
 	$(perl_scripts:=.1) \
@@ -406,6 +408,40 @@ psselect$(EXEEXT): $(psselect_OBJECTS) $(psselect_DEPENDENCIES)
 pstops$(EXEEXT): $(pstops_OBJECTS) $(pstops_DEPENDENCIES) 
 	@rm -f pstops$(EXEEXT)
 	$(LINK) $(pstops_OBJECTS) $(pstops_LDADD) $(LIBS)
+install-binSCRIPTS: $(bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	test -n "$$list" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -884,7 +920,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -943,9 +979,9 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-nodist_binSCRIPTS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+install-exec-am: install-binPROGRAMS install-binSCRIPTS \
+	install-nodist_binSCRIPTS
+
 install-html: install-html-am
 
 install-html-am:
@@ -985,14 +1021,13 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man \
+uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS uninstall-man \
 	uninstall-nodist_binSCRIPTS uninstall-nodist_texmfSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
 
-.MAKE: install-am install-data-am install-exec-am install-strip \
-	uninstall-am
+.MAKE: install-am install-data-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-binPROGRAMS clean-generic ctags dist dist-all dist-bzip2 \
@@ -1000,9 +1035,9 @@ uninstall-man: uninstall-man1
 	dist-zip distcheck distclean distclean-compile \
 	distclean-generic distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-hook install-html \
+	install install-am install-binPROGRAMS install-binSCRIPTS \
+	install-data install-data-am install-data-hook install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
 	install-man1 install-nodist_binSCRIPTS \
 	install-nodist_texmfSCRIPTS install-pdf install-pdf-am \
@@ -1010,51 +1045,46 @@ uninstall-man: uninstall-man1
 	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-hook \
-	uninstall-man uninstall-man1 uninstall-nodist_binSCRIPTS \
-	uninstall-nodist_texmfSCRIPTS
+	uninstall-am uninstall-binPROGRAMS uninstall-binSCRIPTS \
+	uninstall-hook uninstall-man uninstall-man1 \
+	uninstall-nodist_binSCRIPTS uninstall-nodist_texmfSCRIPTS
 
 
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-.PHONY: install-perl-links make-perl-links \
-	install-shell-links make-shell-links uninstall-links
+
+#
+.PHONY: install-lua-links install-perl-links install-shell-links \
+	install-links make-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
 
-# We support both multiplatform and non-multiplatform builds.
+install-lua-links:
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
+
 install-perl-links:
-@WIN32_FALSE@	case "$(bindir)" in \
-@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-perl-links;; \
-@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-perl-links;; \
-@WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-@WIN32_FALSE@	     exit 1;; \
-@WIN32_FALSE@	esac
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=perl EXT=pl install-links
 
 install-shell-links:
-@WIN32_FALSE@	case "$(bindir)" in \
-@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. make-shell-links;; \
-@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. make-shell-links;; \
-@WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-@WIN32_FALSE@	     exit 1;; \
-@WIN32_FALSE@	esac
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
 
-make-perl-links:
+# We support both multiplatform and non-multiplatform builds.
+install-links:
+	case "$(bindir)" in \
+	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
+	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
+	  *) echo "strange directory '$(bindir)' for linked $(TYPE) scripts" >&2; \
+	     exit 1;; \
+	esac
+
+make-links:
 	@cd $(DESTDIR)$(bindir) && \
-	  for f in $(perl_scripts); do \
+	  for f in $($(TYPE)_scripts); do \
 	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.pl'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.pl $$f || exit 1; \
+	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.$(EXT)'"; \
+	    $(LN_S) $(REL)/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
 	  done  
-
-make-shell-links:
-	@cd $(DESTDIR)$(bindir) && \
-	  for f in $(shell_scripts); do \
-	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.sh'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.sh $$f || exit 1; \
-	  done
 
 uninstall-links:
 @WIN32_FALSE@	@for f in $(all_scripts); do \
@@ -1064,17 +1094,7 @@ uninstall-links:
 
 install-data-hook: install-perl-links
 
-install-exec-hook:
-@WIN32_FALSE@	@for f in $(sh_scripts); do \
-@WIN32_FALSE@	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$(PSUTILS_TREE)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	  $(INSTALL_SCRIPT) "$(srcdir)/$(PSUTILS_TREE)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	done
-
 uninstall-hook: uninstall-links
-@WIN32_FALSE@	@for f in $(sh_scripts); do \
-@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	done
 
 %.pl: $(PSUTILS_TREE)/%.pl patchlev.h
 	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $< >$@
