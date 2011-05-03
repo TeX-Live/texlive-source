@@ -1,3 +1,8 @@
+2011-05-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* openclose.c (recorder_change_filename): on windows, an opened file
+	cannot be renamed.
+
 2011-05-02  Karl Berry  <karl@tug.org>
 
 	* openclose.c (recorder_change_filename): take output_directory
