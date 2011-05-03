@@ -1,3 +1,7 @@
+2011-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web, tex.ch0: Remove pdfeTeX_banner, no more pdfeTeX.
+
 2011-05-02  Akira Kakuto <kakuto@fuk.kindai.ac.jp>  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Append eTeX_version_string to pdfTeX_banner.

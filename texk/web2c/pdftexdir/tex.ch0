@@ -23,7 +23,7 @@
 @x [1.2] l.188
 @d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
-@d banner==pdfeTeX_banner
+@d banner==pdfTeX_banner
 @y
 @d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @z
