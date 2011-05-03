@@ -58,7 +58,7 @@ dvipos - ?
 
 dvipsk - maintained here by Tom Rokicki, Karl Berry, Akira Kakuto, ...
 
-dvisvgm - checked 25apr11, need 1.06
+dvisvgm 1.0.6 - checked 25apr11
   http://sourceforge.net/projects/dvisvgm/files/dvisvgm/
 
 gsftopk - from Paul Vojta's xdvi?
