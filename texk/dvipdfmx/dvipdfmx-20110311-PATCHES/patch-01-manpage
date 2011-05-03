@@ -1,0 +1,19 @@
+diff -ur dvipdfmx-20110311.orig/man/extractbb.1 dvipdfmx-20110311/man/extractbb.1
+--- dvipdfmx-20110311.orig/man/extractbb.1	2011-03-09 08:45:17.000000000 +0100
++++ dvipdfmx-20110311/man/extractbb.1	2011-04-29 01:23:09.000000000 +0200
+@@ -1,4 +1,4 @@
+-.TH "EXTRACTBB" "1" "30 August 2009" "20090708" "DVIPDFMx"
++.TH "EXTRACTBB" "1" "28 April 2011" "20110311" "DVIPDFMx"
+ .PP 
+ .SH "NAME" 
+ extractbb, ebb \- extract bounding box information from graphics files
+@@ -59,7 +59,8 @@
+ Write output in dvipdfm's ``bb'' format.
+ .TP
+ .B -x
+-Write output in dvipdfmx's ``xbb'' format (default).
++Write output in dvipdfmx's ``xbb'' format (default), which is the same
++as that used by the PDF format.
+ .PD
+ .PP
+ .SH "BUGS"
