@@ -1,3 +1,9 @@
+2011-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported snapshot 20110311.
+	* patch-04-dvipdfmx-20110311 (removed): Now included.
+	* patch-01-manpage (new): Update man/extractbb.1.
+
 2011-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-00-cfg (new): Change dvipdfmx.cfg to use rungs instead of
