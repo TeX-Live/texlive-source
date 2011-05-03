@@ -1,3 +1,7 @@
+2011-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpsewhich.c (find_format): Drop unused variable 'try_len'.
+
 2011-04-28  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (try_suffix): new fn, checking entire string for

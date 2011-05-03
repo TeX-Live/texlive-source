@@ -223,7 +223,6 @@ find_format (kpathsea kpse, string name, boolean is_filename)
       unsigned name_len = strlen (name);
 
       while (f != kpse_last_format) {
-        unsigned try_len;
         const_string *ext;
         const_string ftry;
         boolean found = false;
