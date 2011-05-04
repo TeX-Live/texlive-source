@@ -946,9 +946,6 @@ static void
 ipc_open_out (void) {
 #ifdef WIN32
   u_long mode = 1;
-#define SOCK_NONBLOCK(s) ioctlsocket (s, FIONBIO, &mode)
-#else
-#define SOCK_NONBLOCK(s) fcntl (s, F_SETFL, O_NONBLOCK)
 #endif
 #ifdef IPC_DEBUG
   fputs ("tex: Opening socket for IPC output ...\n", stderr);
@@ -964,8 +961,13 @@ ipc_open_out (void) {
 
   sock = socket (PF_UNIX, SOCK_STREAM, 0);
   if (sock >= 0) {
-    if (connect (sock, ipc_addr, ipc_addr_len) != 0
-        || SOCK_NONBLOCK (sock) < 0) {
+    if (connect (sock, ipc_addr, ipc_addr_len) != 0 ||
+#ifdef WIN32
+        ioctlsocket (sock, FIONBIO, &mode) < 0
+#else
+        fcntl (sock, F_SETFL, O_NONBLOCK) < 0
+#endif
+        ) {
       close (sock);
       sock = -1;
       return;

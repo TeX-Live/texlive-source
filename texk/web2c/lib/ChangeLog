@@ -1,3 +1,8 @@
+2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (ipc_open_out): Avoid to #define SOCK_NONBLOCK which
+	conflicts with newer GNU C library headers.
+
 2011-05-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* openclose.c (recorder_change_filename): on windows, an opened file
