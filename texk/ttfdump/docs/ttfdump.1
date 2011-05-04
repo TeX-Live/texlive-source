@@ -1,8 +1,19 @@
-.TH TTFDUMP 1 "18 Feb 1997" "ILX Project" 
+.TH TTFDUMP 1 "4 May 2011" "ILX Project" 
 .SH NAME
 ttfdump \- Dumping the contents of a TrueType Font file
 .SH SYNOPSIS
-\fBttfdump\fR [-h] [-t \fItablename\fP] [-g \fIglyphnumber\fP] [-c \fIcollection\fP] [-i] \fIttfile\fR [-o \fIdumpfile\fR]
+.B ttfdump
+.RB [ \-h ]
+.RB [ \-t
+.IR tablename ]
+.RB [ \-g
+.IR glyphnumber ]
+.RB [\ -c
+.IR collection ]
+.RB [\ -o
+.IR dumpfile ]
+.RB [ \-i ]
+.I ttfile
 .SH DESCRIPTION
 \fBttfdump\fP dumps the contents of a TrueType font file in ASCII form. 
 A TrueType font file is consist of various tables. Those table are divided into
@@ -94,11 +105,11 @@ otherwise dump all glyphs in \fIttfile\fP.
 \fB-c\fI collection\fR
 Select a TrueType font in a TrueType Collection.
 .TP
-\fB-i\fI ttfile\fR
-TrueType font file to be dumped.
-.TP
 \fB-o\fI dumpfile\fR
 Output of the dump. If this option is not specified, dump to stdout.
+.TP
+\fB-i\fI ttfile\fR
+TrueType font file to be dumped.
 .RE
 .SH EXAMPLE
 To dump all information in the TrueType font file times.ttf:

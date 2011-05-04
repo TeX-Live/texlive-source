@@ -1,3 +1,8 @@
+2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	docs/ttfdump.1, tests/ttfdump.test: Assume a posixly correct
+	getopt() without non-options followed by options.
+
 2011-04-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/ttfdump.test (new): Shell script for a test case.
