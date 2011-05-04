@@ -1,7 +1,12 @@
+2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Reformulate in terms of vlna-1.5
+	source tree and patches in vlna-1.5-PATCHES.
+
 2011-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vlna.w (hexnum, settiestr): Declare as static.
-	(settiestr): Dreop unused local variable 'c'.
+	(settiestr): Drop unused local variable 'c'.
 
 2011-04-27  Karl Berry  <karl@tug.org>
 

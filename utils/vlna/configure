@@ -564,11 +564,12 @@ PACKAGE_STRING='vlna for TeX Live 1.5'
 PACKAGE_BUGREPORT='tex-live@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="vlna.w"
+ac_unique_file="vlna-1.5/vlna.w"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+VLNA_TREE
 do_cweb_FALSE
 do_cweb_TRUE
 CSPLAIN
@@ -3496,6 +3497,9 @@ else
   do_cweb_TRUE='#'
   do_cweb_FALSE=
 fi
+
+
+VLNA_TREE=vlna-1.5
 
 
 ac_config_files="$ac_config_files Makefile"

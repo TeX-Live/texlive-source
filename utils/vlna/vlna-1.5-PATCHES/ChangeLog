@@ -1,0 +1,9 @@
+2011-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-0[123]-warnings (new): Document changes applied to the
+	vlna-1.5 source tree.
+
+2011-04-27  Karl Berry  <karl@tug.org>
+
+	* Import 1.5 from ftp://math.feld.cvut.cz/pub/olsak/vlna.
+

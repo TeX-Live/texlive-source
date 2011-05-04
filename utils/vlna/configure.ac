@@ -6,9 +6,10 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([vlna for TeX Live], [1.5], [tex-live@tug.org])
+m4_define([vlna_version], [1.5])[]dnl using unmodified vlna source tree
+AC_INIT([vlna for TeX Live], vlna_version, [tex-live@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([vlna.w])
+AC_CONFIG_SRCDIR([vlna-]vlna_version[/vlna.w])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -36,6 +37,8 @@ if test x"$do_cweb" = xyes; then
   esac
 fi
 AM_CONDITIONAL([do_cweb], [test "x$do_cweb" = xyes])
+
+AC_SUBST([VLNA_TREE], [vlna-]vlna_version)
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

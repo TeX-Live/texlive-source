@@ -1,0 +1,240 @@
+2009-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* vlna.c: Use ANSI C function definitions, all static except main.
+
+diff -ur vlna-1.5.orig/vlna.w vlna-1.5/vlna.w
+--- vlna-1.5.orig/vlna.w	2010-02-01 22:52:15.000000000 +0100
++++ vlna-1.5/vlna.w	2011-05-02 15:58:47.000000000 +0200
+@@ -59,9 +59,7 @@
+ 
+ @ Základní rozvr¾ení funkce |main|.
+ @<Hlavní program@>=
+-int main (argc,argv)
+-    int argc;
+-    char **argv;
++int main (int argc, char **argv)
+ {
+   @<Lokální promìnné funkce |main|@>;
+   prog_name=argv[0]; status = OK;
+@@ -112,7 +110,7 @@
+ kulturnì dlouhý string obsahující \.{\char92n} s formátovacími
+ po¾adavky. Byl jsem nucen to takto nehezky zapsat.
+ @<Pomocné funkce@>=
+-void printusage ()
++static void printusage (void)
+ {
+   fprintf(stderr,
+     "usage: vlna [opt] [filenames]\n"
+@@ -204,8 +202,7 @@
+ @ Definujeme funkci pro výpis chybového hlá¹ení pøi neúspì¹ném otevøení
+ souboru.
+ @<Pomocné funkce@>=
+-void ioerr (f)
+-  char *f;
++static void ioerr (char *f)
+ {
+    fprintf(stderr, "%s: cannot open file %s\n", prog_name, f);
+ }
+@@ -335,7 +332,7 @@
+ } PATITEM;
+ typedef struct PATTERN {     /* jeden pattern */
+    PATITEM *patt;            /* ukazatel na prvni pozici */
+-   void (*proc)();           /* procedura spustena pri souhlasu patternu */
++   void (*proc)(void);       /* procedura spustena pri souhlasu patternu */
+    struct PATTERN *next ;    /* nasledujici v seznamu vsech patternu */
+ } PATTERN;
+ 
+@@ -407,8 +404,7 @@
+ ohlídat pøípadnou chybu pøi alokaci, budeme allokovat pamì» zprostøedkovanì
+ pomocí funkce |myalloc|.
+ @<Pomocné funkce@>=
+-void *myalloc (size)
+-  int size;
++static void *myalloc (int size)
+ {
+   void *p;
+   p = malloc (size);
+@@ -425,8 +421,7 @@
+ Vrátí ukazatel na novì alokované místo. Jednotlivé pozice patternu se musí
+ následovnì alokovat pomocí |setpi|.
+ @<Pomocné funkce@>=
+-PATTERN *setpattern (proc) @/
+-  void (*proc)();
++static PATTERN *setpattern (void (*proc)(void))
+ {
+   PATTERN *pp;
+   pp = myalloc (sizeof (PATTERN));
+@@ -444,9 +439,7 @@
+ |patt| ve struktuøe |PATTERN| a dal¹í byly provázány polo¾kou |next| ve
+ struktuøe |PATITEM|. Poslední pozice má |next==NULL|.
+ @<Pomocné funkce@>=
+-void setpi (str, flag)
+-  char *str;
+-  int flag;
++static void setpi (char *str, int flag)
+ {
+   PATITEM* p;
+   p = myalloc (sizeof (PATITEM));
+@@ -479,9 +472,7 @@
+ 
+ @ Definujme funkci |normalpattern|.
+ @<Pomocné funkce@>=
+-PATTERN *normalpattern (proc, str) @/
+-  void (*proc)();
+-  char *str;
++static PATTERN *normalpattern (void (*proc)(void), char *str)
+ {
+   PATTERN *pp;
+   int j=0;
+@@ -517,8 +508,7 @@
+ @d FOUND   -1
+ @d NOFOUND -2
+ @<Pomocné funkce@>=
+-int match (p)
+-  PATITEM *p;
++static int match (PATITEM *p)
+ {
+   int m;
+   if (strchr (p->str, c) != NULL) m = 1;  /* Znak nalezen */
+@@ -565,8 +555,7 @@
+ implementovat jen pøepínání mezi stavem ètení z oblasti komentáøe
+ (|listpatt==commentlist|) a mimo komentáø (|listpatt==normallist|);
+ @<Vlnkovací funkce |tie|@>=
+-void tie (input, output)
+-  FILE *input, *output;
++static void tie (FILE *input, FILE *output)
+ {
+   int ap;  /* ap je pocet otevrenych patternu */
+   register int k, m, n;
+@@ -736,7 +725,7 @@
+ neboli vlnku. Nakonec pøipojíme zapamatovaný znak |p|, ov¹em pokud pøed ním byla nula, 
+ vlo¾íme ji je¹tì pøed znak |p|.
+ @<Pomocné funkce@>=
+-void vlnkain()
++static void vlnkain(void)
+ {
+   int i;
+   char p, z;
+@@ -780,7 +769,7 @@
+ situaci pouze zru¹íme stávající (v poøadí druhé) \uv{\.{\char92n}} a
+ nebudeme vytváøet nové. Na výstupu bude soubor o jeden øádek krat¹í.
+ @<Pomocné funkce@>=
+-void vlnkacr()
++static void vlnkacr(void)
+ {
+   char p, z;
+   int i, j;
+@@ -850,7 +839,7 @@
+ hodnotu promìnné |c|. Staèí tedy zmìnit hodnotu |c| a vlnkovací patterny se
+ neotevøou.
+ @<Pomocné funkce@>=
+-void tielock ()
++static void tielock (void)
+ {
+   c = 1;
+ }
+@@ -859,7 +848,7 @@
+ módu vlnky nedìláme. Pøi zji¹tìném nesouladu v pøechodech mezi
+ math-módy spustíme následující proceduru.
+ @<Pomocné funkce@>=
+-void printwarning ()
++static void printwarning (void)
+ {
+   if (!silent)
+     fprintf (stderr, 
+@@ -884,13 +873,13 @@
+ }
+ 
+ @ @<Pomocné funkce@>=
+-void mathin ()
++static void mathin (void)
+ {
+   if (mode!=TEXTMODE) printwarning ();
+   mode = MATHMODE;
+   normallist = listpatt = mathlist;
+ }
+-void mathout ()
++static void mathout (void)
+ {
+   if (mode!=MATHMODE) printwarning ();
+   mode = TEXTMODE;
+@@ -902,7 +891,7 @@
+ \.{\$\$} souhlasí ten druhý dolar s na¹ím patternem, ale to u¾ jsme uvnitø
+ display módu. V takovém pøípadì také nic nedìláme.
+ @<Pomocné funkce@>=
+-void onedollar ()
++static void onedollar (void)
+ {
+   if (buffnz[inz-3]=='\\' || (buffnz[inz-3]=='$' && buffnz[inz-4]!='\\')) return;
+   if (mode==DISPLAYMODE) printwarning ();
+@@ -921,7 +910,7 @@
+ setpi (cr, ONE);
+ 
+ @ @<Pomocné funkce@>=
+-void checkmode ()
++static void checkmode (void)
+ {
+   if (mode!=TEXTMODE) {
+     printwarning ();
+@@ -947,17 +936,17 @@
+ }
+ 
+ @ @<Pomocné funkce@>=
+-void displayin ()
++static void displayin (void)
+ {
+   if (mode!=TEXTMODE) printwarning ();
+   mode = DISPLAYMODE; normallist = listpatt = parcheck;
+ }
+-void displayout ()
++static void displayout (void)
+ {
+   if (mode!=DISPLAYMODE) printwarning();
+   mode = TEXTMODE; normallist =  listpatt = vlnkalist;
+ }
+-void twodollars ()
++static void twodollars (void)
+ {
+   if (buffnz[inz-3]=='\\') return;
+   if (mode==DISPLAYMODE) displayout ();
+@@ -999,7 +988,7 @@
+ int prevmode;
+ PATTERN *prevlist, *verboutlist[4];
+ char verbchar[2];
+-void verbinchar ()
++static void verbinchar (void)
+ {
+   prevmode = mode;
+   verbchar[0] = c;
+@@ -1017,7 +1006,7 @@
+ math. módu mù¾e být
+ \.{\char92hbox} a v nìm lokálnì verbatim konstrukce).
+ @<Pomocné funkce@>=
+-void verbin ()
++static void verbin (void)
+ { 
+   int i;
+   i = 0;
+@@ -1037,7 +1026,7 @@
+ }
+ 
+ @ @<Pomocné funkce@>=
+-void verbout ()
++static void verbout (void)
+ {
+   if (mode!=VERBMODE) return;
+   if (web && buffnz[inz-2] == '@@' && buffnz[inz-3] == '@@') return;
+@@ -1059,11 +1048,11 @@
+ normalpattern (tieon, "%.~.+");
+ 
+ @ @<Pomocné funkce@>=
+-void tieoff ()
++static void tieoff (void)
+ {
+   normallist = NULL;
+ }
+-void tieon ()
++static void tieon (void)
+ {
+   normallist = vlnkalist;
+ }

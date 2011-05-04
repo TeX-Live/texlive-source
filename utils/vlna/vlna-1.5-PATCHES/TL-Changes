@@ -1,0 +1,18 @@
+Changes applied to the vlna-1.5 tree as obtained from:
+	ftp://math.feld.cvut.cz/pub/olsak/vlna/vlna-1.5.tar.gz
+
+Remove:
+	Makefile.in
+	aclocal.m4
+	configure
+	depcomp
+	install-sh
+	missing
+
+Remove and regenerate in ../:
+	vlna.c
+	vlna.dvi
+	vlna.idx
+	vlna.scn
+	vlna.tex
+
