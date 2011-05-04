@@ -7,7 +7,7 @@
 
 ########################################################################
 # bundledoc                                                            #
-# Copyright (C) 2010 Scott Pakin                                       #
+# Copyright (C) 2011 Scott Pakin                                       #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -25,10 +25,10 @@
 ########################################################################
 
 use 5.006;             # Fail gracefully if we're not using Perl v5.6.0.
-our $VERSION = "3.0";  # Specify the version of bundledoc.
+our $VERSION = "3.1";  # Specify the version of bundledoc.
 use File::Basename;
 use File::Copy;
-use File::Spec::Functions qw(catfile devnull rel2abs rootdir updir);
+use File::Spec::Functions qw(abs2rel catfile devnull rel2abs rootdir updir);
 use File::Path;
 use Getopt::Long;
 use Pod::Usage;
@@ -55,8 +55,8 @@ my $manifest = "MANIFEST";
 my $progname = basename($0);
 
 # Other global variables
-my ($verbose, $keepdirs, $depfile, $localonly); # Taken from the command line
-my (@exclude_files, @include_files);      # Taken from the command line
+my ($verbose, $keepdirs, $depfile, $localonly);  # Taken from the command line
+my (@exclude_files, @include_files, @listdeps);  # Taken from the command line
 my ($texfile, $docdirname);               # Derived from $depfile
 my %subdirs;                              # Map from a qualified name to its subdirectory
 
@@ -141,9 +141,9 @@ sub find_dependencies ()
         my $filename = $2;
         my $versioninfo = $3;
 
-	# Extract the subdirectory if one exists.
-	my $subdir = dirname $filename;
-	my $qname = "";
+        # Extract the subdirectory if one exists.
+        my $subdir = dirname $filename;
+        my $qname = "";
 
         # Determine what to do based on the file type.
         # NOTE: The PROCESSDEP block currently ignores the following
@@ -168,13 +168,13 @@ sub find_dependencies ()
             };
         }
 
-	# If the file is of one of the above types, add the qualified
-	# name to the list of dependencies.  In addition, if it is in
-	# a proper subdirectory, add an entry to the subdirs hash.
-	unless ($qname eq "") {
-	    push @dependencies, $qname;
-	    $subdirs{$qname} = $subdir unless $subdir eq ".";
-	}
+        # If the file is of one of the above types, add the qualified
+        # name to the list of dependencies.  In addition, if it is in
+        # a proper subdirectory, add an entry to the subdirs hash.
+        unless ($qname eq "") {
+            push @dependencies, $qname;
+            $subdirs{$qname} = $subdir unless $subdir eq ".";
+        }
     }
     close DEPFILE;
     @dependencies = sort @dependencies;
@@ -235,6 +235,13 @@ sub find_dependencies ()
     print "REMOVING $numdups duplicate file(s)\n" if $verbose && $numdups;
     @dependencies = sort keys %uniquedeps;
 
+    # If --listdeps was specified, output the list of dependencies.
+    if (@listdeps) {
+        @dependencies = map {abs2rel($_)} @dependencies if grep /^rel$/, @listdeps;
+        print join("\n", @dependencies), "\n";
+        exit 0 if grep /^only$/, @listdeps;
+    }
+
     # Return the list of dependencies.
     return @dependencies;
 }
@@ -255,15 +262,16 @@ GetOptions ('texfile=s' => \$texfile,
             'include=s' => \@include_files,
             'config=s' => sub { process_config_file($_[1]) },
             'verbose!' => \$verbose,
+            'listdeps=s' => \@listdeps,
             'version' => sub { print "bundledoc $VERSION\n"; exit -1 },
-            'help' => \$showhelp) || pod2usage (-exitval => -1, -verbose => 0);
+            'help' => \$showhelp) || pod2usage (-exitval => 1, -verbose => 0);
 pod2usage (-exitval => 0,
            -verbose => 1) if $showhelp && $verbose;
 pod2usage (-message => "(For more detailed help, enter \"$0 --help --verbose\".)",
            -exitval => 0,
            -verbose => 0) if $showhelp;
 pod2usage (-message => "${progname}: Too few arguments",
-           -exitval => -1,
+           -exitval => 1,
            -verbose => 0) if $#ARGV==-1;
 $depfile = shift;                # Dependencies from snapshot.sty
 ($texfile = $depfile) =~ s/\.[^.]*$/.tex/ if !$texfile;   # Main LaTeX source file
@@ -271,6 +279,17 @@ $depfile = shift;                # Dependencies from snapshot.sty
 ($ENV{"BDBASE"} = rel2abs($depfile)) =~ s/\.[^.]*$//;   # May be needed by user-defined variables
 print "BDBASE = '$ENV{BDBASE}'\n" if $verbose;
 $ENV{"BDBASE"} = "\"$ENV{BDBASE}\"";
+
+# Expand and sanity check @listdeps.
+@listdeps = map {s/\s+//g; split /,/} @listdeps;
+foreach my $ldep (@listdeps) {
+    if ($ldep !~ /^(rel|only|yes|no)$/) {
+        pod2usage (-message => "${progname}: Invalid --listdeps option \"$ldep\"",
+                   -exitval => 1,
+                   -verbose => 0);
+    }
+}
+@listdeps = () if grep /^no$/, @listdeps;
 
 # Create a bundled file.
 my @dependencies = find_dependencies();
@@ -307,11 +326,11 @@ else {
     }
     if ($manifest ne "") {
         my $manifest = catfile $tempdir2, $manifest;
-	my $manifestdir = dirname $manifest;
-	unless (-d $manifestdir) {
-	    print "CREATING $manifestdir\n" if $verbose;
-	    mkpath($manifestdir, 0, 0777) || die "${progname}: $! ($manifestdir)\n";
-	}
+        my $manifestdir = dirname $manifest;
+        unless (-d $manifestdir) {
+            print "CREATING $manifestdir\n" if $verbose;
+            mkpath($manifestdir, 0, 0777) || die "${progname}: $! ($manifestdir)\n";
+        }
         print "WRITING $manifest\n" if $verbose;
         open (MANIFEST, ">$manifest") || die "${progname}: $! ($manifest)\n";
         print MANIFEST join ("\n", @dependencies), "\n";
@@ -355,6 +374,7 @@ bundledoc
 [B<--exclude>=I<string>]
 [B<--include>=I<filespec>]
 [B<--manifest>=I<file>]
+[B<-->B<listdeps>=[yes|no|only|rel]...]
 [B<-->[B<no>]B<keepdirs>]
 [B<--config>=I<file>]
 I<.dep file>
@@ -399,8 +419,8 @@ also be given:
 
 =item B<--version>
 
-Output the B<bundledoc> script's version number.  This overrides all the
-remaining options.
+Output the B<bundledoc> script's version number.  This overrides all
+of the remaining options.
 
 =item B<--help>
 
@@ -410,7 +430,6 @@ Give a brief usage message.  This overrides all of the remaining options.
 
 B<bundledoc> normally does not output anything except error messages.
 With C<--verbose>, it outputs copious status messages.
-
 
 =item B<--texfile>=I<main .tex file>            (default: I<somefile>F<.tex>)
 
@@ -462,6 +481,16 @@ the dependencies.  To change the filename from ``F<MANIFEST>'' to
 something else, use the C<--manifest> option.  As a special case,
 C<--manifest=""> tells B<bundledoc> not to include a manifest file at
 all.
+
+=item B<--listdeps>=[yes|no|only|rel]...]       (default: C<no>)
+
+C<--listdeps> accepts one or more of C<yes>, C<no>, C<only>, or C<rel>
+as a comma-separated list.  As long as C<no> does not appear in this
+list, B<bundledoc> outputs all of the main LaTeX file's dependencies.
+If the list contains C<rel>, then B<bundledoc> outputs the list of
+dependencies with relative pathnames.  If the list contains C<only>,
+then B<bundledoc> exits after displaying the list, without producing
+an archive.
 
 =item B<-->[B<no>]B<keepdirs>                   (default: C<nokeepdirs>)
 
