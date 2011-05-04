@@ -194,7 +194,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(VLNA_TREE) $(VLNA_TREE)-PATCHES
+EXTRA_DIST = $(VLNA_TREE) $(VLNA_TREE)-PATCHES vlna.dvi vlna.tex \
+	vlna.idx vlna.scn
 AM_CFLAGS = $(WARNING_CFLAGS)
 man1_MANS = $(VLNA_TREE)/vlna.man
 CLEANFILES = vlna.log vlna.toc

@@ -19,6 +19,8 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 bin_PROGRAMS = vlna
 man1_MANS = $(VLNA_TREE)/vlna.man
 
+EXTRA_DIST += vlna.dvi vlna.tex vlna.idx vlna.scn
+
 CLEANFILES = vlna.log vlna.toc
 
 vlna.dvi: vlna.tex vlna.idx vlna.scn
