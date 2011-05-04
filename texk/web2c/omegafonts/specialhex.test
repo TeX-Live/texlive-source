@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
@@ -12,7 +12,8 @@ TEXMFCNF=$srcdir/../../kpathsea \
 TEXMFCNF=$srcdir/../../kpathsea \
   ./omfonts -ofm2opl -verbose tests/specialhex tests/specialhex || exit 1
 
-./omfonts -opl2ofm -verbose tests/specialhex tests/xspecialhex || exit 1
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./omfonts -opl2ofm -verbose tests/specialhex tests/xspecialhex || exit 1
 
 TEXMFCNF=$srcdir/../../kpathsea \
   ./omfonts -ofm2opl -verbose tests/xspecialhex tests/xspecialhex || exit 1

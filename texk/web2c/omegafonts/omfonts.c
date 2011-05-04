@@ -230,7 +230,7 @@ main (int argc, string *argv)
     }
 
     name_program = names_program[program];
-    kpse_set_program_name(name_program, NULL);
+    kpse_set_program_name(argv[0], name_program);
     kpse_init_prog(uppercasify(name_program), 0, nil, nil);
 
     if (((argc-optind) > no_files) || ((argc-optind) < 1)) {

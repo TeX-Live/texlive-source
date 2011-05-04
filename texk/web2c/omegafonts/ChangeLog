@@ -1,3 +1,12 @@
+2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* omfonts.c (main): Call kpse_set_program_name() with args
+	argv[0] and name_program, not name_program and NULL to avoid
+	lstat warnings.
+
+	* charwd.test, level1.test, omfonts.test, repeat.test,
+	specialhex.test: Always set TEXMFCNF to avoid warnings.
+
 2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [WIN32]: Add o??2o??.exe wrappers.

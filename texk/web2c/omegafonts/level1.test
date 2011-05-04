@@ -1,11 +1,12 @@
 #! /bin/sh
 
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
 
-./omfonts -opl2ofm -verbose $srcdir/tests/level1 tests/xlevel1 || exit 1
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./omfonts -opl2ofm -verbose $srcdir/tests/level1 tests/xlevel1 || exit 1
 
 TEXMFCNF=$srcdir/../../kpathsea \
   ./omfonts -ofm2opl -verbose tests/xlevel1 tests/xlevel1 || exit 1

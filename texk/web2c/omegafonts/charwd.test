@@ -1,13 +1,14 @@
 #! /bin/sh
 
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
 
 grep -v 'CHARWD R' $srcdir/tests/charwd-r.pl >tests/charwdr.pl
 
-./omfonts -opl2ofm tests/charwdr.pl tests/charwdr.tfm || exit 1
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./omfonts -opl2ofm tests/charwdr.pl tests/charwdr.tfm || exit 1
 
 TEXMFCNF=$srcdir/../../kpathsea \
   TFMFONTS=tests \
@@ -17,7 +18,8 @@ diff $srcdir/tests/charwd-r.pl tests/charwdr.xpl || exit 1
 
 grep -v 'CHARWD R' $srcdir/tests/charwd-v.vpl >tests/charwdv.vpl
 
-./omfonts -ovp2ovf tests/charwdv.vpl tests/charwdv.vf tests/charwdv.tfm || exit 1
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./omfonts -ovp2ovf tests/charwdv.vpl tests/charwdv.vf tests/charwdv.tfm || exit 1
 
 TEXMFCNF=$srcdir/../../kpathsea \
   TFMFONTS=tests \
