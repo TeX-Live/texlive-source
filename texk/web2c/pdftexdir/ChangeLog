@@ -2,6 +2,8 @@
 
 	* pdftex.web (pdfTeX_banner): etex version before pdftex version.
 	(pdftex_revision, pdftex_version_string): bump to 12.
+	* pdftexextra.h (BANNER): change redundantly-specified banner
+	again and again.
 	(These changes approved by Thanh.)
 
 2011-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
