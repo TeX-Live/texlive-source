@@ -1,3 +1,8 @@
+2011-05-06  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.eplatex): no longer needed per Akira.
+	(platex will always use eptex.)
+
 2011-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpsewhich.c (find_format): Drop unused variable 'try_len'.
