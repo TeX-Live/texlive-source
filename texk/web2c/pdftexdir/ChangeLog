@@ -1,3 +1,9 @@
+2011-05-05  Karl Berry  <karl@tug.org>
+
+	* pdftex.web (pdfTeX_banner): etex version before pdftex version.
+	(pdftex_revision, pdftex_version_string): bump to 12.
+	(These changes approved by Thanh.)
+
 2011-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web, tex.ch0: Remove pdfeTeX_banner, no more pdfeTeX.

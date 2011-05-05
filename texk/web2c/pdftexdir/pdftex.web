@@ -296,10 +296,10 @@ known as `\eTeX'.
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
-@d pdftex_revision=="11" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.11' {current \pdfTeX\ version}
+@d pdftex_revision=="12" { \.{\\pdftexrevision} }
+@d pdftex_version_string=='-1.40.12' {current \pdfTeX\ version}
 @#
-@d pdfTeX_banner=='This is pdfTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
+@d pdfTeX_banner=='This is pdfTeX, Version 3.1415926',eTeX_version_string,pdftex_version_string
    {printed when \pdfTeX\ starts}
 @#
 @d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
