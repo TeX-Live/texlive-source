@@ -417,7 +417,8 @@ the @samp{.log} file, for example, respecting
 location}).  However, if @TeX{} processing is done on the command line
 (or in response to the @samp{**} prompt), the @samp{.fls} might be
 written to the current directory, or include an integer (the current
-pid), as in @file{texput1234.fls}.
+pid), as in @file{texput1234.fls}.  You can use @option{-jobname} to
+explicitly set the basename.
 
 @item -translate-file=@var{tcxfile}
 @opindex -translate-file=@var{tcxfile}

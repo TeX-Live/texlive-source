@@ -564,7 +564,8 @@ common:
      given (*note Output file location::).  However, if TeX processing
      is done on the command line (or in response to the `**' prompt),
      the `.fls' might be written to the current directory, or include
-     an integer (the current pid), as in `texput1234.fls'.
+     an integer (the current pid), as in `texput1234.fls'.  You can use
+     `-jobname' to explicitly set the basename.
 
 `-translate-file=TCXFILE'
      Use TCXFILE to define which characters are printable and
@@ -3546,7 +3547,7 @@ Index
                                                               (line  59)
 * --with-x:                              Online Metafont graphics.
                                                               (line  57)
-* -8bit:                                 Common options.      (line 105)
+* -8bit:                                 Common options.      (line 106)
 * -base=BASE:                            Determining the memory dump to use.
                                                               (line  15)
 * -base=DUMPNAME:                        Common options.      (line  34)
@@ -3596,7 +3597,7 @@ Index
 * -no-mktex=FILETYPE:                    tex invocation.      (line 105)
 * -no-parse-first-line:                  Common options.      (line  73)
 * -no-shell-escape:                      tex invocation.      (line 123)
-* -oem:                                  Common options.      (line 110)
+* -oem:                                  Common options.      (line 111)
 * -output-comment=STRING:                tex invocation.      (line 115)
 * -output-directory <1>:                 Output file location.
                                                               (line  15)
@@ -3618,7 +3619,7 @@ Index
 * -T:                                    mpost invocation.    (line 118)
 * -terse:                                bibtex invocation.   (line  28)
 * -tex=TEXPROGRAM:                       mpost invocation.    (line 121)
-* -translate-file=TCXFILE:               Common options.      (line  98)
+* -translate-file=TCXFILE:               Common options.      (line  99)
 * -troff:                                mpost invocation.    (line 118)
 * -underline:                            tangle invocation.   (line  41)
 * -uppercase:                            tangle invocation.   (line  35)
@@ -3639,7 +3640,7 @@ Index
 * .NNN PostScript figures:               mpost invocation.    (line  37)
 * .NNNgf generic fonts:                  mf invocation.       (line  34)
 * .tcx character translation files <1>:  TCX files.           (line   6)
-* .tcx character translation files:      Common options.      (line  98)
+* .tcx character translation files:      Common options.      (line  99)
 * .tex:                                  tex invocation.      (line  20)
 * .tfm output <1>:                       mpost invocation.    (line  37)
 * .tfm output:                           mf invocation.       (line  43)
@@ -3648,8 +3649,8 @@ Index
 * .Xresources:                           Online Metafont graphics.
                                                               (line  69)
 * 2602gf:                                mf invocation.       (line  48)
-* 8 bit clean:                           Common options.      (line 105)
-* 8 bit clean output, specifying:        Common options.      (line 105)
+* 8 bit clean:                           Common options.      (line 106)
+* 8 bit clean output, specifying:        Common options.      (line 106)
 * 8-bit characters:                      TCX files.           (line   6)
 * \bibliography:                         bibtex invocation.   (line  18)
 * \bibliographystyle:                    bibtex invocation.   (line  18)
@@ -3881,7 +3882,7 @@ Index
 * file recorder:                         Common options.      (line  85)
 * filename conventions, in input files:  \input filenames.    (line   6)
 * filenames starting with -:             Option conventions.  (line  19)
-* first line of the main input file:     Common options.      (line  98)
+* first line of the main input file:     Common options.      (line  99)
 * fixed-point arithmetic:                Compile-time options.
                                                               (line  22)
 * FIXPT:                                 Compile-time options.
@@ -4379,7 +4380,7 @@ Index
 * toolkits, X:                           Online Metafont graphics.
                                                               (line  59)
 * torture tests:                         Triptrap.            (line   6)
-* translation file for TeX, specifying:  Common options.      (line  98)
+* translation file for TeX, specifying:  Common options.      (line  99)
 * translation from WEB to C:             Introduction.        (line  17)
 * trap Make target:                      Additional targets.  (line  41)
 * trap test:                             Triptrap.            (line   6)
@@ -4410,7 +4411,7 @@ Index
                                                               (line  50)
 * unsrt.bst:                             Basic BibTeX style files.
                                                               (line  39)
-* using local codepage to display messages: Common options.   (line 110)
+* using local codepage to display messages: Common options.   (line 111)
 * UTF-8 input:                           tex invocation.      (line  89)
 * validation, of DVI files:              dvitype invocation.  (line   6)
 * validation, of GF files:               gftype invocation.   (line   6)
@@ -4492,64 +4493,64 @@ Node: Runtime options15162
 Node: Commonalities16934
 Node: Option conventions17539
 Node: Common options18763
-Node: Path searching23356
-Node: Output file location24378
-Node: Three programs25703
-Node: Initial and virgin26462
-Node: Memory dumps27562
-Node: Creating memory dumps28029
-Node: Determining the memory dump to use29290
-Node: Hardware and memory dumps30914
-Node: Editor invocation33383
-Node: \input filenames34113
-Node: TeX37106
-Node: tex invocation38252
-Node: Initial TeX45222
-Node: Formats46711
-Node: Languages and hyphenation49650
-Node: MLTeX50080
-Node: \charsubdef51575
-Node: \tracingcharsubdef53901
-Node: TCX files54476
-Node: patgen invocation59900
-Node: Shell escapes60617
-Node: IPC and TeX64181
-Node: TeX extensions64751
-Node: Metafont65883
-Node: mf invocation67171
-Node: Initial Metafont71054
-Node: Modes72807
-Node: Online Metafont graphics75063
-Node: gftodvi invocation78478
-Node: mft invocation81311
-Node: MetaPost85366
-Node: mpost invocation86128
-Node: Initial MetaPost91386
-Node: dvitomp invocation93197
-Node: BibTeX93862
-Node: bibtex invocation94223
-Node: Basic BibTeX style files96548
-Node: WEB97890
-Node: tangle invocation99098
-Node: weave invocation101221
-Node: pooltype invocation102629
-Node: DVI utilities103759
-Node: dvicopy invocation104703
-Node: dvitype invocation106001
-Node: dvitype output example108356
-Node: Font utilities111407
-Node: Font file formats112587
-Node: gftopk invocation115886
-Node: pktogf invocation117090
-Node: pktype invocation118269
-Node: gftype invocation121104
-Node: tftopl invocation125620
-Node: pltotf invocation130254
-Node: vftovp invocation131319
-Node: vptovf invocation133603
-Node: Font utilities available elsewhere134657
-Node: Legalisms137065
-Node: References139236
-Node: Index143808
+Node: Path searching23417
+Node: Output file location24439
+Node: Three programs25764
+Node: Initial and virgin26523
+Node: Memory dumps27623
+Node: Creating memory dumps28090
+Node: Determining the memory dump to use29351
+Node: Hardware and memory dumps30975
+Node: Editor invocation33444
+Node: \input filenames34174
+Node: TeX37167
+Node: tex invocation38313
+Node: Initial TeX45283
+Node: Formats46772
+Node: Languages and hyphenation49711
+Node: MLTeX50141
+Node: \charsubdef51636
+Node: \tracingcharsubdef53962
+Node: TCX files54537
+Node: patgen invocation59961
+Node: Shell escapes60678
+Node: IPC and TeX64242
+Node: TeX extensions64812
+Node: Metafont65944
+Node: mf invocation67232
+Node: Initial Metafont71115
+Node: Modes72868
+Node: Online Metafont graphics75124
+Node: gftodvi invocation78539
+Node: mft invocation81372
+Node: MetaPost85427
+Node: mpost invocation86189
+Node: Initial MetaPost91447
+Node: dvitomp invocation93258
+Node: BibTeX93923
+Node: bibtex invocation94284
+Node: Basic BibTeX style files96609
+Node: WEB97951
+Node: tangle invocation99159
+Node: weave invocation101282
+Node: pooltype invocation102690
+Node: DVI utilities103820
+Node: dvicopy invocation104764
+Node: dvitype invocation106062
+Node: dvitype output example108417
+Node: Font utilities111468
+Node: Font file formats112648
+Node: gftopk invocation115947
+Node: pktogf invocation117151
+Node: pktype invocation118330
+Node: gftype invocation121165
+Node: tftopl invocation125681
+Node: pltotf invocation130315
+Node: vftovp invocation131380
+Node: vptovf invocation133664
+Node: Font utilities available elsewhere134718
+Node: Legalisms137126
+Node: References139297
+Node: Index143869
 
 End Tag Table

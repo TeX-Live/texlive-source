@@ -1,3 +1,9 @@
+2011-05-05  Karl Berry  <karl@tug.org>
+
+	* man/pktype.man: output is always to stdout.
+	
+	* doc/web2c.texi (Common option): -jobname can override recorder name.
+
 2011-04-28  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi (Common options): caveats about the -recorder
