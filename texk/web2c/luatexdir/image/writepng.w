@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writepng.w 4133 2011-04-11 16:54:11Z oneiros $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/writepng.w $";
+    "$Id: writepng.w 4240 2011-05-01 20:52:01Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/image/writepng.w $";
 
 #include <assert.h>
 #include "ptexlib.h"
@@ -47,7 +47,6 @@ static void close_and_cleanup_png(image_dict * idict)
 @ @c
 void read_png_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
 {
-    double gamma;
     png_structp png_p;
     png_infop info_p;
     assert(idict != NULL);
@@ -70,31 +69,9 @@ void read_png_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
         pdftex_fail("libpng: internal error");
     png_init_io(png_p, img_file(idict));
     png_read_info(png_p, info_p);
-    /* simple transparency support */
-    if (png_get_valid(png_p, info_p, PNG_INFO_tRNS)) {
-        png_set_tRNS_to_alpha(png_p);
-    }
-    /* alpha channel support  */
-    if (pdf->minor_version < 4 && png_get_color_type(png_p, info_p) | PNG_COLOR_MASK_ALPHA)
-        png_set_strip_alpha(png_p);
-    /* 16bit depth support */
-    if (pdf->minor_version < 5)
-        pdf->image_hicolor = 0;
-    if ((png_get_bit_depth(png_p, info_p) == 16) && (pdf->image_hicolor == 0))
-        png_set_strip_16(png_p);
-    /* gamma support */
-    if (pdf->image_apply_gamma) {
-        if (png_get_gAMA(png_p, info_p, &gamma))
-            png_set_gamma(png_p, (pdf->gamma / 1000.0), gamma);
-        else
-            png_set_gamma(png_p, (pdf->gamma / 1000.0),
-                          (1000.0 / pdf->image_gamma));
-    }
-    /* reset structure */
-    png_read_update_info(png_p, info_p);
     /* resolution support */
-    img_xsize(idict) = (int) png_get_image_width (png_p, info_p);
-    img_ysize(idict) = (int) png_get_image_height (png_p, info_p);
+    img_xsize(idict) = (int) png_get_image_width(png_p, info_p);
+    img_ysize(idict) = (int) png_get_image_height(png_p, info_p);
     if (png_get_valid(png_p, info_p, PNG_INFO_pHYs)) {
         img_xres(idict) =
             round(0.0254 * (double) png_get_x_pixels_per_meter(png_p, info_p));
@@ -114,7 +91,8 @@ void read_png_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
         img_procset(idict) |= PROCSET_IMAGE_C;
         break;
     default:
-        pdftex_fail("unsupported type of color_type <%i>", (int)png_get_color_type (png_p, info_p));
+        pdftex_fail("unsupported type of color_type <%i>",
+                    (int) png_get_color_type(png_p, info_p));
     }
     img_colordepth(idict) = png_get_bit_depth(png_p, info_p);
     if (readtype == IMG_CLOSEINBETWEEN)
@@ -539,7 +517,9 @@ static boolean last_png_needs_page_group;
 
 void write_png(PDF pdf, image_dict * idict)
 {
-    double gamma, checked_gamma;
+    boolean png_copy = true;
+    double gamma = 0.0;
+    png_fixed_point int_file_gamma = 0;
     int i;
     int palette_objnum = 0;
     png_structp png_p;
@@ -557,27 +537,62 @@ void write_png(PDF pdf, image_dict * idict)
     if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
         pdf_printf(pdf, "%s\n", img_attr(idict));
     pdf_printf(pdf, "/Width %i\n/Height %i\n/BitsPerComponent %i\n",
-               (int) png_get_image_width (png_p, info_p),
-               (int) png_get_image_height (png_p, info_p),
+               (int) png_get_image_width(png_p, info_p),
+               (int) png_get_image_height(png_p, info_p),
                (int) png_get_bit_depth(png_p, info_p));
     pdf_puts(pdf, "/ColorSpace ");
-    checked_gamma = 1.0;
-    if (pdf->image_apply_gamma) {
-        if (png_get_gAMA(png_p, info_p, &gamma)) {
-            checked_gamma = (pdf->gamma / 1000.0) * gamma;
-        } else {
-            checked_gamma = (pdf->gamma / 1000.0) * (1000.0 / pdf->image_gamma);
-        }
+    /* simple transparency support */
+    if (png_get_valid(png_p, info_p, PNG_INFO_tRNS)) {
+        png_set_tRNS_to_alpha(png_p);
+        png_copy = false;
     }
-    /* the switching between |info_p| and |png_p| queries has been trial and error.
-     */
-    if (pdf->minor_version > 1 
-           && png_get_interlace_type (png_p, info_p) == PNG_INTERLACE_NONE 
-        &&!(png_get_color_type (png_p, info_p) == PNG_COLOR_TYPE_GRAY_ALPHA ||
-            png_get_color_type (png_p, info_p) == PNG_COLOR_TYPE_RGB_ALPHA)
-        && ((pdf->image_hicolor != 0) || (png_get_bit_depth (png_p, info_p) <= 8))
-        && (checked_gamma <= 1.01 && checked_gamma > 0.99)
+    /* alpha channel support */
+    if (pdf->minor_version < 4
+        && png_get_color_type(png_p, info_p) | PNG_COLOR_MASK_ALPHA) {
+        png_set_strip_alpha(png_p);
+        png_copy = false;
+    }
+    /* 16 bit depth support */
+    if (pdf->minor_version < 5)
+        pdf->image_hicolor = 0;
+    if ((png_get_bit_depth(png_p, info_p) == 16) && (pdf->image_hicolor == 0)) {
+        png_set_strip_16(png_p);
+        png_copy = false;
+    }
+    /* gamma support */
+    if (png_get_valid(png_p, info_p, PNG_INFO_gAMA)) {
+        png_get_gAMA(png_p, info_p, &gamma);
+        png_get_gAMA_fixed(png_p, info_p, &int_file_gamma);
+    }
+    if (pdf->image_apply_gamma) {
+        if (png_get_valid(png_p, info_p, PNG_INFO_gAMA))
+            png_set_gamma(png_p, (pdf->gamma / 1000.0), gamma);
+        else
+            png_set_gamma(png_p, (pdf->gamma / 1000.0),
+                          (1000.0 / pdf->image_gamma));
+        png_copy = false;
+    }
+    /* reset structure */
+    (void) png_set_interlace_handling(png_p);
+    png_read_update_info(png_p, info_p);
+
+    if (png_copy && pdf->minor_version > 1
+        && png_get_interlace_type(png_p, info_p) == PNG_INTERLACE_NONE
+        && (png_get_color_type(png_p, info_p) == PNG_COLOR_TYPE_GRAY
+            || png_get_color_type(png_p, info_p) == PNG_COLOR_TYPE_RGB)
+        && !pdf->image_apply_gamma
+        && (!png_get_valid(png_p, info_p, PNG_INFO_gAMA)
+            || int_file_gamma == PNG_FP_1)
+        && !png_get_valid(png_p, info_p, PNG_INFO_cHRM)
+        && !png_get_valid(png_p, info_p, PNG_INFO_iCCP)
+        && !png_get_valid(png_p, info_p, PNG_INFO_sBIT)
+        && !png_get_valid(png_p, info_p, PNG_INFO_sRGB)
+        && !png_get_valid(png_p, info_p, PNG_INFO_bKGD)
+        && !png_get_valid(png_p, info_p, PNG_INFO_hIST)
+        && !png_get_valid(png_p, info_p, PNG_INFO_tRNS)
+        && !png_get_valid(png_p, info_p, PNG_INFO_sPLT)
         ) {
+        /* Copy PNG */
         png_colorp palette;
         int num_palette;
 
@@ -614,22 +629,37 @@ void write_png(PDF pdf, image_dict * idict)
         }
     } else {
         if (0) {
-            tex_printf(" PNG copy skipped because: ");
-            if ((pdf->image_apply_gamma != 0) &&
-                (checked_gamma > 1.01 || checked_gamma < 0.99))
-                tex_printf("gamma delta=%lf ", checked_gamma);
-            if ((png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_GRAY)
-                && (png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_RGB)
-                && (png_get_color_type (png_p, info_p) != PNG_COLOR_TYPE_PALETTE))
-                tex_printf("colortype ");
-            if (pdf->minor_version <= 1)
-                tex_printf("version=%d ", pdf->minor_version);
-            if (png_get_interlace_type(png_p, info_p) != PNG_INTERLACE_NONE)
+            tex_printf(" *** PNG copy skipped because: ");
+            if (!png_copy)
+                tex_printf("!png_copy ");
+            if (!(pdf->minor_version > 1))
+                tex_printf("minorversion=%d ", pdf->minor_version);
+            if (!(png_get_interlace_type(png_p, info_p) == PNG_INTERLACE_NONE))
                 tex_printf("interlaced ");
-            if (png_get_bit_depth(png_p, info_p) > 8)
-                tex_printf("bitdepth=%d ", png_get_bit_depth(png_p, info_p));
+            if (!((png_get_color_type(png_p, info_p) == PNG_COLOR_TYPE_GRAY)
+                  || (png_get_color_type(png_p, info_p) == PNG_COLOR_TYPE_RGB)))
+                tex_printf("colortype ");
+            if (pdf->image_apply_gamma)
+                tex_printf("apply gamma ");
+            if (!(!png_get_valid(png_p, info_p, PNG_INFO_gAMA)
+                  || int_file_gamma == PNG_FP_1))
+                tex_printf("gamma ");
+            if (png_get_valid(png_p, info_p, PNG_INFO_cHRM))
+                tex_printf("cHRM ");
+            if (png_get_valid(png_p, info_p, PNG_INFO_iCCP))
+                tex_printf("iCCP ");
+            if (png_get_valid(png_p, info_p, PNG_INFO_sBIT))
+                tex_printf("sBIT ");
+            if (png_get_valid(png_p, info_p, PNG_INFO_sRGB))
+                tex_printf("sRGB ");
+            if (png_get_valid(png_p, info_p, PNG_INFO_bKGD))
+                tex_printf("bKGD ");
+            if (png_get_valid(png_p, info_p, PNG_INFO_hIST))
+                tex_printf("hIST ");
             if (png_get_valid(png_p, info_p, PNG_INFO_tRNS))
-                tex_printf("simple transparancy ");
+                tex_printf("tRNS ");
+            if (png_get_valid(png_p, info_p, PNG_INFO_sPLT))
+                tex_printf("sPLT ");
         }
         switch (png_get_color_type(png_p, info_p)) {
         case PNG_COLOR_TYPE_PALETTE:

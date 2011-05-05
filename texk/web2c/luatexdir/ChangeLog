@@ -1,3 +1,19 @@
+2011-05-05  Taco Hoekwater  <taco@luatex.org>
+	* image/writepng.w: fixes for libpng 1.5.2.
+	* lua/lnodelib.c (lua_nodelib_fields): fix field count for 
+	nodes without subtype.
+	* lua/llfslibext.c: fix an variable type and a compiler warning.
+	* lua/loslibext.c (os_execute): fix non-argument use of os.execute.
+	* lua/ltexlib.c (do_luacprint): fix use of bad catcode tables.
+	* lua/luainit.w (HAVE_ASPRINTF): superfluous test removed.
+	* luatex.c: bump version to 0.70, remove SOCK_NONBLOCK definition.
+	* luatex_svnversion.h (luatex_svn_revision): now at 4247.
+	* NEWS: updated for luatex 0.70.0 release.
+	* tex/texfileio.w: patch from bug 615 (recorder filename location).
+	* tex/texmath.w: fix display alignment in TRT mode.
+	* utils/utils.w (HAVE_ASPRINTF): superfluous test removed.
+
+
 2011-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils/synctex{-common.h,.c,.h} (removed): Use copies from

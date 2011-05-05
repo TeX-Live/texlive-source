@@ -2,7 +2,26 @@
 This file is in the public domain.
 
 ==============================================================
-Luatex beta-0.66.0 was released 20110512
+Luatex beta-0.70.0 was released 20110506
+==============================================================
+
+News:
+
+* fixed: various changes needed for libpng 1.5.2.
+
+* fixed: node.fields() for nodes without subtype.
+
+* fixed: non-argument use of os.execute().
+
+* fixed: tex.[s|t|]print() with invalid catcode table arguments.
+
+* fixed: recorder filename location with --output-directory.
+
+* fixed: display alignment in TRT mode.
+
+
+==============================================================
+Luatex beta-0.66.0 was released 20110412
 ==============================================================
 
 News:
@@ -1899,7 +1918,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

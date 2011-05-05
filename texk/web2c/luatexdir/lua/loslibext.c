@@ -25,7 +25,7 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: loslibext.c 3682 2010-05-11 08:07:11Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/loslibext.c $";
+    "$Id: loslibext.c 4167 2011-04-16 09:20:26Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/loslibext.c $";
 
 #if defined(_WIN32) || defined(__NT__)
 #  define MKDIR(a,b) mkdir(a)
@@ -974,6 +974,16 @@ static int os_execute(lua_State * L)
     char *cmdname = NULL;
     const char *cmd = luaL_optstring(L, 1, NULL);
 
+    if (cmd == NULL) { /* pretend we are \.{\\pdfshellescape} */
+	if (shellenabledp <= 0) {
+	    lua_pushinteger(L, 0);
+        } else if (restrictedshell == 0) {
+	    lua_pushinteger(L, 1);
+	} else {
+	    lua_pushinteger(L, 2);
+	}
+	return 1;
+    }
     if (shellenabledp <= 0) {
         lua_pushnil(L);
         lua_pushstring(L, "All command execution disabled.");

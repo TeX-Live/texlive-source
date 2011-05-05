@@ -20,17 +20,13 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: utils.w 3779 2010-07-31 11:29:22Z oneiros $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/utils/utils.w $";
+    "$Id: utils.w 4244 2011-05-05 09:31:30Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/utils/utils.w $";
 
 @ @c
 #include "openbsd-compat.h"
 #include <kpathsea/config.h> /* this is a trick to load mingw32's io.h early,
 				using a macro redefinition of |eof()|. */
-#ifdef HAVE_ASPRINTF            /* asprintf is not defined in openbsd-compat.h, but in stdio.h */
-#  include <stdio.h>
-#endif
-
 #include "sys/types.h"
 #ifndef __MINGW32__
 #  include "sysexits.h"

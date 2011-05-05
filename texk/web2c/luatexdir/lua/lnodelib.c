@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lnodelib.c 4140 2011-04-12 10:18:37Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lnodelib.c $";
+    "$Id: lnodelib.c 4166 2011-04-16 09:12:20Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
 #include "lua/luatex-api.h"
 #include "ptexlib.h"
@@ -782,6 +782,8 @@ static int get_node_field_id(lua_State * L, int n, int node)
 {
     register int t = type(node);
     register const char *s = lua_tostring(L, n);
+    if (s == NULL)
+        return -2;
     if (luaS_ptr_eq(s, list)) {
 	s = luaS_head_ptr; /* create a |head| alias for now */
     }
@@ -895,7 +897,7 @@ static int lua_nodelib_whatsits(lua_State * L)
 static int lua_nodelib_fields(lua_State * L)
 {
     int i = -1;
-    int offset = 3;
+    int offset = 2;
     const char **fields;
     int t = get_valid_node_type_id(L, 1);
     if (t == whatsit_node) {
@@ -913,7 +915,7 @@ static int lua_nodelib_fields(lua_State * L)
     if (nodetype_has_subtype(t)) {
       lua_pushstring(L, "subtype");
       lua_rawseti(L, -2, 2);
-      offset--;
+      offset++;
     }
     if (fields != NULL) {
         if (nodetype_has_prev(t)) {

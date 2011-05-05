@@ -19,16 +19,13 @@
 
 @ @c
 #include "openbsd-compat.h"
-#ifdef HAVE_ASPRINTF            /* asprintf is not defined in openbsd-compat.h, but in stdio.h */
-#  include <stdio.h>
-#endif
 #include <kpathsea/c-stat.h>
 
 #include "lua/luatex-api.h"
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: luainit.w 4114 2011-04-11 06:44:43Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/luainit.w $";
+    "$Id: luainit.w 4244 2011-05-05 09:31:30Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/luainit.w $";
 
 @ 
 TH: TODO

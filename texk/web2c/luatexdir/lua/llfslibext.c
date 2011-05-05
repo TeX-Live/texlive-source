@@ -1,6 +1,6 @@
 /* llfslibext.c
    
-   Copyright 2010 Taco Hoekwater <taco@luatex.org>
+   Copyright 2010-2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -25,7 +25,7 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: llfslibext.c 4084 2011-02-10 09:06:29Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/llfslibext.c $";
+    "$Id: llfslibext.c 4164 2011-04-16 09:00:09Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/llfslibext.c $";
 
 #ifdef _WIN32
 #  include <windows.h>
@@ -81,7 +81,7 @@ static int Preadlink(lua_State * L)
 /** readlink(path) */
     const char *path = luaL_checkstring(L, 1);
     char *b = NULL;
-    size_t allocated = 128;
+    int allocated = 128;
     int n;
     while (1) {
         b = malloc(allocated);
@@ -109,7 +109,7 @@ static int read_link(lua_State * L)
     return Preadlink(L);
 }
 
-static int get_short_name(lua_State * L)
+static int get_short_name(lua_State * L __attribute__ ((unused)))
 {
     /* simply do nothing */
     return 1;

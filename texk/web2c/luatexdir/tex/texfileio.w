@@ -23,8 +23,8 @@
 #include <kpathsea/absolute.h>
 
 static const char _svn_version[] =
-    "$Id: texfileio.w 4128 2011-04-11 12:37:47Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/tex/texfileio.w $";
+    "$Id: texfileio.w 4229 2011-04-30 07:20:23Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/tex/texfileio.w $";
 
 @ @c
 #define end_line_char int_par(end_line_char_code)
@@ -784,6 +784,16 @@ except of course for a short time just after |job_name| has become nonzero.
 @c
 unsigned char *texmf_log_name;  /* full name of the log file */
 
+static void set_recorder_filename(char *filename) {
+    if (output_directory) {
+        filename = concat3(output_directory, DIR_SEP_STRING, filename);
+        recorder_change_filename(filename);
+        free(filename);
+    } else {
+        recorder_change_filename(filename);
+    }
+}
+
 
 @ The |open_log_file| routine is used to open the transcript file and to help
 it catch up to what has previously been printed on the terminal.
@@ -799,7 +809,7 @@ void open_log_file(void)
     if (job_name == 0)
         job_name = getjobname(maketexstring("texput")); /* TODO */
     fn = pack_job_name(".fls");
-    recorder_change_filename(fn);
+    set_recorder_filename(fn);
     fn = pack_job_name(".log");
     while (!lua_a_open_out(&log_file, fn, 0)) {
         /* Try to get a different log file name */

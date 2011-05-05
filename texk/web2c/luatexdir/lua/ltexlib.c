@@ -23,7 +23,7 @@
 
 
 static const char _svn_version[] =
-    "$Id: ltexlib.c 4132 2011-04-11 14:04:10Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/ltexlib.c $";
+    "$Id: ltexlib.c 4234 2011-04-30 14:02:15Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/ltexlib.c $";
 
 #define attribute(A) eqtb[attribute_base+(A)].hh.rh
 #define dimen(A) eqtb[scaled_base+(A)].hh.rh
@@ -97,6 +97,9 @@ static int do_luacprint(lua_State * L, int partial, int deftable)
         if (lua_type(L, 1) == LUA_TNUMBER && n > 1) {
             lua_number2int(cattable, lua_tonumber(L, 1));
             startstrings = 2;
+            if (!valid_catcode_table(cattable)) {
+	      cattable = DEFAULT_CAT_TABLE;
+	    }
         }
     }
     if (lua_type(L, startstrings) == LUA_TTABLE) {
@@ -152,6 +155,9 @@ static int luactprint(lua_State * L)
         if (lua_type(L, -1) == LUA_TNUMBER) {
             lua_number2int(cattable, lua_tonumber(L, -1));
             startstrings = 2;
+            if (!valid_catcode_table(cattable)) {
+	      cattable = DEFAULT_CAT_TABLE;
+	    }
         }
         lua_pop(L, 1);
 
