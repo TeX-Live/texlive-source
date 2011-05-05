@@ -1,3 +1,7 @@
+2011-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac [WIN32]: Don't use visibility attribute.
+
 2010-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, Makefile.am: Remove obsolete zlib-1.2.3.

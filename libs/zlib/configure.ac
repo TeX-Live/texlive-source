@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -74,6 +74,12 @@ caddr_t hello() {
                   [AC_MSG_RESULT([yes])
                   ZLIB_DEFINES="$ZLIB_DEFINES -DUSE_MMAP"],
                   [AC_MSG_RESULT([no])])
+
+KPSE_CHECK_WIN32
+if test "x$kpse_cv_have_win32" != xno; then
+  ZLIB_DEFINES="$ZLIB_DEFINES -DNO_VIZ"
+fi
+
 AC_SUBST([ZLIB_DEFINES])
 
 ZLIB_TREE=[zlib-]zlib_version
