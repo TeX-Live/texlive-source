@@ -1,3 +1,7 @@
+2011-05-06  Karl Berry  <karl@tug.org>
+
+	* writet1.c: update copyright as in pdftexdir.
+
 2011-04-25  Karl Berry  <karl@tug.org>
 
 	* afm2tfm.c (version),
