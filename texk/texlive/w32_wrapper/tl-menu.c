@@ -44,7 +44,7 @@ char ExeList[4][MAX_PATH] = {
   "tlmgr-gui.exe",
   "texdoctk.exe",
   "texworks.exe",
-  ""
+  "cmd.exe"
 };
 
 LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -145,7 +145,7 @@ int APIENTRY WinMain(
     else
       ExeList[i][0] = '\0';
   }
-  strncpy( ExeList[3], ( getenv( "COMSPEC" ) ?: "cmd.exe" ), MAX_PATH );
+  if ( s = getenv( "COMSPEC" ) ) strncpy( ExeList[3], s, MAX_PATH );
   
 	// create a hidden window for messaging
 
