@@ -457,7 +457,18 @@ static void init_kpse(void)
     }
     if (!user_progname) {
         if (ini_version) {
-            user_progname = input_name;
+            if (input_name) {
+                char *p = input_name + strlen(input_name) - 1;
+                while (p >= input_name) {
+                    if (IS_DIR_SEP (*p)) {
+                        p++;
+                        input_name = p;
+                        break;
+                    }
+                    p--;
+                }
+                user_progname = remove_suffix (input_name);
+            }
             if (!user_progname) {
                 user_progname = cleaned_invocation_name(argv[0]);
             }
