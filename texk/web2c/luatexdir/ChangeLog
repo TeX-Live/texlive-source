@@ -1,3 +1,11 @@
+
+2011-05-08  Taco Hoekwater  <taco@luatex.org>
+	* dvi/dvigen.w, pdf/pdfgen.w: fix missing newline after
+	'No pages of output' message.
+	   
+2011-05-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+	* lua/luainit.w, tex/texfileio.w: fix recorder location.
+
 2011-05-05  Taco Hoekwater  <taco@luatex.org>
 	* image/writepng.w: fixes for libpng 1.5.2.
 	* lua/lnodelib.c (lua_nodelib_fields): fix field count for 

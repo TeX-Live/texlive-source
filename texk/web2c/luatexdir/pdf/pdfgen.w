@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 4126 2011-04-11 09:34:50Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
+    "$Id: pdfgen.w 4253 2011-05-09 11:13:00Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
 
@@ -2220,6 +2220,7 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
     if (total_pages == 0) {
         if (callback_id == 0) {
             tprint_nl("No pages of output.");
+            print_ln();
         } else if (callback_id > 0) {
             res = run_callback(callback_id, "->");
         }
@@ -2448,6 +2449,7 @@ void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision)
                 tprint(", ");
                 print_int(pdf_offset(pdf));
                 tprint(" bytes).");
+                print_ln();
             } else if (callback_id > 0) {
                 res = run_callback(callback_id, "->");
             }

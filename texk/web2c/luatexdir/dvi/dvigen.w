@@ -30,8 +30,8 @@
 @ Initial identification of this file, and the needed headers.
 @c
 static const char _svn_version[] =
-    "$Id: dvigen.w 3802 2010-08-07 12:03:08Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/dvi/dvigen.w $";
+    "$Id: dvigen.w 4253 2011-05-09 11:13:00Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/dvi/dvigen.w $";
 
 #include "ptexlib.h"
 
@@ -1354,10 +1354,12 @@ void finish_dvi_file(PDF pdf, int version, int revision)
         decr(cur_s);
     }
     if (total_pages == 0) {
-        if (callback_id == 0)
+        if (callback_id == 0) {
             tprint_nl("No pages of output.");
-        else if (callback_id > 0)
+            print_ln();
+        } else if (callback_id > 0) {
             res = run_callback(callback_id, "->");
+        }
     } else {
         dvi_out(post);          /* beginning of the postamble */
         dvi_four(last_bop);
