@@ -272,7 +272,7 @@ makeindex_SOURCES = \
 
 LDADD = $(KPATHSEA_LIBS)	
 dist_man1_MANS = makeindex.1 mkindex.1
-EXTRA_DIST = ACK CONTRIB FILES NOTES PORTING
+EXTRA_DIST = CONTRIB NOTES
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
