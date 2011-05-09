@@ -760,7 +760,6 @@ with_sysroot
 enable_libtool_lock
 enable_largefile
 enable_compiler_warnings
-with_gnu_ld
 enable_cxx_runtime_hack
 with_system_kpathsea
 with_kpathsea_includes
@@ -776,12 +775,8 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
-CPPFLAGS
 CXX
 CXXFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
 CCC
 CXXCPP'
 
@@ -18384,10 +18379,10 @@ else
   ICU_INCLUDES=`echo '-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
-  ICU_LIBS=`echo 'BLD/libs/icu/icu-build/lib/libsicuio.a BLD/libs/icu/icu-build/lib/libsicui18n.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
+  ICU_LIBS=`echo 'BLD/libs/icu/icu-build/lib/libicuio.a BLD/libs/icu/icu-build/lib/libicui18n.a BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
 
-  ICU_DEPEND=`echo 'BLD/libs/icu/icu-build/lib/libsicuio.a BLD/libs/icu/icu-build/lib/libsicui18n.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
+  ICU_DEPEND=`echo 'BLD/libs/icu/icu-build/lib/libicuio.a BLD/libs/icu/icu-build/lib/libicui18n.a BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ICU_RULE='# Rebuild libicuxxx
 $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h

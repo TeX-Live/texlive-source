@@ -1,3 +1,7 @@
+2011-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-13-STATIC_PREFIX (new): Never use libsicuxxx.a.
+
 2011-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-81-Indic (new): IndicReordering.*: Respect array bounds.

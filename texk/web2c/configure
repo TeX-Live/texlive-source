@@ -22266,10 +22266,10 @@ fi
   ICU_INCLUDES=`echo '-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
-  ICU_LIBS=`echo 'BLD/libs/icu/icu-build/lib/libsicule.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
+  ICU_LIBS=`echo 'BLD/libs/icu/icu-build/lib/libicule.a BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
 
-  ICU_DEPEND=`echo 'BLD/libs/icu/icu-build/lib/libsicule.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
+  ICU_DEPEND=`echo 'BLD/libs/icu/icu-build/lib/libicule.a BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ICU_RULE='# Rebuild libsicuxxx
 $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h

@@ -705,13 +705,6 @@ icu-native/Makefile:
 icubuild: icu-build/Makefile check-makeflags
 @cross_TRUE@	cd icu-native && $(MAKE) $(AM_MAKEFLAGS) all
 	cd icu-build && $(MAKE) $(AM_MAKEFLAGS) all
-	@cd icu-build/lib && for lib in libicu*.a; do \
-	  test -f "$$lib" || continue; \
-	  libs=`echo "$$lib" | sed 's/libicu/libsicu/'`; \
-	  test -f "$$libs" && continue; \
-	  echo "creating link '$$libs' -> '$$lib'"; \
-	  $(LN_S) "$$lib" "$$libs" || exit 1; \
-	done
 
 check-makeflags:
 	@for f in x $$MAKEFLAGS; do \

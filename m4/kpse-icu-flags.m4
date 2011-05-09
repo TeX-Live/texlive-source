@@ -40,7 +40,7 @@ m4_define([_KPSE_ICU_FLAGS],
                  [-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include],
                  m4_bpatsubst([$3 icuuc icudata],
                               [icu\([18a-z]*\)],
-                              [BLD/libs/icu/icu-build/lib/libsicu\1.a]),
+                              [BLD/libs/icu/icu-build/lib/libicu\1.a]),
                  [],
                  [], [${top_builddir}/../../libs/icu/include/unicode/uversion.h])[]dnl
 ]) # _KPSE_ICU_FLAGS
