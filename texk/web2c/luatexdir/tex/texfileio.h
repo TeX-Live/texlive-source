@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfileio.h 4005 2010-11-29 11:52:43Z taco $ */
+/* $Id: texfileio.h 4255 2011-05-09 11:48:02Z taco $ */
 
 #ifndef TEXFILEIO_H
 #  define TEXFILEIO_H
@@ -140,5 +140,6 @@ extern boolean open_in_or_pipe(FILE **, char *, int, const_string fopen_mode,
 extern boolean open_out_or_pipe(FILE **, char *, const_string fopen_mode);
 extern void close_file_or_pipe(FILE *);
 
+extern char *luatex_synctex_get_current_name(void);
 
 #endif

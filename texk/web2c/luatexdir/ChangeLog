@@ -1,3 +1,6 @@
+2011-05-09  Taco Hoekwater  <taco@luatex.org>
+	* tex/texfileio.[hw]: file relative filenames in synctex output.
+	* luatex_svnversion.h: updated to reflect latest luatex revision (4256)
 
 2011-05-08  Taco Hoekwater  <taco@luatex.org>
 	* dvi/dvigen.w, pdf/pdfgen.w: fix missing newline after

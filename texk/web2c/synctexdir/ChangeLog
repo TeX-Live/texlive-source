@@ -1,3 +1,7 @@
+2011-05-09  Taco Hoekwater  <taco@luatex.org>
+
+	* synctex-luatex.h: use an actual function to find the current name.
+
 2011-04-16  Taco Hoekwater  <taco@luatex.org>
 
 	* synctex.c: Rename flags member output => output_p to avoid

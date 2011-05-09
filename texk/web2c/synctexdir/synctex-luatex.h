@@ -59,7 +59,7 @@ authorization from the copyright holder.
 #define SYNCTEX_RULE_DP depth(p)
 
 #define SYNCTEX_CURRENT_TAG (cur_input.synctex_tag_field)
-#define SYNCTEX_GET_CURRENT_NAME() (makecstring(cur_input.name_field))
+#define SYNCTEX_GET_CURRENT_NAME() luatex_synctex_get_current_name()
 #define SYNCTEX_GET_TOTAL_PAGES() (total_pages)
 
 #include "ptexlib.h"
