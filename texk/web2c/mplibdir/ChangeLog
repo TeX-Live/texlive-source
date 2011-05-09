@@ -1,3 +1,7 @@
+2011-05-09  Taco Hoekwater  <taco@luatex.org>
+
+	* mpxout.w (mpx_in_TFM): close tfm files.
+
 2011-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mp.w (mp_do_snprintf): Removed, instead declare and define
