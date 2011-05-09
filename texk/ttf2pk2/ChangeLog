@@ -1,3 +1,9 @@
+2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttfaux.c (readttf_kern): Rewrite, using FT_Get_Kerning().
+
+	* ttf2pk.1, ttf2tfm.1: Mention freetype2, drop old kpathsea.
+
 2011-05-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ttfaux.c (readttf): Skip unused vars.

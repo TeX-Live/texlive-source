@@ -64,7 +64,6 @@ FT_Face_Properties   properties;
 FT_BBox              bbox;
 
 #if 0
-FT_Kerning directory;
 FT_Post    post;
 
 TTO_GSUBHeader  gsub_;
@@ -74,57 +73,43 @@ TTO_GSUBHeader  *gsub;
 Boolean has_gsub;
 
 
-#if 0
 static void
 readttf_kern(Font *fnt)
 {
-  register kern *nk;
-  register ttfinfo *ti;
-  FT_Kern_0_Pair* pairs0;
+  kern *nk;
+  ttfinfo *ti, *tj;
   FT_Error error;
-  unsigned int i, j;
+  FT_Vector akerning;
 
-  
-  if ((error = FT_Get_Kerning_Directory(face, &directory)))
-    oops("Cannot get kerning directory (error code = 0x%x).", error);
-  
-  if (directory.nTables == 0)
-    return;
-
-  for (i = 0; i < directory.nTables; i++)
+  for (ti = fnt->charlist; ti; ti = ti->next)
   {
-    if ((error = FT_Load_Kerning_Table(face, i)))
-      oops("Cannot load kerning table (error code = 0x%x).", error);
-
-    switch (directory.tables[i].format)
+    kern head;
+    kern *tail = &head;
+    head.next = NULL;
+    for (tj = fnt->charlist; tj; tj = tj->next)
     {
-    case 0:
-      pairs0 = directory.tables[i].t.kern0.pairs;
-      for (j = 0; j < directory.tables[i].t.kern0.nPairs; j++, pairs0++)
+      if ((error = FT_Get_Kerning(face, ti->glyphindex, tj->glyphindex,
+                                  FT_KERNING_UNSCALED, &akerning)))
+        oops("Cannot get kerning vector (error code = 0x%x).", error);
+
+      if (akerning.x)
       {
-        ti = findglyph(pairs0->left, fnt->charlist);
-        if (ti == NULL)
-          warning("kern char not found");
-        else
-        {
-          nk = newkern();
-          nk->succ = findglyph(pairs0->right, fnt->charlist)->adobename;
-          nk->delta = transform(pairs0->value * 1000 / fnt->units_per_em, 0,
-                                fnt->efactor, fnt->slant);
-          nk->next = ti->kerns;
-          ti->kerns = nk;
-        }
-      }
-      return;   /* we stop after the first format 0 kerning table */
-
-    default:
-      break;
-    }
-  }
-  return;
-}
-
+        nk = newkern();
+        nk->succ = tj->adobename;
+        nk->delta = transform(akerning.x * 1000 / fnt->units_per_em, 0,
+                              fnt->efactor, fnt->slant);
+        /* We append the new kern to reproduce the old .vpl file */
+        tail->next = nk;
+        tail = nk;
+#if 0
+        nk->next = ti->kerns;
+        ti->kerns = nk;
 #endif
+      }
+    }
+    ti->kerns = head.next;
+  }
+}
 
 
 void
@@ -298,10 +283,6 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
       {
 	cmap_plat=face->charmaps[i]->platform_id;
 	cmap_enc=face->charmaps[i]->encoding_id;
-#if 0
-        if ((error = FT_Get_CharMap_ID(face, i, &cmap_plat, &cmap_enc)))
-          oops("Cannot query cmap (error code = 0x%x).", error);
-#endif
         if (cmap_plat == fnt->pid && cmap_enc == fnt->eid)
           break;
       }
@@ -317,14 +298,12 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
         {
 	  cmap_plat=face->charmaps[i]->platform_id;
 	  cmap_enc=face->charmaps[i]->encoding_id;
-          //FT_Get_CharMap_ID(face, i, &cmap_plat, &cmap_enc);
           fprintf(stderr, "    (%i,%i)\n", cmap_plat, cmap_enc);
         }
         fprintf(stderr, "\n");
         exit(1);
       }
 
-//      if ((error = FT_Get_CharMap(face, i, &char_map)))
       if ((error = FT_Set_Charmap(face, face->charmaps[i])))
         oops("Cannot load cmap (error code = 0x%x).", error);
     }
@@ -532,7 +511,6 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
       else
         index = k;
 
-      //Num = FT_Char_Index(char_map, index);
       Num = FT_Get_Char_Index(face, index);
 
       /* now we try to get a vertical glyph form */
@@ -564,7 +542,6 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
       index = 0;
     }
 
-//    error = FT_Load_Glyph(instance, glyph, Num, 0);
     error = FT_Load_Glyph(face, Num, flags);
 #if 0
     if (!error)
@@ -757,10 +734,8 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
   }
 
   /* kerning between subfonts isn't available */
-#if 0
   if (!only_range)
     readttf_kern(fnt);
-#endif
 }
 
 

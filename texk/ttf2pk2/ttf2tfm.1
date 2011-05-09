@@ -1,6 +1,6 @@
 .\" man page for ttf2tfm
 .
-.TH TTF2TFM 1 10-Jan-2002 "FreeType version 1.5"
+.TH TTF2TFM 1 04-May-2011 "FreeType2 version"
 .SH NAME
 ttf2tfm \- build TeX metric files from a TrueType font
 .SH SYNOPSIS
@@ -8,7 +8,8 @@ ttf2tfm \- build TeX metric files from a TrueType font
 .nh
 .B ttf2tfm
 'in +\n(.ku
-.IR ttffile [ .ttf | .ttc ]
+.I ttffile\c
+.RB [ .ttf | .ttc ]
 [\c
 .BI \-c \ \%caps-height-factor\c
 ]
@@ -956,10 +957,6 @@ is appended and not `\c
 .
 .
 .SS kpathsea
-Please note that older versions of
-.B kpathsea
-(<3.2) have no special means to seach for TrueType fonts and related
-files, thus we use the paths for PostScript related stuff.
 The actual version of kpathsea is displayed on screen if you call
 either
 .B ttf2pk
@@ -995,48 +992,9 @@ version\ 3.2:
 .br
 .C "\&.sfd	TTF2PKINPUTS, TTF2TFMINPUTS"
 .PP
-And here the same for pre-3.2-versions of
-.B kpathsea:
-.PP
-.in +4m
-.ta 2i
-.C \&.ttf \ and "\ .ttc	T1FONTS"
-.br
-.C "ttf2pk.cfg	TEXCONFIG"
-.br
-.C "\&.map	TEXCONFIG"
-.br
-.C "\&.enc	TEXPSHEADERS"
-.br
-.C "\&.rpl	TEXPSHEADERS"
-.br
-.C "\&.tfm	TFMFONTS"
-.br
-.C "\&.sfd	TEXPSHEADERS"
-.PP
-Finally, the same for pre-3.0-versions (as used e.g. in te\*(TX\ 0.4):
-.PP
-.in +4m
-.ta 2i
-.C \&.ttf \ and "\ .ttc	DVIPSHEADERS"
-.br
-.C "ttf2pk.cfg	TEXCONFIG"
-.br
-.C "\&.map	TEXCONFIG"
-.br
-.C "\&.enc	DVIPSHEADERS"
-.br
-.C "\&.rpl	DVIPSHEADERS"
-.br
-.C "\&.tfm	TFMFONTS"
-.br
-.C "\&.sfd	DVIPSHEADERS"
-.PP
 Please consult the info files of
 .B kpathsea
 for details on these variables.
-The decision whether to use the old or the new scheme will be done
-during compilation.
 .PP
 You should set the
 .C TEXMFCNF
