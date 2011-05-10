@@ -63,7 +63,7 @@ my @missing;
 my $writelog = 0;
 my $cache = 0; # don't change!
 my $copy;
-my $pdftexNoEnc=1;
+my $pdftexNoEnc=0;
 
 # initialize mktexupd
 my $updLSR=&mktexupd();
@@ -911,24 +911,20 @@ sub normalizeLines {
 
 ###############################################################################
 # to_pdftex()
-#   we could strip "PS_Encoding_Name ReEncodeFont" from map entries because
-#   they are ignored by pdftex anyway, but it is harmless, and creates
-#   spurious differences.  We want fewer differences, not more.  Really
-#   we want one map file format.
+#   strip "PS_Encoding_Name ReEncodeFont" from map entries because
+#   they are ignored by pdftex anyway.
 ###############################################################################
 sub to_pdftex {
-  return @_;
-#
-#  my @in = @_;
-#  my @out;
-#  foreach my $line (@in) {
-#    if ($line =~ /^(.*\s+)(\S+\s+ReEncodeFont\s)(.*)/) {
-#	    $line = "$1$3";
-#	    $line =~ s/\s+\"\s+\"\s+/ /;
-#    }
-#    push @out, $line;
-#  }
-#  return @out;
+  my @in = @_;
+  my @out;
+  foreach my $line (@in) {
+    if ($line =~ /^(.*\s+)(\S+\s+ReEncodeFont\s)(.*)/) {
+	    $line = "$1$3";
+	    $line =~ s/\s+\"\s+\"\s+/ /;
+    }
+    push @out, $line;
+  }
+  return @out;
 }
 
 ###############################################################################
