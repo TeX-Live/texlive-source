@@ -80,7 +80,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 	$(srcdir)/luatexdir/am/txt2zlib.am \
 	$(srcdir)/mplibdir/am/libmplib.am \
 	$(srcdir)/mplibdir/am/mplib.am \
-	$(srcdir)/omegaware/am/omegaware.am \
+	$(srcdir)/omegaware/am/omegaware.am $(srcdir)/osx-strip.in \
 	$(srcdir)/pdftexdir/am/libpdftex.am \
 	$(srcdir)/pdftexdir/am/pdftex.am \
 	$(srcdir)/pdftexdir/am/pdftosrc.am \
@@ -270,7 +270,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/w2c/c-auto.h ff-config.h
-CONFIG_CLEAN_FILES = web2c-sh tangle-sh ctangleboot-sh
+CONFIG_CLEAN_FILES = web2c-sh tangle-sh ctangleboot-sh osx-strip
 CONFIG_CLEAN_VPATH_FILES =
 ARFLAGS = cru
 libff_a_AR = $(AR) $(ARFLAGS)
@@ -1104,6 +1104,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PATH_STRIP = @PATH_STRIP@
 PKG_CONFIG = @PKG_CONFIG@
 POPPLER_DEPEND = @POPPLER_DEPEND@
 POPPLER_INCLUDES = @POPPLER_INCLUDES@
@@ -2513,6 +2514,8 @@ web2c-sh: $(top_builddir)/config.status $(srcdir)/web2c-sh.in
 tangle-sh: $(top_builddir)/config.status $(srcdir)/tangle-sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 ctangleboot-sh: $(top_builddir)/config.status $(srcdir)/ctangleboot-sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+osx-strip: $(top_builddir)/config.status $(srcdir)/osx-strip.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 libff.a: $(libff_a_OBJECTS) $(libff_a_DEPENDENCIES) 
 	-rm -f libff.a

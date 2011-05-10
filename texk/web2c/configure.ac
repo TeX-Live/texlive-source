@@ -1,6 +1,6 @@
 dnl Process this file with Autoconf to produce a configure script for Web2c.
 dnl
-dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -36,6 +36,12 @@ AC_SUBST([WEB2CVERSION])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([web2c programs])
 KPSE_CANONICAL_HOST
+
+AC_PATH_TOOL([PATH_STRIP], [strip])
+
+case $host_os in
+  darwin*) STRIP='$(top_builddir)/osx-strip' ;;
+esac
 
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
 
@@ -367,6 +373,7 @@ AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile
 AC_CONFIG_FILES([web2c-sh], [chmod +x web2c-sh])
 AC_CONFIG_FILES([tangle-sh], [chmod +x tangle-sh])
 AC_CONFIG_FILES([ctangleboot-sh], [chmod +x ctangleboot-sh])
+AC_CONFIG_FILES([osx-strip], [chmod +x osx-strip])
 
 dnl The subdirectory web2c must be configured for the build system.
 dnl When cross compiling, can not share the cache file with the subdirectory!

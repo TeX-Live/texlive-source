@@ -1,3 +1,8 @@
+2011-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* osx-strip: New shell script to strip Mac OS X binaries.
+	* configure.ac: Use osx-strip for Mac OS X.
+
 2011-05-05  Karl Berry  <karl@tug.org>
 
 	* man/pktype.man: output is always to stdout.

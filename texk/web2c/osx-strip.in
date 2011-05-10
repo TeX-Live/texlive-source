@@ -1,0 +1,15 @@
+#! @SHELL@
+# osx-strip: shell script to strip luatex (and other binaries)
+#    for Mac OS X, keeping the global symbols.
+#
+#   Copyright (C) 2001 Peter Breitenlohner <tex-live@tug.org>
+#      and Philipp Stephani <st_philipp@yahoo.de>
+#
+#   This file is free software; the copyright holders
+#   give unlimited permission to copy and/or distribute it,
+#   with or without modifications, as long as this notice is preserved.
+#
+case $1 in
+  -S | -x) exec @PATH_STRIP@ "$@" ;;
+  *) exec @PATH_STRIP@ -S -x "$@" ;;
+esac
