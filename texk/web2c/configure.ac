@@ -37,12 +37,6 @@ dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([web2c programs])
 KPSE_CANONICAL_HOST
 
-AC_PATH_TOOL([PATH_STRIP], [strip])
-
-case $host_os in
-  darwin*) STRIP='$(top_builddir)/osx-strip' ;;
-esac
-
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
 
 AC_PROG_CXX
@@ -373,7 +367,6 @@ AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile
 AC_CONFIG_FILES([web2c-sh], [chmod +x web2c-sh])
 AC_CONFIG_FILES([tangle-sh], [chmod +x tangle-sh])
 AC_CONFIG_FILES([ctangleboot-sh], [chmod +x ctangleboot-sh])
-AC_CONFIG_FILES([osx-strip], [chmod +x osx-strip])
 
 dnl The subdirectory web2c must be configured for the build system.
 dnl When cross compiling, can not share the cache file with the subdirectory!

@@ -762,7 +762,6 @@ CXXFLAGS
 CXX
 cross_FALSE
 cross_TRUE
-PATH_STRIP
 WARNING_CFLAGS
 CPP
 OTOOL64
@@ -13220,109 +13219,6 @@ fi
 eval kpse_build_alias=\${build_alias-$build}
 
 
-if test -n "$ac_tool_prefix"; then
-  # Extract the first word of "${ac_tool_prefix}strip", so it can be a program name with args.
-set dummy ${ac_tool_prefix}strip; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_PATH_STRIP+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $PATH_STRIP in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_PATH_STRIP="$PATH_STRIP" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_PATH_STRIP="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-PATH_STRIP=$ac_cv_path_PATH_STRIP
-if test -n "$PATH_STRIP"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PATH_STRIP" >&5
-$as_echo "$PATH_STRIP" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-fi
-if test -z "$ac_cv_path_PATH_STRIP"; then
-  ac_pt_PATH_STRIP=$PATH_STRIP
-  # Extract the first word of "strip", so it can be a program name with args.
-set dummy strip; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_ac_pt_PATH_STRIP+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $ac_pt_PATH_STRIP in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_ac_pt_PATH_STRIP="$ac_pt_PATH_STRIP" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_ac_pt_PATH_STRIP="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-ac_pt_PATH_STRIP=$ac_cv_path_ac_pt_PATH_STRIP
-if test -n "$ac_pt_PATH_STRIP"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_pt_PATH_STRIP" >&5
-$as_echo "$ac_pt_PATH_STRIP" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-  if test "x$ac_pt_PATH_STRIP" = x; then
-    PATH_STRIP=""
-  else
-    case $cross_compiling:$ac_tool_warned in
-yes:)
-{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
-$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
-ac_tool_warned=yes ;;
-esac
-    PATH_STRIP=$ac_pt_PATH_STRIP
-  fi
-else
-  PATH_STRIP="$ac_cv_path_PATH_STRIP"
-fi
-
-
-case $host_os in
-  darwin*) STRIP='$(top_builddir)/osx-strip' ;;
-esac
-
  if test "x$cross_compiling" = xyes; then
   cross_TRUE=
   cross_FALSE='#'
@@ -22810,8 +22706,6 @@ ac_config_files="$ac_config_files tangle-sh"
 
 ac_config_files="$ac_config_files ctangleboot-sh"
 
-ac_config_files="$ac_config_files osx-strip"
-
 
 
 
@@ -24062,7 +23956,6 @@ do
     "web2c-sh") CONFIG_FILES="$CONFIG_FILES web2c-sh" ;;
     "tangle-sh") CONFIG_FILES="$CONFIG_FILES tangle-sh" ;;
     "ctangleboot-sh") CONFIG_FILES="$CONFIG_FILES ctangleboot-sh" ;;
-    "osx-strip") CONFIG_FILES="$CONFIG_FILES osx-strip" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -25575,7 +25468,6 @@ fi
     "web2c-sh":F) chmod +x web2c-sh ;;
     "tangle-sh":F) chmod +x tangle-sh ;;
     "ctangleboot-sh":F) chmod +x ctangleboot-sh ;;
-    "osx-strip":F) chmod +x osx-strip ;;
 
   esac
 done # for ac_tag
