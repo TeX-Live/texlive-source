@@ -516,10 +516,6 @@ void write_png(integer img)
         fixedimagehicolor = 0;
 
     pdf_puts("/Type /XObject\n/Subtype /Image\n");
-    pdf_printf("/Width %i\n/Height %i\n/BitsPerComponent %i\n",
-               (int) png_width(img),
-               (int) png_height(img), (int) png_bit_depth(img));
-    pdf_puts("/ColorSpace ");
     /* simple transparency support */
     if (png_get_valid(png_ptr(img), png_info(img), PNG_INFO_tRNS)) {
         png_set_tRNS_to_alpha(png_ptr(img));
@@ -554,6 +550,11 @@ void write_png(integer img)
     /* reset structure */
     (void) png_set_interlace_handling(png_ptr(img));
     png_read_update_info(png_ptr(img), png_info(img));
+
+    pdf_printf("/Width %i\n/Height %i\n/BitsPerComponent %i\n",
+               (int) png_width(img),
+               (int) png_height(img), (int) png_bit_depth(img));
+    pdf_puts("/ColorSpace ");
     if (png_copy && fixedpdfminorversion > 1
         && png_interlace_type(img) == PNG_INTERLACE_NONE
         && (png_color_type(img) == PNG_COLOR_TYPE_GRAY
