@@ -1,3 +1,9 @@
+2011-05-12  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (pdftexNoEnc): rename to pdftexStripEnc.
+	(to_pdftex): change uses.
+	(Reinhard K made an equivalent change.)
+
 2011-04-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Rename updmap-sys => updmap-sys.sh.
