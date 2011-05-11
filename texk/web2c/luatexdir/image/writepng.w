@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writepng.w 4240 2011-05-01 20:52:01Z hhenkel $ "
+    "$Id: writepng.w 4258 2011-05-11 05:36:13Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/image/writepng.w $";
 
 #include <assert.h>
@@ -536,11 +536,6 @@ void write_png(PDF pdf, image_dict * idict)
     pdf_puts(pdf, "/Type /XObject\n/Subtype /Image\n");
     if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
         pdf_printf(pdf, "%s\n", img_attr(idict));
-    pdf_printf(pdf, "/Width %i\n/Height %i\n/BitsPerComponent %i\n",
-               (int) png_get_image_width(png_p, info_p),
-               (int) png_get_image_height(png_p, info_p),
-               (int) png_get_bit_depth(png_p, info_p));
-    pdf_puts(pdf, "/ColorSpace ");
     /* simple transparency support */
     if (png_get_valid(png_p, info_p, PNG_INFO_tRNS)) {
         png_set_tRNS_to_alpha(png_p);
@@ -576,6 +571,11 @@ void write_png(PDF pdf, image_dict * idict)
     (void) png_set_interlace_handling(png_p);
     png_read_update_info(png_p, info_p);
 
+    pdf_printf(pdf, "/Width %i\n/Height %i\n/BitsPerComponent %i\n",
+               (int) png_get_image_width(png_p, info_p),
+               (int) png_get_image_height(png_p, info_p),
+               (int) png_get_bit_depth(png_p, info_p));
+    pdf_puts(pdf, "/ColorSpace ");
     if (png_copy && pdf->minor_version > 1
         && png_get_interlace_type(png_p, info_p) == PNG_INTERLACE_NONE
         && (png_get_color_type(png_p, info_p) == PNG_COLOR_TYPE_GRAY

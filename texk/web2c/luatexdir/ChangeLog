@@ -1,3 +1,7 @@
+2011-05-11  Taco Hoekwater  <taco@luatex.org>
+	* image/writepmg.w: fix for 16bit images in pdf 1.4 (8bit) mode.
+	* luatex_svnversion.h: updated to reflect latest luatex revision (4258)
+
 2011-05-09  Taco Hoekwater  <taco@luatex.org>
 	* tex/texfileio.[hw]: file relative filenames in synctex output.
 	* luatex_svnversion.h: updated to reflect latest luatex revision (4256)
