@@ -5,9 +5,9 @@ Simple tray menu
 Originally written in 2011 by Tomasz M. Trzeciak, Public Domain
 
 compiling with gcc (size optimized):
-echo 1 ICON "tl-menu.ico">tl-menu.rc
-windres tl-menu.rc tl-menu-rc.o
-gcc -Os -s -mwindows -o tl-menu.exe tl-menu-rc.o tl-menu.c
+echo 1 ICON "tl-tray-menu.ico">tl-tray-menu.rc
+windres tl-tray-menu.rc tl-tray-menu-rc.o
+gcc -Os -s -mwindows -o tl-tray-menu.exe tl-tray-menu-rc.o tl-tray-menu.c
 
 */
 
@@ -34,17 +34,19 @@ static char msgbuf[4*MAX_PATH];
 #define MENU_TEXDOC    1
 #define MENU_EDITOR    2
 #define MENU_COMSPEC   3
-#define MENU_EXIT      69
+#define MENU_CUSTOM    4
+#define MENU_EXIT      42
 
 HMENU hPopMenu;
 NOTIFYICONDATA nid;
 
 char szAppName[] = "TrayMenu";
-char ExeList[4][MAX_PATH] = {
+char ExeList[5][MAX_PATH] = {
   "tlmgr-gui.exe",
   "texdoctk.exe",
   "texworks.exe",
-  "cmd.exe"
+  "cmd.exe",
+  ""
 };
 
 LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -62,6 +64,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
       AppendMenu( hPopMenu, MF_STRING, MENU_EDITOR, "&Editor (texworks)" );
     if ( ExeList[MENU_COMSPEC][0] )
       AppendMenu( hPopMenu, MF_STRING, MENU_COMSPEC, "&Command Prompt" );
+    if ( ExeList[MENU_CUSTOM][0] )
+      AppendMenu( hPopMenu, MF_STRING, MENU_CUSTOM, "Custom &Script" );
     AppendMenu( hPopMenu, MF_SEPARATOR, 0, NULL );
     AppendMenu( hPopMenu, MF_STRING, MENU_EXIT,    "E&xit" );
   }
@@ -91,6 +95,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
       case MENU_TEXDOC:
       case MENU_EDITOR:
       case MENU_COMSPEC:
+      case MENU_CUSTOM:
         if ( _spawnlp( _P_NOWAIT, ExeList[LOWORD(wParam)], NULL ) < 0 )
           DIE( "Failed to start: %s", ExeList[LOWORD(wParam)] );
       break;
@@ -145,8 +150,14 @@ int APIENTRY WinMain(
     else
       ExeList[i][0] = '\0';
   }
+  
   if ( s = getenv( "COMSPEC" ) ) strncpy( ExeList[3], s, MAX_PATH );
   
+  strcpy( buffer, selfdir );
+  strcat( buffer, "\\tl-tray-menu-custom.bat" );
+  if ( GetFileAttributes( buffer ) != INVALID_FILE_ATTRIBUTES )
+    strncpy( ExeList[4], buffer, MAX_PATH );
+    
 	// create a hidden window for messaging
 
 	MSG msg;
