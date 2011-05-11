@@ -1,7 +1,7 @@
 2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* Makefile.am, configure.ac: Conditional cross_compiling => cross
-	as in libs/icu, texk/dvipng, and texk/web2c.
+	* Makefile.am, configure.ac: Conditional 'cross_compiling' =>
+	'cross' as in libs/icu, texk/dvipng, and texk/web2c.
 
 	* version.ac: Switch 2011/dev => 2011.
 

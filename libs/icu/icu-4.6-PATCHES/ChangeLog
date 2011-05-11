@@ -1,3 +1,7 @@
+2011-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-14-GENCCODE_ASSEMBLY (new): For amd64-kfreebsd.
+
 2011-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-13-STATIC_PREFIX (new): Never use libsicuxxx.a.
