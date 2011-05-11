@@ -1,19 +1,24 @@
 2011-05-11  Taco Hoekwater  <taco@luatex.org>
+
 	* image/writepmg.w: fix for 16bit images in pdf 1.4 (8bit) mode.
 	* luatex_svnversion.h: updated to reflect latest luatex revision (4258)
 
 2011-05-09  Taco Hoekwater  <taco@luatex.org>
+
 	* tex/texfileio.[hw]: file relative filenames in synctex output.
 	* luatex_svnversion.h: updated to reflect latest luatex revision (4256)
 
 2011-05-08  Taco Hoekwater  <taco@luatex.org>
+
 	* dvi/dvigen.w, pdf/pdfgen.w: fix missing newline after
 	'No pages of output' message.
 	   
 2011-05-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	* lua/luainit.w, tex/texfileio.w: fix recorder location.
 
 2011-05-05  Taco Hoekwater  <taco@luatex.org>
+
 	* image/writepng.w: fixes for libpng 1.5.2.
 	* lua/lnodelib.c (lua_nodelib_fields): fix field count for 
 	nodes without subtype.
@@ -27,7 +32,6 @@
 	* tex/texfileio.w: patch from bug 615 (recorder filename location).
 	* tex/texmath.w: fix display alignment in TRT mode.
 	* utils/utils.w (HAVE_ASPRINTF): superfluous test removed.
-
 
 2011-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
