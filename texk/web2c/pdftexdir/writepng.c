@@ -20,19 +20,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ptexlib.h"
 #include "image.h"
 
-/* ToDo:
- *	Check if multiple use of, e.g., png_bit_depth(img) should be
- *	replaced by
- *		int bitdepth = png_bit_depth(img);
- *	and subsequent use of bitdepth
- */
-#define png_bit_depth(N)	png_get_bit_depth(png_ptr(N), png_info(N))
-#define png_color_type(N)	png_get_color_type(png_ptr(N), png_info(N))
-#define png_height(N)		png_get_image_height(png_ptr(N), png_info(N))
-#define png_interlace_type(N)	png_get_interlace_type(png_ptr(N), png_info(N))
-#define png_rowbytes(N)		png_get_rowbytes(png_ptr(N), png_info(N))
-#define png_width(N)		png_get_image_width(png_ptr(N), png_info(N))
-
 static int transparent_page_group = 0;
 
 void read_png_info(integer img)
@@ -49,8 +36,8 @@ void read_png_info(integer img)
     png_init_io(png_ptr(img), png_file);
     png_read_info(png_ptr(img), png_info(img));
     /* resolution support */
-    img_width(img) = png_width(img);
-    img_height(img) = png_height(img);
+    img_width(img) = png_get_image_width(png_ptr(img), png_info(img));
+    img_height(img) = png_get_image_height(png_ptr(img), png_info(img));
     if (png_get_valid(png_ptr(img), png_info(img), PNG_INFO_pHYs)) {
         img_xres(img) =
             round(0.0254 *
@@ -59,7 +46,7 @@ void read_png_info(integer img)
             round(0.0254 *
                   png_get_y_pixels_per_meter(png_ptr(img), png_info(img)));
     }
-    switch (png_color_type(img)) {
+    switch (png_get_color_type(png_ptr(img), png_info(img))) {
     case PNG_COLOR_TYPE_PALETTE:
         img_color(img) = IMAGE_COLOR_C | IMAGE_COLOR_I;
         break;
@@ -73,11 +60,11 @@ void read_png_info(integer img)
         break;
     default:
         pdftex_fail("unsupported type of color_type <%i>",
-                    png_color_type(img));
+                    png_get_color_type(png_ptr(img), png_info(img)));
     }
     if (fixedpdfminorversion >= 4
-        && (png_color_type(img) == PNG_COLOR_TYPE_GRAY_ALPHA
-            || png_color_type(img) == PNG_COLOR_TYPE_RGB_ALPHA)) {
+        && (png_get_color_type(png_ptr(img), png_info(img)) == PNG_COLOR_TYPE_GRAY_ALPHA
+            || png_get_color_type(png_ptr(img), png_info(img)) == PNG_COLOR_TYPE_RGB_ALPHA)) {
         /* png with alpha channel in device colours; we have to add a Page
          * Group to make Adobe happy, so we have to create a dummy group object
          */
@@ -113,10 +100,10 @@ void read_png_info(integer img)
 
 
 #define write_noninterlaced(outmac)                    \
-  for (i = 0; i < (int)png_height(img); i++) {   \
+  for (i = 0; i < (int)png_get_image_height(png_ptr(img), png_info(img)); i++) {   \
     png_read_row(png_ptr(img), row, NULL);             \
     r = row;                                           \
-    k = png_rowbytes(img);                       \
+    k = png_get_rowbytes(png_ptr(img), png_info(img)); \
     while(k > 0) {                                     \
         l = (k > pdfbufsize)? pdfbufsize : k;          \
                 pdfroom(l);                            \
@@ -128,9 +115,9 @@ void read_png_info(integer img)
         }
 
 #define write_interlaced(outmac)                       \
-  for (i = 0; i < (int)png_height(img); i++) {   \
+  for (i = 0; i < (int)png_get_image_height(png_ptr(img), png_info(img)); i++) {   \
             row = rows[i];                             \
-            k = png_rowbytes(img);               \
+            k = png_get_rowbytes(png_ptr(img), png_info(img));  \
             while(k > 0) {                             \
                 l = (k > pdfbufsize)? pdfbufsize : k;  \
                 pdfroom(l);                            \
@@ -162,17 +149,18 @@ static void write_png_palette(integer img)
                    num_palette -1, (int) palette_objnum);
     }
     pdfbeginstream();
-    if (png_interlace_type(img) == PNG_INTERLACE_NONE) {
-        row = xtalloc(png_rowbytes(img), png_byte);
+    if (png_get_interlace_type(png_ptr(img), png_info(img)) == PNG_INTERLACE_NONE) {
+        row = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
         write_noninterlaced(write_simple_pixel(r));
         xfree(row);
     } else {
-        if (png_height(img) * png_rowbytes(img) >= 10240000L)
+        if (png_get_image_height(png_ptr(img), png_info(img))
+            * png_get_rowbytes(png_ptr(img), png_info(img)) >= 10240000L)
             pdftex_warn
                 ("large interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)");
-        rows = xtalloc(png_height(img), png_bytep);
-        for (i = 0; (unsigned) i < png_height(img); i++)
-            rows[i] = xtalloc(png_rowbytes(img), png_byte);
+        rows = xtalloc(png_get_image_height(png_ptr(img), png_info(img)), png_bytep);
+        for (i = 0; (unsigned) i < png_get_image_height(png_ptr(img), png_info(img)); i++)
+            rows[i] = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
         png_read_image(png_ptr(img), rows);
         write_interlaced(write_simple_pixel(row));
         xfree(rows);
@@ -201,17 +189,18 @@ static void write_png_gray(integer img)
         pdf_puts("/DeviceGray\n");
     }
     pdfbeginstream();
-    if (png_interlace_type(img) == PNG_INTERLACE_NONE) {
-        row = xtalloc(png_rowbytes(img), png_byte);
+    if (png_get_interlace_type(png_ptr(img), png_info(img)) == PNG_INTERLACE_NONE) {
+        row = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
         write_noninterlaced(write_simple_pixel(r));
         xfree(row);
     } else {
-        if (png_height(img) * png_rowbytes(img) >= 10240000L)
+        if (png_get_image_height(png_ptr(img), png_info(img))
+            * png_get_rowbytes(png_ptr(img), png_info(img)) >= 10240000L)
             pdftex_warn
                 ("large interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)");
-        rows = xtalloc(png_height(img), png_bytep);
-        for (i = 0; (unsigned) i < png_height(img); i++)
-            rows[i] = xtalloc(png_rowbytes(img), png_byte);
+        rows = xtalloc(png_get_image_height(png_ptr(img), png_info(img)), png_bytep);
+        for (i = 0; (unsigned) i < png_get_image_height(png_ptr(img), png_info(img)); i++)
+            rows[i] = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
         png_read_image(png_ptr(img), rows);
         write_interlaced(write_simple_pixel(row));
         xfree(rows);
@@ -238,26 +227,28 @@ static void write_png_gray_alpha(integer img)
     pdfcreateobj(0, 0);
     smask_objnum = objptr;
     pdf_printf("/SMask %i 0 R\n", (int) smask_objnum);
-    smask_size = (png_rowbytes(img) / 2) * png_height(img);
+    smask_size = (png_get_rowbytes(png_ptr(img), png_info(img)) / 2)
+                 * png_get_image_height(png_ptr(img), png_info(img));
     smask = xtalloc(smask_size, png_byte);
     pdfbeginstream();
-    if (png_interlace_type(img) == PNG_INTERLACE_NONE) {
-        row = xtalloc(png_rowbytes(img), png_byte);
-        if ((png_bit_depth(img) == 16) && fixedimagehicolor) {
+    if (png_get_interlace_type(png_ptr(img), png_info(img)) == PNG_INTERLACE_NONE) {
+        row = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
+        if ((png_get_bit_depth(png_ptr(img), png_info(img)) == 16) && fixedimagehicolor) {
             write_noninterlaced(write_gray_pixel_16(r));
         } else {
             write_noninterlaced(write_gray_pixel_8(r));
         }
         xfree(row);
     } else {
-        if (png_height(img) * png_rowbytes(img) >= 10240000L)
+        if (png_get_image_height(png_ptr(img), png_info(img))
+            * png_get_rowbytes(png_ptr(img), png_info(img)) >= 10240000L)
             pdftex_warn
                 ("large interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)");
-        rows = xtalloc(png_height(img), png_bytep);
-        for (i = 0; (unsigned) i < png_height(img); i++)
-            rows[i] = xtalloc(png_rowbytes(img), png_byte);
+        rows = xtalloc(png_get_image_height(png_ptr(img), png_info(img)), png_bytep);
+        for (i = 0; (unsigned) i < png_get_image_height(png_ptr(img), png_info(img)); i++)
+            rows[i] = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
         png_read_image(png_ptr(img), rows);
-        if ((png_bit_depth(img) == 16) && fixedimagehicolor) {
+        if ((png_get_bit_depth(png_ptr(img), png_info(img)) == 16) && fixedimagehicolor) {
             write_interlaced(write_gray_pixel_16(row));
         } else {
             write_interlaced(write_gray_pixel_8(row));
@@ -268,12 +259,12 @@ static void write_png_gray_alpha(integer img)
     pdfflush();
     /* now write the Smask object */
     if (smask_objnum > 0) {
-        bitdepth = (int) png_bit_depth(img);
+        bitdepth = (int) png_get_bit_depth(png_ptr(img), png_info(img));
         pdfbegindict(smask_objnum, 0);
         pdf_puts("/Type /XObject\n/Subtype /Image\n");
         pdf_printf("/Width %i\n/Height %i\n/BitsPerComponent %i\n",
-                   (int) png_width(img),
-                   (int) png_height(img),
+                   (int) png_get_image_width(png_ptr(img), png_info(img)),
+                   (int) png_get_image_height(png_ptr(img), png_info(img)),
                    (bitdepth == 16 ? 8 : bitdepth));
         pdf_puts("/ColorSpace /DeviceGray\n");
         pdfbeginstream();
@@ -299,17 +290,18 @@ static void write_png_rgb(integer img)
         pdf_puts("/DeviceRGB\n");
     }
     pdfbeginstream();
-    if (png_interlace_type(img) == PNG_INTERLACE_NONE) {
-        row = xtalloc(png_rowbytes(img), png_byte);
+    if (png_get_interlace_type(png_ptr(img), png_info(img)) == PNG_INTERLACE_NONE) {
+        row = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
         write_noninterlaced(write_simple_pixel(r));
         xfree(row);
     } else {
-        if (png_height(img) * png_rowbytes(img) >= 10240000L)
+        if (png_get_image_height(png_ptr(img), png_info(img))
+            * png_get_rowbytes(png_ptr(img), png_info(img)) >= 10240000L)
             pdftex_warn
                 ("large interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)");
-        rows = xtalloc(png_height(img), png_bytep);
-        for (i = 0; (unsigned) i < png_height(img); i++)
-            rows[i] = xtalloc(png_rowbytes(img), png_byte);
+        rows = xtalloc(png_get_image_height(png_ptr(img), png_info(img)), png_bytep);
+        for (i = 0; (unsigned) i < png_get_image_height(png_ptr(img), png_info(img)); i++)
+            rows[i] = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
         png_read_image(png_ptr(img), rows);
         write_interlaced(write_simple_pixel(row));
         xfree(rows);
@@ -334,26 +326,28 @@ static void write_png_rgb_alpha(integer img)
     pdfcreateobj(0, 0);
     smask_objnum = objptr;
     pdf_printf("/SMask %i 0 R\n", (int) smask_objnum);
-    smask_size = (png_rowbytes(img) / 2) * png_height(img);
+    smask_size = (png_get_rowbytes(png_ptr(img), png_info(img)) / 2)
+                 * png_get_image_height(png_ptr(img), png_info(img));
     smask = xtalloc(smask_size, png_byte);
     pdfbeginstream();
-    if (png_interlace_type(img) == PNG_INTERLACE_NONE) {
-        row = xtalloc(png_rowbytes(img), png_byte);
-        if ((png_bit_depth(img) == 16) && fixedimagehicolor) {
+    if (png_get_interlace_type(png_ptr(img), png_info(img)) == PNG_INTERLACE_NONE) {
+        row = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
+        if ((png_get_bit_depth(png_ptr(img), png_info(img)) == 16) && fixedimagehicolor) {
             write_noninterlaced(write_rgb_pixel_16(r));
         } else {
             write_noninterlaced(write_rgb_pixel_8(r));
         }
         xfree(row);
     } else {
-        if (png_height(img) * png_rowbytes(img) >= 10240000L)
+        if (png_get_image_height(png_ptr(img), png_info(img))
+            * png_get_rowbytes(png_ptr(img), png_info(img)) >= 10240000L)
             pdftex_warn
                 ("large interlaced PNG might cause out of memory (use non-interlaced PNG to fix this)");
-        rows = xtalloc(png_height(img), png_bytep);
-        for (i = 0; (unsigned) i < png_height(img); i++)
-            rows[i] = xtalloc(png_rowbytes(img), png_byte);
+        rows = xtalloc(png_get_image_height(png_ptr(img), png_info(img)), png_bytep);
+        for (i = 0; (unsigned) i < png_get_image_height(png_ptr(img), png_info(img)); i++)
+            rows[i] = xtalloc(png_get_rowbytes(png_ptr(img), png_info(img)), png_byte);
         png_read_image(png_ptr(img), rows);
-        if ((png_bit_depth(img) == 16) && fixedimagehicolor) {
+        if ((png_get_bit_depth(png_ptr(img), png_info(img)) == 16) && fixedimagehicolor) {
             write_interlaced(write_rgb_pixel_16(row));
         } else {
             write_interlaced(write_rgb_pixel_8(row));
@@ -364,12 +358,12 @@ static void write_png_rgb_alpha(integer img)
     pdfflush();
     /* now write the Smask object */
     if (smask_objnum > 0) {
-        bitdepth = (int) png_bit_depth(img);
+        bitdepth = (int) png_get_bit_depth(png_ptr(img), png_info(img));
         pdfbegindict(smask_objnum, 0);
         pdf_puts("/Type /XObject\n/Subtype /Image\n");
         pdf_printf("/Width %i\n/Height %i\n/BitsPerComponent %i\n",
-                   (int) png_width(img),
-                   (int) png_height(img),
+                   (int) png_get_image_width(png_ptr(img), png_info(img)),
+                   (int) png_get_image_height(png_ptr(img), png_info(img)),
                    (bitdepth == 16 ? 8 : bitdepth));
         pdf_puts("/ColorSpace /DeviceGray\n");
         pdfbeginstream();
@@ -440,8 +434,9 @@ static void copy_png(integer img)
                "/Columns %d"
                "/BitsPerComponent %i"
                "/Predictor 10>>\n>>\nstream\n", streamlength,
-               png_color_type(img) == 2 ? 3 : 1,
-               (int) png_width(img), (int) png_bit_depth(img));
+               png_get_color_type(png_ptr(img), png_info(img)) == 2 ? 3 : 1,
+               (int) png_get_image_width(png_ptr(img), png_info(img)),
+               (int) png_get_bit_depth(png_ptr(img), png_info(img)));
     /* 2nd pass to copy data */
     endflag = false;
     if (fseek(fp, 8, SEEK_SET) != 0)
@@ -523,14 +518,14 @@ void write_png(integer img)
     }
     /* alpha channel support */
     if (fixedpdfminorversion < 4
-        && png_color_type(img) | PNG_COLOR_MASK_ALPHA) {
+        && png_get_color_type(png_ptr(img), png_info(img)) | PNG_COLOR_MASK_ALPHA) {
         png_set_strip_alpha(png_ptr(img));
         png_copy = false;
     }
     /* 16 bit depth support */
     if (fixedpdfminorversion < 5)
         fixedimagehicolor = 0;
-    if ((png_bit_depth(img) == 16) && (fixedimagehicolor == 0)) {
+    if ((png_get_bit_depth(png_ptr(img), png_info(img)) == 16) && (fixedimagehicolor == 0)) {
         png_set_strip_16(png_ptr(img));
         png_copy = false;
     }
@@ -552,13 +547,14 @@ void write_png(integer img)
     png_read_update_info(png_ptr(img), png_info(img));
 
     pdf_printf("/Width %i\n/Height %i\n/BitsPerComponent %i\n",
-               (int) png_width(img),
-               (int) png_height(img), (int) png_bit_depth(img));
+               (int) png_get_image_width(png_ptr(img), png_info(img)),
+               (int) png_get_image_height(png_ptr(img), png_info(img)),
+               (int) png_get_bit_depth(png_ptr(img), png_info(img)));
     pdf_puts("/ColorSpace ");
     if (png_copy && fixedpdfminorversion > 1
-        && png_interlace_type(img) == PNG_INTERLACE_NONE
-        && (png_color_type(img) == PNG_COLOR_TYPE_GRAY
-            || png_color_type(img) == PNG_COLOR_TYPE_RGB)
+        && png_get_interlace_type(png_ptr(img), png_info(img)) == PNG_INTERLACE_NONE
+        && (png_get_color_type(png_ptr(img), png_info(img)) == PNG_COLOR_TYPE_GRAY
+            || png_get_color_type(png_ptr(img), png_info(img)) == PNG_COLOR_TYPE_RGB)
         && !fixedimageapplygamma
         && (!png_get_valid(png_ptr(img), png_info(img), PNG_INFO_gAMA)
             || int_file_gamma== PNG_FP_1)
@@ -570,7 +566,7 @@ void write_png(integer img)
         if (img_colorspace_ref(img) != 0) {
             pdf_printf("%i 0 R\n", (int) img_colorspace_ref(img));
         } else {
-            switch (png_color_type(img)) {
+            switch (png_get_color_type(png_ptr(img), png_info(img))) {
             case PNG_COLOR_TYPE_PALETTE:
                 pdfcreateobj(0, 0);
                 palette_objnum = objptr;
@@ -604,10 +600,10 @@ void write_png(integer img)
                 tex_printf(" !png_copy");
             if (fixedpdfminorversion <= 1)
                 tex_printf(" minorversion=%d", (int) fixedpdfminorversion);
-            if (png_interlace_type(img) != PNG_INTERLACE_NONE)
+            if (png_get_interlace_type(png_ptr(img), png_info(img)) != PNG_INTERLACE_NONE)
                 tex_printf(" interlaced");
-            if (!((png_color_type(img) == PNG_COLOR_TYPE_GRAY)
-                  || (png_color_type(img) == PNG_COLOR_TYPE_RGB)))
+            if (!((png_get_color_type(png_ptr(img), png_info(img)) == PNG_COLOR_TYPE_GRAY)
+                  || (png_get_color_type(png_ptr(img), png_info(img)) == PNG_COLOR_TYPE_RGB)))
                 tex_printf(" colortype");
             if (fixedimageapplygamma)
                 tex_printf(" apply gamma");
@@ -631,7 +627,7 @@ void write_png(integer img)
             if (png_get_valid(png_ptr(img), png_info(img), PNG_INFO_sPLT))
                 tex_printf(" sPLT");
         }
-        switch (png_color_type(img)) {
+        switch (png_get_color_type(png_ptr(img), png_info(img))) {
         case PNG_COLOR_TYPE_PALETTE:
             write_png_palette(img);
             break;
@@ -657,7 +653,7 @@ void write_png(integer img)
             break;
         default:
             pdftex_fail("unsupported type of color_type <%i>",
-                        png_color_type(img));
+                        png_get_color_type(png_ptr(img), png_info(img)));
         }
     }
     pdfflush();

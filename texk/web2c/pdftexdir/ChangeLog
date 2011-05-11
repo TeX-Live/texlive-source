@@ -1,3 +1,9 @@
+2011-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writepng.c: Fix for 16bit images in pdf 1.4 (8bit) mode,
+	from Hartmut Henkel.  Expand the png_* macros introduced for
+	libpng-1.2.x => 1.4.x => 1.5.x.
+
 2011-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writepng.c: Fixes for libpng 1.5.2 copied/adapted from luaTeX.
