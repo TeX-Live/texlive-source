@@ -1,3 +1,8 @@
+2011-05-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c: add a function generic_synctex_get_current_name()
+	in order to get full path names for SyncTeX.
+
 2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (ipc_open_out): Avoid to #define SOCK_NONBLOCK which

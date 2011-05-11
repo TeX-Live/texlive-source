@@ -90,6 +90,29 @@
 #define edit_var "MFEDIT"
 #endif /* MF */
 
+#if defined(__SyncTeX__)
+/* 
+   SyncTeX file name should be full path in the case where
+   --output-directory option is given.
+   Borrowed from LuaTeX.
+*/
+char *generic_synctex_get_current_name (void)
+{
+  char *pwdbuf = NULL, *ret;
+  int pwdbufsize = 2;
+  if (kpse_absolute_p(fullnameoffile, 0)) {
+     return xstrdup(fullnameoffile);
+  }
+  do {
+    pwdbufsize = 2*pwdbufsize;
+    pwdbuf = xrealloc (pwdbuf, pwdbufsize);
+  } while (!getcwd(pwdbuf, pwdbufsize));
+  ret = concat3(pwdbuf, DIR_SEP_STRING, fullnameoffile);
+  free(pwdbuf) ;
+  return ret;
+}
+#endif
+
 /* Shell escape.
 
    If shellenabledp == 0, all shell escapes are forbidden.
