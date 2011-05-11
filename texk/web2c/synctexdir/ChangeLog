@@ -1,3 +1,9 @@
+2011-05-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex-etex.h, synctex-pdftex.h, synctex-tex.h, synctex-xetex.h:
+	define SYNCTEX_GET_CURRENT_NAME() as in LuaTeX, since SyncTeX name
+	should be full path when --output-directory option is given.
+
 2011-05-09  Taco Hoekwater  <taco@luatex.org>
 
 	* synctex-luatex.h: use an actual function to find the current name.
