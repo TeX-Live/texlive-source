@@ -63,7 +63,7 @@ my @missing;
 my $writelog = 0;
 my $cache = 0; # don't change!
 my $copy;
-my $pdftexNoEnc=0;
+my $pdftexStripEnc=1;
 
 # initialize mktexupd
 my $updLSR=&mktexupd();
@@ -915,6 +915,7 @@ sub normalizeLines {
 #   they are ignored by pdftex anyway.
 ###############################################################################
 sub to_pdftex {
+  return unless $pdftexStripEnc;
   my @in = @_;
   my @out;
   foreach my $line (@in) {
@@ -1105,12 +1106,12 @@ sub mkMaps {
 
   my @pdftex_ndl14_map = @tmp3;
   @pdftex_ndl14_map = &normalizeLines(@pdftex_ndl14_map);
-  @pdftex_ndl14_map = &to_pdftex(@pdftex_ndl14_map) if ($pdftexNoEnc);
+  @pdftex_ndl14_map = &to_pdftex(@pdftex_ndl14_map);
   &writeLines(">$pdftexoutputdir/pdftex_ndl14.map", @pdftex_ndl14_map);
 
   my @pdftex_dl14_map = @tmp7;
   @pdftex_dl14_map = &normalizeLines(@pdftex_dl14_map);
-  @pdftex_dl14_map = &to_pdftex(@pdftex_dl14_map) if ($pdftexNoEnc);
+  @pdftex_dl14_map = &to_pdftex(@pdftex_dl14_map);
   &writeLines(">$pdftexoutputdir/pdftex_dl14.map", @pdftex_dl14_map);
 
   &setupSymlinks;
