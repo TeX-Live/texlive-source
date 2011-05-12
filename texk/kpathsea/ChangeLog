@@ -1,3 +1,7 @@
+2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* absolute.c: Minor rewrite.
+
 2011-05-06  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.eplatex): no longer needed per Akira.

@@ -1,3 +1,7 @@
+2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	 texmfmp.c: Change arg2 of kpse_absolute_p() from `0' to `false'.
+
 2011-05-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: add a function generic_synctex_get_current_name()

@@ -100,7 +100,7 @@ char *generic_synctex_get_current_name (void)
 {
   char *pwdbuf = NULL, *ret;
   int pwdbufsize = 2;
-  if (kpse_absolute_p(fullnameoffile, 0)) {
+  if (kpse_absolute_p(fullnameoffile, false)) {
      return xstrdup(fullnameoffile);
   }
   do {
