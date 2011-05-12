@@ -7,8 +7,8 @@ rm -rf FonetikaDaniaIwonaeRegular.ttf ttfdump.glyf ttfdump.head
 cp $srcdir/tests/FonetikaDaniaIwonaeRegular.ttf .
 
 ./ttfdump -t head -o ttfdump.head FonetikaDaniaIwonaeRegular.ttf || exit 1
-diff $srcdir/tests/ttfdump.head ttfdump.head || exit 1
+diff -b $srcdir/tests/ttfdump.head ttfdump.head || exit 1
 
 ./ttfdump -t glyf -g 1 -o ttfdump.glyf FonetikaDaniaIwonaeRegular.ttf || exit 1
-diff $srcdir/tests/ttfdump.glyf ttfdump.glyf || exit 1
+diff -b $srcdir/tests/ttfdump.glyf ttfdump.glyf || exit 1
 

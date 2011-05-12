@@ -1,3 +1,7 @@
+2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ttfdump.test: Use 'diff -b' for Dos line endings.
+
 2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	docs/ttfdump.1, tests/ttfdump.test: Assume a posixly correct
