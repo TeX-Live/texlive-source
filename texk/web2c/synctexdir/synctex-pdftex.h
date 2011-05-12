@@ -50,7 +50,6 @@ Thu Jun 19 09:39:21 UTC 2008
 
 #    include "pdftexd.h"
 
-extern char *generic_synctex_get_current_name(void);
 /*   We observe pdfoutputvalue in order to determine whether output mode is
  *   pdf or dvi.
  *   We will assume that pdf_output_value equals pdf_output before entering

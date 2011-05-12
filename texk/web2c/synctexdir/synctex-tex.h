@@ -52,5 +52,4 @@ Thu Jun 19 09:39:21 UTC 2008
 
 #  include "texd.h"
 
-extern char *generic_synctex_get_current_name(void);
 #  define SYNCTEX_GET_CURRENT_NAME() generic_synctex_get_current_name()

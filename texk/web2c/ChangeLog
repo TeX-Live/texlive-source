@@ -1,3 +1,8 @@
+2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h: Move generic_synctex_get_current_name() prototype
+	from synctexdir/synctex-{,e,pdf,xe}tex.h to here.
+
 2011-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* osx-strip: Removed.

@@ -357,9 +357,10 @@ extern void do_undump (char *, int, int, FILE *);
 #endif
 
 /* Handle SyncTeX, if requested */
-#if defined(TeX) || defined(eTeX) || defined(pdfTeX) || defined(XeTeX)
+#if defined(TeX)
 # if defined(__SyncTeX__)
 #  include "synctexdir/synctex-common.h"
+extern char *generic_synctex_get_current_name(void);
 # endif
 #endif
 

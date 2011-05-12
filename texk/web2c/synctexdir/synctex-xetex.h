@@ -62,8 +62,6 @@ Thu Jun 19 09:39:21 UTC 2008
 */
 #  define synchronization_field_size 1
 
-extern char *generic_synctex_get_current_name(void);
-
 /* in XeTeX, "halfword" fields are at least 32 bits, so we'll use those for
  * tag and line so that the sync field size is only one memory_word. */
 #  define SYNCTEX_TAG_MODEL(NODE,TYPE)\
