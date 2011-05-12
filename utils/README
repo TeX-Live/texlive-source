@@ -72,7 +72,14 @@ cd $clisp_basedir
 wget http://ftp.gnu.org/gnu/clisp/release/2.49/clisp-2.49.tar.gz
 gzip -dc clisp-2.49.tar.gz | tar xf -
 cd clisp-2.49
-# On FreeBSD/amd64, add --disable-mmap.
+
+# On Cygwin:
+# mv modules/syscalls/configure modules/syscalls/configure.orig
+# sed -e '{s%-luuid%-L/usr/lib/w32api -luuid%}' \
+#  modules/syscalls/configure.orig > modules/syscalls/configure
+
+# On FreeBSD/amd64: add --disable-mmap.
+
 ./configure --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
   --disable-nls \
   $clisp_builddir \

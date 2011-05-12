@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 22010 2011-04-07 12:49:51Z siepo $
+# $Id: TLUtils.pm 22350 2011-05-08 00:12:42Z reinhardk $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 22010 $';
+my $svnrev = '$Revision: 22350 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -222,7 +222,7 @@ sub platform {
       # We cannot rely on #! in config.guess but have to call /bin/sh
       # explicitly because sometimes the 'noexec' flag is set in
       # /etc/fstab for ISO9660 file systems.
-      chomp (my $guessed_platform = `/bin/sh $config_guess`);
+      chomp (my $guessed_platform = `/bin/sh '$config_guess'`);
 
       # For example, if the disc or reader has hardware problems.
       die "$0: could not run $config_guess, cannot proceed, sorry"
@@ -1515,6 +1515,9 @@ sub do_postaction {
     } elsif ($pa =~ m/\s*fileassoc\s+(.*)\s*$/) {
       $ret &&= _do_postaction_fileassoc($how, $do_fileassocs, $tlpobj, $1);
       next;
+    } elsif ($pa =~ m/\s*appreg\s+(.*)\s*$/) {
+      next unless $do_fileassocs;
+      $ret &&= _do_postaction_application($how, $tlpobj, $1);
     } elsif ($pa =~ m/\s*script\s+(.*)\s*$/) {
       next unless $do_script;
       $ret &&= _do_postaction_script($how, $tlpobj, $1);
@@ -1564,6 +1567,7 @@ sub _do_postaction_fileassoc {
   }
   return 1;
 }
+
 sub _do_postaction_filetype {
   my ($how, $tlpobj, $pa) = @_;
   return 1 unless win32();
@@ -1600,6 +1604,70 @@ sub _do_postaction_filetype {
     TeXLive::TLWinGoo::register_file_type($name, $cmd);
   } elsif ($how eq "remove") {
     TeXLive::TLWinGoo::unregister_file_type($name);
+  } else {
+    tlwarn("Unknown mode $how\n");
+    return 0;
+  }
+  return 1;
+}
+
+sub _do_postaction_application {
+  my ($how, $tlpobj, $pa) = @_;
+  return 1 unless win32();
+  my ($errors, %keyval) =
+    parse_into_keywords($pa, qw/prog cmd exts/);
+
+  if ($errors) {
+    tlwarn("parsing the postaction line >>$pa<< did not succeed!\n");
+    return 0;
+  }
+
+  # prog
+  if (!defined($keyval{'prog'})) {
+    tlwarn("prog of appreg postaction not given\n");
+    return 0;
+  }
+  my $prog = $keyval{'prog'};
+
+  if (!defined($keyval{'cmd'})) {
+    tlwarn("cmd of appreg postaction not given\n");
+    return 0;
+  }
+  my $cmd = $keyval{'cmd'};
+
+  my $exts_arr = [];
+  my $e;
+  my $exts = '';
+  if (!defined($keyval{'exts'})) {
+    tlwarn("exts of appreg postaction not given\n");
+  } else {
+    $exts = $keyval{'exts'};
+    foreach $e (split /\|/, $exts) {
+      if ($e =~ /^\./) {
+        push @$exts_arr, $e;
+      } else {
+        tlwarn("Invalid extension $e for $prog ignored\n");
+      }
+    }
+  }
+
+  my $texdir = `kpsewhich -var-value=SELFAUTOPARENT`;
+  chomp($texdir);
+  my $texdir_bsl = conv_to_w32_path($texdir);
+  $cmd =~ s!^("?)TEXDIR/!$1$texdir/!g;
+
+  &log("postaction $how appreg for " . $tlpobj->name .
+    ": $prog, $cmd, $exts\n");
+  if ($how eq "install") {
+    TeXLive::TLWinGoo::register_application($prog, $cmd, $exts_arr);
+    foreach $e (@$exts_arr) {
+      TeXLive::TLWinGoo::add_to_openwithlist($e, $prog);
+    }
+  } elsif ($how eq "remove") {
+    TeXLive::TLWinGoo::unregister_application($prog);
+    foreach $e (@$exts_arr) {
+      TeXLive::TLWinGoo::remove_from_openwithlist($e, $prog);
+    }
   } else {
     tlwarn("Unknown mode $how\n");
     return 0;
@@ -2797,14 +2865,8 @@ in the list of the remaining arguments.
 =cut
 
 sub member {
-  my ($e, @l) = @_;
-  my ($f);
-  foreach $f (@l) {
-    if ($e eq $f) {
-      return 1;
-    }
-  }
-  return 0;
+  my $what = shift;
+  return scalar grep($_ eq $what, @_);
 }
 
 
