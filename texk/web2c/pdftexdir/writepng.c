@@ -499,6 +499,10 @@ void write_png(integer img)
     boolean png_copy = true;
     double gamma = 0.0;
     png_fixed_point int_file_gamma = 0;
+#ifndef PNG_FP_1
+   /* for libpng < 1.5.0 */
+#define PNG_FP_1    100000
+#endif
     int i;
     integer palette_objnum = 0;
     png_colorp palette;
@@ -557,7 +561,7 @@ void write_png(integer img)
             || png_get_color_type(png_ptr(img), png_info(img)) == PNG_COLOR_TYPE_RGB)
         && !fixedimageapplygamma
         && (!png_get_valid(png_ptr(img), png_info(img), PNG_INFO_gAMA)
-            || int_file_gamma== PNG_FP_1)
+            || int_file_gamma == PNG_FP_1)
         && !png_get_valid(png_ptr(img), png_info(img),
                           PNG_INFO_cHRM | PNG_INFO_iCCP | PNG_INFO_sBIT | PNG_INFO_sRGB
                           | PNG_INFO_bKGD | PNG_INFO_hIST | PNG_INFO_tRNS | PNG_INFO_sPLT)

@@ -520,6 +520,10 @@ void write_png(PDF pdf, image_dict * idict)
     boolean png_copy = true;
     double gamma = 0.0;
     png_fixed_point int_file_gamma = 0;
+#ifndef PNG_FP_1
+   /* for libpng < 1.5.0 */
+#define PNG_FP_1    100000
+#endif
     int i;
     int palette_objnum = 0;
     png_structp png_p;

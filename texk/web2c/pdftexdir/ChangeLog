@@ -1,3 +1,7 @@
+2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writepng.c: #define PNG_FP_1 for libpng < 1.5.0.
+
 2011-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writepng.c: Fix for 16bit images in pdf 1.4 (8bit) mode,
