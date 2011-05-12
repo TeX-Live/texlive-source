@@ -4,6 +4,7 @@ This file records noteworthy changes.  (Public domain.)
 * Trailing comments and whitespace omitted from config values.
 * Add .tlu to type lua suffixes.
 * Prefix program_invocation{,_short}_name with kpse_.
+* Finally remove kpse_set_progname (deprecated since 1998).
 
 6.0.0 (for TeX Collection 2010, 4 June 2010)
 * Change xmalloc and friends to use size_t, unfortunately changing the ABI.

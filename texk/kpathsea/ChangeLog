@@ -2,6 +2,9 @@
 
 	* absolute.c: Minor rewrite.
 
+	* NEWS, progname.[ch]: Finally remove kpse_set_progname
+	(deprecated since 1998).
+
 2011-05-06  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.eplatex): no longer needed per Akira.

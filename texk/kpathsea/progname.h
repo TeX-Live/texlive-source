@@ -48,18 +48,6 @@ extern KPSEDLL string kpse_selfdir (const_string argv0);
 
 extern KPSEDLL void kpse_set_program_name (const_string argv0,
                                       const_string progname);
-
-#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
-
-/* Set first two variables above (if they're not predefined) to a copy of
-   ARGV0 and everything in ARGV0 after the last directory separator,
-   respectively.  kpse_program_name is _always_ set to a copy of everything
-   in ARGV0 after the last directory separator. */
-
-extern KPSEDLL void kpse_set_progname (const_string argv0);
-
-#endif /* MAKE_KPSE_DLL */
-
 #endif /* KPSE_COMPAT_API */
 
 #endif /* not KPATHSEA_PROGNAME_H */

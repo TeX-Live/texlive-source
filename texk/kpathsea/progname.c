@@ -1,6 +1,6 @@
 /* progname.c: the executable name we were invoked as; general initialization.
 
-   Copyright 1994, 1996, 1997, 2008, 2009, 2010 Karl Berry.
+   Copyright 1994, 1996, 1997, 2008, 2009, 2010, 2011 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -660,22 +660,11 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
 }
 
 
-/* This function is deprecated, because when we pretend to have a different
-   name it will look for _that_ name in the PATH if kpse->invocation_name
-   is not defined.  */
 #if defined (KPSE_COMPAT_API)
 void
 kpse_set_program_name (const_string argv0, const_string progname)
 {
   kpathsea_set_program_name (kpse_def, argv0, progname);
-}
-
-/* DEPRECATED since 1998 -- To be removed in Version 6.0.0.  */
-
-void
-kpse_set_progname (const_string argv0)
-{
-  kpathsea_set_program_name (kpse_def, argv0, NULL);
 }
 #endif
 
