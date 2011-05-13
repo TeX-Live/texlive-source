@@ -1,3 +1,7 @@
+2011-05-13  Taco Hoekwater  <taco@luatex.org>
+
+	* synctex-luatex.h: synchronization_field_size has to be 1 for luatex.
+
 2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex-etex.h, synctex-pdftex.h, synctex-tex.h, synctex-xetex.h:

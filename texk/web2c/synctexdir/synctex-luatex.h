@@ -36,6 +36,8 @@ authorization from the copyright holder.
 
 /* $Id: synctex-luatex.h 4064 2011-01-12 22:12:22Z hhenkel $ */
 
+#       define synchronization_field_size 1
+
 #define SYNCTEX_TAG_MODEL(NODE,TYPE)\
                     vinfo(NODE+TYPE##_node_size-synchronization_field_size)
 #define SYNCTEX_LINE_MODEL(NODE,TYPE)\
