@@ -107,8 +107,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.23a';
-$version_details = "$My_name, John Collins, 24 March 2011";
+$version_num = '4.24';
+$version_details = "$My_name, John Collins, 7 May 2011";
 
 
 use Config;
@@ -141,7 +141,7 @@ else {
    warn "Something wrong with the perl configuration: No signals?\n";
 }
 
-## Copyright John Collins 1998-2010
+## Copyright John Collins 1998-2011
 ##           (username collins at node phys.psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -177,10 +177,13 @@ else {
 ##
 ##   Modification log from 1 Jan 2011 onwards in detail
 ##
+##      7 May 2011, John Collins  With biber, use kpsewhich to find source
+##                                   files (e.g., .bib)
 ##     24 Mar 2011, John Collins  Correct bug in detection of source files
 ##                                   listed in .fls
 ##     21 Mar 2011, John Collins  Add 'bcf' to list of generated extensions
-##                                Deal with case that fls files are latex.fls and pdflatex.fls
+##                                Deal with case that fls files are latex.fls
+##                                   and pdflatex.fls
 ##     19--21 Mar 2011, John Collins  -deps and -rules options
 ##                                $use_make_for_missing_files
 ##                                -recorder option
@@ -2940,6 +2943,27 @@ sub check_biber_log {
         }
     }
     close $log_file;
+    my $bibret = &find_file_list1( $Pbiber_source, $Pbiber_source,
+                                  '', \@BIBINPUTS );
+    @$Pbiber_source = uniqs( @$Pbiber_source );
+    if ($bibret == 0) {
+        warn "$My_name: Found biber source file(s) [@$Pbiber_source]\n" 
+        unless $silent;
+    }
+    else {
+        warn "$My_name: Failed to find one or more biber source files ",
+             "in [@$Pbiber_source]\n";
+        if ($force_mode) {
+            warn "==== Force_mode is on, so I will continue.  ",
+                 "But there may be problems ===\n";
+        }
+        else {
+            #$failure = -1;
+            #$failure_msg = 'Failed to find one or more biber source files';
+            #warn "$My_name: Failed to find one or more biber source files\n";
+        }
+        return 3;
+    }
 #    print "$My_name: #Biber errors = $error_count, warning messages = $warning_count,\n  ",
 #          "missing citation messages = $missing_citations, no_citations = $no_citations\n";
     if ( ! $have_error && $no_citations ) {
