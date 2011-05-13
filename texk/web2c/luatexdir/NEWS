@@ -19,6 +19,8 @@ News:
 
 * fixed: display alignment in TRT mode.
 
+* luatex now uses the standard synctex files from Jérome Laurens.
+
 
 ==============================================================
 Luatex beta-0.66.0 was released 20110412
