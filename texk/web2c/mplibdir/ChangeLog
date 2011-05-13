@@ -1,3 +1,7 @@
+2011-05-13  Taco Hoekwater  <taco@luatex.org>
+	* mpost.w (main): change setting of kpse program name
+	(on a hint by PEB).
+
 2011-05-09  Taco Hoekwater  <taco@luatex.org>
 
 	* mpxout.w (mpx_in_TFM): close tfm files.
