@@ -1,3 +1,8 @@
+2011-05-15  Taco Hoekwater  <taco@luatex.org>
+	* tex/texfileio.w (luatex_synctex_get_current_name): work around a 
+	bug in getcwd().
+	* luatex_svnversion.h: updated to reflect latest luatex revision (4267)
+
 2011-05-13  Taco Hoekwater  <taco@luatex.org>
 	* lua/luainit.w: change the copyright year to 2011.
 	* luatex_svnversion.h: updated to reflect latest luatex revision (4264)
