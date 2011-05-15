@@ -49,6 +49,10 @@ char ExeList[5][MAX_PATH] = {
   ""
 };
 
+int CustomHowMessageBox()
+{
+}
+
 LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
   switch ( msg )             
@@ -66,6 +70,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
       AppendMenu( hPopMenu, MF_STRING, MENU_COMSPEC, "&Command Prompt" );
     if ( ExeList[MENU_CUSTOM][0] )
       AppendMenu( hPopMenu, MF_STRING, MENU_CUSTOM, "Custom &Script" );
+    else
     AppendMenu( hPopMenu, MF_SEPARATOR, 0, NULL );
     AppendMenu( hPopMenu, MF_STRING, MENU_EXIT,    "E&xit" );
   }
@@ -95,10 +100,23 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
       case MENU_TEXDOC:
       case MENU_EDITOR:
       case MENU_COMSPEC:
-      case MENU_CUSTOM:
         if ( _spawnlp( _P_NOWAIT, ExeList[LOWORD(wParam)], NULL ) < 0 )
           DIE( "Failed to start: %s", ExeList[LOWORD(wParam)] );
       break;
+      case MENU_CUSTOM:
+        if ( GetFileAttributes( ExeList[LOWORD(wParam)] ) != INVALID_FILE_ATTRIBUTES )
+          {
+            if ( _spawnlp( _P_NOWAIT, ExeList[LOWORD(wParam)], NULL ) < 0 )
+              DIE( "Failed to start: %s", ExeList[LOWORD(wParam)] );
+          }
+        else
+          MessageBox(
+             NULL,
+             "For a custom menu, create tl-tray-menu-custom.bat \nin the root of the installation.\nSee sample at tlpkg\\installer\\tl-tray-menu-custom.bat.",
+             "Custom menu",
+             MB_ICONINFORMATION
+          );
+          break;
 
       case MENU_EXIT:
         Shell_NotifyIcon( NIM_DELETE, &nid );
@@ -129,7 +147,7 @@ int APIENTRY WinMain(
   if ( !nchars || ( nchars == MAX_PATH ) ) DIE( "cannot get own path" );
   if ( s = strrchr( selfdir, '\\' ) ) *s = '\0'; // remove file name part
   
-  // prepend bin/win32 to PATH
+  // append bin/win32 to PATH
   
   static char buffer[MAX_CMD];
   strcpy( buffer, selfdir );
@@ -155,7 +173,9 @@ int APIENTRY WinMain(
   
   strcpy( buffer, selfdir );
   strcat( buffer, "\\tl-tray-menu-custom.bat" );
-  if ( GetFileAttributes( buffer ) != INVALID_FILE_ATTRIBUTES )
+  // if ( GetFileAttributes( buffer ) != INVALID_FILE_ATTRIBUTES )
+    // At call time, we test for this file and display
+    // a message box if it is missing.
     strncpy( ExeList[4], buffer, MAX_PATH );
     
 	// create a hidden window for messaging
