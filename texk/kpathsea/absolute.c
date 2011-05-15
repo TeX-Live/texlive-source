@@ -31,9 +31,11 @@ kpathsea_absolute_p (kpathsea kpse, const_string filename, boolean relative_ok)
 #include <string.h>
   (void)kpse; /* currenty not used */
   return strcspn (filename, "]>:") != strlen (filename);
-#endif /* VMS */
+#else /* not VMS */
+  boolean absolute;
+  boolean explicit_relative;
 
-  boolean absolute = IS_DIR_SEP (*filename)
+  absolute = IS_DIR_SEP (*filename)
 #ifdef DOSISH
                      /* Novell allows non-alphanumeric drive letters. */
                      || (*filename && IS_DEVICE_SEP (filename[1]))
@@ -48,7 +50,8 @@ kpathsea_absolute_p (kpathsea kpse, const_string filename, boolean relative_ok)
                      || strchr (filename, ':')
 #endif /* AMIGA */
                       ;
-  boolean explicit_relative = relative_ok
+  explicit_relative
+    = relative_ok
 #ifdef AMIGA
       /* Leading / is like `../' on Unix and DOS.  Allow Unix syntax,
          too, though, because of possible patch programs like
@@ -62,6 +65,7 @@ kpathsea_absolute_p (kpathsea kpse, const_string filename, boolean relative_ok)
   /* FIXME: On UNIX an IS_DIR_SEP of any but the last character in the name
      implies relative.  */
   return absolute || explicit_relative;
+#endif /* not VMS */
 }
 
 #if defined (KPSE_COMPAT_API)
