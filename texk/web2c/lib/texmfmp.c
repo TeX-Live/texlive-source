@@ -95,11 +95,16 @@
    SyncTeX file name should be full path in the case where
    --output-directory option is given.
    Borrowed from LuaTeX.
+
+   The 2048 instead of a normal low number like 2. That is because
+   apparently glibc's |getcwd| is buggy: actually executing the
+   loop causes errors later on during execution even though the
+   initial function calls work just fine. (Taco).
 */
 char *generic_synctex_get_current_name (void)
 {
   char *pwdbuf = NULL, *ret;
-  int pwdbufsize = 2;
+  int pwdbufsize = 2048;
   if (kpse_absolute_p(fullnameoffile, false)) {
      return xstrdup(fullnameoffile);
   }
