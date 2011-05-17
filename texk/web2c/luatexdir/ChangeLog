@@ -1,3 +1,8 @@
+2011-05-17  Taco Hoekwater  <taco@luatex.org>
+	* tex/texfileio.w (luatex_synctex_get_current_name): switch to xgetcwd()
+	from kpathsea
+	* luatex_svnversion.h: updated to reflect latest luatex revision (4272)
+
 2011-05-15  Taco Hoekwater  <taco@luatex.org>
 	* tex/texfileio.w (luatex_synctex_get_current_name): work around a 
 	bug in getcwd().
