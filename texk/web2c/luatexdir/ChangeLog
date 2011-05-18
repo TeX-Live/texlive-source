@@ -1,3 +1,11 @@
+2011-05-18  Taco Hoekwater  <taco@luatex.org>
+
+	* font/writefont.w (write_fontdescriptor):  Fix for non-embedded
+	fonts in the PDF output.
+	* image/writeimg.w (read_img): Fix for non-existent images that
+	could case a crash.
+	* luatex_svnversion.h: updated to reflect latest luatex revision (4273)
+
 2011-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatex.c (ipcpage): Add 'free(cwd)', remove Aleph comment.

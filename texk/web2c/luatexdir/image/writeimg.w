@@ -22,8 +22,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writeimg.w 4055 2011-01-10 19:52:50Z oneiros $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/writeimg.w $";
+    "$Id: writeimg.w 4271 2011-05-16 14:40:06Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/image/writeimg.w $";
 
 #include <assert.h>
 #include "ptexlib.h"
@@ -288,7 +288,7 @@ void free_image_dict(image_dict * p)
 void read_img(PDF pdf,
               image_dict * idict, int minor_version, int inclusion_errorlevel)
 {
-    char *filepath;
+    char *filepath = NULL;
     int callback_id;
     assert(idict != NULL);
     if (img_filename(idict) == NULL)
