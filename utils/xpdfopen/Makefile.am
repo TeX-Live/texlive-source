@@ -19,3 +19,4 @@ pdfclose_SOURCES = pdfclose.c sendx.c utils.c sendx.h xpdfopen.h utils.h
 EXTRA_DIST = xpdfopen.pdf xpdfopen.tex
 
 EXTRA_DIST += Makefile.am.orig configure.ac.orig
+
