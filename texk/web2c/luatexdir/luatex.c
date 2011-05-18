@@ -654,10 +654,7 @@ static void ipc_snd(int n, int is_eof, char *data)
 
 
 /* This routine notifies the server if there is an eof, or the filename
-   if a new DVI file is starting.  This is the routine called by TeX.
-   Aleph defines str_start(#) as str_start_ar[# - too_big_char], with
-   too_big_char = biggest_char + 1 = 65536 (omstr.ch).*/
-
+   if a new DVI file is starting.  This is the routine called by TeX.  */
 void ipcpage(int is_eof)
 {
     static boolean begun = false;
@@ -675,7 +672,7 @@ void ipcpage(int is_eof)
            preview program.  */
 	name = static_pdf->file_name;
         p = concat3(cwd, DIR_SEP_STRING, name);
-        /* free(name); */
+        free(cwd);
         len = strlen(p);
         begun = true;
     }

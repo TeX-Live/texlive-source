@@ -1,6 +1,11 @@
+2011-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (ipcpage): Add 'free(cwd)'.
+	(generic_synctex_get_current_name): Use xgetcwd().
+
 2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	 texmfmp.c: Change arg2 of kpse_absolute_p() from `0' to `false'.
+	* texmfmp.c: Change arg2 of kpse_absolute_p() from `0' to `false'.
 
 2011-05-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

@@ -95,23 +95,14 @@
    SyncTeX file name should be full path in the case where
    --output-directory option is given.
    Borrowed from LuaTeX.
-
-   The 2048 instead of a normal low number like 2. That is because
-   apparently glibc's |getcwd| is buggy: actually executing the
-   loop causes errors later on during execution even though the
-   initial function calls work just fine. (Taco).
 */
 char *generic_synctex_get_current_name (void)
 {
-  char *pwdbuf = NULL, *ret;
-  int pwdbufsize = 2048;
+  char *pwdbuf, *ret;
   if (kpse_absolute_p(fullnameoffile, false)) {
      return xstrdup(fullnameoffile);
   }
-  do {
-    pwdbufsize = 2*pwdbufsize;
-    pwdbuf = xrealloc (pwdbuf, pwdbufsize);
-  } while (!getcwd(pwdbuf, pwdbufsize));
+  pwdbuf = xgetcwd();
   ret = concat3(pwdbuf, DIR_SEP_STRING, fullnameoffile);
   free(pwdbuf) ;
   return ret;
@@ -1057,7 +1048,7 @@ ipc_snd (int n, int is_eof, char *data)
 /* This routine notifies the server if there is an eof, or the filename
    if a new DVI file is starting.  This is the routine called by TeX.
    Aleph defines str_start(#) as str_start_ar[# - too_big_char], with
-   too_big_char = biggest_char + 1 = 65536 (omstr.ch).*/
+   too_big_char = biggest_char + 1 = 65536 (omstr.ch).  */
 
 void
 ipcpage (int is_eof)
@@ -1093,6 +1084,7 @@ ipcpage (int is_eof)
        been started up and running as a daemon, e.g., as with the NeXT
        preview program.  */
     p = concat3 (cwd, DIR_SEP_STRING, name);
+    free (cwd);
     free (name);
     len = strlen(p);
     begun = true;
