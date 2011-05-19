@@ -2,6 +2,37 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.70.1 was released 20110519
+==============================================================
+
+News:
+
+* fixed: recorder file location from TL (Akira).
+
+* fixed: missing newline on 'No output' line.
+
+* fixed: relative names in synctex file.
+
+* fixed: 16bit png images in generated %!PDF-1.4.
+
+* fixed: building with (installed) libpng < 1.5.0
+
+* fixed: year in --version output.
+
+* fixed: box output to synctex.
+
+* fixed: FontDescriptor for non-embedded OpenType fonts has an 
+  invalid FontFile3 entry (#654)
+
+* fixed: crash on non-existent images.
+
+* fixed: small memory leak in the ipc code.
+
+* fixed: tex.print() and tex.sprint() don't recognize -2 as the 
+  first argument (#659)
+
+
+==============================================================
 Luatex beta-0.70.0 was released 20110506
 ==============================================================
 
@@ -1920,7 +1951,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.70.1/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
