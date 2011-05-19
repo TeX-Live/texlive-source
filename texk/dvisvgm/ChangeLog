@@ -1,3 +1,7 @@
+2011-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, version.ac (new): Imported release 1.0.7.
+
 2011-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvisvgm-1.0.6-PATCHES/TL-Changes: Recreated this, documenting
@@ -7,7 +11,7 @@
 
 	* Imported release 1.0.6.
 	* configure.ac: Adapted.
-	* dvisvgm-1.0.5-PATCHES: removed dir, all patches applies.
+	* dvisvgm-1.0.5-PATCHES: removed dir, all patches applied.
 
 2011-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

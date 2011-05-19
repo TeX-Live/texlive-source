@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -13,7 +13,7 @@ dnl  Copyright (C) 2005-2009 Martin Gieseking <martin.gieseking@uos.de>
 dnl
 dnl *********************************************************************
 dnl
-m4_define([dvisvgm_version], [1.0.6])[]dnl using unmodified dvisvgm source tree
+m4_include([version.ac])[] dnl define dvisvgm_version
 AC_INIT([dvisvgm], dvisvgm_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvisvgm-]dvisvgm_version[/src/dvisvgm.cpp])
