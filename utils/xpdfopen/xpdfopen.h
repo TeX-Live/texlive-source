@@ -30,6 +30,9 @@
 #define	    XPDF_WIN_NAME	    "Xpdf"
 #define     XPDF_WIN_NAME_FMT	    XPDF_WIN_NAME ": %s"
 
+#define	    EVINCE_WIN_NAME	    "evince"
+#define     EVINCE_WIN_NAME_FMT	    "%s"
+
 #define	    OKULAR_WIN_NAME	    "Okular"
 #define     OKULAR_WIN_NAME_FMT	    "%s - " OKULAR_WIN_NAME
 

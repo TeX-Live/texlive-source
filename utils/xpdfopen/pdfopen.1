@@ -1,0 +1,53 @@
+.\" This manpage is licensed under the GNU Public License
+.TH PDFOPEN 1 2011-05-17  "pdfopen version 0.81" ""
+
+.SH NAME
+pdfopen \- open or close a PDF file viewer
+
+.SH SYNOPSIS
+pdfopen 
+[
+.IR option
+] 
+<file.pdf>
+.br
+pdfclose <file.pdf>
+
+.SH OPTIONS
+.TP 8
+.B -h
+output help
+.TP
+.B --help
+output help
+.TP
+.B -viewer <ar9|ar9tab|ar8|ar7|ar5|xpdf|evince>
+use (respectively) Adobe Reader 9 (in a new window), Adobe Reader 9
+(in a new tab of a running AR9, if any),
+Adobe Reader 8, Adobe Reader 7, Adobe Reader 5, xpdf or evince as the
+PDF viewer program.
+Adobe Reader (in a new window) is the default.
+
+.SH DESCRIPTION
+.B pdfopen
+displays the specified PDF file using the given (or default) viewer.
+If there is already an instance of the given viewer displaying the
+given file, the viewer is instructed to reload the file.
+
+.B pdfclose
+searches for one of the above PDF viewers displaying the given file
+and instructs the viewer to close the window.
+
+.SH NOTES
+If the file argument to
+.B pdfclose
+is shown in a tab-capable viewer (such as Adobe Reader 9), the tab
+displaying the file is closed, but the window itself is not closed.
+
+These programs are designed for X11-based systems.  If you somehow
+find compiled versions of these programs on a system using another
+window system, they are very unlikely to be of any use to you.
+
+
+.SH AUTHOR 
+This manual page was written by Jim Diamond <Jim.Diamond@acadiau.ca>.

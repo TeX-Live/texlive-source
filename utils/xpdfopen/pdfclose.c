@@ -1,13 +1,14 @@
 /*
  * pdfclose.c
  * 
- * Modified by Jim Diamond (jim.diamond@acadiau.ca) 2010/04/21
+ * Modified by Jim Diamond (jim.diamond@acadiau.ca) 2010/04/21 (V 0.80) 
+ *                         and again 2011/05/17 (V 0.81)
  * and Peter Breitenlohner <tex-live@tug.org> (2009).
  *
  * This program does not take a viewer argument, and just tries to close
  * any known viewer displaying the given file.
  *
- * V 0.80
+ * V 0.81
  */
 
 #include    <stdio.h>
@@ -65,7 +66,8 @@ main (int argc, char * argv[])
 	if (try_name(argv[1], XPDF_WIN_NAME_FMT))
 	    if (try_name(argv[1], AR7_WIN_NAME_FMT))
 		if (try_name(argv[1], AR5_WIN_NAME_FMT))
-		    return EXIT_FAILURE;
+		   if (try_name(argv[1], EVINCE_WIN_NAME_FMT))
+		       return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
 }

@@ -23,7 +23,7 @@
  * please send it to me for inclusion.
  */
 
-#define     VERSION		"0.80"
+#define     VERSION		"0.81"
 
 #include    <stdio.h>
 #include    <stdlib.h>
@@ -100,7 +100,7 @@ pdf_viewer_t pdf_viewers[] =
 {
     {"ar9", "acroread", USE_SENDX,
      AR9_WIN_NAME, AR9_WIN_NAME_FMT,
-     {"-openInNewWindow", NULL},
+     {"-openInNewInstance", NULL},
      {NULL},
      {"Ctrl-R", NULL}},
     {"ar9-tab", "acroread", USE_SENDX, 
@@ -134,6 +134,11 @@ pdf_viewer_t pdf_viewers[] =
      {"-remote", "tex-server", NULL},
      {NULL},
      {"r", NULL}},
+    {"evince", "evince", USE_SENDX,
+     EVINCE_WIN_NAME, EVINCE_WIN_NAME_FMT,
+     {NULL},
+     {NULL},
+     {"Ctrl-R", NULL}},
 #ifdef TRY_OCULAR
     {"okular", "okular", USE_SENDX,
      OKULAR_WIN_NAME, OKULAR_WIN_NAME_FMT,
@@ -155,16 +160,20 @@ usage(void)
     int i;
     int viewers = sizeof(pdf_viewers) / sizeof(pdf_viewers[0]);
 
-    fprintf(stderr, "Usage: %s [-viewer <prog>] <file.pdf>\n", progname);
-    fprintf(stderr, "\tIf the PDF viewer <prog> is displaying <file.pdf>, "
+    fprintf(stderr, "This is version %s of %s.\n", VERSION, progname);
+    fprintf(stderr, "Usage:\n  %s [-h|--help]\n", progname);
+    fprintf(stderr, "    Show this help.\n");
+    fprintf(stderr, "  %s [-viewer <prog>] <file.pdf>\n", progname);
+    fprintf(stderr, "    If the PDF viewer <prog> is displaying <file.pdf>, "
 	    "reload that file.\n");
-    fprintf(stderr, "\tOtherwise call <prog> to display <file.pdf>.\n");
-    fprintf(stderr, "\tThe default viewer program is %s.\n", DEFAULT_VIEWER);
-    fprintf(stderr, "\tImplemented viewers are");
+    fprintf(stderr, "    Otherwise call <prog> to display <file.pdf>.\n");
+    fprintf(stderr, "    The default viewer program is %s.\n", DEFAULT_VIEWER);
+    fprintf(stderr, "    Implemented viewers:");
     for (i = 0; i < viewers - 1; i++)
 	fprintf(stderr, " '%s'", pdf_viewers[i].short_name);
     fprintf(stderr, " and '%s'.\n", pdf_viewers[viewers - 1].short_name);
-    fprintf(stderr, "\tThis is version %s of %s\n", VERSION, progname);
+    fprintf(stderr, "    Note: ar9 uses acroread's -openInNewInstance argument,"
+	    	    " ar9-tab does not.\n");
 }
 
 
@@ -222,8 +231,8 @@ send_command(const char * window_name, const char * reload_cmd)
 
 
 /*
- * Try to reload the file, then if not successful to start up a new
- * instance of the viewer program.
+ * Try to reload the file.
+ * If not successful, try to start up a new instance of the viewer program.
  * Return 0 on success, non-0 otherwise.
  */
 
@@ -336,6 +345,12 @@ main(int argc, char * argv[])
     env_viewer = getenv("PDF_VIEWER");
     if (env_viewer != NULL)
 	viewer = env_viewer;
+
+    if (argc < 2 || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
+    {
+	usage();
+	return argc < 2 ? EXIT_FAILURE : EXIT_SUCCESS;
+    }
 
     if (argc == 4 && !strcmp(argv[1], "-viewer"))
     {

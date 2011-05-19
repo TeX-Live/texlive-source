@@ -1,9 +1,9 @@
-------------------------------------------------------------------
-Pdfopen 0.80 - Send open/close commands to Acrobat Reader and xpdf
-------------------------------------------------------------------
+---------------------------------------------------------------------------
+xpdfopen 0.81 - Send open/close commands to Acrobat Reader, xpdf and evince
+---------------------------------------------------------------------------
 
 This is a Linux (X11) implementation of Fabrice Popineau's pdfclose/
-pdfopen commands to control Acrobat Reader and xpdf.
+pdfopen commands to control Acrobat Reader, xpdf and evince.
 
 The libX code was borrowed from Reinhard Fobbe's Sendx library for 
 Tcl/Tk, and the programs use the same license, copied below. 
@@ -26,25 +26,27 @@ even though it is impossible to restore the viewport.
 
 Version 0.80 adds an implementation for AR 9 and xpdf.
 
+Version 0.81 adds an implementation for evince.
+
 The AR command lines do not behave precisely the same as under Windows, 
 because the Linux Reader behaves somewhat differently: it is not 
 scriptable, but it is possible to 'fake' keypresses.
 
 
 pdfopen has the following call sequence:
-	pdfopen [-viewer <ar9|ar9-tab|ar8|ar7|ar5|xpdf>] <pdf file name>
-The 'ar9' version uses the '-openInNewWindow' option, the 'ar9-tab'
+	pdfopen [-viewer <ar9|ar9-tab|ar8|ar7|ar5|xpdf|evince>] <pdf file name>
+The 'ar9' version uses the '-openInNewInstance' option, the 'ar9-tab'
 version does not (so if there is already an AR9 window open, a new tab
 will be opened in that window).
 
 
 pdfclose has the following call sequence:
 	pdfclose <pdf file name>
-This program closes an existing AR5, AR7, AR8, AR9 or xpdf window
+This program closes an existing AR5, AR7, AR8, AR9, xpdf or evince window
 displaying the given PDF file.
 
 
-Version 0.80 compiles on Linux (Slackware64 13.0, anyway) with
+Version 0.81 compiles on Linux (Slackware64 13.1, anyway) with
 the following command:
 	gcc -Wall pdfopen.c sendx.c utils.c -o pdfopen -lX11 -s
 should you not want to go through the process of creating and running
@@ -54,8 +56,8 @@ a configure program.
 Taco Hoekwater <taco@metatex.org> (Version(s) up to 0.61)
 Dordrecht, The Netherlands, December 2008.
 
-Jim Diamond <jim.diamond@acadiau.ca> (Version 0.80)
-Acadia University, Wolfville, Nova Scotia, Canada; April 2010.
+Jim Diamond <jim.diamond@acadiau.ca> (Version 0.80 and 0.81)
+Acadia University, Wolfville, Nova Scotia, Canada; May 2011.
 
 
 
