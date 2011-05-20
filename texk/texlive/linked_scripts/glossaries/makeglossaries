@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 1.9 (2010/06/14)
+# Version : 2.03 (2011/12/02)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,16 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.0 (2010-06-30)";
+my $version="2.03 (2011-12-02)";
 
 # History:
+# v2.03 (2011-04-12):
+#   * added warning about possibly needing 'nomain' package option
+# v2.02 (2011-04-2):
+#   * Prints version number at start of run unless -q
+#   * Added more diagnostics.
+# v2.01 (2010-09-29):
+#   * Added 'use warnings'
 # v2.0 (2010-06-30) :
 #   * Made file handle local in &scan_aux
 # v1.9 (2010-06-14) :
@@ -65,6 +72,8 @@ my $version="2.0 (2010-06-30)";
 
 use Getopt::Std;
 use strict;
+# v2.01 added the following line
+use warnings;
 use vars qw($opt_q $opt_t $opt_o $opt_s $opt_p $opt_g $opt_c $opt_r
    $opt_l $opt_i $opt_L $opt_n $opt_C);
 
@@ -79,8 +88,16 @@ getopts('s:o:t:p:L:C:ilqrcgn');
 
 unless ($#ARGV == 0)
 {
-   die "makeglossaries: Need exactly one file argument.\nUse `makeglossaries --help' for help.\n";
+   die "makeglossaries: Need exactly one file argument.\n",
+       "Use `makeglossaries --help' for help.\n";
 }
+
+# v2.02: added:
+print "makeglossaries version $version\n" unless ($opt_q);
+
+# v2.02: added:
+my $xdynotist = 1;
+my $needcompatibilitymode=2;
 
 # define known extensions
 
@@ -116,6 +133,13 @@ if (length($ARGV[0]) > 3 and substr($ARGV[0],-4,1) eq ".")
   }
 }
 
+# v2.01 add check to see if aux file exists
+
+unless (-e "$name.aux")
+{
+   die "Auxiliary file '$name.aux' doesn't exist. Have you run LaTeX?\n";
+}
+
 my $istfile = "";
 
 # should letter ordering be used? (v1.5 added)
@@ -140,7 +164,8 @@ unless ($istfile)
 
 my $xdyopts = '';
 
-unless ($opt_L eq "")
+# v2.01 replaced 'unless ($opt_L eq "")' with 'if ($opt_L)'
+if ($opt_L)
 {
   $xdyopts .= " -L $opt_L";
 }
@@ -162,8 +187,10 @@ if ($letterordering)
 
 if ($opt_q)
 {
-   $mkidxopts .= " -q";
-   $xdyopts .= " -q";
+# v2.01 removed following lines. (This script now deals with
+# printing messages to STDOUT.)
+   #$mkidxopts .= " -q";
+   #$xdyopts .= " -q";
 }
 
 if ($opt_r)
@@ -181,21 +208,52 @@ if ($opt_g)
    $mkidxopts .= " -g";
 }
 
-unless ($opt_p eq "")
+# v2.01 replaced 'unless ($opt_p eq "")' with 'if ($opt_p)'
+if ($opt_p)
 {
    $mkidxopts .= " -p $opt_p";
 }
 
-unless ($opt_s eq "")
+# v2.01 replaced 'unless ($opt_s eq "")' with 'if ($opt_s)'
+if ($opt_s)
 {
+   # v2.01 check if user has specified -s <file>.ist but aux file
+   # indicates .xdy ought to be used and vice-versa. Also check if
+   # requested style file exists
+
+   unless (-e $opt_s)
+   {
+      die "\n",
+         "Requested style file '$opt_s' doesn't exist.\n\n";
+   }
+
+   if ($istfile=~/\.xdy$/ and $opt_s!~/\.xdy$/)
+   {
+      die "\n",
+        "The auxiliary file indicates that you should be using xindy,\n",
+        "but you have specified makeindex style file '$opt_s'\n",
+        "Make sure you don't specify 'xindy' as a package option if\n",
+        "you want to use makeindex.\n\n",
+        "\\usepackage[makeindex]{glossaries}\n\n";
+   }
+   elsif ($istfile!~/\.xdy$/ and $opt_s=~/\.xdy$/)
+   {
+      die "\n",
+        "The auxiliary file indicates that you should be using\n",
+        "makeindex, but you have specified xindy style file '$opt_s'.\n",
+        "Make sure you specify 'xindy' as a package option if you\n",
+        "want to use xindy.\n\n",
+        "\\usepackage[xindy]{glossaries}\n\n";
+   }
+
    $istfile = $opt_s;
 }
 
 # Use xindy if style file ends with .xdy otherwise use makeindex
 
-my $usexindy = $istfile=~m/\.xdy\Z/;
+my $usexindy = ($istfile=~m/\.xdy\Z/);
 
-if ($ext ne '')
+if ($ext)
 {
    # an extension has been specified, so only process
    # the specified file
@@ -223,7 +281,8 @@ if ($ext ne '')
    # v1.6 If %thistype hasn't been defined, then the given
    # extension doesn't correspond to any known glossary type
 
-   unless (defined %thistype)
+   # v2.01 replaced deprecated 'defined(%thistype)' with %thistype
+   unless (%thistype)
    {
       die "The file extension '$ext' doesn't correspond to any\n",
           "known glossary extension. Try running makeglossaries\n",
@@ -232,7 +291,8 @@ if ($ext ne '')
 
    my $outfile;
 
-   if ($opt_o eq "")
+# v2.01 replaced 'if ($opt_o eq "")' with 'unless ($opt_o)'
+   unless ($opt_o)
    {
       $outfile = "$name.$thistype{out}";
    }
@@ -243,13 +303,21 @@ if ($ext ne '')
 
    my $transcript;
 
-   if ($opt_t eq "")
+# v2.01 replaced 'if ($opt_t eq "")' with 'unless ($opt_t)'
+   unless ($opt_t)
    {
       $transcript = "$name.$thistype{'log'}";
    }
    else
    {
       $transcript = $opt_t;
+   }
+
+# v2.01 remove old transcript file
+
+   unless ($opt_n)
+   {
+      unlink($transcript);
    }
 
    if ($usexindy)
@@ -275,7 +343,8 @@ else
 
       my $outfile;
 
-      if ($opt_o eq "")
+# v2.01 changed 'if ($opt_o eq "")' with 'unless ($opt_o)'
+      unless ($opt_o)
       {
          $outfile = "$name.$thistype{out}";
       }
@@ -301,11 +370,41 @@ else
          next;
       }
 
+      my $transcript;
+
+# v2.01 changed 'if ($opt_t eq "")' with 'unless ($opt)'
+      unless ($opt_t)
+      {
+         $transcript = "$name.$thistype{'log'}";
+      }
+      else
+      {
+        $transcript = $opt_t;
+      }
+
       # v1.6 added file empty test
       if (-z $inputfile)
       {
-         print "Warning: File '$inputfile' is empty.\n",
+         my $message =
+             "Warning: File '$inputfile' is empty.\n".
              "Have you used any entries defined in glossary '$type'?\n";
+
+         if ($type eq 'main')
+         {
+            $message .=
+               "Remember to use package option 'nomain' if you\n".
+               "don't want to use the main glossary.\n";
+         }
+
+         warn $message;
+
+         # Write warning to transcript file.
+
+         if (open TRANSFD, ">$transcript")
+         {
+            print TRANSFD $message;
+            close TRANSFD;
+         }
 
          # create an empty output file and move on to the next glossary
 
@@ -322,15 +421,11 @@ else
          next;
       }
 
-      my $transcript;
+# v2.01 remove old transcript file
 
-      if ($opt_t eq "")
+      unless ($opt_n)
       {
-         $transcript = "$name.$thistype{'log'}";
-      }
-      else
-      {
-        $transcript = $opt_t;
+         unlink($transcript);
       }
 
       if ($usexindy)
@@ -414,7 +509,7 @@ sub scan_aux{
               else
               {
                  print STDERR
-                   "Unknown ordering '$letterordering'\n",
+                   "Unknown ordering '$ordering'\n",
                    "Assuming word ordering\n";
                  $letterordering = 0;
               }
@@ -430,61 +525,137 @@ sub scan_aux{
   }
 }
 
-sub makeindex{
-   my($in,$out,$trans,$ist,$rest,$quiet,$dontexec) = @_;
-   my($name,$cmdstr,$buffer,$n,$i,$j);
-   my(@stuff,@item);
+# v2.01 new subroutine run_app added
+sub run_app{
+   my($appname, $appargs, $trans, $quiet, $dontexec) = @_;
 
-   $cmdstr = "$rest -s \"$ist\" -t \"$trans\" -o \"$out\" \"$in\"";
+   local(*STATUS);
 
-   unless ($quiet)
+   my $status   = '';
+   my $warnings = '';
+   my $errno = 0;
+   my $log = '';
+
+   print "$appname $appargs\n" if ($dontexec or not $quiet);
+
+   return if ($dontexec);
+
+   if (open (STATUS, "$appname $appargs 2>&1 |"))
    {
-      print "makeindex $cmdstr\n";
-   }
-
-   unless ($dontexec)
-   {
-      open STATUS, "makeindex $cmdstr 2>&1 |"
-         or die "Can't fork: $!\n";
-
-      my $status = '';
-
       while (<STATUS>)
       {
-         $status .= $_;
+         print unless ($quiet);
+
+         $warnings .= $_ if (/WARNING:/);
+
+         $status .= $_ unless (/^[\w]+ing/ or /^Finished/ or /^Usage:/);
+
+         $log .= $_;
       }
 
       close STATUS;
+   }
+   else
+   {
+      $warnings = "WARNING: Unable to fork $appname: $!\n";
 
-      if ($?)
+      print STDERR $warnings, "Retrying without redirection.\n";
+
+      $status = `$appname $appargs`;
+
+      $log = $status;
+
+      print $status unless ($quiet);
+   }
+
+   if ($?)
+   {
+      $errno = $?;
+
+      if (open LOGFILE, ">>$trans")
       {
-         my $errno = $?;
+         print LOGFILE "\n\n*** Unable to execute: '$appname $appargs' ***\n\n";
+         print LOGFILE "Status report:\n\n";
+         print LOGFILE "$log";
+         close LOGFILE;
+      }
+      else
+      {
+         print STDERR "Unable to open '$trans' $!\n";
+      }
+   }
 
-         if (open LOGFILE, ">>$trans")
+   if ($log=~/\(0 entries accepted,/)
+   {
+      # Attempt to diagnose what's gone wrong
+
+      if (open TRANS, $trans)
+      {
+         while (<TRANS>)
          {
-            print LOGFILE "\n$status";
-            close LOGFILE;
-         }
-         else
-         {
-            print STDERR "Unable to open '$trans' $!\n";
+            if (/Unknown specifier ;/)
+            {
+               $errno = $xdynotist;
+
+               last;
+            }
          }
 
-         die "Call to makeindex failed (errno=$errno):\n", $status;
+         close TRANS;
       }
 
-      print $status;
+   }
+
+   return ($status, $warnings, $errno);
+}
+
+sub makeindex{
+   my($in,$out,$trans,$ist,$rest,$quiet,$dontexec) = @_;
+
+   my $args = "$rest -s \"$ist\" -t \"$trans\" -o \"$out\" \"$in\"";
+
+# v2.01 replaced code with call to &run_app
+
+   my ($status, $warnings, $errno) 
+     = &run_app('makeindex', $args, $trans, $quiet, $dontexec);
+
+   return if ($dontexec);
+
+   if ($errno)
+   {
+      my $diagnostic = '';
+
+      if ($errno = $xdynotist)
+      {
+         $diagnostic =
+           "Style name indicates makeindex, but may be in xindy format.\n"
+          . "Remember to use \\setStyleFile to specify the name\n"
+          . "of the style file rather than redefining \\istfilename\n"
+          . "explicitly.";
+      }
+
+      die "\n***Call to makeindex failed***\n", 
+        ($diagnostic ?
+          "\nPossible cause of problem:\n\n".  $diagnostic . "\n\n":
+          "\n"
+        ),
+        "Check '$trans' for details\n";
    }
 }
 
 sub xindy{
    my($in,$out,$trans,$ist,$language,$codepage,$rest,$quiet,
      $dontexec) = @_;
-   my($cmdstr, $langparam, $main);
+   my($args, $langparam, $main, $retry);
    my($module);
 
    $module = $ist;
    $module=~s/\.xdy\Z//;
+
+   unless (defined($language))
+   {
+      $language = '';
+   }
 
    # map babel names to xindy names
    if ($language eq "frenchb")
@@ -543,7 +714,8 @@ sub xindy{
    # and supply a default. (For all other cases, it's up to the 
    # user to supply a codepage.)
 
-   if ($codepage eq '')
+# v2.01 changed 'if ($codepage eq "")' to 'unless ($codepage)'
+   unless ($codepage)
    {
       if ($language eq 'dutch')
       {
@@ -601,121 +773,138 @@ sub xindy{
       "-o \"$out\"",
       "\"$in\"");
 
-   $cmdstr = join(' ', $rest, $langparam, $codepageparam, $main);
+   $args = join(' ', $rest, $langparam, $codepageparam, $main);
 
-   unless ($quiet)
+# v2.01 replaced code with call to &run_app
+
+   my ($status, $warnings, $errno) 
+     = &run_app('xindy', $args, $trans, $quiet, $dontexec);
+
+   return if ($dontexec);
+
+   if ($status=~/Cannot locate xindy module for language ([^\s]+) in codepage ([^\s]+)/)
    {
-      print "xindy $cmdstr\n";
+      $args = join(' ', $rest, $langparam, $main);
+
+      unless ($quiet)
+      {
+         my $message = "$&\nRetrying using default codepage.\n";
+
+         print STDERR $message;
+
+         $retry .= $message;
+      }
+
+      ($status, $warnings, $errno) 
+         = &run_app('xindy', $args, $trans, $quiet, $dontexec);
+
    }
 
-   unless ($dontexec)
+   if ($status=~/Cannot locate xindy module for language ([^\s]+)/
+    and $1 ne 'general')
    {
-      open STATUS, "xindy $cmdstr 2>&1 |" or die "Can't fork: $!\n";
+      $args = join(' ', $rest, "-L general", $main);
 
-      my $status = '';
-      my $warnings = "";
-      my $retry ="";
-
-      while (<STATUS>)
+      unless ($quiet)
       {
-         $status .= $_;
+         my $message = "$&\nRetrying with -L general\n";
 
-         $warnings .= $_ if /WARNING:/;
+         print STDERR $message;
+         $retry .= $message;
       }
 
-      close STATUS;
+      ($status, $warnings, $errno) 
+         = &run_app('xindy', $args, $trans, $quiet, $dontexec);
 
-      if ($status=~/Cannot locate xindy module for language ([^\s]+) in codepage ([^\s]+)/)
+   }
+
+   if ($errno)
+   {
+      # attempt further diagnostic
+
+      my $diagnostic = '';
+
+      if ($status=~/index 0 should be less than the length of the string/m)
       {
-         $cmdstr = join(' ', $rest, $langparam, $main);
+         $diagnostic = 
+           "Sort key required for entries only containing command names";
+      }
+      elsif ($status=~/variable % has no value/m)
+      {
+         $diagnostic =
+            "Style name has xdy extension, but may be in makeindex format.\n"
+          . "Remember to use \\setStyleFile to specify the name\n"
+          . "of the style file rather than redefining \\istfilename\n"
+          . "explicitly.";
+      }
+      elsif ($status=~/Possible read-error due to ill-formed string " :sep/m)
+      {
+         $diagnostic = 
+            "You may have missed a \" character in a command such as \\GlsAddXdyLocation";
+      }
+      elsif (not $language)
+      {
+         # If the language hasn't been set, then it may be
+         # because the document doesn't contain
+         # \printglossaries/\printglossary or it may be
+         # because the user has a customized style file that
+         # contains the language settings.
 
-         unless ($quiet)
-         {
-            my $message = "$&\nRetrying using default codepage.\n";
+          $diagnostic = 
+          "No language detected.".
+          "\nHave you remembered to use \\printglossary\n".
+          "or \\printglossaries in your document?";
 
-            print STDERR $message;
+          if ($in eq 'glo')
+          {
+             # or it may be that the user doesn't want to use the main
+             # glossary and has forgotten to suppress it with the
+             # "nomain" package option
 
-            $retry .= $message;
-
-            print "xindy $cmdstr\n";
-         }
-
-         open STATUS, "xindy $cmdstr 2>&1 |" 
-           or die "Can't fork: $!\n";
-
-         $status = '';
-
-         while (<STATUS>)
-         {
-            $status .= $_;
-         }
-
-         close STATUS;
+             $diagnostic .= 
+             "\nRemember to use package option 'nomain' if you don't\n".
+             "want to use the main glossary.";
+          }
       }
 
-      if ($status=~/Cannot locate xindy module for language ([^\s]+)/
-       and $1 ne 'general')
+      die "\n***Call to xindy failed***\n", 
+          ($diagnostic ? 
+          "\nPossible cause of problem:\n\n".  $diagnostic . "\n\n":
+          "\n"),
+          "Check '$trans' for details\n";
+   }
+
+   # Check xindy warnings
+
+   if ($status=~/^WARNING:/m)
+   {
+      my $diagwarn = '';
+
+      if ($status=~/did not match any location-class/m)
       {
-         $cmdstr = join(' ', $rest, "-L general", $main);
+         $diagwarn = "You may have forgotten to add a location \n"
+                   . "class with \\GlsAddLocation or you may have \n"
+                   . "the format incorrect.\n";
 
-         unless ($quiet)
-         {
-            my $message = "$&\nRetrying with -L general\n";
-
-            print STDERR $message;
-            $retry .= $message;
-
-            print "xindy $cmdstr\n";
-         }
-
-         open STATUS, "xindy $cmdstr 2>&1 |" 
-           or die "Can't fork: $!\n";
-
-         $status = '';
-
-         while (<STATUS>)
-         {
-            $status .= $_;
-         }
-
-         close STATUS;
       }
 
-      if ($?)
+      if ($status=~/unknown attribute `pageglsnumberformat'/m)
       {
-         my $errno = $?;
-
-         if (open LOGFILE, ">>$trans")
-         {
-            print LOGFILE "\n$status";
-            close LOGFILE;
-         }
-         else
-         {
-            print STDERR "Unable to open '$trans' $!\n";
-         }
-
-         if ($language)
-         {
-            die "Call to xindy failed (errno=$errno):\n", $status;
-         }
-         else
-         {
-            # If the language hasn't been set, then it may be
-            # because the document doesn't contain
-            # \printglossaries/\printglossary or it may be
-            # because the user has a customized style file that
-            # contains the language settings.
-
-            die "Call to xindy failed (errno=$errno):\n", $status,
-             "\n\nNo language detected.",
-             "\nHave you remembered to use \\printglossary\n",
-             "or \\printglossaries in your document?\n\n";
-         }
+         $diagwarn .= "You may need to add 'compatible-2.07' package "
+                   .  "option.\n";
       }
 
-      print $status;
+      if ($diagwarn)
+      {
+         warn "\n**Warning:**\n\n", $diagwarn, "\n";
 
+         $warnings .= "\nmakeglossaries diagnostic messages:\n\n"
+                   . $diagwarn;
+      }
+   }
+
+   if ($retry or $warnings)
+   {
       if (open LOGFILE, ">>$trans")
       {
          print LOGFILE "\n$warnings";
@@ -731,7 +920,6 @@ sub xindy{
       {
          print STDERR "Unable to open '$trans' $!\n";
       }
-
    }
 }
 
@@ -747,6 +935,8 @@ sub HELP_MESSAGE{
    print "-q\t\tQuiet mode\n";
    print "-s <sty>\tEmploy <sty> as the style file\n";
    print "-t <log>\tEmploy <log> as the transcript file\n";
+   print "-n\tPrint the command that would normally be executed,\n",
+         "\tbut don't execute it\n";
 
    print "\n Xindy Options:\n";
    print "-L <language>\tUse <language>.\n";

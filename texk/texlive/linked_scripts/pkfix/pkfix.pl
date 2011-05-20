@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 #
 # pkfix.pl
 #
-# Copyright (C) 2001, 2005, 2007, 2009 Heiko Oberdiek.
+# Copyright (C) 2001, 2005, 2007, 2009, 2011 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
@@ -25,10 +25,10 @@ $^W=1; # turn warning on
 my $file        = "pkfix.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $project     = lc($program);
-my $version     = "1.5";
-my $date        = "2009/03/18";
+my $version     = "1.6";
+my $date        = "2011/04/22";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2001, 2005, 2007, 2009 by $author.";
+my $copyright   = "Copyright (c) 2001, 2005, 2007, 2009, 2011 by $author.";
 #
 # Reqirements: Perl5, dvips
 # History:
@@ -77,6 +77,9 @@ my $copyright   = "Copyright (c) 2001, 2005, 2007, 2009 by $author.";
 #     * Deprecation warning of perl 5.8.8 fixed.
 #   2009/03/18 v1.5:
 #     * Patch to support dvips 5.399 (submitted by Melissa O'Neill).
+#   2011/04/22 v1.6:
+#     * Bug fix: input and output files are read and written in
+#       binary mode (thanks M.S. Dousti for bug report).
 #
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -204,7 +207,9 @@ my $encoding_string = "";
 
 ### open input and output files
 open(IN, $infile) or die "$Error Cannot open `$infile'!\n";
+binmode(IN);
 open(OUT, ">$outfile") or die "$Error Cannot write `$outfile'!\n";
+binmode(OUT);
 
 ##################################
 # expected format:

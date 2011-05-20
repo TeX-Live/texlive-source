@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 22010 2011-04-07 12:49:51Z siepo $
+# $Id: tlmgr.pl 22448 2011-05-12 23:59:31Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 22010 $';
-my $datrev = '$Date: 2011-04-07 14:49:51 +0200 (Thu, 07 Apr 2011) $';
+my $svnrev = '$Revision: 22448 $';
+my $datrev = '$Date: 2011-05-13 01:59:31 +0200 (Fri, 13 May 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -77,7 +77,6 @@ use Getopt::Long qw(:config no_autoabbrev permute);
 use strict;
 
 use TeXLive::TLConfig;
-use TeXLive::TLMedia;
 use TeXLive::TLPDB;
 use TeXLive::TLPOBJ;
 use TeXLive::TLUtils;
@@ -92,10 +91,8 @@ binmode(STDOUT, ":utf8");
 binmode(STDERR, ":utf8");
 
 our %config;       # hash of config settings from config file
-our $tlmediasrc;   # media from which we install/update
-our $tlmediatlpdb;
+our $remotetlpdb;
 our $location;     # location from which the new packages come
-our $localtlmedia; # local installation which we are munging
 our $localtlpdb;   # local installation which we are munging
 
 # flags for machine-readable form
@@ -375,9 +372,10 @@ sub main {
     if (!defined($do_persistent)) {
       $do_persistent = 1;
     }
-    debug("tlmgr:main: persistent download are $do_persistent\n");
-    TeXLive::TLUtils::setup_persistent_downloads() 
-      if $do_persistent;
+    ddebug("tlmgr:main: do persistent downloads = $do_persistent\n");
+    if ($do_persistent) {
+      TeXLive::TLUtils::setup_persistent_downloads() ;
+    }
     if (!defined($::tldownload_server)) {
       debug("tlmgr:main: ::tldownload_server not defined\n");
     } else {
@@ -412,7 +410,6 @@ sub give_version {
     $::version_string .= "\nTLUtils:  " . TeXLive::TLUtils->module_revision();
     $::version_string .= "\nTLPOBJ:   " . TeXLive::TLPOBJ->module_revision();
     $::version_string .= "\nTLPDB:    " . TeXLive::TLPDB->module_revision();
-    $::version_string .= "\nTLMedia:  " . TeXLive::TLMedia->module_revision();
     $::version_string .= "\nTLPaper:  " . TeXLive::TLPaper->module_revision();
     $::version_string .= "\nTLWinGoo: " . TeXLive::TLWinGoo->module_revision();
     $::version_string .= "\n";
@@ -499,6 +496,7 @@ sub execute_action {
     action_restore();
   } elsif ($action =~ m/^path$/i) {
     action_path();
+    finish(0);
   } elsif ($action =~ m/^search$/i) {
     action_search();
     finish(0);
@@ -830,7 +828,7 @@ sub action_remove {
         my $foo = 0;
         info ("remove $pkg\n");
         if (!$opts{"dry-run"}) {
-          $foo = $localtlmedia->remove_package($pkg);
+          $foo = $localtlpdb->remove_package($pkg);
           logpackage("remove: $pkg");
         }
         if ($foo) {
@@ -851,7 +849,7 @@ sub action_remove {
     if (!defined($already_removed{$pkg})) {
       info ("remove $pkg\n");
       if (!$opts{"dry-run"}) {
-        if ($localtlmedia->remove_package($pkg)) {
+        if ($localtlpdb->remove_package($pkg)) {
           # removal was successful
           logpackage("remove: $pkg");
           $already_removed{$pkg} = 1;
@@ -925,6 +923,110 @@ sub action_paper {
 }
 
 
+#  PATH
+#
+sub action_path {
+  my $what = shift @ARGV;
+  if (!defined($what) || ($what !~ m/^(add|remove)$/i)) {
+    $what = "" if ! $what;
+    tlwarn("tlmgr: action path requires add or remove, not: $what\n");
+    return;
+  }
+  init_local_db();
+  my $winadminmode = 0;
+  if (win32()) {
+    #
+    # for w32 we do system wide vs user setting detection as follows:
+    # - if --w32mode is NOT given,
+    #   - if admin
+    #     --> honor opt_w32_multi_user setting in tlpdb
+    #   - if not admin
+    #     - if opt_w32_multi_user == NO
+    #       --> do user path adjustment
+    #     - if opt_w32_multi_user == YES
+    #       --> do nothing, warn that the setting is on, suggest --w32mode user
+    # - if --w32mode admin
+    #   - if admin
+    #     --> ignore opt_w32_multi_user and do system path adjustment
+    #   - if non-admin
+    #     --> do nothing but warn that user does not have privileges
+    # - if --w32mode user
+    #   - if admin
+    #     --> ignore opt_w32_multi_user and do user path adjustment
+    #   - if non-admin
+    #     --> ignore opt_w32_multi_user and do user path adjustment
+    if (!$opts{"w32mode"}) {
+      $winadminmode = $localtlpdb->option("w32_multi_user");
+      if (!TeXLive::TLWinGoo::admin()) {
+        if ($winadminmode) {
+          tlwarn("The TLPDB specifies system wide path adjustments\nbut you don't have admin privileges.\nFor user path adjustment please use\n\t--w32mode user\n");
+          # and do nothing
+          return;
+        }
+      }
+    } else {
+      # we are in the block where a --w32mode argument is given
+      # we reverse the tests:
+      if (TeXLive::TLWinGoo::admin()) {
+        # in admin mode we simply use what is given on the cmd line
+        if ($opts{"w32mode"} eq "user") {
+          $winadminmode = 0;
+        } elsif ($opts{"w32mode"} eq "admin") {
+          $winadminmode = 1;
+        } else {
+          tlwarn("Unknown --w32admin mode: $opts{w32mode}, should be 'admin' or 'user'\n");
+          return;
+        }
+      } else {
+        # we are non-admin
+        if ($opts{"w32mode"} eq "user") {
+          $winadminmode = 0;
+        } elsif ($opts{"w32mode"} eq "admin") {
+          tlwarn("You don't have the privileges to work in --w32mode admin\n");
+          return;
+        } else {
+          tlwarn("Unknown --w32admin mode: $opts{w32mode}, should be 'admin' or 'user'\n");
+          return;
+        }
+      }
+    }
+  }
+  if ($what =~ m/^add$/i) {
+    if (win32()) {
+      TeXLive::TLUtils::w32_add_to_path(
+        $localtlpdb->root . "/bin/win32",
+        $winadminmode);
+      TeXLive::TLWinGoo::broadcast_env();
+    } else {
+      TeXLive::TLUtils::add_symlinks($localtlpdb->root,
+        $localtlpdb->platform(),
+        $localtlpdb->option("sys_bin"),
+        $localtlpdb->option("sys_man"),
+        $localtlpdb->option("sys_info"));
+    }
+  } elsif ($what =~ m/^remove$/i) {
+    if (win32()) {
+      TeXLive::TLUtils::w32_remove_from_path(
+        $localtlpdb->root . "/bin/win32",
+        $winadminmode);
+      TeXLive::TLWinGoo::broadcast_env();
+    } else {
+      # remove symlinks
+      TeXLive::TLUtils::remove_symlinks($localtlpdb->root,
+        $localtlpdb->platform(),
+        $localtlpdb->option("sys_bin"),
+        $localtlpdb->option("sys_man"),
+        $localtlpdb->option("sys_info"));
+    }
+  } else {
+    # that should not happen
+    tlwarn("\nShould not happen, action_path what=$what");
+    exit 1;
+  }
+  return;
+}
+
+
 #  SHOW
 #
 sub action_show {
@@ -942,11 +1044,11 @@ sub action_show {
     my $tlp = $localtlpdb->get_package($pkg);
     my $installed = 0;
     if (!$tlp) {
-      if (!$tlmediatlpdb) {
+      if (!$remotetlpdb) {
         init_tlmedia();
       }
-      $tlp = $tlmediatlpdb->get_package($pkg);
-      $tlpdb = $tlmediatlpdb;
+      $tlp = $remotetlpdb->get_package($pkg);
+      $tlpdb = $remotetlpdb;
     } else {
       $installed = 1;
     }
@@ -956,10 +1058,10 @@ sub action_show {
         @colls = $localtlpdb->needed_by($pkg);
         if (!@colls) {
           # not referenced in the local tlpdb, so try the remote here, too
-          if (!$tlmediatlpdb) {
+          if (!$remotetlpdb) {
             init_tlmedia();
           }
-          @colls = $tlmediatlpdb->needed_by($pkg);
+          @colls = $remotetlpdb->needed_by($pkg);
         }
       }
       # some packages might depend on other packages, so do not
@@ -1069,107 +1171,6 @@ sub action_show {
   return;
 }
 
-#  PATH
-#
-sub action_path {
-  my $what = shift @ARGV;
-  if (!defined($what) || ($what !~ m/^(add|remove)$/i)) {
-    tlwarn("tlmgr: action path needs one argument, either add or remove\n");
-    return;
-  }
-  init_local_db();
-  my $winadminmode = 0;
-  if (win32()) {
-    #
-    # for w32 we do system wide vs user setting detection as follows:
-    # - if --w32mode is NOT given,
-    #   - if admin
-    #     --> honor opt_w32_multi_user setting in tlpdb
-    #   - if not admin
-    #     - if opt_w32_multi_user == NO
-    #       --> do user path adjustment
-    #     - if opt_w32_multi_user == YES
-    #       --> do nothing, warn that the setting is on, suggest --w32mode user
-    # - if --w32mode admin
-    #   - if admin
-    #     --> ignore opt_w32_multi_user and do system path adjustment
-    #   - if non-admin
-    #     --> do nothing but warn that user does not have privileges
-    # - if --w32mode user
-    #   - if admin
-    #     --> ignore opt_w32_multi_user and do user path adjustment
-    #   - if non-admin
-    #     --> ignore opt_w32_multi_user and do user path adjustment
-    if (!$opts{"w32mode"}) {
-      $winadminmode = $localtlmedia->tlpdb->option("w32_multi_user");
-      if (!TeXLive::TLWinGoo::admin()) {
-        if ($winadminmode) {
-          tlwarn("The TLPDB specifies system wide path adjustments\nbut you don't have admin privileges.\nFor user path adjustment please use\n\t--w32mode user\n");
-          # and do nothing
-          return;
-        }
-      }
-    } else {
-      # we are in the block where a --w32mode argument is given
-      # we reverse the tests:
-      if (TeXLive::TLWinGoo::admin()) {
-        # in admin mode we simply use what is given on the cmd line
-        if ($opts{"w32mode"} eq "user") {
-          $winadminmode = 0;
-        } elsif ($opts{"w32mode"} eq "admin") {
-          $winadminmode = 1;
-        } else {
-          tlwarn("Unknown --w32admin mode: $opts{w32mode}, should be 'admin' or 'user'\n");
-          return;
-        }
-      } else {
-        # we are non-admin
-        if ($opts{"w32mode"} eq "user") {
-          $winadminmode = 0;
-        } elsif ($opts{"w32mode"} eq "admin") {
-          tlwarn("You don't have the privileges to work in --w32mode admin\n");
-          return;
-        } else {
-          tlwarn("Unknown --w32admin mode: $opts{w32mode}, should be 'admin' or 'user'\n");
-          return;
-        }
-      }
-    }
-  }
-  if ($what =~ m/^add$/i) {
-    if (win32()) {
-      TeXLive::TLUtils::w32_add_to_path(
-        $localtlmedia->location . "/bin/win32",
-        $winadminmode);
-      TeXLive::TLWinGoo::broadcast_env();
-    } else {
-      TeXLive::TLUtils::add_symlinks($localtlmedia->tlpdb->root,
-        $localtlmedia->platform(),
-        $localtlmedia->tlpdb->option("sys_bin"),
-        $localtlmedia->tlpdb->option("sys_man"),
-        $localtlmedia->tlpdb->option("sys_info"));
-    }
-  } elsif ($what =~ m/^remove$/i) {
-    if (win32()) {
-      TeXLive::TLUtils::w32_remove_from_path(
-        $localtlmedia->location . "/bin/win32",
-        $winadminmode);
-      TeXLive::TLWinGoo::broadcast_env();
-    } else {
-      # remove symlinks
-      TeXLive::TLUtils::remove_symlinks($localtlmedia->tlpdb->root,
-        $localtlmedia->platform(),
-        $localtlmedia->tlpdb->option("sys_bin"),
-        $localtlmedia->tlpdb->option("sys_man"),
-        $localtlmedia->tlpdb->option("sys_info"));
-    }
-  } else {
-    # that should not happen
-    tlwarn("\nShould not happen, action_path what=$what");
-    exit 1;
-  }
-  return;
-}
 
 
 # taxonomy subroutines
@@ -1251,7 +1252,7 @@ sub action_search {
   init_local_db();
   if ($opts{"global"}) {
     init_tlmedia();
-    $tlpdb = $tlmediasrc->tlpdb;
+    $tlpdb = $remotetlpdb;
   } else {
     $tlpdb = $localtlpdb;
   }
@@ -1409,8 +1410,8 @@ sub restore_one_package {
     tlwarn("Cannot read $restore_file, no action taken\n");
     return;
   }
-  $localtlmedia->remove_package($pkg);
-  TeXLive::TLMedia->_install_package($restore_file , 0, [] ,$localtlpdb);
+  $localtlpdb->remove_package($pkg);
+  TeXLive::TLPDB->_install_package($restore_file , 0, [] ,$localtlpdb);
   logpackage("restore: $pkg ($rev)");
   # now we have to read the .tlpobj file and add it to the DB
   my $tlpobj = TeXLive::TLPOBJ->new;
@@ -1713,18 +1714,17 @@ sub write_w32_updater {
   my ($restart_tlmgr, $ref_files_to_be_removed, @w32_updated) = @_;
   my @infra_files_to_be_removed = @$ref_files_to_be_removed;
   # TODO do something with these files TODO
-  my $media = $tlmediasrc->media;
-  my $mediatlpdb = $tlmediasrc->tlpdb;
+  my $media = $remotetlpdb->media;
   # we have to download/copy also the src/doc files if necessary!
-  my $container_src_split = $mediatlpdb->config_src_container;
-  my $container_doc_split = $mediatlpdb->config_doc_container;
+  my $container_src_split = $remotetlpdb->config_src_container;
+  my $container_doc_split = $remotetlpdb->config_doc_container;
   # get options about src/doc splitting from $totlpdb
   # TT: should we use local options to decide about install of doc & src?
   my $opt_src = $localtlpdb->option("install_srcfiles");
   my $opt_doc = $localtlpdb->option("install_docfiles");
   my $root = $localtlpdb->root;
   my $temp = "$root/temp";
-  my $repo = $mediatlpdb->root . "/$Archive";
+  my $repo = $remotetlpdb->root . "/$Archive";
   TeXLive::TLUtils::mkdirhier($temp);
   tlwarn("Backup option not implemented for infrastructure update.\n") if ($opts{"backup"});
   if ($media eq 'local_uncompressed') {
@@ -1734,7 +1734,7 @@ sub write_w32_updater {
   }
   my (@upd_tar, @upd_tlpobj, @upd_info, @rst_tar, @rst_tlpobj, @rst_info);
   foreach my $pkg (@w32_updated) {
-    my $mediatlp = $mediatlpdb->get_package($pkg);
+    my $mediatlp = $remotetlpdb->get_package($pkg);
     my $localtlp = $localtlpdb->get_package($pkg);
     my $oldrev = $localtlp->revision;
     my $newrev = $mediatlp->revision;
@@ -1913,15 +1913,15 @@ sub auto_remove_install_force_packages {
   #
   my @all_schmscolls = ();
   for my $p ($localtlpdb->schemes) {
-    push (@all_schmscolls, $p) if defined($tlmediatlpdb->get_package($p));
+    push (@all_schmscolls, $p) if defined($remotetlpdb->get_package($p));
   }
   for my $p ($localtlpdb->collections) {
-    push (@all_schmscolls, $p) if defined($tlmediatlpdb->get_package($p));
+    push (@all_schmscolls, $p) if defined($remotetlpdb->get_package($p));
   }
   my @localexpansion_full =
     $localtlpdb->expand_dependencies($localtlpdb, @all_schmscolls);
   my @remoteexpansion_full =
-    $tlmediatlpdb->expand_dependencies($localtlpdb, @all_schmscolls);
+    $remotetlpdb->expand_dependencies($localtlpdb, @all_schmscolls);
 
   # compute new/remove/forcerm based on the full expansions
   for my $p (@remoteexpansion_full) {
@@ -1942,7 +1942,7 @@ sub auto_remove_install_force_packages {
     # intersection, don't check A\B and B\A
     next if $newpkgs_full{$p};
     next if $removals_full{$p};
-    next if ($tlmediatlpdb->get_package($p)->category ne "Collection");
+    next if ($remotetlpdb->get_package($p)->category ne "Collection");
     my $tlp = $localtlpdb->get_package($p);
     if (!defined($tlp)) {
       if ($opts{"reinstall-forcibly-removed"}) {
@@ -1956,7 +1956,7 @@ sub auto_remove_install_force_packages {
   # forcibly removed. Again, expand those against the remote tlpdb
   # and remove the expanded packages from the list of localexpansion.
   my @pkgs_from_forcerm_colls = 
-    $tlmediatlpdb->expand_dependencies($localtlpdb, keys %forcermpkgs_full);
+    $remotetlpdb->expand_dependencies($localtlpdb, keys %forcermpkgs_full);
   # 
   # the package in @pkgs_from_forcerm_colls would be auto-installed, so
   # check for that:
@@ -2033,7 +2033,7 @@ sub auto_remove_install_force_packages {
 # tlmgr update --no-depends-at-all foo
 #   will absolutely only update foo not even taking .ARCH into account
 #
-# TLMedia->install_package INSTALLS ONLY ONE PACKAGE, no deps whatsoever
+# TLPDB->install_package INSTALLS ONLY ONE PACKAGE, no deps whatsoever
 # anymore. That has all to be done by hand.
 #
 sub machine_line {
@@ -2083,7 +2083,7 @@ sub action_update {
 
   # check for updates to tlmgr and die unless either --force or --list or --self
   # is given
-  my @critical = check_for_critical_updates($localtlpdb, $tlmediatlpdb);
+  my @critical = check_for_critical_updates($localtlpdb, $remotetlpdb);
   my $dry_run_cont = $opts{"dry-run"} && ($opts{"dry-run"} < 0);
   if ( !$dry_run_cont  && !$opts{"self"} && @critical) {
     critical_updates_warning();
@@ -2185,11 +2185,11 @@ sub action_update {
 
   if (!($opts{"self"} && @critical) || ($opts{"self"} && $opts{"list"})) {
     # update all .ARCH dependencies, too, unless $opts{"no-depends-at-all"}:
-    @todo = $tlmediatlpdb->expand_dependencies("-only-arch", $localtlpdb, @todo)
+    @todo = $remotetlpdb->expand_dependencies("-only-arch", $localtlpdb, @todo)
       unless $opts{"no-depends-at-all"};
     #
     # update general deps unless $opts{"no-depends"}:
-    @todo = $tlmediatlpdb->expand_dependencies("-no-collections",$localtlpdb,@todo)
+    @todo = $remotetlpdb->expand_dependencies("-no-collections",$localtlpdb,@todo)
       unless $opts{"no-depends"};
     #
     # filter out critical packages
@@ -2208,7 +2208,7 @@ sub action_update {
   # options --no-auto-remove, --no-auto-install, --reinstall-forcibly-removed
   my @option_conflict_lines = ();
   my $in_conflict = 0;
-  if (!$opts{"no-auto-remove"}) {
+  if (!$opts{"no-auto-remove"} && $config{"auto-remove"}) {
     for my $pkg (keys %removals) {
       for my $ep (@excluded_pkgs) {
         if ($pkg eq $ep || $pkg =~ m/^$ep\./) {
@@ -2298,7 +2298,7 @@ sub action_update {
         next;
       }
       # install new packages
-      my $mediatlp = $tlmediatlpdb->get_package($pkg);
+      my $mediatlp = $remotetlpdb->get_package($pkg);
       if (!defined($mediatlp)) {
         tlwarn("\nShould not happen: $pkg not found in $location");
         next;
@@ -2308,7 +2308,7 @@ sub action_update {
       next;
     }
     my $rev = $tlp->revision;
-    my $mediatlp = $tlmediatlpdb->get_package($pkg);
+    my $mediatlp = $remotetlpdb->get_package($pkg);
     if (!defined($mediatlp)) {
       debug("$pkg cannot be found in $location\n");
       next;
@@ -2346,7 +2346,7 @@ sub action_update {
   # remove the packages that have disappeared:
   # we add that only to the list of total packages do be worked on
   # when --all is given, because we remove packages only on --all
-  if (!$opts{"no-auto-remove"}) {
+  if (!$opts{"no-auto-remove"} && $config{"auto-remove"}) {
     my @foo = keys %removals;
     $totalnr += $#foo + 1;
   }
@@ -2360,7 +2360,7 @@ sub action_update {
   # get something wrong back, namely the total size of all packages
   my %sizes;
   if (@alltodo) {
-    %sizes = %{$tlmediatlpdb->sizes_of_packages(
+    %sizes = %{$remotetlpdb->sizes_of_packages(
       $localtlpdb->option("install_srcfiles"),
       $localtlpdb->option("install_docfiles"), @alltodo)};
   } else {
@@ -2394,7 +2394,7 @@ sub action_update {
       }
     }
     for my $p (@updated, @new) {
-      my $pkg = $tlmediatlpdb->get_package($p);
+      my $pkg = $remotetlpdb->get_package($p);
       tlwarn("Should not happen: $p not found in $location\n") if (!$pkg);
       next;
       for my $f ($pkg->all_files) {
@@ -2434,11 +2434,11 @@ sub action_update {
   # REMOVALS
   #
   for my $p (keys %removals) {
-    if ($opts{"no-auto-remove"}) {
-      info("not removing $p due to -no-auto-remove (removed on server)\n");
+    if ($opts{"no-auto-remove"} || !$config{"auto-remove"}) {
+      info("not removing $p due to -no-auto-remove or config file option (removed on server)\n");
     } else {
       &ddebug("removing package $p\n");
-      my $pkg = $localtlmedia->tlpdb->get_package($p);
+      my $pkg = $localtlpdb->get_package($p);
       if (! $pkg) {
         # This happened when a collection was removed by the user,
         # and then renamed on the server, e.g., collection-langarab ->
@@ -2476,7 +2476,7 @@ sub action_update {
               clear_old_backups($p, $opts{"backupdir"}, $autobackup);
             }
           }
-          $localtlmedia->remove_package($p);
+          $localtlpdb->remove_package($p);
           logpackage("remove: $p");
         }
         $currnr++;
@@ -2572,7 +2572,7 @@ sub action_update {
       my $unwind_package;
       my $remove_unwind_container = 0;
       my $rev = $tlp->revision;
-      my $mediatlp = $tlmediatlpdb->get_package($pkg);
+      my $mediatlp = $remotetlpdb->get_package($pkg);
       if (!defined($mediatlp)) {
         debug("$pkg cannot be found in $location\n");
         next;
@@ -2666,10 +2666,10 @@ sub action_update {
       if ($pkg =~ m/$CriticalPackagesRegexp/) {
         debug("Not removing critical package $pkg\n");
       } else {
-        $localtlmedia->remove_package($pkg, 
+        $localtlpdb->remove_package($pkg, 
           "remove-warn-files" => \%do_warn_on_move);
       }
-      if ($tlmediasrc->install_package($pkg, $localtlpdb)) {
+      if ($remotetlpdb->install_package($pkg, $localtlpdb)) {
         # installation succeeded because we got a reference
         logpackage("update: $pkg ($rev -> $mediarev)");
         unlink($unwind_package) if $remove_unwind_container;
@@ -2713,8 +2713,8 @@ sub action_update {
           $remove_unwind_container = 1;
           $unwind_package = $newname;
         }
-        my $instret = TeXLive::TLMedia->_install_package("$unwind_package", 0,
-                                                         [], $localtlpdb);
+        my $instret = TeXLive::TLPDB->_install_package("$unwind_package", 0,
+                                                       [], $localtlpdb);
         if ($instret) {
           # now we have to include the tlpobj
           my $tlpobj = TeXLive::TLPOBJ->new;
@@ -2740,7 +2740,7 @@ sub action_update {
             unless $::machinereadable;
       } else {
         # install new packages
-        my $mediatlp = $tlmediatlpdb->get_package($pkg);
+        my $mediatlp = $remotetlpdb->get_package($pkg);
         if (!defined($mediatlp)) {
           tlwarn("\nShould not happen: $pkg not found in $location");
           next;
@@ -2768,7 +2768,7 @@ sub action_update {
         $currnr++;
         $donesize += $sizes{$pkg};
         next if ($opts{"dry-run"} || $opts{"list"});
-        if ($tlmediasrc->install_package($pkg, $localtlpdb)) {
+        if ($remotetlpdb->install_package($pkg, $localtlpdb)) {
           # installation succeeded because we got a reference
           logpackage("auto-install new: $pkg ($mediarev)");
           $nrupdated++;
@@ -2797,11 +2797,11 @@ sub action_update {
       my $newtlp;
       if ($updated{$pkg}) {
         $oldtlp = $localtlpdb->get_package($pkg);
-        $newtlp = $tlmediatlpdb->get_package($pkg);
+        $newtlp = $remotetlpdb->get_package($pkg);
       } else {
         # update failed but we could introduce new files, that
         # should be removed now as a part of restoring backup
-        $oldtlp = $tlmediatlpdb->get_package($pkg);
+        $oldtlp = $remotetlpdb->get_package($pkg);
         $newtlp = $localtlpdb->get_package($pkg);
       }
       die ("That shouldn't happen: $pkg not found in tlpdb") if !defined($newtlp);
@@ -2897,8 +2897,8 @@ sub action_update {
   if ($opts{"dry-run"} && !$opts{"list"} && $restart_tlmgr) {
     $opts{"self"} = 0;
     $opts{"dry-run"} = -1;
-    $localtlmedia = undef;
-    $tlmediatlpdb = undef;
+    $localtlpdb = undef;
+    $remotetlpdb = undef;
     info ("Restarting tlmgr to complete update ...\n");
     action_update();
     return;
@@ -2908,7 +2908,7 @@ sub action_update {
   # warn if nothing is updated.
   if (!(@new || @updated)) {
     info("tlmgr: no updates available\n");
-    if ($tlmediasrc->media ne "NET"
+    if ($remotetlpdb->media ne "NET"
         && !$opts{"dry-run"}
         && !$opts{"repository"}
        ) {
@@ -2948,18 +2948,18 @@ sub action_update {
 #   . it does not care for whether a package seems to be installed or
 #     not (that is the --reinstall)
 #
-# TLMedia->install_package does ONLY INSTALL ONE PACKAGE, no deps whatsoever
+# TLPDB->install_package does ONLY INSTALL ONE PACKAGE, no deps whatsoever
 # anymore!  That has all to be done by hand.
 #
 sub action_install {
   init_local_db(1);
   return if !check_on_writable();
-  # initialize the TLMedia from $location
+  # initialize the TLPDB from $location
   $opts{"no-depends"} = 1 if $opts{"no-depends-at-all"};
   init_tlmedia();
 
   # check for updates to tlmgr itself, and die unless --force is given
-  if (check_for_critical_updates( $localtlpdb, $tlmediatlpdb)) {
+  if (check_for_critical_updates( $localtlpdb, $remotetlpdb)) {
     critical_updates_warning();
     if ($opts{"force"}) {
       tlwarn("Continuing due to --force\n");
@@ -2978,13 +2978,13 @@ sub action_install {
 
   my @packs = @ARGV;
   # first expand the .ARCH dependencies unless $opts{"no-depends-at-all"}
-  @packs = $tlmediatlpdb->expand_dependencies("-only-arch", $localtlpdb, @ARGV) unless $opts{"no-depends-at-all"};
+  @packs = $remotetlpdb->expand_dependencies("-only-arch", $localtlpdb, @ARGV) unless $opts{"no-depends-at-all"};
   # now expand all others unless $opts{"no-depends"}
   # if $opts{"reinstall"} do not collection->collection dependencies
   if ($opts{"reinstall"}) {
-    @packs = $tlmediatlpdb->expand_dependencies("-no-collections", $localtlpdb, @packs) unless $opts{"no-depends"};
+    @packs = $remotetlpdb->expand_dependencies("-no-collections", $localtlpdb, @packs) unless $opts{"no-depends"};
   } else {
-    @packs = $tlmediatlpdb->expand_dependencies($localtlpdb, @packs) unless $opts{"no-depends"};
+    @packs = $remotetlpdb->expand_dependencies($localtlpdb, @packs) unless $opts{"no-depends"};
   }
   #
   # installation order of packages:
@@ -3013,7 +3013,7 @@ sub action_install {
   my @todo;
   for my $pkg (@inst_packs, @inst_colls, @inst_schemes) {
     my $pkgrev = 0;
-    my $mediatlp = $tlmediatlpdb->get_package($pkg);
+    my $mediatlp = $remotetlpdb->get_package($pkg);
     if (!defined($mediatlp)) {
       tlwarn("package $pkg not present in package repository.\n");
       next;
@@ -3036,7 +3036,7 @@ sub action_install {
   return if (!@todo);
 
   my $currnr = 1;
-  my %sizes = %{$tlmediatlpdb->sizes_of_packages(
+  my %sizes = %{$remotetlpdb->sizes_of_packages(
     $localtlpdb->option("install_srcfiles"),
     $localtlpdb->option("install_docfiles"), @todo)};
   defined($sizes{'__TOTAL__'}) || ($sizes{'__TOTAL__'} = 0);
@@ -3067,7 +3067,7 @@ sub action_install {
       info("[$currnr/$totalnr, $estrem/$esttot] ${re}install: $pkg [${kb}k]\n");
     }
     if (!$opts{"dry-run"}) {
-      $tlmediasrc->install_package($pkg, $localtlpdb);
+      $remotetlpdb->install_package($pkg, $localtlpdb);
       logpackage("${re}install: $pkg");
     }
     $donesize += $sizes{$pkg};
@@ -3098,18 +3098,18 @@ sub action_list {
   }
   my $tlm;
   if ($opts{"only-installed"}) {
-    $tlm = $localtlmedia;
+    $tlm = $localtlpdb;
   } else {
     init_tlmedia();
-    $tlm = $tlmediasrc;
+    $tlm = $remotetlpdb;
   }
   my @whattolist;
   if ($what =~ m/^collection/i) {
-    @whattolist = $tlm->tlpdb->collections;
+    @whattolist = $tlm->collections;
   } elsif ($what =~ m/^scheme/i) {
-    @whattolist = $tlm->tlpdb->schemes;
+    @whattolist = $tlm->schemes;
   } else {
-    @whattolist = $tlm->tlpdb->list_packages;
+    @whattolist = $tlm->list_packages;
   }
   foreach (@whattolist) {
     next if ($_ =~ m/^00texlive/);
@@ -3118,7 +3118,7 @@ sub action_list {
     } else {
       print "  ";
     }
-    my $foo = $tlm->tlpdb->get_package($_)->shortdesc;
+    my $foo = $tlm->get_package($_)->shortdesc;
     print "$_: ", defined($foo) ? $foo : "(shortdesc missing)" , "\n";
   }
   return;
@@ -3311,12 +3311,11 @@ sub action_platform {
   $what || ($what = "list");
   if ($what =~ m/^list$/i) {
     # list the available platforms
-    # initialize the TLMedia from $location
+    # initialize the TLPDB from $location
     init_tlmedia();
-    my $mediatlpdb = $tlmediasrc->tlpdb;
     my @already_installed_arch = $localtlpdb->available_architectures;
     print "Available platforms:\n";
-    foreach my $a ($mediatlpdb->available_architectures) {
+    foreach my $a ($remotetlpdb->available_architectures) {
       if (member($a,@already_installed_arch)) {
         print "(i) $a\n";
       } else {
@@ -3329,9 +3328,8 @@ sub action_platform {
   } elsif ($what =~ m/^add$/i) {
     return if !check_on_writable();
     init_tlmedia();
-    my $mediatlpdb = $tlmediasrc->tlpdb;
     my @already_installed_arch = $localtlpdb->available_architectures;
-    my @available_arch = $mediatlpdb->available_architectures;
+    my @available_arch = $remotetlpdb->available_architectures;
     my @todoarchs;
     foreach my $a (@ARGV) {
       if (TeXLive::TLUtils::member($a, @already_installed_arch)) {
@@ -3351,9 +3349,9 @@ sub action_platform {
         if ($dep =~ m/^(.*)\.ARCH$/) {
           # we have to install something
           foreach my $a (@todoarchs) {
-            if ($tlmediatlpdb->get_package("$pkg.$a")) {
+            if ($remotetlpdb->get_package("$pkg.$a")) {
               info("install: $pkg.$a\n");
-              $tlmediasrc->install_package("$pkg.$a", $localtlpdb)
+              $remotetlpdb->install_package("$pkg.$a", $localtlpdb)
                 if (!$opts{"dry-run"});
             }
           }
@@ -3364,7 +3362,7 @@ sub action_platform {
       # install the necessary w32 stuff
       for my $p (@extra_w32_packs) {
         info("install: $p\n");
-        $tlmediasrc->install_package($p, $localtlpdb) if (!$opts{"dry-run"});
+        $remotetlpdb->install_package($p, $localtlpdb) if (!$opts{"dry-run"});
       }
     }
     # update the option("available_architectures") list of installed archs
@@ -3378,7 +3376,7 @@ sub action_platform {
     return if !check_on_writable();
     my @already_installed_arch = $localtlpdb->available_architectures;
     my @todoarchs;
-    my $currentarch = $localtlmedia->platform();
+    my $currentarch = $localtlpdb->platform();
     foreach my $a (@ARGV) {
       if (!TeXLive::TLUtils::member($a, @already_installed_arch)) {
         print "Platform $a not installed, use 'tlmgr platform list'!\n";
@@ -3404,7 +3402,7 @@ sub action_platform {
           foreach my $a (@todoarchs) {
             if ($localtlpdb->get_package("$pkg.$a")) {
               info("remove: $pkg.$a\n");
-              $localtlmedia->remove_package("$pkg.$a") if (!$opts{"dry-run"});
+              $localtlpdb->remove_package("$pkg.$a") if (!$opts{"dry-run"});
             }
           }
         }
@@ -3413,7 +3411,7 @@ sub action_platform {
     if (TeXLive::TLUtils::member('win32', @todoarchs)) {
       for my $p (@extra_w32_packs) {
         info("remove: $p\n");
-        $localtlmedia->remove_package($p) if (!$opts{"dry-run"});
+        $localtlpdb->remove_package($p) if (!$opts{"dry-run"});
       }
     }
     if (!$opts{"dry-run"}) {
@@ -3629,11 +3627,11 @@ sub action_uninstall {
   }
   print ("Ok, removing the whole installation:\n");
   init_local_db();
-  TeXLive::TLUtils::remove_symlinks($localtlmedia->tlpdb->root,
-    $localtlmedia->platform(),
-    $localtlmedia->tlpdb->option("sys_bin"),
-    $localtlmedia->tlpdb->option("sys_man"),
-    $localtlmedia->tlpdb->option("sys_info"));
+  TeXLive::TLUtils::remove_symlinks($localtlpdb->root,
+    $localtlpdb->platform(),
+    $localtlpdb->option("sys_bin"),
+    $localtlpdb->option("sys_man"),
+    $localtlpdb->option("sys_info"));
   # now do remove the rest
   system("rm", "-rf", "$Master/texmf-dist");
   system("rm", "-rf", "$Master/texmf-doc");
@@ -3845,7 +3843,7 @@ sub check_files {
 
   # if we are on W32, return (no find).  We need -use-svn only for
   # checking the live repository on tug, which is not w32.
-  my $arch = $localtlmedia->platform();
+  my $arch = $localtlpdb->platform();
   return $ret if $arch eq "win32";
 
   # check that all files in the trees are covered.
@@ -4427,15 +4425,12 @@ sub init_local_db {
   # if the localtlpdb is already defined do simply return here already
   # to make sure that the settings in the local tlpdb do not overwrite
   # stuff changed via the GUI
-  return if defined $localtlmedia;
   return if defined $localtlpdb;
-  $localtlmedia = TeXLive::TLMedia->new ( $Master );
-  die("cannot setup TLMedia in $Master") unless (defined($localtlmedia));
-  $localtlpdb = $localtlmedia->tlpdb;
-  die("cannot find tlpdb in $Master") unless (defined($localtlpdb));
+  $localtlpdb = TeXLive::TLPDB->new ( root => $Master );
+  die("cannot setup TLPDB in $Master") unless (defined($localtlpdb));
   # setup the programs, for w32 we need the shipped wget/xz etc, so we
   # pass the location of these files to setup_programs.
-  if (!setup_programs("$Master/tlpkg/installer", $localtlmedia->platform)) {
+  if (!setup_programs("$Master/tlpkg/installer", $localtlpdb->platform)) {
     tlwarn("Couldn't set up the necessary programs.\nInstallation of packages is not supported.\nPlease report to texlive\@tug.org.\n");
     if (defined($should_i_die) && $should_i_die) {
       finish(1);
@@ -4471,12 +4466,12 @@ sub init_local_db {
 }
 
 
-# initialize the global $tlmediasrc object, or die.
+# initialize the global $remotetlpdb object, or die.
 # uses the global $location.
 #
 sub init_tlmedia
 {
-  if (defined($tlmediatlpdb) && ($tlmediatlpdb->root eq $location)) {
+  if (defined($remotetlpdb) && ($remotetlpdb->root eq $location)) {
     # nothing to be done
     return;
   }
@@ -4531,8 +4526,8 @@ http://tug.org/texlive/doc/install-tl.html
 END_NO_INTERNET
         # above text duplicated in install-tl
 
-        $tlmediasrc = TeXLive::TLMedia->new(-location => $location,
-          -tlpdbfile => $loc_copy_of_remote_tlpdb);
+        $remotetlpdb = TeXLive::TLPDB->new(root => $location,
+          tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
       } else {
         ddebug("found remote digest: $rem_digest\n");
@@ -4540,33 +4535,31 @@ END_NO_INTERNET
         ddebug("rem_copy_digest = $rem_copy_digest\n");
         if ($rem_copy_digest eq $rem_digest) {
           debug("md5 of local copy identical with remote hash\n");
-          $tlmediasrc = TeXLive::TLMedia->new(-location => $location,
-            -tlpdbfile => $loc_copy_of_remote_tlpdb);
+          $remotetlpdb = TeXLive::TLPDB->new(root => $location,
+            tlpdbfile => $loc_copy_of_remote_tlpdb);
           $local_copy_tlpdb_used = 1;
         }
       }
     }
   }
   if (!$local_copy_tlpdb_used) {
-    # $tlmediasrc is a global variable
-    $tlmediasrc = TeXLive::TLMedia->new(-location => $location);
+    $remotetlpdb = TeXLive::TLPDB->new(root => $location);
   }
-  die($loadmediasrcerror . $location) unless defined($tlmediasrc);
-  $tlmediatlpdb = $tlmediasrc->tlpdb;
+  die($loadmediasrcerror . $location) unless defined($remotetlpdb);
   # we allow a range of years to be specified by the remote tlpdb
   # for which it might work.
-  # the lower limit is TLPDB->config_release
-  # the upper limit is TLPDB->config_maxrelease
+  # the lower limit is TLPDB->config_minrelease
+  # the upper limit is TLPDB->config_release
   # if the later is not present only the year in config_release is accepted
   # checks are done on the first 4 digits only
   # Why only the first four places: some optional network distributions
   # might use
   #   release/2009-foobar
   # If it should work for 2009 and 2010, please use
-  #   release/2009-foobar
-  #   maxrelease/2010-foobar
-  my $texlive_release = $tlmediatlpdb->config_release;
-  my $texlive_maxrelease = $tlmediatlpdb->config_maxrelease;
+  #   minrelease/2009-foobar
+  #   release/2010-foobar
+  my $texlive_release = $remotetlpdb->config_release;
+  my $texlive_minrelease = $remotetlpdb->config_minrelease;
   if (!defined($texlive_release)) {
     tldie "The installation repository does not specify a release year for which it was prepared, bailing out.\n";
   }
@@ -4577,25 +4570,25 @@ END_NO_INTERNET
     tldie "The installation repository does not specify a release year: $texlive_release, bailing out.\n";
   }
   # so $texlive_release_year is numeric, good
-  if (defined($texlive_maxrelease)) {
+  if (defined($texlive_minrelease)) {
     # we specify a range of years!
-    my $texlive_maxrelease_year = $texlive_maxrelease;
-    $texlive_maxrelease_year =~ s/^(....).*$/$1/;
-    if ($texlive_maxrelease_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
-      tldie "The installation repository does not specify a valid maximal release year: $texlive_maxrelease, bailing out.\n";
+    my $texlive_minrelease_year = $texlive_minrelease;
+    $texlive_minrelease_year =~ s/^(....).*$/$1/;
+    if ($texlive_minrelease_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
+      tldie "The installation repository does not specify a valid minimal release year: $texlive_minrelease, bailing out.\n";
     }
     # ok, all numeric and fine, check for range
-    if ($TeXLive::TLConfig::ReleaseYear < $texlive_release_year
-        || $TeXLive::TLConfig::ReleaseYear > $texlive_maxrelease_year) {
+    if ($TeXLive::TLConfig::ReleaseYear < $texlive_minrelease_year
+        || $TeXLive::TLConfig::ReleaseYear > $texlive_release_year) {
       tldie <<END_BADRANGE
 $0: The TeX Live versions supported by the repository
-  ($texlive_release_year--$texlive_maxrelease_year)
+  ($texlive_minrelease_year--$texlive_release_year)
 do not include the version of the local installation
   ($TeXLive::TLConfig::ReleaseYear).  Goodbye.
 END_BADRANGE
     }
   } else {
-    # $texlive_maxrelease not defined, so only one year is valid
+    # $texlive_minrelease not defined, so only one year is valid
     if ($texlive_release_year != $TeXLive::TLConfig::ReleaseYear) {
       tldie <<END_BADYEAR
 $0: The TeX Live versions of the local installation
@@ -4608,7 +4601,7 @@ END_BADYEAR
   }
 
   # check for being frozen
-  if ($tlmediatlpdb->option("frozen")) {
+  if ($remotetlpdb->option("frozen")) {
     my $frozen_msg = <<FROZEN;
 TeX Live $TeXLive::TLConfig::ReleaseYear is frozen forever and will no
 longer be updated.  This happens in preparation for a new release.
@@ -4636,7 +4629,7 @@ FROZEN
       &debug("Cannot save remote TeX Live database to $loc_copy_of_remote_tlpdb: $!\n");
     } else {
       &debug("writing out tlpdb to $loc_copy_of_remote_tlpdb\n");
-      $tlmediatlpdb->writeout($tlfh);
+      $remotetlpdb->writeout($tlfh);
       close($tlfh);
     }
   }
@@ -4686,6 +4679,9 @@ sub load_config_file
   # the default for gui-expertmode is 1 since that is what we
   # have shipped till now
   $config{"gui-expertmode"} = 1;
+  #
+  # by default we remove packages
+  $config{"auto-remove"} = 1;
 
   chomp (my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
   my $fn = "$TEXMFCONFIG/tlmgr/config";
@@ -4711,6 +4707,14 @@ sub load_config_file
       }
     } elsif ($key eq "gui-lang") {
       $config{'gui-lang'} = $val;
+    } elsif ($key eq "auto-remove") {
+      if ($val eq "0") {
+        $config{"auto-remove"} = 0;
+      } elsif ($val eq "1") {
+        $config{"auto-remove"} = 1;
+      } else {
+        tlwarn("Unknown value >$val< for auto-remove in $fn\n");
+      }
     } else {
       tlwarn("Unknown key $key in $fn\n");
     }
@@ -5599,17 +5603,17 @@ C<--print-arch> is a synonym.
 
 =head2 search [I<options>] I<what>
 
-=head2 search [I<options>] --file I<what>
+=head3 search [I<options>] --file I<what>
 
-=head2 search [I<options>] --taxonomy I<what>
+=head3 search [I<options>] --taxonomy I<what>
 
-=head2 search [I<options>] --keyword I<what>
+=head3 search [I<options>] --keyword I<what>
 
-=head2 search [I<options>] --functionality I<what>
+=head3 search [I<options>] --functionality I<what>
 
-=head2 search [I<options>] --characterization I<what>
+=head3 search [I<options>] --characterization I<what>
 
-=head2 search [I<options>] --all I<what>
+=head3 search [I<options>] --all I<what>
 
 By default, search the names, short descriptions, and long descriptions
 of all locally installed packages for the argument I<what>, interpreted
@@ -5761,11 +5765,13 @@ checking the TL development repository.
 
 =head2 path [--w32mode=user|admin] [add|remove]
 
-On Unix adds or removes symlinks for binaries, man pages, and info pages
-in the directories specified by the respective options (see above).
+On Unix, merely adds or removes symlinks for binaries, man pages, and
+info pages in the system directories specified by the respective options
+(see the L<option> description above).  Does not change any
+initialization files, either system or personal.
 
-On Windows, the registry part where the binary directory is
-added or removed is determined in the following way:
+On Windows, the registry part where the binary directory is added or
+removed is determined in the following way:
 
 If the user has admin rights, and the option C<--w32mode> is not given,
 the setting I<w32_multi_user> determines the location (i.e., if it is
@@ -5783,6 +5789,7 @@ If the user does not have admin rights, and the option C<--w32mode>
 is given, it must be B<user> and the user path will be adjusted. If a
 user without admin rights uses the option C<--w32mode admin> a warning
 is issued that the caller does not have enough provileges.
+
 
 =cut
 
@@ -6049,6 +6056,7 @@ addition to these three on the top right there is some text showing the
 currently loaded repository (this text also acts as button and will load
 the default repository).
 
+
 =head2 Menu bar
 
 The following entries can be found in the menu bar:
@@ -6090,6 +6098,7 @@ Provides access to the manual and other basic information on the
 installed version, authors, license.
 
 =back
+
 
 =head2 Main display
 

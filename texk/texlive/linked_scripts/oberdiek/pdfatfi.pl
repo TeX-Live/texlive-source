@@ -1,39 +1,42 @@
-eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $argv:q'
-  if 0;
+#!/usr/bin/env perl
 use strict;
 $^W=1; # turn warning on
 #
 # pdfatfi.pl
 #
-# Copyright (C) 2005, 2006 Heiko Oberdiek.
+# Copyright (C) 2005-2010 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
-# conditions of the LaTeX Project Public License, either version 1.3
-# of this license or (at your option) any later version.
-# The latest version of this license is in
-#   http://www.latex-project.org/lppl.txt
-# and version 1.3 or later is part of all distributions of LaTeX
-# version 2005/12/01 or later.
+# conditions of the LaTeX Project Public License, either
+# version 1.3c of this license or (at your option) any later
+# version. This version of this license is in
+#    http://www.latex-project.org/lppl/lppl-1-3c.txt
+# and the latest version of this license is in
+#    http://www.latex-project.org/lppl.txt
+# and version 1.3 or later is part of all distributions of
+# LaTeX version 2005/12/01 or later.
 #
 # This work has the LPPL maintenance status "maintained".
 #
 # This Current Maintainer of this work is Heiko Oberdiek.
 #
-# See file "attachfile2.pdf" for a list of files that belong to this project.
+# See file "attachfile2.pdf" for a list of files that belong to
+# this project.
 #
 # This file "pdfatfi.pl" may be renamed to "pdfatfi"
 # for installation purposes.
 #
 my $file        = "pdfatfi.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "2.5";
-my $date        = "2009/09/25";
+my $version     = "2.6";
+my $date        = "2010/09/27";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2005, 2006 by $author.";
+my $copyright   = "Copyright (c) 2005-2010 by $author.";
 #
 # History:
 #   2005/05/21 v1.0: First release.
 #   2006/08/16 v2.2: Included in DTX file of attachfile2.dtx.
+#   2010/09/27 v2.6: Keys ModDateTZ and CreationDateTZ added.
 #
 
 use POSIX qw(strftime); # %z is used (GNU)
@@ -58,11 +61,11 @@ $::opt_verbose    = 0;
 my $usage = <<"END_OF_USAGE";
 ${title}Syntax:   \L$program\E [options] <file[.atfi]>
 Function: Help program for LaTeX package "attachfile2".
-Options:                                          (defaults:)
+Options:                                    (defaults:)
   --help          print usage
-  --(no)quiet     suppress messages               ($bool[$::opt_quiet])
-  --(no)verbose   verbose printing                ($bool[$::opt_verbose])
-  --(no)debug     debug informations              ($bool[$::opt_debug])
+  --(no)quiet     suppress messages         ($bool[$::opt_quiet])
+  --(no)verbose   verbose printing          ($bool[$::opt_verbose])
+  --(no)debug     debug informations        ($bool[$::opt_debug])
 END_OF_USAGE
 
 ### process options
@@ -101,7 +104,15 @@ END_DEB
 my $tmpfile = $atfifile . ".tmp";
 
 my $timezone = strftime "%z", localtime;
-$timezone =~ s/^([+\-]\d\d)(\d\d)$/$1'$2'/;
+
+sub gettz ($) {
+    my $time = shift;
+    my $tz = strftime "%z", localtime($time);
+    return '' unless $tz;
+    return 'Z' if $tz eq '+0000';
+    $tz =~ s/^([+\-]\d\d)(\d\d)$/$1'$2'/;
+    return $tz;
+}
 
 open(IN, $atfifile) or die "$Error Cannot open `$atfifile'!\n";
 open(OUT, ">$tmpfile") or die "$Error Cannot write `$tmpfile'!\n";
@@ -125,20 +136,26 @@ while(<IN>) {
             my $mtime = @s[9];
             my $ctime = @s[10]; # inode change time
 
-            my ($sec, $min, $hour, $mday, $mon, $year) = localtime($mtime);
+            my ($sec, $min, $hour, $mday, $mon, $year) =
+                    localtime($mtime);
             my $moddate = sprintf("%04d%02d%02d%02d%02d%02d",
                                   $year + 1900, $mon + 1, $mday,
                                   $hour, $min, $sec);
+            my $moddatetz = 'D:' . $moddate . gettz($mtime);
 
             # Manual page "perlport" says that "ctime" is creation
             # time instead of inode change time for "Win32" and
             # "Mac OS", but it is unsupported for "Mac OS X".
             my $creationdate = "";
+            my $creationdatetz = "";
             if ($^O eq 'MSWin32') { # cygwin?
-                ($sec, $min, $hour, $mday, $mon, $year) = localtime($ctime);
+                ($sec, $min, $hour, $mday, $mon, $year) =
+                        localtime($ctime);
                 $creationdate = sprintf("%04d%02d%02d%02d%02d%02d",
                                         $year + 1900, $mon + 1, $mday,
                                         $hour, $min, $sec);
+                $creationdatetz =
+                        'D:' . $creationdate . gettz($ctime);
             }
 
             # md5 checksum
@@ -155,15 +172,20 @@ while(<IN>) {
             }
 
             $_ = "\\attachfile\@file["
-                 . "ModDate=$moddate,Size=$size"
-                 . (($checksum) ? ",CheckSum=$checksum" : "")
-                 . (($creationdate) ? ",CreationDate=$creationdate" : "")
+                 . "ModDateTZ=$moddatetz"
+                 . ",Size=$size"
+                 . ($checksum ? ",CheckSum=$checksum" : "")
+                 . ($creationdatetz ?
+                         ",CreationDateTZ=$creationdatetz" :
+                         ($creationdate ?
+                                 ",CreationDate=$creationdate" : ""))
                  . "]{$hexfile}\n";
             if ($::opt_verbose) {
                 print "* file entry   = $file\n";
                 print "  size         = $size\n";
                 print "  moddate      = $moddate\n";
-                print "  creationdate = $creationdate\n" if $creationdate;
+                print "  creationdate = $creationdate\n"
+                        if $creationdate;
                 print "  checksum     = $checksum\n" if $checksum;
             }
         }

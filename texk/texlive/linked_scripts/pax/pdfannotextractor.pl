@@ -2,7 +2,7 @@
 use strict;
 $^W=1;
 
-# Copyright (C) 2008 Heiko Oberdiek
+# Copyright (C) 2008, 2011 Heiko Oberdiek
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ $^W=1;
 my $name        = 'PDFAnnotExtractor';
 my $program     = "\L$name\E";
 my $file        = "$program.pl";
-my $version     = "0.1i";
-my $date        = "2008/10/01";
+my $version     = "0.1j";
+my $date        = "2011/04/22";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2008 by $author.";
+my $copyright   = "Copyright (c) 2008, 2011 by $author.";
 
 # History:
 #  2008/10/01 v0.1i: First version of the wrapper script.
