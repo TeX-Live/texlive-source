@@ -70,7 +70,7 @@ TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 % Per-user texmf tree(s) -- organized per the TDS, as usual.  To define
 % more than one per-user tree, set this to a list of directories in
 % braces, as described above.  (This used to be HOMETEXMF.)  ~ expands
-% to %USERPROFILE% on Window, $HOME otherwise.
+% to %USERPROFILE% on Windows, $HOME otherwise.
 TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.
@@ -588,13 +588,14 @@ TEX = etex
 % given as command line option or environment variable.
 BIBTEX_CSFILE = 88591lat.csf
 
-% This variable is specific to Windows.  It must be set to 0 or 1.  It
-% tells script wrappers to use an already installed Perl interpreter if
-% one is found on the search path, in preference to the Perl shipped
-% with TeX Live.  Thus, it may be useful if you (a) installed a full
-% Perl distribution for general use, and (b) need to run Perl programs
-% from TL that use additional modules we don't provide.  The TL Perl
-% does provide all the standard modules.
+% This variable is specific to Windows.  It must be set to 0 or 1.  The
+% default is 0.  Setting it to 1 tells the Windows script wrappers to
+% use an already installed Perl interpreter if one is found on the
+% search path, in preference to the Perl shipped with TeX Live.  Thus,
+% it may be useful if you both (a) installed a full Perl distribution
+% for general use, and (b) need to run Perl programs from TL that use
+% additional modules we don't provide.  The TL Perl does provide all the
+% standard Perl modules.
 %
 %TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL = 0
 

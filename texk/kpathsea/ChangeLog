@@ -1,3 +1,7 @@
+2011-05-22  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf: doc fixes.
+
 2011-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* absolute.c: Partially revert the minor rewrite.
