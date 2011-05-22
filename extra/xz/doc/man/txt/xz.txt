@@ -466,10 +466,10 @@ OPTIONS
 
        --no-adjust
               Display an error and exit if the compression settings exceed the
-              the  memory  usage limit.  The default is to adjust the settings
-              downwards so that the memory usage limit is not exceeded.  Auto-
-              matic  adjusting  is  always  disabled when creating raw streams
-              (--format=raw).
+              memory usage limit.  The default is to adjust the settings down-
+              wards so that the memory usage limit is not exceeded.  Automatic
+              adjusting  is  always disabled when creating raw streams (--for-
+              mat=raw).
 
        -T threads, --threads=threads
               Specify the number of worker threads to use.  The actual  number

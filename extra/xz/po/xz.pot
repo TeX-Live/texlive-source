@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: lasse.collin@tukaani.org\n"
-"POT-Creation-Date: 2011-04-01 08:48+0300\n"
+"POT-Creation-Date: 2011-05-21 16:30+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -402,58 +402,67 @@ msgstr ""
 msgid "Cannot read data from standard input when reading filenames from standard input"
 msgstr ""
 
-#: src/xz/message.c:792 src/xz/message.c:842
+#. TRANSLATORS: This is the program name in the beginning
+#. of the line in messages. Usually it becomes "xz: ".
+#. This is a translatable string because French needs
+#. a space before a colon.
+#: src/xz/message.c:733
+#, c-format
+msgid "%s: "
+msgstr ""
+
+#: src/xz/message.c:796 src/xz/message.c:846
 msgid "Internal error (bug)"
 msgstr ""
 
-#: src/xz/message.c:799
+#: src/xz/message.c:803
 msgid "Cannot establish signal handlers"
 msgstr ""
 
-#: src/xz/message.c:808
+#: src/xz/message.c:812
 msgid "No integrity check; not verifying file integrity"
 msgstr ""
 
-#: src/xz/message.c:811
+#: src/xz/message.c:815
 msgid "Unsupported type of integrity check; not verifying file integrity"
 msgstr ""
 
-#: src/xz/message.c:818
+#: src/xz/message.c:822
 msgid "Memory usage limit reached"
 msgstr ""
 
-#: src/xz/message.c:821
+#: src/xz/message.c:825
 msgid "File format not recognized"
 msgstr ""
 
-#: src/xz/message.c:824
+#: src/xz/message.c:828
 msgid "Unsupported options"
 msgstr ""
 
-#: src/xz/message.c:827
+#: src/xz/message.c:831
 msgid "Compressed data is corrupt"
 msgstr ""
 
-#: src/xz/message.c:830
+#: src/xz/message.c:834
 msgid "Unexpected end of input"
 msgstr ""
 
-#: src/xz/message.c:881
+#: src/xz/message.c:885
 #, c-format
 msgid "%s MiB of memory is required. The limit is %s."
 msgstr ""
 
-#: src/xz/message.c:1048
+#: src/xz/message.c:1052
 #, c-format
 msgid "%s: Filter chain: %s\n"
 msgstr ""
 
-#: src/xz/message.c:1058
+#: src/xz/message.c:1062
 #, c-format
 msgid "Try `%s --help' for more information."
 msgstr ""
 
-#: src/xz/message.c:1084
+#: src/xz/message.c:1088
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -461,15 +470,15 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/xz/message.c:1091
+#: src/xz/message.c:1095
 msgid "Mandatory arguments to long options are mandatory for short options too.\n"
 msgstr ""
 
-#: src/xz/message.c:1095
+#: src/xz/message.c:1099
 msgid " Operation mode:\n"
 msgstr ""
 
-#: src/xz/message.c:1098
+#: src/xz/message.c:1102
 msgid ""
 "  -z, --compress      force compression\n"
 "  -d, --decompress    force decompression\n"
@@ -477,20 +486,20 @@ msgid ""
 "  -l, --list          list information about .xz files"
 msgstr ""
 
-#: src/xz/message.c:1104
+#: src/xz/message.c:1108
 msgid ""
 "\n"
 " Operation modifiers:\n"
 msgstr ""
 
-#: src/xz/message.c:1107
+#: src/xz/message.c:1111
 msgid ""
 "  -k, --keep          keep (don't delete) input files\n"
 "  -f, --force         force overwrite of output file and (de)compress links\n"
 "  -c, --stdout        write to standard output and don't delete input files"
 msgstr ""
 
-#: src/xz/message.c:1113
+#: src/xz/message.c:1117
 msgid ""
 "      --no-sparse     do not create sparse files when decompressing\n"
 "  -S, --suffix=.SUF   use the suffix `.SUF' on compressed files\n"
@@ -500,13 +509,13 @@ msgid ""
 "      --files0[=FILE] like --files but use the null character as terminator"
 msgstr ""
 
-#: src/xz/message.c:1121
+#: src/xz/message.c:1125
 msgid ""
 "\n"
 " Basic file format and compression options:\n"
 msgstr ""
 
-#: src/xz/message.c:1123
+#: src/xz/message.c:1127
 msgid ""
 "  -F, --format=FMT    file format to encode or decode; possible values are\n"
 "                      `auto' (default), `xz', `lzma', and `raw'\n"
@@ -514,19 +523,19 @@ msgid ""
 "                      `crc32', `crc64' (default), or `sha256'"
 msgstr ""
 
-#: src/xz/message.c:1130
+#: src/xz/message.c:1134
 msgid ""
 "  -0 ... -9           compression preset; default is 6; take compressor *and*\n"
 "                      decompressor memory usage into account before using 7-9!"
 msgstr ""
 
-#: src/xz/message.c:1134
+#: src/xz/message.c:1138
 msgid ""
 "  -e, --extreme       try to improve compression ratio by using more CPU time;\n"
 "                      does not affect decompressor memory requirements"
 msgstr ""
 
-#: src/xz/message.c:1139
+#: src/xz/message.c:1143
 #, no-c-format
 msgid ""
 "      --memlimit-compress=LIMIT\n"
@@ -536,19 +545,19 @@ msgid ""
 "                      or both; LIMIT is in bytes, % of RAM, or 0 for defaults"
 msgstr ""
 
-#: src/xz/message.c:1146
+#: src/xz/message.c:1150
 msgid ""
 "      --no-adjust     if compression settings exceed the memory usage limit,\n"
 "                      give an error instead of adjusting the settings downwards"
 msgstr ""
 
-#: src/xz/message.c:1152
+#: src/xz/message.c:1156
 msgid ""
 "\n"
 " Custom filter chain for compression (alternative for using presets):"
 msgstr ""
 
-#: src/xz/message.c:1161
+#: src/xz/message.c:1165
 msgid ""
 "\n"
 "  --lzma1[=OPTS]      LZMA1 or LZMA2; OPTS is a comma-separated list of zero or\n"
@@ -564,7 +573,7 @@ msgid ""
 "                        depth=NUM  maximum search depth; 0=automatic (default)"
 msgstr ""
 
-#: src/xz/message.c:1176
+#: src/xz/message.c:1180
 msgid ""
 "\n"
 "  --x86[=OPTS]        x86 BCJ filter (32-bit and 64-bit)\n"
@@ -577,7 +586,7 @@ msgid ""
 "                        start=NUM  start offset for conversions (default=0)"
 msgstr ""
 
-#: src/xz/message.c:1188
+#: src/xz/message.c:1192
 msgid ""
 "\n"
 "  --delta[=OPTS]      Delta filter; valid OPTS (valid values; default):\n"
@@ -585,49 +594,49 @@ msgid ""
 "                                   from each other (1-256; 1)"
 msgstr ""
 
-#: src/xz/message.c:1196
+#: src/xz/message.c:1200
 msgid ""
 "\n"
 " Other options:\n"
 msgstr ""
 
-#: src/xz/message.c:1199
+#: src/xz/message.c:1203
 msgid ""
 "  -q, --quiet         suppress warnings; specify twice to suppress errors too\n"
 "  -v, --verbose       be verbose; specify twice for even more verbose"
 msgstr ""
 
-#: src/xz/message.c:1204
+#: src/xz/message.c:1208
 msgid "  -Q, --no-warn       make warnings not affect the exit status"
 msgstr ""
 
-#: src/xz/message.c:1206
+#: src/xz/message.c:1210
 msgid "      --robot         use machine-parsable messages (useful for scripts)"
 msgstr ""
 
-#: src/xz/message.c:1209
+#: src/xz/message.c:1213
 msgid ""
 "      --info-memory   display the total amount of RAM and the currently active\n"
 "                      memory usage limits, and exit"
 msgstr ""
 
-#: src/xz/message.c:1212
+#: src/xz/message.c:1216
 msgid ""
 "  -h, --help          display the short help (lists only the basic options)\n"
 "  -H, --long-help     display this long help and exit"
 msgstr ""
 
-#: src/xz/message.c:1216
+#: src/xz/message.c:1220
 msgid ""
 "  -h, --help          display this short help and exit\n"
 "  -H, --long-help     display the long help (lists also the advanced options)"
 msgstr ""
 
-#: src/xz/message.c:1221
+#: src/xz/message.c:1225
 msgid "  -V, --version       display the version number and exit"
 msgstr ""
 
-#: src/xz/message.c:1223
+#: src/xz/message.c:1227
 msgid ""
 "\n"
 "With no FILE, or when FILE is -, read standard input.\n"
@@ -637,12 +646,12 @@ msgstr ""
 #. for this package. Please add _another line_ saying
 #. "Report translation bugs to <...>\n" with the email or WWW
 #. address for translation bugs. Thanks.
-#: src/xz/message.c:1229
+#: src/xz/message.c:1233
 #, c-format
 msgid "Report bugs to <%s> (in English or Finnish).\n"
 msgstr ""
 
-#: src/xz/message.c:1231
+#: src/xz/message.c:1235
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr ""
