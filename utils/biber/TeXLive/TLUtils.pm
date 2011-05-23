@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 22350 2011-05-08 00:12:42Z reinhardk $
+# $Id: TLUtils.pm 22457 2011-05-13 17:24:55Z siepo $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 22350 $';
+my $svnrev = '$Revision: 22457 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -1515,9 +1515,9 @@ sub do_postaction {
     } elsif ($pa =~ m/\s*fileassoc\s+(.*)\s*$/) {
       $ret &&= _do_postaction_fileassoc($how, $do_fileassocs, $tlpobj, $1);
       next;
-    } elsif ($pa =~ m/\s*appreg\s+(.*)\s*$/) {
+    } elsif ($pa =~ m/\s*progid\s+(.*)\s*$/) {
       next unless $do_fileassocs;
-      $ret &&= _do_postaction_application($how, $tlpobj, $1);
+      $ret &&= _do_postaction_progid($how, $tlpobj, $1);
     } elsif ($pa =~ m/\s*script\s+(.*)\s*$/) {
       next unless $do_script;
       $ret &&= _do_postaction_script($how, $tlpobj, $1);
@@ -1611,63 +1611,37 @@ sub _do_postaction_filetype {
   return 1;
 }
 
-sub _do_postaction_application {
+# alternate filetype (= progid) for an extension;
+# associated program shows up in `open with' menu
+sub _do_postaction_progid {
   my ($how, $tlpobj, $pa) = @_;
   return 1 unless win32();
   my ($errors, %keyval) =
-    parse_into_keywords($pa, qw/prog cmd exts/);
+    parse_into_keywords($pa, qw/extension filetype/);
 
   if ($errors) {
     tlwarn("parsing the postaction line >>$pa<< did not succeed!\n");
     return 0;
   }
 
-  # prog
-  if (!defined($keyval{'prog'})) {
-    tlwarn("prog of appreg postaction not given\n");
+  if (!defined($keyval{'extension'})) {
+    tlwarn("extension of progid postaction not given\n");
     return 0;
   }
-  my $prog = $keyval{'prog'};
+  my $extension = $keyval{'extension'};
 
-  if (!defined($keyval{'cmd'})) {
-    tlwarn("cmd of appreg postaction not given\n");
+  if (!defined($keyval{'filetype'})) {
+    tlwarn("filetype of progid postaction not given\n");
     return 0;
   }
-  my $cmd = $keyval{'cmd'};
+  my $filetype = $keyval{'filetype'};
 
-  my $exts_arr = [];
-  my $e;
-  my $exts = '';
-  if (!defined($keyval{'exts'})) {
-    tlwarn("exts of appreg postaction not given\n");
-  } else {
-    $exts = $keyval{'exts'};
-    foreach $e (split /\|/, $exts) {
-      if ($e =~ /^\./) {
-        push @$exts_arr, $e;
-      } else {
-        tlwarn("Invalid extension $e for $prog ignored\n");
-      }
-    }
-  }
-
-  my $texdir = `kpsewhich -var-value=SELFAUTOPARENT`;
-  chomp($texdir);
-  my $texdir_bsl = conv_to_w32_path($texdir);
-  $cmd =~ s!^("?)TEXDIR/!$1$texdir/!g;
-
-  &log("postaction $how appreg for " . $tlpobj->name .
-    ": $prog, $cmd, $exts\n");
+  &log("postaction $how progid for " . $tlpobj->name .
+    ": $extension, $filetype\n");
   if ($how eq "install") {
-    TeXLive::TLWinGoo::register_application($prog, $cmd, $exts_arr);
-    foreach $e (@$exts_arr) {
-      TeXLive::TLWinGoo::add_to_openwithlist($e, $prog);
-    }
+    TeXLive::TLWinGoo::add_to_progids($extension, $filetype);
   } elsif ($how eq "remove") {
-    TeXLive::TLWinGoo::unregister_application($prog);
-    foreach $e (@$exts_arr) {
-      TeXLive::TLWinGoo::remove_from_openwithlist($e, $prog);
-    }
+    TeXLive::TLWinGoo::remove_from_progids($extension, $filetype);
   } else {
     tlwarn("Unknown mode $how\n");
     return 0;
@@ -3223,21 +3197,22 @@ sub forward_slashify {
 
 =item C<setup_persistent_downloads()>
 
-Set up to use persistent connections using LWP/TLDownload.
+Set up to use persistent connections using LWP/TLDownload, that is look
+for a download server.  Return the TLDownload object if successful, else
+false.
 
 =cut
 
-sub setup_persistent_downloads
-{
+sub setup_persistent_downloads {
   if ($TeXLive::TLDownload::net_lib_avail) {
-    debug("setting up persistent downloads succeeded!\n");
+    ddebug("setup_persistent_downloads has net_lib_avail set\n");
     $::tldownload_server = TeXLive::TLDownload->new;
     if (!defined($::tldownload_server)) {
-      debug("TLUtils:setup_persistent_downloads: ::tldownload_server undefined\n");
+      ddebug("TLUtils:setup_persistent_downloads: failed to get ::tldownload_server\n");
     } else {
-      debug("TLUtils:setup_persistent_downloads: succeeded in getting ::tldownload_server\n");
+      ddebug("TLUtils:setup_persistent_downloads: got ::tldownload_server\n");
     }
-    return ($::tldownload_server);
+    return $::tldownload_server;
   }
   return 0;
 }
