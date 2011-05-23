@@ -1,3 +1,11 @@
+2011-05-23  Karl Berry  <karl@tug.org>
+
+	* cnf-to-paths.awk: new awk script.
+	* Makefile.am (stamp-paths): use it instead of the inline sed.
+	Also, change the generated paths.h so that all non-SELFAUTO paths
+	become a constant string "/nonesuch".  That way, if the definitions
+	change, the binaries don't all uselessly change with them.
+
 2011-05-22  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf: doc fixes.

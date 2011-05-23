@@ -157,40 +157,15 @@ kpseinclude_HEADERS = \
 	xopendir.h \
 	xstat.h
 
-## First null out comments and leading/trailing whitespace, then remove
-## lines that define invalid C identifiers, then remove blank lines and
-## lines that define lowercase values (those are never path values).
-## Each line remaining looks like
-## <name> = <value>
-## (but = and surrounding spaces are optional, hence can't remove all spaces).
-## Change this to #ifndef DEFAULT_name@#define DEFAULT_name "value"@#endif,
-## then change the @'s to newlines (sed isn't good at multiline replacements).
-##
-## No backslash-newline escapes in the long sed replacement because that
-## will turn into a space in the output.
-##
-## We replace the $TEXMF* references with nonexisting directories.  These
-## are the compile-time defaults and are not useful in the native TL
-## builds; we rely completely on the self-location.  (Previously, the
-## random build-time paths would get included in the binaries, to
-## consequent confusion.)
-##
-## We preserve the $SELFAUTO* references, since the selfauto-using
-## compile-time path for cnf files is how texmf.cnf gets found, which
-## determines everything else.
-##
-## The definition of DEFAULT_TEXMF (and other variables)
-## that winds up in the final paths.h will not be used.
-##
+## Handle backslash continuations, then null out comments and
+## leading/trailing whitespace.  An awk script does the rest.
+## 
 ## We don't want to rewrite paths.h when we have only changed comments
 ## in texmf.cnf that have no effect on paths.h, since that would cause
 ## almost everything to be rebuilt.
 ##
-## We also replace all semicolons with colons in the paths.
-## (The path-splitting code should be changed to understand both.)
-##
 paths.h: stamp-paths
-stamp-paths: texmf.cnf bsnl.awk
+stamp-paths: texmf.cnf bsnl.awk cnf-to-paths.awk
 # ensure grep is not completely broken, e.g., from GREP_OPTIONS.
 	echo a | grep -v b >/dev/null || { echo "*** grep broken, goodbye."; exit 1; }
 #
@@ -198,21 +173,7 @@ stamp-paths: texmf.cnf bsnl.awk
 	echo "/* paths.h: Generated from texmf.cnf. */" >paths.tmp
 	awk -f $(srcdir)/bsnl.awk $(srcdir)/texmf.cnf \
 	| sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' \
-	| grep '^[ 	]*[A-Z0-9_]*[ 	=]' \
-	| sed '/^$$/d' \
-	| sed 's/^\([^ 	=]*\)[ 	]*=*[ 	]*\(.*\)/#ifndef DEFAULT_\1%#define DEFAULT_\1 "\2"%#endif/' \
-	| tr '%' '\012' \
-	| sed -e 's%\$$TEXMFCONFIG%/nonesuch/texmfconfig%g' \
-	      -e 's%\$$TEXMFDIST%/nonesuch/texmfdist%g' \
-	      -e 's%\$$TEXMFDOCDIR%/nonesuch/texmfdocdir%g' \
-	      -e 's%\$$TEXMFLOCAL%/nonesuch/texmflocal%g' \
-	      -e 's%\$$TEXMFMAIN%/nonesuch/texmfmain%g' \
-	      -e 's%\$$TEXMFSYSCONFIG%/nonesuch/texmfsysconfig%g' \
-	      -e 's%\$$TEXMFSYSVAR%/nonesuch/texmfsysvar%g' \
-	      -e 's%\$$TEXMFVAR%/nonesuch/texmfvar%g' \
-	      -e 's%\$$TEXMF%/nonesuch/texmf%g' \
-	      -e 's%\$$VARTEXFONTS%/nonesuch/vartexfonts%g' \
-	| sed -e 's%;%:%g' \
+	| awk -f $(srcdir)/cnf-to-paths.awk \
 	>>paths.tmp
 	@if cmp -s paths.h paths.tmp 2>/dev/null; then \
 	  echo "paths.h is unchanged"; \

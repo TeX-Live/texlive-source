@@ -1750,7 +1750,7 @@ rebuild: all
 $(libkpathsea_la_OBJECTS): paths.h kpathsea.h
 
 paths.h: stamp-paths
-stamp-paths: texmf.cnf bsnl.awk
+stamp-paths: texmf.cnf bsnl.awk cnf-to-paths.awk
 # ensure grep is not completely broken, e.g., from GREP_OPTIONS.
 	echo a | grep -v b >/dev/null || { echo "*** grep broken, goodbye."; exit 1; }
 #
@@ -1758,21 +1758,7 @@ stamp-paths: texmf.cnf bsnl.awk
 	echo "/* paths.h: Generated from texmf.cnf. */" >paths.tmp
 	awk -f $(srcdir)/bsnl.awk $(srcdir)/texmf.cnf \
 	| sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' \
-	| grep '^[ 	]*[A-Z0-9_]*[ 	=]' \
-	| sed '/^$$/d' \
-	| sed 's/^\([^ 	=]*\)[ 	]*=*[ 	]*\(.*\)/#ifndef DEFAULT_\1%#define DEFAULT_\1 "\2"%#endif/' \
-	| tr '%' '\012' \
-	| sed -e 's%\$$TEXMFCONFIG%/nonesuch/texmfconfig%g' \
-	      -e 's%\$$TEXMFDIST%/nonesuch/texmfdist%g' \
-	      -e 's%\$$TEXMFDOCDIR%/nonesuch/texmfdocdir%g' \
-	      -e 's%\$$TEXMFLOCAL%/nonesuch/texmflocal%g' \
-	      -e 's%\$$TEXMFMAIN%/nonesuch/texmfmain%g' \
-	      -e 's%\$$TEXMFSYSCONFIG%/nonesuch/texmfsysconfig%g' \
-	      -e 's%\$$TEXMFSYSVAR%/nonesuch/texmfsysvar%g' \
-	      -e 's%\$$TEXMFVAR%/nonesuch/texmfvar%g' \
-	      -e 's%\$$TEXMF%/nonesuch/texmf%g' \
-	      -e 's%\$$VARTEXFONTS%/nonesuch/vartexfonts%g' \
-	| sed -e 's%;%:%g' \
+	| awk -f $(srcdir)/cnf-to-paths.awk \
 	>>paths.tmp
 	@if cmp -s paths.h paths.tmp 2>/dev/null; then \
 	  echo "paths.h is unchanged"; \
