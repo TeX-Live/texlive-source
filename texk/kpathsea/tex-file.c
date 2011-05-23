@@ -687,7 +687,7 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
       break;
     case kpse_truetype_format:
       INIT_FORMAT ("truetype fonts", DEFAULT_TTFONTS, TRUETYPE_ENVS);
-#define TRUETYPE_SUFFIXES ".ttf", ".ttc", ".TTF", ".TTC"
+#define TRUETYPE_SUFFIXES ".ttf", ".ttc", ".TTF", ".TTC", ".dfont"
       SUFFIXES (TRUETYPE_SUFFIXES);
       FMT_INFO.suffix_search_only = false;
       FMT_INFO.binmode = true;

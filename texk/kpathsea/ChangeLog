@@ -1,3 +1,9 @@
+2011-05-24  Karl Berry  <karl@tug.org>
+
+	* tex-file.c (TRUETYPE_SUFFIXES): add .dfont.
+	Request from Dohyun Kim, 23 May 2011 16:09:03.
+	* doc/kpathsea.texi (Supported file formats): mention it.
+
 2011-05-23  Karl Berry  <karl@tug.org>
 
 	* cnf-to-paths.awk: new awk script.

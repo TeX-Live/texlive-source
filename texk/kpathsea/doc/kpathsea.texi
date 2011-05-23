@@ -1162,7 +1162,7 @@ type1 fonts: .pfa .pfb
 vf: .vf
 dvips config (dvipsconfig):
 ist: .ist
-truetype fonts: .ttf .ttc .TTF .TTC
+truetype fonts: .ttf .ttc .TTF .TTC .dfont
 type42 fonts: .t42 .T42
 web2c files (web2c):
 other text files (othertext):
@@ -1862,8 +1862,8 @@ dynamic creation program: @code{mktextfm}.
 @flindex .ttf
 @flindex .ttc
 @vindex TTFONTS
-(TrueType outline fonts) @code{TTFONTS}; suffixes @samp{.ttf},
-@samp{.ttc}.
+(TrueType outline fonts) @code{TTFONTS}; suffixes @samp{.ttf} and
+@samp{.TTF}, @samp{.ttc} and @samp{.TTC}, @samp{.dfont}.
 
 @item type1 fonts
 @flindex .pfa

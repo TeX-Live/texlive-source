@@ -2586,7 +2586,7 @@ filename, and returns the first file found.
           vf: .vf
           dvips config (dvipsconfig):
           ist: .ist
-          truetype fonts: .ttf .ttc .TTF .TTC
+          truetype fonts: .ttf .ttc .TTF .TTC .dfont
           type42 fonts: .t42 .T42
           web2c files (web2c):
           other text files (othertext):
@@ -3052,7 +3052,8 @@ environment variables with an underscore, e.g., `TEXINPUTS_latex'
      invocation.)  `TRFONTS'.
 
 `truetype fonts'
-     (TrueType outline fonts) `TTFONTS'; suffixes `.ttf', `.ttc'.
+     (TrueType outline fonts) `TTFONTS'; suffixes `.ttf' and `.TTF',
+     `.ttc' and `.TTC', `.dfont'.
 
 `type1 fonts'
      (Type 1 PostScript outline fonts, *note Glyph files: (dvips)Glyph
@@ -3707,9 +3708,9 @@ Index
 * .ovp:                                  Supported file formats.
                                                               (line 147)
 * .pfa:                                  Supported file formats.
-                                                              (line 199)
+                                                              (line 200)
 * .pfb:                                  Supported file formats.
-                                                              (line 199)
+                                                              (line 200)
 * .pk:                                   Supported file formats.
                                                               (line 154)
 * .pool:                                 Supported file formats.
@@ -3729,7 +3730,7 @@ Index
 * .ttf:                                  Supported file formats.
                                                               (line 196)
 * .vf:                                   Supported file formats.
-                                                              (line 207)
+                                                              (line 208)
 * .w:                                    Supported file formats.
                                                               (line  43)
 * .web:                                  Supported file formats.
@@ -3952,9 +3953,9 @@ Index
 * dvipdfmx.cfg:                          Specially-recognized files.
                                                               (line  19)
 * DVIPSFONTS:                            Supported file formats.
-                                                              (line 242)
+                                                              (line 243)
 * DVIPSHEADERS:                          Supported file formats.
-                                                              (line 199)
+                                                              (line 200)
 * DVIPSMAKEPK:                           mktex script names.  (line  32)
 * DVIPSSIZES:                            Fallback font.       (line   6)
 * dynamic creation of files:             mktex scripts.       (line   6)
@@ -4036,7 +4037,7 @@ Index
 * fontnames, arbitrary length:           Fontmap.             (line  15)
 * fonts, being created:                  Simple installation. (line  79)
 * FOOINPUTS:                             Supported file formats.
-                                                              (line 224)
+                                                              (line 225)
 * fopen, redefined:                      Debugging.           (line  54)
 * format of external database:           Database format.     (line   6)
 * FreeBSD configure error:               Empty Makefiles.     (line   6)
@@ -4482,11 +4483,11 @@ Index
 * system dependencies:                   Running configure.   (line   6)
 * system V universe:                     Running make.        (line  44)
 * T1FONTS:                               Supported file formats.
-                                                              (line 199)
+                                                              (line 200)
 * T1INPUTS:                              Supported file formats.
-                                                              (line 199)
+                                                              (line 200)
 * T42FONTS:                              Supported file formats.
-                                                              (line 204)
+                                                              (line 205)
 * tcfmgr.map:                            Specially-recognized files.
                                                               (line  47)
 * TDS <1>:                               TeX directory structure.
@@ -4632,7 +4633,7 @@ Index
 * version numbers, determining:          Bug checklist.       (line  15)
 * VF files, not found:                   Searching overview.  (line  31)
 * VFFONTS:                               Supported file formats.
-                                                              (line 207)
+                                                              (line 208)
 * VMS support:                           Custom installation. (line  19)
 * Vojta, Paul:                           History.             (line  30)
 * Walsh, Norman:                         History.             (line  57)
@@ -4645,10 +4646,10 @@ Index
                                                               (line   6)
 * wcstombs:                              dlopen.              (line   6)
 * WEB2C:                                 Supported file formats.
-                                                              (line 215)
+                                                              (line 216)
 * Weber, Olaf:                           History.             (line  74)
 * WEBINPUTS:                             Supported file formats.
-                                                              (line 211)
+                                                              (line 212)
 * whitespace, in fontmap files:          Fontmap.             (line  28)
 * whitespace, not ignored on continuation lines: Config files.
                                                               (line  37)
@@ -4663,7 +4664,7 @@ Index
 * XDvi:                                  Specially-recognized files.
                                                               (line  41)
 * XDVIFONTS:                             Supported file formats.
-                                                              (line 242)
+                                                              (line 243)
 * XDVIMAKEPK:                            mktex script names.  (line  32)
 * XDVISIZES:                             Fallback font.       (line   6)
 * XLDFLAGS:                              Running make.        (line  29)
@@ -4739,22 +4740,22 @@ Node: Filename aliases100803
 Node: Database format101981
 Node: Invoking kpsewhich102994
 Node: Path searching options103940
-Node: Specially-recognized files112104
-Node: Auxiliary tasks113460
-Node: Standard options115285
-Node: TeX support115641
-Node: Supported file formats116932
-Node: File lookup124449
-Node: Glyph lookup126198
-Node: Basic glyph lookup127322
-Node: Fontmap128201
-Node: Fallback font130818
-Node: Suppressing warnings131731
-Node: Programming132836
-Node: Programming overview133349
-Node: Calling sequence136043
-Node: Program-specific files142566
-Node: Programming with config files143589
-Node: Index144901
+Node: Specially-recognized files112111
+Node: Auxiliary tasks113467
+Node: Standard options115292
+Node: TeX support115648
+Node: Supported file formats116939
+Node: File lookup124493
+Node: Glyph lookup126242
+Node: Basic glyph lookup127366
+Node: Fontmap128245
+Node: Fallback font130862
+Node: Suppressing warnings131775
+Node: Programming132880
+Node: Programming overview133393
+Node: Calling sequence136087
+Node: Program-specific files142610
+Node: Programming with config files143633
+Node: Index144945
 
 End Tag Table
