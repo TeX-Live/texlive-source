@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/otps/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
@@ -23,7 +23,9 @@ noinst_HEADERS = otp.h routines.h yystype.h
 
 if OTANGLE
 bin_PROGRAMS = $(otps_programs)
-if !WIN32
+if WIN32
+SUBDIRS = win32
+else !WIN32
 bin_SCRIPTS = $(otps_scripts)
 endif !WIN32
 dist_man1_MANS = $(otps_programs:=.man) $(otps_scripts:=.man)

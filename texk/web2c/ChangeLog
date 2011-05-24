@@ -1,3 +1,7 @@
+2011-05-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (AC_CONFIG_FILES): Add otps/win32/Makefile.
+
 2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.h: Move generic_synctex_get_current_name() prototype

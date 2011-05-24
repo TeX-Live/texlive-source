@@ -22698,7 +22698,7 @@ fi
 subdirs="$subdirs web2c"
 
 
-ac_config_files="$ac_config_files Makefile doc/Makefile lib/Makefile man/Makefile omegafonts/Makefile otps/Makefile window/Makefile"
+ac_config_files="$ac_config_files Makefile doc/Makefile lib/Makefile man/Makefile omegafonts/Makefile otps/Makefile otps/win32/Makefile window/Makefile"
 
 ac_config_files="$ac_config_files web2c-sh"
 
@@ -23952,6 +23952,7 @@ do
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "omegafonts/Makefile") CONFIG_FILES="$CONFIG_FILES omegafonts/Makefile" ;;
     "otps/Makefile") CONFIG_FILES="$CONFIG_FILES otps/Makefile" ;;
+    "otps/win32/Makefile") CONFIG_FILES="$CONFIG_FILES otps/win32/Makefile" ;;
     "window/Makefile") CONFIG_FILES="$CONFIG_FILES window/Makefile" ;;
     "web2c-sh") CONFIG_FILES="$CONFIG_FILES web2c-sh" ;;
     "tangle-sh") CONFIG_FILES="$CONFIG_FILES tangle-sh" ;;

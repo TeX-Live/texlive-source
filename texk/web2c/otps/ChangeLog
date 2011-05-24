@@ -1,3 +1,10 @@
+2011-05-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkofm: Replace `$*' by `"$@"'.
+
+	* Makefile.am (SUBDIRS): Add win32 to build C programs from
+	Akira's W32TeX as WIN32 replacements for the shell scripts.
+
 2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [WIN32]: Skip mkocp and mkofm shell scripts.

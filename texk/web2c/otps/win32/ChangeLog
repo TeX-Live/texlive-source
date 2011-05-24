@@ -1,0 +1,10 @@
+2011-05-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkocp.c, mkofm.c: New files from Akira's W32TeX.
+
+	* mkocp.c: Drop use of getlongname() for 8+3 names.
+	Drop unused variable `i'.
+
+	* mkofm.c: #include <string.h> for strcpy() prototype.
+	Cast arg3 of spawnvp() to `const char* const*'.
+
