@@ -36,7 +36,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = mkocp$(EXEEXT) mkofm$(EXEEXT)
 subdir = otps/win32
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-asm.m4 \
@@ -299,6 +299,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 mkocp_CPPFLAGS = $(KPATHSEA_INCLUDES)
 mkocp_LDADD = $(KPATHSEA_LIBS)
 mkocp_DEPENDENCIES = $(KPATHSEA_DEPEND)
+EXTRA_DIST = ChangeLog
 all: all-am
 
 .SUFFIXES:

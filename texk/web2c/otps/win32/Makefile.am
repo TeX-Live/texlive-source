@@ -16,3 +16,5 @@ mkocp_DEPENDENCIES = $(KPATHSEA_DEPEND)
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
+EXTRA_DIST = ChangeLog
+
