@@ -760,8 +760,7 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
-CPP
-CPPFLAGS'
+CPP'
 
 
 # Initialize some variables set by options.
@@ -14289,7 +14288,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile"
+ac_config_files="$ac_config_files Makefile win32/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -15313,6 +15312,7 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "win32/Makefile") CONFIG_FILES="$CONFIG_FILES win32/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dviljk/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -20,6 +20,7 @@ $(libdvilj_a_OBJECTS): $(KPATHSEA_DEPEND)
 bin_PROGRAMS = dvilj dvilj2p dvilj4 dvilj4l
 
 if WIN32
+SUBDIRS = win32
 bin_PROGRAMS += dvilj6
 else !WIN32
 dist_bin_SCRIPTS = dvihp

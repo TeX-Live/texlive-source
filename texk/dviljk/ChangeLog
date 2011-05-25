@@ -1,3 +1,8 @@
+2011-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (SUBDIRS): Add win32 to build C program dvihp
+	from Akira's W32TeX as WIN32 replacements for the shell script.
+
 2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [WIN32]: Add dvilj6.exe wrapper.

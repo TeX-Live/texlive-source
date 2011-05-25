@@ -1,0 +1,10 @@
+2011-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvihp.c, mktex.h, mktexlib.h, stackenv.[ch], variables.h:
+	New files from Akira's W32TeX.
+
+	* dvihp.c, stackenv.c: #include <kpathsea/config.h>.
+	* dvihp.c (main): Drop use of getlongname() for 8+3 names.
+	Remove unused variables `dvicopy_log' and `dvilj_log'.
+	Declare almost all strings as const.
+	* mktexlib.h, stackenv.c: Declare mktex_version_string as const.
