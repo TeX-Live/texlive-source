@@ -1,3 +1,9 @@
+2011-05-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* db.c (kpathsea_db_search): Add `free (dir_part)'.
+	(kpathsea_db_search{,_list}): Declare a few strings as const.
+	(kpathsea_db_insert): Use pointer arith to avoid const warning.
+
 2011-05-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): Add the new cnf-to-paths.awk script.
