@@ -1,6 +1,6 @@
 This ps2pk program (all versions) is available under the same
 permissive license as the Type 1 interpreter code that it is based on
-(and incorporates.  For the exact wording, see, for example, the type1.c
+(and incorporates).  For the exact wording, see, for example, the type1.c
 source file.
 --Piet Tutelaers and Pierre MacKay, May 2011.
 
