@@ -1,6 +1,6 @@
 /* extend-fname.c: give a filename a suffix, if necessary.
 
-   Copyright 1992, 1993, 2008 Karl Berry.
+   Copyright 1992, 1993, 2008, 2011 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,9 +17,6 @@
 
 #include <kpathsea/config.h>
 
-
-/* We may or may not return NAME.  It's up to the caller not to assume
-   the return value is modifiable.  */
 
 const_string
 extend_filename (const_string name, const_string default_suffix)
