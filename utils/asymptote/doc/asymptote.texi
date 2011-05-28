@@ -382,8 +382,8 @@ The @code{ImageMagick} package from
 @url{http://www.imagemagick.org/script/binary-releases.php} 
 
 @noindent
-is required to support output formats other than @acronym{EPS} and
-@acronym{PDF} (@pxref{convert}).
+is required to support output formats other than @acronym{EPS},
+@acronym{PDF}, @acronym{SVG}, and @acronym{PNG} (@pxref{convert}).
 The @code{Python} interpreter from @url{http://www.python.org} is only required
 if you wish to try out the graphical user interface (@pxref{GUI}).
 
@@ -532,7 +532,7 @@ under @code{Microsoft Windows XP}:
 @enumerate
 @item Click on the @code{Start} button;
 @item Right-click on @code{My Computer}; 
-@item Choose @code{Properties} from the popup menu;
+@item Choose @code{View system information};
 @item Click the @code{Advanced} tab; 
 @item Click the @code{Environment Variables} button.
 @end enumerate
@@ -788,14 +788,19 @@ application for the extension @code{asy}).
 @noindent
 @cindex @code{-V}
 This method, known as @emph{batch mode}, outputs a @code{PostScript}
-file @code{test.eps}. The @code{-V} option opens up a @code{PostScript}
-viewer window so you can immediately view the result:
+file @code{test.eps}. If you prefer @acronym{PDF} output, use
+the command line
+@verbatim
+asy -V -f pdf test
+@end verbatim
+In either case, the @code{-V} option opens up a viewer window so you
+can immediately view the result:
 @sp 1
 @center @image{diagonal}
 @cindex @code{bp}
 @noindent
-The @code{--} connector joins the two points @code{(0,0)} and
-@code{(100,100)} with a line segment. 
+Here, the @code{--} connector joins the two points @code{(0,0)} and
+@code{(100,100)} with a line segment.
 
 @section Drawing in interactive mode
 Another method is @emph{interactive mode}, where @code{Asymptote} reads
@@ -3260,12 +3265,14 @@ If exactly one of @code{x} or @code{y} is 0, no size restriction
 is imposed in that direction; it will be scaled the same as the other
 direction.
 
+@cindex @code{keepAspect}
 @cindex @code{Aspect}
 If @code{keepAspect} is set to @code{Aspect} or @code{true},
 the picture will be scaled with its aspect ratio preserved such that
 the final width is no more than @code{x} and the final height is
 no more than @code{y}.
 
+@cindex @code{keepAspect}
 @cindex @code{IgnoreAspect}
 If @code{keepAspect} is set to @code{IgnoreAspect} or @code{false},
 the picture will be scaled in both directions so that the final width
@@ -3668,6 +3675,10 @@ will be set to the end-of-file, and both reading and writing operations
 will be enabled. For security reasons, writing to files in directories
 other than the current directory is allowed only if the @code{-globalwrite}
 (or @code{-nosafe}) command-line option is specified.
+@cindex @code{mktemp}
+The function @code{string mktemp(string s)} may be used to create and
+return the name of a unique temporary file in the current directory
+based on the string @code{s}.
 
 @cindex @code{stdin}
 @cindex @code{stdout}
@@ -3691,6 +3702,8 @@ write(file file, suffix suffix=none);
 @cindex @code{flush}
 @cindex @code{endl}
 @cindex @code{newl}
+@cindex @code{DOSendl}
+@cindex @code{DOSnewl}
 @cindex @code{tab}
 @cindex @code{comma}
 If @code{file} is not specified, @code{stdout} is used and
@@ -3701,6 +3714,8 @@ or one-dimensional arrays. The @code{suffix} may be one of the following:
 @code{none} (do nothing), @code{flush} (output buffered data),
 @code{endl} (terminate with a newline and flush),
 @code{newl} (terminate with a newline),
+@code{DOSendl} (terminate with a DOS newline and flush),
+@code{DOSnewl} (terminate with a DOS newline),
 @code{tab} (terminate with a tab), or @code{comma} (terminate with a
 comma). Here are some simple examples of data output:
 @verbatim
@@ -4631,6 +4646,16 @@ write(f(4,3));
 @noindent
 and outputs 43.
 
+@cindex @code{keyword}
+@cindex keyword-only
+Parameters can be specified as ``keyword-only'' by putting @code{keyword}
+immediately before the parameter name, as in @code{int f(int keyword x)} or
+@code{int f(int keyword x=77)}.  This forces the caller of the function to use
+a named argument to give a value for this parameter.  That is, @code{f(x=42)}
+is legal, but @code{f(25)} is not.  Keyword-only parameters must be listed
+after normal parameters in a function definition.
+
+
 As a technical detail, we point out that, since variables of the same
 name but different signatures are allowed in the same scope, the code
 @verbatim
@@ -4714,6 +4739,17 @@ If no arguments are packed, then a zero-length array (as opposed to
 @code{null}) is bound to the rest parameter. Note that default
 arguments are ignored for rest formals and the rest argument is not
 bound to a keyword.
+
+In some cases, keyword-only parameters are helpful to avoid arguments intended
+for the rest parameter to be assigned to other parameters.  For example, here
+the use of @code{keyword} is to avoid @code{pnorm(1.0,2.0,0.3)} matching
+@code{1.0} to @code{p}.
+@verbatim
+real pnorm(real keyword p=2.0 ... real[] v)
+{
+  return sum(v^p)^(1/p);
+}
+@end verbatim
 
 The overloading resolution in @code{Asymptote} is similar to the
 function matching rules used in C++. Every argument match is given a
@@ -5081,9 +5117,10 @@ themselves (in which case they are each initialized to empty arrays).
 
 @cindex @code{array}
 @item T[] array(int n, T value, int depth=intMax)
-returns an array consisting of @code{n} deep copies of a 0, 1, or 2
-dimensional array @code{T value}. If @code{depth} is specified, this
-deep copying recurses to no more than the number of levels specified.
+returns an array consisting of @code{n} copies of @code{value}.
+If @code{value} is itself an array, a deep copy of @code{value} is made
+for each entry. If @code{depth} is specified, this deep copying only
+recurses to the specified number of levels.
 
 @cindex @code{sequence}
 @item int[] sequence(int n)
@@ -5931,7 +5968,7 @@ to the type.  This is regardless of what fields the variable actually possesses.
 @cindex @code{asymptote.sty}
 
 @code{Asymptote} comes with a convenient @code{LaTeX} style file
-@code{asymptote.sty} (version 1.15 or later) that makes @code{LaTeX}
+@code{asymptote.sty} that makes @code{LaTeX}
 @code{Asymptote}-aware. Entering @code{Asymptote} code
 directly into the @code{LaTeX} source file, at the point where it is
 needed, keeps figures organized and avoids the need to invent new file
@@ -5940,8 +5977,7 @@ names for each figure. Simply add the line
 and enclose your @code{Asymptote} code within a
 @code{\begin@{asy@}...\end@{asy@}} environment. As with the
 @code{LaTeX} @code{comment} environment, the @code{\end@{asy@}} command
-must appear on a line by itself, with no leading spaces or trailing
-commands/comments.
+must appear on a line by itself, with no trailing commands/comments.
 
 The sample @code{LaTeX} file below, named @code{latexusage.tex}, can
 be run as follows:
@@ -5959,11 +5995,11 @@ asy latexusage-*.asy
 pdflatex latexusage
 @end verbatim
 @noindent
-To switch between using @code{latex} and @code{pdflatex} you may first
-need to remove the files @code{latexusage-*}, @code{latexusage.pre}, and
-@code{latexusage.aux}. 
+To switch between using inline Asymptote code with @code{latex} and
+@code{pdflatex} you may first need to remove the files @code{latexusage-*.tex}.
 
 @cindex @code{latexmk}
+@cindex @code{perl}
 An even better method for processing a @code{LaTeX} file with embedded
 @code{Asymptote} code is to use the @code{latexmk} utility from
 @quotation
@@ -5981,16 +6017,26 @@ latexmk -pdf latexusage
 will then call @code{Asymptote} automatically, recompiling only the figures
 that have changed. Since each figure is compiled in a separate
 system process, this method also tends to use less memory.
+External @code{Asymptote} code in @code{filename.asy} should be included with
+@cindex @code{asyinclude}
+@verbatim
+\asyinclude[<options>]{<filename.asy>}
+@end verbatim
+@noindent
+so that @code{latexmk} will recognize when the code is changed. Note that
+@code{latemk} requires @code{perl}, available from @url{http://www.perl.org/}. 
 
 @cindex @code{width}
 @cindex @code{height}
+@cindex @code{keepAspect}
 @cindex @code{viewportwidth}
 @cindex @code{viewportheight}
 @cindex @code{attach}
 @cindex @code{inline}
-One can specify @code{width}, @code{height},
+One can specify @code{width}, @code{height}, @code{keepAspect},
 @code{viewportwidth}, @code{viewportheight}, @code{attach}, and @code{inline}.
-@code{keyval}-style options to the @code{asy} environment.
+@code{keyval}-style options to the @code{asy} and @code{asyinclude}
+environments.
 Three-dimensional @acronym{PRC} files may either be embedded within
 the page (the default) or attached as annotated (but printable)
 attachments, using the @code{attach} option and the @code{attachfile2}
@@ -7493,20 +7539,28 @@ Here is an example that uses logarithmic scaling of the function values:
 @sp 1
 @center @image{logimage}
 
-One can also draw an image directly from a two-dimensional pen array:
+One can also draw an image directly from a two-dimensional pen array
+or a function @code{pen f(int, int)}:
 @verbatim
 void image(picture pic=currentpicture, pen[][] data,
            pair initial, pair final,
            bool transpose=(initial.x < final.x && initial.y < final.y),
            bool copy=true, bool antialias=false);
+void image(picture pic=currentpicture, pen f(int, int), int width, int height,
+           pair initial, pair final, bool antialias=false);
 @end verbatim
 @noindent
-as illustrated in the following example:
+as illustrated in the following examples:
 
 @anchor{penimage}
 @verbatiminclude penimage.asy
 @sp 1
 @center @image{penimage}
+
+@anchor{penfunctionimage}
+@verbatiminclude penfunctionimage.asy
+@sp 1
+@center @image{penfunctionimage}
 
 For convenience, the module @code{palette} also defines functions
 that may be used to construct a pen array from a given function and palette:
@@ -8272,6 +8326,16 @@ Module @code{three} also defines the three-dimensional margins
 @code{PenMargins3},
 @code{BeginDotMargin3}, @code{EndDotMargin3}, @code{DotMargin3},
 @code{DotMargins3}, @code{Margin3}, and @code{TrueMargin3}.
+
+@cindex @code{pixel}
+The routine
+@verbatim
+void pixel(picture pic=currentpicture, triple v, pen p=currentpen,
+           real width=1);
+@end verbatim
+@noindent
+can be used to draw on picture @code{pic} a pixel of width @code{width} at
+position @code{v} using pen @code{p}.
 
 Further three-dimensional examples are provided in the files
 @code{near_earth.asy}, @code{conicurv.asy}, and (in the @code{animations}
@@ -9568,11 +9632,12 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  vectorfieldsphere RightView FrontView BackView BottomView CTZ
 @c  LocalWords:  addViews outprefix addAllViews xsplinetype ysplinetype rotateX
 @c  LocalWords:  usplinetype vsplinetype leftbutton middlebutton rightbutton
-@c  LocalWords:  rotateY rotateZ wheelup zoomin wheeldown zoomout TeXLive
+@c  LocalWords:  rotateY rotateZ wheelup zoomin wheeldown zoomout TeXLive pnorm
 @c  LocalWords:  viewportshift signedint signedness psview multiplatform nowarn
 @c  LocalWords:  singlereal singleint writeoverloaded dvisvg reddash lexorder
 @c  LocalWords:  bigdiagonal autobillboard dvisvgm maxtiles hyperrefOptions
 @c  LocalWords:  setpagesize pdfborder controlsystem OmitTickInterval SixViews
 @c  LocalWords:  OmitTickIntervals tickmodifiers autorotated SixViewsUS latexmk
 @c  LocalWords:  ThreeViewsUS ThreeViewsFR SixViewsFR ThreeViews partialsum
-@c  LocalWords:  defaultrender Vidiassov latexmkrc
+@c  LocalWords:  defaultrender Vidiassov latexmkrc mktemp DOSendl DOSnewl perl
+@c  LocalWords:  filename asyinclude latemk penfunctionimage

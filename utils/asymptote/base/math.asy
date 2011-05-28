@@ -113,6 +113,30 @@ real[] partialsum(real[] a, real[] dx)
   return b;
 }
 
+// Given an integer array a, return its partial sums.
+int[] partialsum(int[] a)
+{
+  int[] b=new int[a.length];
+  int sum=0;
+  for(int i=0; i < a.length; ++i) {
+    sum += a[i];
+    b[i]=sum;
+  }
+  return b;
+}
+
+// Given an integer array a, return its partial dx-weighted sums.
+int[] partialsum(int[] a, int[] dx)
+{
+  int[] b=new int[a.length];
+  int sum=0;
+  for(int i=0; i < a.length; ++i) {
+    sum += a[i]*dx[i];
+    b[i]=sum;
+  }
+  return b;
+}
+
 // If strict=false, return whether i > j implies a[i] >= a[j]
 // If strict=true, return whether  i > j implies a[i] > a[j]
 bool increasing(real[] a, bool strict=false)
@@ -232,11 +256,12 @@ bool rectangular(triple[][] m)
 // size of picture pic.
 void drawline(picture pic=currentpicture, pair P, pair Q, pen p=currentpen)
 {
-  pic.add(new void (frame f, transform t, transform, pair m, pair M) {
+  pic.add(new void (frame f, transform t, transform T, pair m, pair M) {
       // Reduce the bounds by the size of the pen.
       m -= min(p); M -= max(p);
 
       // Calculate the points and direction vector in the transformed space.
+      t=t*T;
       pair z=t*P;
       pair v=t*Q-z;
 

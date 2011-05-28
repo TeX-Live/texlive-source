@@ -34,11 +34,7 @@ bool castable(env &e, formal& target, formal& source) {
 score castScore(env &e, formal& target, formal& source) {
   return equivalent(target.t,source.t) ? EXACT :
     (!target.Explicit &&
-#ifdef FASTCAST
      e.fastCastable(target.t,source.t)) ? CAST : FAIL;
-#else
-     e.castable(target.t,source.t, symbol::castsym)) ? CAST : FAIL;
-#endif
 }
 
 
@@ -189,7 +185,12 @@ bool application::matchAtSpot(size_t spot, env &e, formal &source,
 {
   formal &target=sig->getFormal(spot);
   score s=castScore(e, target, source);
-  if (s!=FAIL) {
+
+  if (s == FAIL)
+    return false;
+  else if (sig->formalIsKeywordOnly(spot) && source.name == symbol::nullsym)
+    return false;
+  else {
     // The argument matches.
     args[spot]=seq.addArg(a, target.t, evalIndex);
     if (spot==index)
@@ -197,8 +198,6 @@ bool application::matchAtSpot(size_t spot, env &e, formal &source,
     scores.push_back(s);
     return true;
   }
-  else
-    return false;
 }
 
 bool application::matchArgument(env &e, formal &source,
@@ -257,6 +256,7 @@ bool application::matchSignature(env &e, types::signature *source,
 
 #if 0
   cout << "num args: " << f.size() << endl;
+  cout << "num keyword-only: " << sig->numKeywordOnly << endl;
 #endif
 
   // First, match all of the named (non-rest) arguments.
@@ -485,20 +485,13 @@ bool halfExactMightMatch(env &e,
   assert(formals[0].t);
   assert(formals[1].t);
 
-#ifdef FASTCAST
-#  define CASTABLE fastCastable
-#else
-#  define CASTABLE castable
-#endif
-
   // These casting tests if successful will be repeated again by
   // application::match.  It would be nice to avoid this somehow, but the
   // additional complexity is probably not worth the minor speed improvement.
   if (equivalent(formals[0].t, t1))
-     return e.CASTABLE(formals[1].t, t2);
+     return e.fastCastable(formals[1].t, t2);
   else 
-    return equivalent(formals[1].t, t2) && e.CASTABLE(formals[0].t, t1);
-#undef CASTABLE
+    return equivalent(formals[1].t, t2) && e.fastCastable(formals[0].t, t1);
 }
 
 // Most common after exact matches are cases such as
@@ -666,7 +659,6 @@ app_list multimatch(env &e,
                     types::signature *source,
                     arglist &al)
 {
-#ifdef EXACT_MATCH
   app_list a = exactMultimatch(e, o, source, al);
   if (!a.empty()) {
 #if DEBUG_CACHE
@@ -681,14 +673,11 @@ app_list multimatch(env &e,
   a = halfExactMultimatch(e, o, source, al);
   if (!a.empty()) {
 #if DEBUG_CACHE
-    // Make sure that exactMultimatch and the fallback return the same
-    // application(s).
     sameApplications(a, inexactMultimatch(e, o, source, al), DONT_TEST_EXACT);
 #endif
 
     return a;
   }
-#endif
 
   // Slow but most general method.
   return inexactMultimatch(e, o, source, al);

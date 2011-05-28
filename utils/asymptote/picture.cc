@@ -241,6 +241,18 @@ void texinit()
   } else {
     if(!dir.empty()) 
       cmd.push_back("-output-directory="+dir.substr(0,dir.length()-1));
+    if(getSetting<bool>("inlinetex")) {
+      string name=stripDir(stripExt((outname())));
+      size_t pos=name.rfind("-");
+      if(pos < string::npos) {
+        name=stripExt(name).substr(0,pos);
+        unlink((name+".aux").c_str());
+        cmd.push_back("-jobname="+name.substr(0,pos));
+#ifdef __CYGWIN__
+        cmd.push_back("NUL"); // For MikTeX
+#endif
+      }
+    }
     cmd.push_back("\\scrollmode");
   }
   
@@ -366,27 +378,48 @@ bool picture::texprocess(const string& texname, const string& outname,
             bool first=true;
             transform t=shift(bboxshift)*T;
             bool shift=!t.isIdentity();
-            string beginspecial="TeXDict begin @defspecial";
-            string endspecial="@fedspecial end";
+
+            const string beginspecial="TeXDict begin @defspecial";
+            const size_t beginlength=beginspecial.size();
+            const string endspecial="@fedspecial end";
+            const size_t endlength=endspecial.size();
+
             while(getline(fin,s)) {
-              if(s.find("%%DocumentPaperSizes:") == 0) continue;
-              if(s.find("%!PS-Adobe-") == 0) {
-                fout.header();
-              } else if(first && s.find("%%BoundingBox:") == 0) {
-                bbox box=b;
-                box.shift(bboxshift);
-                if(verbose > 2) BoundingBox(cout,box);
-                fout.BoundingBox(box);
-                first=false;
-              } else if(shift && s.find(beginspecial) == 0) {
-                fout.verbatimline(s);
-                fout.gsave();
-                fout.concat(t);
-              } else if(shift && s.find(endspecial) == 0) {
-                fout.grestore();
-                fout.verbatimline(s);
-              } else
-                fout.verbatimline(s);
+              if (s[0] == '%') {
+                if (s.find("%%DocumentPaperSizes:") == 0)
+                  continue;
+
+                if(s.find("%!PS-Adobe-") == 0) {
+                  fout.header();
+                  continue;
+                }
+
+                if (first && s.find("%%BoundingBox:") == 0) {
+                  bbox box=b;
+                  box.shift(bboxshift);
+                  if(verbose > 2) BoundingBox(cout,box);
+                  fout.BoundingBox(box);
+                  first=false;
+                  continue;
+                }
+              }
+              
+              if (shift) {
+                if (s.compare(0, beginlength, beginspecial) == 0) {
+                  fout.verbatimline(s);
+                  fout.gsave();
+                  fout.concat(t);
+                  continue;
+                }
+                if (s.compare(0, endlength, endspecial) == 0) {
+                  fout.grestore();
+                  fout.verbatimline(s);
+                  continue;
+                }
+              }
+
+              // For the default line, output it unchanged.
+              fout.verbatimline(s);
             }
           }
           if(!keep) {
@@ -430,6 +463,7 @@ int picture::epstopdf(const string& epsname, const string& pdfname)
   cmd.push_back("-dMaxSubsetPct=100");
   cmd.push_back("-dPDFSETTINGS=/prepress");
   cmd.push_back("-dCompatibilityLevel=1.4");
+  cmd.push_back("-P");
   if(safe)
     cmd.push_back("-dSAFER");
   if(!getSetting<bool>("autorotate"))
@@ -878,7 +912,7 @@ bool picture::shipout(picture *preamble, const string& Prefix,
       }
       if(status) {
         if(xobject) {
-          if(transparency)
+          if(pdf || transparency)
             status=(epstopdf(prename,Outname(prefix,"pdf",standardout)) == 0);
         } else {
           if(context) prename=stripDir(prename);

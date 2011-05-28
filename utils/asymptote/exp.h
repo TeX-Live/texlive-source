@@ -19,12 +19,18 @@
 
 namespace trans {
 class coenv;
+class coder;
+
+class label_t;
+typedef label_t *label;
+
 class application;
 }
 
 namespace absyntax {
 
 using trans::coenv;
+using trans::label;
 using trans::application;
 using trans::access;
 using sym::symbol;
@@ -155,7 +161,7 @@ public:
   // Evaluate the expression as a boolean.  If the result equals cond, jump to
   // the label dest, otherwise do not jump.  In either case, no value is left
   // on the stack.
-  virtual void transConditionalJump(coenv &e, bool cond, Int dest);
+  virtual void transConditionalJump(coenv &e, bool cond, label dest);
 
   // This is used to ensure the proper order and number of evaluations.  When
   // called, it immediately translates code to perform the side-effects
@@ -673,12 +679,26 @@ public:
   }
 
   virtual void add(argument a) {
+    if (rest.val) {
+      // TODO: Handle keyword arguments after rest with proper left-to-right
+      // ordering.
+      em.error(a.val->getPos());
+      em << "argument after rest argument";
+    }
     args.push_back(a);
   }
 
   virtual void add(exp *val, symbol name=symbol::nullsym) {
     argument a; a.val=val; a.name=name;
     add(a);
+  }
+
+  virtual void addRest(argument a) {
+    if (rest.val) {
+      em.error(a.val->getPos());
+      em << "additional rest argument";
+    }
+    rest = a;
   }
 
   virtual void prettyprint(ostream &out, Int indent);
@@ -862,10 +882,8 @@ public:
 
   void prettyprint(ostream &out, Int indent);
 
-#ifdef NO_FUNC_OPS
   types::ty *trans(coenv &e);
   types::ty *getType(coenv &e);
-#endif
 };
 
 
@@ -941,7 +959,7 @@ public:
   void prettyprint(ostream &out, Int indent);
 
   types::ty *trans(coenv &e);
-  void transConditionalJump(coenv &e, bool cond, Int dest);
+  void transConditionalJump(coenv &e, bool cond, label dest);
 };
 
 class andExp : public andOrExp {
@@ -952,7 +970,7 @@ public:
   void prettyprint(ostream &out, Int indent);
 
   types::ty *trans(coenv &e);
-  void transConditionalJump(coenv &e, bool cond, Int dest);
+  void transConditionalJump(coenv &e, bool cond, label dest);
 };
 
 class joinExp : public callExp {

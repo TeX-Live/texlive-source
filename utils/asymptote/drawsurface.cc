@@ -24,6 +24,14 @@ void storecolor(GLfloat *colors, int i, const vm::array &pens, int j)
   colors[i+2]=p.blue();
   colors[i+3]=p.opacity();
 }
+
+void storecolor(GLfloat *colors, int i, const RGBAColour& p)
+{
+  colors[i]=p.R;
+  colors[i+1]=p.G;
+  colors[i+2]=p.B;
+  colors[i+3]=p.A;
+}
 #endif  
 
 void drawSurface::bounds(bbox3& b)
@@ -128,11 +136,14 @@ bool drawSurface::write(prcfile *out, unsigned int *, array *, array *, double,
 
   PRCmaterial m(ambient,diffuse,emissive,specular,opacity,PRCshininess);
 
-  if(straight)
-    out->addRectangle(vertices,m);
-  else
+  if(straight) {
+    if(colors)
+      out->addQuad(vertices,colors);
+    else
+      out->addRectangle(vertices,m);
+  } else
     out->addPatch(controls,m);
-  
+                    
   return true;
 }
 
@@ -201,8 +212,9 @@ void drawSurface::render(GLUnurbs *nurb, double size2,
                          double perspective, bool transparent)
 {
 #ifdef HAVE_GL
-  if(invisible || ((colors ? colors[3]+colors[7]+colors[11]+colors[15] < 4.0
-                    : diffuse.A < 1.0) ^ transparent)) return;
+  if(invisible || 
+     ((colors ? colors[0].A+colors[1].A+colors[2].A+colors[3].A < 4.0 :
+       diffuse.A < 1.0) ^ transparent)) return;
   double s;
   static GLfloat Normal[3];
 
@@ -297,6 +309,10 @@ void drawSurface::render(GLUnurbs *nurb, double size2,
   bool havenormal=normal != zero;
   if(havebillboard) BB.init();
 
+  if(colors)
+    for(size_t i=0; i < 4; ++i)
+      storecolor(v,4*i,colors[i]);
+    
   if(!havenormal || (!straight && fraction(d,size3)*size2 >= pixel)) {
     if(lighton) {
       if(havenormal && fraction(dperp,size3)*size2 <= 0.1) {
@@ -324,12 +340,12 @@ void drawSurface::render(GLUnurbs *nurb, double size2,
     gluNurbsSurface(nurb,8,bezier,8,bezier,12,3,Controls,4,4,GL_MAP2_VERTEX_3);
     if(colors) {
       static GLfloat linear[]={0.0,0.0,1.0,1.0};
-      gluNurbsSurface(nurb,4,linear,4,linear,8,4,colors,2,2,GL_MAP2_COLOR_4);
+      gluNurbsSurface(nurb,4,linear,4,linear,8,4,v,2,2,GL_MAP2_COLOR_4);
     }
     
     gluEndSurface(nurb);
   } else {
-    GLfloat Vertices[12];
+    static GLfloat Vertices[12];
     
     if(havebillboard) {
       for(size_t i=0; i < 4; ++i)
@@ -348,16 +364,16 @@ void drawSurface::render(GLUnurbs *nurb, double size2,
     if(lighton)
       glNormal3fv(Normal);
     if(colors) 
-      glColor4fv(colors);
+      glColor4fv(v);
     glVertex3fv(Vertices);
     if(colors) 
-      glColor4fv(colors+8);
+      glColor4fv(v+8);
     glVertex3fv(Vertices+6);
     if(colors) 
-      glColor4fv(colors+12);
+      glColor4fv(v+12);
     glVertex3fv(Vertices+9);
     if(colors) 
-      glColor4fv(colors+4);
+      glColor4fv(v+4);
     glVertex3fv(Vertices+3);
     glEnd();
   }
@@ -504,11 +520,9 @@ void drawNurbs::render(GLUnurbs *nurb, double size2,
   triple m=B.Min();
   triple M=B.Max();
   
-  double s;
   if(perspective) {
     double f=m.getz()*perspective;
     double F=M.getz()*perspective;
-    s=max(f,F);
     if(M.getx() < min(f*Min.getx(),F*Min.getx()) || 
        m.getx() > max(f*Max.getx(),F*Max.getx()) ||
        M.gety() < min(f*Min.gety(),F*Min.gety()) ||
@@ -516,7 +530,6 @@ void drawNurbs::render(GLUnurbs *nurb, double size2,
        M.getz() < Min.getz() ||
        m.getz() > Max.getz()) return;
   } else {
-    s=1.0;
     if(M.getx() < Min.getx() || m.getx() > Max.getx() ||
        M.gety() < Min.gety() || m.gety() > Max.gety() ||
        M.getz() < Min.getz() || m.getz() > Max.getz()) return;
@@ -763,6 +776,50 @@ bool drawTube::write(prcfile *out, unsigned int *, array *, array *, double,
   }
       
   return true;
+}
+
+bool drawPixel::write(prcfile *out, unsigned int *, array *, array *, double,
+                      groupsmap&)
+{
+  if(invisible)
+    return true;
+
+  out->addPoint(v,c,width);
+  
+  return true;
+}
+  
+void drawPixel::render(GLUnurbs *nurb, double size2,
+                       const triple& Min, const triple& Max,
+                       double perspective, bool transparent) 
+{
+#ifdef HAVE_GL
+  if(invisible)
+    return;
+  
+  static GLfloat V[4];
+
+  glEnable(GL_COLOR_MATERIAL);
+  glColorMaterial(GL_FRONT_AND_BACK,GL_EMISSION);
+  
+  static GLfloat Black[]={0,0,0,1};
+  glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,Black);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,Black);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,Black);
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,0.0);
+
+  glPointSize(1.0+width);
+  
+  glBegin(GL_POINT);
+  storecolor(V,0,c);
+  glColor4fv(V);
+  store(V,v);
+  glVertex3fv(V);
+  glEnd();
+  
+  glPointSize(1.0);
+  glDisable(GL_COLOR_MATERIAL);
+#endif
 }
 
 } //namespace camp

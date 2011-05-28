@@ -52,7 +52,8 @@ void exp::transToType(coenv &e, types::ty *target)
     return;
   }
 
-#if FASTCAST
+  // See if the cast can be handled by the fastLookupCast method, which does
+  // less memory allocation.
   if (ct->kind != ty_overloaded &&
       ct->kind != ty_error &&
       target->kind != ty_error) {
@@ -63,7 +64,6 @@ void exp::transToType(coenv &e, types::ty *target)
       return;
     }
   }
-#endif
 
   types::ty *source = e.e.castSource(target, ct, symbol::castsym);
   if (source==0) {
@@ -108,7 +108,7 @@ void exp::transCall(coenv &e, types::ty *target)
   e.c.encode(inst::popcall);
 }
 
-void exp::transConditionalJump(coenv &e, bool cond, Int dest) {
+void exp::transConditionalJump(coenv &e, bool cond, label dest) {
   transToType(e, primBoolean());
   e.c.useLabel(cond ? inst::cjmp : inst::njmp, dest);
 }
@@ -308,7 +308,16 @@ void subscriptExp::transWrite(coenv &e, types::ty *t, exp *value)
   array *a = transArray(e);
   if (!a)
     return;
-  assert(equivalent(a->celltype, t));
+
+  if (!equivalent(a->celltype, t))
+  {
+    em.error(getPos());
+    em << "array expression cannot be used as an address";
+
+    // Translate the value for errors.
+    value->transToType(e, t);
+    return;
+  }
 
   index->transToType(e, types::primInt());
 
@@ -411,7 +420,6 @@ void equalityExp::prettyprint(ostream &out, Int indent)
   callExp::prettyprint(out, indent+1);
 }
 
-#ifdef NO_FUNC_OPS
 types::ty *equalityExp::getType(coenv &e) {
   // Try to the resolve the expression as a function call first.
   types::ty *t = callExp::getType(e);
@@ -424,7 +432,6 @@ types::ty *equalityExp::getType(coenv &e) {
     // returns bool.  In either case, it is safe to return bool.
     return primBoolean();
 }
-#endif
 
 // From a possibly overloaded type, if there is a unique function type, return
 // it, otherwise 0.
@@ -492,7 +499,6 @@ bltin bltinFromName(symbol name) {
   return run::boolFuncNeq;
 }
 
-#ifdef NO_FUNC_OPS
 types::ty *equalityExp::trans(coenv &e) {
   // First, try to handle by normal function resolution.
   types::ty *t = callExp::getType(e);
@@ -534,7 +540,6 @@ types::ty *equalityExp::trans(coenv &e) {
     return t;
   }
 }
-#endif
 
 void scaleExp::prettyprint(ostream &out, Int indent)
 {
@@ -870,7 +875,6 @@ types::ty *callExp::cacheAppOrVarEntry(coenv &e, bool tacit)
 
   // An attempt at speeding up compilation:  See if the source arguments match
   // the (possibly overloaded) function exactly.
-#if CALLEE_SEARCH
   if (searchable) {
     varEntry *ve = callee->getCallee(e, source);
 
@@ -882,13 +886,13 @@ types::ty *callExp::cacheAppOrVarEntry(coenv &e, bool tacit)
       cachedVarEntry = ve;
 #ifndef DEBUG_CACHE
       // Normally DEBUG_CACHE is not defined and we return here for efficiency
-      // reasons.  If DEBUG_CACHE is defined, also resolve the function by the
-      // normal techniques and make sure we get the same result.
+      // reasons.  If DEBUG_CACHE is defined, we instead proceed to resolve
+      // the function by the normal techniques and make sure we get the same
+      // result.
       return ((function *)ve->getType())->getResult();
 #endif
     }
   }
-#endif
 
   // Figure out what function types we can call.
   types::ty *ft = callee->cgetType(e);
@@ -1144,12 +1148,12 @@ void conditionalExp::prettyprint(ostream &out, Int indent)
 void conditionalExp::baseTransToType(coenv &e, types::ty *target) {
   test->transToType(e, types::primBoolean());
 
-  Int tlabel = e.c.fwdLabel();
+  label tlabel = e.c.fwdLabel();
   e.c.useLabel(inst::cjmp,tlabel);
 
   onFalse->transToType(e, target);
 
-  Int end = e.c.fwdLabel();
+  label end = e.c.fwdLabel();
   e.c.useLabel(inst::jmp,end);
 
   e.c.defLabel(tlabel);
@@ -1266,13 +1270,13 @@ types::ty *orExp::trans(coenv &e)
   return getType(e);
 }
 
-void orExp::transConditionalJump(coenv &e, bool cond, Int dest)
+void orExp::transConditionalJump(coenv &e, bool cond, label dest)
 {
   if (cond == true) {
     left->transConditionalJump(e, true, dest);
     right->transConditionalJump(e, true, dest);
   } else { /* cond == false */
-    Int end = e.c.fwdLabel();
+    label end = e.c.fwdLabel();
 
     left->transConditionalJump(e, true, end);
     right->transConditionalJump(e, false, dest);
@@ -1302,10 +1306,10 @@ types::ty *andExp::trans(coenv &e)
   return getType(e);
 }
 
-void andExp::transConditionalJump(coenv &e, bool cond, Int dest)
+void andExp::transConditionalJump(coenv &e, bool cond, label dest)
 {
   if (cond == true) {
-    Int end = e.c.fwdLabel();
+    label end = e.c.fwdLabel();
 
     left->transConditionalJump(e, false, end);
     right->transConditionalJump(e, true, dest);
@@ -1425,7 +1429,7 @@ void selfExp::transAsType(coenv &e, types::ty *target)
   // Create a temp expression for the destination, so it is not evaluated
   // twice.
   exp *temp=dest->evaluate(e, target);
-  temp->transWrite(e, target, ultimateValue(dest));
+  temp->transWrite(e, target, ultimateValue(temp));
 }
 
 void prefixExp::prettyprint(ostream &out, Int indent)

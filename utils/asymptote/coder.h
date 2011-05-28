@@ -35,6 +35,27 @@ using vm::item;
 void assertBltinLookup(inst::opcode op, item it);
 #endif
 
+// Labels used by the coder class to denote where in the code a jump
+// instruction should go to.  Label can be used before their exact location is
+// known.
+// Declared outside of the coder class, so that it can be declared in exp.h.
+struct label_t : public gc {
+  vm::program::label location;
+  vm::program::label firstUse;
+
+  // Most labels are used only once, and so we optimize for that case.  We do,
+  // however, have to handle labels which are used multiple times (such as
+  // break locations in a loop), and so a useVector is allocated to store
+  // these if necessary.
+  typedef mem::vector<vm::program::label> useVector;
+  useVector *moreUses;
+
+  // Only the constructor is defined.  Everything else is handles by methods
+  // of the coder class.
+  label_t() : location(), firstUse(), moreUses(0) {}
+};
+typedef label_t *label;
+
 class coder {
   // The frame of the function we are currently encoding.  This keeps
   // track of local variables, and parameters with respect to the stack.
@@ -78,24 +99,25 @@ class coder {
   // array to write.
   vm::program *program;
 
-  // Keeps track of labels and writes in memory addresses as they're defined.
-  // This way a label can be used before its address is known.
-  std::map<Int,vm::program::label> defs;
-  std::multimap<Int,vm::program::label> uses;
-  Int numLabels;
-
-  // The loop constructs allocate nested frames, in case variables in an
+  // Some loops allocate nested frames, in case variables in an
   // iteration escape in a closure.  This stack keeps track of where the
-  // variables are allocated, so the size of the frame can be encoded.  At the
-  // start, it just holds the label of the first instruction of the lambda, as
-  // this is where space for the variables of the function is allocated.
-  std::stack<vm::program::label> allocs;
+  // pushframe instructions are, so the size of the frame can be encoded.
+  std::stack<vm::program::label> pushframeLabels;
 
   // Loops need to store labels to where break and continue statements
-  // should pass control to.  Since loops can be nested, this needs to
-  // be stored as a stack.
-  std::stack<Int> breakLabels;
-  std::stack<Int> continueLabels;
+  // should pass control.  Since loops can be nested, this needs to
+  // be stored as a stack.  We also store which of the loops are being encoded
+  // with an additional frame for variables.  This is needed to know if the
+  // break and continue statements need to pop the frame.
+  struct loopdata_t : gc {
+    label continueLabel;
+    label breakLabel;
+    bool pushedFrame;
+
+    loopdata_t(label c, label b)
+      : continueLabel(c), breakLabel(b), pushedFrame(false) {}
+  };
+  mem::stack<loopdata_t> loopdata;
 
   // Current File Position
   position curPos;
@@ -255,6 +277,9 @@ private:
     }
   }
 
+  // Encode a jump to a not yet known location.
+  vm::program::label encodeEmptyJump(inst::opcode op);
+
 public:
   void encode(inst::opcode op)
   {
@@ -304,77 +329,81 @@ public:
   bool encode(frame *dest, frame *top);
 
 
-  // Assigns a handle to the current point in the list of stack
+  // Assigns a handle to the current point in the list of bytecode
   // instructions and returns that handle.
-  Int defLabel();
+  label defNewLabel();
 
   // Sets the handle given by label to the current point in the list of
   // instructions.
-  Int defLabel(Int label);
+  label defLabel(label label);
 
   // Encodes the address pointed to by the handle label into the
   // sequence of instructions.  This is useful for a jump instruction to
   // jump to where a label was defined.
-  void useLabel(inst::opcode op, Int label);
+  void useLabel(inst::opcode op, label label);
 
   // If an address has to be used for a jump instruction before it is
   // actually encoded, a handle can be given to it by this function.
   // When that handle's label is later defined, the proper address will
   // be inserted into the code where the handle was used. 
-  Int fwdLabel();
+  label fwdLabel();
 
-  void pushBreak(Int label) {
-    breakLabels.push(label);
+  void pushLoop(label c, label b) {
+    loopdata.push(loopdata_t(c,b));
   }
-  void pushContinue(Int label) {
-    continueLabels.push(label);
+  void popLoop() {
+    loopdata.pop();
   }
-  void popBreak() {
-    breakLabels.pop();
-  }
-  void popContinue() {
-    continueLabels.pop();
+  void loopPushesFrame()
+  {
+    assert(!loopdata.empty());
+    loopdata_t& d = loopdata.top();
+    d.pushedFrame = true;
   }
   bool encodeBreak() {
-    if (breakLabels.empty())
+    if (loopdata.empty())
       return false;
     else {
-      useLabel(inst::jmp,breakLabels.top());
+      loopdata_t& d = loopdata.top();
+      if (d.pushedFrame)
+        encode(inst::popframe);
+      useLabel(inst::jmp,d.breakLabel);
       return true;
     }
   }
   bool encodeContinue() {
-    if (continueLabels.empty())
+    if (loopdata.empty())
       return false;
     else {
-      useLabel(inst::jmp,continueLabels.top());
+      loopdata_t& d = loopdata.top();
+      if (d.pushedFrame)
+        encode(inst::popframe);
+      useLabel(inst::jmp,d.continueLabel);
       return true;
     }
   }
-  
-private:
-  void encodeAllocInstruction() {
-    encode(inst::alloc, 0);
-    allocs.push(--program->end());
-  }
 
-  void finishAlloc() {
-    allocs.top()->ref = level->size();
-    allocs.pop();
-  }
+  // Returns true if a pushclosure has been encoded since the definition of
+  // the label.
+  bool usesClosureSinceLabel(label l);
+
+  // Turn a no-op into a jump to bypass incorrect code.
+  void encodePatch(label from, label to);
 
 public:
   void encodePushFrame() {
-    encode(inst::pushframe);
-    level = new frame("encodePushFrame", level, 0);
+    pushframeLabels.push(program->end());
+    encode(inst::pushframe, (Int)0);
 
-    encodeAllocInstruction();
+    level = new frame("encodePushFrame", level, 0);
   }
 
   void encodePopFrame() {
-    finishAlloc();
+    pushframeLabels.top()->ref = level->size();
+    pushframeLabels.pop();
 
     encode(inst::popframe);
+
     level = level->getParent();
   }
 

@@ -22,7 +22,7 @@ varinit *Default=new definit(nullPos);
   
 void formal::prettyprint(ostream &out, Int indent)
 {
-  prettyname(out, "formal",indent);
+  prettyname(out, keywordOnly ? "formal (keyword only)" : "formal", indent);
   
   base->prettyprint(out, indent+1);
   if (start) start->prettyprint(out, indent+1);
@@ -58,14 +58,22 @@ void formals::prettyprint(ostream &out, Int indent)
 {
   prettyname(out, "formals",indent);
 
-  for(list<formal *>::iterator p = fields.begin(); p != fields.end(); ++p)
+  for (list<formal *>::iterator p = fields.begin(); p != fields.end(); ++p)
     (*p)->prettyprint(out, indent+1);
 }
 
 void formals::addToSignature(signature& sig,
-                             coenv &e, bool encodeDefVal, bool tacit) {
-  for(list<formal *>::iterator p = fields.begin(); p != fields.end(); ++p)
-    sig.add((*p)->trans(e, encodeDefVal, tacit));
+                             coenv &e, bool encodeDefVal, bool tacit)
+{
+  for (list<formal *>::iterator p = fields.begin(); p != fields.end(); ++p) {
+    formal& f=**p;
+    types::formal tf = f.trans(e, encodeDefVal, tacit);
+
+    if (f.isKeywordOnly())
+      sig.addKeywordOnly(tf);
+    else
+      sig.add(tf);
+  }
 
   if (rest) {
     if (!tacit && rest->getDefaultValue()) {
@@ -133,23 +141,22 @@ public:
 };
   
 void transDefault(coenv &e, position pos, varEntry *v, varinit *init) {
-  // This roughly translates into the expression
+  // This roughly translates into the statement
   //   if (isDefault(x))
   //     x=init;
   // where x is the variable in v and isDefault is a function that tests
   // whether x is the default argument token.
-  varEntryExp vee(pos, v);
-  ifStm is(pos,
-           new callExp(pos,
-                       new varEntryExp(pos,
-                                       new function(primBoolean(), v->getType()),
-                                       run::isDefault),
-                       &vee),
-           new expStm(pos,
-                      new basicAssignExp(pos,
-                                         v,
-                                         init)));
-  is.trans(e);                                        
+
+  v->encode(READ, pos, e.c);
+
+  label end = e.c.fwdLabel();
+  e.c.useLabel(inst::jump_if_not_default, end);
+
+  init->transToType(e, v->getType());
+  v->encode(WRITE, pos, e.c);
+  e.c.encodePop();
+
+  e.c.defLabel(end);
 }
 
 void formal::transAsVar(coenv &e, Int index) {

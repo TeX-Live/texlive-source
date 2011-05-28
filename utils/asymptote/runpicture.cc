@@ -59,7 +59,7 @@ function *realRealFunction();
 
 #define CURRENTPEN processData().currentpen
 
-#line 27 "runpicture.in"
+#line 28 "runpicture.in"
 #include "picture.h"
 #include "drawelement.h"
 #include "path.h"
@@ -95,6 +95,7 @@ typedef array penarray;
 typedef array penarray2;
 
 typedef callable callableTransform;
+typedef callable callablePen;
 
 using types::IntArray;
 using types::realArray;
@@ -110,6 +111,11 @@ using types::penArray2;
 function *transformFunction()
 {
   return new function(primTransform());
+}
+
+function *penFunction()
+{
+  return new function(primPen(),primInt(),primInt());
 }
 
 // Ignore unclosed begingroups but not spurious endgroups.
@@ -133,71 +139,71 @@ triple Zero;
 
 #endif
 namespace run {
-#line 94 "runpicture.in"
+#line 101 "runpicture.in"
 void newPicture(stack *Stack)
 {
-#line 95 "runpicture.in"
+#line 102 "runpicture.in"
   {Stack->push<picture*>(new picture()); return;}
 }
 
-#line 99 "runpicture.in"
+#line 106 "runpicture.in"
 // bool empty(picture *f);
 void gen_runpicture1(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 100 "runpicture.in"
+#line 107 "runpicture.in"
   {Stack->push<bool>(f->null()); return;}
 }
 
-#line 104 "runpicture.in"
+#line 111 "runpicture.in"
 // void erase(picture *f);
 void gen_runpicture2(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 105 "runpicture.in"
+#line 112 "runpicture.in"
   f->nodes.clear();
 }
 
-#line 109 "runpicture.in"
+#line 116 "runpicture.in"
 // pair min(picture *f);
 void gen_runpicture3(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 110 "runpicture.in"
+#line 117 "runpicture.in"
   {Stack->push<pair>(f->bounds().Min()); return;}
 }
 
-#line 114 "runpicture.in"
+#line 121 "runpicture.in"
 // pair max(picture *f);
 void gen_runpicture4(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 115 "runpicture.in"
+#line 122 "runpicture.in"
   {Stack->push<pair>(f->bounds().Max()); return;}
 }
 
-#line 119 "runpicture.in"
+#line 126 "runpicture.in"
 // pair size(picture *f);
 void gen_runpicture5(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 120 "runpicture.in"
+#line 127 "runpicture.in"
   bbox b=f->bounds();
   {Stack->push<pair>(b.Max()-b.Min()); return;}
 }
 
-#line 125 "runpicture.in"
+#line 132 "runpicture.in"
 // void _draw(picture *f, path g, pen p);
 void gen_runpicture6(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack);
   path g=vm::pop<path>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 126 "runpicture.in"
+#line 133 "runpicture.in"
   f->append(new drawPath(g,p));
 }
 
-#line 130 "runpicture.in"
+#line 137 "runpicture.in"
 // void fill(picture *f, patharray *g, pen p=CURRENTPEN, bool copy=true);
 void gen_runpicture7(stack *Stack)
 {
@@ -205,12 +211,12 @@ void gen_runpicture7(stack *Stack)
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 131 "runpicture.in"
+#line 138 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   f->append(new drawFill(*copyarray(g),false,p));
 }
 
-#line 136 "runpicture.in"
+#line 143 "runpicture.in"
 // void latticeshade(picture *f, patharray *g, bool stroke=false,                  pen fillrule=CURRENTPEN, penarray2 *p, transform t=identity,                   bool copy=true);
 void gen_runpicture8(stack *Stack)
 {
@@ -221,13 +227,13 @@ void gen_runpicture8(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 139 "runpicture.in"
+#line 146 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   f->append(new drawLatticeShade(*copyarray(g),stroke,fillrule,*copyarray(p),
                                  t));
 }
 
-#line 145 "runpicture.in"
+#line 152 "runpicture.in"
 // void axialshade(picture *f, patharray *g, bool stroke=false, pen pena, pair a,                pen penb, pair b, bool copy=true);
 void gen_runpicture9(stack *Stack)
 {
@@ -239,12 +245,12 @@ void gen_runpicture9(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 147 "runpicture.in"
+#line 154 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   f->append(new drawAxialShade(*copyarray(g),stroke,pena,a,penb,b));
 }
 
-#line 152 "runpicture.in"
+#line 159 "runpicture.in"
 // void radialshade(picture *f, patharray *g, bool stroke=false, pen pena,                 pair a, real ra, pen penb, pair b, real rb, bool copy=true);
 void gen_runpicture10(stack *Stack)
 {
@@ -258,12 +264,12 @@ void gen_runpicture10(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 154 "runpicture.in"
+#line 161 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   f->append(new drawRadialShade(*copyarray(g),stroke,pena,a,ra,penb,b,rb));
 }
 
-#line 159 "runpicture.in"
+#line 166 "runpicture.in"
 // void gouraudshade(picture *f, patharray *g, bool stroke=false,                  pen fillrule=CURRENTPEN, penarray *p, pairarray *z,                  Intarray *edges, bool copy=true);
 void gen_runpicture11(stack *Stack)
 {
@@ -275,7 +281,7 @@ void gen_runpicture11(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 162 "runpicture.in"
+#line 169 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   checkArrays(p,z);
   checkArrays(z,edges);
@@ -283,7 +289,7 @@ void gen_runpicture11(stack *Stack)
                                  *copyarray(z),*copyarray(edges)));
 }
 
-#line 170 "runpicture.in"
+#line 177 "runpicture.in"
 // void gouraudshade(picture *f, patharray *g, bool stroke=false,                  pen fillrule=CURRENTPEN, penarray *p, Intarray *edges,                  bool copy=true);
 void gen_runpicture12(stack *Stack)
 {
@@ -294,7 +300,7 @@ void gen_runpicture12(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 173 "runpicture.in"
+#line 180 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   size_t n=checkArrays(p,edges);
   size_t m=checkArray(g);
@@ -315,7 +321,7 @@ void gen_runpicture12(stack *Stack)
                                  *z,*copyarray(edges)));
 }
 
-#line 194 "runpicture.in"
+#line 201 "runpicture.in"
 // void tensorshade(picture *f, patharray *g, bool stroke=false,                 pen fillrule=CURRENTPEN, penarray2 *p, patharray *b=NULL,                 pairarray2 *z=emptyarray, bool copy=true);
 void gen_runpicture13(stack *Stack)
 {
@@ -327,7 +333,7 @@ void gen_runpicture13(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 197 "runpicture.in"
+#line 204 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   array *(*copyarray2)(array *a)=copy ? copyArray2: nop;
   if(b == NULL) b=g;
@@ -339,7 +345,7 @@ void gen_runpicture13(stack *Stack)
                                 *copyarray(b),*copyarray2(z)));
 }
 
-#line 209 "runpicture.in"
+#line 216 "runpicture.in"
 // void functionshade(picture *f, patharray *g, bool stroke=false,                   pen fillrule=CURRENTPEN, string shader=emptystring,                   bool copy=true);
 void gen_runpicture14(stack *Stack)
 {
@@ -349,14 +355,14 @@ void gen_runpicture14(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 212 "runpicture.in"
+#line 219 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   f->append(new drawFunctionShade(*copyarray(g),stroke,fillrule,shader));
 }
 
 // Clip a picture to a superpath using the given fill rule.
 // Subsequent additions to the picture will not be affected by the clipping.
-#line 219 "runpicture.in"
+#line 226 "runpicture.in"
 // void clip(picture *f, patharray *g, bool stroke=false,          pen fillrule=CURRENTPEN, bool copy=true);
 void gen_runpicture15(stack *Stack)
 {
@@ -365,13 +371,13 @@ void gen_runpicture15(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 221 "runpicture.in"
+#line 228 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   drawClipBegin *begin=new drawClipBegin(*copyarray(g),stroke,fillrule,true);
   f->enclose(begin,new drawClipEnd(true,begin));
 }
 
-#line 227 "runpicture.in"
+#line 234 "runpicture.in"
 // void beginclip(picture *f, patharray *g, bool stroke=false,               pen fillrule=CURRENTPEN, bool copy=true);
 void gen_runpicture16(stack *Stack)
 {
@@ -380,57 +386,57 @@ void gen_runpicture16(stack *Stack)
   bool stroke=vm::pop<bool>(Stack,false);
   patharray * g=vm::pop<patharray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 229 "runpicture.in"
+#line 236 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   f->append(new drawClipBegin(*copyarray(g),stroke,fillrule,false));
 }
 
-#line 234 "runpicture.in"
+#line 241 "runpicture.in"
 // void endclip(picture *f);
 void gen_runpicture17(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 235 "runpicture.in"
+#line 242 "runpicture.in"
   f->append(new drawClipEnd(false));
 }
 
-#line 239 "runpicture.in"
+#line 246 "runpicture.in"
 // void gsave(picture *f);
 void gen_runpicture18(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 240 "runpicture.in"
+#line 247 "runpicture.in"
   f->append(new drawGsave());
 }
 
-#line 244 "runpicture.in"
+#line 251 "runpicture.in"
 // void grestore(picture *f);
 void gen_runpicture19(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 245 "runpicture.in"
+#line 252 "runpicture.in"
   f->append(new drawGrestore());
 }
 
-#line 249 "runpicture.in"
+#line 256 "runpicture.in"
 // void begingroup(picture *f);
 void gen_runpicture20(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 250 "runpicture.in"
+#line 257 "runpicture.in"
   f->append(new drawBegin());
 }
 
-#line 254 "runpicture.in"
+#line 261 "runpicture.in"
 // void endgroup(picture *f);
 void gen_runpicture21(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 255 "runpicture.in"
+#line 262 "runpicture.in"
   f->append(new drawEnd());
 }
 
-#line 259 "runpicture.in"
+#line 266 "runpicture.in"
 // void _begingroup3(picture *f, string name, real compression,                 real granularity, bool closed, bool tessellate,                 bool dobreak, bool nobreak, triple center, Int interaction);
 void gen_runpicture22(stack *Stack)
 {
@@ -444,62 +450,62 @@ void gen_runpicture22(stack *Stack)
   real compression=vm::pop<real>(Stack);
   string name=vm::pop<string>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 262 "runpicture.in"
+#line 269 "runpicture.in"
   f->append(new drawBegin3(name,compression,granularity,
                            closed,tessellate,dobreak,nobreak,
                            center,(Interaction) intcast(interaction)));
 }
 
-#line 268 "runpicture.in"
+#line 275 "runpicture.in"
 // void endgroup3(picture *f);
 void gen_runpicture23(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 269 "runpicture.in"
+#line 276 "runpicture.in"
   f->append(new drawEnd3());
 }
 
-#line 273 "runpicture.in"
+#line 280 "runpicture.in"
 // void add(picture *dest, picture *src);
 void gen_runpicture24(stack *Stack)
 {
   picture * src=vm::pop<picture *>(Stack);
   picture * dest=vm::pop<picture *>(Stack);
-#line 274 "runpicture.in"
+#line 281 "runpicture.in"
   dest->add(*src);
 }
 
-#line 278 "runpicture.in"
+#line 285 "runpicture.in"
 // void prepend(picture *dest, picture *src);
 void gen_runpicture25(stack *Stack)
 {
   picture * src=vm::pop<picture *>(Stack);
   picture * dest=vm::pop<picture *>(Stack);
-#line 279 "runpicture.in"
+#line 286 "runpicture.in"
   dest->prepend(*src);
 }
 
-#line 283 "runpicture.in"
+#line 290 "runpicture.in"
 // void postscript(picture *f, string s);
 void gen_runpicture26(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 284 "runpicture.in"
+#line 291 "runpicture.in"
   f->append(new drawVerbatim(PostScript,s));
 }
 
-#line 288 "runpicture.in"
+#line 295 "runpicture.in"
 // void tex(picture *f, string s);
 void gen_runpicture27(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 289 "runpicture.in"
+#line 296 "runpicture.in"
   f->append(new drawVerbatim(TeX,s));
 }
 
-#line 293 "runpicture.in"
+#line 300 "runpicture.in"
 // void postscript(picture *f, string s, pair min, pair max);
 void gen_runpicture28(stack *Stack)
 {
@@ -507,11 +513,11 @@ void gen_runpicture28(stack *Stack)
   pair min=vm::pop<pair>(Stack);
   string s=vm::pop<string>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 294 "runpicture.in"
+#line 301 "runpicture.in"
   f->append(new drawVerbatim(PostScript,s,min,max));
 }
 
-#line 298 "runpicture.in"
+#line 305 "runpicture.in"
 // void tex(picture *f, string s, pair min, pair max);
 void gen_runpicture29(stack *Stack)
 {
@@ -519,33 +525,33 @@ void gen_runpicture29(stack *Stack)
   pair min=vm::pop<pair>(Stack);
   string s=vm::pop<string>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 299 "runpicture.in"
+#line 306 "runpicture.in"
   f->append(new drawVerbatim(TeX,s,min,max));
 }
 
-#line 303 "runpicture.in"
+#line 310 "runpicture.in"
 // void texpreamble(string s);
 void gen_runpicture30(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
-#line 304 "runpicture.in"
+#line 311 "runpicture.in"
   string t=s+"\n";
   processDataStruct &pd=processData();
   pd.TeXpipepreamble.push_back(t);
   pd.TeXpreamble.push_back(t);
 }
 
-#line 311 "runpicture.in"
+#line 318 "runpicture.in"
 // void deletepreamble();
 void gen_runpicture31(stack *)
 {
-#line 312 "runpicture.in"
+#line 319 "runpicture.in"
   if(getSetting<bool>("inlinetex")) {
     unlink(buildname(outname(),"pre").c_str());
   }
 }
 
-#line 318 "runpicture.in"
+#line 325 "runpicture.in"
 // void _labelpath(picture *f, string s, string size, path g, string justify,                pair offset, pen p);
 void gen_runpicture32(stack *Stack)
 {
@@ -556,40 +562,40 @@ void gen_runpicture32(stack *Stack)
   string size=vm::pop<string>(Stack);
   string s=vm::pop<string>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 320 "runpicture.in"
+#line 327 "runpicture.in"
   f->append(new drawLabelPath(s,size,g,justify,offset,p));
 }
 
-#line 324 "runpicture.in"
+#line 331 "runpicture.in"
 // void texreset();
 void gen_runpicture33(stack *)
 {
-#line 325 "runpicture.in"
+#line 332 "runpicture.in"
   processDataStruct &pd=processData();
   pd.TeXpipepreamble.clear();
   pd.TeXpreamble.clear();
   pd.tex.pipeclose();
 }
 
-#line 332 "runpicture.in"
+#line 339 "runpicture.in"
 // void layer(picture *f);
 void gen_runpicture34(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 333 "runpicture.in"
+#line 340 "runpicture.in"
   f->append(new drawLayer());
 }
 
-#line 337 "runpicture.in"
+#line 344 "runpicture.in"
 // void newpage(picture *f);
 void gen_runpicture35(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 338 "runpicture.in"
+#line 345 "runpicture.in"
   f->append(new drawNewPage());
 }
 
-#line 342 "runpicture.in"
+#line 349 "runpicture.in"
 // void _image(picture *f, realarray2 *data, pair initial, pair final,            penarray *palette=NULL, transform t=identity, bool copy=true,            bool antialias=false);
 void gen_runpicture36(stack *Stack)
 {
@@ -601,14 +607,14 @@ void gen_runpicture36(stack *Stack)
   pair initial=vm::pop<pair>(Stack);
   realarray2 * data=vm::pop<realarray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 345 "runpicture.in"
+#line 352 "runpicture.in"
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   array *(*copyarray2)(array *a)=copy ? copyArray2: nop;
-  f->append(new drawImage(*copyarray2(data),*copyarray(palette),
-                          t*matrix(initial,final),antialias));
+  f->append(new drawPaletteImage(*copyarray2(data),*copyarray(palette),
+                            t*matrix(initial,final),antialias));
 }
 
-#line 352 "runpicture.in"
+#line 359 "runpicture.in"
 // void _image(picture *f, penarray2 *data, pair initial, pair final,            transform t=identity, bool copy=true, bool antialias=false);
 void gen_runpicture37(stack *Stack)
 {
@@ -619,38 +625,56 @@ void gen_runpicture37(stack *Stack)
   pair initial=vm::pop<pair>(Stack);
   penarray2 * data=vm::pop<penarray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 354 "runpicture.in"
+#line 361 "runpicture.in"
   array *(*copyarray2)(array *a)=copy ? copyArray2: nop;
-  f->append(new drawImage(*copyarray2(data),t*matrix(initial,final),antialias));
+  f->append(new drawNoPaletteImage(*copyarray2(data),t*matrix(initial,final),
+                                   antialias));
 }
 
-#line 359 "runpicture.in"
-// string nativeformat();
+#line 367 "runpicture.in"
+// void _image(picture *f, callablePen *F, Int width, Int height,            pair initial, pair final, transform t=identity, bool antialias=false);
 void gen_runpicture38(stack *Stack)
 {
-#line 360 "runpicture.in"
-  {Stack->push<string>(nativeformat()); return;}
-}
-
-#line 364 "runpicture.in"
-// bool latex();
-void gen_runpicture39(stack *Stack)
-{
-#line 365 "runpicture.in"
-  {Stack->push<bool>(latex(getSetting<string>("tex"))); return;}
-}
-
+  bool antialias=vm::pop<bool>(Stack,false);
+  transform t=vm::pop<transform>(Stack,identity);
+  pair final=vm::pop<pair>(Stack);
+  pair initial=vm::pop<pair>(Stack);
+  Int height=vm::pop<Int>(Stack);
+  Int width=vm::pop<Int>(Stack);
+  callablePen * F=vm::pop<callablePen *>(Stack);
+  picture * f=vm::pop<picture *>(Stack);
 #line 369 "runpicture.in"
-// bool pdf();
-void gen_runpicture40(stack *Stack)
-{
-#line 370 "runpicture.in"
-  {Stack->push<bool>(pdf(getSetting<string>("tex"))); return;}
+  f->append(new drawFunctionImage(Stack,F,width,height,
+                                  t*matrix(initial,final),antialias));
 }
 
 #line 374 "runpicture.in"
-// void shipout(string prefix=emptystring, picture *f, picture *preamble=NULL,             string format=emptystring, bool wait=false, bool view=true,             callableTransform *xform);
+// string nativeformat();
+void gen_runpicture39(stack *Stack)
+{
+#line 375 "runpicture.in"
+  {Stack->push<string>(nativeformat()); return;}
+}
+
+#line 379 "runpicture.in"
+// bool latex();
+void gen_runpicture40(stack *Stack)
+{
+#line 380 "runpicture.in"
+  {Stack->push<bool>(latex(getSetting<string>("tex"))); return;}
+}
+
+#line 384 "runpicture.in"
+// bool pdf();
 void gen_runpicture41(stack *Stack)
+{
+#line 385 "runpicture.in"
+  {Stack->push<bool>(pdf(getSetting<string>("tex"))); return;}
+}
+
+#line 389 "runpicture.in"
+// void shipout(string prefix=emptystring, picture *f, picture *preamble=NULL,             string format=emptystring, bool wait=false, bool view=true,             callableTransform *xform);
+void gen_runpicture42(stack *Stack)
 {
   callableTransform * xform=vm::pop<callableTransform *>(Stack);
   bool view=vm::pop<bool>(Stack,true);
@@ -659,15 +683,21 @@ void gen_runpicture41(stack *Stack)
   picture * preamble=vm::pop<picture *>(Stack,NULL);
   picture * f=vm::pop<picture *>(Stack);
   string prefix=vm::pop<string>(Stack,emptystring);
-#line 377 "runpicture.in"
+#line 392 "runpicture.in"
   if(prefix.empty()) prefix=outname();
 
   picture *result=new picture;
   unsigned level=0;
   picture::nodelist::iterator p;
+
+  // If null is given as an xform, just use the identity transformation.
+  bool xformIsNull = xform == nullfunc::instance();
+
   for(p = f->nodes.begin(); p != f->nodes.end(); ++p) {
-    xform->call(Stack);
-    transform t=pop<transform>(Stack);
+    if (!xformIsNull)
+      xform->call(Stack);
+    transform t=xformIsNull ? camp::identity : pop<transform>(Stack);
+
     static transform Zero=transform(0.0,0.0,0.0,0.0,0.0,0.0);
     bool Delete=(t == Zero);
     picture *group=new picture;
@@ -702,9 +732,9 @@ void gen_runpicture41(stack *Stack)
   result->shipout(preamble,prefix,format,0.0,wait,view);
 }
 
-#line 420 "runpicture.in"
+#line 441 "runpicture.in"
 // void shipout3(string prefix, picture *f, string format=emptystring,              real width, real height, real angle, real zoom,              triple m, triple M, pair shift, realarray2 *t,              realarray *background, triplearray *lights, realarray2 *diffuse,              realarray2 *ambient, realarray2 *specular,              bool viewportlighting, bool view=true);
-void gen_runpicture42(stack *Stack)
+void gen_runpicture43(stack *Stack)
 {
   bool view=vm::pop<bool>(Stack,true);
   bool viewportlighting=vm::pop<bool>(Stack);
@@ -724,7 +754,7 @@ void gen_runpicture42(stack *Stack)
   string format=vm::pop<string>(Stack,emptystring);
   picture * f=vm::pop<picture *>(Stack);
   string prefix=vm::pop<string>(Stack);
-#line 426 "runpicture.in"
+#line 447 "runpicture.in"
   size_t n=checkArrays(lights,diffuse);
   checkEqual(n,checkArray(ambient));
   checkEqual(n,checkArray(specular));
@@ -746,27 +776,27 @@ void gen_runpicture42(stack *Stack)
   delete[] T;
 }
 
-#line 448 "runpicture.in"
+#line 469 "runpicture.in"
 // void shipout3(string prefix, picture *f, Intarray *index, triplearray *center);
-void gen_runpicture43(stack *Stack)
+void gen_runpicture44(stack *Stack)
 {
   triplearray * center=vm::pop<triplearray *>(Stack);
   Intarray * index=vm::pop<Intarray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
   string prefix=vm::pop<string>(Stack);
-#line 449 "runpicture.in"
+#line 470 "runpicture.in"
   f->shipout3(prefix,index,center);
 }
 
-#line 453 "runpicture.in"
+#line 474 "runpicture.in"
 // void deconstruct(picture *f, picture *preamble=NULL, real magnification=1,                  callableTransform *xform);
-void gen_runpicture44(stack *Stack)
+void gen_runpicture45(stack *Stack)
 {
   callableTransform * xform=vm::pop<callableTransform *>(Stack);
   real magnification=vm::pop<real>(Stack,1);
   picture * preamble=vm::pop<picture *>(Stack,NULL);
   picture * f=vm::pop<picture *>(Stack);
-#line 455 "runpicture.in"
+#line 476 "runpicture.in"
   unsigned level=0;
   unsigned n=0;
 
@@ -891,24 +921,24 @@ void gen_runpicture44(stack *Stack)
 // Three-dimensional picture and surface operations
 
 // Bezier curve
-#line 580 "runpicture.in"
+#line 601 "runpicture.in"
 // void _draw(picture *f, path3 g, triple center=Zero, pen p, Int interaction=0);
-void gen_runpicture45(stack *Stack)
+void gen_runpicture46(stack *Stack)
 {
   Int interaction=vm::pop<Int>(Stack,0);
   pen p=vm::pop<pen>(Stack);
   triple center=vm::pop<triple>(Stack,Zero);
   path3 g=vm::pop<path3>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 581 "runpicture.in"
+#line 602 "runpicture.in"
   if(g.size() > 0)
     f->append(new drawPath3(g,center,p,(Interaction) intcast(interaction)));
 }
 
 // Bezier patch
-#line 587 "runpicture.in"
+#line 608 "runpicture.in"
 // void draw(picture *f, triplearray2 *P, triple center, bool straight,          penarray *p, real opacity, real shininess, real PRCshininess,          triple normal, penarray *colors, bool lighton,          Int interaction, bool prc=true);
-void gen_runpicture46(stack *Stack)
+void gen_runpicture47(stack *Stack)
 {
   bool prc=vm::pop<bool>(Stack,true);
   Int interaction=vm::pop<Int>(Stack);
@@ -923,30 +953,30 @@ void gen_runpicture46(stack *Stack)
   triple center=vm::pop<triple>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 591 "runpicture.in"
+#line 612 "runpicture.in"
   f->append(new drawSurface(*P,center,straight,*p,opacity,shininess,
                             PRCshininess,normal,*colors,lighton,
                             (Interaction) intcast(interaction),prc));
 }
 
 // General NURBS curve
-#line 598 "runpicture.in"
+#line 619 "runpicture.in"
 // void draw(picture *f, triplearray *P, realarray *knot,          realarray *weights=emptyarray, pen p);
-void gen_runpicture47(stack *Stack)
+void gen_runpicture48(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack);
   realarray * weights=vm::pop<realarray *>(Stack,emptyarray);
   realarray * knot=vm::pop<realarray *>(Stack);
   triplearray * P=vm::pop<triplearray *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 600 "runpicture.in"
+#line 621 "runpicture.in"
   f->append(new drawNurbsPath3(*P,knot,weights,p));
 }
 
 // General NURBS surface
-#line 605 "runpicture.in"
+#line 626 "runpicture.in"
 // void draw(picture *f, triplearray2 *P, realarray *uknot, realarray *vknot,          realarray2 *weights=emptyarray, penarray *p, real opacity,          real shininess, real PRCshininess, penarray *colors, bool lighton);
-void gen_runpicture48(stack *Stack)
+void gen_runpicture49(stack *Stack)
 {
   bool lighton=vm::pop<bool>(Stack);
   penarray * colors=vm::pop<penarray *>(Stack);
@@ -959,15 +989,15 @@ void gen_runpicture48(stack *Stack)
   realarray * uknot=vm::pop<realarray *>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 608 "runpicture.in"
+#line 629 "runpicture.in"
   f->append(new drawNurbs(*P,uknot,vknot,weights,*p,opacity,shininess,
                           PRCshininess,*colors,lighton));
 }
 
 // PRC unit sphere
-#line 614 "runpicture.in"
+#line 635 "runpicture.in"
 // void drawPRCsphere(picture *f, realarray2 *t, bool half=false, penarray *p,                   real opacity, real shininess, Int type);
-void gen_runpicture49(stack *Stack)
+void gen_runpicture50(stack *Stack)
 {
   Int type=vm::pop<Int>(Stack);
   real shininess=vm::pop<real>(Stack);
@@ -976,27 +1006,13 @@ void gen_runpicture49(stack *Stack)
   bool half=vm::pop<bool>(Stack,false);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 616 "runpicture.in"
+#line 637 "runpicture.in"
   f->append(new drawSphere(*t,half,*p,opacity,shininess,intcast(type)));
 }
 
 // PRC unit cylinder
-#line 621 "runpicture.in"
+#line 642 "runpicture.in"
 // void drawPRCcylinder(picture *f, realarray2 *t, penarray *p, real opacity,                     real shininess);
-void gen_runpicture50(stack *Stack)
-{
-  real shininess=vm::pop<real>(Stack);
-  real opacity=vm::pop<real>(Stack);
-  penarray * p=vm::pop<penarray *>(Stack);
-  realarray2 * t=vm::pop<realarray2 *>(Stack);
-  picture * f=vm::pop<picture *>(Stack);
-#line 623 "runpicture.in"
-  f->append(new drawCylinder(*t,*p,opacity,shininess));
-}
-
-// PRC unit disk
-#line 628 "runpicture.in"
-// void drawPRCdisk(picture *f, realarray2 *t, penarray *p, real opacity,                 real shininess);
 void gen_runpicture51(stack *Stack)
 {
   real shininess=vm::pop<real>(Stack);
@@ -1004,14 +1020,28 @@ void gen_runpicture51(stack *Stack)
   penarray * p=vm::pop<penarray *>(Stack);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 630 "runpicture.in"
+#line 644 "runpicture.in"
+  f->append(new drawCylinder(*t,*p,opacity,shininess));
+}
+
+// PRC unit disk
+#line 649 "runpicture.in"
+// void drawPRCdisk(picture *f, realarray2 *t, penarray *p, real opacity,                 real shininess);
+void gen_runpicture52(stack *Stack)
+{
+  real shininess=vm::pop<real>(Stack);
+  real opacity=vm::pop<real>(Stack);
+  penarray * p=vm::pop<penarray *>(Stack);
+  realarray2 * t=vm::pop<realarray2 *>(Stack);
+  picture * f=vm::pop<picture *>(Stack);
+#line 651 "runpicture.in"
   f->append(new drawDisk(*t,*p,opacity,shininess));
 }
 
 // General PRC tube
-#line 635 "runpicture.in"
+#line 656 "runpicture.in"
 // void drawPRCtube(picture *f, path3 center, path3 g, penarray *p, real opacity,                 real shininess);
-void gen_runpicture52(stack *Stack)
+void gen_runpicture53(stack *Stack)
 {
   real shininess=vm::pop<real>(Stack);
   real opacity=vm::pop<real>(Stack);
@@ -1019,62 +1049,75 @@ void gen_runpicture52(stack *Stack)
   path3 g=vm::pop<path3>(Stack);
   path3 center=vm::pop<path3>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 637 "runpicture.in"
+#line 658 "runpicture.in"
   f->append(new drawTube(center,g,*p,opacity,shininess));
 }
 
-#line 641 "runpicture.in"
-// triple min3(picture *f);
-void gen_runpicture53(stack *Stack)
-{
-  picture * f=vm::pop<picture *>(Stack);
-#line 642 "runpicture.in"
-  {Stack->push<triple>(f->bounds3().Min()); return;}
-}
-
-#line 646 "runpicture.in"
-// triple max3(picture *f);
+// Draw pixel
+#line 663 "runpicture.in"
+// void drawpixel(picture *f, triple v, pen p, real width=1.0);
 void gen_runpicture54(stack *Stack)
 {
+  real width=vm::pop<real>(Stack,1.0);
+  pen p=vm::pop<pen>(Stack);
+  triple v=vm::pop<triple>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 647 "runpicture.in"
-  {Stack->push<triple>(f->bounds3().Max()); return;}
+#line 664 "runpicture.in"
+  f->append(new drawPixel(v,p,width));
 }
 
-#line 651 "runpicture.in"
-// triple size3(picture *f);
+#line 668 "runpicture.in"
+// triple min3(picture *f);
 void gen_runpicture55(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 652 "runpicture.in"
+#line 669 "runpicture.in"
+  {Stack->push<triple>(f->bounds3().Min()); return;}
+}
+
+#line 673 "runpicture.in"
+// triple max3(picture *f);
+void gen_runpicture56(stack *Stack)
+{
+  picture * f=vm::pop<picture *>(Stack);
+#line 674 "runpicture.in"
+  {Stack->push<triple>(f->bounds3().Max()); return;}
+}
+
+#line 678 "runpicture.in"
+// triple size3(picture *f);
+void gen_runpicture57(stack *Stack)
+{
+  picture * f=vm::pop<picture *>(Stack);
+#line 679 "runpicture.in"
   bbox3 b=f->bounds3();
   {Stack->push<triple>(b.Max()-b.Min()); return;}
 }
 
-#line 657 "runpicture.in"
+#line 684 "runpicture.in"
 // pair minratio(picture *f);
-void gen_runpicture56(stack *Stack)
-{
-  picture * f=vm::pop<picture *>(Stack);
-#line 658 "runpicture.in"
-  {Stack->push<pair>(f->ratio(::min)); return;}
-}
-
-#line 662 "runpicture.in"
-// pair maxratio(picture *f);
-void gen_runpicture57(stack *Stack)
-{
-  picture * f=vm::pop<picture *>(Stack);
-#line 663 "runpicture.in"
-  {Stack->push<pair>(f->ratio(::max)); return;}
-}
-
-#line 667 "runpicture.in"
-// bool is3D(picture *f);
 void gen_runpicture58(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 668 "runpicture.in"
+#line 685 "runpicture.in"
+  {Stack->push<pair>(f->ratio(::min)); return;}
+}
+
+#line 689 "runpicture.in"
+// pair maxratio(picture *f);
+void gen_runpicture59(stack *Stack)
+{
+  picture * f=vm::pop<picture *>(Stack);
+#line 690 "runpicture.in"
+  {Stack->push<pair>(f->ratio(::max)); return;}
+}
+
+#line 694 "runpicture.in"
+// bool is3D(picture *f);
+void gen_runpicture60(stack *Stack)
+{
+  picture * f=vm::pop<picture *>(Stack);
+#line 695 "runpicture.in"
   {Stack->push<bool>(f->have3D()); return;}
 }
 
@@ -1084,124 +1127,128 @@ namespace trans {
 
 void gen_runpicture_venv(venv &ve)
 {
-#line 94 "runpicture.in"
+#line 101 "runpicture.in"
   REGISTER_BLTIN(run::newPicture,"newPicture");
-#line 99 "runpicture.in"
+#line 106 "runpicture.in"
   addFunc(ve, run::gen_runpicture1, primBoolean(), SYM(empty), formal(primPicture(), SYM(f), false, false));
-#line 104 "runpicture.in"
+#line 111 "runpicture.in"
   addFunc(ve, run::gen_runpicture2, primVoid(), SYM(erase), formal(primPicture(), SYM(f), false, false));
-#line 109 "runpicture.in"
+#line 116 "runpicture.in"
   addFunc(ve, run::gen_runpicture3, primPair(), SYM(min), formal(primPicture(), SYM(f), false, false));
-#line 114 "runpicture.in"
+#line 121 "runpicture.in"
   addFunc(ve, run::gen_runpicture4, primPair(), SYM(max), formal(primPicture(), SYM(f), false, false));
-#line 119 "runpicture.in"
+#line 126 "runpicture.in"
   addFunc(ve, run::gen_runpicture5, primPair(), SYM(size), formal(primPicture(), SYM(f), false, false));
-#line 125 "runpicture.in"
+#line 132 "runpicture.in"
   addFunc(ve, run::gen_runpicture6, primVoid(), SYM(_draw), formal(primPicture(), SYM(f), false, false), formal(primPath(), SYM(g), false, false), formal(primPen(), SYM(p), false, false));
-#line 130 "runpicture.in"
+#line 137 "runpicture.in"
   addFunc(ve, run::gen_runpicture7, primVoid(), SYM(fill), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primPen(), SYM(p), true, false), formal(primBoolean(), SYM(copy), true, false));
-#line 136 "runpicture.in"
+#line 143 "runpicture.in"
   addFunc(ve, run::gen_runpicture8, primVoid(), SYM(latticeshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(fillrule), true, false), formal(penArray2()  , SYM(p), false, false), formal(primTransform(), SYM(t), true, false), formal(primBoolean(), SYM(copy), true, false));
-#line 145 "runpicture.in"
-  addFunc(ve, run::gen_runpicture9, primVoid(), SYM(axialshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(pena), false, false), formal(primPair(), SYM(a), false, false), formal(primPen(), SYM(penb), false, false), formal(primPair(), SYM(b), false, false), formal(primBoolean(), SYM(copy), true, false));
 #line 152 "runpicture.in"
-  addFunc(ve, run::gen_runpicture10, primVoid(), SYM(radialshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(pena), false, false), formal(primPair(), SYM(a), false, false), formal(primReal(), SYM(ra), false, false), formal(primPen(), SYM(penb), false, false), formal(primPair(), SYM(b), false, false), formal(primReal(), SYM(rb), false, false), formal(primBoolean(), SYM(copy), true, false));
+  addFunc(ve, run::gen_runpicture9, primVoid(), SYM(axialshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(pena), false, false), formal(primPair(), SYM(a), false, false), formal(primPen(), SYM(penb), false, false), formal(primPair(), SYM(b), false, false), formal(primBoolean(), SYM(copy), true, false));
 #line 159 "runpicture.in"
+  addFunc(ve, run::gen_runpicture10, primVoid(), SYM(radialshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(pena), false, false), formal(primPair(), SYM(a), false, false), formal(primReal(), SYM(ra), false, false), formal(primPen(), SYM(penb), false, false), formal(primPair(), SYM(b), false, false), formal(primReal(), SYM(rb), false, false), formal(primBoolean(), SYM(copy), true, false));
+#line 166 "runpicture.in"
   addFunc(ve, run::gen_runpicture11, primVoid(), SYM(gouraudshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(fillrule), true, false), formal(penArray()  , SYM(p), false, false), formal(pairArray(), SYM(z), false, false), formal(IntArray(), SYM(edges), false, false), formal(primBoolean(), SYM(copy), true, false));
-#line 170 "runpicture.in"
+#line 177 "runpicture.in"
   addFunc(ve, run::gen_runpicture12, primVoid(), SYM(gouraudshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(fillrule), true, false), formal(penArray()  , SYM(p), false, false), formal(IntArray(), SYM(edges), false, false), formal(primBoolean(), SYM(copy), true, false));
-#line 194 "runpicture.in"
+#line 201 "runpicture.in"
   addFunc(ve, run::gen_runpicture13, primVoid(), SYM(tensorshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(fillrule), true, false), formal(penArray2()  , SYM(p), false, false), formal(pathArray()  , SYM(b), true, false), formal(pairArray2(), SYM(z), true, false), formal(primBoolean(), SYM(copy), true, false));
-#line 209 "runpicture.in"
+#line 216 "runpicture.in"
   addFunc(ve, run::gen_runpicture14, primVoid(), SYM(functionshade), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(fillrule), true, false), formal(primString() , SYM(shader), true, false), formal(primBoolean(), SYM(copy), true, false));
-#line 217 "runpicture.in"
+#line 224 "runpicture.in"
   addFunc(ve, run::gen_runpicture15, primVoid(), SYM(clip), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(fillrule), true, false), formal(primBoolean(), SYM(copy), true, false));
-#line 227 "runpicture.in"
-  addFunc(ve, run::gen_runpicture16, primVoid(), SYM(beginclip), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(fillrule), true, false), formal(primBoolean(), SYM(copy), true, false));
 #line 234 "runpicture.in"
+  addFunc(ve, run::gen_runpicture16, primVoid(), SYM(beginclip), formal(primPicture(), SYM(f), false, false), formal(pathArray()  , SYM(g), false, false), formal(primBoolean(), SYM(stroke), true, false), formal(primPen(), SYM(fillrule), true, false), formal(primBoolean(), SYM(copy), true, false));
+#line 241 "runpicture.in"
   addFunc(ve, run::gen_runpicture17, primVoid(), SYM(endclip), formal(primPicture(), SYM(f), false, false));
-#line 239 "runpicture.in"
+#line 246 "runpicture.in"
   addFunc(ve, run::gen_runpicture18, primVoid(), SYM(gsave), formal(primPicture(), SYM(f), false, false));
-#line 244 "runpicture.in"
+#line 251 "runpicture.in"
   addFunc(ve, run::gen_runpicture19, primVoid(), SYM(grestore), formal(primPicture(), SYM(f), false, false));
-#line 249 "runpicture.in"
+#line 256 "runpicture.in"
   addFunc(ve, run::gen_runpicture20, primVoid(), SYM(begingroup), formal(primPicture(), SYM(f), false, false));
-#line 254 "runpicture.in"
+#line 261 "runpicture.in"
   addFunc(ve, run::gen_runpicture21, primVoid(), SYM(endgroup), formal(primPicture(), SYM(f), false, false));
-#line 259 "runpicture.in"
+#line 266 "runpicture.in"
   addFunc(ve, run::gen_runpicture22, primVoid(), SYM(_begingroup3), formal(primPicture(), SYM(f), false, false), formal(primString() , SYM(name), false, false), formal(primReal(), SYM(compression), false, false), formal(primReal(), SYM(granularity), false, false), formal(primBoolean(), SYM(closed), false, false), formal(primBoolean(), SYM(tessellate), false, false), formal(primBoolean(), SYM(dobreak), false, false), formal(primBoolean(), SYM(nobreak), false, false), formal(primTriple(), SYM(center), false, false), formal(primInt(), SYM(interaction), false, false));
-#line 268 "runpicture.in"
+#line 275 "runpicture.in"
   addFunc(ve, run::gen_runpicture23, primVoid(), SYM(endgroup3), formal(primPicture(), SYM(f), false, false));
-#line 273 "runpicture.in"
+#line 280 "runpicture.in"
   addFunc(ve, run::gen_runpicture24, primVoid(), SYM(add), formal(primPicture(), SYM(dest), false, false), formal(primPicture(), SYM(src), false, false));
-#line 278 "runpicture.in"
+#line 285 "runpicture.in"
   addFunc(ve, run::gen_runpicture25, primVoid(), SYM(prepend), formal(primPicture(), SYM(dest), false, false), formal(primPicture(), SYM(src), false, false));
-#line 283 "runpicture.in"
+#line 290 "runpicture.in"
   addFunc(ve, run::gen_runpicture26, primVoid(), SYM(postscript), formal(primPicture(), SYM(f), false, false), formal(primString() , SYM(s), false, false));
-#line 288 "runpicture.in"
+#line 295 "runpicture.in"
   addFunc(ve, run::gen_runpicture27, primVoid(), SYM(tex), formal(primPicture(), SYM(f), false, false), formal(primString() , SYM(s), false, false));
-#line 293 "runpicture.in"
+#line 300 "runpicture.in"
   addFunc(ve, run::gen_runpicture28, primVoid(), SYM(postscript), formal(primPicture(), SYM(f), false, false), formal(primString() , SYM(s), false, false), formal(primPair(), SYM(min), false, false), formal(primPair(), SYM(max), false, false));
-#line 298 "runpicture.in"
+#line 305 "runpicture.in"
   addFunc(ve, run::gen_runpicture29, primVoid(), SYM(tex), formal(primPicture(), SYM(f), false, false), formal(primString() , SYM(s), false, false), formal(primPair(), SYM(min), false, false), formal(primPair(), SYM(max), false, false));
-#line 303 "runpicture.in"
+#line 310 "runpicture.in"
   addFunc(ve, run::gen_runpicture30, primVoid(), SYM(texpreamble), formal(primString() , SYM(s), false, false));
-#line 311 "runpicture.in"
-  addFunc(ve, run::gen_runpicture31, primVoid(), SYM(deletepreamble));
 #line 318 "runpicture.in"
+  addFunc(ve, run::gen_runpicture31, primVoid(), SYM(deletepreamble));
+#line 325 "runpicture.in"
   addFunc(ve, run::gen_runpicture32, primVoid(), SYM(_labelpath), formal(primPicture(), SYM(f), false, false), formal(primString() , SYM(s), false, false), formal(primString() , SYM(size), false, false), formal(primPath(), SYM(g), false, false), formal(primString() , SYM(justify), false, false), formal(primPair(), SYM(offset), false, false), formal(primPen(), SYM(p), false, false));
-#line 324 "runpicture.in"
+#line 331 "runpicture.in"
   addFunc(ve, run::gen_runpicture33, primVoid(), SYM(texreset));
-#line 332 "runpicture.in"
+#line 339 "runpicture.in"
   addFunc(ve, run::gen_runpicture34, primVoid(), SYM(layer), formal(primPicture(), SYM(f), false, false));
-#line 337 "runpicture.in"
+#line 344 "runpicture.in"
   addFunc(ve, run::gen_runpicture35, primVoid(), SYM(newpage), formal(primPicture(), SYM(f), false, false));
-#line 342 "runpicture.in"
+#line 349 "runpicture.in"
   addFunc(ve, run::gen_runpicture36, primVoid(), SYM(_image), formal(primPicture(), SYM(f), false, false), formal(realArray2(), SYM(data), false, false), formal(primPair(), SYM(initial), false, false), formal(primPair(), SYM(final), false, false), formal(penArray()  , SYM(palette), true, false), formal(primTransform(), SYM(t), true, false), formal(primBoolean(), SYM(copy), true, false), formal(primBoolean(), SYM(antialias), true, false));
-#line 352 "runpicture.in"
-  addFunc(ve, run::gen_runpicture37, primVoid(), SYM(_image), formal(primPicture(), SYM(f), false, false), formal(penArray2()  , SYM(data), false, false), formal(primPair(), SYM(initial), false, false), formal(primPair(), SYM(final), false, false), formal(primTransform(), SYM(t), true, false), formal(primBoolean(), SYM(copy), true, false), formal(primBoolean(), SYM(antialias), true, false));
 #line 359 "runpicture.in"
-  addFunc(ve, run::gen_runpicture38, primString() , SYM(nativeformat));
-#line 364 "runpicture.in"
-  addFunc(ve, run::gen_runpicture39, primBoolean(), SYM(latex));
-#line 369 "runpicture.in"
-  addFunc(ve, run::gen_runpicture40, primBoolean(), SYM(pdf));
+  addFunc(ve, run::gen_runpicture37, primVoid(), SYM(_image), formal(primPicture(), SYM(f), false, false), formal(penArray2()  , SYM(data), false, false), formal(primPair(), SYM(initial), false, false), formal(primPair(), SYM(final), false, false), formal(primTransform(), SYM(t), true, false), formal(primBoolean(), SYM(copy), true, false), formal(primBoolean(), SYM(antialias), true, false));
+#line 367 "runpicture.in"
+  addFunc(ve, run::gen_runpicture38, primVoid(), SYM(_image), formal(primPicture(), SYM(f), false, false), formal(penFunction(), SYM(f), false, false), formal(primInt(), SYM(width), false, false), formal(primInt(), SYM(height), false, false), formal(primPair(), SYM(initial), false, false), formal(primPair(), SYM(final), false, false), formal(primTransform(), SYM(t), true, false), formal(primBoolean(), SYM(antialias), true, false));
 #line 374 "runpicture.in"
-  addFunc(ve, run::gen_runpicture41, primVoid(), SYM(shipout), formal(primString() , SYM(prefix), true, false), formal(primPicture(), SYM(f), false, false), formal(primPicture(), SYM(preamble), true, false), formal(primString() , SYM(format), true, false), formal(primBoolean(), SYM(wait), true, false), formal(primBoolean(), SYM(view), true, false), formal(transformFunction(), SYM(xform), false, false));
-#line 420 "runpicture.in"
-  addFunc(ve, run::gen_runpicture42, primVoid(), SYM(shipout3), formal(primString() , SYM(prefix), false, false), formal(primPicture(), SYM(f), false, false), formal(primString() , SYM(format), true, false), formal(primReal(), SYM(width), false, false), formal(primReal(), SYM(height), false, false), formal(primReal(), SYM(angle), false, false), formal(primReal(), SYM(zoom), false, false), formal(primTriple(), SYM(m), false, false), formal(primTriple(), SYM(m), false, false), formal(primPair(), SYM(shift), false, false), formal(realArray2(), SYM(t), false, false), formal(realArray(), SYM(background), false, false), formal(tripleArray(), SYM(lights), false, false), formal(realArray2(), SYM(diffuse), false, false), formal(realArray2(), SYM(ambient), false, false), formal(realArray2(), SYM(specular), false, false), formal(primBoolean(), SYM(viewportlighting), false, false), formal(primBoolean(), SYM(view), true, false));
-#line 448 "runpicture.in"
-  addFunc(ve, run::gen_runpicture43, primVoid(), SYM(shipout3), formal(primString() , SYM(prefix), false, false), formal(primPicture(), SYM(f), false, false), formal(IntArray(), SYM(index), false, false), formal(tripleArray(), SYM(center), false, false));
-#line 453 "runpicture.in"
-  addFunc(ve, run::gen_runpicture44, primVoid(), SYM(deconstruct), formal(primPicture(), SYM(f), false, false), formal(primPicture(), SYM(preamble), true, false), formal(primReal(), SYM(magnification), true, false), formal(transformFunction(), SYM(xform), false, false));
-#line 576 "runpicture.in"
-  addFunc(ve, run::gen_runpicture45, primVoid(), SYM(_draw), formal(primPicture(), SYM(f), false, false), formal(primPath3(), SYM(g), false, false), formal(primTriple(), SYM(center), true, false), formal(primPen(), SYM(p), false, false), formal(primInt(), SYM(interaction), true, false));
-#line 586 "runpicture.in"
-  addFunc(ve, run::gen_runpicture46, primVoid(), SYM(draw), formal(primPicture(), SYM(f), false, false), formal(tripleArray2(), SYM(p), false, false), formal(primTriple(), SYM(center), false, false), formal(primBoolean(), SYM(straight), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false), formal(primReal(), SYM(prcshininess), false, false), formal(primTriple(), SYM(normal), false, false), formal(penArray()  , SYM(colors), false, false), formal(primBoolean(), SYM(lighton), false, false), formal(primInt(), SYM(interaction), false, false), formal(primBoolean(), SYM(prc), true, false));
+  addFunc(ve, run::gen_runpicture39, primString() , SYM(nativeformat));
+#line 379 "runpicture.in"
+  addFunc(ve, run::gen_runpicture40, primBoolean(), SYM(latex));
+#line 384 "runpicture.in"
+  addFunc(ve, run::gen_runpicture41, primBoolean(), SYM(pdf));
+#line 389 "runpicture.in"
+  addFunc(ve, run::gen_runpicture42, primVoid(), SYM(shipout), formal(primString() , SYM(prefix), true, false), formal(primPicture(), SYM(f), false, false), formal(primPicture(), SYM(preamble), true, false), formal(primString() , SYM(format), true, false), formal(primBoolean(), SYM(wait), true, false), formal(primBoolean(), SYM(view), true, false), formal(transformFunction(), SYM(xform), false, false));
+#line 441 "runpicture.in"
+  addFunc(ve, run::gen_runpicture43, primVoid(), SYM(shipout3), formal(primString() , SYM(prefix), false, false), formal(primPicture(), SYM(f), false, false), formal(primString() , SYM(format), true, false), formal(primReal(), SYM(width), false, false), formal(primReal(), SYM(height), false, false), formal(primReal(), SYM(angle), false, false), formal(primReal(), SYM(zoom), false, false), formal(primTriple(), SYM(m), false, false), formal(primTriple(), SYM(m), false, false), formal(primPair(), SYM(shift), false, false), formal(realArray2(), SYM(t), false, false), formal(realArray(), SYM(background), false, false), formal(tripleArray(), SYM(lights), false, false), formal(realArray2(), SYM(diffuse), false, false), formal(realArray2(), SYM(ambient), false, false), formal(realArray2(), SYM(specular), false, false), formal(primBoolean(), SYM(viewportlighting), false, false), formal(primBoolean(), SYM(view), true, false));
+#line 469 "runpicture.in"
+  addFunc(ve, run::gen_runpicture44, primVoid(), SYM(shipout3), formal(primString() , SYM(prefix), false, false), formal(primPicture(), SYM(f), false, false), formal(IntArray(), SYM(index), false, false), formal(tripleArray(), SYM(center), false, false));
+#line 474 "runpicture.in"
+  addFunc(ve, run::gen_runpicture45, primVoid(), SYM(deconstruct), formal(primPicture(), SYM(f), false, false), formal(primPicture(), SYM(preamble), true, false), formal(primReal(), SYM(magnification), true, false), formal(transformFunction(), SYM(xform), false, false));
 #line 597 "runpicture.in"
-  addFunc(ve, run::gen_runpicture47, primVoid(), SYM(draw), formal(primPicture(), SYM(f), false, false), formal(tripleArray(), SYM(p), false, false), formal(realArray(), SYM(knot), false, false), formal(realArray(), SYM(weights), true, false), formal(primPen(), SYM(p), false, false));
-#line 604 "runpicture.in"
-  addFunc(ve, run::gen_runpicture48, primVoid(), SYM(draw), formal(primPicture(), SYM(f), false, false), formal(tripleArray2(), SYM(p), false, false), formal(realArray(), SYM(uknot), false, false), formal(realArray(), SYM(vknot), false, false), formal(realArray2(), SYM(weights), true, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false), formal(primReal(), SYM(prcshininess), false, false), formal(penArray()  , SYM(colors), false, false), formal(primBoolean(), SYM(lighton), false, false));
-#line 613 "runpicture.in"
-  addFunc(ve, run::gen_runpicture49, primVoid(), SYM(drawPRCsphere), formal(primPicture(), SYM(f), false, false), formal(realArray2(), SYM(t), false, false), formal(primBoolean(), SYM(half), true, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false), formal(primInt(), SYM(type), false, false));
-#line 620 "runpicture.in"
-  addFunc(ve, run::gen_runpicture50, primVoid(), SYM(drawPRCcylinder), formal(primPicture(), SYM(f), false, false), formal(realArray2(), SYM(t), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false));
-#line 627 "runpicture.in"
-  addFunc(ve, run::gen_runpicture51, primVoid(), SYM(drawPRCdisk), formal(primPicture(), SYM(f), false, false), formal(realArray2(), SYM(t), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false));
+  addFunc(ve, run::gen_runpicture46, primVoid(), SYM(_draw), formal(primPicture(), SYM(f), false, false), formal(primPath3(), SYM(g), false, false), formal(primTriple(), SYM(center), true, false), formal(primPen(), SYM(p), false, false), formal(primInt(), SYM(interaction), true, false));
+#line 607 "runpicture.in"
+  addFunc(ve, run::gen_runpicture47, primVoid(), SYM(draw), formal(primPicture(), SYM(f), false, false), formal(tripleArray2(), SYM(p), false, false), formal(primTriple(), SYM(center), false, false), formal(primBoolean(), SYM(straight), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false), formal(primReal(), SYM(prcshininess), false, false), formal(primTriple(), SYM(normal), false, false), formal(penArray()  , SYM(colors), false, false), formal(primBoolean(), SYM(lighton), false, false), formal(primInt(), SYM(interaction), false, false), formal(primBoolean(), SYM(prc), true, false));
+#line 618 "runpicture.in"
+  addFunc(ve, run::gen_runpicture48, primVoid(), SYM(draw), formal(primPicture(), SYM(f), false, false), formal(tripleArray(), SYM(p), false, false), formal(realArray(), SYM(knot), false, false), formal(realArray(), SYM(weights), true, false), formal(primPen(), SYM(p), false, false));
+#line 625 "runpicture.in"
+  addFunc(ve, run::gen_runpicture49, primVoid(), SYM(draw), formal(primPicture(), SYM(f), false, false), formal(tripleArray2(), SYM(p), false, false), formal(realArray(), SYM(uknot), false, false), formal(realArray(), SYM(vknot), false, false), formal(realArray2(), SYM(weights), true, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false), formal(primReal(), SYM(prcshininess), false, false), formal(penArray()  , SYM(colors), false, false), formal(primBoolean(), SYM(lighton), false, false));
 #line 634 "runpicture.in"
-  addFunc(ve, run::gen_runpicture52, primVoid(), SYM(drawPRCtube), formal(primPicture(), SYM(f), false, false), formal(primPath3(), SYM(center), false, false), formal(primPath3(), SYM(g), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false));
+  addFunc(ve, run::gen_runpicture50, primVoid(), SYM(drawPRCsphere), formal(primPicture(), SYM(f), false, false), formal(realArray2(), SYM(t), false, false), formal(primBoolean(), SYM(half), true, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false), formal(primInt(), SYM(type), false, false));
 #line 641 "runpicture.in"
-  addFunc(ve, run::gen_runpicture53, primTriple(), SYM(min3), formal(primPicture(), SYM(f), false, false));
-#line 646 "runpicture.in"
-  addFunc(ve, run::gen_runpicture54, primTriple(), SYM(max3), formal(primPicture(), SYM(f), false, false));
-#line 651 "runpicture.in"
-  addFunc(ve, run::gen_runpicture55, primTriple(), SYM(size3), formal(primPicture(), SYM(f), false, false));
-#line 657 "runpicture.in"
-  addFunc(ve, run::gen_runpicture56, primPair(), SYM(minratio), formal(primPicture(), SYM(f), false, false));
+  addFunc(ve, run::gen_runpicture51, primVoid(), SYM(drawPRCcylinder), formal(primPicture(), SYM(f), false, false), formal(realArray2(), SYM(t), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false));
+#line 648 "runpicture.in"
+  addFunc(ve, run::gen_runpicture52, primVoid(), SYM(drawPRCdisk), formal(primPicture(), SYM(f), false, false), formal(realArray2(), SYM(t), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false));
+#line 655 "runpicture.in"
+  addFunc(ve, run::gen_runpicture53, primVoid(), SYM(drawPRCtube), formal(primPicture(), SYM(f), false, false), formal(primPath3(), SYM(center), false, false), formal(primPath3(), SYM(g), false, false), formal(penArray()  , SYM(p), false, false), formal(primReal(), SYM(opacity), false, false), formal(primReal(), SYM(shininess), false, false));
 #line 662 "runpicture.in"
-  addFunc(ve, run::gen_runpicture57, primPair(), SYM(maxratio), formal(primPicture(), SYM(f), false, false));
-#line 667 "runpicture.in"
-  addFunc(ve, run::gen_runpicture58, primBoolean(), SYM(is3D), formal(primPicture(), SYM(f), false, false));
+  addFunc(ve, run::gen_runpicture54, primVoid(), SYM(drawpixel), formal(primPicture(), SYM(f), false, false), formal(primTriple(), SYM(v), false, false), formal(primPen(), SYM(p), false, false), formal(primReal(), SYM(width), true, false));
+#line 668 "runpicture.in"
+  addFunc(ve, run::gen_runpicture55, primTriple(), SYM(min3), formal(primPicture(), SYM(f), false, false));
+#line 673 "runpicture.in"
+  addFunc(ve, run::gen_runpicture56, primTriple(), SYM(max3), formal(primPicture(), SYM(f), false, false));
+#line 678 "runpicture.in"
+  addFunc(ve, run::gen_runpicture57, primTriple(), SYM(size3), formal(primPicture(), SYM(f), false, false));
+#line 684 "runpicture.in"
+  addFunc(ve, run::gen_runpicture58, primPair(), SYM(minratio), formal(primPicture(), SYM(f), false, false));
+#line 689 "runpicture.in"
+  addFunc(ve, run::gen_runpicture59, primPair(), SYM(maxratio), formal(primPicture(), SYM(f), false, false));
+#line 694 "runpicture.in"
+  addFunc(ve, run::gen_runpicture60, primBoolean(), SYM(is3D), formal(primPicture(), SYM(f), false, false));
 }
 
 } // namespace trans

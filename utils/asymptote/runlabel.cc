@@ -338,7 +338,7 @@ void gen_runlabel3(stack *Stack)
                        "} bind def");
       tex.verbatimline("/V {"+ASY1+"Ry neg Rx 4 copy 4 2 roll 2 copy 6 2 roll 2 copy (M) print ASYy ASYx (L) print ASYy add ASYx (L) print add ASYy add ASYx (L) print add ASYy ASYx (c) print} bind def}");
     }
-    tex.verbatimline(read<string>(s,i)+"%");
+    tex.verbatimline(read<string>(s,i)+"\\ %");
   }
   
   tex.epilogue(true);

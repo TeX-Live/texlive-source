@@ -65,6 +65,10 @@ function *realRealFunction();
 #include "triple.h"
 #include "array.h"
 
+#ifdef __CYGWIN__
+extern "C" int mkstemp(char *c);
+#endif
+
 using namespace camp;
 using namespace settings;
 using namespace vm;
@@ -80,55 +84,55 @@ string commentchar="#";
 
 #endif
 namespace run {
-#line 24 "runfile.in"
+#line 28 "runfile.in"
 // bool ==(file *a, file *b);
 void gen_runfile0(stack *Stack)
 {
   file * b=vm::pop<file *>(Stack);
   file * a=vm::pop<file *>(Stack);
-#line 25 "runfile.in"
+#line 29 "runfile.in"
   {Stack->push<bool>(a == b); return;}
 }
 
-#line 29 "runfile.in"
+#line 33 "runfile.in"
 // bool !=(file *a, file *b);
 void gen_runfile1(stack *Stack)
 {
   file * b=vm::pop<file *>(Stack);
   file * a=vm::pop<file *>(Stack);
-#line 30 "runfile.in"
+#line 34 "runfile.in"
   {Stack->push<bool>(a != b); return;}
 }
 
-#line 34 "runfile.in"
+#line 38 "runfile.in"
 void nullFile(stack *Stack)
 {
-#line 35 "runfile.in"
+#line 39 "runfile.in"
   {Stack->push<file*>(&camp::nullfile); return;}
 }
 
-#line 39 "runfile.in"
+#line 43 "runfile.in"
 // file* input(string name, bool check=true, string comment=commentchar);
 void gen_runfile3(stack *Stack)
 {
   string comment=vm::pop<string>(Stack,commentchar);
   bool check=vm::pop<bool>(Stack,true);
   string name=vm::pop<string>(Stack);
-#line 40 "runfile.in"
+#line 44 "runfile.in"
   char c=comment.empty() ? (char) 0 : comment[0];
   file *f=new ifile(name,c,check);
   f->open();
   {Stack->push<file*>(f); return;}
 }
 
-#line 47 "runfile.in"
+#line 51 "runfile.in"
 // file* output(string name, bool update=false, string comment=commentchar);
 void gen_runfile4(stack *Stack)
 {
   string comment=vm::pop<string>(Stack,commentchar);
   bool update=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack);
-#line 48 "runfile.in"
+#line 52 "runfile.in"
   file *f;
   if(update) {
     char c=comment.empty() ? (char) 0 : comment[0];
@@ -139,13 +143,13 @@ void gen_runfile4(stack *Stack)
   {Stack->push<file*>(f); return;}
 }
 
-#line 59 "runfile.in"
+#line 63 "runfile.in"
 // file* xinput(string name, bool check=true);
 void gen_runfile5(stack *Stack)
 {
   bool check=vm::pop<bool>(Stack,true);
   string name=vm::pop<string>(Stack);
-#line 60 "runfile.in"
+#line 64 "runfile.in"
 #ifdef HAVE_RPC_RPC_H
   file *f=new ixfile(name,check);
   f->open();
@@ -158,13 +162,13 @@ void gen_runfile5(stack *Stack)
 #endif
 }
 
-#line 73 "runfile.in"
+#line 77 "runfile.in"
 // file* xoutput(string name, bool update=false);
 void gen_runfile6(stack *Stack)
 {
   bool update=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack);
-#line 74 "runfile.in"
+#line 78 "runfile.in"
 #ifdef HAVE_RPC_RPC_H
   file *f;
   if(update)
@@ -181,25 +185,25 @@ void gen_runfile6(stack *Stack)
 #endif
 }
 
-#line 91 "runfile.in"
+#line 95 "runfile.in"
 // file* binput(string name, bool check=true);
 void gen_runfile7(stack *Stack)
 {
   bool check=vm::pop<bool>(Stack,true);
   string name=vm::pop<string>(Stack);
-#line 92 "runfile.in"
+#line 96 "runfile.in"
   file *f=new ibfile(name,check);
   f->open();
   {Stack->push<file*>(f); return;}
 }
 
-#line 98 "runfile.in"
+#line 102 "runfile.in"
 // file* boutput(string name, bool update=false);
 void gen_runfile8(stack *Stack)
 {
   bool update=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack);
-#line 99 "runfile.in"
+#line 103 "runfile.in"
   file *f;
   if(update) f=new iobfile(name);
   else f=new obfile(name);
@@ -208,77 +212,77 @@ void gen_runfile8(stack *Stack)
   {Stack->push<file*>(f); return;}
 }
 
-#line 108 "runfile.in"
+#line 112 "runfile.in"
 // bool eof(file *f);
 void gen_runfile9(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 109 "runfile.in"
+#line 113 "runfile.in"
   {Stack->push<bool>(f->eof()); return;}
 }
 
-#line 113 "runfile.in"
+#line 117 "runfile.in"
 // bool eol(file *f);
 void gen_runfile10(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 114 "runfile.in"
+#line 118 "runfile.in"
   {Stack->push<bool>(f->eol()); return;}
 }
 
-#line 118 "runfile.in"
+#line 122 "runfile.in"
 // bool error(file *f);
 void gen_runfile11(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 119 "runfile.in"
+#line 123 "runfile.in"
   {Stack->push<bool>(f->error()); return;}
 }
 
-#line 123 "runfile.in"
+#line 127 "runfile.in"
 // void clear(file *f);
 void gen_runfile12(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 124 "runfile.in"
+#line 128 "runfile.in"
   f->clear();
 }
 
-#line 128 "runfile.in"
+#line 132 "runfile.in"
 // void close(file *f);
 void gen_runfile13(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 129 "runfile.in"
+#line 133 "runfile.in"
   f->close();
 }
 
-#line 133 "runfile.in"
+#line 137 "runfile.in"
 // Int precision(file *f=NULL, Int digits=0);
 void gen_runfile14(stack *Stack)
 {
   Int digits=vm::pop<Int>(Stack,0);
   file * f=vm::pop<file *>(Stack,NULL);
-#line 134 "runfile.in"
+#line 138 "runfile.in"
   if(f == 0) f=&camp::Stdout;
   {Stack->push<Int>(f->precision(digits)); return;}
 }
 
-#line 139 "runfile.in"
+#line 143 "runfile.in"
 // void flush(file *f);
 void gen_runfile15(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 140 "runfile.in"
+#line 144 "runfile.in"
   f->flush();
 }
 
-#line 144 "runfile.in"
+#line 148 "runfile.in"
 // string getc(file *f);
 void gen_runfile16(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 145 "runfile.in"
+#line 149 "runfile.in"
   char c=0;
   if(f->isOpen()) f->read(c);
   static char str[1];
@@ -286,76 +290,76 @@ void gen_runfile16(stack *Stack)
   {Stack->push<string>(string(str)); return;}
 }
 
-#line 153 "runfile.in"
+#line 157 "runfile.in"
 // Int tell(file *f);
 void gen_runfile17(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 154 "runfile.in"
+#line 158 "runfile.in"
   {Stack->push<Int>(f->tell()); return;}
 }
 
-#line 158 "runfile.in"
+#line 162 "runfile.in"
 // void seek(file *f, Int pos);
 void gen_runfile18(stack *Stack)
 {
   Int pos=vm::pop<Int>(Stack);
   file * f=vm::pop<file *>(Stack);
-#line 159 "runfile.in"
+#line 163 "runfile.in"
   f->seek(pos,pos >= 0);
 }
 
-#line 163 "runfile.in"
+#line 167 "runfile.in"
 // void seekeof(file *f);
 void gen_runfile19(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 164 "runfile.in"
+#line 168 "runfile.in"
   f->seek(0,false);
 }
 
-#line 168 "runfile.in"
+#line 172 "runfile.in"
 void namePart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 169 "runfile.in"
+#line 173 "runfile.in"
   {Stack->push<string>(f.filename()); return;}
 }
 
-#line 173 "runfile.in"
+#line 177 "runfile.in"
 void modePart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 174 "runfile.in"
+#line 178 "runfile.in"
   {Stack->push<string>(f.FileMode()); return;}
 }
 
 // Set file dimensions
-#line 179 "runfile.in"
+#line 183 "runfile.in"
 void dimensionSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   Int nz=vm::pop<Int>(Stack,-1);
   Int ny=vm::pop<Int>(Stack,-1);
   Int nx=vm::pop<Int>(Stack,-1);
-#line 180 "runfile.in"
+#line 184 "runfile.in"
   f->dimension(nx,ny,nz);
   {Stack->push<file*>(f); return;}
 }
 
-#line 185 "runfile.in"
+#line 189 "runfile.in"
 void dimensionSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 186 "runfile.in"
+#line 190 "runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(dimensionSetHelper),f)); return;}
 }
 
-#line 190 "runfile.in"
+#line 194 "runfile.in"
 void dimensionPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 191 "runfile.in"
+#line 195 "runfile.in"
   array *a=new array(3);
   (*a)[0]=f.Nx();
   (*a)[1]=f.Ny();
@@ -364,174 +368,174 @@ void dimensionPart(stack *Stack)
 }
 
 // Set file f to read arrays in line-at-a-time mode
-#line 200 "runfile.in"
+#line 204 "runfile.in"
 void lineSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 201 "runfile.in"
+#line 205 "runfile.in"
   f->LineMode(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 206 "runfile.in"
+#line 210 "runfile.in"
 void lineSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 207 "runfile.in"
+#line 211 "runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(lineSetHelper),f)); return;}
 }
 
-#line 211 "runfile.in"
+#line 215 "runfile.in"
 void linePart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 212 "runfile.in"
+#line 216 "runfile.in"
   {Stack->push<bool>(f.LineMode()); return;}
 }
 
 // Set file to read comma-separated values
-#line 217 "runfile.in"
+#line 221 "runfile.in"
 void csvSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 218 "runfile.in"
+#line 222 "runfile.in"
   f->CSVMode(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 223 "runfile.in"
+#line 227 "runfile.in"
 void csvSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 224 "runfile.in"
+#line 228 "runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(csvSetHelper),f)); return;}
 }
 
-#line 228 "runfile.in"
+#line 232 "runfile.in"
 void csvPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 229 "runfile.in"
+#line 233 "runfile.in"
   {Stack->push<bool>(f.CSVMode()); return;}
 }
 
 // Set file to read whitespace-separated values
-#line 234 "runfile.in"
+#line 238 "runfile.in"
 void wordSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 235 "runfile.in"
+#line 239 "runfile.in"
   f->WordMode(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 240 "runfile.in"
+#line 244 "runfile.in"
 void wordSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 241 "runfile.in"
+#line 245 "runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(wordSetHelper),f)); return;}
 }
 
-#line 245 "runfile.in"
+#line 249 "runfile.in"
 void wordPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 246 "runfile.in"
+#line 250 "runfile.in"
   {Stack->push<bool>(f.WordMode()); return;}
 }
 
 // Set file to read/write single precision real XDR values.
-#line 251 "runfile.in"
+#line 255 "runfile.in"
 void singlerealSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 252 "runfile.in"
+#line 256 "runfile.in"
   f->SingleReal(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 257 "runfile.in"
+#line 261 "runfile.in"
 void singlerealSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 258 "runfile.in"
+#line 262 "runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(singlerealSetHelper),f)); return;}
 }
 
-#line 262 "runfile.in"
+#line 266 "runfile.in"
 void singlerealPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 263 "runfile.in"
+#line 267 "runfile.in"
   {Stack->push<bool>(f.SingleReal()); return;}
 }
 
 // Set file to read/write single precision int XDR values.
-#line 268 "runfile.in"
+#line 272 "runfile.in"
 void singleintSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 269 "runfile.in"
+#line 273 "runfile.in"
   f->SingleInt(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 274 "runfile.in"
+#line 278 "runfile.in"
 void singleintSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 275 "runfile.in"
+#line 279 "runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(singleintSetHelper),f)); return;}
 }
 
-#line 279 "runfile.in"
+#line 283 "runfile.in"
 void singleintPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 280 "runfile.in"
+#line 284 "runfile.in"
   {Stack->push<bool>(f.SingleInt()); return;}
 }
 
 // Set file to read/write signed int XDR values.
-#line 285 "runfile.in"
+#line 289 "runfile.in"
 void signedintSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 286 "runfile.in"
+#line 290 "runfile.in"
   f->SignedInt(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 291 "runfile.in"
+#line 295 "runfile.in"
 void signedintSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 292 "runfile.in"
+#line 296 "runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(signedintSetHelper),f)); return;}
 }
 
-#line 296 "runfile.in"
+#line 300 "runfile.in"
 void signedintPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 297 "runfile.in"
+#line 301 "runfile.in"
   {Stack->push<bool>(f.SignedInt()); return;}
 }
 
 // Set file to read an arrayi (i int sizes followed by an i-dimensional array)
-#line 302 "runfile.in"
+#line 306 "runfile.in"
 void readSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   Int i=vm::pop<Int>(Stack);
-#line 303 "runfile.in"
+#line 307 "runfile.in"
   switch(i) {
     case 1:
       f->dimension(-2);
@@ -552,21 +556,21 @@ void readSetHelper(stack *Stack)
   {Stack->push<file*>(f); return;}
 }
 
-#line 324 "runfile.in"
+#line 328 "runfile.in"
 void readSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 325 "runfile.in"
+#line 329 "runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(readSetHelper),f)); return;}
 }
 
 // Delete file named s.
-#line 330 "runfile.in"
+#line 334 "runfile.in"
 // Int delete(string s);
 void gen_runfile45(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
-#line 331 "runfile.in"
+#line 335 "runfile.in"
   s=outpath(s);
   Int rc=unlink(s.c_str());
   if(rc == 0 && verbose > 0) 
@@ -575,13 +579,13 @@ void gen_runfile45(stack *Stack)
 }
 
 // Rename file "from" to file "to".
-#line 340 "runfile.in"
+#line 344 "runfile.in"
 // Int rename(string from, string to);
 void gen_runfile46(stack *Stack)
 {
   string to=vm::pop<string>(Stack);
   string from=vm::pop<string>(Stack);
-#line 341 "runfile.in"
+#line 345 "runfile.in"
   from=outpath(from);
   to=outpath(to);
   Int rc=rename(from.c_str(),to.c_str());
@@ -590,106 +594,125 @@ void gen_runfile46(stack *Stack)
   {Stack->push<Int>(rc); return;}
 }
 
+// Create a unique temporary file name.
+#line 355 "runfile.in"
+// string mktemp(string s);
+void gen_runfile47(stack *Stack)
+{
+  string s=vm::pop<string>(Stack);
+#line 356 "runfile.in"
+  char *S=Strdup(s+"XXXXXX");
+  int fd=mkstemp(S);
+  if(fd < 0) {
+    ostringstream buf;
+    buf << "Could not create unique temporary filename based on " << s;
+    error(buf);
+  }
+  {Stack->push<string>(S); return;}
+}
+
 } // namespace run
 
 namespace trans {
 
 void gen_runfile_venv(venv &ve)
 {
-#line 24 "runfile.in"
+#line 28 "runfile.in"
   addFunc(ve, run::gen_runfile0, primBoolean(), SYM_EQ, formal(primFile(), SYM(a), false, false), formal(primFile(), SYM(b), false, false));
-#line 29 "runfile.in"
+#line 33 "runfile.in"
   addFunc(ve, run::gen_runfile1, primBoolean(), SYM_NEQ, formal(primFile(), SYM(a), false, false), formal(primFile(), SYM(b), false, false));
-#line 34 "runfile.in"
+#line 38 "runfile.in"
   REGISTER_BLTIN(run::nullFile,"nullFile");
-#line 39 "runfile.in"
+#line 43 "runfile.in"
   addFunc(ve, run::gen_runfile3, primFile(), SYM(input), formal(primString() , SYM(name), false, false), formal(primBoolean(), SYM(check), true, false), formal(primString() , SYM(comment), true, false));
-#line 47 "runfile.in"
+#line 51 "runfile.in"
   addFunc(ve, run::gen_runfile4, primFile(), SYM(output), formal(primString() , SYM(name), false, false), formal(primBoolean(), SYM(update), true, false), formal(primString() , SYM(comment), true, false));
-#line 59 "runfile.in"
+#line 63 "runfile.in"
   addFunc(ve, run::gen_runfile5, primFile(), SYM(xinput), formal(primString() , SYM(name), false, false), formal(primBoolean(), SYM(check), true, false));
-#line 73 "runfile.in"
+#line 77 "runfile.in"
   addFunc(ve, run::gen_runfile6, primFile(), SYM(xoutput), formal(primString() , SYM(name), false, false), formal(primBoolean(), SYM(update), true, false));
-#line 91 "runfile.in"
+#line 95 "runfile.in"
   addFunc(ve, run::gen_runfile7, primFile(), SYM(binput), formal(primString() , SYM(name), false, false), formal(primBoolean(), SYM(check), true, false));
-#line 98 "runfile.in"
+#line 102 "runfile.in"
   addFunc(ve, run::gen_runfile8, primFile(), SYM(boutput), formal(primString() , SYM(name), false, false), formal(primBoolean(), SYM(update), true, false));
-#line 108 "runfile.in"
+#line 112 "runfile.in"
   addFunc(ve, run::gen_runfile9, primBoolean(), SYM(eof), formal(primFile(), SYM(f), false, false));
-#line 113 "runfile.in"
+#line 117 "runfile.in"
   addFunc(ve, run::gen_runfile10, primBoolean(), SYM(eol), formal(primFile(), SYM(f), false, false));
-#line 118 "runfile.in"
+#line 122 "runfile.in"
   addFunc(ve, run::gen_runfile11, primBoolean(), SYM(error), formal(primFile(), SYM(f), false, false));
-#line 123 "runfile.in"
+#line 127 "runfile.in"
   addFunc(ve, run::gen_runfile12, primVoid(), SYM(clear), formal(primFile(), SYM(f), false, false));
-#line 128 "runfile.in"
+#line 132 "runfile.in"
   addFunc(ve, run::gen_runfile13, primVoid(), SYM(close), formal(primFile(), SYM(f), false, false));
-#line 133 "runfile.in"
+#line 137 "runfile.in"
   addFunc(ve, run::gen_runfile14, primInt(), SYM(precision), formal(primFile(), SYM(f), true, false), formal(primInt(), SYM(digits), true, false));
-#line 139 "runfile.in"
+#line 143 "runfile.in"
   addFunc(ve, run::gen_runfile15, primVoid(), SYM(flush), formal(primFile(), SYM(f), false, false));
-#line 144 "runfile.in"
+#line 148 "runfile.in"
   addFunc(ve, run::gen_runfile16, primString() , SYM(getc), formal(primFile(), SYM(f), false, false));
-#line 153 "runfile.in"
+#line 157 "runfile.in"
   addFunc(ve, run::gen_runfile17, primInt(), SYM(tell), formal(primFile(), SYM(f), false, false));
-#line 158 "runfile.in"
+#line 162 "runfile.in"
   addFunc(ve, run::gen_runfile18, primVoid(), SYM(seek), formal(primFile(), SYM(f), false, false), formal(primInt(), SYM(pos), false, false));
-#line 163 "runfile.in"
+#line 167 "runfile.in"
   addFunc(ve, run::gen_runfile19, primVoid(), SYM(seekeof), formal(primFile(), SYM(f), false, false));
-#line 168 "runfile.in"
+#line 172 "runfile.in"
   REGISTER_BLTIN(run::namePart,"namePart");
-#line 173 "runfile.in"
+#line 177 "runfile.in"
   REGISTER_BLTIN(run::modePart,"modePart");
-#line 178 "runfile.in"
+#line 182 "runfile.in"
   REGISTER_BLTIN(run::dimensionSetHelper,"dimensionSetHelper");
-#line 185 "runfile.in"
+#line 189 "runfile.in"
   REGISTER_BLTIN(run::dimensionSet,"dimensionSet");
-#line 190 "runfile.in"
+#line 194 "runfile.in"
   REGISTER_BLTIN(run::dimensionPart,"dimensionPart");
-#line 199 "runfile.in"
+#line 203 "runfile.in"
   REGISTER_BLTIN(run::lineSetHelper,"lineSetHelper");
-#line 206 "runfile.in"
+#line 210 "runfile.in"
   REGISTER_BLTIN(run::lineSet,"lineSet");
-#line 211 "runfile.in"
+#line 215 "runfile.in"
   REGISTER_BLTIN(run::linePart,"linePart");
-#line 216 "runfile.in"
+#line 220 "runfile.in"
   REGISTER_BLTIN(run::csvSetHelper,"csvSetHelper");
-#line 223 "runfile.in"
+#line 227 "runfile.in"
   REGISTER_BLTIN(run::csvSet,"csvSet");
-#line 228 "runfile.in"
+#line 232 "runfile.in"
   REGISTER_BLTIN(run::csvPart,"csvPart");
-#line 233 "runfile.in"
+#line 237 "runfile.in"
   REGISTER_BLTIN(run::wordSetHelper,"wordSetHelper");
-#line 240 "runfile.in"
+#line 244 "runfile.in"
   REGISTER_BLTIN(run::wordSet,"wordSet");
-#line 245 "runfile.in"
+#line 249 "runfile.in"
   REGISTER_BLTIN(run::wordPart,"wordPart");
-#line 250 "runfile.in"
+#line 254 "runfile.in"
   REGISTER_BLTIN(run::singlerealSetHelper,"singlerealSetHelper");
-#line 257 "runfile.in"
+#line 261 "runfile.in"
   REGISTER_BLTIN(run::singlerealSet,"singlerealSet");
-#line 262 "runfile.in"
+#line 266 "runfile.in"
   REGISTER_BLTIN(run::singlerealPart,"singlerealPart");
-#line 267 "runfile.in"
+#line 271 "runfile.in"
   REGISTER_BLTIN(run::singleintSetHelper,"singleintSetHelper");
-#line 274 "runfile.in"
+#line 278 "runfile.in"
   REGISTER_BLTIN(run::singleintSet,"singleintSet");
-#line 279 "runfile.in"
+#line 283 "runfile.in"
   REGISTER_BLTIN(run::singleintPart,"singleintPart");
-#line 284 "runfile.in"
+#line 288 "runfile.in"
   REGISTER_BLTIN(run::signedintSetHelper,"signedintSetHelper");
-#line 291 "runfile.in"
+#line 295 "runfile.in"
   REGISTER_BLTIN(run::signedintSet,"signedintSet");
-#line 296 "runfile.in"
+#line 300 "runfile.in"
   REGISTER_BLTIN(run::signedintPart,"signedintPart");
-#line 301 "runfile.in"
+#line 305 "runfile.in"
   REGISTER_BLTIN(run::readSetHelper,"readSetHelper");
-#line 324 "runfile.in"
+#line 328 "runfile.in"
   REGISTER_BLTIN(run::readSet,"readSet");
-#line 329 "runfile.in"
+#line 333 "runfile.in"
   addFunc(ve, run::gen_runfile45, primInt(), SYM(delete), formal(primString() , SYM(s), false, false));
-#line 339 "runfile.in"
+#line 343 "runfile.in"
   addFunc(ve, run::gen_runfile46, primInt(), SYM(rename), formal(primString() , SYM(from), false, false), formal(primString() , SYM(to), false, false));
+#line 354 "runfile.in"
+  addFunc(ve, run::gen_runfile47, primString() , SYM(mktemp), formal(primString() , SYM(s), false, false));
 }
 
 } // namespace trans

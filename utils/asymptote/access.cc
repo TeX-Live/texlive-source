@@ -57,6 +57,29 @@ void bltinAccess::encode(action act, position pos, coder &e, frame *)
   encode(act, pos, e);
 }
   
+/* callableAccess */
+void callableAccess::encode(action act, position pos, coder &e)
+{
+  switch (act) {
+    case READ:
+      e.encode(inst::constpush, (item)f);
+      break;
+    case WRITE:
+      bltinError(pos);
+      break;
+    case CALL:
+      this->encode(READ, pos, e);
+      e.encode(inst::popcall);
+      break;
+  }
+}
+
+void callableAccess::encode(action act, position pos, coder &e, frame *)
+{
+  e.encode(inst::pop);
+  encode(act, pos, e);
+}
+  
 
 /* frameAccess */
 void frameAccess::encode(action act, position pos, coder &e)
@@ -84,6 +107,12 @@ void frameAccess::encode(action act, position pos, coder &e, frame *top)
 }
 
 /* localAccess */
+static void frameError(position pos) {
+  // A local variable is being used when its frame is not active.
+  em.error(pos);
+  em << "static use of dynamic variable";
+}
+
 void localAccess::encode(action act, position pos, coder &e)
 {
   // Get the active frame of the virtual machine.
@@ -91,16 +120,17 @@ void localAccess::encode(action act, position pos, coder &e)
   if (level == active) {
     e.encode(act == WRITE ? inst::varsave : inst::varpush,
              offset);
-    if (act == CALL)
-      e.encode(inst::popcall);
+  }
+  else if (e.encode(level)) {
+      e.encode(act == WRITE ? inst::fieldsave : inst::fieldpush,
+               offset);
   }
   else {
-    // Put the parent frame (in local variable 0) on the stack.
-    e.encode(inst::varpush,0);
-
-    // Encode the access from that frame.
-    this->encode(act, pos, e, active->getParent());
+    frameError(pos);
   }
+
+  if (act == CALL)
+    e.encode(inst::popcall);
 }
 
 void localAccess::encode(action act, position pos, coder &e, frame *top)
@@ -112,9 +142,7 @@ void localAccess::encode(action act, position pos, coder &e, frame *top)
       e.encode(inst::popcall);
   }
   else {
-    // The local variable is being used when its frame is not active.
-    em.error(pos);
-    em << "static use of dynamic variable";
+    frameError(pos);
   }
 }
 

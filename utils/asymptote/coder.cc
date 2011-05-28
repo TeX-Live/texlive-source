@@ -35,11 +35,14 @@ vm::lambda *newLambda(string name) {
 }
 
 
-// The dummy environment of the global environment.
 // Used purely for global variables and static code blocks of file
 // level modules.
 coder::coder(position pos, string name, modifier sord)
+#if SIMPLE_FRAME
+  : level(frame::indirect_frame(name)),
+#else
   : level(new frame(name, 0, 0)),
+#endif
     recordLevel(0),
     recordType(0),
     isCodelet(false),
@@ -49,11 +52,9 @@ coder::coder(position pos, string name, modifier sord)
     sord(sord),
     perm(DEFAULT_PERM),
     program(new vm::program),
-    numLabels(0),
     curPos(pos)
 {
   sord_stack.push(sord);
-  encodeAllocInstruction();
 }
 
 // Defines a new function environment.
@@ -72,11 +73,9 @@ coder::coder(position pos, string name, function *t, coder *parent,
     sord(sord),
     perm(DEFAULT_PERM),
     program(new vm::program),
-    numLabels(0),
     curPos(pos)
 {
   sord_stack.push(sord);
-  encodeAllocInstruction();
 }
 
 // Start encoding the body of the record.  The function being encoded
@@ -92,11 +91,9 @@ coder::coder(position pos, record *t, coder *parent, modifier sord)
     sord(sord),
     perm(DEFAULT_PERM),
     program(new vm::program),
-    numLabels(0),
     curPos(pos)
 {
   sord_stack.push(sord);
-  encodeAllocInstruction();
 }
 
 coder coder::newFunction(position pos, string name, function *t, modifier sord)
@@ -171,33 +168,22 @@ bool coder::encode(frame *f)
   
   if (f == 0) {
     encode(inst::constpush,(item)0);
+    return true;
   }
   else if (f == toplevel) {
     encode(inst::pushclosure);
+    return true;
   }
   else {
-    encode(inst::varpush,0);
-    
-    frame *level = toplevel->getParent();
-    while (level != f) {
-      if (level == 0)
-        // Frame request was in an improper scope.
-        return false;
-
-      encode(inst::fieldpush,0);
-
-      level = level->getParent();
-    }
+    encode(inst::varpush,toplevel->parentIndex());
+    return encode(f, toplevel->getParent());
   }
-
-  return true;
 }
 
 bool coder::encode(frame *dest, frame *top)
 {
-  //cerr << "coder::encode()\n";
-  
   if (dest == 0) {
+    // Change to encodePop?
     encode(inst::pop);
     encode(inst::constpush,(item)0);
   }
@@ -206,12 +192,10 @@ bool coder::encode(frame *dest, frame *top)
     while (level != dest) {
       if (level == 0) {
         // Frame request was in an improper scope.
-        //cerr << "failed\n";
-        
         return false;
       }
 
-      encode(inst::fieldpush,0);
+      encode(inst::fieldpush, level->parentIndex());
 
       level = level->getParent();
     }
@@ -221,67 +205,117 @@ bool coder::encode(frame *dest, frame *top)
   return true;
 }
 
-Int coder::defLabel()
+vm::program::label coder::encodeEmptyJump(inst::opcode op)
 {
-  if (isStatic())
-    return parent->defLabel();
-  
-  return defLabel(numLabels++);
+  // Get the end position before encoding the label.  Once encoded, this will
+  // point to the instruction.
+  vm::program::label pos = program->end();
+
+  encode(op);
+
+  return pos;
 }
 
-Int coder::defLabel(Int label)
+void replaceEmptyJump(vm::program::label from, vm::program::label to)
+{
+  from->ref = to;
+}
+
+label coder::defNewLabel()
+{
+  if (isStatic())
+    return parent->defNewLabel();
+  
+  label l = new label_t();
+  assert(!l->location.defined());
+  assert(!l->firstUse.defined());
+  return defLabel(l);
+}
+
+label coder::defLabel(label label)
 {
   if (isStatic())
     return parent->defLabel(label);
-  
-  assert(label >= 0 && label < numLabels);
 
-  defs.insert(std::make_pair(label,program->end()));
+  //cout << "defining label " << label << endl;
 
-  std::multimap<Int,vm::program::label>::iterator p = uses.lower_bound(label);
-  while (p != uses.upper_bound(label)) {
-    p->second->ref = program->end();
-    ++p;
+  assert(!label->location.defined());
+  //vm::program::label here = program->end();
+  label->location = program->end();
+  assert(label->location.defined());
+
+  if (label->firstUse.defined()) {
+    replaceEmptyJump(label->firstUse, program->end());
+    //vm::printInst(cout, label->firstUse, program->begin());
+    //cout << endl;
+
+    if (label->moreUses) {
+      typedef label_t::useVector useVector;
+      useVector& v = *label->moreUses;
+      for (useVector::iterator p = v.begin(); p != v.end(); ++p) {
+        replaceEmptyJump(*p, program->end());
+      }
+    }
   }
 
   return label;
 }
 
-void coder::useLabel(inst::opcode op, Int label)
+
+void coder::useLabel(inst::opcode op, label label)
 {
   if (isStatic())
     return parent->useLabel(op,label);
   
-#ifdef COMBO
-  if (op == inst::cjmp || op == inst::njmp) {
-    inst& last = program->back();
-    if (last.op == inst::builtin) {
-      bltin f = vm::get<bltin>(last);
-      if (f == run::intLess && op == inst::njmp) {
-        program->pop_back();
-        op = inst::gejmp;
-      }
+  if (label->location.defined()) {
+    encode(op, label->location);
+  } else {
+    if (label->firstUse.defined()) {
+      // Store additional uses in the moreUses array.
+      if (!label->moreUses)
+        label->moreUses = new label_t::useVector;
+      label->moreUses->push_back(encodeEmptyJump(op));
+    }
+    else {
+      label->firstUse = encodeEmptyJump(op);
+      assert(label->firstUse.defined());
+      assert(!label->location.defined());
     }
   }
-#endif
-
-  std::map<Int,vm::program::label>::iterator p = defs.find(label);
-  if (p != defs.end()) {
-    encode(op,p->second);
-  } else {
-    // Not yet defined
-    uses.insert(std::make_pair(label,program->end()));
-    encode(op);
-  }
 }
-
-Int coder::fwdLabel()
+label coder::fwdLabel()
 {
   if (isStatic())
     return parent->fwdLabel();
   
   // Create a new label without specifying its position.
-  return numLabels++;
+  label l = new label_t();
+  assert(!l->location.defined());
+  assert(!l->firstUse.defined());
+
+  //cout << "forward label " << l << endl;
+
+  return l;
+}
+
+bool coder::usesClosureSinceLabel(label l)
+{
+  assert(l->location.defined());
+  for (vm::program::label i = l->location; i != program->end(); ++i)
+    if (i->op == inst::pushclosure)
+      return true;
+  return false;
+}
+
+void coder::encodePatch(label from, label to)
+{
+  assert(from->location.defined());
+  assert(to->location.defined());
+
+  assert(from->location->op == inst::nop);
+
+  from->location->op = inst::jmp;
+  from->location->ref = to->location;
 }
 
 void coder::markPos(position pos)
@@ -302,11 +336,9 @@ vm::lambda *coder::close() {
 
   l->code = program;
 
-  l->params = level->getNumFormals();
+  l->parentIndex = level->parentIndex();
 
-  // Now that we know how many variables the function has, allocate space for
-  // all of them at the start of the function.
-  finishAlloc();
+  l->framesize = level->size();
 
   sord_stack.pop();
   sord = sord_stack.top();

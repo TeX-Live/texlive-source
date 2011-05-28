@@ -56,16 +56,7 @@ private:
   typedef mem::vector<item> stack_t;
   stack_t theStack;
 
-#ifdef DEBUG_FRAME
-  vars_t make_frame(string name, size_t, vars_t closure);
-#else
-  vars_t make_frame(size_t, vars_t closure);
-#endif
-
   void draw(ostream& out);
-
-  // Move arguments from stack to frame.
-  void marshall(size_t args, vars_t vars);
 
   // The initializer functions for imports, indexed by name.
   importInitMap *initMap;
@@ -84,6 +75,9 @@ private:
   position lastPos, breakPos;
   bool newline;
   
+  // Move arguments from stack to frame.
+  void marshall(size_t args, stack::vars_t vars);
+
 public:
   stack() : e(0), debugOp(0), lastPos(nullPos),
             breakPos(nullPos), newline(false) {};
@@ -102,8 +96,9 @@ public:
     return e;
   }
 
-  // Runs the instruction listed in code, with vars as frame of variables.
-  void run(program *code, vars_t vars);
+  // Runs a lambda.  If vars is non-null, it is used to store the variables of
+  // the lambda.  Otherwise, the method allocates a closure only if needed.
+  void runWithOrWithoutClosure(lambda *l, vars_t vars, vars_t parent);
 
   // Executes a function on top of the stack.
   void run(func *f);
@@ -158,6 +153,7 @@ inline T pop(stack* s, T defval)
   
 class interactiveStack : public stack {
   vars_t globals;
+  size_t globals_size;
 public:
   interactiveStack();
     

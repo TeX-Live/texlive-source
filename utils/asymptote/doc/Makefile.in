@@ -1,8 +1,8 @@
 MANFILES = asy.1 xasy.1x
-ASYFILES = $(wildcard *.asy) latexusage.asy
+ASYFILES = $(filter-out $(wildcard latexusage-*.asy),$(wildcard *.asy))
 SOURCE = asymptote.texi version.texi options
 ASY = ../asy -dir ../base -config "" -render=0
-DOCFILES = asymptote.pdf CAD.pdf
+DOCFILES = asymptote.pdf asy-latex.pdf CAD.pdf TeXShopAndAsymptote.pdf
 
 docdir = $(DESTDIR)@docdir@
 infodir = $(DESTDIR)@infodir@
@@ -13,6 +13,12 @@ TEXI2DVI = @TEXI2DVI@
 export docdir infodir INSTALL
 
 all:    doc
+
+asy-latex.pdf:
+	pdflatex asy-latex.dtx
+
+asymptote.sty:
+	pdflatex asy-latex.dtx
 
 dvi:	doc asymptote.dvi
 
@@ -31,9 +37,9 @@ faq:
 %.pdf:	%.asy
 	$(ASY) -f pdf -noprc $<
 
-latexusage.dvi: latexusage.tex
+latexusage.dvi: latexusage.tex asymptote.sty
 	rm -f latexusage-*
-	rm -f latexusage_.pre
+	rm -f latexusage.pre
 	rm -f latexusage.aux
 	latex latexusage
 	$(ASY) -noprc latexusage-*.asy
@@ -49,14 +55,14 @@ options: ../settings.cc
 	$(ASY) -h 2>&1 | grep -iv Asymptote > options
 
 asy.1: options asy.1.begin asy.1.end
-	cat options | grep \^- | sed -e "s/-\(.*\)  \([a-zA-Z].*\)/.TP\n.B -\1\n\2\./" | sed -e "/^.B/ s/-/\\\\-/g" | cat asy.1.begin - asy.1.end > asy.1
+	cat options | grep \^- | sed -e "s/-\(.*\)  \([a-zA-Z0-9].*\)/.TP\n.B -\1\n\2\./" | sed -e "/^.B/ s/-/\\\\-/g" | cat asy.1.begin - asy.1.end > asy.1
 
-asymptote.dvi: $(SOURCE) $(ASYFILES:.asy=.eps)
+asymptote.dvi: $(SOURCE) $(ASYFILES:.asy=.eps) latexusage.pdf
 	ln -sf asymptote.texi asymptote_.texi
 	$(TEXI2DVI) asymptote_.texi
 	mv asymptote_.dvi asymptote.dvi
 
-asymptote.pdf: $(SOURCE) $(ASYFILES:.asy=.pdf)
+asymptote.pdf: $(SOURCE) $(ASYFILES:.asy=.pdf) latexusage.pdf
 	$(TEXI2DVI) --pdf asymptote.texi
 
 CAD.pdf: CAD.tex CAD1.eps 
@@ -65,12 +71,19 @@ CAD.pdf: CAD.tex CAD1.eps
 	latex CAD
 	dvipdf CAD
 
+TeXShopAndAsymptote.pdf: TeXShopAndAsymptote.tex
+	latex TeXShopAndAsymptote
+	latex TeXShopAndAsymptote
+	dvipdf TeXShopAndAsymptote
+
 clean: FORCE
+	-rm -f asy-latex.{aux,idx,ins,log,toc}
 	-rm -f $(ASYFILES:.asy=.pdf)
-	-rm -f *.eps latexusage.{dvi,eps,log,aux,*.eps} latexusage-* latexusage_.pre
+	-rm -f *.eps latexusage.{dvi,eps,pdf,log,aux,*.eps} latexusage-* latexusage.pre
 	-rm -f {asymptote,asymptote_}.{aux,cp,cps,dvi,fn,info,ky,log,pg,toc,tp,vr} 
 	-rm -f asymptote_.texi
 	-rm -f CAD.{aux,dvi,log,toc}
+	-rm -f options asy.1
 	cd png && $(MAKE) clean
 
 install-man:
@@ -102,6 +115,9 @@ uninstall-all:
 distclean: FORCE clean
 	-rm -f version.texi Makefile 
 	-rm -f $(DOCFILES)
-	cd png && make distclean
-	cd FAQ && make distclean
+	cd png && $(MAKE) distclean
+	cd FAQ && $(MAKE) distclean
 FORCE:
+
+Makefile: Makefile.in
+	cd ..; config.status

@@ -14,18 +14,17 @@
 namespace vm {
 
 static const char* opnames[] = {
-  "pop", "intpush", "constpush", 
-  "varpush", "varsave", "fieldpush", "fieldsave",
-  "builtin", "jmp", "cjmp", "njmp", "call",
-  "pushclosure", "makefunc", "ret",
-  "alloc", "pushframe", "popframe",
-
-#ifdef COMBO
-  "varpop", "fieldpop",
-  "gejmp"
-#endif
+#define OPCODE(name, type) #name,
+#include "opcodes.h"
+#undef OPCODE
 };
 static const Int numOps = (Int)(sizeof(opnames)/sizeof(char *));
+
+static const char optypes[] = {
+#define OPCODE(name, type) type,
+#include "opcodes.h"
+#undef OPCODE
+};
 
 #ifdef DEBUG_BLTIN
 mem::map<bltin,string> bltinRegistry;
@@ -41,7 +40,9 @@ string lookupBltin(bltin b) {
 
 ostream& operator<< (ostream& out, const item& i)
 {
-/*
+#if COMPACT
+  out << "<item>";
+#else
   // TODO: Make a data structure mapping typeids to print functions.
   if (i.empty())
     out << "empty";
@@ -58,12 +59,19 @@ ostream& operator<< (ostream& out, const item& i)
   else if (i.type() == typeid(frame)) {
     out << "frame";
 #ifdef DEBUG_FRAME
-    out << " " << (get<frame *>(i))->getName();
+    {
+      frame *f = get<frame *>(i);
+      if (f)
+        out << " " << f->getName();
+      else
+        out << " <null>";
+    }
 #endif
   }
   else
     out << "type " << demangle(i.type().name());
-*/
+#endif
+
   return out;
 }
 
@@ -76,48 +84,35 @@ void printInst(ostream& out, const program::label& code,
   Int i = (Int)code->op;
   
   if (i < 0 || i >= numOps) {
-    out << "<<invalid op>> " << i;
+    out << "<<invalid op>>" << i;
+    return;
   }
   out << opnames[i];
 
-  switch (code->op) {
-    case inst::intpush:
-    case inst::varpush:
-    case inst::varsave:
-    case inst::fieldpush:
-    case inst::fieldsave:
-    case inst::alloc:
-#ifdef COMBO
-    case inst::varpop:
-    case inst::fieldpop:
-#endif
+  switch (optypes[i]) {
+    case 'n':
     {
       out << " " << get<Int>(*code);
       break;
     }
 
-    case inst::constpush:
+    case 't':
     {
       item c = code->ref;
       out << " " << c;
       break;
     }
 
-#ifdef DEBUG_BLTIN
-    case inst::builtin:
+    case 'b':
     {
+#ifdef DEBUG_BLTIN
       string s=lookupBltin(get<bltin>(*code));
       out << " " << (!s.empty() ? s : "<unnamed>") << " ";
+#endif
       break;
     }
-#endif
 
-    case inst::jmp:
-    case inst::cjmp:
-    case inst::njmp:
-#ifdef COMBO
-    case inst::gejmp:
-#endif
+    case 'o':
     {
       char f = out.fill('0');
       out << " i";
@@ -127,13 +122,13 @@ void printInst(ostream& out, const program::label& code,
       break;
     }
 
-#ifdef DEBUG_FRAME
-    case inst::makefunc:
+    case 'l':
     {
+#ifdef DEBUG_FRAME
       out << " " << get<lambda*>(*code)->name << " ";
+#endif
       break;
     }
-#endif
     
     default: {
       /* nothing else to do */

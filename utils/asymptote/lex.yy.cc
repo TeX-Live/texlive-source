@@ -767,20 +767,20 @@ int yy_flex_debug = 1;
 
 static yyconst flex_int16_t yy_rule_linenum[122] =
     {   0,
-      204,  205,  207,  213,  217,  218,  228,  229,  230,  231,
-      235,  236,  246,  247,  248,  249,  250,  251,  252,  253,
-      254,  255,  260,  265,  271,  277,  285,  288,  289,  290,
-      291,  292,  293,  294,  295,  296,  297,  298,  299,  300,
-      301,  303,  304,  305,  306,  307,  308,  309,  310,  311,
-      312,  313,  314,  315,  316,  317,  318,  319,  320,  321,
-      322,  323,  324,  325,  326,  327,  328,  329,  331,  332,
-      333,  334,  335,  336,  338,  339,  340,  341,  342,  344,
-      345,  346,  347,  348,  349,  350,  351,  352,  353,  354,
-      355,  356,  357,  358,  359,  360,  361,  363,  364,  365,
+      205,  206,  208,  214,  218,  219,  229,  230,  231,  232,
+      236,  237,  247,  248,  249,  250,  251,  252,  253,  254,
+      255,  256,  261,  266,  272,  278,  286,  289,  290,  291,
+      292,  293,  294,  295,  296,  297,  298,  299,  300,  301,
+      302,  304,  305,  306,  307,  308,  309,  310,  311,  312,
+      313,  314,  315,  316,  317,  318,  319,  320,  321,  322,
+      323,  324,  325,  326,  327,  328,  329,  330,  332,  333,
+      334,  335,  336,  337,  339,  340,  341,  342,  343,  345,
+      346,  347,  348,  349,  350,  351,  352,  353,  354,  355,
+      356,  357,  358,  359,  360,  361,  362,  364,  365,  366,
 
-      366,  367,  370,  377,  384,  386,  388,  390,  392,  395,
-      397,  398,  404,  408,  412,  416,  419,  423,  424,  425,
-      429
+      367,  368,  371,  378,  385,  387,  389,  391,  393,  396,
+      398,  399,  405,  409,  413,  417,  420,  424,  425,  426,
+      430
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -821,7 +821,8 @@ using mem::string;
 
 #include "opsymbols.h"
 
-#define YY_NO_UNPUT
+static void yyunput(int, char *);
+void (*unused)(int,char *) = yyunput;
 
 fileinfo* fi;
 Int tokPos;
@@ -984,7 +985,7 @@ void getstring(void)
 
 
 
-#line 988 "lex.yy.cc"
+#line 989 "lex.yy.cc"
 
 #define INITIAL 0
 #define lexcomment 1
@@ -1231,10 +1232,10 @@ YY_DECL
 	register int yy_act;
     
 /* %% [7.0] user's declarations go here */
-#line 201 "camp.l"
+#line 202 "camp.l"
 
 
-#line 1238 "lex.yy.cc"
+#line 1239 "lex.yy.cc"
 
 	if ( !(yy_init) )
 		{
@@ -1350,23 +1351,23 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 204 "camp.l"
+#line 205 "camp.l"
 {adjust(); /*commentDepth++;*/}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 205 "camp.l"
+#line 206 "camp.l"
 {adjust(); /*commentDepth--;*/
                     /*if (commentDepth == 0)*/ BEGIN INITIAL; }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 207 "camp.l"
+#line 208 "camp.l"
 {adjust(); newline(); continue; }
 	YY_BREAK
 case YY_STATE_EOF(lexcomment):
-#line 208 "camp.l"
+#line 209 "camp.l"
 {adjust();
                     setEOF("comment not terminated");
                     BEGIN INITIAL;
@@ -1375,7 +1376,7 @@ case YY_STATE_EOF(lexcomment):
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 213 "camp.l"
+#line 214 "camp.l"
 {adjust(); continue; }
 	YY_BREAK
 
@@ -1386,19 +1387,19 @@ case 5:
 (yy_c_buf_p) = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 217 "camp.l"
+#line 218 "camp.l"
 {adjust(); BEGIN INITIAL;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 218 "camp.l"
+#line 219 "camp.l"
 {adjust(); 
                     BEGIN INITIAL;
                     getstring(); 
                     return STRING; }
 	YY_BREAK
 case YY_STATE_EOF(texstring):
-#line 222 "camp.l"
+#line 223 "camp.l"
 {adjust();
                     setEOF("string not terminated");
                     BEGIN INITIAL;
@@ -1409,22 +1410,22 @@ case YY_STATE_EOF(texstring):
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 228 "camp.l"
+#line 229 "camp.l"
 {adjust(); newline(); append('\n'); continue; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 229 "camp.l"
+#line 230 "camp.l"
 {adjust(); append('\\'); append('\\'); continue; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 230 "camp.l"
+#line 231 "camp.l"
 {adjust(); append('\"'); continue; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 231 "camp.l"
+#line 232 "camp.l"
 {adjust(); append(*yytext); }
 	YY_BREAK
 
@@ -1435,19 +1436,19 @@ case 11:
 (yy_c_buf_p) = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 235 "camp.l"
+#line 236 "camp.l"
 {adjust(); BEGIN INITIAL;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 236 "camp.l"
+#line 237 "camp.l"
 {adjust(); 
                     BEGIN INITIAL;
                     getstring(); 
                     return STRING; }
 	YY_BREAK
 case YY_STATE_EOF(cstring):
-#line 240 "camp.l"
+#line 241 "camp.l"
 {adjust();
                     setEOF("string not terminated");
                     BEGIN INITIAL;
@@ -1458,52 +1459,52 @@ case YY_STATE_EOF(cstring):
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 246 "camp.l"
+#line 247 "camp.l"
 {adjust(); newline(); append('\n'); continue; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 247 "camp.l"
+#line 248 "camp.l"
 {adjust(); append(yytext[1]); continue; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 248 "camp.l"
+#line 249 "camp.l"
 {adjust(); append('\a'); continue; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 249 "camp.l"
+#line 250 "camp.l"
 {adjust(); append('\b'); continue; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 250 "camp.l"
+#line 251 "camp.l"
 {adjust(); append('\f'); continue; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 251 "camp.l"
+#line 252 "camp.l"
 {adjust(); append('\n'); continue; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 252 "camp.l"
+#line 253 "camp.l"
 {adjust(); append('\r'); continue; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 253 "camp.l"
+#line 254 "camp.l"
 {adjust(); append('\t'); continue; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 254 "camp.l"
+#line 255 "camp.l"
 {adjust(); append('\v'); continue; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 255 "camp.l"
+#line 256 "camp.l"
 {adjust();
                     char x=(char)(yytext[1]-'0');
                     append(x);
@@ -1512,7 +1513,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 260 "camp.l"
+#line 261 "camp.l"
 {adjust();
                     char x=(char)((yytext[1]-'0')*8+yytext[2]-'0');
                     append(x);
@@ -1521,7 +1522,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 265 "camp.l"
+#line 266 "camp.l"
 {adjust();
                     char x=(char)((yytext[1]-'0')*64+(yytext[2]-'0')*8
                             +yytext[3]-'0');
@@ -1531,7 +1532,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 271 "camp.l"
+#line 272 "camp.l"
 {adjust();
                     char x=(char) (yytext[2] <= '9' ? yytext[2]-'0' : 
                                                       10+yytext[2]-'A');
@@ -1541,7 +1542,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 277 "camp.l"
+#line 278 "camp.l"
 {adjust();
                     char x=(char) ((yytext[2] <= '9' ? yytext[2]-'0' : 
                                                       10+yytext[2]-'A')*16
@@ -1553,390 +1554,390 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 285 "camp.l"
+#line 286 "camp.l"
 {adjust(); append(*yytext); }
 	YY_BREAK
 
 case 28:
 YY_RULE_SETUP
-#line 288 "camp.l"
+#line 289 "camp.l"
 {adjust(); continue;}
 	YY_BREAK
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 289 "camp.l"
+#line 290 "camp.l"
 {adjust(); newline(); continue;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 290 "camp.l"
+#line 291 "camp.l"
 {adjust(); continue;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 291 "camp.l"
+#line 292 "camp.l"
 {adjust(); return ','; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 292 "camp.l"
+#line 293 "camp.l"
 {adjust(); return ':'; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 293 "camp.l"
+#line 294 "camp.l"
 {adjust(); return ';'; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 294 "camp.l"
+#line 295 "camp.l"
 {adjust(); return '('; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 295 "camp.l"
+#line 296 "camp.l"
 {adjust(); return ')'; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 296 "camp.l"
+#line 297 "camp.l"
 {adjust(); return '['; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 297 "camp.l"
+#line 298 "camp.l"
 {adjust(); return ']'; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 298 "camp.l"
+#line 299 "camp.l"
 {adjust(); return '{'; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 299 "camp.l"
+#line 300 "camp.l"
 {adjust(); return '}'; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 300 "camp.l"
+#line 301 "camp.l"
 {adjust(); return '.'; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 301 "camp.l"
+#line 302 "camp.l"
 {adjust(); return ELLIPSIS; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 303 "camp.l"
+#line 304 "camp.l"
 {DEFSYMBOL(SYM_PLUS); return '+'; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 304 "camp.l"
+#line 305 "camp.l"
 {DEFSYMBOL(SYM_MINUS); return '-'; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 305 "camp.l"
+#line 306 "camp.l"
 {DEFSYMBOL(SYM_TIMES); return '*'; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 306 "camp.l"
+#line 307 "camp.l"
 {DEFSYMBOL(SYM_DIVIDE); return '/'; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 307 "camp.l"
+#line 308 "camp.l"
 {DEFSYMBOL(SYM_MOD); return '%'; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 308 "camp.l"
+#line 309 "camp.l"
 {DEFSYMBOL(SYM_CARET); return '^'; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 309 "camp.l"
+#line 310 "camp.l"
 {savesymbol(SYM_CARET); return '^'; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 310 "camp.l"
+#line 311 "camp.l"
 {adjust(); return '?'; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 311 "camp.l"
+#line 312 "camp.l"
 {adjust(); return ASSIGN; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 312 "camp.l"
+#line 313 "camp.l"
 {DEFSYMBOL(SYM_EQ); return EQ; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 313 "camp.l"
+#line 314 "camp.l"
 {DEFSYMBOL(SYM_NEQ); return NEQ; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 314 "camp.l"
+#line 315 "camp.l"
 {DEFSYMBOL(SYM_LT); return LT; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 315 "camp.l"
+#line 316 "camp.l"
 {DEFSYMBOL(SYM_LE); return LE; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 316 "camp.l"
+#line 317 "camp.l"
 {DEFSYMBOL(SYM_GT); return GT; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 317 "camp.l"
+#line 318 "camp.l"
 {DEFSYMBOL(SYM_GE); return GE; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 318 "camp.l"
+#line 319 "camp.l"
 {DEFSYMBOL(SYM_CAND); return CAND; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 319 "camp.l"
+#line 320 "camp.l"
 {DEFSYMBOL(SYM_COR); return COR; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 320 "camp.l"
+#line 321 "camp.l"
 {DEFSYMBOL(SYM_LOGNOT); return LOGNOT; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 321 "camp.l"
+#line 322 "camp.l"
 {DEFSYMBOL(SYM_CARETS); return CARETS; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 322 "camp.l"
+#line 323 "camp.l"
 {DEFSYMBOL(SYM_COLONS); return COLONS; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 323 "camp.l"
+#line 324 "camp.l"
 {DEFSYMBOL(SYM_INCR); return INCR; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 324 "camp.l"
+#line 325 "camp.l"
 {DEFSYMBOL(SYM_DOTS); return DOTS; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 325 "camp.l"
+#line 326 "camp.l"
 {DEFSYMBOL(SYM_DASHES); return DASHES; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 326 "camp.l"
+#line 327 "camp.l"
 {DEFSYMBOL(SYM_LONGDASH); return LONGDASH; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 327 "camp.l"
+#line 328 "camp.l"
 {DEFSYMBOL(SYM_AMPERSAND); return AMPERSAND; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 328 "camp.l"
+#line 329 "camp.l"
 {DEFSYMBOL(SYM_BAR); return BAR; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 329 "camp.l"
+#line 330 "camp.l"
 {makeopsymbol(); return OPERATOR; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 331 "camp.l"
+#line 332 "camp.l"
 {savesymbol(SYM_PLUS); return SELFOP; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 332 "camp.l"
+#line 333 "camp.l"
 {savesymbol(SYM_MINUS); return SELFOP; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 333 "camp.l"
+#line 334 "camp.l"
 {savesymbol(SYM_TIMES); return SELFOP; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 334 "camp.l"
+#line 335 "camp.l"
 {savesymbol(SYM_DIVIDE); return SELFOP; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 335 "camp.l"
+#line 336 "camp.l"
 {savesymbol(SYM_MOD); return SELFOP; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 336 "camp.l"
+#line 337 "camp.l"
 {savesymbol(SYM_CARET); return SELFOP; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 338 "camp.l"
+#line 339 "camp.l"
 {adjust(); return AND; }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 339 "camp.l"
+#line 340 "camp.l"
 {DEFSYMBOL(SYM_CONTROLS); return CONTROLS; }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 340 "camp.l"
+#line 341 "camp.l"
 {DEFSYMBOL(SYM_TENSION); return TENSION; }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 341 "camp.l"
+#line 342 "camp.l"
 {DEFSYMBOL(SYM_ATLEAST); return ATLEAST; }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 342 "camp.l"
+#line 343 "camp.l"
 {DEFSYMBOL(SYM_CURL); return CURL; }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 344 "camp.l"
+#line 345 "camp.l"
 {adjust(); return IF; }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 345 "camp.l"
+#line 346 "camp.l"
 {adjust(); return ELSE; }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 346 "camp.l"
+#line 347 "camp.l"
 {adjust(); return WHILE; }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 347 "camp.l"
+#line 348 "camp.l"
 {adjust(); return FOR; }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 348 "camp.l"
+#line 349 "camp.l"
 {adjust(); return DO; }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 349 "camp.l"
+#line 350 "camp.l"
 {adjust(); return RETURN_; }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 350 "camp.l"
+#line 351 "camp.l"
 {adjust(); return BREAK; }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 351 "camp.l"
+#line 352 "camp.l"
 {adjust(); return CONTINUE; }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 352 "camp.l"
+#line 353 "camp.l"
 {adjust(); return STRUCT; }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 353 "camp.l"
+#line 354 "camp.l"
 {adjust(); return TYPEDEF; }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 354 "camp.l"
+#line 355 "camp.l"
 {adjust(); return NEW; }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 355 "camp.l"
+#line 356 "camp.l"
 {adjust(); return ACCESS; }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 356 "camp.l"
+#line 357 "camp.l"
 {adjust(); return IMPORT; }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 357 "camp.l"
+#line 358 "camp.l"
 {adjust(); return UNRAVEL; }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 358 "camp.l"
+#line 359 "camp.l"
 {adjust(); return FROM; }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 359 "camp.l"
+#line 360 "camp.l"
 {adjust(); return INCLUDE; }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 360 "camp.l"
+#line 361 "camp.l"
 {adjust(); return QUOTE; }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 361 "camp.l"
+#line 362 "camp.l"
 {adjust(); makemod(trans::EXPLICIT_STATIC);
                               return MODIFIER; }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 363 "camp.l"
+#line 364 "camp.l"
 {adjust(); makeperm(trans::PUBLIC); return PERM; }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 364 "camp.l"
+#line 365 "camp.l"
 {adjust(); makeperm(trans::PRIVATE); return PERM; }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 365 "camp.l"
+#line 366 "camp.l"
 {adjust(); makeperm(trans::RESTRICTED); return PERM; }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 366 "camp.l"
+#line 367 "camp.l"
 {adjust(); return THIS; }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 367 "camp.l"
+#line 368 "camp.l"
 {adjust(); return EXPLICIT; }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 370 "camp.l"
+#line 371 "camp.l"
 try {
   adjust(); yylval.e= new intExp(here(), lexical::cast<Int>(yytext)); 
   } catch (lexical::bad_cast&) {
@@ -1947,7 +1948,7 @@ try {
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 377 "camp.l"
+#line 378 "camp.l"
 try {
   adjust(); yylval.e= new realExp(here(), lexical::cast<double>(yytext));
   } catch (lexical::bad_cast&) {
@@ -1958,53 +1959,53 @@ try {
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 384 "camp.l"
+#line 385 "camp.l"
 {
   adjust(); yylval.e= new booleanExp(here(), true); return LIT; }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 386 "camp.l"
+#line 387 "camp.l"
 {
   adjust(); yylval.e= new booleanExp(here(), false); return LIT; }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 388 "camp.l"
+#line 389 "camp.l"
 {
   adjust(); yylval.e= new nullExp(here()); return LIT; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 390 "camp.l"
+#line 391 "camp.l"
 {
   adjust(); yylval.e= new cycleExp(here()); return LIT; }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 392 "camp.l"
+#line 393 "camp.l"
 {
   adjust(); yylval.e= new newPictureExp(here()); return LIT; }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 395 "camp.l"
+#line 396 "camp.l"
 {adjust(); BEGIN opname; }
 	YY_BREAK
 
 case 111:
 YY_RULE_SETUP
-#line 397 "camp.l"
+#line 398 "camp.l"
 {adjust(); continue;} 
 	YY_BREAK
 case 112:
 /* rule 112 can match eol */
 YY_RULE_SETUP
-#line 398 "camp.l"
+#line 399 "camp.l"
 {adjust(); newline(); continue;}
 	YY_BREAK
 case YY_STATE_EOF(opname):
-#line 399 "camp.l"
+#line 400 "camp.l"
 {adjust();
                     setEOF("missing operator name");
                     BEGIN INITIAL;
@@ -2013,7 +2014,7 @@ case YY_STATE_EOF(opname):
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 404 "camp.l"
+#line 405 "camp.l"
 { savesymbol(SYM_CARET);
                      BEGIN INITIAL;
                      return ID;
@@ -2021,7 +2022,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 408 "camp.l"
+#line 409 "camp.l"
 {
   makeopsymbol();
   BEGIN INITIAL;
@@ -2029,7 +2030,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 412 "camp.l"
+#line 413 "camp.l"
 {
   makeopsymbol();
   BEGIN INITIAL;
@@ -2037,40 +2038,40 @@ YY_RULE_SETUP
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 416 "camp.l"
+#line 417 "camp.l"
 {}
 	YY_BREAK
 
 case 117:
 YY_RULE_SETUP
-#line 419 "camp.l"
+#line 420 "camp.l"
 {
   makesymbol();
   return ID; }  
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 423 "camp.l"
+#line 424 "camp.l"
 {adjust(); /*commentDepth = 1;*/ BEGIN lexcomment; }
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 424 "camp.l"
+#line 425 "camp.l"
 {startstring(); BEGIN texstring; }
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 425 "camp.l"
+#line 426 "camp.l"
 {startstring(); BEGIN cstring; }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(lexformat):
-#line 427 "camp.l"
+#line 428 "camp.l"
 { setEOF("unexpected end of input"); yyterminate(); }
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 429 "camp.l"
+#line 430 "camp.l"
 {adjust();
                     error();
                     em << "invalid token";
@@ -2080,10 +2081,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 435 "camp.l"
+#line 436 "camp.l"
 ECHO;
 	YY_BREAK
-#line 2087 "lex.yy.cc"
+#line 2088 "lex.yy.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -3216,4 +3217,4 @@ void yyfree (void * ptr )
 
 /* %ok-for-header */
 
-#line 435 "camp.l"
+#line 436 "camp.l"

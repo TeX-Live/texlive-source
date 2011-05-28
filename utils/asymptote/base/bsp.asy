@@ -201,7 +201,9 @@ void add(picture pic=currentpicture, face[] faces,
     
   for(int i=0; i < n; ++i) {
     picture F=Faces[i].pic;
-    pic.userBox(F.userMin,F.userMax);
-    pic.append(pic.bounds.point,pic.bounds.min,pic.bounds.max,F.T,F.bounds);
+    pic.userBox3(F.userMin3(), F.userMax3());
+    pic.bounds.append(F.T, F.bounds);
+    // The above 2 lines should be replaced with a routine in picture which
+    // copies only sizing data from another picture.
   }
 }

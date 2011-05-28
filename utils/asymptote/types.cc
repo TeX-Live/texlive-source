@@ -19,6 +19,10 @@
 #include "access.h"
 #include "virtualfieldaccess.h"
 
+namespace run {
+void arrayDeleteHelper(vm::stack *Stack);
+}
+
 // For pre-translated symbols.
 #ifndef NOSYM
 #include "types.symbols.h"
@@ -80,25 +84,25 @@ void ty::print(ostream& out) const
     return &v;                                                    \
   }
       
-#define SIGFIELD(Type, name, func)                                      \
-  if (id == name &&                                                     \
-      equivalent(sig, Type()->getSignature()))                          \
-    {                                                                   \
-      static trans::virtualFieldAccess a(run::func);                    \
-      static trans::varEntry v(Type(), &a, 0, position());              \
-      return &v;                                                        \
+#define SIGFIELD(Type, name, func)                                         \
+  if (id == name &&                                                        \
+      equivalent(sig, Type()->getSignature()))                             \
+    {                                                                      \
+      static trans::virtualFieldAccess a(run::func, 0, run::func##Helper); \
+      static trans::varEntry v(Type(), &a, 0, position());                 \
+      return &v;                                                           \
     }
 
-#define DSIGFIELD(name, sym, func)                                      \
-  if (id == sym &&                                                     \
-      equivalent(sig, name##Type()->getSignature()))                    \
-    {                                                                   \
-      static trans::virtualFieldAccess a(run::func);                    \
-      /* for some fields, v needs to be dynamic */                      \
-      /* e.g. when the function type depends on an array type. */       \
-      trans::varEntry *v =                                              \
-        new trans::varEntry(name##Type(), &a, 0, position());           \
-      return v;                                                         \
+#define DSIGFIELD(name, sym, func)                                         \
+  if (id == sym &&                                                         \
+      equivalent(sig, name##Type()->getSignature()))                       \
+    {                                                                      \
+      static trans::virtualFieldAccess a(run::func, 0, run::func##Helper); \
+      /* for some fields, v needs to be dynamic */                         \
+      /* e.g. when the function type depends on an array type. */          \
+      trans::varEntry *v =                                                 \
+        new trans::varEntry(name##Type(), &a, 0, position());              \
+      return v;                                                            \
     }
 
 #define FILEFIELD(GetType, SetType, name, sym) \
@@ -322,8 +326,21 @@ trans::varEntry *array::virtualField(symbol id, signature *sig)
 
 #undef SIGFIELDLIST
 
+void printFormal(ostream& out, const formal& f, bool keywordOnly)
+{
+  if (f.Explicit)
+    out << "explicit ";
+  if (f.name)
+    f.t->printVar(out, keywordOnly ? "keyword "+(string)(f.name) : f.name);
+  else
+    f.t->print(out);
+  if (f.defval)
+    out << "=<default>";
+}
+
 ostream& operator<< (ostream& out, const formal& f)
 {
+#if 0
   if (f.Explicit)
     out << "explicit ";
   if (f.name)
@@ -332,6 +349,8 @@ ostream& operator<< (ostream& out, const formal& f)
     f.t->print(out);
   if (f.defval)
     out << "=<default>";
+#endif
+  printFormal(out, f, false);
   return out;
 }
   
@@ -365,13 +384,12 @@ ostream& operator<< (ostream& out, const signature& s)
 
   out << "(";
 
-  formal_vector::const_iterator f = s.formals.begin();
-  if (f != s.formals.end()) {
-    out << *f;
-    ++f;
+  for (size_t i = 0; i < s.formals.size(); ++i)
+  {
+    if (i > 0)
+      out << ", ";
+    printFormal(out, s.getFormal(i), s.formalIsKeywordOnly(i));
   }
-  for (; f != s.formals.end(); ++f)
-    out << ", " << *f;
 
   if (s.rest.t) {
     if (!s.formals.empty())

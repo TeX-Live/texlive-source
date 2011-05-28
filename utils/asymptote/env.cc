@@ -1,5 +1,5 @@
 /*****
- * env.h
+ * env.cc
  * Andy Hammerlindl 2002/6/20
  *
  * Keeps track of the namespaces of variables and types when traversing
@@ -12,10 +12,6 @@
 #include "builtin.h"
 
 using namespace types;
-
-namespace absyntax {
-void clearCachedCalls();
-}
 
 namespace trans {
 
@@ -88,7 +84,6 @@ bool protoenv::castable(ty *target, ty *source, symbol name) {
   return ct.test(target,source);
 }
 
-#ifdef FASTCAST
 bool protoenv::fastCastable(ty *target, ty *source) {
   assert(target->kind != types::ty_overloaded);
   assert(target->kind != types::ty_error);
@@ -150,7 +145,6 @@ access *protoenv::fastLookupCast(ty *target, ty *source) {
   // Fall back on slow routine.
   return lookupCast(target, source, symbol::castsym);
 }
-#endif
 
 
 ty *protoenv::castTarget(ty *target, ty *source, symbol name) {

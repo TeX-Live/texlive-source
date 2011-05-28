@@ -23,6 +23,7 @@ triplearray* => tripleArray()
 triplearray2* => tripleArray2()
 transform => primTransform()
 callableTransform* => transformFunction()
+callablePen* => penFunction()
 
 #include "picture.h"
 #include "drawelement.h"
@@ -59,6 +60,7 @@ typedef array penarray;
 typedef array penarray2;
 
 typedef callable callableTransform;
+typedef callable callablePen;
 
 using types::IntArray;
 using types::realArray;
@@ -74,6 +76,11 @@ using types::penArray2;
 function *transformFunction()
 {
   return new function(primTransform());
+}
+
+function *penFunction()
+{
+  return new function(primPen(),primInt(),primInt());
 }
 
 // Ignore unclosed begingroups but not spurious endgroups.
@@ -345,15 +352,23 @@ void _image(picture *f, realarray2 *data, pair initial, pair final,
 {
   array *(*copyarray)(array *a)=copy ? copyArray: nop;
   array *(*copyarray2)(array *a)=copy ? copyArray2: nop;
-  f->append(new drawImage(*copyarray2(data),*copyarray(palette),
-                          t*matrix(initial,final),antialias));
+  f->append(new drawPaletteImage(*copyarray2(data),*copyarray(palette),
+                            t*matrix(initial,final),antialias));
 }
 
 void _image(picture *f, penarray2 *data, pair initial, pair final,
             transform t=identity, bool copy=true, bool antialias=false)
 {
   array *(*copyarray2)(array *a)=copy ? copyArray2: nop;
-  f->append(new drawImage(*copyarray2(data),t*matrix(initial,final),antialias));
+  f->append(new drawNoPaletteImage(*copyarray2(data),t*matrix(initial,final),
+                                   antialias));
+}
+
+void _image(picture *f, callablePen *F, Int width, Int height,
+            pair initial, pair final, transform t=identity, bool antialias=false)
+{
+  f->append(new drawFunctionImage(Stack,F,width,height,
+                                  t*matrix(initial,final),antialias));
 }
 
 string nativeformat()
@@ -380,9 +395,15 @@ void shipout(string prefix=emptystring, picture *f, picture *preamble=NULL,
   picture *result=new picture;
   unsigned level=0;
   picture::nodelist::iterator p;
+
+  // If null is given as an xform, just use the identity transformation.
+  bool xformIsNull = xform == nullfunc::instance();
+
   for(p = f->nodes.begin(); p != f->nodes.end(); ++p) {
-    xform->call(Stack);
-    transform t=pop<transform>(Stack);
+    if (!xformIsNull)
+      xform->call(Stack);
+    transform t=xformIsNull ? camp::identity : pop<transform>(Stack);
+
     static transform Zero=transform(0.0,0.0,0.0,0.0,0.0,0.0);
     bool Delete=(t == Zero);
     picture *group=new picture;
@@ -636,6 +657,12 @@ void drawPRCtube(picture *f, path3 center, path3 g, penarray *p, real opacity,
                  real shininess)
 {
   f->append(new drawTube(center,g,*p,opacity,shininess));
+}
+
+// Draw pixel
+void drawpixel(picture *f, triple v, pen p, real width=1.0)
+{
+  f->append(new drawPixel(v,p,width));
 }
 
 triple min3(picture *f)

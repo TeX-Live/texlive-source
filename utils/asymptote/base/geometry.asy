@@ -433,10 +433,6 @@ point point(explicit pair p, real m)
   op.init(currentcoordsys, p, m);
   return op;
 }
-point point(explicit pair p, int m)
-{// Handle ambiguity
-  return point(p,(real)m);
-}
 
 /*<asyxml><function type="point" signature="point(coordsys,explicit point,real)"><code></asyxml>*/
 point point(coordsys R, explicit point M, real m=M.m)
@@ -1150,17 +1146,18 @@ private void Drawline(picture pic=currentpicture, Label L="",pair P, bool dirP=t
                       Label legend="", marker marker=nomarker,
                       pathModifier pathModifier=NoModifier)
 {/* Add the two parameters 'dirP' and 'dirQ' to the native routine
-    'drawline' of the module 'maths'.
+    'drawline' of the module 'math'.
     Segment [PQ] will be prolonged in direction of P if 'dirP=true', in
     direction of Q if 'dirQ=true'.
     If 'dirP=dirQ=true', the behavior is that of the native 'drawline'.
     Add all the other parameters of 'Draw'.*/
-  pic.add(new void (frame f, transform t, transform, pair m, pair M) {
+  pic.add(new void (frame f, transform t, transform T, pair m, pair M) {
       picture opic;
       // Reduce the bounds by the size of the pen.
       m -= min(p)-(linemargin(),linemargin()); M -= max(p)+(linemargin(),linemargin());
 
       // Calculate the points and direction vector in the transformed space.
+      t=t*T;
       pair z=t*P;
       pair q=t*Q;
       pair v=q-z;
@@ -1175,16 +1172,16 @@ private void Drawline(picture pic=currentpicture, Label L="",pair P, bool dirP=t
             ptp=(z.x,z.y+cp*(m.y-z.y));
             ptq=(z.x,q.y+cq*(M.y-q.y));
           } else {
-            ptp=(z.x,q.y+cq*(m.y-q.y));
-            ptq=(z.x,z.y+cp*(M.y-z.y));
+            ptq=(z.x,q.y+cq*(m.y-q.y));
+            ptp=(z.x,z.y+cp*(M.y-z.y));
           }
       } else if(v.y == 0) {
         if (dot(v,m-z) < 0) {
           ptp=(z.x+cp*(m.x-z.x),z.y);
           ptq=(q.x+cq*(M.x-q.x),z.y);
         } else {
-          ptp=(q.x+cq*(m.x-q.x),z.y);
-          ptq=(z.x+cp*(M.x-z.x),z.y);
+          ptq=(q.x+cq*(m.x-q.x),z.y);
+          ptp=(z.x+cp*(M.x-z.x),z.y);
         }
       } else {
         // Calculate the maximum and minimum t values allowed for the
@@ -1239,12 +1236,12 @@ void clipdraw(picture pic=currentpicture, Label L="", path g,
     label(tmp,L,g,p);
     add(pic,tmp);
   }
-  pic.add(new void (frame f, transform t, transform, pair m, pair M) {
+  pic.add(new void (frame f, transform t, transform T, pair m, pair M) {
       // Reduce the bounds by the size of the pen and the margins.
       m += min(p)+(xmargin,ymargin); M -= max(p)+(xmargin,ymargin);
       path bound=box(m,M);
       picture tmp;
-      draw(tmp,"",t*g,align,p,arrow,bar,NoMargin,legend,marker);
+      draw(tmp,"",t*T*g,align,p,arrow,bar,NoMargin,legend,marker);
       clip(tmp,bound);
       add(f,tmp.fit());
     });
@@ -2963,13 +2960,6 @@ ellipse ellipse(point C, real a, real b, real angle=0)
   return oe;
 }
 
-/*<asyxml><function type="ellipse" signature="ellipse(explicit pair,real,real)"><code></asyxml>*/
-ellipse ellipse(explicit pair C, real a, real b)=
-  new ellipse(explicit pair C, real a, real b)
-{/*<asyxml></code><documentation>Overwrite the default routine.</documentation></function></asyxml>*/
-  return ellipse((point)C,a,b,0);
-};
-
 /*<asyxml><function type="ellipse" signature="ellipse(bqe)"><code></asyxml>*/
 ellipse ellipse(bqe bqe)
 {/*<asyxml></code><documentation>Return the ellipse a[0]*x^2 + a[1]*xy + a[2]*y^2 + a[3]*x + a[4]*y + a[5]=0
@@ -3204,16 +3194,6 @@ circle circle(explicit point C, real r)
   if(!finite(r)) oc.l=line(C,C+vector(C.coordsys,(1,0)));
   return oc;
 }
-circle circle(explicit point C, int r)
-{
-  return circle(C,(real) r);
-}
-
-/*<asyxml><function type="circle" signature="circle(pair,real)"><code></asyxml>*/
-circle circle(pair c, real r)=new circle(pair c, real r)
-{/*<asyxml></code><documentation>Overwrite 'circle(pair,real)'</documentation></function></asyxml>*/
-  return circle(locate(c),r);
-};
 
 /*<asyxml><function type="circle" signature="circle(point,point)"><code></asyxml>*/
 circle circle(point A, point B)
@@ -3526,18 +3506,30 @@ path arcfromcenter(ellipse el, real angle1, real angle2,
    The angles are mesured relatively to the  axis (C,x-axis) where C is
    the center of the ellipse.</documentation></function></asyxml>*/
   if(degenerate(el)) abort("arcfromcenter: can not convert degenerated ellipse to path.");
-  guide op;
-  coordsys Rp=coordsys(el);
-  if (n < 1) return op;
   if (angle1 > angle2)
     return reverse(arcfromcenter(el,angle2,angle1,!direction,n));
+  path op;
+  coordsys Rp=coordsys(el);
+  if (n < 1) return op;
+  interpolate join = operator ..;
+  real stretch = max(el.a/el.b, el.b/el.a);
+  if (stretch > 10) {
+    n *= floor(stretch/5);
+    join=operator --;
+  }
   real a1=direction ? radians(angle1) : radians(angle2);
   real a2=direction ? radians(angle2) : radians(angle1)+2*pi;
   real step=(a2-a1)/(n != 1 ? n-1 : 1);
   real a,r;
   real da=radians(el.angle);
+  real a3=angle((cos(a1)/el.a,sin(a1)/el.b));
+  real a3=(a3>=0) ? a3 : a3+2pi;
+  real a4=angle((cos(a2)/el.a,sin(a2)/el.b));
+  real a4=(a4>=0) ? a4 : a4+2pi;
+  real step=(a4-a3)/(n != 1 ? n-1 : 1);
   for (int i=0; i < n; ++i) {
-    a=a1+i*step;
+    a=a3+i*step;
+    a=angle((el.a*cos(a),el.b*sin(a)));
     r=el.b/sqrt(1-(el.e*cos(a))^2);
     op=op..Rp*Rp.polar(r,a+da);
   }
@@ -3782,16 +3774,17 @@ void draw(picture pic=currentpicture, Label L="",parabola parabola,
           margin margin=NoMargin, Label legend="", marker marker=nomarker)
 {/*<asyxml></code><documentation>Draw the parabola 'p' on 'pic' without (if possible) altering the
    size of picture pic.</documentation></function></asyxml>*/
-  pic.add(new void (frame f, transform t, transform, pair m, pair M) {
+  pic.add(new void (frame f, transform t, transform T, pair m, pair M) {
       // Reduce the bounds by the size of the pen and the margins.
       m -= min(p); M -= max(p);
       parabola.bmin=inverse(t)*m; parabola.bmax=inverse(t)*M;
       picture tmp;
-      draw(tmp,L,t*(path) parabola,align,p,arrow,bar,NoMargin,legend,marker);
+      draw(tmp,L,t*T*(path) parabola,align,p,arrow,bar,NoMargin,legend,marker);
       add(f,tmp.fit());
     });
-  if(pic.userMin.x != pic.userMax.x & pic.userMin.y != pic.userMax.y &
-     !finite(abs(pic.userMin)) & !finite(abs(pic.userMax)))
+  pair m=pic.userMin();
+  pair M=pic.userMax();
+  if(m != M)
     pic.addBox(truepoint(SW), truepoint(NE));
 }
 
@@ -3814,19 +3807,21 @@ void draw(picture pic=currentpicture, Label L="", hyperbola h,
           margin margin=NoMargin, Label legend="", marker marker=nomarker)
 {/*<asyxml></code><documentation>Draw the hyperbola 'h' on 'pic' without (if possible) altering the
    size of the picture pic.</documentation></function></asyxml>*/
-  pic.add(new void (frame f, transform t, transform, pair m, pair M) {
+  pic.add(new void (frame f, transform t, transform T, pair m, pair M) {
       // Reduce the bounds by the size of the pen and the margins.
       m -= min(p); M -= max(p);
       h.bmin=inverse(t)*m; h.bmax=inverse(t)*M;
       picture tmp;
-      draw(tmp,L,t*(path) h,align,p,arrow,bar,NoMargin,legend,marker);
+      transform tT=t*T;
+      draw(tmp,L,tT*(path) h,align,p,arrow,bar,NoMargin,legend,marker);
       hyperbola ht=hyperbola(h.F2,h.F1,h.a);
       ht.bmin=inverse(t)*m; ht.bmax=inverse(t)*M;
-      draw(tmp,"",t*(path) ht,align,p,arrow,bar,NoMargin,marker);
+      draw(tmp,"",tT*(path) ht,align,p,arrow,bar,NoMargin,marker);
       add(f,tmp.fit());
     });
-  if(pic.userMin.x != pic.userMax.x & pic.userMin.y != pic.userMax.y &
-     !finite(abs(pic.userMin)) & !finite(abs(pic.userMax)))
+  pair m=pic.userMin();
+  pair M=pic.userMax();
+  if(m != M)
     pic.addBox(truepoint(SW), truepoint(NE));
 }
 
@@ -4158,10 +4153,6 @@ abscissa operator +(int x, explicit abscissa a)
 {
   return ((real)x)+a;
 }
-abscissa operator +(explicit abscissa a, int x)
-{
-  return ((real)x)+a;
-}
 
 /*<asyxml><operator type="abscissa" signature="-(explicit abscissa a)"><code></asyxml>*/
 abscissa operator -(explicit abscissa a)
@@ -4190,10 +4181,6 @@ abscissa operator -(int x, explicit abscissa a)
 {
   return ((real)x)-a;
 }
-abscissa operator -(explicit abscissa a, int x)
-{
-  return a-((real)x);
-}
 
 /*<asyxml><operator type="abscissa" signature="*(real,abscissa)"><code></asyxml>*/
 abscissa operator *(real x, explicit abscissa a)
@@ -4208,15 +4195,6 @@ abscissa operator *(real x, explicit abscissa a)
 abscissa operator *(explicit abscissa a, real x)
 {
   return x*a;
-}
-
-abscissa operator *(int x, explicit abscissa a)
-{
-  return ((real)x)*a;
-}
-abscissa operator *(explicit abscissa a, int x)
-{
-  return ((real)x)*a;
 }
 
 abscissa operator /(real x, explicit abscissa a)
@@ -4237,10 +4215,6 @@ abscissa operator /(explicit abscissa a, real x)
 abscissa operator /(int x, explicit abscissa a)
 {
   return ((real)x)/a;
-}
-abscissa operator /(explicit abscissa a, int x)
-{
-  return a/((real)x);
 }
 
 /*<asyxml><function type="abscissa" signature="relabscissa(real)"><code></asyxml>*/
@@ -4832,6 +4806,10 @@ struct arc {
   /*<asyxml><method type="void" signature="setangles(real,real,real)"><code></asyxml>*/
   void setangles(real a0, real a1, real a2)
   {/*<asyxml></code><documentation>Set the angles.</documentation></method></asyxml>*/
+    if (a1 < 0 && a2 < 0) {
+      a1 += 360;
+      a2 += 360;
+    }
     this.angle0=a0%(sgnd(a0)*360);
     this.angle1=a1%(sgnd(a1)*360);
     this.angle2=a2%(sgnd(2)*360);

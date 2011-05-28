@@ -28,9 +28,11 @@ struct render
 
   bool closed;          // use one-sided rendering?
   bool tessellate;      // use tessellated mesh to store straight patches?
-  bool3 merge;          // merge nodes before rendering, for lower quality
-                        // but faster PRC rendering?
-                        // (default=merge only transparent patches)
+
+  bool3 merge;          // merge nodes before rendering, for faster but
+                        // lower quality PRC rendering (the value default means
+                        // merge opaque patches only).
+
   int sphere;           // PRC sphere type (PRCsphere or NURBSsphere).
 
   // General parameters:
@@ -2408,7 +2410,8 @@ triple point(frame f, triple dir)
 triple point(picture pic=currentpicture, triple dir, bool user=true,
              projection P=currentprojection)
 {
-  triple v=pic.userMin+realmult(rectify(dir),pic.userMax-pic.userMin);
+  triple min = pic.userMin(), max = pic.userMax();
+  triple v=min+realmult(rectify(dir),max-min);
   return user ? v : pic.calculateTransform3(P)*v;
 }
 
@@ -2508,8 +2511,6 @@ private string format(triple v, string sep=" ")
 {
   return string(v.x)+sep+string(v.y)+sep+string(v.z);
 }
-
-private string[] file3;
 
 private string projection(bool infinity, real viewplanesize)
 {
@@ -2696,9 +2697,8 @@ string embed3D(string label="", string text=label, string prefix,
   writeJavaScript(name,lightscript+projection(P.infinity,viewplanesize)+
                   billboard(index,center),script);
 
-  prefix += ".prc";
   if(!settings.inlinetex)
-    file3.push(prefix);
+    file3.push(prefix+".prc");
 
   triple target=P.target;
   if(P.viewportshift != 0) {
@@ -2730,9 +2730,11 @@ string embed3D(string label="", string text=label, string prefix,
     ",3Droo="+Format(abs(v))+
     ",3Dbg="+Format(light.background());
   if(options != "") options3 += ","+options;
-  if(name != "") options3 += ",3Djscript="+stripdirectory(name);
+  if(settings.inlinetex)
+    prefix=jobname(prefix);
+  options3 += ",3Djscript="+prefix+".js";
 
-  return Embed(stripdirectory(prefix),options3,width,height);
+  return Embed(prefix+".prc",options3,width,height);
 }
 
 struct scene
@@ -2983,7 +2985,7 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
   }
 
   string image;
-  if(preview && settings.embed) {
+  if((preview || (prc && settings.render == 0)) && settings.embed) {
     image=prefix;
     if(settings.inlinetex) image += "_0";
     image += "."+nativeformat();

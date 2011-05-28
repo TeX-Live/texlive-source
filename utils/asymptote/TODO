@@ -1,10 +1,17 @@
-Andy: Investigate bbox error in uofa-talk Shadowing slide
+Andy: add keyword-only arguments
 
-Andy: make var work in extended for
+Andy: Arbitrary depth copying of arrays.
+
+Andy: Investigate bbox error in uofa-talk Shadowing slide
 
 Andy: change label in coder to a class not an Int
 
+Andy: look at label alignment in rotvenn
+
 Andy: possible optimizations:
+    eliminate frame copying in picture.add(picture pic, ...)
+    varpush+popcall --> varcall?
+    fieldpush+popcall --> fieldcall?
     overloaded::simplify copies
     straight guide which references a subset of a pair vector.
     Is it cheaper to import a bltin module than to call base_venv again?
@@ -23,16 +30,6 @@ ambiguities, and whatever else you can think of
     
 Andy: operator tuple, to let people define their own tuples
 
-Andy: implement operator init(A a) copy constructors.
-
-Andy and John: (if possible) automatically turn expressions with array
-sub-expressions into iteration over the array(s)
-
 Andy: Decide if we should change vm::error to em in application.cc
 
 John or Andy: Add unit test for AddOps.
-
-Andy: Fix: void f(int x=blah);
-
-Andy: Investigate adding unicode support for identifiers, using iswalpha,
-mbtowc, etc.

@@ -1,15 +1,16 @@
 Info file: asy-faq.info,    -*-Text-*-
 produced by bfnnconv.pl from the Bizarre Format With No Name.
 
+INFO-DIR-SECTION Languages
 START-INFO-DIR-ENTRY
 * asymptote FAQ: (asy-faq).    Asymptote Frequently Asked Questions.
 END-INFO-DIR-ENTRY
 
 
-File: $prefix.info, Node: Top, Next: Question 1.1, Up: (dir)
+File: asy-faq.info, Node: Top, Next: Question 1.1, Up: (dir)
 
             ASYMPTOTE FREQUENTLY ASKED QUESTIONS
-                            11 Jul 2010
+                            26 May 2011
                           
 This is the list of Frequently Asked Questions about Asymptote (asy).
 

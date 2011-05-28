@@ -89,23 +89,23 @@ public:
   
   template<class T>
   item(T *p)
-    : i((Int) p) {
+    : p((void *) p) {
     assert(!empty());
   }
   
   template<class T>
   item(const T &p)
-    : i((Int) new(UseGC) T(p)) {
+    : p(new(UseGC) T(p)) {
     assert(!empty());
   }
   
   template<class T>
   item& operator= (T *a)
-  { i=(Int) a; return *this; }
+  { p=(void *) a; return *this; }
   
   template<class T>
   item& operator= (const T &it)
-  { i=(Int) new(UseGC) T(it); return *this; }
+  { p=new(UseGC) T(it); return *this; }
 #else    
   bool empty() const
   {return *kind == typeid(void);}
@@ -195,19 +195,29 @@ private:
   };
 };
   
+#ifdef SIMPLE_FRAME
+// In the simple implementation, a frame is just an array of items.
+typedef item frame;
+#else
 class frame : public gc {
 #ifdef DEBUG_FRAME
   string name;
+  Int parentIndex;
 #endif
-  typedef mem::vector<item> vars_t;
-  vars_t vars;
+  typedef mem::vector<item> internal_vars_t;
+  internal_vars_t vars;
+
+  // Allow the stack direct access to vars.
+  friend class stack;
 public:
 #ifdef DEBUG_FRAME
-  frame(string name, size_t size)
-    : name(name), vars(size)
+  frame(string name, Int parentIndex, size_t size)
+    : name(name), parentIndex(parentIndex), vars(size)
   {}
 
   string getName() { return name; }
+
+  Int getParentIndex() { return parentIndex; }
 #else
   frame(size_t size)
     : vars(size)
@@ -228,6 +238,8 @@ public:
       vars.resize(n);
   }
 };
+#endif
+
 
 template<typename T>
 inline T get(const item& it)

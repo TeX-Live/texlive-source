@@ -155,16 +155,24 @@ private void notimplemented(string text)
   abort(text+" is not implemented for the '"+settings.tex+"' TeX engine");
 }
 
+string jobname(string name)
+{
+  int pos=rfind(name,"-");
+  return pos >= 0 ? "\ASYprefix\jobname"+substr(name,pos) : name;
+}
+
 string graphic(string name, string options="")
 {
   if(latex()) {
     if(options != "") options="["+options+"]";
-    if(find(name," ") < 0)
-      return "\includegraphics"+options+"{"+name+"}";
-    else {
-      return "\includegraphics"+options+
-        (pdf() ? "{\""+stripextension(name)+"\".pdf}" : "{\""+name+"\"}");
-    }
+    bool pdf=pdf();
+    string includegraphics="\includegraphics"+options;
+    if(settings.inlinetex)
+      return includegraphics+"{"+jobname(name)+"}";
+    else
+      return includegraphics+
+        (find(name," ") < 0 ? "{"+name+"}" :
+         (pdf ? "{\""+stripextension(name)+"\".pdf}" : "{\""+name+"\"}"));
   }
   if(settings.tex != "context")
     notimplemented("graphic");
