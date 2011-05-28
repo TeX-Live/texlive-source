@@ -1,4 +1,4 @@
-.TH "EXTRACTBB" "1" "28 April 2011" "20110311" "DVIPDFMx"
+.TH "EXTRACTBB" "1" "6 May 2011" "20110311" "DVIPDFMx"
 .PP 
 .SH "NAME" 
 extractbb, ebb \- extract bounding box information from graphics files
@@ -60,9 +60,21 @@ Write output in dvipdfm's ``bb'' format.
 .TP
 .B -x
 Write output in dvipdfmx's ``xbb'' format (default), which is the same
-as that used by the PDF format.
+as that used by pdfTeX.
 .PD
 .PP
+.SH "OUTPUT FORMATS"
+.PP
+Here are more details about the bb and xbb formats:
+.PP
+The original ebb (from dvipdfm) ignored density information in bitmap
+images, and generated bounding boxes with 100px = 72bp = 1in.
+Unfortunately, screenshots (especially) tend to look bad with this
+approach.
+.PP
+So, extractbb (from dvipdfmx) uses density information if present.
+Otherwise, it generates bounding box with 100px = 100bp.  This is what
+pdfTeX does.
 .SH "BUGS"
 .PP
 There is currently no way to specify which bounding box is taken

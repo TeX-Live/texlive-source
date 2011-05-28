@@ -2,7 +2,7 @@ This file records noteworthy changes.  (Public domain.)
 
 6.0.1 (for TeX Collection 2011)
 * Trailing comments and whitespace omitted from config values.
-* Add .tlu to type lua suffixes.
+* Add .tlu to type lua suffixes, and .dfont to truetype suffixes.
 * Prefix program_invocation{,_short}_name with kpse_.
 * Finally remove kpse_set_progname (deprecated since 1998).
 
