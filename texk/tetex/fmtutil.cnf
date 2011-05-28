@@ -50,7 +50,6 @@ cont-en xetex cont-usr.tex -8bit *cont-en.ini
 #! cont-it pdftex cont-usr.tex -8bit *cont-it.ini
 #! cont-nl pdftex cont-usr.tex -8bit *cont-nl.ini
 #! cont-ro pdftex cont-usr.tex -8bit *cont-ro.ini
-metafun mpost - metafun.mp
 #
 # from cslatex:
 cslatex pdftex - -etex -translate-file=cp227.tcx cslatex.ini
@@ -79,10 +78,6 @@ dviluatex luatex language.def,language.dat.lua dviluatex.ini
 #
 # from metafont:
 mf mf-nowin - -translate-file=cp227.tcx mf.ini
-#
-# from metapost:
-mpost mpost - mpost.mp
-mfplain mpost - mfplain.ini
 #
 # from mex:
 mex pdftex mexconf.tex -translate-file=cp227.tcx *mex.ini

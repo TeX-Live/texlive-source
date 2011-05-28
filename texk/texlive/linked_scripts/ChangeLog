@@ -1,3 +1,8 @@
+2011-05-28  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (bin_links): add mpost:metafun and mpost:mfplain
+	since mpost no longer has mem files.
+
 2011-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* scripts.lst (new): Lists of texmf and texmf-dist scripts.

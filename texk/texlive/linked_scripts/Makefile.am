@@ -128,6 +128,8 @@ nobase_dist_texmf_dist_scripts_SCRIPTS = \
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	epstopdf:repstopdf \
+	mpost:metafun \
+	mpost:mfplain \
 	pdfcrop:rpdfcrop
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
