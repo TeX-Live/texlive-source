@@ -59,8 +59,10 @@ clisp_toolsdir=$clisp_basedir/clisp-tools
 clisp_builddir=$clisp_basedir/clisp-build
 mkdir $clisp_toolsdir
 
+wget=wget  # or "curl -O" or whatever
+
 cd $clisp_basedir
-wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.10.tar.gz
+$wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.10.tar.gz
 gzip -dc libsigsegv-2.10.tar.gz | tar xf -
 cd libsigsegv-2.10
 ./configure --prefix=$clisp_toolsdir && make && make check && make install
@@ -69,8 +71,21 @@ cd libsigsegv-2.10
 # if clisp's configure will not find libsigsegv.
 ln -s lib $clisp_toolsdir/lib64
 
+# on the mac, get libiconv and ensure link statically.
+# not needed on other platforms?
 cd $clisp_basedir
-wget http://ftp.gnu.org/gnu/clisp/release/2.49/clisp-2.49.tar.gz
+$wget http://ftp.gnu.org/gnu/libiconv/libiconv-1.13.1.tar.gz
+gzip -dc libiconv-1.13.1.tar.gz | tar xf -
+cd libiconv-1.13.1
+./configure --enable-static --prefix=$clisp_toolsdir \
+&& make && make check && make install
+#
+cd $clisp_basedir/clisp-tools/lib
+rm *.dylib
+rm *.la
+
+cd $clisp_basedir
+$wget http://ftp.gnu.org/gnu/clisp/release/2.49/clisp-2.49.tar.gz
 gzip -dc clisp-2.49.tar.gz | tar xf -
 cd clisp-2.49
 
@@ -78,9 +93,9 @@ cd clisp-2.49
 # mv modules/syscalls/configure modules/syscalls/configure.orig
 # sed -e '{s%-luuid%-L/usr/lib/w32api -luuid%}' \
 #  modules/syscalls/configure.orig > modules/syscalls/configure
-
+#
 # On FreeBSD/amd64: add --disable-mmap.
-
+#
 ./configure --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
   --disable-nls \
   $clisp_builddir \
