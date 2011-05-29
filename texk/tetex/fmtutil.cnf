@@ -98,7 +98,11 @@ pdfetex pdftex language.def -translate-file=cp227.tcx *pdfetex.ini
 #
 # from ptex:
 ptex ptex - ptex.ini
-platex ptex language.ptx *platex.ini
+#
+# from eptex:
+eptex eptex language.def *eptex.ini
+platex eptex language.ptx *platex.ini
+#
 #
 # from t2:
 #! cyramstex pdftex language.dat -translate-file=cp227.tcx *cyramstx.ini
