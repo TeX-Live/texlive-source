@@ -1,3 +1,9 @@
+2011-05-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmf.cnf: add "shell_escape.initex = f" and
+	"parse_first_line.initex = f", since we have initex in TL 2011.
+	Otherwise the banner of initex is "This is TeXk, ..."
+
 2011-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* extend-fname.c: Remove the `generic const warning'.

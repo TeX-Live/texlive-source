@@ -511,6 +511,7 @@ repstopdf,\
 
 % plain TeX should remain unenhanced.
 shell_escape.tex = f
+shell_escape.initex = f
 
 % This is used by the Windows script wrapper for restricting searching
 % for the purportedly safe shell_escape_commands above to system
@@ -550,6 +551,7 @@ parse_first_line = t
 % file_line_error_style settings, as well as the options -enctex,
 % -mltex, -8bit, etc., also affect this, but they are all off by default.
 parse_first_line.tex = f
+parse_first_line.initex = f
 
 % Control file:line:error style messages.
 file_line_error_style = f
