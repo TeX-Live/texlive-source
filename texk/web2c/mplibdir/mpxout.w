@@ -1,19 +1,7 @@
-% $Id: mpxout.w 1330 2010-07-27 16:53:56Z taco $
-%
-% Copyright 2008-2009 Taco Hoekwater.
-%
-% This program is free software: you can redistribute it and/or modify
-% it under the terms of the GNU Lesser General Public License as published by
-% the Free Software Foundation, either version 3 of the License, or
-% (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU Lesser General Public License for more details.
-%
-% You should have received a copy of the GNU Lesser General Public License
-% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+% $Id: mpxout.w 1681 2011-05-30 07:15:22Z taco $
+% This file is part of MetaPost;
+% the MetaPost program is in the public domain.
+% See the <Show version...> code in mpost.w for more info.
 
 \def\title{Creating mpx files}
 \def\hang{\hangindent 3em\indent\ignorespaces}

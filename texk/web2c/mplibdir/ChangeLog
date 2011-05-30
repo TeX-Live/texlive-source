@@ -1,4 +1,10 @@
+2011-05-30 Taco Hoekwater  <taco@luatex.org>
+
+	* all files: clarify that base MetaPost is public domain,
+	but uses LGPL'd libraries.
+
 2011-05-13  Taco Hoekwater  <taco@luatex.org>
+
 	* mpost.w (main): change setting of kpse program name
 	(on a hint by PEB).
 

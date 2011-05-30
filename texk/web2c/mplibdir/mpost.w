@@ -1,19 +1,8 @@
-% $Id: mpost.w 1598 2011-04-05 14:14:16Z taco $
+% $Id: mpost.w 1681 2011-05-30 07:15:22Z taco $
 %
-% Copyright 2008-2009 Taco Hoekwater.
-%
-% This program is free software: you can redistribute it and/or modify
-% it under the terms of the GNU Lesser General Public License as published by
-% the Free Software Foundation, either version 3 of the License, or
-% (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU Lesser General Public License for more details.
-%
-% You should have received a copy of the GNU Lesser General Public License
-% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+% This file is part of MetaPost;
+% the MetaPost program is in the public domain.
+% See the <Show version...> code below for more info.
 
 \font\tenlogo=logo10 % font used for the METAFONT logo
 \def\MP{{\tenlogo META}\-{\tenlogo POST}}
@@ -939,19 +928,20 @@ fprintf(stdout,
 {
   char *s = mp_metapost_version();
 if (dvitomp_only)
-  fprintf(stdout, "\n" "dvitomp %s\n", s);
+  fprintf(stdout, "\n" "dvitomp (MetaPost) %s\n", s);
 else
   fprintf(stdout, "\n" "MetaPost %s\n", s);
 fprintf(stdout, 
-"Copyright 2009 AT&T Bell Laboratories.\n"
-"There is NO warranty.  Redistribution of this software is\n"
-"covered by the terms of both the MetaPost copyright and\n"
-"the Lesser GNU Lesser General Public License.\n"
-"For more information about these matters, see the files\n"
-"named COPYING, COPYING.LESSER and the MetaPost source.\n"
-"Primary author of MetaPost: John Hobby.\n"
-"Current maintainer of MetaPost: Taco Hoekwater.\n"
-"\n");
+"The MetaPost source code in the public domain.\n"
+"MetaPost also uses code available under the\n"
+"GNU Lesser General Public License (version 3 or later);\n"
+"therefore MetaPost executables are covered by the LGPL.\n"
+"There is NO warranty.\n"
+"For more information about these matters, see the file\n"
+"COPYING.LESSER or <http://gnu.org/licenses/lgpl.html>.\n"
+"Original author of MetaPost: John Hobby.\n"
+"Author of the CWEB MetaPost: Taco Hoekwater.\n"
+);
   mpost_xfree(s);
   exit(EXIT_SUCCESS);
 }

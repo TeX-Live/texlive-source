@@ -1,8 +1,8 @@
 /* lmplib.c
    
-   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2011 Taco Hoekwater <taco@luatex.org>
 
-   This file is part of LuaTeX.
+   This file is part of LuaTeX and MetaPost.
 
    LuaTeX is free software; you can redistribute it and/or modify it under
    the terms of the GNU Lesser General Public License as published by the Free
