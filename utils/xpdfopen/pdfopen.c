@@ -3,8 +3,9 @@
  *
  * Heavily modified by Jim Diamond (jim.diamond@acadiau.ca) 2010/04/11
  * to work with AR 9 and xpdf.
- * Also some mods by Peter Breitenlohner <tex-live@tug.org> from 2009
- * and suggestions from 2010.
+ * (Also some mods by Peter Breitenlohner <tex-live@tug.org> from 2009
+ * and suggestions from 2010, and some suggestions from Karl Berry
+ * (2011).)
  *
  * Note 1: the calling sequence was changed considerably to match what
  * the program actually seemed to do as well as what made sense to me.
@@ -23,7 +24,7 @@
  * please send it to me for inclusion.
  */
 
-#define     VERSION		"0.81"
+#define     VERSION		"0.82"
 
 #include    <stdio.h>
 #include    <stdlib.h>
@@ -162,7 +163,11 @@ usage(void)
 
     fprintf(stderr, "This is version %s of %s.\n", VERSION, progname);
     fprintf(stderr, "Usage:\n  %s [-h|--help]\n", progname);
-    fprintf(stderr, "    Show this help.\n");
+    fprintf(stderr, "    Show this help and exit.\n");
+
+    fprintf(stderr, "  %s [-v|--version]\n", progname);
+    fprintf(stderr, "    Show the version number and exit.\n");
+    
     fprintf(stderr, "  %s [-viewer <prog>] <file.pdf>\n", progname);
     fprintf(stderr, "    If the PDF viewer <prog> is displaying <file.pdf>, "
 	    "reload that file.\n");
@@ -350,6 +355,12 @@ main(int argc, char * argv[])
     {
 	usage();
 	return argc < 2 ? EXIT_FAILURE : EXIT_SUCCESS;
+    }
+
+    if (!strcmp(argv[1], "-v") || !strcmp(argv[1], "--version"))
+    {
+	printf("This is pdfopen version %s\n", VERSION);
+	return EXIT_SUCCESS;
     }
 
     if (argc == 4 && !strcmp(argv[1], "-viewer"))

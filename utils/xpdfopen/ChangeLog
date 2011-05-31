@@ -1,3 +1,10 @@
+2011-05-28  Jim Diamond <jim.diamond@acadiau.ca>
+	* pdfopen.c:  add -v and --version options.
+	* pdfopen.1:  create man page: thanks to Karl Berry for numerous
+	  	      suggestions and improvements.
+	* pdfclose.1: add version number to usage information.
+	* configure.ac: update for V 0.82.
+
 2011-05-17  Jim Diamond <jim.diamond@acadiau.ca>
 	* pdfopen.c:  add -h and --help options.
 	  	      Reformat usage information.
