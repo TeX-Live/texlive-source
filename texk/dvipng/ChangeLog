@@ -1,3 +1,7 @@
+2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../am/bin_links.am for $(bindir) links.
+
 2011-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac [WIN32]: Add dvigif.exe wrapper.

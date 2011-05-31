@@ -1,3 +1,7 @@
+2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* doc/Makefile.am: Use ../am/bin_links.am for $(bindir) links.
+
 2011-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported snapshot 20110311.

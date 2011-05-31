@@ -40,12 +40,12 @@ DIST_COMMON = $(am__configure_deps) $(am__dist_bin_SCRIPTS_DIST) \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing \
 	$(srcdir)/../am/script_links.am $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/../am/man1_links.am \
-	$(top_srcdir)/configure ../../build-aux/config.guess \
-	../../build-aux/config.sub ../../build-aux/depcomp \
-	../../build-aux/install-sh ../../build-aux/ltmain.sh \
-	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap ChangeLog
+	$(srcdir)/Makefile.in $(top_srcdir)/../am/bin_links.am \
+	$(top_srcdir)/../am/man1_links.am $(top_srcdir)/configure \
+	../../build-aux/config.guess ../../build-aux/config.sub \
+	../../build-aux/depcomp ../../build-aux/install-sh \
+	../../build-aux/ltmain.sh ../../build-aux/missing \
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 @WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(wrappers)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -267,16 +267,12 @@ dist_texconfig_SCRIPTS = tcfmgr
 dist_texconfig_DATA = tcfmgr.map
 web2cdir = ${prefix}/texmf/web2c
 dist_web2c_DATA = fmtutil.cnf
-
-# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	allcm:allec \
 	fmtutil:mktexfmt \
 	kpsetool:kpsexpand \
 	kpsetool:kpsepath
 
-
-# Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
 man1_links = $(bin_links) \
 	fmtutil:fmtutil-sys \
 	texconfig:texconfig-sys \
@@ -292,7 +288,7 @@ all: all-am
 .SUFFIXES:
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/script_links.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/script_links.am $(top_srcdir)/../am/bin_links.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -934,6 +930,23 @@ uninstall-links:
 @WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 @WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 @WIN32_FALSE@	done
+.PHONY: install-bin-links uninstall-bin-links
+
+install-bin-links:
+@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  for s in $(bin_links); do \
+@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
+@WIN32_FALSE@	    rm -f $$link; \
+@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
+@WIN32_FALSE@	  done
+
+uninstall-bin-links:
+@WIN32_FALSE@	@for s in $(bin_links); do \
+@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
+@WIN32_FALSE@	done
 .PHONY: install-man1-links uninstall-man1-links
 
 install-man1-links:
@@ -952,23 +965,11 @@ uninstall-man1-links:
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
 	done
 
+install-exec-hook: install-bin-links
+
 install-data-hook: install-perl-links install-shell-links install-man1-links
 
-install-exec-hook:
-@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
-@WIN32_FALSE@	  for s in $(bin_links); do \
-@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
-@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
-@WIN32_FALSE@	    rm -f $$link; \
-@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
-@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
-@WIN32_FALSE@	  done
-
-uninstall-hook: uninstall-links uninstall-man1-links
-@WIN32_FALSE@	@for s in $(bin_links); do \
-@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
-@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
-@WIN32_FALSE@	done
+uninstall-hook: uninstall-bin-links uninstall-links uninstall-man1-links
 run-texlinks:
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 

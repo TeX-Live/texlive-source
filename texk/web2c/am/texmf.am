@@ -1,6 +1,6 @@
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Common for MF and TeX
@@ -19,7 +19,7 @@ bin_PROGRAMS += tex
 if WIN32
 bin_PROGRAMS += initex
 else !WIN32
-bin_links += tex:initex
+bin_links += tex$(EXEEXT):initex
 endif !WIN32
 endif TEX
 EXTRA_PROGRAMS += tex
@@ -103,7 +103,7 @@ endif MFN
 if WIN32
 bin_PROGRAMS += inimf
 else !WIN32
-bin_links += mf:inimf
+bin_links += mf$(EXEEXT):inimf
 endif !WIN32
 endif MF
 EXTRA_PROGRAMS += mf mf-nowin

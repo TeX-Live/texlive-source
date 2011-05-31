@@ -43,20 +43,20 @@ bin_PROGRAMS = bg5conv$(EXEEXT) cefconv$(EXEEXT) cef5conv$(EXEEXT) \
 @WIN32_TRUE@	gbklatex \
 @WIN32_TRUE@	gbkpdflatex
 
-subdir = .
 DIST_COMMON = $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
-	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/c-auto.in \
-	$(top_srcdir)/configure ../../build-aux/config.guess \
-	../../build-aux/config.sub ../../build-aux/depcomp \
-	../../build-aux/install-sh ../../build-aux/ltmain.sh \
-	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap ChangeLog
+	$(srcdir)/../../build-aux/missing $(srcdir)/../am/bin_links.am \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/c-auto.in $(top_srcdir)/configure \
+	../../build-aux/config.guess ../../build-aux/config.sub \
+	../../build-aux/depcomp ../../build-aux/install-sh \
+	../../build-aux/ltmain.sh ../../build-aux/missing \
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
@@ -305,10 +305,8 @@ hbf2gf_SOURCES = \
 hbf2gf_CPPFLAGS = -I$(srcdir)/$(CJKUTILS_TREE)/hbf2gf -Dunix -DHAVE_LIBKPATHSEA $(AM_CPPFLAGS)
 hbf2gf_DEPENDENCIES = $(KPATHSEA_DEPEND)
 hbf2gf_LDADD = $(KPATHSEA_LIBS)
-@WIN32_FALSE@HOOK_DST = bg5+
 @WIN32_TRUE@HOOK_DST = bg5 cef5 cef cefs sjis
-@WIN32_FALSE@HOOK_CMD = $(LN_S)
-@WIN32_TRUE@HOOK_CMD = cp
+@WIN32_FALSE@bin_links = gbklatex:bg5+latex gbkpdflatex:bg5+pdflatex
 gbklatex_SOURCES = \
 	$(CJKUTILS_TREE)/cjklatex/cjklatex.c
 
@@ -372,7 +370,7 @@ all: c-auto.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/bin_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1045,25 +1043,42 @@ dist-hook:
 config.force: $(KPATHSEA_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
+.PHONY: install-bin-links uninstall-bin-links
+
+install-bin-links:
+@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  for s in $(bin_links); do \
+@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
+@WIN32_FALSE@	    rm -f $$link; \
+@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
+@WIN32_FALSE@	  done
+
+uninstall-bin-links:
+@WIN32_FALSE@	@for s in $(bin_links); do \
+@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
+@WIN32_FALSE@	done
 
 @KPATHSEA_RULE@
-
-install-exec-hook:
-	@cd $(DESTDIR)$(bindir) && \
-	  for p in latex pdflatex; do \
-	    for c in $(HOOK_DST); do \
-	      echo "$(HOOK_CMD) gbk$$p$(EXEEXT) $$c$$p$(EXEEXT)"; \
-	      rm -f $$c$$p$(EXEEXT); $(HOOK_CMD) gbk$$p$(EXEEXT) $$c$$p$(EXEEXT); \
-	    done; \
-	  done
-
-uninstall-hook:
-	@for p in latex pdflatex; do \
-	  for c in $(HOOK_DST); do \
-	    echo "rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT)"; \
-	    rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT); \
-	  done; \
-	done
+@WIN32_TRUE@install-exec-hook:
+@WIN32_TRUE@	@cd $(DESTDIR)$(bindir) && \
+@WIN32_TRUE@	  for p in latex pdflatex; do \
+@WIN32_TRUE@	    for c in $(HOOK_DST); do \
+@WIN32_TRUE@	      echo "cp gbk$$p$(EXEEXT) $$c$$p$(EXEEXT)"; \
+@WIN32_TRUE@	      rm -f $$c$$p$(EXEEXT); cp gbk$$p$(EXEEXT) $$c$$p$(EXEEXT); \
+@WIN32_TRUE@	    done; \
+@WIN32_TRUE@	  done
+@WIN32_TRUE@uninstall-hook:
+@WIN32_TRUE@	@for p in latex pdflatex; do \
+@WIN32_TRUE@	  for c in $(HOOK_DST); do \
+@WIN32_TRUE@	    echo "rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT)"; \
+@WIN32_TRUE@	    rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT); \
+@WIN32_TRUE@	  done; \
+@WIN32_TRUE@	done
+@WIN32_FALSE@install-exec-hook: install-bin-links
+@WIN32_FALSE@uninstall-hook: uninstall-bin-links
 
 hbf2gf.dvi: $(CWEB_TEX)
 	TEXINPUTS=.:$(srcdir):$$TEXINPUTS $(TEX) hbf2gf.tex

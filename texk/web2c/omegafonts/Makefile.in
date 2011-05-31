@@ -39,9 +39,10 @@ bin_PROGRAMS = $(am__EXEEXT_1)
 @OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@noinst_PROGRAMS =  \
 @OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	call_omfonts$(EXEEXT)
 EXTRA_PROGRAMS = omfonts$(EXEEXT)
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(top_srcdir)/../am/bin_links.am ChangeLog pl-lexer.c \
+	pl-parser.c pl-parser.h
 subdir = omegafonts
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in ChangeLog \
-	pl-lexer.c pl-parser.c pl-parser.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-asm.m4 \
@@ -371,6 +372,12 @@ DISTCLEANFILES = pl-parser.output tests/charwdr.* tests/charwdv.* \
 	tests/specialhex.ofm tests/specialhex.opl tests/specialhex.ovf \
 	tests/xspecialhex.*
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
+bin_links = \
+	omfonts$(EXEEXT):ofm2opl \
+	omfonts$(EXEEXT):opl2ofm \
+	omfonts$(EXEEXT):ovf2ovp \
+	omfonts$(EXEEXT):ovp2ovf
+
 OMFONTS_tests = charwd.test level1.test omfonts.test repeat.test specialhex.test
 @OMFONTS_TRUE@@OTANGLE_TRUE@TESTS = $(OMFONTS_tests)
 EXTRA_DIST = $(OMFONTS_tests) tests/charwd-r.pl tests/charwd-v.vpl \
@@ -380,7 +387,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .l .lo .o .obj .y
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/bin_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -856,20 +863,32 @@ $(proglib): ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
 @KPATHSEA_RULE@
+.PHONY: install-bin-links uninstall-bin-links
 
-@OMFONTS_TRUE@@OTANGLE_TRUE@install-exec-hook:
+install-bin-links:
+@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  for s in $(bin_links); do \
+@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
+@WIN32_FALSE@	    rm -f $$link; \
+@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
+@WIN32_FALSE@	  done
+
+uninstall-bin-links:
+@WIN32_FALSE@	@for s in $(bin_links); do \
+@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
+@WIN32_FALSE@	done
+
+@OMFONTS_TRUE@@OTANGLE_TRUE@install-exec-hook: install-bin-links
 @OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	for f in $(linked_programs); do \
 @OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	  $(INSTALL_PROGRAM) call_omfonts$(EXEEXT) $(DESTDIR)$(bindir)/$$f$(EXEEXT) || exit 1; \
 @OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	done
-@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	cd $(DESTDIR)$(bindir) && \
-@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	  for f in $(linked_programs); do \
-@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	    rm -f $$f$(EXEEXT) && \
-@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
-@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_FALSE@	  done
-@OMFONTS_TRUE@@OTANGLE_TRUE@uninstall-hook:
-@OMFONTS_TRUE@@OTANGLE_TRUE@	for f in $(linked_programs); do \
-@OMFONTS_TRUE@@OTANGLE_TRUE@	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
-@OMFONTS_TRUE@@OTANGLE_TRUE@	done
+@OMFONTS_TRUE@@OTANGLE_TRUE@uninstall-hook: uninstall-bin-links
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	for f in $(linked_programs); do \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
+@OMFONTS_TRUE@@OTANGLE_TRUE@@WIN32_TRUE@	done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

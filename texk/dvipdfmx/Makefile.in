@@ -44,7 +44,7 @@ DIST_COMMON = $(am__configure_deps) $(am__dist_bin_SCRIPTS_DIST) \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
-	$(srcdir)/../../build-aux/missing \
+	$(srcdir)/../../build-aux/missing $(srcdir)/../am/bin_links.am \
 	$(srcdir)/../am/man1_links.am $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/configure ../../build-aux/config.guess \
@@ -461,6 +461,11 @@ dvipdfmx_DEPENDENCIES = $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) $(ZLIB_DEPEND)
 dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 call_dvipdfmx_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
+bin_links = \
+	dvipdfmx$(EXEEXT):dvipdfm \
+	dvipdfmx$(EXEEXT):ebb \
+	dvipdfmx$(EXEEXT):extractbb
+
 DISTCLEANFILES = config.force
 configdatadir = ${prefix}/texmf/dvipdfmx
 configdata_DATA = \
@@ -488,8 +493,6 @@ dist_man1_MANS = \
 	man/dvipdfm.1 \
 	man/dvipdft.1
 
-
-# Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
 man1_links = \
 	extractbb:ebb
 
@@ -500,7 +503,7 @@ all: config.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/man1_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/bin_links.am $(srcdir)/../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -2205,6 +2208,23 @@ uninstall-man: uninstall-man1
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+.PHONY: install-bin-links uninstall-bin-links
+
+install-bin-links:
+@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  for s in $(bin_links); do \
+@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
+@WIN32_FALSE@	    rm -f $$link; \
+@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
+@WIN32_FALSE@	  done
+
+uninstall-bin-links:
+@WIN32_FALSE@	@for s in $(bin_links); do \
+@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
+@WIN32_FALSE@	done
 
 @KPATHSEA_RULE@
 @LIBPNG_RULE@
@@ -2233,22 +2253,17 @@ uninstall-man1-links:
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
 	done
 
-install-data-hook: install-man1-links
-
-install-exec-hook:
+install-exec-hook: install-bin-links
 @WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 @WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 @WIN32_TRUE@	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
-@WIN32_FALSE@	cd $(DESTDIR)$(bindir) && \
-@WIN32_FALSE@	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) dvipdfm$(EXEEXT) && \
-@WIN32_FALSE@	  $(LN_S) dvipdfmx$(EXEEXT) dvipdfm$(EXEEXT) && \
-@WIN32_FALSE@	  $(LN_S) dvipdfmx$(EXEEXT) ebb$(EXEEXT) && \
-@WIN32_FALSE@	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT)
 
-uninstall-hook: uninstall-man1-links
-	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
-	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
-	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+install-data-hook: install-man1-links
+
+uninstall-hook: uninstall-bin-links uninstall-man1-links
+@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
+@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
+@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

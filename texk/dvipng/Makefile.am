@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -109,16 +109,16 @@ dvigif_LDADD =
 ## Rebuild libz
 @ZLIB_RULE@
 
+include $(srcdir)/../am/bin_links.am
+
+bin_links = dvipng$(EXEEXT):dvigif
+
 if have_gif
 if WIN32
 bin_PROGRAMS += dvigif
 else !WIN32
-install-exec-hook:
-	cd $(DESTDIR)$(bindir) && \
-	  rm -f dvigif$(EXEEXT) && \
-	  $(LN_S) dvipng$(EXEEXT) dvigif$(EXEEXT)
-uninstall-hook:
-	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
+install-exec-hook: install-bin-links
+uninstall-hook: uninstall-bin-links
 endif !WIN32
 endif have_gif
 

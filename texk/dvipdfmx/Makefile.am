@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipdfmx/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -186,6 +186,13 @@ call_dvipdfmx_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
 
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
 
+bin_links = \
+	dvipdfmx$(EXEEXT):dvipdfm \
+	dvipdfmx$(EXEEXT):ebb \
+	dvipdfmx$(EXEEXT):extractbb
+
+include $(srcdir)/../am/bin_links.am
+
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 ## Rebuild libpng
@@ -230,29 +237,24 @@ dist_man1_MANS = \
 	man/dvipdfm.1 \
 	man/dvipdft.1
 
-# Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
 man1_links = \
 	extractbb:ebb
 
 include $(srcdir)/../am/man1_links.am
 
-install-data-hook: install-man1-links
-
-install-exec-hook:
+install-exec-hook: install-bin-links
 if WIN32
 	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
-else !WIN32
-	cd $(DESTDIR)$(bindir) && \
-	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) dvipdfm$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) dvipdfm$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) ebb$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT)
-endif !WIN32
+endif WIN32
 
-uninstall-hook: uninstall-man1-links
+install-data-hook: install-man1-links
+
+uninstall-hook: uninstall-bin-links uninstall-man1-links
+if WIN32
 	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+endif WIN32
 

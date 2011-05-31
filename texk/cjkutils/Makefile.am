@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/cjkutils/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -57,15 +57,15 @@ endif WIN32
 ## and copy them to{bg5,cef5,cef,cefs,sjis}{,pdf}latex.exe.
 ##
 ## For Unix systems we install the {bg5,cef5,cef,cefs,gbk,sjis}{,pdf}latex
-## shell scripts and create symlinks gbk{,pdf}latex -> bg5{,pdf}latex.
+## shell scripts and create symlinks bg5+{,pdf}latex -> gbk{,pdf}latex.
 ##
 if WIN32
 HOOK_DST = bg5 cef5 cef cefs sjis
-HOOK_CMD = cp
 else !WIN32
-HOOK_DST = bg5+
-HOOK_CMD = $(LN_S)
+bin_links = gbklatex:bg5+latex gbkpdflatex:bg5+pdflatex
 endif !WIN32
+
+include $(srcdir)/../am/bin_links.am
 
 gbklatex_SOURCES = \
 	$(CJKUTILS_TREE)/cjklatex/cjklatex.c
@@ -82,6 +82,21 @@ gbkpdflatex_LDADD = $(gbklatex_LDADD)
 
 if WIN32
 bin_SCRIPTS =
+install-exec-hook:
+	@cd $(DESTDIR)$(bindir) && \
+	  for p in latex pdflatex; do \
+	    for c in $(HOOK_DST); do \
+	      echo "cp gbk$$p$(EXEEXT) $$c$$p$(EXEEXT)"; \
+	      rm -f $$c$$p$(EXEEXT); cp gbk$$p$(EXEEXT) $$c$$p$(EXEEXT); \
+	    done; \
+	  done
+uninstall-hook:
+	@for p in latex pdflatex; do \
+	  for c in $(HOOK_DST); do \
+	    echo "rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT)"; \
+	    rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT); \
+	  done; \
+	done
 else !WIN32
 bin_SCRIPTS = \
 	$(CJKUTILS_TREE)/Bg5conv/bg5latex \
@@ -96,24 +111,9 @@ bin_SCRIPTS = \
 	$(CJKUTILS_TREE)/SJISconv/sjispdflatex \
 	$(CJKUTILS_TREE)/extconv/gbklatex \
 	$(CJKUTILS_TREE)/extconv/gbkpdflatex
+install-exec-hook: install-bin-links
+uninstall-hook: uninstall-bin-links
 endif !WIN32
-
-install-exec-hook:
-	@cd $(DESTDIR)$(bindir) && \
-	  for p in latex pdflatex; do \
-	    for c in $(HOOK_DST); do \
-	      echo "$(HOOK_CMD) gbk$$p$(EXEEXT) $$c$$p$(EXEEXT)"; \
-	      rm -f $$c$$p$(EXEEXT); $(HOOK_CMD) gbk$$p$(EXEEXT) $$c$$p$(EXEEXT); \
-	    done; \
-	  done
-
-uninstall-hook:
-	@for p in latex pdflatex; do \
-	  for c in $(HOOK_DST); do \
-	    echo "rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT)"; \
-	    rm -f $(DESTDIR)$(bindir)/$$c$$p$(EXEEXT); \
-	  done; \
-	done
 
 man1_MANS = \
 	$(CJKUTILS_TREE)/Bg5conv/bg5conv.1 \

@@ -75,24 +75,28 @@ DISTCLEANFILES = pl-parser.output
 
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 
+bin_links = \
+	omfonts$(EXEEXT):ofm2opl \
+	omfonts$(EXEEXT):opl2ofm \
+	omfonts$(EXEEXT):ovf2ovp \
+	omfonts$(EXEEXT):ovp2ovf
+
+include $(top_srcdir)/../am/bin_links.am
+
 if OTANGLE
 if OMFONTS
-install-exec-hook:
+install-exec-hook: install-bin-links
 if WIN32
 	for f in $(linked_programs); do \
 	  $(INSTALL_PROGRAM) call_omfonts$(EXEEXT) $(DESTDIR)$(bindir)/$$f$(EXEEXT) || exit 1; \
 	done
-else !WIN32
-	cd $(DESTDIR)$(bindir) && \
-	  for f in $(linked_programs); do \
-	    rm -f $$f$(EXEEXT) && \
-	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
-	  done
-endif !WIN32
-uninstall-hook:
+endif WIN32
+uninstall-hook: uninstall-bin-links
+if WIN32
 	for f in $(linked_programs); do \
 	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 	done
+endif WIN32
 endif OMFONTS
 endif OTANGLE
 

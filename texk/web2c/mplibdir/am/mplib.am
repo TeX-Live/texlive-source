@@ -1,6 +1,6 @@
 ## texk/web2c/mplibdir/am/mplib.am: Makefile fragment for MetaPost.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## MetaPost
@@ -8,9 +8,11 @@
 if MP
 bin_PROGRAMS += mpost
 if WIN32
-bin_PROGRAMS += dvitomp
+noinst_PROGRAMS += call_mpost
+install_exe_links += install-mpost-links
+uninstall_exe_links += uninstall-mpost-links
 else !WIN32
-bin_links += mpost:dvitomp
+bin_links += mpost$(EXEEXT):dvitomp mpost$(EXEEXT):metafun mpost$(EXEEXT):mfplain
 endif !WIN32
 endif MP
 EXTRA_PROGRAMS += mpost
@@ -19,9 +21,21 @@ mpost_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 mpost_DEPENDENCIES = libmplib.a
 mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm
 
-dvitomp_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
-dvitomp_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
-dvitomp_LDADD =
+call_mpost_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
+call_mpost_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+call_mpost_LDADD =
+
+.PHONY: install-mpost-links uninstall-mpost-links
+if WIN32
+install-mpost-links: call_mpost$(EXEEXT)
+	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/dvitomp$(EXEEXT)
+	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/metafun$(EXEEXT)
+	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/mfplain$(EXEEXT)
+uninstall-mpost-links:
+	rm -f $(DESTDIR)$(bindir)/dvitomp$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/metafun$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/mfplain$(EXEEXT)
+endif WIN32
 
 # Creating one file: just one rule
 mp_ctangle = CWEBINPUTS=$(srcdir)/mplibdir $(ctangle)

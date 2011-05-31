@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright (C) 2009, 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## TeX Live's extra scripts.
@@ -128,8 +128,6 @@ nobase_dist_texmf_dist_scripts_SCRIPTS = \
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	epstopdf:repstopdf \
-	mpost:metafun \
-	mpost:mfplain \
 	pdfcrop:rpdfcrop
 
 # The idea is to install the scripts themselves in texmf*/scripts, and

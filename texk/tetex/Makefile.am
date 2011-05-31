@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/tetex/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -88,14 +88,14 @@ web2cdir = ${prefix}/texmf/web2c
 
 dist_web2c_DATA = fmtutil.cnf
 
-# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	allcm:allec \
 	fmtutil:mktexfmt \
 	kpsetool:kpsexpand \
 	kpsetool:kpsepath
 
-# Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
+include $(top_srcdir)/../am/bin_links.am
+
 man1_links = $(bin_links) \
 	fmtutil:fmtutil-sys \
 	texconfig:texconfig-sys \
@@ -103,27 +103,11 @@ man1_links = $(bin_links) \
 
 include $(top_srcdir)/../am/man1_links.am
 
+install-exec-hook: install-bin-links
+
 install-data-hook: install-perl-links install-shell-links install-man1-links
 
-install-exec-hook:
-if !WIN32
-	@cd $(DESTDIR)$(bindir) && \
-	  for s in $(bin_links); do \
-	    link=`echo $$s | sed 's,.*:,,'`; \
-	    file=`echo $$s | sed 's,:.*,,'`; \
-	    rm -f $$link; \
-	    echo "creating link '$$link' -> '$$file'"; \
-	    $(LN_S) $$file $$link || exit 1; \
-	  done
-endif !WIN32
-
-uninstall-hook: uninstall-links uninstall-man1-links
-if !WIN32
-	@for s in $(bin_links); do \
-	  link=`echo $$s | sed 's,.*:,,'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$link; \
-	done
-endif !WIN32
+uninstall-hook: uninstall-bin-links uninstall-links uninstall-man1-links
 
 EXTRA_DIST = \
 	README.texdoctk

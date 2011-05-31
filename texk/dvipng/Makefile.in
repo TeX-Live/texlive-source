@@ -47,21 +47,21 @@ bin_PROGRAMS = dvipng$(EXEEXT) $(am__EXEEXT_1)
 @have_ft2_or_t1_TRUE@	$(DVIPNG_TREE)/fontmap.c \
 @have_ft2_or_t1_TRUE@	$(DVIPNG_TREE)/tfm.c
 
-@WIN32_TRUE@@have_gif_TRUE@am__append_4 = dvigif
-subdir = .
 DIST_COMMON = $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
-	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure ../../build-aux/config.guess \
-	../../build-aux/config.sub ../../build-aux/depcomp \
-	../../build-aux/install-sh ../../build-aux/ltmain.sh \
-	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap ChangeLog
+	$(srcdir)/../../build-aux/missing $(srcdir)/../am/bin_links.am \
+	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/config.h.in $(top_srcdir)/configure \
+	../../build-aux/config.guess ../../build-aux/config.sub \
+	../../build-aux/depcomp ../../build-aux/install-sh \
+	../../build-aux/ltmain.sh ../../build-aux/missing \
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
+@WIN32_TRUE@@have_gif_TRUE@am__append_4 = dvigif
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gs-device.m4 \
 	$(top_srcdir)/m4/makeinfo.m4 \
@@ -356,6 +356,7 @@ LDADD = $(KPATHSEA_LIBS) $(GD_LIBS) $(FREETYPE2_LIBS) $(T1LIB_LIBS) \
 dvigif_CPPFLAGS = -DEXEPROG=\"dvipng.exe\"
 dvigif_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
 dvigif_LDADD = 
+bin_links = dvipng$(EXEEXT):dvigif
 TESTS = dvipng.test
 CLEANFILES = missfont.log test_dvipng.aux test_dvipng.dvi test_dvipng.log test_dvipng*.png
 all: config.h
@@ -365,7 +366,7 @@ all: config.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../am/bin_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1347,12 +1348,25 @@ config.force: $(dvipng_dependencies)
 @T1LIB_RULE@
 @LIBPNG_RULE@
 @ZLIB_RULE@
-@WIN32_FALSE@@have_gif_TRUE@install-exec-hook:
-@WIN32_FALSE@@have_gif_TRUE@	cd $(DESTDIR)$(bindir) && \
-@WIN32_FALSE@@have_gif_TRUE@	  rm -f dvigif$(EXEEXT) && \
-@WIN32_FALSE@@have_gif_TRUE@	  $(LN_S) dvipng$(EXEEXT) dvigif$(EXEEXT)
-@WIN32_FALSE@@have_gif_TRUE@uninstall-hook:
-@WIN32_FALSE@@have_gif_TRUE@	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
+.PHONY: install-bin-links uninstall-bin-links
+
+install-bin-links:
+@WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  for s in $(bin_links); do \
+@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
+@WIN32_FALSE@	    rm -f $$link; \
+@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
+@WIN32_FALSE@	  done
+
+uninstall-bin-links:
+@WIN32_FALSE@	@for s in $(bin_links); do \
+@WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
+@WIN32_FALSE@	done
+@WIN32_FALSE@@have_gif_TRUE@install-exec-hook: install-bin-links
+@WIN32_FALSE@@have_gif_TRUE@uninstall-hook: uninstall-bin-links
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

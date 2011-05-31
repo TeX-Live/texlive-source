@@ -1,3 +1,7 @@
+2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../am/bin_links.am for $(bindir) links.
+
 2011-05-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac (AC_CONFIG_FILES): Add otps/win32/Makefile.

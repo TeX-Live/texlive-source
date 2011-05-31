@@ -1,3 +1,7 @@
+2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../../am/bin_links.am for $(bindir) links.
+
 2011-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* omfonts.c (main): Call kpse_set_program_name() with args

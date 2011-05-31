@@ -1,3 +1,8 @@
+2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/bin_links.am: New Makefile fragment for symlinks within
+	$(bindir).
+
 2011-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/script_links.am: Add support for lua scripts; reorganize.

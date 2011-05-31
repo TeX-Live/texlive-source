@@ -1,3 +1,7 @@
+2011-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-manpage: Adapted to modified extractbb manpage.
+
 2011-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ../dvipdfmx-20110311/data/dvipdfmx.cfg: Synched from Master.
