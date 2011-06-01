@@ -1,3 +1,7 @@
+2011-06-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (mapdata*): Don't install the map file.
+
 2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* doc/Makefile.am: Use ../am/bin_links.am for $(bindir) links.

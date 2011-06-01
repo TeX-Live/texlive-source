@@ -219,9 +219,11 @@ glyphlistdata_DATA = \
 	$(DVIPDFMX_TREE)/data/glyphlist.txt \
 	$(DVIPDFMX_TREE)/data/pdfglyphlist.txt
 
-mapdatadir = ${prefix}/texmf/fonts/map/dvipdfmx
-mapdata_DATA = \
-	$(DVIPDFMX_TREE)/data/cid-x.map
+## Don't install the map file
+##
+##mapdatadir = ${prefix}/texmf/fonts/map/dvipdfmx
+##mapdata_DATA = \
+##	$(DVIPDFMX_TREE)/data/cid-x.map
 
 cmapdatadir = ${prefix}/texmf/fonts/cmap/dvipdfmx
 cmapdata_DATA = \
