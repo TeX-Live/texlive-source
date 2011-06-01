@@ -1,3 +1,8 @@
+2011-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: Imported release 1.0.8.
+	* Makefile.am: Added Process.cpp to libdvisvgm.a sources.
+
 2011-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, version.ac (new): Imported release 1.0.7.

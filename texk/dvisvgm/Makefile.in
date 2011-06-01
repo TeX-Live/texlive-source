@@ -95,7 +95,7 @@ nodist_libdvisvgm_a_OBJECTS = BgColorSpecialHandler.$(OBJEXT) \
 	Ghostscript.$(OBJEXT) InputBuffer.$(OBJEXT) \
 	InputReader.$(OBJEXT) Length.$(OBJEXT) Matrix.$(OBJEXT) \
 	Message.$(OBJEXT) MetafontWrapper.$(OBJEXT) \
-	PageRanges.$(OBJEXT) PageSize.$(OBJEXT) \
+	PageRanges.$(OBJEXT) PageSize.$(OBJEXT) Process.$(OBJEXT) \
 	PSInterpreter.$(OBJEXT) PsSpecialHandler.$(OBJEXT) \
 	SignalHandler.$(OBJEXT) SpecialManager.$(OBJEXT) \
 	StreamReader.$(OBJEXT) StreamWriter.$(OBJEXT) \
@@ -377,6 +377,7 @@ nodist_libdvisvgm_a_SOURCES =  \
 	$(DVISVGM_TREE)/src/MetafontWrapper.cpp \
 	$(DVISVGM_TREE)/src/PageRanges.cpp \
 	$(DVISVGM_TREE)/src/PageSize.cpp \
+	$(DVISVGM_TREE)/src/Process.cpp \
 	$(DVISVGM_TREE)/src/PSInterpreter.cpp \
 	$(DVISVGM_TREE)/src/PsSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/SignalHandler.cpp \
@@ -556,6 +557,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSInterpreter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageRanges.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageSize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PsSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SignalHandler.Po@am__quote@
@@ -1192,6 +1194,20 @@ PageSize.obj: $(DVISVGM_TREE)/src/PageSize.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/PageSize.cpp' object='PageSize.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PageSize.obj `if test -f '$(DVISVGM_TREE)/src/PageSize.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/PageSize.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/PageSize.cpp'; fi`
+
+Process.o: $(DVISVGM_TREE)/src/Process.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Process.o -MD -MP -MF $(DEPDIR)/Process.Tpo -c -o Process.o `test -f '$(DVISVGM_TREE)/src/Process.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/Process.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Process.Tpo $(DEPDIR)/Process.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/Process.cpp' object='Process.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Process.o `test -f '$(DVISVGM_TREE)/src/Process.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/Process.cpp
+
+Process.obj: $(DVISVGM_TREE)/src/Process.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Process.obj -MD -MP -MF $(DEPDIR)/Process.Tpo -c -o Process.obj `if test -f '$(DVISVGM_TREE)/src/Process.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/Process.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/Process.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Process.Tpo $(DEPDIR)/Process.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/Process.cpp' object='Process.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Process.obj `if test -f '$(DVISVGM_TREE)/src/Process.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/Process.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/Process.cpp'; fi`
 
 PSInterpreter.o: $(DVISVGM_TREE)/src/PSInterpreter.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSInterpreter.o -MD -MP -MF $(DEPDIR)/PSInterpreter.Tpo -c -o PSInterpreter.o `test -f '$(DVISVGM_TREE)/src/PSInterpreter.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/PSInterpreter.cpp

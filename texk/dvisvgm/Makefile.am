@@ -87,6 +87,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/MetafontWrapper.cpp \
 	$(DVISVGM_TREE)/src/PageRanges.cpp \
 	$(DVISVGM_TREE)/src/PageSize.cpp \
+	$(DVISVGM_TREE)/src/Process.cpp \
 	$(DVISVGM_TREE)/src/PSInterpreter.cpp \
 	$(DVISVGM_TREE)/src/PsSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/SignalHandler.cpp \
