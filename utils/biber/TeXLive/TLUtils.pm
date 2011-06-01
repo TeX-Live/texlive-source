@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 22457 2011-05-13 17:24:55Z siepo $
+# $Id: TLUtils.pm 22688 2011-05-30 19:42:46Z siepo $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 22457 $';
+my $svnrev = '$Revision: 22688 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -529,10 +529,10 @@ sub dirname {
   if (win32) {
     $path=~s!\\!/!g;
   }
-  if ($path=~m!/!) {  # dirname("foo/bar/baz") -> "foo/bar"
-    $path=~m!(.*)/.*!;
+  if ($path=~m!/!) {   # dirname("foo/bar/baz") -> "foo/bar"
+    $path=~m!(.*)/.*!; # works because of greedy matching
     return $1;
-  } else {              # dirname("ignore") -> "."
+  } else {             # dirname("ignore") -> "."
     return ".";
   }
 }
@@ -582,14 +582,24 @@ Tests whether its argument is a directory where we can create a directory.
 
 =cut
 
+sub dir_slash {
+  my $d = shift;
+  $d = "$d/" unless $d =~ m!/!;
+  return $d;
+}
+
+# test whether subdirectories can be created in the argument
 sub dir_creatable {
   $path=shift;
-  return 0 unless -d $path;
+  #print STDERR "testing $path\n";
   $path =~ s!\\!/!g if win32;
-  $path =~ s!/$!!g;
+  $path =~ s!/$!!;
+  return 0 unless -d dir_slash($path);
+  #print STDERR "testing $path\n";
   my $i = 0;
   while (-e $path . "/" . $i) { $i++; }
   my $d = $path."/".$i;
+  #print STDERR "creating $d\n";
   return 0 unless mkdir $d;
   return 0 unless -d $d;
   rmdir $d;
@@ -619,9 +629,9 @@ a fileserver.
 
 sub dir_writable {
   $path=shift;
-  return 0 unless -d $path;
+  return 0 unless -d dir_slash($path);
   $path =~ s!\\!/!g if win32;
-  $path =~ s!/$!!g;
+  $path =~ s!/$!!;
   my $i = 0;
   while (-e $path . "/" . $i) { $i++; }
   my $f = $path."/".$i;
@@ -2867,17 +2877,30 @@ sub merge_into {
 Test whether installation with TEXDIR set to $texdir would succeed due to
 writing permissions.
 
+Writable or not, we will not allow installation to the root
+directory (Unix) or the root of the system drive (Windows).
+
 =cut
 
 sub texdir_check {
-  my ($texdir) = shift;                       # PATH/texlive/2008
-  my $texdirparent = dirname($texdir);        # PATH/texlive
-  my $texdirpparent = dirname($texdirparent); # PATH
-  if ( (dir_creatable($texdirpparent)) ||
-       ( (-d $texdirparent) && (dir_creatable($texdirparent)) ) ||
-       ( (-d $texdir) && (dir_writable($texdir)) ) ) {
-    return 1;
-  }
+  my $texdir = shift;
+  my $texdirparent;
+  my $texdirpparent;
+  $texdir =~ s!/$!!; # remove final slash
+  #print STDERR "Checking $texdir".'[/]'."\n";
+  # disallow unix root
+  return 0 if $texdir eq "";
+  # disallow w32 systemdrive root
+  return 0 if (win32() and $texdir eq $ENV{SystemDrive});
+
+  return dir_writable($texdir) if (-d dir_slash($texdir));
+  ($texdirparent = $texdir) =~ s!/[^/]*$!!;
+  #print STDERR "Checking $texdirparent".'[/]'."\n";
+  return  dir_creatable($texdirparent) if -d dir_slash($texdirparent);
+  # try another level up the tree
+  ($texdirpparent = $texdirparent) =~ s!/[^/]*$!!;
+  #print STDERR "Checking $texdirpparent".'[/]'."\n";
+  return dir_creatable($texdirpparent) if -d dir_slash($texdirpparent);
   return 0;
 }
 
