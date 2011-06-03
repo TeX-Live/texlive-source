@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-06-03  Akira Kakuto  <kakuto@fuk,kindai.ac.jp>
+
+	* dpxfile.c: fix a bug in exec_spawn().
+
 2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/fontmap.c [OS X]: #include FT_MAC_H to get prototype for
