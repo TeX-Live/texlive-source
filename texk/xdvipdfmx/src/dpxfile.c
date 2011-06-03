@@ -157,9 +157,13 @@ static int exec_spawn (char *cmd)
   char **cmdv, **qv;
   char *p, *pp;
   char buf[1024];
-  int  i, ret;
+  int  i, ret = -1;
 
-  if (!cmd || !*cmd)
+  if (!cmd)
+    return -1;
+  while (*cmd == ' ' || *cmd == '\t')
+    cmd++;
+  if (*cmd == '\0')
     return -1;
   i = 0;
   p = cmd;
@@ -168,19 +172,16 @@ static int exec_spawn (char *cmd)
       i++;
     p++;
   }
-  cmdv = (char **) xmalloc (sizeof (char *) * (i+2));
+  cmdv = xcalloc (i + 2, sizeof (char *));
   p = cmd;
   qv = cmdv;
-  while (*p == ' ' || *p == '\t')
-    p++;
   while (*p) {
     pp = buf;
     if (*p == '"') {
       p++;
       while (*p != '"') {
         if (*p == '\0') {
-          free (cmdv);
-          return -1;
+          goto done;
         }
         *pp++ = *p++;
       }
@@ -189,8 +190,7 @@ static int exec_spawn (char *cmd)
       p++;
       while (*p != '\'') {
         if (*p == '\0') {
-          free (cmdv);
-          return -1;
+          goto done;
         }
         *pp++ = *p++;
       }
@@ -201,8 +201,7 @@ static int exec_spawn (char *cmd)
           p++;
           while (*p != '\'') {
              if (*p == '\0') {
-                 free (cmdv);
-                 return -1;
+                 goto done;
              }
              *pp++ = *p++;
           }
@@ -213,7 +212,7 @@ static int exec_spawn (char *cmd)
       }
     }
     *pp = '\0';
-    if ((pp = strchr (buf, ' ')) || (pp = strchr (buf, '\t'))) {
+    if (strchr (buf, ' ') || strchr (buf, '\t')) {
 #ifdef WIN32
       *qv = concat3 ("\"", buf, "\"");
 #else
@@ -229,7 +228,6 @@ static int exec_spawn (char *cmd)
       p++;
     qv++;
   }
-  *qv = NULL;
 #ifdef WIN32
   ret = spawnvp (_P_WAIT, *cmdv, (const char* const*) cmdv);
 #else
@@ -238,7 +236,7 @@ static int exec_spawn (char *cmd)
     ret = -1;
   else if (i == 0) {
     if (execvp (*cmdv, cmdv))
-      ret = -1;
+      _exit (-1);
   } else {
     if (wait (&ret) == i) {
       ret = (WIFEXITED (ret) ? WEXITSTATUS (ret) : -1);
@@ -247,14 +245,13 @@ static int exec_spawn (char *cmd)
     }
   }
 #endif
+done:
   qv = cmdv;
-  if (qv) {
-    while (*qv) {
-      free (*qv);
-      qv++;
-    }
-    free (cmdv);
+  while (*qv) {
+    free (*qv);
+    qv++;
   }
+  free (cmdv);
   return ret;
 }
 
