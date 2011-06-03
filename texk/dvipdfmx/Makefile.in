@@ -77,7 +77,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(cmapdatadir)" \
-	"$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)"
+	"$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" \
+	"$(DESTDIR)$(mapdatadir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am_call_dvipdfmx_OBJECTS = call_dvipdfmx-callexe.$(OBJEXT)
 call_dvipdfmx_OBJECTS = $(am_call_dvipdfmx_OBJECTS)
@@ -160,7 +161,8 @@ DIST_SOURCES = $(call_dvipdfmx_SOURCES) $(dvipdfmx_SOURCES)
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man1_MANS) $(man1_MANS)
-DATA = $(cmapdata_DATA) $(configdata_DATA) $(glyphlistdata_DATA)
+DATA = $(cmapdata_DATA) $(configdata_DATA) $(glyphlistdata_DATA) \
+	$(mapdata_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -473,6 +475,10 @@ glyphlistdatadir = ${prefix}/texmf-dist/fonts/map/glyphlist
 glyphlistdata_DATA = \
 	$(DVIPDFMX_TREE)/data/glyphlist.txt \
 	$(DVIPDFMX_TREE)/data/pdfglyphlist.txt
+
+mapdatadir = ${prefix}/texmf/fonts/map/dvipdfmx
+mapdata_DATA = \
+	$(DVIPDFMX_TREE)/data/cid-x.map
 
 cmapdatadir = ${prefix}/texmf/fonts/cmap/dvipdfmx
 cmapdata_DATA = \
@@ -1819,6 +1825,26 @@ uninstall-glyphlistdataDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(glyphlistdatadir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(glyphlistdatadir)" && rm -f $$files
+install-mapdataDATA: $(mapdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(mapdatadir)" || $(MKDIR_P) "$(DESTDIR)$(mapdatadir)"
+	@list='$(mapdata_DATA)'; test -n "$(mapdatadir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(mapdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(mapdatadir)" || exit $$?; \
+	done
+
+uninstall-mapdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(mapdata_DATA)'; test -n "$(mapdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(mapdatadir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(mapdatadir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -2039,7 +2065,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS) $(DATA) config.h
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(cmapdatadir)" "$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(cmapdatadir)" "$(DESTDIR)$(configdatadir)" "$(DESTDIR)$(glyphlistdatadir)" "$(DESTDIR)$(mapdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -2093,7 +2119,7 @@ info: info-am
 info-am:
 
 install-data-am: install-cmapdataDATA install-configdataDATA \
-	install-glyphlistdataDATA install-man
+	install-glyphlistdataDATA install-man install-mapdataDATA
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
@@ -2145,7 +2171,8 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-cmapdataDATA \
 	uninstall-configdataDATA uninstall-dist_binSCRIPTS \
-	uninstall-glyphlistdataDATA uninstall-man
+	uninstall-glyphlistdataDATA uninstall-man \
+	uninstall-mapdataDATA
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
@@ -2166,15 +2193,16 @@ uninstall-man: uninstall-man1
 	install-dvi install-dvi-am install-exec install-exec-am \
 	install-exec-hook install-glyphlistdataDATA install-html \
 	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-cmapdataDATA \
-	uninstall-configdataDATA uninstall-dist_binSCRIPTS \
-	uninstall-glyphlistdataDATA uninstall-hook uninstall-man \
-	uninstall-man1
+	install-man1 install-mapdataDATA install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-cmapdataDATA uninstall-configdataDATA \
+	uninstall-dist_binSCRIPTS uninstall-glyphlistdataDATA \
+	uninstall-hook uninstall-man uninstall-man1 \
+	uninstall-mapdataDATA
 
 
 # in case of an SVN repository

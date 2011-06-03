@@ -1,3 +1,8 @@
+2011-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (mapdata*): Do install the map file, still needed
+	in pTeX.
+
 2011-06-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (mapdata*): Don't install the map file.
