@@ -154,7 +154,7 @@ static int exec_spawn (char *cmd)
 {
   char **cmdv, **qv;
   char *p, *pp;
-  char buf[512];
+  char buf[1024];
   int  i, ret;
 
   if (!cmd || !*cmd)
@@ -194,17 +194,21 @@ static int exec_spawn (char *cmd)
       }
       p++;
     } else {
-      while (*p != ' ' && *p != '\t' && *p)
-#ifdef WIN32
+      while (*p != ' ' && *p != '\t' && *p) {
         if (*p == '\'') {
-          *pp++ = '\"';
+          p++;
+          while (*p != '\'') {
+             if (*p == '\0') {
+                 free (cmdv);
+                 return -1;
+             }
+             *pp++ = *p++;
+          }
           p++;
         } else {
           *pp++ = *p++;
         }
-#else
-        *pp++ = *p++;
-#endif
+      }
     }
     *pp = '\0';
     if ((pp = strchr (buf, ' ')) || (pp = strchr (buf, '\t'))) {
@@ -214,8 +218,11 @@ static int exec_spawn (char *cmd)
       *qv = concat3 ("'", buf, "'");
 #endif
     } else {
-      *qv = concat (buf, "");
+      *qv = xstrdup (buf);
     }
+/*
+    fprintf(stderr,"\n%s", *qv);
+*/
     while (*p == ' ' || *p == '\t')
       p++;
     qv++;
