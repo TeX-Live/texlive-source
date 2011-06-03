@@ -186,8 +186,7 @@ normalize_filename (char *fp, char path_sep)
 #if 0
     fprintf(stderr, "moving %s to %s\n", fp+ret, fp+i);
 #endif
-    memcpy(fp+ret, fp+i, len);
-    *(char *)(fp+ret+len) = '\0';
+    memmove (fp+ret, fp+i, len+1);
   }
 
   /* conditionnally rewrite to same path_sep, slash preferably */

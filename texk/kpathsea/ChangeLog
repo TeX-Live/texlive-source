@@ -1,3 +1,8 @@
+2011-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mingw32.c (normalize_filename): Use memmove() instead of
+	memcpy() for overlapping objects.
+
 2011-05-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmf.cnf: add "shell_escape.initex = f" and
