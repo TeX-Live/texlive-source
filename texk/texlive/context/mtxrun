@@ -11153,9 +11153,11 @@ resolvers.luacnfname    = 'texmfcnf.lua'
 resolvers.luacnfstate   = "unknown"
 
 -- resolvers.luacnfspec = '{$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}' -- what a rubish path
-resolvers.luacnfspec = 'selfautoparent:{/texmf{-local,}{,/web2c},}}'
 
-
+-- changed by Taco Hoekwater to make <root>/texmfnf.lua take precedence,
+-- while still allowing <root>/texmf/texmfnf.lua and 
+-- <root>/texmf/web2c/texmfnf.lua (in that order)
+resolvers.luacnfspec = '{selfautodir:,selfautoparent:};{selfautodir:,selfautoparent:}{/share,}/texmf{-local,};{selfautodir:,selfautoparent:}{/share,}/texmf{-local,}/web2c'
 
 local unset_variable = "unset"
 
