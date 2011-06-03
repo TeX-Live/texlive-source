@@ -170,6 +170,7 @@ top_srcdir = @top_srcdir@
 @WIN32_FALSE@	texmfstart
 
 dist_man1_MANS = \
+	context.man \
 	ctxtools.man \
 	mptopdf.man \
 	pstopdf.man \
