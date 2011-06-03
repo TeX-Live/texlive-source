@@ -2524,8 +2524,28 @@ end
 
 
 function file.is_writable(name)
-    local a = attributes(name) or attributes(dirname(name,"."))
-    return a and sub(a.permissions,2,2) == "w"
+    if os.type == "windows" then
+      local a = attributes(name) or attributes(dirname(name,"."))
+      return a and sub(a.permissions,2,2) == "w"
+    end
+    local f
+    local isnew = true
+    if lfs.isdir(name) then
+      name = name .. "/mtxtest.txt"
+    else
+      f = io.open(name, "rb");
+      if f then
+         f:close()
+         isnew = false
+      end
+    end
+    f = io.open(name, "wb");
+    if f then
+       f:close()
+       if isnew then os.remove(name) end
+       return true
+    end
+    return false
 end
 
 function file.is_readable(name)
