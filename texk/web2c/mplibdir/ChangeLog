@@ -1,7 +1,11 @@
+2011-06-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mplib.am (bin_links): Remove no longer existing 'metafun'.
+
 2011-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* Makefile.am (bin_links): Move mpost:metafun and mpost:mfplain
-	from ../../texlive/linked_scripts/ to here.
+	* am/mplib.am (bin_links): Move mpost:metafun and mpost:mfplain
+	from ../../texlive/linked_scripts/Makefile.am to here.
 	[MinGW]: Build call_mpost.exe wrapper binary and install as
 	dvitomp.exe, metafun.exe, amd mfplain.exe.
 

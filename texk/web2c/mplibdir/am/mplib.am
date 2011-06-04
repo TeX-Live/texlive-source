@@ -12,7 +12,7 @@ noinst_PROGRAMS += call_mpost
 install_exe_links += install-mpost-links
 uninstall_exe_links += uninstall-mpost-links
 else !WIN32
-bin_links += mpost$(EXEEXT):dvitomp mpost$(EXEEXT):metafun mpost$(EXEEXT):mfplain
+bin_links += mpost$(EXEEXT):dvitomp mpost$(EXEEXT):mfplain
 endif !WIN32
 endif MP
 EXTRA_PROGRAMS += mpost
@@ -29,11 +29,9 @@ call_mpost_LDADD =
 if WIN32
 install-mpost-links: call_mpost$(EXEEXT)
 	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/dvitomp$(EXEEXT)
-	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/metafun$(EXEEXT)
 	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/mfplain$(EXEEXT)
 uninstall-mpost-links:
 	rm -f $(DESTDIR)$(bindir)/dvitomp$(EXEEXT)
-	rm -f $(DESTDIR)$(bindir)/metafun$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/mfplain$(EXEEXT)
 endif WIN32
 

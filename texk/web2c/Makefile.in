@@ -115,7 +115,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 @MP_TRUE@@WIN32_TRUE@am__append_19 = call_mpost
 @MP_TRUE@@WIN32_TRUE@am__append_20 = install-mpost-links
 @MP_TRUE@@WIN32_TRUE@am__append_21 = uninstall-mpost-links
-@MP_TRUE@@WIN32_FALSE@am__append_22 = mpost$(EXEEXT):dvitomp mpost$(EXEEXT):metafun mpost$(EXEEXT):mfplain
+@MP_TRUE@@WIN32_FALSE@am__append_22 = mpost$(EXEEXT):dvitomp mpost$(EXEEXT):mfplain
 @MP_TRUE@am__append_23 = $(mp_tests)
 @MP_TRUE@am__append_24 = pltotf tftopl
 @MP_TRUE@am__append_25 = mptrap.diffs
@@ -8973,11 +8973,9 @@ trap-clean:
 .PHONY: install-mpost-links uninstall-mpost-links
 @WIN32_TRUE@install-mpost-links: call_mpost$(EXEEXT)
 @WIN32_TRUE@	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/dvitomp$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/metafun$(EXEEXT)
 @WIN32_TRUE@	$(INSTALL_PROGRAM) call_mpost$(EXEEXT) $(DESTDIR)$(bindir)/mfplain$(EXEEXT)
 @WIN32_TRUE@uninstall-mpost-links:
 @WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/dvitomp$(EXEEXT)
-@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/metafun$(EXEEXT)
 @WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/mfplain$(EXEEXT)
 
 mpost.c: ctangle$(EXEEXT) mplibdir/mpost.w
