@@ -2524,26 +2524,20 @@ end
 
 
 function file.is_writable(name)
-    if os.type == "windows" then
-      local a = attributes(name) or attributes(dirname(name,"."))
-      return a and sub(a.permissions,2,2) == "w"
-    end
-    local f
-    local isnew = true
     if lfs.isdir(name) then
-      name = name .. "/mtxtest.txt"
+        name = name .. "/m_t_x_t_e_s_t.tmp"
+        local f = io.open(name,"wb")
+        if f then
+            f:close()
+            os.remove(name)
+            return true
+        end
     else
-      f = io.open(name, "rb");
-      if f then
-         f:close()
-         isnew = false
-      end
-    end
-    f = io.open(name, "wb");
-    if f then
-       f:close()
-       if isnew then os.remove(name) end
-       return true
+        f = io.open(name,"ab")
+        if f then
+            f:close()
+            return true
+        end
     end
     return false
 end
@@ -11153,11 +11147,9 @@ resolvers.luacnfname    = 'texmfcnf.lua'
 resolvers.luacnfstate   = "unknown"
 
 -- resolvers.luacnfspec = '{$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}' -- what a rubish path
+resolvers.luacnfspec = 'selfautoparent:{/texmf{-local,}{,/web2c},}}'
 
--- changed by Taco Hoekwater to make <root>/texmfnf.lua take precedence,
--- while still allowing <root>/texmf/texmfnf.lua and 
--- <root>/texmf/web2c/texmfnf.lua (in that order)
-resolvers.luacnfspec = '{selfautodir:,selfautoparent:};{selfautodir:,selfautoparent:}{/share,}/texmf{-local,};{selfautodir:,selfautoparent:}{/share,}/texmf{-local,}/web2c'
+
 
 local unset_variable = "unset"
 
