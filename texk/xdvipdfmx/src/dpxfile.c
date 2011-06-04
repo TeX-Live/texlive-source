@@ -161,9 +161,10 @@ static int exec_spawn (char *cmd)
 
   if (!cmd)
     return -1;
-  while (*cmd == ' ' || *cmd == '\t')
-    cmd++;
-  if (*cmd == '\0')
+  p = cmd;
+  while (*p == ' ' || *p == '\t')
+    p++;
+  if (*p == '\0')
     return -1;
   i = 0;
   p = cmd;
