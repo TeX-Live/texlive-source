@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 22448 2011-05-12 23:59:31Z karl $
+# $Id: tlmgr.pl 22804 2011-06-05 23:21:10Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 22448 $';
-my $datrev = '$Date: 2011-05-13 01:59:31 +0200 (Fri, 13 May 2011) $';
+my $svnrev = '$Revision: 22804 $';
+my $datrev = '$Date: 2011-06-06 01:21:10 +0200 (Mon, 06 Jun 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -574,6 +574,9 @@ sub handle_execute_actions
 
   if ($::files_changed) {
     $errors += do_cmd_and_check("mktexlsr");
+    if (defined($localtlpdb->get_package('context'))) {
+      $errors += do_cmd_and_check("mtxrun --generate");
+    }
     $::files_changed = 0;
   }
 
@@ -3938,11 +3941,26 @@ sub check_runfiles {
     # assume tex4ht, xdy, afm stuff is ok, and don't worry about
     # Changes, README et al.  Other per-format versions.
     next if $f =~ /\.(afm|cfg|4hf|htf|xdy)$/;
-    next if $f =~ /^(Changes|README|language\.dat|(czech|slovak)\.sty)$/;
-    next if $f =~ /^(libertine\.sty|m-tex4ht\.tex|metatex\.tex)$/;
-    next if $f =~ /^(kinsoku\.tex|luatools\.lua|cid2code\.txt|etex\.src)$/;
-    next if $f =~ /^(ps2mfbas\.mf|pstricks\.con|tex4ht\.env)$/;
-    next if $f =~ /^(texutil\.rb|tlmgrgui\.pl|language\.def)$/;
+    next if $f
+      =~ /^((czech|slovak)\.sty
+            |Changes
+            |README
+            |cid2code\.txt
+            |etex\.src
+            |kinsoku\.tex
+            |language\.dat
+            |language\.def
+            |libertine\.sty
+            |luatools\.lua
+            |m-tex4ht\.tex
+            |metatex\.tex
+            |ps2mfbas\.mf
+            |pstricks\.con
+            |sample\.bib
+            |tex4ht\.env
+            |texutil\.rb
+            |tlmgrgui\.pl
+           )$/x;
     #
     my @copies = grep (/\/$f$/, @runtime_files);
     # map files can be duplicated between (but not within) formats.
