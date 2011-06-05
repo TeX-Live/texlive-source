@@ -1,7 +1,3 @@
-2011-06-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
-
-	* dpxfile.c (exec_spawn): Left the argument intact.
-
 2011-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dpxfile.c (exec_spawn): Exit if execvp() fails, some clean up.
