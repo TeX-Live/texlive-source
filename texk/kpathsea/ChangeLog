@@ -1,3 +1,7 @@
+2011-06-06  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.context): No trailing comma, per Taco.
+
 2011-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.c (normalize_filename): Use memmove() instead of
