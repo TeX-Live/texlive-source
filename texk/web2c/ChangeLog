@@ -1,3 +1,8 @@
+2011-06-06  Karl Berry  <karl@tug.org>
+
+	* doc/web2c.texi: update MetaPost description, .mem's are
+	no longer created or used.
+
 2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../am/bin_links.am for $(bindir) links.

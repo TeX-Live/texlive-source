@@ -350,8 +350,7 @@ process of trying to recover and continue.
 @cindex initial form, enabling
 Enable the ``initial'' form of the program (@pxref{Initial and
 virgin}).  This is implicitly set if the program name is @code{initex}
-resp.@: @code{inimf} resp.@: @code{inimpost}, although these variants
-are no longer typically installed.
+resp.@: @code{inimf}.
 
 @item -interaction=@var{string}
 @opindex -interaction=@var{string}
@@ -530,7 +529,7 @@ control some array sizes and other features are described in
 
 @menu
 * Initial and virgin::          Making memory dumps vs. production runs.
-* Memory dumps::                .fmt/.base/.mem files for fast startup.
+* Memory dumps::                .fmt/.base files for fast startup.
 * Editor invocation::           The `e' response at errors.
 * \input filenames::            ~ and $ expansion in TeX/MF/MP.
 @end menu
@@ -540,10 +539,9 @@ control some array sizes and other features are described in
 @subsection Initial and virgin
 
 @cindex executables, shared initial and virgin
-The @TeX{}, Metafont, and MetaPost programs each have two main
-variants, called @dfn{initial} and @dfn{virgin}.  As of Web2c 7, one
-executable suffices for both variants, and in fact, the @code{ini...}
-executables are no longer created.
+The @TeX{} and Metafont programs each have two main variants, called
+@dfn{initial} and @dfn{virgin}.  MetaPost no longer makes this
+distinction.
 
 The initial form is enabled if:
 @enumerate
@@ -551,8 +549,7 @@ The initial form is enabled if:
 @opindex -ini
 the @samp{-ini} option was specified; or
 @item
-the program name is @file{initex} resp.@: @file{inimf} resp.@:
-@file{inimpost} (these variants are no longer typically installed); or
+the program name is @file{initex} resp.@: @file{inimf}; or
 @item
 the first line of the main input file is @samp{%&ini};
 @end enumerate
@@ -581,7 +578,7 @@ memory dump file.
 @cindex dumping memory
 @cindex macros, predefining in memory dumps
 @cindex predefined macros and memory dumps
-In typical use, @TeX{}, Metafont, and MetaPost require a large number of
+In typical use, @TeX{} and Metafont require a large number of
 macros to be predefined; therefore, they support @dfn{memory dump}
 files, which can be read much more efficiently than ordinary source
 code. 
@@ -620,9 +617,6 @@ creating memory dumps:
 
 @item Metafont
 (@samp{.base}) @xref{Initial Metafont}.
-
-@item MetaPost
-(@samp{.mem}) @xref{Initial MetaPost}.
 @end table
 
 When making memory dumps, the programs read environment variables and
@@ -654,8 +648,7 @@ backslash protects the @samp{&} against interpretation by the shell.)
 @item
 @opindex -fmt=@var{fmt}
 @opindex -base=@var{base}
-@opindex -mem=@var{mem}
-If the @samp{-fmt} resp.@: @samp{-base} resp.@: @samp{-mem} option is
+If the @samp{-fmt} resp.@: @samp{-base} option is
 specified, its value is used.
 
 @item
@@ -681,9 +674,9 @@ must be given first.
 @cindex program name, determines memory dump
 @cindex links to binaries
 Otherwise, the program uses the program invocation name, most commonly
-@file{tex} resp.@: @file{mf} resp.@: @file{mpost}.  For example, if
-@file{latex} is a link to @file{tex}, and the user runs @samp{latex
-foo}, @file{latex.fmt} will be used.
+@file{tex} resp.@: @file{mf}.  For example, if @file{latex} is a link
+to @file{tex}, and the user runs @samp{latex foo}, @file{latex.fmt}
+will be used.
 
 @end enumerate
 
@@ -728,11 +721,11 @@ may wish to get maximum speed.
 @TeX{}nically, even without @samp{--disable-dump-share}, sharing of
 @file{.fmt} files cannot be guaranteed to work.  Floating-point values
 are always written in native format, and hence will generally not be
-readable across platforms.  Fortunately, @TeX{} uses floating point only
-to represent glue ratios, and all common formats (plain, @LaTeX{},
-AMS@TeX{}, @dots{}) do not do any glue setting at @file{.fmt}-creation
-time.  Metafont and MetaPost do not use floating point in any dumped
-value at all.
+readable across platforms.  Fortunately, @TeX{} uses floating point
+only to represent glue ratios, and all common formats (plain,
+@LaTeX{}, AMS@TeX{}, @dots{}) do not do any glue setting at
+@file{.fmt}-creation time.  Metafont does not use floating point in
+any dumped value at all.
 
 @cindex date and time, in memory dumps
 @cindex time and date, in memory dumps
@@ -779,8 +772,8 @@ main ()
 @opindex e @r{response at error prompt}
 
 @TeX{}, Metafont, and MetaPost all (by default) stop and ask for user
-intervention at an error.  If the user responds with @kbd{e} or @kbd{E},
-the program invokes an editor.
+intervention at an error.  If the input came from a file, and the user
+responds with @kbd{e} or @kbd{E}, the program invokes an editor.
 
 @vindex TEXEDIT
 @vindex MFEDIT
@@ -790,7 +783,9 @@ Specifying @samp{--with-editor=@var{cmd}} to @code{configure} sets the
 default editor command string to @var{cmd}.  The environment
 variables/configuration values @code{TEXEDIT}, @code{MFEDIT}, and
 @code{MPEDIT} (respectively) override this.  If @samp{--with-editor} is
-not specified, the default is @code{vi +%d %s}.
+not specified, the default is @code{vi +%d %s} on Unix, and an
+invocation of the @TeX{}works editor on Windows.  (See
+@file{texmf.cnf} for the precise values.)
 
 In this string, @samp{%d} is replaced by the line number of the error,
 and @samp{%s} is replaced by the name of the current input file.
@@ -2592,54 +2587,24 @@ typeset the labels.
 @cindex initial MetaPost
 @cindex MetaPost, initial
 
-@flindex .mem
-@cindex mem files
-@code{inimpost} is the ``initial'' form of MetaPost, which does
-lengthy initializations avoided by the ``virgin'' (@code{vir}) form,
-so as to be capable of dumping @file{.mem} files (@pxref{Memory
-dumps}).  For a detailed comparison of virgin and initial forms, see
-@ref{Initial and virgin}.  In past releases, a separate program
-@command{inimpost} was installed for the initial form, but this is no
-longer the case.
+As of MetaPost 1.504 (@TeX{} Live 2011), MetaPost no longer dumps
+@file{.mem} files (@pxref{Memory dumps}) and does not distinguish
+virgin and initial forms (@pxref{Initial and virgin}).  Instead, the
+``initial'' file name is read in its source form---that is,
+@file{mpost.mp} when the program is invoked as @command{mpost}.
 
 For a list of options and other information, see @ref{mpost invocation}.
-
-@flindex plain.mem
-@flindex mpost.mem
-@cindex mem files, plain only
-The principal memory dump file used with MetaPost is the default,
-@file{plain.mem}, also known as @file{mpost.mem} (again, @pxref{Memory
-dumps}).  It is created by default during installation, but you can
-also do so by hand if necessary (e.g., if a @file{plain.mp} update is
-issued):
-@example
-mpost -ini '\input plain dump'
-@end example
-@noindent
-(The quotes prevent interpretation of the backslashes from the shell.)
-Then install the resulting @file{plain.mem} in @samp{$(memdir)}
-(@file{/usr/local/share/texmf/web2c} by default), and link
-@file{mpost.mem} to it.
 
 @cindex Metafont, compatibility in MetaPost
 @cindex plain Metafont, compatibility in MetaPost
 @cindex MetaPost and plain Metafont compatibility
-@flindex mfplain.mem
-MetaPost also provides a mem file with all the features of plain
-Metafont, called @file{mfplain.mem}.  You can create that in the same
-way; just replace @samp{plain} in the above command with @samp{mfplain}.
-@file{mfplain.mem} file lets you directly process Metafont source files
-with MetaPost, producing character proofs (one file for each character)
-similar to those produced with Metafont in proof mode and GFtoDVI
-(@pxref{gftodvi invocation}).
-
-@flindex metafun.mp
-@cindex MetaFun, enhanced MetaPost
-@cindex Pragma ADE
-Another MetaPost mem file, named MetaFun, provides many advanced
-features.  It was developed and maintained by Pragma ADE.  The home
-page for MetaFun, other MetaPost-related things, and lots more from
-Pragma: @url{http://www.pragma-ade.com/}.
+@flindex mfplain
+MetaPost provides a format with all the features of plain Metafont,
+called @file{mfplain}.  You can use that in the same way; just run
+@command{mfplain} instead of @command{mpost}.  This lets you directly
+process Metafont source files with MetaPost, producing character
+proofs (one file for each character) similar to those produced with
+Metafont in proof mode and GFtoDVI (@pxref{gftodvi invocation}).
 
 
 @node dvitomp invocation
