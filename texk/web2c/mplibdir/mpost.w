@@ -1,4 +1,4 @@
-% $Id: mpost.w 1681 2011-05-30 07:15:22Z taco $
+% $Id: mpost.w 1687 2011-06-06 11:53:20Z taco $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -107,10 +107,8 @@ static void mpost_run_editor (MP mp, char *fname, int fline) {
   boolean sdone, ddone;
   sdone = ddone = false;
   edit_value = kpse_var_value ("MPEDIT");
-  if (edit_value == NULL)
-    edit_value = getenv("EDITOR");
   if (edit_value == NULL) {
-    fprintf (stderr,"call_edit: can't find a suitable MPEDIT or EDITOR variable\n");
+    fprintf (stderr,"call_edit: can't find a suitable MPEDIT variable\n");
     exit(mp_status(mp));    
   }
   command = (string) mpost_xmalloc (strlen (edit_value) + strlen(fname) + 11 + 3);
