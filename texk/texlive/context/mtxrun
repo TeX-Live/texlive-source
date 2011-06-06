@@ -14532,11 +14532,13 @@ function runners.execute_script(fullname,internal,nosplit)
                     environment.ownscript = result
                     dofile(result)
                 else
+                    local quotedresult = result
+                    if string.match(result,' ') and not string.match(result,"^\".*\"$") then quotedresult = '"' .. result .. '"' end
                     local binary = runners.applications[file.extname(result)]
                     if binary and binary ~= "" then
-                        result = binary .. " " .. result
+                        quotedresult = binary .. " " .. quotedresult
                     end
-                    local command = result .. " " .. environment.reconstructcommandline(environment.arguments_after,noquote)
+                    local command = quotedresult .. " " .. environment.reconstructcommandline(environment.arguments_after,noquote)
                     if e_verbose then
                         report()
                         report("executing: %s",command)
