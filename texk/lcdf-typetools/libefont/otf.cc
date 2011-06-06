@@ -769,6 +769,32 @@ Coverage::Coverage(Glyph first, Glyph last) throw ()
     }
 }
 
+Coverage::Coverage(const Vector<bool> &gmap) throw ()
+{
+    int end = gmap.size();
+    while (end > 0 && !gmap[end - 1])
+	--end;
+    if (end > 0) {
+	_str = String::make_garbage(8 + end);
+	_str.align(4);
+	uint8_t *data = _str.mutable_udata();
+	memset(data, 0, 8 + end);
+	data[1] = 3;
+
+	uint32_t n = 0;
+	const bool *it = gmap.begin();
+	data += 8;
+	for (int i = 0; i < end; ++i, ++it, ++data)
+	    if (*it) {
+		*data = 1;
+		++n;
+	    }
+
+	n = htonl(n);
+	memcpy(_str.mutable_udata() + 4, &n, 4);
+    }
+}
+
 Coverage::Coverage(const String &str, ErrorHandler *errh, bool do_check) throw ()
     : _str(str)
 {
@@ -833,7 +859,9 @@ Coverage::size() const throw ()
     else if (data[1] == T_RANGES) {
 	data += _str.length() - RANGES_RECSIZE;
 	return USHORT_AT(data + 4) + USHORT_AT(data + 2) - USHORT_AT(data) + 1;
-    } else
+    } else if (data[1] == T_X_BYTEMAP)
+	return ULONG_AT(data + 4);
+    else
 	return -1;
 }
 
@@ -873,6 +901,11 @@ Coverage::coverage_index(Glyph g) const throw ()
 		l = m + 1;
 	}
 	return -1;
+    } else if (data[1] == T_X_BYTEMAP) {
+	if (g >= 0 && g < _str.length() - 8 && data[8 + g])
+	    return g;
+	else
+	    return -1;
     } else
 	return -1;
 }
@@ -942,17 +975,28 @@ operator&(const Coverage &a, const Coverage &b)
 {
     StringAccum sa;
     sa << '\000' << '\001' << '\000' << '\000';
-    Coverage::iterator ai = a.begin(), bi = b.begin();
-    while (ai && bi) {
-	if (*ai < *bi)
-	    ai.forward_to(*bi);
-	else if (*ai == *bi) {
-	    uint16_t x = *ai;
-	    sa << (char)(x >> 8) << (char)(x & 0xFF);
-	    ai++, bi++;
-	} else
-	    bi.forward_to(*ai);
+
+    if (b.has_fast_covers()) {
+	for (Coverage::iterator ai = a.begin(); ai; ++ai)
+	    if (b.covers(*ai)) {
+		uint16_t x = *ai;
+		sa << (char)(x >> 8) << (char)(x & 0xFF);
+	    }
+
+    } else {
+	Coverage::iterator ai = a.begin(), bi = b.begin();
+	while (ai && bi) {
+	    if (*ai < *bi)
+		ai.forward_to(*bi);
+	    else if (*ai == *bi) {
+		uint16_t x = *ai;
+		sa << (char)(x >> 8) << (char)(x & 0xFF);
+		ai++, bi++;
+	    } else
+		bi.forward_to(*ai);
+	}
     }
+
     int n = (sa.length() - 4) / 2;
     sa[2] = (n >> 8);
     sa[3] = (n & 0xFF);
@@ -977,33 +1021,38 @@ operator<=(const Coverage &a, const Coverage &b)
  *                      *
  ************************/
 
-Coverage::iterator::iterator(const String &str, int pos)
-    : _str(str), _pos(pos), _value(0)
+Coverage::iterator::iterator(const String &str, bool is_end)
+    : _str(str), _value(0)
 {
     // XXX assume _str has been checked
+    if (!_str.length()) {
+	_pos = 0;
+	return;
+    }
 
     // shrink _str to fit the coverage table
     const uint8_t *data = _str.udata();
-    if (_str.length()) {
-	int n = USHORT_AT(data + 2);
-	switch (USHORT_AT(data)) {
-	  case T_LIST:
-	    _str = _str.substring(0, HEADERSIZE + n*LIST_RECSIZE);
-	    break;
-	  case T_RANGES:
-	    _str = _str.substring(0, HEADERSIZE + n*RANGES_RECSIZE);
-	    break;
-	  default:
-	    _str = String();
-	    break;
-	}
-    }
-    if (_pos >= _str.length())
-	_pos = _str.length();
-    else {
-	// now, move _pos into the coverage table
-	_pos = HEADERSIZE;
-	_value = (_pos >= _str.length() ? 0 : USHORT_AT(data + _pos));
+    int n = USHORT_AT(data + 2);
+    switch (USHORT_AT(data)) {
+    case T_LIST:
+	_str = _str.substring(0, HEADERSIZE + n*LIST_RECSIZE);
+    normal_pos_setting:
+	_pos = is_end ? _str.length() : HEADERSIZE;
+	_value = _pos >= _str.length() ? 0 : USHORT_AT(data + _pos);
+	break;
+    case T_RANGES:
+	_str = _str.substring(0, HEADERSIZE + n*RANGES_RECSIZE);
+	goto normal_pos_setting;
+    case T_X_BYTEMAP:
+	for (_pos = 8; _pos < _str.length() && !data[_pos]; ++_pos)
+	    /* do nothing */;
+	_value = _pos >= _str.length() ? 0 : _pos - 8;
+	break;
+    default:
+	_str = String();
+	_pos = 0;
+	_value = 0;
+	break;
     }
 }
 
@@ -1014,8 +1063,10 @@ Coverage::iterator::coverage_index() const
     assert(_pos < _str.length());
     if (data[1] == T_LIST)
 	return (_pos - HEADERSIZE) / LIST_RECSIZE;
-    else
+    else if (data[1] == T_RANGES)
 	return USHORT_AT(data + _pos + 4) + _value - USHORT_AT(data + _pos);
+    else
+	return _pos - 8;
 }
 
 void
@@ -1026,8 +1077,21 @@ Coverage::iterator::operator++(int)
     if (_pos >= len
 	|| (data[1] == T_RANGES && ++_value <= USHORT_AT(data + _pos + 2)))
 	return;
-    _pos += (data[1] == T_LIST ? LIST_RECSIZE : RANGES_RECSIZE);
-    _value = (_pos >= len ? 0 : USHORT_AT(data + _pos));
+    switch (data[1]) {
+    case T_LIST:
+	_pos += LIST_RECSIZE;
+    normal_pos_setting:
+	_value = _pos >= len ? 0 : USHORT_AT(data + _pos);
+	break;
+    case T_RANGES:
+	_pos += RANGES_RECSIZE;
+	goto normal_pos_setting;
+    case T_X_BYTEMAP:
+	for (++_pos; _pos < len && !data[_pos]; ++_pos)
+	    /* do nothing */;
+	_value = _pos >= len ? 0 : _pos - 8;
+	break;
+    }
 }
 
 bool
@@ -1067,7 +1131,8 @@ Coverage::iterator::forward_to(Glyph find)
 	}
 	_pos = HEADERSIZE + l * LIST_RECSIZE;
 	_value = (_pos >= _str.length() ? 0 : USHORT_AT(data - HEADERSIZE + _pos));
-    } else {		// data[1] == T_RANGES
+
+    } else if (data[1] == T_RANGES) {
 	// check for "common" case: this or next element
 	if (find <= USHORT_AT(data + _pos + 2)) {
 	    assert(find >= USHORT_AT(data + _pos));
@@ -1099,6 +1164,13 @@ Coverage::iterator::forward_to(Glyph find)
 	}
 	_pos = HEADERSIZE + l * LIST_RECSIZE;
 	_value = (_pos >= _str.length() ? 0 : USHORT_AT(data - HEADERSIZE + _pos));
+
+    } else if (data[1] == T_X_BYTEMAP) {
+	_pos = 8 + find;
+	while (_pos < _str.length() && !data[_pos])
+	    ++_pos;
+	_pos = _pos >= _str.length() ? _str.length() : _pos;
+	_value = _pos >= _str.length() ? 0 : _pos - 8;
     }
 
     return find == _value;

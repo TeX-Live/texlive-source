@@ -1,5 +1,20 @@
 LCDF Typetools NEWS
 
+Version 2.90   3.Jun.2011
+
+* Correct crash on glyph names that start with a dot.  Marc van Dongen
+  report.
+
+
+Version 2.89   2.Jun.2011
+
+* Better handle combinations of fonts and options that would create so many
+  substitutions that otftotfm would run out of memory.  Marc van Dongen
+  report.
+
+* Thanks to Peter Breitenlohner.
+
+
 Version 2.88   8.Mar.2011
 
 * Warning reduction.

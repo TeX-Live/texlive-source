@@ -1307,18 +1307,37 @@ main_dvips_map(const String &ps_name, const FontInfo &finfo, ErrorHandler *errh)
 }
 
 static void
-do_gsub(Metrics& metrics, const OpenType::Font& otf, DvipsEncoding& dvipsenc, bool dvipsenc_literal, HashMap<uint32_t, int>& feature_usage, const Vector<PermString>& glyph_names, ErrorHandler* errh)
+do_gsub(Metrics& metrics, const OpenType::Font& otf,
+	DvipsEncoding& dvipsenc, bool dvipsenc_literal,
+	HashMap<uint32_t, int>& feature_usage,
+	const Vector<PermString>& glyph_names, ErrorHandler* errh)
 {
-    // apply activated GSUB features
+    // find activated GSUB features
     OpenType::Gsub gsub(otf.table("GSUB"), &otf, errh);
     Vector<Lookup> lookups(gsub.nlookups(), Lookup());
     find_lookups(gsub.script_list(), gsub.feature_list(), lookups, errh);
+
+    // find all characters that might result
+    Vector<bool> used(glyph_names.size(), false);
+    for (Metrics::Code c = 0; c < metrics.encoding_size(); ++c) {
+	Metrics::Glyph g = metrics.glyph(c);
+	if (g >= 0 && g < used.size())
+	    used[g] = true;
+    }
+    for (int i = 0; i < lookups.size(); ++i)
+	if (lookups[i].used) {
+	    OpenType::GsubLookup l = gsub.lookup(i);
+	    l.mark_out_glyphs(gsub, used);
+	}
+    OpenType::Coverage used_coverage(used);
+
+    // apply activated GSUB features
     Vector<OpenType::Substitution> subs;
     for (int i = 0; i < lookups.size(); i++)
 	if (lookups[i].used) {
 	    OpenType::GsubLookup l = gsub.lookup(i);
 	    subs.clear();
-	    bool understood = l.unparse_automatics(gsub, subs);
+	    bool understood = l.unparse_automatics(gsub, subs, used_coverage);
 
 	    // check for -ffina, which should apply only at the ends of words,
 	    // and -finit, which should apply only at the beginnings.
@@ -1360,7 +1379,7 @@ do_gsub(Metrics& metrics, const OpenType::Font& otf, DvipsEncoding& dvipsenc, bo
 	    if (alt_lookups[i].used) {
 		OpenType::GsubLookup l = gsub.lookup(i);
 		alt_subs.clear();
-		(void) l.unparse_automatics(gsub, alt_subs);
+		(void) l.unparse_automatics(gsub, alt_subs, used_coverage);
 		metrics.apply_alternates(alt_subs, i, *alt_lookups[i].filter, glyph_names);
 	    }
 	altselector_features.swap(interesting_features);

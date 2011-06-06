@@ -46,7 +46,7 @@ DvipsEncoding::add_glyphlist(String text)
 	while (s != end && isspace((unsigned char) *s))
 	    ++s;
 	// ignore comments
-	if (*s == '#') {
+	if (s != end && *s == '#') {
 	skip_to_end_of_line:
 	    while (s != end && *s != '\n' && *s != '\r')
 		++s;
@@ -128,7 +128,7 @@ DvipsEncoding::glyphname_unicode(String gn, Vector<uint32_t> &unis)
 
     // drop all characters to the right of the first dot
     String::iterator dot = std::find(gn.begin(), gn.end(), '.');
-    if (dot < gn.end())
+    if (dot > gn.begin() && dot < gn.end())
 	gn = gn.substring(gn.begin(), dot);
 
     // map the first component, handle later components recursively
@@ -508,13 +508,13 @@ DvipsEncoding::parse_unicoding_words(Vector<String> &v, int override, ErrorHandl
 	/* no warnings to delete a glyph */;
     else {
 	for (int i = 2; i < v.size(); i++) {
-	    if (i > 2)
+	    if (_unicoding.size() != original_size)
 		_unicoding.push_back(GLYPHLIST_ALTERNATIVE);
 	    if (!glyphname_unicode(v[i], _unicoding)) {
 		errh->warning("can%,t map %<%s%> to Unicode", v[i].c_str());
-		if (i == 2)
+		if (i == v.size() - 1 && _unicoding.size() == original_size)
 		    errh->warning("target %<%s%> will be deleted from encoding", v[0].c_str());
-		else
+		else if (_unicoding.size() != original_size)
 		    _unicoding.pop_back();
 	    }
 	}
@@ -718,7 +718,7 @@ DvipsEncoding::parse_unicoding(const String &unicoding_text, int override, Error
 }
 
 void
-DvipsEncoding::bad_codepoint(int code, Metrics &metrics, Vector<String> &unencoded)
+DvipsEncoding::bad_codepoint(int code, Metrics &metrics, HashMap<PermString, int> &unencoded)
 {
     for (int i = 0; i < _lig.size(); i++) {
 	Ligature &l = _lig[i];
@@ -736,7 +736,7 @@ DvipsEncoding::bad_codepoint(int code, Metrics &metrics, Vector<String> &unencod
 	    v.push_back(Setting(Setting::RULE, 500, 500));
 	    v.push_back(Setting(Setting::SPECIAL, String("Warning: missing glyph '") + _e[code] + "'"));
 	    metrics.encode_virtual(code, _e[code], 0, v, true);
-	    unencoded.push_back(_e[code]);
+	    unencoded.insert(_e[code], 1);
 	}
     }
 }
@@ -887,10 +887,13 @@ DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *
     }
 
     // final pass: complain
-    Vector<String> unencoded;
+    HashMap<PermString, int> unencoded_map;
     for (int code = 0; code < _e.size(); code++)
 	if (_e[code] != dot_notdef && metrics.glyph(code) <= 0)
-	    bad_codepoint(code, metrics, unencoded);
+	    bad_codepoint(code, metrics, unencoded_map);
+    Vector<String> unencoded;
+    for (HashMap<PermString, int>::iterator it = unencoded_map.begin(); it; ++it)
+	unencoded.push_back(it.key());
 
     if (unencoded.size() == 1) {
 	errh->warning("%<%s%> glyph not found in font", unencoded[0].c_str());

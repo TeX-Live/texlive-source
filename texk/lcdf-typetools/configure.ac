@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Adapted for TeX Live.
-m4_define([lcdf_typetools_version], [2.88])[]dnl using unmodified lcdf-typetools source tree
+m4_include([version.ac])[] dnl define lcdf_typetools_version
 AC_INIT([LCDF typetools for TeX Live], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([NEWS])
@@ -331,9 +331,7 @@ dnl Preset $prefix and $exec_prefix.
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-shell_expand datadir
-
-AC_DEFINE_UNQUOTED(SHAREDIR, "$datadir/lcdf-typetools", [Data directory.])
+AC_DEFINE_UNQUOTED(SHAREDIR, "/nonesuch", [Data directory.])
 
 
 dnl

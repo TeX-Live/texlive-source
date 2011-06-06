@@ -140,11 +140,15 @@ class Coverage { public:
 
     Coverage() throw ();		// empty coverage
     Coverage(Glyph first, Glyph last) throw ();	// range coverage
-    Coverage(const String&, ErrorHandler* = 0, bool check = true) throw ();
+    Coverage(const Vector<bool> &gmap) throw (); // used-bytemap coverage
+    Coverage(const String &str, ErrorHandler *errh = 0, bool check = true) throw ();
     // default destructor
 
     bool ok() const throw ()		{ return _str.length() > 0; }
     int size() const throw ();
+    bool has_fast_covers() const throw () {
+	return _str.length() > 0 && _str.data()[1] == T_X_BYTEMAP;
+    }
 
     int coverage_index(Glyph) const throw ();
     bool covers(Glyph g) const throw ()	{ return coverage_index(g) >= 0; }
@@ -181,14 +185,14 @@ class Coverage { public:
 	int _pos;
 	Glyph _value;
 	friend class Coverage;
-	iterator(const String&, int);
+	iterator(const String &str, bool is_end);
     };
 
-    iterator begin() const		{ return iterator(_str, 0); }
-    iterator end() const		{ return iterator(_str, _str.length()); }
+    iterator begin() const		{ return iterator(_str, false); }
+    iterator end() const		{ return iterator(_str, true); }
     Glyph operator[](int) const throw ();
 
-    enum { T_LIST = 1, T_RANGES = 2,
+    enum { T_LIST = 1, T_RANGES = 2, T_X_BYTEMAP = 3,
 	   HEADERSIZE = 4, LIST_RECSIZE = 2, RANGES_RECSIZE = 6 };
 
   private:

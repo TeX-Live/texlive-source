@@ -42,7 +42,7 @@ class MakeType1CharstringInterp : public Type1CharstringGenInterp { public:
 
     bool type2_command(int, const uint8_t *, int *);
 
-    String landmark() const;
+    String landmark(ErrorHandler *errh) const;
 
     class Subr;
 
@@ -159,10 +159,10 @@ MakeType1CharstringInterp::~MakeType1CharstringInterp()
 }
 
 String
-MakeType1CharstringInterp::landmark() const
+MakeType1CharstringInterp::landmark(ErrorHandler *errh) const
 {
     if (_cur_glyph >= 0 && _cur_glyph < program()->nglyphs())
-	return String("glyph '") + program()->glyph_name(_cur_glyph) + "'";
+	return errh->format("glyph %<%s%>", program()->glyph_name(_cur_glyph).c_str());
     else
 	return String();
 }
@@ -406,7 +406,7 @@ MakeType1CharstringInterp::run(const CharstringContext &g, Type1Charstring &out,
     Type1CharstringGenInterp::run(g, out);
 
     if (Type1CharstringGenInterp::bad_flex() && !_flex_message) {
-	errh->lwarning(landmark(), "complex flex hint replaced with curves");
+	errh->lwarning(landmark(errh), "complex flex hint replaced with curves");
 	errh->message("(This Type 2 format font contains flex hints prohibited by Type 1.\nI%,ve safely replaced them with ordinary curves.)");
 	_flex_message = true;
     }

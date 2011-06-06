@@ -641,15 +641,59 @@ GsubLookup::subtable(int i) const
 	return Data();
 }
 
-bool
-GsubLookup::unparse_automatics(const Gsub &gsub, Vector<Substitution> &v) const
+void
+GsubLookup::mark_out_glyphs(const Gsub &gsub, Vector<bool> &gmap) const
 {
     int nlookup = _d.u16(4);
     switch (_type) {
       case L_SINGLE:
 	for (int i = 0; i < nlookup; i++) {
 	    GsubSingle x(subtable(i)); // this pattern makes gcc-3.3.4 happier
-	    x.unparse(v);
+	    x.mark_out_glyphs(gmap);
+	}
+	return;
+      case L_MULTIPLE:
+	for (int i = 0; i < nlookup; i++) {
+	    GsubMultiple x(subtable(i));
+	    x.mark_out_glyphs(gmap);
+	}
+	return;
+      case L_ALTERNATE:
+	for (int i = 0; i < nlookup; i++) {
+	    GsubMultiple x(subtable(i));
+	    x.mark_out_glyphs(gmap);
+	}
+	return;
+      case L_LIGATURE:
+	for (int i = 0; i < nlookup; i++) {
+	    GsubLigature x(subtable(i));
+	    x.mark_out_glyphs(gmap);
+	}
+	return;
+    case L_CONTEXT:
+	for (int i = 0; i < nlookup; i++) {
+	    GsubContext x(subtable(i));
+	    x.mark_out_glyphs(gsub, gmap);
+	}
+	return;
+    case L_CHAIN:
+	for (int i = 0; i < nlookup; i++) {
+	    GsubChainContext x(subtable(i));
+	    x.mark_out_glyphs(gsub, gmap);
+	}
+	return;
+    }
+}
+
+bool
+GsubLookup::unparse_automatics(const Gsub &gsub, Vector<Substitution> &v, const Coverage &limit) const
+{
+    int nlookup = _d.u16(4);
+    switch (_type) {
+      case L_SINGLE:
+	for (int i = 0; i < nlookup; i++) {
+	    GsubSingle x(subtable(i)); // this pattern makes gcc-3.3.4 happier
+	    x.unparse(v, limit);
 	}
 	return true;
       case L_MULTIPLE:
@@ -674,7 +718,7 @@ GsubLookup::unparse_automatics(const Gsub &gsub, Vector<Substitution> &v) const
 	  bool understood = true;
 	  for (int i = 0; i < nlookup; i++) {
 	      GsubContext x(subtable(i));
-	      understood &= x.unparse(gsub, v);
+	      understood &= x.unparse(gsub, v, limit);
 	  }
 	  return understood;
       }
@@ -682,7 +726,7 @@ GsubLookup::unparse_automatics(const Gsub &gsub, Vector<Substitution> &v) const
 	  bool understood = true;
 	  for (int i = 0; i < nlookup; i++) {
 	      GsubChainContext x(subtable(i));
-	      understood &= x.unparse(gsub, v);
+	      understood &= x.unparse(gsub, v, limit);
 	  }
 	  return understood;
       }
@@ -766,15 +810,30 @@ GsubSingle::map(Glyph g) const
 }
 
 void
-GsubSingle::unparse(Vector<Substitution> &v) const
+GsubSingle::mark_out_glyphs(Vector<bool> &gmap) const
 {
     if (_d[1] == 1) {
 	int delta = _d.s16(4);
 	for (Coverage::iterator i = coverage().begin(); i; i++)
-	    v.push_back(Substitution(*i, *i + delta));
+	    gmap[*i + delta] = true;
     } else {
 	for (Coverage::iterator i = coverage().begin(); i; i++)
-	    v.push_back(Substitution(*i, _d.u16(HEADERSIZE + i.coverage_index()*FORMAT2_RECSIZE)));
+	    gmap[_d.u16(HEADERSIZE + i.coverage_index()*FORMAT2_RECSIZE)] = true;
+    }
+}
+
+void
+GsubSingle::unparse(Vector<Substitution> &v, const Coverage &limit) const
+{
+    if (_d[1] == 1) {
+	int delta = _d.s16(4);
+	for (Coverage::iterator it = coverage().begin(); it; ++it)
+	    if (limit.covers(*it))
+		v.push_back(Substitution(*it, *it + delta));
+    } else {
+	for (Coverage::iterator it = coverage().begin(); it; ++it)
+	    if (limit.covers(*it))
+		v.push_back(Substitution(*it, _d.u16(HEADERSIZE + it.coverage_index()*FORMAT2_RECSIZE)));
     }
 }
 
@@ -828,6 +887,16 @@ GsubMultiple::map(Glyph g, Vector<Glyph> &v) const
 	for (int i = 0; i < seq.u16(0); i++)
 	    v.push_back(seq.u16(SEQ_HEADERSIZE + i*SEQ_RECSIZE));
 	return true;
+    }
+}
+
+void
+GsubMultiple::mark_out_glyphs(Vector<bool> &gmap) const
+{
+    for (Coverage::iterator i = coverage().begin(); i; ++i) {
+	Data seq = _d.offset_subtable(HEADERSIZE + i.coverage_index()*RECSIZE);
+	for (int j = 0; j < seq.u16(0); ++j)
+	    gmap[seq.u16(SEQ_HEADERSIZE + j*SEQ_RECSIZE)] = true;
     }
 }
 
@@ -911,6 +980,20 @@ GsubLigature::map(const Vector<Glyph> &gs, Glyph &result, int &consumed) const
 }
 
 void
+GsubLigature::mark_out_glyphs(Vector<bool> &gmap) const
+{
+    for (Coverage::iterator i = coverage().begin(); i; i++) {
+	Data ligset = _d.offset_subtable(HEADERSIZE + i.coverage_index()*RECSIZE);
+	int nligset = ligset.u16(0);
+	Vector<Glyph> components(1, *i);
+	for (int j = 0; j < nligset; j++) {
+	    Data lig = ligset.offset_subtable(SET_HEADERSIZE + j*SET_RECSIZE);
+	    gmap[lig.u16(0)] = true;
+	}
+    }
+}
+
+void
 GsubLigature::unparse(Vector<Substitution> &v) const
 {
     for (Coverage::iterator i = coverage().begin(); i; i++) {
@@ -988,7 +1071,30 @@ GsubContext::coverage() const throw ()
 }
 
 bool
-GsubContext::f3_unparse(const Data &data, int nglyph, int glyphtab_offset, int nsub, int subtab_offset, const Gsub &gsub, Vector<Substitution> &outsubs, const Substitution &prototype_sub)
+GsubContext::f3_mark_out_glyphs(const Data &data, int nsub, int subtab_offset, const Gsub &gsub, Vector<bool> &gmap)
+{
+    for (int j = 0; j < nsub; ++j) {
+	int lookup_index = data.u16(subtab_offset + SUBRECSIZE*j + 2);
+	gsub.lookup(lookup_index).mark_out_glyphs(gsub, gmap);
+    }
+}
+
+void
+GsubContext::mark_out_glyphs(const Gsub &gsub, Vector<bool> &gmap) const
+{
+    if (_d.u16(0) != 3)		// XXX
+	return;
+    int nglyph = _d.u16(2);
+    int nsubst = _d.u16(4);
+    f3_mark_out_glyphs(_d, nsubst, F3_HSIZE + nglyph*2, gsub, gmap);
+}
+
+bool
+GsubContext::f3_unparse(const Data &data,
+			int nglyph, int glyphtab_offset, const Coverage &limit,
+			int nsub, int subtab_offset,
+			const Gsub &gsub, Vector<Substitution> &outsubs,
+			const Substitution &prototype_sub)
 {
     Vector<Substitution> subs;
     subs.push_back(prototype_sub);
@@ -998,7 +1104,7 @@ GsubContext::f3_unparse(const Data &data, int nglyph, int glyphtab_offset, int n
     for (int i = 0; i < nglyph; i++) {
 	assert(!work_subs.size());
 	Coverage c(data.offset_subtable(glyphtab_offset + i*2));
-	for (Coverage::iterator ci = c.begin(); ci; ci++)
+	for (Coverage::iterator ci = (c & limit).begin(); ci; ci++)
 	    for (int j = 0; j < subs.size(); j++)
 		work_subs.push_back(subs[j].in_out_append_glyph(*ci));
 	subs.clear();
@@ -1030,13 +1136,13 @@ GsubContext::f3_unparse(const Data &data, int nglyph, int glyphtab_offset, int n
 }
 
 bool
-GsubContext::unparse(const Gsub &gsub, Vector<Substitution> &v) const
+GsubContext::unparse(const Gsub &gsub, Vector<Substitution> &v, const Coverage &limit) const
 {
     if (_d.u16(0) != 3)		// XXX
 	return false;
     int nglyph = _d.u16(2);
     int nsubst = _d.u16(4);
-    return f3_unparse(_d, nglyph, F3_HSIZE, nsubst, F3_HSIZE + nglyph*2, gsub, v, Substitution());
+    return f3_unparse(_d, nglyph, F3_HSIZE, limit, nsubst, F3_HSIZE + nglyph*2, gsub, v, Substitution());
 }
 
 
@@ -1078,8 +1184,25 @@ GsubChainContext::coverage() const throw ()
     return Coverage(_d.offset_subtable(input_offset + F3_INPUT_HSIZE), 0, false);
 }
 
+void
+GsubChainContext::mark_out_glyphs(const Gsub &gsub, Vector<bool> &gmap) const
+{
+    if (_d.u16(0) != 3)
+	return;
+
+    int nbacktrack = _d.u16(2);
+    int input_offset = F3_HSIZE + nbacktrack*2;
+    int ninput = _d.u16(input_offset);
+    int lookahead_offset = input_offset + F3_INPUT_HSIZE + ninput*2;
+    int nlookahead = _d.u16(lookahead_offset);
+    int subst_offset = lookahead_offset + F3_LOOKAHEAD_HSIZE + nlookahead*2;
+    int nsubst = _d.u16(subst_offset);
+
+    GsubContext::f3_mark_out_glyphs(_d, nsubst, subst_offset + F3_SUBST_HSIZE, gsub, gmap);
+}
+
 bool
-GsubChainContext::unparse(const Gsub &gsub, Vector<Substitution> &v) const
+GsubChainContext::unparse(const Gsub &gsub, Vector<Substitution> &v, const Coverage &limit) const
 {
     if (_d.u16(0) != 3)
 	return false;
@@ -1096,13 +1219,24 @@ GsubChainContext::unparse(const Gsub &gsub, Vector<Substitution> &v) const
     Vector<Coverage> lookaheadc;
     if (gsub.chaincontext_reverse_backtrack()) {
 	for (int i = 0; i < nbacktrack; i++)
-	    backtrackc.push_back(Coverage(_d.offset_subtable(F3_HSIZE + i*2)));
+	    backtrackc.push_back(Coverage(_d.offset_subtable(F3_HSIZE + i*2)) & limit);
     } else {
 	for (int i = nbacktrack - 1; i >= 0; i--)
-	    backtrackc.push_back(Coverage(_d.offset_subtable(F3_HSIZE + i*2)));
+	    backtrackc.push_back(Coverage(_d.offset_subtable(F3_HSIZE + i*2)) & limit);
     }
     for (int i = 0; i < nlookahead; i++)
-	lookaheadc.push_back(Coverage(_d.offset_subtable(lookahead_offset + F3_LOOKAHEAD_HSIZE + i*2)));
+	lookaheadc.push_back(Coverage(_d.offset_subtable(lookahead_offset + F3_LOOKAHEAD_HSIZE + i*2)) & limit);
+
+    // give up if would generate too many substitutions
+    double n = 1;
+    for (int i = 0; i < nbacktrack; ++i)
+	n *= backtrackc[i].size();
+    for (int i = 0; i < nlookahead; ++i)
+	n *= lookaheadc[i].size();
+    for (int i = 0; i < ninput; ++i)
+	n *= (Coverage(_d.offset_subtable(input_offset + F3_INPUT_HSIZE + i*2)) & limit).size();
+    if (n > 1000000)		// arbitrary cutoff
+	return false;
 
     Vector<Coverage::iterator> backtracki;
     Vector<Coverage::iterator> lookaheadi;
@@ -1124,7 +1258,7 @@ GsubChainContext::unparse(const Gsub &gsub, Vector<Substitution> &v) const
 	for (int i = 0; i < nlookahead; i++)
 	    right_begin[i] = *lookaheadi[i];
 
-	any |= GsubContext::f3_unparse(_d, ninput, input_offset + F3_INPUT_HSIZE, nsubst, subst_offset + F3_SUBST_HSIZE, gsub, v, s);
+	any |= GsubContext::f3_unparse(_d, ninput, input_offset + F3_INPUT_HSIZE, limit, nsubst, subst_offset + F3_SUBST_HSIZE, gsub, v, s);
 
 	// step iterators
 	for (int i = nlookahead - 1; i >= 0; i--) {

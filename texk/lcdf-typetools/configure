@@ -764,7 +764,6 @@ with_sysroot
 enable_libtool_lock
 enable_largefile
 enable_compiler_warnings
-with_gnu_ld
 enable_cxx_runtime_hack
 enable_cfftot1
 enable_mmafm
@@ -776,8 +775,6 @@ enable_t1lint
 enable_t1rawafm
 enable_t1reencode
 enable_t1testpage
-enable_ttftotype42
-enable_cfftot1
 enable_ttftotype42
 enable_updmap
 with_kpathsea
@@ -795,12 +792,8 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
-CPPFLAGS
 CXX
 CXXFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
 CCC
 CXXCPP'
 
@@ -19834,11 +19827,9 @@ shell_expand () {
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-shell_expand datadir
-
 
 cat >>confdefs.h <<_ACEOF
-#define SHAREDIR "$datadir/lcdf-typetools"
+#define SHAREDIR "/nonesuch"
 _ACEOF
 
 

@@ -92,7 +92,7 @@ class DvipsEncoding { public:
     int parse_unicoding_words(Vector<String> &, int override, ErrorHandler *);
     void parse_word_group(Vector<String> &, int override, int wt, ErrorHandler *);
     int parse_words(const String &, int override, int wt, ErrorHandler *);
-    void bad_codepoint(int, Metrics &, Vector<String> &);
+    void bad_codepoint(int, Metrics &, HashMap<PermString, int> &bad_unicodes);
     bool x_unicodes(PermString chname, Vector<uint32_t> &unicodes) const;
     String landmark(int line) const;
 
