@@ -210,15 +210,12 @@ static int exec_spawn (char *cmd)
       }
     }
     *pp = '\0';
-    if (strchr (buf, ' ') || strchr (buf, '\t')) {
 #ifdef WIN32
+    if (strchr (buf, ' ') || strchr (buf, '\t'))
       *qv = concat3 ("\"", buf, "\"");
-#else
-      *qv = concat3 ("'", buf, "'");
+    else
 #endif
-    } else {
       *qv = xstrdup (buf);
-    }
 /*
     fprintf(stderr,"\n%s", *qv);
 */

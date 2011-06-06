@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dpxfile.c (exec_spawn): Do not quote execvp() arguments.
+
 2011-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dpxfile.c (exec_spawn): Exit if execvp() fails, some clean up.
