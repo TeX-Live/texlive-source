@@ -331,7 +331,14 @@ dnl Preset $prefix and $exec_prefix.
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-AC_DEFINE_UNQUOTED(SHAREDIR, "/nonesuch", [Data directory.])
+shell_expand datadir
+
+if test "x$enable_native_texlive_build" = xyes; then
+  sharedir=/nonesuch
+else
+  sharedir=$datadir/lcdf-typetools
+fi
+AC_DEFINE_UNQUOTED(SHAREDIR, "$sharedir", [Data directory.])
 
 
 dnl
