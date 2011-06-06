@@ -3951,7 +3951,6 @@ sub check_runfiles {
             |language\.dat
             |language\.def
             |libertine\.sty
-            |luatools\.lua
             |m-tex4ht\.tex
             |metatex\.tex
             |ps2mfbas\.mf
