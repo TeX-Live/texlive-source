@@ -1,3 +1,7 @@
+2011-06-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* hash.c: leave original letter cases also on win32.
+
 2011-06-06  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.context): No trailing comma, per Taco.

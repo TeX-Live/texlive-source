@@ -26,16 +26,6 @@
 /* The hash function.  We go for simplicity here.  */
 
 /* All our hash tables are related to filenames.  */
-#ifdef MONOCASE_FILENAMES
-#if defined(WIN32) && !defined(__i386_pc_gnu__)
-/* This is way faster under Win32. */
-#define TRANSFORM(x) ((unsigned)CharLower((LPTSTR)(BYTE)(x)))
-#else
-#define TRANSFORM(x) (tolower(x))
-#endif
-#else
-#define TRANSFORM(x) (x)
-#endif
 
 static unsigned
 hash (hash_table_type table,  const_string key)
@@ -45,7 +35,7 @@ hash (hash_table_type table,  const_string key)
   /* Our keys aren't often anagrams of each other, so no point in
      weighting the characters.  */
   while (*key != 0)
-    n = (n + n + TRANSFORM (*key++)) % table.size;
+    n = (n + n + *key++) % table.size;
 
   return n;
 }
