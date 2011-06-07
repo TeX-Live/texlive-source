@@ -1,3 +1,8 @@
+2011-06-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-kern-and-glue (new): Handle `\kern', allow `em/ex'
+	for dimensions, handle glue specs.
+
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to detex-2.8.

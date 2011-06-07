@@ -157,7 +157,12 @@ S	[ \t\n]*
 W	[a-zA-Z]+
 N	[+-]?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))
 U	pt|pc|in|bp|cm|mm|dd|cc|sp
-D	{S}(({N}{S}{U})|(\\{W})){S}
+HU	{U}|em
+HD	{S}(({N}{S}{HU})|(\\{W})){S}
+HG	{HD}(plus{HD})?(minus{HD})?
+VU	{U}|ex
+VD	{S}(({N}{S}{VU})|(\\{W})){S}
+VG	{VD}(plus{VD})?(minus{VD})?
 Z	\*?
 
 %Start Define Display IncludeOnly Input Math Normal Control
@@ -212,11 +217,12 @@ Z	\*?
 <LaEnd>"\n"					NEWLINE;
 <LaEnd>.					;
 
-<Normal>"\\vskip"{D}				;
-<Normal>"\\vspace"{Z}{S}"{"{D}"}"		;
-<Normal>"\\hskip"{D}				;
-<Normal>"\\hspace"{Z}{S}"{"{D}"}"		;
-<Normal>"\\addvspace"{S}"{"{D}"}"		;
+<Normal>"\\kern"{HD}				;
+<Normal>"\\vskip"{VG}				;
+<Normal>"\\vspace"{Z}{S}"{"{VG}"}"		;
+<Normal>"\\hskip"{HG}				;
+<Normal>"\\hspace"{Z}{S}"{"{HG}"}"		;
+<Normal>"\\addvspace"{S}"{"{VG}"}"		;
 
 <Normal>"\\newlength"				{ KILLARGS(1); }
 <Normal>"\\setlength"				{ KILLARGS(2); }
