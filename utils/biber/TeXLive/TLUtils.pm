@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 22688 2011-05-30 19:42:46Z siepo $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 22688 $';
+my $svnrev = '$Revision: 22842 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -1369,7 +1368,7 @@ sub install_package {
 
   # we assume that $::progs has been set up!
   my $wget = $::progs{'wget'};
-  my $xzdec = $::progs{'xzdec'};
+  my $xzdec = "\"$::progs{'xzdec'}\"";
   if (!defined($wget) || !defined($xzdec)) {
     tlwarn("install_package: wget/xzdec programs not set up properly.\n");
     return 0;
@@ -3318,6 +3317,7 @@ sub check_on_working_mirror
     tlwarn ("check_on_working_mirror: Programs not set up, trying wget\n");
     $wget = "wget";
   }
+  $wget = "\"wget\"";
   #
   # the test is currently not completely correct, because we do not
   # use the LWP if it is set up for it, but I am currently too lazy
