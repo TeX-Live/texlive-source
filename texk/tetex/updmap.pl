@@ -462,8 +462,12 @@ sub cfgval {
 
   if ($#cfg < 0) {
     open FILE, "<$cnfFile" or die "can't open configuration file $cnfFile: $!";
-    @cfg = <FILE>;
+    while (<FILE>) {
+      s/\s*$//; # strip trailing spaces
+      push @cfg, $_;
+    }
     close FILE;
+    chomp (@cfg);
   }
   for my $line (@cfg) {
     if ($line =~ m/^\s*${variable}[\s=]+(.*)\s*$/) {
@@ -573,7 +577,6 @@ sub locateMap {
   my @maps = @_;
   my @files;
 
-  chomp @maps;
   return @maps if ($#maps < 0);
 
   @files = `kpsewhich --format=map @maps`;
@@ -581,7 +584,7 @@ sub locateMap {
 
   foreach my $map (@maps) {
     push @missing, $map if (! grep /\/$map$/, @files);
- }
+  }
   if (wantarray) {
     return @files;
   }
