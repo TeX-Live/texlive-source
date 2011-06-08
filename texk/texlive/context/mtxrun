@@ -10043,9 +10043,12 @@ local function splitpathexpr(str, newlist, validate) -- I couldn't resist lpeggi
     str = lpegmatch(stripper_1,str)
     if validate then
         for s in gmatch(str,"[^,]+") do
+            local restoreslashes = false
+            if gmatch(s, "//$") then restoreslashes = true end
             s = validate(s)
             if s then
                 n = n + 1 ; t[n] = s
+                if restoreslashes and not find(s, "//$") then t[n] = t[n] .. '//' end
             end
         end
     else
@@ -15156,7 +15159,7 @@ elseif environment.argument("find-file") then
 
     resolvers.load()
     local e_pattern = environment.argument("pattern")
-    local e_format  = environment.arguments("format")
+    local e_format  = environment.argument("format")
     if not e_pattern then
         runners.register_arguments(filename)
         environment.initializearguments(environment.arguments_after)
