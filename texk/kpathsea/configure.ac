@@ -47,6 +47,9 @@ m4_foreach([Kpse_Mktex], [kpse_mktex_opts],
            [m4_ifset([Kpse_Mktex],
                      [KPSE_MKTEX_DEFINE(Kpse_Mktex)])])[]dnl
 
+# So we can use reasonable awk in the Makefile.
+AC_PROG_AWK
+
 dnl Replacement functions that may be required on ancient broken system.
 AC_CHECK_DECLS([putenv, strstr])
 AC_REPLACE_FUNCS([putenv strcasecmp strtol strstr])

@@ -1756,9 +1756,9 @@ stamp-paths: texmf.cnf bsnl.awk cnf-to-paths.awk
 #
 # generate paths.h without build machine directories.
 	echo "/* paths.h: Generated from texmf.cnf. */" >paths.tmp
-	awk -f $(srcdir)/bsnl.awk $(srcdir)/texmf.cnf \
+	$(AWK) -f $(srcdir)/bsnl.awk $(srcdir)/texmf.cnf \
 	| sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' \
-	| awk -f $(srcdir)/cnf-to-paths.awk \
+	| $(AWK) -f $(srcdir)/cnf-to-paths.awk \
 	>>paths.tmp
 	@if cmp -s paths.h paths.tmp 2>/dev/null; then \
 	  echo "paths.h is unchanged"; \

@@ -1,3 +1,11 @@
+2011-06-10  Karl Berry  <karl@tug.org>
+
+	* configure.ac (AC_PROG_AWK): new test.
+	* Makefile.am (stamp-paths): use $(AWK).
+	This is to avoid broken Solaris /usr/bin/awk, which does
+	not have sub().
+	Report from Ettore Aldrovandi, 8 Jun 2011 23:36:44.
+
 2011-06-09  Karl Berry  <karl@tug.org>
 
 	* mktexlsr: write directory args to a file and read them back,
