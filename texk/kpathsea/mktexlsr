@@ -101,10 +101,12 @@ while test $# -gt 0; do
     # supporting spaces in the name.  This still doesn't support
     # newlines in the directory names, but nobody ever complains about
     # that, and it seems much too much trouble to use \0 terminators.
-    (umask 077 && touch "$treefile" ) \
-    || { echo "$progname: $treefile: could not create arg file, goodbye." >&2;\
-               exit 1; }
-    echo "$1" >"$treefile"
+    (umask 077
+    if echo "$1" >>"$treefile"; then :; else
+      echo "$progname: $treefile: could not append to arg file, goodbye." >&2
+      exit 1
+    fi
+    )
   fi
   shift
 done
