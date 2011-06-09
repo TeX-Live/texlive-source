@@ -1,3 +1,8 @@
+2011-06-10  Karl Berry  <karl@tug.org>
+
+	* tpic2pdftex: LANG=C; export LANG for non-bash.
+	Report from Nelson, 9 Jun 2011 06:47:05.
+
 2010-12-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Version 1.97 (as in tpic2pdftex).
