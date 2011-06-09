@@ -1,3 +1,9 @@
+2011-06-09  Karl Berry  <karl@tug.org>
+
+	* mktexlsr: write directory args to a file and read them back,
+	so we can support spaces (though not newlines) in the directory names.
+	Reword some error messages.
+
 2011-06-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* hash.c: leave original letter cases also on win32.

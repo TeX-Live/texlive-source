@@ -66,6 +66,10 @@ if tty -s; then verbose=true; else verbose=false; fi
 dry_run=false
 trees=
 
+treefile="${TMPDIR-/tmp}/mktexlsrtrees$$.tmp"
+trap 'cd /; rm -f $treefile; test -z "$db_dir_tmp" || rm -rf "$db_dir_tmp"; 
+      exit' 0 1 2 3 7 13 15
+
 # A copy of some stuff from mktex.opt, so we can run in the presence of
 # terminally damaged ls-R files.
 while test $# -gt 0; do
@@ -86,11 +90,21 @@ while test $# -gt 0; do
   elif test "x$1" = x--; then
     :
   elif echo "x$1" | grep '^x-' >/dev/null; then
-    echo "$progname: unknown option $1, try --help if you need it." >&2
+    echo "$progname: unknown option \`$1', try --help if you need it." >&2
     exit 1
   else
-    test -d "$1" || echo "$progname: $1 not a directory." >&2
-    trees="$trees $1"  # don't want to update system dirs
+    if test ! -d "$1"; then
+      echo "$progname: $1: not a directory, skipping." >&2
+      continue
+    fi
+    # By saving the argument in a file, we can later get it back while
+    # supporting spaces in the name.  This still doesn't support
+    # newlines in the directory names, but nobody ever complains about
+    # that, and it seems much too much trouble to use \0 terminators.
+    (umask 077 && touch "$treefile" ) \
+    || { echo "$progname: $treefile: could not create arg file, goodbye." >&2;\
+               exit 1; }
+    echo "$1" >"$treefile"
   fi
   shift
 done
@@ -101,20 +115,19 @@ ls_R_magic='% ls-R -- filename database for kpathsea; do not change this line.'
 # The old string, which should continue to work.
 old_ls_R_magic='% ls-R -- maintained by MakeTeXls-R; do not change this line.'
 
-trap 'cd /; test -z "$db_dir_tmp" || rm -rf "$db_dir_tmp"; exit' 0 1 2 3 7 13 15
-
-# Get list of directories from $TEXMFDBS; eliminate duplicates.
 {
-  if test -n "$trees"; then
-    set x $trees
-  else
-    OIFS=$IFS  # want just a newline
-    IFS='
+  # Get list of directories from the explicit arguments (now saved in
+  # $treefile), or $TEXMFDBS if no explicit args.  Eliminate duplicates.
+  saveIFS=$IFS  # break only at newline
+  IFS='
 '
+  if test -s "$treefile"; then
+    set x `sort "$treefile" | uniq`
+  else
     set x `kpsewhich --show-path=ls-R | tr : '
 ' | sort | uniq`
-    IFS=$OIFS
   fi
+  IFS=$saveIFS
   shift
 }
 
@@ -156,16 +169,16 @@ for TEXMFLS_R in "$@"; do
   elif test -s "$db_file" \
        && test "x`sed '1s/$//;1q' \"$db_file\"`" != "x$ls_R_magic" \
        && test "x`sed '1s/$//;1q' \"$db_file\"`" != "x$old_ls_R_magic"; then
-    echo "$progname: $db_file lacks magic string. Skipping..." >&2
+    echo "$progname: $db_file: no magic string, skipping..." >&2
     continue
   fi
 
   # Skip if we cannot write the file:
-  kpseaccess -w "$db_file" || { echo "$progname: $db_file: no write permission. Skipping..." >&2; continue; }
+  kpseaccess -w "$db_file" || { echo "$progname: $db_file: no write permission, skipping..." >&2; continue; }
 
   db_dir_tmp="$db_dir/lsR$$.tmp"
   (umask 077 && mkdir "$db_dir_tmp" ) \
-    || { echo "$progname: could not create directory '$db_dir_tmp'. Skipping..." >&2; continue; }
+    || { echo "$progname: $db_dir_tmp: could not create directory, skipping..." >&2; continue; }
   db_file_tmp="$db_dir_tmp/lsR$$.tmp"
   rm -f "$db_file_tmp"
 
