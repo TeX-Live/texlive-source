@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 22842 $';
+my $svnrev = '$Revision: 22870 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -525,13 +525,23 @@ Return C<$path> with its trailing C</component> removed.
 
 sub dirname {
   my $path=shift;
-  if (win32) {
+  my $drive='';
+  if (&win32) {
     $path=~s!\\!/!g;
   }
-  if ($path=~m!/!) {   # dirname("foo/bar/baz") -> "foo/bar"
-    $path=~m!(.*)/.*!; # works because of greedy matching
-    return $1;
-  } else {             # dirname("ignore") -> "."
+  if ($path=~m!^[A-Za-z]\:!) {
+    $path=~ s/^(.\:)(.*)/$1,$2/;
+    ($drive, $path)=($1,$2);
+  }
+  if ($path=~m!/!) {
+    $path=~m!(.*)/.*!;  # works because of greedy matching
+    my $dir=$1;
+    if (length($dir)) { # dirname("foo/bar/baz") -> "foo/bar"
+      return "$drive$dir";
+    } else {            # dirname("/baz") -> "/"
+      return "$drive/";
+    }
+  } else {              # dirname("ignore") -> "."
     return ".";
   }
 }

@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 22840 2011-06-06 23:30:48Z karl $
+# $Id: tlmgr.pl 22875 2011-06-09 00:45:20Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 22840 $';
-my $datrev = '$Date: 2011-06-07 01:30:48 +0200 (Tue, 07 Jun 2011) $';
+my $svnrev = '$Revision: 22875 $';
+my $datrev = '$Date: 2011-06-09 02:45:20 +0200 (Thu, 09 Jun 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -174,6 +174,8 @@ sub main {
                          "keyword" => 1,
                          "characterization" => 1,
                          "functionality" => 1 },
+    "dump-tlpdb"    => { "local" => 1,
+                         "remote" => 1 },
     "uninstall"     => { "force" => 1 },
     "update"        => { "no-depends" => 1,
                          "no-depends-at-all" => 1,
@@ -505,6 +507,9 @@ sub execute_action {
     finish(0);
   } elsif ($action =~ m/^conf$/i) {
     action_conf();
+    finish(0);
+  } elsif ($action =~ m/^dump-tlpdb$/i) {
+    action_dumptlpdb();
     finish(0);
   } elsif ($action =~ m/^show$/i) {
     action_show();
@@ -1029,7 +1034,21 @@ sub action_path {
   return;
 }
 
-
+#  DUMP TLPDB
+#
+sub action_dumptlpdb {
+  init_local_db();
+  if ($opts{"local"}) {
+    $localtlpdb->writeout;
+    return;
+  }
+  if ($opts{"remote"}) {
+    init_tlmedia();
+    $remotetlpdb->writeout;
+  }
+  return;
+}
+    
 #  SHOW
 #
 sub action_show {
@@ -5688,13 +5707,16 @@ Search for package names, descriptions, and taxonomies, but not files.
 
 =head2 show [I<options>] I<pkg>...
 
-Display information about I<pkg>: the name, category, installation status,
-short and long description.  Searches in the remote installation source
-for the package if it is not locally installed.
+Display information about I<pkg>: the name, category, short and long
+description, installation status, and TeX Live revision number.
+Searches in the remote installation source for the package if it is not
+locally installed.
 
-It also displays the information taken from the TeX Catalogue (license,
-date, version), but note that there is a high probability that this
-information is slightly off due to timing issues.
+It also displays information taken from the TeX Catalogue, namely the
+package version, date, and license.  Consider these, especially the
+package version, approximations only, due to timing skew of the updates
+of the difference pieces.  The C<revision> value, by contrast, comes
+directly from TL and is reliable.
 
 Options:
 
@@ -5722,6 +5744,28 @@ L</"TAXONOMIES"> below for details.
 =back
 
 
+=head2 dump-tlpdb [I<options>]
+
+Dumps local or remote TLPDB as is to stdout.
+
+Options:
+
+=over 4
+
+=item B<--local>
+
+Dumps the local tlpdb.
+
+=item B<--remote>
+
+Dumps the remote tlpdb.
+
+=back
+
+If both B<--local> and B<--remote> is given, only the local tlpdb is dumped
+out. If none is given then nothing is dumped.
+
+
 =head2 list [--only-installed] [collections|schemes|I<pkg>...]
 
 With no argument, lists all packages available at the package
@@ -5732,8 +5776,8 @@ the request type.
 
 With anything else as arguments, operates as the C<show> action.
 
-If the option C<--only-installed> is given the installation source will
-not be used and only locally installed packages, collections, or schemes
+If the option C<--only-installed> is given, the installation source will
+not be used; only locally installed packages, collections, or schemes
 are listed.
 
 
