@@ -12618,7 +12618,7 @@ end
 local function resolve(str) -- use schemes, this one is then for the commandline only
     local res = resolved[str]
     if not res then
-        res = gsub(str,"([a-z][a-z]+):([^ \"\']*)",_resolve_)
+        res = gsub(str,"([a-z][a-z]+):([^ \"\';]*)",_resolve_)
         resolved[str] = res
         abstract[res] = str
     end
