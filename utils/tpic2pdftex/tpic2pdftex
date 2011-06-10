@@ -164,7 +164,7 @@ BEGIN{
     print "  LANG=\"C\"; export LANG"
     print "before calling awk."
     print "ERROR: Floating point numbers miss decimal point. Do" > "/dev/stderr"
-    print "  LANG=\"C\; export LANG"" > "/dev/stderr"
+    print "  LANG=\"C\"; export LANG" > "/dev/stderr"
     print "before calling awk." > "/dev/stderr"
     exit 1;
   }

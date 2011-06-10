@@ -1,3 +1,7 @@
+2011-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tpic2pdftex: Fix a syntax error (typo).
+
 2011-06-10  Karl Berry  <karl@tug.org>
 
 	* tpic2pdftex: LANG=C; export LANG for non-bash.
