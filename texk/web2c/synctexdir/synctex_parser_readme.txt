@@ -116,6 +116,11 @@ causing a void .synctex.gz file to be created even if it was not expected. Repor
 - taking output_directory into account
 - Replaced FOPEN_WBIN_MODE by FOPEN_W_MODE when opening the text version of the .synctex file.
 - Merging with LuaTeX's version of synctex.c
+1.15: Fri Jun 10 14:10:17 UTC 2011
+This concerns the synctex command line tool and 3rd party developers.
+TeX and friends are not concerned by these changes.
+- Bug fixed in _synctex_get_io_mode_name, sometimes the wrong mode was returned
+- Support for LuaTeX convention of './' file prefixing
 
 Acknowledgments:
 ----------------

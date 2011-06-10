@@ -3,9 +3,9 @@ Copyright (c) 2008, 2009, 2010, 2011 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Fri Mar 11 07:39:12 UTC 2011
+Latest Revision: Fri Jun 10 14:10:17 UTC 2011
 
-Version: 1.13
+Version: 1.15
 
 See synctex_parser_readme.txt for more details
 
@@ -66,7 +66,13 @@ extern "C" {
 #	else
 #		define SYNCTEX_IS_PATH_SEPARATOR(c) ('/' == c)
 #	endif
-
+    
+#	if _WIN32
+#		define SYNCTEX_IS_DOT(c) ('.' == c)
+#	else
+#		define SYNCTEX_IS_DOT(c) ('.' == c)
+#	endif
+    
 /*  This custom malloc functions initializes to 0 the newly allocated memory.
  *  There is no bzero function on windows. */
 void *_synctex_malloc(size_t size);
@@ -126,6 +132,8 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 /*  returns the correct mode required by fopen and gzopen from the given io_mode */
 const char * _synctex_get_io_mode_name(synctex_io_mode_t io_mode);
 
+const char * synctex_ignore_leading_dot_slash(const char * name);
+    
 #ifdef __cplusplus
 }
 #endif
