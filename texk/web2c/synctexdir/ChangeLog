@@ -1,3 +1,7 @@
+2011-06-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex_parser_utils.c: fix a typo.
+
 2011-05-13  Taco Hoekwater  <taco@luatex.org>
 
 	* synctex-luatex.h: synchronization_field_size has to be 1 for luatex.

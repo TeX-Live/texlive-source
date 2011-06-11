@@ -170,7 +170,7 @@ next_character:
 		}
 	} else if(SYNCTEX_IS_PATH_SEPARATOR(*rhs)) {/*  rhs points to a path separator but not lhs */
 		return synctex_NO;
-	} else {else if(toupper(*lhs) != toupper(*rhs)){/*  uppercase do not match */
+	} else if(toupper(*lhs) != toupper(*rhs)){/*  uppercase do not match */
 		return synctex_NO;
 	} else if (!*lhs) {/*  lhs is at the end of the string */
 		return *rhs ? synctex_NO : synctex_YES;
