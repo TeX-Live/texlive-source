@@ -40,6 +40,8 @@
 #         hartmut_henkel@gmx.de
 #
 # NEWS:
+#   11 Jun. 2011 - sh construct portability
+#   (patch from Nelson Beebe)
 #   24 Dec. 2009 - use gawk for default awk only if it exists
 #   (patch by Karl Berry).
 #   14 Jan. 2007 - make it executable shell script, calling awk
