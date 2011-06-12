@@ -1,6 +1,6 @@
 #!/bin/sh -
 #
-# $Id: tpic2pdftex,v 1.97 2010/01/16 11:51:43 hahe Exp $
+# $Id$
 #
 # Experimental awk-script for conversion of tpic \specials as produced
 # by (groff-)pic into pdfTeX \pdfliteral sections for further processing
