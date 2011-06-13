@@ -250,20 +250,37 @@ match (const_string filename,  const_string path_elt)
   }
 
   /* If we've reached the end of PATH_ELT, check that we're at the last
-     component of FILENAME, we've matched.  */
+     component of FILENAME (that is, no directory separators remaining);
+     only then have we matched.  */
   if (!matched && *path_elt == 0) {
-    /* Probably PATH_ELT ended with `vf' or some such, and FILENAME ends
-       with `vf/ptmr.vf'.  In that case, we'll be at a directory
-       separator.  On the other hand, if PATH_ELT ended with a / (as in
-       `vf/'), FILENAME being the same `vf/ptmr.vf', we'll be at the
-       `p'.  Upshot: if we're at a dir separator in FILENAME, skip it.
-       But if not, that's ok, as long as there are no more dir separators.  */
+    /* Typically PATH_ELT ends with, say, `vf', and FILENAME ends with
+       `vf/ptmr.vf'.  In that case, we'll be at the /.  On the other
+       hand, if PATH_ELT ended with a / (as in `vf/'), FILENAME being
+       the same `vf/ptmr.vf', we'll be at the `p'.
+       Upshot: if we're at a dir sep in FILENAME, skip it.  */
     if (IS_DIR_SEP (*filename))
       filename++;
 
-    while (*filename && !IS_DIR_SEP (*filename))
-      filename++;
-    matched = *filename == 0;
+    /* Here are the basic possibilities for the check on being at the
+       last component:
+       1) PATH_ELT is empty and FILENAME is `ptmr.vf'     => match.
+          (we now have original_filename == filename)
+       2) PATH_ELT is empty and FILENAME is `foo/ptmr.vf' => no match.
+          (we now have original_filename == filename)
+       3) PATH_ELT is `vf/' and FILENAME is `vf/ptmr.vf'
+          (we are now after the / in each)                 => match.
+       4) PATH_ELT is `vf' and FILENAME is `vfoo.ext'
+          (we are now after the f in each)                 => no match.
+       
+       When (the original) PATH_ELT was the empty string, we want to match
+       a FILENAME without dir seps.  (This could be argued, and may never
+       happen in practice, but is the historical behavior.)  */
+    /* if original_filename != filename then original_filename < filename */
+    if (original_filename == filename || IS_DIR_SEP (filename[-1])) {
+      while (*filename && !IS_DIR_SEP (*filename))
+        filename++;
+      matched = *filename == 0;
+    }
   }
 
   return matched;

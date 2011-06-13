@@ -1,3 +1,10 @@
+2011-06-13  Manuel P\'egour\'e-Gonnard <mpg@elzevir.fr>
+
+	* db.c (match): ensure that we are at a dir separator in
+	the filename before checking for being at the final component.
+	(We were erroneously matching "foobar" to "foo" in some cases.)
+	Report from Manuel, tex-k mail 12 Jun 2011 21:29:55.
+
 2011-06-10  Karl Berry  <karl@tug.org>
 
 	* configure.ac (AC_PROG_AWK): new test.
