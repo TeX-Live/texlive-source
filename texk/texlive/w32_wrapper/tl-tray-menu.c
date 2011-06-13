@@ -45,6 +45,7 @@ char *menuLabels[MAX_MENU_ENTRIES] = {
 "&Package Manager",
 "&Documentation",
 "&Editor", 
+"PostScript/PDF &Viewer",
 "&Command Prompt",
 NULL };
 
@@ -53,6 +54,7 @@ char *menuCommands[MAX_MENU_ENTRIES] = {
 "bin\\win32\\tlmgr-gui.exe",
 "bin\\win32\\texdoctk.exe",
 "bin\\win32\\texworks.exe",
+"bin\\win32\\psv.exe",
 "tlpkg\\installer\\tl-cmd.bat",
 NULL };
 
