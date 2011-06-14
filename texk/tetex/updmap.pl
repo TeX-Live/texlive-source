@@ -7,14 +7,14 @@
 # Anyone may freely use, modify, and/or distribute this file, without
 # limitation.
 ###############################################################################
-# $Id: updmap.pl 21946 2011-04-04 00:16:58Z karl $
+# $Id$
 BEGIN {
   $^W=1;
   chomp($TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`);
   unshift (@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $version = '$Id: updmap.pl 21946 2011-04-04 00:16:58Z karl $';
+my $version = '$Id$';
 
 use strict;
 use TeXLive::TLUtils qw(mkdirhier mktexupd win32);
