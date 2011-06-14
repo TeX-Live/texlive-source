@@ -1,6 +1,6 @@
 2011-06-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* patch-01-f3_mark_out_glyphs-is-void (new): Patch from
+	* patch-01-void-func (new): Patch from
 	Vladimir Volovich <vvv@vsu.ru>.
 
 2011-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
