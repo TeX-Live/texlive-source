@@ -6,8 +6,7 @@
 # Fabrice Popineau, for the Perl version.
 # Anyone may freely use, modify, and/or distribute this file, without
 # limitation.
-###############################################################################
-# $Id$
+
 BEGIN {
   $^W=1;
   chomp($TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`);
@@ -20,7 +19,7 @@ use strict;
 use TeXLive::TLUtils qw(mkdirhier mktexupd win32);
 use Getopt::Long;
 $Getopt::Long::autoabbrev=0;
-Getopt::Long::Configure ("bundling");
+Getopt::Long::Configure (qw(bundling ignore_case_always));
 
 my $progname='updmap';
 my $cnfFile;
@@ -42,6 +41,7 @@ my $syncwithtrees;
 
 my $verbose;
 my $opt_edit;
+my $opt_force;
 my $opt_help;
 my $dry_run;
 my $TEXMFMAIN;
@@ -71,42 +71,45 @@ $updLSR->{mustexist}(0);
 
 my @cfg = ();
 
-my @psADOBE = (
-	       's/ URWGothicL-Demi / AvantGarde-Demi /x',
-	       's/ URWGothicL-DemiObli / AvantGarde-DemiOblique /x',
-	       's/ URWGothicL-Book / AvantGarde-Book /x',
-	       's/ URWGothicL-BookObli / AvantGarde-BookOblique /x',
-	       's/ URWBookmanL-DemiBold / Bookman-Demi /x',
-	       's/ URWBookmanL-DemiBoldItal / Bookman-DemiItalic /x',
-	       's/ URWBookmanL-Ligh / Bookman-Light /x',
-	       's/ URWBookmanL-LighItal / Bookman-LightItalic /x',
-	       's/ NimbusMonL-Bold / Courier-Bold /x',
-	       's/ NimbusMonL-BoldObli / Courier-BoldOblique /x',
-	       's/ NimbusMonL-Regu / Courier /x',
-	       's/ NimbusMonL-ReguObli / Courier-Oblique /x',
-	       's/ NimbusSanL-Bold / Helvetica-Bold /x',
-	       's/ NimbusSanL-BoldCond / Helvetica-Narrow-Bold /x',
-	       's/ NimbusSanL-BoldItal / Helvetica-BoldOblique /x',
-	       's/ NimbusSanL-BoldCondItal / Helvetica-Narrow-BoldOblique /x',
-	       's/ NimbusSanL-Regu / Helvetica /x',
-	       's/ NimbusSanL-ReguCond / Helvetica-Narrow /x',
-	       's/ NimbusSanL-ReguItal / Helvetica-Oblique /x',
-	       's/ NimbusSanL-ReguCondItal / Helvetica-Narrow-Oblique /x',
-	       's/ CenturySchL-Bold / NewCenturySchlbk-Bold /x',
-	       's/ CenturySchL-BoldItal / NewCenturySchlbk-BoldItalic /x',
-	       's/ CenturySchL-Roma / NewCenturySchlbk-Roman /x',
-	       's/ CenturySchL-Ital / NewCenturySchlbk-Italic /x',
-	       's/ URWPalladioL-Bold / Palatino-Bold /x',
-	       's/ URWPalladioL-BoldItal / Palatino-BoldItalic /x',
-	       's/ URWPalladioL-Roma / Palatino-Roman /x',
-	       's/ URWPalladioL-Ital / Palatino-Italic /x',
-	       's/ StandardSymL / Symbol /x',
-	       's/ NimbusRomNo9L-Medi / Times-Bold /x',
-	       's/ NimbusRomNo9L-MediItal / Times-BoldItalic /x',
-	       's/ NimbusRomNo9L-Regu / Times-Roman /x',
-	       's/ NimbusRomNo9L-ReguItal / Times-Italic /x',
+my @psADOBE = ( # this list is in reverse order by PostScript name
+                # so that the Times-BoldItalic substitution (for
+                # example) happens before Times-Bold.  Otherwise the
+                # result is the bogus "Times-Bold Ital".
+	       's/ Dingbats / ZapfDingbats /x',
 	       's/ URWChanceryL-MediItal / ZapfChancery-MediumItalic /x',
-	       's/ Dingbats / ZapfDingbats /x'
+	       's/ NimbusRomNo9L-ReguItal / Times-Italic /x',
+	       's/ NimbusRomNo9L-Regu / Times-Roman /x',
+	       's/ NimbusRomNo9L-MediItal / Times-BoldItalic /x',
+	       's/ NimbusRomNo9L-Medi / Times-Bold /x',
+	       's/ StandardSymL / Symbol /x',
+	       's/ URWPalladioL-Ital / Palatino-Italic /x',
+	       's/ URWPalladioL-Roma / Palatino-Roman /x',
+	       's/ URWPalladioL-BoldItal / Palatino-BoldItalic /x',
+	       's/ URWPalladioL-Bold / Palatino-Bold /x',
+	       's/ CenturySchL-Ital / NewCenturySchlbk-Italic /x',
+	       's/ CenturySchL-Roma / NewCenturySchlbk-Roman /x',
+	       's/ CenturySchL-BoldItal / NewCenturySchlbk-BoldItalic /x',
+	       's/ CenturySchL-Bold / NewCenturySchlbk-Bold /x',
+	       's/ NimbusSanL-ReguCondItal / Helvetica-Narrow-Oblique /x',
+	       's/ NimbusSanL-ReguItal / Helvetica-Oblique /x',
+	       's/ NimbusSanL-ReguCond / Helvetica-Narrow /x',
+	       's/ NimbusSanL-Regu / Helvetica /x',
+	       's/ NimbusSanL-BoldCondItal / Helvetica-Narrow-BoldOblique /x',
+	       's/ NimbusSanL-BoldItal / Helvetica-BoldOblique /x',
+	       's/ NimbusSanL-BoldCond / Helvetica-Narrow-Bold /x',
+	       's/ NimbusSanL-Bold / Helvetica-Bold /x',
+	       's/ NimbusMonL-ReguObli / Courier-Oblique /x',
+	       's/ NimbusMonL-Regu / Courier /x',
+	       's/ NimbusMonL-BoldObli / Courier-BoldOblique /x',
+	       's/ NimbusMonL-Bold / Courier-Bold /x',
+	       's/ URWBookmanL-LighItal / Bookman-LightItalic /x',
+	       's/ URWBookmanL-Ligh / Bookman-Light /x',
+	       's/ URWBookmanL-DemiBoldItal / Bookman-DemiItalic /x',
+	       's/ URWBookmanL-DemiBold / Bookman-Demi /x',
+	       's/ URWGothicL-BookObli / AvantGarde-BookOblique /x',
+	       's/ URWGothicL-Book / AvantGarde-Book /x',
+	       's/ URWGothicL-DemiObli / AvantGarde-DemiOblique /x',
+	       's/ URWGothicL-Demi / AvantGarde-Demi /x',
 	      );
 
 my @fileADOBEkb = (
@@ -389,11 +392,11 @@ sub copyFile {
 sub help {
   my $progname=&progname();
   my $usage= <<"EOF";
-Usage: $progname [option] ... [command]
+Usage: $progname [OPTION] ... [COMMAND]
 
 Update the default font map files used by pdftex, dvips, and dvipdfm, as
-determined by updmap.cfg (the one returned by running "kpsewhich
-updmap.cfg").
+determined by updmap.cfg (the one returned by running
+"kpsewhich updmap.cfg").
 
 Among other things, these font map files are used to determine which
 fonts should be used as bitmaps and which as outlines, and to determine
@@ -407,19 +410,21 @@ Valid options:
   --pdftexoutputdir DIR     specify output directory (pdftex syntax)
   --outputdir DIR           specify output directory (for all files)
   --copy                    cp generic files rather than using symlinks
+  --force                   recreate files even if config hasn't changed
   --nomkmap                 do not recreate map files
   --nohash                  do not run texhash
   -n, --dry-run             only show the configuration, no output
   --quiet                   reduce verbosity
 
 Valid commands:
-  --help                    show this message
+  --help                    show this message and exit
+  --version                 show version information and exit
   --edit                    edit updmap.cfg file
   --showoptions ITEM        show alternatives for options
   --setoption OPTION VALUE  set option, where OPTION is one of:
                              dvipsPreferOutline, LW35, dvipsDownloadBase35,
                              or pdftexDownloadBase14
-  --setoption OPTION=VALUE  see above, just different syntax
+  --setoption OPTION=VALUE  as above, just different syntax
   --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
                               where MAPTYPE is either Map or MixedMap
   --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
@@ -808,27 +813,27 @@ sub setupCfgFile {
 ###############################################################################
 sub processOptions {
   unless (&GetOptions (
-      "q|quiet" => \$quiet,
-		  "cnffile=s" => \$cnfFile,
-		  "outputdir=s" => \$outputdir,
-		  "dvipsoutputdir=s" => \$dvipsoutputdir,
-		  "pdftexoutputdir=s" => \$pdftexoutputdir,
-		  "setoption=s" => \%setOption,
-		  "enable=s" => \$enableItem,
-		  "disable=s" => \@disableItem,
-		  "e|edit" => \$opt_edit,
-		  "l|listmaps" => \$listmaps,
-		  "listavailablemaps" => \$listavailablemaps,
-		  "syncwithtrees" => \$syncwithtrees,
-		  "showoptions=s" => \@showoptions,
-		  "nohash" => \$nohash,
-		  "nomkmap" => \$nomkmap,
-		  "version" => sub { print &version() . "\n"; exit(0) },
-
-      "n|dry-run" => \$dry_run,
+      "cnffile=s" => \$cnfFile,
       "copy" => \$copy,
-		  "h|help" => \$opt_help)) {
-    my $progname=&progname();
+      "disable=s" => \@disableItem,
+      "dvipsoutputdir=s" => \$dvipsoutputdir,
+      "enable=s" => \$enableItem,
+      "e|edit" => \$opt_edit,
+      "force" => \$opt_force,
+      "listavailablemaps" => \$listavailablemaps,
+      "l|listmaps" => \$listmaps,
+      "nohash" => \$nohash,
+      "nomkmap" => \$nomkmap,
+      "n|dry-run" => \$dry_run,
+      "outputdir=s" => \$outputdir,
+      "pdftexoutputdir=s" => \$pdftexoutputdir,
+      "q|quiet" => \$quiet,
+      "setoption=s" => \%setOption,
+      "showoptions=s" => \@showoptions,
+      "syncwithtrees" => \$syncwithtrees,
+      "version" => sub { print &version() . "\n"; exit(0) },
+      "h|help" => \$opt_help)) {
+    my $progname = &progname();
     die "Try \"$progname --help\".\n";
   }
 
@@ -982,8 +987,9 @@ sub mkMaps {
   $pdftexDownloadBase14 = &cfgval("pdftexDownloadBase14");
   $pdftexDownloadBase14 = 1 unless (defined $pdftexDownloadBase14);
 
-  &wlog ("\nupdmap is creating new map files " . 
-         "using the following configuration:" .
+  &wlog ("\nupdmap " .
+         ($dry_run ? "would create" : "is creating") .
+         " new map files using the following configuration:" .
          "\n  LW35 font names                  : " . 
          $mode .
          "\n  prefer outlines                  : " . 
@@ -1231,8 +1237,8 @@ sub main {
       &disableMap($m);
     }
   }
-  if ($cmd and &files_are_equal($bakFile, $cnfFile)) {
-    print "$cnfFile unchanged. Map files not recreated.\n" unless ($quiet);
+  if ($cmd && !$opt_force && &files_are_equal($bakFile, $cnfFile)) {
+    print "$cnfFile unchanged.  Map files not recreated.\n" unless ($quiet);
   }
   else {
     if (! $nomkmap) {

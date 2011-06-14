@@ -1,3 +1,17 @@
+2011-06-15  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (@psADOBE): do BoldItalic (etc.) before Bold (etc.),
+	other generated pdftex.map has bogus names with spaces.
+	Original report from Herbert Schulz,
+	mactex mail 13 Jun 2011 08:27:46.
+
+	Unrelated, sorry:
+	(Getopt::Long::Configure): set ignore_case_always.
+	(Case-insensitive option matching is the default?!)
+	(--force, $opt_force): new option.
+	(processOptions): sort and indent option list consistently.    
+	
+
 2011-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../am/bin_links.am for $(bindir) links.
