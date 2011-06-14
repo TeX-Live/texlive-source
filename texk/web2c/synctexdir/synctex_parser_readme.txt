@@ -121,6 +121,11 @@ This concerns the synctex command line tool and 3rd party developers.
 TeX and friends are not concerned by these changes.
 - Bug fixed in _synctex_get_io_mode_name, sometimes the wrong mode was returned
 - Support for LuaTeX convention of './' file prefixing
+1.16: Tue Jun 14 08:23:30 UTC 2011
+This concerns the synctex command line tool and 3rd party developers.
+TeX and friends are not concerned by these changes.
+- Better forward search (thanks Jose Alliste)
+- Support for LuaTeX convention of './' file prefixing now for everyone, not only for Windows
 
 Acknowledgments:
 ----------------

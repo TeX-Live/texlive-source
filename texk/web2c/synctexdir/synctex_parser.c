@@ -3,9 +3,9 @@ Copyright (c) 2008, 2009, 2010 , 2011 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Fri Jun 10 14:10:17 UTC 2011
+Latest Revision: Tue Jun 14 08:23:30 UTC 2011
 
-Version: 1.15
+Version: 1.16
 
 See synctex_parser_readme.txt for more details
 
@@ -3392,8 +3392,9 @@ int synctex_display_query(synctex_scanner_t scanner,const char * name,int line,i
 					goto next_end;
 				}
 				start_ref += 1;
-				SYNCTEX_END = (char *)start_ref;
-                return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);// added on behalf Jan Sundermeyer
+                SYNCTEX_END = (char *)start_ref;
+                SYNCTEX_CUR = NULL;// added on behalf of Jose Alliste
+				return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t);// added on behalf Jan Sundermeyer
             }
 			SYNCTEX_CUR = NULL;
 			// return (SYNCTEX_END-SYNCTEX_START)/sizeof(synctex_node_t); removed on behalf Jan Sundermeyer
