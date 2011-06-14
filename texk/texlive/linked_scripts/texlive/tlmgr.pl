@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 22875 2011-06-09 00:45:20Z preining $
+# $Id: tlmgr.pl 22912 2011-06-11 04:40:36Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 22875 $';
-my $datrev = '$Date: 2011-06-09 02:45:20 +0200 (Thu, 09 Jun 2011) $';
+my $svnrev = '$Revision: 22912 $';
+my $datrev = '$Date: 2011-06-11 06:40:36 +0200 (Sat, 11 Jun 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -1038,7 +1038,14 @@ sub action_path {
 #
 sub action_dumptlpdb {
   init_local_db();
+  # set machine readable to 1
+  my $savemr = $::machinereadable;
+  $::machinereadable = 1;
   if ($opts{"local"}) {
+    # since we want to be consistent we write out the location of
+    # the installation, too, in the format as it is done when
+    # dumping the remote tlpdb
+    print "location-url\t", $localtlpdb->root, "\n";
     $localtlpdb->writeout;
     return;
   }
@@ -1046,6 +1053,7 @@ sub action_dumptlpdb {
     init_tlmedia();
     $remotetlpdb->writeout;
   }
+  $::machinereadable = $savemr;
   return;
 }
     
@@ -5764,6 +5772,13 @@ Dumps the remote tlpdb.
 
 If both B<--local> and B<--remote> is given, only the local tlpdb is dumped
 out. If none is given then nothing is dumped.
+
+In the line before the dump of the tlpdb the location is specified on 
+a line:
+
+  location-url TAB <location>
+
+
 
 
 =head2 list [--only-installed] [collections|schemes|I<pkg>...]
