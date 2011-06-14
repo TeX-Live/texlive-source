@@ -99,7 +99,7 @@ class GsubContext { public:
     enum { F3_HSIZE = 6, SUBRECSIZE = 4 };
   private:
     Data _d;
-    static bool f3_mark_out_glyphs(const Data &data, int nsub, int subtab_offset, const Gsub &gsub, Vector<bool> &gmap);
+    static void f3_mark_out_glyphs(const Data &data, int nsub, int subtab_offset, const Gsub &gsub, Vector<bool> &gmap);
     static bool f3_unparse(const Data &data,
 			   int nglyph, int glyphtab_offset, const Coverage &limit,
 			   int nsub, int subtab_offset,

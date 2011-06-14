@@ -1070,7 +1070,7 @@ GsubContext::coverage() const throw ()
 	return Coverage();
 }
 
-bool
+void
 GsubContext::f3_mark_out_glyphs(const Data &data, int nsub, int subtab_offset, const Gsub &gsub, Vector<bool> &gmap)
 {
     for (int j = 0; j < nsub; ++j) {
