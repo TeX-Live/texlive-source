@@ -1,5 +1,4 @@
 #! /usr/bin/env perl
-###############################################################################
 # updmap: utility to maintain map files for outline fonts.
 #
 # Thomas Esser, (C) 2002.
@@ -19,7 +18,7 @@ use strict;
 use TeXLive::TLUtils qw(mkdirhier mktexupd win32);
 use Getopt::Long;
 $Getopt::Long::autoabbrev=0;
-Getopt::Long::Configure (qw(bundling ignore_case_always));
+Getopt::Long::Configure (qw(ignore_case_always));
 
 my $progname='updmap';
 my $cnfFile;
@@ -32,14 +31,13 @@ my $nohash;
 my $nomkmap;
 
 my $enableItem;
-my %setOption = ();
+my @setoptions = ();
 my @showoptions = ();
 my @disableItem = ();
 my $listmaps;
 my $listavailablemaps;
 my $syncwithtrees;
 
-my $verbose;
 my $opt_edit;
 my $opt_force;
 my $opt_help;
@@ -327,7 +325,7 @@ sub getLines {
   foreach my $fname (@_) {
     next if (! $fname);
     if (! exists $maps{"$fname"}) {
-      open FILE, "<$fname" or die "can't get lines from $fname: $!";
+      open FILE, "<$fname" or die "$0: can't get lines from $fname: $!";
       my @file=<FILE>;
       close FILE;
       if ($writelog) {
@@ -358,7 +356,7 @@ sub getLines {
 sub writeLines {
   my ($fname, @lines) = @_;
   map { ($_ !~ m/\n$/ ? s/$/\n/ : $_ ) } @lines;
-  open FILE, ">$fname" or die "can't write lines to $fname: $!";
+  open FILE, ">$fname" or die "$0: can't write lines to $fname: $!";
   print FILE @lines;
   close FILE;
 }
@@ -375,7 +373,7 @@ sub copyFile {
 
   $src eq $dst && return "can't copy $src to itself!\n";
 
-  open IN, "<$src" or die "can't open source file $src for copying: $!";
+  open IN, "<$src" or die "$0: can't open source file $src for copying: $!";
   open OUT, ">$dst";
 
   binmode(IN);
@@ -469,7 +467,7 @@ sub cfgval {
   my $value;
 
   if ($#cfg < 0) {
-    open FILE, "<$cnfFile" or die "can't open configuration file $cnfFile: $!";
+    open FILE, "<$cnfFile" or die "$0: can't open configuration file $cnfFile: $!";
     while (<FILE>) {
       s/\s*$//; # strip trailing spaces
       push @cfg, $_;
@@ -644,6 +642,34 @@ sub configReplace {
 }
 
 ###############################################################################
+# setOption (@options)
+#   parse @options for "key=value" (one element of @options)
+#   or "key", "value" (two elements of @options) pairs.
+#   (These were the values provided to --setoption.)
+#   
+sub setOptions {
+  my (@options) = @_;
+  for (my $i = 0; $i < @options; $i++) {
+    my $o = $options[$i];
+    
+    my ($key,$val);
+    if ($o =~ /=/) {
+      ($key,$val) = split (/=/, $o, 2);
+    } else {
+      $key = $o;
+      die "$0: no value for --setoption $key, goodbye.\n"
+        if $i + 1 >= @options;
+      $val = $options[$i + 1];
+      $i++;
+    }
+    
+    die "$0: unexpected empty key or val for options (@options), goodbye.\n"
+      if !$key || !$val;
+    &setOption ($key, $val);
+  }
+}
+
+###############################################################################
 # setOption (option, value)
 #   sets option to value in the config file (replacing the existing setting
 #   or by adding a new line to the config file).
@@ -653,18 +679,21 @@ sub setOption {
 
   if ($opt eq "LW35") {
     if ($val !~ m/^(URWkb|URW|ADOBE|ADOBEkb)$/) {
-      die "Invalid value $val for option $opt.\n";
+      die "$0: Invalid value $val for option $opt.\n";
     }
+  } elsif ($opt =~ 
+m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14)$/) {
+      if ($val !~ m/^(true|false)$/) {
+        die "$0: Invalid value $val for option $opt; should be \"true\" or \"false\".\n";
+      }
+  } else {
+    die "$0: Unsupported option $opt.\n";
   }
-  elsif ($opt =~ 
-         m/^(dvipsPreferOutline|dvipsDownloadBase35|pdftexDownloadBase14)$/) {
-    if ($val !~ m/^(true|false)$/) {
-      die "invalid value $val for option $opt.\n";
-    }
-  }
-  else {
-    die "Unsupported option $opt.\n";
-  }
+
+  # silently accept this old option name, just in case.
+  return if $opt eq "dvipdfmDownloadBase14";
+  
+  #print "Setting option $opt to $val...\n" if (! $quiet);
   &configReplace("$cnfFile", "^" . "$opt" . "\\s", "$opt $val");
 }
 
@@ -676,7 +705,7 @@ sub enableMap {
   my ($type, $map) = @_;
 
   if ($type !~ m/^(Map|MixedMap)$/) {
-    die "updmap: Invalid mapType $type\n";
+    die "$0: Invalid mapType $type\n";
   }
   # a map can only have one type, so we carefully disable everything
   # about map here:
@@ -720,7 +749,6 @@ sub initVars {
   $quiet = 0;
   $nohash = 0;
   $nomkmap = 0;
-  $verbose = 1;
   $cnfFile = "";
   $cnfFileShort = "updmap.cfg";
   $outputdir = "";
@@ -737,11 +765,11 @@ sub showOptions {
       print "URWkb URW ADOBE ADOBEkb\n";
     }
     elsif ($item =~ 
-           m/(dvipsPreferOutline|pdftexDownloadBase14|dvipsDownloadBase35)/) {
+m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35)/) {
       print "true false\n";
     }
     else {
-      print "Unknown item \"$item\". Choose one of LW35, dvipsPreferOutline,\n" 
+      print "Unknown item \"$item\"; should be one of LW35, dvipsPreferOutline,\n" 
           . "  dvipsDownloadBase35, or pdftexDownloadBase14\n";
     }
   }
@@ -766,7 +794,7 @@ sub setupOutputDir {
     if ($tf) {
       &mkdirhier("$tf/$rel");
       if (! -w "$tf/$rel") {
-        die "Directory \"$tf/$rel\" isn't writable.\n";
+        die "$0: Directory \"$tf/$rel\" isn't writable.\n";
       }
     }
     $od = "$tf/$rel";
@@ -806,7 +834,7 @@ sub setupCfgFile {
       print "Config file: \"$cnfFile\"\n" if (! $quiet);
     }
     else {
-      die "Config file updmap.cfg not found.\n";
+      die "$0: Config file updmap.cfg not found.\n";
     }
   }
 }
@@ -833,7 +861,7 @@ sub processOptions {
       "outputdir=s" => \$outputdir,
       "pdftexoutputdir=s" => \$pdftexoutputdir,
       "q|quiet" => \$quiet,
-      "setoption=s" => \%setOption,
+      "setoption=s{1,2}" => \@setoptions,
       "showoptions=s" => \@showoptions,
       "syncwithtrees" => \$syncwithtrees,
       "version" => sub { print &version() . "\n"; exit(0) },
@@ -960,7 +988,7 @@ sub mkMaps {
     $logfile="$TEXMFVAR/web2c/updmap.log";
     mkdirhier "$TEXMFVAR/web2c";
     open LOG, ">$logfile" 
-        or die "Can't open \"$logfile\"";
+        or die "$0: Can't open \"$logfile\"";
     $writelog=1;
     print LOG &version() . "\n";
     printf LOG "%s\n\n", scalar localtime();
@@ -1219,11 +1247,9 @@ sub main {
     $editor ||= (&win32 ? "notepad" : "vi");
     system($editor, $cnfFile);
 
-  } elsif (keys %setOption) {
+  } elsif (@setoptions) {
     $cmd = 'setOption';
-    foreach my $m (keys %setOption) {
-      &setOption ($m, $setOption{$m});
-    }
+    &setOptions (@setoptions);
 
   } elsif ($enableItem) {
     $cmd = 'enableMap';
@@ -1241,7 +1267,7 @@ sub main {
   }
 
   if ($cmd && !$opt_force && &files_are_equal($bakFile, $cnfFile)) {
-    print "$cnfFile unchanged.  Map files not recreated.\n" unless ($quiet);
+    print "$cnfFile unchanged.  Map files not recreated.\n" if (! $quiet);
   } else {
     if (! $nomkmap) {
       &setupDestDir;

@@ -1,3 +1,21 @@
+2011-06-16  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: support --setoption foo bar as well as foo=bar,
+	for compatibility.
+	(setOptions): new fn.
+	(ProcessOptions): use "setoption=s{1,2}" => \@setoptions
+	instead of "setoption=s" => \%setOption, since we have to parse
+	the values manually.
+	(Getopt::Long::Configure): removing bundling, disallows the
+	=s{1,2} Getopt directive we specify for parsing.
+	Original report from Herbert Schulz,
+	mactex mail 13 Jun 2011 07:56:50.
+	
+	Unrelated, sorry:
+	Add $0 to die commands.
+	(setOption): silently accept dvipdfmDownloadBase14.
+	($verbose): remove unused variable.
+
 2011-06-15  Karl Berry  <karl@tug.org>
 
 	* updmap.pl: reformat long lists, reduce ####, other formatting.
@@ -8,6 +26,7 @@
 	other generated pdftex.map has bogus names with spaces.
 	Original report from Herbert Schulz,
 	mactex mail 13 Jun 2011 08:27:46.
+
 	Unrelated, sorry:
 	(Getopt::Long::Configure): set ignore_case_always.
 	(Case-insensitive option matching is the default?!)
