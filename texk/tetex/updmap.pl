@@ -75,155 +75,155 @@ my @psADOBE = ( # this list is in reverse order by PostScript name
                 # so that the Times-BoldItalic substitution (for
                 # example) happens before Times-Bold.  Otherwise the
                 # result is the bogus "Times-Bold Ital".
-	       's/ Dingbats / ZapfDingbats /x',
-	       's/ URWChanceryL-MediItal / ZapfChancery-MediumItalic /x',
-	       's/ NimbusRomNo9L-ReguItal / Times-Italic /x',
-	       's/ NimbusRomNo9L-Regu / Times-Roman /x',
-	       's/ NimbusRomNo9L-MediItal / Times-BoldItalic /x',
-	       's/ NimbusRomNo9L-Medi / Times-Bold /x',
-	       's/ StandardSymL / Symbol /x',
-	       's/ URWPalladioL-Ital / Palatino-Italic /x',
-	       's/ URWPalladioL-Roma / Palatino-Roman /x',
-	       's/ URWPalladioL-BoldItal / Palatino-BoldItalic /x',
-	       's/ URWPalladioL-Bold / Palatino-Bold /x',
-	       's/ CenturySchL-Ital / NewCenturySchlbk-Italic /x',
-	       's/ CenturySchL-Roma / NewCenturySchlbk-Roman /x',
-	       's/ CenturySchL-BoldItal / NewCenturySchlbk-BoldItalic /x',
-	       's/ CenturySchL-Bold / NewCenturySchlbk-Bold /x',
-	       's/ NimbusSanL-ReguCondItal / Helvetica-Narrow-Oblique /x',
-	       's/ NimbusSanL-ReguItal / Helvetica-Oblique /x',
-	       's/ NimbusSanL-ReguCond / Helvetica-Narrow /x',
-	       's/ NimbusSanL-Regu / Helvetica /x',
-	       's/ NimbusSanL-BoldCondItal / Helvetica-Narrow-BoldOblique /x',
-	       's/ NimbusSanL-BoldItal / Helvetica-BoldOblique /x',
-	       's/ NimbusSanL-BoldCond / Helvetica-Narrow-Bold /x',
-	       's/ NimbusSanL-Bold / Helvetica-Bold /x',
-	       's/ NimbusMonL-ReguObli / Courier-Oblique /x',
-	       's/ NimbusMonL-Regu / Courier /x',
-	       's/ NimbusMonL-BoldObli / Courier-BoldOblique /x',
-	       's/ NimbusMonL-Bold / Courier-Bold /x',
-	       's/ URWBookmanL-LighItal / Bookman-LightItalic /x',
-	       's/ URWBookmanL-Ligh / Bookman-Light /x',
-	       's/ URWBookmanL-DemiBoldItal / Bookman-DemiItalic /x',
-	       's/ URWBookmanL-DemiBold / Bookman-Demi /x',
-	       's/ URWGothicL-BookObli / AvantGarde-BookOblique /x',
-	       's/ URWGothicL-Book / AvantGarde-Book /x',
-	       's/ URWGothicL-DemiObli / AvantGarde-DemiOblique /x',
-	       's/ URWGothicL-Demi / AvantGarde-Demi /x',
-	      );
+        's/Dingbats/ZapfDingbats/',
+        's/URWChanceryL-MediItal/ZapfChancery-MediumItalic/',
+        's/NimbusRomNo9L-ReguItal/Times-Italic/',
+        's/NimbusRomNo9L-Regu/Times-Roman/',
+        's/NimbusRomNo9L-MediItal/Times-BoldItalic/',
+        's/NimbusRomNo9L-Medi/Times-Bold/',
+        's/StandardSymL/Symbol/',
+        's/URWPalladioL-Ital/Palatino-Italic/',
+        's/URWPalladioL-Roma/Palatino-Roman/',
+        's/URWPalladioL-BoldItal/Palatino-BoldItalic/',
+        's/URWPalladioL-Bold/Palatino-Bold/',
+        's/CenturySchL-Ital/NewCenturySchlbk-Italic/',
+        's/CenturySchL-Roma/NewCenturySchlbk-Roman/',
+        's/CenturySchL-BoldItal/NewCenturySchlbk-BoldItalic/',
+        's/CenturySchL-Bold/NewCenturySchlbk-Bold/',
+        's/NimbusSanL-ReguCondItal/Helvetica-Narrow-Oblique/',
+        's/NimbusSanL-ReguItal/Helvetica-Oblique/',
+        's/NimbusSanL-ReguCond/Helvetica-Narrow/',
+        's/NimbusSanL-Regu/Helvetica/',
+        's/NimbusSanL-BoldCondItal/Helvetica-Narrow-BoldOblique/',
+        's/NimbusSanL-BoldItal/Helvetica-BoldOblique/',
+        's/NimbusSanL-BoldCond/Helvetica-Narrow-Bold/',
+        's/NimbusSanL-Bold/Helvetica-Bold/',
+        's/NimbusMonL-ReguObli/Courier-Oblique/',
+        's/NimbusMonL-Regu/Courier/',
+        's/NimbusMonL-BoldObli/Courier-BoldOblique/',
+        's/NimbusMonL-Bold/Courier-Bold/',
+        's/URWBookmanL-LighItal/Bookman-LightItalic/',
+        's/URWBookmanL-Ligh/Bookman-Light/',
+        's/URWBookmanL-DemiBoldItal/Bookman-DemiItalic/',
+        's/URWBookmanL-DemiBold/Bookman-Demi/',
+        's/URWGothicL-BookObli/AvantGarde-BookOblique/',
+        's/URWGothicL-Book/AvantGarde-Book/',
+        's/URWGothicL-DemiObli/AvantGarde-DemiOblique/',
+        's/URWGothicL-Demi/AvantGarde-Demi/',
+		);
 
 my @fileADOBEkb = (
-		   's/\buagd8a.pfb\b/pagd8a.pfb/x',
-		   's/\buagdo8a.pfb\b/pagdo8a.pfb/x',
-		   's/\buagk8a.pfb\b/pagk8a.pfb/x',
-		   's/\buagko8a.pfb\b/pagko8a.pfb/x',
-		   's/\bubkd8a.pfb\b/pbkd8a.pfb/x',
-		   's/\bubkdi8a.pfb\b/pbkdi8a.pfb/x',
-		   's/\bubkl8a.pfb\b/pbkl8a.pfb/x',
-		   's/\bubkli8a.pfb\b/pbkli8a.pfb/x',
-		   's/\bucrb8a.pfb\b/pcrb8a.pfb/x',
-		   's/\bucrbo8a.pfb\b/pcrbo8a.pfb/x',
-		   's/\bucrr8a.pfb\b/pcrr8a.pfb/x',
-		   's/\bucrro8a.pfb\b/pcrro8a.pfb/x',
-		   's/\buhvb8a.pfb\b/phvb8a.pfb/x',
-		   's/\buhvb8ac.pfb\b/phvb8an.pfb/x',
-		   's/\buhvbo8a.pfb\b/phvbo8a.pfb/x',
-		   's/\buhvbo8ac.pfb\b/phvbo8an.pfb/x',
-		   's/\buhvr8a.pfb\b/phvr8a.pfb/x',
-		   's/\buhvr8ac.pfb\b/phvr8an.pfb/x',
-		   's/\buhvro8a.pfb\b/phvro8a.pfb/x',
-		   's/\buhvro8ac.pfb\b/phvro8an.pfb/x',
-		   's/\buncb8a.pfb\b/pncb8a.pfb/x',
-		   's/\buncbi8a.pfb\b/pncbi8a.pfb/x',
-		   's/\buncr8a.pfb\b/pncr8a.pfb/x',
-		   's/\buncri8a.pfb\b/pncri8a.pfb/x',
-		   's/\buplb8a.pfb\b/pplb8a.pfb/x',
-		   's/\buplbi8a.pfb\b/pplbi8a.pfb/x',
-		   's/\buplr8a.pfb\b/pplr8a.pfb/x',
-		   's/\buplri8a.pfb\b/pplri8a.pfb/x',
-		   's/\busyr.pfb\b/psyr.pfb/x',
-		   's/\butmb8a.pfb\b/ptmb8a.pfb/x',
-		   's/\butmbi8a.pfb\b/ptmbi8a.pfb/x',
-		   's/\butmr8a.pfb\b/ptmr8a.pfb/x',
-		   's/\butmri8a.pfb\b/ptmri8a.pfb/x',
-		   's/\buzcmi8a.pfb\b/pzcmi8a.pfb/x',
-		   's/\buzdr.pfb\b/pzdr.pfb/x'
+        's/\buagd8a.pfb\b/pagd8a.pfb/',
+        's/\buagdo8a.pfb\b/pagdo8a.pfb/',
+        's/\buagk8a.pfb\b/pagk8a.pfb/',
+        's/\buagko8a.pfb\b/pagko8a.pfb/',
+        's/\bubkd8a.pfb\b/pbkd8a.pfb/',
+        's/\bubkdi8a.pfb\b/pbkdi8a.pfb/',
+        's/\bubkl8a.pfb\b/pbkl8a.pfb/',
+        's/\bubkli8a.pfb\b/pbkli8a.pfb/',
+        's/\bucrb8a.pfb\b/pcrb8a.pfb/',
+        's/\bucrbo8a.pfb\b/pcrbo8a.pfb/',
+        's/\bucrr8a.pfb\b/pcrr8a.pfb/',
+        's/\bucrro8a.pfb\b/pcrro8a.pfb/',
+        's/\buhvb8a.pfb\b/phvb8a.pfb/',
+        's/\buhvb8ac.pfb\b/phvb8an.pfb/',
+        's/\buhvbo8a.pfb\b/phvbo8a.pfb/',
+        's/\buhvbo8ac.pfb\b/phvbo8an.pfb/',
+        's/\buhvr8a.pfb\b/phvr8a.pfb/',
+        's/\buhvr8ac.pfb\b/phvr8an.pfb/',
+        's/\buhvro8a.pfb\b/phvro8a.pfb/',
+        's/\buhvro8ac.pfb\b/phvro8an.pfb/',
+        's/\buncb8a.pfb\b/pncb8a.pfb/',
+        's/\buncbi8a.pfb\b/pncbi8a.pfb/',
+        's/\buncr8a.pfb\b/pncr8a.pfb/',
+        's/\buncri8a.pfb\b/pncri8a.pfb/',
+        's/\buplb8a.pfb\b/pplb8a.pfb/',
+        's/\buplbi8a.pfb\b/pplbi8a.pfb/',
+        's/\buplr8a.pfb\b/pplr8a.pfb/',
+        's/\buplri8a.pfb\b/pplri8a.pfb/',
+        's/\busyr.pfb\b/psyr.pfb/',
+        's/\butmb8a.pfb\b/ptmb8a.pfb/',
+        's/\butmbi8a.pfb\b/ptmbi8a.pfb/',
+        's/\butmr8a.pfb\b/ptmr8a.pfb/',
+        's/\butmri8a.pfb\b/ptmri8a.pfb/',
+        's/\buzcmi8a.pfb\b/pzcmi8a.pfb/',
+        's/\buzdr.pfb\b/pzdr.pfb/',
 		  );
 
 my @fileURW = (
-	's/\buagd8a.pfb\b/a010015l.pfb/x',
-	's/\buagdo8a.pfb\b/a010035l.pfb/x',
-	's/\buagk8a.pfb\b/a010013l.pfb/x',
-	's/\buagko8a.pfb\b/a010033l.pfb/x',
-	's/\bubkd8a.pfb\b/b018015l.pfb/x',
-	's/\bubkdi8a.pfb\b/b018035l.pfb/x',
-	's/\bubkl8a.pfb\b/b018012l.pfb/x',
-	's/\bubkli8a.pfb\b/b018032l.pfb/x',
-	's/\bucrb8a.pfb\b/n022004l.pfb/x',
-	's/\bucrbo8a.pfb\b/n022024l.pfb/x',
-	's/\bucrr8a.pfb\b/n022003l.pfb/x',
-	's/\bucrro8a.pfb\b/n022023l.pfb/x',
-	's/\buhvb8a.pfb\b/n019004l.pfb/x',
-	's/\buhvb8ac.pfb\b/n019044l.pfb/x',
-	's/\buhvbo8a.pfb\b/n019024l.pfb/x',
-	's/\buhvbo8ac.pfb\b/n019064l.pfb/x',
-	's/\buhvr8a.pfb\b/n019003l.pfb/x',
-	's/\buhvr8ac.pfb\b/n019043l.pfb/x',
-	's/\buhvro8a.pfb\b/n019023l.pfb/x',
-	's/\buhvro8ac.pfb\b/n019063l.pfb/x',
-	's/\buncb8a.pfb\b/c059016l.pfb/x',
-	's/\buncbi8a.pfb\b/c059036l.pfb/x',
-	's/\buncr8a.pfb\b/c059013l.pfb/x',
-	's/\buncri8a.pfb\b/c059033l.pfb/x',
-	's/\buplb8a.pfb\b/p052004l.pfb/x',
-	's/\buplbi8a.pfb\b/p052024l.pfb/x',
-	's/\buplr8a.pfb\b/p052003l.pfb/x',
-	's/\buplri8a.pfb\b/p052023l.pfb/x',
-	's/\busyr.pfb\b/s050000l.pfb/x',
-	's/\butmb8a.pfb\b/n021004l.pfb/x',
-	's/\butmbi8a.pfb\b/n021024l.pfb/x',
-	's/\butmr8a.pfb\b/n021003l.pfb/x',
-	's/\butmri8a.pfb\b/n021023l.pfb/x',
-	's/\buzcmi8a.pfb\b/z003034l.pfb/x',
-	's/\buzdr.pfb\b/d050000l.pfb/x'
+	's/\buagd8a.pfb\b/a010015l.pfb/',
+	's/\buagdo8a.pfb\b/a010035l.pfb/',
+	's/\buagk8a.pfb\b/a010013l.pfb/',
+	's/\buagko8a.pfb\b/a010033l.pfb/',
+	's/\bubkd8a.pfb\b/b018015l.pfb/',
+	's/\bubkdi8a.pfb\b/b018035l.pfb/',
+	's/\bubkl8a.pfb\b/b018012l.pfb/',
+	's/\bubkli8a.pfb\b/b018032l.pfb/',
+	's/\bucrb8a.pfb\b/n022004l.pfb/',
+	's/\bucrbo8a.pfb\b/n022024l.pfb/',
+	's/\bucrr8a.pfb\b/n022003l.pfb/',
+	's/\bucrro8a.pfb\b/n022023l.pfb/',
+	's/\buhvb8a.pfb\b/n019004l.pfb/',
+	's/\buhvb8ac.pfb\b/n019044l.pfb/',
+	's/\buhvbo8a.pfb\b/n019024l.pfb/',
+	's/\buhvbo8ac.pfb\b/n019064l.pfb/',
+	's/\buhvr8a.pfb\b/n019003l.pfb/',
+	's/\buhvr8ac.pfb\b/n019043l.pfb/',
+	's/\buhvro8a.pfb\b/n019023l.pfb/',
+	's/\buhvro8ac.pfb\b/n019063l.pfb/',
+	's/\buncb8a.pfb\b/c059016l.pfb/',
+	's/\buncbi8a.pfb\b/c059036l.pfb/',
+	's/\buncr8a.pfb\b/c059013l.pfb/',
+	's/\buncri8a.pfb\b/c059033l.pfb/',
+	's/\buplb8a.pfb\b/p052004l.pfb/',
+	's/\buplbi8a.pfb\b/p052024l.pfb/',
+	's/\buplr8a.pfb\b/p052003l.pfb/',
+	's/\buplri8a.pfb\b/p052023l.pfb/',
+	's/\busyr.pfb\b/s050000l.pfb/',
+	's/\butmb8a.pfb\b/n021004l.pfb/',
+	's/\butmbi8a.pfb\b/n021024l.pfb/',
+	's/\butmr8a.pfb\b/n021003l.pfb/',
+	's/\butmri8a.pfb\b/n021023l.pfb/',
+	's/\buzcmi8a.pfb\b/z003034l.pfb/',
+	's/\buzdr.pfb\b/d050000l.pfb/',
 		   );
 
 my @fileADOBE = (
-	's/\buagd8a.pfb\b/agd_____.pfb/x',
-	's/\buagdo8a.pfb\b/agdo____.pfb/x',
-	's/\buagk8a.pfb\b/agw_____.pfb/x',
-	's/\buagko8a.pfb\b/agwo____.pfb/x',
-	's/\bubkd8a.pfb\b/bkd_____.pfb/x',
-	's/\bubkdi8a.pfb\b/bkdi____.pfb/x',
-  's/\bubkl8a.pfb\b/bkl_____.pfb/x',
-	's/\bubkli8a.pfb\b/bkli____.pfb/x',
-	's/\bucrb8a.pfb\b/cob_____.pfb/x',
-	's/\bucrbo8a.pfb\b/cobo____.pfb/x',
-	's/\bucrr8a.pfb\b/com_____.pfb/x',
-	's/\bucrro8a.pfb\b/coo_____.pfb/x',
-	's/\buhvb8a.pfb\b/hvb_____.pfb/x',
-	's/\buhvb8ac.pfb\b/hvnb____.pfb/x',
-	's/\buhvbo8a.pfb\b/hvbo____.pfb/x',
-	's/\buhvbo8ac.pfb\b/hvnbo___.pfb/x',
-	's/\buhvr8a.pfb\b/hv______.pfb/x',
-	's/\buhvr8ac.pfb\b/hvn_____.pfb/x',
-	's/\buhvro8a.pfb\b/hvo_____.pfb/x',
-	's/\buhvro8ac.pfb\b/hvno____.pfb/x',
-	's/\buncb8a.pfb\b/ncb_____.pfb/x',
-	's/\buncbi8a.pfb\b/ncbi____.pfb/x',
-	's/\buncr8a.pfb\b/ncr_____.pfb/x',
-	's/\buncri8a.pfb\b/nci_____.pfb/x',
-	's/\buplb8a.pfb\b/pob_____.pfb/x',
-	's/\buplbi8a.pfb\b/pobi____.pfb/x',
-	's/\buplr8a.pfb\b/por_____.pfb/x',
-	's/\buplri8a.pfb\b/poi_____.pfb/x',
-	's/\busyr.pfb\b/sy______.pfb/x',
-	's/\butmb8a.pfb\b/tib_____.pfb/x',
-	's/\butmbi8a.pfb\b/tibi____.pfb/x',
-	's/\butmr8a.pfb\b/tir_____.pfb/x',
-	's/\butmri8a.pfb\b/tii_____.pfb/x',
-	's/\buzcmi8a.pfb\b/zcmi____.pfb/x',
-	's/\buzdr.pfb\b/zd______.pfb/x'
+	's/\buagd8a.pfb\b/agd_____.pfb/',
+	's/\buagdo8a.pfb\b/agdo____.pfb/',
+	's/\buagk8a.pfb\b/agw_____.pfb/',
+	's/\buagko8a.pfb\b/agwo____.pfb/',
+	's/\bubkd8a.pfb\b/bkd_____.pfb/',
+	's/\bubkdi8a.pfb\b/bkdi____.pfb/',
+	's/\bubkl8a.pfb\b/bkl_____.pfb/',
+	's/\bubkli8a.pfb\b/bkli____.pfb/',
+	's/\bucrb8a.pfb\b/cob_____.pfb/',
+	's/\bucrbo8a.pfb\b/cobo____.pfb/',
+	's/\bucrr8a.pfb\b/com_____.pfb/',
+	's/\bucrro8a.pfb\b/coo_____.pfb/',
+	's/\buhvb8a.pfb\b/hvb_____.pfb/',
+	's/\buhvb8ac.pfb\b/hvnb____.pfb/',
+	's/\buhvbo8a.pfb\b/hvbo____.pfb/',
+	's/\buhvbo8ac.pfb\b/hvnbo___.pfb/',
+	's/\buhvr8a.pfb\b/hv______.pfb/',
+	's/\buhvr8ac.pfb\b/hvn_____.pfb/',
+	's/\buhvro8a.pfb\b/hvo_____.pfb/',
+	's/\buhvro8ac.pfb\b/hvno____.pfb/',
+	's/\buncb8a.pfb\b/ncb_____.pfb/',
+	's/\buncbi8a.pfb\b/ncbi____.pfb/',
+	's/\buncr8a.pfb\b/ncr_____.pfb/',
+	's/\buncri8a.pfb\b/nci_____.pfb/',
+	's/\buplb8a.pfb\b/pob_____.pfb/',
+	's/\buplbi8a.pfb\b/pobi____.pfb/',
+	's/\buplr8a.pfb\b/por_____.pfb/',
+	's/\buplri8a.pfb\b/poi_____.pfb/',
+	's/\busyr.pfb\b/sy______.pfb/',
+	's/\butmb8a.pfb\b/tib_____.pfb/',
+	's/\butmbi8a.pfb\b/tibi____.pfb/',
+	's/\butmr8a.pfb\b/tir_____.pfb/',
+	's/\butmri8a.pfb\b/tii_____.pfb/',
+	's/\buzcmi8a.pfb\b/zcmi____.pfb/',
+	's/\buzdr.pfb\b/zd______.pfb/',
 		);
 
 &main;
@@ -232,9 +232,10 @@ exit 0;
 ###############################################################################
 # progname()
 #   return the name of the program.  Needed if invoked by a wrapper. 
-###############################################################################
+#
 sub progname {
-  if (`kpsewhich --var-value=TEXMFVAR` eq `kpsewhich --var-value=TEXMFSYSVAR`) {
+  if (`kpsewhich --var-value=TEXMFVAR`
+      eq `kpsewhich --var-value=TEXMFSYSVAR`) {
     return 'updmap-sys';
   } else {
     return 'updmap';
@@ -247,11 +248,12 @@ sub version {
   return $ret;
 }
 
+
 ###############################################################################
 # equalize_file(filename[, comment_char])
 #   read a file and return its processed content as a string.
 #   look into the source code for more details.
-###############################################################################
+#
 sub equalize_file {
   my $file=shift;
   my $comment=shift;
@@ -274,7 +276,7 @@ sub equalize_file {
 ###############################################################################
 # files_are_different(file_A, file_B[, comment_char])
 #   compare two equalized files.
-###############################################################################
+#
 sub files_are_different {
   my $file_A=shift;
   my $file_B=shift;
@@ -291,7 +293,7 @@ sub files_are_different {
 # files_are_equal(file_A, file_B[, comment_char])
 #   compare two equalized files.  Same as files_are_different() with
 #   return value inverted.
-###############################################################################
+#
 sub files_are_equal {
   return (&files_are_different (@_))? 0:1;
 }
@@ -299,7 +301,7 @@ sub files_are_equal {
 ###############################################################################
 # files_are_identical(file_A, file_B)
 #   compare two files.  Same as cmp(1).
-###############################################################################
+#
 sub files_are_identical {
   my $file_A=shift;
   my $file_B=shift;
@@ -318,7 +320,7 @@ sub files_are_identical {
 
 ###############################################################################
 # getLines()
-#   return the lines in $filename
+#
 ###############################################################################
 sub getLines {
   my @lines = ();
@@ -352,7 +354,7 @@ sub getLines {
 ###############################################################################
 # writeLines()
 #   write the lines in $filename
-###############################################################################
+#
 sub writeLines {
   my ($fname, @lines) = @_;
   map { ($_ !~ m/\n$/ ? s/$/\n/ : $_ ) } @lines;
@@ -364,7 +366,7 @@ sub writeLines {
 ###############################################################################
 # copyFile()
 #   copy file $src to $dst, sets $dst creation and mod time
-###############################################################################
+#
 sub copyFile {
   my ($src, $dst) = @_;
   my $dir;
@@ -385,10 +387,11 @@ sub copyFile {
   utime($t[8], $t[9], $dst);
 }
 
+
 ###############################################################################
 # help()
 #   display help message and exit
-###############################################################################
+#
 sub help {
   my $progname=&progname();
   my $usage= <<"EOF";
@@ -456,11 +459,11 @@ EOF
   exit 0;
 }
 
-
+
 ###############################################################################
 # cfgval(variable)
 #   read variable ($1) from config file
-###############################################################################
+#
 sub cfgval {
   my ($variable) = @_;
   my $value;
@@ -492,7 +495,7 @@ sub cfgval {
 ###############################################################################
 # SymlinkOrCopy(dir, src, dest)
 #   create symlinks if possible, otherwise copy files 
-###############################################################################
+#
 sub SymlinkOrCopy {
   my ($dir, $src, $dest) = @_;
   if (&win32 || $copy) {  # always copy
@@ -508,7 +511,7 @@ sub SymlinkOrCopy {
 ###############################################################################
 # setupSymlinks()
 #   set symlink for psfonts.map according to dvipsPreferOutline variable
-###############################################################################
+#
 sub setupSymlinks {
   my $src;
 
@@ -529,12 +532,13 @@ sub setupSymlinks {
   &SymlinkOrCopy("$pdftexoutputdir", "$src", "pdftex.map");
 }
 
+
 ###############################################################################
 # transLW35(args ...)
 #   transform fontname and filenames according to transformation specified
 #   by mode.  Possible values:
 #      URW|URWkb|ADOBE|ADOBEkb
-###############################################################################
+#
 sub transLW35 {
   my ($name) = @_;
   my @lines = &getLines($name);
@@ -560,7 +564,7 @@ sub transLW35 {
 ###############################################################################
 # locateWeb2c (file ...)
 #   apply kpsewhich with format 'web2c files'
-###############################################################################
+#
 sub locateWeb2c {
   my @files = @_;
   return @files if ($#files < 0);
@@ -577,7 +581,7 @@ sub locateWeb2c {
 ###############################################################################
 # locateMap (file ...)
 #   apply kpsewhich with format 'dvips config'
-###############################################################################
+#
 sub locateMap {
   my @maps = @_;
   my @files;
@@ -603,7 +607,7 @@ sub locateMap {
 #   filter config file by regex for map lines and extract the map filenames.
 #   These are then looked up (by kpsewhich in locateMap) and the content of
 #   all map files is send to stdout.
-###############################################################################
+#
 sub catMaps {
   my ($map) = @_;
   my %count = ( );
@@ -623,7 +627,7 @@ sub catMaps {
 # configReplace(file, pattern, line)
 #   The first line in file that matches pattern gets replaced by line.
 #   line will be added at the end of the file if pattern does not match.
-###############################################################################
+#
 sub configReplace {
   my ($file, $pat, $line) = @_;
   my @lines = &getLines($file);
@@ -643,7 +647,7 @@ sub configReplace {
 # setOption (option, value)
 #   sets option to value in the config file (replacing the existing setting
 #   or by adding a new line to the config file).
-###############################################################################
+#
 sub setOption {
   my ($opt, $val) = @_;
 
@@ -667,7 +671,7 @@ sub setOption {
 ###############################################################################
 # enableMap (type, map)
 #   enables an entry in the config file for map with a given type.
-###############################################################################
+#
 sub enableMap {
   my ($type, $map) = @_;
 
@@ -685,7 +689,7 @@ sub enableMap {
 ###############################################################################
 # disableMap (map)
 #   disables map in config file (any type)
-###############################################################################
+#
 sub disableMap {
   my ($map) = @_;
   my %count = ();
@@ -710,7 +714,7 @@ sub disableMap {
 ###############################################################################
 # initVars()
 #   initialize global variables
-###############################################################################
+#
 sub initVars {
   $progname="updmap";
   $quiet = 0;
@@ -726,7 +730,7 @@ sub initVars {
 ###############################################################################
 # showOptions(item)
 #   show Options for an item
-###############################################################################
+#
 sub showOptions {
   foreach my $item (@_) {
     if ($item eq "LW35") {
@@ -749,7 +753,7 @@ sub showOptions {
 #   find an output directory if none specified on cmd line. First choice is
 #   $TEXMFVAR/fonts/map/updmap (if TEXMFVAR is set), next is relative to
 #   config file location. Fallback is $TEXMFMAIN/fonts/map/updmap.
-###############################################################################
+#
 sub setupOutputDir {
   my($od, $driver) = @_;
 
@@ -780,7 +784,7 @@ sub setupDestDir {
 ###############################################################################
 # setupCfgFile()
 #   find config file if none specified on cmd line.
-###############################################################################
+#
 sub setupCfgFile {
   if (! $cnfFile) {
     my $tf = `kpsewhich --var-value=TEXMFCONFIG`;
@@ -807,10 +811,11 @@ sub setupCfgFile {
   }
 }
 
+
 ###############################################################################
 # processOptions()
 #   process cmd line options
-###############################################################################
+#
 sub processOptions {
   unless (&GetOptions (
       "cnffile=s" => \$cnfFile,
@@ -818,7 +823,7 @@ sub processOptions {
       "disable=s" => \@disableItem,
       "dvipsoutputdir=s" => \$dvipsoutputdir,
       "enable=s" => \$enableItem,
-      "e|edit" => \$opt_edit,
+      "edit" => \$opt_edit,
       "force" => \$opt_force,
       "listavailablemaps" => \$listavailablemaps,
       "l|listmaps" => \$listmaps,
@@ -834,7 +839,7 @@ sub processOptions {
       "version" => sub { print &version() . "\n"; exit(0) },
       "h|help" => \$opt_help)) {
     my $progname = &progname();
-    die "Try \"$progname --help\".\n";
+    die "Try \"$progname --help\" for more information.\n";
   }
 
   if ($outputdir) {
@@ -842,12 +847,12 @@ sub processOptions {
     $pdftexoutputdir = $outputdir if (! $pdftexoutputdir);
   }
   if ($cnfFile && ! -f $cnfFile) {
-    die "Config file \"$cnfFile\" not found.\n";
+    die "$0: Config file \"$cnfFile\" not found.\n";
   }
-  if ($dvipsoutputdir && ! -d $dvipsoutputdir) {
+  if ($dvipsoutputdir && ! $dry_run && ! -d $dvipsoutputdir) {
     &mkdirhier ($dvipsoutputdir);
   }
-  if ($pdftexoutputdir && ! -d $pdftexoutputdir) {
+  if ($pdftexoutputdir && ! $dry_run && ! -d $pdftexoutputdir) {
     &mkdirhier ($pdftexoutputdir);
   }
 }
@@ -855,7 +860,7 @@ sub processOptions {
 ###############################################################################
 # listMaps()
 #   list all maps mentioned in the config file
-###############################################################################
+#
 sub listMaps {
   my $what=shift;
   my @mapfiles;
@@ -899,7 +904,7 @@ sub listMaps {
 # normalizeLines()
 #   remove comments, whitespace is exactly one space, no empty lines,
 #   no whitespace at end of line, one space before and after "
-###############################################################################
+#
 sub normalizeLines {
   my @lines = @_;
   my %count = ();
@@ -919,9 +924,11 @@ sub normalizeLines {
 
 ###############################################################################
 # to_pdftex()
-#   strip "PS_Encoding_Name ReEncodeFont" from map entries because
-#   they are ignored by pdftex anyway.
-###############################################################################
+#   if $pdftexStripEnc is set, strip "PS_Encoding_Name ReEncodeFont"
+#   from map entries; they are ignored by pdftex.  But since the sh
+#   incarnation of updmap included them, and we want to minimize
+#   differences, this is not done by default.
+#
 sub to_pdftex {
   return unless $pdftexStripEnc;
   my @in = @_;
@@ -936,10 +943,11 @@ sub to_pdftex {
   return @out;
 }
 
+
 ###############################################################################
 # mkMaps()
 #   the main task of this script: create the output files
-###############################################################################
+#
 sub mkMaps {
   my @lines;
   my $logfile;
@@ -1169,20 +1177,20 @@ sub mkMaps {
   print "\nTranscript written on \"$logfile\".\n" if (! $quiet);
 }
 
+
 ###############################################################################
 # main()
-#   execution starts here
-###############################################################################
+#
 sub main {
   &initVars;
   &processOptions;
+
+  &help if ($opt_help);
 
   if (@showoptions) {
     &showOptions(@showoptions);
     exit 0;
   }
-
-  &help if ($opt_help);
 
   &setupCfgFile;
 
@@ -1206,47 +1214,42 @@ sub main {
   my $cmd = '';
 
   if ($opt_edit) {
-    my $editor = undef;
-    $editor ||= $ENV{'EDITOR'};
-    $editor ||= $ENV{'VISUAL'};
-    if (&win32) {
-      $editor ||= "notepad";
-    } else {
-      $editor ||= "vi";
-    }
     $cmd = 'edit';
-    system("$editor $cnfFile");
-  }
-  elsif (keys %setOption) {
+    my $editor = $ENV{'VISUAL'} || $ENV{'EDITOR'};
+    $editor ||= (&win32 ? "notepad" : "vi");
+    system($editor, $cnfFile);
+
+  } elsif (keys %setOption) {
     $cmd = 'setOption';
     foreach my $m (keys %setOption) {
       &setOption ($m, $setOption{$m});
     }
-  }
-  elsif ($enableItem) {
+
+  } elsif ($enableItem) {
     $cmd = 'enableMap';
-    if ($enableItem=~/=/) {
+    if ($enableItem =~ /=/) {
       &enableMap(split('=', $enableItem));
     } else {
       &enableMap($enableItem, shift @ARGV);
     }
-  }
-  elsif (@disableItem) {
+
+  } elsif (@disableItem) {
     $cmd = 'disableMap';
     foreach my $m (@disableItem) {
       &disableMap($m);
     }
   }
+
   if ($cmd && !$opt_force && &files_are_equal($bakFile, $cnfFile)) {
     print "$cnfFile unchanged.  Map files not recreated.\n" unless ($quiet);
-  }
-  else {
+  } else {
     if (! $nomkmap) {
       &setupDestDir;
       &mkMaps;
     }
     unlink ($bakFile);
   }
+
   $updLSR->{exec}() unless $nohash;
 }
 __END__
