@@ -61,7 +61,7 @@ my @missing;
 my $writelog = 0;
 my $cache = 0; # don't change!
 my $copy;
-my $pdftexStripEnc=1;
+my $pdftexStripEnc = 0;
 
 # initialize mktexupd
 my $updLSR=&mktexupd();
@@ -69,45 +69,42 @@ $updLSR->{mustexist}(0);
 
 my @cfg = ();
 
-my @psADOBE = ( # this list is in reverse order by PostScript name
-                # so that the Times-BoldItalic substitution (for
-                # example) happens before Times-Bold.  Otherwise the
-                # result is the bogus "Times-Bold Ital".
-        's/Dingbats/ZapfDingbats/',
-        's/URWChanceryL-MediItal/ZapfChancery-MediumItalic/',
-        's/NimbusRomNo9L-ReguItal/Times-Italic/',
-        's/NimbusRomNo9L-Regu/Times-Roman/',
-        's/NimbusRomNo9L-MediItal/Times-BoldItalic/',
-        's/NimbusRomNo9L-Medi/Times-Bold/',
-        's/StandardSymL/Symbol/',
-        's/URWPalladioL-Ital/Palatino-Italic/',
-        's/URWPalladioL-Roma/Palatino-Roman/',
-        's/URWPalladioL-BoldItal/Palatino-BoldItalic/',
-        's/URWPalladioL-Bold/Palatino-Bold/',
-        's/CenturySchL-Ital/NewCenturySchlbk-Italic/',
-        's/CenturySchL-Roma/NewCenturySchlbk-Roman/',
-        's/CenturySchL-BoldItal/NewCenturySchlbk-BoldItalic/',
-        's/CenturySchL-Bold/NewCenturySchlbk-Bold/',
-        's/NimbusSanL-ReguCondItal/Helvetica-Narrow-Oblique/',
-        's/NimbusSanL-ReguItal/Helvetica-Oblique/',
-        's/NimbusSanL-ReguCond/Helvetica-Narrow/',
-        's/NimbusSanL-Regu/Helvetica/',
-        's/NimbusSanL-BoldCondItal/Helvetica-Narrow-BoldOblique/',
-        's/NimbusSanL-BoldItal/Helvetica-BoldOblique/',
-        's/NimbusSanL-BoldCond/Helvetica-Narrow-Bold/',
-        's/NimbusSanL-Bold/Helvetica-Bold/',
-        's/NimbusMonL-ReguObli/Courier-Oblique/',
-        's/NimbusMonL-Regu/Courier/',
-        's/NimbusMonL-BoldObli/Courier-BoldOblique/',
-        's/NimbusMonL-Bold/Courier-Bold/',
-        's/URWBookmanL-LighItal/Bookman-LightItalic/',
-        's/URWBookmanL-Ligh/Bookman-Light/',
-        's/URWBookmanL-DemiBoldItal/Bookman-DemiItalic/',
-        's/URWBookmanL-DemiBold/Bookman-Demi/',
-        's/URWGothicL-BookObli/AvantGarde-BookOblique/',
-        's/URWGothicL-Book/AvantGarde-Book/',
-        's/URWGothicL-DemiObli/AvantGarde-DemiOblique/',
-        's/URWGothicL-Demi/AvantGarde-Demi/',
+my @psADOBE = (
+       's/ URWGothicL-Demi / AvantGarde-Demi /',
+       's/ URWGothicL-DemiObli / AvantGarde-DemiOblique /',
+       's/ URWGothicL-Book / AvantGarde-Book /',
+       's/ URWGothicL-BookObli / AvantGarde-BookOblique /',
+       's/ URWBookmanL-DemiBold / Bookman-Demi /',
+       's/ URWBookmanL-DemiBoldItal / Bookman-DemiItalic /',
+       's/ URWBookmanL-Ligh / Bookman-Light /',
+       's/ URWBookmanL-LighItal / Bookman-LightItalic /',
+       's/ NimbusMonL-Bold / Courier-Bold /',
+       's/ NimbusMonL-BoldObli / Courier-BoldOblique /',
+       's/ NimbusMonL-Regu / Courier /',
+       's/ NimbusMonL-ReguObli / Courier-Oblique /',
+       's/ NimbusSanL-Bold / Helvetica-Bold /',
+       's/ NimbusSanL-BoldCond / Helvetica-Narrow-Bold /',
+       's/ NimbusSanL-BoldItal / Helvetica-BoldOblique /',
+       's/ NimbusSanL-BoldCondItal / Helvetica-Narrow-BoldOblique /',
+       's/ NimbusSanL-Regu / Helvetica /',
+       's/ NimbusSanL-ReguCond / Helvetica-Narrow /',
+       's/ NimbusSanL-ReguItal / Helvetica-Oblique /',
+       's/ NimbusSanL-ReguCondItal / Helvetica-Narrow-Oblique /',
+       's/ CenturySchL-Bold / NewCenturySchlbk-Bold /',
+       's/ CenturySchL-BoldItal / NewCenturySchlbk-BoldItalic /',
+       's/ CenturySchL-Roma / NewCenturySchlbk-Roman /',
+       's/ CenturySchL-Ital / NewCenturySchlbk-Italic /',
+       's/ URWPalladioL-Bold / Palatino-Bold /',
+       's/ URWPalladioL-BoldItal / Palatino-BoldItalic /',
+       's/ URWPalladioL-Roma / Palatino-Roman /',
+       's/ URWPalladioL-Ital / Palatino-Italic /',
+       's/ StandardSymL / Symbol /',
+       's/ NimbusRomNo9L-Medi / Times-Bold /',
+       's/ NimbusRomNo9L-MediItal / Times-BoldItalic /',
+       's/ NimbusRomNo9L-Regu / Times-Roman /',
+       's/ NimbusRomNo9L-ReguItal / Times-Italic /',
+       's/ URWChanceryL-MediItal / ZapfChancery-MediumItalic /',
+       's/ Dingbats / ZapfDingbats /',
 		);
 
 my @fileADOBEkb = (
@@ -423,7 +420,7 @@ Valid commands:
   --edit                    edit updmap.cfg file
   --showoptions ITEM        show alternatives for options
   --setoption OPTION VALUE  set option, where OPTION is one of:
-                             dvipsPreferOutline, LW35, dvipsDownloadBase35,
+                             LW35, dvipsPreferOutline, dvipsDownloadBase35,
                              or pdftexDownloadBase14
   --setoption OPTION=VALUE  as above, just different syntax
   --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
@@ -453,6 +450,7 @@ Report bugs to: tex-k\@tug.org
 TeX Live home page: <http://tug.org/texlive/>
 EOF
 ;
+  print &version() . "\n";
   print $usage;
   exit 0;
 }
@@ -551,7 +549,7 @@ sub transLW35 {
     for my $r (@psADOBE) {
       map { eval($r); } @lines;
     }
-    my @filemode = eval ("\@file" .$mode);
+    my @filemode = eval ("\@file" . $mode);
     for my $r (@filemode) {
       map { eval($r); } @lines;
     }
@@ -849,6 +847,7 @@ sub processOptions {
       "cnffile=s" => \$cnfFile,
       "copy" => \$copy,
       "disable=s" => \@disableItem,
+      "dvipdfmoutputdir=s" => sub {print "$0: ignoring --dvipdfmoutputdir\n"},
       "dvipsoutputdir=s" => \$dvipsoutputdir,
       "enable=s" => \$enableItem,
       "edit" => \$opt_edit,
@@ -864,7 +863,7 @@ sub processOptions {
       "setoption=s{1,2}" => \@setoptions,
       "showoptions=s" => \@showoptions,
       "syncwithtrees" => \$syncwithtrees,
-      "version" => sub { print &version() . "\n"; exit(0) },
+      "version" => sub { print &version() . "\n"; exit(0); },
       "h|help" => \$opt_help)) {
     my $progname = &progname();
     die "Try \"$progname --help\" for more information.\n";
@@ -958,7 +957,7 @@ sub normalizeLines {
 #   differences, this is not done by default.
 #
 sub to_pdftex {
-  return unless $pdftexStripEnc;
+  return @_ unless $pdftexStripEnc;
   my @in = @_;
   my @out;
   foreach my $line (@in) {
@@ -1023,26 +1022,26 @@ sub mkMaps {
   $pdftexDownloadBase14 = &cfgval("pdftexDownloadBase14");
   $pdftexDownloadBase14 = 1 unless (defined $pdftexDownloadBase14);
 
-  &wlog ("\nupdmap " .
-         ($dry_run ? "would create" : "is creating") .
-         " new map files using the following configuration:" .
-         "\n  LW35 font names                  : " . 
-         $mode .
-         "\n  prefer outlines                  : " . 
-         ($dvipsPreferOutline ? "true" : "false") .
-         "\n  texhash enabled                  : " .
-         ($nohash ? "false" : "true") .
-         "\n  download standard fonts (dvips)  : " .
-         ($dvipsDownloadBase35 ? "true" : "false") .
-         "\n  download standard fonts (pdftex) : " .
-         ($pdftexDownloadBase14 ? "true" : "false") . 
-         "\n\n");
+  &wlog ("\nupdmap "
+         . ($dry_run ? "would create" : "is creating")
+         . " new map files using the following configuration:"
+         . "\n  LW35 font names                  : "
+         .      $mode
+         . "\n  prefer outlines                  : "
+         .      ($dvipsPreferOutline ? "true" : "false")
+         . "\n  texhash enabled                  : "
+         .      ($nohash ? "false" : "true")
+         . "\n  download standard fonts (dvips)  : "
+         .      ($dvipsDownloadBase35 ? "true" : "false")
+         . "\n  download standard fonts (pdftex) : "
+         .      ($pdftexDownloadBase14 ? "true" : "false")
+         . "\n\n");
 
   &wlog ("Scanning for LW35 support files");
   $dvips35 = &locateMap("dvips35.map");
   $pdftex35 = &locateMap("pdftex35.map");
   $ps2pk35 = &locateMap("ps2pk35.map");
-  my $LW35="\n$dvips35\n$pdftex35\n$ps2pk35\n\n";
+  my $LW35 = "\n$dvips35\n$pdftex35\n$ps2pk35\n\n";
   if ($dry_run) {
     print $LW35;
   } else {
@@ -1081,7 +1080,7 @@ sub mkMaps {
   if (@missing > 0) {
     print STDERR "\nERROR:  The following map file(s) couldn't be found:\n\t";
     print STDERR join(' ', @missing);
-    my $progname=&progname();
+    my $progname = &progname();
     print STDERR "\n\n\tDid you run mktexlsr?\n\n" .
         "\tYou can delete non-existent map entries using the command\n".
         "\n\t  $progname --syncwithtrees\n\n";

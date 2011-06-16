@@ -1,5 +1,22 @@
 2011-06-16  Karl Berry  <karl@tug.org>
 
+	* updmap.pl ($pdftexStripEnc): set to zero.
+	(to_pdftex): return the input, not empty.
+	(ProcessOptions): accept and ignore dvipdfmoutputdir.
+	
+	* updmap.pl (@psADOBE): use the same list as from sh updmap,
+	including the spaces, to be sure we are getting the same behavior.
+	
+	Related:
+	* Master/texmf/fonts/map/dvips/tetex/pdftex35.map,
+	* Master/texmf/fonts/map/dvips/tetex/ps2pk35.map (phvbo8rn,phvbo8yn):
+        ever since at least TL 7, these have had
+	spurious "-Narrow-BoldOblique" suffixes on the correct
+	NimbusSanL-BoldCondItal, left over from the Adobe
+	Helvetica-Narrow-BoldOblique.
+	(Yet the fonts could still be used.)
+	* Master/texmf/fonts/map/{dvips,pdftex}/updmap: regenerate.
+
 	* updmap.pl: support --setoption foo bar as well as foo=bar,
 	for compatibility.
 	(setOptions): new fn.
