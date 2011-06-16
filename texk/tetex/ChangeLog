@@ -1,6 +1,7 @@
 2011-06-16  Karl Berry  <karl@tug.org>
 
 	* updmap.pl (help): add more info and modify to work with help2man.
+	* updmap.man: generate with help2man.
 
 	* updmap.pl (progname): eliminate fn in favor of $0
 	or hardwired "updmap" as appropriate.
