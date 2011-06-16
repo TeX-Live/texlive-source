@@ -21,6 +21,7 @@ $Getopt::Long::autoabbrev=0;
 Getopt::Long::Configure (qw(ignore_case_always));
 
 my $progname='updmap';
+
 my $cnfFile;
 my $cnfFileShort;
 my $outputdir;
@@ -29,6 +30,7 @@ my $pdftexoutputdir;
 my $quiet;
 my $nohash;
 my $nomkmap;
+my (@psADOBE, @fileADOBE, @fileADOBEkb, @fileURW);
 
 my $enableItem;
 my @setoptions = ();
@@ -55,12 +57,12 @@ my $pdftex35;
 my $ps2pk35;
 
 my $newcnf;
+my $copy;
 my %link;
 my %maps;
 my @missing;
 my $writelog = 0;
 my $cache = 0; # don't change!
-my $copy;
 my $pdftexStripEnc = 0;
 
 # initialize mktexupd
@@ -69,160 +71,88 @@ $updLSR->{mustexist}(0);
 
 my @cfg = ();
 
-my @psADOBE = (
-       's/ URWGothicL-Demi / AvantGarde-Demi /',
-       's/ URWGothicL-DemiObli / AvantGarde-DemiOblique /',
-       's/ URWGothicL-Book / AvantGarde-Book /',
-       's/ URWGothicL-BookObli / AvantGarde-BookOblique /',
-       's/ URWBookmanL-DemiBold / Bookman-Demi /',
-       's/ URWBookmanL-DemiBoldItal / Bookman-DemiItalic /',
-       's/ URWBookmanL-Ligh / Bookman-Light /',
-       's/ URWBookmanL-LighItal / Bookman-LightItalic /',
-       's/ NimbusMonL-Bold / Courier-Bold /',
-       's/ NimbusMonL-BoldObli / Courier-BoldOblique /',
-       's/ NimbusMonL-Regu / Courier /',
-       's/ NimbusMonL-ReguObli / Courier-Oblique /',
-       's/ NimbusSanL-Bold / Helvetica-Bold /',
-       's/ NimbusSanL-BoldCond / Helvetica-Narrow-Bold /',
-       's/ NimbusSanL-BoldItal / Helvetica-BoldOblique /',
-       's/ NimbusSanL-BoldCondItal / Helvetica-Narrow-BoldOblique /',
-       's/ NimbusSanL-Regu / Helvetica /',
-       's/ NimbusSanL-ReguCond / Helvetica-Narrow /',
-       's/ NimbusSanL-ReguItal / Helvetica-Oblique /',
-       's/ NimbusSanL-ReguCondItal / Helvetica-Narrow-Oblique /',
-       's/ CenturySchL-Bold / NewCenturySchlbk-Bold /',
-       's/ CenturySchL-BoldItal / NewCenturySchlbk-BoldItalic /',
-       's/ CenturySchL-Roma / NewCenturySchlbk-Roman /',
-       's/ CenturySchL-Ital / NewCenturySchlbk-Italic /',
-       's/ URWPalladioL-Bold / Palatino-Bold /',
-       's/ URWPalladioL-BoldItal / Palatino-BoldItalic /',
-       's/ URWPalladioL-Roma / Palatino-Roman /',
-       's/ URWPalladioL-Ital / Palatino-Italic /',
-       's/ StandardSymL / Symbol /',
-       's/ NimbusRomNo9L-Medi / Times-Bold /',
-       's/ NimbusRomNo9L-MediItal / Times-BoldItalic /',
-       's/ NimbusRomNo9L-Regu / Times-Roman /',
-       's/ NimbusRomNo9L-ReguItal / Times-Italic /',
-       's/ URWChanceryL-MediItal / ZapfChancery-MediumItalic /',
-       's/ Dingbats / ZapfDingbats /',
-		);
-
-my @fileADOBEkb = (
-        's/\buagd8a.pfb\b/pagd8a.pfb/',
-        's/\buagdo8a.pfb\b/pagdo8a.pfb/',
-        's/\buagk8a.pfb\b/pagk8a.pfb/',
-        's/\buagko8a.pfb\b/pagko8a.pfb/',
-        's/\bubkd8a.pfb\b/pbkd8a.pfb/',
-        's/\bubkdi8a.pfb\b/pbkdi8a.pfb/',
-        's/\bubkl8a.pfb\b/pbkl8a.pfb/',
-        's/\bubkli8a.pfb\b/pbkli8a.pfb/',
-        's/\bucrb8a.pfb\b/pcrb8a.pfb/',
-        's/\bucrbo8a.pfb\b/pcrbo8a.pfb/',
-        's/\bucrr8a.pfb\b/pcrr8a.pfb/',
-        's/\bucrro8a.pfb\b/pcrro8a.pfb/',
-        's/\buhvb8a.pfb\b/phvb8a.pfb/',
-        's/\buhvb8ac.pfb\b/phvb8an.pfb/',
-        's/\buhvbo8a.pfb\b/phvbo8a.pfb/',
-        's/\buhvbo8ac.pfb\b/phvbo8an.pfb/',
-        's/\buhvr8a.pfb\b/phvr8a.pfb/',
-        's/\buhvr8ac.pfb\b/phvr8an.pfb/',
-        's/\buhvro8a.pfb\b/phvro8a.pfb/',
-        's/\buhvro8ac.pfb\b/phvro8an.pfb/',
-        's/\buncb8a.pfb\b/pncb8a.pfb/',
-        's/\buncbi8a.pfb\b/pncbi8a.pfb/',
-        's/\buncr8a.pfb\b/pncr8a.pfb/',
-        's/\buncri8a.pfb\b/pncri8a.pfb/',
-        's/\buplb8a.pfb\b/pplb8a.pfb/',
-        's/\buplbi8a.pfb\b/pplbi8a.pfb/',
-        's/\buplr8a.pfb\b/pplr8a.pfb/',
-        's/\buplri8a.pfb\b/pplri8a.pfb/',
-        's/\busyr.pfb\b/psyr.pfb/',
-        's/\butmb8a.pfb\b/ptmb8a.pfb/',
-        's/\butmbi8a.pfb\b/ptmbi8a.pfb/',
-        's/\butmr8a.pfb\b/ptmr8a.pfb/',
-        's/\butmri8a.pfb\b/ptmri8a.pfb/',
-        's/\buzcmi8a.pfb\b/pzcmi8a.pfb/',
-        's/\buzdr.pfb\b/pzdr.pfb/',
-		  );
-
-my @fileURW = (
-	's/\buagd8a.pfb\b/a010015l.pfb/',
-	's/\buagdo8a.pfb\b/a010035l.pfb/',
-	's/\buagk8a.pfb\b/a010013l.pfb/',
-	's/\buagko8a.pfb\b/a010033l.pfb/',
-	's/\bubkd8a.pfb\b/b018015l.pfb/',
-	's/\bubkdi8a.pfb\b/b018035l.pfb/',
-	's/\bubkl8a.pfb\b/b018012l.pfb/',
-	's/\bubkli8a.pfb\b/b018032l.pfb/',
-	's/\bucrb8a.pfb\b/n022004l.pfb/',
-	's/\bucrbo8a.pfb\b/n022024l.pfb/',
-	's/\bucrr8a.pfb\b/n022003l.pfb/',
-	's/\bucrro8a.pfb\b/n022023l.pfb/',
-	's/\buhvb8a.pfb\b/n019004l.pfb/',
-	's/\buhvb8ac.pfb\b/n019044l.pfb/',
-	's/\buhvbo8a.pfb\b/n019024l.pfb/',
-	's/\buhvbo8ac.pfb\b/n019064l.pfb/',
-	's/\buhvr8a.pfb\b/n019003l.pfb/',
-	's/\buhvr8ac.pfb\b/n019043l.pfb/',
-	's/\buhvro8a.pfb\b/n019023l.pfb/',
-	's/\buhvro8ac.pfb\b/n019063l.pfb/',
-	's/\buncb8a.pfb\b/c059016l.pfb/',
-	's/\buncbi8a.pfb\b/c059036l.pfb/',
-	's/\buncr8a.pfb\b/c059013l.pfb/',
-	's/\buncri8a.pfb\b/c059033l.pfb/',
-	's/\buplb8a.pfb\b/p052004l.pfb/',
-	's/\buplbi8a.pfb\b/p052024l.pfb/',
-	's/\buplr8a.pfb\b/p052003l.pfb/',
-	's/\buplri8a.pfb\b/p052023l.pfb/',
-	's/\busyr.pfb\b/s050000l.pfb/',
-	's/\butmb8a.pfb\b/n021004l.pfb/',
-	's/\butmbi8a.pfb\b/n021024l.pfb/',
-	's/\butmr8a.pfb\b/n021003l.pfb/',
-	's/\butmri8a.pfb\b/n021023l.pfb/',
-	's/\buzcmi8a.pfb\b/z003034l.pfb/',
-	's/\buzdr.pfb\b/d050000l.pfb/',
-		   );
-
-my @fileADOBE = (
-	's/\buagd8a.pfb\b/agd_____.pfb/',
-	's/\buagdo8a.pfb\b/agdo____.pfb/',
-	's/\buagk8a.pfb\b/agw_____.pfb/',
-	's/\buagko8a.pfb\b/agwo____.pfb/',
-	's/\bubkd8a.pfb\b/bkd_____.pfb/',
-	's/\bubkdi8a.pfb\b/bkdi____.pfb/',
-	's/\bubkl8a.pfb\b/bkl_____.pfb/',
-	's/\bubkli8a.pfb\b/bkli____.pfb/',
-	's/\bucrb8a.pfb\b/cob_____.pfb/',
-	's/\bucrbo8a.pfb\b/cobo____.pfb/',
-	's/\bucrr8a.pfb\b/com_____.pfb/',
-	's/\bucrro8a.pfb\b/coo_____.pfb/',
-	's/\buhvb8a.pfb\b/hvb_____.pfb/',
-	's/\buhvb8ac.pfb\b/hvnb____.pfb/',
-	's/\buhvbo8a.pfb\b/hvbo____.pfb/',
-	's/\buhvbo8ac.pfb\b/hvnbo___.pfb/',
-	's/\buhvr8a.pfb\b/hv______.pfb/',
-	's/\buhvr8ac.pfb\b/hvn_____.pfb/',
-	's/\buhvro8a.pfb\b/hvo_____.pfb/',
-	's/\buhvro8ac.pfb\b/hvno____.pfb/',
-	's/\buncb8a.pfb\b/ncb_____.pfb/',
-	's/\buncbi8a.pfb\b/ncbi____.pfb/',
-	's/\buncr8a.pfb\b/ncr_____.pfb/',
-	's/\buncri8a.pfb\b/nci_____.pfb/',
-	's/\buplb8a.pfb\b/pob_____.pfb/',
-	's/\buplbi8a.pfb\b/pobi____.pfb/',
-	's/\buplr8a.pfb\b/por_____.pfb/',
-	's/\buplri8a.pfb\b/poi_____.pfb/',
-	's/\busyr.pfb\b/sy______.pfb/',
-	's/\butmb8a.pfb\b/tib_____.pfb/',
-	's/\butmbi8a.pfb\b/tibi____.pfb/',
-	's/\butmr8a.pfb\b/tir_____.pfb/',
-	's/\butmri8a.pfb\b/tii_____.pfb/',
-	's/\buzcmi8a.pfb\b/zcmi____.pfb/',
-	's/\buzdr.pfb\b/zd______.pfb/',
-		);
-
 &main;
 exit 0;
+
+
+# return program name + version string.
+sub version {
+  my $ret = sprintf "%s version %s", &progname(), $version;
+  return $ret;
+}
+
+###############################################################################
+# help()
+#   display help message and exit
+#
+sub help {
+  my $progname = &progname();
+  my $usage= <<"EOF";
+Usage: $progname [OPTION] ... [COMMAND]
+
+Update the default font map files used by pdftex, dvips, and dvipdfm, as
+determined by updmap.cfg (the one returned by running
+"kpsewhich updmap.cfg").
+
+Among other things, these font map files are used to determine which
+fonts should be used as bitmaps and which as outlines, and to determine
+which fonts are included in the output.
+
+By default, the TeX filename database is also rebuilt (with mktexlsr).
+
+Valid options:
+  --cnffile FILE            read FILE for the updmap configuration
+  --dvipsoutputdir DIR      specify output directory (dvips syntax)
+  --pdftexoutputdir DIR     specify output directory (pdftex syntax)
+  --outputdir DIR           specify output directory (for all files)
+  --copy                    cp generic files rather than using symlinks
+  --force                   recreate files even if config hasn't changed
+  --nomkmap                 do not recreate map files
+  --nohash                  do not run texhash
+  -n, --dry-run             only show the configuration, no output
+  --quiet                   reduce verbosity
+
+Valid commands:
+  --help                    show this message and exit
+  --version                 show version information and exit
+  --edit                    edit updmap.cfg file
+  --showoptions ITEM        show alternatives for options
+  --setoption OPTION VALUE  set option, where OPTION is one of:
+                             LW35, dvipsPreferOutline, dvipsDownloadBase35,
+                             or pdftexDownloadBase14
+  --setoption OPTION=VALUE  as above, just different syntax
+  --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
+                              where MAPTYPE is either Map or MixedMap
+  --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
+  --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
+  --disable MAPFILE         disable MAPFILE, whether Map or MixedMap
+  --syncwithtrees           entries with unavailable map files will be
+                             disabled in the config file
+  --listmaps                list all active and inactive maps
+  --listavailablemaps       same as --listmaps, but without
+                             unavailable map files
+
+Explanation of the map types: the (only) difference between Map and
+MixedMap is that MixedMap entries are not added to psfonts_pk.map.  The
+purpose is to help users with printers that render Type 1 outline fonts
+worse than mode-tuned Type 1 bitmap fonts.  So MixedMap is used for
+fonts that are available as both Type 1 and Metafont.
+
+To see the precise locations of the various files that will be read and
+written, run updmap -n.
+
+For step-by-step instructions on making new fonts known to TeX, see
+http://tug.org/fonts/fontinstall.html.
+
+Report bugs to: tex-k\@tug.org
+TeX Live home page: <http://tug.org/texlive/>
+EOF
+;
+  print &version() . "\n";
+  print $usage;
+  exit 0;
+}
+
 
 ###############################################################################
 # progname()
@@ -237,10 +167,51 @@ sub progname {
   }
 }
 
-# return program name + version string.
-sub version {
-  my $ret = sprintf "%s version %s", &progname(), $version;
-  return $ret;
+
+###############################################################################
+# processOptions()
+#   process cmd line options
+#
+sub processOptions {
+  unless (&GetOptions (
+      "cnffile=s" => \$cnfFile,
+      "copy" => \$copy,
+      "disable=s" => \@disableItem,
+      "dvipdfmoutputdir=s" => sub {print "$0: ignoring --dvipdfmoutputdir\n"},
+      "dvipsoutputdir=s" => \$dvipsoutputdir,
+      "enable=s" => \$enableItem,
+      "edit" => \$opt_edit,
+      "force" => \$opt_force,
+      "listavailablemaps" => \$listavailablemaps,
+      "l|listmaps" => \$listmaps,
+      "nohash" => \$nohash,
+      "nomkmap" => \$nomkmap,
+      "n|dry-run" => \$dry_run,
+      "outputdir=s" => \$outputdir,
+      "pdftexoutputdir=s" => \$pdftexoutputdir,
+      "q|quiet" => \$quiet,
+      "setoption=s{1,2}" => \@setoptions,
+      "showoptions=s" => \@showoptions,
+      "syncwithtrees" => \$syncwithtrees,
+      "version" => sub { print &version() . "\n"; exit(0); },
+      "h|help" => \$opt_help)) {
+    my $progname = &progname();
+    die "Try \"$progname --help\" for more information.\n";
+  }
+
+  if ($outputdir) {
+    $dvipsoutputdir = $outputdir if (! $dvipsoutputdir);
+    $pdftexoutputdir = $outputdir if (! $pdftexoutputdir);
+  }
+  if ($cnfFile && ! -f $cnfFile) {
+    die "$0: Config file \"$cnfFile\" not found.\n";
+  }
+  if ($dvipsoutputdir && ! $dry_run && ! -d $dvipsoutputdir) {
+    &mkdirhier ($dvipsoutputdir);
+  }
+  if ($pdftexoutputdir && ! $dry_run && ! -d $pdftexoutputdir) {
+    &mkdirhier ($pdftexoutputdir);
+  }
 }
 
 
@@ -382,112 +353,6 @@ sub copyFile {
   utime($t[8], $t[9], $dst);
 }
 
-
-###############################################################################
-# help()
-#   display help message and exit
-#
-sub help {
-  my $progname=&progname();
-  my $usage= <<"EOF";
-Usage: $progname [OPTION] ... [COMMAND]
-
-Update the default font map files used by pdftex, dvips, and dvipdfm, as
-determined by updmap.cfg (the one returned by running
-"kpsewhich updmap.cfg").
-
-Among other things, these font map files are used to determine which
-fonts should be used as bitmaps and which as outlines, and to determine
-which fonts are included in the output.
-
-By default, the TeX filename database is also rebuilt (with mktexlsr).
-
-Valid options:
-  --cnffile FILE            read FILE for the updmap configuration
-  --dvipsoutputdir DIR      specify output directory (dvips syntax)
-  --pdftexoutputdir DIR     specify output directory (pdftex syntax)
-  --outputdir DIR           specify output directory (for all files)
-  --copy                    cp generic files rather than using symlinks
-  --force                   recreate files even if config hasn't changed
-  --nomkmap                 do not recreate map files
-  --nohash                  do not run texhash
-  -n, --dry-run             only show the configuration, no output
-  --quiet                   reduce verbosity
-
-Valid commands:
-  --help                    show this message and exit
-  --version                 show version information and exit
-  --edit                    edit updmap.cfg file
-  --showoptions ITEM        show alternatives for options
-  --setoption OPTION VALUE  set option, where OPTION is one of:
-                             LW35, dvipsPreferOutline, dvipsDownloadBase35,
-                             or pdftexDownloadBase14
-  --setoption OPTION=VALUE  as above, just different syntax
-  --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
-                              where MAPTYPE is either Map or MixedMap
-  --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
-  --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
-  --disable MAPFILE         disable MAPFILE, whether Map or MixedMap
-  --syncwithtrees           entries with unavailable map files will be
-                             disabled in the config file
-  --listmaps                list all active and inactive maps
-  --listavailablemaps       same as --listmaps, but without
-                             unavailable map files
-
-Explanation of the map types: the (only) difference between Map and
-MixedMap is that MixedMap entries are not added to psfonts_pk.map.  The
-purpose is to help users with printers that render Type 1 outline fonts
-worse than mode-tuned Type 1 bitmap fonts.  So MixedMap is used for
-fonts that are available as both Type 1 and Metafont.
-
-To see the precise locations of the various files that will be read and
-written, run updmap -n.
-
-For step-by-step instructions on making new fonts known to TeX, see
-http://tug.org/fonts/fontinstall.html.
-
-Report bugs to: tex-k\@tug.org
-TeX Live home page: <http://tug.org/texlive/>
-EOF
-;
-  print &version() . "\n";
-  print $usage;
-  exit 0;
-}
-
-
-###############################################################################
-# cfgval(variable)
-#   read variable ($1) from config file
-#
-sub cfgval {
-  my ($variable) = @_;
-  my $value;
-
-  if ($#cfg < 0) {
-    open FILE, "<$cnfFile" or die "$0: can't open configuration file $cnfFile: $!";
-    while (<FILE>) {
-      s/\s*$//; # strip trailing spaces
-      push @cfg, $_;
-    }
-    close FILE;
-    chomp (@cfg);
-  }
-  for my $line (@cfg) {
-    if ($line =~ m/^\s*${variable}[\s=]+(.*)\s*$/) {
-      $value = $1;
-      if ($value =~ m/^(true|yes|t|y|1)$/) {
-        $value = 1;
-      }
-      elsif ($value =~ m/^(false|no|f|n|0)$/) {
-        $value = 0;
-      }
-      last;
-    }
-  }
-  return $value;
-}
-
 ###############################################################################
 # SymlinkOrCopy(dir, src, dest)
 #   create symlinks if possible, otherwise copy files 
@@ -598,25 +463,37 @@ sub locateMap {
   }
 }
 
+
 ###############################################################################
-# catMaps(regex)
-#   filter config file by regex for map lines and extract the map filenames.
-#   These are then looked up (by kpsewhich in locateMap) and the content of
-#   all map files is send to stdout.
+# cfgval(variable)
+#   read variable ($1) from config file
 #
-sub catMaps {
-  my ($map) = @_;
-  my %count = ( );
-  my @maps = grep { $_ =~ m/$map/ } @cfg;
-  map{
-    $_ =~ s/\#.*//;
-    $_ =~ s/\s*([^\s]*)\s*([^\s]*)/$2/;
-  } @maps;
-  @maps = sort(@maps);
-  @maps = grep { ++$count{$_} < 2; } @maps;
+sub cfgval {
+  my ($variable) = @_;
+  my $value;
 
-  @maps = &locateMap(@maps);
-  return @maps;
+  if ($#cfg < 0) {
+    open FILE, "<$cnfFile" or die "$0: can't open configuration file $cnfFile: $!";
+    while (<FILE>) {
+      s/\s*$//; # strip trailing spaces
+      push @cfg, $_;
+    }
+    close FILE;
+    chomp (@cfg);
+  }
+  for my $line (@cfg) {
+    if ($line =~ m/^\s*${variable}[\s=]+(.*)\s*$/) {
+      $value = $1;
+      if ($value =~ m/^(true|yes|t|y|1)$/) {
+        $value = 1;
+      }
+      elsif ($value =~ m/^(false|no|f|n|0)$/) {
+        $value = 0;
+      }
+      last;
+    }
+  }
+  return $value;
 }
 
 ###############################################################################
@@ -696,6 +573,28 @@ m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14)$/) {
 }
 
 ###############################################################################
+# showOptions(item)
+#   show Options for an item
+#
+sub showOptions {
+  foreach my $item (@_) {
+    if ($item eq "LW35") {
+      print "URWkb URW ADOBE ADOBEkb\n";
+    }
+    elsif ($item =~ 
+m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35)/) {
+      print "true false\n";
+    }
+    else {
+      print "Unknown item \"$item\"; should be one of LW35, dvipsPreferOutline,\n" 
+          . "  dvipsDownloadBase35, or pdftexDownloadBase14\n";
+    }
+  }
+  exit 0
+}
+
+
+###############################################################################
 # enableMap (type, map)
 #   enables an entry in the config file for map with a given type.
 #
@@ -736,42 +635,6 @@ sub disableMap {
   foreach $type (@mapType) {
     &configReplace("$cnfFile", "^$type" . "\\s*$map", "#! $type $map");
   }
-}
-
-###############################################################################
-# initVars()
-#   initialize global variables
-#
-sub initVars {
-  $progname="updmap";
-  $quiet = 0;
-  $nohash = 0;
-  $nomkmap = 0;
-  $cnfFile = "";
-  $cnfFileShort = "updmap.cfg";
-  $outputdir = "";
-  chomp($TEXMFMAIN =`kpsewhich --var-value=TEXMFMAIN`);
-}
-
-###############################################################################
-# showOptions(item)
-#   show Options for an item
-#
-sub showOptions {
-  foreach my $item (@_) {
-    if ($item eq "LW35") {
-      print "URWkb URW ADOBE ADOBEkb\n";
-    }
-    elsif ($item =~ 
-m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35)/) {
-      print "true false\n";
-    }
-    else {
-      print "Unknown item \"$item\"; should be one of LW35, dvipsPreferOutline,\n" 
-          . "  dvipsDownloadBase35, or pdftexDownloadBase14\n";
-    }
-  }
-  exit 0
 }
 
 ###############################################################################
@@ -837,51 +700,25 @@ sub setupCfgFile {
   }
 }
 
-
 ###############################################################################
-# processOptions()
-#   process cmd line options
+# catMaps(regex)
+#   filter config file by regex for map lines and extract the map filenames.
+#   These are then looked up (by kpsewhich in locateMap) and the content of
+#   all map files is send to stdout.
 #
-sub processOptions {
-  unless (&GetOptions (
-      "cnffile=s" => \$cnfFile,
-      "copy" => \$copy,
-      "disable=s" => \@disableItem,
-      "dvipdfmoutputdir=s" => sub {print "$0: ignoring --dvipdfmoutputdir\n"},
-      "dvipsoutputdir=s" => \$dvipsoutputdir,
-      "enable=s" => \$enableItem,
-      "edit" => \$opt_edit,
-      "force" => \$opt_force,
-      "listavailablemaps" => \$listavailablemaps,
-      "l|listmaps" => \$listmaps,
-      "nohash" => \$nohash,
-      "nomkmap" => \$nomkmap,
-      "n|dry-run" => \$dry_run,
-      "outputdir=s" => \$outputdir,
-      "pdftexoutputdir=s" => \$pdftexoutputdir,
-      "q|quiet" => \$quiet,
-      "setoption=s{1,2}" => \@setoptions,
-      "showoptions=s" => \@showoptions,
-      "syncwithtrees" => \$syncwithtrees,
-      "version" => sub { print &version() . "\n"; exit(0); },
-      "h|help" => \$opt_help)) {
-    my $progname = &progname();
-    die "Try \"$progname --help\" for more information.\n";
-  }
+sub catMaps {
+  my ($map) = @_;
+  my %count = ( );
+  my @maps = grep { $_ =~ m/$map/ } @cfg;
+  map{
+    $_ =~ s/\#.*//;
+    $_ =~ s/\s*([^\s]*)\s*([^\s]*)/$2/;
+  } @maps;
+  @maps = sort(@maps);
+  @maps = grep { ++$count{$_} < 2; } @maps;
 
-  if ($outputdir) {
-    $dvipsoutputdir = $outputdir if (! $dvipsoutputdir);
-    $pdftexoutputdir = $outputdir if (! $pdftexoutputdir);
-  }
-  if ($cnfFile && ! -f $cnfFile) {
-    die "$0: Config file \"$cnfFile\" not found.\n";
-  }
-  if ($dvipsoutputdir && ! $dry_run && ! -d $dvipsoutputdir) {
-    &mkdirhier ($dvipsoutputdir);
-  }
-  if ($pdftexoutputdir && ! $dry_run && ! -d $pdftexoutputdir) {
-    &mkdirhier ($pdftexoutputdir);
-  }
+  @maps = &locateMap(@maps);
+  return @maps;
 }
 
 ###############################################################################
@@ -1202,6 +1039,174 @@ sub mkMaps {
   }
   close LOG;
   print "\nTranscript written on \"$logfile\".\n" if (! $quiet);
+}
+
+
+###############################################################################
+# initVars()
+#   initialize global variables
+#
+sub initVars {
+  $progname="updmap";
+  $quiet = 0;
+  $nohash = 0;
+  $nomkmap = 0;
+  $cnfFile = "";
+  $cnfFileShort = "updmap.cfg";
+  $outputdir = "";
+  chomp($TEXMFMAIN =`kpsewhich --var-value=TEXMFMAIN`);
+
+  @psADOBE = (
+       's/ URWGothicL-Demi / AvantGarde-Demi /',
+       's/ URWGothicL-DemiObli / AvantGarde-DemiOblique /',
+       's/ URWGothicL-Book / AvantGarde-Book /',
+       's/ URWGothicL-BookObli / AvantGarde-BookOblique /',
+       's/ URWBookmanL-DemiBold / Bookman-Demi /',
+       's/ URWBookmanL-DemiBoldItal / Bookman-DemiItalic /',
+       's/ URWBookmanL-Ligh / Bookman-Light /',
+       's/ URWBookmanL-LighItal / Bookman-LightItalic /',
+       's/ NimbusMonL-Bold / Courier-Bold /',
+       's/ NimbusMonL-BoldObli / Courier-BoldOblique /',
+       's/ NimbusMonL-Regu / Courier /',
+       's/ NimbusMonL-ReguObli / Courier-Oblique /',
+       's/ NimbusSanL-Bold / Helvetica-Bold /',
+       's/ NimbusSanL-BoldCond / Helvetica-Narrow-Bold /',
+       's/ NimbusSanL-BoldItal / Helvetica-BoldOblique /',
+       's/ NimbusSanL-BoldCondItal / Helvetica-Narrow-BoldOblique /',
+       's/ NimbusSanL-Regu / Helvetica /',
+       's/ NimbusSanL-ReguCond / Helvetica-Narrow /',
+       's/ NimbusSanL-ReguItal / Helvetica-Oblique /',
+       's/ NimbusSanL-ReguCondItal / Helvetica-Narrow-Oblique /',
+       's/ CenturySchL-Bold / NewCenturySchlbk-Bold /',
+       's/ CenturySchL-BoldItal / NewCenturySchlbk-BoldItalic /',
+       's/ CenturySchL-Roma / NewCenturySchlbk-Roman /',
+       's/ CenturySchL-Ital / NewCenturySchlbk-Italic /',
+       's/ URWPalladioL-Bold / Palatino-Bold /',
+       's/ URWPalladioL-BoldItal / Palatino-BoldItalic /',
+       's/ URWPalladioL-Roma / Palatino-Roman /',
+       's/ URWPalladioL-Ital / Palatino-Italic /',
+       's/ StandardSymL / Symbol /',
+       's/ NimbusRomNo9L-Medi / Times-Bold /',
+       's/ NimbusRomNo9L-MediItal / Times-BoldItalic /',
+       's/ NimbusRomNo9L-Regu / Times-Roman /',
+       's/ NimbusRomNo9L-ReguItal / Times-Italic /',
+       's/ URWChanceryL-MediItal / ZapfChancery-MediumItalic /',
+       's/ Dingbats / ZapfDingbats /',
+		);
+
+  @fileADOBEkb = (
+        's/\buagd8a.pfb\b/pagd8a.pfb/',
+        's/\buagdo8a.pfb\b/pagdo8a.pfb/',
+        's/\buagk8a.pfb\b/pagk8a.pfb/',
+        's/\buagko8a.pfb\b/pagko8a.pfb/',
+        's/\bubkd8a.pfb\b/pbkd8a.pfb/',
+        's/\bubkdi8a.pfb\b/pbkdi8a.pfb/',
+        's/\bubkl8a.pfb\b/pbkl8a.pfb/',
+        's/\bubkli8a.pfb\b/pbkli8a.pfb/',
+        's/\bucrb8a.pfb\b/pcrb8a.pfb/',
+        's/\bucrbo8a.pfb\b/pcrbo8a.pfb/',
+        's/\bucrr8a.pfb\b/pcrr8a.pfb/',
+        's/\bucrro8a.pfb\b/pcrro8a.pfb/',
+        's/\buhvb8a.pfb\b/phvb8a.pfb/',
+        's/\buhvb8ac.pfb\b/phvb8an.pfb/',
+        's/\buhvbo8a.pfb\b/phvbo8a.pfb/',
+        's/\buhvbo8ac.pfb\b/phvbo8an.pfb/',
+        's/\buhvr8a.pfb\b/phvr8a.pfb/',
+        's/\buhvr8ac.pfb\b/phvr8an.pfb/',
+        's/\buhvro8a.pfb\b/phvro8a.pfb/',
+        's/\buhvro8ac.pfb\b/phvro8an.pfb/',
+        's/\buncb8a.pfb\b/pncb8a.pfb/',
+        's/\buncbi8a.pfb\b/pncbi8a.pfb/',
+        's/\buncr8a.pfb\b/pncr8a.pfb/',
+        's/\buncri8a.pfb\b/pncri8a.pfb/',
+        's/\buplb8a.pfb\b/pplb8a.pfb/',
+        's/\buplbi8a.pfb\b/pplbi8a.pfb/',
+        's/\buplr8a.pfb\b/pplr8a.pfb/',
+        's/\buplri8a.pfb\b/pplri8a.pfb/',
+        's/\busyr.pfb\b/psyr.pfb/',
+        's/\butmb8a.pfb\b/ptmb8a.pfb/',
+        's/\butmbi8a.pfb\b/ptmbi8a.pfb/',
+        's/\butmr8a.pfb\b/ptmr8a.pfb/',
+        's/\butmri8a.pfb\b/ptmri8a.pfb/',
+        's/\buzcmi8a.pfb\b/pzcmi8a.pfb/',
+        's/\buzdr.pfb\b/pzdr.pfb/',
+		  );
+
+  @fileURW = (
+	's/\buagd8a.pfb\b/a010015l.pfb/',
+	's/\buagdo8a.pfb\b/a010035l.pfb/',
+	's/\buagk8a.pfb\b/a010013l.pfb/',
+	's/\buagko8a.pfb\b/a010033l.pfb/',
+	's/\bubkd8a.pfb\b/b018015l.pfb/',
+	's/\bubkdi8a.pfb\b/b018035l.pfb/',
+	's/\bubkl8a.pfb\b/b018012l.pfb/',
+	's/\bubkli8a.pfb\b/b018032l.pfb/',
+	's/\bucrb8a.pfb\b/n022004l.pfb/',
+	's/\bucrbo8a.pfb\b/n022024l.pfb/',
+	's/\bucrr8a.pfb\b/n022003l.pfb/',
+	's/\bucrro8a.pfb\b/n022023l.pfb/',
+	's/\buhvb8a.pfb\b/n019004l.pfb/',
+	's/\buhvb8ac.pfb\b/n019044l.pfb/',
+	's/\buhvbo8a.pfb\b/n019024l.pfb/',
+	's/\buhvbo8ac.pfb\b/n019064l.pfb/',
+	's/\buhvr8a.pfb\b/n019003l.pfb/',
+	's/\buhvr8ac.pfb\b/n019043l.pfb/',
+	's/\buhvro8a.pfb\b/n019023l.pfb/',
+	's/\buhvro8ac.pfb\b/n019063l.pfb/',
+	's/\buncb8a.pfb\b/c059016l.pfb/',
+	's/\buncbi8a.pfb\b/c059036l.pfb/',
+	's/\buncr8a.pfb\b/c059013l.pfb/',
+	's/\buncri8a.pfb\b/c059033l.pfb/',
+	's/\buplb8a.pfb\b/p052004l.pfb/',
+	's/\buplbi8a.pfb\b/p052024l.pfb/',
+	's/\buplr8a.pfb\b/p052003l.pfb/',
+	's/\buplri8a.pfb\b/p052023l.pfb/',
+	's/\busyr.pfb\b/s050000l.pfb/',
+	's/\butmb8a.pfb\b/n021004l.pfb/',
+	's/\butmbi8a.pfb\b/n021024l.pfb/',
+	's/\butmr8a.pfb\b/n021003l.pfb/',
+	's/\butmri8a.pfb\b/n021023l.pfb/',
+	's/\buzcmi8a.pfb\b/z003034l.pfb/',
+	's/\buzdr.pfb\b/d050000l.pfb/',
+		   );
+
+  @fileADOBE = (
+	's/\buagd8a.pfb\b/agd_____.pfb/',
+	's/\buagdo8a.pfb\b/agdo____.pfb/',
+	's/\buagk8a.pfb\b/agw_____.pfb/',
+	's/\buagko8a.pfb\b/agwo____.pfb/',
+	's/\bubkd8a.pfb\b/bkd_____.pfb/',
+	's/\bubkdi8a.pfb\b/bkdi____.pfb/',
+	's/\bubkl8a.pfb\b/bkl_____.pfb/',
+	's/\bubkli8a.pfb\b/bkli____.pfb/',
+	's/\bucrb8a.pfb\b/cob_____.pfb/',
+	's/\bucrbo8a.pfb\b/cobo____.pfb/',
+	's/\bucrr8a.pfb\b/com_____.pfb/',
+	's/\bucrro8a.pfb\b/coo_____.pfb/',
+	's/\buhvb8a.pfb\b/hvb_____.pfb/',
+	's/\buhvb8ac.pfb\b/hvnb____.pfb/',
+	's/\buhvbo8a.pfb\b/hvbo____.pfb/',
+	's/\buhvbo8ac.pfb\b/hvnbo___.pfb/',
+	's/\buhvr8a.pfb\b/hv______.pfb/',
+	's/\buhvr8ac.pfb\b/hvn_____.pfb/',
+	's/\buhvro8a.pfb\b/hvo_____.pfb/',
+	's/\buhvro8ac.pfb\b/hvno____.pfb/',
+	's/\buncb8a.pfb\b/ncb_____.pfb/',
+	's/\buncbi8a.pfb\b/ncbi____.pfb/',
+	's/\buncr8a.pfb\b/ncr_____.pfb/',
+	's/\buncri8a.pfb\b/nci_____.pfb/',
+	's/\buplb8a.pfb\b/pob_____.pfb/',
+	's/\buplbi8a.pfb\b/pobi____.pfb/',
+	's/\buplr8a.pfb\b/por_____.pfb/',
+	's/\buplri8a.pfb\b/poi_____.pfb/',
+	's/\busyr.pfb\b/sy______.pfb/',
+	's/\butmb8a.pfb\b/tib_____.pfb/',
+	's/\butmbi8a.pfb\b/tibi____.pfb/',
+	's/\butmr8a.pfb\b/tir_____.pfb/',
+	's/\butmri8a.pfb\b/tii_____.pfb/',
+	's/\buzcmi8a.pfb\b/zcmi____.pfb/',
+	's/\buzdr.pfb\b/zd______.pfb/',
+		);
 }
 
 
