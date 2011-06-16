@@ -77,7 +77,7 @@ exit 0;
 
 # return program name + version string.
 sub version {
-  my $ret = sprintf "%s version %s", $short_progname, $version;
+  my $ret = sprintf "%s (TeX Live) version %s\n", $short_progname, $version;
   return $ret;
 }
 
@@ -87,20 +87,20 @@ sub version {
 #
 sub help {
   my $usage= <<"EOF";
-Usage: $short_progname [OPTION] ... [COMMAND]
+Usage: $short_progname     [OPTION] ... [COMMAND]
    or: $short_progname-sys [OPTION] ... [COMMAND]
 
-Update the default font map files used by pdftex, dvips, and dvipdfm, as
-determined by updmap.cfg (the one returned by running
-"kpsewhich updmap.cfg").
+Update the default font map files used by pdftex, dvips, and dvipdfm(x),
+as determined by the configuration file updmap.cfg (the one returned by
+running "kpsewhich updmap.cfg").
 
-Among other things, these font map files are used to determine which
-fonts should be used as bitmaps and which as outlines, and to determine
-which fonts are included in the output.
+Among other things, these map files are used to determine which fonts
+should be used as bitmaps and which as outlines, and to determine which
+fonts are included in the output.
 
-By default, the TeX filename database is also rebuilt (with mktexlsr).
+By default, the TeX filename database (ls-R) is also updated.
 
-Valid options:
+Options:
   --cnffile FILE            read FILE for the updmap configuration
   --dvipsoutputdir DIR      specify output directory (dvips syntax)
   --pdftexoutputdir DIR     specify output directory (pdftex syntax)
@@ -110,12 +110,11 @@ Valid options:
   --nomkmap                 do not recreate map files
   --nohash                  do not run texhash
   -n, --dry-run             only show the configuration, no output
-  --quiet                   reduce verbosity
+  --quiet, --silent         reduce verbosity
 
-Valid commands:
+Commands:
   --help                    show this message and exit
   --version                 show version information and exit
-  --edit                    edit updmap.cfg file
   --showoptions ITEM        show alternatives for options
   --setoption OPTION VALUE  set option, where OPTION is one of:
                              LW35, dvipsPreferOutline, dvipsDownloadBase35,
@@ -126,29 +125,67 @@ Valid commands:
   --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
   --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
   --disable MAPFILE         disable MAPFILE, whether Map or MixedMap
-  --syncwithtrees           entries with unavailable map files will be
-                             disabled in the config file
   --listmaps                list all active and inactive maps
   --listavailablemaps       same as --listmaps, but without
                              unavailable map files
+  --syncwithtrees           disable unavailable map files in updmap.cfg
 
 Explanation of the map types: the (only) difference between Map and
-MixedMap is that MixedMap entries are not added to psfonts_pk.map.  The
-purpose is to help users with printers that render Type 1 outline fonts
-worse than mode-tuned Type 1 bitmap fonts.  So MixedMap is used for
-fonts that are available as both Type 1 and Metafont.
+MixedMap is that MixedMap entries are not added to psfonts_pk.map.
+The purpose is to help users with printers that render Type 1 outline
+fonts worse than mode-tuned Type 1 bitmap fonts.  So, MixedMap is used
+for fonts that are available as both Type 1 and Metafont.
 
-To see the precise locations of the various files that will be read and
-written, run updmap -n.
+Explanation of the --setoption possibilities:
 
-For step-by-step instructions on making new fonts known to TeX, see
-http://tug.org/fonts/fontinstall.html.
+  dvipsPreferOutline    true|false  (default true)
+    Whether dvips uses bitmaps or outlines, when both are available.
+  dvipsDownloadBase35   true|false  (default false)
+    Whether dvips includes the standard 35 PostScript fonts in its output.
+  pdftexDownloadBase14  true|false   (default true)
+    Whether pdftex includes the standard 14 PDF fonts in its output.
+  LW35                  URWkb|URW|ADOBEkb|ADOBE  (default URWkb)
+    Adapt the font and file names of the standard 35 PostScript fonts.
+    URWkb    URW fonts with "berry" filenames    (e.g. uhvbo8ac.pfb)
+    URW      URW fonts with "vendor" filenames   (e.g. n019064l.pfb)
+    ADOBEkb  Adobe fonts with "berry" filenames  (e.g. phvbo8an.pfb)
+    ADOBE    Adobe fonts with "vendor" filenames (e.g. hvnbo___.pfb)
+
+  These options are only read and acted on by updmap; dvips, pdftex, etc.,
+  do not know anything about them.  They work by changing the default map
+  file which the programs read, so they can be overridden by specifying
+  command-line options or configuration files to the programs, as
+  explained at the beginning of updmap.cfg.
+
+Explanation of trees and files normally used:
+
+  updmap both reads and writes TEXMFCONFIG/web2c/updmap.cfg, according to
+  the actions specified.
+
+  updmap writes the map files for dvips (psfonts.map) and pdftex
+  (pdftex.map) to the TEXMFVAR/fonts/map/updmap/{dvips,pdftex}/
+  directories.   
+
+  The log file is written to TEXMFVAR/web2c/updmap.log.
+
+  When updmap-sys is run, TEXMFSYSCONFIG and TEXMFSYSVAR are used
+  instead.  This is the only difference between updmap-sys and updmap.
+
+  Other locations can be used if overridden on the command line, or these
+  trees don't exist, or you are not using the original TeX Live.
+
+  To see the precise locations of the various files that
+  will be read and written, give the -n option (or read the man page).
+
+For step-by-step instructions on making new fonts known to TeX, read
+http://tug.org/fonts/fontinstall.html.  For even more terse
+instructions, read the beginning of updmap.cfg.
 
 Report bugs to: tex-k\@tug.org
 TeX Live home page: <http://tug.org/texlive/>
 EOF
 ;
-  print &version() . "\n";
+  print &version();
   print $usage;
   exit 0;
 }
@@ -176,11 +213,11 @@ sub processOptions {
       "n|dry-run" => \$dry_run,
       "outputdir=s" => \$outputdir,
       "pdftexoutputdir=s" => \$pdftexoutputdir,
-      "q|quiet" => \$quiet,
+      "q|quiet|silent" => \$quiet,
       "setoption=s{1,2}" => \@setoptions,
       "showoptions=s" => \@showoptions,
       "syncwithtrees" => \$syncwithtrees,
-      "version" => sub { print &version() . "\n"; exit(0); },
+      "version" => sub { print &version(); exit(0); },
       "h|help" => \$opt_help)) {
     die "Try \"$0 --help\" for more information.\n";
   }
@@ -212,7 +249,7 @@ sub equalize_file {
   my @temp;
 
   open IN, "$file";
-  my @lines=(<IN>);
+  my @lines = (<IN>);
   close IN;
   chomp(@lines);
 
@@ -554,7 +591,7 @@ m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14)$/) {
   # silently accept this old option name, just in case.
   return if $opt eq "dvipdfmDownloadBase14";
   
-  #print "Setting option $opt to $val...\n" if (! $quiet);
+  #print "Setting option $opt to $val...\n" if !$quiet;
   &configReplace("$cnfFile", "^" . "$opt" . "\\s", "$opt $val");
 }
 
@@ -647,7 +684,7 @@ sub setupOutputDir {
     $od = "$tf/$rel";
   }
   &mkdirhier($od);
-  print "$driver output dir: \"$od\"\n" if (! $quiet);
+  print "$driver output dir: \"$od\"\n" if !$quiet;
   return $od;
 }
 
@@ -670,17 +707,16 @@ sub setupCfgFile {
         unlink "$tf/web2c/$cnfFileShort";
         my $original_cfg=`kpsewhich updmap.cfg`;
         chomp($original_cfg);
-        print("copy $original_cfg => $tf/web2c/$cnfFileShort\n") if (! $quiet);
+        print("copy $original_cfg => $tf/web2c/$cnfFileShort\n") if !$quiet;
         $newcnf="$tf/web2c/$cnfFileShort";
         &copyFile("$original_cfg", "$tf/web2c/$cnfFileShort");
         $updLSR->{add}("$tf/web2c/$cnfFileShort");
       }
     }
     $cnfFile = "$tf/web2c/updmap.cfg";
-    if ($cnfFile) {
-      print "Config file: \"$cnfFile\"\n" if (! $quiet);
-    }
-    else {
+    if (-s $cnfFile) {
+      print "Config file: \"$cnfFile\"\n" if !$quiet;
+    } else {
       die "$0: Config file updmap.cfg not found.\n";
     }
   }
@@ -743,7 +779,7 @@ sub listMaps {
         my $entry="$_"; 
         unless (grep { $_ =~ m/$entry/ } @paths) {
           &disableMap($entry);
-          print "  $entry disabled\n" if (! $quiet); 
+          print "  $entry disabled\n" if !$quiet; 
         }
       } @lines;
     }
@@ -812,7 +848,7 @@ sub mkMaps {
     open LOG, ">$logfile" 
         or die "$0: Can't open log file \"$logfile\": $!";
     $writelog=1;
-    print LOG &version() . "\n";
+    print LOG &version();
     printf LOG "%s\n\n", scalar localtime();
     print LOG  "Using config file \"$cnfFile\".\n";
   }
@@ -821,7 +857,7 @@ sub mkMaps {
     if ($dry_run) {
       print $str;
     } else {
-      print $str if (! $quiet);
+      print $str if !$quiet;
       print LOG $str;
     }
   }
@@ -929,14 +965,14 @@ sub mkMaps {
     close FILE;
   }
 
-  print "Generating output for ps2pk...\n" if (! $quiet);
+  print "Generating output for ps2pk...\n" if !$quiet;
   my @ps2pk_map = &transLW35($ps2pk35);
   push @ps2pk_map, &getLines(@tmp1);
   push @ps2pk_map, &getLines(@tmp2);
   &writeLines(">$dvipsoutputdir/ps2pk.map", 
               &normalizeLines(@ps2pk_map));
 
-  print "Generating output for dvips...\n" if (! $quiet);
+  print "Generating output for dvips...\n" if !$quiet;
   my @download35_map = &transLW35($ps2pk35);
   &writeLines(">$dvipsoutputdir/download35.map", 
               &normalizeLines(@download35_map));
@@ -958,7 +994,7 @@ sub mkMaps {
   &writeLines(">$dvipsoutputdir/psfonts_pk.map", 
               &normalizeLines(@psfonts_pk_map));
 
-  print "Generating output for pdftex...\n" if (! $quiet);
+  print "Generating output for pdftex...\n" if !$quiet;
   # remove PaintType due to Sebastian's request
   my @tmp3 = &transLW35($pdftex35);
   push @tmp3, &getLines(@tmp1);
@@ -1023,7 +1059,7 @@ sub mkMaps {
     $updLSR->{add}("$d/$f");
   }
   close LOG;
-  print "\nTranscript written on \"$logfile\".\n" if (! $quiet);
+  print "\nTranscript written on \"$logfile\".\n" if !$quiet;
 }
 
 
@@ -1230,6 +1266,8 @@ sub main {
   my $cmd = '';
 
   if ($opt_edit) {
+    # it's not a good idea to edit updmap.cfg manually these days,
+    # but for compatibility we'll silently keep the option.
     $cmd = 'edit';
     my $editor = $ENV{'VISUAL'} || $ENV{'EDITOR'};
     $editor ||= (&win32 ? "notepad" : "vi");
@@ -1255,7 +1293,7 @@ sub main {
   }
 
   if ($cmd && !$opt_force && &files_are_equal($bakFile, $cnfFile)) {
-    print "$cnfFile unchanged.  Map files not recreated.\n" if (! $quiet);
+    print "$cnfFile unchanged.  Map files not recreated.\n" if !$quiet;
   } else {
     if (! $nomkmap) {
       &setupDestDir;
@@ -1264,7 +1302,10 @@ sub main {
     unlink ($bakFile);
   }
 
-  $updLSR->{exec}() unless $nohash;
+  unless ($nohash) {
+    print "$0: Updating ls-R files.\n" if !$quiet;
+    $updLSR->{exec}() 
+  }
 }
 __END__
 
