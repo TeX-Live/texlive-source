@@ -278,7 +278,7 @@ man1_links = $(bin_links) \
 	texconfig:texconfig-sys \
 	updmap:updmap-sys
 
-EXTRA_DIST = README.texdoctk fontinst.bat updmap
+EXTRA_DIST = README.texdoctk old-fontinst.bat old-updmap
 run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)

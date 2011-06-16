@@ -1,5 +1,9 @@
 2011-06-16  Karl Berry  <karl@tug.org>
 
+	* old-updmap: rename from updmap, to make it clearer this
+	(sh version) is not used any more.
+	* old-fontinst.bat: rename from fontinst.bat.
+
 	* updmap.pl ($pdftexStripEnc): set to zero.
 	(to_pdftex): return the input, not empty.
 	(ProcessOptions): accept and ignore dvipdfmoutputdir.

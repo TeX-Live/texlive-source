@@ -115,8 +115,8 @@ EXTRA_DIST = \
 ## Not used
 ##
 EXTRA_DIST += \
-	fontinst.bat \
-	updmap
+	old-fontinst.bat \
+	old-updmap
 
 ## 
 ## This target is invoked by the top-level make,
