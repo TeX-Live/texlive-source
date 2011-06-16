@@ -20,7 +20,7 @@ use Getopt::Long;
 $Getopt::Long::autoabbrev=0;
 Getopt::Long::Configure (qw(ignore_case_always));
 
-my $progname='updmap';
+my $short_progname = "updmap";
 
 my $cnfFile;
 my $cnfFileShort;
@@ -77,7 +77,7 @@ exit 0;
 
 # return program name + version string.
 sub version {
-  my $ret = sprintf "%s version %s", &progname(), $version;
+  my $ret = sprintf "%s version %s", $short_progname, $version;
   return $ret;
 }
 
@@ -86,9 +86,9 @@ sub version {
 #   display help message and exit
 #
 sub help {
-  my $progname = &progname();
   my $usage= <<"EOF";
-Usage: $progname [OPTION] ... [COMMAND]
+Usage: $short_progname [OPTION] ... [COMMAND]
+   or: $short_progname-sys [OPTION] ... [COMMAND]
 
 Update the default font map files used by pdftex, dvips, and dvipdfm, as
 determined by updmap.cfg (the one returned by running
@@ -154,19 +154,6 @@ EOF
 }
 
 
-###############################################################################
-# progname()
-#   return the name of the program.  Needed if invoked by a wrapper. 
-#
-sub progname {
-  if (`kpsewhich --var-value=TEXMFVAR`
-      eq `kpsewhich --var-value=TEXMFSYSVAR`) {
-    return 'updmap-sys';
-  } else {
-    return 'updmap';
-  }
-}
-
 
 ###############################################################################
 # processOptions()
@@ -195,8 +182,7 @@ sub processOptions {
       "syncwithtrees" => \$syncwithtrees,
       "version" => sub { print &version() . "\n"; exit(0); },
       "h|help" => \$opt_help)) {
-    my $progname = &progname();
-    die "Try \"$progname --help\" for more information.\n";
+    die "Try \"$0 --help\" for more information.\n";
   }
 
   if ($outputdir) {
@@ -819,12 +805,12 @@ sub mkMaps {
   $cache=1;
 
   if (! $dry_run) {
-    my $TEXMFVAR=`kpsewhich --var-value=TEXMFVAR`;
+    my $TEXMFVAR = `kpsewhich --var-value=TEXMFVAR`;
     chomp($TEXMFVAR);
-    $logfile="$TEXMFVAR/web2c/updmap.log";
+    $logfile = "$TEXMFVAR/web2c/updmap.log";
     mkdirhier "$TEXMFVAR/web2c";
     open LOG, ">$logfile" 
-        or die "$0: Can't open \"$logfile\"";
+        or die "$0: Can't open log file \"$logfile\": $!";
     $writelog=1;
     print LOG &version() . "\n";
     printf LOG "%s\n\n", scalar localtime();
@@ -859,9 +845,9 @@ sub mkMaps {
   $pdftexDownloadBase14 = &cfgval("pdftexDownloadBase14");
   $pdftexDownloadBase14 = 1 unless (defined $pdftexDownloadBase14);
 
-  &wlog ("\nupdmap "
-         . ($dry_run ? "would create" : "is creating")
-         . " new map files using the following configuration:"
+  &wlog ("\n$0 "
+         . ($dry_run ? "would create" : "is creating") . " new map files"
+         . "\nusing the following configuration:"
          . "\n  LW35 font names                  : "
          .      $mode
          . "\n  prefer outlines                  : "
@@ -917,10 +903,9 @@ sub mkMaps {
   if (@missing > 0) {
     print STDERR "\nERROR:  The following map file(s) couldn't be found:\n\t";
     print STDERR join(' ', @missing);
-    my $progname = &progname();
     print STDERR "\n\n\tDid you run mktexlsr?\n\n" .
-        "\tYou can delete non-existent map entries using the command\n".
-        "\n\t  $progname --syncwithtrees\n\n";
+        "\tYou can delete non-existent map entries using the option\n".
+        "\t  --syncwithtrees.\n\n";
     exit (1);
   }
   exit(0) if $dry_run;
@@ -1047,7 +1032,6 @@ sub mkMaps {
 #   initialize global variables
 #
 sub initVars {
-  $progname="updmap";
   $quiet = 0;
   $nohash = 0;
   $nomkmap = 0;

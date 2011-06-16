@@ -1,5 +1,8 @@
 2011-06-16  Karl Berry  <karl@tug.org>
 
+	* updmap.pl (progname): eliminate fn in favor of $0
+	or hardwired "updmap" as appropriate.
+
 	* old-updmap: rename from updmap, to make it clearer this
 	(sh version) is not used any more.
 	* old-fontinst.bat: rename from fontinst.bat.
@@ -509,5 +512,6 @@
 	had.
 
 Sat Dec 18 14:19:43 CET 1999 te
+
 	* added manpages for epstopdf and dvi2fax (contributed by "James
 	R. Van Zandt" <jrv@vanzandt.mv.com>)
