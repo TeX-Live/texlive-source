@@ -464,24 +464,22 @@ sub locateWeb2c {
 
 ###############################################################################
 # locateMap (file ...)
-#   apply kpsewhich with format 'dvips config'
+#   apply kpsewhich with format 'map'
 #
 sub locateMap {
   my @maps = @_;
-  my @files;
-
   return @maps if ($#maps < 0);
 
-  @files = `kpsewhich --format=map @maps`;
+  my @files = `kpsewhich --format=map @maps`;
   chomp @files;
 
   foreach my $map (@maps) {
-    push @missing, $map if (! grep /\/$map$/, @files);
+    push @missing, $map if (! grep /\/$map(\.map)?$/, @files);
   }
+
   if (wantarray) {
     return @files;
-  }
-  else {
+  } else {
     return $files[0];
   }
 }

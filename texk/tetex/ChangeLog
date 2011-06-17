@@ -1,3 +1,9 @@
+2011-06-18  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (locateMap): allow "Map foo" (without the ".map"),
+	as the sh updmap map.  (The actual file still being foo.map.)
+	Report from Peter Dyballa, 15 Jun 2011 10:04:36.
+
 2011-06-16  Karl Berry  <karl@tug.org>
 
 	* updmap.pl (help): add more info and modify to work with help2man.
