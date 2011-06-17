@@ -11,7 +11,7 @@ updmap-sys \- manage TeX font maps, system-wide
 .B updmap-sys
 [\fIOPTION\fR] ... [\fICOMMAND\fR]
 .SH DESCRIPTION
-updmap (TeX Live) version $Id: updmap.pl 23018 2011\-06\-16 20:35:36Z karl $
+updmap (TeX Live) version $Id: updmap.pl 23034 2011\-06\-17 23:44:39Z karl $
 .PP
 Update the default font map files used by pdftex, dvips, and dvipdfm(x),
 as determined by the configuration file updmap.cfg (the one returned by
