@@ -1,4 +1,190 @@
 ------------------------------------------------------------------------
+r5309 | jcbowman | 2011-06-18 00:40:24 -0600 (Sat, 18 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/README
+
+Update README.
+------------------------------------------------------------------------
+r5308 | jcbowman | 2011-06-18 00:39:21 -0600 (Sat, 18 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update copyright.
+------------------------------------------------------------------------
+r5307 | jcbowman | 2011-06-18 00:35:24 -0600 (Sat, 18 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/doc/Makefile.in
+
+Add missing install-prebuilt dependency.
+------------------------------------------------------------------------
+r5306 | jcbowman | 2011-06-17 17:27:04 -0600 (Fri, 17 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Remove unwanted preprocessor conditionals.
+------------------------------------------------------------------------
+r5305 | jcbowman | 2011-06-17 11:50:18 -0600 (Fri, 17 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Fix diagnostic.
+------------------------------------------------------------------------
+r5304 | jcbowman | 2011-06-17 01:56:37 -0600 (Fri, 17 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/picture.cc
+
+Fix preprocessor conditional.
+
+------------------------------------------------------------------------
+r5303 | jcbowman | 2011-06-17 01:44:31 -0600 (Fri, 17 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.h
+
+Support compilation without GLUT library.
+
+------------------------------------------------------------------------
+r5302 | jcbowman | 2011-06-17 01:04:36 -0600 (Fri, 17 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/common.h
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.cc
+
+Disable offscreen rendering support by default.
+
+------------------------------------------------------------------------
+r5301 | jcbowman | 2011-06-16 14:25:20 -0600 (Thu, 16 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/main.cc
+
+Don't require LIBGLUT for thread support.
+
+------------------------------------------------------------------------
+r5300 | jcbowman | 2011-06-16 14:19:21 -0600 (Thu, 16 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/TeXShopAndAsymptote.tex
+
+Remove unused include.
+
+------------------------------------------------------------------------
+r5299 | jcbowman | 2011-06-16 13:13:15 -0600 (Thu, 16 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Add preprocessor conditional for CYGWIN.
+------------------------------------------------------------------------
+r5298 | jcbowman | 2011-06-16 00:13:01 -0600 (Thu, 16 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.cc
+
+Allow offscreen rendering to be toggled at runtime.
+
+------------------------------------------------------------------------
+r5297 | jcbowman | 2011-06-15 15:39:19 -0600 (Wed, 15 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/transform.h
+
+Fix pen shift bounds.
+
+------------------------------------------------------------------------
+r5296 | jcbowman | 2011-06-14 16:45:08 -0600 (Tue, 14 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/patches/README
+
+Update README.
+------------------------------------------------------------------------
+r5295 | jcbowman | 2011-06-14 16:44:35 -0600 (Tue, 14 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Enable offscreen rendering; address autoconf warning messages.
+------------------------------------------------------------------------
+r5294 | jcbowman | 2011-06-14 13:01:48 -0600 (Tue, 14 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Use tirpc library under CYGWIN.
+------------------------------------------------------------------------
+r5293 | jcbowman | 2011-06-13 15:42:24 -0600 (Mon, 13 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/obj.asy
+   M /trunk/asymptote/fileio.cc
+
+Fix handling of whitespace in word mode.
+
+------------------------------------------------------------------------
+r5292 | jcbowman | 2011-06-13 11:01:30 -0600 (Mon, 13 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/palette.asy
+
+Fix implementation of data transpose.
+
+------------------------------------------------------------------------
+r5291 | jcbowman | 2011-06-10 04:19:55 -0600 (Fri, 10 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/palette.asy
+
+Implement transpose option more efficiently.
+
+------------------------------------------------------------------------
+r5290 | jcbowman | 2011-06-10 03:51:30 -0600 (Fri, 10 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/palette.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Implement transpose argument for pen function images.
+
+------------------------------------------------------------------------
+r5289 | pivaldi | 2011-06-09 16:10:37 -0600 (Thu, 09 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Fix coding style
+------------------------------------------------------------------------
+r5288 | pivaldi | 2011-06-09 11:36:27 -0600 (Thu, 09 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Fix limit calculation of parabola and hyperbola
+------------------------------------------------------------------------
+r5287 | jcbowman | 2011-05-30 09:51:41 -0600 (Mon, 30 May 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/PRCdouble.h
+
+Remove extraneous declaration.
+
+------------------------------------------------------------------------
+r5286 | jcbowman | 2011-05-27 17:14:44 -0600 (Fri, 27 May 2011) | 3 lines
+Changed paths:
+   M /trunk/asymptote/common.h
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/penfunctionimage.asy
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/glrender.h
+   M /trunk/asymptote/main.cc
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/settings.h
+
+Add Orest Shardt's offscreen rendering patch (currently implemented and
+tested only for UNIX).
+
+------------------------------------------------------------------------
+r5285 | jcbowman | 2011-05-27 01:56:19 -0600 (Fri, 27 May 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.11svn.
+------------------------------------------------------------------------
 r5284 | jcbowman | 2011-05-26 23:29:46 -0600 (Thu, 26 May 2011) | 2 lines
 Changed paths:
    M /trunk/asymptote/examples/extrudedcontour.asy

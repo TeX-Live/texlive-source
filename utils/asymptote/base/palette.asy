@@ -1,5 +1,7 @@
 private import graph;
 
+private transform swap=(0,0,0,1,1,0);
+
 typedef bounds range(picture pic, real min, real max);
 
 range Range(bool automin=false, real min=-infinity,
@@ -26,16 +28,18 @@ void image(frame f, real[][] data, pair initial, pair final, pen[] palette,
            bool transpose=(initial.x < final.x && initial.y < final.y),
            transform t=identity(), bool copy=true, bool antialias=false)
 {
-  _image(f,transpose ? transpose(data) : copy ? copy(data) : data,
-         initial,final,palette,t,copy=false,antialias=antialias);
+  transform T=transpose ? swap : identity();
+  _image(f,copy ? copy(data) : data,T*initial,T*final,palette,t*T,copy=false,
+         antialias=antialias);
 }
 
 void image(frame f, pen[][] data, pair initial, pair final,
            bool transpose=(initial.x < final.x && initial.y < final.y),
            transform t=identity(), bool copy=true, bool antialias=false)
 {
-  _image(f,transpose ? transpose(data) : copy ? copy(data) : data,
-         initial,final,t,copy=false,antialias=antialias);
+  transform T=transpose ? swap : identity();
+  _image(f,copy ? copy(data) : data,T*initial,T*final,t*T,copy=false,
+         antialias=antialias);
 }
 
 // Reduce color palette to approximate range of data relative to "display"
@@ -69,8 +73,7 @@ bounds image(picture pic=currentpicture, real[][] f, range range=Full,
              bool transpose=(initial.x < final.x && initial.y < final.y),
              bool copy=true, bool antialias=false)
 {
-  if(transpose) f=transpose(f);
-  else if(copy) f=copy(f);
+  if(copy) f=copy(f);
   if(copy) palette=copy(palette);
 
   real m=min(f);
@@ -93,14 +96,15 @@ bounds image(picture pic=currentpicture, real[][] f, range range=Full,
   initial=Scale(pic,initial);
   final=Scale(pic,final);
 
+  transform T=transpose ? swap : identity();
   pic.add(new void(frame F, transform t) {
-      _image(F,f,initial,final,palette,t,copy=false,antialias=antialias);
+      _image(F,f,T*initial,T*final,palette,t*T,copy=false,antialias=antialias);
     },true);
   pic.addBox(initial,final);
   return bounds; // Return bounds used for color space
 }
 
-bounds image(picture pic=currentpicture, real f(real,real),
+bounds image(picture pic=currentpicture, real f(real, real),
              range range=Full, pair initial, pair final,
              int nx=ngraph, int ny=nx, pen[] palette, bool antialias=false)
 {
@@ -126,26 +130,29 @@ void image(picture pic=currentpicture, pen[][] data, pair initial, pair final,
            bool transpose=(initial.x < final.x && initial.y < final.y),
            bool copy=true, bool antialias=false)
 {
-  if(transpose) data=transpose(data);
-  else if(copy) data=copy(data);
+  if(copy) data=copy(data);
 
   initial=Scale(pic,initial);
   final=Scale(pic,final);
 
+  transform T=transpose ? swap : identity();
   pic.add(new void(frame F, transform t) {
-      _image(F,data,initial,final,t,copy=false,antialias=antialias);
+      _image(F,data,T*initial,T*final,t*T,copy=false,antialias=antialias);
     },true);
   pic.addBox(initial,final);
 }
 
 void image(picture pic=currentpicture, pen f(int, int), int width, int height,
-           pair initial, pair final, bool antialias=false)
+           pair initial, pair final,
+           bool transpose=(initial.x < final.x && initial.y < final.y),
+           bool antialias=false)
 {
   initial=Scale(pic,initial);
   final=Scale(pic,final);
 
+  transform T=transpose ? swap : identity();
   pic.add(new void(frame F, transform t) {
-      _image(F,f,width,height,initial,final,t,antialias=antialias);
+      _image(F,f,width,height,T*initial,T*final,t*T,antialias=antialias);
     },true);
   pic.addBox(initial,final);
 }
@@ -285,10 +292,11 @@ void palette(picture pic=currentpicture, Label L="", bounds bounds,
       L.transform(rotate(90));
   }
   real[][] pdata={sequence(palette.length)};
-  if(vertical) pdata=transpose(pdata);
   
+  transform T=vertical ? swap : identity();
   pic.add(new void(frame f, transform t) {
-      _image(f,pdata,initial,final,palette,t,copy=false,antialias=antialias);
+      _image(f,pdata,T*initial,T*final,palette,t*T,copy=false,
+             antialias=antialias);
     },true);
   
   ticklocate locate=ticklocate(initialz,finalz,pic.scale.z,mz.min,mz.max);

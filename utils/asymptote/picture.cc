@@ -1,4 +1,4 @@
-/*****
+ /*****
  * picture.cc
  * Andy Hammerlindl 2002/06/06
  *
@@ -986,7 +986,19 @@ bool picture::shipout3(const string& prefix, const string& format,
 {
   if(getSetting<bool>("interrupt"))
     return true;
-#ifdef HAVE_GL
+  
+  bool offscreen=getSetting<bool>("offscreen");
+  
+#ifndef HAVE_LIBGLUT
+  if(!offscreen)
+    camp::reportError("to support onscreen rendering, please install glut library, run ./configure, and recompile");
+#endif
+  
+#ifndef HAVE_LIBOSMESA
+  if(offscreen)
+    camp::reportError("to support offscreen rendering; please install OSMesa library, run ./configure --enable-offscreen, and recompile");
+#endif
+  
   bounds3();
   
   for(nodelist::const_iterator p=nodes.begin(); p != nodes.end(); ++p) {
@@ -1000,8 +1012,9 @@ bool picture::shipout3(const string& prefix, const string& format,
   static int oldpid=0;
   bool animating=getSetting<bool>("animating");
   bool Wait=!interact::interactive || !View || animating;
-  
-  if(glthread) {
+
+#ifdef HAVE_LIBGLUT
+  if(glthread && !offscreen) {
 #ifdef HAVE_LIBPTHREAD
     if(gl::initialize) {
       gl::initialize=false;
@@ -1024,7 +1037,6 @@ bool picture::shipout3(const string& prefix, const string& format,
       com.specular=specular;
       com.viewportlighting=viewportlighting;
       com.view=View;
-#ifdef HAVE_LIBPTHREAD
       if(Wait)
         pthread_mutex_lock(&readyLock);
       wait(initSignal,initLock);
@@ -1039,13 +1051,10 @@ bool picture::shipout3(const string& prefix, const string& format,
         pthread_cond_wait(&readySignal,&readyLock);
         pthread_mutex_unlock(&readyLock);
       }
-#endif  
       return true;
     }
-#ifdef HAVE_LIBPTHREAD
     if(Wait)
       pthread_mutex_lock(&readyLock);
-#endif  
 #endif
   } else {
     int pid=fork();
@@ -1057,20 +1066,18 @@ bool picture::shipout3(const string& prefix, const string& format,
       return true;
     }
   }
-  
+#endif
   glrender(prefix,this,outputformat,width,height,angle,zoom,m,M,shift,t,
            background,nlights,lights,diffuse,ambient,specular,viewportlighting,
            View,oldpid);
 #ifdef HAVE_LIBPTHREAD
-  if(glthread && Wait) {
+  if(glthread && !offscreen && Wait) {
     pthread_cond_wait(&readySignal,&readyLock);
     pthread_mutex_unlock(&readyLock);
   }
   return true;
-#endif  
-#else
-  reportError("Cannot render image; please install glut, run ./configure, and recompile");
 #endif
+
   return false;
 }
 

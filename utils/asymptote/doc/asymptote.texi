@@ -9,7 +9,7 @@ This file documents @code{Asymptote}, version @value{VERSION}.
 
 @url{http://asymptote.sourceforge.net}
      
-Copyright @copyright{} 2004-10 Andy Hammerlindl, John Bowman, and Tom Prince.
+Copyright @copyright{} 2004-11 Andy Hammerlindl, John Bowman, and Tom Prince.
      
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -7449,7 +7449,7 @@ A color density plot using palette @code{palette} can be generated from
 a function @code{f}(@math{x},@math{y}) and added to a picture @code{pic}:
 @cindex @code{image}
 @verbatim
-bounds image(picture pic=currentpicture, real f(real,real),
+bounds image(picture pic=currentpicture, real f(real, real),
              range range=Full, pair initial, pair final,
              int nx=ngraph, int ny=nx, pen[] palette, bool antialias=false)
 @end verbatim
@@ -7547,7 +7547,9 @@ void image(picture pic=currentpicture, pen[][] data,
            bool transpose=(initial.x < final.x && initial.y < final.y),
            bool copy=true, bool antialias=false);
 void image(picture pic=currentpicture, pen f(int, int), int width, int height,
-           pair initial, pair final, bool antialias=false);
+           pair initial, pair final,
+           bool transpose=(initial.x < final.x && initial.y < final.y),
+           bool antialias=false);
 @end verbatim
 @noindent
 as illustrated in the following examples:
@@ -7808,7 +7810,7 @@ By default, the scene is internally rendered at twice the specified
 resolution; this can be disabled by setting @code{antialias=1}.
 High resolution rendering is done by tiling the image. If your
 graphics card allows it, the rendering can be made more efficient by
-increasing the maximum tile size @code{maxtile} beyond the screen
+increasing the maximum tile size @code{maxtile} to your screen
 dimensions (indicated by @code{maxtile=(0,0)}. If your video card
 generates unwanted black stripes in the output, try setting the
 horizontal and vertical components of @code{maxtiles} to something

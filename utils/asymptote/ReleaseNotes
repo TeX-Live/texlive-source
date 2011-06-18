@@ -1,3 +1,12 @@
+Release Notes for Version 2.11
+
+A new offscreen (software) 3D rendering option supports rendering on
+machines that are remote or lack a working video graphics card.
+Shifted pens now work correctly. The handling of whitespace in word mode
+file reads was fixed. A transpose argument was added to the pen function image
+facility, for consistency with the other image functions. The limit
+calculation of parabola and hyperbola was fixed in the geometry module.
+
 Release Notes for Version 2.10
 
 PRC vertex-shading for straight patches was implemented. A general image
