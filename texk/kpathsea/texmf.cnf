@@ -325,7 +325,7 @@ AFMFONTS = .;$TEXMF/fonts/afm//;$OSFONTDIR//
 % TrueType outline fonts.
 TTFONTS = .;$TEXMF/fonts/{truetype,opentype}//;$OSFONTDIR//
 
-% Opentype outline fonts.
+% OpenType outline fonts.
 OPENTYPEFONTS = .;$TEXMF/fonts/{opentype,truetype}//;$OSFONTDIR//
 
 % Type 42 outline fonts.
@@ -348,9 +348,6 @@ CMAPFONTS = .;$TEXMF/fonts/cmap//
 
 % Subfont definition files.
 SFDFONTS = .;$TEXMF/fonts/sfd//
-
-% OpenType outline fonts.
-OPENTYPEFONTS = .;$TEXMF/fonts/opentype//
 
 % OpenType feature files (.fea).
 FONTFEATURES=.;$TEXMF/fonts/fea//

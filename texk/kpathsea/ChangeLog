@@ -1,3 +1,7 @@
+2011-06-19  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (OPENTYPEFONTS): a duplicate entry was created :(.
+
 2011-06-13  Manuel P\'egour\'e-Gonnard <mpg@elzevir.fr>
 
 	* db.c (match): ensure that we are at a dir separator in
