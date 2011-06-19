@@ -1,4 +1,31 @@
 ------------------------------------------------------------------------
+r5313 | jcbowman | 2011-06-18 17:29:56 -0600 (Sat, 18 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/picture.cc
+
+Support --disable-gl again.
+
+------------------------------------------------------------------------
+r5312 | jcbowman | 2011-06-18 10:55:00 -0600 (Sat, 18 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/PRCdouble.h
+
+Include cstring instead of string.h.
+
+------------------------------------------------------------------------
+r5311 | jcbowman | 2011-06-18 10:50:11 -0600 (Sat, 18 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/PRCdouble.h
+
+Add missing include.
+
+------------------------------------------------------------------------
+r5310 | jcbowman | 2011-06-18 01:55:15 -0600 (Sat, 18 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.12svn.
+------------------------------------------------------------------------
 r5309 | jcbowman | 2011-06-18 00:40:24 -0600 (Sat, 18 Jun 2011) | 1 line
 Changed paths:
    M /trunk/asymptote/README
