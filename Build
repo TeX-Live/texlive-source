@@ -124,6 +124,7 @@ if test -d "$bindir"; then
 # Any errors will have been duly reported anyway.
 fi
 
-echo done `date` | tee -a build.log
+status=`cat exitstatus.txt`
+echo "done (exit status $status)" `date` | tee -a build.log
 
-exit `cat exitstatus.txt`
+exit $status

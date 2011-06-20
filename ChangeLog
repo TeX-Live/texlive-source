@@ -1,3 +1,7 @@
+2011-06-21  Karl Berry  <karl@tug.org>
+
+	* Build: report final exit status.
+
 2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Conditional 'cross_compiling' =>
