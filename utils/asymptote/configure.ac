@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.12],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.13],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 
@@ -358,7 +358,7 @@ AC_DEFUN([ac_FUNC_STRPTIME], [
 
 # Checks for library functions.
 AC_FUNC_FORK
-AC_CHECK_FUNCS([dup2 floor memset pow sqrt strchr tgamma])
+AC_CHECK_FUNCS([dup2 floor memset pow sqrt strchr tgamma memrchr])
 AC_FUNC_STRFTIME
 ac_FUNC_STRPTIME
 AC_FUNC_ERROR_AT_LINE

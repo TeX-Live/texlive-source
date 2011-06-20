@@ -1,4 +1,27 @@
 ------------------------------------------------------------------------
+r5316 | jcbowman | 2011-06-19 07:40:51 -0600 (Sun, 19 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/prc/PRCdouble.cc
+   M /trunk/asymptote/prc/PRCdouble.h
+
+Autodetect memrchr.
+
+------------------------------------------------------------------------
+r5315 | jcbowman | 2011-06-19 07:31:50 -0600 (Sun, 19 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Make install-prebuilt also install asy-keywords.el.
+
+------------------------------------------------------------------------
+r5314 | jcbowman | 2011-06-18 20:03:42 -0600 (Sat, 18 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.13svn.
+------------------------------------------------------------------------
 r5313 | jcbowman | 2011-06-18 17:29:56 -0600 (Sat, 18 Jun 2011) | 2 lines
 Changed paths:
    M /trunk/asymptote/picture.cc
