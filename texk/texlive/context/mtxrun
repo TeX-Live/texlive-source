@@ -10044,7 +10044,7 @@ local function splitpathexpr(str, newlist, validate) -- I couldn't resist lpeggi
     if validate then
         for s in gmatch(str,"[^,]+") do
             local restoreslashes = false
-            if gmatch(s, "//$") then restoreslashes = true end
+            if find(s, "//$") then restoreslashes = true end
             s = validate(s)
             if s then
                 n = n + 1 ; t[n] = s
@@ -12103,6 +12103,7 @@ local function collect_instance_files(filename,askedformat,allresults) -- todo :
                 local path = pathlist[k]
                 local pathname = lpegmatch(inhibitstripper,path)
                 local doscan = path == pathname -- no ^!!
+                if not find (pathname, '//$') then doscan = false end
                 done = false
                 -- using file list
                 if filelist then
