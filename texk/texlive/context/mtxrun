@@ -12135,7 +12135,7 @@ local function collect_instance_files(filename,askedformat,allresults) -- todo :
                         end
                     end
                 end
-                if not done and doscan then
+                if not done then
                     -- check if on disk / unchecked / does not work at all / also zips
                     -- TH perhaps it did not work because of missing resolvers.resolve() 
                     -- and resolvers.scanfiles() calls ...
@@ -12146,22 +12146,19 @@ local function collect_instance_files(filename,askedformat,allresults) -- todo :
                         if not find(pname,"%*") then
                             local ppname = gsub(pname,"/+$","")
                             if can_be_dir(ppname) then
-                                local files = resolvers.scanfiles(ppname)
-                                if files then 
-                                    for k=1,#wantedfiles do
-                                        local w = wantedfiles[k]
-                                        local subpath = files[w]
-                                        if subpath then
-                                            local fname = filejoin(ppname,subpath,w)
-                                            if isreadable(fname) then
-                                                if trace_detail then
-                                                    report_resolving("found '%s' by scanning",fname)
-                                                end
-                                                result[#result+1] = fname
-                                                done = true
-                                                if not allresults then break end
-                                            end
+                                local files = {}
+                                if doscan then files = resolvers.scanfiles(ppname) end
+                                for k=1,#wantedfiles do
+                                    local w = wantedfiles[k]
+                                    local subpath = files[w] or ''
+                                    local fname = filejoin(ppname,subpath,w)
+                                    if isreadable(fname) then
+                                        if trace_detail then
+                                            report_resolving("found '%s' by scanning",fname)
                                         end
+                                        result[#result+1] = fname
+                                        done = true
+                                        if not allresults then break end
                                     end
                                 end
                             else
