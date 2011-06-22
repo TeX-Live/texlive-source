@@ -1,3 +1,9 @@
+2011-06-23  Karl Berry  <karl@tug.org>
+
+	* configure.ac (AC_C_CHAR_UNSIGNED): needed for test
+	in web2c/w2c/config.h, else AIX ends up mis-tangling tex.web.
+	tlbuild mail from vvv, 21 Jun 2011 23:57:53.
+
 2011-06-06  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi: update MetaPost description, .mem's are

@@ -231,6 +231,7 @@ if test `(uname) 2>/dev/null` = aux; then
   AC_CHECK_LIB([posix], [sigemptyset])
 fi
 
+AC_C_CHAR_UNSIGNED
 AC_CHECK_SIZEOF([int])
 if test $ac_cv_sizeof_int -lt 4; then
   AC_MSG_ERROR([Sorry, need `int' with at least 4 bytes.])
