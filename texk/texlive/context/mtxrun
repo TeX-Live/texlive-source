@@ -12150,7 +12150,10 @@ local function collect_instance_files(filename,askedformat,allresults) -- todo :
                                 if doscan then files = resolvers.scanfiles(ppname) end
                                 for k=1,#wantedfiles do
                                     local w = wantedfiles[k]
-                                    local subpath = files[w] or ''
+                                    local subpath = ''
+                                    if files[w] then
+                                       subpath = type(files[w]) == "table" and files[w][1] or files[w]
+                                    end
                                     local fname = filejoin(ppname,subpath,w)
                                     if isreadable(fname) then
                                         if trace_detail then
