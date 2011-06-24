@@ -20,11 +20,9 @@ gcc -Os -s -mwindows -o tl-tray-menu.exe tl-tray-menu-rc.o tl-tray-menu.c
 
 #define MAX_STR 32768
 
-DWORD errCode;
 static char strBuf[MAX_STR];
 
 #define DIE(...) { \
-  errCode = GetLastError(); \
   _snprintf( strBuf, 4*MAX_PATH, __VA_ARGS__ ); \
   MessageBox( NULL, strBuf, "ERROR!", MB_ICONERROR | MB_SETFOREGROUND );\
   return 1; \
@@ -137,7 +135,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
             &si,      // STARTUPINFO structure
             &pi )     // PROCESS_INFORMATION structure
           ) DIE( "Failed to spawn command (error code %d):\n%s", 
-                 errCode, menuCommands[LOWORD(wParam)] );
+                 GetLastError(), menuCommands[LOWORD(wParam)] );
         }
       }
     }
