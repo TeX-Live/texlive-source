@@ -20,9 +20,11 @@ gcc -Os -s -mwindows -o tl-tray-menu.exe tl-tray-menu-rc.o tl-tray-menu.c
 
 #define MAX_STR 32768
 
+DWORD errCode;
 static char strBuf[MAX_STR];
 
 #define DIE(...) { \
+  errCode = GetLastError(); \
   _snprintf( strBuf, 4*MAX_PATH, __VA_ARGS__ ); \
   MessageBox( NULL, strBuf, "ERROR!", MB_ICONERROR | MB_SETFOREGROUND );\
   return 1; \
@@ -102,42 +104,43 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
     break;
     
     case WM_COMMAND:
-		{
-			switch ( LOWORD( wParam ) )
-			{
-				case MENU_CONFIG:
-					MessageBox( NULL, configInfo, nid.szTip, MB_SETFOREGROUND );
-				break;
+    {
+      switch ( LOWORD( wParam ) )
+      {
+        case MENU_CONFIG:
+          MessageBox( NULL, configInfo, nid.szTip, MB_SETFOREGROUND );
+        break;
 
-			  case MENU_EXIT:
-					Shell_NotifyIcon( NIM_DELETE, &nid );
-					ExitProcess(0);
-				break;
+        case MENU_EXIT:
+          Shell_NotifyIcon( NIM_DELETE, &nid );
+          ExitProcess(0);
+        break;
 
-				default:
-				{
-					STARTUPINFO si;
-					PROCESS_INFORMATION pi;
-					ZeroMemory( &si, sizeof(si) );
-					si.cb = sizeof(si);
-					//si.dwFlags = STARTF_USESHOWWINDOW;
-					//si.wShowWindow = SW_HIDE ;
-					ZeroMemory( &pi, sizeof(pi) );
-					if( !CreateProcess(
-						NULL,     // module name (uses command line if NULL)
-						menuCommands[LOWORD(wParam)],     // command line
-						NULL,     // process security atrributes
-						NULL,     // thread security atrributes
-						TRUE,     // handle inheritance
-						0,        // creation flags, e.g. CREATE_NO_WINDOW, DETACHED_PROCESS
-						NULL,     // pointer to environment block (uses parent if NULL)
-						NULL,     // starting directory (uses parent if NULL)
-						&si,      // STARTUPINFO structure
-						&pi )     // PROCESS_INFORMATION structure
-					) DIE( "Failed to execute command:\n%s", menuCommands[LOWORD(wParam)] ); 
-				}
-			}
-		}
+        default:
+        {
+          STARTUPINFO si;
+          PROCESS_INFORMATION pi;
+          ZeroMemory( &si, sizeof(si) );
+          si.cb = sizeof(si);
+          //si.dwFlags = STARTF_USESHOWWINDOW;
+          //si.wShowWindow = SW_HIDE ;
+          ZeroMemory( &pi, sizeof(pi) );
+          if( !CreateProcess(
+            NULL,     // module name (uses command line if NULL)
+            menuCommands[LOWORD(wParam)],     // command line
+            NULL,     // process security atrributes
+            NULL,     // thread security atrributes
+            TRUE,     // handle inheritance
+            0,        // creation flags, e.g. CREATE_NO_WINDOW, DETACHED_PROCESS
+            NULL,     // pointer to environment block (uses parent if NULL)
+            NULL,     // starting directory (uses parent if NULL)
+            &si,      // STARTUPINFO structure
+            &pi )     // PROCESS_INFORMATION structure
+          ) DIE( "Failed to spawn command (error code %d):\n%s", 
+                 errCode, menuCommands[LOWORD(wParam)] );
+        }
+      }
+    }
     break;
 
     default:                 
@@ -158,7 +161,7 @@ int APIENTRY WinMain(
   // scratch variables
 
   char *s;
-	
+  
   // get file name of this executable
   
   static char dirSelf[MAX_PATH];
@@ -185,10 +188,10 @@ int APIENTRY WinMain(
   strcpy( fileConfig, s );
   if ( s = strrchr( fileConfig, '.' ) ) *s = '\0'; // remove file extension part
   strcat( fileConfig, ".ini" );
-	
-	strcat( configInfo, dirSelf );
-	strcat( configInfo, "\\tlpkg\\installer\\" );
-	strcat( configInfo, fileConfig );
+  
+  strcat( configInfo, dirSelf );
+  strcat( configInfo, "\\tlpkg\\installer\\" );
+  strcat( configInfo, fileConfig );
   
   if ( GetFileAttributes( fileConfig ) == INVALID_FILE_ATTRIBUTES ) {
   
@@ -214,12 +217,12 @@ int APIENTRY WinMain(
     for ( lineNo = 1 ; fgets( strBuf, MAX_STR, CONFIG ) 
                        && menuItem < MAX_MENU_ENTRIES ; lineNo++ )
     {
-		  if ( menuItem < 0 )
-			{
-			  if ( *strBuf == '[' && 
-				     strncmp( strBuf, strSect, strlen( strSect ) ) == 0 ) menuItem++;
-				continue;
-			}
+      if ( menuItem < 0 )
+      {
+        if ( *strBuf == '[' && 
+             strncmp( strBuf, strSect, strlen( strSect ) ) == 0 ) menuItem++;
+        continue;
+      }
       if ( *strBuf == ';' ) continue; // skip comments
       if ( *strBuf == '[' ) break;    // next section
       s = &menuStrings[i];
