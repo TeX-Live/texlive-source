@@ -1,7 +1,6 @@
-Index: LESwaps.h
-===================================================================
---- LESwaps.h	(revision 23041)
-+++ LESwaps.h	(working copy)
+diff -ur icu-4.6.orig/source/layout/LESwaps.h icu-4.6/source/layout/LESwaps.h
+--- icu-4.6.orig/source/layout/LESwaps.h	2010-06-15 20:56:44.000000000 +0200
++++ icu-4.6/source/layout/LESwaps.h	2011-06-19 01:33:11.000000000 +0200
 @@ -1,6 +1,7 @@
 +
  /*
