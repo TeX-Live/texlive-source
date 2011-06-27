@@ -142,7 +142,7 @@ eof
   cleanup 0
 }
 
-version()
+versionfunc()
 {
   cat <<eof
 $progname version $version
@@ -433,7 +433,7 @@ main()
       fullfmt=$1; shift
       case $fullfmt in
         ""|--help) help ;;
-        --version) version ;;
+        --version) versionfunc ;;
               --*) abort "unknown option $fullfmt, try --help" ;;
         *.fmt|*.mem|*.base)
           set x --byfmt `echo $fullfmt | sed 's@\.[a-z]*$@@'` ${1+"$@"}
@@ -512,7 +512,7 @@ main()
   case "$cmd" in
          "") abort "missing command; try $progname --help if you need it";;
        help) help;;
-    version) version;;
+    version) versionfunc;;
   esac
 
   if test -n "$cfgparam"; then

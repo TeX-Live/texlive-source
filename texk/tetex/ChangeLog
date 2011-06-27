@@ -1,3 +1,9 @@
+2011-06-27  Karl Berry  <karl@tug.org>
+
+	* fmtutil (version): rename to versionfunc, or Solaris sh dies
+	with "bad substitution".
+	Report from Nelson, 23 Jun 2011 09:42:09.
+
 2011-06-18  Karl Berry  <karl@tug.org>
 
 	* updmap.pl (locateMap): allow "Map foo" (without the ".map"),

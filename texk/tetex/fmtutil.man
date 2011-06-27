@@ -1,4 +1,4 @@
-.TH FMTUTIL 1 "July 2010" "TeX Live" "TeX Live"
+.TH FMTUTIL 1 "June 2011" "TeX Live" "TeX Live"
 .SH "NAME"
 fmtutil \- utility for maintaining TeX format files
 .PP
