@@ -1,3 +1,8 @@
+2011-06-28  Karl Berry  <karl@tug.org>
+
+	* mktexlsr: need to shift when arg is not a directory.
+	Found by Luigi Scarso, tex-k mail 28 Jun 2011 00:21:14.
+
 2011-06-19  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (OPENTYPEFONTS): a duplicate entry was created :(.

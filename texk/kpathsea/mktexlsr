@@ -95,6 +95,7 @@ while test $# -gt 0; do
   else
     if test ! -d "$1"; then
       echo "$progname: $1: not a directory, skipping." >&2
+      shift
       continue
     fi
     # By saving the argument in a file, we can later get it back while
