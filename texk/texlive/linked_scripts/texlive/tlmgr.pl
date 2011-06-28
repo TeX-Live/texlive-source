@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 22912 2011-06-11 04:40:36Z preining $
+# $Id: tlmgr.pl 23117 2011-06-23 18:00:23Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 22912 $';
-my $datrev = '$Date: 2011-06-11 06:40:36 +0200 (Sat, 11 Jun 2011) $';
+my $svnrev = '$Revision: 23117 $';
+my $datrev = '$Date: 2011-06-23 20:00:23 +0200 (Thu, 23 Jun 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -585,21 +585,27 @@ sub handle_execute_actions
     $::files_changed = 0;
   }
 
+  chomp(my $TEXMFSYSVAR = `kpsewhich -var-value=TEXMFSYSVAR`);
+  chomp(my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
+  chomp(my $TEXMFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
+
   #
   # maps handling
   # if enabled and disabled -> do nothing
   # if only enabled -> enable it
   # if only disabled -> disable it
+  # if the option "generate_updmap" is set, then simply ignore all that
+  # and run the equivalent of tlmgr generate updmap
   {
+    my $updmap_run_needed = 0;
     my %do_enable;
     my %do_disable;
-    my $run_full = 0;
     for my $m (keys %{$::execute_actions{'enable'}{'maps'}}) {
-      $run_full = 1;
+      $updmap_run_needed = 1;
       $do_enable{$m} = 1;
     }
     for my $m (keys %{$::execute_actions{'disable'}{'maps'}}) {
-      $run_full = 1;
+      $updmap_run_needed = 1;
       if (defined($do_enable{$m})) {
         # we are upgrading because it is disabled and enabled, so
         # delete the entry in do_enable, it is already
@@ -609,26 +615,60 @@ sub handle_execute_actions
         $do_disable{$m} = 1;
       }
     }
-    for my $m (keys %do_disable) {
-      $errors += do_cmd_and_check("updmap-sys --nomkmap --nohash --disable $m");
+    if ($updmap_run_needed && $localtlpdb->option("generate_updmap")) {
+      my $dest = "$TEXMFSYSCONFIG/web2c/updmap.cfg";
+      my $localcfg = "$TEXMFLOCAL/web2c/updmap-local.cfg";
+      info("tlmgr: generate_updmap writing new $dest\n");
+      TeXLive::TLUtils::create_updmap($localtlpdb, $dest, $localcfg);
+    } else {
+      for my $m (keys %do_disable) {
+        $errors += do_cmd_and_check("updmap-sys --nomkmap --nohash --disable $m");
+      }
+      for my $m (keys %do_enable) {
+        my $str = "updmap-sys --nomkmap --nohash --enable " .
+                  $::execute_actions{'enable'}{'maps'}{$m} . "=$m";
+        $errors += do_cmd_and_check($str);
+      }
     }
-    for my $m (keys %do_enable) {
-      my $str = "updmap-sys --nomkmap --nohash --enable " .
-                $::execute_actions{'enable'}{'maps'}{$m} . "=$m";
-      $errors += do_cmd_and_check($str);
-    }
-    $errors += do_cmd_and_check("updmap-sys") if $run_full;
+    $errors += do_cmd_and_check("updmap-sys") if $updmap_run_needed;
   }
 
+  # format relevant things
+  # we first have to check if the config files, that is fmtutil.cnf 
+  # or one of the language* files have changed, regenerate them
+  # if necessary, and then run the necessary fmtutil calls.
 
-  chomp(my $TEXMFSYSVAR = `kpsewhich -var-value=TEXMFSYSVAR`);
-  chomp(my $TEXMFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
-
-
-  # format-regenerate is used when the paper size changes.  In that
-  # case, if option("create_formats") is set, we simply want to generate
-  #
   {
+    # first check for language* files
+    my $regenerate_language = 0;
+    for my $m (keys %{$::execute_actions{'enable'}{'hyphens'}}) {
+      $regenerate_language = 1;
+      last;
+    }
+    for my $m (keys %{$::execute_actions{'disable'}{'hyphens'}}) {
+      $regenerate_language = 1;
+      last;
+    }
+    if ($regenerate_language) {
+      for my $ext ("dat", "def", "dat.lua") {
+        my $lang = "language.$ext";
+        info("regenerating $lang\n");
+        my $arg1 = "$TEXMFSYSVAR/tex/generic/config/language.$ext";
+        my $arg2 = "$TEXMFLOCAL/tex/generic/config/language-local.$ext";
+        if ($ext eq "dat") {
+          TeXLive::TLUtils::create_language_dat($localtlpdb, $arg1, $arg2);
+        } elsif ($ext eq "def") {
+          TeXLive::TLUtils::create_language_def($localtlpdb, $arg1, $arg2);
+        } else {
+          TeXLive::TLUtils::create_language_lua($localtlpdb, $arg1, $arg2);
+        }
+      }
+    }
+
+    # format-regenerate is used when the paper size changes.  In that
+    # case, if option("create_formats") is set, we simply want to generate
+    # all formats
+    #
     my %done_formats;
     my %updated_engines;
     my %format_to_engine;
@@ -674,37 +714,16 @@ sub handle_execute_actions
         $done_formats{$f} = 1;
       }
     }
-  }
 
-  #
-  # hyphenation patterns
-  # if something has changed do the whole stuff ...
-  {
-    my $do_something = 0;
-    for my $m (keys %{$::execute_actions{'enable'}{'hyphens'}}) {
-      $do_something = 1;
-      last;
-    }
-    for my $m (keys %{$::execute_actions{'disable'}{'hyphens'}}) {
-      $do_something = 1;
-      last;
-    }
+    # now go back to the hyphenation patterns and regenerate formats
+    # based on the various language files
+    # this of course will in some cases duplicate fmtutil calls,
+    # but it is much easier than actually checking which formats
+    # don't need to be updated
 
-    if ($do_something) {
+    if ($regenerate_language) {
       for my $ext ("dat", "def", "dat.lua") {
         my $lang = "language.$ext";
-        info("regenerating $lang\n");
-
-        my $arg1 = "$TEXMFSYSVAR/tex/generic/config/language.$ext";
-        my $arg2 = "$TEXMFLOCAL/tex/generic/config/language-local.$ext";
-        if ($ext eq "dat") {
-          TeXLive::TLUtils::create_language_dat($localtlpdb, $arg1, $arg2);
-        } elsif ($ext eq "def") {
-          TeXLive::TLUtils::create_language_def($localtlpdb, $arg1, $arg2);
-        } else {
-          TeXLive::TLUtils::create_language_lua($localtlpdb, $arg1, $arg2);
-        }
-
         if (! TeXLive::TLUtils::win32()) {
           # Use full path for external command, except on Windows.
           $lang = "$TEXMFSYSVAR/tex/generic/config/$lang";
@@ -1028,7 +1047,7 @@ sub action_path {
     }
   } else {
     # that should not happen
-    tlwarn("\nShould not happen, action_path what=$what");
+    tlwarn("\ntlmgr: Should not happen, action_path what=$what");
     exit 1;
   }
   return;
@@ -1038,21 +1057,25 @@ sub action_path {
 #
 sub action_dumptlpdb {
   init_local_db();
-  # set machine readable to 1
+  
+  # we are basically doing machine-readable output.
   my $savemr = $::machinereadable;
   $::machinereadable = 1;
-  if ($opts{"local"}) {
-    # since we want to be consistent we write out the location of
-    # the installation, too, in the format as it is done when
-    # dumping the remote tlpdb
+  
+  if ($opts{"local"} && !$opts{"remote"}) {
+    # for consistency we write out the location of the installation,
+    # too, in the same format as when dumping the remote tlpdb
     print "location-url\t", $localtlpdb->root, "\n";
     $localtlpdb->writeout;
-    return;
-  }
-  if ($opts{"remote"}) {
+
+  } elsif ($opts{"remote"} && !$opts{"local"}) {
     init_tlmedia();
     $remotetlpdb->writeout;
+
+  } else {
+    tlwarn("tlmgr dump-tlpdb: need exactly one of --local and --remote.\n");
   }
+  
   $::machinereadable = $savemr;
   return;
 }
@@ -5233,14 +5256,15 @@ written to the terminal.  This is a more detailed report than C<--list>.
 
 Concisely list the packages which would be updated, newly installed, or
 removed, without actually changing anything. 
-If C<--all> is given, it lists all available updates.
-If C<--self> is given, but not C<--all> lists only updates the the
-critical packages (tlmgr, texlive infrastructure, perl on Windows, etc.).
-If neither C<--all> nor C<--self> is given, and in addition no I<pkg>
-is passed on the command line, then C<--all> is assumed (so 
-C<tlmgr update --list> behaves like C<tlmgr update --list --all>).
-If neither C<--all> nor C<--self> is given, but package names passed
-on the command line, those packages are checked for updates.
+If C<--all> is also given, all available updates are listed.
+If C<--self> is given, but not C<--all>, only updates to the
+critical packages (tlmgr, texlive infrastructure, perl on Windows, etc.)
+are listed.
+If neither C<--all> nor C<--self> is given, and in addition no I<pkg> is
+given, then C<--all> is assumed (thus, C<tlmgr update --list> is the
+same as C<tlmgr update --list --all>).
+If neither C<--all> nor C<--self> is given, but specific package names are
+given, those packages are checked for updates.
 
 =item B<--exclude> I<pkg>
 
@@ -5270,7 +5294,7 @@ C<--all>), or the given I<pkg> names.
 =item B<--no-auto-install> [I<pkg>]...
 
 Under normal circumstances C<tlmgr> will install packages which are new
-on the server, as descrbed above under C<--all>.  This option prevents
+on the server, as described above under C<--all>.  This option prevents
 any such automatic installation, either for all packages (with
 C<--all>), or the given I<pkg> names.
 
@@ -5489,19 +5513,20 @@ written to the terminal.
 
 The first form shows the global TeX Live settings currently saved in the
 TLPDB with a short description and the C<key> used for changing it in
-paranthesis.
+parentheses.
 
-The second form acts like the first, but also shows options which can
-be defined but are not currently set to any value.
+The second form is similar, but also shows options which can be defined
+but are not currently set to any value.
 
 In the third form, if I<value> is not given, the setting for I<key> is
 displayed.  If I<value> is present, I<key> is set to I<value>.
 
-Possible values for I<key> are (but see B<tlmgr option showall> for
+Possible values for I<key> are (run C<tlmgr option showall> for
 the definitive list):
 
  repository (default package repository),
  formats    (create formats at installation time),
+ postcode   (run postinst code blobs)
  docfiles   (install documentation files),
  srcfiles   (install source files),
  backupdir  (default directory for backups),
@@ -5509,6 +5534,10 @@ the definitive list):
  sys_bin    (directory to which executables are linked by the path action)
  sys_man    (directory to which man pages are linked by the path action)
  sys_info   (directory to which Info files are linked by the path action)
+ generate_updmap     (run the equivalent of tlmgr generate updmap on changes)
+ desktop_integration (Windows-only: create Start menu shortcuts)
+ fileassocs (Windows-only: change file associations)
+ multiuser  (Windows-only: install for all users)
 
 One common use of C<option> is to permanently change the installation to
 get further updates from the Internet, after originally installing from
@@ -5517,14 +5546,24 @@ DVD.  To do this, you can run
  tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
 
 The C<install-tl> documentation has more information about the possible
-values for repository.
+values for C<repository>.  (For backward compatibility, C<location> can
+be used as alternative name for C<repository>.)
 
-To keep backward compatibility C<location> can be used as alternative
-name for C<repository>.
+If C<formats> is set (this is the default), then formats are regenerated
+when either the engine or the format files have changed.  Disable this
+only when you know what you are doing.
 
-The two options C<autobackup> and C<backupdir> determine defaults for
-the C<update>, C<backup> and C<restore> actions.  These three actions
-need a directory to write to or read from the backups.  If
+The C<postcode> option controls execution of per-package
+postinstallation action code.  It is set by default, and again disabling
+is not likely to be of interest except perhaps to developers.
+
+The C<docfiles> and C<srcfiles> options control the installation of
+their respective files of a package. By default both are enabled.  This
+can be disabled if disk space is (very) limited.
+
+The options C<autobackup> and C<backupdir> determine the defaults for
+the actions C<update>, C<backup> and C<restore>.  These three actions
+need a directory in which to read or write the backups.  If
 C<--backupdir> is not specified on the command line, the C<backupdir>
 option value is used (if set).
 
@@ -5535,17 +5574,32 @@ number of backups to keep.  Thus, backups are disabled if the value is
 0.  In the C<--clean> mode of the C<backup> action this option also
 specifies the number to be kept.
 
-To setup C<autobackup> to C<-1> on the command line, use
+To setup C<autobackup> to C<-1> on the command line, use either:
 
   tlmgr option autobackup infty
 
-Or you can use:
+or:
 
   tlmgr option -- autobackup -1
 
-The C<--> avoids having the C<-1> treated as an option.  (For most
-programs, C<--> stops parsing for arguments at the point where it
-appears; this is a general feature of option parsing.)
+The C<--> avoids having the C<-1> treated as an option.  (C<--> stops
+parsing for options at the point where it appears; this is a general
+feature across most Unix programs.)
+
+The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on
+Unix-like systems to control the generation of links for executables,
+info files and man pages. See the C<path> action for details.
+
+For the <generate_updmap> option, see the C<updmap> section in
+L<generate|/"generate [I<option>]... I<what>">.
+
+The last three options control behaviour on Windows installations.  If
+C<desktop_integration> is set, then some packages will install items in
+a sub-folder of the Start menu for C<tlmgr gui>, documentation, etc.  If
+C<fileassocs> is set, Windows file associations are made (see also the
+C<postaction> action).  Finally, if C<multiuser> is set, then adaptions
+to the registry and the menus are done for all users on the system
+instead of only the current user.  All three options are on by default.
 
 
 =head2 conf [texmf|tlmgr [I<key> [I<value>]]]
@@ -5752,35 +5806,6 @@ L</"TAXONOMIES"> below for details.
 =back
 
 
-=head2 dump-tlpdb [I<options>]
-
-Dumps local or remote TLPDB as is to stdout.
-
-Options:
-
-=over 4
-
-=item B<--local>
-
-Dumps the local tlpdb.
-
-=item B<--remote>
-
-Dumps the remote tlpdb.
-
-=back
-
-If both B<--local> and B<--remote> is given, only the local tlpdb is dumped
-out. If none is given then nothing is dumped.
-
-In the line before the dump of the tlpdb the location is specified on 
-a line:
-
-  location-url TAB <location>
-
-
-
-
 =head2 list [--only-installed] [collections|schemes|I<pkg>...]
 
 With no argument, lists all packages available at the package
@@ -5794,6 +5819,39 @@ With anything else as arguments, operates as the C<show> action.
 If the option C<--only-installed> is given, the installation source will
 not be used; only locally installed packages, collections, or schemes
 are listed.
+
+
+=head2 dump-tlpdb [--local|--remote]
+
+Dump complete local or remote TLPDB to standard output, as-is.  The
+output is analogous to the C<--machine-readable> output; see
+L<MACHINE-READABLE OUTPUT> section.
+
+Options:
+
+=over 4
+
+=item B<--local>
+
+Dump the local tlpdb.
+
+=item B<--remote>
+
+Dump the remote tlpdb.
+
+=back
+
+Exactly one of C<--local> and C<--remote> must be given.
+
+In either case, the first line of the output specifies the repository
+location, in this format:
+
+  "location-url" "\t" location
+
+where C<location-url> is the literal field name, followed by a tab, and
+I<location> is the file or url to the repository.
+
+Line endings may be either LF or CRLF depending on the current platform.
 
 
 =head2 check [I<option>]... [files|depends|executes|runfiles|all]
@@ -5864,12 +5922,12 @@ issued that the caller does not have enough privileges.
 If the user does not have admin rights, and the option C<--w32mode>
 is given, it must be B<user> and the user path will be adjusted. If a
 user without admin rights uses the option C<--w32mode admin> a warning
-is issued that the caller does not have enough provileges.
+is issued that the caller does not have enough privileges.
 
 
 =cut
 
-# keep the following on *ONE* line otherwise Windows perldoc does
+# keep the following on *ONE* line otherwise Losedows perldoc does
 # not show it!!!!
 
 =pod
@@ -5881,15 +5939,16 @@ as the second required argument in install or remove mode (which is the
 first required argument), for either the packages given on the command
 line, or for all if C<--all> is given.
 
-The option C<--w32mode> is C<user> all actions will only carried out in
-the user accessible parts of the registry/filesystem, while the C<admin>
-mode selects the system wide parts of the registry for the file
-associations.  Note that if you do not have enough permissions using
-C<--w32mode=admin> will not succeed.
+If the option C<--w32mode> is given the value C<user>, all actions will
+only be carried out in the user-accessible parts of the
+registry/filesystem, while the value C<admin> selects the system-wide
+parts of the registry for the file associations.  If you do not have
+enough permissions, using C<--w32mode=admin> will not succeed.
 
-For the postaction C<fileassoc> the mode can be set with
-C<--fileassocmode>.  If it is set to 1, only new assocations are added,
-if it is set to 2, all associations are set to the TeX Live programs.
+C<--fileassocmode> specifies the action for file associations.  If it is
+set to 1 (the default), only new associations are added; if it is set to
+2, all associations are set to the TeX Live programs.  (See also
+C<option fileassocs>.)
 
 
 =head2 uninstall
@@ -5929,21 +5988,26 @@ respective files: it recreates them from scratch.
 For C<fmtutil> and the language files, this is normal, and both the TeX
 Live installer and C<tlmgr> routinely call C<generate> for them.
 
-For C<updmap>, however, C<tlmgr> does I<not> use
-C<generate>, because the result would be to disable all maps which have
-been manually installed via S<C<updmap-sys --enable>>, e.g., for
-proprietary or local fonts.  The C<generate> action only incorporates
-the changes in the C<--localcfg> file mentioned below.  Furthermore,
-C<tlmgr> updates and maintains the final C<updmap.cfg> in
-C<TEXMFSYSCONFIG> (while the other files are in C<TEXMFSYSVAR>), because
-that is the location that C<updmap-sys> (via C<tcfmgr>) uses.
+For C<updmap>, however, C<tlmgr> does I<not> use C<generate> by default,
+because the result would be to disable all maps which have been manually
+installed via S<C<updmap-sys --enable>>, e.g., for proprietary or local
+fonts, which has been the standard method for adding fonts to TeX
+installations for years.  Rather, the C<generate> action only
+incorporates the changes in the C<--localcfg> file mentioned below.
 
 Notwithstanding the above, if you only use the fonts and font packages
 within TeX Live, and rigorously maintain your local fonts (if any) using
 C<updmap-local.cfg>, there is nothing wrong with using C<generate
 updmap>.  It can be helpful in moving from release to release,
 especially.  We use it ourselves to generate the C<updmap.cfg> file in
-the live source repository.
+the live source repository.  If you want to commit yourself to using
+C<updmap-local.cfg>, you can set the C<generate_updmap> option and
+C<tlmgr> will run C<generate updmap> for you on update.
+
+In any case, C<tlmgr> updates and maintains the final C<updmap.cfg> in
+C<TEXMFSYSCONFIG> (while the other generated files are in
+C<TEXMFSYSVAR>), because that is the location that C<updmap-sys> (via
+C<tcfmgr>) historically uses.
 
 In more detail: C<generate> remakes any of the five config files
 C<language.dat>, C<language.def>, C<language.dat.lua>, C<fmtutil.cnf>,
@@ -5957,7 +6021,8 @@ directories.  If they are present, the final file is made by starting
 with the main file, omitting any entries that the local file specifies
 to be disabled, and finally appending the local file.
 
-Local files specify entries to be disabled with a comment line like this:
+Local files specify entries to be disabled with a comment line, namely
+one of these:
 
   #!NAME
   %!NAME
@@ -6044,7 +6109,9 @@ The respective locations are as follows:
 Final repetition: as explained above, C<tlmgr> does I<not> use
 C<generate updmap> for font map files.  Therefore, if you want to make
 use of C<updmap-local.cfg>, you must run C<tlmgr generate updmap>
-and C<updmap-sys> yourself after making any local changes.
+and C<updmap-sys> yourself after making any local changes.  If you
+make yourself responsible for rigorously using C<updmap-local.cfg>), set
+C<option generate_updmap>).
 
 
 =head1 CONFIGURATION FILE
@@ -6267,24 +6334,24 @@ those where the checkbutton at the beginning of the line is ticked.
 
 =item Update
 
-only update the selcted packages
+only update the selected packages.
 
 =item Install
 
-install the selected packages, acts like C<tlmgr install>, i.e., also
-installs dependencies. This installing a collection will install
-all depending packages, too.
+install the selected packages; acts like C<tlmgr install>, i.e., also
+installs dependencies. Thus, installing a collection will install
+all its constituent packages.
 
 =item Remove
 
-removes the selected packages, acts like C<tlmgr remove>, i.e., it will
+removes the selected packages; acts like C<tlmgr remove>, i.e., it will
 also remove dependencies of collections (but not dependencies of normal
 packages).
 
 =item Backup
 
-makes a backup of the selected packages, acts like C<tlmgr backup>. This
-action needs the option C<backupdir> set (see Options -> General).
+makes a backup of the selected packages; acts like C<tlmgr backup>. This
+action needs the option C<backupdir> set (see C<Options -> General>).
 
 =back
 
@@ -6313,7 +6380,7 @@ The output format is as follows:
   fieldname "\t" value
   ...
   "end-of-header"
-  pkgname status localrev serverrev size runtim esttot
+  pkgname status localrev serverrev size runtime esttot
   ...
   "end-of-updates"
   other output from post actions, not in machine readable form
@@ -6326,7 +6393,7 @@ The I<localrev> and I<serverrev> fields for each package are the
 revision numbers in the local installation and server repository,
 respectively.  The I<size> field is the number of bytes to be
 downloaded, i.e., the size of the compressed tar file for a network
-installation, not the unpacked size. The runtim and esttot fields 
+installation, not the unpacked size. The runtime and esttot fields 
 are only present for updated and auto-install packages, and contain
 the currently passed time since start of installation/updates
 and the estimated total time.
@@ -6344,7 +6411,7 @@ the new package information was drawn.
 =item C<total-bytes> I<count>
 
 The I<count> is simply a decimal number, the sum of the sizes of all the
-packages that need updating or installing (which are listed subseqently).
+packages that need updating or installing (which are listed subsequently).
 
 =back
 
