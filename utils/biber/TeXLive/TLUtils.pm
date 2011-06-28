@@ -1,3 +1,4 @@
+# $Id: TLUtils.pm 23155 2011-06-28 00:43:01Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -5,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 22870 $';
+my $svnrev = '$Revision: 23155 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -525,23 +526,13 @@ Return C<$path> with its trailing C</component> removed.
 
 sub dirname {
   my $path=shift;
-  my $drive='';
-  if (&win32) {
+  if (win32) {
     $path=~s!\\!/!g;
   }
-  if ($path=~m!^[A-Za-z]\:!) {
-    $path=~ s/^(.\:)(.*)/$1,$2/;
-    ($drive, $path)=($1,$2);
-  }
-  if ($path=~m!/!) {
-    $path=~m!(.*)/.*!;  # works because of greedy matching
-    my $dir=$1;
-    if (length($dir)) { # dirname("foo/bar/baz") -> "foo/bar"
-      return "$drive$dir";
-    } else {            # dirname("/baz") -> "/"
-      return "$drive/";
-    }
-  } else {              # dirname("ignore") -> "."
+  if ($path=~m!/!) {   # dirname("foo/bar/baz") -> "foo/bar"
+    $path=~m!(.*)/.*!; # works because of greedy matching
+    return $1;
+  } else {             # dirname("ignore") -> "."
     return ".";
   }
 }
@@ -1896,6 +1887,11 @@ sub add_link_dir_dir {
     chomp (@files = `ls "$from"`);
     my $ret = 1;
     for my $f (@files) {
+      # skip certain dangerous entries that should never be linked somewhere
+      if ($f eq "man") {
+        debug("not linking man into $to.\n");
+        next;
+      }
       unlink("$to/$f");
       if (system("ln -s \"$from/$f\" \"$to\"")) {
         tlwarn("Linking $f from $from to $to failed: $!\n");
@@ -1917,6 +1913,10 @@ sub remove_link_dir_dir {
     my $ret = 1;
     foreach my $f (@files) {
       next if (! -r "$to/$f");
+      if ($f eq "man") {
+        debug("not considering man in $to, it should not be from us!\n");
+        next;
+      }
       if ((-l "$to/$f") &&
           (readlink("$to/$f") =~ m;^$from/;)) {
         $ret = 0 unless unlink("$to/$f");
@@ -2382,7 +2382,7 @@ sub _download_file
 
   my $wget = $ENV{"TL_DOWNLOAD_PROGRAM"} || $wgetdefault;
   my $wgetargs = $ENV{"TL_DOWNLOAD_ARGS"}
-                 || "--user-agent=texlive/wget --tries=10 --timeout=900 -q -O";
+                 || "--user-agent=texlive/wget --tries=10 --timeout=$NetworkTimeout -q -O";
 
   debug("downloading $url using $wget $wgetargs\n");
   my $ret;
@@ -3273,7 +3273,7 @@ sub query_ctan_mirror
   # we need the verbose output, so no -q.
   # do not reduce retries here, but timeout still seems desirable.
   my $mirror = $TeXLiveServerURL;
-  my $cmd = "$wget $mirror --timeout=60 -O "
+  my $cmd = "$wget $mirror --timeout=$NetworkTimeout -O "
             . (win32() ? "nul" : "/dev/null") . " 2>&1";
 
   #
@@ -3335,7 +3335,7 @@ sub check_on_working_mirror
   # so try wget and only check for the return value
   # please KEEP the / after $mirror, some ftp mirrors do give back
   # an error if the / is missing after ../CTAN/
-  my $cmd = "$wget $mirror/ --timeout=60 -O "
+  my $cmd = "$wget $mirror/ --timeout=$NetworkTimeout -O "
             . (win32() ? "nul" : "/dev/null")
             . " 2>" . (win32() ? "nul" : "/dev/null");
   my $ret = system($cmd);
