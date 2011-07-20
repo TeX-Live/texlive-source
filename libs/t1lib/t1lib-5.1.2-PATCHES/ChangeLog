@@ -1,3 +1,8 @@
+2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-ambiguous (new): Fix braces added to avoid
+	`ambiguous else' warning (compare libXfont 1.3.x from XOrg-7.4).
+
 2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-buffer-limit (new): Avoid buffer overflow in

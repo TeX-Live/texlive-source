@@ -1,6 +1,6 @@
 /* tex-glyph.c: search for GF/PK files.
 
-   Copyright 1993, 1994, 1995, 1996, 2008, 2009 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 2008, 2009, 2011 Karl Berry.
    Copyright 1997, 1998, 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -101,8 +101,8 @@ try_size (kpathsea kpse, const_string fontname,  unsigned dpi,
     }
 
   if (ret != NULL && glyph_file)
-    { /* Success.  Fill in the return info.  Discard const.  */
-      glyph_file->name = (string) fontname;
+    { /* Success.  Fill in the return info.  */
+      glyph_file->name = fontname;
       glyph_file->dpi = dpi;
       glyph_file->format = format_found;
     }
@@ -145,12 +145,12 @@ try_resolution (kpathsea kpse, const_string fontname,  unsigned dpi,
    mktexpk to only deal with real names.)  */
 
 static string
-try_fontmap (kpathsea kpse, string *fontname_ptr,  unsigned dpi,
+try_fontmap (kpathsea kpse, const_string *fontname_ptr,  unsigned dpi,
              kpse_file_format_type format,
              kpse_glyph_file_type *glyph_file)
 {
   const_string *mapped_names;
-  string fontname = *fontname_ptr;
+  const_string fontname = *fontname_ptr;
   string ret = NULL;
 
   mapped_names = kpathsea_fontmap_lookup (kpse, fontname);
@@ -255,7 +255,7 @@ kpathsea_find_glyph (kpathsea kpse,
 {
   string ret;
   kpse_glyph_source_type source;
-  string fontname = (string) passed_fontname; /* discard const */
+  const_string fontname = passed_fontname;
 
   /* Start the search: try the name we're given.  */
   source = kpse_glyph_source_normal;

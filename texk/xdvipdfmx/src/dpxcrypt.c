@@ -24,8 +24,16 @@
 #include "config.h"
 #endif
 
-#include <stdint.h>
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
 #include <string.h>
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
 
 #include "dpxcrypt.h"
 

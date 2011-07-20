@@ -129,7 +129,7 @@ read_map_file(char *name)
 		/* If we had a header we were downloading, figure out what to do;
 		   couldn't do this above since we want to check the suffix.  */
 		if (hdr_name) {
-		    char *suffix = find_suffix(hdr_name);
+		    const char *suffix = find_suffix(hdr_name);
 		    if (encoding_p
 			|| (suffix != NULL && strcmp(suffix, "enc") == 0)) {
 			Vectfile = hdr_name;

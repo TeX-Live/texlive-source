@@ -1,6 +1,6 @@
 /* types.h: general types for kpathsea.
 
-   Copyright 1993, 1995, 1996, 2005, 2008, 2009, 2010 Karl Berry.
+   Copyright 1993, 1995, 1996, 2005, 2008, 2009, 2010, 2011 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -169,7 +169,7 @@ typedef enum
 typedef struct
 {
   const_string type;            /* Human-readable description.  */
-  const_string path;            /* The search path to use.  */
+  string path;                  /* The search path to use.  */
   const_string raw_path;        /* Pre-$~ (but post-default) expansion.  */
   const_string path_source;     /* Where the path started from.  */
   const_string override_path;   /* From client environment variable.  */

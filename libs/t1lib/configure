@@ -615,6 +615,7 @@ T1_INT16
 EGREP
 GREP
 CPP
+WARNING_CFLAGS
 RANLIB
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
@@ -707,6 +708,7 @@ ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
 enable_dependency_tracking
+enable_compiler_warnings
 '
       ac_precious_vars='build_alias
 host_alias
@@ -716,8 +718,7 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
-CPP
-CPPFLAGS'
+CPP'
 
 
 # Initialize some variables set by options.
@@ -1339,6 +1340,9 @@ Optional Features:
 			  (and sometimes confusing) to the casual installer
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
+  --enable-compiler-warnings=[no|min|yes|max|all]
+                          Turn on compiler warnings [default: yes if
+                          maintainer-mode, min otherwise]
 
 Some influential environment variables:
   CC          C compiler command
@@ -2739,9 +2743,6 @@ T1LIB_PATCHLEVEL=2
 T1LIB_VERSIONSTRING='"5.1.2"'
 
 
-
-
-
 ac_config_headers="$ac_config_headers lib/t1lib/sysconf.h"
 
 
@@ -3827,6 +3828,76 @@ else
 fi
 
 
+# Check whether --enable-compiler-warnings was given.
+if test "${enable_compiler_warnings+set}" = set; then :
+  enableval=$enable_compiler_warnings;
+fi
+case $enable_compiler_warnings in #(
+  no | min | yes | max | all) :
+     ;; #(
+  *) :
+    if test "x$enable_maintainer_mode" = xyes; then :
+  enable_compiler_warnings=yes
+else
+  enable_compiler_warnings=min
+fi ;;
+esac
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
+if ${kpse_cv_warning_cflags+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$GCC" = xyes; then
+  kpse_cv_warning_cflags=
+if test "x$enable_compiler_warnings" != xno; then
+  kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
+  case `$CC -dumpversion` in #(
+  3.4.* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
+  *) :
+     ;;
+esac
+  case `$CC -dumpversion` in #(
+  3.[234].* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;; #(
+  *) :
+     ;;
+esac
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+      case `$CC -dumpversion` in #(
+  3.4.* | 4.*) :
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;; #(
+  *) :
+     ;;
+esac
+      if test "x$enable_compiler_warnings" != xmax; then
+        kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
+      fi
+    fi
+  fi
+fi
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
+else
+  kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_warning_cflags" >&5
+$as_echo "$kpse_cv_warning_cflags" >&6; }
+WARNING_CFLAGS=$kpse_cv_warning_cflags
+
+
+
+
+
+
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing sqrt" >&5
 $as_echo_n "checking for library containing sqrt... " >&6; }
@@ -4692,48 +4763,6 @@ test -z "x$T1_INT64" || \
 T1LIB_DATA_DIR="${datadir}/t1lib"
 
 
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether stat file-mode macros are broken" >&5
-$as_echo_n "checking whether stat file-mode macros are broken... " >&6; }
-if ${ac_cv_header_stat_broken+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#if defined S_ISBLK && defined S_IFDIR
-extern char c1[S_ISBLK (S_IFDIR) ? -1 : 1];
-#endif
-
-#if defined S_ISBLK && defined S_IFCHR
-extern char c2[S_ISBLK (S_IFCHR) ? -1 : 1];
-#endif
-
-#if defined S_ISLNK && defined S_IFREG
-extern char c3[S_ISLNK (S_IFREG) ? -1 : 1];
-#endif
-
-#if defined S_ISSOCK && defined S_IFREG
-extern char c4[S_ISSOCK (S_IFREG) ? -1 : 1];
-#endif
-
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_header_stat_broken=no
-else
-  ac_cv_header_stat_broken=yes
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_stat_broken" >&5
-$as_echo "$ac_cv_header_stat_broken" >&6; }
-if test $ac_cv_header_stat_broken = yes; then
-
-$as_echo "#define STAT_MACROS_BROKEN 1" >>confdefs.h
-
-fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
 $as_echo_n "checking for an ANSI C-conforming const... " >&6; }

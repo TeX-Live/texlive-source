@@ -5,28 +5,9 @@ dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
-dnl --------------------------------------------------------
-dnl Keep ptexenc shared and package library versions the same:
-dnl   Only bug fixes:
-dnl     ptexenc_lib_micro += 1;
-dnl   Adding new interfaces (backwards compatible)
-dnl     ptexenc_lib_minor += 1;
-dnl     ptexenc_lib_micro = 0;
-dnl   Modifying or revoking interfaces (not backwards compatible)
-dnl     ptexenc_lib_major += 1;
-dnl     ptexenc_lib_minor = 0;
-dnl     ptexenc_lib_micro = 0;
 dnl
-dnl   After a release, set ptexenc_lib_dev to "dev", to distinguish
-dnl   binaries built between releases.
-
-m4_define([ptexenc_lib_major], [1])[]dnl
-m4_define([ptexenc_lib_minor], [2])[]dnl
-m4_define([ptexenc_lib_micro], [0])[]dnl
-m4_define([ptexenc_lib_devel], [])[]dnl or "dev"
-m4_define([ptexenc_version], [ptexenc_lib_major.ptexenc_lib_minor.ptexenc_lib_micro[]ptexenc_lib_devel])[]dnl
-
-AC_INIT([ptexenc], [ptexenc_version], [tex-k@tug.org])
+m4_include([version.ac])[] dnl define ptexenc_version
+AC_INIT([ptexenc], ptexenc_version, [tex-k@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([ptexenc.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
@@ -34,8 +15,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 AC_SUBST([PTEXENCVERSION], [ptexenc_version])
 AC_DEFINE([PTEXENCVERSION], ["ptexenc version ptexenc_version"])
-AC_SUBST([PTEXENC_LT_VERSINFO],
-         [m4_eval(ptexenc_lib_major+ptexenc_lib_minor):ptexenc_lib_micro:ptexenc_lib_minor])
+KPSE_LT_VERSION([ptexenc])
 
 dnl Common code for all programs (or libraries) using libkpathsea.
 KPSE_COMMON([ptexenc])

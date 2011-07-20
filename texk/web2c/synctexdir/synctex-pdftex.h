@@ -56,4 +56,3 @@ Thu Jun 19 09:39:21 UTC 2008
  *   the synctex_sheet function below, in the including synctex.c file.  */
 #    define SYNCTEX_OFFSET_IS_PDF (pdfoutputvalue>0)
 #    define SYNCTEX_OUTPUT ((pdfoutputvalue>0)?"pdf":"dvi")
-#    define SYNCTEX_GET_CURRENT_NAME() generic_synctex_get_current_name()

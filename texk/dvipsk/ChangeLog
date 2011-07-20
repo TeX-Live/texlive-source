@@ -1,3 +1,13 @@
+2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* afm2tfm.c (openfiles), resident.c (residentfont): Allow
+	find_suffix() to return a const string.
+
+2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* protos.h, loadfont.c (pkopen), search.c (pksearch): Declare
+	font name as const.
+
 2011-05-06  Karl Berry  <karl@tug.org>
 
 	* writet1.c: update copyright as in pdftexdir.

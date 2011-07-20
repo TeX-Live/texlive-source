@@ -1,15 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([t1lib_major], [5])[]dnl
-m4_define([t1lib_minor], [1])[]dnl
-m4_define([t1lib_micro], [2])[]dnl using unmodified t1lib-5.1.2 source tree
-m4_define([t1lib_version], t1lib_major.t1lib_minor.t1lib_micro)[]dnl
+m4_include([version.ac])[] dnl define t1lib_version
 AC_INIT([T1lib for TeX Live], t1lib_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([t1lib-]t1lib_version[/lib/t1lib/t1base.c])
@@ -19,16 +16,12 @@ AC_CONFIG_MACRO_DIR([../../m4])
 AM_INIT_AUTOMAKE([foreign no-define])
 AM_MAINTAINER_MODE
 
-T1LIB_VERSION=t1lib_major()
-T1LIB_REVISION=t1lib_minor()
-T1LIB_PATCHLEVEL=t1lib_micro()
-T1LIB_VERSIONSTRING='"t1lib_major.t1lib_minor.t1lib_micro"'
-AC_SUBST([T1LIB_VERSION])
-AC_SUBST([T1LIB_REVISION])
-AC_SUBST([T1LIB_PATCHLEVEL])
-AC_SUBST([T1LIB_VERSIONSTRING])
+KPSE_LIB_VERSION([t1lib])[]dnl
+AC_SUBST([T1LIB_VERSION], [t1lib_major])[]dnl
+AC_SUBST([T1LIB_REVISION], [t1lib_minor])[]dnl
+AC_SUBST([T1LIB_PATCHLEVEL], [t1lib_micro])[]dnl
+AC_SUBST([T1LIB_VERSIONSTRING], '"t1lib_version"')
 
-dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_HEADERS([lib/t1lib/sysconf.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
@@ -37,6 +30,8 @@ dnl **** Check for some programs and libraries ****
 
 AC_PROG_CC
 AC_PROG_RANLIB
+
+KPSE_COMPILER_WARNINGS
 
 AC_SEARCH_LIBS([sqrt], [m])
 
@@ -115,7 +110,6 @@ AC_SUBST([T1LIB_DATA_DIR])
 
 dnl **** Check for functions and header files ****
 
-AC_HEADER_STAT()
 AC_C_CONST()
 AC_TYPE_SIZE_T()
 

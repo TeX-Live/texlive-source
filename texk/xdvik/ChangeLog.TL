@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* read-mapfile.c (read_map_file): Allow find_suffix() to return
+	a const string.
+
 2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* hypertex.c (launch_xdvi): `program_invocation_name' has been

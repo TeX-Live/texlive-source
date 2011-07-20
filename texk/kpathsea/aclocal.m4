@@ -990,8 +990,9 @@ AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
 m4_include([../../m4/kpse-common.m4])
+m4_include([../../m4/kpse-lib-version.m4])
+m4_include([../../m4/kpse-mktex.m4])
 m4_include([../../m4/kpse-warnings.m4])
-m4_include([../../m4/kpse-web2c.m4])
 m4_include([../../m4/kpse-win32.m4])
 m4_include([../../m4/libtool.m4])
 m4_include([../../m4/ltoptions.m4])

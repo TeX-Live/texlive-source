@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -31,6 +31,7 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_C_BIGENDIAN
+AC_TYPE_UINT32_T
 
 AC_CHECK_DECL([timezone],
               [AC_DEFINE([HAVE_TIMEZONE], 1,

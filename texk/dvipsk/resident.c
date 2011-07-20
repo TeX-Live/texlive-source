@@ -877,7 +877,7 @@ getpsinfo(const char *name)
                      out what to do; couldn't do this above since we
                      want to check the suffix.  */
                   if (hdr_name) {
-                     char *suffix = find_suffix (hdr_name);
+                     const char *suffix = find_suffix (hdr_name);
                      if (encoding_p || STREQ (suffix, "enc")) {
                         /* (SPQR) if it is a reencoding, pass on to
                            FontPart, and download as usual */

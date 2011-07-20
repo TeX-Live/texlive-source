@@ -53,11 +53,9 @@ pdf_page_height_code:   print_esc("pdfpageheight");
 
 @x
 @!old_setting:0..max_selector; {saved |selector| setting}
-begin if tracing_output>0 then
 @y
 @!old_setting:0..max_selector; {saved |selector| setting}
 @!t: scaled;
-begin if tracing_output>0 then
 @z
 
 @x

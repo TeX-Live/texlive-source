@@ -89,9 +89,6 @@
 /* Define to 1 if you have the `getcwd' function. */
 #undef HAVE_GETCWD
 
-/* Define to 1 if class `PDFDoc' has the `getPDFMajorVersion' member. */
-#undef HAVE_GETPDFMAJORVERSION
-
 /* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 

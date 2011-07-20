@@ -5,8 +5,6 @@
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 0
-
 # KPSE_POPPLER_FLAGS
 # ---------------
 # Provide the configure option '--with-system-poppler' (if in the TL tree).
@@ -38,6 +36,6 @@ if $PKG_CONFIG poppler --atleast-version=0.12; then
   POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
   POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
 elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  AC_MSG_ERROR([did not find poppler-0.10 or better])
+  AC_MSG_ERROR([did not find poppler-0.12 or better])
 fi
 ]) # KPSE_POPPLER_SYSTEM_FLAGS

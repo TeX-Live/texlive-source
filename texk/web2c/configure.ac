@@ -196,6 +196,11 @@ AM_CONDITIONAL([MP], [test "x$enable_mp" != xno])
 
 AM_CONDITIONAL([WEB], [test "x$enable_web_progs" != xno])
 
+AS_IF([test "x$enable_ptex:$enable_eptex" = xno:no],
+      [enable_pweb_progs=no],
+      [enable_pweb_progs=$enable_web_progs])
+AM_CONDITIONAL([PWEB], [test "x$enable_pweb_progs" != xno])
+
 dnl Although quite unusual, it is possible to build Web2C (TeX & Co)
 dnl using installed (system) kpathsea headers and library.
 dnl In that case we need the location of <kpathsea/paths.h>.
@@ -261,21 +266,6 @@ KPSE_FREETYPE2_FLAGS
 KPSE_TECKIT_FLAGS
 KPSE_ICU_XETEX_FLAGS([icule])
 KPSE_OBSDCOMPAT_FLAGS
-
-# Checks for xpdf (libpoppler) features.
-KPSE_ADD_FLAGS([xpdf])
-AC_LANG_PUSH([C++])
-AC_CACHE_CHECK([for PDFDoc::getPDFMajorVersion],
-               [kpse_cv_have_getPDFMajorVersion],
-               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <PDFDoc.h>]],
-                                                   [[PDFDoc *pdfDoc; pdfDoc->getPDFMajorVersion();]])],
-                                  [kpse_cv_have_getPDFMajorVersion=yes],
-                                  [kpse_cv_have_getPDFMajorVersion=no])])
-AS_IF([test "x$kpse_cv_have_getPDFMajorVersion" = xyes],
-      [AC_DEFINE([HAVE_GETPDFMAJORVERSION], 1,
-                 [Define to 1 if class `PDFDoc' has the `getPDFMajorVersion' member.])])
-AC_LANG_POP([C++])
-KPSE_RESTORE_FLAGS
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
 AC_CONFIG_HEADERS([w2c/c-auto.h:c-auto.in],

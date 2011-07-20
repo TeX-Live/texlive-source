@@ -1,3 +1,9 @@
+2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* afm2pl.c (find_suffix, !KPATHSEA): Declare result as const.
+	(openout, writepl, conspsfonts): Allow find_suffix() to return
+	a const string.
+
 2010-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Version 0.7.1 (since 2009-06-21).

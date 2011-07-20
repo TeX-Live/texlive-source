@@ -1,3 +1,24 @@
+2011-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: No need to test for PDFDoc::getPDFMajorVersion
+	for poppler >= 0.12.
+
+2011-07-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* enctex.ch: Fix an off-by-one bug initializing mubyte_cswrite.
+	From Roderich Schupp <roderich.schupp@googlemail.com>,
+	Debian Bug#633011, tex-k mail Fri, 8 Jul 2011 15:56:23.
+
+2011-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/web2c.ac: Always use poppler for XeTeX instead of xpdf.
+
+2011-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	SyncTeX infrastructure for pTeX and e-pTeX.
+	* ac/web2c.ac: Enable SyncTeX for pTeX and e-pTeX.
+	* texmfmp-help.h (*PTEXHELP): Document the -synctex option.
+
 2011-06-23  Karl Berry  <karl@tug.org>
 
 	* configure.ac (AC_C_CHAR_UNSIGNED): needed for test

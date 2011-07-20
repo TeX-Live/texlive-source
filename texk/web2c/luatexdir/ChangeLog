@@ -1,4 +1,16 @@
+2011-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reduce memory leaks.
+	* lua/lkpselib.c (do_lua_kpathsea_lookup): Free string no longer
+	used.
+
+2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	lua/lkpselib.c (find_dpi): Allow find_suffix() to return a
+	const string.
+
 2011-05-19  Taco Hoekwater  <taco@luatex.org>
+
 	* lua/ltexlib.c: fix a bug on negative catcode table arguments.
 	* luatex.c, NEWS: luatex is now version 0.70.1
 	* luatex_svnversion.h: updated to reflect latest luatex revision (4277)

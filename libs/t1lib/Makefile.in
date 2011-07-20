@@ -46,7 +46,9 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-lib-version.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -159,6 +161,7 @@ T1LIB_VERSIONSTRING = @T1LIB_VERSIONSTRING@
 T1_INT16 = @T1_INT16@
 T1_INT32 = @T1_INT32@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -207,7 +210,7 @@ EXTRA_DIST = $(T1LIB_TREE) $(T1LIB_TREE)-PATCHES l047016t.pfa \
 INCLUDES = -Ilib -I$(top_srcdir)/$(T1LIB_TREE)
 AM_CPPFLAGS = $(T1LIB_DEFINES) -DT1LIB_IDENT=\"@T1LIB_VERSIONSTRING@\" \
 	-DGLOBAL_CONFIG_DIR=\"@T1LIB_DATA_DIR@\"
-AM_CFLAGS = $(T1LIB_CFLAGS)
+AM_CFLAGS = $(T1LIB_CFLAGS) # $(WARNING_CFLAGS)
 LDADD = libt1.a
 noinst_LIBRARIES = libt1.a
 nodist_libt1_a_SOURCES = $(lib_t1lib_sources) $(lib_type1_sources)

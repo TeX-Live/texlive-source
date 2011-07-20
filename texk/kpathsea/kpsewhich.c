@@ -129,7 +129,7 @@ static unsigned
 find_dpi (string s)
 {
   unsigned dpi_number = 0;
-  string extension = find_suffix (s);
+  const_string extension = find_suffix (s);
 
   if (extension != NULL)
     sscanf (extension, "%u", &dpi_number);
@@ -342,12 +342,15 @@ lookup (kpathsea kpse, string name)
       case kpse_any_glyph_format:
         {
           kpse_glyph_file_type glyph_ret;
+          string temp = remove_suffix (name);
           /* Try to extract the resolution from the name.  */
           unsigned local_dpi = find_dpi (name);
           if (!local_dpi)
             local_dpi = dpi;
-          ret = kpathsea_find_glyph (kpse, remove_suffix (name),
+          ret = kpathsea_find_glyph (kpse, temp,
                                      local_dpi, fmt, &glyph_ret);
+          if (temp != name)
+            free (temp);
         }
         break;
 

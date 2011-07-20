@@ -1,6 +1,6 @@
 ## texk/web2c/synctexdir/am/synctex.am: Makefile fragment for SyncTeX.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## The SyncTeX tool
@@ -107,6 +107,78 @@ EXTRA_DIST += \
 	synctexdir/synctex-e-mem.ch1 \
 	synctexdir/synctex-e-rec.ch0 \
 	synctexdir/synctex-e-rec.ch1
+
+## SyncTeX infrastructure: pTeX
+
+if PTEX_SYNCTEX
+
+ptex_CPPFLAGS += -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
+
+ptex_LDADD += $(ZLIB_LIBS)
+ptex_prereq += $(ZLIB_DEPEND)
+
+ptex_ch_synctex = \
+	synctexdir/synctex-p-mem.ch0 \
+	synctexdir/synctex-mem.ch0 \
+	synctexdir/synctex-mem.ch1 \
+	synctexdir/synctex-p-mem.ch1 \
+	synctexdir/synctex-p-rec.ch0 \
+	synctexdir/synctex-rec.ch0 \
+	synctexdir/synctex-rec.ch1 \
+	synctexdir/synctex-rec.ch2 \
+	synctexdir/synctex-p-rec.ch1
+
+dist_ptex_SOURCES += \
+	synctexdir/synctex.c \
+	synctexdir/synctex.h \
+	synctexdir/synctex-common.h \
+	synctexdir/synctex-ptex.h
+
+ptex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-ptex.h\"
+
+endif PTEX_SYNCTEX
+
+EXTRA_DIST += \
+	synctexdir/synctex-p-mem.ch0 \
+	synctexdir/synctex-p-mem.ch1 \
+	synctexdir/synctex-p-rec.ch0 \
+	synctexdir/synctex-p-rec.ch1
+
+## SyncTeX infrastructure: e-pTeX
+
+if EPTEX_SYNCTEX
+
+eptex_CPPFLAGS += -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
+
+eptex_LDADD += $(ZLIB_LIBS)
+eptex_prereq += $(ZLIB_DEPEND)
+
+eptex_ch_synctex = \
+	synctexdir/synctex-ep-mem.ch0 \
+	synctexdir/synctex-mem.ch0 \
+	synctexdir/synctex-mem.ch1 \
+	synctexdir/synctex-e-mem.ch0 \
+	synctexdir/synctex-ep-mem.ch1 \
+	synctexdir/synctex-p-rec.ch0 \
+	synctexdir/synctex-rec.ch0 \
+	synctexdir/synctex-rec.ch1 \
+	synctexdir/synctex-ep-rec.ch1 \
+	synctexdir/synctex-p-rec.ch1
+
+dist_eptex_SOURCES += \
+	synctexdir/synctex.c \
+	synctexdir/synctex.h \
+	synctexdir/synctex-common.h \
+	synctexdir/synctex-eptex.h
+
+eptex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-eptex.h\"
+
+endif EPTEX_SYNCTEX
+
+EXTRA_DIST += \
+	synctexdir/synctex-ep-mem.ch0 \
+	synctexdir/synctex-ep-mem.ch1 \
+	synctexdir/synctex-ep-rec.ch1
 
 ## SyncTeX infrastructure: pdfTeX
 

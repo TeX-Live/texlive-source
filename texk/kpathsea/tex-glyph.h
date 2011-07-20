@@ -1,6 +1,6 @@
 /* tex-glyph.h: look for a TeX glyph font (GF or PK).
 
-   Copyright 1993, 2008, 2009 Karl Berry.
+   Copyright 1993, 2008, 2009, 2011 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ typedef enum
 
 typedef struct
 {
-  string name;                  /* font name found */
+  const_string name;            /* font name found */
   unsigned dpi;                 /* size found, for glyphs */
   kpse_file_format_type format; /* glyph format found */
   kpse_glyph_source_type source;        /* where we found it */

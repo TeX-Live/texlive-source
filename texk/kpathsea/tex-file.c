@@ -1,6 +1,6 @@
 /* tex-file.c: high-level file searching by format.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -223,7 +223,9 @@ kpse_maketex_option (const_string fmtname,  boolean value)
 #define EXPAND_DEFAULT(try_path, source_string)                 \
   if (try_path) {                                               \
     info->raw_path = try_path;                                  \
+    tmp = info->path;                                           \
     info->path = kpathsea_expand_default (kpse, try_path, info->path);  \
+    free (tmp);                                                 \
     info->path_source = source_string;                          \
   }
 
@@ -240,6 +242,7 @@ init_path (kpathsea kpse, kpse_format_info_type *info,
   string env_name;
   string env_value = NULL;
   string var = NULL;
+  string tmp;
   va_list ap;
 
   info->default_path = default_path;
@@ -291,7 +294,8 @@ init_path (kpathsea kpse, kpse_format_info_type *info,
      bottom are guaranteed to exist.  */
 
   /* Assume we can reliably start with the compile-time default.  */
-  info->path = info->raw_path = info->default_path;
+  info->raw_path = info->default_path;
+  info->path = xstrdup (info->raw_path);
   info->path_source = "compile-time paths.h";
 
   EXPAND_DEFAULT (info->cnf_path, "texmf.cnf");
@@ -313,7 +317,9 @@ init_path (kpathsea kpse, kpse_format_info_type *info,
   }
 
   EXPAND_DEFAULT (info->override_path, "application override variable");
+  tmp = info->path;
   info->path = kpathsea_brace_expand (kpse, info->path);
+  free (tmp);
 }
 
 
@@ -1391,10 +1397,10 @@ kpathsea_reset_program_name (kpathsea kpse, const_string progname)
        to 100k if this function is called. */
     if (i == kpse_cnf_format || i == kpse_db_format)
       continue;
-    /* Wipe the path (it is tested) and the cnf_path and because their
+    /* Wipe the path (it is tested) and the cnf_path because their
        values may differ with the new program name.  */
     if (kpse->format_info[i].path != NULL) {
-      free ((string)kpse->format_info[i].path);
+      free (kpse->format_info[i].path);
       kpse->format_info[i].path = NULL;
     }
     /* We cannot free the cnf_path: it points into the cnf hash, which

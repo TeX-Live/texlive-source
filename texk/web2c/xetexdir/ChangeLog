@@ -1,3 +1,14 @@
+2011-07-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.ch: Fix an off-by-one bug initializing mubyte_cswrite.
+	From Roderich Schupp <roderich.schupp@googlemail.com>,
+	Debian Bug#633011, tex-k mail Fri, 8 Jul 2011 15:56:23.
+
+2011-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeX_ext.c, pdfimage.cpp, am/xetex.am: Always use poppler
+	instead of xpdf.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

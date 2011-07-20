@@ -843,11 +843,11 @@ int stemno;
           if (stemtop >= alignmentzones[i].bottomy + blues->BlueShift){
             enforceovershoot = TRUE;
 	  }
+	}
         else
           if (stembottom <= alignmentzones[i].topy - blues->BlueShift){
             enforceovershoot = TRUE;
 	  }
-	}
       }
       
       

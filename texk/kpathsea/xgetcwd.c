@@ -1,6 +1,6 @@
 /* xgetcwd.c: a from-scratch version of getwd.  Ideas from tcsh 5.20 source.
 
-   Copyright 1992, 1994, 1996, 2008 Karl Berry.
+   Copyright 1992, 1994, 1996, 2008, 2011 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -18,9 +18,9 @@
 
 #include <kpathsea/config.h>
 
-#if defined (HAVE_GETCWD) || defined (HAVE_GETWD)
+#if (defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)) || defined (HAVE_GETWD)
 #include <kpathsea/c-pathmx.h>
-#else /* not HAVE_GETCWD && not HAVE_GETWD*/
+#else /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
 #include <kpathsea/c-dir.h>
 #include <kpathsea/xopendir.h>
 #include <kpathsea/xstat.h>
@@ -33,7 +33,7 @@ xchdir (string dirname)
         _PERROR(dirname);
 }
 
-#endif /* not HAVE_GETCWD && not HAVE_GETWD */
+#endif /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
 
 
 /* Return the pathname of the current directory, or give a fatal error.  */
@@ -48,24 +48,22 @@ xgetcwd (void)
        is not detected by configure, let me know.
                                        -- Olaf Weber <infovore@xs4all.nl */
 #if defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)
-    string path = (string)xmalloc(PATH_MAX + 1);
+    char path[PATH_MAX + 1];
 
-    if (getcwd (path, PATH_MAX + 1) == 0) {
-        fprintf(stderr, "getcwd: %s", path);
-        exit(EXIT_FAILURE);
+    if (getcwd (path, PATH_MAX + 1) == NULL) {
+        FATAL_PERROR ("getcwd");
     }
 
-    return path;
+    return xstrdup (path);
 #elif defined (HAVE_GETWD)
-    string path = (string)xmalloc(PATH_MAX + 1);
+    char path[PATH_MAX + 1];
 
-    if (getwd (path) == 0) {
-        fprintf(stderr, "getwd: %s", path);
-        exit(EXIT_FAILURE);
+    if (getwd (path) == NULL) {
+        FATAL_PERROR ("getwd");
     }
 
-    return path;
-#else /* not HAVE_GETCWD && not HAVE_GETWD */
+    return xstrdup (path);
+#else /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
     struct stat root_stat, cwd_stat;
     string cwd_path = (string)xmalloc(2); /* In case we assign "/" below.  */
 
@@ -143,5 +141,5 @@ xgetcwd (void)
 #endif
 
     return cwd_path;
-#endif /* not HAVE_GETCWD && not HAVE_GETWD */
+#endif /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
 }

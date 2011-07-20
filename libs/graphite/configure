@@ -729,11 +729,7 @@ CPPFLAGS
 CCC
 CC
 CFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
-CPP
-CPPFLAGS'
+CPP'
 
 
 # Initialize some variables set by options.
@@ -4423,39 +4419,42 @@ $as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
 if ${kpse_cv_warning_cflags+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  if test "x$enable_compiler_warnings" = xno; then
+  if test "x$GCC" = xyes; then
   kpse_cv_warning_cflags=
-elif test "x$GCC" = xyes; then
+if test "x$enable_compiler_warnings" != xno; then
   kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
-case `$CC -dumpversion` in #(
+  case `$CC -dumpversion` in #(
   3.4.* | 4.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
   *) :
      ;;
 esac
-case `$CC -dumpversion` in #(
+  case `$CC -dumpversion` in #(
   3.[234].* | 4.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;; #(
   *) :
      ;;
 esac
-if test "x$enable_compiler_warnings" != xmin; then
-  kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
-  kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
-  if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
-    case `$CC -dumpversion` in #(
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+      case `$CC -dumpversion` in #(
   3.4.* | 4.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;; #(
   *) :
      ;;
 esac
-    if test "x$enable_compiler_warnings" != xmax; then
-      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
+      if test "x$enable_compiler_warnings" != xmax; then
+        kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
+      fi
     fi
   fi
 fi
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
 else
   kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
 fi
@@ -4470,26 +4469,32 @@ $as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
 if ${kpse_cv_warning_cxxflags+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  if test "x$enable_compiler_warnings" = xno; then
+  if test "x$GXX" = xyes; then
   kpse_cv_warning_cxxflags=
-elif test "x$GXX" = xyes; then
+kpse_warn_strings="-Wno-write-strings"
+if test "x$enable_compiler_warnings" != xno; then
   kpse_cv_warning_cxxflags="-Wimplicit -Wreturn-type"
-case `$CXX -dumpversion` in #(
+  case `$CXX -dumpversion` in #(
   3.[234].* | 4.*) :
     kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas" ;; #(
   *) :
      ;;
 esac
-if test "x$enable_compiler_warnings" != xmin; then
-  kpse_cv_warning_cxxflags="-Wall -Wunused $kpse_cv_warning_cxxflags"
-  if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
-    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
-  fi
-    if test "x$enable_compiler_warnings" != xmax; then
-      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wshadow"
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cxxflags="-Wall -Wunused $kpse_cv_warning_cxxflags"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align"
+      kpse_warn_strings="-Wwrite-strings"
+      if test "x$enable_compiler_warnings" != xmax; then
+        kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wshadow"
+      fi
     fi
+  fi
 fi
+kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags $kpse_warn_strings"
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cxxflags=
 else
   kpse_cv_warning_cxxflags= # FIXME: warning flags for non-GNU C++ compilers
 fi

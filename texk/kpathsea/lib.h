@@ -152,7 +152,7 @@ extern string strstr (const_string haystack, const_string needle);
 
 /* If NAME has a suffix, return a pointer to its first character (i.e.,
    the one after the `.'); otherwise, return NULL.  */
-extern KPSEDLL string find_suffix (const_string name);
+extern KPSEDLL const_string find_suffix (const_string name);
 
 /* Return NAME with any suffix removed.  */
 extern KPSEDLL string remove_suffix (const_string name);

@@ -692,13 +692,19 @@ enable_dump_share
 enable_ipc
 enable_omfonts
 enable_tex
+enable_tex_synctex
 enable_etex
+enable_etex_synctex
 enable_ptex
+enable_ptex_synctex
 enable_eptex
+enable_eptex_synctex
 enable_aleph
 enable_pdftex
+enable_pdftex_synctex
 enable_luatex
 enable_xetex
+enable_xetex_synctex
 enable_mf
 enable_mf_nowin
 with_mf_x_toolkit
@@ -1472,13 +1478,19 @@ Optional Features:
   --disable-omfonts         do not compile and install omfonts (use Web2C
                             versions)
   --disable-tex             do not compile and install TeX
+  --enable-tex-synctex        build TeX with SyncTeX support
   --enable-etex             compile and install e-TeX
+  --disable-etex-synctex      build e-TeX without SyncTeX support
   --disable-ptex            do not compile and install pTeX
+  --disable-ptex-synctex      build pTeX without SyncTeX support
   --disable-eptex           do not compile and install e-pTeX
+  --disable-eptex-synctex     build e-pTeX without SyncTeX support
   --disable-aleph           do not compile and install Aleph
   --disable-pdftex          do not compile and install pdfTeX
+  --disable-pdftex-synctex    build pdfTeX without SyncTeX support
   --disable-luatex          do not compile and install luaTeX
   --disable-xetex           do not compile and install XeTeX
+  --disable-xetex-synctex     build XeTeX without SyncTeX support
   --disable-mf              do not build METAFONT
   --disable-mf-nowin          do not build a separate non-windows-capable
                               METAFONT
@@ -3094,6 +3106,7 @@ fi
 
 
 
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
 $as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
 if ${kpse_cv_have_win32+:} false; then :
@@ -3471,31 +3484,46 @@ if test "${enable_tex+set}" = set; then :
   enableval=$enable_tex;
 fi
 case $enable_tex in #(
-  yes|no) :
+  yes | no) :
      ;; #(
   *) :
     enable_tex=yes ;;
 esac
+
+# Check whether --enable-tex-synctex was given.
+if test "${enable_tex_synctex+set}" = set; then :
+  enableval=$enable_tex_synctex;
+fi
 # Check whether --enable-etex was given.
 if test "${enable_etex+set}" = set; then :
   enableval=$enable_etex;
 fi
 case $enable_etex in #(
-  yes|no) :
+  yes | no) :
      ;; #(
   *) :
     enable_etex=no ;;
 esac
+
+# Check whether --enable-etex-synctex was given.
+if test "${enable_etex_synctex+set}" = set; then :
+  enableval=$enable_etex_synctex;
+fi
 # Check whether --enable-ptex was given.
 if test "${enable_ptex+set}" = set; then :
   enableval=$enable_ptex;
 fi
 case $enable_ptex in #(
-  yes|no) :
+  yes | no) :
      ;; #(
   *) :
     enable_ptex=yes ;;
 esac
+
+# Check whether --enable-ptex-synctex was given.
+if test "${enable_ptex_synctex+set}" = set; then :
+  enableval=$enable_ptex_synctex;
+fi
 
 test "x$enable_web2c:$enable_ptex" = xyes:yes && {
   need_ptexenc=yes
@@ -3505,11 +3533,16 @@ if test "${enable_eptex+set}" = set; then :
   enableval=$enable_eptex;
 fi
 case $enable_eptex in #(
-  yes|no) :
+  yes | no) :
      ;; #(
   *) :
     enable_eptex=yes ;;
 esac
+
+# Check whether --enable-eptex-synctex was given.
+if test "${enable_eptex_synctex+set}" = set; then :
+  enableval=$enable_eptex_synctex;
+fi
 
 test "x$enable_web2c:$enable_eptex" = xyes:yes && {
   need_ptexenc=yes
@@ -3519,7 +3552,7 @@ if test "${enable_aleph+set}" = set; then :
   enableval=$enable_aleph;
 fi
 case $enable_aleph in #(
-  yes|no) :
+  yes | no) :
      ;; #(
   *) :
     enable_aleph=yes ;;
@@ -3529,11 +3562,16 @@ if test "${enable_pdftex+set}" = set; then :
   enableval=$enable_pdftex;
 fi
 case $enable_pdftex in #(
-  yes|no) :
+  yes | no) :
      ;; #(
   *) :
     enable_pdftex=yes ;;
 esac
+
+# Check whether --enable-pdftex-synctex was given.
+if test "${enable_pdftex_synctex+set}" = set; then :
+  enableval=$enable_pdftex_synctex;
+fi
 
 test "x$enable_web2c:$enable_pdftex" = xyes:yes && {
   need_xpdf=yes
@@ -3545,7 +3583,7 @@ if test "${enable_luatex+set}" = set; then :
   enableval=$enable_luatex;
 fi
 case $enable_luatex in #(
-  yes|no) :
+  yes | no) :
      ;; #(
   *) :
     enable_luatex=yes ;;
@@ -3562,14 +3600,19 @@ if test "${enable_xetex+set}" = set; then :
   enableval=$enable_xetex;
 fi
 case $enable_xetex in #(
-  yes|no) :
+  yes | no) :
      ;; #(
   *) :
     enable_xetex=yes ;;
 esac
 
+# Check whether --enable-xetex-synctex was given.
+if test "${enable_xetex_synctex+set}" = set; then :
+  enableval=$enable_xetex_synctex;
+fi
+
 test "x$enable_web2c:$enable_xetex" = xyes:yes && {
-  need_xpdf=yes
+  need_poppler=yes
   need_libpng=yes
   need_freetype2=yes
   need_icu_xetex=yes
@@ -4979,79 +5022,37 @@ $as_echo "$as_me: Assuming installed \`kpathsea' headers and library" >&6;}
   ac_configure_args="$ac_configure_args '--with-system-kpathsea=$with_system_kpathsea'"
 fi
 
-## texk/kpathsea/ac/web2c.ac: configure.ac fragment for the TeX Live
+## texk/kpathsea/ac/mktex.ac: configure.ac fragment for the TeX Live
 ## subdirectory texk/kpathsea.
 ## configure defaults for mktexfmt & Co.
 # Check whether --enable-mktexmf-default was given.
 if test "${enable_mktexmf_default+set}" = set; then :
   enableval=$enable_mktexmf_default;
 fi
-case $enable_mktexmf_default in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_mktexmf_default=yes ;;
-esac
 # Check whether --enable-mktexpk-default was given.
 if test "${enable_mktexpk_default+set}" = set; then :
   enableval=$enable_mktexpk_default;
 fi
-case $enable_mktexpk_default in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_mktexpk_default=yes ;;
-esac
 # Check whether --enable-mktextfm-default was given.
 if test "${enable_mktextfm_default+set}" = set; then :
   enableval=$enable_mktextfm_default;
 fi
-case $enable_mktextfm_default in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_mktextfm_default=yes ;;
-esac
 # Check whether --enable-mkocp-default was given.
 if test "${enable_mkocp_default+set}" = set; then :
   enableval=$enable_mkocp_default;
 fi
-case $enable_mkocp_default in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_mkocp_default=yes ;;
-esac
 # Check whether --enable-mkofm-default was given.
 if test "${enable_mkofm_default+set}" = set; then :
   enableval=$enable_mkofm_default;
 fi
-case $enable_mkofm_default in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_mkofm_default=yes ;;
-esac
 # Check whether --enable-mktexfmt-default was given.
 if test "${enable_mktexfmt_default+set}" = set; then :
   enableval=$enable_mktexfmt_default;
 fi
-case $enable_mktexfmt_default in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_mktexfmt_default=yes ;;
-esac
 # Check whether --enable-mktextex-default was given.
 if test "${enable_mktextex_default+set}" = set; then :
   enableval=$enable_mktextex_default;
 fi
-case $enable_mktextex_default in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_mktextex_default=no ;;
-esac
 
 
 

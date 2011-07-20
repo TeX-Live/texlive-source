@@ -1,3 +1,10 @@
+2011-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-exec_spawn (new): Bug fix for exec_spawn() from
+	Akira Kakuto  <kakuto@fuk.kindai.ac.jp> and Peter Breitenlohner.
+
+	* patch-03-uint32_t (new): Portability fix (for AIX).
+
 2011-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-manpage: Adapted to modified extractbb manpage.

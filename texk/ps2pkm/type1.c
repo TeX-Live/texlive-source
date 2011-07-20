@@ -107,14 +107,12 @@ typedef struct xobject xobject;
 /*****************/
 /* Useful macros */
 /*****************/
-static DOUBLE tmpx;  /* Store macro argument in tmpx to avoid re-evaluation */
-static LONG tmpi;    /* Store converted value in tmpi to avoid re-evaluation */
  
-#define FABS(x) (((tmpx = (x)) < 0.0) ? -tmpx : tmpx)
+#define FABS(x) fabs(x)
  
-#define CEIL(x) (((tmpi = (LONG) (tmpx = (x))) < tmpx) ? ++tmpi : tmpi)
+#define CEIL(x) ceil(x)
  
-#define FLOOR(x) (((tmpi = (LONG) (tmpx = (x))) > tmpx) ? --tmpi : tmpi)
+#define FLOOR(x) floor(x)
  
 #define ROUND(x) FLOOR((x) + 0.5)
  
@@ -127,6 +125,8 @@ int currentchar = -1; /* for error reporting */
 #define Error {errflag = TRUE; return;}
  
 #define Error0(errmsg) { CC; IfTrace0(TRUE, errmsg); Error;}
+
+#define Error01(errmsg) { CC; IfTrace0(TRUE, errmsg); errflag = TRUE; return -1.0;}
  
 #define Error1(errmsg,arg) { CC; IfTrace1(TRUE, errmsg, arg); Error;}
  
@@ -477,10 +477,10 @@ int stemno;
       if (unitpixels < blues->BlueScale)
         suppressovershoot = TRUE;
       else
-        if (alignmentzones[i].topzone)
+        if (alignmentzones[i].topzone) {
           if (stemtop >= alignmentzones[i].bottomy + blues->BlueShift)
             enforceovershoot = TRUE;
-        else
+        } else
           if (stembottom <= alignmentzones[i].topy - blues->BlueShift)
             enforceovershoot = TRUE;
  
@@ -519,20 +519,22 @@ int stemno;
            it falls at least one pixel beyond the flat position. */
  
         if (enforceovershoot)
-          if (overshoot < onepixel)
+          if (overshoot < onepixel) {
             if (alignmentzones[i].topzone)
               stemshift += onepixel - overshoot;
             else
               stemshift -= onepixel - overshoot;
+          }
  
         /* SUPPRESS overshoot by aligning the stem to the alignment zone's
            flat position. */
  
-        if (suppressovershoot)
+        if (suppressovershoot) {
           if (alignmentzones[i].topzone)
             stemshift -= overshoot;
           else
             stemshift += overshoot;
+        }
       }
  
       /************************************************************/
@@ -780,7 +782,7 @@ static void PSFakePush(Num)
 static DOUBLE PSFakePop ()
 {
   if (PSFakeTop >= 0) return(PSFakeStack[PSFakeTop--]);
-  else Error0("PSFakePop : Stack empty\n");
+  else Error01("PSFakePop : Stack empty\n");
   /*NOTREACHED*/
 }
  

@@ -1,6 +1,16 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.defines: Add newline at end of file.
+
+2011-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/eptex.am (eptex_ch_srcs): SyncTeX infrastructure.
+	* pdfsavepos.ch: Slightly reformulate to simplify SyncTeX.
+	* eptrip/texmf.cnf (main_memory): Increase for SyncTeX.
+
 2011-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech: Adapted to pTeX Version p3.2.

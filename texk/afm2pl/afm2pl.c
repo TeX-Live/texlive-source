@@ -386,11 +386,11 @@ concat(const char *s1, const char *s2)
 /* Return pointer to first character after `.' in last directory element
  * of NAME.  If the name is `foo' or `/foo.bar/baz', we have no extension.
  */
-static char *
+static const char *
 find_suffix(const char *name)
 {
   const char *slash_pos;
-  char *dot_pos = (char *) strrchr (name, '.');
+  const char *dot_pos = (char *) strrchr (name, '.');
 
   if (dot_pos == NULL)
     return NULL;
@@ -501,15 +501,14 @@ openout(const char *fname, int based_on, const char *outext)
   const char *inext = ".afm";
   /* use inext+1 and outext+1 when the leading dot is not desired */
   const char *realfname;
-  char *suf;
+  const char *suf;
 
   if (based_on) {  /* compute output filename */
     suf = find_suffix (fname);
     if (suf && !strcmp ((inext + 1), suf)) {    /* replace afm suffix */
       char * q;
       q = newstring (fname);
-      suf = find_suffix (q);
-      suf[0] = 0;
+      q[suf - fname] = 0;
       strcat (q, (outext + 1));
       realfname = q;
       /* no allocation required: new suffix not longer than old one */
@@ -1787,7 +1786,8 @@ writepl(void)
   register struct kern *nkern;
   struct adobeinfo *asucc, *asub;
   int ht, dt;
-  char labeled, *pp;
+  char labeled;
+  const char *pp;
 
   outname = openout (outname, based_on, ".pl");
 
@@ -1795,7 +1795,8 @@ writepl(void)
   {
     char *outbase = newstring (xbasename (outname));
     pp = find_suffix (outbase);
-    if (pp) { pp--; *pp = 0; }
+    if (pp)
+      outbase[pp - outbase - 1] = 0;
     (void) sprintf (obuffer, "%s%s%s", outbase,
                     (efactor == 1.0 ? "" : "-E"),
                     (slant == 0.0 ? "" : "-S"));
@@ -2260,15 +2261,14 @@ readargs(int argc, char **argv)
 static void
 conspsfonts(void)
 {
-  char *p, *q;
+  char *p;
+  const char *q;
 
   /* TeX fontname is file basename without path or extension */
   p = newstring (xbasename (outname));
   q = find_suffix (p);
-  if (q > p) {
-    q--;
-    *q = 0;
-  }
+  if (q)
+    p[q - p - 1] = 0;
   openout (p, 0, ".map");
   (void) fprintf (outfile, "%s %s", p, fontname);
   free (p);
@@ -2288,10 +2288,8 @@ conspsfonts(void)
   }
   p = newstring (xbasename (afmname));
   q = find_suffix (p);
-  if (q > p) {
-    q--;
-    *q = 0;
-  }
+  if (q)
+    p[q - p - 1] = 0;
   (void) fprintf (outfile, " <%s.pfb", p);
   free (p);
   (void) fprintf (outfile, "\n");

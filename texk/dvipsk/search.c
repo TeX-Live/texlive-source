@@ -195,7 +195,7 @@ search(kpse_file_format_type format, const char *file, const char *mode)
 
 FILE *
 pksearch(const char *file, const char *mode, halfword dpi,
-         char **name_ret, int *dpi_ret)
+         const char **name_ret, int *dpi_ret)
 {
   FILE *ret;
   kpse_glyph_file_type font_file;

@@ -762,8 +762,7 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
-CPP
-CPPFLAGS'
+CPP'
 
 
 # Initialize some variables set by options.
@@ -12452,39 +12451,42 @@ $as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
 if ${kpse_cv_warning_cflags+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  if test "x$enable_compiler_warnings" = xno; then
+  if test "x$GCC" = xyes; then
   kpse_cv_warning_cflags=
-elif test "x$GCC" = xyes; then
+if test "x$enable_compiler_warnings" != xno; then
   kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
-case `$CC -dumpversion` in #(
+  case `$CC -dumpversion` in #(
   3.4.* | 4.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
   *) :
      ;;
 esac
-case `$CC -dumpversion` in #(
+  case `$CC -dumpversion` in #(
   3.[234].* | 4.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;; #(
   *) :
      ;;
 esac
-if test "x$enable_compiler_warnings" != xmin; then
-  kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
-  kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
-  if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
-    case `$CC -dumpversion` in #(
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+      case `$CC -dumpversion` in #(
   3.4.* | 4.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;; #(
   *) :
      ;;
 esac
-    if test "x$enable_compiler_warnings" != xmax; then
-      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
+      if test "x$enable_compiler_warnings" != xmax; then
+        kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wshadow"
+      fi
     fi
   fi
 fi
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
 else
   kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
 fi

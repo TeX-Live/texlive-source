@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live top-level
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Use 'aclocal --force' (for "computed m4_sinclude")
@@ -21,6 +21,7 @@ EXTRA_DIST = \
 	README.hacking \
 	README.layout \
 	build-aux/README.TL \
+	m4/ChangeLog \
 	m4/README \
 	reautoconf
 

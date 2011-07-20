@@ -331,7 +331,7 @@ static int lua_kpathsea_var_value(lua_State * L)
 static unsigned find_dpi(const_string s)
 {
     unsigned dpi_number = 0;
-    string extension = find_suffix(s);
+    const_string extension = find_suffix(s);
 
     if (extension != NULL)
         sscanf(extension, "%u", &dpi_number);
@@ -622,13 +622,16 @@ static int do_lua_kpathsea_lookup(lua_State * L, kpathsea kpse, int idx)
         case kpse_any_glyph_format:
             {
                 kpse_glyph_file_type glyph_ret;
+                string temp = remove_suffix (name);
                 /* Try to extract the resolution from the name.  */
                 unsigned local_dpi = find_dpi(name);
                 if (!local_dpi)
                     local_dpi = (unsigned) dpi;
                 ret =
-                    kpathsea_find_glyph(kpse, remove_suffix(name), local_dpi,
+                    kpathsea_find_glyph(kpse, temp, local_dpi,
                                         fmt, &glyph_ret);
+                if (temp != name)
+                    free (temp);
             }
             break;
 

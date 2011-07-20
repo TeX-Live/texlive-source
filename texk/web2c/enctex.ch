@@ -42,14 +42,14 @@ for i:=@'177 to @'377 do xchr[i]:=i;
 {Initialize enc\TeX\ data.}
 for i:=0 to 255 do mubyte_read[i]:=null;
 for i:=0 to 255 do mubyte_write[i]:=0;
-for i:=0 to 128 do mubyte_cswrite[i]:=null;
+for i:=0 to 127 do mubyte_cswrite[i]:=null;
 mubyte_keep := 0; mubyte_start := false;
 write_noexpanding := false; cs_converting := false;
 special_printing := false; message_printing := false;
 no_convert := false; active_noconvert := false;
 @z
 
-@x [5.59] l.1508FIXME -- enc\TeX\ modifications of |print|.
+@x [5.59] l.1508 FIXME -- enc\TeX\ modifications of |print|.
   else begin if selector>pseudo then
       begin print_char(s); return; {internal strings are not expanded}
       end;

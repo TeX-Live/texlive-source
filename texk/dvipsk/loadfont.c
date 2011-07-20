@@ -109,7 +109,7 @@ static Boolean
 pkopen(register fontdesctype *fd)
 {
    register char *d, *n;
-   char *name_ret;
+   const char *name_ret;
 #ifdef KPATHSEA
    int dpi_ret;
 #else

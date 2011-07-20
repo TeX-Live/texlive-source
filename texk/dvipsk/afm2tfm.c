@@ -1567,7 +1567,7 @@ openfiles(int argc, char **argv)
    const char *q;
 #endif
    register int i;
-   char *p;
+   const char *p;
    int arginc;
 
    tfmout = (FILE *)NULL;
@@ -1699,7 +1699,7 @@ default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
 
 #ifdef KPATHSEA
    if ((p = find_suffix(outname)) != NULL)
-      *(p-1) = 0;
+      outname[p-outname-1] = 0;
    strcat(outname, ".tfm");
    if (tfmout == NULL && (tfmout=fopen(outname, WRITEBIN))==NULL)
       error("! can't open tfm output file");
@@ -1709,7 +1709,7 @@ default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
  */
    if (p == NULL)
      p = find_suffix(outname);
-   *(p-1) = 0;
+   outname[p-outname-1] = 0;
 
    q = xbasename(outname);
    strcpy(tmpstr, q);        /* be careful, q and outname are overlapping */

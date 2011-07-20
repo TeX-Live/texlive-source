@@ -271,6 +271,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CFLAGS = #$(WARNING_CFLAGS)
 mag_SOURCES = \
 	basics.c \
 	basics.h \

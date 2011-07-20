@@ -673,37 +673,32 @@ end
 @x [13.202] l.4056 - pTeX:
     kern_node,math_node,penalty_node: do_nothing;
 @y
-    kern_node,disp_node,math_node,penalty_node: do_nothing;
+    disp_node,
+    kern_node,math_node,penalty_node: do_nothing;
 @z
 
 @x [14.206] l.4121 - pTeX: space_ptr, xspace_ptr, dir_node, disp_node
 @ @<Case statement to copy...@>=
-case type(p) of
+@y
+@ @<Case statement to copy...@>=
+@z
+@x [14.206] l.4123
 hlist_node,vlist_node,unset_node: begin r:=get_node(box_node_size);
   mem[r+6]:=mem[p+6]; mem[r+5]:=mem[p+5]; {copy the last two words}
-  list_ptr(r):=copy_node_list(list_ptr(p)); {this affects |mem[r+5]|}
-  words:=5;
-  end;
-rule_node: begin r:=get_node(rule_node_size); words:=rule_node_size;
-  end;
+@y
+dir_node,
+hlist_node,vlist_node,unset_node: begin r:=get_node(box_node_size);
+  mem[r+7]:=mem[p+7];
+  mem[r+6]:=mem[p+6]; mem[r+5]:=mem[p+5]; {copy the last three words}
+  add_glue_ref(space_ptr(r)); add_glue_ref(xspace_ptr(r));
+@z
+@x [14.206] l.4130
 ins_node: begin r:=get_node(ins_node_size); mem[r+4]:=mem[p+4];
   add_glue_ref(split_top_ptr(p));
   ins_ptr(r):=copy_node_list(ins_ptr(p)); {this affects |mem[r+4]|}
   words:=ins_node_size-1;
   end;
 @y
-@ @<Case statement to copy...@>=
-case type(p) of
-hlist_node,vlist_node,dir_node,unset_node:
-  begin r:=get_node(box_node_size);
-  mem[r+7]:=mem[p+7];
-  mem[r+6]:=mem[p+6]; mem[r+5]:=mem[p+5]; {copy the last three words}
-  add_glue_ref(space_ptr(r)); add_glue_ref(xspace_ptr(r));
-  list_ptr(r):=copy_node_list(list_ptr(p)); {this affects |mem[r+5]|}
-  words:=5;
-  end;
-rule_node: begin r:=get_node(rule_node_size); words:=rule_node_size;
-  end;
 ins_node: begin r:=get_node(ins_node_size);
   mem[r+5]:=mem[p+5]; mem[r+4]:=mem[p+4];
   add_glue_ref(split_top_ptr(p));
@@ -714,12 +709,9 @@ ins_node: begin r:=get_node(ins_node_size);
 
 @x [14.206] l.4140 - pTeX: disp_node
 kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
-  words:=small_node_size;
-  end;
 @y
-kern_node,disp_node,math_node,penalty_node:
-  begin r:=get_node(small_node_size); words:=small_node_size;
-  end;
+disp_node,
+kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
 @z
 
 @x [15.207] l.4201 - pTeX: Add kanji, kana, other_kchar category codes.
@@ -2568,10 +2560,10 @@ fget; read_sixteen(nk);
 fget; read_sixteen(ne);
 fget; read_sixteen(np);
 if jfm_flag<>dir_default then
-  begin if lf<>7+lh+nt+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np then abort
+  begin if lf<>7+lh+nt+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np then abort;
   end
 else
-  begin if lf<>6+lh+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np then abort
+  begin if lf<>6+lh+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np then abort;
   end;
 if (nw=0)or(nh=0)or(nd=0)or(ni=0) then abort;
 end

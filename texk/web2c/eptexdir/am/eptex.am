@@ -75,6 +75,7 @@ eptex_ch_srcs = \
 	ptexdir/ptex-base.ch \
 	eptexdir/eptex.ech \
 	eptexdir/etex.ch1 \
+	$(eptex_ch_synctex) \
 	eptexdir/fam256.ch \
 	eptexdir/pdfstrcmp.ch \
 	eptexdir/pdfsavepos.ch \

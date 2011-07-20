@@ -1,0 +1,66 @@
+2011-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-lib-version.m4 (new): Split FOO_version into FOO_major,
+	FOO_minor, and FOO_micro; build FOO_LT_VERSINFO.
+
+2011-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-xpdf-flags.m4: Require system (poppler) version >= 0.12.
+	* kpse-poppler-flags.m4: Fixed a typo.
+	* README: Updated.
+
+	* kpse-warnings.m4 [WARNING_CXXFLAGS, WARNING_OBJCXXFLAGS]:
+	For g++ always use either -Wno-write-strings or -Wwrite-strings
+	because the default for C++ has changed with gcc-4.4.
+
+	* kpse-web2c.m4: Added configure options `--enable-*-synctex',
+	moved handling of `--enable-mktex*-default' from here ...
+	* kpse-mktex.m4: ... to this new file.
+	* kpse-setup.m4: Added KPSE_MKTEX_PREPARE.
+
+2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-common.m4 (KPSE_COMMON): Remove check for
+	program_invocation_name.
+
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): add ptexenc, makejvf, mendexk.
+	From Akira and Norbert.
+	* kpse-ptexenc-flags.m4: new file.
+
+2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-icu-flags.m4 (KPSE_ICU_SYSTEM_FLAGS): Work around bug
+	in icu-config version 4.4.
+	* kpse-common.m4 (KPSE_COMMON): Added AC_TYPE_SIZE_T.
+
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-common.m4 (KPSE_COMMON): Use LT_INIT([win32-dll]).
+	* kpse-gd-flags.m4 (KPSE_GD_FLAGS): Add -DNONDLL.
+
+2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-kpathsea-flags.m4: Detect if libkpathsea was compiled
+	without debugging support and add '-DNODEBUG' if necessary.
+
+2010-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-warnings.m4: Redefine compiler warning levels to
+	reduce the number of 'min' warnings.
+
+2009-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-setup.m4: Disable cross compilation of xindy.
+	* configure.ac: Report absolute build and source dir; reject
+	paths with embedded spaces.
+
+2009-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-warnings.m4: Additional level 'all' of compiler
+	warnings, 'max' now without the extremely noisy -Wshadow.
+
+2009-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-warnings.m4: Implement Objective C compiler warnings.

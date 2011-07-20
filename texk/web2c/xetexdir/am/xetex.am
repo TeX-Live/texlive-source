@@ -1,6 +1,6 @@
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## XeTeX
@@ -37,9 +37,9 @@ libxetex += libxetexmm.a
 else !XETEX_MACOSX
 
 xetex_cppflags += -DXETEX_OTHER
-xetex_cppflags += $(XPDF_INCLUDES) $(LIBPNG_INCLUDES) $(FONTCONFIG_INCLUDES)
-xetex_ldadd += $(XPDF_LIBS) $(LIBPNG_LIBS) $(FONTCONFIG_LIBS)
-xetex_dependencies += $(XPDF_DEPEND) $(LIBPNG_DEPEND)
+xetex_cppflags += $(POPPLER_INCLUDES) $(LIBPNG_INCLUDES) $(FONTCONFIG_INCLUDES)
+xetex_ldadd += $(POPPLER_LIBS) $(LIBPNG_LIBS) $(FONTCONFIG_LIBS)
+xetex_dependencies += $(POPPLER_DEPEND) $(LIBPNG_DEPEND)
 
 endif !XETEX_MACOSX
 

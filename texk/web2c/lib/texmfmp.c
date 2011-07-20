@@ -622,7 +622,6 @@ maininit (int ac, string *av)
   kpse_record_output = recorder_record_output;
 
 #if defined(__SyncTeX__)
-# warning SyncTeX: -synctex command line option available
   /* 0 means "disable Synchronize TeXnology".
      synctexoption is a *.web variable.
      We initialize it to a weird value to catch the -synctex command line flag.
@@ -631,11 +630,6 @@ maininit (int ac, string *av)
      by the user.  */
 # define SYNCTEX_NO_OPTION INT_MAX
   synctexoption = SYNCTEX_NO_OPTION;
-#else
-# /* Omit warning for Aleph, pTeX, epTeX, and non-TeX.  */
-# if defined(TeX) && !defined(Aleph) && !defined(pTeX) && !defined(epTeX)
-#  warning SyncTeX: -synctex command line option NOT available
-# endif
 #endif
 
   /* If the user says --help or --version, we need to notice early.  And

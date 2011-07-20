@@ -1,3 +1,15 @@
+2011-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am (pweb_tests): New variable for tests of pTeX
+	related Web programs (split off ptex_tests).
+
+	* ptrip/texmf.cnf (main_memory): Increase for SyncTeX.
+
+2011-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am (ptex_ch_srcs): SyncTeX infrastructure.
+	* ptex-base.ch: Slightly reformulate to simplify SyncTeX.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

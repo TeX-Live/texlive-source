@@ -23,11 +23,23 @@
 /* Return pointer to first character after `.' in last directory element
    of NAME.  If the name is `foo' or `/foo.bar/baz', we have no extension.  */
 
-string
+/* The the result of strrchr(NAME, '.'), when not NULL, is a non-const
+   pointer into the string NAME.  However, this is cheating (motivated
+   by limitations of the C language) when the argument NAME is a
+   const string, because in that case the (technically non-const) result
+   from strrchr() is certainly not modifiable.
+
+   We do not want to repeat this kind of cheating for find_suffix() and
+   therefore declare find_suffix(NAME) as const.  When find_suffix(NAME)
+   is non-NULL and the argument NAME is modifiable (i.e., non-const)
+   then NAME+(find_suffix(NAME)-NAME) is an equivalent modifiable string
+   and the pointer arithmetic is optimized away by modern compilers.  */
+
+const_string
 find_suffix (const_string name)
 {
   const_string slash_pos;
-  string dot_pos = strrchr (name, '.');
+  const_string dot_pos = strrchr (name, '.');
 
   if (dot_pos == NULL)
     return NULL;

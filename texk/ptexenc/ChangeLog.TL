@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2011-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: New file defining the ptexenc version.
+	* configure.ac: Adapt. Use KPSE_LT_VERSION.
+
 2011-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	For e-pTeX, adapted from eptex-110102.tar.xz by Hironori Kitagawa.

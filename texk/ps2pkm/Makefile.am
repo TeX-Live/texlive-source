@@ -1,12 +1,13 @@
 ## Makefile.am for the TeX Live subdirectory texk/ps2pkm/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CFLAGS = #$(WARNING_CFLAGS)
 
 bin_PROGRAMS = mag pfb2pfa pk2bm ps2pk
 

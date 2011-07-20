@@ -8,7 +8,7 @@ max_print_line = 72
 		
 % pTeX.
 mem_bot          =    1
-main_memory      = 3500
+main_memory      = 4500
 max_strings      = 3000
 pool_size        = 40000
 

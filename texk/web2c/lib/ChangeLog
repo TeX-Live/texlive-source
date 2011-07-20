@@ -1,3 +1,7 @@
+2011-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Drop `#warning SyncTeX: -synctex command line...'.
+
 2011-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (ipcpage): Add 'free(cwd)'.

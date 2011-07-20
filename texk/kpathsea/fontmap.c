@@ -172,7 +172,7 @@ const_string *
 kpathsea_fontmap_lookup (kpathsea kpse, const_string key)
 {
   const_string *ret;
-  string suffix = find_suffix (key);
+  const_string suffix = find_suffix (key);
 
   if (kpse->map.size == 0) {
     read_all_maps (kpse);

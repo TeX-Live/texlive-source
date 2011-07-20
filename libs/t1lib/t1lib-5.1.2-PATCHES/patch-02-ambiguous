@@ -1,0 +1,16 @@
+diff -ur t1lib-5.1.2.orig/lib/type1/type1.c t1lib-5.1.2/lib/type1/type1.c
+--- t1lib-5.1.2.orig/lib/type1/type1.c	2007-12-23 16:49:42.000000000 +0100
++++ t1lib-5.1.2/lib/type1/type1.c	2011-07-19 21:34:40.000000000 +0200
+@@ -843,11 +843,11 @@
+           if (stemtop >= alignmentzones[i].bottomy + blues->BlueShift){
+             enforceovershoot = TRUE;
+ 	  }
++	}
+         else
+           if (stembottom <= alignmentzones[i].topy - blues->BlueShift){
+             enforceovershoot = TRUE;
+ 	  }
+-	}
+       }
+       
+       

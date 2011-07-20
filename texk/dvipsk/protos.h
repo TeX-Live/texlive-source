@@ -194,7 +194,7 @@ extern short scanpage(void);
 /* prototypes for functions from search.c */
 #ifdef KPATHSEA
 extern FILE *search(kpse_file_format_type format, const char *file, const char *mode);
-extern FILE *pksearch(const char *file, const char *mode, halfword dpi, char **name_ret, int *dpi_ret);
+extern FILE *pksearch(const char *file, const char *mode, halfword dpi, const char **name_ret, int *dpi_ret);
 #else /* !KPATSHEA */
 extern FILE *search(char *path, const char *file, const char *mode);
 extern FILE *pksearch(char *path, const char *file, const char *mode, char *n, halfword dpi, halfword vdpi);

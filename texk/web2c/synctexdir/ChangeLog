@@ -1,3 +1,21 @@
+2011-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	SyncTeX infrastructure for pTeX and e-pTeX.
+	* synctex-ptex.h, synctex-p-{mem,rec}.ch[01] (all new):
+	Additional files for pTeX.
+	* synctex-eptex.h, synctex-ep-{mem.ch[01],rec.ch1 (all new):
+	Additional files for e-pTeX.
+	* am/synctex.am: Adapt
+
+	* synctex.c: Drop `#warning These structures MUST be kept...'.
+
+2011-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex-{,e}tex.h: Drop the `#warning SyncTeX for *TeX'.
+	* synctex-{,e,pdf,xe}tex.h: Move the default definition of
+	SYNCTEX_GET_CURRENT_NAME for here ...
+	* synctex.c: ... to here.
+
 2011-06-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex_parser_utils.c: fix a typo.

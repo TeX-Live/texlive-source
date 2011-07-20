@@ -40,6 +40,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Object.h"
 #include "Stream.h"
+#include "Lexer.h"
+#include "Parser.h"
 #include "Array.h"
 #include "Dict.h"
 #include "XRef.h"
@@ -149,7 +151,39 @@ int main(int argc, char *argv[])
                         (e->type == xrefEntryFree ? "f" : "n"));
             else {              // e->offset is the object number of the object stream
 #ifdef POPPLER_VERSION
-                fprintf(stderr, "warning: this version of pdftosrc doesn't support object stream (use pdftosrc from TeX Live if you need it)\n");
+                Stream *str;
+                Parser *parser;
+                Object objStr, obj1, obj2;
+                int nObjects, first, n;
+                int localOffset = 0;
+                Guint firstOffset;
+
+                assert(xref->fetch(e->offset, 0, &objStr)->isStream());
+                nObjects = objStr.streamGetDict()->lookup("N", &obj1)->getInt();
+                obj1.free();
+                first = objStr.streamGetDict()->lookup("First", &obj1)->getInt();
+                obj1.free();
+                firstOffset = objStr.getStream()->getBaseStream()->getStart() + first;
+
+                // parse the header: object numbers and offsets
+                objStr.streamReset();
+                obj1.initNull();
+                str = new EmbedStream(objStr.getStream(), &obj1, gTrue, first);
+                parser = new Parser(xref, new Lexer(xref, str), gFalse);
+                for (n = 0; n < nObjects; ++n) {
+                    parser->getObj(&obj1);
+                    parser->getObj(&obj2);
+                    if (n == e->gen)
+                        localOffset = obj2.getInt();
+                    obj1.free();
+                    obj2.free();
+                }
+                while (str->getChar() != EOF) ;
+                delete parser;
+                objStr.free();
+
+                fprintf(outfile, "%.10lu 00000 n\n",
+                        (long unsigned)(firstOffset + localOffset));
 #else
                 // e->gen is the local index inside that object stream
                 //int objStrOffset = xref->getEntry(e->offset)->offset;

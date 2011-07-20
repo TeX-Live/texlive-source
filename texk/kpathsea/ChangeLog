@@ -1,3 +1,20 @@
+2011-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: New file defining the kpathsea version.
+	Update version number 6.0.1 => 6.0.2dev.
+	* configure.ac: Adapt. Use KPSE_LT_VERSION.
+
+2011-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/web2c.ac renamed into ac/mktex.ac.
+	* ac/withenable.ac, configure.ac: web2c.ac => mktex.ac.
+	* configure.ac: KPSE_WEB2C_PREPARE => KPSE_MKTEX_PREPARE.
+
+2011-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-make.c [WIN32]: Do not #include <kpathsea/win32lib.h>
+	from here (already done from config.h).
+
 2011-06-28  Karl Berry  <karl@tug.org>
 
 	* mktexlsr: need to shift when arg is not a directory.
@@ -6,6 +23,49 @@
 2011-06-19  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (OPENTYPEFONTS): a duplicate entry was created :(.
+
+2011-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* progname.c (remove_dots): Correctly handle dir="/foo/../bar".
+	FIXME: What about dir="c:foo/../bar" and dir="c:../bar"?
+
+2011-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reduce memory leaks.
+
+	* types.h (kpse_format_info_type): Declare path as non-const.
+	* tex-file.c (init_path): Free old value of path when assigning
+	a new value.
+
+	* progname.c (kpathsea_selfdir): Free strings no longer used.
+
+	* kpsewhich.c (lookup): Free string no longer used.
+
+2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fontmap.c (kpathsea_fontmap_lookup), kpsewhich.c (find_dpi),
+	progname.c (kpathsea_set_program_name): Allow find_suffix() to
+	return a const string.
+
+	* find-suffix.c, lib.h: Declare find_suffix() as const.
+	* find-suffix.c: Explain that NAME+(find_suffix(NAME)-NAME) is
+	equivalent to find_suffix(NAME) but not necessarily const.
+
+	* progname.c (remove_dots): Somewhat reorganize (initialize
+	ret as `NULL' instead of `(string)""').
+
+2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-glyph.c (try_size, try_fontmap, kpathsea_find_glyph),
+	tex-glyph.h (kpse_glyph_file_type): Declare font name as const.
+
+2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xgetcwd.c: Fix #include directives (depend on GETCWD_FORKS).
+	(xgetcwd): The returned string may be long lived, so malloc()
+	only as needed.
+	Do not print path when getcwd(path, size) or getwd(path) fail,
+	the contents is undefined.
 
 2011-06-13  Manuel P\'egour\'e-Gonnard <mpg@elzevir.fr>
 

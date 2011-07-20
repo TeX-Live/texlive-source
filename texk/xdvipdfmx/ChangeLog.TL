@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (AC_TYPE_UINT32_T): Portability fix for AIX.
+	* dpxcrypt.c: Use headers as in configure test for uint32_t.
+
 2011-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dpxfile.c (exec_spawn): Do not quote execvp() arguments.

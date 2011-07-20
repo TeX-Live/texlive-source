@@ -122,6 +122,9 @@ const_string EPTEXHELP[] = {
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
+#if defined(__SyncTeX__)
+    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+#endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-help                   print this message and exit.",
     "-version                print version information and exit.",
@@ -346,6 +349,9 @@ const_string PTEXHELP[] = {
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
+#if defined(__SyncTeX__)
+    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+#endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-help                   print this message and exit.",
     "-version                print version information and exit.",

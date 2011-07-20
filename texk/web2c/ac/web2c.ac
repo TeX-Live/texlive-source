@@ -1,6 +1,6 @@
 ## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 dnl
-dnl Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options for TeX and MF
@@ -33,12 +33,12 @@ dnl [PROG, BUILD-OR-NO, SYNC-OR-NO, TEXT, REQUIRED-LIBS]
 m4_define([kpse_tex_progs], [dnl
 [[tex],    [yes], [no],  [TeX],    []],
 [[etex],   [no],  [yes], [e-TeX],  []],
-[[ptex],   [yes], [no],  [pTeX],   [ptexenc]],
-[[eptex],  [yes], [no],  [e-pTeX], [ptexenc]],
-[[aleph],  [yes], [no],  [Aleph],  []],
+[[ptex],   [yes], [yes], [pTeX],   [ptexenc]],
+[[eptex],  [yes], [yes], [e-pTeX], [ptexenc]],
+[[aleph],  [yes], [],    [Aleph],  []],
 [[pdftex], [yes], [yes], [pdfTeX], [xpdf libpng obsdcompat]],
-[[luatex], [yes], [no],  [luaTeX], [poppler libpng obsdcompat zziplib]],
-[[xetex],  [yes], [yes], [XeTeX],  [xpdf libpng freetype2 icu-xetex teckit graphite]],
+[[luatex], [yes], [],    [luaTeX], [poppler libpng obsdcompat zziplib]],
+[[xetex],  [yes], [yes], [XeTeX],  [poppler libpng freetype2 icu-xetex teckit graphite]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
            [m4_ifset([Kpse_Prog],

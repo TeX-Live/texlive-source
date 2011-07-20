@@ -1,3 +1,13 @@
+2011-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use KPSE_COMPILER_WARNINGS.
+	* Makefile.am [AM_CFLAGS]: Prepare for WARNING_CFLAGS.
+
+2011-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: New file defining the t1lib version.
+	* configure.ac: Adapt. Drom useless AC_HEADER_STAT.
+
 2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Do not compile lib/type1/bstring.c.

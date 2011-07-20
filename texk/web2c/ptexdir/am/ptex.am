@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -11,14 +11,14 @@ pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
 # pTeX Tests
 #
-ptex_tests = \
+ptex_tests = ptexdir/ptrip.test
+pweb_tests = \
 	ptexdir/pbibtex.test \
 	ptexdir/pdvitype.test \
 	ptexdir/ppltotf.test \
-	ptexdir/ptftopl.test \
-	ptexdir/ptrip.test
+	ptexdir/ptftopl.test
 
-EXTRA_DIST += $(ptex_tests)
+EXTRA_DIST += $(ptex_tests) $(pweb_tests)
 DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
 	$(pweb_programs:=.p) $(pweb_programs:=-web2c) $(pweb_programs:=.web)
 
@@ -41,10 +41,10 @@ libkanji_a_CPPFLAGS = $(ptex_cppflags)
 ##
 if PTEX
 bin_PROGRAMS += ptex
-if WEB
-bin_PROGRAMS += $(pweb_programs)
-endif WEB
 endif PTEX
+if PWEB
+bin_PROGRAMS += $(pweb_programs)
+endif PWEB
 EXTRA_PROGRAMS += ptex $(pweb_programs)
 
 ptex_CPPFLAGS = $(ptex_cppflags)
@@ -93,6 +93,7 @@ ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
 	$(tie) -c ptex.ch ptex.web $(ptex_ch_srcs)
 ptex_ch_srcs = \
 	ptexdir/ptex-base.ch \
+	$(ptex_ch_synctex) \
 	tex-binpool.ch
 
 EXTRA_DIST += $(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptex.defines
@@ -116,8 +117,8 @@ pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
 	$(tie) -m pbibtex.web bibtex.web bibtex.ch
 EXTRA_DIST += ptexdir/pbibtex.ch web2c/cvtbib.sed
 
-ptex_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
-ptex_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
+pweb_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
+pweb_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
 
 ## pDVItype
 ## 
@@ -135,7 +136,7 @@ pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
 	$(tie) -m pdvitype.web dvitype.web dvitype.ch
 EXTRA_DIST += ptexdir/pdvitype.ch
 
-ptex_tests += ptexdir/sample.test
+pweb_tests += ptexdir/sample.test
 
 ## pPLtoTF
 ## 
@@ -169,7 +170,7 @@ ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie) -m ptftopl.web tftopl.web tftopl.ch
 EXTRA_DIST += ptexdir/ptftopl.ch
 
-ptex_tests += ptexdir/yokotate.test
+pweb_tests += ptexdir/yokotate.test
 
 ## 
 EXTRA_DIST += \
@@ -186,6 +187,9 @@ check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += ptrip.diffs
 TRIPTRAP_CLEAN += ptrip-clean
 endif PTEX
+if PWEB
+TESTS += $(pweb_tests)
+endif PWEB
 
 ## Test data and results
 ##

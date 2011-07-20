@@ -270,33 +270,30 @@ remove_dots (kpathsea kpse, string dir)
 #else
   string c;
   unsigned len;
-  string ret = (string) ""; /* We always reassign.  */
+  string ret = NULL;
 
   for (c = kpathsea_filename_component (kpse, dir); c;
        c = kpathsea_filename_component (kpse, NULL)) {
     if (STREQ (c, ".")) {
       /* If leading ., replace with cwd.  Else ignore.  */
-      if (*ret == 0) {
+      if (!ret) {
         ret = xgetcwd ();
       }
 
     } else if (STREQ (c, "..")) {
       /* If leading .., start with xdirname (cwd).  Else remove last
          component from ret, if any.  */
-      if (*ret == 0) {
+      if (!ret) {
         string dot = xgetcwd ();
         ret = xdirname (dot);
         free (dot);
       } else {
         unsigned last;
-        for (last = strlen (ret);
-             last > (NAME_BEGINS_WITH_DEVICE (ret) ? 2 : 0);
-             last--) {
-          if (IS_DIR_SEP (ret[last - 1])) {
+        string p = NAME_BEGINS_WITH_DEVICE (ret) ? ret + 2 : ret;
+        for (last = strlen (p); last > 0; last--) {
+          if (IS_DIR_SEP (p[last - 1])) {
             /* If we have `/../', that's the same as `/'.  */
-            if (last > 1) {
-              ret[last - 1] = 0;
-            }
+            p[(last - 1 ? last - 1 : 1)] = 0;
             break;
           }
         }
@@ -306,17 +303,17 @@ remove_dots (kpathsea kpse, string dir)
       /* Not . or ..; just append.  Include a directory separator unless
          our string already ends with one.  This also changes all directory
          separators into the canonical DIR_SEP_STRING.  */
-      string temp;
-      len = strlen (ret);
-      temp = concat3 (ret, ((len > 0 && ret[len - 1] == DIR_SEP)
-                            || (NAME_BEGINS_WITH_DEVICE (c) && *ret == 0))
-                           ? "" : DIR_SEP_STRING,
-                      c);
-      if (*ret)
-        free (ret);
-      ret = temp;
+      if (!ret) {
+        ret = concat (NAME_BEGINS_WITH_DEVICE (c) ? "" : DIR_SEP_STRING, c);
+      } else {
+        string temp = ret;
+        len = strlen (ret);
+        ret = concat3 (ret, ret[len - 1] == DIR_SEP ? "" : DIR_SEP_STRING, c);
+        free (temp);
+      }
     }
   }
+  assert (ret);
 
   /* Remove a trailing /, just in case it snuck in.  */
   len = strlen (ret);
@@ -336,6 +333,7 @@ kpathsea_selfdir (kpathsea kpse, const_string argv0)
 {
   string ret = NULL;
   string self = NULL;
+  string name;
 
   if (kpathsea_absolute_p (kpse, argv0, true)) {
     self = xstrdup (argv0);
@@ -369,8 +367,6 @@ kpathsea_selfdir (kpathsea kpse, const_string argv0)
        want to search any ls-R's or do anything special with //'s.  */
     for (elt = kpathsea_path_element (kpse, getenv ("PATH")); !self && elt;
          elt = kpathsea_path_element (kpse, NULL)) {
-      string name;
-
       /* UNIX tradition interprets the empty path element as "." */
       if (*elt == 0) elt = ".";
 
@@ -383,11 +379,12 @@ kpathsea_selfdir (kpathsea kpse, const_string argv0)
          only executable by some classes and not others.  See the
          `file_status' function in execute_cmd.c in bash for what's
          necessary if we were to do it right.  */
-      if (stat (name, &s) == 0 && s.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)) {
-        /* Do not stop at directories. */
-        if (!S_ISDIR(s.st_mode))
-          self = name;
-      }
+      if (stat (name, &s) == 0 && s.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH)
+                               /* Do not stop at directories. */
+                               && !S_ISDIR(s.st_mode))
+        self = name;
+      else
+        free (name);
     }
 #endif /* not AMIGA */
   }
@@ -396,9 +393,15 @@ kpathsea_selfdir (kpathsea kpse, const_string argv0)
   if (!self)
     self = concat3 (".", DIR_SEP_STRING, argv0);
 
-  ret = xdirname (remove_dots (kpse, expand_symlinks (kpse, self)));
+  name = remove_dots (kpse, expand_symlinks (kpse, self));
 
+#ifndef AMIGA
   free (self);
+#endif
+
+  ret = xdirname (name);
+
+  free (name);
 
   return ret;
 }
@@ -470,7 +473,8 @@ void
 kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
                            const_string progname)
 {
-  string ext, sdir, sdir_parent, sdir_grandparent;
+  const_string ext;
+  string sdir, sdir_parent, sdir_grandparent;
   string s = getenv ("KPATHSEA_DEBUG");
 #ifdef WIN32
   string debug_output = getenv("KPATHSEA_DEBUG_OUTPUT");

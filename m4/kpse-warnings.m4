@@ -1,11 +1,9 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
-
-# serial 0
 
 # KPSE_COMPILER_WARNINGS
 # ----------------------
@@ -61,10 +59,10 @@ AC_REQUIRE([AC_PROG_CC])[]dnl
 AC_CACHE_CHECK([what warning flags to pass to the C compiler],
                [kpse_cv_warning_cflags],
                [dnl
-if test "x$enable_compiler_warnings" = xno; then
-  kpse_cv_warning_cflags=
-elif test "x$GCC" = xyes; then
+if test "x$GCC" = xyes; then
   _KPSE_WARNING_GNU_CFLAGS([CC], [cflags])[]dnl
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
 else
   kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
 fi])
@@ -81,10 +79,10 @@ m4_define([_KPSE_WARNING_CXXFLAGS],
 [AC_CACHE_CHECK([what warning flags to pass to the C++ compiler],
                 [kpse_cv_warning_cxxflags],
                 [dnl
-if test "x$enable_compiler_warnings" = xno; then
-  kpse_cv_warning_cxxflags=
-elif test "x$GXX" = xyes; then
+if test "x$GXX" = xyes; then
   _KPSE_WARNING_GNU_CXXFLAGS([CXX], [cxxflags])[]dnl
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cxxflags=
 else
   kpse_cv_warning_cxxflags= # FIXME: warning flags for non-GNU C++ compilers
 fi])
@@ -103,10 +101,10 @@ AC_REQUIRE([AC_PROG_OBJC])[]dnl
 AC_CACHE_CHECK([what warning flags to pass to the Objective C compiler],
                [kpse_cv_warning_objcflags],
                [dnl
-if test "x$enable_compiler_warnings" = xno; then
-  kpse_cv_warning_objcflags=
-elif test "x$GOBJC" = xyes; then
+if test "x$GOBJC" = xyes; then
   _KPSE_WARNING_GNU_CFLAGS([OBJC], [objcflags])[]dnl
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_objcflags=
 else
   kpse_cv_warning_objcflags= # FIXME: warning flags for non-GNU Objective C compilers
 fi])
@@ -125,10 +123,10 @@ AC_REQUIRE([AC_PROG_OBJCXX])[]dnl
 AC_CACHE_CHECK([what warning flags to pass to the Objective C++ compiler],
                [kpse_cv_warning_objcxxflags],
                [dnl
-if test "x$enable_compiler_warnings" = xno; then
-  kpse_cv_warning_objcxxflags=
-elif test "x$GOBJCXX" = xyes; then
+if test "x$GOBJCXX" = xyes; then
   _KPSE_WARNING_GNU_CXXFLAGS([OBJCXX], [objcxxflags])[]dnl
+elif test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_objcxxflags=
 else
   kpse_cv_warning_objcxxflags= # FIXME: warning flags for non-GNU Objective C++ compilers
 fi])
@@ -142,47 +140,56 @@ m4_define([_KPSE_WARNING_OBJCXXFLAGS], [])[]dnl
 # Internal subroutine.
 # Determine warning flags for GNU (Objective) C compiler.
 m4_define([_KPSE_WARNING_GNU_CFLAGS],
-[kpse_cv_warning_$2="-Wimplicit -Wreturn-type"
-AS_CASE([`$[]$1 -dumpversion`],
-        [3.4.* | 4.*],
-        [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wdeclaration-after-statement"])
-AS_CASE([`$[]$1 -dumpversion`],
-        [3.@<:@234@:>@.* | 4.*],
-        [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
-if test "x$enable_compiler_warnings" != xmin; then
-  kpse_cv_warning_$2="-Wall -Wunused $kpse_cv_warning_$2"
-  kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wmissing-prototypes -Wmissing-declarations"
-  if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
-    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wcast-qual -Wcast-align -Wwrite-strings"
-    AS_CASE([`$[]$1 -dumpversion`],
-            [3.4.* | 4.*],
-            [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wold-style-definition"])
-    if test "x$enable_compiler_warnings" != xmax; then
-      kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wshadow"
+[kpse_cv_warning_$2=
+if test "x$enable_compiler_warnings" != xno; then
+  kpse_cv_warning_$2="-Wimplicit -Wreturn-type"
+  AS_CASE([`$[]$1 -dumpversion`],
+          [3.4.* | 4.*],
+          [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wdeclaration-after-statement"])
+  AS_CASE([`$[]$1 -dumpversion`],
+          [3.@<:@234@:>@.* | 4.*],
+          [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_$2="-Wall -Wunused $kpse_cv_warning_$2"
+    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wmissing-prototypes -Wmissing-declarations"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+      kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wcast-qual -Wcast-align -Wwrite-strings"
+      AS_CASE([`$[]$1 -dumpversion`],
+              [3.4.* | 4.*],
+              [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wold-style-definition"])
+      if test "x$enable_compiler_warnings" != xmax; then
+        kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wshadow"
+      fi
     fi
   fi
 fi
-]) # _KPSE_WARNING_GNU_CFLAGS
+]) # _KPSE_WARNING_GNU_CFLAGS
 
 # _KPSE_WARNING_GNU_CXXFLAGS(COMPILER, TAG)
 # -----------------------------------------
 # Internal subroutine.
 # Determine warning flags for GNU (Objective) C++ compiler.
 m4_define([_KPSE_WARNING_GNU_CXXFLAGS],
-[kpse_cv_warning_$2="-Wimplicit -Wreturn-type"
-AS_CASE([`$[]$1 -dumpversion`],
-        [3.@<:@234@:>@.* | 4.*],
-        [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
-if test "x$enable_compiler_warnings" != xmin; then
-  kpse_cv_warning_$2="-Wall -Wunused $kpse_cv_warning_$2"
-  if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
-    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wcast-qual -Wcast-align -Wwrite-strings"
-  fi
-    if test "x$enable_compiler_warnings" != xmax; then
-      kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wshadow"
+[kpse_cv_warning_$2=
+kpse_warn_strings="-Wno-write-strings"
+if test "x$enable_compiler_warnings" != xno; then
+  kpse_cv_warning_$2="-Wimplicit -Wreturn-type"
+  AS_CASE([`$[]$1 -dumpversion`],
+          [3.@<:@234@:>@.* | 4.*],
+          [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_$2="-Wall -Wunused $kpse_cv_warning_$2"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
+      kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wcast-qual -Wcast-align"
+      kpse_warn_strings="-Wwrite-strings"
+      if test "x$enable_compiler_warnings" != xmax; then
+        kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wshadow"
+      fi
     fi
+  fi
 fi
-]) # _KPSE_WARNING_GNU_CXXFLAGS
+kpse_cv_warning_$2="$kpse_cv_warning_$2 $kpse_warn_strings"
+]) # _KPSE_WARNING_GNU_CXXFLAGS
 

@@ -50,6 +50,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/m4/kpse-lt-hack.m4 \
+	$(top_srcdir)/m4/kpse-mktex.m4 \
 	$(top_srcdir)/m4/kpse-options.m4 $(top_srcdir)/m4/kpse-pkgs.m4 \
 	$(top_srcdir)/m4/kpse-poppler-flags.m4 \
 	$(top_srcdir)/m4/kpse-ptexenc-flags.m4 \
@@ -131,7 +132,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/libs/zlib/ac/withenable.ac \
 	$(top_srcdir)/texk/ptexenc/ac/withenable.ac \
 	$(top_srcdir)/texk/kpathsea/ac/withenable.ac \
-	$(top_srcdir)/texk/kpathsea/ac/web2c.ac \
+	$(top_srcdir)/texk/kpathsea/ac/mktex.ac \
 	$(top_srcdir)/texk/kpathsea/ac/kpathsea.ac \
 	$(top_srcdir)/texk/ptexenc/ac/ptexenc.ac \
 	$(top_srcdir)/libs/zlib/ac/zlib.ac \
@@ -348,6 +349,7 @@ EXTRA_DIST = \
 	README.hacking \
 	README.layout \
 	build-aux/README.TL \
+	m4/ChangeLog \
 	m4/README \
 	reautoconf
 
