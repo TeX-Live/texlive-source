@@ -1,5 +1,11 @@
 T1utils NEWS
 
+Version 1.37   29.Jun.2011
+
+* t1asm: Use a dynamically allocated buffer to handle huge characters
+  (reported by Werner Lemberg).
+
+
 Version 1.36   29.May.2010
 
 * Several minor cleanups.

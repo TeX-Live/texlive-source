@@ -95,4 +95,8 @@ extern "C" {
 char *strerror(int errno);
 #endif
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* T1UTILS_CONFIG_H */

@@ -92,8 +92,8 @@ static int lenIV = 4;
 static char cs_start[10];
 
 /* for charstring buffering */
-static byte charstring_buf[65535];
-static byte *charstring_bp;
+static byte *charstring_buf, *charstring_bp;
+static int charstring_bufsiz;
 
 /* decryption stuff */
 static uint16_t er, cr;
@@ -109,6 +109,7 @@ static struct command {
   { "and", 12, 3 },		/* Type 2 */
   { "blend", 16, -1 },		/* Type 2 */
   { "callgsubr", 29, -1 },	/* Type 2 */
+  { "callother", 12, 16 },	/* Type 1 ONLY */
   { "callothersubr", 12, 16 },	/* Type 1 ONLY */
   { "callsubr", 10, -1 },
   { "closepath", 9, -1 },	/* Type 1 ONLY */
@@ -371,6 +372,12 @@ static void charstring_start(void)
 {
   int i;
 
+  if (!charstring_buf) {
+    charstring_bufsiz = 65536;
+    if (!(charstring_buf = (byte *) malloc(charstring_bufsiz)))
+      fatal_error("out of memory");
+  }
+
   charstring_bp = charstring_buf;
   cr = 4330;
   for (i = 0; i < lenIV; i++)
@@ -381,10 +388,14 @@ static void charstring_start(void)
 
 static void charstring_byte(int v)
 {
-    byte b = (byte)(v & 0xff);
-    if (charstring_bp - charstring_buf > (int)sizeof(charstring_buf))
-	fatal_error("charstring buffer overflow");
-    *charstring_bp++ = cencrypt(b);
+  byte b = (byte)(v & 0xff);
+  if (charstring_bp - charstring_buf == charstring_bufsiz) {
+    charstring_bufsiz *= 2;
+    if (!(charstring_buf = (byte *) realloc(charstring_buf, charstring_bufsiz)))
+      fatal_error("out of memory");
+    charstring_bp = charstring_buf + charstring_bufsiz / 2;
+  }
+  *charstring_bp++ = cencrypt(b);
 }
 
 /* This function outputs buffered, encrypted charstring data through possible

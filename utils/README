@@ -12,7 +12,7 @@ asymptote 2.13 - checked 19jun11
 chktex 1.6.4 - checked 25apr11
   http://baruch.ev-en.org/proj/chktex/chktex-1.6.4.tar.gz
 
-dialog 1.1-20110302 - checked 25apr11
+dialog 1.1-20110707 - checked 21jul11
   ftp://invisible-island.net/dialog/dialog.tar.gz
 
 ps2eps 1.68 - checked 25apr11
@@ -25,7 +25,7 @@ psutils p17 - checked 25apr11
   -> http://www.connochaetos.org/misc/psutils-libre-1.17.tar.gz
   (Fabrice made small modifications for Windows, it seems)
 
-t1utils 1.36 - checked 25apr11
+t1utils 1.37 - checked 21jul11
   http://www.lcdf.org/type/
 
 tpic2pdftex 1.97 - checked 25apr11
