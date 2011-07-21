@@ -1,14 +1,14 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([dialog_version], [1.1-20110302])[]dnl using unmodified dialog source tree
-AC_PREREQ([2.65])
+m4_include([version.ac])[] dnl define dialog_version
 AC_INIT([dialog for TeX Live], dialog_version, [peb@mppmu.mpg.de])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dialog-]dialog_version[/dialog.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
@@ -21,8 +21,7 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 
-DIALOG_TREE=[dialog-]dialog_version
-AC_SUBST([DIALOG_TREE])
+AC_SUBST([DIALOG_TREE], [dialog-]dialog_version)
 
 # Initialize the subdir machinery
 AC_CONFIG_SUBDIRS([])
