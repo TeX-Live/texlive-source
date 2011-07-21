@@ -11,7 +11,7 @@ See also comments in ../texk/README.
 
 freetype 1.5 - ?
 
-freetype2 2.4.4 - checked 25apr11
+freetype2 2.4.5 - checked 21jul11
   http://savannah.nongnu.org/download/freetype/
 
 gd 2.0.35 - unchecked 25apr11, site down
@@ -26,13 +26,14 @@ graphite 2.3.1 - checked 25apr11
 icu 4.6 - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
-libpng 1.5.2 - checked 25apr11
+libpng 1.5.4 - checked 21jul11
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
 obsdcompat - used by pdftex and luatex
 
-poppler 0.12.4 - http://poppler.freedesktop.org/ - used by luatex
+poppler 0.12.4 - checked => 0.16.7
+  http://poppler.freedesktop.org/ - used by luatex and xetex
 
 t1lib 5.1.2 - checked 25apr11
   (apparently unmaintained)
@@ -42,7 +43,7 @@ teckit 2.5.1 - checked 25apr11
   http://scripts.sil.org/svn-view/teckit/
 
 xpdf 3.02pl5 - http://www.foolabs.com/xpdf/
-  with modifications for pdftex and xetex
+  with modifications for pdftex
 
 zlib 1.2.5 - checked 25apr11
   http://www.zlib.net/ - used by many

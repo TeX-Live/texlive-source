@@ -1,12 +1,19 @@
+2011-07-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import freetype-2.4.5.
+	* version.ac: New file defining the freetype version.
+	* configure.ac: Adapt.
+	* Makefile.am: Build without support for bzip2 compressed fonts.
+
 2011-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import freetype-2.4.4.
-
 	* configure.ac: Adjust.
 
 2010-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import freetype-2.4.2.
+	* configure.ac: Adjust.
 
 2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -31,7 +38,7 @@
 
 	* Makefile.am (ft-build/Makefile): use --without-zlib instead
 	of --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE), due to bizarre
-	"file is not of required architecture" warning from MacOSX ld.
+	"file is not of required architecture" error from MacOSX ld.
 
 2009-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
