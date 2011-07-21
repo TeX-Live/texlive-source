@@ -1,3 +1,9 @@
+2011-07-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpng-1.5.4.
+	* version.ac: New file defining the libpng version.
+	* configure.ac: Adapt.
+
 2011-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import libpng-1.5.2.
