@@ -1227,7 +1227,7 @@ kpathsea_in_name_ok (kpathsea kpse, const_string fname)
 }
 
 
-#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+#if defined(WIN32) || defined(__CYGWIN__)
 static int
 Isspace (char c)
 {
@@ -1287,16 +1287,16 @@ executable_filep (kpathsea kpse, const_string fname, boolean silent)
     }
     return false;
 }
-#endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
+#endif /* WIN32 || __CYGWIN__ */
 
 static boolean
 kpathsea_out_name_ok_1 (kpathsea kpse, const_string fname, boolean silent)
 {
-#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+#if defined(WIN32) || defined(__CYGWIN__)
   /* Output of an executable file is restricted on Windows */
   if (executable_filep (kpse, fname, silent))
     return false;
-#endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
+#endif /* WIN32 || __CYGWIN__ */
   /* For output, default to paranoid. */
   return kpathsea_name_ok (kpse, fname, "openout_any", "p", ok_writing,silent);
 }

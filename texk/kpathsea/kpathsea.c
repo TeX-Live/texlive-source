@@ -36,13 +36,13 @@ kpathsea_new (void)
 
 #if KPATHSEA_CAN_FREE
 
-#define string_free(a) if((a)!=NULL) free((char *)(a))
+#define string_free(a) if ((a) != NULL) free((char *)(a))
 
 static void
 str_llist_free (str_llist_type p)
 {
     str_llist_type q;
-    while (p!=NULL) {
+    while (p != NULL) {
         q = p->next;
         free (p->str);
         free (p);
@@ -54,7 +54,7 @@ static void
 cache_free (cache_entry *the_cache, int cache_size)
 {
     int f ;
-    for (f=0;f<cache_size;f++) {
+    for (f = 0; f < cache_size; f++) {
         string_free (the_cache[f].key);
         str_llist_free (the_cache[f].value[0]);
     }
@@ -78,7 +78,7 @@ kpathsea_finish (kpathsea kpse)
     hash_free (kpse->cnf_hash);
     hash_free (kpse->db);
     hash_free (kpse->alias_db);
-    str_list_free(&kpse->db_dir_list);
+    str_list_free (&kpse->db_dir_list);
     hash_free (kpse->link_table);
     cache_free (kpse->the_cache, kpse->cache_length);
     hash_free (kpse->map);
@@ -96,38 +96,39 @@ kpathsea_finish (kpathsea kpse)
         free(kpse->fallback_resolutions);
     for (i = 0; i != kpse_last_format; ++i) {
         f = kpse->format_info[i];
-        /*string_free ((string)f.path);*/
-        string_free ((string)f.override_path);
-        string_free ((string)f.client_path);
-        /*string_free ((string)f.cnf_path);*/
+        string_free (f.path);
+        string_free (f.override_path);
+        string_free (f.client_path);
+        /*string_free (f.cnf_path);*/
     }
 
     if (kpse->missfont != (FILE *)NULL)
-        fclose(kpse->missfont);
+        fclose (kpse->missfont);
 
     for (i = 0; i < (int)kpse->expansion_len; i++) {
         string_free (kpse->expansions[i].var);
     }
     free (kpse->expansions);
-    if (kpse->saved_env!=NULL) {
+    if (kpse->saved_env != NULL) {
         for (i = 0; i != kpse->saved_count; ++i)
             string_free (kpse->saved_env[i]);
         free (kpse->saved_env);
     }
-#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+#endif /* KPATHSEA_CAN_FREE */
+#if defined(WIN32) || defined(__CYGWIN__)
     if (kpse->suffixlist != NULL) {
         char **p;
-        for p = kpse->suffixlist; *p; p++)
+        for (p = kpse->suffixlist; *p; p++)
             free (*p);
         free (kpse->suffixlist);
+        kpse->suffixlist = NULL;
     }
-#endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
-#endif /* KPATHSEA_CAN_FREE */
+#endif /* WIN32 || __CYGWIN__ */
 #if defined (KPSE_COMPAT_API)
-    if (kpse==kpse_def)
+    if (kpse == kpse_def)
         return;
 #endif
-    free(kpse);
+    free (kpse);
 }
 
 

@@ -1,3 +1,10 @@
+2011-07-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpathsea.c, progname.c, tex-file.c, types.h:
+	Drop #if defined(__MINGW32__) already implied by defined(WIN32).
+
+	* kpathsea.c (kpathsea_finish): Free suffixlist.
+
 2011-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: New file defining the kpathsea version.
@@ -302,7 +309,7 @@
 
 2010-11-07  Karl Berry  <karl@tug.org>
 
- 	* cnf.c (do_line): remove trailing comment and preceding
+	* cnf.c (do_line): remove trailing comment and preceding
 	whitespace, so they do not appear as part of the value.
 	From Akira.
 	* doc/kpathsea.texi (Config files): document this.
@@ -369,7 +376,7 @@
 
 2010-05-25  Karl Berry  <karl@tug.org>
 
-	* texmf.cnf (shell_escape_commands): include fc-list for 
+	* texmf.cnf (shell_escape_commands): include fc-list for
 	the luaotfload font cache.
 
 2010-05-24  Karl Berry  <karl@tug.org>
@@ -732,7 +739,7 @@
 	* strstr.c,
 	* strcasecmp.c,
 	* getopt.c,
-	* getopt.h, 
+	* getopt.h,
 	* getopt1.c: remove all redefinitions of const.
 
 2010-01-31  Javier Mugica  <javier@digi21.eu>
@@ -815,17 +822,17 @@
 2009-12-11  Alexander Cherepanov  <cherepan@mccme.ru>
 
 	* tex-file.c (kpathsea_name_ok): correct check for /../ so that
-        "file..txt" is still allowed.
+	"file..txt" is still allowed.
 	tlsec mail, 05 Dec 2009 12:33:35.
 
 2009-12-05  Karl Berry  <karl@tug.org>
 
-        Suggested/reported by Daniel Luecking, 16 Nov 2009 11:58:00:
+	Suggested/reported by Daniel Luecking, 16 Nov 2009 11:58:00:
 
 	* kpsewhich.c (init_more): split out lengthier initializations
 	to own fn.  Initialize all mktex programs to false, so that
-        cnf/env settings such as MKTEXPK=1 don't apply to kpsewhich.
-        (read_command_line) <--[no-]mktex>: set must_exist, since
+	cnf/env settings such as MKTEXPK=1 don't apply to kpsewhich.
+	(read_command_line) <--[no-]mktex>: set must_exist, since
 	otherwise the mktex program is never called.
 	* doc/kpathsea.texi (Path searching options): minimally describe this.
 
@@ -838,9 +845,9 @@
 
 	* absolute.c, * absolute.h, * cnf.c, * db.c, * dir.c, * elt-dirs.c,
 	* expand.c, * kdefault.c, * kpsewhich.c, * lib.h, * magstep.h,
-        * pathsearch.c, * pathsearch.h, * proginit.c, * progname.c,
+	* pathsearch.c, * pathsearch.h, * proginit.c, * progname.c,
 	* readable.h, * tex-file.c, * tex-file.h, * tex-glyph.c, * tex-glyph.h,
-        * tex-make.c, * types.h, * xputenv.c: formatting/doc fixes. 
+	* tex-make.c, * types.h, * xputenv.c: formatting/doc fixes.
 
 2009-12-01  Karl Berry  <karl@tug.org>
 
@@ -1273,7 +1280,7 @@
 2008-12-15  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (main): warn if the explicit --user-format string
-	is not recognized.  
+	is not recognized.
 
 2008-12-13  Karl Berry  <karl@tug.org>
 
@@ -1306,7 +1313,7 @@
 2008-07-06  Karl Berry  <karl@tug.org>
 
 	* withenable.ac (texmfmain): do not bother with long verbose
-	complaint when the tree can't be found, since this is normal in TL. 
+	complaint when the tree can't be found, since this is normal in TL.
 
 2008-07-05  Karl Berry  <karl@tug.org>
 
@@ -1316,7 +1323,7 @@
 2008-07-04  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (max_strings): increase to 500000.
-	ctt posting from Benno Puetz, http://groups.google.com/group/comp.text.tex/browse_thread/thread/2c3aa2d09b4625e3 
+	ctt posting from Benno Puetz, http://groups.google.com/group/comp.text.tex/browse_thread/thread/2c3aa2d09b4625e3
 
 	* progname.c [HAVE_PROGRAM_INVOCATION_NAME]: remove all #ifdef's
 	except around the declaration, so that we always use our own code
@@ -1654,7 +1661,7 @@
 2007-08-27  Karl Berry  <karl@tug.org>
 
 	* fontmap.c (map_file_parse): free the original pointer, not the
-	potentially moved one (after whitespace skipping). 
+	potentially moved one (after whitespace skipping).
 	From: "George N. White III", 25 Jul 2007 11:27:12.
 
 2007-07-29  Karl Berry  <karl@tug.org>
@@ -3102,7 +3109,7 @@
 
 	* texmf.in: Improved comments about VARTEXMF, along lines
 	suggested by Thomas Esser.
- 	Increased font_mem_size, as requested by Thomas.
+	Increased font_mem_size, as requested by Thomas.
 
 	* pathsearch.c (path_search): Print a message if we're debugging
 	the search and we're not pounding the disk because an ls-R file
@@ -3167,7 +3174,7 @@
 	* AUTHORS: Update accounts for MakeTeX scripts and expand.c.
 
 	* c-memstr.h: Don't declare strstr if strstr is already a define.
- 	Suggested by Paul Vojta <vojta@math.berkeley.edu>.
+	Suggested by Paul Vojta <vojta@math.berkeley.edu>.
 
 	* readlink.c: Corrected a bug in the help string (wrong program
 	name), reported by several people.
@@ -3351,7 +3358,7 @@
 	KPSEDLL, by Fabrice.
 
 	* tex-glyph.c (try_resolution): Add casts to quiet a compiler.
- 	From Fabrice.
+	From Fabrice.
 
 	* tex-file.h (kpse_fallback_resolutions_string, kpse_format_info,
 	kpse_set_program_enabled, kpse_maketex_option, kpse_init_format,
@@ -3385,7 +3392,7 @@
 	kpse_path_search): Add KPSEDLL, by Fabrice.
 
 	* pathsearch.c (path_search): We now strip devices in the caller.
- 	From Fabrice.
+	From Fabrice.
 
 	* magstep.h (kpse_magstep_fix): Add KPSEDLL, by Fabrice.
 
@@ -3439,7 +3446,7 @@
 	* cnf.h (kpse_cnf_get): Add KPSEDLL.  From Fabrice.
 
 	* c-std.h: Don't include math.h if we're seen be a C++ compiler.
- 	From Fabrice.
+	From Fabrice.
 
 	* c-proto.h [WIN32]: Instead of defining DllImport, define
 	KPSEDLL.  This change makes building shared libraries on windows
@@ -3551,7 +3558,7 @@
 	* acconfig.h: Add define guard for c-auto.h.
 
 	* Makefile.in: Change ../make/*.make to ../make/*.mk.
- 	Correct texmf.sed.
+	Correct texmf.sed.
 	Prevent substitution of $(texmf) in texmf.cnf in some
 	cases.
 	Replace semicolons with colons in paths.h.
@@ -3579,7 +3586,7 @@ Sun Jun 21 14:43:44 1998  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* mktexlsr: Test for the presence of the magic string in ls-R, to
 	prevent accidentally overwriting ls-R files that are not ours.
- 	Change the code to ensure ./ in front of directory names in the
+	Change the code to ensure ./ in front of directory names in the
 	presence of different output from different versions of ls.
 
 Mon May  4 19:42:44 1998  Olaf Weber  <olaf@infovore.xs4all.nl>
@@ -3652,8 +3659,8 @@ Mon Mar  9 07:22:23 1998  Olaf Weber  <olaf@infovore.xs4all.nl>
 	* mktexlsr: exit 0 if we succeeded.
 
 	* withenable.ac: Remove double slashes from texmfmain variable.
- 	Strictly speaking, it is a user fault when this occurs, but...
- 	From Thomas Esser.
+	Strictly speaking, it is a user fault when this occurs, but...
+	From Thomas Esser.
 
 Sun Mar  8 18:23:33 1998  Olaf Weber  <olaf@infovore.xs4all.nl>
 
@@ -3808,7 +3815,7 @@ Mon Feb 16 09:46:47 1998  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* texmf.in: VARTEXFONTS uses @vartexfonts@ so it can be filled in
 	from the Makefile.  OFMFONTS changed to explicitly use TFMFONTS.
- 	TEXMCNF uses @web2c@ rather than @web2cdir@.
+	TEXMCNF uses @web2c@ rather than @web2cdir@.
 
 	* withenable.ac: Do not force default for --enable-multiplatform,
 	so that we can inherit one from a script that calls us.
@@ -3839,7 +3846,7 @@ Tue Feb 10 17:59:26 1998  Olaf Weber  <infovore@xs4all.nl>
 
 	* tex-make.c (kpse_make_tex): We pass the raw / to mktexpk in the
 	--mfmode switch when appropriate; remove unset_mode variable.
- 	Update comments to reflect new situation.
+	Update comments to reflect new situation.
 
 	* kpathsea.texi: Note that empty path components are now ignored
 	in stead of expanded to cwd.
@@ -3959,7 +3966,7 @@ Wed Jan 28 20:36:56 1998  Olaf Weber  <infovore@xs4all.nl>
 	* dir.c [WIN32]: Extensive modifications from Fabrice.
 
 	* kpsestat.c, kpsewhich.c: Replace exit with return from main.
- 	From Fabrice.
+	From Fabrice.
 
 	* readable.c [WIN32]: Separate definition of READABLE.  From
 	Fabrice Popineau.
@@ -4079,7 +4086,7 @@ Tue Dec 30 17:55:45 1997  Olaf Weber  <infovore@xs4all.nl>
 	use SEP variable for path separator.
 
 	* mktex.opt: Pick the correct path separator for MS-DOS and UNIX.
- 	Add a more appropriate magic string for ls-R files, but keep the
+	Add a more appropriate magic string for ls-R files, but keep the
 	old one around for compatibility.
 
 	* Makefile.in (install-exec): Add check for original mktexlsr.
@@ -4296,11 +4303,11 @@ Wed Nov 19 17:24:08 1997  Olaf Weber  <infovore@xs4all.nl>
 	the 8.3 pattern.  After Eli Zaretskii.
 
 	* MakeTeXTFM: Make temporary names fit into the 8.3 pattern.
- 	Allow a second optional argument.  Update usage message.  After
+	Allow a second optional argument.  Update usage message.  After
 	Eli Zaretskii.
 
 	* MakeTeXcommon: Make temporary names fit into the 8.3 pattern.
- 	Do a 'cd /' before we cd to $KPSE_DOT, for MS-DOS' sake.  After
+	Do a 'cd /' before we cd to $KPSE_DOT, for MS-DOS' sake.  After
 	Eli Zaretskii.
 
 	* MakeTeXnames: If $DEST starts with "letter-colon-slash", it
@@ -4474,7 +4481,7 @@ Mon Oct 20 07:22:33 1997  Olaf Weber  <infovore@xs4all.nl>
 	Fabrice Popineau.
 
 	* lib.h: Add kpathsea/config.h to the includes.  New macro STRNEQ.
- 	From Fabrice Popineau.
+	From Fabrice Popineau.
 
 	* progname.c (kpse_set_progname [WIN32]): New environment variable
 	KPSE_DEBUG_OUTPUT.  If defined, it names a file to which stderr
@@ -4510,7 +4517,7 @@ Fri Oct 17 10:41:08 1997  Olaf Weber  <infovore@xs4all.nl>
 	From Eli Zaretskii <eliz@is.elta.co.il>.
 
 	* path-elt.c (main): Use ENV_SEP_STRING instead of explicit ":".
- 	From Eli Zaretskii <eliz@is.elta.co.il>.
+	From Eli Zaretskii <eliz@is.elta.co.il>.
 
 	* kpsewhich.c (path_expand): Handle file names with device
 	letters.
@@ -4529,14 +4536,14 @@ Fri Oct 17 10:41:08 1997  Olaf Weber  <infovore@xs4all.nl>
 	letter is alphanumeric. From Eli Zaretskii <eliz@is.elta.co.il>.
 
 	* xgetcwd.c (xgetcwd) [DOSISH]: Prepend drive letter before path.
- 	From Eli Zaretskii <eliz@is.elta.co.il>.
+	From Eli Zaretskii <eliz@is.elta.co.il>.
 
 	* progname.c (kpse_set_progname) [__DJGPP__]: Compute the long
 	file name of the program given its 8+3 alias.
 	(kpse_set_progname) Compute SELFAUTOLOC before removing the
 	".exe" suffix, if any, because `selfdir' might look along the PATH
 	for the file.
- 	After Eli Zaretskii <eliz@is.elta.co.il>.
+	After Eli Zaretskii <eliz@is.elta.co.il>.
 
 	* config.h (DOSISH): Move the definition to the top, so we could
 	define MONOCASE_FILENAMES right there.
@@ -4893,11 +4900,11 @@ Tue Jan 21 08:26:17 1997  Karl Berry  <karl@cs.umb.edu>
 
 	* db.c (match): Don't return false just because the path element
 	ended in /.
-	Bug from: Richard Walker <Richard.Walker@cs.anu.edu.au>.        
+	Bug from: Richard Walker <Richard.Walker@cs.anu.edu.au>.
 
 	* expand.c (kpse_path_expand): Do variable expansion before
 	splitting on path elements.
-	Bug from: Richard Walker <Richard.Walker@cs.anu.edu.au>.        
+	Bug from: Richard Walker <Richard.Walker@cs.anu.edu.au>.
 
 	* tilde.c [TEST]: Function name changed.
 	From: Richard Walker <Richard.Walker@cs.anu.edu.au>.
@@ -5107,7 +5114,7 @@ Mon Dec  9 17:23:32 1996  Karl Berry  <karl@cs.umb.edu>
 	* tex-file.c (kpse_open_file): Open VF files in binary mode.
 	From Fabrice.
 
-	* types.h (boolean) [WIN32]: Remove this case, Fabrice 
+	* types.h (boolean) [WIN32]: Remove this case, Fabrice
 	has found another solution.
 
 	* elt-dirs.c (expand_elt): Do not check for a device separator.
@@ -5171,10 +5178,10 @@ Tue Dec  3 18:02:08 1996  Ulrik Vieth  <vieth@thphy.uni-duesseldorf.de>
 Mon Dec  9 00:28:58 1996  Ulrik Vieth  <vieth@thphy.uni-duesseldorf.de>
 
 	* MakeTeXcommon: Use `basename $0` in usage and version messages
-	for consistency with other programs and scripts. 
+	for consistency with other programs and scripts.
 	Also accept -help, -version in addition to --help, --version.
 
-	* MakeTeX{MF,PK,TFM,ls-R,mkdir,names,update}: 
+	* MakeTeX{MF,PK,TFM,ls-R,mkdir,names,update}:
 	Use `basename $0` in usage messages for consistency.
 	
 Tue Dec  3 18:02:08 1996  Ulrik Vieth  <vieth@thphy.uni-duesseldorf.de>
@@ -5647,7 +5654,7 @@ Wed Feb  7 16:52:08 1996  Karl Berry  <karl@cs.umb.edu>
 	- ts is a typo. tc are the text companion fonts
 	- replace >&3 by >$STDOUT where $STDOUT is a filename. Its content is
 	  displayed by the trap command in MTcommon.
-	- added missing ;; in case/esac  
+	- added missing ;; in case/esac 
 	- use : ${VAR=VAL} where possible
 	- added mt_min_args
 	- removed psfonts.map parsing (was only needed for ps2pk)
@@ -6020,7 +6027,7 @@ Sat Aug 26 14:49:28 1995  Karl Berry  <karl@cs.umb.edu>
 	* cnf.c (CNF_NAME): #define this.
 	* tex-file.c (kpse_init_path): Instead of setting the .program
 	element to texmf.cnf here.
- 
+
 	* db.c (db_insert): Rename to kpse_db_insert.
 	* db.h: Change decl.
 	* tex-make.c (maketex): Change call.
@@ -6110,7 +6117,7 @@ Sat Aug 19 12:57:54 1995  Karl Berry  <karl@cs.umb.edu>
 	* tex-make.c (maketex): Give warning if MTPK output a string that
 	wasn't a filename. From Pierre.
 
-	* kpsewhich.c (read_command_line): Execute -expand right 
+	* kpsewhich.c (read_command_line): Execute -expand right
 
 	* tilde.c (kpse_tilde_expand): If HOME is /, don't start path with //.
 	From: Andreas Schott <andreas@mpa-garching.mpg.de>.
@@ -6255,7 +6262,7 @@ Fri Jun  9 19:11:34 1995  Karl Berry  <karl@cs.umb.edu>
 	* concatn.c: Free the in-between concatenations to avoid garbage.
 	* absolute.c [OS2]: Use same conventions as for DOS.
 	* c-std.h, c-pathch.h, c-fopen.h: Likewise.
-	From: rs@purple.in-ulm.de (Ralph Schleicher).        
+	From: rs@purple.in-ulm.de (Ralph Schleicher).
 
 Tue Jun  6 13:11:46 1995  Karl Berry  <karl@cs.umb.edu>
 

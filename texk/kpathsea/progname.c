@@ -416,7 +416,7 @@ kpse_selfdir (const_string argv0)
 
 #endif /* not WIN32 */
 
-#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+#if defined(WIN32) || defined(__CYGWIN__)
 
 /* Create a list of executable suffixes of files not to be written.  */
 #define EXE_SUFFIXES ".com;.exe;.bat;.cmd;.vbs;.vbe;.js;.jse;.wsf;.wsh;.ws;.tcl;.py;.pyw"
@@ -467,7 +467,7 @@ mk_suffixlist (kpathsea kpse)
     *p = NULL;
     free (v);
 }
-#endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
+#endif /* WIN32 || __CYGWIN__ */
 
 void
 kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
@@ -621,9 +621,9 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   sdir_grandparent = xdirname (sdir_parent);
   kpathsea_xputenv (kpse, "SELFAUTOPARENT", sdir_grandparent);
 
-#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+#if defined(WIN32) || defined(__CYGWIN__)
   mk_suffixlist(kpse);
-#endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
+#endif /* WIN32 || __CYGWIN__ */
 
   free (sdir);
   free (sdir_parent);

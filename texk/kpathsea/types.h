@@ -251,9 +251,9 @@ typedef struct kpathsea_instance {
        allows us to reclaim memory we allocated.  */
     char **saved_env;           /* keep track of changed items */
     int saved_count;
-#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+#if defined(WIN32) || defined(__CYGWIN__)
     char **suffixlist;
-#endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
+#endif /* WIN32 || __CYGWIN__ */
 } kpathsea_instance;
 
 /* these come from kpathsea.c */
