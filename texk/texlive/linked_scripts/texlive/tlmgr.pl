@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 23117 2011-06-23 18:00:23Z karl $
+# $Id: tlmgr.pl 23193 2011-07-21 06:05:07Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 23117 $';
-my $datrev = '$Date: 2011-06-23 20:00:23 +0200 (Thu, 23 Jun 2011) $';
+my $svnrev = '$Revision: 23193 $';
+my $datrev = '$Date: 2011-07-21 08:05:07 +0200 (Thu, 21 Jul 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -1047,7 +1047,7 @@ sub action_path {
     }
   } else {
     # that should not happen
-    tlwarn("\ntlmgr: Should not happen, action_path what=$what");
+    tlwarn("\ntlmgr: Should not happen, action_path what=$what\n");
     exit 1;
   }
   return;
@@ -1182,7 +1182,7 @@ sub action_show {
         for my $d (sort @todo) {
           my $foo = $tlpdb->get_package($d);
           if (!$foo) {
-            tlwarn ("\nShould not happen, no dependent package $d");
+            tlwarn ("\nShould not happen, no dependent package $d\n");
             next;
           }
           if ($d ne $pkg) {
@@ -2353,7 +2353,7 @@ sub action_update {
       # install new packages
       my $mediatlp = $remotetlpdb->get_package($pkg);
       if (!defined($mediatlp)) {
-        tlwarn("\nShould not happen: $pkg not found in $location");
+        tlwarn("\nShould not happen: $pkg not found in $location\n");
         next;
       }
       my $mediarev = $mediatlp->revision;
@@ -2795,7 +2795,7 @@ sub action_update {
         # install new packages
         my $mediatlp = $remotetlpdb->get_package($pkg);
         if (!defined($mediatlp)) {
-          tlwarn("\nShould not happen: $pkg not found in $location");
+          tlwarn("\nShould not happen: $pkg not found in $location\n");
           next;
         }
         my $mediarev = $mediatlp->revision;
