@@ -1,9 +1,17 @@
+2011-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/synctex.am (eptex_ch_synctex): Bug fix:
+	use synctex-e-rec.ch[01] instead of ...
+	* synctex-ep-rec.ch1 (removed): ... this file.
+	Mail from Akira, Sat, 23 Jul 2011 23:02:45.
+
+
 2011-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	SyncTeX infrastructure for pTeX and e-pTeX.
 	* synctex-ptex.h, synctex-p-{mem,rec}.ch[01] (all new):
 	Additional files for pTeX.
-	* synctex-eptex.h, synctex-ep-{mem.ch[01],rec.ch1 (all new):
+	* synctex-eptex.h, synctex-ep-{mem.ch[01],rec.ch1} (all new):
 	Additional files for e-pTeX.
 	* am/synctex.am: Adapt
 

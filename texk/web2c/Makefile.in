@@ -1470,9 +1470,9 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	synctexdir/synctex-p-mem.ch0 synctexdir/synctex-p-mem.ch1 \
 	synctexdir/synctex-p-rec.ch0 synctexdir/synctex-p-rec.ch1 \
 	synctexdir/synctex-ep-mem.ch0 synctexdir/synctex-ep-mem.ch1 \
-	synctexdir/synctex-ep-rec.ch1 synctexdir/synctex-pdf-rec.ch2 \
-	synctexdir/synctex-xe-mem.ch2 synctexdir/synctex-xe-rec.ch2 \
-	synctexdir/synctex-xe-rec.ch3 libmd5/md5.test
+	synctexdir/synctex-pdf-rec.ch2 synctexdir/synctex-xe-mem.ch2 \
+	synctexdir/synctex-xe-rec.ch2 synctexdir/synctex-xe-rec.ch3 \
+	libmd5/md5.test
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c tangleboot.c tangleboot.h tangleboot.p \
 	tangleboot-web2c ctangle.c cweb.c cweb.h ctangle-ctangle \
@@ -2484,7 +2484,8 @@ synctex_LDADD = $(ZLIB_LIBS)
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch0 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch1 \
-@EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-ep-rec.ch1 \
+@EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
+@EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch1 \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-p-rec.ch1
 
 @PDFTEX_SYNCTEX_TRUE@pdftex_ch_synctex = \
