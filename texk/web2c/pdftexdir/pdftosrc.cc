@@ -32,11 +32,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <goo/gfile.h>
 #else
 #include <aconf.h>
-#include <assert.h>
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
 #endif
+#include <assert.h>
 
 #include "Object.h"
 #include "Stream.h"

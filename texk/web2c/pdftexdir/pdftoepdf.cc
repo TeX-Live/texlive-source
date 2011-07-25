@@ -42,8 +42,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
-#include <assert.h>
 #endif
+#include <assert.h>
 
 #include "Object.h"
 #include "Stream.h"

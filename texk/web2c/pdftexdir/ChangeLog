@@ -1,3 +1,8 @@
+2011-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftoepdf.cc, pdftosrc.cc: #include <assert.h> for both xpdf
+	and poppler.
+
 2011-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftosrc.cc: Rewrite the Object Stream handling for poppler
