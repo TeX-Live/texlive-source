@@ -33,6 +33,9 @@
    support \'s.)  */
 #define UNIX_BITMAP_SPEC "$KPATHSEA_NAME.$KPATHSEA_DPI$KPATHSEA_FORMAT"
 #define DPI_BITMAP_SPEC  "dpi$KPATHSEA_DPI/$KPATHSEA_NAME.$KPATHSEA_FORMAT"
+#ifdef WIN32
+#define DOS_BITMAP_SPEC  "$KPATHSEA_DPI/$KPATHSEA_NAME.$KPATHSEA_FORMAT"
+#endif
 
 /* Look up font $KPATHSEA_NAME at resolution $KPATHSEA_DPI in PATH,
    with filename suffix EXTENSION.  Return file found or NULL.  */
@@ -41,7 +44,11 @@ static string
 try_format (kpathsea kpse, kpse_file_format_type format)
 {
   static const_string bitmap_specs[]
-    = { UNIX_BITMAP_SPEC, DPI_BITMAP_SPEC, NULL };
+    = { UNIX_BITMAP_SPEC, DPI_BITMAP_SPEC,
+#ifdef WIN32
+        DOS_BITMAP_SPEC,
+#endif
+        NULL };
   const_string *spec;
   boolean must_exist;
   const_string *sfx;

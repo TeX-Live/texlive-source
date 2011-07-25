@@ -1,6 +1,6 @@
 /* c-fopen.h: how to open files with fopen.
 
-   Copyright 1992, 1994, 1995, 1996, 2008 Karl Berry.
+   Copyright 1992, 1994, 1995, 1996, 2008, 2011 Karl Berry.
    Copyright 1998, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -20,8 +20,12 @@
 #define C_FOPEN_H
 
 /* How to open a text file:  */
+/* From Akira:
+   I'm using Unix style line ending character to write text files.
+   I find it is easiest to define FOPEN_W_MODE == FOPEN_WBIN_MODE etc. for
+   my purpose.  */
 #ifndef FOPEN_A_MODE
-#define FOPEN_A_MODE "a"
+#define FOPEN_A_MODE "ab"
 #endif
 
 #ifndef FOPEN_R_MODE
@@ -29,7 +33,7 @@
 #endif
 
 #ifndef FOPEN_W_MODE
-#define FOPEN_W_MODE "w"
+#define FOPEN_W_MODE "wb"
 #endif
 
 /* How to open a binary file for reading:  */

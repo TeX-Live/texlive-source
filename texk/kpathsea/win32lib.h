@@ -50,7 +50,8 @@
 /*This is not defined even if !__STDC__*/
 #define snprintf _snprintf
 
-/*The gnu name is different*/
-#define strcasecmp stricmp
+/* The POSIX names are different */
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
 
 #endif

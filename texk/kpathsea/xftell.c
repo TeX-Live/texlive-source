@@ -18,7 +18,6 @@
 
 #include <kpathsea/config.h>
 
-
 long
 xftell (FILE *f,  const_string filename)
 {

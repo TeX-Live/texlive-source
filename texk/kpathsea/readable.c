@@ -33,7 +33,7 @@
 /* `stat' is way too expensive for such a simple job.  */
 #define READABLE(fn, st) \
   (access (fn, R_OK) == 0 && access (fn, D_OK) == -1)
-#elif WIN32
+#elif defined (WIN32)
 /* Warning: st must be an unsigned int under Win32 */
 static boolean
 READABLE(const_string fn, unsigned int st)

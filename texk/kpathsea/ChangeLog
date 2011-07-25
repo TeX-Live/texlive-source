@@ -1,3 +1,13 @@
+2011-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Minor changes to reduce diffs between TeX Live and W32TeX.
+	* c-ctype.h [WIN32]: Never #define isascii.
+	* c-fopen.h: Always write text files with Unix line endings.
+	* tex-glyph.c (bitmap_specs) [WIN32]: Add DOS_BITMAP_SPEC.
+	* win32lib.h: #define strncasecmp as _strnicmp.
+	* readable.c: Replace #elif WIN32 => #elif defined (WIN32).
+	* magstep.c, pathsearch.h, xftell.c: Adjust whitespace.
+
 2011-07-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpathsea.c, progname.c, tex-file.c, types.h:

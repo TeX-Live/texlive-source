@@ -20,7 +20,6 @@
 
 #include <kpathsea/magstep.h>
 
-
 /* Return true magstep N, where the lsb of N means ``half'' (see
    magstep.h) for resolution BDPI.  From Tom Rokicki's dvips.  */
 
@@ -66,6 +65,7 @@ magstep (int n,  int bdpi)
    part of Kpathsea now so all the drivers can use it.  The idea is to
    return the true dpi corresponding to DPI with a base resolution of
    BDPI.  If M_RET is non-null, we also set that to the mag value.  */
+
 
 /* Don't bother trying to use fabs or some other ``standard'' routine
    which can only cause trouble; just roll our own simple-minded
