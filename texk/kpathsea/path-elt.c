@@ -53,6 +53,13 @@ element (kpathsea kpse, const_string passed_path,  boolean env_p)
   brace_level = 0;
   while (*p != 0  && !(brace_level == 0
                        && (env_p ? IS_ENV_SEP (*p) : IS_DIR_SEP (*p)))) {
+#if defined(WIN32)
+    if (IS_KANJI(p)) {
+        p++;
+        p++;
+        continue;
+    }
+#endif
     if (*p == '{') ++brace_level;
     else if (*p == '}') --brace_level;
     ++p;

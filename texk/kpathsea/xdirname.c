@@ -1,6 +1,6 @@
 /* xdirname.c: return the directory part of a path.
 
-   Copyright 1999, 2008 Karl Berry.
+   Copyright 1999, 2008, 2011 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -30,6 +30,9 @@ xdirname (const_string name)
 {
     string ret;
     unsigned limit = 0, loc;
+#if defined(WIN32)
+    string p;
+#endif
 
     /* Ignore a NULL name. */
     if (!name)
@@ -76,6 +79,17 @@ xdirname (const_string name)
         ret[loc] = '\0';
     }
 
+#if defined(WIN32)
+    for (p = ret; *p; p++) {
+        if (IS_KANJI(p)) {
+            p++;
+            continue;
+        }
+        if (*p == '\\')
+            *p = '/';
+    }
+#endif
+
     return ret;
 }
 
@@ -116,4 +130,3 @@ Local variables:
 standalone-compile-command: "gcc -g -I. -I.. -DTEST xdirname.c kpathsea.a"
 End:
 */
-

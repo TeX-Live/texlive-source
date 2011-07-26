@@ -1,6 +1,6 @@
 /* variable.c: variable expansion.
 
-    Copyright 1993, 1994, 1995, 1996, 2008, 2009 Karl Berry.
+    Copyright 1993, 1994, 1995, 1996, 2008, 2009, 2011 Karl Berry.
     Copyright 1997, 1999, 2001, 2002, 2005 Olaf Weber.
 
     This library is free software; you can redistribute it and/or
@@ -220,8 +220,13 @@ kpathsea_var_expand (kpathsea kpse, const_string src)
         /* ${: scan ahead for matching delimiter, then expand.  */
         const_string var_end = ++s;
 
-        while (*var_end && !IS_VAR_END_DELIMITER (*var_end))
+        while (*var_end && !IS_VAR_END_DELIMITER (*var_end)) {
+#if defined(WIN32)
+          if (IS_KANJI(var_end))
+            var_end++;
+#endif
           var_end++;
+        }
 
         if (! *var_end) {
           WARNING1 ("%s: No matching } for ${", src);

@@ -1,6 +1,6 @@
 /* truncate.c: truncate too-long components in a filename.
 
-   Copyright 1993, 1995, 2008, 2010 Karl Berry.
+   Copyright 1993, 1995, 2008, 2010, 2011 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,16 @@ kpathsea_truncate_filename (kpathsea kpse, const_string name)
 
   for (; *name; name++)
     {
+#if defined(WIN32)
+      if (IS_KANJI(name)) {
+          if (c_len < NAME_MAX) {
+              ret[ret_len++] = *name++;
+              ret[ret_len++] = *name;
+          }
+          c_len += 2;
+          continue;
+      }
+#endif
       if (IS_DIR_SEP (*name) || IS_DEVICE_SEP (*name))
         { /* At a directory delimiter, reset component length.  */
           c_len = 0;

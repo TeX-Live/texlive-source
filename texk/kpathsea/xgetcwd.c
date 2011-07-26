@@ -49,10 +49,24 @@ xgetcwd (void)
                                        -- Olaf Weber <infovore@xs4all.nl */
 #if defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)
     char path[PATH_MAX + 1];
+#if defined(WIN32)
+    string pp;
+#endif
 
     if (getcwd (path, PATH_MAX + 1) == NULL) {
         FATAL_PERROR ("getcwd");
     }
+
+#if defined(WIN32)
+    for (pp = path; *pp; pp++) {
+        if (IS_KANJI(pp)) {
+            pp++;
+            continue;
+        }
+        if (*pp == '\\')
+            *pp = '/';
+    }
+#endif
 
     return xstrdup (path);
 #elif defined (HAVE_GETWD)

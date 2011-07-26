@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -86,9 +86,12 @@ libkpathsea_la_SOURCES = \
 	xstat.c \
 	xstrdup.c
 
+if WIN32
 if MINGW32
 libkpathsea_la_SOURCES += mingw32.c
 endif MINGW32
+libkpathsea_la_SOURCES += knj.c
+endif WIN32
 
 $(libkpathsea_la_OBJECTS): paths.h kpathsea.h
 
@@ -132,6 +135,7 @@ kpseinclude_HEADERS = \
 	fontmap.h \
 	getopt.h \
 	hash.h \
+	knj.h \
 	lib.h \
 	line.h \
 	magstep.h \
@@ -194,6 +198,7 @@ kpathsea.h: Makefile paths.h
 	(cd $(srcdir) && ls -1 *.h) \
 	| sed -e '/^config\.h/d' \
 	      -e '/^paths\.h/d' \
+	      -e '/^knj\.h/d' \
 	      -e '/^kpathsea\.h/d' \
 	      -e '/^mingw32\.h/d' \
 	      -e '/^win32lib\.h/d' \

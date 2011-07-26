@@ -95,6 +95,9 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
   string top_dir = (string)xmalloc (len + 1);
   string cur_dir = NULL; /* First thing in ls-R might be a filename.  */
   FILE *db_file = fopen (db_filename, FOPEN_R_MODE);
+#if defined(WIN32)
+  string pp;
+#endif
 
   strncpy (top_dir, db_filename, len);
   top_dir[len] = 0;
@@ -102,6 +105,16 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
   if (db_file) {
     while ((line = read_line (db_file)) != NULL) {
       len = strlen (line);
+
+#if defined(WIN32)
+      for (pp = line; *pp; pp++) {
+        if (IS_KANJI(pp)) {
+          pp++;
+          continue;
+        }
+        *pp = TRANSFORM(*pp);
+      }
+#endif
 
       /* A line like `/foo:' = new dir foo.  Allow both absolute (/...)
          and explicitly relative (./...) names here.  It's a kludge to
@@ -503,7 +516,11 @@ kpathsea_db_search (kpathsea kpse, const_string name,
     unsigned len = 1; /* Have NULL element already allocated.  */
     for (r = aliases; *r; r++)
       len++;
+    /* This is essentially
     XRETALLOC (aliases, len + 1, const_string);
+       except that MSVC warns without the cast to `void *'.  */
+    aliases = (const_string *) xrealloc ((void *) aliases,
+                                         (len + 1) * sizeof(const_string));
     for (i = len; i > 0; i--) {
       aliases[i] = aliases[i - 1];
     }
@@ -579,7 +596,7 @@ kpathsea_db_search (kpathsea kpse, const_string name,
       free (orig_dirs);
   }
 
-  free (aliases);
+  free ((void *) aliases);
 
   /* If we had to break up NAME, free the TEMP_STR.  */
   if (temp_str)
@@ -673,7 +690,8 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
           unsigned len = 1; /* Have NULL element already allocated.  */
           for (r = aliases; *r; r++)
               len++;
-          XRETALLOC (aliases, len + 1, const_string);
+          aliases = (const_string *) xrealloc ((void *) aliases,
+                                               (len + 1) * sizeof(const_string));
           for (i = len; i > 0; i--) {
               aliases[i] = aliases[i - 1];
           }
@@ -744,7 +762,7 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
               free (orig_dirs);
       }
 
-      free (aliases);
+      free ((void *) aliases);
       if (temp_str)
           free (temp_str);
   }

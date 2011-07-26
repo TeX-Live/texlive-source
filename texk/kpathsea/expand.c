@@ -1,6 +1,6 @@
 /* expand.c: general expansion.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 1998, 2005, 2008, 2009
+   Copyright 1993, 1994, 1995, 1996, 1997, 1998, 2005, 2008, 2009, 2011
    Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -296,7 +296,6 @@ static void expand_append (str_list_type* partial,
 }
 
 
-
 static str_list_type
 brace_expand (kpathsea kpse, const_string *text)
 {
@@ -305,6 +304,12 @@ brace_expand (kpathsea kpse, const_string *text)
     result = str_list_init();
     partial = str_list_init();
     for (p = *text; *p && *p != '}'; ++p) {
+#if defined(WIN32)
+        if (IS_KANJI(p)) {
+            p++;
+            continue;
+        }
+#endif
         /* FIXME: Should be IS_ENV_SEP(*p) */
         if (*p == ENV_SEP || *p == ',') {
             expand_append(&partial, *text, p);

@@ -449,7 +449,7 @@ mk_suffixlist (kpathsea kpse)
     if (*q)
       n++;
     kpse->suffixlist = (char **) xmalloc ((n + 2) * sizeof (char *));
-    p = (char **)kpse->suffixlist;
+    p = kpse->suffixlist;
     *p = xstrdup (".dll");
     p++;
     q = v;
@@ -489,6 +489,8 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   }
 
 #if defined(WIN32)
+  is_cp932_system = (GetACP () == 932);
+
   /* Set various info about user. Among many things,
      ensure that HOME is set.  */
   init_user_info();

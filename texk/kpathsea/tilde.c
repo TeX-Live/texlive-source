@@ -1,7 +1,7 @@
 /* tilde.c: expand user's home directories.
 
     Copyright 1997, 1998, 2005, Olaf Weber.
-    Copyright 1993, 1995, 1996, 1997, 2008 Karl Berry.
+    Copyright 1993, 1995, 1996, 1997, 2008, 2011 Karl Berry.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -41,9 +41,23 @@ kpathsea_tilde_expand (kpathsea kpse, string name)
   string expansion;
   const_string home;
   const_string prefix;
+#if defined(WIN32)
+  string p;
+#endif
 
   (void)kpse; /* currenty not used */
   assert (name);
+
+#if defined(WIN32)
+  for (p = name; *p; p++) {
+    if (IS_KANJI(p)) {
+      p++;
+      continue;
+    }
+    if (*p == '\\')
+      *p = '/'; 
+  }
+#endif
 
   /* If there is a leading "!!", set prefix to "!!", otherwise use
      the empty string.  After this, we can test whether a prefix was
