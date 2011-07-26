@@ -342,7 +342,11 @@ kpathsea_set_suffixes_va_list (kpathsea kpse, kpse_file_format_type format,
 
   while ((s = va_arg (ap, string)) != NULL) {
     count++;
+    /* This is essentially
     XRETALLOC (*list, count + 1, const_string);
+       except that MSVC warns without the cast to `void *'.  */
+    *list = (const_string *) xrealloc ((void *) *list,
+                                       (count + 1) * sizeof(const_string));
     (*list)[count - 1] = s;
   }
   (*list)[count] = NULL;
@@ -413,7 +417,8 @@ init_maketex (kpathsea kpse, kpse_file_format_type fmt,
   va_start (ap, dflt_prog);
   while ((arg = va_arg (ap, string)) != NULL) {
     f->argc++;
-    XRETALLOC (f->argv, f->argc + 1, const_string);
+    f->argv = (const_string *) xrealloc ((void *) f->argv,
+                                         (f->argc + 1) * sizeof(const_string));
     f->argv[f->argc - 1] = arg;
   }
   va_end (ap);
@@ -880,7 +885,7 @@ kpse_init_format (kpse_file_format_type format)
 
 static void
 target_fontmaps (kpathsea kpse, string **target, unsigned *count,
-                const_string name)
+                 const_string name)
 {
   const_string *mapped_names = kpathsea_fontmap_lookup (kpse, name);
 
@@ -976,7 +981,8 @@ kpse_find_file (const_string name,  kpse_file_format_type format,
 
 string *
 kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
-               kpse_file_format_type format, boolean must_exist, boolean all)
+                            kpse_file_format_type format,
+                            boolean must_exist, boolean all)
 {
   string *target, name;
   const_string *ext;
@@ -1062,7 +1068,7 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
 
   /* Search, trying to minimize disk-pounding.  */
   ret = kpathsea_path_search_list_generic (kpse, FMT_INFO.path,
-                                         (const_string*) target, false, all);
+                                           (const_string*) target, false, all);
 
   /* Do we need to pound the disk? */
   if (! *ret && must_exist) {
@@ -1081,7 +1087,7 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
     }
     target[count] = NULL;
     ret = kpathsea_path_search_list_generic (kpse, FMT_INFO.path,
-                                           (const_string*) target, true, all);
+                                             (const_string*) target, true, all);
   }
 
   /* Free the list we created. */

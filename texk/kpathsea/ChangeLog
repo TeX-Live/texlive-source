@@ -9,9 +9,10 @@
 	variable.c, xdirname.c, xgetcwd.c:
 	Test for 2-Byte Kanji (CP 932, SJIS) codes.
 
-	* db.c (kpathsea_db_search, kpathsea_db_search_list): Cast
-	aliases to `void *' because MSVC warns for a `const_string *'
-	argument when expecting `void *'.
+	* db.c (kpathsea_db_search, kpathsea_db_search_list),
+	tex-file.c (kpathsea_set_suffixes_va_list, init_maketex):
+	Cast arg to `void *' because MSVC warns for a `const_string *'
+	arg when expecting `void *'.
 
 	* config.h, db.c, hash.c: #define and use TRANSFORM.
 
