@@ -921,9 +921,9 @@ such as Ghostview.
 @opindex -noomega
 @cindex Omega extensions
 @cindex p@TeX{} extensions
-Disable the use of Omega and p@TeX{} extensions when interpreting DVI
+Disable the use of Omega extensions when interpreting DVI
 files.  By default, the additional opcodes @samp{129} and @samp{134}
-are recognized by Dvips as Omega extensions and interpreted as
+are recognized by Dvips as Omega or p@TeX{} extensions and interpreted as
 requests to set 2-byte characters.
 
 @item -noptex

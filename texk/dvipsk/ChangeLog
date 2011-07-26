@@ -1,3 +1,10 @@
+2011-07-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* bbox.c, dopage.c, dvips.c, pprescan.c, scanpage.c, dvips.1,
+	dvips.help, dvips.info and dvips.texi: pTeX with otf package
+	by S. Saito requires set2, put2, and independent options
+	-noomega and -noptex.
+
 2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* afm2tfm.c (openfiles), resident.c (residentfont): Allow

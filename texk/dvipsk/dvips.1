@@ -244,13 +244,13 @@ PostScript printers.  Old versions of TranScript in particular cannot
 handle modern Encapsulated PostScript.
 .TP
 .BR -noomega
-This will disable the use of Omega and pTeX extensions when interpreting DVI
+This will disable the use of Omega extensions when interpreting DVI
 files.  By default, the additional opcodes
 .I 129
 and
 .I 134
-are recognized by dvips as Omega extensions and interpreted as requests to
-set 2-byte characters.
+are recognized by dvips as Omega or pTeX extensions and interpreted as
+requests to set 2-byte characters.
 .TP
 .BR -noptex
 This will disable the use of pTeX extensions when interpreting DVI files.

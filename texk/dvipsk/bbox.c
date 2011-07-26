@@ -318,13 +318,13 @@ case 130: /* set3 */
          charmove = 1;
          goto dochar;
 case 134: /* put2 */
-         if (noomega) error("! synch");
+         if (noomega && noptex) error("! synch");
          mychar = dvibyte();
          mychar = (mychar << 8) + dvibyte();
          charmove = 0;
          goto dochar;
 case 129: /* set2 */
-         if (noomega) error("! synch");
+         if (noomega && noptex) error("! synch");
          mychar = dvibyte();
          mychar = (mychar << 8) + dvibyte();
          charmove = 1;

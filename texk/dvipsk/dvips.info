@@ -584,7 +584,7 @@ Options:
 -m*  Manual feed                     -M*  Don't make fonts
 -mode s Metafont device name
 -n # Maximum number of pages         -N*  No structured comments
--noomega  Disable Omega and pTeX extensions
+-noomega  Disable Omega extensions
 -noptex   Disable pTeX extensions
 -o f Output file                     -O c Set/change paper offset
 -p # First page                      -P s Load config.$s
@@ -810,9 +810,9 @@ reversal, use `-r0'.  Such options are marked with a trailing `*'.
      movement, etc., in PostScript viewers such as Ghostview.
 
 `-noomega'
-     Disable the use of Omega and pTeX extensions when interpreting DVI
+     Disable the use of Omega extensions when interpreting DVI
      files.  By default, the additional opcodes `129' and `134' are
-     recognized by Dvips as Omega extensions and interpreted as
+     recognized by Dvips as Omega or pTeX extensions and interpreted as
      requests to set 2-byte characters.
 
 `-noptex'
@@ -3777,7 +3777,7 @@ File: dvips.info,  Node: Index,  Prev: Color,  Up: Top
 Index
 *****
 
- [index ]
+
 * Menu:
 
 * ! special (literal PS header):         Literal headers.     (line   6)

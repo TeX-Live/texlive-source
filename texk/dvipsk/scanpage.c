@@ -175,9 +175,9 @@ case 130: case 135: /* set3, put3 */
          mychar = (mychar << 8) + dvibyte();
          goto dochar;
 case 129: case 134: /* set2, put2 */
-         if (noomega) {
+         if (noomega && noptex) {
             sprintf(errbuf,
-               "! DVI file contains unexpected Omega command (%d)",cmd);
+               "! DVI file contains unexpected command (%d)",cmd);
             error(errbuf);
          }
          mychar = dvibyte(); mychar = (mychar << 8) + dvibyte();

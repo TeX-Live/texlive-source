@@ -279,7 +279,7 @@ static const char *helparr[] = {
 "-m*  Manual feed                     -M*  Don't make fonts",
 "-mode s Metafont device name",
 "-n # Maximum number of pages         -N*  No structured comments",
-"-noomega  Disable Omega and pTeX extensions",
+"-noomega  Disable Omega extensions",
 "-noptex   Disable pTeX extensions",
 "-o f Output file                     -O c Set/change paper offset",
 #if defined(MSDOS) || defined(OS2)
@@ -821,7 +821,7 @@ case 'm' :
                break;
 case 'n' :
                if (STREQ (p, "oomega")) {
-                 noomega = noptex = 1;
+                 noomega = 1;
                } else if (STREQ (p, "optex")) {
                  noptex = 1;
                } else {
