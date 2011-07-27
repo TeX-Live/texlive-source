@@ -491,9 +491,29 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
 #if defined(WIN32)
   is_cp932_system = (GetACP () == 932);
 
+#if defined(__MINGW32__)
   /* Set various info about user. Among many things,
      ensure that HOME is set.  */
   init_user_info();
+#else /* !__MINGW32__ */
+  kpse->_z_p_open.f = NULL;
+  kpse->_z_p_open.hp = 0;
+  kpse->_z_p_open.next = &kpse->_z_p_open;
+  kpse->_popen_list = &kpse->_z_p_open;
+  kpse->the_passwd.pw_name = kpse->the_passwd_name;
+  kpse->the_passwd.pw_passwd = kpse->the_passwd_passwd;
+  kpse->the_passwd.pw_uid = 0;
+  kpse->the_passwd.pw_gid = 0;
+  kpse->the_passwd.pw_quota = 0;
+  kpse->the_passwd.pw_gecos = kpse->the_passwd_gecos;
+  kpse->the_passwd.pw_dir = kpse->the_passwd_dir;
+  kpse->the_passwd.pw_shell = kpse->the_passwd_shell;
+  kpse->__system_allow_multiple_cmds = 0;
+
+  /* Set various info about user. Among many things,
+     ensure that HOME is set.  */
+  kpathsea_init_user_info(kpse);
+#endif /* !__MINGW32__ */
 
   /* redirect stderr to debug_output. Easier to send logfiles. */
   if (debug_output) {
@@ -527,21 +547,35 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
       close(err);
     }
   }
+
   /* Win95 always gives the short filename for argv0, not the long one.
      There is only this way to catch it. It makes all the kpse_selfdir
      stuff useless for win32. */
   {
     char short_path[PATH_MAX], path[PATH_MAX], *fp;
+#if !defined(__MINGW32__)
+    HANDLE hnd;
+    WIN32_FIND_DATA ffd;
+#endif
 
     /* SearchPath() always gives back an absolute directory */
     if (SearchPath(NULL, argv0, ".exe", PATH_MAX, short_path, &fp) == 0)
         LIB_FATAL1("Can't determine where the executable %s is.\n", argv0);
+#if defined(__MINGW32__)
     if (!win32_get_long_filename(short_path, path, sizeof(path))) {
         LIB_FATAL1("This path points to an invalid file : %s\n", short_path);
     }
     /* slashify the dirname */
     for (fp = path; fp && *fp; fp++)
         if (IS_DIR_SEP(*fp)) *fp = DIR_SEP;
+#else /* !__MINGW32__ */
+    if (getlongpath(path, short_path, PATH_MAX) == 0)
+        FATAL1("Can't get long name for %s.\n", short_path);
+    if ((hnd = FindFirstFile(short_path, &ffd)) == INVALID_HANDLE_VALUE)
+        FATAL1("The following path points to an invalid file : %s\n", path);
+    FindClose(hnd);
+    /* dirname aleady slashified in WIN32 */
+#endif /* !__MINGW32__ */
     /* sdir will be the directory of the executable, ie: c:/TeX/bin */
     sdir = xdirname(path);
     kpse->invocation_name = xstrdup(xbasename(path));

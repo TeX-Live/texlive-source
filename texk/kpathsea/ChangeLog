@@ -1,3 +1,8 @@
+2011-07-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	More diffs between TeX Live and W32TeX.
+	* progname.c (kpathsea_set_program_name): Merge TL and W32TeX.
+
 2011-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More diffs between TeX Live and W32TeX.
