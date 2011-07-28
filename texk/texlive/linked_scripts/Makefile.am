@@ -119,6 +119,7 @@ texmf_dist_other_scripts = \
 	texdirflatten/texdirflatten \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
+	urlbst/urlbst \
 	ulqda/ulqda.pl \
 	vpe/vpe.pl
 nobase_dist_texmf_dist_scripts_SCRIPTS = \

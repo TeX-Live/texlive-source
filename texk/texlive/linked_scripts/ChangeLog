@@ -1,3 +1,7 @@
+2011-07-29  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_dist_other_scripts): add urlbst.
+
 2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (bin_links): Move mpost:metafun and mpost:mfplain
