@@ -81,12 +81,10 @@ xdirname (const_string name)
 
 #if defined(WIN32)
     for (p = ret; *p; p++) {
-        if (IS_KANJI(p)) {
-            p++;
-            continue;
-        }
         if (*p == '\\')
             *p = '/';
+        else if (IS_KANJI(p))
+            p++;
     }
 #endif
 

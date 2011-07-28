@@ -21,8 +21,12 @@
 #include <kpathsea/c-pathch.h>
 #include <kpathsea/tilde.h>
 
+#undef USE_GETPWNAM
 #ifdef HAVE_PWD_H
 #include <pwd.h>
+#define USE_GETPWNAM 1
+#elif defined (WIN32) && !defined (__MINGW32__)
+#define USE_GETPWNAM 1
 #endif
 
 #ifdef WIN32
@@ -48,17 +52,6 @@ kpathsea_tilde_expand (kpathsea kpse, string name)
   (void)kpse; /* currenty not used */
   assert (name);
 
-#if defined(WIN32)
-  for (p = name; *p; p++) {
-    if (IS_KANJI(p)) {
-      p++;
-      continue;
-    }
-    if (*p == '\\')
-      *p = '/'; 
-  }
-#endif
-
   /* If there is a leading "!!", set prefix to "!!", otherwise use
      the empty string.  After this, we can test whether a prefix was
      found by checking *prefix, and it is safe to unconditionally
@@ -71,45 +64,35 @@ kpathsea_tilde_expand (kpathsea kpse, string name)
   }
 
   /* If no leading tilde, do nothing, and return the original string.  */
-  if (*name != '~') {
+  if (*name != '~'
+#ifndef USE_GETPWNAM
+      /* Same for `~user' or `~user/', but no passwd database.  */
+      || (name[1] && !IS_DIR_SEP (name[1]))
+#endif
+     ) {
     if (*prefix)
       name -= 2;
     expansion = name;
 
-  /* If a bare tilde, return the home directory or `.'.  (Very unlikely
-     that the directory name will do anyone any good, but ...  */
-  } else if (name[1] == 0) {
-    home = getenv (HOMEVAR);
-    if (!home) {
-      home = ".";
-    }
-    expansion = concat (prefix, home);
-
-  /* If `~/', remove any trailing / or replace leading // in $HOME.
-     Should really check for doubled intermediate slashes, too.  */
-  } else if (IS_DIR_SEP (name[1])) {
-    unsigned c = 1;
-    home = getenv (HOMEVAR);
-    if (!home) {
-      home = ".";
-    }
-    if (IS_DIR_SEP (*home) && IS_DIR_SEP (home[1])) {  /* handle leading // */
-      home++;
-    }
-    if (IS_DIR_SEP (home[strlen (home) - 1])) {        /* omit / after ~ */
-      c++;
-    }
-    expansion = concat3 (prefix, home, name + c);
-
-  /* If `~user' or `~user/', look up user in the passwd database (but
-     OS/2 doesn't have this concept.  */
   } else {
-#ifdef HAVE_PWD_H
+    /* If a bare tilde, return the home directory or `.'; if just `~user',
+       return that user's home directory or `.'.  Very unlikely that the
+       directory name will do anyone any good, but ...  */
+    unsigned c;
+
+#ifdef USE_GETPWNAM
+    /* If `~user' or `~user/', look up user in the passwd database.  */
+    if (name[1] && !IS_DIR_SEP (name[1])) {
       struct passwd *p;
       string user;
-      unsigned c = 2;
-      while (!IS_DIR_SEP (name[c]) && name[c] != 0) /* find user name */
+      c = 2;
+      while (!IS_DIR_SEP (name[c]) && name[c] != 0) {  /* find user name */
+#if defined(WIN32)
+        if (IS_KANJI(name+c))
+          c++;
+#endif
         c++;
+      }
 
       user = (string) xmalloc (c);
       strncpy (user, name + 1, c - 1);
@@ -122,21 +105,48 @@ kpathsea_tilde_expand (kpathsea kpse, string name)
 
       /* If no such user, just use `.'.  */
       home = p ? p->pw_dir : ".";
-      if (IS_DIR_SEP (*home) && IS_DIR_SEP (home[1])) { /* handle leading // */
-        home++;
-      }
-      if (IS_DIR_SEP (home[strlen (home) - 1]) && name[c] != 0)
-        c++; /* If HOME ends in /, omit the / after ~user. */
+    } else
+#endif /* USE_GETPWNAM */
+    {
+      c = 1;
+      home = getenv (HOMEVAR);
+      if (!home)
+        home = ".";
+    }
 
-      expansion = concat3 (prefix, home, name + c);
-#else /* not HAVE_PWD_H */
-      /* Since we don't know how to look up a user name, just return the
-         original string. */
-      if (*prefix)
-        name -= 2;
-      expansion = name;
-#endif /* not HAVE_PWD_H */
+    /* handle leading // */
+    if (IS_DIR_SEP (*home) && IS_DIR_SEP (home[1]))
+      home++;
+
+    /* If HOME ends in /, omit the / in ~/ or ~user/.  */
+    if (name[c]) {
+#if defined(WIN32)
+      const_string q;
+
+      for (q = home; *q; q++) {
+        if (IS_DIR_SEP (*q) && q[1] == 0)
+          c++;
+        else if (IS_KANJI(q))
+          q++;
+      }
+#else
+      if (IS_DIR_SEP (home[strlen (home) - 1]))
+        c++; 
+#endif
+    }
+
+    expansion = concat3 (prefix, home, name + c);
   }
+
+#if defined(WIN32)
+  for (p = expansion; *p; p++) {
+    if (*p == '\\')
+      *p = '/'; 
+    else if (IS_KANJI(p))
+      p++;
+  }
+#endif
+
   /* We may return the same thing as the original, and then we might not
      be returning a malloc-ed string.  Callers beware.  Sorry.  */
   return expansion;

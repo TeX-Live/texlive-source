@@ -59,12 +59,10 @@ xgetcwd (void)
 
 #if defined(WIN32)
     for (pp = path; *pp; pp++) {
-        if (IS_KANJI(pp)) {
-            pp++;
-            continue;
-        }
         if (*pp == '\\')
             *pp = '/';
+        else if (IS_KANJI(pp))
+            pp++;
     }
 #endif
 

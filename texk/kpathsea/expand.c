@@ -217,14 +217,36 @@ kpathsea_path_expand (kpathsea kpse, const_string path)
   string xpath;
   string elt;
   unsigned len;
+  const_string ypath;
+#if defined(WIN32)
+  string zpath, p;
+#endif
 
   /* Initialise ret to the empty string. */
   ret = (string)xmalloc (1);
   *ret = 0;
   len = 0;
 
+#if defined(WIN32)
+  zpath = xstrdup (path);
+
+  for (p = zpath; *p; p++)
+    if (*p == '\\')
+      *p = '/';
+    else if (IS_KANJI(p))
+      p++;
+
+  ypath = zpath;
+#else
+  ypath = path;
+#endif
+
   /* Expand variables and braces first.  */
-  xpath = kpathsea_brace_expand (kpse, path);
+  xpath = kpathsea_brace_expand (kpse, ypath);
+
+#if defined(WIN32)
+  free (zpath);
+#endif
 
   /* Now expand each of the path elements, printing the results */
   for (elt = kpathsea_path_element (kpse, xpath); elt;
@@ -304,12 +326,6 @@ brace_expand (kpathsea kpse, const_string *text)
     result = str_list_init();
     partial = str_list_init();
     for (p = *text; *p && *p != '}'; ++p) {
-#if defined(WIN32)
-        if (IS_KANJI(p)) {
-            p++;
-            continue;
-        }
-#endif
         /* FIXME: Should be IS_ENV_SEP(*p) */
         if (*p == ENV_SEP || *p == ',') {
             expand_append(&partial, *text, p);
@@ -333,6 +349,10 @@ brace_expand (kpathsea kpse, const_string *text)
             if (*(p+1) == '{')
                 for (p+=2; *p!='}';++p);
         }
+#if defined(WIN32)
+        else if (IS_KANJI(p))
+            p++;
+#endif
     }
     expand_append(&partial, *text, p);
     str_list_concat(&result, partial);
