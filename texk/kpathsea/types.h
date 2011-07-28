@@ -187,6 +187,25 @@ typedef struct
   boolean binmode;              /* Open files in binary mode?  */
 } kpse_format_info_type;
 
+#if defined(WIN32) && !defined(__MINGW32__)
+struct passwd {
+  char *pw_name;
+  char *pw_passwd;
+  int   pw_uid;
+  int   pw_gid;
+  int   pw_quota;
+  char *pw_gecos;
+  char *pw_dir;
+  char *pw_shell;
+};
+
+struct _popen_elt {
+  FILE *f;                      /* File stream returned */
+  void *hp;                     /* Handle of associated process */
+  struct _popen_elt *next;      /* Next list element */
+};
+#endif /* WIN32 && !__MINGW32 */
+
 typedef struct kpathsea_instance *kpathsea;
 
 typedef struct kpathsea_instance {
@@ -254,6 +273,18 @@ typedef struct kpathsea_instance {
 #if defined(WIN32) || defined(__CYGWIN__)
     char **suffixlist;
 #endif /* WIN32 || __CYGWIN__ */
+
+#if defined(WIN32) && !defined(__MINGW32__)
+    struct _popen_elt _z_p_open;
+    struct _popen_elt *_popen_list;
+    char the_passwd_name[256];
+    char the_passwd_passwd[256];
+    char the_passwd_gecos[256];
+    char the_passwd_dir[256];
+    char the_passwd_shell[256];
+    struct passwd the_passwd;
+    int __system_allow_multiple_cmds;
+#endif /* WIN32 && !__MINGW32__ */
 } kpathsea_instance;
 
 /* these come from kpathsea.c */

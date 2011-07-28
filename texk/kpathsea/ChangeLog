@@ -1,11 +1,15 @@
 2011-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More diffs between TeX Live and W32TeX.
-	* find-suffix.c, xbasename.c:
+	* db.c, find-suffix.c, xbasename.c:
 	Reformulate and test for 2-Byte Kanji (CP 932, SJIS) codes.
 
 	* expand.c, make-suffix.c, tilde.c: Slashify, reformulate,
 	and test for 2-Byte Kanji (CP 932, SJIS) codes.
+
+	* progname.c: Make sure SELFAUTO{LOC,DIR,PARENT} is not just /.
+
+	* types.h (kpathsea_instance): Merge TL and W32TeX.
 
 2011-07-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

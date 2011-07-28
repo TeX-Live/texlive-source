@@ -44,18 +44,13 @@
 #endif
 
 /* read ls-R only on WIN32 */
-#ifdef WIN32
 static const_string db_names[] = {
     DB_NAME,
-    NULL
-};
-#else
-static const_string db_names[] = {
-    DB_NAME,
+#ifndef WIN32
     DB_NAME_LC,
+#endif
     NULL
 };
-#endif
 
 #ifndef ALIAS_NAME
 #define ALIAS_NAME "aliases"
@@ -74,9 +69,17 @@ ignore_dir_p (const_string dirname)
 {
   const_string dot_pos = dirname;
 
+#if defined(WIN32)
+  while (*(++dot_pos)) {
+    if (IS_KANJI(dot_pos-1))
+      dot_pos++;
+    else if (*dot_pos == '.' &&
+#else
   while ((dot_pos = strchr (dot_pos + 1, '.'))) {
+    if (
+#endif
     /* If / before and no / after, skip it. */
-    if (IS_DIR_SEP (dot_pos[-1]) && dot_pos[1] && !IS_DIR_SEP (dot_pos[1]))
+        IS_DIR_SEP (dot_pos[-1]) && dot_pos[1] && !IS_DIR_SEP (dot_pos[1]))
       return true;
   }
 
