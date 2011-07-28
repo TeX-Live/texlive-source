@@ -30,15 +30,21 @@ if ($scriptname =~ /^(.*)def$/) {
     $TEX = $1;
 }
 
-my $CLASS      = "article";
+my $CLASS      = undef;
+my $USERCLASS  = 0;
 my @PACKAGES   = ();
 my @OTHERDEFS  = ();
 my $INPREAMBLE = 0;
+my $PRINTVERSION = 0;
+my $TMPDIR     = '';
 my $SHOWVALUE  = 0;
 my $FINDDEF    = 0;
 my $LISTCMD    = 0;
 my $LISTCMDDEF = 0;
 my $BEFORECLASS = 0;
+my $PGFKEYS      = 0;
+my $PGFKEYSPLAIN = 0;
+my $FAKECMD    = "\0FAKECOMMAND\0";
 my @ENVCODE = ();
 my %DEFS;
 my $LISTSTR = '@TEXDEF@LISTDEFS@'; # used as a dummy command to list definitions
@@ -97,10 +103,11 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
+my $VERSION = 'Version 1.4 -- 2011/07/28';
 sub usage {
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.3 -- 2011/04/03
+Version 1.4 -- 2011/07/28
 Copyright (C) 2011  Martin Scharrer <martin@scharrer-online.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
@@ -132,12 +139,18 @@ Options:
   --after  <code>, -a <code>    : (M) Place <code> after definition is shown.
                                   The <code> can be arbitray TeX code and doesn't need be be balanced.
   --find, -f                    : Find file where the command sequence was defined (L).
+  --Find, -F                    : Show full filepath of the file where the command sequence was defined (L).
   --list, -l                    : List user level command sequences of the given packages (L).
   --list-defs, -L               : List user level command sequences and their shorten definitions of the given packages (L).
   --list-all, -ll               : List all command sequences of the given packages (L).
   --list-defs-all, -LL          : List all command sequences and their shorten definitions of the given packages (L).
   --ignore-cmds <cs,cs,..>,  -i : Ignore the following command sequence(s) in the above lists. (M)
   --ignore-regex <regex,..>, -I : Ignore all command sequences in the above lists which match the given Perl regular expression(s). (M)
+  --pgf-keys, -k                : Takes commands as pgfkeys and displays their definitions. Keys must use the full path but the common '.\@cmd' prefix is applied.
+  --pgf-Keys, -K                : Takes commands as pgfkeys and displays their definitions. Keys must use the full path.
+  --version, -V                 : If used alone prints version of this script.
+                                  (L) Together with -p or -c prints version of LaTeX package(s) or class, respectively.
+  --tempdir <directory>         : Use given existing directory for temporary files.
   --help, -h                    : Print this help and quit.
 
  Long option can be shorten as long the are still unique.  Short options can be combined.
@@ -185,7 +198,10 @@ sub envcode {
 Getopt::Long::Configure ("bundling");
 GetOptions (
    'value|v!' => \$SHOWVALUE,
-   'find|f!' => \$FINDDEF,
+   'version|V!' => \$PRINTVERSION,
+   'tempdir=s' => \$TMPDIR,
+   'find|f!' => sub { $FINDDEF = 1 },
+   'Find|F!' => sub { $FINDDEF = 2 },
    'list|l' => sub { $LISTCMD++ },
    'list-def|L' => sub { $LISTCMDDEF++ },
    'list-all' => sub { $LISTCMD=2 },
@@ -206,7 +222,11 @@ GetOptions (
    'after|a=s' => \&envcode,
    'tex|t=s' => \$TEX,
    'help|h' => \&usage,
+   'pgf-keys|k' => \$PGFKEYS,
+   'pgf-Keys|K' => \$PGFKEYSPLAIN,
 ) || usage();
+
+# usage() unless @ARGV;
 
 if ($TEX =~ /latex$/) {
   $ISLATEX = 1;
@@ -224,18 +244,14 @@ elsif ($TEX =~ /context$/) {
   $ENDENVSTR   = '\stop%s'  . "\n";
 }
 
+$USERCLASS = $CLASS;
+$CLASS = 'article' if not $CLASS;
 $CLASS =~ /^(?:\[(.*)\])?{?(.*?)}?$/;
 $CLASS = $2;
 my $CLASSOPTIONS = $1 || '';
 
-if ($FINDDEF && !$ISLATEX) { die "Error: The --find / -f option is only implemented for LaTeX!\n"; }
-
-my $cwd = getcwd();
-$ENV{TEXINPUTS} = $cwd . ':' . ($ENV{TEXINPUTS} || '');
-
-my $TMPDIR  = tempdir( 'texdef_XXXXXX', CLEANUP => 1, TMPDIR => 1 );
-chdir $TMPDIR or die;
-my $TMPFILE = 'texdef.tex';
+if ($FINDDEF == 1 && !$ISLATEX) { die "Error: The --find / -f option is only implemented for LaTeX!\n"; }
+if ($FINDDEF == 2 && !$ISLATEX) { die "Error: The --Find / -F option is only implemented for LaTeX!\n"; }
 
 my @cmds = @ARGV;
 $LISTCMD = $LISTCMDDEF if $LISTCMDDEF;
@@ -243,6 +259,37 @@ if ($LISTCMD && !$ISLATEX) { die "Error: Listing for commands is only implemente
 if ($LISTCMD) {
     @cmds = ($LISTSTR);
 }
+
+if ($PRINTVERSION) {
+    if (!@PACKAGES && !$USERCLASS) {
+        print STDERR "texdef: $VERSION\n";
+        exit (0) if not @cmds;
+    }
+    elsif (!@cmds) {
+        @cmds = ($FAKECMD);
+    }
+}
+
+sub print_versions {
+    my @files = map { $_.'.sty' } @PACKAGES;
+    unshift @files, "$USERCLASS.cls" if $USERCLASS;
+
+    foreach my $file (@files) {
+        print "\\message{^^J:TEXDEF: $file: \\csname ver\@$file\\endcsname^^J}%\n";
+    }
+    $PRINTVERSION = 0;# only print it once
+}
+
+usage() if not @cmds;
+my $cwd = getcwd();
+$ENV{TEXINPUTS} = '.:' . $cwd . ':' . ($ENV{TEXINPUTS} || '');
+
+if (!$TMPDIR) {
+   $TMPDIR = tempdir( 'texdef_XXXXXX', CLEANUP => 1, TMPDIR => 1 );
+}
+chdir $TMPDIR or die "Couldn't change into temporary directory '$TMPDIR'\n";
+my $TMPFILE = 'texdef.tex';
+
 
 sub testdef {
     my $cmd = shift;
@@ -295,13 +342,21 @@ sub special_chars {
     print '\endgroup'."\n";
 }
 
-
 while (my $cmd = shift @cmds) {
 
 next if $cmd eq '';
 my $origcmd = $cmd; 
 my $showvalue;
 my $inpreamble;
+if ($cmd ne $FAKECMD) {
+if ($PGFKEYS) {
+    $cmd = "pgfk\@$cmd/.\@cmd";
+    push @PACKAGES, "pgfkeys";
+}
+if ($PGFKEYSPLAIN) {
+    $cmd = "pgfk\@$cmd";
+    push @PACKAGES, "pgfkeys";
+}
 if (length ($cmd) > 1) {
     $cmd =~ s/^([#^])?\\?//;
     my $type = $1 || '';
@@ -314,7 +369,7 @@ $lbchar = $cmd =~ s/\{/\\csname\0\@charlb\\endcsname\0/g;
 $rbchar = $cmd =~ s/\}/\\csname\0\@charrb\\endcsname\0/g;
 $cmd =~ s/\s/\\space /g;
 $cmd =~ s/\0/ /g;
-
+}
 
 open (my $tmpfile, '>', $TMPFILE);
 select $tmpfile;
@@ -363,6 +418,7 @@ if ($ISLATEX) {
             print @OTHERDEFS, '';
         }
         unless ($inpreamble || $INPREAMBLE) {
+            print_versions if $PRINTVERSION;
             print '\tracingonline=0\relax'. "\n";
             print '\tracingassigns=0\relax'. "\n";
             print "\\begin{document}\n";
@@ -407,7 +463,7 @@ foreach my $envc (@ENVCODE) {
     }
 }
 
-if (!$LISTCMD) {
+if (!$LISTCMD && $cmd ne $FAKECMD) {
 
 print '\immediate\write0{==============================================================================}%'."\n";
 if (length ($cmd) > 1) {
@@ -450,6 +506,7 @@ foreach my $envc (reverse @ENVCODE) {
 if ($ISLATEX) {
     print "\\documentclass[$CLASSOPTIONS]{$CLASS}\n" if $BEFORECLASS;
     if ($inpreamble || $INPREAMBLE || $BEFORECLASS) {
+        print_versions if $PRINTVERSION;
         print '\tracingonline=0\relax'. "\n";
         print '\tracingassigns=0\relax'. "\n";
         print "\\begin{document}\n" 
@@ -475,7 +532,30 @@ my $definition = '';
 my $errormsg = '';
 
 while (<$texpipe>) {
-  print "$1\n" if /^::\s*(.*)/;
+  if (/^::\s*(.*)/) {
+    my $line = $1;
+    if ($FINDDEF == 2) {
+        if ($line =~ /first defined in "(.*)"/) {
+            my $path = `kpsewhich "$1"`;
+            chomp $path;
+            $line =~ s/$1/$path/;
+        }
+    }
+    print "$line\n";
+    next;
+  }
+  if (/^(:TEXDEF:\s*(.*))/) {
+    my $line = $1;
+    chomp ($line);
+    my $text = $2;
+    while (length $line >= 79) {
+        $line = <$texpipe>;
+        chomp ($line);
+        $text .= $line;
+    }
+    print "$text\n";
+    next;
+  }
   if ($LISTCMD) {
   if (/^>> entering file "(.*)"$/) {
       push @FILES, $currfile;
@@ -488,7 +568,7 @@ while (<$texpipe>) {
   elsif (/^{(?:into|reassigning) \s*(.*)}?$/) {
     my ($cs, $def) = split (/=/, $1, 2);
     $cs =~ s/^\\//;
-    $def =~ s/}$//;
+    $def =~ s/\}$//;
     if ($LISTCMD > 1 || $cs !~ /[@ ]/) {
         if ($def =~ /^\\((?:skip|count|toks|muskip|box|dimen)\d+)$/) {
             $ALIAS{$1} = $cs;
@@ -553,6 +633,7 @@ if ($error) {
   next;
 }
 
+next if $cmd eq $FAKECMD;
 if ($cmd eq $LISTSTR) {
     foreach $currfile (@FILEORDER) {
         next if not keys %{$DEFS{$currfile}};
