@@ -98,9 +98,13 @@ kpathsea_tilde_expand (kpathsea kpse, string name)
       strncpy (user, name + 1, c - 1);
       user[c - 1] = 0;
 
+#if defined(WIN32) && !defined(__MINGW32__)
+      p = kpathsea_getpwnam (kpse, user);
+#else
       /* We only need the cast here for (deficient) systems
          which do not declare `getpwnam' in <pwd.h>.  */
       p = (struct passwd *) getpwnam (user);
+#endif
       free (user);
 
       /* If no such user, just use `.'.  */

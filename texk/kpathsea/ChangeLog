@@ -1,3 +1,7 @@
+2011-07-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tilde.c [WIN32]: Use kpathsea_getpwnam().
+
 2011-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More diffs between TeX Live and W32TeX.
