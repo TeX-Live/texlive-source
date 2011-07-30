@@ -1078,7 +1078,7 @@ var @!long_options: array[0..n_options] of getopt_struct;
     @!getopt_return_val: integer;
     @!option_index: c_int_type;
     @!current_option: 0..n_options;
-    @!suffix: c_string;
+    @!suffix: const_c_string;
 begin
   @<Initialize the option variables@>;
   @<Define the option table@>;

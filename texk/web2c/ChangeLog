@@ -1,3 +1,8 @@
+2011-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mft.ch (parsearguments): Allow find_suffix() to return a
+	const string.
+
 2011-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: No need to test for PDFDoc::getPDFMajorVersion
