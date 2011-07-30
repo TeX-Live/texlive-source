@@ -420,7 +420,7 @@ load_font(struct font *fontp, Boolean use_t1lib
 			    load_font_now,
 #endif
 			    fontp,
-			    &font_found,
+			    (const char **)&font_found,
 			    &size_found,
 #ifdef T1LIB
 			    &fontp->t1id,

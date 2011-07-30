@@ -28,7 +28,7 @@ extern FILE *font_open(
 		       Boolean load_font_now,
 #endif
 		       struct font *fontp,
-		       char **font_ret,
+		       const char **font_ret,
 		       int *dpi_ret,
 #ifdef T1LIB
 		       int *t1id,

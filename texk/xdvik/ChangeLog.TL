@@ -1,6 +1,12 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2011-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* font-open.[ch] (font_open): Constify `char **' parameter.
+	* dvi-init.c (load_font): Cast font_open() argument to
+	`const char **'.
+
 2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* read-mapfile.c (read_map_file): Allow find_suffix() to return
