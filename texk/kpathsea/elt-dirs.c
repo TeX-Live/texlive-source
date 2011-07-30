@@ -32,7 +32,7 @@
    DIR ends with a DIR_SEP for the benefit of later searches.  */
 
 static void
-dir_list_add (str_llist_type *l,  const_string dir)
+dir_list_add (str_llist_type *l, string dir)
 {
   char last_char = dir[strlen (dir) - 1];
   string saved_dir
@@ -47,7 +47,7 @@ dir_list_add (str_llist_type *l,  const_string dir)
 /* If DIR is a directory, add it to the list L.  */
 
 static void
-checked_dir_list_add (kpathsea kpse, str_llist_type *l,  const_string dir)
+checked_dir_list_add (kpathsea kpse, str_llist_type *l, string dir)
 {
     if (kpathsea_dir_p (kpse, dir))
     dir_list_add (l, dir);
@@ -94,7 +94,7 @@ cached (kpathsea kpse, const_string key)
 /* Handle the magic path constructs.  */
 
 /* Declare recursively called routine.  */
-static void expand_elt (kpathsea, str_llist_type *, const_string, unsigned);
+static void expand_elt (kpathsea, str_llist_type *, string, unsigned);
 
 
 /* POST is a pointer into the original element (which may no longer be
@@ -108,8 +108,8 @@ static char dirname[MAX_PATH];
 #endif
 
 static void
-do_subdir (kpathsea kpse, str_llist_type *str_list_ptr,  const_string elt,
-              unsigned elt_length,  const_string post)
+do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
+              unsigned elt_length, string post)
 {
 #ifdef WIN32
   WIN32_FIND_DATA find_file_data;
@@ -305,10 +305,10 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr,  const_string elt,
    looking for magic constructs at START.  */
 
 static void
-expand_elt (kpathsea kpse, str_llist_type * str_list_ptr,  const_string elt,
+expand_elt (kpathsea kpse, str_llist_type * str_list_ptr, string elt,
                unsigned start)
 {
-  const_string dir = elt + start, post;
+  string dir = elt + start, post;
 
   while (*dir != 0)
     {

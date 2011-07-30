@@ -27,7 +27,7 @@
    false if not. */
 
 boolean
-kpathsea_dir_p (kpathsea kpse, const_string fn)
+kpathsea_dir_p (kpathsea kpse, string fn)
 {
   /* FIXME : using the stat() replacement in gnuw32,
          we could avoid this win32 specific code. However,
@@ -36,7 +36,7 @@ kpathsea_dir_p (kpathsea kpse, const_string fn)
 #ifdef WIN32
   int fa;
 
-  kpathsea_normalize_path(kpse, (string)fn);
+  kpathsea_normalize_path(kpse, fn);
   fa = GetFileAttributes(fn);
 
 #ifdef KPSE_DEBUG
@@ -60,9 +60,9 @@ kpathsea_dir_p (kpathsea kpse, const_string fn)
 
 #if defined(KPSE_COMPAT_API)
 boolean
-dir_p (const_string fn)
+dir_p (string fn)
 {
-    return kpathsea_dir_p(kpse_def, fn);
+    return kpathsea_dir_p (kpse_def, fn);
 }
 #endif
 
@@ -141,6 +141,6 @@ kpathsea_dir_links (kpathsea kpse, const_string fn, long nlinks)
 int
 dir_links (const_string fn, long nlinks)
 {
-    return kpathsea_dir_links(kpse_def, fn, nlinks);
+    return kpathsea_dir_links (kpse_def, fn, nlinks);
 }
 #endif

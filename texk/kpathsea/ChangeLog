@@ -1,3 +1,10 @@
+2011-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dir.c (kpathsea_dir_p, dir_p), lib.h: Unconstify string parms.
+	* elt-dirs.c (dir_list_add, checked_dir_list_add, do_subdir,
+	expand_elt): Unconstify string parms and local vars.
+	* progname.c (kpathsea_selfdir): Don't uselessly initialize ret.
+
 2011-07-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tilde.c [WIN32]: Use kpathsea_getpwnam().

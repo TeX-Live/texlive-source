@@ -335,9 +335,9 @@ remove_dots (kpathsea kpse, string dir)
 string
 kpathsea_selfdir (kpathsea kpse, const_string argv0)
 {
-  string ret = NULL;
   string self = NULL;
   string name;
+  string ret;
 
   if (kpathsea_absolute_p (kpse, argv0, true)) {
     self = xstrdup (argv0);
