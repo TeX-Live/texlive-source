@@ -107,8 +107,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.24';
-$version_details = "$My_name, John Collins, 7 May 2011";
+$version_num = '4.25';
+$version_details = "$My_name, John Collins, 7 July 2011";
 
 
 use Config;
@@ -177,6 +177,18 @@ else {
 ##
 ##   Modification log from 1 Jan 2011 onwards in detail
 ##
+##      7 Jul 2011, John Collins  Fix process_rc_file to evade cygwin bug.
+##                                Version 4.25
+##      6 Jul 2011, John Collins  Diagnostic for unreadable rc-file
+##                                N.B.  There appears to be a bug in cygwin's
+##                                perl:  -r /cygdrive/c/latexmk/LatexMk
+##                                returns false even if the file is readable.
+##     31 May 2011, John Collins  Add deps output file to target part
+##                                  of dependency information
+##     15 May 2011, John Collins  Start to correct handling of non-existent
+##                                  bib files:
+##                                  a. After run of biber, set the source files
+##                                  b. Parse Reading message from biber in blg file
 ##      7 May 2011, John Collins  With biber, use kpsewhich to find source
 ##                                   files (e.g., .bib)
 ##     24 Mar 2011, John Collins  Correct bug in detection of source files
@@ -2585,16 +2597,37 @@ sub process_rc_file {
     # NEW VERSION
     # Run rc_file whose name is given in first argument
     #    Exit with code 0 on success
-    #    Exit with code 1 if file could not be read.
+    #    Exit with code 1 if file cannot be read or does not exist.
+    #    Exit with code 2 if is a syntax error or other problem.
+    # PREVIOUSLY: 
     #    Stop if there is a syntax error or other problem.
     my $rc_file = $_[0];
     my $ret_code = 0;
     warn "$My_name: Executing Perl code in file '$rc_file'...\n" 
         if  $diagnostics;
-    if ( ! -r $rc_file ) {
+    # I could use the do command of perl, but the preceeding -r test
+    # to get good diagnostics gets the wrong result under cygwin
+    # (e.g., on /cygdrive/c/latexmk/LatexMk)
+    my $RCH = new FileHandle;
+    if ( !-e $rc_file ) {
+        warn "$My_name: The rc-file '$rc_file' does not exist\n";
         return 1;
     }
-    do( $rc_file );
+    elsif ( open $RCH, "<$rc_file" ) {
+        { local $/; eval <$RCH>; }
+        close $RCH;
+    }
+    else {
+        warn "$My_name: I cannot read the rc-file '$rc_file'\n";
+        return 1;
+    }
+    # PREVIOUS VERSION
+#    if ( ! -r $rc_file ) {
+#        warn "$My_name: I cannot read the rc-file '$rc_file'\n",
+#  	     "          or at least that's what Perl (for $^O) reports\n";
+#        return 1;
+#    }
+#    do( $rc_file );
     if ( $@ ) {
         # Indent each line of possibly multiline message:
         my $message = prefix( $@, "     " );
@@ -2935,6 +2968,7 @@ sub check_biber_log {
         }
         elsif ( /> INFO - Found .* '([^']+)'\s*$/
                 || /> INFO - Found '([^']+)'\s*$/
+                || /> INFO - Reading (.*)$/
                 || /> INFO - Processing .* file '([^']+)' .*$/
               ) {
 	    if ( defined $Pbiber_source ) {
@@ -2943,6 +2977,7 @@ sub check_biber_log {
         }
     }
     close $log_file;
+
     my $bibret = &find_file_list1( $Pbiber_source, $Pbiber_source,
                                   '', \@BIBINPUTS );
     @$Pbiber_source = uniqs( @$Pbiber_source );
@@ -4688,7 +4723,11 @@ sub deps_list {
         delete $source{$_};
     }
     foreach my $dest (@dest) {
-       print $fh "$root_filename$dest :";
+       if ($deps_file eq '-' ) {
+          print $fh "$root_filename$dest :";
+       } else {
+          print $fh "$root_filename$dest $deps_file :";
+       }
        foreach (sort keys %source) {
            print $fh "\\\n    $_";
        }
@@ -5363,7 +5402,13 @@ sub rdb_run1 {
         $$Plast_message = "Bug or configuration error; incorrect command type";
     }
     if ( $rule =~ /^biber/ ) {
-        my $retcode = check_biber_log($$Pbase);
+        my @biber_source = ( );
+        my $retcode = check_biber_log( $$Pbase, \@biber_source );
+        foreach my $source ( @biber_source ) {
+            print "  === Source file '$source' for '$rule'\n"
+               if ($diagnostics);
+            rdb_ensure_file( $rule, $source );
+        }
         if ($retcode == 3) {
             $$Plast_result = 2;
             $$Plast_message = "Could not open biber log file for '$$Pbase'";
