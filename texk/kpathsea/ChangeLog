@@ -1,3 +1,10 @@
+2011-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* win32lib.h.mugica: Renamed from win32lib.h.
+	* win32lib.[ch]: New files, yet to be filled in.
+
+	* knj.c (is_cp932_system): No KPSEDLL in knj.c, only in knj.h.
+
 2011-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More diffs between TeX Live and W32TeX.

@@ -89,7 +89,9 @@ libkpathsea_la_SOURCES = \
 if WIN32
 if MINGW32
 libkpathsea_la_SOURCES += mingw32.c
-endif MINGW32
+else !MINGW32
+libkpathsea_la_SOURCES += win32lib.c
+endif !MINGW32
 libkpathsea_la_SOURCES += knj.c
 endif WIN32
 
@@ -287,5 +289,5 @@ EXTRA_DIST += $(TESTS)
 
 ## Not used
 ##
-EXTRA_DIST += mktex.cnf
+EXTRA_DIST += mktex.cnf win32lib.h.mugica
 

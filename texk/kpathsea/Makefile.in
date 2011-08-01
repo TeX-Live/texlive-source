@@ -39,7 +39,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @MINGW32_TRUE@@WIN32_TRUE@am__append_1 = mingw32.c
-@WIN32_TRUE@am__append_2 = knj.c
+@MINGW32_FALSE@@WIN32_TRUE@am__append_2 = win32lib.c
+@WIN32_TRUE@am__append_3 = knj.c
 bin_PROGRAMS = kpseaccess$(EXEEXT) kpsereadlink$(EXEEXT) \
 	kpsestat$(EXEEXT) kpsewhich$(EXEEXT)
 subdir = .
@@ -115,9 +116,10 @@ am__libkpathsea_la_SOURCES_DIST = tex-file.c absolute.c atou.c cnf.c \
 	uppercasify.c variable.c version.c xbasename.c xcalloc.c \
 	xdirname.c xfopen.c xfseek.c xfseeko.c xftell.c xftello.c \
 	xgetcwd.c xmalloc.c xopendir.c xputenv.c xrealloc.c xstat.c \
-	xstrdup.c mingw32.c knj.c
+	xstrdup.c mingw32.c win32lib.c knj.c
 @MINGW32_TRUE@@WIN32_TRUE@am__objects_1 = libkpathsea_la-mingw32.lo
-@WIN32_TRUE@am__objects_2 = libkpathsea_la-knj.lo
+@MINGW32_FALSE@@WIN32_TRUE@am__objects_2 = libkpathsea_la-win32lib.lo
+@WIN32_TRUE@am__objects_3 = libkpathsea_la-knj.lo
 am_libkpathsea_la_OBJECTS = libkpathsea_la-tex-file.lo \
 	libkpathsea_la-absolute.lo libkpathsea_la-atou.lo \
 	libkpathsea_la-cnf.lo libkpathsea_la-concat.lo \
@@ -146,7 +148,8 @@ am_libkpathsea_la_OBJECTS = libkpathsea_la-tex-file.lo \
 	libkpathsea_la-xgetcwd.lo libkpathsea_la-xmalloc.lo \
 	libkpathsea_la-xopendir.lo libkpathsea_la-xputenv.lo \
 	libkpathsea_la-xrealloc.lo libkpathsea_la-xstat.lo \
-	libkpathsea_la-xstrdup.lo $(am__objects_1) $(am__objects_2)
+	libkpathsea_la-xstrdup.lo $(am__objects_1) $(am__objects_2) \
+	$(am__objects_3)
 libkpathsea_la_OBJECTS = $(am_libkpathsea_la_OBJECTS)
 libkpathsea_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -360,7 +363,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = . doc man
 EXTRA_DIST = BUGS PROJECTS putenv.c strcasecmp.c strtol.c strstr.c \
-	bsnl.awk cnf-to-paths.awk $(TESTS) mktex.cnf
+	bsnl.awk cnf-to-paths.awk $(TESTS) mktex.cnf win32lib.h.mugica
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libkpathsea.la
@@ -378,7 +381,7 @@ libkpathsea_la_SOURCES = tex-file.c absolute.c atou.c cnf.c concat.c \
 	variable.c version.c xbasename.c xcalloc.c xdirname.c xfopen.c \
 	xfseek.c xfseeko.c xftell.c xftello.c xgetcwd.c xmalloc.c \
 	xopendir.c xputenv.c xrealloc.c xstat.c xstrdup.c \
-	$(am__append_1) $(am__append_2)
+	$(am__append_1) $(am__append_2) $(am__append_3)
 kpseincludedir = ${includedir}/kpathsea
 nodist_kpseinclude_HEADERS = \
 	c-auto.h \
@@ -689,6 +692,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-uppercasify.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-variable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-version.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-win32lib.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-xbasename.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-xcalloc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-xdirname.Plo@am__quote@
@@ -1125,6 +1129,13 @@ libkpathsea_la-mingw32.lo: mingw32.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mingw32.c' object='libkpathsea_la-mingw32.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-mingw32.lo `test -f 'mingw32.c' || echo '$(srcdir)/'`mingw32.c
+
+libkpathsea_la-win32lib.lo: win32lib.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-win32lib.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-win32lib.Tpo -c -o libkpathsea_la-win32lib.lo `test -f 'win32lib.c' || echo '$(srcdir)/'`win32lib.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-win32lib.Tpo $(DEPDIR)/libkpathsea_la-win32lib.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='win32lib.c' object='libkpathsea_la-win32lib.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-win32lib.lo `test -f 'win32lib.c' || echo '$(srcdir)/'`win32lib.c
 
 libkpathsea_la-knj.lo: knj.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-knj.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-knj.Tpo -c -o libkpathsea_la-knj.lo `test -f 'knj.c' || echo '$(srcdir)/'`knj.c

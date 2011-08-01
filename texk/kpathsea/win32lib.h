@@ -1,57 +1,26 @@
-/* Public domain.  */
+/* win32lib.h: bits and pieces for win32 and msvc.
 
-#ifndef _WIN32LIB_H_
-#define _WIN32LIB_H_
+   Copyright 1996, xxxx Fabrice Popineau.
+   Copyright xxxx, 2011 Akira Kakuto.
 
-#include <io.h>
-#include <fcntl.h>
-#include <direct.h>
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if !__STDC__
-#if _MSC_VER>=1200
-   #pragma warning(push)
-#endif
-#pragma warning(disable: 4668)
-#pragma warning(disable: 4255)
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-#define boolean donotuse_boolean
-#include <windows.h>    /* Somewhere here WIN32 gets defined */
-#undef boolean
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
-#if _MSC_VER>=1200
-   #pragma warning(pop)
-#else
-   #pragma warning(default: 4668)
-   #pragma warning(default: 4255)
-#endif
+#ifndef KPATHSEA_WIN32LIBH
+#define KPATHSEA_WIN32LIBH
 
-#else /*__STDC__*/
-/* non-ansi definitions for an ANSI compliation with /Fa */
-#define WIN32
-#define off_t _off_t
-#define putenv _putenv
-#define getcwd _getcwd
-#define getcw _getcw
-#define putenv _putenv
-#define strdup _strdup
-#define vsnprintf _vsnprintf
-#define fileno _fileno
-#define strlwr _strlwr
-#define isascii __isascii
-#define mkdir _mkdir
-#define stat _stat
-#define stricmp _stricmp
-#define MAX_PATH _MAX_PATH
-#define S_IFREG _S_IFREG
-#define S_IFMT _S_IFMT
+/*
+ *   To be filled in
+ */
 
-#endif /*__STDC__*/
-
-/*This is not defined even if !__STDC__*/
-#define snprintf _snprintf
-
-/* The POSIX names are different */
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-
-#endif
+#endif /* not KPATHSEA_WIN32LIBH */

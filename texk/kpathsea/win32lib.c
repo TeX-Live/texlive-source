@@ -1,6 +1,7 @@
-/* knj.c: check for 2-Byte Kanji (CP 932, SJIS) codes.
+/* win32lib.c: bits and pieces for win32 and msvc.
 
-   Copyright 2010, 2011 Akira Kakuto.
+   Copyright 1996, xxxx Fabrice Popineau.
+   Copyright xxxx, 2011 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -17,16 +18,7 @@
 
 #include <kpathsea/config.h>
 
-int is_cp932_system;
+/*
+ *   To be filled in
+ */
 
-int isknj(int c)
-{
-  c &= 0xff;
-  return((c>=0x81 && c<=0x9f) || (c>=0xe0 && c<=0xfc));
-}
-
-int isknj2(int c)
-{
-  c &= 0xff;
-  return(c>=0x40 && c<=0xfc && c!=0x7f);
-}
