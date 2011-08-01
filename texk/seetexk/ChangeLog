@@ -1,3 +1,15 @@
+2011-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Remove unused files (they can still be found under
+	<http://ctan.org/tex-archive/dviware/dvibook/libtex>).
+	* bcopy.c, bzero.c, conv.[ch], convstruct.h, dvi_draw.c,
+	dvistate.[ch], dvistuff.[ch], findpost.c, font.c, font_subr.c,
+	getopt.c, gfclass.[ch], gfcodes.h, gffont.c, magfactor.c, num.h,
+	pkfont.c, postamble.h, pxlfont.c, rotate.c, rstfont.c,
+	scaletfm.c, scanpost.c, sdecode.[ch], skip.c, split.c, strsave.c,
+	strtol.c, tfm.[ch], tfmfont.c: All removed.
+	* Makefile.am [EXTRA_DIST]: Removed.
+
 2010-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dviconcat.c, dviselect.c: Fix typo (RBIN_MODE => WBIN_MODE).
