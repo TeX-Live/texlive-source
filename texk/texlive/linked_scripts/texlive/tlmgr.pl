@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 23193 2011-07-21 06:05:07Z preining $
+# $Id: tlmgr.pl 23271 2011-07-29 23:20:41Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 23193 $';
-my $datrev = '$Date: 2011-07-21 08:05:07 +0200 (Thu, 21 Jul 2011) $';
+my $svnrev = '$Revision: 23271 $';
+my $datrev = '$Date: 2011-07-30 01:20:41 +0200 (Sat, 30 Jul 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -6128,10 +6128,11 @@ other lines must look like
 
 where the allowed keys are 
 C<gui-expertmode> (values 0 or 1), 
-C<persistent-downloads> (values 0 or 1),
+C<persistent-downloads> (values 0 or 1), C<auto-remove> (values 0 or 1),
 and C<gui-lang> (values like the command line arguments).  
-C<persistent-downloads> and C<gui-lang> correspond to the command line
-options of the same name.  C<gui-expertmode> switches between the full
+C<persistent-downloads>, C<gui-lang>, and C<auto-remove> correspond to the 
+respective command line options of the same name.  
+C<gui-expertmode> switches between the full
 GUI and a simplified GUI with only the important and mostly used
 settings.
 
