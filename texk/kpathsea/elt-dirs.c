@@ -332,6 +332,10 @@ expand_elt (kpathsea kpse, str_llist_type * str_list_ptr, string elt,
   checked_dir_list_add (kpse, str_list_ptr, elt);
 }
 
+/*  On win32 we slashify ELT, i.e., change '\\' to '/', and then can use
+   IS_DIR_SEP_CH instead of IS_DIR_SEP and need not test for the presence
+   of 2-Byte Kanji (CP 932, SJIS) codes.  */
+
 /* The first bits of a path element can be problematic because they
    look like a request to expand a whole disk, rather than a subtree.
    - It can contain a drive specification.
@@ -346,8 +350,8 @@ expand_elt (kpathsea kpse, str_llist_type * str_list_ptr, string elt,
      handle well filenames like c://dir/foo. So canonicalize the names.
      The resulting name will always be shorter than the one passed, so no
      problem.
-   - If possible, we merely skip multiple leading slashes to prevent
-     expanding from the root of a UNIX filesystem tree.  */
+   - Remove multiple leading slashes to prevent expanding from the root
+     of a UNIX filesystem tree.  */
 
 unsigned
 kpathsea_normalize_path (kpathsea kpse, string elt)
@@ -355,32 +359,37 @@ kpathsea_normalize_path (kpathsea kpse, string elt)
   unsigned ret;
   unsigned i;
 
+#if defined(WIN32)
+  for (i = 0; elt[i]; i++) {
+    if (elt[i] == '\\')
+      elt[i] = '/';
+    else if (IS_KANJI(elt + i))
+      i++;
+  }
+#endif
+
   if (NAME_BEGINS_WITH_DEVICE(elt)) {
     if (*elt >= 'A' && *elt <= 'Z')
       *elt += 'a' - 'A';
-    for (i = 2; IS_DIR_SEP(elt[i]); ++i)
-      ;
-    if (i > 3)
-      memmove (elt+3, elt+i, strlen(elt+i) + 1);
     ret = 2;
 
   } else if (IS_UNC_NAME(elt)) {
-    for (ret = 2; elt[ret] && !IS_DIR_SEP(elt[ret]); ++ret)
+    for (ret = 2; elt[ret] && !IS_DIR_SEP_CH(elt[ret]); ret++)
       ;
-    for (i = ret; elt[i] && IS_DIR_SEP(elt[i]); ++i)
-      ;
-    if (i > ret+1)
-      memmove (elt+ret+1, elt+i, strlen(elt+i) + 1);
 
-  } else {
-    for (ret = 0; IS_DIR_SEP(elt[ret]); ++ret)
-      ;
-  }
+  } else
+    ret = 0;
 
+  for (i = ret; IS_DIR_SEP_CH(elt[i]); ++i)
+    ;
+  if (i > ret + 1) {
 #ifdef KPSE_DEBUG
-  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_STAT) && ret != 1)
+  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_STAT))
     DEBUGF2 ("kpse_normalize_path (%s) => %u\n", elt, ret);
 #endif /* KPSE_DEBUG */
+
+    memmove (elt + ret + 1, elt + i, strlen (elt + i) + 1);
+  }
 
   return ret;
 }
@@ -399,10 +408,14 @@ str_llist_type *
 kpathsea_element_dirs (kpathsea kpse, string elt)
 {
   str_llist_type *ret;
+  unsigned i;
 
   /* If given nothing, return nothing.  */
   if (!elt || !*elt)
     return NULL;
+
+  /* Normalize ELT before looking for a cached value.  */
+  i = kpathsea_normalize_path (kpse, elt);
 
   /* If we've already cached the answer for ELT, return it.  */
   ret = cached (kpse, elt);
@@ -414,7 +427,7 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
   *ret = NULL;
 
   /* We handle the hard case in a subroutine.  */
-  expand_elt (kpse, ret, elt, kpathsea_normalize_path (kpse, elt));
+  expand_elt (kpse, ret, elt, i);
 
   /* Remember the directory list we just found, in case future calls are
      made with the same ELT.  */

@@ -26,22 +26,6 @@
 #define MAX_PIPES 128
 #endif
 
-/* On DOS, it's good to allow both \ and / between directories.  */
-#ifndef IS_DIR_SEP
-#define IS_DIR_SEP(ch) ((ch) == '/' || (ch) == '\\')
-#endif
-#ifndef IS_DEVICE_SEP
-#define IS_DEVICE_SEP(ch) ((ch) == ':')
-#endif
-#ifndef NAME_BEGINS_WITH_DEVICE
-#define NAME_BEGINS_WITH_DEVICE(name) (*(name) && IS_DEVICE_SEP((name)[1]))
-#endif
-/* On win32, UNC names are authorized */
-#ifndef IS_UNC_NAME
-#define IS_UNC_NAME(name) (strlen(name)>=3 && IS_DIR_SEP(*name)  \
-                            && IS_DIR_SEP(*(name+1)) && isalnum(*(name+2)))
-#endif
-
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 extern void init_user_info (void);

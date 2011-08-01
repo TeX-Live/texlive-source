@@ -473,21 +473,15 @@ mk_suffixlist (kpathsea kpse)
 }
 #endif /* WIN32 || __CYGWIN__ */
 
-/* Append a dot if SELFAUTO{LOC,DIR,PARENT} is just `/'.  Otherwise,
-   e.g., $SELFAUTODIR/texmf would search the entire filesystem.  */
+/* On win32 SELFAUTO{LOC,DIR,PARENT} must not be just `/', otherwise,
+   e.g., $SELFAUTODIR/texmf/tex would be mistaken as UNC name.  */
 static inline string
 fix_selfdir (string dir)
 {
 #if defined(WIN32)
-  if (dir[strlen (dir) - 1] == '/') {
-#else
-  if (IS_DIR_SEP (dir[strlen (dir) - 1])) {
+  if (IS_DIR_SEP (*dir) && dir[1] == 0)
+    *dir = 0;
 #endif
-    string ret = concat (dir, ".");
-    free (dir);
-    return ret;
-  }
-
   return dir;
 }
 
@@ -673,12 +667,11 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
 #endif
   /* SELFAUTODIR is actually the parent of the invocation directory,
      and SELFAUTOPARENT the grandparent.  This is how teTeX did it.  */
-  sdir = fix_selfdir (sdir);
-  kpathsea_xputenv (kpse, "SELFAUTOLOC", sdir);
-  sdir_parent = fix_selfdir (xdirname (sdir));
-  kpathsea_xputenv (kpse, "SELFAUTODIR", sdir_parent);
-  sdir_grandparent = fix_selfdir (xdirname (sdir_parent));
-  kpathsea_xputenv (kpse, "SELFAUTOPARENT", sdir_grandparent);
+  sdir_parent = xdirname (sdir);
+  sdir_grandparent = xdirname (sdir_parent);
+  kpathsea_xputenv (kpse, "SELFAUTOLOC", fix_selfdir (sdir));
+  kpathsea_xputenv (kpse, "SELFAUTODIR", fix_selfdir (sdir_parent));
+  kpathsea_xputenv (kpse, "SELFAUTOPARENT", fix_selfdir (sdir_grandparent));
 
 #if defined(WIN32) || defined(__CYGWIN__)
   mk_suffixlist(kpse);

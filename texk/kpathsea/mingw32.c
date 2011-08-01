@@ -26,6 +26,7 @@
 #ifdef __MINGW32__
 
 #include <kpathsea/config.h>
+#include <kpathsea/c-pathch.h>
 #include <kpathsea/c-proto.h>
 #include <kpathsea/mingw32.h>
 #include <kpathsea/lib.h>

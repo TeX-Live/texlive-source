@@ -24,45 +24,44 @@
 
 /* What separates filename components?  */
 #ifndef DIR_SEP
-#ifdef VMS
-#define DIR_SEP ':'
-#define DIR_SEP_STRING ":"
-#else
-#ifdef DOSISH
+# if defined(VMS)
+#  define DIR_SEP ':'
+#  define DIR_SEP_STRING ":"
+# elif defined(DOSISH) /* not VMS */
 /* Either \'s or 's work.  Wayne Sullivan's web2pc prefers /, so we'll
    go with that.  */
-#define DIR_SEP '/'
-#define DIR_SEP_STRING "/"
-#define IS_DEVICE_SEP(ch) ((ch) == ':')
-#define NAME_BEGINS_WITH_DEVICE(name) (*(name) && IS_DEVICE_SEP((name)[1]))
+#  define DIR_SEP '/'
+#  define DIR_SEP_STRING "/"
+#  define IS_DEVICE_SEP(ch) ((ch) == ':')
+#  define NAME_BEGINS_WITH_DEVICE(name) (*(name) && IS_DEVICE_SEP((name)[1]))
 /* On DOS, it's good to allow both \ and / between directories.  */
-#define IS_DIR_SEP(ch) ((ch) == '/' || (ch) == '\\')
-/* On win32, UNC names are authorized */
-#ifdef WIN32
-#define IS_UNC_NAME(name) (strlen(name)>=3 && IS_DIR_SEP(*name)  \
-                            && IS_DIR_SEP(*(name+1)) && isalnum(*(name+2)))
-#endif
-#else
-#ifdef AMIGA
-#define DIR_SEP '/'
-#define DIR_SEP_STRING "/"
-#define IS_DIR_SEP(ch) ((ch) == '/' || (ch) == ':')
-#define IS_DEVICE_SEP(ch) ((ch) == ':')
-#else
-#ifdef VMCMS
-#define DIR_SEP ' '
-#define DIR_SEP_STRING " "
-#else
-#define DIR_SEP '/'
-#define DIR_SEP_STRING "/"
-#endif /* not VM/CMS */
-#endif /* not AMIGA */
-#endif /* not DOSISH */
-#endif /* not VMS */
+#  define IS_DIR_SEP(ch) ((ch) == '/' || (ch) == '\\')
+#  ifdef WIN32
+/*  On win32, UNC names are authorized */
+#   define IS_UNC_NAME(name) (strlen(name)>=3 && IS_DIR_SEP(*name)  \
+                               && IS_DIR_SEP(*(name+1)) && isalnum(*(name+2)))
+/*  Used after converting '\\' into '/' */
+#   define IS_DIR_SEP_CH(ch) ((ch) == '/')
+#  endif
+# elif defined(AMIGA) /* not DOSISH */
+#  define DIR_SEP '/'
+#  define DIR_SEP_STRING "/"
+#  define IS_DIR_SEP(ch) ((ch) == '/' || (ch) == ':')
+#  define IS_DEVICE_SEP(ch) ((ch) == ':')
+# elif defined(VMCMS) /* not AMIGA */
+#  define DIR_SEP ' '
+#  define DIR_SEP_STRING " "
+# else /* not VMCMS */
+#  define DIR_SEP '/'
+#  define DIR_SEP_STRING "/"
+# endif /* not VMCMS */
 #endif /* not DIR_SEP */
 
 #ifndef IS_DIR_SEP
 #define IS_DIR_SEP(ch) ((ch) == DIR_SEP)
+#endif
+#ifndef IS_DIR_SEP_CH
+#define IS_DIR_SEP_CH(ch) IS_DIR_SEP(ch)
 #endif
 #ifndef IS_DEVICE_SEP /* No `devices' on, e.g., Unix.  */
 #define IS_DEVICE_SEP(ch) 0

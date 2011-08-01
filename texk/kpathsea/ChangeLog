@@ -1,9 +1,26 @@
+2011-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	More diffs between TeX Live and W32TeX.
+	* c-pathch.h: IS_DIR_SEP_CH macro to be used with `slashified'
+	filenames without need to test for 2-Byte Kanji codes.
+
+	* elt-dirs.c (kpathsea_normalize_path): Slashify, reformulate,
+	and test for 2-Byte Kanji (CP 932, SJIS) codes.
+	(kpathsea_element_dirs): First call kpathsea_normalize_path()
+	which might modify `elt' and then test for cached answer.
+
+	* progname.c: Make sure SELFAUTO* is not just / only for WIN32.
+
 2011-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dir.c (kpathsea_dir_p, dir_p), lib.h: Unconstify string parms.
 	* elt-dirs.c (dir_list_add, checked_dir_list_add, do_subdir,
 	expand_elt): Unconstify string parms and local vars.
 	* progname.c (kpathsea_selfdir): Don't uselessly initialize ret.
+
+	* mingw32.c: #include <kpathsea/c-pathch.h>.
+	* mingw32.h [IS_DIR_SEP, IS_DEVICE_SEP, IS_UNC_NAME]: Do not
+	duplicate them here, use definitions from c-pathch.h.
 
 2011-07-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
