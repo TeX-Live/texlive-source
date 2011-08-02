@@ -282,7 +282,7 @@ int __cdecl kpathsea_win32_pclose (kpathsea kpse, FILE *f)
 /* large file support */
 
 void
-xfseek64 (FILE *f, __int64 offset, int wherefrom,  char *filename)
+xfseek64 (FILE *f, __int64 offset, int wherefrom,  const char *filename)
 {
     fflush(f);
     if (_lseeki64(fileno(f), offset, wherefrom) < (__int64)0)
@@ -290,7 +290,7 @@ xfseek64 (FILE *f, __int64 offset, int wherefrom,  char *filename)
 }
 
 __int64
-xftell64 (FILE *f, char *filename)
+xftell64 (FILE *f, const char *filename)
 {
     __int64 where;
     fflush(f);

@@ -222,7 +222,11 @@
 #define _WINSOCKAPI_    1
 #endif
 
+#define boolean saved_boolean
 #include <windows.h>
+#undef boolean
+
+#include <kpathsea/types.h>
 
 /* Defines size_t and alloca ().  */
 #include <malloc.h>
@@ -240,6 +244,11 @@
 #undef min
 #endif
 
+extern KPSEDLL FILE *kpathsea_win32_popen (kpathsea kpse, char *cmd, char *mode);
+extern KPSEDLL int kpathsea_win32_pclose (kpathsea kpse, FILE *f);
+extern KPSEDLL struct passwd *kpathsea_getpwnam (kpathsea kpse, char *name);
+extern KPSEDLL int kpathsea_win32_system(kpathsea kpse, char *cmd);
+
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL struct passwd *getpwnam (char *name);
 #define MAX_PIPES 128
@@ -252,16 +261,14 @@ extern KPSEDLL int pclose(FILE * f);
 extern KPSEDLL int system(char * cmd);
 #endif /* KPSE_COMPAT_API */
 
-extern KPSEDLL void xfseek64 (FILE *f, __int64 offset, int wherefrom,  char *fname);
-extern KPSEDLL __int64 xftell64 (FILE *f, char *fname);
+extern KPSEDLL void xfseek64 (FILE *f, __int64 offset, int wherefrom,  const char *fname);
+extern KPSEDLL __int64 xftell64 (FILE *f, const char *fname);
 extern KPSEDLL void texlive_gs_init(void);
 extern KPSEDLL int getlongpath (char *output, char *input, int len);
 extern KPSEDLL char *get_home_directory (void);
 
-/* I don't define xfseeko and xftello in order to find where they are
-   used and to rewrite them by hand using xfseek64 and xftell64.
+#define off_t __int64
 #define xfseeko xfseek64
 #define xftello xftell64
-*/
 
 #endif /* not KPATHSEA_WIN32LIB_H */

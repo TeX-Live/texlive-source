@@ -1,3 +1,10 @@
+2011-08-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.h: follow mingw32.h for boolean and move definitions
+	for win32 functions from lib.h.
+	* win32lib.c: change definitions of xfseek64 and xftell64 to match
+	with xfseeko and xftello.
+
 2011-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More diffs between TeX Live and W32TeX.
