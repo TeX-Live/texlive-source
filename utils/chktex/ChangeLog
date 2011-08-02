@@ -1,3 +1,7 @@
+2011-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* getopt.h: Sync with ../../texk/kpathsea/getopt.h.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* getopt.c: #include <string.h> for prototypes.

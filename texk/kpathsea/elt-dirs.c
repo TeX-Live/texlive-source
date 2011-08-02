@@ -36,7 +36,7 @@ dir_list_add (str_llist_type *l, string dir)
 {
   char last_char = dir[strlen (dir) - 1];
   string saved_dir
-    = IS_DIR_SEP (last_char) || IS_DEVICE_SEP (last_char)
+    = IS_DIR_SEP_CH (last_char) || IS_DEVICE_SEP (last_char)
       ? xstrdup (dir)
       : concat (dir, DIR_SEP_STRING);
 
@@ -125,7 +125,7 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
   /* Some old compilers don't allow aggregate initialization.  */
   name = fn_copy0 (elt, elt_length);
 
-  assert (IS_DIR_SEP (elt[elt_length - 1])
+  assert (IS_DIR_SEP_CH (elt[elt_length - 1])
           || IS_DEVICE_SEP (elt[elt_length - 1]));
 
 #if defined (WIN32)
@@ -312,12 +312,12 @@ expand_elt (kpathsea kpse, str_llist_type * str_list_ptr, string elt,
 
   while (*dir != 0)
     {
-      if (IS_DIR_SEP (*dir))
+      if (IS_DIR_SEP_CH (*dir))
         {
           /* If two or more consecutive /'s, find subdirectories.  */
-          if (IS_DIR_SEP (dir[1]))
+          if (IS_DIR_SEP_CH (dir[1]))
             {
-              for (post = dir + 1; IS_DIR_SEP (*post); post++) ;
+              for (post = dir + 1; IS_DIR_SEP_CH (*post); post++) ;
             do_subdir (kpse, str_list_ptr, elt, dir - elt + 1, post);
               return;
             }

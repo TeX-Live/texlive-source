@@ -1,6 +1,6 @@
 /* Declarations for getopt.
 
-   Copyright 2008, 2010 Karl Berry.
+   Copyright 2008, 2010, 2011 Karl Berry.
    Copyright 1989,90,91,92,93,94,96,97,2000,05 Free Software Foundation, Inc.
 
    The original version of this file was part of the GNU C Library.
@@ -28,6 +28,7 @@
 #define KPSE_DLL 1
 #endif /* WIN32 && !__MINGW32__ && !NO_KPSE_DLL */
 
+#if !defined (KPSEDLL)
 #if defined (KPSE_DLL) && (defined (WIN32) || defined (__CYGWIN__))
 #ifdef MAKE_KPSE_DLL
 #define KPSEDLL __declspec(dllexport)
@@ -36,7 +37,8 @@
 #endif
 #else /* ! (KPSE_DLL && (WIN32 || __CYGWIN__)) */
 #define KPSEDLL
-#endif
+#endif /* ! (KPSE_DLL && (WIN32 || __CYGWIN__)) */
+#endif /* ! KPSEDLL */
 
 #ifdef  __cplusplus
 extern "C" {
@@ -116,6 +118,10 @@ struct option
    differences in the consts, in stdlib.h.  To avoid compilation
    errors, only prototype getopt for the GNU C library.  */
 extern KPSEDLL int getopt (int argc, char *const *argv, const char *shortopts);
+#else /* not __GNU_LIBRARY__ */
+#ifndef __cplusplus
+extern KPSEDLL int getopt ();
+#endif /* not __cplusplus */
 #endif /* __GNU_LIBRARY__ */
 extern KPSEDLL int getopt_long (int argc, char *const *argv, const char *shortopts,
                         const struct option *longopts, int *longind);
@@ -133,6 +139,7 @@ extern int _getopt_internal (int argc, char *const *argv,
 
 #endif /* MAKE_KPSE_DLL || NO_KPSE_DLL */
 #else /* not __STDC__ */
+extern KPSEDLL int getopt ();
 extern KPSEDLL int getopt_long ();
 extern KPSEDLL int getopt_long_only ();
 

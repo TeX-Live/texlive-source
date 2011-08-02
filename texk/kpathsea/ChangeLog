@@ -1,3 +1,12 @@
+2011-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	More diffs between TeX Live and W32TeX.
+	* elt-dirs.c (dir_list_add, do_subdir, expand_elt): Replace
+	IS_DIR_SEP by IS_DIR_SEP_CH.
+
+	* getopt.h: Add (non-ANSI) declaration for getopt().
+	* mingw32.h: #define off_t as off64_t for ftello64 and fseeko64.
+
 2011-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* win32lib.h.mugica: Renamed from win32lib.h.

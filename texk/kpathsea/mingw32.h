@@ -15,6 +15,12 @@
 #include <fcntl.h>
 #include <ctype.h>
 
+/* sys/types.h defines off_t as `long' and we do not want that.
+   We need to include unistd.h and sys/stat.h using off_t
+   before defining off_t (no need to include wchar.h).  */
+#include <unistd.h>
+#include <sys/stat.h>
+#define off_t off64_t
 #define ftello ftello64
 #define fseeko fseeko64
 
