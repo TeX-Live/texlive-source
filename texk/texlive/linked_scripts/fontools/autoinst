@@ -1,10 +1,10 @@
-#!/usr/bin/perl
+#! /usr/bin/env perl
 
 =begin COPYRIGHT
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005, 2006, 2007, 2009, 2010 Marc Penninga.
+    Copyright (C) 2005, 2006, 2007, 2009, 2010, 2011 Marc Penninga.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License 
@@ -122,6 +122,7 @@ my %FD_WIDTH = (
 my %FD_SHAPE = (
     roman   => 'n',
     italic  => 'it',
+    it      => 'it',    # Fix for (at least) some Linotype fonts
     oblique => 'it',
     slanted => 'it',
     romani  => 'n',
@@ -734,7 +735,7 @@ sub read_font_info {
             last SHAPE;
         }
     }
-    
+	
     # Read optical size info
     open $OTFINFO, '-|',"otfinfo --optical-size \"$fontfile\""
         or die "ERROR: 'otfinfo --optical-size \"$fontfile\"' failed";
@@ -1601,7 +1602,7 @@ C<< autoinst I<(... all options and files ...)>  E<gt>autoinst.log 2>&1 >>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005, 2006, 2007, 2009, 2010 Marc Penninga. 
+Copyright (C) 2005, 2006, 2007, 2009, 2010, 2011 Marc Penninga. 
 
 
 =head1 LICENSE
@@ -1629,6 +1630,11 @@ GNU General Public License for more details.
 (See the source code for the full story.)
 
 =over 12
+
+=item I<2011-06-15>
+
+Fixed the font info parsing code for some fonts that are
+too lazy to spell out 'Italic' in full.
 
 =item I<2010-04-29>
 
