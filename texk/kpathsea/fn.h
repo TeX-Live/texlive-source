@@ -1,7 +1,7 @@
 /* fn.h: arbitrarily long filenames (or just strings).
 
    Copyright 2001, 2005 Olaf Weber.
-   Copyright 1993, 2008 Karl Berry.
+   Copyright 1993, 2008, 2011 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,8 @@
 
 #ifndef KPATHSEA_FN_H
 #define KPATHSEA_FN_H
+
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
@@ -41,27 +43,29 @@ typedef struct
 
 
 /* Create a new empty fn.  */
-extern KPSEDLL fn_type fn_init (void);
+extern fn_type fn_init (void);
 
 /* Create a new fn from the first LEN characters from S and a null.  */
-extern KPSEDLL fn_type fn_copy0 (const_string s,  unsigned len);
+extern fn_type fn_copy0 (const_string s,  unsigned len);
 
 /* Free what's been allocated.  Can also just free the string if it's
    been extracted out.  Fatal error if nothing allocated in F.  */
-extern KPSEDLL void fn_free (fn_type *f);
+extern void fn_free (fn_type *f);
 
 /* Append the character C to the fn F.  Don't append trailing null.  */
-extern KPSEDLL void fn_1grow (fn_type *f, char c);
+extern void fn_1grow (fn_type *f, char c);
 
 /* Append LENGTH bytes from SOURCE to F.  */
-extern KPSEDLL void fn_grow (fn_type *f, const_string source, unsigned length);
+extern void fn_grow (fn_type *f, const_string source, unsigned length);
 
 /* Concatenate the component S to the fn F.  Assumes string currently in
    F is null terminated.  */
-extern KPSEDLL void fn_str_grow (fn_type *f, const_string s);
+extern void fn_str_grow (fn_type *f, const_string s);
 
 /* Add a null to F's string at position LOC, and update its length.
    Fatal error if LOC is past the end of the string.  */
-extern KPSEDLL void fn_shrink_to (fn_type *f, unsigned loc);
+extern void fn_shrink_to (fn_type *f, unsigned loc);
+
+#endif /* MAKE_KPSE_DLL */
 
 #endif /* not KPATHSEA_FN_H */

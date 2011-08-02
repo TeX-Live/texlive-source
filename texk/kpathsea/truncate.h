@@ -18,10 +18,10 @@
 #ifndef KPATHSEA_TRUNCATE_H
 #define KPATHSEA_TRUNCATE_H
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
-
-#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Truncate any component in NAME longer than the system NAME_MAX, and
    return the result as a malloced string.  If none, return a copy of

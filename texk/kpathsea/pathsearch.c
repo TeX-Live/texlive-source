@@ -623,33 +623,11 @@ kpse_path_search (const_string path,  const_string name, boolean must_exist)
     return kpathsea_path_search (kpse_def, path,  name, must_exist);
 }
 
-string
-kpse_path_search_list (const_string path,  const_string* names,
-                       boolean must_exist)
-{
-    return kpathsea_path_search_list (kpse_def, path, names, must_exist);
-}
-
 string *
 kpse_all_path_search (const_string path,  const_string name)
 {
     return kpathsea_all_path_search (kpse_def,  path, name);
 }
-
-string *
-kpse_path_search_list_generic (const_string path,  const_string* names,
-                               boolean must_exist,  boolean all)
-{
-  return kpathsea_path_search_list_generic (kpse_def, path, names,
-                                            must_exist, all);
-}
-
-string *
-kpse_all_path_search_list (const_string path, const_string* names)
-{
-  return kpathsea_all_path_search_list (kpse_def, path, names);
-}
-
 #endif
 
 

@@ -1,6 +1,6 @@
 /* expand.h: general expansion.
 
-   Copyright 1993, 1994, 1996, 2008 Karl Berry.
+   Copyright 1993, 1994, 1996, 2008, 2011 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -22,9 +22,13 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* Call kpse_var_expand and kpse_tilde_expand (in that order).  Result
    is always in fresh memory, even if no expansions were done.  */
-extern KPSEDLL string kpathsea_expand (kpathsea kpse, const_string s);
+extern string kpathsea_expand (kpathsea kpse, const_string s);
+
+#endif /* MAKE_KPSE_DLL */
 
 /* Do brace expansion and call `kpse_expand' on each element of the
    result; return the final expansion (always in fresh memory, even if
@@ -40,7 +44,6 @@ extern KPSEDLL string kpathsea_brace_expand (kpathsea kpse, const_string path);
 extern KPSEDLL string kpathsea_path_expand (kpathsea kpse, const_string path);
 
 #if defined(KPSE_COMPAT_API)
-extern KPSEDLL string kpse_expand (const_string s);
 extern KPSEDLL string kpse_brace_expand (const_string path);
 extern KPSEDLL string kpse_path_expand (const_string path);
 #endif

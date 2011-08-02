@@ -1,3 +1,27 @@
+2011-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Unexport kpathsea internal functions, remove unused ones.
+	* db.[ch] (kpse_db_insert, kpse_init_db, kpse_db_search,
+	kpse_db_search_list): All removed.
+	* default.h (kpathsea_expand_default): Internal	use only.
+	* default.h, kdefault.c (kpse_expand_default): Removed.
+	* elt-dirs.c (kpse_normalize_path, kpse_element_dirs): Removed.
+	* expand.[ch] (kpathsea_expand): Internal use only.
+	(kpse_expand): Removed.
+	* fn.h (fn_init, fn_copy0, fn_free, fn_1grow, fn_grow,
+	fn_str_grow, fn_shrink_to): ALL internal use only.
+	* hash.h (hash_insert_normalized): Internal use only.
+	* path-elt.c (kpse_path_element): Removed.
+	* pathsearch.[ch] (kpathsea_path_element, kpathsea_element_dirs,
+	kpathsea_path_search_list, kpathsea_path_search_list_generic,
+	kpathsea_all_path_search_list): Internal use only.
+	(kpse_path_element, kpse_filename_component,
+	kpse_normalize_path, kpse_element_dirs, kpse_path_search_list,
+	kpse_path_search_list_generic, kpse_all_path_search_list):
+	Removed.
+	* fontmap.h, tilde.h, truncate.h, xstat.h: Whole files internal
+	use only.
+
 2011-08-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.h: follow mingw32.h for boolean and move definitions

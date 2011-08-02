@@ -1,6 +1,6 @@
 /* pathsearch.h: mostly-generic path searching.
 
-   Copyright 1993, 1994, 1996, 1997, 2007, 2008, 2009 Karl Berry.
+   Copyright 1993, 1994, 1996, 1997, 2007, 2008, 2009, 2011 Karl Berry.
    Copyright 1999-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -23,13 +23,19 @@
 #include <kpathsea/str-llist.h>
 #include <kpathsea/types.h>
 
+/* The naming of all these functions is rather scattered and
+   inconsistent, but they grew over time, and we don't want to change
+   the meaning of existing names.  */
+
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* If PATH is non-null, return its first element (as defined by
    IS_ENV_SEP).  If it's NULL, return the next element in the previous
    path, a la strtok.  Leading, trailing, or doubled colons result in
    the empty string.  When at the end of PATH, return NULL.  In any
    case, return a pointer to an area that may be overwritten on
    subsequent calls.  */
-extern KPSEDLL string kpathsea_path_element (kpathsea kpse, const_string path);
+extern string kpathsea_path_element (kpathsea kpse, const_string path);
 
 /* Like `kpathsea_path_element', but for filename components (using
    IS_DIR_SEP).  Uses same area as `kpathsea_path_element'.  */
@@ -49,9 +55,10 @@ extern unsigned kpathsea_normalize_path (kpathsea kpse, string elt);
    It's up to the caller to expand ELT.  This is because this routine is
    most likely only useful to be called from `kpathsea_path_search', which
    has already assumed expansion has been done.  */
-extern KPSEDLL str_llist_type *kpathsea_element_dirs (kpathsea kpse,
+extern str_llist_type *kpathsea_element_dirs (kpathsea kpse,
                                                       string elt);
 
+#endif /* MAKE_KPSE_DLL */
 
 /* Call `kpathsea_expand' on NAME.  If the result is an absolute or
    explicitly relative filename, check whether it is a readable
@@ -75,44 +82,38 @@ extern KPSEDLL str_llist_type *kpathsea_element_dirs (kpathsea kpse,
 extern KPSEDLL string kpathsea_path_search
   (kpathsea kpse, const_string path, const_string name, boolean must_exist);
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* Like `kpathsea_path_search', except look for a list of NAMES.  */
-extern KPSEDLL string kpathsea_path_search_list
+extern string kpathsea_path_search_list
   (kpathsea kpse, const_string path, const_string* names, boolean must_exist);
+
+#endif /* MAKE_KPSE_DLL */
 
 /* Like `kpathsea_path_search' with MUST_EXIST true, but always return all
    matches in a NULL-terminated list.  */
 extern KPSEDLL string *kpathsea_all_path_search
   (kpathsea kpse, const_string path, const_string name);
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* Search for any of the NAMES in PATH, and allow specifying both
    MUST_EXIST and ALL.  */
-extern KPSEDLL string *kpathsea_path_search_list_generic (kpathsea kpse,
+extern string *kpathsea_path_search_list_generic (kpathsea kpse,
    const_string path, const_string* names, boolean must_exist, boolean all);
 
 /* Search for any of NAMES, with MUST_EXIST and ALL true.  */
-extern KPSEDLL string *kpathsea_all_path_search_list
+extern string *kpathsea_all_path_search_list
   (kpathsea kpse, const_string path, const_string* names);
 
-/* The naming of all these functions is rather scattered and
-   inconsistent, but they grew over time, and we don't want to change
-   the meaning of existing names.  */
+#endif /* MAKE_KPSE_DLL */
 
 #if defined(KPSE_COMPAT_API)
 
-extern KPSEDLL string kpse_path_element (const_string path);
-extern string kpse_filename_component (const_string path);
-extern unsigned kpse_normalize_path (string elt);
-extern KPSEDLL str_llist_type *kpse_element_dirs (string elt);
 extern KPSEDLL string kpse_path_search
   (const_string path, const_string name, boolean must_exist);
-extern KPSEDLL string kpse_path_search_list
-  (const_string path, const_string* names, boolean must_exist);
 extern KPSEDLL string *kpse_all_path_search
   (const_string path, const_string name);
-extern KPSEDLL string *kpse_path_search_list_generic
-  (const_string path, const_string* names, boolean must_exist, boolean all);
-extern KPSEDLL string *kpse_all_path_search_list
-  (const_string path, const_string* names);
 
 #endif
 

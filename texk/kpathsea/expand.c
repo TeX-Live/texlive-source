@@ -44,14 +44,6 @@ kpathsea_expand (kpathsea kpse, const_string s)
 
   return tilde_expansion;
 }
-
-#if defined(KPSE_COMPAT_API)
-string
-kpse_expand (const_string s)
-{
-    return kpathsea_expand (kpse_def, s);
-}
-#endif
 
 /* Forward declarations of functions from the original expand.c  */
 static str_list_type brace_expand (kpathsea, const_string*);

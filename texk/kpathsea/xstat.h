@@ -1,6 +1,6 @@
 /* xstat.h: stat with error checking.
 
-   Copyright 1992, 1993, 1994, 2008, 2010 Karl Berry.
+   Copyright 1992, 1993, 1994, 2008, 2010, 2011 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,8 @@
 #ifndef KPATHSEA_XSTAT_H
 #define KPATHSEA_XSTAT_H
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 #include <kpathsea/c-proto.h>
 #include <kpathsea/c-stat.h>
 #include <kpathsea/types.h>
@@ -27,8 +29,6 @@
    the `same_file_p' routine in file-p.c, declared in kpathlib.h.  */
 #define SAME_FILE_P(s1, s2) \
   ((s1).st_ino == (s2).st_ino && (s1).st_dev == (s2).st_dev)
-
-#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Does stat(2) on PATH, and aborts if the stat fails.  */
 extern struct stat xstat (const_string path);

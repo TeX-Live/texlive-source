@@ -76,27 +76,21 @@
 /* What separates elements in environment variable path lists?  */
 #ifndef ENV_SEP
 #ifdef VMS
-#define ENV_SEP ','
-#define ENV_SEP_STRING ","
+# define ENV_SEP ','
+# define ENV_SEP_STRING ","
+#elif defined (DOSISH)
+# define ENV_SEP ';'
+# define ENV_SEP_STRING ";"
+#elif defined (AMIGA)
+# define ENV_SEP ';'
+# define ENV_SEP_STRING ";"
+#elif defined (VMCMS)
+# define ENV_SEP ' '
+# define ENV_SEP_STRING " "
 #else
-#ifdef DOSISH
-#define ENV_SEP ';'
-#define ENV_SEP_STRING ";"
-#else
-#ifdef AMIGA
-#define ENV_SEP ';'
-#define ENV_SEP_STRING ";"
-#else
-#ifdef VMCMS
-#define ENV_SEP ' '
-#define ENV_SEP_STRING " "
-#else
-#define ENV_SEP ':'
-#define ENV_SEP_STRING ":"
-#endif /* not VM/CMS */
-#endif /* not AMIGA */
-#endif /* not DOS */
-#endif /* not VMS */
+# define ENV_SEP ':'
+# define ENV_SEP_STRING ":"
+#endif
 #endif /* not ENV_SEP */
 
 #ifndef IS_ENV_SEP

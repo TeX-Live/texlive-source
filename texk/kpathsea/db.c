@@ -216,14 +216,6 @@ kpathsea_db_insert (kpathsea kpse, const_string passed_fname)
     hash_insert (&(kpse->db), file_part, dir_part);
   }
 }
-
-#if defined(KPSE_COMPAT_API)
-void
-kpse_db_insert (const_string passed_fname)
-{
-  kpathsea_db_insert(kpse_def, passed_fname);
-}
-#endif
 
 /* Return true if FILENAME could be in PATH_ELT, i.e., if the directory
    part of FILENAME matches PATH_ELT.  Have to consider // wildcards, but
@@ -446,15 +438,6 @@ kpathsea_init_db (kpathsea kpse)
 
   free (orig_db_files);
 }
-
-#if defined(KPSE_COMPAT_API)
-void
-kpse_init_db (void)
-{
-  kpathsea_init_db(kpse_def);
-}
-#endif
-
 
 /* Avoid doing anything if this PATH_ELT is irrelevant to the databases. */
 str_list_type *
@@ -607,15 +590,6 @@ kpathsea_db_search (kpathsea kpse, const_string name,
 
   return ret;
 }
-
-#if defined(KPSE_COMPAT_API)
-str_list_type *
-kpse_db_search (const_string name,  const_string orig_path_elt,
-                boolean all)
-{
-    return kpathsea_db_search (kpse_def, name, orig_path_elt, all);
-}
-#endif
 
 str_list_type *
 kpathsea_db_search_list (kpathsea kpse, const_string* names,
@@ -772,12 +746,3 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
 
   return ret;
 }
-
-#if defined(KPSE_COMPAT_API)
-str_list_type *
-kpse_db_search_list (const_string* names,  const_string path_elt,
-                     boolean all)
-{
-    return kpathsea_db_search_list (kpse_def, names, path_elt, all);
-}
-#endif

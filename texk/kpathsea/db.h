@@ -1,6 +1,6 @@
 /* db.h: lookups in an externally built db file.
 
-   Copyright 1994, 1995, 2008, 2010 Karl Berry.
+   Copyright 1994, 1995, 2008, 2010, 2011 Karl Berry.
    Copyright 1999, 2003, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -19,11 +19,11 @@
 #ifndef KPATHSEA_DB_H
 #define KPATHSEA_DB_H
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 #include <kpathsea/str-list.h>
-
-#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Initialize the database.  Until this is called, no ls-R matches will
    be found.  */
@@ -43,29 +43,10 @@ extern str_list_type *kpathsea_db_search_list (kpathsea kpse,
                                                const_string  path_elt,
                                                boolean all);
 
-#endif /* MAKE_KPSE_DLL */
-
 /* Insert the filename FNAME into the database.
    Called by mktexpk et al.  */
 extern KPSEDLL void kpathsea_db_insert (kpathsea kpse, const_string fname);
 
-#if defined(KPSE_COMPAT_API)
-
-#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
-
-extern void kpse_init_db (void);
-
-extern str_list_type *kpse_db_search (const_string name,
-                                      const_string path_elt, boolean all);
-
-extern str_list_type *kpse_db_search_list (const_string* names,
-                                           const_string  path_elt,
-                                           boolean all);
-
 #endif /* MAKE_KPSE_DLL */
-
-extern KPSEDLL void kpse_db_insert (const_string fname);
-
-#endif
 
 #endif /* not KPATHSEA_DB_H */

@@ -1,6 +1,6 @@
 /* elt-dirs.c: Translate a path element to its corresponding director{y,ies}.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010, 2011 Karl Berry.
    Copyright 1997, 1998, 1999, 2000, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -393,14 +393,6 @@ kpathsea_normalize_path (kpathsea kpse, string elt)
 
   return ret;
 }
-
-#if defined(KPSE_COMPAT_API)
-unsigned
-kpse_normalize_path (string elt)
-{
-    return kpathsea_normalize_path(kpse_def, elt);
-}
-#endif
 
 /* Here is the entry point.  Returns directory list for ELT.  */
 
@@ -450,14 +442,6 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
 
   return ret;
 }
-
-#if defined(KPSE_COMPAT_API)
-str_llist_type *
-kpse_element_dirs (string elt)
-{
-    return kpathsea_element_dirs(kpse_def, elt);
-}
-#endif
 
 #ifdef TEST
 
@@ -469,7 +453,7 @@ print_element_dirs (const_string elt)
   printf ("Directories of %s:\t", elt ? elt : "(nil)");
   fflush (stdout);
 
-  dirs = kpse_element_dirs (elt);
+  dirs = kpathsea_element_dirs (kpse_def, elt);
 
   if (!dirs)
     printf ("(nil)");

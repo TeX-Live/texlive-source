@@ -48,12 +48,16 @@ extern KPSEDLL void hash_insert (hash_table_type *table,
                                     const_string key,
                                     const_string value);
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* Insert the (KEY, VALUE) association into TABLE.  KEY may have more
    than one VALUE.  Neither KEY nor VALUE is copied.  Assume that KEY
    is already normalized (all lowercase) on platforms where this matters. */
-extern KPSEDLL void hash_insert_normalized (hash_table_type *table,
+extern void hash_insert_normalized (hash_table_type *table,
                                                const_string key,
                                                const_string value);
+
+#endif /* MAKE_KPSE_DLL */
 
 /* Remove the (KEY,VALUE) association from TABLE.  */
 extern KPSEDLL void hash_remove (hash_table_type *table,  const_string key,

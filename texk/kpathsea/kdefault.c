@@ -3,7 +3,7 @@
    make a program `default' from it, since we have a target `default';
    and OSF/1 make doesn't understand .PHONY.)
 
-   Copyright 1993, 1994, 1996, 2008, 2009 Karl Berry.
+   Copyright 1993, 1994, 1996, 2008, 2009, 2011 Karl Berry.
    Copyright 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -84,14 +84,6 @@ kpathsea_expand_default (kpathsea kpse, const_string path,
 
   return expansion;
 }
-#if defined (KPSE_COMPAT_API)
-string
-kpse_expand_default (const_string path,  const_string fallback)
-{
-    return kpathsea_expand_default (kpse_def, path, fallback);
-}
-#endif
-
 
 #ifdef TEST
 
@@ -101,7 +93,7 @@ test_expand_default (const_string path, const_string def)
   string answer;
 
   printf ("Expansion of `%s':\t", path ? path : "(nil)");
-  answer = kpse_expand_default (path, def);
+  answer = kpathsea_expand_default (kpse_def, path, def);
   puts (answer);
 }
 
