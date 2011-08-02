@@ -207,11 +207,7 @@ int main(int argc, char **argv)
 
 	if (styfile==NULL) {
 #ifdef KPATHSEA
-#ifdef KPATHSEA3
 		envbuff=KP_get_value("INDEXDEFAULTSTYLE",NULL);
-#else
-		envbuff=KP_get_value("INDEXDEFAULTSTYLE","INDEXDEFAULTSTYLE",NULL);
-#endif
 #else
 		envbuff=getenv("INDEXDEFAULTSTYLE");
 #endif

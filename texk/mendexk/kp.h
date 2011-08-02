@@ -13,10 +13,6 @@ extern KpathseaSupportInfo kp_ist, kp_dict;
 extern int KP_init(char *);
 extern int KP_entry_filetype(KpathseaSupportInfo *);
 extern const char *KP_find_file(KpathseaSupportInfo *, const char *);
-#ifdef KPATHSEA3
 extern const char *KP_get_value(const char *, const char *);
-#else
-extern const char *KP_get_value(const char *, const char *, const char *);
-#endif
 #endif /* KPATHSEA */
 #endif /* ! KSUPPORT_H_INCLUDED */

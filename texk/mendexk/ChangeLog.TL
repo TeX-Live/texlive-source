@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for mendexk
 ===============================================
 
+2011-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert.c, kp.[ch], main.c: Remove code for ancient kpathsea.
+	* Makefile.am (AM_CPPFLAGS): Drop `-DKPATHSEA3'.
+
 2011-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): No need to mention ChangeLog, README.

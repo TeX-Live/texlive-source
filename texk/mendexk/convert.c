@@ -96,11 +96,7 @@ int dicread(const char *filename)
 
 ENV:
 #ifdef KPATHSEA
-#ifdef KPATHSEA3
 	envfile=KP_get_value("INDEXDEFAULTDICTIONARY",NULL);
-#else
-	envfile=KP_get_value("INDEXDEFAULTDICTIONARY","INDEXDEFAULTDICTIONARY",NULL);
-#endif
 #else
 	envfile=getenv("INDEXDEFAULTDICTIONARY");
 #endif

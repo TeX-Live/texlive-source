@@ -253,7 +253,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA -DKPATHSEA3
+AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 mendex_SOURCES = \
 	convert.c \
