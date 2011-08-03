@@ -238,6 +238,9 @@
 #include <stdio.h>
 #include <process.h>
 
+/* For _getcwd. */
+#include <direct.h>
+
 /* Web2C takes care of ensuring that these are defined.  */
 #ifdef max
 #undef max
