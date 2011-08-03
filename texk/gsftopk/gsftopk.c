@@ -2405,10 +2405,6 @@ Author of gsftopk: Paul Vojta.");
 		*p = '\0';
 #ifdef KPATHSEA
 		searchpath = kpse_find_file(q, kpse_tex_ps_header_format,true);
-#ifdef __MINGW32__
-		/* Be safe for Ghostscript's sake */
-		dostounix_filename(searchpath);
-#endif /* __MINGW32__ */
 		f = searchpath ? fopen(searchpath, FOPEN_R_MODE) : NULL;
 #else
 		f = search(config_file_header_path, "DVIPSHEADERS", q);

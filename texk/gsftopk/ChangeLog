@@ -1,3 +1,7 @@
+2011-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gsftopk.c [MINGW32]: Drop superfluous dostounix_filename().
+
 2010-09-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (DISTCLEANFILES): Use += instead of = to add
