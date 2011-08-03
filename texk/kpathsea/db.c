@@ -103,9 +103,7 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
 
 #if defined(WIN32)
       for (pp = line; *pp; pp++) {
-        if (*pp == '\\')
-          *pp = '/';
-        else if (IS_KANJI(pp))
+        if (IS_KANJI(pp))
           pp++;
         else
           *pp = TRANSFORM(*pp);

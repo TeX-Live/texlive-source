@@ -1,3 +1,7 @@
+2011-08-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* db.c (db_build): No need to slashify lines from db_file.
+
 2011-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.[ch] (dostounix_filename): Remove unused function.
@@ -9,7 +13,7 @@
 	kpsewhich.c (subdir_match): Slashify and test for 2-Byte Kanji
 	(CP 932, SJIS) codes.
 
-2011-08-03  Akirar Kakuto  <kakuto@fuk.kindai.ac.jp>
+2011-08-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.h: #include <direct.h> for _getcwd.
 
