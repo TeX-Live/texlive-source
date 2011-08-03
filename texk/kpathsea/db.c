@@ -69,17 +69,9 @@ ignore_dir_p (const_string dirname)
 {
   const_string dot_pos = dirname;
 
-#if defined(WIN32)
-  while (*(++dot_pos)) {
-    if (IS_KANJI(dot_pos-1))
-      dot_pos++;
-    else if (*dot_pos == '.' &&
-#else
   while ((dot_pos = strchr (dot_pos + 1, '.'))) {
-    if (
-#endif
     /* If / before and no / after, skip it. */
-        IS_DIR_SEP (dot_pos[-1]) && dot_pos[1] && !IS_DIR_SEP (dot_pos[1]))
+    if (IS_DIR_SEP_CH (dot_pos[-1]) && dot_pos[1] && !IS_DIR_SEP_CH (dot_pos[1]))
       return true;
   }
 
@@ -111,11 +103,12 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
 
 #if defined(WIN32)
       for (pp = line; *pp; pp++) {
-        if (IS_KANJI(pp)) {
+        if (*pp == '\\')
+          *pp = '/';
+        else if (IS_KANJI(pp))
           pp++;
-          continue;
-        }
-        *pp = TRANSFORM(*pp);
+        else
+          *pp = TRANSFORM(*pp);
       }
 #endif
 
@@ -231,9 +224,9 @@ match (const_string filename,  const_string path_elt)
     if (FILECHARCASEEQ (*filename, *path_elt)) /* normal character match */
       ;
 
-    else if (IS_DIR_SEP (*path_elt)  /* at // */
-             && original_filename < filename && IS_DIR_SEP (path_elt[-1])) {
-      while (IS_DIR_SEP (*path_elt))
+    else if (IS_DIR_SEP_CH (*path_elt)  /* at // */
+             && original_filename < filename && IS_DIR_SEP_CH (path_elt[-1])) {
+      while (IS_DIR_SEP_CH (*path_elt))
         path_elt++; /* get past second and any subsequent /'s */
       if (*path_elt == 0) {
         /* Trailing //, matches anything. We could make this part of the
@@ -244,7 +237,7 @@ match (const_string filename,  const_string path_elt)
         /* Intermediate //, have to match rest of PATH_ELT.  */
         for (; !matched && *filename; filename++) {
           /* Try matching at each possible character.  */
-          if (IS_DIR_SEP (filename[-1])
+          if (IS_DIR_SEP_CH (filename[-1])
               && FILECHARCASEEQ (*filename, *path_elt))
             matched = match (filename, path_elt);
         }
@@ -266,7 +259,7 @@ match (const_string filename,  const_string path_elt)
        hand, if PATH_ELT ended with a / (as in `vf/'), FILENAME being
        the same `vf/ptmr.vf', we'll be at the `p'.
        Upshot: if we're at a dir sep in FILENAME, skip it.  */
-    if (IS_DIR_SEP (*filename))
+    if (IS_DIR_SEP_CH (*filename))
       filename++;
 
     /* Here are the basic possibilities for the check on being at the
@@ -284,8 +277,8 @@ match (const_string filename,  const_string path_elt)
        a FILENAME without dir seps.  (This could be argued, and may never
        happen in practice, but is the historical behavior.)  */
     /* if original_filename != filename then original_filename < filename */
-    if (original_filename == filename || IS_DIR_SEP (filename[-1])) {
-      while (*filename && !IS_DIR_SEP (*filename))
+    if (original_filename == filename || IS_DIR_SEP_CH (filename[-1])) {
+      while (*filename && !IS_DIR_SEP_CH (*filename))
         filename++;
       matched = *filename == 0;
     }

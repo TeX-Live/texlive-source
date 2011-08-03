@@ -41,6 +41,5 @@ extern char *quote_args(char **);
 #endif /* MAKE_KPSE_DLL */
 
 extern KPSEDLL BOOL win32_get_long_filename (char *, char *, int);
-extern KPSEDLL void dostounix_filename (char *p);
 
 #endif

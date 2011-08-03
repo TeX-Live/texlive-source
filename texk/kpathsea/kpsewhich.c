@@ -1,7 +1,7 @@
 /* kpsewhich -- standalone path lookup and variable expansion for Kpathsea.
    Ideas from Thomas Esser, Pierre MacKay, and many others.
 
-   Copyright 1995-2010 Karl Berry & Olaf Weber.
+   Copyright 1995-2011 Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -272,15 +272,27 @@ subdir_match (str_list_type subdirs,  string *matches)
 {
   string *ret = XTALLOC1 (string);
   unsigned len = 1;
+  unsigned e;
   unsigned m;
+#if defined(WIN32)
+  string p;
+
+  for (e = 0; e < STR_LIST_LENGTH (subdirs); e++) {
+    for (p = STR_LIST_ELT (subdirs, e); *p; p++) {
+      if (*p == '\\')
+        *p = '/';
+      else if (IS_KANJI(p))
+        p++;
+    }
+  }
+#endif
 
   for (m = 0; matches[m]; m++) {
     unsigned loc;
-    unsigned e;
     string s = xstrdup (matches[m]);
-    for (loc = strlen (s); loc > 0 && !IS_DIR_SEP (s[loc-1]); loc--)
+    for (loc = strlen (s); loc > 0 && !IS_DIR_SEP_CH (s[loc-1]); loc--)
       ;
-    while (loc > 0 && IS_DIR_SEP (s[loc-1])) {
+    while (loc > 0 && IS_DIR_SEP_CH (s[loc-1])) {
       loc--;
     }
     s[loc] = 0;  /* wipe out basename */
@@ -288,7 +300,7 @@ subdir_match (str_list_type subdirs,  string *matches)
     for (e = 0; e < STR_LIST_LENGTH (subdirs); e++) {
       string subdir = STR_LIST_ELT (subdirs, e);
       unsigned subdir_len = strlen (subdir);
-      while (subdir_len > 0 && IS_DIR_SEP (subdir[subdir_len-1])) {
+      while (subdir_len > 0 && IS_DIR_SEP_CH (subdir[subdir_len-1])) {
         subdir_len--;
         subdir[subdir_len] = 0; /* remove trailing slashes from subdir spec */
       }
