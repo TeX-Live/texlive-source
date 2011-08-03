@@ -2439,6 +2439,10 @@ makesrcspecial (strnumber srcfilename, int lineno)
 #if defined (__sun__) || defined (__cplusplus)
 #define NO_MF_ASM
 #endif
+/* The assembler code is not PIC safe on i?86 so use C code.  */
+#if defined (__PIC__) && defined (__i386__)
+#define NO_MF_ASM
+#endif
 #if defined(WIN32) && !defined(NO_MF_ASM) && !defined(__MINGW32__)
 #include "lib/mfmpw32.c"
 #elif defined (__i386__) && defined (__GNUC__) && !defined (NO_MF_ASM)

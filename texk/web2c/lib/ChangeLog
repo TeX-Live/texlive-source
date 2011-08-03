@@ -1,3 +1,7 @@
+2011-08-03  Magnus Granberg  <zorry@gentoo.org>
+
+	* texmfmp.c: Use C code for i?86 when -fPIC.
+
 2011-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: Drop `#warning SyncTeX: -synctex command line...'.
