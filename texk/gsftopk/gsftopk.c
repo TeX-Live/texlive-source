@@ -2256,10 +2256,10 @@ Author of gsftopk: Paul Vojta.");
 	if (!test)
 	    xputenv_int("KPATHSEA_DPI", (int) (dpi + 0.5));
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
        /* TeXLive uses its own Ghostscript */  
         texlive_gs_init();
-#endif /* WIN32 && !__MINGW32__ */
+#endif
 
 #endif
 

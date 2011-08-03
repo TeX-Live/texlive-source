@@ -1,6 +1,6 @@
 /* mingw32.c: bits and pieces for mingw32
 
-   Copyright 2009, 2010 Taco Hoekwater <taco@luatex.org>.
+   Copyright 2009-2011 Taco Hoekwater <taco@luatex.org>.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@
 #include <kpathsea/mingw32.h>
 #include <kpathsea/lib.h>
 #include <kpathsea/concatn.h>
+#include <kpathsea/variable.h>
 #include <shlobj.h>
 #include <errno.h>
 
@@ -483,6 +484,57 @@ look_for_cmd(const char *cmd, char **app)
 
   return TRUE;
 
+}
+
+/* special TeXLive Ghostscript */
+
+static int is_dir (char *buff)
+{
+  HANDLE h;
+  WIN32_FIND_DATA w32fd;
+
+  if (((h = FindFirstFile (buff, &w32fd))
+       != INVALID_HANDLE_VALUE) &&
+      (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+    FindClose (h);
+    return (1);
+  } else {
+    FindClose (h);
+    return (0);
+  }
+}
+
+/*
+   TeXlive uses its own gs in
+   $SELFAUTOPARENT/tlpkg/tlgs
+*/
+void texlive_gs_init(void)
+{
+  char *nptr, *path;
+  char tlgsbindir[512];
+  char tlgslibdir[512];
+  nptr = kpse_var_value("SELFAUTOPARENT");
+  if (nptr) {
+    strcpy(tlgsbindir, nptr);
+    strcat(tlgsbindir,"/tlpkg/tlgs");
+    if(is_dir(tlgsbindir)) {
+      strcpy(tlgslibdir, tlgsbindir);
+      strcat(tlgslibdir, "/lib;");
+      strcat(tlgslibdir, tlgsbindir);
+      strcat(tlgslibdir, "/fonts");
+      strcat(tlgsbindir, "/bin;");
+      free(nptr);
+      for(nptr = tlgsbindir; *nptr; nptr++) {
+        if(*nptr == '/') *nptr = '\\';
+      }
+      nptr = getenv("PATH");
+      path = (char *)malloc(strlen(nptr) + strlen(tlgsbindir) + 6);
+      strcpy(path, tlgsbindir);
+      strcat(path, nptr);
+      xputenv("PATH", path);
+      xputenv("GS_LIB", tlgslibdir);
+    }
+  }
 }
 
 #endif /* __MINGW32__ */

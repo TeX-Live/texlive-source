@@ -79,6 +79,10 @@ int main(int argc, char ** argv)
   kpse_set_program_enabled (kpse_pk_format, makeTexPK, kpse_src_compile);
 #endif
 
+#ifdef WIN32
+  texlive_gs_init ();
+#endif
+
   initcolor();
   parsestdin = DecodeArgs(argc, argv);
 

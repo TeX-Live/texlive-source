@@ -1,4 +1,9 @@
-2011--02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2011-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-WIN32 (new): Call texlive_gs_init() for MINGW32,
+	as for native WIN32, from Akira.
+
+2011-02-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-sys_wait (new): #include <sys/wait.h>, not <wait.h>.
 	Reported by Nikola Lecic <nikola.lecic@anthesphoria.net>.

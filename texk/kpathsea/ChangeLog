@@ -5,6 +5,7 @@
 2011-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.[ch] (dostounix_filename): Remove unused function.
+	(texlive_gs_init): New function copied from win32lib.[ch].
 
 2011-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

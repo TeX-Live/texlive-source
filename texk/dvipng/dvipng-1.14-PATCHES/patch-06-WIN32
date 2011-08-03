@@ -1,0 +1,14 @@
+diff -ur dvipng-1.14.orig/dvipng.c dvipng-1.14/dvipng.c
+--- dvipng-1.14.orig/dvipng.c	2008-02-08 14:45:25.000000000 +0100
++++ dvipng-1.14/dvipng.c	2011-08-03 13:34:43.000000000 +0200
+@@ -79,6 +79,10 @@
+   kpse_set_program_enabled (kpse_pk_format, makeTexPK, kpse_src_compile);
+ #endif
+ 
++#ifdef WIN32
++  texlive_gs_init ();
++#endif
++
+   initcolor();
+   parsestdin = DecodeArgs(argc, argv);
+ 
