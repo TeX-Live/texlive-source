@@ -1,3 +1,15 @@
+2011-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	More diffs between TeX Live and W32TeX.
+	* xbasename.c: Test for 2-Byte Kanji (CP 932, SJIS) codes and
+	for Unc names.
+	* xdirname.c: Test for 2-Byte Kanji (CP 932, SJIS) codes and
+	slashify the result.
+
+	* xdirtest.c (new): Standalone program to test xdirname() and
+	xbasename(), based on code moved to here ...
+	* xdirname.c [TEST]: ... from here.
+
 2011-08-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* db.c (db_build): No need to slashify lines from db_file.

@@ -219,6 +219,10 @@ kpsereadlink_SOURCES = readlink.c
 
 kpsewhich_LDADD = libkpathsea.la
 
+EXTRA_PROGRAMS = xdirtest
+
+xdirtest_LDADD = libkpathsea.la
+
 ## The scripts and their data
 web2cdir = ${prefix}/texmf/web2c
 

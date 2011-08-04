@@ -43,6 +43,7 @@ host_triplet = @host@
 @WIN32_TRUE@am__append_3 = knj.c
 bin_PROGRAMS = kpseaccess$(EXEEXT) kpsereadlink$(EXEEXT) \
 	kpsestat$(EXEEXT) kpsewhich$(EXEEXT)
+EXTRA_PROGRAMS = xdirtest$(EXEEXT)
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
 	$(dist_noinst_SCRIPTS) $(dist_web2c_DATA) \
@@ -167,6 +168,9 @@ kpsestat_LDADD = $(LDADD)
 kpsewhich_SOURCES = kpsewhich.c
 kpsewhich_OBJECTS = kpsewhich.$(OBJEXT)
 kpsewhich_DEPENDENCIES = libkpathsea.la
+xdirtest_SOURCES = xdirtest.c
+xdirtest_OBJECTS = xdirtest.$(OBJEXT)
+xdirtest_DEPENDENCIES = libkpathsea.la
 SCRIPTS = $(dist_noinst_SCRIPTS) $(dist_web2c_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -182,10 +186,10 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(libkpathsea_la_SOURCES) $(kpseaccess_SOURCES) \
-	$(kpsereadlink_SOURCES) kpsestat.c kpsewhich.c
+	$(kpsereadlink_SOURCES) kpsestat.c kpsewhich.c xdirtest.c
 DIST_SOURCES = $(am__libkpathsea_la_SOURCES_DIST) \
 	$(kpseaccess_SOURCES) $(kpsereadlink_SOURCES) kpsestat.c \
-	kpsewhich.c
+	kpsewhich.c xdirtest.c
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -445,6 +449,7 @@ DISTCLEANFILES = paths.h stamp-paths kpathsea.h
 kpseaccess_SOURCES = access.c
 kpsereadlink_SOURCES = readlink.c
 kpsewhich_LDADD = libkpathsea.la
+xdirtest_LDADD = libkpathsea.la
 web2cdir = ${prefix}/texmf/web2c
 dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
 dist_web2c_DATA = mktex.opt mktexdir.opt mktexnam.opt
@@ -601,6 +606,9 @@ kpsestat$(EXEEXT): $(kpsestat_OBJECTS) $(kpsestat_DEPENDENCIES)
 kpsewhich$(EXEEXT): $(kpsewhich_OBJECTS) $(kpsewhich_DEPENDENCIES) 
 	@rm -f kpsewhich$(EXEEXT)
 	$(LINK) $(kpsewhich_OBJECTS) $(kpsewhich_LDADD) $(LIBS)
+xdirtest$(EXEEXT): $(xdirtest_OBJECTS) $(xdirtest_DEPENDENCIES) 
+	@rm -f xdirtest$(EXEEXT)
+	$(LINK) $(xdirtest_OBJECTS) $(xdirtest_LDADD) $(LIBS)
 install-dist_web2cSCRIPTS: $(dist_web2c_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(web2cdir)" || $(MKDIR_P) "$(DESTDIR)$(web2cdir)"
@@ -709,6 +717,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-xstat.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-xstrdup.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/readlink.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdirtest.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

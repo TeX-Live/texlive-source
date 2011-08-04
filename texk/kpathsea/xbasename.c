@@ -31,8 +31,31 @@ xbasename (const_string name)
     const_string base = name;
     const_string p;
 
-    for (p = name; *p; p++) {
-        if (IS_DIR_SEP(*p) || IS_DEVICE_SEP(*p))
+    if (NAME_BEGINS_WITH_DEVICE(name))
+        base += 2;
+
+    else if (IS_UNC_NAME(name)) {
+        unsigned limit;
+
+        for (limit = 2; name[limit] && !IS_DIR_SEP (name[limit]); limit++)
+#if defined(WIN32)
+            if (IS_KANJI(name+limit)) limit++
+#endif
+            ;
+        if (name[limit++] && name[limit] && !IS_DIR_SEP (name[limit])) {
+            for (; name[limit] && !IS_DIR_SEP (name[limit]); limit++)
+#if defined(WIN32)
+                if (IS_KANJI(name+limit)) limit++
+#endif
+                ;
+        } else
+            /* malformed UNC name, backup */
+            limit = 0;
+        base += limit;
+    }
+
+    for (p = base; *p; p++) {
+        if (IS_DIR_SEP(*p))
             base = p + 1;
 #if defined(WIN32)
         else if (IS_KANJI(p))

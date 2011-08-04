@@ -32,6 +32,7 @@ xdirname (const_string name)
     unsigned limit = 0, loc;
 #if defined(WIN32)
     string p;
+    unsigned i, j;
 #endif
 
     /* Ignore a NULL name. */
@@ -40,40 +41,63 @@ xdirname (const_string name)
 
     if (NAME_BEGINS_WITH_DEVICE(name)) {
         limit = 2;
-#if defined(WIN32) || defined(__CYGWIN__)
     } else if (IS_UNC_NAME(name)) {
-        for (limit = 2; name[limit] && !IS_DIR_SEP(name[limit]); limit++)
+        for (limit = 2; name[limit] && !IS_DIR_SEP (name[limit]); limit++)
+#if defined(WIN32)
+            if (IS_KANJI(name+limit)) limit++
+#endif
             ;
-        if (name[limit]) {
-            for (limit++ ; name[limit] && !IS_DIR_SEP(name[limit]); limit++)
+        if (name[limit++] && name[limit] && !IS_DIR_SEP (name[limit])) {
+            for (; name[limit] && !IS_DIR_SEP (name[limit]); limit++)
+#if defined(WIN32)
+                if (IS_KANJI(name+limit)) limit++
+#endif
                 ;
             limit--;
-        } else {
+        } else
             /* malformed UNC name, backup */
-            limit = 2;
-        }
-#endif
+            limit = 0;
     }
 
+#if defined(WIN32)
+    j = loc = limit;
+    if (j > 2) j++;
+    for (i = j; name[i]; i++) {
+        if (IS_DIR_SEP (name[i])) {
+            j = i;
+            for (i++; IS_DIR_SEP (name[i]); i++)
+                ;
+            loc = i + 1;
+        } else if (IS_KANJI(name+i)) i++;
+    }
+#else
     for (loc = strlen (name); loc > limit && !IS_DIR_SEP (name[loc-1]); loc--)
         ;
+#endif
 
-    if (loc == limit && limit > 0) {
-        if (limit == 2) {
-            ret = (string)xmalloc(limit + 2);
+    if (loc == limit) {
+        if (limit == 0)
+            ret = xstrdup (".");
+        else if (limit == 2) {
+            ret = (string)xmalloc(4);
             ret[0] = name[0];
             ret[1] = name[1];
             ret[2] = '.';
             ret[3] = '\0';
         } else {
-            ret = (string)xmalloc(limit + 2);
-            strcpy(ret, name);
+            /* UNC name is "//server/share".  */
+            ret = xstrdup (name);
         }
     } else {
         /* If have ///a, must return /, so don't strip off everything.  */
+#if defined(WIN32)
+        loc = j;
+        if (loc == limit && IS_DIR_SEP (name[loc])) loc++;
+#else
         while (loc > limit+1 && IS_DIR_SEP (name[loc-1])) {
             loc--;
         }
+#endif
         ret = (string)xmalloc(loc+1);
         strncpy(ret, name, loc);
         ret[loc] = '\0';
@@ -90,41 +114,3 @@ xdirname (const_string name)
 
     return ret;
 }
-
-#ifdef TEST
-
-char *tab[] = {
-    "\\\\neuromancer\\fptex\\bin\\win32\\kpsewhich.exe",
-    "\\\\neuromancer\\fptex\\win32\\kpsewhich.exe",
-    "\\\\neuromancer\\fptex\\kpsewhich.exe",
-    "\\\\neuromancer\\kpsewhich.exe",
-    "p:\\bin\\win32\\kpsewhich.exe",
-    "p:\\win32\\kpsewhich.exe",
-    "p:\\kpsewhich.exe",
-    "p:bin\\win32\\kpsewhich.exe",
-    "p:win32\\kpsewhich.exe",
-    "p:kpsewhich.exe",
-    "p:///kpsewhich.exe",
-    "/usr/bin/win32/kpsewhich.exe",
-    "/usr/bin/kpsewhich.exe",
-    "/usr/kpsewhich.exe",
-    "///usr/kpsewhich.exe",
-    "///kpsewhich.exe",
-    NULL
-};
-
-int main()
-{
-    char **p;
-    for (p = tab; *p; p++)
-        printf("name %s, dirname %s\n", *p, xdirname(*p));
-    return 0;
-}
-#endif /* TEST */
-
-
-/*
-Local variables:
-standalone-compile-command: "gcc -g -I. -I.. -DTEST xdirname.c kpathsea.a"
-End:
-*/
