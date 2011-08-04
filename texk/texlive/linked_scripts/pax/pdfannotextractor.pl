@@ -24,8 +24,8 @@ $^W=1;
 my $name        = 'PDFAnnotExtractor';
 my $program     = "\L$name\E";
 my $file        = "$program.pl";
-my $version     = "0.1j";
-my $date        = "2011/04/22";
+my $version     = "0.1k";
+my $date        = "2011/07/06";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2008, 2011 by $author.";
 
