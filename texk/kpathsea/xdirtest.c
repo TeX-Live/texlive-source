@@ -27,6 +27,8 @@ static const char *tab[] = {
     "\\\\neuromancer\\fptex\\kpsewhich.exe",
     "\\\\neuromancer\\kpsewhich.exe",
     "//server.host/share/file",
+    "//server.host/share/file/",
+    "//server.host/share/",
     "//server.host//share",	/* malformed */
     "//server.host",		/* malformed */
     "//.host/share",		/* not UNC name */
@@ -35,20 +37,27 @@ static const char *tab[] = {
 /* names with device */
 #if defined (WIN32)
     "p:\\bin\\win32\\kpsewhich.exe",
+    "p:\\bin\\win32\\\\",
     "p:\\win32\\kpsewhich.exe",
+    "p:\\win32\\",
     "p:\\kpsewhich.exe",
+    "p:\\",
     "p:bin\\win32\\kpsewhich.exe",
     "p:win32\\kpsewhich.exe",
 #endif
     "p:win32//kpsewhich.exe",
+    "p:win32/",
     "p:kpsewhich.exe",
     "p:///kpsewhich.exe",
 /* 'normal' names */
     "/usr/bin/win32/kpsewhich.exe",
+    "/usr/bin/win32//",
     "/usr/bin/kpsewhich.exe",
-    "/usr/kpsewhich.exe",
+    "/usr/bin/",
     "///usr/kpsewhich.exe",
+    "/usr/kpsewhich.exe",
     "///kpsewhich.exe",
+    "/kpsewhich.exe",
     "",
     NULL
 };
