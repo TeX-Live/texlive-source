@@ -1,6 +1,6 @@
 /* hash.h: declarations for a hash table.
 
-   Copyright 1994, 1995, 2008, 2010 Karl Berry.
+   Copyright 1994, 1995, 2008, 2010, 2011 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or

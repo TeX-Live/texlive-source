@@ -1,6 +1,6 @@
 /* truncate.h: truncate too-long components in a filename.
 
-   Copyright 1993, 2008, 2010 Karl Berry.
+   Copyright 1993, 2008, 2010, 2011 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

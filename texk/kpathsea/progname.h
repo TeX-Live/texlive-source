@@ -1,6 +1,6 @@
 /* progname.h: Declarations for argv[0] equivalents.
 
-   Copyright 1994, 1996, 2008, 2010 Karl Berry.
+   Copyright 1994, 1996, 2008, 2010, 2011 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or

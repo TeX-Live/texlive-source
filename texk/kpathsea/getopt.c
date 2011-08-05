@@ -1,6 +1,6 @@
 /* Getopt for GNU.
 
-   Copyright 2008, 2009, 2010 Karl Berry.
+   Copyright 2008, 2009, 2010, 2011 Karl Berry.
    Copyright (C) 1987, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 2000, 2010
         Free Software Foundation, Inc.
 

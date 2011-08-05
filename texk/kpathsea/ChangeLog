@@ -1,3 +1,12 @@
+2011-08-05  Karl Berry  <karl@tug.org>
+
+	* dir.c,
+	* getopt.c,
+	* hash.h,
+	* pathsearch.h,
+	* progname.h,
+	* truncate.h: copyright 2011.
+
 2011-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cnf.c, fontmap.c: Do not #include <kpathsea/recorder.h>.

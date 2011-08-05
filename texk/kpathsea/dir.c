@@ -1,6 +1,6 @@
 /* dir.c: directory operations.
 
-   Copyright 1992, 1993, 1994, 1995, 2008, 2009, 2010 Karl Berry.
+   Copyright 1992, 1993, 1994, 1995, 2008, 2009, 2010, 2011 Karl Berry.
    Copyright 2000, 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
