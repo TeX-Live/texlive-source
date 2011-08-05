@@ -4,6 +4,10 @@
 	* Makefile.am (kpseinclude_HEADERS): Remove recorder.h.
 	* recorder.h (removed): Empty file.
 
+	* Makefile.am: Do not install kpathsea internal headers.
+
+	* xdirtest.c: Additional test data.
+
 2011-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More diffs between TeX Live and W32TeX.

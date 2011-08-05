@@ -110,7 +110,17 @@ nodist_kpseinclude_HEADERS = \
 	kpathsea.h \
 	paths.h
 
-kpseinclude_HEADERS = \
+kpseinclude_HEADERS = $(special_headers) $(normal_headers)
+
+# Headers treated specially when building kpathsea.h
+#
+special_headers = \
+	config.h \
+	knj.h \
+	mingw32.h \
+	win32lib.h
+
+normal_headers = \
 	absolute.h \
 	c-ctype.h \
 	c-dir.h \
@@ -128,20 +138,13 @@ kpseinclude_HEADERS = \
 	c-unistd.h \
 	cnf.h \
 	concatn.h \
-	config.h \
-	db.h \
 	debug.h \
-	default.h \
 	expand.h \
-	fn.h \
-	fontmap.h \
 	getopt.h \
 	hash.h \
-	knj.h \
 	lib.h \
 	line.h \
 	magstep.h \
-	mingw32.h \
 	pathsearch.h \
 	proginit.h \
 	progname.h \
@@ -153,12 +156,17 @@ kpseinclude_HEADERS = \
 	tex-glyph.h \
 	tex-hush.h \
 	tex-make.h \
-	tilde.h \
-	truncate.h \
 	types.h \
 	variable.h \
-	version.h \
-	win32lib.h \
+	version.h
+
+noinst_HEADERS = \
+	db.h \
+	default.h \
+	fn.h \
+	fontmap.h \
+	tilde.h \
+	truncate.h \
 	xopendir.h \
 	xstat.h
 
@@ -192,18 +200,10 @@ stamp-paths: texmf.cnf bsnl.awk cnf-to-paths.awk
 kpathsea.h: Makefile paths.h
 	rm -f $@
 	echo '/* This is a generated file */' >$@
-	echo '/* collecting all kpathsea headers. */' >>$@
-	echo '#include <kpathsea/config.h>' >>$@
-	echo '#include <kpathsea/c-auto.h>' >>$@
-	echo '#include <kpathsea/paths.h>' >>$@
-	(cd $(srcdir) && ls -1 *.h) \
-	| sed -e '/^config\.h/d' \
-	      -e '/^paths\.h/d' \
-	      -e '/^knj\.h/d' \
-	      -e '/^kpathsea\.h/d' \
-	      -e '/^mingw32\.h/d' \
-	      -e '/^win32lib\.h/d' \
-	      -e 's,^,#include <kpathsea/,' -e s',$$,>,' >>$@
+	echo '/* collecting all public kpathsea headers. */' >>$@
+	for f in config.h c-auto.h paths.h $(normal_headers); do \
+	  echo "#include <kpathsea/$$f>" >>$@; \
+	done
 
 EXTRA_DIST += bsnl.awk cnf-to-paths.awk
 
