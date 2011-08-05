@@ -1,6 +1,6 @@
 /* cnf.c: read config files.
 
-   Copyright 1994, 1995, 1996, 1997, 2008, 2009 Karl Berry.
+   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -27,7 +27,6 @@
 #include <kpathsea/paths.h>
 #include <kpathsea/pathsearch.h>
 #include <kpathsea/progname.h>
-#include <kpathsea/recorder.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 

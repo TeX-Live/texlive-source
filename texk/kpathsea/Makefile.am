@@ -146,7 +146,6 @@ kpseinclude_HEADERS = \
 	proginit.h \
 	progname.h \
 	readable.h \
-	recorder.h \
 	str-list.h \
 	str-llist.h \
 	systypes.h \

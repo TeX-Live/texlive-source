@@ -17,7 +17,6 @@
 #include <kpathsea/readable.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/absolute.h>
-#include <kpathsea/recorder.h>
 #ifdef WIN32
 #include <kpathsea/concatn.h>
 #endif

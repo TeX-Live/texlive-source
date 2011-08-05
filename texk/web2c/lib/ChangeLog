@@ -1,3 +1,7 @@
+2011-08-04  Magnus Granberg  <zorry@gentoo.org>
+
+	* texmfmp.c: Do not #include empty file <kpathsea/recorder.h>.
+
 2011-08-03  Magnus Granberg  <zorry@gentoo.org>
 
 	* texmfmp.c: Use C code for i?86 when -fPIC.

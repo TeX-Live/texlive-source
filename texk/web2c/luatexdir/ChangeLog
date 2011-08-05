@@ -1,3 +1,7 @@
+2011-08-04  Magnus Granberg  <zorry@gentoo.org>
+
+	* luatex.c: Do not #include empty file <kpathsea/recorder.h>.
+
 2011-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reduce memory leaks.

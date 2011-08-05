@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #endif
 #include <kpathsea/kpathsea.h>
 #include "stackenv.h"
-#include "variables.h"
+
 const_string mktex_version_string = "2.0";
 
 extern char *output;

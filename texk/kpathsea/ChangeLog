@@ -1,3 +1,9 @@
+2011-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cnf.c, fontmap.c: Do not #include <kpathsea/recorder.h>.
+	* Makefile.am (kpseinclude_HEADERS): Remove recorder.h.
+	* recorder.h (removed): Empty file.
+
 2011-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More diffs between TeX Live and W32TeX.

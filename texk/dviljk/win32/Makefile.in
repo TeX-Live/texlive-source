@@ -204,8 +204,7 @@ dvihp_SOURCES = \
 	mktex.h \
 	mktexlib.h \
 	stackenv.c \
-	stackenv.h \
-	variables.h
+	stackenv.h
 
 LDADD = $(KPATHSEA_LIBS)
 dvihp_DEPENDENCIES = $(KPATHSEA_DEPEND)

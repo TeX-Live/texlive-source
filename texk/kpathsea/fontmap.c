@@ -1,7 +1,7 @@
 /* fontmap.c: read files for additional font names.
 
    Copyright 2001, 2002, 2005 Olaf Weber.
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2011 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,6 @@
 #include <kpathsea/line.h>
 #include <kpathsea/pathsearch.h>
 #include <kpathsea/str-list.h>
-#include <kpathsea/recorder.h>
 #include <kpathsea/tex-file.h>
 
 /* We have one and only one fontmap, so may as well make it static
