@@ -1,3 +1,8 @@
+2011-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* progname.c (fix_selfdir): Simplified to not modify arg.
+	(remove_dots): Somewhat clarify the code (suggested by Karl).
+
 2011-08-08  Karl Berry  <karl@tug.org>
 
 	* cnf-to-paths.awk: preserve values starting with /,

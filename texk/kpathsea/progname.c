@@ -291,13 +291,9 @@ remove_dots (kpathsea kpse, string dir)
         unsigned last;
         string p = NAME_BEGINS_WITH_DEVICE (ret) ? ret + 2 : ret;
         for (last = strlen (p); last > 0; last--) {
-#if defined(WIN32)
-          if (p[last - 1] == '/') {
-#else
-          if (IS_DIR_SEP (p[last - 1])) {
-#endif
+          if (IS_DIR_SEP_CH (p[last - 1])) {
             /* If we have `/../', that's the same as `/'.  */
-            p[(last - 1 ? last - 1 : 1)] = 0;
+            p[(last > 1 ? last - 1 : 1)] = 0;
             break;
           }
         }
@@ -479,8 +475,8 @@ static inline string
 fix_selfdir (string dir)
 {
 #if defined(WIN32)
-  if (IS_DIR_SEP (*dir) && dir[1] == 0)
-    *dir = 0;
+  if (IS_DIR_SEP_CH (*dir) && dir[1] == 0)
+    dir++;
 #endif
   return dir;
 }
@@ -667,10 +663,10 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
 #endif
   /* SELFAUTODIR is actually the parent of the invocation directory,
      and SELFAUTOPARENT the grandparent.  This is how teTeX did it.  */
-  sdir_parent = xdirname (sdir);
-  sdir_grandparent = xdirname (sdir_parent);
   kpathsea_xputenv (kpse, "SELFAUTOLOC", fix_selfdir (sdir));
+  sdir_parent = xdirname (sdir);
   kpathsea_xputenv (kpse, "SELFAUTODIR", fix_selfdir (sdir_parent));
+  sdir_grandparent = xdirname (sdir_parent);
   kpathsea_xputenv (kpse, "SELFAUTOPARENT", fix_selfdir (sdir_grandparent));
 
 #if defined(WIN32) || defined(__CYGWIN__)
