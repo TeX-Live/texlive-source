@@ -2,6 +2,11 @@
 
 	* progname.c (fix_selfdir): Simplified to not modify arg.
 	(remove_dots): Somewhat clarify the code (suggested by Karl).
+	* progname.h [WIN32]: Don't declare {kpathsea,kpse)_selfdir().
+
+	* progname.c [TEST]: Update and extend the test program.
+	* Makefile.am (progname-test): Add rules to build the standalone
+	test program.
 
 2011-08-08  Karl Berry  <karl@tug.org>
 

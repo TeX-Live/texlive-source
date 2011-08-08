@@ -25,7 +25,9 @@
 /* Return directory ARGV0 comes from.  Check PATH if ARGV0 is not
    absolute.  */
 
+#if !defined (WIN32)
 extern KPSEDLL string kpathsea_selfdir (kpathsea kpse, const_string argv0);
+#endif
 
 /* Set the first two variables above (if they're not predefined) to a copy
    of ARGV0 and everything in ARGV0 after the last directory separator,
@@ -44,7 +46,9 @@ extern KPSEDLL void kpathsea_set_program_name (kpathsea kpse,
 
 
 #if defined (KPSE_COMPAT_API)
+#if !defined (WIN32)
 extern KPSEDLL string kpse_selfdir (const_string argv0);
+#endif
 
 extern KPSEDLL void kpse_set_program_name (const_string argv0,
                                       const_string progname);

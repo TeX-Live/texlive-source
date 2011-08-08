@@ -722,26 +722,47 @@ kpse_set_program_name (const_string argv0, const_string progname)
 
 
 #ifdef TEST
+static const char *tab[] = {
+/* 'normal' names */
+    "/w/kpathsea",
+    "/w//kpathsea",
+    "/w/./kpathsea",
+    ".",
+    "./",
+    "./.",
+    "../kpathsea",
+    "/kpathsea/../foo",
+    "/../w/kpathsea",
+    "/../w/kpathsea/.",
+    "/te/share/texmf/../../../../bin/gnu",
+    NULL
+};
+
 int
 main (int argc, char **argv)
 {
-  kpathsea kpse = xcalloc(1, sizeof(kpathsea_instance));
-  kpathsea_set_program_name(kpse, argv[0], NULL);
-  puts (remove_dots (kpse,"/w/kpathsea"));
-  puts (remove_dots (kpse,"/w//kpathsea"));
-  puts (remove_dots (kpse,"/w/./kpathsea"));
-  puts (remove_dots (kpse,"."));
-  puts (remove_dots (kpse,"./"));
-  puts (remove_dots (kpse,"./."));
-  puts (remove_dots (kpse,"../kpathsea"));
-  puts (remove_dots (kpse,"/kpathsea/../foo"));
-  puts (remove_dots (kpse,"/../w/kpathsea"));
-  puts (remove_dots (kpse,"/../w/kpathsea/."));
-  puts (remove_dots (kpse,"/te/share/texmf/../../../../bin/gnu"));
+    const char **p;
+    kpathsea kpse = xcalloc(1, sizeof(kpathsea_instance));
+
+    kpathsea_set_program_name(kpse, argv[0], NULL);
+
+#if defined(WIN32)
+    printf("\n%s: Nothing to do for WIN32\n",
+           kpse->invocation_short_name);
+#else
+    printf("\n%s: name -> remove_dots(name)\n\n",
+           kpse->invocation_short_name);
+
+    for (p = tab; *p; p++) {
+        char *q = xstrdup(*p);
+        char *s = remove_dots(kpse, q);
+
+        printf("%s -> %s\n", q, s);
+        free (q);
+        free (s);
+    }
+#endif
+
+    return 0;
 }
-/*
-Local variables:
-standalone-compile-command: "gcc -g -I. -I.. -DTEST progname.c kpathsea.a"
-End:
-*/
 #endif /* TEST */

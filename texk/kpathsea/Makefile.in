@@ -43,7 +43,7 @@ host_triplet = @host@
 @WIN32_TRUE@am__append_3 = knj.c
 bin_PROGRAMS = kpseaccess$(EXEEXT) kpsereadlink$(EXEEXT) \
 	kpsestat$(EXEEXT) kpsewhich$(EXEEXT)
-EXTRA_PROGRAMS = xdirtest$(EXEEXT)
+EXTRA_PROGRAMS = progname-test$(EXEEXT) xdirtest$(EXEEXT)
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
 	$(dist_noinst_SCRIPTS) $(dist_web2c_DATA) \
@@ -168,6 +168,9 @@ kpsestat_LDADD = $(LDADD)
 kpsewhich_SOURCES = kpsewhich.c
 kpsewhich_OBJECTS = kpsewhich.$(OBJEXT)
 kpsewhich_DEPENDENCIES = libkpathsea.la
+am_progname_test_OBJECTS = progname_test-progname.$(OBJEXT)
+progname_test_OBJECTS = $(am_progname_test_OBJECTS)
+progname_test_DEPENDENCIES = libkpathsea.la
 xdirtest_SOURCES = xdirtest.c
 xdirtest_OBJECTS = xdirtest.$(OBJEXT)
 xdirtest_DEPENDENCIES = libkpathsea.la
@@ -186,10 +189,11 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(libkpathsea_la_SOURCES) $(kpseaccess_SOURCES) \
-	$(kpsereadlink_SOURCES) kpsestat.c kpsewhich.c xdirtest.c
+	$(kpsereadlink_SOURCES) kpsestat.c kpsewhich.c \
+	$(progname_test_SOURCES) xdirtest.c
 DIST_SOURCES = $(am__libkpathsea_la_SOURCES_DIST) \
 	$(kpseaccess_SOURCES) $(kpsereadlink_SOURCES) kpsestat.c \
-	kpsewhich.c xdirtest.c
+	kpsewhich.c $(progname_test_SOURCES) xdirtest.c
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -457,6 +461,9 @@ DISTCLEANFILES = paths.h stamp-paths kpathsea.h
 kpseaccess_SOURCES = access.c
 kpsereadlink_SOURCES = readlink.c
 kpsewhich_LDADD = libkpathsea.la
+progname_test_CPPFLAGS = -DMAKE_KPSE_DLL -DTEST
+progname_test_SOURCES = progname.c
+progname_test_LDADD = libkpathsea.la
 xdirtest_LDADD = libkpathsea.la
 web2cdir = ${prefix}/texmf/web2c
 dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
@@ -614,6 +621,9 @@ kpsestat$(EXEEXT): $(kpsestat_OBJECTS) $(kpsestat_DEPENDENCIES)
 kpsewhich$(EXEEXT): $(kpsewhich_OBJECTS) $(kpsewhich_DEPENDENCIES) 
 	@rm -f kpsewhich$(EXEEXT)
 	$(LINK) $(kpsewhich_OBJECTS) $(kpsewhich_LDADD) $(LIBS)
+progname-test$(EXEEXT): $(progname_test_OBJECTS) $(progname_test_DEPENDENCIES) 
+	@rm -f progname-test$(EXEEXT)
+	$(LINK) $(progname_test_OBJECTS) $(progname_test_LDADD) $(LIBS)
 xdirtest$(EXEEXT): $(xdirtest_OBJECTS) $(xdirtest_DEPENDENCIES) 
 	@rm -f xdirtest$(EXEEXT)
 	$(LINK) $(xdirtest_OBJECTS) $(xdirtest_LDADD) $(LIBS)
@@ -724,6 +734,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-xrealloc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-xstat.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-xstrdup.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/progname_test-progname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/readlink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdirtest.Po@am__quote@
 
@@ -1160,6 +1171,20 @@ libkpathsea_la-knj.lo: knj.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='knj.c' object='libkpathsea_la-knj.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-knj.lo `test -f 'knj.c' || echo '$(srcdir)/'`knj.c
+
+progname_test-progname.o: progname.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT progname_test-progname.o -MD -MP -MF $(DEPDIR)/progname_test-progname.Tpo -c -o progname_test-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/progname_test-progname.Tpo $(DEPDIR)/progname_test-progname.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='progname_test-progname.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o progname_test-progname.o `test -f 'progname.c' || echo '$(srcdir)/'`progname.c
+
+progname_test-progname.obj: progname.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT progname_test-progname.obj -MD -MP -MF $(DEPDIR)/progname_test-progname.Tpo -c -o progname_test-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/progname_test-progname.Tpo $(DEPDIR)/progname_test-progname.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progname.c' object='progname_test-progname.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(progname_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o progname_test-progname.obj `if test -f 'progname.c'; then $(CYGPATH_W) 'progname.c'; else $(CYGPATH_W) '$(srcdir)/progname.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

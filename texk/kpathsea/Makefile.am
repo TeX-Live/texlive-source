@@ -218,7 +218,11 @@ kpsereadlink_SOURCES = readlink.c
 
 kpsewhich_LDADD = libkpathsea.la
 
-EXTRA_PROGRAMS = xdirtest
+EXTRA_PROGRAMS = progname-test xdirtest
+
+progname_test_CPPFLAGS = -DMAKE_KPSE_DLL -DTEST
+progname_test_SOURCES = progname.c
+progname_test_LDADD = libkpathsea.la
 
 xdirtest_LDADD = libkpathsea.la
 

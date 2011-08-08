@@ -1,4 +1,4 @@
-/* xdirtest.c: standalone test xdirname() and xbasename().
+/* xdirtest.c: standalone program to test xdirname() and xbasename().
 
    Copyright 1999 Karl Berry.
    Copyright 2005 Olaf Weber.
