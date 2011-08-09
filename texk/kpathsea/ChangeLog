@@ -1,4 +1,9 @@
-2011-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2011-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (SUBDIRS): Add win32 to build C programs from
+	Akira's W32TeX as WIN32 replacements for the shell scripts.
+
+2011-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* progname.c (fix_selfdir): Simplified to not modify arg.
 	(remove_dots): Somewhat clarify the code (suggested by Karl).
@@ -223,7 +228,6 @@
 2011-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* progname.c (remove_dots): Correctly handle dir="/foo/../bar".
-	FIXME: What about dir="c:foo/../bar" and dir="c:../bar"?
 
 2011-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

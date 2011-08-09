@@ -93,6 +93,7 @@ else !MINGW32
 libkpathsea_la_SOURCES += win32lib.c
 endif !MINGW32
 libkpathsea_la_SOURCES += knj.c
+SUBDIRS += win32
 endif WIN32
 
 $(libkpathsea_la_OBJECTS): paths.h kpathsea.h

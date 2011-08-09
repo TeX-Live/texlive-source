@@ -1,0 +1,20 @@
+2011-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* getdestdir.c, mktexmf.c, mktexpk.c, mktextfm.c, mktexupd.c,
+	mktexupdmain.c: New files from Akira's W32TeX.
+
+	* getdestdir.c (getdestdir): Replace kstrrchr() by strrchr().
+
+	* mktexmf.c (main), mktexpk.c (main), mktextfm.c (main),
+	mktexupdmain.c (main): Drop use of getlongname() for 8+3 names.
+
+	* mktexpk.c (main): Replace win32_popen() and win32_pclose() by
+	popen() and pclose().
+
+	* getdestdir.h, mktexupd.h: New headers with function prototypes.
+
+	* *.c: Drop extern declarations and #include these headers.
+	Declare functions as static. Drop unused variables.
+	Add parentheses around assignment used as truth value.
+	Add 'return 0' at end of non-void function.  Constify strings.
+	* getdestdir.c (getdestdir): Initialize `Num' to avoid warning.

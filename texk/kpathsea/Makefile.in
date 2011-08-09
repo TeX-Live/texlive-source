@@ -41,6 +41,7 @@ host_triplet = @host@
 @MINGW32_TRUE@@WIN32_TRUE@am__append_1 = mingw32.c
 @MINGW32_FALSE@@WIN32_TRUE@am__append_2 = win32lib.c
 @WIN32_TRUE@am__append_3 = knj.c
+@WIN32_TRUE@am__append_4 = win32
 bin_PROGRAMS = kpseaccess$(EXEEXT) kpsereadlink$(EXEEXT) \
 	kpsestat$(EXEEXT) kpsewhich$(EXEEXT)
 EXTRA_PROGRAMS = progname-test$(EXEEXT) xdirtest$(EXEEXT)
@@ -213,7 +214,7 @@ ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
 red=; grn=; lgn=; blu=; std=
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = . doc man win32
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -370,7 +371,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-SUBDIRS = . doc man
+SUBDIRS = . doc man $(am__append_4)
 EXTRA_DIST = BUGS PROJECTS putenv.c strcasecmp.c strtol.c strstr.c \
 	bsnl.awk cnf-to-paths.awk $(TESTS) mktex.cnf win32lib.h.mugica
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..

@@ -12936,7 +12936,7 @@ ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
 
-ac_config_files="$ac_config_files Makefile doc/Makefile man/Makefile"
+ac_config_files="$ac_config_files Makefile doc/Makefile man/Makefile win32/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -13965,6 +13965,7 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
+    "win32/Makefile") CONFIG_FILES="$CONFIG_FILES win32/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
