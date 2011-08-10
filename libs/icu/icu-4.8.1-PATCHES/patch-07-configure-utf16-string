@@ -1,0 +1,42 @@
+  new --enable option so we can disable the check for UTF16 string literals.
+  See comments in our libs/icu/configure.ac.
+
+diff -ur icu-4.8.1.orig/source/configure.in icu-4.8.1/source/configure.in
+--- icu-4.8.1.orig/source/configure.in	2011-07-19 23:19:38.000000000 +0200
++++ icu-4.8.1/source/configure.in	2011-08-09 13:53:06.902672504 +0200
+@@ -1019,7 +1019,27 @@
+ fi
+ AC_SUBST(U_SIZEOF_WCHAR_T)
+ 
++AC_MSG_CHECKING([whether to check for UTF-16 string literal support])
++enabled=yes
++U_ENABLE_UTF16_STRING_CHECK=1
++AC_ARG_ENABLE(utf16-string-check,
++    [  --enable-utf16-string-check enable testing for UTF-16 string literal support [default=yes]],
++    [ case "${enableval}" in
++	     yes|"") enabled=yes; U_ENABLE_UTF16_STRING_CHECK=1 ;;
++	     no) enabled=no; U_ENABLE_UTF16_STRING_CHECK=0 ;;
++	     *) ;;
++    esac],
++)
++AC_MSG_RESULT($enabled)
++AC_SUBST(U_ENABLE_UTF16_STRING_CHECK)
++
+ AC_MSG_CHECKING([for UTF-16 string literal support])
++if test $U_ENABLE_UTF16_STRING_CHECK = 0; then
++U_CHECK_UTF16_STRING=0
++U_CHECK_GNUC_UTF16_STRING=0
++CHECK_UTF16_STRING_RESULT="check disabled"
++
++else # do the UTF16 literal checks
+ U_CHECK_UTF16_STRING=1
+ CHECK_UTF16_STRING_RESULT="unknown"
+ 
+@@ -1104,6 +1124,7 @@
+         fi
+     fi
+ fi
++fi
+ AC_SUBST(U_CHECK_GNUC_UTF16_STRING)
+ 
+ AC_MSG_RESULT($CHECK_UTF16_STRING_RESULT)

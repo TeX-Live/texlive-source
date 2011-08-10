@@ -1,3 +1,9 @@
+2011-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapted to the ICU 4.8.1 distribution.
+	* version.ac: New file defining the ICU version.
+	* configure.ac: Adapt.
+
 2010-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapted to the ICU 4.6 distribution.

@@ -1,0 +1,56 @@
+	Make sure the loop over SplitMatra pieces stays within array bounds.
+
+	Remove some trailing white space.
+
+diff -ur icu-4.8.1.orig/source/layout/IndicReordering.cpp icu-4.8.1/source/layout/IndicReordering.cpp
+--- icu-4.8.1.orig/source/layout/IndicReordering.cpp	2011-07-19 23:19:36.000000000 +0200
++++ icu-4.8.1/source/layout/IndicReordering.cpp	2011-08-09 14:13:53.173783415 +0200
+@@ -235,13 +235,13 @@
+ 
+ 		for ( i = beginSyllable ; i < nextSyllable ; i++ ) {
+ 			if ( classTable->isMatra(fOutChars[i+inv_count])) {
+-				IndicClassTable::CharClass matraClass = classTable->getCharClass(fOutChars[i+inv_count]);	
++				IndicClassTable::CharClass matraClass = classTable->getCharClass(fOutChars[i+inv_count]);
+ 				if ( classTable->isSplitMatra(matraClass)) {
+ 					le_int32 saveIndex = fGlyphStorage.getCharIndex(i+inv_count,success);
+ 					le_uint32 saveAuxData = fGlyphStorage.getAuxData(i+inv_count,success);
+                     const SplitMatra *splitMatra = classTable->getSplitMatra(matraClass);
+                     int j;
+-                    for (j = 0 ; *(splitMatra)[j] != 0 ; j++) {
++                    for (j = 0 ; j < SM_MAX_PIECES && *(splitMatra)[j] != 0 ; j++) {
+                         LEUnicode piece = (*splitMatra)[j];
+ 						if ( j == 0 ) {
+ 							fOutChars[i+inv_count] = piece;
+@@ -252,7 +252,7 @@
+ 						}
+  				    }
+ 				}
+-				
++
+ 				if ((matraClass & CF_POS_MASK) == CF_POS_BEFORE) {
+                     moveCharacter(i+inv_count,beginSyllable+inv_count);
+ 				}
+@@ -332,7 +332,7 @@
+                 const SplitMatra *splitMatra = classTable->getSplitMatra(matraClass);
+                 int i;
+ 
+-                for (i = 0; i < 3 && (*splitMatra)[i] != 0; i += 1) {
++                for (i = 0; i < SM_MAX_PIECES && (*splitMatra)[i] != 0; i += 1) {
+                     LEUnicode piece = (*splitMatra)[i];
+                     IndicClassTable::CharClass pieceClass = classTable->getCharClass(piece);
+ 
+diff -ur icu-4.8.1.orig/source/layout/IndicReordering.h icu-4.8.1/source/layout/IndicReordering.h
+--- icu-4.8.1.orig/source/layout/IndicReordering.h	2011-07-19 23:19:36.000000000 +0200
++++ icu-4.8.1/source/layout/IndicReordering.h	2011-08-09 14:13:53.173783415 +0200
+@@ -71,7 +71,10 @@
+ #define SF_POST_BASE_LIMIT_MASK  0x0000FFFFU
+ #define SF_NO_POST_BASE_LIMIT    0x00007FFFU
+ 
+-typedef LEUnicode SplitMatra[3];
++// Max number of split matra pieces
++#define SM_MAX_PIECES 3
++
++typedef LEUnicode SplitMatra[SM_MAX_PIECES];
+ 
+ class MPreFixups;
+ class LEGlyphStorage;
