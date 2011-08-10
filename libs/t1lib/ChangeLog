@@ -6,7 +6,7 @@
 2011-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: New file defining the t1lib version.
-	* configure.ac: Adapt. Drom useless AC_HEADER_STAT.
+	* configure.ac: Adapt. Drop useless AC_HEADER_STAT.
 
 2010-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
