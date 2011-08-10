@@ -7,9 +7,33 @@ AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 # Build WIN32 replacements for Unix shell scripts.
-bin_PROGRAMS = mktexmf mktexpk mktextfm mktexupd
+bin_PROGRAMS = \
+	fmtutil \
+	mktexfmt \
+	mktexlsr \
+	mktexmf \
+	mktexpk \
+	mktextfm \
+	mktexupd
+
+fmtutil_SOURCES = \
+	dirutil.c \
+	dirutil.h \
+	fmtutil.c \
+	mktexupd.c \
+	mktexupd.h
+
+mktexfmt_SOURCES = \
+	mktexfmt.c
+
+mktexlsr_SOURCES = \
+	dirutil.c \
+	dirutil.h \
+	mktexlsr.c
 
 mktexmf_SOURCES = \
+	dirutil.c \
+	dirutil.h \
 	getdestdir.c \
 	getdestdir.h \
 	mktexmf.c \
@@ -17,6 +41,8 @@ mktexmf_SOURCES = \
 	mktexupd.h
 
 mktexpk_SOURCES = \
+	dirutil.c \
+	dirutil.h \
 	getdestdir.c \
 	getdestdir.h \
 	mktexpk.c \
@@ -24,6 +50,8 @@ mktexpk_SOURCES = \
 	mktexupd.h
 
 mktextfm_SOURCES = \
+	dirutil.c \
+	dirutil.h \
 	getdestdir.c \
 	getdestdir.h \
 	mktextfm.c \

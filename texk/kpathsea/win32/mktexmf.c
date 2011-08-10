@@ -5,14 +5,8 @@
 */
 
 #include <kpathsea/kpathsea.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <fcntl.h>
-#include <io.h>
-#include <string.h>
-#include <ctype.h>
 
+#include "dirutil.h"
 #include "getdestdir.h"
 #include "mktexupd.h"
 

@@ -1,14 +1,4 @@
 #include <kpathsea/kpathsea.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <direct.h>
-#include <io.h>
-#include <malloc.h>
-#include <process.h>
-#include <direct.h>
 
 #include "mktexupd.h"
 

@@ -7,16 +7,8 @@ from mktextfm:
 */
 
 #include <kpathsea/kpathsea.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <process.h>
-#include <string.h>
-#include <malloc.h>
-#include <direct.h>
-#include <io.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
+#include "dirutil.h"
 #include "getdestdir.h"
 
 #define NUMBUF   32
@@ -29,73 +21,6 @@ static void
 fatal (const char *s)
 {
   fprintf (stderr, "%s\n", s);
-}
-
-/* check a directory */
-int
-is_dir (char *buff)
-{
-  HANDLE h;
-  WIN32_FIND_DATA w32fd;
-
-  if (((h = FindFirstFile (buff, &w32fd))
-       != INVALID_HANDLE_VALUE) &&
-      (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-    FindClose (h);
-    return (1);
-  } else {
-    FindClose (h);
-    return (0);
-  }
-}
-
-/* make a directory */
-int
-make_dir (char *buff)
-{
-  if (_mkdir (buff)) {
-    fprintf(stderr, "mkdir %s error.\n", buff);
-    return (1);
-  }
-  if (_chmod (buff, _S_IREAD | _S_IWRITE)) {
-    fprintf(stderr, "chmod %s failed.\n", buff);
-    return (1);
-  }
-  return (0);
-}
-
-static int
-make_dir_p(char *buff)
-{
-  int  ret = 0;
-  int  i = 0;
-  char *p = buff;
-
-  while (1) {
-    if(*p == '\0') {
-      ret = 0;
-      if(!is_dir(buff)) {
-        if(make_dir(buff)) {
-          ret = 1;
-        }
-      }
-      break;
-    }
-    if(*p == '/' && (i > 0 && *(p-1) != ':')) {
-      *p = '\0';
-      if(!is_dir(buff)) {
-        if(make_dir(buff)) {
-          ret = 1;
-          *p = '/';
-          break;
-        }
-      }
-      *p = '/';
-    }
-    p++;
-    i++;
-  }
-  return ret;
 }
 
 char *
@@ -127,12 +52,10 @@ getdestdir (int ac, char **av)
   strcpy (spec, av[1]);
 
   for (p = av[2]; *p; p++) {    /* path */
-    if (isknj (*p)) {
-      if(*(p+1)) p++;
-      continue;
-    }
     if (*p == '\\')
       *p = '/';
+    else if (IS_KANJI(p))
+      p++;
   }
 
   p = av[2];
@@ -206,12 +129,10 @@ getdestdir (int ac, char **av)
   topdir = kpse_var_value ("MAKETEXPK_TOP_DIR");
   if (topdir && *topdir && ispk) {
     for (i = 0; topdir[i]; i++) {
-      if (isknj (topdir[i])) {
-        if(topdir[i+1]) i++;
-        continue;
-      }
       if (topdir[i] == '\\')
         topdir[i] = '/';
+      else if (IS_KANJI(topdir+i))
+        i++;
     }
     i = strlen (topdir);
     while(topdir[i - 1] == '/')
@@ -243,12 +164,10 @@ getdestdir (int ac, char **av)
   } else {
     if((topdir = kpse_var_value("TEXMFVAR")) != NULL) {
       for (i = 0; topdir[i]; i++) {
-	if (isknj (topdir[i])) {
-	  if(topdir[i+1]) i++;
-	  continue;
-	}
 	if (topdir[i] == '\\')
 	  topdir[i] = '/';
+        else if (IS_KANJI(topdir+i))
+          i++;
       }
       i = strlen (topdir);
       while(topdir[i - 1] == '/')

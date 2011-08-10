@@ -11,16 +11,8 @@
 #define WINKPSEVERSION  " Kpathsea-6.0.1"
 
 #include <kpathsea/kpathsea.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <fcntl.h>
-#include <direct.h>
-#include <io.h>
-#include <malloc.h>
-#include <process.h>
 
+#include "dirutil.h"
 #include "getdestdir.h"
 #include "mktexupd.h"
 
@@ -126,12 +118,10 @@ main (int ac, char **av)
   tmp = xstrdup(tmp);
 
   for (fpp = tmp; *fpp; fpp++) {
-    if (isknj (*fpp)) {
-      if(*(fpp+1)) fpp++;
-      continue;
-    }
     if (*fpp == '\\')
       *fpp = '/';
+    else if (IS_KANJI(fpp))
+      fpp++;
   }
 /*
 issetdest = 0 : TDS
@@ -169,12 +159,10 @@ issetdest = 2 : current directory
     strcpy (buff, av[2]);
     strcpy (fontname, av[3]);
     for (p = buff; *p; p++) {
-      if (isknj (*p)) {
-        if(*(p+1)) p++;
-        continue;
-      }
       if (*p == '\\')
         *p = '/';
+      else if (IS_KANJI(p))
+        p++;
     }
   } else {
     strcpy (fontname, av[1]);
@@ -213,12 +201,10 @@ issetdest = 2 : current directory
     return (100);
   }
   for (fpp = currdir; *fpp; fpp++) {
-    if (isknj (*fpp)) {
-      if(*(fpp+1)) fpp++;
-      continue;
-    }
     if (*fpp == '\\')
       *fpp = '/';
+    else if (IS_KANJI(fpp))
+      fpp++;
   }
 
   i = strlen (currdir);

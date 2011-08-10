@@ -1,3 +1,26 @@
+2011-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* getdestdir.c, mktexmf.c, mktexpk.c, mktextfm.c, mktexupd.c,
+	mktexupdmain.c: No need to #include any standard headers, they
+	all come through <kpathsea/kpathsea.h>.
+	* getdestdir.c, mktexpk.c, mktextfm.c: Use IS_KANJI().
+
+	* dirutil.[ch]: New files extracted ...
+	* getdestdir.[ch]: ... from here.
+
+	* fmtutil.c, mktexfmt.c, mktexlsr.c: More new files from W32TeX.
+	Drop use of getlongname() for 8+3 names.  Constify strings.
+	No need to #include any standard headers.
+	Declare functions as static. Drop unused variables.
+	Add parentheses around assignment used as truth value.
+
+	* fmtutil.c: Declare the array index Exenum as unsigned char.
+	(is_dir, make_dir, make_dir_p): Removed, use dirutil.c.
+
+	* mktexlsr.c: For MinGW #include "dirutil.h" and use is_dir(),
+	for native WIN32 #include <kpathsea/dirent.h> and use d_isdir.
+	(search): No need to slashify name.  Remove return at end.
+
 2011-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* getdestdir.c, mktexmf.c, mktexpk.c, mktextfm.c, mktexupd.c,

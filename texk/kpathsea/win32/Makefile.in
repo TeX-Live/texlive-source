@@ -34,7 +34,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = mktexmf$(EXEEXT) mktexpk$(EXEEXT) mktextfm$(EXEEXT) \
+bin_PROGRAMS = fmtutil$(EXEEXT) mktexfmt$(EXEEXT) mktexlsr$(EXEEXT) \
+	mktexmf$(EXEEXT) mktexpk$(EXEEXT) mktextfm$(EXEEXT) \
 	mktexupd$(EXEEXT)
 subdir = win32
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in ChangeLog
@@ -58,18 +59,31 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_mktexmf_OBJECTS = getdestdir.$(OBJEXT) mktexmf.$(OBJEXT) \
+am_fmtutil_OBJECTS = dirutil.$(OBJEXT) fmtutil.$(OBJEXT) \
 	mktexupd.$(OBJEXT)
+fmtutil_OBJECTS = $(am_fmtutil_OBJECTS)
+fmtutil_LDADD = $(LDADD)
+fmtutil_DEPENDENCIES = ../libkpathsea.la
+am_mktexfmt_OBJECTS = mktexfmt.$(OBJEXT)
+mktexfmt_OBJECTS = $(am_mktexfmt_OBJECTS)
+mktexfmt_LDADD = $(LDADD)
+mktexfmt_DEPENDENCIES = ../libkpathsea.la
+am_mktexlsr_OBJECTS = dirutil.$(OBJEXT) mktexlsr.$(OBJEXT)
+mktexlsr_OBJECTS = $(am_mktexlsr_OBJECTS)
+mktexlsr_LDADD = $(LDADD)
+mktexlsr_DEPENDENCIES = ../libkpathsea.la
+am_mktexmf_OBJECTS = dirutil.$(OBJEXT) getdestdir.$(OBJEXT) \
+	mktexmf.$(OBJEXT) mktexupd.$(OBJEXT)
 mktexmf_OBJECTS = $(am_mktexmf_OBJECTS)
 mktexmf_LDADD = $(LDADD)
 mktexmf_DEPENDENCIES = ../libkpathsea.la
-am_mktexpk_OBJECTS = getdestdir.$(OBJEXT) mktexpk.$(OBJEXT) \
-	mktexupd.$(OBJEXT)
+am_mktexpk_OBJECTS = dirutil.$(OBJEXT) getdestdir.$(OBJEXT) \
+	mktexpk.$(OBJEXT) mktexupd.$(OBJEXT)
 mktexpk_OBJECTS = $(am_mktexpk_OBJECTS)
 mktexpk_LDADD = $(LDADD)
 mktexpk_DEPENDENCIES = ../libkpathsea.la
-am_mktextfm_OBJECTS = getdestdir.$(OBJEXT) mktextfm.$(OBJEXT) \
-	mktexupd.$(OBJEXT)
+am_mktextfm_OBJECTS = dirutil.$(OBJEXT) getdestdir.$(OBJEXT) \
+	mktextfm.$(OBJEXT) mktexupd.$(OBJEXT)
 mktextfm_OBJECTS = $(am_mktextfm_OBJECTS)
 mktextfm_LDADD = $(LDADD)
 mktextfm_DEPENDENCIES = ../libkpathsea.la
@@ -90,9 +104,11 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(mktexmf_SOURCES) $(mktexpk_SOURCES) $(mktextfm_SOURCES) \
+SOURCES = $(fmtutil_SOURCES) $(mktexfmt_SOURCES) $(mktexlsr_SOURCES) \
+	$(mktexmf_SOURCES) $(mktexpk_SOURCES) $(mktextfm_SOURCES) \
 	$(mktexupd_SOURCES)
-DIST_SOURCES = $(mktexmf_SOURCES) $(mktexpk_SOURCES) \
+DIST_SOURCES = $(fmtutil_SOURCES) $(mktexfmt_SOURCES) \
+	$(mktexlsr_SOURCES) $(mktexmf_SOURCES) $(mktexpk_SOURCES) \
 	$(mktextfm_SOURCES) $(mktexupd_SOURCES)
 ETAGS = etags
 CTAGS = ctags
@@ -218,7 +234,24 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
+fmtutil_SOURCES = \
+	dirutil.c \
+	dirutil.h \
+	fmtutil.c \
+	mktexupd.c \
+	mktexupd.h
+
+mktexfmt_SOURCES = \
+	mktexfmt.c
+
+mktexlsr_SOURCES = \
+	dirutil.c \
+	dirutil.h \
+	mktexlsr.c
+
 mktexmf_SOURCES = \
+	dirutil.c \
+	dirutil.h \
 	getdestdir.c \
 	getdestdir.h \
 	mktexmf.c \
@@ -226,6 +259,8 @@ mktexmf_SOURCES = \
 	mktexupd.h
 
 mktexpk_SOURCES = \
+	dirutil.c \
+	dirutil.h \
 	getdestdir.c \
 	getdestdir.h \
 	mktexpk.c \
@@ -233,6 +268,8 @@ mktexpk_SOURCES = \
 	mktexupd.h
 
 mktextfm_SOURCES = \
+	dirutil.c \
+	dirutil.h \
 	getdestdir.c \
 	getdestdir.h \
 	mktextfm.c \
@@ -323,6 +360,15 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+fmtutil$(EXEEXT): $(fmtutil_OBJECTS) $(fmtutil_DEPENDENCIES) 
+	@rm -f fmtutil$(EXEEXT)
+	$(LINK) $(fmtutil_OBJECTS) $(fmtutil_LDADD) $(LIBS)
+mktexfmt$(EXEEXT): $(mktexfmt_OBJECTS) $(mktexfmt_DEPENDENCIES) 
+	@rm -f mktexfmt$(EXEEXT)
+	$(LINK) $(mktexfmt_OBJECTS) $(mktexfmt_LDADD) $(LIBS)
+mktexlsr$(EXEEXT): $(mktexlsr_OBJECTS) $(mktexlsr_DEPENDENCIES) 
+	@rm -f mktexlsr$(EXEEXT)
+	$(LINK) $(mktexlsr_OBJECTS) $(mktexlsr_LDADD) $(LIBS)
 mktexmf$(EXEEXT): $(mktexmf_OBJECTS) $(mktexmf_DEPENDENCIES) 
 	@rm -f mktexmf$(EXEEXT)
 	$(LINK) $(mktexmf_OBJECTS) $(mktexmf_LDADD) $(LIBS)
@@ -342,7 +388,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirutil.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmtutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdestdir.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mktexfmt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mktexlsr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mktexmf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mktexpk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mktextfm.Po@am__quote@

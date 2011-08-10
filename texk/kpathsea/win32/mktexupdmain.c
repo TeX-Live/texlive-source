@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <kpathsea/kpathsea.h>
 
 #include "mktexupd.h"
