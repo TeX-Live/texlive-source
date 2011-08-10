@@ -26,11 +26,6 @@ Web2C-2010  (2010/07/03 --ak) new options.
 #include "dirutil.h"
 #include "mktexupd.h"
 
-#ifndef __MINGW32__
-#undef system
-#define system win32_system
-#endif
-
 #define BLEN       512
 #define SLEN       256
 #define MAXFMT     128
@@ -142,38 +137,38 @@ do_initex(char *fm, char *en, char *args)
 
   strcpy(enginesubdir, en);
 
-  if(!stricmp(enginesubdir, "mf-nowin"))
+  if(!strcasecmp(enginesubdir, "mf-nowin"))
     strcpy(enginesubdir, "metafont");
-  if(!stricmp(enginesubdir, "mf"))
+  if(!strcasecmp(enginesubdir, "mf"))
     strcpy(enginesubdir, "metafont");
-  if(!stricmp(enginesubdir, "mpost"))
+  if(!strcasecmp(enginesubdir, "mpost"))
     strcpy(enginesubdir, "metapost");
 
-  if(!stricmp(en, "mf-nowin")) {
+  if(!strcasecmp(en, "mf-nowin")) {
     strcpy(fmt, "--jobname=");
     strcpy(ext, ".base");
   }
-  else if(!stricmp(en, "mf")) {
+  else if(!strcasecmp(en, "mf")) {
     strcpy(fmt, "--jobname=");
     strcpy(ext, ".base");
   }
-  else if(!stricmp(en, "mpost")) {
+  else if(!strcasecmp(en, "mpost")) {
     strcpy(fmt, "--jobname=");
     strcpy(ext, ".mem");
   }
-  else if(!stricmp(en, "pmpost")) {
+  else if(!strcasecmp(en, "pmpost")) {
     strcpy(fmt, "--jobname=");
     strcpy(ext, ".mem");
   }
-  else if(!stricmp(en, "upmpost")) {
+  else if(!strcasecmp(en, "upmpost")) {
     strcpy(fmt, "--jobname=");
     strcpy(ext, ".mem");
   }
-  else if(!stricmp(en, "mp641")) {
+  else if(!strcasecmp(en, "mp641")) {
     strcpy(fmt, "--jobname=");
     strcpy(ext, ".mem");
   }
-  else if(!stricmp(en, "nts")) {
+  else if(!strcasecmp(en, "nts")) {
     strcpy(fmt, "--fmt=");
     strcpy(ext, ".nfmt");
   }
@@ -182,12 +177,12 @@ do_initex(char *fm, char *en, char *args)
     strcpy(ext, ".fmt");
   }
 
-  if(!stricmp(en, "pmpost") || !stricmp(en, "mpost")
-     || !stricmp(en, "upmpost") || !stricmp(en, "mp641"))
+  if(!strcasecmp(en, "pmpost") || !strcasecmp(en, "mpost")
+     || !strcasecmp(en, "upmpost") || !strcasecmp(en, "mp641"))
     strcpy(progn2, "mpost");
-  else if(!stricmp(en, "mf-nowin"))
+  else if(!strcasecmp(en, "mf-nowin"))
     strcpy(progn2, "mf");
-  else if(!stricmp(en, "nts"))
+  else if(!strcasecmp(en, "nts"))
     strcpy(progn2, "tex");
   else strcpy(progn2, progn);
 
@@ -207,7 +202,7 @@ do_initex(char *fm, char *en, char *args)
   strcat(fullbin, en);
   strcat(fullbin, "\"");
 
-  if(!stricmp(en, "nts"))
+  if(!strcasecmp(en, "nts"))
     sprintf(cmd, "%s --ini --progname=%s %s <nul",
             fullbin, progn2, args);
   else
@@ -223,7 +218,7 @@ do_initex(char *fm, char *en, char *args)
   strcat(src, ext);
   strcpy(dst, Destdir);
 
-  if((UserDestdir == 0) && stricmp(enginesubdir, "nts")) {
+  if((UserDestdir == 0) && strcasecmp(enginesubdir, "nts")) {
     strcat(dst, enginesubdir);
     if(!is_dir(dst)) {
       if(make_dir(dst)) {
@@ -245,7 +240,7 @@ do_initex(char *fm, char *en, char *args)
   if((_access(src, 0) == 0) && ret == 0) {
     CopyFile(src, dst, FALSE);
     if(lsrflag) mktexupd(dst);
-    if(stricmp(src, "mpost.mem") == 0) {
+    if(strcasecmp(src, "mpost.mem") == 0) {
        int len;
        char *tmpstr;
        len = strlen(dst);
@@ -405,7 +400,11 @@ flag = 1 : --all
   Realenginename[0] = '\0';
 
   kpse_set_program_name(av[0], NULL);
-  strcpy(Programname, av[0]);
+  strcpy(Programname, kpse_invocation_short_name);
+  if (tmp = strrchr(Programname, '.')) {
+    if (strcasecmp (tmp, ".exe") == 0)
+       *tmp = '\0';
+  }
 
   tmp = getenv("TEMP");
   if(!tmp) tmp = getenv("TMP");
@@ -719,7 +718,7 @@ flag = 1 : --all
   j = 0;
   if(flag == 5) {
     for(i = 0; i < Fmtnum; i++) {
-      if(!stricmp(K[i].format, fmtname)) {
+      if(!strcasecmp(K[i].format, fmtname)) {
         show_hyphen(K[i].format, K[i].hyphen);
         j++;
       }
@@ -730,7 +729,7 @@ flag = 1 : --all
     return 1;
   }
 
-  if(stricmp(Programname, "fmtutil-sys") == 0) {
+  if(strcasecmp(Programname, "fmtutil-sys") == 0) {
     char *px = kpse_var_value("TEXMFSYSVAR");
     if(px) {
       xputenv("TEXMFVAR", px);
@@ -806,7 +805,7 @@ flag = 1 : --all
 	if(*q == '\0') cont = 0;
 	*q = '\0';
 	q++;
-	if(!stricmp(p, hyphenfile)) {
+	if(!strcasecmp(p, hyphenfile)) {
 	  do_initex(K[i].format, K[i].engine, K[i].args);
 	  j++;
 	  cont = 0;
@@ -819,12 +818,12 @@ flag = 1 : --all
   }
 
   else if(flag == 7) {
-    if(stricmp(byenginename, "metafont") == 0)
+    if(strcasecmp(byenginename, "metafont") == 0)
       strcpy(byenginename, "mf-nowin");
-    if(stricmp(byenginename, "metapost") == 0)
+    if(strcasecmp(byenginename, "metapost") == 0)
       strcpy(byenginename, "mpost");
     for(i = 0; i < Fmtnum; i++) {
-      if(!stricmp(K[i].engine, byenginename)) {
+      if(!strcasecmp(K[i].engine, byenginename)) {
         do_initex(K[i].format, K[i].engine, K[i].args);
         j++;
       }
@@ -837,20 +836,20 @@ flag = 1 : --all
   else if(flag == 3) {
     for(i = 0; i < Fmtnum; i++) {
       if(Enginename[0]) {
-	if(!stricmp(Enginename, "metafont"))
+	if(!strcasecmp(Enginename, "metafont"))
 	  strcpy(Realenginename, "mf-nowin");
-	else if(!stricmp(Enginename, "metapost"))
+	else if(!strcasecmp(Enginename, "metapost"))
 	  strcpy(Realenginename, "mpost");
 	else
 	  strcpy(Realenginename, Enginename);
-        if(!stricmp(K[i].format, fmtname) &&
-           !stricmp(K[i].engine, Realenginename)) {
+        if(!strcasecmp(K[i].format, fmtname) &&
+           !strcasecmp(K[i].engine, Realenginename)) {
           do_initex(K[i].format, K[i].engine, K[i].args);
           j++;
         }
       }
       else {
-        if(!stricmp(K[i].format, fmtname)) {
+        if(!strcasecmp(K[i].format, fmtname)) {
           do_initex(K[i].format, K[i].engine, K[i].args);
           j++;
         }
@@ -870,28 +869,28 @@ flag = 1 : --all
       strcpy(Buff, Destdir);
 
       strcpy(enginesubdir, K[i].engine);
-      if(!stricmp(enginesubdir, "mf-nowin"))
+      if(!strcasecmp(enginesubdir, "mf-nowin"))
         strcpy(enginesubdir, "metafont");
-      if(!stricmp(enginesubdir, "mf"))
+      if(!strcasecmp(enginesubdir, "mf"))
         strcpy(enginesubdir, "metafont");
-      if(!stricmp(enginesubdir, "mpost"))
+      if(!strcasecmp(enginesubdir, "mpost"))
         strcpy(enginesubdir, "metapost");
-      if(stricmp(enginesubdir, "nts"))
+      if(strcasecmp(enginesubdir, "nts"))
         strcat(Buff, enginesubdir);
       strcat(Buff, "/");
 
       strcat(Buff, K[i].format);
-      if(!stricmp(K[i].engine, "nts"))
+      if(!strcasecmp(K[i].engine, "nts"))
         strcat(Buff, ".nfmt");
-      else if(!stricmp(K[i].engine, "mf"))
+      else if(!strcasecmp(K[i].engine, "mf"))
         strcat(Buff, ".base");
-      else if(!stricmp(K[i].engine, "mf-nowin"))
+      else if(!strcasecmp(K[i].engine, "mf-nowin"))
         strcat(Buff, ".base");
-      else if(!stricmp(K[i].engine, "mpost"))
+      else if(!strcasecmp(K[i].engine, "mpost"))
         strcat(Buff, ".mem");
-      else if(!stricmp(K[i].engine, "pmpost"))
+      else if(!strcasecmp(K[i].engine, "pmpost"))
         strcat(Buff, ".mem");
-      else if(!stricmp(K[i].engine, "upmpost"))
+      else if(!strcasecmp(K[i].engine, "upmpost"))
         strcat(Buff, ".mem");
       else
         strcat(Buff, ".fmt");
@@ -956,5 +955,5 @@ Check executable files. (ignore "Batch" or "Script" files (case 'x'))
             Errorcnt);
     fprintf(stderr, "For details, see log file(s) in the (fmt/base/mem) dir(s).\n");
   }
-  return 0;
+  return Errorcnt;
 }
