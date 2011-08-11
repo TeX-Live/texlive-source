@@ -946,6 +946,9 @@ void write_epdf(void)
             copyObject(&dictObj);
         } else {
             // write Group dict as a separate object, since the Page dict also refers to it
+            pageDict->lookup((char *) "Group", &dictObj);
+            if (!dictObj->isDict())
+                pdftex_fail("PDF inclusion: /Group dict missing");
             writeSepGroup = true;
             initDictFromDict(groupDict, page->getGroup());
             pdf_printf("/Group %d 0 R\n", pdfpagegroupval);
