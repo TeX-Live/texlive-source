@@ -4,7 +4,7 @@ $^W=1; # turn warning on
 #
 # pdfcrop.pl
 #
-# Copyright (C) 2002, 2004, 2005, 2008-2010 Heiko Oberdiek.
+# Copyright (C) 2002, 2004, 2005, 2008-2011 Heiko Oberdiek.
 #
 # This program may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.2
@@ -21,10 +21,10 @@ $^W=1; # turn warning on
 #
 my $file        = "pdfcrop.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.31";
-my $date        = "2010/09/17";
+my $version     = "1.32";
+my $date        = "2011/08/10";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2002-2010 by $author.";
+my $copyright   = "Copyright (c) 2002-2011 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -95,6 +95,7 @@ my $copyright   = "Copyright (c) 2002-2010 by $author.";
 #                   * Again input file names restricted for Ghostscript
 #                     command line, switch then to symbol link/copy
 #                     method.
+# 2011/08/10 v1.32: * Detection for gswin64c.exe added.
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -109,6 +110,9 @@ delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 my $Win = 0;
 $Win = 1 if $^O =~ /mswin32/i;
 $Win = 1 if $^O =~ /cygwin/i;
+use Config;
+my $archname = $Config{'archname'};
+$archname = 'unknown' unless defined $Config{'archname'};
 
 ### string constants for Ghostscript run
 # get Ghostscript command name
@@ -122,6 +126,8 @@ sub find_ghostscript () {
     $system = "cygwin" if $^O =~ /cygwin/i;
     $system = "miktex" if defined($ENV{"TEXSYSTEM"}) and
                           $ENV{"TEXSYSTEM"} =~ /miktex/i;
+    print "* OS name: $^O\n" if $::opt_debug;
+    print "* Arch name: $archname\n" if $::opt_debug;
     print "* System: $system\n" if $::opt_debug;
     my %candidates = (
         'unix' => [qw|gs gsc|],
@@ -131,6 +137,16 @@ sub find_ghostscript () {
         'cygwin' => [qw|gs gswin32c|],
         'miktex' => [qw|mgs gswin32c gs|]
     );
+    if ($system eq 'win' or $system eq 'cygwin' or $system eq 'miktex') {
+        if ($archname =~ /mswin32-x64/i) {
+            my @a = ();
+            foreach my $name (@{$candidates{$system}}) {
+                push @a, 'gswin64c' if $name eq 'gswin32c';
+                push @a, $name;
+            }
+            $candidates{$system} = \@a;
+        }
+    }
     my %ext = (
         'unix' => '',
         'dos' => '.exe',
@@ -140,7 +156,8 @@ sub find_ghostscript () {
         'miktex' => '.exe'
     );
     my $candidates_ref = $candidates{$system};
-    my $ext = $ext{$system};
+    my $ext = $Config{'_exe'};
+    $ext = $ext{$system} unless defined $ext;
     use File::Spec;
     my @path = File::Spec->path();
     my $found = 0;
@@ -222,6 +239,11 @@ sub SearchRegistry () {
             if ($value and $type == REG_SZ()) {
                 print "  GS_DLL = $value\n" if $::opt_debug;
                 $value =~ s|([\\/])([^\\/]+\.dll)$|$1gswin32c.exe|i;
+                my $value64 = $value;
+                $value64 =~ s/gswin32c\.exe$/gswin64c.exe/;
+                if ($archname =~ /mswin32-x64/i and -f $value64) {
+                    $value = $value64;
+                }
                 if (-f $value) {
                     print "  EXE found: $value\n" if $::opt_debug;
                 }
