@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 #
 # thumbpdf.pl
 #
-# Copyright (C) 1999-2008 Heiko Oberdiek.
+# Copyright (C) 1999-2011 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
@@ -26,10 +26,10 @@ $^W=1; # turn warning on
 #
 my $file        = "thumbpdf.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "3.11";
-my $date        = "2010/07/07";
+my $version     = "3.13";
+my $date        = "2011/08/10";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 1999-2010 by $author.";
+my $copyright   = "Copyright (c) 1999-2011 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -147,6 +147,8 @@ my $copyright   = "Copyright (c) 1999-2010 by $author.";
 #   2008/04/16 v3.10
 #   2010/07/07 v3.11
 #    * \input is used with file name extension for "thumbpdf.tex".
+#   2011/08/10 v3.13
+#    * Use gswin64c in Windows with 64 bits.
 #
 
 ### program identification
@@ -160,7 +162,12 @@ my $Error = "!!! Error:"; # error prefix
 my $GS = "gs";
 $GS = "gs386"    if $^O =~ /dos/i;
 $GS = "gsos2"    if $^O =~ /os2/i;
-$GS = "gswin32c" if $^O =~ /mswin32/i;
+if ($^O =~ /mswin32c/i) {
+    # http://perldoc.perl.org/perlport.html#DOS-and-Derivatives
+    use Config;
+    $GS = "gswin32c";
+    $GS = "gswin64c" if $Config{'archname'} =~ /mswin32-x64/i;
+}
 
 # Windows detection (no SIGHUP)
 my $Win = 0;
@@ -236,6 +243,7 @@ Options:                                                         (defaults:)
   --(no)useps     `makepng' uses `.ps' instead of `.pdf' file    ($bool[$::opt_useps])
   --(no)level2    `<jobname>.tpm' with ps level 2 features       ($bool[$::opt_level2])
   --(no)greek     text in greek style (experimental)             ($bool[$::opt_greek])
+  --gscmd <name>  call of ghostscript                            ($GS)
   --antialias <num1>[num2] anti-aliasing, 0 = disable, 4 = max   ($::opt_antialias)
   --device|png [png]<dev>  Ghostscript device for thumbnails,
                            dev = mono, gray, 16, 256, 16m        ($::opt_device)
@@ -243,7 +251,7 @@ Options:                                                         (defaults:)
   --compress <n>           thumbnail compress level, n = 0..10   ($::opt_compress)
   --modes <mode>[,mode]    mode=pdftex|pdfmark|dvips|ps2pdf|
                                 vtexpdfmark|all                  ($::opt_modes)
-  --password apassword     for an encrypted pdf file             ($::opt_password)
+  --password <password>    for an encrypted pdf file             ($::opt_password)
 END_OF_USAGE
 
 ### environment variable THUMBPDF
@@ -378,7 +386,7 @@ my $MaxThumb = 0;
 if ($::opt_makepng)
 {
   print "*** make png files / run Ghostscript ***\n"
-    unless $::opt_quiet or $::opt_printgscmd;
+      unless $::opt_quiet or $::opt_printgscmd;
   if ($::opt_useps)
   {
     print "* ps file: $jobfile\n" if $::opt_verbose;

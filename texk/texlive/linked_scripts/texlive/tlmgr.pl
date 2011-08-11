@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 23271 2011-07-29 23:20:41Z preining $
+# $Id: tlmgr.pl 23420 2011-08-05 06:27:04Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 23271 $';
-my $datrev = '$Date: 2011-07-30 01:20:41 +0200 (Sat, 30 Jul 2011) $';
+my $svnrev = '$Revision: 23420 $';
+my $datrev = '$Date: 2011-08-05 08:27:04 +0200 (Fri, 05 Aug 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -555,7 +555,13 @@ sub do_cmd_and_check
   # tlmgr front ends (MacOSX's TeX Live Utility) can read it
   # and show it to the user before the possibly long delay.
   info("running $cmd ...\n");
-  my ($out, $ret) = TeXLive::TLUtils::run_cmd("$cmd 2>&1");
+  my ($out, $ret);
+  if ($opts{"dry-run"}) {
+    $ret = 0;
+    $out = "";
+  } else {
+    ($out, $ret) = TeXLive::TLUtils::run_cmd("$cmd 2>&1");
+  }
   if ($ret == 0) {
     info("done running $cmd.\n");
     log("--output of $cmd:\n$out\n--end of output of $cmd.");
@@ -662,6 +668,32 @@ sub handle_execute_actions
         } else {
           TeXLive::TLUtils::create_language_lua($localtlpdb, $arg1, $arg2);
         }
+      }
+    }
+
+    #
+    # check if *depending* formats have been changed
+    # we are currently only caring for package "latex" and "tex". If
+    # one of these has changed, we search for all packages *depending*
+    # on latex/tex and regenerate all formats in these packages.
+    #
+    # do this only if we are not in --list or --dry-run mode
+    if (!$opts{"list"}) {
+      my @check_indirect_formats;
+      # TODO:
+      # in case that hyphenation patterns are changed, ie $regenerate_language
+      # then maybe we don't need to update latex based ones?
+      push @check_indirect_formats, $localtlpdb->needed_by("latex")
+        if ($::latex_updated);
+      push @check_indirect_formats, $localtlpdb->needed_by("tex")
+        if ($::tex_updated);
+      for my $p (@check_indirect_formats) {
+          my $tlp = $localtlpdb->get_package($p);
+          if (!defined($tlp)) {
+            tlwarn("$p mentioned but not found in local tlpdb, strange!\n");
+            next;
+          }
+          TeXLive::TLUtils::announce_execute_actions("enable", $tlp, "format");
       }
     }
 
@@ -2832,6 +2864,14 @@ sub action_update {
     }
   }
 
+  #
+  # special check for depending format updates:
+  # if one of latex or tex has been updated, we rebuild the formats
+  # defined in packages *depending* on these packages.
+  if (!$opts{"list"}) {
+    TeXLive::TLUtils::announce_execute_actions("latex-updated") if ($updated{"latex"});
+    TeXLive::TLUtils::announce_execute_actions("tex-updated") if ($updated{"tex"});
+  }
 
   print "end-of-updates\n" if $::machinereadable;
 
