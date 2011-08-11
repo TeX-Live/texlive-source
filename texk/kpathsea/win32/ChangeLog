@@ -1,6 +1,10 @@
+2011-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fmtutil.c: Return zero or one (Errorcnt could be 256).
+
 2011-08-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	*fmtutil.c: returns a nonzero value if it fails to make a format.
+	* fmtutil.c: return a nonzero value if it fails to make a format.
 
 2011-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

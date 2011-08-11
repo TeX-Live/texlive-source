@@ -955,5 +955,5 @@ Check executable files. (ignore "Batch" or "Script" files (case 'x'))
             Errorcnt);
     fprintf(stderr, "For details, see log file(s) in the (fmt/base/mem) dir(s).\n");
   }
-  return Errorcnt;
+  return Errorcnt != 0;
 }
