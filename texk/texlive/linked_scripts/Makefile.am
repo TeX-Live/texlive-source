@@ -95,6 +95,7 @@ texmf_dist_other_scripts = \
 	latexdiff/latexrevise.pl \
 	latexmk/latexmk.pl \
 	luaotfload/mkluatexfontdb.lua \
+	match_parens/match_parens \
 	mathspic/mathspic.pl \
 	mf2pt1/mf2pt1.pl \
 	mkjobtexmf/mkjobtexmf.pl \

@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+
+=begin rdoc
+
+== match_parens - find mismatches of parentheses, braces, (angle) brackets, in texts
+
+== Synopsis
+
+	match_parens [_filename_]
+
+== Description
+
+Mismatches of parentheses, braces, (angle) brackets, especially in TeX
+sources which may be rich in those, may be difficult to trace. This
+little script helps you by writing your text to standard output, after
+adding a left margin to your text, which will normally be almost empty,
+but will clearly show any mismatches. (Just try me on myself to see that
+the parenthesis starting this sentence will not appear to be matched at
+the end of the file. If you look at me in the vim editor, try the command
+:%!%
+
+=== Copyright
+
+Copyright (C) 2009 Wybo Dekker (<tt>wybo@dekkerdocumenten.nl</tt>)
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the {GNU General Public License}[http://www.gnu.org/licenses/]
+as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose. See the {GNU
+General Public License}[http://www.gnu.org/licenses/] for more details.
+
+$Id: match_parens,v 1.7 2011-07-30 09:31:24 wybo Exp $
+=end
+
+private
+ s,   n,  html,    parens =
+'', '0', false, '^{}[]()'
+
+RELEASE = 1.3
+
+while gets()
+   if html
+      if ~/^=end/ || ~/<\/html>/i 
+         html = false
+         parens = '^{}[]()'
+      end
+   else
+      if ~/^=begin rdoc/ || ~/\<html\>/i
+         html = true
+         parens = '^{}[]()<>'
+      end
+   end
+   # look for <> in html or rdoc:
+   s << $_.tr(parens,'')
+   while s.gsub!(/\{\}|\(\)|\[\]|<>/,'') do end
+   puts [n.next!,s,$_].join("\t")
+end
