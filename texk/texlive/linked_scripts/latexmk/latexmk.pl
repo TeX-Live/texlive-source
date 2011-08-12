@@ -107,8 +107,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.25';
-$version_details = "$My_name, John Collins, 7 July 2011";
+$version_num = '4.26';
+$version_details = "$My_name, John Collins, 9 August 2011";
 
 
 use Config;
@@ -177,6 +177,8 @@ else {
 ##
 ##   Modification log from 1 Jan 2011 onwards in detail
 ##
+##      9 Aug 2011, John Collins  Fix bug in error reporting by check_biber_log
+##                                Handle log file from biber 0.9.4
 ##      7 Jul 2011, John Collins  Fix process_rc_file to evade cygwin bug.
 ##                                Version 4.25
 ##      6 Jul 2011, John Collins  Diagnostic for unreadable rc-file
@@ -2936,8 +2938,11 @@ sub view_file_via_temporary {
 sub check_biber_log {
     # Check for biber warnings:
     # Usage: check_biber_log( base_of_biber_run[, \@biber_source )
-    # return 0: OK, 1: biber warnings, 2: biber errors, 
-    #        3: could not open .blg file.
+    # return 0: OK;
+    #        1: biber warnings;
+    #        2: biber errors;
+    #        3: could not open .blg file;
+    #        4: failed to find one or more source files;
     #       10: only error is missing \citation commands.
     # Side effect: add source files @biber_source
     my $base = $_[0];
@@ -2968,6 +2973,7 @@ sub check_biber_log {
         }
         elsif ( /> INFO - Found .* '([^']+)'\s*$/
                 || /> INFO - Found '([^']+)'\s*$/
+                || /> INFO - Reading '([^']+)'\s*$/
                 || /> INFO - Reading (.*)$/
                 || /> INFO - Processing .* file '([^']+)' .*$/
               ) {
@@ -2978,16 +2984,16 @@ sub check_biber_log {
     }
     close $log_file;
 
-    my $bibret = &find_file_list1( $Pbiber_source, $Pbiber_source,
-                                  '', \@BIBINPUTS );
+    my @not_found = &find_file_list1( $Pbiber_source, $Pbiber_source,
+                                      '', \@BIBINPUTS );
     @$Pbiber_source = uniqs( @$Pbiber_source );
-    if ($bibret == 0) {
+    if ( $#not_found < 0) {
         warn "$My_name: Found biber source file(s) [@$Pbiber_source]\n" 
         unless $silent;
     }
     else {
-        warn "$My_name: Failed to find one or more biber source files ",
-             "in [@$Pbiber_source]\n";
+        show_array( "$My_name: Failed to find one or more biber source files:",
+                    @not_found );
         if ($force_mode) {
             warn "==== Force_mode is on, so I will continue.  ",
                  "But there may be problems ===\n";
@@ -2997,7 +3003,7 @@ sub check_biber_log {
             #$failure_msg = 'Failed to find one or more biber source files';
             #warn "$My_name: Failed to find one or more biber source files\n";
         }
-        return 3;
+        return 4;
     }
 #    print "$My_name: #Biber errors = $error_count, warning messages = $warning_count,\n  ",
 #          "missing citation messages = $missing_citations, no_citations = $no_citations\n";
@@ -3747,18 +3753,18 @@ sub parse_aux {
         warn "$My_name: No .bib files listed in .aux file '$aux_file' \n",
         return 2;
     }
-    my $bibret = &find_file_list1( $Pbib_files, $Pbib_files,
-                                  '.bib', \@BIBINPUTS );
+    my @not_found = &find_file_list1( $Pbib_files, $Pbib_files,
+                                      '.bib', \@BIBINPUTS );
     @$Pbib_files = uniqs( @$Pbib_files );
     &find_file_list1( $Pbst_files, $Pbst_files, '.bst' );
     @$Pbst_files = uniqs( @$Pbst_files );
-    if ($bibret == 0) {
-        warn "$My_name: Found bibliography file(s) [@$Pbib_files]\n" 
+    if ( $#not_found < 0) {
+        warn "$My_name: Found bibliography file(s) [@$Pbib_files]\n"
         unless $silent;
     }
     else {
-        warn "$My_name: Failed to find one or more bibliography files ",
-             "in [@$Pbib_files]\n";
+        show_array( "$My_name: Failed to find one or more bibliography files ",
+                    @not_found );
         if ($force_mode) {
             warn "==== Force_mode is on, so I will continue.  ",
                  "But there may be problems ===\n";
@@ -5409,7 +5415,12 @@ sub rdb_run1 {
                if ($diagnostics);
             rdb_ensure_file( $rule, $source );
         }
-        if ($retcode == 3) {
+        if ($retcode == 4) {
+            $$Plast_result = 2;
+            $$Plast_message = "Could not find all biber source files for '$$Pbase'";
+            push @warnings, "Not all biber source files found for '$$Pbase'";
+        }
+        elsif ($retcode == 3) {
             $$Plast_result = 2;
             $$Plast_message = "Could not open biber log file for '$$Pbase'";
             push @warnings, $$Plast_message;
@@ -6620,11 +6631,9 @@ sub find_file_list1 {
     # Modified version of find_file_list that doesn't die.
     # Given output and input arrays of filenames, a file suffix, and a path, 
     # fill the output array with full filenames
-    # Return a status code:
-    # Retcode = 0 on success
-    # Retocde = 1 if at least one file was not found
-    # Usage: find_file_list1( ref_to_output_file_array, 
-    #                         ref_to_input_file_array, 
+    # Return array of not-found files.
+    # Usage: find_file_list1( ref_to_output_file_array,
+    #                         ref_to_input_file_array,
     #                         suffix,
     #                         ref_to_array_search_path
     #                       )
@@ -6633,6 +6642,7 @@ sub find_file_list1 {
   my $ref_input  = $_[1];
   my $suffix     = $_[2];
   my $ref_search = $_[3];
+  my @not_found = ();
 
 #??  show_array( "=====find_file_list1.  Suffix: '$suffix'\n Source:",  @$ref_input );
 #??  show_array( " Bibinputs:",  @$ref_search );
@@ -6646,13 +6656,13 @@ sub find_file_list1 {
     	push @return_list, $tmp_file;
     }
     if ( $find_retcode != 0 ) {
-        $retcode = 1;
+        push @not_found, $file.$suffix;
     }
   }
   @$ref_output = @return_list;
 #??  show_array( " Output", @$ref_output );
 #??  foreach (@$ref_output) { if ( /\/\// ) {  print " ====== double slash in  '$_'\n"; }  }
-  return $retcode;
+  return @not_found;
 } #END find_file_list1
 
 #************************************************************
