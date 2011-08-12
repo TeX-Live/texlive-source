@@ -1219,6 +1219,7 @@ splitFontName(char* name, char** var, char** feat, char** end, int* index)
 					&& !((name - start == 1) && isalpha(*start))
 #endif
 					) {
+					*var = name;
 					++name;
 					while (*name >= '0' && *name <= '9')
 						*index = *index * 10 + *name++ - '0';
