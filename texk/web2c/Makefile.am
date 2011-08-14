@@ -173,6 +173,12 @@ include $(srcdir)/ptexdir/am/ptex.am
 ## e-pTeX
 include $(srcdir)/eptexdir/am/eptex.am
 
+## upTeX
+include $(srcdir)/uptexdir/am/uptex.am
+
+## e-upTeX
+include $(srcdir)/euptexdir/am/euptex.am
+
 ## pdfTeX
 include $(srcdir)/pdftexdir/am/pdftex.am
 include $(srcdir)/pdftexdir/am/libpdftex.am

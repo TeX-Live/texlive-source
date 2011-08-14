@@ -260,7 +260,8 @@ end;
 @x
 char_given,math_given: scanned_result(cur_chr)(int_val);
 @y
-char_given,math_given,omath_given: scanned_result(cur_chr)(int_val);
+omath_given,
+char_given,math_given: scanned_result(cur_chr)(int_val);
 @z
 %-----------------------------------------------
 @x

@@ -129,11 +129,17 @@ main (int argc, string *argv)
   } else if (STREQ (output_name, "eptex")) {
     fputs ("#define INITEX\n#define TeX\n#define epTeX\n", out);
     coerce = "eptexcoerce.h";
+  } else if (STREQ (output_name, "euptex")) {
+    fputs ("#define INITEX\n#define TeX\n#define eupTeX\n", out);
+    coerce = "euptexcoerce.h";
+  } else if (STREQ (output_name, "uptex")) {
+    fputs ("#define INITEX\n#define TeX\n#define upTeX\n", out);
+    coerce = "uptexcoerce.h";
   } else if (STREQ (output_name, "xetex")) {
     fputs ("#define INITEX\n#define TeX\n#define XeTeX\n", out);
     coerce = "xetexcoerce.h";
   } else
-    FATAL1 ("Can only split mf, tex, aleph, eptex, etex, pdftex, ptex, or xetex,\n not %s", output_name);
+    FATAL1 ("Can only split mf, tex, aleph, eptex, euptex, etex, pdftex, ptex, uptex, or xetex,\n not %s", output_name);
   
   coerce_len = strlen (coerce);
   

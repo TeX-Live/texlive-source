@@ -1,3 +1,7 @@
+2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: Update version number 6.0.2dev => 6.1.0dev.
+
 2011-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (SUBDIRS): Add win32 to build C programs from

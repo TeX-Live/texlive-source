@@ -60,7 +60,7 @@ case $basefile in
     midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
     ;;
 
-  mf|tex|aleph|etex|pdftex|ptex|eptex|xetex)
+  mf|tex|aleph|etex|pdftex|ptex|eptex|euptex|uptex|xetex)
     case $basefile in
       mf)
         more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
@@ -117,7 +117,7 @@ case $basefile in
     sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <$basefile.h >x$basefile.h
     mv x$basefile.h $basefile.h
     ;;
-  mf|tex|aleph|etex|pdftex|ptex|eptex|xetex)
+  mf|tex|aleph|etex|pdftex|ptex|eptex|euptex|uptex|xetex)
     sleep 2 # so timestamps are definitely later, to avoid make weirdness
     cat $srcdir/web2c/coerce.h >>${basefile}coerce.h
     touch ${basefile}d.h

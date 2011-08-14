@@ -1,3 +1,7 @@
+2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert, splitup.c: Add upTeX and e-upTeX.
+
 2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

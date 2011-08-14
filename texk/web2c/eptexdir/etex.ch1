@@ -1,14 +1,6 @@
 % eptexdir/etex.ch1: changefile used to build e-pTeX, see eptexdir/eptex-base.ch for details.
 % Public domain. Originally written by Peter Breitenlohner <tex-live@tug.org>.
 
-@x [1.2]
-@d banner==pTeX_banner
-@d banner_k==pTeX_banner_k
-@y
-@d banner==epTeX_banner
-@d banner_k==epTeX_banner_k
-@z
-
 @x [12.184]
     begin print(", "); print_direction(box_dir(p));
 @y
@@ -25,9 +17,9 @@
 @z
 
 @x [27.468]
-@d job_name_code=10 {command code for \.{\\jobname}}
+@d job_name_code=ptex_convert_codes {command code for \.{\\jobname}}
 @y
-@d etex_convert_base=10 {base for \eTeX's command codes}
+@d etex_convert_base=ptex_convert_codes {base for \eTeX's command codes}
 @d eTeX_revision_code=etex_convert_base {command code for \.{\\eTeXrevision}}
 @d etex_convert_codes=etex_convert_base+1 {end of \eTeX's command codes}
 @d job_name_code=etex_convert_codes {command code for \.{\\jobname}}

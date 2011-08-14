@@ -39,12 +39,6 @@ pdf_page_height_code:   print_esc("pdfpageheight");
 @z
 
 @x
-@d etex_convert_codes=etex_convert_base+2 {end of \eTeX's command codes}
-@y
-@d etex_convert_codes=etex_convert_base+3 {end of \eTeX's command codes}
-@z
-
-@x
 @ @<Initialize variables as |ship_out| begins@>=
 @y
 @ @<Initialize variables as |ship_out| begins@>=

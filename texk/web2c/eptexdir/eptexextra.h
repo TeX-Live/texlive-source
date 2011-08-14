@@ -4,9 +4,10 @@
 */
 
 #include <eptexdir/etex_version.h> /* for ETEX_VERSION */
+#include <eptexdir/eptex_version.h> /* for EPTEX_VERSION */
 #include <eptexdir/ptex_version.h> /* for PTEX_VERSION */
 
-#define BANNER "This is e-pTeX, Version 3.1415926-" PTEX_VERSION "-" ETEX_VERSION
+#define BANNER "This is e-pTeX, Version 3.1415926-" PTEX_VERSION "-" EPTEX_VERSION "-" ETEX_VERSION
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR NULL
 #define PROGRAM_HELP EPTEXHELP

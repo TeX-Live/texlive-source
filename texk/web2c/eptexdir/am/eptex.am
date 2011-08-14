@@ -23,11 +23,11 @@ eptex_LDADD = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs)
 
 # e-pTeX C sources
 eptex_c_h = eptexini.c eptex0.c eptexcoerce.h eptexd.h
-nodist_eptex_SOURCES = $(eptex_c_h) eptex-pool.c eptexdir/etex_version.h eptexdir/ptex_version.h
+nodist_eptex_SOURCES = $(eptex_c_h) eptex-pool.c eptexdir/etex_version.h eptexdir/eptex_version.h eptexdir/ptex_version.h
 dist_eptex_SOURCES = eptexdir/eptexextra.c eptexdir/eptexextra.h
 
 # We must create eptexd.h and eptexdir/[ep]tex_version.h before building the eptex_OBJECTS.
-eptex_prereq = eptexd.h eptexdir/etex_version.h eptexdir/ptex_version.h
+eptex_prereq = eptexd.h eptexdir/etex_version.h eptexdir/eptex_version.h eptexdir/ptex_version.h
 $(eptex_OBJECTS): $(eptex_prereq)
 
 $(eptex_c_h): eptex-web2c
@@ -50,10 +50,16 @@ eptexdir/etex_version.h: etexdir/etex.ch
 	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
-# Extract ptex version
-eptexdir/ptex_version.h: eptexdir/eptex.ech
+# Extract eptex version
+eptexdir/eptex_version.h: eptexdir/eptex.ech
 	$(MKDIR_P) eptexdir
-	grep '^@d  pTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
+	grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
+	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@
+
+# Extract ptex version
+eptexdir/ptex_version.h: ptexdir/ptex-base.ch
+	$(MKDIR_P) ptexdir
+	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
 	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate eptex.web

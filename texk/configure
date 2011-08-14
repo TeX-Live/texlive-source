@@ -699,6 +699,10 @@ enable_ptex
 enable_ptex_synctex
 enable_eptex
 enable_eptex_synctex
+enable_uptex
+enable_uptex_synctex
+enable_euptex
+enable_euptex_synctex
 enable_aleph
 enable_pdftex
 enable_pdftex_synctex
@@ -1505,6 +1509,10 @@ Optional Features:
   --disable-ptex-synctex      build pTeX without SyncTeX support
   --disable-eptex           do not compile and install e-pTeX
   --disable-eptex-synctex     build e-pTeX without SyncTeX support
+  --disable-uptex           do not compile and install upTeX
+  --disable-uptex-synctex     build upTeX without SyncTeX support
+  --disable-euptex          do not compile and install e-upTeX
+  --disable-euptex-synctex    build e-upTeX without SyncTeX support
   --disable-aleph           do not compile and install Aleph
   --disable-pdftex          do not compile and install pdfTeX
   --disable-pdftex-synctex    build pdfTeX without SyncTeX support
@@ -3565,6 +3573,44 @@ if test "${enable_eptex_synctex+set}" = set; then :
 fi
 
 test "x$enable_web2c:$enable_eptex" = xyes:yes && {
+  need_ptexenc=yes
+}
+# Check whether --enable-uptex was given.
+if test "${enable_uptex+set}" = set; then :
+  enableval=$enable_uptex;
+fi
+case $enable_uptex in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_uptex=yes ;;
+esac
+
+# Check whether --enable-uptex-synctex was given.
+if test "${enable_uptex_synctex+set}" = set; then :
+  enableval=$enable_uptex_synctex;
+fi
+
+test "x$enable_web2c:$enable_uptex" = xyes:yes && {
+  need_ptexenc=yes
+}
+# Check whether --enable-euptex was given.
+if test "${enable_euptex+set}" = set; then :
+  enableval=$enable_euptex;
+fi
+case $enable_euptex in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_euptex=yes ;;
+esac
+
+# Check whether --enable-euptex-synctex was given.
+if test "${enable_euptex_synctex+set}" = set; then :
+  enableval=$enable_euptex_synctex;
+fi
+
+test "x$enable_web2c:$enable_euptex" = xyes:yes && {
   need_ptexenc=yes
 }
 # Check whether --enable-aleph was given.

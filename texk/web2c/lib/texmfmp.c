@@ -53,6 +53,10 @@
 #include <ptexdir/ptexextra.h>
 #elif defined (epTeX)
 #include <eptexdir/eptexextra.h>
+#elif defined (upTeX)
+#include <uptexdir/uptexextra.h>
+#elif defined (eupTeX)
+#include <euptexdir/euptexextra.h>
 #else
 #define BANNER "This is TeX, Version 3.1415926"
 #define COPYRIGHT_HOLDER "D.E. Knuth"
@@ -88,6 +92,10 @@
 #define VIR_PROGRAM "virmf"
 #define edit_var "MFEDIT"
 #endif /* MF */
+
+#define IS_eTeX (defined(eTeX) || defined(epTeX) || defined(eupTeX)) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX)
+#define IS_pTeX (defined(pTeX) || defined(epTeX) || defined(upTeX) || defined(eupTeX))
+#define IS_upTeX (defined(upTeX) || defined(eupTeX))
 
 #if defined(__SyncTeX__)
 /* 
@@ -507,7 +515,7 @@ runsystem (const char *cmd)
    a file handle (or NULL) instead of a status indicator.  */
 
 static FILE *
-runpopen (const char *cmd, const char *mode)
+runpopen (char *cmd, const char *mode)
 {
   FILE *f = NULL;
   char *safecmd = NULL;
@@ -635,7 +643,7 @@ maininit (int ac, string *av)
      since we want the --ini option, have to do it before getting into
      the web (which would read the base file, etc.).  */
   parse_options (ac, av);
-  
+
   /* If -progname was not specified, default to the dump name.  */
   if (!user_progname)
     user_progname = dump_name;
@@ -711,13 +719,13 @@ maininit (int ac, string *av)
     if (mltexp) {
       fprintf(stderr, "-mltex only works with -ini\n");
     }
-#if !defined(XeTeX) && !defined(pTeX) && !defined(epTeX)
+#if !defined(XeTeX) && !IS_pTeX
     if (enctexp) {
       fprintf(stderr, "-enc only works with -ini\n");
     }
 #endif
 #endif
-#if defined(eTeX) || defined(epTeX) || defined(Aleph) || defined(XeTeX)
+#if IS_eTeX
     if (etexp) {
       fprintf(stderr, "-etex only works with -ini\n");
     }
@@ -799,11 +807,10 @@ main (int ac, string *av)
 
   /* Call the real main program.  */
   mainbody ();
-  
-  return EXIT_SUCCESS;
-} 
-#endif /* !WIN32 || __MINGW32__ */
 
+  return EXIT_SUCCESS;
+}
+#endif /* !WIN32 || __MINGW32__ */
 
 /* This is supposed to ``open the terminal for input'', but what we
    really do is copy command line arguments into TeX's or Metafont's
@@ -897,13 +904,11 @@ topenin (void)
 #ifndef O_NONBLOCK /* POSIX */
 #ifdef O_NDELAY    /* BSD */
 #define O_NONBLOCK O_NDELAY
-#else
-#ifdef FNDELAY     /* NeXT */
+#elif defined(O_FNDELAY)     /* NeXT */
 #define O_NONBLOCK O_FNDELAY
 #else
 what the fcntl? cannot implement IPC without equivalent for O_NONBLOCK.
-#endif /* no FNDELAY */
-#endif /* no O_NDELAY */
+#endif
 #endif /* no O_NONBLOCK */
 #endif /* !WIN32 */
 
@@ -933,7 +938,7 @@ ipc_make_name (void)
   if (ipc_addr_len == 0) {
     string s = getenv ("HOME");
     if (s) {
-      ipc_addr = (struct sockaddr*)xmalloc (strlen (s) + 40);
+      ipc_addr = xmalloc (strlen (s) + 40);
       ipc_addr->sa_family = 0;
       ipc_name = ipc_addr->sa_data;
       strcpy (ipc_name, s);
@@ -944,7 +949,6 @@ ipc_make_name (void)
   return ipc_addr_len;
 }
 
-
 static int sock = -1;
 
 static int
@@ -952,7 +956,6 @@ ipc_is_open (void)
 {
    return sock >= 0;
 }
-
 
 static void
 ipc_open_out (void) {
@@ -990,7 +993,6 @@ ipc_open_out (void) {
   }
 }
 
-
 static void
 ipc_close_out (void)
 {
@@ -1013,13 +1015,13 @@ ipc_snd (int n, int is_eof, char *data)
     char more_data[1024];
   } ourmsg;
 
-#ifdef IPC_DEBUG
-  fputs ("tex: Sending message to socket ...\n", stderr);
-#endif
   if (!ipc_is_open ()) {
     return;
   }
 
+#ifdef IPC_DEBUG
+  fputs ("tex: Sending message to socket ...\n", stderr);
+#endif
   ourmsg.msg.namelength = n;
   ourmsg.msg.eof = is_eof;
   if (n) {
@@ -1036,7 +1038,6 @@ ipc_snd (int n, int is_eof, char *data)
   fputs ("tex: IPC message sent.\n", stderr);
 #endif
 }
-
 
 /* This routine notifies the server if there is an eof, or the filename
    if a new DVI file is starting.  This is the routine called by TeX.
@@ -1072,21 +1073,31 @@ ipcpage (int is_eof)
     }
 #endif
     name[len] = 0;
-    
+
     /* Have to pass whole filename to the other end, since it may have
        been started up and running as a daemon, e.g., as with the NeXT
        preview program.  */
     p = concat3 (cwd, DIR_SEP_STRING, name);
     free (cwd);
     free (name);
+
+#if defined (WIN32)
+    { char *q;
+      for (q = p; *q; q++) {
+        if (*q == '\\')
+          *q = '/';
+        else if (IS_KANJI(q))
+          q++;
+      }
+    }
+#endif
     len = strlen(p);
     begun = true;
   }
   ipc_snd (len, is_eof, p);
   
-  if (p) {
+  if (p)
     free (p);
-  }
 }
 #endif /* TeX && IPC */
 
@@ -1334,13 +1345,13 @@ static struct option long_options[]
 #endif /* IPC */
 #if !defined(Aleph)
       { "mltex",                     0, &mltexp, 1 },
-#if !defined(XeTeX) && !defined(pTeX) && !defined(epTeX)
+#if !defined(XeTeX) && !IS_pTeX
       { "enc",                       0, &enctexp, 1 },
-#endif /* !XeTeX && !pTeX && !epTeX */
+#endif
 #endif /* !Aleph */
-#if defined (eTeX) || defined (epTeX) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX)
+#if IS_eTeX
       { "etex",                      0, &etexp, 1 },
-#endif /* eTeX || epTeX || pdfTeX || Aleph */
+#endif
       { "output-comment",            1, 0, 0 },
 #if defined(pdfTeX)
       { "draftmode",                 0, 0, 0 },
@@ -1379,11 +1390,13 @@ static struct option long_options[]
       { "mktex",                     1, 0, 0 },
       { "no-mktex",                  1, 0, 0 },
 #endif /* TeX or MF */
-#if defined(pTeX) || defined(epTeX)
+#if IS_pTeX
       { "kanji",                     1, 0, 0 },
-#endif /* pTeX || epTeX */
+#endif
+#if IS_upTeX
+      { "kanji-internal",            1, 0, 0 },
+#endif
       { 0, 0, 0, 0 } };
-
 
 static void
 parse_options (int argc, string *argv)
@@ -1529,12 +1542,18 @@ parse_options (int argc, string *argv)
       } else {
         WARNING1 ("Ignoring unknown argument `%s' to --interaction", optarg);
       }
-#if defined(pTeX) || defined(epTeX)
+#if IS_pTeX
     } else if (ARGUMENT_IS ("kanji")) {
       if (!set_enc_string (optarg, NULL)) {
         WARNING1 ("Ignoring unknown argument `%s' to --kanji", optarg);
       }
-#endif /* pTeX || epTeX */
+#endif
+#if IS_upTeX
+    } else if (ARGUMENT_IS ("kanji-internal")) {
+      if (!set_enc_string (NULL, optarg)) {
+        WARNING1 ("Ignoring unknown argument `%s' to --kanji-internal",optarg);
+      }
+#endif
 
     } else if (ARGUMENT_IS ("help")) {
         usagehelp (PROGRAM_HELP, BUG_ADDRESS);
@@ -1708,7 +1727,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
 {
     string fname = NULL;
     int i; /* iterator */
-    
+
     /* opening a read pipe is straightforward, only have to
        skip past the pipe symbol in the file name. filename
        quoting is assumed to happen elsewhere (it does :-)) */
@@ -1719,7 +1738,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
       fname = xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
       recorder_record_input (fname + 1);
-      *f_ptr = runpopen(fname+1,"r");
+      *f_ptr = runpopen(fname+1,"rb");
       free(fname);
       for (i=0; i<=15; i++) {
         if (pipes[i]==NULL) {
@@ -1756,12 +1775,12 @@ open_out_or_pipe (FILE **f_ptr, const_string fopen_mode)
       if (strchr (fname,' ')==NULL && strchr(fname,'>')==NULL) {
         /* mp and mf currently do not use this code, but it 
            is better to be prepared */
-        if (STREQ((fname+strlen(fname)-3),"tex"))
+        if (STREQ((fname+strlen(fname)-4),".tex"))
           *(fname+strlen(fname)-4) = 0;
-        *f_ptr = runpopen(fname+1,"w");
+        *f_ptr = runpopen(fname+1,"wb");
         *(fname+strlen(fname)) = '.';
       } else {
-        *f_ptr = runpopen(fname+1,"w");
+        *f_ptr = runpopen(fname+1,"wb");
       }
       recorder_record_output (fname + 1);
       free(fname);
@@ -1792,8 +1811,9 @@ close_file_or_pipe (FILE *f)
     /* if this file was a pipe, pclose() it and return */    
     for (i=0; i<=15; i++) {
       if (pipes[i] == f) {
-        if (f)
+        if (f) {
           pclose (f);
+        }
         pipes[i] = NULL;
         return;
       }
@@ -1872,7 +1892,7 @@ get_date_and_time (integer *minutes,  integer *day,
 #ifdef WIN32
     SetConsoleCtrlHandler(catch_interrupt, TRUE);
 #else /* not WIN32 */
-    RETSIGTYPE (*old_handler) (int);
+    RETSIGTYPE (*old_handler)(int);
     
     old_handler = signal (SIGINT, catch_interrupt);
     if (old_handler != SIG_DFL)
@@ -1938,13 +1958,13 @@ input_line (FILE *f)
   int i = EOF;
 
   /* Recognize either LF or CR as a line terminator.  */
-#if defined(pTeX) || defined(epTeX)
+#if IS_pTeX
   last = input_line2(f, (char *)buffer, first, bufsize, &i);
-#else /* pTeX || epTeX */
+#else
   last = first;
   while (last < bufsize && (i = getc (f)) != EOF && i != '\n' && i != '\r')
     buffer[last++] = i;
-#endif /* pTeX || epTeX */
+#endif
 
   if (i == EOF && errno != EINTR && last == first)
     return false;
@@ -1979,12 +1999,12 @@ input_line (FILE *f)
      buffer[i] = xord[buffer[i]];
 #endif
 
-#if defined(pTeX) || defined(epTeX)
+#if IS_pTeX
   for (i = last+1; (i < last + 5 && i < bufsize) ; i++)
     buffer[i] = '\0';
-#endif /* pTeX || epTeX */
+#endif
 
-    return true;
+  return true;
 }
 #endif /* !XeTeX */
 
@@ -2067,14 +2087,16 @@ calledit (packedASCIIcode *filename,
 	    }
 	}
       else
-	*temp++ = c;
+        *temp++ = c;
     }
 
   *temp = 0;
 
   /* Execute the command.  */
-  if (system (command) != 0)
-    fprintf (stderr, "! Trouble executing `%s'.\n", command);
+  {
+    if (system (command) != 0)
+      fprintf (stderr, "! Trouble executing `%s'.\n", command);
+  }
 
   /* Quit, since we found an error.  */
   uexit (1);
@@ -2233,7 +2255,7 @@ checkpoolpointer (poolpointer poolptr, size_t len)
   }
 }
 
-#ifndef XeTeX	/* XeTeX uses this from XeTeX_mac.c */
+#ifndef XeTeX	/* XeTeX uses this from XeTeX_ext.c */
 static
 #endif
 int
@@ -2242,37 +2264,37 @@ maketexstring(const_string s)
   size_t len;
 #ifdef XeTeX
   UInt32 rval;
-  const unsigned char* cp = (const unsigned char*)s;
+  const unsigned char *cp = (const unsigned char *)s;
 #endif
   assert (s != 0);
   len = strlen(s);
   checkpoolpointer (poolptr, len); /* in the XeTeX case, this may be more than enough */
 #ifdef XeTeX
   while ((rval = *(cp++)) != 0) {
-  UInt16 extraBytes = bytesFromUTF8[rval];
-  switch (extraBytes) { /* note: code falls through cases! */
-    case 5: rval <<= 6; if (*cp) rval += *(cp++);
-    case 4: rval <<= 6; if (*cp) rval += *(cp++);
-    case 3: rval <<= 6; if (*cp) rval += *(cp++);
-    case 2: rval <<= 6; if (*cp) rval += *(cp++);
-    case 1: rval <<= 6; if (*cp) rval += *(cp++);
-    case 0: ;
-  };
-  rval -= offsetsFromUTF8[extraBytes];
-  if (rval > 0xffff) {
-    rval -= 0x10000;
-    strpool[poolptr++] = 0xd800 + rval / 0x0400;
-    strpool[poolptr++] = 0xdc00 + rval % 0x0400;
-  }
-  else
-    strpool[poolptr++] = rval;
+    UInt16 extraBytes = bytesFromUTF8[rval];
+    switch (extraBytes) { /* note: code falls through cases! */
+      case 5: rval <<= 6; if (*cp) rval += *(cp++);
+      case 4: rval <<= 6; if (*cp) rval += *(cp++);
+      case 3: rval <<= 6; if (*cp) rval += *(cp++);
+      case 2: rval <<= 6; if (*cp) rval += *(cp++);
+      case 1: rval <<= 6; if (*cp) rval += *(cp++);
+      case 0: ;
+    };
+    rval -= offsetsFromUTF8[extraBytes];
+    if (rval > 0xffff) {
+      rval -= 0x10000;
+      strpool[poolptr++] = 0xd800 + rval / 0x0400;
+      strpool[poolptr++] = 0xdc00 + rval % 0x0400;
+    }
+    else
+      strpool[poolptr++] = rval;
   }
 #else /* ! XeTeX */
   while (len-- > 0)
     strpool[poolptr++] = *s++;
 #endif /* ! XeTeX */
 
-  return (makestring());
+  return makestring();
 }
 #endif /* !pdfTeX */
 
@@ -2409,7 +2431,7 @@ makesrcspecial (strnumber srcfilename, int lineno)
   char *filename = gettexstring(srcfilename);
   /* FIXME: Magic number. */
   char buf[40];
-  char * s = buf;
+  char *s = buf;
 
   /* Always put a space after the number, which makes things easier
    * to parse.
@@ -2427,7 +2449,7 @@ makesrcspecial (strnumber srcfilename, int lineno)
   s = filename;
   while (*s)
     strpool[poolptr++] = *s++;
-       
+
   return (oldpoolptr);
 }
 #endif
@@ -2731,6 +2753,7 @@ static struct mfwin_sw *mfwp;
 boolean
 initscreen (void)
 {
+  int retval;
   /* If MFTERM is set, use it.  */
   const_string tty_type = kpse_var_value ("MFTERM");
   
@@ -2761,8 +2784,13 @@ initscreen (void)
   for (mfwp = mfwsw; mfwp->mfwsw_type != NULL; mfwp++) {
     if (!strncmp (mfwp->mfwsw_type, tty_type, strlen (mfwp->mfwsw_type))
 	|| STREQ (tty_type, "emacs")) {
-      if (mfwp->mfwsw_initscreen)
-	return ((*mfwp->mfwsw_initscreen) ());
+      if (mfwp->mfwsw_initscreen) {
+	retval = (*mfwp->mfwsw_initscreen) ();
+#ifdef WIN32
+	Sleep(1000); /* Wait for opening a window */
+#endif
+	return retval;
+      }
       else {
         fprintf (stderr, "mf: Couldn't initialize online display for `%s'.\n",
                  tty_type);

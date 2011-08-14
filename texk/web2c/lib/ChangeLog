@@ -1,4 +1,8 @@
-2011-08-04  Magnus Granberg  <zorry@gentoo.org>
+2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Add upTeX and e-upTeX.
+
+2011-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: Do not #include empty file <kpathsea/recorder.h>.
 

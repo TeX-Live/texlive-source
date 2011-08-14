@@ -1,0 +1,111 @@
+## texk/web2c/euptexdir/am/euptex.am: Makefile fragment for e-upTeX.
+##
+## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## e-upTeX
+##
+if EUPTEX
+bin_PROGRAMS += euptex
+endif EUPTEX
+EXTRA_PROGRAMS += euptex
+
+euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
+
+# With --enable-ipc, e-upTeX may need to link with -lsocket.
+euptex_LDADD = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs)
+
+# e-upTeX C sources
+euptex_c_h = euptexini.c euptex0.c euptexcoerce.h euptexd.h
+nodist_euptex_SOURCES = $(euptex_c_h) euptex-pool.c euptexdir/etex_version.h \
+	euptexdir/eptex_version.h euptexdir/ptex_version.h euptexdir/uptex_version.h
+dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h
+
+# We must create euptexd.h and euptexdir/*tex_version.h before building the euptex_OBJECTS.
+euptex_prereq = euptexd.h euptexdir/etex_version.h euptexdir/eptex_version.h \
+	euptexdir/ptex_version.h euptexdir/uptex_version.h
+$(euptex_OBJECTS): $(euptex_prereq)
+
+$(euptex_c_h): euptex-web2c
+	@$(web2c) euptex
+euptex-web2c: euptex.p $(web2c_texmf) euptexdir/euptex.defines
+	@$(web2c) euptex
+
+euptex-pool.c: euptex.pool euptexd.h $(makecpool_stamp)
+	$(makecpool) euptex >$@ || rm -f $@
+
+# Tangling e-upTeX
+euptex.p euptex.pool: euptex-tangle
+	@$(texmf_tangle) euptex euptex
+euptex-tangle: tangle$(EXEEXT) euptex.web euptex.ch tangle-sh
+	@$(texmf_tangle) euptex euptex
+
+# Extract etex version
+euptexdir/etex_version.h: etexdir/etex.ch
+	$(MKDIR_P) euptexdir
+	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
+	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
+
+# Extract eptex version
+euptexdir/eptex_version.h: eptexdir/eptex.ech
+	$(MKDIR_P) euptexdir
+	grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
+	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@
+
+# Extract ptex version
+euptexdir/ptex_version.h: ptexdir/ptex-base.ch
+	$(MKDIR_P) euptexdir
+	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
+	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
+
+# Extract uptex version
+euptexdir/uptex_version.h: uptexdir/uptex-m.ch
+	$(MKDIR_P) euptexdir
+	grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
+	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@
+
+# Generate euptex.web
+euptex.web: tie$(EXEEXT) $(euptex_web_srcs)
+	$(tie) -m euptex.web $(euptex_web_srcs)
+euptex_web_srcs = \
+	tex.web \
+	etexdir/etex.ch \
+	etexdir/tex.ch0 \
+	tex.ch \
+	etexdir/tex.ech
+
+# Generate euptex.ch
+euptex.ch: tie$(EXEEXT) euptex.web $(euptex_ch_srcs)
+	$(tie) -c euptex.ch euptex.web $(euptex_ch_srcs)
+euptex_ch_srcs = \
+	eptexdir/etex.ch0 \
+	ptexdir/ptex-base.ch \
+	uptexdir/uptex-m.ch \
+	euptexdir/euptex.ch0 \
+	eptexdir/eptex.ech \
+	euptexdir/euptex.ch1 \
+	eptexdir/etex.ch1 \
+	$(euptex_ch_synctex) \
+	eptexdir/fam256.ch \
+	euptexdir/fam256-eup.ch \
+	euptexdir/pdfstrcmp-eup-pre.ch \
+	eptexdir/pdfstrcmp.ch \
+	euptexdir/pdfstrcmp-eup-post.ch \
+	eptexdir/pdfsavepos.ch \
+	euptexdir/pdfsavepos-eup.ch \
+	tex-binpool.ch
+
+EXTRA_DIST += $(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines
+
+DISTCLEANFILES += $(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
+	euptex.p euptex.pool euptex-tangle
+
+## =============
+
+e-upTeX.w: euptex.p
+	$(tie) -m e-upTeX.w euptex.web euptex.ch
+
+e-pTeX.w: eptex.p
+	$(tie) -m e-pTeX.w eptex.web eptex.ch
+
+foo: e-pTeX.w e-upTeX.w upTeX.w

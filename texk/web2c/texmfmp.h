@@ -67,6 +67,14 @@ typedef void* voidpointer;
 #define TEXMFPOOLNAME "eptex.pool"
 #define TEXMFENGINENAME "eptex"
 #include "ptexdir/kanji.h"
+#elif defined (upTeX)
+#define TEXMFPOOLNAME "uptex.pool"
+#define TEXMFENGINENAME "uptex"
+#include "uptexdir/kanji.h"
+#elif defined (eupTeX)
+#define TEXMFPOOLNAME "euptex.pool"
+#define TEXMFENGINENAME "euptex"
+#include "uptexdir/kanji.h"
 #else
 #define TEXMFPOOLNAME "tex.pool"
 #define TEXMFENGINENAME "tex"

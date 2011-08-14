@@ -1,0 +1,49 @@
+{ defined at kanji.c, kanji.h, ptexenc/ptexenc.h, ptexenc/unicode.h }
+@define function BYTE1 ();
+@define function BYTE2 ();
+@define function BYTE3 ();
+@define function BYTE4 ();
+@define function Hi ();
+@define function Lo ();
+@define procedure initdefaultkanji;
+@define procedure forcesjisterm ();
+
+@define function getencstring;
+@define function setencstring ();
+@define procedure setpriorfileenc;
+@define function isinternalUPTEX;
+@define procedure setptexencuptex;
+
+@define function iskanji1 ();
+@define function is1stchr ();
+@define function ismultichr ();
+
+@define function multistrlen ();
+@define function fromBUFF ();
+@define function toBUFF ();
+
+@define function fromDVI ();
+@define function toDVI ();
+@define function putc2 ();
+@define function inputline2 ();
+
+@define function fromJIS ();
+@define function fromEUC ();
+@define function fromSJIS ();
+@define function fromKUTEN ();
+@define function fromUCS ();
+@define function UCStoUTF8 ();
+@define function toUCS ();
+
+@define function checkkanji ();
+@define function iskanji ();
+@define function ischarascii ();
+@define function iswcharascii ();
+@define function ismultiprn ();
+@define function calcpos ();
+@define function kcatcodekey ();
+@define function multilenbuffchar ();
+@define function nrestmultichr ();
+
+@define function getintone();
+@define procedure setintone();

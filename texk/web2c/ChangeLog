@@ -1,3 +1,8 @@
+2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, texmfmem.h, texmfmp.h, texmfmp-help.h,
+	ac/web2c.ac: Add support for upTeX and e-upTeX.
+
 2011-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mft.ch (parsearguments): Allow find_suffix() to return a

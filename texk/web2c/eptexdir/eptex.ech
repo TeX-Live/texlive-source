@@ -8,10 +8,12 @@
 \def\epTeX{$\varepsilon$-p\TeX}
 @z
 
-@x [1.2] l.200 - pTeX:
-@d pTeX_version_string=='-p3.2' {current p\TeX\ version}
+@x [1.2] l.190 - epTeX:
+@d eTeX_version_string=='-2.3' {current \eTeX\ version}
 @y
-@d  pTeX_version_string=='-p3.2-110415' {current \epTeX\ version}
+@d eTeX_version_string=='-2.3' {current \eTeX\ version}
+@#
+@d epTeX_version_string=='-110415'
 @z
 
 @x e-pTeX: banner
@@ -19,10 +21,18 @@
 @y
   {printed when p\TeX\ starts}
 @#
-@d epTeX_version==pTeX_version_string,eTeX_version_string
+@d epTeX_version==pTeX_version_string,epTeX_version_string,eTeX_version_string
 @d epTeX_banner=='This is e-pTeX, Version 3.1415926',epTeX_version
 @d epTeX_banner_k==epTeX_banner
   {printed when \epTeX\ starts}
+@z
+
+@x [1.2]
+@d banner==pTeX_banner
+@d banner_k==pTeX_banner_k
+@y
+@d banner==epTeX_banner
+@d banner_k==epTeX_banner_k
 @z
 
 @x

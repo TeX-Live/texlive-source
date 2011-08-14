@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for e-pTeX
 ==============================================
 
+2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech, eptexextra.h, etex.ch1, am/eptex.am, fam256.ch:
+	Slightly reformulate to simplify e-upTeX.
+	* pdfsavepos.ch: \pdfsavepos is extension, not convert case.
+
 2011-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.defines: Add newline at end of file.

@@ -715,6 +715,14 @@ PDFTEX_FALSE
 PDFTEX_TRUE
 ALEPH_FALSE
 ALEPH_TRUE
+EUPTEX_SYNCTEX_FALSE
+EUPTEX_SYNCTEX_TRUE
+EUPTEX_FALSE
+EUPTEX_TRUE
+UPTEX_SYNCTEX_FALSE
+UPTEX_SYNCTEX_TRUE
+UPTEX_FALSE
+UPTEX_TRUE
 EPTEX_SYNCTEX_FALSE
 EPTEX_SYNCTEX_TRUE
 EPTEX_FALSE
@@ -903,6 +911,10 @@ enable_ptex
 enable_ptex_synctex
 enable_eptex
 enable_eptex_synctex
+enable_uptex
+enable_uptex_synctex
+enable_euptex
+enable_euptex_synctex
 enable_aleph
 enable_pdftex
 enable_pdftex_synctex
@@ -1615,6 +1627,10 @@ Optional Features:
   --disable-ptex-synctex    build pTeX without SyncTeX support
   --disable-eptex         do not compile and install e-pTeX
   --disable-eptex-synctex   build e-pTeX without SyncTeX support
+  --disable-uptex         do not compile and install upTeX
+  --disable-uptex-synctex   build upTeX without SyncTeX support
+  --disable-euptex        do not compile and install e-upTeX
+  --disable-euptex-synctex  build e-upTeX without SyncTeX support
   --disable-aleph         do not compile and install Aleph
   --disable-pdftex        do not compile and install pdfTeX
   --disable-pdftex-synctex  build pdfTeX without SyncTeX support
@@ -17372,6 +17388,44 @@ fi
 test "x$enable_web2c:$enable_eptex" = xyes:yes && {
   need_ptexenc=yes
 }
+# Check whether --enable-uptex was given.
+if test "${enable_uptex+set}" = set; then :
+  enableval=$enable_uptex;
+fi
+case $enable_uptex in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_uptex=yes ;;
+esac
+
+# Check whether --enable-uptex-synctex was given.
+if test "${enable_uptex_synctex+set}" = set; then :
+  enableval=$enable_uptex_synctex;
+fi
+
+test "x$enable_web2c:$enable_uptex" = xyes:yes && {
+  need_ptexenc=yes
+}
+# Check whether --enable-euptex was given.
+if test "${enable_euptex+set}" = set; then :
+  enableval=$enable_euptex;
+fi
+case $enable_euptex in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_euptex=yes ;;
+esac
+
+# Check whether --enable-euptex-synctex was given.
+if test "${enable_euptex_synctex+set}" = set; then :
+  enableval=$enable_euptex_synctex;
+fi
+
+test "x$enable_web2c:$enable_euptex" = xyes:yes && {
+  need_ptexenc=yes
+}
 # Check whether --enable-aleph was given.
 if test "${enable_aleph+set}" = set; then :
   enableval=$enable_aleph;
@@ -18454,6 +18508,52 @@ esac
 else
   EPTEX_SYNCTEX_TRUE='#'
   EPTEX_SYNCTEX_FALSE=
+fi
+ if test "x$enable_uptex" = xyes; then
+  UPTEX_TRUE=
+  UPTEX_FALSE='#'
+else
+  UPTEX_TRUE='#'
+  UPTEX_FALSE=
+fi
+
+case $enable_native_texlive_build:$enable_uptex_synctex in #(
+  yes:yes | no:yes | no:no) :
+     ;; #(
+  *) :
+    enable_uptex_synctex=yes
+         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-uptex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-uptex-synctex=yes' (native TeX Live build)" >&2;} ;;
+esac
+ if test "x$enable_uptex_synctex" = xyes; then
+  UPTEX_SYNCTEX_TRUE=
+  UPTEX_SYNCTEX_FALSE='#'
+else
+  UPTEX_SYNCTEX_TRUE='#'
+  UPTEX_SYNCTEX_FALSE=
+fi
+ if test "x$enable_euptex" = xyes; then
+  EUPTEX_TRUE=
+  EUPTEX_FALSE='#'
+else
+  EUPTEX_TRUE='#'
+  EUPTEX_FALSE=
+fi
+
+case $enable_native_texlive_build:$enable_euptex_synctex in #(
+  yes:yes | no:yes | no:no) :
+     ;; #(
+  *) :
+    enable_euptex_synctex=yes
+         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-euptex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-euptex-synctex=yes' (native TeX Live build)" >&2;} ;;
+esac
+ if test "x$enable_euptex_synctex" = xyes; then
+  EUPTEX_SYNCTEX_TRUE=
+  EUPTEX_SYNCTEX_FALSE='#'
+else
+  EUPTEX_SYNCTEX_TRUE='#'
+  EUPTEX_SYNCTEX_FALSE=
 fi
  if test "x$enable_aleph" = xyes; then
   ALEPH_TRUE=
@@ -22981,6 +23081,22 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${EPTEX_SYNCTEX_TRUE}" && test -z "${EPTEX_SYNCTEX_FALSE}"; then
   as_fn_error $? "conditional \"EPTEX_SYNCTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${UPTEX_TRUE}" && test -z "${UPTEX_FALSE}"; then
+  as_fn_error $? "conditional \"UPTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${UPTEX_SYNCTEX_TRUE}" && test -z "${UPTEX_SYNCTEX_FALSE}"; then
+  as_fn_error $? "conditional \"UPTEX_SYNCTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${EUPTEX_TRUE}" && test -z "${EUPTEX_FALSE}"; then
+  as_fn_error $? "conditional \"EUPTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${EUPTEX_SYNCTEX_TRUE}" && test -z "${EUPTEX_SYNCTEX_FALSE}"; then
+  as_fn_error $? "conditional \"EUPTEX_SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ALEPH_TRUE}" && test -z "${ALEPH_FALSE}"; then

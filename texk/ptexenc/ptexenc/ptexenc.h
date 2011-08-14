@@ -55,6 +55,7 @@ extern PTENCDLL long fromJIS(long jis);
 extern PTENCDLL long fromEUC(long euc);
 extern PTENCDLL long fromSJIS(long sjis);
 extern PTENCDLL long fromKUTEN(long kuten);
+extern PTENCDLL long fromUCS (long ucs);
 extern PTENCDLL long toUCS(long kcode);
 
 /* fputs/putc with encoding conversion */

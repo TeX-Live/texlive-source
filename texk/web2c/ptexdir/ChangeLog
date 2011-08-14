@@ -1,3 +1,9 @@
+2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptex-base.ch: Slightly reformulate to simplify e-upTeX.
+
+	* kanji.h [MP]: Remove TEXMFPOOLNAME and TEXMFENGINENAME.
+
 2011-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am (pweb_tests): New variable for tests of pTeX

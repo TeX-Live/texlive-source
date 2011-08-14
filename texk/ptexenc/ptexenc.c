@@ -256,7 +256,7 @@ long fromKUTEN(long kcode)
 
 
 /* UCS to internal (EUC/SJIS) code conversion */
-static long fromUCS(long kcode)
+long fromUCS(long kcode)
 {
     kcode = UCS2toJIS(kcode);
     if (kcode == 0) return 0;

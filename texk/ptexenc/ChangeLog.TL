@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Add support for upTeX and e-upTeX.
+	* ptexenc/ptexenc.h, ptexenc.c: Export fromUCS().
+
 2011-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: New file defining the ptexenc version.
