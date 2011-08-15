@@ -1,3 +1,7 @@
+2011-08-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp-help.h: Remove w32tex garbage.
+
 2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, texmfmem.h, texmfmp.h, texmfmp-help.h,

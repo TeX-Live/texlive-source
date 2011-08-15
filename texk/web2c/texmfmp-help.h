@@ -118,6 +118,7 @@ const_string EPTEXHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -200,9 +201,6 @@ const_string EUPTEXHELP[] = {
     "",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#ifdef WIN32
-    "[-no]-guess-input-enc   disable/enable to guess input file encoding",
-#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -223,14 +221,10 @@ const_string EUPTEXHELP[] = {
     "-output-comment=STRING  use STRING for DVI file comment instead of date",
     "-output-directory=DIR   use existing DIR as the directory to write files in",
     "[-no]-parse-first-line  disable/enable parsing of first line of input file",
-#ifdef WIN32
-    "-proctimes              print process times, if possible",
-#endif
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-    "-sjis-terminal          always output to stdout and stderr by sjis",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -397,6 +391,7 @@ const_string PTEXHELP[] = {
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -477,9 +472,6 @@ const_string UPTEXHELP[] = {
     "     : uptex [option] &format texfile",
     "",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#ifdef WIN32
-    "[-no]-guess-input-enc   disable/enable to guess input file encoding",
-#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -500,14 +492,10 @@ const_string UPTEXHELP[] = {
     "-output-comment=STRING  use STRING for DVI file comment instead of date",
     "-output-directory=DIR   use existing DIR as the directory to write files in",
     "[-no]-parse-first-line  disable/enable parsing of first line of input file",
-#ifdef WIN32
-    "-proctimes              print process times, if possible",
-#endif
     "-progname=STRING        set program (and fmt) name to STRING",
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-    "-sjis-terminal          always output to stdout and stderr by sjis",
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
