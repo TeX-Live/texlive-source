@@ -15,15 +15,19 @@ Prerequisites:
 - GNU make.  If your GNU make is invoked by some name other than `make',
   try setting the envvar TL_MAKE to what is needed.
 
-- GNU clisp and GNU libffcall, must be present for xindy.  See more
+- GNU clisp and GNU libffcall, for xindy.  See more
   details in utils/README.  (Alternative: Build --disable-xindy.)
 
-- libfontconfig (again both headers and library) must be present for
-  XeTeX and xdvipdfmx, except on MacOSX.  (Alternative:
+- X11 headers and libraries (often a ``development'' package, not
+  installed by default), for pdfopen and xdvi.
+  (Alternative: Build --without-x.)
+
+- libfontconfig (again both headers and library), for XeTeX and xdvipdfmx,
+  except on MacOSX.  (Alternative:
   Build --disable-xetex --disable-xdvipdfmx.)
 
-- X11 headers and libraries must be present for pdfopen and xdvi.
-  (Alternative: Build --without-x.)
+- ncurses or some other terminal library (again both headers and
+  library) for dialog.  (Alternative: Build --disable-dialog.)
 
 - If you modify any .y or .l source files, then Bison and Flex (or maybe
   equivalents) are needed.  The distributed .c and .h files are generated
