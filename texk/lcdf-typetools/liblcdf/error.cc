@@ -486,14 +486,8 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 	    int len;
 	    if (precision < 0)
 		len = strlen(s1);
-	    else {
-#if HAVE_STRNLEN
+	    else
 		len = strnlen(s1, precision);
-#else
-		for (len = 0; len < precision && s1[len] != 0; ++len)
-		    /* do nothing */;
-#endif
-	    }
 
 	    // transform string if alternate form
 	    if (flags & cf_alternate_form) {

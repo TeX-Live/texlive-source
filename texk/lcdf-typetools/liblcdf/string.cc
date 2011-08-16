@@ -610,10 +610,12 @@ String::hashcode(const char *begin, const char *end)
 #undef get16
 #if !HAVE_INDIFFERENT_ALIGNMENT
     } else {
-# if !__i386__
+# if WORDS_BIGENDIAN
 #  define get16(p) (((unsigned char) (p)[0] << 8) + (unsigned char) (p)[1])
-# else
+# elif WORDS_LITTLEENDIAN
 #  define get16(p) ((unsigned char) (p)[0] + ((unsigned char) (p)[1] << 8))
+# else
+#  error "unknown byte order"
 # endif
 	// should be exactly the same as the code above
 	for (; begin != end; begin += 4) {

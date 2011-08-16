@@ -11,6 +11,7 @@
 #  include <win32lib.h>
 # endif
 #else
+# include <stddef.h>
 # define CDECL /* nothing */
 #endif
 
@@ -18,14 +19,19 @@
 extern "C" {
 #endif
 
-/* Prototype strerror if we don't have it. */
+/* Prototype strerror if necessary. */
 #if !HAVE_STRERROR
 char *strerror(int errno);
 #endif
 
-/* Prototype good_strtod if we need it. */
-#if BROKEN_STRTOD
-double good_strtod(const char *nptr, char **endptr);
+/* Prototype strnlen if necessary. */
+#if !HAVE_STRNLEN || !HAVE_DECL_STRNLEN
+size_t strnlen(const char *s, size_t maxlen);
+#endif
+
+/* Prototype good_strtod if necessary. */
+#if HAVE_BROKEN_STRTOD
+double good_strtod(const char *s, char **endptr);
 #endif
 
 #ifdef __cplusplus

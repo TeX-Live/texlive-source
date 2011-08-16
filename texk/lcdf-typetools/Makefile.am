@@ -82,6 +82,7 @@ EXTRA_DIST = \
 	include/efont/ttfkern.hh \
 	glyphlist.txt \
 	texglyphlist.txt \
+	texglyphlist-g2u.txt \
 	7t.enc
 
 liblcdf libefont:
@@ -94,6 +95,12 @@ versionize:
 	perl -pi -e 's/^\.ds V.*/.ds V $(VERSION)/;' $(top_srcdir)/cfftot1/cfftot1.1 $(top_srcdir)/mmafm/mmafm.1 $(top_srcdir)/mmpfb/mmpfb.1 $(top_srcdir)/otfinfo/otfinfo.1 $(top_srcdir)/otftotfm/otftotfm.1 $(top_srcdir)/t1dotlessj/t1dotlessj.1 $(top_srcdir)/t1lint/t1lint.1 $(top_srcdir)/t1rawafm/t1rawafm.1 $(top_srcdir)/t1reencode/t1reencode.1 $(top_srcdir)/t1testpage/t1testpage.1 $(top_srcdir)/ttftotype42/ttftotype42.1
 	perl -pi -e 's/^(\U$(PACKAGE)\E) [\d.ab]+$$/$$1 $(VERSION)/;' $(top_srcdir)/README
 	perl -pi -e 's/^Version: [\d.ab]+$$/Version: $(VERSION)/;' $(top_srcdir)/lcdf-typetools.spec
+
+dist-hook:
+	if test -f $(top_srcdir)/make-glyphtounicode.pl; then (cd $(top_srcdir); perl make-glyphtounicode.pl) > $(distdir)/glyphtounicode.tex; elif test -f $(top_srcdir)/glyphtounicode.tex; then cp $(top_srcdir)/glyphtounicode.tex $(distdir); fi
+
+$(top_srcdir)/glyphtounicode.tex: $(top_srcdir)/glyphlist.txt $(top_srcdir)/texglyphlist.txt $(top_srcdir)/texglyphlist-g2u.txt $(top_srcdir)/make-glyphtounicode.pl
+	cd $(top_srcdir); perl make-glyphtounicode.pl > glyphtounicode.tex
 
 .PHONY: rpm liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 

@@ -4,7 +4,7 @@
 #endif
 #include <lcdf/strtonum.h>
 #include <stdlib.h>
-#ifdef BROKEN_STRTOD
+#if HAVE_BROKEN_STRTOD
 # define strtod good_strtod
 #endif
 #ifdef __cplusplus

@@ -27,7 +27,7 @@
 #ifndef WIN32
 # include <unistd.h>
 #endif
-#ifdef BROKEN_STRTOD
+#if HAVE_BROKEN_STRTOD
 # define strtod good_strtod
 #endif
 namespace Efont {

@@ -46,7 +46,7 @@ extern "C" {
 
 
 /****************
- * Rotate a 32 bit integer by n bytes
+ * Rotate a 32 bit integer by n bits
  */
 #if defined(__GNUC__) && defined(__i386__)
 static inline uint32_t
