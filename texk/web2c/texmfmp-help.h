@@ -96,6 +96,9 @@ const_string EPTEXHELP[] = {
     "",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
+#if defined(WIN32) && !defined(__MINGW32__)
+    "[-no]-guess-input-enc   disable/enable to guess input file encoding",
+#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -119,6 +122,9 @@ const_string EPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
+#if defined(WIN32) && !defined(__MINGW32__)
+    "-sjis-terminal          always output to stdout and stderr by CP932",
+#endif
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -196,11 +202,29 @@ const_string ETEXHELP[] = {
 
 #ifdef eupTeX
 const_string EUPTEXHELP[] = {
-    "Usage: euptex [option] texfile",
-    "     : euptex [option] &format texfile",
+    "Usage: euptex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
+    "   or: euptex [OPTION]... \\FIRST-LINE",
+    "   or: euptex [OPTION]... &FMT ARGS",
+    "  Run e-upTeX on TEXNAME, usually creating TEXNAME.dvi.",
+    "  Any remaining COMMANDS are processed as e-upTeX input, after TEXNAME is read.",
+    "  If the first line of TEXNAME is %&FMT, and FMT is an existing .fmt file,",
+    "  use it.  Else use `NAME.fmt', where NAME is the program invocation name,",
+    "  most commonly `euptex'.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a backslash,",
+    "  interpret all non-option arguments as a line of e-upTeX input.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a &, the",
+    "  next word is taken as the FMT to read, overriding all else.  Any",
+    "  remaining arguments are processed as above.",
+    "",
+    "  If no arguments or options are specified, prompt for input.",
     "",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
+#if defined(WIN32) && !defined(__MINGW32__)
+    "[-no]-guess-input-enc   disable/enable to guess input file encoding",
+#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -225,6 +249,9 @@ const_string EUPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
+#if defined(WIN32) && !defined(__MINGW32__)
+    "-sjis-terminal          always output to stdout and stderr by CP932",
+#endif
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -369,6 +396,9 @@ const_string PTEXHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-fmt=NAME               use NAME instead of program name or %&format.",
+#if defined(WIN32) && !defined(__MINGW32__)
+    "[-no]-guess-input-enc   disable/enable to guess input file encoding",
+#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -392,6 +422,9 @@ const_string PTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
+#if defined(WIN32) && !defined(__MINGW32__)
+    "-sjis-terminal          always output to stdout and stderr by CP932",
+#endif
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
@@ -468,10 +501,28 @@ const_string TEXHELP[] = {
 
 #ifdef upTeX
 const_string UPTEXHELP[] = {
-    "Usage: uptex [option] texfile",
-    "     : uptex [option] &format texfile",
+    "Usage: uptex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
+    "   or: uptex [OPTION]... \\FIRST-LINE",
+    "   or: uptex [OPTION]... &FMT ARGS",
+    "  Run upTeX on TEXNAME, usually creating TEXNAME.dvi.",
+    "  Any remaining COMMANDS are processed as upTeX input, after TEXNAME is read.",
+    "  If the first line of TEXNAME is %&FMT, and FMT is an existing .fmt file,",
+    "  use it.  Else use `NAME.fmt', where NAME is the program invocation name,",
+    "  most commonly `uptex'.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a backslash,",
+    "  interpret all non-option arguments as a line of upTeX input.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a &, the",
+    "  next word is taken as the FMT to read, overriding all else.  Any",
+    "  remaining arguments are processed as above.",
+    "",
+    "  If no arguments or options are specified, prompt for input.",
     "",
     "-fmt=NAME               use NAME instead of program name or %&format.",
+#if defined(WIN32) && !defined(__MINGW32__)
+    "[-no]-guess-input-enc   disable/enable to guess input file encoding",
+#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -496,6 +547,9 @@ const_string UPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
+#if defined(WIN32) && !defined(__MINGW32__)
+    "-sjis-terminal          always output to stdout and stderr by CP932",
+#endif
     "-src-specials           insert source specials into the DVI file",
     "-src-specials=WHERE     insert source specials in certain places of",
     "                          the DVI file. WHERE is a comma-separated value",
