@@ -11,6 +11,10 @@
 #define KCAT_KANJI     16
 #define KCAT_HANGUL    19
 
+#if !defined(WIN32)
+int sjisterminal;
+#endif
+
 /* m: for debug */
 integer check_kanji (integer c,integer m)
 {
@@ -362,3 +366,8 @@ integer multilenbuffchar(integer c)
 boolean is_internalUPTEX(void) { return false; }
 boolean ismultichr (int length, int nth, int c) { return false;  }
 /* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
+
+void initdefaultkanji (void)
+{
+    enable_UPTEX (true); /* enable */
+}

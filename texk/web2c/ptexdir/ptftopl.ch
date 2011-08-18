@@ -29,6 +29,13 @@ var @!k:integer; {all-purpose initiallization index}
     tfm_file_array := cast_to_byte_pointer (xmalloc (1003+4));
 @z
 
+@x
+    parse_arguments;
+@y
+    init_default_kanji;
+    parse_arguments;
+@z
+
 @x [7] l.149 - pTeX:
   print_ln (version_string);
 @y
@@ -343,7 +350,7 @@ else
 @x
 const n_options = 4; {Pascal won't count array lengths for us.}
 @y
-const n_options = 5; {Pascal won't count array lengths for us.}
+const n_options = 6; {Pascal won't count array lengths for us.}
 @z
 @x
 var @!long_options: array[0..n_options] of getopt_struct;
@@ -390,7 +397,18 @@ begin
 @x
 @ An element with all zeros always ends the list.
 @y
-@ kanji option
+@ Shift-JIS terminal (the flag is ignored except for WIN32).
+@.-sjis-terminal@>
+
+@<Define the option...@> =
+long_options[current_option].name := 'sjis-terminal';
+long_options[current_option].has_arg := 0;
+long_options[current_option].flag := address_of (sjis_terminal);
+long_options[current_option].val := 1;
+incr (current_option);
+
+@ Kanji option.
+@.-kanji@>
 
 @<Define the option...@> =
 long_options[current_option].name := 'kanji';

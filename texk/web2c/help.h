@@ -10,7 +10,7 @@
    thing, the messages have a lot in common, so it's nice to have them
    in one place.)
 
-Copyright 1995, 1996, 2009 Karl Berry.
+Copyright 1995, 1996, 2009, 2011 Karl Berry.
 Copyright 2008 Taco Hoekwater.
 Copyright 2001, 2003, 2004 Olaf Weber.
 
@@ -311,37 +311,46 @@ const_string PATGENHELP[] = {
 #endif /* PATGEN */
 
 #ifdef PBIBTEX
+const_string based_prog_name = "BibTeX";
 const_string PBIBTEXHELP[] = {
-"Usage: pbibtex [option] auxfile",
-"",
-"  -min-crossrefs=INTEGER     minimum number of cross-refs required",
-"                             for automatic cite_list inclusion (default 2).",
-"  -terse                     do silently.",
-"  -version                   print version information and exit.",
-"  -help                      print this message and exit.",
-"  -kanji={jis|euc|sjis|utf8} kanji code for output-file.",
-NULL };
+    "Usage: pbibtex [OPTION]... AUXFILE[.aux]",
+    "  Write bibliography for entries in AUXFILE to AUXFILE.bbl,",
+    "  along with a log file AUXFILE.blg."
+    "",
+    "-kanji={jis|euc|sjis|utf8} kanji code for output-file.",
+    "-min-crossrefs=NUMBER      include item after NUMBER cross-refs; default 2",
+#if defined(WIN32)
+    "-sjis-terminal             always output to stdout and stderr by CP932",
+#endif
+    "-terse                     do not print progress reports",
+    "-help                      display this help and exit",
+    "-version                   output version information and exit",
+    NULL
+};
 #endif /* PBIBTEX */
 
 #ifdef PDVITYPE
+const_string based_prog_name = "DVItype";
 const_string PDVITYPEHELP[] = {
-"Usage: pdvitype [option] dvifile",
-"",
-"  -dpi=REAL                  assumed device resolution in pixels per inch",
-"                             (default 300.0).",
-"  -magnification=INTEGER     overrride the postamble's magnification.",
-"  -max-pages=INTEGER         maximum number of pages (default 1000000).",
-"  -output-level=1..4         verbosity level.",
-"                                 1: terse, 2: medium-level, 3: verbose,",
-"                                 4: plus check for postamble(default).",
-"  -page-start=PAGE           type, e.g., `1.*.-5' to specify the first page",
-"                             with \\count0=1, \\count2=4.",
-"                             (see the TeX book chapter 15).",
-"  -show-opcodes              show opcodes in decimal.",
-"  -kanji={jis|euc|sjis|utf8} kanji code for output-file.",
-"  -version                   print version information and exit.",
-"  -help                      print this message and exit.",
-NULL };
+    "Usage: pdvitype [OPTION]... DVIFILE[.dvi]",
+    "  Verify and translate DVIFILE to human-readable form,",
+    "  written to standard output.",
+    "",
+    "-dpi=REAL              set resolution to REAL pixels per inch; default 300.0",
+    "-kanji={jis|euc|sjis|utf8}",
+    "                       kanji code for output-file.",
+    "-magnification=NUMBER  override existing magnification with NUMBER",
+    "-max-pages=NUMBER      process NUMBER pages; default one million",
+    "-output-level=NUMBER   verbosity level, from 0 to 4; default 4",
+    "-page-start=PAGE-SPEC  start at PAGE-SPEC, for example `2' or `5.*.-2'",
+    "-show-opcodes          show numeric opcodes (in decimal)",
+#if defined(WIN32)
+    "-sjis-terminal         always output to stdout and stderr by CP932",
+#endif
+    "-help                  display this help and exit",
+    "-version               output version information and exit",
+    NULL
+};
 #endif /* PDVITYPE */
 
 #ifdef PKTOGF
@@ -394,29 +403,42 @@ const_string POOLTYPEHELP[] = {
 #endif /* POOLTYPE */
 
 #ifdef PPLTOTF
+const_string based_prog_name = "PLtoTF";
 const_string PPLTOTFHELP[] = {
-"Usage: ppltotf [option] plfile [tfmfile]",
-"",
-"  -verbose               output progress reports.",
-"  -version               print version information and exit.",
-"  -help                  print this message and exit.",
-"  -kanji={jis|euc|sjis|utf8}",
-"                         plfile kanji code.",
-NULL };
+    "Usage: ppltotf [OPTION]... PLFILE[.pl] [TFMFILE[.tfm]]",
+    "  Translate the property list PLFILE to TFMFILE.",
+    "  Default TFMFILE is basename of PLFILE extended with `.tfm'.",
+    "",
+    "-kanji={jis|euc|sjis|utf8} plfile kanji code.",
+#if defined(WIN32)
+    "-sjis-terminal             always output to stdout and stderr by CP932",
+#endif
+    "-help                      print this message and exit.",
+    "-verbose                   output progress reports.",
+    "-version                   print version information and exit.",
+    NULL
+};
 #endif /* PPLTOTF */
 
 #ifdef PTFTOPL
+const_string based_prog_name = "TFtoPL";
 const_string PTFTOPLHELP[] = {
-"Usage: ptftopl [option] tfmfile [plfile]",
-"",
-"-charcode-format=TYPE  output character codes according to TYPE,",
-"                        either `octal' or `ascii'; default is ascii.",
-"-verbose               output progress reports.",
-"-version               print version information and exit.",
-"-help                  print this message and exit.",
-"-kanji={jis|euc|sjis|utf8}",
-"                         plfile kanji code.",
-NULL };
+    "Usage: ptftopl [OPTION]... TFMNAME[.tfm] [PLFILE[.pl]]",
+    "  Translate the font metrics TFMNAME to human-readable property list file",
+    "  PLFILE or standard output.",
+    "",
+    "-charcode-format=TYPE      output character codes according to TYPE,",
+    "                            either `octal' or `ascii'; default is ascii for",
+    "                            letters and digits, octal for all else",
+    "-kanji={jis|euc|sjis|utf8} plfile kanji code.",
+#if defined(WIN32)
+    "-sjis-terminal             always output to stdout and stderr by CP932",
+#endif
+    "-help                      display this help and exit",
+    "-verbose                   display progress reports",
+    "-version                   output version information and exit",
+    NULL
+};
 #endif /* PTFTOPL */
 
 #if defined (TANGLE) || defined (TANGLEBOOT)
@@ -427,7 +449,6 @@ const_string TANGLEHELP[] = {
     "  Pascal output goes to the basename of WEBFILE extended with `.p',",
     "  and a string pool file, if necessary, to the same extended with `.pool'.",
     "",
-    "-help          display this help and exit",
     "-length=NUMBER the first NUMBER characters of an identifier have to be",
     "                unique (default 32)",
     "-loose         honor the upper/lower/mixedcase and underline options when",
@@ -438,6 +459,7 @@ const_string TANGLEHELP[] = {
     "                identifiers",
     "-underline     do not remove underline characters from indentifiers",
     "-uppercase     make all identifiers uppercase",
+    "-help          display this help and exit",
     "-version       output version information and exit",
     NULL
 };
@@ -458,6 +480,91 @@ const_string TFTOPLHELP[] = {
     NULL
 };
 #endif /* TFTOPL */
+
+#ifdef UPBIBTEX
+const_string based_prog_name = "BibTeX";
+const_string UPBIBTEXHELP[] = {
+    "Usage: upbibtex [OPTION]... AUXFILE[.aux]",
+    "  Write bibliography for entries in AUXFILE to AUXFILE.bbl,",
+    "  along with a log file AUXFILE.blg."
+    "",
+    "-kanji={jis|euc|sjis|utf8|uptex}",
+    "                           kanji code for output-file.",
+    "-min-crossrefs=NUMBER      include item after NUMBER cross-refs; default 2",
+#if defined(WIN32)
+    "-sjis-terminal             always output to stdout and stderr by CP932",
+#endif
+    "-terse                     do not print progress reports",
+    "-help                      display this help and exit",
+    "-version                   output version information and exit",
+    NULL
+};
+#endif /* UPBIBTEX */
+
+#ifdef UPDVITYPE
+const_string based_prog_name = "DVItype";
+const_string UPDVITYPEHELP[] = {
+    "Usage: updvitype [OPTION]... DVIFILE[.dvi]",
+    "  Verify and translate DVIFILE to human-readable form,",
+    "  written to standard output.",
+    "",
+    "-dpi=REAL              set resolution to REAL pixels per inch; default 300.0",
+    "-kanji={jis|euc|sjis|utf8|uptex}",
+    "                       kanji code for output-file.",
+    "-magnification=NUMBER  override existing magnification with NUMBER",
+    "-max-pages=NUMBER      process NUMBER pages; default one million",
+    "-output-level=NUMBER   verbosity level, from 0 to 4; default 4",
+    "-page-start=PAGE-SPEC  start at PAGE-SPEC, for example `2' or `5.*.-2'",
+    "-show-opcodes          show numeric opcodes (in decimal)",
+#if defined(WIN32)
+    "-sjis-terminal         always output to stdout and stderr by CP932",
+#endif
+    "-help                  display this help and exit",
+    "-version               output version information and exit",
+    NULL
+};
+#endif /* UPDVITYPE */
+
+#ifdef UPPLTOTF
+const_string based_prog_name = "PLtoTF";
+const_string UPPLTOTFHELP[] = {
+    "Usage: uppltotf [OPTION]... PLFILE[.pl] [TFMFILE[.tfm]]",
+    "  Translate the property list PLFILE to TFMFILE.",
+    "  Default TFMFILE is basename of PLFILE extended with `.tfm'.",
+    "",
+    "-kanji={jis|euc|sjis|utf8|uptex}",
+    "                           plfile kanji code.",
+#if defined(WIN32)
+    "-sjis-terminal             always output to stdout and stderr by CP932",
+#endif
+    "-help                      print this message and exit.",
+    "-verbose                   output progress reports.",
+    "-version                   print version information and exit.",
+    NULL
+};
+#endif /* UPPLTOTF */
+
+#ifdef UPTFTOPL
+const_string based_prog_name = "TFtoPL";
+const_string UPTFTOPLHELP[] = {
+    "Usage: uptftopl [OPTION]... TFMNAME[.tfm] [PLFILE[.pl]]",
+    "  Translate the font metrics TFMNAME to human-readable property list file",
+    "  PLFILE or standard output.",
+    "",
+    "-charcode-format=TYPE      output character codes according to TYPE,",
+    "                            either `octal' or `ascii'; default is ascii for",
+    "                            letters and digits, octal for all else",
+    "-kanji={jis|euc|sjis|utf8|uptex}",
+    "                           plfile kanji code.",
+#if defined(WIN32)
+    "-sjis-terminal             always output to stdout and stderr by CP932",
+#endif
+    "-help                      display this help and exit",
+    "-verbose                   display progress reports",
+    "-version                   output version information and exit",
+    NULL
+};
+#endif /* UPTFTOPL */
 
 #ifdef VFTOVP
 const_string VFTOVPHELP[] = {

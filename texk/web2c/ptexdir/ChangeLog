@@ -1,3 +1,20 @@
+2011-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch: Add WIN32
+	option "sjis-terminal" and init_default_kanji().
+	* ptex.defines: Add sjisterminal and initdefaultkanji.
+	* kanji.[ch]: Add support for WIN32 option "sjis-terminal".
+	(check_kanji): Change return type boolean => int (for -1, 0, +1).
+	(initdefaultkanji): New function from W32TeX kanjiextra.c.
+	* am/ptex.am (*_LDADD): Use libkanji.a for all binaries.
+
+2011-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	pTeX update tlsvn23478-uptex-1108111825 [ptex:00267]
+	from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Merged with ptex-20110723-nullfont.ch (bug fix).
+
 2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Slightly reformulate to simplify e-upTeX.

@@ -65,11 +65,9 @@
 @define const DVICOPYHELP;
 @define const DVITOMPHELP;
 @define const DVITYPEHELP;
-@define const ETEXHELP;
 @define const GFTODVIHELP;
 @define const GFTOPKHELP;
 @define const GFTYPEHELP;
-@define const LUATEXHELP;
 @define const MFTHELP;
 @define const ODVICOPYHELP;
 @define const ODVITYPEHELP;
@@ -81,7 +79,6 @@
 @define const PATGENHELP;
 @define const PBIBTEXHELP;
 @define const PDVITYPEHELP;
-@define const PDFTEXHELP;
 @define const PKTOGFHELP;
 @define const PKTYPEHELP;
 @define const PLTOTFHELP;
@@ -90,6 +87,10 @@
 @define const PTFTOPLHELP;
 @define const TANGLEHELP;
 @define const TFTOPLHELP;
+@define const UPBIBTEXHELP;
+@define const UPDVITYPEHELP;
+@define const UPPLTOTFHELP;
+@define const UPTFTOPLHELP;
 @define const VFTOVPHELP;
 @define const VPTOVFHELP;
 @define const WEAVEHELP;

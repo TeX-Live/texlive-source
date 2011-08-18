@@ -679,6 +679,8 @@ LEX
 YFLAGS
 YACC
 KPATHSEA_PATHS_H
+UPWEB_FALSE
+UPWEB_TRUE
 PWEB_FALSE
 PWEB_TRUE
 WEB_FALSE
@@ -19497,6 +19499,20 @@ else
 fi
 
 
+if test "x$enable_uptex:$enable_euptex" = xno:no; then :
+  enable_upweb_progs=no
+else
+  enable_upweb_progs=$enable_web_progs
+fi
+ if test "x$enable_upweb_progs" != xno; then
+  UPWEB_TRUE=
+  UPWEB_FALSE='#'
+else
+  UPWEB_TRUE='#'
+  UPWEB_FALSE=
+fi
+
+
 if test "x$with_system_kpathsea" = xyes; then
   if test "x$with_kpathsea_includes" = x; then
     list="/usr/include /usr/local/include"
@@ -23153,6 +23169,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PWEB_TRUE}" && test -z "${PWEB_FALSE}"; then
   as_fn_error $? "conditional \"PWEB\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${UPWEB_TRUE}" && test -z "${UPWEB_FALSE}"; then
+  as_fn_error $? "conditional \"UPWEB\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

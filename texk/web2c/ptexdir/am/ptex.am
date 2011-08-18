@@ -4,7 +4,7 @@
 ## You may freely use, modify and/or distribute this file.
 
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
-ptex_ldadd = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 pweb_programs = pbibtex pdvitype ppltotf ptftopl
@@ -50,7 +50,7 @@ EXTRA_PROGRAMS += ptex $(pweb_programs)
 ptex_CPPFLAGS = $(ptex_cppflags)
 
 # With --enable-ipc, pTeX may need to link with -lsocket.
-ptex_LDADD = libkanji.a $(ptex_ldadd) $(ipc_socketlibs)
+ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h

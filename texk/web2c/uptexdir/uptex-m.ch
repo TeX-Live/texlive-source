@@ -955,7 +955,7 @@ primitive("chardef",shorthand_def,char_def_code);@/
 @!@:char_def_}{\.{\\chardef} primitive@>
 @y
 @d char_sub_def_code=7 {|shorthand_def| for \.{\\charsubdef}}
-@d kchar_def_code=8 {|shorthand_def| for \.{\\kchardef}}
+@d kchar_def_code=char_sub_def_code+1 {|shorthand_def| for \.{\\kchardef}}
 
 @<Put each...@>=
 primitive("chardef",shorthand_def,char_def_code);@/
@@ -1121,13 +1121,13 @@ begin if is_char_node(link(p)) then
 @z
 
 @x
-  fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
-  link(tail):=main_p; tail:=main_p; last_jchr:=tail;
-  fast_get_avail(main_p); info(main_p):=KANJI(cur_chr);
+    begin fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
+    link(tail):=main_p; tail:=main_p; last_jchr:=tail;
+    fast_get_avail(main_p); info(main_p):=KANJI(cur_chr);
 @y
-  fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
-  link(tail):=main_p; tail:=main_p; last_jchr:=tail;
-  fast_get_avail(main_p); info(main_p):=KANJI(cur_chr)+cur_cmd*max_cjk_val;
+    begin fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
+    link(tail):=main_p; tail:=main_p; last_jchr:=tail;
+    fast_get_avail(main_p); info(main_p):=KANJI(cur_chr)+cur_cmd*max_cjk_val;
 @z
 
 @x

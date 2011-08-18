@@ -22,8 +22,15 @@
 #endif
 
 extern PTENCDLL const char *ptexenc_version_string;
+#if defined(WIN32)
+extern PTENCDLL int sjisterminal;
+extern PTENCDLL int infile_enc_auto;
+#endif
 
 #define KANJI_OPTS "{jis|euc|sjis|utf8}"
+
+/* enable/disable UPTEX */
+extern PTENCDLL void enable_UPTEX (boolean enable);
 
 /* get/set Kanji encoding by string */
 extern PTENCDLL const_string get_enc_string(void);

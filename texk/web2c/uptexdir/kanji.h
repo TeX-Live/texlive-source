@@ -13,6 +13,10 @@
 
 #define KANJI
 
+#if !defined(WIN32)
+extern int sjisterminal;
+#endif
+
 /* functions */
 #define XXHi(x) BYTE1(x)
 #define XHi(x) BYTE2(x)
@@ -32,6 +36,8 @@ extern integer calc_pos (integer c);
 #define calcpos calc_pos
 extern integer kcatcodekey (integer c);
 extern integer multilenbuffchar (integer c);
+extern void initdefaultkanji (void);
+
 #define setptexencuptex() set_enc_string("utf8", "uptex");
 
 /* number of rest of multi-char for kcode_pos */

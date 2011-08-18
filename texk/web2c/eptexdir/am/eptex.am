@@ -95,7 +95,7 @@ DISTCLEANFILES += $(nodist_eptex_SOURCES) eptex.web eptex.ch eptex-web2c \
 ## 
 EXTRA_DIST += \
 	eptexdir/ChangeLog \
-	eptexdir/ChangeLog.TL \
+	eptexdir/Changes.txt \
 	eptexdir/README.txt
 
 if EPTEX

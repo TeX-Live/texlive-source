@@ -2805,11 +2805,11 @@ if (cur_val<0)or((cur_val>15)and(cur_val<>18)) then
   end;
 end;
 
-@* \[54/web2c-string] The string recycling routines.  \TeX{} uses 2
-upto 4 {\it new\/} strings when scanning a filename in an \.{\\input},
-\.{\\openin}, or \.{\\openout} operation.  These strings are normally
-lost because the reference to them are not saved after finishing the
-operation.  |search_string| searches through the string pool for the
+@* \[54/web2c-string] The string recycling routines.
+\TeX{} uses 2 upto 4 {\it new\/} strings when scanning a filename in an
+\.{\\input}, \.{\\openin}, or \.{\\openout} operation.  These strings are
+normally lost because the reference to them are not saved after finishing
+the operation.  |search_string| searches through the string pool for the
 given string and returns either 0 or the found string number.
 
 @<Declare additional routines for string recycling@>=

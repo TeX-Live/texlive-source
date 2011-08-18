@@ -27,3 +27,7 @@
 @define function ismultiprn ();
 @define function calcpos ();
 @define function kcatcodekey ();
+
+@define procedure initdefaultkanji;
+
+@define var sjisterminal;

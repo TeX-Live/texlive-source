@@ -32,6 +32,12 @@
 #endif
 
 const char *ptexenc_version_string = "ptexenc " PTEXENC_VERSION;
+#if defined(WIN32)
+int sjisterminal;
+int infile_enc_auto;
+#else
+static int infile_enc_auto = 1;
+#endif
 
 static int     file_enc = ENC_UNKNOWN;
 static int internal_enc = ENC_UNKNOWN;
@@ -124,6 +130,12 @@ static int get_terminal_enc(void)
     return terminal_enc;
 }
 
+/* enable/disable UPTEX */
+void enable_UPTEX (boolean enable)
+{
+    (void) enable;
+}
+
 const_string get_enc_string(void)
 {
     static char buffer[20]; /* enough large space */
@@ -144,7 +156,13 @@ boolean set_enc_string(const_string file_str, const_string internal_str)
     int internal = string_to_enc(internal_str);
 
     if (file < 0 || internal < 0) return false; /* error */
-    if (file     != ENC_UNKNOWN) {  set_file_enc(file);  nkf_disable();  }
+    if (file     != ENC_UNKNOWN) {
+        set_file_enc(file);
+#if !defined(WIN32)
+        infile_enc_auto =0;
+        nkf_disable();
+#endif
+    }
     if (internal != ENC_UNKNOWN) set_internal_enc(internal);
     return true;
 }
@@ -319,7 +337,7 @@ int putc2(int c, FILE *fp)
         inkanji[fd] = 1;
     } else {                  /* ASCII */
         if (inkanji[fd] < 0 && output_enc == ENC_JIS) {
-            ret = put_multibyte(KANJI_OUT, fp);
+            put_multibyte(KANJI_OUT, fp);
         }
         ret = putc(c, fp);
         inkanji[fd] = 0;

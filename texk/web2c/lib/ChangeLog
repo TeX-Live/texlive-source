@@ -1,3 +1,7 @@
+2011-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Options for (e-)pTeX and (e-)upTeX.
+
 2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: Add upTeX and e-upTeX.

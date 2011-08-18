@@ -35,7 +35,7 @@
 @y
  \def\titlepage{F}
  \centerline{\:\titlefont The {\:\ttitlefont J\BibTeX} preprocessor}
- \vskip 15pt \centerline{(Version 0.32 base on C Version \BibTeX 0.99d---\today)} \vfill}
+ \vskip 15pt \centerline{(Version 0.33 based on C Version \BibTeX 0.99d---\today)} \vfill}
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,6 +224,13 @@ label aux_found,@!aux_not_found;
 begin
   if (not set_enc_string (0,'EUC')) then uexit(1);
   @<Process a possible command line@>
+@z
+
+@x
+parse_arguments;
+@y
+init_default_kanji;
+parse_arguments;
 @z
 
 @x Changes for JBibTeX by Shouichi Matsui [332]
@@ -514,7 +521,7 @@ var @!long_options: array[0..n_options] of getopt_struct;
 begin
   @<Initialize the option variables@>;
 @y
-const n_options = 5; {Pascal won't count array lengths for us.}
+const n_options = 6; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;
     @!getopt_return_val: integer;
     @!option_index: c_int_type;
@@ -576,6 +583,16 @@ long_options[current_option].name := 'version';
 long_options[current_option].has_arg := 0;
 long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
+incr (current_option);
+
+@ Shift-JIS terminal (the flag is ignored except for WIN32).
+@.-sjis-terminal@>
+
+@<Define the option...@> =
+long_options[current_option].name := 'sjis-terminal';
+long_options[current_option].has_arg := 0;
+long_options[current_option].flag := address_of (sjis_terminal);
+long_options[current_option].val := 1;
 incr (current_option);
 
 @ Kanji option.

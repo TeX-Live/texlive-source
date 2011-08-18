@@ -75,6 +75,7 @@ const_string ALEPHHELP[] = {
 #endif /* Aleph */
 
 #ifdef epTeX
+const_string based_prog_name = "e-TeX";
 const_string EPTEXHELP[] = {
     "Usage: eptex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
     "   or: eptex [OPTION]... \\FIRST-LINE",
@@ -96,7 +97,7 @@ const_string EPTEXHELP[] = {
     "",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
 #endif
     "-halt-on-error          stop processing at the first error",
@@ -122,7 +123,7 @@ const_string EPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     "-sjis-terminal          always output to stdout and stderr by CP932",
 #endif
     "-src-specials           insert source specials into the DVI file",
@@ -201,6 +202,7 @@ const_string ETEXHELP[] = {
 #endif /* eTeX */
 
 #ifdef eupTeX
+const_string based_prog_name = "e-TeX";
 const_string EUPTEXHELP[] = {
     "Usage: euptex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
     "   or: euptex [OPTION]... \\FIRST-LINE",
@@ -222,7 +224,7 @@ const_string EUPTEXHELP[] = {
     "",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
 #endif
     "-halt-on-error          stop processing at the first error",
@@ -249,7 +251,7 @@ const_string EUPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     "-sjis-terminal          always output to stdout and stderr by CP932",
 #endif
     "-src-specials           insert source specials into the DVI file",
@@ -376,6 +378,7 @@ const_string PDFTEXHELP[] = {
 #endif /* pdfTeX */
 
 #ifdef pTeX
+const_string based_prog_name = "TeX";
 const_string PTEXHELP[] = {
     "Usage: ptex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
     "   or: ptex [OPTION]... \\FIRST-LINE",
@@ -396,7 +399,7 @@ const_string PTEXHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
 #endif
     "-halt-on-error          stop processing at the first error",
@@ -422,7 +425,7 @@ const_string PTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     "-sjis-terminal          always output to stdout and stderr by CP932",
 #endif
     "-src-specials           insert source specials into the DVI file",
@@ -500,6 +503,7 @@ const_string TEXHELP[] = {
 #endif /* onlyTeX */
 
 #ifdef upTeX
+const_string based_prog_name = "TeX";
 const_string UPTEXHELP[] = {
     "Usage: uptex [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
     "   or: uptex [OPTION]... \\FIRST-LINE",
@@ -520,7 +524,7 @@ const_string UPTEXHELP[] = {
     "  If no arguments or options are specified, prompt for input.",
     "",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
 #endif
     "-halt-on-error          stop processing at the first error",
@@ -547,7 +551,7 @@ const_string UPTEXHELP[] = {
     "-recorder               enable filename recorder",
     "[-no]-shell-escape      disable/enable \\write18{SHELL COMMAND}",
     "-shell-restricted       enable restricted \\write18",
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     "-sjis-terminal          always output to stdout and stderr by CP932",
 #endif
     "-src-specials           insert source specials into the DVI file",

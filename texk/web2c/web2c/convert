@@ -53,10 +53,14 @@ case $basefile in
     more_defines="$srcdir/ptexdir/ptex.defines"
     hfile=ptexdir/kanji.h
     ;;
+  upbibtex|updvitype|uppltotf|uptftopl)
+    more_defines="$srcdir/uptexdir/uptex.defines"
+    hfile=uptexdir/kanji.h
+    ;;
 esac
 
 case $basefile in
-  bibtex|pbibtex)
+  bibtex|pbibtex|upbibtex)
     midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
     ;;
 
@@ -113,7 +117,7 @@ if test ! -s $cfile || grep @error@ $output_files >/dev/null; then
 fi
 
 case $basefile in
-  bibtex|pbibtex)
+  bibtex|pbibtex|upbibtex)
     sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <$basefile.h >x$basefile.h
     mv x$basefile.h $basefile.h
     ;;

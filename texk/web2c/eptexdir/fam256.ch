@@ -1,5 +1,5 @@
 % fam256.ch
-% (C) 2009 by Hironori Kitagawa.
+% (C) 2009, 2011 by Hironori Kitagawa.
 %
 % This patch is derived from om16bit.ch and omfi.ch (both in Omega).
 % (Omega is copyright by John Plaice and Yannis Haralambous.)

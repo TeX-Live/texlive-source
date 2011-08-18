@@ -1,3 +1,12 @@
+2011-08-17  Peter Breitenlohner  <peb@mp.mpg.de>
+
+	* help.h (PBIBTEXHELP, PDVITYPEHELP, PPLTOTFHELP, PTFTOPLHELP):
+	Add "-sjis-terminal" for WIN32 versions.  Uniform appearance.
+	Add UPBIBTEXHELP, UPDVITYPEHELP, UPPLTOTFHELP, and UPTFTOPLHELP.
+	* texmfmp-help.h: WIN32 options also for MINGW32.
+
+	* configure.ac: New conditional UPWEB for upBibTeX and Co.
+
 2011-08-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp-help.h: Recover help messages for w32tex.

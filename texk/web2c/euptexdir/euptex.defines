@@ -5,8 +5,6 @@
 @define function BYTE4 ();
 @define function Hi ();
 @define function Lo ();
-@define procedure initdefaultkanji;
-@define procedure forcesjisterm ();
 
 @define function getencstring;
 @define function setencstring ();

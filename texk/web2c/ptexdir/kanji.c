@@ -5,8 +5,11 @@
 
 #include "kanji.h"
 
-/* FIXME:  why not boolean value */
-boolean check_kanji(integer c)
+#if !defined(WIN32)
+int sjisterminal;
+#endif
+
+int check_kanji(integer c)
 {
     /* FIXME:  why not 255 (0xff) */
     if (0 <= c && c <= 256) return -1;  /* ascii without catcode */
@@ -76,4 +79,9 @@ integer calc_pos(integer c)
 integer kcatcodekey(integer c)
 {
     return Hi(toDVI(c));
+}
+
+void initdefaultkanji (void)
+{
+    enable_UPTEX (false); /* disable */
 }

@@ -201,6 +201,11 @@ AS_IF([test "x$enable_ptex:$enable_eptex" = xno:no],
       [enable_pweb_progs=$enable_web_progs])
 AM_CONDITIONAL([PWEB], [test "x$enable_pweb_progs" != xno])
 
+AS_IF([test "x$enable_uptex:$enable_euptex" = xno:no],
+      [enable_upweb_progs=no],
+      [enable_upweb_progs=$enable_web_progs])
+AM_CONDITIONAL([UPWEB], [test "x$enable_upweb_progs" != xno])
+
 dnl Although quite unusual, it is possible to build Web2C (TeX & Co)
 dnl using installed (system) kpathsea headers and library.
 dnl In that case we need the location of <kpathsea/paths.h>.

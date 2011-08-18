@@ -13,11 +13,15 @@
 
 #define KANJI
 
+#if !defined(WIN32)
+extern int sjisterminal;
+#endif
+
 /* functions */
 #define Hi(x) (((x) >> 8) & 0xff)
 #define Lo(x) ((x) & 0xff)
 
-extern boolean check_kanji (integer c);
+extern int check_kanji (integer c);
 #define checkkanji check_kanji
 extern boolean is_kanji (integer c);
 #define iskanji is_kanji
@@ -29,6 +33,7 @@ extern boolean ismultiprn (integer c);
 extern integer calc_pos (integer c);
 #define calcpos calc_pos
 extern integer kcatcodekey (integer c);
+extern void initdefaultkanji (void);
 
 #ifndef PRESERVE_PUTC
 #undef putc

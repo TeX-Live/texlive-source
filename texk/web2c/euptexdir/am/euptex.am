@@ -87,12 +87,10 @@ euptex_ch_srcs = \
 	eptexdir/etex.ch1 \
 	$(euptex_ch_synctex) \
 	eptexdir/fam256.ch \
-	euptexdir/fam256-eup.ch \
 	euptexdir/pdfstrcmp-eup-pre.ch \
 	eptexdir/pdfstrcmp.ch \
 	euptexdir/pdfstrcmp-eup-post.ch \
 	eptexdir/pdfsavepos.ch \
-	euptexdir/pdfsavepos-eup.ch \
 	tex-binpool.ch
 
 EXTRA_DIST += $(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines
@@ -100,12 +98,3 @@ EXTRA_DIST += $(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines
 DISTCLEANFILES += $(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
 	euptex.p euptex.pool euptex-tangle
 
-## =============
-
-e-upTeX.w: euptex.p
-	$(tie) -m e-upTeX.w euptex.web euptex.ch
-
-e-pTeX.w: eptex.p
-	$(tie) -m e-pTeX.w eptex.web eptex.ch
-
-foo: e-pTeX.w e-upTeX.w upTeX.w

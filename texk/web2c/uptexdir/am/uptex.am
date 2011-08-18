@@ -4,6 +4,10 @@
 ## You may freely use, modify and/or distribute this file.
 
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
+uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+up_tangle = WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv) $(TANGLE)
+
+upweb_programs = updvitype
 
 ## libukanji.a for upTeX and e-upTeX
 ##
@@ -16,12 +20,15 @@ libukanji_a_CPPFLAGS = $(uptex_cppflags)
 if UPTEX
 bin_PROGRAMS += uptex
 endif UPTEX
-EXTRA_PROGRAMS += uptex
+if UPWEB
+bin_PROGRAMS += $(upweb_programs)
+endif UPWEB
+EXTRA_PROGRAMS += uptex $(upweb_programs)
 
 uptex_CPPFLAGS = $(uptex_cppflags)
 
 # With --enable-ipc, upTeX may need to link with -lsocket.
-uptex_LDADD = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs)
+uptex_LDADD = $(uptex_ldadd) $(ipc_socketlibs)
 
 # upTeX C sources
 uptex_c_h = uptexini.c uptex0.c uptexcoerce.h uptexd.h
@@ -79,8 +86,19 @@ EXTRA_DIST += $(uptex_web_srcs) $(uptex_ch_srcs) uptexdir/uptex.defines
 DISTCLEANFILES += $(nodist_uptex_SOURCES) uptex.web uptex.ch uptex-web2c \
 	uptex.p uptex.pool uptex-tangle
 
-## =============
-
-upTeX.w: uptex.p
-	$(tie) -m upTeX.w uptex.web uptex.ch
+## upDVItype
+##
+nodist_updvitype_SOURCES = updvitype.c updvitype.h
+updvitype_SOURCES = uptexdir/kanji.h
+updvitype_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+updvitype_LDADD = $(uptex_ldadd)
+updvitype.c updvitype.h: updvitype-web2c
+	$(web2c) updvitype
+updvitype-web2c: updvitype.p $(web2c_depend) uptexdir/uptex.defines
+	$(web2c) updvitype
+updvitype.p: tangle$(EXEEXT) updvitype.web uptexdir/updvitype.ch
+	$(up_tangle) updvitype updvitype
+updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch ptexdir/pdvitype.ch
+	$(tie) -m updvitype.web dvitype.web dvitype.ch ptexdir/pdvitype.ch
+EXTRA_DIST += ptexdir/pdvitype.ch uptexdir/updvitype.ch
 

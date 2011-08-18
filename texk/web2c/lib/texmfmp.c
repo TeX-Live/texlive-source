@@ -639,6 +639,11 @@ maininit (int ac, string *av)
   synctexoption = SYNCTEX_NO_OPTION;
 #endif
 
+#if IS_pTeX
+  kpse_set_program_name (argv[0], NULL);
+  initdefaultkanji ();
+#endif
+
   /* If the user says --help or --version, we need to notice early.  And
      since we want the --ini option, have to do it before getting into
      the web (which would read the base file, etc.).  */
@@ -651,7 +656,12 @@ maininit (int ac, string *av)
   /* Do this early so we can inspect kpse_invocation_name and
      kpse_program_name below, and because we have to do this before
      any path searching.  */
+#if IS_pTeX
+  if (user_progname)
+    kpse_reset_program_name (user_progname);
+#else
   kpse_set_program_name (argv[0], user_progname);
+#endif
 
   /* FIXME: gather engine names in a single spot. */
   xputenv ("engine", TEXMFENGINENAME);
@@ -1383,14 +1393,19 @@ static struct option long_options[]
       { "default-translate-file",    1, 0, 0 },
       { "8bit",                      0, &eightbitp, 1 },
 #if defined(XeTeX)
-      { "no-pdf",                 0, &nopdfoutput, 1 },
-      { "output-driver",          1, 0, 0 },
-      { "papersize",              1, 0, 0 },
+      { "no-pdf",                    0, &nopdfoutput, 1 },
+      { "output-driver",             1, 0, 0 },
+      { "papersize",                 1, 0, 0 },
 #endif /* XeTeX */
       { "mktex",                     1, 0, 0 },
       { "no-mktex",                  1, 0, 0 },
 #endif /* TeX or MF */
 #if IS_pTeX
+#ifdef WIN32
+      { "sjis-terminal",             0, &sjisterminal, 1 },
+      { "guess-input-enc",           0, &infile_enc_auto, 1 },
+      { "no-guess-input-enc",        0, &infile_enc_auto, 0 },
+#endif
       { "kanji",                     1, 0, 0 },
 #endif
 #if IS_upTeX
@@ -1551,7 +1566,7 @@ parse_options (int argc, string *argv)
 #if IS_upTeX
     } else if (ARGUMENT_IS ("kanji-internal")) {
       if (!set_enc_string (NULL, optarg)) {
-        WARNING1 ("Ignoring unknown argument `%s' to --kanji-internal",optarg);
+        WARNING1 ("Ignoring unknown argument `%s' to --kanji-internal", optarg);
       }
 #endif
 
