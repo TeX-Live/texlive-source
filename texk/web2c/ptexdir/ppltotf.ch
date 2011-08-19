@@ -372,6 +372,13 @@ begin
   @<Initialize the option variables@>;
   version_switch := false;
 @z
+
+@x
+      usage ('pltotf');
+@y
+      usage ('ppltotf');
+@z
+
 @x
       usage_help (PLTOTF_HELP, nil);
 @y

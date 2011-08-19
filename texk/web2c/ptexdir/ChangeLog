@@ -1,3 +1,7 @@
+2011-08-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ppltotf.ch, ptftopl.ch: fix usage ('progname').
+
 2011-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch: Add WIN32

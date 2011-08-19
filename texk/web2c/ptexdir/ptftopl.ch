@@ -369,6 +369,13 @@ begin
   @<Initialize the option variables@>;
   version_switch := false;
 @z
+
+@x
+      usage ('tftopl');
+@y
+      usage ('ptftopl');
+@z
+
 @x
       usage_help (TFTOPL_HELP, nil);
 @y
