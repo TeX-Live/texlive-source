@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 23420 2011-08-05 06:27:04Z preining $
+# $Id: tlmgr.pl 23514 2011-08-12 21:36:21Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 23420 $';
-my $datrev = '$Date: 2011-08-05 08:27:04 +0200 (Fri, 05 Aug 2011) $';
+my $svnrev = '$Revision: 23514 $';
+my $datrev = '$Date: 2011-08-12 23:36:21 +0200 (Fri, 12 Aug 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -5598,8 +5598,8 @@ postinstallation action code.  It is set by default, and again disabling
 is not likely to be of interest except perhaps to developers.
 
 The C<docfiles> and C<srcfiles> options control the installation of
-their respective files of a package. By default both are enabled.  This
-can be disabled if disk space is (very) limited.
+their respective files of a package. By default both are enabled (1).
+This can be disabled (set to 0) if disk space is (very) limited.
 
 The options C<autobackup> and C<backupdir> determine the defaults for
 the actions C<update>, C<backup> and C<restore>.  These three actions
@@ -5630,7 +5630,7 @@ The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on
 Unix-like systems to control the generation of links for executables,
 info files and man pages. See the C<path> action for details.
 
-For the <generate_updmap> option, see the C<updmap> section in
+For the C<generate_updmap> option, see the C<updmap> section in
 L<generate|/"generate [I<option>]... I<what>">.
 
 The last three options control behaviour on Windows installations.  If
@@ -5644,14 +5644,13 @@ instead of only the current user.  All three options are on by default.
 
 =head2 conf [texmf|tlmgr [I<key> [I<value>]]]
 
-With only the C<conf>, show general configuration information for TeX
-Live, including active configuration files, path settings, and more.
-This is like the C<texconfig conf> call, but works on all supported
-platforms.
+With only C<conf>, show general configuration information for TeX Live,
+including active configuration files, path settings, and more.  This is
+like the C<texconfig conf> call, but works on all supported platforms.
 
-With either C<texmf> or C<tlmgr> given in addition, shows all key/value
-pairs (i.e., all settings) as saved in C<ROOT/texmf.cnf> or the tlmgr
-configuration file (see below), respectively.
+With either C<conf texmf> or C<conf tlmgr> given in addition, shows all
+key/value pairs (i.e., all settings) as saved in C<ROOT/texmf.cnf> or
+the tlmgr configuration file (see below), respectively.
 
 If I<key> is given in addition, shows the value of only that given
 I<key> in the respective file.
@@ -5665,7 +5664,7 @@ it afterwards:
   
   tlmgr conf texmf shell_escape 0
 
-B<WARNING:> The general facility is here, but tinkering with settings in
+Warning: The general facility is here, but tinkering with settings in
 this way is very strongly discouraged.  Again, no error checking is
 done, so any sort of breakage is possible.
 

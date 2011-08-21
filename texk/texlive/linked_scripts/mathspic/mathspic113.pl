@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 #
-#(c) Copyright 2005  Apostolos Syropoulos       & R.W.D. Nickalls
-#                    apostolo@ocean1.ee.duth.gr   dicknickalls@compuserve.com
-#                    apostolo@obelix.ee.duth.gr
+#(c) Copyright 2005-2010  VERSION 1.13 April 26, 2010  
+#                    Apostolos Syropoulos   &  R.W.D. Nickalls
+#                    asyropoulos@yahoo.com     dick@nickalls.org
 #
 # This program can be redistributed and/or modified under the terms
 # of the LaTeX Project Public License Distributed from CTAN
@@ -30,7 +30,7 @@ sub READLINE {
 
 package main;
 use Math::Trig;
-our $version_number = "1.00 Feb 14, 2005";
+our $version_number = "1.13 Apr 26, 2010";
 our $commandLineArgs = join(" ", @ARGV);
 our $command  = "";
 our $curr_in_file = "";
@@ -128,47 +128,59 @@ our $LineThickness = 0.4;
     }
     else {
       my $comment = $2 if $in_line =~ s/([^%]+)(%.+)/$1/;
-      for(my $i = $#Macros; $i >= 0; $i--) {
-        my $macro_name = $Macros[$i]->{'macro_name'};
-        if ($in_line =~ /&$macro_name/) {       ############################
-          my $num_of_macro_args = @{$Macros[$i]->{'macro_param'}};
-          if ( $num_of_macro_args > 0 ) { 
-           my $pattern = "&$macro_name\\(";
-           foreach my $p ( 1..$num_of_macro_args ) {
-             my $comma = ($p == $num_of_macro_args) ? "\\s*" : "\\s*,\\s*";
-             $pattern .= "\\s*[^\\s\\)]+$comma";
-           }
-           $pattern .= "\\)";
-           while($in_line =~ /\W*&$macro_name\W+/) {
-             if ($in_line =~ /$pattern/) {   
-               my $before = $`;
-                my $after = $';
-                my $match = $&;
-                my $new_code = $Macros[$i]->{'macro_code'};
-                $match =~ s/^&$macro_name\(\s*//;
-               $match =~ s/\)$//; 
-                foreach my $arg ( 0..($num_of_macro_args - 1) ) {
-                 my $old = $Macros[$i]->{'macro_param'}->[$arg];
-                 my $comma = ($arg == ($num_of_macro_args - 1)) ? "" : ",";
-                 $match =~ s/^\s*([^\s,]+)\s*$comma//;
-                 my $new = $1; 
-                 $new_code =~ s/$old/$new/;
-               }
-                $in_line = "$before$new_code$after"; 
-             }
-             else {
-                PrintErrorMessage("Usage of macro &$macro_name does not " .
-                                  "match its definition", $LC); 
-                return "";
+      EXPANSIONLOOP: while () {
+        my $org_in_line = $in_line;
+        for(my $i = $#Macros; $i >= 0; $i--) {
+          my $macro_name = $Macros[$i]->{'macro_name'};
+          if ($in_line =~ /&$macro_name\b/) {       ############################
+            my $num_of_macro_args = @{$Macros[$i]->{'macro_param'}};
+            if ( $num_of_macro_args > 0 ) { 
+            # Macro with parameters
+              my $pattern = "&$macro_name\\(";
+              foreach my $p ( 1..$num_of_macro_args ) {
+                my $comma = ($p == $num_of_macro_args) ? "\\s*" : "\\s*,\\s*";
+                $pattern .= "\\s*[^\\s\\)]+$comma";
+              }
+              $pattern .= "\\)";
+              while($in_line =~ /&$macro_name\b/) {
+                if ($in_line =~ /$pattern/) {   
+                  my $before = $`;
+                  my $after = $';
+                  my $match = $&;
+                  my $new_code = $Macros[$i]->{'macro_code'};
+                  $match =~ s/^&$macro_name\(\s*//;
+                  $match =~ s/\)$//; 
+                  foreach my $arg ( 0..($num_of_macro_args - 1) ) {
+                    my $old = $Macros[$i]->{'macro_param'}->[$arg];
+                    my $comma = ($arg == ($num_of_macro_args - 1)) ? "" : ",";
+                    $match =~ s/^\s*([^\s,]+)\s*$comma//;
+                    my $new = $1; 
+                    # 'g': Parameter may occur several times
+                    # in $new_code.
+                    # '\b': Substitute only whole words
+                    # not x in xA
+                    $new_code =~ s/\b$old\b/$new/g;
+                  }
+                  $in_line = "$before$new_code$after"; 
+                }
+                else {
+                  PrintErrorMessage("Usage of macro &$macro_name does not " .
+                                    "match its definition", $LC); 
+                  return "";
+                }
+              }
             }
-           }
-         }
-         else {
-          my $replacement = $Macros[$i]->{'macro_code'};
-          $in_line =~ s/&$macro_name/$replacement/g;
+            else {
+              # Macro without parameters
+              my $replacement = $Macros[$i]->{'macro_code'};
+              # '\b': Substitute only whole words
+              # not x in xA
+              $in_line =~ s/&$macro_name\b/$replacement/g;
+            }
           }
-        }
-      } 
+        } 
+        last EXPANSIONLOOP if ( $org_in_line eq $in_line );
+      }
       return "$in_line$comment";   
     }
   }
@@ -333,7 +345,7 @@ our $LineThickness = 0.4;
        print OUT "%* -----------------------------------------------\n";
        print OUT "%* mathspic (Perl version $version_number)\n";
        print OUT "%* A filter program for use with PiCTeX\n";
-       print OUT "%* Copyright (c) 2005 A Syropoulos & RWD Nickalls \n";
+       print OUT "%* Copyright (c) 2005-2010 A Syropoulos & RWD Nickalls \n";
        print OUT "%* Command line: $0 $commandLineArgs\n";
        print OUT "%* Input filename : $source_file\n";
        print OUT "%* Output filename: $out_file\n";
@@ -343,7 +355,7 @@ our $LineThickness = 0.4;
        print LOG "----\n";
        print LOG "$now_string\n";
        print LOG "mathspic (Perl version $version_number)\n";
-       print LOG "Copyright (c) 2005 A Syropoulos & RWD Nickalls \n";
+       print LOG "Copyright (c) 2005-2010 A Syropoulos & RWD Nickalls \n";
        print LOG "Input file  = $source_file\n";
        print LOG "Output file = $out_file\n";
        print LOG "Log file    = $log_file\n";
@@ -355,7 +367,7 @@ our $LineThickness = 0.4;
          my ($lc) = $_[0];
          my ($PointName);
 
-         if (s/^([^\W\d_]\d{0,3})\s*//i) { #point name
+         if (s/^([^\W\d_]\d{0,4})\s*//i) { #point name
            $PointName = $1;
            if (!exists($PointTable{lc($PointName)})) {
              PrintErrorMessage("Undefined point $PointName",$lc);
@@ -538,20 +550,20 @@ our $LineThickness = 0.4;
        {
            return ($1, 1);
        }
-       elsif (/^[^\W\d_]\d{0,3}[^\W\d_]\d{0,3}/) #it is a pair of IDs?
+       elsif (/^[^\W\d_]\d{0,4}[^\W\d_]\d{0,4}/) #it is a pair of IDs?
        {
-          s/^([^\W\d_]\d{0,3})//i;
+          s/^([^\W\d_]\d{0,4})//i;
           $v1 = $1;
           if (!exists($PointTable{lc($v1)})) {  
              if (exists($VarTable{lc($v1)})) {
                 return ($VarTable{lc($v1)}, 1);
              }
              PrintErrorMessage("Point $v1 has not been defined", $lc);
-             s/^\s*[^\W\d_]\d{0,3}//i;
+             s/^\s*[^\W\d_]\d{0,4}//i;
              return (0,0);
           }
           $v1 = lc($v1);
-          s/^\s*([^\W\d_]\d{0,3})//i;
+          s/^\s*([^\W\d_]\d{0,4})//i;
           $v2 = $1;
           if (!exists($PointTable{lc($v2)}))
           {
@@ -563,7 +575,7 @@ our $LineThickness = 0.4;
           my ($x2,$y2,$pSV2,$pS2) = unpack("d3A*",$PointTable{$v2});
           return (Length($x1,$y1,$x2,$y2), 1);
        }
-       elsif (s/^([^\W\d_]\d{0,3})//i) # it is a single id
+       elsif (s/^([^\W\d_]\d{0,4})//i) # it is a single id
        {
          $v1 = $1;
          if (!exists($VarTable{lc($v1)})) #it isn't a variable
@@ -810,7 +822,7 @@ our $LineThickness = 0.4;
        DRAWLINES:while(1) {
          @PP = () ;
          while(1) {
-           if (s/^([^\W\d_]\d{0,3})\s*//i) { #point name
+           if (s/^([^\W\d_]\d{0,4})\s*//i) { #point name
              $P = $1;
              if (!exists($PointTable{lc($P)})) {
                PrintErrorMessage("Undefined point $P",$lc);
@@ -1217,7 +1229,7 @@ our $LineThickness = 0.4;
     elsif (s/^-//) { # is it a negated primitive
        $val = - primitive();
     }
-    elsif (s/^\+//) { # is it a negated primitive
+    elsif (s/^\+//) { # is it a positive primitive
        $val = primitive();
     }
     elsif (s/^angledeg//i) {
@@ -1250,7 +1262,7 @@ our $LineThickness = 0.4;
        chk_rparen("Missing right parenthesis", $lc);
     }
     elsif (s/^angle//i) {
-       chk_lparen("angle".$lc);
+       chk_lparen("angle",$lc);
        my $point_1 = get_point($lc);
        my ($x1,$y1,$pSV1,$pS1)=unpack("d3A*",$PointTable{$point_1});
        my $point_2 = get_point($lc);
@@ -1450,6 +1462,13 @@ our $LineThickness = 0.4;
      }
      return $found;
   }
+
+  sub midpoint {
+    my ($x1, $y1, $x2, $y2)=@_;
+    return ($x1 + ($x2 - $x1)/2, 
+            $y1 + ($y2 - $y1)/2);
+  }
+
 
   sub tand {
     my $d = $_[0];
@@ -1709,7 +1728,7 @@ our $LineThickness = 0.4;
                   do{
                     s/\s*//;
                     PrintErrorMessage("no identifier found after token const",$lc)
-                      if $_ !~ s/^([^\W\d_]\d{0,3})//i;
+                      if $_ !~ s/^([^\W\d_]\d{0,4})//i;
                     my $Constname = $1;
                     my $constname = lc($Constname);
                     if (exists $ConstTable{$constname}) {
@@ -2062,7 +2081,7 @@ our $LineThickness = 0.4;
                     }
                     my(@PP);
                     DRAWPOINTS:while(1) {
-                      if (s/^([^\W\d_]\d{0,3})//i) { #point name
+                      if (s/^([^\W\d_]\d{0,4})//i) { #point name
                         $P = $1;
                         if (!exists($PointTable{lc($P)})) {
                           PrintErrorMessage("Undefined point $P",$lc);
@@ -2087,7 +2106,7 @@ our $LineThickness = 0.4;
               my ($cmd) = $1;
               print OUT "%% $cmd$_" if $comments_on;
               
-                   chk_lparen("drawRightAngle",lc);
+                   chk_lparen("drawRightAngle",$lc);
                    my $point1 = get_point($lc);
                    next LINE if $point1 eq "_undef_";
                    my $point2 = get_point($lc);
@@ -2104,34 +2123,23 @@ our $LineThickness = 0.4;
                    #
                    #actual computation
                    #
-                   my $lengthAC = Length($x1, $y1, $x3, $y3);
-                   my $angleBAC = Angle($x2, $y2, $x1, $y1, $x3, $y3);
-                   my $line1 = $lengthAC / (1 + tand($angleBAC));
-                   #
-                   # determine coordinates of point Q
-                   #
-                   my ($xQ, $yQ) = pointOnLine($x1, $y1, $x3, $y3, $line1);
-                   #
-                   # determine coordinates of point S
-                   #
-                   my $deltax = $xQ - $x2;
-                   my $deltay = $yQ - $y2;
-                   my $lengthBQ = sqrt($deltax * $deltax + $deltay * $deltay);
-                   my $xS = $x2 + ($dist * sqrt(2) * $deltax / $lengthBQ);
-                   my $yS = $y2 + ($dist * sqrt(2) * $deltay / $lengthBQ);
-                   #
-                   # determine coordinates of points S1 and S2
-                   #
-                   my ($xS1, $yS1) = pointOnLine($x2, $y2, $x3, $y3, $dist);
-                   ($xS2, $yS2) = ($xS, $yS);
-                   #
-                   # emit PiCTeX code
-                   #
-                   printf OUT "\\plot  %.5f %.5f    %.5f %.5f   /\n",
-                          $xS1, $yS1, $xS2, $yS2;
-                   ($xS1, $yS1) = pointOnLine($x2, $y2, $x1, $y1, $dist);
-                   printf OUT "\\plot  %.5f %.5f    %.5f %.5f   /\n",
-                          $xS1, $yS1, $xS2, $yS2;
+                   my ($Px, $Py) = pointOnLine($x2, $y2, $x1, $y1, $dist);
+                   my ($Qx, $Qy) = pointOnLine($x2, $y2, $x3, $y3, $dist);
+                   my ($Tx, $Ty) = midpoint($Px, $Py, $Qx, $Qy);
+                   my ($Ux, $Uy) = pointOnLine($x2, $y2, $Tx, $Ty, 2*Length($x2, $y2, $Tx, $Ty));
+                   if ($Px == $Ux || $Py == $Uy) {
+                     printf OUT "\\putrule from %.5f %.5f to %.5f %.5f \n", $Px,$Py,$Ux,$Uy;
+                   }
+                   else {
+                     printf OUT "\\plot %.5f %.5f\t%.5f %.5f / \n", $Px, $Py,$Ux,$Uy;
+                   }
+                   if ($Ux == $Qx || $Uy == $Qy) {
+                     printf OUT "\\putrule from %.5f %.5f to %.5f %.5f \n", $Ux,$Uy,$Qx,$Qy;
+                   }
+                   else {
+                     printf OUT "\\plot %.5f %.5f\t%.5f %.5f / \n", $Ux, $Uy,$Qx,$Qy;
+                   }
+
 
            }
            elsif (s/^\s*(drawsquare(?=\W))//i)
@@ -2626,7 +2634,7 @@ our $LineThickness = 0.4;
                    $pointStar = 0; # default value: he have a point command
                    $pointStar = 1 if s/^\*//;
                    chk_lparen("point" . (($pointStar)?"*":""),$lc);
-                   if (s/^([^\W\d_](?![^\W\d_])\d{0,3})//i) {
+                   if (s/^([^\W\d_](?![^\W\d_])\d{0,4})//i) {
                    #
                    # Note: the regular expression (foo)(?!bar) means that we are
                    # looking a foo not followed by a bar. Moreover, the regular
@@ -2693,8 +2701,7 @@ our $LineThickness = 0.4;
                                       chk_rparen("No closing parenthesis found",$lc);
                                       my ($x1,$y1,$pSV1,$pS1)=unpack("d3A*",$PointTable{$FirstPoint});
                                       my ($x2,$y2,$pSV2,$pS2)=unpack("d3A*",$PointTable{$SecondPoint});
-                                      $Px = $x1 + ($x2 - $x1)/2;
-                                      $Py = $y1 + ($y2 - $y1)/2;
+                                      ($Px, $Py) = midpoint($x1, $y1, $x2, $y2);
 
                           }
                           elsif (s/^pointonline(?=\W)//i) {
@@ -2773,8 +2780,8 @@ our $LineThickness = 0.4;
                                        chk_rparen("after coordinates part",$lc);
 
                           }
-                          elsif (/^[^\W\d_]\d{0,3}\s*[^,\w]/) {
-                            m/^([^\W\d_]\d{0,3})\s*/i;
+                          elsif (/^[^\W\d_]\d{0,4}\s*[^,\w]/) {
+                            m/^([^\W\d_]\d{0,4})\s*/i;
                             if (exists($PointTable{lc($1)})) {         
                               my $Tcoord = get_point($lc);
                               my ($x,$y,$pSV,$pS)=unpack("d3A*",$PointTable{$Tcoord});
@@ -2787,8 +2794,8 @@ our $LineThickness = 0.4;
                               $Py = expr();
                             }
                           }
-                          elsif (/[^\W\d_]\d{0,3}\s*,\s*shift|polar|rotate|vector/i) { #a point?
-                            s/^([^\W\d_]\d{0,3})//i;
+                          elsif (/[^\W\d_]\d{0,4}\s*,\s*shift|polar|rotate|vector/i) { #a point?
+                            s/^([^\W\d_]\d{0,4})//i;
                             my $PointA = $1;
                             if (exists($PointTable{lc($PointA)})) {
                               s/\s*//;
@@ -3082,14 +3089,14 @@ our $LineThickness = 0.4;
                       $pos="";
                       s/\s*//;
                       
-                        if (/^[^\W\d_]\d{0,3}\s*[^,\w]/) {
+                        if (/^[^\W\d_]\d{0,4}\s*[^,\w]/) {
                           my $Tcoord = get_point($lc);
                           my ($x,$y,$pSV,$pS)=unpack("d3A*",$PointTable{$Tcoord});
                           $Px = $x;
                           $Py = $y;
                         }
-                        elsif (/[^\W\d_]\d{0,3}\s*,\s*shift|polar/i) {
-                          s/^([^\W\d_]\d{0,3})//i;
+                        elsif (/[^\W\d_]\d{0,4}\s*,\s*shift|polar/i) {
+                          s/^([^\W\d_]\d{0,4})//i;
                           my $PointA = $1;
                           if (exists($PointTable{lc($PointA)})) {
                             s/\s*//;
@@ -3213,7 +3220,7 @@ our $LineThickness = 0.4;
                   do{
                     s/\s*//;
                     PrintErrorMessage("no identifier found after token var",$lc)
-                      if $_ !~ s/^([^\W\d_]\d{0,3})//i;
+                      if $_ !~ s/^([^\W\d_]\d{0,4})//i;
                     my $Varname = $1;
                     my $varname = lc($Varname);
                     if (exists $ConstTable{$varname}) {
@@ -3279,7 +3286,7 @@ else {
              "Usage:\tmathspic  [-h] [-b] [-c] [-o <out file>] <in file>\n" . 
              "\twhere,\n" . 
              "\t[-b]\tenables bell sound if error exists\n" .
-             "\t[-c]\tdisables comments in ouput file\n" .
+             "\t[-c]\tdisables comments in output file\n" .
              "\t[-h]\tgives this help listing\n" .
              "\t[-o]\tcreates specified output file\n\n"; 
        }
@@ -3300,7 +3307,7 @@ else {
        else {
          $file = $_;
        }
-     }
+     }my ($xA, $yA, $xB, $yB, $dist)=@_;
      die "No input file specified!\n" if $file eq "";
 
   print "This is mathspic version $version_number\n";
