@@ -44,7 +44,7 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/../../build-aux/depcomp \
 	../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -62,8 +62,8 @@ am__objects_1 = FixedPoint.$(OBJEXT) GHash.$(OBJEXT) GList.$(OBJEXT) \
 	GString.$(OBJEXT) gmem.$(OBJEXT) gmempp.$(OBJEXT) \
 	gfile.$(OBJEXT)
 am__objects_2 = FoFiBase.$(OBJEXT) FoFiEncodings.$(OBJEXT) \
-	FoFiTrueType.$(OBJEXT) FoFiType1.$(OBJEXT) \
-	FoFiType1C.$(OBJEXT)
+	FoFiIdentifier.$(OBJEXT) FoFiTrueType.$(OBJEXT) \
+	FoFiType1.$(OBJEXT) FoFiType1C.$(OBJEXT)
 am__objects_3 = Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 	BuiltinFontTables.$(OBJEXT) CMap.$(OBJEXT) Catalog.$(OBJEXT) \
 	CharCodeToUnicode.$(OBJEXT) Decrypt.$(OBJEXT) Dict.$(OBJEXT) \
@@ -72,10 +72,10 @@ am__objects_3 = Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 	GlobalParams.$(OBJEXT) JArithmeticDecoder.$(OBJEXT) \
 	JBIG2Stream.$(OBJEXT) JPXStream.$(OBJEXT) Lexer.$(OBJEXT) \
 	Link.$(OBJEXT) NameToCharCode.$(OBJEXT) Object.$(OBJEXT) \
-	Outline.$(OBJEXT) OutputDev.$(OBJEXT) PDFDoc.$(OBJEXT) \
-	PDFDocEncoding.$(OBJEXT) PSOutputDev.$(OBJEXT) \
-	PSTokenizer.$(OBJEXT) Page.$(OBJEXT) Parser.$(OBJEXT) \
-	SecurityHandler.$(OBJEXT) Stream.$(OBJEXT) \
+	OptionalContent.$(OBJEXT) Outline.$(OBJEXT) \
+	OutputDev.$(OBJEXT) PDFDoc.$(OBJEXT) PDFDocEncoding.$(OBJEXT) \
+	PSOutputDev.$(OBJEXT) PSTokenizer.$(OBJEXT) Page.$(OBJEXT) \
+	Parser.$(OBJEXT) SecurityHandler.$(OBJEXT) Stream.$(OBJEXT) \
 	UnicodeMap.$(OBJEXT) XRef.$(OBJEXT)
 nodist_libxpdf_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3)
@@ -244,11 +244,12 @@ top_srcdir = @top_srcdir@
 #========================================================================
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(XPDF_TREE) $(XPDF_TREE)-foolabs $(XPDF_TREE)-PATCHES
-SUBDIRS = goo fofi xpdf
+SUBDIRS = goo fofi splash xpdf
 GOO_SRC = $(top_srcdir)/$(XPDF_TREE)/goo
 FOFI_SRC = $(top_srcdir)/$(XPDF_TREE)/fofi
+SPLAHS_SRC = $(top_srcdir)/$(XPDF_TREE)/splash
 XPDF_SRC = $(top_srcdir)/$(XPDF_TREE)/xpdf
-INCLUDES = -Igoo -Ifofi -Ixpdf -I$(GOO_SRC) -I$(FOFI_SRC) -I$(XPDF_SRC)
+INCLUDES = -Igoo -Ifofi -Isplash -Ixpdf -I$(GOO_SRC) -I$(FOFI_SRC) -I$(SPLAHS_SRC) -I$(XPDF_SRC)
 AM_CPPFLAGS = -DPDF_PARSER_ONLY
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(NO_WARN_CXXFLAGS)
@@ -270,6 +271,7 @@ goo_libGoo_a_sources = \
 fofi_libfofi_a_sources = \
 	$(FOFI_SRC)/FoFiBase.cc \
 	$(FOFI_SRC)/FoFiEncodings.cc \
+	$(FOFI_SRC)/FoFiIdentifier.cc \
 	$(FOFI_SRC)/FoFiTrueType.cc \
 	$(FOFI_SRC)/FoFiType1.cc \
 	$(FOFI_SRC)/FoFiType1C.cc
@@ -296,6 +298,7 @@ xpdf_libxpdf_a_sources = \
 	$(XPDF_SRC)/Link.cc \
 	$(XPDF_SRC)/NameToCharCode.cc \
 	$(XPDF_SRC)/Object.cc \
+	$(XPDF_SRC)/OptionalContent.cc \
 	$(XPDF_SRC)/Outline.cc \
 	$(XPDF_SRC)/OutputDev.cc \
 	$(XPDF_SRC)/PDFDoc.cc \
@@ -391,6 +394,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FixedPoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiEncodings.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiIdentifier.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiTrueType.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiType1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiType1C.Po@am__quote@
@@ -409,6 +413,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Link.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NameToCharCode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Object.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OptionalContent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Outline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OutputDev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFDoc.Po@am__quote@
@@ -564,6 +569,20 @@ FoFiEncodings.obj: $(FOFI_SRC)/FoFiEncodings.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiEncodings.cc' object='FoFiEncodings.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiEncodings.obj `if test -f '$(FOFI_SRC)/FoFiEncodings.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiEncodings.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiEncodings.cc'; fi`
+
+FoFiIdentifier.o: $(FOFI_SRC)/FoFiIdentifier.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiIdentifier.o -MD -MP -MF $(DEPDIR)/FoFiIdentifier.Tpo -c -o FoFiIdentifier.o `test -f '$(FOFI_SRC)/FoFiIdentifier.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiIdentifier.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiIdentifier.Tpo $(DEPDIR)/FoFiIdentifier.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiIdentifier.cc' object='FoFiIdentifier.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiIdentifier.o `test -f '$(FOFI_SRC)/FoFiIdentifier.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiIdentifier.cc
+
+FoFiIdentifier.obj: $(FOFI_SRC)/FoFiIdentifier.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiIdentifier.obj -MD -MP -MF $(DEPDIR)/FoFiIdentifier.Tpo -c -o FoFiIdentifier.obj `if test -f '$(FOFI_SRC)/FoFiIdentifier.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiIdentifier.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiIdentifier.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiIdentifier.Tpo $(DEPDIR)/FoFiIdentifier.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiIdentifier.cc' object='FoFiIdentifier.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiIdentifier.obj `if test -f '$(FOFI_SRC)/FoFiIdentifier.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiIdentifier.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiIdentifier.cc'; fi`
 
 FoFiTrueType.o: $(FOFI_SRC)/FoFiTrueType.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiTrueType.o -MD -MP -MF $(DEPDIR)/FoFiTrueType.Tpo -c -o FoFiTrueType.o `test -f '$(FOFI_SRC)/FoFiTrueType.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiTrueType.cc
@@ -900,6 +919,20 @@ Object.obj: $(XPDF_SRC)/Object.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/Object.cc' object='Object.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Object.obj `if test -f '$(XPDF_SRC)/Object.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/Object.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/Object.cc'; fi`
+
+OptionalContent.o: $(XPDF_SRC)/OptionalContent.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OptionalContent.o -MD -MP -MF $(DEPDIR)/OptionalContent.Tpo -c -o OptionalContent.o `test -f '$(XPDF_SRC)/OptionalContent.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OptionalContent.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/OptionalContent.Tpo $(DEPDIR)/OptionalContent.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/OptionalContent.cc' object='OptionalContent.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OptionalContent.o `test -f '$(XPDF_SRC)/OptionalContent.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/OptionalContent.cc
+
+OptionalContent.obj: $(XPDF_SRC)/OptionalContent.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT OptionalContent.obj -MD -MP -MF $(DEPDIR)/OptionalContent.Tpo -c -o OptionalContent.obj `if test -f '$(XPDF_SRC)/OptionalContent.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OptionalContent.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OptionalContent.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/OptionalContent.Tpo $(DEPDIR)/OptionalContent.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/OptionalContent.cc' object='OptionalContent.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o OptionalContent.obj `if test -f '$(XPDF_SRC)/OptionalContent.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/OptionalContent.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/OptionalContent.cc'; fi`
 
 Outline.o: $(XPDF_SRC)/Outline.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Outline.o -MD -MP -MF $(DEPDIR)/Outline.Tpo -c -o Outline.o `test -f '$(XPDF_SRC)/Outline.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/Outline.cc

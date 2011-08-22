@@ -1,0 +1,171 @@
+	Patches for pdfTeX / luaTeX / XeTeX
+
+	Object stream support for pdftosrc
+
+	from:
+		Han The Thanh <thanh@pdftex.org>
+
+diff -ur -N xpdf-3.03.orig/xpdf/XRef.cc xpdf-3.03/xpdf/XRef.cc
+--- xpdf-3.03.orig/xpdf/XRef.cc	2011-08-15 23:08:53.000000000 +0200
++++ xpdf-3.03/xpdf/XRef.cc	2011-08-22 14:38:50.000000000 +0200
+@@ -5,6 +5,9 @@
+ // Copyright 1996-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #include <aconf.h>
+ 
+@@ -46,37 +49,9 @@
+ // ObjectStream
+ //------------------------------------------------------------------------
+ 
+-class ObjectStream {
+-public:
+-
+-  // Create an object stream, using object number <objStrNum>,
+-  // generation 0.
+-  ObjectStream(XRef *xref, int objStrNumA);
+-
+-  GBool isOk() { return ok; }
+-
+-  ~ObjectStream();
+-
+-  // Return the object number of this object stream.
+-  int getObjStrNum() { return objStrNum; }
+-
+-  // Get the <objIdx>th object from this stream, which should be
+-  // object number <objNum>, generation 0.
+-  Object *getObject(int objIdx, int objNum, Object *obj);
+-
+-private:
+-
+-  int objStrNum;		// object number of the object stream
+-  int nObjects;			// number of objects in the stream
+-  Object *objs;			// the objects (length = nObjects)
+-  int *objNums;			// the object numbers (length = nObjects)
+-  GBool ok;
+-};
+-
+ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
+   Stream *str;
+   Parser *parser;
+-  int *offsets;
+   Object objStr, obj1, obj2;
+   int first, i;
+ 
+@@ -84,6 +59,7 @@
+   nObjects = 0;
+   objs = NULL;
+   objNums = NULL;
++  offsets = NULL;
+   ok = gFalse;
+ 
+   if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
+@@ -105,6 +81,7 @@
+     goto err1;
+   }
+   first = obj1.getInt();
++  firstOffset = objStr.getStream()->getBaseStream()->getStart() + first;
+   obj1.free();
+   if (first < 0) {
+     goto err1;
+@@ -133,7 +110,6 @@
+       obj1.free();
+       obj2.free();
+       delete parser;
+-      gfree(offsets);
+       goto err1;
+     }
+     objNums[i] = obj1.getInt();
+@@ -143,7 +119,6 @@
+     if (objNums[i] < 0 || offsets[i] < 0 ||
+ 	(i > 0 && offsets[i] < offsets[i-1])) {
+       delete parser;
+-      gfree(offsets);
+       goto err1;
+     }
+   }
+@@ -172,7 +147,6 @@
+     delete parser;
+   }
+ 
+-  gfree(offsets);
+   ok = gTrue;
+ 
+  err1:
+@@ -189,6 +163,7 @@
+     delete[] objs;
+   }
+   gfree(objNums);
++  gfree(offsets);
+ }
+ 
+ Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
+diff -ur -N xpdf-3.03.orig/xpdf/XRef.h xpdf-3.03/xpdf/XRef.h
+--- xpdf-3.03.orig/xpdf/XRef.h	2011-08-15 23:08:53.000000000 +0200
++++ xpdf-3.03/xpdf/XRef.h	2011-08-22 14:33:29.000000000 +0200
+@@ -5,6 +5,9 @@
+ // Copyright 1996-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #ifndef XREF_H
+ #define XREF_H
+@@ -21,7 +24,42 @@
+ class Dict;
+ class Stream;
+ class Parser;
+-class ObjectStream;
++
++//------------------------------------------------------------------------
++// ObjectStream
++//------------------------------------------------------------------------
++
++class ObjectStream {
++public:
++
++  // Create an object stream, using object number <objStrNum>,
++  // generation 0.
++  ObjectStream(XRef *xref, int objStrNumA);
++
++  GBool isOk() { return ok; }
++
++  ~ObjectStream();
++
++  // Return the object number of this object stream.
++  int getObjStrNum() { return objStrNum; }
++
++  // Get the <objIdx>th object from this stream, which should be
++  // object number <objNum>, generation 0.
++  Object *getObject(int objIdx, int objNum, Object *obj);
++
++  int *getOffsets() { return offsets; }
++  Guint getFirstOffset() { return firstOffset; }
++
++private:
++
++  int objStrNum;		// object number of the object stream
++  int nObjects;			// number of objects in the stream
++  Object *objs;			// the objects (length = nObjects)
++  int *objNums;			// the object numbers (length = nObjects)
++  int *offsets;			// the object offsets (length = nObjects)
++  Guint firstOffset;
++  GBool ok;
++};
+ 
+ //------------------------------------------------------------------------
+ // XRef
+@@ -97,6 +135,7 @@
+   int getSize() { return size; }
+   XRefEntry *getEntry(int i) { return &entries[i]; }
+   Object *getTrailerDict() { return &trailerDict; }
++  ObjectStream *getObjStr() { return objStr; }
+ 
+ private:
+ 

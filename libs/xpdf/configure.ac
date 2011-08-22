@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([xpdf_version], [3.02])[]dnl using unmodified xpdf source tree
+m4_include([version.ac])[] dnl define xpdf_version
 AC_INIT([xpdf for TeX Live], xpdf_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xpdf-]xpdf_version[/xpdf/Array.cc])
@@ -89,6 +89,6 @@ AC_SUBST([XPDF_TREE])
 dnl Use $XPDF_TREE to exclude $XPDF_TREE/aconf2.h from DIST_COMMON
 AC_CONFIG_LINKS([aconf2.h:$XPDF_TREE/aconf2.h])
 
-AC_CONFIG_FILES([Makefile xpdf/Makefile goo/Makefile fofi/Makefile])
+AC_CONFIG_FILES([Makefile goo/Makefile fofi/Makefile splash/Makefile xpdf/Makefile])
 
 AC_OUTPUT

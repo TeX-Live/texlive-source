@@ -1,3 +1,12 @@
+2011-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapted to the xpdf 3.03 distribution.
+	* version.ac: New file defining the xpdf version.
+	* Makefile.am (fofi_libfofi_a_sources): Add FoFiIdentifier.cc.
+	(xpdf_libxpdf_a_sources): Add OptionalContent.cc.
+	(SUBDIRS): Add splash for headers.
+	* configure.ac: Adapt.
+
 2011-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (goo_libGoo_a_sources): Omit parsearg.c.

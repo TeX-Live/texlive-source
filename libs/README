@@ -42,7 +42,7 @@ t1lib 5.1.2 - checked 25apr11
 teckit 2.5.1 - checked 25apr11
   http://scripts.sil.org/svn-view/teckit/
 
-xpdf 3.02pl5 - http://www.foolabs.com/xpdf/
+xpdf 3.03 - ftp://ftp.foolabs.com/pub/xpdf/
   with modifications for pdftex
 
 zlib 1.2.5 - checked 25apr11

@@ -1,4 +1,5 @@
 2008-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* configure.in: respect library dependencies.
 
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>

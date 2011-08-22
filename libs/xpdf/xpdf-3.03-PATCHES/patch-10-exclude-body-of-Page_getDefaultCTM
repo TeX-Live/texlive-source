@@ -1,0 +1,22 @@
+	Enable compilation with -DPDF_PARSER_ONLY
+
+	from:
+		Derek B. Noonburg <derek@foolabs.com>
+
+diff -ur -N xpdf-3.03.orig/xpdf/Page.cc xpdf-3.03/xpdf/Page.cc
+--- xpdf-3.03.orig/xpdf/Page.cc	2011-08-15 23:08:53.000000000 +0200
++++ xpdf-3.03/xpdf/Page.cc	2011-08-22 13:52:37.000000000 +0200
+@@ -461,6 +461,7 @@
+ 
+ void Page::getDefaultCTM(double *ctm, double hDPI, double vDPI,
+ 			 int rotate, GBool useMediaBox, GBool upsideDown) {
++#ifndef PDF_PARSER_ONLY
+   GfxState *state;
+   int i;
+ 
+@@ -477,4 +478,5 @@
+     ctm[i] = state->getCTM()[i];
+   }
+   delete state;
++#endif
+ }

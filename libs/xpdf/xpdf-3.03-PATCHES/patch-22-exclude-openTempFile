@@ -1,0 +1,34 @@
+	Patches for pdfTeX / luaTeX / XeTeX
+
+	from:
+		Han The Thanh <thanh@pdftex.org>
+
+diff -ur -N xpdf-3.03.orig/goo/gfile.cc xpdf-3.03/goo/gfile.cc
+--- xpdf-3.03.orig/goo/gfile.cc	2011-08-15 23:08:53.000000000 +0200
++++ xpdf-3.03/goo/gfile.cc	2011-08-22 14:17:58.000000000 +0200
+@@ -7,6 +7,9 @@
+ // Copyright 1996-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #include <aconf.h>
+ 
+@@ -440,6 +443,7 @@
+ #endif
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ GBool openTempFile(GString **name, FILE **f, const char *mode, char *ext) {
+ #if defined(WIN32)
+   //---------- Win32 ----------
+@@ -549,6 +553,7 @@
+   return gTrue;
+ #endif
+ }
++#endif
+ 
+ GBool executeCommand(char *cmd) {
+ #ifdef VMS
