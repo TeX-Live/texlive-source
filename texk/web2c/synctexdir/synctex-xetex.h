@@ -1,9 +1,9 @@
 /* 
-Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008-2011 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Wed Jul  1 11:16:29 UTC 2009
+Latest Revision: Wed Aug 22 07:20:29 UTC 2011
 
 License:
 --------
@@ -56,6 +56,9 @@ Thu Jun 19 09:39:21 UTC 2008
  * pdf or xdv. */
 #  define SYNCTEX_OFFSET_IS_PDF (nopdfoutput==0)
 #  define SYNCTEX_OUTPUT (nopdfoutput!=0?"xdv":"pdf")
+
+#define SYNCTEX_CURH ((nopdfoutput==0)?(curh+4736287):curh)
+#define SYNCTEX_CURV ((nopdfoutput==0)?(curv+4736287):curv)
 
 /*  WARNING:
     The definition below must be in sync with their eponym declarations in synctex-xetex.ch1

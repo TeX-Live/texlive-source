@@ -1,3 +1,8 @@
+2011-08-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex-luatex.h, synctex-xetex.h: Define SYNCTEX_CURH and
+	SYNCTEX_CURH to yield correct coordinates in dvi and pdf mode.
+
 2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/synctex.am: Add upTeX and e-upTeX.
