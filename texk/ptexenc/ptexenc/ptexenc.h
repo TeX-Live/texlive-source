@@ -57,9 +57,9 @@ extern PTENCDLL int multibytelen (int first_byte);
 extern PTENCDLL long fromBUFF(unsigned char *s, int len, int pos);
 extern PTENCDLL long toBUFF(long inter);
 
-/* internal (EUC/SJIS/UPTEX) from/to DVI (JIS) code conversion */
-#define fromDVI fromJIS
-#define toDVI   toJIS
+/* internal (EUC/SJIS/UPTEX) from/to DVI (JIS/UCS) code conversion */
+extern PTENCDLL long toDVI (long kcode);
+extern PTENCDLL long fromDVI (long kcode);
 
 /* JIS/EUC/SJIS/KUTN/UCS to internal (EUC/SJIS/UPTEX) code conversion */
 /* (only for \euc primitive, etc.) */
@@ -79,9 +79,13 @@ extern PTENCDLL int fputs2(const char *s, FILE *fp);
 extern PTENCDLL long input_line2(FILE *fp, unsigned char *buff, long pos,
 				const long buffsize, int *lastchar);
 
+#ifdef WIN32
+extern PTENCDLL void clear_infile_enc(FILE *fp);
+#else
 /* open/close through nkf */
 extern PTENCDLL void nkf_disable(void);
 extern PTENCDLL FILE *nkf_open(const char *path, const char *mode);
 extern PTENCDLL int nkf_close(FILE *fp);
+#endif
 
 #endif /* PTEXENC_PTEXENC_H */

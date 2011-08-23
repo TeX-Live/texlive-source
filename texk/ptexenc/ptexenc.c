@@ -179,7 +179,7 @@ boolean set_enc_string(const_string file_str, const_string internal_str)
     if (file     != ENC_UNKNOWN) {
         set_file_enc(file);
 #if !defined(WIN32)
-        infile_enc_auto =0;
+        infile_enc_auto = 0;
         nkf_disable();
 #endif
     }
@@ -295,6 +295,21 @@ long toBUFF(long kcode)
     return kcode;
 }
 
+/* DVI (JIS/UCS) to internal (EUC/SJIS/UPTEX) code conversion */
+long fromDVI (long kcode)
+{
+    if (is_internalUPTEX()) return UCStoUPTEX(kcode);
+    if (is_internalSJIS())  return JIStoSJIS(kcode);
+    /* EUC */               return JIStoEUC(kcode);
+}
+
+/* internal (EUC/SJIS/UPTEX) to DVI (JIS/UCS) code conversion */
+long toDVI (long kcode)
+{
+    if (is_internalUPTEX()) return UPTEXtoUCS(kcode);
+    if (is_internalSJIS())  return SJIStoJIS(kcode);
+    /* EUC */               return EUCtoJIS(kcode);
+}
 
 /* JIS to internal (EUC/SJIS/UPTEX) code conversion */
 long fromJIS(long kcode)
@@ -681,7 +696,12 @@ long input_line2(FILE *fp, unsigned char *buff, long pos,
     return last;
 }
 
-
+#ifdef WIN32
+void clear_infile_enc(FILE *fp)
+{
+    infile_enc[fileno(fp)] = ENC_UNKNOWN;
+}
+#else /* !WIN32 */
 static const_string in_filter = NULL;
 static FILE *piped_fp[NOFILE];
 static int piped_num = 0;
@@ -692,7 +712,6 @@ void nkf_disable(void)
 }
 
 #ifdef NKF_TEST
-#include <stdlib.h>
 static void nkf_check(void)
 {
     if (piped_num > 0) {
@@ -747,3 +766,4 @@ int nkf_close(FILE *fp) {
     }
     return fclose(fp);
 }
+#endif /* !WIN32 */

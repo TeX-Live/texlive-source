@@ -2,6 +2,8 @@
 
 	* texmfmp.c: Remove some (e-)pTeX cruft.
 
+	* openclose.c [PTEX]: No nkf_open() and nkf_close() for WIN32.
+
 2011-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: Options for (e-)pTeX and (e-)upTeX.

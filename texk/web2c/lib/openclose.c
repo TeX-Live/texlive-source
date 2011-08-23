@@ -224,7 +224,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
                 free (fname);
 
                 /* This fopen is not allowed to fail. */
-#ifdef PTEX
+#if defined(PTEX) && !defined(WIN32)
                 if (filefmt == kpse_tex_format ||
                     filefmt == kpse_bib_format) {
                     *f_ptr = nkf_open (nameoffile + 1, fopen_mode);
@@ -317,7 +317,12 @@ close_file (FILE *f)
     return;
     
 #ifdef PTEX
+#ifdef WIN32
+  clear_infile_enc (f);
+  if (fclose (f) == EOF) {
+#else
   if (nkf_close (f) == EOF) {
+#endif
 #else
   if (fclose (f) == EOF) {
 #endif

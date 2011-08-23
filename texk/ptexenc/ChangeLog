@@ -1,8 +1,10 @@
 2011-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	More support for upTeX and e-upTeX.
+	More support for upTeX and e-upTeX.  Updates from W32TeX.
 	* ptexenc.c, ptexenc/ptexenc.h: Add is_internalEUC(),
-	is_internalUPTEX(), ismultichr(), and ismultichr().
+	is_internalUPTEX(), ismultichr(), ismultichr(), toDVI(), and
+	fromDVI().
+	No nkf_disable(), nkf_open(), and nkf_close() for WIN32.
 
 	* ptexenc/unicode.h, unicode.c: Add UCStoUPTEX(), UPTEXtoUCS().
 
