@@ -317,14 +317,14 @@ const_string PBIBTEXHELP[] = {
     "  Write bibliography for entries in AUXFILE to AUXFILE.bbl,",
     "  along with a log file AUXFILE.blg."
     "",
-    "-kanji={jis|euc|sjis|utf8} kanji code for output-file.",
-    "-min-crossrefs=NUMBER      include item after NUMBER cross-refs; default 2",
+    "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8)",
+    "-min-crossrefs=NUMBER  include item after NUMBER cross-refs; default 2",
 #if defined(WIN32)
-    "-sjis-terminal             always output to stdout and stderr by CP932",
+    "-sjis-terminal         always output to stdout and stderr by CP932",
 #endif
-    "-terse                     do not print progress reports",
-    "-help                      display this help and exit",
-    "-version                   output version information and exit",
+    "-terse                 do not print progress reports",
+    "-help                  display this help and exit",
+    "-version               output version information and exit",
     NULL
 };
 #endif /* PBIBTEX */
@@ -337,8 +337,7 @@ const_string PDVITYPEHELP[] = {
     "  written to standard output.",
     "",
     "-dpi=REAL              set resolution to REAL pixels per inch; default 300.0",
-    "-kanji={jis|euc|sjis|utf8}",
-    "                       kanji code for output-file.",
+    "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8)",
     "-magnification=NUMBER  override existing magnification with NUMBER",
     "-max-pages=NUMBER      process NUMBER pages; default one million",
     "-output-level=NUMBER   verbosity level, from 0 to 4; default 4",
@@ -409,13 +408,13 @@ const_string PPLTOTFHELP[] = {
     "  Translate the property list PLFILE to TFMFILE.",
     "  Default TFMFILE is basename of PLFILE extended with `.tfm'.",
     "",
-    "-kanji={jis|euc|sjis|utf8} plfile kanji code.",
+    "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8)",
 #if defined(WIN32)
-    "-sjis-terminal             always output to stdout and stderr by CP932",
+    "-sjis-terminal         always output to stdout and stderr by CP932",
 #endif
-    "-help                      print this message and exit.",
-    "-verbose                   output progress reports.",
-    "-version                   print version information and exit.",
+    "-help                  print this message and exit.",
+    "-verbose               output progress reports.",
+    "-version               print version information and exit.",
     NULL
 };
 #endif /* PPLTOTF */
@@ -427,16 +426,16 @@ const_string PTFTOPLHELP[] = {
     "  Translate the font metrics TFMNAME to human-readable property list file",
     "  PLFILE or standard output.",
     "",
-    "-charcode-format=TYPE      output character codes according to TYPE,",
-    "                            either `octal' or `ascii'; default is ascii for",
-    "                            letters and digits, octal for all else",
-    "-kanji={jis|euc|sjis|utf8} plfile kanji code.",
+    "-charcode-format=TYPE  output character codes according to TYPE,",
+    "                        either `octal' or `ascii'; default is ascii for",
+    "                        letters and digits, octal for all else",
+    "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8)",
 #if defined(WIN32)
-    "-sjis-terminal             always output to stdout and stderr by CP932",
+    "-sjis-terminal         always output to stdout and stderr by CP932",
 #endif
-    "-help                      display this help and exit",
-    "-verbose                   display progress reports",
-    "-version                   output version information and exit",
+    "-help                  display this help and exit",
+    "-verbose               display progress reports",
+    "-version               output version information and exit",
     NULL
 };
 #endif /* PTFTOPL */
@@ -488,15 +487,15 @@ const_string UPBIBTEXHELP[] = {
     "  Write bibliography for entries in AUXFILE to AUXFILE.bbl,",
     "  along with a log file AUXFILE.blg."
     "",
-    "-kanji={jis|euc|sjis|utf8|uptex}",
-    "                           kanji code for output-file.",
-    "-min-crossrefs=NUMBER      include item after NUMBER cross-refs; default 2",
+    "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
+    "-kanji-internal=STRING set Japanese internal encoding (STRING=euc|uptex)",
+    "-min-crossrefs=NUMBER  include item after NUMBER cross-refs; default 2",
 #if defined(WIN32)
-    "-sjis-terminal             always output to stdout and stderr by CP932",
+    "-sjis-terminal         always output to stdout and stderr by CP932",
 #endif
-    "-terse                     do not print progress reports",
-    "-help                      display this help and exit",
-    "-version                   output version information and exit",
+    "-terse                 do not print progress reports",
+    "-help                  display this help and exit",
+    "-version               output version information and exit",
     NULL
 };
 #endif /* UPBIBTEX */
@@ -509,8 +508,7 @@ const_string UPDVITYPEHELP[] = {
     "  written to standard output.",
     "",
     "-dpi=REAL              set resolution to REAL pixels per inch; default 300.0",
-    "-kanji={jis|euc|sjis|utf8|uptex}",
-    "                       kanji code for output-file.",
+    "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
     "-magnification=NUMBER  override existing magnification with NUMBER",
     "-max-pages=NUMBER      process NUMBER pages; default one million",
     "-output-level=NUMBER   verbosity level, from 0 to 4; default 4",
@@ -532,14 +530,13 @@ const_string UPPLTOTFHELP[] = {
     "  Translate the property list PLFILE to TFMFILE.",
     "  Default TFMFILE is basename of PLFILE extended with `.tfm'.",
     "",
-    "-kanji={jis|euc|sjis|utf8|uptex}",
-    "                           plfile kanji code.",
+    "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
 #if defined(WIN32)
-    "-sjis-terminal             always output to stdout and stderr by CP932",
+    "-sjis-terminal         always output to stdout and stderr by CP932",
 #endif
-    "-help                      print this message and exit.",
-    "-verbose                   output progress reports.",
-    "-version                   print version information and exit.",
+    "-help                  print this message and exit.",
+    "-verbose               output progress reports.",
+    "-version               print version information and exit.",
     NULL
 };
 #endif /* UPPLTOTF */
@@ -551,17 +548,16 @@ const_string UPTFTOPLHELP[] = {
     "  Translate the font metrics TFMNAME to human-readable property list file",
     "  PLFILE or standard output.",
     "",
-    "-charcode-format=TYPE      output character codes according to TYPE,",
-    "                            either `octal' or `ascii'; default is ascii for",
-    "                            letters and digits, octal for all else",
-    "-kanji={jis|euc|sjis|utf8|uptex}",
-    "                           plfile kanji code.",
+    "-charcode-format=TYPE  output character codes according to TYPE,",
+    "                        either `octal' or `ascii'; default is ascii for",
+    "                        letters and digits, octal for all else",
+    "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
 #if defined(WIN32)
-    "-sjis-terminal             always output to stdout and stderr by CP932",
+    "-sjis-terminal         always output to stdout and stderr by CP932",
 #endif
-    "-help                      display this help and exit",
-    "-verbose                   display progress reports",
-    "-version                   output version information and exit",
+    "-help                  display this help and exit",
+    "-verbose               display progress reports",
+    "-version               output version information and exit",
     NULL
 };
 #endif /* UPTFTOPL */

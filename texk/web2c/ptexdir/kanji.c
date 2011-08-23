@@ -81,7 +81,31 @@ integer kcatcodekey(integer c)
     return Hi(toDVI(c));
 }
 
-void initdefaultkanji (void)
+void init_default_kanji (const_string file_str, const_string internal_str)
 {
+    char *p;
+
     enable_UPTEX (false); /* disable */
+
+    p = getenv ("PTEX_KANJI_ENC");
+    if (p) {
+        if (!set_enc_string (p, NULL))
+            fprintf (stderr, "Ignoring bad kanji encoding \"%s\".\n", p);
+    }
+
+#ifdef WIN32
+    p = kpse_var_value ("guess_input_kanji_encoding");
+    if (p) {
+        if (*p == '1' || *p == 'y' || *p == 't')
+            infile_enc_auto = 1;
+        free(p);
+    }
+#endif
+
+    if (!set_enc_string (file_str, internal_str)) {
+        fprintf (stderr, "Bad kanji encoding \"%s\" or \"%s\".\n",
+                 file_str ? file_str  : "NULL",
+                 internal_str ? internal_str : "NULL");
+        uexit(1);
+    }
 }

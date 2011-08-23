@@ -36,7 +36,12 @@ extern integer calc_pos (integer c);
 #define calcpos calc_pos
 extern integer kcatcodekey (integer c);
 extern integer multilenbuffchar (integer c);
-extern void initdefaultkanji (void);
+
+extern void init_default_kanji (const_string file_str, const_string internal_str);
+/* for upTeX and e-upTeX */
+#define initdefaultkanji() init_default_kanji("utf8", "uptex")
+/* for upBibTeX, upDVItype, upPLtoTF, and upTFtoPL */
+#define initkanji() init_default_kanji("utf8", "uptex")
 
 #define setptexencuptex() set_enc_string("utf8", "uptex");
 
@@ -48,17 +53,10 @@ extern void initdefaultkanji (void);
 #define putc(c,fp) putc2(c,fp)
 #endif /* !PRESERVE_PUTC */
 
-#if defined(UPBIBTEX) || defined(BIBTEX)
+#ifdef UPBIBTEX
 #define inputline2(fp,buff,pos,size,ptr) input_line2(fp,buff,pos,size,ptr)
 #else
 #define inputline2(fp,buff,pos,size) input_line2(fp,buff,pos,size,NULL)
 #endif
-
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
-/* Temporary fix for functions still missing in the ptexenc library.  */
-extern boolean is_internalUPTEX(void);
-#define isinternalUPTEX is_internalUPTEX
-extern boolean ismultichr (int length, int nth, int c);
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
 
 #endif /* not KANJI_H */

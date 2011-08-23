@@ -5,14 +5,14 @@
 @x
 @d banner=='This is DVItype, Version 3.6' {printed when the program starts}
 @y
-@d banner=='This is PDVItype, Version 3.6-p0.4'
+@d banner=='This is pDVItype, Version 3.6-p0.4'
   {printed when the program starts}
 @z
 
 @x
   parse_arguments;
 @y
-  init_default_kanji;
+  init_kanji;
   parse_arguments;
 @z
 
@@ -505,7 +505,7 @@ const n_options = 10; {Pascal won't count array lengths for us.}
 @y
     end else if argument_is ('kanji') then begin
       if (not set_enc_string(optarg,optarg)) then begin
-        write_ln('Bad kanjicode encoding "', stringcast(optarg), '".');
+        write_ln('Bad kanji encoding "', stringcast(optarg), '".');
       end;
 
     end; {Else it was a flag; |getopt| has already done the assignment.}

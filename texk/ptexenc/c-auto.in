@@ -11,9 +11,6 @@
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
 
-/* Default kanji encoding. */
-#undef DEFAULT_KANJI_ENC
-
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 

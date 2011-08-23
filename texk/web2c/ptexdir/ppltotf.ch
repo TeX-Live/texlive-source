@@ -13,14 +13,14 @@
 @x [2] l.69 - pTeX:
 @d banner=='This is PLtoTF, Version 3.5' {printed when the program starts}
 @y
-@d banner=='This is Nihongo PLtoTF, Version 3.5-p1.8'
+@d banner=='This is pPLtoTF, Version 3.5-p1.8'
   {printed when the program starts}
 @z
 
 @x
   parse_arguments;
 @y
-  init_default_kanji;
+  init_kanji;
   parse_arguments;
 @z
 
@@ -28,9 +28,7 @@
   print_ln (version_string);
 @y
   print_ln (version_string);
-  print ('process kanji code is ');
-  fputs(get_enc_string, stdout);
-  print_ln ('.');
+  print_ln ('process kanji code is ', conststringcast(get_enc_string), '.');
 @z
 
 @x [18] l.495 - pTeX:
@@ -355,23 +353,6 @@ const n_options = 3; {Pascal won't count array lengths for us.}
 @y
 const n_options = 5; {Pascal won't count array lengths for us.}
 @z
-@x
-var @!long_options: array[0..n_options] of getopt_struct;
-    @!getopt_return_val: integer;
-    @!option_index: c_int_type;
-    @!current_option: 0..n_options;
-begin
-  @<Initialize the option variables@>;
-@y
-var @!long_options: array[0..n_options] of getopt_struct;
-    @!getopt_return_val: integer;
-    @!option_index: c_int_type;
-    @!current_option: 0..n_options;
-    @!version_switch: boolean;
-begin
-  @<Initialize the option variables@>;
-  version_switch := false;
-@z
 
 @x
       usage ('pltotf');
@@ -384,23 +365,23 @@ begin
 @y
       usage_help (PPLTOTF_HELP, nil);
 @z
+
 @x
-    end else if argument_is ('version') then begin
-      print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
-
     end; {Else it was a flag; |getopt| has already done the assignment.}
-  until getopt_return_val = -1;
 @y
-    end else if argument_is ('version') then begin
-      version_switch := true;
-
     end else if argument_is ('kanji') then begin
-      @<Set process kanji code@>;
+      if (not set_enc_string(optarg,optarg)) then
+        print_ln('Bad kanji encoding "', stringcast(optarg), '".');
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
-  until getopt_return_val = -1;
-  if (version_switch) then
-    print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
+@z
+
+@x
+    write_ln (stderr, 'pltotf: Need one or two file arguments.');
+    usage ('pltotf');
+@y
+    write_ln (stderr, 'ppltotf: Need one or two file arguments.');
+    usage ('ppltotf');
 @z
 
 @x
@@ -697,10 +678,10 @@ for i:=0 to 3 do
   end;
 end;
 @#
-function valid_jis_code(jis:integer):boolean;
+function valid_jis_code(cx:integer):boolean;
 var @!first_byte,@!second_byte:integer; { jis code bytes }
 begin valid_jis_code:=true;
-first_byte:=jis div @'400; second_byte:=jis mod @'400;
+first_byte:=cx div @'400; second_byte:=cx mod @'400;
 if (first_byte<@"21)
    or((first_byte>@"28)and(first_byte<@"30))
    or(first_byte>@"74) then valid_jis_code:=false;
@@ -722,7 +703,7 @@ function index_to_jis(ix:integer):integer;
 begin if ix<=8*94-1 then
   index_to_jis:=(ix div 94 +@"21)*@'400+(ix mod 94 +@"21)
 else
-  index_to_jis:=((ix+7*94) div 94 +@"21)*@'400+((ix+7*94) mod 94 +@"21)
+  index_to_jis:=((ix+7*94) div 94 +@"21)*@'400+((ix+7*94) mod 94 +@"21);
 end;
 @#
 function get_kanji:integer; {get kanji character code}
@@ -752,10 +733,6 @@ else if multistrlen(stringcast(buffer), loc+2, loc)=2 then
 else jis_code:=-1;
 get_kanji:=jis_code;
 end;
-
-@ @<Set process kanji code@>=
-  if (not set_enc_string(optarg,optarg)) then
-    print_ln('Bad kanjicode encoding "', stringcast(optarg), '".');
 
 @* Index.
 @z

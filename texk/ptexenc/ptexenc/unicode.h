@@ -13,9 +13,12 @@
 extern boolean isUTF8(int length, int nth, int c);
 
 extern int UTF8length(int first_byte);
-extern int UTF8Slength(string buff, int buff_len);
-extern long UTF8StoUCS(string s);
+extern int UTF8Slength(unsigned char *buff, int buff_len);
+extern long UTF8StoUCS(unsigned char *s);
 extern long PTENCDLL UCStoUTF8(long ucs);
+
+extern long UCStoUPTEX(long ucs);
+extern long UPTEXtoUCS(long uptex);
 
 #define LONG(a,b,c,d) ( ((long)(a)<<24) | ((long)(b)<<16) | ((c)<<8) | (d) )
 #define BYTE1(x) (((x)>>24) & 0xff)

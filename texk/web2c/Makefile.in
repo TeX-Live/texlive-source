@@ -595,7 +595,8 @@ am__EXEEXT_1 = bibtex$(EXEEXT) dvicopy$(EXEEXT) dvitype$(EXEEXT) \
 	vftovp$(EXEEXT) vptovf$(EXEEXT) weave$(EXEEXT)
 am__EXEEXT_2 = pbibtex$(EXEEXT) pdvitype$(EXEEXT) ppltotf$(EXEEXT) \
 	ptftopl$(EXEEXT)
-am__EXEEXT_3 = updvitype$(EXEEXT)
+am__EXEEXT_3 = upbibtex$(EXEEXT) updvitype$(EXEEXT) uppltotf$(EXEEXT) \
+	uptftopl$(EXEEXT)
 am__EXEEXT_4 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT)
 am__EXEEXT_5 = ofm2opl$(EXEEXT) opl2ofm$(EXEEXT) ovf2ovp$(EXEEXT) \
 	ovp2ovf$(EXEEXT)
@@ -688,9 +689,6 @@ am__objects_12 = eptex-eptexini.$(OBJEXT) eptex-eptex0.$(OBJEXT)
 nodist_eptex_OBJECTS = $(am__objects_12) eptex-eptex-pool.$(OBJEXT)
 eptex_OBJECTS = $(dist_eptex_OBJECTS) $(nodist_eptex_OBJECTS)
 @EPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
-eptex_DEPENDENCIES = libkanji.a $(pproglib) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_3)
 am__dist_etex_SOURCES_DIST = etexdir/etexextra.c etexdir/etexextra.h \
 	synctexdir/synctex.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-etex.h
@@ -712,9 +710,6 @@ am__objects_16 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
 nodist_euptex_OBJECTS = $(am__objects_16) euptex-euptex-pool.$(OBJEXT)
 euptex_OBJECTS = $(dist_euptex_OBJECTS) $(nodist_euptex_OBJECTS)
 @EUPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1)
-euptex_DEPENDENCIES = libukanji.a $(pproglib) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_5)
 am_gftodvi_OBJECTS =
 nodist_gftodvi_OBJECTS = gftodvi.$(OBJEXT)
 gftodvi_OBJECTS = $(am_gftodvi_OBJECTS) $(nodist_gftodvi_OBJECTS)
@@ -801,7 +796,6 @@ nodist_pbibtex_OBJECTS = pbibtex-pbibtex.$(OBJEXT)
 pbibtex_OBJECTS = $(am_pbibtex_OBJECTS) $(nodist_pbibtex_OBJECTS)
 am__DEPENDENCIES_8 = libkanji.a $(pproglib) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
-pbibtex_DEPENDENCIES = $(am__DEPENDENCIES_8)
 am__dist_pdftex_SOURCES_DIST = pdftexdir/pdftexextra.c \
 	pdftexdir/pdftexextra.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
@@ -824,7 +818,6 @@ pdftosrc_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 am_pdvitype_OBJECTS =
 nodist_pdvitype_OBJECTS = pdvitype-pdvitype.$(OBJEXT)
 pdvitype_OBJECTS = $(am_pdvitype_OBJECTS) $(nodist_pdvitype_OBJECTS)
-pdvitype_DEPENDENCIES = $(am__DEPENDENCIES_8)
 nodist_pktogf_OBJECTS = pktogf.$(OBJEXT)
 pktogf_OBJECTS = $(nodist_pktogf_OBJECTS)
 pktogf_LDADD = $(LDADD)
@@ -844,7 +837,6 @@ pooltype_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am_ppltotf_OBJECTS =
 nodist_ppltotf_OBJECTS = ppltotf-ppltotf.$(OBJEXT)
 ppltotf_OBJECTS = $(am_ppltotf_OBJECTS) $(nodist_ppltotf_OBJECTS)
-ppltotf_DEPENDENCIES = $(am__DEPENDENCIES_8)
 am__dist_ptex_SOURCES_DIST = ptexdir/ptexextra.c ptexdir/ptexextra.h \
 	synctexdir/synctex.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-ptex.h
@@ -854,12 +846,9 @@ am__objects_21 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
 nodist_ptex_OBJECTS = $(am__objects_21) ptex-ptex-pool.$(OBJEXT)
 ptex_OBJECTS = $(dist_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
 @PTEX_SYNCTEX_TRUE@am__DEPENDENCIES_10 = $(am__DEPENDENCIES_1)
-ptex_DEPENDENCIES = $(am__DEPENDENCIES_8) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_10)
 am_ptftopl_OBJECTS =
 nodist_ptftopl_OBJECTS = ptftopl-ptftopl.$(OBJEXT)
 ptftopl_OBJECTS = $(am_ptftopl_OBJECTS) $(nodist_ptftopl_OBJECTS)
-ptftopl_DEPENDENCIES = $(am__DEPENDENCIES_8)
 am_synctex_OBJECTS = synctex-synctex_main.$(OBJEXT) \
 	synctex-synctex_parser.$(OBJEXT) \
 	synctex-synctex_parser_utils.$(OBJEXT)
@@ -896,13 +885,18 @@ ttf2afm_OBJECTS = $(am_ttf2afm_OBJECTS)
 ttf2afm_LDADD = $(LDADD)
 nodist_txt2zlib_OBJECTS = txt2zlib-txt2zlib.$(OBJEXT)
 txt2zlib_OBJECTS = $(nodist_txt2zlib_OBJECTS)
+am_upbibtex_OBJECTS =
+nodist_upbibtex_OBJECTS = upbibtex-upbibtex.$(OBJEXT)
+upbibtex_OBJECTS = $(am_upbibtex_OBJECTS) $(nodist_upbibtex_OBJECTS)
+am__DEPENDENCIES_12 = libukanji.a $(pproglib) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_updvitype_OBJECTS =
 nodist_updvitype_OBJECTS = updvitype-updvitype.$(OBJEXT)
 updvitype_OBJECTS = $(am_updvitype_OBJECTS) \
 	$(nodist_updvitype_OBJECTS)
-am__DEPENDENCIES_12 = libukanji.a $(pproglib) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_2)
-updvitype_DEPENDENCIES = $(am__DEPENDENCIES_12)
+am_uppltotf_OBJECTS =
+nodist_uppltotf_OBJECTS = uppltotf-uppltotf.$(OBJEXT)
+uppltotf_OBJECTS = $(am_uppltotf_OBJECTS) $(nodist_uppltotf_OBJECTS)
 am__dist_uptex_SOURCES_DIST = uptexdir/uptexextra.c \
 	uptexdir/uptexextra.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
@@ -913,8 +907,9 @@ am__objects_25 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
 nodist_uptex_OBJECTS = $(am__objects_25) uptex-uptex-pool.$(OBJEXT)
 uptex_OBJECTS = $(dist_uptex_OBJECTS) $(nodist_uptex_OBJECTS)
 @UPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_13 = $(am__DEPENDENCIES_1)
-uptex_DEPENDENCIES = $(am__DEPENDENCIES_12) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_13)
+am_uptftopl_OBJECTS =
+nodist_uptftopl_OBJECTS = uptftopl-uptftopl.$(OBJEXT)
+uptftopl_OBJECTS = $(am_uptftopl_OBJECTS) $(nodist_uptftopl_OBJECTS)
 nodist_vftovp_OBJECTS = vftovp.$(OBJEXT)
 vftovp_OBJECTS = $(nodist_vftovp_OBJECTS)
 vftovp_LDADD = $(LDADD)
@@ -1011,9 +1006,12 @@ SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(dist_tex_SOURCES) $(nodist_tex_SOURCES) \
 	$(nodist_tftopl_SOURCES) $(nodist_tie_SOURCES) \
 	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
-	$(nodist_txt2zlib_SOURCES) $(updvitype_SOURCES) \
-	$(nodist_updvitype_SOURCES) $(dist_uptex_SOURCES) \
-	$(nodist_uptex_SOURCES) $(nodist_vftovp_SOURCES) \
+	$(nodist_txt2zlib_SOURCES) $(upbibtex_SOURCES) \
+	$(nodist_upbibtex_SOURCES) $(updvitype_SOURCES) \
+	$(nodist_updvitype_SOURCES) $(uppltotf_SOURCES) \
+	$(nodist_uppltotf_SOURCES) $(dist_uptex_SOURCES) \
+	$(nodist_uptex_SOURCES) $(uptftopl_SOURCES) \
+	$(nodist_uptftopl_SOURCES) $(nodist_vftovp_SOURCES) \
 	$(nodist_vptovf_SOURCES) $(nodist_weave_SOURCES) \
 	$(dist_xetex_SOURCES) $(nodist_xetex_SOURCES) \
 	$(nodist_EXTRA_xetex_SOURCES)
@@ -1035,7 +1033,8 @@ DIST_SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(am__dist_ptex_SOURCES_DIST) $(ptftopl_SOURCES) \
 	$(synctex_SOURCES) $(am__dist_tex_SOURCES_DIST) \
 	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
-	$(updvitype_SOURCES) $(am__dist_uptex_SOURCES_DIST) \
+	$(upbibtex_SOURCES) $(updvitype_SOURCES) $(uppltotf_SOURCES) \
+	$(am__dist_uptex_SOURCES_DIST) $(uptftopl_SOURCES) \
 	$(am__dist_xetex_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
@@ -1399,7 +1398,9 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	eptexdir/eptrip/eptrip.diffs eptexdir/eptrip/etrip.log \
 	eptexdir/eptrip/etrip.tex eptexdir/eptrip/texmf.cnf \
 	$(uptex_web_srcs) $(uptex_ch_srcs) uptexdir/uptex.defines \
-	ptexdir/pdvitype.ch uptexdir/updvitype.ch $(euptex_web_srcs) \
+	ptexdir/pbibtex.ch uptexdir/upbibtex.ch ptexdir/pdvitype.ch \
+	uptexdir/updvitype.ch ptexdir/ppltotf.ch uptexdir/uppltotf.ch \
+	ptexdir/ptftopl.ch uptexdir/uptftopl.ch $(euptex_web_srcs) \
 	$(euptex_ch_srcs) euptexdir/euptex.defines $(pdftex_ch_srcs) \
 	etexdir/etex.ch pdftexdir/pdftex.defines pdftexdir/pdftex.h \
 	pdftexdir/ChangeLog pdftexdir/NEWS pdftexdir/README \
@@ -1802,6 +1803,7 @@ etex_ch_srcs = \
 etex_tests = etexdir/etrip.test
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
@@ -1820,6 +1822,7 @@ ptex_CPPFLAGS = $(ptex_cppflags) $(am__append_84)
 
 # With --enable-ipc, pTeX may need to link with -lsocket.
 ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs) $(am__append_85)
+ptex_DEPENDENCIES = $(ptex_dependencies)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
@@ -1842,18 +1845,22 @@ nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
 pbibtex_SOURCES = ptexdir/kanji.h
 pbibtex_CPPFLAGS = $(ptex_cppflags)
 pbibtex_LDADD = $(ptex_ldadd)
+pbibtex_DEPENDENCIES = $(ptex_dependencies)
 nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
 pdvitype_SOURCES = ptexdir/kanji.h
 pdvitype_CPPFLAGS = $(ptex_cppflags) -DDHEX_CHAR_CODE
 pdvitype_LDADD = $(ptex_ldadd)
+pdvitype_DEPENDENCIES = $(ptex_dependencies)
 nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
 ppltotf_SOURCES = ptexdir/kanji.h
 ppltotf_CPPFLAGS = $(ptex_cppflags) -DPRESERVE_PUTC
 ppltotf_LDADD = $(ptex_ldadd)
+ppltotf_DEPENDENCIES = $(ptex_dependencies)
 nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
 ptftopl_SOURCES = ptexdir/kanji.h
 ptftopl_CPPFLAGS = $(ptex_cppflags)
 ptftopl_LDADD = $(ptex_ldadd)
+ptftopl_DEPENDENCIES = $(ptex_dependencies)
 
 # e-pTeX Tests
 #
@@ -1863,6 +1870,7 @@ eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(am__append_92)
 # With --enable-ipc, e-pTeX may need to link with -lsocket.
 eptex_LDADD = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) \
 	$(ipc_socketlibs) $(am__append_93)
+eptex_DEPENDENCIES = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 
 # e-pTeX C sources
 eptex_c_h = eptexini.c eptex0.c eptexcoerce.h eptexd.h
@@ -1895,14 +1903,16 @@ eptex_ch_srcs = \
 
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+uptex_dependencies = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 up_tangle = WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv) $(TANGLE)
-upweb_programs = updvitype
+upweb_programs = upbibtex updvitype uppltotf uptftopl
 libukanji_a_SOURCES = uptexdir/kanji.c uptexdir/kanji.h
 libukanji_a_CPPFLAGS = $(uptex_cppflags)
 uptex_CPPFLAGS = $(uptex_cppflags) $(am__append_88)
 
 # With --enable-ipc, upTeX may need to link with -lsocket.
 uptex_LDADD = $(uptex_ldadd) $(ipc_socketlibs) $(am__append_89)
+uptex_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX C sources
 uptex_c_h = uptexini.c uptex0.c uptexcoerce.h uptexd.h
@@ -1923,15 +1933,32 @@ uptex_ch_srcs = \
 	$(uptex_ch_synctex) \
 	tex-binpool.ch
 
+nodist_upbibtex_SOURCES = upbibtex.c upbibtex.h
+upbibtex_SOURCES = uptexdir/kanji.h
+upbibtex_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+upbibtex_LDADD = $(uptex_ldadd)
+upbibtex_DEPENDENCIES = $(uptex_dependencies)
 nodist_updvitype_SOURCES = updvitype.c updvitype.h
 updvitype_SOURCES = uptexdir/kanji.h
 updvitype_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
 updvitype_LDADD = $(uptex_ldadd)
+updvitype_DEPENDENCIES = $(uptex_dependencies)
+nodist_uppltotf_SOURCES = uppltotf.c uppltotf.h
+uppltotf_SOURCES = uptexdir/kanji.h
+uppltotf_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+uppltotf_LDADD = $(uptex_ldadd)
+uppltotf_DEPENDENCIES = $(uptex_dependencies)
+nodist_uptftopl_SOURCES = uptftopl.c uptftopl.h
+uptftopl_SOURCES = uptexdir/kanji.h
+uptftopl_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+uptftopl_LDADD = $(uptex_ldadd)
+uptftopl_DEPENDENCIES = $(uptex_dependencies)
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(am__append_96)
 
 # With --enable-ipc, e-upTeX may need to link with -lsocket.
 euptex_LDADD = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) \
 	$(ipc_socketlibs) $(am__append_97)
+euptex_DEPENDENCIES = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 
 # e-upTeX C sources
 euptex_c_h = euptexini.c euptex0.c euptexcoerce.h euptexd.h
@@ -3031,12 +3058,21 @@ ttf2afm$(EXEEXT): $(ttf2afm_OBJECTS) $(ttf2afm_DEPENDENCIES)
 txt2zlib$(EXEEXT): $(txt2zlib_OBJECTS) $(txt2zlib_DEPENDENCIES) 
 	@rm -f txt2zlib$(EXEEXT)
 	$(LINK) $(txt2zlib_OBJECTS) $(txt2zlib_LDADD) $(LIBS)
+upbibtex$(EXEEXT): $(upbibtex_OBJECTS) $(upbibtex_DEPENDENCIES) 
+	@rm -f upbibtex$(EXEEXT)
+	$(LINK) $(upbibtex_OBJECTS) $(upbibtex_LDADD) $(LIBS)
 updvitype$(EXEEXT): $(updvitype_OBJECTS) $(updvitype_DEPENDENCIES) 
 	@rm -f updvitype$(EXEEXT)
 	$(LINK) $(updvitype_OBJECTS) $(updvitype_LDADD) $(LIBS)
+uppltotf$(EXEEXT): $(uppltotf_OBJECTS) $(uppltotf_DEPENDENCIES) 
+	@rm -f uppltotf$(EXEEXT)
+	$(LINK) $(uppltotf_OBJECTS) $(uppltotf_LDADD) $(LIBS)
 uptex$(EXEEXT): $(uptex_OBJECTS) $(uptex_DEPENDENCIES) 
 	@rm -f uptex$(EXEEXT)
 	$(LINK) $(uptex_OBJECTS) $(uptex_LDADD) $(LIBS)
+uptftopl$(EXEEXT): $(uptftopl_OBJECTS) $(uptftopl_DEPENDENCIES) 
+	@rm -f uptftopl$(EXEEXT)
+	$(LINK) $(uptftopl_OBJECTS) $(uptftopl_LDADD) $(LIBS)
 vftovp$(EXEEXT): $(vftovp_OBJECTS) $(vftovp_DEPENDENCIES) 
 	@rm -f vftovp$(EXEEXT)
 	$(LINK) $(vftovp_OBJECTS) $(vftovp_LDADD) $(LIBS)
@@ -3433,12 +3469,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ttf2afm-macnames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ttf2afm-ttf2afm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/txt2zlib-txt2zlib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upbibtex-upbibtex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/updvitype-updvitype.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uppltotf-uppltotf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uptex-synctex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uptex-uptex-pool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uptex-uptex0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uptex-uptexextra.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uptex-uptexini.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uptftopl-uptftopl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vftovp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vptovf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/weave.Po@am__quote@
@@ -8020,6 +8059,20 @@ txt2zlib-txt2zlib.obj: txt2zlib.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(txt2zlib_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o txt2zlib-txt2zlib.obj `if test -f 'txt2zlib.c'; then $(CYGPATH_W) 'txt2zlib.c'; else $(CYGPATH_W) '$(srcdir)/txt2zlib.c'; fi`
 
+upbibtex-upbibtex.o: upbibtex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upbibtex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT upbibtex-upbibtex.o -MD -MP -MF $(DEPDIR)/upbibtex-upbibtex.Tpo -c -o upbibtex-upbibtex.o `test -f 'upbibtex.c' || echo '$(srcdir)/'`upbibtex.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/upbibtex-upbibtex.Tpo $(DEPDIR)/upbibtex-upbibtex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='upbibtex.c' object='upbibtex-upbibtex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upbibtex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o upbibtex-upbibtex.o `test -f 'upbibtex.c' || echo '$(srcdir)/'`upbibtex.c
+
+upbibtex-upbibtex.obj: upbibtex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upbibtex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT upbibtex-upbibtex.obj -MD -MP -MF $(DEPDIR)/upbibtex-upbibtex.Tpo -c -o upbibtex-upbibtex.obj `if test -f 'upbibtex.c'; then $(CYGPATH_W) 'upbibtex.c'; else $(CYGPATH_W) '$(srcdir)/upbibtex.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/upbibtex-upbibtex.Tpo $(DEPDIR)/upbibtex-upbibtex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='upbibtex.c' object='upbibtex-upbibtex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upbibtex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o upbibtex-upbibtex.obj `if test -f 'upbibtex.c'; then $(CYGPATH_W) 'upbibtex.c'; else $(CYGPATH_W) '$(srcdir)/upbibtex.c'; fi`
+
 updvitype-updvitype.o: updvitype.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(updvitype_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT updvitype-updvitype.o -MD -MP -MF $(DEPDIR)/updvitype-updvitype.Tpo -c -o updvitype-updvitype.o `test -f 'updvitype.c' || echo '$(srcdir)/'`updvitype.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/updvitype-updvitype.Tpo $(DEPDIR)/updvitype-updvitype.Po
@@ -8033,6 +8086,20 @@ updvitype-updvitype.obj: updvitype.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='updvitype.c' object='updvitype-updvitype.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(updvitype_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o updvitype-updvitype.obj `if test -f 'updvitype.c'; then $(CYGPATH_W) 'updvitype.c'; else $(CYGPATH_W) '$(srcdir)/updvitype.c'; fi`
+
+uppltotf-uppltotf.o: uppltotf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uppltotf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uppltotf-uppltotf.o -MD -MP -MF $(DEPDIR)/uppltotf-uppltotf.Tpo -c -o uppltotf-uppltotf.o `test -f 'uppltotf.c' || echo '$(srcdir)/'`uppltotf.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uppltotf-uppltotf.Tpo $(DEPDIR)/uppltotf-uppltotf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uppltotf.c' object='uppltotf-uppltotf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uppltotf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uppltotf-uppltotf.o `test -f 'uppltotf.c' || echo '$(srcdir)/'`uppltotf.c
+
+uppltotf-uppltotf.obj: uppltotf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uppltotf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uppltotf-uppltotf.obj -MD -MP -MF $(DEPDIR)/uppltotf-uppltotf.Tpo -c -o uppltotf-uppltotf.obj `if test -f 'uppltotf.c'; then $(CYGPATH_W) 'uppltotf.c'; else $(CYGPATH_W) '$(srcdir)/uppltotf.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uppltotf-uppltotf.Tpo $(DEPDIR)/uppltotf-uppltotf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uppltotf.c' object='uppltotf-uppltotf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uppltotf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uppltotf-uppltotf.obj `if test -f 'uppltotf.c'; then $(CYGPATH_W) 'uppltotf.c'; else $(CYGPATH_W) '$(srcdir)/uppltotf.c'; fi`
 
 uptex-uptexextra.o: uptexdir/uptexextra.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uptex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uptex-uptexextra.o -MD -MP -MF $(DEPDIR)/uptex-uptexextra.Tpo -c -o uptex-uptexextra.o `test -f 'uptexdir/uptexextra.c' || echo '$(srcdir)/'`uptexdir/uptexextra.c
@@ -8103,6 +8170,20 @@ uptex-uptex-pool.obj: uptex-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uptex-pool.c' object='uptex-uptex-pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uptex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uptex-uptex-pool.obj `if test -f 'uptex-pool.c'; then $(CYGPATH_W) 'uptex-pool.c'; else $(CYGPATH_W) '$(srcdir)/uptex-pool.c'; fi`
+
+uptftopl-uptftopl.o: uptftopl.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uptftopl_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uptftopl-uptftopl.o -MD -MP -MF $(DEPDIR)/uptftopl-uptftopl.Tpo -c -o uptftopl-uptftopl.o `test -f 'uptftopl.c' || echo '$(srcdir)/'`uptftopl.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uptftopl-uptftopl.Tpo $(DEPDIR)/uptftopl-uptftopl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uptftopl.c' object='uptftopl-uptftopl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uptftopl_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uptftopl-uptftopl.o `test -f 'uptftopl.c' || echo '$(srcdir)/'`uptftopl.c
+
+uptftopl-uptftopl.obj: uptftopl.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uptftopl_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uptftopl-uptftopl.obj -MD -MP -MF $(DEPDIR)/uptftopl-uptftopl.Tpo -c -o uptftopl-uptftopl.obj `if test -f 'uptftopl.c'; then $(CYGPATH_W) 'uptftopl.c'; else $(CYGPATH_W) '$(srcdir)/uptftopl.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uptftopl-uptftopl.Tpo $(DEPDIR)/uptftopl-uptftopl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uptftopl.c' object='uptftopl-uptftopl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(uptftopl_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uptftopl-uptftopl.obj `if test -f 'uptftopl.c'; then $(CYGPATH_W) 'uptftopl.c'; else $(CYGPATH_W) '$(srcdir)/uptftopl.c'; fi`
 
 xetex-xetexextra.o: xetexdir/xetexextra.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetexextra.o -MD -MP -MF $(DEPDIR)/xetex-xetexextra.Tpo -c -o xetex-xetexextra.o `test -f 'xetexdir/xetexextra.c' || echo '$(srcdir)/'`xetexdir/xetexextra.c
@@ -9703,6 +9784,14 @@ uptex.web: tie$(EXEEXT) $(uptex_web_srcs)
 # Generate uptex.ch
 uptex.ch: tie$(EXEEXT) uptex.web $(uptex_ch_srcs)
 	$(tie) -c uptex.ch uptex.web $(uptex_ch_srcs)
+upbibtex.c upbibtex.h: upbibtex-web2c
+	$(web2c) upbibtex
+upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines
+	$(web2c) upbibtex
+upbibtex.p: tangle$(EXEEXT) upbibtex.web uptexdir/upbibtex.ch
+	$(up_tangle) upbibtex upbibtex
+upbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch ptexdir/pbibtex.ch
+	$(tie) -m upbibtex.web bibtex.web bibtex.ch ptexdir/pbibtex.ch
 updvitype.c updvitype.h: updvitype-web2c
 	$(web2c) updvitype
 updvitype-web2c: updvitype.p $(web2c_depend) uptexdir/uptex.defines
@@ -9711,6 +9800,22 @@ updvitype.p: tangle$(EXEEXT) updvitype.web uptexdir/updvitype.ch
 	$(up_tangle) updvitype updvitype
 updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch ptexdir/pdvitype.ch
 	$(tie) -m updvitype.web dvitype.web dvitype.ch ptexdir/pdvitype.ch
+uppltotf.c uppltotf.h: uppltotf-web2c
+	$(web2c) uppltotf
+uppltotf-web2c: uppltotf.p $(web2c_depend) uptexdir/uptex.defines
+	$(web2c) uppltotf
+uppltotf.p: tangle$(EXEEXT) uppltotf.web uptexdir/uppltotf.ch
+	$(up_tangle) uppltotf uppltotf
+uppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch ptexdir/ppltotf.ch
+	$(tie) -m uppltotf.web pltotf.web pltotf.ch ptexdir/ppltotf.ch
+uptftopl.c uptftopl.h: uptftopl-web2c
+	$(web2c) uptftopl
+uptftopl-web2c: uptftopl.p $(web2c_depend) uptexdir/uptex.defines
+	$(web2c) uptftopl
+uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
+	$(up_tangle) uptftopl uptftopl
+uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
+	$(tie) -m uptftopl.web tftopl.web tftopl.ch ptexdir/ptftopl.ch
 $(euptex_OBJECTS): $(euptex_prereq)
 
 $(euptex_c_h): euptex-web2c

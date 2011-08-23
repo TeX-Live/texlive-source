@@ -28,6 +28,6 @@
 @define function calcpos ();
 @define function kcatcodekey ();
 
-@define procedure initdefaultkanji;
+@define procedure initkanji;
 
 @define var sjisterminal;

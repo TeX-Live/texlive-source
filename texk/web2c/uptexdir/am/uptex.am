@@ -5,9 +5,10 @@
 
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+uptex_dependencies = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 up_tangle = WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
-upweb_programs = updvitype
+upweb_programs = upbibtex updvitype uppltotf uptftopl
 
 ## libukanji.a for upTeX and e-upTeX
 ##
@@ -29,6 +30,7 @@ uptex_CPPFLAGS = $(uptex_cppflags)
 
 # With --enable-ipc, upTeX may need to link with -lsocket.
 uptex_LDADD = $(uptex_ldadd) $(ipc_socketlibs)
+uptex_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX C sources
 uptex_c_h = uptexini.c uptex0.c uptexcoerce.h uptexd.h
@@ -86,12 +88,30 @@ EXTRA_DIST += $(uptex_web_srcs) $(uptex_ch_srcs) uptexdir/uptex.defines
 DISTCLEANFILES += $(nodist_uptex_SOURCES) uptex.web uptex.ch uptex-web2c \
 	uptex.p uptex.pool uptex-tangle
 
+## upBibTeX
+##
+nodist_upbibtex_SOURCES = upbibtex.c upbibtex.h
+upbibtex_SOURCES = uptexdir/kanji.h
+upbibtex_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+upbibtex_LDADD = $(uptex_ldadd)
+upbibtex_DEPENDENCIES = $(uptex_dependencies)
+upbibtex.c upbibtex.h: upbibtex-web2c
+	$(web2c) upbibtex
+upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines
+	$(web2c) upbibtex
+upbibtex.p: tangle$(EXEEXT) upbibtex.web uptexdir/upbibtex.ch
+	$(up_tangle) upbibtex upbibtex
+upbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch ptexdir/pbibtex.ch
+	$(tie) -m upbibtex.web bibtex.web bibtex.ch ptexdir/pbibtex.ch
+EXTRA_DIST += ptexdir/pbibtex.ch uptexdir/upbibtex.ch
+
 ## upDVItype
 ##
 nodist_updvitype_SOURCES = updvitype.c updvitype.h
 updvitype_SOURCES = uptexdir/kanji.h
 updvitype_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
 updvitype_LDADD = $(uptex_ldadd)
+updvitype_DEPENDENCIES = $(uptex_dependencies)
 updvitype.c updvitype.h: updvitype-web2c
 	$(web2c) updvitype
 updvitype-web2c: updvitype.p $(web2c_depend) uptexdir/uptex.defines
@@ -101,4 +121,38 @@ updvitype.p: tangle$(EXEEXT) updvitype.web uptexdir/updvitype.ch
 updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch ptexdir/pdvitype.ch
 	$(tie) -m updvitype.web dvitype.web dvitype.ch ptexdir/pdvitype.ch
 EXTRA_DIST += ptexdir/pdvitype.ch uptexdir/updvitype.ch
+
+## upPLtoTF
+##
+nodist_uppltotf_SOURCES = uppltotf.c uppltotf.h
+uppltotf_SOURCES = uptexdir/kanji.h
+uppltotf_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+uppltotf_LDADD = $(uptex_ldadd)
+uppltotf_DEPENDENCIES = $(uptex_dependencies)
+uppltotf.c uppltotf.h: uppltotf-web2c
+	$(web2c) uppltotf
+uppltotf-web2c: uppltotf.p $(web2c_depend) uptexdir/uptex.defines
+	$(web2c) uppltotf
+uppltotf.p: tangle$(EXEEXT) uppltotf.web uptexdir/uppltotf.ch
+	$(up_tangle) uppltotf uppltotf
+uppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch ptexdir/ppltotf.ch
+	$(tie) -m uppltotf.web pltotf.web pltotf.ch ptexdir/ppltotf.ch
+EXTRA_DIST += ptexdir/ppltotf.ch uptexdir/uppltotf.ch
+
+## upTFtoPL
+##
+nodist_uptftopl_SOURCES = uptftopl.c uptftopl.h
+uptftopl_SOURCES = uptexdir/kanji.h
+uptftopl_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+uptftopl_LDADD = $(uptex_ldadd)
+uptftopl_DEPENDENCIES = $(uptex_dependencies)
+uptftopl.c uptftopl.h: uptftopl-web2c
+	$(web2c) uptftopl
+uptftopl-web2c: uptftopl.p $(web2c_depend) uptexdir/uptex.defines
+	$(web2c) uptftopl
+uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
+	$(up_tangle) uptftopl uptftopl
+uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
+	$(tie) -m uptftopl.web tftopl.web tftopl.ch ptexdir/ptftopl.ch
+EXTRA_DIST += ptexdir/ptftopl.ch uptexdir/uptftopl.ch
 

@@ -5,6 +5,7 @@
 
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 pweb_programs = pbibtex pdvitype ppltotf ptftopl
@@ -51,6 +52,7 @@ ptex_CPPFLAGS = $(ptex_cppflags)
 
 # With --enable-ipc, pTeX may need to link with -lsocket.
 ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs)
+ptex_DEPENDENCIES = $(ptex_dependencies)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
@@ -107,6 +109,7 @@ nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
 pbibtex_SOURCES = ptexdir/kanji.h
 pbibtex_CPPFLAGS = $(ptex_cppflags)
 pbibtex_LDADD  = $(ptex_ldadd)
+pbibtex_DEPENDENCIES = $(ptex_dependencies)
 pbibtex.c pbibtex.h: pbibtex-web2c
 	$(web2c) pbibtex
 pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/ptex.defines web2c/cvtbib.sed
@@ -126,6 +129,7 @@ nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
 pdvitype_SOURCES = ptexdir/kanji.h
 pdvitype_CPPFLAGS = $(ptex_cppflags) -DDHEX_CHAR_CODE
 pdvitype_LDADD = $(ptex_ldadd)
+pdvitype_DEPENDENCIES = $(ptex_dependencies)
 pdvitype.c pdvitype.h: pdvitype-web2c
 	$(web2c) pdvitype
 pdvitype-web2c: pdvitype.p $(web2c_depend) ptexdir/ptex.defines
@@ -144,6 +148,7 @@ nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
 ppltotf_SOURCES = ptexdir/kanji.h
 ppltotf_CPPFLAGS = $(ptex_cppflags) -DPRESERVE_PUTC
 ppltotf_LDADD  = $(ptex_ldadd)
+ppltotf_DEPENDENCIES = $(ptex_dependencies)
 ppltotf.c ppltotf.h: ppltotf-web2c
 	$(web2c) ppltotf
 ppltotf-web2c: ppltotf.p $(web2c_depend) ptexdir/ptex.defines
@@ -160,6 +165,7 @@ nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
 ptftopl_SOURCES = ptexdir/kanji.h
 ptftopl_CPPFLAGS = $(ptex_cppflags)
 ptftopl_LDADD  = $(ptex_ldadd)
+ptftopl_DEPENDENCIES = $(ptex_dependencies)
 ptftopl.c ptftopl.h: ptftopl-web2c
 	$(web2c) ptftopl
 ptftopl-web2c: ptftopl.p $(web2c_depend) ptexdir/ptex.defines

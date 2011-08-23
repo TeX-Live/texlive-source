@@ -33,7 +33,12 @@ extern boolean ismultiprn (integer c);
 extern integer calc_pos (integer c);
 #define calcpos calc_pos
 extern integer kcatcodekey (integer c);
-extern void initdefaultkanji (void);
+
+extern void init_default_kanji (const_string file_str, const_string internal_str);
+/* for pTeX and e-pTeX */
+#define initdefaultkanji() init_default_kanji(NULL, "euc")
+/* for pBibTeX, pDVItype, pPLtoTF, and pTFtoPL */
+#define initkanji() init_default_kanji(NULL, "euc")
 
 #ifndef PRESERVE_PUTC
 #undef putc

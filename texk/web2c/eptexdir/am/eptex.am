@@ -20,6 +20,7 @@ eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 
 # With --enable-ipc, e-pTeX may need to link with -lsocket.
 eptex_LDADD = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs)
+eptex_DEPENDENCIES = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies)
 
 # e-pTeX C sources
 eptex_c_h = eptexini.c eptex0.c eptexcoerce.h eptexd.h

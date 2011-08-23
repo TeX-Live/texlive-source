@@ -1,3 +1,7 @@
+2011-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Remove some (e-)pTeX cruft.
+
 2011-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: Options for (e-)pTeX and (e-)upTeX.

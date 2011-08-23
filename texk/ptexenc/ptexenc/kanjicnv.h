@@ -18,18 +18,18 @@ extern boolean isSJISkanji1(int c);
 extern boolean isSJISkanji2(int c);
 
 /* EUC <=> JIS X 0208 code conversion */
-extern int EUCtoJIS(int);
-extern int JIStoEUC(int);
+extern int EUCtoJIS(int c);
+extern int JIStoEUC(int c);
 
 /* Shift JIS <=> JIS Kanji code conversion */
-extern int SJIStoJIS(int);
-extern int JIStoSJIS(int);
+extern int SJIStoJIS(int c);
+extern int JIStoSJIS(int c);
 
 /* Shift JIS <=> EUC Kanji code conversion */
-extern int SJIStoEUC(int);
-extern int EUCtoSJIS(int);
+extern int SJIStoEUC(int c);
+extern int EUCtoSJIS(int c);
 
 /* KUTEN => JIS kanji code conversion */
-extern int KUTENtoJIS(int);
+extern int KUTENtoJIS(int c);
 
 #endif /* PTEXENC_KANJICNV_H */

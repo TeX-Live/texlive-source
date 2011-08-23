@@ -43,7 +43,7 @@ int UTF8length(int first_byte)
 
 
 /* with strict range check */
-int UTF8Slength(string buff, int buff_len)
+int UTF8Slength(unsigned char *buff, int buff_len)
 {
     int i, len;
 
@@ -58,7 +58,7 @@ int UTF8Slength(string buff, int buff_len)
 
 
 /* WITHOUT strict range check */
-long UTF8StoUCS(string s)
+long UTF8StoUCS(unsigned char *s)
 {
     switch (UTF8length(s[0])) {
     case 1: return s[0];
@@ -70,7 +70,7 @@ long UTF8StoUCS(string s)
 }
 
 #if 0 /* not used */
-int UCStoUTF8S(long ucs, string s)
+int UCStoUTF8S(long ucs, unsigned char *s)
 {
     if (ucs < 0x80) {
 	*s = ucs;
@@ -111,4 +111,21 @@ long UCStoUTF8(long ucs)
 				    UCStoUTF8D3(ucs),
 				    UCStoUTF8D4(ucs));
     return 0; /* unsupported */
+}
+
+
+#define UCS_MAX 0x110000L
+
+/* using over U+10.FFFF Area */
+long UCStoUPTEX (long ucs)
+{
+    if (0x7F < ucs && ucs < 0x1000) ucs += UCS_MAX;
+    return ucs;
+}
+
+/* using over U+10.FFFF Area */
+long UPTEXtoUCS (long uptex)
+{
+    if (UCS_MAX + 0x7F < uptex && uptex < UCS_MAX + 0x1000) uptex -= UCS_MAX;
+    return uptex;
 }

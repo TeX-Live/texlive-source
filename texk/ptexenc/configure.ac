@@ -22,23 +22,6 @@ KPSE_COMMON([ptexenc])
 
 KPSE_KPATHSEA_FLAGS
 
-dnl Default pTeX character encoding.
-AC_ARG_WITH([ptexenc-enc],
-            AS_HELP_STRING([--with-ptexenc-enc=ENC],
-                           [Default pTeX character encoding
-                            (ENC=JIS/EUC/SJIS/UTF8, default UTF8)]))
-AC_MSG_CHECKING([default pTeX character encoding])
-AS_CASE([$with_ptexenc_enc],
-        [jis|JIS], [DEFAULT_KANJI_ENC=ENC_JIS],
-        [euc|EUC], [DEFAULT_KANJI_ENC=ENC_EUC],
-        [sjis|SJIS], [DEFAULT_KANJI_ENC=ENC_SJIS],
-        [''|utf8|UTF8], [DEFAULT_KANJI_ENC=ENC_UTF8],
-            [DEFAULT_KANJI_ENC=ENC_UTF8
-             AC_MSG_WARN([Unknown character encoding \`$with_ptexenc_enc'])])
-AC_MSG_RESULT([$DEFAULT_KANJI_ENC])
-AC_DEFINE_UNQUOTED([DEFAULT_KANJI_ENC], [$DEFAULT_KANJI_ENC],
-                   [Default kanji encoding.])
-
 dnl Using iconv for kanji <=> unicode conversion
 AC_ARG_ENABLE([kanji-iconv],
               AS_HELP_STRING([--enable-kanji-iconv],

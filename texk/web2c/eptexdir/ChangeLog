@@ -2,6 +2,7 @@
 
 	Renamed ChangeLog => Changes.txt, ChangeLog.TL => ChangeLog.
 	* am/eptex.am (EXTRA_DIST): Adapted.
+	* am/eptex.am (eptex_DEPENDENCIES): Define proper dependencies.
 
 2011-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

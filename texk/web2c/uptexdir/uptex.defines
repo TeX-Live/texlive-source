@@ -10,6 +10,7 @@
 @define function setencstring ();
 @define procedure setpriorfileenc;
 @define function isinternalUPTEX;
+@define function isinternalEUC;
 @define procedure setptexencuptex;
 
 @define function iskanji1 ();
@@ -17,6 +18,7 @@
 @define function ismultichr ();
 
 @define function multistrlen ();
+@define function multibytelen ();
 @define function fromBUFF ();
 @define function toBUFF ();
 
@@ -41,6 +43,6 @@
 @define function multilenbuffchar ();
 @define function nrestmultichr ();
 
-@define procedure initdefaultkanji;
+@define procedure initkanji;
 
 @define var sjisterminal;

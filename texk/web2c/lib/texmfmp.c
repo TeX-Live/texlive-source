@@ -620,9 +620,6 @@ maininit (int ac, string *av)
 
   /* Must be initialized before options are parsed.  */
   interactionoption = 4;
-#if defined(pTeX) || defined(epTeX)
-  set_enc_string (NULL, "default");
-#endif /* pTeX || epTeX */
 
   /* Have things to record as we go along.  */
   kpse_record_input = recorder_record_input;

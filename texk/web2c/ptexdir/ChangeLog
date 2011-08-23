@@ -1,3 +1,39 @@
+2011-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch, ptex.defines:
+	Change init_default_kanji => init_kanji.
+	* kanji.[ch]: Map initdefaultkanji (for pTeX and e-pTeX) and
+	initkanji (for pBibTeX, pDVItype, pPLtoTF, and pTFtoPL) to
+	init_default_kanji() with two encoding string arguments.
+
+2011-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch: Change error
+	message text 'kanjicode encoding' => 'kanji encoding'.
+	* am/ptex.am (*_DEPENDENCIES): Define proper dependencies.
+
+2011-08-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch, ppltotf.ch, ptftopl.ch: Stop parsing arguments at
+	"-version" and immediately call print_version_and_exit().
+
+2011-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch: Add WIN32
+	option "sjis-terminal" and init_default_kanji().
+	* ptex.defines: Add sjisterminal and initdefaultkanji.
+	* kanji.[ch]: Add support for WIN32 option "sjis-terminal".
+	(check_kanji): Change return type boolean => int (for -1, 0, +1).
+	(initdefaultkanji): New function from W32TeX kanjiextra.c.
+	* am/ptex.am (*_LDADD): Use libkanji.a for all binaries.
+
+	* pdvitype.ch: Change banner 'PDVItype' => 'pDVItype'.
+	* ppltotf.ch: Change banner 'Nihongo PLtoTF' => 'pPLtoTF'.
+	More fix usage ('progname').  Simplify kanji encoding output.
+	* ptftopl.ch: Change banner 'Nihongo TFtoPL' => 'pTFtoPL'.
+	More fix usage ('progname').  Simplify kanji encoding output.
+	* pbibtex.ch: Simplify kanji encoding output.
+
 2011-08-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ppltotf.ch, ptftopl.ch: fix usage ('progname').
