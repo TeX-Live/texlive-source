@@ -274,7 +274,7 @@ mendex_SOURCES = \
 
 LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)	
 dist_man1_MANS = mendex.1
-EXTRA_DIST = COPYRIGHT COPYRIGHT.jis ChangeLog.TL indexsty mendex.doc
+EXTRA_DIST = COPYRIGHT COPYRIGHT.jis ChangeLog.jis indexsty mendex.doc
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

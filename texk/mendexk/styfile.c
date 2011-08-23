@@ -33,7 +33,7 @@ void styread(const char *filename)
 	filename = KP_find_file(&kp_ist,filename);
 #endif
 	if(kpse_in_name_ok(filename))
-		fp=nkf_open(filename,"r");
+		fp=nkf_open(filename,"rb");
 	else
 		fp=NULL;
 	if (fp==NULL) {

@@ -72,7 +72,7 @@ int dicread(const char *filename)
 		filename = KP_find_file(&kp_dict,filename);
 #endif
 		if(kpse_in_name_ok(filename))
-			fp=nkf_open(filename,"r");
+			fp=nkf_open(filename,"rb");
 		else
 			fp = NULL;
 		if (fp==NULL) {
@@ -105,7 +105,7 @@ ENV:
 		envfile = KP_find_file(&kp_dict,envfile);
 #endif
 		if(kpse_in_name_ok(envfile))
-			fp=nkf_open(envfile,"r");
+			fp=nkf_open(envfile,"rb");
 		else
 			fp = NULL;
 		if (fp==NULL) {
@@ -140,7 +140,7 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 	FILE *fp;
 
 	if(kpse_in_name_ok(filename))
-		fp=nkf_open(filename,"r");
+		fp=nkf_open(filename,"rb");
 	else {
 		fprintf(stderr, "mendex: %s is forbidden to open for reading.\n",filename);
 		exit(-1);

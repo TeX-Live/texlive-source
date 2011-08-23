@@ -1,3 +1,8 @@
+#ifdef WIN32
+#define nkf_open fopen
+#define nkf_close fclose
+#endif
+
 struct page {
 	char *page;
 	char *enc;

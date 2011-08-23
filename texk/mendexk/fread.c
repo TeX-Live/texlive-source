@@ -31,13 +31,13 @@ int idxread(char *filename, int start)
 	}
 	else {
 		if(kpse_in_name_ok(filename))
-			fp=nkf_open(filename,"r");
+			fp=nkf_open(filename,"rb");
 		else
 			fp=NULL;
 		if (fp==NULL) {
 			sprintf(buff,"%s.idx",filename);
 			if(kpse_in_name_ok(buff))
-				fp=nkf_open(buff,"r");
+				fp=nkf_open(buff,"rb");
 			else
 				fp=NULL;
 			if (fp==NULL) {

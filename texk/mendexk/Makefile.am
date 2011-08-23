@@ -42,7 +42,7 @@ dist_man1_MANS = mendex.1
 EXTRA_DIST = \
 	COPYRIGHT \
 	COPYRIGHT.jis \
-	ChangeLog.TL
+	ChangeLog.jis
 
 ## Eventually delete these files
 ##
