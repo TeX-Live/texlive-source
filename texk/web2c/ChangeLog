@@ -1,3 +1,7 @@
+2011-08-23  Peter Breitenlohner  <peb@mp.mpg.de>
+
+	* triptrap-sh: Add uptrip and euptrip tests.
+
 2011-08-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmem.h: upTeX uses Aleph-type memory words.

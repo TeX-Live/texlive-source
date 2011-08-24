@@ -1,0 +1,6 @@
+2011-08-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported upTeX into TeX Live, based on the W32TeX version
+	  from Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+	and on the TL patches in tlsvn23478-uptex-1108111825.tar.xz
+	  from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>.

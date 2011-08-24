@@ -10,6 +10,18 @@ up_tangle = WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 upweb_programs = upbibtex updvitype uppltotf uptftopl
 
+# upTeX Tests
+uptex_tests = uptexdir/uptrip.test
+upweb_tests = \
+	uptexdir/upbibtex.test \
+	uptexdir/updvitype.test \
+	uptexdir/uppltotf.test \
+	uptexdir/uptftopl.test
+
+EXTRA_DIST += $(uptex_tests) $(upweb_tests)
+DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \
+	$(upweb_programs:=.p) $(upweb_programs:=-web2c) $(upweb_programs:=.web)
+
 ## libukanji.a for upTeX and e-upTeX
 ##
 EXTRA_LIBRARIES += libukanji.a
@@ -155,4 +167,43 @@ uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
 	$(tie) -m uptftopl.web tftopl.web tftopl.ch ptexdir/ptftopl.ch
 EXTRA_DIST += ptexdir/ptftopl.ch uptexdir/uptftopl.ch
+
+##
+EXTRA_DIST += \
+	uptexdir/COPYRIGHT \
+	uptexdir/COPYRIGHT.jis \
+	uptexdir/ChangeLog
+
+if UPTEX
+TESTS += $(uptex_tests)
+check_PROGRAMS += dvitype pltotf tftopl
+TRIPTRAP += uptrip.diffs
+TRIPTRAP_CLEAN += uptrip-clean
+endif UPTEX
+if UPWEB
+TESTS += $(upweb_tests)
+endif UPWEB
+
+## Test data and results
+##
+## uptexdir/upbibtex.test
+DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
+## uptexdir/updvitype.test
+DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
+## uptexdir/uppltotf.test
+DISTCLEANFILES += tests/xcmr10.tfm
+## uptexdir/uptftopl.test
+DISTCLEANFILES += tests/xcmr10.pl
+## uptexdir/uptrip.test
+EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
+uptrip.diffs: uptex$(EXEEXT)
+	$(triptrap_diffs) $@
+.PHONY: uptrip-clean
+uptrip-clean:
+	rm -f trip.tfm trip.pl trip.tex trip.fmt uptripin.fot uptripin.log
+	rm -f uptrip.fot uptrip.log trip.log trip.dvi trip.typ
+	rm -f uptrip.fot uptrip.log uptrip.dvi uptrip.typ
+	rm -f tripos.tex 8terminal.tex
+	rm -rf tfm
+DISTCLEANFILES += uptrip.diffs
 

@@ -1,0 +1,867 @@
+>>> Running e-TRIP test for e-upTeX.
+>>> See SRCDIR/euptexdir/euptrip/euptrip.diffs for example of acceptable diffs.
++ echo '*** TRIP test for e-upTeX in compatibility mode ***.'
+*** TRIP test for e-upTeX in compatibility mode ***.
++ ./pltotf SRCDIR/triptrap/trip.pl trip.tfm
++ ./tftopl ./trip.tfm trip.pl
++ diff SRCDIR/triptrap/trip.pl trip.pl
++ ln -s SRCDIR/triptrap/trip.tex .
++ rm -f trip.log
++ ./euptex --progname=eupinitex --ini
++ sed 's/, yoko direction//;s/yoko direction, //' trip.log
++ diff SRCDIR/triptrap/tripin.log cuptripin.log
+1c1
+< This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (INITEX)  23 AUG 2011 22:09
+3,11c3
+< (trip.tex
+< ! Bad character code (256).
+< <to be read again> 
+<                    -
+< l.26   \nonstopmode\lccode256-
+<                               0\mathchardef\a="8000\def\a{ SC...
+< A character number must be between 0 and 255.
+< I changed this one to zero.
+< 
+---
+> (./trip.tex
+91c83,84
+< ### horizontal mode entered at line 77 (language255:hyphenmin1,63)
+---
+> ### horizontal mode entered at line 77 (language255:hyph
+> enmin1,63)
+450,453c443,446
+<  (preloaded format=trip 2008.3.15)
+< 1326 strings of total length 23646
+< 471 memory locations dumped; current usage is 96&278
+< 341 multiletter control sequences
+---
+>  (format=trip 2011.8.23)
+> 1610 strings of total length 27667
+> 489 memory locations dumped; current usage is 110&278
+> 393 multiletter control sequences
+461c454
+< Hyphenation trie of length 273 has 9 ops out of 500
+---
+> Hyphenation trie of length 273 has 9 ops out of 35111
++ rm -f trip.log
++ ./euptex --progname=euptex
++ sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' trip.log
++ diff SRCDIR/triptrap/trip.fot cuptrip.fot
+1,3c1,2
+< This is TeX, Version 3.1415926 (INITEX)
+< ** &trip  trip 
+< (trip.tex ##
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012)
+> **(./trip.tex ##
+17c16
+< Memory usage before: 159&313; after: 102&278; still untouched: 1613
+---
+> Memory usage before: 194&313; after: 118&278; still untouched: 2109
+75c74
+< Memory usage before: 334&431; after: 292&418; still untouched: 175
+---
+> Memory usage before: 456&431; after: 394&418; still untouched: 483
++ diff SRCDIR/triptrap/trip.log cuptrip.log
+1c1
+< This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (format=trip 2011.8.23)  23 AUG 2011 22:09
+3c3
+< (trip.tex ##
+---
+> (./trip.tex ##
+58a59,62
+> \openout0 = `8terminal.tex'.
+> 
+> \openout10 = `tripos.tex'.
+> 
+73c77
+< Memory usage before: 159&313; after: 102&278; still untouched: 1613
+---
+> Memory usage before: 194&313; after: 118&278; still untouched: 2109
+385,386c389,390
+< \insert100, natural size 803.09999; split(1.0 plus 43.0,-2.0); float cos
+< t 100
+---
+> \insert100Y, natural size 803.09999; split(1.0 plus 43.0,-2.0); float co
+> st 100
+426c430
+< \insert200, natural size 400.0; split(0.0,-2.0); float cost 100
+---
+> \insert200Y, natural size 400.0; split(0.0,-2.0); float cost 100
+441c445
+< \insert200, natural size 400.0; split(1.0,-1.0); float cost 100
+---
+> \insert200Y, natural size 400.0; split(1.0,-1.0); float cost 100
+456c460
+< \insert200, natural size 400.0; split(2.0,-1.0); float cost 100
+---
+> \insert200Y, natural size 400.0; split(2.0,-1.0); float cost 100
+474c478
+< \special{^^80-1000.0pt}
+---
+> \special{€-1000.0pt}
+483,484c487,488
+< \insert200, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost 
+< 3
+---
+> \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
+>  3
+642c646
+< Memory usage before: 747&484; after: 581&481; still untouched: 1492
+---
+> Memory usage before: 1090&483; after: 842&480; still untouched: 1989
+647c651,652
+< ### internal vertical mode entered at line 150 (\output routine)
+---
+> ### internal vertical mode entered at line 150 (\output 
+> routine)
+689c694
+< \special{^^80-1000.0pt}
+---
+> \special{€-1000.0pt}
+693,694c698,699
+< \insert100, natural size 535.4; split(1.0 plus 43.0,-2.0); float cost 10
+< 0
+---
+> \insert100Y, natural size 535.4; split(1.0 plus 43.0,-2.0); float cost 1
+> 00
+701c706
+< \insert200, natural size 2.0; split(2.0,-1.0); float cost 100
+---
+> \insert200Y, natural size 2.0; split(2.0,-1.0); float cost 100
+714,715c719,720
+< \insert200, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost 
+< 3
+---
+> \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
+>  3
+815c820
+< Memory usage before: 475&470; after: 290&466; still untouched: 1473
+---
+> Memory usage before: 694&469; after: 410&465; still untouched: 1970
+820c825,826
+< ### internal vertical mode entered at line 150 (\output routine)
+---
+> ### internal vertical mode entered at line 150 (\output 
+> routine)
+915c921
+< Memory usage before: 218&459; after: 149&458; still untouched: 1473
+---
+> Memory usage before: 308&458; after: 198&457; still untouched: 1970
+920c926,927
+< ### internal vertical mode entered at line 150 (\output routine)
+---
+> ### internal vertical mode entered at line 150 (\output 
+> routine)
+1070c1077
+< Memory usage before: 118&328; after: 102&328; still untouched: 1473
+---
+> Memory usage before: 150&327; after: 126&327; still untouched: 1970
+1405c1412
+< \vbox(16383.99998+0.0)x1000.0, glue set 16342.0fil
+---
+> \vbox(16383.99998+0.0)x1000.0, glue set 16341.99998fil
+1504a1512
+> ..\displace 0.0
+1511c1519
+< Memory usage before: 990&376; after: 584&370; still untouched: 735
+---
+> Memory usage before: 1490&375; after: 842&369; still untouched: 1970
+1954c1962
+< (tripos.tex
+---
+> (./tripos.tex
+2018c2026
+< \vbox(16383.99998+1.0)x100.0, glue set 16239.0fil
+---
+> \vbox(16383.99998+1.0)x100.0, glue set 16238.99998fil
+2048,2049c2056,2057
+< ..\rip ^^82 (ligature CA)
+< ..\rip ^^82 (ligature CA)
+---
+> ..\rip ‚ (ligature CA)
+> ..\rip ‚ (ligature CA)
+2189c2197
+< Memory usage before: 950&531; after: 546&448; still untouched: 706
+---
+> Memory usage before: 1458&530; after: 808&447; still untouched: 1941
+2397c2405
+< ! Improper alphabetic constant.
+---
+> ! Improper alphabetic or KANJI constant.
+2533c2541
+< \vbox(16383.99998+0.0)x20.0, glue set 16331.0fil
+---
+> \vbox(16383.99998+0.0)x20.0, glue set 16330.99998fil
+2575c2583
+< Memory usage before: 339&413; after: 236&405; still untouched: 706
+---
+> Memory usage before: 493&411; after: 327&403; still untouched: 1941
+2830c2838
+< Since I expected to read a number between 0 and 15,
+---
+> Since I expected to read a number between 0 and 255,
+3051c3059
+< \insert0, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
+---
+> \insert0Y, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
+3054c3062
+< .\fam0 ^^c8
+---
+> .\fam0 ì  
+3143a3152
+> ....\displace 0.0
+3235c3244
+< ! \textfont 0 is undefined (character ^^c8).
+---
+> ! \textfont 0 is undefined (character ì ©.
+3326c3335
+< \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
+---
+> \vbox(10000.0+2.0)x28.0, glue set 9737.58742fil
+3411c3420
+< p ^^82
+---
+> p ‚
+3547a3557
+> .........\displace 0.0
+3616c3626
+< Memory usage before: 2170&521; after: 1181&459; still untouched: 175
+---
+> Memory usage before: 3263&519; after: 1743&457; still untouched: 483
+3864c3874
+< \vbox(16383.99998+2.0)x100.0, glue set 16318.0fil
+---
+> \vbox(16383.99998+2.0)x100.0, glue set 16317.99997fil
+3951c3961
+< Memory usage before: 640&415; after: 397&410; still untouched: 175
+---
+> Memory usage before: 959&413; after: 573&408; still untouched: 483
+3985c3995
+< ^^82 
+---
+> ‚ 
+3991c4001
+<  []\ip A ^^82 
+---
+>  []\ip A ‚ 
+4034c4044
+< \vbox(16383.99998+0.0)x8236.0, glue set 16344.0fil
+---
+> \vbox(16383.99998+0.0)x8236.0, glue set 16343.99998fil
+4041c4051
+< ..\ip ^^82
+---
+> ..\ip ‚
+4053c4063
+< Memory usage before: 235&401; after: 178&399; still untouched: 175
+---
+> Memory usage before: 342&399; after: 248&397; still untouched: 483
+4420c4430
+< \vbox(16383.99998+0.0)x100.0, glue set 16332.0fil
+---
+> \vbox(16383.99998+0.0)x100.0, glue set 16331.99998fil
+4506c4516
+< Memory usage before: 651&432; after: 417&418; still untouched: 175
+---
+> Memory usage before: 992&431; after: 598&417; still untouched: 483
+4742c4752,4753
+< \vbox(16383.99998+0.0)x205.12613, glue set 16344.0fil
+---
+> \vbox(16383.99998+0.0)x205.12613, glue set 16343.99998fil, yoko directio
+> n
+4828c4839
+< Memory usage before: 776&458; after: 464&452; still untouched: 175
+---
+> Memory usage before: 1174&457; after: 676&451; still untouched: 483
+4881,4888d4891
+< ! Bad number (16).
+< <to be read again> 
+<                    =
+< l.346 ...ewlinechar}\textfont16=
+<                                 \relax
+< Since I expected to read a number between 0 and 15,
+< I changed this one to zero.
+< 
+5700c5703
+< ! \textfont 0 is undefined (character ^^c8).
+---
+> ! \textfont 0 is undefined (character ì ©.
+6380c6383
+< (tripos.tex
+---
+> (./tripos.tex
+6501c6504
+< l.429 ...^^M=13 \def^^M{\relax}#
+---
+> l.429 ...^^M=13 \defqqM{\relax}#
+6595c6598
+< Memory usage before: 819&428; after: 720&426; still untouched: 175
+---
+> Memory usage before: 1220&428; after: 1070&426; still untouched: 483
+7155c7158
+< Memory usage before: 895&439; after: 290&420; still untouched: 175
+---
+> Memory usage before: 1336&439; after: 392&420; still untouched: 483
+7288c7291
+< Memory usage before: 334&431; after: 292&418; still untouched: 175
+---
+> Memory usage before: 456&431; after: 394&418; still untouched: 483
+7296,7299c7299,7302
+<  47 strings out of 1674
+<  253 string characters out of 8354
+<  2825 words of memory out of 3000
+<  372 multiletter control sequences out of 2100
+---
+>  44 strings out of 1690
+>  261 string characters out of 8333
+>  4017 words of memory out of 4500
+>  424 multiletter control sequences out of 15000+0
+7301c7304
+<  2 hyphenation exceptions out of 307
+---
+>  1 hyphenation exception out of 659
++ eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' trip.dvi
+++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' trip.dvi
++ diff SRCDIR/triptrap/trip.typ cuptrip.typ
+1c1
+< This is DVItype, Version 3.6
+---
+> This is DVItype, Version 3.6 (TeX Live 2012)
+9c9
+< ' TeX output 2008.03.15:0223'
+---
+> ' TeX output 2011.08.23:2209'
+419c419
+< 1121: down4 639342208 
+---
+> 1121: down4 639342177 
+1087,1088c1087,1088
+< 2535: y4 203921760 
+< 2540: y0 203921760 
+---
+> 2535: y4 203921756 
+> 2540: y0 203921756 
++ echo '*** TRIP test for e-upTeX in extended mode ***.'
+*** TRIP test for e-upTeX in extended mode ***.
++ rm -f trip.log
++ ./euptex --progname=eupinitex --ini
++ sed 's/, yoko direction//;s/yoko direction, //' trip.log
++ diff SRCDIR/triptrap/tripin.log xuptripin.log
+1,11c1,4
+< This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
+< **\input trip
+< (trip.tex
+< ! Bad character code (256).
+< <to be read again> 
+<                    -
+< l.26   \nonstopmode\lccode256-
+<                               0\mathchardef\a="8000\def\a{ SC...
+< A character number must be between 0 and 255.
+< I changed this one to zero.
+< 
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (INITEX)  23 AUG 2011 22:09
+> entering extended mode
+> ***\input trip
+> (./trip.tex
+36,41d28
+< ! Bad register code (256).
+< l.29 ...{1} \toksdef\tokens=256 
+<                                 \show\errorstopmode
+< A register number must be between 0 and 255.
+< I changed this one to zero.
+< 
+91c78,79
+< ### horizontal mode entered at line 77 (language255:hyphenmin1,63)
+---
+> ### horizontal mode entered at line 77 (language255:hyph
+> enmin1,63)
+450,453c438,441
+<  (preloaded format=trip 2008.3.15)
+< 1326 strings of total length 23646
+< 471 memory locations dumped; current usage is 96&278
+< 341 multiletter control sequences
+---
+>  (format=trip 2011.8.23)
+> 1610 strings of total length 27667
+> 536 memory locations dumped; current usage is 157&278
+> 465 multiletter control sequences
+461c449
+< Hyphenation trie of length 273 has 9 ops out of 500
+---
+> Hyphenation trie of length 273 has 9 ops out of 35111
++ rm -f trip.log
++ ./euptex --progname=euptex
++ sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' trip.log
++ diff SRCDIR/triptrap/trip.fot xuptrip.fot
+1,3c1,3
+< This is TeX, Version 3.1415926 (INITEX)
+< ** &trip  trip 
+< (trip.tex ##
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012)
+> **entering extended mode
+> ## (./trip.tex
+17c17
+< Memory usage before: 159&313; after: 102&278; still untouched: 1613
+---
+> Memory usage before: 194&313; after: 118&278; still untouched: 2109
+75c75
+< Memory usage before: 334&431; after: 292&418; still untouched: 175
+---
+> Memory usage before: 456&431; after: 394&418; still untouched: 483
+77a78,80
+> 
+> ### semi simple group (level 1) entered at line 429 (begingroup)
+> ### bottom level
++ diff SRCDIR/triptrap/trip.log xuptrip.log
+1,3c1,4
+< This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
+< ** &trip  trip
+< (trip.tex ##
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (format=trip 2011.8.23)  23 AUG 2011 22:09
+> entering extended mode
+> **&trip \toksdef\tokens=0 \input trip
+>  (./trip.tex
+58a60,63
+> \openout0 = `8terminal.tex'.
+> 
+> \openout10 = `tripos.tex'.
+> 
+73c78
+< Memory usage before: 159&313; after: 102&278; still untouched: 1613
+---
+> Memory usage before: 194&313; after: 118&278; still untouched: 2109
+385,386c390,391
+< \insert100, natural size 803.09999; split(1.0 plus 43.0,-2.0); float cos
+< t 100
+---
+> \insert100Y, natural size 803.09999; split(1.0 plus 43.0,-2.0); float co
+> st 100
+426c431
+< \insert200, natural size 400.0; split(0.0,-2.0); float cost 100
+---
+> \insert200Y, natural size 400.0; split(0.0,-2.0); float cost 100
+441c446
+< \insert200, natural size 400.0; split(1.0,-1.0); float cost 100
+---
+> \insert200Y, natural size 400.0; split(1.0,-1.0); float cost 100
+456c461
+< \insert200, natural size 400.0; split(2.0,-1.0); float cost 100
+---
+> \insert200Y, natural size 400.0; split(2.0,-1.0); float cost 100
+474c479
+< \special{^^80-1000.0pt}
+---
+> \special{€-1000.0pt}
+483,484c488,489
+< \insert200, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost 
+< 3
+---
+> \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
+>  3
+642c647
+< Memory usage before: 747&484; after: 581&481; still untouched: 1492
+---
+> Memory usage before: 1090&483; after: 842&480; still untouched: 1989
+647c652,653
+< ### internal vertical mode entered at line 150 (\output routine)
+---
+> ### internal vertical mode entered at line 150 (\output 
+> routine)
+689c695
+< \special{^^80-1000.0pt}
+---
+> \special{€-1000.0pt}
+693,694c699,700
+< \insert100, natural size 535.4; split(1.0 plus 43.0,-2.0); float cost 10
+< 0
+---
+> \insert100Y, natural size 535.4; split(1.0 plus 43.0,-2.0); float cost 1
+> 00
+701c707
+< \insert200, natural size 2.0; split(2.0,-1.0); float cost 100
+---
+> \insert200Y, natural size 2.0; split(2.0,-1.0); float cost 100
+714,715c720,721
+< \insert200, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost 
+< 3
+---
+> \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
+>  3
+815c821
+< Memory usage before: 475&470; after: 290&466; still untouched: 1473
+---
+> Memory usage before: 694&469; after: 410&465; still untouched: 1970
+820c826,827
+< ### internal vertical mode entered at line 150 (\output routine)
+---
+> ### internal vertical mode entered at line 150 (\output 
+> routine)
+915c922
+< Memory usage before: 218&459; after: 149&458; still untouched: 1473
+---
+> Memory usage before: 308&458; after: 198&457; still untouched: 1970
+920c927,928
+< ### internal vertical mode entered at line 150 (\output routine)
+---
+> ### internal vertical mode entered at line 150 (\output 
+> routine)
+1070c1078
+< Memory usage before: 118&328; after: 102&328; still untouched: 1473
+---
+> Memory usage before: 150&327; after: 126&327; still untouched: 1970
+1405c1413
+< \vbox(16383.99998+0.0)x1000.0, glue set 16342.0fil
+---
+> \vbox(16383.99998+0.0)x1000.0, glue set 16341.99998fil
+1504a1513
+> ..\displace 0.0
+1511c1520
+< Memory usage before: 990&376; after: 584&370; still untouched: 735
+---
+> Memory usage before: 1490&375; after: 842&369; still untouched: 1970
+1769d1777
+< {restoring \fam=-1}
+1779d1786
+< {restoring \displayindent=0.0pt}
+1833d1839
+< {restoring \fam=-1}
+1954c1960
+< (tripos.tex
+---
+> (./tripos.tex
+2018c2024
+< \vbox(16383.99998+1.0)x100.0, glue set 16239.0fil
+---
+> \vbox(16383.99998+1.0)x100.0, glue set 16238.99998fil
+2048,2049c2054,2055
+< ..\rip ^^82 (ligature CA)
+< ..\rip ^^82 (ligature CA)
+---
+> ..\rip ‚ (ligature CA)
+> ..\rip ‚ (ligature CA)
+2135c2141
+< .\hbox(0.0+0.0)x0.0, shifted 50.0
+---
+> .\hbox(0.0+0.0)x0.0, shifted 50.0, display
+2138c2144
+< .\hbox(0.0+0.0)x0.0, shifted 100.0
+---
+> .\hbox(0.0+0.0)x0.0, shifted 100.0, display
+2189c2195
+< Memory usage before: 950&531; after: 546&448; still untouched: 706
+---
+> Memory usage before: 1458&530; after: 808&447; still untouched: 1941
+2397c2403
+< ! Improper alphabetic constant.
+---
+> ! Improper alphabetic or KANJI constant.
+2533c2539
+< \vbox(16383.99998+0.0)x20.0, glue set 16331.0fil
+---
+> \vbox(16383.99998+0.0)x20.0, glue set 16330.99998fil
+2570c2576,2577
+< .\hbox(0.0+0.0)x15.0, glue set 0.1875, shifted 5.0
+---
+> .\hbox(0.0+0.0)x15.0, glue set 0.1875, shifted 5.0, display, yoko direct
+> ion
+2575c2582
+< Memory usage before: 339&413; after: 236&405; still untouched: 706
+---
+> Memory usage before: 493&411; after: 327&403; still untouched: 1941
+2830c2837
+< Since I expected to read a number between 0 and 15,
+---
+> Since I expected to read a number between 0 and 255,
+2835d2841
+< {restoring current font=\ip}
+3051c3057
+< \insert0, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
+---
+> \insert0Y, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
+3054c3060
+< .\fam0 ^^c8
+---
+> .\fam0 ì  
+3143a3150
+> ....\displace 0.0
+3223d3229
+< {restoring \fam=-1}
+3235c3241
+< ! \textfont 0 is undefined (character ^^c8).
+---
+> ! \textfont 0 is undefined (character ì ©.
+3326c3332
+< \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
+---
+> \vbox(10000.0+2.0)x28.0, glue set 9737.58742fil
+3372c3378
+< .\hbox(68.26251+98.15005)x19.0, glue set - 1.0, shifted 9.0
+---
+> .\hbox(68.26251+98.15005)x19.0, glue set - 1.0, shifted 9.0, display
+3411c3417
+< p ^^82
+---
+> p ‚
+3547a3554
+> .........\displace 0.0
+3557c3564
+< .\hbox(20.5+50.80002)x8.27895, shifted 19.72105
+---
+> .\hbox(20.5+50.80002)x8.27895, shifted 19.72105, display
+3616c3623
+< Memory usage before: 2170&521; after: 1181&459; still untouched: 175
+---
+> Memory usage before: 3263&519; after: 1743&457; still untouched: 483
+3766d3772
+< {restoring \fam=-1}
+3839d3844
+< {restoring \fam=-1}
+3864c3869
+< \vbox(16383.99998+2.0)x100.0, glue set 16318.0fil
+---
+> \vbox(16383.99998+2.0)x100.0, glue set 16317.99997fil
+3895c3900
+< ..\hbox(12.0+4.0)x8.1778
+---
+> ..\hbox(12.0+4.0)x8.1778, display
+3917c3922
+< ..\hbox(0.0+13.00002)x-0.1778, glue set - 57.67767fil
+---
+> ..\hbox(0.0+13.00002)x-0.1778, glue set - 57.67767fil, display
+3925c3930
+< ....\hbox(7.0+1.0)x5.0, shifted 47.5
+---
+> ....\hbox(7.0+1.0)x5.0, shifted 47.5, display
+3951c3956
+< Memory usage before: 640&415; after: 397&410; still untouched: 175
+---
+> Memory usage before: 959&413; after: 573&408; still untouched: 483
+3985c3990
+< ^^82 
+---
+> ‚ 
+3991c3996
+<  []\ip A ^^82 
+---
+>  []\ip A ‚ 
+4011d4015
+< {restoring \fam=-1}
+4034c4038
+< \vbox(16383.99998+0.0)x8236.0, glue set 16344.0fil
+---
+> \vbox(16383.99998+0.0)x8236.0, glue set 16343.99998fil
+4041c4045
+< ..\ip ^^82
+---
+> ..\ip ‚
+4047c4051
+< .\hbox(0.0+0.0)x1009.0, shifted 7227.0
+---
+> .\hbox(0.0+0.0)x1009.0, shifted 7227.0, display
+4051c4055
+< .\hbox(0.0+0.0)x-7127.0, shifted 7227.0
+---
+> .\hbox(0.0+0.0)x-7127.0, shifted 7227.0, display
+4053c4057
+< Memory usage before: 235&401; after: 178&399; still untouched: 175
+---
+> Memory usage before: 342&399; after: 248&397; still untouched: 483
+4420c4424
+< \vbox(16383.99998+0.0)x100.0, glue set 16332.0fil
+---
+> \vbox(16383.99998+0.0)x100.0, glue set 16331.99998fil
+4506c4510
+< Memory usage before: 651&432; after: 417&418; still untouched: 175
+---
+> Memory usage before: 992&431; after: 598&417; still untouched: 483
+4742c4746,4747
+< \vbox(16383.99998+0.0)x205.12613, glue set 16344.0fil
+---
+> \vbox(16383.99998+0.0)x205.12613, glue set 16343.99998fil, yoko directio
+> n
+4828c4833
+< Memory usage before: 776&458; after: 464&452; still untouched: 175
+---
+> Memory usage before: 1174&457; after: 676&451; still untouched: 483
+4845c4850
+< I'll pretend you didn't say \long or \outer or \global.
+---
+> I'll pretend you didn't say \long or \outer or \global or \protected.
+4881,4888d4885
+< ! Bad number (16).
+< <to be read again> 
+<                    =
+< l.346 ...ewlinechar}\textfont16=
+<                                 \relax
+< Since I expected to read a number between 0 and 15,
+< I changed this one to zero.
+< 
+5700c5697
+< ! \textfont 0 is undefined (character ^^c8).
+---
+> ! \textfont 0 is undefined (character ì ©.
+6380c6377
+< (tripos.tex
+---
+> (./tripos.tex
+6501c6498
+< l.429 ...^^M=13 \def^^M{\relax}#
+---
+> l.429 ...^^M=13 \defqqM{\relax}#
+6595c6592
+< Memory usage before: 819&428; after: 720&426; still untouched: 175
+---
+> Memory usage before: 1220&428; after: 1070&426; still untouched: 483
+7155c7152
+< Memory usage before: 895&439; after: 290&420; still untouched: 175
+---
+> Memory usage before: 1336&439; after: 392&420; still untouched: 483
+7288c7285
+< Memory usage before: 334&431; after: 292&418; still untouched: 175
+---
+> Memory usage before: 456&431; after: 394&418; still untouched: 483
+7291a7289,7291
+> 
+> ### semi simple group (level 1) entered at line 429 (begingroup)
+> ### bottom level
+7296,7299c7296,7299
+<  47 strings out of 1674
+<  253 string characters out of 8354
+<  2825 words of memory out of 3000
+<  372 multiletter control sequences out of 2100
+---
+>  44 strings out of 1690
+>  261 string characters out of 8333
+>  4017 words of memory out of 4500
+>  496 multiletter control sequences out of 15000+0
+7301,7302c7301,7302
+<  2 hyphenation exceptions out of 307
+<  7i,7n,9p,113b,38s stack positions out of 200i,40n,60p,500b,600s
+---
+>  1 hyphenation exception out of 659
+>  7i,7n,9p,136b,40s stack positions out of 200i,40n,60p,500b,600s
++ eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' trip.dvi
+++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' trip.dvi
++ diff SRCDIR/triptrap/trip.typ xuptrip.typ
+1c1
+< This is DVItype, Version 3.6
+---
+> This is DVItype, Version 3.6 (TeX Live 2012)
+9c9
+< ' TeX output 2008.03.15:0223'
+---
+> ' TeX output 2011.08.23:2209'
+419c419
+< 1121: down4 639342208 
+---
+> 1121: down4 639342177 
+1087,1088c1087,1088
+< 2535: y4 203921760 
+< 2540: y0 203921760 
+---
+> 2535: y4 203921756 
+> 2540: y0 203921756 
++ echo '*** e-TeX specific part of e-TRIP test for e-upTeX ***.'
+*** e-TeX specific part of e-TRIP test for e-upTeX ***.
++ ./pltotf SRCDIR/etexdir/etrip/etrip.pl etrip.tfm
++ ./tftopl ./etrip.tfm etrip.pl
++ diff SRCDIR/etexdir/etrip/etrip.pl etrip.pl
++ ln -s SRCDIR/eptexdir/eptrip/etrip.tex .
++ ./euptex --progname=eupinitex --ini
++ sed 's/, yoko direction//;s/yoko direction, //' etrip.log
++ diff SRCDIR/etexdir/etrip/etripin.log euptripin.log
+1c1
+< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (INITEX)  7 APR 2011 11:46
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (INITEX)  23 AUG 2011 22:09
+26,29c26,29
+<  (format=etrip 2011.4.7)
+< 1490 strings of total length 26209
+< 280 memory locations dumped; current usage is 36&166
+< 408 multiletter control sequences
+---
+>  (format=etrip 2011.8.23)
+> 1611 strings of total length 27698
+> 283 memory locations dumped; current usage is 40&166
+> 465 multiletter control sequences
++ ./euptex --progname=euptex
++ sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' etrip.log
++ diff SRCDIR/etexdir/etrip/etrip.fot euptrip.fot
+1c1
+< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev)
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012)
++ diff SRCDIR/eptexdir/eptrip/etrip.log euptrip.log
+1c1
+< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (format=etrip 2011.4.7)  7 APR 2011 11:46
+---
+> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (format=etrip 2011.8.23)  23 AUG 2011 22:09
+4c4
+< (etrip.tex e-IniTeX: e-Trip format loaded.
+---
+> (./etrip.tex e-IniTeX: e-Trip format loaded.
+671,672c671,674
+< Memory usage before: 50&182; after: 36&176; still untouched: 680
+< (etrip.out) ( 
+---
+> \openout1 = `etrip.out'.
+> 
+> Memory usage before: 57&183; after: 40&177; still untouched: 2171
+> (./etrip.out) ( 
+764c766
+<                 % end of outer \scantokens) (etrip.out
+---
+>                 % end of outer \scantokens) (./etrip.out
+2184,2190c2186
+< A character number must be between 0 and 255.
+< I changed this one to zero.
+< 
+< ! Bad character code (256).
+< l.674   \iffontchar\font 256 
+<                              \else \fi    % <== bad character...
+< A character number must be between 0 and 255.
+---
+> A character number must be between 0 and 255, or KANJI code.
+2697c2693
+< Memory usage before: 51&320; after: 44&320; still untouched: 680
+---
+> Memory usage before: 58&321; after: 48&321; still untouched: 1171
+2699c2695
+< Memory usage before: 51&320; after: 44&320; still untouched: 680
+---
+> Memory usage before: 58&321; after: 48&321; still untouched: 1171
+4273,4276c4269,4272
+<  22 strings out of 1665
+<  132 string characters out of 8410
+<  2661 words of memory out of 3000
+<  408 multiletter control sequences out of 2100
+---
+>  18 strings out of 1689
+>  140 string characters out of 8302
+>  3329 words of memory out of 4500
+>  466 multiletter control sequences out of 15000+0
+4278c4274
+<  10 hyphenation exceptions out of 307
+---
+>  9 hyphenation exceptions out of 659
++ eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
+++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
++ diff SRCDIR/etexdir/etrip/etrip.typ euptrip.typ
+1c1
+< This is DVItype, Version 3.6
+---
+> This is DVItype, Version 3.6 (TeX Live 2012)
+9c9
+< ' TeX output 2011.04.07:1213'
+---
+> ' TeX output 2011.08.23:2209'
++ :
+PASS: euptexdir/euptrip.test

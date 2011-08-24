@@ -10,6 +10,12 @@ bin_PROGRAMS += euptex
 endif EUPTEX
 EXTRA_PROGRAMS += euptex
 
+# e-upTeX Tests
+#
+euptex_tests = euptexdir/euptrip.test
+
+EXTRA_DIST += $(euptex_tests)
+
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 
 # With --enable-ipc, e-upTeX may need to link with -lsocket.
@@ -98,4 +104,39 @@ EXTRA_DIST += $(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines
 
 DISTCLEANFILES += $(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
 	euptex.p euptex.pool euptex-tangle
+
+##
+EXTRA_DIST += \
+	euptexdir/COPYRIGHT \
+	euptexdir/COPYRIGHT.jis \
+	euptexdir/ChangeLog \
+	euptexdir/EUPTEX.txt
+
+if EUPTEX
+TESTS += $(euptex_tests)
+check_PROGRAMS += dvitype pltotf tftopl
+TRIPTRAP += euptrip.diffs
+TRIPTRAP_CLEAN += euptrip-clean
+endif EUPTEX
+
+## Test data and results
+##
+## eptexdir/eptrip.test
+EXTRA_DIST += \
+	eptexdir/eptrip/etrip.log \
+	eptexdir/eptrip/etrip.tex \
+	euptexdir/euptrip/euptrip.diffs \
+	euptexdir/euptrip/texmf.cnf
+euptrip.diffs: euptex$(EXEEXT)
+	$(triptrap_diffs) $@
+.PHONY: euptrip-clean
+euptrip-clean:
+	rm -f trip.tfm trip.pl trip.tex trip.fmt trip.log trip.dvi
+	rm -f cuptripin.fot cuptripin.log cuptrip.fot cuptrip.log cuptrip.typ
+	rm -f xuptripin.fot xuptripin.log xuptrip.fot xuptrip.log xuptrip.typ
+	rm -f euptripin.fot euptripin.log euptrip.fot euptrip.log euptrip.typ
+	rm -f etrip.tfm etrip.pl etrip.tex etrip.log etrip.fmt etrip.dvi etrip.out
+	rm -f tripos.tex 8terminal.tex
+	rm -rf tfm
+DISTCLEANFILES += euptrip.diffs
 

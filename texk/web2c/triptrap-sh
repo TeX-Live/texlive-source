@@ -25,6 +25,8 @@ do
   etrip.diffs) tst=etexdir/etrip; msg='e-TRIP test for e-TeX';;
   ptrip.diffs) tst=ptexdir/ptrip; msg='TRIP test for pTeX';;
   eptrip.diffs) tst=eptexdir/eptrip; msg='e-TRIP test for e-pTeX';;
+  uptrip.diffs) tst=uptexdir/uptrip; msg='TRIP test for upTeX';;
+  euptrip.diffs) tst=euptexdir/euptrip; msg='e-TRIP test for e-upTeX';;
   *) echo "$me: Bad argument \`$file'"; exit 1;;
   esac
   echo ">>> Running $msg."
@@ -38,6 +40,8 @@ do
       -e "s%$srcdir/etexdir%SRCDIR/etexdir%" \
       -e "s%$srcdir/ptexdir%SRCDIR/ptexdir%" \
       -e "s%$srcdir/eptexdir%SRCDIR/eptexdir%" \
+      -e "s%$srcdir/uptexdir%SRCDIR/uptexdir%" \
+      -e "s%$srcdir/euptexdir%SRCDIR/euptexdir%" \
       $tmp >>$file
   echo "PASS: $tst.test" >>$file
   rm -f $tmp
