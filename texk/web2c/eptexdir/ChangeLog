@@ -1,3 +1,7 @@
+2011-08-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech (just_copy): Copy the additional pTeX fields.
+
 2011-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Renamed ChangeLog => Changes.txt, ChangeLog.TL => ChangeLog.

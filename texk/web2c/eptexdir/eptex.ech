@@ -13,7 +13,7 @@
 @y
 @d eTeX_version_string=='-2.3' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-110415'
+@d epTeX_version_string=='-110825'
 @z
 
 @x e-pTeX: banner
@@ -291,6 +291,19 @@ disp_node: begin
   disp2:=disp_dimen(p); disp_dimen(p):=disp; disp:=disp2;
   if not disped then disped:=true; end;
 othercases goto next_p
+@z
+
+@x e-pTeX: just_copy
+  hlist_node,vlist_node: begin r:=get_node(box_node_size);
+@y
+  dir_node,
+  hlist_node,vlist_node: begin r:=get_node(box_node_size);
+@z
+@x e-pTeX: just_copy
+    words:=5; list_ptr(r):=null; {this affects |mem[r+5]|}
+@y
+    words:=5; list_ptr(r):=null; {this affects |mem[r+5]|}
+    add_glue_ref(space_ptr(r)); add_glue_ref(xspace_ptr(r));
 @z
 
 @x e-pTeX: ifcsname l.28620
