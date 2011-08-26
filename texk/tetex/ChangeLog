@@ -1,3 +1,13 @@
+2011-08-26  Karl Berry  <karl@tug.org>
+
+	* texconfig-dialog: do not invoke tcdialog as fallback,
+	give up instead.  We don't want to install our own (tc)dialog any
+	more, induces curses dependencies.  More importantly, texconfig,
+	and especially this interactive configuration, has not been the
+	way we have been moving (or testing) for years now.  If there is
+	anyone left who wants to do it, they can install their own dialog
+	(or whiptail) program.
+
 2011-06-27  Karl Berry  <karl@tug.org>
 
 	* fmtutil (version): rename to versionfunc, or Solaris sh dies

@@ -1,3 +1,8 @@
+2011-08-26  Karl Berry  <karl@tug.org>
+
+	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): rm dialog.
+	See comments in texk/tetex/ChangeLog.
+
 2011-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-lib-version.m4 (new): Split FOO_version into FOO_major,

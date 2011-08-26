@@ -26,9 +26,6 @@ Prerequisites:
   except on MacOSX.  (Alternative:
   Build --disable-xetex --disable-xdvipdfmx.)
 
-- ncurses or some other terminal library (again both headers and
-  library) for dialog.  (Alternative: Build --disable-dialog.)
-
 - If you modify any .y or .l source files, then Bison and Flex (or maybe
   equivalents) are needed.  The distributed .c and .h files are generated
   with bison-2.4.3 and flex-2.5.35.
@@ -67,8 +64,9 @@ Build information:
   x86_64-linux: gcc 3.4.6, libc 2.3.6, Linux 2.6.28.6
   
   universal-darwin, x86_64-darwin: a menagerie of versions.
+    See Master/source/mactexdoc.tar.xz.
 
-  i386-solaris, x86_64-solaris: Solaris 11
+  i386-solaris, x86_64-solaris: Solaris 11.
 
   powerpc-linux (Debian Squeeze)
 Linux homer 2.6.32-5-powerpc64 #1 SMP Tue Mar 8 02:01:42 UTC 2011

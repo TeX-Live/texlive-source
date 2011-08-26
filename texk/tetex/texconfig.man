@@ -1,4 +1,4 @@
-.TH texconfig 1 "May 2009" "TeX Live" "TeX Live"
+.TH texconfig 1 "August 2011" "TeX Live" "TeX Live"
 .SH NAME
 texconfig \- configures teTeX or TeX Live
 .LP
@@ -14,7 +14,15 @@ texconfig-sys \- configures teTeX or TeX Live system\-wide
 .I texconfig
 allows one to configure and maintain TeX
 in an easy and convenient manner, offering a series of dialog boxes to
-the user. After choosing settings or options, the appropriate files
+the user.
+.PP
+The
+.I tlmgr
+program has subsumed this function for TeX Live.  This program
+is still supported, but the tlmgr interface is much more actively
+developed and tested.
+.PP
+After choosing settings or options, the appropriate files
 are changed automatically and the new settings are applied for the
 user.  If needed, copies of files in
 .I TEXMFDIST
@@ -35,7 +43,7 @@ For making system-wide changes, which will apply to all users of TeX
 (for example, default paper size and so on), run
 .I texconfig-sys
 instead.  Changed or generated files will be placed in
-.I TEXMFSYSCONFIG.
+.IR TEXMFSYSCONFIG .
 (You may need to be root to do this.)
 .PP
 .I texconfig
@@ -197,10 +205,11 @@ if both are unset.
 .SH "SEE ALSO"
 .IR whiptail (1),
 .IR dialog (1),
+.IR tlmgr (1),
 .IR tex (1),
 .IR mf (1),
 .IR vi (1),
 .IR EDITOR
 environment variable.
 .SH AUTHOR
-Thomas Esser <te@dbs.uni-hannover.de>
+Thomas Esser

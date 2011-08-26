@@ -1,6 +1,0 @@
-2011-07-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	Import dialog-1.1-20110707.
-	* version.ac: New file defining the dialog version.
-	* configure.ac: Adapt.
-

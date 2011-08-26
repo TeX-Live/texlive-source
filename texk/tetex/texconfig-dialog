@@ -21,8 +21,7 @@ export PATH
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 # the version string
-version=1184605103 # seconds since `00:00:00 1970-01-01 UTC'
-                   # date '+%s' (with GNU date)
+version='$Id$'
 
 : ${PAGER=more}
 progname=texconfig-dialog
@@ -87,9 +86,7 @@ runDialog()
     $DIALOG_PROG --title "TeX setup utility" ${1+"$@"}
     runDialogRc=$?
   else
-    TERM=$DIALOG_TERM TERMINFO=$DIALOG_TERMINFO \
-      tcdialog --title "TeX setup utility" ${1+"$@"}
-    runDialogRc=$?
+    abort "could not find dialog or whiptail program to run"
   fi
   termCtl clear
   (exit $runDialogRc)

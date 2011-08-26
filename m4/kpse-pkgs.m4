@@ -1,5 +1,5 @@
 # Private macros for the TeX Live (TL) tree.
-# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -75,7 +75,6 @@ AC_DEFUN([KPSE_UTILS_PKGS],
 [m4_define([kpse_utils_pkgs], [
 biber
 chktex
-dialog
 ps2eps
 psutils
 t1utils
