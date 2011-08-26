@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2011
-@set month-year April 2011
+@set month-year August 2011
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -909,7 +909,7 @@ otherwise, are available.
 * Initial TeX::                 Making format files.
 * Formats::                     Major TeX macro packages.
 * Languages and hyphenation::   TeX supports many human languages.
-* Shell escapes::               DVI output to a socket.
+* Shell escapes::               Running subprograms from TeX.
 * IPC and TeX::                 DVI output to a socket.
 * TeX extensions::              Changes to the TeX language.
 @end menu
