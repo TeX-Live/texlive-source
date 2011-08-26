@@ -1,6 +1,6 @@
 /* synctex-luatex.h
 
-   Copyright (c) 2010 Taco Hoekwater <taco@luatex.org>
+   Copyright (c) 2010, 2011 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -50,8 +50,11 @@ authorization from the copyright holder.
 #define SYNCTEX_HEIGHT(NODE) height(NODE)
 #define SYNCTEX_VALUE int_par(synctex_code)
 
-#define SYNCTEX_CURV (dimen_par(page_height_code)-static_pdf->posstruct->pos.v)
-#define SYNCTEX_CURH static_pdf->posstruct->pos.h
+#define SYNCTEX_CURVV (dimen_par(page_height_code)-static_pdf->posstruct->pos.v)
+#define SYNCTEX_CURHH static_pdf->posstruct->pos.h
+
+#define SYNCTEX_CURV (static_pdf->o_mode==OMODE_PDF?SYNCTEX_CURVV:SYNCTEX_CURVV-4736287)
+#define SYNCTEX_CURH (static_pdf->o_mode==OMODE_PDF?SYNCTEX_CURHH:SYNCTEX_CURHH-4736287)
 
 #define SYNCTEX_GET_JOB_NAME() makecstring(job_name)
 #define SYNCTEX_GET_LOG_NAME() get_full_log_name()
