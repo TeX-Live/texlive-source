@@ -6,6 +6,7 @@
 #include <ptexenc/c-auto.h>
 #include <ptexenc/unicode-jp.h>
 #include <ptexenc/kanjicnv.h>
+#include <ptexenc/ptexenc.h>
 
 #if defined(KANJI_ICONV) && defined(HAVE_ICONV_H)
 #include <iconv.h>
