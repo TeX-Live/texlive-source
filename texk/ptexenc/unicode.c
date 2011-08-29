@@ -32,7 +32,7 @@ boolean isUTF8(int length, int nth, int c)
 
 int UTF8length(int first_byte)
 {
-    if (first_byte < 0x00) return -2;  /* illegal */
+    first_byte &= 0xff;
     if (first_byte < 0x80) return 1;
     if (first_byte < 0xc2) return -2;  /* illegal */
     if (first_byte < 0xe0) return 2;
@@ -119,13 +119,12 @@ long UCStoUTF8(long ucs)
 /* using over U+10.FFFF Area */
 long UCStoUPTEX (long ucs)
 {
-    if (0x7F < ucs && ucs < 0x1000) ucs += UCS_MAX;
     return ucs;
 }
 
 /* using over U+10.FFFF Area */
 long UPTEXtoUCS (long uptex)
 {
-    if (UCS_MAX + 0x7F < uptex && uptex < UCS_MAX + 0x1000) uptex -= UCS_MAX;
+    if (uptex>UCS_MAX) return uptex % UCS_MAX; /* for OTF package */
     return uptex;
 }

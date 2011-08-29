@@ -1,3 +1,10 @@
+2011-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* unicode.c (UTF8length, UCStoUPTEX, UPTEXtoUCS),
+	* unicode-jp.c (variation, JIStoUCS2): Patches from
+	Takuji Tanaka <KXD02663@nifty.ne.jp>, mail [ptex:00300].
+
+
 2011-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	More support for upTeX and e-upTeX.  Updates from W32TeX.
