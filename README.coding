@@ -1,4 +1,4 @@
-Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	TeX Live (TL) coding rules
@@ -38,8 +38,8 @@ that function is defined).
 1.4. Variables
 --------------
 The declaration of global variables should follow analogous rules, they
-should either be static or declared extern in a header and instatiated in
-exectly one file.
+should either be static or declared extern in a header and instantiated in
+exactly one file.
 
 2. Const
 ========
@@ -47,9 +47,9 @@ exectly one file.
 2.1. Function parameters
 ------------------------
 Ideally, a function parameter not modified by the function should be
-declared as const.  This is important in particiular for strings (`char *')
-because frequently string literals are used as actual arguments.  Note,
-however, that a `char **' value is not assignment compatible with a `const
+declared as const.  This is important in particular for strings (`char *')
+because frequently string literals are used as actual arguments.
+However, a `char **' value is not assignment compatible with a `const
 char **' variable.  Getting all `const's right often is quite involved but
 usually can be done.  There are, however, a few notable exceptions: the X11
 headers are full of declarations that ought to use const but do not and the
@@ -64,7 +64,6 @@ by X11 headers/macros or third party code.
 2.3. What should be avoided
 ---------------------------
 A type cast, e.g., from `const char *' to `char *' doesn't solve any
-problems, depending on warning options it only may hide them.  Therefore
+problems; depending on warning options, it may only hide them.  Therefore
 such casts should be avoided whenever possible but some such casts may be
 unavoidable.
-

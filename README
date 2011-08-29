@@ -2,7 +2,7 @@ $Id$
 Public domain.  Originally written 2005 by Karl Berry.
 
 For a high-level overview of building TeX Live, see
-http://tug.org/texlive/build.html.
+http://tug.org/texlive/build.html.  In brief:
 
 To configure and make the source tree, run ./Build.
 To build (mostly) without optimization, run ./Build --debug.
@@ -45,13 +45,13 @@ dealing with them is the TeX Live (plain text) database,
 Master/tlpkg/texlive.tlpdb, and/or our installer.  More information is
 under Master/tlpkg.  See also http://tug.org/texlive/distro.html.
 
-For unusual situations:
-
-- If your C++ needs to find the standard library in, say, /usr/local/lib,
+If your C++ needs to find the standard library in, say, /usr/local/lib,
 (i.e., configure fails saying the compiler doesn't work), try:
 env LD_OPTIONS=-R/usr/local/lib ./Build
 
-- Running ./reautoconf here reruns auto-tools as needed.  Use --help for more.
+Many more details about the TL build system, such as adding new
+programs or libraries, recompiling after fixing problems, etc., are in
+the other README.* files here.
 
 
 Build information:

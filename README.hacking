@@ -1,11 +1,16 @@
-Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	Modifying the TeX Live (TL) build system
 	========================================
 
-1. Currently used versions of Tools
+1. Currently used versions of tools
 ===================================
+
+In general, we use the latest released versions of GNU build tools.  We
+install these directly from the original GNU releases (e.g., by building
+them with configure --prefix=/usr/local/gnu and having
+/usr/local/gnu/bin first in our PATH).
 
 autoconf (GNU Autoconf) 2.68
 
@@ -17,7 +22,7 @@ bison (GNU Bison) 2.4.3
 
 flex 2.5.35
 
-m4 (GNU M4) 1.4.15
+m4 (GNU M4) 1.4.16
 
 2. Updating the TL build system
 ===============================
@@ -35,10 +40,13 @@ to avoid due to SVN's handling of timestamps).
 Alternatively, you can run the 'reautoconf' script from the top-level.
 
 The 'config.guess', 'config.sub', etc. files for most packages are kept
-centrally in build-aux/.  There are, however, independent copies in, e.g.,
-libs/freetype/freetype-1.5/, libs/freetype2/freetype-2.3.8/builds/unix/, and
-similar places that might need updating (not done automatically by the
-'reautoconf' script).
+centrally in build-aux/, sourced from GNU Gnulib
+(http://www.gnu.org/software/gnulib), which in turn pulls them from
+their ultimate upstream source repository.  There are, however,
+independent copies in, e.g., libs/freetype2/freetype-*/builds/unix/, and
+similar places.  The 'reautoconf' script does not take care of those,
+but a TL cron job does keep them in sync (nightly).
+
 
 3. Extending the TL build system
 ================================
@@ -50,18 +58,20 @@ To add a new program directory utils/Util/ (not using Kpathsea) or
 texk/Prog/ (possibly using Kpathsea and Ptexenc) you must add the directory
 Util to the M4 list kpse_utils_pkgs or Prog to the M4 list kpse_texk_pkgs
 defined in m4/kpse-pkgs.m4.  In addition you must create a configure.ac
-fragment utils/Util/ac/witheanble.ac or texk/Prog/ac/witheanble.ac defining
+fragment utils/Util/ac/withenable.ac or texk/Prog/ac/withenable.ac defining
 any required libraries from the TL tree and whether this new program is to
 be built by default (in the absence of the corresponding
-'--enable-Util/Prog' or '--disable-Util/Prog' configure options).  If a
-program in texk/Prog/ or utils/Util/ requires specific configure options to
-be seen at the top-level, they should be defined in an additional
-configure.ac fragment texk/Prog/ac/Prog.ac or utils/Util/ac/Util.ac
-(included from texk/Prog/ac/withenable.ac and texk/Prog/configure.ac or
-utils/Util/ac/withenable.ac and utils/Util/configure.ac) as, e.g., for
-texk/web2c/, texk/xdvik/, and utils/xindy/.
+'--enable-Util/Prog' or '--disable-Util/Prog' configure options).
 
-As example, the file texk/dvipdfmx/ac/withenable.ac contains
+If a program in texk/Prog/ or utils/Util/ requires specific configure
+options to be seen at the top-level, they should be defined in an
+additional configure.ac fragment texk/Prog/ac/Prog.ac or
+utils/Util/ac/Util.ac (included from texk/Prog/ac/withenable.ac and
+texk/Prog/configure.ac or utils/Util/ac/withenable.ac and
+utils/Util/configure.ac) as, e.g., for texk/web2c/, texk/xdvik/, and
+utils/xindy/.
+
+As an example, the file texk/dvipdfmx/ac/withenable.ac contains
 	KPSE_ENABLE_PROG([dvipdfmx], [kpathsea libpng])
 where KPSE_ENABLE_PROG, defined in m4/kpse-setup.m4, has one required
 argument -- the name of the subdirectory -- and three optional arguments: a
@@ -76,7 +86,7 @@ or enable configure option for this program.
 
 To add a new generic library directory libs/Lib/ you must add the directory
 Lib to the M4 list kpse_libs_pkgs defined in m4/kpse-pkgs.m4.  In addition
-you must create a configure.ac fragment libs/Lib/ac/witheanble.ac defining
+you must create a configure.ac fragment libs/Lib/ac/withenable.ac defining
 any required libraries from the TL tree and whether an installed (system)
 version of this library can be used.  If that is the case, another
 configure.ac fragment libs/Lib/ac/Lib.ac should specify a small program as
@@ -126,7 +136,7 @@ generic library (described above) with these exceptions:
 (*) Add the directory Lib to the M4 list kpse_texlibs_pkgs (also defined in
 m4/kpse-pkgs.m4) instead of kpse_libs_pkgs.
 
-(*) The configure.ac fragment libs/Lib/ac/witheanble.ac must use
+(*) The configure.ac fragment libs/Lib/ac/withenable.ac must use
 KPSE_WITH_TEXLIB instead of KPSE_WITH_LIB.
 
 (*) The new library must not depend on any generic libraries.
@@ -174,4 +184,3 @@ that rebuilding zlib and/or libpng causes the target to be rebuilt.
 
 Two lines containing @ZLIB_RULE@ and @LIBPNG_RULE@ create the rules required
 to (re-)build zlib and libpng when necessary.
-
