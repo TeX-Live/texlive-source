@@ -1,3 +1,7 @@
+2011-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* euptex.defines: Remove setptexencuptex.
+
 2011-08-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported e-upTeX into TeX Live, based on the W32TeX version

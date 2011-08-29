@@ -11,7 +11,6 @@
 @define procedure setpriorfileenc;
 @define function isinternalUPTEX;
 @define function isinternalEUC;
-@define procedure setptexencuptex;
 
 @define function iskanji1 ();
 @define function is1stchr ();

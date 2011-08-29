@@ -220,7 +220,7 @@ begin
 procedure get_the_top_level_aux_file_name;
 label aux_found,@!aux_not_found;
 begin
-  if (not set_enc_string (0,'EUC')) then uexit(1);
+  if (not set_enc_string (nil,'EUC')) then uexit(1);
   @<Process a possible command line@>
 @z
 
@@ -535,7 +535,7 @@ const n_options = 6; {Pascal won't count array lengths for us.}
     end; {Else it was a flag; |getopt| has already done the assignment.}
 @y
     end else if argument_is ('kanji') then begin
-      if (not set_enc_string(optarg, 0)) then
+      if (not set_enc_string(optarg, nil)) then
         write_ln('Bad kanji encoding "', stringcast(optarg), '".');
 
     end; {Else it was a flag; |getopt| has already done the assignment.}

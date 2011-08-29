@@ -1,3 +1,7 @@
+2011-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch: Use nil, not 0 as arg of set_enc_string().
+
 2011-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch, ptex.defines:

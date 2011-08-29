@@ -10,7 +10,6 @@
 @define function setencstring ();
 @define procedure setpriorfileenc;
 @define function isinternalUPTEX;
-@define procedure setptexencuptex;
 
 @define function iskanji1 ();
 @define function is1stchr ();

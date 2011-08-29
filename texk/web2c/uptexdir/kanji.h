@@ -43,8 +43,6 @@ extern void init_default_kanji (const_string file_str, const_string internal_str
 /* for upBibTeX, upDVItype, upPLtoTF, and upTFtoPL */
 #define initkanji() init_default_kanji("utf8", "uptex")
 
-#define setptexencuptex() set_enc_string("utf8", "uptex");
-
 /* number of rest of multi-char for kcode_pos */
 #define nrestmultichr(x)  ( (x)!=0 ? ((x) / 8) + 2 - ((x) % 8) : -1 )
 

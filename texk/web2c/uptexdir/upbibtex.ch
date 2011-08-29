@@ -300,7 +300,7 @@ const n_options = 7; {Pascal won't count array lengths for us.}
     end; {Else it was a flag; |getopt| has already done the assignment.}
 @y
     end else if argument_is ('kanji-internal') then begin
-      if (not (set_enc_string(0,optarg) and
+      if (not (set_enc_string(nil,optarg) and
                (is_internalEUC or is_internalUPTEX))) then
         write_ln('Bad internal kanji encoding "', stringcast(optarg), '".');
 
