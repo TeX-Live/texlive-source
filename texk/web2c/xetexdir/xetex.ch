@@ -328,7 +328,7 @@ for i:=@'177 to @'377 do xchr[i]:=i;
 {Initialize enc\TeX\ data.}
 for i:=0 to 255 do mubyte_read[i]:=null;
 for i:=0 to 255 do mubyte_write[i]:=0;
-for i:=0 to 128 do mubyte_cswrite[i]:=null;
+for i:=0 to 127 do mubyte_cswrite[i]:=null;
 mubyte_keep := 0; mubyte_start := false;
 write_noexpanding := false; cs_converting := false;
 special_printing := false; message_printing := false;
