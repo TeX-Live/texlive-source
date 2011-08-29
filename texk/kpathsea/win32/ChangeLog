@@ -1,3 +1,7 @@
+2011-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fmtutil.c: Add parens around assignment used as truth value.
+
 2011-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fmtutil.c: Return zero or one (Errorcnt could be 256).

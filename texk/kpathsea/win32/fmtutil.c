@@ -401,7 +401,7 @@ flag = 1 : --all
 
   kpse_set_program_name(av[0], NULL);
   strcpy(Programname, kpse_invocation_short_name);
-  if (tmp = strrchr(Programname, '.')) {
+  if ((tmp = strrchr(Programname, '.'))) {
     if (strcasecmp (tmp, ".exe") == 0)
        *tmp = '\0';
   }
