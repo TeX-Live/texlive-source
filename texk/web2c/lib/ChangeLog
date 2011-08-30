@@ -1,3 +1,7 @@
+2011-08-30  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmem.c [WIN32]: Remove a semicolon.
+
 2011-08-29  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* texmfmem.c [WIN32]: Allow to build TeX & Co as DLL.

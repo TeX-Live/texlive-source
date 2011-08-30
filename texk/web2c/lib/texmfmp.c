@@ -799,7 +799,7 @@ maininit (int ac, string *av)
 
 int
 #if defined(WIN32) && defined(DLLPROC)
-DLLPROC (int ac, string *av);
+DLLPROC (int ac, string *av)
 #else
 main (int ac, string *av)
 #endif
