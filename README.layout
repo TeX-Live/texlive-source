@@ -41,7 +41,7 @@ texk/kpathsea/		the two TeX specific libraries, Kpathsea
 texk/ptexenc/		  and Ptexenc
 libs/Lib/		generic library Lib (zlib, libpng, t1lib, etc.)
 texk/Prog/		TeX specific program package Prog (web2c, afm2pl, etc.)
-utils/Util/		utility program package Util (dialog, ps2eps, etc.)
+utils/Util/		utility program package Util (chktex, ps2eps, etc.)
 
 auxdir/auxsub/		dummy module used to configure the real modules
 
@@ -100,7 +100,7 @@ utils/Util/ac/withenable.ac	defines libraries required by Util, provides
 Running 'configure' for the top-level directory will in addition configure
 the directories auxdir/auxsub/, libs/, utils/, and texk/.  This will
 determine the programs (utils/Util/ and texk/Prog/) to be built and
-libraries from the TL tree (texk/kpathsea/, texk/ptexenc/.  and libs/Lib/)
+libraries from the TL tree (texk/kpathsea/, texk/ptexenc/, and libs/Lib/)
 required by these programs.
 
 3. Running `make' at the top-level
