@@ -129,6 +129,9 @@ extern int runsystem (const char *cmd);
 
 /* The entry point.  */
 extern void maininit (int ac, string *av);
+#if defined(WIN32) && defined(DLLPROC)
+extern __declspec(dllexport) int DLLPROC (int ac, string *av);
+#endif
 
 /* All but the Omega family use this. */
 #if !defined(Aleph)
