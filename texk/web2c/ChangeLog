@@ -1,6 +1,6 @@
 2011-08-29  Peter Breitenlohner  <peb@mp.mpg.de>
 
-	* texmfmem.h [WIN32]: Allow to build TeX & Co as DLL.
+	* texmfmp.h [WIN32]: Allow to build TeX & Co as DLL.
 
 2011-08-23  Peter Breitenlohner  <peb@mp.mpg.de>
 
