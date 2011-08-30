@@ -1,10 +1,10 @@
 2011-08-30  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
 
-	* texmfmem.c [WIN32]: Remove a semicolon.
+	* texmfmp.c [WIN32]: Remove a semicolon.
 
 2011-08-29  Peter Breitenlohner  <peb@mp.mpg.de>
 
-	* texmfmem.c [WIN32]: Allow to build TeX & Co as DLL.
+	* texmfmp.c [WIN32]: Allow to build TeX & Co as DLL.
 
 2011-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
