@@ -1005,6 +1005,20 @@ if (t<cs_token_flag+single_base)and(check_kanji(t,7)<2) then
 @z
 
 @x
+libc_free(format_engine);@/
+@y
+libc_free(format_engine);@/
+dump_kanji(fmt_file);
+@z
+
+@x
+libc_free(format_engine);
+@y
+libc_free(format_engine);
+undump_kanji(fmt_file);
+@z
+
+@x
 begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
 if not check_kanji(cur_val) then
 @y

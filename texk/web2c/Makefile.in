@@ -545,7 +545,8 @@ am_libpdftex_a_OBJECTS = libpdftex_a-avl.$(OBJEXT) \
 libpdftex_a_OBJECTS = $(am_libpdftex_a_OBJECTS)
 libukanji_a_AR = $(AR) $(ARFLAGS)
 libukanji_a_LIBADD =
-am_libukanji_a_OBJECTS = libukanji_a-kanji.$(OBJEXT)
+am_libukanji_a_OBJECTS = libukanji_a-kanji.$(OBJEXT) \
+	libukanji_a-kanji_dump.$(OBJEXT)
 libukanji_a_OBJECTS = $(am_libukanji_a_OBJECTS)
 libxetex_a_AR = $(AR) $(ARFLAGS)
 libxetex_a_LIBADD =
@@ -1944,7 +1945,7 @@ upweb_tests = \
 	uptexdir/uppltotf.test \
 	uptexdir/uptftopl.test
 
-libukanji_a_SOURCES = uptexdir/kanji.c uptexdir/kanji.h
+libukanji_a_SOURCES = uptexdir/kanji.c uptexdir/kanji.h uptexdir/kanji_dump.c
 libukanji_a_CPPFLAGS = $(uptex_cppflags)
 uptex_CPPFLAGS = $(uptex_cppflags) $(am__append_97)
 
@@ -3433,6 +3434,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpdftex_a-writettf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpdftex_a-writezip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libukanji_a-kanji.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libukanji_a-kanji_dump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-FontTableCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-XeTeXFontInst.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-XeTeXFontInst_FT2.Po@am__quote@
@@ -7176,6 +7178,20 @@ libukanji_a-kanji.obj: uptexdir/kanji.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uptexdir/kanji.c' object='libukanji_a-kanji.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libukanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libukanji_a-kanji.obj `if test -f 'uptexdir/kanji.c'; then $(CYGPATH_W) 'uptexdir/kanji.c'; else $(CYGPATH_W) '$(srcdir)/uptexdir/kanji.c'; fi`
+
+libukanji_a-kanji_dump.o: uptexdir/kanji_dump.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libukanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libukanji_a-kanji_dump.o -MD -MP -MF $(DEPDIR)/libukanji_a-kanji_dump.Tpo -c -o libukanji_a-kanji_dump.o `test -f 'uptexdir/kanji_dump.c' || echo '$(srcdir)/'`uptexdir/kanji_dump.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libukanji_a-kanji_dump.Tpo $(DEPDIR)/libukanji_a-kanji_dump.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uptexdir/kanji_dump.c' object='libukanji_a-kanji_dump.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libukanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libukanji_a-kanji_dump.o `test -f 'uptexdir/kanji_dump.c' || echo '$(srcdir)/'`uptexdir/kanji_dump.c
+
+libukanji_a-kanji_dump.obj: uptexdir/kanji_dump.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libukanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libukanji_a-kanji_dump.obj -MD -MP -MF $(DEPDIR)/libukanji_a-kanji_dump.Tpo -c -o libukanji_a-kanji_dump.obj `if test -f 'uptexdir/kanji_dump.c'; then $(CYGPATH_W) 'uptexdir/kanji_dump.c'; else $(CYGPATH_W) '$(srcdir)/uptexdir/kanji_dump.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libukanji_a-kanji_dump.Tpo $(DEPDIR)/libukanji_a-kanji_dump.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='uptexdir/kanji_dump.c' object='libukanji_a-kanji_dump.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libukanji_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libukanji_a-kanji_dump.obj `if test -f 'uptexdir/kanji_dump.c'; then $(CYGPATH_W) 'uptexdir/kanji_dump.c'; else $(CYGPATH_W) '$(srcdir)/uptexdir/kanji_dump.c'; fi`
 
 libxetex_a-XeTeX_ext.o: xetexdir/XeTeX_ext.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -MT libxetex_a-XeTeX_ext.o -MD -MP -MF $(DEPDIR)/libxetex_a-XeTeX_ext.Tpo -c -o libxetex_a-XeTeX_ext.o `test -f 'xetexdir/XeTeX_ext.c' || echo '$(srcdir)/'`xetexdir/XeTeX_ext.c

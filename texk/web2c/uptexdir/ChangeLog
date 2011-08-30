@@ -3,6 +3,13 @@
 	* kanji.h, uptex.defines: Remove setptexencuptex.
 	* upbibtex.ch: Use nil, not 0 as arg of set_enc_string().
 
+	* uptex-m.ch: Add dump_kanji and undump_kanji.
+	* uptex.defines: Add dumpkanji and undumpkanji.
+	* kanji.c: Factor out init_kanji().
+	* kanji_dump.c: New file for dumping/undumping kanji encoding.
+	* kanji.h: Add init_kanji(), dump_kanji(), and undump_kanji().
+	* am/uptex.am (libukanji_a_SOURCES): Add kanji_dump.c.
+
 2011-08-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported upTeX into TeX Live, based on the W32TeX version

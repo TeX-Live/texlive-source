@@ -25,7 +25,7 @@ DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \
 ## libukanji.a for upTeX and e-upTeX
 ##
 EXTRA_LIBRARIES += libukanji.a
-libukanji_a_SOURCES = uptexdir/kanji.c uptexdir/kanji.h
+libukanji_a_SOURCES = uptexdir/kanji.c uptexdir/kanji.h uptexdir/kanji_dump.c
 libukanji_a_CPPFLAGS = $(uptex_cppflags)
 
 ## upTeX

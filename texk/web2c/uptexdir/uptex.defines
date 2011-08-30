@@ -42,6 +42,8 @@
 @define function multilenbuffchar ();
 @define function nrestmultichr ();
 
+@define procedure dumpkanji ();
 @define procedure initkanji;
+@define procedure undumpkanji ();
 
 @define var sjisterminal;

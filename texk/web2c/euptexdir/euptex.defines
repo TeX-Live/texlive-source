@@ -44,3 +44,6 @@
 
 @define function getintone();
 @define procedure setintone();
+
+@define procedure dumpkanji ();
+@define procedure undumpkanji ();

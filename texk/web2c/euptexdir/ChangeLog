@@ -1,6 +1,7 @@
 2011-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* euptex.defines: Remove setptexencuptex.
+	Add dumpkanji and undumpkanji.
 
 2011-08-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
