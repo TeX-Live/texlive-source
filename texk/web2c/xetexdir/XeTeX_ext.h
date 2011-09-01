@@ -335,8 +335,6 @@ typedef void* ATSUStyle; /* dummy declaration just so the stubs can compile */
 };
 #endif
 
-#include "XeTeXOTMath.h"
-
 /* some Mac OS X functions that we provide ourselves for other platforms */
 #ifndef XETEX_MAC
 #ifdef __cplusplus
