@@ -811,6 +811,7 @@ main (int ac, string *av)
 
 #ifdef WIN32
   _setmaxstdio(2048);
+  setmode(fileno(stdin), _O_BINARY);
 #endif
 
   maininit (ac, av);
@@ -1301,13 +1302,29 @@ get_input_file_name (void)
 
   if (argv[optind] && argv[optind][0] != '&' && argv[optind][0] != '\\') {
     /* Not &format, not \input, so assume simple filename. */    
+    string name;
+#ifndef XeTeX
+    boolean quoted;
+#endif
+
+#ifdef WIN32
+    if (strlen (argv[optind]) > 2 && isalpha (argv[optind][0]) &&
+        argv[optind][1] == ':' && argv[optind][2] == '\\') {
+      char *pp;
+      for (pp = argv[optind]; *pp; pp++) {
+        if (*pp == '\\')
+          *pp = '/';
+        else if (IS_KANJI(pp))
+          pp++;
+      }
+    }
+#endif
+
+    name = normalize_quotes(argv[optind], "argument");
 #ifdef XeTeX
-    string name = normalize_quotes(argv[optind], "argument");
     input_file_name = kpse_find_file(argv[optind], INPUT_FORMAT, false);
-    argv[optind] = name;
 #else
-    string name = normalize_quotes(argv[optind], "argument");
-    boolean quoted = (name[0] == '"');
+    quoted = (name[0] == '"');
     if (quoted) {
         /* Overwrite last quote and skip first quote. */
         name[strlen(name)-1] = '\0';
@@ -1319,8 +1336,8 @@ get_input_file_name (void)
         name[strlen(name)] = '"';
         name--;
     }
-    argv[optind] = name;
 #endif
+    argv[optind] = name;
   }
   return input_file_name;
 }
