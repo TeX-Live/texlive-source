@@ -1,3 +1,7 @@
+2011-09-02  Peter Breitenlohner  <peb@mp.mpg.de>
+
+	* texmfmp.c: More changes to reduce diffs with W32TeX.
+
 2011-09-01  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* texmfmp.c [WIN32]: Minor rewrite to reduce diffs with W32TeX.

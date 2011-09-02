@@ -646,6 +646,17 @@ maininit (int ac, string *av)
      the web (which would read the base file, etc.).  */
   parse_options (ac, av);
 
+#if IS_pTeX
+  /* In pTeX and friends, texmf.cnf is not recorded in the case of --recorder,
+     because parse_options() is executed after the start of kpathsea due to
+     special initializations. Therefore we record texmf.cnf here. */
+  if (recorder_enabled) {
+    string p = kpse_find_file ("texmf.cnf", kpse_cnf_format, 0);
+    if (p)
+      recorder_record_input (p);
+  }
+#endif
+
   /* If -progname was not specified, default to the dump name.  */
   if (!user_progname)
     user_progname = dump_name;
