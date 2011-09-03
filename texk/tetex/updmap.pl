@@ -8,6 +8,9 @@
 
 BEGIN {
   $^W=1;
+  if ($] < 5.008008) {
+    die "$0: Perl version 5.8.8 or newer required.  Aborting.\n";
+  }
   chomp($TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`);
   unshift (@INC, "$TEXMFROOT/tlpkg");
 }
