@@ -1,16 +1,13 @@
 #! /usr/bin/env perl
 # updmap: utility to maintain map files for outline fonts.
 #
-# Thomas Esser, (C) 2002.
-# Fabrice Popineau, for the Perl version.
+# Copyright 2002-2011 Thomas Esser.
+# Fabrice Popineau wrote the Perl version.
 # Anyone may freely use, modify, and/or distribute this file, without
 # limitation.
 
 BEGIN {
   $^W=1;
-  if ($] < 5.008008) {
-    die "$0: Perl version 5.8.8 or newer required.  Aborting.\n";
-  }
   chomp($TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`);
   unshift (@INC, "$TEXMFROOT/tlpkg");
 }
@@ -200,6 +197,32 @@ EOF
 #   process cmd line options
 #
 sub processOptions {
+  #
+  # We parse the command line twice.  The first time is to handle
+  # --setoption, which might take either one or two following values.
+  # the second to handle everything else.  The Getopt::Long feature to
+  # handle this is only supported in 5.8.8 (released in 2006) or later,
+  # and a few people run older perls.
+  # 
+  my $oldconfig = Getopt::Long::Configure(qw(pass_through));
+  #  
+  sub read_for_set_options {
+    my ($setopt, $val) = @_;
+    # check if = occurs in $val, if not, get the next argument
+    if ($val =~ m/=/) {
+      push (@setoptions, $val);
+    } else {
+      my $vv = shift @ARGV;
+      die "$0: --setoption $val given with no value; try --help.\n"
+        if !defined($vv);
+      push (@setoptions, "$val=$vv");
+    }
+  }
+  GetOptions("setoption=s@" => \&read_for_set_options) 
+  || die "$0: could not read for --setoption; try --help.\n";
+
+  # restore old getopt config and read everything else.
+  Getopt::Long::Configure($oldconfig);
   unless (&GetOptions (
       "cnffile=s" => \$cnfFile,
       "copy" => \$copy,
@@ -217,12 +240,17 @@ sub processOptions {
       "outputdir=s" => \$outputdir,
       "pdftexoutputdir=s" => \$pdftexoutputdir,
       "q|quiet|silent" => \$quiet,
-      "setoption=s{1,2}" => \@setoptions,
+      "setoption" =>
+        sub {die "$0: --setoption needs an option and value; try --help.\n"},
       "showoptions=s" => \@showoptions,
       "syncwithtrees" => \$syncwithtrees,
       "version" => sub { print &version(); exit(0); },
       "h|help" => \$opt_help)) {
     die "Try \"$0 --help\" for more information.\n";
+  }
+  
+  if (@ARGV) {
+    warn "$0: Ignoring unexpected non-option argument(s): @ARGV.\n";
   }
 
   if ($outputdir) {
@@ -578,7 +606,7 @@ sub setOption {
 
   if ($opt eq "LW35") {
     if ($val !~ m/^(URWkb|URW|ADOBE|ADOBEkb)$/) {
-      die "$0: Invalid value $val for option $opt.\n";
+      die "$0: Invalid value $val for option $opt; try --help.\n";
     }
   } elsif ($opt =~ 
 m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14)$/) {
@@ -586,7 +614,7 @@ m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14)$/) {
         die "$0: Invalid value $val for option $opt; should be \"true\" or \"false\".\n";
       }
   } else {
-    die "$0: Unsupported option $opt.\n";
+    die "$0: Unsupported option $opt (value given: $val).\n";
   }
 
   # silently accept this old option name, just in case.
