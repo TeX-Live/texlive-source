@@ -413,34 +413,60 @@ static int put_multibyte(long c, FILE *fp) {
     /* always */  return putc(BYTE4(c), fp);
 }
 
+static int flush (unsigned char *buff, int num, FILE *fp)
+{
+    int i, ret = EOF;
+
+    /* fprintf(stderr, "putc2: unexpected chars. ( ");
+       for (i=0; i<num; i++) fprintf(stderr, "%02X ", buff[i]);
+       fprintf(stderr, ")\n");
+    */
+    for (i=0; i<num; i++) ret = putc(buff[i], fp);
+    return ret;
+}
+
 /* putc() with code conversion */
 int putc2(int c, FILE *fp)
 {
-    static int inkanji[NOFILE]; /* 0: not in Kanji
-                                   1: in JIS Kanji and first byte is in c1[]
-                                  -1: in JIS Kanji and c1[] is empty */
-    static unsigned char c1[NOFILE];
+    static int num[NOFILE];
+        /* 0    : not in Kanji
+           1..4 : in JIS Kanji and num[] bytes are in store[][]
+           -1   : in JIS Kanji and store[][] is empty */
+    static unsigned char store[NOFILE][4];
     const int fd = fileno(fp);
     int ret = c, output_enc;
 
     if (fp == stdout || fp == stderr) output_enc = get_terminal_enc();
     else                              output_enc = get_file_enc();
 
-    if (inkanji[fd] > 0) {   /* KANJI 2nd */
-        ret = put_multibyte(toENC(HILO(c1[fd], c), output_enc), fp);
-        inkanji[fd] = -1;
-    } else if (iskanji1(c)) { /* KANJI 1st */
-        if (inkanji[fd] == 0 && output_enc == ENC_JIS) {
+    if (num[fd] > 0) {        /* multi-byte char */
+        if (is_internalUPTEX() && iskanji1(c)) { /* error */
+            ret = flush(store[fd], num[fd], fp);
+            num[fd] = 0;
+        }
+        store[fd][num[fd]] = c;
+        num[fd]++;
+        if (multistrlen(store[fd], num[fd], 0) == num[fd]) {
+            long i = fromBUFF(store[fd], num[fd], 0);
+            ret = put_multibyte(toENC(i, output_enc), fp);
+            num[fd] = -1;
+        } else if ((is_internalUPTEX() && num[fd] == 4) ||
+                   (!is_internalUPTEX() && num[fd] == 2)) { /* error */
+            ret = flush(store[fd], num[fd], fp);
+            num[fd] = -1;
+        }
+    } else if (iskanji1(c)) { /* first multi-byte char */
+        if (num[fd] == 0 && output_enc == ENC_JIS) {
             ret = put_multibyte(KANJI_IN, fp);
         }
-        c1[fd] = c;
-        inkanji[fd] = 1;
+        store[fd][0] = c;
+        num[fd] = 1;
     } else {                  /* ASCII */
-        if (inkanji[fd] < 0 && output_enc == ENC_JIS) {
+        if (num[fd] < 0 && output_enc == ENC_JIS) {
             put_multibyte(KANJI_OUT, fp);
         }
         ret = putc(c, fp);
-        inkanji[fd] = 0;
+        num[fd] = 0;
     }
     return ret;
 }
