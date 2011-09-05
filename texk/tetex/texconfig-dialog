@@ -81,22 +81,21 @@ logexec()
 ###############################################################################
 runDialog()
 {
-  termCtl clear
   if test -n "$DIALOG_PROG"; then
+    termCtl clear
     $DIALOG_PROG --title "TeX setup utility" ${1+"$@"}
     runDialogRc=$?
+    termCtl clear
   else
     abort "could not find dialog or whiptail program to run"
   fi
-  termCtl clear
   (exit $runDialogRc)
   return $runDialogRc
 }
 
 ###############################################################################
 # findDialog(void)
-#   Some systems have their own dialog. Use it then and do not use
-#   faked TERM and TERMINFO variables when calling that dialog.
+#   set DIALOG_PROG to the system dialog program, or the empty string.
 ###############################################################################
 findDialog()
 {
@@ -108,11 +107,6 @@ findDialog()
       *)  DIALOG_PROG=$binLoc; break;;
     esac
   done
-  case $DIALOG_PROG in
-    "") 
-      : ${DIALOG_TERMINFO=$TEXMFMAIN/texconfig}
-      : ${DIALOG_TERM=generic}
-  esac
 }
 
 ###############################################################################

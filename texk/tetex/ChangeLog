@@ -1,3 +1,13 @@
+2011-09-05  Karl Berry  <karl@tug.org>
+
+	* texconfig-dialog (runDialog): only clear screen if we actually
+	run the dialog program.
+	(findDialog): do not bother setting DIALOG_TERM and
+	DIALOG_TERMINFO if we don't find a system dialog program,
+	since we're just going to abort anyway.
+	* texmf: remove subdir with terminfo definitions.
+	* Makefile.am (texconfdir, nobase_dist_texconf_DATA): likewise rm.
+
 2011-09-04  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl (BEGIN): older versions are supported again.

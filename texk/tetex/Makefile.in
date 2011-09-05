@@ -36,8 +36,7 @@ POST_UNINSTALL = :
 DIST_COMMON = $(am__configure_deps) $(am__dist_bin_SCRIPTS_DIST) \
 	$(dist_man1_MANS) $(dist_man5_MANS) $(dist_texconfig_DATA) \
 	$(dist_texconfig_SCRIPTS) $(dist_texmf_SCRIPTS) \
-	$(dist_web2c_DATA) $(nobase_dist_texconf_DATA) \
-	$(srcdir)/../../build-aux/install-sh \
+	$(dist_web2c_DATA) $(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing \
 	$(srcdir)/../am/script_links.am $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/../am/bin_links.am \
@@ -86,8 +85,7 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texconfigdir)" \
 	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" \
-	"$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)" \
-	"$(DESTDIR)$(texconfdir)"
+	"$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)"
 SCRIPTS = $(dist_bin_SCRIPTS) $(dist_texconfig_SCRIPTS) \
 	$(dist_texmf_SCRIPTS) $(nodist_bin_SCRIPTS)
 SOURCES =
@@ -96,8 +94,7 @@ man1dir = $(mandir)/man1
 man5dir = $(mandir)/man5
 NROFF = nroff
 MANS = $(dist_man1_MANS) $(dist_man5_MANS)
-DATA = $(dist_texconfig_DATA) $(dist_web2c_DATA) \
-	$(nobase_dist_texconf_DATA)
+DATA = $(dist_texconfig_DATA) $(dist_web2c_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -253,14 +250,6 @@ dist_man1_MANS = \
 dist_man5_MANS = \
 	fmtutil.cnf.5 \
 	updmap.cfg.5
-
-texconfdir = ${prefix}
-nobase_dist_texconf_DATA = \
-	texmf/texconfig/README \
-	texmf/texconfig/g/generic \
-	texmf/texconfig/generic \
-	texmf/texconfig/v/vt100 \
-	texmf/texconfig/x/xterm
 
 texconfigdir = ${prefix}/texmf/texconfig
 dist_texconfig_SCRIPTS = tcfmgr
@@ -564,29 +553,6 @@ uninstall-dist_web2cDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(web2cdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(web2cdir)" && rm -f $$files
-install-nobase_dist_texconfDATA: $(nobase_dist_texconf_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(texconfdir)" || $(MKDIR_P) "$(DESTDIR)$(texconfdir)"
-	@list='$(nobase_dist_texconf_DATA)'; test -n "$(texconfdir)" || list=; \
-	$(am__nobase_list) | while read dir files; do \
-	  xfiles=; for file in $$files; do \
-	    if test -f "$$file"; then xfiles="$$xfiles $$file"; \
-	    else xfiles="$$xfiles $(srcdir)/$$file"; fi; done; \
-	  test -z "$$xfiles" || { \
-	    test "x$$dir" = x. || { \
-	      echo "$(MKDIR_P) '$(DESTDIR)$(texconfdir)/$$dir'"; \
-	      $(MKDIR_P) "$(DESTDIR)$(texconfdir)/$$dir"; }; \
-	    echo " $(INSTALL_DATA) $$xfiles '$(DESTDIR)$(texconfdir)/$$dir'"; \
-	    $(INSTALL_DATA) $$xfiles "$(DESTDIR)$(texconfdir)/$$dir" || exit $$?; }; \
-	done
-
-uninstall-nobase_dist_texconfDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(nobase_dist_texconf_DATA)'; test -n "$(texconfdir)" || list=; \
-	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(texconfdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(texconfdir)" && rm -f $$files
 tags: TAGS
 TAGS:
 
@@ -758,7 +724,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(SCRIPTS) $(MANS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(texconfdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -810,8 +776,7 @@ info-am:
 
 install-data-am: install-dist_texconfigDATA \
 	install-dist_texconfigSCRIPTS install-dist_texmfSCRIPTS \
-	install-dist_web2cDATA install-man \
-	install-nobase_dist_texconfDATA
+	install-dist_web2cDATA install-man
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
@@ -862,7 +827,7 @@ ps-am:
 uninstall-am: uninstall-dist_binSCRIPTS uninstall-dist_texconfigDATA \
 	uninstall-dist_texconfigSCRIPTS uninstall-dist_texmfSCRIPTS \
 	uninstall-dist_web2cDATA uninstall-man \
-	uninstall-nobase_dist_texconfDATA uninstall-nodist_binSCRIPTS
+	uninstall-nodist_binSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1 uninstall-man5
@@ -881,16 +846,15 @@ uninstall-man: uninstall-man1 uninstall-man5
 	install-dvi-am install-exec install-exec-am install-exec-hook \
 	install-html install-html-am install-info install-info-am \
 	install-man install-man1 install-man5 \
-	install-nobase_dist_texconfDATA install-nodist_binSCRIPTS \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
+	install-nodist_binSCRIPTS install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am \
 	uninstall-dist_binSCRIPTS uninstall-dist_texconfigDATA \
 	uninstall-dist_texconfigSCRIPTS uninstall-dist_texmfSCRIPTS \
 	uninstall-dist_web2cDATA uninstall-hook uninstall-man \
-	uninstall-man1 uninstall-man5 \
-	uninstall-nobase_dist_texconfDATA uninstall-nodist_binSCRIPTS
+	uninstall-man1 uninstall-man5 uninstall-nodist_binSCRIPTS
 
 
 #

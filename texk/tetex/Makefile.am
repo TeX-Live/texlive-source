@@ -69,23 +69,11 @@ dist_man5_MANS = \
 	fmtutil.cnf.5 \
 	updmap.cfg.5
 
-texconfdir = ${prefix}
-
-nobase_dist_texconf_DATA = \
-	texmf/texconfig/README \
-	texmf/texconfig/g/generic \
-	texmf/texconfig/generic \
-	texmf/texconfig/v/vt100 \
-	texmf/texconfig/x/xterm
-
 texconfigdir = ${prefix}/texmf/texconfig
-
 dist_texconfig_SCRIPTS = tcfmgr
-
 dist_texconfig_DATA = tcfmgr.map
 
 web2cdir = ${prefix}/texmf/web2c
-
 dist_web2c_DATA = fmtutil.cnf
 
 bin_links = \
@@ -130,4 +118,3 @@ run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 run-texlinks:
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
-
