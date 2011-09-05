@@ -1,7 +1,24 @@
 @x
 @d banner=='This is pDVItype, Version 3.6-p0.4'
 @y
-@d banner=='This is upDVItype, Version 3.6-p0.4-u0.28'
+@d banner=='This is upDVItype, Version 3.6-p0.4-u0.30'
+@z
+
+@x procedure initialize
+  kpse_set_program_name (argv[0], nil);
+  init_kanji;
+  parse_arguments;
+  print (banner);
+  print_ln (version_string);
+@y
+  kpse_set_program_name (argv[0], nil);
+  init_kanji;
+  parse_arguments;
+  print (banner);
+  print (' (');
+  print (stringcast(getencstring));
+  print (')');
+  print_ln (version_string);
 @z
 
 @x procedure out_kanji
