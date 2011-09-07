@@ -72,6 +72,7 @@ texmf_dist_other_scripts = \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	context/perl/mptopdf.pl \
+	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
 	dviasm/dviasm.py \
 	ebong/ebong.py \
