@@ -1,3 +1,10 @@
+2011-09-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c, spc-pdfm.c, tfm.c and vf.c: apply patches by Takuji Tanaka
+	in order to support (e)-upTeX. The (e)-upTeX support is enabled by
+	defining upTeX. In the case -DupTeX, the dvipdfmx must be compatible
+	with the old one, which can be obtained without -DupTeX.
+
 2011-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: New file defining the dvipdfmx version.

@@ -58,6 +58,12 @@
 #define TEX_FONTS_ALLOC_SIZE 16u
 #define VF_NESTING_MAX       16u
 
+#if defined(upTeX)
+/* UTF-32 over U+FFFF -> UTF-16 surrogate pair */
+#define UTF32toUTF16HS(x)  (0xd800 + (((x-0x10000) >> 10) & 0x3ff))
+#define UTF32toUTF16LS(x)  (0xdc00 + (  x                 & 0x3ff))
+#endif
+
 /* Interal Variables */
 static FILE          *dvi_file  = NULL;
 
@@ -734,7 +740,11 @@ dvi_set (SIGNED_QUAD ch)
 {
   struct loaded_font *font;
   spt_t               width, height, depth;
+#if defined(upTeX)
+  unsigned char       wbuf[4];
+#else
   unsigned char       wbuf[2];
+#endif
 
   if (current_font < 0) {
     ERROR("No font selected!");
@@ -753,7 +763,18 @@ dvi_set (SIGNED_QUAD ch)
 
   switch (font->type) {
   case  PHYSICAL:
+#if defined(upTeX)
+    if (ch > 65535) { /* _FIXME_ */
+      wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
+      wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
+      wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
+      wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
+      pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
+			 width, font->font_id, 2);
+    } else if (ch > 255) { /* _FIXME_ */
+#else
     if (ch > 255) { /* _FIXME_ */
+#endif
       wbuf[0] = (ch >> 8) & 0xff;
       wbuf[1] =  ch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
@@ -805,7 +826,11 @@ dvi_put (SIGNED_QUAD ch)
 {
   struct loaded_font *font;
   spt_t               width, height, depth;
+#if defined(upTeX)
+  unsigned char       wbuf[4];
+#else
   unsigned char       wbuf[2];
+#endif
 
   if (current_font < 0) {
     ERROR("No font selected!");
@@ -821,7 +846,18 @@ dvi_put (SIGNED_QUAD ch)
     /* Treat a single character as a one byte string and use the
      * string routine.
      */
+#if defined(upTeX)
+    if (ch > 65535) { /* _FIXME_ */
+      wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
+      wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
+      wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
+      wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
+      pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
+			 width, font->font_id, 2);
+    } else if (ch > 255) { /* _FIXME_ */
+#else
     if (ch > 255) { /* _FIXME_ */
+#endif
       wbuf[0] = (ch >> 8) & 0xff;
       wbuf[1] =  ch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
@@ -898,6 +934,14 @@ do_set2 (void)
   dvi_set(get_unsigned_pair(dvi_file));
 }
 
+#if defined(upTeX)
+static void
+do_set3 (void)
+{
+  dvi_set(get_unsigned_triple(dvi_file));
+}
+#endif
+
 static void
 do_setrule (void)
 {
@@ -934,6 +978,14 @@ do_put2 (void)
 {
   dvi_put(get_unsigned_pair(dvi_file));
 }
+
+#if defined(upTeX)
+static void
+do_put3 (void)
+{
+  dvi_put(get_unsigned_triple(dvi_file));
+}
+#endif
 
 void
 dvi_push (void) 
@@ -1414,8 +1466,14 @@ dvi_do_page (unsigned n,
     switch (opcode) {
     case SET1: do_set1(); break;
     case SET2: do_set2(); break;
+#if defined(upTeX)
+    case SET3: do_set3(); break;
+    case SET4:
+      ERROR("Multibyte (>24 bits) character not supported!");
+#else
     case SET3: case SET4:
       ERROR("Multibyte (>16 bits) character not supported!");
+#endif
       break;
 
     case SET_RULE:
@@ -1424,8 +1482,14 @@ dvi_do_page (unsigned n,
 
     case PUT1: do_put1(); break;
     case PUT2: do_put2(); break;
+#if defined(upTeX)
+    case PUT3: do_put3(); break;
+    case PUT4:
+      ERROR ("Multibyte character (>24 bits) not supported!");
+#else
     case PUT3: case PUT4:
       ERROR ("Multibyte character (>16 bits) not supported!");
+#endif
       break;
 
     case PUT_RULE:

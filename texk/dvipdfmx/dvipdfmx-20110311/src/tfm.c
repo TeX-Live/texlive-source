@@ -55,6 +55,14 @@ static int verbose = 0;
 #define IS_JFM(i) ((i) == JFM_ID || (i) == JFMV_ID)
 #endif /* !WITHOUT_ASCII_PTEX */
 
+#if defined(upTeX)
+#if !defined(WITHOUT_ASCII_PTEX)
+#define INDEX(i)  ((i>0xFFFFul ? 0x10000ul : i))
+#else
+#define INDEX(i)  ((i))
+#endif
+#endif
+
 /*
  * TFM Record structure:
  * Multiple TFM's may be read in at once.
@@ -162,7 +170,11 @@ tfm_font_clear (struct tfm_font *tfm)
 struct coverage
 {
   long           first_char;
+#if defined(upTeX)
+  long           num_chars;
+#else
   unsigned short num_chars;
+#endif
 };
 
 /*
@@ -208,7 +220,11 @@ lookup_char (const struct char_map *map, long charcode)
 {
   if (charcode >= map->coverage.first_char &&
       charcode <= map->coverage.first_char + map->coverage.num_chars)
+#if defined(upTeX)
+    return map->indices[INDEX(charcode - map->coverage.first_char)];
+#else
     return map->indices[charcode - map->coverage.first_char];
+#endif
   else
     return -1;
 
@@ -224,7 +240,11 @@ lookup_range (const struct range_map *map, long charcode)
 	 charcode >= map->coverages[idx].first_char; idx--) {
     if (charcode <=
 	map->coverages[idx].first_char + map->coverages[idx].num_chars)
+#if defined(upTeX)
+      return map->indices[INDEX(idx)];
+#else
       return map->indices[idx];
+#endif
   }
 
   return -1;
@@ -479,12 +499,20 @@ jfm_make_charmap (struct font_metric *fm, struct tfm_font *tfm)
     fm->charmap.type = MAPTYPE_CHAR;
     fm->charmap.data = map = NEW(1, struct char_map);
     map->coverage.first_char = 0;
+#if defined(upTeX)
+    map->coverage.num_chars  = 0x10FFFFu;
+    map->indices    = NEW(0x10001ul, unsigned short);
+#else
     map->coverage.num_chars  = 0xFFFFu;
     map->indices    = NEW(0x10000L, unsigned short);
+#endif
 
     for (code = 0; code <= 0xFFFFu; code++) {
       map->indices[code] = tfm->chartypes[code];
     }
+#if defined(upTeX)
+    map->indices[0x10000ul] = tfm->chartypes[0];
+#endif
   } else {
     struct range_map *map;
 
@@ -493,7 +521,11 @@ jfm_make_charmap (struct font_metric *fm, struct tfm_font *tfm)
     map->num_coverages = 1;
     map->coverages     = NEW(map->num_coverages, struct coverage);
     map->coverages[0].first_char = 0;
+#if defined(upTeX)
+    map->coverages[0].num_chars  = 0x10FFFFu;
+#else
     map->coverages[0].num_chars  = 0xFFFFu;
+#endif
     map->indices = NEW(1, unsigned short);
     map->indices[0] = 0; /* Only default type used. */
   }
@@ -784,7 +816,11 @@ read_tfm (struct font_metric *fm, FILE *tfm_file, UNSIGNED_QUAD tfm_file_size)
     jfm_do_char_type_array(tfm_file, &tfm);
     jfm_make_charmap(fm, &tfm);
     fm->firstchar = 0;
+#if defined(upTeX)
+    fm->lastchar  = 0x10FFFFl;
+#else
     fm->lastchar  = 0xFFFFl;
+#endif
     fm->fontdir   = (tfm.id == JFMV_ID) ? FONT_DIR_VERT : FONT_DIR_HORIZ;
     fm->source    = SOURCE_TYPE_JFM;
   }

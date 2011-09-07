@@ -1,0 +1,478 @@
+diff -ur dvipdfmx-20110311.orig/src/dvi.c dvipdfmx-20110311/src/dvi.c
+--- dvipdfmx-20110311.orig/src/dvi.c	Wed Mar 09 20:02:16 2011
++++ dvipdfmx-20110311/src/dvi.c	Wed Sep 07 16:53:19 2011
+@@ -58,6 +58,12 @@
+ #define TEX_FONTS_ALLOC_SIZE 16u
+ #define VF_NESTING_MAX       16u
+ 
++#if defined(upTeX)
++/* UTF-32 over U+FFFF -> UTF-16 surrogate pair */
++#define UTF32toUTF16HS(x)  (0xd800 + (((x-0x10000) >> 10) & 0x3ff))
++#define UTF32toUTF16LS(x)  (0xdc00 + (  x                 & 0x3ff))
++#endif
++
+ /* Interal Variables */
+ static FILE          *dvi_file  = NULL;
+ 
+@@ -734,7 +740,11 @@
+ {
+   struct loaded_font *font;
+   spt_t               width, height, depth;
++#if defined(upTeX)
++  unsigned char       wbuf[4];
++#else
+   unsigned char       wbuf[2];
++#endif
+ 
+   if (current_font < 0) {
+     ERROR("No font selected!");
+@@ -753,7 +763,18 @@
+ 
+   switch (font->type) {
+   case  PHYSICAL:
++#if defined(upTeX)
++    if (ch > 65535) { /* _FIXME_ */
++      wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
++      wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
++      wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
++      wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
++      pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
++			 width, font->font_id, 2);
++    } else if (ch > 255) { /* _FIXME_ */
++#else
+     if (ch > 255) { /* _FIXME_ */
++#endif
+       wbuf[0] = (ch >> 8) & 0xff;
+       wbuf[1] =  ch & 0xff;
+       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
+@@ -805,7 +826,11 @@
+ {
+   struct loaded_font *font;
+   spt_t               width, height, depth;
++#if defined(upTeX)
++  unsigned char       wbuf[4];
++#else
+   unsigned char       wbuf[2];
++#endif
+ 
+   if (current_font < 0) {
+     ERROR("No font selected!");
+@@ -821,7 +846,18 @@
+     /* Treat a single character as a one byte string and use the
+      * string routine.
+      */
++#if defined(upTeX)
++    if (ch > 65535) { /* _FIXME_ */
++      wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
++      wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
++      wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
++      wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
++      pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
++			 width, font->font_id, 2);
++    } else if (ch > 255) { /* _FIXME_ */
++#else
+     if (ch > 255) { /* _FIXME_ */
++#endif
+       wbuf[0] = (ch >> 8) & 0xff;
+       wbuf[1] =  ch & 0xff;
+       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
+@@ -898,6 +934,14 @@
+   dvi_set(get_unsigned_pair(dvi_file));
+ }
+ 
++#if defined(upTeX)
++static void
++do_set3 (void)
++{
++  dvi_set(get_unsigned_triple(dvi_file));
++}
++#endif
++
+ static void
+ do_setrule (void)
+ {
+@@ -935,6 +979,14 @@
+   dvi_put(get_unsigned_pair(dvi_file));
+ }
+ 
++#if defined(upTeX)
++static void
++do_put3 (void)
++{
++  dvi_put(get_unsigned_triple(dvi_file));
++}
++#endif
++
+ void
+ dvi_push (void) 
+ {
+@@ -1414,8 +1466,14 @@
+     switch (opcode) {
+     case SET1: do_set1(); break;
+     case SET2: do_set2(); break;
++#if defined(upTeX)
++    case SET3: do_set3(); break;
++    case SET4:
++      ERROR("Multibyte (>24 bits) character not supported!");
++#else
+     case SET3: case SET4:
+       ERROR("Multibyte (>16 bits) character not supported!");
++#endif
+       break;
+ 
+     case SET_RULE:
+@@ -1424,8 +1482,14 @@
+ 
+     case PUT1: do_put1(); break;
+     case PUT2: do_put2(); break;
++#if defined(upTeX)
++    case PUT3: do_put3(); break;
++    case PUT4:
++      ERROR ("Multibyte character (>24 bits) not supported!");
++#else
+     case PUT3: case PUT4:
+       ERROR ("Multibyte character (>16 bits) not supported!");
++#endif
+       break;
+ 
+     case PUT_RULE:
+diff -ur dvipdfmx-20110311.orig/src/spc_pdfm.c dvipdfmx-20110311/src/spc_pdfm.c
+--- dvipdfmx-20110311.orig/src/spc_pdfm.c	Wed Mar 09 20:02:16 2011
++++ dvipdfmx-20110311/src/spc_pdfm.c	Wed Sep 07 17:01:47 2011
+@@ -419,6 +419,98 @@
+   return  0;
+ }
+ 
++#if defined(upTeX)
++/* tables/values used in UTF-8 interpretation -
++   code is based on ConvertUTF.[ch] sample code
++   published by the Unicode consortium */
++static unsigned long
++offsetsFromUTF8[6] =    {
++        0x00000000UL,
++        0x00003080UL,
++        0x000E2080UL,
++        0x03C82080UL,
++        0xFA082080UL,
++        0x82082080UL
++};
++
++static unsigned char
++bytesFromUTF8[256] = {
++        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
++        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
++        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
++        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
++        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
++        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
++        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
++        2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
++};
++
++static int
++maybe_reencode_utf8(pdf_obj *instring)
++{
++  unsigned char* inbuf;
++  int            inlen;
++  int            non_ascii = 0;
++  unsigned char* cp;
++  unsigned char* op;
++  unsigned char  wbuf[WBUF_SIZE];
++
++  if (!instring)
++    return 0;
++
++  inlen = pdf_string_length(instring);
++  inbuf = pdf_string_value(instring);
++
++  /* check if the input string is strictly ASCII */
++  for (cp = inbuf; cp < inbuf + inlen; ++cp) {
++    if (*cp > 127) {
++      non_ascii = 1;
++    }
++  }
++  if (non_ascii == 0)
++    return 0; /* no need to reencode ASCII strings */
++
++  cp = inbuf;
++  op = wbuf;
++  *op++ = 0xfe;
++  *op++ = 0xff;
++  while (cp < inbuf + inlen) {
++    unsigned long usv = *cp++;
++    int extraBytes = bytesFromUTF8[usv];
++    if (cp + extraBytes > inbuf + inlen)
++      return -1; /* ill-formed, so give up reencoding */
++    switch (extraBytes) {   /* note: code falls through cases! */
++      case 5: usv <<= 6; usv += *cp++;
++      case 4: usv <<= 6; usv += *cp++;
++      case 3: usv <<= 6; usv += *cp++;
++      case 2: usv <<= 6; usv += *cp++;
++      case 1: usv <<= 6; usv += *cp++;
++      case 0: ;
++    };
++    usv -= offsetsFromUTF8[extraBytes];
++    if (usv > 0x10FFFF)
++      return -1; /* out of valid Unicode range, give up */
++    if (usv > 0xFFFF) {
++      /* supplementary-plane character: generate high surrogate */
++      unsigned long hi = 0xdc00 + (usv - 0x10000) % 0x0400;
++      if (op > wbuf + WBUF_SIZE - 2)
++        return -1; /* out of space */
++      *op++ = hi / 256;
++      *op++ = hi % 256;
++      usv = 0xd800 + (usv - 0x10000) / 0x0400;
++      /* remaining value in usv is the low surrogate */
++    }
++    if (op > wbuf + WBUF_SIZE - 2)
++      return -1; /* out of space */
++    *op++ = usv / 256;
++    *op++ = usv % 256;
++  }
++
++  pdf_set_string(instring, wbuf, op - wbuf);
++  return 0;
++}
++#endif
++
+ static int
+ needreencode (pdf_obj *kp, pdf_obj *vp, struct tounicode *cd)
+ {
+@@ -453,19 +545,38 @@
+ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
+ {
+   int               r = 0; /* continue */
++#if !defined(upTeX)
+   CMap             *cmap;
+   struct tounicode *cd = dp;
++#endif
+ 
+   ASSERT( pdf_obj_typeof(kp) == PDF_NAME );
+ 
++#if !defined(upTeX)
+   if (!cd || cd->cmap_id < 0 || !cd->taintkeys)
+     return  -1;
++#endif
+ 
+   switch (pdf_obj_typeof(vp)) {
+   case  PDF_STRING:
++#if !defined(upTeX)
+     cmap = CMap_cache_get(cd->cmap_id);
+     if (needreencode(kp, vp, cd)) {
+       r = reencodestring(cmap, vp);
++#else
++    {
++      CMap             *cmap;
++      struct tounicode *cd = dp;
++      if (cd && cd->cmap_id >= 0 && cd->taintkeys) {
++        cmap = CMap_cache_get(cd->cmap_id);
++        if (needreencode(kp, vp, cd)) {
++          r = reencodestring(cmap, vp);
++        }
++      }
++      else {
++        r = maybe_reencode_utf8(vp);
++      }
++#endif
+       if (r < 0) /* error occured... */
+         WARN("Failed to convert input string to UTF16...");
+     }
+@@ -486,8 +597,10 @@
+ {
+   pdf_obj  *dict;
+ 
++#if !defined(upTeX)
+   if (cd->cmap_id < 0)
+     return  parse_pdf_dict(pp, endptr, NULL);
++#endif
+ 
+   /* :( */
+   if (cd->unescape_backslash) 
+diff -ur dvipdfmx-20110311.orig/src/tfm.c dvipdfmx-20110311/src/tfm.c
+--- dvipdfmx-20110311.orig/src/tfm.c	Sun Apr 12 08:56:39 2009
++++ dvipdfmx-20110311/src/tfm.c	Wed Sep 07 17:19:36 2011
+@@ -55,6 +55,14 @@
+ #define IS_JFM(i) ((i) == JFM_ID || (i) == JFMV_ID)
+ #endif /* !WITHOUT_ASCII_PTEX */
+ 
++#if defined(upTeX)
++#if !defined(WITHOUT_ASCII_PTEX)
++#define INDEX(i)  ((i>0xFFFFul ? 0x10000ul : i))
++#else
++#define INDEX(i)  ((i))
++#endif
++#endif
++
+ /*
+  * TFM Record structure:
+  * Multiple TFM's may be read in at once.
+@@ -162,7 +170,11 @@
+ struct coverage
+ {
+   long           first_char;
++#if defined(upTeX)
++  long           num_chars;
++#else
+   unsigned short num_chars;
++#endif
+ };
+ 
+ /*
+@@ -208,7 +220,11 @@
+ {
+   if (charcode >= map->coverage.first_char &&
+       charcode <= map->coverage.first_char + map->coverage.num_chars)
++#if defined(upTeX)
++    return map->indices[INDEX(charcode - map->coverage.first_char)];
++#else
+     return map->indices[charcode - map->coverage.first_char];
++#endif
+   else
+     return -1;
+ 
+@@ -224,7 +240,11 @@
+ 	 charcode >= map->coverages[idx].first_char; idx--) {
+     if (charcode <=
+ 	map->coverages[idx].first_char + map->coverages[idx].num_chars)
++#if defined(upTeX)
++      return map->indices[INDEX(idx)];
++#else
+       return map->indices[idx];
++#endif
+   }
+ 
+   return -1;
+@@ -479,12 +499,20 @@
+     fm->charmap.type = MAPTYPE_CHAR;
+     fm->charmap.data = map = NEW(1, struct char_map);
+     map->coverage.first_char = 0;
++#if defined(upTeX)
++    map->coverage.num_chars  = 0x10FFFFu;
++    map->indices    = NEW(0x10001ul, unsigned short);
++#else
+     map->coverage.num_chars  = 0xFFFFu;
+     map->indices    = NEW(0x10000L, unsigned short);
++#endif
+ 
+     for (code = 0; code <= 0xFFFFu; code++) {
+       map->indices[code] = tfm->chartypes[code];
+     }
++#if defined(upTeX)
++    map->indices[0x10000ul] = tfm->chartypes[0];
++#endif
+   } else {
+     struct range_map *map;
+ 
+@@ -493,7 +521,11 @@
+     map->num_coverages = 1;
+     map->coverages     = NEW(map->num_coverages, struct coverage);
+     map->coverages[0].first_char = 0;
++#if defined(upTeX)
++    map->coverages[0].num_chars  = 0x10FFFFu;
++#else
+     map->coverages[0].num_chars  = 0xFFFFu;
++#endif
+     map->indices = NEW(1, unsigned short);
+     map->indices[0] = 0; /* Only default type used. */
+   }
+@@ -784,7 +816,11 @@
+     jfm_do_char_type_array(tfm_file, &tfm);
+     jfm_make_charmap(fm, &tfm);
+     fm->firstchar = 0;
++#if defined(upTeX)
++    fm->lastchar  = 0x10FFFFl;
++#else
+     fm->lastchar  = 0xFFFFl;
++#endif
+     fm->fontdir   = (tfm.id == JFMV_ID) ? FONT_DIR_VERT : FONT_DIR_HORIZ;
+     fm->source    = SOURCE_TYPE_JFM;
+   }
+diff -ur dvipdfmx-20110311.orig/src/vf.c dvipdfmx-20110311/src/vf.c
+--- dvipdfmx-20110311.orig/src/vf.c	Wed May 21 10:08:58 2008
++++ dvipdfmx-20110311/src/vf.c	Wed Sep 07 17:28:52 2011
+@@ -238,11 +238,19 @@
+ 	ch = get_unsigned_quad (vf_file);
+ 	/* Skip over TFM width since we already know it */
+ 	get_unsigned_quad (vf_file);
++#if defined(upTeX)
++	if (ch < 0x1000000L) 
++#else
+ 	if (ch < 65536L) 
++#endif
+ 	  read_a_char_def (vf_file, thisfont, pkt_len, ch);
+ 	else {
+ 	  fprintf (stderr, "char=%ld\n", ch);
++#if defined(upTeX)
++	  ERROR ("Long character (>24 bits) in VF file.\nI can't handle long characters!\n");
++#else
+ 	  ERROR ("Long character (>16 bits) in VF file.\nI can't handle long characters!\n");
++#endif
+ 	}
+ 	break;
+       }
+@@ -455,6 +463,14 @@
+   return;
+ }
+ 
++#if defined(upTeX)
++static void vf_set3(unsigned char **start, unsigned char *end) 
++{
++  vf_set (unsigned_triple(start, end));
++  return;
++}
++#endif
++
+ static void vf_putrule(unsigned char **start, unsigned char *end, spt_t ptsize)
+ {
+   SIGNED_QUAD width, height;
+@@ -491,6 +507,14 @@
+   return;
+ }
+ 
++#if defined(upTeX)
++static void vf_put3(unsigned char **start, unsigned char *end)
++{
++  dvi_put (unsigned_triple(start, end));
++  return;
++}
++#endif
++
+ static void vf_push(void)
+ {
+   dvi_push();
+@@ -850,9 +874,17 @@
+ 	case SET2:
+ 	  vf_set2(&start, end);
+ 	  break;
++#if defined(upTeX)
++	case SET3:
++	  vf_set3(&start, end);
++	  break;
++	case SET4:
++	  ERROR ("Multibyte (>24 bits) character in VF packet.\nI can't handle this!");
++#else
+ 	case SET3:
+ 	case SET4:
+ 	  ERROR ("Multibyte (>16 bits) character in VF packet.\nI can't handle this!");
++#endif
+ 	  break;
+ 	case SET_RULE:
+ 	  vf_setrule(&start, end, ptsize);
+@@ -863,9 +895,17 @@
+ 	case PUT2:
+ 	  vf_put2(&start, end);
+ 	  break;
++#if defined(upTeX)
++	case PUT3:
++	  vf_put3(&start, end);
++	  break;
++	case PUT4:
++	  ERROR ("Multibyte (>24 bits) character in VF packet.\nI can't handle this!");
++#else
+ 	case PUT3:
+ 	case PUT4:
+ 	  ERROR ("Multibyte (>16 bits) character in VF packet.\nI can't handle this!");
++#endif
+ 	  break;
+ 	case PUT_RULE:
+ 	  vf_putrule(&start, end, ptsize);
