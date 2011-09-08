@@ -18,8 +18,8 @@
   
     The script wrapping machinery is not limited to scripts shipped with 
     TeX Live.  You can also use it for script programs from manually 
-    installed packages, which should minimize the problems when using 
-    them with TeX Live. 
+    installed packages.  This should minimize problems when using them 
+    with TeX Live. 
     
     First, make sure that there is an interpreter program available on 
     your system for the script you want to use.  Interpreters for Perl 
@@ -68,9 +68,7 @@
     
     If you prefer to call the script program simply by its name, copy 
     and rename bin/win32/runscript.exe to <script-name>.exe and put it 
-    in bin/win32/ directory of your TeX Live installation or, if you 
-    don't have the write permissions there, somewhere else on the search 
-    path.
+    somewhere on the search path.
 
   Wrapper structure
   
@@ -100,12 +98,12 @@
     
     The launcher script knows, which variant has been used to invoke it 
     based on the sentinel argument.  The lack of this argument means 
-    that it was invoked in a standard way, i.e. through texlua.exe. 
+    that it was invoked in a standard way, i.e., through texlua.exe. 
     
     All the hard work of locating a script/program to execute happens 
     in the launcher script.  The located script/program is always 
     executed directly by spawning its interpreter (or binary) in a new 
-    process. The system shell (cmd.exe) is never called (except for 
+    process.  The system shell (cmd.exe) is never called (except for 
     batch scripts, of course).  If the located script happens to be 
     a (tex)lua script, it is loaded and called internally from within 
     this script, i.e. no new process is spawned.  Execution is done 
