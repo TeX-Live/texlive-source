@@ -10,16 +10,19 @@ sub fromenv;
 sub load_data;
 sub save_data;
 
-my $VERSION = 'v1.1';
+my $VERSION = 'v1.2 from 2011/09/08';
 my %CTAN_SERVERURLS = (
     dante     => 'http://dante.ctan.org/upload.html',
-    de        => 'http://dante.ctan.org/upload.html',
     uktug     => 'http://www.tex.ac.uk/upload/',
-    'uk-tug'  => 'http://www.tex.ac.uk/upload/',
-    uk        => 'http://www.tex.ac.uk/upload/',
-    cambridge => 'http://www.tex.ac.uk/upload/',
 );
-my $CTAN_URL = $CTAN_SERVERURLS{dante};
+my %CTAN_SERVERALIASES = (
+    de        => 'dante',
+    'uk-tug'  => 'uktug',
+    uk        => 'uktug',
+    cambridge => 'uktug',
+);
+
+my $CTAN_URL;
 
 my @FIELDS = qw(contribution version name email summary directory DoNotAnnounce announce notes license freeversion file);
 my @REQUIRED = qw(contribution version name email summary license file);
@@ -35,7 +38,7 @@ my %FIELDS_DESC = (
     directory     => 'Suggested CTAN directory',
     DoNotAnnounce => 'No need to announce this update',
     announce      => 'Short description for announcement',
-    notes         => 'Optional notes to the CTAN maintainers',
+    notes         => 'Optional notes to the CTAN maintainers (DANTE only)',
     license       => 'License type',
     freeversion   => 'Which free license',
     file          => 'File to upload',
@@ -72,6 +75,9 @@ my $QUIET = 0;
 my $ASK   = 1;
 my $FORCE = 0;
 my $PROMPT = -t STDIN ? 1 : 0;
+my $LOG   = 0;
+
+my $LOGFILE = $ENV{CTANUPLOAD_LOGFILE};
 
 sub usage {
     my $warn = shift;
@@ -89,16 +95,19 @@ Arguments can also be given using the CTANUPLOAD environment variable which are 
 explicit arguments will overwrite them.
 
 Options:
-  -h         Print this help and exit.
+  -p         Prompt for missing values. (default if run in terminal)
+  -P         Do not prompt for missing values. (default if not run in terminal)
   -y         Do not ask for confirmation, but submit immediately.
-  -u <URL>   CTAN URL to upload to.
+  -u <URL>   CTAN URL to upload to (defaults to CTAN_URL environment variable or random if not set)
   -U <name>  CTAN server to upload to, either 'dante' or 'uktug'.
   -F <file>  Read data from file
   -f         Force upload even if input seems incorrect (unknown license etc.).
-  -p         Prompt for missing values. (default if run in terminal)
-  -P         Do not prompt for missing values. (default if not run in terminal)
   -v         Verbose mode.
   -q         Quiet mode.
+  -l         Write log file.
+  -L         Do not write log file. (default)
+  -o <file>  Define log file. (still requires -l)
+  -h         Print this help and exit.
   -V         Print version number.
 
 The following fields exists and can be given as
@@ -124,9 +133,17 @@ EOT
     exit ($warn ? 1 : 0);
 }
 
+if (exists $ENV{CTAN_URL}) {
+    unshift @ARGV, ('-u', $ENV{'CTAN_URL'});
+}
+elsif (exists $ENV{CTAN_SERVER}) {
+    unshift @ARGV, ('-U', $ENV{'CTAN_SERVER'});
+}
+
 if (exists $ENV{'CTANUPLOAD'}) {
     unshift @ARGV, (split /\s+/, $ENV{'CTANUPLOAD'});
 }
+
 
 while (my $arg = shift @ARGV) {
     if ($arg =~ /^--(.*?)(?:=(.*))?$/) {
@@ -186,10 +203,20 @@ while (my $arg = shift @ARGV) {
         }
         elsif ($char eq 'U') {
             my $server = lc shift @ARGV;
+            $server = $CTAN_SERVERALIASES{$server} || $server;
             if (not exists $CTAN_SERVERURLS{ $server }) {
                 die "Error: Unknown CTAN server '$server'.\n";
             }
             $CTAN_URL = $CTAN_SERVERURLS{ $server };
+        }
+        elsif ($char eq 'l') {
+            $LOG = 1;
+        }
+        elsif ($char eq 'L') {
+            $LOG = 0;
+        }
+        elsif ($char eq 'o') {
+            $LOGFILE = shift @ARGV;
         }
         elsif ($char eq 'V') {
             print STDERR "ctanupload script $VERSION.\n";
@@ -213,6 +240,7 @@ if ($PROMPT) {
             my $input = '';
             if ($field eq 'notes' || $field eq 'announce') {
                 next if $field eq 'announce' and $FIELDS{DoNotAnnounce};
+                next if $field eq 'notes' and $CTAN_URL ne $CTAN_SERVERURLS{dante};
                 print "\u$FIELDS_DESC{$field}: (press CTRL-Z (Windows) or CTRL-D (Linux) to stop)\n";
                 while (<STDIN>) {
                     $input .= $_;
@@ -260,48 +288,70 @@ if ($PROMPT) {
     }
 }
 
-my $abort = 0;
+my $abort = '';
 foreach my $required (@REQUIRED) {
     if (!length $FIELDS{$required}) {
-        print "Required field '$required' is missing!\n";
-        $abort++;
+        $abort .= "Required field '$required' is missing!\n";
     }
 }
 if (not exists $LICENSES{ $FIELDS{license} }) {
-    print "Unknown license type '$FIELDS{license}'!\n";
-    $abort++ if not $FORCE;
+    $abort .= "Unknown license type '$FIELDS{license}'!\n"
+        if not $FORCE;
 }
 if ($FIELDS{license} ne 'free') {
     $FIELDS{freeversion} = '-not-selected-';
 } elsif (!$FIELDS{freeversion}) {
-    print "Required field 'freeversion' is missing!\n";
-    $abort++;
+    $abort .= "Required field 'freeversion' is missing!\n";
 } elsif (not exists $FREEVERSIONS{ $FIELDS{freeversion} }) {
-    print "Unknown free license '$FIELDS{freeversion}'!\n";
-    $abort++ if not $FORCE;
+    $abort .=  "Unknown free license '$FIELDS{freeversion}'!\n"
+        if not $FORCE;
 }
 if ($FIELDS{file} && ! -f $FIELDS{file}) {
-    print "File '$FIELDS{file}' not found!\n";
-    $abort++;
+    $abort .= "File '$FIELDS{file}' not found!\n";
 }
+
+if ($LOG) {
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+    my $DATE = sprintf ('%04d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
+    if (!$LOGFILE) {
+        $LOGFILE = 'ctanupload-' . $FIELDS{contribution} . " $DATE.log";
+        $LOGFILE =~ tr/: /-_/;
+    }
+    save_data($LOGFILE, 1, "# $DATE");
+    if (!open (LOG, '>>', $LOGFILE)) {
+        warn "Couldn't open logfile '$LOGFILE'.\n";
+        $LOG = 0;
+    }
+}
+
 if ($abort) {
-    print "Aborting!\n";
+    print $abort, "Aborting!\n";
+    if ($LOG) {
+        $abort =~ s/\n/\n# /gms;
+        print LOG "# $abort\n# Aborting!\n";
+    }
     exit (2);
 }
 
 my $DoNotAnnounce;
 if ($FIELDS{DoNotAnnounce}) {
     $FIELDS{DoNotAnnounce} = 'No';
+    $FIELDS{to_announce}   = 'Yes';
     $DoNotAnnounce = '[x]';
 }
 else {
     $FIELDS{DoNotAnnounce} = undef;
+    $FIELDS{to_announce}   = undef;
     $DoNotAnnounce = '[ ]';
 }
 
 if (!$FIELDS{directory}) {
     $FIELDS{directory} = '/macros/latex/contrib/' . $FIELDS{contribution};
 }
+
+
+$CTAN_URL = (values %CTAN_SERVERURLS)[int rand scalar values %CTAN_SERVERURLS]
+    if not defined $CTAN_URL;
 
 print "\nThe following data will be submitted to CTAN ($CTAN_URL):\n";
 
@@ -316,9 +366,18 @@ foreach my $field (@FIELDS) {
         print "$FIELDS_DESC{$field}: $FREEVERSIONS{$FIELDS{$field}}\n";
     }
     else {
-        print "$FIELDS_DESC{$field}: $FIELDS{$field}\n";
+        print "$FIELDS_DESC{$field}: ", $FIELDS{$field} || '', "\n";
     }
 }
+
+eval {
+    my $file = $FIELDS{file};
+    die if not -f $file;
+    print "\n$file (", (-s $file), "):\n";
+    if ($file =~ /\.tar\.gz$/) {
+        system ('tar', 'tzvf', $file);
+    }
+};
 
 if ($ASK) {
     print "\nUpload? [(y/N/(e)dit/(s)ave] ";
@@ -344,10 +403,12 @@ if ($ASK) {
             my $file = 'ctanupload.dat';
             save_data($file);
             print "Data was stored in file '$file'.\n";
+            print LOG "\n# Data was stored in file '$file'.\n" if $LOG;
             exit (2);
         }
         else {
             print "\nUpload aborted!\n";
+            print LOG "\n# Upload aborted!\n" if $LOG;
             exit (1);
         }
     }
@@ -366,13 +427,11 @@ $mech->submit_form(
 );
 
 if ($mech->success()) {
-    print "Upload successfull!\n";
-}
-else {
     print "Upload failed: ", $mech->response()->message(), "\n";
 }
 
 print "\nResponse:\n";
+print LOG "\n# Response:\n" if $LOG;
 eval {
     use HTML::TreeBuilder;
     use HTML::FormatText;
@@ -381,13 +440,17 @@ eval {
     my @response = split /\n/, $formatter->format($tree);
     local $, = "\n";
     print @response[3..$#response-3];
+    local $, = "\n# ";
+    print LOG '', @response[3..$#response-3] if $LOG;
 } or do {
     print "Can't display HTML response, storing reponse if log file 'ctanupload_response.html'\n";
-    open (LOG, '>', 'ctanupload_response.html');
-    print LOG $mech->content();
-    close (LOG);
+    open (HLOG, '>', 'ctanupload_response.html');
+    print HLOG $mech->content();
+    close (HLOG);
 };
 
+print "\n";
+close LOG if $LOG;
 exit (0);
 
 
@@ -404,6 +467,7 @@ sub load_data {
     open (my $load, '<', $file) or die "Couldn't open data file '$file'!\n";
     LOAD_LOOP:
     while (my $line = <$load>) {
+        next if ($line =~ /^\s*(#|$)/);
         if ($line =~ /^([a-z]+)\s*=\s*(.*)$/i) {
             my ($name,$value) = ($1,$2);
             if (!exists $FIELDS{$name}) {
@@ -414,6 +478,7 @@ sub load_data {
             if ($name eq 'announce' || $name eq 'notes') {
                 $FIELDS{$name} .= "\n";
                 while ($line = <$load>) {
+                    next if ($line =~ /^\s*#/);
                     last if ($line =~ /^[a-z]+\s*=/i);
                     $FIELDS{$name} .= $line;
                 }
@@ -431,14 +496,27 @@ sub load_data {
 
 sub save_data {
     my $file = shift;
+    my $storefileinfo = shift;
+    my $header = shift;
     $file = 'ctanupload.dat' if not defined $file;
     open (my $save, '>', $file) or do { warn "Couldn't save data to file '$file'!\n"; return; };
+    print {$save} "$header\n" if $header;
     foreach my $field (@FIELDS) {
         if ($field eq 'DoNotAnnounce') {
             print {$save} "$field = ", $FIELDS{DoNotAnnounce} ? '1' : '0', "\n";
         }
         else {
             print {$save} "$field = ", $FIELDS{$field} || '', "\n";
+        }
+    }
+    if ($storefileinfo && -f $FIELDS{file}) {
+        my $file = $FIELDS{file};
+        print {$save} "\n# $file (", (-s $file), "):\n";
+        if ($file =~ /\.tar\.gz$/) {
+            open (my $TAR, '-|', "tar tzvf $file");
+            print {$save} map { "# $_" } <$TAR>;
+            print {$save} "\n";
+            close ($TAR);
         }
     }
     close ($save);
