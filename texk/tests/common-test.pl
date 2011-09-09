@@ -15,20 +15,22 @@ $ENV{"AFMFONTS"}
 # Run PROG with ARGS.  Return the exit status.
 # Die if PROG is not executable.
 #
-sub test_run
-{
+sub test_run {
   my ($prog, @args) = @_;
 
   # Possibly we should check that $prog starts with ./, since we always
   # want to run out of the build dir.  I think.
   die "$0: no program $prog in " . `pwd` if ! -x $prog;
   
+  # Won't be copyable with weird names, but should get the info across.
+  print "$0: running ", $prog, join (" ", @args), "\n";
+  
+  # Run it.
   my $ret = system ($prog, @args);  
   return $ret;
 }
 
-sub test_file_copy
-{
+sub test_file_copy {
   my ($srcfile,$dstfile) = @_;
   
   # don't copy onto itself.

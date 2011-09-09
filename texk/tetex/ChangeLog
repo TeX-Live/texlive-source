@@ -1,3 +1,14 @@
+2011-09-09  Karl Berry  <karl@tug.org>
+
+	* tests: new subdir, with first updmap test, that doesn't really
+	work yet but passes anyway.
+	* Makefile.am (TESTS): add tests/updmap-cmdline-test.pl.
+	* updmap.pl (read_option_vals): don't call getopt twice (from Norbert).
+	Don't complain about non-option args, that is how --enable/--disable
+	are currently (mis)handled.
+	(writeLines, copyFile, setupOutputDir, SetupCfgFile): do nothing
+	if $dry_run.
+
 2011-09-05  Karl Berry  <karl@tug.org>
 
 	* texconfig-dialog (runDialog): only clear screen if we actually

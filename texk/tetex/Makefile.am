@@ -107,6 +107,9 @@ EXTRA_DIST += \
 	old-updmap
 
 ## 
+TESTS = tests/updmap-cmdline-test.pl
+
+## 
 ## This target is invoked by the top-level make,
 ## to create the per-format engine symlinks in $(bindir),
 ## after everything else is installed.  We explicitly specify the

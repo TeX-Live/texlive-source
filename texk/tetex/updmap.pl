@@ -197,17 +197,15 @@ EOF
 #   process cmd line options
 #
 sub processOptions {
-  #
-  # We parse the command line twice.  The first time is to handle
-  # --setoption, which might take either one or two following values.
-  # the second to handle everything else.  The Getopt::Long feature to
-  # handle this is only supported in 5.8.8 (released in 2006) or later,
-  # and a few people run older perls.
+
+  # This deals with --setoption, which might take either one or two
+  # following values.  The Getopt::Long feature to handle this (s{1,2})
+  # is only supported in 5.8.8 (released in 2006) or later, and a few
+  # people still run older perls.  (--enable and --disable should get
+  # the same treatment.)
   # 
-  my $oldconfig = Getopt::Long::Configure(qw(pass_through));
-  #  
-  sub read_for_set_options {
-    my ($setopt, $val) = @_;
+  sub read_option_vals {
+    my ($optname,$val) = @_;
     # check if = occurs in $val, if not, get the next argument
     if ($val =~ m/=/) {
       push (@setoptions, $val);
@@ -218,11 +216,7 @@ sub processOptions {
       push (@setoptions, "$val=$vv");
     }
   }
-  GetOptions("setoption=s@" => \&read_for_set_options) 
-  || die "$0: could not read for --setoption; try --help.\n";
 
-  # restore old getopt config and read everything else.
-  Getopt::Long::Configure($oldconfig);
   unless (&GetOptions (
       "cnffile=s" => \$cnfFile,
       "copy" => \$copy,
@@ -240,8 +234,7 @@ sub processOptions {
       "outputdir=s" => \$outputdir,
       "pdftexoutputdir=s" => \$pdftexoutputdir,
       "q|quiet|silent" => \$quiet,
-      "setoption" =>
-        sub {die "$0: --setoption needs an option and value; try --help.\n"},
+      "setoption=s@" => \&read_option_vals,
       "showoptions=s" => \@showoptions,
       "syncwithtrees" => \$syncwithtrees,
       "version" => sub { print &version(); exit(0); },
@@ -249,9 +242,10 @@ sub processOptions {
     die "Try \"$0 --help\" for more information.\n";
   }
   
-  if (@ARGV) {
-    warn "$0: Ignoring unexpected non-option argument(s): @ARGV.\n";
-  }
+  # not until we parse --enable and --disable like --setoption.
+  #if (@ARGV) {
+  #  warn "$0: Ignoring unexpected non-option argument(s): @ARGV.\n";
+  #}
 
   if ($outputdir) {
     $dvipsoutputdir = $outputdir if (! $dvipsoutputdir);
@@ -373,9 +367,11 @@ sub getLines {
 
 ###############################################################################
 # writeLines()
-#   write the lines in $filename
+#   write the lines in $filename, unless $dry_run.
 #
 sub writeLines {
+  return if $dry_run;
+
   my ($fname, @lines) = @_;
   map { ($_ !~ m/\n$/ ? s/$/\n/ : $_ ) } @lines;
   open FILE, ">$fname" or die "$0: can't write lines to $fname: $!";
@@ -389,6 +385,11 @@ sub writeLines {
 #
 sub copyFile {
   my ($src, $dst) = @_;
+  
+  if ($dry_run) {
+    print "$0: would copy $src to $dst\n";
+    return;
+  }
   my $dir;
   ($dir=$dst)=~s/(.*)\/.*/$1/;
   mkdirhier $dir;
@@ -698,6 +699,7 @@ sub disableMap {
 sub setupOutputDir {
   my($od, $driver) = @_;
 
+  return if $dry_run;
   if (!$od) {
     my $rel = "fonts/map/$driver/updmap";
     my $tf;
@@ -727,6 +729,7 @@ sub setupDestDir {
 #   find config file if none specified on cmd line.
 #
 sub setupCfgFile {
+  return if $dry_run;
   if (! $cnfFile) {
     my $tf = `kpsewhich --var-value=TEXMFCONFIG`;
     chomp($tf);
@@ -970,7 +973,7 @@ sub mkMaps {
     print STDERR join(' ', @missing);
     print STDERR "\n\n\tDid you run mktexlsr?\n\n" .
         "\tYou can delete non-existent map entries using the option\n".
-        "\t  --syncwithtrees.\n\n";
+        "\t  --syncwithtrees.\n";
     exit (1);
   }
   exit(0) if $dry_run;
