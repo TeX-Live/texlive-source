@@ -221,6 +221,9 @@ local docstr = [[
           so aliasing results in an infinite recursion
         - removed alias for fontinst (no fontinst.exe any more)
         - fixed GUI-mode interpreter for Ruby
+    2011/09/10
+        - added -dDisableFAPI=true to psview argument list. Needed by
+          gs-9.xx
 ]]
 
 -- HELPER SUBROUTINES --
@@ -524,6 +527,7 @@ elseif progname == 'dviout' then
 elseif progname == 'psv' then
   argline = '-sINPUT='..argline
   ARGV = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
+          '-dDisableFAPI=true',
           '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
           '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps')}
 elseif progname == 'repstopdf' or progname == 'rpdfcrop' then

@@ -68,7 +68,9 @@
     
     If you prefer to call the script program simply by its name, copy 
     and rename bin/win32/runscript.exe to <script-name>.exe and put it 
-    somewhere on the search path.
+    somewhere on the search path.]]
+
+local docstr = [[
 
   Wrapper structure
   
@@ -208,4 +210,7 @@
           so aliasing results in an infinite recursion
         - removed alias for fontinst (no fontinst.exe any more)
         - fixed GUI-mode interpreter for Ruby
+    2011/09/10
+        - added -dDisableFAPI=true to psview argument list. Needed by
+          gs-9.xx
 
