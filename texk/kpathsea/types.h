@@ -75,7 +75,6 @@ typedef struct {
 
 
 #include <kpathsea/hash.h>
-#include <kpathsea/str-list.h>
 
 /* from old tex-file.h */
 
