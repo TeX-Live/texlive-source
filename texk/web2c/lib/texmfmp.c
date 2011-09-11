@@ -1416,9 +1416,11 @@ static struct option long_options[]
       { "output-directory",          1, 0, 0 },
       { "parse-first-line",          0, &parsefirstlinep, 1 },
       { "no-parse-first-line",       0, &parsefirstlinep, -1 },
+#if !defined(Aleph)
       { "translate-file",            1, 0, 0 },
       { "default-translate-file",    1, 0, 0 },
       { "8bit",                      0, &eightbitp, 1 },
+#endif /* !Aleph */
 #if defined(XeTeX)
       { "no-pdf",                    0, &nopdfoutput, 1 },
       { "output-driver",             1, 0, 0 },
@@ -1434,8 +1436,6 @@ static struct option long_options[]
       { "no-guess-input-enc",        0, &infile_enc_auto, 0 },
 #endif
       { "kanji",                     1, 0, 0 },
-#endif
-#if IS_upTeX
       { "kanji-internal",            1, 0, 0 },
 #endif
       { 0, 0, 0, 0 } };
@@ -1557,11 +1557,11 @@ parse_options (int argc, string *argv)
       pdfdraftmodevalue = 1;
 #endif /* pdfTeX */
 #if defined (TeX) || defined (MF)
+#if !defined(Aleph)
     } else if (ARGUMENT_IS ("translate-file")) {
       translate_filename = optarg;
     } else if (ARGUMENT_IS ("default-translate-file")) {
       default_translate_filename = optarg;
-#if defined(Aleph)
     } else if (ARGUMENT_IS ("8bit")) {
       /* FIXME: print snippy message? Possibly also for above? */
 #endif /* !Aleph */
@@ -1589,8 +1589,6 @@ parse_options (int argc, string *argv)
       if (!set_enc_string (optarg, NULL)) {
         WARNING1 ("Ignoring unknown argument `%s' to --kanji", optarg);
       }
-#endif
-#if IS_upTeX
     } else if (ARGUMENT_IS ("kanji-internal")) {
       if (!set_enc_string (NULL, optarg)) {
         WARNING1 ("Ignoring unknown argument `%s' to --kanji-internal", optarg);

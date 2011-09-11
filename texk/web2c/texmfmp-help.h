@@ -112,6 +112,7 @@ const_string EPTEXHELP[] = {
 #endif /* IPC */
     "-jobname=STRING         set the job name to STRING",
     "-kanji=STRING           set Japanese encoding (STRING=euc|jis|sjis|utf8)",
+    "-kanji-internal=STRING  set Japanese internal encoding (STRING=euc|sjis)",
     "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
     "                          the bits of NUMBER",
     "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm)",
@@ -239,7 +240,7 @@ const_string EUPTEXHELP[] = {
 #endif /* IPC */
     "-jobname=STRING         set the job name to STRING",
     "-kanji=STRING           set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
-    "-kanji-internal=STRING  set Japanese internal encoding",
+    "-kanji-internal=STRING  set Japanese internal encoding (STRING=euc|sjis|uptex)",
     "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
     "                          the bits of NUMBER",
     "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm)",
@@ -414,6 +415,7 @@ const_string PTEXHELP[] = {
 #endif /* IPC */
     "-jobname=STRING         set the job name to STRING",
     "-kanji=STRING           set Japanese encoding (STRING=euc|jis|sjis|utf8)",
+    "-kanji-internal=STRING  set Japanese internal encoding (STRING=euc|sjis)",
     "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
     "                          the bits of NUMBER",
     "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm)",
@@ -539,7 +541,7 @@ const_string UPTEXHELP[] = {
 #endif /* IPC */
     "-jobname=STRING         set the job name to STRING",
     "-kanji=STRING           set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
-    "-kanji-internal=STRING  set Japanese internal encoding",
+    "-kanji-internal=STRING  set Japanese internal encoding (STRING=euc|sjis|uptex)",
     "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
     "                          the bits of NUMBER",
     "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm)",
