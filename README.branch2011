@@ -1,0 +1,22 @@
+$Id$
+Public domain.  Originally written 2011 by Karl Berry.
+
+This file records commits made to the bug-fix branch (only).
+
+------------------------------------------------------------------------
+r23716 | karl | 2011-08-27 01:29:30 +0200 (Sat, 27 Aug 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/web2c/synctexdir/ChangeLog
+   M /branches/branch2011/Build/source/texk/web2c/synctexdir/synctex-luatex.h
+   M /branches/branch2011/Build/source/texk/web2c/synctexdir/synctex-xetex.h
+
+branch2011: import synctex coordinate fix from trunk r23644
+
+------------------------------------------------------------------------
+r23740 | karl | 2011-08-29 02:14:50 +0200 (Mon, 29 Aug 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/web2c/enctex.ch
+   M /branches/branch2011/Build/source/texk/web2c/xetexdir/xetex.ch
+
+branch2011: import off-by-one fix for enctex/xetex initialization (original r23187, see also email http://tug.org/pipermail/tldistro/2011q3/000120.html)
+------------------------------------------------------------------------
