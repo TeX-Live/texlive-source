@@ -442,6 +442,7 @@ eval {
     print @response[3..$#response-3];
     local $, = "\n# ";
     print LOG '', @response[3..$#response-3] if $LOG;
+    1;
 } or do {
     print "Can't display HTML response, storing reponse if log file 'ctanupload_response.html'\n";
     open (HLOG, '>', 'ctanupload_response.html');
