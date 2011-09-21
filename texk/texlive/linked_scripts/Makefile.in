@@ -257,6 +257,7 @@ texmf_dist_other_scripts = \
 	texdef/texdef.pl \
 	texdiff/texdiff \
 	texdirflatten/texdirflatten \
+	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
 	ulqda/ulqda.pl \
