@@ -1,0 +1,72 @@
+% Copyright 2011 Barbara Beeton <tex-live@tug.org>
+% You may freely use, modify and/or distribute this file.
+% This is the original annotated test report, with various extra info.
+% See below \end{document}.
+\documentclass{amsbook}
+\usepackage{verbatim}
+
+\makeindex
+
+\begin{document}
+
+\chapter{Demonstration of a Makeindex bug}
+
+\index{random text|(}%
+Here we open an index span for ``random text''.
+
+\index{periodic Hilbert transform|(}%
+How could we define the \emph{periodic Hilbert transform}?
+Here is an open index span for ``periodic Hilbert transform''.
+
+(lots more text omitted)
+\newpage
+
+We defined in Section~3 the
+\index{periodic Hilbert transform|(}%
+\emph{periodic Hilbert transform} or \emph{conjugate function}.
+A second open index span for ``periodic Hilbert transform''.
+
+\index{random text|(}%
+(more omitted text and a second open index span for ``random text'')
+
+Closing index spans for the two opened entries.
+\index{periodic Hilbert transform|)}%
+\index{random text|)}%
+
+\vspace{1\baselineskip}
+\verbatiminput{\jobname.tex}
+\newpage
+\noindent This is the .idx file from the previous run:
+\verbatiminput{\jobname.idx-prev}
+\vspace{2\baselineskip}
+This is the resulting .ilg file:
+\verbatiminput{\jobname.ilg}
+\vspace{2\baselineskip}
+And the resulting .ind file; note spurious \verb+\(+ inclusions.
+\verbatiminput{\jobname.ind}
+\end{document}
+
+
+Date: Thu, 22 Sep 2011 12:23:48 -0400
+From: Barbara Beeton
+Subject: a makeindex bug
+
+[...]
+
+to get the desired output, run latex, then makeindex.
+copy or rename <jobname>.idx to <jobname>.idx-prev,
+rerun latex, and take a look at the output.  (the
+reason for the rename is that i've included in the
+output listings of the .idx(-prev), .ilg, and .ind
+files, all small, but very interesting.)
+
+the problem is that if a span is begun for a string
+and then a second span is begun for the same string
+without the first one being closed, the |( in the
+input is put into the output as \( -- with the
+result that an attempt to print the index will get
+an unmatched $ error.  the unmatched span is noted
+in the .ilg file with a warning, but since most
+people ignore warnings the first time around (i
+certainly do), the unrecoverable (la)tex error in
+the index can really throw them into a tizzy.

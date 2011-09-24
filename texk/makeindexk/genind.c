@@ -126,8 +126,14 @@ make_entry(int n)
 		break;
 	if (level < FIELD_MAX)
 	    new_entry();
-	else
+
+        /* Repeat test from just below to see if we are already in an
+           open range.  If so, we don't want to output anything.  (It
+           ends up being output as an erroneous \(.  See
+           tests/nested-range-bb.tex.)  */           
+	else if (! (*curr->encap == idx_ropen && in_range)) {
 	    old_entry();
+	}
     }
 
     if (*curr->encap == idx_ropen)

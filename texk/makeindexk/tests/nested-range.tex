@@ -1,0 +1,33 @@
+% Copyright 2011 Barbara Beeton <tex-live@tug.org>
+% You may freely use, modify and/or distribute this file.
+%
+% This is the minimal version that reproduces the bug.
+% Some commented-out lines are some variations.
+% For all the details, see nested-range-bb.tex.
+%
+\documentclass{article}
+
+\makeindex
+
+\begin{document}
+\index{bad range|(}%
+%\index{ok range|(}%
+start.
+
+\newpage
+\index{bad range|(}%
+second page.
+
+\index{bad range|)}%
+%\index{ok range|)}%
+close.
+
+\end{document}
+
+\index{bad range|)}%
+second close.
+
+\index{bad range|)}%
+third close.
+
+\end{document}

@@ -1,3 +1,9 @@
+2011-09-24  Karl Berry  <karl@tug.org>
+
+	* genind.c (make_entry): do not output erroneous \( when
+	an open range is erroneously opened again.  Report from
+	Barbara Beeton, see tests/nested-range-bb.tex and related.
+
 2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* sortid.c (compare_string): Cast strcoll() args to 'char *' to
