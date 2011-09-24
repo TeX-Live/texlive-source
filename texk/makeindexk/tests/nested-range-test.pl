@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: bibtex-openout-test.pl 17384 2010-03-08 18:49:47Z karl $
+# $Id$
 # Public domain.  Originally written 2011, Karl Berry.
 # Check that makeindex doesn't create spurious output from nested ranges.
 # See nested-range.tex and -bb.tex.

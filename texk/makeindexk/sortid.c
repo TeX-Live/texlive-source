@@ -3,6 +3,7 @@
  *  This file is part of
  *	MakeIndex - A formatter and format independent index processor
  *
+ *  Copyright (C) 1998-2011 by the TeX Live project.
  *  Copyright (C) 1989 by Chen & Harrison International Systems, Inc.
  *  Copyright (C) 1988 by Olivetti Research Center
  *  Copyright (C) 1987 by Regents of the University of California
@@ -12,7 +13,6 @@
  *	Chen & Harrison International Systems, Inc.
  *	Palo Alto, California
  *	USA
- *	(phc@renoir.berkeley.edu or chen@orc.olivetti.com)
  *
  *  Contributors:
  *	Please refer to the CONTRIB file that comes with this release
