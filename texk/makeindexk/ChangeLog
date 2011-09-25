@@ -1,3 +1,8 @@
+2011-09-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* genind.c: write a binary string by octal numbers to avoid an
+	error in old compilers.
+
 2011-09-24  Karl Berry  <karl@tug.org>
 
 	* genind.c (make_entry): do not output erroneous \( when

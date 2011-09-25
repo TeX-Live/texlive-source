@@ -204,7 +204,7 @@ static unsigned char
 first_letter(char *term)
 {
     if (thai_sort)
-        return strchr("אבגדה", term[0]) ? term[1] : term[0];
+        return strchr("\340\341\342\343\344", term[0]) ? term[1] : term[0];
 
     return TOLOWER(term[0]);
 }
