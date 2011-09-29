@@ -1,3 +1,9 @@
+2011-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* logo10.afm, xlogo10.{pl,map} (removed): Moved from here ...
+	* tests/logo10.{afm,pl,mps} (new): ... to here.
+	* afm2pl.test: Test input and expected output now in tests/.
+
 2011-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* afm2pl.c (find_suffix, !KPATHSEA): Declare result as const.
