@@ -50,7 +50,7 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap COPYING ChangeLog INSTALL NEWS
+	../../build-aux/ylwrap COPYING ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
@@ -274,8 +274,11 @@ makeindex_SOURCES = \
 
 LDADD = $(KPATHSEA_LIBS)	
 dist_man1_MANS = makeindex.1 mkindex.1
+EXTRA_DIST = CONTRIB NOTES $(TESTS) tests/nested-range.tex \
+	tests/nested-range.idx tests/nested-range-bb.tex \
+	tests/nested-range-bb.idx
 TESTS = tests/nested-range-test.pl
-EXTRA_DIST = CONTRIB NOTES
+DISTCLEANFILES = 
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -823,6 +826,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"

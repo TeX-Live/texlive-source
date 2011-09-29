@@ -36,6 +36,15 @@ LDADD = $(KPATHSEA_LIBS)
 
 dist_man1_MANS = makeindex.1 mkindex.1
 
-TESTS = tests/nested-range-test.pl
-
 EXTRA_DIST = CONTRIB NOTES
+
+## Tests
+##
+TESTS = tests/nested-range-test.pl
+EXTRA_DIST += $(TESTS)
+
+## tests/nested-range-test.pl
+EXTRA_DIST += tests/nested-range.tex tests/nested-range.idx \
+	tests/nested-range-bb.tex tests/nested-range-bb.idx
+DISTCLEANFILES =
+

@@ -4,7 +4,7 @@
 # Check that makeindex doesn't create spurious output from nested ranges.
 # See nested-range.tex and -bb.tex.
 
-# srcdir = tetex (in the source tree)
+# srcdir = makeindexk (in the source tree)
 BEGIN { chomp ($srcdir = $ENV{"srcdir"} || `cd \`dirname $0\`/.. && pwd`); }
 require "$srcdir/../tests/common-test.pl";
 
@@ -21,7 +21,7 @@ sub main {
   $IND = "nested-range.ind";
   open (IND) || die "open($IND) failed: $!";
   while (<IND>) {
-    $bad = 1 if /\\\(/;
+    $bad = 77 if /\\\(/;
   }
   close (IND) || die "close($IND) failed: $!";
   
