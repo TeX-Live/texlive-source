@@ -19,21 +19,21 @@ independently.
 -----------------------------------------------
 The TL build system no longer supports pre-ANSI C compilers.  Thus all
 function prototypes and definitions must conform to the ANSI C standard
-(including `void' in the declaration of functions that take no parameters).
+(including `void' in the declaration of C functions with no parameters).
 
 1.2. Static
 -----------
-Functions used in only one file must be declared `static'; no prototype is
-required except as forward declaration.
+Functions used in only one file should be declared `static'; no prototype is
+then required except as forward declaration.
 
 1.3. Extern
 -----------
-Functions used in several files require (extern) prototypes to be provided
-by a header files.  That header must be included in the file defining the
-function and in all files using that function -- this is the only way to
-guarantee consistency between definition and use of functions.  No more
-`extern's sprinkled throughout the C code (with or without comment where
-that function is defined).
+Non-static functions, e.g., used in several files, require (extern)
+prototypes to be provided by a header files.  That header must be included
+in the file defining the function and in all files using that function --
+this is the only way to guarantee consistency between definition and use of
+functions.  No more `extern's sprinkled throughout the C code (with or
+without comment where that function is defined).
 
 1.4. Variables
 --------------
@@ -48,7 +48,7 @@ exactly one file.
 ------------------------
 Ideally, a function parameter not modified by the function should be
 declared as const.  This is important in particular for strings (`char *')
-because frequently string literals are used as actual arguments.
+because frequently the actual arguments are string literals.
 However, a `char **' value is not assignment compatible with a `const
 char **' variable.  Getting all `const's right often is quite involved but
 usually can be done.  There are, however, a few notable exceptions: the X11

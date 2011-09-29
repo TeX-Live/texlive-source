@@ -1,3 +1,7 @@
+2011-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Adapt to script_links.am using relpath.
+
 2011-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Rename ht{,context,latex,mex,tex,texi,xelatex,xetex} => ht*.sh.

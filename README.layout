@@ -28,8 +28,8 @@ also kept separately as precise documentation of our changes.
 All this should simplify upgrading of modules maintained independently
 and/or integrating new modules into the TL build system.
 
-	Layout of the TeX Live (TL) build system
-	========================================
+	Layout of the TL build system
+	=============================
 
 1. Layout of directories
 ========================
@@ -71,6 +71,7 @@ Several libraries use an (almost) unmodified source tree supplemented by a
 proxy build system (bypassing that of the source tree), e.g.,
 
 libs/zlib/zlib-1.2.5/		(almost) unmodified source tree
+libs/zlib/zlib-1.2.5-PATCHES/	modifications applied to that source tree
 libs/zlib/Makefile.am		proxy Makefile.am
 libs/zlib/configure.ac		  and configure.ac
 

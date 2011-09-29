@@ -1,9 +1,16 @@
 ## Makefile.am for the TeX Live subdirectory texk/tex4htk/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
+
+## We distribute the whole java tree.
+EXTRA_DIST = java
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DANSI -DKPATHSEA
@@ -43,7 +50,7 @@ CLEANFILES = $(nodist_bin_SCRIPTS)
 
 ## Not used
 ##
-EXTRA_DIST = \
+EXTRA_DIST += \
 	dbcontext \
 	dblatex \
 	dbmcontext \
@@ -66,7 +73,6 @@ EXTRA_DIST = \
 	estexi \
 	esxelatex \
 	esxetex \
-	java \
 	jh1context \
 	jh1latex \
 	jh1mex \
@@ -156,8 +162,4 @@ EXTRA_DIST = \
 	xhxelatex \
 	xhxetex \
 	xv4ht.java
-
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
 

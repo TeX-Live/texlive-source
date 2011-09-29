@@ -106,12 +106,12 @@ LIB_LIBS are constructed from values for the configure options
 '--with-Lib-includes' and/or '--with-Lib-libdir'; alternatively they may
 result from running pkg-config, freetype-config, or similar.
 
-As example, the file libs/libpng/ac/withenable.ac contains
+As an example, the file libs/libpng/ac/withenable.ac contains
 	KPSE_WITH_LIB([libpng], [zlib])
 where KPSE_WITH_LIB, defined in m4/kpse-setup.m4, has one required argument
 -- the name of the subdirectory -- and two optional arguments: a list of
 required TL libraries, and a list of options ('tree' if only the library
-from the TL can be used).  The file libs/libpng/ac/libpng.ac contains
+from the TL tree can be used).  The file libs/libpng/ac/libpng.ac contains
 	KPSE_TRY_LIB([libpng],
 	             [#include <png.h>],
 	             [png_structp png; png_voidp io; png_rw_ptr fn;

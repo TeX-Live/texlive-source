@@ -1,0 +1,58 @@
+#! /bin/sh
+# relpath - compute the relative path FROM -> TO
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+#
+# This file is free software; the copyright holder
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# First handle the simple case that FROM is a subdirectory of TO
+
+case $2 in
+  "$3"/*)
+    echo "X$2" | sed 's,^X'$3'/,,; s,[^/][^/]*,..,g'
+    exit 0;;
+esac
+
+# Now the more general case, mainly for distro builds
+
+err () {
+  echo "$*" >&2
+  exit 1
+}
+
+test $# = 3 || err 'relpath PREF FROM TO
+	compute the relative path FROM -> TO
+	where FROM and TO are absolute paths, and
+	prefixed with PREF are existing directories'
+
+chk () {
+  case $2 in
+    *' '* | *'/./'* | *'/../'*) err "'$2' contains ' ', '/./', or '/../'";;
+    /*) ;;
+    *) err "'$2' must be an absolute path";;
+  esac
+  test -d "$1$2" || err "'$1$2' not a directory"
+  # Normalize, remove leading and trailing /
+  res=`echo $2 | sed 's,^//*,,; s,//*$,,; s,///*,/,g'`
+}
+
+chk "$1" "$2"; from=$res
+chk "$1" "$3"; to=$res
+
+test "/$from" = "/$to" && { echo "."; exit 0; }
+
+# Remove common prefix
+while test "/$to" != "/"; do
+  test "/$from" = "/" && { echo "$to"; exit 0; }
+  test `echo $from | sed 's,/.*,,'` = `echo $to | sed 's,/.*,,'` || break
+  from=`echo $from | sed 's,[^/]*/*,,'`
+  to=`echo $to | sed 's,[^/]*/*,,'`
+done
+
+from=`echo $from | sed 's,[^/][^/]*,..,g'`
+test "/$to" = "/" || from="$from/$to"
+
+echo "$from"
+exit 0

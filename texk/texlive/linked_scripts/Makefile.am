@@ -11,8 +11,12 @@ if MAINTAINER_MODE
 all-local: scripts.tmp
 scripts.tmp: Makefile
 	echo "Create $@"
-	@echo "texmf_scripts='$(nobase_dist_texmf_scripts_SCRIPTS)'" >$@
-	@echo "texmf_dist_scripts='$(nobase_dist_texmf_dist_scripts_SCRIPTS)'" >>$@
+	@echo "texmf_scripts='" >$@
+	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
+	@echo "'" >>$@
+	@echo "texmf_dist_scripts='" >>$@
+	@for f in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do echo "$$f"; done >>$@
+	@echo "'" >>$@
 	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
 else !MAINTAINER_MODE
 all-local:
@@ -152,8 +156,10 @@ bin_links = \
 # written the auto-update to ensure linked_scripts is actually up to date
 # with the masters in Master/texmf*/scripts, but one day.
 #
-# We support both multiplatform and non-multiplatform builds.
+# We support native builds, multiplatform or not, as well as distro builds.
 #
+EXTRA_DIST += ../../../build-aux/relpath
+relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 install-data-hook:
 if WIN32
@@ -168,33 +174,28 @@ if WIN32
 	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$link.exe || exit 1; \
 	done
 else !WIN32
-	case "$(bindir)" in \
-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
-	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-	     exit 1;; \
-	esac
-endif !WIN32
-
 ## Name the link as the basename, removing any extension,
 ## except for listings-ext.sh, which is documented as that name.
 ## Downcase for the sake of TeXcount.pl -> texcount.
-.PHONY: install-links
-install-links:
-	@cd $(DESTDIR)$(bindir) && \
+	@REL=`$(relpath) '$(DESTDIR)' '$(bindir)' '$(prefix)'`; \
+	if test -z "$$REL"; then \
+	  echo 'unable to compute relative path for linked scripts' >&2; \
+	  exit 1; \
+	fi; \
+	cd $(DESTDIR)$(bindir) && \
 	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	    rm -f $$target; \
-	    echo "creating link '$$target' -> '$(REL)/texmf/scripts/$$s'"; \
-	    $(LN_S) $(REL)/texmf/scripts/$$s $$target || exit 1; \
+	    echo "creating link '$$target' -> '$$REL/texmf/scripts/$$s'"; \
+	    $(LN_S) $$REL/texmf/scripts/$$s $$target || exit 1; \
 	  done && \
 	  for s in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
 	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	    echo "$$s" | grep listings-ext.sh >/dev/null \
 	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 	    rm -f $$target; \
-	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
-	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target || exit 1; \
+	    echo "creating link '$$target' -> '$$REL/texmf-dist/scripts/$$s'"; \
+	    $(LN_S) $$REL/texmf-dist/scripts/$$s $$target || exit 1; \
 	  done && \
 	  for s in $(bin_links); do \
 	    link=`echo $$s | sed 's,.*:,,'`; \
@@ -204,11 +205,15 @@ install-links:
 	    $(LN_S) $$file $$link || exit 1; \
 	  done && \
 	  rm -f man && \
-	  if test -d $(REL)/texmf/doc/man; then \
-	    echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
-	    (ln -s $(REL)/texmf/doc/man man || :); \
+	  if test -d $$REL/texmf/doc/man; then \
+	    echo "creating link 'man' -> '$$REL/texmf/doc/man'" && \
+	    (ln -s $$REL/texmf/doc/man man || :); \
 	  else :; fi
 ## man dir link for those mans which can use it.
+endif !WIN32
+
+.PHONY: install-links
+install-links:
 
 ## For WIN32 (MinGW or native) we have wrapper binaries with .exe,
 ## for Cygwin and Unix we have symlinks without .exe.

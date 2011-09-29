@@ -159,7 +159,28 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 DISTCLEANFILES = scripts.tmp
-EXTRA_DIST = scripts.lst
+
+# The idea is to install the scripts themselves in texmf*/scripts, and
+# have bin/arch/foo be a symlink to, say,
+# ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk
+# space, but much more importantly omit duplication, and most
+# importantly of all make it possible to invoke the same Perl script on
+# Windows (see ../w32_wrapper).
+#
+# The installation into texmf*/scripts is ideally done with ctan2tl.
+# The copy of the wrapper for Windows is done by hand, but (todo)
+# could/should also be done by ctan2tl.  The check-wrapper-consistency
+# script at least checks after the fact for problems.
+#
+# We also keep a copy of all the scripts here and install into the runtime.
+# This is purely for other distro builders, so symlinks are not dangling in
+# the inst/bin dir (it is meaningless in native TL).  We have not yet
+# written the auto-update to ensure linked_scripts is actually up to date
+# with the masters in Master/texmf*/scripts, but one day.
+#
+# We support native builds, multiplatform or not, as well as distro builds.
+#
+EXTRA_DIST = scripts.lst ../../../build-aux/relpath
 bin_SCRIPTS = 
 
 # Copies of these scripts exist here for the sake of avoiding
@@ -274,27 +295,7 @@ bin_links = \
 	epstopdf:repstopdf \
 	pdfcrop:rpdfcrop
 
-
-# The idea is to install the scripts themselves in texmf*/scripts, and
-# have bin/arch/foo be a symlink to, say,
-# ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk
-# space, but much more importantly omit duplication, and most
-# importantly of all make it possible to invoke the same Perl script on
-# Windows (see ../w32_wrapper).
-#
-# The installation into texmf*/scripts is ideally done with ctan2tl.
-# The copy of the wrapper for Windows is done by hand, but (todo)
-# could/should also be done by ctan2tl.  The check-wrapper-consistency
-# script at least checks after the fact for problems.
-#
-# We also keep a copy of all the scripts here and install into the runtime.
-# This is purely for other distro builders, so symlinks are not dangling in
-# the inst/bin dir (it is meaningless in native TL).  We have not yet
-# written the auto-update to ensure linked_scripts is actually up to date
-# with the masters in Master/texmf*/scripts, but one day.
-#
-# We support both multiplatform and non-multiplatform builds.
-#
+relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
 all: all-am
@@ -608,8 +609,12 @@ uninstall-am: uninstall-binSCRIPTS \
 @MAINTAINER_MODE_TRUE@all-local: scripts.tmp
 @MAINTAINER_MODE_TRUE@scripts.tmp: Makefile
 @MAINTAINER_MODE_TRUE@	echo "Create $@"
-@MAINTAINER_MODE_TRUE@	@echo "texmf_scripts='$(nobase_dist_texmf_scripts_SCRIPTS)'" >$@
-@MAINTAINER_MODE_TRUE@	@echo "texmf_dist_scripts='$(nobase_dist_texmf_dist_scripts_SCRIPTS)'" >>$@
+@MAINTAINER_MODE_TRUE@	@echo "texmf_scripts='" >$@
+@MAINTAINER_MODE_TRUE@	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
+@MAINTAINER_MODE_TRUE@	@echo "'" >>$@
+@MAINTAINER_MODE_TRUE@	@echo "texmf_dist_scripts='" >>$@
+@MAINTAINER_MODE_TRUE@	@for f in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do echo "$$f"; done >>$@
+@MAINTAINER_MODE_TRUE@	@echo "'" >>$@
 @MAINTAINER_MODE_TRUE@	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
 @MAINTAINER_MODE_FALSE@all-local:
 install-data-hook:
@@ -623,42 +628,41 @@ install-data-hook:
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$link.exe'"; \
 @WIN32_TRUE@	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$link.exe || exit 1; \
 @WIN32_TRUE@	done
-@WIN32_FALSE@	case "$(bindir)" in \
-@WIN32_FALSE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-@WIN32_FALSE@	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
-@WIN32_FALSE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
-@WIN32_FALSE@	     exit 1;; \
-@WIN32_FALSE@	esac
+@WIN32_FALSE@	@REL=`$(relpath) '$(DESTDIR)' '$(bindir)' '$(prefix)'`; \
+@WIN32_FALSE@	if test -z "$$REL"; then \
+@WIN32_FALSE@	  echo 'unable to compute relative path for linked scripts' >&2; \
+@WIN32_FALSE@	  exit 1; \
+@WIN32_FALSE@	fi; \
+@WIN32_FALSE@	cd $(DESTDIR)$(bindir) && \
+@WIN32_FALSE@	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
+@WIN32_FALSE@	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
+@WIN32_FALSE@	    rm -f $$target; \
+@WIN32_FALSE@	    echo "creating link '$$target' -> '$$REL/texmf/scripts/$$s'"; \
+@WIN32_FALSE@	    $(LN_S) $$REL/texmf/scripts/$$s $$target || exit 1; \
+@WIN32_FALSE@	  done && \
+@WIN32_FALSE@	  for s in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
+@WIN32_FALSE@	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
+@WIN32_FALSE@	    echo "$$s" | grep listings-ext.sh >/dev/null \
+@WIN32_FALSE@	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
+@WIN32_FALSE@	    rm -f $$target; \
+@WIN32_FALSE@	    echo "creating link '$$target' -> '$$REL/texmf-dist/scripts/$$s'"; \
+@WIN32_FALSE@	    $(LN_S) $$REL/texmf-dist/scripts/$$s $$target || exit 1; \
+@WIN32_FALSE@	  done && \
+@WIN32_FALSE@	  for s in $(bin_links); do \
+@WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
+@WIN32_FALSE@	    file=`echo $$s | sed 's,:.*,,'`; \
+@WIN32_FALSE@	    rm -f $$link; \
+@WIN32_FALSE@	    echo "creating link '$$link' -> '$$file'"; \
+@WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
+@WIN32_FALSE@	  done && \
+@WIN32_FALSE@	  rm -f man && \
+@WIN32_FALSE@	  if test -d $$REL/texmf/doc/man; then \
+@WIN32_FALSE@	    echo "creating link 'man' -> '$$REL/texmf/doc/man'" && \
+@WIN32_FALSE@	    (ln -s $$REL/texmf/doc/man man || :); \
+@WIN32_FALSE@	  else :; fi
 
 .PHONY: install-links
 install-links:
-	@cd $(DESTDIR)$(bindir) && \
-	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
-	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-	    rm -f $$target; \
-	    echo "creating link '$$target' -> '$(REL)/texmf/scripts/$$s'"; \
-	    $(LN_S) $(REL)/texmf/scripts/$$s $$target || exit 1; \
-	  done && \
-	  for s in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
-	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
-	    echo "$$s" | grep listings-ext.sh >/dev/null \
-	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
-	    rm -f $$target; \
-	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
-	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target || exit 1; \
-	  done && \
-	  for s in $(bin_links); do \
-	    link=`echo $$s | sed 's,.*:,,'`; \
-	    file=`echo $$s | sed 's,:.*,,'`; \
-	    rm -f $$link; \
-	    echo "creating link '$$link' -> '$$file'"; \
-	    $(LN_S) $$file $$link || exit 1; \
-	  done && \
-	  rm -f man && \
-	  if test -d $(REL)/texmf/doc/man; then \
-	    echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
-	    (ln -s $(REL)/texmf/doc/man man || :); \
-	  else :; fi
 
 uninstall-hook:
 	@for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \

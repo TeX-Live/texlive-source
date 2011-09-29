@@ -1,4 +1,4 @@
-## texk/am/perl_links.am: Makefile fragment for perl script links.
+## texk/am/script_links.am: Makefile fragment for lua/perl/shell script links.
 ##
 ## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
@@ -9,8 +9,8 @@
 ##
 ## requires conditionals WIN32 and WIN32_WRAP
 ## requires $(scriptsdir): e.g., texmf/scripts/chktex
-## appends to $(nodist_bin_SCRIPTS)
-#
+## appends to $(nodist_bin_SCRIPTS) and $(EXTRA_DIST)
+##
 ## install-lua-scripts requires $(lua_scripts), e.g., musixflx
 ## install-perl-scripts requires $(perl_scripts), e.g., deweb
 ## install-shell-scripts requires $(shell_scripts), e.g. htlatex
@@ -18,7 +18,7 @@
 ## shell_scripts are somewhat special because win32 needs
 ## additional .bat scripts or similar
 .PHONY: install-lua-links install-perl-links install-shell-links \
-	install-links make-links uninstall-links
+	install-links uninstall-links
 
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 
@@ -48,21 +48,20 @@ if !WIN32
 	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
 endif !WIN32
 
-# We support both multiplatform and non-multiplatform builds.
-install-links:
-	case "$(bindir)" in \
-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
-	  *) echo "strange directory '$(bindir)' for linked $(TYPE) scripts" >&2; \
-	     exit 1;; \
-	esac
+EXTRA_DIST += ../../build-aux/relpath
 
-make-links:
-	@cd $(DESTDIR)$(bindir) && \
+# We support native builds, multiplatform or not, as well as distro builds.
+install-links:
+	@REL=`$(SHELL) $(srcdir)/../../build-aux/relpath '$(DESTDIR)' '$(bindir)' '$(prefix)'`; \
+	if test -z "$$REL"; then \
+	  echo 'unable to compute relative path for linked $(TYPE) scripts' >&2; \
+	  exit 1; \
+	fi; \
+	cd $(DESTDIR)$(bindir) && \
 	  for f in $($(TYPE)_scripts); do \
 	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.$(EXT)'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
+	    echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
 	  done  
 
 uninstall-links:

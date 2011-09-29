@@ -1,3 +1,9 @@
+2011-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ../build-aux/relpath: New shell script to compute relative
+	path for linked scripts.
+	* am/script_links.am: Use relpath, mainly for distros.
+
 2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/bin_links.am: New Makefile fragment for symlinks within
