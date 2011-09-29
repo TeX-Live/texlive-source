@@ -5,6 +5,8 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+EXTRA_DIST =
+
 perl_scripts = \
 	updmap
 
@@ -97,7 +99,7 @@ install-data-hook: install-perl-links install-shell-links install-man1-links
 
 uninstall-hook: uninstall-bin-links uninstall-links uninstall-man1-links
 
-EXTRA_DIST = \
+EXTRA_DIST += \
 	README.texdoctk
 
 ## Not used
@@ -106,10 +108,13 @@ EXTRA_DIST += \
 	old-fontinst.bat \
 	old-updmap
 
-## 
+## Tests
+##
 TESTS = tests/updmap-cmdline-test.pl
+EXTRA_DIST += $(TESTS)
 
 ## 
+.PHONY: run-texlinks
 ## This target is invoked by the top-level make,
 ## to create the per-format engine symlinks in $(bindir),
 ## after everything else is installed.  We explicitly specify the
@@ -120,4 +125,7 @@ run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 run-texlinks:
+if !WIN32
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
+endif !WIN32
+

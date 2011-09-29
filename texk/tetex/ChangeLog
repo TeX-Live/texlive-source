@@ -1,3 +1,8 @@
+2011-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Adapt to script_links.am using relpath.
+	(run-texlinks): Declare as .PHONY; skip texlinks for WIN32.
+
 2011-09-09  Karl Berry  <karl@tug.org>
 
 	* tests: new subdir, with first updmap test, that doesn't really

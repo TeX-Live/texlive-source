@@ -127,7 +127,7 @@ Display the list of Frequently Asked Questions about
 .B teTeX
 (and their answers).
 .TP
-.B font vardir DIR, font ro, font ro
+.B font vardir DIR, font ro, font rw
 .TP
 .B formats
 This command allows to edit

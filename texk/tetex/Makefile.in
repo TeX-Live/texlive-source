@@ -194,6 +194,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
+EXTRA_DIST = ../../build-aux/relpath README.texdoctk old-fontinst.bat \
+	old-updmap $(TESTS)
 perl_scripts = \
 	updmap
 
@@ -269,7 +271,6 @@ man1_links = $(bin_links) \
 	texconfig:texconfig-sys \
 	updmap:updmap-sys
 
-EXTRA_DIST = README.texdoctk old-fontinst.bat old-updmap
 TESTS = tests/updmap-cmdline-test.pl
 run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
@@ -952,10 +953,8 @@ uninstall-man: uninstall-man1 uninstall-man5
 	uninstall-dist_web2cDATA uninstall-hook uninstall-man \
 	uninstall-man1 uninstall-man5 uninstall-nodist_binSCRIPTS
 
-
-#
 .PHONY: install-lua-links install-perl-links install-shell-links \
-	install-links make-links uninstall-links
+	install-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
 
@@ -968,21 +967,18 @@ install-perl-links:
 install-shell-links:
 @WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
 
-# We support both multiplatform and non-multiplatform builds.
+# We support native builds, multiplatform or not, as well as distro builds.
 install-links:
-	case "$(bindir)" in \
-	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
-	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. TYPE=$(TYPE) EXT=$(EXT) make-links;; \
-	  *) echo "strange directory '$(bindir)' for linked $(TYPE) scripts" >&2; \
-	     exit 1;; \
-	esac
-
-make-links:
-	@cd $(DESTDIR)$(bindir) && \
+	@REL=`$(SHELL) $(srcdir)/../../build-aux/relpath '$(DESTDIR)' '$(bindir)' '$(prefix)'`; \
+	if test -z "$$REL"; then \
+	  echo 'unable to compute relative path for linked $(TYPE) scripts' >&2; \
+	  exit 1; \
+	fi; \
+	cd $(DESTDIR)$(bindir) && \
 	  for f in $($(TYPE)_scripts); do \
 	    rm -f $$f; \
-	    echo "creating link '$$f' -> '$(REL)/$(scriptsdir)/$$f.$(EXT)'"; \
-	    $(LN_S) $(REL)/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
+	    echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
 	  done  
 
 uninstall-links:
@@ -1030,8 +1026,10 @@ install-exec-hook: install-bin-links
 install-data-hook: install-perl-links install-shell-links install-man1-links
 
 uninstall-hook: uninstall-bin-links uninstall-links uninstall-man1-links
+
+.PHONY: run-texlinks
 run-texlinks:
-	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
+@WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
