@@ -1,3 +1,13 @@
+2011-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvidvi.test: New shell script for tests.
+	* tests/{play.dvi,playout.2}: Test input and expected output.
+	* Makefile.am: Add the test and its data.
+
+2011-09-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvidvi.c (writedvifile): Write newline at end of stdout.
+
 2011-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvidvi.c (writepreamble): Cast string literal to 'unsigned

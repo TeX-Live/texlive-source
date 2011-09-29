@@ -1213,6 +1213,11 @@ static void writedvifile(void) {
       if (beginp != 1) endpage() ;
    }
    writepostamble() ;
+   if (! quiet) {
+      (void)fprintf(stderr, "\n") ;
+      (void)fflush(stderr) ;
+      prettycolumn = 0 ;
+   }
 }
 int main(int argc, char *argv[])
 {
