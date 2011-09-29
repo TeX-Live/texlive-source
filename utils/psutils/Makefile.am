@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/psutils/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -124,4 +124,15 @@ MAKETEXT = $(PERL) $(srcdir)/$(PSUTILS_TREE)/maketext
 
 %.1: $(PSUTILS_TREE)/%.man patchlev.h
 	$(MAKETEXT) PAPER=$(PAPER) "MAN=$(nodist_man1_MANS)" $< >$@
+
+## Tests
+##
+TESTS = psutils.test
+EXTRA_DIST += $(TESTS)
+
+## psutils.test
+EXTRA_DIST += tests/play.ps tests/playbook.2 tests/playnup.2 tests/playps.2 \
+	tests/playres.2 tests/playsel.2 \
+	tests/plot.eps tests/ploth.eps tests/plotm.eps tests/plotv.eps
+DISTCLEANFILES = play*.2 play*.ps plot*.eps
 

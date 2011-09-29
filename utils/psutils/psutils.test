@@ -1,0 +1,56 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -rf play*
+./psselect 5:15 $srcdir/tests/play.ps playsel.ps \
+	2>playsel.2 \
+	&& diff playsel.2 $srcdir/tests/playsel.2 \
+	|| exit 1
+
+echo psselect tests OK
+
+./psbook -s4 playsel.ps playbook.ps \
+	2>playbook.2 \
+	&& diff playbook.2 $srcdir/tests/playbook.2 \
+	|| exit 1
+
+echo psbook tests OK
+
+./psresize -Pa4 -pa5 playsel.ps playres.ps \
+	2>playres.2 \
+	&& diff playres.2 $srcdir/tests/playres.2 \
+	|| exit 1
+
+echo psresize tests OK
+
+./psnup -2 playsel.ps playnup.ps \
+	2>playnup.2 \
+	&& diff playnup.2 $srcdir/tests/playnup.2 \
+	|| exit 1
+
+echo psnup tests OK
+
+./pstops '2:0L@.7(21cm,0)+1L@.7(21cm,14.85cm)' playsel.ps playps.ps \
+	2>playps.2 \
+	&& diff playps.2 $srcdir/tests/playps.2 \
+	|| exit 1
+
+echo pstops tests OK
+
+rm -rf plot*
+./epsffit -c 0 0 600 368 $srcdir/tests/plot.eps ploth.eps \
+	&& diff ploth.eps $srcdir/tests/ploth.eps \
+	|| exit 1
+
+./epsffit -c 0 0 500 400 $srcdir/tests/plot.eps plotv.eps \
+	&& diff plotv.eps $srcdir/tests/plotv.eps \
+	|| exit 1
+
+./epsffit -m 0 0 368 500 $srcdir/tests/plot.eps plotm.eps \
+	&& diff plotm.eps $srcdir/tests/plotm.eps \
+	|| exit 1
+
+echo epsffit tests OK
+

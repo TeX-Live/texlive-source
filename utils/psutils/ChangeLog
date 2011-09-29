@@ -1,3 +1,10 @@
+2011-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* psutils.test: New shell script for tests.
+	* tests/play.ps tests/play{book,nup,ps,res,sel}.2
+	tests/plot{,h,m,v}.eps: Test input and expected output.
+	* Makefile.am: Add the test and its data.
+
 2011-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Handle sh scripts (without .sh) as bin_SCRIPTS.

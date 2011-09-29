@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
    if ( infile == stdin ) {
       int fd = fileno(stdin) ;
       if ( setmode(fd, O_BINARY) < 0 )
-         message(FATAL, "can't open input file %s\n", argv[4]);
+         message(FATAL, "can't reset stdin to binary mode\n");
     }
    if ( outfile == stdout ) {
       int fd = fileno(stdout) ;
