@@ -1,3 +1,9 @@
+2011-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bbox.test: New shell script testing bbox.
+	* tests/plot.{pnm,out}: Test input and expected output.
+	* Makefile.am: Add the test and its data.
+
 2011-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the ../../texk/am/script_links.am fragment.

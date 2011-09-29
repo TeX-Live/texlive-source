@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/ps2eps/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -38,4 +38,13 @@ install-data-hook: install-perl-links
 uninstall-hook: uninstall-links
 
 CLEANFILES = $(nodist_bin_SCRIPTS)
+
+## Tests
+##
+TESTS = bbox.test
+EXTRA_DIST += $(TESTS)
+
+## bbox.test
+EXTRA_DIST += tests/plot.pbm tests/plot.out
+DISTCLEANFILES = plot.out
 

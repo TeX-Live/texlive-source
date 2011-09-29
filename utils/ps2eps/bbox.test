@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+./bbox -r 20 $srcdir/tests/plot.pbm >plot.out \
+	&& diff plot.out $srcdir/tests/plot.out \
+	|| exit 1
+
