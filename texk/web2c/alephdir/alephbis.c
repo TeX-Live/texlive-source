@@ -48,7 +48,7 @@ runexternalocp (string external_ocp_name)
   unsigned c;
   int c_in;
 #ifdef WIN32
-  char *tempenv;
+  const char *tempenv;
 
 #define null_string(s) ((s == NULL) || (*s == '\0'))
 

@@ -1,3 +1,7 @@
+2011-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* alephbis.c (runexternalocp): Declare tempenv as const.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.
