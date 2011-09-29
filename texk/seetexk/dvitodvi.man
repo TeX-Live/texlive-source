@@ -82,9 +82,9 @@ If the optional minus sign is specified, the page is relative to the end of
 the document, instead of the start.
 
 If page \fIspec\fRs are separated by
-.B \+
+.B +
 the pages will be merged into one page; if they are separated by
-.B \,
+.B ,
 they will be on separate pages.
 If there is only one page specification, with
 .I pageno

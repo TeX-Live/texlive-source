@@ -94,6 +94,8 @@ long	CurrentPosition;	/* The current position of the file */
 
 int	UseThisPage;		/* true => current page is selected */
 
+int	WritingPage;		/* true while writing a page */
+
 i32	InputPageNumber;	/* current absolute page in old DVI file */
 int	NumberOfOutputPages;	/* number of pages in new DVI file */
 
@@ -422,6 +424,7 @@ BeginPage(int really)
 		}
 		message(1, msg, mlen);
 	}
+	WritingPage = 1;
 }
 
 /*
@@ -440,6 +443,7 @@ EndPage(int really)
 		error(1, -1, writeerr);
 	CurrentPosition++;
 	NumberOfOutputPages++;
+	WritingPage = 0;
 }
 
 /*
@@ -699,6 +703,8 @@ Usage: %s [-q] [-i infile] [-o outfile] [-w width] [-h height] <pagespecs> [infi
 	PageSpecs = ParseSpecs(specstring, 1);
 
 	HandleDVIFile();
+	if (WritingPage)
+	   EndPage(1);
 	HandlePostAmble();
 	if (!SFlag)
 		(void) fprintf(stderr, "\nWrote %d page%s, %ld bytes\n",

@@ -506,7 +506,9 @@ Usage: %s [-s] [-i infile] [-o outfile] pages [...] [infile [outfile]]\n",
 	while (optind < argc) {
 		s = argv[optind++];
 		c = *s;
-		if ((!isalpha(c) && c != '/') ||
+		if (!(isalpha(c) || 
+		      c == '/' ||
+		      (c == '.' && (s[1] == '/' || (s[1] == '.' && s[2] == '/')))) ||
 		    ((c == 'e' || c == 'o') && evenodd(s))) {
 			if (ParsePages(s))
 				goto usage;
