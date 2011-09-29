@@ -522,6 +522,14 @@ runpopen (char *cmd, const char *mode)
   char *cmdname = NULL;
   int allow;
 
+#ifdef WIN32
+  char *pp;
+
+  for (pp = cmd; *pp; pp++) {
+    if (*pp == '\'') *pp = '"';
+  }
+#endif
+
   /* If restrictedshell == 0, any command is allowed. */
   if (restrictedshell == 0)
     allow = 1;
@@ -933,23 +941,35 @@ what the fcntl? cannot implement IPC without equivalent for O_NONBLOCK.
 #endif /* no O_NONBLOCK */
 #endif /* !WIN32 */
 
-#ifndef IPC_PIPE_NAME /* $HOME is prepended to this.  */
-#define IPC_PIPE_NAME "/.TeXview_Pipe"
+#ifdef WIN32
+# define IPC_AF AF_INET
+# ifndef IPC_LOCAL_HOST
+#  define IPC_LOCAL_HOST "127.0.0.1"
+#  define FIXED_PORT     (unsigned short)4242
+# endif
+#else
+# define IPC_AF AF_UNIX
+# ifndef IPC_PIPE_NAME /* $HOME is prepended to this.  */
+#  define IPC_PIPE_NAME "/.TeXview_Pipe"
+# endif
 #endif
 #ifndef IPC_SERVER_CMD /* Command to run to start the server.  */
-#define IPC_SERVER_CMD "open `which TeXview`"
+# ifdef WIN32
+#  define IPC_SERVER_CMD "texview.exe"
+# else
+#  define IPC_SERVER_CMD "open `which TeXview`"
+# endif
 #endif
 
 struct msg
 {
-  short namelength; /* length of auxiliary data */
-  int eof;   /* new eof for dvi file */
+  int   namelength; /* length of auxiliary data */
+  int   eof;        /* new eof for dvi file */
 #if 0  /* see usage of struct msg below */
   char more_data[0]; /* where the rest of the stuff goes */ 
 #endif
 };
 
-static char *ipc_name;
 static struct sockaddr *ipc_addr;
 static int ipc_addr_len;
 
@@ -957,8 +977,20 @@ static int
 ipc_make_name (void)
 {
   if (ipc_addr_len == 0) {
+#ifdef WIN32
+    unsigned long remote_addr = inet_addr(IPC_LOCAL_HOST);
+    if (remote_addr != INADDR_NONE) {
+      struct sockaddr_in *ipc_sin_addr = xmalloc (sizeof (struct sockaddr_in));
+      ipc_sin_addr->sin_family = AF_INET;
+      ipc_sin_addr->sin_addr.s_addr = remote_addr;
+      ipc_sin_addr->sin_port = htons (FIXED_PORT);
+      ipc_addr = ((struct sockaddr *) ipc_sin_addr);
+      ipc_addr_len = sizeof(struct sockaddr_in);
+    }
+#else
     string s = getenv ("HOME");
     if (s) {
+      char *ipc_name;
       ipc_addr = xmalloc (strlen (s) + 40);
       ipc_addr->sa_family = 0;
       ipc_name = ipc_addr->sa_data;
@@ -966,46 +998,82 @@ ipc_make_name (void)
       strcat (ipc_name, IPC_PIPE_NAME);
       ipc_addr_len = strlen (ipc_name) + 3;
     }
+#endif
   }
   return ipc_addr_len;
 }
 
-static int sock = -1;
+#ifndef INVALID_SOCKET
+# define INVALID_SOCKET (-1)
+#endif
+static int sock = INVALID_SOCKET;
+
+#ifdef WIN32
+# define CLOSE_SOCKET(s) closesocket (s); WSACleanup ()
+#else
+# define CLOSE_SOCKET(s) close (s)
+#endif
 
 static int
 ipc_is_open (void)
 {
-   return sock >= 0;
+   return sock != INVALID_SOCKET;
 }
 
 static void
 ipc_open_out (void) {
 #ifdef WIN32
-  u_long mode = 1;
+  struct WSAData wsaData;
+  int nCode;
+#if 0
+  unsigned long sockcntl = 1024;
+#else
+  unsigned long mode = 1;
+#endif
 #endif
 #ifdef IPC_DEBUG
   fputs ("tex: Opening socket for IPC output ...\n", stderr);
 #endif
-  if (sock >= 0) {
+  if (sock != INVALID_SOCKET) {
     return;
   }
 
-  if (ipc_make_name () < 0) {
-    sock = -1;
+#ifdef WIN32
+  if ((nCode = WSAStartup(MAKEWORD(1, 1), &wsaData)) != 0) {
+    fprintf(stderr,"WSAStartup() returned error code %d.\n", nCode);
     return;
   }
+#endif
 
-  sock = socket (PF_UNIX, SOCK_STREAM, 0);
-  if (sock >= 0) {
+  if (ipc_make_name () <= 0)
+    return;
+
+  sock = socket (IPC_AF, SOCK_STREAM, 0);
+#ifdef IPC_DEBUG
+  if(sock != INVALID_SOCKET)
+    fprintf(stderr, "tex: Socket handle is %d\n", sock);
+  else
+    fprintf(stderr, "tex: Socket is invalid.\n");
+#endif
+
+  if (sock != INVALID_SOCKET) {
     if (connect (sock, ipc_addr, ipc_addr_len) != 0 ||
 #ifdef WIN32
+#if 0
+        ioctlsocket (sock, O_NONBLOCK, &sockcntl) != 0
+#else
         ioctlsocket (sock, FIONBIO, &mode) < 0
+#endif
 #else
         fcntl (sock, F_SETFL, O_NONBLOCK) < 0
 #endif
         ) {
-      close (sock);
-      sock = -1;
+      CLOSE_SOCKET (sock);
+      sock = INVALID_SOCKET;
+#ifdef IPC_DEBUG
+      fputs ("tex: IPC socket cannot be connected.\n", stderr);
+      fputs ("tex: Socket is closed.\n", stderr);
+#endif
       return;
     }
 #ifdef IPC_DEBUG
@@ -1021,11 +1089,10 @@ ipc_close_out (void)
   fputs ("tex: Closing output socket ...\n", stderr);
 #endif
   if (ipc_is_open ()) {
-    close (sock);
-    sock = -1;
+    CLOSE_SOCKET (sock);
+    sock = INVALID_SOCKET;
   }
 }
-
 
 static void
 ipc_snd (int n, int is_eof, char *data)
@@ -1050,6 +1117,7 @@ ipc_snd (int n, int is_eof, char *data)
   }
   n += sizeof (struct msg);
 #ifdef IPC_DEBUG
+  fprintf(stderr, "%d\t%d\n", ourmsg.msg.namelength, ourmsg.msg.eof);
   fputs ("tex: Writing to socket...\n", stderr);
 #endif
   if (write (sock, &ourmsg, n) != n) {
