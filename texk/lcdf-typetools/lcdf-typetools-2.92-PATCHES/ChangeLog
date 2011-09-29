@@ -1,3 +1,12 @@
+2011-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-const (new): Avoid cast from const to non-const.
+
+2011-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid pkgdata_DATA in order not to install an
+	empty $(pkgdatadir).
+
 2011-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import lcdf-typetools-2.92.

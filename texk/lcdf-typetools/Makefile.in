@@ -98,9 +98,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(encdir)" "$(DESTDIR)$(glyphlistdir)" \
-	"$(DESTDIR)$(pkgdatadir)"
-DATA = $(enc_DATA) $(glyphlist_DATA) $(pkgdata_DATA)
+am__installdirs = "$(DESTDIR)$(encdir)" "$(DESTDIR)$(glyphlistdir)"
+DATA = $(enc_DATA) $(glyphlist_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -278,11 +277,12 @@ DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
 SUBDIRS = . liblcdf libefont @SELECTED_SUBDIRS@
 DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 DISTCLEANFILES = config.force
+@texlive_build_FALSE@glyphlistdir = $(pkgdatadir)
 @texlive_build_TRUE@glyphlistdir = ${prefix}/texmf-dist/fonts/map/glyphlist
-@texlive_build_TRUE@glyphlist_DATA = glyphlist.txt texglyphlist.txt
+@texlive_build_FALSE@encdir = $(pkgdatadir)
 @texlive_build_TRUE@encdir = ${prefix}/texmf-dist/fonts/enc/dvips/base
-@texlive_build_TRUE@enc_DATA = 7t.enc
-@texlive_build_FALSE@pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
+glyphlist_DATA = glyphlist.txt texglyphlist.txt
+enc_DATA = 7t.enc
 EXTRA_DIST = ONEWS lcdf-typetools.spec include/config.h \
 	include/lcdf/bezier.hh include/lcdf/clp.h \
 	include/lcdf/error.hh include/lcdf/filename.hh \
@@ -416,26 +416,6 @@ uninstall-glyphlistDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(glyphlistdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(glyphlistdir)" && rm -f $$files
-install-pkgdataDATA: $(pkgdata_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
-	@list='$(pkgdata_DATA)'; test -n "$(pkgdatadir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pkgdatadir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pkgdatadir)" || exit $$?; \
-	done
-
-uninstall-pkgdataDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(pkgdata_DATA)'; test -n "$(pkgdatadir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(pkgdatadir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(pkgdatadir)" && rm -f $$files
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -761,7 +741,7 @@ check: check-recursive
 all-am: Makefile $(DATA) autoconf.h all-local
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(encdir)" "$(DESTDIR)$(glyphlistdir)" "$(DESTDIR)$(pkgdatadir)"; do \
+	for dir in "$(DESTDIR)$(encdir)" "$(DESTDIR)$(glyphlistdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -812,8 +792,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-encDATA install-glyphlistDATA \
-	install-pkgdataDATA
+install-data-am: install-encDATA install-glyphlistDATA
 
 install-dvi: install-dvi-recursive
 
@@ -859,8 +838,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-encDATA uninstall-glyphlistDATA \
-	uninstall-pkgdataDATA
+uninstall-am: uninstall-encDATA uninstall-glyphlistDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all \
 	ctags-recursive install-am install-strip tags-recursive
@@ -877,13 +855,12 @@ uninstall-am: uninstall-encDATA uninstall-glyphlistDATA \
 	install-encDATA install-exec install-exec-am \
 	install-glyphlistDATA install-html install-html-am \
 	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-pkgdataDATA install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags tags-recursive uninstall uninstall-am \
-	uninstall-encDATA uninstall-glyphlistDATA \
-	uninstall-pkgdataDATA
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am uninstall-encDATA \
+	uninstall-glyphlistDATA
 
 
 all-local: config.force

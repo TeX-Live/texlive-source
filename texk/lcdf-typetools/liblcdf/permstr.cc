@@ -110,8 +110,8 @@ static int scatter[] = {        /* map characters to random values */
 void
 PermString::initialize(const char* s, int length)
 {
-    register unsigned char* m = (unsigned char*) s;
-    register unsigned char* mm;
+    register const unsigned char* m = (const unsigned char*) s;
+    register const unsigned char* mm;
 
     if (length < 0)
 	length = (s ? strlen(s) : 0);

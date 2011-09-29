@@ -15,18 +15,15 @@ config.force: $(KPATHSEA_DEPEND)
 DISTCLEANFILES = config.force
 
 if texlive_build
-
 glyphlistdir = ${prefix}/texmf-dist/fonts/map/glyphlist
-glyphlist_DATA = glyphlist.txt texglyphlist.txt
-
 encdir = ${prefix}/texmf-dist/fonts/enc/dvips/base
-enc_DATA = 7t.enc
-
 else !texlive_build
-
-pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
-
+glyphlistdir = $(pkgdatadir)
+encdir = $(pkgdatadir)
 endif !texlive_build
+
+glyphlist_DATA = glyphlist.txt texglyphlist.txt
+enc_DATA = 7t.enc
 
 EXTRA_DIST = \
 	ONEWS \
