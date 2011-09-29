@@ -1,3 +1,9 @@
+2011-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* t1utils.test: New shell script for tests.
+	* tests/Symbol.{pfa,pfb,raw}: Test input and expected output.
+	* Makefile.am: Add the test and its data.
+
 2011-07-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import t1utils-1.37.

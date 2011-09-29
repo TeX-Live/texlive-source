@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/t1utils/
 ##
-## Copyright (C) 2008, 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2008-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -70,4 +70,13 @@ t1mac_SOURCES = \
 	$(T1UTILS_TREE)/t1mac.c
 
 LDADD = @LIBOBJS@
+
+## Tests
+##
+TESTS = t1utils.test
+EXTRA_DIST += $(TESTS)
+
+## t1utils.test
+EXTRA_DIST += tests/Symbol.pfa tests/Symbol.pfb tests/Symbol.raw
+DISTCLEANFILES = Symbol.pfa Symbol.pfb Symbol.raw
 
