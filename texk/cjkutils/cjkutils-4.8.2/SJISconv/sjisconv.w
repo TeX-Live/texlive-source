@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     ch = fgetc(stdin);@#
 
     while(!feof(stdin))
-       {if((ch >= 0x81 && ch <= 0x9F) || (ch >= 0xE0 && ch <= 0xEF))
+       {if((ch >= 0x81 && ch <= 0x9F) || (ch >= 0xE0 && ch <= 0xFC))
            {fprintf(stdout, "\177%c\177", ch);@#
 
             ch = fgetc(stdin);

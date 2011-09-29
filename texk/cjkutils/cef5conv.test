@@ -1,0 +1,19 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+./cef5conv <$srcdir/tests/cef5conv.tex >cef5conv.cjk \
+	&& diff cef5conv.cjk $srcdir/tests/cef5conv.cjk \
+	|| exit 1
+
+./bg5conv <$srcdir/tests/cef5conv.tex | ./cefconv \
+	| sed 's/cefconv.*bg5conv/cef5conv/' >cef5conv.cjk \
+	&& diff cef5conv.cjk $srcdir/tests/cef5conv.cjk \
+	|| exit 1
+
+./cefconv <$srcdir/tests/cef5conv.tex | ./bg5conv \
+	| sed 's/CJKpreproc.*CNSpreproc/CNSpreproc/;s/cefconv/cef5conv/' >cef5conv.cjk \
+	&& diff cef5conv.cjk $srcdir/tests/cef5conv.cjk \
+	|| exit 1
+

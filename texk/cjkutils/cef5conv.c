@@ -70,6 +70,7 @@ if(*inp!='-'||feof(stdin))
 goto no_macro;
 
 *(outp++)= '\177';
+*(outp++)= '\177';
 *(outp++)= '\"';
 *(outp++)= '0';
 
@@ -85,7 +86,6 @@ if(isxdigit(*inp)&&*inp<0x80&&!feof(stdin))
 else
 goto no_macro;
 
-*(outp++)= '\177';
 *(outp++)= '\177';
 *(outp++)= '\"';
 *(outp++)= '0';

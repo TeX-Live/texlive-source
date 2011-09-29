@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+./extconv <$srcdir/tests/extconv.tex >extconv.cjk \
+	&& diff extconv.cjk $srcdir/tests/extconv.cjk \
+	|| exit 1
+

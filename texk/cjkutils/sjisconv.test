@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+./sjisconv <$srcdir/tests/sjisconv.tex >sjisconv.cjk \
+	&& diff sjisconv.cjk $srcdir/tests/sjisconv.cjk \
+	|| exit 1
+

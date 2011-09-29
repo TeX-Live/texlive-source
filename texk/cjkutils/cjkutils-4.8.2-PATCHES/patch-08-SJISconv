@@ -1,0 +1,26 @@
+	Correct upper limit for first byte of Kanji SJIS (CP 292) codes.
+
+diff -ur cjkutils-4.8.2.orig/CEFconv/cefsconv.w cjkutils-4.8.2/CEFconv/cefsconv.w
+--- cjkutils-4.8.2.orig/CEFconv/cefsconv.w	2011-09-16 21:49:46.000000000 +0200
++++ cjkutils-4.8.2/CEFconv/cefsconv.w	2011-09-16 21:59:48.000000000 +0200
+@@ -122,7 +122,7 @@
+     ch = fgetc(stdin);@#
+ 
+     while(!feof(stdin))
+-       {if((ch >= 0x81 && ch <= 0x9F) || (ch >= 0xE0 && ch <= 0xEF))
++       {if((ch >= 0x81 && ch <= 0x9F) || (ch >= 0xE0 && ch <= 0xFC))
+            {fprintf(stdout, "\177%c\177", ch);@#
+ 
+             ch = fgetc(stdin);
+diff -ur cjkutils-4.8.2.orig/SJISconv/sjisconv.w cjkutils-4.8.2/SJISconv/sjisconv.w
+--- cjkutils-4.8.2.orig/SJISconv/sjisconv.w	2010-12-17 20:41:37.000000000 +0100
++++ cjkutils-4.8.2/SJISconv/sjisconv.w	2011-09-16 21:59:15.000000000 +0200
+@@ -103,7 +103,7 @@
+     ch = fgetc(stdin);@#
+ 
+     while(!feof(stdin))
+-       {if((ch >= 0x81 && ch <= 0x9F) || (ch >= 0xE0 && ch <= 0xEF))
++       {if((ch >= 0x81 && ch <= 0x9F) || (ch >= 0xE0 && ch <= 0xFC))
+            {fprintf(stdout, "\177%c\177", ch);@#
+ 
+             ch = fgetc(stdin);

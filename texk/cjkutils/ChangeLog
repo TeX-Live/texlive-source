@@ -1,3 +1,11 @@
+2011-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Add simple CJK conversion tests.
+	* {bg5,cef,cef5,cefs,ext,sjis}conv.test: Test shell scripts.
+	* tests/{bg5,cef,cef5,cefs,ext,sjis}conv.{tex,cjk}: Test input
+	and expected output.
+	* Makefile.am: Add the tests and their data.
+
 2011-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../am/bin_links.am for $(bindir) links.

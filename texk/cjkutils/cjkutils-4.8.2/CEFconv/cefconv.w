@@ -80,7 +80,7 @@ the CNS planes 1--7, C0 for Big~5 encoding, an encoding CX reserved for
 IRIZ, a private encoding CY, and U for Unicode encoding; \.{yyzz} is a
 hexadecimal representation of the code point in this plane) with
 \medskip
-\quad\.{\char94 \char94 7f72\char94 \char94 ffXX\char94 \char94 7f%
+\quad\.{\char94 \char94 7f72\char94 \char94 7fXX\char94 \char94 7f%
 \char94 \char94 7f"0yy\char94 \char94 7f"0zz\char94 \char94 7f}\quad.
 \medskip
 \.{XX} is the corresponding CJK encoding of \.{xx}; the number `72'

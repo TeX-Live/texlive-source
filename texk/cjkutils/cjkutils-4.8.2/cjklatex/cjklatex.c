@@ -36,10 +36,6 @@
 #include <kpathsea/lib.h>
 #include <kpathsea/getopt.h>
 
-#if defined(WIN32) && !defined(__MINGW32__)
-#include <kpathsea/win32lib.h>
-#endif
-
 static const char *cjklatex_version_string = "1.0";
 
 static const char *usage_str[] = {

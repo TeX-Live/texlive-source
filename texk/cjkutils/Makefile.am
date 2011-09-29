@@ -181,3 +181,27 @@ hbf2gf.c: $(CWEB_SRC)
 	$(CTANGLE) $<
 endif do_cweb
 
+## Tests
+##
+TESTS = bg5conv.test cefconv.test cef5conv.test cefsconv.test extconv.test sjisconv.test
+EXTRA_DIST += $(TESTS)
+
+## bg5conv.test
+EXTRA_DIST += tests/bg5conv.tex tests/bg5conv.cjk
+DISTCLEANFILES += bg5conv.cjk
+## cefconv.test
+EXTRA_DIST += tests/cefconv.tex tests/cefconv.cjk
+DISTCLEANFILES += cefconv.cjk
+## cef5conv.test
+EXTRA_DIST += tests/cef5conv.tex tests/cef5conv.cjk
+DISTCLEANFILES += cef5conv.cjk
+## cefsconv.test
+EXTRA_DIST += tests/cefsconv.tex tests/cefsconv.cjk
+DISTCLEANFILES += cefsconv.cjk
+## extconv.test
+EXTRA_DIST += tests/extconv.tex tests/extconv.cjk
+DISTCLEANFILES += extconv.cjk
+## sjisconv.test
+EXTRA_DIST += tests/sjisconv.tex tests/sjisconv.cjk
+DISTCLEANFILES += sjisconv.cjk
+

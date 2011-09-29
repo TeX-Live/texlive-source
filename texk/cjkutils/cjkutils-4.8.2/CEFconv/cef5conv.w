@@ -172,6 +172,7 @@ int main(int argc, char *argv[])
                 goto no_macro;@#
 
             *(outp++) = '\177';
+            *(outp++) = '\177';
             *(outp++) = '\"';
             *(outp++) = '0';@#
 
@@ -187,7 +188,6 @@ int main(int argc, char *argv[])
             else
                 goto no_macro;@#
 
-            *(outp++) = '\177';
             *(outp++) = '\177';
             *(outp++) = '\"';
             *(outp++) = '0';@#

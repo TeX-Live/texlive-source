@@ -20,7 +20,7 @@ fprintf(stdout,"\\def\\CNSpreproc{%s}",banner);
 ch= fgetc(stdin);
 
 while(!feof(stdin))
-{if((ch>=0x81&&ch<=0x9F)||(ch>=0xE0&&ch<=0xEF))
+{if((ch>=0x81&&ch<=0x9F)||(ch>=0xE0&&ch<=0xFC))
 {fprintf(stdout,"\177%c\177",ch);
 
 ch= fgetc(stdin);
@@ -70,6 +70,7 @@ if(*inp!='-'||feof(stdin))
 goto no_macro;
 
 *(outp++)= '\177';
+*(outp++)= '\177';
 *(outp++)= '\"';
 *(outp++)= '0';
 
@@ -85,7 +86,6 @@ if(isxdigit(*inp)&&*inp<0x80&&!feof(stdin))
 else
 goto no_macro;
 
-*(outp++)= '\177';
 *(outp++)= '\177';
 *(outp++)= '\"';
 *(outp++)= '0';
