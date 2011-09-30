@@ -1,0 +1,14 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -rf wprob.*
+cp $srcdir/tests/wprob.tex .
+
+TEXMFCNF=$srcdir/../kpathsea \
+	./etex --ini --etex --file-line-error --interaction=nonstopmode wprob.tex
+
+grep '^\./wprob\.tex:12: Could not open file NoSuchFile\.eps\.$' \
+	wprob.log || exit 1
+

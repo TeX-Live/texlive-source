@@ -4532,7 +4532,7 @@ begin
   else begin
     print_nl (""); print (full_source_filename_stack[level]); print (":");
     if level=in_open then print_int (line)
-    else print_int (line_stack[index+1-(in_open-level)]);
+    else print_int (line_stack[level+1]);
     print (": ");
   end;
 end;

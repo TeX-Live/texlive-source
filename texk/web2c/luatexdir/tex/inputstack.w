@@ -307,12 +307,13 @@ void show_context(void)
                                 print_int(iname - 1);
                             print_char('>');
                         };
-                    } else if (iindex != in_open) {     /* input from a pseudo file */
-                        tprint_nl("l.");
-                        print_int(line_stack[iindex + 1]);
                     } else {
                         tprint_nl("l.");
-                        print_int(line);
+                        if (iindex == in_open) {
+                            print_int(line);
+                        } else {     /* input from a pseudo file */
+                            print_int(line_stack[iindex + 1]);
+                        }
                     }
                     print_char(' ');
                     PSEUDO_PRINT_THE_LINE();
