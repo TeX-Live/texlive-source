@@ -2607,6 +2607,8 @@ filename, and returns the first file found.
           mlbib: .mlbib .bib
           mlbst: .mlbst .bst
           clua: .dll .so
+          ris: .ris
+          bltxml: .bltxml
 
      This option and `--path' are mutually exclusive.
 
@@ -3606,28 +3608,28 @@ Index
                                                               (line  38)
 * --help:                                Standard options.    (line   8)
 * --interactive:                         Path searching options.
-                                                              (line 118)
+                                                              (line 120)
 * --mktex=FILETYPE:                      Path searching options.
-                                                              (line 123)
+                                                              (line 125)
 * --mode=STRING:                         Path searching options.
-                                                              (line 129)
+                                                              (line 131)
 * --must-exist:                          Path searching options.
-                                                              (line 134)
+                                                              (line 136)
 * --no-mktex=FILETYPE:                   Path searching options.
-                                                              (line 123)
+                                                              (line 125)
 * --path=STRING:                         Path searching options.
-                                                              (line 139)
+                                                              (line 141)
 * --progname=NAME:                       Path searching options.
-                                                              (line 148)
+                                                              (line 150)
 * --safe-in-name=NAME:                   Path searching options.
-                                                              (line 154)
+                                                              (line 156)
 * --safe-out-name=NAME:                  Path searching options.
-                                                              (line 154)
+                                                              (line 156)
 * --show-path=NAME:                      Auxiliary tasks.     (line  41)
 * --srcdir, for building multiple architectures: configure scenarios.
                                                               (line  18)
 * --subdir=STRING:                       Path searching options.
-                                                              (line 160)
+                                                              (line 162)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
 * --version:                             Standard options.    (line  11)
 * --with options:                        configure options.   (line  16)
@@ -4100,7 +4102,7 @@ Index
 * installation, simple:                  Simple installation. (line   6)
 * installing files:                      Installing files.    (line   6)
 * interactive query:                     Path searching options.
-                                                              (line 118)
+                                                              (line 120)
 * interface, not frozen:                 Introduction.        (line  27)
 * introduction:                          Introduction.        (line   6)
 * kdebug::                               Debugging.           (line 105)
@@ -4740,22 +4742,22 @@ Node: Filename aliases100803
 Node: Database format101981
 Node: Invoking kpsewhich102994
 Node: Path searching options103940
-Node: Specially-recognized files112111
-Node: Auxiliary tasks113467
-Node: Standard options115292
-Node: TeX support115648
-Node: Supported file formats116939
-Node: File lookup124493
-Node: Glyph lookup126242
-Node: Basic glyph lookup127366
-Node: Fontmap128245
-Node: Fallback font130862
-Node: Suppressing warnings131775
-Node: Programming132880
-Node: Programming overview133393
-Node: Calling sequence136087
-Node: Program-specific files142610
-Node: Programming with config files143633
-Node: Index144945
+Node: Specially-recognized files112157
+Node: Auxiliary tasks113513
+Node: Standard options115338
+Node: TeX support115694
+Node: Supported file formats116985
+Node: File lookup124539
+Node: Glyph lookup126288
+Node: Basic glyph lookup127412
+Node: Fontmap128291
+Node: Fallback font130908
+Node: Suppressing warnings131821
+Node: Programming132926
+Node: Programming overview133439
+Node: Calling sequence136133
+Node: Program-specific files142656
+Node: Programming with config files143679
+Node: Index144991
 
 End Tag Table

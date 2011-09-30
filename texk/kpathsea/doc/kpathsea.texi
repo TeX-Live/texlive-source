@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.0.1
-@set month-year April 2011
+@set month-year September 2011
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -1183,6 +1183,8 @@ cid maps: .cid .cidmap
 mlbib: .mlbib .bib
 mlbst: .mlbst .bst
 clua: .dll .so
+ris: .ris
+bltxml: .bltxml
 @end example
 
 This option and @samp{--path} are mutually exclusive.

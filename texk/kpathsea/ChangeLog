@@ -1,3 +1,11 @@
+2011-09-30  Karl Berry  <karl@tug.org>
+
+	* types.h (kpse_{ris,bltxml}_format): new types.
+	* tex-file.c ({RIS,BLTXML}_ENVS): new defines.
+	(kpse_init_format): initialize them.
+	* texmf.cnf ({RIS,BLTXML}INPUTS): new definitions.
+	Request from Phil Kime, tex-k 25 Sep 2011 16:46:07.
+
 2011-08-28  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (LUAINPUTS.lualatex, LUAINPUTS.dvilualatex): new defns.

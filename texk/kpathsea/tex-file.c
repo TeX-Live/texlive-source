@@ -1,6 +1,7 @@
 /* tex-file.c: high-level file searching by format.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011
+   Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -91,6 +92,8 @@
 #define MLBIB_ENVS "MLBIBINPUTS", BIB_ENVS
 #define MLBST_ENVS "MLBSTINPUTS", BST_ENVS
 #define CLUA_ENVS "CLUAINPUTS"
+#define RIS_ENVS "RISINPUTS"
+#define BLTXML_ENVS "BLTXMLINPUTS"
 
 /* The compiled-in default list, DEFAULT_FONT_SIZES, is intended to be
    set from the command line (presumably via the Makefile).  */
@@ -804,6 +807,16 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
       INIT_FORMAT ("clua", DEFAULT_CLUAINPUTS, CLUA_ENVS);
 #define CLUA_SUFFIXES ".dll", ".so"
       SUFFIXES (CLUA_SUFFIXES);
+      FMT_INFO.suffix_search_only = true;
+      break;
+    case kpse_ris_format:
+      INIT_FORMAT ("ris", DEFAULT_RISINPUTS, RIS_ENVS);
+      SUFFIXES (".ris");
+      FMT_INFO.suffix_search_only = true;
+      break;
+    case kpse_bltxml_format:
+      INIT_FORMAT ("bltxml", DEFAULT_BLTXMLINPUTS, BLTXML_ENVS);
+      SUFFIXES (".bltxml");
       FMT_INFO.suffix_search_only = true;
       break;
     default:

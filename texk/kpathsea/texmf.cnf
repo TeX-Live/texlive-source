@@ -303,6 +303,10 @@ BSTINPUTS = .;$TEXMF/bibtex/{bst,csf}//
 MLBIBINPUTS = .;$TEXMF/bibtex/bib/{mlbib,}//
 MLBSTINPUTS = .;$TEXMF/bibtex/{mlbst,bst}//
 
+% .ris and .bltxml bibliography formats.
+RISINPUTS = .;$TEXMF/bibtex/ris//
+BLTXMLINPUTS = .;$TEXMF/bibtex/bltxml//
+
 % MFT style files.
 MFTINPUTS = .;$TEXMF/mft//
 
