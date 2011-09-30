@@ -46,5 +46,5 @@ EXTRA_DIST += $(TESTS)
 ## tests/nested-range-test.pl
 EXTRA_DIST += tests/nested-range.tex tests/nested-range.idx \
 	tests/nested-range-bb.tex tests/nested-range-bb.idx
-DISTCLEANFILES =
+DISTCLEANFILES = nested-range.ilg nested-range.ind
 

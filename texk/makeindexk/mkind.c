@@ -105,6 +105,10 @@ main(int argc, char *argv[])
     int     ilg_given = FALSE;
     int     log_given = FALSE;
 
+#if USE_KPATHSEA
+    kpse_set_program_name (*argv, NULL);
+#endif
+
     /* determine program name */
     pgm_fn = strrchr(*argv, DIR_DELIM);
 #ifdef ALT_DIR_DELIM
@@ -119,11 +123,6 @@ main(int argc, char *argv[])
 	pgm_fn = *argv;
     else
 	pgm_fn++;
-
-#if USE_KPATHSEA
-    kpse_set_program_name (pgm_fn, NULL);  /* use the same name as the intro message */
-#endif
-
 
     /* process command line options */
     while (--argc > 0) {

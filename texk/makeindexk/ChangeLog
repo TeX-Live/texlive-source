@@ -1,3 +1,8 @@
+2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.c (main): The argument of kpse_set_program_name() must
+	be the unmodified argv[0], not basename(argv[0]) or some such.
+
 2011-09-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* genind.c: write a binary string by octal numbers to avoid an

@@ -278,7 +278,7 @@ EXTRA_DIST = CONTRIB NOTES $(TESTS) tests/nested-range.tex \
 	tests/nested-range.idx tests/nested-range-bb.tex \
 	tests/nested-range-bb.idx
 TESTS = tests/nested-range-test.pl
-DISTCLEANFILES = 
+DISTCLEANFILES = nested-range.ilg nested-range.ind
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

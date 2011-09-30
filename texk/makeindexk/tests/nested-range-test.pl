@@ -11,7 +11,7 @@ require "$srcdir/../tests/common-test.pl";
 exit (&main ());
 
 sub main {
-  my $ret = &test_run ("makeindex", "$srcdir/tests/nested-range.idx",
+  my $ret = &test_run ("./makeindex", "$srcdir/tests/nested-range.idx",
                        "-o", "nested-range.ind",
                        "-t", "nested-range.ilg");
 
@@ -21,7 +21,7 @@ sub main {
   $IND = "nested-range.ind";
   open (IND) || die "open($IND) failed: $!";
   while (<IND>) {
-    $bad = 77 if /\\\(/;
+    $bad = 1 if /\\\(/;
   }
   close (IND) || die "close($IND) failed: $!";
   
