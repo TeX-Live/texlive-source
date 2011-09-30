@@ -1,3 +1,10 @@
+2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex/printing.w (print_file_line): Bug fix: avoid uninitialized
+	lineno - from ../tex.ch.
+	* tex/inputstack.w: Slightly reformulate printing of current
+	line - from ../etexdir/etex.ch.
+
 2011-08-04  Magnus Granberg  <zorry@gentoo.org>
 
 	* luatex.c: Do not #include empty file <kpathsea/recorder.h>.

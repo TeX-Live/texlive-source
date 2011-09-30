@@ -88,11 +88,15 @@ EXTRA_DIST += \
 
 # pdfTeX Tests
 #
-pdftex_tests = pdftexdir/pdftex.test
+pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test
 
 EXTRA_DIST += $(pdftex_tests)
 
 if PDFTEX
 TESTS += $(pdftex_tests)
 endif PDFTEX
+
+# wprob.test
+EXTRA_DIST += tests/wprob.tex
+DISTCLEANFILES += wprob.log wprob.tex
 

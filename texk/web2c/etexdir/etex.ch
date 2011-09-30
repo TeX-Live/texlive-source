@@ -871,10 +871,9 @@ corresponding token types must precede |write_text|.
 @x [22] m.313 l.6809 - e-TeX scan_tokens
 else  begin print_nl("l."); print_int(line);
 @y
-else if index<>in_open then {input from a pseudo file}
-  begin print_nl("l."); print_int(line_stack[index+1]);
-  end
-else  begin print_nl("l."); print_int(line);
+else  begin print_nl("l.");
+  if index=in_open then print_int(line)
+  else print_int(line_stack[index+1]); {input from a pseudo file}
 @z
 %---------------------------------------
 @x [22] m.314 l.6831 - e-TeX basic

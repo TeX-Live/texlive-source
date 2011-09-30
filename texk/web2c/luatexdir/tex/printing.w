@@ -946,7 +946,7 @@ void print_file_line(void)
         if (level == in_open)
             print_int(line);
         else
-            print_int(line_stack[iindex + 1 - (in_open - level)]);
+            print_int(line_stack[level + 1]);
         tprint(": ");
     }
 }

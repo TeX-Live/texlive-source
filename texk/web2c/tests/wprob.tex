@@ -1,0 +1,15 @@
+\catcode`\%=14
+
+\catcode`\{=1
+\catcode`\}=2
+\catcode`\#=6
+
+\def\err#1{%
+  \errmessage{Could not open file #1}%
+}
+\scantokens{
+  \err{NoSuchFile.eps}
+} % The message above should be >>./wprob.tex:12: Could not open...<<
+\end
+
+

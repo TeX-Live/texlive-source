@@ -1,3 +1,10 @@
+2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch.ch (print_file_line): Bug fix: avoid uninitialized
+	lineno - from ../tex.ch.
+	* eobase.ch: Slightly reformulate printing of current line -
+	from ../etexdir/etex.ch.
+
 2011-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* alephbis.c (runexternalocp): Declare tempenv as const.
