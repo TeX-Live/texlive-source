@@ -4,6 +4,21 @@ Public domain.  Originally written 2011 by Karl Berry.
 This file records commits made to the bug-fix branch (only).
 
 ------------------------------------------------------------------------
+r24159 | karl | 2011-10-01 01:23:37 +0200 (Sat, 01 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/web2c/alephdir/com16bit.ch
+   M /branches/branch2011/Build/source/texk/web2c/alephdir/eobase.ch
+   M /branches/branch2011/Build/source/texk/web2c/etexdir/etex.ch
+   A /branches/branch2011/Build/source/texk/web2c/etexdir/wprob.test
+   M /branches/branch2011/Build/source/texk/web2c/luatexdir/tex/inputstack.w
+   M /branches/branch2011/Build/source/texk/web2c/luatexdir/tex/printing.w
+   A /branches/branch2011/Build/source/texk/web2c/pdftexdir/wprob.test
+   A /branches/branch2011/Build/source/texk/web2c/tests/wprob.tex
+   M /branches/branch2011/Build/source/texk/web2c/tex.ch
+
+branch2011: import line number fix from trunk r24155
+
+------------------------------------------------------------------------
 r23716 | karl | 2011-08-27 01:29:30 +0200 (Sat, 27 Aug 2011) | 1 line
 Changed paths:
    M /branches/branch2011/Build/source/texk/web2c/synctexdir/ChangeLog
@@ -19,4 +34,3 @@ Changed paths:
    M /branches/branch2011/Build/source/texk/web2c/xetexdir/xetex.ch
 
 branch2011: import off-by-one fix for enctex/xetex initialization (original r23187, see also email http://tug.org/pipermail/tldistro/2011q3/000120.html)
-------------------------------------------------------------------------
