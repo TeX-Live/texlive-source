@@ -5,18 +5,12 @@
 @z
 
 @x procedure initialize
-  kpse_set_program_name (argv[0], nil);
-  init_kanji;
-  parse_arguments;
   print (banner);
   print_ln (version_string);
 @y
-  kpse_set_program_name (argv[0], nil);
-  init_kanji;
-  parse_arguments;
   print (banner);
   print (' (');
-  print (stringcast(getencstring));
+  print (conststringcast(get_enc_string));
   print (')');
   print_ln (version_string);
 @z

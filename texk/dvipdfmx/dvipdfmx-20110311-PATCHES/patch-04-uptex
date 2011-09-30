@@ -1,6 +1,6 @@
 diff -ur dvipdfmx-20110311.orig/src/dvi.c dvipdfmx-20110311/src/dvi.c
---- dvipdfmx-20110311.orig/src/dvi.c	Wed Mar 09 20:02:16 2011
-+++ dvipdfmx-20110311/src/dvi.c	Wed Sep 07 16:53:19 2011
+--- dvipdfmx-20110311.orig/src/dvi.c	2011-03-09 08:43:18.000000000 +0100
++++ dvipdfmx-20110311/src/dvi.c	2011-09-07 10:55:45.000000000 +0200
 @@ -58,6 +58,12 @@
  #define TEX_FONTS_ALLOC_SIZE 16u
  #define VF_NESTING_MAX       16u
@@ -137,8 +137,8 @@ diff -ur dvipdfmx-20110311.orig/src/dvi.c dvipdfmx-20110311/src/dvi.c
  
      case PUT_RULE:
 diff -ur dvipdfmx-20110311.orig/src/spc_pdfm.c dvipdfmx-20110311/src/spc_pdfm.c
---- dvipdfmx-20110311.orig/src/spc_pdfm.c	Wed Mar 09 20:02:16 2011
-+++ dvipdfmx-20110311/src/spc_pdfm.c	Wed Sep 07 17:01:47 2011
+--- dvipdfmx-20110311.orig/src/spc_pdfm.c	2011-03-08 03:08:35.000000000 +0100
++++ dvipdfmx-20110311/src/spc_pdfm.c	2011-09-07 10:55:45.000000000 +0200
 @@ -419,6 +419,98 @@
    return  0;
  }
@@ -289,8 +289,8 @@ diff -ur dvipdfmx-20110311.orig/src/spc_pdfm.c dvipdfmx-20110311/src/spc_pdfm.c
    /* :( */
    if (cd->unescape_backslash) 
 diff -ur dvipdfmx-20110311.orig/src/tfm.c dvipdfmx-20110311/src/tfm.c
---- dvipdfmx-20110311.orig/src/tfm.c	Sun Apr 12 08:56:39 2009
-+++ dvipdfmx-20110311/src/tfm.c	Wed Sep 07 17:19:36 2011
+--- dvipdfmx-20110311.orig/src/tfm.c	2011-03-05 05:44:49.000000000 +0100
++++ dvipdfmx-20110311/src/tfm.c	2011-09-07 10:55:45.000000000 +0200
 @@ -55,6 +55,14 @@
  #define IS_JFM(i) ((i) == JFM_ID || (i) == JFMV_ID)
  #endif /* !WITHOUT_ASCII_PTEX */
@@ -388,8 +388,8 @@ diff -ur dvipdfmx-20110311.orig/src/tfm.c dvipdfmx-20110311/src/tfm.c
      fm->source    = SOURCE_TYPE_JFM;
    }
 diff -ur dvipdfmx-20110311.orig/src/vf.c dvipdfmx-20110311/src/vf.c
---- dvipdfmx-20110311.orig/src/vf.c	Wed May 21 10:08:58 2008
-+++ dvipdfmx-20110311/src/vf.c	Wed Sep 07 17:28:52 2011
+--- dvipdfmx-20110311.orig/src/vf.c	2011-03-05 05:44:49.000000000 +0100
++++ dvipdfmx-20110311/src/vf.c	2011-09-07 10:55:45.000000000 +0200
 @@ -238,11 +238,19 @@
  	ch = get_unsigned_quad (vf_file);
  	/* Skip over TFM width since we already know it */

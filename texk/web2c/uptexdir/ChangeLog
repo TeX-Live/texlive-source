@@ -1,3 +1,7 @@
+2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* updvitype.ch: Use const stringcast for get_enc_string().
+
 2011-09-05  Takuji Tanaka  <KXD02663@nifty.ne.jp>
 
 	* updvitype.ch: show encoding in the banner.

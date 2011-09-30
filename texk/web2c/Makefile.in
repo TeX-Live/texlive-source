@@ -154,7 +154,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 @EUPTEX_TRUE@am__append_54 = euptrip.diffs
 @EUPTEX_TRUE@am__append_55 = euptrip-clean
 @PDFTEX_TRUE@am__append_56 = pdftex ttf2afm pdftosrc
-@PDFTEX_TRUE@am__append_57 = $(pdftex_tests)
+@PDFTEX_TRUE@am__append_57 = $(pdftex_tests) $(pdftosrc_tests)
 @MINGW32_TRUE@am__append_58 = \
 @MINGW32_TRUE@	pdftexdir/regex/regex.c \
 @MINGW32_TRUE@	pdftexdir/regex/regex.h
@@ -1429,11 +1429,13 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	pdftexdir/ChangeLog pdftexdir/NEWS pdftexdir/README \
 	pdftexdir/change-files.txt $(pdftex_tests) \
 	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
-	luatexdir/ptexlib.h luatexdir/getluatexsvnversion.sh \
-	$(luatex_tests) luatexdir/lua51/Makefile \
-	luatexdir/lua51/liolib.c luatexdir/lua51/lua.c \
-	luatexdir/lua51/luac.c luatexdir/lua51/print.c \
-	luatexdir/luasocket/src/socket_lua.c \
+	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
+	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
+	pdftexdir/tests/test-15.xref luatexdir/ptexlib.h \
+	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
+	luatexdir/lua51/Makefile luatexdir/lua51/liolib.c \
+	luatexdir/lua51/lua.c luatexdir/lua51/luac.c \
+	luatexdir/lua51/print.c luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/smtp_lua.c \
@@ -1614,9 +1616,10 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
 	euptex.p euptex.pool euptex-tangle euptrip.diffs \
 	$(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c pdftex.p \
-	pdftex.pool pdftex-tangle $(nodist_libluatex_a_SOURCES) \
-	txt2zlib.c $(nodist_xetex_SOURCES) xetex.web xetex-web2c \
-	xetex.p xetex.pool xetex-tangle $(omegaware_programs:=.c) \
+	pdftex.pool pdftex-tangle test-13.pdf test-13.xref test-15.pdf \
+	test-15.xref $(nodist_libluatex_a_SOURCES) txt2zlib.c \
+	$(nodist_xetex_SOURCES) xetex.web xetex-web2c xetex.p \
+	xetex.pool xetex-tangle $(omegaware_programs:=.c) \
 	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
 	$(omegaware_programs:=-web2c) omegaware/tests/xlevel1.ofm \
 	omegaware/tests/xlevel1.opl ofont*vf omegaware/tests/xofont* \
@@ -2107,6 +2110,7 @@ pdftosrc_CXXFLAGS = # $(WARNING_CXXFLAGS)
 pdftosrc_SOURCES = pdftexdir/pdftosrc.cc
 pdftosrc_LDADD = $(pdftex_ldadd) $(LDADD)
 pdftosrc_DEPENDENCIES = $(pdftex_dependencies)
+pdftosrc_tests = pdftexdir/pdftosrc.test
 
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_luatex_SOURCES = dummy.cxx

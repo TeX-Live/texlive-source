@@ -595,13 +595,6 @@ static void parse_options (int, string *);
 /* Try to figure out if we have been given a filename. */
 static string get_input_file_name (void);
 
-#if defined(Aleph)
-/* Declare this for Omega family, so they can parse the -8bit option,
- * even though it is a no-op for them.
- */
-static int eightbitp;
-#endif /* Aleph */
-
 /* Get a true/false value for a variable from texmf.cnf and the environment. */
 static boolean
 texmf_yesno(const_string var)
@@ -1630,12 +1623,9 @@ parse_options (int argc, string *argv)
       translate_filename = optarg;
     } else if (ARGUMENT_IS ("default-translate-file")) {
       default_translate_filename = optarg;
-    } else if (ARGUMENT_IS ("8bit")) {
-      /* FIXME: print snippy message? Possibly also for above? */
 #endif /* !Aleph */
     } else if (ARGUMENT_IS ("mktex")) {
       kpse_maketex_option (optarg, true);
-
     } else if (ARGUMENT_IS ("no-mktex")) {
       kpse_maketex_option (optarg, false);
 #endif /* TeX or MF */
