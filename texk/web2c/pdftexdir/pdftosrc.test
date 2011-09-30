@@ -1,0 +1,19 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+src=$srcdir/pdftexdir/tests
+
+rm -rf test-13.* test-15.*
+
+cp $src/test-13.pdf .
+./pdftosrc test-13.pdf -1 \
+	&& diff test-13.xref $src/test-13.xref \
+	|| exit 1
+
+cp $src/test-15.pdf .
+./pdftosrc test-15.pdf -1 \
+	&& diff test-15.xref $src/test-15.xref \
+	|| exit 1
+

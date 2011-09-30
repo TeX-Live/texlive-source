@@ -1,3 +1,10 @@
+2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftosrc.test: Shell script for a new test.
+	* tests/test-{13,15}.{pdf,xref} (new): Test input and expected
+	output (from Hartmut Henkel <hartmut_henkel@gmx,de>).
+	* am/pdftosrc.am: Adjust.
+
 2011-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftoepdf.cc, pdftosrc.cc: #include <assert.h> for both xpdf
