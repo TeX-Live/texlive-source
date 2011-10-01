@@ -1,3 +1,8 @@
+2011-10-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c: write (sock, buff, n) and send (sock, buff, n, 0)
+	for ipc_snd () are different in winsock.
+
 2011-09-30  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* texmfmp.c [Aleph]: Remove unused variable `eightbitp'.

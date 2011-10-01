@@ -1113,7 +1113,11 @@ ipc_snd (int n, int is_eof, char *data)
   fprintf(stderr, "%d\t%d\n", ourmsg.msg.namelength, ourmsg.msg.eof);
   fputs ("tex: Writing to socket...\n", stderr);
 #endif
+#if defined(WIN32)
+  if (send (sock, (char *)&ourmsg, n, 0) != n) {
+#else
   if (write (sock, &ourmsg, n) != n) {
+#endif
     ipc_close_out ();
   }
 #ifdef IPC_DEBUG
