@@ -3,6 +3,9 @@
 # Common definitions for Perl tests in TeX Live.  We want to use Perl to
 # have a chance of running the tests on Windows.
 
+# absolute path
+chomp (my $TL_TESTS_DIR = `cd "$srcdir/../tests" && pwd`);
+
 # srcdir must be a sibling dir to kpathsea, e.g., web2c.
 $ENV{"TEXMFCNF"} = "$srcdir/../kpathsea";
 $ENV{"AFMFONTS"}
@@ -22,6 +25,10 @@ sub test_run {
   # want to run out of the build dir.  I think.
   die "$0: no program $prog in " . `pwd` if ! -x $prog;
   
+  # use local pm files and kpsewhich.
+  $ENV{"PERL5LIB"} = $TL_TESTS_DIR;
+  $ENV{"PATH"} = "../kpathsea:$ENV{PATH}";
+
   # Won't be copyable with weird names, but should get the info across.
   print "$0: running ", $prog, join (" ", @args), "\n";
   
