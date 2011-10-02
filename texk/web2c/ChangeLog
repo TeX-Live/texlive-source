@@ -1,6 +1,7 @@
 2011-09-30  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* tex.ch (print_file_line): Bug fix: avoid uninitialized lineno.
+	Patch and discussion from Karl, 21 Sep 2011 16:05:09 GMT.
 
 2011-09-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

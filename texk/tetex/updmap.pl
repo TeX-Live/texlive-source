@@ -2,7 +2,7 @@
 # updmap: utility to maintain map files for outline fonts.
 #
 # Copyright 2002-2011 Thomas Esser.
-# Fabrice Popineau wrote the Perl version.
+# Fabrice Popineau originally wrote the Perl version.
 # Anyone may freely use, modify, and/or distribute this file, without
 # limitation.
 
