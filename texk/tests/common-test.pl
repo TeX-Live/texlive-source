@@ -30,7 +30,7 @@ sub test_run {
   $ENV{"PATH"} = "../kpathsea:$ENV{PATH}";
 
   # Won't be copyable with weird names, but should get the info across.
-  print "$0: running ", $prog, join (" ", @args), "\n";
+  print "$0: running ", $prog, " ", join (" ", @args), "\n";
   
   # Run it.
   my $ret = system ($prog, @args);  

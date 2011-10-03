@@ -1,5 +1,10 @@
 2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* wprob.test: New shell script to test for uninitialized line.
+	* am/pdftex.am: Add the new test.	
+
+2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* pdftosrc.test: Shell script for a new test.
 	* tests/test-{13,15}.{pdf,xref} (new): Test input and expected
 	output (from Hartmut Henkel <hartmut_henkel@gmx,de>).

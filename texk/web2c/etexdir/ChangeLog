@@ -1,5 +1,10 @@
 2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* wprob.test: New shell script to test for uninitialized line.
+	* am/etex.am: Add the new test.	
+
+2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* etex.ch: Slightly reformulate printing of current line.
 
 2011-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>

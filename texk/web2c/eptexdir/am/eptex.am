@@ -59,7 +59,7 @@ eptexdir/eptex_version.h: eptexdir/eptex.ech
 
 # Extract ptex version
 eptexdir/ptex_version.h: ptexdir/ptex-base.ch
-	$(MKDIR_P) ptexdir
+	$(MKDIR_P) eptexdir
 	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
 	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
