@@ -2820,6 +2820,14 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 
+if test "x$srcdir" = x. && test "x$enable_build_in_source_tree" != xyes; then
+  rm -rf config.log
+  as_fn_error $? "Configuring and building TeX Live in the source tree
+is strongly discouraged.  If you really want to do that, you must
+specify the configure option \`--enable-build-in-source-tree', but
+then do not ask for help -- you have been warned." "$LINENO" 5
+fi
+
 # Check whether --enable-missing was given.
 if test "${enable_missing+set}" = set; then :
   enableval=$enable_missing;

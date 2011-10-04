@@ -14,6 +14,15 @@ AC_CONFIG_SRCDIR([m4/kpse-pkgs.m4])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
+dnl Prevent to configure the source tree by mistake.
+if test "x$srcdir" = x. && test "x$enable_build_in_source_tree" != xyes; then
+  rm -rf config.log
+  AC_MSG_ERROR([Configuring and building TeX Live in the source tree
+is strongly discouraged.  If you really want to do that, you must
+specify the configure option `--enable-build-in-source-tree', but
+then do not ask for help -- you have been warned.])
+fi
+
 dnl ## ------------------------------------------- ##
 dnl ## Setup of the TeX Live (TL) infrastructure   ##
 dnl ##    done in ./, libs/, utils/, and texk/     ##
