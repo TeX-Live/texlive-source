@@ -2,6 +2,10 @@
 
 	* am/web.am (DISTCLEANFILES): Preserve distributed files.
 
+	* Makefile.am (DISTCLEANFILES): Add CXXLD.sh.
+	* am/texmf.am (DISTCLEANFILES): Add write18-quote.log.
+	* am/web.am (DISTCLEANFILES): Add longline.{aux,bbl,bib,blg}.
+
 2011-09-30  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* tex.ch (print_file_line): Bug fix: avoid uninitialized lineno.

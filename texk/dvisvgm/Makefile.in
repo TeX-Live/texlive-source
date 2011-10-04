@@ -397,7 +397,7 @@ nodist_libpotrace_a_SOURCES = \
 	$(DVISVGM_TREE)/potracelib/potracelib.c \
 	$(DVISVGM_TREE)/potracelib/trace.c
 
-DISTCLEANFILES = config.force
+DISTCLEANFILES = config.force CXXLD.sh
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

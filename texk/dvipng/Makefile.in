@@ -358,7 +358,7 @@ dvigif_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
 dvigif_LDADD = 
 bin_links = dvipng$(EXEEXT):dvigif
 TESTS = dvipng.test
-CLEANFILES = missfont.log test_dvipng.aux test_dvipng.dvi test_dvipng.log test_dvipng*.png
+CLEANFILES = dvipng-test*.png
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

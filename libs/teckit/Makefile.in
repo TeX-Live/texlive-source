@@ -282,7 +282,7 @@ nodist_libTECkit_Compiler_a_SOURCES = \
 nodist_libTECkit_a_SOURCES = \
 	$(TECKIT_TREE)/source/Engine.cpp
 
-DISTCLEANFILES = config.force
+DISTCLEANFILES = config.force CXXLD.sh
 @build_TRUE@TESTS = teckit.test
 CLEANFILES = xtex-text.tec
 all: config.h

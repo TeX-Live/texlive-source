@@ -12,7 +12,7 @@ config.force: $(KPATHSEA_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
-DISTCLEANFILES = config.force
+DISTCLEANFILES = config.force CXXLD.sh
 
 if texlive_build
 glyphlistdir = ${prefix}/texmf-dist/fonts/map/glyphlist

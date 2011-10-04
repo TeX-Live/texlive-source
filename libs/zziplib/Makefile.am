@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build zziplib for TeX Live.
 ##
-##   Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -56,7 +56,7 @@ config.force: $(ZLIB_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
-DISTCLEANFILES = config.force include/_msvc.in
+DISTCLEANFILES = config.force include/_msvc.in _configs.sed
 
 ## Rebuild zlib
 @ZLIB_RULE@

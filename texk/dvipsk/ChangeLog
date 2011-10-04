@@ -1,3 +1,8 @@
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST, DISTCLEANFILES): Make sure that
+	'make distclean' removes all generated files.
+
 2011-07-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bbox.c, dopage.c, dvips.c, pprescan.c, scanpage.c, dvips.1,

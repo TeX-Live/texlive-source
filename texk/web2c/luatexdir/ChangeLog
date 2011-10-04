@@ -2,6 +2,9 @@
 
 	* am/libluatex.am: Avoid to `clean' ../mplibdir/lmplib.c.
 
+	* am/txt2zlib.am (noinst_PROGRAMS): Conditionally add txt2zlib,
+	such that txt2zlib$(EXEEXT) gets cleaned.
+
 2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex/printing.w (print_file_line): Bug fix: avoid uninitialized

@@ -1,3 +1,7 @@
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (DISTCLEANFILES): Add CXXLD.sh.
+
 2009-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reorganize the TECkit build system.

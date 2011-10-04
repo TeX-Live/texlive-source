@@ -1,3 +1,7 @@
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (DISTCLEANFILES): Add CXXLD.sh.
+
 2011-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: Imported release 1.0.8.

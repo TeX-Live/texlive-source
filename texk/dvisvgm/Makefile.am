@@ -123,7 +123,7 @@ config.force: $(dvisvgm_dependencies)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
-DISTCLEANFILES = config.force
+DISTCLEANFILES = config.force CXXLD.sh
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@

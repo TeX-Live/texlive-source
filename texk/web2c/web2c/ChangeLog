@@ -1,3 +1,7 @@
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Add distclean-local to remove kpathsea/ and w2c/.
+
 2011-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines: Remove ETEXHELP, LUATEXHELP, PDFTEXHELP.

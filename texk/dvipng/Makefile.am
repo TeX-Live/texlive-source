@@ -126,5 +126,5 @@ TESTS = dvipng.test
 
 EXTRA_DIST += dvipng.test dvipng-test.dvi
 
-CLEANFILES = missfont.log test_dvipng.aux test_dvipng.dvi test_dvipng.log test_dvipng*.png
+CLEANFILES = dvipng-test*.png
 

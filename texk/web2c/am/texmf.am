@@ -84,6 +84,9 @@ TRIPTRAP_CLEAN += trip-clean
 endif TEX
 DISTCLEANFILES += trip.diffs
 
+## tests/write18-quote-test.pl
+DISTCLEANFILES += write18-quote.log
+
 # trip.test
 trip.diffs: tex$(EXEEXT)
 	$(triptrap_diffs) $@

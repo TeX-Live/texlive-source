@@ -121,20 +121,10 @@ TESTS_ENVIRONMENT += TEXFONTMAPS=$(srcdir)/testdata
 TESTS_ENVIRONMENT += TEXPSHEADERS=$(srcdir)/testdata
 
 EXTRA_DIST += \
-	NEWS \
-	TODO \
-	afm2tfm-test.pl \
-	beginfontk1.test \
-	dvips.test \
-	eepic-nan.test \
-	pfbincl.test \
-	quotecmd-test.pl \
+	$(TESTS) \
 	testdata/8r.enc \
 	testdata/ad.enc \
 	testdata/alt-rule.pro \
-	testdata/beginfontk1.dvi \
-	testdata/beginfontk1.eps \
-	testdata/beginfontk1.tex \
 	testdata/cmex10.pfb \
 	testdata/cmex10.tfm \
 	testdata/cmmi10.pfb \
@@ -147,16 +137,6 @@ EXTRA_DIST += \
 	testdata/cmtt10.tfm \
 	testdata/config.pdf \
 	testdata/config.ps \
-	testdata/dvipstst.tex \
-	testdata/dvipstst.xdv \
-	testdata/dvipstst.xps \
-	testdata/eepic-nan.dvi \
-	testdata/eepic-nan.tex \
-	testdata/intoverflow.dvi \
-	testdata/pfbincl.eps \
-	testdata/pfbincl.tex \
-	testdata/pfbincl.xdv \
-	testdata/pfbincl.xps \
 	testdata/psfonts.map \
 	testdata/ptmbi.vf \
 	testdata/ptmbi8r.tfm \
@@ -164,15 +144,34 @@ EXTRA_DIST += \
 	testdata/ptmr8r.tfm \
 	testdata/ptmri.vf \
 	testdata/ptmri8r.tfm \
-	testdata/quotecmd.dvi \
-	testdata/quotecmd.tex \
 	testdata/special.pro \
 	testdata/tex.pro \
 	testdata/texc.pro \
-	testdata/texps.pro \
-	testdata/vfnameoverflow.dvi
+	testdata/texps.pro
 
-CLEANFILES += dvipstst.ps missfont.log mtest.ps pfbincl.ps
+## afm2tfm-test.pl
+DISTCLEANFILES += afmtest.tfm
+## beginfontk1.test
+EXTRA_DIST += testdata/beginfontk1.dvi testdata/beginfontk1.eps testdata/beginfontk1.tex
+DISTCLEANFILES += beginfontk1.ps
+## dvips.test
+EXTRA_DIST += testdata/dvipstst.tex testdata/dvipstst.xdv testdata/dvipstst.xps
+DISTCLEANFILES += dvipstst.ps missfont.log mtest.ps
+## eepic-nan.test
+EXTRA_DIST += testdata/eepic-nan.dvi testdata/eepic-nan.tex
+DISTCLEANFILES += eepic-nan.ps
+## pfbincl.test
+EXTRA_DIST += testdata/pfbincl.eps testdata/pfbincl.tex testdata/pfbincl.xdv testdata/pfbincl.xps 
+DISTCLEANFILES += pfbincl.ps
+## quotecmd-test.pl
+EXTRA_DIST += testdata/quotecmd.dvi testdata/quotecmd.tex 
+DISTCLEANFILES += *badnews*
+
+EXTRA_DIST += \
+	NEWS \
+	TODO \
+	testdata/intoverflow.dvi \
+	testdata/vfnameoverflow.dvi
 
 ## Not used
 ##

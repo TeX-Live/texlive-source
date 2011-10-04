@@ -263,7 +263,7 @@ nodist_libzzip_a_SOURCES = \
 	$(ZZIPLIB_TREE)/zzip/write.c \
 	$(ZZIPLIB_TREE)/zzip/zip.c
 
-DISTCLEANFILES = config.force include/_msvc.in
+DISTCLEANFILES = config.force include/_msvc.in _configs.sed
 TESTS_ENVIRONMENT = ZZIPLIB_TREE=$(ZZIPLIB_TREE)
 @build_TRUE@TESTS = zziplib.test
 @build_TRUE@dist_check_SCRIPTS = zziplib.test
