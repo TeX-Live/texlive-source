@@ -428,7 +428,7 @@ am_libluatex_a_OBJECTS = libluatex_a-pdftoepdf.$(OBJEXT) \
 	libluatex_a-lstatslib.$(OBJEXT) \
 	libluatex_a-ltexiolib.$(OBJEXT) libluatex_a-ltexlib.$(OBJEXT) \
 	libluatex_a-ltokenlib.$(OBJEXT) libluatex_a-avl.$(OBJEXT) \
-	libluatex_a-synctex.$(OBJEXT)
+	libluatex_a-synctex.$(OBJEXT) libluatex_a-lmplib.$(OBJEXT)
 nodist_libluatex_a_OBJECTS = libluatex_a-dvigen.$(OBJEXT) \
 	libluatex_a-dofont.$(OBJEXT) libluatex_a-luafont.$(OBJEXT) \
 	libluatex_a-mapfile.$(OBJEXT) libluatex_a-pkin.$(OBJEXT) \
@@ -489,8 +489,7 @@ nodist_libluatex_a_OBJECTS = libluatex_a-dvigen.$(OBJEXT) \
 	libluatex_a-texfileio.$(OBJEXT) libluatex_a-texmath.$(OBJEXT) \
 	libluatex_a-texnodes.$(OBJEXT) libluatex_a-textcodes.$(OBJEXT) \
 	libluatex_a-textoken.$(OBJEXT) libluatex_a-avlstuff.$(OBJEXT) \
-	libluatex_a-managed-sa.$(OBJEXT) libluatex_a-utils.$(OBJEXT) \
-	libluatex_a-lmplib.$(OBJEXT)
+	libluatex_a-managed-sa.$(OBJEXT) libluatex_a-utils.$(OBJEXT)
 libluatex_a_OBJECTS = $(am_libluatex_a_OBJECTS) \
 	$(nodist_libluatex_a_OBJECTS)
 libmd5_a_AR = $(AR) $(ARFLAGS)
@@ -1391,21 +1390,21 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap/trip2.in triptrap/tripin.log triptrap/tripman.tex \
 	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
 	mplibdir/ChangeLog $(mpost_web) $(mp_tests) $(libmplib_web) \
-	mplibdir/lmplib.c $(etex_web_srcs) $(etex_ch_srcs) \
-	etexdir/ChangeLog etexdir/INSTALL etexdir/README \
-	etexdir/etex_gen.tex $(etex_tests) tests/wprob.tex \
-	etexdir/etrip/etrip.diffs etexdir/etrip/etrip.fot \
-	etexdir/etrip/etrip.log etexdir/etrip/etrip.out \
-	etexdir/etrip/etrip.pl etexdir/etrip/etrip.tex \
-	etexdir/etrip/etrip.typ etexdir/etrip/etrip1.in \
-	etexdir/etrip/etrip2.in etexdir/etrip/etrip3.in \
-	etexdir/etrip/etripin.log etexdir/etrip/etripman.tex \
-	etexdir/etrip/texmf.cnf etexdir/etrip/trip2.in $(ptex_tests) \
-	$(pweb_tests) $(ptex_web_srcs) $(ptex_ch_srcs) \
-	ptexdir/ptex.defines ptexdir/pbibtex.ch web2c/cvtbib.sed \
-	ptexdir/pdvitype.ch ptexdir/ppltotf.ch ptexdir/ptftopl.ch \
-	ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis ptexdir/ChangeLog \
-	ptexdir/Changes.txt ptexdir/INSTALL.txt ptexdir/README.txt \
+	$(etex_web_srcs) $(etex_ch_srcs) etexdir/ChangeLog \
+	etexdir/INSTALL etexdir/README etexdir/etex_gen.tex \
+	$(etex_tests) tests/wprob.tex etexdir/etrip/etrip.diffs \
+	etexdir/etrip/etrip.fot etexdir/etrip/etrip.log \
+	etexdir/etrip/etrip.out etexdir/etrip/etrip.pl \
+	etexdir/etrip/etrip.tex etexdir/etrip/etrip.typ \
+	etexdir/etrip/etrip1.in etexdir/etrip/etrip2.in \
+	etexdir/etrip/etrip3.in etexdir/etrip/etripin.log \
+	etexdir/etrip/etripman.tex etexdir/etrip/texmf.cnf \
+	etexdir/etrip/trip2.in $(ptex_tests) $(pweb_tests) \
+	$(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptex.defines \
+	ptexdir/pbibtex.ch web2c/cvtbib.sed ptexdir/pdvitype.ch \
+	ptexdir/ppltotf.ch ptexdir/ptftopl.ch ptexdir/COPYRIGHT \
+	ptexdir/COPYRIGHT.jis ptexdir/ChangeLog ptexdir/Changes.txt \
+	ptexdir/INSTALL.txt ptexdir/README.txt \
 	ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst \
 	ptexdir/tests/sample.bib tests/memdata1.bst tests/memdata2.bst \
 	tests/memdata3.bst ptexdir/tests/goth10.tfm \
@@ -1585,30 +1584,31 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	common-ctangle ctangleboot.c cwebboot.c cwebboot.h cftest.p \
 	$(web_programs:=.c) $(web_programs:=.h) $(web_programs:=.p) \
 	$(web_programs:=-web2c) tests/xexampl.aux tests/xexampl.bbl \
-	tests/xexampl.blg tests/memtest* tests/xstory.dvi \
-	tests/xpplr.dvi tests/xstory.dvityp tests/xpagenum.typ \
-	cmr10.dvi tests/xcmr10.dvi cmr10.pk tests/xcmr10.pk \
-	tests/xcmr10.gft1 tests/xcmr10.gft2 io.tex tests/io.tex \
-	tests/xpatout pattmp.4 cmr10.gf tests/xcmr10.600gf \
-	tests/xcmr10.pktyp tests/xcmr10.tfm tests/xtexpool.typ \
-	tests/xcmr10.pl tests/xptmr.vpl tests/xptmr.tfm tests/xptmr.vf \
-	pooltype.tex ctie.c cweave.c tie.c ctie.outc ctie.outm \
-	common.tex common.scn common.idx tie.outc tie.outm \
-	$(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p tex.pool \
-	tex-tangle trip.diffs mftrap.diffs $(nodist_libmf_a_SOURCES) \
-	mf-final.ch mf-web2c mf.p mf.pool mf-tangle \
-	$(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs ptmr.mpx \
-	tests/xptmr.mpx tests/xstory.mpx $(nodist_libmplib_a_SOURCES) \
-	mp-tangle mpmath-tangle psout-tangle svgout-tangle \
-	$(nodist_etex_SOURCES) etex.web etex.ch etex-web2c etex.p \
-	etex.pool etex-tangle etrip.diffs wprob.log wprob.tex \
-	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
-	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
-	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
-	ptex.pool ptex-tangle tests/nissya_bib.* tests/xexampl.aux \
-	tests/xexampl.bbl tests/xexampl.blg tests/memtest* \
-	tests/xstory.dvityp tests/xpagenum.typ tests/xcmr10.tfm \
-	tests/xcmr10.pl tests/xsample.typ tests/x*min10.* ptrip.diffs \
+	tests/xexampl.blg tests/memtest.bib tests/memtest?.* \
+	tests/xstory.dvi tests/xpplr.dvi tests/xstory.dvityp \
+	tests/xpagenum.typ cmr10.dvi tests/xcmr10.dvi cmr10.pk \
+	tests/xcmr10.pk tests/xcmr10.gft1 tests/xcmr10.gft2 io.tex \
+	tests/io.tex tests/xpatout pattmp.4 cmr10.gf \
+	tests/xcmr10.600gf tests/xcmr10.pktyp tests/xcmr10.tfm \
+	tests/xtexpool.typ tests/xcmr10.pl tests/xptmr.vpl \
+	tests/xptmr.tfm tests/xptmr.vf pooltype.tex ctie.c cweave.c \
+	tie.c ctie.outc ctie.outm common.tex common.scn common.idx \
+	tie.outc tie.outm $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
+	tex.p tex.pool tex-tangle trip.diffs mftrap.diffs \
+	$(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c mf.p mf.pool \
+	mf-tangle $(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs \
+	ptmr.mpx tests/xptmr.mpx tests/xstory.mpx \
+	$(nodist_libmplib_a_SOURCES) mp-tangle mpmath-tangle \
+	psout-tangle svgout-tangle $(nodist_etex_SOURCES) etex.web \
+	etex.ch etex-web2c etex.p etex.pool etex-tangle etrip.diffs \
+	wprob.log wprob.tex $(pweb_programs:=.c) $(pweb_programs:=.h) \
+	$(pweb_programs:=.p) $(pweb_programs:=-web2c) \
+	$(pweb_programs:=.web) $(nodist_ptex_SOURCES) ptex.web ptex.ch \
+	ptex-web2c ptex.p ptex.pool ptex-tangle tests/nissya_bib.* \
+	tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
+	tests/memtest.bib tests/memtest?.* tests/xstory.dvityp \
+	tests/xpagenum.typ tests/xcmr10.tfm tests/xcmr10.pl \
+	tests/xsample.typ tests/x*min10.* ptrip.diffs \
 	$(nodist_eptex_SOURCES) eptex.web eptex.ch eptex-web2c eptex.p \
 	eptex.pool eptex-tangle eptrip.diffs $(upweb_programs:=.c) \
 	$(upweb_programs:=.h) $(upweb_programs:=.p) \
@@ -2449,7 +2449,7 @@ nodist_libluatex_a_SOURCES = dvigen.c dofont.c luafont.c mapfile.c \
 	mathcodes.c memoryword.c mlist.c nesting.c packaging.c \
 	postlinebreak.c primitive.c printing.c scanning.c stringpool.c \
 	texdeffont.c texfileio.c texmath.c texnodes.c textcodes.c \
-	textoken.c avlstuff.c managed-sa.c utils.c mplibdir/lmplib.c
+	textoken.c avlstuff.c managed-sa.c utils.c
 libluatex_a_SOURCES = luatexdir/luatex.h luatexdir/dvi/dvigen.h \
 	luatexdir/font/luatexfont.h luatexdir/font/mapfile.h \
 	luatexdir/font/sfnt.h luatexdir/font/texfont.h \
@@ -2502,7 +2502,7 @@ libluatex_a_SOURCES = luatexdir/luatex.h luatexdir/dvi/dvigen.h \
 	luatexdir/utils/avl.h luatexdir/utils/avlstuff.h \
 	luatexdir/utils/managed-sa.h luatexdir/utils/utils.h \
 	synctexdir/synctex-common.h synctexdir/synctex-luatex.h \
-	synctexdir/synctex.c synctexdir/synctex.h
+	synctexdir/synctex.c synctexdir/synctex.h mplibdir/lmplib.c
 luatex_dvi_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/dvi $(ctangle)
 luatex_font_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/font $(ctangle)
 luatex_image_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/image $(ctangle)
@@ -5396,6 +5396,20 @@ libluatex_a-synctex.obj: synctexdir/synctex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-synctex.obj `if test -f 'synctexdir/synctex.c'; then $(CYGPATH_W) 'synctexdir/synctex.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex.c'; fi`
 
+libluatex_a-lmplib.o: mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-lmplib.o -MD -MP -MF $(DEPDIR)/libluatex_a-lmplib.Tpo -c -o libluatex_a-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libluatex_a-lmplib.Tpo $(DEPDIR)/libluatex_a-lmplib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mplibdir/lmplib.c' object='libluatex_a-lmplib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
+
+libluatex_a-lmplib.obj: mplibdir/lmplib.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-lmplib.obj -MD -MP -MF $(DEPDIR)/libluatex_a-lmplib.Tpo -c -o libluatex_a-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libluatex_a-lmplib.Tpo $(DEPDIR)/libluatex_a-lmplib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mplibdir/lmplib.c' object='libluatex_a-lmplib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
+
 libluatex_a-dvigen.o: dvigen.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-dvigen.o -MD -MP -MF $(DEPDIR)/libluatex_a-dvigen.Tpo -c -o libluatex_a-dvigen.o `test -f 'dvigen.c' || echo '$(srcdir)/'`dvigen.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libluatex_a-dvigen.Tpo $(DEPDIR)/libluatex_a-dvigen.Po
@@ -6725,20 +6739,6 @@ libluatex_a-utils.obj: utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='utils.c' object='libluatex_a-utils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-utils.obj `if test -f 'utils.c'; then $(CYGPATH_W) 'utils.c'; else $(CYGPATH_W) '$(srcdir)/utils.c'; fi`
-
-libluatex_a-lmplib.o: mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-lmplib.o -MD -MP -MF $(DEPDIR)/libluatex_a-lmplib.Tpo -c -o libluatex_a-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libluatex_a-lmplib.Tpo $(DEPDIR)/libluatex_a-lmplib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mplibdir/lmplib.c' object='libluatex_a-lmplib.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-lmplib.o `test -f 'mplibdir/lmplib.c' || echo '$(srcdir)/'`mplibdir/lmplib.c
-
-libluatex_a-lmplib.obj: mplibdir/lmplib.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluatex_a-lmplib.obj -MD -MP -MF $(DEPDIR)/libluatex_a-lmplib.Tpo -c -o libluatex_a-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libluatex_a-lmplib.Tpo $(DEPDIR)/libluatex_a-lmplib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mplibdir/lmplib.c' object='libluatex_a-lmplib.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluatex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libluatex_a-lmplib.obj `if test -f 'mplibdir/lmplib.c'; then $(CYGPATH_W) 'mplibdir/lmplib.c'; else $(CYGPATH_W) '$(srcdir)/mplibdir/lmplib.c'; fi`
 
 libmd5_a-md5.o: libmd5/md5.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmd5_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmd5_a-md5.o -MD -MP -MF $(DEPDIR)/libmd5_a-md5.Tpo -c -o libmd5_a-md5.o `test -f 'libmd5/md5.c' || echo '$(srcdir)/'`libmd5/md5.c

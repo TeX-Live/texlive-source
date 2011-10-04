@@ -1,6 +1,6 @@
 ## texk/web2c/mplibdir/am/libmplib.am: Makefile fragment for libmplib.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libmplib.a, used by MetaPost and luaTeX
@@ -52,7 +52,4 @@ EXTRA_DIST += $(libmplib_web)
 
 DISTCLEANFILES += $(nodist_libmplib_a_SOURCES) \
 	mp-tangle mpmath-tangle psout-tangle svgout-tangle
-
-## only used by luaTeX
-EXTRA_DIST += mplibdir/lmplib.c
 

@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/libluatex.am: Makefile fragment for libluatex.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libluatex
@@ -481,9 +481,9 @@ libluatex_a_SOURCES += \
 	synctexdir/synctex.c \
 	synctexdir/synctex.h
 
-## from mplibdir
+## from ../mplibdir
 ##
-nodist_libluatex_a_SOURCES += \
+libluatex_a_SOURCES += \
 	mplibdir/lmplib.c
 
 $(libluatex_a_OBJECTS): libff.a libmplib.a

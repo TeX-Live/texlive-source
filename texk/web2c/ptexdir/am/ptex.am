@@ -206,7 +206,7 @@ DISTCLEANFILES += tests/nissya_bib.*
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
 ## ptexdir/pbibtex-mem.test
 EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
-DISTCLEANFILES += tests/memtest*
+DISTCLEANFILES += tests/memtest.bib tests/memtest?.*
 ## ptexdir/pdvitype.test
 DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
 ## ptexdir/ppltotf.test

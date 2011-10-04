@@ -1,3 +1,7 @@
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am: Avoid to `clean' ../mplibdir/lmplib.c.
+
 2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex/printing.w (print_file_line): Bug fix: avoid uninitialized

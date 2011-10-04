@@ -294,7 +294,8 @@ EXTRA_DIST = $(TESTS) tests/sort.aux tests/sort1.bbl tests/sort2.bbl \
 	bt371csf.zip dos-dj.mak dos-emx.mak os2.mak unix.mak \
 	csf/00readme.txt csf/COPYING csf/HISTORY csf/file_id.diz
 DISTCLEANFILES = tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
-	tests/xsort.aux tests/xsort.bbl tests/xsort.blg tests/memtest*
+	tests/xsort.aux tests/xsort.bbl tests/xsort.blg \
+	tests/memtest.bib tests/memtest?.*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

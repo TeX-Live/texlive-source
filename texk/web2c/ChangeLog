@@ -1,3 +1,7 @@
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/web.am (DISTCLEANFILES): Preserve distributed files.
+
 2011-09-30  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* tex.ch (print_file_line): Bug fix: avoid uninitialized lineno.

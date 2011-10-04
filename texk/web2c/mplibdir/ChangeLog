@@ -1,3 +1,7 @@
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libmplib.am (EXTRA_DIST): Drop lmplib.c, used by luaTeX.
+
 2011-06-06 Taco Hoekwater  <taco@luatex.org>
 
 	* mpost.w (mpost_run_editor): Do not attempt to use EDITOR.
