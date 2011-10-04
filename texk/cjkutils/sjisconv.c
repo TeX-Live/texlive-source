@@ -2,7 +2,7 @@
 "sjisconv (CJK ver. 4.8.2)" \
 
 /*2:*/
-#line 93 "./cjkutils-4.8.2/SJISconv/sjisconv.w"
+#line 96 "./cjkutils-4.8.2/SJISconv/sjisconv.w"
 
 #include <stdio.h> 
 #include <stdlib.h> 
@@ -16,7 +16,7 @@ fprintf(stdout,"\\def\\CJKpreproc{%s}",banner);
 ch= fgetc(stdin);
 
 while(!feof(stdin))
-{if((ch>=0x81&&ch<=0x9F)||(ch>=0xE0&&ch<=0xFC))
+{if((ch>=0x81&&ch<=0x9F)||(ch>=0xE0&&ch<=0xEF))
 {fprintf(stdout,"\177%c\177",ch);
 
 ch= fgetc(stdin);

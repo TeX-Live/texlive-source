@@ -554,12 +554,6 @@ i.e., MS-DOS, OS/2, Windows;
 is for Win32 systems).
 .
 .SS kpathsea
-Please note that older versions of
-.B kpathsea
-(<3.2) have no special means to seach for program related files.
-Additionally, versions older than 3.3 have no default path for miscellaneous
-fonts, thus we use the paths for PostScript related stuff if necessary for
-fonts resp. configuration files.
 The actual version of kpathsea is displayed on screen if you call
 .B hbf2gf
 .BR \-\-version .
@@ -568,42 +562,12 @@ Here is a table of the file type and the corresponding
 .B kpathsea
 variables.
 .PP
-Version\ 3.3 and newer (this won't change again in the future!):
-.PP
 .in +4m
 .ta 2i
 .br
 .C "\&.hbf	MISCFONTS"
 .br
 .C "\&.cfg	HBF2GFINPUTS"
-.PP
-Version\ 3.2:
-.PP
-.in +4m
-.ta 2i
-.br
-.C "\&.hbf	T1FONTS"
-.br
-.C "\&.cfg	HBF2GFINPUTS"
-.PP
-And here the same for pre-3.2-versions of
-.B kpathsea:
-.PP
-.in +4m
-.ta 2i
-.br
-.C "\&.hbf	T1FONTS"
-.br
-.C "\&.cfg	TEXCONFIG"
-.PP
-Finally, the same for versions\ \(<=2.6:
-.PP
-.in +4m
-.ta 2i
-.br
-.C "\&.hbf	DVIPSHEADERS"
-.br
-.C "\&.cfg	TEXCONFIG"
 .PP
 Please consult the info files of
 .B kpathsea

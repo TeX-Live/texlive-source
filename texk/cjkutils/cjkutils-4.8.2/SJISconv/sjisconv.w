@@ -87,6 +87,9 @@ The following code is very simple. No error detection is done because \TeX\
 which will see the output of \.{sjisconv} complains loudly if something is
 wrong.
 
+Note that the user-defined character area of SJIS (with the first bytes in
+the range 0xF0--0xFC) is not supported because it is not portable.
+
 @d banner
 "sjisconv (CJK ver. 4.8.2)"
 
@@ -103,7 +106,7 @@ int main(int argc, char *argv[])
     ch = fgetc(stdin);@#
 
     while(!feof(stdin))
-       {if((ch >= 0x81 && ch <= 0x9F) || (ch >= 0xE0 && ch <= 0xFC))
+       {if((ch >= 0x81 && ch <= 0x9F) || (ch >= 0xE0 && ch <= 0xEF))
            {fprintf(stdout, "\177%c\177", ch);@#
 
             ch = fgetc(stdin);

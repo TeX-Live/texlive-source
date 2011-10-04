@@ -1,3 +1,12 @@
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-08-SJISconv (removed): The user-defined character area of
+	SJIS is not supported because it is not portable.
+
+	Updates from http://git.savannah.gnu.org/r/cjk.git.
+	* patch-09-from-git (new): From Werner Lemberg <wl@gnu.org>.
+	Update test results tests/{cefs,sjis}conv.cjk.
+
 2011-09-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-07-CEFconv (new): Make sure that, as advertised,

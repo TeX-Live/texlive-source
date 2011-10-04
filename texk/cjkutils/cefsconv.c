@@ -2,7 +2,7 @@
 "cefsconv (CJK ver. 4.8.2)" \
 
 /*2:*/
-#line 108 "./cjkutils-4.8.2/CEFconv/cefsconv.w"
+#line 111 "./cjkutils-4.8.2/CEFconv/cefsconv.w"
 
 #include <ctype.h> 
 #include <stdio.h> 
@@ -20,7 +20,7 @@ fprintf(stdout,"\\def\\CNSpreproc{%s}",banner);
 ch= fgetc(stdin);
 
 while(!feof(stdin))
-{if((ch>=0x81&&ch<=0x9F)||(ch>=0xE0&&ch<=0xFC))
+{if((ch>=0x81&&ch<=0x9F)||(ch>=0xE0&&ch<=0xEF))
 {fprintf(stdout,"\177%c\177",ch);
 
 ch= fgetc(stdin);
