@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 23155 2011-06-28 00:43:01Z karl $
+# $Id: TLUtils.pm 23990 2011-09-17 07:40:33Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 23155 $';
+my $svnrev = '$Revision: 23990 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -62,6 +62,7 @@ C<TeXLive::TLUtils> -- utilities used in the TeX Live infrastructure
   TeXLive::TLUtils::setup_programs($bindir, $platform);
   TeXLive::TLUtils::tlcmp($file, $file);
   TeXLive::TLUtils::nulldev();
+  TeXLive::TLUtils::get_full_line($fh);
 
 =head2 Installer Functions
 
@@ -90,6 +91,7 @@ C<TeXLive::TLUtils> -- utilities used in the TeX Live infrastructure
   TeXLive::TLUtils::member($item, @list);
   TeXLive::TLUtils::merge_into(\%to, \%from);
   TeXLive::TLUtils::texdir_check($texdir);
+  TeXLive::TLUtils::quotify_path_with_spaces($path);
   TeXLive::TLUtils::conv_to_w32_path($path);
   TeXLive::TLUtils::native_slashify($internal_path);
   TeXLive::TLUtils::forward_slashify($path_from_user);
@@ -156,6 +158,7 @@ BEGIN {
     &texdir_check
     &member
     &quotewords
+    &quotify_path_with_spaces
     &conv_to_w32_path
     &native_slashify
     &forward_slashify
@@ -164,6 +167,8 @@ BEGIN {
     &merge_into
     &give_ctan_mirror
     &give_ctan_mirror_base
+    &create_mirror_list
+    &extract_mirror_entry
     &tlmd5
     &xsystem
     &run_cmd
@@ -180,6 +185,7 @@ BEGIN {
     &setup_persistent_downloads
     &mktexupd
     &nulldev
+    &get_full_line
   );
   @EXPORT = qw(setup_programs download_file process_logging_options
                tldie tlwarn info log debug ddebug dddebug debug_hash
@@ -262,6 +268,7 @@ sub platform_name {
       ($CPU = $guessed_platform) =~ s/(.*?)-.*/$1/;
       $CPU =~ s/^alpha(.*)/alpha/;   # alphaev56 or whatever
       $CPU =~ s/powerpc64/powerpc/;  # we don't distinguish ppc64
+      $CPU =~ s/mips64el/mipsel/;    # we don't distinguish mips64 and 32 el
 
       my @OSs = qw(aix cygwin darwin freebsd hpux irix
                    kfreebsd linux netbsd openbsd solaris);
@@ -1369,7 +1376,7 @@ sub install_package {
 
   # we assume that $::progs has been set up!
   my $wget = $::progs{'wget'};
-  my $xzdec = "\"$::progs{'xzdec'}\"";
+  my $xzdec = quotify_path_with_spaces($::progs{'xzdec'});
   if (!defined($wget) || !defined($xzdec)) {
     tlwarn("install_package: wget/xzdec programs not set up properly.\n");
     return 0;
@@ -1823,7 +1830,7 @@ after all packages have been unpacked.
 =cut
 
 sub announce_execute_actions {
-  my ($type, $tlp) = @_;
+  my ($type, $tlp, $what) = @_;
   # do simply return immediately if execute actions are suppressed
   return if $::no_execute_actions;
 
@@ -1835,6 +1842,14 @@ sub announce_execute_actions {
     $::files_changed = 1;
     return;
   }
+  if (defined($type) && ($type eq "latex-updated")) {
+    $::latex_updated = 1;
+    return;
+  }
+  if (defined($type) && ($type eq "tex-updated")) {
+    $::tex_updated = 1;
+    return;
+  }
   if (!defined($type) || (($type ne "enable") && ($type ne "disable"))) {
     die "announce_execute_actions: enable or disable, not type $type";
   }
@@ -1842,22 +1857,28 @@ sub announce_execute_actions {
   if ($tlp->runfiles || $tlp->srcfiles || $tlp->docfiles) {
     $::files_changed = 1;
   }
+  $what = "map format hyphen" if (!defined($what));
   foreach my $e ($tlp->executes) {
     if ($e =~ m/^add((Mixed)?Map)\s+([^\s]+)\s*$/) {
-      $::execute_actions{$type}{'maps'}{$3} = "$1";
+      # save the refs as we have another =~ grep in the following lines
+      my $a = $1;
+      my $b = $3;
+      $::execute_actions{$type}{'maps'}{$b} = $a if ($what =~ m/map/);
     } elsif ($e =~ m/^AddFormat\s+(.*)\s*$/) {
       my %r = TeXLive::TLUtils::parse_AddFormat_line("$1");
       if (defined($r{"error"})) {
         tlwarn ("$r{'error'} in parsing $e for return hash\n");
       } else {
-        $::execute_actions{$type}{'formats'}{$r{'name'}} = \%r;
+        $::execute_actions{$type}{'formats'}{$r{'name'}} = \%r
+          if ($what =~ m/format/);
       }
     } elsif ($e =~ m/^AddHyphen\s+(.*)\s*$/) {
       my %r = TeXLive::TLUtils::parse_AddHyphen_line("$1");
       if (defined($r{"error"})) {
         tlwarn ("$r{'error'} in parsing $e for return hash\n");
       } else {
-        $::execute_actions{$type}{'hyphens'}{$r{'name'}} = \%r;
+        $::execute_actions{$type}{'hyphens'}{$r{'name'}} = \%r
+          if ($what =~ m/hyphen/);
       }
     } else {
       tlwarn("Unknown execute $e in ", $tlp->name, "\n");
@@ -2076,7 +2097,9 @@ sub untar {
   my $cwd = cwd();
   chdir($targetdir) || die "chdir($targetdir) failed: $!";
 
-  if (system($tar, "xf", $tarfile) != 0) {
+  # on w32 don't extract file modified time, because AV soft can open
+  # files in the mean time causing time stamp modification to fail
+  if (system($tar, win32() ? "xmf" : "xf", $tarfile) != 0) {
     tlwarn("untar: untarring $tarfile failed (in $targetdir)\n");
     $ret = 0;
   } else {
@@ -2415,6 +2438,31 @@ Return C</dev/null> on Unix and C<nul> on Windows.
 
 sub nulldev {
   return (&win32)? 'nul' : '/dev/null';
+}
+
+=item C<get_full_line ($fh)>
+
+returns the next line from the file handle $fh, taking 
+continuation lines into account (last character of a line is \, and 
+no quoting is parsed).
+
+=cut
+
+#     open my $f, '<', $file_name or die;
+#     while (my $l = get_full_line($f)) { ... }
+#     close $f or die;
+sub get_full_line {
+  my ($fh) = @_;
+  my $line = <$fh>;
+  return undef unless defined $line;
+  return $line unless $line =~ s/\\\r?\n$//;
+  my $cont = get_full_line($fh);
+  if (!defined($cont)) {
+    tlwarn('Continuation disallowed at end of file');
+    $cont = "";
+  }
+  $cont =~ s/^\s*//;
+  return $line . $cont;
 }
 
 
@@ -3176,6 +3224,25 @@ sub process_logging_options {
   }
 }
 
+=pod
+
+This function takes a single argument I<path> and returns it with
+C<"> chars surrounding it on Unix.  On Windows, the C<"> chars are only
+added if I<path> a few special characters, since unconditional quoting
+leads to errors there.  In all cases, any C<"> chars in I<path> itself
+are (erroneously) eradicated.
+ 
+=cut
+
+sub quotify_path_with_spaces {
+  my $p = shift;
+  my $m = win32() ? '[+=^&();,!%\s]' : '.';
+  if ( $p =~ m/$m/ ) {
+    $p =~ s/"//g; # remove any existing double quotes
+    $p = "\"$p\""; 
+  }
+  return($p);
+}
 
 =pod
 
@@ -3202,7 +3269,7 @@ sub conv_to_w32_path {
     chomp($cwd);
     $p = "$cwd\\$p";
   }
-  if ($p =~ m/ /) { $p = "\"$p\""; }
+  $p = quotify_path_with_spaces($p);
   return($p);
 }
 
@@ -3327,7 +3394,7 @@ sub check_on_working_mirror
     tlwarn ("check_on_working_mirror: Programs not set up, trying wget\n");
     $wget = "wget";
   }
-  $wget = "\"wget\"";
+  $wget = quotify_path_with_spaces($wget);
   #
   # the test is currently not completely correct, because we do not
   # use the LWP if it is set up for it, but I am currently too lazy
@@ -3403,6 +3470,59 @@ sub give_ctan_mirror_base
 sub give_ctan_mirror
 {
   return (give_ctan_mirror_base(@_) . "/$TeXLiveServerPath");
+}
+
+=item C<create_mirror_list()>
+
+=item C<extract_mirror_entry($listentry)>
+
+C<create_mirror_list> returns the lists of viable mirrors according to 
+ctan-mirrors.pl, in a list which also contains continents, and country headers.
+
+C<extract_mirror_entry> extracts the actual repository data from one
+of these entries.
+
+# KEEP THESE TWO FUNCTIONS IN SYNC!!!
+
+=cut
+
+sub create_mirror_list {
+  our $mirrors;
+  my @ret = ();
+  require("installer/ctan-mirrors.pl");
+  my @continents = sort keys %$mirrors;
+  for my $continent (@continents) {
+    # first push the name of the continent
+    push @ret, uc($continent);
+    my @countries = sort keys %{$mirrors->{$continent}};
+    for my $country (@countries) {
+      my @mirrors = sort keys %{$mirrors->{$continent}{$country}};
+      my $first = 1;
+      for my $mirror (@mirrors) {
+        my $mfull = $mirror;
+        $mfull =~ s!/$!!;
+        # do not append the server path part here, but add
+        # it down there in the extract mirror entry
+        #$mfull .= "/" . $TeXLive::TLConfig::TeXLiveServerPath;
+        #if ($first) {
+          my $country_str = sprintf "%-12s", $country;
+          push @ret, "  $country_str  $mfull";
+        #  $first = 0;
+        #} else {
+        #  push @ret, "    $mfull";
+        #}
+      }
+    }
+  }
+  return @ret;
+}
+
+# extract_mirror_entry is not very intelligent, it assumes that
+# the last "word" is the URL
+sub extract_mirror_entry {
+  my $ent = shift;
+  my @foo = split ' ', $ent;
+  return $foo[$#foo] . "/" . $TeXLive::TLConfig::TeXLiveServerPath;
 }
 
 sub tlmd5 {
