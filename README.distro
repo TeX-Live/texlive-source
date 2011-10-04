@@ -1,0 +1,91 @@
+Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
+
+	Building TeX Live (TL) to a distro
+	==================================
+
+Although they use the same code base, building for a TL binary distribution
+as shipped by the user groups may be quite different from a `distro' build
+for, e.g., some kind of Linux distribution, a *Bsd or Mac OS X port, or
+similar.
+
+While a TL binary distribution uses shared libraries (libc, libm, X11
+libraries, and libfontconfig) only when absolutely necessary, a distro might
+use as many shared libraries as possible, including the TL specific
+libkpathsea and libptexenc.
+
+In addition the installation paths will, in general, be quite different.
+
+1. Configuring for a distro
+===========================
+Here we give some hints how to configure TL for a distro (see README.config
+for a fairly complete description of all configure options.
+
+1.1. General setup
+------------------
+You must use
+  --disable-native-texlive-build
+otherwise many options described below are rejected, and should use, e.g.,
+  --with-banner-add=/SomeDistro
+to identify your distro.
+
+You may specify
+  --enable-shared
+to build the TL specific kpathsea and ptexenc libraries as shared libraries
+and may add
+  --disable-shared
+if you don't want them as static libraries.
+
+You should use
+  --with-system-LIB
+(for LIB=zlib, libpng, zziplib, etc.) to use installed libraries (including
+kpathsea and ptexenc for the TL specific libraries, e.g., when rebuilding
+individual programs) and you may have to add
+  --with-LIB-includes=DIR
+and/or
+  --with-LIB-libdir=DIR
+to locate the installed headers and libraries.
+
+1.2. Installation paths
+-----------------------
+If you want your principal TEXMF trees to be, e.g.,
+  /usr/share/texmf{,-dist}
+you must specify
+  --prefix=/usr/share
+and you probably need to modify texmf.cnf to reflect your paths.  The
+compile-time paths defined in paths.h will be computed accordingly.
+
+Specify
+  --bindir=/usr/bin
+to install binaries under /usr/bin.  This will cause the installation of
+correct symlinks to scripts under ${prefix}/texmf or ${prefix}/texmf-dist.
+
+To install the TL kpathsea and ptexenc libraries under /usr/lib specify
+  --libdir=/usr/lib
+but on 64bit bi-arch systems and depending on your distro this might also be
+  --libdir=/usr/lib64
+or similar.  The correct choice is important in particular when using shared
+versions of the TL specific libraries.
+
+Alternatively you could specify
+  --exec-prefix=/usr
+for binaries under /usr/bin and libraries under /usr/lib.
+
+You probably should specify
+  --infodir=/usr/share/info --mandir=/usr/share/man
+to have info and man pages installed under /usr/share/{info,man}, and
+  --includedir=/usr/include
+to have headers under /usr/include/{kpathsea,ptexenc}.
+
+For a `staged install' (see Automake manual 12.4), e.g.,
+  mkdir /tmp/staging && make DESTDIR=/tmp/staging install-strip
+all installation paths are prefixed by the value of DESTDIR.
+
+
+2. XXXXXXXX
+===========
+To be filled in.
+
+
+Happy building.  Please use the tldistro list for questions or
+discussion: http://lists.tug.org/tldistro.

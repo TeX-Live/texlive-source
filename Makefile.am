@@ -18,6 +18,7 @@ EXTRA_DIST = \
 	README.coding \
 	README.config \
 	README.cross \
+	README.distro \
 	README.hacking \
 	README.layout \
 	build-aux/README.TL \
