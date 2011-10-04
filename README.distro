@@ -1,8 +1,8 @@
 Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
-	Building TeX Live (TL) to a distro
-	==================================
+	Building TeX Live (TL) for a distro
+	===================================
 
 Although they use the same code base, building for a TL binary distribution
 as shipped by the user groups may be quite different from a `distro' build
@@ -19,7 +19,7 @@ In addition the installation paths will, in general, be quite different.
 1. Configuring for a distro
 ===========================
 Here we give some hints how to configure TL for a distro (see README.config
-for a fairly complete description of all configure options.
+for a fairly complete description of all configure options).
 
 1.1. General setup
 ------------------
