@@ -93,7 +93,7 @@
 #define edit_var "MFEDIT"
 #endif /* MF */
 
-#define IS_eTeX (defined(eTeX) || defined(epTeX) || defined(eupTeX)) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX)
+#define IS_eTeX (defined(eTeX) || defined(epTeX) || defined(eupTeX) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX))
 #define IS_pTeX (defined(pTeX) || defined(epTeX) || defined(upTeX) || defined(eupTeX))
 #define IS_upTeX (defined(upTeX) || defined(eupTeX))
 
@@ -264,25 +264,6 @@ char_needs_quote (int c)
   return (c == '&' || c == '|' || c == '%' || c == '<' ||
           c == '>' || c == ';' || c == ',' || c == '(' ||
           c == ')');
-}
-#endif
-
-#if 0
-/* We could call this at the end of the main program, but does it matter?
-   The process is about to exit anyway.  */
-static void
-free_shellcmdlist (void)
-{
-  char **p;
-
-  if (cmdlist) {
-    p = cmdlist;
-    while (*p) {
-      free (*p);
-      p++;
-    }
-    free (cmdlist);
-  }
 }
 #endif
 

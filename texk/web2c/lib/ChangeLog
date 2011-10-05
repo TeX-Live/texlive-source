@@ -1,3 +1,7 @@
+2011-10-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c : remove unused free_shellcmdlist()
+
 2011-10-04  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* texmfmp.c (calledit): More changes to reduce diffs with W32TeX.
