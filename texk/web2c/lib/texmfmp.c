@@ -116,6 +116,16 @@ char *generic_synctex_get_current_name (void)
 }
 #endif
 
+#if defined(TeX) || (defined(MF) && defined(WIN32))
+static int
+Isspace (char c)
+{
+  return (c == ' ' || c == '\t');
+}
+#endif /* TeX || (MF && WIN32) */
+
+#ifdef TeX
+
 /* Shell escape.
 
    If shellenabledp == 0, all shell escapes are forbidden.
@@ -156,8 +166,6 @@ char *generic_synctex_get_current_name (void)
        escape is forbidden. The value of restrictedshell is
        irrelevant if shellenabledp == 0.
 */
-
-#ifdef TeX
 
 /* cmdlist is a list of allowed commands which are given like this:
    shell_escape_commands = kpsewhich,ebb,extractbb,mpost,metafun
@@ -258,12 +266,6 @@ char_needs_quote (int c)
           c == ')');
 }
 #endif
-
-static int
-Isspace (char c)
-{
-  return (c == ' ' || c == '\t');
-}
 
 #if 0
 /* We could call this at the end of the main program, but does it matter?
@@ -2125,9 +2127,15 @@ calledit (packedASCIIcode *filename,
           integer fnlength,
           integer linenumber)
 {
-  char *temp, *command;
+  char *temp, *command, *fullcmd;
   char c;
   int sdone, ddone, i;
+
+#ifdef WIN32
+  char *fp, *ffp, *env, editorname[256], buffer[256];
+  int cnt = 0;
+  int dontchange = 0;
+#endif
 
   sdone = ddone = 0;
   filename += fnstart;
@@ -2152,6 +2160,17 @@ calledit (packedASCIIcode *filename,
 
   /* So we can construct it as we go.  */
   temp = command;
+
+#ifdef WIN32
+  fp = editorname;
+  if ((isalpha(*edit_value) && *(edit_value + 1) == ':'
+        && IS_DIR_SEP (*(edit_value + 2)))
+      || (*edit_value == '"' && isalpha(*(edit_value + 1))
+        && *(edit_value + 2) == ':'
+        && IS_DIR_SEP (*(edit_value + 3)))
+     )
+    dontchange = 1;
+#endif
 
   while ((c = *edit_value++) != 0)
     {
@@ -2188,17 +2207,56 @@ calledit (packedASCIIcode *filename,
 	      break;
 	    }
 	}
-      else
+      else {
+#ifdef WIN32
+        if (dontchange)
+          *temp++ = c;
+        else { if(Isspace(c) && cnt == 0) {
+            cnt++;
+            temp = command;
+            *temp++ = c;
+            *fp = '\0';
+	  } else if(!Isspace(c) && cnt == 0) {
+            *fp++ = c;
+	  } else {
+            *temp++ = c;
+	  }
+        }
+#else
         *temp++ = c;
+#endif
+      }
     }
 
   *temp = 0;
 
+#ifdef WIN32
+  if (dontchange == 0) {
+    if(editorname[0] == '.' ||
+       editorname[0] == '/' ||
+       editorname[0] == '\\') {
+      fprintf(stderr, "%s is not allowed to execute.\n", editorname);
+      uexit(1);
+    }
+    env = (char *)getenv("PATH");
+    if(SearchPath(env, editorname, ".exe", 256, buffer, &ffp)==0) {
+      if(SearchPath(env, editorname, ".bat", 256, buffer, &ffp)==0) {
+        fprintf(stderr, "I cannot find %s in the PATH.\n", editorname);
+        uexit(1);
+      }
+    }
+    fullcmd = (char *)xmalloc(strlen(buffer)+strlen(command)+5);
+    strcpy(fullcmd, "\"");
+    strcat(fullcmd, buffer);
+    strcat(fullcmd, "\"");
+    strcat(fullcmd, command);
+  } else
+#endif
+  fullcmd = command;
+
   /* Execute the command.  */
-  {
-    if (system (command) != 0)
-      fprintf (stderr, "! Trouble executing `%s'.\n", command);
-  }
+  if (system (fullcmd) != 0)
+    fprintf (stderr, "! Trouble executing `%s'.\n", command);
 
   /* Quit, since we found an error.  */
   uexit (1);
