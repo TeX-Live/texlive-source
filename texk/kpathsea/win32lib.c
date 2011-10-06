@@ -20,7 +20,7 @@
 #include <kpathsea/concatn.h>
 #include <kpathsea/variable.h>
 
-FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, char *cmd, char *mode)
+FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char *mode)
 {
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
@@ -1075,7 +1075,7 @@ build_cmdline(char ***cmd, char *input, char *output)
   under Win9x. This is a workaround for this bug.
 */
 
-int __cdecl kpathsea_win32_system(kpathsea kpse, char *cmd)
+int __cdecl kpathsea_win32_system(kpathsea kpse, const char *cmd)
 {
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
@@ -1266,7 +1266,7 @@ int __cdecl kpathsea_win32_system(kpathsea kpse, char *cmd)
 }
 
 #if defined (KPSE_COMPAT_API)
-FILE * __cdecl win32_popen (char *cmd, char *mode)
+FILE * __cdecl win32_popen (const char *cmd, const char *mode)
 {
    return kpathsea_win32_popen(kpse_def, cmd, mode);
 }
@@ -1315,7 +1315,7 @@ getpwnam (char *name)
   return kpathsea_getpwnam (kpse_def, name);
 }
 
-int __cdecl win32_system(char *cmd)
+int __cdecl win32_system(const char *cmd)
 {
   return kpathsea_win32_system (kpse_def, cmd);
 }

@@ -247,10 +247,10 @@
 #undef min
 #endif
 
-extern KPSEDLL FILE *kpathsea_win32_popen (kpathsea kpse, char *cmd, char *mode);
+extern KPSEDLL FILE *kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char *mode);
 extern KPSEDLL int kpathsea_win32_pclose (kpathsea kpse, FILE *f);
 extern KPSEDLL struct passwd *kpathsea_getpwnam (kpathsea kpse, char *name);
-extern KPSEDLL int kpathsea_win32_system(kpathsea kpse, char *cmd);
+extern KPSEDLL int kpathsea_win32_system(kpathsea kpse, const char *cmd);
 
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL struct passwd *getpwnam (char *name);
@@ -259,9 +259,9 @@ extern KPSEDLL struct passwd *getpwnam (char *name);
 #define popen(cmd, mode) win32_popen(cmd, mode)
 #define pclose(file) win32_pclose(file)
 /* Functions for WIN32 */
-extern KPSEDLL FILE *popen(char * str, char * str2);
+extern KPSEDLL FILE *popen(const char * str, const char * str2);
 extern KPSEDLL int pclose(FILE * f);
-extern KPSEDLL int system(char * cmd);
+extern KPSEDLL int system(const char * cmd);
 #endif /* KPSE_COMPAT_API */
 
 extern KPSEDLL void xfseek64 (FILE *f, __int64 offset, int wherefrom,  const char *fname);

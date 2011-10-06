@@ -1,3 +1,7 @@
+2011-10-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c, win32lib.h: use const char * in system() and popen().
+
 2011-09-30  Karl Berry  <karl@tug.org>
 
 	* types.h (kpse_{ris,bltxml}_format): new types.
