@@ -12,6 +12,7 @@
    #defines TeX or MF, which avoids the need for a special
    Makefile rule.  */
 
+#include <kpathsea/config.h>
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/line.h>
 #include <kpathsea/readable.h>
@@ -21,12 +22,12 @@
 #include <kpathsea/concatn.h>
 #endif
 
-#include <time.h> /* For `struct tm'.  */
 #if defined (HAVE_SYS_TIME_H)
 #include <sys/time.h>
 #elif defined (HAVE_SYS_TIMEB_H)
 #include <sys/timeb.h>
 #endif
+#include <time.h> /* For `struct tm'.  Moved here for Visual Studio 2005.  */
 
 #if defined(__STDC__)
 #include <locale.h>
@@ -39,23 +40,37 @@
 /* {tex,mf}d.h defines TeX, MF, INI, and other such symbols.
    Unfortunately there's no way to get the banner into this code, so
    just repeat the text.  */
+/* We also define predicates, e.g., IS_eTeX for all e-TeX like engines, so
+   the rest of this file can remain unchanged when adding a new engine.  */
 #ifdef TeX
 #if defined(XeTeX)
+#define IS_eTeX 1
 #include <xetexdir/xetexextra.h>
 #elif defined (eTeX)
+#define IS_eTeX 1
 #include <etexdir/etexextra.h>
 #elif defined (pdfTeX)
+#define IS_eTeX 1
 #include <pdftexdir/pdftexextra.h>
 #include <pdftexdir/ptexlib.h>
 #elif defined (Aleph)
+#define IS_eTeX 1
 #include <alephdir/alephextra.h>
 #elif defined (pTeX)
+#define IS_pTeX 1
 #include <ptexdir/ptexextra.h>
 #elif defined (epTeX)
+#define IS_eTeX 1
+#define IS_pTeX 1
 #include <eptexdir/eptexextra.h>
 #elif defined (upTeX)
+#define IS_pTeX 1
+#define IS_upTeX 1
 #include <uptexdir/uptexextra.h>
 #elif defined (eupTeX)
+#define IS_eTeX 1
+#define IS_pTeX 1
+#define IS_upTeX 1
 #include <euptexdir/euptexextra.h>
 #else
 #define BANNER "This is TeX, Version 3.1415926"
@@ -93,9 +108,15 @@
 #define edit_var "MFEDIT"
 #endif /* MF */
 
-#define IS_eTeX (defined(eTeX) || defined(epTeX) || defined(eupTeX) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX))
-#define IS_pTeX (defined(pTeX) || defined(epTeX) || defined(upTeX) || defined(eupTeX))
-#define IS_upTeX (defined(upTeX) || defined(eupTeX))
+#if !defined(IS_eTeX)
+# define IS_eTeX 0
+#endif
+#if !defined(IS_pTeX)
+# define IS_pTeX 0
+#endif
+#if !defined(IS_upTeX)
+# define IS_upTeX 0
+#endif
 
 #if defined(__SyncTeX__)
 /* 
@@ -1485,7 +1506,7 @@ static struct option long_options[]
 #endif
       { "kanji",                     1, 0, 0 },
       { "kanji-internal",            1, 0, 0 },
-#endif
+#endif /* IS_pTeX */
       { 0, 0, 0, 0 } };
 
 static void

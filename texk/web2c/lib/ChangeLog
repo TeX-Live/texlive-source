@@ -1,3 +1,8 @@
+2011-10-04  Peter Breitenlohner  <peb@mp.mpg.de>
+
+	* texmfmp.c: More changes to reduce diffs with W32TeX,
+	for compilation with MS Visual Studio 2005.
+
 2011-10-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c : remove unused free_shellcmdlist()
