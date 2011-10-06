@@ -89,8 +89,10 @@ new_poppler_userdata(AnnotBorder);
 new_poppler_userdata(Annots);
 new_poppler_userdata(Array);
 new_poppler_userdata(Catalog);
-new_poppler_userdata(EmbFile);
 new_poppler_userdata(Dict);
+#ifdef EMBFILE_IN_CATALOG_H
+new_poppler_userdata(EmbFile);
+#endif
 //new_poppler_userdata(GooString);
 new_poppler_userdata(LinkDest);
 new_poppler_userdata(Links);
@@ -393,7 +395,11 @@ static int m_Annot__gc(lua_State * L)
     printf("\n===== Annot GC ===== uin=<%p>\n", uin);
 #endif
     if (uin->atype == ALLOC_LEPDF)
+#ifdef HAVE_ANNOTDECREFCNT
+        ((Annot *) uin->d)->decRefCnt();
+#else
         delete(Annot *) uin->d;
+#endif
     return 0;
 }
 
@@ -409,6 +415,8 @@ static const struct luaL_Reg Annot_m[] = {
 
 //**********************************************************************
 // AnnotBorderStyle
+
+#ifdef HAVE_ANNOTBORDERSTYLE
 
 m_poppler_get_DOUBLE(AnnotBorderStyle, getWidth);
 
@@ -434,6 +442,8 @@ static const struct luaL_Reg AnnotBorderStyle_m[] = {
     {"__gc", m_Annots__gc},
     {NULL, NULL}                // sentinel
 };
+
+#endif
 
 //**********************************************************************
 // Annots
@@ -684,6 +694,8 @@ static int m_Catalog_findDest(lua_State * L)
 m_poppler_get_poppler(Catalog, Object, getDests);
 m_poppler_get_INT(Catalog, numEmbeddedFiles);
 
+#ifdef EMBFILE_IN_CATALOG_H
+
 static int m_Catalog_embeddedFile(lua_State * L)
 {
     EmbFile *ef;
@@ -707,6 +719,8 @@ static int m_Catalog_embeddedFile(lua_State * L)
         lua_pushnil(L);
     return 1;
 }
+
+#endif
 
 m_poppler_get_INT(Catalog, numJS);
 
@@ -749,7 +763,9 @@ static const struct luaL_Reg Catalog_m[] = {
     {"findDest", m_Catalog_findDest},
     {"getDests", m_Catalog_getDests},
     {"numEmbeddedFiles", m_Catalog_numEmbeddedFiles},
+#ifdef EMBFILE_IN_CATALOG_H
     {"embeddedFile", m_Catalog_embeddedFile},
+#endif
     {"numJS", m_Catalog_numJS},
     {"getJS", m_Catalog_getJS},
     {"getOutline", m_Catalog_getOutline},
@@ -760,6 +776,8 @@ static const struct luaL_Reg Catalog_m[] = {
 
 //**********************************************************************
 // EmbFile
+
+#ifdef EMBFILE_IN_CATALOG_H
 
 m_poppler_get_GOOSTRING(EmbFile, name);
 m_poppler_get_GOOSTRING(EmbFile, description);
@@ -800,6 +818,8 @@ static const struct luaL_Reg EmbFile_m[] = {
     {"__tostring", m_EmbFile__tostring},
     {NULL, NULL}                // sentinel
 };
+
+#endif
 
 //**********************************************************************
 // Dict
@@ -2683,12 +2703,16 @@ int luaopen_epdf(lua_State * L)
 {
     register_meta(Annot);
     // TODO register_meta(AnnotBorder);
+#ifdef HAVE_ANNOTBORDERSTYLE
     register_meta(AnnotBorderStyle);
+#endif
     register_meta(Annots);
     register_meta(Array);
     register_meta(Catalog);
-    register_meta(EmbFile);
     register_meta(Dict);
+#ifdef EMBFILE_IN_CATALOG_H
+    register_meta(EmbFile);
+#endif
     register_meta(GooString);
     register_meta(LinkDest);
     register_meta(Links);

@@ -37,6 +37,9 @@
 /* web2c: Default editor for interactive `e' option. */
 #undef EDITOR
 
+/* Define to 1 for the class `EmbFile' in <Catalog.h>. */
+#undef EMBFILE_IN_CATALOG_H
+
 /* metafont: Define to include EPSF pseudo window support. */
 #undef EPSFWIN
 
@@ -45,6 +48,12 @@
 
 /* Define to 1 if you have the `access' function. */
 #undef HAVE_ACCESS
+
+/* Define to 1 if we have the class `AnnotBorderStyle'. */
+#undef HAVE_ANNOTBORDERSTYLE
+
+/* Define to 1 if class `Annot' has the `decRefCnt' member. */
+#undef HAVE_ANNOTDECREFCNT
 
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H

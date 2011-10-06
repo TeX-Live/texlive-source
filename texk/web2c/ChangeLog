@@ -1,3 +1,7 @@
+2011-10-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add poppler feature tests for luaTeX.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/web.am (DISTCLEANFILES): Preserve distributed files.

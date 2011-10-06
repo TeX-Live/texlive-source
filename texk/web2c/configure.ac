@@ -272,6 +272,48 @@ KPSE_TECKIT_FLAGS
 KPSE_ICU_XETEX_FLAGS([icule])
 KPSE_OBSDCOMPAT_FLAGS
 
+# Checks for xpdf poppler features.
+KPSE_ADD_FLAGS([poppler])
+AC_LANG_PUSH([C++])
+AC_CACHE_CHECK([for Annot::decRefCnt],
+               [kpse_cv_have_Annot_decRefCnt],
+               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <goo/GooString.h>
+#include <Object.h>
+#include <Array.h>
+#include <Annot.h>]],
+                                                   [[Annot *an; an->decRefCnt();]])],
+                                  [kpse_cv_have_Annot_decRefCnt=yes],
+                                  [kpse_cv_have_Annot_decRefCnt=no])])
+AS_IF([test "x$kpse_cv_have_Annot_decRefCnt" = xyes],
+      [AC_DEFINE([HAVE_ANNOTDECREFCNT], 1,
+                 [Define to 1 if class `Annot' has the `decRefCnt' member.])])
+AC_CACHE_CHECK([for class AnnotBorderStyle],
+               [kpse_cv_have_AnnotBorderStyle],
+               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <goo/GooString.h>
+#include <Object.h>
+#include <Array.h>
+#include <Annot.h>]],
+                                                   [[AnnotBorderStyle *an;]])],
+                                  [kpse_cv_have_AnnotBorderStyle=yes],
+                                  [kpse_cv_have_AnnotBorderStyle=no])])
+AS_IF([test "x$kpse_cv_have_AnnotBorderStyle" = xyes],
+      [AC_DEFINE([HAVE_ANNOTBORDERSTYLE], 1,
+                 [Define to 1 if we have the class `AnnotBorderStyle'.])])
+AC_CACHE_CHECK([for class EmbFile in Catalog.h],
+               [kpse_cv_have_EmbFile_in_Catalog_h],
+               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <goo/GooString.h>
+#include <Object.h>
+#include <Array.h>
+#include <Catalog.h>]],
+                                                   [[EmbFile *ef;]])],
+                                  [kpse_cv_have_EmbFile_in_Catalog_h=yes],
+                                  [kpse_cv_have_EmbFile_in_Catalog_h=no])])
+AS_IF([test "x$kpse_cv_have_EmbFile_in_Catalog_h" = xyes],
+      [AC_DEFINE([EMBFILE_IN_CATALOG_H], 1,
+                 [Define to 1 for the class `EmbFile' in <Catalog.h>.])])
+AC_LANG_POP([C++])
+KPSE_RESTORE_FLAGS
+
 dnl Write output here, instead of putting a zillion -D's on the command line.
 AC_CONFIG_HEADERS([w2c/c-auto.h:c-auto.in],
  [sed -e 's/^#define PACKAGE/#define WEB2C_PACKAGE/' \

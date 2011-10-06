@@ -1,3 +1,7 @@
+2011-10-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/lepdflib.cc: Test poppler 0.16.x / 0.17.x features.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am: Avoid to `clean' ../mplibdir/lmplib.c.
