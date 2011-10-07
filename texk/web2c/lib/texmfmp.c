@@ -137,6 +137,12 @@ char *generic_synctex_get_current_name (void)
 }
 #endif
 
+#ifdef WIN32
+#if !IS_pTeX
+FILE *Poptr;
+#endif
+#endif
+
 #if defined(TeX) || (defined(MF) && defined(WIN32))
 static int
 Isspace (char c)
@@ -511,8 +517,9 @@ runsystem (const char *cmd)
 
   return allow;
 }
+#endif /* TeX */
 
-#ifdef pdfTeX
+#if ENABLE_PIPES
 /* Like runsystem(), the runpopen() function is called only when
    shellenabledp == 1.   Unlike runsystem(), here we write errors to
    stderr, since we have nowhere better to use; and of course we return
@@ -556,8 +563,7 @@ runpopen (char *cmd, const char *mode)
     free (cmdname);
   return f;
 }
-#endif /* pdfTeX */
-#endif /* TeX */
+#endif /* ENABLE_PIPES */
 
 /* The main program, etc.  */
 
@@ -675,6 +681,10 @@ maininit (int ac, string *av)
 #else
   kpse_set_program_name (argv[0], user_progname);
 #endif
+
+  /* If the program name is "mf-nowin", then reset the name as "mf". */
+  if (strncasecmp (kpse_invocation_name, "mf-nowin", 8) == 0)
+    kpse_reset_program_name ("mf");
 
   /* FIXME: gather engine names in a single spot. */
   xputenv ("engine", TEXMFENGINENAME);
@@ -923,6 +933,7 @@ topenin (void)
 #if defined (TeX) && defined (IPC)
 
 #ifdef WIN32
+#undef _WINSOCKAPI_
 #include <winsock2.h>
 #else
 #include <sys/socket.h>
@@ -1022,11 +1033,7 @@ ipc_open_out (void) {
 #ifdef WIN32
   struct WSAData wsaData;
   int nCode;
-#if 0
-  unsigned long sockcntl = 1024;
-#else
   unsigned long mode = 1;
-#endif
 #endif
 #ifdef IPC_DEBUG
   fputs ("tex: Opening socket for IPC output ...\n", stderr);
@@ -1056,11 +1063,7 @@ ipc_open_out (void) {
   if (sock != INVALID_SOCKET) {
     if (connect (sock, ipc_addr, ipc_addr_len) != 0 ||
 #ifdef WIN32
-#if 0
-        ioctlsocket (sock, O_NONBLOCK, &sockcntl) != 0
-#else
         ioctlsocket (sock, FIONBIO, &mode) < 0
-#endif
 #else
         fcntl (sock, F_SETFL, O_NONBLOCK) < 0
 #endif
@@ -1105,6 +1108,7 @@ ipc_snd (int n, int is_eof, char *data)
   }
 
 #ifdef IPC_DEBUG
+  fprintf(stderr, "%d\t%d\n", ourmsg.msg.namelength, ourmsg.msg.eof);
   fputs ("tex: Sending message to socket ...\n", stderr);
 #endif
   ourmsg.msg.namelength = n;
@@ -1580,7 +1584,11 @@ parse_options (int argc, string *argv)
       ipc_open_out ();
       /* Try to start up the other end if it's not already.  */
       if (!ipc_is_open ()) {
+#ifdef WIN32
+        if (spawnlp (_P_NOWAIT, IPC_SERVER_CMD, IPC_SERVER_CMD, NULL) != -1) {
+#else
         if (system (IPC_SERVER_CMD) == 0) {
+#endif
           unsigned i;
           for (i = 0; i < 20 && !ipc_is_open (); i++) {
 #ifdef WIN32
@@ -1823,10 +1831,11 @@ parse_first_line (const_string filename)
    closed using pclose().
 */
 
-#if defined(pdfTeX)
+#if ENABLE_PIPES
 
-static FILE *pipes [] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
-                         NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
+#define MAX_PIPES 16
+
+static FILE *pipes [MAX_PIPES];
 
 boolean
 open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
@@ -1846,7 +1855,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
       recorder_record_input (fname + 1);
       *f_ptr = runpopen(fname+1,"rb");
       free(fname);
-      for (i=0; i<=15; i++) {
+      for (i=0; i<MAX_PIPES; i++) {
         if (pipes[i]==NULL) {
           pipes[i] = *f_ptr;
           break;
@@ -1854,6 +1863,9 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
       }
       if (*f_ptr)
         setvbuf (*f_ptr,NULL,_IOLBF,0);
+#ifdef WIN32
+      Poptr = *f_ptr;
+#endif
 
       return *f_ptr != NULL;
     }
@@ -1891,7 +1903,7 @@ open_out_or_pipe (FILE **f_ptr, const_string fopen_mode)
       recorder_record_output (fname + 1);
       free(fname);
 
-      for (i=0; i<=15; i++) {
+      for (i=0; i<MAX_PIPES; i++) {
         if (pipes[i]==NULL) {
           pipes[i] = *f_ptr;
           break;
@@ -1915,10 +1927,13 @@ close_file_or_pipe (FILE *f)
 
   if (shellenabledp) {
     /* if this file was a pipe, pclose() it and return */    
-    for (i=0; i<=15; i++) {
+    for (i=0; i<MAX_PIPES; i++) {
       if (pipes[i] == f) {
         if (f) {
           pclose (f);
+#ifdef WIN32
+          Poptr = NULL;
+#endif
         }
         pipes[i] = NULL;
         return;
@@ -1927,7 +1942,7 @@ close_file_or_pipe (FILE *f)
   }
   close_file(f);
 }
-#endif
+#endif /* ENABLE_PIPES */
 
 /* All our interrupt handler has to do is set TeX's or Metafont's global
    variable `interrupt'; then they will do everything needed.  */
@@ -2067,6 +2082,31 @@ input_line (FILE *f)
 #if IS_pTeX
   last = input_line2(f, (char *)buffer, first, bufsize, &i);
 #else
+#ifdef WIN32
+  if (f != Poptr && fileno (f) != fileno (stdin)) {
+    long position = ftell (f);
+
+    if (position == 0L) {
+      int k1 = getc (f);
+
+      if (k1 == EOF || k1 == '\r' || k1 == '\n')
+        fseek (f, -1L , SEEK_CUR);
+      else {
+        int k2 = getc (f);
+
+        if (k2 == EOF || k2 == '\r' || k2 == '\n')
+          fseek (f, -2L , SEEK_CUR);
+        else if (!(k1 == 0xff && k2 == 0xfe) &&
+                 !(k1 == 0xfe && k2 == 0xff)) {
+          int k3 = getc (f);
+
+          if (!(k1 == 0xef && k2 == 0xbb && k3 == 0xbf))
+            fseek (f, -3L, SEEK_CUR);
+        }
+      }
+    }
+  }
+#endif
   last = first;
   while (last < bufsize && (i = getc (f)) != EOF && i != '\n' && i != '\r')
     buffer[last++] = i;

@@ -38,6 +38,7 @@ static boolean UPTEX_enabled;
 const char *ptexenc_version_string = "ptexenc " PTEXENC_VERSION;
 #if defined(WIN32)
 int sjisterminal;
+FILE *Poptr;
 int infile_enc_auto;
 #else
 static int infile_enc_auto = 1;

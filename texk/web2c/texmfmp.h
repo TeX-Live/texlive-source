@@ -119,6 +119,9 @@ extern int tfmtemp, texinputtype;
 extern boolean open_in_or_pipe (FILE **, int, const_string fopen_mode);
 extern boolean open_out_or_pipe (FILE **, const_string fopen_mode);
 extern void close_file_or_pipe (FILE *);
+#define ENABLE_PIPES 1
+#else
+#define ENABLE_PIPES 0
 #endif
 
 /* Executing shell commands.  */
@@ -221,7 +224,7 @@ extern void topenin (void);
 /* These defines reroute the file i/o calls to the new pipe-enabled 
    functions in texmfmp.c*/
 
-#if defined(pdfTeX)
+#if ENABLE_PIPES
 #undef aopenin
 #undef aopenout
 #undef aclose

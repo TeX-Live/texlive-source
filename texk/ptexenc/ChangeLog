@@ -1,3 +1,7 @@
+2011-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptexenc.c, ptexenc/ptexenc.h: Declare and export Poptr.
+
 2011-09-05  Takuji Tanaka <KXD02663@nifty.ne.jp>
 
 	* ptexenc.c: Fix putc2() to output right unicode characters.
