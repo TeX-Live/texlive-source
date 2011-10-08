@@ -1833,9 +1833,9 @@ parse_first_line (const_string filename)
 
 #if ENABLE_PIPES
 
-#define MAX_PIPES 16
+#define NUM_PIPES 16
 
-static FILE *pipes [MAX_PIPES];
+static FILE *pipes [NUM_PIPES];
 
 boolean
 open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
@@ -1855,7 +1855,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
       recorder_record_input (fname + 1);
       *f_ptr = runpopen(fname+1,"rb");
       free(fname);
-      for (i=0; i<MAX_PIPES; i++) {
+      for (i=0; i<NUM_PIPES; i++) {
         if (pipes[i]==NULL) {
           pipes[i] = *f_ptr;
           break;
@@ -1903,7 +1903,7 @@ open_out_or_pipe (FILE **f_ptr, const_string fopen_mode)
       recorder_record_output (fname + 1);
       free(fname);
 
-      for (i=0; i<MAX_PIPES; i++) {
+      for (i=0; i<NUM_PIPES; i++) {
         if (pipes[i]==NULL) {
           pipes[i] = *f_ptr;
           break;
@@ -1927,7 +1927,7 @@ close_file_or_pipe (FILE *f)
 
   if (shellenabledp) {
     /* if this file was a pipe, pclose() it and return */    
-    for (i=0; i<MAX_PIPES; i++) {
+    for (i=0; i<NUM_PIPES; i++) {
       if (pipes[i] == f) {
         if (f) {
           pclose (f);
