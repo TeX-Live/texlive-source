@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -44,15 +44,15 @@ KPSE_ADD_FLAGS([zlib])
 
 AC_CHECK_FUNC([compress], , [AC_ERROR([zlib not found])])
 AC_CHECK_HEADERS([zlib.h], , [AC_ERROR([zlib not found])])
-AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
 
 KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
 fi
 
-TECKIT_TREE=TECkit-[]TECkit_version
-AC_SUBST([TECKIT_TREE])
+AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
+
+AC_SUBST([TECKIT_TREE], [TECkit-]TECkit_version)
 
 AC_CONFIG_FILES([Makefile include/teckit/Makefile])
 

@@ -13413,7 +13413,6 @@ kpse_save_LIBS=$LIBS
 eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$ZLIB_LIBS \$LIBS\"
 
-
 ac_fn_c_check_func "$LINENO" "deflate" "ac_cv_func_deflate"
 if test "x$ac_cv_func_deflate" = xyes; then :
 
@@ -13436,12 +13435,8 @@ fi
 done
 
 
-$as_echo "#define HAVE_LIBZ 1" >>confdefs.h
-
-
 eval CPPFLAGS=\"$LIBPNG_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$LIBPNG_LIBS \$LIBS\"
-
 
 ac_fn_c_check_func "$LINENO" "png_create_read_struct" "ac_cv_func_png_create_read_struct"
 if test "x$ac_cv_func_png_create_read_struct" = xyes; then :
@@ -13465,12 +13460,8 @@ fi
 done
 
 
-$as_echo "#define HAVE_LIBPNG 1" >>confdefs.h
-
-
 eval CPPFLAGS=\"$FREETYPE2_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$FREETYPE2_LIBS \$LIBS\"
-
 
 ac_fn_c_check_func "$LINENO" "FT_Init_FreeType" "ac_cv_func_FT_Init_FreeType"
 if test "x$ac_cv_func_FT_Init_FreeType" = xyes; then :
@@ -13494,15 +13485,22 @@ fi
 done
 
 
-$as_echo "#define HAVE_LIBFREETYPE 1" >>confdefs.h
-
-
 CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
 
 echo timestamp >config.force
 fi
+
+
+$as_echo "#define HAVE_LIBZ 1" >>confdefs.h
+
+
+$as_echo "#define HAVE_LIBPNG 1" >>confdefs.h
+
+
+$as_echo "#define HAVE_LIBFREETYPE 1" >>confdefs.h
+
 
 GD_TREE=gd-2.0.35
 

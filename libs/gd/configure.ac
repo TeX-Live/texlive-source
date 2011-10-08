@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -46,30 +46,27 @@ AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 if test "x$enable_build" != xno || test -f config.force; then
 
 KPSE_ADD_FLAGS([zlib])
-
 AC_CHECK_FUNC([deflate], , [AC_ERROR([zlib not found])])
 AC_CHECK_HEADERS([zlib.h], , [AC_ERROR([zlib not found])])
-AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
 
 KPSE_ADD_FLAGS([libpng])
-
 AC_CHECK_FUNC([png_create_read_struct], , [AC_ERROR([libpng not found])])
 AC_CHECK_HEADERS([png.h], , [AC_ERROR([libpng not found])])
-AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have the png library.])
 
 KPSE_ADD_FLAGS([freetype2])
-
 AC_CHECK_FUNC([FT_Init_FreeType], , [AC_ERROR([libfreetype2 not found])])
 AC_CHECK_HEADERS([ft2build.h], , [AC_ERROR([libfreetype2 not found])])
-AC_DEFINE([HAVE_LIBFREETYPE], 1, [ Define if you have the freetype library.])
 
 KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
 fi
 
-GD_TREE=gd-[]gd_version
-AC_SUBST([GD_TREE])
+AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
+AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have the png library.])
+AC_DEFINE([HAVE_LIBFREETYPE], 1, [ Define if you have the freetype library.])
+
+AC_SUBST([GD_TREE], [gd-]gd_version)
 
 AC_CONFIG_FILES([Makefile include/Makefile])
 

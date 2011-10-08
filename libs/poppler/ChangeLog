@@ -1,3 +1,12 @@
+2011-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import poppler 0.18.0.
+	* version.ac: New file defining the poppler version.
+	* Makefile.am (poppler_libpoppler_a_sources): Add CachedFile.cc,
+	Hints.cc, Linearization.cc, Rendition.cc, strtok_r.cpp, and
+	ViewerPreferences.cc.
+	* configure.ac: Adapt.
+
 2011-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (goo_libGoo_a_sources): Omit PNGWriter.cc.

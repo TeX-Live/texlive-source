@@ -15210,9 +15210,6 @@ fi
 
 
 
-$as_echo "#define __TDS_VERSION__ 0x200406L" >>confdefs.h
-
-
 eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$ZLIB_LIBS \$LIBS\"
 
@@ -15324,6 +15321,10 @@ LIBS=$kpse_save_LIBS
 
 echo timestamp >config.force
 fi
+
+
+$as_echo "#define __TDS_VERSION__ 0x200406L" >>confdefs.h
+
 
 DVIPDFMX_TREE=dvipdfmx-20110311
 

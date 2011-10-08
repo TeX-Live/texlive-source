@@ -5693,15 +5693,16 @@ fi
 done
 
 
-$as_echo "#define HAVE_LIBZ 1" >>confdefs.h
-
-
 CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
 
 echo timestamp >config.force
 fi
+
+
+$as_echo "#define HAVE_LIBZ 1" >>confdefs.h
+
 
 TECKIT_TREE=TECkit-2.5.1
 

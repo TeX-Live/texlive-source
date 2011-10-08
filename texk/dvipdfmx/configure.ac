@@ -60,8 +60,6 @@ if test "x$enable_build" != xno || test -f config.force; then
 KPSE_ADD_FLAGS([kpathsea])
 AC_CHECK_HEADER([kpathsea/version.h], [],
                 [AC_MSG_ERROR([Sorry, kpathsea too old])])
-AC_DEFINE([__TDS_VERSION__], [0x200406L],
-          [Define to 0x200406L if your libkpathsea supports enc formats.])
 
 KPSE_ADD_FLAGS([zlib])
 CHO_CHECK_ZLIB
@@ -73,6 +71,9 @@ KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
 fi
+
+AC_DEFINE([__TDS_VERSION__], [0x200406L],
+          [Define to 0x200406L if your libkpathsea supports enc formats.])
 
 AC_SUBST([DVIPDFMX_TREE], [dvipdfmx-]dvipdfmx_version)
 
