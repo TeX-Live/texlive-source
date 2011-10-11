@@ -150,7 +150,6 @@ int main(int argc, char *argv[])
                         (long unsigned) e->offset, e->gen,
                         (e->type == xrefEntryFree ? "f" : "n"));
             else {              // e->offset is the object number of the object stream
-#ifdef POPPLER_VERSION
                 Stream *str;
                 Parser *parser;
                 Object objStr, obj1, obj2;
@@ -184,24 +183,6 @@ int main(int argc, char *argv[])
 
                 fprintf(outfile, "%.10lu 00000 n\n",
                         (long unsigned)(firstOffset + localOffset));
-#else
-                // e->gen is the local index inside that object stream
-                //int objStrOffset = xref->getEntry(e->offset)->offset;
-                Object tmpObj;
-
-                xref->fetch(i, e->gen, &tmpObj);        // to ensure xref->objStr is set
-                ObjectStream *objStr = xref->getObjStr();
-                assert(objStr != NULL);
-                int *localOffsets = objStr->getOffsets();
-                assert(localOffsets != NULL);
-//                 fprintf(outfile, "%0.10lu %i n\n",
-//                         (long unsigned) (objStrOffset), e->gen);
-                fprintf(outfile, "%.10lu 00000 n\n",
-                        (long unsigned) (objStr->getFirstOffset() +
-                                         localOffsets[e->gen]));
-//                         (long unsigned) (objStrOffset + objStr->getStart() + localOffsets[e->gen]));
-                tmpObj.free();
-#endif
             }
         }
     } else {

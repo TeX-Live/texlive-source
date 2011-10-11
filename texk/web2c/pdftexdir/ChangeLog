@@ -1,3 +1,8 @@
+2011-10-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftosrc.cc: Always use new logic for Object Streams
+	(for xpdf without patch-40-objectStream-support-for-pdftosrc).
+
 2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* wprob.test: New shell script to test for uninitialized line.
