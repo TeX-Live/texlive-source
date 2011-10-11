@@ -1,3 +1,7 @@
+2011-10-11  Peter Breitenlohner  <peb@mp.mpg.de>
+
+	* texmfmp.c [WIN32]: Slightly reformulate Byte order marks.
+
 2011-10-07  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* texmfmp.c: More changes to reduce diffs with W32TeX.
