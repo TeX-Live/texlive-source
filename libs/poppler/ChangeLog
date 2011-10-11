@@ -1,3 +1,7 @@
+2011-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Reorganize definition of POPPLER_VERSION.
+
 2011-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import poppler 0.18.0.

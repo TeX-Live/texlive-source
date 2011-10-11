@@ -1,3 +1,12 @@
+2011-10-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-mingw (new): Split off ...
+	* patch-01-PDF_PARSER_ONLY: ... from here.
+
+2011-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-POPPLER_VERSION: Reorg definition of POPPLER_VERSION.
+
 2011-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported poppler-0.18.0 source tree from:
@@ -6,7 +15,7 @@
 
 2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* patch-01-PDF_PARSER_ONLY: Fix PDF_PARSER_ONLY for WIN32.
+	* patch-01-PDF_PARSER_ONLY: Fix PDF_PARSER_ONLY for MinGW.
 
 	* patch-03-POPPLER_VERSION (new): #define POPPLER_VERSION.
 

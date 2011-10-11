@@ -5211,6 +5211,12 @@ ac_config_headers="$ac_config_headers config.h"
 ac_config_headers="$ac_config_headers poppler/poppler-config.h:poppler-0.18.0/poppler/poppler-config.h.in"
 
 
+
+cat >>confdefs.h <<_ACEOF
+#define POPPLER_VERSION "$PACKAGE_VERSION"
+_ACEOF
+
+
 ## _KPSE_INIT: Initialize TL infrastructure
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
@@ -6749,8 +6755,6 @@ $as_echo X"$file" |
   done
 }
  ;;
-    "poppler/poppler-config.h":H) sed -e 's/^#define PACKAGE_/#define POPPLER_/' poppler/poppler-config.h >config.tmp \
-    && mv -f config.tmp poppler/poppler-config.h ;;
 
   esac
 done # for ac_tag

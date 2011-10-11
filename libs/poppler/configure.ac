@@ -72,9 +72,9 @@ AC_FUNC_FSEEKO
 
 AC_CONFIG_HEADERS([config.h])
 
-AC_CONFIG_HEADERS([poppler/poppler-config.h:poppler-]poppler_version[/poppler/poppler-config.h.in],
-  [sed -e 's/^#define PACKAGE_/#define POPPLER_/' poppler/poppler-config.h >config.tmp \
-    && mv -f config.tmp poppler/poppler-config.h])
+AC_CONFIG_HEADERS([poppler/poppler-config.h:poppler-]poppler_version[/poppler/poppler-config.h.in])
+
+AC_DEFINE_UNQUOTED([POPPLER_VERSION], ["$PACKAGE_VERSION"], [Define to the poppler version.])
 
 KPSE_ZLIB_FLAGS
 
