@@ -5,9 +5,6 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
-//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
-//  See top-level ChangeLog for a list of all modifications
-//========================================================================
 
 #ifndef XREF_H
 #define XREF_H
@@ -24,42 +21,7 @@
 class Dict;
 class Stream;
 class Parser;
-
-//------------------------------------------------------------------------
-// ObjectStream
-//------------------------------------------------------------------------
-
-class ObjectStream {
-public:
-
-  // Create an object stream, using object number <objStrNum>,
-  // generation 0.
-  ObjectStream(XRef *xref, int objStrNumA);
-
-  GBool isOk() { return ok; }
-
-  ~ObjectStream();
-
-  // Return the object number of this object stream.
-  int getObjStrNum() { return objStrNum; }
-
-  // Get the <objIdx>th object from this stream, which should be
-  // object number <objNum>, generation 0.
-  Object *getObject(int objIdx, int objNum, Object *obj);
-
-  int *getOffsets() { return offsets; }
-  Guint getFirstOffset() { return firstOffset; }
-
-private:
-
-  int objStrNum;		// object number of the object stream
-  int nObjects;			// number of objects in the stream
-  Object *objs;			// the objects (length = nObjects)
-  int *objNums;			// the object numbers (length = nObjects)
-  int *offsets;			// the object offsets (length = nObjects)
-  Guint firstOffset;
-  GBool ok;
-};
+class ObjectStream;
 
 //------------------------------------------------------------------------
 // XRef
@@ -135,7 +97,6 @@ public:
   int getSize() { return size; }
   XRefEntry *getEntry(int i) { return &entries[i]; }
   Object *getTrailerDict() { return &trailerDict; }
-  ObjectStream *getObjStr() { return objStr; }
 
 private:
 

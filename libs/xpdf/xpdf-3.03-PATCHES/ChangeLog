@@ -1,5 +1,10 @@
 2011-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* patch-40-objectStream-support-for-pdftosrc: Removed, no longer
+	required with new logic for Object Streams in pdftosrc.cc.
+
+2011-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Imported xpdf-3.03 source tree:
 	  ftp://ftp.foolabs.com/pub/xpdf/xpdf-3.03.tar.gz
 
@@ -8,8 +13,7 @@
 	* patch-10-exclude-body-of-Page_getDefaultCTM, patch-12-mingw32,
 	patch-20-skip-reading-config-file,
 	patch-22-exclude-openTempFile,
-	patch-40-objectStream-support-for-pdftosrc,
-	patch-60-bug-fix: Adapted.
+	patch-40-objectStream-support-for-pdftosrc: Adapted.
 
 2010-12-02  Karl Berry  <karl@tug.org>
 
