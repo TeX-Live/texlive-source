@@ -60,7 +60,6 @@
 @define const stdout;
 @define const true;
 
-@define const ALEPHHELP;
 @define const BIBTEXHELP;
 @define const DVICOPYHELP;
 @define const DVITOMPHELP;

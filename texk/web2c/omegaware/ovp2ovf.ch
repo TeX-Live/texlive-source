@@ -33,25 +33,6 @@ procedure initialize; {this procedure gets things started properly}
 @y
 @!buf_size=3000; {max input line length, output error line length}
 @z
-%@x
-%@!vf_size=10000; {maximum length of |vf| data, in bytes}
-%@!max_stack=100; {maximum depth of simulated \.{DVI} stack}
-%@!max_param_words=30; {the maximum number of \.{fontdimen} parameters allowed}
-%@!max_lig_steps=5000;
-%  {maximum length of ligature program, must be at most $32767-257=32510$}
-%@!max_kerns=500; {the maximum number of distinct kern values}
-%@!hash_size=5003; {preferably a prime number, a bit larger than the number
-%  of character pairs in lig/kern steps}
-%@y
-%@!vf_size=50000; {maximum length of |vf| data, in bytes}
-%@!max_stack=100; {maximum depth of simulated \.{DVI} stack}
-%@!max_param_words=30; {the maximum number of \.{fontdimen} parameters allowed}
-%@!max_lig_steps=10000;
-%  {maximum length of ligature program, must be at most $32767-257=32510$}
-%@!max_kerns=10000; {the maximum number of distinct kern values}
-%@!hash_size=10007; {preferably a prime number, a bit larger than the number
-%  of character pairs in lig/kern steps}
-%@z
 
 @x [6] Open VPL file.
 reset(vpl_file);

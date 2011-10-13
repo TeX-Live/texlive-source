@@ -44,19 +44,6 @@ begin
 @y
 @!buf_size=3000; {max input line length, output error line length}
 @z
-%@x
-%@!max_lig_steps=5000;
-%  {maximum length of ligature program, must be at most $32767-257=32510$}
-%@!max_kerns=500; {the maximum number of distinct kern values}
-%@!hash_size=5003; {preferably a prime number, a bit larger than the number
-%  of character pairs in lig/kern steps}
-%@y
-%@!max_lig_steps=32500;
-%  {maximum length of ligature program, must be at most $32767-257=32510$}
-%@!max_kerns=15000; {the maximum number of distinct kern values}
-%@!hash_size=15077; {preferably a prime number, a bit larger than the number
-%  of character pairs in lig/kern steps}
-%@z
 
 @x [6] Open PL file.
 reset(pl_file);

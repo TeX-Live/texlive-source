@@ -57,18 +57,6 @@ procedure initialize; {this procedure gets things started properly}
     parse_arguments;
 @z
 
-%@x [5] Increase sizes to match vptovf.
-%@!tfm_size=30000; {maximum length of |tfm| data, in bytes}
-%@!lig_size=5000; {maximum length of |lig_kern| program, in words}
-%@!hash_size=5003; {preferably a prime number, a bit larger than the number
-%  of character pairs in lig/kern steps}
-%@y
-%@!tfm_size=40000; {maximum length of |tfm| data, in bytes}
-%@!lig_size=8000; {maximum length of |lig_kern| program, in words ($<2^{15}$)}
-%@!hash_size=8009; {preferably a prime number, a bit larger than the number
-%  of character pairs in lig/kern steps}
-%@z
-
 @x [7] Open the TFM file.
 @ On some systems you may have to do something special to read a
 packed file of bytes. For example, the following code didn't work

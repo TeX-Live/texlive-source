@@ -1,3 +1,7 @@
+2011-10-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* common.defines: Remove ALEPHHELP.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Add distclean-local to remove kpathsea/ and w2c/.
