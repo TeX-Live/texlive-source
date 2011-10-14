@@ -1,3 +1,21 @@
+2011-10-14  Jérôme Laurens  <jerome.laurens@u-bourgogne.fr>
+
+    These changes only affect the synctex command line utility
+    as well as 3rd parties developers. The various TeX engines are not affected.
+    
+	* synctex_parser.c:
+        - cosmetic changes to enhance code readability
+        - Adding the notiong of mean line and weight to hbox nodes
+          in order to enhance forward synchronization
+        - function synctex_scanner_get_name:
+            + Adding support for the new file naming convention with './'
+    * synctex_parser_utils.c:
+        - Adding support for the new file naming convention with './'
+            + function synctex_ignore_leading_dot_slash_in_path replaces synctex_ignore_leading_dot_slash
+            + function _synctex_is_equivalent_file_name is more permissive
+
+    See the synctex_parser_readme.txt for more details
+
 2011-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex-e-rec.ch0: Shorten a change set to simplify e-pTeX.
