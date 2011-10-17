@@ -119,14 +119,12 @@ typedef union _synctex_info_t {
 } synctex_info_t;
 
 #   if defined(SYNCTEX_USE_CHARINDEX)
-#       warning SyncTeX With CHARINDEX
 #       define SYNCTEX_DECLARE_CHARINDEX synctex_charindex_t char_index
 #       define SYNCTEX_CHARINDEX(NODE) (NODE->char_index)
 #       define SYNCTEX_PRINT_CHARINDEX printf("#%i\n",SYNCTEX_CHARINDEX(node))
 #       define SYNCTEX_DECLARE_CHAR_OFFSET synctex_charindex_t charindex_offset
 #       define SYNCTEX_IMPLEMENT_CHARINDEX(NODE,CORRECTION) NODE->char_index = (synctex_charindex_t)(scanner->charindex_offset+SYNCTEX_CUR-SYNCTEX_START+(CORRECTION));
 #   else
-#       warning SyncTeX Without CHARINDEX
 #       define SYNCTEX_DECLARE_CHARINDEX
 #       define SYNCTEX_CHARINDEX(NODE) 0
 #       define SYNCTEX_PRINT_CHARINDEX printf("\n")

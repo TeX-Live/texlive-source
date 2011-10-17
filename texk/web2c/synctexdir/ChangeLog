@@ -1,3 +1,8 @@
+2011-10-18  Akira Kakuto   <kakuto@fuk.kindai.ac.jp>
+
+	* synctex_parser.c: remove "# warning ..." lines, because MSVC fails to
+	interpret them.
+
 2011-10-14  Jérôme Laurens  <jerome.laurens@u-bourgogne.fr>
 
     These changes only affect the synctex command line utility
