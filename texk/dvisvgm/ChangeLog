@@ -1,3 +1,10 @@
+2011-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.0.9.
+	* version.ac: Adapted.
+	* configure.ac: Add the WIN32 conditional.
+	* Makefile.am [WIN32] (AM_CPPFLAGS): Add `-DTEXLIVEWIN32'.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (DISTCLEANFILES): Add CXXLD.sh.

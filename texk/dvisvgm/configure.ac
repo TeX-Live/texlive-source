@@ -41,6 +41,7 @@ AC_CHECK_FUNCS([ftime gettimeofday])
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h])
 
 KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
@@ -125,8 +126,7 @@ fi
 
 KPSE_RESTORE_FLAGS
 
-DVISVGM_TREE=[dvisvgm-]dvisvgm_version
-AC_SUBST([DVISVGM_TREE])
+AC_SUBST([DVISVGM_TREE], [dvisvgm-]dvisvgm_version)
 
 AC_CONFIG_FILES([Makefile])
 

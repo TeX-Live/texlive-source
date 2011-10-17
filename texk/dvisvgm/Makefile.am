@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvisvgm/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -28,6 +28,9 @@ INCLUDES = -I$(top_srcdir)/$(DVISVGM_TREE)/src
 INCLUDES += -I$(top_srcdir)/$(DVISVGM_TREE)/potracelib
 INCLUDES += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES)
 INCLUDES += $(ZLIB_INCLUDES) $(LIBGS_INCLUDES)
+if WIN32
+AM_CPPFLAGS = -DTEXLIVEWIN32
+endif WIN32
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
