@@ -1,3 +1,7 @@
+2011-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-mingw (removed): Instead add `-lgdi32'.
+
 2011-10-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-mingw (new): Split off ...

@@ -211,7 +211,6 @@ get_poppler_datadir (void)
 
 #endif
 
-#ifndef PDF_PARSER_ONLY
 #ifdef _WIN32
 
 //------------------------------------------------------------------------
@@ -456,7 +455,6 @@ int CALLBACK WinFontList::enumFunc2(CONST LOGFONT *font,
 }
 
 #endif // _WIN32
-#endif // PDF_PARSER_ONLY
 
 //------------------------------------------------------------------------
 // PSFontParam
@@ -711,11 +709,9 @@ GlobalParams::GlobalParams(const char *customPopplerDataDir)
   unicodeMapCache = new UnicodeMapCache();
   cMapCache = new CMapCache();
 
-#ifndef PDF_PARSER_ONLY
 #ifdef _WIN32
   baseFontsInitialized = gFalse;
   winFontList = NULL;
-#endif
 #endif
 
 #ifdef ENABLE_PLUGINS
@@ -879,10 +875,8 @@ GlobalParams::~GlobalParams() {
   deleteGooHash(unicodeMaps, GooString);
   deleteGooList(toUnicodeDirs, GooString);
   deleteGooHash(displayFonts, DisplayFontParam);
-#ifndef PDF_PARSER_ONLY
 #ifdef _WIN32
   delete winFontList;
-#endif
 #endif
   deleteGooHash(psFonts, PSFontParam);
   deleteGooList(psNamedFonts16, PSFontParam);

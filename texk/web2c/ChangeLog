@@ -1,3 +1,7 @@
+2011-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac [WIN32]: Add `-lgdi32' to POPPLER_LIBS.
+
 2011-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.h (ENABLE_PIPES): New macro for pipe support.
