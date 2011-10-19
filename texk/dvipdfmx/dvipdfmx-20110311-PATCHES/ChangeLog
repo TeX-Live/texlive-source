@@ -1,6 +1,10 @@
+2011-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-typo (new): Fix typo "featre" -> "feature".
+
 2011-09-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* patch-04-uptex (new): (e)-upTeX support.
+	* patch-04-uptex (new): (e-)upTeX support.
 
 2011-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

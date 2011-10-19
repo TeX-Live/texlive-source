@@ -1558,10 +1558,10 @@ handle_gsub (pdf_obj *conf,
       rv = otl_gsub_select(gsub_list, script, language, feature);
       if (rv < 0) {
 	if (flag == 'p') {
-	  WARN("No GSUB featre %s.%s.%s loaded...",
+	  WARN("No GSUB feature %s.%s.%s loaded...",
 	       script, language, feature);
 	} else if (flag == 'r') {
-	  ERROR("No GSUB featre %s.%s.%s loaded...",
+	  ERROR("No GSUB feature %s.%s.%s loaded...",
 		script, language, feature);
 	}
       } else {
