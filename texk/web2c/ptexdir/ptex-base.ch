@@ -5855,6 +5855,9 @@ function get_jfm_pos(@!kcode:KANJI_code;@!f:internal_font_number):eight_bits;
 var @!jc:KANJI_code; {temporary register for KANJI}
 @!sp,@!mp,@!ep:pointer;
 begin@/
+if f=null_font then
+  begin get_jfm_pos:=kchar_type(null_font)(0); return;
+  end;
 jc:=toDVI(kcode);
 sp:=1; { start position }
 ep:=font_num_ext[f]-1; { end position }
@@ -6684,11 +6687,13 @@ main_i:=orig_char_info(main_f)(qi(0));
 goto main_loop_j+3;
 @#
 main_loop_j+1: space_factor:=1000;
-  fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
-  link(tail):=main_p; tail:=main_p; last_jchr:=tail;
-  fast_get_avail(main_p); info(main_p):=KANJI(cur_chr);
-  link(tail):=main_p; tail:=main_p;
-  cx:=cur_chr; @<Insert kinsoku penalty@>;
+  if main_f<>null_font then
+    begin fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
+    link(tail):=main_p; tail:=main_p; last_jchr:=tail;
+    fast_get_avail(main_p); info(main_p):=KANJI(cur_chr);
+    link(tail):=main_p; tail:=main_p;
+    cx:=cur_chr; @<Insert kinsoku penalty@>;
+  end;
   ins_kp:=false;
 again_2:
   get_next;
@@ -6724,7 +6729,10 @@ again_2:
 @#
 main_loop_j+3:
   if ins_kp=true then @<Insert |pre_break_penalty| of |cur_chr|@>;
-  @<Look ahead for glue or kerning@>;
+  if main_f<>null_font then 
+    begin @<Look ahead for glue or kerning@>;
+    end
+  else inhibit_glue_flag:=false;
   if ins_kp=false then begin { Kanji -> Kanji }
     goto main_loop_j+1;
   end else if ins_kp=true then begin { Kanji -> Ascii }
