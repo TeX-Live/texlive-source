@@ -1,3 +1,7 @@
+2011-10-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kp.c: program name should be mendex.
+
 2011-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Rename: ChangeLog => ChangeLog.jis, ChangeLog.TL => ChangeLog.

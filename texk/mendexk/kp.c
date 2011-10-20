@@ -8,7 +8,7 @@
 int
 KP_init(char *prog)
 {
-  kpse_set_program_name(prog, "mendexk");
+  kpse_set_program_name(prog, NULL);
   return 0;
 }
 
