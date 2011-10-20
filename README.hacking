@@ -16,7 +16,7 @@ autoconf (GNU Autoconf) 2.68
 
 automake (GNU automake) 1.11.1
 
-ltmain.sh (GNU libtool) 2.4
+ltmain.sh (GNU libtool) 2.4.2
 
 bison (GNU Bison) 2.4.3
 
