@@ -1,3 +1,8 @@
+2011-10-20  Werner Fink <werner@suse.de>
+
+	* dospecial.c (fgetboundingbox): Increase `buf' size to avoid
+	overrun.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST, DISTCLEANFILES): Make sure that

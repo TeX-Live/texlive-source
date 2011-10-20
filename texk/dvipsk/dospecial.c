@@ -112,7 +112,7 @@ static void
 fgetboundingbox(char *f, float *llx_p, float *lly_p, float *urx_p, float *ury_p)
 {
    FILE *fp;
-   char buf[BUFSIZ];
+   char buf[BUFSIZ+1];
 
    fp = search(figpath, f, READ);
    if (fp == 0)
