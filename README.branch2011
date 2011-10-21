@@ -2,6 +2,27 @@ $Id$
 Public domain.  Originally written 2011 by Karl Berry.
 
 This file records commits made to the bug-fix branch (only).
+------------------------------------------------------------------------
+r24348 | karl | 2011-10-21 01:59:55 +0200 (Fri, 21 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/web2c/eptexdir/eptex.ech
+   M /branches/branch2011/Build/source/texk/web2c/synctexdir/synctex-e-rec.ch0
+
+branch2011: import e-ptex fixes from trunk r23688
+
+------------------------------------------------------------------------
+r24347 | karl | 2011-10-21 01:54:25 +0200 (Fri, 21 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/web2c/ptexdir/ptex-base.ch
+
+branch2011: import memory corruption, part of r23592, per Hironori Kitagawa, 19 Oct 2011 07:44:35
+
+------------------------------------------------------------------------
+r24346 | karl | 2011-10-21 01:50:28 +0200 (Fri, 21 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/dvipsk/dospecial.c
+
+branch2011: import buffer overrun fix from trunk r24337
 
 ------------------------------------------------------------------------
 r24159 | karl | 2011-10-01 01:23:37 +0200 (Sat, 01 Oct 2011) | 1 line
