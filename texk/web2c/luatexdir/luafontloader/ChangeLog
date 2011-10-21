@@ -1,3 +1,8 @@
+2011-10-21  Werner Fink <werner@suse.de>
+
+	* fontforge/fontforge/psread.c (ioescapestopped): Correctly
+	compute `stack' array size.
+
 2009-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ff-config.in: new configuration header replacing lots of
