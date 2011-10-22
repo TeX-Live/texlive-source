@@ -3,6 +3,13 @@ Public domain.  Originally written 2011 by Karl Berry.
 
 This file records commits made to the bug-fix branch (only).
 ------------------------------------------------------------------------
+r24363 | karl | 2011-10-23 01:08:32 +0200 (Sun, 23 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/web2c/luatexdir/luafontloader/fontforge/fontforge/psread.c
+
+branch2011: import luatex array fix from trunk r24353
+
+------------------------------------------------------------------------
 r24348 | karl | 2011-10-21 01:59:55 +0200 (Fri, 21 Oct 2011) | 1 line
 Changed paths:
    M /branches/branch2011/Build/source/texk/web2c/eptexdir/eptex.ech
