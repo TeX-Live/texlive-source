@@ -385,7 +385,7 @@ return;
     wrapper->top = io;
 }
 
-static int ioescapestopped(IO *wrapper, struct psstack *stack, int sp) {
+static int ioescapestopped(IO *wrapper, struct psstack *stack, int sp, const size_t bsize) {
     _IO *io = wrapper->top, *iop;
     int wasstopped;
 
@@ -396,7 +396,7 @@ static int ioescapestopped(IO *wrapper, struct psstack *stack, int sp) {
 	free(io);
 	if ( wasstopped ) {
 	    wrapper->top = iop;
-	    if ( sp<(int)(sizeof(stack)/sizeof(stack[0])) ) {
+	    if ( sp<(int)bsize ) {
 		stack[sp].type = ps_bool;
 		stack[sp++].u.tf = true;
 	    }
@@ -1609,7 +1609,7 @@ static void _InterpretPS(IO *wrapper, EntityChar *ec, RetStack *rs) {
 	    }
 	  break;
 	  case pt_stop:
-	    sp = ioescapestopped(wrapper,stack,sp);
+	    sp = ioescapestopped(wrapper,stack,sp,sizeof(stack)/sizeof(stack[0]));
 	  break;
 	  case pt_load:
 	    if ( sp>=1 && stack[sp-1].type==ps_lit ) {
