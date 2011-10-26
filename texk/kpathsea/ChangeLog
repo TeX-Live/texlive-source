@@ -1,3 +1,7 @@
+2011-10-27  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (FONTCONFIG_*): doc+formatting fix.
+
 2011-10-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c, win32lib.h: use const char * in system() and popen().
