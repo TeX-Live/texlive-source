@@ -3,6 +3,65 @@ Public domain.  Originally written 2011 by Karl Berry.
 
 This file records commits made to the bug-fix branch (only).
 ------------------------------------------------------------------------
+r24407 | peter | 2011-10-26 12:05:08 +0200 (Wed, 26 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/libs/teckit/configure
+   M /branches/branch2011/Build/source/libs/zziplib/configure
+   M /branches/branch2011/Build/source/texk/afm2pl/configure
+   M /branches/branch2011/Build/source/texk/bibtex8/configure
+   M /branches/branch2011/Build/source/texk/cjkutils/configure
+   M /branches/branch2011/Build/source/texk/detex/configure
+   M /branches/branch2011/Build/source/texk/devnag/configure
+   M /branches/branch2011/Build/source/texk/dtl/configure
+   M /branches/branch2011/Build/source/texk/dvi2tty/configure
+   M /branches/branch2011/Build/source/texk/dvidvi/configure
+   M /branches/branch2011/Build/source/texk/dvipng/configure
+   M /branches/branch2011/Build/source/texk/dvipos/configure
+   M /branches/branch2011/Build/source/texk/gsftopk/configure
+   M /branches/branch2011/Build/source/texk/lacheck/configure
+   M /branches/branch2011/Build/source/texk/makejvf/configure
+   M /branches/branch2011/Build/source/texk/ps2pkm/configure
+   M /branches/branch2011/Build/source/texk/ptexenc/configure
+   M /branches/branch2011/Build/source/texk/seetexk/configure
+   M /branches/branch2011/Build/source/texk/tex4htk/configure
+   M /branches/branch2011/Build/source/texk/ttf2pk/configure
+   M /branches/branch2011/Build/source/texk/ttfdump/configure
+   M /branches/branch2011/Build/source/texk/xdv2pdf/configure
+   M /branches/branch2011/Build/source/texk/xdvik/configure
+   M /branches/branch2011/Build/source/texk/xdvipdfmx/configure
+
+branch2011: update generated files
+
+------------------------------------------------------------------------
+r24406 | peter | 2011-10-26 12:03:55 +0200 (Wed, 26 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/configure
+   M /branches/branch2011/Build/source/tardate.ac
+
+branch2011: set tardate=branch2011 such that 'make dist' creates tex-live-branch2011.tar.*
+
+------------------------------------------------------------------------
+r24405 | peter | 2011-10-26 12:00:04 +0200 (Wed, 26 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/Makefile.am
+   M /branches/branch2011/Build/source/Makefile.in
+
+branch2011: distribute README.branch2011
+
+------------------------------------------------------------------------
+r24404 | peter | 2011-10-26 11:57:08 +0200 (Wed, 26 Oct 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/web2c/Makefile.in
+   M /branches/branch2011/Build/source/texk/web2c/etexdir/ChangeLog
+   M /branches/branch2011/Build/source/texk/web2c/etexdir/am/etex.am
+   M /branches/branch2011/Build/source/texk/web2c/etexdir/wprob.test
+   M /branches/branch2011/Build/source/texk/web2c/pdftexdir/ChangeLog
+   M /branches/branch2011/Build/source/texk/web2c/pdftexdir/am/pdftex.am
+   M /branches/branch2011/Build/source/texk/web2c/pdftexdir/wprob.test
+
+branch2011: import test cases for line number fix from trunk r24155
+
+------------------------------------------------------------------------
 r24363 | karl | 2011-10-23 01:08:32 +0200 (Sun, 23 Oct 2011) | 1 line
 Changed paths:
    M /branches/branch2011/Build/source/texk/web2c/luatexdir/luafontloader/fontforge/fontforge/psread.c
