@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live top-level
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Use 'aclocal --force' (for "computed m4_sinclude")
@@ -15,6 +15,7 @@ distcleancheck_listfiles = find . -type f -o -type l -print
 
 EXTRA_DIST = \
 	Build \
+	README.branch2011 \
 	README.coding \
 	README.config \
 	README.cross \

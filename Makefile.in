@@ -342,6 +342,7 @@ distuninstallcheck_listfiles = find . -type f -o -type l -print
 distcleancheck_listfiles = find . -type f -o -type l -print
 EXTRA_DIST = \
 	Build \
+	README.branch2011 \
 	README.coding \
 	README.config \
 	README.cross \
