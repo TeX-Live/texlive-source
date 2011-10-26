@@ -2,7 +2,7 @@
 # updmap: utility to maintain map files for outline fonts.
 #
 # Copyright 2002-2011 Thomas Esser.
-# Fabrice Popineau originally wrote the Perl version.
+# Fabrice Popineau wrote the Perl version.
 # Anyone may freely use, modify, and/or distribute this file, without
 # limitation.
 
@@ -27,6 +27,7 @@ my $cnfFileShort;
 my $outputdir;
 my $dvipsoutputdir;
 my $pdftexoutputdir;
+my $dvipdfmoutputdir;
 my $quiet;
 my $nohash;
 my $nomkmap;
@@ -51,6 +52,7 @@ my $mode;
 my $dvipsPreferOutline;
 my $dvipsDownloadBase35;
 my $pdftexDownloadBase14;
+my $kanjiEmbed;
 
 my $dvips35;
 my $pdftex35;
@@ -118,13 +120,15 @@ Commands:
   --showoptions ITEM        show alternatives for options
   --setoption OPTION VALUE  set option, where OPTION is one of:
                              LW35, dvipsPreferOutline, dvipsDownloadBase35,
-                             or pdftexDownloadBase14
+                             pdftexDownloadBase14, or kanjiEmbed
   --setoption OPTION=VALUE  as above, just different syntax
   --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
-                              where MAPTYPE is either Map or MixedMap
+                             where MAPTYPE is one of: Map, MixedMap, KanjiMap
   --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
   --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
-  --disable MAPFILE         disable MAPFILE, whether Map or MixedMap
+  --enable KanjiMap=MAPFILE add \"KanjiMap MAPFILE\" to updmap.cfg
+  --disable MAPFILE         disable MAPFILE, whether Map or MixedMap,
+                             or KanjiMap
   --listmaps                list all active and inactive maps
   --listavailablemaps       same as --listmaps, but without
                              unavailable map files
@@ -150,6 +154,7 @@ Explanation of the --setoption possibilities:
     URW      URW fonts with "vendor" filenames   (e.g. n019064l.pfb)
     ADOBEkb  Adobe fonts with "berry" filenames  (e.g. phvbo8an.pfb)
     ADOBE    Adobe fonts with "vendor" filenames (e.g. hvnbo___.pfb)
+  kanjiEmbed            (any string)
 
   These options are only read and acted on by updmap; dvips, pdftex, etc.,
   do not know anything about them.  They work by changing the default map
@@ -197,15 +202,17 @@ EOF
 #   process cmd line options
 #
 sub processOptions {
-
-  # This deals with --setoption, which might take either one or two
-  # following values.  The Getopt::Long feature to handle this (s{1,2})
-  # is only supported in 5.8.8 (released in 2006) or later, and a few
-  # people still run older perls.  (--enable and --disable should get
-  # the same treatment.)
+  #
+  # We parse the command line twice.  The first time is to handle
+  # --setoption, which might take either one or two following values.
+  # the second to handle everything else.  The Getopt::Long feature to
+  # handle this is only supported in 5.8.8 (released in 2006) or later,
+  # and a few people run older perls.
   # 
-  sub read_option_vals {
-    my ($optname,$val) = @_;
+  my $oldconfig = Getopt::Long::Configure(qw(pass_through));
+  #  
+  sub read_for_set_options {
+    my ($setopt, $val) = @_;
     # check if = occurs in $val, if not, get the next argument
     if ($val =~ m/=/) {
       push (@setoptions, $val);
@@ -216,12 +223,16 @@ sub processOptions {
       push (@setoptions, "$val=$vv");
     }
   }
+  GetOptions("setoption=s@" => \&read_for_set_options) 
+  || die "$0: could not read for --setoption; try --help.\n";
 
+  # restore old getopt config and read everything else.
+  Getopt::Long::Configure($oldconfig);
   unless (&GetOptions (
       "cnffile=s" => \$cnfFile,
       "copy" => \$copy,
       "disable=s" => \@disableItem,
-      "dvipdfmoutputdir=s" => sub {print "$0: ignoring --dvipdfmoutputdir\n"},
+      "dvipdfmoutputdir=s" => \$dvipdfmoutputdir,
       "dvipsoutputdir=s" => \$dvipsoutputdir,
       "enable=s" => \$enableItem,
       "edit" => \$opt_edit,
@@ -234,7 +245,8 @@ sub processOptions {
       "outputdir=s" => \$outputdir,
       "pdftexoutputdir=s" => \$pdftexoutputdir,
       "q|quiet|silent" => \$quiet,
-      "setoption=s@" => \&read_option_vals,
+      "setoption" =>
+        sub {die "$0: --setoption needs an option and value; try --help.\n"},
       "showoptions=s" => \@showoptions,
       "syncwithtrees" => \$syncwithtrees,
       "version" => sub { print &version(); exit(0); },
@@ -242,20 +254,23 @@ sub processOptions {
     die "Try \"$0 --help\" for more information.\n";
   }
   
-  # not until we parse --enable and --disable like --setoption.
-  #if (@ARGV) {
-  #  warn "$0: Ignoring unexpected non-option argument(s): @ARGV.\n";
-  #}
+  if (@ARGV) {
+    warn "$0: Ignoring unexpected non-option argument(s): @ARGV.\n";
+  }
 
   if ($outputdir) {
     $dvipsoutputdir = $outputdir if (! $dvipsoutputdir);
     $pdftexoutputdir = $outputdir if (! $pdftexoutputdir);
+    $dvipdfmoutputdir = $outputdir if (! $dvipdfmoutputdir);
   }
   if ($cnfFile && ! -f $cnfFile) {
     die "$0: Config file \"$cnfFile\" not found.\n";
   }
   if ($dvipsoutputdir && ! $dry_run && ! -d $dvipsoutputdir) {
     &mkdirhier ($dvipsoutputdir);
+  }
+  if ($dvipdfmoutputdir && ! $dry_run && ! -d $dvipdfmoutputdir) {
+    &mkdirhier ($dvipdfmoutputdir);
   }
   if ($pdftexoutputdir && ! $dry_run && ! -d $pdftexoutputdir) {
     &mkdirhier ($pdftexoutputdir);
@@ -367,11 +382,9 @@ sub getLines {
 
 ###############################################################################
 # writeLines()
-#   write the lines in $filename, unless $dry_run.
+#   write the lines in $filename
 #
 sub writeLines {
-  return if $dry_run;
-
   my ($fname, @lines) = @_;
   map { ($_ !~ m/\n$/ ? s/$/\n/ : $_ ) } @lines;
   open FILE, ">$fname" or die "$0: can't write lines to $fname: $!";
@@ -385,11 +398,6 @@ sub writeLines {
 #
 sub copyFile {
   my ($src, $dst) = @_;
-  
-  if ($dry_run) {
-    print "$0: would copy $src to $dst\n";
-    return;
-  }
   my $dir;
   ($dir=$dst)=~s/(.*)\/.*/$1/;
   mkdirhier $dir;
@@ -614,6 +622,8 @@ m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14)$/) {
       if ($val !~ m/^(true|false)$/) {
         die "$0: Invalid value $val for option $opt; should be \"true\" or \"false\".\n";
       }
+  } elsif ($opt eq "kanjiEmbed"){
+    # do nothing
   } else {
     die "$0: Unsupported option $opt (value given: $val).\n";
   }
@@ -638,6 +648,9 @@ sub showOptions {
 m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35)/) {
       print "true false\n";
     }
+    elsif ($item eq "kanjiEmbed") {
+      print "(any string)\n";
+    }
     else {
       print "Unknown item \"$item\"; should be one of LW35, dvipsPreferOutline,\n" 
           . "  dvipsDownloadBase35, or pdftexDownloadBase14\n";
@@ -654,7 +667,7 @@ m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35)/) {
 sub enableMap {
   my ($type, $map) = @_;
 
-  if ($type !~ m/^(Map|MixedMap)$/) {
+  if ($type !~ m/^(Map|MixedMap|KanjiMap)$/) {
     die "$0: Invalid mapType $type\n";
   }
   # a map can only have one type, so we carefully disable everything
@@ -676,7 +689,7 @@ sub disableMap {
 
   my @mapType = grep {
     my @fields = split;
-    if ($fields[0] and $fields[0] =~ /^(MixedMap|Map)$/
+    if ($fields[0] and $fields[0] =~ /^(MixedMap|Map|KanjiMap)$/
         and $fields[1] eq $map and ++$count{$fields[0]}) {
       $_ = $fields[0];
     }
@@ -699,7 +712,6 @@ sub disableMap {
 sub setupOutputDir {
   my($od, $driver) = @_;
 
-  return if $dry_run;
   if (!$od) {
     my $rel = "fonts/map/$driver/updmap";
     my $tf;
@@ -722,6 +734,7 @@ sub setupOutputDir {
 sub setupDestDir {
   $dvipsoutputdir = &setupOutputDir($dvipsoutputdir, "dvips");
   $pdftexoutputdir = &setupOutputDir($pdftexoutputdir, "pdftex");
+  $dvipdfmoutputdir = &setupOutputDir($dvipdfmoutputdir, "dvipdfm");
 }
 
 ###############################################################################
@@ -729,7 +742,6 @@ sub setupDestDir {
 #   find config file if none specified on cmd line.
 #
 sub setupCfgFile {
-  return if $dry_run;
   if (! $cnfFile) {
     my $tf = `kpsewhich --var-value=TEXMFCONFIG`;
     chomp($tf);
@@ -766,6 +778,7 @@ sub catMaps {
   my @maps = grep { $_ =~ m/$map/ } @cfg;
   map{
     $_ =~ s/\#.*//;
+    $_ =~ s/\@kanjiEmbed@/$kanjiEmbed/;
     $_ =~ s/\s*([^\s]*)\s*([^\s]*)/$2/;
   } @maps;
   @maps = sort(@maps);
@@ -783,6 +796,7 @@ sub listMaps {
   my $what=shift;
   my @mapfiles;
   my @paths;
+  $kanjiEmbed = &cfgval("kanjiEmbed");
 
   my @lines = grep {
     if ($what eq 'sync') {
@@ -796,14 +810,16 @@ sub listMaps {
     # --listmaps
     map { print "$_\n"; } @lines;
   } else {
-    @mapfiles=grep { $_ =~ s/^(\#! *)?(Mixed)?Map\s+// } @lines;
+    map { $_ =~ s/\@kanjiEmbed@/$kanjiEmbed/ } @lines;
+    @mapfiles=grep { $_ =~ s/^(\#! *)?(Mixed|Kanji)?Map\s+// } @lines;
     @paths=&locateMap(@mapfiles);
 
     if ($what eq 'avail') {
       # --listavailablemaps
       map {
         my $entry="$_"; 
-      #  print "$entry\n" if (grep { $_ =~ m/\/$entry/ } @paths);
+        # why is that disabled?
+        # print "$entry\n" if (grep { $_ =~ m/\/$entry/ } @paths);
       } @lines;
     } elsif ($what eq 'sync') {
       # --syncwithtrees
@@ -861,6 +877,34 @@ sub to_pdftex {
   return @out;
 }
 
+###############################################################################
+# cidx2dvips()
+#   reads from stdin, writes to stdout. It transforms "cid-x"-like syntax into
+#   "dvips"-like syntax.
+###############################################################################
+sub cidx2dvips {
+    my ($s) = @_;
+    my @d;
+    foreach (@$s) {
+      s/,BoldItalic/ -s .3/;
+      s/,Bold//;
+      s/,Italic/ -s .3/;
+      s/\s\s*/ /g;
+      if ($_ =~ /.*[@\:\/,]/) {next;}
+      elsif ($_ =~ /^[^ ][^ ]* unicode /) {next;}
+      s/^([^ ][^ ]* [^ ][^ ]* [^ ][^ ]*)\.[Oo][Tt][Ff]/$1/;
+      s/^([^ ][^ ]* [^ ][^ ]* [^ ][^ ]*)\.[Tt][Tt][FfCc]/$1/; 
+      s/$/ %/;
+      s/^(([^ ]*).*)/$1$2/;
+      s/^([^ ][^ ]* ([^ ][^ ]*) !*([^ ][^ ]*).*)/$1 $3-$2/;
+      s/^(.* -e ([.0-9-][.0-9-]*).*)/$1 "$2 ExtendFont"/;
+      s/^(.* -s ([.0-9-][.0-9-]*).*)/$1 "$2 SlantFont"/;
+      s/.*%//;
+      push(@d, $_);
+    }
+    return @d
+}
+
 
 ###############################################################################
 # mkMaps()
@@ -913,6 +957,9 @@ sub mkMaps {
   $pdftexDownloadBase14 = &cfgval("pdftexDownloadBase14");
   $pdftexDownloadBase14 = 1 unless (defined $pdftexDownloadBase14);
 
+  $kanjiEmbed = &cfgval("kanjiEmbed");
+  $kanjiEmbed = "noEmbed" unless (defined $kanjiEmbed);
+
   &wlog ("\n$0 "
          . ($dry_run ? "would create" : "is creating") . " new map files"
          . "\nusing the following configuration:"
@@ -954,6 +1001,20 @@ sub mkMaps {
   printf "    [%3d files]\n", scalar @tmp1 
       unless ($quiet || $dry_run);
 
+  &wlog ("Scanning for KanjiMap entries");
+  &newline;
+  my @tmpkanji0 = &catMaps('^KanjiMap');
+  foreach my $line (@tmpkanji0) {
+    if ($dry_run) {
+      print "$line\n";
+    } else {
+      print LOG "$line\n";
+    }
+  }
+  &newline;
+  printf "    [%3d files]\n", scalar @tmpkanji0
+      unless ($quiet || $dry_run);
+
   &wlog ("Scanning for Map entries");
   &newline();
   my @tmp2 = &catMaps('^Map');
@@ -973,7 +1034,7 @@ sub mkMaps {
     print STDERR join(' ', @missing);
     print STDERR "\n\n\tDid you run mktexlsr?\n\n" .
         "\tYou can delete non-existent map entries using the option\n".
-        "\t  --syncwithtrees.\n";
+        "\t  --syncwithtrees.\n\n";
     exit (1);
   }
   exit(0) if $dry_run;
@@ -985,6 +1046,7 @@ sub mkMaps {
 		"$dvipsoutputdir/psfonts_pk.map",
 		"$pdftexoutputdir/pdftex_dl14.map",
 		"$pdftexoutputdir/pdftex_ndl14.map",
+    "$dvipdfmoutputdir/kanjix.map",
 		"$dvipsoutputdir/ps2pk.map") {
     open FILE, ">$file";
     print FILE "% $file:\
@@ -996,6 +1058,14 @@ sub mkMaps {
 ";
     close FILE;
   }
+
+  print "Generating output for dvipdfm...\n" if !$quiet;
+  my @tmpkanji1;
+  push @tmpkanji1, &getLines(@tmpkanji0);
+  @tmpkanji1 = &normalizeLines(@tmpkanji1);
+  &writeLines(">$dvipdfmoutputdir/kanjix.map", 
+              @tmpkanji1);
+  my @tmpkanji2 = &cidx2dvips(\@tmpkanji1);
 
   print "Generating output for ps2pk...\n" if !$quiet;
   my @ps2pk_map = &transLW35($ps2pk35);
@@ -1018,11 +1088,13 @@ sub mkMaps {
   my @psfonts_t1_map = &transLW35($dftdvips);
   push @psfonts_t1_map, &getLines(@tmp1);
   push @psfonts_t1_map, &getLines(@tmp2);
+  push @psfonts_t1_map, @tmpkanji2;
   &writeLines(">$dvipsoutputdir/psfonts_t1.map", 
               &normalizeLines(@psfonts_t1_map));
 
   my @psfonts_pk_map = &transLW35($dftdvips);
   push @psfonts_pk_map, &getLines(@tmp2);
+  push @psfonts_pk_map, @tmpkanji2;
   &writeLines(">$dvipsoutputdir/psfonts_pk.map", 
               &normalizeLines(@psfonts_pk_map));
 
@@ -1088,6 +1160,11 @@ sub mkMaps {
   $d="$pdftexoutputdir"; &wlog ("  $d:\n");
   foreach my $f ('pdftex_dl14.map', 'pdftex_ndl14.map', 'pdftex.map') {
     dir ($d, $f, 'pdftex.map');
+    $updLSR->{add}("$d/$f");
+  }
+  $d="$dvipdfmoutputdir"; &wlog ("  $d:\n");
+  foreach my $f ('kanjix.map') {
+    dir ($d, $f, '');
     $updLSR->{add}("$d/$f");
   }
   close LOG;
