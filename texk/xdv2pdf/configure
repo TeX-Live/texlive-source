@@ -763,7 +763,6 @@ with_sysroot
 enable_libtool_lock
 enable_largefile
 enable_compiler_warnings
-with_gnu_ld
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
@@ -777,19 +776,12 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
-CPPFLAGS
 CXX
 CXXFLAGS
-LDFLAGS
-LIBS
-CPPFLAGS
 CCC
 CXXCPP
 OBJC
-OBJCFLAGS
-LDFLAGS
-LIBS
-OBJC'
+OBJCFLAGS'
 
 
 # Initialize some variables set by options.

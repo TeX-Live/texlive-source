@@ -800,7 +800,6 @@ LDFLAGS
 LIBS
 CPPFLAGS
 CPP
-CPPFLAGS
 XMKMF'
 ac_subdirs_all='squeeze'
 
