@@ -1,6 +1,6 @@
 ## texk/web2c/etexdir/am/etex.am: Makefile fragment for e-TeX.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-TeX
@@ -76,7 +76,7 @@ EXTRA_DIST += \
 
 # e-TeX Tests
 #
-etex_tests = etexdir/etrip.test
+etex_tests = etexdir/wprob.test etexdir/etrip.test
 
 EXTRA_DIST += $(etex_tests)
 
@@ -88,6 +88,9 @@ TRIPTRAP_CLEAN += etrip-clean
 endif ETEX
 DISTCLEANFILES += etrip.diffs
 
+# wprob.test
+EXTRA_DIST += tests/wprob.tex
+DISTCLEANFILES += wprob.log wprob.tex
 # etrip.test
 etrip.diffs: etex$(EXEEXT)
 	$(triptrap_diffs) $@

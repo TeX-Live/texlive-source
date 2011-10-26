@@ -1219,6 +1219,10 @@ nodist_man_MANS =
 EXTRA_LIBRARIES = libmf.a libmplib.a libkanji.a libpdftex.a liblua51.a \
 	libluasocket.a libluamisc.a libff.a libluatex.a libxetex.a \
 	libxetexmm.a libmd5.a
+
+# wprob.test
+
+# wprob.test
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap-sh tangle.web tangle.ch tangleboot.pin cwebdir \
 	ctangleboot.cin cwebboot.cin cwebboot.hin tangle.test \
@@ -1265,39 +1269,39 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	mplibdir/ChangeLog $(mpost_web) $(mp_tests) $(libmplib_web) \
 	mplibdir/lmplib.c $(etex_web_srcs) $(etex_ch_srcs) \
 	etexdir/ChangeLog etexdir/INSTALL etexdir/README \
-	etexdir/etex_gen.tex $(etex_tests) etexdir/etrip/etrip.diffs \
-	etexdir/etrip/etrip.fot etexdir/etrip/etrip.log \
-	etexdir/etrip/etrip.out etexdir/etrip/etrip.pl \
-	etexdir/etrip/etrip.tex etexdir/etrip/etrip.typ \
-	etexdir/etrip/etrip1.in etexdir/etrip/etrip2.in \
-	etexdir/etrip/etrip3.in etexdir/etrip/etripin.log \
-	etexdir/etrip/etripman.tex etexdir/etrip/texmf.cnf \
-	etexdir/etrip/trip2.in $(ptex_tests) $(ptex_web_srcs) \
-	$(ptex_ch_srcs) ptexdir/ptex.defines ptexdir/pbibtex.ch \
-	web2c/cvtbib.sed ptexdir/pdvitype.ch ptexdir/ppltotf.ch \
-	ptexdir/ptftopl.ch ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis \
-	ptexdir/ChangeLog ptexdir/Changes.txt ptexdir/INSTALL.txt \
-	ptexdir/README.txt ptexdir/tests/nissya_bib.aux \
-	ptexdir/tests/nissya.bst ptexdir/tests/sample.bib \
-	tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst \
-	ptexdir/tests/goth10.tfm ptexdir/tests/sample.dvi \
-	ptexdir/tests/min10.pl ptexdir/tests/min10.tfm \
-	ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm \
-	ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf \
-	$(eptex_tests) $(eptex_web_srcs) $(eptex_ch_srcs) \
-	eptexdir/eptex.defines eptexdir/ChangeLog \
+	etexdir/etex_gen.tex $(etex_tests) tests/wprob.tex \
+	etexdir/etrip/etrip.diffs etexdir/etrip/etrip.fot \
+	etexdir/etrip/etrip.log etexdir/etrip/etrip.out \
+	etexdir/etrip/etrip.pl etexdir/etrip/etrip.tex \
+	etexdir/etrip/etrip.typ etexdir/etrip/etrip1.in \
+	etexdir/etrip/etrip2.in etexdir/etrip/etrip3.in \
+	etexdir/etrip/etripin.log etexdir/etrip/etripman.tex \
+	etexdir/etrip/texmf.cnf etexdir/etrip/trip2.in $(ptex_tests) \
+	$(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptex.defines \
+	ptexdir/pbibtex.ch web2c/cvtbib.sed ptexdir/pdvitype.ch \
+	ptexdir/ppltotf.ch ptexdir/ptftopl.ch ptexdir/COPYRIGHT \
+	ptexdir/COPYRIGHT.jis ptexdir/ChangeLog ptexdir/Changes.txt \
+	ptexdir/INSTALL.txt ptexdir/README.txt \
+	ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst \
+	ptexdir/tests/sample.bib tests/memdata1.bst tests/memdata2.bst \
+	tests/memdata3.bst ptexdir/tests/goth10.tfm \
+	ptexdir/tests/sample.dvi ptexdir/tests/min10.pl \
+	ptexdir/tests/min10.tfm ptexdir/tests/tmin10.pl \
+	ptexdir/tests/tmin10.tfm ptexdir/ptrip/ptrip.diffs \
+	ptexdir/ptrip/texmf.cnf $(eptex_tests) $(eptex_web_srcs) \
+	$(eptex_ch_srcs) eptexdir/eptex.defines eptexdir/ChangeLog \
 	eptexdir/ChangeLog.TL eptexdir/README.txt \
 	eptexdir/eptrip/eptrip.diffs eptexdir/eptrip/etrip.log \
 	eptexdir/eptrip/etrip.tex eptexdir/eptrip/texmf.cnf \
 	$(pdftex_ch_srcs) etexdir/etex.ch pdftexdir/pdftex.defines \
 	pdftexdir/pdftex.h pdftexdir/ChangeLog pdftexdir/NEWS \
 	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
-	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
-	luatexdir/ptexlib.h luatexdir/getluatexsvnversion.sh \
-	$(luatex_tests) luatexdir/lua51/Makefile \
-	luatexdir/lua51/liolib.c luatexdir/lua51/lua.c \
-	luatexdir/lua51/luac.c luatexdir/lua51/print.c \
-	luatexdir/luasocket/src/socket_lua.c \
+	tests/wprob.tex pdftexdir/regex/COPYING.LIB \
+	pdftexdir/regex/README luatexdir/ptexlib.h \
+	luatexdir/getluatexsvnversion.sh $(luatex_tests) \
+	luatexdir/lua51/Makefile luatexdir/lua51/liolib.c \
+	luatexdir/lua51/lua.c luatexdir/lua51/luac.c \
+	luatexdir/lua51/print.c luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/smtp_lua.c \
@@ -1456,8 +1460,8 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tests/xptmr.mpx tests/xstory.mpx $(nodist_libmplib_a_SOURCES) \
 	mp-tangle mpmath-tangle psout-tangle svgout-tangle \
 	$(nodist_etex_SOURCES) etex.web etex.ch etex-web2c etex.p \
-	etex.pool etex-tangle etrip.diffs $(pweb_programs:=.c) \
-	$(pweb_programs:=.h) $(pweb_programs:=.p) \
+	etex.pool etex-tangle etrip.diffs wprob.log wprob.tex \
+	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
 	ptex.pool ptex-tangle tests/nissya_bib.* tests/xexampl.aux \
@@ -1467,7 +1471,7 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	$(nodist_eptex_SOURCES) eptex.web eptex.ch eptex-web2c eptex.p \
 	eptex.pool eptex-tangle eptrip.diffs $(nodist_pdftex_SOURCES) \
 	pdftex.ch pdftex-web2c pdftex.p pdftex.pool pdftex-tangle \
-	$(nodist_libluatex_a_SOURCES) txt2zlib.c \
+	wprob.log wprob.tex $(nodist_libluatex_a_SOURCES) txt2zlib.c \
 	$(nodist_xetex_SOURCES) xetex.web xetex-web2c xetex.p \
 	xetex.pool xetex-tangle $(omegaware_programs:=.c) \
 	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
@@ -1681,7 +1685,7 @@ etex_ch_srcs = \
 
 # e-TeX Tests
 #
-etex_tests = etexdir/etrip.test
+etex_tests = etexdir/wprob.test etexdir/etrip.test
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
 ptex_ldadd = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
@@ -1806,7 +1810,7 @@ pdftex_ch_srcs = \
 
 # pdfTeX Tests
 #
-pdftex_tests = pdftexdir/pdftex.test
+pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test
 libpdftex_a_CPPFLAGS = $(pdftex_cppflags)
 libpdftex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
@@ -9056,7 +9060,6 @@ etex.web: tie$(EXEEXT) $(etex_web_srcs)
 # Generate etex.ch
 etex.ch: tie$(EXEEXT) etex.web $(etex_ch_srcs)
 	$(tie) -c etex.ch etex.web $(etex_ch_srcs)
-
 # etrip.test
 etrip.diffs: etex$(EXEEXT)
 	$(triptrap_diffs) $@
