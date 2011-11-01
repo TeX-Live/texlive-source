@@ -825,7 +825,7 @@ sub listMaps {
       # --syncwithtrees
       map { 
         my $entry="$_"; 
-        unless (grep { $_ =~ m/$entry/ } @paths) {
+        unless (grep { $_ =~ m/\/$entry/ } @paths) {
           &disableMap($entry);
           print "  $entry disabled\n" if !$quiet; 
         }

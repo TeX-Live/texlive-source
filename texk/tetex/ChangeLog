@@ -1,3 +1,8 @@
+2011-11-02  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: apply patch from Hironori Kitagawa that fixes
+	a --syncwithtrees problem in searching for map names.
+
 2011-10-26  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: apply patch from ptexlive Tsuchimura to support
