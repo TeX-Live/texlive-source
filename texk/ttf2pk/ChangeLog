@@ -3,6 +3,10 @@
 	* ttf2pk.c (main): Bug fix: mapfiles is malloc()ed, so do not
 	realloc() mapfiles+offset.
 
+	* tests/ttf2pk.test, tests/ttf2pk.cfg: Add subfont tests.
+	* tests/GenR102-{ec,h,v}.map: Additional test data.
+	* tests/ttfonts.map: Removed.
+
 2011-10-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* data/HKSCS.sfd: New file copied from Master (r3283).

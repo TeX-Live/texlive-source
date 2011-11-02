@@ -99,8 +99,9 @@ dist_sfddata_DATA = \
 TESTS = tests/ttf2pk.test
 EXTRA_DIST = $(TESTS)
 ## tests/ttf2pk.test
-EXTRA_DIST += tests/GenR102.ttf tests/gentium-ec.enc tests/ttf2pk.cfg tests/ttfonts.map
-DISTCLEANFILES += GenR-ec.vpl GenR102-ec.*
+EXTRA_DIST += tests/GenR102.ttf tests/gentium-ec.enc tests/ttf2pk.cfg \
+	tests/GenR102-ec.map tests/GenR102-h.map tests/GenR102-v.map
+DISTCLEANFILES += GenR-ec.vpl GenR102-*
 
 ## Not used
 ##
