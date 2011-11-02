@@ -3,6 +3,14 @@ Public domain.  Originally written 2011 by Karl Berry.
 
 This file records commits made to the bug-fix branch (only).
 ------------------------------------------------------------------------
+r24460 | peter | 2011-11-02 16:38:52 +0100 (Wed, 02 Nov 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/ttf2pk/ChangeLog
+   M /branches/branch2011/Build/source/texk/ttf2pk/ttf2pk.c
+
+branch2011: import ttf2pk bug fix from trunk r24454
+
+------------------------------------------------------------------------
 r24407 | peter | 2011-10-26 12:05:08 +0200 (Wed, 26 Oct 2011) | 1 line
 Changed paths:
    M /branches/branch2011/Build/source/libs/teckit/configure
@@ -106,6 +114,14 @@ Changed paths:
 branch2011: import line number fix from trunk r24155
 
 ------------------------------------------------------------------------
+r23740 | karl | 2011-08-29 02:14:50 +0200 (Mon, 29 Aug 2011) | 1 line
+Changed paths:
+   M /branches/branch2011/Build/source/texk/web2c/enctex.ch
+   M /branches/branch2011/Build/source/texk/web2c/xetexdir/xetex.ch
+
+branch2011: import off-by-one fix for enctex/xetex initialization (original r23187, see also email http://tug.org/pipermail/tldistro/2011q3/000120.html)
+
+------------------------------------------------------------------------
 r23716 | karl | 2011-08-27 01:29:30 +0200 (Sat, 27 Aug 2011) | 1 line
 Changed paths:
    M /branches/branch2011/Build/source/texk/web2c/synctexdir/ChangeLog
@@ -113,11 +129,3 @@ Changed paths:
    M /branches/branch2011/Build/source/texk/web2c/synctexdir/synctex-xetex.h
 
 branch2011: import synctex coordinate fix from trunk r23644
-
-------------------------------------------------------------------------
-r23740 | karl | 2011-08-29 02:14:50 +0200 (Mon, 29 Aug 2011) | 1 line
-Changed paths:
-   M /branches/branch2011/Build/source/texk/web2c/enctex.ch
-   M /branches/branch2011/Build/source/texk/web2c/xetexdir/xetex.ch
-
-branch2011: import off-by-one fix for enctex/xetex initialization (original r23187, see also email http://tug.org/pipermail/tldistro/2011q3/000120.html)
