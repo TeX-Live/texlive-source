@@ -1,3 +1,8 @@
+2011-11-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttf2pk.c (main): Bug fix: mapfiles is malloc()ed, so do not
+	realloc() mapfiles+offset.
+
 2011-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* parse.c, ttfenc.c: Bug fix. Increase buffer size for increased

@@ -300,7 +300,8 @@ main(int argc, char** argv)
   long inenc_array[256];
   char *fontname;
   size_t fontname_len;
-  char *pk_filename, *tfm_filename, *enc_filename, *map_filename;
+  char *pk_filename, *tfm_filename, *enc_filename;
+  char *map_filename = NULL;
   char *real_ttfname, *real_map_filename;
   int dpi = 0, ptsize;
   Boolean hinting = True;
@@ -374,11 +375,14 @@ main(int argc, char** argv)
   p = mapfiles;
   while (*p)
   {
+    if (map_filename)
+      free(map_filename);
     map_filename = p;
     while (*p != '\n')
       p++;
     *p++ = '\0';
 
+    map_filename = newstring(map_filename);
     real_map_filename = TeX_search_map_file(&map_filename);
     if (!real_map_filename)
     {
