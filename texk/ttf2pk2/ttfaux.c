@@ -16,6 +16,7 @@
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
 #include FT_TYPE1_TABLES_H
+#include FT_TRUETYPE_TABLES_H
 #include FT_BBOX_H
 
 #include "ttf2tfm.h"
@@ -63,9 +64,8 @@ FT_Face_Properties   properties;
 #endif
 FT_BBox              bbox;
 
+TT_Postscript  *postscript;
 #if 0
-FT_Post    post;
-
 TTO_GSUBHeader  gsub_;
 TTO_GSUBHeader  *gsub;
 #endif
@@ -228,6 +228,13 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
 #endif
 
     /*
+     *   Get the Postscript table.
+     */
+
+    if ((postscript = FT_Get_Sfnt_Table(face, ft_sfnt_post)) == NULL)
+      oops("Cannot find Postscript table for `%s'.", real_ttfname);
+
+    /*
      *   We use a dummy glyph size of 10pt.
      */
 
@@ -268,13 +275,8 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
 #endif
 
     fnt->units_per_em = face->units_per_EM;
-	 
-    //fnt->fixedpitch = properties.postscript->isFixedPitch;
-    fnt->fixedpitch = FT_IS_FIXED_WIDTH(face);
-    //fnt->italicangle = properties.postscript->italicAngle / 65536.0;
-    fnt->italicangle = 0.0;
-    //fnt->xheight = properties.os2->sxHeight * 1000 / fnt->units_per_em;
-    fnt->xheight = face->height * 1000 / fnt->units_per_em;
+    fnt->fixedpitch = postscript->isFixedPitch;
+    fnt->italicangle = postscript->italicAngle / 65536.0;
 
     if (fnt->PSnames != Only)
     {
