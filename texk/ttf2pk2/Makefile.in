@@ -15,6 +15,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -36,8 +37,9 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = ttf2pk$(EXEEXT) ttf2tfm$(EXEEXT)
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
-	$(srcdir)/../../build-aux/config.guess \
+DIST_COMMON = README $(am__configure_deps) $(dist_cfgdata_DATA) \
+	$(dist_encdata_DATA) $(dist_man1_MANS) $(dist_mapdata_DATA) \
+	$(dist_sfddata_DATA) $(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
@@ -69,7 +71,9 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = c-auto.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
+	"$(DESTDIR)$(cfgdatadir)" "$(DESTDIR)$(encdatadir)" \
+	"$(DESTDIR)$(mapdatadir)" "$(DESTDIR)$(sfddatadir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 = errormsg.$(OBJEXT) filesrch.$(OBJEXT) \
 	ligkern.$(OBJEXT) newobj.$(OBJEXT) parse.$(OBJEXT) \
@@ -126,6 +130,8 @@ am__base_list = \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man1_MANS)
+DATA = $(dist_cfgdata_DATA) $(dist_encdata_DATA) $(dist_mapdata_DATA) \
+	$(dist_sfddata_DATA)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -313,11 +319,33 @@ ttf2tfm_SOURCES = \
 DISTCLEANFILES = config.force GenR-ec.vpl GenR102-ec.*
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(ZLIB_LIBS)
 dist_man1_MANS = ttf2pk.1 ttf2tfm.1
-EXTRA_DIST = data $(TESTS) tests/GenR102.ttf tests/gentium-ec.enc \
+cfgdatadir = ${prefix}/texmf/ttf2pk
+dist_cfgdata_DATA = data/VPS.rpl data/ttf2pk.cfg
+encdatadir = ${prefix}/texmf/fonts/enc/ttf2pk/base
+dist_encdata_DATA = data/T1-WGL4.enc
+mapdatadir = ${prefix}/texmf-dist/source/fonts/zhmetrics
+dist_mapdata_DATA = data/ttfonts.map
+sfddatadir = ${prefix}/texmf-dist/fonts/sfd/ttf2pk
+dist_sfddata_DATA = \
+	data/Big5.sfd \
+	data/EUC.sfd \
+	data/HKSCS.sfd \
+	data/KS-HLaTeX.sfd \
+	data/SJIS.sfd \
+	data/UBg5plus.sfd \
+	data/UBig5.sfd \
+	data/UGB.sfd \
+	data/UGBK.sfd \
+	data/UJIS.sfd \
+	data/UKS-HLaTeX.sfd \
+	data/UKS.sfd \
+	data/Unicode.sfd
+
+TESTS = tests/ttf2pk.test
+EXTRA_DIST = $(TESTS) tests/GenR102.ttf tests/gentium-ec.enc \
 	tests/ttf2pk.cfg tests/ttfonts.map BUGS MakeSub.in Makefile.dm \
 	dvidrv.btm dvidrv.doc emdir.c emdir.h emtexdir.c emtexdir.h \
 	ttf2pk.doc
-TESTS = tests/ttf2pk.test
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -510,6 +538,86 @@ uninstall-man1:
 	test -z "$$files" || { \
 	  echo " ( cd '$(DESTDIR)$(man1dir)' && rm -f" $$files ")"; \
 	  cd "$(DESTDIR)$(man1dir)" && rm -f $$files; }
+install-dist_cfgdataDATA: $(dist_cfgdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(cfgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(cfgdatadir)"
+	@list='$(dist_cfgdata_DATA)'; test -n "$(cfgdatadir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(cfgdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(cfgdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_cfgdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_cfgdata_DATA)'; test -n "$(cfgdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(cfgdatadir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(cfgdatadir)" && rm -f $$files
+install-dist_encdataDATA: $(dist_encdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(encdatadir)" || $(MKDIR_P) "$(DESTDIR)$(encdatadir)"
+	@list='$(dist_encdata_DATA)'; test -n "$(encdatadir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(encdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(encdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_encdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_encdata_DATA)'; test -n "$(encdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(encdatadir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(encdatadir)" && rm -f $$files
+install-dist_mapdataDATA: $(dist_mapdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(mapdatadir)" || $(MKDIR_P) "$(DESTDIR)$(mapdatadir)"
+	@list='$(dist_mapdata_DATA)'; test -n "$(mapdatadir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(mapdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(mapdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_mapdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_mapdata_DATA)'; test -n "$(mapdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(mapdatadir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(mapdatadir)" && rm -f $$files
+install-dist_sfddataDATA: $(dist_sfddata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(sfddatadir)" || $(MKDIR_P) "$(DESTDIR)$(sfddatadir)"
+	@list='$(dist_sfddata_DATA)'; test -n "$(sfddatadir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(sfddatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(sfddatadir)" || exit $$?; \
+	done
+
+uninstall-dist_sfddataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_sfddata_DATA)'; test -n "$(sfddatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(sfddatadir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(sfddatadir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -700,9 +808,6 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	$(MAKE) $(AM_MAKEFLAGS) \
-	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
-	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -821,9 +926,9 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(PROGRAMS) $(MANS) c-auto.h
+all-am: Makefile $(PROGRAMS) $(MANS) $(DATA) c-auto.h
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(cfgdatadir)" "$(DESTDIR)$(encdatadir)" "$(DESTDIR)$(mapdatadir)" "$(DESTDIR)$(sfddatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -875,7 +980,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man
+install-data-am: install-dist_cfgdataDATA install-dist_encdataDATA \
+	install-dist_mapdataDATA install-dist_sfddataDATA install-man
 
 install-dvi: install-dvi-am
 
@@ -923,7 +1029,9 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man
+uninstall-am: uninstall-binPROGRAMS uninstall-dist_cfgdataDATA \
+	uninstall-dist_encdataDATA uninstall-dist_mapdataDATA \
+	uninstall-dist_sfddataDATA uninstall-man
 
 uninstall-man: uninstall-man1
 
@@ -931,21 +1039,24 @@ uninstall-man: uninstall-man1
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
 	clean clean-binPROGRAMS clean-generic clean-libtool ctags dist \
-	dist-all dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar \
-	dist-tarZ dist-xz dist-zip distcheck distclean \
-	distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-man uninstall-man1
+	dist-all dist-bzip2 dist-gzip dist-lzma dist-shar dist-tarZ \
+	dist-xz dist-zip distcheck distclean distclean-compile \
+	distclean-generic distclean-hdr distclean-libtool \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am \
+	install-dist_cfgdataDATA install-dist_encdataDATA \
+	install-dist_mapdataDATA install-dist_sfddataDATA install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-man1 install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-dist_cfgdataDATA \
+	uninstall-dist_encdataDATA uninstall-dist_mapdataDATA \
+	uninstall-dist_sfddataDATA uninstall-man uninstall-man1
 
 
 $(ttf2pk_OBJECTS) $(ttf2tfm_OBJECTS): config.force
@@ -956,10 +1067,6 @@ config.force: $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND)
 
 @KPATHSEA_RULE@
 @FREETYPE2_RULE@
-
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

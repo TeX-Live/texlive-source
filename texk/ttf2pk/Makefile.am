@@ -67,16 +67,37 @@ LDADD = $(KPATHSEA_LIBS) $(FREETYPE_LIBS)
 
 dist_man1_MANS = ttf2pk.1 ttf2tfm.1
 
-EXTRA_DIST = data
+## Data
+##
+cfgdatadir = ${prefix}/texmf/ttf2pk
+dist_cfgdata_DATA = data/VPS.rpl data/ttf2pk.cfg
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+encdatadir = ${prefix}/texmf/fonts/enc/ttf2pk/base
+dist_encdata_DATA = data/T1-WGL4.enc
+
+mapdatadir = ${prefix}/texmf-dist/source/fonts/zhmetrics
+dist_mapdata_DATA = data/ttfonts.map
+
+sfddatadir = ${prefix}/texmf-dist/fonts/sfd/ttf2pk
+dist_sfddata_DATA = \
+	data/Big5.sfd \
+	data/EUC.sfd \
+	data/HKSCS.sfd \
+	data/KS-HLaTeX.sfd \
+	data/SJIS.sfd \
+	data/UBg5plus.sfd \
+	data/UBig5.sfd \
+	data/UGB.sfd \
+	data/UGBK.sfd \
+	data/UJIS.sfd \
+	data/UKS-HLaTeX.sfd \
+	data/UKS.sfd \
+	data/Unicode.sfd
 
 ## Tests.
 ##
 TESTS = tests/ttf2pk.test
-EXTRA_DIST += $(TESTS)
+EXTRA_DIST = $(TESTS)
 ## tests/ttf2pk.test
 EXTRA_DIST += tests/GenR102.ttf tests/gentium-ec.enc tests/ttf2pk.cfg tests/ttfonts.map
 DISTCLEANFILES += GenR-ec.vpl GenR102-ec.*
