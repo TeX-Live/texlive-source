@@ -3,20 +3,22 @@
 # Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+failed=
+
 rm -rf Symbol.*
 ./t1binary $srcdir/tests/Symbol.pfa Symbol.pfb \
 	&& ./t1ascii Symbol.pfb Symbol.pfa \
 	&& diff Symbol.pfa $srcdir/tests/Symbol.pfa \
-	|| exit 1
-
-echo t1ascii and t1binary test OK
+	&& echo "t1ascii/t1binary tests OK" \
+	|| failed="$failed t1ascii/t1binary"
 
 rm -rf Symbol.*
 ./t1disasm $srcdir/tests/Symbol.pfa Symbol.raw \
 	&& ./t1asm -a Symbol.raw Symbol.pfa \
 	&& diff Symbol.raw $srcdir/tests/Symbol.raw \
 	&& diff Symbol.pfa $srcdir/tests/Symbol.pfa \
-	|| exit 1
+	&& echo "t1asm/t1disasm-ascii tests OK" \
+	|| failed="$failed t1asm/t1disasm-ascii"
 
 rm -rf Symbol.*
 ./t1disasm $srcdir/tests/Symbol.pfb Symbol.raw \
@@ -24,7 +26,10 @@ rm -rf Symbol.*
 	&& ./t1ascii Symbol.pfb Symbol.pfa \
 	&& diff Symbol.raw $srcdir/tests/Symbol.raw \
 	&& diff Symbol.pfa $srcdir/tests/Symbol.pfa \
-	|| exit 1
+	&& echo "t1asm/t1disasm-binary tests OK" \
+	|| failed="$failed t1asm/t1disasm-binary"
 
-echo t1asm and t1disasm test OK
+test -z "$failed" && exit 0
+echo "failed tests:$failed"
+exit 1
 
