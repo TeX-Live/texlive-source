@@ -104,6 +104,7 @@ By default, the TeX filename database (ls-R) is also updated.
 
 Options:
   --cnffile FILE            read FILE for the updmap configuration
+  --dvipdfmoutputdir DIR    specify output directory (dvipdfm syntax)
   --dvipsoutputdir DIR      specify output directory (dvips syntax)
   --pdftexoutputdir DIR     specify output directory (pdftex syntax)
   --outputdir DIR           specify output directory (for all files)
@@ -127,7 +128,7 @@ Commands:
   --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
   --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
   --enable KanjiMap=MAPFILE add \"KanjiMap MAPFILE\" to updmap.cfg
-  --disable MAPFILE         disable MAPFILE, whether Map or MixedMap,
+  --disable MAPFILE         disable MAPFILE, whether Map, MixedMap,
                              or KanjiMap
   --listmaps                list all active and inactive maps
   --listavailablemaps       same as --listmaps, but without
@@ -800,9 +801,9 @@ sub listMaps {
 
   my @lines = grep {
     if ($what eq 'sync') {
-      $_ =~ m/^(Mixed)?Map/
+      $_ =~ m/^(Mixed|Kanji)?Map/
     } else {
-      $_ =~ m/^(\#! *)?(Mixed)?Map/
+      $_ =~ m/^(\#! *)?(Mixed|Kanji)?Map/
     }
   } &getLines($cnfFile);
 
@@ -818,8 +819,8 @@ sub listMaps {
       # --listavailablemaps
       map {
         my $entry="$_"; 
-        # why is that disabled?
-        # print "$entry\n" if (grep { $_ =~ m/\/$entry/ } @paths);
+        # that was disabled, but I don't understand why (NP)
+        print "$entry\n" if (grep { $_ =~ m/\/$entry/ } @paths);
       } @lines;
     } elsif ($what eq 'sync') {
       # --syncwithtrees
