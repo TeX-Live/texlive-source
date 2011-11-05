@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 23514 2011-08-12 21:36:21Z karl $
+# $Id: tlmgr.pl 24419 2011-10-27 14:06:37Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 23514 $';
-my $datrev = '$Date: 2011-08-12 23:36:21 +0200 (Fri, 12 Aug 2011) $';
+my $svnrev = '$Revision: 24419 $';
+my $datrev = '$Date: 2011-10-27 16:06:37 +0200 (Thu, 27 Oct 2011) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -127,9 +127,14 @@ sub main {
     "pause" => 1,
     "print-platform|print-arch" => 1,
     "version" => 1,
-    "help|h|?" => 1);
+    "help" => 1,
+    "h|?" => 1);
 
   my %actionoptions = (
+    "get-mirror"    => { },
+    "option"        => { },
+    "conf"          => { },
+    "version"       => { },
     "backup"        => { "backupdir" => "=s",
                          "clean" => ":-99",
                          "all" => 1,
@@ -256,11 +261,11 @@ sub main {
     exit 0;
   }
 
-  if ((!defined($action) || !$action) && !$opts{"help"}) {
+  if ((!defined($action) || !$action) && !$opts{"help"} && !$opts{"h"}) {
     die "$0: missing action; try --help if you need it.\n";
   }
 
-  if ($opts{"help"}) {
+  if ($opts{"help"} || $opts{"h"}) {
     # perldoc does ASCII emphasis on the output, so it's nice to use it.
     # But not all Unix platforms have it, and on Windows our Config.pm
     # can apparently interfere, so always skip it there.
@@ -282,7 +287,23 @@ sub main {
       pod2usage(-exitstatus => 0, -verbose => 99,
                 -sections => "NAME|SYNOPSIS|ACTIONS/$action.*" , @noperldoc);
     } else {
-      pod2usage(-exitstatus => 0, -verbose => 2, @noperldoc);
+      if ($opts{"help"}) {
+        pod2usage(-exitstatus => 0, -verbose => 2, @noperldoc);
+      } else {
+        # give a short message about usage
+        print "
+tlmgr revision $tlmgrrevision
+usage: tlmgr <options> <action> <arguments>
+where <action> is one of:\n";
+        for my $k (sort keys %actionoptions) {
+          print " $k\n";
+        }
+        print "\nUse\n tlmgr <action> --help
+for more details on a specific option, and
+ tlmgr --help
+for the full story.\n";
+        exit 0;
+      }
     }
   }
 
@@ -4083,10 +4104,12 @@ sub check_executes {
   my (%maps,%langcodes,%fmtlines);
   for my $pkg ($localtlpdb->list_packages) {
     for my $e ($localtlpdb->get_package($pkg)->executes) {
-      if ($e =~ m/add(Mixed)?Map\s+(.*)$/) {
+      if ($e =~ m/add(Mixed|Kanji)?Map\s+(.*)$/) {
         my $foo = $2;
         chomp($foo);
-        push @{$maps{$foo}}, $pkg;
+        if ($foo !~ m/\@kanjiEmbed@/) {
+          push @{$maps{$foo}}, $pkg;
+        }
       } elsif ($e =~ m/AddFormat\s+(.*)$/) {
         my $foo = $1;
         chomp($foo);
