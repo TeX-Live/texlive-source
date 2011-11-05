@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* spc_pdfm.c: fix a typo in spc_handler_pdfm_dest().
+	disable to reencode pdf string to UTF-16 in modstrings()
+	following Heiko Oberdiek.
+
 2011-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac (AC_TYPE_UINT32_T): Portability fix for AIX.
