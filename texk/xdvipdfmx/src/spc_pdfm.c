@@ -1145,7 +1145,7 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
 #ifdef  ENABLE_TOUNICODE
   error = maybe_reencode_utf8(name);
   if (error < 0)
-    return -1;
+    WARN("Failed to convert input string to UTF16...");
 #endif
   array = parse_pdf_object(&args->curptr, args->endptr, NULL);
   if (!array) {
