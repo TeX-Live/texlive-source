@@ -569,12 +569,9 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
           r = reencodestring(cmap, vp);
         }
       }
-/* disable to reencode to UTF-16 following Heiko */
-#if 0
       else {
         r = maybe_reencode_utf8(vp);
       }
-#endif
       if (r < 0) /* error occured... */
         WARN("Failed to convert input string to UTF16...");
     }
@@ -1145,7 +1142,11 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     pdf_release_obj(name);
     return  -1;
   }
-
+#ifdef  ENABLE_TOUNICODE
+  error = maybe_reencode_utf8(name);
+  if (error < 0)
+    return -1;
+#endif
   array = parse_pdf_object(&args->curptr, args->endptr, NULL);
   if (!array) {
     spc_warn(spe, "Destination not specified for pdf:dest.");

@@ -1,11 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
-2011-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2011-11-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_pdfm.c: fix a typo in spc_handler_pdfm_dest().
-	disable to reencode pdf string to UTF-16 in modstrings()
-	following Heiko Oberdiek.
+	reencode also the destination in \special{pdf:dest ...} to UTF-16.
 
 2011-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
