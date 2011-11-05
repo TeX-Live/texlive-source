@@ -1,3 +1,7 @@
+2011-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-04-uptex: remove incompatible lines and erase #ifdef upTeX.
+
 2011-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-typo (new): Fix typo "featre" -> "feature".

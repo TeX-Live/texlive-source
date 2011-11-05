@@ -419,98 +419,6 @@ reencodestring (CMap *cmap, pdf_obj *instring)
   return  0;
 }
 
-#if defined(upTeX)
-/* tables/values used in UTF-8 interpretation -
-   code is based on ConvertUTF.[ch] sample code
-   published by the Unicode consortium */
-static unsigned long
-offsetsFromUTF8[6] =    {
-        0x00000000UL,
-        0x00003080UL,
-        0x000E2080UL,
-        0x03C82080UL,
-        0xFA082080UL,
-        0x82082080UL
-};
-
-static unsigned char
-bytesFromUTF8[256] = {
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-        2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2, 3,3,3,3,3,3,3,3,4,4,4,4,5,5,5,5
-};
-
-static int
-maybe_reencode_utf8(pdf_obj *instring)
-{
-  unsigned char* inbuf;
-  int            inlen;
-  int            non_ascii = 0;
-  unsigned char* cp;
-  unsigned char* op;
-  unsigned char  wbuf[WBUF_SIZE];
-
-  if (!instring)
-    return 0;
-
-  inlen = pdf_string_length(instring);
-  inbuf = pdf_string_value(instring);
-
-  /* check if the input string is strictly ASCII */
-  for (cp = inbuf; cp < inbuf + inlen; ++cp) {
-    if (*cp > 127) {
-      non_ascii = 1;
-    }
-  }
-  if (non_ascii == 0)
-    return 0; /* no need to reencode ASCII strings */
-
-  cp = inbuf;
-  op = wbuf;
-  *op++ = 0xfe;
-  *op++ = 0xff;
-  while (cp < inbuf + inlen) {
-    unsigned long usv = *cp++;
-    int extraBytes = bytesFromUTF8[usv];
-    if (cp + extraBytes > inbuf + inlen)
-      return -1; /* ill-formed, so give up reencoding */
-    switch (extraBytes) {   /* note: code falls through cases! */
-      case 5: usv <<= 6; usv += *cp++;
-      case 4: usv <<= 6; usv += *cp++;
-      case 3: usv <<= 6; usv += *cp++;
-      case 2: usv <<= 6; usv += *cp++;
-      case 1: usv <<= 6; usv += *cp++;
-      case 0: ;
-    };
-    usv -= offsetsFromUTF8[extraBytes];
-    if (usv > 0x10FFFF)
-      return -1; /* out of valid Unicode range, give up */
-    if (usv > 0xFFFF) {
-      /* supplementary-plane character: generate high surrogate */
-      unsigned long hi = 0xdc00 + (usv - 0x10000) % 0x0400;
-      if (op > wbuf + WBUF_SIZE - 2)
-        return -1; /* out of space */
-      *op++ = hi / 256;
-      *op++ = hi % 256;
-      usv = 0xd800 + (usv - 0x10000) / 0x0400;
-      /* remaining value in usv is the low surrogate */
-    }
-    if (op > wbuf + WBUF_SIZE - 2)
-      return -1; /* out of space */
-    *op++ = usv / 256;
-    *op++ = usv % 256;
-  }
-
-  pdf_set_string(instring, wbuf, op - wbuf);
-  return 0;
-}
-#endif
-
 static int
 needreencode (pdf_obj *kp, pdf_obj *vp, struct tounicode *cd)
 {
@@ -545,38 +453,19 @@ static int
 modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
 {
   int               r = 0; /* continue */
-#if !defined(upTeX)
   CMap             *cmap;
   struct tounicode *cd = dp;
-#endif
 
   ASSERT( pdf_obj_typeof(kp) == PDF_NAME );
 
-#if !defined(upTeX)
   if (!cd || cd->cmap_id < 0 || !cd->taintkeys)
     return  -1;
-#endif
 
   switch (pdf_obj_typeof(vp)) {
   case  PDF_STRING:
-#if !defined(upTeX)
     cmap = CMap_cache_get(cd->cmap_id);
     if (needreencode(kp, vp, cd)) {
       r = reencodestring(cmap, vp);
-#else
-    {
-      CMap             *cmap;
-      struct tounicode *cd = dp;
-      if (cd && cd->cmap_id >= 0 && cd->taintkeys) {
-        cmap = CMap_cache_get(cd->cmap_id);
-        if (needreencode(kp, vp, cd)) {
-          r = reencodestring(cmap, vp);
-        }
-      }
-      else {
-        r = maybe_reencode_utf8(vp);
-      }
-#endif
       if (r < 0) /* error occured... */
         WARN("Failed to convert input string to UTF16...");
     }
@@ -597,10 +486,8 @@ my_parse_pdf_dict (const char **pp, const char *endptr, struct tounicode *cd)
 {
   pdf_obj  *dict;
 
-#if !defined(upTeX)
   if (cd->cmap_id < 0)
     return  parse_pdf_dict(pp, endptr, NULL);
-#endif
 
   /* :( */
   if (cd->unescape_backslash) 

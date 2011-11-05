@@ -1,3 +1,8 @@
+2011-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c, spc-pdfm.c, tfm.c and vf.c: remove incompatible lines
+	with the non-upTeX case and erase #ifdef upTeX.
+
 2011-09-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c, spc-pdfm.c, tfm.c and vf.c: apply patches by Takuji Tanaka
