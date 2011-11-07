@@ -1,3 +1,8 @@
+2011-11-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-70-persian (new): Add persian alphabet.
+	* patch-99-future-reorg: Adapt.
+
 2011-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-61-detect-TL: For TL the user commands are now built and

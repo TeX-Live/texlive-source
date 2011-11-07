@@ -32,7 +32,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = xindy-2.4/make-rules/alphabets/finnish
+subdir = xindy-2.4/make-rules/alphabets/persian
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-progs.m4 \
@@ -154,14 +154,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = \
-	cp1252.pl latin9.pl utf8.pl.in
-
+EXTRA_DIST = utf8.pl.in
 CLEANFILES = \
-	cp1252.raw \
-	cp1252-doc.tex \
-	latin9.raw \
-	latin9-doc.tex \
 	utf8.raw \
 	utf8-doc.tex
 
@@ -177,9 +171,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign xindy-2.4/make-rules/alphabets/finnish/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign xindy-2.4/make-rules/alphabets/persian/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign xindy-2.4/make-rules/alphabets/finnish/Makefile
+	  $(AUTOMAKE) --foreign xindy-2.4/make-rules/alphabets/persian/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -14,7 +14,7 @@ dnl  Copyright (C) 2008,2009 by Joachim Schrod.
 dnl
 dnl *********************************************************************
 dnl
-m4_define([xindy_version], [2.4])[]dnl using unmodified xindy source tree
+m4_include([version.ac])[] dnl define xindy_version
 AC_INIT([xindy for TeX Live], xindy_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xindy-]xindy_version[/ChangeLog.Gour])
@@ -187,6 +187,7 @@ AC_CONFIG_FILES([Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/macedonian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/mongolian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/norwegian/Makefile \
+		xindy-]xindy_version[/make-rules/alphabets/persian/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/polish/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/portuguese/Makefile \
 		xindy-]xindy_version[/make-rules/alphabets/romanian/Makefile \

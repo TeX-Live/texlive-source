@@ -1,3 +1,9 @@
+2011-11-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Add persian alphabet. 
+	* version.ac: New file defining the xindy version.
+	* configure.ac: Adapt.
+
 2011-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the ../../texk/am/script_links.am fragment

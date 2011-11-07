@@ -14,10 +14,10 @@
 
 	Drop unused files (from TL2008 and more).
 
-diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Makefile.am.not-yet xindy-2.4/make-rules/alphabets/Makefile.am.not-yet
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Makefile.am.not-yet xindy-2.4/make-rules/alphabets/Makefile.am.not-yet
 --- xindy-2.4.orig/make-rules/alphabets/Makefile.am.not-yet	1970-01-01 01:00:00.000000000 +0100
-+++ xindy-2.4/make-rules/alphabets/Makefile.am.not-yet	2010-01-13 13:01:37.000000000 +0100
-@@ -0,0 +1,310 @@
++++ xindy-2.4/make-rules/alphabets/Makefile.am.not-yet	2011-11-04 17:06:18.000000000 +0100
+@@ -0,0 +1,311 @@
 +## Use `autoreconf' in top-level directory to recreate all
 +## autoconf/automake files.
 +## Or, call `automake Makefile' to create only Makefile.in.
@@ -104,6 +104,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Ma
 +include macedonian/Makefile.am
 +include mongolian/Makefile.am
 +include norwegian/Makefile.am
++include persian/Makefile.am
 +include polish/Makefile.am
 +include portuguese/Makefile.am
 +include romanian/Makefile.am
@@ -328,10 +329,10 @@ diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/Ma
 +
 +CLEANFILES += $(nobase_nodist_lang_DATA) $(DOCS) $(DOC_CLEAN)
 +
-diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/lang.defs xindy-2.4/make-rules/alphabets/lang.defs
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/lang.defs xindy-2.4/make-rules/alphabets/lang.defs
 --- xindy-2.4.orig/make-rules/alphabets/lang.defs	1970-01-01 01:00:00.000000000 +0100
-+++ xindy-2.4/make-rules/alphabets/lang.defs	2010-01-10 22:08:23.000000000 +0100
-@@ -0,0 +1,45 @@
++++ xindy-2.4/make-rules/alphabets/lang.defs	2011-11-04 17:06:22.000000000 +0100
+@@ -0,0 +1,46 @@
 +albanian UTF8_LAT LATIN1
 +belarusian UTF8_CYR CYR_ISO88595 CYR_ISOIR111 CYR_1251
 +bulgarian UTF8_CYR CYR_ISO88595 CYR_KOI8_R CYR_1251
@@ -363,6 +364,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/la
 +macedonian UTF8_CYR CYR_ISO88595 CYR_ISOIR111 CYR_1251
 +mongolian cyrillic UTF8_CYR cyrillic
 +norwegian UTF8_LAT LATIN1
++persian UTF8_OTHER
 +polish UTF8_LAT CP1250 LATIN2
 +portuguese UTF8_LAT LATIN1
 +romanian UTF8_LAT LATIN2
@@ -377,7 +379,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/la
 +upper-sorbian UTF8_LAT CP1250 LATIN2
 +ukrainian UTF8_CYR CYR_KOI8_U CYR_1251
 +vietnamese UTF8_LAT
-diff -ur -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/mk-lang.sh xindy-2.4/make-rules/alphabets/mk-lang.sh
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/make-rules/alphabets/mk-lang.sh xindy-2.4/make-rules/alphabets/mk-lang.sh
 --- xindy-2.4.orig/make-rules/alphabets/mk-lang.sh	1970-01-01 01:00:00.000000000 +0100
 +++ xindy-2.4/make-rules/alphabets/mk-lang.sh	2010-01-13 13:51:57.000000000 +0100
 @@ -0,0 +1,213 @@
