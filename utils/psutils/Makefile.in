@@ -228,8 +228,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(PSUTILS_TREE) $(PSUTILS_TREE)-PATCHES \
 	../../build-aux/relpath $(TESTS) tests/play.ps \
 	tests/playbook.2 tests/playnup.2 tests/playps.2 \
-	tests/playres.2 tests/playsel.2 tests/plot.eps tests/ploth.eps \
-	tests/plotm.eps tests/plotv.eps
+	tests/playres.ps tests/playsel.2 tests/plot.eps \
+	tests/ploth.eps tests/plotm.eps tests/plotv.eps
 OS = UNIX
 PAPER = a4
 AM_CPPFLAGS = -DUNIX -DPAPER=\"$(PAPER)\"

@@ -18,9 +18,9 @@ rm -rf play*
 	&& echo "psbook tests OK" \
 	|| failed="$failed psbook"
 
-./psresize -Pa4 -pa5 playsel.ps playres.ps \
-	2>playres.2 \
-	&& diff playres.2 $srcdir/tests/playres.2 \
+./psresize -Pa4 -pa5 playsel.ps \
+	| sed -e 's/ -0\.000000 / 0.000000 /' >playres.ps \
+	&& diff playres.ps $srcdir/tests/playres.ps \
 	&& echo "psresize tests OK" \
 	|| failed="$failed psresize"
 
