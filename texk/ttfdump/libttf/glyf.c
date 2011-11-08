@@ -8,15 +8,7 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: glyf.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
-
-#ifndef lint
-static char vcid[] = "$Id: glyf.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
 
 static void ttfLoadSimpleGlyph(FILE *fp,GLYFPtr glyf,ULONG offset);
 static void ttfPrintSimpleGlyph(FILE *fp,GLYFPtr glyf);
@@ -33,7 +25,7 @@ double fix2dbl(F2Dot14 fixed);
  */
 void ttfInitGLYF(TTFontPtr font)
 {
-    ULONG tag  = 'g' | 'l' << 8 | 'y' << 16 | 'f' << 24;
+    ULONG tag  = FT_MAKE_TAG ('g', 'l', 'y', 'f');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag, font)) != NULL)
@@ -45,8 +37,7 @@ void ttfInitGLYF(TTFontPtr font)
  * callers should compute this themself form the loca tables */
 void ttfLoadGLYF(FILE *fp, GLYFPtr glyf, ULONG offset)
 {
-    if (fseek(fp, offset, SEEK_SET) != 0)
-	ttfError("Fseek Failed in ttfLoadGLYF\n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadGLYF");
 
     glyf->numberOfContours = ttfGetSHORT(fp);
     glyf->xMin = ttfGetFWord(fp);
@@ -85,18 +76,13 @@ static void ttfLoadSimpleGlyph(FILE *fp, GLYFPtr glyf, ULONG offset)
     SHORT nCnts = glyf->numberOfContours;
     USHORT i,nIns,nPts;
 
-    if (fseek(fp, offset, SEEK_SET) != 0)
-	ttfError("Fseek Failed in ttfLoadSimpleGlyph\n"); 
+    xfseek(fp, offset, SEEK_SET, "ttfLoadSimpleGlyph");
     
-    if (fread(glyf->endPtsOfContours, sizeof(USHORT), nCnts, fp) != nCnts)
-	ttfError("Error when getting endPtsOfContours\n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) glyf->endPtsOfContours,
-		nCnts*sizeof(USHORT));
-#endif
-
     if (nCnts != 0)
-	nPts = (glyf->endPtsOfContours)[nCnts-1]+1;
+	{
+	    ttfReadUSHORT (glyf->endPtsOfContours, nCnts, fp);
+	    nPts = (glyf->endPtsOfContours)[nCnts-1]+1;
+	}
     else
 	/* there seems to be something wrong with my interpretation of 
 	 * NOGLYPH chars, doing this way in case there is a char that has 
@@ -214,7 +200,7 @@ static void ttfPrintSimpleGlyph(FILE *fp, GLYFPtr glyf)
 	    else
 		strcat(buf,"        ");
 	    if (flag & FLAGS_ON_CURVE)
-		strcat(buf,"On \n");
+		strcat(buf,"On\n");
 	    else
 		strcat(buf,"Off\n");
 	    		    
@@ -238,11 +224,9 @@ static void ttfLoadCompositeGlyph(FILE *fp, GLYFPtr glyf, ULONG offset)
     USHORT nIns,flags;   
     Component *cur;
 
-    if (fseek(fp, offset, SEEK_SET) != 0)
-	ttfError("Fseek Failed in ttfLoadCompositeGlyph\n"); 
+    xfseek(fp, offset, SEEK_SET, "ttfLoadCompositeGlyph");
     
-    if((glyf->comp = cur = (Component *) calloc(1, sizeof(Component))) == NULL)
-	ttfError("Out Of Memory\n");
+    glyf->comp = cur = XCALLOC1 (Component);
     cur->previous = NULL; /* beginning of a linked list */
 
     do {
@@ -273,9 +257,7 @@ static void ttfLoadCompositeGlyph(FILE *fp, GLYFPtr glyf, ULONG offset)
 		(cur->data).transform.tensor.yscale  = ttfGetF2Dot14(fp);
 	    }	    
 	/* allocate next component */
-	if ((cur->next = (Component *) calloc(1, sizeof(Component))) == NULL)
-	    ttfError("Out Of Memory\n");
-
+	cur->next = XCALLOC1 (Component);
 	cur->next->previous = cur;
 	cur = cur->next; /* move to next component */
     } while (flags & MORE_COMPONENT);

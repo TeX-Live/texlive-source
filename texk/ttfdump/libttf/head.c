@@ -7,45 +7,25 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: head.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: head.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static HEADPtr ttfAllocHEAD(TTFontPtr font);
 static void ttfLoadHEAD(FILE *fp,HEADPtr head,ULONG offset);
 
 void ttfInitHEAD(TTFontPtr font)
 {
-    ULONG tag = 'h' | 'e' << 8 | 'a' << 16 | 'd' << 24;
+    ULONG tag = FT_MAKE_TAG ('h', 'e', 'a', 'd');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->head = ttfAllocHEAD(font);
+	    font->head = XCALLOC1 (HEAD);
 	    ttfLoadHEAD(font->fp,font->head,ptd->offset);    
 	}
 }
-static HEADPtr ttfAllocHEAD(TTFontPtr font)
-{
-    HEADPtr head;
 
-    if ((head = (HEADPtr) calloc(1,sizeof(HEAD))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return head;
-}
 static void ttfLoadHEAD(FILE *fp,HEADPtr head,ULONG offset)
 {
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadHEAD \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadHEAD");
 
     head->version = ttfGetFixed(fp);
     head->fontRevision = ttfGetFixed(fp);
@@ -54,8 +34,10 @@ static void ttfLoadHEAD(FILE *fp,HEADPtr head,ULONG offset)
     head->flags = ttfGetUSHORT(fp);
     head->unitsPerEm = ttfGetUSHORT(fp);
     
-    fread(head->created,sizeof(char),8,fp);
-    fread(head->modified,sizeof(char),8,fp);
+    if (fread(head->created,sizeof(char),8,fp) != 8)
+        ttfError("Error when getting HEAD created\n");
+    if (fread(head->modified,sizeof(char),8,fp) != 8)
+        ttfError("Error when getting HEAD modified\n");
     
     head->xMin = ttfGetFWord(fp);
     head->yMin = ttfGetFWord(fp);

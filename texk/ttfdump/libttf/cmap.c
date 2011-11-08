@@ -12,7 +12,7 @@
  *   true data to map character code to glyph index
  *     USHORT PlatformID shows which platform the subtable is to be used 
  *            (e.g. Mac, PC)
- *     USHORT Platfrom specofic EncodingID shows what kind of encoding scheme
+ *     USHORT Platfrom specific EncodingID shows what kind of encoding scheme
  *            this table uses (e.g. Big5, iso8859, Unicode etc.)
  *     ULONG  offset is the offset from the beginning of the whole cmap table
  *            to the beginning of the corresponding subtable
@@ -47,26 +47,20 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: cmap.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: cmap.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
+typedef union _TwoBytes {
+    USHORT u;
+    unsigned char c[2];
+} TwoBytes;
 
-static CMAPPtr ttfAllocCMAP(TTFontPtr font);
 static void ttfLoadCMAP(FILE *fp,CMAPPtr cmap,ULONG offset);
 
 static void ttfLoadEncodingTable(FILE *fp,SubTablePtr subTable,ULONG offset);
-static SubTablePtr ttfAllocSubTable(CMAPPtr cmap);
 static void ttfLoadSubTable(FILE *fp,SubTablePtr subTable,ULONG offset);
 static void ttfPrintSubTable(FILE* fp,SubTablePtr ptable);
 static void ttfFreeSubTable(SubTablePtr ptable);
 
-static CMAP0 * ttfAllocCMAP0(SubTablePtr subTable);
 static void ttfLoadCMAP0(FILE *fp,SubTablePtr subTable,ULONG offset);
 static void ttfPrintCMAP0(FILE *fp,SubTablePtr subTable);
 static USHORT ttfLookUpCMAP0(SubTablePtr subTable,USHORT cc);
@@ -89,37 +83,27 @@ static void ttfFreeCMAP6(SubTablePtr subTable);
 
 void ttfInitCMAP(TTFontPtr font)
 {
-    ULONG tag = 'c' | 'm' << 8 | 'a' << 16 | 'p' << 24;
+    ULONG tag = FT_MAKE_TAG ('c', 'm', 'a', 'p');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->cmap = ttfAllocCMAP(font);
+	    font->cmap = XCALLOC1 (CMAP);
 	    ttfLoadCMAP(font->fp,font->cmap,ptd->offset);
 	}
 }
-static CMAPPtr ttfAllocCMAP(TTFontPtr font)
-{
-    CMAPPtr cmap;
-    if ((cmap = (CMAPPtr) calloc(1,sizeof(CMAP))) == NULL)
-	{
-	    ttfError("Out Of Memory in  __FILE_ : __LINE__ \n");
-	    return NULL;
-	}
-    return cmap;
-}
+
 static void ttfLoadCMAP(FILE *fp,CMAPPtr cmap,ULONG offset)
 {
     USHORT i,n;
     ULONG posEnc;            /* beginning of the Encoding Table */
     ULONG baseSub = offset;  /* base of SubTable offset */
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLOADCMAP \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadCMAP");
 
     cmap->version = ttfGetUSHORT(fp);
     cmap->numberOfEncodings = n = ttfGetUSHORT(fp);
-    cmap->subTables = ttfAllocSubTable(cmap);
+    cmap->subTables = XCALLOC (cmap->numberOfEncodings, SubTable);
 
     posEnc = baseSub + sizeof(USHORT)*2; /* step over the beginning of encoding
 					  * table */
@@ -198,24 +182,13 @@ void ttfFreeCMAP(CMAPPtr cmap)
 /* actually, EncodingTable is a part of SubTable */
 static void ttfLoadEncodingTable(FILE *fp,SubTablePtr subTable,ULONG offset)
 {
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadEncodingTable \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadEncodingTable");
     
     subTable->PlatformID = ttfGetUSHORT(fp);
     subTable->EncodingID = ttfGetUSHORT(fp);
     subTable->offset = ttfGetULONG(fp);
 }
-static SubTablePtr ttfAllocSubTable(CMAPPtr cmap)
-{
-    SubTablePtr subTable;
-    
-    if ((subTable = (SubTablePtr) calloc(cmap->numberOfEncodings,sizeof(SubTable))) == NULL)
-	{
-	    ttfError("Out Of Memory in  __FILE__ : __LINE__ \n");
-	    return NULL;
-	}
-    return subTable;
-}
+
 /* should this one be static ? */
 static void ttfLoadSubTable(FILE *fp,SubTablePtr subTable,ULONG base)
 {
@@ -226,8 +199,7 @@ static void ttfLoadSubTable(FILE *fp,SubTablePtr subTable,ULONG base)
      * base: beginning of cmap
      * offset: offset field of each encoding table */
     pos =  base  +  subTable->offset;
-    if (fseek(fp,pos,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadSubTable\n");
+    xfseek(fp, pos, SEEK_SET, "ttfLoadSubTable");
 
     subTable->format = format = ttfGetUSHORT(fp); 
     subTable->length = ttfGetUSHORT(fp);
@@ -309,32 +281,20 @@ static void ttfFreeSubTable(SubTablePtr ptable)
 	}
 }
 
-static CMAP0 * ttfAllocCMAP0(SubTablePtr subTable)
-{
-    CMAP0 * cmap0;
-  
-    if ((cmap0 = (CMAP0 *) calloc(1,sizeof(CMAP0))) == NULL)
-	{
-	    ttfError("Out Of Memory in  __FILE__ : __LINE__ \n");
-	    return NULL;
-	}
-    return cmap0;
-}
 static void ttfLoadCMAP0(FILE *fp,SubTablePtr subTable,ULONG offset)
 {
     BYTE * array;
     
-    subTable->map.cmap0 = ttfAllocCMAP0(subTable);
+    subTable->map.cmap0 = XCALLOC1 (CMAP0);
     array = subTable->map.cmap0->glyphIndexArray; 
 
-    if (fseek(fp,offset,SEEK_SET) != 0)
-	ttfError("Fseek Failed in ttfLoadCMAP0 \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadCMAP0");
 
     /* Attention: we get lots of bytes at once as a work around of the
      * usual ttfGet*, this cause byte sex trouble as will be seen
      * in the fellowing procedures */
     if (fread(array,sizeof(BYTE),256,fp) != 256)
-	ttfError("Error when getting glyphIndexArray \n");
+	ttfError("Error when getting glyphIndexArray\n");
 }
 static void ttfPrintCMAP0(FILE *fp,SubTablePtr subTable)
 {
@@ -344,7 +304,7 @@ static void ttfPrintCMAP0(FILE *fp,SubTablePtr subTable)
     for (i=0;i<256;i++)
 	{
 	    index = ttfLookUpCMAP(subTable,i);
-	    fprintf(fp,"\t\t Char %3d -> Index %4d \n",i,index);
+	    fprintf(fp,"\t\t Char %3d -> Index %4d\n",i,index);
 	}
 }
 static USHORT ttfLookUpCMAP0(SubTablePtr subTable,USHORT cc)
@@ -362,17 +322,12 @@ static void ttfLoadCMAP2(FILE *fp,SubTablePtr subTable,ULONG offset)
     USHORT numGlyphId;
     SubHeaderPtr header;
 
-    if (fseek(fp,offset,SEEK_SET) != 0)
-	ttfError("Fseek Failed in ttfLoadCMAP2 \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadCMAP2");
 
-    subTable->map.cmap2 = (CMAP2 *) calloc(1,sizeof(CMAP2));
+    subTable->map.cmap2 = XCALLOC1 (CMAP2);
     array = subTable->map.cmap2->subHeaderKeys;
     
-    if (fread(array,sizeof(USHORT),256,fp) != 256)
-	ttfError("Error when getting subHeaderKeys \n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) array,256*sizeof(USHORT));
-#endif
+    ttfReadUSHORT (array, 256, fp);
 
     for (i=0;i<256;i++)
 	{
@@ -382,8 +337,7 @@ static void ttfLoadCMAP2(FILE *fp,SubTablePtr subTable,ULONG offset)
 	}
     n += 1; /* the number of subHeaders is one plus the max of subHeaderKeys */
 
-    subTable->map.cmap2->subHeaders = header =
-	(SubHeaderPtr) calloc(n,sizeof(SubHeader)); 
+    subTable->map.cmap2->subHeaders = header = XCALLOC (n, SubHeader);
     for (i=0;i<n;i++)
 	{
 	    (header+i)->firstCode = ttfGetUSHORT(fp);
@@ -403,8 +357,7 @@ static void ttfLoadCMAP2(FILE *fp,SubTablePtr subTable,ULONG offset)
     numGlyphId = 
 	subTable->length - (256 + 3) * sizeof(USHORT) -  n * sizeof(SubHeader);
     numGlyphId /= sizeof(USHORT);
-    subTable->map.cmap2->glyphIndexArray = 
-	(USHORT *) calloc(numGlyphId,sizeof(USHORT));   
+    subTable->map.cmap2->glyphIndexArray = XCALLOC (numGlyphId, USHORT);
     for (i=0;i<numGlyphId;i++)
 	{
 	    subTable->map.cmap2->glyphIndexArray[i] = ttfGetUSHORT(fp);
@@ -415,7 +368,7 @@ static void ttfPrintCMAP2(FILE *fp,SubTablePtr subTable)
     USHORT i,j,numGlyphId;
     USHORT *array,n=0,index;
     SubHeaderPtr header;
-    unsigned short cc;
+    TwoBytes tb;
 
     array = subTable->map.cmap2->subHeaderKeys;
     header = subTable->map.cmap2->subHeaders;
@@ -454,27 +407,21 @@ static void ttfPrintCMAP2(FILE *fp,SubTablePtr subTable)
 
     i = 0;
     fprintf(fp,"\t\t First Byte:\t %2x\n",i);
+    tb.c[1] = i;
     for(j=0;j<=255;j++)
 	{
-#ifndef WORDS_BIGENDIAN
-	    cc = i + (j << 8);
-#else
-	    cc = j + (i << 8);
-#endif
-	    index = ttfLookUpCMAP2(subTable,cc);
+	    tb.c[0] = j;
+	    index = ttfLookUpCMAP2(subTable,tb.u);
 	    fprintf(fp,"\t\t   Char %2x -> Index %d\n",j,index);
 	}
     for (i=128;i<=255;i++)
 	{
 	    fprintf(fp,"\t\t First Byte:\t %2x\n",i);
+	    tb.c[1] = i;
 	    for(j=0;j<=255;j++)
 		{
-#ifndef WORDS_BIGENDIAN
-		    cc = i + (j << 8);
-#else
-		    cc = j + (i << 8);
-#endif
-		    index = ttfLookUpCMAP2(subTable,cc);
+		    tb.c[0] = j;
+		    index = ttfLookUpCMAP2(subTable,tb.u);
 		    fprintf(fp,"\t\t   Char %2x -> Index %d\n",j,index);
 		}
 	}
@@ -486,25 +433,22 @@ static USHORT ttfLookUpCMAP2(SubTablePtr subTable,USHORT cc)
     SubHeaderPtr headers = subTable->map.cmap2->subHeaders;
     SHORT idDelta;
     USHORT firstCode, entryCount, idRangeOffset;
+    TwoBytes tb;
     unsigned char first,second;
 
    
     /* On little endian platforms "low byte" is the "first byte".
-     * It determines that if it is necessary to use the second byte to 
-     * fully interprete the character code, for expamle, if the first byte 
-     * is obivously an ASCII character then it is not necessary to 
+     * It determines if it is necessary to use the second byte to 
+     * fully interprete the character code; for example, if the first byte 
+     * is obviously an ASCII character then it is not necessary to 
      * interpret the second byte, on the other hand, if the first byte is 
      * zero then the second byte is a ASCII char, when the first byte
      * is not an ASCII char nor zero, those two bytes together determine
      * the meanning of the character code
      */
-#ifndef WORDS_BIGENDIAN
-    first = cc & 0x00ff;
-    second = cc >> 8;
-#else
-    first = cc >> 8;
-    second = cc & 0x00ff;
-#endif
+     tb.u = cc;
+     first = tb.c[1];
+     second = tb.c[0];
 
     /* select which subHeader to use */
     idx = array[first];
@@ -542,12 +486,11 @@ static void ttfFreeCMAP2(SubTablePtr subTable)
 static void ttfLoadCMAP4(FILE *fp,SubTablePtr subTable,ULONG offset)
 {
     USHORT segCount;
-    USHORT * array,len;
+    USHORT len;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadCMAP4 \n");    
+    xfseek(fp, offset, SEEK_SET, "ttfLoadCMAP4");
     
-    subTable->map.cmap4 = (CMAP4 *) calloc(1,sizeof(CMAP4));
+    subTable->map.cmap4 = XCALLOC1 (CMAP4);
 
     subTable->map.cmap4->segCountX2 = segCount = ttfGetUSHORT(fp);
     subTable->map.cmap4->searchRange = ttfGetUSHORT(fp);
@@ -555,51 +498,21 @@ static void ttfLoadCMAP4(FILE *fp,SubTablePtr subTable,ULONG offset)
     subTable->map.cmap4->rangeShift = ttfGetUSHORT(fp);
 
     segCount /= 2;
-    subTable->map.cmap4->endCount = array = 
-	(USHORT *) calloc(segCount,sizeof(USHORT));
-    if (fread(array,sizeof(USHORT),segCount,fp) != segCount)
-	ttfError("Error when getting endCount\n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) array,segCount*sizeof(USHORT));
-#endif
+    subTable->map.cmap4->endCount = ttfMakeUSHORT (segCount, fp);
 
     subTable->map.cmap4->reservedPad = ttfGetUSHORT(fp);
 
-    subTable->map.cmap4->startCount = array = 
-	(USHORT *) calloc(segCount,sizeof(USHORT));
-    if (fread(array,sizeof(USHORT),segCount,fp) != segCount)
-	ttfError("Error when getting startCount\n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) array,segCount*sizeof(USHORT));
-#endif
+    subTable->map.cmap4->startCount = ttfMakeUSHORT (segCount, fp);
 
-    subTable->map.cmap4->idDelta = array = 
-	(USHORT *) calloc(segCount,sizeof(USHORT));
-    if (fread(array,sizeof(USHORT),segCount,fp) != segCount)
-	ttfError("Error when getting idDelta\n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) array,segCount*sizeof(USHORT));
-#endif
+    subTable->map.cmap4->idDelta = ttfMakeUSHORT (segCount, fp);
 
-    subTable->map.cmap4->idRangeOffset = array = 
-	(USHORT *) calloc(segCount,sizeof(USHORT));
-    if (fread(array,sizeof(USHORT),segCount,fp) != segCount)
-	ttfError("Error when getting idRangeOffset\n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) array,segCount*sizeof(USHORT));
-#endif
+    subTable->map.cmap4->idRangeOffset = ttfMakeUSHORT (segCount, fp);
 
     /* caculate the length of glyphIndexArray, this is ugly, there should be
      * a better way to get this information. */
     len = subTable->length - 8*sizeof(USHORT) - 4*segCount*sizeof(USHORT);
     len /= sizeof(USHORT);
-    subTable->map.cmap4->glyphIndexArray = array = 
-	(USHORT *) calloc(len,sizeof(USHORT));
-    if (fread(array,sizeof(USHORT),len,fp) != len)
-	ttfError("Error when getting idRangeOffset\n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) array,len*sizeof(USHORT));
-#endif
+    subTable->map.cmap4->glyphIndexArray = ttfMakeUSHORT (len, fp);
 }
 static void ttfPrintCMAP4(FILE *fp,SubTablePtr subTable)
 {
@@ -700,22 +613,14 @@ static void ttfFreeCMAP4(SubTablePtr subTable)
 
 static void ttfLoadCMAP6(FILE *fp,SubTablePtr subTable,ULONG offset)
 {
-    USHORT * array,len;
+    USHORT len;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadCMAP6 \n");    
+    xfseek(fp, offset, SEEK_SET, "ttfLoadCMAP6");
 
-    subTable->map.cmap6 = (CMAP6 *) calloc(1,sizeof(CMAP6));
+    subTable->map.cmap6 = XCALLOC1 (CMAP6);
     subTable->map.cmap6->firstCode = ttfGetUSHORT(fp);
     subTable->map.cmap6->entryCount = len = ttfGetUSHORT(fp);
-    subTable->map.cmap6->glyphIndexArray = array =
-	(USHORT *) calloc(subTable->map.cmap6->entryCount,sizeof(USHORT));
-
-    if (fread(array,sizeof(USHORT),len,fp) != len)
-	ttfError("Error when getting idRangeOffset\n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) array,len*sizeof(USHORT));
-#endif
+    subTable->map.cmap6->glyphIndexArray = ttfMakeUSHORT (len, fp);
 }
 static void ttfPrintCMAP6(FILE *fp, SubTablePtr subTable)
 {

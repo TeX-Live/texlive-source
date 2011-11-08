@@ -5,27 +5,21 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-## We want to distribute the whole subdirectories.
-##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
-EXTRA_DIST = docs include libttf src
-
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
-	rm -f $(distdir)/libttf/Makefile.in
-	rm -f $(distdir)/src/Makefile.in
-
 INCLUDES = -I$(top_srcdir)/include
-AM_CPPFLAGS = -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libttf.a
 
-# libttf/interp.c is not used (would just produce compiler warnings).
-#
-nodist_libttf_a_SOURCES = \
+libttf_a_SOURCES = \
+	include/gcache.h \
+	include/gstate.h \
+	include/loadtable.h \
+	include/os2_P.h \
+	include/protos.h \
+	include/tables.h \
+	include/ttc.h \
+	include/ttf.h \
+	include/ttfutil.h \
 	libttf/cmap.c \
 	libttf/cvt.c \
 	libttf/disasm.c \
@@ -48,7 +42,6 @@ nodist_libttf_a_SOURCES = \
 	libttf/pclt.c \
 	libttf/post.c \
 	libttf/prep.c \
-	libttf/stack.c \
 	libttf/tabledir.c \
 	libttf/ttc.c \
 	libttf/ttfread.c \
@@ -57,13 +50,27 @@ nodist_libttf_a_SOURCES = \
 	libttf/vhea.c \
 	libttf/vmtx.c
 
+## Not used (interp.c would just produce compiler warnings).
+##
+EXTRA_DIST = \
+	libttf/fixed.c \
+	libttf/interp.c \
+	libttf/stack.c
+
 bin_PROGRAMS = ttfdump
 
-nodist_ttfdump_SOURCES = src/ttfdump.c
+ttfdump_SOURCES = src/ttfdump.c
 
 LDADD = libttf.a
 
-nodist_man1_MANS = docs/ttfdump.1
+dist_man1_MANS = docs/ttfdump.1
+
+## Not used
+##
+EXTRA_DIST += \
+	docs/ttfdump.dvi \
+	docs/ttfdump.html \
+	docs/ttfdump.ps
 
 ## Tests.
 ##

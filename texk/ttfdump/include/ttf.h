@@ -23,16 +23,12 @@ typedef signed short SHORT;
 #if SIZEOF_INT==4
 typedef unsigned int ULONG;
 typedef signed int LONG;
-typedef ULONG Fixed;            /* 16.16 fixed point number used for
-                                 * version information */
-
-#elif SIZEOF_LONG==4
-typedef unsigned long ULONG;
-typedef signed long LONG;
-typedef ULONG Fixed;            /* 16.16 fixed point number used for
-                                 * version information */
+#else
+#error "Unsupported size of `int' type!"
 #endif
 
+typedef ULONG Fixed;            /* 16.16 fixed point number used for
+                                 * version information */
 typedef USHORT FUnit;
 typedef SHORT FWord;            /* pixel position in the unit of FUnit */
 typedef USHORT uFWord;
@@ -44,7 +40,7 @@ typedef LONG F26Dot6;           /* 26.6 fixed point number to specify
 BYTE ttfGetBYTE(FILE *fp);
 CHAR ttfGetCHAR(FILE *fp);
 USHORT ttfGetUSHORT(FILE *fp);
-USHORT ttfGetSHORT(FILE *fp);
+SHORT ttfGetSHORT(FILE *fp);
 ULONG ttfGetULONG(FILE *fp);
 LONG ttfGetLONG(FILE *fp);
 Fixed ttfGetFixed(FILE *fp);
@@ -53,8 +49,17 @@ FWord ttfGetFWord(FILE *fp);
 uFWord ttfGetuFWord(FILE *fp);
 F2Dot14 ttfGetF2Dot14(FILE *fp);
 
-short ttfGetLSB16(FILE *fp);
-int ttfGetLSB32(FILE *fp);
+/* Read arrays.  */
+void ttfReadUSHORT(USHORT *array, size_t nelem, FILE *fp);
+void ttfReadULONG(ULONG *array, size_t nelem, FILE *fp);
+void ttfReadFWord(FWord *array, size_t nelem, FILE *fp);
+
+/* Allocate and read arrays.  */
+BYTE *ttfMakeBYTE(size_t nelem, FILE *fp);
+USHORT *ttfMakeUSHORT(size_t nelem, FILE *fp);
+SHORT *ttfMakeSHORT(size_t nelem, FILE *fp);
+ULONG *ttfMakeULONG(size_t nelem, FILE *fp);
+LONG *ttfMakeLONG(size_t nelem, FILE *fp);
 
 #include "tables.h"
 #include "gcache.h"

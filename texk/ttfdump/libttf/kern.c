@@ -7,53 +7,32 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: kern.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: kern.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static KERNPtr ttfAllocKERN(TTFontPtr font);
 static void ttfLoadKERN(FILE *fp,KERNPtr kern,ULONG offset);
 
 void ttfInitKERN(TTFontPtr font)
 {
-    ULONG tag = 'k' | 'e' << 8 | 'r' << 16 | 'n' << 24;
+    ULONG tag = FT_MAKE_TAG ('k', 'e', 'r', 'n');
     TableDirPtr ptd;
      
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->kern = ttfAllocKERN(font);
+	    font->kern = XCALLOC1 (KERN);
 	    ttfLoadKERN(font->fp,font->kern,ptd->offset);
 	}
 }
-static KERNPtr ttfAllocKERN(TTFontPtr font)
-{
-    KERNPtr kern;
-    
-    if ((kern = (KERNPtr) calloc(1,sizeof(KERN))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return kern;
-}
+
 static void ttfLoadKERN (FILE *fp,KERNPtr kern,ULONG offset)
 {
     int i;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadKERN \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadKERN");
     
     kern->version = ttfGetUSHORT(fp);
     kern->nTables = ttfGetUSHORT(fp);
 
-    kern->subtable = (KernSubtable *) calloc(kern->nTables,
-						 sizeof(KernSubtable));
+    kern->subtable = XCALLOC (kern->nTables, KernSubtable);
 
     for (i=0;i<kern->nTables;i++)
 	{
@@ -75,7 +54,7 @@ static void ttfLoadKERN (FILE *fp,KERNPtr kern,ULONG offset)
 		    (kern->subtable+i)->kern.kern0.rangeShift =
 			ttfGetUSHORT(fp);
 		    (kern->subtable+i)->kern.kern0.pairs = pairs =
-			(struct kernpair *) calloc(n,sizeof (struct kernpair));
+			XCALLOC (n, struct kernpair);
 
 		    for (j=0;j<n;j++)
 			{
@@ -114,7 +93,7 @@ void ttfPrintKERN(FILE *fp,KERNPtr kern)
 		    (kern->subtable+i)->version);
 	    fprintf(fp,"\t Bytes in subtable \t %d\n",
 		    (kern->subtable+i)->length);
-	    fprintf(fp,"\t Coverage bits \t 0x%x \n",
+	    fprintf(fp,"\t Coverage bits \t 0x%x\n",
 		    (kern->subtable+i)->coverage);
 	    switch ((kern->subtable+i)->coverage >> 8)
 		{

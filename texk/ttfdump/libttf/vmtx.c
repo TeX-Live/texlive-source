@@ -7,17 +7,8 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: vmtx.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: vmtx.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static VMTXPtr ttfAllocVMTX(TTFontPtr font);
 static void ttfLoadVMTX(FILE *fp,VMTXPtr vmtx,ULONG offset);
 
 /* Caution: Because of interdependency between tables, 
@@ -26,12 +17,12 @@ static void ttfLoadVMTX(FILE *fp,VMTXPtr vmtx,ULONG offset);
  */
 void ttfInitVMTX(TTFontPtr font)
 {
-    ULONG tag = 'v' | 'm' << 8 | 't' << 16 | 'x' << 24;
+    ULONG tag = FT_MAKE_TAG ('v', 'm', 't', 'x');
     TableDirPtr ptd;
     
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL) 
 	{
-	    font->vmtx = ttfAllocVMTX(font);
+	    font->vmtx = XCALLOC1 (VMTX);
 	    font->vmtx->numOfLongVerMetrics = 
 		font->vhea->numOfLongVerMetrics;
 	    font->vmtx->numOfTSB = font->maxp->numGlyphs - 
@@ -39,40 +30,24 @@ void ttfInitVMTX(TTFontPtr font)
 	    ttfLoadVMTX(font->fp,font->vmtx,ptd->offset);
 	}
 }
-static VMTXPtr ttfAllocVMTX(TTFontPtr font)
-{
-    VMTXPtr vmtx;
 
-    if ((vmtx = (VMTXPtr) calloc(1,sizeof(VMTX))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return vmtx;
-}
 static void ttfLoadVMTX(FILE *fp,VMTXPtr vmtx,ULONG offset)
 {
     USHORT i,n = vmtx->numOfLongVerMetrics,m=vmtx->numOfTSB;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLOADVMTX \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadVMTX");
     
-    if ((vmtx->vMetrics = (longVerMetric *) calloc(n,sizeof(longVerMetric))) != NULL)
+    vmtx->vMetrics = XCALLOC (n, longVerMetric);
+    for (i=0;i<n;i++)
 	{
-	    for (i=0;i<n;i++)
-		{
-		    (vmtx->vMetrics+i)->advanceHeight = ttfGetuFWord(fp);
-		    (vmtx->vMetrics+i)->topSideBearing = ttfGetFWord(fp);
-		}
-	}
-    else
-	{
-	    ttfError("Out Of Memory in __FILE__ : __LINE__\n"); 
+	    (vmtx->vMetrics+i)->advanceHeight = ttfGetuFWord(fp);
+	    (vmtx->vMetrics+i)->topSideBearing = ttfGetFWord(fp);
 	}
 
-    /* codes dealing with leftSideBearing entry */
-    if (m && ((vmtx->topSideBearing = (FWord *) calloc(m,sizeof(FWord))) != NULL))
+    /* codes dealing with topSideBearing entry */
+    if (m)
 	{
+	    vmtx->topSideBearing = XCALLOC (m, FWord);
 	    for (i=0;i<m;i++)
 		{
 		    (vmtx->topSideBearing)[i] = ttfGetFWord(fp);

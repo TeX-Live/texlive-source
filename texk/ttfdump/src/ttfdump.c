@@ -12,20 +12,7 @@
 #include "ttfutil.h"
 #include "ttc.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
-
 /* $Id: ttfdump.c,v 1.2 1998/07/04 13:17:52 werner Exp $  */
-
-
-#ifndef lint
-
-static char vcid[] = "$Id: ttfdump.c,v 1.2 1998/07/04 13:17:52 werner Exp $";
-
-#endif /* lint */
-
 
 #define MAXLEN 256
 #define ALL_GLYF -1
@@ -65,43 +52,7 @@ static void print_vdmx(FILE *out);
 static void print_vhea(FILE *out);
 static void print_vmtx(FILE *out);
 
-#if 0
-/* Not used */
-static void dialog (int argc, char *argv[]);
-#endif
 static void usage (void);
-#if 0
-/* Not used */
-static void add_suffix (char *name, char *suffix);
-#endif
-
-
-#if !defined(EXIT_FAILURE)
-#define EXIT_FAILURE 1
-#endif
-
-#if !defined(EXIT_SUCCESS)
-#define EXIT_SUCCESS 0
-#endif
-
-
-/* strdup() is not available on all platforms; this version has been
- * contributed by Nelson Beebe. */
-
-static char *
-Strdup(const char *s)
-{
-  char *p;
-
-
-  p = malloc(((s == (const char *)NULL) ? 0 : strlen (s)) + 1);
-  if (p == (char *)NULL)
-  {
-    (void)fprintf(stderr, "Out of memory in Strdup()\n");
-    exit(EXIT_FAILURE);
-  }
-  return strcpy(p, s);
-}
 
 
 int
@@ -131,7 +82,7 @@ main(int argc, char *argv[])
     switch (c)
     {
     case 't':
-      tablename = Strdup(optarg);
+      tablename = xstrdup(optarg);
       break;
     case 'g':
       if (strcmp(optarg, "x") == 0)
@@ -240,7 +191,7 @@ main(int argc, char *argv[])
   {
     ttfFreeFont(font);
   }
-  exit(EXIT_SUCCESS);
+  return 0;
 }
 
 
@@ -336,7 +287,7 @@ static void
 print_prologue(FILE *out)
 {
   fprintf(out, "True Type Font File Dumper: v 0.5.5\n");
-  fprintf(out, "Copyright 1996-1998 ollie@ms1.hinet.net \n");
+  fprintf(out, "Copyright 1996-1998 ollie@ms1.hinet.net\n");
   fprintf(out, "Dumping File:%s\n\n\n", font->ttfname);
 }
 
@@ -344,8 +295,8 @@ print_prologue(FILE *out)
 static void
 print_offset(FILE *out)
 {
-  fprintf(out, "Offset Table \n");
-  fprintf(out, "------------ \n");
+  fprintf(out, "Offset Table\n");
+  fprintf(out, "------------\n");
   fprintf(out, "\t sfnt version:\n");
   fprintf(out, "\t number of tables: %d\n", font->numTables);
 }
@@ -553,59 +504,11 @@ print_vmtx(FILE *out)
 }
 
 
-#if 0
-/* Not used */
-static void
-dialog(int argc, char *argv[])
-{
-  if (--argc < 1)
-    usage();
-
-  strcpy(ttfname, *++argv);
-  add_suffix(ttfname, "ttf");
-
-  if (--argc < 1)
-    strcpy(dumpname, "-");
-  else
-    strcpy(dumpname, *++argv);
-}
-#endif
-
-
 static void
 usage(void)
 {
   fprintf(stderr, "Usage: ttfdump ttfname dumpname [options]\n");
-  exit(EXIT_FAILURE);
 }
-
-
-#if 0
-/* Not used */
-static void
-add_suffix(char *name, char *suffix)
-{
-  int haveext = 0;
-
-
-  if (name && strcmp(name, "-"))
-  {
-    while (*name)
-    {
-      if (*name == '/')
-        haveext = 0;
-      else if (*name == '.')
-        haveext = 1;
-      name++;
-    }
-    if (!haveext)
-    {
-      *name++ = '.';
-      strcpy(name, suffix);
-    }
-  }
-}
-#endif
 
 
 /* end of ttfdump.c */

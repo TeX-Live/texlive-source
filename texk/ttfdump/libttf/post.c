@@ -4,46 +4,26 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: post.c,v 1.3 1998/06/06 12:55:53 werner Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: post.c,v 1.3 1998/06/06 12:55:53 werner Exp $";
-#endif /* lint */
-
-static POSTPtr ttfAllocPOST(TTFontPtr font);
 static void ttfLoadPOST(FILE *fp, POSTPtr post, ULONG offset);
 
 void ttfInitPOST(TTFontPtr font)
 {
-    ULONG tag = 'p' | 'o' << 8 | 's' << 16 | 't' << 24;
+    ULONG tag = FT_MAKE_TAG ('p', 'o', 's', 't');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag, font)) != NULL)
 	{
-	    font->post = ttfAllocPOST(font);
+	    font->post = XCALLOC1 (POST);
 	    ttfLoadPOST(font->fp, font->post, ptd->offset);
 	}
 }
-static POSTPtr ttfAllocPOST(TTFontPtr font)
-{
-    POSTPtr post;
 
-    if ((post = (POSTPtr) calloc(1, sizeof(POST))) == NULL)
-	{
-	    ttfError("Out of Memofy in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return post;
-}
 static void ttfLoadPOST(FILE *fp, POSTPtr post, ULONG offset)
 {
     USHORT i,numGlyphs;
-    if (fseek(fp, offset, SEEK_SET) != 0)
-	ttfError("Fseek Failed in ttfLoadPOST\n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadPOST");
 
     post->format = ttfGetFixed(fp);
     post->italicAngle = ttfGetFixed(fp);
@@ -58,19 +38,11 @@ static void ttfLoadPOST(FILE *fp, POSTPtr post, ULONG offset)
     switch (post->format)
 	{
 	case 0x00020000:
-	    post->name.format20 = (Format20 *) calloc(1, sizeof(Format20));
+	    post->name.format20 = XCALLOC1 (Format20);
 	    post->name.format20->numGlyphs = numGlyphs = ttfGetUSHORT(fp);
-	    post->name.format20->glyphNameIndex = 
-		(USHORT *) calloc(numGlyphs, sizeof(USHORT));
-	    post->name.format20->GlyphName = 
-		(CHAR **) calloc(numGlyphs, sizeof(CHAR *));
-	    fread(post->name.format20->glyphNameIndex, sizeof(USHORT),
-		  numGlyphs, fp);
-#ifndef WORDS_BIGENDIAN
-	    TwoByteSwap((unsigned char *) post->name.format20->glyphNameIndex,
-			numGlyphs*sizeof(USHORT));
-#endif
+	    post->name.format20->glyphNameIndex = ttfMakeUSHORT (numGlyphs, fp);
 
+	    post->name.format20->GlyphName = XCALLOC (numGlyphs, CHAR *);
 	    for (i=0;i<numGlyphs;i++)
 		{
 		    unsigned char len;
@@ -86,8 +58,7 @@ static void ttfLoadPOST(FILE *fp, POSTPtr post, ULONG offset)
 			     * but the string is not ended with a null 
 			     * character */
 			    len = (unsigned char) ttfGetCHAR(fp);
-			    post->name.format20->GlyphName[i] = 
-				(CHAR *) calloc(len+1, sizeof(CHAR));
+			    post->name.format20->GlyphName[i] = XTALLOC (len+1, CHAR);
 			    if (len)
 				fread(post->name.format20->GlyphName[i],
 				      sizeof(CHAR), len, fp);

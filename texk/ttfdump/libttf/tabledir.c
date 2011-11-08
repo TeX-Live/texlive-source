@@ -9,17 +9,8 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: tabledir.c,v 1.2 1998/07/04 13:17:51 werner Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: tabledir.c,v 1.2 1998/07/04 13:17:51 werner Exp $";
-#endif /* lint */
-
-static TableDirPtr ttfAllocTableDir(TTFontPtr font);
 static void ttfLoadTableDir(FILE *fp,TableDirPtr p,ULONG offset);
 
 #define Offset 12 /* start point of table dir */
@@ -28,7 +19,7 @@ void ttfInitTableDir(TTFontPtr font, ULONG offset)
 {
     int i,pos; /* table directory starts form position 12 */
     
-    font->dir = ttfAllocTableDir(font);
+    font->dir = XCALLOC (font->numTables, TableDir);
     pos = Offset + offset;
     for (i=0;i<font->numTables;i++)
 	{
@@ -37,24 +28,11 @@ void ttfInitTableDir(TTFontPtr font, ULONG offset)
 	}
 }
 
-static TableDirPtr ttfAllocTableDir(TTFontPtr font)
-{
-    TableDirPtr ptable;
-
-    if ((ptable = (TableDirPtr) calloc(font->numTables,sizeof(TableDir))) == NULL)
-	{
-	    ttfError("Out Of memory\n in __FILE__:__LINE__");
-	    return NULL;
-	}
-    return ptable;
-}
-
 static void ttfLoadTableDir(FILE *fp,TableDirPtr p,ULONG offset)
 {
-    if (fseek(fp,offset,SEEK_SET) != 0)
-	ttfError("Fseek Failed\n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadTableDir");
 
-    p -> tag = (ULONG) ttfGetLSB32(fp);
+    p -> tag = ttfGetULONG(fp);
     p -> checksum = ttfGetULONG(fp);
     p -> offset = ttfGetULONG(fp);
     p -> length = ttfGetULONG(fp);
@@ -62,17 +40,8 @@ static void ttfLoadTableDir(FILE *fp,TableDirPtr p,ULONG offset)
 
 void ttfPrintTableDir(FILE *fp,TableDirPtr p)
 {
-    char tagname[5];
-
-    /* make ULONG tag names more like a string */
-    memcpy(tagname,&(p->tag),4);
-    tagname[4] = '\0';
-#ifdef WORDS_BIGENDIAN
-    FourByteSwap((unsigned char *)tagname,4);
-#endif
-
-    fprintf(fp,"'%s' - checksum = 0x%08x, offset = 0x%08x, len = %9u \n",
-	    tagname,p->checksum,p->offset,p->length);
+    fprintf(fp,"'%s' - checksum = 0x%08x, offset = 0x%08x, len = %9u\n",
+	    TagToStr(p->tag),p->checksum,p->offset,p->length);
 }
 
 void ttfFreeTableDir(TableDirPtr p)
@@ -112,7 +81,7 @@ ULONG ttfCalcTableCheckSum(ULONG tagname,TTFontPtr font)
     Length = ((ptable->length+3) & ~3) / sizeof(ULONG);
 
     ptable = ttfLookUpTableDir(tagname, font);    
-    fseek(font->fp,ptable->offset,SEEK_SET);
+    xfseek(font->fp, ptable->offset, SEEK_SET, "ttfCalcTableCheckSum");
 
     while (Length--)
 	{

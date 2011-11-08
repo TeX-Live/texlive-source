@@ -7,68 +7,42 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: hdmx.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: hdmx.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static HDMXPtr ttfAllocHDMX(TTFontPtr font);
 static void ttfLoadHDMX(FILE *fp,HDMXPtr hdmx,ULONG offset);
 
 void ttfInitHDMX(TTFontPtr font)
 {
-    ULONG tag = 'h' | 'd' << 8 | 'm' << 16 | 'x' << 24;
+    ULONG tag = FT_MAKE_TAG ('h', 'd', 'm', 'x');
     TableDirPtr ptd;
      
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->hdmx = ttfAllocHDMX(font);
+	    font->hdmx = XCALLOC1 (HDMX);
 	    font->hdmx->numGlyphs = font->maxp->numGlyphs;
 	    ttfLoadHDMX(font->fp,font->hdmx,ptd->offset);
 	}
 }
-static HDMXPtr ttfAllocHDMX(TTFontPtr font)
-{
-    HDMXPtr hdmx;
-    
-    if ((hdmx = (HDMXPtr) calloc(1,sizeof(HDMX))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return hdmx;
-}
+
 static void ttfLoadHDMX (FILE *fp,HDMXPtr hdmx,ULONG offset)
 {
     int i;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadHDMX \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadHDMX");
     
     hdmx->version = ttfGetUSHORT(fp);
     hdmx->numDevices = ttfGetUSHORT(fp);
     hdmx->size = ttfGetLONG(fp);
 
-    hdmx->Records = (DeviceRecord  *) calloc(hdmx->numDevices, 
-					     sizeof(DeviceRecord));
+    hdmx->Records = XCALLOC (hdmx->numDevices, DeviceRecord);
     
-    if (hdmx->Records == NULL)
-	ttfError("Out of Memory in __FILE__:__LINE__\n");
-    else
-	for (i=0;i<hdmx->numDevices;i++)
-	    {
-		hdmx->Records[i].PixelSize = ttfGetBYTE(fp);
-		hdmx->Records[i].MaxWidth = ttfGetBYTE(fp);
-		hdmx->Records[i].Width = (BYTE *) calloc(hdmx->size,
-							 sizeof(BYTE));
-		fread ((hdmx->Records+i)->Width, sizeof(BYTE), 
-		       hdmx->numGlyphs+1,fp);
-	    }
+    for (i=0;i<hdmx->numDevices;i++)
+	{
+	    hdmx->Records[i].PixelSize = ttfGetBYTE(fp);
+	    hdmx->Records[i].MaxWidth = ttfGetBYTE(fp);
+	    hdmx->Records[i].Width = XCALLOC (hdmx->size, BYTE);
+	    fread ((hdmx->Records+i)->Width, sizeof(BYTE), hdmx->numGlyphs+1,fp);
+	}
 }
 
 void ttfPrintHDMX(FILE *fp,HDMXPtr hdmx)

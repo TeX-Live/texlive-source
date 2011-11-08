@@ -15,38 +15,17 @@ typedef long		blkcnt_t;	/* number of blocks in the file */
 
 /* 	$Id: ttfread.c,v 1.2 1998/07/04 13:17:51 werner Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: ttfread.c,v 1.2 1998/07/04 13:17:51 werner Exp $";
-#endif /* lint */
-
 BYTE ttfGetBYTE(FILE *fp)
 {
     int cc;
     if ((cc = fgetc(fp)) == EOF)
 	{
-	    /*if (feof(fp) != 0)
-		ttfError("Unexpected EOF \n");
+	    if (feof(fp) != 0)
+		ttfError("Unexpected EOF\n");
 	    else
-		ttfError("Error Getting BYTE\n");*/
+		ttfError("Error Getting BYTE\n");
 	}
     return (BYTE) cc;
-}
-short ttfGetLSB16(FILE *fp)
-{
-    int cc;
-    cc = ttfGetBYTE(fp);
-    cc |= ttfGetBYTE(fp) <<8;
-    return cc;
-}
-
-int ttfGetLSB32(FILE *fp)
-{
-    int cc;
-    cc = ttfGetBYTE(fp);
-    cc |= ttfGetBYTE(fp) <<  8;
-    cc |= ttfGetBYTE(fp) << 16;
-    cc |= ttfGetBYTE(fp) << 24;
-    return cc;
 }
 
 CHAR ttfGetCHAR(FILE *fp)
@@ -55,7 +34,7 @@ CHAR ttfGetCHAR(FILE *fp)
     if ((cc = fgetc(fp)) == EOF)
 	{
 	    if (feof(fp) != 0)
-		ttfError("Unexpected EOF \n");
+		ttfError("Unexpected EOF\n");
 	    else
 		ttfError("Error Getting CHAR\n");
 	}
@@ -71,7 +50,7 @@ USHORT ttfGetUSHORT(FILE *fp)
     return (USHORT) cc;
 }
 
-USHORT ttfGetSHORT(FILE *fp)
+SHORT ttfGetSHORT(FILE *fp)
 {
     int cc;
     cc = ttfGetBYTE(fp) << 8;
@@ -125,5 +104,73 @@ uFWord ttfGetuFWord(FILE *fp)
 F2Dot14 ttfGetF2Dot14(FILE *fp)
 {
     return (F2Dot14) ttfGetUSHORT(fp);
+}
+
+/* Read arrays.  */
+void ttfReadUSHORT(USHORT *array, size_t nelem, FILE *fp)
+{
+    int i;
+    for (i = 0; i < nelem; i++)
+        array[i] = ttfGetUSHORT (fp);
+}
+
+void ttfReadULONG(ULONG *array, size_t nelem, FILE *fp)
+{
+    int i;
+    for (i = 0; i < nelem; i++)
+        array[i] = ttfGetULONG (fp);
+}
+
+void ttfReadFWord(FWord *array, size_t nelem, FILE *fp)
+{
+    int i;
+    for (i = 0; i < nelem; i++)
+        array[i] = ttfGetFWord (fp);
+}
+
+/* Allocate and read arrays.  */
+BYTE *ttfMakeBYTE(size_t nelem, FILE *fp)
+{
+    int i;
+    BYTE *array = XTALLOC (nelem, BYTE);
+    for (i = 0; i < nelem; i++)
+        array[i] = ttfGetBYTE (fp);
+    return array;
+}
+
+USHORT *ttfMakeUSHORT(size_t nelem, FILE *fp)
+{
+    int i;
+    USHORT *array = XTALLOC (nelem, USHORT);
+    for (i = 0; i < nelem; i++)
+        array[i] = ttfGetUSHORT (fp);
+    return array;
+}
+
+SHORT *ttfMakeSHORT(size_t nelem, FILE *fp)
+{
+    int i;
+    SHORT *array = XTALLOC (nelem, SHORT);
+    for (i = 0; i < nelem; i++)
+        array[i] = ttfGetSHORT (fp);
+    return array;
+}
+
+ULONG *ttfMakeULONG(size_t nelem, FILE *fp)
+{
+    int i;
+    ULONG *array = XTALLOC (nelem, ULONG);
+    for (i = 0; i < nelem; i++)
+        array[i] = ttfGetULONG (fp);
+    return array;
+}
+
+LONG *ttfMakeLONG(size_t nelem, FILE *fp)
+{
+    int i;
+    LONG *array = XTALLOC (nelem, LONG);
+    for (i = 0; i < nelem; i++)
+        array[i] = ttfGetLONG (fp);
+    return array;
 }
 

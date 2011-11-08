@@ -7,47 +7,27 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: hhea.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: hhea.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static HHEAPtr ttfAllocHHEA(TTFontPtr font);
 static void ttfLoadHHEA(FILE *fp,HHEAPtr hhea,ULONG offset);
 
 void ttfInitHHEA(TTFontPtr font)
 {
-    ULONG tag = 'h' | 'h' << 8 | 'e' << 16 | 'a' << 24;
+    ULONG tag = FT_MAKE_TAG ('h', 'h', 'e', 'a');
     TableDirPtr ptd;
      
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->hhea = ttfAllocHHEA(font);
+	    font->hhea = XCALLOC1 (HHEA);
 	    ttfLoadHHEA(font->fp,font->hhea,ptd->offset);
 	}
 }
-static HHEAPtr ttfAllocHHEA(TTFontPtr font)
-{
-    HHEAPtr hhea;
-    
-    if ((hhea = (HHEAPtr) calloc(1,sizeof(HHEA))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return hhea;
-}
+
 static void ttfLoadHHEA (FILE *fp,HHEAPtr hhea,ULONG offset)
 {
     int i;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLOADCMAP \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadHHEA");
 
     hhea->version = ttfGetFixed(fp);
     hhea->Ascender = ttfGetFWord(fp);

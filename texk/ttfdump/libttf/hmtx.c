@@ -7,17 +7,8 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: hmtx.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: hmtx.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static HMTXPtr ttfAllocHMTX(TTFontPtr font);
 static void ttfLoadHMTX(FILE *fp,HMTXPtr hmtx,ULONG offset);
 
 /* Caution: Because of interdependency between tables, 
@@ -26,52 +17,36 @@ static void ttfLoadHMTX(FILE *fp,HMTXPtr hmtx,ULONG offset);
  */
 void ttfInitHMTX(TTFontPtr font)
 {
-    ULONG tag = 'h' | 'm' << 8 | 't' << 16 | 'x' << 24;
+    ULONG tag = FT_MAKE_TAG ('h', 'm', 't', 'x');
     TableDirPtr ptd;
     
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL) 
 	{
-	    font->hmtx = ttfAllocHMTX(font);
+	    font->hmtx = XCALLOC1 (HMTX);
 	    font->hmtx->numberOfHMetrics = font->hhea->numberOfHMetrics;
 	    font->hmtx->numberOfLSB = font->maxp->numGlyphs - 
 		font->hhea->numberOfHMetrics; 
 	    ttfLoadHMTX(font->fp,font->hmtx,ptd->offset);
 	}
 }
-static HMTXPtr ttfAllocHMTX(TTFontPtr font)
-{
-    HMTXPtr hmtx;
 
-    if ((hmtx = (HMTXPtr) calloc(1,sizeof(HMTX))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return hmtx;
-}
 static void ttfLoadHMTX(FILE *fp,HMTXPtr hmtx,ULONG offset)
 {
     USHORT i,n = hmtx->numberOfHMetrics,m=hmtx->numberOfLSB;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLOADHMTX \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadHMTX");
     
-    if ((hmtx->hMetrics = (longHorMetric *) calloc(n,sizeof(longHorMetric))) != NULL)
+    hmtx->hMetrics = XCALLOC (n, longHorMetric);
+    for (i=0;i<n;i++)
 	{
-	    for (i=0;i<n;i++)
-		{
-		    (hmtx->hMetrics+i)->advanceWidth = ttfGetuFWord(fp);
-		    (hmtx->hMetrics+i)->lsb = ttfGetFWord(fp);
-		}
-	}
-    else
-	{
-	    ttfError("Out Of Memory in __FILE__ : __LINE__\n"); 
+	    (hmtx->hMetrics+i)->advanceWidth = ttfGetuFWord(fp);
+	    (hmtx->hMetrics+i)->lsb = ttfGetFWord(fp);
 	}
 
     /* codes dealing with leftSideBearing entry */
-    if (m && ((hmtx->leftSideBearing = (FWord *) calloc(m,sizeof(FWord))) != NULL))
+    if (m)
 	{
+	    hmtx->leftSideBearing = XCALLOC (m, FWord);
 	    for (i=0;i<m;i++)
 		{
 		    (hmtx->leftSideBearing)[i] = ttfGetFWord(fp);

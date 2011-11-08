@@ -7,7 +7,7 @@
  * Basically the cache can be divided onto two parts, the first one is a 
  * linear part which is a least recently utilitied list (LRU), 
  * the second part is the nonlinear one which is a binary serach tree. 
- * Normally each cache element is one the LRU as well as on the BST.
+ * Normally each cache element is on the LRU as well as on the BST.
  * Those glyph elements are allocated at once as an array of glyph cache 
  * elements at the init phase of glyph cache.
  *
@@ -83,17 +83,8 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: gcache.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: gcache.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static GlyphCachePtr ttfAllocCache(TTFontPtr font);
 static void ttfInitCache(TTFontPtr font);
 static void ttfFreeCache(TTFontPtr font);
 static void ttfRotateCache(TTFontPtr font);
@@ -116,12 +107,13 @@ void ttfInitGlyphCache(TTFontPtr font)
     else
 	font->numCacheElements = 64;
 
-    font->gcache = ttfAllocCache(font);
+    font->gcache = XCALLOC (font->numCacheElements+1, GlyphCache);
     ttfInitCache(font);
 
     ttfAllocCacheData(font);
     ttfInitCacheData(font);
 }
+
 void ttfCleanUpGlyphCache(TTFontPtr font)
 {
     ttfFreeCacheData(font);
@@ -157,19 +149,6 @@ GLYFPtr ttfLoadGlyphCached(TTFontPtr font,ULONG offset)
 #endif
 }
 
-/* alloc GlyphCache headers */
-static GlyphCachePtr ttfAllocCache(TTFontPtr font)
-{
-    USHORT numCache = font->numCacheElements+1;
-    GlyphCachePtr gcache;
-
-    if ((gcache = (GlyphCachePtr) calloc(numCache,sizeof(GlyphCache))) == NULL)
-	{
-	    ttfError("Out of Memory");
-	    return NULL;
-	}
-    return gcache;
-}
 /* threading glyph cache headers */
 static void ttfInitCache(TTFontPtr font)
 {
@@ -222,16 +201,11 @@ static void ttfAllocCacheData(TTFontPtr font)
     USHORT maxContours = font->maxp->maxContours;
     USHORT insLength = font->maxp->maxSizeOfInstructions;
       
-    font->gcache->glyf.endPtsOfContours = (USHORT *) calloc(numCache*maxContours,
-							    sizeof(USHORT));
-    font->gcache->glyf.instructions = (BYTE *) calloc(numCache*insLength,
-						      sizeof(BYTE));
-    font->gcache->glyf.flags = (BYTE *) calloc(numCache*maxPoints,
-					       sizeof(BYTE));
-    font->gcache->glyf.xCoordinates = (SHORT *) calloc(numCache*maxPoints,
-						       sizeof(SHORT));
-    font->gcache->glyf.yCoordinates = (SHORT *) calloc(numCache*maxPoints,
-						       sizeof(SHORT));
+    font->gcache->glyf.endPtsOfContours = XCALLOC (numCache*maxContours, USHORT);
+    font->gcache->glyf.instructions = XCALLOC (numCache*insLength, BYTE);
+    font->gcache->glyf.flags = XCALLOC (numCache*maxPoints, BYTE);
+    font->gcache->glyf.xCoordinates = XCALLOC (numCache*maxPoints, SHORT);
+    font->gcache->glyf.yCoordinates = XCALLOC (numCache*maxPoints, SHORT);
     font->gcache->glyf.comp = NULL;
 }
 static void ttfInitCacheData(TTFontPtr font)

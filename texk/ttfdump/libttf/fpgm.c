@@ -7,35 +7,26 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: fpgm.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: fpgm.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
 static void ttfLoadFPGM(FILE *fp,BYTE *fpgm,USHORT lenght,ULONG offset);
 
 void ttfInitFPGM(TTFontPtr font)
 {
-    ULONG tag = 'f' | 'p' << 8 | 'g' << 16 | 'm' << 24;
+    ULONG tag = FT_MAKE_TAG ('f', 'p', 'g', 'm');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
 	    font->fpgmLength = ptd->length;
-	    font->fpgm = (BYTE *) calloc(font->fpgmLength, sizeof(BYTE));
-	    if (font->fpgm != NULL)
-		ttfLoadFPGM(font->fp,font->fpgm,font->fpgmLength,ptd->offset);
+	    font->fpgm = XCALLOC (font->fpgmLength, BYTE);
+	    ttfLoadFPGM(font->fp,font->fpgm,font->fpgmLength,ptd->offset);
 	}
 }
 
 static void ttfLoadFPGM(FILE *fp,BYTE *fpgm,USHORT length,ULONG offset)
 {
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadCVT \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadFPGM");
 
     if (fread(fpgm, sizeof(BYTE), length, fp) != length)
 	ttfError("Error when getting CVT\n");

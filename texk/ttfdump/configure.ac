@@ -16,10 +16,7 @@ dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([ttfdump])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_BIGENDIAN
 AC_CHECK_SIZEOF([int])
-AC_CHECK_SIZEOF([long])
-AC_CHECK_SIZEOF([long long])
 
 AC_CONFIG_HEADERS([config.h])
 

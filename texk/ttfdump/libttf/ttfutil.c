@@ -1,12 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "ttf.h"
 #include "ttfutil.h"
 
 /* 	$Id: ttfutil.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
-
-#ifndef lint
-static char vcid[] = "$Id: ttfutil.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
 
 /* FixedSplit: split Fixed in to two interger (16.16) */
 void FixedSplit(Fixed f,int b[])
@@ -15,43 +13,65 @@ void FixedSplit(Fixed f,int b[])
     b[1] = f >> 16;
 }
 
-/*
- *      Invert byte order within each 16-bits of an array.
- */
-void
-TwoByteSwap(unsigned char *buf, int nbytes)
+char *
+TagToStr(ULONG tag)
 {
-    register unsigned char c;
-    
-    for (; nbytes > 0; nbytes -= 2, buf += 2)
-	{
-	    c = buf[0];
-	    buf[0] = buf[1];
-	    buf[1] = c;
-	}
-}
+    static char str[5] = "XXXX";
 
-/*
- *      Invert byte order within each 32-bits of an array.
- */
-
-void
-FourByteSwap(unsigned char *buf, int nbytes)
-{
-    register unsigned char c;
-
-    for (; nbytes > 0; nbytes -= 4, buf += 4)
-	{
-	    c = buf[0];
-	    buf[0] = buf[3];
-	    buf[3] = c;
-	    c = buf[1];
-	    buf[1] = buf[2];
-	    buf[2] = c;
-	}
+    str[0] = (tag >> 24) & 0xff;
+    str[1] = (tag >> 16) & 0xff;
+    str[2] = (tag >> 8) & 0xff;
+    str[3] = tag & 0xff;
+    return str;
 }
 
 void ttfError(const char * msg)
 {
     fprintf(stderr,"%s",msg);
+    exit(EXIT_FAILURE);
+}
+
+/* Functions copied or adapted from kpathsea.  */
+void
+xfseek (FILE *f, long offset, int wherefrom, const char *funcname)
+{
+    if (fseek (f, offset, wherefrom) < 0) {
+        FATAL_PERROR(funcname);
+    }
+}
+
+void *
+xmalloc (size_t size)
+{
+    void *new_mem = (void *)malloc(size ? size : 1);
+
+    if (new_mem == NULL) {
+        fprintf(stderr, "fatal: memory exhausted (xmalloc of %lu bytes).\n",
+                (unsigned long)size);
+        exit(EXIT_FAILURE);
+    }
+
+    return new_mem;
+}
+
+void *
+xcalloc (size_t nelem,  size_t elsize)
+{
+    void *new_mem = (void*)calloc(nelem ? nelem : 1, elsize ? elsize : 1);
+
+    if (new_mem == NULL) {
+        fprintf(stderr,
+                "xcalloc: request for %lu elements of size %lu failed.\n",
+                (unsigned long)nelem, (unsigned long)elsize);
+        exit(EXIT_FAILURE);
+    }
+
+    return new_mem;
+}
+
+char *
+xstrdup (const char *s)
+{
+  char *new_string = xmalloc(strlen (s) + 1);
+  return strcpy(new_string, s);
 }

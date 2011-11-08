@@ -4,45 +4,25 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: maxp.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: maxp.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static MAXPPtr ttfAllocMAXP(TTFontPtr font);
 static void ttfLoadMAXP(FILE *fp,MAXPPtr maxp,ULONG offset);
 
 void ttfInitMAXP(TTFontPtr font)
 {
-    ULONG tag = 'm' | 'a' << 8 | 'x' << 16 | 'p' << 24;
+    ULONG tag = FT_MAKE_TAG ('m', 'a', 'x', 'p');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->maxp = ttfAllocMAXP(font);
+	    font->maxp = XCALLOC1 (MAXP);
 	    ttfLoadMAXP(font->fp,font->maxp,ptd->offset);
 	}
 }
-static MAXPPtr ttfAllocMAXP(TTFontPtr font)
-{
-    MAXPPtr maxp;
 
-    if ((maxp = (MAXPPtr) calloc(1,sizeof(MAXP))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return maxp;
-}
 static void ttfLoadMAXP(FILE *fp,MAXPPtr maxp,ULONG offset)
 {
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLOADCMAP \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadMAXP");
 
     maxp->version = ttfGetFixed(fp);
     maxp->numGlyphs = ttfGetUSHORT(fp);

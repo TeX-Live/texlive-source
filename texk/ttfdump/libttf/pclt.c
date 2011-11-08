@@ -7,47 +7,27 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: pclt.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: pclt.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static PCLTPtr ttfAllocPCLT(TTFontPtr font);
 static void ttfLoadPCLT(FILE *fp,PCLTPtr pclt,ULONG offset);
 
 void ttfInitPCLT(TTFontPtr font)
 {
-    ULONG tag = 'P' | 'C' << 8 | 'L' << 16 | 'T' << 24;
+    ULONG tag = FT_MAKE_TAG ('P', 'C', 'L', 'T');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->pclt = ttfAllocPCLT(font);
+	    font->pclt = XCALLOC1 (PCLT);
 	    ttfLoadPCLT(font->fp,font->pclt,ptd->offset);
 	}
 }
-static PCLTPtr ttfAllocPCLT(TTFontPtr font)
-{
-    PCLTPtr pclt;
 
-    if ((pclt = (PCLTPtr) calloc(1,sizeof(PCLT))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return pclt;
-}
 static void ttfLoadPCLT(FILE *fp,PCLTPtr pclt,ULONG offset)
 {
     int i;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLOADCMAP \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadPCLT");
     
     pclt->version = ttfGetFixed(fp);
     pclt->FontNumber = ttfGetULONG(fp);
@@ -78,7 +58,7 @@ void ttfPrintPCLT(FILE *fp,PCLTPtr pclt)
     fprintf(fp,"`PCLT' Table - Printer Command Language Table\n");
     fprintf(fp,"---------------------------------------------\n");
     fprintf(fp,"\t version \t %d.%d\n",b[1],b[0]);
-    fprintf(fp,"\t fontNumber \t %d (0x%x) \n",pclt->FontNumber,
+    fprintf(fp,"\t fontNumber \t %d (0x%x)\n",pclt->FontNumber,
 	    pclt->FontNumber  );
     fprintf(fp,"\t pitch   \t %d\n",pclt->Pitch);
     fprintf(fp,"\t xHeight \t %d\n",pclt->xHeight);

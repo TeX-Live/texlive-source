@@ -7,53 +7,30 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: ltsh.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: ltsh.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static LTSHPtr ttfAllocLTSH(TTFontPtr font);
 static void ttfLoadLTSH(FILE *fp,LTSHPtr ltsh,ULONG offset);
 
 void ttfInitLTSH(TTFontPtr font)
 {
-    ULONG tag = 'L' | 'T' << 8 | 'S' << 16 | 'H' << 24;
+    ULONG tag = FT_MAKE_TAG ('L', 'T', 'S', 'H');
     TableDirPtr ptd;
      
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->ltsh = ttfAllocLTSH(font);
+	    font->ltsh = XCALLOC1 (LTSH);
 	    ttfLoadLTSH(font->fp,font->ltsh,ptd->offset);
 	}
 }
-static LTSHPtr ttfAllocLTSH(TTFontPtr font)
-{
-    LTSHPtr ltsh;
-    
-    if ((ltsh = (LTSHPtr) calloc(1,sizeof(LTSH))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return ltsh;
-}
+
 static void ttfLoadLTSH (FILE *fp,LTSHPtr ltsh,ULONG offset)
 {
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadLTSH \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadLTSH");
     
     ltsh->version = ttfGetUSHORT(fp);
     ltsh->numGlyphs = ttfGetUSHORT(fp);
     
-    ltsh->yPels = (BYTE *) calloc(ltsh->numGlyphs, sizeof(BYTE));
-
-    if(fread(ltsh->yPels, sizeof(BYTE), ltsh->numGlyphs, fp) != ltsh->numGlyphs)
-	ttfError("Error when getting yPels\n");
+    ltsh->yPels = ttfMakeBYTE (ltsh->numGlyphs, fp);
 }
 
 void ttfPrintLTSH(FILE *fp,LTSHPtr ltsh)

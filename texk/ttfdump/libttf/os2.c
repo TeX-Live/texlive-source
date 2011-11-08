@@ -8,47 +8,25 @@
 #define __TTF_OS2
 #include "os2_P.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: os2.c,v 1.2 1998/07/06 06:07:01 werner Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: os2.c,v 1.2 1998/07/06 06:07:01 werner Exp $";
-#endif /* lint */
-
-static OS_2Ptr ttfAllocOS2(TTFontPtr font);
 static void ttfLoadOS2(FILE *fp, OS_2Ptr os2, ULONG offset);
 
 void ttfInitOS2(TTFontPtr font)
 {
-    ULONG tag = 'O' | 'S' << 8 | '/' << 16 | '2' << 24;
+    ULONG tag = FT_MAKE_TAG ('O', 'S', '/', '2');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag, font)) != NULL)
 	{
-	    font->os2 = ttfAllocOS2(font);
+	    font->os2 = XCALLOC1 (OS_2);
 	    ttfLoadOS2(font->fp, font->os2, ptd->offset);
 	}   
 }
 
-static OS_2Ptr ttfAllocOS2(TTFontPtr font)
-{
-    OS_2Ptr os2;
-
-    if ((os2 = (OS_2Ptr) calloc(1, sizeof(OS_2))) == NULL)
-	{
-	    ttfError("Out of Memofy in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return os2;
-}
-
 static void ttfLoadOS2(FILE *fp, OS_2Ptr os2, ULONG offset)
 {
-    if (fseek(fp, offset, SEEK_SET) != 0)
-	ttfError("Fseek Failed in ttfLoadGLYF\n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadOS2");
 
     os2->version = ttfGetUSHORT(fp);
     os2->xAvgCharWidth = ttfGetSHORT(fp);

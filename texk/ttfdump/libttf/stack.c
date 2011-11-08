@@ -5,15 +5,7 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: stack.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
-
-#ifndef lint
-static char vcid[] = "$Id: stack.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
 
 #define stack (vm->Stack)
 #define sp (vm->sp)

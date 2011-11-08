@@ -6,38 +6,30 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: gstate.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
-
-#ifndef lint
-static char vcid[] = "$Id: gstate.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
 
 GraphicsState gsdefault;
 
 void ttfInitGraphicsState(TTFontPtr font)
 {
-    /*font->gstate = GS_DEFAULT;
-    font->gstate_init = GS_DEFAULT;*/
+#if 0
+    font->gstate = GS_DEFAULT;
+    font->gstate_init = GS_DEFAULT;
+#endif
 
-    /*ttfExecuteInstruction(font, font->fpgm);
-    ttfExecuteInstruction(font, font->prep);*/
+#if 0
+    ttfExecuteInstruction(font, font->fpgm);
+    ttfExecuteInstruction(font, font->prep);
+#endif
 }
 
 void ttfInitStack(TTFontPtr font)
 {
     font->vm.sp = 0;
-    font->vm.Stack = (LONG *) calloc (font->maxp->maxStackElements, sizeof(LONG));
-    if (font->vm.Stack == NULL)
-	ttfError("Out of memory\n");
+    font->vm.Stack = XCALLOC (font->maxp->maxStackElements, LONG);
 }
 
 void ttfInitStorageArea(TTFontPtr font)
 {
-    font->vm.StorageArea = (LONG *) calloc (font->maxp->maxStorage, sizeof(LONG));
-    if (font->vm.StorageArea == NULL)
-	ttfError("Out of memory\n");
+    font->vm.StorageArea = XCALLOC (font->maxp->maxStorage, LONG);
 }

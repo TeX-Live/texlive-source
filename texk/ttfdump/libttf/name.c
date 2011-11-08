@@ -6,17 +6,8 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: name.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: name.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static NAMEPtr ttfAllocNAME(TTFontPtr font);
 static void ttfLoadNAME(FILE *fp,NAMEPtr name,ULONG offset);
 static void ttfLoadNameRecord(FILE *fp,NameRecordPtr rec,ULONG offset);
 static void ttfPrintNameRecord(FILE *fp,NameRecordPtr rec);
@@ -27,40 +18,28 @@ static void HexDump(char *p,char *hex,char *asc,int len);
 
 void ttfInitNAME(TTFontPtr font)
 {
-    ULONG tag = 'n' | 'a' << 8 | 'm' << 16 | 'e' <<24;
+    ULONG tag = FT_MAKE_TAG ('n', 'a', 'm', 'e');
     TableDirPtr ptd;
     
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->name = ttfAllocNAME(font);
+	    font->name = XCALLOC1 (NAME);
 	    ttfLoadNAME(font->fp,font->name,ptd->offset);
 	}
 }
-static NAMEPtr ttfAllocNAME(TTFontPtr font)
-{
-    NAMEPtr name;
 
-    if((name = (NAMEPtr) calloc(1,sizeof(NAME))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return name;
-}
 static void ttfLoadNAME(FILE *fp,NAMEPtr name,ULONG offset)
 {
     USHORT i,n;
     ULONG pos;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLOADNAME \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadNAME");
 
     name->format = ttfGetUSHORT(fp);
     name->numberOfRecords = n = ttfGetUSHORT(fp);
     name->offset = ttfGetUSHORT(fp);
 
-    if ((name->NameRecords = (NameRecordPtr) calloc(n,sizeof(NameRecord))) == NULL)
-	ttfError("Out Of Memory\n");
+    name->NameRecords = XCALLOC (n,  NameRecord);
 
     pos = offset + sizeof(USHORT)*3;
 
@@ -98,8 +77,7 @@ void ttfFreeNAME(NAMEPtr name)
 /* offset: address of the beginning of the name record */
 static void ttfLoadNameRecord(FILE *fp,NameRecordPtr rec,ULONG offset)
 {
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadNameRecord \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadNameRecord");
 
     rec->PlatformID = ttfGetUSHORT(fp);
     rec->EncodingID = ttfGetUSHORT(fp);
@@ -126,11 +104,9 @@ static void ttfLoadNameRecordData(FILE *fp,NameRecordPtr rec,ULONG offset)
     ULONG pos;
 
     pos =  offset  +  rec->offset;
-    if (fseek(fp,pos,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadSubTable\n");
+    xfseek(fp, pos, SEEK_SET, "ttfLoadNameRecordData");
 
-    if ((rec->data = (char *) calloc(rec->length,sizeof(char))) == NULL)
-	ttfError("Out Of Memory\n");
+    rec->data = XTALLOC (rec->length, char);
     if (fread(rec->data,sizeof(char),rec->length,fp) != rec->length)
 	ttfError("Error when getting Name Record Data\n");
 }

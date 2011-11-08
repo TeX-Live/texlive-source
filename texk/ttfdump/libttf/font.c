@@ -9,15 +9,7 @@
 #include "ttfutil.h"
 #include "protos.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: font.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
-
-#ifndef lint
-static char vcid[] = "$Id: font.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
 
 static void ttfInitInterpreter(TTFontPtr font);
 
@@ -25,7 +17,7 @@ TTFontPtr ttfInitFont(char *filename)
 {
     TTFontPtr font;
 
-    font = (TTFontPtr) calloc(1,sizeof(TTFont));
+    font = XCALLOC1 (TTFont);
 
     font->ttfname = filename;
     if ((font->fp = fopen (filename,"r")) == NULL)
@@ -40,8 +32,7 @@ TTFontPtr ttfInitFont(char *filename)
 }
 void ttfLoadFont(TTFontPtr font, ULONG offset)
 {
-    if (fseek(font->fp,offset,SEEK_SET) != 0)
-	ttfError("Fseek Failed\n");
+    xfseek(font->fp, offset, SEEK_SET, "ttfLoadFont");
 
     /* offset table */
     font->version = ttfGetFixed(font->fp);
@@ -55,7 +46,7 @@ void ttfLoadFont(TTFontPtr font, ULONG offset)
     ttfInitInterpreter(font);
 
     /* initialize the reference count to 1 */
-    font->refcount = (int *) calloc(1, sizeof(int));
+    font->refcount = XCALLOC1 (int);
     *(font->refcount) = 1;
 }
 void ttfFreeFont(TTFontPtr font)
@@ -147,7 +138,7 @@ TTFontPtr ttfCloneFont(TTFontPtr font)
 {
     TTFontPtr newfont;
 
-    newfont = (TTFontPtr) calloc(1,sizeof(TTFont));
+    newfont = XTALLOC1 (TTFont);
     
     memcpy(newfont, font, sizeof(TTFont));
     newfont->refcount += 1;

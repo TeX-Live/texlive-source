@@ -4,22 +4,14 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: loca.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
-
-#ifndef lint
-static char vcid[] = "$Id: loca.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
 
 static LOCAPtr ttfAllocLOCA(TTFontPtr font);
 static void ttfLoadLOCA(FILE *fp,LOCAPtr loca,ULONG offset);
 
 void ttfInitLOCA(TTFontPtr font)
 {
-    ULONG tag = 'l' | 'o' << 8 | 'c' << 16 | 'a' <<24;
+    ULONG tag = FT_MAKE_TAG ('l', 'o', 'c', 'a');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
@@ -33,33 +25,21 @@ static LOCAPtr ttfAllocLOCA(TTFontPtr font)
     USHORT n=0;
     LOCAPtr loca;
 
-    if ((loca = (LOCAPtr) calloc(1,sizeof(LOCA))) == NULL)
-	 {
-	     ttfError("Out of Memory\n");
-	 }
-    else
-	{
-	    loca->indexToLocFormat = font->head->indexToLocFormat;
-	    loca->numGlyphs = n = font->maxp->numGlyphs;
-	}
+    loca = XCALLOC1 (LOCA);
+    loca->indexToLocFormat = font->head->indexToLocFormat;
+    loca->numGlyphs = n = font->maxp->numGlyphs;
 
     n += 1;/* the number of loca entry is numberOfGlyph+1 */
-    if ((loca->offset = (ULONG *) calloc(n,sizeof(ULONG))) == NULL)
-	{
-	    ttfError("Out Of Memory\n");
-	    free (loca);
-	    return NULL;
-	}
+    loca->offset = XCALLOC (n, ULONG);
     
     return loca; 
 }
 static void ttfLoadLOCA(FILE *fp,LOCAPtr loca,ULONG offset)
 {
-    /* warrning: the number of loca entry is numberOfGlyph+1 !! */
+    /* warning: the number of loca entry is numberOfGlyph+1 !! */
     USHORT i,n = loca->numGlyphs+1;
     
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLOADLOCA \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadLOCA");
  
     switch (loca->indexToLocFormat)
 	{
@@ -70,11 +50,7 @@ static void ttfLoadLOCA(FILE *fp,LOCAPtr loca,ULONG offset)
 		}
 	    break;
 	case LOCA_OFFSET_LONG:
-	    if (fread(loca->offset,sizeof(ULONG),n,fp) != n)
-		ttfError("Error reading loca data\n");
-#ifndef WORDS_BIGENDIAN
-	    FourByteSwap((unsigned char *) loca->offset,n*sizeof(ULONG));
-#endif
+	    ttfReadULONG (loca->offset, n, fp);
 	    break;
 	}
 }

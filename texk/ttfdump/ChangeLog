@@ -1,3 +1,16 @@
+2011-11-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Major update.
+	* include/*, libttf/*, src/ttfdump.c: Drop <dmalloc.h> and vcid.
+	Copy or adapt xfseek(), xmalloc(), xcalloc(), and xstrdup() from
+	kpathsea. Add functions to allocate and/or read arrays.
+	Add FT_MAKE_TAG macro as used in freetype2. Drop unused funcs().
+	Require sizeof(int)==4.  Fix various typos.
+	* configure.ac: Drop AC_C_BIGENDIAN, AC_CHECK_SIZEOF([long]),
+	and AC_CHECK_SIZEOF([long long]).
+	* Makefile.am: Adapt.
+	* docs/ttfdump.1: Fix typos.
+
 2011-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/ttfdump.test: Use 'diff -b' for Dos line endings.

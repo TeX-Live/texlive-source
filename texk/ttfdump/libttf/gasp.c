@@ -7,61 +7,38 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: gasp.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: gasp.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static GASPPtr ttfAllocGASP(TTFontPtr font);
 static void ttfLoadGASP(FILE *fp,GASPPtr gasp,ULONG offset);
 
 void ttfInitGASP(TTFontPtr font)
 {
-    ULONG tag = 'g' | 'a' << 8 | 's' << 16 | 'p' << 24;
+    ULONG tag = FT_MAKE_TAG ('g', 'a', 's', 'p');
     TableDirPtr ptd;
      
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->gasp = ttfAllocGASP(font);
+	    font->gasp = XCALLOC1 (GASP);
 	    ttfLoadGASP(font->fp,font->gasp,ptd->offset);
 	}
 }
-static GASPPtr ttfAllocGASP(TTFontPtr font)
-{
-    GASPPtr gasp;
-    
-    if ((gasp = (GASPPtr) calloc(1,sizeof(GASP))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return gasp;
-}
+
 static void ttfLoadGASP (FILE *fp,GASPPtr gasp,ULONG offset)
 {
     int i;
 
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadGASP \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadGASP");
     
     gasp->version = ttfGetUSHORT(fp);
     gasp->numRanges = ttfGetUSHORT(fp);
     
-    gasp->gaspRange = (GASPRANGE *) calloc(gasp->numRanges, sizeof(GASPRANGE));
+    gasp->gaspRange = XCALLOC (gasp->numRanges, GASPRANGE);
     
-    if (gasp->gaspRange == NULL)
-	ttfError("Out of Memory in __FILE__:__LINE__\n");
-    else
-	for (i=0;i<gasp->numRanges;i++)
-	    {
-		gasp->gaspRange[i].rangeMaxPPEM = ttfGetUSHORT(fp);
-		gasp->gaspRange[i].rangeGaspBehavior = ttfGetUSHORT(fp);
-	    }
+    for (i=0;i<gasp->numRanges;i++)
+	{
+	    gasp->gaspRange[i].rangeMaxPPEM = ttfGetUSHORT(fp);
+	    gasp->gaspRange[i].rangeGaspBehavior = ttfGetUSHORT(fp);
+	}
 }
 
 void ttfPrintGASP(FILE *fp,GASPPtr gasp)

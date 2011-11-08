@@ -5,19 +5,11 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: interp.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: interp.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
 /* A bit about error checking: The execution of a TrueType instruction is 
- * "atomic" which mean that we don't process the error until a single
- * instruction is fully decoded and exectued */
+ * "atomic" which means that we don't process the error until a single
+ * instruction is fully decoded and executed */
 
 /* Pushing data onto the interpreter stack */
 

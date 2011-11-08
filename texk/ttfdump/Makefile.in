@@ -37,7 +37,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = ttfdump$(EXEEXT)
 subdir = .
-DIST_COMMON = README $(am__configure_deps) \
+DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -71,20 +71,19 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libttf_a_AR = $(AR) $(ARFLAGS)
 libttf_a_LIBADD =
-nodist_libttf_a_OBJECTS = cmap.$(OBJEXT) cvt.$(OBJEXT) \
-	disasm.$(OBJEXT) font.$(OBJEXT) fpgm.$(OBJEXT) gasp.$(OBJEXT) \
-	gcache.$(OBJEXT) glyf.$(OBJEXT) gstate.$(OBJEXT) \
-	hdmx.$(OBJEXT) head.$(OBJEXT) hhea.$(OBJEXT) hmtx.$(OBJEXT) \
-	kern.$(OBJEXT) loca.$(OBJEXT) ltsh.$(OBJEXT) maxp.$(OBJEXT) \
-	name.$(OBJEXT) os2.$(OBJEXT) pclt.$(OBJEXT) post.$(OBJEXT) \
-	prep.$(OBJEXT) stack.$(OBJEXT) tabledir.$(OBJEXT) \
-	ttc.$(OBJEXT) ttfread.$(OBJEXT) ttfutil.$(OBJEXT) \
-	vdmx.$(OBJEXT) vhea.$(OBJEXT) vmtx.$(OBJEXT)
-libttf_a_OBJECTS = $(nodist_libttf_a_OBJECTS)
+am_libttf_a_OBJECTS = cmap.$(OBJEXT) cvt.$(OBJEXT) disasm.$(OBJEXT) \
+	font.$(OBJEXT) fpgm.$(OBJEXT) gasp.$(OBJEXT) gcache.$(OBJEXT) \
+	glyf.$(OBJEXT) gstate.$(OBJEXT) hdmx.$(OBJEXT) head.$(OBJEXT) \
+	hhea.$(OBJEXT) hmtx.$(OBJEXT) kern.$(OBJEXT) loca.$(OBJEXT) \
+	ltsh.$(OBJEXT) maxp.$(OBJEXT) name.$(OBJEXT) os2.$(OBJEXT) \
+	pclt.$(OBJEXT) post.$(OBJEXT) prep.$(OBJEXT) \
+	tabledir.$(OBJEXT) ttc.$(OBJEXT) ttfread.$(OBJEXT) \
+	ttfutil.$(OBJEXT) vdmx.$(OBJEXT) vhea.$(OBJEXT) vmtx.$(OBJEXT)
+libttf_a_OBJECTS = $(am_libttf_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-nodist_ttfdump_OBJECTS = ttfdump.$(OBJEXT)
-ttfdump_OBJECTS = $(nodist_ttfdump_OBJECTS)
+am_ttfdump_OBJECTS = ttfdump.$(OBJEXT)
+ttfdump_OBJECTS = $(am_ttfdump_OBJECTS)
 ttfdump_LDADD = $(LDADD)
 ttfdump_DEPENDENCIES = libttf.a
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -100,8 +99,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(nodist_libttf_a_SOURCES) $(nodist_ttfdump_SOURCES)
-DIST_SOURCES =
+SOURCES = $(libttf_a_SOURCES) $(ttfdump_SOURCES)
+DIST_SOURCES = $(libttf_a_SOURCES) $(ttfdump_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -125,7 +124,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(nodist_man1_MANS)
+MANS = $(dist_man1_MANS)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -258,17 +257,19 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = docs include libttf src $(TESTS) \
-	tests/FonetikaDaniaIwonaeRegular.ttf tests/ttfdump.glyf \
-	tests/ttfdump.head ILX NOTE README.bg5
 INCLUDES = -I$(top_srcdir)/include
-AM_CPPFLAGS = -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libttf.a
-
-# libttf/interp.c is not used (would just produce compiler warnings).
-#
-nodist_libttf_a_SOURCES = \
+libttf_a_SOURCES = \
+	include/gcache.h \
+	include/gstate.h \
+	include/loadtable.h \
+	include/os2_P.h \
+	include/protos.h \
+	include/tables.h \
+	include/ttc.h \
+	include/ttf.h \
+	include/ttfutil.h \
 	libttf/cmap.c \
 	libttf/cvt.c \
 	libttf/disasm.c \
@@ -291,7 +292,6 @@ nodist_libttf_a_SOURCES = \
 	libttf/pclt.c \
 	libttf/post.c \
 	libttf/prep.c \
-	libttf/stack.c \
 	libttf/tabledir.c \
 	libttf/ttc.c \
 	libttf/ttfread.c \
@@ -300,9 +300,13 @@ nodist_libttf_a_SOURCES = \
 	libttf/vhea.c \
 	libttf/vmtx.c
 
-nodist_ttfdump_SOURCES = src/ttfdump.c
+EXTRA_DIST = libttf/fixed.c libttf/interp.c libttf/stack.c \
+	docs/ttfdump.dvi docs/ttfdump.html docs/ttfdump.ps $(TESTS) \
+	tests/FonetikaDaniaIwonaeRegular.ttf tests/ttfdump.glyf \
+	tests/ttfdump.head ILX NOTE README.bg5
+ttfdump_SOURCES = src/ttfdump.c
 LDADD = libttf.a
-nodist_man1_MANS = docs/ttfdump.1
+dist_man1_MANS = docs/ttfdump.1
 TESTS = tests/ttfdump.test
 DISTCLEANFILES = FonetikaDaniaIwonaeRegular.ttf ttfdump.glyf \
 	ttfdump.head
@@ -444,7 +448,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pclt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/post.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prep.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tabledir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ttc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ttfdump.Po@am__quote@
@@ -783,20 +786,6 @@ prep.obj: libttf/prep.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o prep.obj `if test -f 'libttf/prep.c'; then $(CYGPATH_W) 'libttf/prep.c'; else $(CYGPATH_W) '$(srcdir)/libttf/prep.c'; fi`
 
-stack.o: libttf/stack.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stack.o -MD -MP -MF $(DEPDIR)/stack.Tpo -c -o stack.o `test -f 'libttf/stack.c' || echo '$(srcdir)/'`libttf/stack.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/stack.Tpo $(DEPDIR)/stack.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/stack.c' object='stack.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o stack.o `test -f 'libttf/stack.c' || echo '$(srcdir)/'`libttf/stack.c
-
-stack.obj: libttf/stack.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT stack.obj -MD -MP -MF $(DEPDIR)/stack.Tpo -c -o stack.obj `if test -f 'libttf/stack.c'; then $(CYGPATH_W) 'libttf/stack.c'; else $(CYGPATH_W) '$(srcdir)/libttf/stack.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/stack.Tpo $(DEPDIR)/stack.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/stack.c' object='stack.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o stack.obj `if test -f 'libttf/stack.c'; then $(CYGPATH_W) 'libttf/stack.c'; else $(CYGPATH_W) '$(srcdir)/libttf/stack.c'; fi`
-
 tabledir.o: libttf/tabledir.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tabledir.o -MD -MP -MF $(DEPDIR)/tabledir.Tpo -c -o tabledir.o `test -f 'libttf/tabledir.c' || echo '$(srcdir)/'`libttf/tabledir.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tabledir.Tpo $(DEPDIR)/tabledir.Po
@@ -917,10 +906,10 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-man1: $(nodist_man1_MANS)
+install-man1: $(dist_man1_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
-	@list='$(nodist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	{ for i in $$list; do echo "$$i"; done; \
 	} | while read p; do \
 	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
@@ -944,7 +933,7 @@ install-man1: $(nodist_man1_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
@@ -1141,9 +1130,6 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	$(MAKE) $(AM_MAKEFLAGS) \
-	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
-	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -755 \
 		-exec chmod u+rwx,go+rx {} \; -o \
@@ -1374,11 +1360,11 @@ uninstall-man: uninstall-man1
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
 	clean clean-binPROGRAMS clean-generic clean-libtool \
 	clean-noinstLIBRARIES ctags dist dist-all dist-bzip2 dist-gzip \
-	dist-hook dist-lzma dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-binPROGRAMS install-data \
+	dist-lzma dist-shar dist-tarZ dist-xz dist-zip distcheck \
+	distclean distclean-compile distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
 	install-info-am install-man install-man1 install-pdf \
@@ -1389,12 +1375,6 @@ uninstall-man: uninstall-man1
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-man uninstall-man1
 
-
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
-	rm -f $(distdir)/libttf/Makefile.in
-	rm -f $(distdir)/src/Makefile.in
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

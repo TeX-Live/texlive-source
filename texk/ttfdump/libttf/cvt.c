@@ -7,42 +7,28 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: cvt.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: cvt.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
 static void ttfLoadCVT(FILE *fp,FWord *cvt,USHORT lenght,ULONG offset);
 
 void ttfInitCVT(TTFontPtr font)
 {
-    ULONG tag = 'c' | 'v' << 8 | 't' << 16 | ' ' << 24;
+    ULONG tag = FT_MAKE_TAG ('c', 'v', 't', ' ');
     TableDirPtr ptd;
 
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
 	    font->cvtLength = ptd->length / sizeof(FWord);
-	    font->cvt = (FWord *) calloc(font->cvtLength, sizeof(FWord));
-	    if (font->cvt != NULL)
-		ttfLoadCVT(font->fp,font->cvt,font->cvtLength,ptd->offset);
+	    font->cvt = XCALLOC (font->cvtLength, FWord);
+	    ttfLoadCVT(font->fp,font->cvt,font->cvtLength,ptd->offset);
 	}
 }
 
 static void ttfLoadCVT(FILE *fp,FWord *cvt,USHORT length,ULONG offset)
 {
-    if (fseek(fp,offset,SEEK_SET) !=0)
-	ttfError("Fseek Failed in ttfLoadCVT \n");
+    xfseek(fp, offset, SEEK_SET, "ttfLoadCVT");
 
-    if (fread(cvt, sizeof(FWord), length, fp) != length)
-	ttfError("Error when getting CVT\n");
-
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) cvt,length*sizeof(FWord));
-#endif
+    ttfReadFWord (cvt, length, fp);
 }
 
 void ttfPrintCVT(FILE *fp, FWord *cvt, USHORT cvtLength)

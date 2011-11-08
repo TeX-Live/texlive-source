@@ -7,55 +7,33 @@
 #include "ttf.h"
 #include "ttfutil.h"
 
-#ifdef MEMCHECK
-#include <dmalloc.h>
-#endif
-
 /* 	$Id: vdmx.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
-#ifndef lint
-static char vcid[] = "$Id: vdmx.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $";
-#endif /* lint */
-
-static VDMXPtr ttfAllocVDMX(TTFontPtr font);
 static void ttfLoadVDMX(FILE *fp,VDMXPtr vdmx,ULONG offset);
 
 void ttfInitVDMX(TTFontPtr font)
 {
-    ULONG tag = 'V' | 'D' << 8 | 'M' << 16 | 'X' << 24;
+    ULONG tag = FT_MAKE_TAG ('V', 'D', 'M', 'X');
     TableDirPtr ptd;
      
     if ((ptd = ttfLookUpTableDir(tag,font)) != NULL)
 	{
-	    font->vdmx = ttfAllocVDMX(font);
+	    font->vdmx = XCALLOC1 (VDMX);
 	    ttfLoadVDMX(font->fp,font->vdmx,ptd->offset);
 	}
 }
-static VDMXPtr ttfAllocVDMX(TTFontPtr font)
-{
-    VDMXPtr vdmx;
-    
-    if ((vdmx = (VDMXPtr) calloc(1,sizeof(VDMX))) == NULL)
-	{
-	    ttfError("Out of Memory in __FILE__:__LINE__\n");
-	    return NULL;
-	}
-    return vdmx;
-}
+
 static void ttfLoadVDMX (FILE *fp,VDMXPtr vdmx,ULONG offset)
 {
     int i;
 
-    if (fseek(fp,offset,SEEK_SET) != 0)
-	ttfError("Fseek Failed in ttfLoadVDMX \n");	
+    xfseek(fp, offset, SEEK_SET, "ttfLoadVDMX");
     
     vdmx->version = ttfGetUSHORT(fp);
     vdmx->numRecs = ttfGetUSHORT(fp);
     vdmx->numRatios = ttfGetUSHORT(fp);
-    vdmx->ratRange = (Ratios *) calloc(vdmx->numRatios, sizeof(Ratios));
-    vdmx->offset = (USHORT *) calloc(vdmx->numRatios, sizeof(USHORT));
-    vdmx->groups = (Vdmx *) calloc(vdmx->numRecs, sizeof(Vdmx));
 
+    vdmx->ratRange = XCALLOC (vdmx->numRatios, Ratios);
     for (i=0;i<vdmx->numRatios;i++)
 	{
 	    (vdmx->ratRange+i)->CharSet = ttfGetBYTE(fp);
@@ -64,14 +42,10 @@ static void ttfLoadVDMX (FILE *fp,VDMXPtr vdmx,ULONG offset)
 	    (vdmx->ratRange+i)->yEndRatio = ttfGetBYTE(fp);
 	    
 	}
-    if (fread(vdmx->offset, sizeof(USHORT), vdmx->numRatios,fp) != 
-	vdmx->numRatios)
-	ttfError("Error when getting Offset\n");
-#ifndef WORDS_BIGENDIAN
-    TwoByteSwap((unsigned char *) vdmx->offset,
-		vdmx->numRatios*sizeof(USHORT));
-#endif
 
+    vdmx->offset = ttfMakeUSHORT (vdmx->numRatios, fp);
+
+    vdmx->groups = XCALLOC (vdmx->numRecs, Vdmx);
     for (i=0;i<vdmx->numRecs;i++)
 	{
 	    int j;
@@ -79,8 +53,7 @@ static void ttfLoadVDMX (FILE *fp,VDMXPtr vdmx,ULONG offset)
 	    (vdmx->groups+i)->startsz = ttfGetBYTE(fp);
 	    (vdmx->groups+i)->endsz = ttfGetBYTE(fp);
     
-	    (vdmx->groups+i)->entry = 
-		(vTable *) calloc((vdmx->groups+i)->recs, sizeof(vTable));
+	    (vdmx->groups+i)->entry = XCALLOC ((vdmx->groups+i)->recs, vTable);
 
 	    for (j=0;j<(vdmx->groups+i)->recs;j++)
 		{
