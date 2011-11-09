@@ -28,6 +28,7 @@ my $outputdir;
 my $dvipsoutputdir;
 my $pdftexoutputdir;
 my $dvipdfmoutputdir;
+my $pxdvioutputdir;
 my $quiet;
 my $nohash;
 my $nomkmap;
@@ -52,6 +53,7 @@ my $mode;
 my $dvipsPreferOutline;
 my $dvipsDownloadBase35;
 my $pdftexDownloadBase14;
+my $pxdviUse;
 my $kanjiEmbed;
 
 my $dvips35;
@@ -93,8 +95,8 @@ Usage: $short_progname     [OPTION] ... [COMMAND]
    or: $short_progname-sys [OPTION] ... [COMMAND]
 
 Update the default font map files used by pdftex, dvips, and dvipdfm(x),
-as determined by the configuration file updmap.cfg (the one returned by
-running "kpsewhich updmap.cfg").
+(and optionally pxdvi) as determined by the configuration file updmap.cfg 
+(the one returned by running "kpsewhich updmap.cfg").
 
 Among other things, these map files are used to determine which fonts
 should be used as bitmaps and which as outlines, and to determine which
@@ -107,6 +109,7 @@ Options:
   --dvipdfmoutputdir DIR    specify output directory (dvipdfm syntax)
   --dvipsoutputdir DIR      specify output directory (dvips syntax)
   --pdftexoutputdir DIR     specify output directory (pdftex syntax)
+  --pxdvioutputdir DIR      specify output directory (pxdvi syntax)
   --outputdir DIR           specify output directory (for all files)
   --copy                    cp generic files rather than using symlinks
   --force                   recreate files even if config hasn't changed
@@ -121,7 +124,7 @@ Commands:
   --showoptions ITEM        show alternatives for options
   --setoption OPTION VALUE  set option, where OPTION is one of:
                              LW35, dvipsPreferOutline, dvipsDownloadBase35,
-                             pdftexDownloadBase14, or kanjiEmbed
+                             pdftexDownloadBase14, pxdviUse, or kanjiEmbed
   --setoption OPTION=VALUE  as above, just different syntax
   --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
                              where MAPTYPE is one of: Map, MixedMap, KanjiMap
@@ -149,6 +152,8 @@ Explanation of the --setoption possibilities:
     Whether dvips includes the standard 35 PostScript fonts in its output.
   pdftexDownloadBase14  true|false   (default true)
     Whether pdftex includes the standard 14 PDF fonts in its output.
+  pxdviUse              true|false  (default false)
+    Whether maps for pxdvi (Japanese-patched xdvi) is under control of updmap.
   LW35                  URWkb|URW|ADOBEkb|ADOBE  (default URWkb)
     Adapt the font and file names of the standard 35 PostScript fonts.
     URWkb    URW fonts with "berry" filenames    (e.g. uhvbo8ac.pfb)
@@ -245,6 +250,7 @@ sub processOptions {
       "n|dry-run" => \$dry_run,
       "outputdir=s" => \$outputdir,
       "pdftexoutputdir=s" => \$pdftexoutputdir,
+      "pxdvioutputdir=s" => \$pxdvioutputdir,
       "q|quiet|silent" => \$quiet,
       "setoption" =>
         sub {die "$0: --setoption needs an option and value; try --help.\n"},
@@ -263,6 +269,7 @@ sub processOptions {
     $dvipsoutputdir = $outputdir if (! $dvipsoutputdir);
     $pdftexoutputdir = $outputdir if (! $pdftexoutputdir);
     $dvipdfmoutputdir = $outputdir if (! $dvipdfmoutputdir);
+    $pxdvioutputdir = $outputdir if (! $pxdvioutputdir);
   }
   if ($cnfFile && ! -f $cnfFile) {
     die "$0: Config file \"$cnfFile\" not found.\n";
@@ -275,6 +282,9 @@ sub processOptions {
   }
   if ($pdftexoutputdir && ! $dry_run && ! -d $pdftexoutputdir) {
     &mkdirhier ($pdftexoutputdir);
+  }
+  if ($pxdvioutputdir && ! $dry_run && ! -d $pxdvioutputdir) {
+    &mkdirhier ($pxdvioutputdir);
   }
 }
 
@@ -619,7 +629,7 @@ sub setOption {
       die "$0: Invalid value $val for option $opt; try --help.\n";
     }
   } elsif ($opt =~ 
-m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14)$/) {
+m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14|pxdviUse)$/) {
       if ($val !~ m/^(true|false)$/) {
         die "$0: Invalid value $val for option $opt; should be \"true\" or \"false\".\n";
       }
@@ -646,7 +656,7 @@ sub showOptions {
       print "URWkb URW ADOBE ADOBEkb\n";
     }
     elsif ($item =~ 
-m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35)/) {
+m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35|pxdviUse)/) {
       print "true false\n";
     }
     elsif ($item eq "kanjiEmbed") {
@@ -654,7 +664,7 @@ m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35)/) {
     }
     else {
       print "Unknown item \"$item\"; should be one of LW35, dvipsPreferOutline,\n" 
-          . "  dvipsDownloadBase35, or pdftexDownloadBase14\n";
+          . "  dvipsDownloadBase35, pdftexDownloadBase14, pxdviUse or kanjiEmbed\n";
     }
   }
   exit 0
@@ -736,6 +746,7 @@ sub setupDestDir {
   $dvipsoutputdir = &setupOutputDir($dvipsoutputdir, "dvips");
   $pdftexoutputdir = &setupOutputDir($pdftexoutputdir, "pdftex");
   $dvipdfmoutputdir = &setupOutputDir($dvipdfmoutputdir, "dvipdfm");
+  $pxdvioutputdir = &setupOutputDir($pxdvioutputdir, "pxdvi");
 }
 
 ###############################################################################
@@ -961,6 +972,9 @@ sub mkMaps {
   $kanjiEmbed = &cfgval("kanjiEmbed");
   $kanjiEmbed = "noEmbed" unless (defined $kanjiEmbed);
 
+  $pxdviUse = &cfgval("pxdviUse");
+  $pxdviUse = 0 unless (defined $pxdviUse);
+
   &wlog ("\n$0 "
          . ($dry_run ? "would create" : "is creating") . " new map files"
          . "\nusing the following configuration:"
@@ -974,6 +988,8 @@ sub mkMaps {
          .      ($dvipsDownloadBase35 ? "true" : "false")
          . "\n  download standard fonts (pdftex) : "
          .      ($pdftexDownloadBase14 ? "true" : "false")
+         . "\n  create a mapfile for pxdvi       : "
+         .      ($pxdviUse ? "true" : "false")
          . "\n\n");
 
   &wlog ("Scanning for LW35 support files");
@@ -1041,14 +1057,18 @@ sub mkMaps {
   exit(0) if $dry_run;
 
   # Create psfonts_t1.map, psfonts_pk.map, ps2pk.map and pdftex.map:
-  for my $file ("$dvipsoutputdir/download35.map",
+  my @managed_files =  ("$dvipsoutputdir/download35.map",
 		"$dvipsoutputdir/builtin35.map",
 		"$dvipsoutputdir/psfonts_t1.map",
 		"$dvipsoutputdir/psfonts_pk.map",
 		"$pdftexoutputdir/pdftex_dl14.map",
 		"$pdftexoutputdir/pdftex_ndl14.map",
     "$dvipdfmoutputdir/kanjix.map",
-		"$dvipsoutputdir/ps2pk.map") {
+		"$dvipsoutputdir/ps2pk.map");
+  if ($pxdviUse) {
+    push @managed_files, "$pxdvioutputdir/xdvi-ptex.map";
+  }
+  for my $file (@managed_files) {
     open FILE, ">$file";
     print FILE "% $file:\
 %   maintained by updmap[-sys].\
@@ -1066,7 +1086,14 @@ sub mkMaps {
   @tmpkanji1 = &normalizeLines(@tmpkanji1);
   &writeLines(">$dvipdfmoutputdir/kanjix.map", 
               @tmpkanji1);
-  my @tmpkanji2 = &cidx2dvips(\@tmpkanji1);
+
+  if ($pxdviUse) {
+    # we use the very same data as for kanjix.map, but generate
+    # a different file, so that in case a user wants to hand-craft it
+    print "Generating output for pxdvi...\n" if !$quiet;
+    &writeLines(">$pxdvioutputdir/xdvi-ptex.map", 
+                @tmpkanji1);
+  }
 
   print "Generating output for ps2pk...\n" if !$quiet;
   my @ps2pk_map = &transLW35($ps2pk35);
@@ -1087,6 +1114,7 @@ sub mkMaps {
   my $dftdvips = ($dvipsDownloadBase35 ? $ps2pk35 : $dvips35);
 
   my @psfonts_t1_map = &transLW35($dftdvips);
+  my @tmpkanji2 = &cidx2dvips(\@tmpkanji1);
   push @psfonts_t1_map, &getLines(@tmp1);
   push @psfonts_t1_map, &getLines(@tmp2);
   push @psfonts_t1_map, @tmpkanji2;
@@ -1167,6 +1195,13 @@ sub mkMaps {
   foreach my $f ('kanjix.map') {
     dir ($d, $f, '');
     $updLSR->{add}("$d/$f");
+  }
+  if ($pxdviUse) {
+    $d="$pxdvioutputdir"; &wlog ("  $d:\n");
+    foreach my $f ('xdvi-ptex.map') {
+      dir ($d, $f, '');
+      $updLSR->{add}("$d/$f");
+    }
   }
   close LOG;
   print "\nTranscript written on \"$logfile\".\n" if !$quiet;

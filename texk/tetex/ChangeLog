@@ -1,3 +1,9 @@
+2011-11-09  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: add support for pxdviUse config option in updmap, 
+	and generate xdvi-ptex.map if it is set in a similar way as kanjix.map,
+	patch based on work of Hironori Kitagawa
+
 2011-11-04  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: small fixes to documentation of updmap.pl, and fixes
