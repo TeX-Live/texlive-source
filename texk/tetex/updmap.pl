@@ -809,6 +809,7 @@ sub listMaps {
   my @mapfiles;
   my @paths;
   $kanjiEmbed = &cfgval("kanjiEmbed");
+  $kanjiEmbed = "noEmbed" unless (defined $kanjiEmbed);
 
   my @lines = grep {
     if ($what eq 'sync') {

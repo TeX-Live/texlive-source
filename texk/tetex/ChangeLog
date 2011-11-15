@@ -1,3 +1,8 @@
+2011-11-16  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: make sure that kanjiEmbed is set to a default value
+	if not found in the config file.
+
 2011-11-09  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: add support for pxdviUse config option in updmap, 
