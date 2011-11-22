@@ -1,4 +1,9 @@
 /******************************************************************************
+ * Takuji Tanaka: 20111119 (KXD02663@nifty.ne.jp)
+ *               Used ptexenc library for Japanese TeX.
+ *               Enabled UTF8 output for Japanese TeX with option -Eu.
+ *               Added upTeX DVI support with option -U.
+ *               Added auto detected Japanese fonts in japanese-otf package.
  * Marcel Mol: 20101113  (marcel@mesa.nl)
  *               Version 5.3.4
  *               Fix VERSION code

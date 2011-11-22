@@ -55,11 +55,11 @@
 
 #define MAXLEN          100    /* size of char-arrays for strings            */
 #if defined(MSDOS) || defined(VMS) || defined(AMIGA)
-#define OPTSET      "haJwepPousltvbcAN" /* legal options                       */
-#define OPTWARG     "wepPovb"  /* options with argument                      */
+#define OPTSET      "haJweEpPousltvbcANU" /* legal options                   */
+#define OPTWARG     "weEpPovb"  /* options with argument                     */
 #else
-#define OPTSET      "haJwepPousqlfFtvbcAN"/* legal options                     */
-#define OPTWARG     "wepPoFvb"     /* options with argument                  */
+#define OPTSET      "haJweEpPousqlfFtvbcANU" /* legal options                */
+#define OPTWARG     "weEpPoFvb"     /* options with argument                 */
 #endif
 
 /*
@@ -75,10 +75,9 @@
 #define bdopt  7                /* bad option                        */
 #define onepp  8                /* only one page list allowed        */
 #define noarg  9                /* argument expected                 */
-#define confl  10               /* -N and -A conflict                */
-#define confj  11               /* -J conflicts -N or -A             */
+#define confl  10               /* -J, -N, -A, and -U conflict       */
 #if defined(THINK_C)
-#define nored  12               /* if no input file, redirect stdin  */
+#define nored  11               /* if no input file, redirect stdin  */
 #endif
 
 
@@ -166,6 +165,7 @@ int main(int argc, char **argv)
     Argc = argc;
     Argv = argv;
 
+    set_enc_string (NULL, "default");
     getargs();                              /* read command line arguments   */
 #if defined(THINK_C)
     if (inputfromfile) {
@@ -380,10 +380,35 @@ void setoption(const char *optarg)
                        j = strlen(optarg);
                        break;
 #endif
-            /* case 'J' : japan   = TRUE; break; */
             case 'J' : jautodetect  = TRUE; break;
-            case 'A' : asciip  = TRUE; break; /* ASCII pTeX */
-            case 'N' : japan   = TRUE; break; /* NTT jTeX */
+            case 'U' : uptex   = TRUE; japan = TRUE;    /* upTeX */
+                       jautodetect = FALSE;
+                       enable_UPTEX(true);
+                       set_enc_string (NULL, UPTEX_INTERNAL_ENC);
+                       break;
+            case 'A' : asciip  = TRUE; japan = TRUE;    /* ASCII pTeX */
+                       jautodetect = FALSE;
+                       set_enc_string (NULL, PTEX_INTERNAL_ENC);
+                       break;
+            case 'N' : nttj    = TRUE; japan = TRUE;    /* NTT jTeX */
+                       jautodetect = FALSE;
+                       set_enc_string (NULL, JTEX_INTERNAL_ENC);
+                       break;
+            case 'E' : 
+                switch (optarg[0]) {
+                       case 'e' :
+                           set_enc_string ("euc", NULL);  break;
+                       case 's' :
+                           set_enc_string ("sjis", NULL); break;
+                       case 'j' :
+                           set_enc_string ("jis", NULL);  break;
+                       case 'u' :
+                           set_enc_string ("utf8", NULL); break;
+                       default :
+                           usage(noarg);
+                }
+                       j++;
+                       break;
             case 't' : ttfont  = TRUE; break;
 	    case 'l' : noffd   = TRUE; break;
 	    case 's' : scascii ^= 1; break;
@@ -436,12 +461,10 @@ void setoption(const char *optarg)
     }
 
     /* Option conflict */
-    if (japan && asciip) {
+    if ((asciip && uptex) ||
+        (nttj && (asciip || uptex)) ||
+        (jautodetect && (nttj || asciip || uptex))) {
         usage(confl);
-    }
-
-    if (jautodetect && (japan || asciip)) {
-        usage(confj);
     }
 
     return;
@@ -707,7 +730,10 @@ void errorexit(int errorcode)
 void usage(int uerr)
 {
 
-    fprintf(stderr, "%s", Copyright);
+    if (jautodetect || nttj || asciip || uptex)
+        fprintf(stderr, "%s (%s) %s", Progname, get_enc_string(), Copyright);
+    else
+        fprintf(stderr, "%s  %s", Progname, Copyright);
 
     if (uerr != ign) {
         fprintf(stderr,"\n%s: ", progname);
@@ -734,9 +760,7 @@ void usage(int uerr)
                             break;
             case   onepp  : fprintf(stderr, "only one pagelist allowed");
                             break;
-            case   confl  : fprintf(stderr, "-N and -A are conflicting");
-                            break;
-            case   confj  : fprintf(stderr, "-J conflicts -N or -A");
+            case   confl  : fprintf(stderr, "-J, -N, -A, and -U are mutually exclusive");
                             break;
 #if defined(THINK_C)
             case   nored  : fprintf(stderr, "\nIf no input file is given in\
@@ -794,11 +818,15 @@ void usage(int uerr)
     fprintf(stderr,
             " -u       Toggle latin1 support (default %s).\n", DEFLATIN1 ? "on" : "off");
     fprintf(stderr,
-            " -J       Enable auto detect for NTT JTeX and ASCII pTeX (japanese fonts).\n");
+            " -J       Enable auto detect for NTT JTeX, ASCII pTeX, and upTeX (japanese fonts).\n");
     fprintf(stderr,
             " -N       Support NTT JTeX dvi.\n");
     fprintf(stderr,
             " -A       Support ASCII pTeX dvi.\n");
+    fprintf(stderr,
+            " -U       Support upTeX dvi.\n");
+    fprintf(stderr,
+            " -Eenc    Output Japanese encoding. e:EUC s:SJIS j:JIS, u:UTF8.\n");
     fprintf(stderr,
             " -c       Override -a -u -s and print all characters 0-255.\n");
     fprintf(stderr,

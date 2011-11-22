@@ -87,13 +87,6 @@
 #define sget3()         snum(3)
 #define sget4()         snum(4)
 
-#if !defined(JIS)
-# define JIS    1       /* if 0 then EUC or SJIS */
-#endif
-#if !defined(SJIS)
-# define SJIS   0       /* if !JIS, 0 then EUC */
-#endif
-
 
 /*
  * Structure and variable definitions
@@ -122,7 +115,7 @@ typedef struct _font {
     long    num;
     struct _font * next;
     char  * name;
-    char    flags; /* to store font types, to get rid of japan/asciip/ttfont/symbolfon/mifont vars */
+    char    flags; /* to store font types, to get rid of nttj/asciip/uptex/ttfont/symbolfon/mifont vars */
     int     fontnum; /* helper for japanese fonts */
 } font;
 
@@ -140,8 +133,10 @@ bool        latin1;             /* if true make latin1 chars right           */
 bool        accent;             /* if true output accents etc: \'{e} etc.    */
 bool        ttfont = FALSE;     /* if true we assumed ttfonts, not cmr       */
 bool        symbolfont = FALSE; /* true if font is a symbol font             */
-bool        japan = FALSE;      /* switch to NTT japanese fonts ...          */
+bool        nttj = FALSE;       /* switch to NTT japanese fonts ...          */
 bool        asciip = FALSE;      /* switch to ASCII japanese fonts ...       */
+bool        uptex = FALSE;      /* switch to upTeX CJK fonts ...             */
+bool        japan = FALSE;      /* switch to NTT/ASCII/.. japanese fonts ... */
 bool        jautodetect = FALSE; /* switch if do auto detection of Japanese TeX */
 bool        jdetect = FALSE;     /* switch if Japanese TeX detection is done */
 bool        mifont = FALSE;      /* ASCII japanese font ??? */
@@ -177,14 +172,7 @@ int         sptr;               /* stack pointer                             */
 font * fonts = NULL;            /* List of fontnames defined                 */
 font * fnt = NULL;              /* Current font                              */
 
-#if JIS
-# define        SJIS    0
-int    inkanji = 0;    /* is in kanji sequence */
-# define KANJIIN  "\033$B"   /* was $@ in debian 5.1-13 patch.. */
-# define KANJIOUT "\033(J"
-#endif
-int    kanji1 = 0;     /* is first kanji character */
-int    kanji2 = 0;     /* is second kanji character */
+int    kanji1 = 0;     /* number of rest of trailer bytes in kanji character */
 
 
 
@@ -219,7 +207,7 @@ void            fontdef         (int);
 void            setfont         (long);
 void            jischar         (unsigned long);
 int             compute_jis     (int, unsigned int, unsigned int *, unsigned int *);
-void            dokanji         (unsigned long);
+void            dokanji         (long);
 int             getjsubfont     (char *);
 
 #else
@@ -249,7 +237,7 @@ void            fontdef         (int x);
 void            setfont         (long fntnum);
 void            jischar         (unsigned long ch);
 void            compute_jis     (int f, unsigned int c, unsigned int * ku, unsigned int * ten);
-void            dokanji         (unsigned long ch);
+void            dokanji         (long ch);
 int             getjsubfont     (char * s);
 #if defined(VMS)
 long		vmsseek		();
@@ -448,9 +436,9 @@ void dopage(void)
             errorexit(illop);
         else
             switch (opcode) {
-                case SET1     : japan ? jischar(get1()) : setchar(get1());break;
-                case SET2     : asciip ? dokanji(get2()) : setchar(get2()); break;
-                case SET3     : setchar(get3()); break;
+                case SET1     : nttj ? jischar(get1()) : setchar(get1());break;
+                case SET2     : (asciip || uptex) ? dokanji(get2()) : setchar(get2()); break;
+                case SET3     : uptex ? dokanji(get3()) : setchar(get3()); break;
                 case SET4     : setchar(get4()); break;
                 case SET_RULE : { long height = sget4();
                                   rule(MOVE, sget4(), height); break;
@@ -617,8 +605,9 @@ void skippage(void)
 
 void printpage(void)
 {
-    register int  i, j;
+    register int  i, j, k;
     register unsigned char ch;
+    unsigned char buff[4];
 
     if (sptr != 0)
         fprintf(stderr, "dvi2tty: warning - stack not empty at eop.\n");
@@ -637,74 +626,58 @@ void printpage(void)
                    i++, j++) {
                 ch = currentline->text[i - leftmargin];
 
-                if (asciip) {
-                    if (kanji1) {
-#if !JIS && !SJIS
-                        ch |= 0x80;
-#endif
-                        kanji2 = 1;
-                        kanji1 = 0;
-                    }
-                    if (!kanji2 && ch > 127) {
-                        kanji1 = 1;
-#if JIS 
-                        if (!inkanji) {
-                            inkanji = 1;
-                            fprintf(output, KANJIIN);
-                        }
-                        ch &= 0x7f;
-#endif
-                    }
-#if JIS
-                    if (!kanji1 && !kanji2 && inkanji) {
-                        fprintf(output, KANJIOUT);
-                        inkanji = 0;
-                    }
-#endif  
-                    if (kanji1 && (j >= (int) foo) &&
-                        (currentline->charactercount > i+1)) {
-#if JIS
-                        if (inkanji)
-                            fprintf(output, KANJIOUT);
-#endif
-                        fprintf(output, "*\n");         /* if line to large */
-                        fprintf(output, " *");          /* mark output      */
-#if JIS
-                        if (inkanji)
-                            fprintf(output, KANJIIN);
-#endif
-                        j = 2;
-                    }
-                }
+		if (japan) {
+		  if (ch > 127) {
+		    for (k = 0; k < 4; k++) {
+		      if (i - leftmargin + k < LINELEN+1)
+			buff[k] = currentline->text[i - leftmargin + k];
+		      else buff[k] = '\0';
+		    }
+		    kanji1 = multistrlen(buff, 4, 0) - 1;
+		  }
+		  else kanji1 = 0;
+		  if (kanji1 && (j + kanji1 > (int) foo) &&
+		      (currentline->charactercount > i+1)) {
+		    putc2('*', output);
+		    putc2('\n', output);    /* if line to large */
+		    putc2(' ', output);
+		    putc2('*', output);     /* mark output      */
+		    j = 2;
+		  }
+		}
 
-                if (ch >= SPACE || allchar)
-                    putc(ch, output);
+                if (ch >= SPACE || allchar) {
+		  if (japan) {
+		    for (k = 0; k < kanji1; k++) {
+		      putc2(ch, output);
+		      i++; j++;
+		      ch = currentline->text[i - leftmargin];
+		    }
+		    putc2(ch, output);
+		  }
+		  else 
+		    putc(ch, output);
+		}
                 if ((j > (int) foo) && (currentline->charactercount > i+1)) {
-#if JIS
-                        if (asciip && inkanji)
-                                fprintf(output,KANJIOUT);
-#endif
-                        fprintf(output, "*\n");         /* if line to large */
-                        fprintf(output, " *");          /* mark output      */
-#if JIS
-                        if (asciip && inkanji)
-                            fprintf(output, KANJIIN);
-#endif
-                        j = 2;
-                 }
-                 if (asciip)
-                     kanji2 = 0;
+		  if (japan) {
+		    putc2('*', output);
+		    putc2('\n', output);    /* if line to large */
+		    putc2(' ', output);
+		    putc2('*', output);     /* mark output      */
+		  }
+		  else {
+		    fprintf(output, "*\n");         /* if line to large */
+		    fprintf(output, " *");          /* mark output      */
+		  }
+		  j = 2;
+                }
             } 
         }
-        putc('\n', output);
+        if (japan)
+          putc2('\n', output);
+        else 
+          putc('\n', output);
     } 
-
-#if JIS
-    if (asciip && !kanji1 && !kanji2 && inkanji) {
-       fprintf(output, KANJIOUT);
-       inkanji = 0;
-    }
-#endif
 
     currentline = firstline;
     while (currentline->next != nil) {
@@ -988,23 +961,19 @@ long snum(int size)
  * DOKANJI -- Process a kanji character opcode.
  */
  
-void dokanji(unsigned long ch)
+void dokanji(long ch)
 {
-#if SJIS
-    register int c1, c2;
+    long i;
 
-    c1 = (ch >> 8) & 0xff;
-    c2 = ch & 0xff;
+    i = toBUFF(fromDVI(ch));
+    kanji1 = 3;
+    if (BYTE1(i) != 0) outchar(BYTE1(i));
+    kanji1 = 2;
+    if (BYTE2(i) != 0) outchar(BYTE2(i));
     kanji1 = 1;
-    outchar((((c1 - 1) >> 1) + ((c1 <= 0x5e) ? 0x71 : 0xb1)));
+    /* always */       outchar(BYTE3(i));
     kanji1 = 0;
-    outchar((c2 + ((c1 & 1) ? ((c2 < 0x60) ? 0x1f : 0x20) : 0x7e)));
-#else
-    kanji1 = 1;
-    outchar(0x80 | ( ch >> 8 ));
-    kanji1 = 0;
-    outchar(ch & 0xff);
-#endif
+    /* always */       outchar(BYTE4(i));
 
     return;
 
@@ -1019,7 +988,7 @@ void dokanji(unsigned long ch)
 void dochar(unsigned char ch)
 {
 
-    if (japan && fnt->fontnum)
+    if (nttj && fnt->fontnum)
         jischar((long) ch);
     else if (symbolfont == TRUE)
         symchar(ch);
@@ -1048,8 +1017,8 @@ void symchar(unsigned char ch)
        case  14: ch = 'O'; break;
        case  15: ch = 'o'; break;
        case  24: ch = '~'; break;
-       case  32: ch = japan ? '<' : 32; break; /* really only for japan? */
-       case  33: ch = japan ? '>' : 33; break; /* really only for japan? */
+       case  32: ch = nttj ? '<' : 32; break; /* really only for japan? */
+       case  33: ch = nttj ? '>' : 33; break; /* really only for japan? */
        case 102: ch = '{'; break;
        case 103: ch = '}'; break;
        case 104: ch = '<'; break;
@@ -1284,6 +1253,14 @@ void outchar(unsigned char ch)
     /*----------------- end of 'latin1 / Scandinavian code' ----------------*/
 
     if (foo == leftmargin-1) {
+      if (japan) {
+        while (((currentline->text[j - leftmargin] != SPACE) ||
+	        (kanji1 && (currentline->text[j+kanji1 - leftmargin] != SPACE)))
+                && (j < rightmargin)) {
+	  j++;
+	  h += charwidth;
+        }
+      } else {
         while (j < rightmargin &&
                ( (currentline->text[j - leftmargin] != SPACE) ||
                  (kanji1 && (currentline->text[j+1 - leftmargin] != SPACE))
@@ -1291,6 +1268,7 @@ void outchar(unsigned char ch)
             j++;
             h += charwidth;
         }
+      }
     }
     if ( allchar || ((ch >= SPACE) && (ch != DEL)) ||
          ((latin1 || scascii) && (ch == 23)) ) {
@@ -1321,7 +1299,7 @@ void putcharacter(long charnr)
     register long saveh;
 
     saveh = h;
-    if (japan)
+    if (nttj)
         dochar((unsigned char) charnr);
     else if (allchar || ((charnr >= 0) && (charnr <= LASTCHAR)))
         outchar((unsigned char) charnr);
@@ -1349,6 +1327,43 @@ void setchar(long charnr)
     return;
 
 } /* setchar */
+
+
+static const char *ptex_fontchk[] = {
+    "min", "goth", "jis",
+    "hmin", "hgoth", "hmgoth",               /* japanese-otf package */
+    "nmlmin", "nmlgoth", "nmlmgoth", 
+    "hiramin", "hirakaku", "hiramaru",
+    NULL /* end */
+};
+
+static const char *uptex_fontchk[] = {
+    "umin", "ugoth", "ujis",
+    "upjis", "upjpn", "upsch", "uptch", "upkor",
+    "uphmin", "uphgoth", "uphmgoth",         /* japanese-otf package */
+    "upnmlmin", "upnmlgoth", "upnmlmgoth", 
+    "uphiramin", "uphirakaku", "uphiramaru",
+    NULL /* end */
+};
+
+static const char *jtex_fontchk[] = {
+    "dmj", "dgj",
+    NULL /* end */
+};
+
+static int checkjfont(const char **jfontlist, const char *name)
+{
+    int i, len;
+    const char *tmpfont;
+
+    i=0;
+    while ( (tmpfont=jfontlist[i]) != NULL ) {
+        len=strlen(tmpfont);
+        if ( !strncmp(tmpfont, name, len) ) return 1;
+        i++;
+    }
+    return 0;
+} /* checkjfont */
 
 
 
@@ -1402,22 +1417,33 @@ void fontdef(int x)
      */
     fonts->flags = 0;
 
-    if (jautodetect && asciip == FALSE && japan == FALSE && !jdetect) {
-        if (!strncmp("min", name, 3) || !strncmp("got", name, 3)) {
+    if ((asciip == FALSE && nttj == FALSE && uptex == FALSE)
+        && (!jdetect) && jautodetect) {
+        if ( checkjfont(ptex_fontchk, name) ) {
             /* Detect as ASCII TeX */
             asciip = TRUE;
-            japan = FALSE;
-            jdetect = TRUE;
+            nttj = uptex = FALSE;
+            japan = jdetect = TRUE;
             fonts->flags |= MIFONT;
-        } else if (!strncmp("dmj", name, 3) || !strncmp("dgj", name, 3)) {
+            set_enc_string (NULL, PTEX_INTERNAL_ENC);
+        } else if ( checkjfont(uptex_fontchk, name) ) {
+            /* Detect as upTeX */
+            uptex = TRUE;
+            nttj = asciip = FALSE;
+            japan = jdetect = TRUE;
+            fonts->flags |= MIFONT;
+            enable_UPTEX(true);
+            set_enc_string (NULL, UPTEX_INTERNAL_ENC);
+        } else if ( checkjfont(jtex_fontchk, name) ) {
             /* Detect as NTT JTeX */
-            asciip = FALSE;
-            japan = TRUE;
-            jdetect = TRUE;
+            nttj = TRUE;
+            asciip = uptex = FALSE;
+            japan = jdetect = TRUE;
             fonts->flags |= JAPFONT;
+            set_enc_string (NULL, JTEX_INTERNAL_ENC);
         }
     }
-    if (japan)
+    if (nttj)
         fonts->fontnum = getjsubfont(name);
     else
         fonts->fontnum = 0;
@@ -1511,7 +1537,9 @@ void jischar(unsigned long ch)
     unsigned int Ku, Ten;
 
     compute_jis(fnt->fontnum, (unsigned int) ch, &Ku, &Ten);
+    kanji1 = 1;
     outchar(Ku+128);
+    kanji1 = 0;
     outchar(Ten+128);
 
     return;

@@ -3899,7 +3899,7 @@ $as_echo "$as_me: Assuming \`--enable-dvi2tty=$enable_dvi2tty'" >&6;}
 esac
 
 test "x$enable_dvi2tty" = xno || {
-  need_kpathsea=yes
+  need_ptexenc=yes
 }
 
 

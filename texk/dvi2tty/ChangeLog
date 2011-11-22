@@ -1,3 +1,10 @@
+2011-11-21  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	Add upTeX support from Tanaka Takuji <KXD02663@nifty.ne.jp>.
+	* ac/withenable.ac, Makefile.am: Require ptexenc.
+	* version.ac (new): Define dvi2tty_version.
+	* configure.ac: Adapted.
+
 2011-01-26  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	* dvi2tty.test: Unset DVI2TTY to nullify dvi2tty options.

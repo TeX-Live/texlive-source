@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvi2tty/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -17,7 +17,7 @@ EXTRA_DIST += $(DVI2TTY_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-INCLUDES = $(KPATHSEA_INCLUDES)
+INCLUDES = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
@@ -36,12 +36,18 @@ dvi2tty_SOURCES = \
 	$(DVI2TTY_TREE)/dvi2tty.c \
 	$(DVI2TTY_TREE)/dvi2tty.h \
 	$(DVI2TTY_TREE)/dvistuff.c
-	
-$(dvi2tty_OBJECTS): $(KPATHSEA_DEPEND)
+
+$(dvi2tty_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
+
+dvi2tty_LDADD = $(PTEXENC_LIBS) $(LDADD)
 
 man1_MANS = \
 	$(DVI2TTY_TREE)/disdvi.1 \
 	$(DVI2TTY_TREE)/dvi2tty.1
+
+## Rebuild libkpathsea & libptexenc
+@KPATHSEA_RULE@
+@PTEXENC_RULE@
 
 ## Tests.
 ##

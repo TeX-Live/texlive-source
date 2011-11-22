@@ -991,6 +991,7 @@ AC_SUBST([am__untar])
 
 m4_include([../../m4/kpse-common.m4])
 m4_include([../../m4/kpse-kpathsea-flags.m4])
+m4_include([../../m4/kpse-ptexenc-flags.m4])
 m4_include([../../m4/kpse-warnings.m4])
 m4_include([../../m4/libtool.m4])
 m4_include([../../m4/ltoptions.m4])

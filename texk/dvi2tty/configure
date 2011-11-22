@@ -617,6 +617,10 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 DVI2TTY_TREE
+PTEXENC_RULE
+PTEXENC_DEPEND
+PTEXENC_LIBS
+PTEXENC_INCLUDES
 KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
@@ -750,6 +754,9 @@ enable_compiler_warnings
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
+with_system_ptexenc
+with_ptexenc_includes
+with_ptexenc_libdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1408,6 +1415,11 @@ Optional Packages:
                           kpathsea headers installed in DIR
   --with-kpathsea-libdir=DIR
                           kpathsea library installed in DIR
+  --with-system-ptexenc   use installed ptexenc headers and library
+  --with-ptexenc-includes=DIR
+                          ptexenc headers installed in DIR
+  --with-ptexenc-libdir=DIR
+                          ptexenc library installed in DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -14038,6 +14050,44 @@ fi
 $as_echo "$kpse_cv_kpse_debug" >&6; }
 if test "x$kpse_cv_kpse_debug" != xyes; then :
   KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
+fi
+
+## _KPSE_LIB_FLAGS: Setup ptexenc (-lptexenc) flags
+
+# Check whether --with-system-ptexenc was given.
+if test "${with_system_ptexenc+set}" = set; then :
+  withval=$with_system_ptexenc;
+fi
+
+# Check whether --with-ptexenc-includes was given.
+if test "${with_ptexenc_includes+set}" = set; then :
+  withval=$with_ptexenc_includes;
+fi
+
+# Check whether --with-ptexenc-libdir was given.
+if test "${with_ptexenc_libdir+set}" = set; then :
+  withval=$with_ptexenc_libdir;
+fi
+if test "x$with_system_ptexenc" = xyes; then
+  if test "x$with_ptexenc_includes" != x && test "x$with_ptexenc_includes" != xyes; then
+  PTEXENC_INCLUDES="-I$with_ptexenc_includes"
+fi
+PTEXENC_LIBS="-lptexenc"
+if test "x$with_ptexenc_libdir" != x && test "x$with_ptexenc_libdir" != xyes; then
+  PTEXENC_LIBS="-L$with_ptexenc_libdir $PTEXENC_LIBS"
+fi
+else
+  PTEXENC_INCLUDES=`echo '-IBLD/texk/ptexenc -ISRC/texk/ptexenc' | sed \
+    -e "s,SRC/,$kpse_SRC/,g" \
+    -e "s,BLD/,$kpse_BLD/,g"`
+  PTEXENC_LIBS=`echo 'BLD/texk/ptexenc/libptexenc.la' | sed \
+    -e "s,BLD/,$kpse_BLD/,g"`
+
+  PTEXENC_DEPEND=`echo 'BLD/texk/ptexenc/libptexenc.la' | sed \
+    -e 's,BLD/texk/,${top_builddir}/../,g'`
+   PTEXENC_RULE='# Rebuild libptexenc
+$(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc/*.h
+	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
 

@@ -129,13 +129,20 @@ terminals in Scandinavia are mapped to ``{|}[\\]''.
 Note this may interfere with -u. Best not to use -u and -s together.
 .TP
 .B \-J
-Auto detect NTT JTeX and ASCII pTeX dvi format.
+Auto detect NTT JTeX, ASCII pTeX, and upTeX dvi format.
 .TP
 .B \-N
 Display NTT JTeX dvi.
 .TP
 .B \-A
 Display ASCII pTeX dvi.
+.TP
+.B \-U
+Display upTeX dvi.
+.TP
+.B \-Eenc
+Set output Japanese encoding. The enc argument 'e', 's', 'j', and 'u'
+denotes EUC-JP, Shift_JIS, ISO-2022-JP, and UTF-8, respectively.
 .TP
 .B \-bdelim
 Print the name of fonts when switching to it (and ending it). The delim

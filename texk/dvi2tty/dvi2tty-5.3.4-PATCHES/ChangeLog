@@ -1,9 +1,16 @@
+2011-11-21  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* patch-03-uptex: New patch for upTeX support
+	from Tanaka Takuji <KXD02663@nifty.ne.jp>.
+
 2011-01-27  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
+	* patch-02-initialize: New patch:
 	* dvistuff.c (fontdef): Initialize the fontnum member.
 
 2011-01-26  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
+	* patch-01-typecast: New patch:
 	* dvistuff.c (dopage): Typecast dochar() argument to the
 	parameter type 'unsigned char', not to 'char'.
 

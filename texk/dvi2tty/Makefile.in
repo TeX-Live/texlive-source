@@ -52,12 +52,13 @@ DIST_COMMON = $(am__configure_deps) \
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-ptexenc-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
 	$(top_srcdir)/../../m4/ltversion.m4 \
-	$(top_srcdir)/../../m4/lt~obsolete.m4 \
+	$(top_srcdir)/../../m4/lt~obsolete.m4 $(top_srcdir)/version.ac \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -76,8 +77,8 @@ am__DEPENDENCIES_1 =
 disdvi_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_dvi2tty_OBJECTS = dvi2tty.$(OBJEXT) dvistuff.$(OBJEXT)
 dvi2tty_OBJECTS = $(am_dvi2tty_OBJECTS)
-dvi2tty_LDADD = $(LDADD)
-dvi2tty_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+dvi2tty_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -193,6 +194,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PTEXENC_DEPEND = @PTEXENC_DEPEND@
+PTEXENC_INCLUDES = @PTEXENC_INCLUDES@
+PTEXENC_LIBS = @PTEXENC_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -255,7 +259,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(DVI2TTY_TREE) $(DVI2TTY_TREE)-PATCHES $(TESTS) \
 	ligtest.tty test.tty testc.tty tests.tty testu.tty
-INCLUDES = $(KPATHSEA_INCLUDES)
+INCLUDES = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 LDADD = $(KPATHSEA_LIBS)
@@ -269,6 +273,7 @@ dvi2tty_SOURCES = \
 	$(DVI2TTY_TREE)/dvi2tty.h \
 	$(DVI2TTY_TREE)/dvistuff.c
 
+dvi2tty_LDADD = $(PTEXENC_LIBS) $(LDADD)
 man1_MANS = \
 	$(DVI2TTY_TREE)/disdvi.1 \
 	$(DVI2TTY_TREE)/dvi2tty.1
@@ -941,7 +946,10 @@ dist-hook:
 
 $(disdvi_OBJECTS): $(KPATHSEA_DEPEND)
 
-$(dvi2tty_OBJECTS): $(KPATHSEA_DEPEND)
+$(dvi2tty_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
+
+@KPATHSEA_RULE@
+@PTEXENC_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

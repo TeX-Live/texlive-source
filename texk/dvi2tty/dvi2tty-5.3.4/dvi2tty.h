@@ -20,7 +20,8 @@
 
 #define VERSION "5.3.4"
 
-#define Copyright "dvi2tty  Copyright (C) 1984, 1985, 1986 Svante Lindahl.\n\
+#define Progname "dvi2tty"
+#define Copyright "Copyright (C) 1984, 1985, 1986 Svante Lindahl.\n\
 Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 
 
@@ -53,6 +54,18 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
  * (this is also used to define the with of the line structure in dvistuff.c)
  */
 #define MAXTERMWIDTH	332
+
+#include <ptexenc/ptexenc.h>
+#include <ptexenc/unicode.h>
+
+/* internal encoding for NTT JTeX : "euc" */
+#define JTEX_INTERNAL_ENC  "euc"
+
+/* internal encoding for ASCII pTeX : "euc" or "sjis" */
+#define PTEX_INTERNAL_ENC  "euc"
+
+/* internal encoding for upTeX : "uptex" */
+#define UPTEX_INTERNAL_ENC  "uptex"
 
 /*
  * ERROR CODES , don't start with 0
@@ -109,9 +122,11 @@ extern bool   scascii;                 /* Scand. nat. chars (dvistuff.c)     */
 extern bool   latin1;                  /* latin1 chars (dvistuff.c)          */
 extern bool   accent;                  /* Output accent stuff(dvistuff.c)    */
 extern bool   ttfont;                  /* tt font assumed   (dvistuff.c)     */
-extern bool   japan;                   /* NTT jTeX font support (dvistuff.c) */
+extern bool   jautodetect;             /* Autodetect NTT jTeX, ASCII pTeX and upTeX (dvistuff.c) */
+extern bool   nttj;                    /* NTT jTeX font support (dvistuff.c) */
 extern bool   asciip;                  /* ASCII pTeX font support (dvistuff.c) */
-extern bool   jautodetect;             /* Autodetect NTT jTex and ASCII pTeX (dvistuff.c) */
+extern bool   uptex;                   /* upTeX font support (dvistuff.c)    */
+extern bool   japan;                   /* japanized TeX font support (dvistuff.c) */
 extern bool   noffd;                   /* output ^L or formfeed (dvistuff.c) */
 extern bool   printfont;               /* include font switches (dvistuff.c) */
 extern bool   allchar;                 /* output all characters (dvistuff.c  */
