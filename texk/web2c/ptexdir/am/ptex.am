@@ -127,7 +127,7 @@ pweb_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
 ## 
 nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
 pdvitype_SOURCES = ptexdir/kanji.h
-pdvitype_CPPFLAGS = $(ptex_cppflags) -DDHEX_CHAR_CODE
+pdvitype_CPPFLAGS = $(ptex_cppflags) -DHEX_CHAR_CODE
 pdvitype_LDADD = $(ptex_ldadd)
 pdvitype_DEPENDENCIES = $(ptex_dependencies)
 pdvitype.c pdvitype.h: pdvitype-web2c

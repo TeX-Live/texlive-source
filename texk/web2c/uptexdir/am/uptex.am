@@ -104,7 +104,7 @@ DISTCLEANFILES += $(nodist_uptex_SOURCES) uptex.web uptex.ch uptex-web2c \
 ##
 nodist_upbibtex_SOURCES = upbibtex.c upbibtex.h
 upbibtex_SOURCES = uptexdir/kanji.h
-upbibtex_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+upbibtex_CPPFLAGS = $(uptex_cppflags)
 upbibtex_LDADD = $(uptex_ldadd)
 upbibtex_DEPENDENCIES = $(uptex_dependencies)
 upbibtex.c upbibtex.h: upbibtex-web2c
@@ -121,7 +121,7 @@ EXTRA_DIST += ptexdir/pbibtex.ch uptexdir/upbibtex.ch
 ##
 nodist_updvitype_SOURCES = updvitype.c updvitype.h
 updvitype_SOURCES = uptexdir/kanji.h
-updvitype_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+updvitype_CPPFLAGS = $(uptex_cppflags) -DHEX_CHAR_CODE
 updvitype_LDADD = $(uptex_ldadd)
 updvitype_DEPENDENCIES = $(uptex_dependencies)
 updvitype.c updvitype.h: updvitype-web2c
@@ -138,7 +138,7 @@ EXTRA_DIST += ptexdir/pdvitype.ch uptexdir/updvitype.ch
 ##
 nodist_uppltotf_SOURCES = uppltotf.c uppltotf.h
 uppltotf_SOURCES = uptexdir/kanji.h
-uppltotf_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+uppltotf_CPPFLAGS = $(uptex_cppflags) -DPRESERVE_PUTC
 uppltotf_LDADD = $(uptex_ldadd)
 uppltotf_DEPENDENCIES = $(uptex_dependencies)
 uppltotf.c uppltotf.h: uppltotf-web2c
@@ -155,7 +155,7 @@ EXTRA_DIST += ptexdir/ppltotf.ch uptexdir/uppltotf.ch
 ##
 nodist_uptftopl_SOURCES = uptftopl.c uptftopl.h
 uptftopl_SOURCES = uptexdir/kanji.h
-uptftopl_CPPFLAGS = $(uptex_cppflags) -DDHEX_CHAR_CODE
+uptftopl_CPPFLAGS = $(uptex_cppflags)
 uptftopl_LDADD = $(uptex_ldadd)
 uptftopl_DEPENDENCIES = $(uptex_dependencies)
 uptftopl.c uptftopl.h: uptftopl-web2c

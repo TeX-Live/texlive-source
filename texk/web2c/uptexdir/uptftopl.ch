@@ -37,6 +37,7 @@
   if (isinternalUPTEX) then out(' U ')
   else out(' J '); {specify jiscode format}
 @z
+
 @x
   out(xchr[Hi(cx)]); out(xchr[Lo(cx)]);
 @y
