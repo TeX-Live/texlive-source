@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ##
 ## This is file `bibexport.sh',
 ## generated with the docstrip utility.
@@ -7,18 +7,20 @@
 ##
 ## bibexport.dtx  (with options: `script')
 ## 
-## (c) 2005/02/27 Nicolas Markey <markey at lsv dot ens-cachan dot fr>
-## All rights reserved.
+## (c) 2011/11/19 Nicolas Markey <markey at lsv dot ens-cachan dot fr>
 ## 
-## This work may be distributed and/or modified under the conditions of
-## the LaTeX Project Public License, either version 1.3 of this license
-## or (at your option) any later version. The latest version of the
+## This work may  be distributed and/or modified under  the conditions of
+## the LaTeX Project  Public License, either version 1.3  of this license
+## or (at  your option)  any later version.   The latest version  of this
 ## license is in
 ## 
-##     http://www.latex-project.org/lppl.txt
+##   http://www.latex-project.org/lppl.txt
 ## 
-## and version 1.3 or later is part of all distributions of LaTeX
-## version 2003/12/01 or later.
+## and version 1.3 or later is part of all distributions of LaTeX version
+## 2005/12/01 or later.
+## 
+## This work has the LPPL maintenance status `maintained'.
+## The Current Maintainer of this work is Nicolas Markey.
 ## 
 ## \CharacterTable
 ##  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -39,106 +41,218 @@
 function usage()
 {
 echo "bibexport: a tool to extract BibTeX entries out of .bib files.
-usage: $0 [-h|v] [-n] [-b bst] [-a [-e file]...] [-o file] file...
-  -a, --all              export the entire .bib files
-  -b, --bst              specifies the .bst style file [default: export.bst]
-  -c, --crossref         include entries that are crossref'd  [default: yes]
-  -e file, --extra file  extra .bib files to be used (for crossrefs)
-  -n, --no-crossref      don't include crossref'd entries      [default: no]
-  -o file                write output to file       [default: bibexport.bib]
-  -p, --preamble         write a preamble at beginning of output
-  -t, --terse            operate silently
-  -h, --help             print this message and exit
-  -v, --version          print version number and exit";
+usage: $0 [-h|v|n|c|a|d|s|t] [-b|e|es|ec|o|r file] file...
+
+Basic options:
+--------------
+ -a, --all                  export the entire .bib files
+ -o bib, --output-file bib  write output to file       [default: bibexport.bib]
+ -t, --terse                operate silently
+ -h, --help                 print this message and exit
+ -v, --version              print version number and exit
+
+Advanced options:
+-----------------
+ -b bst, --bst bst          specifies the .bst style file [default: export.bst]
+ -c, --crossref             preserve crossref field               [default: no]
+ -n, --no-crossref          remove crossref'd entries             [default: no]
+ -e bib, --extra bib        extra .bib file to be used (crossrefs and strings)
+ -es bib, --extras bib      extra .bib file to be used (for strings)
+ -ec bib, --extrac bib      extra .bib file to be used (for crossrefs)
+ -s, --no-preamble          don't write a preamble at beginning of output
+ -r bib, --replace bib      replace .bib file(s) in the .aux file
+ -d, --debug                create intermediate files but don't run BibTeX";
 exit 0;
 }
-VERSION="2.20";
-VDATE="2009/10/11";
-CROSSREF="1";
+function opttolate()
+{
+if [ ${TOOLATE} -ne 0 ]; then
+    echo "No option is allowed after the input files";
+    exit 0;
+fi
+}
+## Version number
+VERSION="3.00";
+## Release date
+VDATE="2011/11/19";
+
+# ALL is a flag set to 1 when '-a' is given
+ALL="0";
+# FILE will be the main input file(s) (.aux or .bib, depending on '-a')
 FILE="";
+# EXT is the extension of the input file(s) (.aux, or .bib if '-a')
 EXT=".aux";
+# EXTRA and EXTRABIB are two copies of the extra files ('-e'), used to
+# include crossref'd entries and @string's
 EXTRA="";
 EXTRABIB="";
-SPACE=" ";
+# REPLACEBIB ('-r') is set to 1 when the \bibdata of the .aux input file
+# must be ignores (then '-e' must be used)
+REPLACEBIB="0";
+# NEWBIB will contain the argument given to -r
+NEWBIB="";
+# BST is the .bst file to be used (default to export.bst)
 BST="export";
+# TERSE will be set to '-terse' if '-t' is given
 TERSE="";
-NOBANNER="true";
+# BANNER is used to turn on or off the preamble informations in the output
+BANNER="true";
+# CREF is the number of citations of crossrefs from which the crossref'd entry
+# must be included.
+CREF="0";
+
+# SPACE will be either ' ' or ','
+SPACE="";
+# TOOLATE is used to prevent extra options after the main file
+TOOLATE="0";
+# DEBUG is used to create files but not run BibTeX.
+DEBUG="";
+
 ARGS=$@;
 if [ $# -eq 0 ]; then
   usage;
 fi
 while [ $# != 0 ]; do
-        case $1 in
-              -a|--all)
-                EXT=""; SPACE="";
-                shift ;;
-            -b|--bst)
-                if [ "`dirname $2`" = "." ]; then
-                    DOLLARTWO="`basename $2 .bst`";
-                else
-                    DOLLARTWO="`dirname $2`/`basename $2 .bst`";
-                fi
-                BST="${DOLLARTWO}";
-                shift 2;;
-            -e|--extra)
-                if [ "`dirname $2`" = "." ]; then
-                    DOLLARTWO="`basename $2 .bib`";
-                else
-                    DOLLARTWO="`dirname $2`/`basename $2 .bib`";
-                fi
-                EXTRA="${EXTRA}${DOLLARTWO},";
-                EXTRABIB="${EXTRABIB},${DOLLARTWO}.bib";
-                shift 2;;
-            -o|--output-file)
-                if [ "`dirname $2`" = "." ]; then
-                    DOLLARTWO="`basename $2 .bib`";
-                else
-                    DOLLARTWO="`dirname $2`/`basename $2 .bib`";
-                fi
-                OUTPUT="${DOLLARTWO}.bib";
-                shift 2 ;;
-            -c|--crossref|--crossrefs|--with-crossref|--with-crossrefs)
-                CREF="1" ;
-                shift ;;
-            -n|--no-crossref|--without-crossref)
-                CREF="20000" ;
-                shift ;;
-            -v|--version)
-                echo "This is bibexport v${VERSION} (released ${VDATE})"; exit 0;;
-            -p|--preamble)
-                NOBANNER="false";
-                shift ;;
-            -t|--terse)
-                TERSE=" -terse ";
-                shift ;;
-            -*)
-                usage;;
-            *)
-                if [ "`dirname $1`" = "." ]; then
-                    DOLLARONE="`basename $1 ${EXT}`";
-                else
-                    DOLLARONE="`dirname $1`/`basename $1 ${EXT}`";
-                fi
-                FILE="${FILE}${SPACE}${DOLLARONE}${EXT}";
-                if [ -z "${SPACE}" ]; then
-                    SPACE=",";
-                fi;
-                shift;;
-        esac
+    case $1 in
+        -a|--all)
+    ## - export all entries in the input file(s)
+    ## - the input files are BibTeX files
+            opttolate;
+            EXT=""; SPACE="";
+            shift ;;
+        -b|--bst)
+    ## - specifies the .bst file to use (default to 'export.bst')
+            opttolate;
+            if [ "`dirname $2`" = "." ]; then
+                DOLLARTWO="`basename $2 .bst`";
+            else
+                DOLLARTWO="`dirname $2`/`basename $2 .bst`";
+            fi
+            BST="${DOLLARTWO}";
+            shift 2;;
+        -d|--debug)
+    ## - debug mode: we create files but do not run bibtex
+    ## - instead, we print what we would have done...
+            opttoolate;
+    DEBUG="echo";
+    shift ;;
+        -e|--extra)
+    ## - extra input files (containing crossrefs or strings)
+    ## - they will be included twice: once before the main file(s)
+    ##   (for @string's), once after (for crossrefs). We fool BibTeX
+    ##   by naming the first one 'file.bib' and the second one
+    ##   'file.bib.bib', to avoid complains.
+            opttolate;
+            if [ "`dirname $2`" = "." ]; then
+                DOLLARTWO="`basename $2 .bib`";
+            else
+                DOLLARTWO="`dirname $2`/`basename $2 .bib`";
+            fi
+            EXTRA="${EXTRA}${DOLLARTWO},";
+            EXTRABIB="${EXTRABIB},${DOLLARTWO}.bib";
+            shift 2;;
+        -es|--extras)
+    ## - extra input files (containing strings)
+    ## - will be included *before* the main files (hence not suitable
+    ##   for crossrefs)
+            opttolate;
+            if [ "`dirname $2`" = "." ]; then
+                DOLLARTWO="`basename $2 .bib`";
+            else
+                DOLLARTWO="`dirname $2`/`basename $2 .bib`";
+            fi
+            EXTRA="${EXTRA}${DOLLARTWO},";
+            shift 2;;
+        -ec|--extrac)
+    ## - extra input files (containing crossrefs)
+    ## - will be included only *after* the main files (hence not
+    ##   suitable for @string's)
+            opttolate;
+            if [ "`dirname $2`" = "." ]; then
+                DOLLARTWO="`basename $2 .bib`";
+            else
+                DOLLARTWO="`dirname $2`/`basename $2 .bib`";
+            fi
+            EXTRABIB="${EXTRABIB},${DOLLARTWO}.bib";
+            shift 2;;
+        -o|--output-file)
+    ## - name of the output file
+    ## - we force it to end with '.bib'
+            opttolate;
+            if [ "`dirname $2`" = "." ]; then
+                DOLLARTWO="`basename $2 .bib`";
+            else
+                DOLLARTWO="`dirname $2`/`basename $2 .bib`";
+            fi
+            OUTPUT="${DOLLARTWO}.bib";
+            shift 2 ;;
+        -c|--crossref|--crossrefs|--with-crossref|--with-crossrefs)
+    ## - whether or not to preserve 'crossref' keys.
+    ## - by default, they are removed, but crossref'd entries are
+    ##   included.
+    ## - crossrefs are *always* expanded anyway.
+            opttolate;
+            CREF="1" ;
+            shift ;;
+        -n|--no-crossref|--without-crossref|--no-crossrefs|--without-crossrefs)
+    ## - to remove crossref'd entries (hence remove 'crossref' keys).
+            opttolate;
+            CREF="20000" ;
+            shift ;;
+        -r|--replace)
+    ## - to replace the file(s) given in \bibdata in the .aux file with
+    ##   (a) new one(s).
+            opttolate;
+    REPLACEBIB="1";
+    if [ "`dirname $2`" = "." ]; then
+                DOLLARTWO="`basename $2 .bib`";
+            else
+                DOLLARTWO="`dirname $2`/`basename $2 .bib`";
+            fi
+            NEWBIB="${NEWBIB}${DOLLARTWO}.bib,";
+            shift 2;;
+        -v|--version)
+            echo "This is bibexport v${VERSION} (released ${VDATE})"; exit 0;;
+        -s|--no-preamble|--without-preamble)
+            NOBANNER="false";
+            shift ;;
+        -t|--terse|--silent)
+            TERSE=" -terse ";
+            shift ;;
+        -*)
+            usage;;
+        *)
+    ## - list of input files
+    ## - we ensure that no extra option is given later...
+    TOOLATE="1";
+            if [ "`dirname $1`" = "." ]; then
+                DOLLARONE="`basename $1 ${EXT}`";
+            else
+                DOLLARONE="`dirname $1`/`basename $1 ${EXT}`";
+            fi
+            FILE="${FILE}${SPACE}${DOLLARONE}${EXT}";
+            if [ ${ALL} -eq 1 ]; then
+                SPACE=",";
+    else
+SPACE=" ";
+            fi;
+            shift;;
+    esac
 done
 FINALFILE=${OUTPUT};
 if [ ! "${FINALFILE}" ]; then
     FINALFILE="bibexport.bib";
 fi
 TMPFILE="bibexp.`date +%s`";
-if [ -z "${EXT}" ]; then
-    if [ -z "${EXTRA}" ]; then
+if [ -z "${EXT}" ]; then ## we export all entries
+    if [ -z "${EXTRA}" ]; then ## we have no extra files
         cat > ${TMPFILE}.aux <<EOF
 \citation{*}
 \bibdata{${FILE}}
 \bibstyle{${BST}}
 EOF
-    else
+    else ## we have extra files (e.g. for crossrefs) but want all entries from ${FILE}
+   ## we first extract the keys to be used:
         cat > ${TMPFILE}.aux <<EOF
 \citation{*}
 \bibdata{${FILE}}
@@ -146,33 +260,68 @@ EOF
 EOF
         bibtex -min-crossrefs=${CREF} -terse ${TMPFILE};
         mv -f ${TMPFILE}.bbl ${TMPFILE}.aux;
+## and then prepare the .aux file for exporting:
         cat >> ${TMPFILE}.aux <<EOF
 \bibdata{${EXTRA}${FILE}${EXTRABIB}}
 \bibstyle{${BST}}
 EOF
     fi
-else
+else ## we only export entries listed in the given .aux file:
+  if [ ! "x${REPLACEBIB}" = "x1" ]; then
     cat ${FILE} | sed -e "s/bibstyle{.*}/bibstyle{${BST}}/" > ${TMPFILE}.aux;
+  else
+    cat ${FILE} | sed -e "s/bibstyle{.*}/bibstyle{${BST}}/" \
+      -e "s/bibdata{.*}/bibdata{${EXTRA}${NEWBIB%,}${EXTRABIB}}/" > ${TMPFILE}.aux;
+  fi
 fi
-bibtex -min-crossrefs=${CREF} ${TERSE} ${TMPFILE}
-echo "" > ${FINALFILE}
-if [ ! "${NOBANNER}" = "true" ]; then
-    echo -ne "@comment{generated using bibexport:\n" >> ${FINALFILE};
-    echo -ne "  creation date:\t`date +\"%c\"`\n" >> ${FINALFILE};
-    echo -ne "  command:\t\t$0 ${ARGS}\n" >> ${FINALFILE};
-    echo -ne "  bibexport-version:\tv${VERSION} (${VDATE})\n" >> ${FINALFILE};
-    echo -ne "  bibexport-maintainer:\tmarkey(at)lsv.ens-cachan.fr\n" >> ${FINALFILE};
-    sed -ie "s/}/)/g" ${FINALFILE};
-    echo -ne "}\n\n\n" >> ${FINALFILE};
-fi
-if [ ! "x${CREF}" = "x1" ]; then
-    sed -r -e \
-        "/^ *[cC][rR][oO][sS][sS][rR][eE][fF] *= *[^,]+,?$/d" \
-        ${TMPFILE}.bbl >> ${FINALFILE};
+if [ -z "$DEBUG" ]; then
+    bibtex -min-crossrefs=${CREF} ${TERSE} ${TMPFILE};
+    if [ -e ${FINALFILE} ]; then
+mv ${FINALFILE} ${FINALFILE}-save-`date "+%Y.%m.%d:%H.%M.%S"`
+    fi
+    echo "" > ${FINALFILE}
 else
-    cat ${TMPFILE}.bbl >> ${FINALFILE};
+    echo "bibtex -min-crossrefs=${CREF} ${TERSE} ${TMPFILE};"
 fi
-rm -f ${TMPFILE}.bbl ${TMPFILE}.aux ${TMPFILE}.blg
+if [ ! "${BANNER}" = "false" ]; then
+    ## list of cited entries
+    if [ -z "$DEBUG" ]; then
+sed -i -e "s/\\\bibstyle{.*}/\\\bibstyle{expcites}/" ${TMPFILE}.aux
+mv ${TMPFILE}.aux ${TMPFILE}-cites.aux
+bibtex -terse -min-crossrefs=${CREF} ${TMPFILE}-cites
+echo -ne "@comment{generated using bibexport:\n" >> ${FINALFILE};
+echo -ne "  creation date:\t`date +\"%c\"`\n" >> ${FINALFILE};
+echo -ne "  command:\t\t$0 ${ARGS}\n" >> ${FINALFILE};
+if [ -z "${EXT}" ]; then
+    echo -ne "  source files:\t\t${FILETAB}\t\t\t${EXTRABIBTAB}\n" >> ${FINALFILE}; \
+fi
+cat ${TMPFILE}-cites.bbl >> ${FINALFILE};
+echo -ne "  bibexport-version:\tv${VERSION} (${VDATE})\n" >> ${FINALFILE};
+echo -ne "  bibexport-maintainer:\tmarkey(at)lsv.ens-cachan.fr\n" >> ${FINALFILE};
+sed -i -e "s/}/)/g" ${FINALFILE};
+echo -n -e "}\n\n\n" >> ${FINALFILE};
+rm -f ${TMPFILE}-cites.bbl ${TMPFILE}-cites.aux ${TMPFILE}-cites.blg
+    fi
+fi
+if [ ${CREF} -ne 1 ]; then
+    if [ -z "$DEBUG" ]; then
+egrep -iv '^ *crossref *= *[^,]+,?$' \
+    ${TMPFILE}.bbl >> ${FINALFILE};
+    else
+echo "egrep -iv '^ *crossref *= *[^,]+,?$' ${TMPFILE}.bbl >> ${FINALFILE};"
+    fi
+else
+    if [ -z "$DEBUG" ]; then
+cat ${TMPFILE}.bbl >> ${FINALFILE};
+    else
+echo "cat ${TMPFILE}.bbl >> ${FINALFILE};"
+    fi
+fi
+if [ -z "$DEBUG" ]; then
+    rm -f ${TMPFILE}.bbl ${TMPFILE}.aux ${TMPFILE}.blg;
+else
+    echo "rm -f ${TMPFILE}.bbl ${TMPFILE}.aux ${TMPFILE}.blg";
+fi
 ## 
 ##
 ## End of file `bibexport.sh'.
