@@ -113,8 +113,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.27a';
-$version_details = "$My_name, John Collins, 10 October 2011";
+$version_num = '4.28a';
+$version_details = "$My_name, John Collins, 28 November 2011";
 
 
 use Config;
@@ -183,6 +183,23 @@ else {
 ##
 ##   Modification log from 1 Jan 2011 onwards in detail
 ##
+##     28 Nov 2011, John Collins Correct duplicate making of view file
+##                                  (in subroutine do_viewfile)
+##     14 Nov 2011, John Collins Extend bibtex treatment of missing files 
+##                                 to biber
+##     13 Nov 2011, John Collins Possibility of moving cleaned up files to
+##                                 directory instead of deleting them.
+##                          Change criterion in rdb_makeB1 for no-run when
+##                            dest doesn't exist.  If primary source also
+##                            doesn't exist, then run is pointless for all
+##                            non-primary rules, not just cusdep (which was
+##                            previous case).
+##                          Also change parse_bibtex_log to treat missing
+##                            aux file as warning, not error.  Did I do that
+##                            correctly?
+##                          Better: combinations of missing aux, missing bbl,
+##                            and changed bib file seem to work now, for bibtex.
+##      3 Nov 2011, John Collins  Update help text
 ##     10 Oct 2011, John Collins  Corrections to new options:
 ##                                Substitutions in commands
 ##                                Locate .fls correctly
@@ -482,7 +499,8 @@ $new_viewer_always = 0;     # If 1, always open a new viewer in pvc mode.
 
 $quote_filenames = 1;       # Quote filenames in external commands
 
-
+$del_dir = '';        # Directory into which cleaned up files are to be put.
+                      # If $del_dir is '', just delete the files
 
 #########################################################################
 
@@ -1876,11 +1894,11 @@ foreach $filename ( @file_list )
                    split(' ',$clean_ext), 
                    keys %generated_exts_all 
                  );
-        unlink( 'texput.log', "texput.aux", 
+        unlink_or_move( 'texput.log', "texput.aux", 
                 keys %index_bibtex_generated, 
                 keys %aux_files );
         if ($cleanup_includes_generated) {
-	    unlink( keys %other_generated );
+	    unlink_or_move( keys %other_generated );
 	}
         if ( $cleanup_includes_cusdep_generated) {
 	    &cleanup_cusdep_generated;
@@ -1891,7 +1909,7 @@ foreach $filename ( @file_list )
                      );
         }
     }
-    if ($cleanup_fdb) { unlink $fdb_name; }
+    if ($cleanup_fdb) { unlink_or_move( $fdb_name ); }
     if ($cleanup_only) { next FILE; }
 
 
@@ -2355,7 +2373,6 @@ sub do_viewfile {
     }
     else {
         $return = &rdb_ext_cmd;
-        $return = &rdb_ext_cmd;
     }
     return $return;
 } #END do_viewfile
@@ -2776,7 +2793,7 @@ sub cleanup1 {
     my $dir = shift;
     foreach (@_) { 
         (my $name = /%R/ ? $_ : "%R.$_") =~ s/%R/$dir$root_filename/;
-        unlink("$name");
+        unlink_or_move("$name");
     }
 } #END cleanup1
 
@@ -2799,7 +2816,7 @@ sub cleanup_one_cusdep_generated {
        return;
     }
     if ( (-e $$Pdest) && (-e $$Psource) ) {
-        unlink $$Pdest;
+        unlink_or_move( $$Pdest );
     }
     elsif ( (-e $$Pdest) && (!-e $$Psource) ) {
         warn "$My_name: For custom dependency '$rule',\n",
@@ -2964,6 +2981,7 @@ sub print_help
   "                on force mode, so errors do not cause $my_name to stop.)\n",
   "            (Side effect: turn off ordinary preview mode.)\n",
   "   -pvc-  - turn off -pvc\n",
+  "   -quiet    - silence progress messages from called programs\n",
   "   -r <file> - Read custom RC file\n",
   "               (N.B. This file could override options specified earlier\n",
   "               on the command line.)\n",
@@ -3049,6 +3067,7 @@ sub check_biber_log {
     #        3: could not open .blg file;
     #        4: failed to find one or more source files, except for bibfile;
     #        5: failed to find bib file;
+    #        6: missing file, one of which is control file
     #       10: only error is missing \citation commands.
     # Side effect: add source files @biber_source
     my $base = $_[0];
@@ -3063,10 +3082,11 @@ sub check_biber_log {
     my $no_citations = 0;
     my $error_count = 0;            # From my counting of error messages
     my $warning_count = 0;          # From my counting of warning messages
-    # The next two occur only from biber v > 
+    # The next two occur only from biber
     my $bibers_error_count = 0;     # From biber's counting of errors
     my $bibers_warning_count = 0;   # From biber's counting of warnings
     my $not_found_count = 0;
+    my $control_file_missing = 0;
     while (<$log_file>) {
         if (/> WARN /) { 
             print "Biber warning: $_"; 
@@ -3077,6 +3097,11 @@ sub check_biber_log {
             print "Biber error: $_"; 
             if ( /> FATAL - Cannot find file '([^']+)'/ ) {  #'
                 $not_found_count++;
+                push @$Pbiber_source, $1;
+            }
+            elsif ( /> FATAL - Cannot find control file '([^']+)'/ ) {  #'
+                $not_found_count++;
+                $control_file_missing = 1;
                 push @$Pbiber_source, $1;
             }
             else {
@@ -3109,7 +3134,7 @@ sub check_biber_log {
     my @not_found = &find_file_list1( $Pbiber_source, $Pbiber_source,
                                       '', \@BIBINPUTS );
     @$Pbiber_source = uniqs( @$Pbiber_source );
-    if ( $#not_found < 0) {
+    if ( ($#not_found < 0) && ($#$Pbiber_source >= 0) ) {
         warn "$My_name: Found biber source file(s) [@$Pbiber_source]\n"
         unless $silent;
     }
@@ -3126,6 +3151,9 @@ sub check_biber_log {
             warn "==== Force_mode is on, so I will continue.  ",
                  "But there may be problems ===\n";
         }
+        if ($control_file_missing) {
+            return 6;
+	}
         return 4;
     }
 #    print "$My_name: #Biber errors = $error_count, warning messages = $warning_count,\n  ",
@@ -3148,7 +3176,9 @@ sub check_bibtex_log {
     # Usage: check_bibtex_log( base_of_bibtex_run )
     # return 0: OK, 1: bibtex warnings, 2: bibtex errors, 
     #        3: could not open .blg file.
-    #       10: only error is missing \citation commands.
+    #       10: only error is missing \citation commands or a missing aux file
+    #           (which would normally be corrected after a later run of 
+    #           (pdf)latex).
 
     my $base = $_[0];
     my $log_name = "$base.blg";
@@ -3158,27 +3188,41 @@ sub check_bibtex_log {
     my $have_warning = 0;
     my $have_error = 0;
     my $missing_citations = 0;
+    my @missing_aux = ();
     my $error_count = 0;
     while (<$log_file>) {
         if (/^Warning--/) { 
             #print "Bibtex warning: $_"; 
             $have_warning = 1;
         }
-        elsif ( /^I found no \\citation commands---while reading file/ ) {
-            $missing_citations++; 
+        elsif ( /^I couldn\'t open auxiliary file (.*\.aux)/ ) {
+            push @missing_aux, $1;
 	}
-        elsif (/There (were|was) (\d+) error message/) { 
+        elsif ( /^I found no \\citation commands---while reading file/ ) {
+            $missing_citations++;
+	}
+        elsif (/There (were|was) (\d+) error message/) {
             $error_count = $2;
             #print "Bibtex error: count=$error_count $_"; 
             $have_error = 1;
         }
     }
     close $log_file;
-    #print "Bibtex errors = $error_count, missing citations = $missing_citations\n";
-    if ($have_error && ($error_count <= $missing_citations ) 
-        && ($missing_citations > 0) ) {
-        # If the only error is a missing citation line, that should only 
+    my $missing = $missing_citations + $#missing_aux + 1;
+
+    if ( $#missing_aux > -1 ) {
+        # Need to make the missing files.
+        warn "$My_name: One or more aux files is missing for bibtex. I'll try\n",
+             "          to get (pdf)latex to remake them.\n";
+        rdb_for_some( [keys %current_primaries], sub{ $$Pout_of_date = 1; } );
+    }
+    #print "Bibtex errors = $error_count, missing aux files and citations = $missing\n";
+    if ($have_error && ($error_count <= $missing )
+        && ($missing > 0) ) {
+        # If the only error is a missing citation line, that should only
         # count as a warning.
+        # Also a missing aux file should be innocuous; it will be created on
+        # next run of (pdf)latex.  ?? HAVE I HANDLED THAT CORRECTLY?
         # But have to deal with the problem that bibtex gives a non-zero 
         # exit code.  So leave things as they are so that the user gets
         # a better diagnostic ??????????????????????????
@@ -5274,8 +5318,15 @@ sub rdb_makeB1 {
 	    #      not run the rule, but not set an error condition.
 	    #      Any error will arise at the (pdf)latex level due to a 
 	    #      missing source file at that level.
-	    if ( ( $$Pcmd_type eq 'cusdep') && $$Psource && (! -e $$Psource) ) {
-		# No action
+	    if ( $$Psource && (! -e $$Psource)
+# OLD                && ( ( $$Pcmd_type eq 'cusdep') )
+# NEW
+                 && ( ( $$Pcmd_type ne 'primary') )
+               ) {
+                # Main source file doesn't exist, and rule is NOT primary.
+		# No action, since a run is pointless.  Primary is different:
+                # file might be found elsewhere (by kpsearch from (pdf)latex),
+                # while non-existence of main source file is a clear error.
 	    }
 	    elsif ( $$Pcmd_type eq 'delegated' ) {
 		# Delegate to destination rule
@@ -5373,14 +5424,18 @@ sub rdb_makeB1 {
             # For a primary rule, i.e., (pdf)latex, not to produce the 
             #    expected output file may not be an error condition.  
             # Diagnostics were handled in parsing the log file.
-            # Special action in main loop inrdb_makeB1
+            # Special action in main loop in rdb_makeB
             $missing_dvi_pdf = $$Pdest;
         }
+        elsif ($return == -2) {
+           # Missing output file was reported to be NOT an error
+           $$Pout_of_date = 0;
+	}
 	else {
             $failure = 1;
 	}
     }
-    if ($return != 0) {
+    if ( ($return != 0) && ($return != -2) ) {
         $failure = 1; 
 	$$Plast_result = 2;
         if ( !$$Plast_message ) {
@@ -5406,7 +5461,6 @@ sub rdb_submakeB {
 }  #END rdb_submakeB
 
 #************************************************************
-
 
 sub rdb_classify_rules {
     # Usage: rdb_classify_rules( \%allowed_primaries, requested targets )
@@ -5520,7 +5574,8 @@ sub rdb_run1 {
     # Assumes contexts for: rule.
     # Unconditionally apply the rule
     # Returns return code from applying the rule.
-    # Otherwise: 0 on other kind of success, -1 on error.
+    # Otherwise: 0 on other kind of success, -1 on error, -2 when missing dest_file
+    #    is to be ignored
 
     # Source file data, by definition, correspond to the file state just before 
     # the latest run, and the run_time to the time just before the run:
@@ -5572,6 +5627,14 @@ sub rdb_run1 {
 #            $$Plast_message = "Could not find bib file for '$$Pbase'";
             push @warnings, "Bib file not found for '$$Pbase'";
         }
+        elsif ($retcode == 6) {
+           # Missing control file.  Need to remake it (if possible)
+           # Don't treat missing bbl file as error.
+           warn "$My_name: bibtex control file missing.  Since that can\n",
+                "   be recreated, I'll try to do so.\n";
+           $return = -2;
+           rdb_for_some( [keys %current_primaries], sub{ $$Pout_of_date = 1; } );
+	}
         elsif ($retcode == 4) {
             $$Plast_result = 2;
             $$Plast_message = "Could not find all biber source files for '$$Pbase'";
@@ -5591,13 +5654,16 @@ sub rdb_run1 {
         }
         elsif ($retcode == 10) {
             push @warnings, "Biber found no citations for '$$Pbase'";
-            # Biber doesn't generate a bbl file in this situation.  So I cannot
-            #   ignore the error the way I do with bibtex.
-            #$return = 0;
+            # Biber doesn't generate a bbl file in this situation.
+            $return = -2;
         }
     }
     if ( $rule =~ /^bibtex/ ) {
         my $retcode = check_bibtex_log($$Pbase);
+        if ( ! -e $$Psource ) {
+            $retcode = 10;
+            rdb_for_some( [keys %current_primaries], sub{ $$Pout_of_date = 1; } );
+	}
         if ($retcode == 3) {
             $$Plast_result = 2;
             $$Plast_message = "Could not open bibtex log file for '$$Pbase'";
@@ -5605,15 +5671,23 @@ sub rdb_run1 {
         }
         elsif ($retcode == 2) {
             $$Plast_message = "Bibtex errors: See file '$$Pbase.blg'";
+            $failure = 1;
             push @warnings, $$Plast_message;
         }
         elsif ($retcode == 1) {
             push @warnings, "Bibtex warnings for '$$Pbase'";
         }
         elsif ($retcode == 10) {
-            push @warnings, "Bibtex found no citations for '$$Pbase'";
-            # But this is an innocuous error, so fix return code
-            $return = 0;
+            push @warnings, "Bibtex found no citations for '$$Pbase',\n",
+                            "    or bibtex found a missing aux file\n";
+            if (! -e $$Pdest ) {
+                warn "$My_name: Bibtex did not produce '$$Pdest'.  But that\n",
+                     "     was because of missing files, so I will continue.\n";
+                $return = -2;
+	    }
+            else {
+                $return = 0;
+	    }
         }
     }
 
@@ -5625,16 +5699,15 @@ sub rdb_run1 {
     }
     $$Pout_of_date = $$Pout_of_date_user = 0;
 
-    if ( ($$Plast_result == 0) && ($return != 0) ) {
+    if ( ($$Plast_result == 0) && ($return != 0) && ($return != -2) ) {
         $$Plast_result = 2;
         if ($$Plast_message eq '') {
 	    $$Plast_message = "Command for '$rule' gave return code $return";
 	}
     }
-    elsif ( $$Pdest && (! -e $$Pdest) ) {
+    elsif ( $$Pdest && (! -e $$Pdest) && ($return != -2) ) {
 	$$Plast_result = 1;
     }
-
     return $return;
 }  # END rdb_run1
 
@@ -6474,7 +6547,7 @@ sub cus_dep_delete_dest {
     #   primary run.
 
     # Remove the destination file, to indicate it needs to be remade:
-    unlink $$Pdest;
+    unlink_or_move( $$Pdest );
     # Arrange that the non-existent destination file is not treated as
     #   an error.  The variable changed here is a bit misnamed.
     $$Pchanged = 1;
@@ -6840,6 +6913,21 @@ sub find_file_list1 {
 #??  foreach (@$ref_output) { if ( /\/\// ) {  print " ====== double slash in  '$_'\n"; }  }
   return @not_found;
 } #END find_file_list1
+
+#************************************************************
+
+sub unlink_or_move {
+    if ( $del_dir eq '' ) {
+        unlink @_;
+    }
+    else {
+        foreach (@_) {
+	    if (-e $_ && ! rename $_, "$del_dir/$_" ) {
+                warn "$My_name:Cannot move '$_' to '$del_dir/$_'\n";
+	    }
+        }
+    }
+}
 
 #************************************************************
 
