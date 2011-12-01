@@ -53,7 +53,7 @@ void ttfPrintHHEA(FILE *fp,HHEAPtr hhea)
 
     fprintf(fp,"'hhea' Table - Horizontal Header\n");
     fprintf(fp,"--------------------------\n");
-    fprintf(fp,"\t 'hhea' version:\t %2d.%2d\n",b[1],b[0]);
+    fprintf(fp,"\t 'hhea' version:\t %d.%d\n",b[1],b[0]);
     fprintf(fp,"\t yAscender:\t\t %d\n",hhea->Ascender);
     fprintf(fp,"\t yDescender:\t\t %d\n",hhea->Descender);
     fprintf(fp,"\t yLineGap:\t\t %d\n",hhea->LineGap);

@@ -52,6 +52,9 @@ static void print_vdmx(FILE *out);
 static void print_vhea(FILE *out);
 static void print_vmtx(FILE *out);
 
+static void print_gpos(FILE *out);
+static void print_gsub(FILE *out);
+
 static void usage (void);
 
 
@@ -157,6 +160,9 @@ main(int argc, char *argv[])
   print_offset(dp_file);
   print_dir(dp_file);
 
+  if (font->loca == NULL)
+    glyphnum = NO_GLYF;
+
   if (tablename == NULL)
   {
     /* no table specified */
@@ -236,6 +242,10 @@ print_table(FILE *out, char *tablename)
     print_vhea(out);
   if (!strcmp(tablename, "vmtx"))
     print_vmtx(out);
+  if (!strcmp(tablename, "GPOS"))
+    print_gpos(out);
+  if (!strcmp(tablename, "GSUB"))
+    print_gsub(out);
 }
 
 
@@ -262,6 +272,10 @@ print_all_tables(FILE *dp_file)
   print_vdmx(dp_file);
   print_vhea(dp_file);
   print_vmtx(dp_file);
+
+  /* Additional OpenType Tables */
+  print_gpos(dp_file);
+  print_gsub(dp_file);
 }
 
 
@@ -269,7 +283,6 @@ static void
 print_ttc(TTCHeaderPtr ttc, FILE *out)
 {
   int i, b[2];
-
 
   FixedSplit(ttc->version, b);
 
@@ -295,9 +308,17 @@ print_prologue(FILE *out)
 static void
 print_offset(FILE *out)
 {
+  int b[2];
+
+  FixedSplit(font->version, b);
+
   fprintf(out, "Offset Table\n");
   fprintf(out, "------------\n");
-  fprintf(out, "\t sfnt version:\n");
+  fprintf(out, "\t sfnt version: ");
+  if (b[1] & 0xff00)
+    fprintf(out, "'%s'\n", TagToStr (font->version));
+  else
+    fprintf(out, "\t\t %d.%d\n", b[1], b[0]);
   fprintf(out, "\t number of tables: %d\n", font->numTables);
 }
 
@@ -501,6 +522,22 @@ print_vmtx(FILE *out)
 {
   if (font->vmtx != NULL)
     ttfPrintVMTX(out, font->vmtx);
+}
+
+
+static void
+print_gpos(FILE *out)
+{
+  if (font->gpos != NULL)
+    ttfPrintGPOS(out, font->gpos);
+}
+
+
+static void
+print_gsub(FILE *out)
+{
+  if (font->gsub != NULL)
+    ttfPrintGSUB(out, font->gsub);
 }
 
 

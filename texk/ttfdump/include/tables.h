@@ -1,16 +1,16 @@
-/* table.h -- define data structures for various ttf file internal tables 
+/* tables.h -- define data structures for various ttf file internal tables 
  * See Also: True Type Font Specification
  */
 
-#ifndef __TTF_TABLE_H
-#define __TTF_TABLE_H
+#ifndef __TTF_TABLES_H
+#define __TTF_TABLES_H
 
 /* $Id: tables.h,v 1.2 1998/07/06 06:07:01 werner Exp $ */
 
 /* Offset Table:
  * Into the beginning of a True Type font file
  */
-typedef struct _OffsetTable
+typedef struct
 {
   Fixed version;
   USHORT numTables;
@@ -23,7 +23,7 @@ OffsetTable, *OffsetTablePtr;
 /* Table Directory:
  * The directory to find each table in a True Type font file
  */
-typedef struct _TableDir
+typedef struct
 {
   ULONG tag;
   ULONG checksum;
@@ -34,16 +34,19 @@ TableDir, *TableDirPtr;
 
 
 /* cmap: Character to Glyph Index Mapping Table
- * There are four kinds of cmap, format 0, 2, 4, and 6.  They are defined
- * as follows
+ * There are nine kinds of cmap, format 0, 2, 4, 6, 8, 10, 12,
+ * 13, and 14.  They are defined as follows
  */
 typedef struct
 {
+  USHORT format;  /* = 0 */
+  USHORT length;
+  USHORT version;
   BYTE glyphIndexArray[256];
 }
 CMAP0;
 
-typedef struct _subHeaders
+typedef struct
 {
   USHORT firstCode;
   USHORT entryCount;
@@ -54,6 +57,9 @@ SubHeader, *SubHeaderPtr;
 
 typedef struct
 {
+  USHORT format;  /* = 2 */
+  USHORT length;
+  USHORT version;
   USHORT subHeaderKeys[256];
   SubHeaderPtr subHeaders;
   USHORT *glyphIndexArray;
@@ -62,6 +68,9 @@ CMAP2;
 
 typedef struct
 {
+  USHORT format;  /* = 4 */
+  USHORT length;
+  USHORT version;
   USHORT segCountX2;
   USHORT searchRange;
   USHORT entrySelector;
@@ -73,43 +82,125 @@ typedef struct
   USHORT *idRangeOffset;
   USHORT *glyphIndexArray;
 }
-
 CMAP4;
+
 typedef struct
 {
+  USHORT format;  /* = 6 */
+  USHORT length;
+  USHORT version;
   USHORT firstCode;
   USHORT entryCount;
   USHORT *glyphIndexArray;
 }
 CMAP6;
 
-/* SubTable: one for each encoding scheme */
+typedef struct
+{
+  ULONG startCharCode;
+  ULONG endCharCode;
+  ULONG startGlyphID;
+}
+CharGroup, *CharGroupPtr;
+
+typedef struct
+{
+  USHORT format;  /* = 8 */
+  ULONG length;
+  ULONG version;
+  BYTE is32[8192];
+  ULONG nGroups;
+  CharGroupPtr charGroup;       /* size = nGroups */
+}
+CMAP8;
+
+typedef struct
+{
+  USHORT format;  /* = 10 */
+  ULONG length;
+  ULONG version;
+  ULONG startCharCode;
+  ULONG numChars;
+  USHORT *glyphs;
+}
+CMAP10;
+
+typedef struct
+{
+  USHORT format;  /* = 12 */
+  ULONG length;
+  ULONG version;
+  ULONG nGroups;
+  CharGroupPtr charGroup;       /* size = nGroups */
+}
+CMAP12;
+
+typedef struct
+{
+  USHORT format;  /* = 13 */
+  ULONG length;
+  ULONG version;
+  ULONG nGroups;
+  CharGroupPtr charGroup;       /* size = nGroups */
+}
+CMAP13;
+
+typedef struct
+{
+  int notYet;
+}
+VarSelRec, *VarSelRecPtr;
+
+typedef struct
+{
+  USHORT format;  /* = 14 */
+  ULONG length;
+  ULONG numVarSelRec;
+  VarSelRecPtr varSelRec;       /* size = numVarSelRec */
+}
+CMAP14;
+
+typedef union
+{
+  USHORT *format;
+  CMAP0 *cmap0;
+  CMAP2 *cmap2;
+  CMAP4 *cmap4;
+  CMAP6 *cmap6;
+  CMAP8 *cmap8;
+  CMAP10 *cmap10;
+  CMAP12 *cmap12;
+  CMAP13 *cmap13;
+  CMAP14 *cmap14;
+}
+MapPtr;
+
+/* Encoding: one for each encoding scheme */
 typedef struct
 {
   /* encoding table */
   USHORT PlatformID;
   USHORT EncodingID;
   ULONG offset;
+  USHORT mapindex;
+  MapPtr map;
+}
+Encoding, *EncodingPtr;
 
-  USHORT format;
-  USHORT length;
-  USHORT version;
-  union
-  {
-    CMAP0 *cmap0;
-    CMAP2 *cmap2;
-    CMAP4 *cmap4;
-    CMAP6 *cmap6;
-  }
-  map;
+typedef struct
+{
+  ULONG offset;
+  MapPtr map;
 }
 SubTable, *SubTablePtr;
 
-typedef struct _cmap
+typedef struct
 {
   USHORT version;
   USHORT numberOfEncodings;
-  SubTablePtr subTables;        /* size = numberOfEncodings */
+  USHORT numberOfMaps;
+  EncodingPtr encoding;         /* size = numberOfEncodings */
+  SubTablePtr subTable;         /* size = numberOfMaps */
 }
 CMAP, *CMAPPtr;
 
@@ -209,8 +300,8 @@ typedef struct
   ULONG magicNumber;
   USHORT flags;
   USHORT unitsPerEm;
-  BYTE created[8];
-  BYTE modified[8];
+  ULONG created[2];
+  ULONG modified[2];
   FWord xMin;
   FWord yMin;
   FWord xMax;
@@ -258,7 +349,7 @@ HHEA, *HHEAPtr;
 
 /* for a new created HMTX, one have to fill numberofHMetrics manually for
  * hhea */
-typedef struct _longHorMetric
+typedef struct
 {
   uFWord advanceWidth;
   FWord lsb;
@@ -579,7 +670,10 @@ typedef struct
 }
 VMTX, *VMTXPtr;
 
-#endif /* __TTF_TABLE_H */
+/* Additional OpenType Tables */
+#include "otftables.h"
+
+#endif /* __TTF_TABLES_H */
 
 
 /* end of tables.h */

@@ -49,7 +49,7 @@ void ttfPrintMAXP(FILE *fp,MAXPPtr maxp)
 
     fprintf(fp,"'maxp' Table - Maximum Profile\n");
     fprintf(fp,"------------------------------\n");
-    fprintf(fp,"\t 'maxp' version:\t %2d.%2d\n",b[1],b[0]);
+    fprintf(fp,"\t 'maxp' version:\t %d.%d\n",b[1],b[0]);
     fprintf(fp,"\t numGlyphs:\t\t %d\n",maxp->numGlyphs);
     fprintf(fp,"\t maxPoints:\t\t %d\n",maxp->maxPoints);
     fprintf(fp,"\t maxContours:\t\t %d\n",maxp->maxContours);

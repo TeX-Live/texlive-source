@@ -16,6 +16,7 @@ char *TagToStr(ULONG tag);
 
 /* Functions copied or adapted from kpathsea.  */
 void xfseek (FILE *fp, long offset, int wherefrom, const char *funcname);
+long xftell (FILE *fp, const char *funcname);
 void *xmalloc (size_t size);
 void *xcalloc (size_t nelem, size_t elsize);
 char *xstrdup(const char *s);

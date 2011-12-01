@@ -34,10 +34,8 @@ static void ttfLoadHEAD(FILE *fp,HEADPtr head,ULONG offset)
     head->flags = ttfGetUSHORT(fp);
     head->unitsPerEm = ttfGetUSHORT(fp);
     
-    if (fread(head->created,sizeof(char),8,fp) != 8)
-        ttfError("Error when getting HEAD created\n");
-    if (fread(head->modified,sizeof(char),8,fp) != 8)
-        ttfError("Error when getting HEAD modified\n");
+    ttfReadULONG (head->created, 2, fp);
+    ttfReadULONG (head->modified, 2, fp);
     
     head->xMin = ttfGetFWord(fp);
     head->yMin = ttfGetFWord(fp);
@@ -61,16 +59,16 @@ void ttfPrintHEAD(FILE *fp,HEADPtr head)
 
     fprintf(fp,"'head' Table - Font Header\n");
     fprintf(fp,"--------------------------\n");
-    fprintf(fp,"\t 'head' version:\t %2d.%2d\n",b1[1],b1[0]);
-    fprintf(fp,"\t fontReversion:\t\t %2d.%2d\n",b2[1],b2[0]);
+    fprintf(fp,"\t 'head' version:\t %d.%d\n",b1[1],b1[0]);
+    fprintf(fp,"\t fontReversion:\t\t %d.%d\n",b2[1],b2[0]);
     fprintf(fp,"\t checkSumAdjustment:\t 0x%08x\n",head->checkSumAdj);
     fprintf(fp,"\t magicNumber:\t\t 0x%08x\n",head->magicNumber);
     fprintf(fp,"\t flags:\t\t\t 0x%04x\n",head->flags);
     fprintf(fp,"\t unitsPerEm:\t\t %d\n",head->unitsPerEm);
 
     /* don't know how to compute */
-    fprintf(fp,"\t created:\n");
-    fprintf(fp,"\t modified:\n");
+    fprintf(fp,"\t created:\t\t 0x%08x%08x\n", head->created[0], head->created[1]);
+    fprintf(fp,"\t modified:\t\t 0x%08x%08x\n", head->modified[0], head->modified[1]);
 
     fprintf(fp,"\t xMin:\t\t\t %d\n",head->xMin);
     fprintf(fp,"\t yMin:\t\t\t %d\n",head->yMin);

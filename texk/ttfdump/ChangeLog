@@ -1,3 +1,41 @@
+2011-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/gpos.h (new): GPOS table format.
+	* include/gsub.h (new): GSUB table format.
+	* include/otftables.h (new): OpenType common table formats.
+	* libttf/gpos.c (new): Load, print, and free GPOS table.
+	* libttf/gsub.c (new): Load, print, and free GSUB table.
+	* libttf/otfcommon.c (new): Handle common table formats.
+	* include/loadtable.h, include/tables.h, include/ttf.h,
+	libttf/font.c, src/ttfdump.c: Add GPOS and GSUB tables.
+	* Makefile.am (libttf_a_SOURCES): Add the new files.
+	* docs/ttfdump.1: Mention GPOS and GSUB tables.
+
+	* tests/ttfdump.test: Add tests for GPOS and GSUB tables.
+	* tests/ttfdump.{gpos,gsub} (new): Expected output.
+	* Makefile.am: Adapted.
+
+2011-11-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Additional 'cmap' SubTable Formats.
+	* include/tables.h: Declare data structures for 'cmap' SubTable
+	Formats 8, 10, 12, 13, and 14.
+	* libttf/cmap.c: Separate Encoding Records from SubTables;
+	several Encodings may refer to the same SubTable.
+	Add support for SubTable Formats 8, 10, 12, 13, and 14.
+	FIXME: Format 14 is not yet implemented.
+	* include/loadtable.h, include/ttf.h, libttf/glyf.c: Adapted.
+
+2011-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/tables.h, libttf/head.c: Print created and modified.
+	* libttf/font.c: Index to location ('loca') table is optional.
+	* libttf/loca.c: Avoid segfault for missing 'loca' table.
+	* src/ttfdump.c: Avoid segfault for missing 'loca' table (do not
+	try to print glyphs).  Print sfnt version.
+
+	* tests/ttfdump.test: Perform all sub-tests and report failed ones.
+
 2011-11-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Major update.

@@ -12,9 +12,12 @@ noinst_LIBRARIES = libttf.a
 
 libttf_a_SOURCES = \
 	include/gcache.h \
+	include/gpos.h \
 	include/gstate.h \
+	include/gsub.h \
 	include/loadtable.h \
 	include/os2_P.h \
+	include/otftables.h \
 	include/protos.h \
 	include/tables.h \
 	include/ttc.h \
@@ -28,7 +31,9 @@ libttf_a_SOURCES = \
 	libttf/gasp.c \
 	libttf/gcache.c \
 	libttf/glyf.c \
+	libttf/gpos.c \
 	libttf/gstate.c \
+	libttf/gsub.c \
 	libttf/hdmx.c \
 	libttf/head.c \
 	libttf/hhea.c \
@@ -39,6 +44,7 @@ libttf_a_SOURCES = \
 	libttf/maxp.c \
 	libttf/name.c \
 	libttf/os2.c \
+	libttf/otfcommon.c \
 	libttf/pclt.c \
 	libttf/post.c \
 	libttf/prep.c \
@@ -78,8 +84,15 @@ TESTS = tests/ttfdump.test
 EXTRA_DIST += $(TESTS)
 DISTCLEANFILES =
 ## tests/ttfdump.test
-EXTRA_DIST += tests/FonetikaDaniaIwonaeRegular.ttf tests/ttfdump.glyf tests/ttfdump.head
-DISTCLEANFILES += FonetikaDaniaIwonaeRegular.ttf ttfdump.glyf ttfdump.head
+EXTRA_DIST += \
+	tests/FonetikaDaniaIwonaeRegular.ttf \
+	tests/ttfdump.glyf \
+	tests/ttfdump.gpos \
+	tests/ttfdump.gsub \
+	tests/ttfdump.head
+DISTCLEANFILES += \
+	FonetikaDaniaIwonaeRegular.ttf \
+	ttftest.*
 
 ## Not used
 ##

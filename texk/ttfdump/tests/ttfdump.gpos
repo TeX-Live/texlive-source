@@ -22,39 +22,26 @@ Offset Table
   12. 'name' - checksum = 0x31984665, offset = 0x00001830, len =      1002
   13. 'post' - checksum = 0x0aef76ec, offset = 0x00001c1c, len =       140
 
-Glyph      1.
-	 numberOfContours:	 2
-	 xMin:			 33
-	 yMin:			 0
-	 xMax:			 366
-	 yMax:			 666
+'GPOS' Table - Glyph Positioning Data
+-------------------------------------
+	 'GPOS' Version:	 1.0
+    scriptCount: 1
+   0. 'latn' script - langSysCount: 0
+	 default lang - featureCount: 1
+		  featureIndex: 0
 
-	 EndPoints
-	 ---------
-	  0:  3
-	  1:  7
+    featureCount: 1
+   0. 'kern' feature - lookupCount: 1
+		lookupListIndex: 0
 
-	 Length of Instructions: 46
-
-	 Flags
-	 -----
-	  0: YDual  XDual                   X-Short On
-	  1:        XDual                           On
-	  2: YDual                                  On
-	  3:        XDual                           On
-	  4: YDual                  Y-Short         On
-	  5: YDual                                  On
-	  6:        XDual                           On
-	  7: YDual                                  On
-
-	 Coordinates
-	 -----------
-	  0 Rel (     33,      0) -> Abs (     33,      0)
-	  1 Rel (      0,    666) -> Abs (     33,    666)
-	  2 Rel (    333,      0) -> Abs (    366,    666)
-	  3 Rel (      0,   -666) -> Abs (    366,      0)
-	  4 Rel (   -300,     33) -> Abs (     66,     33)
-	  5 Rel (    267,      0) -> Abs (    333,     33)
-	  6 Rel (      0,    600) -> Abs (    333,    633)
-	  7 Rel (   -267,      0) -> Abs (     66,    633)
+    lookupCount: 1
+   0. lookupType: 2, lookupFlag: 0x0000
+	subTableCount:	1
+       0. lookupFormat: 1 - Pair Adjustment List
+	  Coverage - glyphCount: 1
+		  glyphArray: 34
+	  valueFormat1: 0x0004, valueFormat2: 0x0000, pairSetCount: 1
+	   0. pairValueCount: 1
+	       0. secondGlyph: 14
+		  value1: XAdvance = -33
 

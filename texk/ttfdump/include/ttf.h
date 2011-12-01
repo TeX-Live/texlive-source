@@ -121,7 +121,7 @@ typedef struct
                                  * OffsetTables */
   ULONG glyphOffset;            /* where the glyph table starts */
   TableDirPtr dir;              /* Pointer to Table Directories */
-  SubTablePtr encoding;         /* `encoding' is the currently used encoding 
+  EncodingPtr encoding;         /* `encoding' is the currently used encoding 
                                  * table */
   USHORT numCacheElements;      /* number of glyph cache elements */
 
@@ -158,6 +158,10 @@ typedef struct
   VDMXPtr vdmx;
   VHEAPtr vhea;
   VMTXPtr vmtx;
+
+  /* Additional OpenType Tables */
+  GPOSPtr gpos;
+  GSUBPtr gsub;
 }
 TTFont, *TTFontPtr;
 

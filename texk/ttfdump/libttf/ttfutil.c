@@ -32,12 +32,22 @@ void ttfError(const char * msg)
 }
 
 /* Functions copied or adapted from kpathsea.  */
+long
+xftell (FILE *fp, const char *funcname)
+{
+    long where = ftell (fp);
+
+    if (where < 0)
+        FATAL_PERROR(funcname);
+
+    return where;
+}
+
 void
 xfseek (FILE *f, long offset, int wherefrom, const char *funcname)
 {
-    if (fseek (f, offset, wherefrom) < 0) {
+    if (fseek (f, offset, wherefrom) < 0)
         FATAL_PERROR(funcname);
-    }
 }
 
 void *
@@ -55,7 +65,7 @@ xmalloc (size_t size)
 }
 
 void *
-xcalloc (size_t nelem,  size_t elsize)
+xcalloc (size_t nelem, size_t elsize)
 {
     void *new_mem = (void*)calloc(nelem ? nelem : 1, elsize ? elsize : 1);
 

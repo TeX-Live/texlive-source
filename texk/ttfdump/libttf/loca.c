@@ -59,20 +59,26 @@ void ttfPrintLOCA(FILE *fp,LOCAPtr loca)
 {
     USHORT i;
     
-    fprintf(fp,"'loca' Table - Index to Location\n");
-    fprintf(fp,"--------------------------------\n");
-    for (i=0;i<loca->numGlyphs;i++)
-	{
-	    fprintf(fp,"\t Idx %6d -> GlyphOffset 0x%08x\n",i,
-		    (loca->offset)[i]);
-	}
-    fprintf (fp,"\t Ended at 0x%08x\n",(loca->offset)[loca->numGlyphs]);
+    if (loca)
+        {
+            fprintf(fp,"'loca' Table - Index to Location\n");
+            fprintf(fp,"--------------------------------\n");
+            for (i=0;i<loca->numGlyphs;i++)
+        	{
+        	    fprintf(fp,"\t Idx %6d -> GlyphOffset 0x%08x\n",i,
+        		    (loca->offset)[i]);
+        	}
+            fprintf (fp,"\t Ended at 0x%08x\n",(loca->offset)[loca->numGlyphs]);
+        }
 }
 
 void ttfFreeLOCA(LOCAPtr loca)
 {
-    free (loca->offset);
-    free (loca);
+    if (loca)
+        {
+            free (loca->offset);
+            free (loca);
+        }
 }
 
 ULONG ttfLookUpGlyfLOCA(LOCAPtr loca,USHORT idx)

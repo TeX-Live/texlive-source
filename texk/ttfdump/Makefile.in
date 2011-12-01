@@ -73,9 +73,10 @@ libttf_a_AR = $(AR) $(ARFLAGS)
 libttf_a_LIBADD =
 am_libttf_a_OBJECTS = cmap.$(OBJEXT) cvt.$(OBJEXT) disasm.$(OBJEXT) \
 	font.$(OBJEXT) fpgm.$(OBJEXT) gasp.$(OBJEXT) gcache.$(OBJEXT) \
-	glyf.$(OBJEXT) gstate.$(OBJEXT) hdmx.$(OBJEXT) head.$(OBJEXT) \
-	hhea.$(OBJEXT) hmtx.$(OBJEXT) kern.$(OBJEXT) loca.$(OBJEXT) \
-	ltsh.$(OBJEXT) maxp.$(OBJEXT) name.$(OBJEXT) os2.$(OBJEXT) \
+	glyf.$(OBJEXT) gpos.$(OBJEXT) gstate.$(OBJEXT) gsub.$(OBJEXT) \
+	hdmx.$(OBJEXT) head.$(OBJEXT) hhea.$(OBJEXT) hmtx.$(OBJEXT) \
+	kern.$(OBJEXT) loca.$(OBJEXT) ltsh.$(OBJEXT) maxp.$(OBJEXT) \
+	name.$(OBJEXT) os2.$(OBJEXT) otfcommon.$(OBJEXT) \
 	pclt.$(OBJEXT) post.$(OBJEXT) prep.$(OBJEXT) \
 	tabledir.$(OBJEXT) ttc.$(OBJEXT) ttfread.$(OBJEXT) \
 	ttfutil.$(OBJEXT) vdmx.$(OBJEXT) vhea.$(OBJEXT) vmtx.$(OBJEXT)
@@ -262,9 +263,12 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libttf.a
 libttf_a_SOURCES = \
 	include/gcache.h \
+	include/gpos.h \
 	include/gstate.h \
+	include/gsub.h \
 	include/loadtable.h \
 	include/os2_P.h \
+	include/otftables.h \
 	include/protos.h \
 	include/tables.h \
 	include/ttc.h \
@@ -278,7 +282,9 @@ libttf_a_SOURCES = \
 	libttf/gasp.c \
 	libttf/gcache.c \
 	libttf/glyf.c \
+	libttf/gpos.c \
 	libttf/gstate.c \
+	libttf/gsub.c \
 	libttf/hdmx.c \
 	libttf/head.c \
 	libttf/hhea.c \
@@ -289,6 +295,7 @@ libttf_a_SOURCES = \
 	libttf/maxp.c \
 	libttf/name.c \
 	libttf/os2.c \
+	libttf/otfcommon.c \
 	libttf/pclt.c \
 	libttf/post.c \
 	libttf/prep.c \
@@ -303,13 +310,13 @@ libttf_a_SOURCES = \
 EXTRA_DIST = libttf/fixed.c libttf/interp.c libttf/stack.c \
 	docs/ttfdump.dvi docs/ttfdump.html docs/ttfdump.ps $(TESTS) \
 	tests/FonetikaDaniaIwonaeRegular.ttf tests/ttfdump.glyf \
-	tests/ttfdump.head ILX NOTE README.bg5
+	tests/ttfdump.gpos tests/ttfdump.gsub tests/ttfdump.head ILX \
+	NOTE README.bg5
 ttfdump_SOURCES = src/ttfdump.c
 LDADD = libttf.a
 dist_man1_MANS = docs/ttfdump.1
 TESTS = tests/ttfdump.test
-DISTCLEANFILES = FonetikaDaniaIwonaeRegular.ttf ttfdump.glyf \
-	ttfdump.head
+DISTCLEANFILES = FonetikaDaniaIwonaeRegular.ttf ttftest.*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -434,7 +441,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gasp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/glyf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gpos.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gsub.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hdmx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/head.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hhea.Po@am__quote@
@@ -445,6 +454,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/maxp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/name.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/os2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otfcommon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pclt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/post.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prep.Po@am__quote@
@@ -590,6 +600,20 @@ glyf.obj: libttf/glyf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o glyf.obj `if test -f 'libttf/glyf.c'; then $(CYGPATH_W) 'libttf/glyf.c'; else $(CYGPATH_W) '$(srcdir)/libttf/glyf.c'; fi`
 
+gpos.o: libttf/gpos.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gpos.o -MD -MP -MF $(DEPDIR)/gpos.Tpo -c -o gpos.o `test -f 'libttf/gpos.c' || echo '$(srcdir)/'`libttf/gpos.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gpos.Tpo $(DEPDIR)/gpos.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/gpos.c' object='gpos.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gpos.o `test -f 'libttf/gpos.c' || echo '$(srcdir)/'`libttf/gpos.c
+
+gpos.obj: libttf/gpos.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gpos.obj -MD -MP -MF $(DEPDIR)/gpos.Tpo -c -o gpos.obj `if test -f 'libttf/gpos.c'; then $(CYGPATH_W) 'libttf/gpos.c'; else $(CYGPATH_W) '$(srcdir)/libttf/gpos.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gpos.Tpo $(DEPDIR)/gpos.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/gpos.c' object='gpos.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gpos.obj `if test -f 'libttf/gpos.c'; then $(CYGPATH_W) 'libttf/gpos.c'; else $(CYGPATH_W) '$(srcdir)/libttf/gpos.c'; fi`
+
 gstate.o: libttf/gstate.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstate.o -MD -MP -MF $(DEPDIR)/gstate.Tpo -c -o gstate.o `test -f 'libttf/gstate.c' || echo '$(srcdir)/'`libttf/gstate.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gstate.Tpo $(DEPDIR)/gstate.Po
@@ -603,6 +627,20 @@ gstate.obj: libttf/gstate.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/gstate.c' object='gstate.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstate.obj `if test -f 'libttf/gstate.c'; then $(CYGPATH_W) 'libttf/gstate.c'; else $(CYGPATH_W) '$(srcdir)/libttf/gstate.c'; fi`
+
+gsub.o: libttf/gsub.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gsub.o -MD -MP -MF $(DEPDIR)/gsub.Tpo -c -o gsub.o `test -f 'libttf/gsub.c' || echo '$(srcdir)/'`libttf/gsub.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gsub.Tpo $(DEPDIR)/gsub.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/gsub.c' object='gsub.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gsub.o `test -f 'libttf/gsub.c' || echo '$(srcdir)/'`libttf/gsub.c
+
+gsub.obj: libttf/gsub.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gsub.obj -MD -MP -MF $(DEPDIR)/gsub.Tpo -c -o gsub.obj `if test -f 'libttf/gsub.c'; then $(CYGPATH_W) 'libttf/gsub.c'; else $(CYGPATH_W) '$(srcdir)/libttf/gsub.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gsub.Tpo $(DEPDIR)/gsub.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/gsub.c' object='gsub.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gsub.obj `if test -f 'libttf/gsub.c'; then $(CYGPATH_W) 'libttf/gsub.c'; else $(CYGPATH_W) '$(srcdir)/libttf/gsub.c'; fi`
 
 hdmx.o: libttf/hdmx.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hdmx.o -MD -MP -MF $(DEPDIR)/hdmx.Tpo -c -o hdmx.o `test -f 'libttf/hdmx.c' || echo '$(srcdir)/'`libttf/hdmx.c
@@ -743,6 +781,20 @@ os2.obj: libttf/os2.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/os2.c' object='os2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o os2.obj `if test -f 'libttf/os2.c'; then $(CYGPATH_W) 'libttf/os2.c'; else $(CYGPATH_W) '$(srcdir)/libttf/os2.c'; fi`
+
+otfcommon.o: libttf/otfcommon.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT otfcommon.o -MD -MP -MF $(DEPDIR)/otfcommon.Tpo -c -o otfcommon.o `test -f 'libttf/otfcommon.c' || echo '$(srcdir)/'`libttf/otfcommon.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/otfcommon.Tpo $(DEPDIR)/otfcommon.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/otfcommon.c' object='otfcommon.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o otfcommon.o `test -f 'libttf/otfcommon.c' || echo '$(srcdir)/'`libttf/otfcommon.c
+
+otfcommon.obj: libttf/otfcommon.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT otfcommon.obj -MD -MP -MF $(DEPDIR)/otfcommon.Tpo -c -o otfcommon.obj `if test -f 'libttf/otfcommon.c'; then $(CYGPATH_W) 'libttf/otfcommon.c'; else $(CYGPATH_W) '$(srcdir)/libttf/otfcommon.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/otfcommon.Tpo $(DEPDIR)/otfcommon.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/otfcommon.c' object='otfcommon.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o otfcommon.obj `if test -f 'libttf/otfcommon.c'; then $(CYGPATH_W) 'libttf/otfcommon.c'; else $(CYGPATH_W) '$(srcdir)/libttf/otfcommon.c'; fi`
 
 pclt.o: libttf/pclt.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pclt.o -MD -MP -MF $(DEPDIR)/pclt.Tpo -c -o pclt.o `test -f 'libttf/pclt.c' || echo '$(srcdir)/'`libttf/pclt.c

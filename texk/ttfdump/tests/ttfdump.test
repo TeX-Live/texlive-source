@@ -3,12 +3,32 @@
 # Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-rm -rf FonetikaDaniaIwonaeRegular.ttf ttfdump.glyf ttfdump.head
+failed=
+
+rm -rf FonetikaDaniaIwonaeRegular.ttf ttftest.*
 cp $srcdir/tests/FonetikaDaniaIwonaeRegular.ttf .
 
-./ttfdump -t head -o ttfdump.head FonetikaDaniaIwonaeRegular.ttf || exit 1
-diff -b $srcdir/tests/ttfdump.head ttfdump.head || exit 1
+./ttfdump -t glyf -g 1 -o ttftest.glyf FonetikaDaniaIwonaeRegular.ttf \
+	&& diff -b $srcdir/tests/ttfdump.glyf ttftest.glyf \
+	&& echo "ttfdump.glyf tests OK" \
+	|| failed="$failed ttfdump.glyf"
 
-./ttfdump -t glyf -g 1 -o ttfdump.glyf FonetikaDaniaIwonaeRegular.ttf || exit 1
-diff -b $srcdir/tests/ttfdump.glyf ttfdump.glyf || exit 1
+./ttfdump -t GPOS -o ttftest.gpos FonetikaDaniaIwonaeRegular.ttf \
+	&& diff -b $srcdir/tests/ttfdump.gpos ttftest.gpos \
+	&& echo "ttfdump.gpos tests OK" \
+	|| failed="$failed ttfdump.gpos"
+
+./ttfdump -t GSUB -o ttftest.gsub FonetikaDaniaIwonaeRegular.ttf \
+	&& diff -b $srcdir/tests/ttfdump.gsub ttftest.gsub \
+	&& echo "ttfdump.gsub tests OK" \
+	|| failed="$failed ttfdump.gsub"
+
+./ttfdump -t head -o ttftest.head FonetikaDaniaIwonaeRegular.ttf \
+	&& diff -b $srcdir/tests/ttfdump.head ttftest.head \
+	&& echo "ttfdump.head tests OK" \
+	|| failed="$failed ttfdump.head"
+
+test -z "$failed" && exit 0
+echo "failed tests:$failed"
+exit 1
 

@@ -42,6 +42,7 @@ void ttfLoadFont(TTFontPtr font, ULONG offset)
     
     ttfLoadRequiredTables(font);
     ttfLoadOptionalTables(font);
+    ttfLoadOpenTypeTables(font);
 
     ttfInitInterpreter(font);
 
@@ -55,6 +56,8 @@ void ttfFreeFont(TTFontPtr font)
     
     ttfFreeOptionalTables(font);
     
+    ttfFreeOpenTypeTables(font);
+    
     ttfFreeTableDir(font->dir);
     free(font->refcount);
     free(font);
@@ -67,7 +70,6 @@ void ttfLoadRequiredTables(TTFontPtr font)
 
     ttfInitMAXP(font);
     ttfInitHEAD(font);
-    ttfInitLOCA(font);
 
     ttfInitGlyphCache(font);
     ttfInitGLYF(font);
@@ -85,7 +87,6 @@ void ttfFreeRequiredTables(TTFontPtr font)
     ttfFreeNAME(font->name);
 
     ttfCleanUpGlyphCache(font);
-    ttfFreeLOCA(font->loca);
     ttfFreeHEAD(font->head);
     ttfFreeMAXP(font->maxp);
 
@@ -103,6 +104,7 @@ void ttfLoadOptionalTables(TTFontPtr font)
     ttfInitGASP(font);
     ttfInitHDMX(font);
     ttfInitKERN(font);
+    ttfInitLOCA(font);
     ttfInitPREP(font);
     ttfInitLTSH(font);
     ttfInitPCLT(font);
@@ -117,12 +119,24 @@ void ttfFreeOptionalTables(TTFontPtr font)
     ttfFreeGASP(font->gasp);
     ttfFreeHDMX(font->hdmx);
     ttfFreeKERN(font->kern);
+    ttfFreeLOCA(font->loca);
     ttfFreePREP(font->prep);
     ttfFreeLTSH(font->ltsh);
     ttfFreePCLT(font->pclt);
     ttfFreeVDMX(font->vdmx);
     ttfFreeVHEA(font->vhea);
     ttfFreeVMTX(font->vmtx);
+}
+
+void ttfLoadOpenTypeTables(TTFontPtr font)
+{
+    ttfInitGPOS(font);
+    ttfInitGSUB(font);
+}
+void ttfFreeOpenTypeTables(TTFontPtr font)
+{
+    ttfFreeGPOS(font->gpos);
+    ttfFreeGSUB(font->gsub);
 }
 
 #if 0

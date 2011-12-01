@@ -54,8 +54,8 @@ void ttfLoadGLYF(FILE *fp, GLYFPtr glyf, ULONG offset)
 }
 void ttfPrintGLYF(FILE *fp, GLYFPtr glyf)
 {
-    fprintf(fp,"\t numberOfContours:\t %d  %s\n", glyf->numberOfContours,
-	    glyf->numberOfContours == -1 ? "(Composite)": "");
+    fprintf(fp,"\t numberOfContours:\t %d%s\n", glyf->numberOfContours,
+	    glyf->numberOfContours == -1 ? "  (Composite)": "");
     fprintf(fp,"\t xMin:\t\t\t %d\n", glyf->xMin);
     fprintf(fp,"\t yMin:\t\t\t %d\n", glyf->yMin);
     fprintf(fp,"\t xMax:\t\t\t %d\n", glyf->xMax);
@@ -404,7 +404,7 @@ GLYFPtr ttfLoadGlyphCode(TTFont *font,USHORT cc)
 {
     USHORT index;
     
-    index = ttfLookUpCMAP(font->encoding,cc);
+    index = ttfLookUpCMAP(font->encoding->map,cc);
     return ttfLoadGlyphIndex(font,index);
 }
 
