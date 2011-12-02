@@ -1,9 +1,5 @@
 #!/usr/bin/env perl
 
-## ????????????????????? biber source file issue fatal or not: 
-## Check generation of retcode 4, and ITS USE, which is source of latexmk stop.
-
-
 # On a UNIX-like system, the above enables latexmk to run independently
 #   of the location of the perl executable.  This line relies on the 
 #   existence of the program /usr/bin/env
@@ -113,8 +109,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.28a';
-$version_details = "$My_name, John Collins, 28 November 2011";
+$version_num = '4.28c';
+$version_details = "$My_name, John Collins, 1 December 2011";
 
 
 use Config;
@@ -183,6 +179,11 @@ else {
 ##
 ##   Modification log from 1 Jan 2011 onwards in detail
 ##
+##      1 Dec 2011, John Collins Correct biber-no-bib problem
+##                                 (biber gives an error message, but latexmk
+##                                 should treat that only as a warning).
+##                               Deal correctly with error messages
+##                                 from biber 0.9.7.
 ##     28 Nov 2011, John Collins Correct duplicate making of view file
 ##                                  (in subroutine do_viewfile)
 ##     14 Nov 2011, John Collins Extend bibtex treatment of missing files 
@@ -1207,6 +1208,10 @@ if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
                     #                  1 if last run was successful, but
                     #                    failed to create an output file
                     #                  2 if last run failed
+                    #                  200 if last run gave a warning that is
+                    #                    important enough to be reported with 
+                    #                    the error summary.  The warning
+                    #                    message is stored in last_message.
                     #     last_message is error message for last run
                     #     default_extra_generated is a reference to an array
                     #       of specifications of extra generated files (beyond
@@ -3093,21 +3098,22 @@ sub check_biber_log {
             $have_warning = 1;
             $warning_count ++;
         }
-        elsif (/> FATAL /) {
+        elsif (/> (FATAL|ERROR) /) {
             print "Biber error: $_"; 
-            if ( /> FATAL - Cannot find file '([^']+)'/ ) {  #'
+            if ( /> (FATAL|ERROR) - Cannot find file '([^']+)'/    #'
+                 || /> (FATAL|ERROR) - Cannot find '([^']+)'/ ) {  #'
                 $not_found_count++;
-                push @$Pbiber_source, $1;
+                push @$Pbiber_source, $2;
             }
-            elsif ( /> FATAL - Cannot find control file '([^']+)'/ ) {  #'
+            elsif ( /> (FATAL|ERROR) - Cannot find control file '([^']+)'/ ) {  #'
                 $not_found_count++;
                 $control_file_missing = 1;
-                push @$Pbiber_source, $1;
+                push @$Pbiber_source, $2;
             }
             else {
                 $have_error = 1;
                 $error_count ++;
-                if ( /> FATAL - The file '[^']+' does not contain any citations!/ ) { #'
+                if ( /> (FATAL|ERROR) - The file '[^']+' does not contain any citations!/ ) { #'
                     $no_citations++;
 	        }
             }
@@ -5228,31 +5234,42 @@ sub rdb_makeB {
 #-------------------
 
 sub rdb_show_rule_errors {
-    local @messages = ();
+    local @errors = ();
+    local @warnings = ();
     rdb_for_all( 
 	       sub{
 		   if ($$Plast_message ne '') {
-		       push @messages, "$rule: $$Plast_message";
+                       if ($$Plast_result == 200) {
+   		          push @warnings, "$rule: $$Plast_message";
+		       }
+		       else {
+		          push @errors, "$rule: $$Plast_message";
+		       }
 		   }
 		   elsif ($$Plast_result == 1) {
-		       push @messages, "$rule: failed to create output file";
+		       push @errors, "$rule: failed to create output file";
 		   }
 		   elsif ($$Plast_result == 2) {
-		       push @messages, "$rule: gave an error";
+		       push @errors, "$rule: gave an error";
 		   }
 		   elsif ($$Prun_time == 0) {
-#    This can have innocuous causes.  So don't report
-#		       push @messages, "$rule: never run";
+                       #  This can have innocuous causes.  So don't report
 		   }
 	       }
 	      );
-    if ($#messages > -1) { 
-	warn "Collected error summary (may duplicate other messages):\n";
-	foreach (@messages){
+    if ($#warnings > -1) { 
+	warn "Collected warning summary (may duplicate other messages):\n";
+	foreach (@warnings){
 	    warn "  $_\n";
 	}
     }
-    return $#messages+1;
+    if ($#errors > -1) { 
+	warn "Collected error summary (may duplicate other messages):\n";
+	foreach (@errors){
+	    warn "  $_\n";
+	}
+    }
+    return $#errors+1;
 }
 
 #-------------------
@@ -5574,11 +5591,12 @@ sub rdb_run1 {
     # Assumes contexts for: rule.
     # Unconditionally apply the rule
     # Returns return code from applying the rule.
-    # Otherwise: 0 on other kind of success, -1 on error, -2 when missing dest_file
-    #    is to be ignored
+    # Otherwise: 0 on other kind of success, 
+    #            -1 on error, 
+    #            -2 when missing dest_file is to be ignored
 
-    # Source file data, by definition, correspond to the file state just before 
-    # the latest run, and the run_time to the time just before the run:
+    # Source file data, by definition, correspond to the file state just
+    # before the latest run, and the run_time to the time just before the run:
     &rdb_update_filesA;
     $$Prun_time = time;
     $$Pchanged = 0;       # No special changes in files
@@ -5621,10 +5639,9 @@ sub rdb_run1 {
         if ($retcode == 5) {
         # Special treatment if sole missing file is bib file
         # I don't want to treat that as an error
-	    warn " =============== bib missing special case\n";
-#            $return = 0;
+            $return = 0;
             $$Plast_result = 200;
-#            $$Plast_message = "Could not find bib file for '$$Pbase'";
+            $$Plast_message = "Could not find bib file for '$$Pbase'";
             push @warnings, "Bib file not found for '$$Pbase'";
         }
         elsif ($retcode == 6) {
