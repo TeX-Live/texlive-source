@@ -206,7 +206,7 @@ else !WIN32
 	  done && \
 	  if test -d "$$REL/texmf/doc/man" \
 	     && test -z "$(TL_INSTALL_OMIT_MAN_LINK)" \
-	     && test -h man; then \
+	     && (test -h man || test ! -e man); then \
 	    echo "creating link 'man' -> '$$REL/texmf/doc/man'"; \
 	    rm -f man; \
 	    (ln -s "$$REL/texmf/doc/man" man || :); \

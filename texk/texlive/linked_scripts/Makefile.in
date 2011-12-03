@@ -657,7 +657,7 @@ install-data-hook:
 @WIN32_FALSE@	  done && \
 @WIN32_FALSE@	  if test -d "$$REL/texmf/doc/man" \
 @WIN32_FALSE@	     && test -z "$(TL_INSTALL_OMIT_MAN_LINK)" \
-@WIN32_FALSE@	     && test -h man; then \
+@WIN32_FALSE@	     && (test -h man || test ! -e man); then \
 @WIN32_FALSE@	    echo "creating link 'man' -> '$$REL/texmf/doc/man'"; \
 @WIN32_FALSE@	    rm -f man; \
 @WIN32_FALSE@	    (ln -s "$$REL/texmf/doc/man" man || :); \
