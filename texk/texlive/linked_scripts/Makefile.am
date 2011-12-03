@@ -204,12 +204,15 @@ else !WIN32
 	    echo "creating link '$$link' -> '$$file'"; \
 	    $(LN_S) $$file $$link || exit 1; \
 	  done && \
-	  rm -f man && \
-	  if test -d $$REL/texmf/doc/man; then \
-	    echo "creating link 'man' -> '$$REL/texmf/doc/man'" && \
-	    (ln -s $$REL/texmf/doc/man man || :); \
+	  if test -d "$$REL/texmf/doc/man" \
+	     && test -z "$(TL_INSTALL_OMIT_MAN_LINK)" \
+	     && test -h man; then \
+	    echo "creating link 'man' -> '$$REL/texmf/doc/man'"; \
+	    rm -f man; \
+	    (ln -s "$$REL/texmf/doc/man" man || :); \
 	  else :; fi
-## man dir link for those mans which can use it.
+## man dir link for those mans which can use it, but don't overwrite a
+## real file, e.g., /usr/bin/man.
 endif !WIN32
 
 .PHONY: install-links

@@ -1,3 +1,9 @@
+2011-12-03  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (install-data-hook): only create the man link if it
+	is a link already, and if TL_INSTALL_OMIT_MAN_LINK is unset
+	in the environment.  Report from Bruce Dubbs, 18 Nov 2011 18:56:22.
+
 2011-09-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (scripts.tmp): List each file on a separate line.
