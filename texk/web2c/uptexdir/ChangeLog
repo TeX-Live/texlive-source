@@ -1,3 +1,8 @@
+2011-12-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* uptex-m.ch: change min_halfword because the ConTeXt with
+	euptex falls into an infinite loop if an Overfull \hbox error occurs.
+
 2011-11-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/uptex.am (uppltotf_CPPFLAGS): Replace '-DDHEX_CHAR_CODE'
