@@ -199,12 +199,15 @@ install-links:
 	    echo "creating link '$$link' -> '$$file'"; \
 	    $(LN_S) $$file $$link || exit 1; \
 	  done && \
-	  rm -f man && \
-	  if test -d $(REL)/texmf/doc/man; then \
-	    echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
-	    (ln -s $(REL)/texmf/doc/man man || :); \
+	  if test -d "$$REL/texmf/doc/man" \
+	     && test -z "$(TL_INSTALL_OMIT_MAN_LINK)" \
+	     && (test -h man || test ! -e man); then \
+	    echo "creating link 'man' -> '$$REL/texmf/doc/man'"; \
+	    rm -f man; \
+	    (ln -s "$$REL/texmf/doc/man" man || :); \
 	  else :; fi
-## man dir link for those mans which can use it.
+## man dir link for those mans which can use it, but don't overwrite a
+## real file, e.g., /usr/bin/man.
 
 ## For WIN32 (MinGW or native) we have wrapper binaries with .exe,
 ## for Cygwin and Unix we have symlinks without .exe.
@@ -224,6 +227,8 @@ uninstall-hook:
 	  rm -f $(DESTDIR)$(bindir)/$$link$(WINEXT); \
 	done
 if !WIN32
-	rm -f $(DESTDIR)$(bindir)/man
+	if test -h $(DESTDIR)$(bindir)/man; then \
+	  rm -f $(DESTDIR)$(bindir)/man; \
+	else :; fi
 endif !WIN32
 
