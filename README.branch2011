@@ -3,6 +3,16 @@ Public domain.  Originally written 2011 by Karl Berry.
 
 This file records commits made to the bug-fix branch (only).
 ------------------------------------------------------------------------
+r24766 | peter | 2011-12-05 13:23:16 +0100 (Mon, 05 Dec 2011) | 2 lines
+Changed paths:
+   M /branches/branch2011/Build/source/texk/texlive/linked_scripts/ChangeLog
+   M /branches/branch2011/Build/source/texk/texlive/linked_scripts/Makefile.am
+   M /branches/branch2011/Build/source/texk/texlive/linked_scripts/Makefile.in
+
+branch2011: import more cautious creation and removal of man link
+from trunk r24727, r24728, and r24765
+
+------------------------------------------------------------------------
 r24460 | peter | 2011-11-02 16:38:52 +0100 (Wed, 02 Nov 2011) | 1 line
 Changed paths:
    M /branches/branch2011/Build/source/texk/ttf2pk/ChangeLog
