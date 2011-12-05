@@ -35,6 +35,7 @@ context/perl/mptopdf.pl
 ctanify/ctanify
 ctanupload/ctanupload.pl
 de-macro/de-macro
+dosepsbin/dosepsbin.pl
 dviasm/dviasm.py
 ebong/ebong.py
 epspdf/epspdf.rb
