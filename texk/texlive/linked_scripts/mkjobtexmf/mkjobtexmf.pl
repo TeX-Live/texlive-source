@@ -10,10 +10,10 @@ use strict;
 $^W=1;
 
 my $prj = 'mkjobtexmf';
-my $version = '0.7';
-my $date = '2008/06/28';
+my $version = '0.8';
+my $date = '2011/11/10';
 my $author = 'Heiko Oberdiek';
-my $copyright = "Copyright 2007, 2008 $author";
+my $copyright = "Copyright 2007, 2008, 2011 $author";
 
 my $cmd_tex        = 'pdflatex';
 my $cmd_kpsewhich  = 'kpsewhich';
@@ -33,18 +33,20 @@ my $output = 0;
 my $strace = 0;
 my $copy = 0;
 my $flat = 0;
+my $texhash = 1;
 my $needs_texhash = 0;
 my @texmf;
+my @exclude_ext;
 my %files;
 my %links;
 my %flat_ignore = (
     'ls-R' => '',
     'aliases' => '',
 );
+my $win = 0;
+$win = 1 if $^O =~ /MSWin/i;
 
 my $title = "\U$prj\E $date v$version, $copyright\n";
-
-print $title;
 
 sub die_error ($) {
     my $msg = shift;
@@ -78,6 +80,7 @@ use Pod::Usage;
 
 my $man = 0;
 my $help = 0;
+my $opt_version = 0;
 
 GetOptions(
     'jobname=s'       => \$jobname,
@@ -91,13 +94,26 @@ GetOptions(
     'strace'          => \$strace,
     'copy'            => \$copy,
     'flat'            => \$flat,
+    'texhash!'        => \$texhash,
+    'exclude-ext=s'   => \@exclude_ext,
     'verbose'         => \$verbose,
     'output'          => \$output,
     'help|?'          => \$help,
     'man'             => \$man,
+    'version'         => \$opt_version,
 ) or die_usage('Unknown option');
-pod2usage(1) if $help;
+if ($help) {
+    print $title;
+    pod2usage(1);
+}
 pod2usage(-exitstatus => 0, -verbose => 2) if $man;
+
+if ($opt_version) {
+    print "$prj $date v$version\n";
+    exit(0);
+}
+
+print $title;
 
 if (@ARGV > 0) {
     $strace = 1;
@@ -112,6 +128,12 @@ verbose "jobname: " . value $jobname;
 verbose "texname: " . value $texname if $texname;
 verbose "command: " . value "@args" if @args;
 verbose "destdir: " . value $destdir;
+verbose "system: ". value $^O;
+
+@exclude_ext = split(/,/, join(',', @exclude_ext));
+foreach my $ext (@exclude_ext) {
+    verbose "exclude-ext: " . value $ext;
+}
 
 if (!$copy) {
     my $symlink_exists = eval { symlink('', ''); 1 };
@@ -202,34 +224,83 @@ sub run_tex {
 }
 
 sub run_texhash {
+    return unless $texhash;
     return if $flat;
     if ($needs_texhash) {
-        run_generic(
-            $cmd_texhash,
-            "$destdir/texmf"
-        );
+        my $cmd_version = "$cmd_texhash --version";
+        verbose "exec: $cmd_version";
+        print '>' x 79, "\n";
+        my @lines = `$cmd_version`;
+        print @lines if $verbose;
+        print '<' x 79, "\n";
+        if ($? != 0) {
+            if ($? == -1) {
+                verbose "Execution failed: $!";
+            }
+            elsif ($? & 127) {
+                verbose sprintf "Execution died with signal %d, %s coredump",
+                                ($? & 127), ($? & 128) ? 'with' : 'without';
+            }
+            else {
+                verbose sprintf "Execution failed with error code: %d",
+                                $? >> 8;
+            }
+        }
+        else {
+            my $catch = "@lines";
+            if ($catch =~ /(kpathsea|mktexlsr)/i) {
+                run_generic(
+                    $cmd_texhash,
+                    "$destdir/texmf"
+                );
+            }
+            else{
+                verbose 'Unsupported port of texhax found.';
+            }
+        }
     }
     else {
-        verbose("texhash run skipped, no files added");
+        verbose("Run of texhash skipped, no files added.");
     }
 }
 
 use Cwd 'abs_path', 'getcwd';
 
+my $pwd = getcwd;
+verbose "pwd: " . value($pwd);
+
 sub get_texmf_trees () {
     return if $flat;
     my $cmdline = "$cmd_kpsewhich -expand-path='\$TEXMF'";
+    $cmdline = "$cmd_kpsewhich -expand-path=\$TEXMF" if $win;
     verbose "exec: " . value($cmdline);
     my $str = `$cmdline`;
     check_child_error;
-    chomp $str;
-    @texmf = split ':', $str;
+    $str =~ s/[\r\n]+$//;
+    if ($win) {
+        @texmf = split ';', $str;
+    }
+    else {
+        @texmf = split ':', $str;
+    }
     my %texmf;
     foreach my $texmf (@texmf) {
         $texmf{$texmf} = '';
         $texmf{abs_path($texmf)} = '';
     }
     @texmf = sort keys %texmf;
+    if (@texmf == 0 and $win) {
+        my $cmdline = "$cmd_kpsewhich --show-path=tfm";
+        verbose "exec: " . value($cmdline);
+        my $str = `$cmdline`;
+        check_child_error;
+        $str =~ s/[\n\r]+$//;
+        foreach my $texmf (split ';', $str) {
+            if ($texmf =~ m|^(.*)/fonts/tfm/*$|) {
+                push @texmf, $1;
+            }
+        }
+    }
     if ($verbose) {
         if (@texmf) {
             map { verbose 'texmf: ' . value($_) } @texmf;
@@ -240,10 +311,25 @@ sub get_texmf_trees () {
     }
 }
 
-sub analyze_recorder {
-    my $pwd = getcwd;
-    verbose "pwd: " . value($pwd);
+sub add_file ($) {
+    my $file = shift;
+    my $add = 1;
+    foreach my $ext (@exclude_ext) {
+        my $ext = ".$ext";
+        my $len_ext = length $ext;
+        my $len_file = length $file;
+        if ($len_file >= $len_ext) {
+            if ($ext eq substr $file, $len_file - $len_ext) {
+                $add = 0;
+                verbose "excluded: " . value($file);
+                last;
+            }
+        }
+    }
+    $files{$file} = '' if $add;
+}
 
+sub analyze_recorder {
     my $file_rec = $jobname . ($strace ? $ext_strace : $ext_recorder);
     verbose 'File with recorded file names: ' . value($file_rec);
     open(IN, '<', $file_rec)
@@ -262,7 +348,7 @@ sub analyze_recorder {
             }
             /^\d+\s+\w+\(\"([^"]+)\",/ or warning "Unknown entry `$_'";
             my $file = $1;
-            $files{$file} = '';
+            add_file $file;
         }
     }
     else {
@@ -273,7 +359,7 @@ sub analyze_recorder {
             /^(INPUT|OUTPUT) (.*)$/ or warning "Unknown entry `$_'";
             my $type = $1;
             my $file = $2;
-            $files{$file} = '';
+            add_file $file;
         }
     }
     close(IN);
@@ -328,6 +414,8 @@ sub map_files_flat {
 
 sub map_files_texmf {
     my @failed;
+    my $pwd_dir = "$pwd/";
+    my $pwd_len = length $pwd_dir;
 
     foreach my $file (sort keys %files) {
         verbose "file: " . value($file);
@@ -335,21 +423,26 @@ sub map_files_texmf {
         my $abs_file = abs_path($file);
 
         my $found = '';
-        foreach (@texmf) {
-            my $texmf = "$_/";
-            my $len = length($texmf);
-            my $str = substr $file, 0, $len;
-            if ($texmf eq $str) {
-                $found = 'texmf/' . substr $file, $len;
-                if ($found =~ /(^|\/)\.\.\//) {
-                    $found = '';
+        if ($pwd_dir eq substr $file, 0, $pwd_len) {
+            $found = substr $file, $pwd_len;
+        }
+        if (not $found) {
+            foreach (@texmf) {
+                my $texmf = "$_/";
+                my $len = length($texmf);
+                my $str = substr $file, 0, $len;
+                if ($texmf eq $str) {
+                    $found = 'texmf/' . substr $file, $len;
+                    if ($found =~ /(^|\/)\.\.\//) {
+                        $found = '';
+                    }
                 }
-            }
-            last if $found;
-            my $str = substr $abs_file, 0, $len;
-            if ($texmf eq $str) {
-                $found = 'texmf/' . substr $abs_file, $len;
-                last;
+                last if $found;
+                my $str = substr $abs_file, 0, $len;
+                if ($texmf eq $str) {
+                    $found = 'texmf/' . substr $abs_file, $len;
+                    last;
+                }
             }
         }
         if (not($found)) {
@@ -380,7 +473,7 @@ sub make_dirs ($) {
     my $path = shift;
     my @elems = split /\/+/, $path;
     if (@elems <= 1) {
-        return;
+        return 1;
     }
     pop @elems;
     my $dir = '';
@@ -388,9 +481,13 @@ sub make_dirs ($) {
         $dir .= '/' if $dir;
         $dir .= $elem;
         next if -d $dir;
-        verbose 'mkdir: ' . value($dir);
-        mkdir $dir or die_error "Cannot make directory `$dir'";
+        if (mkdir $dir) {
+            verbose 'mkdir: ' . value($dir);
+            next;
+        }
+        return 0;
     }
+    return 1;
 }
 
 sub make_links {
@@ -398,7 +495,16 @@ sub make_links {
     foreach my $key (sort keys %links) {
         my $source = $links{$key};
         my $dest = "$destdir/$key";
-        make_dirs $dest;
+        my $result_mkdir = make_dirs $dest;
+        if (not $result_mkdir) {
+            if ($key =~ s|^([A-Za-z]):/|$1/|) {
+                $dest = "$destdir/$key";
+                $result_mkdir = make_dirs $dest;
+            }
+            if (not $result_mkdir) {
+                die_error("Cannot create directory `$dest'");
+            }
+        }
         if (-e $dest) {
             my $type = '';
             if (-l $dest) {
@@ -492,6 +598,10 @@ __DATA__
 
 mkjobtexmf -- Generate a texmf tree for a particular job
 
+=head1 VERSION
+
+2011-11-10 v0.8
+
 =head1 SYNOPSIS
 
 The progam B<mkjobtexmf> runs a program and tries to
@@ -531,6 +641,8 @@ Options:
                               symbol links
     --flat                 Junk paths, do not make directories
                               inside the destination directory
+    --(no)texhash          Run texhash, use --notexhash for MiKTeX
+    --exclude-ext <ext>    Exclude files with extension <ext>.
     --cmd-tex <cmd>        Command for the TeX compiler
     --cmd-kpsewhich <cmd>  Command for kpsewhich
     --cmd-texhash <cmd>    Command for texhash
@@ -538,13 +650,14 @@ Options:
     --verbose              Verbose output
     --help                 Brief help message
     --man                  Full documentation
+    --version              Print version identification
 
 =head1 DESCRIPTION
 
 =head2 Running the program
 
 First B<mkjobtexmf> runs a program, usually TeX. The TeX compiler
-is configured by option B<--cmd-tex>. Option B<--texname> can
+is configured by option C<--cmd-tex>. Option C<--texname> can
 be used, if the file name extension differs from F<.tex>:
 
     mkjobtexmf --jobname foo --texname foo.ltx
@@ -591,46 +704,46 @@ result directory F<I<jobname>.mjt>. Absolute file names
 are not supported and neither paths with links to parent directories.
 
 Symbolic links are created by default. The files are copied
-if option --copy is given or symbolic linking is not available.
+if option C<--copy> is given or symbolic linking is not available.
 
 =head1 OPTIONS
 
 =over
 
-=item B<--jobname>=I<jobname>
+=item B<->B<-jobname>=<I<jobname>>
 
-It is the name of the job. `<jobname>.tex' serves as default for
-the TeX file and <jobname> is used for naming various directories
-and files. See section L</FILES>.
+It is the name of the job. `<I<jobname>>.tex' serves as default for
+the TeX file and <I<jobname>> is used for naming various directories
+and files. See section L<"FILES">.
 
-=item B<--texname>=I<name>
+=item B<->B<-texname>=<I<name>>
 
-The name of the TeX input file, if it differs from <jobname>.tex.
+The name of the TeX input file, if it differs from <I<jobname>>.tex.
 
-=item B<--texopt>=I<opt>
+=item B<->B<-texopt>=<I<opt>>
 
-Additional option for the TeX compiler, examples are --ini or
---shell-escape. This option can be given more than once.
+Additional option for the TeX compiler, examples are C<--ini> or
+C<--shell-escape>. This option can be given more than once.
 
-=item B<--destdir>=I<directory>
+=item B<->B<-destdir>=<I<directory>>
 
 Specifies the name of the destination directory where the result
 is collected. As default a directory is generated in the current
 directory with the job name and extension `.mjt'.
 
-=item B<--output>
+=item B<->B<-output>
 
 Also add output files.
 
-=item B<--strace>
+=item B<->B<-strace>
 
 Use method with program B<strace>, see L<"DESCRIPTION">.
 
-=item B<--copy>
+=item B<->B<-copy>
 
 Files are copied instead of creating symbolic links.
 
-=item B<--flat>
+=item B<->B<-flat>
 
 Files are linked or copied without path elements.
 The destination directory will contain a flat list of
@@ -638,30 +751,58 @@ files or links without directory.
 
 The files `ls-R' and `aliases' are ignored.
 
-=item B<--cmd-tex>=I<cmd>
+=item B<->B<-exclude-ext>=<I<ext>>
+
+Files with extension <I<ext>> are excluded. The option can be
+given several times or a comma separated list of extensions
+can be used. Examples:
+
+    --exclude-ext aux --exclude-ext log --exclude-ext toc
+
+is the same as
+
+    --exclude-ext aux,log,toc
+
+=item B<->B<-(no)texhash>
+
+As default the file `ls-R' is generated in the `texmf' tree,
+because this is the file name database that might be used
+in TeX Live. Because MiKTeX uses a different mechanism, its
+`texhash' does not generate the `ls-R' files and C<--notexhash>
+suppresses the call of `texhash'.
+
+=item B<->B<-cmd-tex>=<I<cmd>>
 
 Command for the TeX compiler. Default is pdflatex.
 
-=item B<--cmd-kpsewhich>=I<cmd>
+=item B<->B<-cmd-kpsewhich>=<I<cmd>>
 
 Command for kpsewhich.
 
-=item B<--cmd-texhash>=I<cmd>
+=item B<->B<-cmd-texhash>=<I<cmd>>
 
 Command for updating the file name database of the generated
 texmf tree. Default is texmf.
 
-=item B<--cmd-strace>=I<cmd>
+=item B<->B<-cmd-strace>=<I<cmd>>
 
 Command for strace.
 
-=item B<--verbose>
+=item B<->B<-verbose>
 
 Verbose messages.
 
-=item B<--help>
+=item B<->B<-help>
 
 Display help screen.
+
+=item B<->B(-man>
+
+Print manual page.
+
+=item B<->B<-version>
+
+Print version identification and exit.
 
 =back
 
@@ -745,7 +886,7 @@ file recording (e.g. pdfTeX 1.40.3 does not record .pfb and
 =item F<E<lt>jobnameE<gt>.mjt/>
 
 Directory where the resulting texmf tree and symbol links
-are stored. It can be changed by option --destdir.
+are stored. It can be changed by option C<--destdir>.
 
 =item F<E<lt>jobnameE<gt>.fls>
 
@@ -759,11 +900,11 @@ Log file where the result of B<strace> is stored.
 
 =head1 AUTHOR
 
-Heiko Oberdiek, email: oberdiek at uni-freiburg.de
+Heiko Oberdiek, email: heiko.oberdiek at googlemail.com
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2007 by Heiko Oberdiek.
+Copyright 2007, 2008, 2011 by Heiko Oberdiek.
 
 This library is free software; you may redistribute it and/or
 modify it under the same terms as Perl itself
@@ -771,39 +912,83 @@ modify it under the same terms as Perl itself
 
 =head1 HISTORY
 
-=over
+=over 2
 
-=item 2007/04/16 v0.1
+=item B<2007/04/16 v0.1>
 
-* First experimental version.
+=over 2
 
-=item 2007/05/09 v0.2
+=item * First experimental version.
 
-* Typo in option name fixed.
+=back
 
-=item 2007/09/03 v0.3
+=item B<2007/05/09 v0.2>
 
-* New options: --copy, --flat, --destdir
+=over 2
 
-=item 2007/09/04 v0.4
+=item * Typo in option name fixed.
 
-* Bug fix in map_files_texmf.
+=back
 
-=item 2007/09/06 v0.5
+=item B<2007/09/03 v0.3>
 
-* Support for `configure' added.
+=over 2
+
+=item * New options: C<--copy>, C<--flat>, C<--destdir>
+
+=back
+
+=item B<2007/09/04 v0.4>
+
+=over 2
+
+=item * Bug fix in map_files_texmf.
+
+=back
+
+=item B<2007/09/06 v0.5>
+
+=over 2
+
+=item * Support for `configure' added.
   (Thanks to Norbert Preining for writing a first version of
   the configure stuff.)
 
-=item 2008/04/05 v0.6
+=back
 
-* Tiny fix in target `uninstall' in file `Makefile.in'.
+=item B<2008/04/05 v0.6>
+
+=over 2
+
+=item * Tiny fix in target `uninstall' in file `Makefile.in'.
   (Thanks to Karl Berry)
 
-=item 2008/06/28 v0.7
+=back
 
-* Fix for unknown option `--cmd-strace'.
-  (Thanks to Juho Niemel"a)
+=item B<2008/06/28 v0.7>
+
+=over 2
+
+=item * Fix for unknown option `C<--cmd-strace>'.
+  (Thanks to Juho Niemelä)
+
+=back
+
+=item B<2011/11/10 v0.8>
+
+=over 2
+
+=item * Remove colon from drive specification when making directories.
+
+=item * Option C<--(no)texhash> added.
+
+=item * Some support for MiKTeX (thanks Ulrike Fischer).
+
+=item * Various fixes in the generation of the documentation.
+
+=item * Options C<--exclude-ext> and C<--version> added.
+
+=back
 
 =back
 
