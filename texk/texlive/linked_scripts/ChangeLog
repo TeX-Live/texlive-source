@@ -1,3 +1,7 @@
+2011-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (uninstall-hook): Only remove man if it is a link.
+
 2011-12-03  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (install-data-hook): only create the man link if it

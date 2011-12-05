@@ -237,6 +237,8 @@ uninstall-hook:
 	  rm -f $(DESTDIR)$(bindir)/$$link$(WINEXT); \
 	done
 if !WIN32
-	rm -f $(DESTDIR)$(bindir)/man
+	if test -h $(DESTDIR)$(bindir)/man; then \
+	  rm -f $(DESTDIR)$(bindir)/man; \
+	else :; fi
 endif !WIN32
 

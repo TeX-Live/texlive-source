@@ -678,7 +678,9 @@ uninstall-hook:
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$link$(WINEXT); \
 	done
-@WIN32_FALSE@	rm -f $(DESTDIR)$(bindir)/man
+@WIN32_FALSE@	if test -h $(DESTDIR)$(bindir)/man; then \
+@WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/man; \
+@WIN32_FALSE@	else :; fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
