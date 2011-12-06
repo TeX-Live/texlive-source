@@ -4,8 +4,8 @@ use strict;
 $^W=1;
 
 my $prj = 'dosepsbin';
-my $version = '1.0';
-my $date = '2011/11/10';
+my $version = '1.1';
+my $date = '2011/12/05';
 my $author = 'Heiko Oberdiek';
 my $copyright = "Copyright 2011 $author";
 
@@ -298,7 +298,7 @@ dosepsbin -- Extract PS/WMF/TIFF sections from DOS EPS binary files
 
 =head1 VERSION
 
-2011-11-10 v1.0
+2011-12-05 v1.1
 
 =head1 SYNOPSIS
 
@@ -315,7 +315,7 @@ Options:
 
     --eps-file <file>      Write PS section to <file>.
     --wmf-file <file>      Write WMF section to <file>.
-    --tiff-file <file>      Write WMF section to <file>.
+    --tiff-file <file>      Write TIFF section to <file>.
     --inputfile <file>     The name of the input file.
     --verbose              Verbose output.
     --quiet                Only errors and warnings are printed.
@@ -433,6 +433,14 @@ in section "5.2 Windows Metafile or TIFF":
 =over 2
 
 =item * First version.
+
+=back
+
+=item B<2011/12/05 v1.1>
+
+=over 2
+
+=item * Typo fixed in help text (thanks Peter Breitenlohner).
 
 =back
 
