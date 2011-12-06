@@ -15,8 +15,8 @@ config.force: $(KPATHSEA_DEPEND)
 DISTCLEANFILES = config.force CXXLD.sh
 
 if texlive_build
-glyphlistdir = ${prefix}/texmf-dist/fonts/map/glyphlist
-encdir = ${prefix}/texmf-dist/fonts/enc/dvips/base
+glyphlistdir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
+encdir = $(datarootdir)/texmf-dist/fonts/enc/dvips/base
 else !texlive_build
 glyphlistdir = $(pkgdatadir)
 encdir = $(pkgdatadir)

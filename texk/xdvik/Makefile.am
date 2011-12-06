@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/xdvik/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
@@ -202,10 +202,10 @@ sedscript: mksedscript CHANGES Makefile c-auto.h
 EXTRA_DIST += mksedscript xdvi.1.in
 CLEANFILES += sedscript xdvi.1
 
-xdvidir = ${prefix}/texmf/xdvi
+xdvidir = $(datarootdir)/texmf/xdvi
 dist_xdvi_DATA = texmf/XDvi
 
-pixmapdir = ${prefix}/texmf/xdvi/pixmap
+pixmapdir = $(datarootdir)/texmf/xdvi/pixmap
 dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
 
 dist_noinst_DATA = texmf/xdvi.cfg

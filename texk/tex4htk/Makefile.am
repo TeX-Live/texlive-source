@@ -36,7 +36,7 @@ nodist_bin_SCRIPTS =
 
 include $(srcdir)/../am/script_links.am
 
-texmfdir = ${prefix}/$(scriptsdir)
+texmfdir = $(datarootdir)/$(scriptsdir)
 dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
 
 install-data-hook: install-perl-links install-shell-links

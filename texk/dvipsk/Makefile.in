@@ -380,7 +380,7 @@ dist_prologues = \
 	tex.lpro \
 	texps.lpro
 
-prologdir = ${prefix}/texmf/dvips/base
+prologdir = $(datarootdir)/texmf/dvips/base
 prologues = $(dist_prologues:.lpro=.pro) texc.pro
 SUFFIXES = .pro .lpro
 EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \

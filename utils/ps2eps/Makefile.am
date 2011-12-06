@@ -31,7 +31,7 @@ nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am
 
-texmfdir = ${prefix}/$(scriptsdir)
+texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(PS2EPS_TREE)/bin/ps2eps.pl
 
 install-data-hook: install-perl-links

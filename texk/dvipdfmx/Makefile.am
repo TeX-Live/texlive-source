@@ -210,20 +210,20 @@ DISTCLEANFILES = config.force
 
 ## Data
 ##
-configdatadir = ${prefix}/texmf/dvipdfmx
+configdatadir = $(datarootdir)/texmf/dvipdfmx
 configdata_DATA = \
 	$(DVIPDFMX_TREE)/data/dvipdfmx.cfg
 
-glyphlistdatadir = ${prefix}/texmf-dist/fonts/map/glyphlist
+glyphlistdatadir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
 glyphlistdata_DATA = \
 	$(DVIPDFMX_TREE)/data/glyphlist.txt \
 	$(DVIPDFMX_TREE)/data/pdfglyphlist.txt
 
-mapdatadir = ${prefix}/texmf/fonts/map/dvipdfmx
+mapdatadir = $(datarootdir)/texmf/fonts/map/dvipdfmx
 mapdata_DATA = \
 	$(DVIPDFMX_TREE)/data/cid-x.map
 
-cmapdatadir = ${prefix}/texmf/fonts/cmap/dvipdfmx
+cmapdatadir = $(datarootdir)/texmf/fonts/cmap/dvipdfmx
 cmapdata_DATA = \
 	$(DVIPDFMX_TREE)/data/EUC-UCS2
 

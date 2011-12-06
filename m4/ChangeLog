@@ -1,3 +1,7 @@
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-web2c.m4: Modify msgs when setting enable_*TeX_synctex.
+
 2011-08-26  Karl Berry  <karl@tug.org>
 
 	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): rm dialog.

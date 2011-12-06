@@ -33,7 +33,7 @@ LDADD = $(KPATHSEA_LIBS)
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
-csfdir = ${prefix}/texmf-dist/bibtex/csf/base
+csfdir = $(datarootdir)/texmf-dist/bibtex/csf/base
 
 dist_csf_DATA = \
 	csf/88591lat.csf \
@@ -45,7 +45,7 @@ dist_csf_DATA = \
 	csf/cp866rus.csf \
 	csf/csfile.txt
 
-btdocdir = ${prefix}/texmf/doc/bibtex8
+btdocdir = $(datarootdir)/texmf/doc/bibtex8
 
 dist_btdoc_DATA = \
 	00readme.txt \

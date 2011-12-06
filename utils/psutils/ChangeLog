@@ -1,3 +1,7 @@
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.
+
 2011-11-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* psutils.test: Do not depend on floating point rounding.

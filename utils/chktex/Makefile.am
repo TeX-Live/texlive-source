@@ -58,7 +58,7 @@ nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am
 
-texmfdir = ${prefix}/$(scriptsdir)
+texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 
 install-data-hook: install-perl-links
@@ -69,12 +69,12 @@ bin_SCRIPTS = $(CHKTEX_TREE)/chkweb
 endif !WIN32
 
 # resource file
-configdir = ${prefix}/texmf/chktex
+configdir = $(datarootdir)/texmf/chktex
 
 config_DATA = $(CHKTEX_TREE)/chktexrc
 
 # documentation
-pdfdocdir = ${prefix}/texmf/doc/chktex
+pdfdocdir = $(datarootdir)/texmf/doc/chktex
 
 dist_pdfdoc_DATA = ChkTeX.pdf
 

@@ -18483,9 +18483,14 @@ case $enable_native_texlive_build:$enable_tex_synctex in #(
   yes:no | no:yes | no:no) :
      ;; #(
   *) :
-    enable_tex_synctex=no
-         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-tex-synctex=no' (native TeX Live build)" >&5
-$as_echo "$as_me: WARNING: Enforcing \`--enable-tex-synctex=no' (native TeX Live build)" >&2;} ;;
+    if test -z "$enable_tex_synctex"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-tex-synctex=no'" >&5
+$as_echo "$as_me: Assuming \`--enable-tex-synctex=no'" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-tex-synctex=no' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-tex-synctex=no' (native TeX Live build)" >&2;}
+fi
+         enable_tex_synctex=no ;;
 esac
  if test "x$enable_tex_synctex" = xyes; then
   TEX_SYNCTEX_TRUE=
@@ -18506,9 +18511,14 @@ case $enable_native_texlive_build:$enable_etex_synctex in #(
   yes:yes | no:yes | no:no) :
      ;; #(
   *) :
-    enable_etex_synctex=yes
-         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-etex-synctex=yes' (native TeX Live build)" >&5
-$as_echo "$as_me: WARNING: Enforcing \`--enable-etex-synctex=yes' (native TeX Live build)" >&2;} ;;
+    if test -z "$enable_etex_synctex"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-etex-synctex=yes'" >&5
+$as_echo "$as_me: Assuming \`--enable-etex-synctex=yes'" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-etex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-etex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_etex_synctex=yes ;;
 esac
  if test "x$enable_etex_synctex" = xyes; then
   ETEX_SYNCTEX_TRUE=
@@ -18529,9 +18539,14 @@ case $enable_native_texlive_build:$enable_ptex_synctex in #(
   yes:yes | no:yes | no:no) :
      ;; #(
   *) :
-    enable_ptex_synctex=yes
-         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-ptex-synctex=yes' (native TeX Live build)" >&5
-$as_echo "$as_me: WARNING: Enforcing \`--enable-ptex-synctex=yes' (native TeX Live build)" >&2;} ;;
+    if test -z "$enable_ptex_synctex"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ptex-synctex=yes'" >&5
+$as_echo "$as_me: Assuming \`--enable-ptex-synctex=yes'" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-ptex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-ptex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_ptex_synctex=yes ;;
 esac
  if test "x$enable_ptex_synctex" = xyes; then
   PTEX_SYNCTEX_TRUE=
@@ -18552,9 +18567,14 @@ case $enable_native_texlive_build:$enable_eptex_synctex in #(
   yes:yes | no:yes | no:no) :
      ;; #(
   *) :
-    enable_eptex_synctex=yes
-         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-eptex-synctex=yes' (native TeX Live build)" >&5
-$as_echo "$as_me: WARNING: Enforcing \`--enable-eptex-synctex=yes' (native TeX Live build)" >&2;} ;;
+    if test -z "$enable_eptex_synctex"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-eptex-synctex=yes'" >&5
+$as_echo "$as_me: Assuming \`--enable-eptex-synctex=yes'" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-eptex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-eptex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_eptex_synctex=yes ;;
 esac
  if test "x$enable_eptex_synctex" = xyes; then
   EPTEX_SYNCTEX_TRUE=
@@ -18575,9 +18595,14 @@ case $enable_native_texlive_build:$enable_uptex_synctex in #(
   yes:yes | no:yes | no:no) :
      ;; #(
   *) :
-    enable_uptex_synctex=yes
-         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-uptex-synctex=yes' (native TeX Live build)" >&5
-$as_echo "$as_me: WARNING: Enforcing \`--enable-uptex-synctex=yes' (native TeX Live build)" >&2;} ;;
+    if test -z "$enable_uptex_synctex"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-uptex-synctex=yes'" >&5
+$as_echo "$as_me: Assuming \`--enable-uptex-synctex=yes'" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-uptex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-uptex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_uptex_synctex=yes ;;
 esac
  if test "x$enable_uptex_synctex" = xyes; then
   UPTEX_SYNCTEX_TRUE=
@@ -18598,9 +18623,14 @@ case $enable_native_texlive_build:$enable_euptex_synctex in #(
   yes:yes | no:yes | no:no) :
      ;; #(
   *) :
-    enable_euptex_synctex=yes
-         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-euptex-synctex=yes' (native TeX Live build)" >&5
-$as_echo "$as_me: WARNING: Enforcing \`--enable-euptex-synctex=yes' (native TeX Live build)" >&2;} ;;
+    if test -z "$enable_euptex_synctex"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-euptex-synctex=yes'" >&5
+$as_echo "$as_me: Assuming \`--enable-euptex-synctex=yes'" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-euptex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-euptex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_euptex_synctex=yes ;;
 esac
  if test "x$enable_euptex_synctex" = xyes; then
   EUPTEX_SYNCTEX_TRUE=
@@ -18628,9 +18658,14 @@ case $enable_native_texlive_build:$enable_pdftex_synctex in #(
   yes:yes | no:yes | no:no) :
      ;; #(
   *) :
-    enable_pdftex_synctex=yes
-         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-pdftex-synctex=yes' (native TeX Live build)" >&5
-$as_echo "$as_me: WARNING: Enforcing \`--enable-pdftex-synctex=yes' (native TeX Live build)" >&2;} ;;
+    if test -z "$enable_pdftex_synctex"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-pdftex-synctex=yes'" >&5
+$as_echo "$as_me: Assuming \`--enable-pdftex-synctex=yes'" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-pdftex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-pdftex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_pdftex_synctex=yes ;;
 esac
  if test "x$enable_pdftex_synctex" = xyes; then
   PDFTEX_SYNCTEX_TRUE=
@@ -18658,9 +18693,14 @@ case $enable_native_texlive_build:$enable_xetex_synctex in #(
   yes:yes | no:yes | no:no) :
      ;; #(
   *) :
-    enable_xetex_synctex=yes
-         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-xetex-synctex=yes' (native TeX Live build)" >&5
-$as_echo "$as_me: WARNING: Enforcing \`--enable-xetex-synctex=yes' (native TeX Live build)" >&2;} ;;
+    if test -z "$enable_xetex_synctex"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xetex-synctex=yes'" >&5
+$as_echo "$as_me: Assuming \`--enable-xetex-synctex=yes'" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-xetex-synctex=yes' (native TeX Live build)" >&5
+$as_echo "$as_me: WARNING: Enforcing \`--enable-xetex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_xetex_synctex=yes ;;
 esac
  if test "x$enable_xetex_synctex" = xyes; then
   XETEX_SYNCTEX_TRUE=

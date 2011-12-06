@@ -1,3 +1,7 @@
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.
+
 2011-10-27  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (FONTCONFIG_*): doc+formatting fix.

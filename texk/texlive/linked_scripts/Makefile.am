@@ -34,7 +34,7 @@ bin_SCRIPTS =
 # dangling symlinks produced by `make install'.
 # The instances in texmf* are the masters (except when it is CTAN).
 #
-texmf_scriptsdir = ${prefix}/texmf/scripts
+texmf_scriptsdir = $(datarootdir)/texmf/scripts
 ## We distinguish shell and other (perl, lua, python, ruby, ...) scripts.
 texmf_shell_scripts = \
 	simpdftex/simpdftex
@@ -49,7 +49,7 @@ nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_shell_scripts) \
 	$(texmf_other_scripts)
 
-texmf_dist_scriptsdir = ${prefix}/texmf-dist/scripts
+texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_dist_shell_scripts = \
 	bibexport/bibexport.sh \
 	installfont/installfont-tl \

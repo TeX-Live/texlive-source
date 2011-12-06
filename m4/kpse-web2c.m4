@@ -43,8 +43,10 @@ m4_define([KPSE_XTEX_COND],
 m4_ifval([$3], [
 AS_CASE([$enable_native_texlive_build:$enable_$1_synctex],
         [yes:$3 | no:yes | no:no], ,
-        [enable_$1_synctex=$3
-         AC_MSG_WARN([Enforcing `--enable-$1-synctex=$3' (native TeX Live build)])])
+        [AS_IF([test -z "$enable_$1_synctex"],
+               [AC_MSG_NOTICE([Assuming `--enable-$1-synctex=$3'])],
+               [AC_MSG_WARN([Enforcing `--enable-$1-synctex=$3' (native TeX Live build)])])
+         enable_$1_synctex=$3])
 AM_CONDITIONAL(AS_TR_CPP($1)[_SYNCTEX], [test "x$enable_$1_synctex" = xyes])[]dnl
 ])[]dnl m4_ifval
 ]) # KPSE_XTEX_COND

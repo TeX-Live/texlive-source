@@ -37,7 +37,7 @@ nodist_bin_SCRIPTS =
 
 include $(srcdir)/../am/script_links.am
 
-texmfdir = ${prefix}/$(scriptsdir)
+texmfdir = $(datarootdir)/$(scriptsdir)
 dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
 
 if !WIN32
@@ -71,11 +71,11 @@ dist_man5_MANS = \
 	fmtutil.cnf.5 \
 	updmap.cfg.5
 
-texconfigdir = ${prefix}/texmf/texconfig
+texconfigdir = $(datarootdir)/texmf/texconfig
 dist_texconfig_SCRIPTS = tcfmgr
 dist_texconfig_DATA = tcfmgr.map
 
-web2cdir = ${prefix}/texmf/web2c
+web2cdir = $(datarootdir)/texmf/web2c
 dist_web2c_DATA = fmtutil.cnf
 
 bin_links = \

@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* data/Makefile.am:
+	Replace ${prefix}/texmf => $(datarootdir)/texmf.
+
 2011-11-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_pdfm.c: fix a typo in spc_handler_pdfm_dest().

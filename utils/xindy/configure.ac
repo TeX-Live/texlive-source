@@ -40,8 +40,8 @@ AS_CASE([$enable_xindy_docs],
 
 # Installation directories for TeX Live.
 memdir='$(bindir)'
-pkglibdir='${prefix}/texmf/xindy'
-docdir='${prefix}/texmf/doc/xindy'
+pkglibdir='$(datarootdir)/texmf/xindy'
+docdir='$(datarootdir)/texmf/doc/xindy'
 AC_SUBST([memdir])
 AC_SUBST([pkglibdir])
 AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])

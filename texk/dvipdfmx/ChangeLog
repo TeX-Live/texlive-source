@@ -1,3 +1,7 @@
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.
+
 2011-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c, spc-pdfm.c, tfm.c and vf.c: remove incompatible lines

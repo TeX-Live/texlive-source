@@ -73,14 +73,19 @@ if test "x$LN_S" != "xln -s" && test "x$with_ln_s" != xno; then
   AC_MSG_ERROR([You could use `--without-ln-s' to build without working `ln -s'])
 fi
 
-if test "x$mandir" = 'x${datarootdir}/man'; then
-  mandir='${prefix}/texmf/doc/man'
-  ac_configure_args="$ac_configure_args '--mandir=$mandir'"  
-fi
-
-if test "x$infodir" = 'x${datarootdir}/info'; then
-  infodir='${prefix}/texmf/doc/info'
-  ac_configure_args="$ac_configure_args '--infodir=$infodir'"  
+if test "x$enable_native_texlive_build" = xyes; then
+  if test "x$datarootdir" = 'x${prefix}/share'; then
+    datarootdir='${prefix}'
+    ac_configure_args="$ac_configure_args '--datarootdir=$datarootdir'"  
+  fi
+  if test "x$mandir" = 'x${datarootdir}/man'; then
+    mandir='${prefix}/texmf/doc/man'
+    ac_configure_args="$ac_configure_args '--mandir=$mandir'"  
+  fi
+  if test "x$infodir" = 'x${datarootdir}/info'; then
+    infodir='${prefix}/texmf/doc/info'
+    ac_configure_args="$ac_configure_args '--infodir=$infodir'"  
+  fi
 fi
 
 dnl Although quite unusual, it is possible to build Web2C (TeX & Co)
@@ -179,13 +184,21 @@ case $kpse_src$kpse_bld in
   *' '*) AC_MSG_ERROR([Absolute source and/or build path with embedded spaces]);;
 esac
 AC_MSG_RESULT([
-   prefix:                       $prefix
    enable_native_texlive_build:  $enable_native_texlive_build
    enable_shared:                $enable_shared
    enable_multiplatform:         $enable_multiplatform
    enable_cxx_runtime_hack:      $enable_cxx_runtime_hack
    enable_libtool_hack:          $enable_libtool_hack
    enable_compiler_warnings:     $enable_compiler_warnings
+
+   prefix:                       $prefix
+   includedir:                   $includedir
+   datarootdir:                  $datarootdir
+   mandir:                       $mandir
+   infodir:                      $infodir
+   exec_prefix:                  $exec_prefix
+   bindir:                       $bindir
+   libdir:                       $libdir
 
 ** Next run `make' to configure and build each library and program.
 ])

@@ -228,7 +228,7 @@ progname_test_LDADD = libkpathsea.la
 xdirtest_LDADD = libkpathsea.la
 
 ## The scripts and their data
-web2cdir = ${prefix}/texmf/web2c
+web2cdir = $(datarootdir)/texmf/web2c
 
 dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
 

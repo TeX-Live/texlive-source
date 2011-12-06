@@ -48,34 +48,31 @@ to locate the installed headers and libraries.
 
 1.2. Installation paths
 -----------------------
-If you want your principal TEXMF trees to be, e.g.,
+If you specify, e.g.,
+  --prefix=/usr
+binaries will be installed under
+  /usr/bin
+libraries under
+  /usr/lib
+header files under
+  /usr/include
+info pages under
+  /usr/share/info
+mnual pages under
+  /usr/share/man
+and the principal TEXMF trees under
   /usr/share/texmf{,-dist}
-you must specify
-  --prefix=/usr/share
-and you probably need to modify texmf.cnf to reflect your paths.  The
-compile-time paths defined in paths.h will be computed accordingly.
 
-Specify
-  --bindir=/usr/bin
-to install binaries under /usr/bin.  This will cause the installation of
-correct symlinks to scripts under ${prefix}/texmf or ${prefix}/texmf-dist.
-
-To install the TL kpathsea and ptexenc libraries under /usr/lib specify
-  --libdir=/usr/lib
-but on 64bit bi-arch systems and depending on your distro this might also be
+Moreover you can use
+  --exec-prefix=DIR
+and
+  --{bin,lib,include,info,man,dataroot}dir=DIR
+to modify these default choices.  Depending on your distro you might want to
+specify
   --libdir=/usr/lib64
-or similar.  The correct choice is important in particular when using shared
-versions of the TL specific libraries.
+or similar on 64bit bi-arch (Linux) systems.
 
-Alternatively you could specify
-  --exec-prefix=/usr
-for binaries under /usr/bin and libraries under /usr/lib.
-
-You probably should specify
-  --infodir=/usr/share/info --mandir=/usr/share/man
-to have info and man pages installed under /usr/share/{info,man}, and
-  --includedir=/usr/include
-to have headers under /usr/include/{kpathsea,ptexenc}.
+The top-level configure script displays the actual installation paths.
 
 For a `staged install' (see Automake manual 12.4), e.g.,
   mkdir /tmp/staging && make DESTDIR=/tmp/staging install-strip

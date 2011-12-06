@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.
+
 2011-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* font-open.[ch] (font_open): Constify `char **' parameter.

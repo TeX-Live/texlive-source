@@ -98,7 +98,7 @@ nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am
 
-texmfdir = ${prefix}/$(scriptsdir)
+texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 
 if !WIN32

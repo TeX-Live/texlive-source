@@ -254,16 +254,16 @@ nodist_bin_SCRIPTS = $(am__append_1)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
-texmfdir = ${prefix}/$(scriptsdir)
+texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 @WIN32_FALSE@bin_SCRIPTS = $(CHKTEX_TREE)/chkweb
 
 # resource file
-configdir = ${prefix}/texmf/chktex
+configdir = $(datarootdir)/texmf/chktex
 config_DATA = $(CHKTEX_TREE)/chktexrc
 
 # documentation
-pdfdocdir = ${prefix}/texmf/doc/chktex
+pdfdocdir = $(datarootdir)/texmf/doc/chktex
 dist_pdfdoc_DATA = ChkTeX.pdf
 CLEANFILES = $(nodist_bin_SCRIPTS) ChkTeX.aux ChkTeX.log chktest
 DISTCLEANFILES = stamp-tex

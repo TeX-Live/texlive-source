@@ -1,3 +1,11 @@
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Use TL specific installation directories only
+	for $enable_native_texlive_build=yes (also datarootdir).
+	Display the installation directories.
+
+	* README.config, README.distro: Adapted.
+
 2011-10-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tardate.ac: Switch to 2011-10-05.

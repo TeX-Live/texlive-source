@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/xindy/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -65,7 +65,7 @@ if CLISP_RUNTIME
 	rm -f "$(DESTDIR)$(bindir)/$(XINDY_RUN)"
 endif CLISP_RUNTIME
 
-texmfdir = ${prefix}/$(scriptsdir)
+texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 
 %.pl: $(XINDY_TREE)/user-commands/%.in

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipsk/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -83,7 +83,7 @@ dist_prologues = \
 	tex.lpro \
 	texps.lpro
 
-prologdir = ${prefix}/texmf/dvips/base
+prologdir = $(datarootdir)/texmf/dvips/base
 
 prologues = $(dist_prologues:.lpro=.pro) texc.pro
 
