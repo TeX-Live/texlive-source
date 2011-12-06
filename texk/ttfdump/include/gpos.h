@@ -32,7 +32,12 @@
 typedef struct
 {
   SHORT valDesign[4];
-  DevicePtr valDevice[4];
+  union
+  {
+    USHORT offset;
+    DevicePtr device;
+  }
+  valDevice[4];
 }
 ValueRecord, *ValueRecordPtr;
 

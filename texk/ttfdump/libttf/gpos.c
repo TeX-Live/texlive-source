@@ -17,7 +17,7 @@ static USHORT getValueFormat (FILE *fp)
 }
 
 static ValueRecordPtr
-gposMakeValueRecord (USHORT valueFormat, FILE *fp, ULONG offset)
+gposMakeValueRecord (USHORT valueFormat, FILE *fp)
 {
     int i;
     ValueRecordPtr value;
@@ -31,9 +31,21 @@ gposMakeValueRecord (USHORT valueFormat, FILE *fp, ULONG offset)
             value->valDesign[i] = ttfGetSHORT (fp);
     for (i = 0; i < 4; i++)
         if (valueFormat & (ValueFormat_XPlaDevice << i))
-            ttfGetUSHORT (fp);
+            value->valDevice[i].offset = ttfGetUSHORT (fp);
 
     return value;
+}
+
+static void
+gposLoadValueRecord (ValueRecordPtr value, FILE *fp, ULONG offset)
+{
+    int i;
+
+    if (value == NULL)
+        return;
+    for (i = 0; i < 4; i++)
+        if (value->valDevice[i].offset)
+            value->valDevice[i].device = otfMakeDevice (fp, offset + value->valDevice[i].offset);
 }
 
 static const char *txtDesign[4] = {
@@ -41,6 +53,13 @@ static const char *txtDesign[4] = {
     "YPlacement",
     "XAdvance",
     "YAdvance"
+};
+
+static const char *txtDevice[4] = {
+    "XPlaDevice",
+    "YPlaDevice",
+    "XAdvDevice",
+    "YAdvDevice"
 };
 
 static void
@@ -54,8 +73,12 @@ gposPrintValueRecord (FILE *fp, const char *str, USHORT valueFormat, ValueRecord
             fprintf (fp, "%s %s = %d\n", s, txtDesign[i], value->valDesign[i]);
             s = str;
         }
-    if (valueFormat & ValueFormat_AllDevice)
-        fprintf (fp, "\t\t *** Device Table NOT YET IMPLEMENTED ***\n");
+    for (i = 0; i < 4; i++)
+        if (value->valDevice[i].device) {
+            fprintf (fp, "%s %s:", s, txtDevice[i]);
+            otfPrintDevice (fp, value->valDevice[i].device);
+            s = str;
+        }
 }
 
 static void freeValueRecord (ValueRecordPtr value)
@@ -64,8 +87,8 @@ static void freeValueRecord (ValueRecordPtr value)
         int i;
 
         for (i = 0; i < 4; i++)
-            if (value->valDevice[i])
-                free (value->valDevice[i]);
+            if (value->valDevice[i].device)
+                free (value->valDevice[i].device);
         free (value);
     }
 }
@@ -214,8 +237,9 @@ static Pos11Ptr makeGPOS11 (FILE *fp, ULONG offset)
 
     cOffset = ttfGetUSHORT (fp);
     pos->valueFormat = getValueFormat (fp);
-    pos->value = gposMakeValueRecord (pos->valueFormat, fp, offset);
+    pos->value = gposMakeValueRecord (pos->valueFormat, fp);
     pos->coverage = otfMakeCoverage (fp, offset + cOffset);
+    gposLoadValueRecord (pos->value, fp, offset);
 
     return pos;
 }
@@ -248,8 +272,10 @@ static Pos12Ptr makeGPOS12 (FILE *fp, ULONG offset)
     pos->valueCount = ttfGetUSHORT (fp);
     pos->value = XCALLOC (pos->valueCount, ValueRecordPtr);
     for (i = 0; i < pos->valueCount; i++)
-        pos->value[i] = gposMakeValueRecord (pos->valueFormat, fp, offset);
+        pos->value[i] = gposMakeValueRecord (pos->valueFormat, fp);
     pos->coverage = otfMakeCoverage (fp, offset + cOffset);
+    for (i = 0; i < pos->valueCount; i++)
+        gposLoadValueRecord (pos->value[i], fp, offset);
 
     return pos;
 }
@@ -277,19 +303,19 @@ static void freeGPOS12 (Pos12Ptr pos)
     otfFreeCoverage (pos->coverage);
 }
 
-static void gposLoadPairSet (Pos21Ptr pos, int i, FILE *fp, ULONG offset, USHORT poff)
+static void gposLoadPairSet (Pos21Ptr pos, int i, FILE *fp, ULONG offset)
 {
     int j;
     PairSetPtr pairSet = &pos->pairSet[i];
 
-    xfseek (fp, offset + poff, SEEK_SET, "gposLoadPairSet");
+    xfseek (fp, offset, SEEK_SET, "gposLoadPairSet");
 
     pairSet->pairValueCount = ttfGetUSHORT (fp);
     pairSet->pairValue = XCALLOC (pairSet->pairValueCount, PairValueRecord);
     for (j = 0; j < pairSet->pairValueCount; j++) {
         pairSet->pairValue[j].secondGlyph = ttfGetUSHORT (fp);
-        pairSet->pairValue[j].value1 = gposMakeValueRecord (pos->valueFormat1, fp, offset);
-        pairSet->pairValue[j].value2 = gposMakeValueRecord (pos->valueFormat2, fp, offset);
+        pairSet->pairValue[j].value1 = gposMakeValueRecord (pos->valueFormat1, fp);
+        pairSet->pairValue[j].value2 = gposMakeValueRecord (pos->valueFormat2, fp);
     }
 }
 
@@ -308,8 +334,16 @@ static Pos21Ptr makeGPOS21 (FILE *fp, ULONG offset)
     pos->coverage = otfMakeCoverage (fp, offset + cOffset);
     pos->pairSet = XCALLOC (pos->pairSetCount, PairSet);
     for (i = 0; i < pos->pairSetCount; i++)
-        gposLoadPairSet (pos, i, fp, offset, pOffset[i]);
+        gposLoadPairSet (pos, i, fp, offset + pOffset[i]);
     free (pOffset);
+    for (i = 0; i < pos->pairSetCount; i++) {
+        int j;
+
+        for (j = 0; j < pos->pairSet[i].pairValueCount; j++) {
+            gposLoadValueRecord (pos->pairSet[i].pairValue[j].value1, fp, offset);
+            gposLoadValueRecord (pos->pairSet[i].pairValue[j].value2, fp, offset);
+        }
+    }
 
     return pos;
 }
@@ -324,6 +358,7 @@ static void printGPOS21 (FILE *fp, Pos21Ptr pos)
                  pos->valueFormat1, pos->valueFormat2, pos->pairSetCount);
     for (i = 0; i < pos->pairSetCount; i++) {
         int j;
+
         fprintf (fp, "\t  %2d. pairValueCount: %d\n", i, pos->pairSet[i].pairValueCount);
         for (j = 0; j < pos->pairSet[i].pairValueCount; j++) {
             fprintf (fp, "\t      %2d. secondGlyph: %d\n", j,
@@ -360,7 +395,7 @@ static void freeGPOS21 (Pos21Ptr pos)
 
 static Pos22Ptr makeGPOS22 (FILE *fp, ULONG offset)
 {
-    int num = 0, i;
+    int i;
     USHORT cOffset, cOffset1, cOffset2;
     Pos22Ptr pos = XCALLOC1 (Pos22);
 
@@ -372,24 +407,20 @@ static Pos22Ptr makeGPOS22 (FILE *fp, ULONG offset)
     pos->class1Count = ttfGetUSHORT (fp);
     pos->class2Count = ttfGetUSHORT (fp);
     pos->values = XCALLOC (2 * pos->class1Count * pos->class2Count, ValueRecordPtr);
-    for (i = 0; i < pos->class1Count; i++) {
-        int j;
-
-        for (j = 0; j < pos->class2Count; j++) {
-            pos->values[num++] = gposMakeValueRecord (pos->valueFormat1, fp, offset);
-            pos->values[num++] = gposMakeValueRecord (pos->valueFormat2, fp, offset);
-        }
-    }
+    for (i = 0; i < 2 * pos->class1Count * pos->class2Count; i++)
+        pos->values[i] = gposMakeValueRecord (i & 1 ? pos->valueFormat2 : pos->valueFormat1, fp);
     pos->coverage = otfMakeCoverage (fp, offset + cOffset);
     pos->classDef1 = otfMakeClassDef (fp, offset + cOffset1);
     pos->classDef2 = otfMakeClassDef (fp, offset + cOffset2);
+    for (i = 0; i < 2 * pos->class1Count * pos->class2Count; i++)
+        gposLoadValueRecord (pos->values[i], fp, offset);
 
     return pos;
 }
 
 static void printGPOS22 (FILE *fp, Pos22Ptr pos)
 {
-    int num = 0, i;
+    int i, num = 0;
 
     fprintf (fp, " - Pair Adjustment Class\n\t  ");
     otfPrintCoverage (fp, pos->coverage);
@@ -461,6 +492,7 @@ static Pos31Ptr makeGPOS31 (FILE *fp, ULONG offset)
 static void printGPOS31 (FILE *fp, Pos31Ptr pos)
 {
     int i, num = 0;
+
     fprintf (fp, " - Cursive Attachment\n\t  ");
     otfPrintCoverage (fp, pos->coverage);
     fprintf (fp, "\t  entryExitCount: %d\n", pos->entryExitCount);

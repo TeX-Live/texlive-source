@@ -1,5 +1,12 @@
 2011-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* libttf/otfcommon.c: Improved output strings.
+
+	* include/gpos.h, libttf/gpos.c: Support ValueRecords with
+	device parts (ppem dependent fine tuning).
+
+2011-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* include/gpos.h (new): GPOS table format.
 	* include/gsub.h (new): GSUB table format.
 	* include/otftables.h (new): OpenType common table formats.

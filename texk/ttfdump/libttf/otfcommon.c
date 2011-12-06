@@ -566,33 +566,33 @@ static void loadOtfRule (OtfRulePtr otfRule, FILE *fp, ULONG offset)
 static void loadOtfRuleSet (OtfRuleSetPtr otfRuleSet, FILE *fp, ULONG offset)
 {
     int i;
-    USHORT *pOffset;
+    USHORT *rOffset;
 
     xfseek (fp, offset, SEEK_SET, "loadOtfRuleSet");
 
     otfRuleSet->otfRuleCount = ttfGetUSHORT (fp);
-    pOffset = ttfMakeUSHORT (otfRuleSet->otfRuleCount, fp);
+    rOffset = ttfMakeUSHORT (otfRuleSet->otfRuleCount, fp);
     otfRuleSet->otfRule = XCALLOC (otfRuleSet->otfRuleCount, OtfRule);
     for (i = 0; i < otfRuleSet->otfRuleCount; i++)
-        loadOtfRule (&otfRuleSet->otfRule[i], fp, offset + pOffset[i]);
-    free (pOffset);
+        loadOtfRule (&otfRuleSet->otfRule[i], fp, offset + rOffset[i]);
+    free (rOffset);
 }
 
 OtfCtx1Ptr makeOTFCtx1 (FILE *fp, ULONG offset)
 {
     int i;
     USHORT cOffset;
-    USHORT *pOffset;
+    USHORT *rOffset;
     OtfCtx1Ptr otf = XCALLOC1 (OtfCtx1);
 
     cOffset = ttfGetUSHORT (fp);
     otf->otfRuleSetCount = ttfGetUSHORT (fp);
-    pOffset = ttfMakeUSHORT (otf->otfRuleSetCount, fp);
+    rOffset = ttfMakeUSHORT (otf->otfRuleSetCount, fp);
     otf->otfRuleSet = XCALLOC (otf->otfRuleSetCount, OtfRuleSet);
     otf->coverage = otfMakeCoverage (fp, offset + cOffset);
     for (i = 0; i < otf->otfRuleSetCount; i++)
-        loadOtfRuleSet (&otf->otfRuleSet[i], fp, offset + pOffset[i]);
-    free (pOffset);
+        loadOtfRuleSet (&otf->otfRuleSet[i], fp, offset + rOffset[i]);
+    free (rOffset);
 
     return otf;
 }
@@ -601,7 +601,8 @@ void printOTFCtx1 (FILE *fp, OtfCtx1Ptr otf)
 {
     int i;
 
-    fprintf (fp, " - Context Simple\n\t  ");
+    fprintf (fp, " - Context %s Simple\n\t  ",
+                 otf->lookupType == 7 ? "Positioning" : "Substitution");
     otfPrintCoverage (fp, otf->coverage);
     fprintf (fp, "\t  otfRuleSetCount: %d\n", otf->otfRuleSetCount);
     for (i = 0; i < otf->otfRuleSetCount; i++) {
@@ -611,7 +612,7 @@ void printOTFCtx1 (FILE *fp, OtfCtx1Ptr otf)
         for (j = 0; j < otf->otfRuleSet[i].otfRuleCount; j++) {
             int k;
 
-            fprintf (fp, "\t    %2d. glyphtCount: %d ", j,
+            fprintf (fp, "\t    %2d. glyphCount: %d ", j,
                          otf->otfRuleSet[i].otfRule[j].glyphCount);
             for (k = 0; k < otf->otfRuleSet[i].otfRule[j].glyphCount - 1; k++)
                 fprintf (fp, k == 0 ? "- %d" : ", %d", otf->otfRuleSet[i].otfRule[j].input[k]);
@@ -653,16 +654,16 @@ static void loadOtfClassRule (OtfClassRulePtr otfClassRule, FILE *fp, ULONG offs
 static void loadOtfClassSet (OtfClassSetPtr otfClassSet, FILE *fp, ULONG offset)
 {
     int i;
-    USHORT *pOffset;
+    USHORT *sOffset;
 
     xfseek (fp, offset, SEEK_SET, "loadOtfClassSet");
 
     otfClassSet->otfClassRuleCnt = ttfGetUSHORT (fp);
-    pOffset = ttfMakeUSHORT (otfClassSet->otfClassRuleCnt, fp);
+    sOffset = ttfMakeUSHORT (otfClassSet->otfClassRuleCnt, fp);
     otfClassSet->otfClassRule = XCALLOC (otfClassSet->otfClassRuleCnt, OtfClassRule);
     for (i = 0; i < otfClassSet->otfClassRuleCnt; i++)
-        loadOtfClassRule (&otfClassSet->otfClassRule[i], fp, offset + pOffset[i]);
-    free (pOffset);
+        loadOtfClassRule (&otfClassSet->otfClassRule[i], fp, offset + sOffset[i]);
+    free (sOffset);
 }
 
 OtfCtx2Ptr makeOTFCtx2 (FILE *fp, ULONG offset)
@@ -670,20 +671,20 @@ OtfCtx2Ptr makeOTFCtx2 (FILE *fp, ULONG offset)
     int i;
     USHORT cOffset;
     USHORT clOffset;
-    USHORT *pOffset;
+    USHORT *sOffset;
     OtfCtx2Ptr otf = XCALLOC1 (OtfCtx2);
 
     cOffset = ttfGetUSHORT (fp);
     clOffset = ttfGetUSHORT (fp);
     otf->otfClassSetCnt = ttfGetUSHORT (fp);
-    pOffset = ttfMakeUSHORT (otf->otfClassSetCnt, fp);
+    sOffset = ttfMakeUSHORT (otf->otfClassSetCnt, fp);
     otf->otfClassSet = XCALLOC (otf->otfClassSetCnt, OtfClassSet);
     otf->coverage = otfMakeCoverage (fp, offset + cOffset);
     otf->classDef = otfMakeClassDef (fp, offset + clOffset);
     for (i = 0; i < otf->otfClassSetCnt; i++)
-        if (pOffset[i])
-            loadOtfClassSet (&otf->otfClassSet[i], fp, offset + pOffset[i]);
-    free (pOffset);
+        if (sOffset[i])
+            loadOtfClassSet (&otf->otfClassSet[i], fp, offset + sOffset[i]);
+    free (sOffset);
 
     return otf;
 }
@@ -692,7 +693,8 @@ void printOTFCtx2 (FILE *fp, OtfCtx2Ptr otf)
 {
     int i;
 
-    fprintf (fp, " - Context Class-based\n\t  ");
+    fprintf (fp, " - Context %s Class-based\n\t  ",
+                 otf->lookupType == 7 ? "Positioning" : "Substitution");
     otfPrintCoverage (fp, otf->coverage);
     fprintf (fp, "\t  ClassDef - ");
     otfPrintClassDef (fp, otf->classDef);
@@ -704,7 +706,7 @@ void printOTFCtx2 (FILE *fp, OtfCtx2Ptr otf)
         for (j = 0; j < otf->otfClassSet[i].otfClassRuleCnt; j++) {
             int k;
 
-            fprintf (fp, "\t    %2d. glyphtCount: %d ", j,
+            fprintf (fp, "\t    %2d. glyphCount: %d ", j,
                          otf->otfClassSet[i].otfClassRule[j].glyphCount);
             for (k = 0; k < otf->otfClassSet[i].otfClassRule[j].glyphCount - 1; k++)
                 fprintf (fp, k == 0 ? "- %d" : ", %d", otf->otfClassSet[i].otfClassRule[j].class[k]);
@@ -756,7 +758,8 @@ void printOTFCtx3 (FILE *fp, OtfCtx3Ptr otf)
 {
     int i;
 
-    fprintf (fp, " - Context Coverage-based\n");
+    fprintf (fp, " - Context %s Coverage-based\n",
+                 otf->lookupType == 7 ? "Positioning" : "Substitution");
     fprintf (fp, "\t  glyphCount: %d\n", otf->glyphCount);
     for (i = 0; i < otf->glyphCount; i++) {
         fprintf (fp, "\t  %2d. ", i);
@@ -794,33 +797,33 @@ static void
 loadChainOtfRuleSet (ChainOtfRuleSetPtr chainOtfRuleSet, FILE *fp, ULONG offset)
 {
     int i;
-    USHORT *pOffset;
+    USHORT *rOffset;
 
     xfseek (fp, offset, SEEK_SET, "loadChainOtfRuleSet");
 
     chainOtfRuleSet->chainOtfRuleCount = ttfGetUSHORT (fp);
-    pOffset = ttfMakeUSHORT (chainOtfRuleSet->chainOtfRuleCount, fp);
+    rOffset = ttfMakeUSHORT (chainOtfRuleSet->chainOtfRuleCount, fp);
     chainOtfRuleSet->chainOtfRule = XCALLOC (chainOtfRuleSet->chainOtfRuleCount, ChainOtfRule);
     for (i = 0; i < chainOtfRuleSet->chainOtfRuleCount; i++)
-        loadChainOtfRule (&chainOtfRuleSet->chainOtfRule[i], fp, offset + pOffset[i]);
-    free (pOffset);
+        loadChainOtfRule (&chainOtfRuleSet->chainOtfRule[i], fp, offset + rOffset[i]);
+    free (rOffset);
 }
 
 OtfChn1Ptr makeOTFChn1 (FILE *fp, ULONG offset)
 {
     int i;
     USHORT cOffset;
-    USHORT *pOffset;
+    USHORT *rOffset;
     OtfChn1Ptr otf = XCALLOC1 (OtfChn1);
 
     cOffset = ttfGetUSHORT (fp);
     otf->chainOtfRuleSetCount = ttfGetUSHORT (fp);
-    pOffset = ttfMakeUSHORT (otf->chainOtfRuleSetCount, fp);
+    rOffset = ttfMakeUSHORT (otf->chainOtfRuleSetCount, fp);
     otf->coverage = otfMakeCoverage (fp, offset + cOffset);
     otf->chainOtfRuleSet = XCALLOC (otf->chainOtfRuleSetCount, ChainOtfRuleSet);
     for (i = 0; i < otf->chainOtfRuleSetCount; i++)
-        loadChainOtfRuleSet (&otf->chainOtfRuleSet[i], fp, offset + pOffset[i]);
-    free (pOffset);
+        loadChainOtfRuleSet (&otf->chainOtfRuleSet[i], fp, offset + rOffset[i]);
+    free (rOffset);
 
     return otf;
 }
@@ -829,7 +832,8 @@ void printOTFChn1 (FILE *fp, OtfChn1Ptr otf)
 {
     int i;
 
-    fprintf (fp, " - Chained Context Simple\n\t  ");
+    fprintf (fp, " - Chained Context %s Simple\n\t  ",
+                 otf->lookupType == 8 ? "Positioning" : "Substitution");
     otfPrintCoverage (fp, otf->coverage);
     fprintf (fp, "\t  chainOtfRuleSetCount: %d\n", otf->chainOtfRuleSetCount);
     for (i = 0; i < otf->chainOtfRuleSetCount; i++) {
@@ -898,16 +902,16 @@ static void
 loadChainOtfClassSet (ChainOtfClassSetPtr chainOtfClassSet, FILE *fp, ULONG offset)
 {
     int i;
-    USHORT *pOffset;
+    USHORT *rOffset;
 
     xfseek (fp, offset, SEEK_SET, "loadChainOtfClassSet");
 
     chainOtfClassSet->chainOtfClassRuleCnt = ttfGetUSHORT (fp);
-    pOffset = ttfMakeUSHORT (chainOtfClassSet->chainOtfClassRuleCnt, fp);
+    rOffset = ttfMakeUSHORT (chainOtfClassSet->chainOtfClassRuleCnt, fp);
     chainOtfClassSet->chainOtfClassRule = XCALLOC (chainOtfClassSet->chainOtfClassRuleCnt, ChainOtfClassRule);
     for (i = 0; i < chainOtfClassSet->chainOtfClassRuleCnt; i++)
-        loadChainOtfClassRule (&chainOtfClassSet->chainOtfClassRule[i], fp, offset + pOffset[i]);
-    free (pOffset);
+        loadChainOtfClassRule (&chainOtfClassSet->chainOtfClassRule[i], fp, offset + rOffset[i]);
+    free (rOffset);
 }
 
 OtfChn2Ptr makeOTFChn2 (FILE *fp, ULONG offset)
@@ -915,7 +919,7 @@ OtfChn2Ptr makeOTFChn2 (FILE *fp, ULONG offset)
     int i;
     USHORT cOffset;
     USHORT bOffset, iOffset, lOffset;
-    USHORT *pOffset;
+    USHORT *sOffset;
     OtfChn2Ptr otf = XCALLOC1 (OtfChn2);
 
     cOffset = ttfGetUSHORT (fp);
@@ -923,16 +927,16 @@ OtfChn2Ptr makeOTFChn2 (FILE *fp, ULONG offset)
     iOffset = ttfGetUSHORT (fp);
     lOffset = ttfGetUSHORT (fp);
     otf->chainOtfClassSetCnt = ttfGetUSHORT (fp);
-    pOffset = ttfMakeUSHORT (otf->chainOtfClassSetCnt, fp);
+    sOffset = ttfMakeUSHORT (otf->chainOtfClassSetCnt, fp);
     otf->coverage = otfMakeCoverage (fp, offset + cOffset);
     otf->backtrackClassDef = otfMakeClassDef (fp, offset + bOffset);
     otf->inputClassDef = otfMakeClassDef (fp, offset + iOffset);
     otf->lookaheadClassDef = otfMakeClassDef (fp, offset + lOffset);
     otf->chainOtfClassSet = XCALLOC (otf->chainOtfClassSetCnt, ChainOtfClassSet);
     for (i = 0; i < otf->chainOtfClassSetCnt; i++)
-        if (pOffset[i])
-            loadChainOtfClassSet (&otf->chainOtfClassSet[i], fp, offset + pOffset[i]);
-    free (pOffset);
+        if (sOffset[i])
+            loadChainOtfClassSet (&otf->chainOtfClassSet[i], fp, offset + sOffset[i]);
+    free (sOffset);
 
     return otf;
 }
@@ -941,7 +945,8 @@ void printOTFChn2 (FILE *fp, OtfChn2Ptr otf)
 {
     int i;
 
-    fprintf (fp, " - Chained Context Class-based\n\t  ");
+    fprintf (fp, " - Chained Context %s Class-based\n\t  ",
+                 otf->lookupType == 8 ? "Positioning" : "Substitution");
     otfPrintCoverage (fp, otf->coverage);
     fprintf (fp, "\t  backtrackClassDef - ");
     otfPrintClassDef (fp, otf->backtrackClassDef);
@@ -1037,7 +1042,8 @@ void printOTFChn3 (FILE *fp, OtfChn3Ptr otf)
 {
     int i;
 
-    fprintf (fp, " - Chained Context Coverage-based\n");
+    fprintf (fp, " - Chained Context %s Coverage-based\n",
+                 otf->lookupType == 8 ? "Positioning" : "Substitution");
     fprintf (fp, "\t  backtrackGlyphCount: %d\n", otf->backtrackGlyphCount);
     for (i = 0; i < otf->backtrackGlyphCount; i++) {
         fprintf (fp, "\t  %2d. backtrack", i);
