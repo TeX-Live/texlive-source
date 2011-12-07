@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 23990 2011-09-17 07:40:33Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 23990 $';
+my $svnrev = '$Revision: 24439 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -1859,7 +1858,7 @@ sub announce_execute_actions {
   }
   $what = "map format hyphen" if (!defined($what));
   foreach my $e ($tlp->executes) {
-    if ($e =~ m/^add((Mixed)?Map)\s+([^\s]+)\s*$/) {
+    if ($e =~ m/^add((Mixed|Kanji)?Map)\s+([^\s]+)\s*$/) {
       # save the refs as we have another =~ grep in the following lines
       my $a = $1;
       my $b = $3;
@@ -2654,6 +2653,9 @@ sub check_updmap_config_value {
       tlwarn("Unknown setting for LW35  in $f: $v\n");
       return 0;
     }
+  } elsif ($k eq "kanjiEmbed") {
+    # any string is fine
+    return 1;
   } else {
     return 0;
   }
