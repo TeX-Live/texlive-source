@@ -1,3 +1,7 @@
+2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptex-base.ch: Ensure that `hi(#)==#'.
+
 2011-11-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am (pdvitype_CPPFLAGS): Replace '-DDHEX_CHAR_CODE' by

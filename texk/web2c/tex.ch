@@ -936,8 +936,8 @@ noreturn procedure confusion(@!s:str_number);
 
 % [8.110] Make it easy to change constants.  Do not increase
 % max_quarterword without changing the memoryword structure in `texmfmem.h'.
-% If you set min_quarterword or min_halfword to a non-zero value, you have
-% to remove the definitions of qi/qo, hi/ho in this change file!
+% If you set min_quarterword to a non-zero value, you have to remove the
+% definitions of qi/qo in this change file!
 @x [8.110] l.2405 - increase |max_halfword|
 @d min_quarterword=0 {smallest allowable value in a |quarterword|}
 @d max_quarterword=255 {largest allowable value in a |quarterword|}
@@ -950,7 +950,15 @@ noreturn procedure confusion(@!s:str_number);
 @d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @z
 
-@x [8.111] l.2422 - max_font_max
+@x [8.111] l.2435 - min_halfword and max_halfword
+if (mem_min<min_halfword)or(mem_max>=max_halfword)or@|
+  (mem_bot-mem_min>max_halfword+1) then bad:=14;
+@y
+if (mem_bot-sup_main_memory<min_halfword)or@|
+  (mem_top+sup_main_memory>=max_halfword) then bad:=14;
+@z
+
+@x [8.111] l.2437 - max_font_max
 if (font_base<min_quarterword)or(font_max>max_quarterword) then bad:=15;
 if font_max>font_base+256 then bad:=16;
 @y
@@ -958,7 +966,7 @@ if (max_font_max<min_halfword)or(max_font_max>max_halfword) then bad:=15;
 if font_max>font_base+max_font_max then bad:=16;
 @z
 
-@x [8.112] l.2435 - Efficiency.
+@x [8.112] l.2450 - Efficiency.
 macros are simplified in the obvious way when |min_quarterword=0|.
 @^inner loop@>@^system dependencies@>
 
@@ -974,6 +982,11 @@ macros are simplified in the obvious way when |min_quarterword=0|.
 macros are simplified in the obvious way when |min_quarterword=0|.
 So they have been simplified here in the obvious way.
 @^inner loop@>@^system dependencies@>
+
+The \.{WEB} source for \TeX\ defines |hi(#)==#+min_halfword| which can be
+simplified when |min_halfword=0|.  The Web2C implemetation of \TeX\ can use
+|hi(#)==#| together with |min_halfword<0| as long as |max_halfword| is
+sufficiently large.
 
 @d qi(#)==# {to put an |eight_bits| item into a quarterword}
 @d qo(#)==# {to take an |eight_bits| item from a quarterword}

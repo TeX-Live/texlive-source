@@ -306,13 +306,26 @@ k:=first; while k < last do begin print_buffer(k) end;
 if last<>first then for k:=first to last-1 do print(buffer[k]);
 @z
 
+@x [8.111] l.2436 - pTeX: check hi/ho
+  (mem_top+sup_main_memory>=max_halfword) then bad:=14;
+@y
+  (mem_top+sup_main_memory>=max_halfword)or@|
+  (hi(0)<>0) then bad:=14;
+@z
+
+@x [8.112] l.2450 - pTeX: hi/ho
+sufficiently large.
+@y
+sufficiently large and this is required for p\TeX.
+@z
+
 @x [8.112] l.2588 - pTeX:
 @d ho(#)==# {to take a sixteen-bit item from a halfword}
 @y
 @d ho(#)==# {to take a sixteen-bit item from a halfword}
-@d KANJI(#)==# {pTeX: to output an KANJI code into a halfword}
-@d tokanji(#)==# {pTeX: to take an KANJI code into a halfword}
-@d tonum(#)==# {pTeX: to put an KANJI code into a halfword}
+@d KANJI(#)==# {pTeX: to output a KANJI code}
+@d tokanji(#)==# {pTeX: to take a KANJI code from a halfword}
+@d tonum(#)==# {pTeX: to put a KANJI code into a halfword}
 @z
 
 @x [10.135] l.2895 - pTeX: box_dir

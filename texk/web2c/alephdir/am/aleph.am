@@ -1,6 +1,6 @@
 ## texk/web2c/alephdir/am/aleph.am: Makefile fragment for Aleph.
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Aleph
@@ -94,7 +94,16 @@ DISTCLEANFILES += $(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c \
 
 EXTRA_DIST += \
 	alephdir/ChangeLog \
-	alephdir/Makefile \
 	alephdir/aleph.defines \
 	alephdir/aleph.version
+
+# Aleph Tests
+#
+aleph_tests = alephdir/aleph.test
+
+EXTRA_DIST += $(aleph_tests)
+
+if ALEPH
+TESTS += $(aleph_tests)
+endif ALEPH
 

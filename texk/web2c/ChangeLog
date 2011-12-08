@@ -1,3 +1,7 @@
+2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex.ch: Consistency of `constants'.
+
 2011-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac [WIN32]: Add `-lgdi32' to POPPLER_LIBS.

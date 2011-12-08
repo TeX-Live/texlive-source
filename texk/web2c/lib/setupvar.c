@@ -22,7 +22,7 @@ setupboundvariable (integer *var, const_string var_name, integer dflt)
        But negative numbers are always wrong.  */
     if (conf_val < 0 || (conf_val == 0 && dflt > 0)) {
       fprintf (stderr,
-               "%s: Bad value (%ld) in texmf.cnf for %s, keeping %ld.\n",
+               "%s: Bad value (%ld) in environment or texmf.cnf for %s, keeping %ld.\n",
                kpse_invocation_name,
                (long) conf_val, var_name, (long) dflt);
     } else {

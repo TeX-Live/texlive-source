@@ -177,7 +177,7 @@ if the subrange is `|-128..127|'.
 @d max_halfword==65535 {largest allowable value in a |halfword|}
 @y
 @d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
-@d min_halfword=0 {smallest allowable value in a |halfword|}
+@d min_halfword=-@"3FFFFFFF {smallest allowable value in a |halfword|}
 @d max_halfword=@"3FFFFFFF {largest allowable value in a |halfword|}
 @z
 %---------------------------------------
@@ -189,7 +189,15 @@ if (min_quarterword>0)or(max_quarterword<@"7FFF) then bad:=11;
 if (min_halfword>0)or(max_halfword<@"3FFFFFFF) then bad:=12;
 @z
 %---------------------------------------
-@x [8] m.111 l.2423 - Omega
+@x [8.111] l.2435 - min_halfword and max_halfword
+if (mem_min<min_halfword)or(mem_max>=max_halfword)or@|
+  (mem_bot-mem_min>max_halfword+1) then bad:=14;
+@y
+if (mem_bot-sup_main_memory<min_halfword)or@|
+  (mem_top+sup_main_memory>=max_halfword) then bad:=14;
+@z
+%---------------------------------------
+@x [8] m.111 l.2438 - Omega
 if font_max>font_base+256 then bad:=16;
 @y
 if font_max>font_base+@"10000 then bad:=16;

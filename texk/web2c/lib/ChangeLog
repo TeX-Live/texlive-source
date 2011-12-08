@@ -1,3 +1,8 @@
+2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* setupvar.c (setupboundvariable): Warning message: the bad
+	value can be from the environment or from texmf.cnf.
+
 2011-10-11  Peter Breitenlohner  <peb@mp.mpg.de>
 
 	* texmfmp.c [WIN32]: Slightly reformulate Byte order marks.
@@ -125,15 +130,15 @@
 	Avoid 'differ in signedness' warnings.
 	texmfmp.c (input_line): Caat input_line2() arg2 to 'char *'.
 
-2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* setupvar.c (setupboundvariable): `program_invocation_name' has
-	been renamed into `kpse_invocation_name'.
-
 2011-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (calledit): [__MINGW32__] Drop win32_system() and
 	use system() as for all other systems.
+
+2011-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* setupvar.c (setupboundvariable): `program_invocation_name' has
+	been renamed into `kpse_invocation_name'.
 
 2010-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -1,3 +1,12 @@
+2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch, om16bit.ch: Consistency of `constants'.
+	* omocp.ch: Adjust to null, i.e., min_halfword <0.
+
+	* aleph.test (new): Just testing 'aleph -version'.
+	* Makefile (removed): Unused.
+	* am/aleph.am: Adjusted.
+
 2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch.ch (print_file_line): Bug fix: avoid uninitialized

@@ -644,7 +644,7 @@ else begin
     while r <> 0 do begin
       p:=q; q:=r; r:=ocp_lstack_lnext(r);
       end;
-    ocp_lstack_lnext(p) := null;
+    ocp_lstack_lnext(p) := 0;
     end
   end;
 end;

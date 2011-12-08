@@ -786,7 +786,7 @@ been commented~out.
 @y
 @z
 
-@x [8.112] l.2435 - Efficiency.
+@x [8.112] l.2450 - Efficiency.
 macros are simplified in the obvious way when |min_quarterword=0|.
 @^inner loop@>@^system dependencies@>
 
@@ -802,6 +802,11 @@ macros are simplified in the obvious way when |min_quarterword=0|.
 macros are simplified in the obvious way when |min_quarterword=0|.
 So they have been simplified here in the obvious way.
 @^inner loop@>@^system dependencies@>
+
+The \.{WEB} source for \TeX\ defines |hi(#)==#+min_halfword| which can be
+simplified when |min_halfword=0|.  The Web2C implemetation of \Aleph\ can
+use |hi(#)==#| together with |min_halfword<0| as long as |max_halfword| is
+sufficiently large.
 
 @d qi(#)==# {to put an |eight_bits| item into a quarterword}
 @d qo(#)==# {to take an |eight_bits| item from a quarterword}
