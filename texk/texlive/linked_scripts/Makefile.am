@@ -178,7 +178,7 @@ else !WIN32
 ## Name the link as the basename, removing any extension,
 ## except for listings-ext.sh, which is documented as that name.
 ## Downcase for the sake of TeXcount.pl -> texcount.
-	@REL=`$(relpath) '$(DESTDIR)' '$(bindir)' '$(prefix)'`; \
+	@REL=`$(relpath) '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
 	if test -z "$$REL"; then \
 	  echo 'unable to compute relative path for linked scripts' >&2; \
 	  exit 1; \

@@ -969,7 +969,7 @@ install-shell-links:
 
 # We support native builds, multiplatform or not, as well as distro builds.
 install-links:
-	@REL=`$(SHELL) $(srcdir)/../../build-aux/relpath '$(DESTDIR)' '$(bindir)' '$(prefix)'`; \
+	@REL=`$(SHELL) $(srcdir)/../../build-aux/relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
 	if test -z "$$REL"; then \
 	  echo 'unable to compute relative path for linked $(TYPE) scripts' >&2; \
 	  exit 1; \
