@@ -131,8 +131,7 @@ Commands:
   --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
   --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
   --enable KanjiMap=MAPFILE add \"KanjiMap MAPFILE\" to updmap.cfg
-  --disable MAPFILE         disable MAPFILE, whether Map, MixedMap,
-                             or KanjiMap
+  --disable MAPFILE         disable MAPFILE, whether Map, MixedMap, or KanjiMap
   --listmaps                list all active and inactive maps
   --listavailablemaps       same as --listmaps, but without
                              unavailable map files
@@ -860,8 +859,8 @@ sub normalizeLines {
   map {$_ =~ s/\s+/ /gx } @lines;
   @lines = grep { $_ !~ m/^\s*$/x } @lines;
   map { $_ =~ s/\s$//x ;
-	$_ =~ s/\s*\"\s*/ \" /gx;
-	$_ =~ s/\" ([^\"]*) \"/\"$1\"/gx;
+        $_ =~ s/\s*\"\s*/ \" /gx;
+        $_ =~ s/\" ([^\"]*) \"/\"$1\"/gx;
       } @lines;
 
   @lines = grep {++$count{$_} < 2 } (sort @lines);
@@ -882,8 +881,8 @@ sub to_pdftex {
   my @out;
   foreach my $line (@in) {
     if ($line =~ /^(.*\s+)(\S+\s+ReEncodeFont\s)(.*)/) {
-	    $line = "$1$3";
-	    $line =~ s/\s+\"\s+\"\s+/ /;
+            $line = "$1$3";
+            $line =~ s/\s+\"\s+\"\s+/ /;
     }
     push @out, $line;
   }
@@ -1059,13 +1058,13 @@ sub mkMaps {
 
   # Create psfonts_t1.map, psfonts_pk.map, ps2pk.map and pdftex.map:
   my @managed_files =  ("$dvipsoutputdir/download35.map",
-		"$dvipsoutputdir/builtin35.map",
-		"$dvipsoutputdir/psfonts_t1.map",
-		"$dvipsoutputdir/psfonts_pk.map",
-		"$pdftexoutputdir/pdftex_dl14.map",
-		"$pdftexoutputdir/pdftex_ndl14.map",
-    "$dvipdfmoutputdir/kanjix.map",
-		"$dvipsoutputdir/ps2pk.map");
+                "$dvipsoutputdir/builtin35.map",
+                "$dvipsoutputdir/psfonts_t1.map",
+                "$dvipsoutputdir/psfonts_pk.map",
+                "$pdftexoutputdir/pdftex_dl14.map",
+                "$pdftexoutputdir/pdftex_ndl14.map",
+                "$dvipdfmoutputdir/kanjix.map",
+                "$dvipsoutputdir/ps2pk.map");
   if ($pxdviUse) {
     push @managed_files, "$pxdvioutputdir/xdvi-ptex.map";
   }
@@ -1258,7 +1257,7 @@ sub initVars {
        's/ NimbusRomNo9L-ReguItal / Times-Italic /',
        's/ URWChanceryL-MediItal / ZapfChancery-MediumItalic /',
        's/ Dingbats / ZapfDingbats /',
-		);
+                );
 
   @fileADOBEkb = (
         's/\buagd8a.pfb\b/pagd8a.pfb/',
@@ -1296,83 +1295,83 @@ sub initVars {
         's/\butmri8a.pfb\b/ptmri8a.pfb/',
         's/\buzcmi8a.pfb\b/pzcmi8a.pfb/',
         's/\buzdr.pfb\b/pzdr.pfb/',
-		  );
+                  );
 
   @fileURW = (
-	's/\buagd8a.pfb\b/a010015l.pfb/',
-	's/\buagdo8a.pfb\b/a010035l.pfb/',
-	's/\buagk8a.pfb\b/a010013l.pfb/',
-	's/\buagko8a.pfb\b/a010033l.pfb/',
-	's/\bubkd8a.pfb\b/b018015l.pfb/',
-	's/\bubkdi8a.pfb\b/b018035l.pfb/',
-	's/\bubkl8a.pfb\b/b018012l.pfb/',
-	's/\bubkli8a.pfb\b/b018032l.pfb/',
-	's/\bucrb8a.pfb\b/n022004l.pfb/',
-	's/\bucrbo8a.pfb\b/n022024l.pfb/',
-	's/\bucrr8a.pfb\b/n022003l.pfb/',
-	's/\bucrro8a.pfb\b/n022023l.pfb/',
-	's/\buhvb8a.pfb\b/n019004l.pfb/',
-	's/\buhvb8ac.pfb\b/n019044l.pfb/',
-	's/\buhvbo8a.pfb\b/n019024l.pfb/',
-	's/\buhvbo8ac.pfb\b/n019064l.pfb/',
-	's/\buhvr8a.pfb\b/n019003l.pfb/',
-	's/\buhvr8ac.pfb\b/n019043l.pfb/',
-	's/\buhvro8a.pfb\b/n019023l.pfb/',
-	's/\buhvro8ac.pfb\b/n019063l.pfb/',
-	's/\buncb8a.pfb\b/c059016l.pfb/',
-	's/\buncbi8a.pfb\b/c059036l.pfb/',
-	's/\buncr8a.pfb\b/c059013l.pfb/',
-	's/\buncri8a.pfb\b/c059033l.pfb/',
-	's/\buplb8a.pfb\b/p052004l.pfb/',
-	's/\buplbi8a.pfb\b/p052024l.pfb/',
-	's/\buplr8a.pfb\b/p052003l.pfb/',
-	's/\buplri8a.pfb\b/p052023l.pfb/',
-	's/\busyr.pfb\b/s050000l.pfb/',
-	's/\butmb8a.pfb\b/n021004l.pfb/',
-	's/\butmbi8a.pfb\b/n021024l.pfb/',
-	's/\butmr8a.pfb\b/n021003l.pfb/',
-	's/\butmri8a.pfb\b/n021023l.pfb/',
-	's/\buzcmi8a.pfb\b/z003034l.pfb/',
-	's/\buzdr.pfb\b/d050000l.pfb/',
-		   );
+        's/\buagd8a.pfb\b/a010015l.pfb/',
+        's/\buagdo8a.pfb\b/a010035l.pfb/',
+        's/\buagk8a.pfb\b/a010013l.pfb/',
+        's/\buagko8a.pfb\b/a010033l.pfb/',
+        's/\bubkd8a.pfb\b/b018015l.pfb/',
+        's/\bubkdi8a.pfb\b/b018035l.pfb/',
+        's/\bubkl8a.pfb\b/b018012l.pfb/',
+        's/\bubkli8a.pfb\b/b018032l.pfb/',
+        's/\bucrb8a.pfb\b/n022004l.pfb/',
+        's/\bucrbo8a.pfb\b/n022024l.pfb/',
+        's/\bucrr8a.pfb\b/n022003l.pfb/',
+        's/\bucrro8a.pfb\b/n022023l.pfb/',
+        's/\buhvb8a.pfb\b/n019004l.pfb/',
+        's/\buhvb8ac.pfb\b/n019044l.pfb/',
+        's/\buhvbo8a.pfb\b/n019024l.pfb/',
+        's/\buhvbo8ac.pfb\b/n019064l.pfb/',
+        's/\buhvr8a.pfb\b/n019003l.pfb/',
+        's/\buhvr8ac.pfb\b/n019043l.pfb/',
+        's/\buhvro8a.pfb\b/n019023l.pfb/',
+        's/\buhvro8ac.pfb\b/n019063l.pfb/',
+        's/\buncb8a.pfb\b/c059016l.pfb/',
+        's/\buncbi8a.pfb\b/c059036l.pfb/',
+        's/\buncr8a.pfb\b/c059013l.pfb/',
+        's/\buncri8a.pfb\b/c059033l.pfb/',
+        's/\buplb8a.pfb\b/p052004l.pfb/',
+        's/\buplbi8a.pfb\b/p052024l.pfb/',
+        's/\buplr8a.pfb\b/p052003l.pfb/',
+        's/\buplri8a.pfb\b/p052023l.pfb/',
+        's/\busyr.pfb\b/s050000l.pfb/',
+        's/\butmb8a.pfb\b/n021004l.pfb/',
+        's/\butmbi8a.pfb\b/n021024l.pfb/',
+        's/\butmr8a.pfb\b/n021003l.pfb/',
+        's/\butmri8a.pfb\b/n021023l.pfb/',
+        's/\buzcmi8a.pfb\b/z003034l.pfb/',
+        's/\buzdr.pfb\b/d050000l.pfb/',
+                   );
 
   @fileADOBE = (
-	's/\buagd8a.pfb\b/agd_____.pfb/',
-	's/\buagdo8a.pfb\b/agdo____.pfb/',
-	's/\buagk8a.pfb\b/agw_____.pfb/',
-	's/\buagko8a.pfb\b/agwo____.pfb/',
-	's/\bubkd8a.pfb\b/bkd_____.pfb/',
-	's/\bubkdi8a.pfb\b/bkdi____.pfb/',
-	's/\bubkl8a.pfb\b/bkl_____.pfb/',
-	's/\bubkli8a.pfb\b/bkli____.pfb/',
-	's/\bucrb8a.pfb\b/cob_____.pfb/',
-	's/\bucrbo8a.pfb\b/cobo____.pfb/',
-	's/\bucrr8a.pfb\b/com_____.pfb/',
-	's/\bucrro8a.pfb\b/coo_____.pfb/',
-	's/\buhvb8a.pfb\b/hvb_____.pfb/',
-	's/\buhvb8ac.pfb\b/hvnb____.pfb/',
-	's/\buhvbo8a.pfb\b/hvbo____.pfb/',
-	's/\buhvbo8ac.pfb\b/hvnbo___.pfb/',
-	's/\buhvr8a.pfb\b/hv______.pfb/',
-	's/\buhvr8ac.pfb\b/hvn_____.pfb/',
-	's/\buhvro8a.pfb\b/hvo_____.pfb/',
-	's/\buhvro8ac.pfb\b/hvno____.pfb/',
-	's/\buncb8a.pfb\b/ncb_____.pfb/',
-	's/\buncbi8a.pfb\b/ncbi____.pfb/',
-	's/\buncr8a.pfb\b/ncr_____.pfb/',
-	's/\buncri8a.pfb\b/nci_____.pfb/',
-	's/\buplb8a.pfb\b/pob_____.pfb/',
-	's/\buplbi8a.pfb\b/pobi____.pfb/',
-	's/\buplr8a.pfb\b/por_____.pfb/',
-	's/\buplri8a.pfb\b/poi_____.pfb/',
-	's/\busyr.pfb\b/sy______.pfb/',
-	's/\butmb8a.pfb\b/tib_____.pfb/',
-	's/\butmbi8a.pfb\b/tibi____.pfb/',
-	's/\butmr8a.pfb\b/tir_____.pfb/',
-	's/\butmri8a.pfb\b/tii_____.pfb/',
-	's/\buzcmi8a.pfb\b/zcmi____.pfb/',
-	's/\buzdr.pfb\b/zd______.pfb/',
-		);
+        's/\buagd8a.pfb\b/agd_____.pfb/',
+        's/\buagdo8a.pfb\b/agdo____.pfb/',
+        's/\buagk8a.pfb\b/agw_____.pfb/',
+        's/\buagko8a.pfb\b/agwo____.pfb/',
+        's/\bubkd8a.pfb\b/bkd_____.pfb/',
+        's/\bubkdi8a.pfb\b/bkdi____.pfb/',
+        's/\bubkl8a.pfb\b/bkl_____.pfb/',
+        's/\bubkli8a.pfb\b/bkli____.pfb/',
+        's/\bucrb8a.pfb\b/cob_____.pfb/',
+        's/\bucrbo8a.pfb\b/cobo____.pfb/',
+        's/\bucrr8a.pfb\b/com_____.pfb/',
+        's/\bucrro8a.pfb\b/coo_____.pfb/',
+        's/\buhvb8a.pfb\b/hvb_____.pfb/',
+        's/\buhvb8ac.pfb\b/hvnb____.pfb/',
+        's/\buhvbo8a.pfb\b/hvbo____.pfb/',
+        's/\buhvbo8ac.pfb\b/hvnbo___.pfb/',
+        's/\buhvr8a.pfb\b/hv______.pfb/',
+        's/\buhvr8ac.pfb\b/hvn_____.pfb/',
+        's/\buhvro8a.pfb\b/hvo_____.pfb/',
+        's/\buhvro8ac.pfb\b/hvno____.pfb/',
+        's/\buncb8a.pfb\b/ncb_____.pfb/',
+        's/\buncbi8a.pfb\b/ncbi____.pfb/',
+        's/\buncr8a.pfb\b/ncr_____.pfb/',
+        's/\buncri8a.pfb\b/nci_____.pfb/',
+        's/\buplb8a.pfb\b/pob_____.pfb/',
+        's/\buplbi8a.pfb\b/pobi____.pfb/',
+        's/\buplr8a.pfb\b/por_____.pfb/',
+        's/\buplri8a.pfb\b/poi_____.pfb/',
+        's/\busyr.pfb\b/sy______.pfb/',
+        's/\butmb8a.pfb\b/tib_____.pfb/',
+        's/\butmbi8a.pfb\b/tibi____.pfb/',
+        's/\butmr8a.pfb\b/tir_____.pfb/',
+        's/\butmri8a.pfb\b/tii_____.pfb/',
+        's/\buzcmi8a.pfb\b/zcmi____.pfb/',
+        's/\buzdr.pfb\b/zd______.pfb/',
+                );
 }
 
 
