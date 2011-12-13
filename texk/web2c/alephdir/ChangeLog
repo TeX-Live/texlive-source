@@ -1,3 +1,8 @@
+2011-12-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch, om16bit.ch: Consistency of `constants':
+	Aleph requires min_halfword==0.
+
 2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch, om16bit.ch: Consistency of `constants'.

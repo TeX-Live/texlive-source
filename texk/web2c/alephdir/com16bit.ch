@@ -804,9 +804,8 @@ So they have been simplified here in the obvious way.
 @^inner loop@>@^system dependencies@>
 
 The \.{WEB} source for \TeX\ defines |hi(#)==#+min_halfword| which can be
-simplified when |min_halfword=0|.  The Web2C implemetation of \Aleph\ can
-use |hi(#)==#| together with |min_halfword<0| as long as |max_halfword| is
-sufficiently large.
+simplified when |min_halfword=0|.  The Web2C implemetation of \Aleph\
+occasionally uses |null| as~0, and therefore requires |min_halfword=0|.
 
 @d qi(#)==# {to put an |eight_bits| item into a quarterword}
 @d qo(#)==# {to take an |eight_bits| item from a quarterword}
@@ -2437,10 +2436,9 @@ begin @!{|start_here|}
 @+init
   if ini_version then begin
     extra_mem_top := 0;
-    extra_mem_bot := 0;
   end;
 @+tini
-  if extra_mem_bot>sup_main_memory then extra_mem_bot:=sup_main_memory;
+  extra_mem_bot := 0;
   if extra_mem_top>sup_main_memory then extra_mem_top:=sup_main_memory;
   {|mem_top| is an index, |main_memory| a size}
   mem_top := mem_bot + main_memory -1;
