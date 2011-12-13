@@ -526,11 +526,10 @@ am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/subfont.c pdftexdir/tounicode.c pdftexdir/utils.c \
 	pdftexdir/vfpacket.c pdftexdir/writeenc.c \
 	pdftexdir/writefont.c pdftexdir/writeimg.c \
-	pdftexdir/writejbig2.c pdftexdir/writejbig2.h \
-	pdftexdir/writejpg.c pdftexdir/writepng.c pdftexdir/writet1.c \
-	pdftexdir/writet3.c pdftexdir/writettf.c pdftexdir/writettf.h \
-	pdftexdir/writezip.c pdftexdir/regex/regex.c \
-	pdftexdir/regex/regex.h
+	pdftexdir/writejbig2.c pdftexdir/writejpg.c \
+	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
+	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
+	pdftexdir/regex/regex.c pdftexdir/regex/regex.h
 @MINGW32_TRUE@am__objects_6 = libpdftex_a-regex.$(OBJEXT)
 am_libpdftex_a_OBJECTS = libpdftex_a-avl.$(OBJEXT) \
 	libpdftex_a-avlstuff.$(OBJEXT) libpdftex_a-epdf.$(OBJEXT) \
@@ -2100,10 +2099,10 @@ libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/subfont.c pdftexdir/tounicode.c pdftexdir/utils.c \
 	pdftexdir/vfpacket.c pdftexdir/writeenc.c \
 	pdftexdir/writefont.c pdftexdir/writeimg.c \
-	pdftexdir/writejbig2.c pdftexdir/writejbig2.h \
-	pdftexdir/writejpg.c pdftexdir/writepng.c pdftexdir/writet1.c \
-	pdftexdir/writet3.c pdftexdir/writettf.c pdftexdir/writettf.h \
-	pdftexdir/writezip.c $(am__append_58)
+	pdftexdir/writejbig2.c pdftexdir/writejpg.c \
+	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
+	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
+	$(am__append_58)
 EXTRA_libpdftex_a_SOURCES = pdftexdir/macnames.c \
 	pdftexdir/regex/regcomp.c pdftexdir/regex/regex_internal.c \
 	pdftexdir/regex/regex_internal.h pdftexdir/regex/regexec.c

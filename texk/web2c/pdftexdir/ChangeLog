@@ -1,3 +1,9 @@
+2011-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writejbig2.h (removed): Declarations moved ...
+	* writejbig2.c: ... to here.  Declare most functions as static.
+	* am/libpdftex.am (libpdftex_a_SOURCES): Remove writejbig2.h.
+
 2011-10-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftosrc.cc: Always use new logic for Object Streams

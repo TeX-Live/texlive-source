@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/libpdftex.am: Makefile fragment for libpdftex.
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libpdftex
@@ -32,7 +32,6 @@ libpdftex_a_SOURCES = \
 	pdftexdir/writefont.c \
 	pdftexdir/writeimg.c \
 	pdftexdir/writejbig2.c \
-	pdftexdir/writejbig2.h \
 	pdftexdir/writejpg.c \
 	pdftexdir/writepng.c \
 	pdftexdir/writet1.c \
