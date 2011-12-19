@@ -46,7 +46,7 @@ if (first_byte<@"21)
 if (second_byte<@"21)or(second_byte>@"7E) then valid_jis_code:=false;
 @y
 begin valid_jis_code:=true;
-if (cx>@"FFFF)or(check_kanji(fromDVI(cx),0)<>1)
+if (cx>@"FFFF)or(not is_char_kanji(fromDVI(cx)))
   or(toDVI(fromDVI(cx))<>cx) then valid_jis_code:=false;
 @z
 

@@ -1,3 +1,8 @@
+2011-12-19  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch, ptex.defines, kanji.[ch]: Avoid Segmentation
+	fault for japanese \catcode or \kcatcode.
+
 2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Ensure that `hi(#)==#'.

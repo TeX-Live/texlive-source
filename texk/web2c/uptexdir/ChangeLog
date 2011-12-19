@@ -1,3 +1,13 @@
+2011-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* uptex-m.ch, kanji.[ch]: Drop unused param2 of check_kanji().
+
+2011-12-19  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch, uptex.defines, kanji.[ch], uppltotf.ch,
+	uppltotf.ch: Avoid Segmentation fault for japanese \catcode
+	or \kcatcode.
+
 2011-12-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* uptex-m.ch: change min_halfword because the ConTeXt with

@@ -1194,6 +1194,35 @@ for k:="A" to "Z" do
 { $\.{@@"20}+|k| = |kcatcodekey|(|fromKUTEN|(|HILO|(k,1))$ }
 @z
 
+@x
+@ @<Show the halfword code in |eqtb[n]|@>=
+if n<math_code_base then
+  begin if n<lc_code_base then
+    begin print_esc("catcode"); print_int(n-cat_code_base);
+    end
+@y
+@ @<Show the halfword code in |eqtb[n]|@>=
+if n<math_code_base then
+  begin if n<kcat_code_base then
+    begin print_esc("catcode"); print_int(n-cat_code_base);
+    end
+  else if n<auto_xsp_code_base then
+    begin print_esc("kcatcode"); print_int(n-kcat_code_base);
+    end
+  else if n<inhibit_xsp_code_base then
+    begin print_esc("xspcode"); print_int(n-auto_xsp_code_base);
+    end
+  else if n<kinsoku_base then
+    begin print("(inhibitxspcode table) "); print_int(n-inhibit_xsp_code_base);
+    end
+  else if n<kansuji_base then
+    begin print("(kinsoku table) "); print_int(n-kinsoku_base);
+    end
+  else if n<lc_code_base then
+    begin print_esc("kansujichar"); print_int(n-kansuji_base);
+    end
+@z
+
 @x [17.236] l.5092 - pTeX: cur_jfam_code, jchr_widow_penalty
 @d cur_fam_code=44 {current family}
 @d escape_char_code=45 {escape character for token output}
@@ -1965,12 +1994,16 @@ else scanned_result(eqtb[m+cur_val].int)(int_val);
 @y
 if m=math_code_base then scanned_result(ho(math_code(cur_val)))(int_val)
 else if m=kcat_code_base then scanned_result(equiv(m+kcatcodekey(cur_val)))(int_val)
-else if m<math_code_base then
-  begin if is_kanji(cur_val) then
+else if m<math_code_base then { \.{\\lccode}, \.{\\uccode}, \.{\\sfcode}, \.{\\catcode} }
+  begin if not is_char_ascii(cur_val) then
   scanned_result(equiv(m+Hi(cur_val)))(int_val)
   else scanned_result(equiv(m+cur_val))(int_val)
   end
-else scanned_result(eqtb[m+cur_val].int)(int_val);
+else { \.{\\delcode} }
+  begin if not is_char_ascii(cur_val) then
+  scanned_result(eqtb[m+Hi(cur_val)].int)(int_val)
+  else scanned_result(eqtb[m+cur_val].int)(int_val)
+  end;
 @z
 
 @x [26.420] l.8474 - pTeX: Fetch a box dimension: dir_node
@@ -2069,7 +2102,7 @@ end;
 @y
 procedure scan_char_num;
 begin scan_int;
-if not is_char_ascii(cur_val)and not check_kanji(cur_val) then {|wchar_token|}
+if not is_char_ascii(cur_val) and not is_char_kanji(cur_val) then
   begin print_err("Bad character code");
 @.Bad character code@>
   help2("A character number must be between 0 and 255, or KANJI code.")@/
@@ -5626,7 +5659,10 @@ def_code: begin
   @<Let |m| be the minimal legal code value, based on |cur_chr|@>;
   @<Let |n| be the largest legal code value, based on |cur_chr|@>;
   p:=cur_chr; scan_char_num;
-  if p=kcat_code_base then p:=p+kcatcodekey(cur_val) else p:=p+cur_val;
+  if p=kcat_code_base then p:=p+kcatcodekey(cur_val) 
+  else if not is_char_ascii(cur_val) then p:=p+Hi(cur_val) 
+    { If |cur_val| is a KANJI code, we use its upper half, as the case of retrieving. }
+  else p:=p+cur_val;
   scan_optional_equals; scan_int;
   if ((cur_val<m)and(p<del_code_base))or(cur_val>n) then
   begin print_err("Invalid code ("); print_int(cur_val);
@@ -5913,7 +5949,7 @@ set_kansuji_char: print_esc("kansujichar");
 @ @<Assignments@>=
 set_kansuji_char:
 begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if not check_kanji(cur_val) then
+if not is_char_kanji(cur_val) then
   begin print_err("Invalid KANSUJI char (");
   print_hex(cur_val); print_char(")");
 @.Invalid KANSUJI char@>
@@ -6049,7 +6085,7 @@ end;
 @ @<Assignments@>=
 assign_inhibit_xsp_code:
 begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if check_kanji(n) then
+if is_char_kanji(n) then
   begin j:=get_inhibit_pos(tokanji(n),new_pos);
   if j=no_entry then
     begin print_err("Inhibit table is full!!");
@@ -6123,7 +6159,7 @@ end;
 @ @<Assignments@>=
 assign_kinsoku:
 begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if is_char_ascii(n) or check_kanji(n) then
+if is_char_ascii(n) or is_char_kanji(n) then
   begin j:=get_kinsoku_pos(tokanji(n),new_pos);
   if j=no_entry then
     begin print_err("KINSOKU table is full!!");

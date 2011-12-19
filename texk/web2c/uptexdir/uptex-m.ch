@@ -306,7 +306,7 @@ token that stands for a control sequence; is a multiple of~256, less~1}
     end
   else  begin m:=Hi(info(p)); c:=Lo(info(p));
 @y
-  if check_kanji(info(p),1)=2 then {|wchar_token|}
+  if check_kanji(info(p)) then {|wchar_token|}
     begin m:=info(p) div max_cjk_val; c:=info(p) mod max_cjk_val; end
   else  begin m:=info(p) div max_char_val; c:=info(p) mod max_char_val;
 @z
@@ -354,7 +354,7 @@ if ((kcp mod @'10)>0)and(nrestmultichr(kcp)>0) then p:=p-(kcp mod @'10);
       begin cur_input:=input_stack[base_ptr-1];
       s:=get_avail; info(s):=Lo(buffer[loc]);
 @y
-    begin  if (link(start)=null)and(check_kanji(info(start),2)=2) then {|wchar_token|}
+    begin  if (link(start)=null)and(check_kanji(info(start))) then {|wchar_token|}
       begin cur_input:=input_stack[base_ptr-1];
       s:=get_avail; info(s):=(buffer[loc] mod max_char_val);
 @z
@@ -470,7 +470,7 @@ if cat=other_kchar then k:=k-multilenbuffchar(cur_chr)+1; {now |k| points to fir
   else
     begin cur_cmd:=Hi(t); cur_chr:=Lo(t);
 @y
-  else if check_kanji(t,3)=2 then {|wchar_token|}
+  else if check_kanji(t) then {|wchar_token|}
     begin cur_cmd:=t div max_cjk_val; cur_chr:=t mod max_cjk_val; end
   else
     begin cur_cmd:=t div max_char_val; cur_chr:=t mod max_char_val;
@@ -492,7 +492,7 @@ if cat=other_kchar then k:=k-multilenbuffchar(cur_chr)+1; {now |k| points to fir
     end;
   buffer[j]:=Lo(info(p)); incr(j); p:=link(p);
 @y
-  if check_kanji(info(p),4)=2 then {|wchar_token|}
+  if check_kanji(info(p)) then {|wchar_token|}
     begin t:=toBUFF(info(p) mod max_cjk_val);
     if BYTE1(t)<>0 then begin buffer[j]:=BYTE1(t); incr(j); end;
     if BYTE2(t)<>0 then begin buffer[j]:=BYTE2(t); incr(j); end;
@@ -530,18 +530,6 @@ char_given,math_given: scanned_result(cur_chr)(int_val);
 @y
 kchar_given,
 char_given,math_given: scanned_result(cur_chr)(int_val);
-@z
-
-@x
-  begin if is_kanji(cur_val) then
-@y
-  begin if (cur_val<0)or(cur_val>255) then
-@z
-
-@x
-if not is_char_ascii(cur_val)and not check_kanji(cur_val) then {|wchar_token|}
-@y
-if ((cur_val<0)or(cur_val>255))and(check_kanji(cur_val,6)<>1) then {|wchar_token|}
 @z
 
 @x
@@ -1000,7 +988,7 @@ if (t<cs_token_flag+single_base)and(not check_kanji(t)) then
 @y
 @<Change the case of the token in |p|, if a change is appropriate@>=
 t:=info(p);
-if (t<cs_token_flag+single_base)and(check_kanji(t,7)<2) then
+if (t<cs_token_flag+single_base)and(not check_kanji(t)) then
   begin c:=t mod max_char_val;
 @z
 
@@ -1016,14 +1004,6 @@ libc_free(format_engine);
 @y
 libc_free(format_engine);
 undump_kanji(fmt_file);
-@z
-
-@x
-begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if not check_kanji(cur_val) then
-@y
-begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if check_kanji(cur_val,8)<>1 then
 @z
 
 @x
@@ -1071,26 +1051,6 @@ end;
   define(p,data,cur_chr);
 end;
 set_enable_cjk_token: define(enable_cjk_token_code,data,cur_chr);
-@z
-
-@x
-assign_inhibit_xsp_code:
-begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if check_kanji(n) then
-@y
-assign_inhibit_xsp_code:
-begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if check_kanji(n,9)=1 then
-@z
-
-@x
-assign_kinsoku:
-begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if is_char_ascii(n) or check_kanji(n) then
-@y
-assign_kinsoku:
-begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
-if abs(check_kanji(n,10))=1 then
 @z
 
 @x

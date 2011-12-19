@@ -7,12 +7,10 @@
 @z
 
 @x e-pTeX: ifcsname l.28620
-  if check_kanji(info(p)) then {|wchar_token|}
     begin buffer[m]:=Hi(info(p)); incr(m);
     end;
   buffer[m]:=Lo(info(p)); incr(m); p:=link(p);
 @y
-  if check_kanji(info(p),4)=2 then {|wchar_token|}
     begin
     if BYTE1(toBUFF(info(p) mod max_cjk_val))<>0 then begin buffer[m]:=BYTE1(toBUFF(info(p) mod max_cjk_val)); incr(m); end;
     if BYTE2(toBUFF(info(p) mod max_cjk_val))<>0 then begin buffer[m]:=BYTE2(toBUFF(info(p) mod max_cjk_val)); incr(m); end;

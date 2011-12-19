@@ -23,14 +23,12 @@ extern int sjisterminal;
 #define Hi(x) BYTE3(x)
 #define Lo(x) BYTE4(x)
 
-extern integer check_kanji (integer c, integer m);
+extern boolean check_kanji (integer c);
 #define checkkanji check_kanji
-extern boolean is_kanji (integer c);
-#define iskanji is_kanji
 extern boolean is_char_ascii (integer c);
 #define ischarascii is_char_ascii
-extern boolean is_wchar_ascii (integer c);
-#define iswcharascii is_wchar_ascii
+extern boolean is_char_kanji (integer c);
+#define ischarkanji is_char_kanji
 extern boolean ismultiprn (integer c);
 extern integer calc_pos (integer c);
 #define calcpos calc_pos

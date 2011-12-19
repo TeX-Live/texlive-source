@@ -1,6 +1,6 @@
 /*
  *  KANJI Code conversion routines.
- *  (for ptex only)
+ *  (for upTeX and e-upTeX)
  */
 
 #include "kanji.h"
@@ -15,29 +15,12 @@
 int sjisterminal;
 #endif
 
-/* m: for debug */
-integer check_kanji (integer c,integer m)
+/*  TOKEN */
+boolean check_kanji (integer c)
 {
-    if (c > CS_TOKEN_FLAG) return 0;
-    if (is_internalUPTEX()) {
-        if ((c & CJK_TOKEN_FLAG) < CJK_CHAR_LIMIT) {
-	  if (XXHi(c)==0) return 1;
-	  else if (XXHi(c)>=KCAT_KANJI && XXHi(c)<=KCAT_HANGUL) return 2;
-	}
-    } else {
-        if ((XHi(c)==0) &&
-	    iskanji1(Hi(c)) && iskanji2(Lo(c))) {
-	  if (XXHi(c)==0) return 1;
-	  else if (XXHi(c)>=KCAT_KANJI && XXHi(c)<=KCAT_HANGUL) return 2;
-	}
-    }
-    if (0 <= c && c <= 255) return -1;  /* ascii without catcode */
-    return 0;  /* ascii with catcode */
-}
-
-boolean is_kanji(integer c)
-{
-    return (iskanji1(Hi(c)) && iskanji2(Lo(c)));
+    if (c > CS_TOKEN_FLAG) return false;
+    else if (!(XXHi(c)>=KCAT_KANJI && XXHi(c)<=KCAT_HANGUL)) return false;
+    else return is_char_kanji(c);
 }
 
 boolean is_char_ascii(integer c)
@@ -45,9 +28,12 @@ boolean is_char_ascii(integer c)
     return (0 <= c && c < 0x100);
 }
 
-boolean is_wchar_ascii(integer c)
+boolean is_char_kanji(integer c)
 {
-    return (!is_char_ascii(c) && !is_kanji(c));
+    if (is_internalUPTEX()) 
+        return (c>=0&&(c & CJK_TOKEN_FLAG) < CJK_CHAR_LIMIT);
+    else
+        return iskanji1(Hi(c)) && iskanji2(Lo(c));
 }
 
 boolean ismultiprn(integer c)
