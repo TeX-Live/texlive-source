@@ -1562,10 +1562,12 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	omegaware/tests/ofontv6.opl omegaware/tests/ofontv6.ovp \
 	omegaware/tests/Cherokee.pl omegaware/tests/OCherokee.ovp \
 	omegaware/tests/repeat.opl omegaware/tests/repeated.opl \
-	omegaware/tests/specialhex.ovp $(aleph_web_srcs) \
-	$(aleph_ch_srcs) alephdir/ChangeLog alephdir/aleph.defines \
-	alephdir/aleph.version $(aleph_tests) synctexdir/ChangeLog \
-	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
+	omegaware/tests/sample.out omegaware/tests/sample.ovp \
+	omegaware/tests/sample0-h.opl omegaware/tests/specialhex.ovp \
+	$(aleph_web_srcs) $(aleph_ch_srcs) alephdir/ChangeLog \
+	alephdir/aleph.defines alephdir/aleph.version $(aleph_tests) \
+	synctexdir/ChangeLog synctexdir/README.txt \
+	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \
@@ -1635,6 +1637,8 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
 	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
 	cftest.p omegaware/tests/xrepeated.* \
+	omegaware/tests/sample*.ofm omegaware/tests/sample.ovf \
+	omegaware/tests/sample1-h.opl omegaware/tests/xsample.out \
 	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
 	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
 	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
@@ -2612,7 +2616,7 @@ OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 
 OMFONTS_tests = omegaware/level1.test omegaware/ofonts.test \
 	omegaware/omfonts.test omegaware/repeat.test \
-	omegaware/specialhex.test
+	omegaware/selectfont.test omegaware/specialhex.test
 
 
 # With --enable-ipc, Aleph may need to link with -lsocket.

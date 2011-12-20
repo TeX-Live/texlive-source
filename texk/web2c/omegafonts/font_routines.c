@@ -446,7 +446,15 @@ get_hex(unsigned char c)
 void
 set_select_font(unsigned f)
 {
-    append_command_2(DVI_FNT_NUM_0, DVI_FNT_NUM_63, DVI_FNT_1, f);
+    unsigned i;
+
+    for (i = 0; i < no_fonts; i++)
+        if (f == font_table[i].font_number) {
+            append_command_2(DVI_FNT_NUM_0, DVI_FNT_NUM_63, DVI_FNT_1, i);
+            return;
+        }
+
+    internal_error_1("undefined MAPFONT %d cannot be selected", f);
 }
 
 void

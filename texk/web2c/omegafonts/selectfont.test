@@ -1,0 +1,25 @@
+#! /bin/sh
+
+# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../../kpathsea
+OFMFONTS=tests
+export TEXMFCNF OFMFONTS
+
+./omfonts -opl2ofm -verbose $srcdir/tests/sample0-h tests/sample0-h || exit 1
+
+./omfonts -opl2ofm -verbose $srcdir/tests/sample0-h tests/sample1-h || exit 1
+
+./omfonts -ofm2opl -verbose sample1-h tests/sample1-h || exit 1
+
+diff $srcdir/tests/sample0-h.opl tests/sample1-h.opl || exit 1
+
+./omfonts -ovp2ovf -verbose $srcdir/tests/sample tests/sample tests/sample || exit 1
+
+./omfonts -ovf2ovp -verbose tests/sample sample tests/xsample.out || exit 1
+
+diff $srcdir/tests/sample.out tests/xsample.out || exit 1
+

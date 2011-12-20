@@ -1,3 +1,9 @@
+2011-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* selectfont.test, tests/sample.out, tests/sample.ovp,
+	tests/sample0-h.opl (new): Shell script and data for a new test.
+	* am/omegaware.am: Add the new test.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

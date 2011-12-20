@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/omegafonts/
 ##
-## Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS =  -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
@@ -102,7 +102,7 @@ endif OTANGLE
 
 ## Tests
 ##
-OMFONTS_tests = charwd.test level1.test omfonts.test repeat.test specialhex.test
+OMFONTS_tests = charwd.test level1.test omfonts.test repeat.test selectfont.test specialhex.test
 if OTANGLE
 if OMFONTS
 TESTS = $(OMFONTS_tests)
@@ -125,6 +125,9 @@ DISTCLEANFILES += tests/Cherokee.tfm tests/OCherokee.ofm \
 ## repeat.test
 EXTRA_DIST += tests/repeat.opl tests/repeated.opl
 DISTCLEANFILES += tests/xrepeated.*
+## selectfont.test
+EXTRA_DIST += tests/sample.out tests/sample.ovp tests/sample0-h.opl
+DISTCLEANFILES += tests/sample*.ofm tests/sample.ovf tests/sample1-h.opl tests/xsample.out
 ## specialhex.test
 EXTRA_DIST += tests/specialhex.ovp
 DISTCLEANFILES += tests/specialhex.ofm tests/specialhex.opl \

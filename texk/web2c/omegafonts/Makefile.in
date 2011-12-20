@@ -369,8 +369,9 @@ DISTCLEANFILES = pl-parser.output tests/charwdr.* tests/charwdv.* \
 	tests/xlevel1.ofm tests/xlevel1.opl tests/Cherokee.tfm \
 	tests/OCherokee.ofm tests/OCherokee.opl tests/OCherokee.ovf \
 	tests/xCherokee.* tests/xOCherokee.* tests/xrepeated.* \
-	tests/specialhex.ofm tests/specialhex.opl tests/specialhex.ovf \
-	tests/xspecialhex.*
+	tests/sample*.ofm tests/sample.ovf tests/sample1-h.opl \
+	tests/xsample.out tests/specialhex.ofm tests/specialhex.opl \
+	tests/specialhex.ovf tests/xspecialhex.*
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 bin_links = \
 	omfonts$(EXEEXT):ofm2opl \
@@ -378,11 +379,12 @@ bin_links = \
 	omfonts$(EXEEXT):ovf2ovp \
 	omfonts$(EXEEXT):ovp2ovf
 
-OMFONTS_tests = charwd.test level1.test omfonts.test repeat.test specialhex.test
+OMFONTS_tests = charwd.test level1.test omfonts.test repeat.test selectfont.test specialhex.test
 @OMFONTS_TRUE@@OTANGLE_TRUE@TESTS = $(OMFONTS_tests)
 EXTRA_DIST = $(OMFONTS_tests) tests/charwd-r.pl tests/charwd-v.vpl \
 	tests/level1.opl tests/Cherokee.pl tests/OCherokee.ovp \
-	tests/repeat.opl tests/repeated.opl tests/specialhex.ovp
+	tests/repeat.opl tests/repeated.opl tests/sample.out \
+	tests/sample.ovp tests/sample0-h.opl tests/specialhex.ovp
 all: all-am
 
 .SUFFIXES:
