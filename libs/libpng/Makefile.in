@@ -259,7 +259,7 @@ nodist_libpng_a_SOURCES = \
 	$(LIBPNG_TREE)/pngpread.c
 
 DISTCLEANFILES = config.force
-@build_TRUE@TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
+TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
 @build_TRUE@TESTS = libpng.test
 @build_TRUE@dist_check_SCRIPTS = libpng.test
 CLEANFILES = pngout.png

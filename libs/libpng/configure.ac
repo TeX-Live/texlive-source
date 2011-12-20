@@ -32,6 +32,7 @@ AC_CHECK_HEADERS([malloc.h stdlib.h string.h strings.h])
 AC_C_CONST
 AC_TYPE_SIZE_T
 AC_STRUCT_TM
+AC_C_RESTRICT
 
 # Checks for library functions.
 AC_FUNC_STRTOD

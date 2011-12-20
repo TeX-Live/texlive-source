@@ -26,7 +26,7 @@ graphite 2.3.1 - checked 25apr11
 icu 4.8.1 - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
-libpng 1.5.5 - checked 5oct11
+libpng 1.5.7 - checked 20dec11
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
@@ -47,7 +47,6 @@ xpdf 3.03 - ftp://ftp.foolabs.com/pub/xpdf/
 
 zlib 1.2.5 - checked 25apr11
   http://www.zlib.net/ - used by many
-  http://www.libpng.org/pub/png/pngcode.html
 
 zziplib 0.13.60 - checked 25apr11
   http://zziplib.sourceforge.net/ - used by luatex

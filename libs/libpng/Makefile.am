@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build libpng for TeX Live.
 ##
-##   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -70,8 +70,8 @@ DISTCLEANFILES = config.force
 ## Rebuild zlib
 @ZLIB_RULE@
 
-if build
 TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
+if build
 TESTS = libpng.test
 check_PROGRAMS = pngtest
 dist_check_SCRIPTS = libpng.test
