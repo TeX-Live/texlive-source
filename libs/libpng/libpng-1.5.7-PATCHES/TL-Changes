@@ -15,3 +15,6 @@ Removed:
 Removed empty dir:
 	projects/vstudio/pngstest
 
+Converted Dos/Win line ends to native:
+	projects/owatcom/pngconfig.mak
+
