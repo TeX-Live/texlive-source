@@ -15192,7 +15192,7 @@ end
 @!pdf_file: byte_file; {the PDF output file}
 @!pdf_buf: ^eight_bits; {pointer to the PDF output buffer or PDF object stream buffer}
 @!pdf_buf_size: integer; {end of PDF output buffer or PDF object stream buffer}
-@!pdf_ptr: longinteger; {pointer to the first unused byte in the PDF buffer or object stream buffer}
+@!pdf_ptr: integer; {pointer to the first unused byte in the PDF buffer or object stream buffer}
 @!pdf_op_buf: ^eight_bits; {the PDF output buffer}
 @!pdf_os_buf: ^eight_bits; {the PDF object stream buffer}
 @!pdf_os_buf_size: integer; {current size of the PDF object stream buffer, grows dynamically}

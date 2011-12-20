@@ -346,7 +346,7 @@ static void read_cmap(void)
     TTF_USHORT *glyphId, format, segCount;
     long int n, i, k, length, index;
     int unicode_map_count = 0;
-    ttf_seek_tab("cmap", TTF_USHORT_SIZE);      /* skip the table vesrion number (=0) */
+    ttf_seek_tab("cmap", TTF_USHORT_SIZE);      /* skip the table version number (=0) */
     ncmapsubtabs = get_ushort();
     cmap_offset = xftell(fontfile, cur_file_name) - 2 * TTF_USHORT_SIZE;
     cmap_tab = xtalloc(ncmapsubtabs, cmap_entry);

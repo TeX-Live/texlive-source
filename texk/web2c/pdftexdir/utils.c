@@ -1077,7 +1077,7 @@ void getfiledump(strnumber s, int offset, int length)
         return;
     }
     recorder_record_input(file_name);
-    if (fseek(f, (off_t) offset, SEEK_SET) != 0) {
+    if (fseek(f, offset, SEEK_SET) != 0) {
         xfree(file_name);
         return;
     }

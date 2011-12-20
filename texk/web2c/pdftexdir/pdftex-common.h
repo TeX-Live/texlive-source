@@ -39,7 +39,7 @@ extern integer pdfboxspectrim;
 extern integer pdfboxspecart;
 
 extern longinteger pdfstreamlength;
-extern longinteger pdfptr;
+extern integer pdfptr;
 extern integer poolptr;
 extern eightbits *pdfbuf;
 extern integer pdfbufsize;

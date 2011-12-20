@@ -580,7 +580,7 @@ static ttf_cmap_entry *ttf_read_cmap(char *ttf_name, int pid, int eid,
         return p;
 
     /* not found, have to read it */
-    ttf_seek_tab("cmap", TTF_USHORT_SIZE);      /* skip the table vesrion number (=0) */
+    ttf_seek_tab("cmap", TTF_USHORT_SIZE);      /* skip the table version number (=0) */
     ncmapsubtabs = get_ushort();
     cmap_offset = xftell(INFILE, cur_file_name) - 2 * TTF_USHORT_SIZE;
     cmap_tab = xtalloc(ncmapsubtabs, cmap_entry);

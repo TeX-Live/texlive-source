@@ -1,3 +1,13 @@
+2011-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web: Change type of pdf_ptr: longinteger => integer.
+	* pdftex-common.h: Change type of pdfptr accordingly.
+
+2011-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c (getfiledump): Drop `off_t' cast from arg2 of fseek().
+	* ttf2afm.c, writettf.c: Typo in comment.
+
 2011-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writejbig2.h (removed): Declarations moved ...
