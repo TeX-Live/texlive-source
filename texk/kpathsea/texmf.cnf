@@ -212,8 +212,14 @@ TEXINPUTS.omega         = .;$TEXMF/tex/{plain,generic,}//
 TEXINPUTS.ptex          = .;$TEXMF/tex/{ptex,ptexgeneric,plain,generic,}//
 TEXINPUTS.platex        = .;$TEXMF/tex/{platex,ptexgeneric,latex,generic,}//
 
-% epTeX.
+% epTeX, and for pmpost.
 TEXINPUTS.eptex         = .;$TEXMF/tex/{ptex,ptexgeneric,plain,generic,}//
+TEX.pmpost = eptex
+
+% (e)up(La)TeX.
+TEXINPUTS.uplatex = .;$TEXMF/tex/{uplatex,platex,ptexgeneric,latex,generic,}//
+TEXINPUTS.uptex   = .;$TEXMF/tex/{uptex,ptex,ptexgeneric,plain,generic,}//
+TEXINPUTS.euptex  = .;$TEXMF/tex/{uptex,ptex,ptexgeneric,plain,generic}//
 
 % pBibTeX bibliographies and style files.
 BIBINPUTS.pbibtex       = .;$TEXMF/{pbibtex,bibtex}/bib//
