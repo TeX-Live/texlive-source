@@ -117,7 +117,6 @@ reduce \.{VFtoVP}'s capacity.
 @!xmax_char=65536; {|max_char|+1}
 @!xxmax_char=65537;{|max_char|+2}
 @!xmax_label=80001;{must be greater than |max_lig_steps|}
-@!mem_size=40008; {|max_char|*4+8}
 @!name_length=50; {a file name shouldn't be longer than this}
 @!max_stack=50; {maximum depth of \.{DVI} stack in character packets}
 

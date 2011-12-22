@@ -167,18 +167,8 @@ print_ln('pt')
 
 @x [39] Open another TFM file.
 reset(tfm_file,cur_name);
-@^system dependencies@>
-if eof(tfm_file) then
-  print_ln('---not loaded, font metric file can''t be opened!')
-@.font metric file can\'t be opened@>
-else  begin font_bc:=0; font_ec:=65536; {will cause error if not modified soon}
 @y
 tfm_file := kpse_open_file (cur_name, kpse_ofm_format);
-@^system dependencies@>
-if eof(tfm_file) then
-  print_ln('---not loaded, font metric file can''t be opened!')
-@.font metric file can\'t be opened@>
-else  begin font_bc:=0; font_ec:=65536; {will cause error if not modified soon}
 @z
 
 @x [40] Be quiet if not -verbose.

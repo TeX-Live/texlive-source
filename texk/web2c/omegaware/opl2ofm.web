@@ -132,7 +132,7 @@ reduce \.{PLtoTF}'s capacity.
 @!xmax_char=65536; {|max_char|+1}
 @!xxmax_char=65537;{|max_char|+2}
 @!xxxmax_char=65538;{|max_char|+3}
-@!mem_size=262144; {|max_char|*4+8}
+@!mem_size=262148; {|max_char|*4+8}
 @!max_width=65535; {the largest character width number}
 @!max_height=255; {the largest character height number}
 @!max_depth=255; {the largest character depth number}

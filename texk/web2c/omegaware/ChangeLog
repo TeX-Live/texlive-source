@@ -1,3 +1,10 @@
+2011-12-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.web: Correctly compute mem_size=max_char*4+8;
+	* ofm2opl.web, ovf2ovp.web: Drop unused mem_size.
+
+	* ovf2ovp.ch: Shorten change set (for upTeX version).
+
 2011-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* selectfont.test, tests/sample.out, tests/sample.ovp,
