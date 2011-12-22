@@ -1,3 +1,8 @@
+2011-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace DISTCHECK_CONFIGURE_FLAGS by
+	AM_DISTCHECK_CONFIGURE_FLAGS (for automake-1.11.2).
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (DISTCLEANFILES): Add CXXLD.sh.

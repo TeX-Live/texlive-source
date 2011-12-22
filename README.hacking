@@ -14,7 +14,7 @@ them with configure --prefix=/usr/local/gnu and having
 
 autoconf (GNU Autoconf) 2.68
 
-automake (GNU automake) 1.11.1
+automake (GNU automake) 1.11.2
 
 ltmain.sh (GNU libtool) 2.4.2
 
@@ -46,7 +46,6 @@ their ultimate upstream source repository.  There are, however,
 independent copies in, e.g., libs/freetype2/freetype-*/builds/unix/, and
 similar places.  The 'reautoconf' script does not take care of those,
 but a TL cron job does keep them in sync (nightly).
-
 
 3. Extending the TL build system
 ================================

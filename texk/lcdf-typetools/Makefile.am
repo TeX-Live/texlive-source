@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
-DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
+AM_DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
 
 SUBDIRS = . liblcdf libefont @SELECTED_SUBDIRS@
 DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42

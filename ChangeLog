@@ -1,3 +1,8 @@
+2011-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace DISTCHECK_CONFIGURE_FLAGS by
+	AM_DISTCHECK_CONFIGURE_FLAGS (for automake-1.11.2).
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Use TL specific installation directories only

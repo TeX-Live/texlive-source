@@ -8,7 +8,7 @@
 ACLOCAL_AMFLAGS = -I m4 --force
 
 ## speed up distcheck
-DISTCHECK_CONFIGURE_FLAGS = -C
+AM_DISTCHECK_CONFIGURE_FLAGS = -C
 ## check as well for symlinks
 distuninstallcheck_listfiles = find . -type f -o -type l -print
 distcleancheck_listfiles = find . -type f -o -type l -print
