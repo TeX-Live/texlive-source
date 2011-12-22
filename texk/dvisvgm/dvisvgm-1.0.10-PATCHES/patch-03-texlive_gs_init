@@ -1,6 +1,6 @@
-diff -ur dvisvgm-1.0.9.orig/src/FileFinder.cpp dvisvgm-1.0.9/src/FileFinder.cpp
---- dvisvgm-1.0.9.orig/src/FileFinder.cpp	2011-10-04 18:35:48.000000000 +0200
-+++ dvisvgm-1.0.9/src/FileFinder.cpp	2011-10-17 11:57:07.000000000 +0200
+diff -ur dvisvgm-1.0.10.orig/src/FileFinder.cpp dvisvgm-1.0.10/src/FileFinder.cpp
+--- dvisvgm-1.0.10.orig/src/FileFinder.cpp	2011-10-05 18:04:40.000000000 +0200
++++ dvisvgm-1.0.10/src/FileFinder.cpp	2011-12-22 12:03:19.222930951 +0100
 @@ -84,6 +84,9 @@
  	kpse_set_program_enabled(kpse_tfm_format, 1, kpse_src_env);
  	kpse_set_program_enabled(kpse_mf_format, 1, kpse_src_env);

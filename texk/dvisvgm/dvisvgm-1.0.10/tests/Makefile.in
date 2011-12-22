@@ -34,30 +34,30 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-TESTS = BoundingBoxTest$(EXEEXT) CalculatorTest$(EXEEXT) \
-	ColorSpecialTest$(EXEEXT) CommandLineTest$(EXEEXT) \
-	CRC32Test$(EXEEXT) DirectoryTest$(EXEEXT) \
+TESTS = BoundingBoxTest$(EXEEXT) CRC32Test$(EXEEXT) \
+	CalculatorTest$(EXEEXT) ColorSpecialTest$(EXEEXT) \
+	CommandLineTest$(EXEEXT) DirectoryTest$(EXEEXT) \
 	FileFinderTest$(EXEEXT) FilePathTest$(EXEEXT) \
 	FileSystemTest$(EXEEXT) FontManagerTest$(EXEEXT) \
 	FontMapTest$(EXEEXT) GFReaderTest$(EXEEXT) \
 	GraphicPathTest$(EXEEXT) LengthTest$(EXEEXT) \
 	MatrixTest$(EXEEXT) MessageExceptionTest$(EXEEXT) \
-	PageRagesTest$(EXEEXT) PageSizeTest$(EXEEXT) PairTest$(EXEEXT) \
-	PSInterpreterTest$(EXEEXT) \
+	PSInterpreterTest$(EXEEXT) PageRagesTest$(EXEEXT) \
+	PageSizeTest$(EXEEXT) PairTest$(EXEEXT) \
 	SplittedCharInputBufferTest$(EXEEXT) \
 	StreamInputBufferTest$(EXEEXT) StreamReaderTest$(EXEEXT) \
 	StreamWriterTest$(EXEEXT) TypesTest$(EXEEXT) \
 	VectorStreamTest$(EXEEXT) check-conv
-check_PROGRAMS = BoundingBoxTest$(EXEEXT) CalculatorTest$(EXEEXT) \
-	ColorSpecialTest$(EXEEXT) CommandLineTest$(EXEEXT) \
-	CRC32Test$(EXEEXT) DirectoryTest$(EXEEXT) \
+check_PROGRAMS = BoundingBoxTest$(EXEEXT) CRC32Test$(EXEEXT) \
+	CalculatorTest$(EXEEXT) ColorSpecialTest$(EXEEXT) \
+	CommandLineTest$(EXEEXT) DirectoryTest$(EXEEXT) \
 	FileFinderTest$(EXEEXT) FilePathTest$(EXEEXT) \
 	FileSystemTest$(EXEEXT) FontManagerTest$(EXEEXT) \
 	FontMapTest$(EXEEXT) GFReaderTest$(EXEEXT) \
 	GraphicPathTest$(EXEEXT) LengthTest$(EXEEXT) \
 	MatrixTest$(EXEEXT) MessageExceptionTest$(EXEEXT) \
-	PageRagesTest$(EXEEXT) PageSizeTest$(EXEEXT) PairTest$(EXEEXT) \
-	PSInterpreterTest$(EXEEXT) \
+	PSInterpreterTest$(EXEEXT) PageRagesTest$(EXEEXT) \
+	PageSizeTest$(EXEEXT) PairTest$(EXEEXT) \
 	SplittedCharInputBufferTest$(EXEEXT) \
 	StreamInputBufferTest$(EXEEXT) StreamReaderTest$(EXEEXT) \
 	StreamWriterTest$(EXEEXT) TypesTest$(EXEEXT) \
@@ -333,57 +333,57 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CXXFLAGS = -I$(srcdir)/../src -I$(srcdir)/../../src -Wall -DSRCDIR='"$(srcdir)"'
 BoundingBoxTest_SOURCES = BoundingBoxTest.cpp
-BoundingBoxTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
-CalculatorTest_SOURCES = CalculatorTest.cpp
-CalculatorTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
-ColorSpecialTest_SOURCES = ColorSpecialTest.cpp
-ColorSpecialTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
-CommandLineTest_SOURCES = CommandLineTest.cpp
-CommandLineTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+BoundingBoxTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 CRC32Test_SOURCES = CRC32Test.cpp
-CRC32Test_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+CRC32Test_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
+CalculatorTest_SOURCES = CalculatorTest.cpp
+CalculatorTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
+ColorSpecialTest_SOURCES = ColorSpecialTest.cpp
+ColorSpecialTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
+CommandLineTest_SOURCES = CommandLineTest.cpp
+CommandLineTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 DirectoryTest_SOURCES = DirectoryTest.cpp
-DirectoryTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+DirectoryTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 FileFinderTest_SOURCES = FileFinderTest.cpp
-FileFinderTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+FileFinderTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 FilePathTest_SOURCES = FilePathTest.cpp
-FilePathTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+FilePathTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 FileSystemTest_SOURCES = FileSystemTest.cpp
-FileSystemTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+FileSystemTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 FontManagerTest_SOURCES = FontManagerTest.cpp
-FontManagerTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+FontManagerTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 FontMapTest_SOURCES = FontMapTest.cpp
-FontMapTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+FontMapTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 GFReaderTest_SOURCES = GFReaderTest.cpp
-GFReaderTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+GFReaderTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 GraphicPathTest_SOURCES = GraphicPathTest.cpp
-GraphicPathTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+GraphicPathTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 LengthTest_SOURCES = LengthTest.cpp
-LengthTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+LengthTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 MatrixTest_SOURCES = MatrixTest.cpp
-MatrixTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+MatrixTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 MessageExceptionTest_SOURCES = MessageExceptionTest.cpp
-MessageExceptionTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
-PageRagesTest_SOURCES = PageRagesTest.cpp
-PageRagesTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
-PageSizeTest_SOURCES = PageSizeTest.cpp
-PageSizeTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
-PairTest_SOURCES = PairTest.cpp
-PairTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+MessageExceptionTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 PSInterpreterTest_SOURCES = PSInterpreterTest.cpp
-PSInterpreterTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+PSInterpreterTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
+PageRagesTest_SOURCES = PageRagesTest.cpp
+PageRagesTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
+PageSizeTest_SOURCES = PageSizeTest.cpp
+PageSizeTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
+PairTest_SOURCES = PairTest.cpp
+PairTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 SplittedCharInputBufferTest_SOURCES = SplittedCharInputBufferTest.cpp
-SplittedCharInputBufferTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+SplittedCharInputBufferTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 StreamInputBufferTest_SOURCES = StreamInputBufferTest.cpp
-StreamInputBufferTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+StreamInputBufferTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 StreamReaderTest_SOURCES = StreamReaderTest.cpp
-StreamReaderTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+StreamReaderTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 StreamWriterTest_SOURCES = StreamWriterTest.cpp
-StreamWriterTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+StreamWriterTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 TypesTest_SOURCES = TypesTest.cpp
-TypesTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+TypesTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 VectorStreamTest_SOURCES = VectorStreamTest.cpp
-VectorStreamTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main
+VectorStreamTest_LDADD = ../src/libdvisvgm.a ../potracelib/libpotrace.a -lgtest -lgtest_main -lpthread
 TESTDATA = frktest.dvi frktest-wf-cmp.svg frktest-nf-cmp.svg \
 	sample.dvi sample-wf-cmp.svg sample-nf-cmp.svg
 EXTRA_DIST = check-conv normalize.xsl cmr10.600gf $(TESTDATA)

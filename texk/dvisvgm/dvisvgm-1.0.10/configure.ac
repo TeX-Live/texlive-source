@@ -4,8 +4,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[1.0.9],[martin.gieseking@uos.de])
-DATE="October 2011"
+AC_INIT([dvisvgm],[1.0.10],[martin.gieseking@uos.de])
+DATE="December 2011"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADER(config.h)
 AC_CANONICAL_HOST
@@ -106,7 +106,7 @@ PKG_PROG_PKG_CONFIG
 # Check for libraries.
 PKG_CHECK_MODULES([FREETYPE], [freetype2])
 CXXFLAGS="$CXXFLAGS ${FREETYPE_CFLAGS}"
-LDFLAGS="$LDFLAGS ${FREETYPE_LIBS}"
+LIBS="$LIBS ${FREETYPE_LIBS}"
 
 AC_CHECK_LIB(z, gzopen)
 

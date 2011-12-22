@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: [see the "AUTHOR" section]
 .\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
-.\"      Date: 10/14/2011
+.\"      Date: 12/18/2011
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 1.0.9
+.\"    Source: dvisvgm 1.0.10
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "10/14/2011" "dvisvgm 1\&.0\&.9" "dvisvgm Manual"
+.TH "DVISVGM" "1" "12/18/2011" "dvisvgm 1\&.0\&.10" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -194,7 +194,8 @@ is omitted, dvisvgm prints the path of the default cache directory and some info
 .PP
 \fB\-\-color\fR
 .RS 4
-Enables colorization of messages printed during the conversion process\&.
+Enables colorization of messages printed during the conversion process\&. The colors can be customized via the environment variable
+DVISVGM_COLORS\&. See ENVIRONMENT section below for further information\&.
 .RE
 .PP
 \fB\-e, \-\-exact\fR
@@ -213,7 +214,7 @@ Prints a short summary of all available command\-line options\&.
 This option is only available if the Ghostscript library is not directly linked to dvisvgm and PostScript support was not completely disabled during compilation\&. In this case, dvisvgm tries to load the shared GS library dynamically during runtime\&. By default, it expects the library\(cqs name to be libgs\&.so (on Unix\-like systems) or gsdll32\&.dll (Windows)\&. Option
 \fB\-\-libgs\fR
 can be used to give a different name\&. Alternatively, the GS library name can also be set by the environment variable
-\fBLIBGS\fR\&. The latter has less precedence than the command\-line option\&.
+LIBGS\&. The latter has less precedence than the command\-line option\&.
 .RE
 .PP
 \fB\-l, \-\-list\-specials\fR
@@ -681,7 +682,8 @@ does not try to implement its own PostScript interpreter but relies on Ghostscri
 \fIlibgs\&.so\fR
 on Unix\-like systems, and for
 \fIgsdll32\&.dll\fR
-on Windows\&. You can override these default file names with the environment variable LIBGS\&. The library must be installed and must be reachable through the ld search path (*nix) or the PATH environment variable (Windows)\&. If it cannot be found, the evaluation of PostScript specials is disabled\&. Use option
+on Windows\&. You can override these default file names with the environment variable
+LIBGS\&. The library must be installed and must be reachable through the ld search path (*nix) or the PATH environment variable (Windows)\&. If it cannot be found, the evaluation of PostScript specials is disabled\&. Use option
 \fB\-\-list\-specials\fR
 to check whether PS support is available, i\&.e\&. the entry
 \fIps\fR
@@ -747,7 +749,81 @@ Converts first page of \fIfile\&.dvi\fR to \fIfile\&.svg\fR where three transfor
 .sp
 If dvisvgm was linked without the Ghostscript library, and if PostScript support has not been disabled, the shared Ghostscript library is looked up during runtime\&. The environment variable LIBGS can be used to specify path and file name of the library\&.
 .sp
-The pre\-compiled Windows version of \fBdvisvgm\fR requires a working installation of MiKTeX 2\&.7 or above\&. To enable evaluation of PostScript specials, the original Ghostscript DLL must be present and reachable through the search path\&.
+The pre\-compiled Windows version of \fBdvisvgm\fR requires a working installation of MiKTeX 2\&.9 or above\&. To enable evaluation of PostScript specials, the original Ghostscript DLL must be present and reachable through the search path\&.
+.sp
+The environment variable DVISVGM_COLORS specifies the colors used to highlight various parts of dvisvgm\(cqs message output\&. It is only evaluated if option \fB\-\-color\fR is given\&. The value of DVISVGM_COLORS is a list of colon\-separated entries of the form \fIgg\fR=\fIBF\fR, where \fIgg\fR denotes one of the color group indicators listed below, and \fIBF\fR are two hexadecimal digits specifying the background (first digit) and foreground/text color (second digit)\&. The color color values are defined as follows: 0=black, 1=red, 2=green, 3=yellow, 4=blue, 5=magenta, 6=cyan, 7:gray, 8=bright red, 9=bright green, A=bright yellow, B=bright blue, C=bright magenta, D=bright cyan, E=bright gray, F=white\&. Depending on the terminal, the colors may differ\&. Rather than changing always both the text and background color, it\(cqs also possible to change only one of them: An asterisk (*) in place of a hexadecimal digit indicates the default text or background color of the terminal\&.
+.sp
+All malformed entries in the list are silently ignored\&.
+.TS
+tab(:);
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt.
+T{
+.sp
+\fBer\fR
+T}:T{
+.sp
+error messages
+T}
+T{
+.sp
+\fBwn\fR
+T}:T{
+.sp
+warning messages
+T}
+T{
+.sp
+\fBpn\fR
+T}:T{
+.sp
+messages about page numbers
+T}
+T{
+.sp
+\fBps\fR
+T}:T{
+.sp
+page size messages
+T}
+T{
+.sp
+\fBfw\fR
+T}:T{
+.sp
+information about the files written
+T}
+T{
+.sp
+\fBsm\fR
+T}:T{
+.sp
+state messages
+T}
+T{
+.sp
+\fBtr\fR
+T}:T{
+.sp
+messages of the glyph tracer
+T}
+T{
+.sp
+\fBpi\fR
+T}:T{
+.sp
+progress indicator
+T}
+.TE
+.sp 1
+.sp
+\fBExample:\fR er=01:pi=*5 sets the colors of error messages (er) to red (1) on black (0), and those of progress indicators (pi) to cyan (5) on default background (*)\&.
 .SH "FILES"
 .sp
 The location of the following files is determined by the kpathsea library\&. To check the actual kpathsea configuration you can use the \fBkpsewhich\fR utility\&.
