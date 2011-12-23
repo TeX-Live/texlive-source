@@ -18714,7 +18714,9 @@ else
   XETEX_SYNCTEX_FALSE=
 fi
 
-if test "x$enable_aleph:$enable_xetex" = xno:no; then :
+test "x$enable_omfonts" = xno || enable_omfonts=yes
+
+if test "x$enable_aleph:$enable_xetex:$enable_omfonts" = xno:no:yes; then :
   enable_otangle=no
 else
   enable_otangle=yes

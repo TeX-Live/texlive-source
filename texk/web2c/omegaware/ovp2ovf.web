@@ -103,16 +103,23 @@ procedure initialize; {this procedure gets things started properly}
 @ The following parameters can be changed at compile time to extend or
 reduce \.{VPtoVF}'s capacity.
 
+@d char_max=@"FFFF
+@d xchar_max=char_max+1
+@d xxchar_max=xchar_max+1
+@d mem_max=xxchar_max+xxchar_max+xxchar_max+xxchar_max
+@#
+@d width_max=@"FFFF
+
 @<Constants...@>=
 @!ofm_type=0;     {16-bit OFM; sufficient for most purposes}
-@!max_char=65535; {the largest character number in a font}
-@!xmax_char=65536; {|max_char|+1}
-@!xxmax_char=65537;{|max_char|+2}
-@!mem_size=262148; {|max_char|*4+8}
+@!max_char=char_max; {the largest character number in a font}
+@!xmax_char=xchar_max; {|max_char|+1}
+@!xxmax_char=xxchar_max;{|max_char|+2}
+@!mem_size=mem_max; {|max_char|*4+8}
 @!max_font=1000; {the largest font number}
 @!xmax_font=1001;  {|max_font|+1}
 @!xxmax_font=1002;  {|max_font|+2}
-@!max_width=65535; {the largest character width number}
+@!max_width=width_max; {the largest character width number}
 @!max_height=255; {the largest character height number}
 @!max_depth=255; {the largest character depth number}
 @!max_italic=255; {the largest character italic correction number}
@@ -1500,6 +1507,8 @@ and $2^{31}-1$, inclusive, so that a computer with two's complement
 @ The first number scanner, which returns a one-byte value, surely has
 no problems of arithmetic overflow.
 
+@d max_byte=@"FFFF
+
 @p function get_byte:byte; {scans a one-byte property value}
 var acc:integer; {an accumulator}
 @!t:ASCII_code; {the type of value to be scanned}
@@ -1531,7 +1540,7 @@ else skip_error('"C" value must be standard ASCII and not a paren')
 @ @<Scan a small dec...@>=
 begin while (cur_char>="0")and(cur_char<="9") do begin
   acc:=acc*10+cur_char-"0";
-  if acc>65535 then begin
+  if acc>max_byte then begin
     skip_error('This value shouldn''t exceed 65535');
 @.This value shouldn't...@>
     acc:=0; cur_char:=" ";
@@ -1544,7 +1553,7 @@ end
 @ @<Scan a small oct...@>=
 begin while (cur_char>="0")and(cur_char<="7") do begin
   acc:=acc*8+cur_char-"0";
-  if acc>65535 then begin
+  if acc>max_byte then begin
     skip_error('This value shouldn''t exceed ''177777');
 @.This value shouldn't...@>
     acc:=0; cur_char:=" ";
@@ -1559,7 +1568,7 @@ begin while ((cur_char>="0")and(cur_char<="9"))or
    ((cur_char>="A")and(cur_char<="F")) do begin
   if cur_char>="A" then cur_char:=cur_char+"0"+10-"A";
   acc:=acc*16+cur_char-"0";
-  if acc>65535 then begin
+  if acc>max_byte then begin
     skip_error('This value shouldn''t exceed "FFFF');
 @.This value shouldn't...@>
     acc:=0; cur_char:=" ";

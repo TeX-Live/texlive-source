@@ -1548,8 +1548,10 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/ChangeLog $(xetex_tests) \
 	xetexdir/LICENSE.txt omegaware/README omegaware/ChangeLog \
 	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
-	$(opl2ofm_sources) $(otangle_sources) $(ovf2ovp_sources) \
-	$(ovp2ovf_sources) $(OTANGLE_tests) $(OMFONTS_tests) \
+	$(opl2ofm_sources) $(otangle_sources) omegaware/ovf2ovp.web \
+	omegaware/ovf2ovp.up omegaware/ovf2ovp.ch \
+	omegaware/ovp2ovf.web omegaware/ovp2ovf.up \
+	omegaware/ovp2ovf.ch $(OTANGLE_tests) $(OMFONTS_tests) \
 	omegaware/tests/level1.opl omegaware/tests/ofontd1.dvi \
 	omegaware/tests/ofontd1.typ omegaware/tests/ofontd2.dvi \
 	omegaware/tests/ofontd2.typ omegaware/tests/ofontd3.dvi \
@@ -1639,18 +1641,18 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	$(nodist_xetex_SOURCES) xetex.web xetex-web2c xetex.p \
 	xetex.pool xetex-tangle $(omegaware_programs:=.c) \
 	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
-	$(omegaware_programs:=-web2c) omegaware/tests/xlevel1.ofm \
-	omegaware/tests/xlevel1.opl ofont*vf omegaware/tests/xofont* \
-	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
-	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
-	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
-	cftest.p omegaware/tests/xrepeated.* \
-	omegaware/tests/sample*.ofm omegaware/tests/sample.ovf \
-	omegaware/tests/sample1-h.opl omegaware/tests/xsample.out \
-	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
-	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
-	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
-	aleph.pool aleph-tangle
+	$(omegaware_programs:=-web2c) ovf2ovp.web ovp2ovf.web \
+	omegaware/tests/xlevel1.ofm omegaware/tests/xlevel1.opl \
+	ofont*vf omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
+	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
+	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
+	omegaware/tests/xOCherokee.* cftest.p \
+	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
+	omegaware/tests/sample.ovf omegaware/tests/sample1-h.opl \
+	omegaware/tests/xsample.out omegaware/tests/specialhex.ofm \
+	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
+	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
+	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP_CLEAN = $(am__append_9) $(am__append_17) $(am__append_26) \
 	$(am__append_31) $(am__append_37) $(am__append_43) \
@@ -2605,6 +2607,7 @@ omegaware_tools = odvicopy odvitype otangle
 omegaware_font_tools = ofm2opl opl2ofm ovf2ovp ovp2ovf
 omegaware_programs = $(omegaware_tools) $(omegaware_font_tools)
 ow_tangle = WEBINPUTS=$(srcdir)/omegaware $(buildenv) $(TANGLE)
+ow_otangle = WEBINPUTS=.:$(srcdir)/omegaware $(buildenv) $(OTANGLE)
 nodist_odvicopy_SOURCES = odvicopy.c odvicopy.h
 odvicopy_sources = omegaware/odvicopy.web omegaware/odvicopy.ch
 nodist_odvitype_SOURCES = odvitype.c odvitype.h
@@ -2616,9 +2619,7 @@ opl2ofm_sources = omegaware/opl2ofm.web omegaware/opl2ofm.ch
 nodist_otangle_SOURCES = otangle.c otangle.h
 otangle_sources = omegaware/otangle.web omegaware/otangle.ch
 nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
-ovf2ovp_sources = omegaware/ovf2ovp.web omegaware/ovf2ovp.ch
 nodist_ovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
-ovp2ovf_sources = omegaware/ovp2ovf.web omegaware/ovp2ovf.ch
 OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 	omegaware/otangle.test
 
@@ -10291,14 +10292,18 @@ ovf2ovp.c ovf2ovp.h: ovf2ovp-web2c
 	@$(web2c) ovf2ovp
 ovf2ovp-web2c: ovf2ovp.p $(web2c_depend)
 	@$(web2c) ovf2ovp
-ovf2ovp.p: tangle$(EXEEXT) $(ovf2ovp_sources)
-	$(ow_tangle) ovf2ovp ovf2ovp
+ovf2ovp.p: otangle$(EXEEXT) ovf2ovp.web omegaware/ovf2ovp.ch
+	$(ow_otangle) ovf2ovp ovf2ovp
+ovf2ovp.web: tie$(EXEEXT) omegaware/ovf2ovp.web omegaware/ovf2ovp.up
+	$(tie) -m ovf2ovp.web omegaware/ovf2ovp.web omegaware/ovf2ovp.up
 ovp2ovf.c ovp2ovf.h: ovp2ovf-web2c
 	@$(web2c) ovp2ovf
 ovp2ovf-web2c: ovp2ovf.p $(web2c_depend)
 	@$(web2c) ovp2ovf
-ovp2ovf.p: tangle$(EXEEXT) $(ovp2ovf_sources)
-	$(ow_tangle) ovp2ovf ovp2ovf
+ovp2ovf.p: otangle$(EXEEXT) ovp2ovf.web omegaware/ovp2ovf.ch
+	$(ow_otangle) ovp2ovf ovp2ovf
+ovp2ovf.web: tie$(EXEEXT) omegaware/ovp2ovf.web omegaware/ovp2ovf.up
+	$(tie) -m ovp2ovf.web omegaware/ovp2ovf.web omegaware/ovp2ovf.up
 
 # We must create alephd.h before building the aleph_OBJECTS.
 $(aleph_OBJECTS): alephd.h

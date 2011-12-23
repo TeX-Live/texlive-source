@@ -1,3 +1,7 @@
+2011-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac [OTANGLE]: For ovf2ovp and ovp2ovf (Web2C).
+
 2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex.ch: Consistency of `constants'.

@@ -1,3 +1,11 @@
+2011-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ovf2ovp.web, ovp2ovf.web: Replace 65535 etc by numeric Web
+	macros (can be up to 2^{30} for otangle).
+
+	* ovf2ovp.up, ovp2ovf.up (new): Changes for upTeX versions.
+	* am/omegaware.am: Adapted.
+
 2011-12-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* opl2ofm.web: Correctly compute mem_size=max_char*4+8;

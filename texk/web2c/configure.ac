@@ -142,7 +142,9 @@ m4_foreach([Kpse_Prog], [kpse_tex_progs],
            [m4_ifset([Kpse_Prog],
                      [KPSE_XTEX_COND(Kpse_Prog)])])[]dnl
 
-AS_IF([test "x$enable_aleph:$enable_xetex" = xno:no],
+test "x$enable_omfonts" = xno || enable_omfonts=yes
+
+AS_IF([test "x$enable_aleph:$enable_xetex:$enable_omfonts" = xno:no:yes],
       [enable_otangle=no],
       [enable_otangle=yes])
 AM_CONDITIONAL([OTANGLE],
