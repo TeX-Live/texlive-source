@@ -76,10 +76,10 @@ unsigned length_ovf = 0;
 const_string name_program;
 
 const_string OMFONTSHELP[] = {
-    "Usage: omfomts -ofm2opl [OPTION]... FILE...",
-    "       omfomts -opl2ofm [OPTION]... FILE...",
-    "       omfomts -ovf2ovp [OPTION]... FILE...",
-    "       omfomts -ovp2ovf [OPTION]... FILE...",
+    "Usage: omfonts -ofm2opl [OPTION]... FILE...",
+    "       omfonts -opl2ofm [OPTION]... FILE...",
+    "       omfonts -ovf2ovp [OPTION]... FILE...",
+    "       omfonts -ovp2ovf [OPTION]... FILE...",
     "",
     "be ofm2opl, opl2ofm, ovf2ovp, or ovp2ovf",
     NULL
@@ -94,7 +94,7 @@ static const_string names_msg[PROG_NUM] = {
     "This is opl2ofm, Version 2.1",
     "This is ovf2ovp, Version 2.1",
     "This is ovp2ovf, Version 2.1",
-    "This is omfomts, Version 2.1"
+    "This is omfonts, Version 2.1"
 };
 
 int no_files=0;

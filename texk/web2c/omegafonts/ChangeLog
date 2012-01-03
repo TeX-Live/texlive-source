@@ -1,3 +1,7 @@
+2012-01-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* omfonts.c: fix a typo (omfomts ---> omfonts).
+
 2011-12-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* font_routines.c (set_select_font): Select the correct MAPFONT.
