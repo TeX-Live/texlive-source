@@ -25,6 +25,7 @@
 
 static int default_kanji_enc = ENC_UTF8;
 static boolean UPTEX_enabled;
+static boolean prior_file_enc = false;
 
 #define ESC '\033'
 
@@ -155,6 +156,11 @@ void enable_UPTEX (boolean enable)
         if (internal_enc == ENC_UPTEX)
             internal_enc = ENC_EUC;
     }
+}
+
+void set_prior_file_enc(void)
+{
+    prior_file_enc = true;
 }
 
 const_string get_enc_string(void)
@@ -437,7 +443,8 @@ int putc2(int c, FILE *fp)
     const int fd = fileno(fp);
     int ret = c, output_enc;
 
-    if (fp == stdout || fp == stderr) output_enc = get_terminal_enc();
+    if ((fp == stdout || fp == stderr) && !(prior_file_enc))
+                                      output_enc = get_terminal_enc();
     else                              output_enc = get_file_enc();
 
     if (num[fd] > 0) {        /* multi-byte char */

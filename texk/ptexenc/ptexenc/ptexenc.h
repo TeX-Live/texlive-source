@@ -32,6 +32,7 @@ extern PTENCDLL int infile_enc_auto;
 
 /* enable/disable UPTEX */
 extern PTENCDLL void enable_UPTEX (boolean enable);
+extern PTENCDLL void set_prior_file_enc(void);
 
 /* get/set Kanji encoding by string */
 extern PTENCDLL const_string get_enc_string(void);

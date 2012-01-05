@@ -1,3 +1,8 @@
+2012-01-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kanji.h: enable -kanji option in updvitype.
+	(patch from TANAKA Takuji-san).
+
 2011-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* uptex-m.ch, kanji.[ch]: Drop unused param2 of check_kanji().

@@ -37,6 +37,8 @@ extern void init_default_kanji (const_string file_str, const_string internal_str
 #define initdefaultkanji() init_default_kanji(NULL, "euc")
 /* for pBibTeX, pDVItype, pPLtoTF, and pTFtoPL */
 #define initkanji() init_default_kanji(NULL, "euc")
+/* for pDVItype */
+#define setpriorfileenc() set_prior_file_enc()
 
 #ifndef PRESERVE_PUTC
 #undef putc

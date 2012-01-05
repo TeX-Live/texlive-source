@@ -144,6 +144,13 @@ for k:=1 to nt do
 @z
 
 @x
+    print_ln(']');
+@y
+    print(']');
+    print_ln('');
+@z
+
+@x
 @p procedure out_text(c:ASCII_code);
 begin if text_ptr=line_length-2 then flush_text;
 incr(text_ptr); text_buf[text_ptr]:=c;
@@ -504,6 +511,7 @@ const n_options = 10; {Pascal won't count array lengths for us.}
     end; {Else it was a flag; |getopt| has already done the assignment.}
 @y
     end else if argument_is ('kanji') then begin
+      set_prior_file_enc;
       if (not set_enc_string(optarg,optarg)) then begin
         write_ln('Bad kanji encoding "', stringcast(optarg), '".');
       end;

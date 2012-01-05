@@ -1,3 +1,9 @@
+2012-01-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexenc/ptexenc.h, ptexenc.c: add set_prior_file_enc() in order to
+	enable -kanji option in pdvitype and updvitype.
+	(patch from TANAKA Takuji-san).
+
 2011-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexenc.c, ptexenc/ptexenc.h: Declare and export Poptr.

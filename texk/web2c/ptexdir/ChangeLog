@@ -1,3 +1,8 @@
+2012-01-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kanji.h, pdvitype.ch: enable -kanji option in pdvitype.
+	(patch from TANAKA Takuji-san).
+
 2011-12-19  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch, ptex.defines, kanji.[ch]: Avoid Segmentation
