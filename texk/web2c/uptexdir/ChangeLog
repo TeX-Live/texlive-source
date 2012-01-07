@@ -1,3 +1,7 @@
+2012-01-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kanji.h: revert wrt init_kanji (from TANAKA Takuji-san).
+
 2012-01-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* kanji.h: enable -kanji option in updvitype.

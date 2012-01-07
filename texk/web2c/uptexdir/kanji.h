@@ -35,6 +35,7 @@ extern integer calc_pos (integer c);
 extern integer kcatcodekey (integer c);
 extern integer multilenbuffchar (integer c);
 
+extern void init_kanji (const_string file_str, const_string internal_str);
 extern void init_default_kanji (const_string file_str, const_string internal_str);
 /* for upTeX and e-upTeX */
 #define initdefaultkanji() init_default_kanji("utf8", "uptex")
