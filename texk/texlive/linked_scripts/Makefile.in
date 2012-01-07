@@ -172,12 +172,11 @@ DISTCLEANFILES = scripts.tmp
 # space, but more importantly omit duplication, and most
 # importantly of all make it possible to invoke the same Perl script on
 # Windows (see ../w32_wrapper).
-# 
+#
 # The installation into texmf*/scripts is ideally done with ctan2tl.
-# The copy of the wrapper for Windows is done by hand, is done by
-# ctan2tl.  (And for shell scripts, its addition must be undone by
-# hand.)  The check-wrapper-consistency script checks after the fact for
-# problems.
+# The copy of the wrapper for Windows is also done by ctan2tl.  (And
+# for shell scripts, its addition must be undone by hand.)  The
+# check-wrapper-consistency script checks after the fact for problems.
 #
 # We also keep a copy of all the scripts here and install into the runtime.
 # This is purely for other distro builders, so symlinks are not dangling in
