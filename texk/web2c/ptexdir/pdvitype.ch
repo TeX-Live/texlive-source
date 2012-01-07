@@ -1,4 +1,4 @@
-% This is a change file for PLtoTF
+% This is a change file for DVItype.
 %
 % 09/27/95 (KA)  Supporting ASCII pTeX
 %
@@ -141,13 +141,6 @@ for k:=1 to nt do
     jfm_char_type_hash_table[jfm_h]:=jfm_char_type_count;
     jfm_char_type_count := jfm_char_type_count + 1
   end;
-@z
-
-@x
-    print_ln(']');
-@y
-    print(']');
-    print_ln('');
 @z
 
 @x

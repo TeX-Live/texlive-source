@@ -1,3 +1,7 @@
+2012-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdvitype.ch: Remove an unnecessary change in previous.
+
 2012-01-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* kanji.h, pdvitype.ch: enable -kanji option in pdvitype.
