@@ -1,3 +1,9 @@
+2012-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fixwrites.c: Replace 'fprintf(filename, "%c\n", char);' by
+	'{ putc(char, filename); putc ('\n', filename); }'.  Patch from
+	Akira Kakuto for (u)pDVItype & Co. where putc() => putc2().
+
 2011-10-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines: Remove ALEPHHELP.

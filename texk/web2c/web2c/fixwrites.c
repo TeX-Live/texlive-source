@@ -438,6 +438,14 @@ main (int argc,  string *argv)
 	  *as = '\0';
 	  printf ("putc (%s, %s);\n", argp, filename);
 	}
+      else if (strcmp (args, "%c\\n") == 0)
+	{
+	  for (as = argp; *as; ++as) ;
+	  while (*--as != ')') ;
+	  *as = '\0';
+	  printf ("{ putc (%s, %s);  ", argp, filename);
+	  printf ("putc ( '\\n', %s); }\n", filename);
+	}
       else if (strcmp (args, "%s") == 0)
         printf ("Fputs (%s, %s\n", filename, argp);
       else
