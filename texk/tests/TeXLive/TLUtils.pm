@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 24439 $';
+my $svnrev = '$Revision: 25027 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -259,39 +259,41 @@ C</.*-(.*$)/> as a last resort and hope it provides something useful.
 =cut
 
 sub platform_name {
-      my ($guessed_platform) = @_;
+  my ($guessed_platform) = @_;
 
-      $guessed_platform =~ s/^x86_64-(.*-k?)freebsd/amd64-$1freebsd/;
-      my $CPU; # CPU type as reported by config.guess.
-      my $OS;  # O/S type as reported by config.guess.
-      ($CPU = $guessed_platform) =~ s/(.*?)-.*/$1/;
-      $CPU =~ s/^alpha(.*)/alpha/;   # alphaev56 or whatever
-      $CPU =~ s/powerpc64/powerpc/;  # we don't distinguish ppc64
-      $CPU =~ s/mips64el/mipsel/;    # we don't distinguish mips64 and 32 el
+  $guessed_platform =~ s/^x86_64-(.*-k?)freebsd/amd64-$1freebsd/;
+  my $CPU; # CPU type as reported by config.guess.
+  my $OS;  # O/S type as reported by config.guess.
+  ($CPU = $guessed_platform) =~ s/(.*?)-.*/$1/;
+  $CPU =~ s/^alpha(.*)/alpha/;   # alphaev56 or whatever
+  $CPU =~ s/armv7l/armel/;       # arm
+  $CPU =~ s/powerpc64/powerpc/;  # we don't distinguish ppc64
+  $CPU =~ s/mips64el/mipsel/;    # we don't distinguish mips64 and 32 el
 
-      my @OSs = qw(aix cygwin darwin freebsd hpux irix
-                   kfreebsd linux netbsd openbsd solaris);
-      for my $os (@OSs) {
-        # Match word boundary at the beginning of the os name so that
-        #   freebsd and kfreebsd are distinguished.
-        # Do not match word boundary at the end of the os so that
-        #   solaris2 is matched.
-        $OS = $os if $guessed_platform =~ /\b$os/;
-      }
-      if ($OS eq "darwin") {
-        # We never want to guess x86_64-darwin even if config.guess
-        # does, because Leopard can be 64-bit but our x86_64-darwin
-        # binaries will only run on Snow Leopard.
-        $CPU = "universal";
-      } elsif ($CPU =~ /^i.86$/) {
-        $CPU = "i386";  # 586, 686, whatever
-      }
+  my @OSs = qw(aix cygwin darwin freebsd hpux irix
+               kfreebsd linux netbsd openbsd solaris);
+  for my $os (@OSs) {
+    # Match word boundary at the beginning of the os name so that
+    #   freebsd and kfreebsd are distinguished.
+    # Do not match word boundary at the end of the os so that
+    #   solaris2 is matched.
+    $OS = $os if $guessed_platform =~ /\b$os/;
+  }
+  
+  if ($OS eq "darwin") {
+    # We never want to guess x86_64-darwin even if config.guess
+    # does, because Leopard can be 64-bit but our x86_64-darwin
+    # binaries will only run on Snow Leopard.
+    $CPU = "universal";
+  } elsif ($CPU =~ /^i.86$/) {
+    $CPU = "i386";  # 586, 686, whatever
+  }
 
-      unless (defined $OS) {
-        ($OS = $guessed_platform) =~ s/.*-(.*)/$1/;
-      }
+  if (! defined $OS) {
+    ($OS = $guessed_platform) =~ s/.*-(.*)/$1/;
+  }
 
-      return "$CPU-$OS";
+  return "$CPU-$OS";
 }
 
 =item C<platform_desc($platform)>
@@ -309,11 +311,12 @@ sub platform_desc {
     'alphaev5-osf'     => 'DEC Alphaev5 OSF',
     'amd64-freebsd'    => 'x86_64 with FreeBSD',
     'amd64-kfreebsd'   => 'x86_64 with GNU/FreeBSD',
+    'armel-linux'      => 'ARM with GNU/Linux',
     'hppa-hpux'        => 'HP-UX',
     'i386-cygwin'      => 'Intel x86 with Cygwin',
     'i386-darwin'      => 'Intel x86 with MacOSX/Darwin',
     'i386-freebsd'     => 'Intel x86 with FreeBSD',
-    'i386-kfreebsd'    => 'Intel x86 with GNU/FreeBSD',
+    'i386-kfreebsd'    => 'Intel x86 with GNU/kFreeBSD',
     'i386-openbsd'     => 'Intel x86 with OpenBSD',
     'i386-netbsd'      => 'Intel x86 with NetBSD',
     'i386-linux'       => 'Intel x86 with GNU/Linux',
@@ -1947,7 +1950,7 @@ sub remove_link_dir_dir {
     }
     # trry to remove the destination directory, it might be empty and
     # we might have write permissions, ignore errors
-    `rmdir "$to" 2>/dev/null`;
+    # `rmdir "$to" 2>/dev/null`;
     return $ret;
   } else {
     tlwarn ("destination $to not writable, no removal of links done!\n");
@@ -1987,7 +1990,7 @@ sub add_remove_symlinks {
         $errors++ unless remove_link_dir_dir($mandir, "$sys_man/$m");
       }
     }
-    `rmdir "$sys_man" 2>/dev/null` if ($mode eq "remove");
+    # `rmdir "$sys_man" 2>/dev/null` if ($mode eq "remove");
   } else {
     tlwarn("destination of man symlink $sys_man not writable, "
       . "cannot $mode symlinks.\n");
