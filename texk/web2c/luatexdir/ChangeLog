@@ -1,3 +1,10 @@
+2012-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Consistent support for large JBIG2 files.
+	* image/writejbig2.w: Change type of various struct members, local
+	variables and findstreamstart() from `long' or `unsigned long'
+	to `off_t'.  Do not use xfseek and xfseeko for the same file.
+
 2011-10-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/lepdflib.cc: Test poppler 0.16.x / 0.17.x features.

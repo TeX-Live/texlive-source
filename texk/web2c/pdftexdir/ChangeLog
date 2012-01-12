@@ -1,3 +1,10 @@
+2012-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Consistent support for large JBIG2 files.
+	* writejbig2.c: Change type of various struct members, local
+	variables and findstreamstart() from `long' or `unsigned long'
+	to `off_t'.  Do not use xfseek and xfseeko for the same file.
+
 2011-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Change type of pdf_ptr: longinteger => integer.
