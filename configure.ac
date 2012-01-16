@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -185,6 +185,7 @@ case $kpse_src$kpse_bld in
 esac
 AC_MSG_RESULT([
    enable_native_texlive_build:  $enable_native_texlive_build
+   enable_largefile:             $enable_largefile
    enable_shared:                $enable_shared
    enable_multiplatform:         $enable_multiplatform
    enable_cxx_runtime_hack:      $enable_cxx_runtime_hack

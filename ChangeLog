@@ -1,3 +1,7 @@
+2012-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Report `$enable_largefile'.
+
 2012-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tardate.ac: Switch to 2012-01-13.

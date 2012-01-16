@@ -1,5 +1,5 @@
 # Private macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -29,6 +29,10 @@ AS_CASE([$enable_native_texlive_build],
         [yes | no], [:],
         [enable_native_texlive_build=yes
          ac_configure_args="$ac_configure_args '--enable-native-texlive-build'"])
+AS_CASE([$enable_largefile],
+        [yes | no], [:],
+        [enable_largefile=yes
+         ac_configure_args="$ac_configure_args '--enable_largefile'"])
 AS_CASE([$enable_multiplatform],
         [yes | no], [:],
         [enable_multiplatform=$enable_native_texlive_build

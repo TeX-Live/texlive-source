@@ -3040,6 +3040,13 @@ case $enable_native_texlive_build in #(
     enable_native_texlive_build=yes
          ac_configure_args="$ac_configure_args '--enable-native-texlive-build'" ;;
 esac
+case $enable_largefile in #(
+  yes | no) :
+    : ;; #(
+  *) :
+    enable_largefile=yes
+         ac_configure_args="$ac_configure_args '--enable_largefile'" ;;
+esac
 case $enable_multiplatform in #(
   yes | no) :
     : ;; #(

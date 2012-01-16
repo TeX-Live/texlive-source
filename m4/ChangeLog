@@ -1,3 +1,7 @@
+2012-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-setup.m4 (KPSE_SETUP): Normalize `enable_largefile'.
+
 2012-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-poppler-flags.m4: Drop `-DPDF_PARSER_ONLY'.

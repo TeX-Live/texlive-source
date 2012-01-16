@@ -3715,6 +3715,13 @@ case $enable_native_texlive_build in #(
     enable_native_texlive_build=yes
          ac_configure_args="$ac_configure_args '--enable-native-texlive-build'" ;;
 esac
+case $enable_largefile in #(
+  yes | no) :
+    : ;; #(
+  *) :
+    enable_largefile=yes
+         ac_configure_args="$ac_configure_args '--enable_largefile'" ;;
+esac
 case $enable_multiplatform in #(
   yes | no) :
     : ;; #(
@@ -23252,6 +23259,7 @@ case $kpse_src$kpse_bld in
 esac
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:
    enable_native_texlive_build:  $enable_native_texlive_build
+   enable_largefile:             $enable_largefile
    enable_shared:                $enable_shared
    enable_multiplatform:         $enable_multiplatform
    enable_cxx_runtime_hack:      $enable_cxx_runtime_hack
@@ -23271,6 +23279,7 @@ esac
 " >&5
 $as_echo "
    enable_native_texlive_build:  $enable_native_texlive_build
+   enable_largefile:             $enable_largefile
    enable_shared:                $enable_shared
    enable_multiplatform:         $enable_multiplatform
    enable_cxx_runtime_hack:      $enable_cxx_runtime_hack
