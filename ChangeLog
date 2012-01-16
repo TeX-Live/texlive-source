@@ -1,3 +1,7 @@
+2012-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2012-01-13.
+
 2011-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace DISTCHECK_CONFIGURE_FLAGS by
