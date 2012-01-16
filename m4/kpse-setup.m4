@@ -32,7 +32,7 @@ AS_CASE([$enable_native_texlive_build],
 AS_CASE([$enable_largefile],
         [yes | no], [:],
         [enable_largefile=yes
-         ac_configure_args="$ac_configure_args '--enable_largefile'"])
+         ac_configure_args="$ac_configure_args '--enable-largefile'"])
 AS_CASE([$enable_multiplatform],
         [yes | no], [:],
         [enable_multiplatform=$enable_native_texlive_build
