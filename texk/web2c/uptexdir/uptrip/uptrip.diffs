@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is upTeX, Version 3.1415926-p3.2-u0.30 (utf8.uptex) (TeX Live 2012) (INITEX)  23 AUG 2011 21:31
+> This is upTeX, Version 3.1415926-p3.2-u1.00 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -37,8 +37,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2011.8.23)
-> 1458 strings of total length 25415
+>  (format=trip 2012.1.16)
+> 1460 strings of total length 25454
 > 485 memory locations dumped; current usage is 106&278
 > 383 multiletter control sequences
 461c454
@@ -54,7 +54,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is upTeX, Version 3.1415926-p3.2-u0.30 (utf8.uptex) (TeX Live 2012)
+> This is upTeX, Version 3.1415926-p3.2-u1.00 (utf8.uptex) (TeX Live 2012/dev)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -68,7 +68,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is upTeX, Version 3.1415926-p3.2-u0.30 (utf8.uptex) (TeX Live 2012) (format=trip 2011.8.23)  23 AUG 2011 21:31
+> This is upTeX, Version 3.1415926-p3.2-u1.00 (utf8.uptex) (TeX Live 2012/dev) (format=trip 2012.1.16)  16 JAN 2012 15:14
 3c3
 < (trip.tex ##
 ---
@@ -208,13 +208,13 @@
 3054c3062
 < .\fam0 ^^c8
 ---
-> .\fam0 ì  
+> .\fam0 È 
 3143a3152
 > ....\displace 0.0
 3235c3244
 < ! \textfont 0 is undefined (character ^^c8).
 ---
-> ! \textfont 0 is undefined (character ì ©.
+> ! \textfont 0 is undefined (character È).
 3326c3335
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
@@ -277,7 +277,7 @@
 5700c5711
 < ! \textfont 0 is undefined (character ^^c8).
 ---
-> ! \textfont 0 is undefined (character ì ©.
+> ! \textfont 0 is undefined (character È).
 6380c6391
 < (tripos.tex
 ---
@@ -304,8 +304,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1542
->  261 string characters out of 14585
+>  44 strings out of 1540
+>  261 string characters out of 14546
 >  4259 words of memory out of 4500
 >  414 multiletter control sequences out of 15000+0
 7301c7312
@@ -318,11 +318,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012)
+> This is DVItype, Version 3.6 (TeX Live 2012/dev)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2011.08.23:2131'
+> ' TeX output 2012.01.16:1514'
 419c419
 < 1121: down4 639342208 
 ---

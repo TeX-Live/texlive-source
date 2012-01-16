@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (INITEX)  23 AUG 2011 22:09
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -37,8 +37,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2011.8.23)
-> 1610 strings of total length 27667
+>  (format=trip 2012.1.16)
+> 1612 strings of total length 27706
 > 489 memory locations dumped; current usage is 110&278
 > 393 multiletter control sequences
 461c454
@@ -54,7 +54,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012)
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -68,7 +68,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (format=trip 2011.8.23)  23 AUG 2011 22:09
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (format=trip 2012.1.16)  16 JAN 2012 15:14
 3c3
 < (trip.tex ##
 ---
@@ -212,13 +212,13 @@
 3054c3062
 < .\fam0 ^^c8
 ---
-> .\fam0 ì  
+> .\fam0 È 
 3143a3152
 > ....\displace 0.0
 3235c3244
 < ! \textfont 0 is undefined (character ^^c8).
 ---
-> ! \textfont 0 is undefined (character ì ©.
+> ! \textfont 0 is undefined (character È).
 3326c3335
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
@@ -290,7 +290,7 @@
 5700c5703
 < ! \textfont 0 is undefined (character ^^c8).
 ---
-> ! \textfont 0 is undefined (character ì ©.
+> ! \textfont 0 is undefined (character È).
 6380c6383
 < (tripos.tex
 ---
@@ -317,8 +317,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1690
->  261 string characters out of 8333
+>  44 strings out of 1688
+>  261 string characters out of 8294
 >  4017 words of memory out of 4500
 >  424 multiletter control sequences out of 15000+0
 7301c7304
@@ -331,11 +331,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012)
+> This is DVItype, Version 3.6 (TeX Live 2012/dev)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2011.08.23:2209'
+> ' TeX output 2012.01.16:1514'
 419c419
 < 1121: down4 639342208 
 ---
@@ -365,7 +365,7 @@
 < I changed this one to zero.
 < 
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (INITEX)  23 AUG 2011 22:09
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
 > entering extended mode
 > ***\input trip
 > (./trip.tex
@@ -387,8 +387,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2011.8.23)
-> 1610 strings of total length 27667
+>  (format=trip 2012.1.16)
+> 1612 strings of total length 27706
 > 536 memory locations dumped; current usage is 157&278
 > 465 multiletter control sequences
 461c449
@@ -404,7 +404,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012)
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev)
 > **entering extended mode
 > ## (./trip.tex
 17c17
@@ -425,7 +425,7 @@
 < ** &trip  trip
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (format=trip 2011.8.23)  23 AUG 2011 22:09
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (format=trip 2012.1.16)  16 JAN 2012 15:14
 > entering extended mode
 > **&trip \toksdef\tokens=0 \input trip
 >  (./trip.tex
@@ -589,7 +589,7 @@
 3054c3060
 < .\fam0 ^^c8
 ---
-> .\fam0 ì  
+> .\fam0 È 
 3143a3150
 > ....\displace 0.0
 3223d3229
@@ -597,7 +597,7 @@
 3235c3241
 < ! \textfont 0 is undefined (character ^^c8).
 ---
-> ! \textfont 0 is undefined (character ì ©.
+> ! \textfont 0 is undefined (character È).
 3326c3332
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
@@ -707,7 +707,7 @@
 5700c5697
 < ! \textfont 0 is undefined (character ^^c8).
 ---
-> ! \textfont 0 is undefined (character ì ©.
+> ! \textfont 0 is undefined (character È).
 6380c6377
 < (tripos.tex
 ---
@@ -738,8 +738,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1690
->  261 string characters out of 8333
+>  44 strings out of 1688
+>  261 string characters out of 8294
 >  4017 words of memory out of 4500
 >  496 multiletter control sequences out of 15000+0
 7301,7302c7301,7302
@@ -754,11 +754,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012)
+> This is DVItype, Version 3.6 (TeX Live 2012/dev)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2011.08.23:2209'
+> ' TeX output 2012.01.16:1514'
 419c419
 < 1121: down4 639342208 
 ---
@@ -781,15 +781,15 @@
 1c1
 < This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (INITEX)  7 APR 2011 11:46
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (INITEX)  23 AUG 2011 22:09
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
 26,29c26,29
 <  (format=etrip 2011.4.7)
 < 1490 strings of total length 26209
 < 280 memory locations dumped; current usage is 36&166
 < 408 multiletter control sequences
 ---
->  (format=etrip 2011.8.23)
-> 1611 strings of total length 27698
+>  (format=etrip 2012.1.16)
+> 1613 strings of total length 27737
 > 283 memory locations dumped; current usage is 40&166
 > 465 multiletter control sequences
 + ./euptex --progname=euptex
@@ -798,12 +798,12 @@
 1c1
 < This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev)
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012)
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev)
 + diff SRCDIR/eptexdir/eptrip/etrip.log euptrip.log
 1c1
 < This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (format=etrip 2011.4.7)  7 APR 2011 11:46
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u0.30-110415-2.3 (utf8.uptex) (TeX Live 2012) (format=etrip 2011.8.23)  23 AUG 2011 22:09
+> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (format=etrip 2012.1.16)  16 JAN 2012 15:14
 4c4
 < (etrip.tex e-IniTeX: e-Trip format loaded.
 ---
@@ -844,8 +844,8 @@
 <  2661 words of memory out of 3000
 <  408 multiletter control sequences out of 2100
 ---
->  18 strings out of 1689
->  140 string characters out of 8302
+>  18 strings out of 1687
+>  140 string characters out of 8263
 >  3329 words of memory out of 4500
 >  466 multiletter control sequences out of 15000+0
 4278c4274
@@ -858,10 +858,10 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012)
+> This is DVItype, Version 3.6 (TeX Live 2012/dev)
 9c9
 < ' TeX output 2011.04.07:1213'
 ---
-> ' TeX output 2011.08.23:2209'
+> ' TeX output 2012.01.16:1514'
 + :
 PASS: euptexdir/euptrip.test

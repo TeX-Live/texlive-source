@@ -1,3 +1,11 @@
+2012-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Update for upTeX-1.00. From TANAKA Takuji <KXD02663@nifty.ne.jp>.
+	* uniblock.[ch]: New files.
+	* main.c, makejvf.h, write.c: Use the new files.
+	* Makefile.am (makejvf_SOURCES): Add the new files.
+	(EXTRA_DIST): Drop Makefile.orig.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

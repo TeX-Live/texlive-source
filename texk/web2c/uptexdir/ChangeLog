@@ -1,3 +1,12 @@
+2012-01-15  Takuji Tanaka  <KXD02663@nifty.ne.jp>
+
+	* uptex-m.ch, uppltotf.ch uptftopl.ch, updvitype.ch, upbibtex.ch:
+	Update upTeX version number.
+
+	* uptex-m.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-6.0.0.txt Date: 2010-06-04, 11:12:00 PDT [KW]".
+
 2012-01-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* kanji.h: revert wrt init_kanji (from TANAKA Takuji-san).
