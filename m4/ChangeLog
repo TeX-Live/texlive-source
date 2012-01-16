@@ -1,3 +1,7 @@
+2012-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-poppler-flags.m4: Drop `-DPDF_PARSER_ONLY'.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-web2c.m4: Modify msgs when setting enable_*TeX_synctex.

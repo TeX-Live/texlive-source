@@ -1,3 +1,7 @@
+2012-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): Drop `-DPDF_PARSER_ONLY'.
+
 2011-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Reorganize definition of POPPLER_VERSION.

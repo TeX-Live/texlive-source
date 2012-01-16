@@ -22375,7 +22375,7 @@ elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
   as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
 fi
 else
-  POPPLER_INCLUDES=`echo '-DPDF_PARSER_ONLY -IBLD/libs/poppler -IBLD/libs/poppler/goo -IBLD/libs/poppler/poppler' | sed \
+  POPPLER_INCLUDES=`echo '-IBLD/libs/poppler -IBLD/libs/poppler/goo -IBLD/libs/poppler/poppler' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   POPPLER_LIBS=`echo 'BLD/libs/poppler/libpoppler.a' | sed \

@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build poppler for TeX Live.
 ##
-##   Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -31,7 +31,7 @@ FOFI_SRC = $(top_srcdir)/$(POPPLER_TREE)/fofi
 POPPLER_SRC = $(top_srcdir)/$(POPPLER_TREE)/poppler
 
 INCLUDES = -Igoo -Ifofi -Ipoppler -I$(GOO_SRC) -I$(FOFI_SRC) -I$(POPPLER_SRC) $(ZLIB_INCLUDES)
-AM_CPPFLAGS = -DPDF_PARSER_ONLY -DPOPPLER_DATADIR='"."'
+AM_CPPFLAGS = -DPOPPLER_DATADIR='"."'
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(NO_WARN_CXXFLAGS)
 
