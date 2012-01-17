@@ -1,3 +1,7 @@
+2012-01-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* write.c: binary write mode for tfm and vf on Windows.
+
 2012-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update for upTeX-1.00. From TANAKA Takuji <KXD02663@nifty.ne.jp>.

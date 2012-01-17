@@ -11,7 +11,7 @@ FILE *vfopen(char *name)
 	int fidshift=0;
 
 	if (fidzero) fidshift=-1;
-	fp = fopen(name,"w");
+	fp = fopen(name,"wb");
 	if (fp == NULL) {
 		fprintf(stderr,"I cannot create VF file, %s.",name);
 		exit(-1);
@@ -817,7 +817,7 @@ void maketfm(char *name)
 
 	strcpy(nbuf,name);
 	strcat(nbuf,".tfm");
-	fp = fopen(nbuf,"w");
+	fp = fopen(nbuf,"wb");
 	if (fp == NULL) {
 		fprintf(stderr,"I cannot create TFM file, %s.",name);
 		exit(-1);
