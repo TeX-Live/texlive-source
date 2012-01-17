@@ -47,7 +47,7 @@ extern boolean recorder_enabled;
 extern string output_directory;
 
 /* printversion.c */
-extern void printversionandexit (const_string, const_string, const_string, char*);
+extern void printversionandexit (const_string, const_string, const_string, const_string);
 
 /* setupvar.c */
 /* Set an array size from texmf.cnf.  */

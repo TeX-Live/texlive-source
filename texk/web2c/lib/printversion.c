@@ -24,7 +24,7 @@ void
 printversionandexit (const_string banner,
                      const_string copyright_holder,  
                      const_string author,
-                     char *extra_info)
+                     const_string extra_info)
 {
   string prog_name;
   unsigned len;
@@ -65,7 +65,8 @@ printversionandexit (const_string banner,
   printf ("Primary author of %s: %s.\n", prog_name, author);
 
   if (extra_info) {
-    puts (extra_info);
+    fputs (extra_info, stdout);
+    printf ("Compiled with %d file offset bits\n", 8 * sizeof (off_t)); 
   }
 
   uexit (0);
