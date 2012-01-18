@@ -1,6 +1,6 @@
 dnl Process this file with Autoconf to produce a configure script for Web2c.
 dnl
-dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -274,6 +274,11 @@ KPSE_FREETYPE2_FLAGS
 KPSE_TECKIT_FLAGS
 KPSE_ICU_XETEX_FLAGS([icule])
 KPSE_OBSDCOMPAT_FLAGS
+
+# Check size of off_t (using <kpathsea/config.h>)
+KPSE_ADD_FLAGS([kpathsea])
+AC_CHECK_SIZEOF([off_t], , AC_INCLUDES_DEFAULT
+[#include <kpathsea/config.h>])
 
 # Checks for xpdf poppler features.
 KPSE_ADD_FLAGS([poppler])

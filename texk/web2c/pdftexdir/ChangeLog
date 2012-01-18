@@ -1,3 +1,8 @@
+2012-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writejbig2.c (getstreamlen): Change type to `off_t'.
+	Use LONGINTEGER_TYPE and LONGINTEGER_PRId for printing.
+
 2012-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Consistent support for large JBIG2 files.

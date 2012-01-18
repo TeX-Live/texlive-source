@@ -357,15 +357,14 @@ static unsigned long read4bytes(FILE * f)
 
 /**********************************************************************/
 
-static unsigned long getstreamlen(LITEM * slip, boolean refer)
+static off_t getstreamlen(LITEM * slip, boolean refer)
 {
     SEGINFO *sip;
-    unsigned long len = 0;
+    off_t len = 0;
     for (; slip != NULL; slip = slip->next) {
         sip = slip->d;
         if (refer || sip->isrefered)
-            len += (unsigned long) (sip->hdrend - sip->hdrstart)
-                 + (unsigned long) (sip->dataend - sip->datastart);
+            len += (sip->hdrend - sip->hdrstart) + (sip->dataend - sip->datastart);
     }
     return len;
 }
@@ -721,7 +720,8 @@ static void wr_jbig2(FILEINFO * fip, unsigned long page)
         pdf_printf("/Height %i\n", pip->height);
         pdf_puts("/ColorSpace /DeviceGray\n");
         pdf_puts("/BitsPerComponent 1\n");
-        pdf_printf("/Length %lu\n", getstreamlen(pip->segments.first, true));
+        pdf_printf("/Length %" LONGINTEGER_PRId "\n",
+                   (LONGINTEGER_TYPE) getstreamlen(pip->segments.first, true));
         pdf_puts("/Filter [/JBIG2Decode]\n");
         if (fip->page0.last != NULL) {
             if (fip->pdfpage0objnum == 0) {
@@ -735,7 +735,8 @@ static void wr_jbig2(FILEINFO * fip, unsigned long page)
         pip = find_pageinfo(&(fip->page0), page);
         assert(pip != NULL);
         pdfbegindict(fip->pdfpage0objnum, 0);
-        pdf_printf("/Length %lu\n", getstreamlen(pip->segments.first, false));
+        pdf_printf("/Length %" LONGINTEGER_PRId "\n",
+                   (LONGINTEGER_TYPE) getstreamlen(pip->segments.first, false));
     }
     pdf_puts(">>\n");
     pdf_puts("stream\n");

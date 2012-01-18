@@ -1,3 +1,8 @@
+2012-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check sizeof(off_t).
+	* w2c/config.h: Define LONGINTEGER_TYPE and LONGINTEGER_PRId.
+
 2011-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac [OTANGLE]: For ovf2ovp and ovp2ovf (Web2C).
