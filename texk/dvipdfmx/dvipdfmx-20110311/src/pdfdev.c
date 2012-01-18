@@ -332,19 +332,23 @@ static char format_buffer[FORMAT_BUF_SIZE];
  * is vertical font. While ASCII pTeX manages current writing direction
  * and font's WMode separately.
  *
- * 00/11 WMODE_HH/VV  h(v) font, h(v) direction.
- * 01    WMODE_HV    -90 deg. rotated
- * 10    WMODE_VH    +90 deg. rotated
- *
+ * 000/101 WMODE_HH/VV  h(v) font, h(v) direction.
+ * 001    WMODE_HV    -90 deg. rotated  
+ * 100    WMODE_VH    +90 deg. rotated
+ * 011    WMODE_HD    +90 deg. rotated
+ * 111    WMODE_VD    180 deg. rotated
+
  * In MetaPost PostScript file processing (mp_mode = 1), only HH/VV mode
  * is applied.
  */
 #define TEXT_WMODE_HH 0
 #define TEXT_WMODE_HV 1
-#define TEXT_WMODE_VH 2
-#define TEXT_WMODE_VV 3
+#define TEXT_WMODE_VH 4
+#define TEXT_WMODE_VV 5
+#define TEXT_WMODE_HD 3
+#define TEXT_WMODE_VD 7
 
-#define ANGLE_CHANGES(m1,m2) ((abs((m1)-(m2)) % 3) == 0 ? 0 : 1)
+#define ANGLE_CHANGES(m1,m2) ((abs((m1)-(m2)) % 5) == 0 ? 0 : 1)
 #define ROTATE_TEXT(m)       ((m) != TEXT_WMODE_HH && (m) != TEXT_WMODE_VV)
 
 static struct {
@@ -525,6 +529,16 @@ dev_set_text_matrix (spt_t xpos, spt_t ypos, double slant, double extend, int ro
     /* Vertical font */
     tm.a =  1.0; tm.b =  -slant;
     tm.c =  0.0; tm.d =   extend;
+    break;
+  case TEXT_WMODE_HD:
+    /* Horizontal font */
+    tm.a =  0.0;    tm.b = extend;
+    tm.c = -1.0;    tm.d = slant ;
+    break;
+  case TEXT_WMODE_VD:
+    /* Vertical font */
+    tm.a = -1.0; tm.b =   slant;
+    tm.c =  0.0; tm.d =  -extend;
     break;
   }
   tm.e = xpos * dev_unit.dvi2pts;
@@ -730,6 +744,39 @@ start_string (spt_t xpos, spt_t ypos, double slant, double extend, int rotate)
     format_buffer[len++] = ' ';
     len += dev_sprint_bp(format_buffer+len, desired_dely, &error_dely);
     break;
+  case TEXT_WMODE_HD:
+    /* Horizontal font in down-to-up mode: rot = +90
+     *
+     *                          | s/e  -1|
+     * d_user = d x -I_hv = d x |        |
+     *                          | 1/e   0|
+     */
+    desired_delx = -(spt_t)(-(dely + delx*slant)/extend);
+    desired_dely = -delx;
+
+    format_buffer[len++] = ' ';
+    len += dev_sprint_bp(format_buffer+len, desired_delx, &error_dely);
+    format_buffer[len++] = ' ';
+    len += dev_sprint_bp(format_buffer+len, desired_dely, &error_delx);
+    error_delx = -error_delx;
+    error_dely = -error_dely;
+   break;
+  case TEXT_WMODE_VD:
+    /* Vertical font in down-to-up mode: rot = 180
+     *                          |-1 -s/e|
+     * d_user = d x -I_vv = d x |       |
+     *                          | 0 -1/e|
+     */
+    desired_delx = -delx;
+    desired_dely = -(spt_t)((dely + delx*slant)/extend);
+
+    format_buffer[len++] = ' ';
+    len += dev_sprint_bp(format_buffer+len, desired_delx, &error_delx);
+    format_buffer[len++] = ' ';
+    len += dev_sprint_bp(format_buffer+len, desired_dely, &error_dely);
+    error_delx = -error_delx;
+    error_dely = -error_dely;
+    break;
   }
   pdf_doc_add_page_content(format_buffer, len);  /* op: */
   /*
@@ -798,11 +845,11 @@ dev_set_font (int font_id)
 
   vert_font  = font->wmode ? 1 : 0;
   if (dev_param.autorotate) {
-    vert_dir = text_state.dir_mode ? 1 : 0;
+    vert_dir = text_state.dir_mode;
   } else {
     vert_dir = vert_font;
   }
-  text_rotate = (vert_font << 1)|vert_dir;
+  text_rotate = (vert_font << 2)|vert_dir;
 
   if (font->slant  != text_state.matrix.slant  ||
       font->extend != text_state.matrix.extend ||
@@ -1085,14 +1132,18 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
    * (in 1000 units per em) but dvipdfmx does not take into account of this...
    */
 
-  if (text_state.dir_mode) {
+  if (text_state.dir_mode==0) {
+    /* Left-to-right */
+    delh = text_xorigin + text_state.offset - xpos;
+    delv = ypos - text_yorigin;
+  } else if (text_state.dir_mode==1) {
     /* Top-to-bottom */
     delh = ypos - text_yorigin + text_state.offset;
     delv = xpos - text_xorigin;
   } else {
-    /* Left-to-right */
-    delh = text_xorigin + text_state.offset - xpos;
-    delv = ypos - text_yorigin;
+    /* Bottom-to-top */
+    delh = ypos + text_yorigin + text_state.offset;
+    delv = xpos + text_xorigin;
   }
 
   /* White-space more than 3em is not considered as a part of single text.
@@ -1615,11 +1666,11 @@ pdf_dev_set_dirmode (int text_dir)
 
   vert_font = (font && font->wmode) ? 1 : 0;
   if (dev_param.autorotate) {
-    vert_dir = text_dir ? 1 : 0;
+    vert_dir = text_dir;
   } else {
     vert_dir = vert_font;
   }
-  text_rotate = (vert_font << 1)|vert_dir;
+  text_rotate = (vert_font << 2)|vert_dir;
 
   if (font &&
       ANGLE_CHANGES(text_rotate, text_state.matrix.rotate)) {
@@ -1640,11 +1691,11 @@ dev_set_param_autorotate (int auto_rotate)
 
   vert_font = (font && font->wmode) ? 1 : 0;
   if (auto_rotate) {
-    vert_dir = text_state.dir_mode ? 1 : 0;
+    vert_dir = text_state.dir_mode;
   } else {
     vert_dir = vert_font;
   }
-  text_rotate = (vert_font << 1)|vert_dir;
+  text_rotate = (vert_font << 2)|vert_dir;
 
   if (ANGLE_CHANGES(text_rotate, text_state.matrix.rotate)) {
     text_state.force_reset = 1;

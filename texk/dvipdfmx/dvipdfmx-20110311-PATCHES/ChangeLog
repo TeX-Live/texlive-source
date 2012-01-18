@@ -1,3 +1,7 @@
+2012-01-17  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* patch-06-dtou (new): Support for (e-)(u)pTeX dtou direction.
+
 2011-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* patch-04-uptex: remove incompatible lines and erase #ifdef upTeX.

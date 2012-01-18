@@ -1,6 +1,6 @@
 diff -ur dvipdfmx-20110311.orig/src/dvi.c dvipdfmx-20110311/src/dvi.c
---- dvipdfmx-20110311.orig/src/dvi.c	Wed Mar 09 16:43:18 2011
-+++ dvipdfmx-20110311/src/dvi.c	Sat Nov 05 22:25:11 2011
+--- dvipdfmx-20110311.orig/src/dvi.c	2011-03-09 08:43:18.000000000 +0100
++++ dvipdfmx-20110311/src/dvi.c	2011-11-05 14:58:04.000000000 +0100
 @@ -58,6 +58,10 @@
  #define TEX_FONTS_ALLOC_SIZE 16u
  #define VF_NESTING_MAX       16u
@@ -113,8 +113,8 @@ diff -ur dvipdfmx-20110311.orig/src/dvi.c dvipdfmx-20110311/src/dvi.c
  
      case PUT_RULE:
 diff -ur dvipdfmx-20110311.orig/src/tfm.c dvipdfmx-20110311/src/tfm.c
---- dvipdfmx-20110311.orig/src/tfm.c	Sat Mar 05 13:44:49 2011
-+++ dvipdfmx-20110311/src/tfm.c	Sat Nov 05 22:33:49 2011
+--- dvipdfmx-20110311.orig/src/tfm.c	2011-03-05 05:44:49.000000000 +0100
++++ dvipdfmx-20110311/src/tfm.c	2011-11-05 14:58:04.000000000 +0100
 @@ -55,6 +55,12 @@
  #define IS_JFM(i) ((i) == JFM_ID || (i) == JFMV_ID)
  #endif /* !WITHOUT_ASCII_PTEX */
@@ -190,8 +190,8 @@ diff -ur dvipdfmx-20110311.orig/src/tfm.c dvipdfmx-20110311/src/tfm.c
      fm->source    = SOURCE_TYPE_JFM;
    }
 diff -ur dvipdfmx-20110311.orig/src/vf.c dvipdfmx-20110311/src/vf.c
---- dvipdfmx-20110311.orig/src/vf.c	Sat Mar 05 13:44:49 2011
-+++ dvipdfmx-20110311/src/vf.c	Sat Nov 05 22:35:40 2011
+--- dvipdfmx-20110311.orig/src/vf.c	2011-03-05 05:44:49.000000000 +0100
++++ dvipdfmx-20110311/src/vf.c	2011-11-05 14:58:04.000000000 +0100
 @@ -238,11 +238,11 @@
  	ch = get_unsigned_quad (vf_file);
  	/* Skip over TFM width since we already know it */

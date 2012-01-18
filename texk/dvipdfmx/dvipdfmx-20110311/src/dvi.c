@@ -654,19 +654,25 @@ static void do_moveto (SIGNED_QUAD x, SIGNED_QUAD y)
 
 void dvi_right (SIGNED_QUAD x)
 {
-  if (!dvi_state.d) {
-    dvi_state.h += x;
-  } else {
-    dvi_state.v += x;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += x; break;
+  case 1:
+    dvi_state.v += x; break;
+  case 3:
+    dvi_state.v -= x; break;
   }
 }
 
 void dvi_down (SIGNED_QUAD y)
 {
-  if (!dvi_state.d) {
-    dvi_state.v += y;
-  } else {
-    dvi_state.h -= y;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.v += y; break;
+  case 1:
+    dvi_state.h -= y; break;
+  case 3:
+    dvi_state.h += y; break;
   }
 }
 
@@ -721,10 +727,13 @@ do_string (unsigned char *s, int len)
     }
     dvi_pop();
   }
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += width; break;
+  case 1:
+    dvi_state.v += width; break;
+  case 3:
+    dvi_state.v -= width; break;
   }
 }
 
@@ -803,11 +812,13 @@ dvi_set (SIGNED_QUAD ch)
     vf_set_char(ch, font->font_id); /* push/pop invoked */
     break;
   }
-
-  if (!dvi_state.d) {
-    dvi_state.h += width;
-  } else {
-    dvi_state.v += width;
+  switch (dvi_state.d) {
+  case 0:
+    dvi_state.h += width; break;
+  case 1:
+    dvi_state.v += width; break;
+  case 3:
+    dvi_state.v -= width; break;
   }
 }
 
@@ -890,17 +901,24 @@ dvi_rule (SIGNED_QUAD width, SIGNED_QUAD height)
 {
   do_moveto(dvi_state.h, dvi_state.v);
 
-  if (!dvi_state.d) {
+  switch (dvi_state.d) {
+  case 0:
     pdf_dev_set_rule(dvi_state.h, -dvi_state.v,  width, height);
-  } else { /* right ? */
+    break;
+  case 1:
     pdf_dev_set_rule(dvi_state.h, -dvi_state.v - width, height, width);
+    break;
+  case 3: 
+    pdf_dev_set_rule(dvi_state.h - height, -dvi_state.v , height, width);
+    break;
   }
 }
 
 void
-dvi_dir (UNSIGNED_BYTE dir)
+dvi_dir (UNSIGNED_BYTE dir) /* how? */
 {
-  dvi_state.d = dir ? 1 : 0;
+  fprintf(stderr, "  > dvi_dir %d\n", dir);
+  dvi_state.d = dir;
   pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1: vertical */
 }
 
@@ -1385,7 +1403,7 @@ do_eop (void)
 static void
 do_dir (void)
 {
-  dvi_state.d = get_unsigned_byte(dvi_file) ? 1 : 0;
+  dvi_state.d = get_unsigned_byte(dvi_file);
   pdf_dev_set_dirmode(dvi_state.d); /* 0: horizontal, 1: vertical */
 }
 
