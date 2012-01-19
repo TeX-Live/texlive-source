@@ -1,8 +1,11 @@
 #! /usr/bin/env perl
 # updmap: utility to maintain map files for outline fonts.
 #
-# Copyright 2002-2011 Thomas Esser.
-# Fabrice Popineau wrote the Perl version.
+# Copyright 2002-2011 Thomas Esser (for the shell version)
+# Copyright 2002-2011 Fabrice Popineau (for the first perl version)
+# Copyright 2009-2011 Reinhard Kotucha
+# Copyright 2011-2012 Norbert Preining
+#
 # Anyone may freely use, modify, and/or distribute this file, without
 # limitation.
 
@@ -209,27 +212,36 @@ EOF
 sub processOptions {
   #
   # We parse the command line twice.  The first time is to handle
-  # --setoption, which might take either one or two following values.
-  # the second to handle everything else.  The Getopt::Long feature to
+  # --setoption and --enable, which might take either one or two following 
+  # values, the second to handle everything else.  The Getopt::Long feature to
   # handle this is only supported in 5.8.8 (released in 2006) or later,
   # and a few people run older perls.
   # 
   my $oldconfig = Getopt::Long::Configure(qw(pass_through));
   #  
-  sub read_for_set_options {
-    my ($setopt, $val) = @_;
+  sub read_one_or_two {
+    my ($opt, $val) = @_;
     # check if = occurs in $val, if not, get the next argument
     if ($val =~ m/=/) {
-      push (@setoptions, $val);
+      if ($opt eq "setoption") {
+        push @setoptions, $val;
+      } else {
+        $enableItem = $val;
+      }
     } else {
       my $vv = shift @ARGV;
-      die "$0: --setoption $val given with no value; try --help.\n"
+      die "Try \"$0 --help\" for more information.\n"
         if !defined($vv);
-      push (@setoptions, "$val=$vv");
+      if ($opt eq "setoption") {
+        push @setoptions, "$val=$vv";
+      } else {
+        $enableItem = "$val=$vv";
+      }
     }
   }
-  GetOptions("setoption=s@" => \&read_for_set_options) 
-  || die "$0: could not read for --setoption; try --help.\n";
+  GetOptions("setoption=s@" => \&read_one_or_two,
+             "enable=s"    => \&read_one_or_two) ||
+    die "$0: illegal arguments, try --help for more information.\n";
 
   # restore old getopt config and read everything else.
   Getopt::Long::Configure($oldconfig);
@@ -239,7 +251,7 @@ sub processOptions {
       "disable=s" => \@disableItem,
       "dvipdfmoutputdir=s" => \$dvipdfmoutputdir,
       "dvipsoutputdir=s" => \$dvipsoutputdir,
-      "enable=s" => \$enableItem,
+      # "enable=s" => \$enableItem,
       "edit" => \$opt_edit,
       "force" => \$opt_force,
       "listavailablemaps" => \$listavailablemaps,
