@@ -58,6 +58,7 @@ my $dvipsDownloadBase35;
 my $pdftexDownloadBase14;
 my $pxdviUse;
 my $kanjiEmbed;
+my $kanjiVariant;
 
 my $dvips35;
 my $pdftex35;
@@ -127,7 +128,8 @@ Commands:
   --showoptions ITEM        show alternatives for options
   --setoption OPTION VALUE  set option, where OPTION is one of:
                              LW35, dvipsPreferOutline, dvipsDownloadBase35,
-                             pdftexDownloadBase14, pxdviUse, or kanjiEmbed
+                             pdftexDownloadBase14, pxdviUse, kanjiEmbed,
+                             or kanjiVariant
   --setoption OPTION=VALUE  as above, just different syntax
   --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
                              where MAPTYPE is one of: Map, MixedMap, KanjiMap
@@ -163,6 +165,7 @@ Explanation of the --setoption possibilities:
     ADOBEkb  Adobe fonts with "berry" filenames  (e.g. phvbo8an.pfb)
     ADOBE    Adobe fonts with "vendor" filenames (e.g. hvnbo___.pfb)
   kanjiEmbed            (any string)
+  kanjiVariant          (any string)
 
   These options are only read and acted on by updmap; dvips, pdftex, etc.,
   do not know anything about them.  They work by changing the default map
@@ -644,7 +647,7 @@ m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14|pxdviU
       if ($val !~ m/^(true|false)$/) {
         die "$0: Invalid value $val for option $opt; should be \"true\" or \"false\".\n";
       }
-  } elsif ($opt eq "kanjiEmbed"){
+  } elsif ($opt eq "kanjiEmbed" || $opt eq "kanjiVariant"){
     # do nothing
   } else {
     die "$0: Unsupported option $opt (value given: $val).\n";
@@ -670,12 +673,12 @@ sub showOptions {
 m/(dvipsPreferOutline|(dvipdfm|pdftex)DownloadBase14|dvipsDownloadBase35|pxdviUse)/) {
       print "true false\n";
     }
-    elsif ($item eq "kanjiEmbed") {
+    elsif ($item eq "kanjiEmbed" || $item eq "kanjiVariant") {
       print "(any string)\n";
     }
     else {
       print "Unknown item \"$item\"; should be one of LW35, dvipsPreferOutline,\n" 
-          . "  dvipsDownloadBase35, pdftexDownloadBase14, pxdviUse or kanjiEmbed\n";
+          . "  dvipsDownloadBase35, pdftexDownloadBase14, pxdviUse, kanjiEmbed, or kanjiVariant\n";
     }
   }
   exit 0
@@ -802,9 +805,28 @@ sub catMaps {
   map{
     $_ =~ s/\#.*//;
     $_ =~ s/\@kanjiEmbed@/$kanjiEmbed/;
+    $_ =~ s/\@kanjiVariant@/$kanjiVariant/;
     $_ =~ s/\s*([^\s]*)\s*([^\s]*)/$2/;
   } @maps;
-  @maps = sort(@maps);
+
+  my @newmaps;
+  for my $m (@maps) {
+    if ($m =~ m/\@kanjiEmbed@/ || $m =~ m/\@kanjiVariant@/) {
+      my $newm = $m;
+      $newm =~ s/\@kanjiEmbed@/$kanjiEmbed/;
+      $newm =~ s/\@kanjiVariant@/$kanjiVariant/;
+      my $mf = `kpsewhich --format=map $newm`;
+      chomp($mf);
+      if (!$mf) {
+        print "$0: generated map $newm (from $m) does not exists, not activating it!\n";
+      } else {
+        push @newmaps, $newm;
+      }
+    } else {
+      push @newmaps, $m;
+    }
+  }
+  @maps = sort(@newmaps);
   @maps = grep { ++$count{$_} < 2; } @maps;
 
   @maps = &locateMap(@maps);
@@ -821,6 +843,8 @@ sub listMaps {
   my @paths;
   $kanjiEmbed = &cfgval("kanjiEmbed");
   $kanjiEmbed = "noEmbed" unless (defined $kanjiEmbed);
+  $kanjiVariant = &cfgval("kanjiVariant");
+  $kanjiVariant = "" unless (defined $kanjiVariant);
 
   my @lines = grep {
     if ($what eq 'sync') {
@@ -835,6 +859,7 @@ sub listMaps {
     map { print "$_\n"; } @lines;
   } else {
     map { $_ =~ s/\@kanjiEmbed@/$kanjiEmbed/ } @lines;
+    map { $_ =~ s/\@kanjiVariant@/$kanjiVariant/ } @lines;
     @mapfiles=grep { $_ =~ s/^(\#! *)?(Mixed|Kanji)?Map\s+// } @lines;
     @paths=&locateMap(@mapfiles);
 
@@ -983,6 +1008,9 @@ sub mkMaps {
 
   $kanjiEmbed = &cfgval("kanjiEmbed");
   $kanjiEmbed = "noEmbed" unless (defined $kanjiEmbed);
+
+  $kanjiVariant = &cfgval("kanjiVariant");
+  $kanjiVariant = "" unless (defined $kanjiVariant);
 
   $pxdviUse = &cfgval("pxdviUse");
   $pxdviUse = 0 unless (defined $pxdviUse);

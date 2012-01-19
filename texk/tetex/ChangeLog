@@ -1,6 +1,8 @@
 2012-01-19  Norbert Preining  <preining@logic.at>
 
-	* updmap.pl: allow --enable Map foo.map again
+	* updmap.pl: 
+	  . allow --enable Map foo.map again
+	  . support kanjiVariant options and replacement
 
 2011-12-12  Karl Berry  <karl@tug.org>
 
