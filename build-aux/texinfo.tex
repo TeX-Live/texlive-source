@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2011-05-23.16}
+\def\texinfoversion{2012-01-04.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -116,6 +116,7 @@
 % Set up fixed words for English if not already set.
 \ifx\putwordAppendix\undefined  \gdef\putwordAppendix{Appendix}\fi
 \ifx\putwordChapter\undefined   \gdef\putwordChapter{Chapter}\fi
+\ifx\putworderror\undefined     \gdef\putworderror{error}\fi
 \ifx\putwordfile\undefined      \gdef\putwordfile{file}\fi
 \ifx\putwordin\undefined        \gdef\putwordin{in}\fi
 \ifx\putwordIndexIsEmpty\undefined       \gdef\putwordIndexIsEmpty{(Index is empty)}\fi
@@ -228,6 +229,13 @@
   \tracingcommands3  % 3 gives us more in etex
   \errorcontextlines16
 }%
+
+% @errormsg{MSG}.  Do the index-like expansions on MSG, but if things
+% aren't perfect, it's not the end of the world, being an error message,
+% after all.
+% 
+\def\errormsg{\begingroup \indexnofonts \doerrormsg}
+\def\doerrormsg#1{\errmessage{#1}}
 
 % add check for \lastpenalty to plain's definitions.  If the last thing
 % we did was a \nobreak, we don't want to insert more space.
@@ -1089,50 +1097,24 @@ where each line of input produces a line of output.}
 % for display in the outlines, and in other places.  Thus, we have to
 % double any backslashes.  Otherwise, a name like "\node" will be
 % interpreted as a newline (\n), followed by o, d, e.  Not good.
-% http://www.ntg.nl/pipermail/ntg-pdftex/2004-July/000654.html
-% (and related messages, the final outcome is that it is up to the TeX
-% user to double the backslashes and otherwise make the string valid, so
-% that's what we do).
+% 
+% See http://www.ntg.nl/pipermail/ntg-pdftex/2004-July/000654.html and
+% related messages.  The final outcome is that it is up to the TeX user
+% to double the backslashes and otherwise make the string valid, so
+% that's what we do.  pdftex 1.30.0 (ca.2005) introduced a primitive to
+% do this reliably, so we use it.
 
-% double active backslashes.
-%
-{\catcode`\@=0 \catcode`\\=\active
- @gdef@activebackslashdouble{%
-   @catcode`@\=@active
-   @let\=@doublebackslash}
-}
-
-% To handle parens, we must adopt a different approach, since parens are
-% not active characters.  hyperref.dtx (which has the same problem as
-% us) handles it with this amazing macro to replace tokens, with minor
-% changes for Texinfo.  It is included here under the GPL by permission
-% from the author, Heiko Oberdiek.
-%
-% #1 is the tokens to replace.
-% #2 is the replacement.
-% #3 is the control sequence with the string.
-%
-\def\HyPsdSubst#1#2#3{%
-  \def\HyPsdReplace##1#1##2\END{%
-    ##1%
-    \ifx\\##2\\%
-    \else
-      #2%
-      \HyReturnAfterFi{%
-        \HyPsdReplace##2\END
-      }%
-    \fi
-  }%
-  \xdef#3{\expandafter\HyPsdReplace#3#1\END}%
-}
-\long\def\HyReturnAfterFi#1\fi{\fi#1}
-
-% #1 is a control sequence in which to do the replacements.
-\def\backslashparens#1{%
-  \xdef#1{#1}% redefine it as its expansion; the definition is simply
-             % \lastnode when called from \setref -> \pdfmkdest.
-  \HyPsdSubst{(}{\realbackslash(}{#1}%
-  \HyPsdSubst{)}{\realbackslash)}{#1}%
+% #1 is a control sequence in which to do the replacements,
+% which we \xdef.
+\def\txiescapepdf#1{%
+  \ifx\pdfescapestring\relax
+    % No primitive available; should we give a warning or log?
+    % Many times it won't matter.
+  \else
+    % The expandable \pdfescapestring primitive escapes parentheses,
+    % backslashes, and other special chars.
+    \xdef#1{\pdfescapestring{#1}}%
+  \fi
 }
 
 \newhelp\nopdfimagehelp{Texinfo supports .png, .jpg, .jpeg, and .pdf images
@@ -1194,29 +1176,31 @@ output) for that.)}
     \def\imagewidth{#2}\setbox0 = \hbox{\ignorespaces #2}%
     \def\imageheight{#3}\setbox2 = \hbox{\ignorespaces #3}%
     %
-    % pdftex (and the PDF format) support .png, .jpg, .pdf (among
-    % others).  Let's try in that order.
+    % pdftex (and the PDF format) support .pdf, .png, .jpg (among
+    % others).  Let's try in that order, PDF first since if
+    % someone has a scalable image, presumably better to use that than a
+    % bitmap.
     \let\pdfimgext=\empty
     \begingroup
-      \openin 1 #1.png \ifeof 1
-        \openin 1 #1.jpg \ifeof 1
-          \openin 1 #1.jpeg \ifeof 1
-            \openin 1 #1.JPG \ifeof 1
-              \openin 1 #1.pdf \ifeof 1
-                \openin 1 #1.PDF \ifeof 1
+      \openin 1 #1.pdf \ifeof 1
+        \openin 1 #1.PDF \ifeof 1
+          \openin 1 #1.png \ifeof 1
+            \openin 1 #1.jpg \ifeof 1
+              \openin 1 #1.jpeg \ifeof 1
+                \openin 1 #1.JPG \ifeof 1
                   \errhelp = \nopdfimagehelp
                   \errmessage{Could not find image file #1 for pdf}%
-                \else \gdef\pdfimgext{PDF}%
+                \else \gdef\pdfimgext{JPG}%
                 \fi
-              \else \gdef\pdfimgext{pdf}%
+              \else \gdef\pdfimgext{jpeg}%
               \fi
-            \else \gdef\pdfimgext{JPG}%
+            \else \gdef\pdfimgext{jpg}%
             \fi
-          \else \gdef\pdfimgext{jpeg}%
+          \else \gdef\pdfimgext{png}%
           \fi
-        \else \gdef\pdfimgext{jpg}%
+        \else \gdef\pdfimgext{PDF}%
         \fi
-      \else \gdef\pdfimgext{png}%
+      \else \gdef\pdfimgext{pdf}%
       \fi
       \closein 1
     \endgroup
@@ -1244,10 +1228,9 @@ output) for that.)}
     % such as \, aren't expanded when present in a section title.
     \indexnofonts
     \turnoffactive
-    \activebackslashdouble
     \makevalueexpandable
     \def\pdfdestname{#1}%
-    \backslashparens\pdfdestname
+    \txiescapepdf\pdfdestname
     \safewhatsit{\pdfdest name{\pdfdestname} xyz}%
   }}
   %
@@ -1279,28 +1262,22 @@ output) for that.)}
     % page number.  We could generate a destination for the section
     % text in the case where a section has no node, but it doesn't
     % seem worth the trouble, since most documents are normally structured.
-    \def\pdfoutlinedest{#3}%
+    \edef\pdfoutlinedest{#3}%
     \ifx\pdfoutlinedest\empty
       \def\pdfoutlinedest{#4}%
     \else
-      % Doubled backslashes in the name.
-      {\activebackslashdouble \xdef\pdfoutlinedest{#3}%
-       \backslashparens\pdfoutlinedest}%
+      \txiescapepdf\pdfoutlinedest
     \fi
     %
-    % Also double the backslashes in the display string.
-    {\activebackslashdouble \xdef\pdfoutlinetext{#1}%
-     \backslashparens\pdfoutlinetext}%
+    % Also escape PDF chars in the display string.
+    \edef\pdfoutlinetext{#1}%
+    \txiescapepdf\pdfoutlinetext
     %
     \pdfoutline goto name{\pdfmkpgn{\pdfoutlinedest}}#2{\pdfoutlinetext}%
   }
   %
   \def\pdfmakeoutlines{%
     \begingroup
-      % Thanh's hack / proper braces in bookmarks
-      \edef\mylbrace{\iftrue \string{\else}\fi}\let\{=\mylbrace
-      \edef\myrbrace{\iffalse{\else\string}\fi}\let\}=\myrbrace
-      %
       % Read toc silently, to get counts of subentries for \pdfoutline.
       \def\partentry##1##2##3##4{}% ignore parts in the outlines
       \def\numchapentry##1##2##3##4{%
@@ -1356,15 +1333,26 @@ output) for that.)}
       % Latin 2 (0xea) gets translated to a | character.  Info from
       % Staszek Wawrykiewicz, 19 Jan 2004 04:09:24 +0100.
       %
-      % xx to do this right, we have to translate 8-bit characters to
-      % their "best" equivalent, based on the @documentencoding.  Right
-      % now, I guess we'll just let the pdf reader have its way.
+      % TODO this right, we have to translate 8-bit characters to
+      % their "best" equivalent, based on the @documentencoding.  Too
+      % much work for too little return.  Just use the ASCII equivalents
+      % we use for the index sort strings.
+      % 
       \indexnofonts
       \setupdatafile
+      % We can have normal brace characters in the PDF outlines, unlike
+      % Texinfo index files.  So set that up.
+      \def\{{\lbracecharliteral}%
+      \def\}{\rbracecharliteral}%
       \catcode`\\=\active \otherbackslash
       \input \tocreadfilename
     \endgroup
   }
+  {\catcode`[=1 \catcode`]=2
+   \catcode`{=\other \catcode`}=\other
+   \gdef\lbracecharliteral[{]%
+   \gdef\rbracecharliteral[}]%
+  ]
   %
   \def\skipspaces#1{\def\PP{#1}\def\D{|}%
     \ifx\PP\D\let\nextsp\relax
@@ -2372,7 +2360,9 @@ end
   \else\ifx\next-%
   \else\ifx\next.%
   \else\ptexslash
-  \fi\fi\fi}
+  \fi\fi\fi
+  \aftersmartic
+}
 
 % like \smartslanted except unconditionally uses \ttsl, and no ic.
 % @var is set to this for defun arguments.
@@ -2382,9 +2372,15 @@ end
 % ttsl for book titles, do we?
 \def\cite#1{{\sl #1}\futurelet\next\smartitaliccorrection}
 
+\def\aftersmartic{}
+\def\var#1{%
+  \let\saveaftersmartic = \aftersmartic
+  \def\aftersmartic{\null\let\aftersmartic=\saveaftersmartic}%
+  \smartslanted{#1}%
+}
+
 \let\i=\smartitalic
 \let\slanted=\smartslanted
-\def\var#1{\smartslanted{#1}}
 \let\dfn=\smartslanted
 \let\emph=\smartitalic
 
@@ -2480,7 +2476,7 @@ end
     \plainfrenchspacing
     #1%
   }%
-  \null
+  \null % reset spacefactor to 1000
 }
 
 % We *must* turn on hyphenation at `-' and `_' in @code.
@@ -2762,6 +2758,7 @@ end
   \ifx\temp\empty \else
     \space ({\unsepspaces \ignorespaces \temp \unskip})%
   \fi
+  \null % reset \spacefactor=1000
 }
 
 % @abbr for "Comput. J." and the like.
@@ -2774,6 +2771,7 @@ end
   \ifx\temp\empty \else
     \space ({\unsepspaces \ignorespaces \temp \unskip})%
   \fi
+  \null % reset \spacefactor=1000
 }
 
 % @asis just yields its argument.  Used with @table, for example.
@@ -2838,20 +2836,48 @@ end
   }
 }
 
+% @inlinefmt{FMTNAME,PROCESSED-TEXT} and @inlineraw{FMTNAME,RAW-TEXT}.
+% Ignore unless FMTNAME == tex; then it is like @iftex and @tex,
+% except specified as a normal braced arg, so no newlines to worry about.
+% 
+\def\outfmtnametex{tex}
+%
+\long\def\inlinefmt#1{\doinlinefmt #1,\finish}
+\long\def\doinlinefmt#1,#2,\finish{%
+  \def\inlinefmtname{#1}%
+  \ifx\inlinefmtname\outfmtnametex \ignorespaces #2\fi
+}
+% For raw, must switch into @tex before parsing the argument, to avoid
+% setting catcodes prematurely.  Doing it this way means that, for
+% example, @inlineraw{html, foo{bar} gets a parse error instead of being
+% ignored.  But this isn't important because if people want a literal
+% *right* brace they would have to use a command anyway, so they may as
+% well use a command to get a left brace too.  We could re-use the
+% delimiter character idea from \verb, but it seems like overkill.
+% 
+\long\def\inlineraw{\tex \doinlineraw}
+\long\def\doinlineraw#1{\doinlinerawtwo #1,\finish}
+\def\doinlinerawtwo#1,#2,\finish{%
+  \def\inlinerawname{#1}%
+  \ifx\inlinerawname\outfmtnametex \ignorespaces #2\fi
+  \endgroup % close group opened by \tex.
+}
+
 
 \message{glyphs,}
 % and logos.
 
-% @@ prints an @.
+% @@ prints an @, as does @atchar{}.
 \def\@{\char64 }
+\let\atchar=\@
 
-% Used to generate quoted braces.  Unless we're in typewriter, use
-% \ecfont because the CM text fonts do not have braces, and we don't
-% want to switch into math.
+% @{ @} @lbracechar{} @rbracechar{} all generate brace characters.
+% Unless we're in typewriter, use \ecfont because the CM text fonts do
+% not have braces, and we don't want to switch into math.
 \def\mylbrace{{\ifmonospace\else\ecfont\fi \char123}}
 \def\myrbrace{{\ifmonospace\else\ecfont\fi \char125}}
-\let\{=\mylbrace
-\let\}=\myrbrace
+\let\{=\mylbrace \let\lbracechar=\{
+\let\}=\myrbrace \let\rbracechar=\}
 \begingroup
   % Definitions to produce \{ and \} commands for indices,
   % and @{ and @} for the aux/toc files.
@@ -2979,7 +3005,7 @@ end
 {\tentt \global\dimen0 = 3em}% Width of the box.
 \dimen2 = .55pt % Thickness of rules
 % The text. (`r' is open on the right, `e' somewhat less so on the left.)
-\setbox0 = \hbox{\kern-.75pt \reducedsf error\kern-1.5pt}
+\setbox0 = \hbox{\kern-.75pt \reducedsf \putworderror\kern-1.5pt}
 %
 \setbox\errorbox=\hbox to \dimen0{\hfil
    \hsize = \dimen0 \advance\hsize by -5.8pt % Space to left+right.
@@ -3955,13 +3981,13 @@ end
 %        If so, set to same dimension as multitablelinespace.
 \ifdim\multitableparskip>\multitablelinespace
 \global\multitableparskip=\multitablelinespace
-\global\advance\multitableparskip-7pt %% to keep parskip somewhat smaller
-                                      %% than skip between lines in the table.
+\global\advance\multitableparskip-7pt % to keep parskip somewhat smaller
+                                      % than skip between lines in the table.
 \fi%
 \ifdim\multitableparskip=0pt
 \global\multitableparskip=\multitablelinespace
-\global\advance\multitableparskip-7pt %% to keep parskip somewhat smaller
-                                      %% than skip between lines in the table.
+\global\advance\multitableparskip-7pt % to keep parskip somewhat smaller
+                                      % than skip between lines in the table.
 \fi}
 
 
@@ -4473,6 +4499,7 @@ end
   %
   % Commands that take arguments.
   \definedummyword\acronym
+  \definedummyword\anchor
   \definedummyword\cite
   \definedummyword\code
   \definedummyword\command
@@ -5855,7 +5882,6 @@ end
   % This is purely so the last item on the list is a known \penalty >
   % 10000.  This is so \startdefun can avoid allowing breakpoints after
   % section headings.  Otherwise, it would insert a valid breakpoint between:
-  %
   %   @section sec-whatever
   %   @deffn def-whatever
   \penalty 10001
@@ -6273,6 +6299,12 @@ end
   \normbskip=\baselineskip \normpskip=\parskip \normlskip=\lineskip
   % Flag to tell @lisp, etc., not to narrow margin.
   \let\nonarrowing = t%
+  %
+  % If this cartouche directly follows a sectioning command, we need the
+  % \parskip glue (backspaced over by default) or the cartouche can
+  % collide with the section heading.
+  \ifnum\lastpenalty>10000 \vskip\parskip \fi
+  %
   \vbox\bgroup
       \baselineskip=0pt\parskip=0pt\lineskip=0pt
       \carttop
@@ -6286,7 +6318,7 @@ end
 	      \lineskip=\normlskip
 	      \parskip=\normpskip
 	      \vskip -\parskip
-	      \comment % For explanation, see the end of \def\group.
+	      \comment % For explanation, see the end of def\group.
 }
 \def\Ecartouche{%
               \ifhmode\par\fi
@@ -7242,9 +7274,15 @@ end
 \def\macroxxx#1{%
   \getargs{#1}% now \macname is the macname and \argl the arglist
   \ifx\argl\empty       % no arguments
-     \paramno=0
+     \paramno=0\relax
   \else
      \expandafter\parsemargdef \argl;%
+     \if\paramno>256\relax
+       \ifx\eTeXversion\thisisundefined
+         \errhelp = \EMsimple
+         \errmessage{You need eTeX to compile a file with macros with more than 256 arguments}
+       \fi
+     \fi
   \fi
   \if1\csname ismacro.\the\macname\endcsname
      \message{Warning: redefining \the\macname}%
@@ -7294,9 +7332,17 @@ end
 \def\getmacname#1 #2\relax{\macname={#1}}
 \def\getmacargs#1{\def\argl{#1}}
 
+% For macro processing make @ a letter so that we can make Texinfo private macro names.
+\edef\texiatcatcode{\the\catcode`\@}
+\catcode `@=11\relax
+
 % Parse the optional {params} list.  Set up \paramno and \paramlist
-% so \defmacro knows what to do.  Define \macarg.blah for each blah
-% in the params list to be ##N where N is the position in that list.
+% so \defmacro knows what to do.  Define \macarg.BLAH for each BLAH
+% in the params list to some hook where the argument si to be expanded.  If
+% there are less than 10 arguments that hook is to be replaced by ##N where N
+% is the position in that list, that is to say the macro arguments are to be
+% defined `a la TeX in the macro body.  
+%
 % That gets used by \mbodybackslash (above).
 %
 % We need to get `macro parameter char #' into several definitions.
@@ -7306,12 +7352,33 @@ end
 %
 % The same technique is used to protect \eatspaces till just before
 % the macro is used.
-
+%
+% If there are 10 or more arguments, a different technique is used, where the
+% hook remains in the body, and when macro is to be expanded the body is
+% processed again to replace the arguments.
+%
+% In that case, the hook is \the\toks N-1, and we simply set \toks N-1 to the
+% argument N value and then \edef  the body (nothing else will expand because of
+% the catcode regime underwhich the body was input).
+%
+% If you compile with TeX (not eTeX), and you have macros with 10 or more
+% arguments, you need that no macro has more than 256 arguments, otherwise an
+% error is produced.
 \def\parsemargdef#1;{%
   \paramno=0\def\paramlist{}%
   \let\hash\relax
   \let\xeatspaces\relax
   \parsemargdefxxx#1,;,%
+  % In case that there are 10 or more arguments we parse again the arguments
+  % list to set new definitions for the \macarg.BLAH macros corresponding to
+  % each BLAH argument. It was anyhow needed to parse already once this list
+  % in order to count the arguments, and as macros with at most 9 arguments
+  % are by far more frequent than macro with 10 or more arguments, defining
+  % twice the \macarg.BLAH macros does not cost too much processing power.
+  \ifnum\paramno<10\relax\else
+    \paramno0\relax
+    \parsemmanyargdef@@#1,;,% 10 or more arguments
+  \fi
 }
 \def\parsemargdefxxx#1,{%
   \if#1;\let\next=\relax
@@ -7322,16 +7389,205 @@ end
     \edef\paramlist{\paramlist\hash\the\paramno,}%
   \fi\next}
 
+\def\parsemmanyargdef@@#1,{%
+  \if#1;\let\next=\relax
+  \else 
+    \let\next=\parsemmanyargdef@@
+    \edef\tempb{\eatspaces{#1}}%
+    \expandafter\def\expandafter\tempa
+       \expandafter{\csname macarg.\tempb\endcsname}%
+    % Note that we need some extra \noexpand\noexpand, this is because we
+    % don't want \the  to be expanded in the \parsermacbody  as it uses an
+    % \xdef .
+    \expandafter\edef\tempa
+      {\noexpand\noexpand\noexpand\the\toks\the\paramno}%
+    \advance\paramno by 1\relax
+  \fi\next}
+
 % These two commands read recursive and nonrecursive macro bodies.
 % (They're different since rec and nonrec macros end differently.)
 %
+
+\catcode `\@\texiatcatcode
 \long\def\parsemacbody#1@end macro%
 {\xdef\temp{\eatcr{#1}}\endgroup\defmacro}%
 \long\def\parsermacbody#1@end rmacro%
 {\xdef\temp{\eatcr{#1}}\endgroup\defmacro}%
+\catcode `\@=11\relax
 
-% This defines the macro itself. There are six cases: recursive and
-% nonrecursive macros of zero, one, and many arguments.
+\let\endargs@\relax
+\let\nil@\relax
+\def\nilm@{\nil@}%
+\long\def\nillm@{\nil@}%
+
+% This macro is expanded during the Texinfo macro expansion, not during its
+% definition.  It gets all the arguments values and assigns them to macros
+% macarg.ARGNAME
+%
+% #1 is the macro name
+% #2 is the list of argument names
+% #3 is the list of argument values
+\def\getargvals@#1#2#3{%
+  \def\macargdeflist@{}%
+  \def\saveparamlist@{#2}% Need to keep a copy for parameter expansion.
+  \def\paramlist{#2,\nil@}%
+  \def\macroname{#1}%
+  \begingroup
+  \macroargctxt
+  \def\argvaluelist{#3,\nil@}%
+  \def\@tempa{#3}%
+  \ifx\@tempa\empty
+    \setemptyargvalues@
+  \else
+    \getargvals@@
+  \fi
+}
+
+% 
+\def\getargvals@@{%
+  \ifx\paramlist\nilm@
+      % Some sanity check needed here that \argvaluelist is also empty.
+      \ifx\argvaluelist\nillm@
+      \else
+        \errhelp = \EMsimple
+        \errmessage{Too many arguments in macro `\macroname'!}%
+      \fi
+      \let\next\macargexpandinbody@
+  \else
+    \ifx\argvaluelist\nillm@
+       % No more arguments values passed to macro.  Set remaining named-arg
+       % macros to empty.
+       \let\next\setemptyargvalues@
+    \else
+      % pop current arg name into \@tempb
+      \def\@tempa##1{\pop@{\@tempb}{\paramlist}##1\endargs@}%
+      \expandafter\@tempa\expandafter{\paramlist}%
+       % pop current argument value into \@tempc
+      \def\@tempa##1{\longpop@{\@tempc}{\argvaluelist}##1\endargs@}%
+      \expandafter\@tempa\expandafter{\argvaluelist}%
+       % Here \@tempb is the current arg name and \@tempc is the current arg value.
+       % First place the new argument macro definition into \@tempd
+       \expandafter\macname\expandafter{\@tempc}%
+       \expandafter\let\csname macarg.\@tempb\endcsname\relax
+       \expandafter\def\expandafter\@tempe\expandafter{%
+         \csname macarg.\@tempb\endcsname}%
+       \edef\@tempd{\long\def\@tempe{\the\macname}}%
+       \push@\@tempd\macargdeflist@
+       \let\next\getargvals@@
+    \fi
+  \fi
+  \next
+}
+
+\def\push@#1#2{%
+  \expandafter\expandafter\expandafter\def
+  \expandafter\expandafter\expandafter#2%
+  \expandafter\expandafter\expandafter{%
+  \expandafter#1#2}%
+}
+
+% Replace arguments by their values in the macro body, and place the result
+% in macro \@tempa
+\def\macvalstoargs@{%
+  %  To do this we use the property that token registers that are \the'ed
+  % within an \edef  expand only once. So we are going to place all argument
+  % values into respective token registers.
+  %
+  % First we save the token context, and initialize argument numbering.
+  \begingroup
+    \paramno0\relax
+    % Then, for each argument number #N, we place the corresponding argument
+    % value into a new token list register \toks#N
+    \expandafter\putargsintokens@\saveparamlist@,;,%
+    % Then, we expand the body so that argument are replaced by their
+    % values. The trick for values not to be expanded themselves is that they
+    % are within tokens and that tokens expand only once in an \edef .
+    \edef\@tempc{\csname mac.\macroname .body\endcsname}%
+    % Now we restore the token stack pointer to free the token list registers
+    % which we have used, but we make sure that expanded body is saved after
+    % group.
+    \expandafter
+  \endgroup
+  \expandafter\def\expandafter\@tempa\expandafter{\@tempc}%
+  }
+
+\def\macargexpandinbody@{% 
+  %% Define the named-macro outside of this group and then close this group. 
+  \expandafter
+  \endgroup
+  \macargdeflist@
+  % First the replace in body the macro arguments by their values, the result
+  % is in \@tempa .
+  \macvalstoargs@
+  % Then we point at the \norecurse or \gobble (for recursive) macro value
+  % with \@tempb .
+  \expandafter\let\expandafter\@tempb\csname mac.\macroname .recurse\endcsname
+  % Depending on whether it is recursive or not, we need some tailing
+  % \egroup .
+  \ifx\@tempb\gobble
+     \let\@tempc\relax
+  \else
+     \let\@tempc\egroup
+  \fi
+  % And now we do the real job:
+  \edef\@tempd{\noexpand\@tempb{\macroname}\noexpand\scanmacro{\@tempa}\@tempc}%
+  \@tempd
+}
+
+\def\putargsintokens@#1,{%
+  \if#1;\let\next\relax
+  \else
+    \let\next\putargsintokens@
+    % First we allocate the new token list register, and give it a temporary
+    % alias \@tempb .
+    \toksdef\@tempb\the\paramno
+    % Then we place the argument value into that token list register.
+    \expandafter\let\expandafter\@tempa\csname macarg.#1\endcsname
+    \expandafter\@tempb\expandafter{\@tempa}%
+    \advance\paramno by 1\relax
+  \fi
+  \next
+}
+
+% Save the token stack pointer into macro #1
+\def\texisavetoksstackpoint#1{\edef#1{\the\@cclvi}}
+% Restore the token stack pointer from number in macro #1
+\def\texirestoretoksstackpoint#1{\expandafter\mathchardef\expandafter\@cclvi#1\relax}
+% newtoks that can be used non \outer .
+\def\texinonouternewtoks{\alloc@ 5\toks \toksdef \@cclvi}
+
+% Tailing missing arguments are set to empty
+\def\setemptyargvalues@{%
+  \ifx\paramlist\nilm@
+    \let\next\macargexpandinbody@
+  \else
+    \expandafter\setemptyargvaluesparser@\paramlist\endargs@
+    \let\next\setemptyargvalues@
+  \fi
+  \next
+}
+
+\def\setemptyargvaluesparser@#1,#2\endargs@{%
+  \expandafter\def\expandafter\@tempa\expandafter{%
+    \expandafter\def\csname macarg.#1\endcsname{}}%
+  \push@\@tempa\macargdeflist@
+  \def\paramlist{#2}%
+}
+
+% #1 is the element target macro
+% #2 is the list macro
+% #3,#4\endargs@ is the list value
+\def\pop@#1#2#3,#4\endargs@{%
+   \def#1{#3}%
+   \def#2{#4}%
+}
+\long\def\longpop@#1#2#3,#4\endargs@{%
+   \long\def#1{#3}%
+   \long\def#2{#4}%
+}
+
+% This defines a Texinfo @macro. There are eight cases: recursive and
+% nonrecursive macros of zero, one, up to nine, and many arguments.
 % Much magic with \expandafter here.
 % \xdef is used so that macro definitions will survive the file
 % they're defined in; @include reads the file inside a group.
@@ -7350,17 +7606,25 @@ end
          \expandafter\noexpand\csname\the\macname xxx\endcsname}%
       \expandafter\xdef\csname\the\macname xxx\endcsname##1{%
          \egroup\noexpand\scanmacro{\temp}}%
-    \else % many
-      \expandafter\xdef\csname\the\macname\endcsname{%
-         \bgroup\noexpand\macroargctxt
-         \noexpand\csname\the\macname xx\endcsname}%
-      \expandafter\xdef\csname\the\macname xx\endcsname##1{%
-          \expandafter\noexpand\csname\the\macname xxx\endcsname ##1,}%
-      \expandafter\expandafter
-      \expandafter\xdef
-      \expandafter\expandafter
-        \csname\the\macname xxx\endcsname
-          \paramlist{\egroup\noexpand\scanmacro{\temp}}%
+    \else
+      \ifnum\paramno<10\relax % at most 9
+        \expandafter\xdef\csname\the\macname\endcsname{%
+           \bgroup\noexpand\macroargctxt
+           \noexpand\csname\the\macname xx\endcsname}%
+        \expandafter\xdef\csname\the\macname xx\endcsname##1{%
+            \expandafter\noexpand\csname\the\macname xxx\endcsname ##1,}%
+        \expandafter\expandafter
+        \expandafter\xdef
+        \expandafter\expandafter
+          \csname\the\macname xxx\endcsname
+            \paramlist{\egroup\noexpand\scanmacro{\temp}}%
+      \else % 10 or more
+        \expandafter\xdef\csname\the\macname\endcsname{%
+          \noexpand\getargvals@{\the\macname}{\argl}%
+        }%    
+        \global\expandafter\let\csname mac.\the\macname .body\endcsname\temp
+        \global\expandafter\let\csname mac.\the\macname .recurse\endcsname\gobble
+      \fi
     \fi
   \else
     \ifcase\paramno
@@ -7377,22 +7641,32 @@ end
         \egroup
         \noexpand\norecurse{\the\macname}%
         \noexpand\scanmacro{\temp}\egroup}%
-    \else % many
-      \expandafter\xdef\csname\the\macname\endcsname{%
-         \bgroup\noexpand\macroargctxt
-         \expandafter\noexpand\csname\the\macname xx\endcsname}%
-      \expandafter\xdef\csname\the\macname xx\endcsname##1{%
-          \expandafter\noexpand\csname\the\macname xxx\endcsname ##1,}%
-      \expandafter\expandafter
-      \expandafter\xdef
-      \expandafter\expandafter
-      \csname\the\macname xxx\endcsname
-      \paramlist{%
-          \egroup
-          \noexpand\norecurse{\the\macname}%
-          \noexpand\scanmacro{\temp}\egroup}%
+    \else % at most 9
+      \ifnum\paramno<10\relax
+        \expandafter\xdef\csname\the\macname\endcsname{%
+           \bgroup\noexpand\macroargctxt
+           \expandafter\noexpand\csname\the\macname xx\endcsname}%
+        \expandafter\xdef\csname\the\macname xx\endcsname##1{%
+            \expandafter\noexpand\csname\the\macname xxx\endcsname ##1,}%
+        \expandafter\expandafter
+        \expandafter\xdef
+        \expandafter\expandafter
+        \csname\the\macname xxx\endcsname
+        \paramlist{%
+            \egroup
+            \noexpand\norecurse{\the\macname}%
+            \noexpand\scanmacro{\temp}\egroup}%
+      \else % 10 or more:
+        \expandafter\xdef\csname\the\macname\endcsname{%
+          \noexpand\getargvals@{\the\macname}{\argl}%
+        }%
+        \global\expandafter\let\csname mac.\the\macname .body\endcsname\temp
+        \global\expandafter\let\csname mac.\the\macname .recurse\endcsname\norecurse
+      \fi
     \fi
   \fi}
+
+\catcode `\@\texiatcatcode\relax
 
 \def\norecurse#1{\bgroup\cslet{#1}{macsave.#1}}
 
@@ -7565,9 +7839,8 @@ end
      % etc. don't get their TeX definitions.
      \getfilename{#4}%
      %
-     % See comments at \activebackslashdouble.
-     {\activebackslashdouble \xdef\pdfxrefdest{#1}%
-      \backslashparens\pdfxrefdest}%
+     \edef\pdfxrefdest{#1}%
+     \txiescapepdf\pdfxrefdest
      %
      \leavevmode
      \startlink attr{/Border [0 0 0]}%
@@ -7856,7 +8129,7 @@ end
 % space to prevent strange expansion errors.)
 \def\supereject{\par\penalty -20000\footnoteno =0 }
 
-% @footnotestyle is meaningful for info output only.
+% @footnotestyle is meaningful for Info output only.
 \let\footnotestyle=\comment
 
 {\catcode `\@=11
@@ -7919,6 +8192,8 @@ end
   % expands into a box, it must come within the paragraph, lest it
   % provide a place where TeX can split the footnote.
   \footstrut
+  %
+  % Invoke rest of plain TeX footnote routine.
   \futurelet\next\fo@t
 }
 }%end \catcode `\@=11
@@ -9534,14 +9809,24 @@ directory should work if nowhere else does.}
 
 % In texinfo, backslash is an active character; it prints the backslash
 % in fixed width font.
-\catcode`\\=\active
-@def@normalbackslash{{@tt@backslashcurfont}}
+\catcode`\\=\active  % @ for escape char from now on.
+
+% The story here is that in math mode, the \char of \backslashcurfont
+% ends up printing the roman \ from the math symbol font (because \char
+% in math mode uses the \mathcode, and plain.tex sets
+% \mathcode`\\="026E).  It seems better for @backslashchar{} to always
+% print a typewriter backslash, hence we use an explicit \mathchar,
+% which is the decimal equivalent of "715c (class 7, e.g., use \fam;
+% ignored family value; char position "5C).  We can't use " for the
+% usual hex value because it has already been made active.
+@def@normalbackslash{{@tt @ifmmode @mathchar29020 @else @backslashcurfont @fi}}
+@let@backslashchar = @normalbackslash % @backslashchar{} is for user documents.
+
 % On startup, @fixbackslash assigns:
 %  @let \ = @normalbackslash
-
 % \rawbackslash defines an active \ to do \backslashcurfont.
 % \otherbackslash defines an active \ to be a literal `\' character with
-% catcode other.
+% catcode other.  We switch back and forth between these.
 @gdef@rawbackslash{@let\=@backslashcurfont}
 @gdef@otherbackslash{@let\=@realbackslash}
 
@@ -9597,9 +9882,12 @@ directory should work if nowhere else does.}
 @def@normalslash{/}
 
 % These look ok in all fonts, so just make them not special.
+% @hashchar{} gets its own user-level command, because of #line.
 @catcode`@& = @other @def@normalamp{&}
 @catcode`@# = @other @def@normalhash{#}
 @catcode`@% = @other @def@normalpercent{%}
+
+@let @hashchar = @normalhash
 
 @c Finally, make ` and ' active, so that txicodequoteundirected and
 @c txicodequotebacktick work right in, e.g., @w{@code{`foo'}}.  If we

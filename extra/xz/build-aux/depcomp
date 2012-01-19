@@ -1,10 +1,10 @@
 #! /bin/sh
 # depcomp - compile a program generating dependencies as side-effects
 
-scriptversion=2009-04-28.21; # UTC
+scriptversion=2011-12-04.11; # UTC
 
-# Copyright (C) 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009 Free
-# Software Foundation, Inc.
+# Copyright (C) 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009, 2010,
+# 2011 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ scriptversion=2009-04-28.21; # UTC
 
 case $1 in
   '')
-     echo "$0: No command.  Try \`$0 --help' for more information." 1>&2
+     echo "$0: No command.  Try '$0 --help' for more information." 1>&2
      exit 1;
      ;;
   -h | --h*)
@@ -40,11 +40,11 @@ as side-effects.
 
 Environment variables:
   depmode     Dependency tracking mode.
-  source      Source file read by `PROGRAMS ARGS'.
-  object      Object file output by `PROGRAMS ARGS'.
+  source      Source file read by 'PROGRAMS ARGS'.
+  object      Object file output by 'PROGRAMS ARGS'.
   DEPDIR      directory where to store dependencies.
   depfile     Dependency file to output.
-  tmpdepfile  Temporary file to use when outputing dependencies.
+  tmpdepfile  Temporary file to use when outputting dependencies.
   libtool     Whether libtool is used (yes/no).
 
 Report bugs to <bug-automake@gnu.org>.
@@ -90,8 +90,16 @@ if test "$depmode" = msvcmsys; then
    # This is just like msvisualcpp but w/o cygpath translation.
    # Just convert the backslash-escaped backslashes to single forward
    # slashes to satisfy depend.m4
-   cygpath_u="sed s,\\\\\\\\,/,g"
+   cygpath_u='sed s,\\\\,/,g'
    depmode=msvisualcpp
+fi
+
+if test "$depmode" = msvc7msys; then
+   # This is just like msvc7 but w/o cygpath translation.
+   # Just convert the backslash-escaped backslashes to single forward
+   # slashes to satisfy depend.m4
+   cygpath_u='sed s,\\\\,/,g'
+   depmode=msvc7
 fi
 
 case "$depmode" in
@@ -148,7 +156,7 @@ gcc)
 ## The second -e expression handles DOS-style file names with drive letters.
   sed -e 's/^[^:]*: / /' \
       -e 's/^['$alpha']:\/[^:]*: / /' < "$tmpdepfile" >> "$depfile"
-## This next piece of magic avoids the `deleted header file' problem.
+## This next piece of magic avoids the "deleted header file" problem.
 ## The problem is that when a header file which appears in a .P file
 ## is deleted, the dependency causes make to die (because there is
 ## typically no way to rebuild the header).  We avoid this by adding
@@ -156,12 +164,14 @@ gcc)
 ## this for us directly.
   tr ' ' '
 ' < "$tmpdepfile" |
-## Some versions of gcc put a space before the `:'.  On the theory
+## Some versions of gcc put a space before the ':'.  On the theory
 ## that the space means something, we add a space to the output as
-## well.
+## well.  hp depmode also adds that space, but also prefixes the VPATH
+## to the object.  Take care to not repeat it in the output.
 ## Some versions of the HPUX 10.20 sed can't process this invocation
 ## correctly.  Breaking it into two sed invocations is a workaround.
-    sed -e 's/^\\$//' -e '/^$/d' -e '/:$/d' | sed -e 's/$/ :/' >> "$depfile"
+    sed -e 's/^\\$//' -e '/^$/d' -e "s|.*$object$||" -e '/:$/d' \
+      | sed -e 's/$/ :/' >> "$depfile"
   rm -f "$tmpdepfile"
   ;;
 
@@ -193,7 +203,7 @@ sgi)
     # clever and replace this with sed code, as IRIX sed won't handle
     # lines with more than a fixed number of characters (4096 in
     # IRIX 6.2 sed, 8192 in IRIX 6.5).  We also remove comment lines;
-    # the IRIX cc adds comments like `#:fec' to the end of the
+    # the IRIX cc adds comments like '#:fec' to the end of the
     # dependency line.
     tr ' ' '
 ' < "$tmpdepfile" \
@@ -219,7 +229,7 @@ sgi)
 aix)
   # The C for AIX Compiler uses -M and outputs the dependencies
   # in a .u file.  In older versions, this file always lives in the
-  # current directory.  Also, the AIX compiler puts `$object:' at the
+  # current directory.  Also, the AIX compiler puts '$object:' at the
   # start of each line; $object doesn't have directory information.
   # Version 6 uses the directory in both cases.
   dir=`echo "$object" | sed -e 's|/[^/]*$|/|'`
@@ -249,9 +259,9 @@ aix)
     test -f "$tmpdepfile" && break
   done
   if test -f "$tmpdepfile"; then
-    # Each line is of the form `foo.o: dependent.h'.
+    # Each line is of the form 'foo.o: dependent.h'.
     # Do two passes, one to just change these to
-    # `$object: dependent.h' and one to simply `dependent.h:'.
+    # '$object: dependent.h' and one to simply 'dependent.h:'.
     sed -e "s,^.*\.[a-z]*:,$object:," < "$tmpdepfile" > "$depfile"
     # That's a tab and a space in the [].
     sed -e 's,^.*\.[a-z]*:[	 ]*,,' -e 's,$,:,' < "$tmpdepfile" >> "$depfile"
@@ -265,7 +275,7 @@ aix)
   ;;
 
 icc)
-  # Intel's C compiler understands `-MD -MF file'.  However on
+  # Intel's C compiler understands '-MD -MF file'.  However on
   #    icc -MD -MF foo.d -c -o sub/foo.o sub/foo.c
   # ICC 7.0 will fill foo.d with something like
   #    foo.o: sub/foo.c
@@ -290,10 +300,10 @@ icc)
     exit $stat
   fi
   rm -f "$depfile"
-  # Each line is of the form `foo.o: dependent.h',
-  # or `foo.o: dep1.h dep2.h \', or ` dep3.h dep4.h \'.
+  # Each line is of the form 'foo.o: dependent.h',
+  # or 'foo.o: dep1.h dep2.h \', or ' dep3.h dep4.h \'.
   # Do two passes, one to just change these to
-  # `$object: dependent.h' and one to simply `dependent.h:'.
+  # '$object: dependent.h' and one to simply 'dependent.h:'.
   sed "s,^[^:]*:,$object :," < "$tmpdepfile" > "$depfile"
   # Some versions of the HPUX 10.20 sed can't process this invocation
   # correctly.  Breaking it into two sed invocations is a workaround.
@@ -334,7 +344,7 @@ hp2)
   done
   if test -f "$tmpdepfile"; then
     sed -e "s,^.*\.[a-z]*:,$object:," "$tmpdepfile" > "$depfile"
-    # Add `dependent.h:' lines.
+    # Add 'dependent.h:' lines.
     sed -ne '2,${
 	       s/^ *//
 	       s/ \\*$//
@@ -349,9 +359,9 @@ hp2)
 
 tru64)
    # The Tru64 compiler uses -MD to generate dependencies as a side
-   # effect.  `cc -MD -o foo.o ...' puts the dependencies into `foo.o.d'.
+   # effect.  'cc -MD -o foo.o ...' puts the dependencies into 'foo.o.d'.
    # At least on Alpha/Redhat 6.1, Compaq CCC V6.2-504 seems to put
-   # dependencies in `foo.d' instead, so we check for that too.
+   # dependencies in 'foo.d' instead, so we check for that too.
    # Subdirectories are respected.
    dir=`echo "$object" | sed -e 's|/[^/]*$|/|'`
    test "x$dir" = "x$object" && dir=
@@ -405,6 +415,52 @@ tru64)
    rm -f "$tmpdepfile"
    ;;
 
+msvc7)
+  if test "$libtool" = yes; then
+    showIncludes=-Wc,-showIncludes
+  else
+    showIncludes=-showIncludes
+  fi
+  "$@" $showIncludes > "$tmpdepfile"
+  stat=$?
+  grep -v '^Note: including file: ' "$tmpdepfile"
+  if test "$stat" = 0; then :
+  else
+    rm -f "$tmpdepfile"
+    exit $stat
+  fi
+  rm -f "$depfile"
+  echo "$object : \\" > "$depfile"
+  # The first sed program below extracts the file names and escapes
+  # backslashes for cygpath.  The second sed program outputs the file
+  # name when reading, but also accumulates all include files in the
+  # hold buffer in order to output them again at the end.  This only
+  # works with sed implementations that can handle large buffers.
+  sed < "$tmpdepfile" -n '
+/^Note: including file:  *\(.*\)/ {
+  s//\1/
+  s/\\/\\\\/g
+  p
+}' | $cygpath_u | sort -u | sed -n '
+s/ /\\ /g
+s/\(.*\)/	\1 \\/p
+s/.\(.*\) \\/\1:/
+H
+$ {
+  s/.*/	/
+  G
+  p
+}' >> "$depfile"
+  rm -f "$tmpdepfile"
+  ;;
+
+msvc7msys)
+  # This case exists only to let depend.m4 do its work.  It works by
+  # looking at the text of this script.  This case will never be run,
+  # since it is checked for above.
+  exit 1
+  ;;
+
 #nosideeffect)
   # This comment above is used by automake to tell side-effect
   # dependency tracking mechanisms from slower ones.
@@ -422,7 +478,7 @@ dashmstdout)
     shift
   fi
 
-  # Remove `-o $object'.
+  # Remove '-o $object'.
   IFS=" "
   for arg
   do
@@ -442,9 +498,9 @@ dashmstdout)
   done
 
   test -z "$dashmflag" && dashmflag=-M
-  # Require at least two characters before searching for `:'
+  # Require at least two characters before searching for ':'
   # in the target name.  This is to cope with DOS-style filenames:
-  # a dependency such as `c:/foo/bar' could be seen as target `c' otherwise.
+  # a dependency such as 'c:/foo/bar' could be seen as target 'c' otherwise.
   "$@" $dashmflag |
     sed 's:^[  ]*[^: ][^:][^:]*\:[    ]*:'"$object"'\: :' > "$tmpdepfile"
   rm -f "$depfile"
@@ -503,7 +559,9 @@ makedepend)
   touch "$tmpdepfile"
   ${MAKEDEPEND-makedepend} -o"$obj_suffix" -f"$tmpdepfile" "$@"
   rm -f "$depfile"
-  cat < "$tmpdepfile" > "$depfile"
+  # makedepend may prepend the VPATH from the source file name to the object.
+  # No need to regex-escape $object, excess matching of '.' is harmless.
+  sed "s|^.*\($object *:\)|\1|" "$tmpdepfile" > "$depfile"
   sed '1,2d' "$tmpdepfile" | tr ' ' '
 ' | \
 ## Some versions of the HPUX 10.20 sed can't process this invocation
@@ -525,7 +583,7 @@ cpp)
     shift
   fi
 
-  # Remove `-o $object'.
+  # Remove '-o $object'.
   IFS=" "
   for arg
   do
