@@ -578,11 +578,6 @@ common:
      considered printable.  If `-translate-file' was given as well,
      then the TCX file may mark characters as non-printable.
 
-`-oem'
-     This option is specific to Windows. When specified, TeX engines
-     will use the OEM code page rather than the ANSI one to display
-     their messages.
-
 
 
 File: web2c.info,  Node: Path searching,  Next: Output file location,  Prev: Common options,  Up: Commonalities
@@ -3572,7 +3567,6 @@ Index
 * -no-mktex=FILETYPE:                    tex invocation.      (line 105)
 * -no-parse-first-line:                  Common options.      (line  72)
 * -no-shell-escape:                      tex invocation.      (line 123)
-* -oem:                                  Common options.      (line 110)
 * -output-comment=STRING:                tex invocation.      (line 115)
 * -output-directory <1>:                 Output file location.
                                                               (line  15)
@@ -4378,7 +4372,6 @@ Index
                                                               (line  50)
 * unsrt.bst:                             Basic BibTeX style files.
                                                               (line  39)
-* using local codepage to display messages: Common options.   (line 110)
 * UTF-8 input:                           tex invocation.      (line  89)
 * validation, of DVI files:              dvitype invocation.  (line   6)
 * validation, of GF files:               gftype invocation.   (line   6)
@@ -4460,64 +4453,64 @@ Node: Runtime options15164
 Node: Commonalities16936
 Node: Option conventions17541
 Node: Common options18765
-Node: Path searching23338
-Node: Output file location24360
-Node: Three programs25685
-Node: Initial and virgin26439
-Node: Memory dumps27378
-Node: Creating memory dumps27834
-Node: Determining the memory dump to use29045
-Node: Hardware and memory dumps30632
-Node: Editor invocation33090
-Node: \input filenames33956
-Node: TeX36949
-Node: tex invocation38101
-Node: Initial TeX45071
-Node: Formats46560
-Node: Languages and hyphenation49499
-Node: MLTeX49929
-Node: \charsubdef51424
-Node: \tracingcharsubdef53750
-Node: TCX files54325
-Node: patgen invocation59749
-Node: Shell escapes60466
-Node: IPC and TeX64030
-Node: TeX extensions64600
-Node: Metafont65732
-Node: mf invocation67020
-Node: Initial Metafont70903
-Node: Modes72656
-Node: Online Metafont graphics74912
-Node: gftodvi invocation78327
-Node: mft invocation81160
-Node: MetaPost85215
-Node: mpost invocation85977
-Node: Initial MetaPost91235
-Node: dvitomp invocation92157
-Node: BibTeX92822
-Node: bibtex invocation93183
-Node: Basic BibTeX style files95508
-Node: WEB96850
-Node: tangle invocation98058
-Node: weave invocation100181
-Node: pooltype invocation101589
-Node: DVI utilities102719
-Node: dvicopy invocation103663
-Node: dvitype invocation104961
-Node: dvitype output example107316
-Node: Font utilities110367
-Node: Font file formats111547
-Node: gftopk invocation114846
-Node: pktogf invocation116050
-Node: pktype invocation117229
-Node: gftype invocation120064
-Node: tftopl invocation124580
-Node: pltotf invocation129214
-Node: vftovp invocation130279
-Node: vptovf invocation132563
-Node: Font utilities available elsewhere133617
-Node: Legalisms136025
-Node: References138196
-Node: Index142768
+Node: Path searching23172
+Node: Output file location24194
+Node: Three programs25519
+Node: Initial and virgin26273
+Node: Memory dumps27212
+Node: Creating memory dumps27668
+Node: Determining the memory dump to use28879
+Node: Hardware and memory dumps30466
+Node: Editor invocation32924
+Node: \input filenames33790
+Node: TeX36783
+Node: tex invocation37935
+Node: Initial TeX44905
+Node: Formats46394
+Node: Languages and hyphenation49333
+Node: MLTeX49763
+Node: \charsubdef51258
+Node: \tracingcharsubdef53584
+Node: TCX files54159
+Node: patgen invocation59583
+Node: Shell escapes60300
+Node: IPC and TeX63864
+Node: TeX extensions64434
+Node: Metafont65566
+Node: mf invocation66854
+Node: Initial Metafont70737
+Node: Modes72490
+Node: Online Metafont graphics74746
+Node: gftodvi invocation78161
+Node: mft invocation80994
+Node: MetaPost85049
+Node: mpost invocation85811
+Node: Initial MetaPost91069
+Node: dvitomp invocation91991
+Node: BibTeX92656
+Node: bibtex invocation93017
+Node: Basic BibTeX style files95342
+Node: WEB96684
+Node: tangle invocation97892
+Node: weave invocation100015
+Node: pooltype invocation101423
+Node: DVI utilities102553
+Node: dvicopy invocation103497
+Node: dvitype invocation104795
+Node: dvitype output example107150
+Node: Font utilities110201
+Node: Font file formats111381
+Node: gftopk invocation114680
+Node: pktogf invocation115884
+Node: pktype invocation117063
+Node: gftype invocation119898
+Node: tftopl invocation124414
+Node: pltotf invocation129048
+Node: vftovp invocation130113
+Node: vptovf invocation132397
+Node: Font utilities available elsewhere133451
+Node: Legalisms135859
+Node: References138030
+Node: Index142602
 
 End Tag Table

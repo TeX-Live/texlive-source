@@ -439,12 +439,6 @@ This option specifies that by default all characters should be
 considered printable.  If @samp{-translate-file} was given as well, then the
 TCX file may mark characters as non-printable.
 
-@item -oem
-@opindex -oem
-@cindex using local codepage to display messages
-This option is specific to Windows. When specified, @TeX{} engines will use the
-OEM code page rather than the ANSI one to display their messages.
-
 @end table
 
 
