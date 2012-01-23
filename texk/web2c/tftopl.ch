@@ -136,13 +136,20 @@ tfm_file_array
   := cast_to_byte_pointer (xrealloc (tfm_file_array, 4 * lf - 1 + 1002));
 @z
 
-% [20] Both nl and lig_size are in words, so the multiplication is not
+% [21] Both nl and lig_size are in words, so the multiplication is not
 % needed.  Found by "C.M. Connelly" <c@eskimo.com> and
 % Melissa O'Neill <oneill@cs.sfu.ca>
 @x
 if nl>4*lig_size then
 @y
 if nl>lig_size then
+@z
+
+% [21] Add missing space in error message.
+@x
+  bc:1,'..',ec:1,'is illegal!');
+@y
+  bc:1,'..',ec:1,' is illegal!');
 @z
 
 % [27, 28] Change strings to C char pointers. The Pascal strings are

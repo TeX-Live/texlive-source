@@ -1,3 +1,7 @@
+2012-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptftopl.ch: Adapt to missing space added in ../tftopl.ch.
+
 2012-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdvitype.ch: Remove an unnecessary change in previous.

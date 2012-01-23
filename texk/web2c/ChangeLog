@@ -1,3 +1,7 @@
+2012-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tftopl.ch, vftovp.ch: Add missing space in error message.
+
 2012-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check sizeof(off_t).

@@ -782,7 +782,7 @@ if nl>4*lig_size then
 @.The lig/kern program...@>
 if (bc>ec+1)or(ec>top_char) then abort('The character code range ',
 @.The character code range...@>
-  bc:1,'..',ec:1,'is illegal!');
+  bc:1,'..',ec:1,' is illegal!');
 if ec>max_char then
   abort('Character ',ec:1,'is too large.  Ask a wizard to enlarge me.');
 if (nw=0)or(nh=0)or(nd=0)or(ni=0) then

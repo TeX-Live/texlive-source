@@ -1,3 +1,7 @@
+2012-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.web, ovf2ovp.web: Add missing space in error message.
+
 2011-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ovf2ovp.web, ovp2ovf.web: Replace 65535 etc by numeric Web

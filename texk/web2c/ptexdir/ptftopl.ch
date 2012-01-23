@@ -116,7 +116,7 @@ else
 @x [21] l.485 - pTeX: ng has to be treated specially
 if (bc>ec+1)or(ec>255) then abort('The character code range ',
 @.The character code range...@>
-  bc:1,'..',ec:1,'is illegal!');
+  bc:1,'..',ec:1,' is illegal!');
 if (nw=0)or(nh=0)or(nd=0)or(ni=0) then
   abort('Incomplete subfiles for character dimensions!');
 @.Incomplete subfiles...@>
@@ -130,7 +130,7 @@ case file_format of
 tfm_format: begin
   if (bc>ec+1)or(ec>255) then abort('The character code range ',
 @.The character code range...@>
-    bc:1,'..',ec:1,'is illegal!');
+    bc:1,'..',ec:1,' is illegal!');
   if (nw=0)or(nh=0)or(nd=0)or(ni=0) then
     abort('Incomplete subfiles for character dimensions!');
 @.Incomplete subfiles...@>
@@ -143,7 +143,7 @@ tfm_format: begin
 jfm_format,vfm_format: begin ng:=ne;
   if (bc>ec+1)or(ec>255)or(bc<>0) then abort('The character code range ',
 @.The character code range...@>
-      bc:1,'..',ec:1,'is illegal!');
+      bc:1,'..',ec:1,' is illegal!');
   if (nw=0)or(nh=0)or(nd=0)or(ni=0) then
     abort('Incomplete subfiles for character dimensions!');
 @.Incomplete subfiles...@>

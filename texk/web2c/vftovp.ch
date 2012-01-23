@@ -133,6 +133,13 @@ if nl>4*lig_size then
 if nl>lig_size then
 @z
 
+% [25] Add missing space in error message.
+@x
+  bc:1,'..',ec:1,'is illegal!');
+@y
+  bc:1,'..',ec:1,' is illegal!');
+@z
+
 % [31] Ditto for vf_abort.
 @x
 @d vf_abort(#)==
