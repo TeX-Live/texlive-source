@@ -112,6 +112,12 @@ begin while loc=limit do fill_buffer;
   begin cur_char:=xord[buffer[loc+1]];
 @z
 
+@x [63] Interpret '--' as '+', not '-'.
+  begin cur_char:=" "; negative:=true;
+@y
+  begin cur_char:=" "; negative:=not negative;
+@z
+
 @x [79] `index' might be a library routine.
 |k|th element of its list.
 @y

@@ -1,6 +1,6 @@
 ## texk/web2c/omegaware/am/omegaware.am: Makefile fragment for omegaware web programs.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 omegaware_tools = odvicopy odvitype otangle
@@ -101,7 +101,7 @@ DISTCLEANFILES += ovp2ovf.web
 OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 	omegaware/otangle.test
 OMFONTS_tests = omegaware/level1.test omegaware/ofonts.test \
-	omegaware/omfonts.test omegaware/repeat.test \
+	omegaware/omfonts.test omegaware/realnum.test omegaware/repeat.test \
 	omegaware/selectfont.test omegaware/specialhex.test
 EXTRA_DIST += $(OTANGLE_tests) $(OMFONTS_tests)
 
@@ -146,6 +146,9 @@ DISTCLEANFILES += omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
 	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.*
 ## omegaware/otangle.test
 DISTCLEANFILES += cftest.p
+## omegaware/realnum.test
+EXTRA_DIST += omegaware/tests/realnum.opl omegaware/tests/realnum.out
+DISTCLEANFILES += omegaware/tests/xrealnum.*
 ## omegaware/repeat.test
 EXTRA_DIST += omegaware/tests/repeat.opl omegaware/tests/repeated.opl
 DISTCLEANFILES += omegaware/tests/xrepeated.*

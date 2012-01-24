@@ -1,3 +1,12 @@
+2012-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pl-lexer.l: 'Correctly' scan real numbers for scan_fix().
+	Reported by Tanaka Takuji <KXD02663@nifty.ne.jp>.
+
+	* realnum.test, tests/realnum.opl, tests/realnum.out (new):
+	Shell script and data for a new test.
+	* Makefile.am: Add the new test.
+
 2012-01-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* omfonts.c: fix a typo (omfomts ---> omfonts).

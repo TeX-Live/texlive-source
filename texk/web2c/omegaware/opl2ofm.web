@@ -1433,7 +1433,7 @@ end;
 @ @<Scan the blanks...@>=
 repeat get_next;
 if cur_char="-" then begin
-  cur_char:=" "; negative:=true;
+  cur_char:=" "; negative:=not negative;
   end
 else if cur_char="+" then cur_char:=" ";
 until cur_char<>" "

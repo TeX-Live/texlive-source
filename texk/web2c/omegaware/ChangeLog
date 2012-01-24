@@ -1,3 +1,11 @@
+2012-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.web, ovp2ovf.web: Interpret "--" as "+", not "-".
+
+	* realnum.test, tests/realnum.opl, tests/realnum.out (new):
+	Shell script and data for a new test.
+	* am/omegaware.am: Add the new test.
+
 2012-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofm2opl.web, ovf2ovp.web: Add missing space in error message.

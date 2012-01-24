@@ -1,3 +1,7 @@
+2012-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pltotf.ch, vptovf.ch: Interpret "--" as "+", not "-".
+
 2012-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tftopl.ch, vftovp.ch: Add missing space in error message.

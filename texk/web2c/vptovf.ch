@@ -106,6 +106,12 @@ begin while loc=limit do fill_buffer;
   begin cur_char:=xord[buffer[loc+1]];
 @z
 
+@x [73] Interpret '--' as '+', not '-'.
+  begin cur_char:=" "; negative:=true;
+@y
+  begin cur_char:=" "; negative:=not negative;
+@z
+
 % [89] `index' is not a good choice for an identifier on Unix systems.
 % Neither is `class', on AIX.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

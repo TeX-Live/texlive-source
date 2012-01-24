@@ -69,7 +69,7 @@ ws		[ \t]+
 hexnumber       H{ws}[A-F0-9]+
 octnumber       O{ws}[0-7]+
 decnumber       D{ws}[0-9]+
-realnumber      R[ \t+-]+[0-9]*("."[0-9]*){0,1}
+realnumber      R[ \t+-]+[0-9]*("."[0-9]*)?
 charnumber      C{ws}.
 
 %%

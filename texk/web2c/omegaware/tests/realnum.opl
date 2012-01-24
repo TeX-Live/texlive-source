@@ -1,0 +1,14 @@
+(DESIGNSIZE R 10.0)
+(CHARACTER C A
+   (COMMENT no space, tab, or sign required after R)
+   (CHARWD R)
+   (CHARHT R 1.0)
+   (CHARDP R 0.1)
+   (CHARIC R+1)
+   )
+(CHARACTER C B
+   (CHARWD R .)
+   (CHARHT R 1.)
+   (CHARDP R .1)
+   (CHARIC R--1)
+   )

@@ -1,0 +1,17 @@
+#! /bin/sh
+
+# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../../kpathsea
+OFMFONTS=tests
+export TEXMFCNF OFMFONTS
+
+./omfonts -opl2ofm -verbose $srcdir/tests/realnum tests/xrealnum || exit 1
+
+./omfonts -ofm2opl -verbose xrealnum tests/xrealnum || exit 1
+
+diff $srcdir/tests/realnum.out tests/xrealnum.opl || exit 1
+
