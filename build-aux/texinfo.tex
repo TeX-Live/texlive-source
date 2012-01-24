@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2012-01-04.16}
+\def\texinfoversion{2012-01-19.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -7802,26 +7802,36 @@ end
 \def\pxref#1{\putwordsee{} \xrefX[#1,,,,,,,]}
 \def\xref#1{\putwordSee{} \xrefX[#1,,,,,,,]}
 \def\ref#1{\xrefX[#1,,,,,,,]}
+%
+\newbox\topbox
+\newbox\printedrefnamebox
+\newbox\printedmanualbox
+%
 \def\xrefX[#1,#2,#3,#4,#5,#6]{\begingroup
   \unsepspaces
-  \def\printedmanual{\ignorespaces #5}%
+  %
   \def\printedrefname{\ignorespaces #3}%
-  \setbox1=\hbox{\printedmanual\unskip}%
-  \setbox0=\hbox{\printedrefname\unskip}%
-  \ifdim \wd0 = 0pt
+  \setbox\printedrefnamebox = \hbox{\printedrefname\unskip}%
+  %
+  \def\printedmanual{\ignorespaces #5}%
+  \setbox\printedmanualbox  = \hbox{\printedmanual\unskip}%
+  %
+  % If the printed reference name (arg #3) was not explicitly given in
+  % the @xref, figure out what we want to use.
+  \ifdim \wd\printedrefnamebox = 0pt
     % No printed node name was explicitly given.
     \expandafter\ifx\csname SETxref-automatic-section-title\endcsname \relax
-      % Use the node name inside the square brackets.
+      % Not auto section-title: use node name inside the square brackets.
       \def\printedrefname{\ignorespaces #1}%
     \else
-      % Use the actual chapter/section title appear inside
-      % the square brackets.  Use the real section title if we have it.
-      \ifdim \wd1 > 0pt
-        % It is in another manual, so we don't have it.
+      % Auto section-title: use chapter/section title inside
+      % the square brackets if we have it.
+      \ifdim \wd\printedmanualbox > 0pt
+        % It is in another manual, so we don't have it; use node name.
         \def\printedrefname{\ignorespaces #1}%
       \else
         \ifhavexrefs
-          % We know the real title if we have the xref values.
+          % We (should) know the real title if we have the xref values.
           \def\printedrefname{\refx{#1-title}{}}%
         \else
           % Otherwise just copy the Info node name.
@@ -7867,7 +7877,7 @@ end
   \iffloat\Xthisreftitle
     % If the user specified the print name (third arg) to the ref,
     % print it instead of our usual "Figure 1.2".
-    \ifdim\wd0 = 0pt
+    \ifdim\wd\printedrefnamebox = 0pt
       \refx{#1-snt}{}%
     \else
       \printedrefname
@@ -7875,21 +7885,46 @@ end
     %
     % if the user also gave the printed manual name (fifth arg), append
     % "in MANUALNAME".
-    \ifdim \wd1 > 0pt
+    \ifdim \wd\printedmanualbox > 0pt
       \space \putwordin{} \cite{\printedmanual}%
     \fi
   \else
     % node/anchor (non-float) references.
-    %
-    % If we use \unhbox0 and \unhbox1 to print the node names, TeX does not
-    % insert empty discretionaries after hyphens, which means that it will
-    % not find a line break at a hyphen in a node names.  Since some manuals
-    % are best written with fairly long node names, containing hyphens, this
-    % is a loss.  Therefore, we give the text of the node name again, so it
-    % is as if TeX is seeing it for the first time.
-    \ifdim \wd1 > 0pt
-      \putwordSection{} ``\printedrefname'' \putwordin{} \cite{\printedmanual}%
+    % 
+    % If we use \unhbox to print the node names, TeX does not insert
+    % empty discretionaries after hyphens, which means that it will not
+    % find a line break at a hyphen in a node names.  Since some manuals
+    % are best written with fairly long node names, containing hyphens,
+    % this is a loss.  Therefore, we give the text of the node name
+    % again, so it is as if TeX is seeing it for the first time.
+    % 
+    % Cross-manual reference.  Only include the "Section ``foo'' in" if
+    % the foo is neither missing or Top.  Thus, @xref{,,,foo,The Foo Manual}
+    % outputs simply "see The Foo Manual".
+    \ifdim \wd\printedmanualbox > 0pt
+      % What is the 7sp about?  The idea is that we also want to omit
+      % the Section part if we would be printing "Top", since they are
+      % clearly trying to refer to the whole manual.  But, this being
+      % TeX, we can't easily compare strings while ignoring the possible
+      % spaces before and after in the input.  By adding the arbitrary
+      % 7sp, we make it much less likely that a real node name would
+      % happen to have the same width as "Top" (e.g., in a monospaced font).
+      % I hope it will never happen in practice.
+      % 
+      % For the same basic reason, we retypeset the "Top" at every
+      % reference, since the current font is indeterminate.
+      % 
+      \setbox\topbox = \hbox{Top\kern7sp}%
+      \setbox2 = \hbox{\ignorespaces \printedrefname \unskip \kern7sp}%
+      \ifdim \wd2 > 7sp
+        \ifdim \wd2 = \wd\topbox \else
+          \putwordSection{} ``\printedrefname'' \putwordin{}\space
+        \fi
+      \fi
+      \cite{\printedmanual}%
     \else
+      % Reference in this manual.
+      %
       % _ (for example) has to be the character _ for the purposes of the
       % control sequence corresponding to the node, but it has to expand
       % into the usual \leavevmode...\vrule stuff for purposes of
@@ -7901,7 +7936,7 @@ end
        \setbox2 = \hbox{\ignorespaces \refx{#1-snt}{}}%
        \ifdim \wd2 > 0pt \refx{#1-snt}\space\fi
       }%
-      % output the `[mynode]' via a macro so it can be overridden.
+      % output the `[mynode]' via the macro below so it can be overridden.
       \xrefprintnodename\printedrefname
       %
       % But we always want a comma and a space:
