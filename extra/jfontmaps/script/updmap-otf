@@ -1,0 +1,213 @@
+#!/bin/sh
+# updmap-otf: v0.9.1
+# 11 Nov 2011 by PREINING Norbert <preining@logic.at>  v0.9.1
+#    use kpsewhich for finding fonts
+#    use updmap-sys --setoption kanjiEmbed to select the font family
+#    use current names of map files
+#    use different font name for Kozuka font, as used in the map file
+#    get state from updmap.cfg, not from some state file
+# 27 May 2006 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.9
+#    use noEmbed.map instead of noEmbeddedFont.map
+# 10 Jun 2005 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.8
+#    modified to use updmap-sys in teTeX3
+# 07 Nov 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.7
+#    do not echo back the message of updmap.
+# 17 Oct 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.6
+#    set hiragino map file if nofont is installed and arg is auto.
+# 04 Oct 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.5
+#    handl standby map files more strictly
+# 20 Sep 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.4
+#    hand over current status to map file installer
+# 19 Sep 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.3
+#    handl *-udvips.map in TEXMF/dvipdfm/config/otf/
+# 02 Mar 2004 by KOBAYASHI R. Taizo <tkoba@ike-dyn.ritsumei.ac.jp> v0.2
+#    added noFont-udvips.map
+# 28 Feb 2004 by KOBAYASHI R. Taizo <tkoba@ike-dyn.ritsumei.ac.jp> v0.1
+
+###
+### Usage
+###
+
+Usage() {
+cat <<EOF
+  Usage:  updmap-otf {hiragino|morisawa|kozuka|nofont|"installed font name"|auto|status}
+
+     hiragino:   set Hiragino Fonts embedded in pdf files by otf package
+     morisawa:   set Morisawa Fonts embedded in pdf files by otf package
+     kozuka:     set kozuka Fonts embedded in pdf files by otf package
+     nofont:     set no fonts are embedded
+                 If your system does not have above 3 font families,
+                 this target is selected automatically.
+     "installed font name":
+                 set fonts which are installed as
+		 TEXMF/fonts/map/dvipdfm/otf-"install font name".map
+     auto:       set fonts automatically
+     status:     get information about current environment and usable font map
+
+EOF
+}
+
+hiragino_font=HiraMinPro-W3.otf
+morisawa_font=A-OTF-RyuminPro-Light.otf
+kozuka_font=KozMinPro-Regular.otf
+
+
+###
+### Check Installed Font
+###
+
+CheckInstallFont() {
+  if kpsewhich $hiragino_font >/dev/null ; then
+    HIRAGINO=installed
+  else
+    HIRAGINO=""
+  fi
+    
+  if kpsewhich $morisawa_font >/dev/null ; then
+    MORISAWA=installed
+  else
+    MORISAWA=""
+  fi
+
+  if kpsewhich $kozuka_font >/dev/null ; then
+    KOZUKA=installed
+  else
+    KOZUKA=""
+  fi
+}
+
+###
+### GetStatus
+###
+
+GetStatus() {
+
+STATUS=$(grep ^kanjiEmbed $(kpsewhich updmap.cfg) | awk '{print$2}')
+
+if kpsewhich otf-$STATUS.map >/dev/null ; then
+    echo "CURRENT map file : otf-$STATUS.map"
+else
+    echo "WARNING: Currently selected map file cannot be found: otf-$STATUS.map"
+fi
+  
+
+for MAPFILE in otf-hiragino.map otf-morisawa.map otf-kozuka.map
+do
+    if [ "$MAPFILE" = "otf-$STATUS.map" ] ; then
+        continue
+    fi
+    mffound=`kpsewhich $MAPFILE`
+    if [ -n "$mffound" ] ; then
+	case "$MAPFILE" in
+	    otf-hiragino.map)
+		if [ "$HIRAGINO" = "installed" ]; then
+			echo "Standby map file : $MAPFILE"
+		fi
+		;;
+	    otf-morisawa.map)
+		if [ "$MORISAWA" = "installed" ]; then
+			echo "Standby map file : $MAPFILE"
+		fi
+		;;
+	    otf-kozuka.map)
+		if [ "$KOZUKA" = "installed" ]; then
+			echo "Standby map file : $MAPFILE"
+		fi
+		;;
+	    *)
+		echo "Should not happen!"
+		;;
+	esac
+    fi
+done
+
+}
+
+###
+### Setup Map files
+###
+
+SetupMapFile() {
+
+MAPFILE=otf-$1.map
+
+if kpsewhich $MAPFILE >/dev/null ; then
+    echo "Setting up ... $MAPFILE"
+    updmap-sys -setoption kanjiEmbed $1
+    updmap-sys
+else
+    echo "NOT EXIST $MAPFILE"
+    return 1
+fi
+}
+
+###
+### MAIN
+###
+
+main() {
+
+mktexlsr 2> /dev/null
+
+CheckInstallFont
+
+if [ $# != 1 ] ; then
+    eval Usage ${0##*/}
+    return -1
+fi
+
+case "$1" in
+     hiragino)
+	if [ "$HIRAGINO" = "installed" ]; then
+	    SetupMapFile hiragino
+	else
+	    main auto
+	fi
+	;;
+     morisawa)
+	if [ "$MORISAWA" = "installed" ]; then
+	    SetupMapFile morisawa
+	else
+	    main auto
+	fi
+	;;
+     kozuka)
+	if [ "$KOZUKA" = "installed" ]; then
+	    SetupMapFile kozuka
+	else
+	    main auto
+	fi
+	;;
+     nofont)
+	SetupMapFile noEmbed
+	;;
+     auto)
+	GetStatus
+	if [ "$STATUS" = "morisawa" ] && [ "$MORISAWA" = "installed" ]; then
+	    SetupMapFile morisawa
+	elif [ "$STATUS" = "kozuka" ] && [ "$KOZUKA" = "installed" ]; then
+	    SetupMapFile kozuka
+	elif [ "$STATUS" = "noEmbed" ] && [ "$HIRAGINO" = "installed" ]; then
+	    SetupMapFile hiragino
+	elif [ "$HIRAGINO" = "installed" ]; then
+	    SetupMapFile hiragino
+	elif [ "$MORISAWA" = "installed" ]; then
+	    SetupMapFile morisawa
+	elif [ "$KOZUKA" = "installed" ]; then
+	    SetupMapFile kozuka
+	else
+	    SetupMapFile noEmbed
+	fi
+	;;
+     status)
+	GetStatus
+	return 0
+	;;
+     *)
+	SetupMapFile $1
+	;;
+esac
+}
+
+main $@
+
