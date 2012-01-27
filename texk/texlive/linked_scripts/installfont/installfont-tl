@@ -9,9 +9,9 @@
 # Otherwise the *.afm and *.pfb files must be named in Karl Berry scheme
 # (e.g. 5bbr8a.pfb)
 # (tested with Ubuntu 9.10) v1.6a (03.11.2010)
-# (C) Josef Kleber, Christoph Bier 2009-2010  License: LPPL
+# (C) Josef Kleber, Christoph Bier 2009-2012  License: LPPL
 #
-VERSION="v1.6a (2010/11/03)"
+VERSION="v1.6b (2012/01/25)"
 #
 FONTFAMILY="5bb"
 FONTNAME="Softmaker Barbedor"
