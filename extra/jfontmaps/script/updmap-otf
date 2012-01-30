@@ -58,8 +58,6 @@ cat <<EOF
                  If your system does not have any of the supported font 
                  families as specified above, this target is selected 
                  automatically.
-     auto:       set fonts automatically depending on current settings and
-                 available fonts
      status:     get information about current environment and usable font map
 
 EOF
