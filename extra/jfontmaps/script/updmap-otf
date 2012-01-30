@@ -1,6 +1,12 @@
 #!/bin/sh
 # updmap-otf: v0.9.1
 #
+# Copyright 2004-2006 by KOBAYASHI R. Taizo
+# Copyright 2011-2012 by PREINING Norbert
+#
+# This file is licensed under GPL version 3.
+# For copyright statements see end of file.
+#
 # 27 Jan 2012 by PREINING Norbert <preining@logic.at>  v0.9.2
 #    support IPA and IPAex fonts
 #    improve and extended documentation
@@ -27,6 +33,7 @@
 # 02 Mar 2004 by KOBAYASHI R. Taizo <tkoba@ike-dyn.ritsumei.ac.jp> v0.2
 #    added noFont-udvips.map
 # 28 Feb 2004 by KOBAYASHI R. Taizo <tkoba@ike-dyn.ritsumei.ac.jp> v0.1
+
 
 ###
 ### Usage
@@ -287,3 +294,25 @@ esac
 
 main $@
 
+#
+#
+# Copyright statements:
+#
+# KOBAYASHI Taizo
+# email to preining@logic.at
+# Message-Id: <20120130.162953.59640143170594580.tkoba@cc.kyushu-u.ac.jp>
+# --------------------------------------------------------
+# copyright statement は簡単に以下で結構です。
+#
+#        Copyright 2004-2006 by KOBAYASHI Taizo
+#
+# license も特にこだわりはありませんので
+#
+#        GPL(v3)
+#
+# で結構です。
+# --------------------------------------------------------
+#
+# PREINING Norbert
+# as author and maintainer of the current file
+#

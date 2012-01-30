@@ -16,4 +16,8 @@ Copyright:
 ==========
 All the map files are under Public Domain.
 
-MISSING: copyright for updmap-otf
+The file updmap-otf is
+  Copyright 2004-2006 by KOBAYASHI Taizo
+  Copyright 2011-2012 by PREINING Norbert
+and licensed under the GPL version 3, see the file for details.
+
