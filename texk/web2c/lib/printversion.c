@@ -64,10 +64,8 @@ printversionandexit (const_string banner,
   printf ("named COPYING and the %s source.\n", prog_name);
   printf ("Primary author of %s: %s.\n", prog_name, author);
 
-  if (extra_info) {
+  if (extra_info)
     fputs (extra_info, stdout);
-    printf ("Compiled with %d file offset bits\n", 8 * sizeof (off_t)); 
-  }
 
   uexit (0);
 }

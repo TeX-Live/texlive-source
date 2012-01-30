@@ -1679,11 +1679,11 @@ parse_options (int argc, string *argv)
 #endif
 
     } else if (ARGUMENT_IS ("version")) {
-#if defined (pdfTeX) || defined(XeTeX)
         char *versions;
+#if defined (pdfTeX) || defined(XeTeX)
         initversionstring(&versions); 
 #else
-        const char *versions = "";
+        versions = NULL;
 #endif
         printversionandexit (BANNER, COPYRIGHT_HOLDER, AUTHOR, versions);
 
