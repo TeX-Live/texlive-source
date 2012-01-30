@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH PDFOPEN 1 2011-05-17  "pdfopen 0.82" ""
+.TH PDFOPEN 1 2012-01-28  "pdfopen 0.83" ""
 .
 .SH NAME
 pdfopen, pdfclose \- open or close a PDF file viewer
@@ -19,6 +19,10 @@ output help and exit
 .TP
 .B -v, --version
 output the version number and exit
+.TP
+.B -r, --reset_focus
+after sending commands to the PDF viewer, attempt to reset the input focus to
+the window which had focus before the commands were sent
 .TP
 .B -viewer
 <\fIar9\fP|\fIar9-tab\fP|\fIar8\fP|\fIar7\fP|\fIar5\fP|\fIxpdf\fP|\fIevince\fP>
@@ -65,7 +69,7 @@ document vary from one version of \fBacroread\fP to another;
 consequently, if you are using a version of \fBacroread\fP other than
 AR9, you should explicitly specify the viewer program.
 
-Version 0.81 of \fBpdfopen\fP accepts the following viewer options:
+Version 0.83 of \fBpdfopen\fP accepts the following viewer options:
 .br
 \fIar9\fP, \fIar9-tab\fP, \fIar8\fP, \fIar7\fP, \fIar5\fP, \fIxpdf\fP,
 and \fIevince\fP.
@@ -98,7 +102,7 @@ to ask them to implement a
 "\fB-page \fP\fI<pagenumber>\fP"
 command line option for \fBacroread\fP.
 
-These programs have been tested on Slackware64 Version 13.1 and a few
+These programs have been tested on Slackware64 Version 13.37 and a few
 other versions / distributions of GNU/Linux.  The code is reasonably
 generic and should work out of the box using most recent X11
 implementations.  (Reports to the contrary are welcome, particularly
@@ -133,9 +137,8 @@ With at least AR9 and some window managers, using
 to reload the document gives focus to the
 .B acroread
 window, even though the mouse cursor is not necessarily in that
-window.  This can be annoying.  A contribution from an X11 wizard to
-retain focus in the current window (or to restore focus to that
-window after reloading the PDF document) would be cheerily accepted.
+window.  This can be annoying.  The \fB-reset_focus\fP option can be
+used to deal with this problem.
 .
 .SH AUTHOR 
 This manual page was written by Jim Diamond <Jim.Diamond@acadiau.ca>.

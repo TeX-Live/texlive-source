@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------
-xpdfopen 0.82 - Send open/close commands to Acrobat Reader, xpdf and evince
+xpdfopen 0.83 - Send open/close commands to Acrobat Reader, xpdf and evince
 ---------------------------------------------------------------------------
 
 This is a Linux (X11) implementation of Fabrice Popineau's pdfclose/
@@ -30,13 +30,17 @@ Version 0.81 adds an implementation for evince.
 
 Version 0.82 adds a man page and -v/--version options for pdfopen.
 
+Version 0.83 adds the -r/-reset_focus option for pdfopen.
+
+
 The AR command lines do not behave precisely the same as under Windows, 
 because the Linux Reader behaves somewhat differently: it is not 
 scriptable, but it is possible to 'fake' key-presses.
 
 
 pdfopen has the following call sequence:
-	pdfopen [-viewer <ar9|ar9-tab|ar8|ar7|ar5|xpdf|evince>] <pdf file name>
+	pdfopen [-r|-reset_focus] \
+		[-viewer <ar9|ar9-tab|ar8|ar7|ar5|xpdf|evince>] <pdf file name>
 The 'ar9' version uses the '-openInNewInstance' option, the 'ar9-tab'
 version does not (so if there is already an AR9 window open, a new tab
 will be opened in that window).
@@ -48,7 +52,7 @@ This program closes an existing AR5, AR7, AR8, AR9, xpdf or evince window
 displaying the given PDF file.
 
 
-Version 0.82 compiles on Linux (Slackware64 13.1, anyway) with
+Version 0.83 compiles on Linux (Slackware64 13.37, anyway) with
 the following command:
 	gcc -Wall pdfopen.c sendx.c utils.c -o pdfopen -lX11 -s
 should you not want to go through the process of creating and running
@@ -58,7 +62,7 @@ a configure program.
 Taco Hoekwater <taco@metatex.org> (Version(s) up to 0.61)
 Dordrecht, The Netherlands, December 2008.
 
-Jim Diamond <jim.diamond@acadiau.ca> (Version 0.80, 0.81 and 0.82)
+Jim Diamond <jim.diamond@acadiau.ca> (Version 0.80, 0.81, 0.82 and 0.83)
 Acadia University, Wolfville, Nova Scotia, Canada; May 2011.
 
 

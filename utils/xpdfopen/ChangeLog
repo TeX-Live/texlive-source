@@ -1,3 +1,11 @@
+2012-01-28  Jim Diamond <jim.diamond@acadiau.ca>
+	* sendx.c:    fix (kludgily?) reset_focus() so that it actually works.
+	* pdfopen.c:  add -r and -reset_focus options.
+	* pdfopen.1:  update man page accordingly.
+	* xpdfopen.tex: update (ConTeXt) document accordingly.
+	* configure.ac: update for V 0.83.
+	* README:     update for V 0.83.
+
 2011-05-28  Jim Diamond <jim.diamond@acadiau.ca>
 	* pdfopen.c:  add -v and --version options.
 	* pdfopen.1:  create man page: thanks to Karl Berry for numerous

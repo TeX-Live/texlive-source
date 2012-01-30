@@ -8,15 +8,23 @@
  * Thing.
  *
  * Also added set_focus() and reset_focus() functions.
- * NOTE: they do not work, at least under FVWM2 on Slackware64-13.0.
- * They return success, but the focus never changes (or is reverted to the
- * window containing the mouse before a call to sendx_token() can do its
- * work).
+ *
+ * January 27, 2012 note:
+ * NOTE: to make reset_focus() work, at least under FVWM2 on
+ * Slackware64-13.37 when using AR9, I needed to call XOpenDisplay()
+ * again (since close_channel() has generally been called since
+ * set_focus() was called),  I needed to sleep a bit (perhaps < 1 second
+ * is fine, and perhaps other systems might need more, I dunno), and I
+ * needed to call XFlush().  If someone who understands why the code
+ * here opens and closes the display for every sendx_<something>() can
+ * explain why that makes sense, or why I need the sleep() and the
+ * XFlush(), I'd be happy to be enlightened.
  */
 
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -384,13 +392,20 @@ set_focus(const char * wname)
 }
 
 
-
 int
 reset_focus(void)
 {
     if (previous_window_set)
     {
+	sleep(1);
+	if ((display = XOpenDisplay(display_name)) == NULL)
+	{
+	    throw_exception("can't open display");
+	    return 1;
+	}
+
 	XSetInputFocus(display, previous_window, revert_to, CurrentTime);
+	XFlush(display);
 	previous_window_set = 0;
 	return 0;
     }

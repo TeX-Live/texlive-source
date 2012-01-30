@@ -24,7 +24,7 @@
  * please send it to me for inclusion.
  */
 
-#define     VERSION		"0.82"
+#define     VERSION		"0.83"
 
 #include    <stdio.h>
 #include    <stdlib.h>
@@ -168,10 +168,14 @@ usage(void)
     fprintf(stderr, "  %s [-v|--version]\n", progname);
     fprintf(stderr, "    Show the version number and exit.\n");
     
-    fprintf(stderr, "  %s [-viewer <prog>] <file.pdf>\n", progname);
+    fprintf(stderr, "  %s [-r|--reset_focus] [-viewer <prog>] <file.pdf>\n",
+	    progname);
     fprintf(stderr, "    If the PDF viewer <prog> is displaying <file.pdf>, "
 	    "reload that file.\n");
     fprintf(stderr, "    Otherwise call <prog> to display <file.pdf>.\n");
+    fprintf(stderr, "    If '-r' or '--reset_focus' is used, attempt to");
+    fprintf(stderr, " reset the input focus\n");
+    fprintf(stderr, "    after calling the viewer program.\n");
     fprintf(stderr, "    The default viewer program is %s.\n", DEFAULT_VIEWER);
     fprintf(stderr, "    Implemented viewers:");
     for (i = 0; i < viewers - 1; i++)
@@ -239,10 +243,14 @@ send_command(const char * window_name, const char * reload_cmd)
  * Try to reload the file.
  * If not successful, try to start up a new instance of the viewer program.
  * Return 0 on success, non-0 otherwise.
+ * 
+ * If reset_focus is true, (attempt to) reset the input focus to the
+ * window which had focus when this program was called.  This is
+ * currently only implemented for the USE_SENDX case.
  */
 
 static int
-view_file(const char * filename, int viewer_index)
+view_file(const char * filename, int viewer_index, int focus_reset)
 {
     char * window_name;
     pid_t pid;
@@ -257,6 +265,8 @@ view_file(const char * filename, int viewer_index)
         window_name = make_window_name(pdf_viewer.window_name_fmt, filename);
 	if (window_name == NULL)
 	    return 99;
+	if (focus_reset)
+	    (void)set_focus(window_name);
 	while (*reload_cmds)
 	{
 	    /*
@@ -286,6 +296,8 @@ view_file(const char * filename, int viewer_index)
 		break;
 	    reload_cmds++;
 	}
+	if (focus_reset)
+	    (void)reset_focus();
 	break;
 
       case USE_FORK_EXEC:
@@ -344,6 +356,7 @@ main(int argc, char * argv[])
     char * env_viewer;
     int i;
     int viewer_index = -1;
+    int focus_reset = 0;
 
     progname = argv[0];
 
@@ -361,6 +374,13 @@ main(int argc, char * argv[])
     {
 	printf("This is pdfopen version %s\n", VERSION);
 	return EXIT_SUCCESS;
+    }
+
+    if (!strcmp(argv[1], "--reset_focus") || !strcmp(argv[1], "-r"))
+    {
+	argc--;
+	argv++;
+	focus_reset = 1;
     }
 
     if (argc == 4 && !strcmp(argv[1], "-viewer"))
@@ -394,7 +414,7 @@ main(int argc, char * argv[])
 	return EXIT_FAILURE;
     }
 
-    if (view_file(argv[1], viewer_index))
+    if (view_file(argv[1], viewer_index, focus_reset))
 	return EXIT_FAILURE;
 
     return EXIT_SUCCESS;

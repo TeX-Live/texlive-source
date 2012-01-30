@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/xpdfopen/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -30,6 +30,8 @@ install-data-hook: install-man1-links
 uninstall-hook: uninstall-man1-links
 
 EXTRA_DIST = xpdfopen.pdf xpdfopen.tex
+
+EXTRA_DIST += pdfopen-AR-7-and-8.c
 
 EXTRA_DIST += Makefile.am.orig configure.ac.orig
 
