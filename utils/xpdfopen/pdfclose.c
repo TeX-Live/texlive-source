@@ -20,7 +20,7 @@
 #include    "xpdfopen.h"
 #include    "utils.h"
 
-#define     VERSION           "0.82"
+#define     VERSION           "0.83"
 
 char * progname;		/* set in main(); NOT static! */
 
