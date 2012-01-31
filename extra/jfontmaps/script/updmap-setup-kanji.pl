@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
-# updmap-otf: setup Japanese font embedding
+# updmap-setup-kanji: setup Japanese font embedding
 #
-# Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version
+# Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version (updmap-otf)
 # Copyright 2011-2012 by PREINING Norbert
 #
 # This file is licensed under GPL version 3.
@@ -41,7 +41,7 @@ $^W = 1;
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
-my $prg = "updmap-otf";
+my $prg = "updmap-setup-kanji";
 my $version = '$Id$';
 
 my $updmap_real = "updmap-sys";
@@ -88,12 +88,12 @@ sub version {
 
 sub Usage {
   my $usage = <<"EOF";
-  updmap-otf     Set up embedding of Japanese fonts via updmap.cfg.
+  updmap-setup-kanji  Set up embedding of Japanese fonts via updmap.cfg.
 
                  This script searches for some of the most common fonts
                  for embedding into pdfs by dvipdfmx.
 
-  Usage:  updmap-otf {<fontname>|auto|nofont|status}
+  Usage:  updmap-setup-kanji {<fontname>|auto|nofont|status}
 
      <fontname>  embed fonts as defined by the map file otf-<fontname>.map
                  if it exists.
