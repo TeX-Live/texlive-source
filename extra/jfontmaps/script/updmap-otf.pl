@@ -42,7 +42,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "updmap-otf";
-my $version = '$Id';
+my $version = '$Id$';
 
 my $updmap_real = "updmap-sys";
 my $updmap = $updmap_real;
