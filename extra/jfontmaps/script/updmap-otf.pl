@@ -9,6 +9,7 @@
 #
 # 31 Jan 2012
 #    rewrite in Perl, so that the script is usable under Windows
+#    add command line options for help, dry-run, etc
 # 27 Jan 2012 by PREINING Norbert <preining@logic.at>  v0.9.2
 #    support IPA and IPAex fonts
 #    improve and extended documentation
@@ -41,7 +42,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "updmap-otf";
-my $version = '$Id:';
+my $version = '$Id';
 
 my $updmap_real = "updmap-sys";
 my $updmap = $updmap_real;
