@@ -40,6 +40,7 @@ my (@psADOBE, @fileADOBE, @fileADOBEkb, @fileURW);
 my $enableItem;
 my @setoptions = ();
 my @showoptions = ();
+my @showoption = ();
 my @disableItem = ();
 my $listmaps;
 my $listavailablemaps;
@@ -126,6 +127,7 @@ Commands:
   --help                    show this message and exit
   --version                 show version information and exit
   --showoptions ITEM        show alternatives for options
+  --showoption ITEM         show value of option
   --setoption OPTION VALUE  set option, where OPTION is one of:
                              LW35, dvipsPreferOutline, dvipsDownloadBase35,
                              pdftexDownloadBase14, pxdviUse, kanjiEmbed,
@@ -269,6 +271,7 @@ sub processOptions {
       "setoption" =>
         sub {die "$0: --setoption needs an option and value; try --help.\n"},
       "showoptions=s" => \@showoptions,
+      "showoption=s" => \@showoption,
       "syncwithtrees" => \$syncwithtrees,
       "version" => sub { print &version(); exit(0); },
       "h|help" => \$opt_help)) {
@@ -625,7 +628,7 @@ sub setOptions {
     }
     
     die "$0: unexpected empty key or val for options (@options), goodbye.\n"
-      if !$key || !$val;
+      if !$key || !defined($val);
     &setOption ($key, $val);
   }
 }
@@ -658,6 +661,28 @@ m/^(dvipsPreferOutline|dvipsDownloadBase35|(pdftex|dvipdfm)DownloadBase14|pxdviU
   
   #print "Setting option $opt to $val...\n" if !$quiet;
   &configReplace("$cnfFile", "^" . "$opt" . "\\s", "$opt $val");
+}
+
+###############################################################################
+# showOption(item item ...)
+#   show current value for an item
+#
+sub showOption {
+  sub doit {
+    my ($a, $b) = @_;
+    my $v = &cfgval($a);
+    $v = $b unless (defined $v);
+    print "$a=$v\n";
+  }
+  foreach my $item (@_) {
+    doit("LW35", "URWkb") if ($item eq "LW35");
+    doit("dvipsPreferOutline", 1) if ($item eq "dvipsPreferOutline");
+    doit("dvipsDownloadBase35", 1) if ($item eq "dvipsDownloadBase35");
+    doit("pdftexDownloadBase14", 1) if ($item eq "pdftexDownloadBase14");
+    doit("kanjiEmbed", "noEmbed") if ($item eq "kanjiEmbed");
+    doit("kanjiVariant", "") if ($item eq "kanjiVariant");
+    doit("pxdviUse", 0) if ($item eq "pxdviUse");
+  }
 }
 
 ###############################################################################
@@ -1028,6 +1053,8 @@ sub mkMaps {
          .      ($dvipsDownloadBase35 ? "true" : "false")
          . "\n  download standard fonts (pdftex) : "
          .      ($pdftexDownloadBase14 ? "true" : "false")
+         . "\n  kanjiEmbed/variant replacement   : "
+         .      "$kanjiEmbed/$kanjiVariant"
          . "\n  create a mapfile for pxdvi       : "
          .      ($pxdviUse ? "true" : "false")
          . "\n\n");
@@ -1431,6 +1458,10 @@ sub main {
 
   &setupCfgFile;
 
+  if (@showoption) {
+    &showOption(@showoption);
+    exit 0;
+  }
   if ($listmaps) {
     &listMaps ('list');
     exit 0;

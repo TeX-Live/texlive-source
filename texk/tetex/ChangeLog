@@ -1,3 +1,9 @@
+2012-02-01  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: 
+	  . support -showoption key that shows the current setting
+	  . fix not-acceptance of empty values in key/val -setoption
+
 2012-01-19  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: 
