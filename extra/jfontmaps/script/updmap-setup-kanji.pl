@@ -4,12 +4,13 @@
 # Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version (updmap-otf)
 # Copyright 2011-2012 by PREINING Norbert
 #
-# This file is licensed under GPL version 3.
+# This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
 #
 # 31 Jan 2012
 #    rewrite in Perl, so that the script is usable under Windows
 #    add command line options for help, dry-run, etc
+#    support jis2004 via cmd line -jis2004
 # 27 Jan 2012 by PREINING Norbert <preining@logic.at>  v0.9.2
 #    support IPA and IPAex fonts
 #    improve and extended documentation
@@ -49,10 +50,12 @@ my $updmap = $updmap_real;
 
 my $dry_run = 0;
 my $opt_help = 0;
+my $opt_jis = 0;
 
 if (! GetOptions(
         "n|dry-run" => \$dry_run,
         "h|help" => \$opt_help,
+        "jis2004" => \$opt_jis,
         "version" => sub { print &version(); exit(0); }, ) ) {
   die "Try \"$0 --help\" for more information.\n";
 }
@@ -88,12 +91,12 @@ sub version {
 
 sub Usage {
   my $usage = <<"EOF";
-  updmap-setup-kanji  Set up embedding of Japanese fonts via updmap.cfg.
+  $prg  Set up embedding of Japanese fonts via updmap.cfg.
 
                  This script searches for some of the most common fonts
                  for embedding into pdfs by dvipdfmx.
 
-  Usage:  updmap-setup-kanji {<fontname>|auto|nofont|status}
+  Usage:  $prg {<fontname>|auto|nofont|status}
 
      <fontname>  embed fonts as defined by the map file otf-<fontname>.map
                  if it exists.
@@ -182,6 +185,11 @@ sub SetupMapFile {
   if (check_mapfile($MAPFILE)) {
     print "Setting up ... $MAPFILE\n";
     system("$updmap -setoption kanjiEmbed $rep");
+    if ($opt_jis) {
+      system("$updmap -setoption kanjiVariant -04");
+    } else {
+      system("$updmap -setoption kanjiVariant \"\"");
+    }
     system("$updmap");
   } else {
     print "NOT EXIST $MAPFILE\n";
@@ -241,8 +249,8 @@ sub main {
 
   CheckInstallFont();
 
-  if (defined($b)) {
-    usage();
+  if (!defined($a) || defined($b)) {
+    Usage();
     exit 1;
   }
 
