@@ -7,6 +7,9 @@
 # This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
 #
+# For development see
+#  http://www.tug.org/svn/texlive/trunk/Build/source/extra/jfontmaps/
+#
 # 31 Jan 2012
 #    rewrite in Perl, so that the script is usable under Windows
 #    add command line options for help, dry-run, etc
@@ -269,25 +272,24 @@ sub main {
 # KOBAYASHI Taizo
 # email to preining@logic.at
 # Message-Id: <20120130.162953.59640143170594580.tkoba@cc.kyushu-u.ac.jp>
+# Message-Id: <20120201.105639.625859878546968959.tkoba@cc.kyushu-u.ac.jp>
 # --------------------------------------------------------
 # copyright statement は簡単に以下で結構です。
 #
 #        Copyright 2004-2006 by KOBAYASHI Taizo
 #
-# license も特にこだわりはありませんので
+# では
+#        GPL version 3 or any later version
 #
-#        GPL(v3)
-#
-# で結構です。
 # --------------------------------------------------------
 #
 # PREINING Norbert
 # as author and maintainer of the current file
-#
+# Licensed under GPL version 3 or any later version
 #
 ### Local Variables:
 ### perl-indent-level: 2
 ### tab-width: 2
 ### indent-tabs-mode: nil
 ### End:
-# vim: set tabstop=2 expandtab:
+# vim: set tabstop=2 expandtab autoindent:

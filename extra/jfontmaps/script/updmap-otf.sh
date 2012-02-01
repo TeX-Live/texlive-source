@@ -4,7 +4,14 @@
 # Copyright 2004-2006 by KOBAYASHI R. Taizo
 # Copyright 2011-2012 by PREINING Norbert
 #
-# This file is licensed under GPL version 3.
+# WARNING: This file is NOT developed any more. TeX Live uses a version
+#          rewritten in perl called updmap-setup-kanji, which is located
+#          and developed in the same place as this file.
+# 
+# For development see
+#  http://www.tug.org/svn/texlive/trunk/Build/source/extra/jfontmaps/
+#
+# This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
 #
 # 27 Jan 2012 by PREINING Norbert <preining@logic.at>  v0.9.2
@@ -299,18 +306,18 @@ main $@
 # KOBAYASHI Taizo
 # email to preining@logic.at
 # Message-Id: <20120130.162953.59640143170594580.tkoba@cc.kyushu-u.ac.jp>
+# Message-Id: <20120201.105639.625859878546968959.tkoba@cc.kyushu-u.ac.jp>
 # --------------------------------------------------------
 # copyright statement は簡単に以下で結構です。
 #
 #        Copyright 2004-2006 by KOBAYASHI Taizo
 #
-# license も特にこだわりはありませんので
+# では
+#        GPL version 3 or any later version
 #
-#        GPL(v3)
-#
-# で結構です。
 # --------------------------------------------------------
 #
 # PREINING Norbert
 # as author and maintainer of the current file
+# Licensed under GPL version 3 or any later version
 #
