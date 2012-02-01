@@ -2467,6 +2467,37 @@ the bytes in one shot.  Much better even than writing four
 bytes at a time.
 @z
 
+@x [32.601] l.11911 - check dvi file size
+each time, we use the macro |dvi_out|.
+@y
+each time, we use the macro |dvi_out|.
+
+The length of |dvi_file| should not exceed |@"7FFFFFFF|; we set |cur_s:=-2|
+to prevent further \.{DVI} output causing infinite recursion.
+@z
+
+@x [32.601] l.11918 - dvi_swap: check dvi file size
+begin if dvi_limit=dvi_buf_size then
+@y
+begin if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
+  begin cur_s:=-2;
+  fatal_error("dvi length exceeds ""7FFFFFFF");
+@.dvi length exceeds...@>
+  end;
+if dvi_limit=dvi_buf_size then
+@z
+
+@x [32.602] l.11932 -  empty the last bytes: check dvi file size
+if dvi_ptr>0 then write_dvi(0,dvi_ptr-1)
+@y
+if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
+  begin cur_s:=-2;
+  fatal_error("dvi length exceeds ""7FFFFFFF");
+@.dvi length exceeds...@>
+  end;
+if dvi_ptr>0 then write_dvi(0,dvi_ptr-1)
+@z
+
 @x [32.602] l.11944 - Allow for outputting more than 256 fonts.
 begin dvi_out(fnt_def1);
 dvi_out(f-font_base-1);@/
@@ -2573,6 +2604,11 @@ if ipc_on>0 then
     flush_dvi;
     dvi_gone:=dvi_gone+half_buf;
     end;
+  if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
+    begin cur_s:=-2;
+    fatal_error("dvi length exceeds ""7FFFFFFF");
+@.dvi length exceeds...@>
+    end;
   if dvi_ptr>0 then
     begin write_dvi(0, dvi_ptr-1);
     flush_dvi;
@@ -2584,7 +2620,14 @@ if ipc_on>0 then
 endif ('IPC');
 @z
 
-@x [32.642] l.12742 - Use dvi_offset instead of dvi_buf_size with IPC stuff.
+@x [32.645] l.12766 - check dvi file size
+else  begin dvi_out(post); {beginning of the postamble}
+@y
+else if cur_s<>-2 then
+  begin dvi_out(post); {beginning of the postamble}
+@z
+
+@x [32.645] l.12775 - Use dvi_offset instead of dvi_buf_size with IPC stuff.
   k:=4+((dvi_buf_size-dvi_ptr) mod 4); {the number of 223's}
 @y
 ifdef ('IPC')
@@ -2595,13 +2638,13 @@ ifndef ('IPC')
 endifn ('IPC')
 @z
 
-@x [32.642] l.12773 - use print_file_name
+@x [32.645] l.12780 - use print_file_name
   print_nl("Output written on "); slow_print(output_file_name);
 @y
   print_nl("Output written on "); print_file_name(0, output_file_name, 0);
 @z
 
-@x [32.642] l.12750 - i18n fix
+@x [32.645] l.12782 - i18n fix
   print(" ("); print_int(total_pages); print(" page");
   if total_pages<>1 then print_char("s");
 @y

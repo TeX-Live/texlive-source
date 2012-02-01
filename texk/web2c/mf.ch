@@ -1942,6 +1942,38 @@ the bytes to be written in one shot.  Much better than writing four
 bytes at a time.
 @z
 
+@x [47.1155] check gf file size
+each time, we use the macro |gf_out|.
+@y
+each time, we use the macro |gf_out|.
+
+The length of |gf_file| should not exceed |@"7FFFFFFF|; we set
+|gf_prev_ptr:=0| to prevent further \.{GF} output causing infinite
+recursion.
+@z
+
+@x [47.1155] gf_swap: check gf file size
+begin if gf_limit=gf_buf_size then
+@y
+begin if gf_ptr>(@"7FFFFFFF-gf_offset) then
+  begin gf_prev_ptr:=0;
+  fatal_error("gf length exceeds ""7FFFFFFF");
+@.gf length exceeds...@>
+  end;
+if gf_limit=gf_buf_size then
+@z
+
+@x [47.1156] empty the last bytes: check gf file size
+if gf_ptr>0 then write_gf(0,gf_ptr-1)
+@y
+if gf_ptr>(@"7FFFFFFF-gf_offset) then
+  begin gf_prev_ptr:=0;
+  fatal_error("gf length exceeds ""7FFFFFFF");
+@.gf length exceeds...@>
+  end;
+if gf_ptr>0 then write_gf(0,gf_ptr-1)
+@z
+
 @x [47.1163] C needs k to be 0..256 instead of 0..255.
 procedure init_gf;
 var @!k:eight_bits; {runs through all possible character codes}

@@ -1,3 +1,7 @@
+2012-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch: Ensure dvi file size < 2GB.
+
 2011-12-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch, om16bit.ch: Consistency of `constants':

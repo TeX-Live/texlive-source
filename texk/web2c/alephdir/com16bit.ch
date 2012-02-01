@@ -1093,7 +1093,7 @@ else  if c="""" then begin
 @x [29.517] l.10002 - end_name: string recycling
 @ The third.
 @^system dependencies@>
- 
+
 @p procedure end_name;
 @y
 @ The third.
@@ -1617,6 +1617,37 @@ the bytes in one shot.  Much better even than writing four
 bytes at a time.
 @z
 
+@x [32.601] l.11911 - check dvi file size
+each time, we use the macro |dvi_out|.
+@y
+each time, we use the macro |dvi_out|.
+
+The length of |dvi_file| should not exceed |@"7FFFFFFF|; we set |cur_s:=-2|
+to prevent further \.{DVI} output causing infinite recursion.
+@z
+
+@x [32.601] l.11918 - dvi_swap: check dvi file size
+begin if dvi_limit=dvi_buf_size then
+@y
+begin if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
+  begin cur_s:=-2;
+  fatal_error("dvi length exceeds ""7FFFFFFF");
+@.dvi length exceeds...@>
+  end;
+if dvi_limit=dvi_buf_size then
+@z
+
+@x [32.602] l.11932 -  empty the last bytes: check dvi file size
+if dvi_ptr>0 then write_dvi(0,dvi_ptr-1)
+@y
+if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
+  begin cur_s:=-2;
+  fatal_error("dvi length exceeds ""7FFFFFFF");
+@.dvi length exceeds...@>
+  end;
+if dvi_ptr>0 then write_dvi(0,dvi_ptr-1)
+@z
+
 @x [32.617] l.12261 - Use output_comment if the user set it. Assume it's short enough.
   old_setting:=selector; selector:=new_string;
 @y
@@ -1648,6 +1679,11 @@ if ipc_on>0 then
     flush_dvi;
     dvi_gone:=dvi_gone+half_buf;
     end;
+  if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
+    begin cur_s:=-2;
+    fatal_error("dvi length exceeds ""7FFFFFFF");
+@.dvi length exceeds...@>
+    end;
   if dvi_ptr>0 then
     begin write_dvi(0, dvi_ptr-1);
     flush_dvi;
@@ -1659,7 +1695,14 @@ if ipc_on>0 then
 endif ('IPC');
 @z
 
-@x [32.642] l.12742 - Use dvi_offset instead of dvi_buf_size with IPC stuff.
+@x [32.645] l.12766 - check dvi file size
+else  begin dvi_out(post); {beginning of the postamble}
+@y
+else if cur_s<>-2 then
+  begin dvi_out(post); {beginning of the postamble}
+@z
+
+@x [32.645] l.12775 - Use dvi_offset instead of dvi_buf_size with IPC stuff.
   k:=4+((dvi_buf_size-dvi_ptr) mod 4); {the number of 223's}
 @y
 ifdef ('IPC')

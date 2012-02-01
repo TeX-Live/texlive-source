@@ -475,6 +475,24 @@ begin
 end;
 @z
 
+@x [108] dvi_swap: check dvi file size
+begin if dvi_limit=dvi_buf_size then
+@y
+begin if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
+  abort('dvi length exceeds "7FFFFFFF');
+@.dvi length exceeds...@>
+if dvi_limit=dvi_buf_size then
+@z
+
+@x [109] empty the last bytes: check dvi file size
+if dvi_ptr>0 then write_dvi(0,dvi_ptr-1)
+@y
+if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
+  abort('dvi length exceeds "7FFFFFFF');
+@.dvi length exceeds...@>
+if dvi_ptr>0 then write_dvi(0,dvi_ptr-1)
+@z
+
 % [111] More .b?'s.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
