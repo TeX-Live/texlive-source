@@ -1,3 +1,13 @@
+2012-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.web, ovf2ovp.web: Both nl and lig_size are in words,
+	so the multiplication by 4 is not needed.
+
+	* ofm2opl.ch: Handle tfm_file_array as in TFtoPL, i.e., allocate
+	with a small initial size and reallocate as needed.
+
+	* ofm2opl.ch, opl2ofm.web: Remove unused constant tfm_size.
+
 2012-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* opl2ofm.web, ovp2ovf.web: Interpret "--" as "+", not "-".

@@ -3,6 +3,8 @@
 	* tex.ch, gftodvi.ch: Ensure dvi file size < 2GB.
 	* mf.ch: Ensure gf file size < 2GB.
 
+	* tftopl.ch: Remove unused constant tfm_size.
+
 2012-01-24  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi (Common options): remove doc for the long-since

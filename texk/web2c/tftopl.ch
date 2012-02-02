@@ -64,7 +64,6 @@ procedure initialize; {this procedure gets things started properly}
 @!hash_size=5003; {preferably a prime number, a bit larger than the number
   of character pairs in lig/kern steps}
 @y
-@!tfm_size=150000; {maximum length of |tfm| data, in bytes}
 @!lig_size=32510; {maximum length of |lig_kern| program, in words ($<2^{15}$)}
 @!hash_size=32579; {preferably a prime number, a bit larger than the number
   of character pairs in lig/kern steps}

@@ -126,7 +126,6 @@ reduce \.{PLtoTF}'s capacity.
 @!hash_size=130003; {preferably a prime number, a bit larger than the number
   of character pairs in lig/kern steps}
 @!hash_mult=16007; {another prime}
-@!tfm_size=2000000; {maximum length of |tfm| data, in bytes}
 @!lig_size=800000; {maximum length of |lig_kern| program, in words}
 @!max_char=65535; {the largest character number in a font}
 @!xmax_char=65536; {|max_char|+1}

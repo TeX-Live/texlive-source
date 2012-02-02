@@ -627,7 +627,7 @@ if lf<>(header_length+lh+ncw+nw+nh+nd+ni+nlw+nk+neew+np+
 @.Subfile sizes don't add up...@>
 if lh<2 then abort('The header length is only ',lh:1,'!');
 @.The header length...@>
-if nl>4*lig_size then
+if nl>lig_size then
   abort('The lig/kern program is longer than I can handle!');
 @.The lig/kern program...@>
 if (bc>ec+1)or(ec>top_char) then abort('The character code range ',

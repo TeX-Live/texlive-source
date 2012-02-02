@@ -53,8 +53,13 @@ procedure initialize; {this procedure gets things started properly}
     kpse_init_prog ('OFM2OPL', 0, nil, nil);
     {We |xrealloc| when we know how big the file is.  The 1000 comes
      from the negative lower bound.}
-    tfm_file_array := cast_to_byte_pointer (xmalloc (2000000));
+    tfm_file_array := cast_to_byte_pointer (xmalloc (1009));
     parse_arguments;
+@z
+
+@x [4] Drop unused constant.
+@!tfm_size=2000000; {maximum length of |tfm| data, in bytes}
+@y
 @z
 
 @x [7] Open the TFM file.
@@ -141,8 +146,8 @@ end;
 if 4*lf-1>tfm_size then abort('The file is bigger than I can handle!');
 @.The file is bigger...@>
 @y
-{|tfm_file_array
-  := cast_to_byte_pointer (xrealloc (tfm_file_array, 4 * lf - 1 + 1108));|}
+tfm_file_array
+  := cast_to_byte_pointer (xrealloc (tfm_file_array, 4 * lf - 1 + 1002));
 @z
 
 % [27, 28] Change strings to C char pointers. The Pascal strings are
