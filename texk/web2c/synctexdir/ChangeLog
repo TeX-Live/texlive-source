@@ -1,3 +1,8 @@
+2012-02-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex_parser.c: Change struct __synctex_updater_t member
+	file from 'void *' to 'gzFile', they differ for zlib-1.2.6.
+
 2011-10-18  Akira Kakuto   <kakuto@fuk.kindai.ac.jp>
 
 	* synctex_parser.c: remove "# warning ..." lines, because MSVC fails to

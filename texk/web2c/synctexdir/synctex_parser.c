@@ -4328,9 +4328,9 @@ typedef int (*synctex_fprintf_t)(void *, const char * , ...); /*  print formatte
 #   define SYNCTEX_BITS_PER_BYTE 8
 
 struct __synctex_updater_t {
-    void *file;                 /*  the foo.synctex or foo.synctex.gz I/O identifier  */
-	synctex_fprintf_t fprintf;  /*  either fprintf or gzprintf */
-	int length;                 /*  the number of chars appended */
+    gzFile file;                /*  the foo.synctex or foo.synctex.gz I/O identifier  */
+    synctex_fprintf_t fprintf;  /*  either fprintf or gzprintf */
+    int length;                 /*  the number of chars appended */
     struct _flags {
         unsigned int no_gz:1;   /*  Whether zlib is used or not */
         unsigned int reserved:SYNCTEX_BITS_PER_BYTE*sizeof(int)-1; /*  Align */
