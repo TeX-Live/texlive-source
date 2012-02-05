@@ -73,6 +73,14 @@ packed file of bytes.  It's no problem in C.
 rewritebin (tfm_file, tfm_name);
 @z
 
+@x [17] Avoid name conflict; MinGW defines `byte' in <rpcndr.h>.
+correspond to one-character constants like \.{"A"} in \.{WEB} language.
+@y
+correspond to one-character constants like \.{"A"} in \.{WEB} language.
+
+@d byte == byte_type
+@z
+
 @x [18] Pascal Web's char
 @d first_ord=0 {ordinal number of the smallest element of |char|}
 @y

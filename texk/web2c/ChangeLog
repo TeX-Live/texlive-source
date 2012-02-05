@@ -1,3 +1,7 @@
+2012-02-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* vftovp.ch: Allow arbitrarily large TFM files as in TFtoPL.
+
 2012-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex.ch, gftodvi.ch: Ensure dvi file size < 2GB.

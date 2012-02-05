@@ -19,6 +19,19 @@
 @d print_real(#)==fprint_real(stderr,#)
 @z
 
+% [2] We need to tell web2c about one special variable.
+% Perhaps it would be better to allow @define's
+% anywhere in a source file, but that seemed just as painful as this.
+@x
+@p program VFtoVP(@!vf_file,@!tfm_file,@!vpl_file,@!output);
+@y
+@p
+{Tangle doesn't recognize @@ when it's right after the \.=.}
+@\@= @@define var tfm;@>@\
+
+program VFtoVP(@!vf_file,@!tfm_file,@!vpl_file,@!output);
+@z
+
 @x still [2] Set up for path reading.
 procedure initialize; {this procedure gets things started properly}
   var @!k:integer; {all-purpose index for initialization}
@@ -30,6 +43,9 @@ procedure initialize; {this procedure gets things started properly}
   begin
     kpse_set_program_name (argv[0], nil);
     kpse_init_prog ('VFTOVP', 0, nil, nil);
+    {We |xrealloc| when we know how big the file is.  The 1000 comes
+     from the negative lower bound.}
+    tfm_file_array := cast_to_byte_pointer (xmalloc (1003));
     parse_arguments;
 @z
 
@@ -50,7 +66,6 @@ procedure initialize; {this procedure gets things started properly}
 @y
 @d class == class_var
 @<Constants...@>=
-@!tfm_size=150000; {maximum length of |tfm| data, in bytes}
 @!vf_size=100000; {maximum length of |vf| data, in bytes}
 @!max_fonts=300; {maximum number of local fonts in the |vf| file}
 @!lig_size=32510; {maximum length of |lig_kern| program, in words}
@@ -100,7 +115,7 @@ end else begin
 end;
 @z
 
-% [24] `index' is not a good choice of identifier in C.
+% [22] `index' is not a good choice of identifier in C.
 @x
 @<Types...@>=
 @!index=0..tfm_size; {address of a byte in |tfm|}
@@ -108,7 +123,16 @@ end;
 @d index == index_type
 
 @<Types...@>=
-@!index=0..tfm_size; {address of a byte in |tfm|}
+@!index=integer; {address of a byte in |tfm|}
+@z
+
+@x [23] Make |tfm| be dynamically allocated.
+@!tfm:array [-1000..tfm_size] of byte; {the \.{TFM} input data all goes here}
+@y
+{Kludge here to define |tfm| as a macro which takes care of the negative
+ lower bound.  We've defined |tfm| for the benefit of web2c above.}
+@=#define tfm (tfmfilearray + 1001);@>@\
+@!tfm_file_array: pointer_to_byte; {the input data all goes here}
 @z
 
 % [24] abort() should cause a bad exit code.
@@ -122,6 +146,14 @@ end;
   print_ln('Sorry, but I can''t go on; are you sure this is a TFM?');
   uexit(1);
   end
+@z
+
+@x [24] Allow arbitrarily large input files.
+if 4*lf-1>tfm_size then abort('The file is bigger than I can handle!');
+@.The file is bigger...@>
+@y
+tfm_file_array
+  := cast_to_byte_pointer (xrealloc (tfm_file_array, 4 * lf - 1 + 1002));
 @z
 
 % [25] Both nl and lig_size are in words, so the multiplication is not

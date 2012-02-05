@@ -1,3 +1,10 @@
+2012-02-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ovf2ovp.ch: Allow arbitrarily large TFM files as in TFtoPL.
+
+	* opl2ofm.ch, ovp2ovf.ch: Avoid name conflict; MinGW defines
+	`byte' in <rpcndr.h>.
+
 2012-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofm2opl.web, ovf2ovp.web: Both nl and lig_size are in words,

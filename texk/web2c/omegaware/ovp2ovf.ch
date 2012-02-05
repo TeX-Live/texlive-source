@@ -63,6 +63,14 @@ rewritebin (vf_file, vf_name);
 rewritebin (tfm_file, tfm_name);
 @z
 
+@x [23] Avoid name conflict; MinGW defines `byte' in <rpcndr.h>.
+correspond to one-character constants like \.{"A"} in \.{WEB} language.
+@y
+correspond to one-character constants like \.{"A"} in \.{WEB} language.
+
+@d byte == byte_type
+@z
+
 @x [24] Pascal Web's char
 @d first_ord=0 {ordinal number of the smallest element of |char|}
 @y
