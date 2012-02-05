@@ -97,6 +97,7 @@ texmf_dist_other_scripts = \
 	fontools/showglyphs \
 	fragmaster/fragmaster.pl \
 	glossaries/makeglossaries \
+	jfontmaps/updmap-setup-kanji.pl \
 	latex2man/latex2man \
 	latexdiff/latexdiff.pl \
 	latexdiff/latexdiff-vc.pl \
