@@ -9,7 +9,9 @@ Steps to add a new script:
 * create a directory with the package name, and add the script
 * add the dir/script-name to Makefile.am in the respective section
   (shell vs general interpreter, texmf vs texmf-dist)
-
+* add the package/script to ctan2tds so that is found and installed automatically
+* get ctan2tl run properly
+* (reautoconf?)
 
 Other explanation from Makefile.am
 ----------------------------------
