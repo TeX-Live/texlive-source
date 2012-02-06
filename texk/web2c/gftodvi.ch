@@ -468,11 +468,9 @@ var k:dvi_index;
 begin for k:=a to b do write(dvi_file,dvi_buf[k]);
 end;
 @y
-In C, we can write out the entire array with one call.
-@p procedure write_dvi(@!a,@!b:dvi_index);
-begin
-  write_chunk (dvi_file, dvi_buf, a, b);
-end;
+In C, we use a macro to call |fwrite| or |write| directly, writing all
+the bytes in one shot.  Much better even than writing four
+bytes at a time.
 @z
 
 @x [108] dvi_swap: check dvi file size

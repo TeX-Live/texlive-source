@@ -1,3 +1,10 @@
+2012-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.defines: Moved writedvi from here ...
+	* common.defines: ... to here for use in GFtoDVI.
+
+	* common.defines: Drop writechunk, GFtoDVI now uses writedvi.
+
 2012-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fixwrites.c: Replace 'fprintf(filename, "%c\n", char);' by

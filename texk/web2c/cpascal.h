@@ -144,9 +144,18 @@ typedef FILE *text;
 typedef unsigned char *pointertobyte;
 #define casttobytepointer(e) ((pointertobyte) e)
 
-/* Write out elements START through END of BUF to the file F.  For gftodvi.  */
-#define writechunk(f, buf, start, end) \
-  (void) fwrite (&buf[start], sizeof (buf[start]), end - start + 1, f)
+/* How to output to the GF or DVI file.  */
+#define WRITE_OUT(a, b)							\
+  if ((size_t) fwrite ((char *) &OUT_BUF[a], sizeof (OUT_BUF[a]),       \
+                    (size_t) ((size_t)(b) - (size_t)(a) + 1), OUT_FILE) \
+      != (size_t) ((size_t) (b) - (size_t) (a) + 1))                    \
+    FATAL_PERROR ("fwrite");
+
+#ifdef GFTODVI
+#define writedvi WRITE_OUT 
+#define OUT_FILE dvifile
+#define OUT_BUF dvibuf
+#endif
 
 /* PatGen 2 uses this.  */
 #define input2ints(a,b) zinput2ints (&a, &b)

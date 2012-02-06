@@ -68,7 +68,6 @@
 @define procedure updatescreen;
 @define procedure wakeupterminal;
 @define procedure wclose ();
-@define procedure writedvi ();
 @define procedure writegf ();
 
 @define type fourquarters;

@@ -174,13 +174,7 @@ extern void ipcpage (int);
 #endif /* IPC */
 #endif /* TeX */
 
-/* How to output to the GF or DVI file.  */
-#define WRITE_OUT(a, b)							\
-  if ((size_t) fwrite ((char *) &OUT_BUF[a], sizeof (OUT_BUF[a]),       \
-                    (size_t) ((size_t)(b) - (size_t)(a) + 1), OUT_FILE) \
-      != (size_t) ((size_t) (b) - (size_t) (a) + 1))                    \
-    FATAL_PERROR ("fwrite");
-
+/* How to flush the DVI file.  */
 #define flush_out() fflush (OUT_FILE)
 
 /* Used to write to a TFM file.  */

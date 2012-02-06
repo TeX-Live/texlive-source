@@ -1,3 +1,7 @@
+2012-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatex.h: Remove definition of WRITE_OUT, now in ../cpascal.h.
+
 2012-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/writejbig2.w (getstreamlen): Change type to `off_t'.

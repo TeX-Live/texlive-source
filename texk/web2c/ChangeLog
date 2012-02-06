@@ -1,3 +1,11 @@
+2012-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h: Moved WRITE_OUT from here ...
+	* cpascal.h: ... to here for use in GFtoDVI.
+
+	* gftodvi.ch (write_dvi): Done in C as for TeX.
+	* cpascal.h: Drop writechunk, GFtoDVI now uses writedvi.
+
 2012-02-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vftovp.ch: Allow arbitrarily large TFM files as in TFtoPL.

@@ -90,13 +90,7 @@ extern void ipcpage(int);
 #  endif                        /* IPC */
 
 
-/* How to output to the GF or DVI file.  */
-#  define	WRITE_OUT(a, b)							\
-  if (fwrite ((char *) &OUT_BUF[a], sizeof (OUT_BUF[a]),		\
-                 (int) ((b) - (a) + 1), OUT_FILE) 			\
-      != (int) ((b) - (a) + 1))						\
-    FATAL_PERROR ("fwrite");
-
+/* How to flush the DVI file.  */
 #  define flush_out() fflush (OUT_FILE)
 
 /* Read a line of input as quickly as possible.  */
