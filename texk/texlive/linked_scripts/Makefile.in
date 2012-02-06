@@ -33,7 +33,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = linked_scripts
-DIST_COMMON = $(nobase_dist_texmf_dist_scripts_SCRIPTS) \
+DIST_COMMON = README $(nobase_dist_texmf_dist_scripts_SCRIPTS) \
 	$(nobase_dist_texmf_scripts_SCRIPTS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -258,6 +258,7 @@ texmf_dist_other_scripts = \
 	fontools/showglyphs \
 	fragmaster/fragmaster.pl \
 	glossaries/makeglossaries \
+	jfontmaps/updmap-setup-kanji.pl \
 	latex2man/latex2man \
 	latexdiff/latexdiff.pl \
 	latexdiff/latexdiff-vc.pl \
