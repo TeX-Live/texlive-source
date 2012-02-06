@@ -19,7 +19,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "updmap-setup-kanji";
-my $vers = "0.9.2dev";
+my $vers = "0.9.3";
 my $version = '$Id$';
 
 my $updmap_real = "updmap-sys";
@@ -36,6 +36,12 @@ if (! GetOptions(
         "version" => sub { print &version(); exit(0); }, ) ) {
   die "Try \"$0 --help\" for more information.\n";
 }
+
+
+sub win32 { return ($^O=~/^MSWin(32|64)$/i); }
+
+my $nul = (win32() ? 'nul' : '/dev/null') ;
+
 
 if ($dry_run) {
   $updmap = "echo updmap-sys"; 
@@ -127,7 +133,7 @@ sub CheckInstallFont {
 
 sub check_mapfile {
   my $mapf = shift;
-  my $f = `kpsewhich $mapf 2>/dev/null`;
+  my $f = `kpsewhich $mapf 2> $nul`;
   my $ret = $?;
   if (wantarray) {
     return (!$ret, $f);
@@ -235,8 +241,6 @@ sub SetupReplacement {
 
 sub main {
   my ($a, $b) = @_;
-
-  # mktexlsr 2> /dev/null
 
   CheckInstallFont();
 

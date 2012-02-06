@@ -1,7 +1,9 @@
 2012-02-06  Norbert Preining  <preining@logic.at>
 
 	* scripts/updmap-setup-kanji.pl: change output of status to
-	only report family, change help text a bit
+	only report family, change help text a bit,
+	fix for win32, thanks Akira Kakuto
+	Version v0.9.3
 
 2012-01-31  Norbert Preining  <preining@logic.at>
 
