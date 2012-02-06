@@ -6,7 +6,7 @@ $opt_l = 'kKsSvVzZoOuUiIA';             # defaults for Slovak and Czech
 $opt_c = $opt_f = $opt_h = $opt_v = 0;
 getopts('cfphvl:');
 
-$version_msg = "findhyph version 2.0\n";
+$version_msg = "findhyph version 3.0\n";
 $help_msg = "\nUsage: findhyph [options] <yourtexfile.log>\n" .
             "\n" .
             "Options: -c           display hyphenated words in context\n" .
@@ -33,9 +33,13 @@ $pageno_allowed = 0;
 $write_hyph_page = 0;
 $write_prep_page = 0;
 $act_text = "";
+$looseness = 0;
 
 while(<IN>) {
   chomp;
+  if (/^\@looseness=(\-?\d+)$/) {
+    $looseness = $1;
+  }
   if (/^\@firstpass$/) {
     $pageno_allowed = 0;
     $endgraf = 0;
@@ -46,6 +50,7 @@ while(<IN>) {
     $act_text = "";
     @USED = ();
     %BREAKS = ();
+    %LOOSE = ();
     next;
   }
   if (/^\@secondpass$/) {
@@ -54,6 +59,7 @@ while(<IN>) {
     $act_text = "";
     @USED = ();
     %BREAKS = ();
+    %LOOSE = ();
     next;
   }
   if (/^\@emergencypass$/) {
@@ -61,14 +67,20 @@ while(<IN>) {
     $act_text = "";
     @USED = ();
     %BREAKS = ();
+    %LOOSE = ();
     next;
   }
-  if ($search && /^@@(\d+).+ t=(\d+) \-\> @@(\d+)/) {
+  if ($search && /^@@(\d+): line (\d+)\..+ t=(\-?\d+) \-\> @@(\d+)/) {
     $act_break = $1;
-    $BREAKS{$act_break}{'prev'} = $3;
-    if ($endgraf && $2 < $demerits) {
+    $BREAKS{$act_break}{'prev'} = $4;
+    if ($endgraf && $3 < $demerits) {
       $max_break = $1;
-      $demerits = $2;
+      $max_line = $2;
+      $demerits = $3;
+    }
+    if ($endgraf && $looseness != 0) {
+      $LOOSE{$1}{"line"} = $2;
+      $LOOSE{$1}{"demerits"} = $3;
     }
     $act_text .= "\@$act_break\@";
     next;
@@ -88,6 +100,7 @@ while(<IN>) {
     $pageno_allowed = 1;
     do_hyph();
     $search = 0;
+    $looseness = 0;
     next;
   }
   if ($search) {
@@ -112,6 +125,22 @@ close(O1);
 close(O2) if $opt_p;
 
 sub do_hyph {
+  if ($looseness != 0) {
+    $diff_line = 1e10;
+    $diff_demer = 1e10;
+    for $i (keys %LOOSE) {
+      if (abs($LOOSE{$i}{"line"} - $max_line - $looseness) < $diff_line) {
+        $diff_line = abs($LOOSE{$i}{"line"} - $max_line - $looseness);
+        $diff_demer = $LOOSE{$i}{"demerits"};
+        $max_break = $i;
+      }
+      if (abs($LOOSE{$i}{"line"} - $max_line - $looseness) == $diff_line && 
+          $LOOSE{$i}{"demerits"} < $diff_demer) {
+        $diff_demer = $LOOSE{$i}{"demerits"};
+        $max_break = $i;
+      }
+    }
+  }
   $br = $max_break;
   while (1) {
     $br = $BREAKS{$br}{'prev'};
@@ -200,6 +229,13 @@ B<findhyph [options]> F<foo.log>
 
 =back
 
+If you are setting C<\looseness=E<lt>NE<gt>> to optimize paragraphs, 
+you need to pass that information to the file F<foo.log> in a form 
+C<@looseness=E<lt>NE<gt>> (on a separate line). You can use a macro like
+C<\def\setlooseness#1{\immediate\write-1{@looseness=#1}\looseness=#1}>
+for this purpose. If the paragraph contains material in display math mode,
+you need to use the macro in all split parts of the paragraph.
+
 =head1 OPTIONS
 
 =over 4
@@ -272,7 +308,7 @@ public release
 
 =item *
 
-fixes in line breaks detection algorithm; support for third pass of line
+fixes in line breaks detection algorithm; support for the third pass of line
 breaking algorithm in TeX (positive \emergencystretch); support for 
 discretionary breaks in the first pass
 
@@ -297,6 +333,21 @@ suggestions and testing by Pavel Striz
 
 =back
 
+=head4 3.0 (2012-02-01)
+
+=over 4
+
+=item *
+
+fixed a bug when total paragraph demerits are negative
+
+=item *
+
+C<\looseness> setting is now taken into account (thanks to Karel Horak
+for identifying the issue)
+
+=back
+
 =head1 LICENSE
 
 This program is free software; you can redistribute it and/or modify
@@ -306,6 +357,6 @@ any later version.
 
 =head1 AUTHOR
 
-Copyright (c) Martin Budaj E<lt>m.b@speleo.skE<gt> 2000, 2001, 2009
+Copyright (c) Martin Budaj E<lt>m.b@speleo.skE<gt> 2000, 2001, 2009, 2012
 
 =cut
