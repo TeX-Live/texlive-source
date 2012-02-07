@@ -1,37 +1,27 @@
+$Id$
+Copyright (C) 2012 Norbert Preining <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
+
 source/texk/texlive/linked_scripts
 ==================================
-
 This directory contains copies of the scripts that are shipped within
-TeX Live. 
+TeX Live.  See more discussion, rationale, etc., in ./Makefile.am.
 
-Steps to add a new script:
---------------------------
-* create a directory with the package name, and add the script
+Steps to add a new script (take your time, do it right):
+
+* svn mkdir the directory with the package name, and add the script
+
 * add the dir/script-name to Makefile.am in the respective section
   (shell vs general interpreter, texmf vs texmf-dist)
-* add the package/script to ctan2tds so that is found and installed automatically
-* get ctan2tl run properly
-* (reautoconf?)
 
-Other explanation from Makefile.am
-----------------------------------
-# The idea is to install the scripts themselves in texmf*/scripts, and
-# have bin/arch/foo be a symlink to, say,
-# ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk
-# space, but more importantly omit duplication, and most
-# importantly of all make it possible to invoke the same Perl script on
-# Windows (see ../w32_wrapper).
-#
-# The installation into texmf*/scripts is ideally done with ctan2tl.
-# The copy of the wrapper for Windows is also done by ctan2tl.  (And
-# for shell scripts, its addition must be undone by hand.)  The
-# check-wrapper-consistency script checks after the fact for problems.
-#
-# We also keep a copy of all the scripts here and install into the runtime.
-# This is purely for other distro builders, so symlinks are not dangling in
-# the inst/bin dir (it is meaningless in native TL).  We have not yet
-# written the auto-update to ensure linked_scripts is actually up to date
-# with the masters in Master/texmf*/scripts, but one day.
-#
-# We support native builds, multiplatform or not, as well as distro builds.
+* add the package/script to ctan2tds so that is found and installed
+  automatically (%specialscripts), etc.
 
+* get ctan2tl to run properly
+
+* cd .. && autoreconf -v
+  But only commit the results of this last if you have the same version
+  of GNU m4, libtool, autoconf, automake, etc., installed that were
+  already used (generally the latest official releases).  And if you
+  have installed the original versions straight from ftp.gnu.org for
+  yourself -- don't use versions from distro packages.
