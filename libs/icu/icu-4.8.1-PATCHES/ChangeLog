@@ -9,9 +9,10 @@
 
 	* patch-06-mingw: Removed, included in icu-4.8.1.
 
-	* TL-Changes, patch-05-auxParam, -07-configure-utf16-string,
-	patch-08-avoid-rebuild, patch-09-generated,
-	patch-11-CURR_FULL_DIR, patch-12-mingw, patch-13-STATIC_PREFIX,
+	* TL-Changes, patch-05-auxParam,
+	patch-07-configure-utf16-string, patch-08-avoid-rebuild,
+	patch-09-generated, patch-11-CURR_FULL_DIR, patch-12-mingw,
+	patch-13-STATIC_PREFIX, patch-14-GENCCODE_ASSEMBLY,
 	patch-50-Vertical, patch-60-KernPair, patch-70-Arabic,
 	patch-81-Indic: Adapted.
 	* patch-40-LESwaps: Rewritten, see ICU Ticket #8657, comment 7.

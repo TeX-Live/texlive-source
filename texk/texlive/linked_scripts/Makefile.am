@@ -7,9 +7,7 @@
 
 ## Build lists of texmf and texmf-dist scripts.
 ##
-if MAINTAINER_MODE
-all-local: scripts.tmp
-scripts.tmp: Makefile
+scripts-list: Makefile
 	echo "Create $@"
 	@echo "texmf_scripts='" >$@
 	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
@@ -18,11 +16,14 @@ scripts.tmp: Makefile
 	@for f in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do echo "$$f"; done >>$@
 	@echo "'" >>$@
 	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+
+if MAINTAINER_MODE
+all-local: scripts-list
 else !MAINTAINER_MODE
 all-local:
 endif !MAINTAINER_MODE
 
-DISTCLEANFILES = scripts.tmp
+DISTCLEANFILES = scripts-list
 
 EXTRA_DIST = scripts.lst
 

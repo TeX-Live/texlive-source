@@ -25,3 +25,7 @@ Steps to add a new script (take your time, do it right):
   already used (generally the latest official releases).  And if you
   have installed the original versions straight from ftp.gnu.org for
   yourself -- don't use versions from distro packages.
+
+* make -C BLD/texk/texlive/linked_scripts scripts-list
+  where BLD is the build tree, to update the file scripts.lst in the
+  source tree (or manually update that file).

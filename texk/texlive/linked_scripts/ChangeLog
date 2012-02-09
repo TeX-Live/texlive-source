@@ -1,5 +1,11 @@
 2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* Makefile.am: Rename the target scripts.tmp into scripts-list
+	and make it available independent of maintainer mode.
+	* README: Mention 'make scripts-list'.
+
+2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* Makefile.am: More ${prefix} => $(datarootdir).
 
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>

@@ -164,7 +164,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-DISTCLEANFILES = scripts.tmp
+DISTCLEANFILES = scripts-list
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,
@@ -614,16 +614,17 @@ uninstall-am: uninstall-binSCRIPTS \
 	uninstall-nobase_dist_texmf_scriptsSCRIPTS
 
 
-@MAINTAINER_MODE_TRUE@all-local: scripts.tmp
-@MAINTAINER_MODE_TRUE@scripts.tmp: Makefile
-@MAINTAINER_MODE_TRUE@	echo "Create $@"
-@MAINTAINER_MODE_TRUE@	@echo "texmf_scripts='" >$@
-@MAINTAINER_MODE_TRUE@	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
-@MAINTAINER_MODE_TRUE@	@echo "'" >>$@
-@MAINTAINER_MODE_TRUE@	@echo "texmf_dist_scripts='" >>$@
-@MAINTAINER_MODE_TRUE@	@for f in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do echo "$$f"; done >>$@
-@MAINTAINER_MODE_TRUE@	@echo "'" >>$@
-@MAINTAINER_MODE_TRUE@	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+scripts-list: Makefile
+	echo "Create $@"
+	@echo "texmf_scripts='" >$@
+	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
+	@echo "'" >>$@
+	@echo "texmf_dist_scripts='" >>$@
+	@for f in $(nobase_dist_texmf_dist_scripts_SCRIPTS); do echo "$$f"; done >>$@
+	@echo "'" >>$@
+	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+
+@MAINTAINER_MODE_TRUE@all-local: scripts-list
 @MAINTAINER_MODE_FALSE@all-local:
 install-data-hook:
 @WIN32_TRUE@	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
