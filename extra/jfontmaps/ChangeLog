@@ -1,3 +1,7 @@
+2012-02-10  Norbert Preining  <preining@logic.at>
+
+	* fontmaps: add ipa and ipaex maps
+
 2012-02-06  Norbert Preining  <preining@logic.at>
 
 	* scripts/updmap-setup-kanji.pl: change output of status to
