@@ -10,43 +10,17 @@
 # For development see
 #  http://www.tug.org/svn/texlive/trunk/Build/source/extra/jfontmaps/
 #
-# 31 Jan 2012
-#    rewrite in Perl, so that the script is usable under Windows
-#    add command line options for help, dry-run, etc
-#    support jis2004 via cmd line -jis2004
-# 27 Jan 2012 by PREINING Norbert <preining@logic.at>  v0.9.2
-#    support IPA and IPAex fonts
-#    improve and extended documentation
-# 11 Nov 2011 by PREINING Norbert <preining@logic.at>  v0.9.1
-#    use kpsewhich for finding fonts
-#    use updmap-sys --setoption kanjiEmbed to select the font family
-#    use current names of map files
-#    use different font name for Kozuka font, as used in the map file
-#    get state from updmap.cfg, not from some state file
-# 27 May 2006 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.9
-#    use noEmbed.map instead of noEmbeddedFont.map
-# 10 Jun 2005 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.8
-#    modified to use updmap-sys in teTeX3
-# 07 Nov 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.7
-#    do not echo back the message of updmap.
-# 17 Oct 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.6
-#    set hiragino map file if nofont is installed and arg is auto.
-# 04 Oct 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.5
-#    handl standby map files more strictly
-# 20 Sep 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.4
-#    hand over current status to map file installer
-# 19 Sep 2004 by KOBAYASHI R. Taizo <tkoba965@mac.com> v0.3
-#    handl *-udvips.map in TEXMF/dvipdfm/config/otf/
-# 02 Mar 2004 by KOBAYASHI R. Taizo <tkoba@ike-dyn.ritsumei.ac.jp> v0.2
-#    added noFont-udvips.map
-# 28 Feb 2004 by KOBAYASHI R. Taizo <tkoba@ike-dyn.ritsumei.ac.jp> v0.1
+# For a changelog see
+#  http://www.tug.org/svn/texlive/trunk/Build/source/extra/jfontmaps/ChangeLog
+# 
 
 $^W = 1;
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "updmap-setup-kanji";
-my $version = '$Id: updmap-setup-kanji.pl 25259 2012-02-01 02:13:03Z preining $';
+my $vers = "0.9.3";
+my $version = '$Id: updmap-setup-kanji.pl 25316 2012-02-06 14:48:29Z preining $';
 
 my $updmap_real = "updmap-sys";
 my $updmap = $updmap_real;
@@ -62,6 +36,12 @@ if (! GetOptions(
         "version" => sub { print &version(); exit(0); }, ) ) {
   die "Try \"$0 --help\" for more information.\n";
 }
+
+
+sub win32 { return ($^O=~/^MSWin(32|64)$/i); }
+
+my $nul = (win32() ? 'nul' : '/dev/null') ;
+
 
 if ($dry_run) {
   $updmap = "echo updmap-sys"; 
@@ -88,7 +68,8 @@ my %available;
 main(@ARGV);
 
 sub version {
-  my $ret = sprintf "%s (perl) version %s\n", $prg, $version;
+  my $ret = sprintf "%s version %s\n(svn id: %s)\n", 
+    $prg, $vers, $version;
   return $ret;
 }
 
@@ -99,13 +80,26 @@ sub Usage {
                  This script searches for some of the most common fonts
                  for embedding into pdfs by dvipdfmx.
 
+                 In addition it allows to set up arbitrary font families
+                 to be embedded into the generated pdf files, as long
+                 as at least the map file otf-<family>.map is present.
+                 Other map files that will be used if available are
+                   
+                   ptex-<family>.map
+                   uptex-<family>.map
+                   otf-up-<family>.map
+
+  Please see the documentation of updmap for details (updmap --help).
+
   Usage:  $prg {<fontname>|auto|nofont|status}
 
-     <fontname>  embed fonts as defined by the map file otf-<fontname>.map
-                 if it exists.
+     <family>    embed an arbitrary font family <family>, at least the
+                 map file otf-<family>.map has to be available.
      auto:       embed one of the following supported font families
                  automatically:
                    hiragino, morisawa, kozuka, ipaex, ipa
+                 and fall back to not embedding any font if none of them
+                 is available
      nofont:     embed no fonts (and rely on system fonts when displaying pdfs)
                  If your system does not have any of the supported font 
                  families as specified above, this target is selected 
@@ -139,7 +133,7 @@ sub CheckInstallFont {
 
 sub check_mapfile {
   my $mapf = shift;
-  my $f = `kpsewhich $mapf 2>/dev/null`;
+  my $f = `kpsewhich $mapf 2> $nul`;
   my $ret = $?;
   if (wantarray) {
     return (!$ret, $f);
@@ -161,7 +155,7 @@ sub GetStatus {
   }
 
   if (check_mapfile("otf-$STATUS.map")) {
-    print "CURRENT map file : otf-$STATUS.map\n";
+    print "CURRENT family : $STATUS\n";
   } else {
     print "WARNING: Currently selected map file cannot be found: otf-$STATUS.map\n";
   }
@@ -171,7 +165,7 @@ sub GetStatus {
     next if ($MAPFILE eq "otf-$STATUS.map");
     if (check_mapfile($MAPFILE)) {
       if ($available{$k}) {
-        print "Standby map file : $MAPFILE\n";
+        print "Standby family : $k\n";
       }
     }
   }
@@ -247,8 +241,6 @@ sub SetupReplacement {
 
 sub main {
   my ($a, $b) = @_;
-
-  # mktexlsr 2> /dev/null
 
   CheckInstallFont();
 
