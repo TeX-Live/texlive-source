@@ -1,3 +1,9 @@
+2012-02-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import zlib-1.2.6.
+	* version.ac: New file defining the zlib version.
+	* Makefile.am, configure.ac: Adapt.
+
 2011-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac [WIN32]: Don't use visibility attribute.

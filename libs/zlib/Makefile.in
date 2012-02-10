@@ -47,7 +47,7 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-win32.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -271,8 +271,8 @@ nodist_libz_a_SOURCES = \
 @build_TRUE@dist_check_SCRIPTS = zlib.test
 @build_TRUE@TESTS = zlib.test
 LDADD = libz.a
-nodist_example_SOURCES = $(ZLIB_TREE)/example.c
-nodist_minigzip_SOURCES = $(ZLIB_TREE)/minigzip.c
+nodist_example_SOURCES = $(ZLIB_TREE)/test/example.c
+nodist_minigzip_SOURCES = $(ZLIB_TREE)/test/minigzip.c
 DISTCLEANFILES = zconf.h
 CLEANFILES = foo.gz foo_gz
 all: config.h
@@ -594,33 +594,33 @@ zutil.obj: $(ZLIB_TREE)/zutil.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o zutil.obj `if test -f '$(ZLIB_TREE)/zutil.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/zutil.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/zutil.c'; fi`
 
-example.o: $(ZLIB_TREE)/example.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT example.o -MD -MP -MF $(DEPDIR)/example.Tpo -c -o example.o `test -f '$(ZLIB_TREE)/example.c' || echo '$(srcdir)/'`$(ZLIB_TREE)/example.c
+example.o: $(ZLIB_TREE)/test/example.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT example.o -MD -MP -MF $(DEPDIR)/example.Tpo -c -o example.o `test -f '$(ZLIB_TREE)/test/example.c' || echo '$(srcdir)/'`$(ZLIB_TREE)/test/example.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/example.Tpo $(DEPDIR)/example.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZLIB_TREE)/example.c' object='example.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZLIB_TREE)/test/example.c' object='example.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o example.o `test -f '$(ZLIB_TREE)/example.c' || echo '$(srcdir)/'`$(ZLIB_TREE)/example.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o example.o `test -f '$(ZLIB_TREE)/test/example.c' || echo '$(srcdir)/'`$(ZLIB_TREE)/test/example.c
 
-example.obj: $(ZLIB_TREE)/example.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT example.obj -MD -MP -MF $(DEPDIR)/example.Tpo -c -o example.obj `if test -f '$(ZLIB_TREE)/example.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/example.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/example.c'; fi`
+example.obj: $(ZLIB_TREE)/test/example.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT example.obj -MD -MP -MF $(DEPDIR)/example.Tpo -c -o example.obj `if test -f '$(ZLIB_TREE)/test/example.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/test/example.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/test/example.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/example.Tpo $(DEPDIR)/example.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZLIB_TREE)/example.c' object='example.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZLIB_TREE)/test/example.c' object='example.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o example.obj `if test -f '$(ZLIB_TREE)/example.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/example.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/example.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o example.obj `if test -f '$(ZLIB_TREE)/test/example.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/test/example.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/test/example.c'; fi`
 
-minigzip.o: $(ZLIB_TREE)/minigzip.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT minigzip.o -MD -MP -MF $(DEPDIR)/minigzip.Tpo -c -o minigzip.o `test -f '$(ZLIB_TREE)/minigzip.c' || echo '$(srcdir)/'`$(ZLIB_TREE)/minigzip.c
+minigzip.o: $(ZLIB_TREE)/test/minigzip.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT minigzip.o -MD -MP -MF $(DEPDIR)/minigzip.Tpo -c -o minigzip.o `test -f '$(ZLIB_TREE)/test/minigzip.c' || echo '$(srcdir)/'`$(ZLIB_TREE)/test/minigzip.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/minigzip.Tpo $(DEPDIR)/minigzip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZLIB_TREE)/minigzip.c' object='minigzip.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZLIB_TREE)/test/minigzip.c' object='minigzip.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o minigzip.o `test -f '$(ZLIB_TREE)/minigzip.c' || echo '$(srcdir)/'`$(ZLIB_TREE)/minigzip.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o minigzip.o `test -f '$(ZLIB_TREE)/test/minigzip.c' || echo '$(srcdir)/'`$(ZLIB_TREE)/test/minigzip.c
 
-minigzip.obj: $(ZLIB_TREE)/minigzip.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT minigzip.obj -MD -MP -MF $(DEPDIR)/minigzip.Tpo -c -o minigzip.obj `if test -f '$(ZLIB_TREE)/minigzip.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/minigzip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/minigzip.c'; fi`
+minigzip.obj: $(ZLIB_TREE)/test/minigzip.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT minigzip.obj -MD -MP -MF $(DEPDIR)/minigzip.Tpo -c -o minigzip.obj `if test -f '$(ZLIB_TREE)/test/minigzip.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/test/minigzip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/test/minigzip.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/minigzip.Tpo $(DEPDIR)/minigzip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZLIB_TREE)/minigzip.c' object='minigzip.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(ZLIB_TREE)/test/minigzip.c' object='minigzip.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o minigzip.obj `if test -f '$(ZLIB_TREE)/minigzip.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/minigzip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/minigzip.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o minigzip.obj `if test -f '$(ZLIB_TREE)/test/minigzip.c'; then $(CYGPATH_W) '$(ZLIB_TREE)/test/minigzip.c'; else $(CYGPATH_W) '$(srcdir)/$(ZLIB_TREE)/test/minigzip.c'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.

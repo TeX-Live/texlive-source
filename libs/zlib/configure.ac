@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([zlib_version], [1.2.5])[]dnl using unmodified zlib source tree
+m4_include([version.ac])[] dnl define zlib_version
 AC_INIT([zlib for TeX Live], zlib_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([zlib-]zlib_version[/zlib.h])
@@ -82,8 +82,7 @@ fi
 
 AC_SUBST([ZLIB_DEFINES])
 
-ZLIB_TREE=[zlib-]zlib_version
-AC_SUBST([ZLIB_TREE])
+AC_SUBST([ZLIB_TREE], [zlib-]zlib_version)
 
 if test -f $srcdir/$ZLIB_TREE/zconf.h; then
   AC_MSG_ERROR([Sorry, you must remove the file $ZLIB_TREE/zconf.h])

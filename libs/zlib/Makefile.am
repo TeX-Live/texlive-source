@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build zlib for TeX Live.
 ##
-##   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -71,8 +71,8 @@ endif build
 
 LDADD = libz.a
 
-nodist_example_SOURCES = $(ZLIB_TREE)/example.c
-nodist_minigzip_SOURCES = $(ZLIB_TREE)/minigzip.c
+nodist_example_SOURCES = $(ZLIB_TREE)/test/example.c
+nodist_minigzip_SOURCES = $(ZLIB_TREE)/test/minigzip.c
 
 zconf.h: $(ZLIB_TREE)/zconf.h.in config.status
 	echo '$(SHELL) ./config.status $@'
