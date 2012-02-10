@@ -1,3 +1,8 @@
+2012-02-10  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl: fix breakage of updmap if a generated file does
+	not exist (wrong double substitution of @kanji*@ strings)
+
 2012-02-01  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: 

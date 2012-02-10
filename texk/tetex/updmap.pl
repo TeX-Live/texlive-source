@@ -829,8 +829,8 @@ sub catMaps {
   my @maps = grep { $_ =~ m/$map/ } @cfg;
   map{
     $_ =~ s/\#.*//;
-    $_ =~ s/\@kanjiEmbed@/$kanjiEmbed/;
-    $_ =~ s/\@kanjiVariant@/$kanjiVariant/;
+    # $_ =~ s/\@kanjiEmbed@/$kanjiEmbed/;
+    # $_ =~ s/\@kanjiVariant@/$kanjiVariant/;
     $_ =~ s/\s*([^\s]*)\s*([^\s]*)/$2/;
   } @maps;
 
@@ -843,7 +843,7 @@ sub catMaps {
       my $mf = `kpsewhich --format=map $newm`;
       chomp($mf);
       if (!$mf) {
-        print "$0: generated map $newm (from $m) does not exists, not activating it!\n";
+        print LOG "\n$short_progname: generated map $newm\n\tfrom $m\n\tdoes not exists, not activating it!\n";
       } else {
         push @newmaps, $newm;
       }
