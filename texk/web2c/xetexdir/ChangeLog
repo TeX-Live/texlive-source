@@ -1,3 +1,10 @@
+2012-02-11  Jonathan Kew  <jfkthame@gmail.com>
+
+	* XeTeX_ext.c (makefontdef): pass font pathname to xdvipdfmx
+	  whenever possible, to avoid fontconfig search mismatches
+
+	* xetex.ch (XeTeX_version_string): bump to .6.
+
 2012-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xetex.ch: Adapt to zlib-1.2.6 (problem found by Akira).
