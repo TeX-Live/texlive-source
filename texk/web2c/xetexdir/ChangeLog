@@ -1,3 +1,9 @@
+2012-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.ch: Adapt to zlib-1.2.6 (problem found by Akira).
+	From zlib-1.2.6/ChangeLog: Fix gzeof() to behave just like
+	  feof() when read is not past end of file
+
 2011-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeX_ext.h: Do not #include "XeTeXOTMath.h".

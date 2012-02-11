@@ -6939,12 +6939,9 @@ k:=biggest_lang+1;
 @z
 
 @x
-undump_int(x);
 if (x<>69069)or feof(fmt_file) then goto bad_fmt
 @y
-undump_int(x);
-if (x<>69069) then goto bad_fmt;
-if not w_eof(fmt_file) then goto bad_fmt
+if (x<>69069)or w_eof(fmt_file) then goto bad_fmt
 @z
 
 @x

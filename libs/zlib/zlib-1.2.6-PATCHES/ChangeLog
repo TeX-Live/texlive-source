@@ -1,5 +1,6 @@
 2010-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	Import zlib-1.2.6.
 	* patch-01-LARGEFILE64_SOURCE: Removed.
 
 2010-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
