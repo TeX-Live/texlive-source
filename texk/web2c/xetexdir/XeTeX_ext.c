@@ -1765,12 +1765,12 @@ makefontdef(integer f)
 
 		engine = (XeTeXLayoutEngine)fontlayoutengine[f];
 		fontRef = getFontRef(engine);
-		if (fontRef != 0)
-			getNames(fontRef, &psName, &famName, &styName);
-		else {
-			psName = getFontFilename(engine);
+		psName = getFontFilename(engine);
+		if (psName) {
 			famName = "";
 			styName = "";
+		} else {
+			getNames(getFontRef(engine), &psName, &famName, &styName);
 		}
 
 		rgba = getRgbValue(engine);
