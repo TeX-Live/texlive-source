@@ -1,3 +1,7 @@
+2012-02-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.h: Remove old comments that gzFile is typedef'd as void *.
+
 2012-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.h: Moved WRITE_OUT from here ...

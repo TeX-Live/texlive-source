@@ -237,8 +237,8 @@ extern void topenin (void);
 #define bopenout(f)	open_output (&(f), FOPEN_WBIN_MODE)
 #define bclose		aclose
 #ifdef XeTeX
-/* f is declared as gzFile (typedef'd as void *), but we temporarily
-   use it for a FILE * so that we can use the standard open calls */
+/* f is declared as gzFile, but we temporarily use it for a FILE *
+   so that we can use the standard open calls */
 #define wopenin(f)	(open_input ((FILE**)&(f), DUMP_FORMAT, FOPEN_RBIN_MODE) \
 						&& (f = gzdopen(fileno((FILE*)f), FOPEN_RBIN_MODE)))
 #define wopenout(f)	(open_output ((FILE**)&(f), FOPEN_WBIN_MODE) \
