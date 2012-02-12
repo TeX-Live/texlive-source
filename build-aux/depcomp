@@ -1,10 +1,10 @@
 #! /bin/sh
 # depcomp - compile a program generating dependencies as side-effects
 
-scriptversion=2011-12-04.11; # UTC
+scriptversion=2012-02-03.15; # UTC
 
 # Copyright (C) 1999, 2000, 2003, 2004, 2005, 2006, 2007, 2009, 2010,
-# 2011 Free Software Foundation, Inc.
+# 2011, 2012 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,6 +56,12 @@ EOF
     exit $?
     ;;
 esac
+
+# A tabulation character.
+tab='	'
+# A newline character.
+nl='
+'
 
 if test -z "$depmode" || test -z "$source" || test -z "$object"; then
   echo "depcomp: Variables source, object and depmode must be set" 1>&2
@@ -162,8 +168,7 @@ gcc)
 ## typically no way to rebuild the header).  We avoid this by adding
 ## dummy dependencies for each header file.  Too bad gcc doesn't do
 ## this for us directly.
-  tr ' ' '
-' < "$tmpdepfile" |
+  tr ' ' "$nl" < "$tmpdepfile" |
 ## Some versions of gcc put a space before the ':'.  On the theory
 ## that the space means something, we add a space to the output as
 ## well.  hp depmode also adds that space, but also prefixes the VPATH
@@ -205,16 +210,13 @@ sgi)
     # IRIX 6.2 sed, 8192 in IRIX 6.5).  We also remove comment lines;
     # the IRIX cc adds comments like '#:fec' to the end of the
     # dependency line.
-    tr ' ' '
-' < "$tmpdepfile" \
+    tr ' ' "$nl" < "$tmpdepfile" \
     | sed -e 's/^.*\.o://' -e 's/#.*$//' -e '/^$/ d' | \
-    tr '
-' ' ' >> "$depfile"
+    tr "$nl" ' ' >> "$depfile"
     echo >> "$depfile"
 
     # The second pass generates a dummy entry for each header file.
-    tr ' ' '
-' < "$tmpdepfile" \
+    tr ' ' "$nl" < "$tmpdepfile" \
    | sed -e 's/^.*\.o://' -e 's/#.*$//' -e '/^$/ d' -e 's/$/:/' \
    >> "$depfile"
   else
@@ -263,8 +265,7 @@ aix)
     # Do two passes, one to just change these to
     # '$object: dependent.h' and one to simply 'dependent.h:'.
     sed -e "s,^.*\.[a-z]*:,$object:," < "$tmpdepfile" > "$depfile"
-    # That's a tab and a space in the [].
-    sed -e 's,^.*\.[a-z]*:[	 ]*,,' -e 's,$,:,' < "$tmpdepfile" >> "$depfile"
+    sed -e 's,^.*\.[a-z]*:['"$tab"' ]*,,' -e 's,$,:,' < "$tmpdepfile" >> "$depfile"
   else
     # The sourcefile does not contain any dependencies, so just
     # store a dummy comment line, to avoid errors with the Makefile
@@ -407,8 +408,7 @@ tru64)
    done
    if test -f "$tmpdepfile"; then
       sed -e "s,^.*\.[a-z]*:,$object:," < "$tmpdepfile" > "$depfile"
-      # That's a tab and a space in the [].
-      sed -e 's,^.*\.[a-z]*:[	 ]*,,' -e 's,$,:,' < "$tmpdepfile" >> "$depfile"
+      sed -e 's,^.*\.[a-z]*:['"$tab"' ]*,,' -e 's,$,:,' < "$tmpdepfile" >> "$depfile"
    else
       echo "#dummy" > "$depfile"
    fi
@@ -443,11 +443,11 @@ msvc7)
   p
 }' | $cygpath_u | sort -u | sed -n '
 s/ /\\ /g
-s/\(.*\)/	\1 \\/p
+s/\(.*\)/'"$tab"'\1 \\/p
 s/.\(.*\) \\/\1:/
 H
 $ {
-  s/.*/	/
+  s/.*/'"$tab"'/
   G
   p
 }' >> "$depfile"
@@ -502,11 +502,10 @@ dashmstdout)
   # in the target name.  This is to cope with DOS-style filenames:
   # a dependency such as 'c:/foo/bar' could be seen as target 'c' otherwise.
   "$@" $dashmflag |
-    sed 's:^[  ]*[^: ][^:][^:]*\:[    ]*:'"$object"'\: :' > "$tmpdepfile"
+    sed 's:^['"$tab"' ]*[^:'"$tab"' ][^:][^:]*\:['"$tab"' ]*:'"$object"'\: :' > "$tmpdepfile"
   rm -f "$depfile"
   cat < "$tmpdepfile" > "$depfile"
-  tr ' ' '
-' < "$tmpdepfile" | \
+  tr ' ' "$nl" < "$tmpdepfile" | \
 ## Some versions of the HPUX 10.20 sed can't process this invocation
 ## correctly.  Breaking it into two sed invocations is a workaround.
     sed -e 's/^\\$//' -e '/^$/d' -e '/:$/d' | sed -e 's/$/ :/' >> "$depfile"
@@ -562,8 +561,7 @@ makedepend)
   # makedepend may prepend the VPATH from the source file name to the object.
   # No need to regex-escape $object, excess matching of '.' is harmless.
   sed "s|^.*\($object *:\)|\1|" "$tmpdepfile" > "$depfile"
-  sed '1,2d' "$tmpdepfile" | tr ' ' '
-' | \
+  sed '1,2d' "$tmpdepfile" | tr ' ' "$nl" | \
 ## Some versions of the HPUX 10.20 sed can't process this invocation
 ## correctly.  Breaking it into two sed invocations is a workaround.
     sed -e 's/^\\$//' -e '/^$/d' -e '/:$/d' | sed -e 's/$/ :/' >> "$depfile"
@@ -652,8 +650,8 @@ msvisualcpp)
   sed -n '/^#line [0-9][0-9]* "\([^"]*\)"/ s::\1:p' | $cygpath_u | sort -u > "$tmpdepfile"
   rm -f "$depfile"
   echo "$object : \\" > "$depfile"
-  sed < "$tmpdepfile" -n -e 's% %\\ %g' -e '/^\(.*\)$/ s::	\1 \\:p' >> "$depfile"
-  echo "	" >> "$depfile"
+  sed < "$tmpdepfile" -n -e 's% %\\ %g' -e '/^\(.*\)$/ s::'"$tab"'\1 \\:p' >> "$depfile"
+  echo "$tab" >> "$depfile"
   sed < "$tmpdepfile" -n -e 's% %\\ %g' -e '/^\(.*\)$/ s::\1\::p' >> "$depfile"
   rm -f "$tmpdepfile"
   ;;
