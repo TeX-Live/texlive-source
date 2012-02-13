@@ -20144,6 +20144,9 @@ main ()
 {
 z_stream stream;
 const char *version = zlibVersion();
+#if ZLIB_VERNUM < 0x1260
+  choke me
+#endif
 deflate(&stream, 0);
   ;
   return 0;
