@@ -1,3 +1,7 @@
+2012-02-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.c (eoln): Accept both CR and LF as end-of-line.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

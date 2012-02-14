@@ -12,8 +12,8 @@ eof (FILE *file)
 {
   register int c;
 
-  /* If FILE doesn't exist, return false. This happens when, for
-     example, when a user does `mft foo.mf' -- there's no change file,
+  /* If FILE doesn't exist, return true. This happens, for example,
+     when a user does `mft foo.mf' -- there's no change file,
      so we never open it, so we end up calling this with a null pointer. */
   if (!file)
     return true;

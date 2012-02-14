@@ -190,7 +190,7 @@ BEGIN
   BEGIN
     (void) ungetc (c, file_pointer);
   END
-  if (c == '\n' || c == EOF)
+  if (c == '\n' || c == '\r' || c == EOF)
   BEGIN
     return (TRUE);
   END
