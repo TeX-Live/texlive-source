@@ -1,3 +1,7 @@
+2012-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch: Remove test for end-of-file after undump.
+
 2012-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch: Ensure dvi file size < 2GB.

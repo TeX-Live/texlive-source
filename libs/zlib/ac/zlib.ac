@@ -8,7 +8,4 @@ KPSE_TRY_LIB([zlib],
              [#include <zlib.h>],
              [z_stream stream;
 const char *version = zlibVersion();
-#if ZLIB_VERNUM < 0x1260
-  choke me
-#endif
 deflate(&stream, 0);])

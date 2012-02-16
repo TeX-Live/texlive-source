@@ -1,3 +1,7 @@
+2012-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/zlib.ac: Drop requirement for zlib-1.2.6 or later.
+
 2012-02-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/zlib.ac: Require zlib-1.2.6 or later (for XeTeX).

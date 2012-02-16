@@ -4098,12 +4098,10 @@ undump(batch_mode)(error_stop_mode)(interaction);
 if interaction_option<>unspecified_mode then interaction:=interaction_option;
 @z
 
-% [50.1327] As with TFM files, `eof' here means `have we previously
-% encountered the end-of-file', not `are we at the end of the file'.
-@x [50.1327] l.24120 - dumping/undumping, replace eof() by feof()
+@x [50.1327] l.24172 - Test for end-of-file already done by undump.
 if (x<>69069)or eof(fmt_file) then goto bad_fmt
 @y
-if (x<>69069)or feof(fmt_file) then goto bad_fmt
+if x<>69069 then goto bad_fmt
 @z
 
 % Eliminate probably wrong word `preloaded' from format_idents.

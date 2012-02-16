@@ -2106,17 +2106,17 @@ if mem_min+1100>mem_top then goto off_base;
 mem:=xmalloc_array (memory_word, mem_max - mem_min + 1);
 @z
 
-@x [48.1199] l.22725 -  - Allow command line to override dumped value.
+@x [48.1199] l.22750 - Allow command line to override dumped value.
 undump(batch_mode)(error_stop_mode)(interaction);
 @y
 undump(batch_mode)(error_stop_mode)(interaction);
 if interaction_option<>unspecified_mode then interaction:=interaction_option;
 @z
 
-@x [48.1199] eof is like C feof here.
+@x [48.1199] l.22755 - Test for end-of-file already done by undump.
 undump_int(x);@+if (x<>69069)or eof(base_file) then goto off_base
 @y
-undump_int(x);@+if (x<>69069)or feof(base_file) then goto off_base
+undump_int(x);@+if x<>69069 then goto off_base
 @z
 
 @x [48.1200] Eliminate probably-wrong word `preloaded' from base_idents.

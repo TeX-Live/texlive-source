@@ -1,3 +1,8 @@
+2012-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mf.ch, tex.ch: Remove test for end-of-file after undump.
+	* texmfmp.h: Remove weof().
+
 2012-02-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.h: Remove old comments that gzFile is typedef'd as void *.

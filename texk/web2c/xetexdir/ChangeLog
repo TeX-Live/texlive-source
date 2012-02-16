@@ -1,3 +1,8 @@
+2012-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.ch: Remove test for end-of-file after undump.
+	* xetex.defines: Remove weof().
+
 2012-02-11  Jonathan Kew  <jfkthame@gmail.com>
 
 	* XeTeX_ext.c (makefontdef): pass font pathname to xdvipdfmx
