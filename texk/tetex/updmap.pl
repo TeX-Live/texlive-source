@@ -111,7 +111,7 @@ By default, the TeX filename database (ls-R) is also updated.
 
 Options:
   --cnffile FILE            read FILE for the updmap configuration
-  --dvipdfmoutputdir DIR    specify output directory (dvipdfm syntax)
+  --dvipdfmoutputdir DIR    specify output directory (kanjix.map)
   --dvipsoutputdir DIR      specify output directory (dvips syntax)
   --pdftexoutputdir DIR     specify output directory (pdftex syntax)
   --pxdvioutputdir DIR      specify output directory (pxdvi syntax)
@@ -138,7 +138,7 @@ Commands:
   --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
   --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
   --enable KanjiMap=MAPFILE add \"KanjiMap MAPFILE\" to updmap.cfg
-  --disable MAPFILE         disable MAPFILE, whether Map, MixedMap, or KanjiMap
+  --disable MAPFILE         disable MAPFILE, of any type
   --listmaps                list all active and inactive maps
   --listavailablemaps       same as --listmaps, but without
                              unavailable map files
@@ -160,14 +160,14 @@ Explanation of the --setoption possibilities:
     Whether pdftex includes the standard 14 PDF fonts in its output.
   pxdviUse              true|false  (default false)
     Whether maps for pxdvi (Japanese-patched xdvi) is under control of updmap.
+  kanjiEmbed            (any string)
+  kanjiVariant          (any string)
   LW35                  URWkb|URW|ADOBEkb|ADOBE  (default URWkb)
     Adapt the font and file names of the standard 35 PostScript fonts.
     URWkb    URW fonts with "berry" filenames    (e.g. uhvbo8ac.pfb)
     URW      URW fonts with "vendor" filenames   (e.g. n019064l.pfb)
     ADOBEkb  Adobe fonts with "berry" filenames  (e.g. phvbo8an.pfb)
     ADOBE    Adobe fonts with "vendor" filenames (e.g. hvnbo___.pfb)
-  kanjiEmbed            (any string)
-  kanjiVariant          (any string)
 
   These options are only read and acted on by updmap; dvips, pdftex, etc.,
   do not know anything about them.  They work by changing the default map
@@ -177,12 +177,13 @@ Explanation of the --setoption possibilities:
 
 Explanation of trees and files normally used:
 
-  updmap both reads and writes TEXMFCONFIG/web2c/updmap.cfg, according to
-  the actions specified.
+  updmap both reads and writes TEXMFCONFIG/web2c/updmap.cfg, according
+  to the actions specified.
 
   updmap writes the map files for dvips (psfonts.map) and pdftex
   (pdftex.map) to the TEXMFVAR/fonts/map/updmap/{dvips,pdftex}/
-  directories.   
+  directories.  The map file for Kanji fonts, read by dvipdfmx, is
+  written to TEXMFVAR/fonts/map/updmap/dvipdfm/kanjix.map.
 
   The log file is written to TEXMFVAR/web2c/updmap.log.
 
@@ -193,7 +194,7 @@ Explanation of trees and files normally used:
   trees don't exist, or you are not using the original TeX Live.
 
   To see the precise locations of the various files that
-  will be read and written, give the -n option (or read the man page).
+  will be read and written, give the -n option.
 
 For step-by-step instructions on making new fonts known to TeX, read
 http://tug.org/fonts/fontinstall.html.  For even more terse
