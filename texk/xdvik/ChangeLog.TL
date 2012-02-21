@@ -1,6 +1,12 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2012-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop XDVI_CC_CONCAT and XDVI_SYS_SUNOS_4, the
+	results are not used.
+	* m4/xdvi-cc-concat.m4, m4/xdvi-sys-sunos4.m4: Removed.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

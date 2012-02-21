@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -93,10 +93,8 @@ AC_PATH_XTRA
 
 dnl XDVI checks by Paul Vojta
 XDVI_FUNC_SETSID_IN_VFORK
-XDVI_CC_CONCAT
 XDVI_C_BITMAP_TYPE
 XDVI_SYS_STREAMS
-XDVI_SYS_SUNOS_4
 XDVI_SYS_OLD_LINUX
 XDVI_FUNC_POLL
 

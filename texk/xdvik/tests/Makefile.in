@@ -39,7 +39,6 @@ check_PROGRAMS = run_tests$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/xdvi-c-bitmap-type.m4 \
-	$(top_srcdir)/m4/xdvi-cc-concat.m4 \
 	$(top_srcdir)/m4/xdvi-check-iconv.m4 \
 	$(top_srcdir)/m4/xdvi-check-langinfo.m4 \
 	$(top_srcdir)/m4/xdvi-check-xaw.m4 \
@@ -52,7 +51,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/xdvi-c-bitmap-type.m4 \
 	$(top_srcdir)/m4/xdvi-linker-multiple-defns.m4 \
 	$(top_srcdir)/m4/xdvi-sys-old-linux.m4 \
 	$(top_srcdir)/m4/xdvi-sys-streams.m4 \
-	$(top_srcdir)/m4/xdvi-sys-sunos4.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-t1lib-flags.m4 \
