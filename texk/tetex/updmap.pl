@@ -105,7 +105,7 @@ Update the default font map files used by pdftex, dvips, and dvipdfm(x),
 
 Among other things, these map files are used to determine which fonts
 should be used as bitmaps and which as outlines, and to determine which
-fonts are included in the output.
+fonts are embedded in the output.
 
 By default, the TeX filename database (ls-R) is also updated.
 
@@ -150,6 +150,10 @@ The purpose is to help users with printers that render Type 1 outline
 fonts worse than mode-tuned Type 1 bitmap fonts.  So, MixedMap is used
 for fonts that are available as both Type 1 and Metafont.
 
+KanjiMap, on the other hand, specifies possibly several map files for
+Kanji font support; see below.  KanjiMap entries are added to
+psfonts_t1.map and kanjix.map.
+
 Explanation of the --setoption possibilities:
 
   dvipsPreferOutline    true|false  (default true)
@@ -160,8 +164,10 @@ Explanation of the --setoption possibilities:
     Whether pdftex includes the standard 14 PDF fonts in its output.
   pxdviUse              true|false  (default false)
     Whether maps for pxdvi (Japanese-patched xdvi) is under control of updmap.
-  kanjiEmbed            (any string)
-  kanjiVariant          (any string)
+  kanjiEmbed            any string, default noEmbed
+    specify embedding and choice of Kanji fonts, 
+  kanjiVariant          any string, default empty
+    used as suffix for some Kanji maps; set to -04 for JIS2004.
   LW35                  URWkb|URW|ADOBEkb|ADOBE  (default URWkb)
     Adapt the font and file names of the standard 35 PostScript fonts.
     URWkb    URW fonts with "berry" filenames    (e.g. uhvbo8ac.pfb)
@@ -174,6 +180,12 @@ Explanation of the --setoption possibilities:
   file which the programs read, so they can be overridden by specifying
   command-line options or configuration files to the programs, as
   explained at the beginning of updmap.cfg.
+
+  The options kanjiEmbed and kanjiVariant determine special replacements
+  in map lines: the string \@kanjiEmbed\@ is replaced by the value of
+  the respective option; similarly for kanjiVariant.  These are useful
+  on KanjiMap lines.  This allows Japanese TeX users to easily select
+  different fonts to be included in the final PDF output from dvipdfmx.
 
 Explanation of trees and files normally used:
 
