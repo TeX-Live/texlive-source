@@ -16908,7 +16908,13 @@ else
   kpse_cv_warning_cxxflags=
 kpse_warn_strings="-Wno-write-strings"
 if test "x$enable_compiler_warnings" != xno; then
-  kpse_cv_warning_cxxflags="-Wimplicit -Wreturn-type"
+  kpse_cv_warning_cxxflags="-Wreturn-type"
+  case `$CXX -dumpversion` in #(
+  3.* | 4.[012345].*) :
+    kpse_cv_warning_cxxflags="-Wimplicit $kpse_cv_warning_cxxflags" ;; #(
+  *) :
+     ;;
+esac
   case `$CXX -dumpversion` in #(
   3.[234].* | 4.*) :
     kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas" ;; #(
@@ -17198,7 +17204,13 @@ else
   kpse_cv_warning_objcxxflags=
 kpse_warn_strings="-Wno-write-strings"
 if test "x$enable_compiler_warnings" != xno; then
-  kpse_cv_warning_objcxxflags="-Wimplicit -Wreturn-type"
+  kpse_cv_warning_objcxxflags="-Wreturn-type"
+  case `$OBJCXX -dumpversion` in #(
+  3.* | 4.[012345].*) :
+    kpse_cv_warning_objcxxflags="-Wimplicit $kpse_cv_warning_objcxxflags" ;; #(
+  *) :
+     ;;
+esac
   case `$OBJCXX -dumpversion` in #(
   3.[234].* | 4.*) :
     kpse_cv_warning_objcxxflags="$kpse_cv_warning_objcxxflags -Wno-unknown-pragmas" ;; #(

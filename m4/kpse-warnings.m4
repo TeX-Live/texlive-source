@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -174,7 +174,10 @@ m4_define([_KPSE_WARNING_GNU_CXXFLAGS],
 [kpse_cv_warning_$2=
 kpse_warn_strings="-Wno-write-strings"
 if test "x$enable_compiler_warnings" != xno; then
-  kpse_cv_warning_$2="-Wimplicit -Wreturn-type"
+  kpse_cv_warning_$2="-Wreturn-type"
+  AS_CASE([`$[]$1 -dumpversion`],
+          [3.* | 4.@<:@012345@:>@.*],
+          [kpse_cv_warning_$2="-Wimplicit $kpse_cv_warning_$2"])
   AS_CASE([`$[]$1 -dumpversion`],
           [3.@<:@234@:>@.* | 4.*],
           [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
