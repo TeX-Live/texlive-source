@@ -1,3 +1,8 @@
+2012-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import poppler-0.18.4.
+	* version.ac: Adjust.
+
 2012-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): Drop `-DPDF_PARSER_ONLY'.
