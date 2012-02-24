@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to install silgraphite headers for TeX Live.
 ##
-##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -8,7 +8,7 @@
 ##
 GRAPHITE_SRC = $(top_srcdir)/$(GRAPHITE_TREE)/include/graphite
 
-GRAPHITE_HDRS = \
+hdr_links = \
 	$(GRAPHITE_SRC)/FileFont.h \
 	$(GRAPHITE_SRC)/Font.h \
 	$(GRAPHITE_SRC)/GrAppData.h \
@@ -34,17 +34,5 @@ GRAPHITE_HDRS = \
 	$(GRAPHITE_SRC)/SegmentAux.h \
 	$(GRAPHITE_SRC)/SegmentPainter.h
 
-all-local:
-	@for file in $(GRAPHITE_HDRS); do \
-	  test -f $$file || continue; \
-	  inst=`echo $$file | sed -e 's/^.*\///'`; \
-	  test -f $$inst || { \
-	    echo "$(LN_S) $$file $$inst"; \
-	    $(LN_S) $$file $$inst; } || exit 1; \
-	done
-
-distclean-local:
-	rm -f *.h
-
-
+include $(top_srcdir)/../am/hdr_links.am
 

@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to install zziplib headers for TeX Live.
 ##
-##   Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -8,7 +8,7 @@
 ##
 ZZIPLIB_SRC = $(top_srcdir)/$(ZZIPLIB_TREE)/zzip
 
-ZZIPLIB_HDRS = \
+hdr_links = \
 	$(ZZIPLIB_SRC)/autoconf.h \
 	$(ZZIPLIB_SRC)/conf.h \
 	$(ZZIPLIB_SRC)/fetch.h \
@@ -22,15 +22,5 @@ ZZIPLIB_HDRS = \
 	$(ZZIPLIB_SRC)/write.h \
 	$(ZZIPLIB_SRC)/zzip.h
 
-all-local:
-	@for file in $(ZZIPLIB_HDRS); do \
-	  test -f $$file || continue; \
-	  inst=`echo $$file | sed -e 's/^.*\///'`; \
-	  test -f $$inst || { \
-	    echo "$(LN_S) $$file $$inst"; \
-	    $(LN_S) $$file $$inst; } || exit 1; \
-	done
-
-distclean-local:
-	rm -f *.h
+include $(top_srcdir)/../am/hdr_links.am
 

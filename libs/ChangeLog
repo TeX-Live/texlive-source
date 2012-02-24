@@ -1,3 +1,8 @@
+2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/hdr_links.am: New Makefile fragment to `install' headers
+	in the build tree.
+
 2008-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: respect library dependencies.

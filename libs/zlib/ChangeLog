@@ -1,3 +1,7 @@
+2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/Makefile.am: Use ../am/hdr_links.am.
+
 2012-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/zlib.ac: Drop requirement for zlib-1.2.6 or later.

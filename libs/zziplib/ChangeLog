@@ -1,3 +1,7 @@
+2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/zzip/Makefile.am: Use ../am/hdr_links.am.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (DISTCLEANFILES): Add _configs.sed.

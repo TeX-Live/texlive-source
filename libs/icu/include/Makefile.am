@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to install ICU headers for TeX Live.
 ##
-##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -8,9 +8,11 @@
 ##
 SUBDIRS = layout unicode
 
+ICU_SRC = $(top_srcdir)/$(ICU_TREE)
+
 # ICU headers to be installed in include/
-ICU_HDRS = \
+hdr_links = \
 	$(ICU_SRC)/common/cmemory.h
 
-include $(top_srcdir)/hdrs.am
+include $(top_srcdir)/../am/hdr_links.am
 

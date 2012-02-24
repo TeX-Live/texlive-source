@@ -1,3 +1,7 @@
+2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/graphite/Makefile.am: Use ../am/hdr_links.am.
+
 2009-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reorganize the graphite build system:

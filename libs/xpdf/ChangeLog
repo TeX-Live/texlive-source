@@ -1,3 +1,8 @@
+2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* {fofi,goo,splash,xpdf}/Makefile.am: Use ../am/hdr_links.am.
+	* hdrs.am (removed): Obsolete.
+
 2011-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapted to the xpdf 3.03 distribution.

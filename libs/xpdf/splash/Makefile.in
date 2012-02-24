@@ -32,7 +32,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(top_srcdir)/hdrs.am
+	$(top_srcdir)/../am/hdr_links.am
 subdir = splash
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
@@ -143,11 +143,11 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SRCDIR = $(top_srcdir)/$(XPDF_TREE)/splash
+hdr_links = $(top_srcdir)/$(XPDF_TREE)/splash/*.h
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/hdrs.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/hdr_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -168,7 +168,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
-$(top_srcdir)/hdrs.am:
+$(top_srcdir)/../am/hdr_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -329,9 +329,11 @@ uninstall-am:
 	pdf-am ps ps-am uninstall uninstall-am
 
 all-local:
-	@for file in $(SRCDIR)/*.h; do \
+	@for file in $(hdr_links); do \
+	  test -f $$file || continue; \
 	  inst=`echo $$file | sed -e 's/^.*\///'`; \
 	  test -f $$inst || { \
+	    rm -f $$inst; \
 	    echo "$(LN_S) $$file $$inst"; \
 	    $(LN_S) $$file $$inst; } || exit 1; \
 	done
