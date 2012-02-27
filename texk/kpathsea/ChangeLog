@@ -1,3 +1,8 @@
+2012-02-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-unistd.h [CYGWIN]: Explicitly #include <kpathsea/getopt.h>
+	such that <getopt.h> from Cygwin will be skipped.
+
 2012-02-27  Ken Brown  <kbrow1i@gmail.com>
 
 	* getopt.h: Cygwin requires getopt() prototype.
