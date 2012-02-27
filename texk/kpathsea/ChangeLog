@@ -1,3 +1,7 @@
+2012-02-27  Ken Brown  <kbrow1i@gmail.com>
+
+	* getopt.h: Cygwin requires getopt() prototype.
+
 2011-12-22  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEX.pmpost, TEXINPUTS.(e)up(la)tex): new definitions,

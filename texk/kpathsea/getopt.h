@@ -1,6 +1,6 @@
 /* Declarations for getopt.
 
-   Copyright 2008, 2010, 2011 Karl Berry.
+   Copyright 2008, 2010-2012 Karl Berry.
    Copyright 1989,90,91,92,93,94,96,97,2000,05 Free Software Foundation, Inc.
 
    The original version of this file was part of the GNU C Library.
@@ -112,6 +112,11 @@ struct option
 #define required_argument       1
 #define optional_argument       2
 
+#if defined (__CYGWIN__) && !defined ( __GETOPT_H__)
+#define __GETOPT_H__
+extern KPSEDLL int getopt (int argc, char *const *argv, const char *shortopts);
+#endif
+
 #if defined (__STDC__) && __STDC__
 #ifdef __GNU_LIBRARY__
 /* Many other libraries have conflicting prototypes for getopt, with
@@ -119,9 +124,9 @@ struct option
    errors, only prototype getopt for the GNU C library.  */
 extern KPSEDLL int getopt (int argc, char *const *argv, const char *shortopts);
 #else /* not __GNU_LIBRARY__ */
-#ifndef __cplusplus
+#if !defined (__cplusplus) && !defined (__CYGWIN__)
 extern KPSEDLL int getopt ();
-#endif /* not __cplusplus */
+#endif /* not __cplusplus and not __CYGWIN__ */
 #endif /* __GNU_LIBRARY__ */
 extern KPSEDLL int getopt_long (int argc, char *const *argv, const char *shortopts,
                         const struct option *longopts, int *longind);
