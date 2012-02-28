@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Fixed a typo (no libpaper for TeX Live builds).
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* data/Makefile.am:

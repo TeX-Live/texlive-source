@@ -15593,7 +15593,7 @@ echo timestamp >config.force
 fi
 
 
-if test "x$enable_texlive_build" != xyes || test ! -d $srdir/../kpathsea; then
+if test "x$enable_texlive_build" != xyes || test ! -d $srcdir/../kpathsea; then
   _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
 
 # Check whether --with-paper was given.
