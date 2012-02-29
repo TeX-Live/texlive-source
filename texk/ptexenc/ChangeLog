@@ -1,3 +1,8 @@
+2012-02-29  Ken Brown  <kbrow1i@gmail.com>
+
+	* Makefile.am (libptexenc_la_LIBADD): Add $(KPATHSEA_LIBS) as
+	required with `-no-undefined' (at least for Cygwin).
+
 2012-01-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexenc/ptexenc.h, ptexenc.c: add set_prior_file_enc() in order to

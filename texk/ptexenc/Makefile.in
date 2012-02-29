@@ -97,7 +97,8 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libptexenc_la_LIBADD =
+am__DEPENDENCIES_1 =
+libptexenc_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_libptexenc_la_OBJECTS = libptexenc_la-kanjicnv.lo \
 	libptexenc_la-ptexenc.lo libptexenc_la-unicode-jp.lo \
 	libptexenc_la-unicode.lo
@@ -277,6 +278,7 @@ libptexenc_la_SOURCES = \
 	unicode-jp.c \
 	unicode.c
 
+libptexenc_la_LIBADD = $(KPATHSEA_LIBS)
 nobase_include_HEADERS = \
 	ptexenc/ptexenc.h \
 	ptexenc/unicode.h
@@ -809,6 +811,8 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-nobase_includeHEADERS
 # Rebuild
 .PHONY: rebuild
 rebuild: all
+
+$(libptexenc_la_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
 
