@@ -1,3 +1,7 @@
+2012-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop test for `optreset' (result is not used).
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* includes.h [__MINGW32__]: Temporarily #define eof as macro

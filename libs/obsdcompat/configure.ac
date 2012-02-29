@@ -727,14 +727,6 @@ if test "x$ac_cv_have___va_copy" = "xyes" ; then
 	AC_DEFINE(HAVE___VA_COPY, 1, [Define if __va_copy exists])
 fi
 
-AC_CACHE_CHECK([whether getopt has optreset support],
-		ac_cv_have_getopt_optreset, [
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <getopt.h>
-		]], [[ extern int optreset; optreset = 0; ]])],[ ac_cv_have_getopt_optreset="yes" ],[ ac_cv_have_getopt_optreset="no" 
-	])
-])
-
 dnl Adding -Werror to CFLAGS early prevents configure tests from running.
 dnl Add now.
 CFLAGS="$CFLAGS $werror_flags"
