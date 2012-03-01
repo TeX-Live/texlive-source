@@ -1,3 +1,10 @@
+2012-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* getopt.h: With __need_getopt declare only getopt() but not
+	getopt_long() (with 'struct option').
+
+	* getopt.[ch]: Drop pre-ANSI C non-prototype declarations.
+
 2012-02-27  Ken Brown  <kbrow1i@gmail.com>
 
 	* getopt.h: Cygwin requires getopt() prototype.

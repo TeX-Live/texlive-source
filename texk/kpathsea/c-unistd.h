@@ -24,9 +24,8 @@
 #include <kpathsea/systypes.h>
 
 #if HAVE_UNISTD_H
-#ifdef __CYGWIN__
+# define __need_getopt
 #include <kpathsea/getopt.h>
-#endif
 #include <unistd.h>
 #endif
 

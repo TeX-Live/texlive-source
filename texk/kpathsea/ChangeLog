@@ -1,3 +1,13 @@
+2012-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-unistd.h: Declare getopt() (via  <kpathsea/getopt.h>) but
+	not getopt_long().
+
+	* getopt.h: With __need_getopt declare only getopt() but not
+	getopt_long() (with 'struct option').
+
+	* getopt.[ch]: Drop pre-ANSI C non-prototype declarations.
+
 2012-02-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* c-unistd.h [CYGWIN]: Explicitly #include <kpathsea/getopt.h>
