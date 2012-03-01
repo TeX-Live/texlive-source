@@ -19,7 +19,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "updmap-setup-kanji";
-my $vers = "0.9.3";
+my $vers = "0.9.4";
 my $version = '$Id$';
 
 my $updmap_real = "updmap-sys";
@@ -181,11 +181,11 @@ sub SetupMapFile {
   my $MAPFILE = "otf-$rep.map";
   if (check_mapfile($MAPFILE)) {
     print "Setting up ... $MAPFILE\n";
-    system("$updmap -setoption kanjiEmbed $rep");
+    system("$updmap --quiet --nomkmap --nohash -setoption kanjiEmbed $rep");
     if ($opt_jis) {
-      system("$updmap -setoption kanjiVariant -04");
+      system("$updmap --quiet --nomkmap --nohash -setoption kanjiVariant -04");
     } else {
-      system("$updmap -setoption kanjiVariant \"\"");
+      system("$updmap --quiet --nomkmap --nohash -setoption kanjiVariant \"\"");
     }
     system("$updmap");
   } else {
