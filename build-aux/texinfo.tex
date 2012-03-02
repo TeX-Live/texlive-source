@@ -3,11 +3,11 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2012-01-19.16}
+\def\texinfoversion{2012-02-28.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-% 2007, 2008, 2009, 2010, 2011 Free Software Foundation, Inc.
+% 2007, 2008, 2009, 2010, 2011, 2012 Free Software Foundation, Inc.
 %
 % This texinfo.tex file is free software: you can redistribute it and/or
 % modify it under the terms of the GNU General Public License as
@@ -887,7 +887,7 @@ where each line of input produces a line of output.}
 \def\popthisfilestack{\errthisfilestackempty}
 \def\errthisfilestackempty{\errmessage{Internal error:
   the stack of filenames is empty.}}
-
+%
 \def\thisfile{}
 
 % @center line
@@ -895,36 +895,46 @@ where each line of input produces a line of output.}
 %
 \parseargdef\center{%
   \ifhmode
-    \let\next\centerH
+    \let\centersub\centerH
   \else
-    \let\next\centerV
+    \let\centersub\centerV
   \fi
-  \next{\hfil \ignorespaces#1\unskip \hfil}%
+  \centersub{\hfil \ignorespaces#1\unskip \hfil}%
+  \let\centersub\relax % don't let the definition persist, just in case
 }
-\def\centerH#1{%
-  {%
-    \hfil\break
-    \advance\hsize by -\leftskip
-    \advance\hsize by -\rightskip
-    \line{#1}%
-    \break
-  }%
+\def\centerH#1{{%
+  \hfil\break
+  \advance\hsize by -\leftskip
+  \advance\hsize by -\rightskip
+  \line{#1}%
+  \break
+}}
+%
+\newcount\centerpenalty
+\def\centerV#1{%
+  % The idea here is the same as in \startdefun, \cartouche, etc.: if
+  % @center is the first thing after a section heading, we need to wipe
+  % out the negative parskip inserted by \sectionheading, but still
+  % prevent a page break here.
+  \centerpenalty = \lastpenalty
+  \ifnum\centerpenalty>10000 \vskip\parskip \fi
+  \ifnum\centerpenalty>9999 \penalty\centerpenalty \fi
+  \line{\kern\leftskip #1\kern\rightskip}%
 }
-\def\centerV#1{\line{\kern\leftskip #1\kern\rightskip}}
 
 % @sp n   outputs n lines of vertical space
-
+%
 \parseargdef\sp{\vskip #1\baselineskip}
 
 % @comment ...line which is ignored...
 % @c is the same as @comment
 % @ignore ... @end ignore  is another way to write a comment
-
+%
 \def\comment{\begingroup \catcode`\^^M=\other%
 \catcode`\@=\other \catcode`\{=\other \catcode`\}=\other%
 \commentxxx}
 {\catcode`\^^M=\other \gdef\commentxxx#1^^M{\endgroup}}
-
+%
 \let\c=\comment
 
 % @paragraphindent NCHARS
@@ -1173,8 +1183,8 @@ output) for that.)}
   %
   % #1 is image name, #2 width (might be empty/whitespace), #3 height (ditto).
   \def\dopdfimage#1#2#3{%
-    \def\imagewidth{#2}\setbox0 = \hbox{\ignorespaces #2}%
-    \def\imageheight{#3}\setbox2 = \hbox{\ignorespaces #3}%
+    \def\pdfimagewidth{#2}\setbox0 = \hbox{\ignorespaces #2}%
+    \def\pdfimageheight{#3}\setbox2 = \hbox{\ignorespaces #3}%
     %
     % pdftex (and the PDF format) support .pdf, .png, .jpg (among
     % others).  Let's try in that order, PDF first since if
@@ -1212,8 +1222,8 @@ output) for that.)}
     \else
       \immediate\pdfximage
     \fi
-      \ifdim \wd0 >0pt width \imagewidth \fi
-      \ifdim \wd2 >0pt height \imageheight \fi
+      \ifdim \wd0 >0pt width \pdfimagewidth \fi
+      \ifdim \wd2 >0pt height \pdfimageheight \fi
       \ifnum\pdftexversion<13
          #1.\pdfimgext
        \else
@@ -4732,10 +4742,9 @@ end
 %
 % ..., ready, GO:
 %
-\def\safewhatsit#1{%
-\ifhmode
+\def\safewhatsit#1{\ifhmode
   #1%
-\else
+ \else
   % \lastskip and \lastpenalty cannot both be nonzero simultaneously.
   \whatsitskip = \lastskip
   \edef\lastskipmacro{\the\lastskip}%
@@ -4759,7 +4768,6 @@ end
     % to re-insert the same penalty (values >10000 are used for various
     % signals); since we just inserted a non-discardable item, any
     % following glue (such as a \parskip) would be a breakpoint.  For example:
-    %
     %   @deffn deffn-whatever
     %   @vindex index-whatever
     %   Description.
@@ -4772,8 +4780,7 @@ end
     % (the whatsit from the \write), so we must insert a \nobreak.
     \nobreak\vskip\whatsitskip
   \fi
-\fi
-}
+\fi}
 
 % The index entry written in the file actually looks like
 %  \entry {sortstring}{page}{topic}
@@ -5876,14 +5883,15 @@ end
   %
   % We'll almost certainly start a paragraph next, so don't let that
   % glue accumulate.  (Not a breakpoint because it's preceded by a
-  % discardable item.)
+  % discardable item.)  However, when a paragraph is not started next
+  % (\startdefun, \cartouche, \center, etc.), this needs to be wiped out
+  % or the negative glue will cause weirdly wrong output, typically
+  % obscuring the section heading with something else.
   \vskip-\parskip
   %
-  % This is purely so the last item on the list is a known \penalty >
-  % 10000.  This is so \startdefun can avoid allowing breakpoints after
-  % section headings.  Otherwise, it would insert a valid breakpoint between:
-  %   @section sec-whatever
-  %   @deffn def-whatever
+  % This is so the last item on the main vertical list is a known
+  % \penalty > 10000, so \startdefun, etc., can recognize the situation
+  % and do the needful.
   \penalty 10001
 }
 
@@ -6303,7 +6311,7 @@ end
   % If this cartouche directly follows a sectioning command, we need the
   % \parskip glue (backspaced over by default) or the cartouche can
   % collide with the section heading.
-  \ifnum\lastpenalty>10000 \vskip\parskip \fi
+  \ifnum\lastpenalty>10000 \vskip\parskip \penalty\lastpenalty \fi
   %
   \vbox\bgroup
       \baselineskip=0pt\parskip=0pt\lineskip=0pt
@@ -8316,7 +8324,7 @@ end
   it from ftp://tug.org/tex/epsf.tex.}
 %
 \def\image#1{%
-  \ifx\epsfbox\thisiundefined
+  \ifx\epsfbox\thisisundefined
     \ifwarnednoepsf \else
       \errhelp = \noepsfhelp
       \errmessage{epsf.tex not found, images will be ignored}%
@@ -8340,6 +8348,13 @@ end
   % If the image is by itself, center it.
   \ifvmode
     \imagevmodetrue
+  \else \ifx\centersub\centerV
+    % for @center @image, we need a vbox so we can have our vertical space
+    \imagevmodetrue
+    \vbox\bgroup % vbox has better behavior than vtop herev
+  \fi\fi
+  %
+  \ifimagevmode
     \nobreak\medskip
     % Usually we'll have text after the image which will insert
     % \parskip glue, so insert it here too to equalize the space
@@ -8349,9 +8364,13 @@ end
   \fi
   %
   % Leave vertical mode so that indentation from an enclosing
-  % environment such as @quotation is respected.  On the other hand, if
-  % it's at the top level, we don't want the normal paragraph indentation.
-  \noindent
+  %  environment such as @quotation is respected.
+  % However, if we're at the top level, we don't want the
+  %  normal paragraph indentation.
+  % On the other hand, if we are in the case of @center @image, we don't
+  %  want to start a paragraph, which will create a hsize-width box and
+  %  eradicate the centering.
+  \ifx\centersub\centerV\else \noindent \fi
   %
   % Output the image.
   \ifpdf
@@ -8363,7 +8382,10 @@ end
     \epsfbox{#1.eps}%
   \fi
   %
-  \ifimagevmode \medskip \fi  % space after the standalone image
+  \ifimagevmode
+    \medskip  % space after a standalone image
+  \fi  
+  \ifx\centersub\centerV \egroup \fi
 \endgroup}
 
 
