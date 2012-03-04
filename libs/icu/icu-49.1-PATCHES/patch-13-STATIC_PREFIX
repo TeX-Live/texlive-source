@@ -1,0 +1,31 @@
+diff -ur icu-49.rc.orig/source/config/Makefile.inc.in icu-49.rc/source/config/Makefile.inc.in
+--- icu-49.rc.orig/source/config/Makefile.inc.in	2012-03-02 23:12:16.000000000 +0100
++++ icu-49.rc/source/config/Makefile.inc.in	2012-03-03 17:29:38.000000000 +0100
+@@ -44,7 +44,7 @@
+ LIBICU = lib$(ICUPREFIX)
+ 
+ # Static library prefix and file extension
+-STATIC_PREFIX = s
++STATIC_PREFIX =
+ LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
+ A = a
+ 
+diff -ur icu-49.rc.orig/source/icudefs.mk.in icu-49.rc/source/icudefs.mk.in
+--- icu-49.rc.orig/source/icudefs.mk.in	2012-03-03 17:25:30.000000000 +0100
++++ icu-49.rc/source/icudefs.mk.in	2012-03-03 17:29:38.000000000 +0100
+@@ -190,13 +190,13 @@
+ 
+ ## If we can't use the shared libraries, use the static libraries
+ ifneq ($(ENABLE_SHARED),YES)
+-STATIC_PREFIX_WHEN_USED = s
++STATIC_PREFIX_WHEN_USED =
+ else
+ STATIC_PREFIX_WHEN_USED = 
+ endif
+ 
+ # Static library prefix and file extension
+-STATIC_PREFIX = s
++STATIC_PREFIX =
+ LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
+ A = a
+ SOBJ = $(SO)

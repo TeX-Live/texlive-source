@@ -23,7 +23,7 @@ graphite 2.3.1 - checked 25apr11
   the directory silgraphite-2.3.1/engine/ from
   http://sourceforge.net/projects/silgraphite/files/silgraphite/
 
-icu 4.8.1 - http://download.icu-project.org/files/icu4c/
+icu 49.1 (49_rc) - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
 libpng 1.5.9 - checked 23feb12

@@ -1,0 +1,15 @@
+Changes applied to the icu-49.1/ tree as obtained from:
+	http://download.icu-project.org/files/icu4c/49rc/icu4c-49_rc-src.tgz
+
+Regenerated:
+	configure -- should use autoconf 2.68.
+
+Updated:
+	source/config.guess
+	source/config.sub
+	source/install-sh
+
+Removed empty dirs:
+	layout/unicode
+	test/perf/results
+
