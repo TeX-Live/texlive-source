@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfdev.c (handle_multibyte_string): Handle UTP-16 surrogates
+	for UCS-4 supplementary planes.
+	Based on patch from Tanaka Takuji-san.
+
 2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'the address of XXX will always evaluate as true' warnings.
