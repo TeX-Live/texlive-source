@@ -31,9 +31,9 @@ max_kanji=65535; { maximam number of 2byte characters }
 @z
 
 @x function get_next_raw
-if multistrlen(stringcast(buffer),loc+2,loc)=2 then cur_char:=" "
+if multistrlen(ustringcast(buffer),loc+2,loc)=2 then cur_char:=" "
 @y
-if multistrlen(stringcast(buffer),loc+3,loc)>1 then cur_char:=" "
+if multistrlen(ustringcast(buffer),loc+3,loc)>1 then cur_char:=" "
 @z
 
 @x function valid_jis_code
@@ -75,8 +75,8 @@ index_to_jis:=ix;
 @z
 
 @x function get_kanji
-else if multistrlen(stringcast(buffer), loc+2, loc)=2 then
-  begin jis_code:=toDVI(fromBUFF(stringcast(buffer), loc+2, loc));
+else if multistrlen(ustringcast(buffer), loc+2, loc)=2 then
+  begin jis_code:=toDVI(fromBUFF(ustringcast(buffer), loc+2, loc));
   incr(loc); cur_char:=" ";
 @y
 else if (ch='U')or(ch='u') then
@@ -90,9 +90,9 @@ else if (ch='U')or(ch='u') then
   if not valid_jis_code(jis_code) then
     err_print('jis code ', jis_code:1, ' is invalid');
   end
-else if multistrlen(stringcast(buffer), loc+4, loc)>1 then
+else if multistrlen(ustringcast(buffer), loc+4, loc)>1 then
   begin cur_char:=" ";
-  jis_code:=toDVI(fromBUFF(stringcast(buffer), loc+4, loc));
-  loc:=loc+multistrlen(stringcast(buffer), loc+4, loc)-1;
+  jis_code:=toDVI(fromBUFF(ustringcast(buffer), loc+4, loc));
+  loc:=loc+multistrlen(ustringcast(buffer), loc+4, loc)-1;
 @z
 

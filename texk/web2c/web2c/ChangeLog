@@ -1,3 +1,8 @@
+2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* common.defines: Define ustringcast().
+
 2012-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.defines: Moved writedvi from here ...

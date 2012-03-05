@@ -540,7 +540,7 @@ static void write_multibyte(long i)
 
 static void write_hex(int i)
 {
-    sprintf(buffer + last, "^^%02x", i);
+    sprintf((char *) buffer + last, "^^%02x", i);
     last += 4;
 }
 

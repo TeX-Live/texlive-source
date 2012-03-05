@@ -1,3 +1,9 @@
+2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'the address of XXX will always evaluate as true' warnings.
+	* lib.h (STREQ): Test '(s) != NULL' instead of '(s)'.
+	Gcc >=4.3 produces identical code but -Wall yields no warning.
+
 2012-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* c-unistd.h: Declare getopt() (via  <kpathsea/getopt.h>) but

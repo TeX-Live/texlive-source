@@ -201,11 +201,11 @@ var i:c_int_type;
     end;
   vgetc (f); {skip the eol}
 @y
-  last := input_line2(f,stringcast(buffer),last,buf_size,address_of(i));
+  last := input_line2(f,ustringcast(buffer),last,buf_size,address_of(i));
   while (not eof(f)) and (last > 0) and (i <> 10) and (i <> 13) do
   begin
     buffer_overflow;
-    last := input_line2(f,stringcast(buffer),last,buf_size,address_of(i));
+    last := input_line2(f,ustringcast(buffer),last,buf_size,address_of(i));
   end;
 @z
 

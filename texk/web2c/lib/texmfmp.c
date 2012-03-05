@@ -2080,7 +2080,7 @@ input_line (FILE *f)
 
   /* Recognize either LF or CR as a line terminator.  */
 #if IS_pTeX
-  last = input_line2(f, (char *)buffer, first, bufsize, &i);
+  last = input_line2(f, (unsigned char *)buffer, first, bufsize, &i);
 #else
 #ifdef WIN32
   if (f != Poptr && fileno (f) != fileno (stdin)) {

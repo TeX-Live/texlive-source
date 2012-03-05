@@ -1,3 +1,9 @@
+2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* uppltotf.ch: Use ustringcast(buffer).
+	* uptex-m.ch: Use ustringcast for buffer and str_pool.
+
 2012-01-15  Takuji Tanaka  <KXD02663@nifty.ne.jp>
 
 	* uptex-m.ch, uppltotf.ch uptftopl.ch, updvitype.ch, upbibtex.ch:

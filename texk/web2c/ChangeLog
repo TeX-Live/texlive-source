@@ -1,3 +1,8 @@
+2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* cpascal.h: Define ustringcast().
+
 2012-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mf.ch, tex.ch: Remove test for end-of-file after undump.

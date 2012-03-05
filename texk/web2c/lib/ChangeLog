@@ -1,3 +1,8 @@
+2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* texmfmp.c (input_line): Cast buffer to 'unsigned char *'.
+
 2012-02-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eofeoln.c (eof): Fix a typo in comment.

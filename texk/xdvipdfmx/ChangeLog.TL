@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'the address of XXX will always evaluate as true' warnings.
+	* pdfdraw.c (m_stack_depth): Use '(s) != NULL' instead of '(s)'.
+	Gcc >=4.3 produces identical code but -Wall yields no warning.
+
 2012-02-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Fixed a typo (no libpaper for TeX Live builds).

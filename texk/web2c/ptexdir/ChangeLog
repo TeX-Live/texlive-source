@@ -1,3 +1,9 @@
+2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* pbibtex.ch, ppltotf.ch: Use ustringcast(buffer).
+	* ptex-base.ch: Use ustringcast for buffer and str_pool.
+
 2012-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptftopl.ch: Adapt to missing space added in ../tftopl.ch.

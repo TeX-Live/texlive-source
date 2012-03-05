@@ -65,7 +65,7 @@ else  begin while (limit<buf_size-2)and(not eoln(pl_file)) do
     begin incr(limit); read(pl_file,buffer[limit]);
     end;
 @y
-else  begin limit:=input_line2(pl_file,stringcast(buffer),limit+1,buf_size-1)-1;
+else  begin limit:=input_line2(pl_file,ustringcast(buffer),limit+1,buf_size-1)-1;
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -653,7 +653,7 @@ The |jis_to_index| is called from |chars_in_type| command.
 function get_next_raw:byte; {get next rawdata in buffer}
 begin while loc=limit do fill_buffer;
 incr(loc); get_next_raw:=buffer[loc];
-if multistrlen(stringcast(buffer),loc+2,loc)=2 then cur_char:=" "
+if multistrlen(ustringcast(buffer),loc+2,loc)=2 then cur_char:=" "
 else cur_char:=xord[buffer[loc]];
 end;
 @#
@@ -724,8 +724,8 @@ else if (ch='J')or(ch='j') then
   if not valid_jis_code(jis_code) then
     err_print('jis code ', jis_code:1, ' is invalid');
   end
-else if multistrlen(stringcast(buffer), loc+2, loc)=2 then
-  begin jis_code:=toDVI(fromBUFF(stringcast(buffer), loc+2, loc));
+else if multistrlen(ustringcast(buffer), loc+2, loc)=2 then
+  begin jis_code:=toDVI(fromBUFF(ustringcast(buffer), loc+2, loc));
   incr(loc); cur_char:=" ";
   if not valid_jis_code(jis_code) then
     err_print('jis code ', jis_code:1, ' is invalid');

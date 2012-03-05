@@ -126,6 +126,7 @@ typedef FILE *text;
 #define intcast(x) ((integer) (x))
 #define stringcast(x) ((string) (x))
 #define conststringcast(x) ((const_string) (x))
+#define ustringcast(x) ((unsigned char *) (x))
 
 /* For throwing away input from the file F.  */
 #define vgetc(f) (void) getc (f)

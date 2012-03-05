@@ -559,7 +559,7 @@ char *mfgets(char *buf, int byte, FILE *fp)
 {
 	int c, len;
 
-	if ((len = input_line2(fp, buf, 0, byte, &c)) == 0) return NULL;
+	if ((len = input_line2(fp, (unsigned char *) buf, 0, byte, &c)) == 0) return NULL;
 	if (c == '\n' || c == '\r') {
 		if (len+1 < byte) strcat(buf+len, "\n");
 		else ungetc(c, fp);

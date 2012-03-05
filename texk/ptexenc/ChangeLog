@@ -1,3 +1,8 @@
+2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid 'differ in signedness' warnings.
+	* ptexenc.c (write_hex): Cast buffer to 'char *'.
+
 2012-02-29  Ken Brown  <kbrow1i@gmail.com>
 
 	* Makefile.am (libptexenc_la_LIBADD): Add $(KPATHSEA_LIBS) as

@@ -94,7 +94,7 @@
 
 
 /* I find this easier to read.  */
-#define STREQ(s1, s2) ((s1) && (s2) && (strcmp (s1, s2) == 0))
+#define STREQ(s1, s2) (((s1) != NULL) && ((s2) != NULL) && (strcmp (s1, s2) == 0))
 #define STRNEQ(s1, s2, n) ((s1) && (s2) && (strncmp (s1, s2, n) == 0))
 
 /* Support for FAT/ISO-9660 filesystems.  Theoretically this should be

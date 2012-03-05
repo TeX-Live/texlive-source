@@ -361,19 +361,19 @@ if ((kcp mod @'10)>0)and(nrestmultichr(kcp)>0) then p:=p-(kcp mod @'10);
 
 @x
   begin cur_chr:=buffer[loc]; incr(loc);
-    if multistrlen(stringcast(buffer), limit+1, loc-1)=2 then
-      begin cur_chr:=fromBUFF(stringcast(buffer), limit+1, loc-1);
+    if multistrlen(ustringcast(buffer), limit+1, loc-1)=2 then
+      begin cur_chr:=fromBUFF(ustringcast(buffer), limit+1, loc-1);
       cur_cmd:=kcat_code(kcatcodekey(cur_chr));
       incr(loc);
       end
     else reswitch: cur_cmd:=cat_code(cur_chr);
 @y
   begin
-    cur_chr:=fromBUFF(stringcast(buffer), limit, loc);
+    cur_chr:=fromBUFF(ustringcast(buffer), limit, loc);
     cur_cmd:=kcat_code(kcatcodekey(cur_chr));
-    if (multistrlen(stringcast(buffer), limit, loc)>1) and check_kcat_code(cur_cmd) then begin
+    if (multistrlen(ustringcast(buffer), limit, loc)>1) and check_kcat_code(cur_cmd) then begin
       if (cur_cmd=not_cjk) then cur_cmd:=other_kchar;
-      loc:=loc+multistrlen(stringcast(buffer), limit, loc) end
+      loc:=loc+multistrlen(ustringcast(buffer), limit, loc) end
     else begin
       cur_chr:=buffer[loc]; incr(loc);
       reswitch: cur_cmd:=cat_code(cur_chr);
@@ -403,19 +403,19 @@ hangul_code(skip_blanks),hangul_code(new_line),hangul_code(mid_kanji):
 
 @x
 else  begin k:=loc; cur_chr:=buffer[k]; incr(k);
-  if multistrlen(stringcast(buffer), limit+1, k-1)=2 then
-    begin cat:=kcat_code(kcatcodekey(fromBUFF(stringcast(buffer), limit+1, k-1))); incr(k);
+  if multistrlen(ustringcast(buffer), limit+1, k-1)=2 then
+    begin cat:=kcat_code(kcatcodekey(fromBUFF(ustringcast(buffer), limit+1, k-1))); incr(k);
     end
   else cat:=cat_code(cur_chr);
 start_cs:
   if (cat=letter)or(cat=kanji)or(cat=kana) then state:=skip_blanks
 @y
 else  begin k:=loc;
-  cur_chr:=fromBUFF(stringcast(buffer), limit, k);
+  cur_chr:=fromBUFF(ustringcast(buffer), limit, k);
   cat:=kcat_code(kcatcodekey(cur_chr));
-  if (multistrlen(stringcast(buffer), limit, k)>1) and check_kcat_code(cat) then begin
+  if (multistrlen(ustringcast(buffer), limit, k)>1) and check_kcat_code(cat) then begin
     if (cat=not_cjk) then cat:=other_kchar;
-    k:=k+multistrlen(stringcast(buffer), limit, k) end
+    k:=k+multistrlen(ustringcast(buffer), limit, k) end
   else begin {not multi-byte char}
     cur_chr:=buffer[k];
     cat:=cat_code(cur_chr);
@@ -433,17 +433,17 @@ start_cs:
 
 @x
 begin repeat cur_chr:=buffer[k]; incr(k);
-  if multistrlen(stringcast(buffer), limit+1, k-1)=2 then
-    begin cat:=kcat_code(kcatcodekey(fromBUFF(stringcast(buffer), limit+1, k-1))); incr(k);
+  if multistrlen(ustringcast(buffer), limit+1, k-1)=2 then
+    begin cat:=kcat_code(kcatcodekey(fromBUFF(ustringcast(buffer), limit+1, k-1))); incr(k);
     end
   else cat:=cat_code(cur_chr);
 @y
 begin repeat
-  cur_chr:=fromBUFF(stringcast(buffer), limit, k);
+  cur_chr:=fromBUFF(ustringcast(buffer), limit, k);
   cat:=kcat_code(kcatcodekey(cur_chr));
-  if (multistrlen(stringcast(buffer), limit, k)>1) and check_kcat_code(cat) then begin
+  if (multistrlen(ustringcast(buffer), limit, k)>1) and check_kcat_code(cat) then begin
     if (cat=not_cjk) then cat:=other_kchar;
-    k:=k+multistrlen(stringcast(buffer), limit, k) end
+    k:=k+multistrlen(ustringcast(buffer), limit, k) end
   else begin {not multi-byte char}
     cur_chr:=buffer[k];
     cat:=cat_code(cur_chr);
@@ -545,8 +545,8 @@ begin str_room(1);
 p:=temp_head; link(p):=null; k:=b;
 while k<pool_ptr do
   begin t:=so(str_pool[k]);
-  if multistrlen(stringcast(str_pool), pool_ptr, k)=2 then
-    begin t:=fromBUFF(stringcast(str_pool), pool_ptr, k); incr(k);
+  if multistrlen(ustringcast(str_pool), pool_ptr, k)=2 then
+    begin t:=fromBUFF(ustringcast(str_pool), pool_ptr, k); incr(k);
     end
   else if t=" " then t:=space_token
   else t:=other_token+t;
@@ -557,13 +557,13 @@ while k<pool_ptr do
 begin str_room(1);
 p:=temp_head; link(p):=null; k:=b;
 while k<pool_ptr do
-  begin t:=fromBUFF(stringcast(str_pool), pool_ptr, k);
+  begin t:=fromBUFF(ustringcast(str_pool), pool_ptr, k);
   cc:=kcat_code(kcatcodekey(t));
-  if (multistrlen(stringcast(str_pool), pool_ptr, k)>1)and
+  if (multistrlen(ustringcast(str_pool), pool_ptr, k)>1)and
        check_kcat_code(cc) then
     begin if (cc=not_cjk) then cc:=other_kchar;
 	  t:=t+cc*max_cjk_val;
-	  k:=k+multistrlen(stringcast(str_pool), pool_ptr, k)-1;
+	  k:=k+multistrlen(ustringcast(str_pool), pool_ptr, k)-1;
     end
   else begin t:=so(str_pool[k]);
     if t=" " then t:=space_token
