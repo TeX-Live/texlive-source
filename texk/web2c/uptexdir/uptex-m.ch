@@ -352,11 +352,11 @@ if ((kcp mod @'10)>0)and(nrestmultichr(kcp)>0) then p:=p-(kcp mod @'10);
 @x
     begin  if (link(start)=null)and(check_kanji(info(start))) then {|wchar_token|}
       begin cur_input:=input_stack[base_ptr-1];
-      s:=get_avail; info(s):=Lo(buffer[loc]);
+      s:=get_avail; info(s):=Lo(info(loc));
 @y
     begin  if (link(start)=null)and(check_kanji(info(start))) then {|wchar_token|}
       begin cur_input:=input_stack[base_ptr-1];
-      s:=get_avail; info(s):=(buffer[loc] mod max_char_val);
+      s:=get_avail; info(s):=(info(loc) mod max_char_val);
 @z
 
 @x

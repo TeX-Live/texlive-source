@@ -1,3 +1,7 @@
+2012-03-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptex-base.ch: fix a long-remained bug in show_context.
+
 2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

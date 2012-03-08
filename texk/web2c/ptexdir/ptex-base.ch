@@ -1549,7 +1549,7 @@ if token_type<macro then
   begin  if (token_type=backed_up)and(loc<>null) then
     begin  if (link(start)=null)and(check_kanji(info(start))) then {|wchar_token|}
       begin cur_input:=input_stack[base_ptr-1];
-      s:=get_avail; info(s):=Lo(buffer[loc]);
+      s:=get_avail; info(s):=Lo(info(loc));
       cur_input:=input_stack[base_ptr];
       link(start):=s;
       show_token_list(start,loc,100000);
