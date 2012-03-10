@@ -107,6 +107,12 @@ if test "$depmode" = msvc7msys; then
    depmode=msvc7
 fi
 
+if test "$depmode" = xlc; then
+   # IBM C/C++ Compilers xlc/xlC can output gcc-like dependency informations.
+   gccflag=-qmakedep=gcc,-MF
+   depmode=gcc
+fi
+
 case "$depmode" in
 gcc3)
 ## gcc 3 implements dependency tracking that does exactly what
@@ -225,6 +231,13 @@ sgi)
     echo "#dummy" > "$depfile"
   fi
   rm -f "$tmpdepfile"
+  ;;
+
+xlc)
+  # This case exists only to let depend.m4 do its work.  It works by
+  # looking at the text of this script.  This case will never be run,
+  # since it is checked for above.
+  exit 1
   ;;
 
 aix)
