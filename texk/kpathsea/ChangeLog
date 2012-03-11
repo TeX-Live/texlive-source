@@ -1,3 +1,7 @@
+2012-03-11  Karl Berry  <karl@tug.org>
+
+	* *.c: prepend kpathsea: to warnings.
+
 2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'the address of XXX will always evaluate as true' warnings.

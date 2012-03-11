@@ -1,6 +1,6 @@
 /* readable.c: check if a filename is a readable non-directory file.
 
-   Copyright 1993, 1995, 1996, 2008, 2011 Karl Berry.
+   Copyright 1993, 1995, 1996, 2008, 2011, 2012 Karl Berry.
    Copyright 1998, 1999, 2000, 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@
 #define READABLE(fn, st) \
   (access (fn, R_OK) == 0 && access (fn, D_OK) == -1)
 #elif defined (WIN32)
-/* Warning: st must be an unsigned int under Win32 */
+/* st must be an unsigned int under Windows */
 static boolean
 READABLE(const_string fn, unsigned int st)
 {

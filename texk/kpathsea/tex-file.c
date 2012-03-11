@@ -1,7 +1,7 @@
 /* tex-file.c: high-level file searching by format.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011
-   Karl Berry.
+             2012 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -125,7 +125,7 @@ kpathsea_init_fallback_resolutions (kpathsea kpse, string envvar)
 
       s = atoi (size);
       if (size_count && s < last_resort_sizes[size_count - 1]) {
-    WARNING1 ("kpathsea: last resort size %s not in ascending order, ignored",
+    WARNING1 ("kpathsea: last resort size %s not in ascending order; ignored",
           size);
       } else {
         size_count++;

@@ -1,6 +1,6 @@
 /* progname.c: the executable name we were invoked as; general initialization.
 
-   Copyright 1994, 1996, 1997, 2008, 2009, 2010, 2011 Karl Berry.
+   Copyright 1994, 1996, 1997, 2008, 2009, 2010, 2011, 2012 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -546,17 +546,18 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
     if ((err < 0)
         && (err = _open(debug_output, flags, _S_IREAD | _S_IWRITE)) == -1)
     {
-      WARNING1("Can't open %s for stderr redirection!\n", debug_output);
-      perror(debug_output);
+      WARNING1 ("kpathsea: Can't open %s for stderr redirection!\n",
+                debug_output);
+      perror (debug_output);
     } else if ((olderr = _dup(fileno(stderr))) == -1) {
-      WARNING("Can't dup() stderr!\n");
-      close(err);
+      WARNING ("kpathsea: Can't dup() stderr!\n");
+      close (err);
     } else if (_dup2(err, fileno(stderr)) == -1) {
-      WARNING1("Can't redirect stderr to %s!\n", debug_output);
-      close(olderr);
-      close(err);
+      WARNING1 ("kpathsea: Can't redirect stderr to %s!\n", debug_output);
+      close (olderr);
+      close (err);
     } else {
-      close(err);
+      close (err);
     }
   }
 

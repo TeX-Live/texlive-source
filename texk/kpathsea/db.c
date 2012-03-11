@@ -1,6 +1,6 @@
 /* db.c: an external database to avoid filesystem lookups.
 
-   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011 Karl Berry.
+   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -155,7 +155,7 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
     xfclose (db_file, db_filename);
 
     if (file_count == 0) {
-      WARNING1 ("kpathsea: No usable entries in %s", db_filename);
+      WARNING1 ("kpathsea: %s: No usable entries in ls-R", db_filename);
       WARNING ("kpathsea: See the manual for how to generate ls-R");
       db_file = NULL;
     } else {

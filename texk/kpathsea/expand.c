@@ -1,7 +1,8 @@
 /* expand.c: general expansion.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 1998, 2005, 2008, 2009, 2011
-   Karl Berry & Olaf Weber.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2005, 2008, 2009, 2011,
+             2012 Karl Berry.
+   Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -333,7 +334,7 @@ brace_expand (kpathsea kpse, const_string *text)
             str_list_free(&recurse);
             /* Check for missing closing brace. */
             if (*p != '}') {
-                WARNING1 ("%s: Unmatched {", *text);
+                WARNING1 ("kpathsea: %s: Unmatched {", *text);
             }
             *text = p+1;
         } else if (*p == '$') {
