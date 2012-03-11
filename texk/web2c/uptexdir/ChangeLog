@@ -1,3 +1,7 @@
+2012-03-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* uptex-m.ch: remove unnecessary and seemingly wrong changes
+
 2012-03-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* uptex-m.ch: fix a long-remained bug in show_context.
