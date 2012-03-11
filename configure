@@ -1718,7 +1718,7 @@ Optional Packages:
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
   --with-system-xpdf      use installed poppler headers and library instead of
-                          xpdf (requires pkg-config)
+                          xpdf library from TL (requires pkg-config)
   --with-system-poppler   use installed poppler headers and library (requires
                           pkg-config)
   --with-system-gd        use installed gd headers and library

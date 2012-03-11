@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -24,8 +24,7 @@ AC_DEFUN([KPSE_XPDF_OPTIONS],
 [m4_ifval([$1],
           [AC_ARG_WITH([system-xpdf],
                        AS_HELP_STRING([--with-system-xpdf],
-                                      [use installed poppler headers and library instead of xpdf
-                                       (requires pkg-config)]))])[]dnl
+                                      [use installed poppler headers and library instead of xpdf library from TL (requires pkg-config)]))])[]dnl
 ]) # KPSE_XPDF_OPTIONS
 
 # KPSE_XPDF_SYSTEM_FLAGS

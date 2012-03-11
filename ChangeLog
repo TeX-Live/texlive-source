@@ -1,3 +1,7 @@
+2012-03-11  Karl Berry  <karl@tug.org>
+
+	* README.config: text tweaks for poppler/libxpdf/luatex/etc.
+
 2012-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Report `$enable_largefile'.

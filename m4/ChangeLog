@@ -1,3 +1,7 @@
+2012-03-11  Karl Berry  <karl@tug.org>
+
+	* kpse-xpdf-flags.m4 (KPSE_XPDF_OPTIONS): tweak help text slightly.
+
 2012-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-warnings.m4: Drop `-Wimplicit' for g++ >= 4.6.
