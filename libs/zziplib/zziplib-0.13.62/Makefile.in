@@ -840,7 +840,7 @@ osc-ci osc-commit upload-osc: osc-copy
 	| { while read f; do tarname=`basename $$f` \
 	; if test "$$tarname" != "$$tarball" \
 	; then echo osc rm -f $$f ; osc rm -f $$f \
-	; else echo osc add $$f ; osc add $$f \
+	; else echo osc add $$f ; osc add $$f || true \
 	; fi ; done }
 	osc status $(OSC_SRCDIR)/$(OSC_PROJECT)/$(OSC_PACKAGE)/
 	$(DOIT) osc commit -m "update $(OSC_TARBALL)" $(OSC_SRCDIR)/$(OSC_PROJECT)/$(OSC_PACKAGE)

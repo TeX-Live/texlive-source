@@ -1,7 +1,7 @@
 # norootforbuild
 Summary:      ZZipLib - libZ-based ZIP-access Library with an Easy-to-Use API
 Name:         zziplib
-Version:      0.13.60
+Version:      0.13.62
 Release:      1
 License:      LGPLv2.1+
 Group:        System/Libraries
@@ -153,3 +153,6 @@ test ! -f %_bindir/scrollkeeper-update || %_bindir/scrollkeeper-update
 %dir  %{_includedir}/SDL_rwops_zzip
       %{_includedir}/SDL_rwops_zzip/*
 
+%changelog
+* So Mar 11 2012 guidod <guidod@gmx.de> 0.13.62-1
+- next version 

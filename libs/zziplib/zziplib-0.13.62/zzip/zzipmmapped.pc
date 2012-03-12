@@ -12,7 +12,7 @@ suffix=
 
 Name: zzipmmapped
 Description: ZZipLib - libZ-based ZIP-access Library with an Easy-to-Use API
-Version: 0.13.60
+Version: 0.13.62
 Requires: zzip-zlib-config
 Libs: -L${libdir}  -lzzipmmapped
 Cflags: -I${includedir} 

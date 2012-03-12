@@ -7,12 +7,12 @@ datarootdir=${prefix}/share
 datadir=${datarootdir}
 sysconfdir=${prefix}/etc
 includedir=${prefix}/include
-package=zzipfseeko
+package=zziplib
 suffix=
 
-Name: zzipfseeko
+Name: zziplib
 Description: ZZipLib - libZ-based ZIP-access Library with an Easy-to-Use API
-Version: 0.13.60
+Version: 0.13.62
 Requires: zzip-zlib-config
-Libs: -L${libdir}  -lzzipfseeko
+Libs: -L${libdir}  -lzzip
 Cflags: -I${includedir} 

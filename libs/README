@@ -48,5 +48,5 @@ xpdf 3.03 - ftp://ftp.foolabs.com/pub/xpdf/
 zlib 1.2.6 - checked 10feb12
   http://www.zlib.net/ - used by many
 
-zziplib 0.13.60 - checked 25apr11
+zziplib 0.13.62 - checked 12mar12
   http://zziplib.sourceforge.net/ - used by luatex

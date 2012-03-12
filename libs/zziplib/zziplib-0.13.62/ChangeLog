@@ -1,3 +1,15 @@
+2012-03-11  guidod  <guidod@gmx.de>
+
+	* configure.ac: fallback to libtool -export-dynamic unless being sure to
+	   use gnu-ld --export-dynamic. The darwin case is a bit special here 
+	   as the c-compiler and linker might be from different worlds.
+	* next 0.13.62 - needs a fix for mingw 
+	   (-mconsole is not a linker option, only the gcc should see it)
+
+2010-12-30 guidod <guidod@gmx.de>
+        * done 0.13.60 release, tagged, and announced.
+        * prepare 0.13.61
+
 2010-12-29 guidod <guidod@gmx.de>
         * Makefile.am: allow nonstaic build
         * wrap fd.open like in the Fedora patch

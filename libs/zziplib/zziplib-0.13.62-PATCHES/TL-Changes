@@ -1,4 +1,4 @@
-Changes applied to the zziplib-0.13.60/ tree as obtained from:
+Changes applied to the zziplib-0.13.62/ tree as obtained from:
 	http://zziplib.sourceforge.net/
 
 Copied:
@@ -17,6 +17,7 @@ Converted Dos/Win line ends to native:
 	msvc6/*.dsp
 	msvc6/*.dsw
 	msvc7/*.sln
+	msvc7/*.vcproj
 	msvc8/*.sln
 	msvc8/*.vcproj
 	zzip/file.h

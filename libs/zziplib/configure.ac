@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   based on zziplib-0.13.58:
 dnl     Copyright (C) 2009 Guido Draheim <guido@gmx.de> for ZZipLib.SF.net
@@ -9,7 +9,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([zziplib_version], [0.13.60])[]dnl using unmodified zziplib source tree
+m4_include([version.ac])[] dnl define zziplib_version
 AC_INIT([zziplib for TeX Live], zziplib_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([zziplib-]zziplib_version[/zziplib.spec])
