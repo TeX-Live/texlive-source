@@ -1,3 +1,9 @@
+2012-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-U_PF_UNKNOWN (new): Bug fix for the case that
+	U_PLATFORM == U_PF_UNKNOWN as, e.g., for FreeBSD (why?).
+	Reported by Hilmar Preusse <hille42@web.de>.
+
 2012-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported icu-49.1 source tree (icu4c-49_rc-src.tgz) from:
