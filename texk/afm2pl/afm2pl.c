@@ -2108,7 +2108,7 @@ static void
 readargs(int argc, char **argv)
 {
   register int i;
-  int fdims[3];
+  int fdims[5];
 
   /* skip argv[0] and look at the rest. */
   argv++;
