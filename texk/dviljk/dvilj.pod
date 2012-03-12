@@ -592,6 +592,8 @@ to add color specials to B<dvilj> first.)
 Comparison Guide (and addendum) that documents which PCL escape
 sequences are supported on which HP printers.
 
+=back
+
 =head1 AUTHOR
 
 dvi2xx by Gustaf Neumann, Wirtschaftsuniversitaet Wien.
