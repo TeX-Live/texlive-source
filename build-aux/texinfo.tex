@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2012-02-28.16}
+\def\texinfoversion{2012-03-11.15}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1372,7 +1372,13 @@ output) for that.)}
       \fi
     \fi
     \nextsp}
-  \def\getfilename#1{\filenamelength=0\expandafter\skipspaces#1|\relax}
+  \def\getfilename#1{%
+    \filenamelength=0
+    % If we don't expand the argument now, \skipspaces will get
+    % snagged on things like "@value{foo}".
+    \edef\temp{#1}%
+    \expandafter\skipspaces\temp|\relax
+  }
   \ifnum\pdftexversion < 14
     \let \startlink \pdfannotlink
   \else
@@ -7853,6 +7859,7 @@ end
   \ifpdf
     {\indexnofonts
      \turnoffactive
+     \makevalueexpandable
      % This expands tokens, so do it after making catcode changes, so _
      % etc. don't get their TeX definitions.
      \getfilename{#4}%
