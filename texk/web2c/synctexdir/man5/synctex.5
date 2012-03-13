@@ -1,4 +1,4 @@
-.Dd May 11, 2008
+.Dd Mar 13, 2012
 .Dt SYNCTEX 5
 .Os "Independant"
 .\"
@@ -58,21 +58,21 @@ In the following definitions, we do not mention the section ending condition.
 .Li <Preamble> ::=
 .Bl -item -offset indent
 .It
-.Li Qq SyncTeX Version:
+.Qq SyncTeX Version:
 <Version Number> <EOL>
 .It
 .Li <Input Line>*
 .It
-.Li Qq Magnification:
+.Qq Magnification:
 <TeX magnification> <EOL>
 .It
-.Li Qq Unit:
+.Qq Unit:
 <unit in scaled point> <EOL>
 .It
-.Li Qq X Offset:
+.Qq X Offset:
 <horizontal offset in scaled point> <EOL>
 .It
-.Li Qq Y Offset:
+.Qq Y Offset:
 <vertical offset in scaled point> <EOL>
 .El
 .It
@@ -91,7 +91,7 @@ In the following definitions, we do not mention the section ending condition.
 .It
 .Li <byte offset record>
 .It
-.Li Qq Content:
+.Qq Content:
 <EOL>
 .It
 .Li <sheet(1)>
@@ -122,14 +122,14 @@ In the following definitions, we do not mention the section ending condition.
 .It
 .Li <byte offset record>
 .It
-.Li Qq \&{
+.Qq \&{
 <the integer n> <end of record>/
 .It
 .Li <box content>*
 .It
 .Li <byte offset record>
 .It
-.Li Qq \&}
+.Qq \&}
 <the integer n> <end of record>
 .El
 .El
@@ -152,7 +152,7 @@ with some records related to glue, kern or math nodes.
 .Li <vbox section> ::=
 .Bl -item -offset indent
 .It
-.Li Qq \&[
+.Qq \&[
 <link>
 .Qq \&:
 <point>
@@ -161,14 +161,14 @@ with some records related to glue, kern or math nodes.
 .It
 .Li <box content>*
 .It
-.Li Qq \&]
+.Qq \&]
 <end of record>
 .El
 .It
 .Li <hbox section> ::=
 .Bl -item -offset indent
 .It
-.Li Qq \&(
+.Li \&(
 <link>
 .Qq \&:
 <point>
@@ -177,7 +177,7 @@ with some records related to glue, kern or math nodes.
 .It
 .Li <box content>*
 .It
-.Li Qq \&)
+.Qq \&)
 <end of record>
 .El
 .El
@@ -266,15 +266,16 @@ If there is no postamble, it means that the typesetting process did not end corr
 .It
 .Li <byte offset record>
 .It
-.Li Qq Count:
-<Number fo records> <EOL>
+.Qq Count:
+<Number of records> <EOL>
+.El
 .El
 .Sh The post scriptum
 The post scriptum contains material possibly added by 3rd parties.
 It allows to append some transformation (shift and magnify).
 Typically, one applies a dvi to pdf filter with offset options and magnification,
 then he appends the same options to the synctex file, for example
-.Bd -offset indent
+.Bd -literal -offset indent
 	synctex update -o foo.pdf -m 0.486 -x 9472573sp -y 13.3dd source.dvi
 .Ed
 .Bl -item -offset indent
@@ -286,20 +287,21 @@ then he appends the same options to the synctex file, for example
 .It
 .Li <byte offset record>
 .It
-.Li Qq Post Scriptum:
+.Qq Post Scriptum:
 <EOL>
 .It
-.Li Qq Magnification:
+.Qq Magnification:
 <number> <EOL>
 .Pq Set additional magnification
 .It
-.Li Qq X Offset:
+.Qq X Offset:
 <dimension> <EOL>
 .Pq Set horizontal offset
 .It
-.Li Qq Y Offset:
+.Qq Y Offset:
 <dimension> <EOL>
 .Pq Set vertical offset
+.El
 .El
 This second information will override the offset and magnification previously available in the preamble section.
 All the numbers are encoded using the decimal representation with "C" locale.
@@ -307,4 +309,3 @@ All the numbers are encoded using the decimal representation with "C" locale.
 .Pp
 The <current record> is used to compute the visible size of hbox's.
 The byte offset is an implicit anchor to navigate the synctex file from sheet to sheet.
-.

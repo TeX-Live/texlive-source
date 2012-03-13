@@ -154,7 +154,10 @@ TeX and friends are not concerned by these changes.
       /my///.////foo => foo
       /foo => /foo
       /my//.foo => /my//.foo
-      
+1.17: Tue Mar 13 10:10:03 UTC 2012
+- minor changes, no version changes
+- syntax man pages are fixed as suggested by M. Shimata
+	see mail to tex-live@tug.org titled "syntax.5 has many warnings from groff" and "syntax.1 use invalid macro for mdoc"
 Acknowledgments:
 ----------------
 The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
