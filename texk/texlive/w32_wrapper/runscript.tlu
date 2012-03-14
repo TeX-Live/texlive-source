@@ -224,6 +224,10 @@ local docstr = [[
     2011/09/10
         - added -dDisableFAPI=true to psview argument list. Needed by
           gs-9.xx
+    2012/03/12
+        - added '-i', '.' to psview argument list (author's request)
+        - added environment clean up from Perl specific variables 
+          (when not using external Perl)
 ]]
 
 -- HELPER SUBROUTINES --
@@ -449,6 +453,11 @@ if not PERLEXE then
   PERLEXE = TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
   os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')
   PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlperl/bin')
+  local PERLENV = 'PERL5OPT;PERLIO;PERLIO_DEBUG;PERLLIB;PERL5DB;PERL5DB_THREADED;' ..
+                  'PERL5SHELL;PERL_ALLOW_NON_IFS_LSP;PERL_DEBUG_MSTATS;' ..
+                  'PERL_DESTRUCT_LEVEL;PERL_DL_NONLAZY;PERL_ENCODING;PERL_HASH_SEED;' ..
+                  'PERL_HASH_SEED_DEBUG;PERL_ROOT;PERL_SIGNALS;PERL_UNICODE'
+  for var in string.gmatch(PERLENV, '[^;]+') do os.setenv(var, nil) end
 end
 -- gs stuff
 os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts')
@@ -529,6 +538,7 @@ elseif progname == 'psv' then
   ARGV = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
           '-dDisableFAPI=true',
           '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
+          '-i', '.',
           '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps')}
 elseif progname == 'repstopdf' or progname == 'rpdfcrop' then
   argline = '--restricted ' .. argline

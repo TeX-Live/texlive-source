@@ -68,9 +68,7 @@
     
     If you prefer to call the script program simply by its name, copy 
     and rename bin/win32/runscript.exe to <script-name>.exe and put it 
-    somewhere on the search path.]]
-
-local docstr = [[
+    somewhere on the search path.
 
   Wrapper structure
   
@@ -213,4 +211,8 @@ local docstr = [[
     2011/09/10
         - added -dDisableFAPI=true to psview argument list. Needed by
           gs-9.xx
+    2012/03/12
+        - added '-i', '.' to psview argument list (author's request)
+        - added environment clean up from Perl specific variables 
+          (when not using external Perl)
 
