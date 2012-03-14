@@ -68,7 +68,8 @@ texmf_dist_shell_scripts = \
 	pdfjam/pdfjoin \
 	pdfjam/pdfnup \
 	pdfjam/pdfpun \
-	pst-pdf/ps4pdf
+	pst-pdf/ps4pdf \
+	typeoutfileinfo/typeoutfileinfo.sh
 texmf_dist_other_scripts = \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
