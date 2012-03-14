@@ -19,7 +19,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "updmap-setup-kanji";
-my $vers = "0.9.4";
+my $vers = "0.9.5";
 my $version = '$Id$';
 
 my $updmap_real = "updmap-sys";
@@ -148,6 +148,7 @@ sub GetStatus {
   if ($val =~ m/^kanjiEmbed=(.*)( \()?/) {
     $STATUS = $1;
     $STATUS =~ s/\s*$//;
+    $STATUS =~ s/\(.*\)$//;
     $STATUS =~ s/^"(.*)"$/\1/;
   } else {
     printf STDERR "Cannot find status of current kanjiEmbed setting via updmap-sys --showoption!\n";
