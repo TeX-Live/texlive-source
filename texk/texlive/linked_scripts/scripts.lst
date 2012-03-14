@@ -32,6 +32,7 @@ authorindex/authorindex
 bundledoc/arlatex
 bundledoc/bundledoc
 cachepic/cachepic.tlu
+checkcites/checkcites.lua
 context/perl/mptopdf.pl
 ctanify/ctanify
 ctanupload/ctanupload.pl

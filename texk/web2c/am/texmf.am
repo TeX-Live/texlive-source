@@ -1,6 +1,6 @@
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Common for MF and TeX
@@ -87,7 +87,7 @@ DISTCLEANFILES += trip.diffs
 ## tests/write18-quote-test.pl
 DISTCLEANFILES += write18-quote.log
 
-# trip.test
+## trip.test
 trip.diffs: tex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trip-clean
@@ -192,7 +192,7 @@ TRIPTRAP += mftrap.diffs
 TRIPTRAP_CLEAN += trap-clean
 endif MF
 
-# trap.test
+## trap.test
 mftrap.diffs: mf$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trap-clean

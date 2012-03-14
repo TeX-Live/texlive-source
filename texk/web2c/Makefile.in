@@ -1355,10 +1355,6 @@ nodist_man_MANS =
 EXTRA_LIBRARIES = libmf.a libmplib.a libkanji.a libukanji.a \
 	libpdftex.a liblua51.a libluasocket.a libluamisc.a libff.a \
 	libluatex.a libxetex.a libxetexmm.a libmd5.a
-
-# wprob.test
-
-# wprob.test
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap-sh tangle.web tangle.ch tangleboot.pin cwebdir \
 	ctangleboot.cin cwebboot.cin cwebboot.hin tangle.test \
@@ -9583,7 +9579,6 @@ tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
 	$(tie) -c $@ $(tex_ch_srcs)
 
-# trip.test
 trip.diffs: tex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trip-clean
@@ -9618,7 +9613,6 @@ mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
 mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
 	$(tie) -c $@ $(mf_ch_src)
 
-# trap.test
 mftrap.diffs: mf$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trap-clean
@@ -9714,7 +9708,6 @@ etex.web: tie$(EXEEXT) $(etex_web_srcs)
 # Generate etex.ch
 etex.ch: tie$(EXEEXT) etex.web $(etex_ch_srcs)
 	$(tie) -c etex.ch etex.web $(etex_ch_srcs)
-# etrip.test
 etrip.diffs: etex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: etrip-clean

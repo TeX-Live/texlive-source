@@ -1,4 +1,4 @@
-Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 This directory is the central repository for Autoconf macros needed to build
@@ -13,7 +13,7 @@ original build system.
 Note: the files libtool.m4 and ../build-aux/ltmain.sh must match.
 
 (2) `Public' macros for the TL build system and for the TL libraries in the
-subdirectories libs/*/, texk/kpathsea/, and texk/ptexenc, used to configure
+subdirectories libs/*/, texk/kpathsea/, and texk/ptexenc/, used to configure
 programs and other libraries requiring these TL libraries.  The macros are
 designed with the aim that programs maintained independently can be built as
 part of the TL tree or without TL (using installed versions of the required
