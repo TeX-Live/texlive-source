@@ -9,8 +9,12 @@
 #define EXIT_FAILURE 1
 #endif
 
-void FixedSplit(Fixed f, int b[]);
+#if defined __GNUC__ && __GNUC__ >=3
+__attribute__((__noreturn__))
+#endif
 void ttfError(const char *msg);
+
+void FixedSplit(Fixed f, int b[]);
 #define FT_MAKE_TAG( _x1, _x2, _x3, _x4 ) _x1 << 24 | _x2 << 16 | _x3 << 8 | _x4
 char *TagToStr(ULONG tag);
 

@@ -1,3 +1,7 @@
+2012-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/ttfutil.h: Declare ttfError() with attribute noreturn.
+
 2011-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* libttf/otfcommon.c: Improved output strings.
