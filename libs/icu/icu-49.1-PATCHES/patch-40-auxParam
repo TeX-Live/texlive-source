@@ -297,13 +297,13 @@ diff -ur icu-49.rc.orig/source/layout/LEGlyphStorage.cpp icu-49.rc/source/layout
          fCharIndices[fDestIndex] = fCharIndices[fSrcIndex];
 diff -ur icu-49.rc.orig/source/layout/LEGlyphStorage.h icu-49.rc/source/layout/LEGlyphStorage.h
 --- icu-49.rc.orig/source/layout/LEGlyphStorage.h	2012-03-02 23:14:52.000000000 +0100
-+++ icu-49.rc/source/layout/LEGlyphStorage.h	2012-03-03 17:32:24.000000000 +0100
++++ icu-49.rc/source/layout/LEGlyphStorage.h	2012-03-15 09:11:30.000000000 +0100
 @@ -63,12 +63,12 @@
      float     *fPositions;
  
      /**
 -     * The auxillary data array.
-+     * The auxillary data arrays.
++     * The auxiliary data arrays.
       *
       * @internal
       */

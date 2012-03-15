@@ -61,23 +61,23 @@ ArabicShaping::ShapeType ArabicShaping::getShapeType(LEUnicode c)
     const ClassDefinitionTable *joiningTypes = (const ClassDefinitionTable *) ArabicShaping::shapingTypeTable;
     le_int32 joiningType = joiningTypes->getGlyphClass(c);
 
-    if (joiningType == JT_RIGHT_JOINING) { // check for Syriac exceptions ALAPH, DALATH, RISH
+    if (joiningType == ArabicShaping::JT_RIGHT_JOINING) { // check for Syriac exceptions ALAPH, DALATH, RISH
         if (c == 0x0710)
-            return ST_ALAPH;
+            return ArabicShaping::ST_ALAPH;
         if (c == 0x0715 || c == 0x0716 || c == 0x072A || c == 0x072F)
-            return ST_DALATH_RISH;
+            return ArabicShaping::ST_DALATH_RISH;
     }
 
     if (joiningType == 0) { // check for Mongolian range, not supported by ArabicShaping::shapingTypeTable
         if (c >= 0x1800 && c <= 0x18af)
-            return mongolianTypes[c - 0x1800];
+            return ArabicShaping::mongolianTypes[c - 0x1800];
     }
 
-    if (joiningType >= 0 && joiningType < JT_COUNT) {
-        return shapeTypes[joiningType];
+    if (joiningType >= 0 && joiningType < ArabicShaping::JT_COUNT) {
+        return ArabicShaping::shapeTypes[joiningType];
     }
 
-    return ST_NOSHAPE_NONE;
+    return ArabicShaping::ST_NOSHAPE_NONE;
 }
 
 #define isolFeatureTag LE_ISOL_FEATURE_TAG

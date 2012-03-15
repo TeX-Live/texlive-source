@@ -63,7 +63,7 @@ private:
     float     *fPositions;
 
     /**
-     * The auxillary data arrays.
+     * The auxiliary data arrays.
      *
      * @internal
      */
