@@ -25,6 +25,7 @@ pdfjam/pdfjoin
 pdfjam/pdfnup
 pdfjam/pdfpun
 pst-pdf/ps4pdf
+typeoutfileinfo/typeoutfileinfo.sh
 accfonts/mkt1font
 accfonts/vpl2ovp
 accfonts/vpl2vpl

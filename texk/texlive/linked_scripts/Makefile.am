@@ -8,7 +8,7 @@
 ## Build lists of texmf and texmf-dist scripts.
 ##
 scripts-list: Makefile
-	echo "Create $@"
+	@echo "Create $@"
 	@echo "texmf_scripts='" >$@
 	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
 	@echo "'" >>$@
