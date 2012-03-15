@@ -309,3 +309,11 @@ All the numbers are encoded using the decimal representation with "C" locale.
 .Pp
 The <current record> is used to compute the visible size of hbox's.
 The byte offset is an implicit anchor to navigate the synctex file from sheet to sheet.
+.\" nroff -man synctex.5 | less
+.\"groff -man -Tascii synctex.5 | less
+.\"To convert a man page to plain pre-formatted text (e.g for spell checking) use:
+.\"nroff -man synctex.5 | col -b > synctex.5.txt
+.\"To convert it to Postscript (for printing or further conversion to pdf) use:
+.\"groff -man -Tps synctex.5 > synctex.5.ps
+.\"To convert the man page to html use:
+.\"man2html synctex.5

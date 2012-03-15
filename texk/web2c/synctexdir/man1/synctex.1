@@ -24,3 +24,11 @@ with useful suggestions by some well known actors of the TeX world.
 .\" .Sh BUGS              \" Document known, unremedied bugs 
 .Sh HISTORY           \" Document history if command behaves in a unique manner
 This document has never been updated.
+.\" nroff -man synctex.1 | less
+.\"groff -man -Tascii synctex.1 | less
+.\"To convert a man page to plain pre-formatted text (e.g for spell checking) use:
+.\"nroff -man synctex.1 | col -b > synctex.1.txt
+.\"To convert it to Postscript (for printing or further conversion to pdf) use:
+.\"groff -man -Tps synctex.1 > synctex.1.ps
+.\"To convert the man page to html use:
+.\"man2html synctex.1
