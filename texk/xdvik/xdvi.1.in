@@ -48,7 +48,7 @@
 .\" .if n .ds La LaTeX
 .if t .ds Te T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
 .if n .ds Te TeX
-'	# small and boldface (not all -man's provide it)
+.\"	# small and boldface (not all -man's provide it)
 .de SB
 \&\fB\s-1\&\\$1 \\$2\s0\fR
 ..
@@ -865,7 +865,8 @@ are unvisited before you click on them, or after the DVI file has been reloaded.
 The value should be either a valid X color name (such as
 .IR DarkGoldenrod4 )
 or a hexadecimal color string (such as
-.IR #8b6508 ). See also
+.IR #8b6508 ).
+See also
 .B \-visitedlinkcolor
 and
 .BR \-linkstyle .
@@ -1593,8 +1594,7 @@ instead (which see).
 .B \-thorough
 .RB ( .thorough )
 .B Xdvi
-will usually try to ensure that overstrike characters
-.RI ( e.g. ,
+will usually try to ensure that overstrike characters (e.g.,
 .BR \enotin )
 are printed correctly.  On monochrome displays, this is always possible
 with one logical operation, either
@@ -1671,7 +1671,6 @@ Color used for visited hyperlinks (`Purple4' by default). Hyperlinks become
 visited once you click on them. As for
 .BR linkColor ,
 the value should be either a valid X color name or a hexadecimal color string.
-#endif
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B \-warnspecials
