@@ -1,3 +1,7 @@
+2012-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Fixed a typo (in comment).
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

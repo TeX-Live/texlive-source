@@ -1699,7 +1699,7 @@ config.force: $(common_dependencies)
 
 $(xdvi_bin_OBJECTS): libxdvi.a $(common_dependencies)
 
-# When cross-compiling, EXEEXT for the build and hosts system may differ.
+# When cross-compiling, EXEEXT for the build and host systems may differ.
 # Thus we depend on the auxiliary file squeeze/stamp-squeeze.
 psheader.c: psheader.txt squeeze/stamp-squeeze
 	squeeze/squeeze $(srcdir)/psheader.txt $@

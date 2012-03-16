@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2012-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xdvi.1.in: Remove an unmatched #endif and formatting bugs.
+	* Makefile.am: Fixed a typo (in comment).
+
 2012-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop XDVI_CC_CONCAT and XDVI_SYS_SUNOS_4, the

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/xdvik/
 ##
-## Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
@@ -180,7 +180,7 @@ $(xdvi_bin_OBJECTS): libxdvi.a $(common_dependencies)
 
 LDADD = libxdvi.a $(common_ldadd)
 
-# When cross-compiling, EXEEXT for the build and hosts system may differ.
+# When cross-compiling, EXEEXT for the build and host systems may differ.
 # Thus we depend on the auxiliary file squeeze/stamp-squeeze.
 psheader.c: psheader.txt squeeze/stamp-squeeze
 	squeeze/squeeze $(srcdir)/psheader.txt $@
