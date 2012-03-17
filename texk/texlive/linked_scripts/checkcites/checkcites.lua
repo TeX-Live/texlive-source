@@ -22,8 +22,12 @@
 -- ******************************************************************
 
 -- version and date, to be updated on each release/commit
-VERSION = "1.0g"
-DATE = "March 7, 2012"
+VERSION = "1.0h"
+DATE = "March 16, 2012"
+
+-- globals
+-- warning about \citation{*}
+globalAsteriskWarning = true
 
 -- The following code adds a 'split' function to the string type,
 -- thanks to the codebase available here:
@@ -189,11 +193,18 @@ function getDataFromAuxFile(theAuxFile)
                 -- found a '*'
                 else
 
-                    -- show message
-                    print("I found a '*' citation, which means that all references will be used.\nI'm afraid I have nothing to do now.")
+                    -- check if warning is still valid, that is,
+                    -- if not displayed yet
+                    if globalAsteriskWarning then
 
-                    -- and abort the script
-                    os.exit()
+                        -- show message
+                        print("Warning: '\\nocite{*}' found, I'll do the check nonetheless.\n")
+
+                        -- warning already displayed, so
+                        -- set flag to false
+                        globalAsteriskWarning = false
+
+                    end
 
                 end
 
