@@ -48,7 +48,7 @@ DIST_COMMON = $(am__configure_deps) \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -70,8 +70,7 @@ nodist_libgraphite_a_OBJECTS = FileFont.$(OBJEXT) Font.$(OBJEXT) \
 	GrPassActionCode.$(OBJEXT) GrSlotState.$(OBJEXT) \
 	GrSlotStream.$(OBJEXT) GrTableManager.$(OBJEXT) \
 	MemoryUsage.$(OBJEXT) Platform.$(OBJEXT) Segment.$(OBJEXT) \
-	SegmentAux.$(OBJEXT) TestFSM.$(OBJEXT) TestPasses.$(OBJEXT) \
-	TransductionLog.$(OBJEXT)
+	SegmentAux.$(OBJEXT) TransductionLog.$(OBJEXT)
 libgraphite_a_OBJECTS = $(nodist_libgraphite_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -280,8 +279,6 @@ nodist_libgraphite_a_SOURCES = \
 	$(GRAPHITE_TREE)/src/segment/Platform.cpp \
 	$(GRAPHITE_TREE)/src/segment/Segment.cpp \
 	$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp \
-	$(GRAPHITE_TREE)/src/segment/TestFSM.cpp \
-	$(GRAPHITE_TREE)/src/segment/TestPasses.cpp \
 	$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp
 
 all: all-recursive
@@ -358,8 +355,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Segment.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SegmentAux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SegmentPainter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestFSM.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TestPasses.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TransductionLog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TtfUtil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Util.Po@am__quote@
@@ -713,34 +708,6 @@ SegmentAux.obj: $(GRAPHITE_TREE)/src/segment/SegmentAux.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp' object='SegmentAux.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentAux.obj `if test -f '$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; fi`
-
-TestFSM.o: $(GRAPHITE_TREE)/src/segment/TestFSM.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestFSM.o -MD -MP -MF $(DEPDIR)/TestFSM.Tpo -c -o TestFSM.o `test -f '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TestFSM.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestFSM.Tpo $(DEPDIR)/TestFSM.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TestFSM.cpp' object='TestFSM.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestFSM.o `test -f '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TestFSM.cpp
-
-TestFSM.obj: $(GRAPHITE_TREE)/src/segment/TestFSM.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestFSM.obj -MD -MP -MF $(DEPDIR)/TestFSM.Tpo -c -o TestFSM.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestFSM.Tpo $(DEPDIR)/TestFSM.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TestFSM.cpp' object='TestFSM.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestFSM.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; fi`
-
-TestPasses.o: $(GRAPHITE_TREE)/src/segment/TestPasses.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestPasses.o -MD -MP -MF $(DEPDIR)/TestPasses.Tpo -c -o TestPasses.o `test -f '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TestPasses.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestPasses.Tpo $(DEPDIR)/TestPasses.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TestPasses.cpp' object='TestPasses.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestPasses.o `test -f '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TestPasses.cpp
-
-TestPasses.obj: $(GRAPHITE_TREE)/src/segment/TestPasses.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestPasses.obj -MD -MP -MF $(DEPDIR)/TestPasses.Tpo -c -o TestPasses.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestPasses.Tpo $(DEPDIR)/TestPasses.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TestPasses.cpp' object='TestPasses.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestPasses.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; fi`
 
 TransductionLog.o: $(GRAPHITE_TREE)/src/segment/TransductionLog.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TransductionLog.o -MD -MP -MF $(DEPDIR)/TransductionLog.Tpo -c -o TransductionLog.o `test -f '$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp

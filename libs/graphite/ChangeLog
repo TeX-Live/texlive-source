@@ -1,3 +1,11 @@
+2012-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import engine-2.4
+	  (silgraphite/engine svn r1250 2012-03-1419:45:41 UTC) from
+	  http://scripts.sil.org/svn-public/graphite/graphite/trunk.
+	* version.ac: New file defining the silgraphite version.
+	* Makefile.am, configure.ac: Adapt.
+
 2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* include/graphite/Makefile.am: Use ../am/hdr_links.am.

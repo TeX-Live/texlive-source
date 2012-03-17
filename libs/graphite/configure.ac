@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([silgraphite_version], [2.3.1])[]dnl using unmodified silgraphite/engine source tree
+m4_include([version.ac])[] dnl define silgraphite_version
 AC_INIT([silgraphite for TeX Live], silgraphite_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([engine-]silgraphite_version[/src/segment/GrEngine.cpp])
@@ -41,8 +41,7 @@ AC_CHECK_FUNCS([fabsf])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-GRAPHITE_TREE=[engine-]silgraphite_version
-AC_SUBST([GRAPHITE_TREE])
+AC_SUBST([GRAPHITE_TREE], [engine-]silgraphite_version)
 
 AC_CONFIG_FILES([Makefile include/graphite/Makefile])
 

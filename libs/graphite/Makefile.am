@@ -59,7 +59,5 @@ nodist_libgraphite_a_SOURCES = \
 	$(GRAPHITE_TREE)/src/segment/Platform.cpp \
 	$(GRAPHITE_TREE)/src/segment/Segment.cpp \
 	$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp \
-	$(GRAPHITE_TREE)/src/segment/TestFSM.cpp \
-	$(GRAPHITE_TREE)/src/segment/TestPasses.cpp \
 	$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp
 
