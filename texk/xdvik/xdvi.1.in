@@ -3971,7 +3971,7 @@ If this variable is not set, the following default path is used:
 .ft 3
 .sp 1n
 $HOME/.mime.types:/etc/mime.types:\e
-    /usr/etc/mime.types:/usr/local/etc/mimetypes
+    /usr/etc/mime.types:/usr/local/etc/mime.types
 .sp 1n
 .ft
 .fi

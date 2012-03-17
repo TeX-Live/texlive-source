@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mime.c, xdvi.1.in: Use /usr/local/etc/{mimetypes=>mime.types}.
+
 2012-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xdvi.1.in: Remove an unmatched #endif and formatting bugs.

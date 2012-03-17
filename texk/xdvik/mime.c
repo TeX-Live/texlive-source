@@ -54,7 +54,7 @@
 /* default settings if $EXTENSIONMAPS and $MAILCAPS is not set */
 
 static const char *const DEFAULT_EXTENSIONMAPS =
-"$HOME/.mime.types:/etc/mime.types:/usr/etc/mime.types:/usr/local/etc/mimetypes";
+"$HOME/.mime.types:/etc/mime.types:/usr/etc/mime.types:/usr/local/etc/mime.types";
 
 static const char *const DEFAULT_MAILCAPS =
 "$HOME/.mailcap:/etc/mailcap:/usr/etc/mailcap:/usr/local/etc/mailcap";
