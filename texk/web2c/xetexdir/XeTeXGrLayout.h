@@ -186,6 +186,7 @@ public:
 
 	virtual size_t			getFontFeatures(gr::toffset charIndex, gr::FeatureSetting properties[64]);
 
+	virtual bool			featureVariations()	{ return false; };
 protected:
 	int							fDirLevel;
 	const UInt16*				fTextBuffer;

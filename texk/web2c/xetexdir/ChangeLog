@@ -1,3 +1,8 @@
+2012-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXGrLayout.h: Declare XeTeXGrTextSource::featureVariations()
+	required for graphite-2.4.
+
 2012-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xetex.ch: Remove test for end-of-file after undump.
