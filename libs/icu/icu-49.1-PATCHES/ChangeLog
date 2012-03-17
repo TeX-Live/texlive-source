@@ -1,3 +1,7 @@
+2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-FreeBSD (new): From ICU.
+
 2012-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-40-auxParam: Fix a typo (auxillary => auxiliary).
