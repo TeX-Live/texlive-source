@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--Copyright (c) 2002-2011 SIL International-->
+<sfConversion defaultMapping="SILGreek">
+	<sfMarkers escape="\"
+				chars="abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				mapping="ISO-8859-1">
+		<marker name="id" mapping="ISO-8859-1"/>
+		<marker name="fe" mapping="ISO-8859-1"/>
+	</sfMarkers>
+	<inlineMarkers escape="|" start="{" end="}"
+				chars="abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				mapping="ISO-8859-1">
+		<marker name="rm" mapping="ISO-8859-1"/>
+		<marker name="gk" mapping="SILGreek"/>
+	</inlineMarkers>
+</sfConversion>

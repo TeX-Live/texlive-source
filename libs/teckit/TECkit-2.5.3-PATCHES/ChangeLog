@@ -1,0 +1,38 @@
+2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported TECkit-2.5.3 source tree (teckit) from
+	http://scripts.sil.org/svn-public/teckit/TRUNK
+	(svn r1250 2012-03-1419:45:41 UTC).
+
+	* patch-01-debian-505693, patch-04-case-sensitive (removed):
+	Now in source tree.
+	* patch-02-warning, patch-03-warnings: Adapted.
+
+2010-02-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-case-sensitive (new): #include <windows.h> instead
+	of <Windows.h> for, e.g., Linux => MinGW32 cross compilation.
+
+2009-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reconstruct TL TECkit sources from distributed tarball.
+	* TL-changes (new): Modifications applied to the distribution.
+	* patch-[0-9][0-9]-*: Patches applied to the distribution.
+
+2009-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-warnings (new): Avoid maximal compiler warnings.
+	source/Sample-tools/TECkit_Compile.cpp, source/Engine.{cpp,h},
+	source/Public-headers/TECkit_Compiler.h, source/Compiler.cpp:
+	Constify.
+
+2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-warning (new): Avoid compiler warning.
+	source/Compiler.h: change type of Compiler::Pass.passType
+	long -> UInt32.
+
+2008-11-17  Jonathan Kew  <jonathan_kew@sil.org>
+
+	* patch-01-debian-505693 (new): Bug fix.
+

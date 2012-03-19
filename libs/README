@@ -40,8 +40,9 @@ t1lib 5.1.2 - checked 25apr11
   (apparently unmaintained)
   ftp://sunsite.unc.edu/pub/Linux/libs/graphics/
 
-teckit 2.5.1 - checked 25apr11
-  http://scripts.sil.org/svn-view/teckit/
+teckit 2.5.3 - checked 17mar12
+  http://scripts.sil.org/svn-public/teckit/TRUNK
+  (svn r1250 2012-03-1419:45:41 UTC).
 
 xpdf 3.03 - ftp://ftp.foolabs.com/pub/xpdf/
   with modifications for pdftex

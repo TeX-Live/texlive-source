@@ -1,0 +1,95 @@
+INSTALL
+
+Note: If you checked out teckit from svn, or for any other reason don't have
+a file called "configure", you will need to initialize the directory using
+GNU autotools. Instructions for this are given further down.
+
+For typical Unix-like systems:
+
+	./configure
+	make
+	[sudo] make install
+
+Installs tools into /usr/local/lib, with libraries and header files in
+/usr/local/lib and /usr/local/include respectively.
+
+Typical configure options such as --prefix should work, though little testing
+has been done.
+
+The tools installed are:
+	teckit_compile
+		compiler to create binary mapping tables (.tec) from text files (.map)
+	txtconv
+		simple tool to apply a mapping to a plain-text file
+	sfconv
+		tool to apply mappings to a Standard Format file, as specified by
+		a control file
+
+BUILDING for WINDOWS
+
+You will need to install MinGW.
+
+On Mac or Linux, you can use the package system as follows:
+
+	gcc-mingw32 (Debian/Ubuntu)
+	i386-mingw32-gcc (MacPorts)
+
+You may also need some other packages on Mac, such as updated autotools.
+
+On Windows, install MinGW+MSys. Probably the easiest way to do this is to
+download and run mingw-get-inst. Check the options for C++ and MSYS Basic.
+Once installed, you can open a Unix-like shell by running MinGW > MinGW Shell
+from the All Programs menu. File and directory names use forward slashes in MSys,
+and C:\ is represented as /c
+
+Using the cd command, navigate to the place where you checked out or unzipped
+the teckit sources. Note that if there are spaces in any of the parent directory
+names you may experience difficulty building. If so, move the source directory
+to a location that doesn't involve spaces (eg C:\src\teckit).
+
+If necessary, follow the GNU AUTOTOOLS instructions below, then run:
+
+	./build-windows-binaries.sh
+
+This will create executables and DLLs in teckit-windows-bin. Documentation,
+header files, sample tools, etc. can be added and the result zipped to produce
+a release.
+
+BUILDING a LINUX PACKAGE
+
+Run the following script:
+
+	./build-linux-package.sh
+
+The results will be in the teckit-linux subdirectory.
+
+BUILDING a MAC PACKAGE
+
+Run the following script:
+
+	./build-mac-binaries.sh
+
+This will create files in the teckit-mac subdirectory. To make the package itself:
+
+	cd mac-installer
+	./create-pkg.sh
+
+The result will be a file called TECkit.dmg containing a single .pkg file.
+
+GNU AUTOTOOLS
+
+If you don't have a file called "configure" in the top-level teckit source
+directory, you will need to initialize the directory using GNU autotools.
+
+On Windows, install the autotools by running:
+
+	mingw-get install mingw32-autotools
+
+On Mac or Linux, use the package system (MacPorts on Mac).
+
+Then, on all platforms, run:
+
+	./autogen.sh
+
+in the teckit source directory. This normally needs to be done only once, but
+if you update the directory from svn you may need to run it again.

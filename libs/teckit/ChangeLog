@@ -1,3 +1,11 @@
+2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import TECkit-2.5.3
+	  (teckit svn r116 2011-05-12 18:24:47 UTC) from
+	  http://scripts.sil.org/svn-public/teckit/TRUNK.
+	* version.ac: New file defining the silgraphite version.
+	* configure.ac: Adapt.
+
 2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* include/teckit/Makefile.am: Use ../am/hdr_links.am.

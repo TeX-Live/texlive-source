@@ -1,0 +1,7 @@
+
+Name: TECkit
+Description: Unicode conversion library
+Version: ${version}
+Libs: -L${libdir} -lTECkit
+Cflags: -I${includedir}
+
