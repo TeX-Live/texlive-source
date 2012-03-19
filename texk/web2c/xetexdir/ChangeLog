@@ -1,3 +1,9 @@
+2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeX_ext.c, xetex.h (Byte): Remove temporary #define to my_Byte
+	and subsequent #undef.  The typedef conflict between TECkit_Common.h
+	and zlib is now handled differently (by zlib and TECkit).
+
 2012-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXGrLayout.h: Declare XeTeXGrTextSource::featureVariations()

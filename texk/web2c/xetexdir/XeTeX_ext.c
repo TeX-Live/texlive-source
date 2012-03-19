@@ -46,9 +46,7 @@ authorization from the copyright holders.
 #include "zlib.h"
 
 #define EXTERN extern
-#define Byte my_Byte /* hack to work around typedef conflict with zlib */
 #include "xetexd.h"
-#undef Byte
 
 #ifdef XETEX_MAC
 #undef input /* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
