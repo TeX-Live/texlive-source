@@ -498,7 +498,7 @@ ft-build/Makefile:
 	rm -rf ft-build
 	$(MKDIR_P) ft-build
 	cd ft-build && \
-	  CC='$(CC)' \
+	  CC='$(CC)' CONFIG_SITE=/dev/null \
 	  $(abs_srcdir)/$(FREETYPE_TREE)/configure \
 	    $(config_args) --disable-shared \
 	    --with-old-mac-fonts \

@@ -1,3 +1,7 @@
+2012-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid using a 'config.site' file.
+
 2012-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import freetype-2.4.9.

@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build FreeType for TeX Live.
 ##
-##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -28,10 +28,11 @@ ft-build/Makefile:
 	rm -rf ft-build
 	$(MKDIR_P) ft-build
 	cd ft-build && \
-	  CC='$(CC)' \
+	  CC='$(CC)' CONFIG_SITE=/dev/null \
 	  $(abs_srcdir)/$(FREETYPE_TREE)/configure \
 	    $(config_args) --disable-shared --disable-nls \
 	    --prefix=$(abs_builddir)/ft-install \
+	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)
 
 # Unfortunately the FreeType build system installs the headers after the library;
@@ -41,7 +42,6 @@ libttf.a: ft-build/Makefile
 	cd ft-build/lib \
 	  && $(MAKE) $(AM_MAKEFLAGS) -f arch/unix/Makefile all \
 	  && $(MAKE) $(AM_MAKEFLAGS) -f arch/unix/Makefile install
-	mv ft-install/lib/libttf.a .
 	sleep 1
 	touch libttf.a
 
