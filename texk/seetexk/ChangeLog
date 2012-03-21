@@ -1,6 +1,6 @@
 2012-03-20  Karl Berry  <karl@tug.org>
 
-	* *.c: update license of UMD files to use the X11
+	* *.c, *.h, *.man: update license of UMD files to use the X11
 	license.  Approved by UMD legal, after discussion
 
 2011-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
@@ -210,3 +210,6 @@ Thu Jan  1 11:00:52 1998  Sebastian Rahtz  <s.rahtz@elsevier.co.uk>
 	the texk family to allow us to have just dviconcat and
 	dviselect. No attempt to compile xtex! Made a configure file.
 
+Copyright (C) 2004-2012 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 1998 Sebastian Rahtz
+You may freely use, modify and/or distribute this file.

@@ -1,3 +1,5 @@
+.\" Copyright (c) 1987-2012 UMD-CS, released under the X11 license;
+.\" see README and source files.
 .TH DVICONCAT 1
 .SH NAME
 dviconcat \- concatenate DVI files

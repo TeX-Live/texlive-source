@@ -1,3 +1,5 @@
+.\" Copyright (c) 1987-2012 UMD-CS, released under the X11 license;
+.\" see README and source files.
 .TH DVIBOOK 1
 .SH NAME
 dvibook \- rearrange pages in DVI file into signatures

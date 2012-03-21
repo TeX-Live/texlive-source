@@ -1,3 +1,5 @@
+.\" Copyright (c) 1987-2012 UMD-CS, released under the X11 license;
+.\" see README and source files.
 .TH DVITODVI 1
 .SH NAME
 dvitodvi \- rearrange pages in a DVI file
