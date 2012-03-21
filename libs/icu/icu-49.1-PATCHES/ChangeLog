@@ -1,3 +1,7 @@
+2012-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-m4-quoting (new): Correct m4 quoting in configure.in.
+
 2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-FreeBSD (new): From ICU.

@@ -1,0 +1,19 @@
+	Correct m4 quoting.
+	Use AC_LANG_PROGRAM to create a linkable program.
+
+	Without this we get an error msg
+	  sed: can't read conftest.c: No such file or directory
+
+
+diff -ur icu-49.rc.orig/source/configure.in icu-49.rc/source/configure.in
+--- icu-49.rc.orig/source/configure.in	2012-03-03 17:20:02.000000000 +0100
++++ icu-49.rc/source/configure.in	2012-03-20 20:40:28.000000000 +0100
+@@ -285,7 +285,7 @@
+                 ;;
+             esac
+             
+-            AC_LINK_IFELSE(AC_LANG_SOURCE, CHECK_STATIC_OPT_FLAG=yes, CHECK_STATIC_OPT_FLAG=no, )
++            AC_LINK_IFELSE([AC_LANG_PROGRAM([], [])], [CHECK_STATIC_OPT_FLAG=yes], [CHECK_STATIC_OPT_FLAG=no])
+             AC_MSG_RESULT($CHECK_STATIC_OPT_FLAG)
+             if test "$CHECK_STATIC_OPT_FLAG" = no; then
+                 CPPFLAGS="${OLD_CPPFLAGS}"

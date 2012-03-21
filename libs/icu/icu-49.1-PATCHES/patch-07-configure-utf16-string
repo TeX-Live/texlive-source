@@ -1,5 +1,5 @@
 diff -ur icu-49.rc.orig/source/configure.in icu-49.rc/source/configure.in
---- icu-49.rc.orig/source/configure.in	2012-03-03 17:20:02.000000000 +0100
+--- icu-49.rc.orig/source/configure.in	2012-03-20 20:40:28.000000000 +0100
 +++ icu-49.rc/source/configure.in	2012-03-03 19:43:45.000000000 +0100
 @@ -912,7 +912,27 @@
      fi

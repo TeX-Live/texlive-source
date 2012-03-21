@@ -1,6 +1,6 @@
 diff -ur icu-49.rc.orig/source/configure icu-49.rc/source/configure
 --- icu-49.rc.orig/source/configure	2012-03-02 23:14:56.000000000 +0100
-+++ icu-49.rc/source/configure	2012-03-03 19:43:50.000000000 +0100
++++ icu-49.rc/source/configure	2012-03-20 21:19:48.000000000 +0100
 @@ -623,6 +623,7 @@
  EXTRAS_TRUE
  U_CHECK_UTF16_STRING
@@ -44,7 +44,34 @@ diff -ur icu-49.rc.orig/source/configure icu-49.rc/source/configure
    --enable-extras         build ICU extras default=yes
    --enable-icuio          build ICU's icuio library default=yes
    --enable-layout         build ICU's layout library default=yes
-@@ -5460,47 +5458,9 @@
+@@ -5271,13 +5269,24 @@
+                 ;;
+             esac
+ 
+-            if ac_fn_c_try_link "$LINENO"; then :
++            cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main ()
++{
++
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_link "$LINENO"; then :
+   CHECK_STATIC_OPT_FLAG=yes
+ else
+   CHECK_STATIC_OPT_FLAG=no
+ fi
+ rm -f core conftest.err conftest.$ac_objext \
+-    conftest$ac_exeext
++    conftest$ac_exeext conftest.$ac_ext
+             { $as_echo "$as_me:${as_lineno-$LINENO}: result: $CHECK_STATIC_OPT_FLAG" >&5
+ $as_echo "$CHECK_STATIC_OPT_FLAG" >&6; }
+             if test "$CHECK_STATIC_OPT_FLAG" = no; then
+@@ -5460,47 +5469,9 @@
  
  
  # look for 'ar' the proper way
@@ -95,7 +122,7 @@ diff -ur icu-49.rc.orig/source/configure icu-49.rc/source/configure
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
  $as_echo_n "checking for $ac_word... " >&6; }
  if ${ac_cv_prog_AR+:} false; then :
-@@ -5516,7 +5476,7 @@
+@@ -5516,7 +5487,7 @@
    test -z "$as_dir" && as_dir=.
      for ac_exec_ext in '' $ac_executable_extensions; do
    if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
@@ -104,7 +131,7 @@ diff -ur icu-49.rc.orig/source/configure icu-49.rc/source/configure
      $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
      break 2
    fi
-@@ -5536,10 +5496,10 @@
+@@ -5536,10 +5507,10 @@
  fi
  
  
@@ -118,7 +145,7 @@ diff -ur icu-49.rc.orig/source/configure icu-49.rc/source/configure
  set dummy ar; ac_word=$2
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
  $as_echo_n "checking for $ac_word... " >&6; }
-@@ -5564,7 +5524,6 @@
+@@ -5564,7 +5535,6 @@
    done
  IFS=$as_save_IFS
  
@@ -126,7 +153,7 @@ diff -ur icu-49.rc.orig/source/configure icu-49.rc/source/configure
  fi
  fi
  ac_ct_AR=$ac_cv_prog_ac_ct_AR
-@@ -5576,9 +5535,16 @@
+@@ -5576,9 +5546,16 @@
  $as_echo "no" >&6; }
  fi
  
@@ -145,7 +172,7 @@ diff -ur icu-49.rc.orig/source/configure icu-49.rc/source/configure
    fi
  else
    AR="$ac_cv_prog_AR"
-@@ -7140,8 +7106,31 @@
+@@ -7140,8 +7117,31 @@
      fi
  fi
  
@@ -177,7 +204,7 @@ diff -ur icu-49.rc.orig/source/configure icu-49.rc/source/configure
  U_CHECK_UTF16_STRING=1
  CHECK_UTF16_STRING_RESULT="unknown"
  
-@@ -7274,6 +7263,7 @@
+@@ -7274,6 +7274,7 @@
          fi
      fi
  fi
