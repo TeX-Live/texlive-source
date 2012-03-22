@@ -1,6 +1,6 @@
-diff -ur icu-49.rc.orig/source/layout/LEFontInstance.h icu-49.rc/source/layout/LEFontInstance.h
---- icu-49.rc.orig/source/layout/LEFontInstance.h	2012-03-02 23:14:52.000000000 +0100
-+++ icu-49.rc/source/layout/LEFontInstance.h	2012-03-03 17:34:01.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/LEFontInstance.h icu-49.1/source/layout/LEFontInstance.h
+--- icu-49.1.orig/source/layout/LEFontInstance.h	2012-03-21 18:38:08.000000000 +0100
++++ icu-49.1/source/layout/LEFontInstance.h	2012-03-22 10:19:05.000000000 +0100
 @@ -509,6 +509,10 @@
       */
      static UClassID getStaticClassID();
@@ -24,9 +24,9 @@ diff -ur icu-49.rc.orig/source/layout/LEFontInstance.h icu-49.rc/source/layout/L
  U_NAMESPACE_END
  #endif
  
-diff -ur icu-49.rc.orig/source/layout/ValueRecords.cpp icu-49.rc/source/layout/ValueRecords.cpp
---- icu-49.rc.orig/source/layout/ValueRecords.cpp	2012-03-02 23:14:54.000000000 +0100
-+++ icu-49.rc/source/layout/ValueRecords.cpp	2012-03-03 17:34:01.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/ValueRecords.cpp icu-49.1/source/layout/ValueRecords.cpp
+--- icu-49.1.orig/source/layout/ValueRecords.cpp	2012-03-21 18:38:10.000000000 +0100
++++ icu-49.1/source/layout/ValueRecords.cpp	2012-03-22 10:19:05.000000000 +0100
 @@ -48,8 +48,12 @@
  
          fontInstance->transformFunits(value, 0, pixels);

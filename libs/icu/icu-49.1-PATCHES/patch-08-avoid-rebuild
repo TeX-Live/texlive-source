@@ -1,9 +1,9 @@
 	Avoid to run pkgdata again and again.
 
-diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.in
---- icu-49.rc.orig/source/data/Makefile.in	2012-03-02 23:14:48.000000000 +0100
-+++ icu-49.rc/source/data/Makefile.in	2012-03-03 17:22:06.000000000 +0100
-@@ -104,7 +104,7 @@
+diff -ur icu-49.1.orig/source/data/Makefile.in icu-49.1/source/data/Makefile.in
+--- icu-49.1.orig/source/data/Makefile.in	2012-03-21 18:38:02.000000000 +0100
++++ icu-49.1/source/data/Makefile.in	2012-03-22 10:00:52.000000000 +0100
+@@ -105,7 +105,7 @@
  .PHONY : all all-local all-recursive install install-local install-files	\
  install-recursive clean clean-local clean-recursive distclean		\
  distclean-local distclean-recursive dist dist-local dist-recursive	\
@@ -12,7 +12,7 @@ diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.i
  check-exhaustive
  
  ## Clear suffix list
-@@ -134,6 +134,7 @@
+@@ -135,6 +135,7 @@
  	-test -z *.map || $(RMV) *.map
  
  clean-local: cleanpackage cleanfiles clean-map
@@ -20,7 +20,7 @@ diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.i
  
  cleanfiles:
  	test -z "$(CLEANFILES)" || $(RMV) $(CLEANFILES)
-@@ -178,6 +179,7 @@
+@@ -182,6 +183,7 @@
  else
  	$(INSTALL_DATA) $(ICUDATA_SOURCE_ARCHIVE) $(OUTDIR)
  endif
@@ -28,7 +28,7 @@ diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.i
  
  ## Install ICU data.
  install-local: $(PKGDATA_LIST) ./icupkg.inc packagedata $(OS390INSTALL)
-@@ -422,6 +424,7 @@
+@@ -426,6 +428,7 @@
  ifneq ($(INCLUDE_UNI_CORE_DATA),)
  MISC_FILES_LIST+=$(UNI_CORE_DATA)
  build-local: uni-core-data
@@ -36,7 +36,7 @@ diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.i
  endif
  
  #####################################################
-@@ -432,6 +435,7 @@
+@@ -436,6 +439,7 @@
  
  ifeq ($(ICUDATA_SOURCE_ARCHIVE),)
  build-local: build-dir $(SO_VERSION_DATA) $(ALL_FILES) $(PKGDATA_LIST) $(OS390LIST)
@@ -44,7 +44,7 @@ diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.i
  $(PKGDATA_LIST): $(SRCLISTDEPS)
  	@echo "generating $@ (list of data files)"
  	@-$(RMV) $@
-@@ -449,6 +453,7 @@
+@@ -453,6 +457,7 @@
  	done;
  else
  build-local: build-dir $(SO_VERSION_DATA) $(PKGDATA_LIST) $(OS390LIST)
@@ -52,7 +52,7 @@ diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.i
  $(PKGDATA_LIST): $(SRCLISTDEPS) $(ICUDATA_SOURCE_ARCHIVE)
  ifneq ($(ICUDATA_SOURCE_IS_NATIVE_TARGET),YES)
  	@echo "Unpacking $(ICUDATA_SOURCE_ARCHIVE) and generating $@ (list of data files)"
-@@ -463,6 +468,8 @@
+@@ -467,6 +472,8 @@
  $(BUILD_DIRS): build-dir
  
  build-dir:
@@ -61,7 +61,7 @@ diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.i
  	@list='$(BUILD_DIRS)'; \
  	for dir in $$list; do \
  	  if ! test -d $$dir; then \
-@@ -470,6 +477,7 @@
+@@ -474,6 +481,7 @@
  	    $(MKINSTALLDIRS) $(BUILD_DIRS); \
  	  fi; \
  	done
@@ -69,7 +69,7 @@ diff -ur icu-49.rc.orig/source/data/Makefile.in icu-49.rc/source/data/Makefile.i
  
  # The | is an order-only prerequisite. This helps when the -j option is used,
  # and we don't want the files to be built before the directories are built.
-@@ -767,6 +775,7 @@
+@@ -771,6 +779,7 @@
  # when updating the Unicode data.
  uni-core-data: build-dir $(UNI_CORE_TARGET_DATA)
  	@echo Unicode .icu files built to $(BUILDDIR)

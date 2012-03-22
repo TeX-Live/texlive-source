@@ -1,6 +1,6 @@
-diff -ur icu-49.rc.orig/source/layout/AlternateSubstSubtables.cpp icu-49.rc/source/layout/AlternateSubstSubtables.cpp
---- icu-49.rc.orig/source/layout/AlternateSubstSubtables.cpp	2012-03-02 23:14:52.000000000 +0100
-+++ icu-49.rc/source/layout/AlternateSubstSubtables.cpp	2012-03-03 17:32:24.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/AlternateSubstSubtables.cpp icu-49.1/source/layout/AlternateSubstSubtables.cpp
+--- icu-49.1.orig/source/layout/AlternateSubstSubtables.cpp	2012-03-21 18:38:08.000000000 +0100
++++ icu-49.1/source/layout/AlternateSubstSubtables.cpp	2012-03-22 10:16:50.000000000 +0100
 @@ -27,13 +27,19 @@
              Offset alternateSetTableOffset = SWAPW(alternateSetTableOffsetArray[coverageIndex]);
              const AlternateSetTable *alternateSetTable =
@@ -25,9 +25,9 @@ diff -ur icu-49.rc.orig/source/layout/AlternateSubstSubtables.cpp icu-49.rc/sour
          }
  
          // XXXX If we get here, the table's mal-formed...
-diff -ur icu-49.rc.orig/source/layout/GlyphIterator.cpp icu-49.rc/source/layout/GlyphIterator.cpp
---- icu-49.rc.orig/source/layout/GlyphIterator.cpp	2012-03-02 23:14:52.000000000 +0100
-+++ icu-49.rc/source/layout/GlyphIterator.cpp	2012-03-03 17:32:24.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/GlyphIterator.cpp icu-49.1/source/layout/GlyphIterator.cpp
+--- icu-49.1.orig/source/layout/GlyphIterator.cpp	2012-03-21 18:38:08.000000000 +0100
++++ icu-49.1/source/layout/GlyphIterator.cpp	2012-03-22 10:16:50.000000000 +0100
 @@ -19,7 +19,7 @@
                               FeatureMask theFeatureMask, const GlyphDefinitionTableHeader *theGlyphDefinitionTableHeader)
    : direction(1), position(-1), nextLimit(-1), prevLimit(-1),
@@ -122,9 +122,9 @@ diff -ur icu-49.rc.orig/source/layout/GlyphIterator.cpp icu-49.rc/source/layout/
  }
  
  le_bool GlyphIterator::findFeatureTag()
-diff -ur icu-49.rc.orig/source/layout/GlyphIterator.h icu-49.rc/source/layout/GlyphIterator.h
---- icu-49.rc.orig/source/layout/GlyphIterator.h	2012-03-02 23:14:54.000000000 +0100
-+++ icu-49.rc/source/layout/GlyphIterator.h	2012-03-03 17:32:24.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/GlyphIterator.h icu-49.1/source/layout/GlyphIterator.h
+--- icu-49.1.orig/source/layout/GlyphIterator.h	2012-03-21 18:38:10.000000000 +0100
++++ icu-49.1/source/layout/GlyphIterator.h	2012-03-22 10:16:50.000000000 +0100
 @@ -28,7 +28,7 @@
  
      GlyphIterator(GlyphIterator &that);
@@ -160,9 +160,9 @@ diff -ur icu-49.rc.orig/source/layout/GlyphIterator.h icu-49.rc/source/layout/Gl
      le_int32    glyphGroup;
  
      const GlyphClassDefinitionTable *glyphClassDefinitionTable;
-diff -ur icu-49.rc.orig/source/layout/LEGlyphStorage.cpp icu-49.rc/source/layout/LEGlyphStorage.cpp
---- icu-49.rc.orig/source/layout/LEGlyphStorage.cpp	2012-03-02 23:14:54.000000000 +0100
-+++ icu-49.rc/source/layout/LEGlyphStorage.cpp	2012-03-03 17:32:24.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/LEGlyphStorage.cpp icu-49.1/source/layout/LEGlyphStorage.cpp
+--- icu-49.1.orig/source/layout/LEGlyphStorage.cpp	2012-03-21 18:38:10.000000000 +0100
++++ icu-49.1/source/layout/LEGlyphStorage.cpp	2012-03-22 10:16:50.000000000 +0100
 @@ -20,7 +20,7 @@
  
  LEGlyphStorage::LEGlyphStorage()
@@ -295,9 +295,9 @@ diff -ur icu-49.rc.orig/source/layout/LEGlyphStorage.cpp icu-49.rc/source/layout
      while (fSrcIndex > atPosition) {
          fGlyphs[fDestIndex]      = fGlyphs[fSrcIndex];
          fCharIndices[fDestIndex] = fCharIndices[fSrcIndex];
-diff -ur icu-49.rc.orig/source/layout/LEGlyphStorage.h icu-49.rc/source/layout/LEGlyphStorage.h
---- icu-49.rc.orig/source/layout/LEGlyphStorage.h	2012-03-02 23:14:52.000000000 +0100
-+++ icu-49.rc/source/layout/LEGlyphStorage.h	2012-03-15 09:11:30.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/LEGlyphStorage.h icu-49.1/source/layout/LEGlyphStorage.h
+--- icu-49.1.orig/source/layout/LEGlyphStorage.h	2012-03-21 18:38:08.000000000 +0100
++++ icu-49.1/source/layout/LEGlyphStorage.h	2012-03-22 10:16:50.000000000 +0100
 @@ -63,12 +63,12 @@
      float     *fPositions;
  
@@ -358,9 +358,9 @@ diff -ur icu-49.rc.orig/source/layout/LEGlyphStorage.h icu-49.rc/source/layout/L
  
  U_NAMESPACE_END
  #endif
-diff -ur icu-49.rc.orig/source/layout/OpenTypeLayoutEngine.cpp icu-49.rc/source/layout/OpenTypeLayoutEngine.cpp
---- icu-49.rc.orig/source/layout/OpenTypeLayoutEngine.cpp	2012-03-02 23:14:54.000000000 +0100
-+++ icu-49.rc/source/layout/OpenTypeLayoutEngine.cpp	2012-03-03 17:32:24.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/OpenTypeLayoutEngine.cpp icu-49.1/source/layout/OpenTypeLayoutEngine.cpp
+--- icu-49.1.orig/source/layout/OpenTypeLayoutEngine.cpp	2012-03-21 18:38:08.000000000 +0100
++++ icu-49.1/source/layout/OpenTypeLayoutEngine.cpp	2012-03-22 10:16:50.000000000 +0100
 @@ -78,7 +78,7 @@
  OpenTypeLayoutEngine::OpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
                          le_int32 typoFlags, const GlyphSubstitutionTableHeader *gsubTable, LEErrorCode &success)
@@ -379,9 +379,9 @@ diff -ur icu-49.rc.orig/source/layout/OpenTypeLayoutEngine.cpp icu-49.rc/source/
      }
  
      return count;
-diff -ur icu-49.rc.orig/source/layout/OpenTypeLayoutEngine.h icu-49.rc/source/layout/OpenTypeLayoutEngine.h
---- icu-49.rc.orig/source/layout/OpenTypeLayoutEngine.h	2012-03-02 23:14:54.000000000 +0100
-+++ icu-49.rc/source/layout/OpenTypeLayoutEngine.h	2012-03-03 17:32:24.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/OpenTypeLayoutEngine.h icu-49.1/source/layout/OpenTypeLayoutEngine.h
+--- icu-49.1.orig/source/layout/OpenTypeLayoutEngine.h	2012-03-21 18:38:08.000000000 +0100
++++ icu-49.1/source/layout/OpenTypeLayoutEngine.h	2012-03-22 10:16:50.000000000 +0100
 @@ -194,6 +194,13 @@
      le_bool fFeatureOrder;
  

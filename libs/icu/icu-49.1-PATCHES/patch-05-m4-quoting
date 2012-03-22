@@ -5,9 +5,9 @@
 	  sed: can't read conftest.c: No such file or directory
 
 
-diff -ur icu-49.rc.orig/source/configure.in icu-49.rc/source/configure.in
---- icu-49.rc.orig/source/configure.in	2012-03-03 17:20:02.000000000 +0100
-+++ icu-49.rc/source/configure.in	2012-03-20 20:40:28.000000000 +0100
+diff -ur icu-49.1.orig/source/configure.in icu-49.1/source/configure.in
+--- icu-49.1.orig/source/configure.in	2012-03-21 18:38:10.000000000 +0100
++++ icu-49.1/source/configure.in	2012-03-22 09:54:23.000000000 +0100
 @@ -285,7 +285,7 @@
                  ;;
              esac

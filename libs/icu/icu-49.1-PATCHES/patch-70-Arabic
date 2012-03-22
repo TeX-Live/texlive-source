@@ -1,6 +1,6 @@
-diff -ur icu-49.rc.orig/source/layout/ArabicShaping.cpp icu-49.rc/source/layout/ArabicShaping.cpp
---- icu-49.rc.orig/source/layout/ArabicShaping.cpp	2012-03-02 23:14:54.000000000 +0100
-+++ icu-49.rc/source/layout/ArabicShaping.cpp	2012-03-15 09:11:30.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/ArabicShaping.cpp icu-49.1/source/layout/ArabicShaping.cpp
+--- icu-49.1.orig/source/layout/ArabicShaping.cpp	2012-03-21 18:38:10.000000000 +0100
++++ icu-49.1/source/layout/ArabicShaping.cpp	2012-03-22 10:21:21.000000000 +0100
 @@ -24,6 +24,31 @@
      ArabicShaping::ST_TRANSPARENT   // [T]
  };
@@ -150,9 +150,9 @@ diff -ur icu-49.rc.orig/source/layout/ArabicShaping.cpp icu-49.rc/source/layout/
          erout = out;
      }
  
-diff -ur icu-49.rc.orig/source/layout/ArabicShaping.h icu-49.rc/source/layout/ArabicShaping.h
---- icu-49.rc.orig/source/layout/ArabicShaping.h	2012-03-02 23:14:54.000000000 +0100
-+++ icu-49.rc/source/layout/ArabicShaping.h	2012-03-03 17:37:09.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/ArabicShaping.h icu-49.1/source/layout/ArabicShaping.h
+--- icu-49.1.orig/source/layout/ArabicShaping.h	2012-03-21 18:38:08.000000000 +0100
++++ icu-49.1/source/layout/ArabicShaping.h	2012-03-22 10:21:21.000000000 +0100
 @@ -39,7 +39,10 @@
          MASK_SHAPE_RIGHT    = 1, // if this bit set, shapes to right
          MASK_SHAPE_LEFT     = 2, // if this bit set, shapes to left
@@ -184,9 +184,9 @@ diff -ur icu-49.rc.orig/source/layout/ArabicShaping.h icu-49.rc/source/layout/Ar
  
      static void adjustTags(le_int32 outIndex, le_int32 shapeOffset, LEGlyphStorage &glyphStorage); 
  };
-diff -ur icu-49.rc.orig/source/layout/LayoutEngine.cpp icu-49.rc/source/layout/LayoutEngine.cpp
---- icu-49.rc.orig/source/layout/LayoutEngine.cpp	2012-03-03 17:35:31.000000000 +0100
-+++ icu-49.rc/source/layout/LayoutEngine.cpp	2012-03-03 17:37:09.000000000 +0100
+diff -ur icu-49.1.orig/source/layout/LayoutEngine.cpp icu-49.1/source/layout/LayoutEngine.cpp
+--- icu-49.1.orig/source/layout/LayoutEngine.cpp	2012-03-22 10:20:24.000000000 +0100
++++ icu-49.1/source/layout/LayoutEngine.cpp	2012-03-22 10:21:21.000000000 +0100
 @@ -567,6 +567,8 @@
              break;
  

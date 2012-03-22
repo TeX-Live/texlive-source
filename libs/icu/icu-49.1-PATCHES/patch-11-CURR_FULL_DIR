@@ -2,9 +2,9 @@
 	certainly be that for the native (Unix) system and not that for
 	the build (mingw) system.
 
-diff -ur icu-49.rc.orig/source/Makefile.in icu-49.rc/source/Makefile.in
---- icu-49.rc.orig/source/Makefile.in	2012-03-02 23:14:56.000000000 +0100
-+++ icu-49.rc/source/Makefile.in	2012-03-03 17:25:30.000000000 +0100
+diff -ur icu-49.1.orig/source/Makefile.in icu-49.1/source/Makefile.in
+--- icu-49.1.orig/source/Makefile.in	2012-03-21 18:38:10.000000000 +0100
++++ icu-49.1/source/Makefile.in	2012-03-22 10:11:21.000000000 +0100
 @@ -221,6 +221,8 @@
  config/icucross.mk: $(top_builddir)/icudefs.mk  $(top_builddir)/Makefile
  	@echo rebuilding $@
@@ -14,9 +14,9 @@ diff -ur icu-49.rc.orig/source/Makefile.in icu-49.rc/source/Makefile.in
  	  echo "TOOLEXEEXT=$(EXEEXT)" \
  	   ) > $@
  	@(echo 'TOOLBINDIR=$$(cross_buildroot)/bin' ;\
-diff -ur icu-49.rc.orig/source/icudefs.mk.in icu-49.rc/source/icudefs.mk.in
---- icu-49.rc.orig/source/icudefs.mk.in	2012-03-02 23:14:56.000000000 +0100
-+++ icu-49.rc/source/icudefs.mk.in	2012-03-03 17:25:30.000000000 +0100
+diff -ur icu-49.1.orig/source/icudefs.mk.in icu-49.1/source/icudefs.mk.in
+--- icu-49.1.orig/source/icudefs.mk.in	2012-03-21 18:38:10.000000000 +0100
++++ icu-49.1/source/icudefs.mk.in	2012-03-22 10:11:21.000000000 +0100
 @@ -221,6 +221,7 @@
  TOOLBINDIR=$(BINDIR)
  TOOLLIBDIR=$(LIBDIR)

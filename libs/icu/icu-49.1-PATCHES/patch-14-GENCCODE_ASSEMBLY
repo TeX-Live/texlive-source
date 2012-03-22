@@ -1,6 +1,6 @@
-diff -ur icu-49.rc.orig/source/config/mh-linux icu-49.rc/source/config/mh-linux
---- icu-49.rc.orig/source/config/mh-linux	2012-03-02 23:12:16.000000000 +0100
-+++ icu-49.rc/source/config/mh-linux	2012-03-03 17:31:06.000000000 +0100
+diff -ur icu-49.1.orig/source/config/mh-linux icu-49.1/source/config/mh-linux
+--- icu-49.1.orig/source/config/mh-linux	2012-03-21 18:35:32.000000000 +0100
++++ icu-49.1/source/config/mh-linux	2012-03-22 10:15:47.000000000 +0100
 @@ -37,6 +37,9 @@
  ## Non-shared intermediate object suffix
  STATIC_O = ao

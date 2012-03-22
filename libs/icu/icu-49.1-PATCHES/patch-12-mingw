@@ -1,8 +1,8 @@
 	We don't want this for TeX Live cross compilation.
 
-diff -ur icu-49.rc.orig/source/config/mh-mingw icu-49.rc/source/config/mh-mingw
---- icu-49.rc.orig/source/config/mh-mingw	2012-03-02 23:12:16.000000000 +0100
-+++ icu-49.rc/source/config/mh-mingw	2012-03-03 17:27:40.000000000 +0100
+diff -ur icu-49.1.orig/source/config/mh-mingw icu-49.1/source/config/mh-mingw
+--- icu-49.1.orig/source/config/mh-mingw	2012-03-21 18:35:32.000000000 +0100
++++ icu-49.1/source/config/mh-mingw	2012-03-22 10:13:01.000000000 +0100
 @@ -55,21 +55,10 @@
  SO = dll
  ## Non-shared intermediate object suffix
