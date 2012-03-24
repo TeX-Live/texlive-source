@@ -1,3 +1,8 @@
+2012-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-Cygwin (new): Build fix for Cygwin.
+	Reported by Ken Brown <kbrow1i@gmail.com>.
+
 2012-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Updated icu-49.1 source tree (icu4c-49_1-src.tgz) from:
