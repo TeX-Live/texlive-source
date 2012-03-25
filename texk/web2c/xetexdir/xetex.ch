@@ -4260,7 +4260,7 @@ macro capabilities. This seems a bit ugly, but it works.
   begin
     f := fam_fnt(2 + size_code);
     if is_ot_font(f) then
-      rval := get_native_mathsy_param(f, #)
+      rval := get_native_mathsy_param(cur_f, #)
     else
       rval := mathsy(#);
     define_mathsy_end
@@ -4309,7 +4309,7 @@ define_mathsy_accessor(axis_height)(22)(axis_height);
   begin
     f := fam_fnt(3 + cur_size);
     if is_ot_font(f) then
-      rval := get_native_mathex_param(f, #)
+      rval := get_native_mathex_param(cur_f, #)
     else
       rval := mathex(#);
   define_mathex_end
@@ -4341,8 +4341,19 @@ begin
   type(p):=whatsit_node; subtype(p):=glyph_node;
   native_font(p):=f; native_glyph(p):=g;
   set_native_glyph_metrics(p, 1);
-  link(p):=list_ptr(b); list_ptr(b):=p;
-  height(b):=height(p); width(b):=width(p);
+  if type(b)=hlist_node then begin
+    q:=list_ptr(b);
+    if q=null then list_ptr(b):=p else begin
+      while link(q)<>null do q:=link(q);
+      link(q):=p;
+      if (height(b) < height(p)) then height(b):=height(p);
+      if (depth(b) < depth(p)) then depth(b):=depth(p);
+    end;
+  end else begin
+    link(p):=list_ptr(b); list_ptr(b):=p;
+    height(b):=height(p);
+    if (width(b) < width(p)) then width(b):=width(p);
+  end;
 end;
 
 procedure stack_glue_into_box(@!b:pointer;@!min,max:scaled);
@@ -4352,24 +4363,35 @@ begin
   width(q):=min;
   stretch(q):=max-min;
   p:=new_glue(q);
-  link(p):=list_ptr(b); list_ptr(b):=p;
-  height(b):=height(p); width(b):=width(p);
+  if type(b)=hlist_node then begin
+    q:=list_ptr(b);
+    if q=null then list_ptr(b):=p else begin
+      while link(q)<>null do q:=link(q);
+      link(q):=p;
+    end;
+  end else begin
+    link(p):=list_ptr(b); list_ptr(b):=p;
+    height(b):=height(p); width(b):=width(p);
+  end;
 end;
 
-function build_opentype_assembly(@!f:internal_font_number;@!a:void_pointer;@!h:scaled):pointer;
-  {return a box with height at least |h|, using font |f|, with glyph assembly info from |a|}
+function build_opentype_assembly(@!f:internal_font_number;@!a:void_pointer;@!s:scaled;@!horiz:boolean):pointer;
+  {return a box with height/width at least |s|, using font |f|, with glyph assembly info from |a|}
 var
   b:pointer; {the box we're constructing}
   n:integer; {the number of repetitions of each extender}
   i,j:integer; {indexes}
   g:integer; {glyph code}
   p:pointer; {temp pointer}
-  h_max,o,oo,prev_o,min_o:scaled;
+  s_max,o,oo,prev_o,min_o:scaled;
   no_extenders: boolean;
-  nat,str:scaled; {natural height, stretch}
+  nat,str:scaled; {natural size, stretch}
 begin
   b:=new_null_box;
-  type(b):=vlist_node;
+  if horiz then
+    type(b):=hlist_node
+  else
+    type(b):=vlist_node;
 
   {figure out how many repeats of each extender to use}
   n:=-1;
@@ -4377,8 +4399,8 @@ begin
   min_o:=ot_min_connector_overlap(f);
   repeat
     n:=n+1;
-    {calc max possible height with this number of extenders}
-    h_max:=0;
+    {calc max possible size with this number of extenders}
+    s_max:=0;
     prev_o:=0;
     for i:=0 to ot_part_count(a)-1 do begin
       if ot_part_is_extender(a, i) then begin
@@ -4387,18 +4409,18 @@ begin
           o:=ot_part_start_connector(f, a, i);
           if min_o<o then o:=min_o;
           if prev_o<o then o:=prev_o;
-          h_max:=h_max-o+ot_part_full_advance(f, a, i);
+          s_max:=s_max-o+ot_part_full_advance(f, a, i);
           prev_o:=ot_part_end_connector(f, a, i);
         end
       end else begin
         o:=ot_part_start_connector(f, a, i);
         if min_o<o then o:=min_o;
         if prev_o<o then o:=prev_o;
-        h_max:=h_max-o+ot_part_full_advance(f, a, i);
+        s_max:=s_max-o+ot_part_full_advance(f, a, i);
         prev_o:=ot_part_end_connector(f, a, i);
       end;
     end;
-  until (h_max>=h) or no_extenders;
+  until (s_max>=s) or no_extenders;
 
   {assemble box using |n| copies of each extender,
    with appropriate glue wherever an overlap occurs}
@@ -4427,11 +4449,15 @@ begin
     end;
   end;
 
-  {find natural height and total stretch of the box}
+  {find natural size and total stretch of the box}
   p:=list_ptr(b); nat:=0; str:=0;
   while p<>null do begin
-    if type(p)=whatsit_node then nat:=nat+height(p)+depth(p)
-    else if type(p)=glue_node then begin
+    if type(p)=whatsit_node then begin
+      if horiz then
+        nat:=nat+width(p)
+      else
+        nat:=nat+height(p)+depth(p);
+    end else if type(p)=glue_node then begin
       nat:=nat+width(glue_ptr(p));
       str:=str+stretch(glue_ptr(p));
     end;
@@ -4439,12 +4465,23 @@ begin
   end;
 
   {set glue so as to stretch the connections if needed}
+  o:=0;
   depth(b):=0;
-  if (h>nat) and (str>0) then begin
+  if (s>nat) and (str>0) then begin
+    o:=(s-nat);
+    {don't stretch more than |str|}
+    if (o>str) then o:=str;
     glue_order(b):=normal; glue_sign(b):=stretching;
-    glue_set(b):=unfloat((h-nat)/str);
-    height(b):=nat+round(str*float(glue_set(b)));
-  end else height(b):=nat;
+    glue_set(b):=unfloat(o/str);
+    if horiz then
+      width(b):= nat+round(str*float(glue_set(b)))
+    else
+      height(b):=nat+round(str*float(glue_set(b)));
+  end else
+    if horiz then
+      width(b):=nat
+    else
+      height(b):=nat;
 
   build_opentype_assembly:=b;
 end;
@@ -4487,7 +4524,7 @@ found: if f<>null_font then begin
   else begin
     {for OT fonts, c is the glyph ID to use}
     if ot_assembly_ptr<>nil then
-      b:=build_opentype_assembly(f, ot_assembly_ptr, v)
+      b:=build_opentype_assembly(f, ot_assembly_ptr, v, 0)
     else begin
       b:=new_null_box; type(b):=vlist_node; list_ptr(b):=get_node(glyph_node_size);
       type(list_ptr(b)):=whatsit_node; subtype(list_ptr(b)):=glyph_node;
@@ -4666,6 +4703,7 @@ if char_exists(cur_i) then
   @<Compute the amount of skew@>;
   x:=clean_box(nucleus(q),cramped_style(cur_style)); w:=width(x); h:=height(x);
   @<Switch to a larger accent if available and appropriate@>;
+  if h<x_height(f) then delta:=h@+else delta:=x_height(f);
 @y
 procedure make_math_accent(@!q:pointer);
 label done,done1;
@@ -4678,6 +4716,7 @@ var p,@!x,@!y:pointer; {temporary registers for box construction}
 @!h:scaled; {height of character being accented}
 @!delta:scaled; {space to remove between accent and accentee}
 @!w,@!wa,@!w2:scaled; {width of the accentee, not including sub/superscripts}
+@!ot_assembly_ptr:void_pointer;
 begin fetch(accent_chr(q));
 x:=null;
 if is_native_font(cur_f) then
@@ -4692,6 +4731,10 @@ else if char_exists(cur_i) then
   @<Switch to a larger accent if available and appropriate@>;
   end;
 if x<>null then begin
+  if is_ot_font(f) then
+    if h<get_ot_math_constant(f, accentBaseHeight) then delta:=h@+else delta:=get_ot_math_constant(f, accentBaseHeight)
+  else
+    if h<x_height(f) then delta:=h@+else delta:=x_height(f);
 @z
 
 @x
@@ -4728,30 +4771,27 @@ if x<>null then begin
 @ @<Switch to a larger accent if available and appropriate@>=
 @y
 @ @<Switch to a larger native-font accent if available and appropriate@>=
-  wa:=width(x);
   c:=native_glyph(p);
   a:=0;
   repeat
     g:=get_ot_math_variant(f, c, a, addressof(w2), 1);
-    if (w2>0) and (w2<=wa) then begin
+    if (w2>0) and (w2<=w) then begin
       native_glyph(p):=g;
       set_native_glyph_metrics(p, 1);
       incr(a);
     end;
-  until (w2<0) or (w2>=wa);
-{
-  |if (w2<0) then begin
+  until (w2<0) or (w2>=w);
+  if (w2<0) then begin
     ot_assembly_ptr:=get_ot_assembly_ptr(f, c, 1);
     if ot_assembly_ptr<>nil then begin
       free_node(p,glyph_node_size);
-      p:=build_opentype_assembly(cur_f, ot_assembly_ptr, w1);
+      p:=build_opentype_assembly(cur_f, ot_assembly_ptr, w, 1);
       list_ptr(y):=p;
       goto found;
     end;
-  end else|
-}
+  end else
     set_native_glyph_metrics(p, 1);
-{found:}
+found:
   width(y):=width(p); height(y):=height(p); depth(y):=depth(p);
   if depth(y)<0 then depth(y):=0;
 
@@ -4764,9 +4804,9 @@ begin if cur_style<text_style then clr:=7*default_rule_thickness
 else clr:=3*default_rule_thickness;
 @y
 @<Adjust \(s)|shift_up| and |shift_down| for the case of no fraction line@>=
-begin if is_ot_font(fam_fnt(3+cur_size)) then begin
-  if cur_style<text_style then clr:=get_ot_math_constant(fam_fnt(3+cur_size), stackDisplayStyleGapMin)
-  else clr:=get_ot_math_constant(fam_fnt(3+cur_size), stackGapMin);
+begin if is_ot_font(cur_f) then begin
+  if cur_style<text_style then clr:=get_ot_math_constant(cur_f, stackDisplayStyleGapMin)
+  else clr:=get_ot_math_constant(cur_f, stackGapMin);
 end else begin
   if cur_style<text_style then clr:=7*default_rule_thickness
   else clr:=3*default_rule_thickness;
@@ -4782,13 +4822,13 @@ delta1:=clr-((shift_up-depth(x))-(axis_height(cur_size)+delta));
 delta2:=clr-((axis_height(cur_size)-delta)-(height(z)-shift_down));
 @y
 @<Adjust \(s)|shift_up| and |shift_down| for the case of a fraction line@>=
-begin if is_ot_font(fam_fnt(3+cur_size)) then begin
+begin if is_ot_font(cur_f) then begin
   delta:=half(thickness(q));
-  if cur_style<text_style then clr:=get_ot_math_constant(fam_fnt(3+cur_size), fractionNumDisplayStyleGapMin)
-  else clr:=get_ot_math_constant(fam_fnt(3+cur_size), fractionNumeratorGapMin);
+  if cur_style<text_style then clr:=get_ot_math_constant(cur_f, fractionNumDisplayStyleGapMin)
+  else clr:=get_ot_math_constant(cur_f, fractionNumeratorGapMin);
   delta1:=clr-((shift_up-depth(x))-(axis_height(cur_size)+delta));
-  if cur_style<text_style then clr:=get_ot_math_constant(fam_fnt(3+cur_size), fractionDenomDisplayStyleGapMin)
-  else clr:=get_ot_math_constant(fam_fnt(3+cur_size), fractionDenominatorGapMin);
+  if cur_style<text_style then clr:=get_ot_math_constant(cur_f, fractionDenomDisplayStyleGapMin)
+  else clr:=get_ot_math_constant(cur_f, fractionDenominatorGapMin);
   delta2:=clr-((axis_height(cur_size)-delta)-(height(z)-shift_down));
 end else begin
   if cur_style<text_style then clr:=3*thickness(q)
@@ -4864,7 +4904,10 @@ if math_type(nucleus(q))=math_char then
         n:=0;
         repeat
           g:=get_ot_math_variant(cur_f, c, n, addressof(h2), 0);
-          if h2>0 then native_glyph(p):=g;
+          if h2>0 then begin
+            native_glyph(p):=g;
+            set_native_glyph_metrics(p, 1);
+          end;
           incr(n);
         until (h2<0) or (h2>=h1);
         if (h2<0) then begin
@@ -4872,7 +4915,7 @@ if math_type(nucleus(q))=math_char then
           ot_assembly_ptr:=get_ot_assembly_ptr(cur_f, c, 0);
           if ot_assembly_ptr<>nil then begin
             free_node(p,glyph_node_size);
-            p:=build_opentype_assembly(cur_f, ot_assembly_ptr, h1);
+            p:=build_opentype_assembly(cur_f, ot_assembly_ptr, h1, 0);
             list_ptr(x):=p;
             delta:=0;
             goto found;
@@ -4960,6 +5003,61 @@ var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
 @!t:integer; {subsidiary size code}
 begin p:=new_hlist(q);
 if is_char_node(p) or (p<>null and is_native_word_node(p)) then
+@z
+
+@x
+clr:=height(x)-(abs(math_x_height(cur_size)*4) div 5);
+@y
+if is_ot_font(cur_f) then
+  clr:=height(x)-get_ot_math_constant(cur_f, subscriptTopMax)
+else
+  clr:=height(x)-(abs(math_x_height(cur_size)*4) div 5);
+@z
+
+@x
+clr:=depth(x)+(abs(math_x_height(cur_size)) div 4);
+@y
+if is_ot_font(cur_f) then
+  clr:=depth(x)+get_ot_math_constant(cur_f, superscriptBottomMin)
+else
+  clr:=depth(x)+(abs(math_x_height(cur_size)) div 4);
+@z
+
+@x
+@<Construct a sub/superscript combination box |x|...@>=
+begin y:=clean_box(subscr(q),sub_style(cur_style));
+width(y):=width(y)+script_space;
+if shift_down<sub2(cur_size) then shift_down:=sub2(cur_size);
+clr:=4*default_rule_thickness-
+  ((shift_up-depth(x))-(height(y)-shift_down));
+if clr>0 then
+  begin shift_down:=shift_down+clr;
+  clr:=(abs(math_x_height(cur_size)*4) div 5)-(shift_up-depth(x));
+  if clr>0 then
+    begin shift_up:=shift_up+clr;
+    shift_down:=shift_down-clr;
+    end;
+  end;
+@y
+@<Construct a sub/superscript combination box |x|...@>=
+begin y:=clean_box(subscr(q),sub_style(cur_style));
+width(y):=width(y)+script_space;
+if shift_down<sub2(cur_size) then shift_down:=sub2(cur_size);
+if is_ot_font(cur_f) then
+  clr:=get_ot_math_constant(cur_f, subSuperscriptGapMin)-((shift_up-depth(x))-(height(y)-shift_down))
+else
+  clr:=4*default_rule_thickness-((shift_up-depth(x))-(height(y)-shift_down));
+if clr>0 then
+  begin shift_down:=shift_down+clr;
+  if is_ot_font(cur_f) then
+    clr:=get_ot_math_constant(cur_f, superscriptBottomMaxWithSubscript)-(shift_up-depth(x))
+  else
+    clr:=(abs(math_x_height(cur_size)*4) div 5)-(shift_up-depth(x));
+  if clr>0 then
+    begin shift_up:=shift_up+clr;
+    shift_down:=shift_down-clr;
+    end;
+  end;
 @z
 
 @x
