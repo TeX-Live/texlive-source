@@ -3,6 +3,7 @@ Changes applied to the zlib-1.2.6/ tree as obtained from:
 
 Removed:
 	zconf.h
+	doc/rfc*
 
 Converted Dos/Win line ends to native:
 	contrib/dotzlib/DotZLib/AssemblyInfo.cs
