@@ -1,11 +1,11 @@
 ## Makefile.am for the TeX Live subdirectory utils/chktex/
 ##
-## Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
 #
-#  Adapted for TeX Live from chktex/Makefile.1n
+#  Adapted for TeX Live from chktex/Makefile.in
 #
 #************************************************************************
 ##

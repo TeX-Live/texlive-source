@@ -1,0 +1,13 @@
+Changes applied to the pmx-2.6.17 tree as obtained from:
+	ftp://linus.cs.queensu.ca/pmx-2.6.17.tar.gz
+
+Remove:
+	Makefile.in
+	aclocal.m4
+	configure
+	depcomp
+	f2c.h
+	install-sh
+	missing
+	libf2c/arith.h
+

@@ -229,7 +229,7 @@ top_srcdir = @top_srcdir@
 
 #************************************************************************
 #
-#  Adapted for TeX Live from chktex/Makefile.1n
+#  Adapted for TeX Live from chktex/Makefile.in
 #
 #************************************************************************
 ACLOCAL_AMFLAGS = -I ../../m4

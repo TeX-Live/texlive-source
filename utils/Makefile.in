@@ -70,6 +70,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../m4/kpse-zziplib-flags.m4 \
 	$(top_srcdir)/../utils/biber/ac/withenable.ac \
 	$(top_srcdir)/../utils/chktex/ac/withenable.ac \
+	$(top_srcdir)/../utils/pmx/ac/withenable.ac \
 	$(top_srcdir)/../utils/ps2eps/ac/withenable.ac \
 	$(top_srcdir)/../utils/psutils/ac/withenable.ac \
 	$(top_srcdir)/../utils/t1utils/ac/withenable.ac \

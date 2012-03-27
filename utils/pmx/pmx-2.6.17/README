@@ -1,0 +1,11 @@
+This is PMX, version 2.6.17. PMX provides a preprocessor for MusiXTeX.
+
+pmxab builds a TeX input file based on a .pmx input file in a much
+simpler language, making most of the layout decisions by itself. It has
+most of MusiXTeX's functionality, but it also permits in-line TeX to
+give access to virtually all of MusiXTeX. For proof-listening, pmxab will
+make a MIDI file of your score.
+
+scor2prt is an auxiliary program that makes parts from a score.
+
+The author of pmxab and scor2prt is Don Simons (dsimons@roadrunner.com). 

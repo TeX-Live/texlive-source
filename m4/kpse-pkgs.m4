@@ -75,6 +75,7 @@ AC_DEFUN([KPSE_UTILS_PKGS],
 [m4_define([kpse_utils_pkgs], [
 biber
 chktex
+pmx
 ps2eps
 psutils
 t1utils

@@ -12,6 +12,10 @@ asymptote 2.13 - checked 19jun11
 chktex 1.6.4 - checked 25apr11
   http://baruch.ev-en.org/proj/chktex/chktex-1.6.4.tar.gz
 
+pmx 2.6.17 - checked 27mar12
+  ftp://linus.cs.queensu.ca/pmx-2.6.17.tar.gz
+  (The version on CTAN is different)
+
 ps2eps 1.68 - checked 25apr11
   http://tm.uka.de/~bless/ps2eps
 
