@@ -252,6 +252,7 @@ TESTS = pmx.test
 EXTRA_DIST += $(TESTS)
 
 ## pmx.test
-EXTRA_DIST += tests/barsant*
+EXTRA_DIST += tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
+	tests/barsant.tex tests/barsant1.pmx tests/barsant2.pmx
 DISTCLEANFILES = barsant* pmxaerr.dat
 

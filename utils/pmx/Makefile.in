@@ -279,7 +279,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(PMX_TREE) $(PMX_TREE)-PATCHES ../../build-aux/relpath \
-	$(TESTS) tests/barsant*
+	$(TESTS) tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
+	tests/barsant.tex tests/barsant1.pmx tests/barsant2.pmx
 INCLUDES = -I$(srcdir)/$(PMX_TREE)/libf2c
 AM_CFLAGS = #$(WARNING_CFLAGS)
 pmxab_SOURCES = $(PMX_TREE)/pmxab.c
