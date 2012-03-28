@@ -1,5 +1,8 @@
 Changes applied to the pmx-2.6.17 tree as obtained from:
-	ftp://linus.cs.queensu.ca/pmx-2.6.17.tar.gz
+	http://www.ctan.org/tex-archive/support/pmx/
+
+Rename:
+	pmx2617.c -> pmxab.c
 
 Remove:
 	Makefile.in

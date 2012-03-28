@@ -1,0 +1,11 @@
+2012-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* arith.h (new): Dummy header to avoid the need to run arithchk.
+	* Makefile.am, configure.ac: Modified to allow cross compilation.
+
+2012-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt pmx-2.6.17 to the TeX Live build system.
+
+Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.

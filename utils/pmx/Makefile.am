@@ -15,32 +15,21 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 INCLUDES = -I$(srcdir)/$(PMX_TREE)/libf2c
-AM_CPPFLAGS = -DNON_UNIX_STDIO
 AM_CFLAGS = #$(WARNING_CFLAGS)
 
 bin_PROGRAMS = pmxab scor2prt
 
-nodist_pmxab_SOURCES = pmxab.c
-
-pmxab_LDADD = libf2c.a
+pmxab_SOURCES = $(PMX_TREE)/pmxab.c
 
 scor2prt_SOURCES = $(PMX_TREE)/scor2prt.c
 
-scor2prt_LDADD = libf2c.a
-
-noinst_PROGRAMS = arithchk
-
-arithchk_SOURCES = $(PMX_TREE)/libf2c/arithchk.c
-
-arithchk_CPPFLAGS = $(ARITHCHK_CPPFLAGS)
-
-arith.h: arithchk$(EXEEXT)
-	./arithchk >$@
+LDADD = libf2c.a
 
 noinst_LIBRARIES = libf2c.a
 
 ## libf2c headers
 libf2c_a_SOURCES = \
+	arith.h \
 	$(PMX_TREE)/libf2c/f2c.h \
 	$(PMX_TREE)/libf2c/fio.h \
 	$(PMX_TREE)/libf2c/fmt.h \
@@ -69,7 +58,9 @@ libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/s_stop.c \
 	$(PMX_TREE)/libf2c/sig_die.c \
 	$(PMX_TREE)/libf2c/signal_.c \
-	$(PMX_TREE)/libf2c/system_.c \
+	$(PMX_TREE)/libf2c/system_.c
+## MISC (not used for pmx)
+EXTRA_libf2c_a_SOURCES = \
 	$(PMX_TREE)/libf2c/uninit.c
 ## POW
 libf2c_a_SOURCES += \
@@ -230,7 +221,7 @@ libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/etime_.c
 
 ## QINT (unused)
-EXTRA_libf2c_a_SOURCES = \
+EXTRA_libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/ftell64_.c \
 	$(PMX_TREE)/libf2c/pow_qq.c \
 	$(PMX_TREE)/libf2c/qbitbits.c \
@@ -238,8 +229,4 @@ EXTRA_libf2c_a_SOURCES = \
 ## unused
 EXTRA_libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/signbit.c
-
-$(libf2c_a_OBJECTS): arith.h
-
-DISTCLEANFILES = arith.h pmxab.c
 

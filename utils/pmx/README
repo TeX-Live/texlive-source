@@ -1,0 +1,13 @@
+Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
+
+In order to build pmx we don't need the complete libf2c library. 
+Specifically, we can omit uninit.c and with it the necessity to build and
+run arithchk in order to create the arith.h header file (which would make
+cross compilation impossible).
+
+From all the preprocessor defines arithchk could generate we only might need
+'VAX' (most probably irrelevant) and 'NO_LONG_LONG' which can be handled by
+the configure script.  Thus an empty file arith.h suffices.
+
+

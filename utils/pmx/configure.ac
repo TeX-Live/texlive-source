@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define pmx_version
 AC_INIT([pmx for TeX Live], pmx_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([pmx-]pmx_version[/scor2prt.c])
+AC_CONFIG_SRCDIR([pmx-]pmx_version[/pmxab.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -21,6 +21,15 @@ AC_PROG_CC
 
 KPSE_COMPILER_WARNINGS
 
+dnl initial value for AM_CPPFLAGS
+AC_SUBST([AM_CPPFLAGS], ['-DNON_UNIX_STDIO'])
+
+dnl WIN32 has no <sys/times.h>
+KPSE_CHECK_WIN32
+if test "x$kpse_cv_have_win32" != xno; then
+  AM_CPPFLAGS="$AM_CPPPFLAGS -DUSE_CLOCK"
+fi
+
 dnl Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_LN_S
@@ -31,13 +40,8 @@ AC_SEARCH_LIBS([sqrt], [m])
 
 AC_CHECK_SIZEOF([long long])
 if test $ac_cv_sizeof_long_long -lt 8; then
-  ARITHCHK_CPPFLAGS='-DNO_LONG_LONG -DNO_FPINIT'
-else
-  ARITHCHK_CPPFLAGS='-DNO_FPINIT'
+  AM_CPPFLAGS="$AM_CPPPFLAGS -DNO_LONG_LONG"
 fi
-AC_SUBST([ARITHCHK_CPPFLAGS])
-
-AC_CONFIG_LINKS([pmxab.c:pmx-]pmx_version[/pmx]m4_bpatsubsts(pmx_version, [\.], [])[.c])
 
 AC_SUBST([PMX_TREE], [pmx-]pmx_version)
 

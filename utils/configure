@@ -3227,24 +3227,15 @@ if test "${enable_pmx+set}" = set; then :
   enableval=$enable_pmx;
 fi
 case $enable_pmx in #(
-  yes) :
-    if test "x$cross_compiling" = xyes; then :
-  as_fn_error $? "Unable to cross compile pmx" "$LINENO" 5
-fi ;; #(
-  no) :
+  yes|no) :
      ;; #(
   *) :
-    if test "x$cross_compiling" = xyes; then
-            { $as_echo "$as_me:${as_lineno-$LINENO}: Cross compiling -> \`--disable-pmx'" >&5
-$as_echo "$as_me: Cross compiling -> \`--disable-pmx'" >&6;}
-            enable_pmx=no
-            ac_configure_args="$ac_configure_args '--disable-pmx'"
-          else
+
    enable_pmx=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-pmx=$enable_pmx'" >&5
 $as_echo "$as_me: Assuming \`--enable-pmx=$enable_pmx'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-pmx=$enable_pmx'"
-   fi ;;
+    ;;
 esac
 
 

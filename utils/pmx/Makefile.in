@@ -34,26 +34,26 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = pmxab$(EXEEXT) scor2prt$(EXEEXT)
-noinst_PROGRAMS = arithchk$(EXEEXT)
 subdir = .
-DIST_COMMON = $(am__configure_deps) $(srcdir)/../../build-aux/depcomp \
+DIST_COMMON = README $(am__configure_deps) \
+	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
-	$(top_srcdir)/pmx-2.6.17/pmx2617.c \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
+	$(top_srcdir)/../../m4/kpse-win32.m4 $(top_srcdir)/version.ac \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES = pmxab.c
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
@@ -66,60 +66,58 @@ am_libf2c_a_OBJECTS = abort_.$(OBJEXT) cabs.$(OBJEXT) derf_.$(OBJEXT) \
 	getenv_.$(OBJEXT) i77vers.$(OBJEXT) iargc_.$(OBJEXT) \
 	main.$(OBJEXT) s_paus.$(OBJEXT) s_rnge.$(OBJEXT) \
 	s_stop.$(OBJEXT) sig_die.$(OBJEXT) signal_.$(OBJEXT) \
-	system_.$(OBJEXT) uninit.$(OBJEXT) pow_ci.$(OBJEXT) \
-	pow_dd.$(OBJEXT) pow_di.$(OBJEXT) pow_hh.$(OBJEXT) \
-	pow_ii.$(OBJEXT) pow_ri.$(OBJEXT) pow_zi.$(OBJEXT) \
-	pow_zz.$(OBJEXT) c_abs.$(OBJEXT) c_cos.$(OBJEXT) \
-	c_div.$(OBJEXT) c_exp.$(OBJEXT) c_log.$(OBJEXT) \
-	c_sin.$(OBJEXT) c_sqrt.$(OBJEXT) z_abs.$(OBJEXT) \
-	z_cos.$(OBJEXT) z_div.$(OBJEXT) z_exp.$(OBJEXT) \
-	z_log.$(OBJEXT) z_sin.$(OBJEXT) z_sqrt.$(OBJEXT) \
-	r_abs.$(OBJEXT) r_acos.$(OBJEXT) r_asin.$(OBJEXT) \
-	r_atan.$(OBJEXT) r_atn2.$(OBJEXT) r_cnjg.$(OBJEXT) \
-	r_cos.$(OBJEXT) r_cosh.$(OBJEXT) r_dim.$(OBJEXT) \
-	r_exp.$(OBJEXT) r_imag.$(OBJEXT) r_int.$(OBJEXT) \
-	r_lg10.$(OBJEXT) r_log.$(OBJEXT) r_mod.$(OBJEXT) \
-	r_nint.$(OBJEXT) r_sign.$(OBJEXT) r_sin.$(OBJEXT) \
-	r_sinh.$(OBJEXT) r_sqrt.$(OBJEXT) r_tan.$(OBJEXT) \
-	r_tanh.$(OBJEXT) d_abs.$(OBJEXT) d_acos.$(OBJEXT) \
-	d_asin.$(OBJEXT) d_atan.$(OBJEXT) d_atn2.$(OBJEXT) \
-	d_cnjg.$(OBJEXT) d_cos.$(OBJEXT) d_cosh.$(OBJEXT) \
-	d_dim.$(OBJEXT) d_exp.$(OBJEXT) d_imag.$(OBJEXT) \
-	d_int.$(OBJEXT) d_lg10.$(OBJEXT) d_log.$(OBJEXT) \
-	d_mod.$(OBJEXT) d_nint.$(OBJEXT) d_prod.$(OBJEXT) \
-	d_sign.$(OBJEXT) d_sin.$(OBJEXT) d_sinh.$(OBJEXT) \
-	d_sqrt.$(OBJEXT) d_tan.$(OBJEXT) d_tanh.$(OBJEXT) \
-	i_abs.$(OBJEXT) i_dim.$(OBJEXT) i_dnnt.$(OBJEXT) \
-	i_indx.$(OBJEXT) i_len.$(OBJEXT) i_mod.$(OBJEXT) \
-	i_nint.$(OBJEXT) i_sign.$(OBJEXT) lbitbits.$(OBJEXT) \
-	lbitshft.$(OBJEXT) h_abs.$(OBJEXT) h_dim.$(OBJEXT) \
-	h_dnnt.$(OBJEXT) h_indx.$(OBJEXT) h_len.$(OBJEXT) \
-	h_mod.$(OBJEXT) h_nint.$(OBJEXT) h_sign.$(OBJEXT) \
-	hl_ge.$(OBJEXT) hl_gt.$(OBJEXT) hl_le.$(OBJEXT) \
-	hl_lt.$(OBJEXT) l_ge.$(OBJEXT) l_gt.$(OBJEXT) l_le.$(OBJEXT) \
-	l_lt.$(OBJEXT) ef1asc_.$(OBJEXT) ef1cmc_.$(OBJEXT) \
-	f77_aloc.$(OBJEXT) s_cat.$(OBJEXT) s_cmp.$(OBJEXT) \
-	s_copy.$(OBJEXT) backspac.$(OBJEXT) close.$(OBJEXT) \
-	dfe.$(OBJEXT) dolio.$(OBJEXT) due.$(OBJEXT) endfile.$(OBJEXT) \
-	err.$(OBJEXT) fmt.$(OBJEXT) fmtlib.$(OBJEXT) ftell_.$(OBJEXT) \
-	iio.$(OBJEXT) ilnw.$(OBJEXT) inquire.$(OBJEXT) lread.$(OBJEXT) \
-	lwrite.$(OBJEXT) open.$(OBJEXT) rdfmt.$(OBJEXT) \
-	rewind.$(OBJEXT) rsfe.$(OBJEXT) rsli.$(OBJEXT) rsne.$(OBJEXT) \
-	sfe.$(OBJEXT) sue.$(OBJEXT) typesize.$(OBJEXT) uio.$(OBJEXT) \
-	util.$(OBJEXT) wref.$(OBJEXT) wrtfmt.$(OBJEXT) wsfe.$(OBJEXT) \
-	wsle.$(OBJEXT) wsne.$(OBJEXT) xwsne.$(OBJEXT) dtime_.$(OBJEXT) \
-	etime_.$(OBJEXT)
+	system_.$(OBJEXT) pow_ci.$(OBJEXT) pow_dd.$(OBJEXT) \
+	pow_di.$(OBJEXT) pow_hh.$(OBJEXT) pow_ii.$(OBJEXT) \
+	pow_ri.$(OBJEXT) pow_zi.$(OBJEXT) pow_zz.$(OBJEXT) \
+	c_abs.$(OBJEXT) c_cos.$(OBJEXT) c_div.$(OBJEXT) \
+	c_exp.$(OBJEXT) c_log.$(OBJEXT) c_sin.$(OBJEXT) \
+	c_sqrt.$(OBJEXT) z_abs.$(OBJEXT) z_cos.$(OBJEXT) \
+	z_div.$(OBJEXT) z_exp.$(OBJEXT) z_log.$(OBJEXT) \
+	z_sin.$(OBJEXT) z_sqrt.$(OBJEXT) r_abs.$(OBJEXT) \
+	r_acos.$(OBJEXT) r_asin.$(OBJEXT) r_atan.$(OBJEXT) \
+	r_atn2.$(OBJEXT) r_cnjg.$(OBJEXT) r_cos.$(OBJEXT) \
+	r_cosh.$(OBJEXT) r_dim.$(OBJEXT) r_exp.$(OBJEXT) \
+	r_imag.$(OBJEXT) r_int.$(OBJEXT) r_lg10.$(OBJEXT) \
+	r_log.$(OBJEXT) r_mod.$(OBJEXT) r_nint.$(OBJEXT) \
+	r_sign.$(OBJEXT) r_sin.$(OBJEXT) r_sinh.$(OBJEXT) \
+	r_sqrt.$(OBJEXT) r_tan.$(OBJEXT) r_tanh.$(OBJEXT) \
+	d_abs.$(OBJEXT) d_acos.$(OBJEXT) d_asin.$(OBJEXT) \
+	d_atan.$(OBJEXT) d_atn2.$(OBJEXT) d_cnjg.$(OBJEXT) \
+	d_cos.$(OBJEXT) d_cosh.$(OBJEXT) d_dim.$(OBJEXT) \
+	d_exp.$(OBJEXT) d_imag.$(OBJEXT) d_int.$(OBJEXT) \
+	d_lg10.$(OBJEXT) d_log.$(OBJEXT) d_mod.$(OBJEXT) \
+	d_nint.$(OBJEXT) d_prod.$(OBJEXT) d_sign.$(OBJEXT) \
+	d_sin.$(OBJEXT) d_sinh.$(OBJEXT) d_sqrt.$(OBJEXT) \
+	d_tan.$(OBJEXT) d_tanh.$(OBJEXT) i_abs.$(OBJEXT) \
+	i_dim.$(OBJEXT) i_dnnt.$(OBJEXT) i_indx.$(OBJEXT) \
+	i_len.$(OBJEXT) i_mod.$(OBJEXT) i_nint.$(OBJEXT) \
+	i_sign.$(OBJEXT) lbitbits.$(OBJEXT) lbitshft.$(OBJEXT) \
+	h_abs.$(OBJEXT) h_dim.$(OBJEXT) h_dnnt.$(OBJEXT) \
+	h_indx.$(OBJEXT) h_len.$(OBJEXT) h_mod.$(OBJEXT) \
+	h_nint.$(OBJEXT) h_sign.$(OBJEXT) hl_ge.$(OBJEXT) \
+	hl_gt.$(OBJEXT) hl_le.$(OBJEXT) hl_lt.$(OBJEXT) l_ge.$(OBJEXT) \
+	l_gt.$(OBJEXT) l_le.$(OBJEXT) l_lt.$(OBJEXT) ef1asc_.$(OBJEXT) \
+	ef1cmc_.$(OBJEXT) f77_aloc.$(OBJEXT) s_cat.$(OBJEXT) \
+	s_cmp.$(OBJEXT) s_copy.$(OBJEXT) backspac.$(OBJEXT) \
+	close.$(OBJEXT) dfe.$(OBJEXT) dolio.$(OBJEXT) due.$(OBJEXT) \
+	endfile.$(OBJEXT) err.$(OBJEXT) fmt.$(OBJEXT) fmtlib.$(OBJEXT) \
+	ftell_.$(OBJEXT) iio.$(OBJEXT) ilnw.$(OBJEXT) \
+	inquire.$(OBJEXT) lread.$(OBJEXT) lwrite.$(OBJEXT) \
+	open.$(OBJEXT) rdfmt.$(OBJEXT) rewind.$(OBJEXT) rsfe.$(OBJEXT) \
+	rsli.$(OBJEXT) rsne.$(OBJEXT) sfe.$(OBJEXT) sue.$(OBJEXT) \
+	typesize.$(OBJEXT) uio.$(OBJEXT) util.$(OBJEXT) wref.$(OBJEXT) \
+	wrtfmt.$(OBJEXT) wsfe.$(OBJEXT) wsle.$(OBJEXT) wsne.$(OBJEXT) \
+	xwsne.$(OBJEXT) dtime_.$(OBJEXT) etime_.$(OBJEXT)
 libf2c_a_OBJECTS = $(am_libf2c_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
-PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
-am_arithchk_OBJECTS = arithchk-arithchk.$(OBJEXT)
-arithchk_OBJECTS = $(am_arithchk_OBJECTS)
-arithchk_LDADD = $(LDADD)
-nodist_pmxab_OBJECTS = pmxab.$(OBJEXT)
-pmxab_OBJECTS = $(nodist_pmxab_OBJECTS)
+PROGRAMS = $(bin_PROGRAMS)
+am_pmxab_OBJECTS = pmxab.$(OBJEXT)
+pmxab_OBJECTS = $(am_pmxab_OBJECTS)
+pmxab_LDADD = $(LDADD)
 pmxab_DEPENDENCIES = libf2c.a
 am_scor2prt_OBJECTS = scor2prt.$(OBJEXT)
 scor2prt_OBJECTS = $(am_scor2prt_OBJECTS)
+scor2prt_LDADD = $(LDADD)
 scor2prt_DEPENDENCIES = libf2c.a
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -130,10 +128,9 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libf2c_a_SOURCES) $(EXTRA_libf2c_a_SOURCES) \
-	$(arithchk_SOURCES) $(nodist_pmxab_SOURCES) \
-	$(scor2prt_SOURCES)
+	$(pmxab_SOURCES) $(scor2prt_SOURCES)
 DIST_SOURCES = $(libf2c_a_SOURCES) $(EXTRA_libf2c_a_SOURCES) \
-	$(arithchk_SOURCES) $(scor2prt_SOURCES)
+	$(pmxab_SOURCES) $(scor2prt_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -153,7 +150,7 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
-ARITHCHK_CPPFLAGS = @ARITHCHK_CPPFLAGS@
+AM_CPPFLAGS = @AM_CPPFLAGS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -246,29 +243,25 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(PMX_TREE) $(PMX_TREE)-PATCHES
 INCLUDES = -I$(srcdir)/$(PMX_TREE)/libf2c
-AM_CPPFLAGS = -DNON_UNIX_STDIO
 AM_CFLAGS = #$(WARNING_CFLAGS)
-nodist_pmxab_SOURCES = pmxab.c
-pmxab_LDADD = libf2c.a
+pmxab_SOURCES = $(PMX_TREE)/pmxab.c
 scor2prt_SOURCES = $(PMX_TREE)/scor2prt.c
-scor2prt_LDADD = libf2c.a
-arithchk_SOURCES = $(PMX_TREE)/libf2c/arithchk.c
-arithchk_CPPFLAGS = $(ARITHCHK_CPPFLAGS)
+LDADD = libf2c.a
 noinst_LIBRARIES = libf2c.a
-libf2c_a_SOURCES = $(PMX_TREE)/libf2c/f2c.h $(PMX_TREE)/libf2c/fio.h \
-	$(PMX_TREE)/libf2c/fmt.h $(PMX_TREE)/libf2c/fp.h \
-	$(PMX_TREE)/libf2c/lio.h $(PMX_TREE)/libf2c/rawio.h \
-	$(PMX_TREE)/libf2c/signal1.h $(PMX_TREE)/libf2c/sysdep1.h \
-	$(PMX_TREE)/libf2c/abort_.c $(PMX_TREE)/libf2c/cabs.c \
-	$(PMX_TREE)/libf2c/derf_.c $(PMX_TREE)/libf2c/derfc_.c \
-	$(PMX_TREE)/libf2c/erf_.c $(PMX_TREE)/libf2c/erfc_.c \
-	$(PMX_TREE)/libf2c/exit_.c $(PMX_TREE)/libf2c/f77vers.c \
-	$(PMX_TREE)/libf2c/getarg_.c $(PMX_TREE)/libf2c/getenv_.c \
-	$(PMX_TREE)/libf2c/i77vers.c $(PMX_TREE)/libf2c/iargc_.c \
-	$(PMX_TREE)/libf2c/main.c $(PMX_TREE)/libf2c/s_paus.c \
-	$(PMX_TREE)/libf2c/s_rnge.c $(PMX_TREE)/libf2c/s_stop.c \
-	$(PMX_TREE)/libf2c/sig_die.c $(PMX_TREE)/libf2c/signal_.c \
-	$(PMX_TREE)/libf2c/system_.c $(PMX_TREE)/libf2c/uninit.c \
+libf2c_a_SOURCES = arith.h $(PMX_TREE)/libf2c/f2c.h \
+	$(PMX_TREE)/libf2c/fio.h $(PMX_TREE)/libf2c/fmt.h \
+	$(PMX_TREE)/libf2c/fp.h $(PMX_TREE)/libf2c/lio.h \
+	$(PMX_TREE)/libf2c/rawio.h $(PMX_TREE)/libf2c/signal1.h \
+	$(PMX_TREE)/libf2c/sysdep1.h $(PMX_TREE)/libf2c/abort_.c \
+	$(PMX_TREE)/libf2c/cabs.c $(PMX_TREE)/libf2c/derf_.c \
+	$(PMX_TREE)/libf2c/derfc_.c $(PMX_TREE)/libf2c/erf_.c \
+	$(PMX_TREE)/libf2c/erfc_.c $(PMX_TREE)/libf2c/exit_.c \
+	$(PMX_TREE)/libf2c/f77vers.c $(PMX_TREE)/libf2c/getarg_.c \
+	$(PMX_TREE)/libf2c/getenv_.c $(PMX_TREE)/libf2c/i77vers.c \
+	$(PMX_TREE)/libf2c/iargc_.c $(PMX_TREE)/libf2c/main.c \
+	$(PMX_TREE)/libf2c/s_paus.c $(PMX_TREE)/libf2c/s_rnge.c \
+	$(PMX_TREE)/libf2c/s_stop.c $(PMX_TREE)/libf2c/sig_die.c \
+	$(PMX_TREE)/libf2c/signal_.c $(PMX_TREE)/libf2c/system_.c \
 	$(PMX_TREE)/libf2c/pow_ci.c $(PMX_TREE)/libf2c/pow_dd.c \
 	$(PMX_TREE)/libf2c/pow_di.c $(PMX_TREE)/libf2c/pow_hh.c \
 	$(PMX_TREE)/libf2c/pow_ii.c $(PMX_TREE)/libf2c/pow_ri.c \
@@ -336,10 +329,10 @@ libf2c_a_SOURCES = $(PMX_TREE)/libf2c/f2c.h $(PMX_TREE)/libf2c/fio.h \
 	$(PMX_TREE)/libf2c/wsle.c $(PMX_TREE)/libf2c/wsne.c \
 	$(PMX_TREE)/libf2c/xwsne.c $(PMX_TREE)/libf2c/dtime_.c \
 	$(PMX_TREE)/libf2c/etime_.c
-EXTRA_libf2c_a_SOURCES = $(PMX_TREE)/libf2c/ftell64_.c \
-	$(PMX_TREE)/libf2c/pow_qq.c $(PMX_TREE)/libf2c/qbitbits.c \
-	$(PMX_TREE)/libf2c/qbitshft.c $(PMX_TREE)/libf2c/signbit.c
-DISTCLEANFILES = arith.h pmxab.c
+EXTRA_libf2c_a_SOURCES = $(PMX_TREE)/libf2c/uninit.c \
+	$(PMX_TREE)/libf2c/ftell64_.c $(PMX_TREE)/libf2c/pow_qq.c \
+	$(PMX_TREE)/libf2c/qbitbits.c $(PMX_TREE)/libf2c/qbitshft.c \
+	$(PMX_TREE)/libf2c/signbit.c
 all: all-am
 
 .SUFFIXES:
@@ -422,12 +415,6 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-
-clean-noinstPROGRAMS:
-	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
-arithchk$(EXEEXT): $(arithchk_OBJECTS) $(arithchk_DEPENDENCIES) $(EXTRA_arithchk_DEPENDENCIES) 
-	@rm -f arithchk$(EXEEXT)
-	$(LINK) $(arithchk_OBJECTS) $(arithchk_LDADD) $(LIBS)
 pmxab$(EXEEXT): $(pmxab_OBJECTS) $(pmxab_DEPENDENCIES) $(EXTRA_pmxab_DEPENDENCIES) 
 	@rm -f pmxab$(EXEEXT)
 	$(LINK) $(pmxab_OBJECTS) $(pmxab_LDADD) $(LIBS)
@@ -442,7 +429,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/abort_.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/arithchk-arithchk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/backspac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/c_abs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/c_cos.Po@am__quote@
@@ -882,20 +868,6 @@ system_.obj: $(PMX_TREE)/libf2c/system_.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/libf2c/system_.c' object='system_.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o system_.obj `if test -f '$(PMX_TREE)/libf2c/system_.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/system_.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/system_.c'; fi`
-
-uninit.o: $(PMX_TREE)/libf2c/uninit.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uninit.o -MD -MP -MF $(DEPDIR)/uninit.Tpo -c -o uninit.o `test -f '$(PMX_TREE)/libf2c/uninit.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/uninit.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uninit.Tpo $(DEPDIR)/uninit.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/libf2c/uninit.c' object='uninit.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uninit.o `test -f '$(PMX_TREE)/libf2c/uninit.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/uninit.c
-
-uninit.obj: $(PMX_TREE)/libf2c/uninit.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uninit.obj -MD -MP -MF $(DEPDIR)/uninit.Tpo -c -o uninit.obj `if test -f '$(PMX_TREE)/libf2c/uninit.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/uninit.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/uninit.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uninit.Tpo $(DEPDIR)/uninit.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/libf2c/uninit.c' object='uninit.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uninit.obj `if test -f '$(PMX_TREE)/libf2c/uninit.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/uninit.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/uninit.c'; fi`
 
 pow_ci.o: $(PMX_TREE)/libf2c/pow_ci.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pow_ci.o -MD -MP -MF $(DEPDIR)/pow_ci.Tpo -c -o pow_ci.o `test -f '$(PMX_TREE)/libf2c/pow_ci.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/pow_ci.c
@@ -2759,6 +2731,20 @@ etime_.obj: $(PMX_TREE)/libf2c/etime_.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o etime_.obj `if test -f '$(PMX_TREE)/libf2c/etime_.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/etime_.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/etime_.c'; fi`
 
+uninit.o: $(PMX_TREE)/libf2c/uninit.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uninit.o -MD -MP -MF $(DEPDIR)/uninit.Tpo -c -o uninit.o `test -f '$(PMX_TREE)/libf2c/uninit.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/uninit.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uninit.Tpo $(DEPDIR)/uninit.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/libf2c/uninit.c' object='uninit.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uninit.o `test -f '$(PMX_TREE)/libf2c/uninit.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/uninit.c
+
+uninit.obj: $(PMX_TREE)/libf2c/uninit.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uninit.obj -MD -MP -MF $(DEPDIR)/uninit.Tpo -c -o uninit.obj `if test -f '$(PMX_TREE)/libf2c/uninit.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/uninit.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/uninit.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uninit.Tpo $(DEPDIR)/uninit.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/libf2c/uninit.c' object='uninit.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uninit.obj `if test -f '$(PMX_TREE)/libf2c/uninit.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/uninit.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/uninit.c'; fi`
+
 ftell64_.o: $(PMX_TREE)/libf2c/ftell64_.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ftell64_.o -MD -MP -MF $(DEPDIR)/ftell64_.Tpo -c -o ftell64_.o `test -f '$(PMX_TREE)/libf2c/ftell64_.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/ftell64_.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ftell64_.Tpo $(DEPDIR)/ftell64_.Po
@@ -2829,19 +2815,19 @@ signbit.obj: $(PMX_TREE)/libf2c/signbit.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o signbit.obj `if test -f '$(PMX_TREE)/libf2c/signbit.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/signbit.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/signbit.c'; fi`
 
-arithchk-arithchk.o: $(PMX_TREE)/libf2c/arithchk.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(arithchk_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT arithchk-arithchk.o -MD -MP -MF $(DEPDIR)/arithchk-arithchk.Tpo -c -o arithchk-arithchk.o `test -f '$(PMX_TREE)/libf2c/arithchk.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/arithchk.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/arithchk-arithchk.Tpo $(DEPDIR)/arithchk-arithchk.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/libf2c/arithchk.c' object='arithchk-arithchk.o' libtool=no @AMDEPBACKSLASH@
+pmxab.o: $(PMX_TREE)/pmxab.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pmxab.o -MD -MP -MF $(DEPDIR)/pmxab.Tpo -c -o pmxab.o `test -f '$(PMX_TREE)/pmxab.c' || echo '$(srcdir)/'`$(PMX_TREE)/pmxab.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pmxab.Tpo $(DEPDIR)/pmxab.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/pmxab.c' object='pmxab.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(arithchk_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o arithchk-arithchk.o `test -f '$(PMX_TREE)/libf2c/arithchk.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/arithchk.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pmxab.o `test -f '$(PMX_TREE)/pmxab.c' || echo '$(srcdir)/'`$(PMX_TREE)/pmxab.c
 
-arithchk-arithchk.obj: $(PMX_TREE)/libf2c/arithchk.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(arithchk_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT arithchk-arithchk.obj -MD -MP -MF $(DEPDIR)/arithchk-arithchk.Tpo -c -o arithchk-arithchk.obj `if test -f '$(PMX_TREE)/libf2c/arithchk.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/arithchk.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/arithchk.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/arithchk-arithchk.Tpo $(DEPDIR)/arithchk-arithchk.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/libf2c/arithchk.c' object='arithchk-arithchk.obj' libtool=no @AMDEPBACKSLASH@
+pmxab.obj: $(PMX_TREE)/pmxab.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pmxab.obj -MD -MP -MF $(DEPDIR)/pmxab.Tpo -c -o pmxab.obj `if test -f '$(PMX_TREE)/pmxab.c'; then $(CYGPATH_W) '$(PMX_TREE)/pmxab.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/pmxab.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pmxab.Tpo $(DEPDIR)/pmxab.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/pmxab.c' object='pmxab.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(arithchk_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o arithchk-arithchk.obj `if test -f '$(PMX_TREE)/libf2c/arithchk.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/arithchk.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/arithchk.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pmxab.obj `if test -f '$(PMX_TREE)/pmxab.c'; then $(CYGPATH_W) '$(PMX_TREE)/pmxab.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/pmxab.c'; fi`
 
 scor2prt.o: $(PMX_TREE)/scor2prt.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT scor2prt.o -MD -MP -MF $(DEPDIR)/scor2prt.Tpo -c -o scor2prt.o `test -f '$(PMX_TREE)/scor2prt.c' || echo '$(srcdir)/'`$(PMX_TREE)/scor2prt.c
@@ -3107,7 +3093,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -3115,7 +3100,7 @@ maintainer-clean-generic:
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
-	clean-noinstPROGRAMS mostlyclean-am
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -3188,18 +3173,17 @@ uninstall-am: uninstall-binPROGRAMS
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
-	clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
-	clean-noinstPROGRAMS ctags dist dist-all dist-bzip2 dist-gzip \
-	dist-hook dist-lzip dist-lzma dist-shar dist-tarZ dist-xz \
-	dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	clean-binPROGRAMS clean-generic clean-noinstLIBRARIES ctags \
+	dist dist-all dist-bzip2 dist-gzip dist-hook dist-lzip \
+	dist-lzma dist-shar dist-tarZ dist-xz dist-zip distcheck \
+	distclean distclean-compile distclean-generic distclean-tags \
+	distcleancheck distdir distuninstallcheck dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-binPROGRAMS
@@ -3208,11 +3192,6 @@ uninstall-am: uninstall-binPROGRAMS
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-
-arith.h: arithchk$(EXEEXT)
-	./arithchk >$@
-
-$(libf2c_a_OBJECTS): arith.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
