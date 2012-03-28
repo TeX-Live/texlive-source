@@ -1,0 +1,26 @@
+#! /bin/sh
+
+# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -f barsant* pmxaerr.dat
+
+cp $srcdir/tests/barsant.pmx .
+
+failed=
+
+./scor2prt barsant \
+	&& diff barsant1.pmx $srcdir/tests/barsant1.pmx \
+	&& diff barsant2.pmx $srcdir/tests/barsant2.pmx \
+	|| failed="$failed scor2prt"
+
+./pmxab barsant \
+	&& diff barsant.mid $srcdir/tests/barsant.mid \
+	&& diff barsant.pml $srcdir/tests/barsant.pml \
+	&& diff barsant.tex $srcdir/tests/barsant.tex \
+	|| failed="$failed pmxab"
+
+test -z "$failed" && exit 0
+echo "failed tests:$failed"
+exit 1
+

@@ -3,6 +3,12 @@
 	* arith.h (new): Dummy header to avoid the need to run arithchk.
 	* Makefile.am, configure.ac: Modified to allow cross compilation.
 
+	* pmx.lua, pmx.1, pmxab.1, scor2prt.1: New files from CTAN
+	(http://mirrors.ctan.org/support/pmx/pmx-texmf.zip).
+	* pmx.test: New shell script for tests.
+	* tests/barsant*: Test input and expected output.
+	* Makefile.am, configure.ac: Add the new files.
+
 2012-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt pmx-2.6.17 to the TeX Live build system.

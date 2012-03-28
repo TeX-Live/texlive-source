@@ -230,3 +230,28 @@ EXTRA_libf2c_a_SOURCES += \
 EXTRA_libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/signbit.c
 
+lua_scripts = pmx
+
+scriptsdir = texmf/scripts/pmx
+nodist_bin_SCRIPTS =
+
+include $(srcdir)/../../texk/am/script_links.am
+
+texmfdir = $(datarootdir)/$(scriptsdir)
+texmf_SCRIPTS = $(lua_scripts:=.lua)
+
+install-data-hook: install-lua-links
+
+uninstall-hook: uninstall-links
+
+man1_MANS = pmx.1 pmxab.1 scor2prt.1
+
+## Tests
+##
+TESTS = pmx.test
+EXTRA_DIST += $(TESTS)
+
+## pmx.test
+EXTRA_DIST += tests/barsant*
+DISTCLEANFILES = barsant* pmxaerr.dat
+

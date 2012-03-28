@@ -1,0 +1,101 @@
+.\" This manpage is licensed under the GNU Public License
+.TH pmx 1 2011-11-28  "pmx script, version 0.2" ""
+
+.SH NAME
+pmx \- This script processes pmx files and then deletes intermediate files
+
+.SH SYNOPSIS
+[ texlua ]
+.B pmx[.lua]
+{
+.IR option
+|
+.IR jobname 
+[ .pmx ] 
+} ...
+.TP 
+The default effect is to process each file using 
+.TP 12
+.BR pmxab (1)
+(pre-processing pass)
+.TP 
+.BR etex (1)
+(first pass)
+.TP
+.BR musixflx (1)
+(second pass)
+.TP
+.BR etex (1)
+(third pass)
+.TP
+.BR dvips (1)
+(dvi to Postscript)
+.TP
+.BR ps2pdf (1)
+(Postscript to Portable Document Format)
+.TP
+followed by removal of intermediate files.
+
+.SH OPTIONS
+.TP 8
+.B -v 
+output program name and version number, and quit
+.TP
+.B -h
+output usage summary and quit
+.TP
+.B -l 
+changes the TeX processor to
+.BR latex (1)
+or
+.BR pdflatex (1)
+.TP
+.B -p 
+changes the TeX processor to 
+.BR pdfetex (1) 
+or
+.BR pdflatex (1)
+(and doesn't run 
+.BR dvips (1)
+and 
+.BR ps2pdf (1)
+or
+.BR dvipdfm (1)
+)
+.TP
+.B -d 
+changes the dvi processor to
+.BR dvipdfm (1)
+.TP
+.B -s 
+stops processing at the dvi file
+.TP
+.B -t
+stops processing at the tex (and midi) files
+.TP 
+.B -i
+retain intermediate files
+.TP
+.B -f
+default processing 
+.TP 0
+Options affect processing of all succeeding PMX files unless changed by another option.
+
+.SH SEE ALSO
+.BR pmxab (1)
+.BR scor2prt (1)
+.BR etex (1),
+.BR latex (1),
+.BR pdfetex (1),
+.BR pdflatex (1),
+.BR musixflx (1),
+.BR dvipdfm (1),
+.BR dvips (1),
+.BR ps2pdf (1).
+.br
+pmx260.pdf
+.br
+pmxccn.pdf
+
+.SH AUTHOR 
+This manual page was written by Bob Tennent <rdt@cs.queensu.ca>.
