@@ -238,13 +238,13 @@ nodist_bin_SCRIPTS =
 include $(srcdir)/../../texk/am/script_links.am
 
 texmfdir = $(datarootdir)/$(scriptsdir)
-texmf_SCRIPTS = $(lua_scripts:=.lua)
+dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
 
 install-data-hook: install-lua-links
 
 uninstall-hook: uninstall-links
 
-man1_MANS = pmx.1 pmxab.1 scor2prt.1
+dist_man1_MANS = pmx.1 pmxab.1 scor2prt.1
 
 ## Tests
 ##

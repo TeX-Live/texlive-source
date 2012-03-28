@@ -35,8 +35,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = pmxab$(EXEEXT) scor2prt$(EXEEXT)
-DIST_COMMON = README $(am__configure_deps) \
-	$(srcdir)/../../build-aux/depcomp \
+DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
+	$(dist_texmf_SCRIPTS) $(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing \
 	$(srcdir)/../../texk/am/script_links.am $(srcdir)/Makefile.am \
@@ -112,8 +112,8 @@ am_libf2c_a_OBJECTS = abort_.$(OBJEXT) cabs.$(OBJEXT) derf_.$(OBJEXT) \
 	wrtfmt.$(OBJEXT) wsfe.$(OBJEXT) wsle.$(OBJEXT) wsne.$(OBJEXT) \
 	xwsne.$(OBJEXT) dtime_.$(OBJEXT) etime_.$(OBJEXT)
 libf2c_a_OBJECTS = $(am_libf2c_a_OBJECTS)
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" \
+	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_pmxab_OBJECTS = pmxab.$(OBJEXT)
 pmxab_OBJECTS = $(am_pmxab_OBJECTS)
@@ -150,7 +150,7 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-SCRIPTS = $(nodist_bin_SCRIPTS) $(texmf_SCRIPTS)
+SCRIPTS = $(dist_texmf_SCRIPTS) $(nodist_bin_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -165,7 +165,7 @@ DIST_SOURCES = $(libf2c_a_SOURCES) $(EXTRA_libf2c_a_SOURCES) \
 	$(pmxab_SOURCES) $(scor2prt_SOURCES)
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(man1_MANS)
+MANS = $(dist_man1_MANS)
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -379,8 +379,8 @@ all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 texmfdir = $(datarootdir)/$(scriptsdir)
-texmf_SCRIPTS = $(lua_scripts:=.lua)
-man1_MANS = pmx.1 pmxab.1 scor2prt.1
+dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
+dist_man1_MANS = pmx.1 pmxab.1 scor2prt.1
 TESTS = pmx.test
 DISTCLEANFILES = barsant* pmxaerr.dat
 all: all-am
@@ -472,6 +472,38 @@ pmxab$(EXEEXT): $(pmxab_OBJECTS) $(pmxab_DEPENDENCIES) $(EXTRA_pmxab_DEPENDENCIE
 scor2prt$(EXEEXT): $(scor2prt_OBJECTS) $(scor2prt_DEPENDENCIES) $(EXTRA_scor2prt_DEPENDENCIES) 
 	@rm -f scor2prt$(EXEEXT)
 	$(LINK) $(scor2prt_OBJECTS) $(scor2prt_LDADD) $(LIBS)
+install-dist_texmfSCRIPTS: $(dist_texmf_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(texmfdir)" || $(MKDIR_P) "$(DESTDIR)$(texmfdir)"
+	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-dist_texmfSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	dir='$(DESTDIR)$(texmfdir)'; $(am__uninstall_files_from_dir)
 install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -504,38 +536,6 @@ uninstall-nodist_binSCRIPTS:
 	files=`for p in $$list; do echo "$$p"; done | \
 	       sed -e 's,.*/,,;$(transform)'`; \
 	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
-install-texmfSCRIPTS: $(texmf_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	test -z "$(texmfdir)" || $(MKDIR_P) "$(DESTDIR)$(texmfdir)"
-	@list='$(texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-texmfSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(texmfdir)'; $(am__uninstall_files_from_dir)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -2957,10 +2957,10 @@ scor2prt.obj: $(PMX_TREE)/scor2prt.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/scor2prt.c' object='scor2prt.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o scor2prt.obj `if test -f '$(PMX_TREE)/scor2prt.c'; then $(CYGPATH_W) '$(PMX_TREE)/scor2prt.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/scor2prt.c'; fi`
-install-man1: $(man1_MANS)
+install-man1: $(dist_man1_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
-	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	{ for i in $$list; do echo "$$i"; done; \
 	} | while read p; do \
 	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
@@ -2984,7 +2984,7 @@ install-man1: $(man1_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
+	@list='$(dist_man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
@@ -3318,7 +3318,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(SCRIPTS) $(MANS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -3376,7 +3376,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man install-texmfSCRIPTS
+install-data-am: install-dist_texmfSCRIPTS install-man
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
@@ -3424,8 +3424,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man \
-	uninstall-nodist_binSCRIPTS uninstall-texmfSCRIPTS
+uninstall-am: uninstall-binPROGRAMS uninstall-dist_texmfSCRIPTS \
+	uninstall-man uninstall-nodist_binSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
@@ -3439,17 +3439,18 @@ uninstall-man: uninstall-man1
 	distclean distclean-compile distclean-generic distclean-tags \
 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
 	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-data-hook install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-nodist_binSCRIPTS install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	install-texmfSCRIPTS installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	install-data install-data-am install-data-hook \
+	install-dist_texmfSCRIPTS install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-nodist_binSCRIPTS install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-dist_texmfSCRIPTS \
 	uninstall-hook uninstall-man uninstall-man1 \
-	uninstall-nodist_binSCRIPTS uninstall-texmfSCRIPTS
+	uninstall-nodist_binSCRIPTS
 
 
 # in case of an SVN repository
