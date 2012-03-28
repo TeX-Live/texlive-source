@@ -565,7 +565,7 @@ PACKAGE_STRING='pmx for TeX Live 2.6.17'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="pmx-2.6.17/scor2prt.c"
+ac_unique_file="pmx-2.6.17/pmxab.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -607,12 +607,12 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 PMX_TREE
-ARITHCHK_CPPFLAGS
 EGREP
 GREP
 CPP
 RANLIB
 LN_S
+AM_CPPFLAGS
 WARNING_CFLAGS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
@@ -3736,6 +3736,60 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
+AM_CPPFLAGS='-DNON_UNIX_STDIO'
+
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
+$as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
+if ${kpse_cv_have_win32+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef WIN32
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef __MINGW32__
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_have_win32=mingw32
+else
+  kpse_cv_have_win32=native
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+else
+  kpse_cv_have_win32=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
+$as_echo "$kpse_cv_have_win32" >&6; }
+
+if test "x$kpse_cv_have_win32" != xno; then
+  AM_CPPFLAGS="$AM_CPPPFLAGS -DUSE_CLOCK"
+fi
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ln -s works" >&5
 $as_echo_n "checking whether ln -s works... " >&6; }
@@ -3870,7 +3924,6 @@ esac
 else
   RANLIB="$ac_cv_prog_RANLIB"
 fi
-
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing sqrt" >&5
@@ -4361,14 +4414,8 @@ _ACEOF
 
 
 if test $ac_cv_sizeof_long_long -lt 8; then
-  ARITHCHK_CPPFLAGS='-DNO_LONG_LONG -DNO_FPINIT'
-else
-  ARITHCHK_CPPFLAGS='-DNO_FPINIT'
+  AM_CPPFLAGS="$AM_CPPPFLAGS -DNO_LONG_LONG"
 fi
-
-
-ac_config_links="$ac_config_links pmxab.c:pmx-2.6.17/pmx2617.c"
-
 
 PMX_TREE=pmx-2.6.17
 
@@ -4972,7 +5019,6 @@ esac
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
 config_files="$ac_config_files"
-config_links="$ac_config_links"
 config_commands="$ac_config_commands"
 
 _ACEOF
@@ -4997,9 +5043,6 @@ Usage: $0 [OPTION]... [TAG]...
 
 Configuration files:
 $config_files
-
-Configuration links:
-$config_links
 
 Configuration commands:
 $config_commands
@@ -5129,7 +5172,6 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
-    "pmxab.c") CONFIG_LINKS="$CONFIG_LINKS pmxab.c:pmx-2.6.17/pmx2617.c" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -5143,7 +5185,6 @@ done
 # bizarre bug on SunOS 4.1.3.
 if $ac_need_defaults; then
   test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
-  test "${CONFIG_LINKS+set}" = set || CONFIG_LINKS=$config_links
   test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
 fi
 
@@ -5333,7 +5374,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 fi # test -n "$CONFIG_FILES"
 
 
-eval set X "  :F $CONFIG_FILES    :L $CONFIG_LINKS  :C $CONFIG_COMMANDS"
+eval set X "  :F $CONFIG_FILES      :C $CONFIG_COMMANDS"
 shift
 for ac_tag
 do
@@ -5553,38 +5594,7 @@ which seems to be undefined.  Please make sure it is defined" >&2;}
   || as_fn_error $? "could not create $ac_file" "$LINENO" 5
  ;;
 
-  :L)
-  #
-  # CONFIG_LINK
-  #
 
-  if test "$ac_source" = "$ac_file" && test "$srcdir" = '.'; then
-    :
-  else
-    # Prefer the file from the source tree if names are identical.
-    if test "$ac_source" = "$ac_file" || test ! -r "$ac_source"; then
-      ac_source=$srcdir/$ac_source
-    fi
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: linking $ac_source to $ac_file" >&5
-$as_echo "$as_me: linking $ac_source to $ac_file" >&6;}
-
-    if test ! -r "$ac_source"; then
-      as_fn_error $? "$ac_source: file not found" "$LINENO" 5
-    fi
-    rm -f "$ac_file"
-
-    # Try a relative symlink, then a hard link, then a copy.
-    case $ac_source in
-    [\\/$]* | ?:[\\/]* ) ac_rel_source=$ac_source ;;
-	*) ac_rel_source=$ac_top_build_prefix$ac_source ;;
-    esac
-    ln -s "$ac_rel_source" "$ac_file" 2>/dev/null ||
-      ln "$ac_source" "$ac_file" 2>/dev/null ||
-      cp -p "$ac_source" "$ac_file" ||
-      as_fn_error $? "cannot link or copy $ac_source to $ac_file" "$LINENO" 5
-  fi
- ;;
   :C)  { $as_echo "$as_me:${as_lineno-$LINENO}: executing $ac_file commands" >&5
 $as_echo "$as_me: executing $ac_file commands" >&6;}
  ;;
