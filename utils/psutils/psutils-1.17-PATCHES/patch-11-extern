@@ -1,0 +1,44 @@
+	Remove extern decls from *.c files.
+
+diff -ur psutils-1.17.orig/epsffit.c psutils-1.17/epsffit.c
+--- psutils-1.17.orig/epsffit.c	2009-06-24 00:22:15.000000000 +0200
++++ psutils-1.17/epsffit.c	2012-03-29 14:25:12.000000000 +0200
+@@ -23,7 +23,7 @@
+ 
+ #include "pserror.h"
+ #include "patchlev.h"
+-#include "config.h"
++#include "psutil.h"
+ 
+ #define MIN(x,y) ((x) > (y) ? (y) : (x))
+ #define MAX(x,y) ((x) > (y) ? (x) : (y))
+diff -ur psutils-1.17.orig/pserror.c psutils-1.17/pserror.c
+--- psutils-1.17.orig/pserror.c	2009-09-01 13:40:27.000000000 +0200
++++ psutils-1.17/pserror.c	2012-03-29 14:25:12.000000000 +0200
+@@ -5,8 +5,6 @@
+  * Warnings and errors for PS programs
+  */
+ 
+-extern char *program ;	/* Defined by main program, giving program name */
+-
+ #include "psutil.h"
+ #include "pserror.h"
+ #include "patchlev.h"
+diff -ur psutils-1.17.orig/psutil.c psutils-1.17/psutil.c
+--- psutils-1.17.orig/psutil.c	2009-09-01 13:43:52.000000000 +0200
++++ psutils-1.17/psutil.c	2012-03-29 14:25:12.000000000 +0200
+@@ -23,14 +23,6 @@
+ 
+ #define iscomment(x,y) (strncmp(x,y,strlen(y)) == 0)
+ 
+-extern char *program ;
+-extern int pages;
+-extern int verbose;
+-extern FILE *infile;
+-extern FILE *outfile;
+-extern char pagelabel[BUFSIZ];
+-extern int pageno;
+-
+ static char buffer[BUFSIZ];
+ static long bytes = 0;
+ static long pagescmt = 0;

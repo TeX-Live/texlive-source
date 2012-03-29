@@ -1,7 +1,7 @@
 /*
  * utils.c: Items common to pdfopen and pdfclose.
  *
- * Copyright (C) 2010 Jim Diamond <jim.diamond@acadiau.ca>
+ * Copyright (C) 2010, 2012 Jim Diamond <jim.diamond@acadiau.ca>
  * You may freely use, modify and/or distribute this file.
  */
 
@@ -10,8 +10,6 @@
 #include    <string.h>
 #include    "utils.h"
 #include    "xpdfopen.h"
-
-extern char * progname;
 
 /*
  * Allocate memory and create a window name.

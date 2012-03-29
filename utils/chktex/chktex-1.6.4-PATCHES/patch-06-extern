@@ -1,0 +1,36 @@
+	Remove extern decls from *.c files.
+
+diff -ur chktex-1.6.4.orig/Utility.c chktex-1.6.4/Utility.c
+--- chktex-1.6.4.orig/Utility.c	2010-06-13 14:50:28.000000000 +0200
++++ chktex-1.6.4/Utility.c	2012-03-29 14:09:07.000000000 +0200
+@@ -31,13 +31,6 @@
+ #include "Resource.h"
+ #include "OpSys.h"
+ 
+-#ifdef ASM_HASHWORD
+-extern unsigned short HashWord(const char *a);
+-typedef unsigned short HASH_TYPE;
+-#else
+-typedef unsigned long HASH_TYPE;
+-#endif
+-
+ /***************************** SUPPORT FUNCTIONS ************************/
+ 
+ 
+diff -ur chktex-1.6.4.orig/Utility.h chktex-1.6.4/Utility.h
+--- chktex-1.6.4.orig/Utility.h	2010-05-02 21:59:49.000000000 +0200
++++ chktex-1.6.4/Utility.h	2012-03-29 14:09:07.000000000 +0200
+@@ -49,6 +49,13 @@
+ #define FORWL(ind, list)  for(ind = 0; ind < (list).Stack.Used; ind++)
+ 
+ 
++#ifdef ASM_HASHWORD
++extern unsigned short HashWord(const char *a);
++typedef unsigned short HASH_TYPE;
++#else
++typedef unsigned long HASH_TYPE;
++#endif
++
+ enum Strip
+ {
+     STRP_LFT = 0x01,

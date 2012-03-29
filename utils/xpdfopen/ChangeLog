@@ -1,3 +1,8 @@
+2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c: Move extern decl from here ...
+	* utils.h: ... to here.
+
 2012-01-28  Jim Diamond <jim.diamond@acadiau.ca>
 	* sendx.c:    fix (kludgily?) reset_focus() so that it actually works.
 	* pdfopen.c:  add -r and -reset_focus options.

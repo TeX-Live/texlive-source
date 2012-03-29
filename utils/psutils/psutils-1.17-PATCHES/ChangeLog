@@ -1,3 +1,7 @@
+2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-extern (new): Remove extern decls from *.c files.
+
 2011-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-10-binary-mode (new): Fix error messages when setting

@@ -49,6 +49,13 @@
 #define FORWL(ind, list)  for(ind = 0; ind < (list).Stack.Used; ind++)
 
 
+#ifdef ASM_HASHWORD
+extern unsigned short HashWord(const char *a);
+typedef unsigned short HASH_TYPE;
+#else
+typedef unsigned long HASH_TYPE;
+#endif
+
 enum Strip
 {
     STRP_LFT = 0x01,

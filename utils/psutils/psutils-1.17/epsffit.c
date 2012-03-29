@@ -23,7 +23,7 @@
 
 #include "pserror.h"
 #include "patchlev.h"
-#include "config.h"
+#include "psutil.h"
 
 #define MIN(x,y) ((x) > (y) ? (y) : (x))
 #define MAX(x,y) ((x) > (y) ? (x) : (y))

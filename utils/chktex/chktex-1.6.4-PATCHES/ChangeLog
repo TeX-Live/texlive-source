@@ -1,3 +1,7 @@
+2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-extern (new): Move decls from Utility.c to Utility.h.
+
 2010-06-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-ctype-bug (new): Bug fix:

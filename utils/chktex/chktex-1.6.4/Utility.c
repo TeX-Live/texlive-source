@@ -31,13 +31,6 @@
 #include "Resource.h"
 #include "OpSys.h"
 
-#ifdef ASM_HASHWORD
-extern unsigned short HashWord(const char *a);
-typedef unsigned short HASH_TYPE;
-#else
-typedef unsigned long HASH_TYPE;
-#endif
-
 /***************************** SUPPORT FUNCTIONS ************************/
 
 
