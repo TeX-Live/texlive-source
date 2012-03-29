@@ -22,10 +22,10 @@ struct all_1_ {
     integer nvi[24], nsyst, nvnow;
 };
 struct all_2_ {
-    integer noinow, iorig[24], noinst, insetup;
-    real replacing;
+    integer noinow, iorig[24], noinst;
+    logical insetup, replacing;
     integer instnum[24];
-    real botv[24];
+    logical botv[24];
     integer nvi[24], nsyst, nvnow;
 };
 

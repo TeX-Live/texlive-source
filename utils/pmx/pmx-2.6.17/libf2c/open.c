@@ -30,6 +30,9 @@ extern integer f_clos(cllist*);
 #ifdef NON_ANSI_RW_MODES
 char *f__r_mode[2] = {"r", "r"};
 char *f__w_mode[4] = {"w", "w", "r+w", "r+w"};
+#elif defined(WIN32)
+char *f__r_mode[2] = {"rb", "rb"};
+char *f__w_mode[4] = {"wb", "wb", "rb+", "rb+"};
 #else
 char *f__r_mode[2] = {"rb", "r"};
 char *f__w_mode[4] = {"wb", "w", "r+b", "r+"};

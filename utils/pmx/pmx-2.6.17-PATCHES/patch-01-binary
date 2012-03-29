@@ -1,0 +1,15 @@
+	On Windows fseek() etc. are meaningful only for binary access.
+
+diff -ur pmx-2.6.17.orig/libf2c/open.c pmx-2.6.17/libf2c/open.c
+--- pmx-2.6.17.orig/libf2c/open.c	2012-03-26 12:09:53.000000000 +0200
++++ pmx-2.6.17/libf2c/open.c	2012-03-29 17:12:53.000000000 +0200
+@@ -30,6 +30,9 @@
+ #ifdef NON_ANSI_RW_MODES
+ char *f__r_mode[2] = {"r", "r"};
+ char *f__w_mode[4] = {"w", "w", "r+w", "r+w"};
++#elif defined(WIN32)
++char *f__r_mode[2] = {"rb", "rb"};
++char *f__w_mode[4] = {"wb", "wb", "rb+", "rb+"};
+ #else
+ char *f__r_mode[2] = {"rb", "r"};
+ char *f__w_mode[4] = {"wb", "w", "r+b", "r+"};
