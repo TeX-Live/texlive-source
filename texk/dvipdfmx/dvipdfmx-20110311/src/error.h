@@ -27,7 +27,7 @@
 
 #include "system.h"
 
-extern void error_cleanup();
+extern void error_cleanup (void);
 
 #define FATAL_ERROR -1
 #define NO_ERROR 0

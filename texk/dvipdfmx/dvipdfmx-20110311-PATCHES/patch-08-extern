@@ -1,0 +1,67 @@
+	Remove extern decls from *.c files.
+
+diff -ur dvipdfmx-20110311.orig/src/dpxfile.c dvipdfmx-20110311/src/dpxfile.c
+--- dvipdfmx-20110311.orig/src/dpxfile.c	2011-06-06 09:50:11.000000000 +0200
++++ dvipdfmx-20110311/src/dpxfile.c	2012-03-29 11:39:16.000000000 +0200
+@@ -744,13 +744,8 @@
+ 
+ #ifdef  HAVE_MKSTEMP
+ #  include <stdlib.h>
+-/* extern int mkstemp(const char *); */
+ #endif
+ 
+-/* Please fix: GCC warning
+- *   warning: implicit declaration of function `mkstemp'
+- * mkstemp may not be declared in stdlib.h. 
+- */
+ char *
+ dpx_create_temp_file (void)
+ {
+diff -ur dvipdfmx-20110311.orig/src/dvipdfmx.c dvipdfmx-20110311/src/dvipdfmx.c
+--- dvipdfmx-20110311.orig/src/dvipdfmx.c	2011-03-08 03:08:35.000000000 +0100
++++ dvipdfmx-20110311/src/dvipdfmx.c	2012-03-29 11:46:06.000000000 +0200
+@@ -59,7 +59,7 @@
+ #include "dvipdfmx.h"
+ #include "xbb.h"
+ 
+-extern void error_cleanup (void);
++#include "error.h"
+ 
+ int compat_mode = 0;     /* 0 = dvipdfmx, 1 = dvipdfm */
+ 
+diff -ur dvipdfmx-20110311.orig/src/error.c dvipdfmx-20110311/src/error.c
+--- dvipdfmx-20110311.orig/src/error.c	2011-03-05 05:44:49.000000000 +0100
++++ dvipdfmx-20110311/src/error.c	2012-03-29 11:46:14.000000000 +0200
+@@ -73,8 +73,6 @@
+   }
+ }
+ 
+-extern void error_cleanup (void);
+-
+ void
+ ERROR (const char *fmt, ...)
+ {
+diff -ur dvipdfmx-20110311.orig/src/error.h dvipdfmx-20110311/src/error.h
+--- dvipdfmx-20110311.orig/src/error.h	2011-03-05 05:44:49.000000000 +0100
++++ dvipdfmx-20110311/src/error.h	2012-03-29 11:45:20.000000000 +0200
+@@ -27,7 +27,7 @@
+ 
+ #include "system.h"
+ 
+-extern void error_cleanup();
++extern void error_cleanup (void);
+ 
+ #define FATAL_ERROR -1
+ #define NO_ERROR 0
+diff -ur dvipdfmx-20110311.orig/src/spc_color.c dvipdfmx-20110311/src/spc_color.c
+--- dvipdfmx-20110311.orig/src/spc_color.c	2011-03-06 04:14:15.000000000 +0100
++++ dvipdfmx-20110311/src/spc_color.c	2012-03-29 11:37:55.000000000 +0200
+@@ -140,7 +140,7 @@
+   return  r;
+ }
+ 
+-extern int
++int
+ spc_color_setup_handler (struct spc_handler *sph,
+ 			 struct spc_env *spe, struct spc_arg *ap)
+ {

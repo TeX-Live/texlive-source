@@ -1915,9 +1915,6 @@ do_native_font_def (int scanning)
   }
 }
 
-/* globals initialized by fontmap.c when it opens freetype */
-extern FT_Int ft_major, ft_minor, ft_patch;
-
 static void
 do_glyph_array (int yLocsPresent)
 {
@@ -2500,8 +2497,6 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
   const char *p =  buf, *endptr;
   int    ns_pdf = 0, ns_xtx = 0, error = 0;
   double tmp;
-  extern double paper_width, paper_height;
-  extern char   landscape_mode;
 
   endptr = p + size;
 

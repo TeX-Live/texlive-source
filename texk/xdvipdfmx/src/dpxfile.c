@@ -743,13 +743,8 @@ dpx_find_dfont_file (const char *filename)
 
 #ifdef  HAVE_MKSTEMP
 #  include <stdlib.h>
-/* extern int mkstemp(const char *); */
 #endif
 
-/* Please fix: GCC warning
- *   warning: implicit declaration of function `mkstemp'
- * mkstemp may not be declared in stdlib.h. 
- */
 char *
 dpx_create_temp_file (void)
 {

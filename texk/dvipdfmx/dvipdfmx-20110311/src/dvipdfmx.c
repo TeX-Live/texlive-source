@@ -59,7 +59,7 @@
 #include "dvipdfmx.h"
 #include "xbb.h"
 
-extern void error_cleanup (void);
+#include "error.h"
 
 int compat_mode = 0;     /* 0 = dvipdfmx, 1 = dvipdfm */
 

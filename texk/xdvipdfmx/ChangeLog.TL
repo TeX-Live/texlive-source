@@ -1,6 +1,25 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Remove extern decls from *.c files.
+
+	* dvi.c: Move extern decls from here ...
+	* dvi.h: ... to here ...
+	* fontmap.h: ... and here.
+
+	* tt_aux.c: Move extern decl from here ...
+	* tt_aux.h: ... to here ...
+	* dvipdfmx.c: ... and #include "tt_aux.h".
+
+	* dpxfile.c: Drop obsolete comment that mkstemp may not be
+	declared in stdlib.h.
+	* spc_color.c: Drop 'extern' from function definition.
+	* error.h: ANSI C prototype for error_cleanup().
+	* error.c: Drop extern decl, now in error.h.
+	* dvipdfmx.c: Add '#include "error.h"' and drop extern decl.
+
 2012-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfdev.c (handle_multibyte_string): Handle UTP-16 surrogates

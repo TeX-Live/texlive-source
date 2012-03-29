@@ -30,6 +30,10 @@
 /* spt_t */
 #include "pdfdev.h"
 
+/* instantiated in dvipdfmx.c */
+extern double paper_width, paper_height;
+extern char landscape_mode;
+
 extern double get_origin (int x);
 
 extern void  dvi_set_verbose (void);

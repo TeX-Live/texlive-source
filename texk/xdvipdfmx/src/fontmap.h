@@ -40,6 +40,9 @@
 #ifdef XETEX
 #include "ft2build.h"
 #include FT_FREETYPE_H
+
+/* globals initialized by fontmap.c when it opens freetype */
+extern FT_Int ft_major, ft_minor, ft_patch;
 #endif
 
 /* Options */

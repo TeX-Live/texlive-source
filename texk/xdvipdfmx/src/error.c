@@ -73,8 +73,6 @@ WARN (const char *fmt, ...)
   }
 }
 
-extern void error_cleanup (void);
-
 void
 ERROR (const char *fmt, ...)
 {

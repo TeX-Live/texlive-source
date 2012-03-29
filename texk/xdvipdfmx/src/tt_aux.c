@@ -36,8 +36,6 @@
 #include "tt_post.h"
 #include "tt_aux.h"
 
-extern int always_embed; /* flag declared in dvipdfmx.c */
-
 static int verbose = 0;
 
 void tt_aux_set_verbose(void)

@@ -26,6 +26,8 @@
 #include "pdfobj.h"
 #include "sfnt.h"
 
+extern int always_embed; /* flag declared in dvipdfmx.c */
+
 extern void tt_aux_set_verbose(void);
 
 /* TTC (TrueType Collection) */

@@ -63,7 +63,9 @@
 
 #include "xbb.h"
 
-extern void error_cleanup (void);
+#include "tt_aux.h"
+
+#include "error.h"
 
 static int verbose = 0;
 
