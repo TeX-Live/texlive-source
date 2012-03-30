@@ -1419,6 +1419,11 @@ Memory conservation.  Same as @samp{-a}, @pxref{Option details}.
 @opindex b @r{config command (#copies)}
 Multiple copies.  Same as @samp{-b}, @pxref{Option details}.
 
+@item c @var{filename}
+@opindex c @r{include additional config file}
+Include @var{filename} as an additional configuration file, read
+immediately.
+
 @item D @var{dpi}
 @opindex D @r{config command (dpi)}
 Output resolution.  Same as @samp{-D}, @pxref{Option details}.

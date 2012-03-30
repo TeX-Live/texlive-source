@@ -1,3 +1,10 @@
+2012-03-30  Norbert Preining  <preining@logic.at>
+
+	* resident.c: add new directive "c<filename> to config files, allowing
+	to include other config files.
+	* dvips.texi: document 	t.
+	* contrib/config.proto: add example.
+	 
 2012-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Fixed a typo (in comment).

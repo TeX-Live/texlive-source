@@ -765,6 +765,12 @@ case 't' :
                paperfmt = newstring(PSname);
          }
          break;
+case 'c' :
+         if (sscanf(was_inline+1, "%s", PSname) != 1)
+           bad_config("missing arg to c");
+         else
+           getdefaults(PSname);
+         break;
 default:
          bad_config("strange line");
       }

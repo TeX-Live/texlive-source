@@ -1,13 +1,15 @@
 This file records noteworthy changes.  (Public domain.)
 
-   Require Kpathsea to build.
-   Additional robustness checks.
+   Requires Kpathsea to build.
 
-dvips 5.991 (TeX Live 2011):
+dvips 5.992 (TeX Live 2012):
+  c config file include directive.
+
+dvips 5.991 (TeX Live 2011, 5 July 2011):
   Type 1 parsing bug fixes.
   Integer overflow bug fix.
 
-dvips 5.99 (TeX Live 2010, 4 June 2010):
+dvips 5.99 (TeX Live 2010, 22 July 2010):
    Use the type1 path to search for Type 1 fonts.
    Support for Japanese pTeX.
    Numeric overflow and sprintf checks.

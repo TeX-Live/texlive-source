@@ -1,4 +1,4 @@
-% Prototype Dvips configuration file.
+% Prototype Dvips configuration file.  (Public domain.)
 
 % How to print, maybe with lp instead lpr, etc.
 o |lpr
@@ -40,6 +40,9 @@ Z
 %p +lafonts.map
 %p +cyrfonts.map
 %p +eufonts.map
+
+% To include another configuration file here.
+%c FILENAME
 
 % You will also want definitions for alternative paper sizes -- A4,
 % legal, and such.  Examples in @file{contrib/papersize.level2} and
