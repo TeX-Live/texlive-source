@@ -1,3 +1,12 @@
+2012-03-31  Karl Berry  <karl@tug.org>
+
+	* Build (TL_CONF_LARGEFILE): switch default to --enable-largefile.
+	More info in README.config.
+
+2012-03-12  Karl Berry  <karl@tug.org>
+
+	* README.config: 32-bit rather than 32Bit
+
 2012-03-11  Karl Berry  <karl@tug.org>
 
 	* README.config: text tweaks for poppler/libxpdf/luatex/etc.

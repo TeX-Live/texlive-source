@@ -57,10 +57,9 @@ cd $TL_WORKDIR || exit 1
 # allow override of configure location, just in case.
 : ${TL_CONFIGURE=../configure}
 
-# Do not enable this unless you are testing new code.
-# It currently has no useful effect with the distributed sources.
-# http://tug.org/pipermail/tex-k/2010-September/002202.html
-: ${TL_CONF_LARGEFILE=--disable-largefile}
+# default to supporting large files as much as possible;
+# see comments at --disable-largefile in README.config.
+: ${TL_CONF_LARGEFILE=--enable-largefile}
 
 # default to static linking.
 : ${TL_CONF_SHARED=--disable-shared}
