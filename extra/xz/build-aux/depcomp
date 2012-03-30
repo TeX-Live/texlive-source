@@ -1,7 +1,7 @@
 #! /bin/sh
 # depcomp - compile a program generating dependencies as side-effects
 
-scriptversion=2012-03-12.15; # UTC
+scriptversion=2012-03-27.16; # UTC
 
 # Copyright (C) 1999-2012 Free Software Foundation, Inc.
 
@@ -288,23 +288,26 @@ aix)
   ;;
 
 icc)
-  # Intel's C compiler understands '-MD -MF file'.  However on
-  #    icc -MD -MF foo.d -c -o sub/foo.o sub/foo.c
+  # Intel's C compiler anf tcc (Tiny C Compiler) understand '-MD -MF file'.
+  # However on
+  #    $CC -MD -MF foo.d -c -o sub/foo.o sub/foo.c
   # ICC 7.0 will fill foo.d with something like
   #    foo.o: sub/foo.c
   #    foo.o: sub/foo.h
-  # which is wrong.  We want:
+  # which is wrong.  We want
   #    sub/foo.o: sub/foo.c
   #    sub/foo.o: sub/foo.h
   #    sub/foo.c:
   #    sub/foo.h:
   # ICC 7.1 will output
   #    foo.o: sub/foo.c sub/foo.h
-  # and will wrap long lines using \ :
+  # and will wrap long lines using '\':
   #    foo.o: sub/foo.c ... \
   #     sub/foo.h ... \
   #     ...
-
+  # tcc 0.9.26 (FIXME still under development at the moment of writing)
+  # will emit a similar output, but also prepend the continuation lines
+  # with horizontal tabulation characters.
   "$@" -MD -MF "$tmpdepfile"
   stat=$?
   if test $stat -eq 0; then :
@@ -317,11 +320,17 @@ icc)
   # or 'foo.o: dep1.h dep2.h \', or ' dep3.h dep4.h \'.
   # Do two passes, one to just change these to
   # '$object: dependent.h' and one to simply 'dependent.h:'.
-  sed "s,^[^:]*:,$object :," < "$tmpdepfile" > "$depfile"
-  # Some versions of the HPUX 10.20 sed can't process this invocation
-  # correctly.  Breaking it into two sed invocations is a workaround.
-  sed 's,^[^:]*: \(.*\)$,\1,;s/^\\$//;/^$/d;/:$/d' < "$tmpdepfile" |
-    sed -e 's/$/ :/' >> "$depfile"
+  sed -e "s/^[ $tab][ $tab]*/  /" -e "s,^[^:]*:,$object :," \
+    < "$tmpdepfile" > "$depfile"
+  sed '
+    s/[ '"$tab"'][ '"$tab"']*/ /g
+    s/^ *//
+    s/ *\\*$//
+    s/^[^:]*: *//
+    /^$/d
+    /:$/d
+    s/$/ :/
+  ' < "$tmpdepfile" >> "$depfile"
   rm -f "$tmpdepfile"
   ;;
 
