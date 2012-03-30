@@ -27,7 +27,7 @@ graphite 2.4 - checked 16mar12
 icu 49.1 (49.1 release) - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
-libpng 1.5.9 - checked 23feb12
+libpng 1.5.10 - checked 30mar12
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 

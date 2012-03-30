@@ -1,3 +1,8 @@
+2012-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpng-1.5.10.
+	* version.ac: Adjust.
+
 2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* include/Makefile.am: Use ../am/hdr_links.am.
