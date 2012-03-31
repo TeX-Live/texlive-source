@@ -7,7 +7,7 @@
 
 ########################################################################
 # mf2pt1                                                               #
-# Copyright (C) 2011 Scott Pakin                                       #
+# Copyright (C) 2012 Scott Pakin                                       #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -21,7 +21,7 @@
 # version 2006/05/20 or later.                                         #
 ########################################################################
 
-our $VERSION = "2.4.5";   # mf2pt1 version number
+our $VERSION = "2.4.6";   # mf2pt1 version number
 require 5.6.1;            # I haven't tested mf2pt1 with older Perl versions
 
 use File::Basename;
@@ -160,7 +160,7 @@ my $filedir;
 my $filenoext;
 my $versionmsg = "mf2pt1 version $VERSION
 
-Copyright (C) 2011 Scott Pakin
+Copyright (C) 2012 Scott Pakin
 
 This program may be distributed and/or modified under the conditions
 of the LaTeX Project Public License, either version 1.3c of this
@@ -427,7 +427,7 @@ ENDHEADER
 sub get_bboxes ($)
 {
     execute_command 1, ("mpost", "-mem=mf2pt1", "-progname=mpost",
-                        "\\mode:=localfont; mag:=$mag; bpppix $bpppix; input $mffile");
+                        "\\mode:=localfont; mag:=$mag; bpppix $bpppix; nonstopmode; input $mffile");
     opendir (CURDIR, ".") || die "${progname}: $! ($filedir)\n";
     @charfiles = sort
                    { ($a=~ /\.(\d+)$/)[0] <=> ($b=~ /\.(\d+)$/)[0] }
