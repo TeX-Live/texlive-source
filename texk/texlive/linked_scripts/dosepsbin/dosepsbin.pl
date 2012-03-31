@@ -4,10 +4,10 @@ use strict;
 $^W=1;
 
 my $prj = 'dosepsbin';
-my $version = '1.1';
-my $date = '2011/12/05';
+my $version = '1.2';
+my $date = '2012/03/22';
 my $author = 'Heiko Oberdiek';
-my $copyright = "Copyright 2011 $author";
+my $copyright = "Copyright 2011-2012 $author";
 
 my $verbose = 0;
 my $quiet = 0;
@@ -196,7 +196,7 @@ verbose_kv 'length of TIFF section', $length_tiff;
             print "--> $type section is not available.\n" unless $quiet;
             return '<not present>';
         }
-        $$ref_off >= 32 and $$ref_off < $inputfile_size or
+        $$ref_off >= 30 and $$ref_off < $inputfile_size or
                 die_error "Invalid offset of PS section", {
                     '1 input file' => $inputfile,
                     "2 offset of $type section" => $$ref_off,
@@ -298,7 +298,7 @@ dosepsbin -- Extract PS/WMF/TIFF sections from DOS EPS binary files
 
 =head1 VERSION
 
-2011-12-05 v1.1
+2012-03-22 v1.2
 
 =head1 SYNOPSIS
 
@@ -407,7 +407,7 @@ Heiko Oberdiek, email: heiko.oberdiek at googlemail.com
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2011 by Heiko Oberdiek.
+Copyright 2011-2012 by Heiko Oberdiek.
 
 This library is free software; you may redistribute it and/or
 modify it under the same terms as Perl itself
@@ -441,6 +441,14 @@ in section "5.2 Windows Metafile or TIFF":
 =over 2
 
 =item * Typo fixed in help text (thanks Peter Breitenlohner).
+
+=back
+
+=item B<2012/03/22 v1.2>
+
+=over 2
+
+=item * Fix in validation test for offset of PS section.
 
 =back
 
