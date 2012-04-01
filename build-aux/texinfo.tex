@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2012-03-11.15}
+\def\texinfoversion{2012-03-30.11}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4451,6 +4451,7 @@ end
   \definedummyword\guillemetright
   \definedummyword\guilsinglleft
   \definedummyword\guilsinglright
+  \definedummyword\lbracechar
   \definedummyword\leq
   \definedummyword\minus
   \definedummyword\ogonek
@@ -4463,6 +4464,7 @@ end
   \definedummyword\quoteleft
   \definedummyword\quoteright
   \definedummyword\quotesinglbase
+  \definedummyword\rbracechar
   \definedummyword\result
   \definedummyword\textdegree
   %
@@ -4514,6 +4516,7 @@ end
   \definedummyword\t
   %
   % Commands that take arguments.
+  \definedummyword\abbr
   \definedummyword\acronym
   \definedummyword\anchor
   \definedummyword\cite
@@ -4525,6 +4528,7 @@ end
   \definedummyword\emph
   \definedummyword\env
   \definedummyword\file
+  \definedummyword\image
   \definedummyword\indicateurl
   \definedummyword\kbd
   \definedummyword\key
@@ -4572,7 +4576,10 @@ end
   % content at all.  So for index sorting, we map @{ and @} to strings
   % starting with |, since that ASCII character is between ASCII { and }.
   \def\{{|a}%
+  \def\lbracechar{|a}%
+  %
   \def\}{|b}%
+  \def\rbracechar{|b}%
   %
   % Non-English letters.
   \def\AA{AA}%
