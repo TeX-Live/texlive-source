@@ -220,6 +220,11 @@ libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/dtime_.c \
 	$(PMX_TREE)/libf2c/etime_.c
 
+## Handle DOS line endings
+if WIN32
+libf2c_a_SOURCES += w32getc.c
+endif WIN32
+
 ## QINT (unused)
 EXTRA_libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/ftell64_.c \

@@ -2,6 +2,10 @@
 #include "sysdep1.h"
 #endif
 #include "stdio.h"
+#ifdef WIN32
+extern int w32getc(FILE *f);
+#define getc w32getc
+#endif
 #include "errno.h"
 #ifndef NULL
 /* ANSI C */

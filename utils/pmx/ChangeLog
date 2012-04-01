@@ -1,3 +1,9 @@
+2012-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* w32getc.c (new): Handle DOS line endings (on Windows).
+	Mail from Akira, 31 Mar 2012 21:36:26.
+	* Makefile.am [WIN32]: Add the new file.
+
 2012-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* arith.h (new): Dummy header to avoid the need to run arithchk.

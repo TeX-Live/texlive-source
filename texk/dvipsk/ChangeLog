@@ -6,7 +6,7 @@
 
 	* resident.c: add new directive "c<filename> to config files, allowing
 	to include other config files.
-	* dvips.texi: document 	t.
+	* dvips.texi: document it.
 	* contrib/config.proto: add example.
 	 
 2012-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>

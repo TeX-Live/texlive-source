@@ -35,6 +35,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = pmxab$(EXEEXT) scor2prt$(EXEEXT)
+@WIN32_TRUE@am__append_1 = w32getc.c
 DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	$(dist_texmf_SCRIPTS) $(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
@@ -45,7 +46,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
-@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(wrappers)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_2 = $(wrappers)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
@@ -63,6 +64,88 @@ AR = ar
 ARFLAGS = cru
 libf2c_a_AR = $(AR) $(ARFLAGS)
 libf2c_a_LIBADD =
+am__libf2c_a_SOURCES_DIST = arith.h $(PMX_TREE)/libf2c/f2c.h \
+	$(PMX_TREE)/libf2c/fio.h $(PMX_TREE)/libf2c/fmt.h \
+	$(PMX_TREE)/libf2c/fp.h $(PMX_TREE)/libf2c/lio.h \
+	$(PMX_TREE)/libf2c/rawio.h $(PMX_TREE)/libf2c/signal1.h \
+	$(PMX_TREE)/libf2c/sysdep1.h $(PMX_TREE)/libf2c/abort_.c \
+	$(PMX_TREE)/libf2c/cabs.c $(PMX_TREE)/libf2c/derf_.c \
+	$(PMX_TREE)/libf2c/derfc_.c $(PMX_TREE)/libf2c/erf_.c \
+	$(PMX_TREE)/libf2c/erfc_.c $(PMX_TREE)/libf2c/exit_.c \
+	$(PMX_TREE)/libf2c/f77vers.c $(PMX_TREE)/libf2c/getarg_.c \
+	$(PMX_TREE)/libf2c/getenv_.c $(PMX_TREE)/libf2c/i77vers.c \
+	$(PMX_TREE)/libf2c/iargc_.c $(PMX_TREE)/libf2c/main.c \
+	$(PMX_TREE)/libf2c/s_paus.c $(PMX_TREE)/libf2c/s_rnge.c \
+	$(PMX_TREE)/libf2c/s_stop.c $(PMX_TREE)/libf2c/sig_die.c \
+	$(PMX_TREE)/libf2c/signal_.c $(PMX_TREE)/libf2c/system_.c \
+	$(PMX_TREE)/libf2c/pow_ci.c $(PMX_TREE)/libf2c/pow_dd.c \
+	$(PMX_TREE)/libf2c/pow_di.c $(PMX_TREE)/libf2c/pow_hh.c \
+	$(PMX_TREE)/libf2c/pow_ii.c $(PMX_TREE)/libf2c/pow_ri.c \
+	$(PMX_TREE)/libf2c/pow_zi.c $(PMX_TREE)/libf2c/pow_zz.c \
+	$(PMX_TREE)/libf2c/c_abs.c $(PMX_TREE)/libf2c/c_cos.c \
+	$(PMX_TREE)/libf2c/c_div.c $(PMX_TREE)/libf2c/c_exp.c \
+	$(PMX_TREE)/libf2c/c_log.c $(PMX_TREE)/libf2c/c_sin.c \
+	$(PMX_TREE)/libf2c/c_sqrt.c $(PMX_TREE)/libf2c/z_abs.c \
+	$(PMX_TREE)/libf2c/z_cos.c $(PMX_TREE)/libf2c/z_div.c \
+	$(PMX_TREE)/libf2c/z_exp.c $(PMX_TREE)/libf2c/z_log.c \
+	$(PMX_TREE)/libf2c/z_sin.c $(PMX_TREE)/libf2c/z_sqrt.c \
+	$(PMX_TREE)/libf2c/r_abs.c $(PMX_TREE)/libf2c/r_acos.c \
+	$(PMX_TREE)/libf2c/r_asin.c $(PMX_TREE)/libf2c/r_atan.c \
+	$(PMX_TREE)/libf2c/r_atn2.c $(PMX_TREE)/libf2c/r_cnjg.c \
+	$(PMX_TREE)/libf2c/r_cos.c $(PMX_TREE)/libf2c/r_cosh.c \
+	$(PMX_TREE)/libf2c/r_dim.c $(PMX_TREE)/libf2c/r_exp.c \
+	$(PMX_TREE)/libf2c/r_imag.c $(PMX_TREE)/libf2c/r_int.c \
+	$(PMX_TREE)/libf2c/r_lg10.c $(PMX_TREE)/libf2c/r_log.c \
+	$(PMX_TREE)/libf2c/r_mod.c $(PMX_TREE)/libf2c/r_nint.c \
+	$(PMX_TREE)/libf2c/r_sign.c $(PMX_TREE)/libf2c/r_sin.c \
+	$(PMX_TREE)/libf2c/r_sinh.c $(PMX_TREE)/libf2c/r_sqrt.c \
+	$(PMX_TREE)/libf2c/r_tan.c $(PMX_TREE)/libf2c/r_tanh.c \
+	$(PMX_TREE)/libf2c/d_abs.c $(PMX_TREE)/libf2c/d_acos.c \
+	$(PMX_TREE)/libf2c/d_asin.c $(PMX_TREE)/libf2c/d_atan.c \
+	$(PMX_TREE)/libf2c/d_atn2.c $(PMX_TREE)/libf2c/d_cnjg.c \
+	$(PMX_TREE)/libf2c/d_cos.c $(PMX_TREE)/libf2c/d_cosh.c \
+	$(PMX_TREE)/libf2c/d_dim.c $(PMX_TREE)/libf2c/d_exp.c \
+	$(PMX_TREE)/libf2c/d_imag.c $(PMX_TREE)/libf2c/d_int.c \
+	$(PMX_TREE)/libf2c/d_lg10.c $(PMX_TREE)/libf2c/d_log.c \
+	$(PMX_TREE)/libf2c/d_mod.c $(PMX_TREE)/libf2c/d_nint.c \
+	$(PMX_TREE)/libf2c/d_prod.c $(PMX_TREE)/libf2c/d_sign.c \
+	$(PMX_TREE)/libf2c/d_sin.c $(PMX_TREE)/libf2c/d_sinh.c \
+	$(PMX_TREE)/libf2c/d_sqrt.c $(PMX_TREE)/libf2c/d_tan.c \
+	$(PMX_TREE)/libf2c/d_tanh.c $(PMX_TREE)/libf2c/i_abs.c \
+	$(PMX_TREE)/libf2c/i_dim.c $(PMX_TREE)/libf2c/i_dnnt.c \
+	$(PMX_TREE)/libf2c/i_indx.c $(PMX_TREE)/libf2c/i_len.c \
+	$(PMX_TREE)/libf2c/i_mod.c $(PMX_TREE)/libf2c/i_nint.c \
+	$(PMX_TREE)/libf2c/i_sign.c $(PMX_TREE)/libf2c/lbitbits.c \
+	$(PMX_TREE)/libf2c/lbitshft.c $(PMX_TREE)/libf2c/h_abs.c \
+	$(PMX_TREE)/libf2c/h_dim.c $(PMX_TREE)/libf2c/h_dnnt.c \
+	$(PMX_TREE)/libf2c/h_indx.c $(PMX_TREE)/libf2c/h_len.c \
+	$(PMX_TREE)/libf2c/h_mod.c $(PMX_TREE)/libf2c/h_nint.c \
+	$(PMX_TREE)/libf2c/h_sign.c $(PMX_TREE)/libf2c/hl_ge.c \
+	$(PMX_TREE)/libf2c/hl_gt.c $(PMX_TREE)/libf2c/hl_le.c \
+	$(PMX_TREE)/libf2c/hl_lt.c $(PMX_TREE)/libf2c/l_ge.c \
+	$(PMX_TREE)/libf2c/l_gt.c $(PMX_TREE)/libf2c/l_le.c \
+	$(PMX_TREE)/libf2c/l_lt.c $(PMX_TREE)/libf2c/ef1asc_.c \
+	$(PMX_TREE)/libf2c/ef1cmc_.c $(PMX_TREE)/libf2c/f77_aloc.c \
+	$(PMX_TREE)/libf2c/s_cat.c $(PMX_TREE)/libf2c/s_cmp.c \
+	$(PMX_TREE)/libf2c/s_copy.c $(PMX_TREE)/libf2c/backspac.c \
+	$(PMX_TREE)/libf2c/close.c $(PMX_TREE)/libf2c/dfe.c \
+	$(PMX_TREE)/libf2c/dolio.c $(PMX_TREE)/libf2c/due.c \
+	$(PMX_TREE)/libf2c/endfile.c $(PMX_TREE)/libf2c/err.c \
+	$(PMX_TREE)/libf2c/fmt.c $(PMX_TREE)/libf2c/fmtlib.c \
+	$(PMX_TREE)/libf2c/ftell_.c $(PMX_TREE)/libf2c/iio.c \
+	$(PMX_TREE)/libf2c/ilnw.c $(PMX_TREE)/libf2c/inquire.c \
+	$(PMX_TREE)/libf2c/lread.c $(PMX_TREE)/libf2c/lwrite.c \
+	$(PMX_TREE)/libf2c/open.c $(PMX_TREE)/libf2c/rdfmt.c \
+	$(PMX_TREE)/libf2c/rewind.c $(PMX_TREE)/libf2c/rsfe.c \
+	$(PMX_TREE)/libf2c/rsli.c $(PMX_TREE)/libf2c/rsne.c \
+	$(PMX_TREE)/libf2c/sfe.c $(PMX_TREE)/libf2c/sue.c \
+	$(PMX_TREE)/libf2c/typesize.c $(PMX_TREE)/libf2c/uio.c \
+	$(PMX_TREE)/libf2c/util.c $(PMX_TREE)/libf2c/wref.c \
+	$(PMX_TREE)/libf2c/wrtfmt.c $(PMX_TREE)/libf2c/wsfe.c \
+	$(PMX_TREE)/libf2c/wsle.c $(PMX_TREE)/libf2c/wsne.c \
+	$(PMX_TREE)/libf2c/xwsne.c $(PMX_TREE)/libf2c/dtime_.c \
+	$(PMX_TREE)/libf2c/etime_.c w32getc.c
+@WIN32_TRUE@am__objects_1 = w32getc.$(OBJEXT)
 am_libf2c_a_OBJECTS = abort_.$(OBJEXT) cabs.$(OBJEXT) derf_.$(OBJEXT) \
 	derfc_.$(OBJEXT) erf_.$(OBJEXT) erfc_.$(OBJEXT) \
 	exit_.$(OBJEXT) f77vers.$(OBJEXT) getarg_.$(OBJEXT) \
@@ -110,7 +193,8 @@ am_libf2c_a_OBJECTS = abort_.$(OBJEXT) cabs.$(OBJEXT) derf_.$(OBJEXT) \
 	rsli.$(OBJEXT) rsne.$(OBJEXT) sfe.$(OBJEXT) sue.$(OBJEXT) \
 	typesize.$(OBJEXT) uio.$(OBJEXT) util.$(OBJEXT) wref.$(OBJEXT) \
 	wrtfmt.$(OBJEXT) wsfe.$(OBJEXT) wsle.$(OBJEXT) wsne.$(OBJEXT) \
-	xwsne.$(OBJEXT) dtime_.$(OBJEXT) etime_.$(OBJEXT)
+	xwsne.$(OBJEXT) dtime_.$(OBJEXT) etime_.$(OBJEXT) \
+	$(am__objects_1)
 libf2c_a_OBJECTS = $(am_libf2c_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" \
 	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
@@ -161,7 +245,7 @@ CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libf2c_a_SOURCES) $(EXTRA_libf2c_a_SOURCES) \
 	$(pmxab_SOURCES) $(scor2prt_SOURCES)
-DIST_SOURCES = $(libf2c_a_SOURCES) $(EXTRA_libf2c_a_SOURCES) \
+DIST_SOURCES = $(am__libf2c_a_SOURCES_DIST) $(EXTRA_libf2c_a_SOURCES) \
 	$(pmxab_SOURCES) $(scor2prt_SOURCES)
 man1dir = $(mandir)/man1
 NROFF = nroff
@@ -367,14 +451,14 @@ libf2c_a_SOURCES = arith.h $(PMX_TREE)/libf2c/f2c.h \
 	$(PMX_TREE)/libf2c/wrtfmt.c $(PMX_TREE)/libf2c/wsfe.c \
 	$(PMX_TREE)/libf2c/wsle.c $(PMX_TREE)/libf2c/wsne.c \
 	$(PMX_TREE)/libf2c/xwsne.c $(PMX_TREE)/libf2c/dtime_.c \
-	$(PMX_TREE)/libf2c/etime_.c
+	$(PMX_TREE)/libf2c/etime_.c $(am__append_1)
 EXTRA_libf2c_a_SOURCES = $(PMX_TREE)/libf2c/uninit.c \
 	$(PMX_TREE)/libf2c/ftell64_.c $(PMX_TREE)/libf2c/pow_qq.c \
 	$(PMX_TREE)/libf2c/qbitbits.c $(PMX_TREE)/libf2c/qbitshft.c \
 	$(PMX_TREE)/libf2c/signbit.c
 lua_scripts = pmx
 scriptsdir = texmf/scripts/pmx
-nodist_bin_SCRIPTS = $(am__append_1)
+nodist_bin_SCRIPTS = $(am__append_2)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
@@ -690,6 +774,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uninit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/w32getc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wref.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wrtfmt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wsfe.Po@am__quote@
