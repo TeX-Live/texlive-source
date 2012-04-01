@@ -670,15 +670,13 @@ Primary author of Dvips: T. Rokicki.");
 #endif
    dvips_debug_flag = 0;
    { /* for compilers incompatible with c99 */
-      char *s = (char *)getenv ("DVIPSDEBUG");
+      char *s = getenv ("DVIPSDEBUG");
       if (s) {
          dvips_debug_flag = 1;
-         free (s);
       } else {
-         s = (char *) getenv ("KPATHSEA_DEBUG");
+         s = getenv ("KPATHSEA_DEBUG");
          if (s) {
            dvips_debug_flag = 1;
-           free (s);
          }
       }
    }

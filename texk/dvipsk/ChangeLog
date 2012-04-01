@@ -1,3 +1,7 @@
+2012-04-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvips.c: do not free getenved string.
+
 2012-03-30  Norbert Preining  <preining@logic.at>
 
 	* resident.c: add new directive "c<filename> to config files, allowing
