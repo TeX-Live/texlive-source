@@ -43,9 +43,10 @@ done
 
 # Get arguments from c-auto.h
 
-eval "`awk '/^#define/ { printf "mk_%s=%s", $2, $3
-  for (i = 4; i <= NF; i++) printf " %s", $i
-  print "" }' c-auto.h`"
+# Skip all problematic #define's
+# such as: #define ICONV_CHAR_PPTR_TYPE char **
+# or:      #define PACKAGE_STRING "xdvik 22.85"
+eval "`awk '/^#define/ { if (NF == 3) print "mk_"$2"="$3 }' c-auto.h`"
 
 # eval "`cat c-auto.h \
 #   | grep '^[ 	]*#[ 	]*define[ 	]' \
