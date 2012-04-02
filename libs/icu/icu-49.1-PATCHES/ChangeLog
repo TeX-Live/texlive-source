@@ -1,3 +1,12 @@
+2012-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reduced size of data/in/icudt49l.dat, removing
+	  curr/*
+	  lang/*
+	  region/*
+	  rfc*.spp
+	  zone/*
+
 2012-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-Cygwin (new): Build fix for Cygwin.

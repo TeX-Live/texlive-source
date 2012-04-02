@@ -13,3 +13,10 @@ Removed empty dirs:
 	layout/unicode
 	test/perf/results
 
+Reduced size of data/in/icudt49l.dat
+	icupkg -r 'curr/*' IN OUT
+	icupkg -r 'lang/*' IN OUT
+	icupkg -r 'region/*' IN OUT
+	icupkg -r 'rfc*.spp' IN OUT
+	icupkg -r 'zone/*' IN OUT
+
