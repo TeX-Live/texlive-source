@@ -48,7 +48,7 @@
 .\" .if n .ds La LaTeX
 .if t .ds Te T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
 .if n .ds Te TeX
-.\"	# small and boldface (not all -man's provide it)
+.\" # small and boldface (not all -man's provide it)
 .de SB
 \&\fB\s-1\&\\$1 \\$2\s0\fR
 ..
@@ -225,7 +225,8 @@ string search in DVI files (section STRING SEARCH),
 saving or printing (parts of) the DVI file (sections PRINT DIALOG and SAVE DIALOG).
 .RE
 .PP
-Xdvi can be compiled with the Motif toolkit or the Xaw (Athena) toolkit
+.B Xdvi
+can be compiled with the Motif toolkit or the Xaw (Athena) toolkit
 (and variants of it), and the Motif version has a slightly different GUI;
 these differences are noted below.
 .PP
@@ -1703,10 +1704,12 @@ until the DVI file can be read entirely.
 .BI \-wheelunit " pixels"
 .RB ( .wheelUnit )
 Sets the number of pixels that a motion of a wheel mouse will move the
-image up or down. (See the
+image up, down, left, or right. (See the
 .B wheel
-action, below, for more information on this.)
-If set to zero, the wheel mouse functionality is disabled.
+and
+.B hwheel
+actions, below, for more information on this.)
+If set to zero, the wheel mouse functionality is (essentially) disabled.
 The default value is 80.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
@@ -2444,14 +2447,45 @@ Ctrl<Btn1Down>:mouse-modes("source-special()")\en\e
 <Btn3Down>: mouse-modes("magnifier(*3)")\en\e
 <Btn4Down>: mouse-modes("wheel(-0.2)")\en\e
 <Btn5Down>: mouse-modes("wheel(0.2)")\en\e
+<Btn6Down>: mouse-modes("hwheel(-0.2)")\en\e
+<Btn7Down>: mouse-modes("hwheel(0.2)")\en\e
 .sp 1n
 .ft
 .fi
 .RE
 All of these actions are described in more detail below.
-Note the use of quote symbols around the action strings, which are neccessary
+Note the use of quote symbols around the action strings, which are necessary
 to group them into one argument.
-The buttons 4 and 5 refer to wheel movements (wheel up/down) on wheel mice.
+Buttons 4, 5, 6, and 7 refer to wheel movements (wheel up/down/left/right)
+on wheel mice.  Not all mice support horizontal scrolling.
+.PP
+The X Toolkit routines that implement translations do not support event
+types of
+.B Btn6Down
+or
+.BR Btn7Down .
+Because of this,
+.B xdvi
+implements its own parser for translations given in
+.BR mouseTranslations .
+This parser is more limited than the parser built in to the X Toolkit.
+The string given in
+.B mouseTranslations
+should not begin with
+.RB `` #replace '',
+.RB `` #augment '',
+or
+.RB `` #override ''.
+Modifiers of the form
+.BI @ keysym
+are not supported, and the event type must be of the form
+.B BtnDown
+or
+.BI Btn n Down\fR,\fP
+where
+.I n
+is a positive integer without leading zeroes.  Also, some limitations apply
+to the action field.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B do-href()
@@ -2547,6 +2581,16 @@ The action takes one parameter, giving the distance to scroll the
 image.  If the parameter contains a decimal point, the distance is
 given in wheel units; otherwise, pixels.  A negative value scrolls up,
 a positive value scrolls down.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B hwheel()
+This action can be used to scroll the image horizontally with a wheel mouse,
+where it is usually bound to mouse button 6 (wheel left) or 7 (wheel right).
+The action takes one parameter, giving the distance to scroll the
+image.  If the parameter contains a decimal point, the distance is
+given in wheel units; otherwise, pixels.  A negative value scrolls left,
+a positive value scrolls right.  Not all mice support horizontal scrolling;
+this is mostly for touchpads, trackpads, etc.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B text-selection()
@@ -2785,7 +2829,8 @@ The length of the tick marks can be changed via the X resource
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .SH PAGE HISTORY
-Xdvi keeps a history of viewed pages, and you can move through the history
+.B Xdvi
+keeps a history of viewed pages, and you can move through the history
 and delete items using the keys
 .B [
 .RI ( pagehistory-back() ),
@@ -2847,7 +2892,8 @@ below, for a more detailed description and the default values of these
 variables. If no suitable files are found, a set of built-in default
 MIME types and applications is used.
 .PP
-Xdvi currently uses no heuristics apart from the filename suffix
+.B Xdvi
+currently uses no heuristics apart from the filename suffix
 to determine the mime type of a file. If a filename has no suffix,
 the value of the resource
 .B noMimeSuffix
@@ -3375,7 +3421,8 @@ or
 (see the section
 .B FILE SEARCHING
 below for more information on these variables).
-Xdvi will try to split this pixmap horizontally into
+.B Xdvi
+will try to split this pixmap horizontally into
 .I n
 pieces, where each piece is as wide as the pixmap is high
 and is treated as an image for toolbar button
@@ -3805,12 +3852,17 @@ example in the
 .B dvips
 documentation) is not supported.
 There are also some restrictions due to the way xdvi's  drawing  routines
-are implemented; e.g. the \ecolorbox and \efcolorbox  macros don't work
-with xdvi. See the section LIMITATIONS below for more information on these
-restrictions.
-Xdvi supports the same list of named colors as with
-.BR dvips ,
-namely:
+are implemented; e.g. the
+.B \ecolorbox
+and
+.B \efcolorbox
+macros don't work with
+.BR xdvi .
+See the section LIMITATIONS below for more information on these restrictions.
+.B Xdvi
+supports the same list of named colors as
+.B dvips
+does, namely:
 .P
 .BR Apricot ,
 .BR Aquamarine ,

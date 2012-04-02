@@ -225,6 +225,22 @@ struct PropMotifWmHints {
 
 #endif /* MOTIF */
 
+#if HAVE_X11_INTRINSICI_H
+# include <X11/IntrinsicI.h>
+#else
+
+/* Taken from <X11/TranslateI.h> in libXt-1.0.4 (Oct. 2006) */
+typedef struct _LateBindings {
+	unsigned int	knot:1;
+	unsigned int	pair:1;
+	unsigned short	ref_count;
+	KeySym		keysym;
+} LateBindings, *LateBindingsPtr;
+
+#endif /* HAVE_X11_INTRINSICI_H */
+
+struct mouse_acts	*mouse_actions;
+
 char *dvi_property;		/* for setting in window */
 size_t dvi_property_length;	/* length of above, for efficiency */
 XImage *G_image;
@@ -1825,6 +1841,285 @@ do_forward_search(const char *source_position)
 }
 
 
+/*
+ *	Routines for compile_mouse_actions
+ */
+
+struct modifierinf {
+    int		len;
+    const char	*name;
+    Modifiers	mask;
+    KeySym	keysym;
+};
+
+/* Allowed modifiers, sorted by length and then lexicographically.  */
+
+static	struct modifierinf	modifiers[] = {
+    {1,		"a",		0,		XK_Alt_L},
+    {1,		"c",		ControlMask,	0},
+    {1,		"h",		0,		XK_Hyper_L},
+    {1,		"l",		LockMask,	0},
+    {1,		"m",		0,		XK_Meta_L},
+    {1,		"s",		ShiftMask,	0},
+    {2,		"su",		0,		XK_Super_L},
+    {3,		"Alt",		0,		XK_Alt_L},
+    {4,		"Ctrl",		ControlMask,	0},
+    {4,		"Lock",		LockMask,	0},
+    {4,		"Meta",		0,		XK_Meta_L},
+    {4,		"Mod1",		Mod1Mask,	0},
+    {4,		"Mod2",		Mod2Mask,	0},
+    {4,		"Mod3",		Mod3Mask,	0},
+    {4,		"Mod4",		Mod4Mask,	0},
+    {4,		"Mod5",		Mod5Mask,	0},
+    {5,		"Hyper",	0,		XK_Hyper_L},
+    {5,		"Shift",	ShiftMask,	0},
+    {5,		"Super",	0,		XK_Super_L},
+    {7,		"Button1",	Button1Mask,	0},
+    {7,		"Button2",	Button2Mask,	0},
+    {7,		"Button3",	Button3Mask,	0},
+    {7,		"Button4",	Button4Mask,	0},
+    {7,		"Button5",	Button5Mask,	0},
+};
+
+#define	MODSCTRLINDEX	1	/* index of "c" in the above array */
+#define	MODSMETAINDEX	4	/* index of "m" */
+
+
+static Boolean
+compile_modifiers(const char **pp, struct mouse_acts *mactp)
+{
+    const char		*p = *pp;
+    const char		*p1;
+    Boolean			exclusive = False;
+    LateBindingsPtr		latep = NULL;
+    int			nlate;
+
+    while (*p == ' ' || *p == '\t')
+	++p;
+
+    p1 = p;
+    while (isalpha((int) *p1))
+	++p1;
+
+    if (p1 - p == 3 && memcmp(p, "Any", 3) == 0) {
+	mactp->mask = mactp->value = 0;
+	p = p1;
+	while (*p == ' ' || *p == '\t')
+	    ++p;
+	if (*p != '<')
+	    return False;
+    }
+    else if (p1 - p == 4 && memcmp(p, "None", 4) == 0) {
+	mactp->mask = ~0;
+	mactp->value = 0;
+	p = p1;
+	while (*p == ' ' || *p == '\t')
+	    ++p;
+	if (*p != '<')
+	    return False;
+    }
+    else {
+	if (*p == '!') {
+	    exclusive = True;
+	    do {
+		++p;
+	    } while (*p == ' ' || *p == '\t');
+	}
+
+	for (;;) {
+	    Boolean negated = False;
+	    struct modifierinf *mp;
+
+	    if (*p == '<')
+		break;
+
+	    if (*p == '~') {
+		negated = True;
+		++p;
+	    }
+
+	    if (*p == '^') {
+		mp = &modifiers[MODSCTRLINDEX];
+		++p;
+	    }
+	    else if (*p == '$') {
+		mp = &modifiers[MODSMETAINDEX];
+		++p;
+	    }
+	    else {
+		int min, max;
+
+		p1 = p;
+		while (isalnum((int) *p))
+		    ++p;
+
+		/* do binary search */
+		min = -1;
+		max = XtNumber(modifiers);
+		for (;;) {
+		    int i, diff;
+
+		    i = (min + max) / 2;
+		    if (i == min)
+			return False;	/* if not found */
+		    mp = &modifiers[i];
+
+		    diff = (p - p1) - mp->len;
+		    if (diff == 0)
+			diff = memcmp(p1, mp->name, p - p1);
+
+		    if (diff == 0)
+			break;
+		    if (diff > 0) min = i;
+		    else max = i;
+		}
+	    }
+	    if (mp->mask) {
+		mactp->mask |= mp->mask;
+		if (!negated) mactp->value |= mp->mask;
+	    }
+	    else {
+		LateBindingsPtr lp1;
+
+		if (latep == NULL) {
+		    nlate = 3;
+		    latep = xmalloc(3 * sizeof(LateBindings));
+		    latep->ref_count = 1;
+		}
+		else {
+		    nlate += 2;
+		    latep = xrealloc(latep, nlate * sizeof(LateBindings));
+		}
+		lp1 = &latep[nlate - 3];
+		lp1->knot = lp1[1].knot = negated;
+		lp1->pair = True;
+		lp1->keysym = mp->keysym;
+		++lp1;
+		lp1->pair = False;
+		lp1->ref_count = 0;
+		lp1->keysym = mp->keysym + 1;
+		++lp1;
+		lp1->knot = lp1->pair = False;
+		lp1->ref_count = 0;
+		lp1->keysym = 0;
+	    }
+
+	    while (*p == ' ' || *p == '\t')
+		++p;
+	}
+    }
+
+    mactp->late_bindings = latep;
+    *pp = p;
+
+    return True;
+}
+
+static Boolean
+compile_evtype(const char **pp, unsigned int *buttonp)
+{
+    const char		*p = *pp;
+    const char		*p0;
+
+    ++p;	/* already assumed to be '<' */
+    while (*p == ' ' || *p == '\t')
+	++p;
+
+    p0 = p;
+    while (isalpha((int) *p) && p - p0 < 3)
+	++p;
+
+    if (p - p0 != 3 || memcmp(p0, "Btn", 3) != 0)
+	return False;
+
+    if (*p >= '1' && *p <= '9') {
+	unsigned int n = *p - '0';
+
+	while (*++p >= '0' && *p <= '9')
+	    n = n * 10 + (*p - '0');
+
+	*buttonp = n;
+    }
+
+    p0 = p;
+    while (isalpha((int) *p))
+	++p;
+
+    if (p - p0 != 4 || memcmp(p0, "Down", 4) != 0)
+	return False;
+
+    while (*p == ' ' || *p == '\t')
+	++p;
+
+    if (*p++ != '>')
+	return False;
+
+    while (*p == ' ' || *p == '\t')
+	++p;
+
+    if (*p++ != ':')
+	return False;
+
+    *pp = p;
+
+    return True;
+}
+
+static void
+compile_mouse_actions(void)
+{
+    struct mouse_acts	**mactpp;
+    struct mouse_acts	*mactp;
+    const char		*p = resource.mouse_translations;
+    const char		*p_end;
+    const char		*p_base = base_mouse_translations;
+    struct mouse_acts	mact;
+
+    mactpp = &mouse_actions;
+
+    if (p == NULL) {
+	p = p_base;
+	p_base = NULL;
+    }
+
+    do {	/* loop over translations strings */
+	p_end = p + strlen(p);
+	for (;;) {
+	    while (*p == ' ' || *p == '\t')
+		++p;
+
+	    if (*p == '\n') continue;
+	    if (*p == '\0') break;
+
+	    mact.mask = mact.value = 0;
+	    mact.button = 0;
+
+	    if (!compile_modifiers(&p, &mact)
+	      || !compile_evtype(&p, &mact.button)) {
+		XDVI_WARNING((stderr, "syntax error in wheel translations"));
+	    }
+	    else if (compile_action(p, &mact.action) || mact.action != NULL) {
+		mactp = xmalloc(sizeof(struct mouse_acts));
+		*mactp = mact;
+
+		*mactpp = mactp;
+		mactpp = &mactp->next;
+	    }
+
+	    p = memchr(p, '\n', p_end - p);
+	    if (p == NULL) break;
+	    ++p;
+	}
+
+	p = p_base;
+	p_base = NULL;
+    }
+    while (p != NULL);
+
+    *mactpp = NULL;
+}
+
+
 static void
 create_colormaps(void)
 {
@@ -2200,6 +2495,9 @@ create_widgets(
 	size_t i, k = 0;
 #define WIDGETS_SIZE 10
 	Widget widgets[WIDGETS_SIZE];
+	XtTranslations xlats = XtParseTranslationTable("<BtnDown>: press()\n"
+						       "<Motion>: motion()\n"
+						       "<BtnUp>: release()\n");
 
 	widgets[k++] = globals.widgets.main_row;
 	/* 	widgets[k++] = globals.widgets.menu_bar; */
@@ -2212,21 +2510,21 @@ create_widgets(
 	ASSERT(k < WIDGETS_SIZE, "widgets list too short");
 #undef WIDGETS_SIZE
 	for (i = 0; i < k; i++) {
-	    XtOverrideTranslations(widgets[i], XtParseTranslationTable(base_key_translations));
+	    XtOverrideTranslations(widgets[i],
+				XtParseTranslationTable(base_key_translations));
 	    if (i > 3) { /* widgets for which we want to use our own mouse translations */
-		XtOverrideTranslations(widgets[i], XtParseTranslationTable(base_mouse_translations));
-		if (resource.mouse_translations != NULL) {
-		    XtOverrideTranslations(widgets[i], XtParseTranslationTable(resource.mouse_translations));
-		}
+		XtOverrideTranslations(widgets[i], xlats);
 	    }
 	}
     }
     
+#if 0 /* wasn't clip_widget already done above (i=5)? */
     if (resource.mouse_translations != NULL) {
  	TRACE_GUI((stderr, "merging in mouse translations |%s|", resource.mouse_translations));
 	XtOverrideTranslations(globals.widgets.clip_widget, XtParseTranslationTable(resource.mouse_translations));
     }
-    
+#endif
+
     if (resource.main_translations != NULL) {
 	XtTranslations xlats = XtParseTranslationTable(resource.main_translations);
 	XtOverrideTranslations(globals.widgets.draw_widget, xlats);
@@ -2234,11 +2532,13 @@ create_widgets(
 	XtOverrideTranslations(globals.widgets.main_row, xlats);
 	XtOverrideTranslations(globals.widgets.menu_bar, xlats);
 	XtOverrideTranslations(globals.widgets.main_window, xlats);
-	/* don't do it for the page list, otherwise mouse customizations will break
-	   the default list bindings too. */
+	/* don't do it for the page list, otherwise mouse customizations will
+	   break the default list bindings too. */
 	/* XtOverrideTranslations(page_list, xlats); */
     }
-    
+
+    compile_mouse_actions();
+
 #else /* MOTIF */
     
     globals.widgets.form_widget = XtVaCreateManagedWidget("form", formWidgetClass, globals.widgets.top_level,
@@ -2265,17 +2565,18 @@ create_widgets(
 							  NULL);
     
     XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(base_key_translations));
-    XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(base_mouse_translations));
-    
-    if (resource.mouse_translations != NULL) {
- 	TRACE_GUI((stderr, "merging in mouse translations |%s|", resource.mouse_translations));
-	XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(resource.mouse_translations));
-    }
-    
+
     if (resource.main_translations != NULL) {
 	XtOverrideTranslations(globals.widgets.form_widget, XtParseTranslationTable(resource.main_translations));
     }
-    
+
+    XtOverrideTranslations(globals.widgets.form_widget,
+			   XtParseTranslationTable("<BtnDown>: press()\n"
+						   "<Motion>:  motion()\n"
+						   "<BtnUp>:   release()\n"));
+
+    compile_mouse_actions();
+
     
     /* set background colors of the drawing widget */
     XtVaSetValues(globals.widgets.draw_widget, XtNbackground, resource.back_Pixel, NULL);
@@ -2999,18 +3300,16 @@ run_dvi_file(const char *filename, void *data)
 
     /* Store window id for use by src_client_check().  */
     {
+	xuint32 data;
 #if !(defined(WORD64) || defined(LONG64))
-	xuint32 data = XtWindow(globals.widgets.top_level);
+	data = XtWindow(globals.widgets.top_level);
+#else
+	set_window_id(XtWindow(globals.widgets.top_level),
+		      (unsigned char *)&data);
+#endif
 	XChangeProperty(DISP, DefaultRootWindow(DISP),
 			atom_xdvi_windows(), atom_xdvi_windows(), 32,
 			PropModePrepend, (unsigned char *)&data, 1);
-#else
-	unsigned char data[4];
-	set_window_id(XtWindow(globals.widgets.top_level), data);
-	XChangeProperty(DISP, DefaultRootWindow(DISP),
-			atom_xdvi_windows(), atom_xdvi_windows(), 32,
-			PropModePrepend, data, 1);
-#endif
 	set_dvi_property();
     }
 
@@ -3090,4 +3389,3 @@ run_dvi_file(const char *filename, void *data)
 
     do_pages();
 }
-

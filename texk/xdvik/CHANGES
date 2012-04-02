@@ -9,13 +9,49 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
+   * 22.85 (2012-04-01):
+	+ configure.ac: check for ulltostr is no longer used
+	+ hypertex.c, gui/xm_toolbar.c:  avoid compiler warnings about mixed
+	  declarations and code
+	+ Added support for horizontal scrolling
+	+ Some cleanups in xdvi-1.in and dvi-init.h
+	+ xdvi-1.in:  visitedLinkColor should not be conditional on #ifcolor
+
+   * 22.84.17 (2012-03-30):
+	+ Imported kpathsea, t1lib, and build system from TeX Live
+	+ Imported changes from TeX Live svn versions 13213-25663:
+	  * font-open.[ch] (font_open), dvi-init.c (load font): add const
+	  * read-mapfile.c (read_map_file): Allow find_suffix() to return
+	    a const string.
+	  * tests/run_tests.c, test_dl_list.c: Cast size_t to long for printing
+	    to avoid warnings on 64-bit systems.
+	  * tests/test_string_utils.c (test_expand_filename):
+	    Do not prepend cwd to absolute filenames;
+	    (test_my_stristr): Make test result independent of compiler
+	    optimizations (constant folding).
+	  * [numerous files]:  avoid some compiler warnings
+	  * dvi-draw.c, string-utils.h, xdvi.h, gui/message-window.c,
+	    gui/statusline.c, tests/test_string_utils.c:
+	    omit #include "kpathsea/c-vararg.h", in favor of <stdarg.h>
+	    (when not redundant)
+	  * xdvi.h: remove NeedFunctionPrototypes, et al.
+	+ Imported changes from TeX Live svn version 13213
+	+ Corrected /usr/local/etc/mimetypes to /usr/local/etc/mime.types
+	+ Fixed glitches in xdvi.1.in
+	+ Fixed #2933610 (build error with parallel make)
+	+ Fixed #2868509 (Bus error on NetBSD/sparc64)
+	+ Fixed #2931447 (missing whitespace after viewer command in mailcap file)
+	+ Fixed #2914532 (font dimensions computed incorrectly (musixtex))
+	+ Fixed #2849449 (wrong open() parameters for O_CREAT)
+	+ Fixed #2841005 (bounding boxes not shown for forward search)
+
    * 22.84.16 (2009-05-18):
 	+ Fixed a problem with the distribution (texmf.cnf file wasn't
 	  included).
 
    * 22.84.15 (2009-03-02):
 	+ Fixed #2067614: Re-introduced default binding for key 0
-	  which had been forgotten in previous changes
+	  which had been lost in previous changes
 	+ Fixed #1502137 (compiler warnings on 64bit systems)
 	+ Fixed some typos in the man page (ubuntu ticket #202435, see
           https://bugs.launchpad.net/ubuntu/+source/texlive-bin/+bug/202435)

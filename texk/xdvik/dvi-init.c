@@ -420,7 +420,7 @@ load_font(struct font *fontp, Boolean use_t1lib
 			    load_font_now,
 #endif
 			    fontp,
-			    (const char **)&font_found,
+			    (const char **) &font_found,
 			    &size_found,
 #ifdef T1LIB
 			    &fontp->t1id,
@@ -625,7 +625,7 @@ define_font(
     float fsize;
     double scale_dimconv;
     long checksum;
-    int scale, orig_scale;
+    int scale;
     int design;
     int magstepval;
     int len;
@@ -634,7 +634,7 @@ define_font(
 
     TeXnumber = get_bytes(file, (int)cmnd - FNTDEF1 + 1);
     checksum = get_bytes(file, 4);
-    scale = orig_scale = get_bytes(file, 4);
+    scale = get_bytes(file, 4);
     design = get_bytes(file, 4);
     len = get_byte(file);
     len += get_byte(file);	/* sequence point in the middle */
@@ -671,8 +671,6 @@ define_font(
 	 */
 	fsize = (72.27 * (1 << 4)) * vfparent->dimconv * scale / design;
 	scale_dimconv = vfparent->dimconv;
-	/* Inherit the scale from the virtual parent */
-	scale = vfparent->scale * ((orig_scale * scale_dimconv / (1 << 20)) / vfparent->dimconv);
     }
     magstepval = magstepvalue(&fsize);
     size = fsize + 0.5;
@@ -690,9 +688,14 @@ define_font(
 	    fontp->file = NULL;	/* needed if it's a virtual font */
 	    fontp->checksum = checksum;
 	    fontp->flags = FONT_IN_USE;
-	    fontp->dimconv =  orig_scale * scale_dimconv / (1 << 20);
+	    fontp->dimconv = scale * scale_dimconv / (1 << 20);
 	    fontp->set_char_p = load_n_set_char;
-	    fontp->scale = scale;
+		/* pixsize = scaled size of the font in pixels,
+		 *	  = scale * [vfparent->]dimconv / (1 << 16).
+		 */
+		fontp->pixsize =
+		  (vfparent != NULL ? vfparent->dimconv : dimconv) * scale
+		  / (1 << 16);
 	    if (vfparent == NULL)
 		if (!load_font(fontp, resource.t1lib
 #if DELAYED_MKTEXPK

@@ -287,8 +287,6 @@ static struct tfminfos *tfminfo = NULL;
 /* Try to convert from PS charspace units to DVI units with minimal
    loss of significant digits */
 # define t1_dvi_conv(x)	((((int) (x)) << 16)/1000)
-/* Convert from DVI units to TeX pt */
-# define dvi_pt_conv(x) (((long) ((x)*dimconv)) >> 19)
 
 /* Convert from TFM units to DVI units */
 # define tfm_dvi_conv(x) (((int) (x)) >> 1)
@@ -2973,7 +2971,6 @@ do_char(wide_ubyte ch,
     struct search_settings *settings = NULL;
     const struct page_mapping *page_mapping = NULL;
     uint32_t u_glyph = 0, new_glyph = 0;
-    float fsize = dvi_pt_conv(currinf.fontp->scale); /* font size in pt */
     Boolean convert_to_lowercase = False;
     /* if set to true, ignore whitespace before/after character (for CJK characters) */
     Boolean ignore_whitespace = False;
@@ -2982,7 +2979,7 @@ do_char(wide_ubyte ch,
     /* TODO: for T1 fonts, should we look at fontdimen2 / fontdimen4?
        (e.g. tfminfo[fontmaps[currinf.fontp->t1id].tfmidx].fontdimen2)
     */
-    long min_delta = (int)(1.5 * fsize + 0.5) << 16;
+    long min_delta = (int)(1.5 * currinf.fontp->pixsize + 0.5) << 16;
 
     size_t buf_offset = w_info->buffer_offset;
 
@@ -3064,11 +3061,11 @@ do_char(wide_ubyte ch,
 	/* first, check for linebreaks since accents are also triggered by negative hspace.
 	 * Usually, a linebreak is signalled by vertical movement down. However, in multicolumn
 	 * mode, it can also be a movement up, which we try to catch with the second condition. */
-	if (pxl_v2 > last_pxl_v + (int)(1.2 * fsize + 0.5)
-	    || (page_bak == current_page && pxl_v2 + (int)(6 * fsize + 0.5) < last_pxl_v)) {
+	if (pxl_v2 > last_pxl_v + (int)(1.2 * currinf.fontp->pixsize + 0.5)
+	    || (page_bak == current_page && pxl_v2 + (int)(6 * currinf.fontp->pixsize + 0.5) < last_pxl_v)) {
 	    TRACE_FIND_VERBOSE((stderr, "linebreak (%ld > %ld + %d || %ld < %ld)!\n",
-				pxl_v2, last_pxl_v, (int)(1.2 * fsize + 0.5),
-				pxl_v2 + (int)(6 * fsize + 0.5), last_pxl_v));
+				pxl_v2, last_pxl_v, (int)(1.2 * currinf.fontp->pixsize + 0.5),
+				pxl_v2 + (int)(6 * currinf.fontp->pixsize + 0.5), last_pxl_v));
 	    
 	    /* remove hyphen followed by newline if ignore_hyphens option is set,
 	       and we're scanning for string search: */
@@ -4731,8 +4728,19 @@ source_fwd_draw_box(void)
 	    lr.y = max_y;
 	    
 	    if (i == 0 && bbox_info_idx == 0) { /* only 1 bounding box */
-		XDrawRectangle(DISP, mane.win, globals.gc.high,
-			       min_x, min_y, max_x - min_x, max_y - min_y);
+		/* (2009-08-23) XDrawRectangle is broken in some X
+		   implementations (see sourceforge bug #2841005),
+		   so use XDrawLines instead
+		   XDrawRectangle(DISP, mane.win, globals.gc.high,
+		                  min_x, min_y, max_x - min_x, max_y - min_y);
+		*/
+		XPoint points[5];
+		points[0] = ll;
+		points[1] = ul;
+		points[2] = ur;
+		points[3] = lr;
+		points[4] = ll;
+		XDrawLines(DISP, mane.win, globals.gc.high, points, 5, CoordModeOrigin);
 	    }
 	    else if (i == 0) { /* draw first bbox with open bottom */
 		XPoint points[4];
@@ -5858,7 +5866,7 @@ get_t1_glyph(
       All in all the factor has been dropped.  Despite the beauty flaw.
     */
 
-    float size = dvi_pt_conv(currinf.fontp->scale);
+    float size = currinf.fontp->pixsize * 72 / resource.pixels_per_inch;
 
     int id = currinf.fontp->t1id;
     int t1libid = fontmaps[id].t1libid;
@@ -5880,8 +5888,8 @@ get_t1_glyph(
     if (fontmaps[id].force_pk)
 	return NULL;
 
-    TRACE_T1((stderr, "scale: %ld, ppi %d, sf: %d, size: %f",
-	      currinf.fontp->scale, resource.pixels_per_inch,
+    TRACE_T1((stderr, "pixsize: %f, ppi %d, sf: %d, size: %f",
+	      currinf.fontp->pixsize, resource.pixels_per_inch,
 	      currwin.shrinkfactor, size));
 
     if (t1libid == -1) {
@@ -5894,10 +5902,10 @@ get_t1_glyph(
 	t1libid = fontmaps[id].t1libid;
     }
     
-    TRACE_T1((stderr, "Setting 0x%x `%c' of %d, at %ld(%.2fpt), shrinkage is %d",
+    TRACE_T1((stderr, "Setting 0x%x `%c' of %d, at %f(%.2fpt), shrinkage is %d",
 	      ch,
 	      isprint(ch) ? ch : '?',
-	      t1libid, currinf.fontp->scale,
+	      t1libid, currinf.fontp->pixsize,
 	      size, currwin.shrinkfactor));
 
     /* Check if the glyph already has been rendered */
@@ -5927,7 +5935,9 @@ get_t1_glyph(
 	G = T1_SetChar(t1libid, ch, size, NULL);
 	if (G == NULL) {
 	    /* This can happen e.g. if font is too small; example with plain TeX:
-	       \magnification=50 Hello, world!\end
+	       \magnification=50 Hello, world!\bye
+	       Correction (2010-01-05):  this doesn't happen anymore, now that
+	       (*ahem*) the size is no longer rounded to an integer.
 	    */
 	    statusline_info(STATUS_FOREVER,
 			     "Error rendering character 0x%x `%c' - replacing by whitespace",
@@ -6182,9 +6192,11 @@ void init_t1(void)
     T1_SetLogLevel(T1LOG_DEBUG);
 
     if (resource.subpixel_order == SUBPIXEL_NONE)
-	T1_SetDeviceResolutions(BDPI, BDPI);
+	T1_SetDeviceResolutions(resource.pixels_per_inch,
+	  resource.pixels_per_inch);
     else
-	T1_SetDeviceResolutions(3 * BDPI, BDPI);
+	T1_SetDeviceResolutions(3 * resource.pixels_per_inch,
+	  resource.pixels_per_inch);
 
     read_cfg_file(NULL);
 }

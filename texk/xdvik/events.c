@@ -168,7 +168,7 @@ extern int errno;
 # define XIO_OUT 2
 #endif /* HAVE_POLL */
 
-/* cannot be const since Stings in Action routines arent either */
+/* cannot be const since Strings in Action routines aren't either */
 static char *Act_true_retval = "true";
 static char *Act_false_retval = "false";
     
@@ -346,6 +346,8 @@ static void Act_select_dvi_file(Widget, XEvent *, String *, Cardinal *);
 static void Act_discard_number(Widget, XEvent *, String *, Cardinal *);
 static void Act_drag(Widget, XEvent *, String *, Cardinal *);
 static void Act_wheel(Widget, XEvent *, String *, Cardinal *);
+static void Act_hwheel(Widget, XEvent *, String *, Cardinal *);
+static void Act_press(Widget, XEvent *, String *, Cardinal *);
 static void Act_motion(Widget, XEvent *, String *, Cardinal *);
 static void Act_release(Widget, XEvent *, String *, Cardinal *);
 static void Act_toggle_grid_mode(Widget, XEvent *, String *, Cardinal *);
@@ -418,6 +420,8 @@ static XtActionsRec m_actions[] = {
     {"discard-number", Act_discard_number},
     {"drag", Act_drag},
     {"wheel", Act_wheel},
+    {"hwheel", Act_hwheel},
+    {"press", Act_press},
     {"motion", Act_motion},
     {"release", Act_release},
     {"toggle-grid-mode", Act_toggle_grid_mode},
@@ -446,6 +450,162 @@ static XtActionsRec m_actions[] = {
     {"do-href-newwindow", Act_href_newwindow},
     {"switch-magnifier-units", Act_switch_magnifier_units},
 };
+
+
+Boolean
+compile_action(const char *str, struct xdvi_action **app)
+{
+    const char *p, *p1, *p2, *end_cmd;
+    XtActionsRec *actp;
+    struct xdvi_action *ap;
+    String *params;
+    Cardinal num_params;
+
+    for (;;) {
+
+	while (*str == ' ' || *str == '\t')
+	    ++str;
+
+	if (*str == '\0' || *str == '\n')
+	    break;
+
+	p = str;
+
+	/* find end of command name */
+	while (isalnum((int)*p) || *p == '-' || *p == '_')
+	    ++p;
+	
+	end_cmd = p;
+	
+	for (actp = m_actions; ; ++actp) {
+	    if (actp >= m_actions + XtNumber(m_actions)) {
+		const char *tmp = strchr(str, '\0');
+		if (tmp == NULL) {
+		    tmp = p;
+		}
+		XDVI_WARNING((stderr, "Cannot compile action \"%.*s\".",
+			     (int) (tmp - str), str));
+		*app = NULL;
+		return False;
+	    }
+	    if (memcmp(str, actp->string, p - str) == 0
+	      && actp->string[p - str] == '\0')
+		break;
+	}
+
+	while (*p == ' ' || *p == '\t')
+	    ++p;
+	if (*p != '(') {
+	    while (*p != '\0' && *p != '\n')
+		++p;
+	    XDVI_WARNING((stderr, "Syntax error in action %.*s.",
+			 (int) (p - str), str));
+	    *app = NULL;
+	    return False;
+	}
+
+	do {++p;}
+	while (*p == ' ' || *p == '\t');
+
+	num_params = 0;
+	if (*p == ')')
+	    params = NULL;
+	else {
+	    Cardinal max_params = 4;
+	    
+	    params = xmalloc(max_params * sizeof (String));
+
+	    for (;;) {	/* loop over params */
+		if (*p == '"') {
+		    ++p;
+		    p1 = strchr(p, '"');
+		    if (p1 == NULL) {
+			p1 = strchr(p, '\n');
+			if (p1 == NULL)
+			    p1 = p + strlen(p);
+			XDVI_WARNING((stderr, "Syntax error in action %.*s.",
+				     (int) (p1 - str), str));
+			while (num_params > 0) {
+			    --num_params;
+			    free(params[num_params]);
+			}
+			free(params);
+			*app = NULL;
+			    return False;
+		    }
+		    params[num_params++] = xstrndup(p, p1 - p);
+
+		    do {++p1;}
+		    while (*p1 == ' ' || *p1 == '\t');
+
+		    if (*p1 != ')' && *p1 != ',') {
+			p2 = strchr(p1, '\n');
+			if (p2 == NULL)
+			    p2 = p1 + strlen(p1);
+			XDVI_WARNING((stderr, "Syntax error in action %.*s.",
+				     (int) (p2 - str), str));
+			while (num_params > 0) {
+			    --num_params;
+			    free(params[num_params]);
+			}
+			free(params);
+			*app = NULL;
+			    return False;
+		    }
+		}
+		else {	/* param is not quoted */
+		    for (p1 = p;; ++p1) {
+			if (*p1 == '\0' || *p1 == '\n') {
+			    XDVI_WARNING((stderr,
+					 "Syntax error in action %.*s.",
+					 (int) (p1 - str), str));
+			    while (num_params > 0) {
+				--num_params;
+				free(params[num_params]);
+			    }
+			    free(params);
+			    *app = NULL;
+			    return False;
+			}
+			if (*p1 == ')' || *p1 == ',')
+			    break;
+		    }
+		    p2 = p1;
+		    while (p2 > p && (p2[-1] == ' ' || p2[-1] == '\t'))
+			--p2;
+		    params[num_params++] = xstrndup(p, p2 - p);
+		}
+
+		p = p1;
+		if (*p == ')')
+		    break;
+
+		do {++p;}
+		while (*p == ' ' || *p == '\t');
+
+		if (num_params >= max_params) {
+		    max_params *= 2;
+		    params = xrealloc(params, max_params * sizeof (String));
+		}
+	    }
+	} /* end if */
+
+	ap = xmalloc(sizeof *ap);
+	ap->proc = actp->proc;
+	ap->command = xstrndup(str, end_cmd - str);
+	ap->params = params;
+	ap->num_params = num_params;
+
+	*app = ap;
+	app = &ap->next;
+
+	str = p + 1;
+    }
+
+    *app = NULL;
+    return True;
+}
+
 
 /*
  * Access to m_actions
@@ -556,91 +716,6 @@ warn_num_params(const char *act_name, String *params, int num_params, int max_pa
 }
 
 
-struct xdvi_action *
-compile_action(const char *str)
-{
-    const char *p, *p1, *p2, *end_cmd;
-    XtActionsRec *actp;
-    struct xdvi_action *ap;
-
-    while (*str == ' ' || *str == '\t')
-	++str;
-
-    if (*str == '\0' || *str == '\n')
-	return NULL;
-
-    p = str;
-
-    /* find end of command name */
-    while (isalnum((int)*p) || *p == '-' || *p == '_')
-	++p;
-    
-    end_cmd = p;
-    
-    for (actp = m_actions; ; ++actp) {
-	if (actp >= m_actions + XtNumber(m_actions)) {
-	    const char *tmp = strchr(str, '\0');
-	    if (tmp == NULL) {
-		tmp = p;
-	    }
-	    XDVI_WARNING((stderr, "Cannot compile action \"%.*s\".", (int)(tmp - str), str));
-
-	    return NULL;
-	}
-	if (memcmp(str, actp->string, p - str) == 0 && actp->string[p - str] == '\0')
-	    break;
-    }
-
-    while (*p == ' ' || *p == '\t')
-	++p;
-    if (*p != '(') {
-	while (*p != '\0' && *p != '\n')
-	    ++p;
-	XDVI_WARNING((stderr, "Syntax error in action %.*s.", (int)(p - str), str));
-
-	return NULL;
-    }
-    ++p;
-    while (*p == ' ' || *p == '\t')
-	++p;
-    for (p1 = p;; ++p1) {
-	if (*p1 == '\0' || *p1 == '\n') {
-	    XDVI_WARNING((stderr, "Syntax error in action %.*s.", (int)(p1 - str), str));
-	    return NULL;
-	}
-	if (*p1 == ')')
-	    break;
-    }
-
-    ap = xmalloc(sizeof *ap);
-    ap->proc = actp->proc;
-    ap->command = xstrndup(str, end_cmd - str);
-
-    for (p2 = p1;; --p2) {
-	if (p2 <= p) {	/* if no args */
-	    ap->num_params = 0;
-	    ap->param = NULL;
-	    break;
-	}
-	else if (p2[-1] != ' ' && p2[-1] != '\t') {
-	    /* we only deal with one arg here */
-	    char *arg;
-
-	    arg = xmalloc(p2 - p + 1);
-	    memcpy(arg, p, p2 - p);
-	    arg[p2 - p] = '\0';
-	    ap->num_params = 1;
-	    ap->param = arg;
-	    break;
-	}
-    }
-
-    /* call recursivly; next will be either next parsed action, or NULL */
-    ap->next = compile_action(p1 + 1);
-
-    return ap;
-}
-
 void
 handle_command(Widget widget, XtPointer client_data, XtPointer call_data)
 {
@@ -651,8 +726,9 @@ handle_command(Widget widget, XtPointer client_data, XtPointer call_data)
     /* call all actions registered for this event */
     for (actp = (struct xdvi_action *)client_data; actp != NULL; actp = actp->next) {
 	if (globals.debug & DBG_EVENT)
-	    fprintf(stderr, "calling action with param: %s\n", actp->param);
-	(actp->proc)(widget, NULL, &actp->param, &actp->num_params);
+	    fprintf(stderr, "calling action with param: %s\n",
+		    actp->num_params ? actp->params[0] : "(null)");
+	(actp->proc)(widget, NULL, actp->params, &actp->num_params);
     }
 }
 
@@ -2360,19 +2436,29 @@ Act_mouse_modes(Widget w, XEvent *event,
 	mode_idx = resource.mouse_mode;
     }
 
-    my_action = compile_action(params[mode_idx]);
+    compile_action(params[mode_idx], &my_action);
     for (i = 0, ap = my_action; ap; ap = ap->next, i++) {
-	String args[1];
+	String *args;
+
 	TRACE_EVENTS((stderr, "Action %d for mode %lu: '%s', %d args |%s| maps to proc |%p|",
-		      i, (unsigned long)mode_idx, ap->command, ap->num_params, ap->param, ap->proc));
-	args[0] = ap->param;
+		      i, (unsigned long) mode_idx, ap->command, ap->num_params,
+		      ap->num_params > 0 ? ap->params[0] : "(none)",
+		      ap->proc));
+
+	/* copy args because the action proc may modify them (see below) */
+	if (ap->num_params) {
+	    args = xmalloc(ap->num_params * sizeof (String));
+	    memcpy(args, ap->params, ap->num_params * sizeof (String));
+	}
+	else args = xmalloc(sizeof (String));
 
 	/* now call the action proc directly */
 	XtCallActionProc(w, ap->command, event, args, ap->num_params);
-	
+
 	if (args[0] == Act_true_retval) { /* we may compare the pointers here */
-	    /* Special case: Only invoke first action, not subsequent ones, e.g. if mouse is over
-	     * a link and action is Act_href (currently the only case where this is used).
+	    /* Special case: Only invoke first action, not subsequent ones;
+	     * e.g. if mouse is over a link and action is Act_href or
+	     * Act_href_newwindow (currently the only cases where this is used).
 	     */
 	    break;
 	}
@@ -2382,8 +2468,10 @@ Act_mouse_modes(Widget w, XEvent *event,
     ap = my_action;
     while (ap) {
 	struct xdvi_action *tmp_ap = ap;
-	free(ap->param);
 	free(ap->command);
+	while (ap->num_params > 0)
+	    free(ap->params[--(ap->num_params)]);
+	free(ap->params);
 	ap = tmp_ap->next;
 	free(tmp_ap);
     }
@@ -3499,15 +3587,100 @@ Act_wheel(Widget w, XEvent *event,
 	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, cast_int_to_XtPointer(dist));
 #endif
 
-    wheel_button = event->xbutton.button;
+    if (event != NULL)
+	wheel_button = event->xbutton.button;
 
 #ifdef USE_PANNER
     handle_y_scroll(NULL, NULL, NULL, NULL);
 #endif
 }
 
+static int wheel_h_button = -1;
+
+static void
+Act_hwheel(Widget w, XEvent *event,
+	  String *params, Cardinal *num_params)
+{
+    int dist;
+
+    UNUSED(w);
+
+    if (*num_params != 1) {
+	XDVI_WARNING((stderr, "wheel() requires 1 argument (got %d)", *num_params));
+	return;
+    }
+    dist = (strchr(*params, '.') == NULL) ? atoi(*params)
+	: (int)(my_atof(*params) * resource.wheel_unit);
+#ifdef MOTIF
+    get_xy();
+    set_bar_value(globals.widgets.x_bar, dist - m_window_x,
+		  (int) (globals.page.w - mane.width));
+#else
+    if (globals.widgets.x_bar != NULL)
+	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc,
+			cast_int_to_XtPointer(dist));
+#endif
+
+    if (event != NULL)
+	wheel_h_button = event->xbutton.button;
+
+#ifdef USE_PANNER
+    handle_x_scroll(NULL, NULL, NULL, NULL);
+#endif
+}
+
 
 /* Internal mouse actions.  */
+
+/*
+ * Here xdvi does its own parsing and processing of translations for mouse
+ * button presses.  This is necessary because the X Toolkit does not recognize
+ * <Btn6Down> or <Btn7Down> event types.
+ */
+
+#if HAVE_X11_INTRINSICI_H
+# include <X11/IntrinsicI.h>
+#else
+
+/* From <X11/TranslateI.h> */
+extern Boolean _XtComputeLateBindings(
+    Display*		/* dpy */,
+    struct _LateBindings* /* lateModifiers */,
+    Modifiers*		/* computed */,
+    Modifiers*		/* computedMask */
+);
+
+#endif /* HAVE_X11_INTRINSICI_H */
+
+
+static void
+Act_press(Widget w, XEvent *event,
+	  String *params, Cardinal *num_params)
+{
+    struct mouse_acts *mactp;
+    struct xdvi_action *actp;
+
+    for (mactp = mouse_actions; mactp != NULL; mactp = mactp->next) {
+	if (event->xbutton.button == mactp->button || mactp->button == 0) {
+	    Modifiers mask = 0;
+	    Modifiers value = 0;
+
+	    if (mactp->late_bindings == NULL
+	      || _XtComputeLateBindings(DISP, mactp->late_bindings,
+	      &value, &mask)) {
+		mask |= mactp->mask;
+		value |= mactp->value;
+		if (((value ^ event->xbutton.state) & mask) == 0) {
+		    for (actp = mactp->action; actp != NULL;
+		      actp = actp->next)
+			(actp->proc)(w, event, actp->params, &actp->num_params);
+		    return;
+		}
+	    }
+	}
+    }
+}
+
 
 static void
 Act_motion(Widget w, XEvent *event,
@@ -3522,14 +3695,14 @@ Act_motion(Widget w, XEvent *event,
     UNUSED(num_params);
 
     MYTRACE((stderr, "act_motion!\n"));
-    
+
     if (globals.curr_mode == RULER_MODE_ACTIVE) {
 	show_distance_from_ruler(event, False);
     }
     /* This used to be:
        (abs(x - old_x) > x_threshold || abs(y - old_y) > y_threshold))
        but that didn't work too well either. Just change it whenever user
-       moves the mouse. */       
+       moves the mouse. */
     if (!MAGNIFIER_ACTIVE && !(globals.curr_mode == RULER_MODE_ACTIVE)
 	&& pointerlocate(&x, &y) && (x != old_x || y != old_y)) {
 	htex_displayanchor(x, y);
@@ -3537,7 +3710,8 @@ Act_motion(Widget w, XEvent *event,
 	old_y = y;
     }
 
-    if ((int)(event->xbutton.button) != wheel_button) {
+    if ((int)(event->xbutton.button) != wheel_button
+	&& ((int) (event->xbutton.button) != wheel_h_button)) {
 	MYTRACE((stderr, "mouse_motion!\n"));
 	mouse_motion(event);
     }
@@ -3554,6 +3728,11 @@ Act_release(Widget w, XEvent *event,
 
     if ((int)(event->xbutton.button) == wheel_button) {
 	wheel_button = -1;
+	return;
+    }
+
+    if ((int)(event->xbutton.button) == wheel_h_button) {
+	wheel_h_button = -1;
 	return;
     }
 
@@ -3642,7 +3821,7 @@ Act_show_source_specials(Widget w, XEvent *event,
 {
     int arg;
     Boolean clear_statusline = False;
-    
+
     UNUSED(w);
 
     if (!get_int_arg(params, num_params, &arg))
@@ -3651,7 +3830,7 @@ Act_show_source_specials(Widget w, XEvent *event,
 	clear_statusline = True;
 
     if ((event->type == ButtonPress && mouse_release != null_mouse)
-	|| !MAGNIFIER_ACTIVE) {
+	|| MAGNIFIER_ACTIVE) {
 	xdvi_bell();
 	return;
     }
@@ -3715,7 +3894,7 @@ Act_select_dvi_file(Widget w, XEvent *event,
 	NULL, "*.dvi", True, False, NULL, NULL
     };
     int arg = -1;
-    
+
     UNUSED(w);
     UNUSED(event);
 
@@ -3736,7 +3915,7 @@ Act_select_dvi_file(Widget w, XEvent *event,
 	}
 	return;
     }
-    
+
     file_history_set_page(current_page);
     
     cb.func_ptr = select_cb;

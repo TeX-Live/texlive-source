@@ -649,10 +649,12 @@ enter_leave(Widget w, XtPointer closure, XEvent *event, Boolean *cont)
 static void
 button_info_save(struct xdvi_action *action, Widget w)
 {
-    if (action->proc == Act_back_page && strcmp(action->param, "1") == 0) {
+    if (action->proc == Act_back_page
+      && action->num_params > 0 && strcmp(action->params[0], "1") == 0) {
 	m_button_info.back_button = w;
     }
-    else if (action->proc == Act_forward_page && strcmp(action->param, "1") == 0) {
+    else if (action->proc == Act_forward_page
+      && action->num_params > 0 && strcmp(action->params[0], "1") == 0) {
 	m_button_info.forward_button = w;
     }
     else if (action->proc == Act_pagehistory_back) {
@@ -663,7 +665,8 @@ button_info_save(struct xdvi_action *action, Widget w)
 	set_button_sensitivity(w, False);
 	m_button_info.hyperref_forward_button = w;
     }
-    else if (action->proc == Act_set_shrink_factor && action->param[0] == '+') {
+    else if (action->proc == Act_set_shrink_factor
+	     && action->num_params > 0 && action->params[0][0] == '+') {
 	m_button_info.zoom_in_button = w;
     }
 }
@@ -748,9 +751,10 @@ create_toolbar(Widget parent, Widget menu_bar)
 	}
 	else if (item_count == 4) {
 	    Pixmap sens, insens;
-	    sens = insens = 0; /* make compiler happy ... */
 	    int idx = strtoul(line_items[0], (char **)NULL, 10);
 	    struct xdvi_action *action;
+
+	    sens = insens = 0; /* make compiler happy ... */
 
 	    TRACE_GUI((stderr, "creating pixmap at %d", idx));
 	    if (!create_pixmap(tool_bar, idx, &sens, &insens)) {
@@ -766,7 +770,7 @@ create_toolbar(Widget parent, Widget menu_bar)
 	    }
 	    toolbar_buttons[n].type = TB_BUTTON;
 
-	    if ((action = compile_action(line_items[3])) != NULL) {
+	    if (compile_action(line_items[3], &action)) {
 		char *long_tooltip = xstrdup(line_items[1]);
 		toolbar_buttons[n].tip = xstrdup(line_items[2]);
 		/* char *short_tooltip = xstrdup(line_items[2]); */

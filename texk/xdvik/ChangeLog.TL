@@ -1,6 +1,14 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2012-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported xdvik-22.85.tar.gz
+	from http://sourceforge.net/projects/xdvi/files/xdvik/.
+
+	* mksedscript: Correctly handle strings with embedded blanks,
+	e.g., '#define PACKAGE_STRING "xdvik 22.85"' and similar.
+
 2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mime.c, xdvi.1.in: Use /usr/local/etc/{mimetypes=>mime.types}.

@@ -18,7 +18,6 @@ static const char base_key_translations[] =
     "<Key>7:		digit(7)\n"
     "<Key>8:		digit(8)\n"
     "<Key>9:		digit(9)\n"
-    "<Motion>:		motion()\n"
     "Ctrl<Key>]:	pagehistory-delete-forward()\n"
     "Ctrl<Key>[:	pagehistory-delete-backward()\n"
 /* it seems the following is needed for compatibility with german, french,
@@ -157,7 +156,6 @@ static const char base_key_translations[] =
 
 
 static const char base_mouse_translations[] =
-    "<BtnUp>:release()\n"
     "Shift<Btn1Down>:	mouse-modes(\"drag(+)\")\n"
     "Shift<Btn2Down>:	mouse-modes(\"drag(|)\")\n"
     "Shift<Btn3Down>:	mouse-modes(\"drag(-)\")\n"
@@ -167,6 +165,8 @@ static const char base_mouse_translations[] =
     "<Btn3Down>:	mouse-modes(\"magnifier(*3)\")\n"
     "<Btn4Down>:	mouse-modes(\"wheel(-0.2)\")\n"
     "<Btn5Down>:	mouse-modes(\"wheel(0.2)\")\n"
+    "<Btn6Down>:	mouse-modes(\"hwheel(-0.2)\")\n"
+    "<Btn7Down>:	mouse-modes(\"hwheel(0.2)\")\n"
     "";
 
 

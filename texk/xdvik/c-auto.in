@@ -260,9 +260,6 @@
 /* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
 #undef HAVE_SYS_WAIT_H
 
-/* Define to 1 if you have the `ulltostr' function. */
-#undef HAVE_ULLTOSTR
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
@@ -289,6 +286,9 @@
 
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
+
+/* Define to 1 if you have the <X11/IntrinsicI.h> header file. */
+#undef HAVE_X11_INTRINSICI_H
 
 /* Define to 1 if you have the <X11/Intrinsic.h> header file. */
 #undef HAVE_X11_INTRINSIC_H

@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006, 2007, 2008, 2009, 2010, 2011 TeX Users Group.
+Copyright 2006-2012 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -93,7 +93,7 @@ web2c - maintained here by Karl Berry et al. - core web2c, plain tex, etc.
 
 xdv2pdf - Jonathan Kew
 
-xdvik 22.84.16 - checked 25apr11
-  ftp://tug.org/tex/
+xdvik 22.85 - checked 2apr12
+  http://sourceforge.net/projects/xdvi/files/xdvik/
 
 xdvipdfmx - Jonathan Kew

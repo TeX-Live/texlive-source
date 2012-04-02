@@ -43,7 +43,7 @@ done
 
 # Get arguments from c-auto.h
 
-eval "`awk '/^#define/ { print "mk_"$2"="$3 }' c-auto.h`"
+eval "`awk '/^#define/ { print "mk_"$2"="$3$4$5$6$7 }' c-auto.h`"
 
 # eval "`cat c-auto.h \
 #   | grep '^[ 	]*#[ 	]*define[ 	]' \

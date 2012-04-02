@@ -6,8 +6,8 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([xdvik_version], [22.84.16])
-AC_INIT([xdvik for TeX Live], xdvik_version, [tex-k@tug.org])
+m4_define([xdvik_version], [22.85])
+AC_INIT([xdvik], xdvik_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xdvi.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
@@ -113,7 +113,7 @@ AC_CHECK_TYPE([ptrdiff_t], [],
               [AC_DEFINE_UNQUOTED([ptrdiff_t], [long],
                                   [Define to `long' if <sys/types.h> does not define.])])
 
-AC_CHECK_FUNCS([mkstemp memcpy strerror waitpid sigaction strchr setenv ulltostr \
+AC_CHECK_FUNCS([mkstemp memcpy strerror waitpid sigaction strchr setenv \
                 fchdir getcwd getpwnam getuid getpwuid \
                 lstat ftruncate snprintf vsnprintf realpath])
 
@@ -128,9 +128,11 @@ XDVI_CHECK_ICONV
 XDVI_CHECK_LANGINFO
 
 # Check X11 headers.
+# X11/IntrinsicI.h is needed for LateBindings (to roll our own translations)
 xdvi_save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-AC_CHECK_HEADERS([X11/Intrinsic.h X11/Xosdefs.h X11/xpm.h Xm/XpmP.h])
+AC_CHECK_HEADERS([X11/Intrinsic.h X11/IntrinsicI.h X11/Xosdefs.h X11/xpm.h \
+		  Xm/XpmP.h])
 # For editres, we need to check both the header and define a linker option.
 AC_CHECK_HEADERS([X11/Xmu/Editres.h X11/Xmu/Xmu.h],
                  [x_xmu_lib=-lXmu],

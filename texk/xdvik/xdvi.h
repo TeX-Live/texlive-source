@@ -869,6 +869,17 @@ typedef void (*mouse_proc) (XEvent *);
 extern mouse_proc mouse_motion;
 extern mouse_proc mouse_release;
 
+struct mouse_acts {
+	Modifiers	mask;
+	Modifiers	value;
+	struct _LateBindings *late_bindings;
+	unsigned int	button;
+	struct xdvi_action *action;
+	struct mouse_acts *next;
+};
+
+extern	struct mouse_acts	*mouse_actions;
+
 #if GREY
 extern Pixel plane_masks[4];
 #endif

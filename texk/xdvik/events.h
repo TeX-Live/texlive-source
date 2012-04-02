@@ -228,13 +228,13 @@ extern Boolean check_int(void *val, const char *param);
 
 struct xdvi_action {
     XtActionProc proc;
-    Cardinal num_params;
     String command;
-    String param;
+    String *params;
+    Cardinal num_params;
     struct xdvi_action *next;
 };
 
-extern struct xdvi_action *compile_action(const char *str);
+extern Boolean compile_action(const char *str, struct xdvi_action **);
 extern void watch_file_cb(XtPointer client_data, XtIntervalId * id);
 extern void redraw_page(void);
 

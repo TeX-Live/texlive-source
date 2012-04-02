@@ -273,7 +273,7 @@ try_open_mode(const char *fname, int flags, mode_t mode)
     int fd = open(fname, flags, mode);
     if (fd < 0 && (errno == EMFILE || errno == ENFILE)) {
 	close_a_file();
-	fd = open(fname, flags);
+	fd = open(fname, flags, mode);
     }
     return fd;
 }

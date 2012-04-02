@@ -2,7 +2,7 @@
 #ifndef VERSION_H_
 #define VERSION_H_
 
-#define XDVI_VERSION "22.84.16"
+#define XDVI_VERSION "22.85"
 
 #ifdef MOTIF
 #define XDVI_GUI "(Motif toolkit)"

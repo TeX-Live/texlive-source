@@ -71,10 +71,11 @@ set_menu_info(void *val, XtActionProc proc, Boolean (*cmp)(), struct button_info
 	    && item->elems[i].action != NULL
 	    && item->elems[i].action->proc != NULL
 	    && item->elems[i].action->proc == proc
-	    && item->elems[i].action->param != NULL) {
+	    && item->elems[i].action->num_params > 0
+	    && item->elems[i].action->params[0] != NULL) {
 	    Boolean state;
 	    ASSERT(cmp != NULL, "comparison function musn't be NULL!");
-	    state = cmp(val, item->elems[i].action->param);
+	    state = cmp(val, item->elems[i].action->params[0]);
 #ifdef MOTIF
 	    ASSERT(item->elems[i].widget != 0, "Widget musn't be NULL!");
 	    XmToggleButtonSetState(item->elems[i].widget, state, False);
@@ -231,8 +232,7 @@ insert_items(struct button_info **info, char **items, size_t num_items,
 		have_error = True;
 	    }
 	    
-	    if (strlen(action) == 0
-		|| (my_action = compile_action(action)) == NULL) {
+	    if (strlen(action) == 0 || (!compile_action(action, &my_action))) {
 		XDVI_WARNING((stderr, "Invalid action \"%s\" for button \"%s\" (skipping this line).",
 			      action, items[0]));
 		have_error = True;

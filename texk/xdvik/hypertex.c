@@ -2014,6 +2014,7 @@ launch_program(const char *filename)
     char *fullpath = NULL;
     char canonical_path[MAXPATHLEN + 1];
     Boolean needs_terminal;
+    size_t offset;
     
     TRACE_HTEX((stderr, "launch_program called with |%s|", filename));
 
@@ -2107,25 +2108,34 @@ launch_program(const char *filename)
     if (strlen(format_string) > 0) {
 	ptr = find_format_str(viewer, format_string);
     }
-    else { /* countrary to RFC 1343, we don't pass stuff via pipes (too bothersome) */
+    else {
+	/*
+	  Contrary to RFC 1343, we don't pass stuff via pipes (too bothersome).
+	  Instead, pass it as normal argument by appending it to the command.
+	 */
 	ptr = strchr(viewer, '\0');
     }
 
+    offset = 0;
     if (needs_terminal) {
-	size_t offset = strlen("xterm -e ");
-	syscmd = xmalloc(offset + strlen(viewer) + strlen(fullpath) + 1);
+	offset += strlen("xterm -e ");
+    }
+    /* allocate extra byte for optional whitespace after viewer command */
+    syscmd = xmalloc(offset + strlen(viewer) + strlen(fullpath) + 2);
+    if (needs_terminal) {
 	strcpy(syscmd, "xterm -e ");
-	memcpy(syscmd + offset, viewer, ptr - viewer);
-	strcpy(syscmd + offset + (ptr - viewer), fullpath);
-	strcpy(syscmd + offset + (ptr - viewer) + strlen(fullpath), ptr + strlen(format_string));
-	
     }
-    else {
-	syscmd = xmalloc(strlen(viewer) + strlen(fullpath) + 1);
-	memcpy(syscmd, viewer, ptr - viewer);
-	strcpy(syscmd + (ptr - viewer), fullpath);
-	strcpy(syscmd + (ptr - viewer) + strlen(fullpath), ptr + strlen(format_string));
+    /* viewer command */
+    memcpy(syscmd + offset, viewer, ptr - viewer);
+    /* bugfix for #2931447: add space separator after viewer command if no format string is present */
+    if (strlen(format_string) == 0) {
+	strcpy(syscmd + offset + (ptr - viewer), " ");
+	offset += 1;
     }
+    /* viewer argument */
+    strcpy(syscmd + offset + (ptr - viewer), fullpath);
+    /* rest of command */
+    strcpy(syscmd + offset + (ptr - viewer) + strlen(fullpath), ptr + strlen(format_string));
 
     /*
       mailcap(4) says that the mailcap command shall be passed to system(),

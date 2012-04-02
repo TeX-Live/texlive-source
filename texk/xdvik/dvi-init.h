@@ -98,7 +98,7 @@ struct glyph {
 };
 
 /*
- * Per character information for virtual fonts
+ * Per-character information for virtual fonts
  */
 struct macro {
 	ubyte	*pos;		/* address of first byte of macro */
@@ -156,7 +156,7 @@ struct font {
     struct macro *macro;
     /* These were added for t1 use */
     int t1id;
-    long scale;
+    double pixsize;		/* scaled size of font in pixels */
 };
 
 struct tn {
