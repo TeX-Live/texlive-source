@@ -738,16 +738,9 @@ void lua_initialize(int ac, char **av)
     argc = ac;
     argv = av;
 
-    if (luatex_svn < 0) {
-        if (asprintf(&banner, "This is LuaTeX, Version %s-%d",
-                     luatex_version_string, luatex_date_info) < 0) {
-            exit(EXIT_FAILURE);
-        }
-    } else {
-        if (asprintf(&banner, "This is LuaTeX, Version %s-%d (rev %d)",
-                     luatex_version_string, luatex_date_info, luatex_svn) < 0) {
-            exit(EXIT_FAILURE);
-        }
+    if (asprintf(&banner, "This is LuaTeX, Version %s-%d (TeX Live 2012)",
+                 luatex_version_string, luatex_date_info) < 0) {
+        exit(EXIT_FAILURE);
     }
     ptexbanner = banner;
 

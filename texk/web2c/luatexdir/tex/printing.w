@@ -360,11 +360,7 @@ void print_banner(const char *v, int e, int ver)
     int callback_id;
     callback_id = callback_defined(start_run_callback);
     if (callback_id == 0) {
-        if (ver < 0)
-            fprintf(term_out, "This is LuaTeX, Version %s-%d ", v, e);
-        else
-            fprintf(term_out, "This is LuaTeX, Version %s-%d (rev %d) ", v, e,
-                    ver);
+        fprintf(term_out, "This is LuaTeX, Version %s-%d (TeX Live 2012)", v, e);
         if (format_ident > 0)
             slow_print(format_ident);
         print_ln();
@@ -389,10 +385,7 @@ void log_banner(const char *v, int e, int ver)
     unsigned month = (unsigned) int_par(month_code);
     if (month > 12)
         month = 0;
-    if (ver < 0)
-        fprintf(log_file, "This is LuaTeX, Version %s-%d ", v, e);
-    else
-        fprintf(log_file, "This is LuaTeX, Version %s-%d (rev %d) ", v, e, ver);
+    fprintf(log_file, "This is LuaTeX, Version %s-%d (TeX Live 2012)", v, e);
     slow_print(format_ident);
     print_char(' ');
     print_char(' ');
