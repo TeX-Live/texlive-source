@@ -1,3 +1,7 @@
+2012-04-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2012-04-03.
+
 2012-03-31  Karl Berry  <karl@tug.org>
 
 	* Build (TL_CONF_LARGEFILE): switch default to --enable-largefile.
