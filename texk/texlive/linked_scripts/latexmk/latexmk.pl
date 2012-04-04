@@ -109,14 +109,15 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.30a';
-$version_details = "$My_name, John Collins, 9 December 2011";
+$version_num = '4.31';
+$version_details = "$My_name, John Collins, 30 March 2012";
 
 use Config;
 use File::Copy;
 use File::Basename;
 use FileHandle;
 use File::Find;
+use List::Util qw( max );
 use Cwd;            # To be able to change cwd
 use Cwd "chdir";    # Ensure $ENV{PWD}  tracks cwd
 use Digest::MD5;
@@ -142,7 +143,7 @@ else {
    warn "Something wrong with the perl configuration: No signals?\n";
 }
 
-## Copyright John Collins 1998-2011
+## Copyright John Collins 1998-2012
 ##           (username collins at node phys.psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -176,115 +177,39 @@ else {
 ##     5.  Parsing of log file instead of source file is used to
 ##         obtain dependencies, by default.
 ##
-##   Modification log from 1 Jan 2011 onwards in detail
+##   Modification log from 9 Dec 2011 onwards in detail
 ##
+##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
+##     29, 30 Mar 2012, John Collins Optimize file checking, and # calcs of MD5
+##     24 Jan 2012, John Collins Remove unneeded call to traceback
+##     23 Jan 2012, John Collins Remove initial ./ from ./foo entries in .fls file
+##     16 Jan 2012, John Collins Make aux and/or out directories if it/they
+##                                  don't exist
+##     14 Jan 2012, John Collins Correct bug in parse_quotes
+##     12 Jan 2012, John Collins $success_cmd, $compiling_cmd, $failure_cmd
+##                                  allow actions (e.g., to set window title)
+##                                  after successful compilation, before 
+##                                  compilation, and after failure, in -pvc mode
+##                               Thanks to Aasmud Ervik (12 Jan 2012)
+##      2 Jan 2012, John Collins Add MikTeX-specific options to pass-through list
+##                               Remove redundancy of subroutines rdb_ext_cmd and rdb_ext_cmd1
+##                               In rdb_one_file, give &$file_act null argument list
+##     30 Dec 2011 STILL NEED TO DOCUMENT next items
+##     30 Dec 2011, John Collins Add nostart to possible keywords in commands
+##                               Insert start before command called from view
+##     24 Dec 2011, John Collins Add -xelatex option
+##                               Change OS-X defaults for viewers.
+##     21 Dec 2011, John Collins Add options reproducing options of (pdf)latex
+##     21 Dec 2011, John Collins Add -latexoption=... option
+##     20 Dec 2011, John Collins Command specification string can start
+##                               with "include routine" to invoke a Perl
+##                               subroutine instead of an external cmd.
+##     19 Dec 2011, John Collins Recorder option is now on by default.
+##     13 Dec 2011, John Collins Add -M -MP and -MF options, like gcc.
 ##      9 Dec 2011, John Collins Use OS-dependent search path separator when
 ##                                  when manipulating TEXINPUTS, etc.
 ##                               Correct treatment of current directory
 ##                                  when modifying TEXINPUTS, etc
-##      8 Dec 2011, John Collins V. 4.30
-##                               Fix use of bibtex so that it works correctly
-##                                  when $aux_dir and/or $out_dir is set.
-##                               Correct dependencies of aux files when
-##                                  $aux_dir and/or $out_dir is set.
-##      7 Dec 2011, John Collins Ensure preservation of test_kind for dvips, etc
-##                                 It was getting clobbered by rdb_read.
-##      6 Dec 2011, John Collins   Results of issues in using feynmp packages:
-##                              1. Set $ENV{TEXINPUTS} if $out_dir is set
-##                                 Hence dvips can find files that would
-##                                 normally be generated in the current
-##                                 directory, but that are actually
-##                                 generated in $out_dir.
-##                              2. Deal with missing file message from feynmp
-##                              3. In searching for cus-deps that can make a
-##                                 missing file, look in $out_dir
-##                              4. Now v. 4.29
-##      5 Dec 2011, John Collins Delete spurious print in force_directory
-##      1 Dec 2011, John Collins Correct biber-no-bib problem
-##                                 (biber gives an error message, but latexmk
-##                                 should treat that only as a warning).
-##                               Deal correctly with error messages
-##                                 from biber 0.9.7.
-##     28 Nov 2011, John Collins Correct duplicate making of view file
-##                                  (in subroutine do_viewfile)
-##     14 Nov 2011, John Collins Extend bibtex treatment of missing files 
-##                                 to biber
-##     13 Nov 2011, John Collins Possibility of moving cleaned up files to
-##                                 directory instead of deleting them.
-##                          Change criterion in rdb_makeB1 for no-run when
-##                            dest doesn't exist.  If primary source also
-##                            doesn't exist, then run is pointless for all
-##                            non-primary rules, not just cusdep (which was
-##                            previous case).
-##                          Also change parse_bibtex_log to treat missing
-##                            aux file as warning, not error.  Did I do that
-##                            correctly?
-##                          Better: combinations of missing aux, missing bbl,
-##                            and changed bib file seem to work now, for bibtex.
-##      3 Nov 2011, John Collins  Update help text
-##     10 Oct 2011, John Collins  Corrections to new options:
-##                                Substitutions in commands
-##                                Locate .fls correctly
-##      9 Oct 2011, John Collins  Add options -aux-directory -output-directory
-##      2 Oct 2011, John Collins  Parse summary of warnings and errors from 
-##                                  biber v. 0.9.6
-##      1 Oct 2011, John Collins  Add -norc option that prevents auto reading
-##                                  of rc files.
-##                                The lines adding (or not) 'bbl' to
-##                                  @generated_exts: move them to after parsing
-##                                  of command line options, so that they can
-##                                  respect setting of $bibtex_use from command
-##                                  line options.
-##     20 Sep 2011, John Collins  Add png to list of graphics extensions for
-##                                  pdflatex
-##     23 Aug 2011, John Collins  Warning about making view file via temporary
-##                                Deal with the case that the command for
-##                                  making the view file has no %D placeholder
-##                                Version 4.27
-##     15 Aug 2011, John Collins  Missing file error in biber non-fatal
-##      9 Aug 2011, John Collins  Fix bug in error reporting by check_biber_log
-##                                Handle log file from biber 0.9.4
-##      7 Jul 2011, John Collins  Fix process_rc_file to evade cygwin bug.
-##                                Version 4.25
-##      6 Jul 2011, John Collins  Diagnostic for unreadable rc-file
-##                                N.B.  There appears to be a bug in cygwin's
-##                                perl:  -r /cygdrive/c/latexmk/LatexMk
-##                                returns false even if the file is readable.
-##     31 May 2011, John Collins  Add deps output file to target part
-##                                  of dependency information
-##     15 May 2011, John Collins  Start to correct handling of non-existent
-##                                  bib files:
-##                                  a. After run of biber, set the source files
-##                                  b. Parse Reading message from biber in blg file
-##      7 May 2011, John Collins  With biber, use kpsewhich to find source
-##                                   files (e.g., .bib)
-##     24 Mar 2011, John Collins  Correct bug in detection of source files
-##                                   listed in .fls
-##     21 Mar 2011, John Collins  Add 'bcf' to list of generated extensions
-##                                Deal with case that fls files are latex.fls
-##                                   and pdflatex.fls
-##     19--21 Mar 2011, John Collins  -deps and -rules options
-##                                $use_make_for_missing_files
-##                                -recorder option
-##     12 Mar 2011, John Collins  Deal with problem that if maximum number of
-##                                runs of (pdf)latex is exceeded, -pvc mode
-##                                infinitely repeats (pdf)latex
-##     11 Mar 2011, John Collins  Fix problem that changes in generated files
-##                                during run of (pdf)latex may not be detected
-##                                if the run is shorter than the granularity 
-##                                of file times.
-##     28 Feb 2011, John Collins  Corrections of comments and messages
-##     22 Feb 2011, John Collins  Documentation improvement.
-##     16 Feb 2011, John Collins  Correctly parse blg files of biber 0.8
-##                                Version 4.23.
-##      3 Feb 2011, John Collins  Correct handling of errors in rc files
-##     23 Jan 2011, John Collins  Fix detection of makeindex files with
-##                                   MiKTeX v >= 2.8
-##     23 Jan 2011, John Collins  Fix detection of biber use with MiKTeX 
-##                            (which doesn't put openout lines in log file).
-##      9 Jan 2011, John Collins  Correct parsing of blg file for biber 0.7.2
-##      3 Jan 2011, John Collins  Small correction on reading .fdb_file
-##      1 Jan 2011, John Collins  Biber implementation
 ##
 ##   1998-2010, John Collins.  Many improvements and fixes.
 ##       See CHANGE-log.txt for full list, and CHANGES for summary
@@ -451,6 +376,149 @@ $pdflatex_silent_switch  = '-interaction=batchmode';
 add_input_ext( 'latex', 'tex', 'eps' );
 add_input_ext( 'pdflatex', 'tex', 'jpg', 'pdf', 'png' );
 #show_input_ext( 'latex' ); show_input_ext( 'pdflatex' );
+
+# Information about options to latex and pdflatex that latexmk will simply
+#   pass through to (pdf)latex
+# Option without arg. maps to itself.
+# Option with arg. maps the option part to the full specification
+#  e.g., -kpathsea-debug => -kpathsea-debug=NUMBER
+%allowed_latex_options = ();
+%allowed_latex_options_with_arg = ();
+foreach ( 
+  #####
+  # TeXLive options
+    "-draftmode              switch on draft mode (generates no output PDF)",
+    "-enc                    enable encTeX extensions such as \\mubyte",
+    "-etex                   enable e-TeX extensions",
+    "-file-line-error        enable file:line:error style messages",
+    "-no-file-line-error     disable file:line:error style messages",
+    "-fmt=FMTNAME            use FMTNAME instead of program name or a %& line",
+    "-halt-on-error          stop processing at the first error",
+    "-interaction=STRING     set interaction mode (STRING=batchmode/nonstopmode/\n".
+    "                           scrollmode/errorstopmode)",
+    "-ipc                    send DVI output to a socket as well as the usual\n".
+    "                           output file",
+    "-ipc-start              as -ipc, and also start the server at the other end",
+    "-kpathsea-debug=NUMBER  set path searching debugging flags according to\n".
+    "                           the bits of NUMBER",
+    "-mktex=FMT              enable mktexFMT generation (FMT=tex/tfm/pk)",
+    "-no-mktex=FMT           disable mktexFMT generation (FMT=tex/tfm/pk)",
+    "-mltex                  enable MLTeX extensions such as \charsubdef",
+    "-output-comment=STRING  use STRING for DVI file comment instead of date\n".
+    "                           (no effect for PDF)",
+    "-output-format=FORMAT   use FORMAT for job output; FORMAT is `dvi\" or `pdf\"",
+    "-parse-first-line       enable parsing of first line of input file",
+    "-no-parse-first-line    disable parsing of first line of input file",
+    "-progname=STRING        set program (and fmt) name to STRING",
+    "-shell-escape           enable \\write18{SHELL COMMAND}",
+    "-no-shell-escape        disable \\write18{SHELL COMMAND}",
+    "-shell-restricted       enable restricted \\write18",
+    "-src-specials           insert source specials into the DVI file",
+    "-src-specials=WHERE     insert source specials in certain places of\n".
+    "                           the DVI file. WHERE is a comma-separated value\n".
+    "                           list: cr display hbox math par parend vbox",
+    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-translate-file=TCXNAME use the TCX file TCXNAME",
+    "-8bit                   make all characters printable by default",
+
+  #####
+  # MikTeX options not in TeXLive
+    "-alias=app              pretend to be app",
+    "-buf-size=n             maximum number of characters simultaneously present\n".
+    "                           in current lines",
+    "-c-style-errors         C-style error messages",
+    "-disable-installer      disable automatic installation of missing packages",
+    "-disable-pipes          disable input (output) from (to) child processes",
+    "-disable-write18        disable the \\write18{command} construct",
+    "-dont-parse-first-line  disable checking whether the first line of the main\n".
+    "                           input file starts with %&",
+    "-enable-enctex          enable encTeX extensions such as \\mubyte",
+    "-enable-installer       enable automatic installation of missing packages",
+    "-enable-mltex           enable MLTeX extensions such as \charsubdef",
+    "-enable-pipes           enable input (output) from (to) child processes",
+    "-enable-write18         fully enable the \\write18{command} construct",
+    "-error-line=n           set the width of context lines on terminal error\n".
+    "                           messages",
+    "-extra-mem-bot=n        set the extra size (in memory words) for large data\n".
+    "                           structures",
+    "-extra-mem-top=n        set the extra size (in memory words) for chars,\n".
+    "                           tokens, et al",
+    "-font-max=n             set the maximum internal font number",
+    "-font-mem-size=n        set the size, in TeX memory words, of the font memory",
+    "-half-error-line=n      set the width of first lines of contexts in terminal\n".
+    "                           error messages",
+    "-hash-extra=n           set the extra space for the hash table of control\n".
+    "                           sequences",
+    "-job-time=file          set the time-stamp of all output files equal to\n".
+    "                           file'stime-stamp",
+    "-main-memory=n          change the total size (in memory words) of the main\n".
+    "                           memory array",
+    "-max-in-open=n          set the maximum number of input files and error\n".
+    "                           insertions that can be going on simultaneously",
+    "-max-print-line=n       set the width of longest text lines output",
+    "-max-strings=n          set the maximum number of strings",
+    "-nest-size=n            set the maximum number of semantic levels\n".
+    "                           simultaneously active",
+    "-no-c-style-errors      standard error messages",
+    "-param-size=n           set the the maximum number of simultaneous macro\n".
+    "                           parameters",
+    "-pool-size=n            set the maximum number of characters in strings",
+    "-record-package-usages=file record all package usages and write them into\n".
+    "                           file",
+    "-restrict-write18       partially enable the \\write18{command} construct",
+    "-save-size=n            set the the amount of space for saving values\n".
+    "                           outside of current group",
+    "-stack-size=n           set the maximum number of simultaneous input sources",
+    "-string-vacancies=n     set the minimum number of characters that should be\n".
+    "                           available for the user's control sequences and font\n".
+    "                           names",
+    "-tcx=name               process the TCX table name",
+    "-time-statistics        show processing time statistics",
+    "-trace                  enable trace messages",
+    "-trace=tracestreams     enable trace messages. The tracestreams argument is\n".
+    "                           a comma-separated list of trace stream names",
+    "-trie-size=n            set the amount of space for hyphenation patterns",
+    "-undump=name            use name as the name of the format to be used,\n".
+    "                           instead of the name by which the program was\n".
+    "                           called or a %& line.",
+
+  #####
+    # Options passed to (pdf)latex that have special processing by latexmk,
+    #   so they are commented out here.
+    #-jobname=STRING         set the job name to STRING
+    #-aux-directory=dir    Set the directory dir to which auxiliary files are written
+    #-output-directory=DIR   use existing DIR as the directory to write files in
+    #-quiet
+    #-recorder               enable filename recorder
+    #
+    # Options with different processing by latexmk than (pdf)latex
+    #-help
+    #-version
+    #
+    # Options NOT used by latexmk
+    #-includedirectory=dir    prefix dir to the search path
+    #-initialize              become the INI variant of the compiler
+    #-ini                     be pdfinitex, for dumping formats; this is implicitly
+    #                          true if the program name is `pdfinitex'
+) {
+    if ( /^([^\s=]+)=/ ) {
+        $allowed_latex_options_with_arg{$1} = $_;
+    }
+    elsif ( /^([^\s=]+)\s/ ) {
+        $allowed_latex_options{$1} = $_;
+    }
+    else {
+        $allowed_latex_options{$_} = $_;
+    }
+}
+
+# Arrays of options that will be added to latex and pdflatex.
+# These need to be stored until after the command line parsing is finished,
+#  in case the values of $latex and/or $pdflatex change after an option
+#  is added.
+@extra_latex_options = ();
+@extra_pdflatex_options = ();
+
 
 ## Command to invoke biber & bibtex
 $biber  = 'biber %O %B';
@@ -844,7 +912,23 @@ else {
     }
     elsif ( $^O eq "darwin" ) {
         # OS-X on Macintosh
-        $lpr_pdf  = 'lpr %O %S';  
+        # open starts command associated with a file.
+        # For pdf, this is set by default to OS-X's preview, which is suitable.
+        #     Manual update is simply by clicking on window etc, which is OK.
+        # For ps, this is set also to preview.  This works, but since it
+        #     converts the file to pdf and views the pdf file, it doesn't
+        #     see updates, and a refresh cannot be done.  This is far from
+        #     optimal.
+        # For a full installation of MacTeX, which is probably the most common
+        #     on OS-X, an association is created between dvi files and TeXShop.
+        #     This also converts the file to pdf, so again while it works, it
+        #     does not deal with changed dvi files, as far as I can see.
+        $pdf_previewer = 'open %S';
+        $pdf_update_method = 1;     # manual
+        $dvi_previewer = $dvi_previewer_landscape = 'NONE';
+        $ps_previewer = $ps_previewer_landscape = 'NONE';
+        # Others
+        $lpr_pdf  = 'lpr %O %S';
         $pscmd = "ps -ww -u $ENV{USER}"; 
     }
 }
@@ -913,7 +997,7 @@ $aux_dir = '';          # Directory for aux files (log, aux, etc).
 
 
 ## default flag settings.
-$recorder = 0;          # Whether to use recorder option on latex/pdflatex
+$recorder = 1;          # Whether to use recorder option on latex/pdflatex
 $silent = 0;            # silence latex's messages?
 $landscape_mode = 0;	# default to portrait mode
 
@@ -959,6 +1043,8 @@ $banner_message = 'DRAFT'; # Original default message
 $do_cd = 0;     # Do not do cd to directory of source file.
                 #   Thus behave like latex.
 $dependents_list = 0;   # Whether to display list(s) of dependencies
+$dependents_phony = 0;  # Whether list(s) of dependencies includes phony targets
+                        # (as with 'gcc -MP').
 $deps_file = '-';       # File for dependency list output.  Default stdout.
 $rules_list = 0;   # Whether to display list(s) of dependencies
 @dir_stack = (); # Stack of pushed directories.
@@ -1160,7 +1246,9 @@ if (!$BIBINPUTS) { $BIBINPUTS = '.'; }
                     # Rule data:
                     #   0: [ cmd_type, ext_cmd, int_cmd, test_kind, 
                     #       source, dest, base,
-		    #       out_of_date, out_of_date_user, time_of_last_run, changed
+		    #       out_of_date, out_of_date_user,
+                    #       time_of_last_run, time_of_last_file_check,
+                    #       changed
                     #       last_result, last_message,
                     #       default_extra_generated
                     #      ]
@@ -1219,6 +1307,8 @@ if (!$BIBINPUTS) { $BIBINPUTS = '.'; }
 		    #              last applied.  (In standard units
 		    #              from perl, to be directly compared
 		    #              with file modification times.)
+                    #     time_of_last_file_check = last time that a check
+                    #              was made for changes in source files.
                     #     changed flags whether special changes have been made
                     #          that require file-existence status to be ignored
                     #     last_result is 
@@ -1289,9 +1379,7 @@ elsif (exists $ENV{'USERPROFILE'} ) {
 
 foreach $_ ( @ARGV )
 {
-    # Make -- and - equivalent at beginning of option:
-    s/^--/-/;
-    if (/^-norc$/ ) {
+    if (/^-{1,2}norc$/ ) {
         $auto_rc_use = 0;
     }
 }
@@ -1332,7 +1420,9 @@ $bad_options = 0;
 
 while ($_ = $ARGV[0])
 {
-  # Make -- and - equivalent at beginning of option:
+  # Make -- and - equivalent at beginning of option,
+  # but save original for possible use in (pdf)latex command line
+  $original = $_;
   s/^--/-/;
   shift;
   if ( /^-aux-directory=(.*)$/ || /^-auxdir=(.*)$/ ) {
@@ -1349,7 +1439,7 @@ while ($_ = $ARGV[0])
   elsif (/^-cd-$/)   { $do_cd = 0; }
   elsif (/^-commands$/) { &print_commands; exit; }
   elsif (/^-d$/)     { $banner = 1; }
-  elsif (/^-dependents$/ || /^-deps$/ ) { $dependents_list = 1; }
+  elsif (/^-dependents$/ || /^-deps$/ || /^-M$/ ) { $dependents_list = 1; }
   elsif (/^-nodependents$/ || /^-dependents-$/ || /^-deps-$/) { $dependents_list = 0; }
   elsif (/^-deps-out=(.*)$/) {
       $deps_file = $1;
@@ -1374,6 +1464,19 @@ while ($_ = $ARGV[0])
   elsif (/^-latex=(.*)$/) {
       $latex = $1;
   }
+  elsif (/^-latexoption=(.*)$/) {
+      push @extra_latex_options, $1;
+      push @extra_pdflatex_options, $1;
+  }
+# See above for -M
+  elsif (/^-MF$/) {
+     if ( $ARGV[0] eq '' ) {
+	&exit_help( "No file name specified after -MF switch");
+     }
+     $deps_file = $ARGV[0];
+     shift; 
+  }
+  elsif ( /^-MP$/ ) { $dependents_phony = 1; }
   elsif (/^-new-viewer$/) {
       $new_viewer_always = 1; 
   }
@@ -1426,6 +1529,17 @@ while ($_ = $ARGV[0])
   elsif (/^-recorder-$/ ){ $recorder = 0; }
   elsif (/^-rules$/ ) { $rules_list = 1; }
   elsif (/^-norules$/ || /^-rules-$/ ) { $rules_list = 0; }
+  elsif (/^-showextraoptions$/) {
+     print "List of extra latex and pdflatex options recognized by $my_name:\n",
+           "These are passed as is to (pdf)latex.  They may not be recognized by\n",
+           "particular versions of (pdf)latex.  This list is a combination of those\n",
+           "for TeXLive and MikTeX.\n\n";
+     foreach $option ( sort( keys %allowed_latex_options, keys %allowed_latex_options_with_arg ) ) {
+       if (exists $allowed_latex_options{$option} ) { print "   $allowed_latex_options{$option}\n"; }
+       if (exists $allowed_latex_options_with_arg{$option} ) { print "   $allowed_latex_options_with_arg{$option}\n"; }
+     }
+     exit;
+  }
   elsif (/^-silent$/ || /^-quiet$/ ){ $silent = 1; }
   elsif (/^-time$/) { $show_time = 1;}
   elsif (/^-time-$/) { $show_time = 0;}
@@ -1441,6 +1555,11 @@ while ($_ = $ARGV[0])
   elsif (/^-view=none$/)    { $view = "none";}
   elsif (/^-view=ps$/)      { $view = "ps";}
   elsif (/^-view=pdf$/)     { $view = "pdf"; }
+  elsif (/^-xelatex$/)      { 
+      $pdflatex = "xelatex %O %S";
+      $pdf_mode = 1;
+      $dvi_mode = $postscript_mode = 0; 
+  }
   elsif (/^-e$/) {  
      if ( $#ARGV < 0 ) {
         &exit_help( "No code to execute specified after -e switch"); 
@@ -1495,6 +1614,13 @@ while ($_ = $ARGV[0])
      $ps_filter = $ARGV[0];
      shift; 
   }
+  elsif ( ( exists( $allowed_latex_options{$_} ) )
+          || ( /^(-.+)=/ && exists( $allowed_latex_options_with_arg{$1} ) )
+        )
+  {
+      push @extra_latex_options, $original;
+      push @extra_pdflatex_options, $original;
+  }
   elsif (/^-/) {
      warn "$My_name: $_ bad option\n"; 
      $bad_options++;
@@ -1536,9 +1662,6 @@ if ( $texfile_search ne "" ) {
     @default_files = split / /, "*.tex $texfile_search";
 }
 
-#printA "A: Command line file list:\n";
-#for ($i = 0; $i <= $#command_line_file_list; $i++ ) {  print "$i: '$command_line_file_list[$i]'\n"; }
-
 #Glob the filenames command line if the script was not invoked under a 
 #   UNIX-like environment.
 #   Cases: (1) MS/MSwin native    Glob
@@ -1557,8 +1680,6 @@ if ( ($^O eq "MSWin32") || ($^O eq "cygwin") ) {
 }
 else {
     @file_list = @command_line_file_list;
-#print "A2:File list:\n";
-#for ($i = 0; $i <= $#file_list; $i++ ) {  print "$i: '$file_list[$i]'\n"; }
 }
 @file_list = uniq1( @file_list );
 
@@ -1655,6 +1776,9 @@ if ( ($jobname ne '') && ($num_files > 1) ) {
 add_option( $latex_default_switches, \$latex );
 add_option( $pdflatex_default_switches, \$pdflatex );
 
+foreach (@extra_latex_options) { add_option( $_, \$latex ); }
+foreach (@extra_pdflatex_options) { add_option( $_, \$pdflatex ); }
+
 
 # If landscape mode, change dvips processor, and the previewers:
 if ( $landscape_mode )
@@ -1679,6 +1803,16 @@ if ( $recorder ) {
 
 if ( $out_dir ) {
     add_option( "-output-directory=\"$out_dir\"", \$latex, \$pdflatex );
+    if ( ! -e $out_dir ) {
+        warn "$My_name: making output directory '$out_dir'\n"
+	    if ! $silent;
+        mkdir $out_dir;
+    }
+    elsif ( ! -d $out_dir ) {
+        warn "$My_name: you requested output directory '$out_dir',\n",
+             "     but an ordinary file of the same name exists, which will\n",
+             "     probably give an error later\n";
+    }
 }
 
 if ( $aux_dir && ($aux_dir ne $out_dir) ) {
@@ -1686,6 +1820,16 @@ if ( $aux_dir && ($aux_dir ne $out_dir) ) {
     # option is sufficient, especially because the -aux-directory exists
     # only in MiKTeX, not in TeXLive.
     add_option( "-aux-directory=\"$aux_dir\"", \$latex, \$pdflatex );
+    if ( ! -e $aux_dir ) {
+        warn "$My_name: making auxiliary directory '$aux_dir'\n"
+	    if ! $silent;
+        mkdir $aux_dir;
+    }
+    elsif ( ! -d $aux_dir ) {
+        warn "$My_name: you requested aux directory '$aux_dir',\n",
+             "     but an ordinary file of the same name exists, which will\n",
+             "     probably give an error later\n";
+    }
 }
 
 if ( $jobname ne '' ) { 
@@ -2118,6 +2262,14 @@ sub fix_cmds {
         # Source only
         if ( $_ && ! /%/ ) { $_ .= " %O %S"; }
     }
+    foreach ($pdf_previewer, $ps_previewer, $ps_previewer_landscape,
+             $dvi_previewer, $dvi_previewer_landscape,
+    ) {
+        # Run previewers detached
+        if ( $_ && ! /^(nostart|NONE|internal) / ) {
+            $_ = "start $_";
+        }
+    }
     foreach ($biber, $bibtex) {
         # Base only
         if ( $_ && ! /%/ ) { $_ .= " %O %B"; }
@@ -2264,7 +2416,7 @@ sub rdb_set_rules {
     #              "    S='$source', D='$dest', B='$base' $needs_making\n";
 	    rdb_create_rule( $rule, $cmd_type, $ext_cmd, $int_cmd, $test_kind, 
 			     $source, $dest, $base,
-			     $needs_making, undef, 1, $PA_extra_gen );
+			     $needs_making, undef, undef, 1, $PA_extra_gen );
 # !! ?? Last line was
 #			     $needs_making, undef, ($test_kind==1) );
 	}
@@ -2401,18 +2553,18 @@ sub do_viewfile {
         if ( $$Pext_cmd =~ /%D/ ) {
             my $tmpfile = tempfile1( "${root_filename}_tmp", $ext );
             warn "$My_name: Making '$$Pdest' via temporary '$tmpfile'...\n";
-            $return = &rdb_ext_cmd1( '', '', $tmpfile );
+            $return = &Run_subst( undef, undef, undef, undef, $tmpfile );
             move( $tmpfile, $$Pdest );
         }
         else {
             warn "$My_name is configured to make '$$Pdest' via a temporary file\n",
                  "    but the command template '$$Pext_cmd' does not have a slot\n",
 	    "    to set the destination file, so I won't use a temporary file\n";
-            $return = &rdb_ext_cmd;
+            $return = &Run_subst();
 	}
     }
     else {
-        $return = &rdb_ext_cmd;
+        $return = &Run_subst();
     }
     return $return;
 } #END do_viewfile
@@ -2459,7 +2611,7 @@ sub do_update_view {
     }
     elsif ($viewer_update_method == 4) {
         if (defined $$Pext_cmd) {
-            $return = &rdb_ext_cmd;
+            $return = &Run_subst();
 	}
         else {
             warn "$My_name: viewer is supposed to be updated by running a command,\n",
@@ -2475,7 +2627,7 @@ sub if_source {
     # Unconditionally apply rule if source file exists.
     # Assumes rule context
     if ( -e $$Psource ) {
-        return &rdb_ext_cmd;
+        return &Run_subst();
     }
     else {
 	return -1;
@@ -2641,6 +2793,9 @@ CHANGE:
             #   $MSWin_fudge_break.
             $SIG{BREAK} = $SIG{INT} = 'IGNORE';
         }
+        if ($compiling_cmd) {
+	    Run_subst( $compiling_cmd );
+        }
         $failure = rdb_makeB( @targets );
 
 ##     warn "=========Viewer PID = $$Pviewer_process; updated=$updated\n";
@@ -2708,7 +2863,15 @@ CHANGE:
             $failure_msg =~ s/\s*$//;  #Remove trailing space
             warn "$My_name: $failure_msg\n",
     "    ==> You will need to change a source file before I do another run <==\n";
+            if ($failure_cmd) {
+	        Run_subst( $failure_cmd );
+            }
 	}
+        else {
+            if ($success_cmd) {
+	        Run_subst( $success_cmd );
+            }
+        }
         rdb_show_rule_errors();
         if ($show_time && ! $first_time) { show_timing(); }
         if ( $first_time || $updated || $failure ) {
@@ -2755,9 +2918,9 @@ sub process_rc_file {
     # Run rc_file whose name is given in first argument
     #    Exit with code 0 on success
     #    Exit with code 1 if file cannot be read or does not exist.
-    #    Exit with code 2 if is a syntax error or other problem.
-    # PREVIOUSLY: 
     #    Stop if there is a syntax error or other problem.
+    # PREVIOUSLY: 
+    #    Exit with code 2 if is a syntax error or other problem.
     my $rc_file = $_[0];
     my $ret_code = 0;
     warn "$My_name: Executing Perl code in file '$rc_file'...\n" 
@@ -2994,6 +3157,10 @@ sub print_help
   "   -l-    - turn off -l\n",
   "   -latex=<program> - set program used for latex.\n",
   "                      (replace '<program>' by the program name)\n",
+  "   -latexoption=<option> - add the given option to the (pdf)latex command\n",
+  "   -M     - Show list of dependent files after processing\n",
+  "   -MF file - Specifies name of file to receives list dependent files\n",
+  "   -MP    - List of dependent files includes phony target for each source file.\n",
   "   -new-viewer    - in -pvc mode, always start a new viewer\n",
   "   -new-viewer-   - in -pvc mode, start a new viewer only if needed\n",
   "   -nobibtex      - never use bibtex\n",
@@ -3030,6 +3197,8 @@ sub print_help
   "   -recorder- - Do not use -recorder option for (pdf)latex\n",
   "   -rules    - Show list of rules after processing\n",
   "   -rules-   - Do not show list of rules after processing\n",
+  "   -showextraoptions  - Show other allowed options that are simply passed\n",
+  "               as is to latex and pdflatex\n",
   "   -silent   - silence progress messages from called programs\n",
   "   -time     - show CPU time used\n",
   "   -time-    - don't show CPU time used\n",
@@ -3043,12 +3212,18 @@ sub print_help
   "   -view=none    - no viewer is used\n",
   "   -view=ps      - viewer is for ps\n",
   "   -view=pdf     - viewer is for pdf\n",
+  "   -xelatex      - use xelatex for processing files to pdf\n",
+  "\n",
   "   filename = the root filename of LaTeX document\n",
   "\n",
   "-p, -pv and -pvc are mutually exclusive\n",
   "-h, -c and -C override all other options.\n",
   "-pv and -pvc require one and only one filename specified\n",
-  "All options can be introduced by '-' or '--'.  (E.g., --help or -help.)\n";
+  "All options can be introduced by '-' or '--'.  (E.g., --help or -help.)\n",
+  " \n",
+  "In addition, latexmk recognizes many other options that are passed to\n",
+  "latex and/or pdflatex without interpretation by latexmk.  Run latexmk\n",
+  "with the option -showextraoptions to see a list of these\n";
 
 } #END print_help
 
@@ -3229,17 +3404,17 @@ sub run_bibtex {
 		}
 	    }
             pushd( $path );
-            $return = &rdb_ext_cmd1( '', $base.$ext, '', $base );
+            $return = &Run_subst( undef, undef, '', $base.$ext, '', $base );
             popd();
         }
         else {
             warn "$My_name: Directory in file name '$$Psource' for bibtex\n",
                  "   but it is not the output directory '$aux_dir'\n";
-            $return = rdb_ext_cmd();
+            $return = Run_subst();
 	}
     }
     else {
-        $return = rdb_ext_cmd();
+        $return = Run_subst();
     }
     return $return;
 }
@@ -3983,10 +4158,16 @@ sub parse_fls {
     }
     foreach $_ ( <$fls_file> ) {
         if (/^\s*INPUT\s+(.*)\s+$/) {
-	    $$Pinputs{$1} = 1;
+            my $file = $1;
+            # Take precautions against aliasing of ./foo and foo:
+            $file =~ s(^\./)();
+	    $$Pinputs{$file} = 1;
 	}
         elsif (/^\s*OUTPUT\s+(.*)\s+$/) {
-	    $$Poutputs{$1} = 1;
+            my $file = $1;
+            # Take precautions against aliasing of ./foo and foo:
+            $file =~ s(^\./)();
+	    $$Poutputs{$file} = 1;
 	}
     }
     close( $fls_file );
@@ -4105,11 +4286,12 @@ AUX_LINE:
 #************************************************************
 
 sub fdb_get {
-    # Call: fdb_get(filename [, run_time])
+    # Call: fdb_get(filename [, check_time])
     # Returns an array (time, size, md5) for the current state of the
     #    named file.
-    # The optional argument run_time is the runtime of some command
-    #    associated with the use of the file --- see below.
+    # The optional argument check_time is either the run_time of some command
+    #    that may have changed the file or the last time the file was checked
+    #    for changes --- see below.
     # For non-existent file, deletes its entry in fdb_current, 
     #    and returns (0,-1,0)  
     # As an optimization, the md5 value is taken from the cache in 
@@ -4127,11 +4309,11 @@ sub fdb_get {
     #    at some runtime t, the file is rewritten later by the same or another
     #    program, with timestamp t, and when the initial file also has 
     #    timestamp t.
-    # A test is applied for this situation if the run_time argument is 
+    # A test is applied for this situation if the check_time argument is
     #    supplied and is nonzero.
 
-    my ($file, $run_time) = @_;
-    if ( ! defined $run_time ) { $run_time = 0;}
+    my ($file, $check_time) = @_;
+    if ( ! defined $check_time ) { $check_time = 0;}
     my ($new_time, $new_size) = get_time_size($file);
     my @nofile =  (0,-1,0);     # What we use for initializing
 				# a new entry in fdb or flagging
@@ -4149,23 +4331,27 @@ sub fdb_get {
     my $file_data = $fdb_current{$file};
     my ( $time, $size, $md5 ) = @$file_data;
 
-#warn "--------- Getting MD5: $file: (N,O,R) = $new_time, $time, $run_time\n";
-#warn "--------- $file: (OT,OS,OM) = @$file_data\n";
     if ( ($new_time != $time) || ($new_size != $size) 
-         || ( $run_time && ($run_time == $time ) )
+         || ( $check_time && ($check_time == $time ) )
        ) {
-        # Only force recalculation of md5 if time or size changed
-        # Or if the time equals run_time, so that the file may
-        #   have changed within the 1-second granularity of the time
+        # Only force recalculation of md5 if time or size changed.
+        # However, the physical file time may have changed without
+        #   affecting the value of the time coded in $time, because
+        #   times are computed with a 1-second granularity.
+        #   The only case to treat specially is where the file was created,
+        #   then used by the current rule, and then rewritten, all within
+        #   the granularity size, otherwise the value of the reported file
+        #   time changed, and we've handled it.  But we may have already
+        #   checked this at an earlier time than the current check.  So the
+        #   only dangerous case is where the file time equals a check_time,
+        #   which is either the run_time of the command or the time of a
+        #   previous check.
         # Else we assume file is really unchanged.
         $recalculate_md5 = 1;
     }
     if ($recalculate_md5) {
-#warn "--------- RECALC MD5: $rule $file: (N,O,R) = $new_time, $time, $run_time\n";
-#warn "  ------- $file: (OT,OS,OM) = @$file_data\n";
-#&traceback;
+#warn "--------- RECALC MD5: $rule $file: (N,O,R,C) \n  = $new_time, $time, $$Prun_time, $check_time\n";
         @$file_data = ( $new_time, $new_size, get_checksum_md5( $file ) );
-#warn "  ------- $file: (NT,NS,NM) = @$file_data\n";
     }
     return @$file_data;;
 } #END fdb_get
@@ -4242,7 +4428,7 @@ LINE:
 	    $rule = $1;
             my $tail = $'; #'  Single quote in comment tricks the parser in
                            # emacs from misparsing an isolated single quote
-            $run_time = 0;
+            $run_time = $check_time = 0;
             $source = $dest = $base = '';
             if ( $tail =~ /^\s*(\S+)\s*$/ ) {
                 $run_time = $1;
@@ -4253,11 +4439,19 @@ LINE:
                 $dest = $3;
                 $base = $4;
 	    }
+            elsif ( $tail =~ /^\s*(\S+)\s+\"([^\"]*)\"\s+\"([^\"]*)\"\s+\"([^\"]*)\"\s+(\S+)\s*$/ ) {
+                $run_time = $1;
+                $source = $2;
+                $dest = $3;
+                $base = $4;
+                $check_time = $5;
+	    }
             if ( rdb_rule_exists( $rule ) ) {
                 rdb_one_rule( $rule, 
                               sub{ 
                                    if ($$Ptest_kind == 3) { $$Ptest_kind = 1; }
                                    $$Prun_time = $run_time;
+                                   $$Pcheck_time = $check_time;
                                  }                                      
                              );
 	    }
@@ -4279,7 +4473,7 @@ LINE:
                 # If it existed on last run, it will be in later 
                 #    lines of the fdb file
                 rdb_create_rule( $rule, 'cusdep', '', $PAnew_cmd, 1, 
-                                 $source, $dest, $base, 0, $run_time, 1 );
+                                 $source, $dest, $base, 0, $run_time, $check_time, 1 );
 	    }
             elsif ( $rule =~ /^(makeindex|bibtex|biber)\s*(.*)$/ ) {
                 my $PA_extra_gen = [];
@@ -4319,7 +4513,7 @@ LINE:
                 # If it existed on last run, it will be in later 
                 #    lines of the fdb file
                 rdb_create_rule( $rule, $cmd_type, $ext_cmd, $int_cmd, 1, 
-                                 $source, $dest, $base, 0, $run_time, 1, $PA_extra_gen );
+                                 $source, $dest, $base, 0, $run_time,  $check_time, 1, $PA_extra_gen );
 	    }
             else {
   	        warn "$My_name: In file-database '$in_name' rule '$rule'\n",
@@ -4429,7 +4623,7 @@ sub rdb_write {
            { 
                return; 
            }
-           print $out_handle "[\"$rule\"] $$Prun_time \"$$Psource\" \"$$Pdest\" \"$$Pbase\" \n"; 
+           print $out_handle "[\"$rule\"] $$Prun_time \"$$Psource\" \"$$Pdest\" \"$$Pbase\" $$Pcheck_time\n";
            rdb_do_files(
              sub { print $out_handle "  \"$file\" $$Ptime $$Psize $$Pmd5 \"$$Pfrom_rule\"\n"; }
 	   );
@@ -4526,7 +4720,7 @@ sub rdb_set_latex_deps {
             print "!!!===Creating rule '$from_rule': '$ind_file' from '$idx_file'\n"
                   if ($diagnostics);
             rdb_create_rule( $from_rule, 'external', $makeindex, '', 1, 
-                             $idx_file, $ind_file, $ind_base, 1, 0);
+                             $idx_file, $ind_file, $ind_base, 1, 0, 0 );
             print "  ===Source file '$ind_file' for '$rule'\n"
                   if ($diagnostics > -1);
             rdb_ensure_file( $rule, $ind_file, $from_rule );
@@ -4572,11 +4766,11 @@ sub rdb_set_latex_deps {
             print "   ===Creating rule '$from_rule'\n" if ($diagnostics);
             if ( $bib_program eq 'biber' ) {
                 rdb_create_rule( $from_rule, 'external', $biber, '', 1,
-                                 "$bbl_base.bcf", $bbl_file, $bbl_base, 1, 0);
+                                 "$bbl_base.bcf", $bbl_file, $bbl_base, 1, 0, 0 );
 	     }
              else {
                  rdb_create_rule( $from_rule, 'external', $bibtex, 'run_bibtex', 1,
-                                  "$bbl_base.aux", $bbl_file, $bbl_base, 1, 0);
+                                  "$bbl_base.aux", $bbl_file, $bbl_base, 1, 0, 0 );
 	       }
 	}
         local %old_sources = ();
@@ -4897,7 +5091,7 @@ DEP:
                 local @PAnew_cmd = ( 'do_cusdep', $func_name );
                 if (! rdb_rule_exists( $from_rule ) ) {
                     rdb_create_rule( $from_rule, 'cusdep', '', \@PAnew_cmd, 3, 
-                                     $source, $new_dest, $base_name, 0);
+                                     $source, $new_dest, $base_name, 0 );
 		}
                 else {
 		    rdb_one_rule( 
@@ -4917,10 +5111,9 @@ DEP:
         # Try to make the missing file
         #Set character to surround filenames in commands:
         my $q = $quote_filenames ? '"' : '';
-	if ($rule =~ /^cusdep/ ) { traceback(); }
         if ( $toext ne '' ) {
              print "$My_name: '$rule': source file '$file' doesn't exist. I'll try making it...\n";
-             &Run_msg( "$make $q$file$q" );
+             &Run_subst( "$make $q$file$q" );
              if ( -e $file ) {
                  return;
 	     }
@@ -4930,7 +5123,7 @@ DEP:
                    "   I'll try making it with allowed extensions \n";
              foreach my $try_ext ( keys %$Pinput_extensions ) {
                  my $new_dest = "$file.$try_ext";
-                 &Run_msg( "$make $q$new_dest$q" );
+                 &Run_subst( "$make $q$new_dest$q" );
                  if ( -e $new_dest ) {
                      print "SUCCESS in making '$new_dest'\n";
                      # Put file in rule, without a from_rule, but
@@ -5016,6 +5209,13 @@ sub deps_list {
        print $fh "\n";
     }
     print $fh "#===End dependents for $filename:\n";
+    if ($dependents_phony) {
+        print $fh "\n#===Phony rules for $filename:\n\n";
+        foreach (sort keys %source) {
+            print $fh "$_ :\n\n";
+        }
+        print $fh "#===End phony rules for $filename:\n";
+    }
 } #END deps_list
 
 #************************************************************
@@ -5269,7 +5469,11 @@ sub rdb_makeB {
 	    }
             rdb_for_some( [@post_primary], \&rdb_makeB1 );
             if ($failure) { last PASS; }
-            if ($runs > 0) { next PASS; }
+            if ($runs > 0) {
+               # If something was run, repeat the loop to test for any changes
+               # that entail further processing.
+               next PASS;
+            }
             # Get here if nothing was run.
             last PASS;
 	}
@@ -5489,7 +5693,7 @@ sub rdb_makeB1 {
     else {
         warn_running( "Run number $pass{$rule} of rule '$rule'" );
         if ($$Pcmd_type eq 'primary' ) { 
-            $return = &rdb_primary_run; 
+            $return = &rdb_primary_run;
         }
         else { $return = &rdb_run1; }
     }
@@ -5550,7 +5754,6 @@ sub rdb_submakeB {
     %visited = %visited_at_rule_start;
     local $failure = 0;  # Error flag
     my @v = keys %visited;
-#??    print "---submakeB $rule.  @v \n";
     rdb_do_files( sub{ rdb_recurse_rule( $$Pfrom_rule, 0,0,0, \&rdb_makeB1 ) } );
     return $failure;
 }  #END rdb_submakeB
@@ -5696,7 +5899,7 @@ sub rdb_run1 {
         $return = &$int_cmd( @int_args ); 
     }
     elsif ($$Pext_cmd) {
-	$return = &rdb_ext_cmd;
+	$return = &Run_subst();
     }
     else {
         warn "$My_name: Either a bug OR a configuration error:\n",
@@ -5834,34 +6037,44 @@ sub rdb_dummy_run1 {
 
 #-----------------
 
-sub rdb_ext_cmd {
-    # Call: rdb_ext_cmd
-    # Assumes rule context.  Runs external command with substitutions.
-    # Uses defaults for the substitutions.  See rdb_ext_cmd1.
-    return rdb_ext_cmd1();
-} #END rdb_ext_cmd
+sub Run_subst {
+    # Call: Run_subst( cmd, msg, options, source, dest, base )
+    # Runs command with substitutions.
+    # If an argument is omitted or undefined, it is replaced by a default:
+    #    cmd is the command to execute
+    #    msg is whether to print a message: 
+    #           0 for not, 1 according to $silent setting, 2 always
+    #    options, source, dest, base: correspond to placeholders.
+    # Substitutions:
+    #    %S=source, %D=dest, %B=base, %R=root=base for latex, %O=options, 
+    #    %T=texfile, %Y=$aux_dir1, %Z=$out_dir1
+    # This is a globally usable subroutine, and works in a rule context,
+    #    and outside.
+    # Defaults:
+    #     cmd: $PPext_cmd if defined, else '';
+    #     msg: 1
+    #     options: ''
+    #     source:  $$Psource if defined, else $texfile_name;
+    #     dest:    $$Pdest if defined, else $view_file, else '';
+    #     base:    $$Pbase if defined, else $root_filename;
 
-#-----------------
+    my ($ext_cmd, $msg, $options, $source, $dest, $base ) = @_;
 
-sub rdb_ext_cmd1 {
-    # Call: rdb_ext_cmd1( options, source, dest, base ) or rdb_ext_cmd1() or ...
-    # Assumes rule context.  Returns command with substitutions.
-    # Null arguments or unprovided arguments => use defaults.
-    # for %S=source, %D=dest, %B=base, %R=root=base for latex, %O='', 
-    # %T=texfile, %Y for $aux_dir1, %Z for $out_dir1
-    my ($options, $source, $dest, $base ) = @_;
-    # Apply defaults
+    $ext_cmd ||= ( $Pext_cmd ? $$Pext_cmd : '' );
+    $msg     =   ( defined $msg ? $msg : 1 );
     $options ||= '';
-    $source  ||= $$Psource;
-    $dest    ||= $$Pdest;
-    $base    ||= $$Pbase;
-    
-    my $ext_cmd = $$Pext_cmd;
-    
+    $source  ||= ( $Psource ? $$Psource : $texfile_name );
+    $dest    ||= ( $Pdest ? $$Pdest : ( $view_file || '' ) );
+    $base    ||= ( $Pbase ? $$Pbase : $root_filename );
+
+    if ( $ext_cmd eq '' ) {
+         return 0;
+    }
+
     #Set character to surround filenames:
     my $q = $quote_filenames ? '"' : '';
 
-    %subst = ( 
+    my %subst = ( 
        '%O' => $options,
        '%R' => $q.$root_filename.$q,
        '%B' => $q.$base.$q,
@@ -5879,10 +6092,12 @@ sub rdb_ext_cmd1 {
     }
     $ext_cmd = join '', @tokens;
 
-    # print "quote is '$q'; ext_cmd = '$ext_cmd'\n";
-    my ($pid, $return) = &Run_msg($ext_cmd);
+    my ($pid, $return) = 
+          ( ($msg == 0) || ( ($msg == 1) && $silent ) )
+             ? &Run($ext_cmd)
+             : &Run_msg($ext_cmd);
     return $return;
-} #END rdb_ext_cmd1
+} #END Run_subst
 
 #-----------------
 
@@ -5943,10 +6158,6 @@ sub rdb_primary_run {
 	}
     }
 
-
-    ####### NOT ANY MORE! Capture any changes in source file status before we
-    #         check for errors in the latex run
-
     # Find current set of source files:
     &rdb_set_latex_deps;
 
@@ -5958,22 +6169,8 @@ sub rdb_primary_run {
     #   up-to-date:
     rdb_do_files( sub { if ($$Pcorrect_after_primary) {&rdb_update1;} } );
 
-    # There may be new source files, and the run may have caused
-    # circular-dependency files to be changed.  And the regular
-    # source files may have been updated during a lengthy run of
-    # latex.  So redo the makes for sources of the current rule:
-    my $submake_return = &rdb_submakeB;
-    &rdb_clear_change_record;
-    &rdb_flag_changes_here(0);
-    if ($$Pout_of_date && !$silent) { 
-        &rdb_diagnose_changes( "Rule '$rule': " );
-    }
     $updated = 1;    # Flag that some dependent file has been remade
-    # Fix the state of the files as of now: this will solve the
-    # problem of latex and pdflatex interfering with each other,
-    # at the expense of some non-optimality
-    #??  Check this is correct:
-    &rdb_update_filesA;
+
     if ( $diagnostics ) {
 	print "$My_name: Rules after run: \n";
 	rdb_show();
@@ -6025,6 +6222,9 @@ sub rdb_flag_changes_here {
 
     local $ignore_run_time = $_[0];
     if ( ! defined $ignore_run_time ) { $ignore_run_time = 0; }
+
+    $$Pcheck_time = time;
+
     local $dest_mtime = 0;
     $dest_mtime = get_mtime($$Pdest) if ($$Pdest);
     rdb_do_files( \&rdb_file_change1);
@@ -6042,8 +6242,11 @@ sub rdb_file_change1 {
     # Flag whether $file in $rule has changed or disappeared.
     # Set rule's make flag if there's a change.
 
-    my $run_time_argument = $ignore_run_time ? 0 : $$Prun_time;
-    my ($new_time, $new_size, $new_md5) = fdb_get($file, $run_time_argument );
+    my $check_time_argument = 0;
+    if (! $ignore_run_time ) {
+        $check_time_argument = max( $$Pcheck_time, $$Prun_time );
+    }
+    my ($new_time, $new_size, $new_md5) = fdb_get($file, $check_time_argument );
 #??    print "FC1 '$rule':$file $$Pout_of_date TK=$$Ptest_kind\n"; 
 #??    print "    OLD $$Ptime, $$Psize, $$Pmd5\n",
 #??          "    New $new_time, $new_size, $new_md5\n";
@@ -6382,7 +6585,8 @@ sub rdb_one_rule {
     local ( $PArule_data, $PHsource, $PHdest ) = @{$rule_db{$rule}};
     local ($Pcmd_type, $Pext_cmd, $PAint_cmd, $Ptest_kind, 
            $Psource, $Pdest, $Pbase,
-           $Pout_of_date, $Pout_of_date_user, $Prun_time, $Pchanged,
+           $Pout_of_date, $Pout_of_date_user, $Prun_time, $Pcheck_time,
+           $Pchanged,
            $Plast_result, $Plast_message, $PA_extra_generated )
         = Parray( $PArule_data );
 
@@ -6405,7 +6609,7 @@ sub rdb_one_file {
     local $PAfile_data = ${$PHsource}{$file};
     local ($Ptime, $Psize, $Pmd5, $Pfrom_rule, $Pcorrect_after_primary ) 
           = Parray( $PAfile_data );
-    &$file_act if $file_act;
+    &$file_act() if $file_act;
     if ( ! rdb_rule_exists( $$Pfrom_rule ) ) {
         $$Pfrom_rule = '';
     }
@@ -6431,7 +6635,7 @@ sub rdb_remove_rule {
 sub rdb_create_rule {
     # rdb_create_rule( rule, command_type, ext_cmd, int_cmd, test_kind,
     #                  source, dest, base, 
-    #                  needs_making, run_time, set_file_not_exists,
+    #                  needs_making, run_time, check_time, set_file_not_exists,
     #                  ref_to_array_of_specs_of_extra_generated_files )
     # int_cmd is either a string naming a perl subroutine or it is a
     # reference to an array containing the subroutine name and its
@@ -6441,7 +6645,7 @@ sub rdb_create_rule {
 # ==== Sets rule data ====
     my ( $rule, $cmd_type, $int_cmd, $PAext_cmd, $test_kind, 
          $source, $dest, $base, 
-         $needs_making, $run_time, $set_file_not_exists, $extra_gen ) = @_;
+         $needs_making, $run_time, $check_time, $set_file_not_exists, $extra_gen ) = @_;
     my $changed = 0;
 
     # Set defaults, and normalize parameters:
@@ -6449,7 +6653,7 @@ sub rdb_create_rule {
               $set_file_not_exists ) {
         if (! defined $_) { $_ = ''; }
     }
-    foreach ( $needs_making, $run_time, $test_kind ) {
+    foreach ( $needs_making, $run_time, $check_time, $test_kind ) {
         if (! defined $_) { $_ = 0; }
     }
     if (!defined $test_kind) {
@@ -6471,7 +6675,7 @@ sub rdb_create_rule {
     $rule_db{$rule} = 
         [  [$cmd_type, $int_cmd, $PAext_cmd, $test_kind, 
             $source, $dest, $base,
-            $needs_making, 0, $run_time, $changed,
+            $needs_making, 0, $run_time, $check_time, $changed,
             -1, '', $PA_extra_gen ],
            {},
            {}
@@ -6594,7 +6798,7 @@ sub rdb_update_gen_files {
 #************************************************************
 
 sub rdb_update_filesA {
-    # Call: fdb_updateA
+    # Call: rdb_update_filesA
     # Assumes rule context.  Update source files of rule to current state.
     rdb_do_files( \&rdb_update1 );
 }
@@ -6757,7 +6961,7 @@ sub glob_list1 {
         }
     }
     return @globbed;
-}
+} #END glob_list1
 
 #************************************************************
 # Miscellaneous
@@ -6771,8 +6975,51 @@ sub prefix {
        $line[$i] = $prefix.$line[$i]."\n";
    }
    return join( "", @line );
-}
+} #END prefix
 
+
+#===============================
+
+sub parse_quotes {
+    # Split string into words.
+    # Words are delimited by space, except that strings
+    # quoted all stay inside a word.  E.g., 
+    #   'asdf B" df "d "jkl"'
+    # is split to ( 'asdf', 'B df d', 'jkl').
+    # An array is returned.
+    my @results = ();
+    my $item = '';
+    local $_ = shift;
+    pos($_) = 0;
+  ITEM:
+    while() {
+        /\G\s*/gc;
+        if ( /\G$/ ) {
+	    last ITEM;
+	}
+        # Now pos (and \G) is at start of item:
+      PART:
+        while () {
+  	    if (/\G([^\s\"]*)/gc) {
+	        $item .= $1;
+	    }
+            if ( /\G\"([^\"]*)\"/gc ) {
+                # Match balanced quotes
+		$item .= $1;
+		next PART;
+	    }
+            elsif ( /\G\"(.*)$/gc ) {
+                # Match unbalanced quote
+		$item .= $1;
+                warn "====Non-matching quotes in\n    '$_'\n";
+	    }
+            push @results, $item;
+            $item = '';
+            last PART;
+	}
+    }
+    return @results;
+} #END parse_quotes
 
 #************************************************************
 #************************************************************
@@ -7333,38 +7580,65 @@ sub Run_msg {
     my $time = processing_time() - $time1;
     push @timings, "'$_[0]': time = $time\n"; 
     return ($pid, $return);
-}
+} #END Run_msg
+
+#==================
 
 sub Run {
-# Usage: Run ("program arguments ");
-#    or  Run ("start program arguments");
-#    or  Run ("NONE program arguments");
-# First form is just a call to system, and the routine returns after the 
-#    program has finished executing.  
-# Second form (with 'start') runs the program detached, as appropriate for
-#    the operating system: It runs "program arguments &" on UNIX, and 
-#    "start program arguments" on WIN95 and WINNT.  If multiple start
-#    words are at the beginning of the command, the extra ones are removed.
-# Third form (with 'NONE') does not run anything, but prints an error
-#    message.  This is provided to allow program names defined in the
-#    configuration to flag themselves as unimplemented.
-# A given command line starting with "start NONE" is equivalent to "NONE".
-# If the word "start" is duplicated at the beginning, that is equivalent to
-#    a single "start".
+# Usage: Run ("command string");
+#    or  Run ("one-or-more keywords command string");
+# Possible keywords: internal, NONE, start, nostart.
+#
+# A command string not started by keywords just gives a call to system with
+#   the specified string, I return after that has finished executing.
+# Exceptions to this behavior are triggered by keywords.
+# The general form of the string is
+#    Zero or more occurences of the start keyword,
+#    followed by at most one of the other key words (internal, nostart, NONE),
+#    followed by (a) a command string to be executed by the systerm
+#             or (b) if the command string is specified to be internal, then
+#                    it is of the form
+#
+#                       routine arguments
+#
+#                    which implies invocation of the named Perl subroutine
+#                    with the given arguments, which are obtained by splitting
+#                    the string into words, delimited by spaces, but with
+#                    allowance for double quotes.
+#
+# The meaning of the keywords is:
+#
+#    start: The command line is to be running detached, as appropriate for
+#             a previewer.  The method is appropriate for the operating system
+#             (and the keyword is inspired by the action of the start command
+#             that implements in under MSWin).
+#           HOWEVER: the start keyword is countermanded by the nostart,
+#             internal, and NONE keywords.  This allows rules that do
+#             previewing to insert a start keyword to create a presumption
+#             of detached running unless otherwise.
+#   nostart: Countermands a previous start keyword; the following command
+#             string is then to be obeyed by the system, and any necessary
+#             detaching (as of a previewer) is done by the executed command(s).
+#   internal: The following command string, of the form 'routine arguments'
+#             specifies a called to the named Perl subroutine.
+#   NONE:   This does not run anything, but causes an error message to be
+#             printed.  This is provided to allow program names defined in the
+#             configuration to flag themselves as unimplemented.
+# Note that if the word "start" is duplicated at the beginning, that is
+#   equivalent to a single "start".
+#
 # Return value is a list (pid, exitcode):
-#   If process is spawned sucessfully, and I know the PID,
+#   If a process is spawned sucessfully, and I know the PID,
 #       return (pid, 0),
 #   else if process is spawned sucessfully, but I do not know the PID,
 #       return (0, 0),
 #   else if process is run, 
 #       return (0, exitcode of process)
-#   else (I fail to run the requested process)
+#   else if I fail to run the requested process
 #       return (0, suitable return code)
 #   where return code is 1 if cmdline is null or begins with "NONE" (for
-#                      an unimplemented command)
-#                     or the return value of the system subroutine.
-
-
+#       an unimplemented command)
+#       or the return value of the Perl subroutine.
     my $cmd_line = $_[0];
     if ( $cmd_line eq '' ) {
 	traceback( "$My_name: Bug OR configuration error\n".
@@ -7380,7 +7654,16 @@ sub Run {
 	# already contained a "start").
         $detach = 1;
     }
-    if ( $cmd_line =~ /^NONE/ ) {
+    if ( $cmd_line =~ s/^nostart +// ) {
+        $detach = 0;
+    }
+    if ( $cmd_line =~ /^internal\s+([a-zA-Z_]\w*)\s+(.*)$/ ) {
+	my $routine = $1;
+	my @args = parse_quotes( $2 );
+	warn "$My_name: calling $routine( @args )\n";
+        return ( 0, &$routine( @args ) );
+    }
+    elsif ( $cmd_line =~ /^NONE/ ) {
         warn "$My_name: ",
              "Program not implemented for this version.  Command line:\n";
 	warn "   '$cmd_line'\n";
@@ -7395,7 +7678,7 @@ sub Run {
        # metacharacters to be interpreted:
        return( 0, system( $cmd_line ) );
    }
-}
+}  #END Run
 
 #************************************************************
 
@@ -7460,7 +7743,7 @@ sub Run_Detached {
     }
     # NEVER GET HERE.
     ##warn "Run_Detached.UNIX: F\n";
-}
+} #END Run_Detached
 
 #************************************************************
 
