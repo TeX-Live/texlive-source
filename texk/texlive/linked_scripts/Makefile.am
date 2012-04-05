@@ -89,6 +89,7 @@ texmf_dist_other_scripts = \
 	epspdf/epspdf.rb \
 	epspdf/epspdftk.tcl \
 	epstopdf/epstopdf.pl \
+	exceltex/exceltex \
 	fig4latex/fig4latex \
 	findhyph/findhyph \
 	fontools/afm2afm \
