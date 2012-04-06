@@ -1,3 +1,8 @@
+2012-04-07  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (glob_str_size): increase from 5000 to 20000 per Akira,
+	06 Apr 2012 10:25:18.
+
 2012-03-11  Karl Berry  <karl@tug.org>
 
 	* *.c: prepend kpathsea: to warnings.
