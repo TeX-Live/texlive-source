@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2012-03-30.11}
+\def\texinfoversion{2012-04-06.11}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4530,6 +4530,7 @@ end
   \definedummyword\file
   \definedummyword\image
   \definedummyword\indicateurl
+  \definedummyword\inforef
   \definedummyword\kbd
   \definedummyword\key
   \definedummyword\math
@@ -7814,7 +7815,7 @@ end
   \fi\fi
 }
 
-
+% 
 % @xref, @pxref, and @ref generate cross-references.  For \xrefX, #1 is
 % the node name, #2 the name of the Info cross-reference, #3 the printed
 % node name, #4 the name of the Info file, #5 the name of the printed
@@ -7824,15 +7825,20 @@ end
 \def\xref#1{\putwordSee{} \xrefX[#1,,,,,,,]}
 \def\ref#1{\xrefX[#1,,,,,,,]}
 %
-\newbox\topbox
+\newbox\toprefbox
 \newbox\printedrefnamebox
+\newbox\infofilenamebox
 \newbox\printedmanualbox
 %
 \def\xrefX[#1,#2,#3,#4,#5,#6]{\begingroup
   \unsepspaces
   %
+  % Get args without leading/trailing spaces.
   \def\printedrefname{\ignorespaces #3}%
   \setbox\printedrefnamebox = \hbox{\printedrefname\unskip}%
+  %
+  \def\infofilename{\ignorespaces #4}%
+  \setbox\infofilenamebox = \hbox{\infofilename\unskip}%
   %
   \def\printedmanual{\ignorespaces #5}%
   \setbox\printedmanualbox  = \hbox{\printedmanual\unskip}%
@@ -7868,11 +7874,18 @@ end
      \turnoffactive
      \makevalueexpandable
      % This expands tokens, so do it after making catcode changes, so _
-     % etc. don't get their TeX definitions.
+     % etc. don't get their TeX definitions.  This ignores all spaces in
+     % #4, including (wrongly) those in the middle of the filename.
      \getfilename{#4}%
      %
+     % This (wrongly) does not take account of leading or trailing
+     % spaces in #1, which should be ignored.
      \edef\pdfxrefdest{#1}%
-     \txiescapepdf\pdfxrefdest
+     \ifx\pdfxrefdest\empty
+       \def\pdfxrefdest{Top}% no empty targets
+     \else
+       \txiescapepdf\pdfxrefdest  % escape PDF special chars
+     \fi
      %
      \leavevmode
      \startlink attr{/Border [0 0 0]}%
@@ -7905,7 +7918,7 @@ end
       \printedrefname
     \fi
     %
-    % if the user also gave the printed manual name (fifth arg), append
+    % If the user also gave the printed manual name (fifth arg), append
     % "in MANUALNAME".
     \ifdim \wd\printedmanualbox > 0pt
       \space \putwordin{} \cite{\printedmanual}%
@@ -7920,32 +7933,20 @@ end
     % this is a loss.  Therefore, we give the text of the node name
     % again, so it is as if TeX is seeing it for the first time.
     % 
-    % Cross-manual reference.  Only include the "Section ``foo'' in" if
-    % the foo is neither missing or Top.  Thus, @xref{,,,foo,The Foo Manual}
-    % outputs simply "see The Foo Manual".
     \ifdim \wd\printedmanualbox > 0pt
-      % What is the 7sp about?  The idea is that we also want to omit
-      % the Section part if we would be printing "Top", since they are
-      % clearly trying to refer to the whole manual.  But, this being
-      % TeX, we can't easily compare strings while ignoring the possible
-      % spaces before and after in the input.  By adding the arbitrary
-      % 7sp, we make it much less likely that a real node name would
-      % happen to have the same width as "Top" (e.g., in a monospaced font).
-      % I hope it will never happen in practice.
+      % Cross-manual reference with a printed manual name.
       % 
-      % For the same basic reason, we retypeset the "Top" at every
-      % reference, since the current font is indeterminate.
+      \crossmanualxref{\cite{\printedmanual\unskip}}%
+    %
+    \else\ifdim \wd\infofilenamebox > 0pt
+      % Cross-manual reference with only an info filename (arg 4), no
+      % printed manual name (arg 5).  This is essentially the same as
+      % the case above; we output the filename, since we have nothing else.
       % 
-      \setbox\topbox = \hbox{Top\kern7sp}%
-      \setbox2 = \hbox{\ignorespaces \printedrefname \unskip \kern7sp}%
-      \ifdim \wd2 > 7sp
-        \ifdim \wd2 = \wd\topbox \else
-          \putwordSection{} ``\printedrefname'' \putwordin{}\space
-        \fi
-      \fi
-      \cite{\printedmanual}%
+      \crossmanualxref{\code{\infofilename\unskip}}%
+    %
     \else
-      % Reference in this manual.
+      % Reference within this manual.
       %
       % _ (for example) has to be the character _ for the purposes of the
       % control sequence corresponding to the node, but it has to expand
@@ -7966,10 +7967,36 @@ end
       %
       % output the `page 3'.
       \turnoffactive \putwordpage\tie\refx{#1-pg}{}%
-    \fi
+    \fi\fi
   \fi
   \endlink
 \endgroup}
+
+% Output a cross-manual xref to #1.  Used just above (twice).
+% 
+% Only include the text "Section ``foo'' in" if the foo is neither
+% missing or Top.  Thus, @xref{,,,foo,The Foo Manual} outputs simply
+% "see The Foo Manual", the idea being to refer to the whole manual.
+% 
+% But, this being TeX, we can't easily compare our node name against the
+% string "Top" while ignoring the possible spaces before and after in
+% the input.  By adding the arbitrary 7sp below, we make it much less
+% likely that a real node name would have the same width as "Top" (e.g.,
+% in a monospaced font).  Hopefully it will never happen in practice.
+% 
+% For the same basic reason, we retypeset the "Top" at every
+% reference, since the current font is indeterminate.
+% 
+\def\crossmanualxref#1{%
+  \setbox\toprefbox = \hbox{Top\kern7sp}%
+  \setbox2 = \hbox{\ignorespaces \printedrefname \unskip \kern7sp}%
+  \ifdim \wd2 > 7sp  % nonempty?
+    \ifdim \wd2 = \wd\toprefbox \else  % same as Top?
+      \putwordSection{} ``\printedrefname'' \putwordin{}\space
+    \fi
+  \fi
+  #1%
+}
 
 % This macro is called from \xrefX for the `[nodename]' part of xref
 % output.  It's a separate macro only so it can be changed more easily,
