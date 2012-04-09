@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 #
 # thumbpdf.pl
 #
-# Copyright (C) 1999-2011 Heiko Oberdiek.
+# Copyright (C) 1999-2012 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
@@ -26,10 +26,10 @@ $^W=1; # turn warning on
 #
 my $file        = "thumbpdf.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "3.13";
-my $date        = "2011/08/10";
+my $version     = "3.14";
+my $date        = "2012/04/09";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 1999-2011 by $author.";
+my $copyright   = "Copyright (c) 1999-2012 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -149,6 +149,7 @@ my $copyright   = "Copyright (c) 1999-2011 by $author.";
 #    * \input is used with file name extension for "thumbpdf.tex".
 #   2011/08/10 v3.13
 #    * Use gswin64c in Windows with 64 bits.
+#   2012/04/09 v3.14
 #
 
 ### program identification
