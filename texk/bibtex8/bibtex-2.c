@@ -2212,8 +2212,14 @@ BEGIN
     if (Ent_Str_Size > Buf_Size)
         bad = 10 * bad + 9;
 
-    if (Glob_Str_Size > Buf_Size)
-        bad = 100 * bad + 11;
+    /*
+    ** The following check has been removed because glob_str_size can
+    ** now dynamically changed, which makes it possible that this test
+    ** fails without a real problem.
+    **
+    ** if (Glob_Str_Size > Buf_Size)
+    **     bad = 100 * bad + 11;
+    */
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 17 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 

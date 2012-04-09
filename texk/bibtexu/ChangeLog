@@ -1,3 +1,9 @@
+2012-04-10  Norbert Preining  <preining@logic.at>
+
+	* bibtex-2.c: Do not check whether Glob_Str_Size > Buf_Size,
+	since the former can be changed dynamically
+	* bibtex.h: Adjust BUF_SIZE to the value that matches bibtex.ch
+
 2012-02-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex.c (eoln): Accept both CR and LF as end-of-line.
