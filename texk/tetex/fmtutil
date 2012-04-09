@@ -419,9 +419,10 @@ main()
   need_find_hyphenfile=false
   cfgparam=
   cfgmaint=
-  tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/$progname.$$
   verboseFlag=true
   noAbortFlag=false
+  # eradicate double slashes to avoid kpathsea expansion.
+  tmpdir=`echo ${TMPDIR-${TEMP-${TMP-/tmp}}}/$progname.$$ | sed s,//,/,g`
 
   # mktexfmtMode: if called as mktexfmt, set to true. Will echo the
   # first generated filename after successful generation to stdout then

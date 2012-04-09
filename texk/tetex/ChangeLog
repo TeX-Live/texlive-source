@@ -1,3 +1,8 @@
+2012-04-10  Karl Berry  <karl@tug.org>
+
+	* fmtutil (main): eradicate double slashes in tmpdir.
+	tex-k mail from Alexey Vikhlinin, 8 Apr 2012 17:32:02.
+
 2012-03-12  Karl Berry  <karl@tug.org>
 
 	* updmap.cfg.5: avoid ... at beginning of line.
