@@ -1,6 +1,6 @@
 /* c-std.h: the first header files.
 
-   Copyright 1992, 1993, 1994, 1995, 1996, 1997, 2008 Karl Berry.
+   Copyright 1992, 1993, 1994, 1995, 1996, 1997, 2008, 2012 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -86,13 +86,6 @@ extern ALLOC_RETURN_TYPE *calloc (), *malloc (), *realloc ();
 #ifdef VMS
 #include <unixlib.h>
 #include <unixio.h>
-#else
-#if !defined (WIN32) && !defined (__cplusplus)
-/* `popen' and `pclose' are part of POSIX.2, not POSIX.1.  So
-   STDC_HEADERS isn't enough.  */
-extern FILE *popen ();
-extern int pclose ();
-#endif /* not WIN32 && not __cplusplus */
 #endif /* not VMS */
 
 #endif /* not KPATHSEA_C_STD_H */
