@@ -1,5 +1,5 @@
 %%
-%%  ChkTeX v1.6.4, LaTeX documentation for ChkTeX program.
+%%  ChkTeX v@PACKAGE_VERSION@, LaTeX documentation for ChkTeX program.
 %%  Copyright (C) 1995-96 Jens T. Berger Thielemann
 %%
 %%  This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 %%
 %%  You should have received a copy of the GNU General Public License
 %%  along with this program; if not, write to the Free Software
-%%  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+%%  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 %%
 %%  Contact the author at:
 %%              Jens Berger
@@ -35,15 +35,17 @@
 
 
 
-\documentstyle[a4, array, tabularx, verbatim, multicol]{article}
+\documentclass[a4paper]{article}
 %latex
+\usepackage{array, tabularx, verbatim, multicol}
+\usepackage[T1]{fontenc}
 \nonfrenchspacing
 \newcounter{errornum}
 \setcounter{errornum}{1}
 %endlatex
 \newcommand{\jtbt}{Jens~T. Berger~Thielemann}
-\newcommand{\Cmd}[1]{``{\tt{}#1}''}
-\newcommand{\rsrc}{``{\tt{}chktexrc}''}
+\newcommand{\Cmd}[1]{``\texttt{#1}''}
+\newcommand{\rsrc}{``\texttt{chktexrc}''}
 \newcommand{\chktex}{Chk\TeX}
 
 %latex
@@ -51,7 +53,7 @@
 \newcommand{\fmted}[1]{%
   {\noindent\large%
     \begin{tabularx}{\linewidth}{lY}%
-      \bf Warning \theerrornum:  & \tt #1%
+      \bf Warning \theerrornum:  & \texttt{#1}%
     \end{tabularx}}\stepcounter{errornum}\nopagebreak[4]}
 
 \newenvironment{errdesc}[1]{\noindent\fmted{#1}\begin{quote}}{\end{quote}%
@@ -61,10 +63,8 @@
 \newenvironment{rawhtml}{\comment}{\endcomment}
 
 \makeatletter
-\@namedef{errdesc*}#1{\begin{errdesc}{\textit{#1\/}}}
+\@namedef{errdesc*}#1{\begin{errdesc}{\textit{#1}}}
 \@namedef{enderrdesc*}{\end{errdesc}}
-\@ifundefined{textit}{\gdef\textit#1{{\it #1\/}}}\relax
-\@ifundefined{LaTeXe}{\gdef\LaTeXe{\LaTeX2${}_{\textstyle\varepsilon}$}}\relax
 \makeatother
 
 
@@ -82,7 +82,7 @@
 %endlatex
 
 
-\title{\chktex\ v1.6.4}
+\title{\chktex\ v@PACKAGE_VERSION@}
 \author{Jens~T. Berger~Thielemann}
 \date{\today}
 
@@ -96,8 +96,8 @@
 \section{Introduction}
 
 This program has been written in frustration because some constructs in
-\LaTeX\ are sometimes non-intuitive, and easy to forget. It is {\em
-  not\/} a replacement for the built-in checker in \LaTeX\@; however it
+\LaTeX\ are sometimes non-intuitive, and easy to forget. It is 
+\emph{not} a replacement for the built-in checker in \LaTeX\@; however it
 catches some typographic errors \LaTeX\ oversees. In other words, it
 is Lint for \LaTeX. Filters are also provided for checking the 
 \LaTeX\ parts of CWEB documents.
@@ -122,125 +122,6 @@ removed. If interest rises it can be resurrected.
 should be aware of that in most cases, all this is transparent to the user.
 As you will see, \chktex\ offers the ability to adapt to many environments
 and configurations.
-
-\subsection{New features}
-
-Modifications and additions since v1.6:
-\begin{itemize}
-  \item Improved the build system
-  \item Better fixes for memory access errors
-\end{itemize}
-
-Modifications and additions since v1.5:
-\begin{itemize}
-  \item Fixed a crash when running from emacs
-  \item Fixed a crash when checking our own manual
-  \item Added \tt{\BS{}verb*} support
-\end{itemize}
-
-Modifications and additions since v1.4:
-
-\subsubsection{Program}
-
-Modifications to the executable itself:
-\begin{itemize}
-\item As usual, a few more warnings:
-  \begin{itemize}
-  \item No space or similar in front/after parenthesis.
-  \item Demands a consistent quote style.
-  \item Double spaces in input which will not be rendered as one.
-  \item Punctuation malplaced regarding to math mode.
-  \item Warns about \TeX\ primitives.
-  \item Space in front of footnotes.
-  \item Bogus {\tt\BS{}left} and {\tt\BS{}right} commands.
-  \end{itemize}
-
-\item The abbreviation recognizer has (for the last time?) been
-  redesigned. We now produce far less false warnings, catch more
-  cases and do all this faster than before. Seems like a win.
-
-  Done much of the same with the italic correction detection part,
-  too\ldots
-\item Some bugs have been silently fixed. Hot spots in the program
-  have been optimized; in certain cases this in fact doubles the
-  speed!
-
-  Along with this goes more code elegance and utilization of macro
-  processing and the C language. Take a look at \Cmd{Resource.[ch]}.
-
-\item It's possible to specify separate output-formats depending on
-  whether you are sending the output to a file/pipe or to a
-  terminal.
-
-\item Column positions are finally correct; we now expand tabs
-  correctly.
-\item \chktex\ will now recursively search for {\tt\BS{}input}'ed
-  files, both in the document and on the commandline. See the 
-  \rsrc\ file for more info.
-\item The debug switch is now more intelligent; if you wish to hack
-  a bit on \chktex\ for yourself, it is possible to produce
-  selective debugging output. The feature can also be disabled
-  altogether.
-\item MS-DOS and OS/2 version of the program is now more flexible
-  and well-behaved, thanks to Gerd B\"ohm.
-\item You may now say \Cmd{-wall} to make all messages warnings, and
-  turn them on.
-\item Uses termcap on UNIX boxes; this should ensure that \Cmd{-v2}
-  (or more precisely: \Cmd{\%i} and \Cmd{\%I}) works regardless to
-  what terminal you are using.
-\end{itemize}
-
-\subsubsection{Resource file}
-
-New concepts introduced in the setup file:
-\begin{itemize}
-\item You may now specify both case-sensitive and case-insensitive
-  user patterns in the \rsrc\ file. In addition; it is now possible
-  to reset/clear lists.
-\item It is possible to specify how many arguments
-  (optional/required) \Cmd{WIPEARG} should wipe; it behaves also
-  somewhat more intelligent when the arguments stretch over multiple
-  lines.
-\item Global files will be read {\em in addition\/} to local ones. The
-  searching order has also been reversed in order to make this more
-  intelligent.
-\end{itemize}
-
-
-\subsubsection{Other}
-Various other stuff I've done to the product:
-
-\begin{itemize}
-\item The documentation has been polished and should now be easier
-  to use in practical situations.
-\item \Cmd{check} target in \Cmd{Makefile}, so you can check that
-  the installation succeeded. In fact, the \Cmd{Makefile} has been
-  enhanced in several other ways too, amongst other it is now GNU
-  conforming.
-\item \Cmd{deweb} is now documented; you may say \Cmd{man~deweb} to
-  get a few words of advice. The support script ({\tt chkweb}) does
-  now behave as the remaining package (accepting stdin input and flags).
-\item I've written an Emacs hack which magically adds \chktex\ to the
-  list of AUC-\TeX\ commands; thus making the use of the program even
-  more trivial.
-
-  For those of you who don't wish to mess with Emacs, I've included a trivial
-%latex
-  $\mbox{lacheck}\leftrightarrow\mbox{\chktex}$
-%!lacheck <-> \chktex\ %
-%endlatex
-  interface.
-
-  This means that you now can use \chktex\ just as easily as lacheck
-  when you're running AUC-\TeX.
-
-\item Added an ARexx script which lets \chktex\ talk to VBrowse, the
-  message browser of Volker Barthelmann's freely distributable ANSI
-  C compiler. The browser itself is available on Aminet as
-  \Cmd{dev/c/vbcc.lha}.
-\end{itemize}
-
-\subsection{Feature list}
 
 \begin{itemize}
 \item Supports over 40 warnings. Warnings include:
@@ -307,7 +188,7 @@ Various other stuff I've done to the product:
 \end{itemize}
 
 Still, it is important to realize that the output from \chktex\ is
-only intended as a {\em guide\/} to fixing faults. However, it is by
+only intended as a \emph{guide} to fixing faults. However, it is by
 no means always correct. This means that correct \LaTeX\ code may
 produce errors in \chktex, and vice versa: Incorrect \LaTeX\ code may pass
 silently through.
@@ -334,21 +215,18 @@ You  should  have  received  a  copy of the GNU General Public License
 along   with  this  program;  if  not,  write  to:
 \begin{quote}
     The  Free  Software Foundation, Inc. \\
-    675 Mass Ave \\
-    Cambridge    \\
-    MA 02139     \\
+    51 Franklin Street \\
+    Fifth Floor \\
+    Boston \\
+    MA 02110-1301 \\
     USA
 \end{quote}
 
 
-
-
-\begin{html}
 \section{Availability}
 
 This program will be uploaded to CTAN\@; thus it can be
 found at any mirrors of those.
-\end{html}
 
 \section{Installation}
 
@@ -467,12 +345,12 @@ A few words on installation on various platforms:
   file, and edit it appropiately, for more
   comfort.  This should not be necessary, though, at least not the
   first time.
-
-  Finally, you may now compile and link all  \verb@.c@ files.  Define
-  \Cmd{HAVE\_CONFIG\_H} to 1 (on the command-line, for instance).  If
-  the \Cmd{config.h} you wish to use has another name, define
-  \Cmd{CONFIG\_H\_NAME} to that (in that case, don't define
-  \Cmd{HAVE\_CONFIG\_H}).
+  
+  Finally, you may now compile and link all \verb@.c@ files.  Do not
+  forget to define \Cmd{HAVE\_CONFIG\_H} to 1 (on the command-line,
+  for instance).  If the \Cmd{config.h} you wish to use has another
+  name, define \Cmd{CONFIG\_H\_NAME} to that (in that case, don't
+  define \Cmd{HAVE\_CONFIG\_H}).
 
   Put the directory path of the \rsrc\ file in a environment variable
   named \Cmd{CHKTEXRC}.  The files \Cmd{deweb.in} and \Cmd{chkweb}
@@ -496,8 +374,8 @@ A few words on installation on various platforms:
     identifier is significant.
   \end{enumerate}
 \end{description}
-{\bf Note:\/} You {\em must\/} install the new \rsrc\ file; \chktex\ will
-fail to function unless!
+\paragraph{Note:} You \emph{must} install the new \rsrc\ file; \chktex\ will
+fail to function otherwise!
 
     After   doing   this,   you   may  enhance  \chktex'  behaviour  by
 reading/editing the \rsrc\ file.
@@ -505,13 +383,15 @@ reading/editing the \rsrc\ file.
 %latex
 \section{Usage}
 
+\subsection{\chktex}
+
 \subsubsection{Synopsis}
 
 A UNIX-compliant template format follows:
 
 \newcommand{\Group}[1]{\mbox{[#1]}}
-\begin{tabularx}\textwidth{lY}
-  \tt chktex & \tt \Group{-hiqrW} \Group{-v[0-\dots]} \Group{-l
+\begin{tabularx}{.95\linewidth}{lY}
+  \texttt{chktex} & \ttfamily \Group{-hiqrW} \Group{-v[0-\dots]} \Group{-l
     <rcfile>} \Group{-[wemn] <[1-42]|all>} \Group{-d[0-\ldots]} \Group{-p
     <pseudoname>} \Group{-o <outputfile>} \Group{-[btxgI][0|1]}
   file1 file2 \dots
@@ -532,17 +412,17 @@ options:
 \item[Misc.\ options:] General options which aren't related to some
   specific subpart of \chktex.
   \begin{description}
-  \item[{\tt -h [--help]}] Gives you a command summary.
-  \item[{\tt -i [--license]}] Shows distribution information.
-  \item[{\tt -l [--localrc]}] Reads a resource-file formatted
+  \item[\texttt{-h [--help]}] Gives you a command summary.
+  \item[\texttt{-i [--license]}] Shows distribution information.
+  \item[\texttt{-l [--localrc]}] Reads a resource-file formatted
     as the global resource-file \rsrc, in addition to the global
     resource-file. This option needs the name of the resource-file
-    as a parameter. See also {\tt -g}.
-  \item[{\tt -r [--reset]}] This will reset all settings to their
-    defaults. This may be useful if you use the {\tt CMDLINE}
+    as a parameter. See also \texttt{-g}.
+  \item[\texttt{-r [--reset]}] This will reset all settings to their
+    defaults. This may be useful if you use the \texttt{CMDLINE}
     directive in your \rsrc\ file, and wish to do something
     unusual.
-  \item[{\tt -d [--debug]}] Needs a numeric argument; a bitmask
+  \item[\texttt{-d [--debug]}] Needs a numeric argument; a bitmask
     telling what to output.  The values below may be added in order
     to output multiple debugging info.
 
@@ -559,47 +439,47 @@ options:
 
     It is possible to install versions of \chktex\ that ignore this
     flag; this means that it is not certain that this flag works.
-  \item[{\tt -W [--version]}] Displays version information, and exits.
+  \item[\texttt{-W [--version]}] Displays version information, and exits.
   \end{description}
 \item[Muting warning messages:] Controls whether and in what form
   error messages will appear. Usually they accept a specific warning
   number (e.g.\ \Cmd{-w2}), but you may also say \Cmd{all} (e.g.\
-  \Cmd{-wall}) which does the operation on {\em all\/} warnings.
+  \Cmd{-wall}) which does the operation on \emph{all} warnings.
   \begin{description}
-  \item[{\tt -w [--warnon]}] Makes the message number passed as
+  \item[\texttt{-w [--warnon]}] Makes the message number passed as
     parameter a warning and turns it on.
-  \item[{\tt -e [--erroron]}] Makes the message number passed as
+  \item[\texttt{-e [--erroron]}] Makes the message number passed as
     parameter an error and turns it on.
-  \item[{\tt -m [--msgon]}] Makes the message number passed as
+  \item[\texttt{-m [--msgon]}] Makes the message number passed as
     parameter a message and turns it on. Messages are not counted.
-  \item[{\tt -n [--nowarn]}] Turns the warning/error number passed
+  \item[\texttt{-n [--nowarn]}] Turns the warning/error number passed
     as a parameter off.
   \end{description}
 \item[Output control flags:] Determines the appearance and
   destination of the error reports.
   \begin{description}
-  \item[{\tt -q [--quiet]}] Shuts up about copyright information.
-  \item[{\tt -o [--output]}] Normally, all errors are piped to {\tt stdout}.
+  \item[\texttt{-q [--quiet]}] Shuts up about copyright information.
+  \item[\texttt{-o [--output]}] Normally, all errors are piped to \texttt{stdout}.
     Using this option with a parameter, errors will be sent to the
     named file instead. Only information relative to the \LaTeX\ file
     will be sent to that file. Memory problems and similar will as as
-    always be sent to {\tt stderr}. If a file with the name given
+    always be sent to \texttt{stderr}. If a file with the name given
     already exists, it will be renamed to \Cmd{foobar.bak}
     (\Cmd{foobar.\$cl} under MS-DOS), \Cmd{foobar} being the name of
     the file.  See also \Cmd{-b}.
 
-  \item[{\tt -v [--verbosity]}] Specifies how much and how you
+  \item[\texttt{-v [--verbosity]}] Specifies how much and how you
     wish the error reports to be displayed. This is specified in the
     \rsrc\ file; we'll list the default values below. If you wish,
     you may thus edit the \rsrc\ file to add or modify new formats.
 
-    The default is mode 1 (that is, the {\em second\/} entry in the
-    \rsrc\ file), using {\tt -v} without any parameter will give you
+    The default is mode 1 (that is, the \emph{second} entry in the
+    \rsrc\ file), using \texttt{-v} without any parameter will give you
     mode 2.
 
     \begin{description}
     \item[0] Will show the information in a way that should be
-      suitable for further parsing by {\tt awk}, {\tt sed} or
+      suitable for further parsing by \texttt{awk}, \texttt{sed} or
       similar.  The format is as follows:
 \begin{verbatim}
 File:Line:Column:Warning number:Warning message
@@ -618,7 +498,7 @@ File:Line:Column:Warning number:Warning message
       at compilation time. UNIX boxes, however, will find the
       information automatically.
     \item[3] Shows the information suitable for parsing by Emacs;
-      this is the same format as {\tt lacheck} uses. More formally,
+      this is the same format as \texttt{lacheck} uses. More formally,
       it is the following:
 \begin{verbatim}
 "File", line Line: Warning message
@@ -634,31 +514,30 @@ File:Line:Column:Warning number:Warning message
       longer time to parse, but much more informative in use.
     \end{description}
 
-  \item[{\tt -f [--format]}] Specifies the format of the output.
+  \item[\texttt{-f [--format]}] Specifies the format of the output.
     This is done using a format similar to \Cmd{printf()}, where we
     support the specifiers listed below.
 
     \smallskip
-    \newcommand{\Pf}[1]{\tt \%#1 &}
+    \newcommand{\Pf}[1]{\texttt{\%#1} &}
     \begin{tabularx}{\linewidth}{cX}
       \bf Code & \bf Description \\
-      \Pf{b} String to print {\bf b\/}etween fields (from {\tt
-        -s} option). \\
-      \Pf{c} {\bf C\/}olumn position of error. \\
-      \Pf{d} Length of error ({\bf d\/}igit). \\
-      \Pf{f} Current {\bf f\/}ilename.\\
-      \Pf{i} Turn on {\bf i\/}nverse printing mode.\\
-      \Pf{I} Turn off {\bf i\/}nverse printing mode.\\
-      \Pf{k} {\bf k\/}ind of error (warning, error, message).\\
-      \Pf{l} {\bf l\/}ine number of error.\\
-      \Pf{m} Warning {\bf m\/}essage.\\
-      \Pf{n} Warning {\bf n\/}umber.\\
-      \Pf{u} An {\bf u\/}nderlining line (like the one which
+      \Pf{b} String to print \textbf{b}etween fields (from \texttt{-s}
+      option).\\
+      \Pf{c} \textbf{C}olumn position of error. \\
+      \Pf{d} Length of error (\textbf{d}igit). \\
+      \Pf{f} Current \textbf{f}ilename.\\
+      \Pf{i} Turn on \textbf{i}nverse printing mode.\\
+      \Pf{I} Turn off \textbf{i}nverse printing mode.\\
+      \Pf{k} \textbf{k}ind of error (warning, error, message).\\
+      \Pf{l} \textbf{l}ine number of error.\\
+      \Pf{m} Warning \textbf{m}essage.\\
+      \Pf{n} Warning \textbf{n}umber.\\
+      \Pf{u} An \textbf{u}nderlining line (like the one which
       appears when using \Cmd{-v1}).\\
       \Pf{r} Part of line in front of error ($\mbox{`S'} -
       1$).\\
-      \Pf{s} Part of line which contains error ({\bf
-        s\/}tring).\\
+      \Pf{s} Part of line which contains error (\textbf{s}tring).\\
       \Pf{t} Part of line after error ($\mbox{`S'} + 1$).
     \end{tabularx}
     \smallskip
@@ -668,18 +547,18 @@ File:Line:Column:Warning number:Warning message
     Please note that we may introduce other specifiers in the future,
     so don't abuse this feature for other characters.
 
-    Also, note that we do {\em not\/} support field lengths (yet).
+    Also, note that we do \emph{not} support field lengths (yet).
     This may come in the future, if I get the time\dots
 
-    The {\tt -v} command is implemented by indexing into the \rsrc\
+    The \texttt{-v} command is implemented by indexing into the \rsrc\
     file; read that for seeing how each format is implemented. If
     you find yourself using a particular format often by using the
     -f switch, consider putting it in the \rsrc\ file instead.
-  \item[{\tt -V [--pipeverb]}] Which entry we'll use in the \rsrc\
-    file whenever {\tt stdout} isn't a terminal.
+  \item[\texttt{-V [--pipeverb]}] Which entry we'll use in the \rsrc\
+    file whenever \texttt{stdout} isn't a terminal.
 
     The default is to use the same mode as specified with the
-    {\tt -v} switch; using {\tt -V} without any parameter will give you
+    \texttt{-v} switch; using \texttt{-V} without any parameter will give you
     mode 1.
 
     This switch was implemented because GNU less has problems with
@@ -690,7 +569,7 @@ File:Line:Column:Warning number:Warning message
 setenv LESS -r
 \end{verbatim}
 
-  \item[{\tt -p [--pseudoname]}] With this switch, you can provide
+  \item[\texttt{-p [--pseudoname]}] With this switch, you can provide
     the filename which will be used when we report the errors. This
     may be useful in scripts, especially when doing pipes. It is in
     other words similar to C's \verb@#line@ directive.
@@ -699,35 +578,35 @@ setenv LESS -r
     this one in turn \verb@\@\verb@input@ are presented under their original
     names. This seems most logical to me.
 
-  \item[{\tt -s [--splitchar]}] String to use instead of the
-    colons when doing {\tt -v0}; e.g.\ this string will be output
+  \item[\texttt{-s [--splitchar]}] String to use instead of the
+    colons when doing \texttt{-v0}; e.g.\ this string will be output
     between the fields.
 
   \end{description}
 \item[Boolean switches:] Common for all of these are that they
-  take an optional parameter.  If it is {\tt 0}, the feature will
-  be disabled, if it is {\tt 1}, it will be enabled. All these
+  take an optional parameter.  If it is \texttt{0}, the feature will
+  be disabled, if it is \texttt{1}, it will be enabled. All these
   features are on by default; and are toggled if you don't give
   any parameter.
 
   \begin{description}
-  \item[{\tt -b [--backup]}] If you use the {\tt -o} switch, and the
-    named outputfile exists, it will be renamed to {\tt filename.bak}.
-  \item[{\tt -I [--inputfiles]}] Execute \verb@\@\verb@input@
+  \item[\texttt{-b [--backup]}] If you use the \texttt{-o} switch, and the
+    named outputfile exists, it will be renamed to \texttt{filename.bak}.
+  \item[\texttt{-I [--inputfiles]}] Execute \verb@\@\verb@input@
     statements; e.g.\ include the file in the input. Our input parsing
     does of course nest; we use an input-stack to keep track of this.
-  \item[{\tt -H [--headererr]}] Show errors found in front of the
-    \verb@\begin{document}@ line. Some people keep {\em lots\/} of
+  \item[\texttt{-H [--headererr]}] Show errors found in front of the
+    \verb@\begin{document}@ line. Some people keep \emph{lots} of
     pure \TeX\ code there, which errors can't be detected reliably
     (in other words, we will in most cases just produce a lot of
     garbage).
-  \item[{\tt -g [--globalrc]}] Read in the global resource file.  This
-    switch may be useful together with the {\tt -l} option.
-  \item[{\tt -t [--tictoc]}] Display a twirling baton, to show that
-    we're working. {\tt -v0} does an {\tt -t0}, too, as it assumes
+  \item[\texttt{-g [--globalrc]}] Read in the global resource file.  This
+    switch may be useful together with the \texttt{-l} option.
+  \item[\texttt{-t [--tictoc]}] Display a twirling baton, to show that
+    we're working. \texttt{-v0} does an \texttt{-t0}, too, as it assumes
     that the user then uses the program non-interactively.  This is
     now a no-op.
-  \item[{\tt -x [--wipeverb]}] Ignore the ``\verb@\verb@'' command
+  \item[\texttt{-x [--wipeverb]}] Ignore the ``\verb@\verb@'' command
     found within the \LaTeX\ file and its argument is completely by
     the checking routines.  This is done by simply overwriting them.
     If you somehow don't like that (for instance, you would like to
@@ -737,14 +616,14 @@ setenv LESS -r
 
 
 If you don't specify any input \LaTeX-files on the commandline, we'll
-read from {\tt stdin}.  To abort {\tt stdin} input, press the
+read from \texttt{stdin}.  To abort \texttt{stdin} input, press the
 following keycombinations:
 
 \smallskip
 \begin{tabular}{ll}
   \bf Machine & \bf Key-combination \\
-  UNIX & $\fbox{\tt Ctrl} + \fbox{\tt D}$ \\
-  MS-DOS & $\fbox{\tt Ctrl} + \fbox{Z}$, followed by return.
+  UNIX & $\fbox{\texttt{Ctrl}} + \fbox{\texttt{D}}$ \\
+  MS-DOS & $\fbox{\texttt{Ctrl}} + \fbox{Z}$, followed by return.
 \end{tabular}
 \smallskip
 
@@ -766,9 +645,9 @@ routine.
 
 \subsubsection{The \rsrc\ file}
 
-You should also take a look at the \rsrc\ file. As the file is
-self-documenting; you should be able to get the meaning of each
-keyword by simply reading the file. The method for {\em finding it},
+You should also take a look at the \rsrc\ file. As it is
+self-documenting, you should be able to get the meaning of each
+keyword by simply reading the file. The method for \emph{finding it},
 however, has grown rather complex. An outline is given below.
 
 If \chktex\ finds multiple files when searching, each and everyone
@@ -781,8 +660,9 @@ In this list, \Cmd{\$foo} is assumed to be the environment variable
 
 \begin{enumerate}
 \item First, we'll take a look at the directory which was specified as
-  \Cmd{DATADIR} during compilation. On UNIX boxes, this usually evaluates to
-  \Cmd{/usr/local/share/chktexrc} or similar, under MS-DOS it is set
+  \Cmd{DATADIR} during compilation. On UNIX boxes, this usually
+  evaluates to something similar to 
+  \Cmd{/usr/local/share/chktexrc}, under MS-DOS it is set
   to \Cmd{\BS{}emtex\BS{}data\BS{}chktexrc}.
 
 \item Look in the following system directories:
@@ -871,14 +751,14 @@ as follows:
 chkweb [options] file1 file2 ...
 \end{verbatim}
 As you may see from the script, it is only a trivial interface towards
-{\tt deweb} and \chktex.  It does not support any individual options
+\texttt{deweb} and \chktex.  It does not support any individual options
 on the command line --- all options found will be passed onto \chktex.
 If \Cmd{--} or a filename is found, the remaining parameters will be
 ignored.
 The  only  real  intelligence  it  features  is  that it will try to append
 \verb@.w@ to filenames it can't find.
 
-If no filenames are given, we will read from {\tt stdin}.
+If no filenames are given, we will read from \texttt{stdin}.
 
 \subsection{DeWEB}
 
@@ -889,36 +769,36 @@ It is called with the following synopsis:
 deweb file1 file2 ...
 \end{verbatim}
 
-{\tt deweb} filters away all C \&\ CWEB commands from a CWEB source code.
-This leaves only the \LaTeX\ code.  This stripped code, in turn, may then
-be passed to a suitable syntax checker for \LaTeX, like \chktex\ and {\tt
-  lacheck}, or spell-checkers like {\tt ispell}.
+\texttt{deweb} filters away all C \&\ CWEB commands from a CWEB source
+code. This leaves only the \LaTeX\ code.  This stripped code, in turn,
+may then be passed to a suitable syntax checker for \LaTeX, like
+\chktex\ and \texttt{lacheck}, or spell-checkers like \texttt{ispell}.
 
-When {\tt deweb} strips away the C code from your CWEB source, it tries to
+When \texttt{deweb} strips away the C code from your CWEB source, it tries to
 preserve line breaks.  This means that the error reports from {\it your
   favorite tool\/} will be correct regarding to line numbers.  In most
 cases, the column position will also be correct.  This significantly
 simplifies finding the errors in the \LaTeX\ source (in contrast to the
-output from {\tt cweave}, which output is truly difficult to figure
+output from \texttt{cweave}, which output is truly difficult to figure
 anything out from).
 
-{\tt deweb} accepts a list of filenames on the argument line, and will send
-its output to {\tt stdout}.  If no filenames are given, it will read from
+\texttt{deweb} accepts a list of filenames on the argument line, and will send
+its output to \texttt{stdout}.  If no filenames are given, it will read from
 stdin, acting as a filter.  No options are currently accepted.
 
-Macho users may try to pipe the output from {\tt deweb} directly into
+Macho users may try to pipe the output from \texttt{deweb} directly into
 \LaTeX, theoretically, this should work.  This would ease the debugging of
 the \LaTeX\ code significantly, as when \LaTeX\ complains about wrong
 syntax, you'll be able to find the erroneous line much more easily.  Don't
 expect that the output looks very much like the final one, though.
 
-{\tt deweb} should now understand all correct {\tt CWEB} opcodes.  If it
+\texttt{deweb} should now understand all correct \texttt{CWEB} opcodes.  If it
 complains about not understanding a correct opcode, please inform the
 author.
 
 \subsubsection{Bugs}
 
-{\tt deweb} will not even {\em compile\/} under Perl versions before perl
+\texttt{deweb} will not even \emph{compile} under Perl versions before perl
 v5.  Unfortunately, this means that we can't even tell the user why we
 failed; Perl will just complain about not being able to compile the
 regexps.
@@ -929,7 +809,7 @@ Error messages set in {\it italic type\/} are turned off by default.
 Where margin paragraphs are listed in the text, they refer to the
 keyword in the \rsrc\ file which controls the discussed warning.
 
-\newcommand\Keyword[1]{\marginpar{\large\tt\hfill\\ #1}}
+\newcommand\Keyword[1]{\marginpar{\texttt{\hfill\\ #1}}}
 
 \smallskip\pagebreak[2]
 \Keyword{Silent}
@@ -1049,9 +929,9 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
   \begin{tabular}{ll}
     \bf Character type & \bf Keyword in \rsrc\ file \\*
-    Space & \tt WordDash \\*
-    Number & \tt NumDash \\*
-    Alphabetic character & \tt HyphDash \\*
+    Space & \texttt{WordDash} \\*
+    Number & \texttt{NumDash} \\*
+    Alphabetic character & \texttt{HyphDash} \\*
   \end{tabular}
 
   This is more or less correct, according to my references.  Hopefully
@@ -1070,8 +950,8 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
 \fmted{`\%s' expected, found  `\%s'.}
 \begin{errdesc}{Solo `\%s' found.}
-  You get this warning whenever brackets or environments don't match.
-  \chktex\ expect to find matching brackets/environments in the
+  Either brackets or environments don't match.
+  \chktex\ expects to find matching brackets/environments in the
   same order as their opposites were found, and no closing delimiters
   which haven't been preceded by an opening one.
 
@@ -1139,7 +1019,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
   detect an error. As \chktex\ currently processes the \LaTeX\ file on
   a line-by-line basis, it won't find the argument if the command
   which needed it was on the previous line. On the other hand, this
-  {\em may\/} also be an error; you ought to check it to be safe.
+  \emph{may} also be an error; you ought to check it to be safe.
 
   \begin{errexam}
     \verb@$\hat$@ \\*
@@ -1152,7 +1032,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
 \begin{errdesc}{No match found for `\%s'.}
 
-  This warning is triggered if we find a single, {\em opening\/}
+  This warning is triggered if we find a single, \emph{opening}
   bracket or environment.  While bracket matching is not an explicit
   error, it is usually a sign that something is wrong.
 
@@ -1187,7 +1067,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
 \begin{errdesc}{You should use "'" (ASCII 39)  instead  of
     "'" (ASCII 180).} On some keyboards you might get the wrong quote.
-  This quote looks, IMHO, {\em ugly\/} compared to the standard
+  This quote looks, IMHO, \emph{ugly} compared to the standard
   quotes, it doesn't even come out as a quote!  Just see in the
   example.
 
@@ -1204,7 +1084,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
 \Keyword{Userwarn}
 \begin{errdesc}{User-specified pattern found.}
-  A substring  you've specified using {\tt USERWARN} in the \rsrc\ file,
+  A substring  you've specified using \texttt{USERWARN} in the \rsrc\ file,
   has been found.
 \end{errdesc}
 
@@ -1304,7 +1184,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
 \Keyword{Italic\\ItalCmd\\NonItalic}
 \begin{errdesc}{Don't use \BS/ in front of small punctuation.}
-  Italic correction should generally {\em not\/} be used in front of
+  Italic correction should generally \emph{not} be used in front of
   small punctuation characters like `.' and `,'; as it looks better
   when the preceding italic character leans ``over'' the punctum or
   comma.
@@ -1336,7 +1216,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 \begin{errdesc*}{Multiple spaces detected in output.}
 
   This warning, intended for the novice, will remind you that even if
-  you {\em type\/} multiple spaces in your input, only a single space
+  you \emph{type} multiple spaces in your input, only a single space
   will come out. Some ways to come around this is listed below.
 
   \begin{errexam}
@@ -1423,7 +1303,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
   description on each style follows:
   \begin{description}
   \item[Traditional:] This style is the most visually pleasing. It
-    always puts the punctuation {\em in front of\/} the quotes, which
+    always puts the punctuation \emph{in front of} the quotes, which
     gives a continuous bottom line.
 
     However, it may in certain cases be ambigious. Consider the
@@ -1436,7 +1316,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
     That would be very bad --- because the reader would be prone to
     type the string d-d-dot, and it happens that in \Cmd{vi(1)} dot
     repeats the last command accepted. The net result would be to
-    delete {\em two\/} lines! This problem is avoided using logical
+    delete \emph{two} lines! This problem is avoided using logical
     style, described below.
     \pagebreak[3]
   \item[Logical:] This style uses quotes as balanced delimiters like
@@ -1523,8 +1403,8 @@ program --- if I have the time.
 
 \begin{itemize}
 \item Do a final fix for maths mode. Currently, \chktex\ doesn't
-  recognize embedded math mode (i.e.\ constructions like
-  \verb@$$a+b\text{for $a \leq 0$}$$@).
+  recognize constructions like
+  \verb@$$a+b\text{for $a \leq 0$}$$@, i.e.\ embedded math mode.
 
 \item Support for regular expressions as user patterns. I'll do it at
   once I get the GNU \Cmd{rx} package up and running (it doesn't
@@ -1559,7 +1439,7 @@ you like \chktex\ and would like to help improving it, here's a few things
 I would like to receive. The following ideas are given:
 
 \begin{itemize}
-\item Does anyone have a $\mbox{\LaTeX}\rightarrow \mbox{{\tt troff}}$
+\item Does anyone have a $\mbox{\LaTeX}\rightarrow \mbox{\texttt{troff}}$
   conversion program? It would be really nice if I could extract the
   relevant sections from this manual, and present them as a man page.
   I will not, however, convert this manual to \TeX{}info in order to
@@ -1568,8 +1448,8 @@ I would like to receive. The following ideas are given:
 
   This doesn't mean that I'm not willing to restructure the document
   at all. This manual already uses some kind of preprocessing in order
-  to achieve HTML output via \LaTeX2{\tt html}, I'm willing to do the
-  same in order to produce {\tt troff} output.
+  to achieve HTML output via \LaTeX2\texttt{html}, I'm willing to do the
+  same in order to produce \texttt{troff} output.
 
 \item Help me port the program! This is a prioritized one. It's no fun
   writing ANSI C when people haven't got a C compiler.
@@ -1580,7 +1460,7 @@ I would like to receive. The following ideas are given:
   credit where appropiate.
 
   Just one request: If you have to modify the sources in order to make
-  \chktex\ compile \& work on the new platform, {\em please\/} enclose your
+  \chktex\ compile \& work on the new platform, \emph{please} enclose your
   changes in something like \Cmd{\#ifdef \_\_PLATFORM\_\_\dots code\dots\#endif}!
   It makes life so much easier later, when we try to merge the two
   source trees.
@@ -1612,7 +1492,7 @@ I would like to receive. The following ideas are given:
   tell me so, so I can remove this item.
 
   I don't have GoldEd in my possession; the script was just modelled
-  after Juergen Zeschky's, ({\tt <juergen@sokrates.nbg.de>})
+  after Juergen Zeschky's, (\texttt{<juergen@sokrates.nbg.de>})
   $\mbox{PGP}\leftrightarrow\mbox{GoldED}$ interface.
 
 \item If you update the \rsrc\ file in anyway that is not strictly
@@ -1649,10 +1529,10 @@ mathematical analysis, statistics \& probability calculations plus
 studying the relationship between society and computers.
 
 At home I now possess 4 computers, of which 1 is regular use: A
-vanilla Amiga 1200, expanded only by a HD\@.  The others are a {\tt
-  80286} PC and an Amiga 500, both semi-out-of-order.  The last one is
-a Commodore VIC-20, which for some peculiar reason never seems to be
-used. Plans are to get a Linux-capable PC, though.
+vanilla Amiga 1200, expanded only by a HD\@.  The others are a
+\texttt{80286} PC and an Amiga 500, both semi-out-of-order.  The last
+one is a Commodore VIC-20, which for some peculiar reason never seems
+to be used. Plans are to get a Linux-capable PC, though.
 
 Most of the time in front of these computers (including SGI Indy's and
 SPARC stations at our university) is spent on C and shell programming,
@@ -1667,7 +1547,7 @@ plus some text-processing.
 
 C and shell programming are not my only knowledge areas regarding
 computers, however.  I write the following languages more or less:
-Perl, Motorola {\tt 68000} assembly code, ARexx, Simula, C++, \LaTeX,
+Perl, Motorola \texttt{68000} assembly code, ARexx, Simula, C++, \LaTeX,
 HTML, AmigaGuide, Amos Basic and Installer LISP\@.  Once I also
 mastered Commodore Basic V2, the ``language'' included with my VIC-20.
 
@@ -1691,8 +1571,8 @@ The author wishes to thank the following people (in alphabetical order):
 \item[]
   \setbox0=\hbox{
     \begin{tabular}{l}
-      \bf #1 \\
-      \tt #2 \\
+      \textbf{#1} \\
+      \texttt{#2} \\
     \end{tabular}
     } \usebox0\\ }
 
@@ -1784,7 +1664,7 @@ the development of \chktex, please write to:
     Spektrumvn. 4         \\
     N-0666 Oslo           \\
     Norway                \\
-    E-mail: {\tt <jensthi@ifi.uio.no>}
+    E-mail: \texttt{<jensthi@ifi.uio.no>}
   \end{quote}
 %latex
 \end{samepage}
@@ -1797,7 +1677,7 @@ Since the original author is unreachable, the maintainer these days is:
 %endlatex
   \begin{quote}
     Baruch Even     \\
-	E-mail: {\tt <chktex@ev-en.org>}
+    E-mail: \texttt{<chktex@ev-en.org>}
   \end{quote}
 %latex
 \end{samepage}

@@ -1,0 +1,123 @@
+Development of ChkTeX is now in a maintainance mode. All versions
+after 1.6 are essentially bug fixes.
+
+1.6.6 (2012-04-07), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Fixed some memory issues
+  * Do not increase line number when the line was very long
+  * Some fixes for TexLive
+
+1.6.5 (??), released by Jean-Marc Lasgouttes <lasgouttes@lyx.org>
+
+  * Fix bug where ChkTeX generates a warning about missing space before
+    parenthesis when the parenthesis is at start of line.
+  * Update ChkTeX.tex.in to use proper LaTeX2e markup.
+  * Update the build machinery a bit.
+
+1.6.4 (2007-10-20), released by Baruch Even
+
+  * For some reason 1.6.3 did not include all the changes it was supposed to
+    have, this release should fix it. One such issue is the MacOS X
+    compilation.
+  * Include some updates to the default chktexrc from Jean-Marc Lasgouttes.
+
+1.6.3, released by Baruch Even
+
+  * Support DESTDIR for installation to help distributions.
+  * Apply old standing patch from Jean-Marc Lasgouttes to compile outside the
+    directory.
+  * Enable compilation on MacOS X.
+  * Fix various coding issues.
+
+
+Original versions from Jens T. Berger Thielemann:
+=================================================
+
+Modifications and additions since v1.6:
+
+  * Improved the build system
+  * Better fixes for memory access errors
+
+Modifications and additions since v1.5:
+
+  * Fixed a crash when running from emacs
+  * Fixed a crash when checking our own manual
+  * Added \verb* support
+
+Modifications and additions since v1.4:
+
+ ** New warnings
+
+  * No space or similar in front/after parenthesis.
+  * Demands a consistent quote style.
+  * Double spaces in input which will not be rendered as one.
+  * Punctuation malplaced regarding to math mode.
+  * Warns about TeX primitives.
+  * Space in front of footnotes.
+  * Bogus \left and \right commands.
+
+ ** Program
+
+  * The abbreviation recognizer has (for the last time?) been
+    redesigned. We now produce far less false warnings, catch more
+    cases and do all this faster than before. Seems like a win. Done
+    much of the same with the italic correction detection part,
+    too.
+  * Some bugs have been silently fixed. Hot spots in the program have
+    been optimized; in certain cases this in fact doubles the speed!
+  * Along with this goes more code elegance and utilization of macro
+    processing and the C language. Take a look at Resource.[ch].
+
+  * It's possible to specify separate output-formats depending on
+    whether you are sending the output to a file/pipe or to a
+    terminal.
+
+  * Column positions are finally correct; we now expand tabs
+    correctly.
+  * ChkTeX will now recursively search for \input'ed
+    files, both in the document and on the commandline. See the
+    chktexrc file for more info.
+  * The debug switch is now more intelligent; if you wish to hack
+    a bit on ChkTeX for yourself, it is possible to produce
+    selective debugging output. The feature can also be disabled
+    altogether.
+  * MS-DOS and OS/2 version of the program is now more flexible
+    and well-behaved, thanks to Gerd Boehm.
+  * You may now say -wall to make all messages warnings, and
+    turn them on.
+  * Uses termcap on UNIX boxes; this should ensure that -v2
+    (or more precisely: %i and %I works regardless to
+    what terminal you are using.
+
+ ** Resource file
+
+  * You may now specify both case-sensitive and case-insensitive user
+    patterns in the chktexrc file. In addition; it is now possible to
+    reset/clear lists.
+  * You can now specify how many optional or required arguments
+    WIPEARG should wipe; it also behaves somewhat more intelligently
+    when the arguments stretch over multiple lines.
+  * Global files will be read in addition to local ones. The searching
+    order has also been reversed in order to make this more
+    intelligent.
+
+ ** Other
+
+  * The documentation has been polished and should now be easier
+    to use in practical situations.
+  * check target in Makefile, so you can check that the installation
+    succeeded. In fact, the Makefile has been enhanced in several other
+    ways too, amongst other it is now GNU conforming.
+  * deweb is now documented; you may say "man deweb" to get a few
+    words of advice. The support script (chkweb) does now behave as the
+    remaining package (accepting stdin input and flags).
+  * I've written an Emacs hack which magically adds ChkTeX to the list
+    of AUC-TeX commands; thus making the use of the program even more
+    trivial. For those of you who don't wish to mess with Emacs, I've
+    included a trivial lacheck <-> ChkTeX interface. This means that you
+    now can use ChkTeX just as easily as lacheck when you're running
+    AUC-TeX.
+  * Added an ARexx script which lets ChkTeX talk to VBrowse, the
+    message browser of Volker Barthelmann's freely distributable ANSI
+    C compiler. The browser itself is available on Aminet as
+    dev/c/vbcc.lha.

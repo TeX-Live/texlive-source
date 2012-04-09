@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -8,11 +8,11 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl *********************************************************************
 dnl
-dnl  Adapted for TeX Live from chktex-1.6.4/configure.in
+dnl  Adapted for TeX Live from chktex-*/configure.in
 dnl
 dnl *********************************************************************
 dnl
-m4_define([chktex_version], [1.6.4])[]dnl using unmodified chktex source tree
+m4_define([chktex_version], [1.6.6])[]dnl using unmodified chktex source tree
 AC_INIT([ChkTeX for TeX Live], chktex_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([chktex-]chktex_version[/ChkTeX.c])

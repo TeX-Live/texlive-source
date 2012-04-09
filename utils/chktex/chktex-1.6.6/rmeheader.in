@@ -1,0 +1,19 @@
+Short:    v@PACKAGE_VERSION@. Finds typographic errors in LaTeX
+Author:   <chktex@ev-en.org> (Baruch Even)
+Uploader: <chktex@ev-en.org> (Baruch Even)
+Type:     text/tex
+Replaces: text/tex/ChkTeX.lha
+Version:  @PACKAGE_VERSION@
+URL:      http://www.freesoftware.fsf.org/chktex
+
+
+             #####  ###       ###    ########     ###     ##
+           ###   ##  ##        ##       ##          ##   #
+          @@         @@ @@@    @@  @@   @@  #######  @@ @
+          @@         @@@  @@   @@ @@    @@   ##   #   @@
+          &&         &&   &&   &&&&     &&   @@      & &&
+           &&&   &&  &&   &&   && &&    &&   @@@@   &   &&
+             %%%%%  %%%   %%% %%%  %%%  %%   &&   %%%    %%% v@PACKAGE_VERSION@
+                                             &&   &
+                                            %%%%%%%
+

@@ -1,0 +1,317 @@
+#
+#  Makefile for ChkTeX project, creates the stuff.
+#  Copyright (C) 1996 Jens T. Berger Thielemann
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#  Contact the author at:
+#		Jens Berger
+#		Spektrumvn. 4
+#		N-0666 Oslo
+#		Norway
+#		E-mail: <jensthi@ifi.uio.no>
+#
+
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+sysconfdir=@sysconfdir@
+srcdir=@srcdir@
+mandir=@mandir@
+INSTALL=@INSTALL@
+INSTALL_PROGRAM=@INSTALL_PROGRAM@
+INSTALL_DATA=@INSTALL_DATA@
+MKDIR_P=@MKDIR_P@
+ELISPDIR=@ELISPDIR@
+CLEAN=@CLEAN@
+
+CC=@CC@
+CFLAGS=@CFLAGS@
+CPPFLAGS=@CPPFLAGS@ -I$(srcdir) -I. $(DEFS) $(USRDEFS)
+DEFS=@DEFS@
+LIBS=@LIBS@
+LDFLAGS=@LDFLAGS@
+LN_S=@LN_S@
+LATEX=@LATEX@
+DVIPS=@DVIPS@
+PS2PDF=ps2pdf
+PERL5=@PERL5@
+LATEX2HTML=@LATEX2HTML@
+LYNX=@LYNX@
+GROFF=@GROFF@
+SHELL=/bin/sh
+
+BUILT_SCRIPTS=@BUILT_SCRIPTS@
+SCRIPTS=@SCRIPTS@
+
+USRDEFS=-DSYSCONFDIR=\"$(sysconfdir)\" -D__unix__
+
+VPATH=$(srcdir)
+
+#####################################################################
+
+EXTRA_DIST=configure.in Makefile.in stamp-h.in config.h.in rmeheader.in \
+	MakeHTML.pl ChkTeX.tex.in aclocal.m4 NEWS \
+	chktex.el chkweb deweb.in COPYING chktex.1 chkweb.1 deweb.1 \
+	Test.tex input.tex Test.out configure install-sh lacheck chktexrc \
+	$(wildcard m4/*.m4)
+
+# created by configure
+CONFIG_DIST=ChkTeX.tex
+
+# created at make time
+BUILT_DIST=chktex.doc chkweb.doc deweb.doc README ChkTeX.dvi
+
+CSOURCES=ChkTeX.c FindErrs.c OpSys.c Resource.c Utility.c
+
+# The sources are the C sources and possibly the files with the same base name
+# but ending with .h
+SOURCEFILES=$(CSOURCES) $(wildcard $(CSOURCES:.c=.h)) types.h
+
+DISTFILES=$(EXTRA_DIST) $(SOURCEFILES)
+
+all: chktex 
+
+DISTDIR:=chktex-@PACKAGE_VERSION@
+dist: $(DISTDIR).tar.gz
+$(DISTDIR).tar.gz: $(DISTFILES) $(CONFIG_DIST) $(BUILT_DIST) html
+	rm -r $(DISTDIR) 2>/dev/null ; true
+	$(MKDIR_P) $(DISTDIR)
+	for f in $(DISTFILES) ; do \
+	  cp $(srcdir)/$$f $(DISTDIR) ; \
+	done
+	cp $(CONFIG_DIST) $(BUILT_DIST) $(DISTDIR)
+	$(MKDIR_P) $(DISTDIR)/html
+	cp HTML/ChkTeX/*.{html,css} $(DISTDIR)/html
+	rm -f $(DISTDIR).tar.gz
+	tar --owner=0 --group=0 -chzf $@ $(DISTDIR)
+	rm -rf $(DISTDIR)
+
+########################################################################
+
+.c.o:
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+CLEAN+=$(CSOURCES:.c=.o)
+
+.%.d: %.c
+	$(CC) -M $(CPPFLAGS) $< > $@.tmp
+	sed 's,\($*\)\.o *:,\1.o $@ : Makefile,g' $@.tmp > $@
+	-rm -f $@.tmp 2>/dev/null
+
+DEPFILES=$(patsubst %.c,.%.d,$(CSOURCES))
+CLEAN+=$(DEPFILES)
+
+ifeq ($(findstring clean,$(MAKECMDGOALS)),)
+include $(DEPFILES)
+endif
+
+###################### MAIN DEPENDENCIES ################################
+
+OBJS= ChkTeX.o FindErrs.o OpSys.o Resource.o Utility.o
+
+MAKETEST= (builddir=`pwd` ; cd $(srcdir) ; $${builddir}/chktex -mall -r -g0 -lchktexrc -v5 Test.tex)
+
+$(srcdir)/Test.out:
+	-rm -f $(srcdir)/Test.out
+	$(MAKETEST) 1> $(srcdir)/Test.out 
+
+check: chktex
+	@echo ">>> Testing that checking algorithms work correctly..."
+	@-rm -f chktest
+	$(MAKETEST) 1> chktest  
+	@if cmp -s chktest $(srcdir)/Test.out; then \
+	echo ">>> OK!"; \
+	rm -f chktest; \
+	else \
+	echo "***WARNING***"; \
+	echo "Problems when checking compilation. This may or may not"; \
+	echo "be a problem; anyway, I'm giving you a diff from what the"; \
+	echo "results were *supposed* to be..."; \
+	diff -u chktest $(srcdir)/Test.out; \
+	fi
+
+
+chktex: $(OBJS)
+	$(CC) $(LDFLAGS) -o chktex $(OBJS) $(LIBS)
+
+install: chktex ChkTeX.dvi
+	$(MKDIR_P) $(DESTDIR)$(bindir)
+	for program in chktex $(BUILT_SCRIPTS); do \
+		$(INSTALL_PROGRAM) $$program $(DESTDIR)$(bindir); \
+	done
+	for program in $(SCRIPTS); do \
+		$(INSTALL_PROGRAM) $(srcdir)/$$program $(DESTDIR)$(bindir); \
+	done
+	$(MKDIR_P) $(DESTDIR)$(sysconfdir)
+	$(INSTALL_DATA) $(srcdir)/chktexrc $(DESTDIR)$(sysconfdir)
+	if (eval echo "$(BUILT_SCRIPTS)") | egrep deweb >/dev/null 2>&1; then \
+		$(MKDIR_P) $(DESTDIR)$(mandir)/man1; \
+                cp $(srcdir)/deweb.1 $(DESTDIR)$(mandir)/man1; \
+	fi
+	if (eval echo "$(ELISPDIR)") | egrep "/" >/dev/null 2>&1; then \
+		$(INSTALL_DATA) $(srcdir)/chktex.el $(DESTDIR)$(ELISPDIR); \
+	fi
+
+
+
+uninstall:
+	for program in chktex $(SCRIPTS) $(BUILT_SCRIPTS); do \
+		rm -f $(DESTDIR)$(bindir)/$$program; \
+	done
+	rm -f $(DESTDIR)$(sysconfdir)/chktexrc  $(DESTDIR)$(mandir)/man1/deweb.1
+	if (eval echo "$(ELISPDIR)") | egrep "/" >/dev/null 2>&1; then \
+		rm -f $(DESTDIR)$(ELISPDIR)/chktex.el ; \
+	fi
+
+test:
+	chktex -v2 -mall $(srcdir)/Test.tex | less -r
+
+indent:
+	indent -npsl -bli0 -npcs -nut -i4 $(SOURCEFILES)
+
+mostlyclean: clean
+
+clean:
+	rm -rf $(CLEAN) $(BUILT_DIST) $(DISTDIR).tar.gz \
+	  *.aux *.log *.pdf *.dvi *.ps \
+	  chktex HTML rme chktest
+
+distclean: clean
+	rm -rf $(CONFIG_DIST) *.cache *.status *.log *.tar.gz \
+	  deweb Makefile autom4te.cache config.h
+
+maintainer-clean: distclean
+	rm -rf *.rme install-sh config.guess config.sub aclocal.m4 \
+	  configure missing rmeheader stamp-h mkinstalldirs tags
+
+dvi: ChkTeX.dvi
+
+ifneq ($(LATEX2HTML),)
+html: ChkTeX.tex MakeHTML.pl
+	-rm -r HTML
+	$(MKDIR_P) HTML
+	$(PERL5) $(srcdir)/MakeHTML.pl ChkTeX.tex > HTML/ChkTeX.tex
+	cd HTML; $(LATEX2HTML) ChkTeX.tex
+	$(PERL5) -i -pe 's%</code> %</code>%gi;s%\s+([.,?!])%$$1%g;' HTML/ChkTeX/*.html
+
+README: ChkTeX.tex rmeheader MakeHTML.pl
+	rm -rf rme
+	$(MKDIR_P) rme
+	$(PERL5) $(srcdir)/MakeHTML.pl ChkTeX.tex > rme/ChkTeX.tex
+	cd rme; $(LATEX2HTML) -split 0 ChkTeX.tex
+	$(PERL5) -i -pe 's%L<SUP><SMALL>A</SMALL></SUP>%La%g;s%T<SMALL>E</SMALL>X%TeX%g;s%<SUB>(.*)</SUB>%$$1%g' rme/ChkTeX/*.html
+	$(PERL5) -i -pe 's%</code> %</code>%gi;s%\s+([.,?!])%$$1%g;' rme/ChkTeX/*.html
+	$(LYNX) -dump rme/ChkTeX/ChkTeX.html > rme/ChkTeX.rme
+	cp rmeheader README
+	$(PERL5) -e 'undef $$/;$$_=<>;($$_)=/(.*INTRODUCTION(.|\n)*?)[ \t]+ABOUT THIS DOCUMENT/i;s/[ \t]+\n/\n/g;s/\n\n\n/\n/g;s/\[\d+\]//g;print;' rme/ChkTeX.rme >> README
+	rm -rf rme
+else
+html README:
+	@echo "latex2html is unavailable on this system, cant create target $@."; exit 1
+endif
+
+###################### AUTOCONF REMAKING ################################
+
+$(srcdir)/configure: configure.in aclocal.m4
+	cd $(srcdir) && autoconf
+
+#autoheader might not change config.h.in, so touch a stamp file.
+$(srcdir)/config.h.in: stamp-h.in
+$(srcdir)/stamp-h.in: configure.in aclocal.m4
+	cd $(srcdir) && autoheader
+	echo timestamp > $(srcdir)/stamp-h.in
+
+config.h: stamp-h
+stamp-h: config.h.in config.status
+	./config.status
+
+ChkTeX.tex: ChkTeX.tex.in
+	./config.status ChkTeX.tex
+
+Makefile: Makefile.in config.status
+	./config.status
+
+config.status: configure
+	./config.status --recheck
+
+###################### INDIVIDUAL DEPENDENCIES ##########################
+
+%.doc: %.1
+	$(GROFF) $< > $@
+
+ChkTeX.dvi: ChkTeX.tex
+ifdef LATEX
+	$(LATEX) ChkTeX.tex
+else
+	echo "No latex program found by configure"
+	false
+endif
+
+ChkTeX.ps: ChkTeX.dvi
+	$(DVIPS) -o ChkTeX.ps ChkTeX.dvi
+
+ChkTeX.pdf: ChkTeX.ps
+	$(PS2PDF) $< $@
+
+cover:
+	-./chktex -h
+	-./chktex Test.tex
+	-./chktex -v2 -t -o tmptmptmp <Test.tex
+	-./chktex -v2 -t -o tmptmptmp Test.tex
+	-./chktex Test.tex -v
+	-./chktex Test.tex -v0
+	-./chktex Test.tex -v1
+	-./chktex Test.tex -v2
+	-./chktex Test.tex -v3
+	-./chktex Test.tex -v4
+	-./chktex -t -v0s::: Test.tex -x
+	-./chktex -p FOO Test.tex
+	-./chktex -t Test.tex
+	-./chktex -o tmptmptmp -o tmptmptmptmp Test.tex
+	-./chktex -l t:faultrc test.tex
+	-./chktex -e30w22n1 Test.tex
+	-./chktex -w33e-n1 Test.tex
+	-./chktex -i
+	-./chktex -v2 -t -o tmptmptmp <Test.tex
+	-./chktex -I Test.tex
+	-./chktex -rd2 Test.tex
+	-./chktex -gd2 Test.tex
+	-./chktex -f "*N\
+Between: %b*N\
+Column: %c*N\
+Length: %d*N\
+File: %f*N\
+%iInverse%I*N\
+Kind: %k*N\
+Line: %l*N\
+Msg: %m*N\
+Num: %n*N\
+Und: %u*N\
+Pre:  %r*N\
+Str:  %s*N\
+Post: %t*N\
+*N\
+%k in %f line %l: %m*N\
+%r%i%s%I%t*N\
+%u*N\
+*N" Test.tex
+	-./chktex -o tmptmptmp -r -d2 Test.tex
+	-./chktex -qv0 Test.tex
+	-./chktex -w30 Test.tex
+	-./chktex -g --localrc=.testrc -d2 Test.tex
+	for file in $(CSOURCES); do gcov $(GCOVOPTS) $$file; done

@@ -1,0 +1,116 @@
+.TH deweb 1 "June 8, 1996"
+.AT 3
+.SH NAME
+deweb \- strips away C & CWEB commands from CWEB sources
+.SH SYNOPSIS
+.B deweb
+[
+.B file1 file2 ...
+]
+.SH DESCRIPTION
+.I deweb
+filters away all C & CWEB commands from a CWEB source code. This
+leaves only the
+.I LaTeX
+code. This stripped code, in turn, may then
+be passed to a suitable syntax checker for LaTeX, like
+.I ChkTeX
+and
+.I lacheck,
+or spell-checkers like
+.I ispell.
+.PP
+The
+.I chkweb
+tool, included in the 
+.I ChkTeX
+distribution will do just this; writing similar scripts should be
+trivial.
+.PP
+When
+.I deweb
+strips away the C code from your CWEB source, it tries to preserve line breaks.
+This means that the error reports  from
+.I <your favorite tool>
+will be correct regarding to line numbers. In most cases,
+the column position
+will also be correct. This significantly simplifies
+finding the errors in the
+.I LaTeX
+source (in contrast to the output from
+.I cweave,
+which output is truly difficult to figure anything out from).
+.PP
+.I deweb
+accepts a list of filenames on the argument line, and will send its output
+to
+.I stdout.
+If no filenames are given, it will read from stdin, acting as
+a filter. No options are currently accepted.
+.PP
+Macho users may try to pipe the output from
+.I deweb
+directly into
+.I LaTeX,
+theoretically, this should work. This would ease the debugging
+of the
+.I LaTeX
+code significantly, as when
+.I LaTeX
+complains about wrong syntax, you'll be able to find the erroneous
+line much more easily. Don't expect that the output looks very much
+like the final one, though.
+.PP
+.I deweb
+should now understand all correct
+.I CWEB
+opcodes. If it complains about not understanding a correct opcode,
+please inform the author.
+.SH DISTRIBUTION
+Copyright (C) 1996 Jens T. Berger Thielemann
+.PP
+This program is free software; you can redistribute it and/or modify
+it under the terms of the 
+.I GNU General Public License 
+as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+.PP
+This program is distributed in the hope that it will be useful,
+but
+.B WITHOUT ANY WARRANTY;
+without even the implied warranty of
+.B MERCHANTABILITY
+or
+.B FITNESS FOR A PARTICULAR PURPOSE.
+See the
+.I GNU General Public License
+for more details.
+.PP
+You should have received a copy of the 
+.B GNU General Public License
+along with this program; if not, write to the
+.I Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+.SH ENVIRONMENT
+No environment variables are used.
+.SH FILES
+None.
+.SH AUTHOR
+Jens T. Berger Thielemann,
+.I <jensthi@ifi.uio.no>
+.SH "SEE ALSO"
+.B cweave(1), perl(1), chktex, lacheck(1), ispell(1)
+.SH BUGS
+Doesn't even
+.B compile
+under
+.I Perl
+versions before perl v5. Unfortunately, this means that we can't even
+tell the user why we failed;
+.I Perl
+will just complain about not being able to compile the regexps.
+.PP
+The program will try to swallow the whole input file at once, instead of
+processing it on a line\-by\-line basis.
+.ex
