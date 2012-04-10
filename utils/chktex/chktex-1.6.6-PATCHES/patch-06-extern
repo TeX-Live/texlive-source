@@ -1,4 +1,5 @@
 	Remove extern decls from *.c files.
+	(Not installed in upstream 1.6.6.  Propose static function instead?)
 
 diff -ur chktex-1.6.4.orig/Utility.c chktex-1.6.4/Utility.c
 --- chktex-1.6.4.orig/Utility.c	2010-06-13 14:50:28.000000000 +0200

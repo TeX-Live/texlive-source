@@ -1,3 +1,11 @@
+2012-04-10  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (dist_pdfdoc_DATA): ChkTeX.pdf is now distributed
+	from upstream.
+	(ChkTeX.pdf, CLEANFILES, stamp-tex, all-local,
+	DISTCLEANFILES, build-tex, EXTRA_DIST): so we don't need to build
+	it.  I guess.
+
 2012-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* getopt.h: With __need_getopt declare only getopt() but not

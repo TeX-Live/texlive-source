@@ -58,8 +58,8 @@ DIST_COMMON = $(am__configure_deps) $(dist_pdfdoc_DATA) \
 	$(srcdir)/../../build-aux/missing \
 	$(srcdir)/../../texk/am/script_links.am $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/chktex-1.6.4/ChkTeX.tex.in \
-	$(top_srcdir)/chktex-1.6.4/deweb.in $(top_srcdir)/configure \
+	$(top_srcdir)/chktex-1.6.6/ChkTeX.tex.in \
+	$(top_srcdir)/chktex-1.6.6/deweb.in $(top_srcdir)/configure \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
@@ -256,7 +256,7 @@ top_srcdir = @top_srcdir@
 #************************************************************************
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES \
-	../../build-aux/relpath ChkTeX.tex chktex.test
+	../../build-aux/relpath chktex.test
 AM_CPPFLAGS = -DNO_KPSE_DLL
 AM_CFLAGS = $(WARNING_CFLAGS)
 chktex_SOURCES = \
@@ -296,9 +296,8 @@ config_DATA = $(CHKTEX_TREE)/chktexrc
 
 # documentation
 pdfdocdir = $(datarootdir)/texmf/doc/chktex
-dist_pdfdoc_DATA = ChkTeX.pdf
-CLEANFILES = $(nodist_bin_SCRIPTS) ChkTeX.aux ChkTeX.log chktest
-DISTCLEANFILES = stamp-tex
+dist_pdfdoc_DATA = $(CHKTEX_TREE)/ChkTeX.pdf
+CLEANFILES = $(nodist_bin_SCRIPTS) chktest
 
 # chktex tests
 TESTS = chktex.test
@@ -358,9 +357,9 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-ChkTeX.tmp: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/ChkTeX.tex.in
+ChkTeX.tmp: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.6/ChkTeX.tex.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
-deweb.pl: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.4/deweb.in
+deweb.pl: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.6/deweb.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
@@ -1020,8 +1019,7 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS) $(DATA) config.h \
-		all-local
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS) $(DATA) config.h
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(configdir)" "$(DESTDIR)$(pdfdocdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -1053,7 +1051,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1141,10 +1138,10 @@ uninstall-man: uninstall-man1
 .MAKE: all check-am install-am install-data-am install-strip \
 	uninstall-am
 
-.PHONY: CTAGS GTAGS all all-am all-local am--refresh check check-TESTS \
-	check-am clean clean-binPROGRAMS clean-generic ctags dist \
-	dist-all dist-bzip2 dist-gzip dist-hook dist-lzip dist-lzma \
-	dist-shar dist-tarZ dist-xz dist-zip distcheck distclean \
+.PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
+	clean clean-binPROGRAMS clean-generic ctags dist dist-all \
+	dist-bzip2 dist-gzip dist-hook dist-lzip dist-lzma dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
 	distclean-compile distclean-generic distclean-hdr \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
@@ -1204,20 +1201,6 @@ uninstall-links:
 
 install-data-hook: install-perl-links
 uninstall-hook: uninstall-links
-
-ChkTeX.pdf: $(PDF_DEPEND)
-	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
-	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
-
-.PHONY: build-tex
-all-local: stamp-tex
-stamp-tex: ChkTeX.tmp
-	$(MAKE) $(AM_MAKEFLAGS) build-tex
-	$(MAKE) $(AM_MAKEFLAGS) ChkTeX.pdf
-	echo timestamp >$@
-build-tex:
-	cmp -s ChkTeX.tmp $(srcdir)/ChkTeX.tex \
-	  || cp ChkTeX.tmp $(srcdir)/ChkTeX.tex
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

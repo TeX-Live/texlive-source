@@ -76,29 +76,9 @@ config_DATA = $(CHKTEX_TREE)/chktexrc
 # documentation
 pdfdocdir = $(datarootdir)/texmf/doc/chktex
 
-dist_pdfdoc_DATA = ChkTeX.pdf
+dist_pdfdoc_DATA = $(CHKTEX_TREE)/ChkTeX.pdf
 
-ChkTeX.pdf: $(PDF_DEPEND)
-	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
-	$(PDFLATEX) -interaction batchmode $(srcdir)/ChkTeX.tex
-
-CLEANFILES = $(nodist_bin_SCRIPTS) ChkTeX.aux ChkTeX.log
-
-## We distribute ChkTeX.tex (generated from $(CHKTEX_TREE)/ChkTeX.tex.in)
-## and ChkTeX.pdf, but also need rules to create them if missing or
-## (in maintainer-mode) to update them if required.
-.PHONY: build-tex
-all-local: stamp-tex
-stamp-tex: ChkTeX.tmp
-	$(MAKE) $(AM_MAKEFLAGS) build-tex
-	$(MAKE) $(AM_MAKEFLAGS) ChkTeX.pdf
-	echo timestamp >$@
-DISTCLEANFILES = stamp-tex
-build-tex:
-	cmp -s ChkTeX.tmp $(srcdir)/ChkTeX.tex \
-	  || cp ChkTeX.tmp $(srcdir)/ChkTeX.tex
-
-EXTRA_DIST += ChkTeX.tex
+CLEANFILES = $(nodist_bin_SCRIPTS)
 
 # chktex tests
 TESTS = chktex.test

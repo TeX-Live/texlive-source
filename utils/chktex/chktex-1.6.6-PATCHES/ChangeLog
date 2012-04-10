@@ -1,3 +1,18 @@
+2012-04-10  Karl Berry  <karl@tug.org>
+
+	* patch-01-const,
+	* patch-02-bug,
+	* patch-03-texlive,
+	* patch-04-strcpy-bug,
+	* patch-05-ctype-bug: apparently installed upstream, yay.
+	
+	* patch-06-extern: not installed, but HashWord and HASH_TYPE are
+	only used in that one .c file anyway, so it seems fine to me for
+	them to be defined there.  Admittedly the function should be static.
+	Did not apply or change, sorry.
+
+	* TL-Changes: update for chktex 1.6.6.
+
 2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-extern (new): Move decls from Utility.c to Utility.h.
