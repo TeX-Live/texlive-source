@@ -48,7 +48,14 @@ fi
 : ${TL_BUILD_ENV=}
 if test "x$1" = x--debug || test "x$1" = x-g; then
   shift
-  TL_BUILD_ENV="CFLAGS='-g $TL_GCFLAGS' CXXFLAGS=-g OBJCFLAGS=-g $TL_BUILD_ENV"
+  # The idea is that with Build -g, you can set TL_COMPILER_GFLAGS in
+  # the environment with options common to all three compilers used.
+  # Not necessarily anything to do with debugging, e.g., -mcpu=sparvc9.
+  : ${TL_COMPILER_GFLAGS=-g}
+  c="CFLAGS='$TL_COMPILER_GFLAGS'"
+  cxx="CXXFLAGS='$TL_COMPILER_GFLAGS'"
+  objc="OBJCFLAGS='$TL_COMPILER_GFLAGS'"
+  TL_BUILD_ENV="$c $cxx $objc $TL_BUILD_ENV"
 fi
 
 test -d $TL_WORKDIR || mkdir $TL_WORKDIR
@@ -84,9 +91,12 @@ cd $TL_WORKDIR || exit 1
 # configure && make.  Keep the tee outside, so that we can detect
 # failure at either step.
 {
-  echo starting `date` on `uname -a`
+  echo "starting `date`"
+  echo "on `uname -a`"
   echo "$0 $*"
   echo
+  env | sort >buildenv.txt
+  #
   set -vx  # show the configure and make commands in the log.
 
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
