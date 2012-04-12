@@ -1,3 +1,9 @@
+2012-04-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* bibtex.ch: Do not check whether ent_str_size > buf_size and
+	glob_str_size > buf_size, because buf_size can be changed dynamically,
+	whereas ent_str_size and glob_str_size are constants.
+ 
 2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

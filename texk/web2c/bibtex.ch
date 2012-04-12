@@ -290,6 +290,12 @@ if (hash_prime >= (16384-64)) then              bad:=10*bad+6;
 if (hash_base <> 1) then                        bad:=10*bad+6;
 @z
 
+@x [17] remove the following, since buf_size changes dynamically.
+if (ent_str_size > buf_size) then               bad:=10*bad+9;
+if (glob_str_size > buf_size) then              bad:=100*bad+11;
+@y
+@z
+
 @x [22, 23, 27, 28] Allow any character as input. [22]
 @!ASCII_code=0..127;    {seven-bit numbers}
 @y
