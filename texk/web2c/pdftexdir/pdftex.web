@@ -1,4 +1,4 @@
-% Copyright (c) 1996-2011 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh,
+% Copyright (c) 1996-2012 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh,
 % <thanh@@pdftex.org>
 
 % This file is part of pdfTeX.
@@ -5674,8 +5674,10 @@ that will be defined later.
 @d pdf_append_kern_code      = pdftex_first_integer_code + 23 {append kern before certain characters?}
 @d pdf_gen_tounicode_code    = pdftex_first_integer_code + 24 {generate ToUnicode for fonts?}
 @d pdf_draftmode_code        = pdftex_first_integer_code + 25 {switch on draftmode if positive}
-@d pdf_inclusion_copy_font_code     = pdftex_first_integer_code + 26 {generate ToUnicode for fonts?}
-@d pdf_int_pars=pdftex_first_integer_code + 27 {total number of \pdfTeX's integer parameters}
+@d pdf_inclusion_copy_font_code = pdftex_first_integer_code + 26 {generate ToUnicode for fonts?}
+@d pdf_suppress_warning_dup_dest_code    = pdftex_first_integer_code + 27 {suppress warning about duplicated destinations}
+@d pdf_suppress_warning_dup_map_code     = pdftex_first_integer_code + 28 {suppress warning about duplicated map lines}
+@d pdf_int_pars=pdftex_first_integer_code + 29 {total number of \pdfTeX's integer parameters}
 @#
 @d etex_int_base=pdf_int_pars {base for \eTeX's integer parameters}
 @d tracing_assigns_code=etex_int_base {show assignments}
@@ -5781,6 +5783,8 @@ that will be defined later.
 @d pdf_image_apply_gamma == int_par(pdf_image_apply_gamma_code)
 @d pdf_draftmode        == int_par(pdf_draftmode_code)
 @d pdf_inclusion_copy_font == int_par(pdf_inclusion_copy_font_code)
+@d pdf_suppress_warning_dup_dest == int_par(pdf_suppress_warning_dup_dest_code)
+@d pdf_suppress_warning_dup_map == int_par(pdf_suppress_warning_dup_map_code)
 @#
 @d tracing_assigns==int_par(tracing_assigns_code)
 @d tracing_groups==int_par(tracing_groups_code)
@@ -5882,7 +5886,9 @@ pdf_prepend_kern_code:    print_esc("pdfprependkern");
 pdf_append_kern_code:    print_esc("pdfappendkern");
 pdf_gen_tounicode_code:    print_esc("pdfgentounicode");
 pdf_draftmode_code:        print_esc("pdfdraftmode");
-pdf_inclusion_copy_font_code:    print_esc("pdfinclusioncopyfonts");
+pdf_inclusion_copy_font_code:   print_esc("pdfinclusioncopyfonts");
+pdf_suppress_warning_dup_dest_code:  print_esc("pdfsuppresswarningdupdest");
+pdf_suppress_warning_dup_map_code:   print_esc("pdfsuppresswarningdupmap");
 @/@<Cases for |print_param|@>@/
 othercases print("[unknown integer parameter!]")
 endcases;
@@ -6060,6 +6066,10 @@ primitive("pdfdraftmode",assign_int,int_base+pdf_draftmode_code);@/
 @!@:pdf_draftmode_}{\.{\\pdfdraftmode} primitive@>
 primitive("pdfinclusioncopyfonts",assign_int,int_base+pdf_inclusion_copy_font_code);@/
 @!@:pdf_inclusion_copy_font_}{\.{\\pdfinclusioncopyfonts} primitive@>
+primitive("pdfsuppresswarningdupdest",assign_int,int_base+pdf_suppress_warning_dup_dest_code);@/
+@!@:pdf_suppress_warning_dup_dest_}{\.{\\pdfsuppresswarningdupdest} primitive@>
+primitive("pdfsuppresswarningdupmap",assign_int,int_base+pdf_suppress_warning_dup_map_code);@/
+@!@:pdf_suppress_warning_dup_map_}{\.{\\pdfsuppresswarningdupmap} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
 assign_int: if chr_code<count_base then print_param(chr_code-int_base)
@@ -14976,6 +14986,12 @@ in C.
 begin
     get_pdf_compress_level := pdf_compress_level;
 end;
+
+function get_pdf_suppress_warning_dup_map: integer;
+begin
+    get_pdf_suppress_warning_dup_map := pdf_suppress_warning_dup_map;
+end;
+
 
 function get_nullfont: internal_font_number;
 begin
@@ -34417,6 +34433,8 @@ with the same identifier already exists and give a warning if needed.
 @<Declare procedures needed in |pdf_hlist_out|, |pdf_vlist_out|@>=
 procedure warn_dest_dup(id: integer; byname: small_number; s1, s2: str_number);
 begin
+    if pdf_suppress_warning_dup_dest > 0 then
+        return;
     pdf_warning(s1, "destination with the same identifier (", false, false);
     if byname > 0 then begin
         print("name");

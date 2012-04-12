@@ -48,6 +48,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define enc_eof()       feof(encfile)
 #define pdftex_fail     ttf_fail
 
+#define print_str(S)    if (S != NULL) fprintf(outfile, #S " %s\n", escape_eol(S))
 #define print_dimen(N)  if (N != 0) fprintf(outfile, #N " %i\n", (int)get_ttf_funit(N))
 
 #define get_ttf_funit(n) \
@@ -748,21 +749,26 @@ static void print_char_metric(FILE * f, int charcode, long glyph_index)
             (int) get_ttf_funit(mtx_tab[glyph_index].bbox[3]));
 }
 
-static void print_str(char *s)
+static char * escape_eol(char *s)
 {
     char *p, *e;
+    char *dest, *d;
 
     if (s == NULL)
-        return;
+        return NULL;
 
+    dest = d = xtalloc(2*strlen(s), char);
     e = strend(s);
     for (p = s; p < e; p++) {
-        if (*p == 10 || *p == 13)
-            fputs("\\n", outfile);
+        if (*p == 10 || *p == 13) {
+            *d++ = '\\';
+            *d++ = 'n';
+        }
         else
-            fputc(*p, outfile);
+            *d++ = *p;
     }
-    fputs("\n", outfile);
+    *d = 0;
+    return dest;
 }
 
 static void print_afm(char *date, char *fontname)

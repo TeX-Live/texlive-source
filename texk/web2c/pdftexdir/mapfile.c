@@ -1,5 +1,5 @@
 /* mapfile.c: handling of map files/lines
-Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2012 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -179,6 +179,7 @@ int avl_do_entry(fm_entry * fm, int mode)
     fm_entry *p;
     void *a;
     void **aa;
+    boolean suppress_warn = (getpdfsuppresswarningdupmap() > 0);
 
     /* handle tfm_name link */
 
@@ -187,9 +188,10 @@ int avl_do_entry(fm_entry * fm, int mode)
         if (p != NULL) {
             switch (mode) {
             case FM_DUPIGNORE:
-                pdftex_warn
-                    ("fontmap entry for `%s' already exists, duplicates ignored",
-                     fm->tfm_name);
+                if (!suppress_warn)
+                    pdftex_warn
+                        ("fontmap entry for `%s' already exists, duplicates ignored",
+                         fm->tfm_name);
                 goto exit;
                 break;
             case FM_REPLACE:

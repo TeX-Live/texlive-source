@@ -1,3 +1,19 @@
+2012-04-12  Thanh Han The  <thanh@river-valley.org>
+
+	* ttf2afm.c (print_str): new macro, replacing function.
+	(escape_eol): new fn, replacing print_str, now returning a string.
+
+	* writettf.c (ttf_reindex_glyphs): use %n to sscanf forms
+	uniABCD and index123. 
+
+	* mapfile.c (suppress_warn): way to avoid dup warnings.
+	
+	* pdftex.web (pdf_suppress_warning_dup_dest_code,
+	pdf_suppress_warning_dup_dest_code): new primitives
+	\pdfsuppresswarningdupdest and \pdfsuppresswarningdupmap.
+	(get_pdf_suppress_warning_dup_map): new fn.
+	(warn_dest_dup): check pdf_suppress_warning_dup_dest.
+
 2012-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writejbig2.c (getstreamlen): Change type to `off_t'.
