@@ -1,3 +1,10 @@
+2012-04-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* bibtex-2.c: Do not check whether Glob_Str_Size > Buf_Size,
+	and Ent_Str_size > Buf_Size, since Buf_Size can be changed
+	dynamically, whereas Glob_Str_Size and Ent_Str_Size are maximum
+	values which are constants.
+
 2012-04-10  Norbert Preining  <preining@logic.at>
 
 	* bibtex-2.c: Do not check whether Glob_Str_Size > Buf_Size,
