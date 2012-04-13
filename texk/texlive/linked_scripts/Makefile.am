@@ -118,6 +118,7 @@ texmf_dist_other_scripts = \
 	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
+	pedigree-perl/pedigree.pl \
 	perltex/perltex.pl \
 	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
