@@ -120,8 +120,12 @@ struct option
 #if defined(__GNU_LIBRARY__) || defined (WIN32) || defined (__CYGWIN__)
 /* Many other libraries have conflicting prototypes for getopt, with
    differences in the consts, in stdlib.h.  To avoid compilation
-   errors, only prototype getopt for the GNU C library.  */
+   errors, only prototype getopt for the GNU C library.  And not when
+   compiling with C++; g++ 4.7.0 has introduced a conflicting
+   declaration.  */
+#if !defined (__cplusplus)
 extern KPSEDLL int getopt (int argc, char *const *argv, const char *shortopts);
+#endif
 #if defined (__MINGW32__) || defined (__CYGWIN__)
 #define __GETOPT_H__ /* Avoid that <unistd.h> redeclares the getopt API.  */
 #endif

@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 25027 $';
+my $svnrev = '$Revision: 25907 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -265,10 +265,11 @@ sub platform_name {
   my $CPU; # CPU type as reported by config.guess.
   my $OS;  # O/S type as reported by config.guess.
   ($CPU = $guessed_platform) =~ s/(.*?)-.*/$1/;
-  $CPU =~ s/^alpha(.*)/alpha/;   # alphaev56 or whatever
-  $CPU =~ s/armv7l/armel/;       # arm
-  $CPU =~ s/powerpc64/powerpc/;  # we don't distinguish ppc64
-  $CPU =~ s/mips64el/mipsel/;    # we don't distinguish mips64 and 32 el
+  $CPU =~ s/^alpha(.*)/alpha/;   # alphaev whatever
+  $CPU =~ s/armv7l/armel/;       # arm whatever
+  $CPU =~ s/powerpc64/powerpc/;  # don't distinguish ppc64
+  $CPU =~ s/sparc64/sparc/;      # don't distinguish sparc64
+  $CPU =~ s/mips64el/mipsel/;    # don't distinguish mips64 and 32 el
 
   my @OSs = qw(aix cygwin darwin freebsd hpux irix
                kfreebsd linux netbsd openbsd solaris);
@@ -2497,12 +2498,15 @@ sub make_var_skeleton {
 
 =item C<make_local_skeleton($prefix)>
 
-Generate a skeleton of empty directories in the C<TEXMFLOCAL> tree.
+Generate a skeleton of empty directories in the C<TEXMFLOCAL> tree 
+if C<TEXMFLOCAL> doesn't already exist.
 
 =cut
 
 sub make_local_skeleton {
   my $prefix=shift;
+
+  return if (-d $prefix);
 
   mkdirhier "$prefix/tex/latex/local";
   mkdirhier "$prefix/tex/plain/local";
@@ -2514,6 +2518,7 @@ sub make_local_skeleton {
   mkdirhier "$prefix/fonts/source/local";
   mkdirhier "$prefix/fonts/type1/local";
   mkdirhier "$prefix/metapost/local";
+  mkdirhier "$prefix/doc/local";
   mkdirhier "$prefix/web2c";
 }
 
