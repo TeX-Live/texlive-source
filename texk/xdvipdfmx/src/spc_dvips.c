@@ -22,6 +22,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
+#include <string.h>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -189,7 +191,7 @@ spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
 
   ASSERT(spe && args);
 
-  spc_warn(spe, "ps:plotfile found (not properly implemented)");
+  spc_warn(spe, "\"ps: plotfile\" found (not properly implemented)");
 
   skip_white(&args->curptr, args->endptr);
   filename = parse_filename(&args->curptr, args->endptr);
@@ -225,10 +227,7 @@ spc_handler_ps_literal (struct spc_env *spe, struct spc_arg *args)
   int     st_depth, gs_depth;
   double  x_user, y_user;
 
-  ASSERT(spe && args);
-
-  if (args->curptr >= args->endptr)
-    return  -1;
+  ASSERT(spe && args && args->curptr <= args->endptr);
 
   if (args->curptr + strlen(":[begin]") <= args->endptr &&
       !strncmp(args->curptr, ":[begin]", strlen(":[begin]"))) {
@@ -846,8 +845,8 @@ static struct spc_handler dvips_handlers[] = {
   {"header",      spc_handler_ps_header},
   {"PSfile",        spc_handler_ps_file},
   {"psfile",        spc_handler_ps_file},
-  {"ps: plotfile",  spc_handler_ps_plotfile}, /* FIXME */
-  {"PS: plotfile",  spc_handler_ps_plotfile}, /* FIXME */
+  {"ps: plotfile ", spc_handler_ps_plotfile},
+  {"PS: plotfile ", spc_handler_ps_plotfile},
   {"PS:",           spc_handler_ps_literal},
   {"ps:",           spc_handler_ps_literal},
   {"PST:",          spc_handler_ps_trickscmd},
@@ -942,10 +941,14 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 	 isalpha(args->curptr[0])) {
     args->curptr++;
   }
-  /* ps:: --> : */
+  /* Test for "ps:". The "ps::" special is subsumed under this case.  */
   if (args->curptr < args->endptr &&
       args->curptr[0] == ':') {
     args->curptr++;
+    if (args->curptr+strlen(" plotfile ") <= args->endptr &&
+	!strncmp(args->curptr, " plotfile ", strlen(" plotfile "))) {
+      args->curptr += strlen(" plotfile ");
+      }
   } else if (args->curptr+1 < args->endptr &&
              args->curptr[0] == '"' && args->curptr[1] == ' ') {
     args->curptr += 2;
