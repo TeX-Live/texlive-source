@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2006 Boris Veytsman & Leila Akhmadeeva
+# Copyright (C) 2006-2012 Boris Veytsman & Leila Akhmadeeva
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ Pedigree::MarriageNode(3), Pedigree::Area(3).
 
 =head1  AUTHOR
 
-Boris Veytsman, Leila Akhmadeeva, 2006, 2007
+Boris Veytsman, Leila Akhmadeeva, 2006-2012
 
 
 =cut
@@ -105,18 +105,18 @@ Boris Veytsman, Leila Akhmadeeva, 2006, 2007
 use strict;
 use vars qw($opt_c $opt_d $opt_o $opt_s $opt_v);
 
-##############################
-# TeXLive compatibility stuff
-##############################
-my $TLMaster;      # Where TeXlive is
-my $TLCONF;        # TL config file
-my $TLCONFLOCAL;   # TL local config file
-chomp($TLMaster = `kpsewhich -var-value=SELFAUTOPARENT`);
-if (length($TLMaster)) {
-    unshift @INC, "$TLMaster/texmf-dist/scripts/pedigree-perl";
-    $TLCONF = "$TLMaster/texmf-config/pedigree/pedigree.cfg";
-    chomp($TLCONFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
-    $TLCONFLOCAL .= "/pedigree/pedigree.cfg";
+our $TLCONF;        # TL config file
+our $TLCONFLOCAL;   # TL local config file
+
+BEGIN {
+    # find files relative to our installed location within TeX Live
+    chomp(my $TLMaster = `kpsewhich -var-value=SELFAUTOPARENT`); # TL root
+    if (length($TLMaster)) {
+	unshift @INC, "$TLMaster/texmf-dist/scripts/pedigree-perl";
+	$TLCONF = "$TLMaster/texmf-config/pedigree/pedigree.cfg";
+	chomp($TLCONFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
+	$TLCONFLOCAL .= "/pedigree/pedigree.cfg";
+    }
 }
 
 use Getopt::Std;
@@ -129,9 +129,9 @@ use Pedigree;
 
 my $USAGE="Usage: $0 [-c configuration_file] [-d] [-o output_file] [-s start_id] input_file\n";
 my $COPYRIGHT=<<END;
-$0 Version 0.4, July 2012
+$0 Version 1.0, April 2012
 
-Copyright (C) 2006, 2007, 2012 Boris Veytsman & Leila Akhmadeeva
+Copyright (C) 2006-2012 Boris Veytsman & Leila Akhmadeeva
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
