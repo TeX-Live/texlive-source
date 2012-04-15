@@ -1,3 +1,7 @@
+2012-04-15  Karl Berry  <karl@tug.org>
+
+	* pdftex.web (pdftex_revision, pdftex_version_string)
+
 2012-04-12  Thanh Han The  <thanh@river-valley.org>
 
 	* ttf2afm.c (print_str): new macro, replacing function.

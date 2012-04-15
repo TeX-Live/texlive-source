@@ -296,8 +296,8 @@ known as `\eTeX'.
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
-@d pdftex_revision=="12" { \.{\\pdftexrevision} }
-@d pdftex_version_string=='-1.40.12' {current \pdfTeX\ version}
+@d pdftex_revision=="13" { \.{\\pdftexrevision} }
+@d pdftex_version_string=='-1.40.13' {current \pdfTeX\ version}
 @#
 @d pdfTeX_banner=='This is pdfTeX, Version 3.1415926',eTeX_version_string,pdftex_version_string
    {printed when \pdfTeX\ starts}
