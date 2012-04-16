@@ -44,8 +44,8 @@ extern str_list_type *kpathsea_db_search_list (kpathsea kpse,
                                                boolean all);
 
 /* Insert the filename FNAME into the database.
-   Called by mktexpk et al.  */
-extern KPSEDLL void kpathsea_db_insert (kpathsea kpse, const_string fname);
+   Called by mktex() in tex-make.c.  */
+extern void kpathsea_db_insert (kpathsea kpse, const_string fname);
 
 #endif /* MAKE_KPSE_DLL */
 

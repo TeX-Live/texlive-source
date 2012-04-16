@@ -7,9 +7,6 @@
  * change current dir to tmp.
  */
 
-#define WINWEB2CVERSION "Web2C-2011"
-#define WINKPSEVERSION  " Kpathsea-6.0.1"
-
 #include <kpathsea/kpathsea.h>
 
 #include "dirutil.h"
@@ -32,8 +29,8 @@ usage (void)
 static void
 version (void)
 {
-  fprintf (stderr, "%s, (C version 1.4 --ak 2009-2011)\n", progname);
-  fprintf (stderr, WINWEB2CVERSION WINKPSEVERSION "\n");
+  fprintf (stderr, "%s, (C version 1.4 --ak 2009-2012)\n", progname);
+  fprintf (stderr, WEB2C_KPSE_VERSION "\n");
   return;
 }
 

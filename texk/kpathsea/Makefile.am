@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -137,7 +137,6 @@ normal_headers = \
 	c-stat.h \
 	c-std.h \
 	c-unistd.h \
-	cnf.h \
 	concatn.h \
 	debug.h \
 	expand.h \
@@ -162,6 +161,7 @@ normal_headers = \
 	version.h
 
 noinst_HEADERS = \
+	cnf.h \
 	db.h \
 	default.h \
 	fn.h \

@@ -1,5 +1,5 @@
 dnl
-dnl   Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -12,9 +12,7 @@ dnl     a.b.c => a.b.c+1
 dnl   Adding new interfaces (backwards compatible)
 dnl     a.b.c => a.b+1.0
 dnl   Modifying or revoking interfaces (not backwards compatible)
-dnl     a.b.c => a+1.b.c
-dnl     kpse_lib_minor = 0;
-dnl     kpse_lib_micro = 0;
+dnl     a.b.c => a+1.0.0
 dnl
 dnl   After a release:
 dnl     append "dev", to distinguish binaries built between releases.

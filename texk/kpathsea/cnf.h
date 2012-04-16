@@ -1,6 +1,6 @@
 /* cnf.h: runtime config files.
 
-   Copyright 1994, 1995, 2008 Karl Berry.
+   Copyright 1994, 1995, 2008, 2012 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -19,6 +19,8 @@
 #ifndef KPATHSEA_CNF_H
 #define KPATHSEA_CNF_H
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
@@ -26,10 +28,8 @@
    On the first call, also read all the `texmf.cnf' files in the
    path for kpse_cnf_format (and initialize the path).  */
 
-extern KPSEDLL string kpathsea_cnf_get (kpathsea kpse, const_string name);
+extern string kpathsea_cnf_get (kpathsea kpse, const_string name);
 
-#if defined(KPSE_COMPAT_API)
-extern KPSEDLL string kpse_cnf_get (const_string var);
-#endif
+#endif /* MAKE_KPSE_DLL */
 
 #endif /* not KPATHSEA_CNF_H */

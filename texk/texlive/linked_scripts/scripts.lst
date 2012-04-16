@@ -44,6 +44,7 @@ ebong/ebong.py
 epspdf/epspdf.rb
 epspdf/epspdftk.tcl
 epstopdf/epstopdf.pl
+exceltex/exceltex
 fig4latex/fig4latex
 findhyph/findhyph
 fontools/afm2afm
@@ -72,6 +73,7 @@ musixtex/musixtex.lua
 oberdiek/pdfatfi.pl
 pax/pdfannotextractor.pl
 pdfcrop/pdfcrop.pl
+pedigree-perl/pedigree.pl
 perltex/perltex.pl
 pkfix/pkfix.pl
 pkfix-helper/pkfix-helper

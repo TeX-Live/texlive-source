@@ -1,9 +1,10 @@
 ## Makefile.am for the TeX Live subdirectory texk/dviljk/win32/
 ##
-## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
+INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
+AM_CPPFLAGS = -DWEB2C_KPSE_VERSION='"Web2C-$(WEB2CVERSION) Kpathsea-$(KPSEVERSION)"'
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 # Build WIN32 replacements for Unix shell scripts.

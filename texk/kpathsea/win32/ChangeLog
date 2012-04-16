@@ -1,3 +1,9 @@
+2012-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): Define WEB2C_KPSE_VERSION.
+	* mktexpk.c, mktextfm.c: Drop WINWEB2CVERSION, WINKPSEVERSION,
+	use WEB2C_KPSE_VERSION with versions from configure.
+
 2011-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fmtutil.c: Add parens around assignment used as truth value.

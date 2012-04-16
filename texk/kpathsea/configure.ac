@@ -17,6 +17,9 @@ AC_SUBST([KPSEVERSION], [kpse_version])
 AC_DEFINE([KPSEVERSION], ["kpathsea version kpse_version"])
 KPSE_LT_VERSION([kpse])
 
+m4_include([../../version.ac])[] dnl define tex_live_version
+AC_SUBST([WEB2CVERSION], [tex_live_version])
+
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([kpathsea])
 dnl Include additional code for kpathsea.

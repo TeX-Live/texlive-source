@@ -696,6 +696,7 @@ am__isrc
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
+WEB2CVERSION
 KPSE_LT_VERSINFO
 KPSEVERSION
 target_alias
@@ -2408,6 +2409,10 @@ $as_echo "#define KPSEVERSION \"kpathsea version 6.1.0dev\"" >>confdefs.h
 
 
 KPSE_LT_VERSINFO=7:0:1
+
+
+
+ WEB2CVERSION=2012/dev
 
 
 am__api_version='1.11'

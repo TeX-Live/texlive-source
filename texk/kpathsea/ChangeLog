@@ -1,3 +1,14 @@
+2012-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cnf.[ch]: Drop KPSEDLL from kpathsea_cnf_get(), and remove
+	kpse_cnf_get().
+	* db.h: Drop KPSEDLL from kpathsea_db_insert().
+	* Makefile.am: Do not install cnf.h.
+	* mingw32.h: Add a copyright statement.
+
+	* configure.ac: Subst tex_live_version from ../../version.ac
+	as WEB2CVERSION for WIN32 programs.
+
 2012-04-09  Karl Berry  <karl@tug.org>
 
 	* getopt.h (getopt) [!__cplusplus]: do not declare when compiling
@@ -12,6 +23,12 @@
 
 	* texmf.cnf (glob_str_size): increase from 5000 to 20000 per Akira,
 	06 Apr 2012 10:25:18.
+
+2012-04-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-unistd.h: Declare getopt() (via  <kpathsea/getopt.h>) only
+	for Mingw and Cygwin; for other systems using the GNU C library
+	g++-4.7 might choke on incompatible exception specifications.
 
 2012-03-11  Karl Berry  <karl@tug.org>
 
