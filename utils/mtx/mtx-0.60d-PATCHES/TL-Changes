@@ -1,0 +1,12 @@
+Changes applied to the mtx-0.60d tree as obtained from:
+	http://www.ctan.org/tex-archive/support/m-tx/
+
+Remove:
+	Makefile.in
+	aclocal.m4
+	configure
+	depcomp
+	install-sh
+	missing
+	libp2c/Makefile.in
+

@@ -1,0 +1,7 @@
+## utils/mtx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/mtx/
+dnl
+dnl Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## configure options and TL libraries required for mtx
+KPSE_ENABLE_PROG([mtx])

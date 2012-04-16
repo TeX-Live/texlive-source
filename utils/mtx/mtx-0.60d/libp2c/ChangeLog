@@ -1,0 +1,390 @@
+Wed Mar 10 15:03:20 1999  Alexander L. Belikoff  <abel@blinky>
+
+	* src/p2c.h: DOUBLE defined as double
+
+Tue Mar 31 14:57:26 1998  Alexander L. Belikoff  <abel@blinky>
+
+	* src/trans.h:
+	Magic limits (MININT, MAXINT), causing random p2c bugs on the Alpha replaced
+	with LONG-MIN/MAX from limits.h (integers in Pascal include longs in C,
+	according to p2c)
+
+Tue Sep 23 09:14:22 1997  Harvey J. Stein  <hjstein@bfr.co.il>
+
+	* src/p2c.proto, src/funcs.c, src/p2c.hdrs:
+	Adjustments to get pad to work correctly.
+
+Thu Jul  3 20:41:55 1997  Harvey J. Stein  <hjstein@bfr.co.il>
+
+	* src/p2c.proto, src/sys.p2crc, src/trans.h, src/expr.c, src/funcs.c, src/p2c.hdrs:
+	Bug: Consider:
+
+	   procedure foo(x: array[i..j : integer] of varying[k] of char);
+	   ...
+	   var z : array[3..12] of varying[20] of char;
+	   ...
+	   foo(z);
+
+	This should become something like:
+
+	   foo(int i, int j, int k, char x[j-i+1][k])
+	   ...
+	   char z[10][20];
+	   ...
+	   foo(3, 12, 20, z);
+
+	Instead, it was generating:
+
+	   foo(3, 12, 255, z);
+
+	which totally screws up accessing z.
+
+	Analysis: To do this correctly, p2c has to keep dereferencing z as it
+	processes the hidden arguments i, j, & k so that it's working on an
+	expression of the appropriate type each time it tries to find either
+	the size of the string or the start & end points of arrays.  Instead,
+	it just wasn't.
+
+	Fix done: I couldn't figure out exactly how to do the above.  But, p2c
+	calls strmax_func to get the length of the character string.  I just
+	built some additional dereferencing into it so that it gets the
+	correct length in the above sort of situation.  So, changed
+	strmax_func in expr.c.
+
+
+	Bug: Index(x,y) is a common pascal extension for finding a substring
+	in a string.  p2c handles it but it wasn't working right on Dec code.
+
+	Analysis:  Some dialects of pascal consider x to be the string and y
+	to be the substring.  Others switch x & y.  p2c supports (substring,
+	string), and Dec pascal supports the opposite.
+
+	Fix: There was some support for switching index argument order, but it
+	was tightly coupled to HP compiler directive support.  I added a
+	comment switch ("IndexOrder") for additional control of this feature.
+	Changed func_strpos in funcs.c, and added the switch in trans.h.
+
+Fri Jun 13 07:22:26 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* src/p2c.hdrs, src/p2c.proto, src/pexpr.c, src/decl.c, src/funcs.c:
+	Fixed bug in [truncate] handling - I didn't clear the new Meaning
+	fields (fakenumargs & truncated) at meaning creation time, so they
+	were sometimes showing up on non-truncated variables.  Changed
+	initmeaning (decl.c).
+
+	Moved hidden number_of_args from beginning to end of arg list.  At the
+	beginning it was interfering with the return hidden variable,
+	causing return to not be generated.  Changes were in p_funcdecl
+	(decl.c), func_present (funcs.c), and p_funcarglist (pexpr.c).  Added
+	has_truncate function to pexpr.c to check whether an arg list has the
+	truncated attribute.
+
+	Argument variables were sometimes getting shadowed just because
+	they're initialized.  Problem was in var_reference, which clones
+	Meanings that have constdefns.  But arg variables don't need to be
+	cloned since the constants are handled by p_funcarglist.  So skipped
+	cloning if Meaning's kind is MK_PARAM or MK_VARPARAM.  Previous fix of
+	always cloning, but only copying meanings if not MK_PARAM seems to
+	have been incorrect.
+
+Sun Jun  1 13:15:06 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* src/sys.p2crc, src/trans.h, src/pexpr.c, src/parse.c, src/lex.c, src/p2c.hdrs, src/p2c.proto, src/funcs.c, src/decl.c:
+	Enhancements:
+
+	Added support for [truncate].  This involved:
+	   1. Added a truncated flag & a fakenumargs flag to the Meaning
+	      structure.
+	   2. In p_funcdecl (decl.c), recognizing the [truncate] attribute in
+	      argument lists.  If it's seen, the argument's truncated flag is
+	      set, and it and all arguments following are given default values
+	      (assuming that they don't already have default values).  The
+	      default values gets p2c to automatically generate the correct
+	      number of arguments for calling the subroutine when some are
+	      left out.
+	   3. In p_funcdecl (decl.c), if any of the args are tagged with
+	      [truncate], then add a hidden argument to the front of the
+	      argument list - number_of_args.  Flag it with fakenumargs.
+	   4. In p_funcarglist (pexpr.c), when the fcn has a fakenumargs
+	      parameter as the first parameter, (and truncateisdefalt is zero)
+	      compute the index of the last argument supplied, and pass it as
+	      the first argument in the call.
+	   5. In funcs.c, added func_present to handle the PRESENT(x) calls.
+	      It parses the call, figures out the index of the argument in the
+	      fcns calling sequence (say n), and generates an expression
+	      (number_of_args >= n) to be the output for the PRESENT(x) call.
+	   6. Added new config parameter - TruncateIsDefault to turn off
+	      PRESENT support (in case one doesn't want the extra arg to be
+	      generated).
+
+	Added support for CONTINUE & BREAK.  Just had to basically declare
+	them as keywords in lex.c, and recognize them in parse.c, and declare
+	their tokens in trans.h (since p2c already supported them internally).
+
+	Added descriptions for SkipReIncludes, NoOutput, and TruncateIsDefault
+	to sys.p2crc.
+
+	Bug fixes:
+
+	Bug: args with default values which are also used in local functions
+	lose their default values.
+
+	Attempted fix: in var_reference (pexpr.c), don't zero out the
+	constdefn when the arg is cloned if the arg is a parameter.
+
+	Problems: This works, but it sometimes causes bogus declarations of
+	the old variable to be output.
+
+Wed May 14 14:27:32 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* src/stuff.c, src/p2c.hdrs, src/p2c.proto, src/out.c, src/expr.c, p2c.patch:
+	(Updated p2c.patch for last set of changes)
+
+	Bug: p2c was seg faulting when given expressions such as:
+	   there :=
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' +
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' +
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' +
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' +
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890';
+
+	and:
+
+	   there :=
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' +
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' +
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' +
+	   '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' + where;
+
+	when there is VARYING [XXX] OF CHAR;
+
+	Analysis: There seem to be all sorts of fixed length character arrays
+	around the code.  It seems that especially long expressions and/or
+	character strings can cause them to overflow.
+
+	Fix: I upped some of the limits, which at least avoided core dumps on
+	the code I'm currently processing, but really one needs to go through
+	and properly keep track of the amount copied into strings so as to
+	avoid buffer overruns.  But, this is a real pain in the ass because of
+	the shitty semantics of the standard C library.
+
+	Basically, the stack allocated ones that I noticed in expr.c and out.c
+	I upped to length 2000, and in stuff.c, I upped the size of the
+	strings in formatbuf[] to 4000.
+
+Tue May 13 19:27:00 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* src/lex.c, src/p2c.hdrs, src/p2c.proto, src/trans.c, src/Makefile, src/decl.c, src/expr.c, src/funcs.c:
+	Minor fixes/changes:
+	   -Was calling close in handle_include (lex.c) when it should have
+	    been fclose.
+	   -Modified src/Makefile to allow for using insure on the source code
+	    (to catch memory bugs).
+
+
+	Major fixes:
+
+	Bug: p2c occasionally was freeing memory that was already freed.
+
+	Analysis: This seems to occur sometimes on constant string
+	     definitions because mp->val.s might point to the same string as
+	     mp->constdefn->val.s, and forget_ctx tries to free them both.
+
+	Fix: In decl.c, in forget_ctx: After calling free_value(&mp->val) when
+	     mp->kind == MK_CONST, instead of always calling
+	     freexpr(mp->constdefn), only call it when mp->kind != MK_CONST,
+	     or when mp->constdefn->val.s != mp->val.s.
+
+	     I also tried to fix this by copying mp->val.s in p_constdecl when
+	     creating mp->constdefn->val.s, but never got this to work
+	     correctly, so I commented it out.
+
+
+	Bug: p2c core dumped on:
+
+	     readv(data,         short_string);
+
+	     when data is a packed array[1..7] of char, and
+	     short_string is a packed array[1..3] of char.
+
+	Analysis: What was happening was that in handleread_text (funcs.c),
+	     when the readv argument is an array, it was checking
+	     ord_range(ex->val.type->indextype, ...), and ex was NULL.
+
+	Fix: It seems like this was a typo, so I change it to check
+	     var->... instead of ex->...
+
+
+	Bug: p2c core dumped on:
+
+	     WRITELN('%SQLMOD ', msg);
+
+	     when msg was of type varying[x] of char.
+
+	Analysis: Some part of the code was converting the above string to
+	     "%%SQLMOD %s".  It seems that cleansprintf (from expr.c) didn't
+	     realize that % is escaped by %%, so it thought that there should
+	     be 2 arguments (maybe 3?) for the above printf string instead of
+	     one, and thus was going off of the end of the args list (i.e. -
+	     ex->args[j] out of range).
+
+	Fix: Inside the for loop, if the next character is also a %, then
+	     skip arg processing, and skip the next character (just copy it
+	     into fmtbuf).
+
+
+	Bug: p2c core dumps on:
+
+	     readv(c, i);
+
+	    when c is a char and i is an integer.
+
+	Analysis: In funcs.c, in handleread_text, var is never getting
+	     initialized - it's getting passed in as NULL, and it only gets
+	     set if isstrread is true.  Since c is a char, fex->val.type->kind
+	     is TK_CHAR, not TK_STRING, so isstrread is false, so var fails to
+	     get initialized.
+
+	Fix: After the case that var is set when isstrread is true, if it's
+	     still NULL, we set it to p_expr(NULL).  This prevents the core
+	     dump, but produces incorrect code!  It outputs:
+
+	        fscanf(c, "%ld", &i);
+
+	     when it should more likely be something along the lines of
+	     sscanf(&c, ...) (but safer).
+
+Mon May  5 15:23:04 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* src/out.c, src/p2c.hdrs, src/p2c.proto, src/trans.h, src/decl.c, src/lex.c, p2c.patch:
+	New features (out.c, trans.h):
+	   New parameter NoOutput - setting it to 1 stops p2c from generating
+	   output.  Useful when trying to simulate Dec style modules via
+	   include files - just convert INHERIT to %include, and put
+	   {*NoOutput=1} at the top of each include file, and p2c does the
+	   right thing.  This was done by not pushing characters into the
+	   output stream when nooutput is 1.  The real code changes occur in
+	   out.c, in putc_outf, and puts_outf.  Accumulating the output, but
+	   turning off writes (i.e. - wiring it into flush_outfilebuf) failed
+	   because of timing differences btw when comment directives are
+	   processed and when output occurs.
+
+	Bug fixes:
+
+	   Bug: Some variable declarations weren't getting output.  Most
+	   noticable were the automatically generated Return variables.
+
+	   Analysis: When using the {INTF-ONLY} directive in include files
+	   then the fwd declaration of fcns was being interpreted as the fcn
+	   definition, and so the variables generated when the declaration was
+	   seen were marked as "wasdeclared".  Then, when the code for the
+	   function was being generated, these variables weren't getting
+	   output because "wasdeclared" was 1.  This was most visible from the
+	   automatically generated Return variable, but occasionally happened
+	   to other variables.
+
+	   Fix: in decl.c:activatemeaning - added resetting of "wasdeclared"
+	   if we can identify that the variable is the autogenerated return
+	   variable.  Detected them by snarfing code from isretvar.  But this
+	   was a lousy fix because as mentioned above, there are other
+	   variables which are occasionally affected.  And, it's no longer
+	   needed because of the new NoOutput feature, so I commented out the
+	   change, but left the code there as a reminder of the problem.
+
+
+	   Bug: Comments weren't getting output in the correct places.  This
+	   is a serious problem when using {EMBED comments to insert C code
+	   into the output stream.  Sometimes code from the {EMBED comment
+	   given in an include file showed up in the includer.  Sometimes the
+	   code didn't get emitted at all because of mistiming against
+	   {nooutput} directives.
+
+	   Analysis:  p2c builds up a comment string structure as it parses
+	   the code, and hangs it off of the code's internal representation.
+	   Presumably this is so that when doing code transformations, the
+	   comments are output in the correct places.  However, this seems to
+	   sometimes fail when using %include files.  It seems that the
+	   comments weren't getting processed & output until the current block
+	   was finished.  Included files don't start a new block because one
+	   could conceivably include random snippets of code anywhere you want
+	   (inside of RECORD declarations, for example).  Thus, sometimes
+	   comments from inside the include file don't get processed & output
+	   until well after the include file itself is finished being
+	   processed.
+
+	   Fix: Added the call flushcomments(NULL, -1, -1) to both push_input
+	   and pop_input (in lex.c).  This seems to have fixed it with no
+	   noticable side effects.
+
+Tue Apr 29 18:36:51 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* src/p2c.hdrs, src/p2c.proto, src/lex.c:
+	Added recognition of AND_THEN and OR_ELSE.
+
+	* src/trans.h, src/lex.c, src/p2c.hdrs, src/p2c.proto:
+	Added tracking of files that have been included so that they can
+	optionally be ignored the second time they're seen.  This is needed
+	because a module (say X) can inherit from two other modules (say Y and
+	Z), both of whom inherit from a fourth module (say Z).  Converting the
+	inherits to includes thus gets Z included twice.  If it's not ignored,
+	it causes p2c to start renaming procedures so as to avoid name
+	clashes.
+
+	Added an rc file parameter (skipreincludes) for controling the above
+	action.
+
+	* src/decl.c, src/p2c.hdrs, src/p2c.proto, src/parse.c:
+	Various adjustments & bug fixes suggested by Dave Gillespie:
+
+	decl.c:  Call format_s so that we work with a copy of the string
+	         when removing dollar signs - a little more robust.
+
+	         Missing ! on strcicmp caused bogus externs to be emitted on
+	         some variable declarations.
+
+	parse.c: Sprinkle afew p_attributes around p_block so that p2c
+	         properly parses attributes in front of declaration blocks.
+	         In particular, this fixes the problem where p2c was choking
+	         on [hidden] followed by TYPE, which appears in analytic.pas.
+
+Wed Apr 23 12:17:08 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* src/p2c.proto, src/decl.c, src/p2c.hdrs:
+	Modified addfield so that it removes dollar signs from record field
+	identifiers.  This is more consistent with the handling of other
+	identifiers, and also needed by much of the Pascal code.
+
+Mon Apr 21 10:41:53 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* p2c.patch: Submitted new patch to Dave G.
+
+	* src/p2c.proto, src/lex.c, src/p2c.cat, src/p2c.hdrs, src/Makefile:
+	Changed VALUE from a keyword to a possible keyword when working with
+	Dec Pascal code.  Original code set it to be a keyword for Dec, and a
+	possible keyword otherwise.  However, if it's a keyword, then p2c
+	doesn't accept it the name of a slot in a record.  Since Dec accepts
+	this usage, I figured that VALUE should always be a possible keyword
+	instead of a keyword.
+
+Thu Apr 17 11:33:22 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* p2c.patch: patches generated & mailed to Dave Gillespie
+
+Wed Apr 16 16:26:07 1997  Harvey J. Stein  <hjstein@blinky.bfr.co.il>
+
+	* src/p2c.hdrs, src/p2c.proto, .cvsignore, examples/.cvsignore, src/.cvsignore, src/decl.c, src/p2c.cat:
+	Parser didn't expect a ( after the OTHERWISE keyword.  Modified
+	decl.c to expect it.
+
+	* src/INSTALL, src/citmods.c, src/comment.c, src/decl.c, src/dir.c, src/expr.c, src/funcs.c, src/hpmods.c, src/lex.c, src/loc.p2clib.c, src/loc.p2crc, src/makeproto.c, src/out.c, src/p2c.cat, src/p2c.h, src/p2c.hdrs, src/p2c.proto, src/p2cc.cat, src/p2cc.man, src/p2cc.perl, src/p2clib.c, src/parse.c, src/pexpr.c, src/string.pas, src/system.imp, src/system.m2, src/trans.h, src/turbo.imp:
+	Import of p2c 1.21alpha2
+
+	* src/INSTALL, src/citmods.c, src/comment.c, src/decl.c, src/dir.c, src/expr.c, src/funcs.c, src/hpmods.c, src/lex.c, src/loc.p2clib.c, src/loc.p2crc, src/makeproto.c, src/out.c, src/p2c.cat, src/p2c.h, src/p2c.hdrs, src/p2c.proto, src/p2cc.cat, src/p2cc.man, src/p2cc.perl, src/p2clib.c, src/parse.c, src/pexpr.c, src/string.pas, src/system.imp, src/system.m2, src/trans.h, src/turbo.imp:
+	Initial revision
+
+	* HP/import/asm.imp, HP/import/fs.imp, HP/import/general_0.imp, HP/import/general_1.imp, HP/import/general_2.imp, HP/import/general_3.imp, HP/import/general_4.imp, HP/import/hpib_0.imp, HP/import/hpib_1.imp, HP/import/hpib_2.imp, HP/import/hpib_3.imp, HP/import/iodecl.imp, HP/import/misc.imp, HP/import/rnd.imp, HP/import/sysdevs.imp, HP/import/sysglobals.imp, HP/include/asm.h, HP/include/fs.h, HP/include/general_0.h, HP/include/general_1.h, HP/include/general_2.h, HP/include/general_3.h, HP/include/general_4.h, HP/include/hpib_0.h, HP/include/hpib_1.h, HP/include/hpib_2.h, HP/include/hpib_3.h, HP/include/iodecl.h, HP/include/misc.h, HP/include/rnd.h, HP/include/sysdevs.h, HP/include/sysglobals.h, Makefile, README, examples/Makefile, examples/README, examples/basic.doc, examples/basic.p, examples/c/basic.c, examples/c/cref.c, examples/c/e.c, examples/c/fact.c, examples/c/self.c, examples/cref.p, examples/e.p, examples/fact.p, examples/p2crc, examples/self.p, ftp.README, src/COPYING, src/HISTORY, src/Makefile, src/NOTES, src/README, src/p2c.man, src/stuff.c, src/sys.p2crc, src/trans.c:
+	Import of p2c 1.21alpha2
+
+	* HP/import/asm.imp, HP/import/fs.imp, HP/import/general_0.imp, HP/import/general_1.imp, HP/import/general_2.imp, HP/import/general_3.imp, HP/import/general_4.imp, HP/import/hpib_0.imp, HP/import/hpib_1.imp, HP/import/hpib_2.imp, HP/import/hpib_3.imp, HP/import/iodecl.imp, HP/import/misc.imp, HP/import/rnd.imp, HP/import/sysdevs.imp, HP/import/sysglobals.imp, HP/include/asm.h, HP/include/fs.h, HP/include/general_0.h, HP/include/general_1.h, HP/include/general_2.h, HP/include/general_3.h, HP/include/general_4.h, HP/include/hpib_0.h, HP/include/hpib_1.h, HP/include/hpib_2.h, HP/include/hpib_3.h, HP/include/iodecl.h, HP/include/misc.h, HP/include/rnd.h, HP/include/sysdevs.h, HP/include/sysglobals.h, Makefile, README, examples/Makefile, examples/README, examples/basic.doc, examples/basic.p, examples/c/basic.c, examples/c/cref.c, examples/c/e.c, examples/c/fact.c, examples/c/self.c, examples/cref.p, examples/e.p, examples/fact.p, examples/p2crc, examples/self.p, ftp.README, src/COPYING, src/HISTORY, src/Makefile, src/NOTES, src/README, src/p2c.man, src/stuff.c, src/sys.p2crc, src/trans.c:
+	Initial revision
+

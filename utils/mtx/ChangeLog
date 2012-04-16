@@ -1,0 +1,11 @@
+2012-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt mtx-0.60d to the TeX Live build system.
+
+	* configure.ac: Do not use AC_CONFIG_HEADERS because config.h
+	is not included by the sources.
+	Do not use AC_FUNC_MALLOC because this might redefine malloc()
+	as rpl_malloc().
+
+Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
