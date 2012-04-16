@@ -15,7 +15,7 @@
 % You should have received a copy of the GNU General Public License along with
 % this program.  If not, see <http://www.gnu.org/licenses/>.
 
-% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2012 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -38279,7 +38279,7 @@ f:=cur_val
 procedure@?scan_normal_glue; forward;@t\2@>@/
 procedure@?scan_mu_glue; forward;@t\2@>
 
-@ Here we declare to trivial procedures in order to avoid mutually
+@ Here we declare two trivial procedures in order to avoid mutually
 recursive procedures with parameters.
 
 @<Declare procedures needed for expressions@>=

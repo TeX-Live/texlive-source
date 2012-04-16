@@ -18,6 +18,10 @@
 	(get_pdf_suppress_warning_dup_map): new fn.
 	(warn_dest_dup): check pdf_suppress_warning_dup_dest.
 
+2012-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web: Fixed a typo in TeX text (for e-TeX).
+
 2012-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writejbig2.c (getstreamlen): Change type to `off_t'.

@@ -200,7 +200,7 @@ Isspace (char c)
 
 static char **cmdlist = NULL;
 
-void 
+static void 
 mk_shellcmdlist (const char *v)
 {
   char **p;
@@ -245,7 +245,7 @@ mk_shellcmdlist (const char *v)
 /* Called from maininit.  Not static because also called from
    luatexdir/lua/luainit.c.  */
 
-void
+static void
 init_shell_escape (void)
 {
   if (shellenabledp < 0) {  /* --no-shell-escape on cmd line */
@@ -303,7 +303,7 @@ char_needs_quote (int c)
    should get executed.  And we set CMDNAME to its first word; this is
    what is checked against the shell_escape_commands list.  */
 
-int
+static int
 shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
 {
   char **p;
@@ -1302,7 +1302,7 @@ readtcxfile (void)
 #endif /* TeX || MF [character translation] */
 
 #ifdef XeTeX /* XeTeX handles this differently, and allows odd quotes within names */
-string
+static string
 normalize_quotes (const_string name, const_string mesg)
 {
     int quote_char = 0;
@@ -1349,7 +1349,7 @@ normalize_quotes (const_string name, const_string mesg)
 #else
 /* Normalize quoting of filename -- that is, only quote if there is a space,
    and always use the quote-name-quote style. */
-string
+static string
 normalize_quotes (const_string name, const_string mesg)
 {
     boolean quoted = false;
@@ -2023,6 +2023,7 @@ get_date_and_time (integer *minutes,  integer *day,
   }
 }
 
+#if defined(pdfTeX)
 /*
  Getting a high resolution time.
  */
@@ -2045,27 +2046,7 @@ get_seconds_and_micros (integer *seconds,  integer *micros)
   *micros  = 0;
 #endif
 }
-
-/*
-  Generating a better seed numbers
-  */
-integer
-getrandomseed(void)
-{
-#if defined (HAVE_GETTIMEOFDAY)
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return (tv.tv_usec + 1000000 * tv.tv_usec);
-#elif defined (HAVE_FTIME)
-  struct timeb tb;
-  ftime(&tb);
-  return (tb.millitm + 1000 * tb.time);
-#else
-  time_t myclock = time ((time_t*)NULL);
-  struct tm *tmptr = localtime(&myclock);
-  return (tmptr->tm_sec + 60*(tmptr->tm_min + 60*tmptr->tm_hour));
 #endif
-}
 
 /* Read a line of input as efficiently as possible while still looking
    like Pascal.  We set `last' to `first' and return `false' if we get

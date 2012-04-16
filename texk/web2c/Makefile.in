@@ -1422,20 +1422,19 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
 	mplibdir/ChangeLog $(mpost_web) $(mp_tests) $(libmplib_web) \
 	$(etex_web_srcs) $(etex_ch_srcs) etexdir/ChangeLog \
-	etexdir/INSTALL etexdir/README etexdir/etex_gen.tex \
-	$(etex_tests) tests/wprob.tex etexdir/etrip/etrip.diffs \
-	etexdir/etrip/etrip.fot etexdir/etrip/etrip.log \
-	etexdir/etrip/etrip.out etexdir/etrip/etrip.pl \
-	etexdir/etrip/etrip.tex etexdir/etrip/etrip.typ \
-	etexdir/etrip/etrip1.in etexdir/etrip/etrip2.in \
-	etexdir/etrip/etrip3.in etexdir/etrip/etripin.log \
-	etexdir/etrip/etripman.tex etexdir/etrip/texmf.cnf \
-	etexdir/etrip/trip2.in $(ptex_tests) $(pweb_tests) \
-	$(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptex.defines \
-	ptexdir/pbibtex.ch web2c/cvtbib.sed ptexdir/pdvitype.ch \
-	ptexdir/ppltotf.ch ptexdir/ptftopl.ch ptexdir/COPYRIGHT \
-	ptexdir/COPYRIGHT.jis ptexdir/ChangeLog ptexdir/Changes.txt \
-	ptexdir/INSTALL.txt ptexdir/README.txt \
+	etexdir/etex_gen.tex $(etex_tests) tests/wprob.tex \
+	etexdir/etrip/etrip.diffs etexdir/etrip/etrip.fot \
+	etexdir/etrip/etrip.log etexdir/etrip/etrip.out \
+	etexdir/etrip/etrip.pl etexdir/etrip/etrip.tex \
+	etexdir/etrip/etrip.typ etexdir/etrip/etrip1.in \
+	etexdir/etrip/etrip2.in etexdir/etrip/etrip3.in \
+	etexdir/etrip/etripin.log etexdir/etrip/etripman.tex \
+	etexdir/etrip/texmf.cnf etexdir/etrip/trip2.in $(ptex_tests) \
+	$(pweb_tests) $(ptex_web_srcs) $(ptex_ch_srcs) \
+	ptexdir/ptex.defines ptexdir/pbibtex.ch web2c/cvtbib.sed \
+	ptexdir/pdvitype.ch ptexdir/ppltotf.ch ptexdir/ptftopl.ch \
+	ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis ptexdir/ChangeLog \
+	ptexdir/Changes.txt ptexdir/INSTALL.txt ptexdir/README.txt \
 	ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst \
 	ptexdir/tests/sample.bib tests/memdata1.bst tests/memdata2.bst \
 	tests/memdata3.bst ptexdir/tests/goth10.tfm \

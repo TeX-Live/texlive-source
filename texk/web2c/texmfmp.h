@@ -95,12 +95,6 @@ typedef void* voidpointer;
 #define OUT_FILE gffile
 #define OUT_BUF gfbuf
 #endif /* MF */
-#ifdef MP
-#define TEXMFPOOLNAME "mp.pool"
-#define TEXMFENGINENAME "metapost"
-#define DUMP_FILE memfile
-#define DUMP_FORMAT kpse_mem_format
-#endif /* MP */
 
 /* Restore underscores.  */
 #define kpsedvipsconfigformat kpse_dvips_config_format
@@ -111,7 +105,7 @@ typedef void* voidpointer;
 #define kpsetexpoolformat kpse_texpool_format
 #define kpsetexformat kpse_tex_format
 
-/* Hacks for TeX that are better not to #ifdef, see texmfmp.c.  */
+/* Hacks for TeX that are better not to #ifdef, see lib/openclose.c.  */
 extern int tfmtemp, texinputtype;
 
 /* pdfTeX uses these for pipe support */
@@ -125,9 +119,6 @@ extern void close_file_or_pipe (FILE *);
 #endif
 
 /* Executing shell commands.  */
-extern void mk_shellcmdlist (const char *);
-extern void init_shell_escape (void);
-extern int shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname);
 extern int runsystem (const char *cmd);
 
 /* The entry point.  */
@@ -142,8 +133,6 @@ extern void readtcxfile (void);
 extern string translate_filename;
 #define translatefilename translate_filename
 #endif
-
-extern string normalize_quotes (const_string name, const_string mesg);
 
 #ifdef TeX
 /* The type `glueratio' should be a floating point type which won't
@@ -199,12 +188,11 @@ extern boolean input_line (FILE *);
 #define	dateandtime(i,j,k,l) get_date_and_time (&(i), &(j), &(k), &(l))
 extern void get_date_and_time (integer *, integer *, integer *, integer *);
 
+#if defined(pdfTeX)
 /* Get high-res time info. */
 #define secondsandmicros(i,j) get_seconds_and_micros (&(i), &(j))
 extern void get_seconds_and_micros (integer *, integer *);
-
-/* This routine has to return a scaled value. */
-extern integer getrandomseed (void);
+#endif
 
 /* Copy command-line arguments into the buffer, despite the name.  */
 extern void topenin (void);
@@ -260,10 +248,6 @@ extern void topenin (void);
 #define dumpcore abort
 #else
 #define dumpcore uexit (1)
-#endif
-
-#ifdef MP
-extern boolean callmakempx (string, string);
 #endif
 
 #ifdef MF

@@ -48,8 +48,8 @@
 % TeX is a trademark of the American Mathematical Society.
 % METAFONT is a trademark of Addison-Wesley Publishing Company.
 @y
-
-% e-TeX is copyright (C) 1994,98 by the NTS team; all rights are reserved.
+% e-TeX is copyright (C) 1999-2012 by P. Breitenlohner (1994,98 by the NTS
+% team); all rights are reserved.
 
 % e-TeX and NTS are trademarks of the NTS group.
 % TeX is a trademark of the American Mathematical Society.
@@ -3660,7 +3660,7 @@ f:=cur_val
 procedure@?scan_normal_glue; forward;@t\2@>@/
 procedure@?scan_mu_glue; forward;@t\2@>
 
-@ Here we declare to trivial procedures in order to avoid mutually
+@ Here we declare two trivial procedures in order to avoid mutually
 recursive procedures with parameters.
 
 @<Declare procedures needed for expressions@>=

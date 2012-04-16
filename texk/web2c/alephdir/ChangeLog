@@ -1,3 +1,7 @@
+2012-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eobase.ch: Fixed a typo in TeX text (for e-TeX).
+
 2012-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch: Remove test for end-of-file after undump.

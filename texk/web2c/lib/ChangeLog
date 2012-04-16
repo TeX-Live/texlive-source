@@ -1,3 +1,10 @@
+2012-04-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (mk_shellcmdlist, init_shell_escape,
+	shell_cmd_is_allowed, normalize_quotes): Declare as static.
+	(get_seconds_and_micros): Define only for pdfTeX.
+	(getrandomseed): Removed, MP only.
+
 2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

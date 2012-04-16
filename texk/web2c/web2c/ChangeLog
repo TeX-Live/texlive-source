@@ -1,3 +1,7 @@
+2012-04-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.defines (callmakempx, getrandomseed): Removed, MP only.
+
 2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

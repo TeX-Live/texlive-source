@@ -70,8 +70,6 @@ DISTCLEANFILES += $(nodist_etex_SOURCES) etex.web etex.ch etex-web2c \
 
 EXTRA_DIST += \
 	etexdir/ChangeLog \
-	etexdir/INSTALL \
-	etexdir/README \
 	etexdir/etex_gen.tex
 
 # e-TeX Tests

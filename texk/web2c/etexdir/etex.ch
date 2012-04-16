@@ -3,7 +3,7 @@
 % to be applied to tex.web in order to define the
 % e-TeX program.
  
-% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2012 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -29,7 +29,7 @@
 % TeX is a trademark of the American Mathematical Society.
 % METAFONT is a trademark of Addison-Wesley Publishing Company.
 @y
-% e-TeX is copyright (C) 1999-2011 by P. Breitenlohner (1994,98 by the NTS
+% e-TeX is copyright (C) 1999-2012 by P. Breitenlohner (1994,98 by the NTS
 % team); all rights are reserved. Copying of this file is authorized only if
 % (1) you are P. Breitenlohner, or if (2) you make absolutely no changes to
 % your copy. (Programs such as TIE allow the application of several change
@@ -4964,7 +4964,7 @@ f:=cur_val
 procedure@?scan_normal_glue; forward;@t\2@>@/
 procedure@?scan_mu_glue; forward;@t\2@>
 
-@ Here we declare to trivial procedures in order to avoid mutually
+@ Here we declare two trivial procedures in order to avoid mutually
 recursive procedures with parameters.
 
 @<Declare procedures needed for expressions@>=
