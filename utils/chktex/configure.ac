@@ -8,11 +8,11 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl *********************************************************************
 dnl
-dnl  Adapted for TeX Live from chktex-*/configure.in
+dnl  Adapted for TeX Live from chktex-1.6.4/configure.in
 dnl
 dnl *********************************************************************
 dnl
-m4_define([chktex_version], [1.6.6])[]dnl using unmodified chktex source tree
+m4_include([version.ac])[] dnl define chktex_version
 AC_INIT([ChkTeX for TeX Live], chktex_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([chktex-]chktex_version[/ChkTeX.c])

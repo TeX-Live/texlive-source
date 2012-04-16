@@ -1,3 +1,8 @@
+2012-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-extern: Remove the obsolete ASM_HASHWORD stuff (for
+	Amiga) avoiding extern decls from *.c files.
+
 2012-04-10  Karl Berry  <karl@tug.org>
 
 	* patch-01-const,

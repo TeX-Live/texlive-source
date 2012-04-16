@@ -31,12 +31,7 @@
 #include "Resource.h"
 #include "OpSys.h"
 
-#ifdef ASM_HASHWORD
-extern unsigned short HashWord(const char *a);
-typedef unsigned short HASH_TYPE;
-#else
 typedef unsigned long HASH_TYPE;
-#endif
 
 /***************************** SUPPORT FUNCTIONS ************************/
 
@@ -389,14 +384,12 @@ int strinfront(const char *Str, const char *Cmp)
 /*************************** HASH INDEX **************************/
 
 /*
- * Hashes a string. The string ought be rather short. We use an asm
- * version the Amiga; note that this returns an unsigned short instead.
+ * Hashes a string. The string ought be rather short.
  *
  * The algorithm was designed by Peter Weinberger. This version was
  * adapted from Dr Dobb's Journal April 1996 page 26.
  */
 
-#ifndef ASM_HASHWORD
 static unsigned long HashWord(const char *str)
 {
     register unsigned long h = 0, hbit, c;
@@ -411,7 +404,6 @@ static unsigned long HashWord(const char *str)
 
     return (h);
 }
-#endif
 
 /*
  * Inserts a string into a hash index. Note: You'll have to

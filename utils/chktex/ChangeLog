@@ -1,5 +1,11 @@
+2012-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: New file defining the chktex version.
+	* configure.ac: Adapt.
+
 2012-04-10  Karl Berry  <karl@tug.org>
 
+	Import chktex-1.6.6.
 	* Makefile.am (dist_pdfdoc_DATA): ChkTeX.pdf is now distributed
 	from upstream.
 	(ChkTeX.pdf, CLEANFILES, stamp-tex, all-local,
