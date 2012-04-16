@@ -1,103 +1,134 @@
-#!/usr/bin/perl
+#! /usr/bin/env perl
 
-=pod
+=begin COPYRIGHT
 
-=head1 NAME
+----------------------------------------------------------------------------
 
-ot2kpx - extract kerning information from an OpenType font
+    Copyright (C) 2005-2012 Marc Penninga.
 
-=head1 SYNOPSIS
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation, either version 2
+    of the License, or (at your option) any later version.
 
-ot2kpx I<font>
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-=head1 DESCRIPTION
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to
+        Free Software Foundation, Inc.,
+        59 Temple Place,
+        Suite 330,
+        Boston, MA 02111-1307,
+        USA
 
-In many OpenType fonts, most kerning data is stored in the `GPOS' table rather
-than in the `kern' table. B<ot2kpx> extracts the kerning data from both tables
-and prints it (in F<afm> format) to C<stdout>.
+----------------------------------------------------------------------------
 
-=head1 RESTRICTIONS
-
-=over 2
-
-=item B<->
-
-B<ot2kpx> prints data from all features named `kern', regardless of script
-and language. Maybe it would be better to let the user choose a script
-and language (defaulting to `latn' and `DFLT') and print only the kerning
-data from features associated with these values.
-
-=item B<->
-
-B<ot2kpx> uses only the XAdvance data associated with the first glyph in any
-kerning pair; all other data in the ValueRecords is ignored. I'm not sure 
-whether this is The Right Thing to Do; however, almost always there is
-no other data, so this approach gives correct results (in fact, the only
-font I know of that does contain data other than XAdvance is Linotype
-Palatino; this also contains XAdvDevice data, which is used (according to 
-the OpenType specification) to I<`define subtle, device-dependent adjustments
-at specific font sizes or device resolutions'>. Since there is no way to
-express such adjustments in F<afm> format, ignoring them seems to be the
-only option.)
-
-=back
-
-=head1 SEE ALSO
-
-F<afm2afm>, F<autoinst>, F<cmap2enc>, F<font2afm>, F<pfm2kpx>.
-
-=head1 AUTHOR
-
-Marc Penninga <marc@penninga.info>
-
-=head1 HISTORY
-
-=over 12
-
-=item I<2005-01-10>
-
-First version
-
-=item I<2005-02-18>
-
-Rewrote some of the code
-
-=item I<2005-03-08>
-
-Input files searched via B<kpsewhich> (where available)
-
-=item I<2005-03-15>
-
-Input files searched using B<kpsewhich> or B<findtexmf>
-
-=item I<2005-03-21>
-
-Test if GPOS table is present before trying to read it
-
-=item I<2005-04-29>
-
-Improved the documentation
-
-=item I<2005-05-25>
-
-Changed warning that's given when the font contains no GPOS table, to an
-informational message.
-
-=item I<2005-07-29>
-
-A few updates to the documentation
-
-=back
+=end COPYRIGHT
 
 =cut
 
-##############################################################################
+use strict;
+use warnings;
 
 use integer;
-use warnings; no warnings qw(uninitialized);
+use List::Util @List::Util::EXPORT_OK;
+use Pod::Usage;
 
-@StandardStrings = qw(
+use v5.10;
 
+our ($NUM_GLYPHS, $UNITS_PER_EM, %KPX);
+
+sub main {
+    pod2usage(-verbose => 0) if @ARGV != 1;
+
+    my %font = OTF::get_tables($ARGV[0]);
+
+    $NUM_GLYPHS = unpack '@4n', $font{maxp};
+    $UNITS_PER_EM = unpack '@18n', $font{head};
+
+    my @glyph_name = map { sprintf "index%d", $_ } 0 .. $NUM_GLYPHS - 1;
+    if (defined $font{CFF}) {
+        OTF::CFF::get_glyph_names($font{CFF}, \@glyph_name);
+    }
+
+    if (defined $font{kern}) {
+        OTF::Kern::parse_kerntable($font{kern});
+    }
+
+    if (defined $font{GPOS}) {
+        my @lookup_list_indices
+            = OTF::GPOS::get_lookup_list_indices($font{GPOS});
+        my @all_lookups = OTF::GPOS::get_lookups($font{GPOS});
+        my @lookups = @all_lookups[@lookup_list_indices];
+        my @subtables = map { OTF::GPOS::get_subtables($_) } @lookups;
+
+        for my $subtable (@subtables) {
+            my $pos_format = unpack 'n', $subtable;
+            given ($pos_format) {
+                when (1) { OTF::GPOS::parse_pos_format_1($subtable) }
+                when (2) { OTF::GPOS::parse_pos_format_2($subtable) }
+                default {
+                    warn "[ERROR] invalid PosFormat $pos_format ignored";
+                }
+            }
+        }
+    }
+
+    my $num_kernpairs = sum map { scalar keys %{$KPX{$_}} } keys %KPX;
+    print "StartKernData\nStartKernPairs $num_kernpairs\n";
+    for my $first (sort { $a <=> $b } keys %KPX) {
+        my $first_glyph = $glyph_name[$first];
+        for my $second (sort { $a <=> $b } keys %{$KPX{$first}}) {
+            print "KPX $first_glyph $glyph_name[$second] ",
+                  "$KPX{$first}{$second}\n";
+        }
+    }
+    print "EndKernPairs\nEndKernData\n";
+
+    return;
+}
+
+
+########################################################################
+
+
+package OTF;
+
+#-----------------------------------------------------------------------
+# Return a hash with all tables (as strings) from the font
+#-----------------------------------------------------------------------
+sub get_tables {
+    my $filename = shift;
+
+    open my $fontfile, '<:raw', $filename
+        or die "[ERROR] can't open $filename: $!";
+    my $fontdata = do { local $/; <$fontfile> };
+    close $fontfile;
+
+    my ($sfnt_version, @tables) = unpack 'a4nx6/(a16)', $fontdata;
+
+    die "[ERROR] $filename: unknown font type"
+        unless $sfnt_version eq "\x00\x01\x00\x00"
+            || $sfnt_version eq 'OTTO';
+
+    my %table = map { my ($tag, $offset, $length) = unpack 'A4@8N@12N', $_;
+                      ($tag => substr $fontdata, $offset, $length);
+                    }
+                    @tables;
+
+    return %table;
+}
+
+
+########################################################################
+
+
+package OTF::CFF;
+
+my @STANDARD_STRINGS = qw(
     .notdef space exclam quotedbl
     numbersign dollar percent ampersand
     quoteright parenleft parenright asterisk
@@ -222,437 +253,602 @@ use warnings; no warnings qw(uninitialized);
     Regular Roman Semibold
 );
 
-sub getu($) {
-    my $arg = shift;
-    my $n = length $arg;
-    my $r = 0;
-    
-    for my $i (0 .. $n - 1) {
-        $r = ($r << 8) + unpack("C", substr($arg, $i, 1));
+#-----------------------------------------------------------------------
+#
+#-----------------------------------------------------------------------
+sub get_glyph_names {
+    my ($CFF, $glyph_name) = @_;
+
+    # skip header; parse (and ignore) NAME index
+    my ($rest) = _parse_index(substr $CFF, unpack '@2C', $CFF);
+
+    # parse TopDict index
+    ($rest, my @top_dict) = _parse_index($rest);
+    if (@top_dict > 1) {
+        warn "[WARNING] multiple fonts in single file not supported";
     }
-    
-    return $r;
-}
-
-sub gets16($) {
-    my $v = getu $_[0];
-    if ($v > 0x7FFF) {
-        $v -= 0x10000;
+    my %top_dict = _parse_dict($top_dict[0]);
+    if ($NUM_GLYPHS != unpack 'n', substr($CFF, $top_dict{17}, 2)) {
+        die "[ERROR] NumGlyphs different in 'maxp' and 'CFF' tables";
     }
 
-    return $v;
-}
+    # parse String index
+    ($rest, my @strings) = _parse_index($rest);
+    @strings = (@STANDARD_STRINGS, @strings);
 
-sub getnum($) {
-    my $i;
-    my $r = 0;
-
-    if (${$_[0]}[0] == 28) {
-        shift(@{$_[0]});
-        for $i (0, 1) {
-            $r = ($r << 8) | shift(@{$_[0]});
+    my $charset = substr $CFF, $top_dict{15};
+    my $format = unpack 'C', $charset;
+    given ($format) {
+        when (0) {
+            my @codes = unpack "\@1n@{[ $NUM_GLYPHS - 1 ]}", $charset;
+            @$glyph_name = @strings[0, @codes];
         }
-    } 
-    elsif (${$_[0]}[0] == 29) {
-        shift(@{$_[0]});
-        for $i (0 .. 3) {
-            $r = ($r << 8) | shift(@{$_[0]});
+        when (1) {
+            my $i = 0;
+            $glyph_name->[$i++] = $strings[0];
+            for (my $j = 0; $i < $NUM_GLYPHS; $j++) {
+                my ($first, $n_left)
+                    = unpack "\@@{[ 1 + 3*$j ]}nC", $charset;
+                $glyph_name->[$i + $_] = $strings[$first + $_]
+                    for 0 .. $n_left;
+                $i += 1 + $n_left;
+            }
         }
-    } 
-    elsif (${$_[0]}[0] == 30) {
-	shift @{$_[0]};
-    	$nibbles = "";
-	$nibbles .= sprintf("%02x", shift @{$_[0]}) until $nibbles =~ /f/;
-	$nibbles =~ tr/abef/.E-/d;
-	$nibbles =~ s/c/E-/g;
-    	$r = eval $nibbles;
-    } 
-    elsif (${$_[0]}[0] >= 251) {
-        $r = -256 * (shift(@{$_[0]}) - 251) - shift(@{$_[0]}) - 108;
-    } 
-    elsif (${$_[0]}[0] >= 247) {
-        $r =  256 * (shift(@{$_[0]}) - 247) + shift(@{$_[0]}) + 108;
-    } 
-    else {
-        $r = shift(@{$_[0]}) - 139;
+        when (2) {
+            my $i = 0;
+            $glyph_name->[$i++] = $strings[0];
+            for (my $j = 0; $i < $NUM_GLYPHS; $j++) {
+                my ($first, $n_left)
+                    = unpack "\@@{[ 1 + 4*$j ]}nn", $charset;
+                $glyph_name->[$i + $_] = $strings[$first + $_]
+                    for 0 .. $n_left;
+                $i += 1 + $n_left;
+            }
+        }
+        default {
+            warn "[ERROR] invalid CharsetFormat '$format' ignored";
+        }
     }
 
-    return $r;
+    return;
 }
 
-sub getidx($) {
-    my $n  = getu(substr $_[0], 0, 2);
-    my $sz = getu(substr $_[0], 2, 1);
-    my(@r, @off, @d, $i);
-    for $i (0 .. $n) {
-        $off[$i] = getu(substr $_[0], 3 + $i * $sz, $sz);
+#-----------------------------------------------------------------------
+# Parse Adobe's INDEX format (see CFF spec); return "rest" plus data array
+#-----------------------------------------------------------------------
+sub _parse_index {
+    my $index = shift;
+
+    my ($count, $off_size) = unpack 'nC', $index;
+    my @offsets = unpack "\@3(a$off_size)@{[ $count + 1 ]}", $index;
+    given ($off_size) {
+        when (1) { $_ = unpack 'C', $_ for @offsets }
+        when (2) { $_ = unpack 'n', $_ for @offsets }
+        when (4) { $_ = unpack 'N', $_ for @offsets }
+        when (3) {
+            for my $offset (@offsets) {
+                my @bytes = map 'C3', $offset;
+                $offset = ($bytes[0] << 16) + ($bytes[1] << 8) + $bytes[2];
+            }
+        }
+        default {
+            warn "[ERROR] invalid OffSize $off_size ignored";
+        }
     }
-    for $i (0 .. $n - 1) {
-        $d[$i] = substr $_[0], 2 + ($n + 1) * $sz + $off[$i], 
-	    	$off[$i + 1] - $off[$i];
+    $_ += 2 + $off_size * ($count + 1) for @offsets;
+
+    my @data;
+    for my $i (0 .. $count - 1) {
+        $data[$i]
+            = substr $index, $offsets[$i], $offsets[$i + 1] - $offsets[$i];
     }
 
-    return substr($_[0], 2 + ($n + 1) * $sz + $off[$n]), @d;
+    return substr($index, $offsets[$count]), @data;
 }
 
-sub getcov($) {
-    my $Coverage = shift;
-    my $CoverageFormat = getu(substr $Coverage, 0, 2);
-    my @r = ();
-    if ($CoverageFormat == 1) {
-    	my $GlyphCount = getu(substr $Coverage, 2, 2);
-	for my $i (0 .. $GlyphCount - 1) {
-	    push @r, getu(substr $Coverage, 4 + 2 * $i, 2);
-	}
-    } 
-    elsif ($CoverageFormat == 2) {
-    	my $RangeCount = getu(substr $Coverage, 2, 2);
-	for my $i (0 .. $RangeCount - 1) {
-	    my $RangeRecord = substr $Coverage, 4 + 6 * $i, 6;
-	    my $Start = getu(substr $RangeRecord, 0, 2);
-	    my $End = getu(substr $RangeRecord, 2, 2);
-	    for my $j ($Start .. $End) {
-	    	push @r, $j;
-	    }
-	}
-    } 
-    else {
-    	warn "Warning: unknown CoverageFormat `$CoverageFormat'\n";
-    }
-    return @r;
-}
+#-----------------------------------------------------------------------
+# Parse Adobe's DICT format (see CFF spec); return data hash
+#-----------------------------------------------------------------------
+sub _parse_dict {
+    my $dict = shift;
 
-sub getclass($) {
-    my @c = (0) * $NumGlyphs;
-    my $ClassFormat = getu(substr $_[0], 0, 2);
-    my($i, $j);
-
-    if ($ClassFormat == 1) {
-	my $StartGlyph = getu(substr $_[0], 2, 2);
-	my $GlyphCount = getu(substr $_[0], 4, 2);
-
-	for $i (0 .. $GlyphCount - 1) {
-	    $c[$i + $StartGlyph] = getu(substr $_[0], 6 + 2 * $i, 2);
-	}
-    } 
-    elsif ($ClassFormat == 2) {
-	my $ClassRangeCount = getu(substr $_[0], 2, 2);
-
-	for $i (0 .. $ClassRangeCount - 1) {
-	    my $ClassRangeRecord = substr $_[0], 4 + 6 * $i, 6;
-	    my $Start = getu(substr $ClassRangeRecord, 0, 2);
-	    my $End   = getu(substr $ClassRangeRecord, 2, 2);
-	    my $Class = getu(substr $ClassRangeRecord, 4, 2);
-
-	    for $j ($Start .. $End) {
-        	$c[$j] = $Class;
-	    }
-	}
-    } 
-    else {
-	warn "Warning: unknown ClassFormat `$ClassFormat'\n";
+    my @bytes = unpack 'C*', $dict;
+    my (@operands, %dict);
+    while (@bytes) {
+        given ($bytes[0]) {
+            when ([0 .. 11, 13 .. 22]) {
+                my $operator = shift @bytes;
+                ($dict{$operator} = join q{ }, @operands) =~ s/^\s+//xms;
+                @operands = ();
+            }
+            when (12) {
+                my $operator = join q{ }, splice @bytes, 0, 2;
+                ($dict{$operator} = join q{ }, @operands) =~ s/^\s+//xms;
+                @operands = ();
+            }
+            when ([28, 29, 30, 32 .. 254]) {
+                push @operands, _get_number(\@bytes);
+            }
+            default {
+                warn "[ERROR] invalid byte $bytes[0] in DICT ignored";
+                shift @bytes;
+            }
+        }
     }
 
-    return @c;
+    return %dict;
 }
 
-##############################################################################
+#-----------------------------------------------------------------------
+# Parse Adobe's variable-length numbers (see CFF spec); shorten arg array
+#-----------------------------------------------------------------------
+sub _get_number {
+    my $bytes = shift;
 
-use integer;
-use warnings; no warnings qw(uninitialized);
-
-$0 =~ s!.*/!!;
-die "Usage: $0 fontfile\n" if @ARGV != 1;
-
-if ((chop($fn = `kpsewhich $ARGV[0] 2>&1`) and -e $fn) or
-    (chop($fn = `findtexmf $ARGV[0] 2>&1`) and -e $fn)) 
-{
-    open FONT, "<$fn" or die "Error: can't open `$fn' - $!\n";
-} 
-else {
-    open FONT, "<$ARGV[0]" or 
-	    die "Error: can't open `$ARGV[0]' - $!\n";
-}
-binmode FONT;
-{
-    local $/;
-    $FONT = <FONT>;
-}
-
-$NumTables = getu(substr $FONT, 4, 2);
-for ($i = 0; $i < $NumTables; $i++) {
-$Record = substr $FONT, 12 + 16 * $i, 16;
-    ($Name = substr $Record, 0, 4) =~ s/\s//g;
-    $Offset = getu(substr $Record, 8, 4);
-    $Length = getu(substr $Record, 12, 4);
-    $Table{$Name} = substr $FONT, $Offset, $Length;
-}
-
-$UnitsPerEM = getu(substr $Table{head}, 18, 2);
-$NumGlyphs = getu(substr $Table{maxp}, 4, 2);
-
-if (exists $Table{GPOS}) {
-    $FeatureList = substr $Table{GPOS}, getu(substr $Table{GPOS}, 6, 2);
-    $FeatureCount = getu(substr $FeatureList, 0, 2);
-    for $i (0 .. $FeatureCount - 1) {
-	$FeatureTag = substr $FeatureList, 2 + 6 * $i, 4;
-	$Feature = getu(substr $FeatureList, 6 + 6 * $i, 2);
-	$LookupCount = getu(substr $FeatureList, $Feature + 2, 2);
-	for $j (0 .. $LookupCount - 1) {
-	    push @{$LookupListIndex{$FeatureTag}}, 
-	    	    getu(substr $FeatureList, $Feature + 4 + 2 * $j, 2);
-	}
-    }
-    $LookupList = substr $Table{GPOS}, getu(substr $Table{GPOS}, 8, 2);
-    $LookupCount = getu(substr $LookupList, 0, 2);
-    for $i (0 .. $LookupCount - 1) {
-	$Lookup[$i] = substr $LookupList, 
-	    	getu(substr $LookupList, 2 + 2 * $i, 2);
-    }
-    for $j (@{$LookupListIndex{kern}}) {
-	$LookupTable = $Lookup[$j];
-	$LookupType = getu(substr $LookupTable, 0, 2);
-	$SubTableCount = getu(substr $LookupTable, 4, 2);
-	if ($LookupType != 2) {
-	    warn "Warning: wrong LookupType `$LookupType', table skipped\n";
-	    next;
-	}
-	for $k (0 .. $SubTableCount - 1) {
-    	    $SubTable = substr $LookupTable, 
-	    	    getu(substr $LookupTable, 6 + 2 * $k, 2);
-	    $PosFormat = getu(substr $SubTable, 0, 2);
-	    if ($PosFormat == 1) {
-		$Coverage = substr $SubTable, getu(substr $SubTable, 2, 2);
-		@Coverage = getcov($Coverage);
-        	$ValueFormat1 = getu(substr $SubTable, 4, 2);
-        	$ValueFormat2 = getu(substr $SubTable, 6, 2);
-
-        	if (!($ValueFormat1 & 0x04) || $ValueFormat2 != 0) {
-        	    warn "Warning: ValueFormat `($ValueFormat1, " . 
-		    	 "$ValueFormat2)' not implemented\n";
-        	    next;
-        	}
-        	$PairValueRecordSize = 4;
-        	$ValueOffset = 2;
-		if ($ValueFormat1 & 0x01) {
-	    	    $PairValueRecordSize += 2;
-		    $ValueOffset += 2;
-		}
-		if ($ValueFormat1 & 0x02) {
-	    	    $PairValueRecordSize += 2;
-		    $ValueOffset += 2;
-		}
-		if ($ValueFormat1 & 0x08) {$PairValueRecordSize += 2}
-		if ($ValueFormat1 & 0x10) {$PairValueRecordSize += 2}
-		if ($ValueFormat1 & 0x20) {$PairValueRecordSize += 2}
-		if ($ValueFormat1 & 0x40) {$PairValueRecordSize += 2}
-		if ($ValueFormat1 & 0x80) {$PairValueRecordSize += 2}
-
-		$GlyphCount = @Coverage;
-		$PairSetCount = getu(substr $SubTable, 8, 2);
-		if ($GlyphCount != $PairSetCount) {
-	    	    warn "ERROR: GlyphCount not equal to PairSetCount\n";
-		    next;
-		}
-		for $l (0 .. $#Coverage) {
-	    	    $left = $Coverage[$l];
-	    	    $PairSet = substr $SubTable, 
-		    	    getu(substr $SubTable, 10 + 2 * $l, 2);
-		    $PairValueCount = getu(substr $PairSet, 0, 2);
-
-		    for $r (0 .. $PairValueCount - 1) {
-			$PairValueRecord = substr $PairSet, 
-		    		2 + $r * $PairValueRecordSize, 
-				$PairValueRecordSize;
-			$right = getu(substr $PairValueRecord, 0, 2);
-			$Value = getu(substr $PairValueRecord, $ValueOffset, 2);
-			$KPX{$left}{$right} ||= $Value * 1000 / $UnitsPerEM;
-		    }
-		}
-	    } 
-	    elsif ($PosFormat == 2) {
-		$Coverage = substr $SubTable, getu(substr $SubTable, 2, 2);
-		@Coverage = getcov($Coverage);
-
-		$ValueFormat1 = getu(substr $SubTable, 4, 2);
-		$ValueFormat2 = getu(substr $SubTable, 6, 2);
-
-        	if (!($ValueFormat1 & 0x04) || $ValueFormat2 != 0) {
-        	    warn "Warning: ValueFormat `($ValueFormat1, " . 
-		    	 "$ValueFormat2)' not implemented\n";
-        	    next;
-        	}
-        	$Class2RecordSize = 2;
-        	$ValueOffset = 0;
-		if ($ValueFormat1 & 0x01) {
-	    	    $Class2RecordSize += 2;
-		    $ValueOffset += 2;
-		}
-		if ($ValueFormat1 & 0x02) {
-	    	    $Class2RecordSize += 2;
-		    $ValueOffset += 2;
-		}
-		if ($ValueFormat1 & 0x08) {$Class2RecordSize += 2}
-		if ($ValueFormat1 & 0x10) {$Class2RecordSize += 2}
-		if ($ValueFormat1 & 0x20) {$Class2RecordSize += 2}
-		if ($ValueFormat1 & 0x40) {$Class2RecordSize += 2}
-		if ($ValueFormat1 & 0x80) {$Class2RecordSize += 2}
-
-		$ClassDef1 = getu(substr $SubTable, 8, 2);
-		$ClassDef2 = getu(substr $SubTable, 10, 2);
-		$Class1Count = getu(substr $SubTable, 12, 2);
-		$Class2Count = getu(substr $SubTable, 14, 2);
-		@Class1 = getclass(substr $SubTable, $ClassDef1);
-		@Class2 = getclass(substr $SubTable, $ClassDef2);
-
-		for $l (0 .. $Class1Count - 1) {
-        	    $Class1RecordSize = $Class2Count * $Class2RecordSize;
-        	    $Class1Record = substr $SubTable, 
-		    	    16 + $Class1RecordSize * $l, 
-		    	    $Class1RecordSize;
-
-    	    	    for $m (0 .. $Class2Count - 1) {
-                	$ValueRecord = substr $Class1Record, 
-		    		$Class2RecordSize * $m, $Class2RecordSize;
-                	$Value[$l][$m] = 
-				gets16(substr $ValueRecord, $ValueOffset, 2);
-        	    }
-		}
-
-    		for $m (@Coverage) {
-		    for $n (0 .. $NumGlyphs - 1) {
-			if ($Value = $Value[$Class1[$m]][$Class2[$n]]) {
-                            $KPX{$m}{$n} ||= $Value * 1000 / $UnitsPerEM;
-			}
-		    }
-        	}
-	    } 
-	    else {
-        	warn "Warning: unknown PosFormat `$PosFormat'\n";
-        	next;
-	    }
-	}
-    }
-} 
-
-
-if (exists $Table{kern}) {
-    $nTables = getu(substr $Table{kern}, 2, 2);
-    $startSubTable = 4;
-    for $i (0 .. $nTables - 1) {
-    	$length = getu(substr $Table{kern}, $startSubTable + 2, 2);
-	$coverage = getu(substr $Table{kern}, $startSubTable + 4, 2);
-	if ($coverage != 0x01) {
-	    warn "Warning: format of `kern' table not supported\n";
-	    $startSubTable += $length;
-	    next;
-	}
-	$nPairs = getu(substr $Table{kern}, $startSubTable + 6, 2);
-	for $j (0 .. $nPairs - 1) {
-	    $kernRecord = substr $Table{kern}, $startSubTable + 14 + 6 * $j, 6;
-	    $left = getu(substr $kernRecord, 0, 2);
-	    $right = getu(substr $kernRecord, 2, 2);
-	    $value = gets16(substr $kernRecord, 4, 2);
-	    $KPX{$left}{$right} ||= $value * 1000 / $UnitsPerEM;
-	}
-	$startSubTable += $length;
+    given (my $b0 = shift @$bytes) {
+        when (28) {
+            my ($b1, $b2) = splice @$bytes, 0, 2;
+            return ($b1 << 8) | $b2;
+        }
+        when (29) {
+            my ($b1, $b2, $b3, $b4) = splice @$bytes, 0, 4;
+            return ((((($b1 << 8) + $b2) << 8) + $b3) << 8) + $b4;
+        }
+        when (30) {
+            # Reals not implemented; just dump appropriate number of bytes
+            until (($b0 & 0xf0) == 0xf0 || ($b0 & 0xf) == 0xf) {
+                $b0 = shift @$bytes;
+            }
+        }
+        when ([ 32 .. 246]) {
+            return $b0 - 139;
+        }
+        when ([247 .. 250]) {
+            my $b1 = shift @$bytes;
+            return 256 * ($b0 - 247) + $b1 + 108;
+        }
+        when ([251 .. 254]) {
+            my $b1 = shift @$bytes;
+            return -256 * ($b0 - 251) - $b1 - 108;
+        }
     }
 }
 
 
-if (exists $Table{CFF}) {
-    $HdrSize = getu(substr $Table{CFF}, 2, 1);
-    ($CFF, undef) = getidx substr($Table{CFF}, $HdrSize);
-    ($CFF, @TopDict) = getidx $CFF;
-    @TopDict = map ord, split(//, $TopDict[0]);
-    while (@TopDict) {
-	if ($TopDict[0] > 21) {
-	    push @Operands, getnum(\@TopDict);
-	} 
-	elsif ($TopDict[0] == 12) {
-	    $Operator = shift(@TopDict) . " " . shift(@TopDict);
-	    ($TopDict{$Operator} = join " ", @Operands) =~ s/^\s*//;
-	    @Operands = undef;
-	} 
-	else {
-	    $Operator = shift(@TopDict);
-	    ($TopDict{$Operator} = join " ", @Operands) =~ s/^\s*//;
-	    @Operands = undef;
-	}
+########################################################################
+
+
+package OTF::GPOS;
+
+#-----------------------------------------------------------------------
+# Return list of all Lookups from the GPOS table
+#-----------------------------------------------------------------------
+sub get_lookups {
+    my $GPOS = shift;
+
+    my $lookup_list = substr $GPOS, unpack '@8n', $GPOS;
+    my @lookup_offsets = unpack 'n/n', $lookup_list;
+
+    return map { substr $lookup_list, $_ } @lookup_offsets;
+}
+
+#-----------------------------------------------------------------------
+# Return list of all LookupListIndices pointed to by 'kern' feature
+#-----------------------------------------------------------------------
+sub get_lookup_list_indices {
+    my $GPOS = shift;
+
+    my $feature_list = substr $GPOS, unpack '@6n', $GPOS;
+    my %lookup_list_index;
+    for my $feature_record (unpack 'n/(a6)', $feature_list) {
+        my ($tag, $offset) = unpack 'a4n', $feature_record;
+        next if $tag ne 'kern';
+
+        my $feature = substr $feature_list, $offset;
+        my @lookup_list_indices = unpack '@2n/n', $feature;
+        $lookup_list_index{$_} = 1 for @lookup_list_indices;
     }
-    ($CFF, @Strings) = getidx $CFF;
-    unshift @Strings, @StandardStrings;
-    if ($NumGlyphs != getu(substr $Table{CFF}, $TopDict{17}, 2)) {
-    	die "Error: NumGlyphs in `maxp' different from `CFF'\n";
+
+    return keys %lookup_list_index;
+}
+
+#-----------------------------------------------------------------------
+# Return list of all subtables in Lookup table
+#-----------------------------------------------------------------------
+sub get_subtables {
+    my $lookup = shift;
+
+    my ($lookup_type, @subtable_offsets) = unpack 'n@4n/n', $lookup;
+    if ($lookup_type != 2) {
+        warn "[WARNING] LookupType $lookup_type not implemented";
+        return;
     }
-    if ($TopDict{15} == 0) {
-	for $i (0 .. 228) {$glyphName[$i] = $Strings[$i]}
-    } 
-    elsif ($TopDict{15} == 1) {
-	warn "Warning: predefined CharSet `Expert' not implemented\n";
-    } 
-    elsif ($TopDict{15} == 2) {
-	warn "Warning: predefined CharSet `ExpertSubset' not implemented\n";
-    } 
-    else {
-	$Charset = substr $Table{CFF}, $TopDict{15};
-	$Format  = getu(substr $Charset, 0, 1);
-	if ($Format == 0) {
-	    $glyphName[0] = $Strings[0];
-	    for $j (1 .. $NumGlyphs - 1) {
-        	$glyphName[$j] = $Strings[getu(substr $Charset, 1 + 2 * $j,2)];
-	    }
-	} 
-	elsif ($Format == 1) {
-	    $i = 0;
-	    $glyphName[$i++] = $Strings[0];
-	    for ($j = 0; $i < $NumGlyphs; $j++) {
-        	$first = getu(substr $Charset, 1 + 3 * $j, 2);
-        	$nLeft = getu(substr $Charset, 3 + 3 * $j, 1);
-        	for $k (0 .. $nLeft) {
-        	    $glyphName[$i++] = $Strings[$first + $k];
-        	}
-	    }
-	} 
-	elsif ($Format == 2) {
-	    $i = 0;
-	    $glyphName[$i++] = $Strings[0];
-	    for ($j = 0; $i < $NumGlyphs; $j++) {
-        	$first = getu(substr $Charset, 1 + 4 * $j, 2);
-        	$nLeft = getu(substr $Charset, 3 + 4 * $j, 2);
-        	for $k (0 .. $nLeft) {
-        	    $glyphName[$i++] = $Strings[$first + $k];
-        	}
-	    }
-	} 
-	else {die "Error: unknown CharsetFormat `$Format'\n"}
+
+    return map { substr $lookup, $_ } @subtable_offsets;
+}
+
+#-----------------------------------------------------------------------
+# Parse subtable in PairPosFormat 1, store kern pairs in global %KPX
+#-----------------------------------------------------------------------
+sub parse_pos_format_1 {
+    my $subtable = shift;
+
+    my ($coverage_offset, $value_format_1, $value_format_2, @pair_set_offsets)
+        = unpack '@2nnnn/n', $subtable;
+
+    my @coverage = _get_coverage(substr $subtable, $coverage_offset);
+    my @pair_sets = map { substr $subtable, $_ } @pair_set_offsets;
+    if (@coverage != @pair_sets) {
+        warn "[ERROR] Coverage table doesn't match PairSet table";
+        return;
     }
-} 
-else {
-    for $i (0 .. 0xFF) {
-	$glyphName[$i] = sprintf "index0x%02X", $i;
+
+    my ($record_size, $value_offset)
+        = _parse_value_formats($value_format_1, $value_format_2, 2, 2);
+
+    while (1) {
+        my $pair_set = shift @pair_sets or last;
+        my $first = shift @coverage;
+
+        my @pair_value_records = unpack "n/(a$record_size)", $pair_set;
+
+        for my $pair_value_record (@pair_value_records) {
+            my ($second, $value)
+                = unpack "n\@${value_offset}s>", $pair_value_record;
+            next if $value == 0;
+            $KPX{$first}{$second} ||= 1000 * $value / $UNITS_PER_EM;
+        }
     }
-    for $i (0x100 .. $NumGlyphs - 1) {
-	$glyphName[$i] = sprintf "index0x%04X", $i;
+
+    return;
+}
+
+#-----------------------------------------------------------------------
+# Parse subtable in PairPosFormat 2, store kern pairs in global %KPX
+#-----------------------------------------------------------------------
+sub parse_pos_format_2 {
+    my $subtable = shift;
+
+    my ($coverage_offset, $value_format_1, $value_format_2,
+        $class_def_1, $class_def_2, $class_1_count, $class_2_count)
+        = unpack '@2nnnnnnn', $subtable;
+
+    my @coverage = _get_coverage(substr $subtable, $coverage_offset);
+
+    my ($class_2_record_size, $value_offset)
+        = _parse_value_formats($value_format_1, $value_format_2, 0, 0);
+
+    my @class_1 = _get_class(substr $subtable, $class_def_1);
+    my @class_2 = _get_class(substr $subtable, $class_def_2);
+
+    my $class_1_record_size = $class_2_count * $class_2_record_size;
+    my @class_1_records
+        = unpack "\@16(a$class_1_record_size)$class_1_count", $subtable;
+
+    for my $class_1 (0 .. $class_1_count - 1) {
+        my $class_1_record = $class_1_records[$class_1];
+        my @class_2_records
+            = unpack "(a$class_2_record_size)$class_2_count", $class_1_record;
+
+        for my $class_2 (0 .. $class_2_count - 1) {
+            my $class_2_record = $class_2_records[$class_2];
+            my $value = unpack "\@${value_offset}s>", $class_2_record;
+            next if $value == 0;
+            $value = 1000 * $value / $UNITS_PER_EM;
+
+            my @first  = grep { $class_1[$_] == $class_1 } @coverage;
+            my @second = grep { $class_2[$_] == $class_2 } 0 .. $#class_2;
+
+            for my $first (@first) {
+                for my $second (@second) {
+                    $KPX{$first}{$second} ||= $value;
+                }
+            }
+        }
+    }
+
+    return;
+}
+
+#-----------------------------------------------------------------------
+# Get class number for all glyphs
+#-----------------------------------------------------------------------
+sub _get_class {
+    my $class = shift;
+
+    my @class = (0) x $NUM_GLYPHS;
+
+    my $class_format = unpack 'n', $class;
+    given ($class_format) {
+        when (1) {
+            my ($start_glyph, @class_value) = unpack '@2nn/n', $class;
+            @class[$start_glyph .. $start_glyph + $#class_value]
+                = @class_value;
+        }
+        when (2) {
+            my @class_ranges = unpack '@2n/(a6)', $class;
+            for my $class_range (@class_ranges) {
+                my ($start, $end, $class) = unpack 'nnn', $class_range;
+                @class[$start .. $end] = ($class) x ($end - $start + 1);
+            }
+        }
+        default {
+            warn "[ERROR] invalid ClassFormat '$class_format' ignored";
+            return;
+        }
+    }
+
+    return @class;
+}
+
+
+#-----------------------------------------------------------------------
+# Determine size of ValueRecord and offset of XAdvance value in it
+#-----------------------------------------------------------------------
+sub _parse_value_formats {
+    my ($value_format_1, $value_format_2, $record_size, $value_offset) = @_;
+
+    unless ($value_format_1 & 0x4 && $value_format_2 == 0) {
+        warn "[WARNING] ValueFormat ($value_format_1, ",
+             "$value_format_2) not implemented";
+        return;
+    }
+
+    for my $bit ((0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80)) {
+        $record_size += 2 if $value_format_1 & $bit;
+    }
+    for my $bit ((0x1, 0x2)) {
+        $value_offset += 2 if $value_format_1 & $bit;
+    }
+
+    return ($record_size, $value_offset);
+}
+
+#-----------------------------------------------------------------------
+# Return a list of GlyphIDs in a Coverage table
+#-----------------------------------------------------------------------
+sub _get_coverage {
+    my $coverage = shift;
+
+    my $coverage_format = unpack 'n', $coverage;
+    given ($coverage_format) {
+        when (1) {
+            return unpack '@2n/n', $coverage;
+        }
+        when (2) {
+            my @range_records = unpack '@2n/(a6)', $coverage;
+
+            return map { my ($start, $end) = unpack 'nn', $_;
+                         $start .. $end;
+                       }
+                       @range_records;
+        }
+        default {
+            warn "[WARNING] unknown CoverageFormat $coverage_format ignored";
+        }
     }
 }
 
-for $i (0 .. $NumGlyphs - 1) {
-    for $j (0 .. $NumGlyphs - 1) {
-	if ($Value = $KPX{$i}{$j}) {
-	    push @KPX, sprintf("KPX %s %s %d\n", 
-	    	    $glyphName[$i], $glyphName[$j], 
-	    	    $Value > 0x7FFF ? $Value - 0x10000 : $Value);
-	}
+
+########################################################################
+
+
+package OTF::Kern;
+
+#-----------------------------------------------------------------------
+# Parse "kern"table, store kern pairs in global %KPX
+#-----------------------------------------------------------------------
+sub parse_kerntable {
+    my $kern = shift;
+
+    my $num_tables = unpack '@2n', $kern;
+    my $start_subtable = 4;
+    for my $i (0 .. $num_tables - 1) {
+        my $subtable = substr $kern, $start_subtable;
+        my ($length, $coverage) = unpack '@2nn', $subtable;
+        $start_subtable += $length;
+
+        if ($coverage != 0x1) {
+            warn "[WARNING] kern table format '$coverage' not implemented";
+            next;
+        }
+
+        my @kern_pairs = unpack '@6nx6/(a6)', $subtable;
+        for my $kern_pair (@kern_pairs) {
+            my ($first, $second, $value) = unpack 'nns>', $kern_pair;
+            next if $value == 0;
+
+            $KPX{$first}{$second} ||= 1000 * $value / $UNITS_PER_EM;
+        }
     }
+
+    return;
 }
 
-$KPX = @KPX;
-print <<EOF;
-StartKernData
-StartKernPairs $KPX
- @{KPX}EndKernPairs
-EndKernData
-EOF
+
+########################################################################
+
+
+package main;
+
+main();
 
 __END__
+
+
+########################################################################
+
+
+    To create the documentation:
+
+    pod2man --center="Marc Penninga" --release="fontools" --section=1 \
+        ot2kpx - | groff -Tps -man - | ps2pdf - ot2kpx.pdf
+
+=pod
+
+=head1 NAME
+
+ot2kpx - extract kerning information from OpenType fonts
+
+
+=head1 SYNOPSIS
+
+=over 8
+
+=item B<ot2kpx>
+
+B<fontfile>
+
+=back
+
+
+=head1 DESCRIPTION
+
+B<ot2kpx> extract the kerning data from OpenType fonts (both F<otf>
+and F<ttf> formats) and prints it (in F<afm> format) to C<stdout>.
+
+
+=head1 OPTIONS AND ARGUMENTS
+
+=over 4
+
+=item B<fontfile>
+
+The OpenType font (in either F<otf> or F<ttf> format).
+
+=back
+
+
+=head1 RESTRICTIONS
+
+=over 4
+
+=item B<->
+
+B<ot2kpx> doesn't implement all of the OpenType specification.
+Things that are missing include: support for font files containing
+multiple fonts, LookupTables with LookupTypes other than 2,
+"kern" tables with format other than 0 and ValueRecords with
+other types of data than just XAdvance data.
+
+Most of these limitations don't really matter, since the missing features
+are rare (the only fonts I know of that use them are the non-western fonts
+that come with Adobe Reader). Furthermore, some of these features concern
+(according to the OpenType specification) I<"define subtle, device-dependent
+adjustments at specific font sizes or device resolutions">.
+Since there's no way to express such adjustments in F<afm> format,
+ignoring them seems to be the only option anyway.
+
+=item B<->
+
+B<ot2kpx> collects kerning data first from the "kern" table, then from
+all LookupTables associated with the "kern" feature; if a kerning pair
+occurs multiple times, the first value seen is chosen.
+There are (or may be) several issues with this approach:
+
+=over 4
+
+=item -
+
+The OpenType specification says that fonts in F<otf> format shouldn't
+use the "kern" table at all, just the lookups from the "GPOS" table.
+Many such fonts do, however, contain a "kern" table, but no "GPOS" table;
+so we use the "kern" table anyway.
+
+=item -
+
+Instead of reading all LookupTables, it might be better to let the user
+specify a script and language and process only the LookupTables for
+those values.
+However, at least in the fonts I checked, all script/language combinations
+eventually point to the I<same> "kern" LookupTables, so this approach
+wouldn't make any difference (apart from further complicating the code).
+
+=back
+
+=back
+
+
+=head1 AUTHOR
+
+Marc Penninga <marcpenninga@gmail.com>
+
+
+=head1 COPYRIGHT
+
+Copyright (C) 2005-2012 Marc Penninga.
+
+
+=head1 LICENSE
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published
+by the Free Software Foundation, either version 2 of the License,
+or (at your option) any later version.
+A copy of the GNU General Public License is included with B<autoinst>;
+see the file F<GPLv2.txt>.
+
+
+=head1 DISCLAIMER
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+
+=head1 RECENT CHANGES
+
+(See the source code for the rest of the story.)
+
+=over 12
+
+=item I<2012-02-01>
+
+Refactored the code, and fixed a number of bugs in the process.
+Updated the documentation.
+
+=back
+
+
+=begin Really_old_history
+
+=over 12
+
+=item I<2005-01-10>
+
+First version
+
+=item I<2005-02-18>
+
+Rewrote some of the code
+
+=item I<2005-03-08>
+
+Input files searched via B<kpsewhich> (where available)
+
+=item I<2005-03-15>
+
+Input files searched using B<kpsewhich> or B<findtexmf>
+
+=item I<2005-03-21>
+
+Test if GPOS table is present before trying to read it
+
+=item I<2005-04-29>
+
+Improved the documentation
+
+=item I<2005-05-25>
+
+Changed warning that's given when the font contains no GPOS table, to an
+informational message.
+
+=item I<2005-07-29>
+
+A few updates to the documentation
+
+=back
+
+=cut
+
