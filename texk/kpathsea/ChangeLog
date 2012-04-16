@@ -1,3 +1,8 @@
+2012-04-16  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFCNF): spell out every directory explicitly,
+	so we can include $SELFAUTOPARENT/../texmf-local/web2c.
+
 2012-04-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cnf.[ch]: Drop KPSEDLL from kpathsea_cnf_get(), and remove

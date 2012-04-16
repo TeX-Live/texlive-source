@@ -49,6 +49,8 @@
 % (http://tug.org/tds), or files may not be found.
 %
 % Redistributors will probably want $SELFAUTODIR/share, i.e., /usr/share.
+% Kpathsea sets SELFAUTOLOC (the directory with the binary),
+% SELFAUTODIR (its parent), and SELFAUTOPARENT (its grandparent).
 TEXMFROOT = $SELFAUTOPARENT
 
 % The tree containing runtime files related to the specific
@@ -461,9 +463,38 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 % /usr/local/texlive/YYYY/texmf.cnf; any settings in this latter file
 % will take precedence over the distributed one under texmf/web2c.
 % 
-% For security reasons, it is better not to include . in this path.
+% For security reasons, it is best not to include . in this path.
 %
-TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}
+% The idea behind this lengthy definition: for each of
+% SELFAUTO{LOC,DIR,AUTO}, look in the directory,
+% then the subdirectories share/texmf-local and share/texmf,
+% then ./texmf-local and ./texmf.
+% 
+% However, we want to include one more directory: the
+% great-grandparent's texmf-local, because that is how TL is installed
+% by default.  That is, given a binary
+% /usr/local/texlive/YYYY/bin/PLATFORM/kpsewhich, it should be fine
+% /usr/local/texlive/texmf-local/web2c/texmf.cnf.  Not under YYYY.
+% 
+% As a result, we cannot use actual brace expansion in the definition,
+% since we don't want to scatter ../'s throughout the value.  Hence we
+% explicitly list every directory.  Arguably more understandable anyway.
+%
+TEXMFCNF = {\
+$SELFAUTOLOC,\
+$SELFAUTOLOC/share/texmf-local/web2c,$SELFAUTOLOC/share/texmf/web2c,\
+$SELFAUTOLOC/texmf-local/web2c,$SELFAUTOLOC/texmf/web2c,\
+$SELFAUTODIR,\
+$SELFAUTODIR/share/texmf-local/web2c,$SELFAUTODIR/share/texmf/web2c,\
+$SELFAUTODIR/texmf-local/web2c,$SELFAUTODIR/texmf/web2c,\
+$SELFAUTOPARENT/../texmf-local/web2c,\
+$SELFAUTOPARENT,\
+$SELFAUTOPARENT/share/texmf-local/web2c,$SELFAUTOPARENT/share/texmf/web2c,\
+$SELFAUTOPARENT/texmf-local/web2c,$SELFAUTOPARENT/texmf/web2c\
+}
+%
+% For reference, here is the old brace-using definition:
+%TEXMFCNF = {$SELFAUTOLOC,$SELFAUTODIR,$SELFAUTOPARENT}{,{/share,}/texmf{-local,}/web2c}
 
 % kpathsea 3.5.3 and later sets these at runtime. To avoid empty
 % expansions from binaries linked against an earlier version of the
