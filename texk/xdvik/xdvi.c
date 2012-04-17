@@ -3300,7 +3300,8 @@ run_dvi_file(const char *filename, void *data)
 
     /* Store window id for use by src_client_check().  */
     {
-	xuint32 data;
+	/* was xuint32, but need 8-byte alignment on some 64-bit systems. */
+	long data;
 #if !(defined(WORD64) || defined(LONG64))
 	data = XtWindow(globals.widgets.top_level);
 #else

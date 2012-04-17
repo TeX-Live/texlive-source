@@ -1,6 +1,12 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2012-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xdvi.c (run_dvi_file): Avoid unaligned access on some 64-bit
+	systems.  Mail from Nelson H. F. Beebe <beebe@math.utah.edu>
+	[tlbuild] Mon, 16 Apr 2012 18:48:34.
+
 2012-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported xdvik-22.85.tar.gz
