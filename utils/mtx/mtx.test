@@ -1,0 +1,16 @@
+#! /bin/sh
+
+# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -f mozart*
+
+cp $srcdir/tests/mozart.mtx .
+
+set -x
+
+./prepmx mozart \
+	&& diff mozart.pmx $srcdir/tests/mozart.pmx \
+	|| exit 1
+
+exit 0

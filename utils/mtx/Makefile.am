@@ -61,3 +61,28 @@ libp2c_a_SOURCES = \
 	$(MTX_TREE)/libp2c/p2c.h \
 	$(MTX_TREE)/libp2c/p2clib.c
 
+lua_scripts = m-tx
+
+scriptsdir = texmf/scripts/m-tx
+nodist_bin_SCRIPTS =
+
+include $(srcdir)/../../texk/am/script_links.am
+
+texmfdir = $(datarootdir)/$(scriptsdir)
+dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
+
+install-data-hook: install-lua-links
+
+uninstall-hook: uninstall-links
+
+dist_man1_MANS = m-tx.1 prepmx.1
+
+## Tests
+##
+TESTS = mtx.test
+EXTRA_DIST += $(TESTS)
+
+## mtx.test
+EXTRA_DIST += tests/mozart.mtx tests/mozart.pmx
+DISTCLEANFILES = mozart*
+

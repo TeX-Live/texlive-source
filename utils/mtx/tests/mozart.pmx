@@ -1,0 +1,26 @@
+---
+\def\mtxversion{0.60d}
+\def\mtxdate{<11 October 2008>}
+\input mtx
+\mtxComposerLine{}{W. A. Mozart (1756--1791)}
+\mtxTitleLine{Riff in C}
+---
+2 -1 2 4 4 0 6  0.00000 0 1 1 20 0
+
+60
+./
+Tt
+\mtxTitle
+Tc
+\mtxPoetComposer
+% Paragraph 2 line 5 bar 1
+ w120m
+c83 g8+ e8 g8 c8- g8+ e8 g8 | /
+c25 e4 g4 | /
+
+%Bar 2
+d8 g8 f8 g8 c8- g8+ e8 g8 | Rb
+ /
+b4-d c1 d1 c2 | /
+
+% Coded by M-Tx

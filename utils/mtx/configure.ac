@@ -21,6 +21,11 @@ AC_PROG_CC
 
 KPSE_COMPILER_WARNINGS
 
+KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+AM_CONDITIONAL([WIN32_WRAP],
+               [test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe])
+
 dnl Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_LN_S
