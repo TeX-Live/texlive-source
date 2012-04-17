@@ -1,3 +1,9 @@
+2012-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech (just_copy): Bug fix, copy the additional pTeX word.
+	Mail from Werner Fink <werner@suse.de>
+	[tex-live] Mon, Apr 16 16:28:50.
+
 2011-12-19  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* fam256.ch, eptex.defines: Avoid Segmentation fault for

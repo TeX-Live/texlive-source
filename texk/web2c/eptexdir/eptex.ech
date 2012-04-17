@@ -300,9 +300,10 @@ othercases goto next_p
   hlist_node,vlist_node: begin r:=get_node(box_node_size);
 @z
 @x e-pTeX: just_copy
-    words:=5; list_ptr(r):=null; {this affects |mem[r+5]|}
+    mem[r+6]:=mem[p+6]; mem[r+5]:=mem[p+5]; {copy the last two words}
 @y
-    words:=5; list_ptr(r):=null; {this affects |mem[r+5]|}
+    mem[r+7]:=mem[p+7];
+    mem[r+6]:=mem[p+6]; mem[r+5]:=mem[p+5]; {copy the last three words}
     add_glue_ref(space_ptr(r)); add_glue_ref(xspace_ptr(r));
 @z
 
