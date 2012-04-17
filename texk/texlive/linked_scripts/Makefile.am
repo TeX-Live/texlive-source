@@ -94,11 +94,7 @@ texmf_dist_other_scripts = \
 	findhyph/findhyph \
 	fontools/afm2afm \
 	fontools/autoinst \
-	fontools/cmap2enc \
-	fontools/font2afm \
 	fontools/ot2kpx \
-	fontools/pfm2kpx \
-	fontools/showglyphs \
 	fragmaster/fragmaster.pl \
 	glossaries/makeglossaries \
 	jfontmaps/updmap-setup-kanji.pl \
