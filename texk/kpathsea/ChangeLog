@@ -1,3 +1,7 @@
+2012-04-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmf.cnf: erase "ptexgeneric".
+
 2012-04-16  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFCNF): spell out every directory explicitly,

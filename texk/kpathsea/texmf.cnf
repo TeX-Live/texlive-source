@@ -211,17 +211,17 @@ TEXINPUTS.lamed         = .;$TEXMF/tex/{lamed,lambda,latex,generic,}//
 TEXINPUTS.omega         = .;$TEXMF/tex/{plain,generic,}//
 
 % p(La)TeX.
-TEXINPUTS.ptex          = .;$TEXMF/tex/{ptex,ptexgeneric,plain,generic,}//
-TEXINPUTS.platex        = .;$TEXMF/tex/{platex,ptexgeneric,latex,generic,}//
+TEXINPUTS.ptex          = .;$TEXMF/tex/{ptex,plain,generic,}//
+TEXINPUTS.platex        = .;$TEXMF/tex/{platex,latex,generic,}//
 
 % epTeX, and for pmpost.
-TEXINPUTS.eptex         = .;$TEXMF/tex/{ptex,ptexgeneric,plain,generic,}//
+TEXINPUTS.eptex         = .;$TEXMF/tex/{ptex,plain,generic,}//
 TEX.pmpost = eptex
 
 % (e)up(La)TeX.
-TEXINPUTS.uplatex = .;$TEXMF/tex/{uplatex,platex,ptexgeneric,latex,generic,}//
-TEXINPUTS.uptex   = .;$TEXMF/tex/{uptex,ptex,ptexgeneric,plain,generic,}//
-TEXINPUTS.euptex  = .;$TEXMF/tex/{uptex,ptex,ptexgeneric,plain,generic}//
+TEXINPUTS.uplatex = .;$TEXMF/tex/{uplatex,platex,latex,generic,}//
+TEXINPUTS.uptex   = .;$TEXMF/tex/{uptex,ptex,plain,generic,}//
+TEXINPUTS.euptex  = .;$TEXMF/tex/{uptex,ptex,plain,generic}//
 
 % pBibTeX bibliographies and style files.
 BIBINPUTS.pbibtex       = .;$TEXMF/{pbibtex,bibtex}/bib//
