@@ -12975,8 +12975,6 @@ $as_echo "#define COLOR 1" >>confdefs.h
 
 
 
-
-
 $as_echo "#define T1LIB 1" >>confdefs.h
 
 

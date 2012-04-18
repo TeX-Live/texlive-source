@@ -1,7 +1,6 @@
 # Autoconf macros for xdvik.
-# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 # Copyright (C) 2004 - 2009 Stefan Ulrich <xdvi-core@lists.sourceforge.net>
-#               ????    or maybe earlier Copyright by Paul Vojta ??
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,

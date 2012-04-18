@@ -1,6 +1,14 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2012-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Remove some obsolete comments.
+
+	* m4/xdvi-check-iconv.m4, m4/xdvi-check-langinfo.m4,
+	m4/xdvi-func-working-vsnprintf.m4: Update copyright statements
+	with info provided by Paul Vojta <vojta@math.berkeley.edu>.
+
 2012-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xdvi.c (run_dvi_file): Avoid unaligned access on some 64-bit

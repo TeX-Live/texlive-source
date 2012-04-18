@@ -1,7 +1,5 @@
 # Autoconf macros for xdvik.
-# Copyright (C) ???? - 2009 Paul Vojta <xdvi-core@lists.sourceforge.net>
-# and/or
-# Copyright (C) ???? - 2009 Stefan Ulrich <xdvi-core@lists.sourceforge.net>
+# Copyright (C) 2004 - 2009 Stefan Ulrich <xdvi-core@lists.sourceforge.net>
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders

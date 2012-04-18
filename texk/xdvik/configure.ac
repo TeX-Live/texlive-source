@@ -49,16 +49,6 @@ dnl               AS_HELP_STRING([--disable-color],
 dnl                              [Disable support for color specials]))
 AC_DEFINE([COLOR], 1, [Define to enable support for color specials.])
 
-dnl OBSOLETE AC_ARG_ENABLE([buttons],
-dnl OBSOLETE               AS_HELP_STRING([--disable-buttons],
-dnl OBSOLETE                              [Disable buttons on the side of the window]))
-dnl OBSOLETE AC_DEFINE([BUTTONS], 1, [Define to enable buttons on the side of the window.])
-
-dnl OBSOLETE AC_ARG_ENABLE([statusline],
-dnl OBSOLETE               AS_HELP_STRING([--disable-statusline],
-dnl OBSOLETE                              [Disable statusline at bottom of window]))
-dnl OBSOLETE AC_DEFINE([STATUSLINE], 1, [Define to enable statusline at bottom of window.])
-
 dnl Required, not optional.
 dnl AC_ARG_ENABLE([t1lib],
 dnl               AS_HELP_STRING([--disable-t1lib],
