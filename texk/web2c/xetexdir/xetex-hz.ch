@@ -341,13 +341,6 @@ p, q: pointer;
 @z
 
 @x
-@d is_native_word_node(#) == ((not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node))
-@y
-@d is_native_word_node(#) == ((not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node))
-@d is_glyph_node(#) == ((not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = glyph_node))
-@z
-
-@x
 glue_node: @<Move right or output leaders@>;
 @y
 glue_node: @<Move right or output leaders@>;

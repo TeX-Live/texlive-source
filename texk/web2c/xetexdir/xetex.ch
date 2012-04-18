@@ -2,6 +2,7 @@
  Part of the XeTeX typesetting system
  copyright (c) 1994-2008 by SIL International
  copyright (c) 2009-2012 by Jonathan Kew
+ copyright (c) 2012 by Khaled Hosny
 
  Written by Jonathan Kew
 
@@ -66,8 +67,8 @@ authorization from the copyright holders.
 @d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @#
 @d XeTeX_version=0
-@d XeTeX_revision==".9997"
-@d XeTeX_version_string=='-0.9997.6' {current \XeTeX\ version}
+@d XeTeX_revision==".9998"
+@d XeTeX_version_string=='-0.9998' {current \XeTeX\ version}
 @#
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
@@ -3778,6 +3779,7 @@ p:=list_ptr(this_box);
 @ Extra stuff for justifiable AAT text; need to merge runs of words and normal spaces.
 
 @d is_native_word_node(#) == ((not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node))
+@d is_glyph_node(#) == ((not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = glyph_node))
 
 @<Merge sequences of words using AAT fonts and inter-word spaces into single nodes@>=
 p := list_ptr(this_box);
@@ -4132,6 +4134,15 @@ end;
 @z
 
 @x
+@d accent_noad=over_noad+1 {|type| of a noad for accented subformulas}
+@y
+@d accent_noad=over_noad+1 {|type| of a noad for accented subformulas}
+@d fixed_acc=1 {|subtype| for non growing math accents}
+@d bottom_acc=2 {|subtype| for bottom math accents}
+@d is_bottom_acc(#)==(subtype(#)=bottom_acc) or (subtype(#)=bottom_acc+fixed_acc)
+@z
+
+@x
 procedure print_fam_and_char(@!p:pointer); {prints family and character}
 begin print_esc("fam"); print_int(fam(p)); print_char(" ");
 print_ASCII(qo(character(p)));
@@ -4259,7 +4270,7 @@ macro capabilities. This seems a bit ugly, but it works.
     rval: scaled;
   begin
     f := fam_fnt(2 + size_code);
-    if is_ot_font(f) then
+    if is_ot_font(cur_f) then
       rval := get_native_mathsy_param(cur_f, #)
     else
       rval := mathsy(#);
@@ -4308,7 +4319,7 @@ define_mathsy_accessor(axis_height)(22)(axis_height);
     rval: scaled;
   begin
     f := fam_fnt(3 + cur_size);
-    if is_ot_font(f) then
+    if is_ot_font(cur_f) then
       rval := get_native_mathex_param(cur_f, #)
     else
       rval := mathex(#);
@@ -4732,7 +4743,8 @@ else if char_exists(cur_i) then
   end;
 if x<>null then begin
   if is_ot_font(f) then
-    if h<get_ot_math_constant(f, accentBaseHeight) then delta:=h@+else delta:=get_ot_math_constant(f, accentBaseHeight)
+    if is_bottom_acc(q) then delta:=0
+    else if h<get_ot_math_constant(f, accentBaseHeight) then delta:=h@+else delta:=get_ot_math_constant(f, accentBaseHeight)
   else
     if h<x_height(f) then delta:=h@+else delta:=x_height(f);
 @z
@@ -4740,6 +4752,9 @@ if x<>null then begin
 @x
   y:=char_box(f,c);
   shift_amount(y):=s+half(w-width(y));
+  width(y):=0; p:=new_kern(-delta); link(p):=x; link(y):=p;
+  y:=vpack(y,natural); width(y):=width(x);
+  if height(y)<h then @<Make the height of box |y| equal to |h|@>;
 @y
   y:=char_box(f,c);
   if is_native_font(f) then begin
@@ -4757,7 +4772,7 @@ if x<>null then begin
     wa:=get_ot_math_accent_pos(f,native_glyph(p));
     if wa=@"7FFFFFFF then wa:=half(width(y));
     p:=list_ptr(x);
-    if (p<>null) and (type(p)=whatsit_node) and (subtype(p)=glyph_node) and (link(p)=null) then begin
+    if (p<>null) and is_glyph_node(p) and (math_type(nucleus(q))=math_char) then begin
       w2:=get_ot_math_accent_pos(native_font(p), native_glyph(p));
       if w2=@"7FFFFFFF then w:=half(w) else w:=w2;
     end else
@@ -4765,35 +4780,49 @@ if x<>null then begin
     shift_amount(y):=s+w-wa;
   end else
     shift_amount(y):=s+half(w-width(y));
+  width(y):=0;
+  if is_bottom_acc(q) then begin
+    link(x):=y; y:=vpack(x,natural); shift_amount(y):=-(h - height(y));
+  end else begin
+    p:=new_kern(-delta); link(p):=x; link(y):=p; y:=vpack(y,natural);
+    if height(y)<h then @<Make the height of box |y| equal to |h|@>;
+  end;
+  width(y):=width(x);
 @z
 
 @x
 @ @<Switch to a larger accent if available and appropriate@>=
 @y
 @ @<Switch to a larger native-font accent if available and appropriate@>=
-  c:=native_glyph(p);
-  a:=0;
-  repeat
-    g:=get_ot_math_variant(f, c, a, addressof(w2), 1);
-    if (w2>0) and (w2<=w) then begin
-      native_glyph(p):=g;
+  if odd(subtype(q)) then {non growing accent}
+    set_native_glyph_metrics(p, 1)
+  else begin
+    c:=native_glyph(p);
+    a:=0;
+    repeat
+      g:=get_ot_math_variant(f, c, a, addressof(w2), 1);
+      if (w2>0) and (w2<=w) then begin
+        native_glyph(p):=g;
+        set_native_glyph_metrics(p, 1);
+        incr(a);
+      end;
+    until (w2<0) or (w2>=w);
+    if (w2<0) then begin
+      ot_assembly_ptr:=get_ot_assembly_ptr(f, c, 1);
+      if ot_assembly_ptr<>nil then begin
+        free_node(p,glyph_node_size);
+        p:=build_opentype_assembly(cur_f, ot_assembly_ptr, w, 1);
+        list_ptr(y):=p;
+        goto found;
+      end;
+    end else
       set_native_glyph_metrics(p, 1);
-      incr(a);
-    end;
-  until (w2<0) or (w2>=w);
-  if (w2<0) then begin
-    ot_assembly_ptr:=get_ot_assembly_ptr(f, c, 1);
-    if ot_assembly_ptr<>nil then begin
-      free_node(p,glyph_node_size);
-      p:=build_opentype_assembly(cur_f, ot_assembly_ptr, w, 1);
-      list_ptr(y):=p;
-      goto found;
-    end;
-  end else
-    set_native_glyph_metrics(p, 1);
+  end;
 found:
   width(y):=width(p); height(y):=height(p); depth(y):=depth(p);
-  if depth(y)<0 then depth(y):=0;
+  if is_bottom_acc(q) then begin
+    if height(y)<0 then height(y):=0
+  end else if depth(y)<0 then depth(y):=0;
 
 @ @<Switch to a larger accent if available and appropriate@>=
 @z
@@ -4877,6 +4906,7 @@ var delta:scaled; {offset between subscript and superscript}
 @!h1,@!h2:scaled; {height of original text-style symbol and possible replacement}
 @!n,@!g:integer; {potential variant index and glyph code}
 @!ot_assembly_ptr:void_pointer;
+@!save_f:internal_font_number;
 begin if (subtype(q)=normal)and(cur_style<text_style) then
   subtype(q):=limits;
 delta:=0;
@@ -4894,7 +4924,7 @@ if math_type(nucleus(q))=math_char then
   x:=clean_box(nucleus(q),cur_style);
   if is_ot_font(cur_f) then begin
     p:=list_ptr(x);
-    if (type(p)=whatsit_node) and (subtype(p)=glyph_node) then begin
+    if is_glyph_node(p) then begin
       if cur_style<text_style then begin
         {try to replace the operator glyph with a display-size variant,
          ensuring it is larger than the text size}
@@ -4934,10 +4964,18 @@ found:
     {center vertically}
   math_type(nucleus(q)):=sub_box; info(nucleus(q)):=x;
   end;
+save_f:=cur_f;
 if subtype(q)=limits then
   @<Construct a box with limits above and below it, skewed by |delta|@>;
 make_op:=delta;
 end;
+@z
+
+@x
+@<Attach the limits to |y| and adjust |height(v)|, |depth(v)|...@>=
+@y
+@<Attach the limits to |y| and adjust |height(v)|, |depth(v)|...@>=
+cur_f:=save_f;
 @z
 
 @x
@@ -4987,43 +5025,60 @@ var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
 @!t:small_number; {subsidiary size code}
 begin p:=new_hlist(q);
 if is_char_node(p) then
-@y
-@ The purpose of |make_scripts(q,delta)| is to attach the subscript and/or
-superscript of noad |q| to the list that starts at |new_hlist(q)|,
-given that subscript and superscript aren't both empty. The superscript
-will appear to the right of the subscript by a given distance |delta|.
+  begin shift_up:=0; shift_down:=0;
+  end
+else  begin z:=hpack(p,natural);
+  if cur_style<script_style then t:=script_size@+else t:=script_script_size;
+  shift_up:=height(z)-sup_drop(t);
+  shift_down:=depth(z)+sub_drop(t);
+  free_node(z,box_node_size);
+  end;
+if math_type(supscr(q))=empty then
+  @<Construct a subscript box |x| when there is no superscript@>
+else  begin @<Construct a superscript box |x|@>;
+  if math_type(subscr(q))=empty then shift_amount(x):=-shift_up
+  else @<Construct a sub/superscript combination box |x|, with the
+    superscript offset by |delta|@>;
+  end;
+if new_hlist(q)=null then new_hlist(q):=x
+else  begin p:=new_hlist(q);
+  while link(p)<>null do p:=link(p);
+  link(p):=x;
+  end;
+end;
 
-We set |shift_down| and |shift_up| to the minimum amounts to shift the
-baseline of subscripts and superscripts based on the given nucleus.
+@ When there is a subscript without a superscript, the top of the subscript
+should not exceed the baseline plus four-fifths of the x-height.
 
-@<Declare math...@>=
-procedure make_scripts(@!q:pointer;@!delta:scaled);
-var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
-@!shift_up,@!shift_down,@!clr:scaled; {dimensions in the calculation}
-@!t:integer; {subsidiary size code}
-begin p:=new_hlist(q);
-if is_char_node(p) or (p<>null and is_native_word_node(p)) then
-@z
-
-@x
+@<Construct a subscript box |x| when there is no superscript@>=
+begin x:=clean_box(subscr(q),sub_style(cur_style));
+width(x):=width(x)+script_space;
+if shift_down<sub1(cur_size) then shift_down:=sub1(cur_size);
 clr:=height(x)-(abs(math_x_height(cur_size)*4) div 5);
-@y
-if is_ot_font(cur_f) then
-  clr:=height(x)-get_ot_math_constant(cur_f, subscriptTopMax)
-else
-  clr:=height(x)-(abs(math_x_height(cur_size)*4) div 5);
-@z
+if shift_down<clr then shift_down:=clr;
+shift_amount(x):=shift_down;
+end
 
-@x
+@ The bottom of a superscript should never descend below the baseline plus
+one-fourth of the x-height.
+
+@<Construct a superscript box |x|@>=
+begin x:=clean_box(supscr(q),sup_style(cur_style));
+width(x):=width(x)+script_space;
+if odd(cur_style) then clr:=sup3(cur_size)
+else if cur_style<text_style then clr:=sup1(cur_size)
+else clr:=sup2(cur_size);
+if shift_up<clr then shift_up:=clr;
 clr:=depth(x)+(abs(math_x_height(cur_size)) div 4);
-@y
-if is_ot_font(cur_f) then
-  clr:=depth(x)+get_ot_math_constant(cur_f, superscriptBottomMin)
-else
-  clr:=depth(x)+(abs(math_x_height(cur_size)) div 4);
-@z
+if shift_up<clr then shift_up:=clr;
+end
 
-@x
+@ When both subscript and superscript are present, the subscript must be
+separated from the superscript by at least four times |default_rule_thickness|.
+If this condition would be violated, the subscript moves down, after which
+both subscript and superscript move up so that the bottom of the superscript
+is at least as high as the baseline plus four-fifths of the x-height.
+
 @<Construct a sub/superscript combination box |x|...@>=
 begin y:=clean_box(subscr(q),sub_style(cur_style));
 width(y):=width(y)+script_space;
@@ -5038,9 +5093,98 @@ if clr>0 then
     shift_down:=shift_down-clr;
     end;
   end;
+shift_amount(x):=delta; {superscript is |delta| to the right of the subscript}
+p:=new_kern((shift_up-depth(x))-(height(y)-shift_down)); link(x):=p; link(p):=y;
+x:=vpack(x,natural); shift_amount(x):=shift_down;
+end
 @y
+@ The purpose of |make_scripts(q,delta)| is to attach the subscript and/or
+superscript of noad |q| to the list that starts at |new_hlist(q)|,
+given that subscript and superscript aren't both empty. The superscript
+will appear to the right of the subscript by a given distance |delta|.
+
+We set |shift_down| and |shift_up| to the minimum amounts to shift the
+baseline of subscripts and superscripts based on the given nucleus.
+
+@<Declare math...@>=
+procedure make_scripts(@!q:pointer;@!delta:scaled);
+var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
+@!shift_up,@!shift_down,@!clr:scaled; {dimensions in the calculation}
+@!t:integer; {subsidiary size code}
+@!save_f:internal_font_number;
+begin p:=new_hlist(q);
+if is_char_node(p) or (p<>null and is_glyph_node(p)) then
+  begin shift_up:=0; shift_down:=0;
+  end
+else  begin z:=hpack(p,natural);
+  if cur_style<script_style then t:=script_size@+else t:=script_script_size;
+  shift_up:=height(z)-sup_drop(t);
+  shift_down:=depth(z)+sub_drop(t);
+  free_node(z,box_node_size);
+  end;
+if math_type(supscr(q))=empty then
+  @<Construct a subscript box |x| when there is no superscript@>
+else  begin @<Construct a superscript box |x|@>;
+  if math_type(subscr(q))=empty then shift_amount(x):=-shift_up
+  else @<Construct a sub/superscript combination box |x|, with the
+    superscript offset by |delta|@>;
+  end;
+if new_hlist(q)=null then new_hlist(q):=x
+else  begin p:=new_hlist(q);
+  while link(p)<>null do p:=link(p);
+  link(p):=x;
+  end;
+end;
+
+@ When there is a subscript without a superscript, the top of the subscript
+should not exceed the baseline plus four-fifths of the x-height.
+
+@<Construct a subscript box |x| when there is no superscript@>=
+begin
+save_f:=cur_f;
+x:=clean_box(subscr(q),sub_style(cur_style));
+cur_f:=save_f;
+width(x):=width(x)+script_space;
+if shift_down<sub1(cur_size) then shift_down:=sub1(cur_size);
+if is_ot_font(cur_f) then
+  clr:=height(x)-get_ot_math_constant(cur_f, subscriptTopMax)
+else
+  clr:=height(x)-(abs(math_x_height(cur_size)*4) div 5);
+if shift_down<clr then shift_down:=clr;
+shift_amount(x):=shift_down;
+end
+
+@ The bottom of a superscript should never descend below the baseline plus
+one-fourth of the x-height.
+
+@<Construct a superscript box |x|@>=
+begin
+save_f:=cur_f;
+x:=clean_box(supscr(q),sup_style(cur_style));
+cur_f:=save_f;
+width(x):=width(x)+script_space;
+if odd(cur_style) then clr:=sup3(cur_size)
+else if cur_style<text_style then clr:=sup1(cur_size)
+else clr:=sup2(cur_size);
+if shift_up<clr then shift_up:=clr;
+if is_ot_font(cur_f) then
+  clr:=depth(x)+get_ot_math_constant(cur_f, superscriptBottomMin)
+else
+  clr:=depth(x)+(abs(math_x_height(cur_size)) div 4);
+if shift_up<clr then shift_up:=clr;
+end
+
+@ When both subscript and superscript are present, the subscript must be
+separated from the superscript by at least four times |default_rule_thickness|.
+If this condition would be violated, the subscript moves down, after which
+both subscript and superscript move up so that the bottom of the superscript
+is at least as high as the baseline plus four-fifths of the x-height.
+
 @<Construct a sub/superscript combination box |x|...@>=
-begin y:=clean_box(subscr(q),sub_style(cur_style));
+begin
+save_f:=cur_f;
+y:=clean_box(subscr(q),sub_style(cur_style));
+cur_f:=save_f;
 width(y):=width(y)+script_space;
 if shift_down<sub2(cur_size) then shift_down:=sub2(cur_size);
 if is_ot_font(cur_f) then
@@ -5058,6 +5202,10 @@ if clr>0 then
     shift_down:=shift_down-clr;
     end;
   end;
+shift_amount(x):=delta; {superscript is |delta| to the right of the subscript}
+p:=new_kern((shift_up-depth(x))-(height(y)-shift_down)); link(x):=p; link(p):=y;
+x:=vpack(x,natural); shift_amount(x):=shift_down;
+end
 @z
 
 @x
@@ -5243,7 +5391,7 @@ max_hyph_char:=too_big_lang;
 @x
   @<Skip to node |hb|, putting letters into |hu| and |hc|@>;
 @y
-if (not is_char_node(ha)) and (type(ha) = whatsit_node) and (subtype(ha) = native_word_node) then begin
+if is_native_word_node(ha) then begin
   @<Check that nodes after |native_word| permit hyphenation; if not, |goto done1|@>;
   @<Prepare a |native_word_node| for hyphenation@>;
 end else begin
@@ -5379,7 +5527,7 @@ if hyf_char>biggest_char then goto done1;
 @<Replace nodes |ha..hb| by a sequence of nodes...@>=
 @y
 @<Replace nodes |ha..hb| by a sequence of nodes...@>=
-if (not is_char_node(ha)) and (type(ha) = whatsit_node) and (subtype(ha) = native_word_node) then begin
+if is_native_word_node(ha) then begin
  @<Hyphenate the |native_word_node| at |ha|@>;
 end else begin
 @z
@@ -5865,9 +6013,7 @@ collected:
 		repeat
 			if main_h = 0 then main_h := main_k;
 
-			if      (not is_char_node(main_pp))
-				and (type(main_pp)=whatsit_node)
-				and (subtype(main_pp)=native_word_node)
+			if      is_native_word_node(main_pp)
 				and (native_font(main_pp)=main_f)
 				and (main_ppp<>main_pp)
 				and (not is_char_node(main_ppp))
@@ -5940,9 +6086,7 @@ collected:
 				end;
 				if main_ppp<>main_pp then main_ppp:=link(main_ppp);
 			end;
-		if      (not is_char_node(main_pp))
-			and (type(main_pp)=whatsit_node)
-			and (subtype(main_pp)=native_word_node)
+		if      is_native_word_node(main_pp)
 			and (native_font(main_pp)=main_f)
 			and (main_ppp<>main_pp)
 			and (not is_char_node(main_ppp))
@@ -6351,6 +6495,14 @@ if (cur_val>=var_code)and fam_in_range then fam(accent_chr(tail)):=cur_fam
 else fam(accent_chr(tail)):=(cur_val div 256) mod 16;
 @y
 if cur_chr=1 then begin
+  if scan_keyword("fixed") then
+    subtype(tail):=fixed_acc
+  else if scan_keyword("bottom") then begin
+    if scan_keyword("fixed") then
+      subtype(tail):=bottom_acc+fixed_acc
+    else
+      subtype(tail):=bottom_acc;
+  end;
   scan_math_class_int; c := set_class_field(cur_val);
   scan_math_fam_int;   c := c + set_family_field(cur_val);
   scan_usv_num;        cur_val := cur_val + c;
@@ -7373,9 +7525,7 @@ begin
 				end
 				else if (type(pp) = disc_node) then begin
 					ppp := link(pp);
-					if (ppp <> null) and (not is_char_node(ppp))
-							and (type(ppp) = whatsit_node)
-							and (subtype(ppp) = native_word_node)
+					if (ppp <> null) and is_native_word_node(ppp)
 							and (native_font(ppp) = native_font(p)) then begin
 						pp := link(ppp);
 						goto restart;
