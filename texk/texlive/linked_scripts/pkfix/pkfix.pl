@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 #
 # pkfix.pl
 #
-# Copyright (C) 2001, 2005, 2007, 2009, 2011 Heiko Oberdiek.
+# Copyright (C) 2001, 2005, 2007, 2009, 2011, 2012 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
@@ -25,10 +25,10 @@ $^W=1; # turn warning on
 my $file        = "pkfix.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $project     = lc($program);
-my $version     = "1.6";
-my $date        = "2011/04/22";
+my $version     = "1.7";
+my $date        = "2012/04/18";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2001, 2005, 2007, 2009, 2011 by $author.";
+my $copyright   = "Copyright (c) 2001, 2005, 2007, 2009, 2011, 2012 by $author.";
 #
 # Reqirements: Perl5, dvips
 # History:
@@ -80,6 +80,8 @@ my $copyright   = "Copyright (c) 2001, 2005, 2007, 2009, 2011 by $author.";
 #   2011/04/22 v1.6:
 #     * Bug fix: input and output files are read and written in
 #       binary mode (thanks M.S. Dousti for bug report).
+#   2012/04/18 v1.7:
+#     * Option --version added.
 #
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -130,6 +132,7 @@ $::opt_quiet      = 0;
 $::opt_debug      = 0;
 $::opt_verbose    = 0;
 $::opt_clean      = 1;
+$::opt_version    = 0;
 
 my $usage = <<"END_OF_USAGE";
 ${title}Syntax:   \L$program\E [options] <inputfile.ps> <outputfile.ps>
@@ -137,6 +140,7 @@ Function: This program tries to replace pk fonts in <inputfile.ps>
           by the type 1 versions. The result is written in <outputfile.ps>.
 Options:                                                         (defaults:)
   --help            print usage
+  --version         print version number
   --(no)quiet       suppress messages                            ($bool[$::opt_quiet])
   --(no)verbose     verbose printing                             ($bool[$::opt_verbose])
   --(no)debug       debug informations                           ($bool[$::opt_debug])
@@ -157,6 +161,7 @@ my @OrgArgv = @ARGV;
 use Getopt::Long;
 GetOptions(
     "help!",
+    "version!",
     "quiet!",
     "debug!",
     "verbose!",
@@ -166,6 +171,10 @@ GetOptions(
     "dvips=s",
     "options=s"
 ) or die $usage;
+if ($::opt_version) {
+    print "$project $date v$version\n";
+    exit(0);
+}
 !$::opt_help or die $usage;
 @ARGV < 3 or die "$usage$Error Too many files!\n";
 @ARGV == 2 or die "$usage$Error Missing file names!\n";

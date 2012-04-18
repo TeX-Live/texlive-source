@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 24419 2011-10-27 14:06:37Z preining $
+# $Id: tlmgr.pl 26004 2012-04-17 04:09:34Z preining $
 #
-# Copyright 2008, 2009, 2010, 2011 Norbert Preining
+# Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 24419 $';
-my $datrev = '$Date: 2011-10-27 16:06:37 +0200 (Thu, 27 Oct 2011) $';
+my $svnrev = '$Revision: 26004 $';
+my $datrev = '$Date: 2012-04-17 06:09:34 +0200 (Tue, 17 Apr 2012) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -124,6 +124,7 @@ sub main {
     "package-logfile" => "=s",
     "persistent-downloads" => "!",
     "no-execute-actions" => 1,
+    "pin-file" => "=s",
     "pause" => 1,
     "print-platform|print-arch" => 1,
     "version" => 1,
@@ -135,6 +136,8 @@ sub main {
     "option"        => { },
     "conf"          => { },
     "version"       => { },
+    "repository"    => { },
+    "candidate"     => { },
     "backup"        => { "backupdir" => "=s",
                          "clean" => ":-99",
                          "all" => 1,
@@ -504,6 +507,12 @@ sub execute_action {
   } elsif ($action =~ m/^option$/i) {
     action_option();
     finish(0);
+  } elsif ($action =~ m/^repository$/i) {
+    action_repository();
+    finish(0);
+  } elsif ($action =~ m/^candidates$/i) {
+    action_candidates();
+    finish(0);
   } elsif ($action =~ m/^list$/i) {
     action_list();
     finish(0);
@@ -533,7 +542,7 @@ sub execute_action {
     action_dumptlpdb();
     finish(0);
   } elsif ($action =~ m/^show$/i) {
-    action_show();
+    action_show(@ARGV);
     finish(0);
   } elsif ($action =~ m/^remove$/i) {
     action_remove();
@@ -1145,7 +1154,8 @@ sub action_show {
       tlwarn("tlmgr: Cannot load taxonomy file, showing taxonomies not supported.\n");
     }
   }
-  foreach my $pkg (@ARGV) {
+  foreach my $ppp (@_) {
+    my ($pkg, $tag) = split '@', $ppp, 2;
     my $tlpdb = $localtlpdb;
     my $tlp = $localtlpdb->get_package($pkg);
     my $installed = 0;
@@ -1153,126 +1163,179 @@ sub action_show {
       if (!$remotetlpdb) {
         init_tlmedia();
       }
-      $tlp = $remotetlpdb->get_package($pkg);
+      if (defined($tag)) {
+        if (!$remotetlpdb->is_virtual) {
+          tlwarn("tlmgr: specifying implicite tags is not allowed for non-virtual databases!\n");
+          next;
+        } else {
+          if (!$remotetlpdb->is_repository($tag)) {
+            tlwarn("tlmgr: no such repository tag defined: $tag\n");
+            next;
+          }
+        }
+      }
+      $tlp = $remotetlpdb->get_package($pkg, $tag);
+      if (!$tlp) {
+        if (defined($tag)) {
+          # we already searched for the package in a specific tag, don't retry
+          # all candidates!
+          tlwarn("tlmgr: Cannot find package $pkg in repository $tag\n");
+          next;
+        }
+        if ($remotetlpdb->is_virtual) {
+          # we might have a package that is available in a
+          # subsidiary repository, but not installable
+          # because it is not pinned
+          # we will list it but warn about this fact
+          my @cand = $remotetlpdb->candidates($pkg);
+          if (@cand) {
+            my $first = shift @cand;
+            if (defined($first)) {
+              tlwarn("strange, we have a first candidate but no tlp: $pkg\n");
+              next;
+            }
+            # already shifted away the first element
+            if ($#cand >= 0) {
+              # recursively showing all tags, but warn
+              print "package:     ", $pkg, "\n";
+              print "WARNING:     This package is not pinned but present in subsidiary repositories\n";
+              print "WARNING:     As long as it is not pinned it is not installable.\n";
+              print "WARNING:     Listing all available copies of the package.\n";
+              my @aaa;
+              for my $a (@cand) {
+                my ($t,$r) = split(/\//, $a, 2);
+                push @aaa, "$pkg" . '@' . $t;
+              }
+              action_show(@aaa);
+              next;
+            } else {
+              tlwarn("strange, package listed but no residual candidates: $pkg\n");
+              next;
+            }
+          } else {
+            tlwarn("strange, package listed but no candidates: $pkg\n");
+            next;
+          }
+        }
+        tlwarn("tlmgr: cannot find package $pkg\n");
+        next;
+      }
       $tlpdb = $remotetlpdb;
     } else {
       $installed = 1;
     }
-    if ($tlp) {
-      my @colls;
-      if ($tlp->category ne "Collection" && $tlp->category ne "Scheme") {
-        @colls = $localtlpdb->needed_by($pkg);
-        if (!@colls) {
-          # not referenced in the local tlpdb, so try the remote here, too
-          if (!$remotetlpdb) {
-            init_tlmedia();
-          }
-          @colls = $remotetlpdb->needed_by($pkg);
+    my @colls;
+    if ($tlp->category ne "Collection" && $tlp->category ne "Scheme") {
+      @colls = $localtlpdb->needed_by($pkg);
+      if (!@colls) {
+        # not referenced in the local tlpdb, so try the remote here, too
+        if (!$remotetlpdb) {
+          init_tlmedia();
         }
+        @colls = $remotetlpdb->needed_by($pkg);
       }
-      # some packages might depend on other packages, so do not
-      # include arbitrary package in the list of collections, but
-      # only collectons:
-      @colls = grep {m;^collection-;} @colls;
-      print "package:     ", $tlp->name, "\n";
-      print "category:    ", $tlp->category, "\n";
-      print "shortdesc:   ", $tlp->shortdesc, "\n" if ($tlp->shortdesc);
-      print "longdesc:    ", $tlp->longdesc, "\n" if ($tlp->longdesc);
-      print "installed:   ", ($installed ? "Yes" : "No"), "\n";
-      print "revision:    ", $tlp->revision, "\n" if ($installed);
-      print "cat-version: ", $tlp->cataloguedata->{'version'}, "\n"
-        if $tlp->cataloguedata->{'version'};
-      print "cat-date:    ", $tlp->cataloguedata->{'date'}, "\n"
-        if $tlp->cataloguedata->{'date'};
-      print "cat-license: ", $tlp->cataloguedata->{'license'}, "\n"
-        if $tlp->cataloguedata->{'license'};
-      print "collection:  ", @colls, "\n" if (@colls);
-      if ($opts{"keyword"} || $opts{"taxonomy"}) {
-        print "keywords:    ";
-        if (defined($taxonomy->{'by-package'}{'keyword'}{$pkg})) {
-          print join(', ',@{$taxonomy->{'by-package'}{'keyword'}{$pkg}}), "\n";
-        } else {
-          print "(none found)\n";
-        }
-      }
-      if ($opts{"functionality"} || $opts{"taxonomy"}) {
-        print "function:    ";
-        if (defined($taxonomy->{'by-package'}{'functionality'}{$pkg})) {
-          print join(', ',@{$taxonomy->{'by-package'}{'functionality'}{$pkg}}), "\n";
-        } else {
-          print "(none found)\n";
-        }
-      }
-      if ($opts{"characterization"} || $opts{"taxonomy"}) {
-        print "primary characterization: ";
-        if (defined($taxonomy->{'by-package'}{'primary'}{$pkg})) {
-          print $taxonomy->{'by-package'}{'primary'}{$pkg}, "\n";
-        } else {
-          print "(none found)\n";
-        }
-        print "secondary characterization: ";
-        if (defined($taxonomy->{'by-package'}{'secondary'}{$pkg})) {
-          print $taxonomy->{'by-package'}{'secondary'}{$pkg}, "\n";
-        } else {
-          print "(none found)\n";
-        }
-      }
-      if ($opts{"list"}) {
-        if ($tlp->category eq "Collection" || $tlp->category eq "Scheme") {
-          # in the case of collections of schemes we list the deps
-          my @deps = $tlp->depends;
-          if (@deps) {
-            print "depends:\n";
-            for my $d (@deps) {
-              print "\t$d\n";
-            }
-          }
-        }
-        print "Included files, by type:\n";
-        # if the package has a .ARCH dependency we also list the files for
-        # those packages
-        my @todo = $tlpdb->expand_dependencies("-only-arch", $tlpdb, ($pkg));
-        for my $d (sort @todo) {
-          my $foo = $tlpdb->get_package($d);
-          if (!$foo) {
-            tlwarn ("\nShould not happen, no dependent package $d\n");
-            next;
-          }
-          if ($d ne $pkg) {
-            print "depending package $d:\n";
-          }
-          if ($foo->runfiles) {
-            print "run files:\n";
-            for my $f (sort $foo->runfiles) { print "  $f\n"; }
-          }
-          if ($foo->srcfiles) {
-            print "source files:\n";
-            for my $f (sort $foo->srcfiles) { print "  $f\n"; }
-          }
-          if ($foo->docfiles) {
-            print "doc files:\n";
-            for my $f (sort $foo->docfiles) {
-              print "  $f";
-              my $dfd = $foo->docfiledata;
-              if (defined($dfd->{$f})) {
-                for my $k (keys %{$dfd->{$f}}) {
-                  print " $k=\"", $dfd->{$f}->{$k}, '"';
-                }
-              }
-              print "\n";
-            }
-          }
-          # in case we have them
-          if ($foo->allbinfiles) {
-            print "bin files (all platforms):\n";
-            for my $f (sort $foo->allbinfiles) { print " $f\n"; }
-          }
-        }
-      }
-      print "\n";
-    } else {
-      printf STDERR "tlmgr: cannot find $pkg\n";
     }
+    # some packages might depend on other packages, so do not
+    # include arbitrary package in the list of collections, but
+    # only collectons:
+    @colls = grep {m;^collection-;} @colls;
+    print "package:     ", $tlp->name, "\n";
+    print "repository:  ", $tag, "\n" if (defined($tag));
+    print "category:    ", $tlp->category, "\n";
+    print "shortdesc:   ", $tlp->shortdesc, "\n" if ($tlp->shortdesc);
+    print "longdesc:    ", $tlp->longdesc, "\n" if ($tlp->longdesc);
+    print "installed:   ", ($installed ? "Yes" : "No"), "\n";
+    print "revision:    ", $tlp->revision, "\n" if ($installed);
+    print "cat-version: ", $tlp->cataloguedata->{'version'}, "\n"
+      if $tlp->cataloguedata->{'version'};
+    print "cat-date:    ", $tlp->cataloguedata->{'date'}, "\n"
+      if $tlp->cataloguedata->{'date'};
+    print "cat-license: ", $tlp->cataloguedata->{'license'}, "\n"
+      if $tlp->cataloguedata->{'license'};
+    print "collection:  ", @colls, "\n" if (@colls);
+    if ($opts{"keyword"} || $opts{"taxonomy"}) {
+      print "keywords:    ";
+      if (defined($taxonomy->{'by-package'}{'keyword'}{$pkg})) {
+        print join(', ',@{$taxonomy->{'by-package'}{'keyword'}{$pkg}}), "\n";
+      } else {
+        print "(none found)\n";
+      }
+    }
+    if ($opts{"functionality"} || $opts{"taxonomy"}) {
+      print "function:    ";
+      if (defined($taxonomy->{'by-package'}{'functionality'}{$pkg})) {
+        print join(', ',@{$taxonomy->{'by-package'}{'functionality'}{$pkg}}), "\n";
+      } else {
+        print "(none found)\n";
+      }
+    }
+    if ($opts{"characterization"} || $opts{"taxonomy"}) {
+      print "primary characterization: ";
+      if (defined($taxonomy->{'by-package'}{'primary'}{$pkg})) {
+        print $taxonomy->{'by-package'}{'primary'}{$pkg}, "\n";
+      } else {
+        print "(none found)\n";
+      }
+      print "secondary characterization: ";
+      if (defined($taxonomy->{'by-package'}{'secondary'}{$pkg})) {
+        print $taxonomy->{'by-package'}{'secondary'}{$pkg}, "\n";
+      } else {
+        print "(none found)\n";
+      }
+    }
+    if ($opts{"list"}) {
+      if ($tlp->category eq "Collection" || $tlp->category eq "Scheme") {
+        # in the case of collections of schemes we list the deps
+        my @deps = $tlp->depends;
+        if (@deps) {
+          print "depends:\n";
+          for my $d (@deps) {
+            print "\t$d\n";
+          }
+        }
+      }
+      print "Included files, by type:\n";
+      # if the package has a .ARCH dependency we also list the files for
+      # those packages
+      my @todo = $tlpdb->expand_dependencies("-only-arch", $tlpdb, ($pkg));
+      for my $d (sort @todo) {
+        my $foo = $tlpdb->get_package($d);
+        if (!$foo) {
+          tlwarn ("\nShould not happen, no dependent package $d\n");
+          next;
+        }
+        if ($d ne $pkg) {
+          print "depending package $d:\n";
+        }
+        if ($foo->runfiles) {
+          print "run files:\n";
+          for my $f (sort $foo->runfiles) { print "  $f\n"; }
+        }
+        if ($foo->srcfiles) {
+          print "source files:\n";
+          for my $f (sort $foo->srcfiles) { print "  $f\n"; }
+        }
+        if ($foo->docfiles) {
+          print "doc files:\n";
+          for my $f (sort $foo->docfiles) {
+            print "  $f";
+            my $dfd = $foo->docfiledata;
+            if (defined($dfd->{$f})) {
+              for my $k (keys %{$dfd->{$f}}) {
+                print " $k=\"", $dfd->{$f}->{$k}, '"';
+              }
+            }
+            print "\n";
+          }
+        }
+        # in case we have them
+        if ($foo->allbinfiles) {
+          print "bin files (all platforms):\n";
+        for my $f (sort $foo->allbinfiles) { print " $f\n"; }
+        }
+      }
+    }
+    print "\n";
   }
   return;
 }
@@ -2048,7 +2111,12 @@ sub auto_remove_install_force_packages {
     # intersection, don't check A\B and B\A
     next if $newpkgs_full{$p};
     next if $removals_full{$p};
-    next if ($remotetlpdb->get_package($p)->category ne "Collection");
+    my $remotetlp = $remotetlpdb->get_package($p);
+    if (!defined($remotetlp)) {
+      tlwarn("Strange, $p mentioned but not found anywhere!\n");
+      next;
+    }
+    next if ($remotetlp->category ne "Collection");
     my $tlp = $localtlpdb->get_package($p);
     if (!defined($tlp)) {
       if ($opts{"reinstall-forcibly-removed"}) {
@@ -2149,15 +2217,36 @@ sub machine_line {
     $ret = 1;
     shift;
   }
-  my ($pkg, $flag, $lrev, $rrev, @args) = @_;
+  my ($pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag) = @_;
   $lrev ||= "-";
   $rrev ||= "-";
   $flag ||= "?";
-  my $str = "$pkg\t$flag\t$lrev\t$rrev\t";
-  $str .= join("\t", @args) if (@args);
+  $size ||= "-";
+  $runtime ||= "-";
+  $esttot ||= "-";
+  $tag ||= "-";
+  my $str = join("\t", $pkg, $flag, $lrev, $rrev, $size, $runtime, $esttot, $tag);
   $str .= "\n";
   return($str) if $ret;
   print $str;
+}
+
+sub upd_info {
+  my ($pkg, $kb, $lrev, $mrev, $txt) = @_;
+  my $flen = 25;
+  my $kbstr = ($kb >= 0 ? " [${kb}k]" : "");
+  my $kbstrlen = length($kbstr);
+  my $pkglen = length($pkg);
+  my $is = sprintf("%-9s ", "$txt:");
+  if ($pkglen + $kbstrlen > $flen) {
+    $is .= "$pkg$kbstr: ";
+  } else {
+    $is .= sprintf ('%*2$s', $pkg, -($flen-$kbstrlen));
+    $is .= "$kbstr: ";
+  }
+  $is .= sprintf("local: %8s, source: %8s",
+                         $lrev,       $mrev);
+  info("$is\n");
 }
 
 sub action_update {
@@ -2414,20 +2503,36 @@ sub action_update {
       next;
     }
     my $rev = $tlp->revision;
-    my $mediatlp = $remotetlpdb->get_package($pkg);
+    my $mediatlp;
+    my $maxtag;
+    if ($remotetlpdb->is_virtual) {
+      ($maxtag, undef, $mediatlp, undef) =
+        $remotetlpdb->virtual_candidate($pkg);
+    } else {
+      $mediatlp = $remotetlpdb->get_package($pkg);
+    }
     if (!defined($mediatlp)) {
       debug("$pkg cannot be found in $location\n");
       next;
     }
     my $mediarev = $mediatlp->revision;
+    my $mediarevstr = $mediarev;
+    my @addargs = ();
+    if ($remotetlpdb->is_virtual) {
+      push @addargs, $maxtag;
+      $mediarevstr .= "\@$maxtag";
+    }
     if ($rev < $mediarev) {
       $updated{$pkg} = 0; # will be changed to one on successful update
     } elsif ($rev > $mediarev) {
       if ($::machinereadable) {
         push @addlines,
-          machine_line("-ret", $pkg, $FLAG_REVERSED_UPDATE, $rev, $mediarev, "-");
+          machine_line("-ret", $pkg, $FLAG_REVERSED_UPDATE, $rev, $mediarev, "-", @addargs);
       } else {
-        info("$pkg: local: $rev, source: $mediarev (reverse, keep)\n");
+        if ($opts{"list"}) {
+          # not issueing anything if we keep a package
+          upd_info($pkg, -1, $rev, $mediarevstr, "keep");
+        }
       }
     }
   }
@@ -2525,6 +2630,8 @@ sub action_update {
     }
   }
 
+  # parameters for field width
+  my $totalnrdigits = length("$totalnr");
 
   #
   # ORDER OF PACKAGE ACTIONS
@@ -2557,7 +2664,7 @@ sub action_update {
         if ($::machinereadable) {
           machine_line($p, $FLAG_REMOVE, $rev, "-", "-", "-");
         } else {
-          info("$p: local: $rev, source: <absent> (auto-remove)\n");
+          upd_info($p, -1, $rev, "<absent>", "autorm");
         }
         $currnr++;
       } else {
@@ -2569,7 +2676,8 @@ sub action_update {
         if ($::machinereadable) {
           machine_line($p, $FLAG_REMOVE, $rev, "-", "-", "-");
         } else {
-          info("[$currnr/$totalnr] auto-remove: $p\n");
+          info("[" . sprintf ('%*2$s', $currnr, $totalnrdigits) .
+            "/$totalnr] auto-remove: $p ... ");
         }
         if (!$opts{"dry-run"}) {
           if ($opts{"backup"}) {
@@ -2585,6 +2693,7 @@ sub action_update {
           $localtlpdb->remove_package($p);
           logpackage("remove: $p");
         }
+        info("done\n") unless $::machinereadable;
         $currnr++;
       }
     }
@@ -2678,19 +2787,44 @@ sub action_update {
       my $unwind_package;
       my $remove_unwind_container = 0;
       my $rev = $tlp->revision;
-      my $mediatlp = $remotetlpdb->get_package($pkg);
+      my $mediatlp;
+      my $maxtag;
+      if ($remotetlpdb->is_virtual) {
+        ($maxtag, undef, $mediatlp, undef) =
+          $remotetlpdb->virtual_candidate($pkg);
+      } else {
+        $mediatlp = $remotetlpdb->get_package($pkg);
+      }
       if (!defined($mediatlp)) {
         debug("$pkg cannot be found in $location\n");
         next;
       }
       my $mediarev = $mediatlp->revision;
+      my $mediarevstr = $mediarev;
+      my @addargs = ();
+      if ($remotetlpdb->is_virtual) {
+        push @addargs, $maxtag;
+        $mediarevstr .= "\@$maxtag";
+      }
       $nrupdated++;
       if ($opts{"list"}) {
         if ($::machinereadable) {
-          machine_line($pkg, $FLAG_UPDATE, $rev, $mediarev, $sizes{$pkg});
+          machine_line($pkg, $FLAG_UPDATE, $rev, $mediarev, $sizes{$pkg}, "-", "-", @addargs);
         } else {
           my $kb = int($sizes{$pkg} / 1024) + 1;
-          info("$pkg [${kb}k]: local: $rev, source: $mediarev (update)\n");
+          upd_info($pkg, $kb, $rev, $mediarevstr, "update");
+          if ($remotetlpdb->is_virtual) {
+            my @cand = $remotetlpdb->candidates($pkg);
+            shift @cand;  # remove the top element
+            if (@cand) {
+              print "\tother candidates: ";
+              for my $a (@cand) {
+                my ($t,$r) = split(/\//, $a, 2);
+                print $r . '@' . $t . " ";
+              }
+              print "\n";
+            }
+          }
         }
         $updated{$pkg} = 1;
         next;
@@ -2731,10 +2865,11 @@ sub action_update {
       }
       
       if ($::machinereadable) {
-        machine_line($pkg, $FLAG_UPDATE, $rev, $mediarev, $sizes{$pkg}, $estrem, $esttot);
+        machine_line($pkg, $FLAG_UPDATE, $rev, $mediarev, $sizes{$pkg}, $estrem, $esttot, @addargs);
       } else {
         my $kb = int ($sizes{$pkg} / 1024) + 1;
-        info("[$currnr/$totalnr, $estrem/$esttot] update: $pkg [${kb}k] ($rev -> $mediarev)");
+        info("[" . sprintf ('%*2$s', $currnr, $totalnrdigits) .
+          "/$totalnr, $estrem/$esttot] update: $pkg [${kb}k] ($rev -> $mediarevstr)");
       }
       $donesize += $sizes{$pkg};
       $currnr++;
@@ -2777,7 +2912,7 @@ sub action_update {
       }
       if ($remotetlpdb->install_package($pkg, $localtlpdb)) {
         # installation succeeded because we got a reference
-        logpackage("update: $pkg ($rev -> $mediarev)");
+        logpackage("update: $pkg ($rev -> $mediarevstr)");
         unlink($unwind_package) if $remove_unwind_container;
         # remember successful update
         $updated{$pkg} = 1;
@@ -2805,7 +2940,7 @@ sub action_update {
         # now in fact we should do some cleanup, removing files and
         # dirs from the new package before re-installing the old one.
         # TODO
-        logpackage("failed update: $pkg ($rev -> $mediarev)");
+        logpackage("failed update: $pkg ($rev -> $mediarevstr)");
         tlwarn("\n\nInstallation of new version of $pkg did fail, trying to unwind.\n");
         if (win32()) {
           # w32 is notorious for not releasing a file immediately
@@ -2846,12 +2981,25 @@ sub action_update {
             unless $::machinereadable;
       } else {
         # install new packages
-        my $mediatlp = $remotetlpdb->get_package($pkg);
+        my $mediatlp;
+        my $maxtag;
+        if ($remotetlpdb->is_virtual) {
+          ($maxtag, undef, $mediatlp, undef) =
+            $remotetlpdb->virtual_candidate($pkg);
+        } else {
+          $mediatlp = $remotetlpdb->get_package($pkg);
+        }
         if (!defined($mediatlp)) {
           tlwarn("\nShould not happen: $pkg not found in $location\n");
           next;
         }
         my $mediarev = $mediatlp->revision;
+        my $mediarevstr = $mediarev;
+        my @addargs;
+        if ($remotetlpdb->is_virtual) {
+          $mediarevstr .= "\@$maxtag";
+          push @addargs, $maxtag;
+        }
         my ($estrem, $esttot);
         if (!$opts{"list"}) {
           ($estrem, $esttot) = TeXLive::TLUtils::time_estimate($totalsize,
@@ -2861,14 +3009,16 @@ sub action_update {
           my @maargs = ($pkg, $FLAG_AUTOINSTALL, "-", $mediatlp->revision, $sizes{$pkg});
           if (!$opts{"list"}) {
             push @maargs, $estrem, $esttot;
+          } else {
+            push @maargs, undef, undef;
           }
-          machine_line(@maargs);
+          machine_line(@maargs, @addargs);
         } else {
           my $kb = int($sizes{$pkg} / 1024) + 1;
           if ($opts{"list"}) {
-            info("$pkg [${kb}k]: local: <absent>, source: " . $mediatlp->revision . " (auto-install)\n");
+            upd_info($pkg, $kb, "<absent>", $mediarevstr, "autoinst");
           } else {
-            info("[$currnr/$totalnr, $estrem/$esttot] auto-install: $pkg [${kb}k]\n");
+            info("[$currnr/$totalnr, $estrem/$esttot] auto-install: $pkg ($mediarevstr) [${kb}k]\n");
           }
         }
         $currnr++;
@@ -2876,7 +3026,7 @@ sub action_update {
         next if ($opts{"dry-run"} || $opts{"list"});
         if ($remotetlpdb->install_package($pkg, $localtlpdb)) {
           # installation succeeded because we got a reference
-          logpackage("auto-install new: $pkg ($mediarev)");
+          logpackage("auto-install new: $pkg ($mediarevstr)");
           $nrupdated++;
         } else {
           tlwarn("$0: couldn't install new package $pkg\n");
@@ -3023,6 +3173,7 @@ sub action_update {
   if (!(@new || @updated)) {
     info("tlmgr: no updates available\n");
     if ($remotetlpdb->media ne "NET"
+        && $remotetlpdb->media ne "virtual"
         && !$opts{"dry-run"}
         && !$opts{"repository"}
        ) {
@@ -3101,6 +3252,14 @@ sub action_install {
     @packs = $remotetlpdb->expand_dependencies($localtlpdb, @packs) unless $opts{"no-depends"};
   }
   #
+  # expand dependencies returns a list pkg@tag in case of a virtual
+  # remote db.
+  my %packs;
+  for my $p (@packs) {
+    my ($pp, $aa) = split('@', $p);
+    $packs{$pp} = (defined($aa) ? $aa : 0);
+  }
+  #
   # installation order of packages:
   # first all normal packages, then collections, then schemes
   # isn't already installed, but the collection already updated, it will
@@ -3108,7 +3267,7 @@ sub action_install {
   my @inst_packs;
   my @inst_colls;
   my @inst_schemes;
-  for my $pkg (sort @packs) {
+  for my $pkg (sort keys %packs) {
     # we do name checking here, not to load all tlpobj again and again
     if ($pkg =~ m/^scheme-/) {
       push @inst_schemes, $pkg;
@@ -3127,7 +3286,11 @@ sub action_install {
   my @todo;
   for my $pkg (@inst_packs, @inst_colls, @inst_schemes) {
     my $pkgrev = 0;
-    my $mediatlp = $remotetlpdb->get_package($pkg);
+    # if the package name is asked from a specific repository, use
+    # that one, otherwise leave the  decision to $remotetlpdb by not
+    # giving a final argument
+    my $mediatlp = $remotetlpdb->get_package($pkg,
+      ($packs{$pkg} ? $packs{$pkg} : undef));
     if (!defined($mediatlp)) {
       tlwarn("package $pkg not present in package repository.\n");
       next;
@@ -3175,13 +3338,26 @@ sub action_install {
     my ($estrem, $esttot) = TeXLive::TLUtils::time_estimate($totalsize,
                               $donesize, $starttime);
     my $kb = int($sizes{$pkg} / 1024) + 1;
+    my @addargs = ();
+    my $tagstr = "";
+    if ($remotetlpdb->is_virtual) {
+      if ($packs{$pkg} ne "0") {
+        push @addargs, $packs{$pkg};
+        $tagstr = " \@" . $packs{$pkg};
+      } else {
+        my ($maxtag,undef,undef,undef) = $remotetlpdb->virtual_candidate($pkg);
+        push @addargs, $maxtag;
+        $tagstr = " \@" . $maxtag;
+      }
+    }
     if ($::machinereadable) {
-      machine_line($pkg, $flag, "-", $revs{$pkg}, $sizes{$pkg}, $estrem, $esttot);
+      machine_line($pkg, $flag, "-", $revs{$pkg}, $sizes{$pkg}, $estrem, $esttot, @addargs);
     } else {
-      info("[$currnr/$totalnr, $estrem/$esttot] ${re}install: $pkg [${kb}k]\n");
+      info("[$currnr/$totalnr, $estrem/$esttot] ${re}install: $pkg$tagstr [${kb}k]\n");
     }
     if (!$opts{"dry-run"}) {
-      $remotetlpdb->install_package($pkg, $localtlpdb);
+      $remotetlpdb->install_package($pkg, $localtlpdb,
+        ($packs{$pkg} ? $packs{$pkg} : undef) );
       logpackage("${re}install: $pkg");
     }
     $donesize += $sizes{$pkg};
@@ -3204,7 +3380,7 @@ sub action_list {
     # we list them, otherwise we go direct into tlmgr show $pkg mode
     if ($what !~ m/^(collection|scheme)/i) {
       tlwarn("(switching to show mode)\n");
-      action_show();
+      action_show(@ARGV);
       return;
     }
   } else {
@@ -3223,7 +3399,11 @@ sub action_list {
   } elsif ($what =~ m/^scheme/i) {
     @whattolist = $tlm->schemes;
   } else {
-    @whattolist = $tlm->list_packages;
+    if ($tlm->is_virtual) {
+      @whattolist = $tlm->list_packages("-all");
+    } else {
+      @whattolist = $tlm->list_packages;
+    }
   }
   foreach (@whattolist) {
     next if ($_ =~ m/^00texlive/);
@@ -3232,12 +3412,198 @@ sub action_list {
     } else {
       print "  ";
     }
-    my $foo = $tlm->get_package($_)->shortdesc;
+    my $tlp = $tlm->get_package($_);
+    if (!$tlp) {
+      if ($remotetlpdb->is_virtual) {
+        # we might have the case that a package is present in a
+        # subsidiary repository, but not pinned, so it will
+        # not be found by ->get_package
+        # In this case we list all repositories shipping it,
+        # but warn that it is not pinned and thus not reachable.
+        my @cand = $remotetlpdb->candidates($_);
+        if (@cand) {
+          my $first = shift @cand;
+          if (defined($first)) {
+            tlwarn("strange, we have a first candidate but no tlp: $_\n");
+            next;
+          }
+          # already shifted away the first element
+          if ($#cand >= 0) {
+            print "$_: --- no installable candidate found, \n";
+            print "    but present in subsidiary repositories without a pin.\n";
+            print "    This package is not reachable without pinning.\n";
+            print "    Repositories containing this package:\n";
+            for my $a (@cand) {
+              my ($t,$r) = split(/\//, $a, 2);
+              my $tlp = $remotetlpdb->get_package($_, $t);
+              my $foo = $tlp->shortdesc;
+              print "      $t: ", defined($foo) ? $foo : "(shortdesc missing)" , "\n";
+            }
+            next;
+          } else {
+            tlwarn("strange, package listed but no residual candidates: $_\n");
+            next;
+          }
+        } else {
+          tlwarn("strange, package listed but no candidates: $_\n");
+          next;
+        }
+      } else {
+        tlwarn("strange, package cannot be found in remote tlpdb: $_\n");
+        next;
+      }
+    }
+    my $foo = $tlp->shortdesc;
     print "$_: ", defined($foo) ? $foo : "(shortdesc missing)" , "\n";
   }
   return;
 }
 
+#  REPOSITORY
+#
+# this action manages the list of repositories
+# tlmgr repository list               -> lists repositories
+# tlmgr repository add path [tag]     -> add repository with optional tag
+# tlmgr repository remove [path|tag]  -> removes repository or tag
+# tlmgr repository set path[#tag] [path[#tag] ...] -> sets the list
+#
+
+sub array_to_repository {
+  my %r = @_;
+  my @ret;
+  for my $k (keys %r) {
+    my $v = $r{$k};
+    if ($k eq $v) {
+      push @ret, $k;
+    } else {
+      push @ret, "$v#$k";
+    }
+  }
+  return "@ret";
+}
+sub repository_to_array {
+  my $r = shift;
+  my %r;
+  for my $rr (split ' ', $r) {
+    if ($rr =~ m/^([^#]+)#(.*)$/) {
+      $r{$2} = $1;
+    } else {
+      $r{$rr} = $rr;
+    }
+  }
+  return %r;
+}
+sub action_repository {
+  init_local_db();
+  my $what = shift @ARGV;
+  $what = "list" if !defined($what);
+  my %repos = repository_to_array($localtlpdb->option("location"));
+  if ($what =~ m/^list$/i) {
+    print "List of repositories (with tags if set):\n";
+    for my $k (keys %repos) {
+      my $v = $repos{$k};
+      print "\t$v";
+      if ($k ne $v) {
+        print " ($k)";
+      }
+      print "\n";
+    }
+    return;
+  }
+  if ($what eq "add") {
+    my $p = shift @ARGV;
+    if (!defined($p)) {
+      tlwarn("You need to give a new repository aas argument to add\n");
+      return;
+    }
+    my $t = shift @ARGV;
+    $t = $p if (!defined($t));
+    if (defined($repos{$t})) {
+      tlwarn("This repository or its tag is already defined, no action\n");
+      return;
+    }
+    # TODO more checks needed?
+    # if there was till now only *one* repository and that without
+    # a tag, we give that one the "main" tag which is necessary
+    # for proper operation!
+    my @tags = keys %repos;
+    if ($#tags == 0) {
+      # we have only one repository, check if it has the main tag
+      my $maintag = $tags[0];
+      if ($maintag ne 'main') {
+        $repos{'main'} = $repos{$maintag};
+        delete $repos{$maintag};
+      }
+    }
+    $repos{$t} = $p;
+    $localtlpdb->option("location", array_to_repository(%repos));
+    $localtlpdb->save;
+    return;
+  }
+  if ($what eq "remove") {
+    my $p = shift @ARGV;
+    if (!defined($p)) {
+      tlwarn("Which repository should be removed?\n");
+      return;
+    }
+    my $found = 0;
+    for my $k (keys %repos) {
+      if ($k eq $p || $repos{$k} eq $p) {
+        $found = 1;
+        delete $repos{$k};
+      }
+    }
+    if (!$found) {
+      tlwarn("Cannot find the repository $p\n");
+    } else {
+      $localtlpdb->option("location", array_to_repository(%repos));
+      $localtlpdb->save;
+    }
+    return;
+  }
+  if ($what eq "set") {
+    # TODO TODO
+    # we have to make sure that there is ONE main repository!!!
+    %repos = repository_to_array("@ARGV");
+    $localtlpdb->option("location", array_to_repository(%repos));
+    $localtlpdb->save;
+    return;
+  }
+  # we are still here, unknown command to repository
+  tlwarn("tlmgr: unknown directive to tlmgr repository: $what\n");
+  return;
+}
+
+sub action_candidates {
+  my $what = shift @ARGV;
+  if (!defined($what)) {
+    tlwarn("tlmgr: action candidates needs a package name as argument\n");
+    return;
+  }
+  init_local_db();
+  init_tlmedia();
+  my @cand = $remotetlpdb->candidates($what);
+  if (@cand) {
+    my $first = shift @cand;
+    if (defined($first)) {
+      my ($t,$r) = split(/\//, $first, 2);
+      print "Install candidate for $what from $t ($r)\n";
+    } else {
+      print "No install candidate for $what found.\n";
+    }
+    # already shifted away the first element
+    if ($#cand >= 0) {
+      print "Other repositories providing this package:\n";
+      for my $a (@cand) {
+        my ($t,$r) = split(/\//, $a, 2);
+        print "$t ($r)\n";
+      }
+    }
+  } else {
+    print "Package $what not found.\n";
+  }
+  return;
+}
 
 #  OPTION
 #
@@ -4601,7 +4967,93 @@ sub init_local_db {
 #
 sub init_tlmedia
 {
-  if (defined($remotetlpdb) && ($remotetlpdb->root eq $location)) {
+  # first check if $location contains multiple locations
+  # in this case we go to virtual mode
+  #my %repos = repository_to_array($localtlpdb->option("location"));
+  my %repos = repository_to_array($location);
+  my @tags = keys %repos;
+  # if we have only one repo, but this one contains a name tag #....
+  # then we remove it and save the local tlpdb
+  if ($#tags == 0 && ($location =~ m/#/)) {
+    $location = $repos{$tags[0]};
+    $localtlpdb->option("location", $location);
+    $localtlpdb->save;
+    %repos = repository_to_array($location);
+  }
+  # check if we are only one tag/repo
+  if ($#tags == 0) {
+    # go to normal mode
+    _init_tlmedia();
+    return;
+  }
+  # we are still here, so we have more tags
+
+  # check that there is a main repository
+  if (!TeXLive::TLUtils::member('main', @tags)) {
+    tldie("Cannot find main repository, you have to tag one as main!\n");
+  }
+
+  # TODO TODO
+  # - abstract the set up of a single media tlpdb
+  # - make clear how to check for a already loaded remotetlpdb
+  $remotetlpdb = TeXLive::TLPDB->new();
+  $remotetlpdb->make_virtual;
+
+  my $locstr = $repos{'main'};
+  my $tlmdb = setup_one_remotetlpdb($locstr);
+  $remotetlpdb->virtual_add_tlpdb($tlmdb, "main");
+  for my $t (@tags) {
+    if ($t ne 'main') {
+      my $tlmdb = setup_one_remotetlpdb($repos{$t});
+      $remotetlpdb->virtual_add_tlpdb($tlmdb, $t);
+      $locstr .= " $repos{$t}";
+    }
+  }
+
+  # now check/setup pinning
+  # TODO for now no default pinning file!
+  if ($opts{"pin-file"}) {
+    my @pins = read_pinning_file($opts{"pin-file"});
+    if (@pins) {
+      $remotetlpdb->virtual_pinning(@pins);
+    }
+  } else {
+    # check for pinning file in TEXMFLOCAL/tlpkg/pinning.txt
+    chomp (my $TEXMFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
+    debug("trying to load pinning file $TEXMFLOCAL/tlpkg/pinning.txt\n");
+    if (-r "$TEXMFLOCAL/tlpkg/pinning.txt") {
+      my @pins = read_pinning_file("$TEXMFLOCAL/tlpkg/pinning.txt");
+      if (@pins) {
+        info("tlmgr: using pinning file $TEXMFLOCAL/tlpkg/pinning.txt\n");
+        $remotetlpdb->virtual_pinning(@pins);
+      }
+    }
+  }
+
+  # this "location-url" line should not be changed since GUI programs
+  # depend on it:
+  print "location-url\t$locstr\n" if $::machinereadable;
+  info("tlmgr: package repository:\n");
+  info("\tmain = " . $repos{'main'} . "\n");
+  for my $t (@tags) {
+    if ($t ne 'main') {
+      info("\t$t = " . $repos{$t} . "\n");
+    }
+  }
+}
+
+
+
+
+sub _init_tlmedia
+{
+
+  # if we are already initialized to the same location, nothing
+  # needs to be done.
+  # if we are initialized to a virtual tlpdb, then we have to 
+  # do in any case an initialization
+  if (defined($remotetlpdb) && !$remotetlpdb->is_virtual &&
+      ($remotetlpdb->root eq $location)) {
     # nothing to be done
     return;
   }
@@ -4614,10 +5066,28 @@ sub init_tlmedia
     $location =~ s,^$TeXLiveServerURL,$mirrorbase,;
   }
 
+  $remotetlpdb = setup_one_remotetlpdb($location);
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$location\n" if $::machinereadable;
   info("tlmgr: package repository $location\n");
+}
+
+sub setup_one_remotetlpdb
+{
+  my $location = shift;
+  my $remotetlpdb;
+
+  # TODO
+  # check if that is already loaded!!!
+
+  # choose a mirror if we are asked.
+  if ($location =~ m/^ctan$/i) {
+    $location = give_ctan_mirror();
+  } elsif ($location =~ m,^$TeXLiveServerURL,) {
+    my $mirrorbase = TeXLive::TLUtils::give_ctan_mirror_base();
+    $location =~ s,^$TeXLiveServerURL,$mirrorbase,;
+  }
 
   # if we talk about a net location try to download the hash of the tlpdb
   # - if that is possible, check for the locally saved file and if the hash
@@ -4763,8 +5233,30 @@ FROZEN
       close($tlfh);
     }
   }
+
+  return($remotetlpdb);
 }
 
+sub read_pinning_file {
+  my $pf = shift;
+  my @pins;
+  my $pfh;
+  if (!open($pfh, "<$pf")) {
+    tlwarn("Pinning file $pf cannot be read: $!\n");
+    return;
+  }
+  debug("Reading pinning file $pf\n");
+  while (my $l = TeXLive::TLUtils::get_full_line($pfh)) {
+    chomp($l);
+    # comments and empty lines are allowed
+    next if ($l =~ m/^\s*#/);
+    next if ($l =~ m/^\s*$/);
+    my ($a, $b) = split(/:/, $l);
+    push @pins, $remotetlpdb->make_pin_data_from_line($l);
+  }
+  close($pfh);
+  return @pins;
+}
 
 
 # finish handles the -pause option (wait for input from stdin),
@@ -5561,6 +6053,42 @@ written to the terminal.
 
 =back
 
+=head2 repositoy
+
+=over 4
+
+=item B<repository list>
+
+=item B<repository add I<path> [I<tag>]>
+
+=item B<repository remove I<path|tag>>
+
+=item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
+
+This action manages the list of repositories. See L</"MULTIPLE REPOSITORIES">
+below for detailed explanations.
+
+The first form list all configured repositories and the respective tags
+if set. The second form adds a repository (and optionally attaching a
+tag) to the list of repositories. The third from removes a repository,
+either by full path/url, or by tag. The last form sets the list
+of repositories to the items given on the command line, not keeping
+previous settings. Be reminded that one of the repositories has to
+be tagged as B<main>, otherwise all operations will fail.
+
+=back
+
+=head2 candidates
+
+=over 4
+
+=item B<candidates I<pkg>>
+
+Shows the list of available candidates for package I<pkg>. See
+L</"MULTIPLE REPOSITORIES"> below for details.
+
+
+=back
 
 =head2 option
 
@@ -6198,6 +6726,118 @@ C<gui-expertmode> switches between the full
 GUI and a simplified GUI with only the important and mostly used
 settings.
 
+=head1 MULTIPLE REPOSITORIES
+
+Most packages are distributed via the main TeX Live repository, but
+sometimes local repositories are used to provide local packages
+(like commercial fonts, internal styles), as well as alternative
+package repositories for packages that cannot be included in
+proper TeX Live due to license or other reasons.
+
+Without multiple repository support using these additional repositories
+needed an extra invocation and temporarily setting the installation
+source to this additional repository. By setting up all the
+repositories as sources of packages one does not need to
+use multiple invocations of tlmgr anymore.
+
+B<Warning:> Although support for multiple repositories has been
+tested extensively, it does not guarantee proper operation. If you
+want to be sure not to break anything, consider continuing
+using multiple invocations of tlmgr.
+
+When using multiple repositories, one has to be the main repository,
+which distributes most of the TeX Live packages. If you convert
+from a single repository installation to a multiple repository
+installation (by calling tlmgr repository add), the previously
+set repository will be set as the main repository.
+
+By default, even if multiple repositories are configured, packages
+are B<only> installed from the main repository, as long as
+packages are not explicitely pinned to a different repository.
+That also means by simply adding another repository you will
+B<not> be able to install the packages from there, you first
+have to specify which packages should be taken from a
+different repository by specifying some pinning rules.
+
+=head2 Pinning
+
+Pinning a package is done by editing (adding) a file
+
+  TEXMFLOCAL/tlpkg/pinning.txt
+
+which contains lines
+
+  repo:pkg[,pkg]
+
+In this line the C<repo> is either the full URL saved in the
+list or repositories, or one of the tags given. The C<pkg>
+are shell style globs for packages.
+
+By default everything is pinned to the main repository, so
+you can imagine that at the end of the file pinning.txt there
+is a line
+
+  main:*
+
+If a package C<foo> is pinned to a repository, any package
+C<foo> in any other repository, even if it has a higher
+revision number, will not be considered as installable
+candidate.
+
+=head2 Usage example with tlcontrib
+
+- check current repository:
+
+ $ tlmgr repository list
+ List of repositories (with tags if set):
+   /var/www/norbert/tlnet
+
+- add tlcontrib repository (and give it a short name)
+
+ $ tlmgr repository add http://tlcontrib.metatex.org/2011 tlcontrib
+
+- check repositories:
+
+ $ tlmgr repository list
+ List of repositories (with tags if set):
+    http://tlcontrib.metatex.org/2011 (tlcontrib)
+    /var/www/norbert/tlnet (main)
+
+
+- add a pinning to get cowfont from tlcontrib:
+
+ $ mkdir -p `kpsewhich -var-value TEXMFLOCAL`/tlpkg
+ $ echo "tlcontrib:cowfont" > `kpsewhich -var-value TEXMFLOCAL`/tlpkg/pinning.txt
+
+- check that we can find cowfont:
+
+ $ tlmgr show cowfont
+ tlmgr: using pinning file .../tlpkg/pinning.txt
+ tlmgr: package repository /var/www/norbert/tlnet http://tlcontrib.metatex.org/2011
+ package:     cowfont
+ category:    Package
+ ...
+
+- install cowfont and context (which is needed!)
+
+ $ tlmgr install context cowfont
+ tlmgr: using pinning file .../tlpkg/pinning.txt
+ tlmgr: package repository /var/www/norbert/tlnet http://tlcontrib.metatex.org/2011
+ [1/11, ??:??/??:??] install: context.x86_64-linux @main [84k]
+ [2/11, 00:00/00:00] install: context @main [4274k]
+ [3/11, 00:01/00:02] install: cowfont @tlcontrib [655k]
+ [4/11, 00:05/00:09] install: metapost.x86_64-linux @main [198k]
+ [5/11, 00:05/00:09] install: metapost @main [72k]
+ [6/11, 00:05/00:09] install: mptopdf.x86_64-linux @main [1k]
+ [7/11, 00:06/00:11] install: mptopdf @main [37k]
+ [8/11, 00:06/00:11] install: stmaryrd @main [163k]
+ [9/11, 00:07/00:12] install: xetex.x86_64-linux @main [4442k]
+ [10/11, 00:08/00:08] install: xetex @main [46k]
+ [11/11, 00:08/00:08] install: xetexconfig @main [13k]
+ ...
+
+In the last part you see that the cowfont is installed from
+the tlcontrib part (@tlcontrib).
 
 =head1 TAXONOMIES
 
