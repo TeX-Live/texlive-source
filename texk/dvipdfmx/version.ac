@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current dvipdfmx version
-m4_define([dvipdfmx_version], [20110311])
+m4_define([dvipdfmx_version], [20120420])

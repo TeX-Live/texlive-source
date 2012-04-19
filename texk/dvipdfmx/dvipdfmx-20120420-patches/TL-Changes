@@ -1,0 +1,14 @@
+Changes applied to the dvipdfmx-20110420 tree as obtained from the
+the subversion source of TL.
+
+#Changes applied to the dvipdfmx-20110311 tree as obtained from:
+#	http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20110311.tar.gz
+
+Removed:
+	NEWS
+	compile
+	depcomp
+	install-sh
+	missing
+	mkinstalldirs
+

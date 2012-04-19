@@ -3,6 +3,83 @@ $Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.290 2011/03/11 03:15:31 chofchof E
 ChangeLog: Changes for DVIPDFMx
 ===============================
 
+2012-04-20  Norbert Preining  <preining@logic.at>
+
+	* DVIPDFMx-20120420 release
+
+2012-04-20  Alexander Grahn  <A.Grahn@hzdr.de>
+
+	* src/spc_pdfm.c: use kpse to find media
+
+2012-04-20  Norbert Preining  <preining@logic.at>
+
+	* src/dvipdfmx.c: add a new directive "i" for reading subsidiary
+	config files
+	* data/dvipdfmx.cfg: document the new directive
+
+2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Remove extern decls from *.c files.
+	* dpxfile.c: Drop obsolete comment that mkstemp may not be
+	declared in stdlib.h.
+	* spc_color.c: Drop 'extern' from function definition.
+	* error.h: ANSI C prototype for error_cleanup().
+	* error.c: Drop extern decl, now in error.h.
+	* dvipdfmx.c: Add '#include "error.h"' and drop extern decl.
+
+2012-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfdev.c: Handle UTP-16 surrogates for UCS-4
+	supplementary planes.  Based on patch from Tanaka Takuji-san.
+
+2012-01-17  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* dvi.c, pdfdev.c:: Support for (e-)(u)pTeX dtou direction.
+
+2011-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c, spc-pdfm.c, tfm.c and vf.c: remove incompatible lines
+	with the non-upTeX case and erase #ifdef upTeX.
+
+2011-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tt_cmap.c: Fix typo "featre" -> "feature".
+
+2011-09-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c, spc-pdfm.c, tfm.c and vf.c: apply patches by Takuji Tanaka
+	in order to support (e)-upTeX. The (e)-upTeX support is enabled by
+	defining upTeX. In the case -DupTeX, the dvipdfmx must be compatible
+	with the old one, which can be obtained without -DupTeX.
+
+2011-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dpxcrypt.c: Use headers as in configure test for uint32_t.
+
+2011-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dpxfile.c (exec_spawn): Do not quote execvp() arguments.
+
+2011-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dpxfile.c (exec_spawn): Exit if execvp() fails, some clean up.
+
+2011-06-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dpxfile.c: fix a bug in exec_spawn().
+
+2011-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* man/extractbb.1: Update extractbb manpage.
+
+2011-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ../dvipdfmx-20110311/data/dvipdfmx.cfg: Synched from Master.
+
+2011-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* man/extractbb.1: Update man/extractbb.1.
+
 2011-03-11  Jin-Hwan Cho
 
 	* dpxcrypt.c:

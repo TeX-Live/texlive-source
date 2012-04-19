@@ -1364,7 +1364,7 @@ spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, in
 {
   pdf_obj *fstream;
   long     nb_read;
-  char    *ident, *instring;
+  char    *ident, *instring, *fullname;
   pdf_obj *tmp;
   FILE    *fp;
 
@@ -1400,11 +1400,19 @@ spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, in
       RELEASE(ident);
       return  -1;
     }
-    fp = DPXFOPEN(instring, DPX_RES_TYPE_BINARY);
+    fullname = kpse_find_pict(instring);
+    if (!fullname) {
+      spc_warn(spe, "File \"%s\" not found.", instring);
+      pdf_release_obj(tmp);
+      RELEASE(ident);
+      return  -1;
+    }
+    fp = DPXFOPEN(fullname, DPX_RES_TYPE_BINARY);
     if (!fp) {
       spc_warn(spe, "Could not open file: %s", instring);
       pdf_release_obj(tmp);
       RELEASE(ident);
+      RELEASE(fullname);
       return -1;
     }
     fstream = pdf_new_stream(STREAM_COMPRESS);

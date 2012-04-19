@@ -1,3 +1,8 @@
+2012-04-20  Norbert Preining  <preining@logic.at>
+
+	Imported snapshot 20110420.
+	This snapshot is actually the current state of the SVN repository.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

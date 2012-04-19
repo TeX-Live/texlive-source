@@ -102,6 +102,9 @@ static char   landscape_mode    = 0;
 char *dvi_filename = NULL, *pdf_filename = NULL;
 
 static void
+read_config_file (const char *config);
+
+static void
 set_default_pdf_filename(void)
 {
   const char *dvi_base;
@@ -131,7 +134,7 @@ show_version (void)
 {
   fprintf(stdout, "\nThis is %s-%s by the DVIPDFMx project team,\n", PACKAGE, VERSION);
   fprintf(stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf(stdout, "\nCopyright (C) 2002-2011 by the DVIPDFMx project team\n");
+  fprintf(stdout, "\nCopyright (C) 2002-2012 by the DVIPDFMx project team\n");
   fprintf(stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf(stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf(stdout, "the Free Software Foundation; either version 2 of the License, or\n");
@@ -561,6 +564,11 @@ do_args (int argc, char *argv[])
         break;
       case 'E':
         compat_mode = 1;
+        break;
+      case 'i':
+        CHECK_ARG(1, "subsidiary config file");
+        read_config_file(argv[1]);
+        POP_ARG();
         break;
       case 'e':
 	if (compat_mode) {

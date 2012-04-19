@@ -1,3 +1,8 @@
+2012-04-20  Norbert Preining  <preining@logic.at>
+
+	* remove all patches but patch-00-cfg and include them in
+	proper dvipdfmx, add also the changelogs there.
+
 2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-08-extern (new): Remove extern decls from *.c files.

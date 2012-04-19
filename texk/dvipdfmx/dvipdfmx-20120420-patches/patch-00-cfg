@@ -1,6 +1,6 @@
-diff -ur dvipdfmx-20110311.orig/data/dvipdfmx.cfg dvipdfmx-20110311/data/dvipdfmx.cfg
---- dvipdfmx-20110311.orig/data/dvipdfmx.cfg	2010-10-12 02:01:29.000000000 +0200
-+++ dvipdfmx-20110311/data/dvipdfmx.cfg	2011-04-29 00:31:34.000000000 +0200
+diff -ur dvipdfmx-20120420.orig/data/dvipdfmx.cfg dvipdfmx-20120420/data/dvipdfmx.cfg
+--- dvipdfmx-20120420.orig/data/dvipdfmx.cfg	2010-10-12 02:01:29.000000000 +0200
++++ dvipdfmx-20120420/data/dvipdfmx.cfg	2011-04-29 00:31:34.000000000 +0200
 @@ -137,14 +137,23 @@
  %% than A0, and their llx=lly=0, you can use "-dEPSCrop" instead of
  %% "-sPAPERSIZE=a0"
