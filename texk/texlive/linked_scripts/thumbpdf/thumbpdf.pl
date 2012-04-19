@@ -26,8 +26,9 @@ $^W=1; # turn warning on
 #
 my $file        = "thumbpdf.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "3.14";
-my $date        = "2012/04/09";
+my $prj         = 'thumbpdf';
+my $version     = "3.15";
+my $date        = "2012/04/18";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 1999-2012 by $author.";
 #
@@ -150,6 +151,8 @@ my $copyright   = "Copyright (c) 1999-2012 by $author.";
 #   2011/08/10 v3.13
 #    * Use gswin64c in Windows with 64 bits.
 #   2012/04/09 v3.14
+#   2012/04/18 v3.15
+#    * Option --version added.
 #
 
 ### program identification
@@ -212,6 +215,7 @@ $::opt_modes      = "pdftex";
 $::opt_gscmd      = "";
 $::opt_level2     = 0;
 $::opt_help       = 0;
+$::opt_version    = 0;
 $::opt_quiet      = 0;
 $::opt_debug      = 0;
 $::opt_verbose    = 0;
@@ -234,6 +238,7 @@ Function: Support of thumbnails for pdfTeX or dvips/ps2pdf (pdfmark).
           `<jobname>$pdftexext' (pdfTeX), `<jobname>$pdfmarkext' (pdfmark)
 Options:                                                         (defaults:)
   --help          print usage
+  --version       print version number
   --(no)quiet     suppress messages                              ($bool[$::opt_quiet])
   --(no)verbose   verbose printing                               ($bool[$::opt_verbose])
   --(no)debug     debug informations                             ($bool[$::opt_debug])
@@ -265,6 +270,7 @@ my @OrgArgv = @ARGV;
 use Getopt::Long;
 GetOptions(
   "help!",
+  "version!",
   "quiet!",
   "debug!",
   "verbose!",
@@ -286,6 +292,10 @@ GetOptions(
   "greek!"
 ) or die $usage;
 !$::opt_help or die $usage;
+if ($::opt_version) {
+    print "$prj $date v$version\n";
+    exit(0);
+}
 @ARGV < 2 or die "$usage$Error Too many files!\n";
 @ARGV == 1 or die "$usage$Error Missing jobname!\n";
 
