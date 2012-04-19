@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26004 2012-04-17 04:09:34Z preining $
+# $Id: tlmgr.pl 26026 2012-04-18 05:54:24Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26004 $';
-my $datrev = '$Date: 2012-04-17 06:09:34 +0200 (Tue, 17 Apr 2012) $';
+my $svnrev = '$Revision: 26026 $';
+my $datrev = '$Date: 2012-04-18 07:54:24 +0200 (Wed, 18 Apr 2012) $';
 my $tlmgrrevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
@@ -152,7 +152,6 @@ sub main {
                          "reinstall" => 1,
                          "force" => 1,
                          "dry-run|n" => 1 },
-    "list"          => { "only-installed" => 1 },
     "paper"         => { "list" => 1 },
     "path"          => { "w32mode" => "=s" },
     "platform"      => { "dry-run|n" => 1 },
@@ -177,11 +176,12 @@ sub main {
                          "characterization" => 1,
                          "functionality" => 1,
                          "taxonomy" => 1 },
-    "show"          => { "list" => 1,
+    "info"          => { "list" => 1,
                          "taxonomy" => 1,
                          "keyword" => 1,
                          "characterization" => 1,
-                         "functionality" => 1 },
+                         "functionality" => 1,
+                         "only-installed" => 1 },
     "dump-tlpdb"    => { "local" => 1,
                          "remote" => 1 },
     "uninstall"     => { "force" => 1 },
@@ -315,6 +315,11 @@ for the full story.\n";
   if ($action =~ /^(paper|xdvi|pdftex|dvips|dvipdfmx?|context)$/) {
     unshift(@ARGV, $action);
     $action = "paper";
+  }
+
+  # backward compatibility with action "show" and "list" from before
+  if ($action =~ /^(show|list)$/) {
+    $action = "info";
   }
 
   # --machine-readable is only supported by update.
@@ -513,9 +518,6 @@ sub execute_action {
   } elsif ($action =~ m/^candidates$/i) {
     action_candidates();
     finish(0);
-  } elsif ($action =~ m/^list$/i) {
-    action_list();
-    finish(0);
   } elsif ($action =~ m/^check$/i) {
     action_check();
   } elsif ($action =~ m/^install$/i) {
@@ -541,8 +543,8 @@ sub execute_action {
   } elsif ($action =~ m/^dump-tlpdb$/i) {
     action_dumptlpdb();
     finish(0);
-  } elsif ($action =~ m/^show$/i) {
-    action_show(@ARGV);
+  } elsif ($action =~ m/^info$/i) {
+    action_info(@ARGV);
     finish(0);
   } elsif ($action =~ m/^remove$/i) {
     action_remove();
@@ -1142,9 +1144,9 @@ sub action_dumptlpdb {
   return;
 }
     
-#  SHOW
+#  INFO
 #
-sub action_show {
+sub action_info {
   init_local_db();
   my $taxonomy;
   if ($opts{"taxonomy"} || $opts{"characterization"} || $opts{"functionality"}
@@ -1154,7 +1156,20 @@ sub action_show {
       tlwarn("tlmgr: Cannot load taxonomy file, showing taxonomies not supported.\n");
     }
   }
-  foreach my $ppp (@_) {
+  my ($what, @todo) = @ARGV;
+  #
+  # tlmgr info
+  # tlmgr info collection
+  # tlmgr info scheme
+  # these commands just list the packages/collections/schemes installed with 
+  # a short list
+  if (!defined($what) || ($what =~ m/^(collections|schemes)$/i)) {
+    show_list_of_packages($what);
+    return;
+  }
+  # we are still here, so $what is defined and neither collection nor scheme,
+  # so assume the arguments are package names
+  foreach my $ppp ($what, @todo) {
     my ($pkg, $tag) = split '@', $ppp, 2;
     my $tlpdb = $localtlpdb;
     my $tlp = $localtlpdb->get_package($pkg);
@@ -1206,7 +1221,7 @@ sub action_show {
                 my ($t,$r) = split(/\//, $a, 2);
                 push @aaa, "$pkg" . '@' . $t;
               }
-              action_show(@aaa);
+              action_info(@aaa);
               next;
             } else {
               tlwarn("strange, package listed but no residual candidates: $pkg\n");
@@ -3370,22 +3385,12 @@ sub action_install {
   }
 }
 
-sub action_list {
+sub show_list_of_packages {
   init_local_db();
   # make sure that the @ARGV hash is not changed in case we switch to
   # show mode
-  my ($what) = @ARGV;
-  if ($what) {
-    # if the argument to list is either 'collection' or 'scheme'
-    # we list them, otherwise we go direct into tlmgr show $pkg mode
-    if ($what !~ m/^(collection|scheme)/i) {
-      tlwarn("(switching to show mode)\n");
-      action_show(@ARGV);
-      return;
-    }
-  } else {
-    $what = "";
-  }
+  my ($what) = @_;
+  $what = "" if !$what;
   my $tlm;
   if ($opts{"only-installed"}) {
     $tlm = $localtlpdb;
@@ -3394,9 +3399,9 @@ sub action_list {
     $tlm = $remotetlpdb;
   }
   my @whattolist;
-  if ($what =~ m/^collection/i) {
+  if ($what =~ m/^collections/i) {
     @whattolist = $tlm->collections;
-  } elsif ($what =~ m/^scheme/i) {
+  } elsif ($what =~ m/^schemes/i) {
     @whattolist = $tlm->schemes;
   } else {
     if ($tlm->is_virtual) {
@@ -6357,9 +6362,16 @@ Search for package names, descriptions, and taxonomies, but not files.
 =back
 
 
-=head2 show [I<options>] I<pkg>...
+=head2 info [I<options>] [collections|schemes|I<pkg>...]
 
-Display information about I<pkg>: the name, category, short and long
+With no argument, lists all packages available at the package
+repository, prefixing those already installed with C<i>.
+
+With the single word C<collections> or C<schemes> as the argument, lists
+the request type instead of all packages.
+
+With anything else as arguments, 
+display information about I<pkg>: the name, category, short and long
 description, installation status, and TeX Live revision number.
 Searches in the remote installation source for the package if it is not
 locally installed.
@@ -6369,6 +6381,9 @@ package version, date, and license.  Consider these, especially the
 package version, approximations only, due to timing skew of the updates
 of the difference pieces.  The C<revision> value, by contrast, comes
 directly from TL and is reliable.
+
+The former actions B<show> and B<list> are merged into this action,
+but are still supported for backward compatibility.
 
 Options:
 
@@ -6380,6 +6395,13 @@ If the option C<--list> is given with a package, the list of contained
 files is also shown, including those for platform-specific dependencies.
 When given with schemes and collections, C<--list> outputs their
 dependencies in a similar way.
+
+=item B<--only-installed>
+
+If this options is given,  the installation source will
+not be used; only locally installed packages, collections, or schemes
+are listed.
+(Does not work for listing of packages for now)
 
 =item B<--taxonomy>
 
@@ -6394,21 +6416,6 @@ given packages from the corresponding taxonomy (or all of them).  See
 L</"TAXONOMIES"> below for details.
 
 =back
-
-
-=head2 list [--only-installed] [collections|schemes|I<pkg>...]
-
-With no argument, lists all packages available at the package
-repository, prefixing those already installed with C<i>.
-
-With the single word C<collections> or C<schemes> as the argument, lists
-the request type.
-
-With anything else as arguments, operates as the C<show> action.
-
-If the option C<--only-installed> is given, the installation source will
-not be used; only locally installed packages, collections, or schemes
-are listed.
 
 
 =head2 dump-tlpdb [--local|--remote]

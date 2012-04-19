@@ -4,7 +4,7 @@ use strict;
 #
 # vpe.pl
 #
-# Copyright (C) 2000 Heiko Oberdiek.
+# Copyright (C) 2000, 2012 Heiko Oberdiek.
 #
 # This program may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.2
@@ -19,15 +19,17 @@ use strict;
 # This file "vpe.pl" may be renamed to "vpe"
 # for installation purposes.
 #
-my $file        = "vpe.pl";
+my $prj         = 'vpe';
+my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "0.1";
-my $date        = "2000/09/15";
+my $version     = "0.2";
+my $date        = "2012/04/18";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2000 by $author.";
+my $copyright   = "Copyright (c) 2000, 2012 by $author.";
 #
 # History:
 #   2000/09/15 v0.1: First release.
+#   2012/04/18 v0.2: Option --version added.
 #
 
 ### program identification
@@ -68,8 +70,9 @@ Depending on the name of the script `vpe' works in four modes:
   this file at that line number.
 
 Options:
-  --help:     print usage.
-  --verbose:  print additional informations during running.
+  --help:     print usage
+  --version   print version number
+  --verbose:  print additional informations during running
   --force:    force symbol links
   --delete:   delete symbol links
   --sty:      internal for `vpe.sty' (get absolute file name and lines)
@@ -80,6 +83,7 @@ END_OF_USAGE
 ### options
 $::opt_verbose = 0;
 $::opt_help = 0;
+$::opt_version = 0;
 $::opt_force = 0;
 $::opt_delete = 0;
 $::opt_sty = 0;
@@ -88,6 +92,7 @@ $::opt_progname = "latex";
 use Getopt::Long;
 GetOptions(
   "help!",
+  "version!",
   "verbose!",
   "force!",
   "delete!",
@@ -97,6 +102,10 @@ GetOptions(
 ) or die $usage;
 if ($::opt_help) {
   die $usage;
+}
+if ($::opt_version) {
+  print "$prj $date v$version\n";
+  exit(0);
 }
 
 if ($::opt_sty and $::opt_system) {
