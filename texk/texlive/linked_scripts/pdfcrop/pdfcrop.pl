@@ -19,7 +19,8 @@ $^W=1; # turn warning on
 # This file "pdfcrop.pl" may be renamed to "pdfcrop"
 # for installation purposes.
 #
-my $file        = "pdfcrop.pl";
+my $prj         = 'pdfcrop';
+my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $version     = "1.33";
 my $date        = "2012/02/01";
@@ -97,6 +98,9 @@ my $copyright   = "Copyright (c) 2002-2012 by $author.";
 #                     method.
 # 2011/08/10 v1.32: * Detection for gswin64c.exe added.
 # 2012/02/01 v1.33: * Input file can be `-' (standard input).
+# 2012/04/18 v1.34: * Format of --version changed
+#                     from naked version number to a line with
+#                     program name, date and version.
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -418,7 +422,7 @@ GetOptions(
 !$::opt_help or usage(0);
 
 if ($::opt_version) {
-    print "$version\n";
+    print "$prj $date v$version\n";
     exit(0);
 }
 
