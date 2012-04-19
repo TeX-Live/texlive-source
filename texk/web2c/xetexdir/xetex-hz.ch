@@ -1,7 +1,39 @@
+/****************************************************************************\
+ Part of the XeTeX typesetting system
+ copyright (c) 1994-2008 by SIL International
+ copyright (c) 2009-2012 by Jonathan Kew
+ copyright (c) 2012 by Khaled Hosny
+
+ Written by Jonathan Kew
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of the copyright holders
+shall not be used in advertising or otherwise to promote the sale,
+use or other dealings in this Software without prior written
+authorization from the copyright holders.
+\****************************************************************************/
+
 @x
 new_kern:=p;
 end;
-
 @y
 new_kern:=p;
 end;
@@ -32,14 +64,12 @@ end;
 @!hlist_stack_level:0..max_hlist_stack; {fill level for |hlist_stack|}
 @!first_p: pointer; {to access the first node of the paragraph}
 @!global_prev_p: pointer; {to access |prev_p| in |line_break|; should be kept in sync with |prev_p| by |update_prev_p|}
-
 @z
 
 @x
 @<Search |hyph_list| for pointers to |p|@>;
 end;
 gubed
-
 @y
 @<Search |hyph_list| for pointers to |p|@>;
 end;
@@ -119,8 +149,6 @@ if positive then
 else
     round_xn_over_d := -u;
 end;
-
-
 @z
 
 @x
@@ -141,7 +169,6 @@ end;
 show_node_list(p); {the show starts at |p|}
 print_ln;
 end;
-
 @y
 show_node_list(p); {the show starts at |p|}
 print_ln;
@@ -153,8 +180,6 @@ begin
     depth_threshold:=pool_size-pool_ptr-1;
     show_node_list(p); {the show starts at |p|}
 end;
-
-
 @z
 
 @x
@@ -355,7 +380,6 @@ end;
 
 @x
 @ @<Set init...@>=adjust_tail:=null; last_badness:=0;
-
 @y
 @ @<Set init...@>=adjust_tail:=null; last_badness:=0;
 
@@ -428,9 +452,6 @@ begin
 {     font(margin_char(k)) := font(p); }
     new_margin_kern := k;
 end;
-
-
-
 @z
 
 @x
@@ -588,7 +609,6 @@ begin
 done:
     total_pw := left_pw(l) + right_pw(r);
 end;
-
 @z
 
 @x
@@ -924,11 +944,9 @@ begin
     print(": "); print(p);
     succumb;
 end;
-
 @y
         flush_string;
 end;
-
 @z
 
 @x
@@ -953,7 +971,6 @@ XeTeX_selector_name_code:
 
 XeTeX_glyph_name_code:
     if is_native_font(fnt) then print_glyph_name(fnt, arg1);
-
 @y
       not_native_font_error(convert, c, fnt);
   end;
