@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-04-20  Norbert Preining  <preining@logic.at>
+
+	* dvipdfmx.c: allow inclusion of subsidiary config files, directive i
+	* data/config/dvipdfmx.cfg: document the i directive
+
 2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Remove extern decls from *.c files.
