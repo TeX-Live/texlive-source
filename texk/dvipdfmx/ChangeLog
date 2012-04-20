@@ -1,7 +1,7 @@
 2012-04-20  Norbert Preining  <preining@logic.at>
 
-	Imported snapshot 20110420.
-	This snapshot is actually the current state of the SVN repository.
+	Imported snapshot 20120420.
+	* version.ac, man/dvipdfm.1: Adapted.
 
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

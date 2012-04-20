@@ -1,0 +1,11 @@
+Changes applied to the dvipdfmx-20110420 tree as obtained from:
+	ftp://ftpth.mppmu.mpg.de/pub/peb/TLtests/dvipdfmx-20120420.tar.xz
+
+Removed:
+	NEWS
+	compile
+	depcomp
+	install-sh
+	missing
+	mkinstalldirs
+
