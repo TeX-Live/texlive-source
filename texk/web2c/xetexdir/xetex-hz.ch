@@ -4,7 +4,7 @@
  copyright (c) 2009-2012 by Jonathan Kew
  copyright (c) 2012 by Khaled Hosny
 
- Written by Jonathan Kew
+ Written by Han The Thanh
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
