@@ -1,10 +1,18 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-04-21  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/spc_pdfm.c: use kpse to find media.
+
 2012-04-20  Norbert Preining  <preining@logic.at>
 
 	* dvipdfmx.c: allow inclusion of subsidiary config files, directive i
 	* data/config/dvipdfmx.cfg: document the i directive
+
+2012-04-14  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/spc_dvips.c: Fixed bug in "ps: plotfile" special.
 
 2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
