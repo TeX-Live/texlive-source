@@ -133,6 +133,7 @@ static void
 show_version (void)
 {
   fprintf(stdout, "\nThis is %s-%s by the DVIPDFMx project team,\n", PACKAGE, VERSION);
+  fprintf(stdout, "modified for TeX Live,\n");
   fprintf(stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
   fprintf(stdout, "\nCopyright (C) 2002-2012 by the DVIPDFMx project team\n");
   fprintf(stdout, "\nThis is free software; you can redistribute it and/or modify\n");
