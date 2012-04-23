@@ -1094,6 +1094,9 @@ int __cdecl win32_system(const char *cmd)
   *q = '\0';
   av[3] = NULL;
   ret = spawnvp(_P_WAIT, av[0], av);
+  free(av[0]);
+  free(av[1]);
+  free(av[2]);
   return ret;
 }
 
