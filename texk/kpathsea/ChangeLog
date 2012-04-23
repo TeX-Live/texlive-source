@@ -1,3 +1,7 @@
+2012-04-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.h, win32lib.c: rewrite win32_system().
+
 2012-04-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmf.cnf: erase "ptexgeneric".

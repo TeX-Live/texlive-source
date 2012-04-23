@@ -1070,198 +1070,30 @@ build_cmdline(char ***cmd, char *input, char *output)
 
 /* win32_system */
 
-/*
-  It has been proven that system() fails to retrieve exit codes
-  under Win9x. This is a workaround for this bug.
-*/
-
-int __cdecl kpathsea_win32_system(kpathsea kpse, const char *cmd)
+int __cdecl win32_system(const char *cmd)
 {
-  STARTUPINFO si;
-  PROCESS_INFORMATION pi;
-  DWORD ret = 0;
-  HANDLE hIn, hOut, hPipeIn, hPipeOut;
-  SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
-  int   i;
-  int   is_cmd_pipe;
-  char  *app_name, *new_cmd;
-  char  ***cmd_pipe;
-  char  *red_i, *red_o;
-  char  *red_input = NULL;
-  char  *red_output = NULL;
-  char  *sp, *dp;
+  const char *p;
+  char  *q;
+  char  *av[4];
+  int   len, ret;
 
-  /* Reset errno ??? */
-  errno = 0;
+  if(_osver & 0x8000)
+    av[0] = xstrdup("command.com");
+  else
+    av[0] = xstrdup("cmd.exe");
+  av[1] = xstrdup("/c");
 
-  /* Admittedly, the command interpreter will allways be found. */
-  if (! cmd) {
-    errno = 0;
-#ifdef _TRACE
-    fprintf(stderr, "system: (null) command.\n");
-#endif
-    return 1;
-  }
-
-  if (look_for_cmd(cmd, &app_name, &new_cmd) == FALSE) {
-    /* Failed to find the command or malformed cmd */
-    errno = ENOEXEC;
-#ifdef _TRACE
-    fprintf(stderr, "system: failed to find command.\n");
-#endif
-    return -1;
-  }
-
-  is_cmd_pipe = 0;
-  cmd_pipe = (char ***)kpathsea_parse_cmdline(kpse, new_cmd, &red_i, &red_o,
-              &is_cmd_pipe);
-
-  if(red_i) {
-    red_input = (char *)malloc(strlen(red_i) + 1);
-    for(sp = red_i, dp = red_input; *sp; sp++) {
-      if(*sp != '\"') *dp++ = *sp;
-    }
-    *dp = '\0';
-  }
-
-  if(red_o) {
-    red_output = (char *)malloc(strlen(red_o) + 1);
-    for(sp = red_o, dp = red_output; *sp; sp++) {
-      if(*sp != '\"') *dp++ = *sp;
-    }
-    *dp = '\0';
-  }
-
-  for (i = 0; cmd_pipe[i]; i++) {
-
-    /* free the cmd and build the current one */
-    if (new_cmd) free(new_cmd);
-
-    if(is_cmd_pipe)
-      new_cmd = (char *)build_cmdline(&cmd_pipe[i], red_input, red_output);
+  len = strlen(cmd) + 1;
+  av[2] = malloc(len);
+  for(p = cmd, q = av[2]; *p; p++, q++) {
+    if(*p == '\'')
+      *q = '"';
     else
-      new_cmd = (char *)build_cmdline(&cmd_pipe[i], NULL, NULL);
-
-    /* First time, use red_input if available */
-    if (i == 0) {
-      if (is_cmd_pipe == 0) {
-        if (red_input) {
-          hIn = CreateFile(red_input,
-            GENERIC_READ,
-            FILE_SHARE_READ | FILE_SHARE_WRITE,
-            &sa,
-            OPEN_EXISTING,
-            FILE_ATTRIBUTE_NORMAL,
-            NULL);
-          if (hIn == INVALID_HANDLE_VALUE) {
-#ifdef _TRACE
-            fprintf(stderr, "system: failed to open hIn (%s) with error %d.\n",
-                    red_input, GetLastError());
-#endif
-            errno = EIO;
-            return -1;
-          }
-        }
-        else {
-          hIn = GetStdHandle(STD_INPUT_HANDLE);
-        }
-      }
-    }
-    /* Last time, use red_output if available */
-    if (cmd_pipe[i+1] == NULL) {
-      if (is_cmd_pipe == 0) {
-        if (red_output) {
-          hOut = CreateFile(red_output,
-            GENERIC_WRITE,
-            FILE_SHARE_READ | FILE_SHARE_WRITE,
-            &sa,
-            OPEN_ALWAYS,
-            FILE_ATTRIBUTE_NORMAL,
-            NULL);
-          if (hOut == INVALID_HANDLE_VALUE) {
-#ifdef _TRACE
-            fprintf(stderr, "system: failed to open hOut (%s) with error %d.\n",
-                    red_output, GetLastError());
-#endif
-            errno = EIO;
-            return -1;
-          }
-        }
-        else {
-          hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-        }
-      }
-    }
-
-    /* In the case of pipe, we use spawnvp(), as the original
-       system() --ak 2009/07/08 */
-
-    if(is_cmd_pipe) {
-      char *av[4];
-      if(_osver & 0x8000)
-        av[0] = strdup("command.com");
-      else
-        av[0] = strdup("cmd.exe");
-      av[1] = strdup("/c");
-      av[2] = new_cmd;
-      av[3] = NULL;
-      ret = spawnvp(_P_WAIT, av[0], av);
-      free(av[0]);
-      free(av[1]);
-      if(new_cmd) free(new_cmd);
-      if(app_name) free(app_name);
-      if(red_input) free(red_input);
-      if(red_output) free(red_output);
-      return ret;
-    }
-
-    ZeroMemory( &si, sizeof(STARTUPINFO) );
-    si.cb = sizeof(STARTUPINFO);
-    si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
-    si.wShowWindow = SW_SHOW;
-    si.hStdInput = hIn;
-    si.hStdOutput = hOut;
-    si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
-
-#ifdef _TRACE
-    fprintf(stderr, "Executing: %s\n", new_cmd);
-#endif
-    if (CreateProcess(app_name,
-                      new_cmd,
-                      NULL,
-                      NULL,
-                      TRUE,
-                      0,
-                      NULL,
-                      NULL,
-                      &si,
-                      &pi) == 0) {
-      fprintf(stderr, "win32_system(%s) call failed (Error %d).\n", cmd, GetLastError());
-      return -1;
-    }
-
-    /* Only the process handle is needed */
-    CloseHandle(pi.hThread);
-
-    if (WaitForSingleObject(pi.hProcess, INFINITE) == WAIT_OBJECT_0) {
-      if (GetExitCodeProcess(pi.hProcess, &ret) == 0) {
-        fprintf(stderr, "Failed to retrieve exit code: %s (Error %d)\n", cmd, GetLastError());
-        ret = -1;
-      }
-    }
-    else {
-      fprintf(stderr, "Failed to wait for process termination: %s (Error %d)\n", cmd, GetLastError());
-      ret = -1;
-    }
-    CloseHandle(pi.hProcess);
-
-    if (red_input) CloseHandle(hIn);
-    if (red_output) CloseHandle(hOut);
+      *q = *p;
   }
-
-  if (new_cmd) free(new_cmd);
-  if (app_name) free(app_name);
-
+  *q = '\0';
+  av[3] = NULL;
+  ret = spawnvp(_P_WAIT, av[0], av);
   return ret;
 }
 
@@ -1315,8 +1147,4 @@ getpwnam (char *name)
   return kpathsea_getpwnam (kpse_def, name);
 }
 
-int __cdecl win32_system(const char *cmd)
-{
-  return kpathsea_win32_system (kpse_def, cmd);
-}
 #endif /* KPSE_COMPAT_API */

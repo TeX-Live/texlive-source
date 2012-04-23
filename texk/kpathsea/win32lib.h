@@ -250,7 +250,7 @@
 extern KPSEDLL FILE *kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char *mode);
 extern KPSEDLL int kpathsea_win32_pclose (kpathsea kpse, FILE *f);
 extern KPSEDLL struct passwd *kpathsea_getpwnam (kpathsea kpse, char *name);
-extern KPSEDLL int kpathsea_win32_system(kpathsea kpse, const char *cmd);
+extern KPSEDLL int win32_system(const char *cmd);
 
 #if defined (KPSE_COMPAT_API)
 extern KPSEDLL struct passwd *getpwnam (char *name);
