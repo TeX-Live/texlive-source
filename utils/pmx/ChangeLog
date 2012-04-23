@@ -1,8 +1,3 @@
-2012-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* configure.ac: Add AC_SYS_LARGEFILE and AC_FUNC_FSEEKO,
-	required for FreeBSD (and maybe others).
-
 2012-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w32getc.c (new): Handle DOS line endings (on Windows).

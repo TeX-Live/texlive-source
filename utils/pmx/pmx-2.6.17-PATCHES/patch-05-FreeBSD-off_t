@@ -1,0 +1,13 @@
+	On FreeBSD (and maybe others) we need <sys/types.h> for off_t.
+
+diff -ur pmx-2.6.17.orig/libf2c/fio.h pmx-2.6.17/libf2c/fio.h
+--- pmx-2.6.17.orig/libf2c/fio.h	2012-04-01 14:49:20.000000000 +0200
++++ pmx-2.6.17/libf2c/fio.h	2012-04-23 10:06:01.000000000 +0200
+@@ -1,6 +1,7 @@
+ #ifndef SYSDEP_H_INCLUDED
+ #include "sysdep1.h"
+ #endif
++#include <sys/types.h> /* for off_t */
+ #include "stdio.h"
+ #ifdef WIN32
+ extern int w32getc(FILE *f);
