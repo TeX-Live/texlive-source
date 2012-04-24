@@ -1,11 +1,9 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2012 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
-
-# serial 0
 
 # KPSE_OBSDCOMPAT_FLAGS
 # ---------------------
@@ -16,5 +14,5 @@ AC_DEFUN([KPSE_OBSDCOMPAT_FLAGS],
 [_KPSE_LIB_FLAGS([obsdcompat], [openbsd-compat], [tree],
                  [-IBLD/libs/obsdcompat -ISRC/libs/obsdcompat],
                  [BLD/libs/obsdcompat/libopenbsd-compat.a], [],
-                 [], [${top_srcdir}/../../libs/obsdcompat/*.[ch]])[]dnl
+                 [${top_srcdir}/../../libs/obsdcompat/*.[ch]])[]dnl
 ]) # KPSE_OBSDCOMPAT_FLAGS

@@ -5704,15 +5704,10 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   ZLIB_RULE='# Rebuild libz
+  ZLIB_INCLUDES="-I$kpse_BLD/libs/zlib/include"
+  ZLIB_LIBS="$kpse_BLD/libs/zlib/libz.a"
+  ZLIB_DEPEND='${top_builddir}/../../libs/zlib/libz.a'
+  ZLIB_RULE='# Rebuild libz
 $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/zlib/include/zconf.h:

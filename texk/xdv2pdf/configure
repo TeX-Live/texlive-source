@@ -18498,15 +18498,10 @@ if test "x$with_kpathsea_libdir" != x && test "x$with_kpathsea_libdir" != xyes; 
   KPATHSEA_LIBS="-L$with_kpathsea_libdir $KPATHSEA_LIBS"
 fi
 else
-  KPATHSEA_INCLUDES=`echo '-IBLD/texk -ISRC/texk' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  KPATHSEA_LIBS=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  KPATHSEA_DEPEND=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
-    -e 's,BLD/texk/,${top_builddir}/../,g'`
-   KPATHSEA_RULE='# Rebuild libkpathsea
+  KPATHSEA_INCLUDES="-I$kpse_BLD/texk -I$kpse_SRC/texk"
+  KPATHSEA_LIBS="$kpse_BLD/texk/kpathsea/libkpathsea.la"
+  KPATHSEA_DEPEND='${top_builddir}/../kpathsea/libkpathsea.la'
+  KPATHSEA_RULE='# Rebuild libkpathsea
 $(KPATHSEA_DEPEND): ${top_srcdir}/../kpathsea/*.[ch] ${top_builddir}/../kpathsea/paths.h
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../kpathsea/paths.h:

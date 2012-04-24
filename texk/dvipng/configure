@@ -15833,15 +15833,10 @@ if test "x$with_kpathsea_libdir" != x && test "x$with_kpathsea_libdir" != xyes; 
   KPATHSEA_LIBS="-L$with_kpathsea_libdir $KPATHSEA_LIBS"
 fi
 else
-  KPATHSEA_INCLUDES=`echo '-IBLD/texk -ISRC/texk' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  KPATHSEA_LIBS=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  KPATHSEA_DEPEND=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
-    -e 's,BLD/texk/,${top_builddir}/../,g'`
-   KPATHSEA_RULE='# Rebuild libkpathsea
+  KPATHSEA_INCLUDES="-I$kpse_BLD/texk -I$kpse_SRC/texk"
+  KPATHSEA_LIBS="$kpse_BLD/texk/kpathsea/libkpathsea.la"
+  KPATHSEA_DEPEND='${top_builddir}/../kpathsea/libkpathsea.la'
+  KPATHSEA_RULE='# Rebuild libkpathsea
 $(KPATHSEA_DEPEND): ${top_srcdir}/../kpathsea/*.[ch] ${top_builddir}/../kpathsea/paths.h
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../kpathsea/paths.h:
@@ -15909,15 +15904,10 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   ZLIB_RULE='# Rebuild libz
+  ZLIB_INCLUDES="-I$kpse_BLD/libs/zlib/include"
+  ZLIB_LIBS="$kpse_BLD/libs/zlib/libz.a"
+  ZLIB_DEPEND='${top_builddir}/../../libs/zlib/libz.a'
+  ZLIB_RULE='# Rebuild libz
 $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/zlib/include/zconf.h:
@@ -16030,15 +16020,10 @@ elif test "x$need_libpng:$with_system_libpng" = xyes:yes; then
   as_fn_error $? "did not find libpng" "$LINENO" 5
 fi
 else
-  LIBPNG_INCLUDES=`echo '-IBLD/libs/libpng/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  LIBPNG_LIBS=`echo 'BLD/libs/libpng/libpng.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  LIBPNG_DEPEND=`echo 'BLD/libs/libpng/libpng.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   LIBPNG_RULE='# Rebuild libpng
+  LIBPNG_INCLUDES="-I$kpse_BLD/libs/libpng/include"
+  LIBPNG_LIBS="$kpse_BLD/libs/libpng/libpng.a"
+  LIBPNG_DEPEND='${top_builddir}/../../libs/libpng/libpng.a'
+  LIBPNG_RULE='# Rebuild libpng
 $(LIBPNG_DEPEND): ${top_builddir}/../../libs/libpng/include/png.h
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/libpng/include/png.h:
@@ -16070,15 +16055,10 @@ if test "x$with_t1lib_libdir" != x && test "x$with_t1lib_libdir" != xyes; then
   T1LIB_LIBS="-L$with_t1lib_libdir $T1LIB_LIBS"
 fi
 else
-  T1LIB_INCLUDES=`echo '-IBLD/libs/t1lib' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  T1LIB_LIBS=`echo 'BLD/libs/t1lib/libt1.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  T1LIB_DEPEND=`echo 'BLD/libs/t1lib/libt1.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   T1LIB_RULE='# Rebuild libt1
+  T1LIB_INCLUDES="-I$kpse_BLD/libs/t1lib"
+  T1LIB_LIBS="$kpse_BLD/libs/t1lib/libt1.a"
+  T1LIB_DEPEND='${top_builddir}/../../libs/t1lib/libt1.a'
+  T1LIB_RULE='# Rebuild libt1
 $(T1LIB_DEPEND): ${top_builddir}/../../libs/t1lib/t1lib.h
 	cd ${top_builddir}/../../libs/t1lib && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/t1lib/t1lib.h:
@@ -16191,16 +16171,12 @@ elif test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
   as_fn_error $? "did not find freetype-config required for system freetype2 library" "$LINENO" 5
 fi
 else
-  FREETYPE2_INCLUDES=`echo 'BLD/libs/freetype2' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  FREETYPE2_LIBS=`echo 'BLD/libs/freetype2/libfreetype.la' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
+  FREETYPE2_INCLUDES="$kpse_BLD/libs/freetype2"
+  FREETYPE2_LIBS="$kpse_BLD/libs/freetype2/libfreetype.la"
   FREETYPE2_LIBS="\`cat $FREETYPE2_INCLUDES/ft-libs\`"
   FREETYPE2_INCLUDES="\`cat $FREETYPE2_INCLUDES/ft-includes\`"
-  FREETYPE2_DEPEND=`echo 'BLD/libs/freetype2/libfreetype.la' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   FREETYPE2_RULE='# Rebuild libfreetype
+  FREETYPE2_DEPEND='${top_builddir}/../../libs/freetype2/libfreetype.la'
+  FREETYPE2_RULE='# Rebuild libfreetype
 $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/ft2build.h
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/freetype2/ft2build.h:
@@ -16232,15 +16208,10 @@ if test "x$with_gd_libdir" != x && test "x$with_gd_libdir" != xyes; then
   GD_LIBS="-L$with_gd_libdir $GD_LIBS"
 fi
 else
-  GD_INCLUDES=`echo '-IBLD/libs/gd/include -DNONDLL' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  GD_LIBS=`echo 'BLD/libs/gd/libgd.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  GD_DEPEND=`echo 'BLD/libs/gd/libgd.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   GD_RULE='# Rebuild libgd
+  GD_INCLUDES="-I$kpse_BLD/libs/gd/include -DNONDLL"
+  GD_LIBS="$kpse_BLD/libs/gd/libgd.a"
+  GD_DEPEND='${top_builddir}/../../libs/gd/libgd.a'
+  GD_RULE='# Rebuild libgd
 $(GD_DEPEND): ${top_builddir}/../../libs/gd/include/gd.h
 	cd ${top_builddir}/../../libs/gd && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/gd/include/gd.h:

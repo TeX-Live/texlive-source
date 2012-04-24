@@ -1,3 +1,12 @@
+2012-04-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-common.m4 (_KPSE_LIB_FLAGS_TL): Replace sed substitutions
+	in configure by m4_bpatsubst() at autoconf time.
+
+2012-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-obsdcompat-flags.m4: Correct SRC/BLD dependencies.
+
 2012-03-11  Karl Berry  <karl@tug.org>
 
 	* kpse-xpdf-flags.m4 (KPSE_XPDF_OPTIONS): tweak help text slightly.

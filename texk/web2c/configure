@@ -22184,15 +22184,10 @@ if test "x$with_kpathsea_libdir" != x && test "x$with_kpathsea_libdir" != xyes; 
   KPATHSEA_LIBS="-L$with_kpathsea_libdir $KPATHSEA_LIBS"
 fi
 else
-  KPATHSEA_INCLUDES=`echo '-IBLD/texk -ISRC/texk' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  KPATHSEA_LIBS=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  KPATHSEA_DEPEND=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
-    -e 's,BLD/texk/,${top_builddir}/../,g'`
-   KPATHSEA_RULE='# Rebuild libkpathsea
+  KPATHSEA_INCLUDES="-I$kpse_BLD/texk -I$kpse_SRC/texk"
+  KPATHSEA_LIBS="$kpse_BLD/texk/kpathsea/libkpathsea.la"
+  KPATHSEA_DEPEND='${top_builddir}/../kpathsea/libkpathsea.la'
+  KPATHSEA_RULE='# Rebuild libkpathsea
 $(KPATHSEA_DEPEND): ${top_srcdir}/../kpathsea/*.[ch] ${top_builddir}/../kpathsea/paths.h
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../kpathsea/paths.h:
@@ -22260,15 +22255,10 @@ if test "x$with_ptexenc_libdir" != x && test "x$with_ptexenc_libdir" != xyes; th
   PTEXENC_LIBS="-L$with_ptexenc_libdir $PTEXENC_LIBS"
 fi
 else
-  PTEXENC_INCLUDES=`echo '-IBLD/texk/ptexenc -ISRC/texk/ptexenc' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  PTEXENC_LIBS=`echo 'BLD/texk/ptexenc/libptexenc.la' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  PTEXENC_DEPEND=`echo 'BLD/texk/ptexenc/libptexenc.la' | sed \
-    -e 's,BLD/texk/,${top_builddir}/../,g'`
-   PTEXENC_RULE='# Rebuild libptexenc
+  PTEXENC_INCLUDES="-I$kpse_BLD/texk/ptexenc -I$kpse_SRC/texk/ptexenc"
+  PTEXENC_LIBS="$kpse_BLD/texk/ptexenc/libptexenc.la"
+  PTEXENC_DEPEND='${top_builddir}/../ptexenc/libptexenc.la'
+  PTEXENC_RULE='# Rebuild libptexenc
 $(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc/*.h
 	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
@@ -22298,15 +22288,10 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   ZLIB_RULE='# Rebuild libz
+  ZLIB_INCLUDES="-I$kpse_BLD/libs/zlib/include"
+  ZLIB_LIBS="$kpse_BLD/libs/zlib/libz.a"
+  ZLIB_DEPEND='${top_builddir}/../../libs/zlib/libz.a'
+  ZLIB_RULE='# Rebuild libz
 $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/zlib/include/zconf.h:
@@ -22327,15 +22312,10 @@ elif test "x$need_libpng:$with_system_libpng" = xyes:yes; then
   as_fn_error $? "did not find libpng" "$LINENO" 5
 fi
 else
-  LIBPNG_INCLUDES=`echo '-IBLD/libs/libpng/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  LIBPNG_LIBS=`echo 'BLD/libs/libpng/libpng.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  LIBPNG_DEPEND=`echo 'BLD/libs/libpng/libpng.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   LIBPNG_RULE='# Rebuild libpng
+  LIBPNG_INCLUDES="-I$kpse_BLD/libs/libpng/include"
+  LIBPNG_LIBS="$kpse_BLD/libs/libpng/libpng.a"
+  LIBPNG_DEPEND='${top_builddir}/../../libs/libpng/libpng.a'
+  LIBPNG_RULE='# Rebuild libpng
 $(LIBPNG_DEPEND): ${top_builddir}/../../libs/libpng/include/png.h
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/libpng/include/png.h:
@@ -22357,15 +22337,10 @@ elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
   as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
 fi
 else
-  XPDF_INCLUDES=`echo '-DPDF_PARSER_ONLY -IBLD/libs/xpdf -IBLD/libs/xpdf/goo -IBLD/libs/xpdf/xpdf' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  XPDF_LIBS=`echo 'BLD/libs/xpdf/libxpdf.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  XPDF_DEPEND=`echo 'BLD/libs/xpdf/libxpdf.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   XPDF_RULE='# Rebuild libxpdf
+  XPDF_INCLUDES="-DPDF_PARSER_ONLY -I$kpse_BLD/libs/xpdf -I$kpse_BLD/libs/xpdf/goo -I$kpse_BLD/libs/xpdf/xpdf"
+  XPDF_LIBS="$kpse_BLD/libs/xpdf/libxpdf.a"
+  XPDF_DEPEND='${top_builddir}/../../libs/xpdf/libxpdf.a'
+  XPDF_RULE='# Rebuild libxpdf
 $(XPDF_DEPEND): ${top_builddir}/../../libs/xpdf/xpdf/Stream.h
 	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
@@ -22387,15 +22362,10 @@ elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
   as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
 fi
 else
-  POPPLER_INCLUDES=`echo '-IBLD/libs/poppler -IBLD/libs/poppler/goo -IBLD/libs/poppler/poppler' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  POPPLER_LIBS=`echo 'BLD/libs/poppler/libpoppler.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  POPPLER_DEPEND=`echo 'BLD/libs/poppler/libpoppler.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   POPPLER_RULE='# Rebuild libpoppler
+  POPPLER_INCLUDES="-I$kpse_BLD/libs/poppler -I$kpse_BLD/libs/poppler/goo -I$kpse_BLD/libs/poppler/poppler"
+  POPPLER_LIBS="$kpse_BLD/libs/poppler/libpoppler.a"
+  POPPLER_DEPEND='${top_builddir}/../../libs/poppler/libpoppler.a'
+  POPPLER_RULE='# Rebuild libpoppler
 $(POPPLER_DEPEND): ${top_builddir}/../../libs/poppler/poppler/Stream.h
 	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/poppler/poppler/Stream.h:
@@ -22417,15 +22387,10 @@ elif test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
   as_fn_error $? "did not find zziplib-0.12 or better" "$LINENO" 5
 fi
 else
-  ZZIPLIB_INCLUDES=`echo '-IBLD/libs/zziplib/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  ZZIPLIB_LIBS=`echo 'BLD/libs/zziplib/libzzip.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  ZZIPLIB_DEPEND=`echo 'BLD/libs/zziplib/libzzip.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   ZZIPLIB_RULE='# Rebuild libzzip
+  ZZIPLIB_INCLUDES="-I$kpse_BLD/libs/zziplib/include"
+  ZZIPLIB_LIBS="$kpse_BLD/libs/zziplib/libzzip.a"
+  ZZIPLIB_DEPEND='${top_builddir}/../../libs/zziplib/libzzip.a'
+  ZZIPLIB_RULE='# Rebuild libzzip
 $(ZZIPLIB_DEPEND): ${top_builddir}/../../libs/zziplib/include/zzip/zzip.h
 	cd ${top_builddir}/../../libs/zziplib && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/zziplib/include/zzip/zzip.h:
@@ -22446,15 +22411,10 @@ elif test "x$need_graphite:$with_system_graphite" = xyes:yes; then
   as_fn_error $? "did not find silgraphite 2.3 or better" "$LINENO" 5
 fi
 else
-  GRAPHITE_INCLUDES=`echo '-IBLD/libs/graphite/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  GRAPHITE_LIBS=`echo 'BLD/libs/graphite/libgraphite.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  GRAPHITE_DEPEND=`echo 'BLD/libs/graphite/libgraphite.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   GRAPHITE_RULE='# Rebuild libgraphite
+  GRAPHITE_INCLUDES="-I$kpse_BLD/libs/graphite/include"
+  GRAPHITE_LIBS="$kpse_BLD/libs/graphite/libgraphite.a"
+  GRAPHITE_DEPEND='${top_builddir}/../../libs/graphite/libgraphite.a'
+  GRAPHITE_RULE='# Rebuild libgraphite
 $(GRAPHITE_DEPEND): ${top_builddir}/../../libs/graphite/include/graphite/GrClient.h
 	cd ${top_builddir}/../../libs/graphite && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/graphite/include/graphite/GrClient.h:
@@ -22567,16 +22527,12 @@ elif test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
   as_fn_error $? "did not find freetype-config required for system freetype2 library" "$LINENO" 5
 fi
 else
-  FREETYPE2_INCLUDES=`echo 'BLD/libs/freetype2' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  FREETYPE2_LIBS=`echo 'BLD/libs/freetype2/libfreetype.la' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
+  FREETYPE2_INCLUDES="$kpse_BLD/libs/freetype2"
+  FREETYPE2_LIBS="$kpse_BLD/libs/freetype2/libfreetype.la"
   FREETYPE2_LIBS="\`cat $FREETYPE2_INCLUDES/ft-libs\`"
   FREETYPE2_INCLUDES="\`cat $FREETYPE2_INCLUDES/ft-includes\`"
-  FREETYPE2_DEPEND=`echo 'BLD/libs/freetype2/libfreetype.la' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   FREETYPE2_RULE='# Rebuild libfreetype
+  FREETYPE2_DEPEND='${top_builddir}/../../libs/freetype2/libfreetype.la'
+  FREETYPE2_RULE='# Rebuild libfreetype
 $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/ft2build.h
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/freetype2/ft2build.h:
@@ -22608,15 +22564,10 @@ if test "x$with_teckit_libdir" != x && test "x$with_teckit_libdir" != xyes; then
   TECKIT_LIBS="-L$with_teckit_libdir $TECKIT_LIBS"
 fi
 else
-  TECKIT_INCLUDES=`echo '-IBLD/libs/teckit/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  TECKIT_LIBS=`echo 'BLD/libs/teckit/libTECkit.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  TECKIT_DEPEND=`echo 'BLD/libs/teckit/libTECkit.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   TECKIT_RULE='# Rebuild libTECkit
+  TECKIT_INCLUDES="-I$kpse_BLD/libs/teckit/include"
+  TECKIT_LIBS="$kpse_BLD/libs/teckit/libTECkit.a"
+  TECKIT_DEPEND='${top_builddir}/../../libs/teckit/libTECkit.a'
+  TECKIT_RULE='# Rebuild libTECkit
 $(TECKIT_DEPEND): ${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h
 	cd ${top_builddir}/../../libs/teckit && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h:
@@ -22624,33 +22575,21 @@ ${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h:
 fi
 
 ## _KPSE_LIB_FLAGS: Setup icu (-lsicuxxx) flags
-  ICU_INCLUDES=`echo '-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  ICU_LIBS=`echo 'BLD/libs/icu/icu-build/lib/libicule.a BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  ICU_DEPEND=`echo 'BLD/libs/icu/icu-build/lib/libicule.a BLD/libs/icu/icu-build/lib/libicuuc.a BLD/libs/icu/icu-build/lib/libicudata.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   ICU_RULE='# Rebuild libsicuxxx
+  ICU_INCLUDES="-DU_STATIC_IMPLEMENTATION -I$kpse_BLD/libs/icu/include"
+  ICU_LIBS="$kpse_BLD/libs/icu/icu-build/lib/libicule.a $kpse_BLD/libs/icu/icu-build/lib/libicuuc.a $kpse_BLD/libs/icu/icu-build/lib/libicudata.a"
+  ICU_DEPEND='${top_builddir}/../../libs/icu/icu-build/lib/libicule.a ${top_builddir}/../../libs/icu/icu-build/lib/libicuuc.a ${top_builddir}/../../libs/icu/icu-build/lib/libicudata.a'
+  ICU_RULE='# Rebuild libsicuxxx
 $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
 ## _KPSE_LIB_FLAGS: Setup obsdcompat (-lopenbsd-compat) flags
-  OBSDCOMPAT_INCLUDES=`echo '-IBLD/libs/obsdcompat -ISRC/libs/obsdcompat' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  OBSDCOMPAT_LIBS=`echo 'BLD/libs/obsdcompat/libopenbsd-compat.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  OBSDCOMPAT_DEPEND=`echo 'BLD/libs/obsdcompat/libopenbsd-compat.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   OBSDCOMPAT_RULE='# Rebuild libopenbsd-compat
+  OBSDCOMPAT_INCLUDES="-I$kpse_BLD/libs/obsdcompat -I$kpse_SRC/libs/obsdcompat"
+  OBSDCOMPAT_LIBS="$kpse_BLD/libs/obsdcompat/libopenbsd-compat.a"
+  OBSDCOMPAT_DEPEND='${top_builddir}/../../libs/obsdcompat/libopenbsd-compat.a'
+  OBSDCOMPAT_RULE='# Rebuild libopenbsd-compat
 $(OBSDCOMPAT_DEPEND): ${top_srcdir}/../../libs/obsdcompat/*.[ch]
-	cd ${top_builddir}/../../libs/obsdcompat && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_srcdir}/../../libs/obsdcompat/*.[ch]:
 	cd ${top_builddir}/../../libs/obsdcompat && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
 

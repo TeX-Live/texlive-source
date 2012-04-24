@@ -11805,15 +11805,10 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   ZLIB_RULE='# Rebuild libz
+  ZLIB_INCLUDES="-I$kpse_BLD/libs/zlib/include"
+  ZLIB_LIBS="$kpse_BLD/libs/zlib/libz.a"
+  ZLIB_DEPEND='${top_builddir}/../../libs/zlib/libz.a'
+  ZLIB_RULE='# Rebuild libz
 $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/zlib/include/zconf.h:
@@ -11926,15 +11921,10 @@ elif test "x$need_libpng:$with_system_libpng" = xyes:yes; then
   as_fn_error $? "did not find libpng" "$LINENO" 5
 fi
 else
-  LIBPNG_INCLUDES=`echo '-IBLD/libs/libpng/include' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  LIBPNG_LIBS=`echo 'BLD/libs/libpng/libpng.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-
-  LIBPNG_DEPEND=`echo 'BLD/libs/libpng/libpng.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   LIBPNG_RULE='# Rebuild libpng
+  LIBPNG_INCLUDES="-I$kpse_BLD/libs/libpng/include"
+  LIBPNG_LIBS="$kpse_BLD/libs/libpng/libpng.a"
+  LIBPNG_DEPEND='${top_builddir}/../../libs/libpng/libpng.a'
+  LIBPNG_RULE='# Rebuild libpng
 $(LIBPNG_DEPEND): ${top_builddir}/../../libs/libpng/include/png.h
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/libpng/include/png.h:
@@ -13435,16 +13425,12 @@ elif test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
   as_fn_error $? "did not find freetype-config required for system freetype2 library" "$LINENO" 5
 fi
 else
-  FREETYPE2_INCLUDES=`echo 'BLD/libs/freetype2' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  FREETYPE2_LIBS=`echo 'BLD/libs/freetype2/libfreetype.la' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
+  FREETYPE2_INCLUDES="$kpse_BLD/libs/freetype2"
+  FREETYPE2_LIBS="$kpse_BLD/libs/freetype2/libfreetype.la"
   FREETYPE2_LIBS="\`cat $FREETYPE2_INCLUDES/ft-libs\`"
   FREETYPE2_INCLUDES="\`cat $FREETYPE2_INCLUDES/ft-includes\`"
-  FREETYPE2_DEPEND=`echo 'BLD/libs/freetype2/libfreetype.la' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   FREETYPE2_RULE='# Rebuild libfreetype
+  FREETYPE2_DEPEND='${top_builddir}/../../libs/freetype2/libfreetype.la'
+  FREETYPE2_RULE='# Rebuild libfreetype
 $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/ft2build.h
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/freetype2/ft2build.h:
