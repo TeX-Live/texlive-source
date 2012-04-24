@@ -1,3 +1,8 @@
+2012-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (rebuild): Touch libkpathsea.la to avoid an
+	infinite loop when only mingw32.h or win32lib.h is changed.
+
 2012-04-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.h, win32lib.c: rewrite win32_system().

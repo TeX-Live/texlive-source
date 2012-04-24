@@ -8,6 +8,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 # Rebuild
 .PHONY: rebuild
 rebuild: all
+	touch libkpathsea.la
 
 SUBDIRS = . doc man
 
