@@ -3384,6 +3384,7 @@ if translate_filename then begin
 @d is_native_font(#)==(is_atsu_font(#) or is_otgr_font(#))
 	{native fonts have |font_area| = 65534 or 65535,
 	 which would be a string containing an invalid Unicode character}
+@d is_new_mathfont(#)==(is_ot_font(#) and (isOpenTypeMathFont(font_layout_engine[#])))
 
 @d non_char==qi(too_big_char) {a |halfword| code that can't match a real character}
 @z
@@ -4270,7 +4271,7 @@ macro capabilities. This seems a bit ugly, but it works.
     rval: scaled;
   begin
     f := fam_fnt(2 + size_code);
-    if is_ot_font(cur_f) then
+    if is_new_mathfont(cur_f) then
       rval := get_native_mathsy_param(cur_f, #)
     else
       rval := mathsy(#);
@@ -4319,7 +4320,7 @@ define_mathsy_accessor(axis_height)(22)(axis_height);
     rval: scaled;
   begin
     f := fam_fnt(3 + cur_size);
-    if is_ot_font(cur_f) then
+    if is_new_mathfont(cur_f) then
       rval := get_native_mathex_param(cur_f, #)
     else
       rval := mathex(#);
@@ -4477,7 +4478,6 @@ begin
 
   {set glue so as to stretch the connections if needed}
   o:=0;
-  depth(b):=0;
   if (s>nat) and (str>0) then begin
     o:=(s-nat);
     {don't stretch more than |str|}
@@ -4676,10 +4676,10 @@ f:internal_font_number;
 rule_thickness:scaled; {rule thickness}
 @!delta,@!clr:scaled; {dimensions involved in the calculation}
 begin f:=fam_fnt(small_fam(left_delimiter(q)) + cur_size);
-if is_ot_font(f) then rule_thickness:=get_ot_math_constant(f,radicalRuleThickness)
+if is_new_mathfont(f) then rule_thickness:=get_ot_math_constant(f,radicalRuleThickness)
 else rule_thickness:=default_rule_thickness;
 x:=clean_box(nucleus(q),cramped_style(cur_style));
-if is_ot_font(f) then begin
+if is_new_mathfont(f) then begin
   if cur_style<text_style then {display style}
     clr:=get_ot_math_constant(f,radicalDisplayStyleVerticalGap)
   else clr:=get_ot_math_constant(f,radicalVerticalGap);
@@ -4690,7 +4690,7 @@ end else begin
     end;
 end;
 y:=var_delimiter(left_delimiter(q),cur_size,height(x)+depth(x)+clr+rule_thickness);
-if is_ot_font(f) then begin
+if is_new_mathfont(f) then begin
   depth(y):=height(y)+depth(y)-rule_thickness;
   height(y):=rule_thickness;
 end;
@@ -4742,7 +4742,7 @@ else if char_exists(cur_i) then
   @<Switch to a larger accent if available and appropriate@>;
   end;
 if x<>null then begin
-  if is_ot_font(f) then
+  if is_new_mathfont(f) then
     if is_bottom_acc(q) then delta:=0
     else if h<get_ot_math_constant(f, accentBaseHeight) then delta:=h@+else delta:=get_ot_math_constant(f, accentBaseHeight)
   else
@@ -4833,7 +4833,7 @@ begin if cur_style<text_style then clr:=7*default_rule_thickness
 else clr:=3*default_rule_thickness;
 @y
 @<Adjust \(s)|shift_up| and |shift_down| for the case of no fraction line@>=
-begin if is_ot_font(cur_f) then begin
+begin if is_new_mathfont(cur_f) then begin
   if cur_style<text_style then clr:=get_ot_math_constant(cur_f, stackDisplayStyleGapMin)
   else clr:=get_ot_math_constant(cur_f, stackGapMin);
 end else begin
@@ -4851,7 +4851,7 @@ delta1:=clr-((shift_up-depth(x))-(axis_height(cur_size)+delta));
 delta2:=clr-((axis_height(cur_size)-delta)-(height(z)-shift_down));
 @y
 @<Adjust \(s)|shift_up| and |shift_down| for the case of a fraction line@>=
-begin if is_ot_font(cur_f) then begin
+begin if is_new_mathfont(cur_f) then begin
   delta:=half(thickness(q));
   if cur_style<text_style then clr:=get_ot_math_constant(cur_f, fractionNumDisplayStyleGapMin)
   else clr:=get_ot_math_constant(cur_f, fractionNumeratorGapMin);
@@ -4922,7 +4922,7 @@ if math_type(nucleus(q))=math_char then
     delta:=char_italic(cur_f)(cur_i);
   end;
   x:=clean_box(nucleus(q),cur_style);
-  if is_ot_font(cur_f) then begin
+  if is_new_mathfont(cur_f) then begin
     p:=list_ptr(x);
     if is_glyph_node(p) then begin
       if cur_style<text_style then begin
@@ -5146,7 +5146,7 @@ x:=clean_box(subscr(q),sub_style(cur_style));
 cur_f:=save_f;
 width(x):=width(x)+script_space;
 if shift_down<sub1(cur_size) then shift_down:=sub1(cur_size);
-if is_ot_font(cur_f) then
+if is_new_mathfont(cur_f) then
   clr:=height(x)-get_ot_math_constant(cur_f, subscriptTopMax)
 else
   clr:=height(x)-(abs(math_x_height(cur_size)*4) div 5);
@@ -5167,7 +5167,7 @@ if odd(cur_style) then clr:=sup3(cur_size)
 else if cur_style<text_style then clr:=sup1(cur_size)
 else clr:=sup2(cur_size);
 if shift_up<clr then shift_up:=clr;
-if is_ot_font(cur_f) then
+if is_new_mathfont(cur_f) then
   clr:=depth(x)+get_ot_math_constant(cur_f, superscriptBottomMin)
 else
   clr:=depth(x)+(abs(math_x_height(cur_size)) div 4);
@@ -5187,13 +5187,13 @@ y:=clean_box(subscr(q),sub_style(cur_style));
 cur_f:=save_f;
 width(y):=width(y)+script_space;
 if shift_down<sub2(cur_size) then shift_down:=sub2(cur_size);
-if is_ot_font(cur_f) then
+if is_new_mathfont(cur_f) then
   clr:=get_ot_math_constant(cur_f, subSuperscriptGapMin)-((shift_up-depth(x))-(height(y)-shift_down))
 else
   clr:=4*default_rule_thickness-((shift_up-depth(x))-(height(y)-shift_down));
 if clr>0 then
   begin shift_down:=shift_down+clr;
-  if is_ot_font(cur_f) then
+  if is_new_mathfont(cur_f) then
     clr:=get_ot_math_constant(cur_f, superscriptBottomMaxWithSubscript)-(shift_up-depth(x))
   else
     clr:=(abs(math_x_height(cur_size)*4) div 5)-(shift_up-depth(x));
@@ -6528,11 +6528,11 @@ if (font_params[fam_fnt(2+text_size)]<total_mathsy_params)or@|
 @y
 @ @<Check that the necessary fonts...@>=
 if ((font_params[fam_fnt(2+text_size)]<total_mathsy_params)
-    and (not is_ot_font(fam_fnt(2+text_size)))) or@|
+    and (not is_new_mathfont(fam_fnt(2+text_size)))) or@|
    ((font_params[fam_fnt(2+script_size)]<total_mathsy_params)
-    and (not is_ot_font(fam_fnt(2+script_size)))) or@|
+    and (not is_new_mathfont(fam_fnt(2+script_size)))) or@|
    ((font_params[fam_fnt(2+script_script_size)]<total_mathsy_params)
-    and (not is_ot_font(fam_fnt(2+script_script_size)))) then
+    and (not is_new_mathfont(fam_fnt(2+script_script_size)))) then
 @z
 
 @x
@@ -6541,11 +6541,11 @@ else if (font_params[fam_fnt(3+text_size)]<total_mathex_params)or@|
    (font_params[fam_fnt(3+script_script_size)]<total_mathex_params) then
 @y
 else if ((font_params[fam_fnt(3+text_size)]<total_mathex_params)
-    and (not is_ot_font(fam_fnt(3+text_size)))) or@|
+    and (not is_new_mathfont(fam_fnt(3+text_size)))) or@|
    ((font_params[fam_fnt(3+script_size)]<total_mathex_params)
-    and (not is_ot_font(fam_fnt(3+script_size)))) or@|
+    and (not is_new_mathfont(fam_fnt(3+script_size)))) or@|
    ((font_params[fam_fnt(3+script_script_size)]<total_mathex_params)
-    and (not is_ot_font(fam_fnt(3+script_script_size)))) then
+    and (not is_new_mathfont(fam_fnt(3+script_script_size)))) then
 @z
 
 @x
