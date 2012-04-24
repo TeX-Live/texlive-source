@@ -1,3 +1,8 @@
+2012-04-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-FreeBSD (new): Build fix for FreeBSD.
+	Reported by Nikola Lecic <nikola.lecic@anthesphoria.net>
+
 2012-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reduced size of data/in/icudt49l.dat, removing
