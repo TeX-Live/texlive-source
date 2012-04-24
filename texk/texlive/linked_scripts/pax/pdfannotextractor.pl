@@ -2,7 +2,7 @@
 use strict;
 $^W=1;
 
-# Copyright (C) 2008, 2011 Heiko Oberdiek
+# Copyright (C) 2008, 2011, 2012 Heiko Oberdiek
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,19 +24,21 @@ $^W=1;
 my $name        = 'PDFAnnotExtractor';
 my $program     = "\L$name\E";
 my $file        = "$program.pl";
-my $version     = "0.1k";
-my $date        = "2011/07/06";
+my $version     = "0.1l";
+my $date        = "2012/04/18";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2008, 2011 by $author.";
+my $copyright   = "Copyright (c) 2008, 2011, 2012 by $author.";
 
 # History:
 #  2008/10/01 v0.1i: First version of the wrapper script.
+#  2012/04/18 v0.1l: Option --version added.
 
 my $title = "$name $version, $date - $copyright\n";
 my $usage = <<"END_OF_USAGE";
 ${title}Syntax:   $program [options] <PDF files[.pdf]>
 Options:
   --help      print usage
+  --version   print version number
   --install   try installing PDFBox library
   --debug     debug informations
 END_OF_USAGE
@@ -44,13 +46,19 @@ END_OF_USAGE
 my $help = 0;
 my $debug = 0;
 my $install = 0;
+my $opt_version = 0;
 use Getopt::Long;
 GetOptions(
   'debug!' => \$debug,
   'install!' => \$install,
-  'help!' => \$help
+  'help!' => \$help,
+  'version!' => \$opt_version,
 ) or die $usage;
 !$help or die $usage;
+if ($opt_version) {
+  print "$name $date v$version\n";
+  exit(0);
+}
 !$install and (@ARGV >= 1 or die $usage);
 
 print $title;

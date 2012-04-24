@@ -236,6 +236,7 @@ texmf_dist_shell_scripts = \
 	bibexport/bibexport.sh \
 	installfont/installfont-tl \
 	latexfileversion/latexfileversion \
+	listbib/listbib \
 	listings-ext/listings-ext.sh \
 	pdfjam/pdf180 \
 	pdfjam/pdf270 \

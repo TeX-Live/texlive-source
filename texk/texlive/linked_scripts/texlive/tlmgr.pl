@@ -1,13 +1,14 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26026 2012-04-18 05:54:24Z preining $
+# $Id: tlmgr.pl 26063 2012-04-20 00:18:04Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26026 $';
-my $datrev = '$Date: 2012-04-18 07:54:24 +0200 (Wed, 18 Apr 2012) $';
+my $svnrev = '$Revision: 26063 $';
+my $datrev = '$Date: 2012-04-20 02:18:04 +0200 (Fri, 20 Apr 2012) $';
 my $tlmgrrevision;
+my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $tlmgrrevision = $1;
 } else {
@@ -87,6 +88,10 @@ TeXLive::TLUtils->import(qw(member info give_ctan_mirror win32 dirname
                             mkdirhier copy log debug tlcmp));
 use TeXLive::TLPaper;
 
+#
+# set up $prg for warning messages
+$prg = TeXLive::TLUtils::basename($0);
+
 binmode(STDOUT, ":utf8");
 binmode(STDERR, ":utf8");
 
@@ -149,6 +154,7 @@ sub main {
     "gui"           => { "load" => 1 },
     "install"       => { "no-depends" => 1,
                          "no-depends-at-all" => 1,
+                         "file" => 1,
                          "reinstall" => 1,
                          "force" => 1,
                          "dry-run|n" => 1 },
@@ -265,7 +271,7 @@ sub main {
   }
 
   if ((!defined($action) || !$action) && !$opts{"help"} && !$opts{"h"}) {
-    die "$0: missing action; try --help if you need it.\n";
+    die "$prg: missing action; try --help if you need it.\n";
   }
 
   if ($opts{"help"} || $opts{"h"}) {
@@ -296,12 +302,12 @@ sub main {
         # give a short message about usage
         print "
 tlmgr revision $tlmgrrevision
-usage: tlmgr <options> <action> <arguments>
-where <action> is one of:\n";
+usage: tlmgr  OPTION...  ACTION  ARGUMENT...
+where ACTION is one of:\n";
         for my $k (sort keys %actionoptions) {
           print " $k\n";
         }
-        print "\nUse\n tlmgr <action> --help
+        print "\nUse\n tlmgr ACTION --help
 for more details on a specific option, and
  tlmgr --help
 for the full story.\n";
@@ -557,7 +563,7 @@ sub execute_action {
     action_recreate_tlpdb();
     finish(0);
   } else {
-    die "$0: unknown action: $action; try --help if you need it.\n";
+    die "$prg: unknown action: $action; try --help if you need it.\n";
   }
 
   # close the special log file
@@ -2298,7 +2304,7 @@ sub action_update {
   if ( !$dry_run_cont  && !$opts{"self"} && @critical) {
     critical_updates_warning();
     if ($opts{"force"}) {
-      tlwarn("$0: Continuing due to --force.\n");
+      tlwarn("$prg: Continuing due to --force.\n");
     } elsif ($opts{"list"}) {
       # do not warn here
     } else {
@@ -2306,7 +2312,7 @@ sub action_update {
         # return here and don't do any updates
         return;
       } else {
-        die "$0: Exiting, please read above warning.\n";
+        die "$prg: Exiting, please read above warning.\n";
       }
     }
   }
@@ -2905,7 +2911,7 @@ sub action_update {
                                       "__BACKUP_${pkg}.r" . $tlp->revision,
                                       $tlp->relocated);
         if ($s <= 0) {
-          tlwarn("\n$0: Creation of backup container of $pkg failed.\n");
+          tlwarn("\n$prg: Creation of backup container of $pkg failed.\n");
           tlwarn("Continuing to update other packages, please retry...\n");
           # we should try to update other packages at least
           next;
@@ -3044,7 +3050,7 @@ sub action_update {
           logpackage("auto-install new: $pkg ($mediarevstr)");
           $nrupdated++;
         } else {
-          tlwarn("$0: couldn't install new package $pkg\n");
+          tlwarn("$prg: couldn't install new package $pkg\n");
         }
       }
     }
@@ -3251,6 +3257,12 @@ sub action_install {
         die "tlmgr: Not continuing, please see warning above!\n";
       }
     }
+  }
+
+  #
+  # installation from a .tar.xz
+  if ($opts{"file"}) {
+    return $localtlpdb->install_package_files(@ARGV);
   }
 
   $opts{"no-depends"} = 1 if $opts{"no-depends-at-all"};
@@ -3518,13 +3530,13 @@ sub action_repository {
   if ($what eq "add") {
     my $p = shift @ARGV;
     if (!defined($p)) {
-      tlwarn("You need to give a new repository aas argument to add\n");
+      tlwarn("$prg: you need to give a new repository as argument to add\n");
       return;
     }
     my $t = shift @ARGV;
     $t = $p if (!defined($t));
     if (defined($repos{$t})) {
-      tlwarn("This repository or its tag is already defined, no action\n");
+      tlwarn("$prg: this repository or its tag is already defined, no action\n");
       return;
     }
     # TODO more checks needed?
@@ -3543,6 +3555,11 @@ sub action_repository {
     $repos{$t} = $p;
     $localtlpdb->option("location", array_to_repository(%repos));
     $localtlpdb->save;
+    if ($t eq $p) {
+      print "$prg: added repository $p\n";
+    } else {
+      print "$prg: added repository `$t' for `$p'\n";
+    }
     return;
   }
   if ($what eq "remove") {
@@ -3563,6 +3580,7 @@ sub action_repository {
     } else {
       $localtlpdb->option("location", array_to_repository(%repos));
       $localtlpdb->save;
+      print "$prg: removed repository `$p'\n";
     }
     return;
   }
@@ -3962,7 +3980,7 @@ sub action_generate {
       $dest .= ".dat.lua" if $append_extension;
       my $localcfg = $opts{"localcfg"} ||
         "$TEXMFLOCAL/tex/generic/config/language-local.dat.lua";
-      debug("$0: writing language.dat.lua data to $dest\n");
+      debug("$prg: writing language.dat.lua data to $dest\n");
       TeXLive::TLUtils::create_language_lua($localtlpdb, $dest, $localcfg);
       if ($opts{"rebuild-sys"}) {
         do_cmd_and_check("fmtutil-sys --byhyphen $dest");
@@ -3977,7 +3995,7 @@ sub action_generate {
       $dest .= ".dat" if $append_extension;
       my $localcfg = $opts{"localcfg"} ||
         "$TEXMFLOCAL/tex/generic/config/language-local.dat";
-      debug ("$0: writing language.dat data to $dest\n");
+      debug ("$prg: writing language.dat data to $dest\n");
       TeXLive::TLUtils::create_language_dat($localtlpdb, $dest, $localcfg);
       if ($opts{"rebuild-sys"}) {
         do_cmd_and_check("fmtutil-sys --byhyphen $dest");
@@ -3992,7 +4010,7 @@ sub action_generate {
       $dest .= ".def" if $append_extension;
       my $localcfg = $opts{"localcfg"} ||
         "$TEXMFLOCAL/tex/generic/config/language-local.def";
-      debug("$0: writing language.def data to $dest\n");
+      debug("$prg: writing language.def data to $dest\n");
       TeXLive::TLUtils::create_language_def($localtlpdb, $dest, $localcfg);
       if ($opts{"rebuild-sys"}) {
         do_cmd_and_check("fmtutil-sys --byhyphen $dest");
@@ -4005,7 +4023,7 @@ sub action_generate {
   } elsif ($what =~ m/^fmtutil$/i) {
     my $dest = $opts{"dest"} || "$TEXMFSYSVAR/web2c/fmtutil.cnf";
     my $localcfg = $opts{"localcfg"} || "$TEXMFLOCAL/web2c/fmtutil-local.cnf";
-    debug("$0: writing new fmtutil.cnf to $dest\n");
+    debug("$prg: writing new fmtutil.cnf to $dest\n");
     TeXLive::TLUtils::create_fmtutil($localtlpdb, $dest, $localcfg);
 
     if ($opts{"rebuild-sys"}) {
@@ -4018,7 +4036,7 @@ sub action_generate {
   } elsif ($what =~ m/^updmap$/i) {
     my $dest = $opts{"dest"} || "$TEXMFSYSCONFIG/web2c/updmap.cfg";
     my $localcfg = $opts{"localcfg"} || "$TEXMFLOCAL/web2c/updmap-local.cfg";
-    debug("$0: writing new updmap.cfg to $dest\n");
+    debug("$prg: writing new updmap.cfg to $dest\n");
     TeXLive::TLUtils::create_updmap($localtlpdb, $dest, $localcfg);
 
     if ($opts{"rebuild-sys"}) {
@@ -4029,7 +4047,7 @@ sub action_generate {
     }
 
   } else {
-    die "$0: Unknown option for generate: $what; try --help if you need it.\n";
+    die "$prg: Unknown option for generate: $what; try --help if you need it.\n";
   }
 
   return;
@@ -4701,7 +4719,7 @@ sub check_depends {
 # on a client system or overriding global settings.
 # 
 # tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all]
-#    [install|remove] [shortcut|fileassoc|script] [<package> <package> ...]
+#    [install|remove] [shortcut|fileassoc|script] [<pkg>...]
 
 sub action_postaction {
   my $how = shift @ARGV;
@@ -4995,7 +5013,7 @@ sub init_tlmedia
 
   # check that there is a main repository
   if (!TeXLive::TLUtils::member('main', @tags)) {
-    tldie("Cannot find main repository, you have to tag one as main!\n");
+    tldie("$prg: Cannot find main repository, you have to tag one as main!\n");
   }
 
   # TODO TODO
@@ -5166,13 +5184,15 @@ END_NO_INTERNET
   my $texlive_release = $remotetlpdb->config_release;
   my $texlive_minrelease = $remotetlpdb->config_minrelease;
   if (!defined($texlive_release)) {
-    tldie "The installation repository does not specify a release year for which it was prepared, bailing out.\n";
+    tldie("$prg: The installation repository does not specify a "
+          . "release year for which it was prepared, goodbye.\n");
   }
   # still here, so we have $texlive_release defined
   my $texlive_release_year = $texlive_release;
   $texlive_release_year =~ s/^(....).*$/$1/;
   if ($texlive_release_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
-    tldie "The installation repository does not specify a release year: $texlive_release, bailing out.\n";
+    tldie("$prg: The installation repository does not specify a "
+          . "valid release year, goodbye: $texlive_release\n");
   }
   # so $texlive_release_year is numeric, good
   if (defined($texlive_minrelease)) {
@@ -5180,13 +5200,14 @@ END_NO_INTERNET
     my $texlive_minrelease_year = $texlive_minrelease;
     $texlive_minrelease_year =~ s/^(....).*$/$1/;
     if ($texlive_minrelease_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
-      tldie "The installation repository does not specify a valid minimal release year: $texlive_minrelease, bailing out.\n";
+      tldie("The installation repository does not specify a "
+            . "valid minimal release year, goodbye: $texlive_minrelease\n");
     }
     # ok, all numeric and fine, check for range
     if ($TeXLive::TLConfig::ReleaseYear < $texlive_minrelease_year
         || $TeXLive::TLConfig::ReleaseYear > $texlive_release_year) {
       tldie <<END_BADRANGE
-$0: The TeX Live versions supported by the repository
+$prg: The TeX Live versions supported by the repository
   ($texlive_minrelease_year--$texlive_release_year)
 do not include the version of the local installation
   ($TeXLive::TLConfig::ReleaseYear).  Goodbye.
@@ -5196,7 +5217,7 @@ END_BADRANGE
     # $texlive_minrelease not defined, so only one year is valid
     if ($texlive_release_year != $TeXLive::TLConfig::ReleaseYear) {
       tldie <<END_BADYEAR
-$0: The TeX Live versions of the local installation
+$prg: The TeX Live versions of the local installation
 and the repository being accessed are not compatible:
       local: $TeXLive::TLConfig::ReleaseYear
  repository: $texlive_release_year
@@ -5572,9 +5593,9 @@ Report what would be updated without actually updating anything.
 Make your local TeX installation correspond to what is in the package
 repository (typically useful when updating from CTAN).
 
-=item C<tlmgr show> I<pkgname>
+=item C<tlmgr show> I<pkg>
 
-Display detailed information about I<pkgname>, such as the installation
+Display detailed information about I<pkg>, such as the installation
 status and description.
 
 =back
@@ -6294,19 +6315,19 @@ Print the TeX Live identifier for the detected platform
 C<--print-arch> is a synonym.
 
 
-=head2 search [I<options>] I<what>
+=head2 search [I<option>...] I<what>
 
-=head3 search [I<options>] --file I<what>
+=head3 search [I<option>...] --file I<what>
 
-=head3 search [I<options>] --taxonomy I<what>
+=head3 search [I<option>...] --taxonomy I<what>
 
-=head3 search [I<options>] --keyword I<what>
+=head3 search [I<option>...] --keyword I<what>
 
-=head3 search [I<options>] --functionality I<what>
+=head3 search [I<option>...] --functionality I<what>
 
-=head3 search [I<options>] --characterization I<what>
+=head3 search [I<option>...] --characterization I<what>
 
-=head3 search [I<options>] --all I<what>
+=head3 search [I<option>...] --all I<what>
 
 By default, search the names, short descriptions, and long descriptions
 of all locally installed packages for the argument I<what>, interpreted
@@ -6362,7 +6383,7 @@ Search for package names, descriptions, and taxonomies, but not files.
 =back
 
 
-=head2 info [I<options>] [collections|schemes|I<pkg>...]
+=head2 info [I<option>...] [collections|schemes|I<pkg>...]
 
 With no argument, lists all packages available at the package
 repository, prefixing those already installed with C<i>.
@@ -6370,19 +6391,18 @@ repository, prefixing those already installed with C<i>.
 With the single word C<collections> or C<schemes> as the argument, lists
 the request type instead of all packages.
 
-With anything else as arguments, 
-display information about I<pkg>: the name, category, short and long
-description, installation status, and TeX Live revision number.
-Searches in the remote installation source for the package if it is not
-locally installed.
+With any other arguments, display information about I<pkg>: the name,
+category, short and long description, installation status, and TeX Live
+revision number.  If I<pkg> is not locally installed, searches in the
+remote installation source.
 
 It also displays information taken from the TeX Catalogue, namely the
 package version, date, and license.  Consider these, especially the
-package version, approximations only, due to timing skew of the updates
-of the difference pieces.  The C<revision> value, by contrast, comes
-directly from TL and is reliable.
+package version, as approximations only, due to timing skew of the
+updates of the different pieces.  By contrast, the C<revision> value
+comes directly from TL and is reliable.
 
-The former actions B<show> and B<list> are merged into this action,
+The former actions C<show> and C<list> are merged into this action,
 but are still supported for backward compatibility.
 
 Options:
