@@ -1,0 +1,282 @@
+000000: PRE       version          : 2
+000002:           numerator        : 25400000
+000006:           denominator      : 473628672
+000010:           magnification    : 1000
+000014:           job name ( 27)   : TeX output 2010.10.30:1207
+000042: BOP       page number      : 1
+000047:                0       0       0
+000059:                0       0       0
+000071:                0       0       0
+000083:           prev page offset : -00001
+000087: DOWN4:    40632320
+000092: PUSH
+000093: DOWN4:    -38076416
+000098: DOWN4:    36110336
+000103: PUSH
+000104: DOWN4:    -33816576
+000109: PUSH
+000110: RIGHT3:   5111808
+000114: FNT_DEF1: 7
+000116:           checksum         : 1274110073
+000120:           scale            : 655360
+000124:           design           : 655360
+000128:           name             : cmr10
+000135: FONT_07              /* cmr10 */
+000136: Char:     hello.
+000142: POP
+000143: Y3:       786432
+000147: PUSH
+000148: RIGHT3:   5111808
+000152: Char:     dollar
+000158: W3:       174152
+000162: Char:     $
+000163: W0
+000164: Char:     amp
+000167: X2:       18205
+000170: Char:     ersand
+000176: RIGHT3:   174153
+000180: Char:     &
+000181: W0
+000182: Char:     pro
+000185: X0
+000186: Char:     cen
+000189: RIGHT2:   -18205
+000192: Char:     t
+000193: W0
+000194: Char:     %
+000195: W0
+000196: Char:     matje
+000201: X3:       174153
+000205: Char:     #
+000206: W0
+000207: Char:     leftbrace
+000216: W0
+000217: FNT_DEF1: 13
+000219:           checksum         : 555887770
+000223:           scale            : 655360
+000227:           design           : 655360
+000231:           name             : cmsy10
+000239: FONT_13              /* cmsy10 */
+000240: Char:     f
+000241: X0
+000242: FONT_07              /* cmr10 */
+000243: Char:     righ
+000247: RIGHT2:   -18205
+000250: Char:     tbrace
+000256: W0
+000257: FONT_13              /* cmsy10 */
+000258: Char:     g
+000259: W0
+000260: FONT_07              /* cmr10 */
+000261: Char:     underscore
+000271: POP
+000272: Y0
+000273: PUSH
+000274: PUSH
+000275: RIGHT3:   4128768
+000279: PUT_RULE: height: 26214
+000284:           length: 196610
+000288: POP
+000289: POP
+000290: Y0
+000291: PUSH
+000292: RIGHT3:   5111808
+000296: Char:     dagger
+000302: W3:       218453
+000306: FONT_13              /* cmsy10 */
+000307: Char:     y
+000308: FONT_07              /* cmr10 */
+000309: Char:     ddagger
+000316: W0
+000317: FONT_13              /* cmsy10 */
+000318: Char:     z
+000319: FONT_07              /* cmr10 */
+000320: Char:     section
+000327: W0
+000328: FONT_13              /* cmsy10 */
+000329: Char:     x
+000330: FONT_07              /* cmr10 */
+000331: Char:     paragraph
+000340: W0
+000341: FONT_13              /* cmsy10 */
+000342: Char:     {
+000343: FONT_07              /* cmr10 */
+000344: Char:     cop
+000347: W2:       -18205
+000350: Char:     yrigh
+000355: W0
+000356: Char:     t
+000357: PUSH
+000358: PUSH
+000359: PUSH
+000360: PUSH
+000361: RIGHT3:   400498
+000365: DOWN2:    -19753
+000368: Char:     c
+000369: POP
+000370: POP
+000371: POP
+000372: PUSH
+000373: PUSH
+000374: RIGHT3:   218453
+000378: FONT_13              /* cmsy10 */
+000379: Char:     fl         /* ligature (non-printing) 0x0D */
+000380: POP
+000381: POP
+000382: POP
+000383: RIGHT3:   873814
+000387: FONT_07              /* cmr10 */
+000388: Char:     p
+000389: RIGHT2:   18205
+000392: Char:     ound
+000396: RIGHT3:   218453
+000400: FNT_DEF1: 14
+000402:           checksum         : 320884962
+000406:           scale            : 655360
+000410:           design           : 655360
+000414:           name             : cmu10
+000421: FONT_14              /* cmu10 */
+000422: Char:     $
+000423: POP
+000424: Y3:       1441792
+000428: PUSH
+000429: PUSH
+000430: PUSH
+000431: PUSH
+000432: RIGHT3:   5111809
+000436: FONT_13              /* cmsy10 */
+000437: Char:     ffl        /* ligature (non-printing) 0x0F */
+000438: POP
+000439: POP
+000440: POP
+000441: RIGHT3:   5767170
+000445: FONT_07              /* cmr10 */
+000446: Char:     item
+000450: RIGHT3:   218453
+000454: Char:     1
+000455: POP
+000456: DOWN3:    1310720
+000460: PUSH
+000461: PUSH
+000462: PUSH
+000463: PUSH
+000464: RIGHT3:   5111809
+000468: FONT_13              /* cmsy10 */
+000469: Char:     ffl        /* ligature (non-printing) 0x0F */
+000470: POP
+000471: POP
+000472: PUSH
+000473: PUSH
+000474: RIGHT3:   6504452
+000478: FNT_DEF1: 15
+000480:           checksum         : 452076118
+000484:           scale            : 655360
+000488:           design           : 655360
+000492:           name             : cmbx10
+000500: FONT_15              /* cmbx10 */
+000501: Char:     {
+000502: POP
+000503: POP
+000504: POP
+000505: RIGHT3:   7208962
+000509: FONT_07              /* cmr10 */
+000510: Char:     item
+000514: RIGHT3:   218453
+000518: Char:     2.1
+000521: POP
+000522: Y0
+000523: PUSH
+000524: RIGHT3:   4128768
+000528: Char:     b
+000529: W2:       -18205
+000532: Char:     y
+000533: W0
+000534: Char:     e.
+000536: POP
+000537: Y3:       786432
+000541: PUSH
+000542: RIGHT3:   5111808
+000546: Char:     maths:
+000552: POP
+000553: Y0
+000554: PUSH
+000555: RIGHT4:   12739479
+000560: Char:     1
+000561: W3:       145632
+000565: Char:     +
+000566: W0
+000567: Char:     2
+000568: W3:       182040
+000572: Char:     =
+000573: W0
+000574: Char:     5
+000575: FNT_DEF1: 10
+000577:           checksum         : 195060286
+000581:           scale            : 655360
+000585:           design           : 655360
+000589:           name             : cmmi10
+000597: FONT_10              /* cmmi10 */
+000598: Char:     =
+000599: FONT_07              /* cmr10 */
+000600: Char:     3
+000601: W3:       145632
+000605: FONT_13              /* cmsy10 */
+000606: Char:     0x03
+000607: W0
+000608: FONT_07              /* cmr10 */
+000609: Char:     1
+000610: W0
+000611: FONT_13              /* cmsy10 */
+000612: Char:     0x00
+000613: W0
+000614: FONT_07              /* cmr10 */
+000615: Char:     1
+000616: POP
+000617: POP
+000618: DOWN3:    1966080
+000622: PUSH
+000623: RIGHT4:   15269888
+000628: Char:     1
+000629: POP
+000630: POP
+000631: EOP
+000632: POST      last page offset : 000042
+000637:           numerator        : 25400000
+000641:           denominator      : 473628672
+000645:           magnification    : 1000
+000649:           max page height  : 40632320
+000653:           max page width   : 26738688
+000657:           stack size needed: 7
+000659:           number of pages  : 1
+000661: FNT_DEF1: 15
+000663:           checksum         : 452076118
+000667:           scale            : 655360
+000671:           design           : 655360
+000675:           name             : cmbx10
+000683: FNT_DEF1: 14
+000685:           checksum         : 320884962
+000689:           scale            : 655360
+000693:           design           : 655360
+000697:           name             : cmu10
+000704: FNT_DEF1: 13
+000706:           checksum         : 555887770
+000710:           scale            : 655360
+000714:           design           : 655360
+000718:           name             : cmsy10
+000726: FNT_DEF1: 10
+000728:           checksum         : 195060286
+000732:           scale            : 655360
+000736:           design           : 655360
+000740:           name             : cmmi10
+000748: FNT_DEF1: 7
+000750:           checksum         : 1274110073
+000754:           scale            : 655360
+000758:           design           : 655360
+000762:           name             : cmr10
+000769: POSTPOST  postamble offset : 000632
+000774:           version          : 2
+000775: TRAILER
+000776: TRAILER
+000777: TRAILER
+000778: TRAILER
+000779: TRAILER

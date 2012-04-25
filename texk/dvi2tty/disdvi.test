@@ -1,0 +1,11 @@
+#! /bin/sh
+
+# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test_src=$srcdir/$DVI2TTY_TREE/test
+
+./disdvi $test_src/ligtest >ligtest.dout \
+	&& diff $srcdir/ligtest.dis ligtest.dout \
+	|| exit 1
+

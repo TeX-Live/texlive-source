@@ -1,3 +1,10 @@
+2012-04-25  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* dvi2tty.test: Add a copyright statement.
+	* disdvi.test: New shell script for 'make check' test.
+	* ligtest.dis (new): Expected test output.
+	* Makefile.am: Add the new test.
+
 2011-11-21  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	Add upTeX support from Tanaka Takuji <KXD02663@nifty.ne.jp>.

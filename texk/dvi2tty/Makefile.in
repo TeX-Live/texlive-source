@@ -290,7 +290,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(DVI2TTY_TREE) $(DVI2TTY_TREE)-PATCHES $(TESTS) \
-	ligtest.tty test.tty testc.tty tests.tty testu.tty
+	ligtest.dis ligtest.tty test.tty testc.tty tests.tty testu.tty
 INCLUDES = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -310,9 +310,10 @@ man1_MANS = \
 	$(DVI2TTY_TREE)/disdvi.1 \
 	$(DVI2TTY_TREE)/dvi2tty.1
 
-TESTS = dvi2tty.test
+TESTS = disdvi.test dvi2tty.test
 TESTS_ENVIRONMENT = DVI2TTY_TREE=$(DVI2TTY_TREE)
-DISTCLEANFILES = ligtest.out test.out testc.out tests.out testu.out
+DISTCLEANFILES = ligtest.dout ligtest.out test.out testc.out tests.out \
+	testu.out
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
