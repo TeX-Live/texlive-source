@@ -1,3 +1,9 @@
+2012-04-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-MEM_DEBUG (new): Try to avoid mem_debug_check warning.
+	* spc_pdfm.c (spc_handler_pdfm_stream_with_type): Free fullname.
+	* mem.c: Increase MEM_LINE, avoid C99-ism, add tex-k@tug.org.
+
 2012-04-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-texlive (new): Indicate this the TeX Live version.
