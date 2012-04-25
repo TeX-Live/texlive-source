@@ -12,7 +12,7 @@ install these directly from the original GNU releases (e.g., by building
 them with configure --prefix=/usr/local/gnu and having
 /usr/local/gnu/bin first in our PATH).
 
-autoconf (GNU Autoconf) 2.68
+autoconf (GNU Autoconf) 2.69
 
 automake (GNU automake) 1.11.5
 
