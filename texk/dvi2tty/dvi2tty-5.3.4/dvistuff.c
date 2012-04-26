@@ -276,15 +276,18 @@ void postamble(void)
 {
     register long size;
     register int  count;
-#if !defined (THINK_C)
+#if !defined (THINK_C) && defined(VMS)
     struct stat st;
 #endif
 
 #if defined (THINK_C)
     size = DVIfile->len;
-#else
+#elif defined(VMS)
     fstat (fileno(DVIfile), &st);
     size = (long) st.st_size;                   /* get size of file          */
+#else
+    fseek (DVIfile, 0L, SEEK_END);
+    size = ftell (DVIfile);                     /* get size of file          */
 #endif
 
     count = -1;

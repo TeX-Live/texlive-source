@@ -1,0 +1,27 @@
+	It seems that st.st_size yields garbage on 32-bit
+	OpenSolaris/OpenIndiana with large file support.
+
+diff -ur dvi2tty-5.3.4.orig/dvistuff.c dvi2tty-5.3.4/dvistuff.c
+--- dvi2tty-5.3.4.orig/dvistuff.c	2011-11-21 22:41:54.000000000 +0100
++++ dvi2tty-5.3.4/dvistuff.c	2012-04-26 09:20:32.000000000 +0200
+@@ -276,15 +276,18 @@
+ {
+     register long size;
+     register int  count;
+-#if !defined (THINK_C)
++#if !defined (THINK_C) && defined(VMS)
+     struct stat st;
+ #endif
+ 
+ #if defined (THINK_C)
+     size = DVIfile->len;
+-#else
++#elif defined(VMS)
+     fstat (fileno(DVIfile), &st);
+     size = (long) st.st_size;                   /* get size of file          */
++#else
++    fseek (DVIfile, 0L, SEEK_END);
++    size = ftell (DVIfile);                     /* get size of file          */
+ #endif
+ 
+     count = -1;
