@@ -964,8 +964,7 @@ main (int argc, char *argv[])
   miktex_uninitialize ();
 #endif
 
-  if (verbose)
-    mem_debug_check();
+  mem_debug_check();
 
   return 0;
 }

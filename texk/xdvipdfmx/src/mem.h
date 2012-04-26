@@ -33,8 +33,6 @@ extern void *renew (void *p, size_t size);
 extern void mem_debug_init(void);
 extern void mem_debug_check(void);
 
-#undef MEM_DEBUG
-
 #ifdef MEM_DEBUG
 
 extern void *mem_add    (void *ptr,

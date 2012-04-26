@@ -33,7 +33,7 @@
 
 #include "dpxutil.h"
 
-#define MEM_LINE   128
+#define MEM_LINE   180
 
 static struct ht_table *mem_ht;
 static long int mem_event;
@@ -83,9 +83,10 @@ mem_error (void *vp)
 
 void *mem_add(void *ptr, const char *file, const char *function, int line) {
   if (ptr && !mem_internal) {
+    char **p;
     mem_internal = 1;
     mem_str = malloc(MEM_LINE);
-    char **p = malloc(sizeof(ptr));
+    p = malloc(sizeof(ptr));
     *p = ptr;
     snprintf(mem_str, MEM_LINE, "(0x%08lx) %s (%s, %d)"
 #ifdef __GNUC__
@@ -137,7 +138,8 @@ void mem_debug_init(void)
 void mem_debug_check(void)
 {
   if (mem_count)
-    WARN("%ld memory objects still allocated\n", mem_count);
+    WARN("%ld memory objects still allocated\n"
+         "You may want to report this to tex-k@tug.org\n", mem_count);
 }
 
 void *mem_add(void *ptr) {

@@ -1,6 +1,14 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-04-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Enable use of MEM_DEBUG, try to avoid mem_debug_check warning.
+	* mem.h: Enable use of MEM_DEBUG.
+	* mem.c: Increase MEM_LINE, avoid C99-ism, add tex-k@tug.org.
+	* dvipdfmx.c (main): Enable mem_debug_check().
+	* spc_pdfm.c (spc_handler_pdfm_stream_with_type): Free fullname.
+
 2012-04-21  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* src/spc_pdfm.c: use kpse to find media.
