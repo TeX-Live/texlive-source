@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid.h,v 1.13 2004/09/02 12:23:06 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid.h,v 1.14 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -44,7 +44,9 @@ extern CIDSysInfo CSI_UNICODE;
 typedef struct CIDFont CIDFont;
 
 extern void CIDFont_set_verbose     (void);
+#if 0
 extern int  CIDFont_require_version (void);
+#endif
 extern void CIDFont_set_flags       (long flags);
 
 #define CIDFONT_FORCE_FIXEDPITCH (1 << 1)

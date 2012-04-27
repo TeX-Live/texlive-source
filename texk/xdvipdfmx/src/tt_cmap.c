@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.26 2008/05/08 18:51:59 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.27 2009/09/18 23:56:02 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -1685,9 +1685,10 @@ fprintf(stderr, "otf_load_Unicode_CMap(%s, %d)\n", map_name, ttc_index);
     if (!fp) return -1;
     sfont = dfont_open(fp, ttc_index);
   } else {
-    sfont = sfnt_open(fp, -1);
+    sfont = sfnt_open(fp);
   }
 #endif
+
   if (!sfont) {
     ERROR("Could not open OpenType/TrueType/dfont font file \"%s\"", map_name);
   }

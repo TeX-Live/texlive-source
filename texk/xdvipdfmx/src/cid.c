@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.31 2008/05/17 04:18:47 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.34 2011/03/06 03:14:13 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -59,16 +59,18 @@
 static struct {
   const char *registry;
   const char *ordering;
-  /* Heighest Supplement values supported by PDF-1.0, 1.1, ... */
+  /* Heighest Supplement values supported by PDF-1.0, 1.1, ...; see
+   * also http://partners.adobe.com/public/developer/font/index.html#ckf
+   */
   int   supplement[16];
 } CIDFont_stdcc_def[] = {
-  {"Adobe", "UCS",      {-1, -1, 0, 0, 0, 0, 0}}, 
-  {"Adobe", "GB1",      {-1, -1, 0, 2, 4, 4, 4}}, 
-  {"Adobe", "CNS1",     {-1, -1, 0, 0, 3, 4, 4}},
-  {"Adobe", "Japan1",   {-1, -1, 2, 2, 4, 5, 6}},
-  {"Adobe", "Korea1",   {-1, -1, 1, 1, 2, 2, 2}},
-  {"Adobe", "Identity", {-1, -1, 0, 0, 0, 0, 0}},
-  {NULL, NULL, {0,0,0,0,0,0,0}}
+  {"Adobe", "UCS",      {-1, -1, 0, 0, 0, 0, 0, 0}}, 
+  {"Adobe", "GB1",      {-1, -1, 0, 2, 4, 4, 4, 4}}, 
+  {"Adobe", "CNS1",     {-1, -1, 0, 0, 3, 4, 4, 4}},
+  {"Adobe", "Japan1",   {-1, -1, 2, 2, 4, 5, 6, 6}},
+  {"Adobe", "Korea1",   {-1, -1, 1, 1, 2, 2, 2, 2}},
+  {"Adobe", "Identity", {-1, -1, 0, 0, 0, 0, 0, 0}},
+  {NULL,    NULL,       { 0,  0, 0, 0, 0, 0, 0, 0}}
 };
 #define UCS_CC    0
 #define ACC_START 1
@@ -113,11 +115,13 @@ CIDFont_set_verbose (void)
   __verbose++;
 }
 
+#if 0
 int
 CIDFont_require_version (void)
 {
   return PDF_CID_SUPPORT_MIN;
 }
+#endif
 
 CIDFont *
 CIDFont_new (void)

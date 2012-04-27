@@ -1029,7 +1029,7 @@ otf_create_ToUnicode_stream (const char *font_name,
   int         cmap_add_id;
   tt_cmap    *ttcmap;
   char       *cmap_name;
-  FILE       *fp;
+  FILE       *fp = NULL;
   sfnt       *sfont;
   long        offset = 0;
 
@@ -1124,7 +1124,8 @@ otf_create_ToUnicode_stream (const char *font_name,
   RELEASE(cmap_name);
 
   sfnt_close(sfont);
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   return cmap_ref;
 }
@@ -1601,7 +1602,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
   unsigned long   offset = 0;
   char  *base_name = NULL, *cmap_name = NULL;
   char  *tounicode_name = NULL;
-  FILE  *fp;
+  FILE  *fp = NULL;
   otl_gsub      *gsub_list = NULL;
   tt_cmap       *ttcmap;
   CMap          *cmap, *base, *tounicode = NULL;

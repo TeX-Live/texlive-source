@@ -70,7 +70,7 @@ int
 pdf_font_open_type1c (pdf_font *font)
 {
   char     *ident, *fontname;
-  FILE     *fp;
+  FILE     *fp = NULL;
   sfnt     *sfont;
   cff_font *cffont;
   pdf_obj  *descriptor, *tmp;
@@ -106,7 +106,8 @@ pdf_font_open_type1c (pdf_font *font)
   if (cffont->flag & FONTTYPE_CIDFONT) {
     cff_close (cffont);
     sfnt_close(sfont);
-    DPXFCLOSE(fp);
+    if (fp)
+      DPXFCLOSE(fp);
     return -1;
   }
 
@@ -149,7 +150,8 @@ pdf_font_open_type1c (pdf_font *font)
   }
 
   sfnt_close(sfont);
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   return 0;
 }
@@ -230,7 +232,7 @@ pdf_font_load_type1c (pdf_font *font)
   pdf_obj      *fontdict, *descriptor;
   char         *usedchars;
   char         *fontname, *uniqueTag, *ident, *fullname;
-  FILE         *fp;
+  FILE         *fp = NULL;
   int           encoding_id;
   pdf_obj      *fontfile, *stream_dict;
   char        **enc_vec;
@@ -708,7 +710,8 @@ pdf_font_load_type1c (pdf_font *font)
   cff_close (cffont);
   sfnt_close(sfont);
 
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   if (verbose > 1) {
     MESG("[%u/%u glyphs][%ld bytes]", num_glyphs, cs_count, offset);

@@ -70,7 +70,7 @@ static struct {
   {"Adobe", "Japan1",   {-1, -1, 2, 2, 4, 5, 6, 6}},
   {"Adobe", "Korea1",   {-1, -1, 1, 1, 2, 2, 2, 2}},
   {"Adobe", "Identity", {-1, -1, 0, 0, 0, 0, 0, 0}},
-  {NULL, NULL, {0,0,0,0,0,0,0,0}}
+  {NULL,    NULL,       { 0,  0, 0, 0, 0, 0, 0, 0}}
 };
 #define UCS_CC    0
 #define ACC_START 1

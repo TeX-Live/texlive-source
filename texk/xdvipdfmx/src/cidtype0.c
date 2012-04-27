@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.39 2008/10/13 19:42:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.40 2011/03/06 03:14:13 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify

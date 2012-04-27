@@ -467,7 +467,7 @@ CIDFont_type0_dofont (CIDFont *font)
 {
   sfnt     *sfont;
   cff_font *cffont;
-  FILE     *fp;
+  FILE     *fp = NULL;
   cff_index    *charstrings, *idx;
   cff_charsets *charset = NULL;
   cff_fdselect *fdselect = NULL;
@@ -571,7 +571,8 @@ CIDFont_type0_dofont (CIDFont *font)
     RELEASE(CIDToGIDMap);
     cff_close(cffont);
     sfnt_close(sfont);
-    DPXFCLOSE(fp);
+    if (fp)
+      DPXFCLOSE(fp);
 
     return;
   }
@@ -689,7 +690,8 @@ CIDFont_type0_dofont (CIDFont *font)
 
   cff_close(cffont);
   sfnt_close(sfont);
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   if (verbose > 1)
     MESG("[%u/%u glyphs][%ld bytes]", num_glyphs, cs_count, destlen);
@@ -719,7 +721,7 @@ CIDFont_type0_open (CIDFont *font, const char *name,
   char       *fontname;
   sfnt       *sfont;
   cff_font   *cffont;
-  FILE       *fp;
+  FILE       *fp = NULL;
   unsigned long offset = 0;
 
   ASSERT(font);
@@ -746,7 +748,8 @@ CIDFont_type0_open (CIDFont *font, const char *name,
   if (!(cffont->flag & FONTTYPE_CIDFONT)) {
     cff_close(cffont);
     sfnt_close(sfont);
-    DPXFCLOSE(fp);
+    if (fp)
+      DPXFCLOSE(fp);
     return -1;
   }
 
@@ -819,7 +822,7 @@ CIDFont_type0_open (CIDFont *font, const char *name,
   /* getting font info. from TrueType tables */
   if ((font->descriptor
        = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0)) == NULL)
-    ERROR("Could not obtain neccesary font info.");
+    ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {
     memmove(fontname + 7, fontname, strlen(fontname) + 1);
@@ -851,7 +854,8 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 	       pdf_new_number(1000)); /* not sure */
 
   sfnt_close(sfont);
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   return 0;
 }
@@ -871,7 +875,7 @@ CIDFont_type0_t1cdofont (CIDFont *font)
   int    parent_id;
   char  *used_chars;
   double default_width, nominal_width;
-  FILE  *fp;
+  FILE  *fp = NULL;
 
   ASSERT(font);
 
@@ -1102,7 +1106,8 @@ CIDFont_type0_t1cdofont (CIDFont *font)
   }
 
   sfnt_close(sfont);
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   if (verbose > 1)
     MESG("[%u glyphs][%ld bytes]", num_glyphs, destlen);
@@ -1133,7 +1138,7 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
   sfnt       *sfont;
   cff_font   *cffont;
   unsigned long offset = 0;
-  FILE       *fp;
+  FILE       *fp = NULL;
 
   ASSERT(font);
 
@@ -1159,7 +1164,8 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
   if (cffont->flag & FONTTYPE_CIDFONT) {
     cff_close(cffont);
     sfnt_close(sfont);
-    DPXFCLOSE(fp);
+    if (fp)
+      DPXFCLOSE(fp);
 
     return -1;
   }
@@ -1218,7 +1224,7 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
   /* getting font info. from TrueType tables */
   if ((font->descriptor
        = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0)) == NULL)
-    ERROR("Could not obtain neccesary font info.");
+    ERROR("Could not obtain necessary font info.");
 
   if (opt->embed) {
     memmove(fontname + 7, fontname, strlen(fontname) + 1);
@@ -1246,7 +1252,8 @@ CIDFont_type0_t1copen (CIDFont *font, const char *name,
     pdf_add_dict(font->fontdict, pdf_new_name("CIDSystemInfo"), csi_dict);
   }
   sfnt_close(sfont);
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   return 0;
 }
@@ -1372,11 +1379,9 @@ t1_load_UnicodeCMap (const char *font_name,
     return -1;
 
   cffont = t1_load_font(NULL, 1, fp);
-  if (!cffont) {
-    DPXFCLOSE(fp);
-    return -1;
-  }
   DPXFCLOSE(fp);
+  if (!cffont)
+    return -1;
 
   cmap_id = load_base_CMap(font_name, wmode, cffont);
   

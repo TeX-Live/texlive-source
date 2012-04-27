@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype2.c,v 1.36 2008/05/17 04:18:47 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype2.c,v 1.38 2011/03/06 03:14:13 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -548,6 +548,7 @@ CIDFont_type2_dofont (CIDFont *font)
     sfont = sfnt_open(fp);
   }
 #endif
+
   if (!sfont) {
     ERROR("Could not open TTF file: %s", font->ident);
   }

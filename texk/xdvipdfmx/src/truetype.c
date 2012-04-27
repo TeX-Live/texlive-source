@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.11 2009/08/28 00:26:17 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.12 2011/03/06 03:14:15 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -92,6 +92,7 @@ pdf_font_open_truetype (pdf_font *font)
     sfont = sfnt_open(fp);
   }
 #endif
+
   if (!sfont) {
     WARN("Could not open TrueType font: %s", ident);
     if (fp)
@@ -886,7 +887,7 @@ pdf_font_load_truetype (pdf_font *font)
 #ifdef  ENABLE_NOEMBED
   int        embedding   = pdf_font_get_flag(font, PDF_FONT_FLAG_NOEMBED) ? 0 : 1;
 #endif /* ENABLE_NOEMBED */
-  int        index         = pdf_font_get_index(font);
+  int        index       = pdf_font_get_index(font);
   char     **enc_vec;
   pdf_obj   *fontfile;
   FILE      *fp = NULL;
@@ -909,6 +910,7 @@ pdf_font_load_truetype (pdf_font *font)
     sfont = sfnt_open(fp);
   }
 #endif
+
   if (!sfont) {
     ERROR("Unable to open TrueType/dfont file: %s", ident);
     if (fp)

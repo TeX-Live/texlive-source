@@ -498,7 +498,7 @@ CIDFont_type2_dofont (CIDFont *font)
   unsigned char *cidtogidmap;
   USHORT   num_glyphs;
   int      i, glyph_ordering = 0, unicode_cmap = 0;
-  FILE    *fp;
+  FILE    *fp = NULL;
 
   if (!font->indirect)
     return;
@@ -853,7 +853,8 @@ CIDFont_type2_dofont (CIDFont *font)
     if (cidtogidmap)
       RELEASE(cidtogidmap);
     sfnt_close(sfont);
-    DPXFCLOSE(fp);
+    if (fp)
+      DPXFCLOSE(fp);
 
     return;
   }
@@ -873,7 +874,8 @@ CIDFont_type2_dofont (CIDFont *font)
   fontfile = sfnt_create_FontFile_stream(sfont);
 
   sfnt_close(sfont);
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   if (!fontfile)
     ERROR("Could not created FontFile stream for \"%s\".", font->ident);
@@ -926,7 +928,7 @@ CIDFont_type2_open (CIDFont *font, const char *name,
   char    *fontname;
   sfnt    *sfont;
   unsigned long offset = 0;
-  FILE    *fp;
+  FILE    *fp = NULL;
 
   ASSERT(font && opt);
 
@@ -960,7 +962,8 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     break;
   default:
     sfnt_close(sfont);
-    DPXFCLOSE(fp);
+    if (fp)
+      DPXFCLOSE(fp);
     return -1;
     break;
   }
@@ -1059,7 +1062,7 @@ CIDFont_type2_open (CIDFont *font, const char *name,
 
   font->descriptor = tt_get_fontdesc(sfont, &(opt->embed), opt->stemv, 0);
   if (!font->descriptor) {
-    ERROR("Could not obtain neccesary font info.");
+    ERROR("Could not obtain necessary font info.");
   }
 
   if (opt->embed) {
@@ -1076,7 +1079,8 @@ CIDFont_type2_open (CIDFont *font, const char *name,
 	       pdf_new_name(fontname));
 
   sfnt_close(sfont);
-  DPXFCLOSE(fp);
+  if (fp)
+    DPXFCLOSE(fp);
 
   /*
    * Don't write fontdict here.
