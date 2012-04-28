@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.57 2008/06/05 06:27:42 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.76 2011/03/06 03:14:14 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1338,11 +1338,13 @@ pdf_doc_begin_article (const char *article_id, pdf_obj *article_info)
   return;
 }
 
+#if 0
 void
 pdf_doc_end_article (const char *article_id)
 {
   return; /* no-op */
 }
+#endif
 
 static pdf_bead *
 find_bead (pdf_article *article, const char *bead_id)
@@ -2293,6 +2295,7 @@ pdf_doc_expand_box (const pdf_rect *rect)
   breaking_state.dirty    = 1;
 }
 
+#if 0
 /* This should be number tree */
 void
 pdf_doc_set_pagelabel (long  pg_start,
@@ -2325,3 +2328,4 @@ pdf_doc_set_pagelabel (long  pg_start,
 
   return;
 }
+#endif

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.24 2008/06/05 06:27:42 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.33 2009/09/19 18:48:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -85,7 +85,9 @@ extern void     pdf_doc_add_page_resource (const char *category,
 
 /* Article thread */
 extern void     pdf_doc_begin_article (const char *article_id, pdf_obj *info);
+#if 0
 extern void     pdf_doc_end_article   (const char *article_id);  /* Do nothing... */
+#endif
 extern void     pdf_doc_make_article  (const char *article_id,
 				       const char **bead_order, int num_beads);
 extern void     pdf_doc_add_bead      (const char *article_id,
@@ -120,11 +122,13 @@ extern void     pdf_doc_expand_box  (const pdf_rect *rect);
 /* Manual thumbnail */
 extern void     pdf_doc_enable_manual_thumbnails (void);
 
+#if 0
 /* PageLabels - */
 extern void     pdf_doc_set_pagelabel (long  page_start,
                                        const char *type,
                                        const void *prefix, int pfrx_len,
                                        long  counter_start);
+#endif
 
 /* Similar to bop_content */
 #include "pdfcolor.h"

@@ -4,8 +4,8 @@ ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 2012-04-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reduce differences between dvipdfmx and xdvipdfmx.
-	* cid.[ch], cidtype[02].c, mem.[ch], truetype.c, tt_cmap.c:
-	Trivial modifications.
+	* cid.[ch], cidtype[02].c, dpxutil.[ch], pdfdoc.[ch],
+	mem.[ch], truetype.c, tt_cmap.c: Trivial modifications.
 
 2012-04-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
