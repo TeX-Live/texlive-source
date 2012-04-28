@@ -19,10 +19,10 @@ gd 2.0.35 - unchecked 25apr11, site down
   http://www.boutell.com/gd/
   https://bitbucket.org/pierrejoye/gd-libgd/overview
 
-graphite 2.4 - checked 16mar12
+graphite 2.4 - checked 27apr12
   the directory silgraphite/engine/ from
   http://scripts.sil.org/svn-public/graphite/graphite/trunk
-  (svn r1250 2012-03-1419:45:41 UTC).
+  (svn r1306 2012-04-26 13:45:28 UTC).
 
 icu 49.1 (49.1 release) - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu

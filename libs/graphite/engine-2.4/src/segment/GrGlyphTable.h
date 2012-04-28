@@ -208,7 +208,7 @@ public:
 		GrIStream & glat_strm, long lGlatStart, int fxdSilVersion);
 	void Initialize(int fxdSilfVersion, data16 chwFlags,
 		data16 chwBWAttr, data16 chwJStrAttr, data16 chwJStrHWAttr,
-		int cGlyphs, int cAttrs, int cnCompPerLig);
+		int cGlyphs, int cAttrs, int nCompAttr1, int cnCompPerLig);
 
 	void CreateEmpty();
 
@@ -266,6 +266,7 @@ protected:
 	bool m_fHasDebugStrings;	// are debugging strings loaded into memory?
 
 	int m_nAttrIDLim;		// number of glyph attributes
+	int m_nCompAttr1;		// first component attribute
 	int m_cComponents;		// number of initial glyph attributes that
 							// represent ligature components
 	int m_cnCompPerLig;
@@ -317,7 +318,7 @@ public:
 
 	bool ReadFromFont(GrIStream & gloc_strm, long lGlocStart, 
 		GrIStream & glat_strm, long lGlatStart, 
-		data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int cnCompPerLig, 
+		data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int nCompAttr1, int cnCompPerLig, 
 		int fxdSilfVersion);
 
 	void CreateEmpty();

@@ -1,0 +1,414 @@
+diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
+--- engine-2.4.orig/src/font/TtfUtil.cpp	2012-03-17 00:52:28.000000000 +0100
++++ engine-2.4/src/font/TtfUtil.cpp	2012-04-27 19:18:57.000000000 +0200
+@@ -11,6 +11,7 @@
+ Description:
+     Implements the methods for TtfUtil class. This file should remain portable to any C++ 
+ 	environment by only using standard C++ and the TTF structurs defined in Tt.h.
++	AW 2011-10-21: Add support for multi-level composite glyphs. Contribution by Alexey Kryukov.
+ -------------------------------------------------------------------------------*//*:End Ignore*/
+ 
+ 
+@@ -173,11 +174,9 @@
+ which could cause a lookup in the hmtx table to exceed the table length. Of course, TTF tables
+ that are completely corrupt will cause unpredictable results. */
+ 
+-/* Note on composite glyphs: Glyphs that have components that are themselves composites
+-are not supported. IsDeepComposite can be used to test for this. False is returned from many 
+-of the methods in this cases. It is unclear how to build composite glyphs in some cases, 
+-so this code represents my best guess until test cases can be found. See notes on the high-
+-level GlyfPoints method. */
++/* Note on composite glyphs: It is unclear how to build composite glyphs in some cases, 
++so this code represents Alan's best guess until test cases can be found. See notes on
++the high-level GlyfPoints method. */
+ 
+ namespace TtfUtil
+ {
+@@ -1593,6 +1592,7 @@
+ 
+ /*----------------------------------------------------------------------------------------------
+ 	Determine if a particular Glyph ID is a multi-level composite.
++	This is probably not needed since support for multi-level composites has been added.
+ ----------------------------------------------------------------------------------------------*/
+ bool IsDeepComposite(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
+ 							 long lLocaSize, const void * pHead)
+@@ -1646,13 +1646,13 @@
+ }
+ 
+ /*----------------------------------------------------------------------------------------------
+-	Get the number of contours based on the given tables and Glyph ID
++	Get the number of contours based on the given tables and Glyph ID.
+ 	Handles both simple and composite glyphs.
+ 	Return true if successful, false otherwise. On false, cnContours will be INT_MIN
+-		False may indicate a white space glyph or a multi-level composite glyph.
++		False may indicate a white space glyph (or component).
+ ----------------------------------------------------------------------------------------------*/
+-bool GlyfContourCount(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
+-	size_t lLocaSize, const void * pHead, size_t & cnContours)
++bool GlyfContourCount(gr::gid16 nGlyphId, const void * pGlyf,
++	const void * pLoca, size_t lLocaSize, const void * pHead, size_t & cnContours)
+ {
+ 	cnContours = static_cast<size_t>(INT_MIN);
+ 
+@@ -1670,7 +1670,7 @@
+ 		
+ 	//handle composite glyphs
+ 
+-	int rgnCompId[kMaxGlyphComponents]; // assumes no glyph will be made of more than 8 components
++	int rgnCompId[kMaxGlyphComponents]; // assumes only a limted number of glyph components
+ 	size_t cCompIdTotal = kMaxGlyphComponents;
+ 	size_t cCompId = 0;
+ 
+@@ -1682,12 +1682,17 @@
+ 	for (size_t i = 0; i < cCompId; i++)
+ 	{
+ 		if (IsSpace(static_cast<gr::gid16>(rgnCompId[i]), pLoca, lLocaSize, pHead)) {return false;}
+-		pSimpleGlyf = GlyfLookup(static_cast<gr::gid16>(rgnCompId[i]), 
+-		                         pGlyf, pLoca, lLocaSize, pHead);
++		pSimpleGlyf = GlyfLookup(static_cast<gr::gid16>(rgnCompId[i]), pGlyf,
++			pLoca, lLocaSize, pHead);
+ 		if (pSimpleGlyf == 0) {return false;}
+-		// return false on multi-level composite
+ 		if ((cTmp = GlyfContourCount(pSimpleGlyf)) < 0) 
+-			return false;
++		{
++			size_t cNest = 0;
++			if (!GlyfContourCount(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize, 
++				pHead, 	cNest))
++				return false;
++			cTmp = (int) cNest;
++		}
+ 		cRtnContours += cTmp;
+ 	}
+ 
+@@ -1697,16 +1702,16 @@
+ 
+ /*----------------------------------------------------------------------------------------------
+ 	Get the point numbers for the end points of the glyph contours based on the given tables 
+-	and Glyph ID
++	and Glyph ID.
+ 	Handles both simple and composite glyphs.
+ 	cnPoints - count of contours from GlyfContourCount (same as number of end points)
+ 	prgnContourEndPoints - should point to a buffer large enough to hold cnPoints integers
+ 	Return true if successful, false otherwise. On false, all end points are INT_MIN
+-		False may indicate a white space glyph or a multi-level composite glyph.
++		False may indicate a white space glyph (or component).
+ ----------------------------------------------------------------------------------------------*/
+ bool GlyfContourEndPoints(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
+ 	size_t lLocaSize, const void * pHead, 
+-	int * prgnContourEndPoint, size_t cnPoints)
++	int * prgnContourEndPoint, size_t & cnPoints)
+ {
+ 	std::fill_n(prgnContourEndPoint, cnPoints, INT_MIN);
+ 
+@@ -1737,9 +1742,15 @@
+ 		if (IsSpace(static_cast<gr::gid16>(rgnCompId[i]), pLoca, lLocaSize, pHead)) {return false;}
+ 		pSimpleGlyf = GlyfLookup(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize, pHead);
+ 		if (pSimpleGlyf == NULL) {return false;}
+-		// returns false on multi-level composite
++
+ 		if (!GlyfContourEndPoints(pSimpleGlyf, prgnCurrentEndPoint, cCurrentPoints, cActualPts))
+-			return false;
++		{
++			size_t cNestedPts = ( size_t ) cCurrentPoints;
++			if (!GlyfContourEndPoints(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize, 
++										pHead, prgnCurrentEndPoint, cNestedPts))
++				return false;
++			cActualPts = cCurrentPoints - cNestedPts;
++		} 
+ 		// points in composite are numbered sequentially as components are added
+ 		//  must adjust end point numbers for new point numbers
+ 		for (int j = 0; j < cActualPts; j++)
+@@ -1750,6 +1761,7 @@
+ 		cCurrentPoints -= cActualPts;
+ 	}
+ 
++	cnPoints = cCurrentPoints;
+ 	return true;
+ }
+ 
+@@ -1763,7 +1775,7 @@
+ 	prgfOnCurve - should point to a buffer a large enough to hold cnPoints bytes (bool)
+ 		This range is parallel to the prgnX & prgnY
+ 	Return true if successful, false otherwise. On false, all points may be INT_MIN
+-		False may indicate a white space glyph, a multi-level composite, or a corrupt font
++		False may indicate a white space glyph (or component), or a corrupt font
+ 	// TODO: doesn't support composite glyphs whose components are themselves components
+ 		It's not clear from the TTF spec when the transforms should be applied. Should the 
+ 		transform be done before or after attachment point calcs? (current code - before) 
+@@ -1777,8 +1789,8 @@
+ ----------------------------------------------------------------------------------------------*/
+ bool GlyfPoints(gr::gid16 nGlyphId, const void * pGlyf,
+ 		const void * pLoca, size_t lLocaSize, const void * pHead,
+-		const int * /*prgnContourEndPoint*/, size_t /*cnEndPoints*/,
+-		int * prgnX, int * prgnY, bool * prgfOnCurve, size_t cnPoints)
++		const int * prgnContourEndPoint, size_t cnEndPoints,
++		int * prgnX, int * prgnY, bool * prgfOnCurve, size_t & cnPoints)
+ {
+ 	std::fill_n(prgnX, cnPoints, INT_MAX);
+ 	std::fill_n(prgnY, cnPoints, INT_MAX);
+@@ -1822,12 +1834,29 @@
+ 	for (size_t i = 0; i < cCompId; i++)
+ 	{
+ 		if (IsSpace(static_cast<gr::gid16>(rgnCompId[i]), pLoca, lLocaSize, pHead)) {return false;}
+-		void * pCompGlyf = GlyfLookup(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize, pHead);
++		void * pCompGlyf = GlyfLookup(static_cast<gr::gid16>(rgnCompId[i]), pGlyf,
++			pLoca, lLocaSize, pHead);
+ 		if (pCompGlyf == NULL) {return false;}
+-		// returns false on multi-level composite
++
+ 		if (!GlyfPoints(pCompGlyf, prgnCurrentX, prgnCurrentY, prgbCurrentFlag, 
+ 			cCurrentPoints, cActualPts))
+-			return false; 
++		{
++			size_t cNestedPts = ( size_t ) cCurrentPoints;
++			if (!GlyfPoints(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize, pHead, 
++				prgnContourEndPoint, cnEndPoints, prgnCurrentX, prgnCurrentY, (bool *)prgbCurrentFlag, 
++				cNestedPts))
++			{
++				return false;
++			}
++			cActualPts = cCurrentPoints - cNestedPts;
++		} 
++		else
++		{
++			// convert points to absolute coordinates
++			// do before transform and attachment point placement are applied
++			CalcAbsolutePoints(prgnCurrentX, prgnCurrentY, cActualPts);
++		}
++
+ 		if (!GetComponentPlacement(pSimpleGlyf, rgnCompId[i], fOffset, a, b))
+ 			return false;
+ 		if (!GetComponentTransform(pSimpleGlyf, rgnCompId[i], 
+@@ -1835,10 +1864,6 @@
+ 			return false;
+ 		bool fIdTrans = flt11 == 1.0 && flt12 == 0.0 && flt21 == 0.0 && flt22 == 1.0;
+ 
+-		// convert points to absolute coordinates
+-		// do before transform and attachment point placement are applied
+-		CalcAbsolutePoints(prgnCurrentX, prgnCurrentY, cActualPts);
+-
+ 		// apply transform - see main method note above
+ 		// do before attachment point calcs
+ 		if (!fIdTrans)
+@@ -1890,6 +1915,7 @@
+ 
+ 	SimplifyFlags((char *)prgfOnCurve, cnPoints);
+ 
++	cnPoints = cCurrentPoints;
+ 	return true;
+ }
+ 
+diff -ur engine-2.4.orig/src/font/TtfUtil.h engine-2.4/src/font/TtfUtil.h
+--- engine-2.4.orig/src/font/TtfUtil.h	2010-06-10 19:18:22.000000000 +0200
++++ engine-2.4/src/font/TtfUtil.h	2012-04-27 19:18:57.000000000 +0200
+@@ -139,10 +139,10 @@
+ 	bool GlyfContourCount(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
+ 		size_t lLocaSize, const void *pHead, size_t & cnContours);
+ 	bool GlyfContourEndPoints(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
+-		size_t lLocaSize,	const void * pHead, int * prgnContourEndPoint, size_t cnPoints); 
++		size_t lLocaSize,	const void * pHead, int * prgnContourEndPoint, size_t & cnPoints); 
+ 	bool GlyfPoints(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
+ 		size_t lLocaSize, const void * pHead, const int * prgnContourEndPoint, size_t cnEndPoints, 
+-		int * prgnX, int * prgnY, bool * prgfOnCurve, size_t cnPoints);
++		int * prgnX, int * prgnY, bool * prgfOnCurve, size_t & cnPoints);
+ 
+ 	// utitily method used by high-level GlyfPoints 
+ 	bool SimplifyFlags(char * prgbFlags, int cnPoints);
+diff -ur engine-2.4.orig/src/segment/GrEngine.cpp engine-2.4/src/segment/GrEngine.cpp
+--- engine-2.4.orig/src/segment/GrEngine.cpp	2012-03-17 00:02:13.000000000 +0100
++++ engine-2.4/src/segment/GrEngine.cpp	2012-04-27 19:18:57.000000000 +0200
+@@ -1090,9 +1090,10 @@
+ 	
+ 	//	line-break flag
+ 	int nLineBreak = grstrm.ReadByteFromFont();
+-	if (nLineBreak != 0 && nLineBreak != 1)
++	if (nLineBreak > 3)
+ 		return false; // bad table
+-    m_fLineBreak = (nLineBreak != 0)? true : false;
++    m_fLineBreak = ((nLineBreak & 0x0001) == 0)? false : true;
++	// ignore other flag
+ 
+ 	//	range of possible cross-line-boundary contextualization
+ 	m_cchwPreXlbContext = grstrm.ReadByteFromFont();
+@@ -1115,9 +1116,23 @@
+ 
+ 	if (*pfxdSilfVersion >= 0x00020000)
+ 	{
++		bTmp = grstrm.ReadByteFromFont();
++		if (bTmp != 0)
++			// The mirror attributes are defined, so first component is 5.
++			m_nCompAttr1 = 5;
++		else if (m_chwPseudoAttr < 3)
++		{
++			// The *actualForPsuedo*, directionality, and breakweight attributes are first.
++			gAssert(m_chwBWAttr < 3);
++			gAssert(m_chwDirAttr < 3);
++			m_nCompAttr1 = 3;
++		}
++		else
++			// The component attributes are first.
++			m_nCompAttr1 = 0;
++
+ 		// reserved
+ 		grstrm.ReadByteFromFont();
+-		grstrm.ReadByteFromFont();
+ 
+ 		//	justification levels
+ 		m_cJLevels = grstrm.ReadByteFromFont();
+@@ -1158,6 +1173,14 @@
+ 		m_chwJShrink0 = 0xffff;
+ 		m_chwJStep0 = 0xffff;
+ 		m_chwJWeight0 = 0xffff;
++
++		if (m_chwPseudoAttr == 0)
++			// The *actualForPsuedo*, directionality, and breakweight attributes are first.
++			m_nCompAttr1 = 3;
++		else
++			// The component attributes are first.
++			m_nCompAttr1 = 0;
++
+ 	}
+ 
+ 	//	number of component attributes
+@@ -1310,6 +1333,7 @@
+ 	m_chwDirAttr = 3;		// directionality
+ 
+ 	m_cComponents = 0;		//	number of component attributes
++	m_nCompAttr1 = 5;		//  component attribute
+ 
+ 	m_cnUserDefn = 0;		// number of user-defined slot attributes
+ 	m_cnCompPerLig = 0;		// max number of ligature components
+@@ -1372,7 +1396,8 @@
+ 	m_pgtbl->SetNumberOfStyles(1);	// for now
+ 
+ 	return m_pgtbl->ReadFromFont(grstrmGloc, lGlocStart, grstrmGlat, lGlatStart,
+-		m_chwBWAttr, m_chwJStretch0, m_cJLevels, m_cnCompPerLig, fxdSilfVersion);
++		m_chwBWAttr, m_chwJStretch0, m_cJLevels, m_nCompAttr1, m_cnCompPerLig,
++		fxdSilfVersion);
+ }
+ 
+ /*----------------------------------------------------------------------------------------------
+diff -ur engine-2.4.orig/src/segment/GrEngine.h engine-2.4/src/segment/GrEngine.h
+--- engine-2.4.orig/src/segment/GrEngine.h	2012-03-17 00:02:13.000000000 +0100
++++ engine-2.4/src/segment/GrEngine.h	2012-04-27 19:18:57.000000000 +0200
+@@ -308,6 +308,11 @@
+ 		return m_cnUserDefn;
+ 	}
+ 
++	int FirstCompAttr()
++	{
++		return m_nCompAttr1;
++	}
++
+ 	int NumCompPerLig()
+ 	{
+ 		return m_cnCompPerLig;
+@@ -471,6 +476,7 @@
+ 
+ 	int m_cComponents;		// number of glyph attributes at the beginning of the glyph table
+ 							// that actually represent ligature components
++	int m_nCompAttr1;		// first lig component attribute
+ 
+ 	int m_cnUserDefn;		// number of user-defined slot attributes
+ 	int m_cnCompPerLig;		// max number of components needed per ligature
+diff -ur engine-2.4.orig/src/segment/GrGlyphTable.cpp engine-2.4/src/segment/GrGlyphTable.cpp
+--- engine-2.4.orig/src/segment/GrGlyphTable.cpp	2011-02-28 19:20:51.000000000 +0100
++++ engine-2.4/src/segment/GrGlyphTable.cpp	2012-04-27 19:18:57.000000000 +0200
+@@ -43,7 +43,7 @@
+ ----------------------------------------------------------------------------------------------*/	
+ bool GrGlyphTable::ReadFromFont(GrIStream & grstrmGloc, long lGlocStart, 
+ 	GrIStream & grstrmGlat, long lGlatStart, 
+-	data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int cnCompPerLig, 
++	data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int nCompAttr1, int cnCompPerLig, 
+ 	int fxdSilfVersion)
+ {
+ 	//	Create the glyph sub-table for the single style.
+@@ -66,7 +66,7 @@
+ 	//	Create a single sub-table for the single style.
+ 	pgstbl->Initialize(fxdSilfVersion, snFlags,
+ 		chwBWAttr, chwJStrAttr, data16(chwJStrAttr + cJLevels),
+-		m_cglf, cAttrs, cnCompPerLig);
++		m_cglf, cAttrs, nCompAttr1, cnCompPerLig);
+ 
+ 	SetSubTable(0, pgstbl);
+ 
+@@ -121,7 +121,7 @@
+ 	GrGlyphSubTable * pgstbl = new GrGlyphSubTable();
+ 	
+ 	//	Create a single sub-table for the single style.
+-	pgstbl->Initialize(0, 0, 0, 0, 0, m_cglf, 0, 0);
++	pgstbl->Initialize(0, 0, 0, 0, 0, m_cglf, 0, 0, 0);
+ 
+ 	SetSubTable(0, pgstbl);
+ 
+@@ -139,7 +139,7 @@
+ ----------------------------------------------------------------------------------------------*/
+ void GrGlyphSubTable::Initialize(int fxdSilfVersion, utf16 chwFlags,
+ 	data16 chwBWAttr, data16 chwJStrAttr, data16 chwJStrHWAttr,
+-	int cGlyphs, int cAttrs, int cnCompPerLig)
++	int cGlyphs, int cAttrs, int nCompAttr1, int cnCompPerLig)
+ {
+ 	m_fxdSilfVersion = fxdSilfVersion;
+ 	m_fHasDebugStrings = HasAttrNames(chwFlags);
+@@ -149,6 +149,8 @@
+ 	m_chwJStrHWAttr = chwJStrHWAttr;
+ 	m_fGlocShort = !LongFormat(chwFlags);
+ 
++	m_nCompAttr1 = nCompAttr1;
++
+ 	if (m_fGlocShort)
+ 	{ // item # cGlyphs holds length, which is convenient for dealing with last item
+ 		m_prgibBIGAttrValues = new byte[(cGlyphs + 1) * sizeof(data16)];
+@@ -442,8 +444,8 @@
+ 	int iMin = iFlag + 1;	// first actual value; +1 in order to skip the flag
+ 	if (m_prgnDefinedComponents[iFlag] == 0)
+ 	{
+-		int iTmp = iMin;	
+-		for (int nCompID = 0; nCompID < m_cComponents; nCompID++)
++		int iTmp = iMin;
++		for (int nCompID = m_nCompAttr1; nCompID < m_nCompAttr1 + m_cComponents; nCompID++)
+ 		{
+ 			if (ComponentIsDefined(chwGlyphID, nCompID))
+ 				m_prgnDefinedComponents[iTmp++] = nCompID;
+@@ -469,8 +471,9 @@
+ ----------------------------------------------------------------------------------------------*/
+ bool GrGlyphSubTable::ComponentIsDefined(gid16 chwGlyphID, int nAttrID)
+ {
+-	gAssert(nAttrID < m_cComponents);
+-	if (nAttrID >= m_cComponents)
++
++	gAssert(nAttrID - m_nCompAttr1 < m_cComponents);
++	if (nAttrID - m_nCompAttr1 >= m_cComponents)
+ 		return false;
+ 
+ 	return (GlyphAttrValue(chwGlyphID, nAttrID) != 0);
+diff -ur engine-2.4.orig/src/segment/GrGlyphTable.h engine-2.4/src/segment/GrGlyphTable.h
+--- engine-2.4.orig/src/segment/GrGlyphTable.h	2011-02-28 19:20:51.000000000 +0100
++++ engine-2.4/src/segment/GrGlyphTable.h	2012-04-27 19:18:57.000000000 +0200
+@@ -208,7 +208,7 @@
+ 		GrIStream & glat_strm, long lGlatStart, int fxdSilVersion);
+ 	void Initialize(int fxdSilfVersion, data16 chwFlags,
+ 		data16 chwBWAttr, data16 chwJStrAttr, data16 chwJStrHWAttr,
+-		int cGlyphs, int cAttrs, int cnCompPerLig);
++		int cGlyphs, int cAttrs, int nCompAttr1, int cnCompPerLig);
+ 
+ 	void CreateEmpty();
+ 
+@@ -266,6 +266,7 @@
+ 	bool m_fHasDebugStrings;	// are debugging strings loaded into memory?
+ 
+ 	int m_nAttrIDLim;		// number of glyph attributes
++	int m_nCompAttr1;		// first component attribute
+ 	int m_cComponents;		// number of initial glyph attributes that
+ 							// represent ligature components
+ 	int m_cnCompPerLig;
+@@ -317,7 +318,7 @@
+ 
+ 	bool ReadFromFont(GrIStream & gloc_strm, long lGlocStart, 
+ 		GrIStream & glat_strm, long lGlatStart, 
+-		data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int cnCompPerLig, 
++		data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int nCompAttr1, int cnCompPerLig, 
+ 		int fxdSilfVersion);
+ 
+ 	void CreateEmpty();

@@ -308,6 +308,11 @@ public:
 		return m_cnUserDefn;
 	}
 
+	int FirstCompAttr()
+	{
+		return m_nCompAttr1;
+	}
+
 	int NumCompPerLig()
 	{
 		return m_cnCompPerLig;
@@ -471,6 +476,7 @@ protected:
 
 	int m_cComponents;		// number of glyph attributes at the beginning of the glyph table
 							// that actually represent ligature components
+	int m_nCompAttr1;		// first lig component attribute
 
 	int m_cnUserDefn;		// number of user-defined slot attributes
 	int m_cnCompPerLig;		// max number of components needed per ligature

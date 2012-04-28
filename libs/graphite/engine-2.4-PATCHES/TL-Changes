@@ -1,6 +1,6 @@
 Changes applied to the silgraphite-2.4/engine/ tree obtained from:
 	http://scripts.sil.org/svn-public/graphite/graphite/trunk
-	(svn r1250 2012-03-1419:45:41 UTC).
+	(svn r1250 2012-03-14 19:45:41 UTC).
 
 Removed:
 	config/

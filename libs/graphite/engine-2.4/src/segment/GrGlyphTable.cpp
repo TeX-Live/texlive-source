@@ -43,7 +43,7 @@ namespace gr
 ----------------------------------------------------------------------------------------------*/	
 bool GrGlyphTable::ReadFromFont(GrIStream & grstrmGloc, long lGlocStart, 
 	GrIStream & grstrmGlat, long lGlatStart, 
-	data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int cnCompPerLig, 
+	data16 chwBWAttr, data16 chwJStrAttr, int cJLevels, int nCompAttr1, int cnCompPerLig, 
 	int fxdSilfVersion)
 {
 	//	Create the glyph sub-table for the single style.
@@ -66,7 +66,7 @@ bool GrGlyphTable::ReadFromFont(GrIStream & grstrmGloc, long lGlocStart,
 	//	Create a single sub-table for the single style.
 	pgstbl->Initialize(fxdSilfVersion, snFlags,
 		chwBWAttr, chwJStrAttr, data16(chwJStrAttr + cJLevels),
-		m_cglf, cAttrs, cnCompPerLig);
+		m_cglf, cAttrs, nCompAttr1, cnCompPerLig);
 
 	SetSubTable(0, pgstbl);
 
@@ -121,7 +121,7 @@ void GrGlyphTable::CreateEmpty()
 	GrGlyphSubTable * pgstbl = new GrGlyphSubTable();
 	
 	//	Create a single sub-table for the single style.
-	pgstbl->Initialize(0, 0, 0, 0, 0, m_cglf, 0, 0);
+	pgstbl->Initialize(0, 0, 0, 0, 0, m_cglf, 0, 0, 0);
 
 	SetSubTable(0, pgstbl);
 
@@ -139,7 +139,7 @@ void GrGlyphSubTable::CreateEmpty()
 ----------------------------------------------------------------------------------------------*/
 void GrGlyphSubTable::Initialize(int fxdSilfVersion, utf16 chwFlags,
 	data16 chwBWAttr, data16 chwJStrAttr, data16 chwJStrHWAttr,
-	int cGlyphs, int cAttrs, int cnCompPerLig)
+	int cGlyphs, int cAttrs, int nCompAttr1, int cnCompPerLig)
 {
 	m_fxdSilfVersion = fxdSilfVersion;
 	m_fHasDebugStrings = HasAttrNames(chwFlags);
@@ -148,6 +148,8 @@ void GrGlyphSubTable::Initialize(int fxdSilfVersion, utf16 chwFlags,
 	m_chwJStrAttr = chwJStrAttr;
 	m_chwJStrHWAttr = chwJStrHWAttr;
 	m_fGlocShort = !LongFormat(chwFlags);
+
+	m_nCompAttr1 = nCompAttr1;
 
 	if (m_fGlocShort)
 	{ // item # cGlyphs holds length, which is convenient for dealing with last item
@@ -442,8 +444,8 @@ int GrGlyphSubTable::CalculateDefinedComponents(gid16 chwGlyphID)
 	int iMin = iFlag + 1;	// first actual value; +1 in order to skip the flag
 	if (m_prgnDefinedComponents[iFlag] == 0)
 	{
-		int iTmp = iMin;	
-		for (int nCompID = 0; nCompID < m_cComponents; nCompID++)
+		int iTmp = iMin;
+		for (int nCompID = m_nCompAttr1; nCompID < m_nCompAttr1 + m_cComponents; nCompID++)
 		{
 			if (ComponentIsDefined(chwGlyphID, nCompID))
 				m_prgnDefinedComponents[iTmp++] = nCompID;
@@ -469,8 +471,9 @@ int GrGlyphSubTable::CalculateDefinedComponents(gid16 chwGlyphID)
 ----------------------------------------------------------------------------------------------*/
 bool GrGlyphSubTable::ComponentIsDefined(gid16 chwGlyphID, int nAttrID)
 {
-	gAssert(nAttrID < m_cComponents);
-	if (nAttrID >= m_cComponents)
+
+	gAssert(nAttrID - m_nCompAttr1 < m_cComponents);
+	if (nAttrID - m_nCompAttr1 >= m_cComponents)
 		return false;
 
 	return (GlyphAttrValue(chwGlyphID, nAttrID) != 0);

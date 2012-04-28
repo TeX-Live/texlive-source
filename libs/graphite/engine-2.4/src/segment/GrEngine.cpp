@@ -1090,9 +1090,10 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 	
 	//	line-break flag
 	int nLineBreak = grstrm.ReadByteFromFont();
-	if (nLineBreak != 0 && nLineBreak != 1)
+	if (nLineBreak > 3)
 		return false; // bad table
-    m_fLineBreak = (nLineBreak != 0)? true : false;
+    m_fLineBreak = ((nLineBreak & 0x0001) == 0)? false : true;
+	// ignore other flag
 
 	//	range of possible cross-line-boundary contextualization
 	m_cchwPreXlbContext = grstrm.ReadByteFromFont();
@@ -1115,8 +1116,22 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 
 	if (*pfxdSilfVersion >= 0x00020000)
 	{
+		bTmp = grstrm.ReadByteFromFont();
+		if (bTmp != 0)
+			// The mirror attributes are defined, so first component is 5.
+			m_nCompAttr1 = 5;
+		else if (m_chwPseudoAttr < 3)
+		{
+			// The *actualForPsuedo*, directionality, and breakweight attributes are first.
+			gAssert(m_chwBWAttr < 3);
+			gAssert(m_chwDirAttr < 3);
+			m_nCompAttr1 = 3;
+		}
+		else
+			// The component attributes are first.
+			m_nCompAttr1 = 0;
+
 		// reserved
-		grstrm.ReadByteFromFont();
 		grstrm.ReadByteFromFont();
 
 		//	justification levels
@@ -1158,6 +1173,14 @@ bool GrEngine::ReadSilfTable(GrIStream & grstrm, long lTableStart, int iSubTable
 		m_chwJShrink0 = 0xffff;
 		m_chwJStep0 = 0xffff;
 		m_chwJWeight0 = 0xffff;
+
+		if (m_chwPseudoAttr == 0)
+			// The *actualForPsuedo*, directionality, and breakweight attributes are first.
+			m_nCompAttr1 = 3;
+		else
+			// The component attributes are first.
+			m_nCompAttr1 = 0;
+
 	}
 
 	//	number of component attributes
@@ -1310,6 +1333,7 @@ void GrEngine::CreateEmpty()
 	m_chwDirAttr = 3;		// directionality
 
 	m_cComponents = 0;		//	number of component attributes
+	m_nCompAttr1 = 5;		//  component attribute
 
 	m_cnUserDefn = 0;		// number of user-defined slot attributes
 	m_cnCompPerLig = 0;		// max number of ligature components
@@ -1372,7 +1396,8 @@ bool GrEngine::ReadGlocAndGlatTables(GrIStream & grstrmGloc, long lGlocStart,
 	m_pgtbl->SetNumberOfStyles(1);	// for now
 
 	return m_pgtbl->ReadFromFont(grstrmGloc, lGlocStart, grstrmGlat, lGlatStart,
-		m_chwBWAttr, m_chwJStretch0, m_cJLevels, m_cnCompPerLig, fxdSilfVersion);
+		m_chwBWAttr, m_chwJStretch0, m_cJLevels, m_nCompAttr1, m_cnCompPerLig,
+		fxdSilfVersion);
 }
 
 /*----------------------------------------------------------------------------------------------
