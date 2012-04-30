@@ -1,7 +1,7 @@
 @x
 @d banner=='This is pBibTeX, Version 0.99d-j0.33'
 @y
-@d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.00'
+@d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.10'
 @z
 
 @x

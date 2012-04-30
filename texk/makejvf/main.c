@@ -174,9 +174,9 @@ int main(int argc, char ** argv)
 
 	if (ucs) {
 		ib=0;
-		for (i=0;i<(useset3+1);i++)
+		for (i=0;i<(useset3*2+1);i++)
 			for (j=0;j<65536;j++) {
-				ch=i*2*65536+j;
+				ch=i*65536+j;
 				if (search_cjk_entry(&ib,ch,ucs))
 					writevfu(ch,vfp);
 			}
@@ -193,7 +193,7 @@ int main(int argc, char ** argv)
 
 void usage(void)
 {
-	fputs2("MAKEJVF ver.1.1a-u1.00 -- make Japanese VF file.\n", stderr);
+	fputs2("MAKEJVF ver.1.1a-u1.10 -- make Japanese VF file.\n", stderr);
 	fputs2("%% makejvf [<options>] <TFMfile> <PSfontTFM>\n", stderr);
 	fputs2("options:\n", stderr);
 	fputs2("-C           長体モード\n", stderr);
@@ -208,8 +208,8 @@ void usage(void)
 	fputs2("-u <Charset> UCS mode\n", stderr);
 	fputs2("             <Charset> gb : GB,  cns : CNS,  ks : KS\n", stderr);
 	fputs2("                       jis : JIS,  jisq : JIS quote only\n", stderr);
-	fputs2("-J <TFMfile> JIS encoded PS font TFM name for quote, double quote with UCS mode\n", stderr);
-	fputs2("-U <TFMfile> UCS encoded PS font TFM name for quote, double quote with UCS mode\n", stderr);
+	fputs2("-J <TFMfile> JIS encoded PS font TFM name for quote, double quote (with UCS mode)\n", stderr);
+	fputs2("-U <TFMfile> UCS encoded PS font TFM name for quote, double quote (with UCS mode)\n", stderr);
 	fputs2("-3           use set3 (with UCS mode)\n", stderr);
 	fputs2("-H           use half-width katakana (with UCS mode)\n", stderr);
 	fputs2("-i           font ID from No.0\n", stderr);

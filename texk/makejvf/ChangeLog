@@ -1,3 +1,10 @@
+2012-04-29
+
+	Update for upTeX-1.10. From TANAKA Takuji <KXD02663@nifty.ne.jp>.
+	* uniblock.c: Update references Unicode blocks Blocks-6.1.0.txt
+	and CMap files.
+	* main.c: Update version number. Revise help messages.
+
 2012-01-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* write.c: binary write mode for tfm and vf on Windows.

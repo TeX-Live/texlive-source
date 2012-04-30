@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is upTeX, Version 3.1415926-p3.2-u1.00 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
+> This is upTeX, Version 3.1415926-p3.2-u1.10 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -54,7 +54,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is upTeX, Version 3.1415926-p3.2-u1.00 (utf8.uptex) (TeX Live 2012/dev)
+> This is upTeX, Version 3.1415926-p3.2-u1.10 (utf8.uptex) (TeX Live 2012/dev)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -68,7 +68,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is upTeX, Version 3.1415926-p3.2-u1.00 (utf8.uptex) (TeX Live 2012/dev) (format=trip 2012.1.16)  16 JAN 2012 15:14
+> This is upTeX, Version 3.1415926-p3.2-u1.10 (utf8.uptex) (TeX Live 2012/dev) (format=trip 2012.1.16)  16 JAN 2012 15:14
 3c3
 < (trip.tex ##
 ---
