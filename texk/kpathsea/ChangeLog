@@ -1,3 +1,7 @@
+2012-04-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c: further rewrite win32_system().
+
 2012-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (rebuild): Touch libkpathsea.la to avoid an

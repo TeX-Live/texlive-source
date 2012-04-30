@@ -1069,6 +1069,15 @@ build_cmdline(char ***cmd, char *input, char *output)
 }
 
 /* win32_system */
+static int is_include_space(const char *s)
+{
+  char *p;
+  p = strchr(s, ' ');
+  if(p) return 1;
+  p = strchr(s, '\t');
+  if(p) return 1;
+  return 0;
+}
 
 int __cdecl win32_system(const char *cmd)
 {
@@ -1076,21 +1085,25 @@ int __cdecl win32_system(const char *cmd)
   char  *q;
   char  *av[4];
   int   len, ret;
+  int   spacep = 0;
 
-  if(_osver & 0x8000)
-    av[0] = xstrdup("command.com");
-  else
-    av[0] = xstrdup("cmd.exe");
+  av[0] = xstrdup("cmd.exe");
   av[1] = xstrdup("/c");
 
-  len = strlen(cmd) + 1;
+  len = strlen(cmd) + 3;
+  spacep = is_include_space(cmd);
   av[2] = malloc(len);
-  for(p = cmd, q = av[2]; *p; p++, q++) {
+  q = av[2];
+  if(spacep)
+    *q++ = '"';
+  for(p = cmd; *p; p++, q++) {
     if(*p == '\'')
       *q = '"';
     else
       *q = *p;
   }
+  if(spacep)
+    *q++ = '"';
   *q = '\0';
   av[3] = NULL;
   ret = spawnvp(_P_WAIT, av[0], av);
