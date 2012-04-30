@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 ################################################################################
 #  texdef -- Show definitions of TeX commands
-#  Copyright (c) 2011 Martin Scharrer <martin@scharrer-online.de>
+#  Copyright (c) 2011-2012 Martin Scharrer <martin@scharrer-online.de>
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -29,7 +29,9 @@ my $TEX = 'pdflatex';
 if ($scriptname =~ /^(.*)def$/) {
     $TEX = $1;
 }
+my $TEXOPTIONS = " -interaction nonstopmode ";
 
+## Variables for options and settings
 my $CLASS      = undef;
 my $USERCLASS  = 0;
 my @PACKAGES   = ();
@@ -38,6 +40,7 @@ my $INPREAMBLE = 0;
 my $PRINTVERSION = 0;
 my $TMPDIR     = '';
 my $SHOWVALUE  = 0;
+my $PRINTORIGDEF  = 0;
 my $FINDDEF    = 0;
 my $LISTCMD    = 0;
 my $LISTCMDDEF = 0;
@@ -79,6 +82,8 @@ my %IGNOREDEF = map { $_ => 1 } qw(
    @ifdefinable default@ds ds@ @curroptions
    filename@area filename@base filename@ext
 );
+
+## Adds arguments to %IGNOREDEF
 sub addignore {
   my $opt  = shift;
   my $arg  = shift;
@@ -103,12 +108,12 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
-my $VERSION = 'Version 1.4 -- 2011/07/28';
+my $VERSION = 'Version 1.5 -- 2012/04/29';
 sub usage {
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.4 -- 2011/07/28
-Copyright (C) 2011  Martin Scharrer <martin@scharrer-online.de>
+Version 1.5 -- 2012/04/29
+Copyright (C) 2011-2012  Martin Scharrer <martin@scharrer-online.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
 
@@ -140,6 +145,7 @@ Options:
                                   The <code> can be arbitray TeX code and doesn't need be be balanced.
   --find, -f                    : Find file where the command sequence was defined (L).
   --Find, -F                    : Show full filepath of the file where the command sequence was defined (L).
+  --source, -s                  : Try to show the original source code of the command definition (L).
   --list, -l                    : List user level command sequences of the given packages (L).
   --list-defs, -L               : List user level command sequences and their shorten definitions of the given packages (L).
   --list-all, -ll               : List all command sequences of the given packages (L).
@@ -194,7 +200,7 @@ sub envcode {
   push @ENVCODE, [ $opt, $arg ];
 }
 
-
+## Define and process options
 Getopt::Long::Configure ("bundling");
 GetOptions (
    'value|v!' => \$SHOWVALUE,
@@ -202,6 +208,7 @@ GetOptions (
    'tempdir=s' => \$TMPDIR,
    'find|f!' => sub { $FINDDEF = 1 },
    'Find|F!' => sub { $FINDDEF = 2 },
+   'source|s!' => \$PRINTORIGDEF,
    'list|l' => sub { $LISTCMD++ },
    'list-def|L' => sub { $LISTCMDDEF++ },
    'list-all' => sub { $LISTCMD=2 },
@@ -228,6 +235,7 @@ GetOptions (
 
 # usage() unless @ARGV;
 
+## Format specific settings
 if ($TEX =~ /latex$/) {
   $ISLATEX = 1;
   $BEGINENVSTR = '\begin{%s}' . "\n";
@@ -282,14 +290,20 @@ sub print_versions {
 
 usage() if not @cmds;
 my $cwd = getcwd();
-$ENV{TEXINPUTS} = '.:' . $cwd . ':' . ($ENV{TEXINPUTS} || '');
+my $OS = $^O;
+my $DIRSEP;
+if ($OS =~ /MSWin/) {
+    $DIRSEP = ';';
+} else {
+    $DIRSEP = ':';
+}
+$ENV{TEXINPUTS} = '.' . $DIRSEP . $cwd . $DIRSEP . ($ENV{TEXINPUTS} || '');
 
 if (!$TMPDIR) {
    $TMPDIR = tempdir( 'texdef_XXXXXX', CLEANUP => 1, TMPDIR => 1 );
 }
 chdir $TMPDIR or die "Couldn't change into temporary directory '$TMPDIR'\n";
-my $TMPFILE = 'texdef.tex';
-
+my $TMPFILE = 'texdeftmp.tex';
 
 sub testdef {
     my $cmd = shift;
@@ -342,6 +356,9 @@ sub special_chars {
     print '\endgroup'."\n";
 }
 
+#######################################################################################################################
+##  Loop around given commands                                                                                       ##
+#######################################################################################################################
 while (my $cmd = shift @cmds) {
 
 next if $cmd eq '';
@@ -378,7 +395,7 @@ print "\\nonstopmode\n";
 
 if ($ISLATEX) {
     #print "\\nofiles\n";
-    if ($FINDDEF || $LISTCMD) {
+    if ($FINDDEF || $LISTCMD || $PRINTORIGDEF) {
         # Load the 'filehook' and 'currfile' packages without 'kvoptions' by providing dummy definitions for the 'currfile' options:
         print '\makeatletter\expandafter\def\csname ver@kvoptions.sty\endcsname{0000/00/00}\let\SetupKeyvalOptions\@gobble\newcommand\DeclareBoolOption[2][]{}\let\DeclareStringOption\DeclareBoolOption';
         print '\let\DeclareVoidOption\@gobbletwo\def\ProcessKeyvalOptions{\@ifstar{}{}}';
@@ -388,7 +405,7 @@ if ($ISLATEX) {
         print '\makeatletter\expandafter\let\csname ver@kvoptions.sty\endcsname\relax\let\SetupKeyvalOptions\@undefined\let\DeclareBoolOption\@undefined\let\DeclareStringOption\@undefined';
         print '\let\DeclareVoidOption\@undefined\let\ProcessKeyvalOptions\@undefined\makeatother';
     }
-    if ($FINDDEF) {
+    if ($FINDDEF || $PRINTORIGDEF) {
         print '{\expandafter}\expandafter\ifx\csname ' . $cmd . '\expandafter\endcsname\csname @undefined\endcsname' . "\n";
         print '\AtEndOfFiles{{{\expandafter}\expandafter\ifx\csname ' . $cmd . '\expandafter\endcsname\csname @undefined\endcsname\else' . "\n";
         print '  \ClearHook\AtEndOfFiles{}\relax';
@@ -525,7 +542,58 @@ close ($tmpfile);
 
 select STDOUT;
 
-open (my $texpipe, '-|', "$TEX '$TMPFILE' ");
+# Removes all '{' and '}' characters which no real braces.
+sub remove_invalid_braces {
+    $_[0] =~ s/%.*$//; # remove line comments
+    $_[0] =~ s/\\[{}]//; # remove \{ and \}
+}
+
+sub print_orig_def {
+    my $rmacroname = shift;
+    my $file = shift;
+    my $path = shift;
+    my $found = 0;
+    open (my $fh, '<', $path) or return;
+    my $rmacrodef  = qr/
+        ^                                                        # Begin of line (no whitespaces!)
+        (
+        (?:(?:\\global|\\long|\\protected|\\outer)\s*)*       # Prefixes (maybe with whitespace between them)
+        )
+        \\(
+            [gex]?def \s* \\                                   # TeX definitions
+            | (?:new|renew|provide)command\s* \*? \s* {? \s* \\  # LaTeX definitions
+            | (?:new|renew|provide)robustcmd\s* \*? \s* {? \s* \\  # etoolbox definitions
+            | \@namedef{?                                        # Definition by name only
+            | Declare[a-zA-z]+ \s* \*? \s* {? \s* \\             # Declare... definitions
+            | declare[a-zA-z]+ \s* \*? \s* {? \s* \\             # declare... definitions
+        )
+        $rmacroname                                              # Macro name without backslash
+        [^a-zA-Z@]
+        /xms;
+    while (my $line = <$fh>) {
+        if ($line =~ $rmacrodef) {
+            $found = 1;
+            print "% $file, line $.:\n";
+            print $line;
+            remove_invalid_braces $line;
+            my $obrace = $line =~ tr/{/{/;
+            my $cbrace = $line =~ tr/}/}/;
+            while ($obrace != $cbrace) {
+                my $line = <$fh>;
+                print $line;
+                remove_invalid_braces $line;
+                $obrace += $line =~ tr/{/{/;
+                $cbrace += $line =~ tr/}/}/;
+            }
+            print "\n";
+            last;
+        }
+    }
+    close($fh);
+    return $found;
+}
+
+open (my $texpipe, '-|', "$TEX $TEXOPTIONS \"$TMPFILE\" ");
 
 my $name = '';
 my $definition = '';
@@ -541,7 +609,23 @@ while (<$texpipe>) {
             $line =~ s/$1/$path/;
         }
     }
-    print "$line\n";
+    if ($PRINTORIGDEF) {
+        if ($line =~ /first defined in "(.*)"/) {
+            my $file = $1;
+            my $path = `kpsewhich "$file"`;
+            chomp $path;
+            print_orig_def($cmd, $file, $path);
+        }
+        elsif ($line =~ /is defined by \(La\)TeX./) {
+            my $file = 'latex.ltx';
+            my $path = `kpsewhich "$file"`;
+            chomp $path;
+            print_orig_def($cmd, $file, $path);
+        }
+    }
+    else {
+        print "$line\n";
+    }
     next;
   }
   if (/^(:TEXDEF:\s*(.*))/) {
@@ -649,7 +733,7 @@ if ($cmd eq $LISTSTR) {
             print "\n";
         }
     }
-} else {
+} elsif (!$PRINTORIGDEF) {
     print "\n(in preamble)" if $inpreamble;
     print "\n$name:\n$definition\n\n";
 }

@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26063 2012-04-20 00:18:04Z preining $
+# $Id: tlmgr.pl 26138 2012-04-25 15:23:08Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26063 $';
-my $datrev = '$Date: 2012-04-20 02:18:04 +0200 (Fri, 20 Apr 2012) $';
+my $svnrev = '$Revision: 26138 $';
+my $datrev = '$Date: 2012-04-25 17:23:08 +0200 (Wed, 25 Apr 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3039,7 +3039,7 @@ sub action_update {
           if ($opts{"list"}) {
             upd_info($pkg, $kb, "<absent>", $mediarevstr, "autoinst");
           } else {
-            info("[$currnr/$totalnr, $estrem/$esttot] auto-install: $pkg ($mediarevstr) [${kb}k]\n");
+            info("[$currnr/$totalnr, $estrem/$esttot] auto-install: $pkg ($mediarevstr) [${kb}k] ... ");
           }
         }
         $currnr++;
@@ -3049,6 +3049,7 @@ sub action_update {
           # installation succeeded because we got a reference
           logpackage("auto-install new: $pkg ($mediarevstr)");
           $nrupdated++;
+          info("done\n") unless $::machinereadable;
         } else {
           tlwarn("$prg: couldn't install new package $pkg\n");
         }
@@ -3198,11 +3199,15 @@ sub action_update {
         && !$opts{"dry-run"}
         && !$opts{"repository"}
        ) {
-      tlwarn("\nYour installation is set up to look on the disk for updates.\n");
-      tlwarn("To install from the Internet for this one time only, run\n");
-      tlwarn("  tlmgr -repository $TeXLiveURL\n");
-      tlwarn("\nTo change the default for all future updates, run\n");
-      tlwarn("  tlmgr option repository $TeXLiveURL\n\n");
+      tlwarn(<<END_DISK_WARN);
+tlmgr: Your installation is set up to look on the disk for updates.
+To install from the Internet for this one time only, run:
+  tlmgr -repository $TeXLiveURL ACTION ARG...
+where ACTION is install, update, etc.; see tlmgr -help if needed.
+
+To change the default for all future updates, run:
+  tlmgr option repository $TeXLiveURL
+END_DISK_WARN
     }
   }
 }
@@ -5732,6 +5737,12 @@ Install each I<pkg> given on the command line. By default this installs
 all packages on which the given I<pkg>s are dependent, also.  Options:
 
 =over 4
+
+=item B<--file>
+
+Instead of fetching a package from the installation repository, use
+the packages files given on the command line. These files need
+to be proper TeX Live package files (with contained tlpobj file).
 
 =item B<--reinstall>
 
