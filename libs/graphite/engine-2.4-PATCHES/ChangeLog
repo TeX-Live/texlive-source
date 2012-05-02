@@ -1,3 +1,8 @@
+2012-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-svn_r1308_1312 (new): Update from SVN r1306 -> 1312.
+	(svn r1312 2012-05-01 20:27:08 UTC).
+
 2012-04-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-10-svn_r1250_1308 (new): Update from SVN r1250 -> 1306.

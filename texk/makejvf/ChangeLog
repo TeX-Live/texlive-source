@@ -1,4 +1,4 @@
-2012-04-29
+2012-04-29  Norbert Preining  <preining@logic.at>
 
 	Update for upTeX-1.10. From TANAKA Takuji <KXD02663@nifty.ne.jp>.
 	* uniblock.c: Update references Unicode blocks Blocks-6.1.0.txt

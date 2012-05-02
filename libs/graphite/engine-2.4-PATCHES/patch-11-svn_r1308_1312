@@ -1,0 +1,101 @@
+diff -ur engine-2.4.orig/src/segment/GrTableManager.h engine-2.4/src/segment/GrTableManager.h
+--- engine-2.4.orig/src/segment/GrTableManager.h	2010-05-21 17:41:28.000000000 +0200
++++ engine-2.4/src/segment/GrTableManager.h	2012-05-02 15:41:41.000000000 +0200
+@@ -489,6 +489,7 @@
+ 	void LogInTable(std::ostream & strmOut, int n);
+ 	void LogInTable(std::ostream & strmOut, float n);
+ 	void LogHexInTable(std::ostream & strmOut, gid16 chw, bool fPlus = false);
++	void LogDecimalInTable(std::ostream & strmOut, utf16 chw);
+ 	void LogDirCodeInTable(std::ostream & strmOut, int dirc);
+ 	void LogBreakWeightInTable(std::ostream & strmOut, int lb);
+ #endif // TRACING
+diff -ur engine-2.4.orig/src/segment/TransductionLog.cpp engine-2.4/src/segment/TransductionLog.cpp
+--- engine-2.4.orig/src/segment/TransductionLog.cpp	2012-03-14 20:45:41.000000000 +0100
++++ engine-2.4/src/segment/TransductionLog.cpp	2012-05-02 15:41:41.000000000 +0200
+@@ -1221,7 +1221,8 @@
+ 
+ 	int ccomp = 0;
+ 
+-	strmOut << "Glyph IDs:     ";
++	strmOut << "Glyph IDs      ";
++	strmOut << "      - hex    ";
+ 	int islout;
+ 	for (islout = 0; islout < m_cslout; islout++)
+ 	{
+@@ -1233,6 +1234,23 @@
+ 		}
+ 		else
+ 		{
++			ptman->LogDecimalInTable(strmOut, psloutTmp->GlyphID());
++			ccomp = max(ccomp, psloutTmp->NumberOfComponents());
++		}
++	}
++	strmOut << "\n";
++
++	strmOut << "        hex   ";
++	for (islout = 0; islout < m_cslout; islout++)
++	{
++		GrSlotOutput * psloutTmp = m_prgslout + islout;
++		if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
++			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
++		{
++			strmOut << ".      ";
++		}
++		else
++		{
+ 			ptman->LogHexInTable(strmOut, psloutTmp->GlyphID());
+ 			ccomp = max(ccomp, psloutTmp->NumberOfComponents());
+ 		}
+@@ -1459,7 +1477,7 @@
+ ----------------------------------------------------------------------------------------------*/
+ void GrTableManager::LogSlotGlyphs(std::ostream & strmOut, GrSlotStream * psstrm)
+ {
+-	strmOut << "Glyph IDs:     ";
++	strmOut << "Glyph IDs      ";
+ 	int islot;
+ 	for (islot = 0; islot < psstrm->WritePos(); islot++)
+ 	{
+@@ -1467,6 +1485,17 @@
+ 		if (pslotTmp->IsLineBreak(LBGlyphID()))
+ 			strmOut << "#      ";
+ 		else
++			LogDecimalInTable(strmOut, pslotTmp->GlyphID());
++	}
++	strmOut << "\n";
++
++	strmOut << "      - hex    ";
++	for (islot = 0; islot < psstrm->WritePos(); islot++)
++	{
++		GrSlotState * pslotTmp = psstrm->SlotAt(islot);
++		if (pslotTmp->IsLineBreak(LBGlyphID()))
++			strmOut << ".      ";
++		else
+ 			LogHexInTable(strmOut, pslotTmp->GlyphID());
+ 	}
+ 	strmOut << "\n";
+@@ -2117,6 +2146,25 @@
+ }
+ 
+ /*----------------------------------------------------------------------------------------------
++	Write a decimal value (a glyphID or Unicode codepoint) into the table.
++----------------------------------------------------------------------------------------------*/
++void GrTableManager::LogDecimalInTable(std::ostream & strmOut, utf16 chw)
++{
++	//char rgch[20];
++	int nSp = SP_PER_SLOT - 6;
++	if (chw < 100000) nSp++;
++	if (chw < 10000) nSp++;
++	if (chw < 1000) nSp++;
++	if (chw < 100) nSp++;
++	if (chw < 10) nSp++;
++    
++	strmOut << std::dec << chw;
++
++	for (int i = 0; i < nSp; i++)
++		strmOut << " ";
++}
++
++/*----------------------------------------------------------------------------------------------
+ 	Write a directionality code to the table.
+ ----------------------------------------------------------------------------------------------*/
+ void GrTableManager::LogDirCodeInTable(std::ostream & strmOut, int dirc)

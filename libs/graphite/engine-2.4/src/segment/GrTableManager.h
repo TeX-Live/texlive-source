@@ -489,6 +489,7 @@ public:
 	void LogInTable(std::ostream & strmOut, int n);
 	void LogInTable(std::ostream & strmOut, float n);
 	void LogHexInTable(std::ostream & strmOut, gid16 chw, bool fPlus = false);
+	void LogDecimalInTable(std::ostream & strmOut, utf16 chw);
 	void LogDirCodeInTable(std::ostream & strmOut, int dirc);
 	void LogBreakWeightInTable(std::ostream & strmOut, int lb);
 #endif // TRACING

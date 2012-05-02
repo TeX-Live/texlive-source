@@ -1221,7 +1221,8 @@ void Segment::LogSurfaceToUnderlying(GrTableManager *, std::ostream &)
 
 	int ccomp = 0;
 
-	strmOut << "Glyph IDs:     ";
+	strmOut << "Glyph IDs      ";
+	strmOut << "      - hex    ";
 	int islout;
 	for (islout = 0; islout < m_cslout; islout++)
 	{
@@ -1230,6 +1231,23 @@ void Segment::LogSurfaceToUnderlying(GrTableManager *, std::ostream &)
 			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
 		{
 			strmOut << "#      ";
+		}
+		else
+		{
+			ptman->LogDecimalInTable(strmOut, psloutTmp->GlyphID());
+			ccomp = max(ccomp, psloutTmp->NumberOfComponents());
+		}
+	}
+	strmOut << "\n";
+
+	strmOut << "        hex   ";
+	for (islout = 0; islout < m_cslout; islout++)
+	{
+		GrSlotOutput * psloutTmp = m_prgslout + islout;
+		if (psloutTmp->SpecialSlotFlag() == kspslLbInitial ||
+			psloutTmp->SpecialSlotFlag() == kspslLbFinal)
+		{
+			strmOut << ".      ";
 		}
 		else
 		{
@@ -1459,13 +1477,24 @@ void GrTableManager::LogSlotHeader(std::ostream & strmOut, int islotLim,
 ----------------------------------------------------------------------------------------------*/
 void GrTableManager::LogSlotGlyphs(std::ostream & strmOut, GrSlotStream * psstrm)
 {
-	strmOut << "Glyph IDs:     ";
+	strmOut << "Glyph IDs      ";
 	int islot;
 	for (islot = 0; islot < psstrm->WritePos(); islot++)
 	{
 		GrSlotState * pslotTmp = psstrm->SlotAt(islot);
 		if (pslotTmp->IsLineBreak(LBGlyphID()))
 			strmOut << "#      ";
+		else
+			LogDecimalInTable(strmOut, pslotTmp->GlyphID());
+	}
+	strmOut << "\n";
+
+	strmOut << "      - hex    ";
+	for (islot = 0; islot < psstrm->WritePos(); islot++)
+	{
+		GrSlotState * pslotTmp = psstrm->SlotAt(islot);
+		if (pslotTmp->IsLineBreak(LBGlyphID()))
+			strmOut << ".      ";
 		else
 			LogHexInTable(strmOut, pslotTmp->GlyphID());
 	}
@@ -2114,6 +2143,25 @@ void GrTableManager::LogHexInTable(std::ostream & strmOut, utf16 chw, bool fPlus
 		strmOut << "+ ";
 	else
 		strmOut << "  ";
+}
+
+/*----------------------------------------------------------------------------------------------
+	Write a decimal value (a glyphID or Unicode codepoint) into the table.
+----------------------------------------------------------------------------------------------*/
+void GrTableManager::LogDecimalInTable(std::ostream & strmOut, utf16 chw)
+{
+	//char rgch[20];
+	int nSp = SP_PER_SLOT - 6;
+	if (chw < 100000) nSp++;
+	if (chw < 10000) nSp++;
+	if (chw < 1000) nSp++;
+	if (chw < 100) nSp++;
+	if (chw < 10) nSp++;
+    
+	strmOut << std::dec << chw;
+
+	for (int i = 0; i < nSp; i++)
+		strmOut << " ";
 }
 
 /*----------------------------------------------------------------------------------------------
