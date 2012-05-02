@@ -40,6 +40,7 @@ my $INPREAMBLE = 0;
 my $PRINTVERSION = 0;
 my $TMPDIR     = '';
 my $SHOWVALUE  = 0;
+my $ISENVIRONMENT = 0;
 my $PRINTORIGDEF  = 0;
 my $FINDDEF    = 0;
 my $LISTCMD    = 0;
@@ -108,11 +109,11 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
-my $VERSION = 'Version 1.5 -- 2012/04/29';
+my $VERSION = 'Version 1.6 -- 2012/05/02';
 sub usage {
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.5 -- 2012/04/29
+Version 1.6 -- 2012/05/02
 Copyright (C) 2011-2012  Martin Scharrer <martin@scharrer-online.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
@@ -124,10 +125,13 @@ Usage:
 Other program names are possible. See the 'tex' option.  Command names do not need to start with `\`.
 
 Options:
-  --tex <flv>, -t <flv>         : Use given flavour of TeX: 'tex', 'latex', 'context'.
+  --tex <format>, -t <format>   : Use given format of TeX: 'tex', 'latex', 'context'.
                                   Variations of 'tex' and 'latex', like 'luatex', 'lualatex', 'xetex', 'xelatex' are supported.
                                   The default is given by the used program name: 'texdef' -> 'tex', 'latexdef' -> 'latex', etc.
+  --source, -s                  : Try to show the original source code of the command definition (L).
   --value, -v                   : Show value of command instead (i.e. \the\command).
+  --Environment, -E             : Every command name is taken as an environment name. This will show the definition of
+                                  both \Macro\foo and \Macro\endfoo if \texttt{foo} is used as command name (L).
   --preamble, -P                : Show definition of the command inside the preamble.
   --beforeclass, -B             : Show definition of the command before \documentclass.
   --package <pkg>, -p <pkg>     : (M) Load given tex-file, package or module depending on whether '*tex', '*latex'
@@ -136,7 +140,7 @@ Options:
   --class <class>, -c <class>   : (LaTeX only) Load given class instead of default ('article').
                                   The <class> can start with `[<classs options>]` and end 
                                   with `<classname>` or `{<classname>}`.
-  --environment <env>, -p <env> : (M) Show definition inside the given environment <env>.
+  --environment <env>, -e <env> : (M) Show definition inside the given environment <env>.
   --othercode <code>, -o <code> : (M) Add other code into the preamble before the definition is shown.
                                   This can be used to e.g. load PGF/TikZ libraries.
   --before <code>, -b <code>    : (M) Place <code> before definition is shown.
@@ -145,7 +149,6 @@ Options:
                                   The <code> can be arbitray TeX code and doesn't need be be balanced.
   --find, -f                    : Find file where the command sequence was defined (L).
   --Find, -F                    : Show full filepath of the file where the command sequence was defined (L).
-  --source, -s                  : Try to show the original source code of the command definition (L).
   --list, -l                    : List user level command sequences of the given packages (L).
   --list-defs, -L               : List user level command sequences and their shorten definitions of the given packages (L).
   --list-all, -ll               : List all command sequences of the given packages (L).
@@ -204,6 +207,7 @@ sub envcode {
 Getopt::Long::Configure ("bundling");
 GetOptions (
    'value|v!' => \$SHOWVALUE,
+   'Environment|E!' => \$ISENVIRONMENT,
    'version|V!' => \$PRINTVERSION,
    'tempdir=s' => \$TMPDIR,
    'find|f!' => sub { $FINDDEF = 1 },
@@ -289,6 +293,7 @@ sub print_versions {
 }
 
 usage() if not @cmds;
+
 my $cwd = getcwd();
 my $OS = $^O;
 my $DIRSEP;
@@ -544,8 +549,28 @@ select STDOUT;
 
 # Removes all '{' and '}' characters which no real braces.
 sub remove_invalid_braces {
-    $_[0] =~ s/%.*$//; # remove line comments
-    $_[0] =~ s/\\[{}]//; # remove \{ and \}
+    $_[0] =~ s/\\[\\%]//g; # remove \\ and \%
+    $_[0] =~ s/%.*$//;     # remove line comments
+    $_[0] =~ s/\\[{}]//g;  # remove \{ and \}
+}
+
+sub env_braces {
+    my $line = shift;
+    remove_invalid_braces $line;
+    my $level = shift || 0;
+    my $count = shift || 0;
+    for my $char (split //, $line) {
+        if ($char eq '{') {
+            $level++;
+        }
+        elsif ($char eq '}') {
+            $level--;
+            if ($level == 0) {
+                $count++;
+            }
+        }
+    }
+    return ($level, $count);
 }
 
 sub print_orig_def {
@@ -570,6 +595,26 @@ sub print_orig_def {
         $rmacroname                                              # Macro name without backslash
         [^a-zA-Z@]
         /xms;
+    my $rmacrolet  = qr/
+        ^                                                        # Begin of line (no whitespaces!)
+        \s*
+        (?:
+        (?:(?:\\global)\s*)*       # Prefixes (maybe with whitespace between them)
+        )
+        \\let \s* \\                                             # let
+        $rmacroname                                              # Macro name without backslash
+        \s* =?                                                   # Optional '='
+        \s* \\ ([a-zA-Z@]+)                                      # Second macro
+        /xms;
+    my $renvdef = qr/
+        ^\s*                                                     # Begin of line (no whitespaces!)
+        \\(
+            (?:new|renew|provide)environment\s* { \s*            # LaTeX definitions
+        )
+        ($rmacroname)                                            # Environment names follow same rules as macro names
+        \s* }                                                    # closing brace
+        (.*)                                                     # Rest of line
+        /xms;
     while (my $line = <$fh>) {
         if ($line =~ $rmacrodef) {
             $found = 1;
@@ -588,6 +633,28 @@ sub print_orig_def {
             print "\n";
             last;
         }
+        elsif ($line =~ $rmacrolet) {
+            my $letcmd = $1;
+            $found = 1;
+            print "% $file, line $.:\n";
+            print $line;
+            print "\n";
+            unshift @cmds, $letcmd;
+            last;
+        }
+        elsif ($line =~ $renvdef) {
+            $found = 2;
+            print "% $file, line $.:\n";
+            print $line;
+            my ($level, $count) = env_braces $line;
+            while ($count < 3) {
+                my $line = <$fh>;
+                print $line;
+                ($level, $count) = env_braces $line, $level, $count;
+            }
+            print "\n";
+            last;
+        }
     }
     close($fh);
     return $found;
@@ -598,6 +665,7 @@ open (my $texpipe, '-|', "$TEX $TEXOPTIONS \"$TMPFILE\" ");
 my $name = '';
 my $definition = '';
 my $errormsg = '';
+my $origdeffound = 0;
 
 while (<$texpipe>) {
   if (/^::\s*(.*)/) {
@@ -614,13 +682,18 @@ while (<$texpipe>) {
             my $file = $1;
             my $path = `kpsewhich "$file"`;
             chomp $path;
-            print_orig_def($cmd, $file, $path);
+            $origdeffound = print_orig_def($cmd, $file, $path);
         }
         elsif ($line =~ /is defined by \(La\)TeX./) {
             my $file = 'latex.ltx';
             my $path = `kpsewhich "$file"`;
             chomp $path;
-            print_orig_def($cmd, $file, $path);
+            $file = $path if $FINDDEF > 1;
+            $origdeffound = print_orig_def($cmd, $file, $path);
+        }
+        if (!$origdeffound) {
+            print "Source code definition of '$cmd' could not be found.\n";
+            print "$line\n";
         }
     }
     else {
@@ -733,12 +806,15 @@ if ($cmd eq $LISTSTR) {
             print "\n";
         }
     }
-} elsif (!$PRINTORIGDEF) {
+} elsif (!$PRINTORIGDEF || !$origdeffound) {
     print "\n(in preamble)" if $inpreamble;
     print "\n$name:\n$definition\n\n";
 }
 
 testdef($origcmd,$definition);
+if ($ISENVIRONMENT && $origdeffound < 2 && $cmd !~ /^end/) {
+    unshift @cmds, 'end' . $cmd;
+}
 
 }
 
