@@ -1,3 +1,8 @@
+2012-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import zlib-1.2.7.
+	* version.ac: Adapt..
+
 2012-03-28  Karl Berry  <karl@tug.org>
 
 	* zlib*/doc/rfc*: remove (to save hassle downstream), these are

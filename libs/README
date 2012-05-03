@@ -47,7 +47,7 @@ teckit 2.5.3 - checked 17mar12
 xpdf 3.03 - ftp://ftp.foolabs.com/pub/xpdf/
   with modifications for pdftex
 
-zlib 1.2.6 - checked 10feb12
+zlib 1.2.7 - checked 3may12
   http://www.zlib.net/ - used by many
 
 zziplib 0.13.62 - checked 12mar12

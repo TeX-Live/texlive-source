@@ -21,7 +21,8 @@
 	subdirectory.
 	* TECkit-2.5.1-PATCHES: New directory with patches applied to
 	the TECkit-2.5.1 distribution.
-	* teckit/Makefile.am (new): Create header symlinks in build tree.
+	* include/teckit/Makefile.am (new): Create header symlinks in
+	build tree.
 
 2009-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
