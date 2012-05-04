@@ -294,7 +294,10 @@ xftell64 (FILE *f, const char *filename)
     FATAL_PERROR(filename);
     return (__int64)(-1);
   }
-  where = filepos - f->_cnt;
+  if(filepos == (__int64)0)
+    where = (__int64)(f->_ptr - f->_base);
+  else
+    where = filepos - f->_cnt;
   return where;
 }
 
