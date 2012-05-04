@@ -1,6 +1,6 @@
 dnl See ./README for our basic strategy here.
 dnl
-dnl   Copyright (C) 2011 Karl Berry <tex-live@tug.org>
+dnl   Copyright (C) 2011, 2012 Karl Berry <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -18,6 +18,10 @@ AM_MAINTAINER_MODE
 dnl Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+
+BIBER_BINARY=
+
+if test "x$enable_build" != xno || test -f config.force; then
 
 dnl Determine the TeX Live platform name.
 KPSE_TL_PLATFORM
@@ -50,17 +54,17 @@ elif test -r "$srcdir/$biber_bin"; then
     # check if freebsd os version is new enough.
     if test "$OSVERSION" -ge 701000; then
       BIBER_BINARY="$biber_bin"
-    else
-      BIBER_BINARY=  # too old, skip it
     fi
   else
     # not freebsd, just take it.
     BIBER_BINARY="$biber_bin"
   fi
-else
-  BIBER_BINARY=
 fi
 AC_MSG_RESULT([$BIBER_BINARY])
+
+echo timestamp >config.force
+fi
+
 AC_SUBST([BIBER_BINARY])
 
 AC_CONFIG_FILES([Makefile])

@@ -2386,6 +2386,10 @@ $as_echo "no" >&6; }
 fi
 
 
+BIBER_BINARY=
+
+if test "x$enable_build" != xno || test -f config.force; then
+
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
@@ -3536,7 +3540,9 @@ if test "X$TL_PLATFORM" = X; then
     TL_PLATFORM=`$PERL -I"$srcdir" -MTeXLive::TLUtils -e '
       print TeXLive::TLUtils::platform_name("'"$ac_cv_host"'");'`
     if test -z "$TL_PLATFORM"; then
-      as_fn_error $? "cannot determine TeX Live platform name" "$LINENO" 5
+      as_fn_error $? "
+****** cannot determine TeX Live platform name for host \"$ac_cv_host\"
+****** configure with either '--disable-biber' or 'TL_PLATFORM=platform_name'" "$LINENO" 5
     fi
   else
     TL_PLATFORM=win32
@@ -3574,18 +3580,18 @@ elif test -r "$srcdir/$biber_bin"; then
     # check if freebsd os version is new enough.
     if test "$OSVERSION" -ge 701000; then
       BIBER_BINARY="$biber_bin"
-    else
-      BIBER_BINARY=  # too old, skip it
     fi
   else
     # not freebsd, just take it.
     BIBER_BINARY="$biber_bin"
   fi
-else
-  BIBER_BINARY=
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $BIBER_BINARY" >&5
 $as_echo "$BIBER_BINARY" >&6; }
+
+echo timestamp >config.force
+fi
+
 
 
 ac_config_files="$ac_config_files Makefile"

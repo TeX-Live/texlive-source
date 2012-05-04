@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -19,7 +19,9 @@ if test "X$TL_PLATFORM" = X; then
     TL_PLATFORM=`$PERL -I"$srcdir" -MTeXLive::TLUtils -e '
       print TeXLive::TLUtils::platform_name("'"$ac_cv_host"'");'`
     if test -z "$TL_PLATFORM"; then
-      AC_MSG_ERROR([cannot determine TeX Live platform name])
+      AC_MSG_ERROR([
+****** cannot determine TeX Live platform name for host "$ac_cv_host"
+****** configure with either '--disable-biber' or 'TL_PLATFORM=platform_name'])
     fi
   else
     TL_PLATFORM=win32

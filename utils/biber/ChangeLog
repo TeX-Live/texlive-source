@@ -1,3 +1,9 @@
+2012-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac, m4/kpse-tl-platform.m4: Skip
+	autodetection of TeX Live platform name (via KPSE_TL_PLATFORM)
+	when configured with '--disable-biber'.
+
 2011-03-29  Karl Berry  <karl@tug.org>
 
 	* configure.ac: only install the freebsd binary if the current

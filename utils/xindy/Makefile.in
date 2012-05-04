@@ -287,6 +287,7 @@ EXTRA_DIST = README-clisp $(XINDY_TREE)-PATCHES $(XINDY_TREE)/AUTHORS \
 	../../build-aux/relpath
 SUBDIRS = . $(XINDY_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
+DISTCLEANFILES = config.force
 perl_scripts = texindy xindy
 scriptsdir = texmf/scripts/xindy
 nodist_bin_SCRIPTS = $(am__append_1)
@@ -787,6 +788,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
