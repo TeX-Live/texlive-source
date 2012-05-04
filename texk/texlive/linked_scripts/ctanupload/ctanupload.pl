@@ -10,7 +10,7 @@ sub fromenv;
 sub load_data;
 sub save_data;
 
-my $VERSION = 'v1.2 from 2011/09/08';
+my $VERSION = 'v1.2a from 2012/05/03';
 my %CTAN_SERVERURLS = (
     dante     => 'http://dante.ctan.org/upload.html',
     uktug     => 'http://www.tex.ac.uk/upload/',
@@ -232,6 +232,9 @@ while (my $arg = shift @ARGV) {
     }
 }
 
+$CTAN_URL = (values %CTAN_SERVERURLS)[int rand scalar values %CTAN_SERVERURLS]
+    if not defined $CTAN_URL;
+
 PROMPT:
 
 if ($PROMPT) {
@@ -340,8 +343,8 @@ if ($FIELDS{DoNotAnnounce}) {
     $DoNotAnnounce = '[x]';
 }
 else {
-    $FIELDS{DoNotAnnounce} = undef;
-    $FIELDS{to_announce}   = undef;
+    delete $FIELDS{DoNotAnnounce};
+    delete $FIELDS{to_announce};
     $DoNotAnnounce = '[ ]';
 }
 
@@ -349,9 +352,6 @@ if (!$FIELDS{directory}) {
     $FIELDS{directory} = '/macros/latex/contrib/' . $FIELDS{contribution};
 }
 
-
-$CTAN_URL = (values %CTAN_SERVERURLS)[int rand scalar values %CTAN_SERVERURLS]
-    if not defined $CTAN_URL;
 
 print "\nThe following data will be submitted to CTAN ($CTAN_URL):\n";
 
@@ -427,12 +427,14 @@ $mech->submit_form(
 );
 
 if ($mech->success()) {
-    print "Upload failed: ", $mech->response()->message(), "\n";
+    print "HTTP response code: ", $mech->response()->message(), "\n";
 }
 
 print "\nResponse:\n";
 print LOG "\n# Response:\n" if $LOG;
 eval {
+    #print $mech->content();
+    #return 1;
     use HTML::TreeBuilder;
     use HTML::FormatText;
     my $tree = HTML::TreeBuilder->new_from_content( $mech->content() );
