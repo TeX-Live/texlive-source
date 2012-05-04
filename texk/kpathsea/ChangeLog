@@ -1,3 +1,7 @@
+2012-05-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c: rewrite xftell64 and xfseek64 for W32.
+
 2012-04-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c: further rewrite win32_system().

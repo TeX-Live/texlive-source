@@ -281,25 +281,35 @@ int __cdecl kpathsea_win32_pclose (kpathsea kpse, FILE *f)
 
 /* large file support */
 
-void
-xfseek64 (FILE *f, __int64 offset, int wherefrom,  const char *filename)
-{
-    fflush(f);
-    if (_lseeki64(fileno(f), offset, wherefrom) < (__int64)0)
-        FATAL_PERROR(filename);
-}
-
 __int64
 xftell64 (FILE *f, const char *filename)
 {
-    __int64 where;
-    fflush(f);
-    where = _telli64(fileno(f));
-    if (where < (__int64)0)
-        FATAL_PERROR(filename);
+  __int64 where, filepos;
+  int fd;
 
-    return where;
+  fd = fileno(f);
+  if(f->_cnt < 0)
+    f->_cnt = 0;
+  if((filepos = _lseeki64(fd, (__int64)0, SEEK_CUR)) < (__int64)0) {
+    FATAL_PERROR(filename);
+    return (__int64)(-1);
+  }
+  where = filepos - f->_cnt;
+  return where;
 }
+
+void
+xfseek64 (FILE *f, __int64 offset, int wherefrom,  const char *filename)
+{
+  if(wherefrom == SEEK_CUR) {
+    offset += xftell64(f, filename);
+    wherefrom = SEEK_SET;
+  }
+  fflush(f);
+  if (_lseeki64(fileno(f), offset, wherefrom) < (__int64)0)
+    FATAL_PERROR(filename);
+}
+
 
 /* special TeXLive Ghostscript */
 
