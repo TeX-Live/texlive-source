@@ -1,3 +1,8 @@
+2012-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* README: Update the list of prerequisites.
+	* README.config: Mention configure options for biber.
+
 2012-04-12  Karl Berry  <karl@tug.org>
 
 	* Build (TL_COMPILER_GFLAGS): new envvar, used to override -g
