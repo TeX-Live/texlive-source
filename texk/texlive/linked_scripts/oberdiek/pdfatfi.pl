@@ -4,7 +4,7 @@ $^W=1; # turn warning on
 #
 # pdfatfi.pl
 #
-# Copyright (C) 2005-2010 Heiko Oberdiek.
+# Copyright (C) 2005-2010, 2012 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either
@@ -26,17 +26,19 @@ $^W=1; # turn warning on
 # This file "pdfatfi.pl" may be renamed to "pdfatfi"
 # for installation purposes.
 #
-my $file        = "pdfatfi.pl";
+my $prj         = 'pdfatfi';
+my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "2.6";
-my $date        = "2010/09/27";
+my $version     = "2.7";
+my $date        = "2012/04/18";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2005-2010 by $author.";
+my $copyright   = "Copyright (c) 2005-2010, 2012 by $author.";
 #
 # History:
 #   2005/05/21 v1.0: First release.
 #   2006/08/16 v2.2: Included in DTX file of attachfile2.dtx.
 #   2010/09/27 v2.6: Keys ModDateTZ and CreationDateTZ added.
+#   2012/04/18 v2.7: Option --version added.
 #
 
 use POSIX qw(strftime); # %z is used (GNU)
@@ -57,12 +59,14 @@ $::opt_help       = 0;
 $::opt_quiet      = 0;
 $::opt_debug      = 0;
 $::opt_verbose    = 0;
+$::opt_version    = 0;
 
 my $usage = <<"END_OF_USAGE";
 ${title}Syntax:   \L$program\E [options] <file[.atfi]>
 Function: Help program for LaTeX package "attachfile2".
 Options:                                    (defaults:)
   --help          print usage
+  --version       print version number
   --(no)quiet     suppress messages         ($bool[$::opt_quiet])
   --(no)verbose   verbose printing          ($bool[$::opt_verbose])
   --(no)debug     debug informations        ($bool[$::opt_debug])
@@ -73,11 +77,16 @@ my @OrgArgv = @ARGV;
 use Getopt::Long;
 GetOptions(
   "help!",
+  "version!",
   "quiet!",
   "debug!",
   "verbose!",
 ) or die $usage;
 !$::opt_help or die $usage;
+if ($::opt_version) {
+    print "$prj $date v$version\n";
+    exit(0);
+}
 @ARGV == 1 or die "$usage$Error Missing jobname!\n";
 
 $::opt_quiet = 0 if $::opt_verbose;
@@ -204,4 +213,3 @@ rename $tmpfile, $atfifile
 print "*** ready. ***\n" unless $::opt_quiet;
 
 __END__
-
