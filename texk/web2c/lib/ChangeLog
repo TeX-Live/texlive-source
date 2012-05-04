@@ -1,3 +1,7 @@
+2012-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* printversion.c (printversionandexit): Update 'Copyright 2012'.
+
 2012-04-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (mk_shellcmdlist, init_shell_escape,
