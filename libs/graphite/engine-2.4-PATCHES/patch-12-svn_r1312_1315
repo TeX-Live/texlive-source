@@ -1,7 +1,39 @@
+diff -ur engine-2.4.orig/include/graphite/Segment.h engine-2.4/include/graphite/Segment.h
+--- engine-2.4.orig/include/graphite/Segment.h	2010-05-25 07:45:14.000000000 +0200
++++ engine-2.4/include/graphite/Segment.h	2012-05-03 19:45:36.000000000 +0200
+@@ -64,7 +64,7 @@
+ 	virtual ~Segment();
+ 
+ 	// Basic copy constructor:
+-	Segment(Segment & seg);
++	Segment(const Segment & seg);
+ 
+ 	// For making modified copies of segments:
+ 	static Segment * LineContextSegment(Segment & seg, bool fStartLine, bool fEndLine);
 diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
---- engine-2.4.orig/src/font/TtfUtil.cpp	2010-05-22 20:35:07.000000000 +0200
-+++ engine-2.4/src/font/TtfUtil.cpp	2012-03-16 23:55:47.000000000 +0100
-@@ -1250,7 +1250,7 @@
+--- engine-2.4.orig/src/font/TtfUtil.cpp	2012-04-27 19:18:57.000000000 +0200
++++ engine-2.4/src/font/TtfUtil.cpp	2012-05-03 19:45:36.000000000 +0200
+@@ -805,12 +805,14 @@
+ 	uint16 * pStr = reinterpret_cast<uint16 *>(pWStr);
+ 	uint16 * const pStrEnd = pStr + (nSize == 0 ? gr::utf16len(pStr) : nSize);
+ 
++#ifndef USE_STDLIB_WORKAROUNDS
+ 	std::transform(pStr, pStrEnd, pStr, read<uint16>);
+-
+-//		for (int i = 0; i < nSize; i++)
+-//		{ // swap the wide characters in the string
+-//			pStr[i] = gr::utf16(read(uint16(pStr[i])));
+-//		}
++#else
++	for (int i = 0; i < nSize; i++)
++	{	// swap the wide characters in the string
++		pStr[i] = gr::utf16(read(uint16(pStr[i])));
++	}
++#endif
+ }
+ 
+ /*----------------------------------------------------------------------------------------------
+@@ -1249,7 +1251,7 @@
  		(&pGlyph->end_pts_of_contours[cContours]);
  	
  	// skip over hints & point to first flag
@@ -10,7 +42,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  	pbGlyph += sizeof(uint16);
  	pbGlyph += cbHints;
  
-@@ -1304,7 +1304,7 @@
+@@ -1303,7 +1305,7 @@
  			}
  			else
  			{
@@ -19,7 +51,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  				pbGlyph += sizeof(int16);
  			}
  		}
-@@ -1333,7 +1333,7 @@
+@@ -1332,7 +1334,7 @@
  			}
  			else
  			{
@@ -28,7 +60,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  				pbGlyph += sizeof(int16);
  			}
  		}
-@@ -1369,9 +1369,9 @@
+@@ -1368,9 +1370,9 @@
  	size_t iCurrentComp = 0;
  	do 
  	{
@@ -40,7 +72,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  		pbGlyph += sizeof(uint16);
  		if (iCurrentComp >= cnCompIdTotal) 
  			return false;
-@@ -1413,18 +1413,18 @@
+@@ -1412,18 +1414,18 @@
  	uint16 GlyphFlags;
  	do 
  	{
@@ -63,7 +95,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  				pbGlyph += sizeof(int16);
  			}
  			else
-@@ -1478,9 +1478,9 @@
+@@ -1477,9 +1479,9 @@
  	uint16 GlyphFlags;
  	do 
  	{
@@ -75,7 +107,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  		{
  			pbGlyph += sizeof(uint16); // skip over glyph id of component
  			pbGlyph += GlyphFlags & CompoundGlyph::Arg1Arg2Words  ? 4 : 2; // skip over placement data
-@@ -1492,7 +1492,7 @@
+@@ -1491,7 +1493,7 @@
  
  			if (GlyphFlags & CompoundGlyph::HaveScale)
  			{
@@ -84,7 +116,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  				pbGlyph += sizeof(uint16);
  				flt12 = 0;
  				flt21 = 0;
-@@ -1500,22 +1500,22 @@
+@@ -1499,22 +1501,22 @@
  			}
  			else if (GlyphFlags & CompoundGlyph::HaveXAndYScale)
  			{
@@ -113,9 +145,21 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  				pbGlyph += sizeof(uint16);
  			}
  			else
+diff -ur engine-2.4.orig/src/generic/Debug.cpp engine-2.4/src/generic/Debug.cpp
+--- engine-2.4.orig/src/generic/Debug.cpp	2010-05-13 16:39:27.000000000 +0200
++++ engine-2.4/src/generic/Debug.cpp	2012-05-03 19:45:36.000000000 +0200
+@@ -13,7 +13,7 @@
+ ----------------------------------------------------------------------------------------------*/
+ 
+ #ifdef _WIN32
+-#include <Windows.h>
++#include <windows.h>
+ #endif
+ //#include "common.h"
+ //#include "Main.h"
 diff -ur engine-2.4.orig/src/segment/FileInput.cpp engine-2.4/src/segment/FileInput.cpp
 --- engine-2.4.orig/src/segment/FileInput.cpp	2010-05-22 20:35:07.000000000 +0200
-+++ engine-2.4/src/segment/FileInput.cpp	2012-03-17 00:02:13.000000000 +0100
++++ engine-2.4/src/segment/FileInput.cpp	2012-05-03 19:45:36.000000000 +0200
 @@ -88,7 +88,7 @@
  /*----------------------------------------------------------------------------------------------
  	Initialize the stream to a buffer.
@@ -127,7 +171,7 @@ diff -ur engine-2.4.orig/src/segment/FileInput.cpp engine-2.4/src/segment/FileIn
  	Assert(m_pbNext == NULL);
 diff -ur engine-2.4.orig/src/segment/FileInput.h engine-2.4/src/segment/FileInput.h
 --- engine-2.4.orig/src/segment/FileInput.h	2008-05-20 10:02:16.000000000 +0200
-+++ engine-2.4/src/segment/FileInput.h	2012-03-17 00:02:13.000000000 +0100
++++ engine-2.4/src/segment/FileInput.h	2012-05-03 19:45:36.000000000 +0200
 @@ -54,7 +54,7 @@
  	virtual void GetPositionInFont(long * plPos) = 0;
  	virtual void SetPositionInFont(long lPos) = 0;
@@ -160,7 +204,7 @@ diff -ur engine-2.4.orig/src/segment/FileInput.h engine-2.4/src/segment/FileInpu
  } // namespace gr
 diff -ur engine-2.4.orig/src/segment/FontFace.cpp engine-2.4/src/segment/FontFace.cpp
 --- engine-2.4.orig/src/segment/FontFace.cpp	2011-03-21 17:13:25.000000000 +0100
-+++ engine-2.4/src/segment/FontFace.cpp	2012-03-17 00:02:13.000000000 +0100
++++ engine-2.4/src/segment/FontFace.cpp	2012-05-03 19:45:36.000000000 +0200
 @@ -338,9 +338,9 @@
  
  //	ibGlocStart = cbGlatTbl;
@@ -222,8 +266,8 @@ diff -ur engine-2.4.orig/src/segment/FontFace.cpp engine-2.4/src/segment/FontFac
  		if (!fOk)
  		{
 diff -ur engine-2.4.orig/src/segment/GrEngine.cpp engine-2.4/src/segment/GrEngine.cpp
---- engine-2.4.orig/src/segment/GrEngine.cpp	2010-06-09 23:35:22.000000000 +0200
-+++ engine-2.4/src/segment/GrEngine.cpp	2012-03-17 00:02:13.000000000 +0100
+--- engine-2.4.orig/src/segment/GrEngine.cpp	2012-04-27 19:18:57.000000000 +0200
++++ engine-2.4/src/segment/GrEngine.cpp	2012-05-03 19:45:36.000000000 +0200
 @@ -889,9 +889,9 @@
  	implementation of the engine can't handle.
  ----------------------------------------------------------------------------------------------*/
@@ -238,9 +282,9 @@ diff -ur engine-2.4.orig/src/segment/GrEngine.cpp engine-2.4/src/segment/GrEngin
  {
  	pgrstrm->OpenBuffer(pSilfTbl, sizeof(int));
 diff -ur engine-2.4.orig/src/segment/GrEngine.h engine-2.4/src/segment/GrEngine.h
---- engine-2.4.orig/src/segment/GrEngine.h	2010-06-09 23:35:22.000000000 +0200
-+++ engine-2.4/src/segment/GrEngine.h	2012-03-17 00:02:13.000000000 +0100
-@@ -541,9 +541,9 @@
+--- engine-2.4.orig/src/segment/GrEngine.h	2012-04-27 19:18:57.000000000 +0200
++++ engine-2.4/src/segment/GrEngine.h	2012-05-03 19:45:36.000000000 +0200
+@@ -547,9 +547,9 @@
  	void DestroyEverything();
  
  	bool CheckTableVersions(GrIStream * pgrstrm,
@@ -253,3 +297,15 @@ diff -ur engine-2.4.orig/src/segment/GrEngine.h engine-2.4/src/segment/GrEngine.
  		int * pfxdBadVersion);
  	//bool ReadSileTable(GrIStream & grstrm, long lTableSTart,
  	//	int * pmFontEmUnits, bool * pfMismatchedBase);
+diff -ur engine-2.4.orig/src/segment/Segment.cpp engine-2.4/src/segment/Segment.cpp
+--- engine-2.4.orig/src/segment/Segment.cpp	2012-03-14 20:45:41.000000000 +0100
++++ engine-2.4/src/segment/Segment.cpp	2012-05-03 19:45:36.000000000 +0200
+@@ -432,7 +432,7 @@
+ /*----------------------------------------------------------------------------------------------
+ 	Basic copy method.
+ ----------------------------------------------------------------------------------------------*/
+-Segment::Segment(Segment & seg)
++Segment::Segment(const Segment & seg)
+ {
+ 	int islout;
+ 

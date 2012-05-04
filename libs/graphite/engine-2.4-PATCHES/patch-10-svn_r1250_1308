@@ -1,5 +1,5 @@
 diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
---- engine-2.4.orig/src/font/TtfUtil.cpp	2012-03-17 00:52:28.000000000 +0100
+--- engine-2.4.orig/src/font/TtfUtil.cpp	2010-05-22 20:35:07.000000000 +0200
 +++ engine-2.4/src/font/TtfUtil.cpp	2012-04-27 19:18:57.000000000 +0200
 @@ -11,6 +11,7 @@
  Description:
@@ -24,7 +24,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  
  namespace TtfUtil
  {
-@@ -1593,6 +1592,7 @@
+@@ -1591,6 +1590,7 @@
  
  /*----------------------------------------------------------------------------------------------
  	Determine if a particular Glyph ID is a multi-level composite.
@@ -32,7 +32,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  ----------------------------------------------------------------------------------------------*/
  bool IsDeepComposite(gr::gid16 nGlyphId, const void * pGlyf, const void * pLoca, 
  							 long lLocaSize, const void * pHead)
-@@ -1646,13 +1646,13 @@
+@@ -1644,13 +1644,13 @@
  }
  
  /*----------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  {
  	cnContours = static_cast<size_t>(INT_MIN);
  
-@@ -1670,7 +1670,7 @@
+@@ -1668,7 +1668,7 @@
  		
  	//handle composite glyphs
  
@@ -59,7 +59,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  	size_t cCompIdTotal = kMaxGlyphComponents;
  	size_t cCompId = 0;
  
-@@ -1682,12 +1682,17 @@
+@@ -1680,12 +1680,17 @@
  	for (size_t i = 0; i < cCompId; i++)
  	{
  		if (IsSpace(static_cast<gr::gid16>(rgnCompId[i]), pLoca, lLocaSize, pHead)) {return false;}
@@ -81,7 +81,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  		cRtnContours += cTmp;
  	}
  
-@@ -1697,16 +1702,16 @@
+@@ -1695,16 +1700,16 @@
  
  /*----------------------------------------------------------------------------------------------
  	Get the point numbers for the end points of the glyph contours based on the given tables 
@@ -101,7 +101,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  {
  	std::fill_n(prgnContourEndPoint, cnPoints, INT_MIN);
  
-@@ -1737,9 +1742,15 @@
+@@ -1735,9 +1740,15 @@
  		if (IsSpace(static_cast<gr::gid16>(rgnCompId[i]), pLoca, lLocaSize, pHead)) {return false;}
  		pSimpleGlyf = GlyfLookup(static_cast<gr::gid16>(rgnCompId[i]), pGlyf, pLoca, lLocaSize, pHead);
  		if (pSimpleGlyf == NULL) {return false;}
@@ -119,7 +119,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  		// points in composite are numbered sequentially as components are added
  		//  must adjust end point numbers for new point numbers
  		for (int j = 0; j < cActualPts; j++)
-@@ -1750,6 +1761,7 @@
+@@ -1748,6 +1759,7 @@
  		cCurrentPoints -= cActualPts;
  	}
  
@@ -127,7 +127,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  	return true;
  }
  
-@@ -1763,7 +1775,7 @@
+@@ -1761,7 +1773,7 @@
  	prgfOnCurve - should point to a buffer a large enough to hold cnPoints bytes (bool)
  		This range is parallel to the prgnX & prgnY
  	Return true if successful, false otherwise. On false, all points may be INT_MIN
@@ -136,7 +136,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  	// TODO: doesn't support composite glyphs whose components are themselves components
  		It's not clear from the TTF spec when the transforms should be applied. Should the 
  		transform be done before or after attachment point calcs? (current code - before) 
-@@ -1777,8 +1789,8 @@
+@@ -1775,8 +1787,8 @@
  ----------------------------------------------------------------------------------------------*/
  bool GlyfPoints(gr::gid16 nGlyphId, const void * pGlyf,
  		const void * pLoca, size_t lLocaSize, const void * pHead,
@@ -147,7 +147,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  {
  	std::fill_n(prgnX, cnPoints, INT_MAX);
  	std::fill_n(prgnY, cnPoints, INT_MAX);
-@@ -1822,12 +1834,29 @@
+@@ -1820,12 +1832,29 @@
  	for (size_t i = 0; i < cCompId; i++)
  	{
  		if (IsSpace(static_cast<gr::gid16>(rgnCompId[i]), pLoca, lLocaSize, pHead)) {return false;}
@@ -180,7 +180,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  		if (!GetComponentPlacement(pSimpleGlyf, rgnCompId[i], fOffset, a, b))
  			return false;
  		if (!GetComponentTransform(pSimpleGlyf, rgnCompId[i], 
-@@ -1835,10 +1864,6 @@
+@@ -1833,10 +1862,6 @@
  			return false;
  		bool fIdTrans = flt11 == 1.0 && flt12 == 0.0 && flt21 == 0.0 && flt22 == 1.0;
  
@@ -191,7 +191,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.cpp engine-2.4/src/font/TtfUtil.cpp
  		// apply transform - see main method note above
  		// do before attachment point calcs
  		if (!fIdTrans)
-@@ -1890,6 +1915,7 @@
+@@ -1888,6 +1913,7 @@
  
  	SimplifyFlags((char *)prgfOnCurve, cnPoints);
  
@@ -216,7 +216,7 @@ diff -ur engine-2.4.orig/src/font/TtfUtil.h engine-2.4/src/font/TtfUtil.h
  	// utitily method used by high-level GlyfPoints 
  	bool SimplifyFlags(char * prgbFlags, int cnPoints);
 diff -ur engine-2.4.orig/src/segment/GrEngine.cpp engine-2.4/src/segment/GrEngine.cpp
---- engine-2.4.orig/src/segment/GrEngine.cpp	2012-03-17 00:02:13.000000000 +0100
+--- engine-2.4.orig/src/segment/GrEngine.cpp	2010-06-09 23:35:22.000000000 +0200
 +++ engine-2.4/src/segment/GrEngine.cpp	2012-04-27 19:18:57.000000000 +0200
 @@ -1090,9 +1090,10 @@
  	
@@ -290,7 +290,7 @@ diff -ur engine-2.4.orig/src/segment/GrEngine.cpp engine-2.4/src/segment/GrEngin
  
  /*----------------------------------------------------------------------------------------------
 diff -ur engine-2.4.orig/src/segment/GrEngine.h engine-2.4/src/segment/GrEngine.h
---- engine-2.4.orig/src/segment/GrEngine.h	2012-03-17 00:02:13.000000000 +0100
+--- engine-2.4.orig/src/segment/GrEngine.h	2010-06-09 23:35:22.000000000 +0200
 +++ engine-2.4/src/segment/GrEngine.h	2012-04-27 19:18:57.000000000 +0200
 @@ -308,6 +308,11 @@
  		return m_cnUserDefn;

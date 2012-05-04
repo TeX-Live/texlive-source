@@ -808,10 +808,10 @@ void SwapWString(void * pWStr, size_t nSize /* = 0 */) throw (std::invalid_argum
 #ifndef USE_STDLIB_WORKAROUNDS
 	std::transform(pStr, pStrEnd, pStr, read<uint16>);
 #else
-		for (int i = 0; i < nSize; i++)
-		{ // swap the wide characters in the string
-			pStr[i] = gr::utf16(read(uint16(pStr[i])));
-		}
+	for (int i = 0; i < nSize; i++)
+	{	// swap the wide characters in the string
+		pStr[i] = gr::utf16(read(uint16(pStr[i])));
+	}
 #endif
 }
 

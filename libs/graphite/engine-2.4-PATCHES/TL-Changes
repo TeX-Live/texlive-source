@@ -10,15 +10,13 @@ Executed the command:
 i.e., removed execute permissions from all files except configure.
 
 Converted Dos/Win line ends to native:
+	CMakeLists.txt
 	build_d_vc8.bat
 	build_vc8.bat
 	makefile.vc8
+	src/CMakeLists.txt
+	test/ProfileHarness/CMakeLists.txt
+	test/RegressionTest/CMakeLists.txt
 	test/RegressionTest/Makefile.vc8
 	test/RegressionTest/RtTextSrc.h
-
-Added newline at end of file:
-	build.bat
-	build_d.bat
-	build_d_vc8.bat
-	build_vc8.bat
 

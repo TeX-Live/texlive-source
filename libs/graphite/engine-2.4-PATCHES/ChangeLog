@@ -1,3 +1,12 @@
+2012-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-svn_r1312_1315 (new): Update from SVN r1312 -> 1315.
+	(svn r1315 2012-05-03 17:45:36 UTC).
+	* patch-01-warnings, patch-05-copy-constr,
+	patch-07-stdlib-workaround, patch-08-case-sensitive (removed):
+	Now in silgraphite repository.
+	* patch-06-static-const-members (removed): Unused (and buggy?).
+
 2012-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-11-svn_r1308_1312 (new): Update from SVN r1306 -> 1312.

@@ -34,7 +34,6 @@ int g_itcaseStart = 0;  // adjust to skip to a certain test
 
 SegmentMemoryUsage g_smu;
 FontMemoryUsage g_fmu;
-const int TestCase::kAbsent;
 
 std::string g_fontPath = ".";
 #ifdef _WIN32
