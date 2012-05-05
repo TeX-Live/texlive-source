@@ -1,3 +1,8 @@
+2012-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, m4/kpse-tl-platform.m4:
+	Make sure that configuring with '--disable-biber' really works.
+
 2012-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac, m4/kpse-tl-platform.m4: Skip

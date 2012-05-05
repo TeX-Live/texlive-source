@@ -18,11 +18,6 @@ if test "X$TL_PLATFORM" = X; then
   if test "x$kpse_cv_have_win32" = xno; then
     TL_PLATFORM=`$PERL -I"$srcdir" -MTeXLive::TLUtils -e '
       print TeXLive::TLUtils::platform_name("'"$ac_cv_host"'");'`
-    if test -z "$TL_PLATFORM"; then
-      AC_MSG_ERROR([
-****** cannot determine TeX Live platform name for host "$ac_cv_host"
-****** configure with either '--disable-biber' or 'TL_PLATFORM=platform_name'])
-    fi
   else
     TL_PLATFORM=win32
   fi

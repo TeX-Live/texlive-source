@@ -2388,8 +2388,6 @@ fi
 
 BIBER_BINARY=
 
-if test "x$enable_build" != xno || test -f config.force; then
-
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
@@ -3539,11 +3537,6 @@ if test "X$TL_PLATFORM" = X; then
   if test "x$kpse_cv_have_win32" = xno; then
     TL_PLATFORM=`$PERL -I"$srcdir" -MTeXLive::TLUtils -e '
       print TeXLive::TLUtils::platform_name("'"$ac_cv_host"'");'`
-    if test -z "$TL_PLATFORM"; then
-      as_fn_error $? "
-****** cannot determine TeX Live platform name for host \"$ac_cv_host\"
-****** configure with either '--disable-biber' or 'TL_PLATFORM=platform_name'" "$LINENO" 5
-    fi
   else
     TL_PLATFORM=win32
   fi
@@ -3551,6 +3544,13 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $TL_PLATFORM" >&5
 $as_echo "$TL_PLATFORM" >&6; }
 
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+if test -z "$TL_PLATFORM"; then
+  as_fn_error $? "****** cannot determine TeX Live platform name for host \"$ac_cv_host\"
+****** configure with either '--disable-biber' or 'TL_PLATFORM=platform_name'" "$LINENO" 5
+fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for a biber binary" >&5
 $as_echo_n "checking for a biber binary... " >&6; }

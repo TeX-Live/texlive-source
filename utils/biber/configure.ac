@@ -21,10 +21,15 @@ AC_PROG_MAKE_SET
 
 BIBER_BINARY=
 
-if test "x$enable_build" != xno || test -f config.force; then
-
 dnl Determine the TeX Live platform name.
 KPSE_TL_PLATFORM
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+if test -z "$TL_PLATFORM"; then
+  AC_MSG_ERROR([****** cannot determine TeX Live platform name for host "$ac_cv_host"
+****** configure with either '--disable-biber' or 'TL_PLATFORM=platform_name'])
+fi
 
 dnl Check if we have an executable for this platform.
 AC_MSG_CHECKING([for a biber binary])
