@@ -65,7 +65,7 @@ Build information:
   i386-linux: Debian sarge, gcc 3.3.5, libc 2.3.2, Linux 2.6.9-67.0.4.ELsmp
     chroot /home/texlive/sarge; Build --with-xindy --with-clisp=...
   
-  x86_64-linux: gcc 3.4.6, libc 2.3.6, Linux 2.6.28.6
+  x86_64-linux: gcc 4.5, libc 2.3.6, Linux 2.6.28.6
   
   universal-darwin, x86_64-darwin: a menagerie of versions.
     See Master/source/mactexdoc.tar.xz.
