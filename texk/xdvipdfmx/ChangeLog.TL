@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* fontmap.c: fix a typo.
+
 2012-04-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reduce differences between dvipdfmx and xdvipdfmx.
