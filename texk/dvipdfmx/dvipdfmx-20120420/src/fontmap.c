@@ -604,7 +604,7 @@ fontmap_parse_mapdef_dps (fontmap_rec *mrec,
             if ((t = parse_string_value(&r, e))) {
               if (strcmp(t, "SlantFont") == 0)
                 mrec->opt.slant = atof(s);
-              else if (strcmp(r, "ExtendFont") == 0)
+              else if (strcmp(t, "ExtendFont") == 0)
                 mrec->opt.extend = atof(s);
               RELEASE(t);
             }
