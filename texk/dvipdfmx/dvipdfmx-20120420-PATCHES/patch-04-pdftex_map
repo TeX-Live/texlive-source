@@ -1,0 +1,37 @@
+diff -ur dvipdfmx-20120420.orig/src/fontmap.c dvipdfmx-20120420/src/fontmap.c
+--- dvipdfmx-20120420.orig/src/fontmap.c	2011-03-07 18:11:26.000000000 +0100
++++ dvipdfmx-20120420/src/fontmap.c	2012-05-06 04:59:09.000000000 +0200
+@@ -566,13 +566,17 @@
+   skip_blank(&p, endptr);
+ 
+   /* The first field (after TFM name) must be PostScript name. */
+-  if (p < endptr) {
+-    q = parse_string_value(&p, endptr);
+-    if (q) RELEASE(q);
+-    skip_blank(&p, endptr);
+-  } else {
+-    WARN("Missing a PostScript font name.");
+-    return -1;
++  /* However, pdftex.map allows a line without PostScript name. */
++
++  if (*p != '"' && *p != '<') {
++    if (p < endptr) {
++      q = parse_string_value(&p, endptr);
++      if (q) RELEASE(q);
++      skip_blank(&p, endptr);
++    } else {
++      WARN("Missing a PostScript font name.");
++      return -1;
++    }
+   }
+ 
+   if (p >= endptr) return 0;
+@@ -604,7 +608,7 @@
+             if ((t = parse_string_value(&r, e))) {
+               if (strcmp(t, "SlantFont") == 0)
+                 mrec->opt.slant = atof(s);
+-              else if (strcmp(r, "ExtendFont") == 0)
++              else if (strcmp(t, "ExtendFont") == 0)
+                 mrec->opt.extend = atof(s);
+               RELEASE(t);
+             }

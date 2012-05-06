@@ -1,7 +1,7 @@
 /* win32lib.c: bits and pieces for win32 and msvc.
 
-   Copyright 1996, 1997. 1998 Fabrice Popineau.
-   Copyright 2006, 2011 Akira Kakuto.
+   Copyright 1996, 1997. 1998, 1999 Fabrice Popineau.
+   Copyright 2006, 2011, 2012 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

@@ -1,3 +1,8 @@
+2012-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-04-pdftex_map (new): Fix a typo in fontmap.c.
+	* fontmap.c: Allow pdftex.map without PS name.
+
 2012-04-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-03-trivial (new): Reduce differences between dvipdfmx
