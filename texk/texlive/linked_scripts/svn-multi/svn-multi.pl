@@ -4,11 +4,9 @@
 #  version 0.1, Mar 1st, 2009
 # --------------------------------------------------------------
 #
-# Copyright (C) 2006-2009 Martin Scharrer
+# Copyright (C) 2006-2012 Martin Scharrer
 # E-mail: martin@scharrer-online.de
-# WWW: http://latex.scharrer-online.de/svn-multi/
-#
-# $Id$
+# Code repository: https://bitbucket.org/martin_scharrer/svn-multi
 #
 # This program works only in combination with the LaTeX package 'svn-multi' and
 # generates .svx files with '\svnidlong' macros holding Subversion keywords for
