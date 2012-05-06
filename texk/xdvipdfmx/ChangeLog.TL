@@ -3,7 +3,7 @@ ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 
 2012-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* fontmap.c: fix a typo.
+	* fontmap.c: fix a typo. allow pdftex.map without PS name.
 
 2012-04-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
