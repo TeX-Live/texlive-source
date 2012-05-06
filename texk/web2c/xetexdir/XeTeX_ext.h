@@ -291,7 +291,6 @@ extern "C" {
 	int input_line(UFILE* f);
 	void makeutf16name();
 
-	int initpool();
 	void terminatefontmanager();
 	int maketexstring(const char* s);
 

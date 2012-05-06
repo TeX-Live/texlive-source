@@ -64,7 +64,6 @@ authorization from the copyright holders.
 @define procedure printutf8str();
 @define procedure setinputfileencoding();
 @define procedure terminatefontmanager;
-@define function initpool();
 @define type gzFile;
 @define procedure checkfortfmfontmapping;
 @define function loadtfmfontmapping;

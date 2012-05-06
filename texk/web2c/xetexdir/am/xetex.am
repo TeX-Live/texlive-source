@@ -68,7 +68,7 @@ $(xetex_OBJECTS): $(xetex_prereq)
 
 ## XeTeX C sources
 xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
-nodist_xetex_SOURCES = $(xetex_c_h) xetex_pool.c \
+nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c \
 	xetexdir/etex_version.h xetexdir/xetex_version.h
 dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h
 
@@ -77,8 +77,8 @@ $(xetex_c_h): xetex-web2c
 xetex-web2c: xetex.p $(web2c_texmf) xetexdir/xetex.defines
 	@$(web2c) xetex
 
-xetex_pool.c: xetex.pool xetexd.h
-	perl $(srcdir)/xetexdir/pool2c.pl $< $@
+xetex-pool.c: xetex.pool xetexd.h $(makecpool_stamp)
+	$(makecpool) xetex >$@ || rm -f $@
 
 ## Tangling XeTeX
 xetex.p xetex.pool: xetex-tangle
@@ -110,6 +110,7 @@ xetex_web_srcs = \
 	enctex.ch \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
+	tex-binpool.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
 	xetexdir/xetex-latex3.ch \
