@@ -10,7 +10,7 @@ sub fromenv;
 sub load_data;
 sub save_data;
 
-my $VERSION = 'v1.2a from 2012/05/03';
+my $VERSION = 'v1.2b from 2012/05/06';
 my %CTAN_SERVERURLS = (
     dante     => 'http://dante.ctan.org/upload.html',
     uktug     => 'http://www.tex.ac.uk/upload/',
@@ -343,9 +343,16 @@ if ($FIELDS{DoNotAnnounce}) {
     $DoNotAnnounce = '[x]';
 }
 else {
-    delete $FIELDS{DoNotAnnounce};
+    $FIELDS{DoNotAnnounce} = 'Yes';
     delete $FIELDS{to_announce};
     $DoNotAnnounce = '[ ]';
+}
+# Only keep the announcement field used by the site:
+if ($CTAN_URL eq $CTAN_SERVERURLS{dante}) {
+    delete $FIELDS{to_announce};
+}
+else {
+    delete $FIELDS{DoNotAnnounce};
 }
 
 if (!$FIELDS{directory}) {
