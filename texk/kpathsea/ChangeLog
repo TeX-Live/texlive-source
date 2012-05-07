@@ -1,3 +1,8 @@
+2012-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (rebuild): Depend on 'all-am' instead of 'all' to
+	avoid an infinite loop.
+
 2012-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* win32lib.[ch]: Copyright 2012.

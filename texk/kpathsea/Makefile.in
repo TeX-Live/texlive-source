@@ -1900,7 +1900,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 
 # Rebuild
 .PHONY: rebuild
-rebuild: all
+rebuild: all-am
 	touch libkpathsea.la
 
 $(libkpathsea_la_OBJECTS): paths.h kpathsea.h
