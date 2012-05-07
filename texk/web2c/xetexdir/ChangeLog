@@ -1,3 +1,8 @@
+2012-05-07  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* am/xetex.am (xetex_web_srcs): Drop enctex.ch.
+	* xetex.ch, xetex-latex3.ch: Adjusted.
+
 2012-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/xetex.am (EXTRA_DIST): Drop pool2c.pl (is removed).

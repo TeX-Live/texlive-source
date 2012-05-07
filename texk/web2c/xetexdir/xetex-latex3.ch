@@ -354,9 +354,9 @@ b := is_in_csname; is_in_csname := true;
 
 % \ifincsname
 @x
-if (cur_cmd<>end_cs_name) or (cur_chr<>0) then @<Complain about missing \.{\\endcsname}@>;
+if cur_cmd<>end_cs_name then @<Complain about missing \.{\\endcsname}@>;
 @y
-if (cur_cmd<>end_cs_name) or (cur_chr<>0) then @<Complain about missing \.{\\endcsname}@>;
+if cur_cmd<>end_cs_name then @<Complain about missing \.{\\endcsname}@>;
 is_in_csname := b;
 @z
 

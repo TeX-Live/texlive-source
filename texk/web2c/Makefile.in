@@ -2589,7 +2589,6 @@ xetex_web_srcs = \
 	etexdir/etex.ch \
 	etexdir/tex.ch0 \
 	tex.ch \
-	enctex.ch \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
 	tex-binpool.ch \
