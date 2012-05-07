@@ -964,7 +964,7 @@ am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
 @XETEX_SYNCTEX_TRUE@am__objects_26 = xetex-synctex.$(OBJEXT)
 dist_xetex_OBJECTS = xetex-xetexextra.$(OBJEXT) $(am__objects_26)
 am__objects_27 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_27) xetex-xetex_pool.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_27) xetex-xetex-pool.$(OBJEXT)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_14 = $(am__DEPENDENCIES_1) \
 @XETEX_MACOSX_FALSE@	$(am__DEPENDENCIES_1) \
@@ -1567,42 +1567,41 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafontloader/fontforge/plugins/Makefile.in \
 	$(libluatex_web) luatexdir/ChangeLog luatexdir/NEWS \
 	luatexdir/font/subfont.txt $(xetex_web_srcs) \
-	xetexdir/xetex.defines xetexdir/pool2c.pl \
-	xetexdir/unicode-char-prep.pl xetexdir/appleGlyphNames.c \
-	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/ChangeLog $(xetex_tests) \
-	xetexdir/LICENSE.txt omegaware/README omegaware/ChangeLog \
-	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
-	$(opl2ofm_sources) $(otangle_sources) omegaware/ovf2ovp.web \
-	omegaware/ovf2ovp.up omegaware/ovf2ovp.ch \
-	omegaware/ovp2ovf.web omegaware/ovp2ovf.up \
-	omegaware/ovp2ovf.ch $(OTANGLE_tests) $(OMFONTS_tests) \
-	omegaware/tests/level1.opl omegaware/tests/ofontd1.dvi \
-	omegaware/tests/ofontd1.typ omegaware/tests/ofontd2.dvi \
-	omegaware/tests/ofontd2.typ omegaware/tests/ofontd3.dvi \
-	omegaware/tests/ofontd3.typ omegaware/tests/ofontr1.vf \
-	omegaware/tests/ofontr2.ovf omegaware/tests/ofontr3.ovf \
-	omegaware/tests/ofontv4.vf omegaware/tests/ofontv5.ovf \
-	omegaware/tests/ofontv6.ovf omegaware/tests/ofontd0.dtl \
-	omegaware/tests/ofontd0.dvi omegaware/tests/ofontd0.typ \
-	omegaware/tests/ofontr0.tfm omegaware/tests/ofontr1.tfm \
-	omegaware/tests/ofontr2.ofm omegaware/tests/ofontr3.ofm \
-	omegaware/tests/ofontv4.tfm omegaware/tests/ofontv5.ofm \
-	omegaware/tests/ofontv6.ofm omegaware/tests/ofontr0.pl \
-	omegaware/tests/ofontr1.pl omegaware/tests/ofontr1.vpl \
-	omegaware/tests/ofontr2.opl omegaware/tests/ofontr2.ovp \
-	omegaware/tests/ofontr3.opl omegaware/tests/ofontr3.ovp \
-	omegaware/tests/ofontv4.pl omegaware/tests/ofontv4.vpl \
-	omegaware/tests/ofontv5.opl omegaware/tests/ofontv5.ovp \
-	omegaware/tests/ofontv6.opl omegaware/tests/ofontv6.ovp \
-	omegaware/tests/Cherokee.pl omegaware/tests/OCherokee.ovp \
-	omegaware/tests/realnum.opl omegaware/tests/realnum.out \
-	omegaware/tests/repeat.opl omegaware/tests/repeated.opl \
-	omegaware/tests/sample.out omegaware/tests/sample.ovp \
-	omegaware/tests/sample0-h.opl omegaware/tests/specialhex.ovp \
-	$(aleph_web_srcs) $(aleph_ch_srcs) alephdir/ChangeLog \
-	alephdir/aleph.defines alephdir/aleph.version $(aleph_tests) \
-	synctexdir/ChangeLog synctexdir/README.txt \
-	synctexdir/synctex_parser_readme.txt \
+	xetexdir/xetex.defines xetexdir/unicode-char-prep.pl \
+	xetexdir/appleGlyphNames.c xetexdir/XeTeXFontMgr_Mac.mm \
+	xetexdir/ChangeLog $(xetex_tests) xetexdir/LICENSE.txt \
+	omegaware/README omegaware/ChangeLog $(odvicopy_sources) \
+	$(odvitype_sources) $(ofm2opl_sources) $(opl2ofm_sources) \
+	$(otangle_sources) omegaware/ovf2ovp.web omegaware/ovf2ovp.up \
+	omegaware/ovf2ovp.ch omegaware/ovp2ovf.web \
+	omegaware/ovp2ovf.up omegaware/ovp2ovf.ch $(OTANGLE_tests) \
+	$(OMFONTS_tests) omegaware/tests/level1.opl \
+	omegaware/tests/ofontd1.dvi omegaware/tests/ofontd1.typ \
+	omegaware/tests/ofontd2.dvi omegaware/tests/ofontd2.typ \
+	omegaware/tests/ofontd3.dvi omegaware/tests/ofontd3.typ \
+	omegaware/tests/ofontr1.vf omegaware/tests/ofontr2.ovf \
+	omegaware/tests/ofontr3.ovf omegaware/tests/ofontv4.vf \
+	omegaware/tests/ofontv5.ovf omegaware/tests/ofontv6.ovf \
+	omegaware/tests/ofontd0.dtl omegaware/tests/ofontd0.dvi \
+	omegaware/tests/ofontd0.typ omegaware/tests/ofontr0.tfm \
+	omegaware/tests/ofontr1.tfm omegaware/tests/ofontr2.ofm \
+	omegaware/tests/ofontr3.ofm omegaware/tests/ofontv4.tfm \
+	omegaware/tests/ofontv5.ofm omegaware/tests/ofontv6.ofm \
+	omegaware/tests/ofontr0.pl omegaware/tests/ofontr1.pl \
+	omegaware/tests/ofontr1.vpl omegaware/tests/ofontr2.opl \
+	omegaware/tests/ofontr2.ovp omegaware/tests/ofontr3.opl \
+	omegaware/tests/ofontr3.ovp omegaware/tests/ofontv4.pl \
+	omegaware/tests/ofontv4.vpl omegaware/tests/ofontv5.opl \
+	omegaware/tests/ofontv5.ovp omegaware/tests/ofontv6.opl \
+	omegaware/tests/ofontv6.ovp omegaware/tests/Cherokee.pl \
+	omegaware/tests/OCherokee.ovp omegaware/tests/realnum.opl \
+	omegaware/tests/realnum.out omegaware/tests/repeat.opl \
+	omegaware/tests/repeated.opl omegaware/tests/sample.out \
+	omegaware/tests/sample.ovp omegaware/tests/sample0-h.opl \
+	omegaware/tests/specialhex.ovp $(aleph_web_srcs) \
+	$(aleph_ch_srcs) alephdir/ChangeLog alephdir/aleph.defines \
+	alephdir/aleph.version $(aleph_tests) synctexdir/ChangeLog \
+	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \
@@ -2580,7 +2579,7 @@ xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
 # We must create libxetex.a etc before building the xetex_OBJECTS
 xetex_prereq = $(libxetex) xetexdir/etex_version.h xetexdir/xetex_version.h
 xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
-nodist_xetex_SOURCES = $(xetex_c_h) xetex_pool.c \
+nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c \
 	xetexdir/etex_version.h xetexdir/xetex_version.h
 
 dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h \
@@ -2593,6 +2592,7 @@ xetex_web_srcs = \
 	enctex.ch \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
+	tex-binpool.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
 	xetexdir/xetex-latex3.ch \
@@ -3582,8 +3582,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/weave.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-synctex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetex-pool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetex0.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetex_pool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetexextra.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetexini.Po@am__quote@
 
@@ -8354,19 +8354,19 @@ xetex-xetex0.obj: xetex0.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetex0.obj `if test -f 'xetex0.c'; then $(CYGPATH_W) 'xetex0.c'; else $(CYGPATH_W) '$(srcdir)/xetex0.c'; fi`
 
-xetex-xetex_pool.o: xetex_pool.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetex_pool.o -MD -MP -MF $(DEPDIR)/xetex-xetex_pool.Tpo -c -o xetex-xetex_pool.o `test -f 'xetex_pool.c' || echo '$(srcdir)/'`xetex_pool.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetex_pool.Tpo $(DEPDIR)/xetex-xetex_pool.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetex_pool.c' object='xetex-xetex_pool.o' libtool=no @AMDEPBACKSLASH@
+xetex-xetex-pool.o: xetex-pool.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetex-pool.o -MD -MP -MF $(DEPDIR)/xetex-xetex-pool.Tpo -c -o xetex-xetex-pool.o `test -f 'xetex-pool.c' || echo '$(srcdir)/'`xetex-pool.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetex-pool.Tpo $(DEPDIR)/xetex-xetex-pool.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetex-pool.c' object='xetex-xetex-pool.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetex_pool.o `test -f 'xetex_pool.c' || echo '$(srcdir)/'`xetex_pool.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetex-pool.o `test -f 'xetex-pool.c' || echo '$(srcdir)/'`xetex-pool.c
 
-xetex-xetex_pool.obj: xetex_pool.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetex_pool.obj -MD -MP -MF $(DEPDIR)/xetex-xetex_pool.Tpo -c -o xetex-xetex_pool.obj `if test -f 'xetex_pool.c'; then $(CYGPATH_W) 'xetex_pool.c'; else $(CYGPATH_W) '$(srcdir)/xetex_pool.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetex_pool.Tpo $(DEPDIR)/xetex-xetex_pool.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetex_pool.c' object='xetex-xetex_pool.obj' libtool=no @AMDEPBACKSLASH@
+xetex-xetex-pool.obj: xetex-pool.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -MT xetex-xetex-pool.obj -MD -MP -MF $(DEPDIR)/xetex-xetex-pool.Tpo -c -o xetex-xetex-pool.obj `if test -f 'xetex-pool.c'; then $(CYGPATH_W) 'xetex-pool.c'; else $(CYGPATH_W) '$(srcdir)/xetex-pool.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/xetex-xetex-pool.Tpo $(DEPDIR)/xetex-xetex-pool.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xetex-pool.c' object='xetex-xetex-pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetex_pool.obj `if test -f 'xetex_pool.c'; then $(CYGPATH_W) 'xetex_pool.c'; else $(CYGPATH_W) '$(srcdir)/xetex_pool.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xetex_CPPFLAGS) $(CPPFLAGS) $(xetex_CFLAGS) $(CFLAGS) -c -o xetex-xetex-pool.obj `if test -f 'xetex-pool.c'; then $(CYGPATH_W) 'xetex-pool.c'; else $(CYGPATH_W) '$(srcdir)/xetex-pool.c'; fi`
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -10304,8 +10304,8 @@ $(xetex_c_h): xetex-web2c
 xetex-web2c: xetex.p $(web2c_texmf) xetexdir/xetex.defines
 	@$(web2c) xetex
 
-xetex_pool.c: xetex.pool xetexd.h
-	perl $(srcdir)/xetexdir/pool2c.pl $< $@
+xetex-pool.c: xetex.pool xetexd.h $(makecpool_stamp)
+	$(makecpool) xetex >$@ || rm -f $@
 
 xetex.p xetex.pool: xetex-tangle
 	@$(o_tangle) xetex

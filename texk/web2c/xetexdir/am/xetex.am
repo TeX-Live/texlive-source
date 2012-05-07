@@ -1,6 +1,6 @@
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## XeTeX
@@ -123,7 +123,6 @@ DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex-web2c \
 	xetex.p xetex.pool xetex-tangle
 
 EXTRA_DIST += \
-	xetexdir/pool2c.pl \
 	xetexdir/unicode-char-prep.pl
 
 ## libxetex
