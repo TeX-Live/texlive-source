@@ -60,7 +60,7 @@ the other README.* files here.
 
 Build information:
   In general, xe(la)tex and xdvipdfmx depend on fontconfig.
-  We cannot statically link it because it varies on different systems.
+  We cannot statically link it because it varies by os version.
 
   i386-linux: Debian sarge, gcc 3.3.5, libc 2.3.2, Linux 2.6.9-67.0.4.ELsmp
     chroot /home/texlive/sarge; Build --with-xindy --with-clisp=...
@@ -87,12 +87,6 @@ GNU Make 3.81
   Because Solaris 8 does not include fontconfig, we used fontconfig
   package (version 2.3.2) from http://www.blastwave.org/
   (together with its dependencies)
-
-  sparc-linux (utah)
-kernel: 2.4.28-sparc-r1
-/lib/libc-2.3.3.so
-gcc version 3.3.4 20040623 (Gentoo Linux 3.3.4-r1, ssp-3.3.2-2, pie-8.7.6)
-make 3.81
 
   powerpc-aix
 OS: AIX 4.3
