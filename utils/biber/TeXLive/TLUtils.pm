@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 25907 $';
+my $svnrev = '$Revision: 26100 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -100,6 +100,7 @@ C<TeXLive::TLUtils> -- utilities used in the TeX Live infrastructure
   TeXLive::TLUtils::compare_tlpobjs($tlpA, $tlpB);
   TeXLive::TLUtils::compare_tlpdbs($tlpdbA, $tlpdbB);
   TeXLive::TLUtils::report_tlpdb_differences(\%ret);
+  TeXLive::TLUtils::tlnet_disabled_packages($root);
   TeXLive::TLUtils::mktexupd();
 
 =head1 DESCRIPTION
@@ -163,6 +164,7 @@ BEGIN {
     &forward_slashify
     &conv_to_w32_path
     &untar
+    &unpack
     &merge_into
     &give_ctan_mirror
     &give_ctan_mirror_base
@@ -2071,12 +2073,112 @@ sub w32_remove_from_path {
   TeXLive::TLWinGoo::adjust_reg_path_for_texlive('remove', $bindir, $mode);
 }
 
+=pod
+
+=item C<unpack($what, $targetdir>
+
+If necessary, downloads C$what>, and then unpacks it into C<$targetdir>.
+Returns the name of the unpacked package (determined from the name of C<$what>)
+in case of success, otherwise undefined.
+
+=cut
+
+sub unpack {
+  my ($what, $target) = @_;
+
+  if (!defined($what)) {
+    tlwarn("TLUtils::unpack: nothing to unpack!\n");
+    return;
+  }
+
+  # we assume that $::progs has been set up!
+  my $wget = $::progs{'wget'};
+  my $xzdec = TeXLive::TLUtils::quotify_path_with_spaces($::progs{'xzdec'});
+  if (!defined($wget) || !defined($xzdec)) {
+    tlwarn("_install_package: programs not set up properly, strange.\n");
+    return;
+  }
+
+  my $type;
+  if ($what =~ m,\.tar(\.xz)?$,) {
+    $type = defined($what) ? "xz" : "tar";
+  } else {
+    tlwarn("TLUtils::unpack: don't know how to unpack this: $what\n");
+    return;
+  }
+
+  my $tempdir = tl_tmpdir();
+
+  # we are still here, so something was handed in and we have either .tar or .tar.xz
+  my $fn = basename($what);
+  my $pkg = $fn;
+  $pkg =~ s/\.tar(\.xz)?$//;
+  my $tarfile;
+  my $remove_tarfile = 1;
+  if ($type eq "xz") {
+    my $xzfile = "$tempdir/$fn";
+    $tarfile  = "$tempdir/$fn"; $tarfile =~ s/\.xz$//;
+    my $xzfile_quote = $xzfile;
+    my $tarfile_quote = $tarfile;
+    my $target_quote = $target;
+    if (win32()) {
+      $xzfile =~ s!/!\\!g;
+      $tarfile =~ s!/!\\!g;
+      $target =~ s!/!\\!g;
+    }
+    $xzfile_quote = "\"$xzfile\"";
+    $tarfile_quote = "\"$tarfile\"";
+    $target_quote = "\"$target\"";
+    if ($what =~ m,http://|ftp://,) {
+      # we are installing from the NET
+      # download the file and put it into temp
+      if (!download_file($what, $xzfile) || (! -r $xzfile)) {
+        tlwarn("Downloading \n");
+        tlwarn("   $what\n");
+        tlwarn("did not succeed, please retry.\n");
+        unlink($tarfile, $xzfile);
+        return;
+      }
+    } else {
+      # we are installing from local compressed files
+      # copy it to temp
+      TeXLive::TLUtils::copy($what, $tempdir);
+    }
+    debug("un-xzing $xzfile to $tarfile\n");
+    system("$xzdec < $xzfile_quote > $tarfile_quote");
+    if (! -f $tarfile) {
+      tlwarn("TLUtils::unpack: Unpacking $xzfile failed, please retry.\n");
+      unlink($tarfile, $xzfile);
+      return;
+    }
+    unlink($xzfile);
+  } else {
+    $tarfile = "$tempdir/$fn";
+    if ($what =~ m,http://|ftp://,) {
+      if (!download_file($what, $tarfile) || (! -r $tarfile)) {
+        tlwarn("Downloading \n");
+        tlwarn("   $what\n");
+        tlwarn("failed, please retry.\n");
+        unlink($tarfile);
+        return;
+      }
+    } else {
+      $tarfile = $what;
+      $remove_tarfile = 0;
+    }
+  }
+  if (untar($tarfile, $target, $remove_tarfile)) {
+    return "$pkg";
+  } else {
+    return;
+  }
+}
 
 =pod
 
 =item C<untar($tarfile, $targetdir, $remove_tarfile)>
 
-Unpacke C<$tarfile> in C<$targetdir> (changing directories to
+Unpacks C<$tarfile> in C<$targetdir> (changing directories to
 C<$targetdir> and then back to the original directory).  If
 C<$remove_tarfile> is true, unlink C<$tarfile> after unpacking.
 
@@ -3653,6 +3755,25 @@ sub compare_tlpdbs {
   $ret{'different_packages'} = \%diffpacks if (keys %diffpacks);
 
   return %ret;
+}
+
+sub tlnet_disabled_packages {
+  my ($root) = @_;
+  my $disabled_pkgs = "$root/tlpkg/dev/tlnet-disabled-packages.txt";
+  my @ret;
+  if (-r $disabled_pkgs) {
+    open (DISABLED, "<$disabled_pkgs") || die "Huu, -r but cannot open: $?";
+    while (<DISABLED>) {
+      chomp;
+      next if /^\s*#/;
+      next if /^\s*$/;
+      $_ =~ s/^\s*//;
+      $_ =~ s/\s*$//;
+      push @ret, $_;
+    }
+    close(DISABLED) || warn ("Cannot close tlnet-disabled-packages.txt: $?");
+  }
+  return @ret;
 }
 
 sub report_tlpdb_differences {
