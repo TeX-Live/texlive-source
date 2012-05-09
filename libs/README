@@ -14,7 +14,7 @@ freetype 1.5 - ?
 freetype2 2.4.9 - checked 9mar12
   http://savannah.nongnu.org/download/freetype/
 
-gd 2.0.35 - unchecked 25apr11, site down
+gd 2.0.35 - unchecked 10may12, libgd still down
   http://www.libgd.org/releases/
   http://www.boutell.com/gd/
   https://bitbucket.org/pierrejoye/gd-libgd/overview
@@ -36,15 +36,17 @@ obsdcompat - used by pdftex and luatex
 poppler 0.18.4 - checked 23feb12
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
-t1lib 5.1.2 - checked 25apr11
+t1lib 5.1.2 - checked 10may12
   (apparently unmaintained)
   ftp://sunsite.unc.edu/pub/Linux/libs/graphics/
+  http://www.t1lib.org/
 
 teckit 2.5.3 - checked 17mar12
   http://scripts.sil.org/svn-public/teckit/TRUNK
   (svn r1250 2012-03-14 19:45:41 UTC).
 
-xpdf 3.03 - ftp://ftp.foolabs.com/pub/xpdf/
+xpdf 3.03 - checked 10may12
+  ftp://ftp.foolabs.com/pub/xpdf/
   with modifications for pdftex
 
 zlib 1.2.7 - checked 3may12

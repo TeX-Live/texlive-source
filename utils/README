@@ -19,28 +19,28 @@ mtx 0.60d - checked 16apr12
 pmx 2.6.17 - checked 28mar12
   http://mirror.ctan.org/support/pmx/
 
-ps2eps 1.68 - checked 25apr11
+ps2eps 1.68 - checked 10may12
   http://tm.uka.de/~bless/ps2eps
 
-psutils p17 - checked 25apr11
+psutils p17 - checked 10may12
   http://www.tardis.ed.ac.uk/~ajcd/psutils/index.html
   -> http://mirror.ctan.org/support/psutils/
   https://savannah.nongnu.org/bugs/?30782
   -> http://www.connochaetos.org/misc/psutils-libre-1.17.tar.gz
   (Fabrice made small modifications for Windows, it seems)
 
-t1utils 1.37 - checked 21jul11
+t1utils 1.37 - checked 10may12
   http://www.lcdf.org/type/
 
-tpic2pdftex 1.97 - checked 25apr11
+tpic2pdftex 1.97 - checked 10may12
   http://mirror.ctan.org/graphics/tpic2pdftex/
 
-vlna 1.5 - checked 25apr11
+vlna 1.5 - checked 10may12
   ftp://math.feld.cvut.cz/pub/olsak/vlna/
 
 xindy - see just below
 
-xpdfopen 0.83 - checked 30jan12
+xpdfopen 0.83 - checked 10may12
   http://mirror.ctan.org/support/xpdfopen/
   http://cs.acadiau.ca/~jdiamond/xpdfopen/
 

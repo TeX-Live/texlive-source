@@ -30,14 +30,14 @@ bibtexu - ?
 cjkutils 4.8.2 - checked 18dec10
   http://cjk.ffii.org/cjk-4.8.2.tar.gz
 
-detex 2.8 - checked 25apr11
+detex 2.8 - checked 10may12
   http://www.cs.purdue.edu/homes/trinkle/detex/
 
 devnag - from devnag package installed in texmf-dist.
 
 dtl - ?
 
-dvi2tty 5.3.4 - checked 25apr11
+dvi2tty 5.3.4 - checked 10may12
   http://www.mesa.nl/pub/dvi2tty/
   ftp://ftp.mesa.nl/pub/dvi2tty/
 
@@ -48,20 +48,20 @@ dviljk - maintained here, by Joachim Schrod
 dvipdfmx 20120420 - checked 20apr12
   ftp://ftpth.mppmu.mpg.de/pub/peb/TLtests/dvipdfmx-20120420.tar.xz
 
-dvipng 1.14 - checked 25apr11
+dvipng 1.14 - checked 10may12
   http://mirror.ctan.org/dviware/dvipng/ (but maybe stale)
   http://savannah.nongnu.org/files/?group=dvipng
 
 dvipos - ?
 
-dvipsk - maintained here by Tom Rokicki, Karl Berry, Akira Kakuto, ...
+dvipsk - maintained here, by us
 
-dvisvgm 1.0.11 - checked 12mar12
+dvisvgm - checked 10may12
   http://downloads.sourceforge.net/dvisvgm/dvisvgm-1.0.11.tar.gz
 
 gsftopk - from Paul Vojta's xdvi?
 
-kpathsea - maintained here by Karl Berry, et al.
+kpathsea - maintained here, by us
 
 lacheck - checked 25apr11
   http://mirror.ctan.org/support/lacheck/lacheck-1.26.tar.gz
@@ -79,19 +79,21 @@ seetexk - ?
 tex4htk - checked 25apr11
   http://tug.org/tex4ht/
 
-texlive - maintained here, scripts
+texlive - scripts maintained here, by us
+
+texlive - scripts maintained here, by us
 
 ttf2pk - maintained here, by us
 
 ttfdump - ?
 
-web2c - maintained here by Karl Berry et al. - core web2c, plain tex, etc.
+web2c - maintained here, by us - core web2c, plain tex, etc.
         The TeX variant dirs (pdftexdir, xetexdir, etc.)
         updated here by their respective maintainers.
 
-xdv2pdf - Jonathan Kew
+xdv2pdf - Khaled Hosny, Jonathan Kew
 
-xdvik 22.85 - checked 2apr12
+xdvik 22.85 - checked 10may12
   http://sourceforge.net/projects/xdvi/files/xdvik/
 
-xdvipdfmx - Jonathan Kew
+xdvipdfmx - Khaled Hosny, Jonathan Kew
