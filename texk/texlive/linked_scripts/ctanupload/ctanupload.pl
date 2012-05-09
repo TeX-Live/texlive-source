@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 ################################################################################
-# Copyright (c) 2011 Martin Scharrer <martin@scharrer-online.de>
+# Copyright (c) 2011-2012 Martin Scharrer <martin@scharrer-online.de>
 # This is open source software under the GPL v3 or later.
 ################################################################################
 use strict;
@@ -10,7 +10,7 @@ sub fromenv;
 sub load_data;
 sub save_data;
 
-my $VERSION = 'v1.2b from 2012/05/06';
+my $VERSION = 'v1.2c from 2012/05/08';
 my %CTAN_SERVERURLS = (
     dante     => 'http://dante.ctan.org/upload.html',
     uktug     => 'http://www.tex.ac.uk/upload/',
@@ -235,6 +235,8 @@ while (my $arg = shift @ARGV) {
 $CTAN_URL = (values %CTAN_SERVERURLS)[int rand scalar values %CTAN_SERVERURLS]
     if not defined $CTAN_URL;
 
+my $DANTE = $CTAN_URL =~ /dante/;
+
 PROMPT:
 
 if ($PROMPT) {
@@ -243,7 +245,7 @@ if ($PROMPT) {
             my $input = '';
             if ($field eq 'notes' || $field eq 'announce') {
                 next if $field eq 'announce' and $FIELDS{DoNotAnnounce};
-                next if $field eq 'notes' and $CTAN_URL ne $CTAN_SERVERURLS{dante};
+                next if $field eq 'notes' and not $DANTE;
                 print "\u$FIELDS_DESC{$field}: (press CTRL-Z (Windows) or CTRL-D (Linux) to stop)\n";
                 while (<STDIN>) {
                     $input .= $_;
@@ -336,24 +338,7 @@ if ($abort) {
     exit (2);
 }
 
-my $DoNotAnnounce;
-if ($FIELDS{DoNotAnnounce}) {
-    $FIELDS{DoNotAnnounce} = 'No';
-    $FIELDS{to_announce}   = 'Yes';
-    $DoNotAnnounce = '[x]';
-}
-else {
-    $FIELDS{DoNotAnnounce} = 'Yes';
-    delete $FIELDS{to_announce};
-    $DoNotAnnounce = '[ ]';
-}
-# Only keep the announcement field used by the site:
-if ($CTAN_URL eq $CTAN_SERVERURLS{dante}) {
-    delete $FIELDS{to_announce};
-}
-else {
-    delete $FIELDS{DoNotAnnounce};
-}
+my $DoNotAnnounce = ($FIELDS{DoNotAnnounce}) ? '[x]' : '[ ]';
 
 if (!$FIELDS{directory}) {
     $FIELDS{directory} = '/macros/latex/contrib/' . $FIELDS{contribution};
@@ -395,13 +380,14 @@ if ($ASK) {
         if ($response eq 'e' or $response eq 'edit') {
             my $file = 'ctanupload.dat';
             save_data($file);
-            if (not defined $ENV{EDITOR}) {
+            my $editor = $ENV{'CTANUPLOAD_EDITOR'} || $ENV{'EDITOR'};
+            if (not defined $editor) {
                 print "No EDITOR environment variable defined.\n";
                 print "Data was stored in file '$file'. Please edit manually and load with the -F option.\n";
                 exit (1);
             }
             else {
-                system($ENV{EDITOR}, $file);
+                system($editor, $file);
                 load_data($file);
                 goto PROMPT;
             }
@@ -421,6 +407,29 @@ if ($ASK) {
     }
 }
 
+if ($FIELDS{DoNotAnnounce}) {
+    if ($DANTE) {
+        $FIELDS{DoNotAnnounce} = 'No';
+        delete $FIELDS{'to_announce'};
+        $FIELDS{notes} = '';
+    } else {
+        $FIELDS{'to_announce'} = 'Yes';
+        delete $FIELDS{DoNotAnnounce};
+        delete $FIELDS{notes};
+    }
+}
+else {
+    if ($DANTE) {
+        $FIELDS{DoNotAnnounce} = 'Yes';
+        delete $FIELDS{to_announce};
+    } else {
+        delete $FIELDS{'to_announce'};
+        delete $FIELDS{DoNotAnnounce};
+        delete $FIELDS{notes};
+    }
+}
+# Add Submit button for the sake of completeness:
+$FIELDS{'SUBMIT'} = ($DANTE) ? 'Submit' : 'Submit contribution';
 
 use WWW::Mechanize;
 my $mech = WWW::Mechanize->new(quiet => $QUIET, autocheck => 1);
@@ -440,17 +449,24 @@ if ($mech->success()) {
 print "\nResponse:\n";
 print LOG "\n# Response:\n" if $LOG;
 eval {
-    #print $mech->content();
-    #return 1;
-    use HTML::TreeBuilder;
-    use HTML::FormatText;
-    my $tree = HTML::TreeBuilder->new_from_content( $mech->content() );
-    my $formatter = HTML::FormatText->new(leftmargin => 0, rightmargin => 80);
-    my @response = split /\n/, $formatter->format($tree);
-    local $, = "\n";
-    print @response[3..$#response-3];
-    local $, = "\n# ";
-    print LOG '', @response[3..$#response-3] if $LOG;
+    if ($mech->response()->header('Content-Type') eq 'text/plain') {
+        #open (my $DEBUGFILE, '>', 'ctanupload.dbg');
+        #print {$DEBUGFILE} $mech->content();
+        #close ($DEBUGFILE);
+        print $mech->content();
+        print LOG $mech->content() if $LOG;
+    }
+    else {
+        use HTML::TreeBuilder;
+        use HTML::FormatText;
+        my $tree = HTML::TreeBuilder->new_from_content( $mech->content() );
+        my $formatter = HTML::FormatText->new(leftmargin => 0, rightmargin => 80);
+        my @response = split /\n/, $formatter->format($tree);
+        local $, = "\n";
+        print @response[3..$#response-3];
+        local $, = "\n# ";
+        print LOG '', @response[3..$#response-3] if $LOG;
+    }
     1;
 } or do {
     print "Can't display HTML response, storing reponse if log file 'ctanupload_response.html'\n";

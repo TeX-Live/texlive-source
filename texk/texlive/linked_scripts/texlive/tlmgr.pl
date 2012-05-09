@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26138 2012-04-25 15:23:08Z karl $
+# $Id: tlmgr.pl 26265 2012-05-09 00:15:38Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26138 $';
-my $datrev = '$Date: 2012-04-25 17:23:08 +0200 (Wed, 25 Apr 2012) $';
+my $svnrev = '$Revision: 26265 $';
+my $datrev = '$Date: 2012-05-09 02:15:38 +0200 (Wed, 09 May 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -36,7 +36,7 @@ BEGIN {
   # make subprograms (including kpsewhich) have the right path:
   my ($bindir, $kpsewhichname);
   if ($^O =~ /^MSWin/i) {
-    # on win32 $0 and __FILE__ point directly to tlmgr.pl; they can be relative
+    # on w32 $0 and __FILE__ point directly to tlmgr.pl; they can be relative
     $Master = __FILE__;
     $Master =~ s!\\!/!g;
     $Master =~ s![^/]*$!../../..!
@@ -1586,7 +1586,7 @@ sub get_available_backups {
       $backups{$1}->{$2} = $usedt;
     }
   }
-  # reset the original value of the win32 sloppy mode for stating files
+  # reset the original value of the w32 sloppy mode for stating files
   ${^WIN32_SLOPPY_STAT} = $oldwsloppy;
   return %backups;
 }
@@ -3102,7 +3102,7 @@ sub action_update {
         if ($#found_pkgs >= 0) {
           my $bad_file = 1;
           if (win32()) {
-            # on win32 the packages have not been removed already,
+            # on w32 the packages have not been removed already,
             # so we check that the only package listed in @found_pkgs
             # is the one we are working on ($pkg)
             if ($#found_pkgs == 0 && $found_pkgs[0] =~ m/^$pkg:/) {
@@ -3156,7 +3156,7 @@ sub action_update {
     $restart_tlmgr = 1;
   }
 
-  # infra update and tlmgr restart on win32 is done by the updater batch script
+  # infra update and tlmgr restart on w32 is done by the updater batch script
   if (win32() && !$opts{"list"} && @critical) {
     info("Preparing TeX Live infrastructure update...\n");
     for my $f (@infra_files_to_be_removed) {
@@ -3493,6 +3493,11 @@ sub show_list_of_packages {
 sub array_to_repository {
   my %r = @_;
   my @ret;
+  my @k = keys %r;
+  if ($#k == 0) {
+    # only one repo, don't write any tag
+    return $r{$k[0]};
+  }
   for my $k (keys %r) {
     my $v = $r{$k};
     if ($k eq $v) {
@@ -3506,7 +3511,13 @@ sub array_to_repository {
 sub repository_to_array {
   my $r = shift;
   my %r;
-  for my $rr (split ' ', $r) {
+  my @repos = split ' ', $r;
+  if ($#repos == 0) {
+    # only one repo, this is the main one!
+    $r{'main'} = $repos[0];
+    return %r;
+  }
+  for my $rr (@repos) {
     if ($rr =~ m/^([^#]+)#(.*)$/) {
       $r{$2} = $1;
     } else {
@@ -3641,7 +3652,7 @@ sub action_option {
   init_local_db();
   if ($what =~ m/^show$/i) {
     for my $o (keys %{$localtlpdb->options}) {
-      # ignore some things which are win32 specific
+      # ignore some things which are w32 specific
       next if ($o eq "desktop_integration" && !win32());
       next if ($o eq "file_assocs" && !win32());
       next if ($o eq "w32_multi_user" && !win32());
@@ -4077,15 +4088,17 @@ sub action_gui {
         Win32::MsgBox($msg, 1|Win32::MB_ICONSTOP(), "Warning");
       } else {
         printf STDERR "
-Cannot load Tk, thus the GUI cannot be started!
+$prg: Cannot load Tk, thus the GUI cannot be started!
 The Perl/Tk module is not shipped with the TeX Live installation.
-You have to install it to get tlmgr GUI running. See
-http://tug.org/texlive/distro.html for more details.
+You have to install it to get the tlmgr GUI working.
+(INC = @INC)
 
+See http://tug.org/texlive/distro.html#perltk for more details.
+Goodbye.
 ";
       }
     } else {
-      printf STDERR "Problem loading Tk: $@\n";
+      printf STDERR "$prg: unexpected problem loading Tk: $@\n";
     }
     exit 1;
   }
@@ -4977,8 +4990,8 @@ sub init_local_db {
     $location = "$TeXLive::TLConfig::TeXLiveURL";
   }
   # we normalize the path only if it is
-  # - neither a URL starting with http or ftp
-  # - if we are on windows it does not start with Drive:[\/]
+  # - a url starting with neither http or ftp
+  # - if we are on Windows, it does not start with Drive:[\/]
   if (! ( $location =~ m!^(http|ftp)://!i  ||
           (win32() && (!(-e $location) || ($location =~ m!^.:[\\/]!) ) ) ) ) {
     # seems to be a local path, try to normalize it
@@ -6090,6 +6103,7 @@ written to the terminal.
 
 =back
 
+
 =head2 repositoy
 
 =over 4
@@ -6102,18 +6116,21 @@ written to the terminal.
 
 =item B<repository set I<path>[#I<tag>] [I<path>[#I<tag>] ...]>
 
-This action manages the list of repositories. See L</"MULTIPLE REPOSITORIES">
-below for detailed explanations.
+This action manages the list of repositories.  See L</"MULTIPLE
+REPOSITORIES"> below for detailed explanations.
 
-The first form list all configured repositories and the respective tags
-if set. The second form adds a repository (and optionally attaching a
-tag) to the list of repositories. The third from removes a repository,
-either by full path/url, or by tag. The last form sets the list
-of repositories to the items given on the command line, not keeping
-previous settings. Be reminded that one of the repositories has to
-be tagged as B<main>, otherwise all operations will fail.
+The first form (C<list>) lists all configured repositories and the
+respective tags if set.  The second form (C<add>) adds a repository
+(optionally attaching a tag) to the list of repositories.  The third
+form (C<remove>) removes a repository, either by full path/url, or by
+tag.  The last form (C<set>) sets the list of repositories to the items
+given on the command line, not keeping previous settings
+
+In all cases, one of the repositories must be tagged as C<main>;
+otherwise, all operations will fail!
 
 =back
+
 
 =head2 candidates
 
@@ -6121,8 +6138,8 @@ be tagged as B<main>, otherwise all operations will fail.
 
 =item B<candidates I<pkg>>
 
-Shows the list of available candidates for package I<pkg>. See
-L</"MULTIPLE REPOSITORIES"> below for details.
+Shows the available candidate repositories for package I<pkg>.
+See L</"MULTIPLE REPOSITORIES"> below.
 
 
 =back
@@ -6263,7 +6280,7 @@ done, so any sort of breakage is possible.
 
 =item B<paper [a4|letter]>
 
-=item B<S<xdvi|pdftex|dvips|dvipdfmx|dvipdfm|context paper [I<papersize>|--list]>>
+=item B<S<[xdvi|pdftex|dvips|dvipdfmx|dvipdfm|context] paper [I<papersize>|--list]>>
 
 =back
 
@@ -6324,6 +6341,61 @@ written to the terminal.
 Print the TeX Live identifier for the detected platform
 (hardware/operating system) combination to standard output, and exit.
 C<--print-arch> is a synonym.
+
+
+=head2 info [I<option>...] [collections|schemes|I<pkg>...]
+
+With no argument, lists all packages available at the package
+repository, prefixing those already installed with C<i>.
+
+With the single word C<collections> or C<schemes> as the argument, lists
+the request type instead of all packages.
+
+With any other arguments, display information about I<pkg>: the name,
+category, short and long description, installation status, and TeX Live
+revision number.  If I<pkg> is not locally installed, searches in the
+remote installation source.
+
+It also displays information taken from the TeX Catalogue, namely the
+package version, date, and license.  Consider these, especially the
+package version, as approximations only, due to timing skew of the
+updates of the different pieces.  By contrast, the C<revision> value
+comes directly from TL and is reliable.
+
+The former actions C<show> and C<list> are merged into this action,
+but are still supported for backward compatibility.
+
+Options:
+
+=over 4
+
+=item B<--list>
+
+If the option C<--list> is given with a package, the list of contained
+files is also shown, including those for platform-specific dependencies.
+When given with schemes and collections, C<--list> outputs their
+dependencies in a similar way.
+
+=item B<--only-installed>
+
+If this options is given,  the installation source will
+not be used; only locally installed packages, collections, or schemes
+are listed.
+(Does not work for listing of packages for now)
+
+=item B<--taxonomy>
+
+=item B<--keyword>
+
+=item B<--functionality>
+
+=item B<--characterization>
+
+In addition to the normal data displayed, also display information for
+given packages from the corresponding taxonomy (or all of them).  See
+L</"TAXONOMIES"> below for details.
+
+=back
 
 
 =head2 search [I<option>...] I<what>
@@ -6390,61 +6462,6 @@ descriptions.  See L</"TAXONOMIES"> below.
 =item B<--all>
 
 Search for package names, descriptions, and taxonomies, but not files.
-
-=back
-
-
-=head2 info [I<option>...] [collections|schemes|I<pkg>...]
-
-With no argument, lists all packages available at the package
-repository, prefixing those already installed with C<i>.
-
-With the single word C<collections> or C<schemes> as the argument, lists
-the request type instead of all packages.
-
-With any other arguments, display information about I<pkg>: the name,
-category, short and long description, installation status, and TeX Live
-revision number.  If I<pkg> is not locally installed, searches in the
-remote installation source.
-
-It also displays information taken from the TeX Catalogue, namely the
-package version, date, and license.  Consider these, especially the
-package version, as approximations only, due to timing skew of the
-updates of the different pieces.  By contrast, the C<revision> value
-comes directly from TL and is reliable.
-
-The former actions C<show> and C<list> are merged into this action,
-but are still supported for backward compatibility.
-
-Options:
-
-=over 4
-
-=item B<--list>
-
-If the option C<--list> is given with a package, the list of contained
-files is also shown, including those for platform-specific dependencies.
-When given with schemes and collections, C<--list> outputs their
-dependencies in a similar way.
-
-=item B<--only-installed>
-
-If this options is given,  the installation source will
-not be used; only locally installed packages, collections, or schemes
-are listed.
-(Does not work for listing of packages for now)
-
-=item B<--taxonomy>
-
-=item B<--keyword>
-
-=item B<--functionality>
-
-=item B<--characterization>
-
-In addition to the normal data displayed, also display information for
-given packages from the corresponding taxonomy (or all of them).  See
-L</"TAXONOMIES"> below for details.
 
 =back
 
@@ -6742,7 +6759,7 @@ make yourself responsible for rigorously using C<updmap-local.cfg>), set
 C<option generate_updmap>).
 
 
-=head1 CONFIGURATION FILE
+=head1 TLMGR CONFIGURATION FILE
 
 A small subset of the command line options can be set in a config file
 for C<tlmgr> which resides in C<TEXMFCONFIG/tlmgr/config>.  By default, the
@@ -6764,118 +6781,6 @@ C<gui-expertmode> switches between the full
 GUI and a simplified GUI with only the important and mostly used
 settings.
 
-=head1 MULTIPLE REPOSITORIES
-
-Most packages are distributed via the main TeX Live repository, but
-sometimes local repositories are used to provide local packages
-(like commercial fonts, internal styles), as well as alternative
-package repositories for packages that cannot be included in
-proper TeX Live due to license or other reasons.
-
-Without multiple repository support using these additional repositories
-needed an extra invocation and temporarily setting the installation
-source to this additional repository. By setting up all the
-repositories as sources of packages one does not need to
-use multiple invocations of tlmgr anymore.
-
-B<Warning:> Although support for multiple repositories has been
-tested extensively, it does not guarantee proper operation. If you
-want to be sure not to break anything, consider continuing
-using multiple invocations of tlmgr.
-
-When using multiple repositories, one has to be the main repository,
-which distributes most of the TeX Live packages. If you convert
-from a single repository installation to a multiple repository
-installation (by calling tlmgr repository add), the previously
-set repository will be set as the main repository.
-
-By default, even if multiple repositories are configured, packages
-are B<only> installed from the main repository, as long as
-packages are not explicitely pinned to a different repository.
-That also means by simply adding another repository you will
-B<not> be able to install the packages from there, you first
-have to specify which packages should be taken from a
-different repository by specifying some pinning rules.
-
-=head2 Pinning
-
-Pinning a package is done by editing (adding) a file
-
-  TEXMFLOCAL/tlpkg/pinning.txt
-
-which contains lines
-
-  repo:pkg[,pkg]
-
-In this line the C<repo> is either the full URL saved in the
-list or repositories, or one of the tags given. The C<pkg>
-are shell style globs for packages.
-
-By default everything is pinned to the main repository, so
-you can imagine that at the end of the file pinning.txt there
-is a line
-
-  main:*
-
-If a package C<foo> is pinned to a repository, any package
-C<foo> in any other repository, even if it has a higher
-revision number, will not be considered as installable
-candidate.
-
-=head2 Usage example with tlcontrib
-
-- check current repository:
-
- $ tlmgr repository list
- List of repositories (with tags if set):
-   /var/www/norbert/tlnet
-
-- add tlcontrib repository (and give it a short name)
-
- $ tlmgr repository add http://tlcontrib.metatex.org/2011 tlcontrib
-
-- check repositories:
-
- $ tlmgr repository list
- List of repositories (with tags if set):
-    http://tlcontrib.metatex.org/2011 (tlcontrib)
-    /var/www/norbert/tlnet (main)
-
-
-- add a pinning to get cowfont from tlcontrib:
-
- $ mkdir -p `kpsewhich -var-value TEXMFLOCAL`/tlpkg
- $ echo "tlcontrib:cowfont" > `kpsewhich -var-value TEXMFLOCAL`/tlpkg/pinning.txt
-
-- check that we can find cowfont:
-
- $ tlmgr show cowfont
- tlmgr: using pinning file .../tlpkg/pinning.txt
- tlmgr: package repository /var/www/norbert/tlnet http://tlcontrib.metatex.org/2011
- package:     cowfont
- category:    Package
- ...
-
-- install cowfont and context (which is needed!)
-
- $ tlmgr install context cowfont
- tlmgr: using pinning file .../tlpkg/pinning.txt
- tlmgr: package repository /var/www/norbert/tlnet http://tlcontrib.metatex.org/2011
- [1/11, ??:??/??:??] install: context.x86_64-linux @main [84k]
- [2/11, 00:00/00:00] install: context @main [4274k]
- [3/11, 00:01/00:02] install: cowfont @tlcontrib [655k]
- [4/11, 00:05/00:09] install: metapost.x86_64-linux @main [198k]
- [5/11, 00:05/00:09] install: metapost @main [72k]
- [6/11, 00:05/00:09] install: mptopdf.x86_64-linux @main [1k]
- [7/11, 00:06/00:11] install: mptopdf @main [37k]
- [8/11, 00:06/00:11] install: stmaryrd @main [163k]
- [9/11, 00:07/00:12] install: xetex.x86_64-linux @main [4442k]
- [10/11, 00:08/00:08] install: xetex @main [46k]
- [11/11, 00:08/00:08] install: xetexconfig @main [13k]
- ...
-
-In the last part you see that the cowfont is installed from
-the tlcontrib part (@tlcontrib).
 
 =head1 TAXONOMIES
 
@@ -6923,22 +6828,259 @@ Examples:
                                         #   including all taxonomy entries
 
 
+=head1 MULTIPLE REPOSITORIES
+
+Most packages are distributed via the main TeX Live repository, but
+sometimes local repositories are used to provide local packages (e.g.,
+proprietary fonts, internal styles).  There are also alternative package
+repositories for packages that cannot or should not be included in TeX
+Live, due to being under rapid development or for other reasons.
+
+It's possible to tell C<tlmgr> about additional repositories you want to
+use.  Although this support for multiple repositories has been tested
+extensively, we cannot guarantee proper operation.  If in doubt or if
+problems, you can temporarily set the installation source to any
+repository and perform your operations.
+
+When using multiple repositories, one of them has to be set as the main
+repository, which distributes most of the installed packages.  If you
+switch from a single repository installation to a multiple repository
+installation (by calling C<tlmgr repository add>), the previously set
+repository will be set as the main repository.
+
+By default, even if multiple repositories are configured, packages are
+I<only> installed from the main repository.  Thus, simply adding a
+second repository does not enable installation of anything from there.
+You first have to specify which packages should be taken from a
+different repository by specifying some so-called ``pinning'' rules,
+described next.
+
+=head2 Pinning
+
+Pinning a package is done by editing (adding) a file
+
+  TEXMFLOCAL/tlpkg/pinning.txt
+
+which contains lines of the form:
+
+  repo:pkg[,pkg]
+
+In this line, the I<repo> is either a full url or repository tag that
+was added to the repository list.  Each I<pkg> is a shell-style glob for
+package identifiers.
+
+By default, everything is pinned to the main repository, 
+as if at the end of C<pinning.txt> there is a line
+
+  main:*
+
+Now, if a package C<foo> is pinned to a repository, any package C<foo>
+in any other repository, even if it has a higher revision number, will
+not be considered as an installable candidate.
+
+=head2 Multiple repository example with tlcontrib
+
+First, check that we have support for multiple repositories, and only
+one specified (as is the case by default):
+
+ $ tlmgr repository list
+ List of repositories (with tags if set):
+   /var/www/norbert/tlnet
+
+Add the C<tlcontrib> repository maintained by Taco Hoekwater et al.,
+with the tag C<tlcontrib>:
+
+ $ tlmgr repository add http://tlcontrib.metatex.org/2011 tlcontrib
+
+Check the repository list again:
+
+ $ tlmgr repository list
+ List of repositories (with tags if set):
+    http://tlcontrib.metatex.org/2011 (tlcontrib)
+    /var/www/norbert/tlnet (main)
+
+Specify a pinning entry to get the package C<cowfont> from C<tlcontrib>:
+
+ $ tlocal=`kpsewhich -var-value TEXMFLOCAL`
+ $ mkdir -p $tlocal/tlpkg
+ $ echo "tlcontrib:cowfont" > $tlocal/tlpkg/pinning.txt
+
+Check that we can find C<cowfont>:
+
+ $ tlmgr show cowfont
+ tlmgr: using pinning file .../tlpkg/pinning.txt
+ tlmgr: package repository /var/www/norbert/tlnet http://tlcontrib.metatex.org/2011
+ package:     cowfont
+ category:    Package
+ ...
+
+- install cowfont and context (which is needed!)
+
+ $ tlmgr install context cowfont
+ tlmgr: using pinning file .../tlpkg/pinning.txt
+ tlmgr: package repository /var/www/norbert/tlnet http://tlcontrib.metatex.org/2011
+ [1/11, ??:??/??:??] install: context.x86_64-linux @main [84k]
+ [2/11, 00:00/00:00] install: context @main [4274k]
+ [3/11, 00:01/00:02] install: cowfont @tlcontrib [655k]
+ [4/11, 00:05/00:09] install: metapost.x86_64-linux @main [198k]
+ [5/11, 00:05/00:09] install: metapost @main [72k]
+ [6/11, 00:05/00:09] install: mptopdf.x86_64-linux @main [1k]
+ [7/11, 00:06/00:11] install: mptopdf @main [37k]
+ [8/11, 00:06/00:11] install: stmaryrd @main [163k]
+ [9/11, 00:07/00:12] install: xetex.x86_64-linux @main [4442k]
+ [10/11, 00:08/00:08] install: xetex @main [46k]
+ [11/11, 00:08/00:08] install: xetexconfig @main [13k]
+ ...
+
+In the last part you see that the cowfont is installed from
+the tlcontrib part (@tlcontrib).
+
+
 =head1 GUI FOR TLMGR
 
-The graphical user interface for C<tlmgr> needs Perl/TK being installed.
+The graphical user interface for C<tlmgr> needs Perl/Tk to be installed.
 For Windows the necessary modules are shipped within TeX Live, for all
-other (i.e., Unix-based) systems Perl/Tk (as well as perl of course) has
-to be installed.
+other (i.e., Unix-based) systems Perl/Tk (as well as Perl of course) has
+to be installed.  L<http://tug.org/texlive/distro.html#perltk> has a
+list of invocations for some distros.
 
 When started with C<tlmgr gui> the graphical user interface will be
 shown.  The main window contains a menu bar, the main display, and a
 status area where messages normally shown on the console are displayed.
 
-Within the main display there are three main parts: The I<Display
-configuration>, the list of packages, and the buttons for actions.  In
-addition to these three on the top right there is some text showing the
-currently loaded repository (this text also acts as button and will load
-the default repository).
+Within the main display there are three main parts: the C<Display
+configuration> area, the list of packages, and the action buttons.
+
+Also, at the top right the currently loaded repository is shown; this
+also acts as a button and when clicked will try to load the default
+repository.  To load a different repository, see the C<tlmgr> menu item.
+
+Finally, the status area at the bottom of the window gives additional
+information about what is going on.
+
+
+=head2 Main display
+
+=head3 Display configuration area
+
+The first part of the main display allows you to specify (filter) which
+packages are shown.  By default, all are shown.  Changes here are
+reflected right away.
+
+=over 4
+
+=item Status
+
+Select whether to show all packages (the default), only those installed,
+only those I<not> installed, or only those with update available.
+
+=item Category
+
+Select which categories are shown: packages, collections, and/or
+schemes.  These are briefly explained in the L<DESCRIPTION> section
+above.
+
+=item Match
+
+Select packages matching for a specific pattern.  By default, this uses
+the same algorithm as C<tlmgr search>, i.e., searches everything:
+descriptions, taxonomies, and/or filenames.  You can also select any
+subset for searching.
+
+=item Selection
+
+Select packages to those selected, those not selected, or all.  Here,
+``selected'' means that the checkbox in the beginning of the line of a
+package is ticked.
+
+=item Display configuration buttons
+
+To the right there are three buttons: select all packages, select none
+(a.k.a. deselect all), and reset all these filters to the defaults,
+i.e., show all available.
+
+=back
+
+=head3 Package list area
+
+The second are of the main display lists all installed packages.  If a
+repository is loaded, those that are available but not installed are
+also listed.
+
+Double clicking on a package line pops up an informational window with
+further details: the long description, included files, etc.
+
+Each line of the package list consists of the following items:
+
+=over 4
+
+=item a checkbox
+
+Used to select particular packages; some of the action buttons (see
+below) work only on the selected packages.
+
+=item package name
+
+The name (identifier) of the package as given in the database.
+
+=item local revision (and version)
+
+If the package is installed the TeX Live revision number for the
+installed package will be shown.  If there is a catalogue version given
+in the database for this package, it will be shown in parentheses.
+However, the catalogue version, unlike the TL revision, is not
+guaranteed to reflect what is actually installed.
+
+=item remote revision (and version)
+
+If a repository has been loaded the revision of the package in the
+repository (if present) is shown.  As with the local column, if a
+catalogue version is provided it will be displayed.  And also as with
+the local column, the catalogue version may be stale.
+
+=item short description
+
+The short description of the package.
+
+=back
+
+=head3 Main display action buttons
+
+Below the list of packages are several buttons:
+
+=over 4
+
+=item Update all installed
+
+This calls C<tlmgr update --all>, i.e., tries to update all available
+packages.  Below this button is a toggle to allow reinstallation of
+previously removed packages as part of this action.
+
+The other four buttons only work on the selected packages, i.e., those
+where the checkbox at the beginning of the package line is ticked.
+
+=item Update
+
+Update only the selected packages.
+
+=item Install
+
+Install the selected packages; acts like C<tlmgr install>, i.e., also
+installs dependencies.  Thus, installing a collection installs all its
+constituent packages.
+
+=item Remove
+
+Removes the selected packages; acts like C<tlmgr remove>, i.e., it will
+also remove dependencies of collections (but not dependencies of normal
+packages).
+
+=item Backup
+
+Makes a backup of the selected packages; acts like C<tlmgr backup>. This
+action needs the option C<backupdir> set (see C<Options -> General>).
+
+=back
 
 
 =head2 Menu bar
@@ -6947,162 +7089,54 @@ The following entries can be found in the menu bar:
 
 =over 4
 
-=item B<tlmgr>
+=item B<tlmgr> menu
 
-Provides access to load various repositories (the default as specified
-in the texlive database, the default network repository, if given the
-repository specified on the command line, and an arbitrary other one.
-Furthermore is allows to quit C<tlmgr>.
+The items here load various repositories: the default as specified in
+the TeX Live database, the default network repository, the repository
+specified on the command line (if any), and an arbitrarily
+manually-entered one.  Also has the so-necessary C<quit> operation.
 
-=item B<Options>
+=item B<Options menu>
 
-Provides access to three groups of options, I<General> (for almost all
-options), I<Paper> (configuration of default paper sizes), I<Platforms>
-(only on Unix, configuration of the supported/installed platforms), as
-well as some toggles to turn on and off various options.
+Provides access to several groups of options: C<Paper> (configuration of
+default paper sizes), C<Platforms> (only on Unix, configuration of the
+supported/installed platforms), C<GUI Language> (select language used in
+the GUI interface), and C<General> (everything else).
 
-There is also a toggle for C<Expert options> which defaults to on. If
-you turn this off the next time you start the GUI a simplified screen
-will be shown that exhibits only the most important and necessary
-functionality. This setting is saved in the configuration file of
-C<tlmgr>, see L<CONFIGURATION FILE> for details.
+Several toggles are also here.  The first is C<Expert options>, which is
+set by default.  If you turn this off, the next time you start the GUI a
+simplified screen will be shown that display only the most important
+functionality.  This setting is saved in the configuration file of
+C<tlmgr>; see L<CONFIGURATION FILE> for details.
 
-=item B<Actions>
+The other toggles are all off by default: for debugging output, to
+disable the automatic installation of new packages, and to disable the
+automatic removal of packages deleted from the server.  Playing with the
+choices of what is or isn't installed may lead to an inconsistent TeX Live
+installation; e.g., when a package is renamed.
 
-Provides access to a variety of items, such as updating the filename
-database (aka ls-R, mktexlsr, texhash), rebuilding of all formats
-(C<fmtutil-sys --all>), updating the font map database (C<updmap-sys>),
-and handling of symbolic links in system directories (only Unix),
-restoring backups of packages, as well as removal of the full TeX Live
-installation (only Unix).
+=item B<Actions menu>
 
-=item B<Help>
+Provides access to several actions: update the filename database (aka
+C<ls-R>, C<mktexlsr>, C<texhash>), rebuild all formats (C<fmtutil-sys
+--all>), update the font map database (C<updmap-sys>), restore from a backup
+of a package, and use of symbolic links in system directories (not on
+Windows).
 
-Provides access to the manual and other basic information on the 
-installed version, authors, license.
+The final action is to remove the entire TeX Live installation (also not
+on Windows).
 
-=back
+=item B<Help menu>
 
-
-=head2 Main display
-
-The main display lists all packages, installed and, if a repository is
-loaded, also those that are available but not installed.
-
-Each line of the package list contains of the following items:
-
-=over 4
-
-=item a checkbox
-
-used for selecting packages, some of the action buttons (see below) will
-work only on the selected packages.
-
-=item the package name
-
-that is the name of the package as given in the database.
-
-=item local revision (and version)
-
-If the package is installed the revision of the installed package will
-be shown. If there is a catalogue version given in the database for this
-package, it will be shown in parenthesis.
-
-=item remote revision (and version)
-
-If a repository has been loaded the revision of the package in the
-repository (if present) is shown. As with the local variant, if a
-catalogue version is provided it will be displayed.
-
-=item short description
-
-The short description (or title) is shown.
+Provides access to the TeX Live manual (also on the web at
+L<http://tug.org/texlive/doc.html>) and the usual ``About'' box.
 
 =back
-
-Double clicking on one of the lines pops up an informational window with
-further details, the long description, included files, etc.
-
-Above the list of package there are options to configure the list of
-packages to be shown. Changing any of them will automatically update the
-list of packages. The different display configurations are:
-
-=over 4
-
-=item Status
-
-allows selecting to show all, only the installed, only those packages
-that are not installed, or only those with packages available.
-
-=item Category
-
-allows to select which categories are shown.
-
-=item Match
-
-allows searching for a specific pattern. This uses the same algorithm as
-C<tlmgr search>, i.e., searches in the title, short and long
-descriptions.
-
-=item Selection
-
-allows restricting the list of packages to those selected, not selected,
-or all (selected means that the checkbox in the beginning of the line of
-a package is selected).
-
-=item buttons
-
-To the right there are three buttons, one to select all packages, one to
-select none (deselect all), and one to reset all filters to the
-defaults, i.e., show all available.
-
-=back
-
-Below the list of packages there are five buttons:
-
-=over 4
-
-=item Update all installed
-
-This calls C<tlmgr update --all> internally, i.e., tries to update all
-available packages.
-
-Below this button there is a toggle that allows reinstallation of
-previously removed packages.
-
-The following four buttons only work on the I<selected> packages, i.e.,
-those where the checkbutton at the beginning of the line is ticked.
-
-=item Update
-
-only update the selected packages.
-
-=item Install
-
-install the selected packages; acts like C<tlmgr install>, i.e., also
-installs dependencies. Thus, installing a collection will install
-all its constituent packages.
-
-=item Remove
-
-removes the selected packages; acts like C<tlmgr remove>, i.e., it will
-also remove dependencies of collections (but not dependencies of normal
-packages).
-
-=item Backup
-
-makes a backup of the selected packages; acts like C<tlmgr backup>. This
-action needs the option C<backupdir> set (see C<Options -> General>).
-
-=back
-
-Finally, the status area at the bottom of the window gives additional
-information about what is going on.
 
 
 =head1 MACHINE-READABLE OUTPUT
 
-Given the C<--machine-readable> option, C<tlmgr> writes to stdout in the
+With the C<--machine-readable> option, C<tlmgr> writes to stdout in the
 fixed line-oriented format described here, and the usual informational
 messages for human consumption are written to stderr (normally they are
 written to stdout).  The idea is that a program can get all the
@@ -7114,7 +7148,7 @@ L<install|"install [I<option>]... I<pkg>...">, and the
 L<option|"option"> actions.  
 
 
-=head2 Update and install actions
+=head2 update and install actions
 
 The output format is as follows:
 
