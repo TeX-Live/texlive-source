@@ -1,3 +1,8 @@
+2012-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luainit.w (lua_initialize): Use WEB2CVERSION.
+	* tex/printing.w (print_banner, log_banner): Same.
+
 2012-02-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatex.h: Remove definition of WRITE_OUT, now in ../cpascal.h.

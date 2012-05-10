@@ -1,3 +1,7 @@
+2012-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luainit.w: Use WEB2CVERSION.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libmplib.am (EXTRA_DIST): Drop lmplib.c, used by luaTeX.
