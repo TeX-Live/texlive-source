@@ -1,7 +1,7 @@
 /* lepdflib.cc
 
-   Copyright 2009-2011 Taco Hoekwater <taco@luatex.org>
-   Copyright 2009-2011 Hartmut Henkel <hartmut@luatex.org>
+   Copyright 2009-2012 Taco Hoekwater <taco@luatex.org>
+   Copyright 2009-2012 Hartmut Henkel <hartmut@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -19,8 +19,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lepdflib.cc 4134 2011-04-11 20:54:58Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
+    "$Id: lepdflib.cc 4415 2012-05-09 19:56:06Z oneiros $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
 
 #include "image/epdf.h"
 
@@ -49,15 +49,13 @@ static const char *ErrorCodeNames[] = { "None", "OpenFile", "BadCatalog",
 //**********************************************************************
 
 #define M_Annot            "Annot"
-#define M_AnnotBorder      "AnnotBorder"
-#define M_AnnotBorderStyle "AnnotBorderStyle"
 #define M_Annots           "Annots"
 #define M_Array            "Array"
 #define M_Catalog          "Catalog"
-#define M_EmbFile          "EmbFile"
 #define M_Dict             "Dict"
 #define M_GooString        "GooString"
 #define M_LinkDest         "LinkDest"
+#define M_Link             "Link"
 #define M_Links            "Links"
 #define M_Object           "Object"
 #define M_Page             "Page"
@@ -65,8 +63,8 @@ static const char *ErrorCodeNames[] = { "None", "OpenFile", "BadCatalog",
 #define M_PDFRectangle     "PDFRectangle"
 #define M_Ref              "Ref"
 #define M_Stream           "Stream"
-#define M_XRef             "XRef"
 #define M_XRefEntry        "XRefEntry"
+#define M_XRef             "XRef"
 
 //**********************************************************************
 
@@ -84,16 +82,9 @@ static udstruct *new_##type##_userdata(lua_State * L)                           
 new_poppler_userdata(PDFDoc);
 
 new_poppler_userdata(Annot);
-new_poppler_userdata(AnnotBorder);
-//new_poppler_userdata(AnnotBorderStyle);
-new_poppler_userdata(Annots);
 new_poppler_userdata(Array);
 new_poppler_userdata(Catalog);
 new_poppler_userdata(Dict);
-#ifdef EMBFILE_IN_CATALOG_H
-new_poppler_userdata(EmbFile);
-#endif
-//new_poppler_userdata(GooString);
 new_poppler_userdata(LinkDest);
 new_poppler_userdata(Links);
 new_poppler_userdata(Object);
@@ -102,7 +93,6 @@ new_poppler_userdata(PDFRectangle);
 new_poppler_userdata(Ref);
 new_poppler_userdata(Stream);
 new_poppler_userdata(XRef);
-//new_poppler_userdata(XRefEntry);
 
 //**********************************************************************
 
@@ -135,53 +125,6 @@ static int l_open_PDFDoc(lua_State * L)
         uout->pd = d;
     }
     return 1;                   // doc path
-}
-
-static int l_new_Annot(lua_State * L)
-{
-    udstruct *uxref, *udict, *ucatalog, *uref, *uout;
-    uxref = (udstruct *) luaL_checkudata(L, 1, M_XRef);
-    udict = (udstruct *) luaL_checkudata(L, 2, M_Dict);
-    ucatalog = (udstruct *) luaL_checkudata(L, 3, M_Catalog);
-    uref = (udstruct *) luaL_checkudata(L, 4, M_Ref);
-    if (uxref->pd != ucatalog->pd || uxref->pd != udict->pd
-        || uxref->pd != uref->pd)
-        pdfdoc_differs_error(L);
-    if ((uxref->pd != NULL && uxref->pd->pc != uxref->pc) ||
-        (ucatalog->pd != NULL && ucatalog->pd->pc != ucatalog->pc) ||
-        (udict->pd != NULL && udict->pd->pc != udict->pc) ||
-        (uref->pd != NULL && uref->pd->pc != uref->pc))
-        pdfdoc_changed_error(L);
-    uout = new_Annot_userdata(L);
-    uout->d =
-        new Annot((XRef *) uxref->d, (Dict *) udict->d, (Catalog *) ucatalog->d,
-                  (Object *) uref->d);
-    uout->atype = ALLOC_LEPDF;
-    uout->pc = uxref->pc;
-    uout->pd = uxref->pd;
-    return 1;
-}
-
-static int l_new_Annots(lua_State * L)
-{
-    udstruct *uxref, *ucatalog, *uannotsobj, *uout;
-    uxref = (udstruct *) luaL_checkudata(L, 1, M_XRef);
-    ucatalog = (udstruct *) luaL_checkudata(L, 2, M_Catalog);
-    uannotsobj = (udstruct *) luaL_checkudata(L, 3, M_Object);
-    if (uxref->pd != ucatalog->pd || uxref->pd != uannotsobj->pd)
-        pdfdoc_differs_error(L);
-    if ((uxref->pd != NULL && uxref->pd->pc != uxref->pc)
-        || (ucatalog->pd != NULL && ucatalog->pd->pc != ucatalog->pc)
-        || (uannotsobj->pd != NULL && uannotsobj->pd->pc != uannotsobj->pc))
-        pdfdoc_changed_error(L);
-    uout = new_Annots_userdata(L);
-    uout->d =
-        new Annots((XRef *) uxref->d, (Catalog *) ucatalog->d,
-                   (Object *) uannotsobj->d);
-    uout->atype = ALLOC_LEPDF;
-    uout->pc = uxref->pc;
-    uout->pd = uxref->pd;
-    return 1;
 }
 
 static int l_new_Array(lua_State * L)
@@ -238,8 +181,6 @@ static int l_new_PDFRectangle(lua_State * L)
 
 static const struct luaL_Reg epdflib[] = {
     {"open", l_open_PDFDoc},
-    {"Annot", l_new_Annot},
-    {"Annots", l_new_Annots},
     {"Array", l_new_Array},
     {"Dict", l_new_Dict},
     {"Object", l_new_Object},
@@ -362,12 +303,26 @@ static int m_##type##__tostring(lua_State * L)                 \
     return 1;                                                  \
 }
 
+#define m_poppler_check_string(in, function)                   \
+static int m_##in##_##function(lua_State * L)                  \
+{                                                              \
+    const char *s;                                             \
+    udstruct *uin;                                             \
+    uin = (udstruct *) luaL_checkudata(L, 1, M_##in);          \
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)             \
+        pdfdoc_changed_error(L);                               \
+    s = luaL_checkstring(L, 2);                                \
+    if (((in *) uin->d)->function((char *) s))                 \
+        lua_pushboolean(L, 1);                                 \
+    else                                                       \
+        lua_pushboolean(L, 0);                                 \
+    return 1;                                                  \
+}
+
 //**********************************************************************
 // Annot
 
 m_poppler_get_BOOL(Annot, isOk);
-m_poppler_get_OBJECT(Annot, getAppearance);
-m_poppler_get_poppler(Annot, AnnotBorder, getBorder);
 
 static int m_Annot_match(lua_State * L)
 {
@@ -405,45 +360,11 @@ static int m_Annot__gc(lua_State * L)
 
 static const struct luaL_Reg Annot_m[] = {
     {"isOk", m_Annot_isOk},
-    {"getAppearance", m_Annot_getAppearance},
-    {"getBorder", m_Annot_getBorder},
     {"match", m_Annot_match},
     {"__tostring", m_Annot__tostring},
     {"__gc", m_Annot__gc},
     {NULL, NULL}                // sentinel
 };
-
-//**********************************************************************
-// AnnotBorderStyle
-
-#ifdef HAVE_ANNOTBORDERSTYLE
-
-m_poppler_get_DOUBLE(AnnotBorderStyle, getWidth);
-
-m_poppler__tostring(AnnotBorderStyle);
-
-static int m_Annots__gc(lua_State * L)
-{
-    udstruct *uin;
-    uin = (udstruct *) luaL_checkudata(L, 1, M_Annots);
-    if (uin->pd != NULL && uin->pd->pc != uin->pc)
-        pdfdoc_changed_error(L);
-#ifdef DEBUG
-    printf("\n===== Annots GC ===== uin=<%p>\n", uin);
-#endif
-    if (uin->atype == ALLOC_LEPDF)
-        delete(Annots *) uin->d;
-    return 0;
-}
-
-static const struct luaL_Reg AnnotBorderStyle_m[] = {
-    {"getWidth", m_AnnotBorderStyle_getWidth},
-    {"__tostring", m_AnnotBorderStyle__tostring},
-    {"__gc", m_Annots__gc},
-    {NULL, NULL}                // sentinel
-};
-
-#endif
 
 //**********************************************************************
 // Annots
@@ -694,34 +615,6 @@ static int m_Catalog_findDest(lua_State * L)
 m_poppler_get_poppler(Catalog, Object, getDests);
 m_poppler_get_INT(Catalog, numEmbeddedFiles);
 
-#ifdef EMBFILE_IN_CATALOG_H
-
-static int m_Catalog_embeddedFile(lua_State * L)
-{
-    EmbFile *ef;
-    int i, len;
-    udstruct *uin, *uout;
-    uin = (udstruct *) luaL_checkudata(L, 1, M_Catalog);
-    if (uin->pd != NULL && uin->pd->pc != uin->pc)
-        pdfdoc_changed_error(L);
-    i = luaL_checkint(L, 2);
-    len = ((Catalog *) uin->d)->numEmbeddedFiles();
-    if (i > 0 && i <= len) {
-        ef = ((Catalog *) uin->d)->embeddedFile(i - 1);
-        if (ef != NULL) {
-            uout = new_EmbFile_userdata(L);
-            uout->d = ef;
-            uout->pc = uin->pc;
-            uout->pd = uin->pd;
-        } else
-            lua_pushnil(L);
-    } else
-        lua_pushnil(L);
-    return 1;
-}
-
-#endif
-
 m_poppler_get_INT(Catalog, numJS);
 
 static int m_Catalog_getJS(lua_State * L)
@@ -763,9 +656,6 @@ static const struct luaL_Reg Catalog_m[] = {
     {"findDest", m_Catalog_findDest},
     {"getDests", m_Catalog_getDests},
     {"numEmbeddedFiles", m_Catalog_numEmbeddedFiles},
-#ifdef EMBFILE_IN_CATALOG_H
-    {"embeddedFile", m_Catalog_embeddedFile},
-#endif
     {"numJS", m_Catalog_numJS},
     {"getJS", m_Catalog_getJS},
     {"getOutline", m_Catalog_getOutline},
@@ -773,53 +663,6 @@ static const struct luaL_Reg Catalog_m[] = {
     {"__tostring", m_Catalog__tostring},
     {NULL, NULL}                // sentinel
 };
-
-//**********************************************************************
-// EmbFile
-
-#ifdef EMBFILE_IN_CATALOG_H
-
-m_poppler_get_GOOSTRING(EmbFile, name);
-m_poppler_get_GOOSTRING(EmbFile, description);
-m_poppler_get_INT(EmbFile, size);
-m_poppler_get_GOOSTRING(EmbFile, modDate);
-m_poppler_get_GOOSTRING(EmbFile, createDate);
-m_poppler_get_GOOSTRING(EmbFile, checksum);
-m_poppler_get_GOOSTRING(EmbFile, mimeType);
-
-static int m_EmbFile_streamObject(lua_State * L)
-{
-    udstruct *uin, *uout;
-    uin = (udstruct *) luaL_checkudata(L, 1, M_EmbFile);
-    if (uin->pd != NULL && uin->pd->pc != uin->pc)
-        pdfdoc_changed_error(L);
-    uout = new_Object_userdata(L);
-    uout->d = new Object();     // automatic init to type "none"
-    ((EmbFile *) uin->d)->streamObject().copy((Object *) uout->d);
-    uout->pc = uin->pc;
-    uout->pd = uin->pd;
-    return 1;
-}
-
-m_poppler_get_BOOL(EmbFile, isOk);
-
-m_poppler__tostring(EmbFile);
-
-static const struct luaL_Reg EmbFile_m[] = {
-    {"name", m_EmbFile_name},
-    {"description", m_EmbFile_description},
-    {"size", m_EmbFile_size},
-    {"modDate", m_EmbFile_modDate},
-    {"createDate", m_EmbFile_createDate},
-    {"checksum", m_EmbFile_checksum},
-    {"mimeType", m_EmbFile_mimeType},
-    {"streamObject", m_EmbFile_streamObject},
-    {"isOk", m_EmbFile_isOk},
-    {"__tostring", m_EmbFile__tostring},
-    {NULL, NULL}                // sentinel
-};
-
-#endif
 
 //**********************************************************************
 // Dict
@@ -888,20 +731,7 @@ static int m_Dict_remove(lua_State * L)
     return 0;
 }
 
-static int m_Dict_is(lua_State * L)
-{
-    const char *s;
-    udstruct *uin;
-    uin = (udstruct *) luaL_checkudata(L, 1, M_Dict);
-    if (uin->pd != NULL && uin->pd->pc != uin->pc)
-        pdfdoc_changed_error(L);
-    s = luaL_checkstring(L, 2);
-    if (((Dict *) uin->d)->is((char *) s))
-        lua_pushboolean(L, 1);
-    else
-        lua_pushboolean(L, 0);
-    return 1;
-}
+m_poppler_check_string(Dict, is);
 
 static int m_Dict_lookup(lua_State * L)
 {
@@ -1012,6 +842,8 @@ static int m_Dict_getValNF(lua_State * L)
     return 1;
 }
 
+m_poppler_check_string(Dict, hasKey);
+
 m_poppler__tostring(Dict);
 
 static const struct luaL_Reg Dict_m[] = {
@@ -1028,6 +860,7 @@ static const struct luaL_Reg Dict_m[] = {
     {"getKey", m_Dict_getKey},
     {"getVal", m_Dict_getVal},
     {"getValNF", m_Dict_getValNF},
+    {"hasKey", m_Dict_hasKey},
     {"__tostring", m_Dict__tostring},
     {NULL, NULL}                // sentinel
 };
@@ -1135,9 +968,13 @@ static const struct luaL_Reg LinkDest_m[] = {
 //**********************************************************************
 // Links
 
+m_poppler_get_INT(Links, getNumLinks);
+
 m_poppler__tostring(Links);
 
 static const struct luaL_Reg Links_m[] = {
+    {"getNumLinks", m_Links_getNumLinks},
+    //{"getLink", m_Links_getLink},
     {"__tostring", m_Links__tostring},
     {NULL, NULL}                // sentinel
 };
@@ -1367,13 +1204,11 @@ static int m_Object_getType(lua_State * L)
 
 static int m_Object_getTypeName(lua_State * L)
 {
-    char *s;
     udstruct *uin;
     uin = (udstruct *) luaL_checkudata(L, 1, M_Object);
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
-    s = ((Object *) uin->d)->getTypeName();
-    lua_pushstring(L, s);
+    lua_pushstring(L, ((Object *) uin->d)->getTypeName());
     return 1;
 }
 
@@ -1465,15 +1300,13 @@ static int m_Object_getString(lua_State * L)
 
 static int m_Object_getName(lua_State * L)
 {
-    char *s;
     udstruct *uin;
     uin = (udstruct *) luaL_checkudata(L, 1, M_Object);
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
-    if (((Object *) uin->d)->isName()) {
-        s = ((Object *) uin->d)->getName();
-        lua_pushstring(L, s);
-    } else
+    if (((Object *) uin->d)->isName())
+        lua_pushstring(L, ((Object *) uin->d)->getName());
+    else
         lua_pushnil(L);
     return 1;
 }
@@ -1582,10 +1415,9 @@ static int m_Object_getCmd(lua_State * L)
     uin = (udstruct *) luaL_checkudata(L, 1, M_Object);
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
-    if (((Object *) uin->d)->isCmd()) {
-        s = ((Object *) uin->d)->getCmd();
-        lua_pushstring(L, s);
-    } else
+    if (((Object *) uin->d)->isCmd())
+        lua_pushstring(L, ((Object *) uin->d)->getCmd());
+    else
         lua_pushnil(L);
     return 1;
 }
@@ -2043,28 +1875,6 @@ m_poppler_get_poppler(Page, Dict, getSeparationInfo);
 m_poppler_get_poppler(Page, Dict, getResourceDict);
 m_poppler_get_OBJECT(Page, getAnnots);
 
-static int m_Page_getLinks(lua_State * L)
-{
-    Links *links;
-    udstruct *uin, *ucat, *uout;
-    uin = (udstruct *) luaL_checkudata(L, 1, M_Page);
-    ucat = (udstruct *) luaL_checkudata(L, 2, M_Catalog);
-    if (uin->pd != NULL && ucat->pd != NULL && uin->pd != ucat->pd)
-        pdfdoc_differs_error(L);
-    if ((uin->pd != NULL && uin->pd->pc != uin->pc)
-        || (ucat->pd != NULL && ucat->pd->pc != ucat->pd->pc))
-        pdfdoc_changed_error(L);
-    links = ((Page *) uin->d)->getLinks((Catalog *) ucat->d);
-    if (links != NULL) {
-        uout = new_Links_userdata(L);
-        uout->d = links;
-        uout->pc = uin->pc;
-        uout->pd = uin->pd;
-    } else
-        lua_pushnil(L);
-    return 1;
-}
-
 m_poppler_get_OBJECT(Page, getContents);
 
 m_poppler__tostring(Page);
@@ -2091,7 +1901,6 @@ static const struct luaL_Reg Page_m[] = {
     {"getSeparationInfo", m_Page_getSeparationInfo},
     {"getResourceDict", m_Page_getResourceDict},
     {"getAnnots", m_Page_getAnnots},
-    {"getLinks", m_Page_getLinks},
     {"getContents", m_Page_getContents},
     {"__tostring", m_Page__tostring},
     {NULL, NULL}                // sentinel
@@ -2276,19 +2085,23 @@ static int m_PDFDoc_findPage(lua_State * L)
 
 static int m_PDFDoc_getLinks(lua_State * L)
 {
-    int i;
+    int i, pages;
     Links *links;
     udstruct *uin, *uout;
     uin = (udstruct *) luaL_checkudata(L, 1, M_PDFDoc);
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
     i = luaL_checkint(L, 2);
-    links = ((PdfDocument *) uin->d)->doc->getLinks(i);
-    if (links != NULL) {
-        uout = new_Links_userdata(L);
-        uout->d = links;
-        uout->pc = uin->pc;
-        uout->pd = uin->pd;
+    pages = ((PdfDocument *) uin->d)->doc->getNumPages();
+    if (i > 0 && i <= pages) {
+        links = ((PdfDocument *) uin->d)->doc->getLinks(i);
+        if (links != NULL) {
+            uout = new_Links_userdata(L);
+            uout->d = links;
+            uout->pc = uin->pc;
+            uout->pd = uin->pd;
+        } else
+            lua_pushnil(L);
     } else
         lua_pushnil(L);
     return 1;
@@ -2367,6 +2180,8 @@ static int m_PDFDoc_getDocInfoNF(lua_State * L)
 m_PDFDoc_INT(getPDFMajorVersion);
 m_PDFDoc_INT(getPDFMinorVersion);
 
+m_poppler__tostring(PDFDoc);
+
 static int m_PDFDoc__gc(lua_State * L)
 {
     udstruct *uin;
@@ -2410,6 +2225,7 @@ static const struct luaL_Reg PDFDoc_m[] = {
     {"getDocInfoNF", m_PDFDoc_getDocInfoNF},
     {"getPDFMajorVersion", m_PDFDoc_getPDFMajorVersion},
     {"getPDFMinorVersion", m_PDFDoc_getPDFMinorVersion},
+    {"__tostring", m_PDFDoc__tostring},
     {"__gc", m_PDFDoc__gc},     // finalizer
     {NULL, NULL}                // sentinel
 };
@@ -2555,11 +2371,6 @@ static const char *StreamKindNames[] =
     "Flate", "JBIG2", "JPX", "Weird", NULL
 };
 
-#if 0
-static const char *StreamColorSpaceModeNames[] =
-    { "CSNone", "CSDeviceGray", "CSDeviceRGB", "CSDeviceCMYK", NULL };
-#endif
-
 m_poppler_get_INT(Stream, getKind);
 
 static int m_Stream_getKindName(lua_State * L)
@@ -2645,12 +2456,26 @@ static int m_XRef_fetch(lua_State * L)
 m_poppler_get_OBJECT(XRef, getDocInfo);
 m_poppler_get_OBJECT(XRef, getDocInfoNF);
 m_poppler_get_INT(XRef, getNumObjects);
-// getLastXRefPos
 m_poppler_get_INT(XRef, getRootNum);
 m_poppler_get_INT(XRef, getRootGen);
 // getStreamEnd
-m_poppler_get_INT(XRef, getSize);
-// getEntry
+
+static int m_XRef_getNumEntry(lua_State * L)
+{
+    int i, offset;
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_XRef);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    offset = luaL_checkint(L, 2);
+    i = ((XRef *) uin->d)->getNumEntry(offset);
+    if (i >= 0)
+        lua_pushinteger(L, i);
+    else
+        lua_pushnil(L);
+    return 1;
+}
+
 m_poppler_get_poppler(XRef, Object, getTrailerDict);
 
 m_poppler__tostring(XRef);
@@ -2672,11 +2497,10 @@ static const struct luaL_Reg XRef_m[] = {
     {"getDocInfo", m_XRef_getDocInfo},
     {"getDocInfoNF", m_XRef_getDocInfoNF},
     {"getNumObjects", m_XRef_getNumObjects},
-    //
     {"getRootNum", m_XRef_getRootNum},
     {"getRootGen", m_XRef_getRootGen},
-    //
-    {"getSize", m_XRef_getSize},
+    // {"getStreamEnd", m_XRef_getStreamEnd},
+    {"getNumEntry", m_XRef_getNumEntry},
     {"getTrailerDict", m_XRef_getTrailerDict},
     {"__tostring", m_XRef__tostring},
     {NULL, NULL}                // sentinel
@@ -2685,7 +2509,10 @@ static const struct luaL_Reg XRef_m[] = {
 //**********************************************************************
 // XRefEntry
 
+m_poppler__tostring(XRefEntry);
+
 static const struct luaL_Reg XRefEntry_m[] = {
+    {"__tostring", m_XRefEntry__tostring},
     {NULL, NULL}                // sentinel
 };
 
@@ -2702,17 +2529,10 @@ static const struct luaL_Reg XRefEntry_m[] = {
 int luaopen_epdf(lua_State * L)
 {
     register_meta(Annot);
-    // TODO register_meta(AnnotBorder);
-#ifdef HAVE_ANNOTBORDERSTYLE
-    register_meta(AnnotBorderStyle);
-#endif
     register_meta(Annots);
     register_meta(Array);
     register_meta(Catalog);
     register_meta(Dict);
-#ifdef EMBFILE_IN_CATALOG_H
-    register_meta(EmbFile);
-#endif
     register_meta(GooString);
     register_meta(LinkDest);
     register_meta(Links);

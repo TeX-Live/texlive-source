@@ -1,3 +1,7 @@
+2012-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop obsolete poppler tests.
+
 2012-04-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bibtex.ch: Do not check whether ent_str_size > buf_size and
