@@ -1,9 +1,9 @@
-This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (format=etrip 2011.4.7)  7 APR 2011 11:46
+This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (format=etrip 2012.5.11)  11 MAY 2012 13:47
 entering extended mode
 **&etrip etrip
 (./etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2011-04-07] for e-TeX v3.1415926-2.3.
-(You are using e-TeX version/revision 2.3)
+This is the e-Trip test [2012-05-11] for e-TeX v3.1415926-2.4.
+(You are using e-TeX version/revision 2.4)
 Missing character: There is no b in font nullfont!
 
 Missing character: There is no c in font nullfont!
@@ -4272,8 +4272,8 @@ laywidowpenalties:
 {restoring \interlinepenalties=0}
  ) 
 Here is how much of TeX's memory you used:
- 18 strings out of 1810
- 140 string characters out of 7791
+ 18 strings out of 1809
+ 140 string characters out of 7762
  3164 words of memory out of 3999
  409 multiletter control sequences out of 15000+0
  2286 words of font info for 3 fonts, out of 20000 for 75

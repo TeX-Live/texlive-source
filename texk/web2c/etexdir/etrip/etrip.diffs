@@ -12,7 +12,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011) (INITEX)  15 APR 2011 13:04
+> This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (INITEX)  11 MAY 2012 13:57
 3c3
 < (trip.tex
 ---
@@ -23,8 +23,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2011.4.15)
-> 1489 strings of total length 26179
+>  (format=trip 2012.5.11)
+> 1490 strings of total length 26207
 > 479 memory locations dumped; current usage is 104&278
 > 342 multiletter control sequences
 461c461
@@ -39,7 +39,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011)
+> This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -53,7 +53,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011) (format=trip 2011.4.15)  15 APR 2011 13:04
+> This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (format=trip 2012.5.11)  11 MAY 2012 13:57
 3c3
 < (trip.tex ##
 ---
@@ -173,8 +173,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1811
->  261 string characters out of 7821
+>  44 strings out of 1810
+>  261 string characters out of 7793
 >  3821 words of memory out of 3999
 >  373 multiletter control sequences out of 15000+0
 7301c7305
@@ -187,11 +187,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2011)
+> This is DVItype, Version 3.6 (TeX Live 2012)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2011.04.15:1304'
+> ' TeX output 2012.05.11:1357'
 419c419
 < 1121: down4 639342208 
 ---
@@ -338,40 +338,22 @@
 + mv etrip.log etripin.log
 + diff SRCDIR/etexdir/etrip/etripin.log etripin.log
 1c1
-< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (INITEX)  7 APR 2011 11:46
+< This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (INITEX)  11 MAY 2012 13:47
 ---
-> This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011) (INITEX)  15 APR 2011 13:04
-26,27c26,27
-<  (format=etrip 2011.4.7)
-< 1490 strings of total length 26209
----
->  (format=etrip 2011.4.15)
-> 1490 strings of total length 26210
+> This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (INITEX)  11 MAY 2012 13:57
 + ./etex --progname=etex
 + diff SRCDIR/etexdir/etrip/etrip.fot etrip.fot
-1c1
-< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev)
----
-> This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011)
 + diff SRCDIR/etexdir/etrip/etrip.log etrip.log
 1c1
-< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (format=etrip 2011.4.7)  7 APR 2011 11:46
+< This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (format=etrip 2012.5.11)  11 MAY 2012 13:47
 ---
-> This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011) (format=etrip 2011.4.15)  15 APR 2011 13:04
-4276c4276
-<  140 string characters out of 7791
----
->  140 string characters out of 7790
+> This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (format=etrip 2012.5.11)  11 MAY 2012 13:57
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
 + diff SRCDIR/etexdir/etrip/etrip.typ etrip.typ
-1c1
-< This is DVItype, Version 3.6
----
-> This is DVItype, Version 3.6 (TeX Live 2011)
 9c9
-< ' TeX output 2011.04.07:1213'
+< ' TeX output 2012.05.11:1347'
 ---
-> ' TeX output 2011.04.15:1304'
+> ' TeX output 2012.05.11:1357'
 + :
 PASS: etexdir/etrip.test

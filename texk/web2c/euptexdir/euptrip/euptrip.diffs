@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (INITEX)  11 MAY 2012 14:17
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -26,6 +26,12 @@
 < 
 ---
 > (./trip.tex
+47,48c39,40
+< <recently read> \font 
+<                       
+---
+> <recently read> 
+>                 
 91c83,84
 < ### horizontal mode entered at line 77 (language255:hyphenmin1,63)
 ---
@@ -37,8 +43,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2012.1.16)
-> 1612 strings of total length 27706
+>  (format=trip 2012.5.11)
+> 1613 strings of total length 27734
 > 489 memory locations dumped; current usage is 110&278
 > 393 multiletter control sequences
 461c454
@@ -54,12 +60,26 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev)
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
 ---
 > Memory usage before: 194&313; after: 118&278; still untouched: 2109
+28c27
+<                 }
+---
+>                 
+43,44c42,43
+< <recently read> end 
+<                     
+---
+> <recently read> 
+>                 
+70c69
+<                 }endwrite 
+---
+>                 
 75c74
 < Memory usage before: 334&431; after: 292&418; still untouched: 175
 ---
@@ -68,7 +88,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (format=trip 2012.1.16)  16 JAN 2012 15:14
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (format=trip 2012.5.11)  11 MAY 2012 14:17
 3c3
 < (trip.tex ##
 ---
@@ -110,6 +130,12 @@
 ---
 > \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
 >  3
+494,495c498,499
+< <recently read> \showlists 
+<                            
+---
+> <recently read> 
+>                 
 642c646
 < Memory usage before: 747&484; after: 581&481; still untouched: 1492
 ---
@@ -139,6 +165,12 @@
 ---
 > \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
 >  3
+723,724c728,729
+< <recently read> \showlists 
+<                            
+---
+> <recently read> 
+>                 
 815c820
 < Memory usage before: 475&470; after: 290&466; still untouched: 1473
 ---
@@ -148,6 +180,12 @@
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
+832,833c838,839
+< <recently read> \showlists 
+<                            
+---
+> <recently read> 
+>                 
 915c921
 < Memory usage before: 218&459; after: 149&458; still untouched: 1473
 ---
@@ -157,6 +195,12 @@
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
+928,929c935,936
+< <recently read> \showlists 
+<                            
+---
+> <recently read> 
+>                 
 1070c1077
 < Memory usage before: 118&328; after: 102&328; still untouched: 1473
 ---
@@ -171,6 +215,12 @@
 < Memory usage before: 990&376; after: 584&370; still untouched: 735
 ---
 > Memory usage before: 1490&375; after: 842&369; still untouched: 1970
+1809,1810c1817,1818
+< <recently read> $
+<                  
+---
+> <recently read> 
+>                 
 1954c1962
 < (tripos.tex
 ---
@@ -189,10 +239,32 @@
 < Memory usage before: 950&531; after: 546&448; still untouched: 706
 ---
 > Memory usage before: 1458&530; after: 808&447; still untouched: 1941
+2256,2257c2264,2265
+< <recently read> \font 
+<                       
+---
+> <recently read> 
+>                 
 2397c2405
 < ! Improper alphabetic constant.
 ---
 > ! Improper alphabetic or KANJI constant.
+2455c2463
+<                 \endgroup 
+---
+>                 
+2468,2469c2476,2477
+< <recently read> \halign 
+<                         
+---
+> <recently read> 
+>                 
+2497,2498c2505,2506
+< <recently read> =
+<                  
+---
+> <recently read> 
+>                 
 2533c2541
 < \vbox(16383.99998+0.0)x20.0, glue set 16331.0fil
 ---
@@ -201,10 +273,28 @@
 < Memory usage before: 339&413; after: 236&405; still untouched: 706
 ---
 > Memory usage before: 493&411; after: 327&403; still untouched: 1941
+2587,2588c2595,2596
+< <recently read> \eqno 
+<                       
+---
+> <recently read> 
+>                 
+2695,2696c2703,2704
+< <recently read> $
+<                  
+---
+> <recently read> 
+>                 
 2830c2838
 < Since I expected to read a number between 0 and 15,
 ---
 > Since I expected to read a number between 0 and 255,
+2904,2905c2912,2913
+< <recently read> \displaylimits 
+<                                
+---
+> <recently read> 
+>                 
 3051c3059
 < \insert0, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
 ---
@@ -215,10 +305,20 @@
 > .\fam0 È 
 3143a3152
 > ....\displace 0.0
+3207c3216
+<                 }
+---
+>                 
 3235c3244
 < ! \textfont 0 is undefined (character ^^c8).
 ---
 > ! \textfont 0 is undefined (character È).
+3297,3298c3306,3307
+< <recently read> \!
+<                   
+---
+> <recently read> 
+>                 
 3326c3335
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
@@ -233,10 +333,26 @@
 < Memory usage before: 2170&521; after: 1181&459; still untouched: 175
 ---
 > Memory usage before: 3263&519; after: 1743&457; still untouched: 483
+3778c3788
+<                 \inaccessible 
+---
+>                 
+3810c3820
+<                 \right .
+---
+>                 
+3825c3835
+<                 \right .
+---
+>                 
 3864c3874
 < \vbox(16383.99998+2.0)x100.0, glue set 16318.0fil
 ---
 > \vbox(16383.99998+2.0)x100.0, glue set 16317.99997fil
+3938c3948
+<                 }\endwrite 
+---
+>                 
 3951c3961
 < Memory usage before: 640&415; after: 397&410; still untouched: 175
 ---
@@ -269,6 +385,24 @@
 < Memory usage before: 651&432; after: 417&418; still untouched: 175
 ---
 > Memory usage before: 992&431; after: 598&417; still untouched: 483
+4549,4550c4559,4560
+< <argument> ##
+<              
+---
+> <argument> 
+>            
+4679,4680c4689,4690
+< <template> \A 
+<               \endtemplate 
+---
+> <template> 
+>            
+4689,4690c4699,4700
+< <recently read> }
+<                  
+---
+> <recently read> 
+>                 
 4742c4752,4753
 < \vbox(16383.99998+0.0)x205.12613, glue set 16344.0fil
 ---
@@ -287,26 +421,250 @@
 < Since I expected to read a number between 0 and 15,
 < I changed this one to zero.
 < 
-5700c5703
+4901c4904
+<                 \inaccessible 
+---
+>                 
+4996c4999
+<                 }
+---
+>                 
+5089c5092
+<                 \fi 
+---
+>                 
+5102c5105
+<                 \cr }
+---
+>                 
+5115,5116c5118,5119
+< <inserted text> \cr 
+<                     }
+---
+> <inserted text> 
+>                 
+5171c5174
+<                 }
+---
+>                 
+5200c5203
+<                 }
+---
+>                 
+5220c5223
+<                 \par 
+---
+>                 
+5232c5235
+<                 \par 
+---
+>                 
+5250c5253
+<                 \par 
+---
+>                 
+5266c5269
+<                 \par 
+---
+>                 
+5330c5333
+<                 $
+---
+>                 
+5384c5387
+<                 $
+---
+>                 
+5395c5398
+<                 }
+---
+>                 
+5432c5435
+<                 }
+---
+>                 
+5530,5531c5533,5534
+< <recently read> \enorm 
+<                        
+---
+> <recently read> 
+>                 
+5654,5655c5657,5658
+< <recently read> \accent 
+<                         
+---
+> <recently read> 
+>                 
+5674c5677
+<                 $
+---
+>                 
+5685c5688
+<                 }
+---
+>                 
+5700,5702c5703,5705
 < ! \textfont 0 is undefined (character ^^c8).
+< <recently read> $
+<                  
 ---
 > ! \textfont 0 is undefined (character È).
+> <recently read> 
+>                 
+5848,5849c5851,5852
+< <recently read> \trip 
+<                       
+---
+> <recently read> 
+>                 
+5856,5857c5859,5860
+< <recently read> \trip 
+<                       
+---
+> <recently read> 
+>                 
+5911,5912c5914,5915
+< <recently read> \foo 
+<                      
+---
+> <recently read> 
+>                 
+5915,5916c5918,5919
+< <template> \endtemplate 
+<                         
+---
+> <template> 
+>            
+5938,5939c5941,5942
+< <template> }\endtemplate 
+<                          
+---
+> <template> 
+>            
+5959c5962
+<                 }
+---
+>                 
+5973c5976
+<                 \cr 
+---
+>                 
+5985c5988
+<                 {
+---
+>                 
+6109c6112
+<                 }
+---
+>                 
+6152c6155
+<                 }
+---
+>                 
+6283,6284c6286,6287
+< <template> \cr 
+<                
+---
+> <template> 
+>            
+6297,6298c6300,6301
+< <template> &
+<             \ifnum 0=`{\fi \endtemplate 
+---
+> <template> 
+>            
+6342,6343c6345,6346
+< <recently read> \err 
+<                      
+---
+> <recently read> 
+>                 
+6346,6347c6349,6350
+< <template> \endtemplate 
+<                         
+---
+> <template> 
+>            
 6380c6383
 < (tripos.tex
 ---
 > (./tripos.tex
+6403,6404c6406,6407
+< <recently read> \input 
+<                        
+---
+> <recently read> 
+>                 
 6501c6504
 < l.429 ...^^M=13 \def^^M{\relax}#
 ---
 > l.429 ...^^M=13 \defqqM{\relax}#
+6541c6544
+<                 \par 
+---
+>                 
+6544,6545c6547,6548
+< <inserted text> }
+<                  \endwrite 
+---
+> <inserted text> 
+>                 
+6561,6562c6564,6565
+< <inserted text> }
+<                  \endwrite 
+---
+> <inserted text> 
+>                 
+6581,6582c6584,6585
+< <recently read> }
+<                  
+---
+> <recently read> 
+>                 
 6595c6598
 < Memory usage before: 819&428; after: 720&426; still untouched: 175
 ---
 > Memory usage before: 1220&428; after: 1070&426; still untouched: 483
+6700,6701c6703,6704
+< <recently read> |undefined 
+<                            
+---
+> <recently read> 
+>                 
+6775c6778
+<                 }
+---
+>                 
+6800c6803
+<                 }
+---
+>                 
+6815c6818
+<                 }
+---
+>                 
+6830c6833
+<                 }
+---
+>                 
 7155c7158
 < Memory usage before: 895&439; after: 290&420; still untouched: 175
 ---
 > Memory usage before: 1336&439; after: 392&420; still untouched: 483
+7182c7185
+<                 }
+---
+>                 
+7218,7219c7221,7222
+< <recently read> end 
+<                     
+---
+> <recently read> 
+>                 
+7279c7282
+<                 }endwrite 
+---
+>                 
 7288c7291
 < Memory usage before: 334&431; after: 292&418; still untouched: 175
 ---
@@ -317,8 +675,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1688
->  261 string characters out of 8294
+>  44 strings out of 1687
+>  261 string characters out of 8266
 >  4017 words of memory out of 4500
 >  424 multiletter control sequences out of 15000+0
 7301c7304
@@ -331,11 +689,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012/dev)
+> This is DVItype, Version 3.6 (TeX Live 2012)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2012.01.16:1514'
+> ' TeX output 2012.05.11:1417'
 419c419
 < 1121: down4 639342208 
 ---
@@ -365,7 +723,7 @@
 < I changed this one to zero.
 < 
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (INITEX)  11 MAY 2012 14:17
 > entering extended mode
 > ***\input trip
 > (./trip.tex
@@ -376,6 +734,12 @@
 < A register number must be between 0 and 255.
 < I changed this one to zero.
 < 
+47,48c34,35
+< <recently read> \font 
+<                       
+---
+> <recently read> 
+>                 
 91c78,79
 < ### horizontal mode entered at line 77 (language255:hyphenmin1,63)
 ---
@@ -387,8 +751,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2012.1.16)
-> 1612 strings of total length 27706
+>  (format=trip 2012.5.11)
+> 1613 strings of total length 27734
 > 536 memory locations dumped; current usage is 157&278
 > 465 multiletter control sequences
 461c449
@@ -404,13 +768,27 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev)
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012)
 > **entering extended mode
 > ## (./trip.tex
 17c17
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
 ---
 > Memory usage before: 194&313; after: 118&278; still untouched: 2109
+28c28
+<                 }
+---
+>                 
+43,44c43,44
+< <recently read> end 
+<                     
+---
+> <recently read> 
+>                 
+70c70
+<                 }endwrite 
+---
+>                 
 75c75
 < Memory usage before: 334&431; after: 292&418; still untouched: 175
 ---
@@ -425,7 +803,7 @@
 < ** &trip  trip
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (format=trip 2012.1.16)  16 JAN 2012 15:14
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (format=trip 2012.5.11)  11 MAY 2012 14:17
 > entering extended mode
 > **&trip \toksdef\tokens=0 \input trip
 >  (./trip.tex
@@ -466,6 +844,12 @@
 ---
 > \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
 >  3
+494,495c499,500
+< <recently read> \showlists 
+<                            
+---
+> <recently read> 
+>                 
 642c647
 < Memory usage before: 747&484; after: 581&481; still untouched: 1492
 ---
@@ -495,6 +879,12 @@
 ---
 > \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
 >  3
+723,724c729,730
+< <recently read> \showlists 
+<                            
+---
+> <recently read> 
+>                 
 815c821
 < Memory usage before: 475&470; after: 290&466; still untouched: 1473
 ---
@@ -504,6 +894,12 @@
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
+832,833c839,840
+< <recently read> \showlists 
+<                            
+---
+> <recently read> 
+>                 
 915c922
 < Memory usage before: 218&459; after: 149&458; still untouched: 1473
 ---
@@ -513,6 +909,12 @@
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
+928,929c936,937
+< <recently read> \showlists 
+<                            
+---
+> <recently read> 
+>                 
 1070c1078
 < Memory usage before: 118&328; after: 102&328; still untouched: 1473
 ---
@@ -531,6 +933,12 @@
 < {restoring \fam=-1}
 1779d1786
 < {restoring \displayindent=0.0pt}
+1809,1810c1816,1817
+< <recently read> $
+<                  
+---
+> <recently read> 
+>                 
 1833d1839
 < {restoring \fam=-1}
 1954c1960
@@ -559,10 +967,32 @@
 < Memory usage before: 950&531; after: 546&448; still untouched: 706
 ---
 > Memory usage before: 1458&530; after: 808&447; still untouched: 1941
+2256,2257c2262,2263
+< <recently read> \font 
+<                       
+---
+> <recently read> 
+>                 
 2397c2403
 < ! Improper alphabetic constant.
 ---
 > ! Improper alphabetic or KANJI constant.
+2455c2461
+<                 \endgroup 
+---
+>                 
+2468,2469c2474,2475
+< <recently read> \halign 
+<                         
+---
+> <recently read> 
+>                 
+2497,2498c2503,2504
+< <recently read> =
+<                  
+---
+> <recently read> 
+>                 
 2533c2539
 < \vbox(16383.99998+0.0)x20.0, glue set 16331.0fil
 ---
@@ -576,12 +1006,30 @@
 < Memory usage before: 339&413; after: 236&405; still untouched: 706
 ---
 > Memory usage before: 493&411; after: 327&403; still untouched: 1941
+2587,2588c2594,2595
+< <recently read> \eqno 
+<                       
+---
+> <recently read> 
+>                 
+2695,2696c2702,2703
+< <recently read> $
+<                  
+---
+> <recently read> 
+>                 
 2830c2837
 < Since I expected to read a number between 0 and 15,
 ---
 > Since I expected to read a number between 0 and 255,
 2835d2841
 < {restoring current font=\ip}
+2904,2905c2910,2911
+< <recently read> \displaylimits 
+<                                
+---
+> <recently read> 
+>                 
 3051c3057
 < \insert0, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
 ---
@@ -592,12 +1040,22 @@
 > .\fam0 È 
 3143a3150
 > ....\displace 0.0
+3207c3214
+<                 }
+---
+>                 
 3223d3229
 < {restoring \fam=-1}
 3235c3241
 < ! \textfont 0 is undefined (character ^^c8).
 ---
 > ! \textfont 0 is undefined (character È).
+3297,3298c3303,3304
+< <recently read> \!
+<                   
+---
+> <recently read> 
+>                 
 3326c3332
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
@@ -622,6 +1080,18 @@
 > Memory usage before: 3263&519; after: 1743&457; still untouched: 483
 3766d3772
 < {restoring \fam=-1}
+3778c3784
+<                 \inaccessible 
+---
+>                 
+3810c3816
+<                 \right .
+---
+>                 
+3825c3831
+<                 \right .
+---
+>                 
 3839d3844
 < {restoring \fam=-1}
 3864c3869
@@ -640,6 +1110,10 @@
 < ....\hbox(7.0+1.0)x5.0, shifted 47.5
 ---
 > ....\hbox(7.0+1.0)x5.0, shifted 47.5, display
+3938c3943
+<                 }\endwrite 
+---
+>                 
 3951c3956
 < Memory usage before: 640&415; after: 397&410; still untouched: 175
 ---
@@ -682,6 +1156,24 @@
 < Memory usage before: 651&432; after: 417&418; still untouched: 175
 ---
 > Memory usage before: 992&431; after: 598&417; still untouched: 483
+4549,4550c4553,4554
+< <argument> ##
+<              
+---
+> <argument> 
+>            
+4679,4680c4683,4684
+< <template> \A 
+<               \endtemplate 
+---
+> <template> 
+>            
+4689,4690c4693,4694
+< <recently read> }
+<                  
+---
+> <recently read> 
+>                 
 4742c4746,4747
 < \vbox(16383.99998+0.0)x205.12613, glue set 16344.0fil
 ---
@@ -704,26 +1196,250 @@
 < Since I expected to read a number between 0 and 15,
 < I changed this one to zero.
 < 
-5700c5697
+4901c4898
+<                 \inaccessible 
+---
+>                 
+4996c4993
+<                 }
+---
+>                 
+5089c5086
+<                 \fi 
+---
+>                 
+5102c5099
+<                 \cr }
+---
+>                 
+5115,5116c5112,5113
+< <inserted text> \cr 
+<                     }
+---
+> <inserted text> 
+>                 
+5171c5168
+<                 }
+---
+>                 
+5200c5197
+<                 }
+---
+>                 
+5220c5217
+<                 \par 
+---
+>                 
+5232c5229
+<                 \par 
+---
+>                 
+5250c5247
+<                 \par 
+---
+>                 
+5266c5263
+<                 \par 
+---
+>                 
+5330c5327
+<                 $
+---
+>                 
+5384c5381
+<                 $
+---
+>                 
+5395c5392
+<                 }
+---
+>                 
+5432c5429
+<                 }
+---
+>                 
+5530,5531c5527,5528
+< <recently read> \enorm 
+<                        
+---
+> <recently read> 
+>                 
+5654,5655c5651,5652
+< <recently read> \accent 
+<                         
+---
+> <recently read> 
+>                 
+5674c5671
+<                 $
+---
+>                 
+5685c5682
+<                 }
+---
+>                 
+5700,5702c5697,5699
 < ! \textfont 0 is undefined (character ^^c8).
+< <recently read> $
+<                  
 ---
 > ! \textfont 0 is undefined (character È).
+> <recently read> 
+>                 
+5848,5849c5845,5846
+< <recently read> \trip 
+<                       
+---
+> <recently read> 
+>                 
+5856,5857c5853,5854
+< <recently read> \trip 
+<                       
+---
+> <recently read> 
+>                 
+5911,5912c5908,5909
+< <recently read> \foo 
+<                      
+---
+> <recently read> 
+>                 
+5915,5916c5912,5913
+< <template> \endtemplate 
+<                         
+---
+> <template> 
+>            
+5938,5939c5935,5936
+< <template> }\endtemplate 
+<                          
+---
+> <template> 
+>            
+5959c5956
+<                 }
+---
+>                 
+5973c5970
+<                 \cr 
+---
+>                 
+5985c5982
+<                 {
+---
+>                 
+6109c6106
+<                 }
+---
+>                 
+6152c6149
+<                 }
+---
+>                 
+6283,6284c6280,6281
+< <template> \cr 
+<                
+---
+> <template> 
+>            
+6297,6298c6294,6295
+< <template> &
+<             \ifnum 0=`{\fi \endtemplate 
+---
+> <template> 
+>            
+6342,6343c6339,6340
+< <recently read> \err 
+<                      
+---
+> <recently read> 
+>                 
+6346,6347c6343,6344
+< <template> \endtemplate 
+<                         
+---
+> <template> 
+>            
 6380c6377
 < (tripos.tex
 ---
 > (./tripos.tex
+6403,6404c6400,6401
+< <recently read> \input 
+<                        
+---
+> <recently read> 
+>                 
 6501c6498
 < l.429 ...^^M=13 \def^^M{\relax}#
 ---
 > l.429 ...^^M=13 \defqqM{\relax}#
+6541c6538
+<                 \par 
+---
+>                 
+6544,6545c6541,6542
+< <inserted text> }
+<                  \endwrite 
+---
+> <inserted text> 
+>                 
+6561,6562c6558,6559
+< <inserted text> }
+<                  \endwrite 
+---
+> <inserted text> 
+>                 
+6581,6582c6578,6579
+< <recently read> }
+<                  
+---
+> <recently read> 
+>                 
 6595c6592
 < Memory usage before: 819&428; after: 720&426; still untouched: 175
 ---
 > Memory usage before: 1220&428; after: 1070&426; still untouched: 483
+6700,6701c6697,6698
+< <recently read> |undefined 
+<                            
+---
+> <recently read> 
+>                 
+6775c6772
+<                 }
+---
+>                 
+6800c6797
+<                 }
+---
+>                 
+6815c6812
+<                 }
+---
+>                 
+6830c6827
+<                 }
+---
+>                 
 7155c7152
 < Memory usage before: 895&439; after: 290&420; still untouched: 175
 ---
 > Memory usage before: 1336&439; after: 392&420; still untouched: 483
+7182c7179
+<                 }
+---
+>                 
+7218,7219c7215,7216
+< <recently read> end 
+<                     
+---
+> <recently read> 
+>                 
+7279c7276
+<                 }endwrite 
+---
+>                 
 7288c7285
 < Memory usage before: 334&431; after: 292&418; still untouched: 175
 ---
@@ -738,8 +1454,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1688
->  261 string characters out of 8294
+>  44 strings out of 1687
+>  261 string characters out of 8266
 >  4017 words of memory out of 4500
 >  496 multiletter control sequences out of 15000+0
 7301,7302c7301,7302
@@ -754,11 +1470,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012/dev)
+> This is DVItype, Version 3.6 (TeX Live 2012)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2012.01.16:1514'
+> ' TeX output 2012.05.11:1417'
 419c419
 < 1121: down4 639342208 
 ---
@@ -779,89 +1495,688 @@
 + sed 's/, yoko direction//;s/yoko direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etripin.log euptripin.log
 1c1
-< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (INITEX)  7 APR 2011 11:46
+< This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (INITEX)  11 MAY 2012 13:47
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (INITEX)  16 JAN 2012 15:14
-26,29c26,29
-<  (format=etrip 2011.4.7)
-< 1490 strings of total length 26209
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (INITEX)  11 MAY 2012 14:17
+27,29c27,29
+< 1491 strings of total length 26238
 < 280 memory locations dumped; current usage is 36&166
 < 408 multiletter control sequences
 ---
->  (format=etrip 2012.1.16)
-> 1613 strings of total length 27737
+> 1614 strings of total length 27765
 > 283 memory locations dumped; current usage is 40&166
 > 465 multiletter control sequences
 + ./euptex --progname=euptex
 + sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etrip.fot euptrip.fot
 1c1
-< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev)
+< This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012)
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev)
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012)
 + diff SRCDIR/eptexdir/eptrip/etrip.log euptrip.log
 1c1
-< This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (format=etrip 2011.4.7)  7 APR 2011 11:46
+< This is e-pTeX, Version 3.1415926-p3.3-110825-2.4 (utf8.euc) (TeX Live 2012) (format=etrip 2012.5.11)  11 MAY 2012 14:10
 ---
-> This is e-upTeX, Version 3.1415926-p3.2-u1.00-110825-2.3 (utf8.uptex) (TeX Live 2012/dev) (format=etrip 2012.1.16)  16 JAN 2012 15:14
-4c4
-< (etrip.tex e-IniTeX: e-Trip format loaded.
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (format=etrip 2012.5.11)  11 MAY 2012 14:17
+203c203
+< \vbox(30.00002+0.0)x0.0, yoko direction
 ---
-> (./etrip.tex e-IniTeX: e-Trip format loaded.
-671,672c671,674
-< Memory usage before: 50&182; after: 36&176; still untouched: 680
-< (etrip.out) ( 
+> \vbox(30.00002+0.0)x0.0
+641c641
+< \vbox(0.0+0.0)x0.0, yoko direction
 ---
-> \openout1 = `etrip.out'.
-> 
-> Memory usage before: 57&183; after: 40&177; still untouched: 2171
-> (./etrip.out) ( 
-764c766
-<                 % end of outer \scantokens) (etrip.out
+> \vbox(0.0+0.0)x0.0
+666c666
+< \vbox(0.0+0.0)x0.0, yoko direction
 ---
->                 % end of outer \scantokens) (./etrip.out
-2184,2190c2186
-< A character number must be between 0 and 255.
-< I changed this one to zero.
-< 
+> \vbox(0.0+0.0)x0.0
+942c942
+< ### yoko direction, restricted horizontal mode entered at line 468
+---
+> ### restricted horizontal mode entered at line 468
+953c953
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+965c965
+< \hbox(8.0+2.0)x9.0, yoko direction []}
+---
+> \hbox(8.0+2.0)x9.0 []}
+980c980
+< \vbox(188.0+0.0)x10.0, yoko direction
+---
+> \vbox(188.0+0.0)x10.0
+984c984
+< .\vbox(9.0+0.0)x0.0, yoko direction
+---
+> .\vbox(9.0+0.0)x0.0
+988c988
+< .\hbox(0.0+0.0)x0.0, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0
+996c996
+< .\vbox(19.0+0.0)x0.0, yoko direction
+---
+> .\vbox(19.0+0.0)x0.0
+1002c1002
+< .\vbox(30.0+0.0)x0.0, yoko direction
+---
+> .\vbox(30.0+0.0)x0.0
+1007c1007
+< .\hbox(0.0+0.0)x10.0, yoko direction
+---
+> .\hbox(0.0+0.0)x10.0
+1064c1064
+< \vbox(17.0+0.0)x0.0, glue set 2.0fil, yoko direction
+---
+> \vbox(17.0+0.0)x0.0, glue set 2.0fil
+1068c1068
+< .\vbox(9.0+0.0)x0.0, yoko direction
+---
+> .\vbox(9.0+0.0)x0.0
+1072c1072
+< .\hbox(0.0+0.0)x0.0, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0
+1081c1081
+< \vbox(132.0+0.0)x10.0, yoko direction
+---
+> \vbox(132.0+0.0)x10.0
+1084c1084
+< .\vbox(19.0+0.0)x0.0, yoko direction
+---
+> .\vbox(19.0+0.0)x0.0
+1090c1090
+< .\vbox(30.0+0.0)x0.0, yoko direction
+---
+> .\vbox(30.0+0.0)x0.0
+1095c1095
+< .\hbox(0.0+0.0)x10.0, yoko direction
+---
+> .\hbox(0.0+0.0)x10.0
+1110c1110
+< \vbox(27.0+0.0)x0.0, glue set 5.0fil, yoko direction
+---
+> \vbox(27.0+0.0)x0.0, glue set 5.0fil
+1113c1113
+< .\vbox(19.0+0.0)x0.0, yoko direction
+---
+> .\vbox(19.0+0.0)x0.0
+1122c1122
+< \vbox(70.0+0.0)x10.0, yoko direction
+---
+> \vbox(70.0+0.0)x10.0
+1124c1124
+< .\vbox(30.0+0.0)x0.0, yoko direction
+---
+> .\vbox(30.0+0.0)x0.0
+1129c1129
+< .\hbox(0.0+0.0)x10.0, yoko direction
+---
+> .\hbox(0.0+0.0)x10.0
+1144c1144
+< \vbox(37.0+0.0)x0.0, glue set 7.0fil, yoko direction
+---
+> \vbox(37.0+0.0)x0.0, glue set 7.0fil
+1146c1146
+< .\vbox(30.0+0.0)x0.0, yoko direction
+---
+> .\vbox(30.0+0.0)x0.0
+1154c1154
+< \vbox(0.0+0.0)x10.0, yoko direction
+---
+> \vbox(0.0+0.0)x10.0
+1156c1156
+< .\hbox(0.0+0.0)x10.0, yoko direction
+---
+> .\hbox(0.0+0.0)x10.0
+1185c1185
+< \vbox(35.0+0.0)x0.0, glue set 21.0fil, yoko direction
+---
+> \vbox(35.0+0.0)x0.0, glue set 21.0fil
+1189c1189
+< .\vbox(9.0+0.0)x0.0, yoko direction
+---
+> .\vbox(9.0+0.0)x0.0
+1193c1193
+< .\hbox(0.0+0.0)x0.0, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0
+1215c1215
+< \vbox(35.0+0.0)x0.0, glue set 13.0fil, yoko direction
+---
+> \vbox(35.0+0.0)x0.0, glue set 13.0fil
+1218c1218
+< .\vbox(19.0+0.0)x0.0, yoko direction
+---
+> .\vbox(19.0+0.0)x0.0
+1240c1240
+< \vbox(35.0+0.0)x0.0, glue set 5.0fil, yoko direction
+---
+> \vbox(35.0+0.0)x0.0, glue set 5.0fil
+1242c1242
+< .\vbox(30.0+0.0)x0.0, yoko direction
+---
+> .\vbox(30.0+0.0)x0.0
+1263c1263
+< \vbox(35.0+0.0)x10.0, glue set 35.0fil, yoko direction
+---
+> \vbox(35.0+0.0)x10.0, glue set 35.0fil
+1265c1265
+< .\hbox(0.0+0.0)x10.0, yoko direction
+---
+> .\hbox(0.0+0.0)x10.0
+1289c1289
+< \vbox(35.0+0.0)x0.0, glue set 35.0fil, yoko direction
+---
+> \vbox(35.0+0.0)x0.0, glue set 35.0fil
+1291c1291
+< .\hbox(0.0+0.0)x0.0, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0
+1315c1315
+< \vbox(35.0+0.0)x0.0, glue set 35.0fil, yoko direction
+---
+> \vbox(35.0+0.0)x0.0, glue set 35.0fil
+1317c1317
+< .\hbox(0.0+0.0)x0.0, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0
+1402c1402
+< ### yoko(math) direction, math mode entered at line 522
+---
+> ### math mode entered at line 522
+1416c1416
+< ### yoko(math) direction, math mode entered at line 519
+---
+> ### math mode entered at line 519
+1426c1426
+< ### yoko(math) direction, math mode entered at line 515
+---
+> ### math mode entered at line 515
+1434c1434
+< ### yoko(math) direction, math mode entered at line 514
+---
+> ### math mode entered at line 514
+1438,1439c1438,1439
+< ### yoko(math) direction, math mode entered at line 513
+< ### yoko direction, restricted horizontal mode entered at line 512
+---
+> ### math mode entered at line 513
+> ### restricted horizontal mode entered at line 512
+1441c1441
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+1449c1449
+< ### yoko(math) direction, math mode entered at line 519
+---
+> ### math mode entered at line 519
+1473c1473
+< ### yoko(math) direction, math mode entered at line 515
+---
+> ### math mode entered at line 515
+1481c1481
+< ### yoko(math) direction, math mode entered at line 514
+---
+> ### math mode entered at line 514
+1485,1486c1485,1486
+< ### yoko(math) direction, math mode entered at line 513
+< ### yoko direction, restricted horizontal mode entered at line 512
+---
+> ### math mode entered at line 513
+> ### restricted horizontal mode entered at line 512
+1488c1488
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+1496c1496
+< ### yoko(math) direction, math mode entered at line 515
+---
+> ### math mode entered at line 515
+1529c1529
+< ### yoko(math) direction, math mode entered at line 514
+---
+> ### math mode entered at line 514
+1533,1534c1533,1534
+< ### yoko(math) direction, math mode entered at line 513
+< ### yoko direction, restricted horizontal mode entered at line 512
+---
+> ### math mode entered at line 513
+> ### restricted horizontal mode entered at line 512
+1536c1536
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+1544c1544
+< ### yoko(math) direction, math mode entered at line 514
+---
+> ### math mode entered at line 514
+1581,1582c1581,1582
+< ### yoko(math) direction, math mode entered at line 513
+< ### yoko direction, restricted horizontal mode entered at line 512
+---
+> ### math mode entered at line 513
+> ### restricted horizontal mode entered at line 512
+1584c1584
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+1592c1592
+< ### yoko(math) direction, math mode entered at line 513
+---
+> ### math mode entered at line 513
+1631c1631
+< ### yoko direction, restricted horizontal mode entered at line 512
+---
+> ### restricted horizontal mode entered at line 512
+1633c1633
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+1641c1641
+< ### yoko direction, restricted horizontal mode entered at line 512
+---
+> ### restricted horizontal mode entered at line 512
+1844c1844
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+1852c1852
+< ### yoko direction, restricted horizontal mode entered at line 530
+---
+> ### restricted horizontal mode entered at line 530
+1860c1860
+< .\hbox(0.0+0.0)x0.0, shifted -16.5, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0, shifted -16.5
+1872c1872
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+1880c1880
+< ### yoko direction, restricted horizontal mode entered at line 533
+---
+> ### restricted horizontal mode entered at line 533
+1885c1885
+< .\hbox(0.0+0.0)x0.0, shifted 3.0, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0, shifted 3.0
+1904c1904
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+1923c1923
+< .\hbox(0.0+0.0)x0.0, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0
+1947c1947
+< \vbox(0.0+0.0)x10.0, yoko direction
+---
+> \vbox(0.0+0.0)x10.0
+1974c1974
+< ..\hbox(0.0+0.0)x0.0, yoko direction
+---
+> ..\hbox(0.0+0.0)x0.0
+2189,2194d2188
 < ! Bad character code (256).
 < l.674   \iffontchar\font 256 
 <                              \else \fi    % <== bad character...
-< A character number must be between 0 and 255.
+< A character number must be between 0 and 255, or KANJI code.
+< I changed this one to zero.
+< 
+3192c3186
+< \hbox(0.0+0.0)x3.0, yoko direction
 ---
-> A character number must be between 0 and 255, or KANJI code.
-2697c2693
-< Memory usage before: 51&320; after: 44&320; still untouched: 680
+> \hbox(0.0+0.0)x3.0
+3245c3239
+< \vbox(0.0+0.0)x96.0, yoko direction
 ---
-> Memory usage before: 58&321; after: 48&321; still untouched: 1171
-2699c2695
-< Memory usage before: 51&320; after: 44&320; still untouched: 680
+> \vbox(0.0+0.0)x96.0
+3257,3258c3251,3252
+< \hbox(0.0+0.0)x96.0, glue set 31.0fill, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
 ---
-> Memory usage before: 58&321; after: 48&321; still untouched: 1171
-4273,4276c4269,4272
-<  22 strings out of 1665
-<  132 string characters out of 8410
-<  2661 words of memory out of 3000
-<  408 multiletter control sequences out of 2100
+> \hbox(0.0+0.0)x96.0, glue set 31.0fill
+> .\hbox(0.0+0.0)x30.0
+3260c3254
+< .\hbox(0.0+0.0)x30.0, yoko direction
 ---
->  18 strings out of 1687
->  140 string characters out of 8263
->  3329 words of memory out of 4500
+> .\hbox(0.0+0.0)x30.0
+3288c3282
+< \vbox(0.0+0.0)x96.0, yoko direction
+---
+> \vbox(0.0+0.0)x96.0
+3300,3301c3294,3295
+< \hbox(0.0+0.0)x96.0, glue set - 0.25, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x96.0, glue set - 0.25
+> .\hbox(0.0+0.0)x30.0
+3303c3297
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3331c3325
+< \vbox(0.0+0.0)x96.0, yoko direction
+---
+> \vbox(0.0+0.0)x96.0
+3343,3344c3337,3338
+< \hbox(0.0+0.0)x96.0, glue set - 0.5, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x96.0, glue set - 0.5
+> .\hbox(0.0+0.0)x30.0
+3346c3340
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3382c3376
+< \vbox(0.0+0.0)x98.0, yoko direction
+---
+> \vbox(0.0+0.0)x98.0
+3400,3401c3394,3395
+< \hbox(0.0+0.0)x98.0, glue set 34.0fill, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x98.0, glue set 34.0fill
+> .\hbox(0.0+0.0)x30.0
+3429c3423
+< \vbox(0.0+0.0)x98.0, yoko direction
+---
+> \vbox(0.0+0.0)x98.0
+3441c3435
+< \hbox(0.0+0.0)x98.0, glue set - 0.125, yoko direction
+---
+> \hbox(0.0+0.0)x98.0, glue set - 0.125
+3443c3437
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3445c3439
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3473c3467
+< \vbox(0.0+0.0)x98.0, yoko direction
+---
+> \vbox(0.0+0.0)x98.0
+3485,3486c3479,3480
+< \hbox(0.0+0.0)x98.0, glue set - 0.25, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x98.0, glue set - 0.25
+> .\hbox(0.0+0.0)x30.0
+3488c3482
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3516c3510
+< \vbox(0.0+0.0)x100.0, yoko direction
+---
+> \vbox(0.0+0.0)x100.0
+3528,3529c3522,3523
+< \hbox(0.0+0.0)x100.0, glue set 35.0fill, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x100.0, glue set 35.0fill
+> .\hbox(0.0+0.0)x30.0
+3531c3525
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3559c3553
+< \vbox(0.0+0.0)x100.0, yoko direction
+---
+> \vbox(0.0+0.0)x100.0
+3571,3572c3565,3566
+< \hbox(0.0+0.0)x100.0, glue set 35.0fill, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x100.0, glue set 35.0fill
+> .\hbox(0.0+0.0)x30.0
+3574c3568
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3602c3596
+< \vbox(0.0+0.0)x100.0, yoko direction
+---
+> \vbox(0.0+0.0)x100.0
+3614,3615c3608,3609
+< \hbox(0.0+0.0)x100.0, glue set 35.0fill, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x100.0, glue set 35.0fill
+> .\hbox(0.0+0.0)x30.0
+3617c3611
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3645c3639
+< \vbox(0.0+0.0)x110.0, yoko direction
+---
+> \vbox(0.0+0.0)x110.0
+3657,3658c3651,3652
+< \hbox(0.0+0.0)x110.0, glue set 45.0fill, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x110.0, glue set 45.0fill
+> .\hbox(0.0+0.0)x30.0
+3661c3655
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3689c3683
+< \vbox(0.0+0.0)x110.0, yoko direction
+---
+> \vbox(0.0+0.0)x110.0
+3701,3702c3695,3696
+< \hbox(0.0+0.0)x110.0, glue set 0.125, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x110.0, glue set 0.125
+> .\hbox(0.0+0.0)x30.0
+3704c3698
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3732c3726
+< \vbox(0.0+0.0)x110.0, yoko direction
+---
+> \vbox(0.0+0.0)x110.0
+3744,3745c3738,3739
+< \hbox(0.0+0.0)x110.0, glue set 0.25, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x110.0, glue set 0.25
+> .\hbox(0.0+0.0)x30.0
+3747c3741
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3775c3769
+< \vbox(0.0+0.0)x120.0, yoko direction
+---
+> \vbox(0.0+0.0)x120.0
+3787,3788c3781,3782
+< \hbox(0.0+0.0)x120.0, glue set 55.0fill, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x120.0, glue set 55.0fill
+> .\hbox(0.0+0.0)x30.0
+3790c3784
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3818c3812
+< \vbox(0.0+0.0)x120.0, yoko direction
+---
+> \vbox(0.0+0.0)x120.0
+3830,3831c3824,3825
+< \hbox(0.0+0.0)x120.0, glue set 0.25, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x120.0, glue set 0.25
+> .\hbox(0.0+0.0)x30.0
+3833c3827
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+3861c3855
+< \vbox(0.0+0.0)x120.0, yoko direction
+---
+> \vbox(0.0+0.0)x120.0
+3873,3874c3867,3868
+< \hbox(0.0+0.0)x120.0, glue set 0.5, yoko direction
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> \hbox(0.0+0.0)x120.0, glue set 0.5
+> .\hbox(0.0+0.0)x30.0
+3876c3870
+< .\hbox(0.0+0.0)x30.0, yoko direction
+---
+> .\hbox(0.0+0.0)x30.0
+4003c3997
+< \vbox(0.0+0.0)x0.0, yoko direction
+---
+> \vbox(0.0+0.0)x0.0
+4024,4026c4018,4020
+< \vbox(40.0+0.0)x0.0, yoko direction
+< .\vbox(20.0+0.0)x0.0, yoko direction
+< ..\vbox(20.0+0.0)x0.0, yoko direction
+---
+> \vbox(40.0+0.0)x0.0
+> .\vbox(20.0+0.0)x0.0
+> ..\vbox(20.0+0.0)x0.0
+4030c4024
+< .\vbox(20.0+0.0)x0.0, yoko direction
+---
+> .\vbox(20.0+0.0)x0.0
+4034c4028
+< ..\vbox(20.0+0.0)x0.0, yoko direction
+---
+> ..\vbox(20.0+0.0)x0.0
+4044,4046c4038,4040
+< \vbox(50.0+0.0)x0.0, yoko direction
+< .\vbox(30.0+0.0)x0.0, yoko direction
+< ..\vbox(20.0+0.0)x0.0, yoko direction
+---
+> \vbox(50.0+0.0)x0.0
+> .\vbox(30.0+0.0)x0.0
+> ..\vbox(20.0+0.0)x0.0
+4052c4046
+< .\vbox(20.0+0.0)x0.0, yoko direction
+---
+> .\vbox(20.0+0.0)x0.0
+4055c4049
+< ..\vbox(20.0+0.0)x0.0, yoko direction
+---
+> ..\vbox(20.0+0.0)x0.0
+4065,4067c4059,4061
+< \vbox(60.0+0.0)x0.0, yoko direction
+< .\vbox(20.0+0.0)x0.0, yoko direction
+< ..\vbox(20.0+0.0)x0.0, yoko direction
+---
+> \vbox(60.0+0.0)x0.0
+> .\vbox(20.0+0.0)x0.0
+> ..\vbox(20.0+0.0)x0.0
+4074c4068
+< .\vbox(20.0+0.0)x0.0, yoko direction
+---
+> .\vbox(20.0+0.0)x0.0
+4078c4072
+< ..\vbox(20.0+0.0)x0.0, yoko direction
+---
+> ..\vbox(20.0+0.0)x0.0
+4088,4090c4082,4084
+< \vbox(60.0+0.0)x0.0, yoko direction
+< .\vbox(30.0+0.0)x0.0, yoko direction
+< ..\vbox(20.0+0.0)x0.0, yoko direction
+---
+> \vbox(60.0+0.0)x0.0
+> .\vbox(30.0+0.0)x0.0
+> ..\vbox(20.0+0.0)x0.0
+4098c4092
+< .\vbox(20.0+0.0)x0.0, yoko direction
+---
+> .\vbox(20.0+0.0)x0.0
+4101c4095
+< ..\vbox(20.0+0.0)x0.0, yoko direction
+---
+> ..\vbox(20.0+0.0)x0.0
+4111c4105
+< ### yoko direction, internal vertical mode entered at line 1184
+---
+> ### internal vertical mode entered at line 1184
+4113c4107
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+4126c4120
+< ### yoko direction, internal vertical mode entered at line 1184
+---
+> ### internal vertical mode entered at line 1184
+4128c4122
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+4138c4132
+< ### yoko direction, internal vertical mode entered at line 1185
+---
+> ### internal vertical mode entered at line 1185
+4140c4134
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+4153c4147
+< ### yoko direction, internal vertical mode entered at line 1185
+---
+> ### internal vertical mode entered at line 1185
+4158c4152
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+4168c4162
+< \vbox(12.0+0.0)x0.0, yoko direction
+---
+> \vbox(12.0+0.0)x0.0
+4181c4175
+< \vbox(0.0+0.0)x0.0, yoko direction
+---
+> \vbox(0.0+0.0)x0.0
+4186c4180
+< .\hbox(0.0+0.0)x0.0, yoko direction
+---
+> .\hbox(0.0+0.0)x0.0
+4195c4189
+< ### yoko direction, internal vertical mode entered at line 1191
+---
+> ### internal vertical mode entered at line 1191
+4198c4192
+< ### yoko direction, vertical mode entered at line 0
+---
+> ### vertical mode entered at line 0
+4267c4261
+< \vbox(0.0+0.0)x0.0, yoko direction}
+---
+> \vbox(0.0+0.0)x0.0}
+4275,4276c4269,4270
+<  18 strings out of 1696
+<  140 string characters out of 8256
+---
+>  18 strings out of 1686
+>  140 string characters out of 8235
+4278c4272
+<  460 multiletter control sequences out of 15000+0
+---
 >  466 multiletter control sequences out of 15000+0
-4278c4274
-<  10 hyphenation exceptions out of 307
----
->  9 hyphenation exceptions out of 659
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
 + diff SRCDIR/etexdir/etrip/etrip.typ euptrip.typ
-1c1
-< This is DVItype, Version 3.6
----
-> This is DVItype, Version 3.6 (TeX Live 2012/dev)
 9c9
-< ' TeX output 2011.04.07:1213'
+< ' TeX output 2012.05.11:1347'
 ---
-> ' TeX output 2012.01.16:1514'
+> ' TeX output 2012.05.11:1417'
 + :
 PASS: euptexdir/euptrip.test

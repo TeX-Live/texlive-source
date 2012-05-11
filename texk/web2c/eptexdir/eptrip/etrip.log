@@ -1,9 +1,9 @@
-This is e-TeX, Version 3.1415926-2.3 (TeX Live 2011/dev) (format=etrip 2011.4.7)  7 APR 2011 11:46
+This is e-pTeX, Version 3.1415926-p3.3-110825-2.4 (utf8.euc) (TeX Live 2012) (format=etrip 2012.5.11)  11 MAY 2012 14:10
 entering extended mode
 **&etrip etrip
-(etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2011-04-07] for e-TeX v3.1415926-2.3.
-(You are using e-TeX version/revision 2.3)
+(./etrip.tex e-IniTeX: e-Trip format loaded.
+This is the e-Trip test [2012-05-11] for e-TeX v3.1415926-2.4.
+(You are using e-TeX version/revision 2.4)
 Missing character: There is no b in font nullfont!
 
 Missing character: There is no c in font nullfont!
@@ -200,7 +200,7 @@ Overfull \hbox (3.0pt too wide) in paragraph at lines 205--211
 .\glue(\rightskip) 0.0
 
 > \box0=
-\vbox(30.00002+0.0)x0.0
+\vbox(30.00002+0.0)x0.0, yoko direction
 .\hbox(17.0+3.00002)x0.0
 ..\hbox(0.0+0.0)x0.0
 ..\trip a
@@ -638,7 +638,7 @@ l.404 ...cted\def\1{\2}} \show\1
 
 \1->\2
 > \box0=
-\vbox(0.0+0.0)x0.0
+\vbox(0.0+0.0)x0.0, yoko direction
 .\special{\1\2}
 
 ! OK.
@@ -663,13 +663,15 @@ l.409 ...xpandafter\1\1} \show\5
 Checking \scantokens, \tracingscantokens, \readline, and \everyeof:
 
 Completed box being shipped out [1]
-\vbox(0.0+0.0)x0.0
+\vbox(0.0+0.0)x0.0, yoko direction
 .\openout1=etrip.out
 .\write1{\unexpanded \expandafter {\1}}
 .\closeout1
 
-Memory usage before: 50&182; after: 36&176; still untouched: 680
-(etrip.out) ( 
+\openout1 = `etrip.out'.
+
+Memory usage before: 57&183; after: 40&177; still untouched: 2171
+(./etrip.out) ( 
 Warning: end of semi simple group (level 3) entered at line 431 of a dif
 ferent file
 Warning: end of \iftrue entered on line 431 of a different file
@@ -746,7 +748,7 @@ l.444         }
                 % end of outer \scantokens
 ! Incomplete \iffalse; all text was ignored after line 9.
 <inserted text> 
-                \fi 
+                
 l.6  }
       
 l.444         }
@@ -761,7 +763,7 @@ Warning: end of file when \ifnum entered on line 6 is incomplete
 l.9 \fi
        
 l.444         }
-                % end of outer \scantokens) (etrip.out
+                % end of outer \scantokens) (./etrip.out
 ! Undefined control sequence.
 \endgroup ->\9\9
                 
@@ -792,7 +794,7 @@ Runaway definition?
 ->\begingroup 
 ! File ended while scanning definition of \1.
 <inserted text> 
-                }
+                
 l.453 ...scantokens{\begingroup}
                                  % <== error
 I suspect you have forgotten a `}', causing me
@@ -937,7 +939,7 @@ Missing character: There is no e in font etrip!
 {false}
 {\showlists}
 
-### restricted horizontal mode entered at line 468
+### yoko direction, restricted horizontal mode entered at line 468
 \trip r
 \trip r (ligature up)
 \trip b
@@ -948,7 +950,7 @@ Missing character: There is no e in font etrip!
 \glue 4.0 plus 2.0 minus 1.0
 \trip s
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -960,7 +962,7 @@ l.468 ...ox25=\hbox{\1\showlists
 {restoring \2=macro:->\begingroup \scantokens {\message \ETC.}
 {changing \box25=void}
 {into \box25=
-\hbox(8.0+2.0)x9.0 []}
+\hbox(8.0+2.0)x9.0, yoko direction []}
 {vertical mode: blank space  }
 {end-group character }}
 {restoring \box25=void}
@@ -975,15 +977,15 @@ Current marks:
  \splitfirstmarks 3=.
  \splitbotmarks 3=.
 > \box0=
-\vbox(188.0+0.0)x10.0
+\vbox(188.0+0.0)x10.0, yoko direction
 .\mark{0-1}
 .\marks1{1-1}
 .\glue 1.0
-.\vbox(9.0+0.0)x0.0
+.\vbox(9.0+0.0)x0.0, yoko direction
 .\mark{0-2}
 .\marks3{}
 .\glue(\baselineskip) 0.0
-.\hbox(0.0+0.0)x0.0
+.\hbox(0.0+0.0)x0.0, yoko direction
 .\glue 5.0
 .\glue 0.0 plus 1.0fil
 .\penalty 0
@@ -991,61 +993,61 @@ Current marks:
 .\mark{0-3}
 .\glue 1.0
 .\glue(\lineskip) 0.0
-.\vbox(19.0+0.0)x0.0
+.\vbox(19.0+0.0)x0.0, yoko direction
 .\marks3{3-3}
 .\glue 3.0 plus 1.0fil
 .\penalty 0
 .\glue 40.0
 .\glue(\lineskip) 0.0
-.\vbox(30.0+0.0)x0.0
+.\vbox(30.0+0.0)x0.0, yoko direction
 .\glue 0.0 plus 1.0fil
 .\penalty 0
 .\glue 40.0
 .\glue(\baselineskip) 0.0
-.\hbox(0.0+0.0)x10.0
+.\hbox(0.0+0.0)x10.0, yoko direction
 
 ! OK.
 l.491   \1 \showbox0 
                      \let\5=\3 \def\3#1{\showtokens\expandaft...
 
 > 0-1.
-<recently read> }
-                 
+<recently read> 
+                
 ...
 l.493   \1
            \showbox1 \showbox0 \let\3=\5
 
 > 0-2.
-<recently read> }
-                 
+<recently read> 
+                
 ...
 l.493   \1
            \showbox1 \showbox0 \let\3=\5
 
 > 1-1.
-<recently read> }
-                 
+<recently read> 
+                
 ...
 l.493   \1
            \showbox1 \showbox0 \let\3=\5
 
 > 1-1.
-<recently read> }
-                 
+<recently read> 
+                
 ...
 l.493   \1
            \showbox1 \showbox0 \let\3=\5
 
 > .
-<recently read> }
-                 
+<recently read> 
+                
 ...
 l.493   \1
            \showbox1 \showbox0 \let\3=\5
 
 > .
-<recently read> }
-                 
+<recently read> 
+                
 ...
 l.493   \1
            \showbox1 \showbox0 \let\3=\5
@@ -1059,15 +1061,15 @@ Current marks:
  \splitfirstmarks 3=.
  \splitbotmarks 3=.
 > \box1=
-\vbox(17.0+0.0)x0.0, glue set 2.0fil
+\vbox(17.0+0.0)x0.0, glue set 2.0fil, yoko direction
 .\mark{0-1}
 .\marks1{1-1}
 .\glue 1.0
-.\vbox(9.0+0.0)x0.0
+.\vbox(9.0+0.0)x0.0, yoko direction
 .\mark{0-2}
 .\marks3{}
 .\glue(\baselineskip) 0.0
-.\hbox(0.0+0.0)x0.0
+.\hbox(0.0+0.0)x0.0, yoko direction
 .\glue 5.0
 .\glue 0.0 plus 1.0fil
 
@@ -1076,21 +1078,21 @@ l.493   \1 \showbox1
                      \showbox0 \let\3=\5
 
 > \box0=
-\vbox(132.0+0.0)x10.0
+\vbox(132.0+0.0)x10.0, yoko direction
 .\mark{0-3}
 .\glue(\splittopskip) 0.0
-.\vbox(19.0+0.0)x0.0
+.\vbox(19.0+0.0)x0.0, yoko direction
 .\marks3{3-3}
 .\glue 3.0 plus 1.0fil
 .\penalty 0
 .\glue 40.0
 .\glue(\lineskip) 0.0
-.\vbox(30.0+0.0)x0.0
+.\vbox(30.0+0.0)x0.0, yoko direction
 .\glue 0.0 plus 1.0fil
 .\penalty 0
 .\glue 40.0
 .\glue(\baselineskip) 0.0
-.\hbox(0.0+0.0)x10.0
+.\hbox(0.0+0.0)x10.0, yoko direction
 
 ! OK.
 l.493   \1 \showbox1 \showbox0 
@@ -1105,10 +1107,10 @@ Current marks:
  \splitfirstmarks 3=3-3.
  \splitbotmarks 3=3-3.
 > \box1=
-\vbox(27.0+0.0)x0.0, glue set 5.0fil
+\vbox(27.0+0.0)x0.0, glue set 5.0fil, yoko direction
 .\mark{0-3}
 .\glue(\splittopskip) 0.0
-.\vbox(19.0+0.0)x0.0
+.\vbox(19.0+0.0)x0.0, yoko direction
 .\marks3{3-3}
 .\glue 3.0 plus 1.0fil
 
@@ -1117,14 +1119,14 @@ l.495   \1 \showbox1
                      \showbox0
 
 > \box0=
-\vbox(70.0+0.0)x10.0
+\vbox(70.0+0.0)x10.0, yoko direction
 .\glue(\splittopskip) 0.0
-.\vbox(30.0+0.0)x0.0
+.\vbox(30.0+0.0)x0.0, yoko direction
 .\glue 0.0 plus 1.0fil
 .\penalty 0
 .\glue 40.0
 .\glue(\baselineskip) 0.0
-.\hbox(0.0+0.0)x10.0
+.\hbox(0.0+0.0)x10.0, yoko direction
 
 ! OK.
 l.495   \1 \showbox1 \showbox0
@@ -1139,9 +1141,9 @@ Current marks:
  \splitfirstmarks 3=.
  \splitbotmarks 3=.
 > \box1=
-\vbox(37.0+0.0)x0.0, glue set 7.0fil
+\vbox(37.0+0.0)x0.0, glue set 7.0fil, yoko direction
 .\glue(\splittopskip) 0.0
-.\vbox(30.0+0.0)x0.0
+.\vbox(30.0+0.0)x0.0, yoko direction
 .\glue 0.0 plus 1.0fil
 
 ! OK.
@@ -1149,9 +1151,9 @@ l.497   \1 \showbox1
                      \showbox0
 
 > \box0=
-\vbox(0.0+0.0)x10.0
+\vbox(0.0+0.0)x10.0, yoko direction
 .\glue(\splittopskip) 0.0
-.\hbox(0.0+0.0)x10.0
+.\hbox(0.0+0.0)x10.0, yoko direction
 
 ! OK.
 l.497   \1 \showbox1 \showbox0
@@ -1180,15 +1182,15 @@ Current marks:
  \firstmarks 3=.
  \botmarks 3=.
 > \box255=
-\vbox(35.0+0.0)x0.0, glue set 21.0fil
+\vbox(35.0+0.0)x0.0, glue set 21.0fil, yoko direction
 .\mark{0-1}
 .\marks1{1-1}
 .\glue(\topskip) 0.0
-.\vbox(9.0+0.0)x0.0
+.\vbox(9.0+0.0)x0.0, yoko direction
 .\mark{0-2}
 .\marks3{}
 .\glue(\baselineskip) 0.0
-.\hbox(0.0+0.0)x0.0
+.\hbox(0.0+0.0)x0.0, yoko direction
 .\glue 5.0
 .\glue 0.0 plus 1.0fil
 
@@ -1210,10 +1212,10 @@ Current marks:
  \firstmarks 3=3-3.
  \botmarks 3=3-3.
 > \box255=
-\vbox(35.0+0.0)x0.0, glue set 13.0fil
+\vbox(35.0+0.0)x0.0, glue set 13.0fil, yoko direction
 .\mark{0-3}
 .\glue(\topskip) 0.0
-.\vbox(19.0+0.0)x0.0
+.\vbox(19.0+0.0)x0.0, yoko direction
 .\marks3{3-3}
 .\glue 3.0 plus 1.0fil
 
@@ -1235,9 +1237,9 @@ Current marks:
  \firstmarks 3=3-3.
  \botmarks 3=3-3.
 > \box255=
-\vbox(35.0+0.0)x0.0, glue set 5.0fil
+\vbox(35.0+0.0)x0.0, glue set 5.0fil, yoko direction
 .\glue(\topskip) 0.0
-.\vbox(30.0+0.0)x0.0
+.\vbox(30.0+0.0)x0.0, yoko direction
 .\glue 0.0 plus 1.0fil
 
 ! OK.
@@ -1258,9 +1260,9 @@ Current marks:
  \firstmarks 3=.
  \botmarks 3=.
 > \box255=
-\vbox(35.0+0.0)x10.0, glue set 35.0fil
+\vbox(35.0+0.0)x10.0, glue set 35.0fil, yoko direction
 .\glue(\topskip) 0.0
-.\hbox(0.0+0.0)x10.0
+.\hbox(0.0+0.0)x10.0, yoko direction
 .\mark{}
 .\marks1{}
 .\marks3{}
@@ -1284,9 +1286,9 @@ Current marks:
  \firstmarks 3=.
  \botmarks 3=.
 > \box255=
-\vbox(35.0+0.0)x0.0, glue set 35.0fil
+\vbox(35.0+0.0)x0.0, glue set 35.0fil, yoko direction
 .\glue(\topskip) 0.0
-.\hbox(0.0+0.0)x0.0
+.\hbox(0.0+0.0)x0.0, yoko direction
 .\mark{}
 .\marks1{}
 .\marks3{}
@@ -1310,9 +1312,9 @@ Current marks:
  \firstmarks 3=.
  \botmarks 3=.
 > \box255=
-\vbox(35.0+0.0)x0.0, glue set 35.0fil
+\vbox(35.0+0.0)x0.0, glue set 35.0fil, yoko direction
 .\glue(\topskip) 0.0
-.\hbox(0.0+0.0)x0.0
+.\hbox(0.0+0.0)x0.0, yoko direction
 .\glue 0.0 plus 1.0fil
 
 ! OK.
@@ -1324,7 +1326,7 @@ l.502 ...x{}\vfil\penalty-10000
 Checking \middle:
 ! Missing $ inserted.
 <inserted text> 
-                $
+                
 ...
 l.511   \setbox0=\vbox{\middle
                                \par \right \par} % <== 8 errors
@@ -1352,7 +1354,7 @@ I'm ignoring a \middle that had no matching \left.
 
 ! Missing $ inserted.
 <inserted text> 
-                $
+                
 ...
 l.511 ...box0=\vbox{\middle \par
                                  \right \par} % <== 8 errors
@@ -1361,7 +1363,7 @@ you left one out. Proceed, with fingers crossed.
 
 ! Missing $ inserted.
 <inserted text> 
-                $
+                
 ...
 l.511 ...box{\middle \par \right
                                  \par} % <== 8 errors
@@ -1389,7 +1391,7 @@ I'm ignoring a \right that had no matching \left.
 
 ! Missing $ inserted.
 <inserted text> 
-                $
+                
 ...
 l.511 ...middle \par \right \par
                                 } % <== 8 errors
@@ -1397,7 +1399,7 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 
-### math mode entered at line 522
+### yoko(math) direction, math mode entered at line 522
 \mathord
 .\fam1 r
 this will be denominator of:
@@ -1411,7 +1413,7 @@ this will be denominator of:
 \\middle"142342
 \\mathord
 \.\fam1 q
-### math mode entered at line 519
+### yoko(math) direction, math mode entered at line 519
 \left"161361
 \mathord
 .\fam1 p
@@ -1421,7 +1423,7 @@ this will be denominator of:
 \middle"142342
 \mathord
 .\fam1 q
-### math mode entered at line 515
+### yoko(math) direction, math mode entered at line 515
 \mathord
 .\fam1 r
 this will be denominator of:
@@ -1429,14 +1431,14 @@ this will be denominator of:
 \\left"161361
 \\mathord
 \.\fam1 q
-### math mode entered at line 514
+### yoko(math) direction, math mode entered at line 514
 \left"161361
 \mathord
 .\fam1 p
-### math mode entered at line 513
-### restricted horizontal mode entered at line 512
+### yoko(math) direction, math mode entered at line 513
+### yoko direction, restricted horizontal mode entered at line 512
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -1444,7 +1446,7 @@ l.523 ...      \over r\showlists
                                 
 
 
-### math mode entered at line 519
+### yoko(math) direction, math mode entered at line 519
 \left"161361
 \mathord
 .\fam1 p
@@ -1468,7 +1470,7 @@ l.523 ...      \over r\showlists
 ./\mathord
 ./.\fam1 r
 .\right"162362
-### math mode entered at line 515
+### yoko(math) direction, math mode entered at line 515
 \mathord
 .\fam1 r
 this will be denominator of:
@@ -1476,14 +1478,14 @@ this will be denominator of:
 \\left"161361
 \\mathord
 \.\fam1 q
-### math mode entered at line 514
+### yoko(math) direction, math mode entered at line 514
 \left"161361
 \mathord
 .\fam1 p
-### math mode entered at line 513
-### restricted horizontal mode entered at line 512
+### yoko(math) direction, math mode entered at line 513
+### yoko direction, restricted horizontal mode entered at line 512
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -1491,7 +1493,7 @@ l.524 ...      \right]\showlists
                                 
 
 
-### math mode entered at line 515
+### yoko(math) direction, math mode entered at line 515
 \mathord
 .\fam1 r
 \mathinner
@@ -1524,14 +1526,14 @@ this will be denominator of:
 \\left"161361
 \\mathord
 \.\fam1 q
-### math mode entered at line 514
+### yoko(math) direction, math mode entered at line 514
 \left"161361
 \mathord
 .\fam1 p
-### math mode entered at line 513
-### restricted horizontal mode entered at line 512
+### yoko(math) direction, math mode entered at line 513
+### yoko direction, restricted horizontal mode entered at line 512
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -1539,7 +1541,7 @@ l.525 ...      \right]\showlists
                                 
 
 
-### math mode entered at line 514
+### yoko(math) direction, math mode entered at line 514
 \left"161361
 \mathord
 .\fam1 p
@@ -1576,10 +1578,10 @@ l.525 ...      \right]\showlists
 ./..\right"162362
 ./.\right"162362
 .\right"162362
-### math mode entered at line 513
-### restricted horizontal mode entered at line 512
+### yoko(math) direction, math mode entered at line 513
+### yoko direction, restricted horizontal mode entered at line 512
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -1587,7 +1589,7 @@ l.526         \right]\showlists
                                
 
 
-### math mode entered at line 513
+### yoko(math) direction, math mode entered at line 513
 \mathinner
 .\left"161361
 .\mathord
@@ -1626,9 +1628,9 @@ l.526         \right]\showlists
 ../.\right"162362
 ..\right"162362
 .\right"162362
-### restricted horizontal mode entered at line 512
+### yoko direction, restricted horizontal mode entered at line 512
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -1636,7 +1638,7 @@ l.527       \right]\showlists
                              
 
 
-### restricted horizontal mode entered at line 512
+### yoko direction, restricted horizontal mode entered at line 512
 \mathon
 \hbox(30.99977+16.99977)x80.99994
 .\hbox(14.00002+2.0)x6.00002, shifted -0.99998
@@ -1839,7 +1841,7 @@ l.527       \right]\showlists
 ...\trip B
 \mathoff
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -1847,7 +1849,7 @@ l.528     $\showlists
                      
 
 
-### restricted horizontal mode entered at line 530
+### yoko direction, restricted horizontal mode entered at line 530
 \mathon
 \hbox(17.0+3.00002)x19.00002
 .\hbox(14.00002+2.0)x6.00002, shifted -0.99998
@@ -1855,7 +1857,7 @@ l.528     $\showlists
 .\hbox(16.0+4.00002)x6.0, shifted -1.0
 ..\bigtrip B
 .\trip p
-.\hbox(0.0+0.0)x0.0, shifted -16.5
+.\hbox(0.0+0.0)x0.0, shifted -16.5, yoko direction
 .\vbox(-1.00002+20.99998)x7.0, shifted -18.0
 ..\hbox(-1.00002+2.0)x7.0
 ...\trip ^^@
@@ -1867,7 +1869,7 @@ l.528     $\showlists
 ...\trip B
 \mathoff
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -1875,12 +1877,12 @@ l.532 ...box{}\right]$\showlists
                                 }
 
 
-### restricted horizontal mode entered at line 533
+### yoko direction, restricted horizontal mode entered at line 533
 \mathon
 \hbox(17.99997+3.99997)x19.00002
 .\hbox(14.00002+2.0)x6.00002, shifted -0.99998
 ..\bigtrip a
-.\hbox(0.0+0.0)x0.0, shifted 3.0
+.\hbox(0.0+0.0)x0.0, shifted 3.0, yoko direction
 .\hbox(16.0+4.00002)x6.0, shifted -1.0
 ..\bigtrip B
 .\trip s
@@ -1899,7 +1901,7 @@ l.532 ...box{}\right]$\showlists
 ...\trip B
 \mathoff
 spacefactor 1000
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -1918,7 +1920,7 @@ Checking TeX--XeT enhancements:
 .\beginR
 .\kern 3.0
 .\penalty 0
-.\hbox(0.0+0.0)x0.0
+.\hbox(0.0+0.0)x0.0, yoko direction
 .\kern 3.0
 .\kern 0.0
 .\endR
@@ -1942,7 +1944,7 @@ Checking TeX--XeT enhancements:
 .\glue(\rightskip) 0.0
 
 > \box0=
-\vbox(0.0+0.0)x10.0
+\vbox(0.0+0.0)x10.0, yoko direction
 .\hbox(0.0+0.0)x10.0, glue set 8.5fil
 ..\hbox(0.0+0.0)x0.5
 ..\beginL
@@ -1969,7 +1971,7 @@ Checking TeX--XeT enhancements:
 ..\beginR
 ..\kern 3.0
 ..\penalty 0
-..\hbox(0.0+0.0)x0.0
+..\hbox(0.0+0.0)x0.0, yoko direction
 ..\kern 3.0
 ..\kern 0.0
 ..\endR
@@ -2181,13 +2183,13 @@ look up `weird error' in the index to The TeXbook.)
 ! Bad character code (-1).
 l.673 ...ffontchar\textfont2 -1 
                                 \else \fi    % <== bad charac...
-A character number must be between 0 and 255.
+A character number must be between 0 and 255, or KANJI code.
 I changed this one to zero.
 
 ! Bad character code (256).
 l.674   \iffontchar\font 256 
                              \else \fi    % <== bad character...
-A character number must be between 0 and 255.
+A character number must be between 0 and 255, or KANJI code.
 I changed this one to zero.
 
 ! You can't use `\fontcharwd' in vertical mode.
@@ -2345,8 +2347,8 @@ Continue and I'll use the largest value I can.
 {changing \dimen45=0.0pt}
 {into \dimen45=16383.99998pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.778 ...5=\dimexpr1sp*\skip44\9
                                 
 I can't evaluate this expression,
@@ -2367,8 +2369,8 @@ Continue and I'll use the largest value I can.
 {changing \dimen45=0.0pt}
 {into \dimen45=16383.99998pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.780 ...5=\dimexpr1sp*\skip44\9
                                 
 I can't evaluate this expression,
@@ -2377,8 +2379,8 @@ since the result is out of range.
 {changing \dimen45=16383.99998pt}
 {into \dimen45=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.781 ...4=\numexpr"7FFFFFFE+2\9
                                     \dimen44=\dimexpr"3FFFFFF...
 I can't evaluate this expression,
@@ -2387,8 +2389,8 @@ since the result is out of range.
 {changing \count44=2147450880}
 {into \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.781 ...imexpr"3FFFFFFEsp+2sp\9
                                 
 I can't evaluate this expression,
@@ -2397,8 +2399,8 @@ since the result is out of range.
 {changing \dimen44=-16384.0pt}
 {into \dimen44=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.782 ...=\numexpr-"7FFFFFFE-2\9
                                    \dimen44=\dimexpr-"3FFFFFF...
 I can't evaluate this expression,
@@ -2406,8 +2408,8 @@ since the result is out of range.
 
 {reassigning \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.782 ...mexpr-"3FFFFFFEsp-2sp\9
                                 
 I can't evaluate this expression,
@@ -2415,8 +2417,8 @@ since the result is out of range.
 
 {reassigning \dimen44=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.783 ...=\numexpr"10000*"8000\9
                                    \dimen44=\dimexpr"8000sp*"...
 I can't evaluate this expression,
@@ -2424,8 +2426,8 @@ since the result is out of range.
 
 {reassigning \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.783 ...\dimexpr"8000sp*"8000\9
                                 
 I can't evaluate this expression,
@@ -2433,8 +2435,8 @@ since the result is out of range.
 
 {reassigning \dimen44=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.784 ...\numexpr"10000*-"8000\9
                                   \dimen44=\dimexpr"8000sp*-"...
 I can't evaluate this expression,
@@ -2442,8 +2444,8 @@ since the result is out of range.
 
 {reassigning \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.784 ...dimexpr"8000sp*-"8000\9
                                 
 I can't evaluate this expression,
@@ -2451,8 +2453,8 @@ since the result is out of range.
 
 {reassigning \dimen44=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.785 ...\numexpr-"10000*"8000\9
                                   \dimen44=\dimexpr-"8000sp*"...
 I can't evaluate this expression,
@@ -2460,8 +2462,8 @@ since the result is out of range.
 
 {reassigning \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.785 ...dimexpr-"8000sp*"8000\9
                                 
 I can't evaluate this expression,
@@ -2469,8 +2471,8 @@ since the result is out of range.
 
 {reassigning \dimen44=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.786 ...numexpr-"10000*-"8000\9
                                  \dimen44=\dimexpr-"8000sp*-"...
 I can't evaluate this expression,
@@ -2478,8 +2480,8 @@ since the result is out of range.
 
 {reassigning \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.786 ...imexpr-"8000sp*-"8000\9
                                 
 I can't evaluate this expression,
@@ -2487,8 +2489,8 @@ since the result is out of range.
 
 {reassigning \dimen44=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.787     \count44=\numexpr0/0\9
                                             \dimen44=\dimexpr...
 I can't evaluate this expression,
@@ -2496,8 +2498,8 @@ since the result is out of range.
 
 {reassigning \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.787 ...dimen44=\dimexpr0pt/0\9
                                 
 I can't evaluate this expression,
@@ -2505,8 +2507,8 @@ since the result is out of range.
 
 {reassigning \dimen44=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.788     \count44=\numexpr1/0\9
                                             \dimen44=\dimexpr...
 I can't evaluate this expression,
@@ -2514,8 +2516,8 @@ since the result is out of range.
 
 {reassigning \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.788 ...dimen44=\dimexpr1pt/0\9
                                 
 I can't evaluate this expression,
@@ -2523,8 +2525,8 @@ since the result is out of range.
 
 {reassigning \dimen44=0.0pt}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.789 ...\count44=\numexpr-1/0\9
                                            \dimen44=\dimexpr-...
 I can't evaluate this expression,
@@ -2532,8 +2534,8 @@ since the result is out of range.
 
 {reassigning \count44=0}
 ! Arithmetic overflow.
-<recently read> \9
-                  
+<recently read> 
+                
 l.789 ...imen44=\dimexpr-1pt/0\9
                                 
 I can't evaluate this expression,
@@ -2569,8 +2571,8 @@ Expr quotient rounding 2 OK
 Expr quotient rounding 3 OK
 Expr quotient rounding 4 OK
 ! Incompatible glue units.
-<recently read> \9
-                  
+<recently read> 
+                
 ...
 l.829   \15{32}{5}{6}
                         % <== three mu_error's (! Incompatibl...
@@ -2585,8 +2587,8 @@ l.829   \15{32}{5}{6}
 I'm going to assume that 1mu=1pt when they're mixed.
 
 ! Incompatible glue units.
-<recently read> \relax 
-                       
+<recently read> 
+                
 ...
 l.829   \15{32}{5}{6}
                         % <== three mu_error's (! Incompatibl...
@@ -2594,8 +2596,8 @@ I'm going to assume that 1mu=1pt when they're mixed.
 
 Expr quotient rounding 5 OK
 ! Incompatible glue units.
-<recently read> \9
-                  
+<recently read> 
+                
 ...
 l.830   \16{33}{5}{7}
                         % <== three mu_error's (! Incompatibl...
@@ -2610,8 +2612,8 @@ l.830   \16{33}{5}{7}
 I'm going to assume that 1mu=1pt when they're mixed.
 
 ! Incompatible glue units.
-<recently read> \relax 
-                       
+<recently read> 
+                
 ...
 l.830   \16{33}{5}{7}
                         % <== three mu_error's (! Incompatibl...
@@ -2619,8 +2621,8 @@ I'm going to assume that 1mu=1pt when they're mixed.
 
 Expr quotient rounding 6 OK
 ! Incompatible glue units.
-<recently read> \9
-                  
+<recently read> 
+                
 ...
 l.831   \17{25}{4}{6}
                         % <== three mu_error's (! Incompatibl...
@@ -2635,8 +2637,8 @@ l.831   \17{25}{4}{6}
 I'm going to assume that 1mu=1pt when they're mixed.
 
 ! Incompatible glue units.
-<recently read> \relax 
-                       
+<recently read> 
+                
 ...
 l.831   \17{25}{4}{6}
                         % <== three mu_error's (! Incompatibl...
@@ -2644,8 +2646,8 @@ I'm going to assume that 1mu=1pt when they're mixed.
 
 Expr quotient rounding 7 OK
 ! Incompatible glue units.
-<recently read> \9
-                  
+<recently read> 
+                
 ...
 l.832   \18{26}{4}{7}
                         % <== three mu_error's (! Incompatibl...
@@ -2660,8 +2662,8 @@ l.832   \18{26}{4}{7}
 I'm going to assume that 1mu=1pt when they're mixed.
 
 ! Incompatible glue units.
-<recently read> \relax 
-                       
+<recently read> 
+                
 ...
 l.832   \18{26}{4}{7}
                         % <== three mu_error's (! Incompatibl...
@@ -2681,8 +2683,8 @@ I can't evaluate this expression,
 since the result is out of range.
 
 ! Arithmetic overflow.
-<inserted text> \relax 
-                       
+<inserted text> 
+                
 <to be read again> 
                    \else 
 \1...expr (#3sp)*(#4)/(#5)\else 
@@ -2694,9 +2696,9 @@ since the result is out of range.
 
 Expr fraction rounding 3 OK
 [1]
-Memory usage before: 51&320; after: 44&320; still untouched: 680
+Memory usage before: 58&321; after: 48&321; still untouched: 1171
 [1]
-Memory usage before: 51&320; after: 44&320; still untouched: 680
+Memory usage before: 58&321; after: 48&321; still untouched: 1171
 Checking \mutoglue and \gluetomu:
 ! You can't use `\mutoglue' in vertical mode.
 l.903   \mutoglue
@@ -3187,7 +3189,7 @@ l.1044   \showbox32100
                       
 
 > \box32101=
-\hbox(0.0+0.0)x3.0
+\hbox(0.0+0.0)x3.0, yoko direction
 
 ! OK.
 l.1045   \showbox32101
@@ -3240,7 +3242,7 @@ Checking \lastlinefit:
 @@4: line 2.2- t=144 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x96.0
+\vbox(0.0+0.0)x96.0, yoko direction
 .\hbox(0.0+0.0)x96.0, glue set - 0.5 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x96.0, glue set 31.0fill []
@@ -3252,10 +3254,10 @@ l.1079     \lastlinefit=-1 \1
                              
 
 > \box0=
-\hbox(0.0+0.0)x96.0, glue set 31.0fill
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x96.0, glue set 31.0fill, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 0.0 plus 1.0fill
 .\glue(\rightskip) 0.0
@@ -3283,7 +3285,7 @@ l.1079     \lastlinefit=-1 \1
 @@4: line 2.2- t=148 s=31.0 a=-1.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x96.0
+\vbox(0.0+0.0)x96.0, yoko direction
 .\hbox(0.0+0.0)x96.0, glue set - 0.5 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x96.0, glue set - 0.25 []
@@ -3295,10 +3297,10 @@ l.1080     \lastlinefit=500 \1
                               
 
 > \box0=
-\hbox(0.0+0.0)x96.0, glue set - 0.25
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x96.0, glue set - 0.25, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 32.0
 .\glue(\rightskip) 0.0
@@ -3326,7 +3328,7 @@ l.1080     \lastlinefit=500 \1
 @@4: line 2.2- t=288 s=31.0 a=-2.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x96.0
+\vbox(0.0+0.0)x96.0, yoko direction
 .\hbox(0.0+0.0)x96.0, glue set - 0.5 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x96.0, glue set - 0.5 []
@@ -3338,10 +3340,10 @@ l.1081     \lastlinefit=1001 \1
                                
 
 > \box0=
-\hbox(0.0+0.0)x96.0, glue set - 0.5
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x96.0, glue set - 0.5, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 33.0
 .\glue(\rightskip) 0.0
@@ -3377,7 +3379,7 @@ l.1081     \lastlinefit=1001 \1
 @@5: line 5.2- t=0 -> @@4
 
 > \box0=
-\vbox(0.0+0.0)x98.0
+\vbox(0.0+0.0)x98.0, yoko direction
 .\hbox(0.0+0.0)x98.0, glue set 68.0fill []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x98.0, glue set 68.0fill []
@@ -3395,8 +3397,8 @@ l.1085 ...  \lastlinefit=1000 \1
                                 
 
 > \box0=
-\hbox(0.0+0.0)x98.0, glue set 34.0fill
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x98.0, glue set 34.0fill, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 0.0 plus 1.0fill
 .\glue(\rightskip) 0.0 plus 1.0fill
@@ -3424,7 +3426,7 @@ l.1085 ...  \lastlinefit=1000 \1
 @@4: line 2.2- t=4 s=33.0 a=-0.5 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x98.0
+\vbox(0.0+0.0)x98.0, yoko direction
 .\hbox(0.0+0.0)x98.0, glue set - 0.25 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x98.0, glue set - 0.125 []
@@ -3436,11 +3438,11 @@ l.1087       \lastlinefit=500 \1
                                 
 
 > \box0=
-\hbox(0.0+0.0)x98.0, glue set - 0.125
+\hbox(0.0+0.0)x98.0, glue set - 0.125, yoko direction
 .\glue(\leftskip) 0.0 plus -1.0fill
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 33.5
 .\glue(\rightskip) 0.0 plus 1.0fill
@@ -3468,7 +3470,7 @@ l.1087       \lastlinefit=500 \1
 @@4: line 2.2- t=8 s=33.0 a=-1.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x98.0
+\vbox(0.0+0.0)x98.0, yoko direction
 .\hbox(0.0+0.0)x98.0, glue set - 0.25 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x98.0, glue set - 0.25 []
@@ -3480,10 +3482,10 @@ l.1089     \lastlinefit=1000 \1
                                
 
 > \box0=
-\hbox(0.0+0.0)x98.0, glue set - 0.25
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x98.0, glue set - 0.25, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 34.0
 .\glue(\rightskip) 0.0
@@ -3511,7 +3513,7 @@ l.1089     \lastlinefit=1000 \1
 @@4: line 2.2- t=0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x100.0
+\vbox(0.0+0.0)x100.0, yoko direction
 .\hbox(0.0+0.0)x100.0 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x100.0, glue set 35.0fill []
@@ -3523,10 +3525,10 @@ l.1091     \lastlinefit=0 \1
                             
 
 > \box0=
-\hbox(0.0+0.0)x100.0, glue set 35.0fill
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x100.0, glue set 35.0fill, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 0.0 plus 1.0fill
 .\glue(\rightskip) 0.0
@@ -3554,7 +3556,7 @@ l.1091     \lastlinefit=0 \1
 @@4: line 2.2- t=0 s=0.0 a=0.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x100.0
+\vbox(0.0+0.0)x100.0, yoko direction
 .\hbox(0.0+0.0)x100.0 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x100.0, glue set 35.0fill []
@@ -3566,10 +3568,10 @@ l.1092     \lastlinefit=500 \1
                               
 
 > \box0=
-\hbox(0.0+0.0)x100.0, glue set 35.0fill
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x100.0, glue set 35.0fill, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 0.0 plus 1.0fill
 .\glue(\rightskip) 0.0
@@ -3597,7 +3599,7 @@ l.1092     \lastlinefit=500 \1
 @@4: line 2.2- t=0 s=0.0 a=0.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x100.0
+\vbox(0.0+0.0)x100.0, yoko direction
 .\hbox(0.0+0.0)x100.0 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x100.0, glue set 35.0fill []
@@ -3609,10 +3611,10 @@ l.1093     \lastlinefit=1000 \1
                                
 
 > \box0=
-\hbox(0.0+0.0)x100.0, glue set 35.0fill
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x100.0, glue set 35.0fill, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 0.0 plus 1.0fill
 .\glue(\rightskip) 0.0
@@ -3640,7 +3642,7 @@ l.1093     \lastlinefit=1000 \1
 @@4: line 2.2- t=4 s=0.0 a=0.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x110.0
+\vbox(0.0+0.0)x110.0, yoko direction
 .\hbox(0.0+0.0)x110.0, glue set 0.25 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x110.0, glue set 45.0fill []
@@ -3652,11 +3654,11 @@ l.1097 ...  \lastlinefit=1000 \1
                                 
 
 > \box0=
-\hbox(0.0+0.0)x110.0, glue set 45.0fill
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x110.0, glue set 45.0fill, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
 .\glue 0.0 plus 1.0fil
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 0.0 plus 1.0fill
 .\glue(\rightskip) 0.0
@@ -3684,7 +3686,7 @@ l.1097 ...  \lastlinefit=1000 \1
 @@4: line 2.2- t=4 s=45.0 a=2.5 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x110.0
+\vbox(0.0+0.0)x110.0, yoko direction
 .\hbox(0.0+0.0)x110.0, glue set 0.25 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x110.0, glue set 0.125 []
@@ -3696,10 +3698,10 @@ l.1099     \lastlinefit=500 \1
                               
 
 > \box0=
-\hbox(0.0+0.0)x110.0, glue set 0.125
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x110.0, glue set 0.125, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 42.5
 .\glue(\rightskip) 0.0
@@ -3727,7 +3729,7 @@ l.1099     \lastlinefit=500 \1
 @@4: line 2.2- t=8 s=45.0 a=5.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x110.0
+\vbox(0.0+0.0)x110.0, yoko direction
 .\hbox(0.0+0.0)x110.0, glue set 0.25 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x110.0, glue set 0.25 []
@@ -3739,10 +3741,10 @@ l.1100     \lastlinefit=1000 \1
                                
 
 > \box0=
-\hbox(0.0+0.0)x110.0, glue set 0.25
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x110.0, glue set 0.25, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 40.0
 .\glue(\rightskip) 0.0
@@ -3770,7 +3772,7 @@ l.1100     \lastlinefit=1000 \1
 @@4: line 2.2- t=144 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x120.0
+\vbox(0.0+0.0)x120.0, yoko direction
 .\hbox(0.0+0.0)x120.0, glue set 0.5 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x120.0, glue set 55.0fill []
@@ -3782,10 +3784,10 @@ l.1102     \lastlinefit=0 \1
                             
 
 > \box0=
-\hbox(0.0+0.0)x120.0, glue set 55.0fill
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x120.0, glue set 55.0fill, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 0.0 plus 1.0fill
 .\glue(\rightskip) 0.0
@@ -3813,7 +3815,7 @@ l.1102     \lastlinefit=0 \1
 @@4: line 2.2- t=148 s=55.0 a=5.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x120.0
+\vbox(0.0+0.0)x120.0, yoko direction
 .\hbox(0.0+0.0)x120.0, glue set 0.5 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x120.0, glue set 0.25 []
@@ -3825,10 +3827,10 @@ l.1103     \lastlinefit=500 \1
                               
 
 > \box0=
-\hbox(0.0+0.0)x120.0, glue set 0.25
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x120.0, glue set 0.25, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 50.0
 .\glue(\rightskip) 0.0
@@ -3856,7 +3858,7 @@ l.1103     \lastlinefit=500 \1
 @@4: line 2.2- t=288 s=55.0 a=10.0 -> @@2
 
 > \box0=
-\vbox(0.0+0.0)x120.0
+\vbox(0.0+0.0)x120.0, yoko direction
 .\hbox(0.0+0.0)x120.0, glue set 0.5 []
 .\glue(\baselineskip) 0.0
 .\hbox(0.0+0.0)x120.0, glue set 0.5 []
@@ -3868,10 +3870,10 @@ l.1104     \lastlinefit=1000 \1
                                
 
 > \box0=
-\hbox(0.0+0.0)x120.0, glue set 0.5
-.\hbox(0.0+0.0)x30.0
+\hbox(0.0+0.0)x120.0, glue set 0.5, yoko direction
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\glue 5.0 plus 20.0 minus 4.0
-.\hbox(0.0+0.0)x30.0
+.\hbox(0.0+0.0)x30.0, yoko direction
 .\penalty 10000
 .\glue(\parfillskip) 45.0
 .\glue(\rightskip) 0.0
@@ -3981,7 +3983,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1138--1138
 Checking \savingvdiscards, \pagediscards, and \splitdiscards:
 ! Missing $ inserted.
 <inserted text> 
-                $
+                
 ...
 l.1146 ...oindent$\splitdiscards
                                 \noindent$\pagediscards}
@@ -3990,7 +3992,7 @@ you left one out. Proceed, with fingers crossed.
 
 ! Missing $ inserted.
 <inserted text> 
-                $
+                
 ...
 l.1146 ...noindent$\pagediscards
                                 }
@@ -3998,7 +4000,7 @@ I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 > \box27=
-\vbox(0.0+0.0)x0.0
+\vbox(0.0+0.0)x0.0, yoko direction
 .\hbox(0.0+0.0)x0.0
 ..\mathon
 ..\mathoff
@@ -4019,17 +4021,17 @@ l.1147   \showbox27
                    
 
 > \box0=
-\vbox(40.0+0.0)x0.0
-.\vbox(20.0+0.0)x0.0
-..\vbox(20.0+0.0)x0.0
+\vbox(40.0+0.0)x0.0, yoko direction
+.\vbox(20.0+0.0)x0.0, yoko direction
+..\vbox(20.0+0.0)x0.0, yoko direction
 ..\openout0=abc
 ..\penalty 0
 ..\write1{write 1}
-.\vbox(20.0+0.0)x0.0
+.\vbox(20.0+0.0)x0.0, yoko direction
 ..\write2{write 2}
 ..\closeout3
 ..\glue(\splittopskip) 0.0
-..\vbox(20.0+0.0)x0.0
+..\vbox(20.0+0.0)x0.0, yoko direction
 ..\glue 0.0 plus 1.0fil
 
 ! OK.
@@ -4039,18 +4041,18 @@ l.1175   \1 -1 20
                     \1 0 30    \1 1 20    \1 2 30
 
 > \box0=
-\vbox(50.0+0.0)x0.0
-.\vbox(30.0+0.0)x0.0
-..\vbox(20.0+0.0)x0.0
+\vbox(50.0+0.0)x0.0, yoko direction
+.\vbox(30.0+0.0)x0.0, yoko direction
+..\vbox(20.0+0.0)x0.0, yoko direction
 ..\openout0=abc
 ..\penalty 0
 ..\write1{write 1}
 ..\glue 10.0 plus 1.0 minus 1.0
 ..\write2{write 2}
-.\vbox(20.0+0.0)x0.0
+.\vbox(20.0+0.0)x0.0, yoko direction
 ..\closeout3
 ..\glue(\splittopskip) 0.0
-..\vbox(20.0+0.0)x0.0
+..\vbox(20.0+0.0)x0.0, yoko direction
 ..\glue 0.0 plus 1.0fil
 
 ! OK.
@@ -4060,20 +4062,20 @@ l.1175   \1 -1 20   \1 0 30
                                \1 1 20    \1 2 30
 
 > \box0=
-\vbox(60.0+0.0)x0.0
-.\vbox(20.0+0.0)x0.0
-..\vbox(20.0+0.0)x0.0
+\vbox(60.0+0.0)x0.0, yoko direction
+.\vbox(20.0+0.0)x0.0, yoko direction
+..\vbox(20.0+0.0)x0.0, yoko direction
 ..\openout0=abc
 ..\penalty 0
 ..\write1{write 1}
 .\glue 10.0 plus 1.0 minus 1.0
 .\penalty 0
 .\kern 10.0
-.\vbox(20.0+0.0)x0.0
+.\vbox(20.0+0.0)x0.0, yoko direction
 ..\write2{write 2}
 ..\closeout3
 ..\glue(\splittopskip) 0.0
-..\vbox(20.0+0.0)x0.0
+..\vbox(20.0+0.0)x0.0, yoko direction
 ..\glue 0.0 plus 1.0fil
 
 ! OK.
@@ -4083,9 +4085,9 @@ l.1175 ...   \1 0 30    \1 1 20
                                    \1 2 30
 
 > \box0=
-\vbox(60.0+0.0)x0.0
-.\vbox(30.0+0.0)x0.0
-..\vbox(20.0+0.0)x0.0
+\vbox(60.0+0.0)x0.0, yoko direction
+.\vbox(30.0+0.0)x0.0, yoko direction
+..\vbox(20.0+0.0)x0.0, yoko direction
 ..\openout0=abc
 ..\penalty 0
 ..\write1{write 1}
@@ -4093,10 +4095,10 @@ l.1175 ...   \1 0 30    \1 1 20
 ..\write2{write 2}
 .\penalty 0
 .\kern 10.0
-.\vbox(20.0+0.0)x0.0
+.\vbox(20.0+0.0)x0.0, yoko direction
 ..\closeout3
 ..\glue(\splittopskip) 0.0
-..\vbox(20.0+0.0)x0.0
+..\vbox(20.0+0.0)x0.0, yoko direction
 ..\glue 0.0 plus 1.0fil
 
 ! OK.
@@ -4106,9 +4108,9 @@ l.1175 ...    \1 1 20    \1 2 30
                                 
 
 
-### internal vertical mode entered at line 1184
+### yoko direction, internal vertical mode entered at line 1184
 prevdepth ignored
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 ### recent contributions:
 \glue 0.0 plus 1.0fil
 \kern 20.0
@@ -4121,9 +4123,9 @@ l.1184 ...0 \vfil \kern 20 pt \1
                                  \penalty -1 \1
 
 
-### internal vertical mode entered at line 1184
+### yoko direction, internal vertical mode entered at line 1184
 prevdepth ignored
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -4133,9 +4135,9 @@ l.1184 ...0 pt \1 \penalty -1 \1
                                 
 
 
-### internal vertical mode entered at line 1185
+### yoko direction, internal vertical mode entered at line 1185
 prevdepth ignored
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 ### recent contributions:
 \glue 0.0 plus 1.0fill
 \kern 2.0
@@ -4148,12 +4150,12 @@ l.1185 ...1 \vfill \kern 2 pt \1
                                  \penalty 10 \1
 
 
-### internal vertical mode entered at line 1185
+### yoko direction, internal vertical mode entered at line 1185
 \glue 0.0 plus 1.0fill
 \kern 2.0
 \penalty 10
 prevdepth ignored
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -4163,7 +4165,7 @@ l.1185 ...2 pt \1 \penalty 10 \1
                                 
 
 > \box0=
-\vbox(12.0+0.0)x0.0
+\vbox(12.0+0.0)x0.0, yoko direction
 .\kern 5.0
 .\penalty 0
 .\kern 7.0
@@ -4176,12 +4178,12 @@ l.1190 ...box {} \penalty -10000
                                 
 
 > \box255=
-\vbox(0.0+0.0)x0.0
+\vbox(0.0+0.0)x0.0, yoko direction
 .\write1{}
 .\write2{}
 .\write3{}
 .\glue(\topskip) 0.0
-.\hbox(0.0+0.0)x0.0
+.\hbox(0.0+0.0)x0.0, yoko direction
 
 ! OK.
 <output> ...wbox 0 \showbox 255 
@@ -4190,10 +4192,10 @@ l.1190 ...box {} \penalty -10000
                                 
 
 
-### internal vertical mode entered at line 1191
+### yoko direction, internal vertical mode entered at line 1191
 \penalty 10000
 prevdepth ignored
-### vertical mode entered at line 0
+### yoko direction, vertical mode entered at line 0
 prevdepth 0.0
 
 ! OK.
@@ -4262,7 +4264,7 @@ laywidowpenalties:
 {restoring \interlinepenalties=3 101\ETC.}
 {changing \box0=void}
 {into \box0=
-\vbox(0.0+0.0)x0.0}
+\vbox(0.0+0.0)x0.0, yoko direction}
 {restoring \box0=void}
 {restoring \displaywidowpenalties=0}
 {restoring \widowpenalties=0}
@@ -4270,12 +4272,12 @@ laywidowpenalties:
 {restoring \interlinepenalties=0}
  ) 
 Here is how much of TeX's memory you used:
- 22 strings out of 1665
- 132 string characters out of 8410
- 2661 words of memory out of 3000
- 408 multiletter control sequences out of 2100
+ 18 strings out of 1696
+ 140 string characters out of 8256
+ 3329 words of memory out of 4500
+ 460 multiletter control sequences out of 15000+0
  2286 words of font info for 3 fonts, out of 20000 for 75
- 10 hyphenation exceptions out of 307
+ 9 hyphenation exceptions out of 659
  10i,15n,8p,137b,78s stack positions out of 200i,40n,60p,500b,600s
 
 Output written on etrip.dvi (3 pages, 220 bytes).

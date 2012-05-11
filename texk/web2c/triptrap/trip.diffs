@@ -10,7 +10,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2011) (INITEX)  15 APR 2011 13:03
+> This is TeX, Version 3.1415926 (TeX Live 2012) (INITEX)  11 MAY 2012 13:42
 3c3
 < (trip.tex
 ---
@@ -19,8 +19,8 @@
 <  (preloaded format=trip 2008.3.15)
 < 1326 strings of total length 23646
 ---
->  (format=trip 2011.4.15)
-> 1370 strings of total length 24558
+>  (format=trip 2012.5.11)
+> 1371 strings of total length 24586
 461c461
 < Hyphenation trie of length 273 has 9 ops out of 500
 ---
@@ -32,13 +32,13 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2011)
+> This is TeX, Version 3.1415926 (TeX Live 2012)
 > **(./trip.tex ##
 + diff SRCDIR/triptrap/trip.log trip.log
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is TeX, Version 3.1415926 (TeX Live 2011) (format=trip 2011.4.15)  15 APR 2011 13:03
+> This is TeX, Version 3.1415926 (TeX Live 2012) (format=trip 2012.5.11)  11 MAY 2012 13:42
 3c3
 < (trip.tex ##
 ---
@@ -92,8 +92,8 @@
 <  47 strings out of 1674
 <  253 string characters out of 8354
 ---
->  44 strings out of 1630
->  261 string characters out of 15442
+>  44 strings out of 1629
+>  261 string characters out of 15414
 7299c7303
 <  372 multiletter control sequences out of 2100
 ---
@@ -108,11 +108,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2011)
+> This is DVItype, Version 3.6 (TeX Live 2012)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2011.04.15:1303'
+> ' TeX output 2012.05.11:1342'
 419c419
 < 1121: down4 639342208 
 ---

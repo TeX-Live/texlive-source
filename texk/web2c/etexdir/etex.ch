@@ -98,6 +98,7 @@
 %             some rearrangements to reduce interferences between
 %                 e-TeX and pTeX, in part suggested by Hironori Kitagawa
 %                 <h_kitagawa2001@@yahoo.co.jp>, Mar 2011.
+% Version 2.4 fixed an uninitialized line number bug, released in May 2012.
 
 % Although considerable effort has been expended to make the e-TeX program
 % correct and reliable, no warranty is implied; the author disclaims any
@@ -183,8 +184,8 @@ known as `\eTeX'.
 @d banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
 @y
 @d eTeX_version=2 { \.{\\eTeXversion} }
-@d eTeX_revision==".3" { \.{\\eTeXrevision} }
-@d eTeX_version_string=='-2.3' {current \eTeX\ version}
+@d eTeX_revision==".4" { \.{\\eTeXrevision} }
+@d eTeX_version_string=='-2.4' {current \eTeX\ version}
 @#
 @d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}

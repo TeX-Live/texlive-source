@@ -1,3 +1,7 @@
+2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web: Adapted to e-TeX Version 2.4.
+
 2012-04-15  Karl Berry  <karl@tug.org>
 
 	* pdftex.web (pdftex_revision, pdftex_version_string)

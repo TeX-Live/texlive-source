@@ -47,12 +47,13 @@
 % (19/01/2011) PB  Let \lastkern etc act through disp node.
 % (15/04/2011) PB  pTeX p3.2 Add \ifdbox and \ifddir
 % (2011-08-18) PB  Bug fix by Hironori Kitagawa.
+% (2012-05-11) PB  pTeX p3.3
 %
 @x [1.2] l.200 - pTeX:
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
 @y
-@d pTeX_version_string=='-p3.2' {current p\TeX\ version}
+@d pTeX_version_string=='-p3.3' {current p\TeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.1415926',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner

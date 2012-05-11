@@ -1,3 +1,8 @@
+2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptex.ech (eTeX_version_string): Version 2.4.
+	* eptrip/eptrip.{diffs,log,tex}: Adapted.
+
 2012-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech (just_copy): Bug fix, copy the additional pTeX word.

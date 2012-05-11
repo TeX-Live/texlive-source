@@ -1,4 +1,4 @@
-This is DVItype, Version 3.6
+This is DVItype, Version 3.6 (TeX Live 2012)
 Options selected:
   Starting page = *.*.*.*.*.*.*.*.*.* 
   Maximum number of pages = 1000000
@@ -6,7 +6,7 @@ Options selected:
   Resolution =  72.27000000 pixels per inch
 numerator/denominator=25400000/473628672
 magnification=1000;       0.00001526 pixels per DVI unit
-' TeX output 2011.04.07:1213'
+' TeX output 2012.05.11:1347'
  
 42: beginning of page 1.0.0.0.0.0.0.0.0.0 
 87: eop 

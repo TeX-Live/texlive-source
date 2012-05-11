@@ -7,17 +7,17 @@
 1c1
 < This is METAFONT, Version 2.718281 (INIMF)  15 MAR 2008 02:23
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2011) (INIMF)  15 APR 2011 13:04
+> This is METAFONT, Version 2.718281 (TeX Live 2012) (INIMF)  11 MAY 2012 13:42
 150c150
 < String usage 26&83 (891&11438 still untouched)
 ---
-> String usage 30&98 (6387&79485 still untouched)
+> String usage 30&98 (6386&79458 still untouched)
 176,177c176,177
 <  (preloaded base=trap 2008.3.15)
 < 1117 strings of total length 20614
 ---
->  (base=trap 2011.4.15)
-> 1122 strings of total length 20566
+>  (base=trap 2012.5.11)
+> 1123 strings of total length 20593
 + ./mf --progname=inimf
 + mv trap.log mftrap.log
 + mv trap.tfm mftrap.tfm
@@ -27,31 +27,31 @@
 < ** &trap  trap 
 < (trap.mf
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2011) (INIMF)
+> This is METAFONT, Version 2.718281 (TeX Live 2012) (INIMF)
 > **(trap.mf
 39c38
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6301&75641 still untouched)
+> String usage 50&202 (6300&75614 still untouched)
 + diff SRCDIR/triptrap/mftrap.log mftrap.log
 1c1
 < This is METAFONT, Version 2.718281 (preloaded base=trap 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is METAFONT, Version 2.718281 (TeX Live 2011) (base=trap 2011.4.15)  15 APR 2011 13:04
+> This is METAFONT, Version 2.718281 (TeX Live 2012) (base=trap 2012.5.11)  11 MAY 2012 13:42
 1825c1825
 < String usage 24&92 (858&11309 still untouched)
 ---
-> String usage 30&119 (6347&79309 still untouched)
+> String usage 30&119 (6346&79282 still untouched)
 4235c4235
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6301&75641 still untouched)
+> String usage 50&202 (6300&75614 still untouched)
 4251,4252c4251,4252
 <  68 strings out of 883
 <  3752 string characters out of 11386
 ---
->  77 strings out of 6378
->  3793 string characters out of 79434
+>  77 strings out of 6377
+>  3793 string characters out of 79407
 4254,4255c4254,4255
 <  289 symbolic tokens out of 2100
 <  8i,43n,14r,8p,167b stack positions out of 30i,100n,300r,150p,500b
@@ -69,10 +69,10 @@
 1c1
 < This is GFtype, Version 3.1
 ---
-> This is GFtype, Version 3.1 (TeX Live 2011)
+> This is GFtype, Version 3.1 (TeX Live 2012)
 3c3
 < ' METAFONT output 2008.03.15:0223'
 ---
-> ' METAFONT output 2011.04.15:1304'
+> ' METAFONT output 2012.05.11:1342'
 + exit 0
 PASS: trap.test

@@ -1,3 +1,9 @@
+2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Version 2.4, dated May 11, 2012.
+	* etrip/etrip.tex, etrip/etripin.log, etrip/etrip.log,
+	etrip/etrip.fot, etrip/etrip.typ, etrip/etrip.diffs: Adapted.
+
 2012-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Fixed a typo in TeX text.
