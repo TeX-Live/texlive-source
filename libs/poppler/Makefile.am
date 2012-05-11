@@ -56,6 +56,7 @@ goo_libGoo_a_sources = \
 fofi_libfofi_a_sources = \
 	$(FOFI_SRC)/FoFiBase.cc \
 	$(FOFI_SRC)/FoFiEncodings.cc \
+	$(FOFI_SRC)/FoFiIdentifier.cc \
 	$(FOFI_SRC)/FoFiTrueType.cc \
 	$(FOFI_SRC)/FoFiType1.cc \
 	$(FOFI_SRC)/FoFiType1C.cc

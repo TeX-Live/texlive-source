@@ -33,7 +33,7 @@ libpng 1.5.10 - checked 30mar12
 
 obsdcompat - used by pdftex and luatex
 
-poppler 0.18.4 - checked 23feb12
+poppler 0.20.0 - checked 11may12
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 t1lib 5.1.2 - checked 10may12

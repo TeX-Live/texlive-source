@@ -1,0 +1,74 @@
+diff -ur poppler-0.20.0.orig/poppler/GfxState.cc poppler-0.20.0/poppler/GfxState.cc
+--- poppler-0.20.0.orig/poppler/GfxState.cc	2012-05-07 03:42:01.000000000 +0200
++++ poppler-0.20.0/poppler/GfxState.cc	2012-05-11 08:43:26.000000000 +0200
+@@ -3121,7 +3121,7 @@
+ 
+   getParameterRange(&sMin, &sMax, xMin, yMin, xMax, yMax);
+   upperBound = ctm->norm() * getDistance(sMin, sMax);
+-  maxSize = ceil(upperBound);
++  maxSize = (int)ceil(upperBound);
+   maxSize = std::max<int>(maxSize, 2);
+ 
+   {
+diff -ur poppler-0.20.0.orig/poppler/GfxState.h poppler-0.20.0/poppler/GfxState.h
+--- poppler-0.20.0.orig/poppler/GfxState.h	2012-02-14 19:15:04.000000000 +0100
++++ poppler-0.20.0/poppler/GfxState.h	2012-05-09 10:05:26.000000000 +0200
+@@ -100,7 +100,7 @@
+ }
+ 
+ static inline Guchar dblToByte(double x) {
+-  return (x * 255.0);
++  return (Guchar)(x * 255.0);
+ }
+ 
+ static inline double byteToDbl(Guchar x) {
+diff -ur poppler-0.20.0.orig/poppler/Hints.cc poppler-0.20.0/poppler/Hints.cc
+--- poppler-0.20.0.orig/poppler/Hints.cc	2012-02-29 21:12:22.000000000 +0100
++++ poppler-0.20.0/poppler/Hints.cc	2012-05-09 10:05:26.000000000 +0200
+@@ -415,7 +415,7 @@
+ {
+   Guint bit, bits;
+ 
+-  if (n < 0) return -1;
++  if (n < 0) return (Guint)-1;
+   if (n == 0) return 0;
+ 
+   if (n == 1)
+@@ -423,11 +423,11 @@
+ 
+   bit = (readBit(str) << (n-1));
+   if (bit == (Guint) -1)
+-    return -1;
++    return (Guint)-1;
+ 
+   bits = readBits(n-1, str);
+   if (bits == (Guint) -1)
+-    return -1;
++    return (Guint)-1;
+ 
+   return bit | bits;
+ }
+diff -ur poppler-0.20.0.orig/poppler/Lexer.cc poppler-0.20.0/poppler/Lexer.cc
+--- poppler-0.20.0.orig/poppler/Lexer.cc	2012-03-01 17:47:33.000000000 +0100
++++ poppler-0.20.0/poppler/Lexer.cc	2012-05-09 10:05:26.000000000 +0200
+@@ -216,7 +216,7 @@
+ 	      overflownUnsignedInteger = gTrue;
+ 	      xf = xi * 10.0 + (c - '0');
+ 	    } else {
+-	      xui = xi * 10.0 + (c - '0');
++	      xui = (unsigned int)(xi * 10.0 + (c - '0'));
+ 	    }
+ 	  } else {
+ 	    xi = xi * 10 + (c - '0');
+diff -ur poppler-0.20.0.orig/poppler/Stream.cc poppler-0.20.0/poppler/Stream.cc
+--- poppler-0.20.0.orig/poppler/Stream.cc	2012-05-03 23:28:57.000000000 +0200
++++ poppler-0.20.0/poppler/Stream.cc	2012-05-11 08:43:26.000000000 +0200
+@@ -478,7 +478,7 @@
+   Guchar *p;
+  
+   int readChars = str->doGetChars(inputLineSize, inputLine);
+-  for ( ; readChars < inputLineSize; readChars++) inputLine[readChars] = EOF;
++  for ( ; readChars < inputLineSize; readChars++) inputLine[readChars] = (Guchar)EOF;
+   if (nBits == 1) {
+     p = inputLine;
+     for (i = 0; i < nVals; i += 8) {

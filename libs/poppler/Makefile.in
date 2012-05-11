@@ -81,8 +81,8 @@ am__objects_1 = FixedPoint.$(OBJEXT) gfile.$(OBJEXT) gmem.$(OBJEXT) \
 	gmempp.$(OBJEXT) GooHash.$(OBJEXT) GooList.$(OBJEXT) \
 	GooString.$(OBJEXT) GooTimer.$(OBJEXT) gstrtod.$(OBJEXT)
 am__objects_2 = FoFiBase.$(OBJEXT) FoFiEncodings.$(OBJEXT) \
-	FoFiTrueType.$(OBJEXT) FoFiType1.$(OBJEXT) \
-	FoFiType1C.$(OBJEXT)
+	FoFiIdentifier.$(OBJEXT) FoFiTrueType.$(OBJEXT) \
+	FoFiType1.$(OBJEXT) FoFiType1C.$(OBJEXT)
 am__objects_3 = Annot.$(OBJEXT) Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 	BuiltinFontTables.$(OBJEXT) CMap.$(OBJEXT) \
 	CachedFile.$(OBJEXT) Catalog.$(OBJEXT) \
@@ -312,6 +312,7 @@ goo_libGoo_a_sources = \
 fofi_libfofi_a_sources = \
 	$(FOFI_SRC)/FoFiBase.cc \
 	$(FOFI_SRC)/FoFiEncodings.cc \
+	$(FOFI_SRC)/FoFiIdentifier.cc \
 	$(FOFI_SRC)/FoFiTrueType.cc \
 	$(FOFI_SRC)/FoFiType1.cc \
 	$(FOFI_SRC)/FoFiType1C.cc
@@ -460,6 +461,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FlateStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiEncodings.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiIdentifier.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiTrueType.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiType1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FoFiType1C.Po@am__quote@
@@ -681,6 +683,20 @@ FoFiEncodings.obj: $(FOFI_SRC)/FoFiEncodings.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiEncodings.cc' object='FoFiEncodings.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiEncodings.obj `if test -f '$(FOFI_SRC)/FoFiEncodings.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiEncodings.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiEncodings.cc'; fi`
+
+FoFiIdentifier.o: $(FOFI_SRC)/FoFiIdentifier.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiIdentifier.o -MD -MP -MF $(DEPDIR)/FoFiIdentifier.Tpo -c -o FoFiIdentifier.o `test -f '$(FOFI_SRC)/FoFiIdentifier.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiIdentifier.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiIdentifier.Tpo $(DEPDIR)/FoFiIdentifier.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiIdentifier.cc' object='FoFiIdentifier.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiIdentifier.o `test -f '$(FOFI_SRC)/FoFiIdentifier.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiIdentifier.cc
+
+FoFiIdentifier.obj: $(FOFI_SRC)/FoFiIdentifier.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiIdentifier.obj -MD -MP -MF $(DEPDIR)/FoFiIdentifier.Tpo -c -o FoFiIdentifier.obj `if test -f '$(FOFI_SRC)/FoFiIdentifier.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiIdentifier.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiIdentifier.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FoFiIdentifier.Tpo $(DEPDIR)/FoFiIdentifier.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(FOFI_SRC)/FoFiIdentifier.cc' object='FoFiIdentifier.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FoFiIdentifier.obj `if test -f '$(FOFI_SRC)/FoFiIdentifier.cc'; then $(CYGPATH_W) '$(FOFI_SRC)/FoFiIdentifier.cc'; else $(CYGPATH_W) '$(srcdir)/$(FOFI_SRC)/FoFiIdentifier.cc'; fi`
 
 FoFiTrueType.o: $(FOFI_SRC)/FoFiTrueType.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FoFiTrueType.o -MD -MP -MF $(DEPDIR)/FoFiTrueType.Tpo -c -o FoFiTrueType.o `test -f '$(FOFI_SRC)/FoFiTrueType.cc' || echo '$(srcdir)/'`$(FOFI_SRC)/FoFiTrueType.cc
