@@ -2,7 +2,7 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
   if 0;
 use strict;
 
-# $Id: epstopdf.pl 18319 2010-05-17 16:34:21Z karl $
+# $Id: epstopdf.pl 26303 2012-05-11 22:54:04Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,8 @@ use strict;
 #
 # emacs-page
 # History
+#  2012/05/12 v2.17 (Karl Berry)
+#    * uselessly placate -w.  Debian bug 672281.
 #  2010/05/09 v2.16 (Karl Berry)
 #    * make --nogs dump edited PostScript to stdout by default
 #      (report from Reinhard Kotucha).
@@ -149,9 +151,9 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 18319 2010-05-17 16:34:21Z karl $) 2.16';
+my $ident = '($Id: epstopdf.pl 26303 2012-05-11 22:54:04Z karl $) 2.17';
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2010 Karl Berry et al.
+Copyright 2009-2012 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -179,9 +181,12 @@ $::opt_exact = 0;
 $::opt_filter = 0;
 $::opt_gs = 1;
 $::opt_gscmd = "";
+$::opt_help = 0;
 $::opt_hires = 0;
 $::opt_outfile = "";
 $::opt_res = 0;
+$::opt_restricted = 0;
+$::opt_version = 0;
 
 ### usage
 my @bool = ("false", "true");
