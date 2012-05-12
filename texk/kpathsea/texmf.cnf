@@ -473,12 +473,13 @@ RUBYINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/ruby//
 % However, we want to include one more directory: the
 % great-grandparent's texmf-local, because that is how TL is installed
 % by default.  That is, given a binary
-% /usr/local/texlive/YYYY/bin/PLATFORM/kpsewhich, it should be fine
-% /usr/local/texlive/texmf-local/web2c/texmf.cnf.  Not under YYYY.
+% /usr/local/texlive/YYYY/bin/PLATFORM/kpsewhich, it should find
+% /usr/local/texlive/texmf-local/web2c/texmf.cnf.  I.e., not under YYYY.
 % 
 % As a result, we cannot use actual brace expansion in the definition,
 % since we don't want to scatter ../'s throughout the value.  Hence we
-% explicitly list every directory.  Arguably more understandable anyway.
+% explicitly list every directory.  Arguably more understandable this
+% way anyway.
 %
 TEXMFCNF = {\
 $SELFAUTOLOC,\
@@ -542,6 +543,7 @@ shell_escape_commands = \
 bibtex,bibtex8,\
 kpsewhich,\
 makeindex,\
+mpost,
 repstopdf,\
 
 % we'd like to allow:
