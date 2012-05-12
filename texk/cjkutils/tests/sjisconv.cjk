@@ -1,4 +1,4 @@
-\def\CJKpreproc{sjisconv (CJK ver. 4.8.2)}
+\def\CJKpreproc{sjisconv (CJK ver. 4.8.3)}
 0x81 0x7b:Å123
 0x9f 0x5c:ü92
 0xe0 0x7d:‡125

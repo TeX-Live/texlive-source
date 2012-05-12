@@ -1,3 +1,10 @@
+2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cjk-4.8.3/utils as cjkutils-4.8.3.
+	* version.ac: New file defining the cjk version.
+	* configure.ac: Adapt.
+	* tests/{bg5,cef,cef5,cefs,ext,sjis}conv.cjk: Version 4.8.3.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

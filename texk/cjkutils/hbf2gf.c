@@ -1,5 +1,5 @@
 #define banner  \
-"hbf2gf (CJK ver. 4.8.2)" \
+"hbf2gf (CJK ver. 4.8.3)" \
  \
 
 #define TRUE 1
@@ -100,10 +100,10 @@
 #define VALID_SUBCODE 1 \
 
 /*4:*/
-#line 191 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 191 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*10:*/
-#line 408 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 408 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef HAVE_CONFIG_H
 #include <c-auto.h> 
@@ -121,7 +121,7 @@
 
 
 /*:10*//*69:*/
-#line 2469 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2469 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
 #include "kpathsea/kpathsea.h"
@@ -134,46 +134,46 @@
 #endif
 
 /*:69*/
-#line 192 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 192 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*11:*/
-#line 429 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 429 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_file(void);
 
 
 /*:11*//*13:*/
-#line 491 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 491 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_pre(void);
 
 
 /*:13*//*16:*/
-#line 579 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 579 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_data(void);
 
 
 /*:16*//*20:*/
-#line 690 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 690 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_post(void);
 
 
 /*:20*//*25:*/
-#line 834 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 834 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void fputl(long,FILE*);
 
 
 /*:25*//*29:*/
-#line 994 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 994 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void make_pixel_array(void);
 
 
 /*:29*//*36:*/
-#line 1222 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1222 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef __GNUC__
 __inline__
@@ -182,7 +182,7 @@ void read_row(unsigned char*);
 
 
 /*:36*//*39:*/
-#line 1272 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1272 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef __GNUC__
 __inline__
@@ -191,55 +191,55 @@ void write_row(unsigned char*);
 
 
 /*:39*//*41:*/
-#line 1325 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1325 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_coding(void);
 
 
 /*:41*//*45:*/
-#line 1486 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1486 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_pl(void);
 
 
 /*:45*//*47:*/
-#line 1583 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1583 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_ovp(void);
 
 
 /*:47*//*50:*/
-#line 1728 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1728 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_job(void);
 
 
 /*:50*//*54:*/
-#line 1977 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1977 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void read_config(void);
 
 
 /*:54*//*64:*/
-#line 2308 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2308 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 int fsearch(const char*);
 
 
 /*:64*//*67:*/
-#line 2447 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2447 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void config_error(const char*);
 
 
 /*:67*//*71:*/
-#line 2490 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2490 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 const char*TeX_search_version(void);
 
 
 /*:71*//*74:*/
-#line 2525 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2525 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
 extern int setup_list(struct emtex_dir*,char*,const char*,unsigned);
@@ -249,17 +249,17 @@ char*file_find(char*,struct emtex_dir*);
 
 
 /*:74*//*79:*/
-#line 2613 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2613 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char*TeX_search_cfg_file(char*);
 char*TeX_search_hbf_file(char*);
 
 
 /*:79*/
-#line 193 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 193 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*2:*/
-#line 127 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 127 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 int nmb_files= -1;
 int unicode= FALSE;
@@ -300,7 +300,7 @@ int end_of_file= FALSE;
 
 
 /*:2*//*15:*/
-#line 538 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 538 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 long char_adr[256];
 long*char_adr_p;
@@ -342,7 +342,7 @@ int dot_count;
 
 
 /*:15*//*19:*/
-#line 667 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 667 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char coding[STRING_LENGTH+1];
 char comment[STRING_LENGTH+1];
@@ -361,7 +361,7 @@ double ppp_y;
 
 
 /*:19*//*27:*/
-#line 871 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 871 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 HBF_CHAR code;
 const unsigned char*bitmap;
@@ -384,13 +384,13 @@ long s_mag_x,s_mag_y,s_slant;
 
 
 /*:27*//*38:*/
-#line 1267 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1267 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 int threshold= 128;
 
 
 /*:38*//*49:*/
-#line 1717 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1717 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char job_extension[EXTENSION_LENGTH+1];
 char rm_command[STRING_LENGTH+1];
@@ -402,13 +402,13 @@ int ofm_file= FALSE;
 
 
 /*:49*//*53:*/
-#line 1972 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1972 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char Buffer[STRING_LENGTH+1];
 
 
 /*:53*//*58:*/
-#line 2090 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2090 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 int offset_x;
 int offset_y;
@@ -417,13 +417,13 @@ HBF_CHAR user_min_char;
 int have_min_char= FALSE;
 
 /*:58*//*60:*/
-#line 2247 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2247 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 HBF_CHAR min_char,max_char;
 
 
 /*:60*//*62:*/
-#line 2274 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2274 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char b2_codes[256];
 unsigned char min_2_byte,max_2_byte;
@@ -431,7 +431,7 @@ int nmb_2_bytes= 0;
 
 
 /*:62*//*70:*/
-#line 2481 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2481 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #if defined(HAVE_EMTEXDIR)
 char emtex_version_string[]= "emTeXdir";
@@ -441,7 +441,7 @@ char no_version_string[]= "no search library";
 
 
 /*:70*//*73:*/
-#line 2518 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2518 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
 struct emtex_dir cfg_path,hbf_path;
@@ -449,13 +449,13 @@ struct emtex_dir cfg_path,hbf_path;
 
 
 /*:73*//*76:*/
-#line 2564 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2564 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char name_buffer[FILE_NAME_LENGTH+1];
 
 
 /*:76*/
-#line 194 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 194 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 
@@ -463,7 +463,7 @@ int main(int argc,char*argv[])
 {char*p;
 
 /*78:*/
-#line 2586 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2586 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
 kpse_set_program_name(argv[0],"hbf2gf");
@@ -484,16 +484,16 @@ exit(1);
 
 
 /*:78*/
-#line 200 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 200 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 /*7:*/
-#line 307 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 307 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 if(argc==2)
 {if(strcmp(argv[1],"--help")==0)
 /*6:*/
-#line 288 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 288 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {printf(USAGE);
 exit(0);
@@ -501,11 +501,11 @@ exit(0);
 
 
 /*:6*/
-#line 310 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 310 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 else if(strcmp(argv[1],"--version")==0)
 /*5:*/
-#line 261 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 261 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {printf("\n");
 printf(banner);
@@ -516,7 +516,7 @@ exit(0);
 
 
 /*:5*/
-#line 312 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 312 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 }
 
@@ -554,7 +554,7 @@ exit(1);
 
 
 /*:7*/
-#line 202 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 202 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 if(!quiet)
@@ -583,7 +583,7 @@ read_config();
 
 if(mf_like)
 /*8:*/
-#line 352 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 352 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {if(unicode)
 file_number= (int)strtol(&argv[1][strlen(argv[1])-2],
@@ -611,11 +611,11 @@ y_scale= (double)x_resolution/y_scale;
 
 
 /*:8*/
-#line 229 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 229 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 /*28:*/
-#line 903 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 903 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {int col,offset;
 
@@ -698,11 +698,11 @@ s_slant= slant*SCALE;
 
 
 /*:28*/
-#line 231 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 231 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 /*9:*/
-#line 387 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 387 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {int j,max_numb;
 
@@ -724,7 +724,7 @@ nmb_files= j;
 
 
 /*:9*/
-#line 233 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 233 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 if(tfm_files)
@@ -742,7 +742,7 @@ return 0;
 
 
 /*:4*//*12:*/
-#line 437 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 437 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_file(void)
 {char output_file[FILE_NAME_LENGTH+1];
@@ -786,7 +786,7 @@ write_data();
 
 
 /*:12*//*14:*/
-#line 498 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 498 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_pre(void)
 {char out_s[40],s[20];
@@ -809,7 +809,7 @@ fputs(out_s,out);
 
 
 /*:14*//*17:*/
-#line 584 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 584 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_data(void)
 {dot_count= 0;
@@ -817,7 +817,7 @@ char_adr_p= char_adr;
 
 for(last_char= 0;(last_char<256)&&!end_of_file;last_char++)
 /*18:*/
-#line 609 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 609 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {if(dot_count++%10==0)
 if(pk_files&&!quiet)
@@ -861,13 +861,13 @@ fputc(EOC,out);
 
 
 /*:18*/
-#line 590 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 590 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 }
 
 
 /*:17*//*21:*/
-#line 695 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 695 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_post(void)
 {long special_adr;
@@ -895,7 +895,7 @@ tfm_width= (tfm_output_size_x+2*tfm_offset_x)*_2_20;
 
 
 /*22:*/
-#line 741 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 741 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 special_adr= ftell(out);
 
@@ -913,10 +913,10 @@ fputs(comment,out);
 
 
 /*:22*/
-#line 721 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 721 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*23:*/
-#line 770 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 770 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 post_adr= ftell(out);
 fputc(POST,out);
@@ -955,10 +955,10 @@ fputl(*char_adr_p++,out);
 
 
 /*:23*/
-#line 722 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 722 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*24:*/
-#line 821 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 821 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 fputc(POSTPOST,out);
 fputl(post_adr,out);
@@ -970,13 +970,13 @@ fputc(POSTPOST_ID,out);
 
 
 /*:24*/
-#line 723 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 723 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 }
 
 
 /*:21*//*26:*/
-#line 839 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 839 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void fputl(long num,FILE*f)
 {fputc(num>>24,f);
@@ -987,7 +987,7 @@ fputc(num,f);
 
 
 /*:26*//*30:*/
-#line 999 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 999 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void make_pixel_array(void)
 {unsigned char*prP;
@@ -1025,7 +1025,7 @@ if(!bitmap)
 empty_char= TRUE;
 else
 /*31:*/
-#line 1058 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1058 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {if(pk_output_size_y==input_size_y)
 temp_prP= prP;
@@ -1033,7 +1033,7 @@ temp_prP= prP;
 curr_row= input_size_y-1;
 for(row= 0;row<pk_output_size_y;++row)
 {/*32:*/
-#line 1072 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1072 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 if(pk_output_size_y==input_size_y)
 
@@ -1055,7 +1055,7 @@ need_to_read_row= 1;
 }
 
 /*33:*/
-#line 1099 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1099 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 if(need_to_read_row)
 if(rows_read<input_size_y)
@@ -1087,16 +1087,16 @@ frac_row_to_fill= SCALE;
 
 
 /*:33*/
-#line 1092 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1092 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 }
 
 
 /*:32*/
-#line 1064 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1064 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*34:*/
-#line 1140 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1140 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 if(pk_width==input_size_x&&s_slant==0)
 
@@ -1151,7 +1151,7 @@ frac_col_to_fill-= frac_col_left;
 }
 
 /*35:*/
-#line 1198 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1198 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 if(frac_col_to_fill> 0)
 {--xP;
@@ -1171,20 +1171,20 @@ write_row(new_prP);
 
 
 /*:35*/
-#line 1193 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1193 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 }
 
 
 /*:34*/
-#line 1066 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1066 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 }
 }
 
 
 /*:31*/
-#line 1035 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1035 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 }
 }
@@ -1208,7 +1208,7 @@ goto again;
 
 
 /*:30*//*37:*/
-#line 1230 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1230 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef __GNUC__
 __inline__
@@ -1243,7 +1243,7 @@ bitshift= 7;
 
 
 /*:37*//*40:*/
-#line 1280 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1280 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef __GNUC__
 __inline__
@@ -1259,7 +1259,7 @@ for(col= 0,xP= pixelrow;col<pk_output_size_x;++col,++xP)
 
 
 /*:40*//*42:*/
-#line 1333 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1333 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_coding(void)
 {register int count,skip;
@@ -1276,7 +1276,7 @@ goto start;
 
 while(y<pk_output_size_y)
 {/*43:*/
-#line 1357 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1357 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 count= 0;
 x= 0;
@@ -1345,11 +1345,11 @@ continue;
 
 
 /*:43*/
-#line 1348 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1348 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 start:
 /*44:*/
-#line 1425 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1425 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 while(x<pk_output_size_x)
 {if(*cp==paint)
@@ -1390,7 +1390,7 @@ paint= WHITE;
 
 
 /*:44*/
-#line 1350 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1350 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 y++;
 }
@@ -1398,7 +1398,7 @@ y++;
 
 
 /*:42*//*46:*/
-#line 1491 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1491 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_pl(void)
 {int i,pos;
@@ -1488,7 +1488,7 @@ fclose(out);
 
 
 /*:46*//*48:*/
-#line 1588 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1588 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_ovp(void)
 {int c,i,nmb_subfonts,remainder,count,pos;
@@ -1603,7 +1603,7 @@ fclose(out);
 
 
 /*:48*//*51:*/
-#line 1733 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1733 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void write_job(void)
 {FILE*out;
@@ -1689,7 +1689,7 @@ fclose(out);
 
 
 /*:51*//*55:*/
-#line 1985 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1985 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void read_config(void)
 {HBF_BBOX*boxp;
@@ -1697,7 +1697,7 @@ char*real_config_file;
 
 
 /*56:*/
-#line 2037 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2037 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {int i,lastext= -1;
 
@@ -1715,7 +1715,7 @@ strcat(config_file,".cfg");
 
 
 /*:56*/
-#line 1991 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 1991 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 real_config_file= TeX_search_cfg_file(config_file);
@@ -1750,7 +1750,7 @@ exit(0);
 }
 
 /*57:*/
-#line 2054 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2054 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {char hbf_header[STRING_LENGTH+1];
 char*real_hbf_header;
@@ -1787,10 +1787,10 @@ strcpy(output_name,Buffer);
 
 
 /*:57*/
-#line 2024 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2024 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*59:*/
-#line 2098 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2098 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {if(fsearch("nmb_files"))
 nmb_files= atoi(Buffer);
@@ -1932,11 +1932,11 @@ job_extension[EXTENSION_LENGTH]= '\0';
 
 
 /*:59*/
-#line 2025 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2025 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 /*61:*/
-#line 2252 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2252 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {const void*cp;
 HBF_CHAR dummy;
@@ -1951,10 +1951,10 @@ min_char= user_min_char;
 
 
 /*:61*/
-#line 2027 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2027 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*63:*/
-#line 2281 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2281 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {const void*b2r;
 unsigned char dummy;
@@ -1977,7 +1977,7 @@ nmb_2_bytes++;
 
 
 /*:63*/
-#line 2028 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2028 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 fclose(config);
@@ -1985,7 +1985,7 @@ fclose(config);
 
 
 /*:55*//*65:*/
-#line 2313 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2313 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 int fsearch(const char*search_string)
 {char*P,p;
@@ -2041,7 +2041,7 @@ Ch= fgetc(config);
 
 if(*temp_buffer)
 /*66:*/
-#line 2392 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2392 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {P= temp_buffer;
 Buf_p= Buffer;
@@ -2094,7 +2094,7 @@ count--;
 
 
 /*:66*/
-#line 2367 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2367 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 else
 *Buffer= '\0';
@@ -2104,7 +2104,7 @@ return(*Buffer)?1:0;
 
 
 /*:65*//*68:*/
-#line 2452 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2452 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 void config_error(const char*message)
 {fprintf(stderr,"Couldn't find `%s' entry in configuration file\n",
@@ -2115,7 +2115,7 @@ exit(1);
 
 
 /*:68*//*72:*/
-#line 2495 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2495 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 const char*TeX_search_version(void)
 {
@@ -2137,7 +2137,7 @@ return no_version_string;
 
 
 /*:72*//*75:*/
-#line 2537 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2537 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
 int dir_setup(ed,env,dir,flags)
@@ -2165,7 +2165,7 @@ return TRUE;
 
 
 /*:75*//*77:*/
-#line 2569 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2569 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char*file_find(name,list)
 char*name;
@@ -2180,7 +2180,7 @@ return NULL;
 
 
 /*:77*//*80:*/
-#line 2619 "./cjkutils-4.8.2/hbf2gf/hbf2gf.w"
+#line 2619 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
 char*TeX_search_cfg_file(char*name)

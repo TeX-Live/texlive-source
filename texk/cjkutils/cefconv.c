@@ -1,8 +1,8 @@
 #define banner  \
-"cefconv (CJK ver. 4.8.2)" \
+"cefconv (CJK ver. 4.8.3)" \
 
 /*2:*/
-#line 100 "./cjkutils-4.8.2/CEFconv/cefconv.w"
+#line 100 "./cjkutils-4.8.3/CEFconv/cefconv.w"
 
 #include <ctype.h> 
 #include <stdio.h> 
