@@ -1,3 +1,7 @@
+2012-05-12  Werner Lemberg  <wl@gnu.org>
+
+	* patgen.ch: Fixed a typo causing weave to fail.
+
 2012-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop obsolete poppler tests.

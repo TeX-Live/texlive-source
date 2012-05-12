@@ -24,7 +24,7 @@
 @d get_input(#)==#:=input_int(std_input)
 @d get_input_ln(#)==begin #:=getc(std_input); read_ln(std_input); end
 @#
-@d std_input==stdin@z
+@d std_input==stdin
 @z
 
 @x Eliminate the |end_of_PATGEN| label.
