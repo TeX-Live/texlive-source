@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is pTeX, Version 3.1415926-p3.3 (utf8.euc) (TeX Live 2012) (INITEX)  11 MAY 2012 14:00
+> This is pTeX, Version 3.1415926-p3.3 (utf8.euc) (TeX Live 2012) (INITEX)  12 MAY 2012 14:18
 3c3
 < (trip.tex
 ---
@@ -22,12 +22,6 @@
 < A character number must be between 0 and 255.
 ---
 > A character number must be between 0 and 255, or KANJI code.
-47,48c47,48
-< <recently read> \font 
-<                       
----
-> <recently read> 
->                 
 91c91,92
 < ### horizontal mode entered at line 77 (language255:hyphenmin1,63)
 ---
@@ -39,7 +33,7 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2012.5.11)
+>  (format=trip 2012.5.12)
 > 1451 strings of total length 25461
 > 485 memory locations dumped; current usage is 106&278
 > 377 multiletter control sequences
@@ -62,20 +56,6 @@
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
 ---
 > Memory usage before: 190&313; after: 114&278; still untouched: 3113
-28c27
-<                 }
----
->                 
-43,44c42,43
-< <recently read> end 
-<                     
----
-> <recently read> 
->                 
-70c69
-<                 }endwrite 
----
->                 
 75c74
 < Memory usage before: 334&431; after: 292&418; still untouched: 175
 ---
@@ -84,7 +64,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is pTeX, Version 3.1415926-p3.3 (utf8.euc) (TeX Live 2012) (format=trip 2012.5.11)  11 MAY 2012 14:00
+> This is pTeX, Version 3.1415926-p3.3 (utf8.euc) (TeX Live 2012) (format=trip 2012.5.12)  12 MAY 2012 14:18
 3c3
 < (trip.tex ##
 ---
@@ -122,12 +102,6 @@
 ---
 > \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
 >  3
-494,495c498,499
-< <recently read> \showlists 
-<                            
----
-> <recently read> 
->                 
 642c646
 < Memory usage before: 747&484; after: 581&481; still untouched: 1492
 ---
@@ -153,12 +127,6 @@
 ---
 > \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
 >  3
-723,724c728,729
-< <recently read> \showlists 
-<                            
----
-> <recently read> 
->                 
 815c820
 < Memory usage before: 475&470; after: 290&466; still untouched: 1473
 ---
@@ -168,12 +136,6 @@
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
-832,833c838,839
-< <recently read> \showlists 
-<                            
----
-> <recently read> 
->                 
 915c921
 < Memory usage before: 218&459; after: 149&458; still untouched: 1473
 ---
@@ -183,12 +145,6 @@
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
-928,929c935,936
-< <recently read> \showlists 
-<                            
----
-> <recently read> 
->                 
 1070c1077
 < Memory usage before: 118&328; after: 102&328; still untouched: 1473
 ---
@@ -203,12 +159,6 @@
 < Memory usage before: 990&376; after: 584&370; still untouched: 735
 ---
 > Memory usage before: 1486&375; after: 838&369; still untouched: 1974
-1809,1810c1817,1818
-< <recently read> $
-<                  
----
-> <recently read> 
->                 
 1954c1962
 < (tripos.tex
 ---
@@ -221,32 +171,10 @@
 < Memory usage before: 950&531; after: 546&448; still untouched: 706
 ---
 > Memory usage before: 1454&530; after: 804&447; still untouched: 1945
-2256,2257c2264,2265
-< <recently read> \font 
-<                       
----
-> <recently read> 
->                 
 2397c2405
 < ! Improper alphabetic constant.
 ---
 > ! Improper alphabetic or KANJI constant.
-2455c2463
-<                 \endgroup 
----
->                 
-2468,2469c2476,2477
-< <recently read> \halign 
-<                         
----
-> <recently read> 
->                 
-2497,2498c2505,2506
-< <recently read> =
-<                  
----
-> <recently read> 
->                 
 2533c2541
 < \vbox(16383.99998+0.0)x20.0, glue set 16331.0fil
 ---
@@ -255,24 +183,6 @@
 < Memory usage before: 339&413; after: 236&405; still untouched: 706
 ---
 > Memory usage before: 489&411; after: 323&403; still untouched: 1945
-2587,2588c2595,2596
-< <recently read> \eqno 
-<                       
----
-> <recently read> 
->                 
-2695,2696c2703,2704
-< <recently read> $
-<                  
----
-> <recently read> 
->                 
-2904,2905c2912,2913
-< <recently read> \displaylimits 
-<                                
----
-> <recently read> 
->                 
 3051c3059
 < \insert0, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
 ---
@@ -283,20 +193,10 @@
 > .\fam0 È 
 3143a3152
 > ....\displace 0.0
-3207c3216
-<                 }
----
->                 
 3235c3244
 < ! \textfont 0 is undefined (character ^^c8).
 ---
 > ! \textfont 0 is undefined (character È).
-3297,3298c3306,3307
-< <recently read> \!
-<                   
----
-> <recently read> 
->                 
 3326c3335
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
@@ -307,26 +207,10 @@
 < Memory usage before: 2170&521; after: 1181&459; still untouched: 175
 ---
 > Memory usage before: 3259&519; after: 1739&457; still untouched: 241
-3778c3788
-<                 \inaccessible 
----
->                 
-3810c3820
-<                 \right .
----
->                 
-3825c3835
-<                 \right .
----
->                 
 3864c3874
 < \vbox(16383.99998+2.0)x100.0, glue set 16318.0fil
 ---
 > \vbox(16383.99998+2.0)x100.0, glue set 16317.99997fil
-3938c3948
-<                 }\endwrite 
----
->                 
 3951c3961
 < Memory usage before: 640&415; after: 397&410; still untouched: 175
 ---
@@ -347,24 +231,6 @@
 < Memory usage before: 651&432; after: 417&418; still untouched: 175
 ---
 > Memory usage before: 988&431; after: 594&417; still untouched: 241
-4549,4550c4559,4560
-< <argument> ##
-<              
----
-> <argument> 
->            
-4679,4680c4689,4690
-< <template> \A 
-<               \endtemplate 
----
-> <template> 
->            
-4689,4690c4699,4700
-< <recently read> }
-<                  
----
-> <recently read> 
->                 
 4742c4752,4753
 < \vbox(16383.99998+0.0)x205.12613, glue set 16344.0fil
 ---
@@ -374,250 +240,26 @@
 < Memory usage before: 776&458; after: 464&452; still untouched: 175
 ---
 > Memory usage before: 1170&457; after: 672&451; still untouched: 241
-4901c4912
-<                 \inaccessible 
----
->                 
-4996c5007
-<                 }
----
->                 
-5089c5100
-<                 \fi 
----
->                 
-5102c5113
-<                 \cr }
----
->                 
-5115,5116c5126,5127
-< <inserted text> \cr 
-<                     }
----
-> <inserted text> 
->                 
-5171c5182
-<                 }
----
->                 
-5200c5211
-<                 }
----
->                 
-5220c5231
-<                 \par 
----
->                 
-5232c5243
-<                 \par 
----
->                 
-5250c5261
-<                 \par 
----
->                 
-5266c5277
-<                 \par 
----
->                 
-5330c5341
-<                 $
----
->                 
-5384c5395
-<                 $
----
->                 
-5395c5406
-<                 }
----
->                 
-5432c5443
-<                 }
----
->                 
-5530,5531c5541,5542
-< <recently read> \enorm 
-<                        
----
-> <recently read> 
->                 
-5654,5655c5665,5666
-< <recently read> \accent 
-<                         
----
-> <recently read> 
->                 
-5674c5685
-<                 $
----
->                 
-5685c5696
-<                 }
----
->                 
-5700,5702c5711,5713
+5700c5711
 < ! \textfont 0 is undefined (character ^^c8).
-< <recently read> $
-<                  
 ---
 > ! \textfont 0 is undefined (character È).
-> <recently read> 
->                 
-5848,5849c5859,5860
-< <recently read> \trip 
-<                       
----
-> <recently read> 
->                 
-5856,5857c5867,5868
-< <recently read> \trip 
-<                       
----
-> <recently read> 
->                 
-5911,5912c5922,5923
-< <recently read> \foo 
-<                      
----
-> <recently read> 
->                 
-5915,5916c5926,5927
-< <template> \endtemplate 
-<                         
----
-> <template> 
->            
-5938,5939c5949,5950
-< <template> }\endtemplate 
-<                          
----
-> <template> 
->            
-5959c5970
-<                 }
----
->                 
-5973c5984
-<                 \cr 
----
->                 
-5985c5996
-<                 {
----
->                 
-6109c6120
-<                 }
----
->                 
-6152c6163
-<                 }
----
->                 
-6283,6284c6294,6295
-< <template> \cr 
-<                
----
-> <template> 
->            
-6297,6298c6308,6309
-< <template> &
-<             \ifnum 0=`{\fi \endtemplate 
----
-> <template> 
->            
-6342,6343c6353,6354
-< <recently read> \err 
-<                      
----
-> <recently read> 
->                 
-6346,6347c6357,6358
-< <template> \endtemplate 
-<                         
----
-> <template> 
->            
 6380c6391
 < (tripos.tex
 ---
 > (./tripos.tex
-6403,6404c6414,6415
-< <recently read> \input 
-<                        
----
-> <recently read> 
->                 
 6501c6512
 < l.429 ...^^M=13 \def^^M{\relax}#
 ---
 > l.429 ...^^M=13 \defqqM{\relax}#
-6541c6552
-<                 \par 
----
->                 
-6544,6545c6555,6556
-< <inserted text> }
-<                  \endwrite 
----
-> <inserted text> 
->                 
-6561,6562c6572,6573
-< <inserted text> }
-<                  \endwrite 
----
-> <inserted text> 
->                 
-6581,6582c6592,6593
-< <recently read> }
-<                  
----
-> <recently read> 
->                 
 6595c6606
 < Memory usage before: 819&428; after: 720&426; still untouched: 175
 ---
 > Memory usage before: 1216&428; after: 1066&426; still untouched: 241
-6700,6701c6711,6712
-< <recently read> |undefined 
-<                            
----
-> <recently read> 
->                 
-6775c6786
-<                 }
----
->                 
-6800c6811
-<                 }
----
->                 
-6815c6826
-<                 }
----
->                 
-6830c6841
-<                 }
----
->                 
 7155c7166
 < Memory usage before: 895&439; after: 290&420; still untouched: 175
 ---
 > Memory usage before: 1332&439; after: 388&420; still untouched: 241
-7182c7193
-<                 }
----
->                 
-7218,7219c7229,7230
-< <recently read> end 
-<                     
----
-> <recently read> 
->                 
-7279c7290
-<                 }endwrite 
----
->                 
 7288c7299
 < Memory usage before: 334&431; after: 292&418; still untouched: 175
 ---
@@ -646,7 +288,7 @@
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2012.05.11:1400'
+> ' TeX output 2012.05.12:1418'
 419c419
 < 1121: down4 639342208 
 ---

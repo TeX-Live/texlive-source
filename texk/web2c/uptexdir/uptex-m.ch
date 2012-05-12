@@ -351,6 +351,12 @@ if ((kcp mod @'10)>0)and(nrestmultichr(kcp)>0) then p:=p-(kcp mod @'10);
 @z
 
 @x
+      s:=get_avail; info(s):=Lo(info(loc));
+@y
+      s:=get_avail; info(s):=(info(loc) mod max_char_val);
+@z
+
+@x
   begin cur_chr:=buffer[loc]; incr(loc);
     if multistrlen(ustringcast(buffer), limit+1, loc-1)=2 then
       begin cur_chr:=fromBUFF(ustringcast(buffer), limit+1, loc-1);

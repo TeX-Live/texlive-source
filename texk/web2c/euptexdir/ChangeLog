@@ -1,3 +1,7 @@
+2012-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* euptrip/euptrip.diffs: Updated.
+
 2011-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* euptex.ch1: Drop unused param2 of check_kanji().

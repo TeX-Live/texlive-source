@@ -1,4 +1,4 @@
-% This is a change file for pTeX 3.2
+% This is a change file for pTeX 3.3
 % By Sadayuki Tanaka and ASCII MEDIA WORKS.
 %
 % Thanks for :
@@ -1484,6 +1484,17 @@ kanji,kana,other_kchar: begin print("kanji character ");
    {|state| code at start of line}
 @z
 
+@x [22.311] l.6986 - pTeX: label
+@p procedure show_context; {prints where the scanner is}
+label done;
+var old_setting:0..max_selector; {saved |selector| setting}
+@y
+@p procedure show_context; {prints where the scanner is}
+label done, done1;
+var old_setting:0..max_selector; {saved |selector| setting}
+@!s: pointer; {temporary pointer}
+@z
+
 @x [22.316] l.7110 - pTeX: init kcode_pos
 @d begin_pseudoprint==
   begin l:=tally; tally:=0; selector:=pseudo;
@@ -1537,10 +1548,21 @@ else show_token_list(link(start),loc,100000) {avoid reference count}
 @ @<Pseudoprint the token list@>=
 begin_pseudoprint;
 if token_type<macro then
-  begin if (token_type=backed_up)and(loc<>null) then
+  begin  if (token_type=backed_up)and(loc<>null) then
+    begin  if (link(start)=null)and(check_kanji(info(start))) then {|wchar_token|}
+      begin cur_input:=input_stack[base_ptr-1];
+      s:=get_avail; info(s):=Lo(info(loc));
+      cur_input:=input_stack[base_ptr];
+      link(start):=s;
+      show_token_list(start,loc,100000);
+      free_avail(s);link(start):=null;
+      goto done1;
+      end;
+    end;
   show_token_list(start,loc,100000);
   end
 else show_token_list(link(start),loc,100000); {avoid reference count}
+done1:
 @z
 
 @x [24.341] l.7479 - pTeX: set last_chr

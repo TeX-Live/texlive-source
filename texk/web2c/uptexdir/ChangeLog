@@ -1,3 +1,9 @@
+2012-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* uptex-m.ch: Restore the 'unnecessary and seemingly wrong'
+	changes; they are required to show the error context.
+	* uptrip/uptrip.diffs: Adapted.
+
 2012-04-29  Takuji Tanaka  <KXD02663@nifty.ne.jp>
 
 	* uptex-m.ch, uppltotf.ch uptftopl.ch, updvitype.ch, upbibtex.ch:
