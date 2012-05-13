@@ -237,7 +237,7 @@ EXTRA_libf2c_a_SOURCES += \
 
 lua_scripts = pmx
 
-scriptsdir = texmf/scripts/pmx
+scriptsdir = texmf-dist/scripts/pmx
 nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am

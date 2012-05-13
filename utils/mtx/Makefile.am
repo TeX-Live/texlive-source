@@ -63,7 +63,7 @@ libp2c_a_SOURCES = \
 
 lua_scripts = m-tx
 
-scriptsdir = texmf/scripts/m-tx
+scriptsdir = texmf-dist/scripts/m-tx
 nodist_bin_SCRIPTS =
 
 include $(srcdir)/../../texk/am/script_links.am

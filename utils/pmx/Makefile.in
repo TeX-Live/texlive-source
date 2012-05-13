@@ -485,7 +485,7 @@ EXTRA_libf2c_a_SOURCES = $(PMX_TREE)/libf2c/uninit.c \
 	$(PMX_TREE)/libf2c/qbitbits.c $(PMX_TREE)/libf2c/qbitshft.c \
 	$(PMX_TREE)/libf2c/signbit.c
 lua_scripts = pmx
-scriptsdir = texmf/scripts/pmx
+scriptsdir = texmf-dist/scripts/pmx
 nodist_bin_SCRIPTS = $(am__append_2)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)

@@ -301,7 +301,7 @@ libp2c_a_SOURCES = \
 	$(MTX_TREE)/libp2c/p2clib.c
 
 lua_scripts = m-tx
-scriptsdir = texmf/scripts/m-tx
+scriptsdir = texmf-dist/scripts/m-tx
 nodist_bin_SCRIPTS = $(am__append_1)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
