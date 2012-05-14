@@ -5,8 +5,7 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-EXTRA_DIST = \
-	updmap-single.pl
+EXTRA_DIST =
 
 shell_scripts = \
 	updmap-sys
@@ -104,12 +103,8 @@ EXTRA_DIST += \
 ##
 EXTRA_DIST += \
 	old-fontinst.bat \
-	old-updmap
-
-## Tests
-##
-TESTS = tests/updmap-cmdline-test.pl
-EXTRA_DIST += $(TESTS)
+	old-updmap \
+	updmap-single.pl
 
 ## 
 .PHONY: run-texlinks

@@ -1,6 +1,7 @@
 2012-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* Makefile.am: Adapt to updmap.pl => updmap-single.pl.
+	* tests/ (removed): Moved from here to ../texlive/.
+	* Makefile.am: Adapted.
 
 2012-04-14  Norbert Preining  <preining@logic.at>
 
