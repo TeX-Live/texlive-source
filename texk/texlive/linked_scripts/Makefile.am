@@ -132,6 +132,7 @@ texmf_dist_other_scripts = \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
 	ulqda/ulqda.pl \
+	uptex/convbkmk.rb \
 	urlbst/urlbst \
 	vpe/vpe.pl
 nobase_dist_texmf_dist_scripts_SCRIPTS = \
