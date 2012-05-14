@@ -144,6 +144,11 @@ sub main {
 
   help() if $opts{'help'};
 
+  if ($opts{'version'}) {
+    print version();
+    exit (0);
+  }
+
   if ($opts{'_readsave'}) {
     read_updmap_files($opts{'_readsave'});
     print "READING DONE ============================\n";
