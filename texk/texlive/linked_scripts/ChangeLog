@@ -1,3 +1,7 @@
+2012-05-14  Norbert Preining  <preining@logic.at>
+
+	* Makefile.am/in: add updmap.pl to texmf_other_scripts
+
 2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Rename the target scripts.tmp into scripts-list

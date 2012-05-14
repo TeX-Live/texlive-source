@@ -45,7 +45,8 @@ texmf_other_scripts = \
 	tetex/texdoctk.pl \
 	texdoc/texdoc.tlu \
 	texlive/rungs.tlu \
-	texlive/tlmgr.pl
+	texlive/tlmgr.pl \
+	texlive/updmap.pl
 nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_shell_scripts) \
 	$(texmf_other_scripts)

@@ -6,6 +6,7 @@ tetex/texdoctk.pl
 texdoc/texdoc.tlu
 texlive/rungs.tlu
 texlive/tlmgr.pl
+texlive/updmap.pl
 '
 texmf_dist_scripts='
 bibexport/bibexport.sh
@@ -87,6 +88,7 @@ texliveonfly/texliveonfly.py
 texloganalyser/texloganalyser
 thumbpdf/thumbpdf.pl
 ulqda/ulqda.pl
+uptex/convbkmk.rb
 urlbst/urlbst
 vpe/vpe.pl
 '
