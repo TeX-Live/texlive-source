@@ -3,6 +3,8 @@
 	* tests/ (removed): Moved from here to ../texlive/.
 	* Makefile.am: Adapted.
 
+	* fmtutil.cnf: Updated from Master.
+
 2012-04-14  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: rename to updmap-single.pl, we ship updmap.pl now
