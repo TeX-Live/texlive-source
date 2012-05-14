@@ -348,6 +348,10 @@ sub main {
     exit 0;
   }
 
+  # what does this?
+  $updLSR = &mktexupd();
+  $updLSR->{mustexist}(0);
+
   my $cmd;
   if ($opts{'edit'}) {
     if ($opts{"dry-run"}) {
@@ -376,9 +380,6 @@ sub main {
     $changed ||= enable_disable_maps(@{$opts{'enable'}}, @{$opts{'disable'}});
   }
 
-  # what does this?
-  $updLSR = &mktexupd();
-  $updLSR->{mustexist}(0);
 
   if ($cmd && !$opts{'force'} && !$changed) {
     print "$changes_config_file unchanged.  Map files not recreated.\n" 
@@ -1332,6 +1333,10 @@ sub save_updmap {
     }
     close(FN) || warn("Cannot close file handle for $fn: $!");
     delete $alldata->{'updmap'}{$fn}{'changed'};
+    #
+    # update lsR database
+    $updLSR->{add}($fn);
+    #
     return 1;
   }
   return 0;
