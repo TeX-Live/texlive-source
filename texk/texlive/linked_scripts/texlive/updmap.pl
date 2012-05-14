@@ -340,10 +340,8 @@ sub main {
   if ($opts{'syncwithtrees'}) {
     my @missing = read_map_files();
     if (@missing) {
-      print "Missing map files found, disabling them in $changes_config_file\n";
-      for my $m (@missing) {
-        $changed ||= disableMap($m);
-      }
+      print "Missing map files found, disabling\n  @missing\nin $changes_config_file\n";
+      $changed ||= enable_disable_maps(@missing);
       # the original script did not run any update of the map files here,
       # should we do that?
     }
