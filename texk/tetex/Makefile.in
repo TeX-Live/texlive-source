@@ -231,11 +231,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = ../../build-aux/relpath README.texdoctk old-fontinst.bat \
-	old-updmap $(TESTS)
-perl_scripts = \
-	updmap
-
+EXTRA_DIST = updmap-single.pl ../../build-aux/relpath README.texdoctk \
+	old-fontinst.bat old-updmap $(TESTS)
 shell_scripts = \
 	updmap-sys
 
@@ -264,7 +261,7 @@ all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 texmfdir = $(datarootdir)/$(scriptsdir)
-dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
+dist_texmf_SCRIPTS = $(shell_scripts:=.sh)
 @WIN32_FALSE@dist_bin_SCRIPTS = $(sh_scripts)
 CLEANFILES = $(nodist_bin_SCRIPTS)
 dist_man1_MANS = \
@@ -1098,7 +1095,7 @@ uninstall-man1-links:
 
 install-exec-hook: install-bin-links
 
-install-data-hook: install-perl-links install-shell-links install-man1-links
+install-data-hook: install-shell-links install-man1-links
 
 uninstall-hook: uninstall-bin-links uninstall-links uninstall-man1-links
 

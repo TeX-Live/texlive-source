@@ -1,7 +1,11 @@
+2012-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Adapt to updmap.pl => updmap-single.pl.
+
 2012-04-14  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: rename to updmap-single.pl, we ship updmap.pl now
-	via ../texlive/updmap.pl
+	via ../texlive/linked_scripts/texlive/updmap.pl
 
 2012-04-10  Karl Berry  <karl@tug.org>
 
