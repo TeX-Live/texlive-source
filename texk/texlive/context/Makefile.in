@@ -61,7 +61,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__dist_bin_SCRIPTS_DIST = context ctxtools luatools mtxrun pstopdf \
-	rlxtools texexec texmfstart
+	texexec texmfstart
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -193,7 +193,6 @@ top_srcdir = @top_srcdir@
 @WIN32_FALSE@	luatools \
 @WIN32_FALSE@	mtxrun \
 @WIN32_FALSE@	pstopdf \
-@WIN32_FALSE@	rlxtools \
 @WIN32_FALSE@	texexec \
 @WIN32_FALSE@	texmfstart
 

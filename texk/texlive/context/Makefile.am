@@ -17,7 +17,6 @@ dist_bin_SCRIPTS = \
 	luatools \
 	mtxrun \
 	pstopdf \
-	rlxtools \
 	texexec \
 	texmfstart
 endif !WIN32
