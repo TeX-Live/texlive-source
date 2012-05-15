@@ -7,6 +7,9 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 EXTRA_DIST =
 
+perl_scripts = \
+	updmap
+
 shell_scripts = \
 	updmap-sys
 
@@ -35,7 +38,7 @@ nodist_bin_SCRIPTS =
 include $(srcdir)/../am/script_links.am
 
 texmfdir = $(datarootdir)/$(scriptsdir)
-dist_texmf_SCRIPTS = $(shell_scripts:=.sh)
+dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
 
 if !WIN32
 dist_bin_SCRIPTS = $(sh_scripts)
@@ -92,7 +95,7 @@ include $(top_srcdir)/../am/man1_links.am
 
 install-exec-hook: install-bin-links
 
-install-data-hook: install-shell-links install-man1-links
+install-data-hook: install-perl-links install-shell-links install-man1-links
 
 uninstall-hook: uninstall-bin-links uninstall-links uninstall-man1-links
 
@@ -121,4 +124,9 @@ run-texlinks:
 if !WIN32
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 endif !WIN32
+
+## Tests
+##
+TESTS = tests/updmap-cmdline-test.pl
+EXTRA_DIST += $(TESTS)
 

@@ -11,7 +11,3 @@ SUBDIRS = context linked_scripts
 ##
 EXTRA_DIST = w32_wrapper
 
-## Tests
-##
-TESTS = tests/updmap-cmdline-test.pl
-EXTRA_DIST += $(TESTS)
