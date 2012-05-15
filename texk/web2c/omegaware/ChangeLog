@@ -1,3 +1,7 @@
+2012-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/omegaware.am: Add rule to build wovp2ovf.
+
 2012-02-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ovf2ovp.ch: Allow arbitrarily large TFM files as in TFtoPL.

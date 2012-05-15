@@ -3,7 +3,7 @@
 ## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-omegaware_tools = odvicopy odvitype otangle
+omegaware_tools = odvicopy odvitype otangle wovp2ovf
 omegaware_font_tools = ofm2opl opl2ofm ovf2ovp ovp2ovf
 omegaware_programs = $(omegaware_tools) $(omegaware_font_tools)
 
@@ -85,6 +85,7 @@ EXTRA_DIST += omegaware/ovf2ovp.web omegaware/ovf2ovp.up omegaware/ovf2ovp.ch
 DISTCLEANFILES += ovf2ovp.web
 	
 nodist_ovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
+nodist_wovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
 ovp2ovf.c ovp2ovf.h: ovp2ovf-web2c
 	@$(web2c) ovp2ovf
 ovp2ovf-web2c: ovp2ovf.p $(web2c_depend)

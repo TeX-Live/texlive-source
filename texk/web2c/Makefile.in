@@ -627,7 +627,8 @@ am__EXEEXT_2 = pbibtex$(EXEEXT) pdvitype$(EXEEXT) ppltotf$(EXEEXT) \
 	ptftopl$(EXEEXT)
 am__EXEEXT_3 = upbibtex$(EXEEXT) updvitype$(EXEEXT) uppltotf$(EXEEXT) \
 	uptftopl$(EXEEXT)
-am__EXEEXT_4 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT)
+am__EXEEXT_4 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT) \
+	wovp2ovf$(EXEEXT)
 am__EXEEXT_5 = ofm2opl$(EXEEXT) opl2ofm$(EXEEXT) ovf2ovp$(EXEEXT) \
 	ovp2ovf$(EXEEXT)
 am__EXEEXT_6 = $(am__EXEEXT_4) $(am__EXEEXT_5)
@@ -957,6 +958,10 @@ nodist_weave_OBJECTS = weave.$(OBJEXT)
 weave_OBJECTS = $(nodist_weave_OBJECTS)
 weave_LDADD = $(LDADD)
 weave_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
+nodist_wovp2ovf_OBJECTS = ovp2ovf.$(OBJEXT)
+wovp2ovf_OBJECTS = $(nodist_wovp2ovf_OBJECTS)
+wovp2ovf_LDADD = $(LDADD)
+wovp2ovf_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
 	xetexdir/xetexextra.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
@@ -1048,8 +1053,8 @@ SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(nodist_uptex_SOURCES) $(uptftopl_SOURCES) \
 	$(nodist_uptftopl_SOURCES) $(nodist_vftovp_SOURCES) \
 	$(nodist_vptovf_SOURCES) $(nodist_weave_SOURCES) \
-	$(dist_xetex_SOURCES) $(nodist_xetex_SOURCES) \
-	$(nodist_EXTRA_xetex_SOURCES)
+	$(nodist_wovp2ovf_SOURCES) $(dist_xetex_SOURCES) \
+	$(nodist_xetex_SOURCES) $(nodist_EXTRA_xetex_SOURCES)
 DIST_SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(liblua51_a_SOURCES) $(libluamisc_a_SOURCES) \
 	$(EXTRA_libluamisc_a_SOURCES) $(libluasocket_a_SOURCES) \
@@ -2628,7 +2633,7 @@ libxetexmm_a_SOURCES = \
 # XeTeX Tests
 #
 xetex_tests = xetexdir/xetex.test
-omegaware_tools = odvicopy odvitype otangle
+omegaware_tools = odvicopy odvitype otangle wovp2ovf
 omegaware_font_tools = ofm2opl opl2ofm ovf2ovp ovp2ovf
 omegaware_programs = $(omegaware_tools) $(omegaware_font_tools)
 ow_tangle = WEBINPUTS=$(srcdir)/omegaware $(buildenv) $(TANGLE)
@@ -2645,6 +2650,7 @@ nodist_otangle_SOURCES = otangle.c otangle.h
 otangle_sources = omegaware/otangle.web omegaware/otangle.ch
 nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
 nodist_ovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
+nodist_wovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
 OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 	omegaware/otangle.test
 
@@ -3179,6 +3185,9 @@ vptovf$(EXEEXT): $(vptovf_OBJECTS) $(vptovf_DEPENDENCIES) $(EXTRA_vptovf_DEPENDE
 weave$(EXEEXT): $(weave_OBJECTS) $(weave_DEPENDENCIES) $(EXTRA_weave_DEPENDENCIES) 
 	@rm -f weave$(EXEEXT)
 	$(LINK) $(weave_OBJECTS) $(weave_LDADD) $(LIBS)
+wovp2ovf$(EXEEXT): $(wovp2ovf_OBJECTS) $(wovp2ovf_DEPENDENCIES) $(EXTRA_wovp2ovf_DEPENDENCIES) 
+	@rm -f wovp2ovf$(EXEEXT)
+	$(LINK) $(wovp2ovf_OBJECTS) $(wovp2ovf_LDADD) $(LIBS)
 xetex$(EXEEXT): $(xetex_OBJECTS) $(xetex_DEPENDENCIES) $(EXTRA_xetex_DEPENDENCIES) 
 	@rm -f xetex$(EXEEXT)
 	$(xetex_LINK) $(xetex_OBJECTS) $(xetex_LDADD) $(LIBS)
