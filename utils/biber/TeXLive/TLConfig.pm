@@ -1,12 +1,12 @@
-# $Id: TLConfig.pm 23084 2011-06-22 03:07:01Z preining $
+# $Id: TLConfig.pm 26329 2012-05-13 17:31:15Z karl $
 # TeXLive::TLConfig.pm - module exporting configuration values
-# Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining
+# Copyright 2007, 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 23084 $';
+my $svnrev = '$Revision: 26329 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -54,7 +54,7 @@ BEGIN {
 
 # the year of our release, will be used in the location of the
 # network packages, and in menu names, and other places.
-$ReleaseYear = 2011;
+$ReleaseYear = 2012;
 
 # users can upgrade from this year to the current year; maybe a spread
 # of more than one year will be useful at some point, but not now.
