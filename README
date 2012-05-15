@@ -110,7 +110,9 @@ GNU Make 3.81
       ulimit -s 16384
     did suffice for me
   - compiling of texk/web2c/pdftexdir/writezip.c is broken and triggers a 
-    compiler error with the above gcc. Disabling optimization -O2 using
-    Build --debug ... resolved this problem.
+    compiler error with the above gcc. This is a known optimization error
+    of gcc on alphas. The solution is to set
+      LDFLAGS=-Wl,--no-relax
+    before running Build.
   - compilation of clisp needs --disable-mmap
   - asy compilation with --disable-gsl && make
