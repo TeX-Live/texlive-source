@@ -49,6 +49,9 @@ my $BEFORECLASS = 0;
 my $PGFKEYS      = 0;
 my $PGFKEYSPLAIN = 0;
 my $FAKECMD    = "\0FAKECOMMAND\0";
+my $EDIT = 0;
+my $EDITOR;
+my $EDITORCMDLN;
 my @ENVCODE = ();
 my %DEFS;
 my $LISTSTR = '@TEXDEF@LISTDEFS@'; # used as a dummy command to list definitions
@@ -56,6 +59,9 @@ my @FILES; # List of files (sty, cls, ...)
 my @FILEORDER; # Order of files
 my %ALIAS; # list of aliases; required for registers
 my $currfile = ''; # current file name
+# Operating system:
+my $OS = $^O;
+my $WINDOWS = ($OS =~ /MSWin/);
 
 my @IGNOREDEFREG = (# List of definitions to be ignored. Can be a regex or string
    qr/^ver\@.*\.(?:sty|cls)$/,
@@ -109,11 +115,13 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
-my $VERSION = 'Version 1.6 -- 2012/05/02';
+my $VERSION = 'Version 1.7b -- 2012/05/15';
 sub usage {
+    my $option = shift;
+    my $ret    = ($option) ? 0 : 1;
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.6 -- 2012/05/02
+Version 1.7b -- 2012/05/15
 Copyright (C) 2011-2012  Martin Scharrer <martin@scharrer-online.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
@@ -159,6 +167,13 @@ Options:
   --pgf-Keys, -K                : Takes commands as pgfkeys and displays their definitions. Keys must use the full path.
   --version, -V                 : If used alone prints version of this script.
                                   (L) Together with -p or -c prints version of LaTeX package(s) or class, respectively.
+  --edit                        : Opens the file holding the macro definition. Uses --Find and --source. (L)
+                                  If the source definition can not be found the definition is printed as normal instead.
+  --editor <editor>             : Can be used to set the used editor. If not used the environment variables TEXDEF_EDITOR, EDITOR and
+                                  SELECTED_EDITOR are read in this order. If none of these are set a list of default
+                                  editors are tried.  The <editor> string can include '%f' for the filename, '%n' for
+                                  the line number and '%%' for a literal '%'.  If no '%' is used '+%n %f' is added to
+                                  the given command.
   --tempdir <directory>         : Use given existing directory for temporary files.
   --help, -h                    : Print this help and quit.
 
@@ -194,7 +209,7 @@ List all user level command sequences (macros) defined by the 'xspace' LaTeX pac
     latexdef -l -p xspace
 
 EOT
-  exit (1);
+  exit ($ret);
 }
 
 sub envcode {
@@ -235,9 +250,57 @@ GetOptions (
    'help|h' => \&usage,
    'pgf-keys|k' => \$PGFKEYS,
    'pgf-Keys|K' => \$PGFKEYSPLAIN,
+   'edit!' => sub { $EDIT=1; $FINDDEF = 2; $PRINTORIGDEF = 1; },
+   'editor=s' => \$EDITOR,
 ) || usage();
 
 # usage() unless @ARGV;
+
+if ($EDIT && !$EDITOR) {
+    $EDITOR = $ENV{'TEXDEF_EDITOR'} || $ENV{'EDITOR'} || $ENV{'SELECTED_EDITOR'};
+    if (!$EDITOR) {
+        if (!$WINDOWS && exists $ENV{HOME}) {
+        # Check ~/.selected_editor file (Ubuntu)
+        my $fn = "$ENV{HOME}/.selected_editor";
+        if (-r $fn) {
+            open (my $fh, '<', $fn);
+            while (<$fh>) {
+                s/#.*//;
+                if (/^\s*SELECTED_EDITOR=(["']?)(.*)\1/) {
+                    $EDITOR=$2;
+                }
+            }
+            close ($fh);
+        }
+        }
+    }
+    if (!$EDITOR) {
+        warn "No editor set. Using default!\n";
+        if ($WINDOWS) {
+            $EDITOR = 'texworks "%f"';
+        }
+        else {
+            for my $ed (qw(/usr/bin/vim /usr/bin/emacs /usr/bin/nano)) {
+                if (-x $ed) {
+                    $EDITOR = $ed;
+                    last;
+                }
+            }
+            if (!$EDITOR) {
+                for my $ed (qw(/usr/bin/editor /usr/bin/open /bin/open)) {
+                    if (-x $ed) {
+                        $EDITOR = "$ed \"%f\"";
+                        last;
+                    }
+                }
+            }
+        }
+    }
+    if (!$EDITOR) {
+        warn "No suitable editor found. Disable editing!\n";
+        $EDIT = 0;
+    }
+}
 
 ## Format specific settings
 if ($TEX =~ /latex$/) {
@@ -295,9 +358,8 @@ sub print_versions {
 usage() if not @cmds;
 
 my $cwd = getcwd();
-my $OS = $^O;
 my $DIRSEP;
-if ($OS =~ /MSWin/) {
+if ($WINDOWS) {
     $DIRSEP = ';';
 } else {
     $DIRSEP = ':';
@@ -402,7 +464,9 @@ if ($ISLATEX) {
     #print "\\nofiles\n";
     if ($FINDDEF || $LISTCMD || $PRINTORIGDEF) {
         # Load the 'filehook' and 'currfile' packages without 'kvoptions' by providing dummy definitions for the 'currfile' options:
-        print '\makeatletter\expandafter\def\csname ver@kvoptions.sty\endcsname{0000/00/00}\let\SetupKeyvalOptions\@gobble\newcommand\DeclareBoolOption[2][]{}\let\DeclareStringOption\DeclareBoolOption';
+        print '\makeatletter\expandafter\def\csname ver@kvoptions.sty\endcsname{0000/00/00}\let\SetupKeyvalOptions\@gobble';
+        print '\newcommand\DeclareStringOption[2][]{}';
+        print '\newcommand\DeclareBoolOption[2][false]{\expandafter\newif\csname ifcurrfile@#2\endcsname\csname currfile@#2#1\endcsname}';
         print '\let\DeclareVoidOption\@gobbletwo\def\ProcessKeyvalOptions{\@ifstar{}{}}';
         print '\def\currfile@mainext{tex}\def\currfile@maindir{\@currdir}\let\ifcurrfile@fink\iffalse\makeatother';
         print "\\RequirePackage{filehook}\n";
@@ -412,7 +476,15 @@ if ($ISLATEX) {
     }
     if ($FINDDEF || $PRINTORIGDEF) {
         print '{\expandafter}\expandafter\ifx\csname ' . $cmd . '\expandafter\endcsname\csname @undefined\endcsname' . "\n";
+        print '\AtBeginOfFiles{{{\expandafter}\expandafter\ifx\csname ' . $cmd . '\expandafter\endcsname\csname @undefined\endcsname\else' . "\n";
+        print '  \ClearHook\AtBeginOfFiles{}\relax';
+        print '  \ClearHook\AtEndOfFiles{}\relax';
+        # Get parent filename
+        print '  \csname currfile@pop\endcsname';
+        print '  {\message{^^J:: \expandafter\string\csname '.$cmd.'\endcsname\space first defined in "\currfilename".^^J}}\fi}}', "\n";
+        print '  \csname currfile@push\endcsname';
         print '\AtEndOfFiles{{{\expandafter}\expandafter\ifx\csname ' . $cmd . '\expandafter\endcsname\csname @undefined\endcsname\else' . "\n";
+        print '  \ClearHook\AtBeginOfFiles{}\relax';
         print '  \ClearHook\AtEndOfFiles{}\relax';
         print '  {\message{^^J:: \expandafter\string\csname '.$cmd.'\endcsname\space first defined in "\currfilename".^^J}}\fi}}', "\n";
         print '\else'. "\n";
@@ -573,10 +645,27 @@ sub env_braces {
     return ($level, $count);
 }
 
+sub call_editor {
+    my $path = shift;
+    my $linenumber = shift;
+    print "Opening file '$path', line $linenumber.\n";
+    if ($EDITOR =~ /%/) {
+        $EDITOR =~ s/%%/\000/;
+        $EDITOR =~ s/%f/$path/;
+        $EDITOR =~ s/%n/$linenumber/;
+        $EDITOR =~ s/\000/%/;
+        system($EDITOR);
+    }
+    else {
+        system($EDITOR, "+$linenumber", $path);
+    }
+}
+
 sub print_orig_def {
     my $rmacroname = shift;
     my $file = shift;
     my $path = shift;
+    my $linenumber;
     my $found = 0;
     open (my $fh, '<', $path) or return;
     my $rmacrodef  = qr/
@@ -585,9 +674,11 @@ sub print_orig_def {
         (?:(?:\\global|\\long|\\protected|\\outer)\s*)*       # Prefixes (maybe with whitespace between them)
         )
         \\(
-            [gex]?def \s* \\                                   # TeX definitions
+              (?:[gex]?def) \s* \\                               # TeX definitions
             | (?:new|renew|provide)command\s* \*? \s* {? \s* \\  # LaTeX definitions
             | (?:new|renew|provide)robustcmd\s* \*? \s* {? \s* \\  # etoolbox definitions
+            | (?:new(?:box|count|dimen|if|insert|read|skip|muskip|toks|write)) \s* \\ # TeX registers etc.
+            | (?:char|count|dimen|mathchar|skip|toks)def \s* \\  # TeX chardefs etc.
             | \@namedef{?                                        # Definition by name only
             | Declare[a-zA-z]+ \s* \*? \s* {? \s* \\             # Declare... definitions
             | declare[a-zA-z]+ \s* \*? \s* {? \s* \\             # declare... definitions
@@ -597,17 +688,14 @@ sub print_orig_def {
         /xms;
     my $rmacrolet  = qr/
         ^                                                        # Begin of line (no whitespaces!)
-        \s*
-        (?:
-        (?:(?:\\global)\s*)*       # Prefixes (maybe with whitespace between them)
-        )
+        (?:global\s*)?                                           # Prefixes (maybe with whitespace between them)
         \\let \s* \\                                             # let
         $rmacroname                                              # Macro name without backslash
         \s* =?                                                   # Optional '='
         \s* \\ ([a-zA-Z@]+)                                      # Second macro
         /xms;
     my $renvdef = qr/
-        ^\s*                                                     # Begin of line (no whitespaces!)
+        ^                                                        # Begin of line (no whitespaces!)
         \\(
             (?:new|renew|provide)environment\s* { \s*            # LaTeX definitions
         )
@@ -617,9 +705,17 @@ sub print_orig_def {
         /xms;
     while (my $line = <$fh>) {
         if ($line =~ $rmacrodef) {
+            my $defcmd = $1;
             $found = 1;
-            print "% $file, line $.:\n";
+            $linenumber = $.;
+            if ($EDIT) {
+                call_editor($path, $linenumber);
+                last;
+            }
+            print "% $file, line $linenumber:\n";
             print $line;
+            last if $defcmd =~ /^(?:new(?:box|count|dimen|if|insert|read|skip|muskip|toks|write))/;
+            last if $defcmd =~ /^(?:char|count|dimen|mathchar|skip|toks)def/;
             remove_invalid_braces $line;
             my $obrace = $line =~ tr/{/{/;
             my $cbrace = $line =~ tr/}/}/;
@@ -636,7 +732,12 @@ sub print_orig_def {
         elsif ($line =~ $rmacrolet) {
             my $letcmd = $1;
             $found = 1;
-            print "% $file, line $.:\n";
+            $linenumber = $.;
+            if ($EDIT) {
+                call_editor($path, $linenumber);
+                last;
+            }
+            print "% $file, line $linenumber:\n";
             print $line;
             print "\n";
             unshift @cmds, $letcmd;
@@ -644,7 +745,12 @@ sub print_orig_def {
         }
         elsif ($line =~ $renvdef) {
             $found = 2;
-            print "% $file, line $.:\n";
+            $linenumber = $.;
+            if ($EDIT) {
+                call_editor($path, $linenumber);
+                last;
+            }
+            print "% $file, line $linenumber:\n";
             print $line;
             my ($level, $count) = env_braces $line;
             while ($count < 3) {
@@ -692,7 +798,7 @@ while (<$texpipe>) {
             $origdeffound = print_orig_def($cmd, $file, $path);
         }
         if (!$origdeffound) {
-            print "Source code definition of '$cmd' could not be found.\n";
+            print "Source code definition of '$origcmd' could not be found.\n";
             print "$line\n";
         }
     }
@@ -790,6 +896,8 @@ if ($error) {
   next;
 }
 
+#last if $PRINTORIGDEF && $origdeffound && $EDIT;
+
 next if $cmd eq $FAKECMD;
 if ($cmd eq $LISTSTR) {
     foreach $currfile (@FILEORDER) {
@@ -811,7 +919,9 @@ if ($cmd eq $LISTSTR) {
     print "\n$name:\n$definition\n\n";
 }
 
-testdef($origcmd,$definition);
+if (!($PRINTORIGDEF && $origdeffound)) {
+    testdef($origcmd,$definition);
+}
 if ($ISENVIRONMENT && $origdeffound < 2 && $cmd !~ /^end/) {
     unshift @cmds, 'end' . $cmd;
 }
