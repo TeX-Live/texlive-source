@@ -1,0 +1,31 @@
+diff -ur engine-2.4.orig/src/font/Font.cpp engine-2.4/src/font/Font.cpp
+--- engine-2.4.orig/src/font/Font.cpp	2010-05-22 20:35:07.000000000 +0200
++++ engine-2.4/src/font/Font.cpp	2012-05-14 16:47:16.000000000 +0200
+@@ -174,6 +174,7 @@
+ 	if (m_pLoca == 0) return;
+ 
+ 	size_t cContours;
++	size_t cEndPoints;
+ 	size_t cPoints;
+ 
+ 	const size_t CONTOUR_BUF_SIZE = 16;
+@@ -191,8 +192,9 @@
+ 		rgnEndPtHeapBuf = new int[cContours] : 
+ 		rgnEndPtFixedBuf;
+ 
++	cEndPoints = cContours;
+ 	if (!TtfUtil::GlyfContourEndPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 
+-		prgnEndPt, cContours))
++		prgnEndPt, cEndPoints)) //cEndPonts will be zero on return
+ 	{
+ 		return;	// should have been caught above
+ 	}
+@@ -203,7 +205,7 @@
+ 	int * prgnY       = (cPoints > POINT_BUF_SIZE) ? rgnYHeapBuf=       new int[cPoints]  : rgnYFixedBuf;
+ 
+ 	if (TtfUtil::GlyfPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 0, 0, 
+-		prgnX, prgnY, prgfOnCurve, cPoints))
++		prgnX, prgnY, prgfOnCurve, cPoints)) //cPoints will be zero on return
+ 	{
+ 		float nPixEmSquare;
+ 		getFontMetrics(0, 0, &nPixEmSquare);

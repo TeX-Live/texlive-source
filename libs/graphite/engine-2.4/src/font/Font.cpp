@@ -174,6 +174,7 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 	if (m_pLoca == 0) return;
 
 	size_t cContours;
+	size_t cEndPoints;
 	size_t cPoints;
 
 	const size_t CONTOUR_BUF_SIZE = 16;
@@ -191,8 +192,9 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 		rgnEndPtHeapBuf = new int[cContours] : 
 		rgnEndPtFixedBuf;
 
+	cEndPoints = cContours;
 	if (!TtfUtil::GlyfContourEndPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 
-		prgnEndPt, cContours))
+		prgnEndPt, cEndPoints)) //cEndPonts will be zero on return
 	{
 		return;	// should have been caught above
 	}
@@ -203,7 +205,7 @@ void Font::getGlyphPoint(gid16 glyphID, unsigned int pointNum, Point & pointRetu
 	int * prgnY       = (cPoints > POINT_BUF_SIZE) ? rgnYHeapBuf=       new int[cPoints]  : rgnYFixedBuf;
 
 	if (TtfUtil::GlyfPoints(glyphID, m_pGlyf, m_pLoca, m_cbLocaSize, m_pHead, 0, 0, 
-		prgnX, prgnY, prgfOnCurve, cPoints))
+		prgnX, prgnY, prgfOnCurve, cPoints)) //cPoints will be zero on return
 	{
 		float nPixEmSquare;
 		getFontMetrics(0, 0, &nPixEmSquare);

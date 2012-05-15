@@ -1,3 +1,8 @@
+2012-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-13-svn_r1315_1333 (new): Update from SVN r1315 -> 1333.
+	(svn r1333 2012-05-14 14:47:16 UTC, omitting changes in test/).
+
 2012-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-12-svn_r1312_1315 (new): Update from SVN r1312 -> 1315.
