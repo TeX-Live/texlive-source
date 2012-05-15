@@ -1,3 +1,7 @@
+2012-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use $(SHELL) for sub-configure.
+
 2012-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid using a 'config.site' file.

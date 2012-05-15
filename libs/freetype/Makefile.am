@@ -28,8 +28,8 @@ ft-build/Makefile:
 	rm -rf ft-build
 	$(MKDIR_P) ft-build
 	cd ft-build && \
-	  CC='$(CC)' CONFIG_SITE=/dev/null \
-	  $(abs_srcdir)/$(FREETYPE_TREE)/configure \
+	  CC='$(CC)' CONFIG_SITE=/dev/null CONFIG_SHELL='$(SHELL)' \
+	  $(SHELL) $(abs_srcdir)/$(FREETYPE_TREE)/configure \
 	    $(config_args) --disable-shared --disable-nls \
 	    --prefix=$(abs_builddir)/ft-install \
 	    --libdir=$(abs_builddir) \
