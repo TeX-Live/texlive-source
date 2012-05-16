@@ -15,6 +15,7 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 INCLUDES = -I$(srcdir)/$(MTX_TREE)/libp2c
+AM_CPPFLAGS = -DNO_DECLARE_MALLOC
 AM_CFLAGS = #$(WARNING_CFLAGS)
 
 bin_PROGRAMS = prepmx

@@ -261,6 +261,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(MTX_TREE) $(MTX_TREE)-PATCHES ../../build-aux/relpath \
 	$(TESTS) tests/mozart.mtx tests/mozart.pmx
 INCLUDES = -I$(srcdir)/$(MTX_TREE)/libp2c
+AM_CPPFLAGS = -DNO_DECLARE_MALLOC
 AM_CFLAGS = #$(WARNING_CFLAGS)
 prepmx_SOURCES = \
 	$(MTX_TREE)/analyze.c \

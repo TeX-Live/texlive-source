@@ -1,3 +1,9 @@
+2012-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): Add '-DNO_DECLARE_MALLOC' to avoid
+	a possibly conflicting redeclaration of malloc().
+	From Vladimir Volovich <vvv@vsu.ru>.
+
 2012-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt mtx-0.60d to the TeX Live build system.
