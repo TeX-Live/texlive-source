@@ -1,0 +1,15 @@
+	The Posix manpage says strcasecmp() is declared in <strings.h>
+	and this indeed required for AIX 4.3 and xlc.
+
+diff -ur -N xpdf-3.03.orig/xpdf/GlobalParams.cc xpdf-3.03/xpdf/GlobalParams.cc
+--- xpdf-3.03.orig/xpdf/GlobalParams.cc	2011-08-22 14:11:46.000000000 +0200
++++ xpdf-3.03/xpdf/GlobalParams.cc	2012-05-16 13:36:12.000000000 +0200
+@@ -52,6 +52,8 @@
+ 
+ #ifdef WIN32
+ #  define strcasecmp stricmp
++#else
++#  include <strings.h>
+ #endif
+ 
+ #if MULTITHREADED

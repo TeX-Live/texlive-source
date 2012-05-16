@@ -52,6 +52,8 @@
 
 #ifdef WIN32
 #  define strcasecmp stricmp
+#else
+#  include <strings.h>
 #endif
 
 #if MULTITHREADED

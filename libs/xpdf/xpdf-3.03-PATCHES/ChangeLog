@@ -1,3 +1,8 @@
+2012-05-16  Vladimir Volovich  <vvv@vsu.ru>
+
+	* patch-30-include-strings_h (new): Bug fix for AIX 4.3 and xlc.
+	The Posix manpage says strcasecmp() is declared in <strings.h>.
+
 2011-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-40-objectStream-support-for-pdftosrc: Removed, no longer
