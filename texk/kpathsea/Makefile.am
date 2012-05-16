@@ -138,6 +138,7 @@ normal_headers = \
 	c-stat.h \
 	c-std.h \
 	c-unistd.h \
+	cnf.h \
 	concatn.h \
 	debug.h \
 	expand.h \
@@ -162,7 +163,6 @@ normal_headers = \
 	version.h
 
 noinst_HEADERS = \
-	cnf.h \
 	db.h \
 	default.h \
 	fn.h \

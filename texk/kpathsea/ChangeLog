@@ -1,3 +1,9 @@
+2012-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cnf.[ch]: Add KPSEDLL to kpathsea_cnf_get(), and reintroduce
+	kpse_cnf_get().
+	* Makefile.am: Do install cnf.h.
+
 2012-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (rebuild): Depend on 'all-am' instead of 'all' to
