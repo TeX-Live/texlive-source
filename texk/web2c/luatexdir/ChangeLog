@@ -1,3 +1,7 @@
+2012-05-18  Taco Hoekwater  <taco@luatex.org>
+
+	* lua/ltexlib.c: fix a ConTeXt crash on `\endinput \end`.
+
 2012-05-18  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* tex/commands.h, tex/commands.w, tex/maincontrol.h,
