@@ -1,6 +1,6 @@
 /* mathcodes.h
    
-   Copyright 2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2009-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -43,7 +43,7 @@ void set_math_code(int n,
                    int mathfamily, int mathcharacter, quarterword gl);
 
 mathcodeval get_math_code(int n);
-int get_math_code_num(int n);
+int get_math_code_num(int n, boolean compat);
 int get_del_code_num(int n);
 mathcodeval scan_mathchar(int extcode);
 mathcodeval scan_delimiter_as_mathchar(int extcode);

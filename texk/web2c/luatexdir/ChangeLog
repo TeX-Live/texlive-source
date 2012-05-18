@@ -1,3 +1,10 @@
+2012-05-18  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* tex/commands.h, tex/commands.w, tex/maincontrol.h,
+	tex/maincontrol.w, tex/mathcodes.h, tex/mathcodes.w, tex/scanning.w, 
+	tex/texmath.w, tex/mlist.w: backport math relatex changes from 0.71
+	* luatex.c: bump version to 0.70.1
+
 2012-05-10  Hartmut Henkel  <hartmut@luatex.org>
 	and Peter Breitenlohner  <peb@mppmu.mpg.de>
 

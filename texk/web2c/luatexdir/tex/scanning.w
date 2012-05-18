@@ -1,6 +1,6 @@
 % scanning.w
 % 
-% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2009-2012 Taco Hoekwater <taco@@luatex.org>
 
 % This file is part of LuaTeX.
 
@@ -646,7 +646,7 @@ void scan_something_internal(int level, boolean negative)
             /* Fetch a character code from some table */
             scan_char_num();
             if (m == math_code_base) {
-                cur_val1 = get_math_code_num(cur_val);
+                cur_val1 = get_math_code_num(cur_val, true);
                 scanned_result(cur_val1, int_val_level);
             } else if (m == lc_code_base) {
                 cur_val1 = get_lc_code(cur_val);
@@ -673,7 +673,7 @@ void scan_something_internal(int level, boolean negative)
         case extdef_math_code_cmd:
             /* Fetch an extended math code table value */
             scan_char_num();
-            cur_val1 = get_math_code_num(cur_val);
+            cur_val1 = get_math_code_num(cur_val, false);
             scanned_result(cur_val1, int_val_level);
             break;
         case toks_register_cmd:

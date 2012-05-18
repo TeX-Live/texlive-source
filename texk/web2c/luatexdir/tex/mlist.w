@@ -186,11 +186,12 @@ static void math_param_error(const char *param, int style)
 static scaled accent_base_height(int f)
 {
     scaled a;
-    a = x_height(f);
-    if (a == 0 && is_new_mathfont(f)) {
+    if (is_new_mathfont(f)) {
         a = font_MATH_par(f, AccentBaseHeight);
         if (a == undefined_math_parameter)
-            a = 0;
+            a = x_height(f);
+    } else {
+        a = x_height(f);
     }
     return a;
 }
@@ -991,57 +992,56 @@ static scaled height_plus_depth(internal_font_number f, int c)
 @c
 static scaled stack_into_box(pointer b, internal_font_number f, int c)
 {
-    pointer p;                  /* new node placed into |b| */
-    p = char_box(f, c, node_attr(b));
-    vlink(p) = list_ptr(b);
-    list_ptr(b) = p;
-    height(b) = height(p);
-    return height_plus_depth(f, c);
-}
-
-
-static scaled stack_into_hbox(pointer b, internal_font_number f, int c)
-{
     pointer p, q;               /* new node placed into |b| */
     p = char_box(f, c, node_attr(b));
-    q = list_ptr(b);
-    if (q == null) {
+    if (type(b) == vlist_node) {
+        vlink(p) = list_ptr(b);
         list_ptr(b) = p;
-    } else {
-        while (vlink(q) != null)
-            q = vlink(q);
-        vlink(q) = p;
-    }
-    if (height(b) < height(p))
         height(b) = height(p);
-    if (depth(b) < depth(p))
-        depth(b) = depth(p);
-    return char_width(f, c);
-}
-
-
-@ @c
-static void add_delim_kern(pointer b, scaled s)
-{
-    pointer p;                  /* new node placed into |b| */
-    p = new_kern(s);
-    reset_attributes(p, node_attr(b));
-    vlink(p) = list_ptr(b);
-    list_ptr(b) = p;
-}
-
-static void add_delim_hkern(pointer b, scaled s)
-{
-    pointer p, q;               /* new node placed into |b| */
-    p = new_kern(s);
-    reset_attributes(p, node_attr(b));
-    q = list_ptr(b);
-    if (q == null) {
-        list_ptr(b) = p;
+        if (width(b) < width(p))
+            width(b) = width(p);
+        return height_plus_depth(f, c);
     } else {
-        while (vlink(q) != null)
-            q = vlink(q);
-        vlink(q) = p;
+        q = list_ptr(b);
+        if (q == null) {
+            list_ptr(b) = p;
+        } else {
+            while (vlink(q) != null)
+                q = vlink(q);
+            vlink(q) = p;
+        }
+        if (height(b) < height(p))
+            height(b) = height(p);
+        if (depth(b) < depth(p))
+            depth(b) = depth(p);
+        return char_width(f, c);
+    }
+}
+
+static void stack_glue_into_box(pointer b, scaled min, scaled max) {
+    pointer p, q;               /* new node placed into |b| */
+    q = new_spec(zero_glue);
+    width(q) = min;
+    stretch(q) = max-min;
+    p = new_glue(q);
+    reset_attributes(p, node_attr(b));
+    if (type(b) == vlist_node) {
+        vlink(p) = list_ptr(b);
+        list_ptr(b) = p;
+        height(b) = height(p);
+    } else {
+        q = list_ptr(b);
+        if (q == null) {
+            list_ptr(b) = p;
+        } else {
+            while (vlink(q) != null)
+                q = vlink(q);
+            vlink(q) = p;
+        }
+        if (height(b) < height(p))
+            height(b) = height(p);
+        if (depth(b) < depth(p))
+            depth(b) = depth(p);
     }
 }
 
@@ -1068,27 +1068,26 @@ int cur_size;                   /* size code corresponding to |cur_style|  */
 static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
                              pointer att, int boxtype, int cur_style)
 {
-    pointer b;
+    pointer b;                  /* new box */
+    scaled b_max;               /* natural (maximum) size of the stack */
+    scaled s_max;               /* amount of possible shrink in the stack */
     extinfo *cur;
     scaled min_overlap, prev_overlap;
-    scaled b_max;               /* natural (maximum) height of the stack */
-    scaled s_max;               /* amount of possible shrink in the stack */
-    scaled a, wd, ht, dp, last_ht;
-    int cc;                     /* a temporary character code for extensibles  */
     int i;                      /* a temporary counter number of extensible pieces */
-    int with_extenders;
-    int num_extenders, num_normal, num_total;
-    scaled c, d, u;
-    scaled *max_shrinks = NULL;
+    int with_extenders;         /* number of times to repeat each repeatable item in |ext| */
+    int num_extenders, num_normal;
+    scaled a, c, d;
+
     assert(ext != NULL);
     b = new_null_box();
     type(b) = (quarterword) boxtype;
     reset_attributes(b, att);
     min_overlap = connector_overlap_min(cur_style);
     assert(min_overlap >= 0);
-    with_extenders = 0;
+    with_extenders = -1;
     num_extenders = 0;
     num_normal = 0;
+
     cur = ext;
     while (cur != NULL) {
         if (!char_exists(f, cur->glyph)) {
@@ -1145,258 +1144,114 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
        that height.
      */
     cur = ext;
-    prev_overlap = -1;
+    b_max = 0;
+    while (b_max < v && num_extenders > 0) {
+        b_max = 0;
+	prev_overlap = 0;
+        with_extenders++;
+        for (cur = ext; cur != NULL; cur = cur->next) {
+	    if (cur->extender == 0) {
+	        c = cur->start_overlap;
+		if (min_overlap < c)
+		    c = min_overlap;
+		if (prev_overlap < c)
+		    c = prev_overlap;
+                a = cur->advance;
+                if (a == 0) {
+                    /* for tfm fonts */
+                    if (boxtype == vlist_node)
+                        a = height_plus_depth(f, cur->glyph);
+                    else
+                        a = char_width(f, cur->glyph);
+                    assert(a > 0);
+                }
+		b_max += a - c;
+		prev_overlap = cur->end_overlap;
+	    } else {
+	        i = with_extenders;
+		while (i > 0) {
+	            c = cur->start_overlap;
+		    if (min_overlap < c)
+		        c = min_overlap;
+		    if (prev_overlap < c)
+		        c = prev_overlap;
+                    a = cur->advance;
+                    if (a == 0) {
+                        /* for tfm fonts */
+                        if (boxtype == vlist_node)
+                            a = height_plus_depth(f, cur->glyph);
+                        else
+                            a = char_width(f, cur->glyph);
+                        assert(a > 0);
+                    }
+		    b_max += a - c;
+		    prev_overlap = cur->end_overlap;
+		    i--;
+		}
+	    }
+	}
+    }
+
+    /* assemble box using |with_extenders| copies of each extender, with
+       appropriate glue wherever an overlap occurs */
+    prev_overlap = 0;
     b_max = 0;
     s_max = 0;
     for (cur = ext; cur != NULL; cur = cur->next) {
-        /* substract width of the current overlap if this is not the first */
-        if (cur->extender == 0) {       /* not an extender */
-            a = cur->advance;
-            if (a == 0) {
-                if (boxtype == vlist_node)
-                    a = height_plus_depth(f, cur->glyph);       /* for tfm fonts */
-                else
-                    a = char_width(f, cur->glyph);      /* for tfm fonts */
-                assert(a > 0);
-            }
-            b_max += a;         /* add the advance value */
-            if (prev_overlap >= 0) {
-                c = min_overlap;
-                if (c >= a)
-                    c = (a - 1);
-                b_max -= c;
-                d = c;
-                if (prev_overlap > cur->start_overlap) {
-                    if (cur->start_overlap > d)
-                        d = cur->start_overlap;
-                } else {
-                    if (prev_overlap > d)
-                        d = prev_overlap;
-                }
-                s_max += (d - c);
-            }
-            prev_overlap = cur->end_overlap;
-        }
+        if (cur->extender == 0) {
+	    c = cur->start_overlap;
+	    if (prev_overlap < c)
+	        c = prev_overlap;
+	    d = c;
+	    if (min_overlap < c)
+	        c = min_overlap;
+	    if (d > 0) {
+	        stack_glue_into_box(b, -d, -c);
+	        s_max += (-c) - (-d);
+	        b_max -= d;
+	    }
+            b_max += stack_into_box(b, f, cur->glyph);
+	    prev_overlap = cur->end_overlap;
+	    i--;
+	} else {
+	    i = with_extenders;
+	    while (i > 0) {
+	        c = cur->start_overlap;
+		if (prev_overlap < c)
+		    c = prev_overlap;
+		d = c;
+		if (min_overlap < c)
+		    c = min_overlap;
+		if (d > 0) {
+		    stack_glue_into_box(b, -d, -c);
+	            s_max += (-c) - (-d);
+	            b_max -= d;
+		}
+                b_max += stack_into_box(b, f, cur->glyph);
+		prev_overlap = cur->end_overlap;
+	        i--;
+	    }
+	}
     }
-    if (b_max < v && num_extenders > 0) {       /* not large enough, but can grow */
-      RETRY:
-        with_extenders++;
-        cur = ext;
-        prev_overlap = -1;
-        b_max = 0;
-        s_max = 0;
-        i = with_extenders;
-        while (cur != NULL) {
-            a = cur->advance;
-            if (a == 0) {
-                if (boxtype == vlist_node)
-                    a = height_plus_depth(f, cur->glyph);       /* for tfm fonts */
-                else
-                    a = char_width(f, cur->glyph);
-                assert(a >= 0);
-            }
-            /* substract width of the current overlap if this is not the first */
-            if (prev_overlap >= 0) {
-                c = min_overlap;
-                if (c >= a)
-                    c = (a - 1);
-                b_max -= c;
-                d = c;
-                if (prev_overlap > cur->start_overlap) {
-                    if (cur->start_overlap > d)
-                        d = cur->start_overlap;
-                } else {
-                    if (prev_overlap > d)
-                        d = prev_overlap;
-                }
-                s_max += (d - c);
-            }
-            if (cur->extender == 0) {   /* not an extender */
-                i = 0;
-                prev_overlap = cur->end_overlap;
-            } else {
-                i--;
-                prev_overlap = cur->end_overlap;
-            }
-            b_max += a;         /* add the advance value */
-            if (i <= 0) {       /* can be $-1$ if the first glyph is an extender  */
-                cur = cur->next;
-                i = with_extenders;
-            }
-        }
-        if (b_max < v) {        /* not large enough, but can grow */
-            goto RETRY;
-        }
-    }
-    /* now |b_max| is the natural height or width, |with_extenders| holds
-       the count of each extender that is needed, and the maximum 
-       amount the stack can shrink by is |s_max|.
 
-       |(b_max-v)| is the total amount of extra height or width that needs
-       to be gotten rid of, and the total number of items in the stack is
-       |(num_extenders*with_extenders)+num_normal|
-     */
-    /* create an array of maximum shrinks and fill it */
-    if (with_extenders) {
-        num_total = ((num_extenders * with_extenders) + num_normal);
-    } else {
-	/* make sure we take at least the extenders that are needed to complete the built-up glyph */
-        num_total = (num_extenders + num_normal);
-    }
-    if (num_total == 1) {
-        /* weird, but could happen */
-        cc = ext->glyph;
-        (void) stack_into_box(b, f, cc);
-        width(b) = char_width(f, cc);
-        height(b) = char_height(f, cc);
-        depth(b) = char_depth(f, cc);
-        return b;
-    }
-    max_shrinks = xcalloc((unsigned) num_total, sizeof(scaled));
-    cur = ext;
-    prev_overlap = -1;
-    c = 0;
-    i = 0;
-  REDO:
-    while (cur != NULL) {
-        if (cur->extender == 0 || with_extenders) {
-            if (prev_overlap >= 0) {
-                d = prev_overlap;
-                if (d > cur->start_overlap)
-                    d = cur->start_overlap;
-                if (d < min_overlap)
-                    d = min_overlap;
-                max_shrinks[c++] = (d - min_overlap);
-            }
-            prev_overlap = cur->end_overlap;
-            if (cur->extender == 0) {
-                /* simple char, just reset |i| */
-                i = 0;
-            } else {
-                if (i == 0) {   /* first in loop */
-                    i = with_extenders;
-                    if (i != 1)
-                        goto REDO;
-                } else if (i == 1) {
-                    /* done */
-                    i = 0;
-                } else {
-                    i--;
-                    if (i != 1)
-                        goto REDO;
-                }
-            }
-        }
-        cur = cur->next;
-    }
-    /* now create the box contents */
-    cur = ext;
-    wd = 0;
+    /* set glue so as to stretch the connections if needed */
     d = 0;
-    ht = 0;
-    dp = 0;
-    if (boxtype == vlist_node) {
-        while (cur != NULL) {
-            cc = cur->glyph;
-            if (char_width(f, cc) > wd)
-                wd = char_width(f, cc);
-            if (cur->extender > 0) {
-                i = with_extenders;
-                while (i > 0) {
-                    ht += stack_into_box(b, f, cc);
-                    if (d < (num_total - 1)) {
-                        u = min_overlap;
-                        if (s_max != 0)
-                            u += xn_over_d(max_shrinks[d], (b_max - v), s_max);
-                        add_delim_kern(b, -u);
-                        ht -= u;
-                    }
-                    d++;
-                    i--;
-                }
-            } else {
-                ht += stack_into_box(b, f, cc);
-                if (d < (num_total - 1)) {
-                    u = min_overlap;
-                    if (s_max != 0)
-                        u += xn_over_d(max_shrinks[d], (b_max - v), s_max);
-                    add_delim_kern(b, -u);
-                    ht -= u;
-                }
-                d++;
-            }
-            cur = cur->next;
-        }
-        xfree(max_shrinks);
-        /* it is important to use |ht| here instead of |v| because  if there
-           was not enough shrink to get the correct size, it has to be centered
-           based on its actual height. That actual height is not the same as
-           |b_max| either because |min_overlap| can have ben set by the user
-           outside of the font's control.
-         */
-        last_ht = 0;
-        height(b) = ht;
-        depth(b) = 0;
-        /* the next correction is needed for radicals */
-        if (list_ptr(b) != null && 
-            type(list_ptr(b)) == hlist_node && list_ptr(list_ptr(b)) != null 
-            && type(list_ptr(list_ptr(b))) == glyph_node) {     /* and it should be */
-            last_ht =
-                char_height(font(list_ptr(list_ptr(b))),
-                            character(list_ptr(list_ptr(b))));
-            height(b) = last_ht;
-            depth(b) = ht - last_ht;
-        }
-#if 0
-           fprintf (stdout,"v=%f,b_max=%f,ht=%f,n=%d\n", (float)v/65536.0,
-           (float)b_max/65536.0,(float)height(b)/65536.0,num_total);
-#endif
-        width(b) = wd;
-    } else {
-        /* horizontal version */
-
-        while (cur != NULL) {
-            cc = cur->glyph;
-            if (char_height(f, cc) > ht)
-                ht = char_height(f, cc);
-            if (char_depth(f, cc) > dp)
-                dp = char_depth(f, cc);
-            if (cur->extender > 0) {
-                i = with_extenders;
-                while (i > 0) {
-                    wd += stack_into_hbox(b, f, cc);
-                    if (d < (num_total - 1)) {
-                        u = min_overlap;
-                        if (s_max != 0)
-                            u += xn_over_d(max_shrinks[d], (b_max - v), s_max);
-                        add_delim_hkern(b, -u);
-                        wd -= u;
-                    }
-                    d++;
-                    i--;
-                }
-            } else {
-                wd += stack_into_hbox(b, f, cc);
-                if (d < (num_total - 1)) {
-                    u = min_overlap;
-                    if (s_max != 0)
-                        u += xn_over_d(max_shrinks[d], (b_max - v), s_max);
-                    add_delim_hkern(b, -u);
-                    wd -= u;
-                }
-                d++;
-            }
-            cur = cur->next;
-        }
-        xfree(max_shrinks);
-        /* it is important to use |wd| here instead of |v| because  if there
-           was not enough shrink to get the correct size, it has to be centered
-           based on its actual width. That actual width is not the same as
-           |b_max| either because |min_overlap| can have ben set by the user
-           outside of the font's control.
-         */
-        width(b) = wd;
+    if (v > b_max && s_max > 0) {
+        d = v-b_max;
+        /* don't stretch more than |s_max| */
+        if (d > s_max)
+            d = s_max;
+        glue_order(b) = normal;
+        glue_sign(b) = stretching;
+        glue_set(b) = unfloat(d/(float) s_max);
+        b_max += d;
     }
+
+    if (boxtype == vlist_node)
+        height(b) = b_max;
+    else
+        width(b) = b_max;
+
     return b;
 }
 
@@ -2134,6 +1989,48 @@ respect to the size of the final box.
 #define TOP_OR_BOT_MASK ((TOP_CODE) | (BOT_CODE))
 #define STRETCH_ACCENT_CODE 4
 
+static boolean compute_accent_skew(pointer q, int top_or_bot, scaled *s)
+{
+    pointer p;                  /* temporary register for box construction */
+    boolean s_is_absolute;      /* will be true if a top-accent is placed in |s| */
+
+    s_is_absolute = false;
+
+    if (type(nucleus(q)) == math_char_node) {
+        fetch(nucleus(q));
+        if (is_new_mathfont(cur_f)) {
+            if (top_or_bot == TOP_CODE) {
+                *s = char_top_accent(cur_f, cur_c);
+                if (*s != INT_MIN) {
+                    s_is_absolute = true;
+                }
+            } else {
+                *s = char_bot_accent(cur_f, cur_c);
+                if (*s != INT_MIN) {
+                    s_is_absolute = true;
+                }
+            }
+        } else {
+            if (top_or_bot == TOP_CODE) {
+                *s = get_kern(cur_f, cur_c, skew_char(cur_f));
+            } else {
+                *s = 0;
+            }
+        }
+    } else if (type(nucleus(q)) == sub_mlist_node) {
+	/* if |nucleus(q)| is a |sub_mlist_node| composed of an |accent_noad| we
+         * use the positioning of the nucleus of that noad, recursing until
+         * the inner most |accent_noad|. This way multiple stacked accents are
+         * aligned to the inner most one. */
+        p = math_list(nucleus(q));
+        if (type(p) == accent_noad) {
+            s_is_absolute = compute_accent_skew(p, top_or_bot, s);
+        }
+    }
+
+    return s_is_absolute;
+}
+
 static void do_make_math_accent(pointer q, internal_font_number f, int c,
                                 int flags, int cur_style)
 {
@@ -2145,57 +2042,31 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
     boolean s_is_absolute;      /* will be true if a top-accent is placed in |s| */
     extinfo *ext;
     pointer attr_p;
-    const int compat_mode = radical_rule(cur_style) == undefined_math_parameter;
     const int top_or_bot = flags & TOP_OR_BOT_MASK;
     attr_p = (top_or_bot == TOP_CODE ? accent_chr(q) : bot_accent_chr(q));
-    s_is_absolute = false;
     c = cur_c;
     f = cur_f;
-    /* Compute the amount of skew, or set |s| to an alignment point */
+
     s = 0;
-    if (type(nucleus(q)) == math_char_node) {
-        fetch(nucleus(q));
-        if (compat_mode) {
-          if (top_or_bot == TOP_CODE) {
-            s = get_kern(cur_f, cur_c, skew_char(cur_f));
-          } else {
-            s = 0;
-          }
-        } else {
-        if (top_or_bot == TOP_CODE) {
-            s = char_top_accent(cur_f, cur_c);
-            if (s != INT_MIN) {
-                s_is_absolute = true;
-            }
-        } else {                /* new skewchar madness for bot accents */
-            s = char_bot_accent(cur_f, cur_c);
-            if (s == INT_MIN) {       /* better than nothing: */
-                s = char_top_accent(cur_f, cur_c);
-            }
-            if (s != INT_MIN) {
-                s_is_absolute = true;
-            }
-        }
-        }
-    }
+    s_is_absolute = false;
+    /* Compute the amount of skew, or set |s| to an alignment point */
+    s_is_absolute = compute_accent_skew(q, top_or_bot, &s);
+
     x = clean_box(nucleus(q), cramped_style(cur_style), cur_style);
     w = width(x);
     h = height(x);
-    if (!compat_mode && !s_is_absolute && type(nucleus(q)) == math_char_node) {
+    if (is_new_mathfont(cur_f) && !s_is_absolute) {
       s = half(w);
       s_is_absolute = true;
     }
     /* Switch to a larger accent if available and appropriate */
     y = null;
-    if (flags & STRETCH_ACCENT_CODE) {
+    if ((flags & STRETCH_ACCENT_CODE) && (char_width(f, c) < w)) {
       while (1) {
         ext = NULL;
         if ((char_tag(f, c) == ext_tag) &&
             ((ext = get_charinfo_hor_variants(char_info(f, c))) != NULL)) {
-            scaled w1 = xn_over_d(w, delimiter_factor, 1000);
-            if (w - w1 > delimiter_shortfall)
-                w1 = w - delimiter_shortfall;
-            y = get_delim_hbox(ext, f, w1, node_attr(attr_p), cur_style);
+            y = get_delim_hbox(ext, f, w, node_attr(attr_p), cur_style);
             break;
         } else if (char_tag(f, c) != list_tag) {
             break;
@@ -2240,10 +2111,11 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
     }
     if (s_is_absolute) {
         scaled sa;
-        if (top_or_bot == TOP_CODE)
+        if (ext != NULL) {
+            sa = half(width(y));	/* if the accent is extensible just take the center */
+        } else {
             sa = char_top_accent(f, c);
-        else
-            sa = char_bot_accent(f, c);
+        }
         if (sa == INT_MIN) {
             sa = half(width(y));        /* just take the center */
         }

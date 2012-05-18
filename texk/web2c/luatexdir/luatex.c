@@ -22,9 +22,9 @@ static const char _svn_version[] =
 
 int luatex_svn = luatex_svn_revision;
 int luatex_version = 70;        /* \.{\\luatexversion}  */
-int luatex_revision = '1';      /* \.{\\luatexrevision}  */
+int luatex_revision = '2';      /* \.{\\luatexrevision}  */
 int luatex_date_info = -extra_version_info;     /* the compile date is negated */
-const char *luatex_version_string = "beta-0.70.1";
+const char *luatex_version_string = "beta-0.70.2";
 const char *engine_name = "luatex";     /* the name of this engine */
 
 #include <kpathsea/c-ctype.h>

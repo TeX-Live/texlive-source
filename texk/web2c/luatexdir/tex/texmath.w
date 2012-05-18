@@ -1150,6 +1150,7 @@ void scan_extdef_del_code(int level, int extcode)
 @ @c
 mathcodeval scan_mathchar(int extcode)
 {
+    char errstr[255] = { 0 };
     const char *hlp[] = {
         "I'm going to use 0 instead of that illegal code value.",
         NULL
@@ -1163,6 +1164,11 @@ mathcodeval scan_mathchar(int extcode)
             tex_error("Invalid math code", hlp);
             cur_val = 0;
         }
+        if (cur_val < 0) {
+            snprintf(errstr, 255, "Bad mathchar (%d)", (int)cur_val);
+            tex_error(errstr, hlp);
+            cur_val = 0;
+        }
         mcls = (cur_val / 0x1000);
         mfam = ((cur_val % 0x1000) / 0x100);
         mchr = (cur_val % 0x100);
@@ -1171,6 +1177,11 @@ mathcodeval scan_mathchar(int extcode)
         scan_int();
         if (cur_val > 0x8000000) {
             tex_error("Invalid math code", hlp);
+            cur_val = 0;
+        }
+        if (cur_val < 0) {
+            snprintf(errstr, 255, "Bad mathchar (%d)", (int)cur_val);
+            tex_error(errstr, hlp);
             cur_val = 0;
         }
         mcls = (cur_val / 0x1000000);

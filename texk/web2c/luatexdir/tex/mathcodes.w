@@ -1,6 +1,7 @@
 % mathnodes.w
 % 
-% Copyright 2006-2010 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2012 Khaled Hosny <khaledhosny@@eglug.org>
 
 % This file is part of LuaTeX.
 
@@ -207,20 +208,33 @@ mathcodeval get_math_code(int n)
 
 
 @ @c
-int get_math_code_num(int n)
+int get_math_code_num(int n, boolean compat)
 {
     mathcodeval mval;
     mval = get_math_code(n);
-    if (mval.origin_value == tex_mathcode) {
-        return (mval.class_value * 16 + mval.family_value) * 256 +
-            mval.character_value;
-    } else if (mval.origin_value == aleph_mathcode) {
-        return (mval.class_value * 256 + mval.family_value) * 65536 +
-            mval.character_value;
-    } else if (mval.origin_value == xetexnum_mathcode
-               || mval.origin_value == xetex_mathcode) {
-        return (mval.class_value + (mval.family_value * 8)) * (65536 * 32) +
-            mval.character_value;
+    if (compat) { /* \.{\\the\\mathcode} */
+        if (mval.class_value > 8
+            || mval.family_value > 15
+            || mval.character_value > 255) {
+            print_err("Extended mathchar used as mathchar");
+            help2("A mathchar number must be between 0 and \"8000.",
+                  "I changed this one to zero.");
+            int_error(get_math_code_num(n, false));
+            return 0;
+        } else
+            return mval.class_value * 4096 + mval.family_value * 256 + mval.character_value;
+    } else { /* \.{\\the\\Umathcodenum} */
+        if (mval.origin_value == tex_mathcode) {
+            return (mval.class_value * 16 + mval.family_value) * 256 +
+                mval.character_value;
+        } else if (mval.origin_value == aleph_mathcode) {
+            return (mval.class_value * 256 + mval.family_value) * 65536 +
+                mval.character_value;
+        } else if (mval.origin_value == xetexnum_mathcode
+                   || mval.origin_value == xetex_mathcode) {
+            return (mval.class_value + (mval.family_value * 8)) * (65536 * 32) +
+                mval.character_value;
+        }
     }
     return 0;
 }

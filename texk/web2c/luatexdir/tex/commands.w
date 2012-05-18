@@ -675,6 +675,7 @@ void initialize_commands(void)
     primitive_tex("mathchardef", shorthand_def_cmd, math_char_def_code, 0);
     primitive_omega("omathchardef", shorthand_def_cmd, omath_char_def_code, 0);
     primitive_luatex("Umathchardef", shorthand_def_cmd, xmath_char_def_code, 0);
+    primitive_luatex("Umathcharnumdef", shorthand_def_cmd, umath_char_def_code, 0);
     primitive_tex("countdef", shorthand_def_cmd, count_def_code, 0);
     primitive_luatex("attributedef", shorthand_def_cmd, attribute_def_code, 0);
     primitive_tex("dimendef", shorthand_def_cmd, dimen_def_code, 0);

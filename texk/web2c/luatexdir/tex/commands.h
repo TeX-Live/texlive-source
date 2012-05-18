@@ -150,7 +150,7 @@ typedef enum {
     /* the smallest code that can follow \.{\\the} */
     math_given_cmd,             /* math code defined by \.{\\mathchardef} */
     omath_given_cmd,            /* math code defined by \.{\\omathchardef} */
-    xmath_given_cmd,            /* math code defined by \.{\\Umathchardef} */
+    xmath_given_cmd,            /* math code defined by \.{\\Umathchardef} or \.{\\Umathcharnumdef} */
     last_item_cmd,              /* most recent item ( \.{\\lastpenalty}, \.{\\lastkern}, \.{\\lastskip} ) */
 #  define max_non_prefixed_command_cmd last_item_cmd    /* largest command code that can't be \.{\\global} */
     toks_register_cmd,          /* token list register ( \.{\\toks} ) */

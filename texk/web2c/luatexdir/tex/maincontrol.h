@@ -112,6 +112,7 @@ corresponding |chr| is the |eqtb| location of the internal register in question.
 #  define skip_def_code 7       /* |shorthand_def| for \.{\\skipdef} */
 #  define mu_skip_def_code 8    /* |shorthand_def| for \.{\\muskipdef} */
 #  define toks_def_code 9       /* |shorthand_def| for \.{\\toksdef} */
+#  define umath_char_def_code 10 /* |shorthand_def| for \.{\\Umathcharnumdef} */
 
 extern void adjust_space_factor(void);
 extern void main_control(void);

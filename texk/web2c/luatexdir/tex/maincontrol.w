@@ -2269,6 +2269,13 @@ void prefixed_command(void)
                 mval.character_value;
             define(p, xmath_given_cmd, cur_val);
             break;
+        case umath_char_def_code:
+            mval = scan_mathchar(xetexnum_mathcode);
+            cur_val =
+                (mval.class_value + (8 * mval.family_value)) * (65536 * 32) +
+                mval.character_value;
+            define(p, xmath_given_cmd, cur_val);
+            break;
         default:
             scan_register_num();
             switch (n) {
