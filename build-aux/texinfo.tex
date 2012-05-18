@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2012-04-06.11}
+\def\texinfoversion{2012-05-16.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -28,9 +28,9 @@
 %
 % Please try the latest version of texinfo.tex before submitting bug
 % reports; you can get the latest version from:
-%   http://www.gnu.org/software/texinfo/ (the Texinfo home page), or
-%   ftp://tug.org/tex/texinfo.tex
-%     (and all CTAN mirrors, see http://www.ctan.org).
+%   http://ftp.gnu.org/gnu/texinfo/ (the Texinfo release area), or
+%   http://ftpmirror.gnu.org/texinfo/ (same, via a mirror), or
+%   http://www.gnu.org/software/texinfo/ (the Texinfo home page)
 % The texinfo.tex in any given distribution could well be out
 % of date, so if that's what you're using, please check.
 %
@@ -1367,9 +1367,8 @@ output) for that.)}
   \def\skipspaces#1{\def\PP{#1}\def\D{|}%
     \ifx\PP\D\let\nextsp\relax
     \else\let\nextsp\skipspaces
-      \ifx\p\space\else\addtokens{\filename}{\PP}%
-        \advance\filenamelength by 1
-      \fi
+      \addtokens{\filename}{\PP}%
+      \advance\filenamelength by 1
     \fi
     \nextsp}
   \def\getfilename#1{%
@@ -1475,9 +1474,6 @@ output) for that.)}
 \def\ttsl{\setfontstyle{ttsl}}
 
 
-% Default leading.
-\newdimen\textleading  \textleading = 13.2pt
-
 % Set the baselineskip to #1, and the lineskip and strut size
 % correspondingly.  There is no deep meaning behind these magic numbers
 % used as factors; they just match (closely enough) what Knuth defined.
@@ -1489,6 +1485,7 @@ output) for that.)}
 % can get a sort of poor man's double spacing by redefining this.
 \def\baselinefactor{1}
 %
+\newdimen\textleading
 \def\setleading#1{%
   \dimen0 = #1\relax
   \normalbaselineskip = \baselinefactor\dimen0
@@ -1761,18 +1758,24 @@ end
 \fi\fi
 
 
-% Set the font macro #1 to the font named #2, adding on the
-% specified font prefix (normally `cm').
+% Set the font macro #1 to the font named \fontprefix#2.
 % #3 is the font's design size, #4 is a scale factor, #5 is the CMap
-% encoding (currently only OT1, OT1IT and OT1TT are allowed, pass
-% empty to omit).
+% encoding (only OT1, OT1IT and OT1TT are allowed, or empty to omit).
+% Example:
+% #1 = \textrm
+% #2 = \rmshape
+% #3 = 10
+% #4 = \mainmagstep
+% #5 = OT1
+%
 \def\setfont#1#2#3#4#5{%
   \font#1=\fontprefix#2#3 scaled #4
   \csname cmap#5\endcsname#1%
 }
 % This is what gets called when #5 of \setfont is empty.
 \let\cmap\gobble
-% emacs-page end of cmaps
+%
+% (end of cmaps)
 
 % Use cm as the default font prefix.
 % To specify the font prefix, you must define \fontprefix
@@ -1782,7 +1785,7 @@ end
 \fi
 % Support font families that don't use the same naming scheme as CM.
 \def\rmshape{r}
-\def\rmbshape{bx}               %where the normal face is bold
+\def\rmbshape{bx}               % where the normal face is bold
 \def\bfshape{b}
 \def\bxshape{bx}
 \def\ttshape{tt}
@@ -1797,8 +1800,7 @@ end
 \def\scshape{csc}
 \def\scbshape{csc}
 
-% Definitions for a main text size of 11pt.  This is the default in
-% Texinfo.
+% Definitions for a main text size of 11pt.  (The default in Texinfo.)
 %
 \def\definetextfontsizexi{%
 % Text fonts (11.2pt, magstep1).
@@ -1923,7 +1925,7 @@ end
 \textleading = 13.2pt % line spacing for 11pt CM
 \textfonts            % reset the current fonts
 \rm
-} % end of 11pt text font size definitions
+} % end of 11pt text font size definitions, \definetextfontsizexi
 
 
 % Definitions to make the main text be 10pt Computer Modern, with
@@ -2055,7 +2057,7 @@ end
 \textleading = 12pt   % line spacing for 10pt CM
 \textfonts            % reset the current fonts
 \rm
-} % end of 10pt text font size definitions
+} % end of 10pt text font size definitions, \definetextfontsizex
 
 
 % We provide the user-level command
