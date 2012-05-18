@@ -1,3 +1,7 @@
+2012-05-18  Karl Berry  <karl@tug.org>
+
+	* pmx-2.6.18.
+
 2012-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w32getc.c (new): Handle DOS line endings (on Windows).

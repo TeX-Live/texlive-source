@@ -235,7 +235,7 @@ EXTRA_libf2c_a_SOURCES += \
 EXTRA_libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/signbit.c
 
-lua_scripts = pmx
+lua_scripts = pmx2pdf
 
 scriptsdir = texmf-dist/scripts/pmx
 nodist_bin_SCRIPTS =
@@ -249,7 +249,7 @@ install-data-hook: install-lua-links
 
 uninstall-hook: uninstall-links
 
-dist_man1_MANS = pmx.1 pmxab.1 scor2prt.1
+dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
 
 ## Tests
 ##

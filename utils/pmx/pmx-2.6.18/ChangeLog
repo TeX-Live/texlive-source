@@ -1,0 +1,206 @@
+Changes from PMX 2.5 to 2.603, 15 April 2011
+
+2.501 (Note: new scor2prt)
+
+Bugfix: initialize index in PMX subroutine putorn to eliminate subscript
+error detected in some compilers Bugfix in scor2prt: Ignore special
+treatment of special symbols if they appear between double quotes.
+Tweak: move end of first part of line­break ties slightly to the right.
+
+2.502 (Note: new pmx.tex)
+
+The height of a figured bass vertical stack can now be adjusted upward by
+an integral number of \internote by appending "+" and the number. Recall
+that it can already be moved downward 4\internote by prepending "_"
+(underscore). The two options can be combined to provide full control
+over the vertical position.  Ties can now be represented with braces
+"{" before a note and "}" after. Both are equivalent to "t" after the
+note. (Thanks to Dirk Laurie).  In pmx.tex all the commands of the form
+\font\...=\fontid sy1000 have been changed to \font\...=cmsy10 (Thanks
+to Olivier Vogel).
+
+2.503
+
+Enable arpeggio left shift with ?­[x] Allow musicsize of 24 and 29.
+Bugfix: Fix bug introduced in 2.415 which caused error in printing
+replacement number in xtup.
+
+2.504
+
+Gap between normal grace and main note: X[x] as option to the G command,
+where x is the gap size in notehead widths.  Bugfix: og (segno) now
+works OK when nv .ne. noinst.
+
+2.505
+
+A new global option AK activates special rules for vertical positioning of
+rests in two­voice staves.  By way of background, without the new option,
+rests in two­voice staves have default positions based on a simple rule
+that is not context­sensitive: those in the lower voice (the one before
+"//") are 4\internote below their single­voice default positions,
+and those in the upper line are 2\internote above the single­voice
+default. The new option invokes a set of context­sensitive rules to
+set the default position. The baseline rule is to align the rest in
+a horizontal line with the next following note in the same bar. If
+there is no following note in the bar, then it is aligned with the next
+prior note. If there are simulataneous rests in both voices, the old
+rule is applied. When the AK option is in force, it only affects places
+where there are two voices in a staff. It may be toggled on and off at
+the beginning of any input block, using just AK. When the option is in
+effect, any user­defined tweaks on the height of a rest will supersede
+the option for that particular rest, i.e., the tweak will be applied
+relative to the single­voice default position.
+
+2.506
+
+Fixes a bug in AK. Simultaneous, equal­duration rests will be positioned
+according to the default rules.
+
+2.507
+
+Enhancement to global option AK for vertical positioning of rests in
+two­voice staves (see version 2.505): The option L ("look left") in a rest
+will cause the vertical position of that rest to be based on the preceding
+note, rather than the following one as is the default when AK has been
+issued Partial bugfix: In unbeamed xtuplets, the length of the bracket
+and position of the number are now adjusted to account for any inserted
+hardspaces.  Bugfix: unbeamed xtups with two flags are now allowed.
+
+2.508
+
+Allow grace notes in xtuplets.
+
+2.509
+
+Correct small bug in arpeggio left­shifting (it got confused when there
+was more than one voice on a staff).
+
+2.510
+
+Bugfix: Correct omission of character variable declarations in new
+subroutine getgrace introduced in 2.508.
+
+2.511 (Note: new scor2prt named s2p2511.exe)
+
+Bugfix: Correct error in horizontal spacing introduced in 2.507.
+Experiment: Remove prohibition against tempo changes in MIDI macros.
+Bugfix in scor2prt: Make it work right when "R" command occurs at end
+of input block and "/" is on next line (as produced by M­Tx).
+
+2.512
+
+Enable multiplicity down­up "][" within xtuplet
+
+2.513
+
+Bugfix: If there is more than one rest at start of a beamed xtuplet marked
+as a forced beam, beam height and slope tweaks are now properly handled.
+Bugfix: If an xtuplet with multiplicity 2 or 3 starts with a rest, the
+rest is now printed correctly.  Bugfix: Unbeamed xtuplets (with option
+'a' on first note) with multiplicity 2 or 3 are now printed correctly.
+
+2.514
+
+Bugfix: Correct horizontal spacing when after­grace is immediately
+followed by normal grace.  Bugfix: Correct transpose register when it
+has been changed in a single after­grace.
+
+2.515
+
+Bugfix: Correct error in automatic forced beams. Before the fix, if the
+beam did not start an integral number of beam durations from the start
+of the bar, incorrect results would occur.  Bugfix: Properly center
+fermata over centered whole­bar rest.
+
+2.516 (Note: new pmx.tex)
+
+Allow figures in voice #2.
+
+2.517
+
+Allow figures in two voices, voice 1 and any other one.
+
+2.518
+
+Bug fixes in 2­voice figures.
+
+2.519
+
+Fix bug that prevented \sk from being output, misaligning some voices.
+
+2.520
+
+New feature: special characters 2+, 4+, 5+, 6+, 9+ for figured bass. In
+the PMX string for any figure, follow the number by 's'. This uses the
+font cmrj from the new package figbas. You must install this font in
+your TeX setup for this to work.
+
+2.521
+
+Bugfix: Font definition syntax corrected so no extra space is introduced.
+
+2.602 (Note: new pmx.tex; requires eTeX)
+
+Allow 24 voices, beams, slurs. Require etex.  Include comment about
+doubling size of internal buffer to 131072, requiring gfortran for
+Windows to compile.  Correct slur indexing in linebreakslurs.  Account for
+comment lines in line count for error messages
+
+2.603 (Note: new scor2prt)
+
+In getpmxmod.for, decrease nline by 2 to fix locating errors following
+reading in an include file.  Add some error messages in g1etset.for
+setup data
+
+2.610
+
+Instrument-wise transposition: Ki[instrument #][+/-][trans
+amt.][+/-][new key]. For more than one instrument, may immediately
+repeat everything after "K". Must either be at start of score (right
+after setup), or if later, must be preceded by normal (full score) key
+change command K+0[+/-][new key]. Must be used with relative accidentals
+("Ar"). Part(s) to be transposed must be entered in concert key, and
+will appear transposed in the score. MIDI behavior not yet tested.
+Has not yet been integrated into scor2prt, so for now if you want to
+make parts, only use Ki... as score-only (on line after "%%") and/or
+instrument only (on same line after %[Instrument #]).
+
+2.613
+
+Set error trap if "D" is entered before any notes.
+
+Enhance "AS" to allow spacing adjustments tailored for either smallsize
+or tinysize. As before, "AS" must be followed by nv characters, but now
+they may be "0" for normal, "-" or "s" for small, or "t" for tiny. Still
+must set sizes of instruments with inline TeX. 
+
+Bugfix: Fixed broken "K-..." in 2.610.
+
+2.614
+
+Bugfix: revise raised dotted rests by separately raising rest and dot. 
+
+2.615 *(Note: new scor2prt)*
+
+Command "AS", described above under 2.163, now also causes staff sizes
+to change (in score only, not parts), so inline TeX is no longer needed
+to change sizes of selected staves. 
+
+Scor2prt transfers partwise transposition commands Ki... (see 2.610
+above) into parts.
+
+2.616
+
+"Feature" added: Hairpin dynamics now may span input blocks.
+
+2.617
+
+Repaired several obscure bugs related to platform and compiler
+dependencies; see pmxab.f for details.
+
+2.6.18
+
+For letter and a4 paper respectively, commands "Acl" and "Ac4" set
+horizontal and vertical sizes and offsets that center the page with no
+further adjustments required in dvips.
+

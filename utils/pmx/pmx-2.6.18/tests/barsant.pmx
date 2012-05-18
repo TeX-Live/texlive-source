@@ -1,0 +1,68 @@
+%----------------%
+%
+%  barsant.pmx   Revised 29 June 2002
+% 
+%----------------%
+%
+% nv,noinst,mtrnuml,mtrdenl,mtrnump,mtrdenp,xmtrnum0,isig,
+  2    2      4       4        0      6        0       0 
+%
+% npages,nsyst,musicsize,fracindent
+    1      7     20        0.07
+Basso
+Recorder
+bt
+./
+Abep
+Iiharet60
+Tc
+Francesco Barsanti (1690-1772)
+%%
+AeI1.1
+%2S9
+% Bar 1-4
+h
+Adagio
+c43 r8 f 65 f 42 e 6 r c | [ b 6 c ] d 7 b 65 c4 r8 c 65 t | 
+  \global\figdrop5\Figu{-1}{\fsmsh}\Figu{0}{4}\Figu{4}{2}\
+  c t bf4 65 x1842 a8 65 t a t #42 g 6 r g 65 t |  
+  g t #42 f4 \global\figdrop8\ 65 x1842 \Figu06\ e8 d 54 dd1+ 3 c3 b8 6 g 7  /
+g85 Gf ed1 d3 [ c3      a8+ gd1x5n s+1 f e d c s+1 ] Gc b8 s c s r e |
+  [ d35 s c d s e op ] e s d e s f op [ f s e f s g ] g f e f  
+    Gf ed1 d3 c8 r ad1+ g3 |
+  [ fs15 dd+ ] [ c3 \nbbbbl2\ bf1x3 s+2 a g ] s+2 Gfn [ e1 cd+ ] [ b3  
+    \nbbbbl2\ a1x3 g f ] Ge ds8 ot e r ed1 dn3 |
+  [ cs15 ad+ ] [ g3 \nbbbbl2\ f1x3 s+2 e d s+2 ] 
+    Gcn b1 c8 g1+ g3 s f e f s f8 op r1 f ed d3 /
+% Bar 5-6
+[ c84 f- 7 ] g 4 g- 3 c ed1 f3 gd1 f3 ed1 d3 | cs4 5 r8 c 65 d4 r8 fd1 e3 /
+[ e65 g c e s e1 s ] d6 c b a g f e d  dd8 ot c1 c4 r8 ed1 f3 |
+  g85 gx3 s+1 fs g s+1 bf8 [ a3 s g fn e s ] [ f1 s d cs s d op ] 
+    d s e f s gs op /
+% Bar 7-8
+ds43 5 r8 d 65 e # ed1 fs3 gs8 e 7 | a4 r8 a 6 g4 7 r8 g 6 /
+a85 ax3n+0+.7 s+2 gs a s+2 c8 bd1 ot a3 g1 Gfs ed8 r1 b+ bd ot a6 s b s |
+  c86x3 s+2 b a s+2 ax3 s+2 g f s+2 fx3 s+1 e f s+1 c+  
+    bx3 s+2 a g s+2 gx3 s+2 f e s+2 ex3nf+0+.7 s+2 ds e s+2 b+ /
+% Bar 9-10
+f43 7 r8 d 65 e4 gs- 65 | a r r gs+ 65 /
+a85x3 s+2 g f s+2 fx3 s+2 e d s+2 dx3nf+0+.7 s+2 cs d s+2 a+ 
+    gs1 b d8 r1 d cd b3 s+0-.3 |
+  [ c1 s a s bf s gs s ] a s fs s gn s e s
+    [ fn s ds s e s cs s ] dn s f s e d s / 
+% Bar 11-12
+[ a83 d- 7 ] e 4 e- #3 a ad1+ b3 c8 gs 65 | a4 # cs- 65 d8 dd1 e3 f8 d /
+c15 s+2 gs+ a s+1 d- Gc bd8 ot a1 a4 r8 ed1+ d3 | 
+  cs1 e g bf [ a3 cs e1 s ] e6 s d s cn bf a g f e s  
+    Ge fd1 e3 d8 ot  r8 dd1 cn3 / 
+% Bar 13-14
+g43 b- 65 [-1+1 c8 cd1 d3 ] ef8 b 6 | c4 -3 bf n42 af 6 an #6 /
+b14 d f a [ g3 b d1 t ] [+1 d6 t c b a g f e d ] 
+    Gd ed1 ot d3 c8 r1 d dd ot c6 s d s |
+  ef1 c cd ot b6 s c s  en1 c cd ot b6 s c s  
+    f1 c cd ot b6 s c s fs1 c cd ot b6 s c s /
+% Bar 15-end
+b82 6 gd1 a3 b8 g 7 c4 -3 r | r2 r8 f e s 6 d s 6 | [-1 c f 7 g 4 g- 3 ] c2 /
+g45 r1 af gd f3  ef1 bn+ s c s an s [ bf s g s af s fs s ] |
+  g s e s f s d s [ ef s c s df s bn s ] c8 s a op g op f+ s |
+  [ e s a- dd ot c1 ] c2 /

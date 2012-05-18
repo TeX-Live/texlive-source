@@ -1,0 +1,40 @@
+*** pmx2618.for.orig	2012-04-25 13:36:16.590777551 -0400
+--- pmx2618.for	2012-04-25 13:37:15.659777518 -0400
+***************
+*** 753,760 ****
+          read(*,'(a)')jobname
+          numargs = 1
+        else 
+!         call getarg(1,jobname,idum) ! May need to replace this w/ next line 
+! c       call getarg(1,jobname) 
+        end if
+  10    ljob = lenstr(jobname,44)
+        if (ljob .gt. 44) then
+--- 753,760 ----
+          read(*,'(a)')jobname
+          numargs = 1
+        else 
+! c       call getarg(1,jobname,idum) ! May need to replace this w/ next line 
+!         call getarg(1,jobname) 
+        end if
+  10    ljob = lenstr(jobname,44)
+        if (ljob .gt. 44) then
+***************
+*** 766,773 ****
+        else if (numargs .eq. 2) then
+          if (ljob.eq.2 .and. jobname(1:2).eq.'-o') then
+            optimize = .true.
+!           call getarg(2,jobname,idum) ! May need to replace this w/ next line 
+! c         call getarg(2,jobname) 
+            numargs = 1 
+            go to 10
+          else
+--- 766,773 ----
+        else if (numargs .eq. 2) then
+          if (ljob.eq.2 .and. jobname(1:2).eq.'-o') then
+            optimize = .true.
+! c         call getarg(2,jobname,idum) ! May need to replace this w/ next line 
+!           call getarg(2,jobname) 
+            numargs = 1 
+            go to 10
+          else

@@ -484,7 +484,7 @@ EXTRA_libf2c_a_SOURCES = $(PMX_TREE)/libf2c/uninit.c \
 	$(PMX_TREE)/libf2c/ftell64_.c $(PMX_TREE)/libf2c/pow_qq.c \
 	$(PMX_TREE)/libf2c/qbitbits.c $(PMX_TREE)/libf2c/qbitshft.c \
 	$(PMX_TREE)/libf2c/signbit.c
-lua_scripts = pmx
+lua_scripts = pmx2pdf
 scriptsdir = texmf-dist/scripts/pmx
 nodist_bin_SCRIPTS = $(am__append_2)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
@@ -492,7 +492,7 @@ all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
 texmfdir = $(datarootdir)/$(scriptsdir)
 dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
-dist_man1_MANS = pmx.1 pmxab.1 scor2prt.1
+dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
 TESTS = pmx.test
 DISTCLEANFILES = barsant* pmxaerr.dat
 all: all-am

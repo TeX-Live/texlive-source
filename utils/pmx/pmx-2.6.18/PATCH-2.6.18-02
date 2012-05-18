@@ -1,0 +1,31 @@
+*** scor2prt.for.orig	2012-04-25 13:23:32.439903295 -0400
+--- scor2prt.for	2012-04-25 13:30:54.966902964 -0400
+***************
+*** 106,113 ****
+          read(*,'(a)')jobname
+          numargs = 1
+        else 
+!         call getarg(1,jobname,idum) ! May need to replace this w/ next line 
+! c       call getarg(1,jobname) 
+        end if
+        ljob = lenstr(jobname,27)
+        if (ljob .eq. 0) then
+--- 106,113 ----
+          read(*,'(a)')jobname
+          numargs = 1
+        else 
+! c       call getarg(1,jobname,idum) ! May need to replace this w/ next line 
+!         call getarg(1,jobname) 
+        end if
+        ljob = lenstr(jobname,27)
+        if (ljob .eq. 0) then
+***************
+*** 1480,1485 ****
+--- 1480,1486 ----
+  c
+        common /all/ noinow,iorig(noimax),noinst,insetup,replacing,
+       *       instnum(noimax),botv(noimax),nvi(noimax),nsyst,nvnow
++       logical insetup,replacing,clefpend,botv
+        character*128 line
+        iccount = 0
+        do 1 iset = 1 , 12
