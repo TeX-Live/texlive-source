@@ -1,3 +1,9 @@
+2012-05-20  Karl Berry  <karl@tug.org>
+
+	* Makefile.am: do not handle pmx2pdf.lua here, since
+	it is distributed as part of the texmf.zip file rather than the
+	sources.
+
 2012-05-18  Karl Berry  <karl@tug.org>
 
 	* pmx-2.6.18.
