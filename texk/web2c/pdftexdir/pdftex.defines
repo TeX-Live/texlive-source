@@ -111,7 +111,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 @define function imagerotate();
 @define function imagepages();
 @define function imagecolordepth();
-@define function imagegroupref();
+@define function getimagegroupref();
+@define procedure setimagegroupref();
 @define function imagewidth();
 @define function imagexres();
 @define function imageyres();

@@ -36064,7 +36064,7 @@ begin
         pdf_append_list(pdf_ximage_objnum(p))(pdf_ximage_list);
     if not is_pdf_image(image) then begin
         if is_png_image(image) then begin
-            groupref := image_group_ref(image);
+            groupref := get_image_group_ref(image);
             if (groupref > 0) and (pdf_page_group_val = 0) then 
                 pdf_page_group_val := groupref;
         end;
@@ -36079,9 +36079,14 @@ begin
     end
     else begin
         {for pdf images we generate the page group object number here}
-        groupref := image_group_ref(image); {this is only a flag whether page group is present}
-        if (groupref > 0) and (pdf_page_group_val = 0) then begin
-            pdf_page_group_val := pdf_new_objnum;
+        groupref := get_image_group_ref(image); {0: no group, -1: to be generated; >0: already written}
+        if (groupref <> 0) and (pdf_page_group_val = 0) then begin
+            if groupref = -1 then begin
+                pdf_page_group_val := pdf_new_objnum;
+                set_image_group_ref(image, pdf_page_group_val);
+            end
+            else { groupref > 0 }
+                pdf_page_group_val := groupref;
         end;
         pdf_print_real(ext_xn_over_d(pdf_width(p),
                        ten_pow[6], img_w), 6);

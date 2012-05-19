@@ -294,7 +294,8 @@ extern integer imagewidth(integer);
 extern integer imagexres(integer);
 extern integer imageyres(integer);
 extern integer imagecolordepth(integer);
-extern integer imagegroupref(integer);
+extern integer getimagegroupref(integer);
+extern void setimagegroupref(integer,integer);
 extern integer readimage(strnumber, integer, strnumber, integer, integer,
                          integer, integer);
 extern void deleteimage(integer);

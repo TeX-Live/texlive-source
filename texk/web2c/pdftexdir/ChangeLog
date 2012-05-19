@@ -1,3 +1,13 @@
+2012-05-20  Thanh Han The <thanh@river-valley.org>
+
+	* pdftex.defines (get/setimagegroupref): these replace imagegroupref.
+	* ptexlib.h: likewise.
+	* writeimg.c: define them, and check for page group
+	without object number.
+	* pdftex.web: change calls.
+	* pdftoepdf.cc: more page-group changes.
+	This is all related to http://bugs.debian.org/672951.
+
 2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Adapted to e-TeX Version 2.4.

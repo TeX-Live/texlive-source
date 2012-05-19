@@ -811,6 +811,8 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
         epdf_has_page_group = 1;    // only flag that page group is present;
                                     // the actual object number will be
                                     // generated in pdftex.web
+    else
+        epdf_has_page_group = 0;    // no page group present
 
     pdf_doc->xref = pdf_doc->doc->getXRef();
     return page_num;
@@ -941,6 +943,8 @@ void write_epdf(void)
         if (pdfpagegroupval == 0) { 
             // another pdf with page group was included earlier on the same page;
             // copy the Group entry as is
+            pdftex_warn
+                ("PDF inclusion: multiple pdfs with page group included in a single page");
             pdf_newline();
             pdf_puts("/Group ");
             copyObject(&dictObj);

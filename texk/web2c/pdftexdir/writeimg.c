@@ -150,9 +150,14 @@ integer imagecolordepth(integer img)
     }
 }
 
-integer imagegroupref(integer img)
+integer getimagegroupref(integer img)
 {
     return img_group_ref(img);
+}
+
+void setimagegroupref(integer img, integer value)
+{
+    img_group_ref(img) = value;
 }
 
 /*
@@ -322,7 +327,11 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
         pdf_ptr(img)->orig_y = bp2int(epdf_orig_y);
         pdf_ptr(img)->selected_page = page_num;
         pdf_ptr(img)->doc = epdf_doc;
-        img_group_ref(img) = epdf_has_page_group;
+        if (epdf_has_page_group == 1)
+            img_group_ref(img) = -1;    // page group present, but new object
+                                        // number not set yet
+        else
+            img_group_ref(img) = 0;     // no page group present
         break;
     case IMAGE_TYPE_PNG:
         img_pages(img) = 1;
