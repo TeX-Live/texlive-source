@@ -98,7 +98,7 @@
 \I\\{grP}, \[30], 32, 33.
 \I\.{HALFSCALE}, \[27], 28, 33, 34.
 \I\.{HAVE\_CONFIG\_H}, 10.
-\I\.{HAVE\_EMTEXDIR}, 69, 70, 72, 73, 74, 75, 78, 80.
+\I\.{HAVE\_EMTEXDIR}, 69, 70, 72, 73, 74, 75, 76, 77, 78, 80.
 \I\.{HAVE\_LIBKPATHSEA}, 69, 72, 78, 80.
 \I\.{HAVE\_MIKTEX}, 69, 70, 72, 80.
 \I\\{have\_min\_char}, \[58], 59, 61.

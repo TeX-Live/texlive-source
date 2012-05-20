@@ -1,3 +1,10 @@
+2012-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-static (new): Build fix for 64-bit Mac OS X 10.7.3.
+	Clang does not like non-static inline functions as used here.
+	While at it, all local functions are declared static.
+	Do not extend #ifdef HAVE_EMTEXDIR...#endif over several sections.
+
 2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported cjk-4.8.3/utils source tree from:

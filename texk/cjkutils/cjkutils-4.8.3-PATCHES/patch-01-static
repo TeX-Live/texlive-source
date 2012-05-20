@@ -1,0 +1,373 @@
+	Clang does not like non-static inline functions as used here.
+	While at it, all local functions are declared static.
+
+	Do not extend #ifdef HAVE_EMTEXDIR...#endif over several sections.
+
+diff -ur cjkutils-4.8.3.orig/hbf2gf/hbf2gf.w cjkutils-4.8.3/hbf2gf/hbf2gf.w
+--- cjkutils-4.8.3.orig/hbf2gf/hbf2gf.w	2012-05-07 00:00:00.000000000 +0200
++++ cjkutils-4.8.3/hbf2gf/hbf2gf.w	2012-05-20 14:09:25.143819152 +0200
+@@ -427,7 +427,7 @@
+ functions |write_pre()|, |write_data()|, and |write_post()| handle this.
+ 
+ @<Prototypes@>=
+-void write_file(void);
++static void write_file(void);
+ 
+ 
+ @
+@@ -435,7 +435,7 @@
+ the \.{-n} option isn't specified; otherwise only `\.{.gf}' will be appended.
+ 
+ @c
+-void write_file(void)
++static void write_file(void)
+    {char output_file[FILE_NAME_LENGTH + 1];
+ 
+ 
+@@ -489,14 +489,14 @@
+ @d header " hbf2gf output "
+ 
+ @<Prototypes@>=
+-void write_pre(void);
++static void write_pre(void);
+ 
+ 
+ @
+ @s tm int
+ 
+ @c
+-void write_pre(void)
++static void write_pre(void)
+    {char out_s[40], s[20];
+     time_t secs_now;
+     struct tm *time_now;
+@@ -577,12 +577,12 @@
+ 
+ @
+ @<Prototypes@>=
+-void write_data(void);
++static void write_data(void);
+ 
+ 
+ @
+ @c
+-void write_data(void)
++static void write_data(void)
+    {dot_count = 0;
+     char_adr_p = char_adr;@#
+ 
+@@ -688,12 +688,12 @@
+ \TeX\ defines that 72.27~points are exactly 1~inch.
+ 
+ @<Prototypes@>=
+-void write_post(void);
++static void write_post(void);
+ 
+ 
+ @
+ @c
+-void write_post(void)
++static void write_post(void)
+    {long special_adr;
+     long post_adr;@#
+ 
+@@ -832,12 +832,12 @@
+ \TeX\ wants the most significant byte first.
+ 
+ @<Prototypes@>=
+-void fputl(long, FILE *);
++static void fputl(long, FILE *);
+ 
+ 
+ @
+ @c
+-void fputl(long num, FILE *f)
++static void fputl(long num, FILE *f)
+    {fputc(num >> 24, f);
+     fputc(num >> 16, f);
+     fputc(num >> 8, f);
+@@ -992,12 +992,12 @@
+ 
+ 
+ @<Prototypes@>=
+-void make_pixel_array(void);
++static void make_pixel_array(void);
+ 
+ 
+ @
+ @c
+-void make_pixel_array(void)
++static void make_pixel_array(void)
+    {unsigned char *prP;
+     unsigned char *temp_prP;
+     unsigned char *new_prP;
+@@ -1220,6 +1220,7 @@
+ glyph).
+ 
+ @<Prototypes@>=
++static
+ #ifdef __GNUC__
+ __inline__
+ #endif
+@@ -1228,6 +1229,7 @@
+ 
+ @
+ @c
++static
+ #ifdef __GNUC__
+ __inline__
+ #endif
+@@ -1270,6 +1272,7 @@
+ 
+ @
+ @<Prototypes@>=
++static
+ #ifdef __GNUC__
+ __inline__
+ #endif
+@@ -1278,6 +1281,7 @@
+ 
+ @
+ @c
++static
+ #ifdef __GNUC__
+ __inline__
+ #endif
+@@ -1323,7 +1327,7 @@
+ @d NOOP        244         /* not used */
+ 
+ @<Prototypes@>=
+-void write_coding(void);
++static void write_coding(void);
+ 
+ 
+ @
+@@ -1331,7 +1335,7 @@
+ ``Unreachable code $\ldots$'' or something similar.
+ 
+ @c
+-void write_coding(void)
++static void write_coding(void)
+    {register int count, skip;
+     register unsigned char paint;
+     register int x, y;
+@@ -1484,12 +1488,12 @@
+ single bytes and use the \.{HEADER} command repeatedly.
+ 
+ @<Prototypes@>=
+-void write_pl(void);
++static void write_pl(void);
+ 
+ 
+ @
+ @c
+-void write_pl(void)
++static void write_pl(void)
+    {int i, pos;
+     char output_file[FILE_NAME_LENGTH + 1];
+     long t, sc;
+@@ -1581,12 +1585,12 @@
+ of the subfonts back to the original encoding positions.
+ 
+ @<Prototypes@>=
+-void write_ovp(void);
++static void write_ovp(void);
+ 
+ 
+ @
+ @c
+-void write_ovp(void)
++static void write_ovp(void)
+    {int c, i, nmb_subfonts, remainder, count, pos;
+     char output_file[FILE_NAME_LENGTH + 1];
+     long t, sc;
+@@ -1726,12 +1730,12 @@
+ 
+ @
+ @<Prototypes@>=
+-void write_job(void);
++static void write_job(void);
+ 
+ 
+ @
+ @c
+-void write_job(void)
++static void write_job(void)
+    {FILE *out;
+     int i, j;
+     char buffer[FILE_NAME_LENGTH + 1];
+@@ -1975,7 +1979,7 @@
+ 
+ @
+ @<Prototypes@>=
+-void read_config(void);
++static void read_config(void);
+ 
+ 
+ @
+@@ -1983,7 +1987,7 @@
+ isn't a HBF font at all.
+ 
+ @c
+-void read_config(void)
++static void read_config(void)
+    {HBF_BBOX *boxp;
+     char *real_config_file;
+ 
+@@ -2306,12 +2310,12 @@
+ |Buffer| if existent. |fsearch()| returns~1 on success.
+ 
+ @<Prototypes@>=
+-int fsearch(const char *);
++static int fsearch(const char *);
+ 
+ 
+ @
+ @c
+-int fsearch(const char *search_string)
++static int fsearch(const char *search_string)
+    {char *P, p;
+     const char *Q;
+     char temp_buffer[STRING_LENGTH + 1];
+@@ -2445,12 +2449,12 @@
+ message.
+ 
+ @<Prototypes@>=
+-void config_error(const char *);
++static void config_error(const char *);
+ 
+ 
+ @
+ @c
+-void config_error(const char *message)
++static void config_error(const char *message)
+    {fprintf(stderr, "Couldn't find `%s' entry in configuration file\n",
+             message);
+     exit(1);
+@@ -2488,12 +2492,12 @@
+ 
+ @
+ @<Prototypes@>=
+-const char *TeX_search_version(void);
++static const char *TeX_search_version(void);
+ 
+ 
+ @
+ @c
+-const char *TeX_search_version(void)
++static const char *TeX_search_version(void)
+    {
+ #if defined(HAVE_LIBKPATHSEA)
+     return kpathsea_version_string;
+@@ -2525,8 +2529,8 @@
+ @<Prototypes@>=
+ #ifdef HAVE_EMTEXDIR
+ extern int setup_list(struct emtex_dir *, char *, const char *, unsigned);
+-int dir_setup(struct emtex_dir *, const char *, const char *, unsigned);
+-char *file_find(char *, struct emtex_dir *);
++static int dir_setup(struct emtex_dir *, const char *, const char *, unsigned);
++static char *file_find(char *, struct emtex_dir *);
+ #endif
+ 
+ 
+@@ -2536,7 +2540,7 @@
+ 
+ @c
+ #ifdef HAVE_EMTEXDIR
+-int dir_setup(ed, env, dir, flags)
++static int dir_setup(ed, env, dir, flags)
+   struct emtex_dir *ed;
+   const char *env;
+   const char *dir;
+@@ -2558,16 +2562,20 @@
+ 
+     return TRUE;
+    }
++#endif
+ 
+ 
+ @
+ @<Global variables@>=
++#ifdef HAVE_EMTEXDIR
+ char name_buffer[FILE_NAME_LENGTH + 1];
++#endif
+ 
+ 
+ @
+ @c
+-char *file_find(name, list)
++#ifdef HAVE_EMTEXDIR
++static char *file_find(name, list)
+   char *name;
+   struct emtex_dir *list;
+ 
+@@ -2611,38 +2619,38 @@
+ versions, and within \.{HBF2GFINPUTS} for new versions.
+ 
+ @<Prototypes@>=
+-char *TeX_search_cfg_file(char *);
+-char *TeX_search_hbf_file(char *);
++static char *TeX_search_cfg_file(char *);
++static char *TeX_search_hbf_file(char *);
+ 
+ 
+ @
+ @c
+ #if defined(HAVE_LIBKPATHSEA)
+-char *TeX_search_cfg_file(char *name)
++static char *TeX_search_cfg_file(char *name)
+    {
+     return kpse_find_file(name, kpse_program_text_format, TRUE);
+    }@#
+ 
+ 
+-char *TeX_search_hbf_file(char *name)
++static char *TeX_search_hbf_file(char *name)
+    {
+     return kpse_find_file(name, kpse_miscfonts_format, TRUE);
+    }@#
+ 
+ 
+ #elif defined(HAVE_EMTEXDIR)
+-char *TeX_search_cfg_file(char *name)
++static char *TeX_search_cfg_file(char *name)
+    {return file_find(name, &cfg_path);
+    }@#
+ 
+ 
+-char *TeX_search_hbf_file(char *name)
++static char *TeX_search_hbf_file(char *name)
+    {return file_find(name, &hbf_path);
+    }@#
+ 
+ 
+ #elif defined(HAVE_MIKTEX)
+-char *TeX_search_cfg_file(char *name)
++static char *TeX_search_cfg_file(char *name)
+    {char result[_MAX_PATH];
+ 
+     if (!miktex_find_input_file("hbf2gf", *name, result))
+@@ -2651,7 +2659,7 @@
+    }@#
+ 
+ 
+-char *TeX_search_hbf_file(char *name)
++static char *TeX_search_hbf_file(char *name)
+    {char result[_MAX_PATH];
+ 
+ 
+@@ -2662,12 +2670,12 @@
+ 
+ 
+ #else
+-char *TeX_search_cfg_file(char *name)
++static char *TeX_search_cfg_file(char *name)
+    {return name;
+    }@#
+ 
+ 
+-char *TeX_search_hbf_file(char *name)
++static char *TeX_search_hbf_file(char *name)
+    {return name;
+    }
+ #endif

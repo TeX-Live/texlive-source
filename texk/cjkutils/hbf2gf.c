@@ -121,7 +121,7 @@
 
 
 /*:10*//*69:*/
-#line 2469 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2473 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
 #include "kpathsea/kpathsea.h"
@@ -139,42 +139,43 @@
 /*11:*/
 #line 429 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_file(void);
+static void write_file(void);
 
 
 /*:11*//*13:*/
 #line 491 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_pre(void);
+static void write_pre(void);
 
 
 /*:13*//*16:*/
 #line 579 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_data(void);
+static void write_data(void);
 
 
 /*:16*//*20:*/
 #line 690 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_post(void);
+static void write_post(void);
 
 
 /*:20*//*25:*/
 #line 834 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void fputl(long,FILE*);
+static void fputl(long,FILE*);
 
 
 /*:25*//*29:*/
 #line 994 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void make_pixel_array(void);
+static void make_pixel_array(void);
 
 
 /*:29*//*36:*/
 #line 1222 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
+static
 #ifdef __GNUC__
 __inline__
 #endif
@@ -182,8 +183,9 @@ void read_row(unsigned char*);
 
 
 /*:36*//*39:*/
-#line 1272 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1274 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
+static
 #ifdef __GNUC__
 __inline__
 #endif
@@ -191,68 +193,68 @@ void write_row(unsigned char*);
 
 
 /*:39*//*41:*/
-#line 1325 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1329 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_coding(void);
+static void write_coding(void);
 
 
 /*:41*//*45:*/
-#line 1486 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1490 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_pl(void);
+static void write_pl(void);
 
 
 /*:45*//*47:*/
-#line 1583 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1587 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_ovp(void);
+static void write_ovp(void);
 
 
 /*:47*//*50:*/
-#line 1728 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1732 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_job(void);
+static void write_job(void);
 
 
 /*:50*//*54:*/
-#line 1977 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1981 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void read_config(void);
+static void read_config(void);
 
 
 /*:54*//*64:*/
-#line 2308 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2312 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-int fsearch(const char*);
+static int fsearch(const char*);
 
 
 /*:64*//*67:*/
-#line 2447 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2451 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void config_error(const char*);
+static void config_error(const char*);
 
 
 /*:67*//*71:*/
-#line 2490 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2494 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-const char*TeX_search_version(void);
+static const char*TeX_search_version(void);
 
 
 /*:71*//*74:*/
-#line 2525 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2529 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
 extern int setup_list(struct emtex_dir*,char*,const char*,unsigned);
-int dir_setup(struct emtex_dir*,const char*,const char*,unsigned);
-char*file_find(char*,struct emtex_dir*);
+static int dir_setup(struct emtex_dir*,const char*,const char*,unsigned);
+static char*file_find(char*,struct emtex_dir*);
 #endif
 
 
 /*:74*//*79:*/
-#line 2613 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2621 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-char*TeX_search_cfg_file(char*);
-char*TeX_search_hbf_file(char*);
+static char*TeX_search_cfg_file(char*);
+static char*TeX_search_hbf_file(char*);
 
 
 /*:79*/
@@ -384,13 +386,13 @@ long s_mag_x,s_mag_y,s_slant;
 
 
 /*:27*//*38:*/
-#line 1267 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1269 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 int threshold= 128;
 
 
 /*:38*//*49:*/
-#line 1717 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1721 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char job_extension[EXTENSION_LENGTH+1];
 char rm_command[STRING_LENGTH+1];
@@ -402,13 +404,13 @@ int ofm_file= FALSE;
 
 
 /*:49*//*53:*/
-#line 1972 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1976 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char Buffer[STRING_LENGTH+1];
 
 
 /*:53*//*58:*/
-#line 2090 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2094 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 int offset_x;
 int offset_y;
@@ -417,13 +419,13 @@ HBF_CHAR user_min_char;
 int have_min_char= FALSE;
 
 /*:58*//*60:*/
-#line 2247 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2251 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 HBF_CHAR min_char,max_char;
 
 
 /*:60*//*62:*/
-#line 2274 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2278 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 char b2_codes[256];
 unsigned char min_2_byte,max_2_byte;
@@ -431,7 +433,7 @@ int nmb_2_bytes= 0;
 
 
 /*:62*//*70:*/
-#line 2481 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2485 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #if defined(HAVE_EMTEXDIR)
 char emtex_version_string[]= "emTeXdir";
@@ -441,7 +443,7 @@ char no_version_string[]= "no search library";
 
 
 /*:70*//*73:*/
-#line 2518 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2522 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
 struct emtex_dir cfg_path,hbf_path;
@@ -449,9 +451,11 @@ struct emtex_dir cfg_path,hbf_path;
 
 
 /*:73*//*76:*/
-#line 2564 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2569 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
+#ifdef HAVE_EMTEXDIR
 char name_buffer[FILE_NAME_LENGTH+1];
+#endif
 
 
 /*:76*/
@@ -463,7 +467,7 @@ int main(int argc,char*argv[])
 {char*p;
 
 /*78:*/
-#line 2586 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2594 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
 kpse_set_program_name(argv[0],"hbf2gf");
@@ -744,7 +748,7 @@ return 0;
 /*:4*//*12:*/
 #line 437 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_file(void)
+static void write_file(void)
 {char output_file[FILE_NAME_LENGTH+1];
 
 
@@ -788,7 +792,7 @@ write_data();
 /*:12*//*14:*/
 #line 498 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_pre(void)
+static void write_pre(void)
 {char out_s[40],s[20];
 time_t secs_now;
 struct tm*time_now;
@@ -811,7 +815,7 @@ fputs(out_s,out);
 /*:14*//*17:*/
 #line 584 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_data(void)
+static void write_data(void)
 {dot_count= 0;
 char_adr_p= char_adr;
 
@@ -869,7 +873,7 @@ fputc(EOC,out);
 /*:17*//*21:*/
 #line 695 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_post(void)
+static void write_post(void)
 {long special_adr;
 long post_adr;
 
@@ -978,7 +982,7 @@ fputc(POSTPOST_ID,out);
 /*:21*//*26:*/
 #line 839 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void fputl(long num,FILE*f)
+static void fputl(long num,FILE*f)
 {fputc(num>>24,f);
 fputc(num>>16,f);
 fputc(num>>8,f);
@@ -989,7 +993,7 @@ fputc(num,f);
 /*:26*//*30:*/
 #line 999 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void make_pixel_array(void)
+static void make_pixel_array(void)
 {unsigned char*prP;
 unsigned char*temp_prP;
 unsigned char*new_prP;
@@ -1208,8 +1212,9 @@ goto again;
 
 
 /*:30*//*37:*/
-#line 1230 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1231 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
+static
 #ifdef __GNUC__
 __inline__
 #endif
@@ -1243,8 +1248,9 @@ bitshift= 7;
 
 
 /*:37*//*40:*/
-#line 1280 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1283 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
+static
 #ifdef __GNUC__
 __inline__
 #endif
@@ -1259,9 +1265,9 @@ for(col= 0,xP= pixelrow;col<pk_output_size_x;++col,++xP)
 
 
 /*:40*//*42:*/
-#line 1333 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1337 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_coding(void)
+static void write_coding(void)
 {register int count,skip;
 register unsigned char paint;
 register int x,y;
@@ -1276,7 +1282,7 @@ goto start;
 
 while(y<pk_output_size_y)
 {/*43:*/
-#line 1357 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1361 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 count= 0;
 x= 0;
@@ -1345,11 +1351,11 @@ continue;
 
 
 /*:43*/
-#line 1348 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1352 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 start:
 /*44:*/
-#line 1425 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1429 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 while(x<pk_output_size_x)
 {if(*cp==paint)
@@ -1390,7 +1396,7 @@ paint= WHITE;
 
 
 /*:44*/
-#line 1350 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1354 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 y++;
 }
@@ -1398,9 +1404,9 @@ y++;
 
 
 /*:42*//*46:*/
-#line 1491 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1495 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_pl(void)
+static void write_pl(void)
 {int i,pos;
 char output_file[FILE_NAME_LENGTH+1];
 long t,sc;
@@ -1488,9 +1494,9 @@ fclose(out);
 
 
 /*:46*//*48:*/
-#line 1588 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1592 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_ovp(void)
+static void write_ovp(void)
 {int c,i,nmb_subfonts,remainder,count,pos;
 char output_file[FILE_NAME_LENGTH+1];
 long t,sc;
@@ -1603,9 +1609,9 @@ fclose(out);
 
 
 /*:48*//*51:*/
-#line 1733 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1737 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void write_job(void)
+static void write_job(void)
 {FILE*out;
 int i,j;
 char buffer[FILE_NAME_LENGTH+1];
@@ -1689,15 +1695,15 @@ fclose(out);
 
 
 /*:51*//*55:*/
-#line 1985 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1989 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void read_config(void)
+static void read_config(void)
 {HBF_BBOX*boxp;
 char*real_config_file;
 
 
 /*56:*/
-#line 2037 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2041 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {int i,lastext= -1;
 
@@ -1715,7 +1721,7 @@ strcat(config_file,".cfg");
 
 
 /*:56*/
-#line 1991 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 1995 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 real_config_file= TeX_search_cfg_file(config_file);
@@ -1750,7 +1756,7 @@ exit(0);
 }
 
 /*57:*/
-#line 2054 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2058 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {char hbf_header[STRING_LENGTH+1];
 char*real_hbf_header;
@@ -1787,10 +1793,10 @@ strcpy(output_name,Buffer);
 
 
 /*:57*/
-#line 2024 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2028 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*59:*/
-#line 2098 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2102 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {if(fsearch("nmb_files"))
 nmb_files= atoi(Buffer);
@@ -1932,11 +1938,11 @@ job_extension[EXTENSION_LENGTH]= '\0';
 
 
 /*:59*/
-#line 2025 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2029 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 /*61:*/
-#line 2252 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2256 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {const void*cp;
 HBF_CHAR dummy;
@@ -1951,10 +1957,10 @@ min_char= user_min_char;
 
 
 /*:61*/
-#line 2027 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2031 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 /*63:*/
-#line 2281 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2285 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {const void*b2r;
 unsigned char dummy;
@@ -1977,7 +1983,7 @@ nmb_2_bytes++;
 
 
 /*:63*/
-#line 2028 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2032 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 
 fclose(config);
@@ -1985,9 +1991,9 @@ fclose(config);
 
 
 /*:55*//*65:*/
-#line 2313 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2317 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-int fsearch(const char*search_string)
+static int fsearch(const char*search_string)
 {char*P,p;
 const char*Q;
 char temp_buffer[STRING_LENGTH+1];
@@ -2041,7 +2047,7 @@ Ch= fgetc(config);
 
 if(*temp_buffer)
 /*66:*/
-#line 2392 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2396 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 {P= temp_buffer;
 Buf_p= Buffer;
@@ -2094,7 +2100,7 @@ count--;
 
 
 /*:66*/
-#line 2367 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2371 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 else
 *Buffer= '\0';
@@ -2104,9 +2110,9 @@ return(*Buffer)?1:0;
 
 
 /*:65*//*68:*/
-#line 2452 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2456 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-void config_error(const char*message)
+static void config_error(const char*message)
 {fprintf(stderr,"Couldn't find `%s' entry in configuration file\n",
 message);
 exit(1);
@@ -2115,9 +2121,9 @@ exit(1);
 
 
 /*:68*//*72:*/
-#line 2495 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2499 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-const char*TeX_search_version(void)
+static const char*TeX_search_version(void)
 {
 #if defined(HAVE_LIBKPATHSEA)
 return kpathsea_version_string;
@@ -2137,10 +2143,10 @@ return no_version_string;
 
 
 /*:72*//*75:*/
-#line 2537 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2541 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
-int dir_setup(ed,env,dir,flags)
+static int dir_setup(ed,env,dir,flags)
 struct emtex_dir*ed;
 const char*env;
 const char*dir;
@@ -2162,12 +2168,14 @@ env);
 
 return TRUE;
 }
+#endif
 
 
 /*:75*//*77:*/
-#line 2569 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2576 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
-char*file_find(name,list)
+#ifdef HAVE_EMTEXDIR
+static char*file_find(name,list)
 char*name;
 struct emtex_dir*list;
 
@@ -2180,34 +2188,34 @@ return NULL;
 
 
 /*:77*//*80:*/
-#line 2619 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
+#line 2627 "./cjkutils-4.8.3/hbf2gf/hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
-char*TeX_search_cfg_file(char*name)
+static char*TeX_search_cfg_file(char*name)
 {
 return kpse_find_file(name,kpse_program_text_format,TRUE);
 }
 
 
-char*TeX_search_hbf_file(char*name)
+static char*TeX_search_hbf_file(char*name)
 {
 return kpse_find_file(name,kpse_miscfonts_format,TRUE);
 }
 
 
 #elif defined(HAVE_EMTEXDIR)
-char*TeX_search_cfg_file(char*name)
+static char*TeX_search_cfg_file(char*name)
 {return file_find(name,&cfg_path);
 }
 
 
-char*TeX_search_hbf_file(char*name)
+static char*TeX_search_hbf_file(char*name)
 {return file_find(name,&hbf_path);
 }
 
 
 #elif defined(HAVE_MIKTEX)
-char*TeX_search_cfg_file(char*name)
+static char*TeX_search_cfg_file(char*name)
 {char result[_MAX_PATH];
 
 if(!miktex_find_input_file("hbf2gf",*name,result))
@@ -2216,7 +2224,7 @@ return strdup(result);
 }
 
 
-char*TeX_search_hbf_file(char*name)
+static char*TeX_search_hbf_file(char*name)
 {char result[_MAX_PATH];
 
 
@@ -2227,12 +2235,12 @@ return strdup(result);
 
 
 #else
-char*TeX_search_cfg_file(char*name)
+static char*TeX_search_cfg_file(char*name)
 {return name;
 }
 
 
-char*TeX_search_hbf_file(char*name)
+static char*TeX_search_hbf_file(char*name)
 {return name;
 }
 #endif
