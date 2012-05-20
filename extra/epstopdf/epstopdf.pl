@@ -1,7 +1,4 @@
-eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $argv:q'
-  if 0;
-use strict;
-
+#!/usr/bin/env perl
 # $Id$
 # (Copyright lines below.)
 #
@@ -46,6 +43,12 @@ use strict;
 #
 # emacs-page
 # History
+#  2012/05/20 (Karl Berry)
+#    * use /usr/bin/env, since Ruby has apparently required #! for years,
+#      and we rely on it for our other scripts, so why not.
+#      (tex-k mail from Jean Krohn, 2 Aug 2010 15:57:54,
+#       per http://osdir.com/ml/lang.ruby.general/2002-06/msg01388.html
+#       and ruby-bugs:PR#315).
 #  2012/05/12 v2.17 (Karl Berry)
 #    * uselessly placate -w.  Debian bug 672281.
 #  2010/05/09 v2.16 (Karl Berry)
