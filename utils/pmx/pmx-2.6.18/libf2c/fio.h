@@ -1,7 +1,12 @@
 #ifndef SYSDEP_H_INCLUDED
 #include "sysdep1.h"
 #endif
+#include <sys/types.h> /* for off_t */
 #include "stdio.h"
+#ifdef WIN32
+extern int w32getc(FILE *f);
+#define getc w32getc
+#endif
 #include "errno.h"
 #ifndef NULL
 /* ANSI C */

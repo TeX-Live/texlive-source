@@ -2,9 +2,9 @@
 
 	Mail from Akira, 29 Mar 2012 23:50:53.
 
-diff -ur pmx-2.6.17.orig/libf2c/open.c pmx-2.6.17/libf2c/open.c
---- pmx-2.6.17.orig/libf2c/open.c	2012-03-26 12:09:53.000000000 +0200
-+++ pmx-2.6.17/libf2c/open.c	2012-03-29 17:12:53.000000000 +0200
+diff -ur pmx-2.6.18.orig/libf2c/open.c pmx-2.6.18/libf2c/open.c
+--- pmx-2.6.18.orig/libf2c/open.c	2012-04-09 18:24:12.000000000 +0200
++++ pmx-2.6.18/libf2c/open.c	2012-05-19 18:46:29.225582726 +0200
 @@ -30,6 +30,9 @@
  #ifdef NON_ANSI_RW_MODES
  char *f__r_mode[2] = {"r", "r"};

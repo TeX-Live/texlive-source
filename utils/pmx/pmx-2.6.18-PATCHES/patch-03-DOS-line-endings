@@ -2,9 +2,9 @@
 
 	Mail from Akira, 31 Mar 2012 21:36:26.
 
-diff -ur pmx-2.6.17.orig/libf2c/fio.h pmx-2.6.17/libf2c/fio.h
---- pmx-2.6.17.orig/libf2c/fio.h	2012-03-26 12:09:53.000000000 +0200
-+++ pmx-2.6.17/libf2c/fio.h	2012-04-01 14:49:20.000000000 +0200
+diff -ur pmx-2.6.18.orig/libf2c/fio.h pmx-2.6.18/libf2c/fio.h
+--- pmx-2.6.18.orig/libf2c/fio.h	2012-04-09 18:24:12.000000000 +0200
++++ pmx-2.6.18/libf2c/fio.h	2012-05-19 18:47:56.503874316 +0200
 @@ -2,6 +2,10 @@
  #include "sysdep1.h"
  #endif

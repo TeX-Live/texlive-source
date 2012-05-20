@@ -10,4 +10,8 @@ From all the preprocessor defines arithchk could generate we only might need
 'VAX' (most probably irrelevant) and 'NO_LONG_LONG' which can be handled by
 the configure script.  Thus an empty file arith.h suffices.
 
+================
+
+Actually, compiling neither signbit.c nor uninit.c the file arith.h is not
+used at all and can bbe omitted.
 

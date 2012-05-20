@@ -16,6 +16,7 @@
 @SET_MAKE@
 
 
+
 VPATH = @srcdir@
 am__make_dryrun = \
   { \
@@ -51,9 +52,11 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = pmxab$(EXEEXT) scor2prt$(EXEEXT)
-@WIN32_TRUE@am__append_1 = w32getc.c
-subdir = .
+@WIN32_TRUE@am__append_1 = \
+@WIN32_TRUE@	$(PMX_TREE)/w32getc.c
+
 DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
+	$(dist_texmf_SCRIPTS) $(srcdir)/../../texk/am/script_links.am \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/install-sh \
@@ -62,6 +65,8 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
+@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_2 = $(wrappers)
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 $(top_srcdir)/version.ac \
@@ -78,7 +83,7 @@ AR = ar
 ARFLAGS = cru
 libf2c_a_AR = $(AR) $(ARFLAGS)
 libf2c_a_LIBADD =
-am__libf2c_a_SOURCES_DIST = arith.h $(PMX_TREE)/libf2c/f2c.h \
+am__libf2c_a_SOURCES_DIST = $(PMX_TREE)/libf2c/f2c.h \
 	$(PMX_TREE)/libf2c/fio.h $(PMX_TREE)/libf2c/fmt.h \
 	$(PMX_TREE)/libf2c/fp.h $(PMX_TREE)/libf2c/lio.h \
 	$(PMX_TREE)/libf2c/rawio.h $(PMX_TREE)/libf2c/signal1.h \
@@ -158,7 +163,7 @@ am__libf2c_a_SOURCES_DIST = arith.h $(PMX_TREE)/libf2c/f2c.h \
 	$(PMX_TREE)/libf2c/wrtfmt.c $(PMX_TREE)/libf2c/wsfe.c \
 	$(PMX_TREE)/libf2c/wsle.c $(PMX_TREE)/libf2c/wsne.c \
 	$(PMX_TREE)/libf2c/xwsne.c $(PMX_TREE)/libf2c/dtime_.c \
-	$(PMX_TREE)/libf2c/etime_.c w32getc.c
+	$(PMX_TREE)/libf2c/etime_.c $(PMX_TREE)/w32getc.c
 @WIN32_TRUE@am__objects_1 = w32getc.$(OBJEXT)
 am_libf2c_a_OBJECTS = abort_.$(OBJEXT) cabs.$(OBJEXT) derf_.$(OBJEXT) \
 	derfc_.$(OBJEXT) erf_.$(OBJEXT) erfc_.$(OBJEXT) \
@@ -210,7 +215,8 @@ am_libf2c_a_OBJECTS = abort_.$(OBJEXT) cabs.$(OBJEXT) derf_.$(OBJEXT) \
 	xwsne.$(OBJEXT) dtime_.$(OBJEXT) etime_.$(OBJEXT) \
 	$(am__objects_1)
 libf2c_a_OBJECTS = $(am_libf2c_a_OBJECTS)
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" \
+	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_pmxab_OBJECTS = pmxab.$(OBJEXT)
 pmxab_OBJECTS = $(am_pmxab_OBJECTS)
@@ -220,23 +226,6 @@ am_scor2prt_OBJECTS = scor2prt.$(OBJEXT)
 scor2prt_OBJECTS = $(am_scor2prt_OBJECTS)
 scor2prt_LDADD = $(LDADD)
 scor2prt_DEPENDENCIES = libf2c.a
-DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libf2c_a_SOURCES) $(EXTRA_libf2c_a_SOURCES) \
-	$(pmxab_SOURCES) $(scor2prt_SOURCES)
-DIST_SOURCES = $(am__libf2c_a_SOURCES_DIST) $(EXTRA_libf2c_a_SOURCES) \
-	$(pmxab_SOURCES) $(scor2prt_SOURCES)
-am__can_run_installinfo = \
-  case $$AM_UPDATE_INFO_DIR in \
-    n|no|NO) false;; \
-    *) (install-info --version) >/dev/null 2>&1;; \
-  esac
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -264,6 +253,24 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
+SCRIPTS = $(dist_texmf_SCRIPTS) $(nodist_bin_SCRIPTS)
+DEFAULT_INCLUDES = -I.@am__isrc@
+depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
+am__depfiles_maybe = depfiles
+am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+SOURCES = $(libf2c_a_SOURCES) $(EXTRA_libf2c_a_SOURCES) \
+	$(pmxab_SOURCES) $(scor2prt_SOURCES)
+DIST_SOURCES = $(am__libf2c_a_SOURCES_DIST) $(EXTRA_libf2c_a_SOURCES) \
+	$(pmxab_SOURCES) $(scor2prt_SOURCES)
+am__can_run_installinfo = \
+  case $$AM_UPDATE_INFO_DIR in \
+    n|no|NO) false;; \
+    *) (install-info --version) >/dev/null 2>&1;; \
+  esac
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man1_MANS)
@@ -385,102 +392,110 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(PMX_TREE) $(PMX_TREE)-PATCHES $(TESTS) \
-	tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
-	tests/barsant.tex tests/barsant1.pmx tests/barsant2.pmx
+EXTRA_DIST = $(PMX_TREE) $(PMX_TREE)-PATCHES ../../build-aux/relpath \
+	$(TESTS)
 INCLUDES = -I$(srcdir)/$(PMX_TREE)/libf2c
 AM_CFLAGS = #$(WARNING_CFLAGS)
 pmxab_SOURCES = $(PMX_TREE)/pmxab.c
 scor2prt_SOURCES = $(PMX_TREE)/scor2prt.c
 LDADD = libf2c.a
 noinst_LIBRARIES = libf2c.a
-libf2c_a_SOURCES = arith.h $(PMX_TREE)/libf2c/f2c.h \
-	$(PMX_TREE)/libf2c/fio.h $(PMX_TREE)/libf2c/fmt.h \
-	$(PMX_TREE)/libf2c/fp.h $(PMX_TREE)/libf2c/lio.h \
-	$(PMX_TREE)/libf2c/rawio.h $(PMX_TREE)/libf2c/signal1.h \
-	$(PMX_TREE)/libf2c/sysdep1.h $(PMX_TREE)/libf2c/abort_.c \
-	$(PMX_TREE)/libf2c/cabs.c $(PMX_TREE)/libf2c/derf_.c \
-	$(PMX_TREE)/libf2c/derfc_.c $(PMX_TREE)/libf2c/erf_.c \
-	$(PMX_TREE)/libf2c/erfc_.c $(PMX_TREE)/libf2c/exit_.c \
-	$(PMX_TREE)/libf2c/f77vers.c $(PMX_TREE)/libf2c/getarg_.c \
-	$(PMX_TREE)/libf2c/getenv_.c $(PMX_TREE)/libf2c/i77vers.c \
-	$(PMX_TREE)/libf2c/iargc_.c $(PMX_TREE)/libf2c/main.c \
-	$(PMX_TREE)/libf2c/s_paus.c $(PMX_TREE)/libf2c/s_rnge.c \
-	$(PMX_TREE)/libf2c/s_stop.c $(PMX_TREE)/libf2c/sig_die.c \
-	$(PMX_TREE)/libf2c/signal_.c $(PMX_TREE)/libf2c/system_.c \
-	$(PMX_TREE)/libf2c/pow_ci.c $(PMX_TREE)/libf2c/pow_dd.c \
-	$(PMX_TREE)/libf2c/pow_di.c $(PMX_TREE)/libf2c/pow_hh.c \
-	$(PMX_TREE)/libf2c/pow_ii.c $(PMX_TREE)/libf2c/pow_ri.c \
-	$(PMX_TREE)/libf2c/pow_zi.c $(PMX_TREE)/libf2c/pow_zz.c \
-	$(PMX_TREE)/libf2c/c_abs.c $(PMX_TREE)/libf2c/c_cos.c \
-	$(PMX_TREE)/libf2c/c_div.c $(PMX_TREE)/libf2c/c_exp.c \
-	$(PMX_TREE)/libf2c/c_log.c $(PMX_TREE)/libf2c/c_sin.c \
-	$(PMX_TREE)/libf2c/c_sqrt.c $(PMX_TREE)/libf2c/z_abs.c \
-	$(PMX_TREE)/libf2c/z_cos.c $(PMX_TREE)/libf2c/z_div.c \
-	$(PMX_TREE)/libf2c/z_exp.c $(PMX_TREE)/libf2c/z_log.c \
-	$(PMX_TREE)/libf2c/z_sin.c $(PMX_TREE)/libf2c/z_sqrt.c \
-	$(PMX_TREE)/libf2c/r_abs.c $(PMX_TREE)/libf2c/r_acos.c \
-	$(PMX_TREE)/libf2c/r_asin.c $(PMX_TREE)/libf2c/r_atan.c \
-	$(PMX_TREE)/libf2c/r_atn2.c $(PMX_TREE)/libf2c/r_cnjg.c \
-	$(PMX_TREE)/libf2c/r_cos.c $(PMX_TREE)/libf2c/r_cosh.c \
-	$(PMX_TREE)/libf2c/r_dim.c $(PMX_TREE)/libf2c/r_exp.c \
-	$(PMX_TREE)/libf2c/r_imag.c $(PMX_TREE)/libf2c/r_int.c \
-	$(PMX_TREE)/libf2c/r_lg10.c $(PMX_TREE)/libf2c/r_log.c \
-	$(PMX_TREE)/libf2c/r_mod.c $(PMX_TREE)/libf2c/r_nint.c \
-	$(PMX_TREE)/libf2c/r_sign.c $(PMX_TREE)/libf2c/r_sin.c \
-	$(PMX_TREE)/libf2c/r_sinh.c $(PMX_TREE)/libf2c/r_sqrt.c \
-	$(PMX_TREE)/libf2c/r_tan.c $(PMX_TREE)/libf2c/r_tanh.c \
-	$(PMX_TREE)/libf2c/d_abs.c $(PMX_TREE)/libf2c/d_acos.c \
-	$(PMX_TREE)/libf2c/d_asin.c $(PMX_TREE)/libf2c/d_atan.c \
-	$(PMX_TREE)/libf2c/d_atn2.c $(PMX_TREE)/libf2c/d_cnjg.c \
-	$(PMX_TREE)/libf2c/d_cos.c $(PMX_TREE)/libf2c/d_cosh.c \
-	$(PMX_TREE)/libf2c/d_dim.c $(PMX_TREE)/libf2c/d_exp.c \
-	$(PMX_TREE)/libf2c/d_imag.c $(PMX_TREE)/libf2c/d_int.c \
-	$(PMX_TREE)/libf2c/d_lg10.c $(PMX_TREE)/libf2c/d_log.c \
-	$(PMX_TREE)/libf2c/d_mod.c $(PMX_TREE)/libf2c/d_nint.c \
-	$(PMX_TREE)/libf2c/d_prod.c $(PMX_TREE)/libf2c/d_sign.c \
-	$(PMX_TREE)/libf2c/d_sin.c $(PMX_TREE)/libf2c/d_sinh.c \
-	$(PMX_TREE)/libf2c/d_sqrt.c $(PMX_TREE)/libf2c/d_tan.c \
-	$(PMX_TREE)/libf2c/d_tanh.c $(PMX_TREE)/libf2c/i_abs.c \
-	$(PMX_TREE)/libf2c/i_dim.c $(PMX_TREE)/libf2c/i_dnnt.c \
-	$(PMX_TREE)/libf2c/i_indx.c $(PMX_TREE)/libf2c/i_len.c \
-	$(PMX_TREE)/libf2c/i_mod.c $(PMX_TREE)/libf2c/i_nint.c \
-	$(PMX_TREE)/libf2c/i_sign.c $(PMX_TREE)/libf2c/lbitbits.c \
-	$(PMX_TREE)/libf2c/lbitshft.c $(PMX_TREE)/libf2c/h_abs.c \
-	$(PMX_TREE)/libf2c/h_dim.c $(PMX_TREE)/libf2c/h_dnnt.c \
-	$(PMX_TREE)/libf2c/h_indx.c $(PMX_TREE)/libf2c/h_len.c \
-	$(PMX_TREE)/libf2c/h_mod.c $(PMX_TREE)/libf2c/h_nint.c \
-	$(PMX_TREE)/libf2c/h_sign.c $(PMX_TREE)/libf2c/hl_ge.c \
-	$(PMX_TREE)/libf2c/hl_gt.c $(PMX_TREE)/libf2c/hl_le.c \
-	$(PMX_TREE)/libf2c/hl_lt.c $(PMX_TREE)/libf2c/l_ge.c \
-	$(PMX_TREE)/libf2c/l_gt.c $(PMX_TREE)/libf2c/l_le.c \
-	$(PMX_TREE)/libf2c/l_lt.c $(PMX_TREE)/libf2c/ef1asc_.c \
-	$(PMX_TREE)/libf2c/ef1cmc_.c $(PMX_TREE)/libf2c/f77_aloc.c \
-	$(PMX_TREE)/libf2c/s_cat.c $(PMX_TREE)/libf2c/s_cmp.c \
-	$(PMX_TREE)/libf2c/s_copy.c $(PMX_TREE)/libf2c/backspac.c \
-	$(PMX_TREE)/libf2c/close.c $(PMX_TREE)/libf2c/dfe.c \
-	$(PMX_TREE)/libf2c/dolio.c $(PMX_TREE)/libf2c/due.c \
-	$(PMX_TREE)/libf2c/endfile.c $(PMX_TREE)/libf2c/err.c \
-	$(PMX_TREE)/libf2c/fmt.c $(PMX_TREE)/libf2c/fmtlib.c \
-	$(PMX_TREE)/libf2c/ftell_.c $(PMX_TREE)/libf2c/iio.c \
-	$(PMX_TREE)/libf2c/ilnw.c $(PMX_TREE)/libf2c/inquire.c \
-	$(PMX_TREE)/libf2c/lread.c $(PMX_TREE)/libf2c/lwrite.c \
-	$(PMX_TREE)/libf2c/open.c $(PMX_TREE)/libf2c/rdfmt.c \
-	$(PMX_TREE)/libf2c/rewind.c $(PMX_TREE)/libf2c/rsfe.c \
-	$(PMX_TREE)/libf2c/rsli.c $(PMX_TREE)/libf2c/rsne.c \
-	$(PMX_TREE)/libf2c/sfe.c $(PMX_TREE)/libf2c/sue.c \
-	$(PMX_TREE)/libf2c/typesize.c $(PMX_TREE)/libf2c/uio.c \
-	$(PMX_TREE)/libf2c/util.c $(PMX_TREE)/libf2c/wref.c \
-	$(PMX_TREE)/libf2c/wrtfmt.c $(PMX_TREE)/libf2c/wsfe.c \
-	$(PMX_TREE)/libf2c/wsle.c $(PMX_TREE)/libf2c/wsne.c \
-	$(PMX_TREE)/libf2c/xwsne.c $(PMX_TREE)/libf2c/dtime_.c \
-	$(PMX_TREE)/libf2c/etime_.c $(am__append_1)
+libf2c_a_SOURCES = $(PMX_TREE)/libf2c/f2c.h $(PMX_TREE)/libf2c/fio.h \
+	$(PMX_TREE)/libf2c/fmt.h $(PMX_TREE)/libf2c/fp.h \
+	$(PMX_TREE)/libf2c/lio.h $(PMX_TREE)/libf2c/rawio.h \
+	$(PMX_TREE)/libf2c/signal1.h $(PMX_TREE)/libf2c/sysdep1.h \
+	$(PMX_TREE)/libf2c/abort_.c $(PMX_TREE)/libf2c/cabs.c \
+	$(PMX_TREE)/libf2c/derf_.c $(PMX_TREE)/libf2c/derfc_.c \
+	$(PMX_TREE)/libf2c/erf_.c $(PMX_TREE)/libf2c/erfc_.c \
+	$(PMX_TREE)/libf2c/exit_.c $(PMX_TREE)/libf2c/f77vers.c \
+	$(PMX_TREE)/libf2c/getarg_.c $(PMX_TREE)/libf2c/getenv_.c \
+	$(PMX_TREE)/libf2c/i77vers.c $(PMX_TREE)/libf2c/iargc_.c \
+	$(PMX_TREE)/libf2c/main.c $(PMX_TREE)/libf2c/s_paus.c \
+	$(PMX_TREE)/libf2c/s_rnge.c $(PMX_TREE)/libf2c/s_stop.c \
+	$(PMX_TREE)/libf2c/sig_die.c $(PMX_TREE)/libf2c/signal_.c \
+	$(PMX_TREE)/libf2c/system_.c $(PMX_TREE)/libf2c/pow_ci.c \
+	$(PMX_TREE)/libf2c/pow_dd.c $(PMX_TREE)/libf2c/pow_di.c \
+	$(PMX_TREE)/libf2c/pow_hh.c $(PMX_TREE)/libf2c/pow_ii.c \
+	$(PMX_TREE)/libf2c/pow_ri.c $(PMX_TREE)/libf2c/pow_zi.c \
+	$(PMX_TREE)/libf2c/pow_zz.c $(PMX_TREE)/libf2c/c_abs.c \
+	$(PMX_TREE)/libf2c/c_cos.c $(PMX_TREE)/libf2c/c_div.c \
+	$(PMX_TREE)/libf2c/c_exp.c $(PMX_TREE)/libf2c/c_log.c \
+	$(PMX_TREE)/libf2c/c_sin.c $(PMX_TREE)/libf2c/c_sqrt.c \
+	$(PMX_TREE)/libf2c/z_abs.c $(PMX_TREE)/libf2c/z_cos.c \
+	$(PMX_TREE)/libf2c/z_div.c $(PMX_TREE)/libf2c/z_exp.c \
+	$(PMX_TREE)/libf2c/z_log.c $(PMX_TREE)/libf2c/z_sin.c \
+	$(PMX_TREE)/libf2c/z_sqrt.c $(PMX_TREE)/libf2c/r_abs.c \
+	$(PMX_TREE)/libf2c/r_acos.c $(PMX_TREE)/libf2c/r_asin.c \
+	$(PMX_TREE)/libf2c/r_atan.c $(PMX_TREE)/libf2c/r_atn2.c \
+	$(PMX_TREE)/libf2c/r_cnjg.c $(PMX_TREE)/libf2c/r_cos.c \
+	$(PMX_TREE)/libf2c/r_cosh.c $(PMX_TREE)/libf2c/r_dim.c \
+	$(PMX_TREE)/libf2c/r_exp.c $(PMX_TREE)/libf2c/r_imag.c \
+	$(PMX_TREE)/libf2c/r_int.c $(PMX_TREE)/libf2c/r_lg10.c \
+	$(PMX_TREE)/libf2c/r_log.c $(PMX_TREE)/libf2c/r_mod.c \
+	$(PMX_TREE)/libf2c/r_nint.c $(PMX_TREE)/libf2c/r_sign.c \
+	$(PMX_TREE)/libf2c/r_sin.c $(PMX_TREE)/libf2c/r_sinh.c \
+	$(PMX_TREE)/libf2c/r_sqrt.c $(PMX_TREE)/libf2c/r_tan.c \
+	$(PMX_TREE)/libf2c/r_tanh.c $(PMX_TREE)/libf2c/d_abs.c \
+	$(PMX_TREE)/libf2c/d_acos.c $(PMX_TREE)/libf2c/d_asin.c \
+	$(PMX_TREE)/libf2c/d_atan.c $(PMX_TREE)/libf2c/d_atn2.c \
+	$(PMX_TREE)/libf2c/d_cnjg.c $(PMX_TREE)/libf2c/d_cos.c \
+	$(PMX_TREE)/libf2c/d_cosh.c $(PMX_TREE)/libf2c/d_dim.c \
+	$(PMX_TREE)/libf2c/d_exp.c $(PMX_TREE)/libf2c/d_imag.c \
+	$(PMX_TREE)/libf2c/d_int.c $(PMX_TREE)/libf2c/d_lg10.c \
+	$(PMX_TREE)/libf2c/d_log.c $(PMX_TREE)/libf2c/d_mod.c \
+	$(PMX_TREE)/libf2c/d_nint.c $(PMX_TREE)/libf2c/d_prod.c \
+	$(PMX_TREE)/libf2c/d_sign.c $(PMX_TREE)/libf2c/d_sin.c \
+	$(PMX_TREE)/libf2c/d_sinh.c $(PMX_TREE)/libf2c/d_sqrt.c \
+	$(PMX_TREE)/libf2c/d_tan.c $(PMX_TREE)/libf2c/d_tanh.c \
+	$(PMX_TREE)/libf2c/i_abs.c $(PMX_TREE)/libf2c/i_dim.c \
+	$(PMX_TREE)/libf2c/i_dnnt.c $(PMX_TREE)/libf2c/i_indx.c \
+	$(PMX_TREE)/libf2c/i_len.c $(PMX_TREE)/libf2c/i_mod.c \
+	$(PMX_TREE)/libf2c/i_nint.c $(PMX_TREE)/libf2c/i_sign.c \
+	$(PMX_TREE)/libf2c/lbitbits.c $(PMX_TREE)/libf2c/lbitshft.c \
+	$(PMX_TREE)/libf2c/h_abs.c $(PMX_TREE)/libf2c/h_dim.c \
+	$(PMX_TREE)/libf2c/h_dnnt.c $(PMX_TREE)/libf2c/h_indx.c \
+	$(PMX_TREE)/libf2c/h_len.c $(PMX_TREE)/libf2c/h_mod.c \
+	$(PMX_TREE)/libf2c/h_nint.c $(PMX_TREE)/libf2c/h_sign.c \
+	$(PMX_TREE)/libf2c/hl_ge.c $(PMX_TREE)/libf2c/hl_gt.c \
+	$(PMX_TREE)/libf2c/hl_le.c $(PMX_TREE)/libf2c/hl_lt.c \
+	$(PMX_TREE)/libf2c/l_ge.c $(PMX_TREE)/libf2c/l_gt.c \
+	$(PMX_TREE)/libf2c/l_le.c $(PMX_TREE)/libf2c/l_lt.c \
+	$(PMX_TREE)/libf2c/ef1asc_.c $(PMX_TREE)/libf2c/ef1cmc_.c \
+	$(PMX_TREE)/libf2c/f77_aloc.c $(PMX_TREE)/libf2c/s_cat.c \
+	$(PMX_TREE)/libf2c/s_cmp.c $(PMX_TREE)/libf2c/s_copy.c \
+	$(PMX_TREE)/libf2c/backspac.c $(PMX_TREE)/libf2c/close.c \
+	$(PMX_TREE)/libf2c/dfe.c $(PMX_TREE)/libf2c/dolio.c \
+	$(PMX_TREE)/libf2c/due.c $(PMX_TREE)/libf2c/endfile.c \
+	$(PMX_TREE)/libf2c/err.c $(PMX_TREE)/libf2c/fmt.c \
+	$(PMX_TREE)/libf2c/fmtlib.c $(PMX_TREE)/libf2c/ftell_.c \
+	$(PMX_TREE)/libf2c/iio.c $(PMX_TREE)/libf2c/ilnw.c \
+	$(PMX_TREE)/libf2c/inquire.c $(PMX_TREE)/libf2c/lread.c \
+	$(PMX_TREE)/libf2c/lwrite.c $(PMX_TREE)/libf2c/open.c \
+	$(PMX_TREE)/libf2c/rdfmt.c $(PMX_TREE)/libf2c/rewind.c \
+	$(PMX_TREE)/libf2c/rsfe.c $(PMX_TREE)/libf2c/rsli.c \
+	$(PMX_TREE)/libf2c/rsne.c $(PMX_TREE)/libf2c/sfe.c \
+	$(PMX_TREE)/libf2c/sue.c $(PMX_TREE)/libf2c/typesize.c \
+	$(PMX_TREE)/libf2c/uio.c $(PMX_TREE)/libf2c/util.c \
+	$(PMX_TREE)/libf2c/wref.c $(PMX_TREE)/libf2c/wrtfmt.c \
+	$(PMX_TREE)/libf2c/wsfe.c $(PMX_TREE)/libf2c/wsle.c \
+	$(PMX_TREE)/libf2c/wsne.c $(PMX_TREE)/libf2c/xwsne.c \
+	$(PMX_TREE)/libf2c/dtime_.c $(PMX_TREE)/libf2c/etime_.c \
+	$(am__append_1)
 EXTRA_libf2c_a_SOURCES = $(PMX_TREE)/libf2c/uninit.c \
 	$(PMX_TREE)/libf2c/ftell64_.c $(PMX_TREE)/libf2c/pow_qq.c \
 	$(PMX_TREE)/libf2c/qbitbits.c $(PMX_TREE)/libf2c/qbitshft.c \
 	$(PMX_TREE)/libf2c/signbit.c
+lua_scripts = pmx2pdf
+scriptsdir = texmf-dist/scripts/pmx
+nodist_bin_SCRIPTS = $(am__append_2)
+all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
+texmfdir = $(datarootdir)/$(scriptsdir)
+dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
 dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
 TESTS = pmx.test
+TESTS_ENVIRONMENT = test_src=$(srcdir)/$(PMX_TREE)/tests
 DISTCLEANFILES = barsant* pmxaerr.dat
 all: all-am
 
@@ -488,7 +503,7 @@ all: all-am
 .SUFFIXES: .c .o .obj
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../texk/am/script_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -511,6 +526,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/../../texk/am/script_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -573,6 +589,76 @@ pmxab$(EXEEXT): $(pmxab_OBJECTS) $(pmxab_DEPENDENCIES) $(EXTRA_pmxab_DEPENDENCIE
 scor2prt$(EXEEXT): $(scor2prt_OBJECTS) $(scor2prt_DEPENDENCIES) $(EXTRA_scor2prt_DEPENDENCIES) 
 	@rm -f scor2prt$(EXEEXT)
 	$(LINK) $(scor2prt_OBJECTS) $(scor2prt_LDADD) $(LIBS)
+install-dist_texmfSCRIPTS: $(dist_texmf_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(texmfdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(texmfdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texmfdir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texmfdir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-dist_texmfSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_texmf_SCRIPTS)'; test -n "$(texmfdir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	dir='$(DESTDIR)$(texmfdir)'; $(am__uninstall_files_from_dir)
+install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-nodist_binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nodist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -2884,6 +2970,20 @@ etime_.obj: $(PMX_TREE)/libf2c/etime_.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o etime_.obj `if test -f '$(PMX_TREE)/libf2c/etime_.c'; then $(CYGPATH_W) '$(PMX_TREE)/libf2c/etime_.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/libf2c/etime_.c'; fi`
 
+w32getc.o: $(PMX_TREE)/w32getc.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT w32getc.o -MD -MP -MF $(DEPDIR)/w32getc.Tpo -c -o w32getc.o `test -f '$(PMX_TREE)/w32getc.c' || echo '$(srcdir)/'`$(PMX_TREE)/w32getc.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/w32getc.Tpo $(DEPDIR)/w32getc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/w32getc.c' object='w32getc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o w32getc.o `test -f '$(PMX_TREE)/w32getc.c' || echo '$(srcdir)/'`$(PMX_TREE)/w32getc.c
+
+w32getc.obj: $(PMX_TREE)/w32getc.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT w32getc.obj -MD -MP -MF $(DEPDIR)/w32getc.Tpo -c -o w32getc.obj `if test -f '$(PMX_TREE)/w32getc.c'; then $(CYGPATH_W) '$(PMX_TREE)/w32getc.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/w32getc.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/w32getc.Tpo $(DEPDIR)/w32getc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(PMX_TREE)/w32getc.c' object='w32getc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o w32getc.obj `if test -f '$(PMX_TREE)/w32getc.c'; then $(CYGPATH_W) '$(PMX_TREE)/w32getc.c'; else $(CYGPATH_W) '$(srcdir)/$(PMX_TREE)/w32getc.c'; fi`
+
 uninit.o: $(PMX_TREE)/libf2c/uninit.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uninit.o -MD -MP -MF $(DEPDIR)/uninit.Tpo -c -o uninit.o `test -f '$(PMX_TREE)/libf2c/uninit.c' || echo '$(srcdir)/'`$(PMX_TREE)/libf2c/uninit.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/uninit.Tpo $(DEPDIR)/uninit.Po
@@ -3381,9 +3481,9 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(MANS)
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(SCRIPTS) $(MANS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -3441,13 +3541,14 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man
-
+install-data-am: install-dist_texmfSCRIPTS install-man
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-binPROGRAMS install-nodist_binSCRIPTS
 
 install-html: install-html-am
 
@@ -3488,11 +3589,13 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man
-
+uninstall-am: uninstall-binPROGRAMS uninstall-dist_texmfSCRIPTS \
+	uninstall-man uninstall-nodist_binSCRIPTS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
 
-.MAKE: check-am install-am install-strip
+.MAKE: check-am install-am install-data-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
 	clean clean-binPROGRAMS clean-cscope clean-generic \
@@ -3502,20 +3605,59 @@ uninstall-man: uninstall-man1
 	distclean-generic distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-pdf \
+	install-data-am install-data-hook install-dist_texmfSCRIPTS \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-man1 install-nodist_binSCRIPTS install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-man \
-	uninstall-man1
+	uninstall-am uninstall-binPROGRAMS uninstall-dist_texmfSCRIPTS \
+	uninstall-hook uninstall-man uninstall-man1 \
+	uninstall-nodist_binSCRIPTS
 
 
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+.PHONY: install-lua-links install-perl-links install-shell-links \
+	install-links uninstall-links
+@WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
+
+install-lua-links:
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=lua EXT=lua install-links
+
+install-perl-links:
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=perl EXT=pl install-links
+
+install-shell-links:
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
+
+# We support native builds, multiplatform or not, as well as distro builds.
+install-links:
+	@REL=`$(SHELL) $(srcdir)/../../build-aux/relpath '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
+	if test -z "$$REL"; then \
+	  echo 'unable to compute relative path for linked $(TYPE) scripts' >&2; \
+	  exit 1; \
+	fi; \
+	cd $(DESTDIR)$(bindir) && \
+	  for f in $($(TYPE)_scripts); do \
+	    rm -f $$f; \
+	    echo "creating link '$$f' -> '$$REL/$(scriptsdir)/$$f.$(EXT)'"; \
+	    $(LN_S) $$REL/$(scriptsdir)/$$f.$(EXT) $$f || exit 1; \
+	  done  
+
+uninstall-links:
+@WIN32_FALSE@	@for f in $(all_scripts); do \
+@WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+@WIN32_FALSE@	done
+
+install-data-hook: install-lua-links
+
+uninstall-hook: uninstall-links
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

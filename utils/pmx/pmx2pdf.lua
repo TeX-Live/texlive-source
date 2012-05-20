@@ -1,11 +1,12 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.2"
+VERSION = "0.2.1"
 
 --[[
-     pmx.lua: processes MusiXTeX files using pmxab as a pre-processor (and deletes intermediate files)
+     pmx2pdf: processes MusiXTeX files using pmxab as a pre-processor 
+     (and deletes intermediate files)
 
-     (c) Copyright 2011 Bob Tennent rdt@cs.queensu.ca
+     (c) Copyright 2011-12 Bob Tennent rdt@cs.queensu.ca
 
      This program is free software; you can redistribute it and/or modify it
      under the terms of the GNU General Public License as published by the
@@ -26,6 +27,9 @@ VERSION = "0.2"
 --[[
 
   ChangeLog:
+     version 0.2.1 2012-05-15 RDT
+       renamed to avoid possible name clashes
+
      version 0.2  2011-11-28 RDT
        added -i (retain intermediate files) option
 
@@ -34,7 +38,7 @@ VERSION = "0.2"
 --]]
 
 function usage()
-  print("Usage:  [texlua] pmx.lua { option | basename[.pmx] } ... ")
+  print("Usage:  [texlua] pmx2pdf { option | basename[.pmx] } ... ")
   print("options: -v  version")
   print("         -h  help")
   print("         -l  latex (or pdflatex)")
@@ -47,7 +51,7 @@ function usage()
 end
 
 function whoami ()
-  print("This is pmx.lua version ".. VERSION .. ".")
+  print("This is pmx2pdf version ".. VERSION .. ".")
 end
 
 whoami()
@@ -138,7 +142,7 @@ repeat
           end
         end
       else
-        print("pmx/MusiXTeX processing of " .. filename .. ".pmx fails.\n")
+        print("PMX/MusiXTeX processing of " .. filename .. ".pmx fails.\n")
         exit_code = 2
         --[[ uncomment for debugging
         print("tex = ", tex)

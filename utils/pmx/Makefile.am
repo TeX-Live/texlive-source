@@ -29,7 +29,6 @@ noinst_LIBRARIES = libf2c.a
 
 ## libf2c headers
 libf2c_a_SOURCES = \
-	arith.h \
 	$(PMX_TREE)/libf2c/f2c.h \
 	$(PMX_TREE)/libf2c/fio.h \
 	$(PMX_TREE)/libf2c/fmt.h \
@@ -222,7 +221,8 @@ libf2c_a_SOURCES += \
 
 ## Handle DOS line endings
 if WIN32
-libf2c_a_SOURCES += w32getc.c
+libf2c_a_SOURCES += \
+	$(PMX_TREE)/w32getc.c
 endif WIN32
 
 ## QINT (unused)
@@ -235,6 +235,20 @@ EXTRA_libf2c_a_SOURCES += \
 EXTRA_libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/signbit.c
 
+lua_scripts = pmx2pdf
+
+scriptsdir = texmf-dist/scripts/pmx
+nodist_bin_SCRIPTS =
+
+include $(srcdir)/../../texk/am/script_links.am
+
+texmfdir = $(datarootdir)/$(scriptsdir)
+dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
+
+install-data-hook: install-lua-links
+
+uninstall-hook: uninstall-links
+
 dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
 
 ## Tests
@@ -242,8 +256,8 @@ dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
 TESTS = pmx.test
 EXTRA_DIST += $(TESTS)
 
+TESTS_ENVIRONMENT = test_src=$(srcdir)/$(PMX_TREE)/tests
+
 ## pmx.test
-EXTRA_DIST += tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
-	tests/barsant.tex tests/barsant1.pmx tests/barsant2.pmx
 DISTCLEANFILES = barsant* pmxaerr.dat
 

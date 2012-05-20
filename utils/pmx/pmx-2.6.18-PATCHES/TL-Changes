@@ -6,8 +6,8 @@ Remove:
 	aclocal.m4
 	configure
 	depcomp
+	f2c.h
 	install-sh
 	missing
+	arith.h
 
-(looks like the tests and other things are now in the dist, but have to
-ignore that right now, sorry. --karl)

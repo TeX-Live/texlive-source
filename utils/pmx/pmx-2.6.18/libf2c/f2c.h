@@ -13,6 +13,9 @@ typedef char *address;
 typedef short int shortint;
 typedef float real;
 typedef double doublereal;
+#ifdef WIN32
+#define _COMPLEX_DEFINED 1
+#endif
 typedef struct { real r, i; } complex;
 typedef struct { doublereal r, i; } doublecomplex;
 typedef long int logical;

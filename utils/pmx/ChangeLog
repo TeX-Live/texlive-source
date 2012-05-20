@@ -1,3 +1,9 @@
+2012-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: do handle pmx2pdf.lua here, since although it is
+	distributed as part of the texmf.zip we must create a symlink
+	in bindir.
+
 2012-05-20  Karl Berry  <karl@tug.org>
 
 	* Makefile.am: do not handle pmx2pdf.lua here, since
@@ -5,8 +11,14 @@
 	sources.
 
 2012-05-18  Karl Berry  <karl@tug.org>
+	and Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* pmx-2.6.18.
+	Import pmx-2.6.18.
+	* w32getc.c, tests/ (removed): Now distributed from upstream.
+	* arith.h (removed): Unused.
+	* pmx.lua, pmx.1 (removed): Renamed ...
+	* pmx2pdf.lua, pmx2pdf.1 (new): ... into these and updated.
+	* Makefile.am, pmx.test, version.ac: Adapted. 
 
 2012-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

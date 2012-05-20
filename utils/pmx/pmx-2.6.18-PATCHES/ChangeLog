@@ -1,3 +1,11 @@
+2012-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported pmx-2.6.18 source tree from:
+	  http://www.ctan.org/tex-archive/support/pmx/
+	* patch-02-bugfix (removed): Obsolete.
+	* patch-01-binary, patch-03-DOS-line-endings,
+	patch-04-MSVC-complex, patch-05-FreeBSD-off_t: Adapted.
+
 2012-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-FreeBSD-off_t (new): Build fix for FreeBSD.
