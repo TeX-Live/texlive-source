@@ -2061,9 +2061,9 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
     }
     /* Switch to a larger accent if available and appropriate */
     y = null;
+    ext = NULL;
     if ((flags & STRETCH_ACCENT_CODE) && (char_width(f, c) < w)) {
       while (1) {
-        ext = NULL;
         if ((char_tag(f, c) == ext_tag) &&
             ((ext = get_charinfo_hor_variants(char_info(f, c))) != NULL)) {
             y = get_delim_hbox(ext, f, w, node_attr(attr_p), cur_style);
