@@ -1,6 +1,10 @@
+2012-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mplib.am (mpost_LDADD): Drop explicit '-lm'.
+
 2012-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* lua/luainit.w: Use WEB2CVERSION.
+	* mpost.w: Use WEB2CVERSION.
 
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

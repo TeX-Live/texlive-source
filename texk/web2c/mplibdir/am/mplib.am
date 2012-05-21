@@ -1,6 +1,6 @@
 ## texk/web2c/mplibdir/am/mplib.am: Makefile fragment for MetaPost.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## MetaPost
@@ -19,7 +19,7 @@ EXTRA_PROGRAMS += mpost
 
 mpost_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 mpost_DEPENDENCIES = libmplib.a
-mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm
+mpost_LDADD = libmplib.a $(KPATHSEA_LIBS)
 
 call_mpost_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
 call_mpost_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c

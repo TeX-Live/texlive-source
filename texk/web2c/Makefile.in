@@ -1834,7 +1834,7 @@ mf_ch_src = \
 mf_tests = trap.test
 mpost_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 mpost_DEPENDENCIES = libmplib.a
-mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm
+mpost_LDADD = libmplib.a $(KPATHSEA_LIBS)
 call_mpost_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
 call_mpost_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
 call_mpost_LDADD = 
