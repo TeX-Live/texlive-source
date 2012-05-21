@@ -16,7 +16,6 @@
 #
 # TODO
 # - check all other invocations
-# - after TL2012? remove -oldmode version
 # - after TL2012? Maybe remove support for reading updmap-local.cfg
 #
 
@@ -63,11 +62,12 @@ my $alldata;
 my $updLSR;
 
 my @cmdline_options = (
-  "oldmode",
+  "listfiles",
   "cnffile=s@", 
   "copy", 
   "disable=s@",
   "dvipdfmoutputdir=s",
+  "dvipdfmxoutputdir=s",
   "dvipsoutputdir=s",
   # the following does not work, Getopt::Long looses the first
   # entry in a multi setting, treat it separately in processOptions
@@ -96,7 +96,6 @@ my @cmdline_options = (
   "help|h",
   # some debugging invocations
   "_readsave=s",
-  "_listupdmap",
   );
 
 my %settings = (
@@ -149,6 +148,17 @@ sub main {
     exit (0);
   }
 
+  if ($opts{'dvipdfmoutputdir'} && !defined($opts{'dvipdfmxoutputdir'})) {
+    $opts{'dvipdfmxoutputdir'} = $opts{'dvipdfmoutputdir'};
+    printf STDERR "Using --dvipdfmoutputdir options for dvipdfmx, but please use --dvipdfmxoutputdir\n";
+  }
+
+  if ($opts{'dvipdfmoutputdir'} && $opts{'dvipdfmxoutputdir'} &&
+      $opts{'dvipdfmoutputdir'} ne $opts{'dvipdfmxoutputdir'}) {
+    printf STDERR "Options for --dvipdfmoutputdir and --dvipdfmxoutputdir do not agree\nplease use only --dvipdfmxoutputdir. Exiting.\n";
+    exit(1);
+  }
+
   if ($opts{'_readsave'}) {
     read_updmap_files($opts{'_readsave'});
     print "READING DONE ============================\n";
@@ -185,11 +195,14 @@ sub main {
   #
   # we also determine here where changes will be saved to
   if ($opts{'cnffile'}) {
+    my @tmp;
     for my $f (@{$opts{'cnffile'}}) {
       if (! -f $f) {
         die "$prg: Config file \"$f\" not found.";
       }
+      push @tmp, (win32() ? lc($f) : $f);
     }
+    @{$opts{'cnffile'}} = @tmp;
     # in case that config files are given on the command line, the first
     # in the list is the one where changes will be written to.
     ($changes_config_file) = @{$opts{'cnffile'}};
@@ -197,24 +210,8 @@ sub main {
     my @all_files = `kpsewhich -all updmap.cfg`;
     chomp(@all_files);
     my @used_files;
-    #
-    # in --oldmode we ignore texmf/web2c/updmap.cfg and reorder some
-    # order to get things right
-    # without --oldmode everything will be used as default to, i.e.
-    # the order is given by kpsewhich -all updmap.cfg
-    if (!$opts{"oldmode"}) { 
-      push @used_files, @all_files;
-    } else {
-      # --oldmode
-      for my $f (@all_files) {
-        # make sure that all file names are lower case on windows for comparison
-        $f = lc($f) if win32();
-        if ($f =~ m!$TEXMFROOT/texmf/web2c/updmap.cfg!) {
-          warning("Ignoring $f, it is only a sample file!\n");
-        } else {
-          push @used_files, $f;
-        }
-      }
+    for my $f (@all_files) {
+      push @used_files, (win32() ? lc($f) : $f);
     }
     #
     # reorder used files: since we ship and manage with tlmgr 
@@ -232,7 +229,7 @@ sub main {
     if ($TMLabs) {
       for my $f (@used_files) {
         my $absf = Cwd::abs_path($f); #should always work
-        if ($absf =~ m/^$TMLabs/) {
+        if ($absf =~ m/^\Q$TMLabs\E/) {
           $found = 1;
           last;
         }
@@ -255,7 +252,7 @@ sub main {
       my @tmp;
       my $local_pushed = 0;
       for my $f (@used_files) {
-        if ($f =~ m!$TEXMFCONFIG|$TEXMFVAR|$TEXMFHOME!) {
+        if ($f =~ m!\Q$TEXMFCONFIG\E|\Q$TEXMFVAR\E|\Q$TEXMFHOME\E!) {
           push @tmp, $f;
         } else {
           if (!$local_pushed) {
@@ -269,7 +266,7 @@ sub main {
             $local_pushed = 1;
           }
           # push the original
-          push @tmp, $f unless ($f =~ m!$TEXMFLOCAL!);
+          push @tmp, $f unless ($f =~ m!\Q$TEXMFLOCAL\E!);
         }
       }
       @used_files = @tmp;
@@ -282,7 +279,7 @@ sub main {
     # if none of the two exists, create a file in TEXMFCONFIG and use it
     my $use_top = 0;
     for my $f (@used_files) {
-      if ($f =~ m!($TEXMFHOME|$TEXMFCONFIG)/web2c/updmap.cfg!) {
+      if ($f =~ m!(\Q$TEXMFHOME\E|\Q$TEXMFCONFIG\E)/web2c/updmap.cfg!) {
         $use_top = 1;
         last;
       }
@@ -301,11 +298,12 @@ sub main {
       print "  $f\n";
     }
   }
-  $alldata->{'changes_config'} = $changes_config_file;
-
-  if ($opts{'_listupdmap'}) {
+  if ($opts{'listfiles'}) {
+    # we listed it above, so be done
     exit 0;
   }
+
+  $alldata->{'changes_config'} = $changes_config_file;
 
   read_updmap_files(@{$opts{'cnffile'}});
 
@@ -340,15 +338,29 @@ sub main {
   if ($opts{'syncwithtrees'}) {
     my @missing = read_map_files();
     if (@missing) {
-      print "Missing map files found, disabling\n  @missing\nin $changes_config_file\n";
+      print "Missing map files found, disabling\n";
+      for my $m (@missing) {
+        my $orig = $alldata->{'maps'}{$m}{'origin'};
+        print "\t$m (in $orig)\n";
+      }
+      print "in $changes_config_file\n";
+      print "Do you really want to continue (y/N)? ";
+      my $answer = <STDIN>;
+      $answer = "n" if !defined($answer);
+      chomp($answer);
+      print "answer =$answer=\n";
+      if ($answer ne "y" && $answer ne "Y") {
+        print "Please fix manually before running updmap(-sys) again!\n";
+        exit 0;
+      }
       $changed ||= enable_disable_maps(@missing);
+      print "finished.\n";
       # the original script did not run any update of the map files here,
       # should we do that?
     }
     exit 0;
   }
 
-  # what does this?
   $updLSR = &mktexupd();
   $updLSR->{mustexist}(0);
 
@@ -356,7 +368,6 @@ sub main {
   if ($opts{'edit'}) {
     if ($opts{"dry-run"}) {
       printf STDERR "No, are you joking, you want to edit with --dry-run?\n";
-      printf STDERR "Not doing that, bye bye!\n";
       exit 1;
     }
     # it's not a good idea to edit updmap.cfg manually these days,
@@ -395,17 +406,9 @@ sub main {
       unshift @aaa, $changes_config_file;
       $alldata->{'order'} = [ @aaa ];
       #
-      # since things have changed, reread the whole updmap files
-      if ($changed) {
-        delete $alldata->{'updmap'};
-        delete $alldata->{'maps'};
-        read_updmap_files(@{$opts{'cnffile'}}) if $changed;
-      }
-      #
       setupOutputDir("dvips");
       setupOutputDir("pdftex");
       setupOutputDir("dvipdfmx");
-      setupOutputDir("dvipdfm");
       setupOutputDir("pxdvi");
       my @missing = read_map_files();
       if (@missing) {
@@ -901,7 +904,7 @@ sub mkMaps {
   # Create psfonts_t1.map, psfonts_pk.map, ps2pk.map and pdftex.map:
   my $dvipsoutputdir = $opts{'dvipsoutputdir'};
   my $pdftexoutputdir = $opts{'pdftexoutputdir'};
-  my $dvipdfmoutputdir = $opts{'dvipdfmoutputdir'};
+  my $dvipdfmxoutputdir = $opts{'dvipdfmxoutputdir'};
   my $pxdvioutputdir = $opts{'pxdvioutputdir'};
   if (!$opts{'dry-run'}) {
     my @managed_files =  ("$dvipsoutputdir/download35.map",
@@ -910,7 +913,7 @@ sub mkMaps {
       "$dvipsoutputdir/psfonts_pk.map",
       "$pdftexoutputdir/pdftex_dl14.map",
       "$pdftexoutputdir/pdftex_ndl14.map",
-      "$dvipdfmoutputdir/kanjix.map",
+      "$dvipdfmxoutputdir/kanjix.map",
       "$dvipsoutputdir/ps2pk.map");
     push @managed_files, "$pxdvioutputdir/xdvi-ptex.map"
       if ($pxdviUse eq "true");
@@ -935,8 +938,8 @@ sub mkMaps {
   my @mixedmaps_fonts = getFonts(@mixedmaps);
   my @notmixedmaps_fonts = getFonts(@notmixedmaps);
 
-  print "Generating output for dvipdfm...\n" if !$opts{'quiet'};
-  &writeLines(">$dvipdfmoutputdir/kanjix.map", @kanjimaps_fonts);
+  print "Generating output for dvipdfmx...\n" if !$opts{'quiet'};
+  &writeLines(">$dvipdfmxoutputdir/kanjix.map", @kanjimaps_fonts);
 
   if ($pxdviUse eq "true") {
     # we use the very same data as for kanjix.map, but generate
@@ -1066,7 +1069,7 @@ sub mkMaps {
     dir ($d, $f, 'pdftex.map');
     $updLSR->{add}("$d/$f") unless $opts{'dry-run'};
   }
-  $d="$dvipdfmoutputdir";
+  $d="$dvipdfmxoutputdir";
   print_and_log("  $d:\n");
   foreach my $f ('kanjix.map') {
     dir ($d, $f, '');
@@ -1186,6 +1189,7 @@ sub enable_disable_maps {
   die "$prg: top config file $tc has not been read."
     if (!defined($alldata->{'updmap'}{$tc}));
   my $changed = 0;
+
   for my $w (@what) {
     if ($w =~ m/=/) {
       # this is --enable MapType=MapName
@@ -1196,6 +1200,7 @@ sub enable_disable_maps {
       disable_map($tc, $w);
     }
   }
+  merge_settings();
   return save_updmap($tc);
 }
 
@@ -1274,6 +1279,11 @@ sub save_updmap {
     my @lines = @{$upd{'lines'}};
     if (!@lines) {
       print "Creating new config file $fn\n";
+      # update lsR database
+      $updLSR->{add}($fn);
+      $updLSR->{exec}();
+      # reset the LSR stuff, otherwise we add files several times
+      $updLSR->{reset}();
     }
     # collect the lines with data
     my %line_to_setting;
@@ -1333,10 +1343,6 @@ sub save_updmap {
     }
     close(FN) || warn("Cannot close file handle for $fn: $!");
     delete $alldata->{'updmap'}{$fn}{'changed'};
-    #
-    # update lsR database
-    $updLSR->{add}($fn);
-    #
     return 1;
   }
   return 0;
@@ -1564,10 +1570,31 @@ sub read_updmap_files {
   }
   #
   $alldata->{'order'} = \@l;
-  #
-  # merge the settings so that we can check for kanjiEmbed
-  #
+
+  # merge data and check for kanji embed
   merge_settings();
+}
+
+sub merge_settings {
+  #
+  my @l = @{$alldata->{'order'}};
+  #
+  # for security clean out everything that was there
+  %{$alldata->{'merged'}} = ();
+  #
+  # first read in the settings
+  # we read it in *reverse* order and simple fill up the combined data
+  # thus if there are multiple definitions/settings, the one coming from
+  # the first in the original list will win!
+  for my $l (reverse @l) {
+    # merge settings
+    if (defined($alldata->{'updmap'}{$l}{'setting'})) {
+      for my $k (keys %{$alldata->{'updmap'}{$l}{'setting'}}) {
+        $alldata->{'merged'}{'setting'}{$k}{'val'} = $alldata->{'updmap'}{$l}{'setting'}{$k}{'val'};
+        $alldata->{'merged'}{'setting'}{$k}{'origin'} = $l;
+      }
+    }
+  }
   #
   my ($kanjiEmbed, $kanjiEmbed_origin) = get_cfg('kanjiEmbed');
   my ($kanjiVariant, $kanjiVariant_origin) = get_cfg('kanjiVariant');
@@ -1800,31 +1827,6 @@ sub read_map_file {
 }
 
 #
-# merge and update the setting
-#
-sub merge_settings {
-  my @l = @{$alldata->{'order'}};
-  #
-  # for security clean out everything that was there
-  %{$alldata->{'merged'}} = ();
-  #
-  # first read in the settings
-  # we read it in *reverse* order and simple fill up the combined data
-  # thus if there are multiple definitions/settings, the one coming from
-  # the first in the original list will win!
-  for my $l (reverse @l) {
-    # merge settings
-    if (defined($alldata->{'updmap'}{$l}{'setting'})) {
-      for my $k (keys %{$alldata->{'updmap'}{$l}{'setting'}}) {
-        $alldata->{'merged'}{'setting'}{$k}{'val'} = $alldata->{'updmap'}{$l}{'setting'}{$k}{'val'};
-        $alldata->{'merged'}{'setting'}{$k}{'origin'} = $l;
-      }
-    }
-  }
-  #
-}
-
-#
 # merging the various font definitions
 #
 sub merge_data {
@@ -1885,7 +1887,7 @@ Options:
   --cnffile FILE            read FILE for the updmap configuration 
                             (can be given multiple times, in which case
                             all the files are used)
-  --dvipdfmoutputdir DIR    specify output directory (dvipdfm syntax)
+  --dvipdfmxoutputdir DIR   specify output directory (dvipdfm syntax)
   --dvipsoutputdir DIR      specify output directory (dvips syntax)
   --pdftexoutputdir DIR     specify output directory (pdftex syntax)
   --pxdvioutputdir DIR      specify output directory (pxdvi syntax)

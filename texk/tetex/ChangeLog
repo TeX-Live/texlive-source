@@ -1,18 +1,28 @@
-2012-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2012-05-21  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl
+	  . on win32, ensure file names are in lower case 
+	  . add --dvipdfmxoutputdir, make --dvipdfmoutputdir synonym
+	    (more or less)
+	  . make sure that the file name database is properly updated
+	    when creating a new config file
+	  . remove --old-mode cmd line option
+
+2012-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* updmap.pl: Moved from  ../texlive/linked_scripts/texlive/
 	back to here.
 	* tests/ (new): Moved from ../texlive/ to here and adapted.
 	* Makefile.am: Adapted.
 
-2012-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2012-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/ (removed): Moved from here to ../texlive/.
 	* Makefile.am: Adapted.
 
 	* fmtutil.cnf: Updated from Master.
 
-2012-04-14  Norbert Preining  <preining@logic.at>
+2012-05-14  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: rename to updmap-single.pl, we ship updmap.pl now
 	via ../texlive/linked_scripts/texlive/updmap.pl
