@@ -1,3 +1,7 @@
+2012-05-21  Norbert Preining  <preining@logic.at>
+
+	* patch-05-cid-x_map (new): add entries for rml-jis and gbm-jis
+
 2012-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* patch-04-pdftex_map (new): Fix a typo in fontmap.c.

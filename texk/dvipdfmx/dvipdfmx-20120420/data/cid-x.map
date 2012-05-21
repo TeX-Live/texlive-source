@@ -76,6 +76,9 @@ gbm  H GothicBBB-Medium
 rmlv V Ryumin-Light
 gbmv V GothicBBB-Medium
 
+rml-jis H Ryumin-Light
+gbm-jis H GothicBBB-Medium
+
 %% Synthetic font used for futo* family.
 %% jun101 not available.
 %ryumin-l    H Ryumin-Light

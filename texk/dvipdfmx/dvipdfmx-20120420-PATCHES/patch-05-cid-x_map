@@ -1,0 +1,13 @@
+diff -ur dvipdfmx-20120420/data/cid-x.map.orig dvipdfmx-20120420/data/cid-x.map
+--- dvipdfmx-20120420/data/cid-x.map.orig	2012-05-21 10:21:39.127888382 +0900
++++ dvipdfmx-20120420/data/cid-x.map	2012-05-21 10:21:54.255899122 +0900
+@@ -76,6 +76,9 @@
+ rmlv V Ryumin-Light
+ gbmv V GothicBBB-Medium
+ 
++rml-jis H Ryumin-Light
++gbm-jis H GothicBBB-Medium
++
+ %% Synthetic font used for futo* family.
+ %% jun101 not available.
+ %ryumin-l    H Ryumin-Light
