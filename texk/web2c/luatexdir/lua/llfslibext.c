@@ -17,8 +17,8 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "lua/luatex-api.h"
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 #include <kpathsea/c-stat.h>
 #include <kpathsea/c-dir.h>

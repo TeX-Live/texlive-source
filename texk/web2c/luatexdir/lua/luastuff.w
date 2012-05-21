@@ -22,8 +22,8 @@ static const char _svn_version[] =
     "$Id: luastuff.w 4001 2010-11-28 15:49:46Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/luastuff.w $";
 
-#include "lua/luatex-api.h"
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 @ @c
 lua_State *Luas = NULL;

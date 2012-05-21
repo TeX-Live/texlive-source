@@ -21,8 +21,8 @@ static const char _svn_version[] =
     "$Id: lnodelib.c 4166 2011-04-16 09:12:20Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
-#include "lua/luatex-api.h"
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 #define init_luaS_index(a) do {                                         \
     lua_pushliteral(L,#a);                                              \

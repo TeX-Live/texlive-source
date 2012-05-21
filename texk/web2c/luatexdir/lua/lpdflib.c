@@ -21,8 +21,8 @@ static const char _svn_version[] =
     "$Id: lpdflib.c 3941 2010-11-01 23:31:27Z hhenkel $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lpdflib.c $";
 
-#include "lua/luatex-api.h"
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 static int luapdfprint(lua_State * L)
 {

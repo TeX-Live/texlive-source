@@ -18,8 +18,8 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
 
 @ @c
-#include "lua/luatex-api.h"
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 static const char _svn_version[] =
     "$Id: luatoken.w 3849 2010-09-01 09:10:48Z taco $ "

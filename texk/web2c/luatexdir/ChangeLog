@@ -1,3 +1,15 @@
+2012-05-21  Taco Hoekwater  <taco@luatex.org>
+
+	* tex/printing.w, lua/ltokenlib.c, lua/llanglib.c, lua/llualib.c,
+	lua/lnodelib.c, lua/luainit.w, lua/ltexiolib.c,
+	lua/lcallbacklib.c, lua/lstatslib.c, lua/ltexlib.c,
+	lua/loslibext.c, lua/lkpselib.c, lua/luatoken.w, lua/llfslibext.c,
+	lua/lfontlib.c, lua/luanode.w, lua/lpdflib.c, lua/luastuff.w:
+	when loading both "ptexlib.h" and "lua/luatex-api.h", make sure
+	that "ptexlib.h" is loaded first because that reads config.h
+	which affects loading of system headers (via Large File Support,
+	specifically).
+
 2012-05-20  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* tex/mlist.w: fix "warning: 'ext' might be used uninitialized".
