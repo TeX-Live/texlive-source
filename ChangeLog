@@ -1,3 +1,8 @@
+2012-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Test for GNU make before creating Makefile,
+	required for FreeBSD make and perhaps others.
+
 2012-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* README: Update the list of prerequisites.

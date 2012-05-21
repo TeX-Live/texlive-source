@@ -1,4 +1,4 @@
-2012-05-20  Thanh Han The <thanh@river-valley.org>
+2012-05-20  Thanh Han The  <thanh@river-valley.org>
 
 	* pdftex.defines (get/setimagegroupref): these replace imagegroupref.
 	* ptexlib.h: likewise.

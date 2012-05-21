@@ -156,10 +156,14 @@ AC_CONFIG_SUBDIRS([auxdir/auxsub libs utils texk])
 
 AC_CONFIG_FILES([Makefile])
 
+dnl Try to detect GNU make early, '-v' is verbose for BSD make.
+rm -f Makefile
+kpse_GNU_make=`${MAKE-make} -v 2>/dev/null | grep GNU`
+
 AC_OUTPUT
 
 dnl Most probably we need GNU make.
-if test -z "`${MAKE-make} -v 2>/dev/null | grep GNU`"; then
+if test -z "$kpse_GNU_make"; then
   if test "x$enable_native_texlive_build" = xno; then
     AC_MSG_WARN([Building TeX Live may require GNU make])
   else
