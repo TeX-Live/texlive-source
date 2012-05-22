@@ -8112,7 +8112,7 @@ xml.tocdata(e,"error")
 </typing>
 --ldx]]--
 
-function xml.tocdata(e,wrapper)
+function xml.tocdata(e,wrapper) -- a few more in the aux module
     local whatever = type(e) == "table" and xmltostring(e.dt) or e or ""
     if wrapper then
         whatever = format("<%s>%s</%s>",wrapper,whatever,wrapper)
@@ -10095,6 +10095,36 @@ function xml.cdatatotext(e)
     end
 end
 
+-- local x = xml.convert("<x><a>1<b>2</b>3</a></x>")
+-- xml.texttocdata(xml.first(x,"a"))
+-- print(x) -- <x><![CDATA[1<b>2</b>3]]></x>
+
+function xml.texttocdata(e) -- could be a finalizer
+    local dt = e.dt
+    local s = xml.tostring(dt) -- no shortcut?
+    e.tg = "@cd@"
+    e.special = true
+    e.ns = ""
+    e.rn = ""
+    e.dt = { s }
+    e.at = nil
+end
+
+-- local x = xml.convert("<x><a>1<b>2</b>3</a></x>")
+-- xml.tocdata(xml.first(x,"a"))
+-- print(x) -- <x><![CDATA[<a>1<b>2</b>3</a>]]></x>
+
+function xml.elementtocdata(e) -- could be a finalizer
+    local dt = e.dt
+    local s = xml.tostring(e) -- no shortcut?
+    e.tg = "@cd@"
+    e.special = true
+    e.ns = ""
+    e.rn = ""
+    e.dt = { s }
+    e.at = nil
+end
+
 xml.builtinentities = table.tohash { "amp", "quot", "apos", "lt", "gt" } -- used often so share
 
 local entities        = characters and characters.entities or nil
@@ -10242,7 +10272,7 @@ if not modules then modules = { } end modules ['lxml-xml'] = {
 }
 
 local concat = table.concat
-local find = string.find
+local find, lower, upper = string.find, string.lower, string.upper
 
 local xml = xml
 
@@ -10637,6 +10667,46 @@ end
 
 function xml.textonly(e) -- no pattern
     return concat(textonly(e,{}))
+end
+
+--
+
+-- local x = xml.convert("<x><a x='+'>1<B>2</B>3</a></x>")
+-- xml.filter(x,"**/lowerall()") print(x)
+-- xml.filter(x,"**/upperall()") print(x)
+
+function finalizers.lowerall(collected)
+    for c=1,#collected do
+        local e = collected[c]
+        if not e.special then
+            e.tg = lower(e.tg)
+            local eat = e.at
+            if eat then
+                local t = { }
+                for k,v in next, eat do
+                    t[lower(k)] = v
+                end
+                e.at = t
+            end
+        end
+    end
+end
+
+function finalizers.upperall(collected)
+    for c=1,#collected do
+        local e = collected[c]
+        if not e.special then
+            e.tg = upper(e.tg)
+            local eat = e.at
+            if eat then
+                local t = { }
+                for k,v in next, eat do
+                    t[upper(k)] = v
+                end
+                e.at = t
+            end
+        end
+    end
 end
 
 
