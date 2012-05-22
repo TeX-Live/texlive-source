@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26265 2012-05-09 00:15:38Z preining $
+# $Id: tlmgr.pl 26468 2012-05-17 16:07:52Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26265 $';
-my $datrev = '$Date: 2012-05-09 02:15:38 +0200 (Wed, 09 May 2012) $';
+my $svnrev = '$Revision: 26468 $';
+my $datrev = '$Date: 2012-05-17 18:07:52 +0200 (Thu, 17 May 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -632,47 +632,21 @@ sub handle_execute_actions
   chomp(my $TEXMFSYSVAR = `kpsewhich -var-value=TEXMFSYSVAR`);
   chomp(my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
   chomp(my $TEXMFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
+  chomp(my $TEXMFDIST = `kpsewhich -var-value=TEXMFDIST`);
 
   #
   # maps handling
-  # if enabled and disabled -> do nothing
-  # if only enabled -> enable it
-  # if only disabled -> disable it
-  # if the option "generate_updmap" is set, then simply ignore all that
-  # and run the equivalent of tlmgr generate updmap
   {
     my $updmap_run_needed = 0;
-    my %do_enable;
-    my %do_disable;
     for my $m (keys %{$::execute_actions{'enable'}{'maps'}}) {
       $updmap_run_needed = 1;
-      $do_enable{$m} = 1;
     }
     for my $m (keys %{$::execute_actions{'disable'}{'maps'}}) {
       $updmap_run_needed = 1;
-      if (defined($do_enable{$m})) {
-        # we are upgrading because it is disabled and enabled, so
-        # delete the entry in do_enable, it is already
-        delete $do_enable{$m};
-      } else {
-        # not new installed, so simply removed
-        $do_disable{$m} = 1;
-      }
     }
-    if ($updmap_run_needed && $localtlpdb->option("generate_updmap")) {
-      my $dest = "$TEXMFSYSCONFIG/web2c/updmap.cfg";
-      my $localcfg = "$TEXMFLOCAL/web2c/updmap-local.cfg";
-      info("tlmgr: generate_updmap writing new $dest\n");
-      TeXLive::TLUtils::create_updmap($localtlpdb, $dest, $localcfg);
-    } else {
-      for my $m (keys %do_disable) {
-        $errors += do_cmd_and_check("updmap-sys --nomkmap --nohash --disable $m");
-      }
-      for my $m (keys %do_enable) {
-        my $str = "updmap-sys --nomkmap --nohash --enable " .
-                  $::execute_actions{'enable'}{'maps'}{$m} . "=$m";
-        $errors += do_cmd_and_check($str);
-      }
+    if ($updmap_run_needed) {
+      my $dest = "$TEXMFDIST/web2c/updmap.cfg";
+      TeXLive::TLUtils::create_updmap($localtlpdb, $dest);
     }
     $errors += do_cmd_and_check("updmap-sys") if $updmap_run_needed;
   }
@@ -3962,17 +3936,15 @@ sub action_generate {
   init_local_db();
 
   # we create fmtutil.cnf, language.dat, language.def in TEXMFSYSVAR and
-  # updmap.cfg in TEXMFSYSCONFIG.  The reason is that calls to
-  # updmap-sys (as is done by the tlmgr update call when packages with
-  # maps are installed) will create the updmap.cfg file in
-  # TEXMFSYSCONFIG.  It would start from the version in TEXMFSYSVAR, but
-  # after that the TEXMFSYSCONFIG takes precedence and thus the
-  # mechanism explained in updmap.cfg header would not work.  We don't
-  # want that.  So just use TEXMFSYSCONFIG from the start.
+  # updmap.cfg in TEXMFDIST. The reason is that we are now using an
+  # implementation of updmap that supports multiple updmap files.
+  # Local adaptions should not be made there, but only in TEXMFLOCAL
+  # or TEXMF(SYS)CONFIG updmap.cfg
   #
   chomp (my $TEXMFSYSVAR = `kpsewhich -var-value=TEXMFSYSVAR`);
   chomp (my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
   chomp (my $TEXMFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
+  chomp (my $TEXMFDIST = `kpsewhich -var-value=TEXMFDIST`);
 
   # we do generate all config files, treat $opts{"dest"} as pattern
   # and make it append the respective extensions
@@ -4050,10 +4022,9 @@ sub action_generate {
     }
 
   } elsif ($what =~ m/^updmap$/i) {
-    my $dest = $opts{"dest"} || "$TEXMFSYSCONFIG/web2c/updmap.cfg";
-    my $localcfg = $opts{"localcfg"} || "$TEXMFLOCAL/web2c/updmap-local.cfg";
+    my $dest = $opts{"dest"} || "$TEXMFDIST/web2c/updmap.cfg";
     debug("$prg: writing new updmap.cfg to $dest\n");
-    TeXLive::TLUtils::create_updmap($localtlpdb, $dest, $localcfg);
+    TeXLive::TLUtils::create_updmap($localtlpdb, $dest);
 
     if ($opts{"rebuild-sys"}) {
       do_cmd_and_check("updmap-sys");
@@ -5496,11 +5467,10 @@ sub check_for_critical_updates
   return(@critical_upd);
 }
 
-sub critical_updates_warning
-{
-  tlwarn("Updates for tlmgr itself are present.\n");
+sub critical_updates_warning {
   tlwarn("=" x 79, "\n");
-  tlwarn("Please update the package manager first, via either\n");
+  tlwarn("Updates for tlmgr itself are present.\n");
+  tlwarn("So, please update the package manager first, via either\n");
   tlwarn("  tlmgr update --self\n");
   tlwarn("or by getting the latest updater for Unix-ish systems:\n");
   tlwarn("  $TeXLiveURL/update-tlmgr-latest.sh\n");
@@ -6179,7 +6149,6 @@ the definitive list):
  sys_bin    (directory to which executables are linked by the path action)
  sys_man    (directory to which man pages are linked by the path action)
  sys_info   (directory to which Info files are linked by the path action)
- generate_updmap     (run the equivalent of tlmgr generate updmap on changes)
  desktop_integration (Windows-only: create Start menu shortcuts)
  fileassocs (Windows-only: change file associations)
  multiuser  (Windows-only: install for all users)
@@ -6234,9 +6203,6 @@ feature across most Unix programs.)
 The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on
 Unix-like systems to control the generation of links for executables,
 info files and man pages. See the C<path> action for details.
-
-For the C<generate_updmap> option, see the C<updmap> section in
-L<generate|/"generate [I<option>]... I<what>">.
 
 The last three options control behaviour on Windows installations.  If
 C<desktop_integration> is set, then some packages will install items in
@@ -6628,31 +6594,20 @@ Do not ask for confirmation, remove immediately.
 =back
 
 The C<generate> action overwrites any manual changes made in the
-respective files: it recreates them from scratch.
+respective files: it recreates them from scratch based on the
+information of the installed packages, plus local adaptions.
 
-For C<fmtutil> and the language files, this is normal, and both the TeX
-Live installer and C<tlmgr> routinely call C<generate> for them.
+The TeX Live installer and C<tlmgr> routinely call C<generate> for
+all of these files.
 
-For C<updmap>, however, C<tlmgr> does I<not> use C<generate> by default,
-because the result would be to disable all maps which have been manually
-installed via S<C<updmap-sys --enable>>, e.g., for proprietary or local
-fonts, which has been the standard method for adding fonts to TeX
-installations for years.  Rather, the C<generate> action only
-incorporates the changes in the C<--localcfg> file mentioned below.
+For managing your own fonts, please see the documentation of
+updmap, which supports multiple updmap.cfg files. So by simply
+editing TEXMFLOCAL's updmap.cfg they will be accounted for.
 
-Notwithstanding the above, if you only use the fonts and font packages
-within TeX Live, and rigorously maintain your local fonts (if any) using
-C<updmap-local.cfg>, there is nothing wrong with using C<generate
-updmap>.  It can be helpful in moving from release to release,
-especially.  We use it ourselves to generate the C<updmap.cfg> file in
-the live source repository.  If you want to commit yourself to using
-C<updmap-local.cfg>, you can set the C<generate_updmap> option and
-C<tlmgr> will run C<generate updmap> for you on update.
-
-In any case, C<tlmgr> updates and maintains the final C<updmap.cfg> in
-C<TEXMFSYSCONFIG> (while the other generated files are in
-C<TEXMFSYSVAR>), because that is the location that C<updmap-sys> (via
-C<tcfmgr>) historically uses.
+In any case, C<tlmgr> updates and maintains C<updmap.cfg> in
+C<TEXMFDIST> (while the other generated files are in
+C<TEXMFSYSVAR>), because that is the location where the fonts
+are installed.
 
 In more detail: C<generate> remakes any of the five config files
 C<language.dat>, C<language.def>, C<language.dat.lua>, C<fmtutil.cnf>,
@@ -6660,26 +6615,27 @@ and C<updmap.cfg> from the information present in the local TLPDB, plus
 locally-maintained files.
 
 The locally-maintained files are C<language-local.dat>,
-C<language-local.def>, C<language-local.dat.lua>, C<fmtutil-local.cnf>,
-or C<updmap-local.cfg>, searched for in C<TEXMFLOCAL> in the respective
-directories.  If they are present, the final file is made by starting
+C<language-local.def>, C<language-local.dat.lua>, or C<fmtutil-local.cnf>,
+searched for in C<TEXMFLOCAL> in the respective directories.
+The formerly supported C<updmap-local.cfg> is not supported anymore,
+since C<updmap> now supports multiple updmap.cfg files, so local
+additions can be put into an updmap.cfg file in TEXMFLOCAL.
+If local additions are present, the final file is made by starting
 with the main file, omitting any entries that the local file specifies
 to be disabled, and finally appending the local file.
 
 Local files specify entries to be disabled with a comment line, namely
 one of these:
 
-  #!NAME
   %!NAME
   --!NAME
 
-where C<fmtutil.cnf> and C<updmap.cfg> use C<#>, C<language.dat> and
+where C<fmtutil.cnf> uses C<#>, C<language.dat> and
 C<language.def> use C<%>, and C<language.dat.lua> use C<-->.  In any
-case, the I<name> is the respective format name, map file name (include
-the C<.map> extension), or hyphenation pattern identifier.  Examples:
+case, the I<name> is the respective format name, or hyphenation pattern
+identifier.  Examples:
 
   #!pdflatex
-  #!lm.map
   %!german
   --!usenglishmax
 
@@ -6692,19 +6648,8 @@ except for the special disabling lines, the local files follow the same
 syntax as the master files.
 
 The form C<generate language> recreates both the C<language.dat>, the
-C<language.def> and the C<language.dat.lua>files, while the forms with
+C<language.def> and the C<language.dat.lua> files, while the forms with
 extension recreates only the given language file.
-
-Special consideration for updmap.cfg: in addition to font map files,
-this file specifies the setting of five options: C<dvipsPreferOutline>,
-C<LW35>, C<dvipsDownloadBase35>, C<pdftexDownloadBase14>, and
-C<dvipdfmDownloadBase14>.  The defaults for these as set in
-C<updmap-hdr.cfg> are usually fine.  If you want to change them, you can
-include changed settings for any or all of these five options in your
-C<updmap-local.cfg> file and they will be respected by C<generate
-updmap>.  For example:
-
-  dvipsDownloadBase35 true
 
 Options:
 
@@ -6713,7 +6658,7 @@ Options:
 =item B<--dest> I<output_file>
 
 specifies the output file (defaults to the respective location in
-C<TEXMFSYSVAR> for C<language*> and C<fmtutil>, and C<TEXMFSYSCONFIG>
+C<TEXMFSYSVAR> for C<language*> and C<fmtutil>, and C<TEXMFSYSDIST>
 for C<updmap>).  If C<--dest> is given to C<generate language>, it serves
 as a basename onto which C<.dat> will be appended for the name of the
 C<language.dat> output file, C<.def> will be
@@ -6751,19 +6696,13 @@ The respective locations are as follows:
   web2c/fmtutil.cnf (and fmtutil-local.cnf);
   web2c/updmap.cfg (and updmap-local.cfg).
 
-Final repetition: as explained above, C<tlmgr> does I<not> use
-C<generate updmap> for font map files.  Therefore, if you want to make
-use of C<updmap-local.cfg>, you must run C<tlmgr generate updmap>
-and C<updmap-sys> yourself after making any local changes.  If you
-make yourself responsible for rigorously using C<updmap-local.cfg>), set
-C<option generate_updmap>).
-
 
 =head1 TLMGR CONFIGURATION FILE
 
 A small subset of the command line options can be set in a config file
 for C<tlmgr> which resides in C<TEXMFCONFIG/tlmgr/config>.  By default, the
-config file is in C<~/.texlive2010/texmf-config/tlmgr/config>. This is I<not>
+config file is in C<~/.texliveYYYY/texmf-config/tlmgr/config> (replacing
+C<YYYY> with the year of your TeX Live installation). This is I<not>
 C<TEXMFSYSVAR>, so that the file is specific to a single user.
 
 In this file, empty lines and lines starting with # are ignored.  All
@@ -6977,7 +6916,7 @@ only those I<not> installed, or only those with update available.
 =item Category
 
 Select which categories are shown: packages, collections, and/or
-schemes.  These are briefly explained in the L<DESCRIPTION> section
+schemes.  These are briefly explained in the L</"DESCRIPTION"> section
 above.
 
 =item Match

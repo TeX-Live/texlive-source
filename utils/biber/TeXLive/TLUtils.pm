@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 26320 2012-05-13 03:53:19Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 26320 $';
+my $svnrev = '$Revision: 26541 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -1575,7 +1574,7 @@ sub _do_postaction_fileassoc {
     tlwarn("filetype of fileassoc postaction not given\n");
     return 0;
   }
-  my $filetype = $keyval{'filetype'};
+  my $filetype = $keyval{'filetype'}.'.'.$ReleaseYear;
 
   &log("postaction $how fileassoc for " . $tlpobj->name .
     ": $extension, $filetype\n");
@@ -1606,7 +1605,7 @@ sub _do_postaction_filetype {
     tlwarn("name of filetype postaction not given\n");
     return 0;
   }
-  my $name = $keyval{'name'};
+  my $name = $keyval{'name'}.'.'.$ReleaseYear;
 
   # cmd can be an arbitrary string
   if (!defined($keyval{'cmd'})) {
@@ -1656,7 +1655,7 @@ sub _do_postaction_progid {
     tlwarn("filetype of progid postaction not given\n");
     return 0;
   }
-  my $filetype = $keyval{'filetype'};
+  my $filetype = $keyval{'filetype'}.'.'.$ReleaseYear;
 
   &log("postaction $how progid for " . $tlpobj->name .
     ": $extension, $filetype\n");
@@ -3857,9 +3856,9 @@ sub mktexupd {
         $files{$file}=1;
       }
     },
-    # "reset" => sub { 
-    #    %files=();
-    # },
+    "reset" => sub { 
+       %files=();
+    },
     "mustexist" => sub {
       $mustexist=shift;
     },
@@ -3880,12 +3879,14 @@ sub mktexupd {
       foreach my $path (keys %files) {
         foreach my $db (@texmfdbs) {
           $db=substr($db, -1) if ($db=~m|/$|); # strip leading /
-          if (substr($path, 0, length("$db/")) eq "$db/") {
+          $db = lc($db) if win32();
+          $up = (win32() ? lc($path) : $path);
+          if (substr($up, 0, length("$db/")) eq "$db/") {
             # we appended a / because otherwise "texmf" is recognized as a
             # substring of "texmf-dist".
-            my $path='./' . substr($path, length("$db/"));
+            my $np = './' . substr($up, length("$db/"));
             my ($dir, $file);
-            $_=$path;
+            $_=$np;
             ($dir, $file) = m|(.*)/(.*)|;
             $dbs{$db}{$dir}{$file}=1;
           }
