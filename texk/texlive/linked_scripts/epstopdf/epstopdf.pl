@@ -1,8 +1,5 @@
-eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $argv:q'
-  if 0;
-use strict;
-
-# $Id: epstopdf.pl 26303 2012-05-11 22:54:04Z karl $
+#!/usr/bin/env perl
+# $Id: epstopdf.pl 26570 2012-05-22 16:14:37Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -46,6 +43,12 @@ use strict;
 #
 # emacs-page
 # History
+#  2012/05/22 v2.18 (Karl Berry)
+#    * use /usr/bin/env, since Ruby has apparently required #! for years,
+#      and we rely on it for our other scripts, so why not.
+#      (tex-k mail from Jean Krohn, 2 Aug 2010 15:57:54,
+#       per http://osdir.com/ml/lang.ruby.general/2002-06/msg01388.html
+#       and ruby-bugs:PR#315).
 #  2012/05/12 v2.17 (Karl Berry)
 #    * uselessly placate -w.  Debian bug 672281.
 #  2010/05/09 v2.16 (Karl Berry)
@@ -151,7 +154,7 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 26303 2012-05-11 22:54:04Z karl $) 2.17';
+my $ident = '($Id: epstopdf.pl 26570 2012-05-22 16:14:37Z karl $) 2.18';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2012 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.

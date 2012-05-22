@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.03 (2011/12/02)
+# Version : 2.04 (2011/06/21)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,11 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.03 (2011-12-02)";
+my $version="2.04 (2012-05-19)";
 
 # History:
+# v2.04 (2012-04-19):
+#   * fixed bug in &scan_aux
 # v2.03 (2011-04-12):
 #   * added warning about possibly needing 'nomain' package option
 # v2.02 (2011-04-2):
@@ -456,6 +458,10 @@ sub scan_aux{
         if (m/\\\@input{(.+)\.aux}/)
         {
            &scan_aux($1);
+
+           # v2.04 added
+           # (Fix provided by Daniel Grund) 
+           next;
         }
 
         if (m/\\\@newglossary\s*\{(.*)\}{(.*)}{(.*)}{(.*)}/)
