@@ -43,7 +43,7 @@
 #
 # emacs-page
 # History
-#  2012/05/20 (Karl Berry)
+#  2012/05/22 v2.18 (Karl Berry)
 #    * use /usr/bin/env, since Ruby has apparently required #! for years,
 #      and we rely on it for our other scripts, so why not.
 #      (tex-k mail from Jean Krohn, 2 Aug 2010 15:57:54,
@@ -154,7 +154,7 @@
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id$) 2.17';
+my $ident = '($Id$) 2.18';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2012 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.

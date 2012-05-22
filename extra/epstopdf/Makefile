@@ -90,8 +90,8 @@ check1:
 	pdfinfo $(file).pdf | grep "Page size"
 
 dist: epstopdf.tar.gz epstopdf.html
-epstopdf.tar.gz: README epstopdf.pl epstopdf.1 epstopdf.man1.pdf
-	tar chzf epstopdf.tar.gz $^
+epstopdf.tar.gz: README epstopdf.pl epstopdf.1 repstopdf.1 epstopdf.man1.pdf
+	tar czf epstopdf.tar.gz $^
 
 groff = groff
 groff_opts = -man -t
