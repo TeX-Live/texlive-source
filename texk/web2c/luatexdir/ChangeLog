@@ -1,3 +1,12 @@
+2012-05-22  Taco Hoekwater  <taco@luatex.org>
+
+	* luafontloader/fontforge/fontforge/splinesave.c,
+	luafontloader/fontforge/fontforge/splinefont.h: drop parts of the
+	Type1 saving routines (unused) to remove a compiler warning.
+
+	* pdf/pdftypes.h, lua/limglib.c, image/epdf.h, image/writeimg.w,
+	image/writejbig2.w, ptexlib.h: more off_t trouble.
+
 2012-05-21  Taco Hoekwater  <taco@luatex.org>
 
 	* tex/printing.w, lua/ltokenlib.c, lua/llanglib.c, lua/llualib.c,
