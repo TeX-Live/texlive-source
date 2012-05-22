@@ -1914,7 +1914,6 @@ struct glyphdata;
 extern int UnitsParallel(BasePoint *u1,BasePoint *u2,int strict);
 extern int CvtPsStem3(struct growbuf *gb, SplineChar *scs[MmMax], int instance_count,
 	int ishstem, int round);
-extern struct pschars *CID2ChrsSubrs(SplineFont *cidmaster,struct cidbytes *cidbytes,int flags,int layer);
 extern struct pschars *SplineFont2ChrsSubrs2(SplineFont *sf, int nomwid,
 	int defwid, const int *bygid, int cnt, int flags,
 	struct pschars **_subrs,int layer);
