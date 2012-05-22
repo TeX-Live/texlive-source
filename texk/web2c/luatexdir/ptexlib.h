@@ -23,6 +23,10 @@
 #ifndef PTEXLIB_H
 #  define PTEXLIB_H
 
+#ifdef HAVE_CONFIG_H
+#include <w2c/config.h>
+#endif
+
 /* WEB2C macros and prototypes */
 #  define EXTERN extern
 #  include "luatex.h"

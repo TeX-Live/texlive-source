@@ -25,8 +25,8 @@ static const char _svn_version[] =
     "$Id: writeimg.w 4271 2011-05-16 14:40:06Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/image/writeimg.w $";
 
-#include <assert.h>
 #include "ptexlib.h"
+#include <assert.h>
 #include <kpathsea/c-auto.h>
 #include <kpathsea/c-memstr.h>
 

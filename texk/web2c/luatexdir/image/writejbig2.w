@@ -86,6 +86,9 @@ static const char _svn_version[] =
 
 #undef DEBUG
 
+#ifdef HAVE_CONFIG_H
+#include <w2c/config.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>

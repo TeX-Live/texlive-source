@@ -21,13 +21,13 @@ static const char _svn_version[] =
     "$Id: limglib.c 4051 2011-01-09 22:41:33Z hhenkel $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/limglib.c $";
 
+#include "ptexlib.h"
+#include "lua/luatex-api.h"
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include "lua51/lua.h"
 #include "lua51/lauxlib.h"
-#include "ptexlib.h"
-#include "lua/luatex-api.h"
 
 /**********************************************************************/
 

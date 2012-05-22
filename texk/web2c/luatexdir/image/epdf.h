@@ -23,7 +23,11 @@
 
 #ifndef EPDF_H
 #  define EPDF_H
-
+extern "C" {
+#ifdef HAVE_CONFIG_H
+#include <w2c/config.h>
+#endif
+}
 #  include <stdlib.h>
 #  include <math.h>
 #  include <stddef.h>

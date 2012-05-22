@@ -22,6 +22,9 @@
 #ifndef PDFTYPES_H
 #  define PDFTYPES_H
 
+#ifdef HAVE_CONFIG_H
+#include <w2c/config.h>
+#endif
 #  include <zlib.h>
 #  include "lua/luatex-api.h"
 
