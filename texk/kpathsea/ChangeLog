@@ -1,3 +1,8 @@
+2012-05-22  Karl Berry  <karl@tug.org>
+
+	* mktexmf: test $name for csso12*, not $rootname.
+	From Debian via Norbert, 21 May 2012 10:11:08.
+
 2012-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cnf.[ch]: Add KPSEDLL to kpathsea_cnf_get(), and reintroduce
