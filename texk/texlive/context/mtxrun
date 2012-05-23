@@ -12294,6 +12294,7 @@ resolvers.luacnfstate   = "unknown"
 -- selfautoparent:texmf-context/web2c
 -- selfautoparent:texmf/web2c
 
+this_is_texlive = true
 if this_is_texlive then
  -- resolvers.luacnfspec = '{selfautodir:,selfautoparent:}{,{/share,}/texmf{-local,}/web2c}'
  -- resolvers.luacnfspec = '{selfautodir:{/share,}/texmf-local/web2c,selfautoparent:{/share,}/texmf{-local,}/web2c}'
