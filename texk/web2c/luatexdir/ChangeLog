@@ -1,5 +1,11 @@
 2012-05-22  Taco Hoekwater  <taco@luatex.org>
 
+	* lua/lkpselib.c: new function kpse.default_texmfcnf() that
+	reports the value of DEFAULT_TEXMFCNF, for the benefit of
+	context mkiv on Debian.
+
+2012-05-22  Taco Hoekwater  <taco@luatex.org>
+
 	* luafontloader/fontforge/fontforge/splinesave.c,
 	luafontloader/fontforge/fontforge/splinefont.h: drop parts of the
 	Type1 saving routines (unused) to remove a compiler warning.

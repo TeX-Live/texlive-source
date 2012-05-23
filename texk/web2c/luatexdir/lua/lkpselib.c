@@ -26,6 +26,7 @@
 #include <kpathsea/pathsearch.h>
 #include <kpathsea/str-list.h>
 #include <kpathsea/tex-file.h>
+#include <kpathsea/paths.h>
 
 static const char _svn_version[] =
     "$Id: lkpselib.c 4020 2010-11-30 13:43:25Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/lua/lkpselib.c $";
@@ -238,6 +239,12 @@ static int lua_kpathsea_find_file(lua_State * L)
     }
     return 1;
 
+}
+
+static int show_texmfcnf(lua_State * L)
+{
+    lua_pushstring(L, DEFAULT_TEXMFCNF);
+    return 1;
 }
 
 static int show_path(lua_State * L)
@@ -806,6 +813,7 @@ static const struct luaL_reg kpselib_m[] = {
     {"show_path", lua_kpathsea_show_path},
     {"lookup", lua_kpathsea_lookup},
     {"version", lua_kpse_version},
+    {"default_texmfcnf", show_texmfcnf},
     {NULL, NULL}                /* sentinel */
 };
 
@@ -822,6 +830,7 @@ static const struct luaL_reg kpselib_l[] = {
     {"show_path", show_path},
     {"lookup", lua_kpse_lookup},
     {"version", lua_kpse_version},
+    {"default_texmfcnf", show_texmfcnf},
     {NULL, NULL}                /* sentinel */
 };
 
