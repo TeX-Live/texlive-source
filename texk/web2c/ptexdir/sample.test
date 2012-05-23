@@ -1,16 +1,19 @@
 #! /bin/sh
 
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
 
 tfmpath=`$KPSEWHICH cmbx10.tfm` || exit 77
 
+tfmparent=`dirname "$tfmpath"`
+tfmgrandparent=`dirname "$tfmparent"`
+
 # Test inputs
 testdir=$srcdir/ptexdir/tests
 
 TEXMFCNF=$srcdir/../kpathsea \
-  TFMFONTS=$testdir:`dirname \`dirname \\\`dirname $tfmpath\\\`\``// \
+  TFMFONTS=$testdir:`dirname "$tfmgrandparent"`// \
   ./pdvitype -show-opcodes $testdir/sample >tests/xsample.typ || exit 1
 

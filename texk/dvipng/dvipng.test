@@ -7,11 +7,13 @@ get_val () {
 }
 
 get_val mktex.cnf
-TEXMFCNF=`dirname $res`
+TEXMFCNF=`dirname "$res"`
 get_val psfonts.map
-TEXFONTMAPS=`dirname \`dirname $res\``//
+par=`dirname "$res"`
+TEXFONTMAPS=`dirname "$par"`//
 get_val 8r.enc
-ENCFONTS=`dirname \`dirname $res\``//
+par=`dirname "$res"`
+ENCFONTS=`dirname "$par"`//
 get_val --expand-var='$TEXMFMAIN'
 TEXMFMAIN=$res
 get_val --expand-var='$TEXMFDIST'

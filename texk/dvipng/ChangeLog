@@ -1,3 +1,7 @@
+2012-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipng.test: Cope with spaces in paths returned by kpsewhich.
+
 2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (CLEANFILES): Adapt to 'new' test script.

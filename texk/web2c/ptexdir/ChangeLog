@@ -1,3 +1,8 @@
+2012-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdvitype.test, sample.test: Cope with spaces in paths returned
+	by kpsewhich.
+
 2012-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Restore the 'unnecessary and seemingly wrong'

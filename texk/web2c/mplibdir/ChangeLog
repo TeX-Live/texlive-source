@@ -1,3 +1,7 @@
+2012-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvitomp.test: Cope with spaces in paths returned by kpsewhich.
+
 2012-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mplib.am (mpost_LDADD): Drop explicit '-lm'.
