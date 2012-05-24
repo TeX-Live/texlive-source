@@ -11004,26 +11004,29 @@ local function f_second(a,b)
     return concat(t,",")
 end
 
+-- old  {a,b}{c,d} => ac ad bc bd
+--
 -- local function f_both(a,b)
 --     local t, n = { }, 0
---     for sb in gmatch(b,"[^,]+") do              -- and not sa
---         for sa in gmatch(a,"[^,]+") do          --         sb
+--     for sa in gmatch(a,"[^,]+") do
+--         for sb in gmatch(b,"[^,]+") do
 --             n = n + 1 ; t[n] = sa .. sb
 --         end
 --     end
 --     return concat(t,",")
 -- end
+--
+-- new  {a,b}{c,d} => ac bc ad bd
 
 local function f_both(a,b)
     local t, n = { }, 0
-    for sa in gmatch(a,"[^,]+") do
-        for sb in gmatch(b,"[^,]+") do
+    for sb in gmatch(b,"[^,]+") do              -- and not sa
+        for sa in gmatch(a,"[^,]+") do          --         sb
             n = n + 1 ; t[n] = sa .. sb
         end
     end
     return concat(t,",")
 end
-
 
 local left  = P("{")
 local right = P("}")
@@ -11038,9 +11041,6 @@ local l_rest   = Cs( ( left * var * (left/"") * var * (right/"") * var * right  
 
 local stripper_1 = lpeg.stripper ("{}@")
 local replacer_1 = lpeg.replacer { { ",}", ",@}" }, { "{,", "{@," }, }
-
--- old  {a,b}{c,d} => ac ad bc bd
--- new  {a,b}{c,d} => ac bc ad bd
 
 local function splitpathexpr(str, newlist, validate) -- I couldn't resist lpegging it (nice exercise).
     if trace_expansions then
@@ -11169,7 +11169,7 @@ local stripper = Cs(
 )
 
 function resolvers.checkedvariable(str) -- assumes str is a string
-    return lpegmatch(stripper,str) or str
+    return type(str) == "string" and lpegmatch(stripper,str) or str
 end
 
 -- The path splitter:
@@ -12333,8 +12333,10 @@ resolvers.luacnfstate   = "unknown"
 -- selfautoparent:texmf/web2c
 
 if environment.default_texmfcnf then
+    -- unfortunately we now have quite some overkill in the spec (not so nice on a network)
     resolvers.luacnfspec = environment.default_texmfcnf
 else
+ -- resolvers.luacnfspec = "selfautoparent:texmf{-local,-context,}/web2c"
     resolvers.luacnfspec = "{selfautoloc:,selfautodir:,selfautoparent:}{,/texmf{-local,}/web2c}"
 end
 
@@ -12673,7 +12675,7 @@ local function load_configuration_files()
                     instance.loaderror = true
                 end
             elseif trace_locating then
-                report_resolving("skipping configuration file '%s' (no file)",filename)
+                report_resolving("skipping configuration file '%s' (no valid format)",filename)
             end
             instance.order[#instance.order+1] = instance.setups[pathname]
             if instance.loaderror then
@@ -14028,13 +14030,21 @@ function resolvers.resetresolve(str)
 end
 
 local function resolve(str) -- use schemes, this one is then for the commandline only
-    local res = resolved[str]
-    if not res then
-        res = gsub(str,"([a-z][a-z]+):([^ \"\';]*)",_resolve_) -- home:xx;selfautoparent:xx; etc
-        resolved[str] = res
-        abstract[res] = str
+    if type(str) == "table" then
+        local t = { }
+        for i=1,#str do
+            t[i] = resolve(str[i])
+        end
+        return t
+    else
+        local res = resolved[str]
+        if not res then
+            res = gsub(str,"([a-z][a-z]+):([^ \"\';,]*)",_resolve_) -- home:xx;selfautoparent:xx; etc (comma added)
+            resolved[str] = res
+            abstract[res] = str
+        end
+        return res
     end
-    return res
 end
 
 local function unresolve(str)
@@ -15223,6 +15233,7 @@ function resolvers.load_tree(tree,resolve)
         -- local AUTOPARENT etc. although these are alwasy set new.
 
         if resolve then
+         -- resolvers.luacnfspec = resolvers.joinpath(resolvers.resolve(resolvers.expandedpathfromlist(resolvers.splitpath(resolvers.luacnfspec))))
             resolvers.luacnfspec = resolvers.resolve(resolvers.luacnfspec)
         end
 
@@ -15298,7 +15309,7 @@ function resolvers.listers.variables(pattern)
             report_lists("  env: %s",tabstr(rawget(environment,key))    or "unset")
             report_lists("  var: %s",tabstr(configured[key])            or "unset")
             report_lists("  exp: %s",tabstr(expansions[key])            or "unset")
-            report_lists("  res: %s",resolvers.resolve(expansions[key]) or "unset")
+            report_lists("  res: %s",tabstr(resolvers.resolve(expansions[key])) or "unset")
         end
     end
     instance.environment = fastcopy(env)
