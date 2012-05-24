@@ -15,6 +15,19 @@
 # limitation.
 #
 # TODO
+# - $HOME and sudo and updmap-sys horror
+#   some instances of sudo do not reset $HOME to the home of root
+#   as an effect of "sudo updmap" creates root owned files in the home 
+#   of a normal user, and "sudo updmap-sys" uses map files and updmap.cfg
+#   files from the directory of a normal user, but creating files
+#   in TEXMFSYSCONFIG. This is *all* wrong.
+#   We should check: if we are running as UID 0 (root) on Unix and the
+#   env{HOME} is NOT the same as the one of root, then give a warning
+#   and reset it to the real home dir of root.
+#   If we don't want to read /etc/passwd to find out the home dir of
+#   root, we could simply check for /root/ being contained in HOME,
+#   or check only for /root/ and if it is different reset $HOME to
+#   some non-existing directory.
 # - check all other invocations
 # - after TL2012? Maybe remove support for reading updmap-local.cfg
 #
