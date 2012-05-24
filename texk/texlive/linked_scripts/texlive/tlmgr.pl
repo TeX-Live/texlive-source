@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26468 2012-05-17 16:07:52Z karl $
+# $Id: tlmgr.pl 26626 2012-05-24 08:59:43Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26468 $';
-my $datrev = '$Date: 2012-05-17 18:07:52 +0200 (Thu, 17 May 2012) $';
+my $svnrev = '$Revision: 26626 $';
+my $datrev = '$Date: 2012-05-24 10:59:43 +0200 (Thu, 24 May 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -72,6 +72,7 @@ BEGIN {
 }
 
 use Cwd qw/abs_path/;
+use File::Spec;
 use Digest::MD5;
 use Pod::Usage;
 use Getopt::Long qw(:config no_autoabbrev permute);
@@ -1113,7 +1114,7 @@ sub action_dumptlpdb {
     $localtlpdb->writeout;
 
   } elsif ($opts{"remote"} && !$opts{"local"}) {
-    init_tlmedia();
+    init_tlmedia_or_die();
     $remotetlpdb->writeout;
 
   } else {
@@ -1152,11 +1153,12 @@ sub action_info {
   foreach my $ppp ($what, @todo) {
     my ($pkg, $tag) = split '@', $ppp, 2;
     my $tlpdb = $localtlpdb;
+    my $source_found;
     my $tlp = $localtlpdb->get_package($pkg);
     my $installed = 0;
     if (!$tlp) {
       if (!$remotetlpdb) {
-        init_tlmedia();
+        init_tlmedia_or_die();
       }
       if (defined($tag)) {
         if (!$remotetlpdb->is_virtual) {
@@ -1215,6 +1217,17 @@ sub action_info {
         tlwarn("tlmgr: cannot find package $pkg\n");
         next;
       }
+      # we want to also show the source if it is known
+      if (defined($tag)) {
+        $source_found = $tag;
+      } else {
+        if ($remotetlpdb->is_virtual) {
+          my ($firsttag, @cand) = $remotetlpdb->candidates($pkg);
+          $source_found = $firsttag;
+        } else {
+          # might be single user repository, don't mention anything
+        }
+      }
       $tlpdb = $remotetlpdb;
     } else {
       $installed = 1;
@@ -1225,7 +1238,7 @@ sub action_info {
       if (!@colls) {
         # not referenced in the local tlpdb, so try the remote here, too
         if (!$remotetlpdb) {
-          init_tlmedia();
+          init_tlmedia_or_die();
         }
         @colls = $remotetlpdb->needed_by($pkg);
       }
@@ -1235,7 +1248,7 @@ sub action_info {
     # only collectons:
     @colls = grep {m;^collection-;} @colls;
     print "package:     ", $tlp->name, "\n";
-    print "repository:  ", $tag, "\n" if (defined($tag));
+    print "repository:  ", $source_found, "\n" if (defined($source_found));
     print "category:    ", $tlp->category, "\n";
     print "shortdesc:   ", $tlp->shortdesc, "\n" if ($tlp->shortdesc);
     print "longdesc:    ", $tlp->longdesc, "\n" if ($tlp->longdesc);
@@ -1415,7 +1428,7 @@ sub action_search {
   }
   init_local_db();
   if ($opts{"global"}) {
-    init_tlmedia();
+    init_tlmedia_or_die();
     $tlpdb = $remotetlpdb;
   } else {
     $tlpdb = $localtlpdb;
@@ -2259,7 +2272,7 @@ sub action_update {
     return;
   }
 
-  init_tlmedia();
+  init_tlmedia_or_die();
   info("update: dry run, no changes will be made\n") if $opts{"dry-run"};
 
   my @excluded_pkgs = ();
@@ -2564,11 +2577,12 @@ sub action_update {
   # sizes_of_packages returns the sizes of *all* packages if nothing
   # is passed over, so if @new and @updated both are empty we will
   # get something wrong back, namely the total size of all packages
+  # the third argument is undef to compute *all* platforms
   my %sizes;
   if (@alltodo) {
     %sizes = %{$remotetlpdb->sizes_of_packages(
       $localtlpdb->option("install_srcfiles"),
-      $localtlpdb->option("install_docfiles"), @alltodo)};
+      $localtlpdb->option("install_docfiles"), undef, @alltodo)};
   } else {
     $sizes{'__TOTAL__'} = 0;
   }
@@ -3221,7 +3235,7 @@ sub action_install {
   return if !check_on_writable();
   # initialize the TLPDB from $location
   $opts{"no-depends"} = 1 if $opts{"no-depends-at-all"};
-  init_tlmedia();
+  init_tlmedia_or_die();
 
   # check for updates to tlmgr itself, and die unless --force is given
   if (check_for_critical_updates( $localtlpdb, $remotetlpdb)) {
@@ -3319,9 +3333,10 @@ sub action_install {
   return if (!@todo);
 
   my $currnr = 1;
+  # undef here is a ref to array of platforms, if undef all are used
   my %sizes = %{$remotetlpdb->sizes_of_packages(
     $localtlpdb->option("install_srcfiles"),
-    $localtlpdb->option("install_docfiles"), @todo)};
+    $localtlpdb->option("install_docfiles"), undef, @todo)};
   defined($sizes{'__TOTAL__'}) || ($sizes{'__TOTAL__'} = 0);
   my $totalsize = $sizes{'__TOTAL__'};
   my $donesize = 0;
@@ -3364,7 +3379,7 @@ sub action_install {
     if (!$opts{"dry-run"}) {
       $remotetlpdb->install_package($pkg, $localtlpdb,
         ($packs{$pkg} ? $packs{$pkg} : undef) );
-      logpackage("${re}install: $pkg");
+      logpackage("${re}install: $pkg$tagstr");
     }
     $donesize += $sizes{$pkg};
     $currnr++;
@@ -3386,7 +3401,7 @@ sub show_list_of_packages {
   if ($opts{"only-installed"}) {
     $tlm = $localtlpdb;
   } else {
-    init_tlmedia();
+    init_tlmedia_or_die();
     $tlm = $remotetlpdb;
   }
   my @whattolist;
@@ -3520,13 +3535,19 @@ sub action_repository {
   if ($what eq "add") {
     my $p = shift @ARGV;
     if (!defined($p)) {
-      tlwarn("$prg: you need to give a new repository as argument to add\n");
+      tlwarn("$prg: no repository given (to add)\n");
+      return;
+    }
+    # check if it is either url or absolute path
+    if (($p !~ m!^(http|ftp)://!i) && 
+        !File::Spec->file_name_is_absolute($p)) {
+      tlwarn("$prg: neither http/ftp URL nor absolute path, no action: $p\n");
       return;
     }
     my $t = shift @ARGV;
     $t = $p if (!defined($t));
     if (defined($repos{$t})) {
-      tlwarn("$prg: this repository or its tag is already defined, no action\n");
+      tlwarn("$prg: repository or its tag already defined, no action: $p\n");
       return;
     }
     # TODO more checks needed?
@@ -3546,16 +3567,16 @@ sub action_repository {
     $localtlpdb->option("location", array_to_repository(%repos));
     $localtlpdb->save;
     if ($t eq $p) {
-      print "$prg: added repository $p\n";
+      print "$prg: added repository: $p\n";
     } else {
-      print "$prg: added repository `$t' for `$p'\n";
+      print "$prg: added repository with tag $t: $p\n";
     }
     return;
   }
   if ($what eq "remove") {
     my $p = shift @ARGV;
     if (!defined($p)) {
-      tlwarn("Which repository should be removed?\n");
+      tlwarn("$prg: no repository given (to remove)\n");
       return;
     }
     my $found = 0;
@@ -3566,11 +3587,11 @@ sub action_repository {
       }
     }
     if (!$found) {
-      tlwarn("Cannot find the repository $p\n");
+      tlwarn("$prg: repository not defined, cannot remove: $p\n");
     } else {
       $localtlpdb->option("location", array_to_repository(%repos));
       $localtlpdb->save;
-      print "$prg: removed repository `$p'\n";
+      print "$prg: removed repository: $p\n";
     }
     return;
   }
@@ -3583,18 +3604,18 @@ sub action_repository {
     return;
   }
   # we are still here, unknown command to repository
-  tlwarn("tlmgr: unknown directive to tlmgr repository: $what\n");
+  tlwarn("$prg: unknown directive to tlmgr repository: $what\n");
   return;
 }
 
 sub action_candidates {
   my $what = shift @ARGV;
   if (!defined($what)) {
-    tlwarn("tlmgr: action candidates needs a package name as argument\n");
+    tlwarn("$prg: candidates needs a package name as argument\n");
     return;
   }
   init_local_db();
-  init_tlmedia();
+  init_tlmedia_or_die();
   my @cand = $remotetlpdb->candidates($what);
   if (@cand) {
     my $first = shift @cand;
@@ -3805,7 +3826,7 @@ sub action_platform {
   if ($what =~ m/^list$/i) {
     # list the available platforms
     # initialize the TLPDB from $location
-    init_tlmedia();
+    init_tlmedia_or_die();
     my @already_installed_arch = $localtlpdb->available_architectures;
     print "Available platforms:\n";
     foreach my $a ($remotetlpdb->available_architectures) {
@@ -3820,7 +3841,7 @@ sub action_platform {
     finish(0);
   } elsif ($what =~ m/^add$/i) {
     return if !check_on_writable();
-    init_tlmedia();
+    init_tlmedia_or_die();
     my @already_installed_arch = $localtlpdb->available_architectures;
     my @available_arch = $remotetlpdb->available_architectures;
     my @todoarchs;
@@ -4977,6 +4998,13 @@ sub init_local_db {
 # initialize the global $remotetlpdb object, or die.
 # uses the global $location.
 #
+sub init_tlmedia_or_die {
+  my ($ret, $err) = init_tlmedia();
+  if (!$ret) {
+    tldie("$prg: $err");
+  }
+}
+
 sub init_tlmedia
 {
   # first check if $location contains multiple locations
@@ -4995,14 +5023,13 @@ sub init_tlmedia
   # check if we are only one tag/repo
   if ($#tags == 0) {
     # go to normal mode
-    _init_tlmedia();
-    return;
+    return _init_tlmedia();
   }
   # we are still here, so we have more tags
 
   # check that there is a main repository
   if (!TeXLive::TLUtils::member('main', @tags)) {
-    tldie("$prg: Cannot find main repository, you have to tag one as main!\n");
+    return(0, "Cannot find main repository, you have to tag one as main!");
   }
 
   # TODO TODO
@@ -5012,11 +5039,17 @@ sub init_tlmedia
   $remotetlpdb->make_virtual;
 
   my $locstr = $repos{'main'};
-  my $tlmdb = setup_one_remotetlpdb($locstr);
+  my ($tlmdb, $errormsg) = setup_one_remotetlpdb($locstr);
+  if (!defined($tlmdb)) {
+    return (0, $errormsg);
+  }
   $remotetlpdb->virtual_add_tlpdb($tlmdb, "main");
   for my $t (@tags) {
     if ($t ne 'main') {
-      my $tlmdb = setup_one_remotetlpdb($repos{$t});
+      my ($tlmdb, $errormsg) = setup_one_remotetlpdb($repos{$t});
+      if (!defined($tlmdb)) {
+        return(0, $errormsg);
+      }
       $remotetlpdb->virtual_add_tlpdb($tlmdb, $t);
       $locstr .= " $repos{$t}";
     }
@@ -5045,13 +5078,14 @@ sub init_tlmedia
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$locstr\n" if $::machinereadable;
-  info("tlmgr: package repository:\n");
+  info("tlmgr: package repositories:\n");
   info("\tmain = " . $repos{'main'} . "\n");
   for my $t (@tags) {
     if ($t ne 'main') {
       info("\t$t = " . $repos{$t} . "\n");
     }
   }
+  return 1;
 }
 
 
@@ -5067,7 +5101,7 @@ sub _init_tlmedia
   if (defined($remotetlpdb) && !$remotetlpdb->is_virtual &&
       ($remotetlpdb->root eq $location)) {
     # nothing to be done
-    return;
+    return 1;
   }
 
   # choose a mirror if we are asked.
@@ -5078,11 +5112,18 @@ sub _init_tlmedia
     $location =~ s,^$TeXLiveServerURL,$mirrorbase,;
   }
 
-  $remotetlpdb = setup_one_remotetlpdb($location);
+  my $errormsg;
+  ($remotetlpdb, $errormsg) = setup_one_remotetlpdb($location);
+  if (!defined($remotetlpdb)) {
+    return(0, $errormsg);
+  }
+
+
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$location\n" if $::machinereadable;
   info("tlmgr: package repository $location\n");
+  return 1;
 }
 
 sub setup_one_remotetlpdb
@@ -5157,7 +5198,9 @@ END_NO_INTERNET
   if (!$local_copy_tlpdb_used) {
     $remotetlpdb = TeXLive::TLPDB->new(root => $location);
   }
-  die($loadmediasrcerror . $location) unless defined($remotetlpdb);
+  if (!defined($remotetlpdb)) {
+    return(undef, $loadmediasrcerror . $location);
+  }
   # we allow a range of years to be specified by the remote tlpdb
   # for which it might work.
   # the lower limit is TLPDB->config_minrelease
@@ -5173,15 +5216,15 @@ END_NO_INTERNET
   my $texlive_release = $remotetlpdb->config_release;
   my $texlive_minrelease = $remotetlpdb->config_minrelease;
   if (!defined($texlive_release)) {
-    tldie("$prg: The installation repository does not specify a "
-          . "release year for which it was prepared, goodbye.\n");
+    return(undef, "The installation repository does not specify a "
+          . "release year for which it was prepared, goodbye.");
   }
   # still here, so we have $texlive_release defined
   my $texlive_release_year = $texlive_release;
   $texlive_release_year =~ s/^(....).*$/$1/;
   if ($texlive_release_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
-    tldie("$prg: The installation repository does not specify a "
-          . "valid release year, goodbye: $texlive_release\n");
+    return(undef, "The installation repository does not specify a "
+          . "valid release year, goodbye: $texlive_release");
   }
   # so $texlive_release_year is numeric, good
   if (defined($texlive_minrelease)) {
@@ -5189,29 +5232,25 @@ END_NO_INTERNET
     my $texlive_minrelease_year = $texlive_minrelease;
     $texlive_minrelease_year =~ s/^(....).*$/$1/;
     if ($texlive_minrelease_year !~ m/^[1-9][0-9][0-9][0-9]$/) {
-      tldie("The installation repository does not specify a "
-            . "valid minimal release year, goodbye: $texlive_minrelease\n");
+      return(undef, "The installation repository does not specify a "
+            . "valid minimal release year, goodbye: $texlive_minrelease");
     }
     # ok, all numeric and fine, check for range
     if ($TeXLive::TLConfig::ReleaseYear < $texlive_minrelease_year
         || $TeXLive::TLConfig::ReleaseYear > $texlive_release_year) {
-      tldie <<END_BADRANGE
-$prg: The TeX Live versions supported by the repository
+      return (undef, "The TeX Live versions supported by the repository
   ($texlive_minrelease_year--$texlive_release_year)
 do not include the version of the local installation
-  ($TeXLive::TLConfig::ReleaseYear).  Goodbye.
-END_BADRANGE
+  ($TeXLive::TLConfig::ReleaseYear).");
     }
   } else {
     # $texlive_minrelease not defined, so only one year is valid
     if ($texlive_release_year != $TeXLive::TLConfig::ReleaseYear) {
-      tldie <<END_BADYEAR
-$prg: The TeX Live versions of the local installation
+      return(undef, "The TeX Live versions of the local installation
 and the repository being accessed are not compatible:
       local: $TeXLive::TLConfig::ReleaseYear
  repository: $texlive_release_year
-(Perhaps you need to use a different CTAN mirror?)  Goodbye.
-END_BADYEAR
+(Perhaps you need to use a different CTAN mirror?).");
     }
   }
 
@@ -6074,7 +6113,7 @@ written to the terminal.
 =back
 
 
-=head2 repositoy
+=head2 repository
 
 =over 4
 
@@ -6769,38 +6808,41 @@ Examples:
 
 =head1 MULTIPLE REPOSITORIES
 
-Most packages are distributed via the main TeX Live repository, but
-sometimes local repositories are used to provide local packages (e.g.,
-proprietary fonts, internal styles).  There are also alternative package
-repositories for packages that cannot or should not be included in TeX
-Live, due to being under rapid development or for other reasons.
+The main TeX Live repository includes a vast array of packages.
+Nevertheless, additional local repositories can be useful to provide
+locally-installed resources, such as proprietary fonts and house styles.
+Also, alternative package repositories distribute packages that cannot
+or should not be included in TeX Live, due to being under rapid
+development or for other reasons.
 
-It's possible to tell C<tlmgr> about additional repositories you want to
-use.  Although this support for multiple repositories has been tested
-extensively, we cannot guarantee proper operation.  If in doubt or if
-problems, you can temporarily set the installation source to any
-repository and perform your operations.
+The simplest and most reliable method is simply to temporarily set the
+installation source to any repository (with the C<-repository> command
+line option or C<option repository>), and perform your operations.  When
+you are using multiple repositories over a sustained time, however, this
+is inconvenient.  Thus, it's possible to tell C<tlmgr> about additional
+repositories you want to use.  The basic command is C<tlmgr repository
+add>.  The rest of this section explains further.
 
 When using multiple repositories, one of them has to be set as the main
 repository, which distributes most of the installed packages.  If you
 switch from a single repository installation to a multiple repository
-installation (by calling C<tlmgr repository add>), the previously set
-repository will be set as the main repository.
+installation, the previously set repository will be set as the main
+repository.
 
 By default, even if multiple repositories are configured, packages are
 I<only> installed from the main repository.  Thus, simply adding a
-second repository does not enable installation of anything from there.
-You first have to specify which packages should be taken from a
-different repository by specifying some so-called ``pinning'' rules,
+second repository does not actually enable installation of anything from
+there.  You also have to specify which packages should be taken from a
+different repository by specifying so-called ``pinning'' rules,
 described next.
 
 =head2 Pinning
 
-Pinning a package is done by editing (adding) a file
+Pinning a package is done by editing (creating) this file:
 
   TEXMFLOCAL/tlpkg/pinning.txt
 
-which contains lines of the form:
+with lines of the form:
 
   repo:pkg[,pkg]
 
@@ -6808,28 +6850,28 @@ In this line, the I<repo> is either a full url or repository tag that
 was added to the repository list.  Each I<pkg> is a shell-style glob for
 package identifiers.
 
+When a package C<foo> is pinned to a repository, a package C<foo> in any
+other repository, even if it has a higher revision number, will not be
+considered an installable candidate.
+
 By default, everything is pinned to the main repository, 
-as if at the end of C<pinning.txt> there is a line
+as if the last line of C<pinning.txt> was
 
   main:*
 
-Now, if a package C<foo> is pinned to a repository, any package C<foo>
-in any other repository, even if it has a higher revision number, will
-not be considered as an installable candidate.
-
 =head2 Multiple repository example with tlcontrib
 
-First, check that we have support for multiple repositories, and only
-one specified (as is the case by default):
+First, check that we have support for multiple repositories, and have
+only one enabled (as is the case by default):
 
  $ tlmgr repository list
  List of repositories (with tags if set):
    /var/www/norbert/tlnet
 
-Add the C<tlcontrib> repository maintained by Taco Hoekwater et al.,
-with the tag C<tlcontrib>:
+Let's add the C<tlcontrib> repository (L<http://tlcontrib.metatex.org>,
+maintained by Taco Hoekwater et al.), with the tag C<tlcontrib>:
 
- $ tlmgr repository add http://tlcontrib.metatex.org/2011 tlcontrib
+ $ tlmgr repository add http://tlcontrib.metatex.org/2012 tlcontrib
 
 Check the repository list again:
 
@@ -6838,41 +6880,34 @@ Check the repository list again:
     http://tlcontrib.metatex.org/2011 (tlcontrib)
     /var/www/norbert/tlnet (main)
 
-Specify a pinning entry to get the package C<cowfont> from C<tlcontrib>:
+Specify a pinning entry to get the package C<microtype> from C<tlcontrib>:
 
  $ tlocal=`kpsewhich -var-value TEXMFLOCAL`
- $ mkdir -p $tlocal/tlpkg
- $ echo "tlcontrib:cowfont" > $tlocal/tlpkg/pinning.txt
+ $ echo "tlcontrib:microtype" > $tlocal/tlpkg/pinning.txt
 
-Check that we can find C<cowfont>:
+Check that we can find C<microtype>:
 
- $ tlmgr show cowfont
+ $ tlmgr show microtype
  tlmgr: using pinning file .../tlpkg/pinning.txt
- tlmgr: package repository /var/www/norbert/tlnet http://tlcontrib.metatex.org/2011
- package:     cowfont
+ tlmgr: package repositories:
+ ...
+ package:     microtype
  category:    Package
  ...
 
-- install cowfont and context (which is needed!)
+- install C<microtype>:
 
- $ tlmgr install context cowfont
+ $ tlmgr install microtype
  tlmgr: using pinning file .../tlpkg/pinning.txt
- tlmgr: package repository /var/www/norbert/tlnet http://tlcontrib.metatex.org/2011
- [1/11, ??:??/??:??] install: context.x86_64-linux @main [84k]
- [2/11, 00:00/00:00] install: context @main [4274k]
- [3/11, 00:01/00:02] install: cowfont @tlcontrib [655k]
- [4/11, 00:05/00:09] install: metapost.x86_64-linux @main [198k]
- [5/11, 00:05/00:09] install: metapost @main [72k]
- [6/11, 00:05/00:09] install: mptopdf.x86_64-linux @main [1k]
- [7/11, 00:06/00:11] install: mptopdf @main [37k]
- [8/11, 00:06/00:11] install: stmaryrd @main [163k]
- [9/11, 00:07/00:12] install: xetex.x86_64-linux @main [4442k]
- [10/11, 00:08/00:08] install: xetex @main [46k]
- [11/11, 00:08/00:08] install: xetexconfig @main [13k]
+ tlmgr: package repositories:
  ...
+ [1/1,  ??:??/??:??] install: microtype @tlcontrib [39k]
 
-In the last part you see that the cowfont is installed from
-the tlcontrib part (@tlcontrib).
+In the output here you can see that the C<microtype> package is
+installed from the C<tlcontrib> repository (C<@tlcontrib>).  (By the
+way, hopefully the new version of microtype that is in tlcontrib as of
+this writing will be released on CTAN soon, but meanwhile, it serves as
+an example.)
 
 
 =head1 GUI FOR TLMGR
