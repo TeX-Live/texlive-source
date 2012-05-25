@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26626 2012-05-24 08:59:43Z preining $
+# $Id: tlmgr.pl 26636 2012-05-24 18:02:00Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26626 $';
-my $datrev = '$Date: 2012-05-24 10:59:43 +0200 (Thu, 24 May 2012) $';
+my $svnrev = '$Revision: 26636 $';
+my $datrev = '$Date: 2012-05-24 20:02:00 +0200 (Thu, 24 May 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5596,8 +5596,8 @@ files.  Schemes typically contain a mix of collections and packages, but
 each package is included in exactly one collection, no more and no less.
 Installation can be customized and managed at any level.
 
-For the full documentation of TeX Live, see
-L<http://tug.org/texlive/doc>.
+See L<http://tug.org/texlive/doc> for all the TeX Live documentation
+available.
 
 =head1 EXAMPLES
 
@@ -5609,7 +5609,7 @@ with C<tlmgr>:
 =item C<tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet>
 
 Tell C<tlmgr> to use a nearby CTAN mirror for future updates; useful if
-you want continuing updates, and installed TeX Live from the DVD image.
+you installed TeX Live from the DVD image and want continuing updates.
 
 =item C<tlmgr update --list>
 
@@ -5620,24 +5620,24 @@ Report what would be updated without actually updating anything.
 Make your local TeX installation correspond to what is in the package
 repository (typically useful when updating from CTAN).
 
-=item C<tlmgr show> I<pkg>
+=item C<tlmgr info> I<pkg>
 
 Display detailed information about I<pkg>, such as the installation
 status and description.
 
 =back
 
-For all the capabilities and details of C<tlmgr>, please see the
+For all the capabilities and details of C<tlmgr>, please read the
 following voluminous information.
 
 =head1 OPTIONS
 
 The following options to C<tlmgr> are global options, not specific to
 any action.  All options, whether global or action-specific, can be
-given at any place and in arbitrary order.  The first non-option
-argument will be the main action.  In all cases, C<-->I<option> and
-C<->I<option> are equivalent, and an C<=> is optional between an option
-name and its value.
+given anywhere on the command line, and in any order.  The first
+non-option argument will be the main action.  In all cases,
+C<-->I<option> and C<->I<option> are equivalent, and an C<=> is optional
+between an option name and its value.
 
 =over 4
 
@@ -5645,9 +5645,10 @@ name and its value.
 
 Specifies the package repository from which packages should be installed
 or updated, overriding the default package repository found in the
-installation's TeX Live Package Database (TLPDB, a file named
-C<texlive.tlpdb>).  The documentation for C<install-tl> has more details
-about this (L<http://tug.org/texlive/doc/install-tl.html>).
+installation's TeX Live Package Database (a.k.a. the TLPDB, defined
+entirely in the file C<tlpkg/texlive.tlpdb>).  The documentation for
+C<install-tl> has more details about this
+(L<http://tug.org/texlive/doc/install-tl.html>).
 
 C<--repository> changes the repository location only for the current
 run; to make a permanent change, use C<option repository> (see the
@@ -5659,65 +5660,64 @@ are accepted as aliases for this option.
 
 =item B<--gui> [I<action>]
 
-You can give this option together with an action to be brought directly
-into the respective screen of the GUI.  For example, running
+C<tlmgr> has a graphical interface as well as the command-line
+interface.  You can give this option, C<--gui>, together with an action
+to be brought directly into the respective screen of the GUI.  For
+example, running
 
   tlmgr --gui update
 
-starts you directly at the update screen.
+starts you directly at the update screen.  Without any action, the
+GUI will be started at the main screen.
 
 =item B<--gui-lang> I<llcode>
 
 Normally the GUI tries to deduce your language from the environment (on
 Windows via the registry, on Unix via C<LC_MESSAGES>). If that fails you
-can select a different language by giving this option a two-letter
-(ISO 639-1) language code (with the exception for selecting simplified
-or traditional Chinese). Currently supported (but not necessarily
-completely translated) are:
-English (en, default), Czech (cs), German (de), French (fr), 
-Italian (it), Dutch (nl), Polish (pl), Russian (ru), Slovak (sk), 
-Slovenian (sl), Serbian (sr), Vietnamese (vi), simplified Chinese (zh-cn),
-and traditional Chinese (zh-tw).
-
+can select a different language by giving this option with a language
+code (based on ISO 639-1).  Currently supported (but not necessarily
+completely translated) are: English (en, default), Czech (cs), German
+(de), French (fr), Italian (it), Japanese (ja), Dutch (nl), Polish (pl),
+Brazilian Portuguese (pt_br), Russian (ru), Slovak (sk), Slovenian (sl),
+Serbian (sr), Vietnamese (vi), simplified Chinese (zh-cn), and
+traditional Chinese (zh-tw).
 
 =item B<--machine-readable>
 
-In lieu of the normal output intended for human consumption, write to
-standard output in a fixed format more suitable for machine parsing.
-See the L</"MACHINE-READABLE OUTPUT"> section below for details.
+Instead of the normal output intended for human consumption, write (to
+standard output) a fixed format more suitable for machine parsing.  See
+the L</"MACHINE-READABLE OUTPUT"> section below.
 
 =item B<--package-logfile> I<file>
 
-B<tlmgr> logs all package actions (install, remove, update, failed
+C<tlmgr> logs all package actions (install, remove, update, failed
 updates, failed restores) to a separate log file, by default
-C<TEXMFSYSVAR/web2c/tlmgr.log>. This option allows you to select a
-different file for that.  This is separate from normal logging; for
-that, see the option C<-v> below, and TeXLive::TLUtils.
+C<TEXMFSYSVAR/web2c/tlmgr.log>.  This option allows you to specific a
+different file for the log.
 
 =item B<--pause>
 
-This option makes B<tlmgr> wait for user input before exiting.  Useful on
+This option makes C<tlmgr> wait for user input before exiting.  Useful on
 Windows to avoid command windows disappearing.
 
 =item B<--persistent-downloads>
 
 =item B<--no-persistent-downloads>
 
-For net installs, activating this option makes tlmgr try to set up a
-persistent connection using the Net::LWP Perl module.  
-This opens only one connection between your computer and the server 
-per session and reuses it, instead of initiating a new download for
-each package.  
+For network-based installations, this option (on by default) makes
+C<tlmgr> try to set up a persistent connection (using the L<Net::LWP>
+Perl module).  The idea is to open and reuse only one connection per
+session between your computer and the server, instead of initiating a
+new download for each package.
 
-This option is turned on by default, and tlmgr will
-fall back to using wget if this is not possible. If you want to disable 
-usage of LWP and persistent connections, please use
-B<--no-persistent-downloads>.
+If this is not possible, C<tlmgr> will fall back to using C<wget>.  To
+disable these persistent connections, use C<--no-persistent-downloads>.
 
 =item B<--no-execute-actions>
 
 Suppress the execution of the execute actions as defined in the tlpsrc
-files. Only use at your own risk.
+files.  Documented only for completeness, as this is only useful in
+debugging.
 
 =item B<--debug-translation>
 
@@ -5730,11 +5730,11 @@ translators to see what remains to be done.
 The standard options for TeX Live programs are also accepted:
 C<--help/-h/-?>, C<--version>, C<-q> (no informational messages), C<-v>
 (debugging messages, can be repeated).  For the details about these, see
-the TeXLive::TLUtils documentation.
+the L<TeXLive::TLUtils> documentation.
 
 The C<--version> option shows version information about the TeX Live
-release and about the C<tlmgr> script itself. If paired with C<-v>,
-revision number for the used TeX Live Perl modules are shown, too.
+release and about the C<tlmgr> script itself.  If C<-v> is given as
+well, revision number for the used TeX Live Perl modules are shown, too.
 
 =head1 ACTIONS
 

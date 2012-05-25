@@ -1,11 +1,12 @@
+# $Id: TLUtils.pm 26615 2012-05-24 00:39:35Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007, 2008, 2009, 2010, 2011 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2012 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 26541 $';
+my $svnrev = '$Revision: 26615 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -2583,7 +2584,7 @@ Generate a skeleton of empty directories in the C<TEXMFSYSVAR> tree.
 =cut
 
 sub make_var_skeleton {
-  my $prefix=shift;
+  my ($prefix) = @_;
 
   mkdirhier "$prefix/tex/generic/config";
   mkdirhier "$prefix/fonts/map/dvipdfm/updmap";
@@ -2599,27 +2600,28 @@ sub make_var_skeleton {
 
 =item C<make_local_skeleton($prefix)>
 
-Generate a skeleton of empty directories in the C<TEXMFLOCAL> tree 
-if C<TEXMFLOCAL> doesn't already exist.
+Generate a skeleton of empty directories in the C<TEXMFLOCAL> tree,
+unless C<TEXMFLOCAL> already exists.
 
 =cut
 
 sub make_local_skeleton {
-  my $prefix=shift;
+  my ($prefix) = @_;
 
   return if (-d $prefix);
 
-  mkdirhier "$prefix/tex/latex/local";
-  mkdirhier "$prefix/tex/plain/local";
-  mkdirhier "$prefix/dvips/local";
   mkdirhier "$prefix/bibtex/bib/local";
   mkdirhier "$prefix/bibtex/bst/local";
-  mkdirhier "$prefix/fonts/tfm/local";
-  mkdirhier "$prefix/fonts/vf/local";
-  mkdirhier "$prefix/fonts/source/local";
-  mkdirhier "$prefix/fonts/type1/local";
-  mkdirhier "$prefix/metapost/local";
   mkdirhier "$prefix/doc/local";
+  mkdirhier "$prefix/dvips/local";
+  mkdirhier "$prefix/fonts/source/local";
+  mkdirhier "$prefix/fonts/tfm/local";
+  mkdirhier "$prefix/fonts/type1/local";
+  mkdirhier "$prefix/fonts/vf/local";
+  mkdirhier "$prefix/metapost/local";
+  mkdirhier "$prefix/tex/latex/local";
+  mkdirhier "$prefix/tex/plain/local";
+  mkdirhier "$prefix/tlpkg";
   mkdirhier "$prefix/web2c";
 }
 
