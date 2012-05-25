@@ -11004,6 +11004,9 @@ local function f_second(a,b)
     return concat(t,",")
 end
 
+-- kpsewhich --expand-braces '{a,b}{c,d}'
+-- ac:bc:ad:bd
+
 -- old  {a,b}{c,d} => ac ad bc bd
 --
 -- local function f_both(a,b)
@@ -13040,7 +13043,10 @@ function resolvers.expandpathfromvariable(str)
 end
 
 function resolvers.expandbraces(str) -- output variable and brace expansion of STRING
-    local ori = resolvers.variable(str)
+--     local ori = resolvers.variable(str)
+--     if ori == "" then
+        local ori = str
+--     end
     local pth = expandedpathfromlist(resolvers.splitpath(ori))
     return joinpath(pth)
 end
@@ -14733,16 +14739,17 @@ function resolvers.usezipfile(archive)
     if archive and not registeredfiles[archive] then
         local z = zip.openarchive(archive)
         if z then
+            local instance = resolvers.instance
             local tree = url.query(specification.query).tree or ""
             if trace_locating then
                 report_zip("registering, registering archive '%s'",archive)
             end
-            statistics.starttiming(resolvers.instance)
+            statistics.starttiming(instance)
             resolvers.prependhash('zip',archive)
             resolvers.extendtexmfvariable(archive) -- resets hashes too
             registeredfiles[archive] = z
             instance.files[archive] = resolvers.registerzipfile(z,tree)
-            statistics.stoptiming(resolvers.instance)
+            statistics.stoptiming(instance)
         elseif trace_locating then
             report_zip("registering, unknown archive '%s'",archive)
         end
@@ -16673,7 +16680,7 @@ elseif e_argument("find-path") then
 
 elseif e_argument("expand-braces") then
 
-    -- luatools: runners.execute_ctx_script("mtx-base","--expand-braces",filename)
+    -- luatools: runners.execute_ctx_script("mtx-base","--expand-braces",filename
 
     resolvers.load("nofiles")
     runners.register_arguments(filename)
