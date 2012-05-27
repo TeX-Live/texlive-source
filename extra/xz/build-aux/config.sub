@@ -1543,6 +1543,9 @@ case $basic_machine in
 	c4x-* | tic4x-*)
 		os=-coff
 		;;
+	hexagon-*)
+		os=-elf
+		;;
 	tic54x-*)
 		os=-coff
 		;;
