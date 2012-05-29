@@ -1,3 +1,7 @@
+2012-05-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c: rewrite win32_system.
+
 2012-05-22  Karl Berry  <karl@tug.org>
 
 	* mktexmf: test $name for csso12*, not $rootname.

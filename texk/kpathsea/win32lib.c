@@ -1100,6 +1100,9 @@ int __cdecl win32_system(const char *cmd)
   int   len, ret;
   int   spacep = 0;
 
+  if(cmd == NULL)
+    return 1;
+
   av[0] = xstrdup("cmd.exe");
   av[1] = xstrdup("/c");
 
