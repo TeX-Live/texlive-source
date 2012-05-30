@@ -15,19 +15,6 @@
 # limitation.
 #
 # TODO
-# - $HOME and sudo and updmap-sys horror
-#   some instances of sudo do not reset $HOME to the home of root
-#   as an effect of "sudo updmap" creates root owned files in the home 
-#   of a normal user, and "sudo updmap-sys" uses map files and updmap.cfg
-#   files from the directory of a normal user, but creating files
-#   in TEXMFSYSCONFIG. This is *all* wrong.
-#   We should check: if we are running as UID 0 (root) on Unix and the
-#   env{HOME} is NOT the same as the one of root, then give a warning
-#   and reset it to the real home dir of root.
-#   If we don't want to read /etc/passwd to find out the home dir of
-#   root, we could simply check for /root/ being contained in HOME,
-#   or check only for /root/ and if it is different reset $HOME to
-#   some non-existing directory.
 # - check all other invocations
 # - after TL2012? Maybe remove support for reading updmap-local.cfg
 #
@@ -56,6 +43,13 @@ use TeXLive::TLUtils qw(mkdirhier mktexupd win32 basename dirname
 #use Data::Dumper;
 #$Data::Dumper::Indent = 1;
 
+my $prg = basename($0);
+
+# sudo sometimes does not reset the home dir of root, check on that
+# see more comments at the definition of the function itself
+# this function checks by itself whether it is running on windows or not
+reset_root_home();
+
 chomp(my $TEXMFMAIN = `kpsewhich --var-value=TEXMFMAIN`);
 chomp(my $TEXMFVAR = `kpsewhich -var-value=TEXMFVAR`);
 chomp(my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
@@ -68,7 +62,6 @@ if (win32()) {
   $TEXMFROOT = lc($TEXMFROOT);
 }
 
-my $prg = basename($0);
 
 my %opts = ( quiet => 0, nohash => 0, nomkmap => 0 );
 my $alldata;
@@ -1863,6 +1856,45 @@ sub merge_data {
         $alldata->{'merged'}{'KanjiMap'}{'fonts'}{$f} = 
           $alldata->{'maps'}{$m}{'fonts'}{$f}
             if ($alldata->{'updmap'}{$origin}{'maps'}{$m}{'type'} eq "KanjiMap");
+      }
+    }
+  }
+}
+
+
+#
+# $HOME and sudo and updmap-sys horror
+#   some instances of sudo do not reset $HOME to the home of root
+#   as an effect of "sudo updmap" creates root owned files in the home 
+#   of a normal user, and "sudo updmap-sys" uses map files and updmap.cfg
+#   files from the directory of a normal user, but creating files
+#   in TEXMFSYSCONFIG. This is *all* wrong.
+#   we check: if we are running as UID 0 (root) on Unix and the
+#   ENV{HOME} is NOT the same as the one of root, then give a warning
+#   and reset it to the real home dir of root.
+
+sub reset_root_home {
+  if (!win32() && ($> == 0)) {  # $> is effective uid
+    my $envhome = $ENV{'HOME'};
+    # if $HOME isn't an existing directory, that's ok; TLU does this.
+    if (defined($envhome) && (-d $envhome)) {
+      # we want to avoid calling getpwuid as far as possible, so if
+      # $envhome is either / or /root we accept it straight ahead
+      if ($envhome eq "/" || $envhome eq "/root") {
+        return;
+      }
+      # $HOME is defined, check what is the home of root in reality
+      my (undef,undef,undef,undef,undef,undef,undef,$roothome) = getpwuid(0);
+      if (defined($roothome)) {
+        if ($envhome ne $roothome) {
+          warning("$prg: resetting \$HOME value (was $envhome) to root's "
+            . "actual home ($roothome).\n");
+          $ENV{'HOME'} = $roothome;
+        } else {
+          # envhome and roothome do agree, nothing to do, that is the good case
+        }
+      } else { 
+        warning("$prg: home of root not defined, strange!\n");
       }
     }
   }
