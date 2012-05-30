@@ -1,7 +1,7 @@
 #! /bin/sh
 # Common stub for a few missing GNU programs while installing.
 
-scriptversion=2012-01-06.18; # UTC
+scriptversion=2012-05-23.18; # UTC
 
 # Copyright (C) 1996-2012 Free Software Foundation, Inc.
 # Originally by Fran,cois Pinard <pinard@iro.umontreal.ca>, 1996.
@@ -160,7 +160,9 @@ WARNING: '$1' is $msg.  You should only need it if
          you modified 'acconfig.h' or '${configure_ac}'.  You might want
          to install the Autoconf and GNU m4 packages.  Grab them
          from any GNU archive site."
-    files=`sed -n 's/^[ ]*A[CM]_CONFIG_HEADER(\([^)]*\)).*/\1/p' ${configure_ac}`
+    files=`sed -n -e 's/^[ ]*AC_CONFIG_HEADER(\([^)]*\)).*/\1/p' \
+                  -e 's/^[ ]*AC_CONFIG_HEADERS(\([^)]*\)).*/\1/p' \
+             ${configure_ac}`
     test -z "$files" && files="config.h"
     touch_files=
     for f in $files; do
