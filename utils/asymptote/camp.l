@@ -27,6 +27,8 @@ using mem::string;
 
 #include "opsymbols.h"
 
+#define YY_NO_INPUT
+
 static void yyunput(int, char *);
 void (*unused)(int,char *) = yyunput;
 
@@ -102,6 +104,11 @@ void savesymbol(symbol name)
  */
 #define DEFSYMBOL(name) \
     savesymbol(name)
+
+ /* Extra symbols can be added by EXTRASYMBOL */
+#define EXTRASYMBOL(chars, codename) /* blank */
+
+EXTRASYMBOL(tuple, SYM_TUPLE);
 
 void makesymbol()
 {

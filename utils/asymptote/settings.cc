@@ -67,7 +67,8 @@ using trans::refAccess;
 using trans::varEntry;
 using vm::array;
 
-void doConfig(string filename);
+void runFile(const string& filename);
+
 
 namespace settings {
   
@@ -89,7 +90,7 @@ mode_t mask;
   
 string systemDir=ASYMPTOTE_SYSDIR;
 
-#ifndef __CYGWIN__
+#ifndef __MSDOS__
   
 bool msdos=false;
 string HOME="HOME";
@@ -189,8 +190,8 @@ void queryRegistry()
     gs=getEntry("AFPL Ghostscript/*/GS_DLL");
   defaultGhostscript=stripFile(gs)+defaultGhostscript;
   if(defaultPDFViewer != "cmd")
-  defaultPDFViewer=getEntry("Adobe/Acrobat Reader/*/InstallPath/@")+"\\"+
-    defaultPDFViewer;
+    defaultPDFViewer=getEntry("Adobe/Acrobat Reader/*/InstallPath/@")+"\\"+
+      defaultPDFViewer;
   if(defaultPSViewer != "cmd")
     defaultPSViewer=getEntry("Ghostgum/GSview/*")+"\\gsview\\"+defaultPSViewer;
   string s;
@@ -275,7 +276,7 @@ bool warn(const string& s)
 }
 
 // The dictionaries of long options and short options.
-class option;
+struct option;
 typedef mem::map<CONST string, option *> optionsMap_t;
 optionsMap_t optionsMap;
 
@@ -693,8 +694,8 @@ struct stringArraySetting : public itemSetting {
 
 struct engineSetting : public argumentSetting {
   engineSetting(string name, char code,
-               string argname, string desc,
-               string defaultValue)
+                string argname, string desc,
+                string defaultValue)
     : argumentSetting(name, code, argname, description(desc,defaultValue),
                       types::primString(), (item)defaultValue) {}
 
@@ -1208,8 +1209,8 @@ void initSettings() {
 
   addOption(new boolSetting("wait", 0,
                             "Wait for child processes to finish before exiting"));
-  // Be interactive even in a pipe
-  addOption(new boolSetting("interactive", 0, ""));
+  addOption(new IntSetting("inpipe", 0, "n","",-1));
+  addOption(new IntSetting("outpipe", 0, "n","",-1));
   addOption(new boolSetting("exitonEOF", 0, "Exit interactive mode on EOF",
                             true));
                             
@@ -1301,7 +1302,7 @@ char *getArg(int n) { return argList[n]; }
 void setInteractive() {
   if(numArgs() == 0 && !getSetting<bool>("listvariables") && 
      getSetting<string>("command").empty() &&
-     (isatty(STDIN_FILENO) || getSetting<bool>("interactive")))
+     (isatty(STDIN_FILENO) || getSetting<Int>("inpipe") >= 0))
     interact::interactive=true;
   
   historyname=getSetting<bool>("localhistory") ? 
@@ -1367,7 +1368,7 @@ void initDir() {
   if(initdir.empty())
     initdir=Getenv(HOME.c_str(),msdos)+dirsep+"."+suffix;
   
-#ifdef __CYGWIN__  
+#ifdef __MSDOS__  
   mask=umask(0);
   if(mask == 0) mask=0027;
   umask(mask);
@@ -1557,11 +1558,11 @@ Int getScroll()
     if(terminal) {
       int error;
       error=setupterm(terminal,1,&error);
-#ifndef __CYGWIN__      
+#ifndef __MSDOS__      
       if(error == 0) scroll=lines > 2 ? lines-1 : 1;
       else
 #endif
-	scroll=0;
+        scroll=0;
     } else scroll=0;
 
   }
@@ -1569,12 +1570,25 @@ Int getScroll()
   return scroll;
 }
 
+void doConfig(string file) 
+{
+  bool autoplain=getSetting<bool>("autoplain");
+  bool listvariables=getSetting<bool>("listvariables");
+  if(autoplain) Setting("autoplain")=false; // Turn off for speed.
+  if(listvariables) Setting("listvariables")=false;
+
+  runFile(file);
+
+  if(autoplain) Setting("autoplain")=true;
+  if(listvariables) Setting("listvariables")=true;
+}
+
 void setOptions(int argc, char *argv[])
 {
   argv0=argv[0];
 
   cout.precision(DBL_DIG);
-  
+
   // Build settings module.
   initSettings();
   
@@ -1603,6 +1617,9 @@ void setOptions(int argc, char *argv[])
   
   // Read command-line options again to override configuration file defaults.
   getOptions(argc,argv);
+  
+  if(getSetting<Int>("outpipe") == 2) // Redirect cerr to cout
+    std::cerr.rdbuf(std::cout.rdbuf());
   
   Setting("sysdir")=sysdir;
   

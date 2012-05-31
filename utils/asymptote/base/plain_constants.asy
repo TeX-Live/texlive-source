@@ -57,8 +57,8 @@ bool finite(triple v)
   return abs(v.x) < infinity && abs(v.y) < infinity && abs(v.z) < infinity;
 }
 
-restricted file stdin=input("");
-restricted file stdout=output("");
+restricted file stdin=input();
+restricted file stdout=output();
 
 void none(file file) {}
 void endl(file file) {write(file,'\n',flush);}
@@ -101,8 +101,8 @@ struct bool3 {
 
 void write(file file, string s="", bool3 b, suffix suffix=none)
 {
-  if(b.set) write(b.value);
-  else write("default");
+  if(b.set) write(b.value,suffix);
+  else write("default",suffix);
 }
 
 void write(string s="", bool3 b, suffix suffix=endl) 

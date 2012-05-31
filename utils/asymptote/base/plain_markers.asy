@@ -117,22 +117,43 @@ marker marker(path[] g, markroutine markroutine=marknodes, pen p=currentpen,
   return marker(f,markroutine,above);
 }
 
+// On picture pic, add path g with opacity thinning about every node.
+marker markthin(path g, pen p=currentpen,
+                real thin(real fraction)=new real(real x) {return x^2;},
+                filltype filltype=NoFill) {
+  marker M=new marker;
+  M.above=true;
+  filltype.fill(M.f,g,p);
+  real factor=1/abs(size(M.f));
+  M.markroutine=new void(picture pic=currentpicture, frame, path G) {
+    transform t=pic.calculateTransform();
+    int n=size(G);
+    for(int i=0; i < n; ++i) {
+      pair z=point(G,i);
+      frame f;
+      real fraction=1;
+      if(i > 0) fraction=min(fraction,abs(t*(z-point(G,i-1)))*factor);
+      if(i < n-1) fraction=min(fraction,abs(t*(point(G,i+1)-z))*factor);
+      filltype.fill(f,g,p+opacity(thin(fraction)));
+      add(pic,f,point(G,i));
+    }
+  };
+  return M;
+}
+
 marker nomarker;
 
 real circlescale=0.85;
 
-marker[] Mark={
-  marker(scale(circlescale)*unitcircle),
-  marker(polygon(3)),marker(polygon(4)),
-  marker(polygon(5)),marker(invert*polygon(3)),
-  marker(cross(4)),marker(cross(6))
-};
+path[] MarkPath={scale(circlescale)*unitcircle,
+                 polygon(3),polygon(4),polygon(5),invert*polygon(3),
+                 cross(4),cross(6)};
 
-marker[] MarkFill={
-  marker(scale(circlescale)*unitcircle,Fill),marker(polygon(3),Fill),
-  marker(polygon(4),Fill),marker(polygon(5),Fill),
-  marker(invert*polygon(3),Fill)
-};
+marker[] Mark=sequence(new marker(int i) {return marker(MarkPath[i]);},
+                       MarkPath.length);
+
+marker[] MarkFill=sequence(new marker(int i) {return marker(MarkPath[i],Fill);},
+                           MarkPath.length-2);
 
 marker Mark(int n) 
 {

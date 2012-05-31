@@ -1,12 +1,3 @@
-// A rotation in the direction dir limited to [-90,90]
-// This is useful for rotating text along a line in the direction dir.
-transform rotate(explicit pair dir)
-{
-  real angle=degrees(dir);
-  if(angle > 90 && angle < 270) angle -= 180;
-  return rotate(angle);
-} 
-
 real angle(transform t)
 {
   pair z=(2t.xx*t.yy,t.yx*t.yy-t.xx*t.xy);
@@ -475,27 +466,27 @@ void label(frame f, Label L, align align=NoAlign,
 }
   
 void label(picture pic=currentpicture, Label L, pair position,
-           align align=NoAlign, pen p=nullpen, filltype filltype=NoFill)
+           align align=NoAlign, pen p=currentpen, filltype filltype=NoFill)
 {
   Label L=Label(L,position,align,p,filltype);
   add(pic,L);
 }
   
 void label(picture pic=currentpicture, Label L, align align=NoAlign,
-           pen p=nullpen, filltype filltype=NoFill)
+           pen p=currentpen, filltype filltype=NoFill)
 {
   label(pic,L,L.position,align,p,filltype);
 }
   
 void label(picture pic=currentpicture, Label L, explicit path g,
-           align align=NoAlign, pen p=nullpen, filltype filltype=NoFill)
+           align align=NoAlign, pen p=currentpen, filltype filltype=NoFill)
 {
   Label L=Label(L,align,p,filltype);
   L.out(pic,g);
 }
 
 void label(picture pic=currentpicture, Label L, explicit guide g,
-           align align=NoAlign, pen p=nullpen, filltype filltype=NoFill)
+           align align=NoAlign, pen p=currentpen, filltype filltype=NoFill)
 {
   label(pic,L,(path) g,align,p,filltype);
 }

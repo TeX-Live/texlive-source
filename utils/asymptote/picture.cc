@@ -248,7 +248,7 @@ void texinit()
         name=stripExt(name).substr(0,pos);
         unlink((name+".aux").c_str());
         cmd.push_back("-jobname="+name.substr(0,pos));
-#ifdef __CYGWIN__
+#ifdef __MSDOS__
         cmd.push_back("NUL"); // For MikTeX
 #endif
       }
@@ -966,7 +966,7 @@ Communicate com;
 void glrenderWrapper()
 {
 #ifdef HAVE_GL  
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
   wait(initSignal,initLock);
   endwait(initSignal,initLock);
 #endif  
@@ -1012,13 +1012,15 @@ bool picture::shipout3(const string& prefix, const string& format,
 #ifdef HAVE_GL  
   bool View=settings::view() && view;
   static int oldpid=0;
+#ifdef HAVE_PTHREAD
   bool animating=getSetting<bool>("animating");
   bool Wait=!interact::interactive || !View || animating;
 #endif  
+#endif  
 
-#ifdef HAVE_LIBGLUT
+#if defined(HAVE_LIBGLUT) && defined(HAVE_GL)
   if(glthread && !offscreen) {
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
     if(gl::initialize) {
       gl::initialize=false;
       com.prefix=prefix;
@@ -1074,7 +1076,7 @@ bool picture::shipout3(const string& prefix, const string& format,
   glrender(prefix,this,outputformat,width,height,angle,zoom,m,M,shift,t,
            background,nlights,lights,diffuse,ambient,specular,viewportlighting,
            View,oldpid);
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
   if(glthread && !offscreen && Wait) {
     pthread_cond_wait(&readySignal,&readyLock);
     pthread_mutex_unlock(&readyLock);

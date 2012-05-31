@@ -14,7 +14,7 @@
 #ifdef HAVE_GL
 
 #ifdef HAVE_LIBGLUT
-#ifdef __CYGWIN__
+#ifdef __MSDOS__
 #ifndef FGAPI
 #define FGAPI GLUTAPI
 #endif
@@ -151,7 +151,7 @@ OSMesaContext ctx;
 unsigned char *osmesa_buffer;
 #endif
 
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
 pthread_t mainthread;
 
 pthread_cond_t initSignal=PTHREAD_COND_INITIALIZER;
@@ -287,7 +287,7 @@ void setProjection()
 
 void drawscene(double Width, double Height)
 {
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
   static bool first=true;
   if(glthread && first && !getSetting<bool>("offscreen")) {
     wait(initSignal,initLock);
@@ -385,7 +385,7 @@ void Export()
     glutPostRedisplay();
 #endif
 
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
   if(glthread && readyAfterExport && !offscreen) {
     readyAfterExport=false;        
     endwait(readySignal,readyLock);
@@ -433,7 +433,7 @@ void quit()
       Setting("interrupt")=true;
     home();
     Animate=getSetting<bool>("autoplay");
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
     if(!interact::interactive || animating)
       endwait(readySignal,readyLock);
 #endif    
@@ -559,7 +559,7 @@ void fullscreen(bool reposition=true)
   Width=screenWidth;
   Height=screenHeight;
   reshape0(Width,Height);
-#ifdef __CYGWIN__
+#ifdef __MSDOS__
   glutFullScreen();
 #else
   if(reposition)
@@ -666,7 +666,9 @@ void screen()
 void nextframe(int) 
 {
   glFinish();
+#ifdef HAVE_PTHREAD
   endwait(readySignal,readyLock);
+#endif    
   double framedelay=getSetting<double>("framedelay");
   if(framedelay > 0)
     usleep((unsigned int) (1000.0*framedelay+0.5));
@@ -681,7 +683,7 @@ void display()
   }
   drawscene(Width,Height);
   glutSwapBuffers();
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
   if(glthread && Animate) {
     queueExport=false;
     double delay=1.0/getSetting<double>("framerate");
@@ -927,7 +929,7 @@ string action(int button, int mod)
       Mod=nMods;
   }
     
-  if(Button >= 0 && Button < nButtons) {
+  if(Button < nButtons) {
     array *left=getSetting<array *>("leftbutton");
     array *middle=getSetting<array *>("middlebutton");
     array *right=getSetting<array *>("rightbutton");
@@ -936,7 +938,7 @@ string action(int button, int mod)
     array *Buttons[]={left,middle,right,wheelup,wheeldown};
     array *a=Buttons[button];
     size_t size=checkArray(a);
-    if(Mod >= 0 && Mod < size)
+    if(Mod < size)
       return read<string>(a,Mod);
   }
   return "";
@@ -1356,10 +1358,12 @@ void glrender(const string& prefix, const picture *pic, const string& format,
 {
   bool offscreen=getSetting<bool>("offscreen");
 
-#ifndef __CYGWIN__    
+#ifndef __MSDOS__    
   Iconify=getSetting<bool>("iconify");
 #endif
+#ifdef HAVE_PTHREAD
   static bool initializedView=false;
+#endif  
 
   width=max(width,1.0);
   height=max(height,1.0);
@@ -1485,7 +1489,7 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   size_t nbuttons=sizeof(buttons)/sizeof(int);
 #endif  
   
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
   if(glthread && initializedView && !offscreen) {
     if(!View)
       readyAfterExport=queueExport=true;
@@ -1621,7 +1625,9 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   
   if(View && !offscreen) {
 #ifdef HAVE_LIBGLUT
+#ifdef HAVE_PTHREAD
     initializedView=true;
+#endif    
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
@@ -1654,7 +1660,9 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     if(glthread && !offscreen) {
       if(havewindow) {
         readyAfterExport=true;
+#ifdef HAVE_PTHREAD
         pthread_kill(mainthread,SIGUSR1);
+#endif    
       } else {
         initialized=true;
         readyAfterExport=true;

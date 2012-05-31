@@ -222,7 +222,7 @@ void gen_runhistory2(stack *Stack)
   string name=vm::pop<string>(Stack,emptystring);
   string prompt=vm::pop<string>(Stack,emptystring);
 #line 153 "runhistory.in"
-  if(!(isatty(STDIN_FILENO) || getSetting<bool>("interactive")))
+  if(!(isatty(STDIN_FILENO) || getSetting<Int>("inpipe") >= 0))
     {Stack->push<string>(emptystring); return;}
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   init_readline(tabcompletion);

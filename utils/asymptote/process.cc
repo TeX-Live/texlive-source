@@ -59,6 +59,26 @@ using absyntax::block;
 
 mem::stack<processDataStruct *> processDataStack;
 
+// Exception-safe way to push and pop the process data.
+class withProcessData {
+  // Do not let this object be dynamically allocated.
+  void *operator new(size_t);
+
+  processDataStruct *pd_ptr;
+public:
+
+  withProcessData(processDataStruct *pd_ptr) : pd_ptr(pd_ptr)
+  {
+    processDataStack.push(pd_ptr);
+  }
+
+  ~withProcessData()
+  {
+    assert(processDataStack.top() == pd_ptr);
+    processDataStack.pop();
+  }
+};
+
 processDataStruct &processData() {
   assert(!processDataStack.empty());
   return *processDataStack.top();
@@ -70,16 +90,16 @@ processDataStruct &processData() {
 // ensures that the data is popped even if an exception is thrown.
 class penv {
   genv *_ge;
-  processDataStruct pd;
+  processDataStruct _pd;
 
   // Do not let this object be dynamically allocated.
   void *operator new(size_t);
 
 public:
-  penv() : _ge(0), pd() {
+  penv() : _ge(0), _pd() {
     // Push the processData first, as it needs to be on the stack before genv
     // is initialized.
-    processDataStack.push(&pd);
+    processDataStack.push(&_pd);
     _ge = new genv;
   }
 
@@ -89,6 +109,8 @@ public:
   }
 
   genv &ge() { return *_ge; }
+
+  processDataStruct *pd() { return &_pd; }
 };
 
 
@@ -216,6 +238,7 @@ public:
     } catch(std::bad_alloc&) {
       outOfMemory();
     } catch(quit) {
+      // Exception to quit running the current code. Nothing more to do.
     } catch(handled_error) {
       em.statusError();
     }
@@ -289,7 +312,7 @@ public:
     }
   }
 
-  void doRun(transMode tm=TRANS_NORMAL) {
+  void doExec(transMode tm=TRANS_NORMAL) {
     // Don't prepare an environment to run the code if there isn't any code.
     if (getTree())
       icore::doRun(false,tm);
@@ -319,6 +342,15 @@ public:
     return parser::parseString(str, getName());
   }
 };
+
+void printGreeting(bool interactive) {
+  if(!getSetting<bool>("quiet")) {
+    cout << "Welcome to " << PROGRAM << " version " << VERSION << SVN_REVISION;
+    if(interactive)
+      cout << " (to view the manual, type help)";
+    cout << endl;
+  }
+}
 
 class ifile : public itree {
   string filename;
@@ -351,6 +383,7 @@ public:
   }
 
   void process(bool purge=false) {
+    if(verbose > 1) printGreeting(false);
     try {
       init();
     } catch(handled_error) {
@@ -367,13 +400,6 @@ public:
     }
   }
 };
-
-void printGreeting() {
-  if(!getSetting<bool>("quiet"))
-    cout << "Welcome to " << PROGRAM << " version " << VERSION << SVN_REVISION
-         << " (to view the manual, type help)" << endl;
-}
-
 
 // Add a semi-colon terminator, if one is not there.
 string terminateLine(const string line) {
@@ -561,9 +587,6 @@ class iprompt : public icore {
   // Code ran at start-up.
   string startline;
 
-  // Used for handling quit abbreviation (q).
-  protoenv *einteractive;
-  
   void postRun(coenv &, istack &) {
   }
   
@@ -618,11 +641,11 @@ class iprompt : public icore {
   // and return true if they can handle the command.  If false is returned, the
   // line is treated as a normal line of code.
   // commands is a map of command names to methods which implement the commands.
-  typedef bool (iprompt::*command)(commandLine);
+  typedef bool (iprompt::*command)(coenv &, istack &, commandLine);
   typedef mem::map<CONST string, command> commandMap;
   commandMap commands;
 
-  bool exit(commandLine cl) {
+  bool exit(coenv &, istack &, commandLine cl) {
     if (cl.simple()) {
       // Don't store exit commands in the history file.
       interact::deleteLastLine();
@@ -632,12 +655,12 @@ class iprompt : public icore {
     else return false;
   }
 
-  bool q(commandLine cl) {
-    if(einteractive->ve.getType(symbol::trans("q"))) return false;
-    return exit(cl);
+  bool q(coenv &e, istack &s, commandLine cl) {
+    if(e.e.ve.getType(symbol::trans("q"))) return false;
+    return exit(e,s,cl);
   }
 
-  bool reset(commandLine cl) {
+  bool reset(coenv &, istack &, commandLine cl) {
     if (cl.simple()) {
       running=false;
       restart=true;
@@ -648,7 +671,7 @@ class iprompt : public icore {
     else return false;
   }
 
-  bool help(commandLine cl) {
+  bool help(coenv &, istack &, commandLine cl) {
     if (cl.simple()) {
       popupHelp();
       return true;
@@ -656,16 +679,15 @@ class iprompt : public icore {
     else return false;
   }
 
-  bool erase(commandLine cl) {
-    running=false;
-    restart=true;
-    if (cl.simple())
-      startline="erase()";
-    else startline=cl.line;
-    return true;
+  bool erase(coenv &e, istack &s, commandLine cl) {
+    if (cl.simple()) {
+      runLine(e,s,"erase();");
+      return true;
+    }
+    else return false;
   }
 
-  bool input(commandLine cl) {
+  bool input(coenv &, istack &, commandLine cl) {
     running=false;
     restart=true;
     startline="include "+cl.rest;
@@ -689,14 +711,14 @@ class iprompt : public icore {
 #undef ADDCOMMAND
   }
 
-  bool handleCommand(string line) {
+  bool handleCommand(coenv &e, istack &s, string line) {
     commandLine cl(line);
     if (cl.word != "") {
       commandMap::iterator p=commands.find(cl.word);
       if (p != commands.end()) {
         // Execute the command.
         command &com=p->second;
-        return (this->*com)(cl);
+        return (this->*com)(e,s,cl);
       }
       else
         return false;
@@ -808,7 +830,6 @@ public:
   void run(coenv &e, istack &s, transMode=TRANS_NORMAL) {
     running=true;
     interact::setCompleter(new trans::envCompleter(e.e));
-    einteractive=&(e.e);
 
     runStartCode(e, s);
 
@@ -817,15 +838,15 @@ public:
       string line=getline(false);
 
       // Check if it is a special command.
-      if (handleCommand(line))
+      if (handleCommand(e,s,line))
         continue;
       else
         runLine(e, s, line);
     }
   }
 
-  void process() {
-    printGreeting();
+  void process(bool purge=false) {
+    printGreeting(true);
     interact::init_interactive();
     try {
       setPath("",true);
@@ -860,13 +881,13 @@ void processPrompt() {
 }
 
 void runCode(absyntax::block *code) {
-  icode(code).doRun();
+  icode(code).doExec();
 }
 void runString(const string& s, bool interactiveWrite) {
-  istring(s).doRun(interactiveWrite ? TRANS_INTERACTIVE : TRANS_NORMAL);
+  istring(s).doExec(interactiveWrite ? TRANS_INTERACTIVE : TRANS_NORMAL);
 }
 void runFile(const string& filename) {
-  ifile(filename).doRun();
+  ifile(filename).doExec();
 }
 void runPrompt() {
   iprompt().doRun();
@@ -894,3 +915,71 @@ void doUnrestrictedList() {
   e.e.list(0);
 }
 
+// Environment class used by external programs linking to the shared library.
+class fullenv : public gc {
+  penv pe;
+  env base_env;
+  coder base_coder;
+  coenv e;
+
+  vm::interactiveStack s;
+
+public:
+  fullenv() :
+    pe(), base_env(pe.ge()), base_coder(nullPos, "fullenv"),
+    e(base_coder, base_env), s()
+  {
+    s.setInitMap(pe.ge().getInitMap());
+    s.setEnvironment(&e);
+
+    // TODO: Add way to not run autoplain.
+    runAutoplain(e, s);
+  }
+
+  coenv &getCoenv()
+  {
+    return e;
+  }
+
+  void runRunnable(runnable *r)
+  {
+    assert(!em.errors()); // TODO: Decide how to handle prior errors.
+
+    try {
+      { withProcessData token(pe.pd()); 
+        ::runRunnable(r, e, s, TRANS_INTERACTIVE);
+      }
+    } catch(std::bad_alloc&) {
+      // TODO: give calling application useful message.
+      cerr << "out of memory" << endl;
+    } catch (quit) {
+      // I'm not sure whether this counts as successfully running the code or
+      // not.
+      cerr << "quit exception" << endl;
+    } catch (handled_error) {
+      // Normally, this is the result of an error that changes the return code
+      // of the free-standing asymptote program.
+      // An error should probably be reported to the application calling the
+      // asymptote library.
+      cerr << "handled error" << endl;
+    }
+
+    em.clear();
+  }
+};
+
+fullenv &getFullEnv()
+{
+  static fullenv fe;
+  return fe;
+}
+
+coenv &coenvInOngoingProcess()
+{
+  return getFullEnv().getCoenv();
+}
+
+void runInOngoingProcess(runnable *r)
+{
+  getFullEnv().runRunnable(r);
+}

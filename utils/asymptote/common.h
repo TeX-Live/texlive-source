@@ -7,6 +7,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#undef NDEBUG
+
 #include <iostream>
 #include <climits>
 
@@ -21,12 +23,12 @@
 #include "config.h"
 #endif
 
-#if defined(HAVE_LIBGLU) && \
+#if !defined(FOR_SHARED) && defined(HAVE_LIBGLU) && \
   ((defined(HAVE_LIBGL) && defined(HAVE_LIBGLUT)) || defined(HAVE_LIBOSMESA))
 #define HAVE_GL
 #endif
 
-#ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_PTHREAD
 #include <pthread.h>
 #endif
 

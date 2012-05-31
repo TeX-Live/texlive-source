@@ -3,11 +3,12 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.13],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.16],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
+m4_include([ax_pthread.m4])
 
-test "$CFLAGS" || CFLAGS="-g -O3"
+test "$CFLAGS" || CFLAGS="-g -O3 -ansi"
 
 AC_C_BIGENDIAN
 
@@ -104,17 +105,20 @@ AC_PROG_YACC
 
 if test "$GXX" = yes ; then
    ac_gcc_version=`echo __GNUC__ | $CC -E - | grep -v ^\#`
+   ac_clang=`echo __clang__ | $CC -E - | grep -v ^\#`
    if test "$ac_gcc_version" -lt 4; then
        CFLAGS=$CFLAGS" -finline-limit=400"
    else
-       CFLAGS=$CFLAGS" --no-var-tracking"
+     if test "$ac_clang" != 1; then
+         CFLAGS=$CFLAGS" -fno-var-tracking"
+     fi
    fi
 fi
 
 AC_CHECK_HEADER(tr1/unordered_map,,
 		[AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])
 
-GCVERSION=gc-7.1
+GCVERSION=gc-7.2b
 
 AC_CHECK_FILE($GCVERSION.tar.gz,
 ac_cv_use_gc=$GCVERSION,
@@ -197,9 +201,9 @@ AC_ARG_ENABLE(gc-full-debug,
  fi
 ])
 
-if test "$OSTYPE" = "cygwin"; then
+if test "$OSTYPE" = "msdos"; then
 INCL=$INCL" -I/usr/include/tirpc"
-CPPFLAGS=$CPPFLAGS" $INCL"
+CPPFLAGS=$CPPFLAGS" -D__MSDOS__ $INCL"
 fi
 
 AC_CHECK_FUNC(getopt_long_only, AC_DEFINE(HAVE_GNU_GETOPT_H, 1,
@@ -222,7 +226,7 @@ AC_CHECK_LIB([m], [sqrt],,
 AC_MSG_ERROR([*** Please install libm on your system ***]))
 AC_CHECK_LIB([z], [deflate],,
 AC_MSG_ERROR([*** Please install libz on your system ***]))
-AC_CHECK_LIB([pthread], [pthread_create])
+AX_PTHREAD
 AC_CHECK_LIB([sigsegv], [stackoverflow_install_handler])
 AC_CHECK_LIB([rt], [sched_yield])
 
@@ -287,7 +291,7 @@ AC_ARG_ENABLE(offscreen,
 
 if test "x$enable_gl" != "xno"; then
 case "$OSTYPE" in
-     cygwin)
+     msdos)
               if test "x$enable_offscreen" != "xyes"; then
                 AC_CHECK_HEADER(GL/gl.h,
 				  [AC_DEFINE(HAVE_LIBGL, 1,

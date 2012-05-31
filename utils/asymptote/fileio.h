@@ -39,12 +39,27 @@ extern string tab;
 extern string newline;
   
 enum Mode {NOMODE,INPUT,OUTPUT,UPDATE,BINPUT,BOUTPUT,BUPDATE,XINPUT,XOUTPUT,
-           XUPDATE};
+           XUPDATE,OPIPE};
 
-static const string FileModes[]={"none",
-                                 "input","output","ouptut(update=false)",
-                                 "binput","boutput","boutput(update=false)",
-                                 "xinput","xoutput","xoutput(update=false)"};
+static const string FileModes[]=
+{"none","input","output","output(update)",
+ "input(binary)","output(binary)","output(binary,update)",
+ "input(xdr)","output(xdr)","output(xdr,update)","output(pipe)"};
+
+extern FILE *pipeout;
+
+inline void openpipeout() 
+{
+  int fd=settings::getSetting<Int>("outpipe");
+  if(!pipeout) {
+    if(fd >= 0) pipeout=fdopen(intcast(fd),"w");
+  }
+  if(!pipeout) {
+    ostringstream buf;
+    buf << "Cannot open outpipe " << fd;
+    reportError(buf);
+  }
+}
 
 class file : public gc {
 protected:  
@@ -113,7 +128,7 @@ public:
   void Check() {
     if(error()) {
       ostringstream buf;
-      buf << "Cannot open file \"" << name << "\".";
+      buf << "Cannot open file \"" << name << "\"";
       reportError(buf);
     }
   }
@@ -124,8 +139,8 @@ public:
     if(closed) {
       ostringstream buf;
       buf << "I/O operation attempted on ";
-      if(name != "") buf << "closed file \'" << name << "\'.";
-      else buf << "null file.";
+      if(name != "") buf << "closed file \'" << name << "\'";
+      else buf << "null file";
       reportError(buf);
     }
     return true;
@@ -149,7 +164,7 @@ public:
   void unsupported(const char *rw, const char *type) {
     ostringstream buf;
     buf << rw << " of type " << type << " not supported in " << FileMode()
-        << " mode.";
+        << " mode";
     reportError(buf);
   }
   
@@ -230,6 +245,86 @@ public:
   
   void SignedInt(bool b) {signedint=b;}
   bool SignedInt() {return signedint;}
+};
+
+class opipe : public file {
+public:
+  opipe(const string& name) : file(name,false,OPIPE) {}
+
+  void open() {
+    openpipeout();
+  }
+  
+  bool text() {return true;}
+  bool eof() {return pipeout ? feof(pipeout) : true;}
+  bool error() {return pipeout ? ferror(pipeout) : true;}
+  void clear() {if(pipeout) clearerr(pipeout);}
+  void flush() {if(pipeout) fflush(pipeout);}
+  
+  void seek(Int pos, bool begin=true) {
+    if(!standard && pipeout) {
+      clear();
+      fseek(pipeout,pos,begin ? SEEK_SET : SEEK_END);
+    }
+  }
+  
+  size_t tell() {
+    return pipeout ? ftell(pipeout) : 0;
+  }
+  
+  void write(const string& val) {
+    fprintf(pipeout,"%s",val.c_str());
+  }
+  
+  void write(bool val) {
+    ostringstream s;
+    s << val;
+    write(s.str());
+  }
+  
+  void write(Int val) {
+    ostringstream s;
+    s << val;
+    write(s.str());
+  }
+  void write(double val) {
+    ostringstream s;
+    s << val;
+    write(s.str());
+  }
+  void write(const pair& val) {
+    ostringstream s;
+    s << val;
+    write(s.str());
+  }
+  void write(const triple& val) {
+    ostringstream s;
+    s << val;
+    write(s.str());
+  }
+
+  void write(const pen &val) {
+    ostringstream s;
+    s << val;
+    write(s.str());
+  }
+  
+  void write(guide *val) {
+    ostringstream s;
+    s << *val;
+    write(s.str());
+  }
+  
+  void write(const transform& val) {
+    ostringstream s;
+    s << val;
+    write(s.str());
+  }
+  
+  void writeline() {
+    fprintf(pipeout,"\n");
+    if(errorstream::interrupt) throw interrupted();
+  }
 };
 
 class ifile : public file {
@@ -443,7 +538,7 @@ public:
     }
   }
   void Read(char& val) {iread(val);}
-  void Read(string& val) {iread(val);}
+  void Read(string& val) {char c; iread(c); val=c;}
   
   void Read(double& val) {
     if(singlereal) {float fval; iread(fval); val=fval;}

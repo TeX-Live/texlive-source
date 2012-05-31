@@ -255,6 +255,12 @@ Links to many external resources, including an excellent user-written
 @quotation
 @url{http://asymptote.sourceforge.net/links.html}.
 @end quotation
+@cindex reference
+@cindex quick reference
+A quick reference card for @code{Asymptote} is available at
+@quotation
+@url{http://asymptote.sourceforge.net/asyRefCard.pdf}.
+@end quotation
 
 @node Installation
 @chapter Installation
@@ -549,7 +555,8 @@ The current directory;
 @item
 @cindex @code{dir}
 A list of one or more directories specified by the configuration
-variable @code{dir} (separated by @code{:} under UNIX and
+variable @code{dir} or environment variable @code{ASYMPTOTE_DIR}
+(separated by @code{:} under UNIX and
 @code{;} under @code{MSDOS});
 @item
 @cindex @code{.asy}
@@ -577,7 +584,7 @@ cd asymptote-x.xx
 @end verbatim
 By default the system version of the Boehm garbage collector will be
 used; if it is old we recommend first putting
-@url{http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc-7.1.tar.gz}
+@url{http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc-7.2b.tar.gz}
 in the @code{Asymptote} source directory.
 
 @cindex @code{freeglut}
@@ -587,7 +594,7 @@ in the @code{Asymptote} source directory.
 @anchor{multisampling}
 @noindent
 If your graphics card supports multisampling, we recommend using version
-@code{2.6.0} (or later) of @code{freeglut} to support antialiasing in
+@code{2.6.0} of @code{freeglut} to support antialiasing in
 @code{Asymptote}'s adaptive @code{OpenGL} 3D renderer
 (@code{MacOS X} users can skip this step since @code{Asymptote} is configured
 to use the native glut library on that platform). Download
@@ -1393,7 +1400,7 @@ picture clipping, see the first example in @ref{LaTeX usage}.
 @section label
 @verbatim
 void label(picture pic=currentpicture, Label L, pair position,
-           align align=NoAlign, pen p=nullpen, filltype filltype=NoFill)
+           align align=NoAlign, pen p=currentpen, filltype filltype=NoFill)
 @end verbatim
 
 Draw Label @code{L} on picture @code{pic} using pen @code{p}. If
@@ -1405,8 +1412,6 @@ the @code{PostScript} offset @code{align*labelmargin(p)}.
 The constant @code{Align} can be used to align the
 bottom-left corner of the label at @code{position}.
 @cindex @code{nullpen}
-If @code{p} is @code{nullpen}, the pen specified within the
-Label, which defaults to @code{currentpen}, will be used.
 @cindex @code{Label}
 @anchor{Label}
 The Label @code{L} can either be a string or the structure obtained by calling
@@ -1427,6 +1432,7 @@ For example, @code{rotate(45)*xscale(2)*L} first scales @code{L} in the
 @math{x} direction and then rotates it counterclockwise by 45
 degrees. The final position of a Label can also be shifted by a
 @code{PostScript} coordinate translation: @code{shift(10,0)*L}.
+An explicit pen specified within the Label overrides other pen arguments.
 The @code{embed} argument determines how the Label should transform with the
 embedding picture:
 @table @code
@@ -1455,7 +1461,7 @@ shift, rotate, slant, reflect, and scale with embedding picture.
 To add a label to a path, use
 @verbatim
 void label(picture pic=currentpicture, Label L, path g, align align=NoAlign,
-           pen p=nullpen, filltype filltype=NoFill);
+           pen p=currentpen, filltype filltype=NoFill);
 @end verbatim
 @cindex @code{Relative}
 By default the label will be positioned at the midpoint of the path.
@@ -1794,12 +1800,18 @@ maximum value is @code{intMax}.
 @cindex @code{realMax}
 @cindex @code{realEpsilon}
 @cindex @code{realDigits}
+@cindex @code{mask}
+@cindex @code{inf}
+@cindex @code{isnan}
 a real number; this should be set to the highest-precision native
 floating-point type on the architecture. The implicit initializer for
 reals is @code{0.0}. Real numbers have precision
 @code{realEpsilon}, with @code{realDigits} significant digits.
 The smallest positive real number is @code{realMin} and the largest
-positive real number is @code{realMax}.
+positive real number is @code{realMax}. 
+The variable @code{inf} and function @code{bool isnan(real x)}
+are useful when floating-point exceptions are masked with
+the @code{-mask} command-line option (the default in interactive mode).
 
 @item pair
 @cindex @code{pair}
@@ -2070,24 +2082,30 @@ delimited by @code{delimiter} (an empty delimiter signifies a space,
 but with duplicate delimiters discarded);
 
 @anchor{format}
-@item string format(string s, int n)
+@item string format(string s, int n, string locale="")
 @cindex @code{format}
 returns a string containing @code{n} formatted according to the C-style
-format string @code{s} using the current locale;
+format string @code{s} using locale @code{locale} (or the current locale if an
+empty string is specified);
 
-@item string format(string s=defaultformat, real x, string locale="")
+@item string format(string s=defaultformat, string s=defaultseparator, real x, string locale="")
 returns a string containing @code{x} formatted according to the C-style format
 string @code{s} using locale @code{locale} (or the current locale if an
 empty string is specified), following the behaviour of the C function
 @code{fprintf}), except that only one data field is allowed, trailing
 zeros are removed by default (unless @code{#} is specified), and
 (if the format string specifies math mode) @TeX{} is used to typeset
-scientific notation;
+scientific notation using the @code{defaultseparator="\!\times\!";};
 
 @cindex @code{hex}
 @cindex @code{hexidecimal}
 @item int hex(string s);
-casts a hexidecimal string @code{s} to an integer.
+casts a hexidecimal string @code{s} to an integer;
+
+@cindex @code{ascii}
+@cindex @code{ascii}
+@item int ascii(string s);
+returns the ASCII code for the first character of string @code{s};
 
 @cindex @code{string}
 @item string string(real x, int digits=realDigits)
@@ -2096,7 +2114,7 @@ casts @code{x} to a string using precision @code{digits} and the C locale;
 @cindex @code{locale}
 @item string locale(string s="")
 sets the locale to the given string, if nonempty, and returns the
-current locale.
+current locale;
 
 @item string time(string format="%a %b %d %T %Z %Y")
 @cindex @code{time}
@@ -2143,6 +2161,17 @@ locale. For example, to return the date corresponding to 24 hours ago:
 @verbatim
 time(seconds()-24*60*60);
 @end verbatim
+
+@cindex @code{system}
+@item int system(string s)
+@item int system(string[] s)
+if the setting @code{safe} is false, call the arbitrary system command @code{s};
+
+@cindex @code{asy}
+@item void asy(string format, bool overwrite=false ... string[] s)
+conditionally process each file name in array @code{s} in a new environment,
+using format @code{format}, overwriting the output file only if
+@code{overwrite} is true;
 
 @cindex @code{abort}
 @item void abort(string s="")
@@ -2315,8 +2344,8 @@ cubic spline parameter @code{t-floor(t)} (@pxref{Bezier curves}).
 @item pair dir(path p)
 returns dir(p,length(p)).
 
-@item pair dir(path p, path g)
-returns unit(dir(p)+dir(g)).
+@item pair dir(path p, path q)
+returns unit(dir(p)+dir(q)).
 
 @cindex @code{accel}
 @item pair accel(path p, int t, int sign=0);
@@ -2352,12 +2381,15 @@ returns the effective postcontrol point  of @code{p} at parameter @code{t}.
 returns the length (in user coordinates) of the piecewise linear
 or cubic curve that path @code{p} represents.
 
-@anchor{arctime}
 @cindex @code{arctime}
 @item real arctime(path p, real L);
 returns the path "time", a real number between 0 and the length of
 the path in the sense of @code{point(path p, real t)}, at which the
 cumulative arclength (measured from the beginning of the path) equals @code{L}.
+
+@cindex @code{arcpoint}
+@item real arcpoint(path p, real L);
+returns @code{point(p,arctime(p,L))}.
 
 @cindex @code{dirtime}
 @item real dirtime(path p, pair z);
@@ -2805,8 +2837,8 @@ pen dashed=linetype(new real[] {8,8});
 pen longdashed=linetype(new real[] {24,8});
 pen dashdotted=linetype(new real[] {8,8,0,8});
 pen longdashdotted=linetype(new real[] {24,8,0,8});
-pen Dotted=dotted+1.0;
-pen Dotted(pen p=currentpen) {return dotted+2*linewidth(p);}
+pen Dotted(pen p=currentpen) {return linetype(new real[] {0,3})+2*linewidth(p);}
+pen Dotted=Dotted();
 @end verbatim
 @sp 1
 @center @image{linetype}
@@ -2829,11 +2861,11 @@ The line type of a pen can be determined with the functions
 @code{pen linewidth(real)}. The default line width is 0.5 bp; this value
 may be changed with @code{defaultpen(pen)}. The line width of a pen
 is returned by @code{real linewidth(pen p=currentpen)}.
-For convenience, in the module @code{plain} we define
+For convenience, in the module @code{plain_pens} we define
 @verbatim
-static void defaultpen(real w) {defaultpen(linewidth(w));}
-static pen operator +(pen p, real w) {return p+linewidth(w);}
-static pen operator +(real w, pen p) {return linewidth(w)+p;}
+void defaultpen(real w) {defaultpen(linewidth(w));}
+pen operator +(pen p, real w) {return p+linewidth(w);}
+pen operator +(real w, pen p) {return linewidth(w)+p;}
 @end verbatim
 so that one may set the line width like this:
 @verbatim
@@ -3622,8 +3654,11 @@ that can be used for importing @code{LaTeX} packages.
 value) files and portable @acronym{XDR} (External Data Representation)
 binary files.
 
+@cindex @code{input}
 An input file must first be opened with 
-@code{input(string name, bool check=true, string comment="#")};
+@verbatim
+input(string name="", bool check=true, string comment="#", string mode="");
+@end verbatim
 reading is then done by assignment:
 @cindex open
 @cindex @code{input}
@@ -3665,7 +3700,7 @@ comment character as an ordinary character) and return it as a string.
 @cindex append
 A file named @code{name} can be open for output with
 @verbatim
-file output(string name, bool update=false);
+file output(string name="", bool update=false, string comment="#", string mode="");
 @end verbatim
 @noindent
 If @code{update=false}, any existing data in the file will be erased
@@ -3727,23 +3762,21 @@ write(fout,"List: ",1,2,3);     // Writes "List: 1     2     3"
 @noindent
         
 @cindex binary format
-@cindex @code{xinput}
-@cindex @code{xoutput}
-@cindex @code{binput}
-@cindex @code{boutput}
 @cindex single precision
 @cindex double precision
 @cindex @code{singlereal}
 @cindex @code{singleint}
 @cindex @code{signedint}
-A file may also be opened with @code{xinput} or @code{xoutput}, instead of
-@code{input} or @code{output}, to read or write
+@cindex @code{mode}
+@cindex @code{binary}
+@cindex @code{xdr}
+A file may be opened with @code{mode="xdr"}, to read or write
 double precision (64-bit) reals and single precision (32-bit)
 integers in Sun Microsystem's @acronym{XDR} (External
 Data Representation) portable binary format (available on all
 @code{UNIX} platforms).
-Alternatively, a file may also be opened with @code{binput} or
-@code{boutput} to read or write double precision reals and single
+Alternatively, a file may also be opened with @code{mode="binary"}
+to read or write double precision reals and single
 precision integers in the native (nonportable) machine binary format.
 The virtual member functions
 @code{file singlereal(bool b=true)} and @code{file singleint(bool b=true)}
@@ -3870,10 +3903,6 @@ int animate(string args="", string file="", string format="");
 call the @code{ImageMagick} commands @code{convert} and @code{animate},
 respectively, with the arguments @code{args} and the file name constructed
 from the strings @code{file} and @code{format}. 
-@cindex @code{system}
-If the setting @code{safe} is false, then the functions 
-@code{int system(string s)} and @code{int system(string[] s)} can be
-used to call the arbitrary system command @code{s}.
 
 @node Variable initializers
 @section Variable initializers
@@ -4316,7 +4345,7 @@ not
 @cindex @code{?}
 @cindex conditional
 @verbatim
-bool positive=(pi >= 0) ? true : false;
+bool positive=(pi > 0) ? true : false;
 @end verbatim
 
 @cindex @code{interp}
@@ -4919,6 +4948,7 @@ also defined.
 @cindex @code{F}
 @cindex @code{E}
 @cindex @code{P}
+@cindex @code{sndncn}
 @cindex @code{Ei}
 @cindex @code{Si}
 @cindex @code{Ci}
@@ -4936,6 +4966,7 @@ defines the airy functions @code{Ai(real)},
 @code{J(real, real)}, @code{Y(real, real)}, @code{I(real, real)},
 @code{K(real, real)}, @code{zero_J(real, int)}, the elliptic functions 
 @code{F(real, real)}, @code{E(real, real)}, and @code{P(real, real)}, 
+the Jacobi elliptic functions @code{real[] sndncn(real,real)},
 the exponential/trigonometric integrals @code{Ei}, @code{Si}, and @code{Ci},
 the Legendre polynomials @code{Pl(int, real)}, and the Riemann zeta
 function @code{zeta(real)}. For example, to compute the sine integral
@@ -5179,19 +5210,11 @@ searches an array @code{a} sorted in ascending order such that element
 
 @cindex @code{copy}
 @item T[] copy(T[] a)
-returns a copy of the array @code{a};
-
-@cindex @code{copy}
-@item T[][] copy(T[][] a)
-returns a copy of the array @code{a};
-
-@cindex @code{copy}
-@item T[][][] copy(T[][][] a)
-returns a copy of the array @code{a};
+returns a deep copy of the array @code{a};
 
 @cindex @code{concat}
 @item T[] concat(... T[][] a)
-returns a new array formed by concatenating the arrays given as arguments;
+returns a new array formed by concatenating the given one-dimensional arrays given as arguments;
 
 @cindex @code{alias}
 @item bool alias(T[] a, T[] b)
@@ -5817,7 +5840,8 @@ code s=quote {
 eval(s,true);        // Outputs 1
 @end verbatim
 
-To include the contents of a file @code{graph} verbatim (as if the
+@cindex @code{include}
+To include the contents of an existing file @code{graph} verbatim (as if the
 contents of the file were inserted at that point), use one of the forms:
 @verbatim
 include graph;
@@ -5978,6 +6002,7 @@ and enclose your @code{Asymptote} code within a
 @code{\begin@{asy@}...\end@{asy@}} environment. As with the
 @code{LaTeX} @code{comment} environment, the @code{\end@{asy@}} command
 must appear on a line by itself, with no trailing commands/comments.
+A blank line is not allowed after @code{\begin@{asy@}}.
 
 The sample @code{LaTeX} file below, named @code{latexusage.tex}, can
 be run as follows:
@@ -6006,8 +6031,8 @@ An even better method for processing a @code{LaTeX} file with embedded
 @url{http://www.ctan.org/tex-archive/support/latexmk/}
 @end quotation
 @noindent
-after putting the rules
-@verbatiminclude latexmkrc
+after putting the contents of
+@url{http://asymptote.svn.sourceforge.net/viewvc/asymptote/trunk/asymptote/doc/latexmkrc}
 @noindent
 in a file @code{latexmkrc} in the same directory. The command
 @verbatim
@@ -6017,6 +6042,14 @@ latexmk -pdf latexusage
 will then call @code{Asymptote} automatically, recompiling only the figures
 that have changed. Since each figure is compiled in a separate
 system process, this method also tends to use less memory.
+To store the figures in a separate directory named @code{asy}, one can define
+@verbatim
+\def\asydir{asy}
+@end verbatim
+in @code{latexusage.tex} and put the contents of
+@url{http://asymptote.svn.sourceforge.net/viewvc/asymptote/trunk/asymptote/doc/latexmkrc_asydir}
+in a file @code{latexmkrc} in the same directory.
+@noindent
 External @code{Asymptote} code in @code{filename.asy} should be included with
 @cindex @code{asyinclude}
 @verbatim
@@ -6040,9 +6073,8 @@ environments.
 Three-dimensional @acronym{PRC} files may either be embedded within
 the page (the default) or attached as annotated (but printable)
 attachments, using the @code{attach} option and the @code{attachfile2}
-(or older @code{attachfile}) @code{LaTeX} package. The default value
-of @code{viewportwidth} is @code{\the\linewidth} for inline 3D figures
-and @code{0} for attachments. The @code{inline} option generates
+(or older @code{attachfile}) @code{LaTeX} package.
+The @code{inline} option generates
 inline @code{LaTeX} code instead of @acronym{EPS} or @acronym{PDF}
 files. This makes 2D LaTeX symbols visible to the 
 @code{\begin@{asy@}...\end@{asy@}} environment.  In this mode,
@@ -6384,7 +6416,7 @@ sharp corners of paths, as illustrated in the example file @code{roundpath.asy}.
 @cindex animation
 @cindex @code{ImageMagick}
 This module allows one to generate animations, as illustrated by the
-files @code{wheel.asy}, @code{wavelet.asy}, and @code{cube.asy} in
+files @code{wheel.asy}, @code{wavepacket.asy}, and @code{cube.asy} in
 the @code{animations} subdirectory of the examples directory. These
 animations use the @code{ImageMagick} @code{convert} program to
 merge multiple images into a @acronym{GIF} or @acronym{MPEG}
@@ -7060,17 +7092,17 @@ void ytick(picture pic=currentpicture, Label L="", real y,
 void tick(picture pic=currentpicture, pair z,
           pair dir, real size=Ticksize, pen p=currentpen);
 void labelx(picture pic=currentpicture, Label L="", explicit pair z,
-            align align=S, string format="", pen p=nullpen);
+            align align=S, string format="", pen p=currentpen);
 void labelx(picture pic=currentpicture, Label L="", real x,
-            align align=S, string format="", pen p=nullpen);
+            align align=S, string format="", pen p=currentpen);
 void labelx(picture pic=currentpicture, Label L,
             string format="", explicit pen p=currentpen);
 void labely(picture pic=currentpicture, Label L="", explicit pair z,
-            align align=W, string format="", pen p=nullpen);
+            align align=W, string format="", pen p=currentpen);
 void labely(picture pic=currentpicture, Label L="", real y,
-            align align=W, string format="", pen p=nullpen);
+            align align=W, string format="", pen p=currentpen);
 void labely(picture pic=currentpicture, Label L,
-            string format="", explicit pen p=nullpen);
+            string format="", explicit pen p=currentpen);
 @end verbatim
 @end itemize
 
@@ -8000,6 +8032,15 @@ This is equivalent to
 @verbatim 
 orthographic((x,y,z),up,target,zoom,viewportshift,showtarget,center)
 @end verbatim
+
+The routine
+@cindex @code{camera}
+@verbatim 
+triple camera(real alpha, real beta);
+@end verbatim
+can be used to compute the camera position with the @math{x} axis below
+the horizontal at angle @code{alpha}, the @math{y} axis below the horizontal
+at angle @code{beta}, and the @math{z} axis up. 
 
 @cindex @code{autoadjust}
 @item perspective(triple camera, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ real zoom=1, real angle=0, pair viewportshift=0, @*@ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool autoadjust=true, @*@ @ @ @ @ @ @ @ @ @ @ @ bool center=autoadjust)
@@ -9243,12 +9284,12 @@ and @code{tk-devel} packages.
 
 Pictures are deconstructed into the @acronym{PNG} image format, which
 supports full alpha channel transparency. Under @code{Microsoft Windows},
-this requires @code{Python 2.6.2} and the @code{Python Imaging Library}:
+this requires @code{Python 2.7.3} and the @code{Python Imaging Library}:
 @quotation
-@url{http://www.python.org/ftp/python/2.6.2/python-2.6.2.msi}
+@url{http://www.python.org/ftp/python/2.7.3/python-2.7.3.msi}
 @end quotation
 @quotation
-@url{http://effbot.org/downloads/PIL-1.1.7.win32-py2.6.exe}.
+@url{http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe}.
 @end quotation
 @noindent
 On @code{UNIX} systems, place
@@ -9493,7 +9534,7 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  latexusage tex bbox PostScript subdirectory gcc emacs ASYDIR
 @c  LocalWords:  documentclass usepackage subpath shipout sqrt xN  Mx bw AcroRd
 @c  LocalWords:  xscale xaxis yaxis BeginBar GIF postprocessing fpu de rpair xy
-@c  LocalWords:  nomask noplain ImageMagick defaultfontsize defaultlinewidth cd
+@c  LocalWords:  ImageMagick defaultfontsize defaultlinewidth cd asymptote Hy
 @c  LocalWords:  startup natively xasy tkinter VxN yingyang currentpicture toc
 @c  LocalWords:  MetaPost MetaFont Hammerlindl Healy texinfo autoload setq setf
 @c  LocalWords:  printindex setfilename settitle dircategory direntry titlepage
@@ -9506,8 +9547,8 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  dirtime currentpen colorspaces grayscale cmyk defaultpen x cx
 @c  LocalWords:  linetype longdashed dashdotted longdashdotted linewidth y XP
 @c  LocalWords:  fontsize defaultfilename keepAspect IgnoreAspect ise flushleft
-@c  LocalWords:  src dest XDR txt getc fout stdin stdout endl xinput eof js prc
-@c  LocalWords:  xoutput Microsystem's eol exponentials postfix sayhi th Ubuntu
+@c  LocalWords:  src dest XDR txt getc fout stdin stdout endl eof js prc
+@c  LocalWords:  Microsystem's eol exponentials postfix sayhi th Ubuntu
 @c  LocalWords:  sqr intop addby libm asin acos atan sinh tanh asinh acosh cbrt
 @c  LocalWords:  atanh fabs hypot fmod ceil srand dereferenced alice pete sqrtx
 @c  LocalWords:  eval fft csv runtime nonalphanumeric labely LeftTicks NoTicks
@@ -9592,7 +9633,7 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  labelpath intersectionpoints PSTricks pstextpath curvedlabel
 @c  LocalWords:  LeftJustified RightJustified tickmodifier gunzip gmake IRIX dv
 @c  LocalWords:  texcommand RET SITEDIR filegraph pathmarkers POSIX binput AOB
-@c  LocalWords:  boutput nonportable markinterval stickframe circlebarframe tix
+@c  LocalWords:  nonportable markinterval stickframe circlebarframe tix
 @c  LocalWords:  crossframe tildeframe markangle StickIntervalMarker gswin expm
 @c  LocalWords:  CrossIntervalMarker CircleBarIntervalMarker Ghostscript syzygy
 @c  LocalWords:  TildeIntervalMarker autoimport calculateTransform bitwise tk
@@ -9637,9 +9678,14 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  rotateY rotateZ wheelup zoomin wheeldown zoomout TeXLive pnorm
 @c  LocalWords:  viewportshift signedint signedness psview multiplatform nowarn
 @c  LocalWords:  singlereal singleint writeoverloaded dvisvg reddash lexorder
-@c  LocalWords:  bigdiagonal autobillboard dvisvgm maxtiles hyperrefOptions
+@c  LocalWords:  bigdiagonal autobillboard dvisvgm maxtiles hyperrefOptions xdr
 @c  LocalWords:  setpagesize pdfborder controlsystem OmitTickInterval SixViews
 @c  LocalWords:  OmitTickIntervals tickmodifiers autorotated SixViewsUS latexmk
 @c  LocalWords:  ThreeViewsUS ThreeViewsFR SixViewsFR ThreeViews partialsum
 @c  LocalWords:  defaultrender Vidiassov latexmkrc mktemp DOSendl DOSnewl perl
-@c  LocalWords:  filename asyinclude latemk penfunctionimage
+@c  LocalWords:  filename asyinclude latemk penfunctionimage Affine decrement
+@c  LocalWords:  affine Redisplay redisplay isnan radians defaultseparator Jens
+@c  LocalWords:  ascii piecewise arcpoint spacings tilings sndncn resizing
+@c  LocalWords:  differentiable vectorization vectorized asydir normals quartic
+@c  LocalWords:  wavepacket kerned parametrized specular hyperboloid Bourke's
+@c  LocalWords:  Michail

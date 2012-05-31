@@ -25,13 +25,6 @@ except:
 
 import CubicBezier
 
-class asyProcessFailure(Exception):
-  """asy could not be invoked to execute a command because the process has failed."""
-  pass
-
-idCounter = 0;
-randString = 'wGd3I26kOcu4ZI4arZZMqoJufO2h1QE2D728f1Lai3aqeTQC9'
-
 quickAsyFailed = True
 global AsyTempDir
 
@@ -41,10 +34,11 @@ def startQuickAsy():
   global quickAsy
   global quickAsyFailed
   global AsyTempDir
+  global fout,fin
   if quickAsyRunning():
     return
   try:
-    quickAsy.stdin.close()
+    fout.close()
     quickAsy.wait()
   except:
     pass
@@ -54,9 +48,18 @@ def startQuickAsy():
       AsyTempDir=mkdtemp(prefix="asy_", dir="./")
     else:
       AsyTempDir=mkdtemp(prefix="asy_")+os.sep
-    quickAsy = Popen([xasyOptions.options['asyPath'],"-noV","-multiline",
-                      "-interactive","-o"+AsyTempDir],
-                     stdin=PIPE,stdout=PIPE,stderr=STDOUT)
+    if sys.platform[:3] == 'win':
+      quickAsy=Popen([xasyOptions.options['asyPath'],"-noV","-multiline","-q",
+               "-o"+AsyTempDir,"-inpipe=0","-outpipe=2"],stdin=PIPE,stderr=PIPE)
+      fout=quickAsy.stdin
+      fin=quickAsy.stderr
+    else:
+      (rx,wx) = os.pipe()
+      (ra,wa) = os.pipe()
+      quickAsy=Popen([xasyOptions.options['asyPath'],"-noV","-multiline","-q",
+               "-o"+AsyTempDir,"-inpipe="+str(rx),"-outpipe="+str(wa)])
+      fout=os.fdopen(wx,'w')
+      fin=os.fdopen(ra,'r')
     if quickAsy.returncode != None:
       quickAsyFailed = True
   except:
@@ -74,8 +77,7 @@ def quickAsyRunning():
 def asyExecute(command):
   if not quickAsyRunning():
     startQuickAsy()
-  syncQuickAsyOutput()
-  quickAsy.stdin.write(command)
+  fout.write(command)
 
 def closeConsole(event):
   global console
@@ -96,19 +98,6 @@ def consoleOutput(line):
   console.insert(END,line)
   ctl.lift()
 
-def syncQuickAsyOutput(verbose=False,queue=None):
-  global idCounter
-  idStr = randString+"-id "+str(idCounter)
-  idCounter += 1
-  quickAsy.stdin.write("\nwrite(\""+idStr+"\");\n")
-  quickAsy.stdin.flush()
-  line = quickAsy.stdout.readline()
-  while not line.endswith(idStr+'\n'):
-    if verbose:
-      queue.put(("OUTPUT",line))
-    line = quickAsy.stdout.readline()
-    quickAsy.stdin.flush()
-
 class asyTransform:
   """A python implementation of an asy transform"""
   def __init__(self,initTuple,delete=False):
@@ -128,7 +117,6 @@ class asyTransform:
       return str(self.t)
 
   def scale(self,s):
-    #return asyTransform((s*self.t[0],s*self.t[1],s*self.t[2],s*self.t[3],s*self.t[4],s*self.t[5]))
     return asyTransform((0,0,s,0,0,s))*self
 
   def __str__(self):
@@ -208,30 +196,27 @@ class asyPen(asyObj):
 
   def computeColor(self):
     """Find out the color of an arbitrary asymptote pen."""
-    syncQuickAsyOutput()
-    quickAsy.stdin.write("pen p="+self.getCode()+';\n')
-    quickAsy.stdin.write("write(\";\n\");write(colorspace(p));\n")
-    quickAsy.stdin.write("write(colors(p));\n")
-    quickAsy.stdin.flush()
-    testline = quickAsy.stdout.readline()
-    if testline.startswith("> -:"):
-      raise Exception,"Invalid pen options"
-    quickAsy.stdout.readline()
-    colorspace = quickAsy.stdout.readline()
+    fout.write("pen p="+self.getCode()+';\n')
+    fout.write("file fout=output(mode='pipe');\n")
+    fout.write("write(fout,colorspace(p),newl);\n")
+    fout.write("write(fout,colors(p));\n")
+    fout.write("flush(fout);\n")
+    fout.flush()
+    colorspace = fin.readline()
     if colorspace.find("cmyk") != -1:
-      lines = quickAsy.stdout.readline()+quickAsy.stdout.readline()+quickAsy.stdout.readline()+quickAsy.stdout.readline()
+      lines = fin.readline()+fin.readline()+fin.readline()+fin.readline()
       parts = lines.split()
-      c,m,y,k = eval(parts[2]),eval(parts[4]),eval(parts[6]),eval(parts[8])
+      c,m,y,k = eval(parts[0]),eval(parts[1]),eval(parts[2]),eval(parts[3])
       k = 1-k
       r,g,b = ((1-c)*k,(1-m)*k,(1-y)*k)
     elif colorspace.find("rgb") != -1:
-      lines = quickAsy.stdout.readline()+quickAsy.stdout.readline()+quickAsy.stdout.readline()
+      lines = fin.readline()+fin.readline()+fin.readline()
       parts = lines.split()
-      r,g,b = eval(parts[2]),eval(parts[4]),eval(parts[6])
+      r,g,b = eval(parts[0]),eval(parts[1]),eval(parts[2])
     elif colorspace.find("gray") != -1:
-      lines = quickAsy.stdout.readline()
+      lines = fin.readline()
       parts = lines.split()
-      r = g = b = eval(parts[2])
+      r = g = b = eval(parts[0])
     self.color = (r,g,b)
 
   def tkColor(self):
@@ -352,18 +337,19 @@ class asyPath(asyObj):
 
   def computeControls(self):
     """Evaluate the code of the path to obtain its control points"""
-    syncQuickAsyOutput()
-    quickAsy.stdin.write("path p="+self.getCode()+';\n')
-    quickAsy.stdin.write("write(length(p));\n")
-    quickAsy.stdin.write("write(unstraighten(p));write(\"\");\n")
-    quickAsy.stdin.flush()
-    lengthStr = quickAsy.stdout.readline()
+    fout.write("file fout=output(mode='pipe');\n")
+    fout.write("path p="+self.getCode()+';\n')
+    fout.write("write(fout,length(p),newl);\n")
+    fout.write("write(fout,unstraighten(p),endl);\n")
+    fout.flush()
+    lengthStr = fin.readline()
     pathSegments = eval(lengthStr.split()[-1])
     pathStrLines = []
     for i in range(pathSegments+1):
-      pathStrLines.append(quickAsy.stdout.readline())
+      line=fin.readline()
+      line=line.replace("\n","")
+      pathStrLines.append(line)
     oneLiner = "".join(split(join(pathStrLines)))
-    oneLiner = oneLiner.replace(">","")
     splitList = oneLiner.split("..")
     nodes = [a for a in splitList if a.find("controls")==-1]
     self.nodeSet = []
@@ -468,23 +454,20 @@ class xasyItem:
 
   def asyfyThread(self,mag=1.0):
     """Convert the item to a list of images by deconstructing this item's code"""
-    quickAsy.stdin.write("\nreset;\n")
-    quickAsy.stdin.write("initXasyMode();\n")
-    quickAsy.stdin.write("atexit(null);\n")
-    syncQuickAsyOutput()
+    fout.write("reset;\n")
+    fout.write("initXasyMode();\n")
+    fout.write("atexit(null);\n")
     global console
     for line in self.getCode().splitlines():
-      quickAsy.stdin.write(line+"\n");
-    quickAsy.stdin.flush()
-    syncQuickAsyOutput(verbose=True,queue=self.imageHandleQueue);
-    quickAsy.stdin.write("deconstruct(%f);\n"%mag)
-    quickAsy.stdin.flush()
+      fout.write(line+"\n");
+    fout.write("deconstruct(%f);\n"%mag)
+    fout.flush()
     format = "png"
-    maxargs = int(split(quickAsy.stdout.readline())[1])
+    maxargs = int(split(fin.readline())[0])
     boxes=[]
     batch=0
     n=0
-    text = quickAsy.stdout.readline()
+    text = fin.readline()
     template=AsyTempDir+"%d_%d.%s"
     def render():
         for i in range(len(boxes)):
@@ -493,7 +476,7 @@ class xasyItem:
           self.imageHandleQueue.put((name,format,(l,b,r,t),i))
     while text != "Done\n" and text != "Error\n":
       boxes.append(text)
-      text = quickAsy.stdout.readline()
+      text = fin.readline()
       n += 1
       if n >= maxargs:
         render()
@@ -501,7 +484,7 @@ class xasyItem:
         batch += 1
         n=0
     if text == "Error\n":
-      self.imageHandleQueue.put(("ERROR",quickAsy.stdout.readline()))
+      self.imageHandleQueue.put(("ERROR",fin.readline()))
     else:
       render()
     self.imageHandleQueue.put((None,))

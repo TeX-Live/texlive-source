@@ -27,10 +27,6 @@
 
 #include "common.h"
 
-#ifdef __CYGWIN__
-#define NOMINMAX
-#endif
-
 #ifdef HAVE_LIBSIGSEGV
 #include <sigsegv.h>
 #endif
@@ -46,7 +42,6 @@
 
 using namespace settings;
 
-errorstream em;
 using interact::interactive;
 
 namespace run {
@@ -106,20 +101,6 @@ void signalHandler(int)
 void interruptHandler(int)
 {
   em.Interrupt(true);
-}
-
-// Run the config file.
-void doConfig(string file) 
-{
-  bool autoplain=getSetting<bool>("autoplain");
-  bool listvariables=getSetting<bool>("listvariables");
-  if(autoplain) Setting("autoplain")=false; // Turn off for speed.
-  if(listvariables) Setting("listvariables")=false;
-
-  runFile(file);
-
-  if(autoplain) Setting("autoplain")=true;
-  if(listvariables) Setting("listvariables")=true;
 }
 
 struct Args 
@@ -189,13 +170,17 @@ int main(int argc, char *argv[])
   Args args(argc,argv);
 #ifdef HAVE_GL
   gl::glthread=getSetting<bool>("threads");
-#if HAVE_LIBPTHREAD
+#if HAVE_PTHREAD
   
   if(gl::glthread) {
     pthread_t thread;
     try {
       if(pthread_create(&thread,NULL,asymain,&args) == 0) {
         gl::mainthread=pthread_self();
+        sigset_t set;
+        sigemptyset(&set);
+        sigaddset(&set, SIGCHLD);
+        pthread_sigmask(SIG_BLOCK, &set, NULL);
         while(true) {
           camp::glrenderWrapper();
           gl::initialize=true;

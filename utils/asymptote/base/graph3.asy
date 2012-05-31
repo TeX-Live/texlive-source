@@ -545,10 +545,20 @@ void xaxis3At(picture pic=currentpicture, Label L="", axis axis,
                                                ztrans(t,z)) : (xmin,y,z);
             triple b=xmax == infinity ? tinv*(rt.x-max3(p).x,ytrans(t,y),
                                               ztrans(t,z)) : (xmax,y,z);
-            triple a2=xmin == -infinity ? tinv*(lb.x-min3(p).x,ytrans(t,y2),
-                                                ztrans(t,z2)) : (xmin,y2,z2);
-            triple b2=xmax == infinity ? tinv*(rt.x-max3(p).x,ytrans(t,y2),
-                                               ztrans(t,z2)) : (xmax,y2,z2);
+            real y0;
+            real z0;
+            if(abs(dir.y) < abs(dir.z)) {
+              y0=y;
+              z0=z2;
+            } else {
+              y0=y2;
+              z0=z;
+            }
+            
+            triple a2=xmin == -infinity ? tinv*(lb.x-min3(p).x,ytrans(t,y0),
+                                                ztrans(t,z0)) : (xmin,y0,z0);
+            triple b2=xmax == infinity ? tinv*(rt.x-max3(p).x,ytrans(t,y0),
+                                               ztrans(t,z0)) : (xmax,y0,z0);
 
             if(xmin == -infinity || xmax == infinity) {
               bounds mx=autoscale(a.x,b.x,pic.scale.x.scale);
@@ -562,7 +572,8 @@ void xaxis3At(picture pic=currentpicture, Label L="", axis axis,
             b += fuzz;
 
             picture d;
-            ticks(d,t,L,a--b,finite(y2) ? a2--b2 : nullpath3,p,arrow,margin,
+            ticks(d,t,L,a--b,finite(y0) && finite(z0) ? a2--b2 : nullpath3,
+                  p,arrow,margin,
                   ticklocate(a.x,b.x,pic.scale.x,Dir(dir)),divisor,
                   opposite,primary);
             add(f,t*T*tinv*d);
@@ -667,11 +678,21 @@ void yaxis3At(picture pic=currentpicture, Label L="", axis axis,
                                                ztrans(t,z)) : (x,ymin,z);
             triple b=ymax == infinity ? tinv*(xtrans(t,x),rt.y-max3(p).y,
                                               ztrans(t,z)) : (x,ymax,z);
-            triple a2=ymin == -infinity ? tinv*(xtrans(t,x2),lb.y-min3(p).y,
-                                                ztrans(t,z2)) : (x2,ymin,z2);
-            triple b2=ymax == infinity ? tinv*(xtrans(t,x2),rt.y-max3(p).y,
-                                               ztrans(t,z2)) : (x2,ymax,z2);
-
+            real x0;
+            real z0;
+            if(abs(dir.x) < abs(dir.z)) {
+              x0=x;
+              z0=z2;
+            } else {
+              x0=x2;
+              z0=z;
+            }
+            
+            triple a2=ymin == -infinity ? tinv*(xtrans(t,x0),lb.y-min3(p).y,
+                                                ztrans(t,z0)) : (x0,ymin,z0);
+            triple b2=ymax == infinity ? tinv*(xtrans(t,x0),rt.y-max3(p).y,
+                                               ztrans(t,z0)) : (x0,ymax,z0);
+ 
             if(ymin == -infinity || ymax == infinity) {
               bounds my=autoscale(a.y,b.y,pic.scale.y.scale);
               pic.scale.y.tickMin=my.min;
@@ -684,7 +705,8 @@ void yaxis3At(picture pic=currentpicture, Label L="", axis axis,
             b += fuzz;
 
             picture d;
-            ticks(d,t,L,a--b,finite(x2) ? a2--b2 : nullpath3,p,arrow,margin,
+            ticks(d,t,L,a--b,finite(x0) && finite(z0) ? a2--b2 : nullpath3,
+                  p,arrow,margin,
                   ticklocate(a.y,b.y,pic.scale.y,Dir(dir)),divisor,
                   opposite,primary);
             add(f,t*T*tinv*d);
@@ -789,10 +811,20 @@ void zaxis3At(picture pic=currentpicture, Label L="", axis axis,
                                                lb.z-min3(p).z) : (x,y,zmin);
             triple b=zmax == infinity ? tinv*(xtrans(t,x),ytrans(t,y),
                                               rt.z-max3(p).z) : (x,y,zmax);
-            triple a2=zmin == -infinity ? tinv*(xtrans(t,x2),ytrans(t,y2),
-                                                lb.z-min3(p).z) : (x2,y2,zmin);
-            triple b2=zmax == infinity ? tinv*(xtrans(t,x2),ytrans(t,y2),
-                                               rt.z-max3(p).z) : (x2,y2,zmax);
+            real x0;
+            real y0;
+            if(abs(dir.x) < abs(dir.y)) {
+              x0=x;
+              y0=y2;
+            } else {
+              x0=x2;
+              y0=y;
+            }
+            
+            triple a2=zmin == -infinity ? tinv*(xtrans(t,x0),ytrans(t,y0),
+                                                lb.z-min3(p).z) : (x0,y0,zmin);
+            triple b2=zmax == infinity ? tinv*(xtrans(t,x0),ytrans(t,y0),
+                                               rt.z-max3(p).z) : (x0,y0,zmax);
 
             if(zmin == -infinity || zmax == infinity) {
               bounds mz=autoscale(a.z,b.z,pic.scale.z.scale);
@@ -806,7 +838,8 @@ void zaxis3At(picture pic=currentpicture, Label L="", axis axis,
             b += fuzz;
 
             picture d;
-            ticks(d,t,L,a--b,finite(x2) ? a2--b2 : nullpath3,p,arrow,margin,
+            ticks(d,t,L,a--b,finite(x0) && finite(y0) ? a2--b2 : nullpath3,
+                  p,arrow,margin,
                   ticklocate(a.z,b.z,pic.scale.z,Dir(dir)),divisor,
                   opposite,primary);
             add(f,t*T*tinv*d);
@@ -1189,6 +1222,7 @@ real ScaleZ(picture pic=currentpicture, real z)
 void tick(picture pic=currentpicture, triple v, triple dir, real size=Ticksize,
           pen p=currentpen)
 {
+  triple v=Scale(pic,v);
   pic.add(new void (picture f, transform3 t) {
       triple tv=t*v;
       draw(f,tv--tv+unit(dir)*size,p);
@@ -1200,27 +1234,27 @@ void tick(picture pic=currentpicture, triple v, triple dir, real size=Ticksize,
 void xtick(picture pic=currentpicture, triple v, triple dir=Y,
            real size=Ticksize, pen p=currentpen)
 {
-  tick(pic,Scale(pic,v),dir,size,p);
+  tick(pic,v,dir,size,p);
 }
 
 void xtick3(picture pic=currentpicture, real x, triple dir=Y,
             real size=Ticksize, pen p=currentpen)
 {
-  xtick(pic,(x,pic.scale.y.scale.logarithmic ? 1 : 0,
+  tick(pic,(x,pic.scale.y.scale.logarithmic ? 1 : 0,
              pic.scale.z.scale.logarithmic ? 1 : 0),dir,size,p);
 }
 
 void ytick(picture pic=currentpicture, triple v, triple dir=X,
            real size=Ticksize, pen p=currentpen) 
 {
-  xtick(pic,v,dir,size,p);
+  tick(pic,v,dir,size,p);
 }
 
-void ytick(picture pic=currentpicture, real y, triple dir=X,
-           real size=Ticksize, pen p=currentpen)
+void ytick3(picture pic=currentpicture, real y, triple dir=X,
+            real size=Ticksize, pen p=currentpen)
 {
-  xtick(pic,(pic.scale.x.scale.logarithmic ? 1 : 0,y,
-             pic.scale.z.scale.logarithmic ? 1 : 0),dir,size,p);
+  tick(pic,(pic.scale.x.scale.logarithmic ? 1 : 0,y,
+            pic.scale.z.scale.logarithmic ? 1 : 0),dir,size,p);
 }
 
 void ztick(picture pic=currentpicture, triple v, triple dir=X,
@@ -1229,8 +1263,8 @@ void ztick(picture pic=currentpicture, triple v, triple dir=X,
   xtick(pic,v,dir,size,p);
 }
 
-void ztick(picture pic=currentpicture, real z, triple dir=X,
-           real size=Ticksize, pen p=currentpen)
+void ztick3(picture pic=currentpicture, real z, triple dir=X,
+            real size=Ticksize, pen p=currentpen)
 {
   xtick(pic,(pic.scale.x.scale.logarithmic ? 1 : 0,
              pic.scale.y.scale.logarithmic ? 1 : 0,z),dir,size,p);
@@ -1241,15 +1275,14 @@ void tick(picture pic=currentpicture, Label L, real value, triple v,
 {
   Label L=L.copy();
   L.align(L.align,-dir);
-  if(shift(L.T3)*O == O) {
+  if(shift(L.T3)*O == O)
     L.T3=shift(dot(dir,L.align.dir3) > 0 ? dir*size :
                ticklabelshift(L.align.dir3,p))*L.T3;
-  }
   L.p(p);
   if(L.s == "") L.s=format(format == "" ? defaultformat : format,value);
   L.s=baseline(L.s,baselinetemplate);
-  label(pic,L,v);
-  xtick(pic,v,dir,size,p);
+  label(pic,L,Scale(pic,v));
+  tick(pic,v,dir,size,p);
 }
 
 void xtick(picture pic=currentpicture, Label L, triple v, triple dir=Y,
@@ -1262,7 +1295,7 @@ void xtick3(picture pic=currentpicture, Label L, real x, triple dir=Y,
             string format="", real size=Ticksize, pen p=currentpen)
 {
   xtick(pic,L,(x,pic.scale.y.scale.logarithmic ? 1 : 0,
-               pic.scale.z.scale.logarithmic ? 1 : 0),dir,size,p);
+              pic.scale.z.scale.logarithmic ? 1 : 0),dir,size,p);
 }
 
 void ytick(picture pic=currentpicture, Label L, triple v, triple dir=X,
@@ -1274,8 +1307,8 @@ void ytick(picture pic=currentpicture, Label L, triple v, triple dir=X,
 void ytick3(picture pic=currentpicture, Label L, real y, triple dir=X,
             string format="", real size=Ticksize, pen p=currentpen)
 {
-  ytick(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,y,
-               pic.scale.z.scale.logarithmic ? 1 : 0),dir,format,size,p);
+  xtick(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,y,
+              pic.scale.z.scale.logarithmic ? 1 : 0),dir,format,size,p);
 }
 
 void ztick(picture pic=currentpicture, Label L, triple v, triple dir=X,
@@ -1287,8 +1320,8 @@ void ztick(picture pic=currentpicture, Label L, triple v, triple dir=X,
 void ztick3(picture pic=currentpicture, Label L, real z, triple dir=X,
             string format="", real size=Ticksize, pen p=currentpen)
 {
-  ztick(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,
-               pic.scale.z.scale.logarithmic ? 1 : 0,z),dir,format,size,p);
+  xtick(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,
+              pic.scale.z.scale.logarithmic ? 1 : 0,z),dir,format,size,p);
 }
 
 private void label(picture pic, Label L, triple v, real x, align align,
@@ -1305,39 +1338,39 @@ private void label(picture pic, Label L, triple v, real x, align align,
 }
 
 void labelx(picture pic=currentpicture, Label L="", triple v,
-            align align=-Y, string format="", pen p=nullpen)
+            align align=-Y, string format="", pen p=currentpen)
 {
   label(pic,L,Scale(pic,v),v.x,align,format,p);
 }
 
 void labelx3(picture pic=currentpicture, Label L="", real x,
-             align align=-Y, string format="", pen p=nullpen)
+             align align=-Y, string format="", pen p=currentpen)
 {
   labelx(pic,L,(x,pic.scale.y.scale.logarithmic ? 1 : 0,
                 pic.scale.z.scale.logarithmic ? 1 : 0),align,format,p);
 }
 
 void labely(picture pic=currentpicture, Label L="", triple v,
-            align align=-X, string format="", pen p=nullpen)
+            align align=-X, string format="", pen p=currentpen)
 {
   label(pic,L,Scale(pic,v),v.y,align,format,p);
 }
 
 void labely3(picture pic=currentpicture, Label L="", real y,
-             align align=-X, string format="", pen p=nullpen)
+             align align=-X, string format="", pen p=currentpen)
 {
   labely(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,y,
                 pic.scale.z.scale.logarithmic ? 1 : 0),align,format,p);
 }
 
 void labelz(picture pic=currentpicture, Label L="", triple v,
-            align align=-X, string format="", pen p=nullpen)
+            align align=-X, string format="", pen p=currentpen)
 {
   label(pic,L,Scale(pic,v),v.z,align,format,p);
 }
 
 void labelz3(picture pic=currentpicture, Label L="", real z,
-             align align=-X, string format="", pen p=nullpen)
+             align align=-X, string format="", pen p=currentpen)
 {
   labelz(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,
                 pic.scale.y.scale.logarithmic ? 1 : 0,z),align,format,p);

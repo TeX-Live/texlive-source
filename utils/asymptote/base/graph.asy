@@ -593,9 +593,11 @@ tickvalues generateticks(int sign, Label F="", ticklabel ticklabel=null,
 
     if(b-a < 100.0*epsilon*norm) b=a;
       
-    real tickmin=finite(locate.S.tickMin) && (Step == 0 || locate.S.automin) ? 
+    bool autotick=Step == 0 && N == 0;
+    
+    real tickmin=finite(locate.S.tickMin) && (autotick || locate.S.automin) ? 
       locate.S.Tinv(locate.S.tickMin) : a;
-    real tickmax=finite(locate.S.tickMax) && (Step == 0 || locate.S.automax) ?
+    real tickmax=finite(locate.S.tickMax) && (autotick || locate.S.automax) ?
       locate.S.Tinv(locate.S.tickMax) : b;
     if(tickmin > tickmax) {real temp=tickmin; tickmin=tickmax; tickmax=temp;}
       
@@ -603,7 +605,7 @@ tickvalues generateticks(int sign, Label F="", ticklabel ticklabel=null,
 
     bool calcStep=true;
     real len=tickmax-tickmin;
-    if(Step == 0 && N == 0) {
+    if(autotick) {
       N=1;
       if(divisor.length > 0) {
         bool autoscale=locate.S.automin && locate.S.automax;
@@ -1202,15 +1204,15 @@ void xaxisAt(picture pic=currentpicture, Label L="", axis axis,
     });
 
   void bounds() {
-    if(type == Min) 
+    if(type == Both) {
+      y2=pic.scale.y.automax() ? tickMax(pic).y : pic.userMax().y;
+      y=opposite ? y2 :
+        (pic.scale.y.automin() ? tickMin(pic).y : pic.userMin().y);
+    } 
+    else if(type == Min) 
       y=pic.scale.y.automin() ? tickMin(pic).y : pic.userMin().y;
     else if(type == Max)
       y=pic.scale.y.automax() ? tickMax(pic).y : pic.userMax().y;
-    else if(type == Both) {
-      y2=pic.scale.y.automax() ? tickMax(pic).y : pic.userMax().y;
-      y=opposite ? y2 : 
-        (pic.scale.y.automin() ? tickMin(pic).y : pic.userMin().y);
-    }
 
     real Xmin=finite(xmin) ? xmin : pic.userMin().x;
     real Xmax=finite(xmax) ? xmax : pic.userMax().x;
@@ -1296,15 +1298,14 @@ void yaxisAt(picture pic=currentpicture, Label L="", axis axis,
     });
   
   void bounds() {
-    if(type == Min) 
-      x=pic.scale.x.automin() ? tickMin(pic).x : pic.userMin().x;
-    else if(type == Max)
-      x=pic.scale.x.automax() ? tickMax(pic).x : pic.userMax().x;
-    else if(type == Both) {
+    if(type == Both) {
       x2=pic.scale.x.automax() ? tickMax(pic).x : pic.userMax().x;
       x=opposite ? x2 : 
         (pic.scale.x.automin() ? tickMin(pic).x : pic.userMin().x);
-    }
+    } else if(type == Min) 
+      x=pic.scale.x.automin() ? tickMin(pic).x : pic.userMin().x;
+    else if(type == Max)
+      x=pic.scale.x.automax() ? tickMax(pic).x : pic.userMax().x;
 
     real Ymin=finite(ymin) ? ymin : pic.userMin().y;
     real Ymax=finite(ymax) ? ymax : pic.userMax().y;
@@ -1655,6 +1656,7 @@ real ScaleY(picture pic=currentpicture, real y)
 void tick(picture pic=currentpicture, pair z, pair dir, real size=Ticksize,
           pen p=currentpen)
 {
+  pair z=Scale(pic,z);
   pic.add(new void (frame f, transform t) {
       pair tz=t*z;
       draw(f,tz--tz+unit(dir)*size,p);
@@ -1666,32 +1668,32 @@ void tick(picture pic=currentpicture, pair z, pair dir, real size=Ticksize,
 void xtick(picture pic=currentpicture, explicit pair z, pair dir=N,
            real size=Ticksize, pen p=currentpen)
 {
-  tick(pic,Scale(pic,z),dir,size,p);
+  tick(pic,z,dir,size,p);
 }
 
 void xtick(picture pic=currentpicture, real x, pair dir=N,
            real size=Ticksize, pen p=currentpen)
 {
-  xtick(pic,(x,pic.scale.y.scale.logarithmic ? 1 : 0),dir,size,p);
+  tick(pic,(x,pic.scale.y.scale.logarithmic ? 1 : 0),dir,size,p);
 }
 
 void ytick(picture pic=currentpicture, explicit pair z, pair dir=E,
            real size=Ticksize, pen p=currentpen) 
 {
-  xtick(pic,z,dir,size,p);
+  tick(pic,z,dir,size,p);
 }
 
 void ytick(picture pic=currentpicture, real y, pair dir=E,
            real size=Ticksize, pen p=currentpen)
 {
-  xtick(pic,(pic.scale.x.scale.logarithmic ? 1 : 0,y),dir,size,p);
+  tick(pic,(pic.scale.x.scale.logarithmic ? 1 : 0,y),dir,size,p);
 }
 
 void tick(picture pic=currentpicture, Label L, real value, explicit pair z,
           pair dir, string format="", real size=Ticksize, pen p=currentpen)
 {
   Label L=L.copy();
-  L.position(z);
+  L.position(Scale(pic,z));
   L.align(L.align,-dir);
   if(shift(L.T)*0 == 0)
     L.T=shift(dot(dir,L.align.dir) > 0 ? dir*size :
@@ -1700,7 +1702,7 @@ void tick(picture pic=currentpicture, Label L, real value, explicit pair z,
   if(L.s == "") L.s=format(format == "" ? defaultformat : format,value);
   L.s=baseline(L.s,baselinetemplate);
   add(pic,L);
-  xtick(pic,z,dir,size,p);
+  tick(pic,z,dir,size,p);
 }
 
 void xtick(picture pic=currentpicture, Label L, explicit pair z, pair dir=N,
@@ -1724,7 +1726,7 @@ void ytick(picture pic=currentpicture, Label L, explicit pair z, pair dir=E,
 void ytick(picture pic=currentpicture, Label L, real y, pair dir=E,
            string format="", real size=Ticksize, pen p=currentpen)
 {
-  ytick(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,y),dir,format,size,p);
+  xtick(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,y),dir,format,size,p);
 }
 
 private void label(picture pic, Label L, pair z, real x, align align,
@@ -1743,13 +1745,13 @@ private void label(picture pic, Label L, pair z, real x, align align,
 
 // Put a label on the x axis.
 void labelx(picture pic=currentpicture, Label L="", explicit pair z,
-            align align=S, string format="", pen p=nullpen)
+            align align=S, string format="", pen p=currentpen)
 {
   label(pic,L,Scale(pic,z),z.x,align,format,p);
 }
 
 void labelx(picture pic=currentpicture, Label L="", real x,
-            align align=S, string format="", pen p=nullpen)
+            align align=S, string format="", pen p=currentpen)
 {
   labelx(pic,L,(x,pic.scale.y.scale.logarithmic ? 1 : 0),align,format,p);
 }
@@ -1762,19 +1764,19 @@ void labelx(picture pic=currentpicture, Label L,
 
 // Put a label on the y axis.
 void labely(picture pic=currentpicture, Label L="", explicit pair z,
-            align align=W, string format="", pen p=nullpen)
+            align align=W, string format="", pen p=currentpen)
 {
   label(pic,L,Scale(pic,z),z.y,align,format,p);
 }
 
 void labely(picture pic=currentpicture, Label L="", real y,
-            align align=W, string format="", pen p=nullpen)
+            align align=W, string format="", pen p=currentpen)
 {
   labely(pic,L,(pic.scale.x.scale.logarithmic ? 1 : 0,y),align,format,p);
 }
 
 void labely(picture pic=currentpicture, Label L,
-            string format="", explicit pen p=nullpen)
+            string format="", explicit pen p=currentpen)
 {
   labely(pic,L,L.position.position,format,p);
 }

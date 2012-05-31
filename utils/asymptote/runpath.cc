@@ -345,13 +345,13 @@ void gen_runpath23(stack *Stack)
 }
 
 #line 172 "runpath.in"
-// real arctime(path p, real dval);
+// real arctime(path p, real L);
 void gen_runpath24(stack *Stack)
 {
-  real dval=vm::pop<real>(Stack);
+  real L=vm::pop<real>(Stack);
   path p=vm::pop<path>(Stack);
 #line 173 "runpath.in"
-  {Stack->push<real>(p.arctime(dval)); return;}
+  {Stack->push<real>(p.arctime(L)); return;}
 }
 
 #line 177 "runpath.in"
@@ -784,7 +784,7 @@ void gen_runpath_venv(venv &ve)
 #line 167 "runpath.in"
   addFunc(ve, run::gen_runpath23, primReal(), SYM(arclength), formal(primPath(), SYM(p), false, false));
 #line 172 "runpath.in"
-  addFunc(ve, run::gen_runpath24, primReal(), SYM(arctime), formal(primPath(), SYM(p), false, false), formal(primReal(), SYM(dval), false, false));
+  addFunc(ve, run::gen_runpath24, primReal(), SYM(arctime), formal(primPath(), SYM(p), false, false), formal(primReal(), SYM(l), false, false));
 #line 177 "runpath.in"
   addFunc(ve, run::gen_runpath25, primReal(), SYM(dirtime), formal(primPath(), SYM(p), false, false), formal(primPair(), SYM(z), false, false));
 #line 182 "runpath.in"

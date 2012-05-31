@@ -328,6 +328,16 @@ projection orthographic(real x, real y, real z, triple up=Z,
                       center=center);
 }
 
+// Compute camera position with x axis below the horizontal at angle alpha,
+// y axis below the horizontal at angle beta, and z axis up.
+triple camera(real alpha, real beta)
+{
+  real denom=Tan(alpha+beta);
+  real Tanalpha=Tan(alpha);
+  real Tanbeta=Tan(beta);
+  return (sqrt(Tanalpha/denom),sqrt(Tanbeta/denom),sqrt(Tanalpha*Tanbeta));
+}
+
 projection oblique(real angle=45)
 {
   transform3 t=identity(4);
@@ -2830,13 +2840,13 @@ struct scene
             return b == 0 ? (0.5*(a.x+a.y)) :
               (b.x^2*a.x+b.y^2*a.y)/(b.x^2+b.y^2);
           }
-          pic2.erase();
           transform3 s=keepAspect ? scale3(min(f(v,x),f(v,y),f(v,z))) :
             xscale3(f(v,x))*yscale3(f(v,y))*zscale3(f(v,z));
           s=shift(this.P.target)*s*shift(-this.P.target);
           t=s*t;
           this.P=s*this.P;
           this.P.bboxonly=false;
+          if(!is3D) pic2.erase();
           f=pic.fit3(t,is3D ? null : pic2,this.P);
         }
 
@@ -2988,6 +2998,11 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
   if((preview || (prc && settings.render == 0)) && settings.embed) {
     image=prefix;
     if(settings.inlinetex) image += "_0";
+    if(!preview && !shipped && !S.pic2.empty2()) {
+      transform T=S.pic2.scaling(S.width,S.height);
+      shipout(image,S.pic2.fit(T),newframe,nativeformat(),false,false,null);
+    }
+    
     image += "."+nativeformat();
     if(!settings.inlinetex) file3.push(image);
     image=graphic(image,"hiresbb");
@@ -3019,7 +3034,7 @@ object embed(string label="", string text=label,
     object F;
     transform T=S.pic2.scaling(xsize,ysize,keepAspect);
     F.f=pic.fit(scale(S.t[0][0])*T);
-    add(F.f,S.pic2.fit(T));
+    add(F.f,S.pic2.fit());
     return F;
   }
 }

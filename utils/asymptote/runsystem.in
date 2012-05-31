@@ -74,8 +74,7 @@ string convertname(string name, const string& format)
 {
   if(name.empty())
     return buildname(outname(),format,"");
-  else
-    name=outpath(name);
+  name=outpath(name);
   return format.empty() ? name : format+":"+name;
 }
 
@@ -238,7 +237,7 @@ Int convert(string args=emptystring, string file=emptystring,
 Int animate(string args=emptystring, string file=emptystring,
             string format=emptystring)
 {
-#ifndef __CYGWIN__
+#ifndef __MSDOS__
   string name=convertname(file,format);
   if(view()) {
     mem::vector<string> cmd;

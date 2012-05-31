@@ -1,3 +1,38 @@
+Release Notes for Version 2.16
+
+Ticks are no longer autoscaled when the number of major intervals is
+specified and autoscale is false. Manual tick scaling was fixed. A bug in
+the palette range was fixed. A division by zero in constructing curved arrows
+was fixed. A numerical underflow was fixed. A picture bound error was
+fixed. The current value of currentpen is now always respected in default
+arguments. A default viewportwidth is no longer imposed for attached
+images. A routine for computing camera positions was added. The format
+command is now more consistent with C++ printf formatting. Named arguments
+can now appear in function calls after rest arguments. The wheel example
+was improved to support PDF animations. The erase command no longer resets
+the machine state. Pipes are now used for xasy communication. A new mode
+parameter to input and output replaces xinput, xoutput, binput, and
+boutput. The icon directory path for 64-bit MSWindows systems was fixed.
+Compilation of native CYGWIN binaries is now supported.
+
+Release Notes for Version 2.15
+
+A compilation problem under MacOS X was fixed.
+
+Release Notes for Version 2.14
+
+Minor problems in the geometry module were fixed. Billboard interaction is
+now disabled for offscreen rendering. A markthin(path) marker with opacity
+thinning was implemented. A locale string was added to format(string,int).
+The copy, map, and sequence functions were generalized to arbitrary depths.
+Asymptote can now be compiled as a shared library. A tuple operator was
+added. The draw(revolution) function now defers drawing until the final
+camera position is known. Nonrendered preview images can now be generated
+for fitted pictures. String reads from binary files were fixed. An int
+ascii(string) function and a bool isnan(real) function were implemented.
+Jacobi elliptic functions were implemented. A quick reference card was added.
+Compilation and static initialization issues under MacOS X Lion were addressed.
+
 Release Notes for Version 2.13
 
 Compilation and installation issues were addressed.

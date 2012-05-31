@@ -1,4 +1,963 @@
 ------------------------------------------------------------------------
+r5434 | jcbowman | 2012-05-30 13:45:48 -0600 (Wed, 30 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasy2asy.py
+
+Work around Windows Python bug.
+
+------------------------------------------------------------------------
+r5433 | jcbowman | 2012-05-30 11:53:45 -0600 (Wed, 30 May 2012) | 3 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/fileio.h
+   M /trunk/asymptote/runfile.in
+
+Replace xinput by input(mode="xdr") and xoutput by input(mode="xdr").
+Replace binput by input(mode="binary") and xoutput by input(mode="binary").
+
+------------------------------------------------------------------------
+r5432 | jcbowman | 2012-05-30 10:35:57 -0600 (Wed, 30 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runhistory.in
+
+Update setting.
+
+------------------------------------------------------------------------
+r5431 | jcbowman | 2012-05-30 10:24:17 -0600 (Wed, 30 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasy2asy.py
+   M /trunk/asymptote/base/plain_constants.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/fileio.h
+   M /trunk/asymptote/interact.cc
+   M /trunk/asymptote/runfile.in
+   M /trunk/asymptote/settings.cc
+
+Workaround limited pipe support in cygwin.
+
+------------------------------------------------------------------------
+r5430 | jcbowman | 2012-05-29 23:06:58 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Fix type in conditional.
+
+------------------------------------------------------------------------
+r5429 | jcbowman | 2012-05-29 10:02:48 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasy2asy.py
+   M /trunk/asymptote/GUI/xasyMainWin.py
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update diagnostics and documentation.
+
+------------------------------------------------------------------------
+r5428 | jcbowman | 2012-05-29 07:20:20 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/locate.cc
+   M /trunk/asymptote/main.cc
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/psfile.cc
+   M /trunk/asymptote/runlabel.in
+   M /trunk/asymptote/runsystem.in
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/util.cc
+
+Support compilation of native CYGWIN binaries.
+
+------------------------------------------------------------------------
+r5427 | jcbowman | 2012-05-29 06:12:56 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fileio.h
+
+Fix pair and triple pipe output.
+
+------------------------------------------------------------------------
+r5426 | jcbowman | 2012-05-29 06:09:25 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fileio.h
+
+Simplify opipe formatting.
+
+------------------------------------------------------------------------
+r5425 | jcbowman | 2012-05-29 04:30:35 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fileio.h
+
+Work around compiler bug.
+
+------------------------------------------------------------------------
+r5424 | jcbowman | 2012-05-29 03:34:25 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Fix makefile.
+
+------------------------------------------------------------------------
+r5423 | jcbowman | 2012-05-29 02:24:29 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Improve msdos build.
+
+------------------------------------------------------------------------
+r5422 | jcbowman | 2012-05-29 02:19:52 -0600 (Tue, 29 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Fix MSDOS makefile dependencies.
+
+------------------------------------------------------------------------
+r5421 | jcbowman | 2012-05-29 00:03:06 -0600 (Tue, 29 May 2012) | 1 line
+Changed paths:
+   M /trunk/asymptote/util.h
+
+Fix CYGWIN build.
+------------------------------------------------------------------------
+r5420 | jcbowman | 2012-05-28 23:58:08 -0600 (Mon, 28 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Reinstate -fno-var-tracking option for older compilers.
+
+------------------------------------------------------------------------
+r5419 | jcbowman | 2012-05-28 22:42:37 -0600 (Mon, 28 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/interact.cc
+
+Support arbitrarily long input lines in xasy.
+
+------------------------------------------------------------------------
+r5418 | jcbowman | 2012-05-28 17:29:40 -0600 (Mon, 28 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasyOptionsDialog.py
+
+Remove broken asy path validation code.
+
+------------------------------------------------------------------------
+r5417 | jcbowman | 2012-05-28 16:30:26 -0600 (Mon, 28 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/configure.ac
+
+Fix warning messages.
+
+------------------------------------------------------------------------
+r5416 | jcbowman | 2012-05-28 14:52:16 -0600 (Mon, 28 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fileio.h
+
+Fix portability issues.
+
+------------------------------------------------------------------------
+r5415 | jcbowman | 2012-05-28 09:47:51 -0600 (Mon, 28 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasy2asy.py
+   M /trunk/asymptote/GUI/xasyMainWin.py
+   M /trunk/asymptote/base/plain_constants.asy
+   M /trunk/asymptote/fileio.cc
+   M /trunk/asymptote/fileio.h
+   M /trunk/asymptote/interact.cc
+   M /trunk/asymptote/runfile.in
+   M /trunk/asymptote/runpicture.in
+   M /trunk/asymptote/runsystem.in
+   M /trunk/asymptote/settings.cc
+
+Use pipes for xasy communication.
+
+------------------------------------------------------------------------
+r5414 | jcbowman | 2012-05-25 09:04:06 -0600 (Fri, 25 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/electromagnetic.asy
+
+Improve example.
+
+------------------------------------------------------------------------
+r5413 | jcbowman | 2012-05-25 09:02:15 -0600 (Fri, 25 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_arrows.asy
+
+Fix division by zero.
+
+------------------------------------------------------------------------
+r5412 | jcbowman | 2012-05-25 09:00:56 -0600 (Fri, 25 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph.asy
+
+Don't autoscale ticks when N is specified and autoscale is false.
+
+------------------------------------------------------------------------
+r5411 | jcbowman | 2012-05-25 08:57:08 -0600 (Fri, 25 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Add new new routine for computing camera positions.
+
+------------------------------------------------------------------------
+r5410 | jcbowman | 2012-05-24 22:38:45 -0600 (Thu, 24 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update to gc-7.2b.
+
+------------------------------------------------------------------------
+r5409 | jcbowman | 2012-05-24 15:49:39 -0600 (Thu, 24 May 2012) | 8 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/examples/splitpatch.asy
+
+Respect straight flag in external().
+
+Add partialu and partialv derivatives for patches.
+
+Add a general split function.
+
+Move split structure into splitpatch example.
+
+------------------------------------------------------------------------
+r5408 | jcbowman | 2012-05-19 22:51:47 -0600 (Sat, 19 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/palette.asy
+
+Fix palette range (bug 3487991).
+
+------------------------------------------------------------------------
+r5407 | jcbowman | 2012-05-19 14:38:43 -0600 (Sat, 19 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Remove obsolete --no-var-tracking compilation option.
+
+------------------------------------------------------------------------
+r5406 | jcbowman | 2012-05-19 13:44:58 -0600 (Sat, 19 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/prc/oPRCFile.cc
+
+Remove unused value.
+
+------------------------------------------------------------------------
+r5405 | jcbowman | 2012-05-19 13:21:30 -0600 (Sat, 19 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/main.cc
+
+Block SIGCHLD.
+
+------------------------------------------------------------------------
+r5404 | jcbowman | 2012-05-19 13:20:12 -0600 (Sat, 19 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/common.h
+
+Force assert to be active.
+
+------------------------------------------------------------------------
+r5403 | jcbowman | 2012-05-19 10:55:16 -0600 (Sat, 19 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph.asy
+   M /trunk/asymptote/base/graph3.asy
+
+Fix manual tick scaling.
+
+------------------------------------------------------------------------
+r5402 | jcbowman | 2012-05-19 09:40:33 -0600 (Sat, 19 May 2012) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/graph.asy
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/plain_Label.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Use currentpen rather than nullpen so that current value of currentpen is
+respected.
+
+------------------------------------------------------------------------
+r5401 | jcbowman | 2012-05-15 05:54:54 -0600 (Tue, 15 May 2012) | 2 lines
+Changed paths:
+   A /trunk/asymptote/config.guess
+
+Add missing file.
+
+------------------------------------------------------------------------
+r5400 | jcbowman | 2012-05-15 05:50:40 -0600 (Tue, 15 May 2012) | 1 line
+Changed paths:
+   A /trunk/asymptote/config.sub
+
+Add missing file.
+------------------------------------------------------------------------
+r5399 | jcbowman | 2012-05-15 05:36:47 -0600 (Tue, 15 May 2012) | 2 lines
+Changed paths:
+   A /trunk/asymptote/ax_pthread.m4
+
+Add missing file.
+
+------------------------------------------------------------------------
+r5398 | jcbowman | 2012-05-15 05:28:40 -0600 (Tue, 15 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/common.h
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/main.cc
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.h
+
+Update POSIX thread support.
+
+------------------------------------------------------------------------
+r5397 | jcbowman | 2012-05-15 03:49:45 -0600 (Tue, 15 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/pipestream.h
+
+Fix warning message.
+
+------------------------------------------------------------------------
+r5396 | jcbowman | 2012-05-15 03:08:30 -0600 (Tue, 15 May 2012) | 4 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update to gc-7.2.
+
+Simplify makefile; fix shared library version.
+
+------------------------------------------------------------------------
+r5395 | jcbowman | 2012-05-10 18:06:16 -0600 (Thu, 10 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/process.cc
+
+Fix the erase command so it behaves as documented (no reset).
+
+------------------------------------------------------------------------
+r5394 | jcbowman | 2012-05-10 15:54:47 -0600 (Thu, 10 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asy-latex.dtx
+   M /trunk/asymptote/doc/latexusage.tex
+
+Don't force a default viewportwidth.
+
+------------------------------------------------------------------------
+r5393 | jcbowman | 2012-05-10 15:47:54 -0600 (Thu, 10 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/examples/animations/wheel.asy
+
+Improve wheel.asy example to allow pdf animations.
+
+------------------------------------------------------------------------
+r5392 | jcbowman | 2012-05-10 15:27:32 -0600 (Thu, 10 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/examples/splitpatch.asy
+
+Fix split structure.
+
+------------------------------------------------------------------------
+r5391 | jcbowman | 2012-05-09 13:24:12 -0600 (Wed, 09 May 2012) | 2 lines
+Changed paths:
+   A /trunk/asymptote/EnvVarUpdate.nsh
+   A /trunk/asymptote/lnkX64IconFix.nsh
+
+Add NSIS support files.
+
+------------------------------------------------------------------------
+r5390 | jcbowman | 2012-05-09 12:51:37 -0600 (Wed, 09 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.nsi
+
+Fix icon directory on 64-bit MSWindows systems.
+
+------------------------------------------------------------------------
+r5389 | jcbowman | 2012-05-09 12:42:42 -0600 (Wed, 09 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/solids.asy
+   M /trunk/asymptote/examples/hyperboloid.asy
+   M /trunk/asymptote/examples/hyperboloidsilhouette.asy
+
+Remove obsolete constructor; update examples.
+
+------------------------------------------------------------------------
+r5388 | jcbowman | 2012-05-09 12:40:29 -0600 (Wed, 09 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update documentation.
+
+------------------------------------------------------------------------
+r5387 | jcbowman | 2012-05-03 19:39:30 -0600 (Thu, 03 May 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/examples/splitpatch.asy
+
+Make split compute subpatches for each input patch.
+
+------------------------------------------------------------------------
+r5386 | hammera | 2012-03-28 20:36:39 -0600 (Wed, 28 Mar 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/tests/Makefile
+   A /trunk/asymptote/tests/pic
+   A /trunk/asymptote/tests/pic/trans.asy
+
+Add picture bounds test.
+
+------------------------------------------------------------------------
+r5385 | hammera | 2012-03-28 20:35:51 -0600 (Wed, 28 Mar 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_bounds.asy
+
+Changed name of class to avoid confusion. 
+
+------------------------------------------------------------------------
+r5384 | hammera | 2012-03-28 18:48:45 -0600 (Wed, 28 Mar 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_bounds.asy
+
+Fix translated bound error.
+
+------------------------------------------------------------------------
+r5383 | jcbowman | 2012-01-26 09:09:57 -0700 (Thu, 26 Jan 2012) | 2 lines
+Changed paths:
+   M /trunk/asymptote/path.cc
+
+Fix numerical underflow.
+
+------------------------------------------------------------------------
+r5382 | hammera | 2011-12-28 14:08:25 -0700 (Wed, 28 Dec 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/application.cc
+   M /trunk/asymptote/application.h
+   M /trunk/asymptote/errors
+   M /trunk/asymptote/exp.h
+   M /trunk/asymptote/tests/types/keyword.asy
+   A /trunk/asymptote/tests/types/order.asy
+
+Allow named arguments after rest arguments.
+
+------------------------------------------------------------------------
+r5381 | hammera | 2011-12-28 14:08:00 -0700 (Wed, 28 Dec 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/program.cc
+
+Nicer debug output with COMPACT flag.
+
+------------------------------------------------------------------------
+r5380 | hammera | 2011-12-28 14:07:37 -0700 (Wed, 28 Dec 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/stack.cc
+
+Refactor vm::frame allocation.
+
+------------------------------------------------------------------------
+r5379 | wspr | 2011-12-18 00:07:26 -0700 (Sun, 18 Dec 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/doc/asy-latex.dtx
+
+fix \CatchFileDef fallback command
+------------------------------------------------------------------------
+r5378 | jcbowman | 2011-12-16 01:05:37 -0700 (Fri, 16 Dec 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runstring.in
+
+Fix trailing zero removal.
+
+------------------------------------------------------------------------
+r5377 | jcbowman | 2011-12-11 21:46:58 -0700 (Sun, 11 Dec 2011) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_strings.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/runstring.in
+
+Make format more consistent with fprintf; add a defaultseparator argument
+for typesetting scientific notation.
+
+------------------------------------------------------------------------
+r5376 | jcbowman | 2011-11-19 16:08:57 -0700 (Sat, 19 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Work around quote translation problem.
+
+------------------------------------------------------------------------
+r5375 | jcbowman | 2011-11-16 18:37:09 -0700 (Wed, 16 Nov 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.16svn.
+------------------------------------------------------------------------
+r5374 | jcbowman | 2011-11-16 14:35:43 -0700 (Wed, 16 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runtime.in
+
+Add missing isnan declaration for MacOS X.
+
+------------------------------------------------------------------------
+r5373 | jcbowman | 2011-11-16 01:55:41 -0700 (Wed, 16 Nov 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.15svn.
+------------------------------------------------------------------------
+r5372 | jcbowman | 2011-11-16 00:58:35 -0700 (Wed, 16 Nov 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/util.h
+
+Add missing CYGWIN declarations.
+------------------------------------------------------------------------
+r5371 | jcbowman | 2011-11-15 23:20:57 -0700 (Tue, 15 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/solids.asy
+   M /trunk/asymptote/examples/animations/earthmoon.asy
+   M /trunk/asymptote/examples/animations/sphere.asy
+   A /trunk/asymptote/examples/pseudosphere.asy
+   A /trunk/asymptote/tests/gc/label.asy
+   A /trunk/asymptote/tests/gc/shipout.asy
+
+Update examples.
+
+------------------------------------------------------------------------
+r5370 | jcbowman | 2011-11-15 14:23:53 -0700 (Tue, 15 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asyRefCard.tex
+
+Fix typo.
+
+------------------------------------------------------------------------
+r5369 | jcbowman | 2011-11-15 14:18:41 -0700 (Tue, 15 Nov 2011) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+   M /trunk/asymptote/base/plain_Label.asy
+   M /trunk/asymptote/doc/Makefile.in
+   A /trunk/asymptote/doc/asyRefCard.tex
+   M /trunk/asymptote/doc/asymptote.texi
+
+Move obsolete rotate(explicit pair dir) routine to geometry module.
+
+Add quick reference card.
+
+------------------------------------------------------------------------
+r5368 | jcbowman | 2011-11-15 14:17:39 -0700 (Tue, 15 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Fix render=0 bugs.
+
+------------------------------------------------------------------------
+r5367 | jcbowman | 2011-11-15 13:04:28 -0700 (Tue, 15 Nov 2011) | 3 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/gsl.cc
+
+Implement Jacobi elliptic function sndncn(real u, real m), which returns
+real[] {sn,dn,cn}.
+
+------------------------------------------------------------------------
+r5366 | jcbowman | 2011-11-15 12:36:33 -0700 (Tue, 15 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/runstring.in
+
+Implement int ascii(string s).
+
+------------------------------------------------------------------------
+r5365 | jcbowman | 2011-11-15 12:27:56 -0700 (Tue, 15 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/Makefile.in
+
+Added manpage target to build man page only.
+
+------------------------------------------------------------------------
+r5364 | jcbowman | 2011-11-15 11:45:15 -0700 (Tue, 15 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/runtime.in
+
+Add bool isnan(real).
+
+------------------------------------------------------------------------
+r5363 | jcbowman | 2011-11-15 01:45:48 -0700 (Tue, 15 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_surface.asy
+
+Fix preview surfaces with render=0.
+
+------------------------------------------------------------------------
+r5362 | jcbowman | 2011-11-14 23:55:06 -0700 (Mon, 14 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fileio.h
+
+Fix string reads from binary files.
+
+------------------------------------------------------------------------
+r5361 | jcbowman | 2011-11-14 23:53:24 -0700 (Mon, 14 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Blank lines are not allowed after \begin{asy}.
+
+------------------------------------------------------------------------
+r5360 | jcbowman | 2011-11-14 23:00:27 -0700 (Mon, 14 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Generate missing preview images for fitted pictures.
+
+------------------------------------------------------------------------
+r5359 | jcbowman | 2011-11-14 16:52:20 -0700 (Mon, 14 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/solids.asy
+
+Fix draw(revolution).
+
+------------------------------------------------------------------------
+r5358 | jcbowman | 2011-11-10 17:07:05 -0700 (Thu, 10 Nov 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph.asy
+   M /trunk/asymptote/base/solids.asy
+
+Fix axis bug introduced in r5349.
+
+------------------------------------------------------------------------
+r5357 | jcbowman | 2011-09-30 08:23:17 -0600 (Fri, 30 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/pen.h
+   M /trunk/asymptote/prc/writePRC.cc
+
+Portability fixes.
+
+------------------------------------------------------------------------
+r5356 | jcbowman | 2011-09-29 22:14:23 -0600 (Thu, 29 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawlabel.cc
+   M /trunk/asymptote/pen.cc
+
+Move lastpen to the end of pen.cc so that it is initialized last.
+
+------------------------------------------------------------------------
+r5355 | hammera | 2011-09-29 13:32:22 -0600 (Thu, 29 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/impdatum.cc
+   M /trunk/asymptote/policy.h
+
+Change Int to int_typ in policy.h
+
+------------------------------------------------------------------------
+r5354 | jcbowman | 2011-09-29 08:38:53 -0600 (Thu, 29 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/process.cc
+
+Avoid compiler warnings about virtual function overloading.
+
+------------------------------------------------------------------------
+r5353 | jcbowman | 2011-09-29 07:54:09 -0600 (Thu, 29 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawfill.cc
+   M /trunk/asymptote/pen.cc
+   M /trunk/asymptote/pen.h
+
+Avoid further static initialization issues (courtesy of Michail Vidiassov).
+
+------------------------------------------------------------------------
+r5352 | jcbowman | 2011-09-29 07:50:13 -0600 (Thu, 29 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runtime.in
+
+Remove extraneous comparison.
+
+------------------------------------------------------------------------
+r5351 | jcbowman | 2011-09-29 07:42:10 -0600 (Thu, 29 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/camp.l
+
+Avoid unused function warning message.
+
+------------------------------------------------------------------------
+r5350 | jcbowman | 2011-09-29 07:04:03 -0600 (Thu, 29 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/dec.h
+   M /trunk/asymptote/drawelement.h
+   M /trunk/asymptote/drawpath3.h
+   M /trunk/asymptote/exp.h
+   M /trunk/asymptote/impdatum.cc
+   M /trunk/asymptote/program.h
+   M /trunk/asymptote/record.h
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/stack.h
+   M /trunk/asymptote/texfile.cc
+   M /trunk/asymptote/texfile.h
+   M /trunk/asymptote/vm.h
+
+Fix warning messages.
+
+------------------------------------------------------------------------
+r5349 | jcbowman | 2011-09-29 06:25:04 -0600 (Thu, 29 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph.asy
+   M /trunk/asymptote/base/graph3.asy
+
+Fix extended axes.
+
+------------------------------------------------------------------------
+r5348 | jcbowman | 2011-09-28 11:51:42 -0600 (Wed, 28 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   A /trunk/asymptote/pen.cc
+   M /trunk/asymptote/pen.h
+   M /trunk/asymptote/process.h
+
+Work around static initialization fiasco.
+
+------------------------------------------------------------------------
+r5347 | jcbowman | 2011-09-28 11:17:50 -0600 (Wed, 28 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/access.h
+
+Fix typo.
+
+------------------------------------------------------------------------
+r5346 | jcbowman | 2011-09-28 10:49:33 -0600 (Wed, 28 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_paths.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/runpath.in
+
+Update documentation.
+
+------------------------------------------------------------------------
+r5345 | jcbowman | 2011-09-28 10:44:41 -0600 (Wed, 28 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawimage.h
+
+Remove unused member.
+
+------------------------------------------------------------------------
+r5344 | jcbowman | 2011-09-28 10:24:10 -0600 (Wed, 28 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/gsl.cc
+
+Fix comparison.
+
+------------------------------------------------------------------------
+r5343 | jcbowman | 2011-09-28 10:16:20 -0600 (Wed, 28 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Remove extraneous comparisons.
+
+------------------------------------------------------------------------
+r5342 | jcbowman | 2011-09-28 10:12:33 -0600 (Wed, 28 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/texfile.cc
+
+Fix comparison.
+
+------------------------------------------------------------------------
+r5341 | hammera | 2011-09-19 21:18:30 -0600 (Mon, 19 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/stm.cc
+
+TRANSJUMP no longer an option.
+
+------------------------------------------------------------------------
+r5340 | hammera | 2011-09-15 16:15:35 -0600 (Thu, 15 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/camp.l
+   M /trunk/asymptote/opsymbols.pl
+   M /trunk/asymptote/tests/types/constructor.asy
+
+Add 'operator tuple' via EXTRASYMBOL command.
+
+------------------------------------------------------------------------
+r5339 | jcbowman | 2011-09-15 09:23:55 -0600 (Thu, 15 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/camp.l
+
+Fix build.
+
+------------------------------------------------------------------------
+r5338 | hammera | 2011-09-07 20:39:57 -0600 (Wed, 07 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/aspy.py
+
+Add operator overloading to aspy.
+
+------------------------------------------------------------------------
+r5337 | hammera | 2011-09-07 18:29:08 -0600 (Wed, 07 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/camp.y
+   M /trunk/asymptote/tests/types/constructor.asy
+
+Add 'operator tuple'.
+
+------------------------------------------------------------------------
+r5336 | hammera | 2011-09-05 18:01:39 -0600 (Mon, 05 Sep 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   A /trunk/asymptote/aspy.py
+   M /trunk/asymptote/common.h
+   M /trunk/asymptote/dec.cc
+   M /trunk/asymptote/dec.h
+   M /trunk/asymptote/errormsg.cc
+   M /trunk/asymptote/genv.cc
+   A /trunk/asymptote/impdatum.cc
+   M /trunk/asymptote/main.cc
+   M /trunk/asymptote/picture.cc
+   A /trunk/asymptote/policy.h
+   M /trunk/asymptote/process.cc
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/stack.cc
+   M /trunk/asymptote/stm.h
+   M /trunk/asymptote/types.h
+
+Can compile Asymptote as a shared library.
+
+------------------------------------------------------------------------
+r5335 | jcbowman | 2011-08-30 16:10:39 -0600 (Tue, 30 Aug 2011) | 4 lines
+Changed paths:
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/examples/ring.asy
+   M /trunk/asymptote/runarray.in
+   M /trunk/asymptote/runstring.in
+
+Generalize copy, map, and sequence functions to arbitrary depths.
+
+Add locale string to format(string,int).
+
+------------------------------------------------------------------------
+r5334 | jcbowman | 2011-08-22 10:46:31 -0600 (Mon, 22 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_bounds.asy
+
+Improve nullpath handling.
+
+------------------------------------------------------------------------
+r5333 | jcbowman | 2011-08-22 09:22:55 -0600 (Mon, 22 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_bounds.asy
+
+Allow draw(nullpath) again.
+
+------------------------------------------------------------------------
+r5332 | jcbowman | 2011-08-21 18:31:43 -0600 (Sun, 21 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asy-latex.dtx
+
+Update version number.
+
+------------------------------------------------------------------------
+r5331 | jcbowman | 2011-08-21 16:09:54 -0600 (Sun, 21 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/util.h
+
+Remove portability tweak for MIPS.
+
+------------------------------------------------------------------------
+r5330 | jcbowman | 2011-08-21 15:09:03 -0600 (Sun, 21 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/util.cc
+
+Specify arbitrary size if MAXPATHLEN is undefined.
+
+------------------------------------------------------------------------
+r5329 | wspr | 2011-08-17 02:51:20 -0600 (Wed, 17 Aug 2011) | 3 lines
+Changed paths:
+   M /trunk/asymptote/doc/asy-latex.dtx
+
+some missing comment chars in \asyinclude
+
+also bumped the version number of the .sty by a minor increment (hope this is okay)
+------------------------------------------------------------------------
+r5328 | jcbowman | 2011-08-13 02:50:17 -0600 (Sat, 13 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_markers.asy
+
+Build Mark and MarkFill from MarkPath.
+
+------------------------------------------------------------------------
+r5327 | jcbowman | 2011-08-12 23:50:06 -0600 (Fri, 12 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_markers.asy
+
+Implement markthin(path) marker with opacity thinning.
+
+------------------------------------------------------------------------
+r5326 | jcbowman | 2011-08-04 21:48:05 -0600 (Thu, 04 Aug 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/README
+
+Update link to cygwin1.dll source code.
+
+------------------------------------------------------------------------
+r5325 | jcbowman | 2011-07-12 08:35:36 -0600 (Tue, 12 Jul 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawsurface.cc
+
+Disable billboard interaction for offscreen rendering.
+
+------------------------------------------------------------------------
+r5324 | pivaldi | 2011-06-29 10:09:51 -0600 (Wed, 29 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Fix double drawing of path when showing triangle in geometry.asy
+------------------------------------------------------------------------
+r5323 | pivaldi | 2011-06-27 16:35:42 -0600 (Mon, 27 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+remove trailing char
+------------------------------------------------------------------------
+r5322 | pivaldi | 2011-06-27 11:04:13 -0600 (Mon, 27 Jun 2011) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Fix arc orientation in arcfromcenter
+Enable again arcfromcenter for line (with explicit constraint)
+Cleaning and improving code
+
+------------------------------------------------------------------------
+r5321 | pivaldi | 2011-06-23 08:58:15 -0600 (Thu, 23 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Remove previous modification in geometry.asy
+------------------------------------------------------------------------
+r5320 | jcbowman | 2011-06-22 20:55:18 -0600 (Wed, 22 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Prebuilt target should not rebuild asy-keywords.el.
+
+------------------------------------------------------------------------
+r5319 | pivaldi | 2011-06-20 14:56:04 -0600 (Mon, 20 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Fix inverse(real, point, point) in geometry.asy
+------------------------------------------------------------------------
+r5318 | jcbowman | 2011-06-19 17:29:55 -0600 (Sun, 19 Jun 2011) | 2 lines
+Changed paths:
+   M /trunk/asymptote/process.cc
+
+Print version number with -vv.
+
+------------------------------------------------------------------------
+r5317 | jcbowman | 2011-06-19 13:34:43 -0600 (Sun, 19 Jun 2011) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.14svn.
+------------------------------------------------------------------------
 r5316 | jcbowman | 2011-06-19 07:40:51 -0600 (Sun, 19 Jun 2011) | 2 lines
 Changed paths:
    M /trunk/asymptote/configure.ac
