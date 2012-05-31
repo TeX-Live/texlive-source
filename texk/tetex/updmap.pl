@@ -1879,8 +1879,8 @@ sub reset_root_home {
     # if $HOME isn't an existing directory, that's ok; TLU does this.
     if (defined($envhome) && (-d $envhome)) {
       # we want to avoid calling getpwuid as far as possible, so if
-      # $envhome is either / or /root we accept it straight ahead
-      if ($envhome eq "/" || $envhome eq "/root") {
+      # $envhome is one of some usual values we accept it without worrying.
+      if ($envhome =~ m,^(/|/root|/var/root)/*$, {
         return;
       }
       # $HOME is defined, check what is the home of root in reality

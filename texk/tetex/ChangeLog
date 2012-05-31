@@ -1,3 +1,7 @@
+2012-05-31  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (reset_root_home): accept /var/root.
+
 2012-05-31  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl: reset root $HOME if it is not the real one, since
