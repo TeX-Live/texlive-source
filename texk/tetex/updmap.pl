@@ -1880,7 +1880,7 @@ sub reset_root_home {
     if (defined($envhome) && (-d $envhome)) {
       # we want to avoid calling getpwuid as far as possible, so if
       # $envhome is one of some usual values we accept it without worrying.
-      if ($envhome =~ m,^(/|/root|/var/root)/*$, {
+      if ($envhome =~ m,^(/|/root|/var/root)/*$,) {
         return;
       }
       # $HOME is defined, check what is the home of root in reality
@@ -1919,20 +1919,20 @@ Usage: $prg     [OPTION] ... [COMMAND]
    or: $prg-sys [OPTION] ... [COMMAND]
 
 Update the default font map files used by pdftex, dvips, and dvipdfm(x),
-(and optionally pxdvi) as determined by all configuration files updmap.cfg 
+and optionally pxdvi, as determined by all configuration files updmap.cfg 
 (the ones returned by running "kpsewhich --all updmap.cfg", but see below).
 
 Among other things, these map files are used to determine which fonts
 should be used as bitmaps and which as outlines, and to determine which
-fonts are included in the output.
+font files are included in the PDF or PostScript output.
 
 By default, the TeX filename database (ls-R) is also updated.
 
 Options:
   --cnffile FILE            read FILE for the updmap configuration 
-                            (can be given multiple times, in which case
-                            all the files are used)
-  --dvipdfmxoutputdir DIR   specify output directory (dvipdfm syntax)
+                             (can be given multiple times, in which case
+                             all the files are used)
+  --dvipdfmxoutputdir DIR   specify output directory (dvipdfm(x) syntax)
   --dvipsoutputdir DIR      specify output directory (dvips syntax)
   --pdftexoutputdir DIR     specify output directory (pdftex syntax)
   --pxdvioutputdir DIR      specify output directory (pxdvi syntax)
@@ -1947,16 +1947,16 @@ Options:
 Commands:
   --help                    show this message and exit
   --version                 show version information and exit
-  --showoptions OPTION      show possible settings for OPTION
   --showoption OPTION       show the current setting of OPTION
-  --setoption OPTION VALUE  set OPTION to value
+  --showoptions OPTION      show possible settings for OPTION
+  --setoption OPTION VALUE  set OPTION to value; option names below
   --setoption OPTION=VALUE  as above, just different syntax
   --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
-                              where MAPTYPE is either Map, MixedMap, KanjiMap
+                             where MAPTYPE is Map, MixedMap, or KanjiMap
   --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
   --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
   --enable KanjiMap=MAPFILE add \"KanjiMap MAPFILE\" to updmap.cfg
-  --disable MAPFILE         disable MAPFILE, whether Map, MixedMap, or KanjiMap
+  --disable MAPFILE         disable MAPFILE, of whatever type
   --listmaps                list all active and inactive maps
   --listavailablemaps       same as --listmaps, but without
                              unavailable map files
@@ -1964,29 +1964,30 @@ Commands:
 
 Explanation of the map types: the (only) difference between Map and
 MixedMap is that MixedMap entries are not added to psfonts_pk.map.
-KanjiMap entries are added to psfonts_t1.map and kanjix.map.
-The purpose is to help users with printers that render Type 1 outline
+The purpose is to help users with devices that render Type 1 outline
 fonts worse than mode-tuned Type 1 bitmap fonts.  So, MixedMap is used
 for fonts that are available as both Type 1 and Metafont.
+KanjiMap entries are added to psfonts_t1.map and kanjix.map.
 
-Explanation of the possible OPTIONS (showoptions, showoptions, setoption):
+Explanation of the OPTION names for --showoptions, --showoptions, --setoption:
 
   dvipsPreferOutline    true|false  (default true)
     Whether dvips uses bitmaps or outlines, when both are available.
-  dvipsDownloadBase35   true|false  (default false)
+  dvipsDownloadBase35   true|false  (default true)
     Whether dvips includes the standard 35 PostScript fonts in its output.
   pdftexDownloadBase14  true|false   (default true)
     Whether pdftex includes the standard 14 PDF fonts in its output.
   pxdviUse              true|false  (default false)
-    Whether maps for pxdvi (Japanese-patched xdvi) is under control of updmap.
+    Whether maps for pxdvi (Japanese-patched xdvi) are under updmap's control.
+  kanjiEmbed            (any string)
+  kanjiVariant          (any string)
+    See below.
   LW35                  URWkb|URW|ADOBEkb|ADOBE  (default URWkb)
     Adapt the font and file names of the standard 35 PostScript fonts.
     URWkb    URW fonts with "berry" filenames    (e.g. uhvbo8ac.pfb)
     URW      URW fonts with "vendor" filenames   (e.g. n019064l.pfb)
     ADOBEkb  Adobe fonts with "berry" filenames  (e.g. phvbo8an.pfb)
     ADOBE    Adobe fonts with "vendor" filenames (e.g. hvnbo___.pfb)
-  kanjiEmbed            (any string)
-  kanjiVariant          (any string)
 
   These options are only read and acted on by updmap; dvips, pdftex, etc.,
   do not know anything about them.  They work by changing the default map
@@ -1994,66 +1995,62 @@ Explanation of the possible OPTIONS (showoptions, showoptions, setoption):
   command-line options or configuration files to the programs, as
   explained at the beginning of updmap.cfg.
 
-  The options kanjiEmbed and kanjiVariant govern special replacements
-  in the map lines. If a map contains the string \@kanjiEmbed\@, then
-  this will be replaced by the value of the respective option. Similarly
-  for kanjiVariant. This way users of Japanese TeX can select different
-  fonts to be included in the final pdf.
+  The options kanjiEmbed and kanjiVariant specify special replacements
+  in the map lines.  If a map contains the string \@kanjiEmbed\@, then
+  this will be replaced by the value of that option; similarly for
+  kanjiVariant.  In this way, users of Japanese TeX can select different
+  fonts to be included in the final output.
 
 Explanation of trees and files normally used:
 
-  updmap reads all the updmap.cfg files found by
-    kpsewhich -all updmap.cfg
-  in the order returned by kpsewhich. There is one exception to keep
-  upgradability from earlier versions of TeX Live: If there is a file
-  TEXMFLOCAL/web2c/updmap-local.cfg (which was formerly used by tlmgr
-  to merge local fonts), then a (not necessarily existing) file
-  TEXMFLOCAL/web2c/updmap.cfg is ignored and the updmap-local.cfg is
-  used instead. In this case updmap recognizes also the syntax for
-  disabling map files in the updmap-local.cfg (this syntax was different
-  to what is used now!).
+  If --cnffile is specified on the command line (possibly multiple
+  times), its value(s) are used.  Otherwise, updmap reads all the
+  updmap.cfg files found by running \`kpsewhich -all updmap.cfg',
+  in the order returned by kpsewhich.  If multiple updmap.cfg files are
+  found, all the maps mentioned in all the updmap.cfg files are merged.
+  
+  There is one exception to keep upgradability from earlier versions of
+  TeX Live: if a file TEXMFLOCAL/web2c/updmap-local.cfg exists (formerly
+  used by tlmgr to merge local fonts), then the file
+  TEXMFLOCAL/web2c/updmap.cfg is ignored (if it exists) and the
+  updmap-local.cfg is used instead.  In this case, updmap recognizes the
+  previous syntax for disabling map files in updmap-local.cfg (this
+  syntax is different from what is used now).
 
-  According to the actions updmap might write to one of the given files or
-  create a new updmap.cfg, see below for details.
+  According to the actions, updmap might write to one of the given files
+  or create a new updmap.cfg, described further below.
 
-  If multiple updmap.cfg files are found, all the map files mentioned
-  in all the updmap.cfg files are merged.
+  Where changes are saved: if config files are given on the command
+  line, then the first one given will be used to save any changes from
+  --setoption, --enable or --disable.  If the config files are taken
+  from kpsewhich output, then the algorithm is more complex:
+    1) If \$TEXMFHOME/web2c/updmap.cfg or \$TEXMFCONFIG/web2c/updmap.cfg
+    appears in the list of used files, then the one listed first by
+    kpsewhich --all (equivalently, the one returned by kpsewhich
+    updmap.cfg), is used.
+      
+    2) If neither of the above two are present and changes are made, a
+    new config file is created in \$TEXMFCONFIG/web2c/updmap.cfg.
 
-  CAVEATS with multiple updmap.cfg files
-  * where changes are saved
-    If config files are given on the cmd line, then the first given will
-    be used to save changes (by --setoption, --enable or --disable).
-    If the config files are taken from kpsewhich, then the algorithm is 
-    more complex:
-    - if one of \$TEXMFHOME/web2c/updmap.cfg or \$TEXMFCONFIG/web2c/updmap.cfg
-      appears in the list of used files, then the one given *first* by
-      kpsewhich --all, or equivalently, the one given by kpsewhich updmap.cfg,
-      is used
-    - if none of the above two are present, a new config file is created
-      in \$TEXMFCONFIG/web2c/updmap.cfg (in case there are actual changes)
-      and used
+  Multiple definitions of a font:
+    If a font is defined in more than one map file, then the definition
+    coming from the first-listed updmap.cfg is used.  If a font is
+    defined multiple times in the same map file, one is chosen
+    arbitrarily.  In both cases a warning is issued.
 
-  * multiple font definitions
-    If a font is defined multiple times in different maps, then the
-    definition of the map file that comes from the highest priority
-    updmap.cfg file is used.
-    If a font is defined multiple times in the same map file, an
-    arbitrary definition is used.
-    In both cases warnings are issued.
-
-  * disabling map files
-    updmap.cfg files with higher priority can disable map files that
-    are mentioned in lower priority updmap.cfg files by disabling
-    them, i.e., writing
+  Disabling maps:
+    updmap.cfg files with higher priority (listed earlier) can disable
+    maps mentioned in lower priority (listed later) updmap.cfg files by
+    writing, e.g.,
       \#! Map mapname.map
     or
       \#! MixedMap mapname.map
-    into the higher prioprity updmap.cfg file. 
+    in the higher-priority updmap.cfg file. 
 
-    As an example take a user with a copy of the commercial MTPRO fonts.
-    He wants to disable the belleek version of the fonts, that is
-    disable the map belleek.map. The user should create a updmap.cfg file
-    in \$TEXMFCONFIG/web2c/updmap.cfg with the content
+    As an example, suppose you have a copy of MathTime Pro fonts
+    and want to disable the Belleek version of the fonts; that is,
+    disable the map belleek.map.  You can create the file
+    \$TEXMFCONFIG/web2c/updmap.cfg with the content
       #! Map belleek.map
       Map mt-plus.map
       Map mt-yy.map
@@ -2066,13 +2063,14 @@ Explanation of trees and files normally used:
   The log file is written to TEXMFVAR/web2c/updmap.log.
 
   When updmap-sys is run, TEXMFSYSCONFIG and TEXMFSYSVAR are used
-  instead.  This is the only difference between updmap-sys and updmap.
+  instead of TEXMFCONFIG and TEXMFVAR, respectively.  This is the only
+  difference between updmap-sys and updmap.
 
-  Other locations can be used if overridden on the command line, or these
-  trees don't exist, or you are not using the original TeX Live.
+  Other locations may be used if you give them on the command line, or
+  these trees don't exist, or you are not using the original TeX Live.
 
   To see the precise locations of the various files that
-  will be read and written, give the -n option (or read the man page).
+  will be read and written, give the -n option (or read the source).
 
 For step-by-step instructions on making new fonts known to TeX, read
 http://tug.org/fonts/fontinstall.html.  For even more terse
