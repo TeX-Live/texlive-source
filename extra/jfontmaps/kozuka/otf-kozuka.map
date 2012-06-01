@@ -40,8 +40,8 @@ otf-ujml-h      UniJIS-UTF16-H        KozGoPro-Light.otf
 otf-ujml-v      UniJIS-UTF16-V        KozGoPro-Light.otf
 otf-cjml-h       Identity-H      KozGoPro-Light.otf
 otf-cjml-v       Identity-V  KozGoPro-Light.otf
-hminl-h   H KozGoPro-Light.otf
-hminl-v V KozGoPro-Light.otf
+hminl-h   H KozMinPro-Light.otf
+hminl-v V KozMinPro-Light.otf
 
 %
 % JIS 2004
@@ -73,5 +73,5 @@ hmgothrn-v  V KozGoPr6N-Heavy.otf
 
 otf-ujmln-h      UniJIS2004-UTF16-H        KozGoPro-Light.otf
 otf-ujmln-v      UniJIS2004-UTF16-V        KozGoPro-Light.otf
-hminln-h   H KozGoPro-Light.otf
-hminln-v V KozGoPro-Light.otf
+hminln-h   H KozMinPro-Light.otf
+hminln-v V KozMinPro-Light.otf
