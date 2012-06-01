@@ -1,3 +1,7 @@
+2012-06-01  Karl Berry  <karl@tug.org>
+
+	* updmap.pl: consistently use $prg, and remove .pl suffix.
+
 2012-05-31  Karl Berry  <karl@tug.org>
 
 	* updmap.pl (reset_root_home): accept /var/root.

@@ -43,7 +43,7 @@ use TeXLive::TLUtils qw(mkdirhier mktexupd win32 basename dirname
 #use Data::Dumper;
 #$Data::Dumper::Indent = 1;
 
-my $prg = basename($0);
+(my $prg = basename($0)) =~ s/\.pl$//;
 
 # sudo sometimes does not reset the home dir of root, check on that
 # see more comments at the definition of the function itself
@@ -1687,10 +1687,10 @@ sub read_updmap_file {
       if ($b eq "Map" || $b eq "MixedMap" || $b eq "KanjiMap") {
         my $c = shift @rest;
         if (!defined($c)) {
-          warning("updmap: apparently not a real disable line, ignored: $_\n");
+          warning("$prg: apparently not a real disable line, ignored: $_\n");
         } else {
           if (defined($data{'maps'}{$c})) {
-            warning("updmap: double mentioning of $c in $fn\n");
+            warning("$prg: double mention of $c in $fn\n");
           }
           $data{'maps'}{$c}{'status'} = 'disabled';
           $data{'maps'}{$c}{'type'} = $b;
@@ -1700,25 +1700,25 @@ sub read_updmap_file {
       next;
     }
     if (@rest) {
-      warning("updmap: line $i in $fn contains a syntax error, more than two words!\n");
+      warning("$prg: line $i in $fn contains a syntax error, more than two words!\n");
     }
     if (defined($settings{$a})) {
       if (check_option($a, $b)) {
         $data{'setting'}{$a}{'val'} = $b;
         $data{'setting'}{$a}{'line'} = $i;
       } else {
-        warning("updmap: unknown setting for $a: $b, ignored!\n");
+        warning("$prg: unknown setting for $a: $b, ignored!\n");
       }
     } elsif ($a eq "Map" || $a eq "MixedMap" || $a eq "KanjiMap") {
       if (defined($data{'maps'}{$b}) && $data{'maps'}{$b}{'type'} ne $a) {
-        warning("updmap: double mentioning of $b with conflicting types in $fn\n");
+        warning("$prg: double mention of $b with conflicting types in $fn\n");
       } else {
         $data{'maps'}{$b}{'type'} = $a;
         $data{'maps'}{$b}{'status'} = 'enabled';
         $data{'maps'}{$b}{'line'} = $i;
       }
     } else {
-      warning("updmap: unrecognized line $i in $fn: $_\n");
+      warning("$prg: unrecognized line $i in $fn: $_\n");
     }
   }
   return \%data;
@@ -1876,7 +1876,7 @@ sub merge_data {
 sub reset_root_home {
   if (!win32() && ($> == 0)) {  # $> is effective uid
     my $envhome = $ENV{'HOME'};
-    # if $HOME isn't an existing directory, that's ok; TLU does this.
+    # if $HOME isn't an existing directory, we don't care.
     if (defined($envhome) && (-d $envhome)) {
       # we want to avoid calling getpwuid as far as possible, so if
       # $envhome is one of some usual values we accept it without worrying.
