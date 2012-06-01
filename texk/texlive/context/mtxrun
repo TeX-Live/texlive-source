@@ -1126,8 +1126,39 @@ local lpeg = require("lpeg")
 
 local report = texio and texio.write_nl or print
 
+-- local lpmatch = lpeg.match
+-- local lpprint = lpeg.print
+-- local lpp     = lpeg.P
+-- local lpr     = lpeg.R
+-- local lps     = lpeg.S
+-- local lpc     = lpeg.C
+-- local lpb     = lpeg.B
+-- local lpv     = lpeg.V
+-- local lpcf    = lpeg.Cf
+-- local lpcb    = lpeg.Cb
+-- local lpcg    = lpeg.Cg
+-- local lpct    = lpeg.Ct
+-- local lpcs    = lpeg.Cs
+-- local lpcc    = lpeg.Cc
+-- local lpcmt   = lpeg.Cmt
+-- local lpcarg  = lpeg.Carg
 
+-- function lpeg.match(l,...) report("LPEG MATCH") lpprint(l) return lpmatch(l,...) end
 
+-- function lpeg.P    (l) local p = lpp   (l) report("LPEG P =")    lpprint(l) return p end
+-- function lpeg.R    (l) local p = lpr   (l) report("LPEG R =")    lpprint(l) return p end
+-- function lpeg.S    (l) local p = lps   (l) report("LPEG S =")    lpprint(l) return p end
+-- function lpeg.C    (l) local p = lpc   (l) report("LPEG C =")    lpprint(l) return p end
+-- function lpeg.B    (l) local p = lpb   (l) report("LPEG B =")    lpprint(l) return p end
+-- function lpeg.V    (l) local p = lpv   (l) report("LPEG V =")    lpprint(l) return p end
+-- function lpeg.Cf   (l) local p = lpcf  (l) report("LPEG Cf =")   lpprint(l) return p end
+-- function lpeg.Cb   (l) local p = lpcb  (l) report("LPEG Cb =")   lpprint(l) return p end
+-- function lpeg.Cg   (l) local p = lpcg  (l) report("LPEG Cg =")   lpprint(l) return p end
+-- function lpeg.Ct   (l) local p = lpct  (l) report("LPEG Ct =")   lpprint(l) return p end
+-- function lpeg.Cs   (l) local p = lpcs  (l) report("LPEG Cs =")   lpprint(l) return p end
+-- function lpeg.Cc   (l) local p = lpcc  (l) report("LPEG Cc =")   lpprint(l) return p end
+-- function lpeg.Cmt  (l) local p = lpcmt (l) report("LPEG Cmt =")  lpprint(l) return p end
+-- function lpeg.Carg (l) local p = lpcarg(l) report("LPEG Carg =") lpprint(l) return p end
 
 local type = type
 local byte, char, gmatch = string.byte, string.char, string.gmatch
@@ -2696,8 +2727,12 @@ local function basename(name)
     return match(name,"^.+[/\\](.-)$") or name
 end
 
+-- local function nameonly(name)
+--     return (gsub(match(name,"^.+[/\\](.-)$") or name,"%..*$",""))
+-- end
+
 local function nameonly(name)
-    return (gsub(match(name,"^.+[/\\](.-)$") or name,"%..*$",""))
+    return (gsub(match(name,"^.+[/\\](.-)$") or name,"%.[%a%d]+$",""))
 end
 
 local function extname(name,default)
