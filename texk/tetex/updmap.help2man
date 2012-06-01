@@ -1,0 +1,93 @@
+# $Id$
+# This help2man auxiliary file is in the public domain.
+# Originally created by Karl Berry.
+# The FILES text from Claire Connelly.
+# See the Makefile for the help2man invocation.
+
+[NAME]
+updmap \- manage TeX font maps, per-user
+.br
+updmap-sys \- manage TeX font maps, system-wide
+
+/in the final output/
+.SH ENVIRONMENT
+
+/give the -n option/
+.SH EXAMPLES
+
+[FILES]
+Configuration and input files:
+.IP "\fIupdmap\&.cfg\fP"
+Main configuration file\&.  In
+\fItexmf/web2c\fP by default, but may be located elsewhere
+depending on your distribution\&.  Each texmf tree read should have its
+own \fIupdmap.cfg\fP.
+.IP "\fIdvips35\&.map\fP"
+Map file for standard 35 PostScript fonts for
+use with \fBdvips\fP(1)\&.
+.IP "\fIpdftex35\&.map\fP"
+Map file for standard 35 PostScript fonts for
+use with \fBpdftex\fP(1)\&.
+.IP "\fIps2pk35\&.map\fP"
+Map file for standard 35 PostScript fonts for
+use with \fBps2pk\fP(1)\&.
+.PP
+Output files:
+.IP "\fIpsfonts\&.map\fP"
+For \fBdvips\fP(1)\&.
+Same as \fIpsfonts_t1\&.map\fP if option \fBdvipsPreferOutline\fP active,
+else as \fIpsfonts_pk\&.map\fP.
+.IP "\fIpsfonts_pk\&.map\fP"
+For \fBdvips\fP(1)\&.
+Without information from MixedMap files\&.
+(Setting of \fBdvipsPreferOutline\fP ignored\&.)
+.IP "\fIpsfonts_t1\&.map\fP"
+For \fBdvips\fP(1)\&.
+With information from MixedMap files\&.
+(Setting of \fBdvipsPreferOutline\fP ignored\&.)
+.IP "\fIdownload35\&.map\fP"
+For \fBdvips\fP(1)\&.
+Always downloads the standard 35 fonts\&.
+(Setting of \fBdvipsDownloadBase35\fP ignored\&.)
+.IP "\fIbuiltin35\&.map\fP"
+For \fBdvips\fP(1)\&.
+Never downloads the standard 35 fonts\&.
+(Setting of \fBdvipsDownloadBase35\fP ignored\&.)
+.IP "\fIpdftex\&.map\fP"
+For \fBpdftex\fP(1)\&.
+Same as \fIpdftex_dl14\&.map\fP if option \fBpdftexDownloadBase14\fP active,
+else as \fIpdftex_ndl14\&.map\fP.
+.IP "\fIpdftex_dl14\&.map\fP"
+For \fBpdftex\fP(1)\&.
+Always downloads the standard 14 fonts\&.
+.IP "\fIpdftex_ndl14\&.map\fP"
+For \fBpdftex\fP(1)\&.
+Never downloads the standard 14 fonts\&.
+.IP "\fIps2pk\&.map\fP"
+Similar to \fIpsfonts.map\fP file, but
+forces all fonts to be downloaded, so this map file can be used with
+\fBxdvi\fP(1) and \fBps2pk\fP(1)\&.
+.PP
+Configuration files for \fBdvips\fP(1):
+.IP "\fIconfig\&.builtin35\fP"
+Loads \fIbuiltin35\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP "\fIconfig\&.download35\fP"
+Loads \fIdownload35\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP "\fIconfig\&.outline\fP"
+Loads \fIpsfonts_t1\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP "\fIconfig\&.pdf\fP"
+Loads \fIpsfonts_t1\&.map\fP instead
+of \fIpsfonts\&.map\fP and has additional optimizations for PDF generation\&.
+.IP "\fIconfig\&.pk\fP"
+Loads \fIpsfonts_pk\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+.IP "\fIconfig\&.www\fP"
+Loads \fIpsfonts_t1\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.
+(For compatibility with old versions\&.)
+.IP "\fIconfig\&.gstopk\fP"
+Loads \fIpsfonts_t1\&.map\fP instead
+of \fIpsfonts\&.map\fP\&.

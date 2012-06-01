@@ -1106,6 +1106,11 @@ uninstall-hook: uninstall-bin-links uninstall-links uninstall-man1-links
 run-texlinks:
 @WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
+.PHONY: xupdmap.man
+xupdmap.man: updmap.help2man updmap.pl
+	help2man --include=$< --source="TeX Live" --no-info \
+	  $(srcdir)/updmap.pl >/tmp/$@
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

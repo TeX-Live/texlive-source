@@ -1,5 +1,8 @@
 2012-06-01  Karl Berry  <karl@tug.org>
 
+	* Makefile.am (xupdmap.man): new (phony) target to run help2man.
+	* updmap.help2man: new file.
+
 	* updmap.pl: consistently use $prg, and remove .pl suffix.
 
 2012-05-31  Karl Berry  <karl@tug.org>

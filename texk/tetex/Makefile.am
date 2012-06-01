@@ -125,6 +125,15 @@ if !WIN32
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 endif !WIN32
 
+## Generate the updmap man page using help2man plus a bit of
+## handwritten material.  But don't actually update updmap.man,
+## we don't want to require help2man for an install.  Leave that to be
+## done by hand.
+.PHONY: xupdmap.man
+xupdmap.man: updmap.help2man updmap.pl
+	help2man --include=$< --source="TeX Live" --no-info \
+	  $(srcdir)/updmap.pl >/tmp/$@
+
 ## Tests
 ##
 TESTS = tests/updmap-cmdline-test.pl
