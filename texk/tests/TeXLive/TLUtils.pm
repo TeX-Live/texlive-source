@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 26615 2012-05-24 00:39:35Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2012 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 26615 $';
+my $svnrev = '$Revision: 26663 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -313,7 +312,7 @@ sub platform_desc {
     'alpha-linux'      => 'DEC Alpha with GNU/Linux',
     'alphaev5-osf'     => 'DEC Alphaev5 OSF',
     'amd64-freebsd'    => 'x86_64 with FreeBSD',
-    'amd64-kfreebsd'   => 'x86_64 with GNU/FreeBSD',
+    'amd64-kfreebsd'   => 'x86_64 with GNU/kFreeBSD',
     'armel-linux'      => 'ARM with GNU/Linux',
     'hppa-hpux'        => 'HP-UX',
     'i386-cygwin'      => 'Intel x86 with Cygwin',
@@ -357,9 +356,8 @@ currently based on the value of Perl's C<$^O> variable.
 
 =cut
 
-sub win32
-{
-  if ($^O=~/^MSWin(32|64)$/i) {
+sub win32 {
+  if ($^O =~ /^MSWin/i) {
     return 1;
   } else {
     return 0;
@@ -478,8 +476,7 @@ C<chdir($dir)> or die.
 
 =cut
 
-sub xchdir
-{
+sub xchdir {
   my ($dir) = @_;
   chdir($dir) || die "$0: chdir($dir) failed: $!";
   ddebug("xchdir($dir) ok\n");
@@ -492,8 +489,7 @@ Run C<system(@args)> and die if unsuccessful.
 
 =cut
 
-sub xsystem
-{
+sub xsystem {
   my (@args) = @_;
   ddebug("running system(@args)\n");
   my $retval = system(@args);
@@ -880,8 +876,7 @@ that is a fatal error.
 
 =cut
 
-sub copy
-{
+sub copy {
   my $infile = shift;
   my $filemode = 0;
   if ($infile eq "-f") { # second argument is a file
@@ -1001,8 +996,7 @@ C</absolute/path/to/dir1>.
 
 =cut
 
-sub collapse_dirs
-{
+sub collapse_dirs {
   my (@files) = @_;
   my @ret = ();
   my %by_dir;
@@ -1071,8 +1065,7 @@ returns all the directories from which all content will be removed
 #   case put that directory into the removal list
 # - return this removal list
 #
-sub removed_dirs
-{
+sub removed_dirs {
   my (@files) = @_;
   my %removed_dirs;
   my %by_dir;
@@ -2224,8 +2217,7 @@ Returns 1 if different, 0 if the same.
 
 =cut
 
-sub tlcmp
-{
+sub tlcmp {
   my ($filea, $fileb) = @_;
   if (!defined($fileb)) {
     die <<END_USAGE;
@@ -2241,11 +2233,14 @@ END_USAGE
 }
 
 
-# Return contents of FNAME as a string, converting all of CR, LF, and
-# CRLF to just LF.
-#
-sub read_file_ignore_cr
-{
+=item C<read_file_ignore_cr($file)>
+
+Return contents of FILE as a string, converting all of CR, LF, and
+CRLF to just LF.
+
+=cut
+
+sub read_file_ignore_cr {
   my ($fname) = @_;
   my $ret = "";
 
@@ -2501,8 +2496,7 @@ sub download_file {
   return($ret);
 }
 
-sub _download_file
-{
+sub _download_file {
   my ($url, $dest, $wgetdefault) = @_;
   if (win32()) {
     $dest =~ s!/!\\!g;
@@ -3189,8 +3183,7 @@ If HASH is a reference, it is followed.
 
 =cut
 
-sub debug_hash
-{
+sub debug_hash {
   my ($label) = shift;
   my (%hash) = (ref $_[0] && $_[0] =~ /.*HASH.*/) ? %{$_[0]} : @_;
 
@@ -3385,8 +3378,7 @@ and the program has to be C<wget> since we parse the output.
 
 =cut
 
-sub query_ctan_mirror
-{
+sub query_ctan_mirror {
   my $wget = $::progs{'wget'};
   if (!defined ($wget)) {
     tlwarn("query_ctan_mirror: Programs not set up, trying wget\n");
@@ -3441,8 +3433,7 @@ Check if MIRROR is functional.
 
 =cut
 
-sub check_on_working_mirror
-{
+sub check_on_working_mirror {
   my $mirror = shift;
 
   my $wget = $::progs{'wget'};
@@ -3479,8 +3470,7 @@ sub check_on_working_mirror
 
 =cut
 
-sub give_ctan_mirror_base
-{
+sub give_ctan_mirror_base {
   my @backbone = qw!http://www.ctan.org/tex-archive
                     http://www.tex.ac.uk/tex-archive
                     http://dante.ctan.org/tex-archive!;
@@ -3523,8 +3513,7 @@ sub give_ctan_mirror_base
 }
 
 
-sub give_ctan_mirror
-{
+sub give_ctan_mirror {
   return (give_ctan_mirror_base(@_) . "/$TeXLiveServerPath");
 }
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26636 2012-05-24 18:02:00Z karl $
+# $Id: tlmgr.pl 26744 2012-05-31 19:48:49Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26636 $';
-my $datrev = '$Date: 2012-05-24 20:02:00 +0200 (Thu, 24 May 2012) $';
+my $svnrev = '$Revision: 26744 $';
+my $datrev = '$Date: 2012-05-31 21:48:49 +0200 (Thu, 31 May 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5670,17 +5670,19 @@ example, running
 starts you directly at the update screen.  Without any action, the
 GUI will be started at the main screen.
 
+=for comment Keep language list in sync with install-tl.
+
 =item B<--gui-lang> I<llcode>
 
-Normally the GUI tries to deduce your language from the environment (on
-Windows via the registry, on Unix via C<LC_MESSAGES>). If that fails you
-can select a different language by giving this option with a language
-code (based on ISO 639-1).  Currently supported (but not necessarily
-completely translated) are: English (en, default), Czech (cs), German
-(de), French (fr), Italian (it), Japanese (ja), Dutch (nl), Polish (pl),
-Brazilian Portuguese (pt_br), Russian (ru), Slovak (sk), Slovenian (sl),
-Serbian (sr), Vietnamese (vi), simplified Chinese (zh-cn), and
-traditional Chinese (zh-tw).
+By default, the GUI tries to deduce your language from the environment
+(on Windows via the registry, on Unix via C<LC_MESSAGES>). If that fails
+you can select a different language by giving this option with a
+language code (based on ISO 639-1).  Currently supported (but not
+necessarily completely translated) are: English (en, default), Czech
+(cs), German (de), French (fr), Italian (it), Japanese (ja), Dutch (nl),
+Polish (pl), Brazilian Portuguese (pt_br), Russian (ru), Slovak (sk),
+Slovenian (sl), Serbian (sr), Vietnamese (vi), simplified Chinese
+(zh-cn), and traditional Chinese (zh-tw).
 
 =item B<--machine-readable>
 
@@ -6628,40 +6630,34 @@ Do not ask for confirmation, remove immediately.
 
 =item B<generate fmtutil>
 
-=item B<generate updmap>
-
 =back
 
 The C<generate> action overwrites any manual changes made in the
 respective files: it recreates them from scratch based on the
 information of the installed packages, plus local adaptions.
-
 The TeX Live installer and C<tlmgr> routinely call C<generate> for
 all of these files.
 
-For managing your own fonts, please see the documentation of
-updmap, which supports multiple updmap.cfg files. So by simply
-editing TEXMFLOCAL's updmap.cfg they will be accounted for.
+For managing your own fonts, please read the C<updmap --help>
+information and/or L<http://tug.org/fonts/fontinstall.html>.
 
-In any case, C<tlmgr> updates and maintains C<updmap.cfg> in
-C<TEXMFDIST> (while the other generated files are in
-C<TEXMFSYSVAR>), because that is the location where the fonts
-are installed.
-
-In more detail: C<generate> remakes any of the five config files
-C<language.dat>, C<language.def>, C<language.dat.lua>, C<fmtutil.cnf>,
-and C<updmap.cfg> from the information present in the local TLPDB, plus
+In more detail: C<generate> remakes any of the configuration files
+C<language.dat>, C<language.def>, C<language.dat.lua>, and
+C<fmtutil.cnf>, from the information present in the local TLPDB, plus
 locally-maintained files.
 
 The locally-maintained files are C<language-local.dat>,
-C<language-local.def>, C<language-local.dat.lua>, or C<fmtutil-local.cnf>,
-searched for in C<TEXMFLOCAL> in the respective directories.
-The formerly supported C<updmap-local.cfg> is not supported anymore,
-since C<updmap> now supports multiple updmap.cfg files, so local
-additions can be put into an updmap.cfg file in TEXMFLOCAL.
-If local additions are present, the final file is made by starting
-with the main file, omitting any entries that the local file specifies
-to be disabled, and finally appending the local file.
+C<language-local.def>, C<language-local.dat.lua>, or
+C<fmtutil-local.cnf>, searched for in C<TEXMFLOCAL> in the respective
+directories.  If local additions are present, the final file is made by
+starting with the main file, omitting any entries that the local file
+specifies to be disabled, and finally appending the local file.
+
+(Historical note: The formerly supported C<updmap-local.cfg> is no longer
+read, since C<updmap> now supports multiple C<updmap.cfg> files.  Thus,
+local additions can and should be put into an C<updmap.cfg> file in
+C<TEXMFLOCAL>.  Although C<generate updmap> still exists, it is only
+called internally by C<tlmgr> and should not be invoked otherwise.)
 
 Local files specify entries to be disabled with a comment line, namely
 one of these:
@@ -6697,14 +6693,13 @@ Options:
 =item B<--dest> I<output_file>
 
 specifies the output file (defaults to the respective location in
-C<TEXMFSYSVAR> for C<language*> and C<fmtutil>, and C<TEXMFSYSDIST>
-for C<updmap>).  If C<--dest> is given to C<generate language>, it serves
-as a basename onto which C<.dat> will be appended for the name of the
-C<language.dat> output file, C<.def> will be
-appended to the value for the name of the C<language.def> output file,
-and C<.dat.lua> to the name of the C<language.dat.lua> file.  (This is
-just to avoid overwriting; if you want a specific name for each output
-file, we recommend invoking C<tlmgr> twice.)
+C<TEXMFSYSVAR>).  If C<--dest> is given to C<generate language>, it
+serves as a basename onto which C<.dat> will be appended for the name of
+the C<language.dat> output file, C<.def> will be appended to the value
+for the name of the C<language.def> output file, and C<.dat.lua> to the
+name of the C<language.dat.lua> file.  (This is just to avoid
+overwriting; if you want a specific name for each output file, we
+recommend invoking C<tlmgr> twice.)
 
 =item B<--localcfg> I<local_conf_file>
 
@@ -6714,7 +6709,7 @@ location in C<TEXMFLOCAL>).
 =item B<--rebuild-sys>
 
 tells tlmgr to run necessary programs after config files have been
-regenerated. These are: C<updmap-sys> after C<generate updmap>,
+regenerated. These are:
 C<fmtutil-sys --all> after C<generate fmtutil>,
 C<fmtutil-sys --byhyphen .../language.dat> after C<generate language.dat>,
 and
@@ -6733,7 +6728,6 @@ The respective locations are as follows:
   tex/generic/config/language.def (and language-local.def);
   tex/generic/config/language.dat.lua (and language-local.dat.lua);
   web2c/fmtutil.cnf (and fmtutil-local.cnf);
-  web2c/updmap.cfg (and updmap-local.cfg).
 
 
 =head1 TLMGR CONFIGURATION FILE
