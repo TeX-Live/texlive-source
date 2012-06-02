@@ -3,7 +3,7 @@
 
 =begin
 
-convbkmk Ver.0.03
+convbkmk Ver.0.04
 
 = License
 
@@ -35,12 +35,17 @@ THE SOFTWARE.
 2011.05.02   0.01  Bug fix: BOM was not correct.
 2012.05.08   0.02  Bug fix: for a case of dvips with -z option and Ruby1.8.
                    Add conversion of /Creator and /Producer .
-2012.05.09   0.03  Suppress halfwidth -> fullwidth katakana conversion
+2012.05.12   0.03  Suppress halfwidth -> fullwidth katakana conversion
                    and MIME decoding in Ruby1.8.
+2012.06.01   0.04  Support escape sequences: \n, \r, \t, \b, \f, \\,
+                   \ddd (octal, PDFDocEncoding) and \0xUUUU (Unicode UTF-16BE).
+                   Support sequences of end of line:
+                   '\' or other followed by "\n", "\r\n" or "\r" .
+                   Set file IO to binary mode.
 
 =end
 
-Version = "0.03"
+Version = "0.04"
 
 require "optparse"
 
@@ -48,8 +53,14 @@ if RUBY_VERSION >= "1.9"
   $RUBY_M17N = true
 
   class String
-    def to_utf16be(enc)
-      self.force_encoding(enc.current).encode('UTF-16BE')
+    def to_utf8(enc)
+      self.force_encoding(enc.current).encode('UTF-8')
+    end
+    def utf16be_to_utf8
+      self.force_encoding('UTF-16BE').encode('UTF-8')
+    end
+    def utf8_to_utf16be
+      self.force_encoding('UTF-8').encode('UTF-16BE')
     end
   end
 else
@@ -58,18 +69,44 @@ else
   require "jcode" # for method each_char
   require "nkf"
   class String
-    def to_utf16be(enc)
-      NKF.nkf('-w16 -x -m0 '+enc.kconv_enc, self)
+    def to_utf8(enc)
+      NKF.nkf('-w -x -m0 '+enc.kconv_enc, self)
+    end
+    def utf16be_to_utf8
+      NKF.nkf('-w -x -m0 --utf16-input', self)
+    end
+    def utf8_to_utf16be
+      NKF.nkf('-w16 -x -m0 --utf8-input', self)
     end
     def ascii_only?
       return self !~ /[\x80-\xFF]/n
     end
+    REPLACE_TABLE = {"\n" => "\\n", "\r" => "\\r", "\t" => "\\t",
+      "\b" => "\\b", "\f" => "\\f", "\e" => "\\e", "\"" => "\\\""}
     def valid_encoding?
-      tmp = "\"" + self + "\""
-      tmp.gsub!("\\(","\\\\\\(")
-      tmp.gsub!("\\)","\\\\\\)")
-      tmp.gsub!("\n","\\n")
-      tmp.gsub!("\r","\\r")
+      conv = ''
+      tmp = self.dup
+      while tmp.length>0 do
+        case tmp
+        when /\A\\\\/
+          conv += "\\\\\\\\"
+        when /\A\\[nrtbf()]/, /\A\\[0-3][0-7][0-7]/, /\A\\0x[0-9A-F]{4}/i
+          conv += "\\"+$&
+        when /\A\\/
+          conv += "\\\\"
+        when /\A[^\\]*/
+          conv += $&
+        else
+          raise 'unexpected input!'
+        end
+        tmp = $'
+      end
+      conv.gsub!(/[\n\r\t\b\f\e"]/) { |s| REPLACE_TABLE[s] }
+      conv.gsub!(/([\000-\037\177])/) { "\\%#03o" % $1.unpack("C*") }
+      tmp = "\"" + conv + "\""
+#      puts 's:' + self
+#      puts 't:' + tmp
+#      puts 'i:' + self.inspect
       return tmp == self.inspect
     end
     def force_encoding(enc)
@@ -206,15 +243,15 @@ def check_parentheses_balance(line, enc)
       # illegal input
       $stdout = STDERR
       p 'parameters: '
-      p enc.status
-      p enc.option
-      p enc.current
+      p '  status: ' + enc.status
+      p '  option: ' + enc.option
+      p '  current: ' + enc.current
       p enc.is_8bit
       if !$RUBY_M17N
-        p tmp_rest.inspect
-        p tmp_rest
+        p '  inspect: '   + tmp_rest.inspect
+        p '  rest   :   [' + tmp_rest + ']'
       end
-      p line
+      p '             [' + line + ']'
       raise 'encoding is not consistent'
     end
   end
@@ -240,6 +277,14 @@ def check_parentheses_balance(line, enc)
   return depth, count, tmp_prev, tmp_rest
 end
 
+# PDFDocEncoding -> UTF-16BE
+PDF2UNI = Array(0..255)
+PDF2UNI[0o030..0o037] = 0x02d8, 0x02c7, 0x02c6, 0x02d9, 0x02dd, 0x02db, 0x02da, 0x02dc
+PDF2UNI[0o200..0o207] = 0x2022, 0x2020, 0x2021, 0x2026, 0x2014, 0x2013, 0x0192, 0x2044
+PDF2UNI[0o210..0o217] = 0x2039, 0x203a, 0x2212, 0x2030, 0x201e, 0x201c, 0x201d, 0x2018
+PDF2UNI[0o220..0o227] = 0x2019, 0x201a, 0x2122, 0xfb01, 0xfb02, 0x0141, 0x0152, 0x0160
+PDF2UNI[0o230..0o237] = 0x0178, 0x017d, 0x0131, 0x0142, 0x0153, 0x0161, 0x017e, 0xfffd
+PDF2UNI[0o240       ] = 0x20ac
 
 def conv_string_to_utf16be(line, enc)
   if line !~ /(\()(.*)(\))/m
@@ -247,24 +292,30 @@ def conv_string_to_utf16be(line, enc)
   end
   pre, tmp, post = $`, $2, $'
 
-  if tmp.ascii_only?
+  if tmp.ascii_only? && tmp !~ /\\0x[0-9A-F]{4}/i
     return line
   end
 
   conv = ''
-  conv.force_encoding(enc.current)
+  conv.force_encoding('UTF-8')
   tmp.force_encoding(enc.current)
+
   while tmp.length>0 do
-    if tmp =~ /\A[^\\]+/
-      conv += $&
-    elsif tmp =~ /\\([0-3][0-7][0-7])/
-      conv += $RUBY_M17N ? $&.oct.chr('ASCII-8BIT') : $&.oct.chr
-    elsif tmp =~ /\\([\r\n]{1,2})/
+    case tmp
+    when /\A[^\\\n\r]+/
+      conv += $&.to_utf8(enc)
+    when /\A\\([0-3][0-7][0-7])/  # PDFDocEncoding -> UTF-8
+      conv += [PDF2UNI[$1.oct]].pack("U*")
+    when /\A\\0x(D[8-B][0-9A-F]{2})\\0x(D[C-F][0-9A-F]{2})/i  # surrogate pair
+      conv += [$1.hex, $2.hex].pack("n*").utf16be_to_utf8
+    when /\A\\0x([0-9A-F]{4})/i
+      conv += [$1.hex].pack("U*")
+    when /\A\\[nrtbf\\]/
+      conv += eval(%!"#{$&}"!)
+    when /\A(\r\n|\r|\n)/
+      conv += "\n"
+    when /\A\\([\r\n]{1,2})|\\/
       # ignore
-    elsif tmp =~ /\\[nrtbf]/
-      conv += eval($&)
-    elsif tmp =~ /\\(.)/
-      conv += $1
     else
       raise 'unexpected input!'
     end
@@ -272,14 +323,8 @@ def conv_string_to_utf16be(line, enc)
   end
 
   buf = 'FEFF' # BOM for UTF-16BE
-  conv.each_char { |chr|
-    if chr == "\r" || chr == "\n"
-      buf += chr
-    else
-      chr.to_utf16be(enc).each_byte {|byte|
-        buf += '%02X' % byte
-      }
-    end
+  conv.utf8_to_utf16be.each_byte {|byte|
+    buf += '%02X' % byte
   }
   return pre + '<' + buf + '>' + post
 end
@@ -341,12 +386,11 @@ else
       raise 'input file does not seem PS file'
     end
     fout = fin.gsub(/\.ps$/i, "-convbkmk#{$&}")
-    open(fin, 'r') {|ifile|
-      open(fout, 'w') {|ofile|
+    open(fin, 'rb') {|ifile|
+      open(fout, 'wb') {|ofile|
         file_treatment(ifile, ofile, enc)
       }
     }
   }
 end
-
 
