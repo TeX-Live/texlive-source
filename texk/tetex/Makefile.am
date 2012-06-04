@@ -133,6 +133,7 @@ endif !WIN32
 xupdmap.man: updmap.help2man updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(srcdir)/updmap.pl >/tmp/$@
+EXTRA_DIST += updmap.help2man
 
 ## Tests
 ##

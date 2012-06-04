@@ -1,3 +1,7 @@
+2012-06-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): Add the new file updmap.help2man.
+
 2012-06-01  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (xupdmap.man): new (phony) target to run help2man.
