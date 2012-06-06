@@ -25,7 +25,7 @@ BEGIN {
   $^W=1;
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
   if ($?) {
-    print STDERR "(m)updmap: Cannot find TEXMFROOT, aborting!\n";
+    print STDERR "updmap: Cannot find TEXMFROOT, aborting!\n";
     exit 1;
   }
   chomp($TEXMFROOT);
