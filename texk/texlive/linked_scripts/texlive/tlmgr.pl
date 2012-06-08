@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26744 2012-05-31 19:48:49Z karl $
+# $Id: tlmgr.pl 26857 2012-06-08 00:31:28Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26744 $';
-my $datrev = '$Date: 2012-05-31 21:48:49 +0200 (Thu, 31 May 2012) $';
+my $svnrev = '$Revision: 26857 $';
+my $datrev = '$Date: 2012-06-08 02:31:28 +0200 (Fri, 08 Jun 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4043,6 +4043,12 @@ sub action_generate {
     }
 
   } elsif ($what =~ m/^updmap$/i) {
+    tlwarn("$prg: generate updmap is no longer needed or supported.\n");
+    tlwarn("$prg: Please read the documentation of the `updmap' program.\n");
+    tlwarn("$prg: Goodbye.\n");
+    exit(1);
+
+  } elsif ($what =~ m/^_updmap$/i) {
     my $dest = $opts{"dest"} || "$TEXMFDIST/web2c/updmap.cfg";
     debug("$prg: writing new updmap.cfg to $dest\n");
     TeXLive::TLUtils::create_updmap($localtlpdb, $dest);
@@ -6656,19 +6662,19 @@ specifies to be disabled, and finally appending the local file.
 (Historical note: The formerly supported C<updmap-local.cfg> is no longer
 read, since C<updmap> now supports multiple C<updmap.cfg> files.  Thus,
 local additions can and should be put into an C<updmap.cfg> file in
-C<TEXMFLOCAL>.  Although C<generate updmap> still exists, it is only
-called internally by C<tlmgr> and should not be invoked otherwise.)
+C<TEXMFLOCAL>.  The C<generate updmap> action no longer exists.)
 
 Local files specify entries to be disabled with a comment line, namely
 one of these:
 
+  #!NAME
   %!NAME
   --!NAME
 
-where C<fmtutil.cnf> uses C<#>, C<language.dat> and
-C<language.def> use C<%>, and C<language.dat.lua> use C<-->.  In any
-case, the I<name> is the respective format name, or hyphenation pattern
-identifier.  Examples:
+where C<fmtutil.cnf> uses C<#>, C<language.dat> and C<language.def> use
+C<%>, and C<language.dat.lua> use C<-->.  In all cases, the I<name> is
+the respective format name or hyphenation pattern identifier.
+Examples:
 
   #!pdflatex
   %!german
@@ -6682,9 +6688,9 @@ for the same item, if a different definition is desired.  In general,
 except for the special disabling lines, the local files follow the same
 syntax as the master files.
 
-The form C<generate language> recreates both the C<language.dat>, the
-C<language.def> and the C<language.dat.lua> files, while the forms with
-extension recreates only the given language file.
+The form C<generate language> recreates all three files C<language.dat>,
+C<language.def>, and C<language.dat.lua>, while the forms with an
+extension recreates only that given language file.
 
 Options:
 
