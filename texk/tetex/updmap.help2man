@@ -3,6 +3,7 @@
 # Originally created by Karl Berry.
 # The FILES text from Claire Connelly.
 # See the Makefile for the help2man invocation.
+# do not fill the long TEXMF* tables.
 
 [NAME]
 updmap \- manage TeX font maps, per-user
@@ -11,6 +12,12 @@ updmap-sys \- manage TeX font maps, system-wide
 
 /in the final output/
 .SH ENVIRONMENT
+
+/in the given order/
+.nf
+
+/where YYYY is/
+.fi
 
 /give the -n option/
 .SH EXAMPLES

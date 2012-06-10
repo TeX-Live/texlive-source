@@ -265,40 +265,40 @@ sub main {
     # updmap (user):
     # ==============
     # as found:
-    # TEXMFCONFIG    $HOME/.texlive2012/texmf-config/web2c/updmap.cfg
-    # TEXMFVAR       $HOME/.texlive2012/texmf-var/web2c/updmap.cfg
+    # TEXMFCONFIG    $HOME/.texliveYYYY/texmf-config/web2c/updmap.cfg
+    # TEXMFVAR       $HOME/.texliveYYYY/texmf-var/web2c/updmap.cfg
     # TEXMFHOME      $HOME/texmf/web2c/updmap.cfg
-    # TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
-    # TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
-    # TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
+    # TEXMFSYSCONFIG $TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
+    # TEXMFSYSVAR    $TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
+    # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
     # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-    # TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+    # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
     # 
     # as used:
-    # TEXMFCONFIG    $HOME/.texlive2012/texmf-config/web2c/updmap.cfg
-    # TEXMFVAR       $HOME/.texlive2012/texmf-var/web2c/updmap.cfg
+    # TEXMFCONFIG    $HOME/.texliveYYYY/texmf-config/web2c/updmap.cfg
+    # TEXMFVAR       $HOME/.texliveYYYY/texmf-var/web2c/updmap.cfg
     # TEXMFHOME      $HOME/texmf/web2c/updmap.cfg
-    # TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
-    # TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+    # TEXMFSYSCONFIG $TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
+    # TEXMFSYSVAR    $TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
     # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-    # TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
-    # TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+    # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
+    # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
     # 
     # updmap-sys (root):
     # ==================
     # as found:
-    # TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
-    # TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
-    # TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
+    # TEXMFSYSCONFIG $TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
+    # TEXMFSYSVAR    $TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
+    # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
     # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-    # TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+    # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
     # 
     # as used:
-    # TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
-    # TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+    # TEXMFSYSCONFIG $TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
+    # TEXMFSYSVAR    $TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
     # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-    # TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
-    # TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+    # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
+    # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
     #
     if ($found || $old_updmap_local_found) {
       my @tmp;
@@ -2057,23 +2057,26 @@ Explanation of trees and files normally used:
 
   Thus, if updmap.cfg files are present in all trees, and the default
   layout is used as shipped with TeX Live, the following files are
-  read in this order:
-  updmap-sys variant:
-  TEXMFSYSCONFIG \$TEXLIVE/2012/texmf-config/web2c/updmap.cfg
-  TEXMFSYSVAR    \$TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+  read in the given order.
+  
+  For updmap-sys:
+  TEXMFSYSCONFIG \$TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
+  TEXMFSYSVAR    \$TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
   TEXMFLOCAL     \$TEXLIVE/texmf-local/web2c/updmap.cfg
-  TEXMFMAIN      \$TEXLIVE/2012/texmf/web2c/updmap.cfg
-  TEXMFDIST      \$TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+  TEXMFMAIN      \$TEXLIVE/YYYY/texmf/web2c/updmap.cfg
+  TEXMFDIST      \$TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
 
-  updmap variant:
-  TEXMFCONFIG    \$HOME/.texlive2012/texmf-config/web2c/updmap.cfg
-  TEXMFVAR       \$HOME/.texlive2012/texmf-var/web2c/updmap.cfg
+  For updmap:
+  TEXMFCONFIG    \$HOME/.texliveYYYY/texmf-config/web2c/updmap.cfg
+  TEXMFVAR       \$HOME/.texliveYYYY/texmf-var/web2c/updmap.cfg
   TEXMFHOME      \$HOME/texmf/web2c/updmap.cfg
-  TEXMFSYSCONFIG \$TEXLIVE/2012/texmf-config/web2c/updmap.cfg
-  TEXMFSYSVAR    \$TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+  TEXMFSYSCONFIG \$TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
+  TEXMFSYSVAR    \$TEXLIVE/YYYY/texmf-var/web2c/updmap.cfg
   TEXMFLOCAL     \$TEXLIVE/texmf-local/web2c/updmap.cfg
-  TEXMFMAIN      \$TEXLIVE/2012/texmf/web2c/updmap.cfg
-  TEXMFDIST      \$TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+  TEXMFMAIN      \$TEXLIVE/YYYY/texmf/web2c/updmap.cfg
+  TEXMFDIST      \$TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
+  
+  (where YYYY is the TeX Live release version).
   
   There is another exception to keep upgradability from earlier versions of
   TeX Live: if a file TEXMFLOCAL/web2c/updmap-local.cfg exists (formerly
@@ -2090,7 +2093,7 @@ Explanation of trees and files normally used:
   line, then the first one given will be used to save any changes from
   --setoption, --enable or --disable.  If the config files are taken
   from kpsewhich output, then the algorithm is more complex:
-    1) If \$TEXMFHOME/web2c/updmap.cfg or \$TEXMFCONFIG/web2c/updmap.cfg
+    1) If \$TEXMFCONFIG/web2c/updmap.cfg or \$TEXMFHOME/web2c/updmap.cfg
     appears in the list of used files, then the one listed first by
     kpsewhich --all (equivalently, the one returned by kpsewhich
     updmap.cfg), is used.
