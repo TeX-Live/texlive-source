@@ -2048,16 +2048,18 @@ Explanation of trees and files normally used:
 
   If --cnffile is specified on the command line (possibly multiple
   times), its value(s) are used.  Otherwise, updmap reads all the
-  updmap.cfg files found by running \`kpsewhich -all updmap.cfg', in 
-  the order returned by kpsewhich, with the exception that a file found 
-  in TEXMFLOCAL is moved above the one in TEXMFMAIN, to make sure that 
-  local adjustments by admins take precedence over what is shipped in 
-  TeX Live. If multiple updmap.cfg files are found, all the maps 
+  updmap.cfg files found by running \`kpsewhich -all updmap.cfg', in the
+  order returned by kpsewhich, with one exception: an updmap.cfg found
+  in TEXMFLOCAL is given higher priority than the updmap.cfg in
+  TEXMFMAIN, to ensure that local adjustments by administrators take
+  precedence over what is shipped in TeX Live.
+
+  In any case, if multiple updmap.cfg files are found, all the maps
   mentioned in all the updmap.cfg files are merged.
 
   Thus, if updmap.cfg files are present in all trees, and the default
   layout is used as shipped with TeX Live, the following files are
-  read in the given order.
+  read, in the given order.
   
   For updmap-sys:
   TEXMFSYSCONFIG \$TEXLIVE/YYYY/texmf-config/web2c/updmap.cfg
@@ -2078,10 +2080,10 @@ Explanation of trees and files normally used:
   
   (where YYYY is the TeX Live release version).
   
-  There is another exception to keep upgradability from earlier versions of
-  TeX Live: if a file TEXMFLOCAL/web2c/updmap-local.cfg exists (formerly
-  used by tlmgr to merge local fonts), then the file
-  TEXMFLOCAL/web2c/updmap.cfg is ignored (if it exists) and the
+  There is another exception to keep upgradability from earlier versions
+  of TeX Live: if a file TEXMFLOCAL/web2c/updmap-local.cfg exists
+  (formerly used by tlmgr to merge local fonts), then the file
+  TEXMFLOCAL/web2c/updmap.cfg is ignored (if it exists) and that
   updmap-local.cfg is used instead.  In this case, updmap recognizes the
   previous syntax for disabling map files in updmap-local.cfg (this
   syntax is different from what is used now).
@@ -2093,6 +2095,7 @@ Explanation of trees and files normally used:
   line, then the first one given will be used to save any changes from
   --setoption, --enable or --disable.  If the config files are taken
   from kpsewhich output, then the algorithm is more complex:
+
     1) If \$TEXMFCONFIG/web2c/updmap.cfg or \$TEXMFHOME/web2c/updmap.cfg
     appears in the list of used files, then the one listed first by
     kpsewhich --all (equivalently, the one returned by kpsewhich
@@ -2101,10 +2104,10 @@ Explanation of trees and files normally used:
     2) If neither of the above two are present and changes are made, a
     new config file is created in \$TEXMFCONFIG/web2c/updmap.cfg.
 
-  Multiple definitions of a font:
+  Resolving multiple definitions of a font:
     If a font is defined in more than one map file, then the definition
     coming from the first-listed updmap.cfg is used.  If a font is
-    defined multiple times in the same map file, one is chosen
+    defined multiple times within the same map file, one is chosen
     arbitrarily.  In both cases a warning is issued.
 
   Disabling maps:
