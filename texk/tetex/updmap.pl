@@ -220,16 +220,15 @@ sub main {
       push @used_files, (win32() ? lc($f) : $f);
     }
     #
-    # reorder used files: since we ship and manage with tlmgr 
-    # the file in TEXMFSYSCONFIG, and TEXMFLOCAL has *lower* priority
-    # then TEXMFSYSCONFIG, we move a TEXMFLOCAL-updmap.cfg if found
-    # after TEXMFCONFIG TEXMFVAR and TEXMFHOME
     chomp(my $TEXMFLOCAL =`kpsewhich --var-value=TEXMFLOCAL`);
     chomp(my $TEXMFHOME =`kpsewhich --var-value=TEXMFHOME`);
     if (win32()) {
       $TEXMFLOCAL = lc($TEXMFLOCAL);
       $TEXMFHOME = lc($TEXMFHOME);
     }
+    #
+    # search for TEXMFLOCAL/web2c/updmap.cfg
+    # see compatibility with updmap-local.cfg below
     my $found = 0;
     my $TMLabs = Cwd::abs_path($TEXMFLOCAL);
     if ($TMLabs) {
@@ -241,12 +240,17 @@ sub main {
         }
       }
     }
+    #
+    # backward compatibility with TL2011 and before updmap-local.cfg
+    # we read this instead of TEXMFLOCAL/web2c/updmap.cfg, but give
+    # a big fat warning
     my $old_updmap_local_found = 0;
     if (-r "$TMLabs/web2c/updmap-local.cfg") {
       $old_updmap_local_found = 1;
       warning("Old configuration file TEXMFLOCAL/web2c/updmap-local.cfg found!\n");
       if ($found) {
         warning("Will read this file *instead* of TEXMFLOCAL/web2c/updmap.cfg!!!\n");
+        # rest of the action is done in the reordering of cfg files
       } else {
         # if TEXMFLOCAL updmap.cfg does not exist, we have to make sure
         # that the replacement is added to the list of updmap files
@@ -254,25 +258,64 @@ sub main {
       }
       warning("Please consider moving the information from updmap-local.cfg to TEXMFLOCAL/web2c/updmap.cfg\n");
     }
+    #
+    # reorder used files: we move TEXMFLOCAL (if used) just above TEXMFMAIN
+    # as sysadmins will probably adjust values there
+    #
+    # updmap (user):
+    # ==============
+    # as found:
+    # TEXMFCONFIG    $HOME/.texlive2012/texmf-config/web2c/updmap.cfg
+    # TEXMFVAR       $HOME/.texlive2012/texmf-var/web2c/updmap.cfg
+    # TEXMFHOME      $HOME/texmf/web2c/updmap.cfg
+    # TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
+    # TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+    # TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
+    # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
+    # TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+    # 
+    # as used:
+    # TEXMFCONFIG    $HOME/.texlive2012/texmf-config/web2c/updmap.cfg
+    # TEXMFVAR       $HOME/.texlive2012/texmf-var/web2c/updmap.cfg
+    # TEXMFHOME      $HOME/texmf/web2c/updmap.cfg
+    # TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
+    # TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+    # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
+    # TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
+    # TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+    # 
+    # updmap-sys (root):
+    # ==================
+    # as found:
+    # TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
+    # TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+    # TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
+    # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
+    # TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+    # 
+    # as used:
+    # TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
+    # TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+    # TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
+    # TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
+    # TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+    #
     if ($found || $old_updmap_local_found) {
       my @tmp;
-      my $local_pushed = 0;
       for my $f (@used_files) {
-        if ($f =~ m!\Q$TEXMFCONFIG\E|\Q$TEXMFVAR\E|\Q$TEXMFHOME\E!) {
+        if ($f =~ m!\Q$TEXMFMAIN/\E!) {
+          if ($old_updmap_local_found) {
+            push @tmp, "$TEXMFLOCAL/web2c/updmap-local.cfg";
+          } else {
+            # since we are under if ($found || $old_updmap_local_found)
+            # we know that TEXMFLOCAL/web2c/updmap.cfg exists!
+            push @tmp, "$TEXMFLOCAL/web2c/updmap.cfg";
+          }
           push @tmp, $f;
         } else {
-          if (!$local_pushed) {
-            # should we use the return value of grep here, but we know
-            # what we will find?!?!
-            if ($old_updmap_local_found) {
-              push @tmp, "$TEXMFLOCAL/web2c/updmap-local.cfg";
-            } else {
-              push @tmp, "$TEXMFLOCAL/web2c/updmap.cfg";
-            }
-            $local_pushed = 1;
+          if ($f !~ m!\Q$TEXMFLOCAL\E!) {
+            push @tmp, $f;
           }
-          # push the original
-          push @tmp, $f unless ($f =~ m!\Q$TEXMFLOCAL\E!);
         }
       }
       @used_files = @tmp;
@@ -2005,11 +2048,34 @@ Explanation of trees and files normally used:
 
   If --cnffile is specified on the command line (possibly multiple
   times), its value(s) are used.  Otherwise, updmap reads all the
-  updmap.cfg files found by running \`kpsewhich -all updmap.cfg',
-  in the order returned by kpsewhich.  If multiple updmap.cfg files are
-  found, all the maps mentioned in all the updmap.cfg files are merged.
+  updmap.cfg files found by running \`kpsewhich -all updmap.cfg', in 
+  the order returned by kpsewhich, with the exception that a file found 
+  in TEXMFLOCAL is moved above the one in TEXMFMAIN, to make sure that 
+  local adjustments by admins take precedence over what is shipped in 
+  TeX Live. If multiple updmap.cfg files are found, all the maps 
+  mentioned in all the updmap.cfg files are merged.
+
+  Thus, if updmap.cfg files are present in all trees, and the default
+  layout is used as shipped with TeX Live, the following files are
+  read in this order:
+  updmap-sys variant:
+  TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
+  TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+  TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
+  TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
+  TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+
+  updmap variant:
+  TEXMFCONFIG    $HOME/.texlive2012/texmf-config/web2c/updmap.cfg
+  TEXMFVAR       $HOME/.texlive2012/texmf-var/web2c/updmap.cfg
+  TEXMFHOME      $HOME/texmf/web2c/updmap.cfg
+  TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
+  TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+  TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
+  TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
+  TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
   
-  There is one exception to keep upgradability from earlier versions of
+  There is another exception to keep upgradability from earlier versions of
   TeX Live: if a file TEXMFLOCAL/web2c/updmap-local.cfg exists (formerly
   used by tlmgr to merge local fonts), then the file
   TEXMFLOCAL/web2c/updmap.cfg is ignored (if it exists) and the
