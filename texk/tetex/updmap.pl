@@ -2059,21 +2059,21 @@ Explanation of trees and files normally used:
   layout is used as shipped with TeX Live, the following files are
   read in this order:
   updmap-sys variant:
-  TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
-  TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
-  TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-  TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
-  TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+  TEXMFSYSCONFIG \$TEXLIVE/2012/texmf-config/web2c/updmap.cfg
+  TEXMFSYSVAR    \$TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+  TEXMFLOCAL     \$TEXLIVE/texmf-local/web2c/updmap.cfg
+  TEXMFMAIN      \$TEXLIVE/2012/texmf/web2c/updmap.cfg
+  TEXMFDIST      \$TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
 
   updmap variant:
-  TEXMFCONFIG    $HOME/.texlive2012/texmf-config/web2c/updmap.cfg
-  TEXMFVAR       $HOME/.texlive2012/texmf-var/web2c/updmap.cfg
-  TEXMFHOME      $HOME/texmf/web2c/updmap.cfg
-  TEXMFSYSCONFIG $TEXLIVE/2012/texmf-config/web2c/updmap.cfg
-  TEXMFSYSVAR    $TEXLIVE/2012/texmf-var/web2c/updmap.cfg
-  TEXMFLOCAL     $TEXLIVE/texmf-local/web2c/updmap.cfg
-  TEXMFMAIN      $TEXLIVE/2012/texmf/web2c/updmap.cfg
-  TEXMFDIST      $TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
+  TEXMFCONFIG    \$HOME/.texlive2012/texmf-config/web2c/updmap.cfg
+  TEXMFVAR       \$HOME/.texlive2012/texmf-var/web2c/updmap.cfg
+  TEXMFHOME      \$HOME/texmf/web2c/updmap.cfg
+  TEXMFSYSCONFIG \$TEXLIVE/2012/texmf-config/web2c/updmap.cfg
+  TEXMFSYSVAR    \$TEXLIVE/2012/texmf-var/web2c/updmap.cfg
+  TEXMFLOCAL     \$TEXLIVE/texmf-local/web2c/updmap.cfg
+  TEXMFMAIN      \$TEXLIVE/2012/texmf/web2c/updmap.cfg
+  TEXMFDIST      \$TEXLIVE/2012/texmf-dist/web2c/updmap.cfg
   
   There is another exception to keep upgradability from earlier versions of
   TeX Live: if a file TEXMFLOCAL/web2c/updmap-local.cfg exists (formerly
