@@ -1,3 +1,12 @@
+2012-06-19  Norbert Preining  <preining@logic.at>
+
+	* scripts/updmap-setup-kanji.pl: 
+	  - fix and simplify status detection
+	  - add options to the help string
+	  - switch completely to updmap (non -sys) variant, we will
+	    use the usual wrapper system for updmap-setup-kanji-sys
+	  (patch from Hironori Kitagawa)
+
 2012-04-25  Norbert Preining  <preining@logic.at>
 
 	* kozuka/otf-up-kozuka.map: fix inconsistency in naming of
