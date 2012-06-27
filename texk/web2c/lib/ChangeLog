@@ -1,3 +1,16 @@
+2012-06-27  Norbert Preining  <preining@logic.at>
+
+	* texmfmp.c (runpopen): append "b" on Windows.
+	(open_in_or_pipe): do not use the "b" here.
+	(This makes pdftex's \input"|..." feature work again,
+	unintentionally broken.)
+	tex-live mail, 26 Jun 2012 14:02:26.
+
+2012-06-27  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (generic_synctex_get_current_name): return the
+	empty string if passed null (can happen with -ini).
+
 2012-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* printversion.c (printversionandexit): Update 'Copyright 2012'.

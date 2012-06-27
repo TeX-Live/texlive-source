@@ -127,6 +127,10 @@
 char *generic_synctex_get_current_name (void)
 {
   char *pwdbuf, *ret;
+  if (!fullnameoffile) {
+    ret = xstrdup("");
+    return ret;
+  }
   if (kpse_absolute_p(fullnameoffile, false)) {
      return xstrdup(fullnameoffile);
   }
@@ -523,7 +527,9 @@ runsystem (const char *cmd)
 /* Like runsystem(), the runpopen() function is called only when
    shellenabledp == 1.   Unlike runsystem(), here we write errors to
    stderr, since we have nowhere better to use; and of course we return
-   a file handle (or NULL) instead of a status indicator.  */
+   a file handle (or NULL) instead of a status indicator.
+   
+   Also, we append "b" to MODE on Windows.  */
 
 static FILE *
 runpopen (char *cmd, const char *mode)
@@ -532,9 +538,14 @@ runpopen (char *cmd, const char *mode)
   char *safecmd = NULL;
   char *cmdname = NULL;
   int allow;
-
 #ifdef WIN32
   char *pp;
+#endif
+  string realmode = xmalloc(strlen(mode)+2);
+
+  strcpy(realmode, mode);
+#ifdef WIN32
+  strcat(realmode, "b");
 
   for (pp = cmd; *pp; pp++) {
     if (*pp == '\'') *pp = '"';
@@ -548,9 +559,9 @@ runpopen (char *cmd, const char *mode)
     allow = shell_cmd_is_allowed (cmd, &safecmd, &cmdname);
 
   if (allow == 1)
-    f = popen (cmd, mode);
+    f = popen (cmd, realmode);
   else if (allow == 2)
-    f = popen (safecmd, mode);
+    f = popen (safecmd, realmode);
   else if (allow == -1)
     fprintf (stderr, "\nrunpopen quotation error in command line: %s\n",
              cmd);
@@ -561,6 +572,7 @@ runpopen (char *cmd, const char *mode)
     free (safecmd);
   if (cmdname)
     free (cmdname);
+  free (realmode);
   return f;
 }
 #endif /* ENABLE_PIPES */
@@ -1853,7 +1865,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
       fname = xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
       recorder_record_input (fname + 1);
-      *f_ptr = runpopen(fname+1,"rb");
+      *f_ptr = runpopen(fname+1,"r");
       free(fname);
       for (i=0; i<NUM_PIPES; i++) {
         if (pipes[i]==NULL) {
@@ -1895,10 +1907,10 @@ open_out_or_pipe (FILE **f_ptr, const_string fopen_mode)
            is better to be prepared */
         if (STREQ((fname+strlen(fname)-4),".tex"))
           *(fname+strlen(fname)-4) = 0;
-        *f_ptr = runpopen(fname+1,"wb");
+        *f_ptr = runpopen(fname+1,"w");
         *(fname+strlen(fname)) = '.';
       } else {
-        *f_ptr = runpopen(fname+1,"wb");
+        *f_ptr = runpopen(fname+1,"w");
       }
       recorder_record_output (fname + 1);
       free(fname);
