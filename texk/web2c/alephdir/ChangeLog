@@ -1,3 +1,7 @@
+2012-06-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* om16bit.ch: Aleph uses 256 math font families.
+
 2012-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eobase.ch: Fixed a typo in TeX text (for e-TeX).

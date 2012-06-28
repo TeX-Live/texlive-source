@@ -2033,7 +2033,7 @@ in one of these principal fields; it looks at the subformula that
 comes next in the input, and places an encoding of that subformula
 into a given word of |mem|.
 
-@d fam_in_range==((cur_fam>=0)and(cur_fam<16))
+@d fam_in_range==((cur_fam>=0)and(cur_fam<256))
 
 @<Declare act...@>=
 @t\4@>@<Declare the function called |fin_mlist|@>@t@>@;@/
