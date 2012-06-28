@@ -1,3 +1,8 @@
+2012-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftosrc.cc: Use XRef::getNumObjects instead of XRef::getSize,
+	required for poppler >= 0.19.0.
+
 2012-05-20  Thanh Han The  <thanh@river-valley.org>
 
 	* pdftex.defines (get/setimagegroupref): these replace imagegroupref.
