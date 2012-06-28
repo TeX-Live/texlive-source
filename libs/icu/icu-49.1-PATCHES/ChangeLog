@@ -1,3 +1,7 @@
+2012-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-82-Indic-bugfix (new): Revert ICU SVN commit 26090.
+
 2012-04-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-FreeBSD (new): Build fix for FreeBSD.
