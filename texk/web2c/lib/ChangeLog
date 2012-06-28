@@ -1,15 +1,15 @@
-2012-06-27  Norbert Preining  <preining@logic.at>
-
-	* texmfmp.c (runpopen): append "b" on Windows.
-	(open_in_or_pipe): do not use the "b" here.
-	(This makes pdftex's \input"|..." feature work again,
-	unintentionally broken.)
-	tex-live mail, 26 Jun 2012 14:02:26.
-
 2012-06-27  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (generic_synctex_get_current_name): return the
 	empty string if passed null (can happen with -ini).
+
+2012-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (open_{in,out}_or_pipe): Use popen() modes "rb" and
+	"wb" only for Windows, Posix allows them only for fopen().
+	(This makes pdftex's \input"|..." feature work again,
+	unintentionally broken.)
+	tex-live mail, 26 Jun 2012 06:24:11.
 
 2012-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
