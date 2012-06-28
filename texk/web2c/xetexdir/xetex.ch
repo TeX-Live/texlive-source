@@ -3132,6 +3132,16 @@ goto done
 @z
 
 @x
+else if cur_cmd=def_family then
+  begin m:=cur_chr; scan_four_bit_int; f:=equiv(m+cur_val);
+  end
+@y
+else if cur_cmd=def_family then
+  begin m:=cur_chr; scan_math_fam_int; f:=equiv(m+cur_val);
+  end
+@z
+
+@x
 @ When \TeX\ wants to typeset a character that doesn't exist, the
 character node is not created; thus the output routine can assume
 that characters exist when it sees them. The following procedure
@@ -5902,6 +5912,12 @@ end;
 whatsit_node: @<Let |d| be the width of the whatsit |p|@>;
 @y
 whatsit_node: @<Let |d| be the width of the whatsit |p|, and |goto found| if ``visible''@>;
+@z
+
+@x
+@d fam_in_range==((cur_fam>=0)and(cur_fam<16))
+@y
+@d fam_in_range==((cur_fam>=0)and(cur_fam<number_math_families))
 @z
 
 @x
