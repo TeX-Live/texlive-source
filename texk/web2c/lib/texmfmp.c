@@ -536,14 +536,9 @@ runpopen (char *cmd, const char *mode)
   char *safecmd = NULL;
   char *cmdname = NULL;
   int allow;
+
 #ifdef WIN32
   char *pp;
-#endif
-  string realmode = xmalloc(strlen(mode)+2);
-
-  strcpy(realmode, mode);
-#ifdef WIN32
-  strcat(realmode, "b");
 
   for (pp = cmd; *pp; pp++) {
     if (*pp == '\'') *pp = '"';
@@ -557,9 +552,9 @@ runpopen (char *cmd, const char *mode)
     allow = shell_cmd_is_allowed (cmd, &safecmd, &cmdname);
 
   if (allow == 1)
-    f = popen (cmd, realmode);
+    f = popen (cmd, mode);
   else if (allow == 2)
-    f = popen (safecmd, realmode);
+    f = popen (safecmd, mode);
   else if (allow == -1)
     fprintf (stderr, "\nrunpopen quotation error in command line: %s\n",
              cmd);
@@ -570,7 +565,6 @@ runpopen (char *cmd, const char *mode)
     free (safecmd);
   if (cmdname)
     free (cmdname);
-  free (realmode);
   return f;
 }
 #endif /* ENABLE_PIPES */
