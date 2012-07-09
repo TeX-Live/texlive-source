@@ -75,7 +75,10 @@ typedef INTEGER_TYPE integer;
 /* We need a type that's at least off_t wide */
 typedef off_t longinteger;
 
-#if SIZEOF_LONG < SIZEOF_OFF_T
+#if defined(WIN32) && !defined(__MINGW32__)
+#define LONGINTEGER_TYPE __int64
+#define LONGINTEGER_PRId "IA64d"
+#elif SIZEOF_LONG < SIZEOF_OFF_T
 #define LONGINTEGER_TYPE long long
 #define LONGINTEGER_PRId "lld"
 #else
