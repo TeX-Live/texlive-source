@@ -1,3 +1,8 @@
+2012-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* {comm,ctang,cweav}-w2c.ch: Use binary mode for output files.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

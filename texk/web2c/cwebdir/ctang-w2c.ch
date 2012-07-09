@@ -249,6 +249,14 @@ static void
 phase_two (void) {
 @z
 
+Section 43.
+
+@x l.577 Use binary mode for output files
+    C_file=fopen(output_file_name,"w");
+@y
+    C_file=fopen(output_file_name,"wb");
+@z
+
 Section 46.
 
 @x l.603

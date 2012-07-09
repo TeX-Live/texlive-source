@@ -660,6 +660,20 @@ FILE *active_file; /* currently active file for \.{CWEAVE} output */
 char *found_filename; /* filename found by |kpse_find_file| */
 @z
 
+Section 78.
+
+@x l.1380 Use binary mode for output files
+  if ((C_file=fopen(C_file_name,"w"))==NULL)
+@y
+  if ((C_file=fopen(C_file_name,"wb"))==NULL)
+@z
+
+@x l.1386 Use binary mode for output files
+  if ((tex_file=fopen(tex_file_name,"w"))==NULL)
+@y
+  if ((tex_file=fopen(tex_file_name,"wb"))==NULL)
+@z
+
 
 Section 81. (reused)
 

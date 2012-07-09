@@ -891,9 +891,21 @@ static void
 phase_three (void) {
 @z
 
+@x l.4309 Use binary mode for output files
+  if ((idx_file=fopen(idx_file_name,"w"))==NULL)
+@y
+  if ((idx_file=fopen(idx_file_name,"wb"))==NULL)
+@z
+
+@x l.4324 Use binary mode for output files
+  if ((scn_file=fopen(scn_file_name,"w"))==NULL)
+@y
+  if ((scn_file=fopen(scn_file_name,"wb"))==NULL)
+@z
+
 Section 235.
 
-@x
+@x l.4440
 strcpy(collate+1," \1\2\3\4\5\6\7\10\11\12\13\14\15\16\17");
 /* 16 characters + 1 = 17 */
 strcpy(collate+17,"\20\21\22\23\24\25\26\27\30\31\32\33\34\35\36\37");

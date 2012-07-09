@@ -344,12 +344,16 @@ show_banner= show_happiness= show_progress= 1;
 
 scan_args();
 if(program==ctangle){
-if((C_file= fopen(C_file_name,"w"))==NULL)
+#line 668 "cwebdir/comm-w2c.ch"
+if((C_file= fopen(C_file_name,"wb"))==NULL)
+#line 1381 "cwebdir/common.w"
 fatal("! Cannot open output file ",C_file_name);
 
 }
 else{
-if((tex_file= fopen(tex_file_name,"w"))==NULL)
+#line 674 "cwebdir/comm-w2c.ch"
+if((tex_file= fopen(tex_file_name,"wb"))==NULL)
+#line 1386 "cwebdir/common.w"
 fatal("! Cannot open output file ",tex_file_name);
 }
 
@@ -1122,7 +1126,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*76:*/
 {
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 /*86:*/
-#line 712 "cwebdir/comm-w2c.ch"
+#line 726 "cwebdir/comm-w2c.ch"
 
 usagehelp(program==ctangle?CTANGLEHELP:CWEAVEHELP,NULL);
 
@@ -1132,7 +1136,7 @@ usagehelp(program==ctangle?CTANGLEHELP:CWEAVEHELP,NULL);
 ;
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 /*87:*/
-#line 721 "cwebdir/comm-w2c.ch"
+#line 735 "cwebdir/comm-w2c.ch"
 
 printversionandexit((program==ctangle?ctangle_banner:cweave_banner),
 "Silvio Levy and Donald E. Knuth",NULL,NULL);

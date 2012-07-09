@@ -375,28 +375,28 @@ static void phase_two(void);
 /*:40*//*45:*/
 #line 602 "cwebdir/ctangle.w"
 
-#line 257 "cwebdir/ctang-w2c.ch"
+#line 265 "cwebdir/ctang-w2c.ch"
 static void output_defs(void);
 #line 604 "cwebdir/ctangle.w"
 
 /*:45*//*47:*/
 #line 648 "cwebdir/ctangle.w"
 
-#line 275 "cwebdir/ctang-w2c.ch"
+#line 283 "cwebdir/ctang-w2c.ch"
 static void out_char(eight_bits);
 #line 650 "cwebdir/ctangle.w"
 
 /*:47*//*89:*/
 #line 1457 "cwebdir/ctangle.w"
 
-#line 370 "cwebdir/ctang-w2c.ch"
+#line 378 "cwebdir/ctang-w2c.ch"
 static void phase_one(void);
 #line 1459 "cwebdir/ctangle.w"
 
 /*:89*//*91:*/
 #line 1475 "cwebdir/ctangle.w"
 
-#line 388 "cwebdir/ctang-w2c.ch"
+#line 396 "cwebdir/ctang-w2c.ch"
 static void skip_limbo(void);
 #line 1477 "cwebdir/ctangle.w"
 
@@ -676,7 +676,9 @@ for(an_output_file= end_output_files;an_output_file> cur_out_file;){
 an_output_file--;
 sprint_section_name(output_file_name,*an_output_file);
 fclose(C_file);
-C_file= fopen(output_file_name,"w");
+#line 257 "cwebdir/ctang-w2c.ch"
+C_file= fopen(output_file_name,"wb");
+#line 578 "cwebdir/ctangle.w"
 if(C_file==0)fatal("! Cannot open output file:",output_file_name);
 
 printf("\n(%s)",output_file_name);update_terminal;
@@ -700,7 +702,7 @@ if(show_happiness)printf("\nDone.");
 /*:41*//*46:*/
 #line 605 "cwebdir/ctangle.w"
 
-#line 266 "cwebdir/ctang-w2c.ch"
+#line 274 "cwebdir/ctang-w2c.ch"
 static void
 output_defs(void)
 #line 608 "cwebdir/ctangle.w"
@@ -743,7 +745,7 @@ pop_level(0);
 #line 651 "cwebdir/ctangle.w"
 
 static void
-#line 284 "cwebdir/ctang-w2c.ch"
+#line 292 "cwebdir/ctang-w2c.ch"
  out_char(eight_bits cur_char)
 #line 655 "cwebdir/ctangle.w"
 {
@@ -844,7 +846,7 @@ default:C_putc(cur_char);out_state= normal;break;
 /*:48*//*57:*/
 #line 813 "cwebdir/ctangle.w"
 
-#line 293 "cwebdir/ctang-w2c.ch"
+#line 301 "cwebdir/ctang-w2c.ch"
 static eight_bits
 skip_ahead(void)
 #line 816 "cwebdir/ctangle.w"
@@ -864,7 +866,7 @@ if(c!=ignore||*(loc-1)=='>')return(c);
 /*:57*//*59:*/
 #line 848 "cwebdir/ctangle.w"
 
-#line 303 "cwebdir/ctang-w2c.ch"
+#line 311 "cwebdir/ctang-w2c.ch"
 static int
 skip_comment(boolean is_long_comment)
 #line 851 "cwebdir/ctangle.w"
@@ -900,7 +902,7 @@ else loc++;
 /*:59*//*62:*/
 #line 900 "cwebdir/ctangle.w"
 
-#line 320 "cwebdir/ctang-w2c.ch"
+#line 328 "cwebdir/ctang-w2c.ch"
 static eight_bits
 get_next(void)
 #line 903 "cwebdir/ctangle.w"
@@ -922,7 +924,7 @@ else id_first= cur_file_name;
 id_loc= id_first+strlen(id_first);
 if(changing)store_two_bytes((sixteen_bits)change_line);
 else store_two_bytes((sixteen_bits)cur_line);
-#line 351 "cwebdir/ctang-w2c.ch"
+#line 359 "cwebdir/ctang-w2c.ch"
 {int a_l= id_lookup(id_first,id_loc,0)-name_dir;app_repl((a_l/0400)+0200);
 app_repl(a_l%0400);}
 #line 1234 "cwebdir/ctangle.w"
@@ -1186,7 +1188,7 @@ mistake:/*63:*/
 switch(c){
 case'+':if(*loc=='+')compress(plus_plus);break;
 case'-':if(*loc=='-'){compress(minus_minus);}
-#line 330 "cwebdir/ctang-w2c.ch"
+#line 338 "cwebdir/ctang-w2c.ch"
 else if(*loc=='>'){if(*(loc+1)=='*'){loc++;compress(minus_gt_ast);}
 else compress(minus_gt);}break;
 #line 956 "cwebdir/ctangle.w"
@@ -1216,7 +1218,7 @@ return(c);
 /*:62*//*75:*/
 #line 1199 "cwebdir/ctangle.w"
 
-#line 341 "cwebdir/ctang-w2c.ch"
+#line 349 "cwebdir/ctang-w2c.ch"
 static void
 scan_repl(eight_bits t)
 #line 1203 "cwebdir/ctangle.w"
@@ -1231,7 +1233,7 @@ else id_first= cur_file_name;
 id_loc= id_first+strlen(id_first);
 if(changing)store_two_bytes((sixteen_bits)change_line);
 else store_two_bytes((sixteen_bits)cur_line);
-#line 351 "cwebdir/ctang-w2c.ch"
+#line 359 "cwebdir/ctang-w2c.ch"
 {int a_l= id_lookup(id_first,id_loc,0)-name_dir;app_repl((a_l/0400)+0200);
 app_repl(a_l%0400);}
 #line 1234 "cwebdir/ctangle.w"
@@ -1276,7 +1278,7 @@ else id_first= cur_file_name;
 id_loc= id_first+strlen(id_first);
 if(changing)store_two_bytes((sixteen_bits)change_line);
 else store_two_bytes((sixteen_bits)cur_line);
-#line 351 "cwebdir/ctang-w2c.ch"
+#line 359 "cwebdir/ctang-w2c.ch"
 {int a_l= id_lookup(id_first,id_loc,0)-name_dir;app_repl((a_l/0400)+0200);
 app_repl(a_l%0400);}
 #line 1234 "cwebdir/ctangle.w"
@@ -1301,7 +1303,7 @@ else id_first= cur_file_name;
 id_loc= id_first+strlen(id_first);
 if(changing)store_two_bytes((sixteen_bits)change_line);
 else store_two_bytes((sixteen_bits)cur_line);
-#line 351 "cwebdir/ctang-w2c.ch"
+#line 359 "cwebdir/ctang-w2c.ch"
 {int a_l= id_lookup(id_first,id_loc,0)-name_dir;app_repl((a_l/0400)+0200);
 app_repl(a_l%0400);}
 #line 1234 "cwebdir/ctangle.w"
@@ -1407,7 +1409,7 @@ cur_text= text_ptr;(++text_ptr)->tok_start= tok_ptr;
 /*:75*//*82:*/
 #line 1357 "cwebdir/ctangle.w"
 
-#line 361 "cwebdir/ctang-w2c.ch"
+#line 369 "cwebdir/ctang-w2c.ch"
 static void
 scan_section(void)
 #line 1360 "cwebdir/ctangle.w"
@@ -1520,7 +1522,7 @@ cur_text->text_link= section_flag;
 /*:82*//*90:*/
 #line 1460 "cwebdir/ctangle.w"
 
-#line 379 "cwebdir/ctang-w2c.ch"
+#line 387 "cwebdir/ctang-w2c.ch"
 static void
 phase_one(void){
 #line 1463 "cwebdir/ctangle.w"
@@ -1536,7 +1538,7 @@ phase= 2;
 /*:90*//*92:*/
 #line 1478 "cwebdir/ctangle.w"
 
-#line 397 "cwebdir/ctang-w2c.ch"
+#line 405 "cwebdir/ctang-w2c.ch"
 static void
 skip_limbo(void)
 #line 1481 "cwebdir/ctangle.w"
@@ -1597,7 +1599,7 @@ default:err_print("! Double @ should be used in limbo");
 #line 1533 "cwebdir/ctangle.w"
 
 void
-#line 406 "cwebdir/ctang-w2c.ch"
+#line 414 "cwebdir/ctang-w2c.ch"
  print_stats(void){
 #line 1536 "cwebdir/ctangle.w"
 printf("\nMemory usage statistics:\n");
