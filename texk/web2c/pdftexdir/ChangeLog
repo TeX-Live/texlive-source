@@ -1,3 +1,9 @@
+2012-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c [__MINGW32__]: #include <regex.h> as for Unix instead
+	of <regex/regex.h>.
+	* am/libpdftex.am (libpdftex_a_CPPFLAGS): Change accordingly.
+
 2012-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftosrc.cc: Use XRef::getNumObjects instead of XRef::getSize,

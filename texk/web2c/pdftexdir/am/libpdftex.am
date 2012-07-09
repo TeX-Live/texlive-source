@@ -1,13 +1,13 @@
 ## texk/web2c/pdftexdir/am/libpdftex.am: Makefile fragment for libpdftex.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libpdftex
 ##
 EXTRA_LIBRARIES += libpdftex.a
 
-libpdftex_a_CPPFLAGS = $(pdftex_cppflags)
+libpdftex_a_CPPFLAGS = $(REGEX_INCLUDES) $(pdftex_cppflags)
 libpdftex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 libpdftex_a_SOURCES = \
@@ -41,6 +41,7 @@ libpdftex_a_SOURCES = \
 	pdftexdir/writezip.c
 
 if MINGW32
+REGEX_INCLUDES = -I$(srcdir)/pdftexdir/regex
 libpdftex_a_SOURCES += \
 	pdftexdir/regex/regex.c \
 	pdftexdir/regex/regex.h

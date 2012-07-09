@@ -25,11 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #else
 #include <sysexits.h>
 #endif
-#ifdef __MINGW32__
-#include <regex/regex.h>
-#else
 #include <regex.h>
-#endif
 #include <kpathsea/c-proto.h>
 #include <kpathsea/c-stat.h>
 #include <kpathsea/c-fopen.h>
