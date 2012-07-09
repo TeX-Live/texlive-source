@@ -1,3 +1,12 @@
+2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2012-06-15.
+	* version.ac: Switch 2012 => 2013/dev.
+
+2012-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2012-06-15.
+
 2012-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Test for GNU make before creating Makefile,

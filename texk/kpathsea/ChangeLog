@@ -1,3 +1,7 @@
+2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: Update version number 6.1.0 => 6.1.1dev.
+
 2012-05-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c: rewrite win32_system.

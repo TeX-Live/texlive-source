@@ -1,3 +1,7 @@
+2012-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* w2c/config.h: Define LONGINTEGER_{TYPE,PRId} for MSVC.
+
 2012-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvicopy.test, dvitype.test: Cope with spaces in paths returned

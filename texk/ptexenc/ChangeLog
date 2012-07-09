@@ -1,3 +1,7 @@
+2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: Update version number 1.3.0 => 1.3.1dev.
+
 2012-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.
