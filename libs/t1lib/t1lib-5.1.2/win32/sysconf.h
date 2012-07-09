@@ -40,8 +40,8 @@
 #define SIZEOF_VOID_P       4
 
 #if defined(_MSC_VER)
-#  define T1LIB_IDENT			"1.0"
-#  define GLOBAL_CONFIG_DIR	"/usr/local/share/t1lib-1.0"
+#  define T1LIB_IDENT		"5.1.2"
+#  define GLOBAL_CONFIG_DIR	"c:/usr/local/share/t1lib"
 #  define T1_AA_TYPE16		short
 #  define T1_AA_TYPE32		int
 #endif

@@ -1,3 +1,8 @@
+2012-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-win32 (new): Adjust some global parameters for MSVC.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-ambiguous (new): Fix braces added to avoid

@@ -1,0 +1,14 @@
+diff -ur t1lib-5.1.2.orig/win32/sysconf.h t1lib-5.1.2/win32/sysconf.h
+--- t1lib-5.1.2.orig/win32/sysconf.h	2007-12-23 16:49:43.000000000 +0100
++++ t1lib-5.1.2/win32/sysconf.h	2012-06-16 20:18:06.000000000 +0200
+@@ -40,8 +40,8 @@
+ #define SIZEOF_VOID_P       4
+ 
+ #if defined(_MSC_VER)
+-#  define T1LIB_IDENT			"1.0"
+-#  define GLOBAL_CONFIG_DIR	"/usr/local/share/t1lib-1.0"
++#  define T1LIB_IDENT		"5.1.2"
++#  define GLOBAL_CONFIG_DIR	"c:/usr/local/share/t1lib"
+ #  define T1_AA_TYPE16		short
+ #  define T1_AA_TYPE32		int
+ #endif
