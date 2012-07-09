@@ -1,3 +1,5 @@
+%option never-interactive
+
 %{
 /* pl-lexer.l: Lexical analysis of property list files.
 
@@ -23,7 +25,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
-#include <kpathsea/config.h>
+#include <kpathsea/lib.h>
 #include "parser.h"
 #include "pl-parser.h"
 #include "manifests.h"
@@ -44,9 +46,6 @@ static void scan_char(void);
 static void scan_fix(void);
 static void scan_string(const char *, unsigned, unsigned);
 static void scan_hex_string(void);
-
-/* from kpathsea, but avoid including kpathsea header files */
-extern char *xstrdup (const char *);
 
 #define KEEP_MIN      0
 #define KEEP_NONE     0

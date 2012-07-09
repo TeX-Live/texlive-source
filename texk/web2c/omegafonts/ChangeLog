@@ -1,3 +1,9 @@
+2012-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pl-lexer.l: Added the never-interactive option to prevent
+	flex from creating a problematic prototype for isatty().
+	#include <kpathsea/lib.h> and drop prototype for xstrdup().
+
 2012-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pl-lexer.l: 'Correctly' scan real numbers for scan_fix().
