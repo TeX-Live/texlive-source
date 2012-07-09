@@ -574,7 +574,7 @@ static int yy_prev_more_offset = 0;
 char yytext[YYLMAX];
 char *yytext_ptr;
 #line 1 "otp-lexer.l"
-/* otp.l: Lexical analysis for OTP files
+/* otp-lexer.l: Lexical analysis for OTP files
 
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
@@ -598,7 +598,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#line 27 "otp-lexer.l"
+#line 29 "otp-lexer.l"
 #include "routines.h"
 #include "yystype.h"
 #include "otp-parser.h"
@@ -788,7 +788,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 43 "otp-lexer.l"
+#line 45 "otp-lexer.l"
 
 #line 794 "otp-lexer.c"
 
@@ -855,7 +855,7 @@ yy_match:
 			*(yy_state_ptr)++ = yy_current_state;
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 131 );
+		while ( yy_current_state != 101 );
 
 yy_find_action:
 		yy_current_state = *--(yy_state_ptr);
@@ -894,24 +894,24 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 44 "otp-lexer.l"
+#line 46 "otp-lexer.l"
 {}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 45 "otp-lexer.l"
+#line 47 "otp-lexer.l"
 { line_number++;}
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 46 "otp-lexer.l"
+#line 48 "otp-lexer.l"
 { line_number++;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 47 "otp-lexer.l"
+#line 49 "otp-lexer.l"
 {
 		int i, j;
 		yylval.yint=0;
@@ -935,7 +935,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 67 "otp-lexer.l"
+#line 69 "otp-lexer.l"
 {
 		int i, j;
 		yylval.yint=0;
@@ -953,7 +953,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 81 "otp-lexer.l"
+#line 83 "otp-lexer.l"
 {
 		int i, j;
 		yylval.yint=0;
@@ -971,7 +971,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 95 "otp-lexer.l"
+#line 97 "otp-lexer.l"
 {
 		yylval.yint=yytext[1]; 
 		return(NUMBER);
@@ -979,13 +979,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 99 "otp-lexer.l"
+#line 101 "otp-lexer.l"
 { yylval.ystring=xstrdup(yytext); return(ID); }
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 100 "otp-lexer.l"
+#line 102 "otp-lexer.l"
 {
 		int i, j, last;
 		char *newtext;
@@ -1005,82 +1005,82 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 116 "otp-lexer.l"
+#line 118 "otp-lexer.l"
 return(RIGHTARROW);
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 117 "otp-lexer.l"
+#line 119 "otp-lexer.l"
 return(LEFTARROW);
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 118 "otp-lexer.l"
+#line 120 "otp-lexer.l"
 return(INPUT);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 119 "otp-lexer.l"
+#line 121 "otp-lexer.l"
 return(OUTPUT);
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 120 "otp-lexer.l"
+#line 122 "otp-lexer.l"
 return(ALIASES);
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 121 "otp-lexer.l"
+#line 123 "otp-lexer.l"
 return(STATES);
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 122 "otp-lexer.l"
+#line 124 "otp-lexer.l"
 return(TABLES);
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 123 "otp-lexer.l"
+#line 125 "otp-lexer.l"
 return(EXPRESSIONS);
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 124 "otp-lexer.l"
+#line 126 "otp-lexer.l"
 return(PUSH);
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 125 "otp-lexer.l"
+#line 127 "otp-lexer.l"
 return(POP);
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 126 "otp-lexer.l"
+#line 128 "otp-lexer.l"
 return(DIV);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 127 "otp-lexer.l"
+#line 129 "otp-lexer.l"
 return(MOD);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 128 "otp-lexer.l"
+#line 130 "otp-lexer.l"
 return(BEG);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 129 "otp-lexer.l"
+#line 131 "otp-lexer.l"
 return(END);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 130 "otp-lexer.l"
+#line 132 "otp-lexer.l"
 return(yytext[0]);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 132 "otp-lexer.l"
+#line 134 "otp-lexer.l"
 ECHO;
 	YY_BREAK
 #line 1087 "otp-lexer.c"
@@ -1608,10 +1608,6 @@ static void yy_load_buffer_state  (void)
 	yyfree((void *) b  );
 }
 
-#ifndef __cplusplus
-extern int isatty (int );
-#endif /* __cplusplus */
-    
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
@@ -1635,7 +1631,7 @@ extern int isatty (int );
         b->yy_bs_column = 0;
     }
 
-        b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+        b->yy_is_interactive = 0;
     
 	errno = oerrno;
 }
@@ -2067,7 +2063,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 132 "otp-lexer.l"
+#line 134 "otp-lexer.l"
 
 
 
