@@ -113,6 +113,8 @@
  *    Initial distribution version.
  */
 
+%option never-interactive
+
 %{ 
 
 #include <stdio.h>
@@ -142,7 +144,6 @@ char *strstr();
 #define CG_ITALIC gstack[gstackp-1].italic
 #define CG_FILE gstack[gstackp-1].s_file
 
-char *bg_command(char *name);
 void pop(void);
 void push(const char *p_name, int p_type, int p_line);
 void linecount(void);
@@ -155,7 +156,6 @@ int check_top_level_end(char *end_command, int type);
 
   /* global variables */
 
-char returnval[100];
 int line_count = 1;
 int warn_count = 0;
 char *file_name;
@@ -960,72 +960,58 @@ void pop(void)
     free(gstack[gstackp].s_file);
 }
 
-char *bg_command(char *name)
+static void print_bg_command(char *name)
 {
     
     switch (CG_TYPE) {
 	
     case 2:
-	(void) strcpy( returnval, "\\begin{" );
-	(void) strcat( returnval, (char *) name);
-	(void) strcat( returnval, "}" );
+	printf("\\begin{%s}", name);
 	break;
 	
     case 3:
-	(void) strcpy( returnval, "beginning of file " );
-	(void) strcat( returnval, (char *) name);
+	printf("beginning of file %s", name);
 	break;
     
     case 4:
-	(void) strcpy( returnval, "math begin " );
-	(void) strcat( returnval, (char *) name);
+	printf("math begin %s", name);
 	break;
     
     case 5:
-	(void) strcpy( returnval, "display math begin " );
-	(void) strcat( returnval, (char *) name);
+	printf("display math begin %s", name);
 	break;
     
     default:
-    	(void) strcpy( returnval, name );
+	printf("%s", name);
 	
     }
-    
-    return ((char *)returnval);
 }
 
-static char *eg_command(char *name, int type)
+static void print_eg_command(char *name, int type)
 {
     
     switch (type) {
 	
     case 2:
-	(void) strcpy( returnval, "\\end{" );
-	(void) strcat( returnval, (char *) name);
-	(void) strcat( returnval, "}" );
+	printf("\\end{%s}", name);
 	break;
 	
     case 3:
-	(void) strcpy( returnval, "end of file " );
-	(void) strcat( returnval, (char *) name);
+	printf("end of file %s", name);
 	break;
     
     case 4:
-	(void) strcpy( returnval, "math end " );
-	(void) strcat( returnval, (char *) name);
+	printf("math end %s", name);
 	break;
     
     case 5:
-	(void) strcpy( returnval, "display math end " );
-	(void) strcat( returnval, (char *) name);
+	printf("display math end %s", name);
 	break;
     
     default:
-    	(void) strcpy( returnval, name );
+	printf("%s", name);
 	break;
     }
-    
-    return ((char *)returnval);
 }
 
 
@@ -1070,15 +1056,17 @@ void f_checkend(char *name)
 
 void print_bad_match(char *end_command, int type)
 {
-	  printf("\"%s\", line %d: <- unmatched \"%s\"\n",
+	  printf("\"%s\", line %d: <- unmatched \"",
 	         file_name, 
-		 line_count, 
-		 eg_command( end_command , type) ) ;
+		 line_count);
+	  print_eg_command(end_command, type);
+	  printf("\"\n");
 
-	  printf("\"%s\", line %d: -> unmatched \"%s\"\n",
+	  printf("\"%s\", line %d: -> unmatched \"",
 	         CG_FILE, 
-		 CG_LINE, 
-		 bg_command( CG_NAME ) ) ;
+		 CG_LINE);
+	  print_bg_command(CG_NAME);
+	  printf("\"\n");
 	  warn_count += 2;
 }
 
@@ -1086,10 +1074,11 @@ int check_top_level_end(char *end_command, int type)
 {
     if ( gstackp == 0 )
 	{
-	 printf("\"%s\", line %d: \"%s\" found at top level\n",
-	       file_name, 
-	       line_count, 
-	       eg_command( end_command, type )) ;
+	 printf("\"%s\", line %d: \"",
+	        file_name, 
+		line_count);
+	 print_eg_command(end_command, type);
+	 printf("\" found at top level\n");
 	 ++warn_count;
          return(0);
 	}

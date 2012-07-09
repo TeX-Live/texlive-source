@@ -1,0 +1,12 @@
+diff -ur lacheck-1.26.orig/lacheck.l lacheck-1.26/lacheck.l
+--- lacheck-1.26.orig/lacheck.l	2010-12-09 23:25:22.000000000 +0100
++++ lacheck-1.26/lacheck.l	2012-06-19 15:11:14.000000000 +0200
+@@ -113,6 +113,8 @@
+  *    Initial distribution version.
+  */
+ 
++%option never-interactive
++
+ %{ 
+ 
+ #include <stdio.h>

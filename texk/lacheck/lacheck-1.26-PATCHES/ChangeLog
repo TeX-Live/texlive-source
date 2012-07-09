@@ -1,3 +1,14 @@
+2012-06-22  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* patch-06-buffer-overrun (new): Avoid buffer overrun for long
+	pathnames (detected by Ken Brown <kbrow1i@gmail.com>).
+
+2012-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-never-interactive (new): Added the never-interactive
+	option to prevent flex from creating a problematic prototype for
+	isatty().
+
 2010-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Patches applied to lacheck-1.26 as obtained from CTAN.
