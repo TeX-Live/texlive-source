@@ -1,3 +1,7 @@
+2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* uptexextra.c [W32TeX]: #define DLLPROC for uptex.dll.
+
 2012-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* updvitype.test: Cope with spaces in paths returned by

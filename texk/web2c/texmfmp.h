@@ -123,7 +123,7 @@ extern int runsystem (const char *cmd);
 
 /* The entry point.  */
 extern void maininit (int ac, string *av);
-#if defined(WIN32) && defined(DLLPROC)
+#if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
 extern __declspec(dllexport) int DLLPROC (int ac, string *av);
 #endif
 

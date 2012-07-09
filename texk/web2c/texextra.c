@@ -8,4 +8,5 @@
 #include <texd.h>
 
 /* Hand-coded routines for TeX or Metafont in C.  */
+#define DLLPROC dlltexmain
 #include <lib/texmfmp.c>

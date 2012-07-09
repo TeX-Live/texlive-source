@@ -1,4 +1,8 @@
 2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c [WIN32]: Ignore DLLPROC for __MINGW32__.
+
+2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 2012-06-27  Norbert Preining  <preining@logic.at>
 
 	* texmfmp.c (runpopen): Append "b" on Windows.

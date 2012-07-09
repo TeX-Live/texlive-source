@@ -2,6 +2,12 @@
 
 	* w2c/config.h: Define LONGINTEGER_{TYPE,PRId} for MSVC.
 
+2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h [WIN32]: Ignore DLLPROC for __MINGW32__.
+
+	* texextra.c [W32TeX]: #define DLLPROC for tex.dll.
+
 2012-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvicopy.test, dvitype.test: Cope with spaces in paths returned

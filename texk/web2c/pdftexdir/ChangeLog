@@ -1,3 +1,7 @@
+2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	 * pdftexextra.c [W32TeX]: #define DLLPROC for pdftex.dll.
+
 2012-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c [__MINGW32__]: #include <regex.h> as for Unix instead

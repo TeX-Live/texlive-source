@@ -1,3 +1,7 @@
+2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etexextra.c [W32TeX]: #define DLLPROC for etex.dll.
+
 2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etex.ch: Version 2.4, dated May 11, 2012.

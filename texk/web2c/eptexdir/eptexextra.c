@@ -8,4 +8,5 @@
 #include <eptexd.h>
 
 /* Hand-coded routines for TeX or Metafont in C.  */
+#define DLLPROC dlleptexmain
 #include <lib/texmfmp.c>

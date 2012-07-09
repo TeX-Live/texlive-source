@@ -8,4 +8,5 @@
 #include <alephd.h>
 
 /* Hand-coded routines for TeX or Metafont in C.  */
+#define DLLPROC dllalephmain
 #include <lib/texmfmp.c>

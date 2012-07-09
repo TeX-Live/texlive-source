@@ -1,3 +1,7 @@
+2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptexextra.c [W32TeX]: #define DLLPROC for eptex.dll.
+
 2012-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptrip/eptrip.diffs, eptrip/etrip.log: Updated.

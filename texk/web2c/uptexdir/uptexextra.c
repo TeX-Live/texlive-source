@@ -8,4 +8,5 @@
 #include <uptexd.h>
 
 /* Hand-coded routines for TeX or Metafont in C.  */
+#define DLLPROC dlluptexmain
 #include <lib/texmfmp.c>
