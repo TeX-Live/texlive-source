@@ -1,3 +1,9 @@
+2012-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-never-interactive (new): Added the never-interactive
+	option to prevent flex from creating a problematic prototype for
+	isatty().
+
 2011-06-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-kern-and-glue (new): Handle `\kern', allow `em/ex'

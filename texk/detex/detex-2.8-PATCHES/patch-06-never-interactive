@@ -1,0 +1,9 @@
+diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
+--- detex-2.8.orig/detex.l	2011-06-07 13:42:05.000000000 +0200
++++ detex-2.8/detex.l	2012-06-21 11:52:31.000000000 +0200
+@@ -1,3 +1,5 @@
++%option never-interactive
++
+ %{
+ #ifndef lint
+ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/03/01 20:22:01 trinkle Exp trinkle $";

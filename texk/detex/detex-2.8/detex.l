@@ -1,3 +1,5 @@
+%option never-interactive
+
 %{
 #ifndef lint
 static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/03/01 20:22:01 trinkle Exp trinkle $";
