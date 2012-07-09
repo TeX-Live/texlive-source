@@ -1,0 +1,27 @@
+diff -ur mtx-0.60d.orig/files.c mtx-0.60d/files.c
+--- mtx-0.60d.orig/files.c	2012-04-05 14:46:38.000000000 +0200
++++ mtx-0.60d/files.c	2012-06-16 17:39:37.000000000 +0200
+@@ -275,9 +275,9 @@
+   pushFile(infilename);
+   strcpy(outfile_NAME, outfilename);
+   if (outfile != NULL)
+-    outfile = freopen(outfile_NAME, "w", outfile);
++    outfile = freopen(outfile_NAME, "wb", outfile);
+   else
+-    outfile = fopen(outfile_NAME, "w");
++    outfile = fopen(outfile_NAME, "wb");
+   _SETIO(outfile != NULL, FileNotFound);
+   strcpy(stylefile_NAME, stylefilename);
+   if (stylefile != NULL)
+diff -ur mtx-0.60d.orig/globals.c mtx-0.60d/globals.c
+--- mtx-0.60d.orig/globals.c	2012-04-05 14:41:42.000000000 +0200
++++ mtx-0.60d/globals.c	2012-06-16 17:39:40.000000000 +0200
+@@ -237,7 +237,7 @@
+     if (outfile != NULL)
+       fclose(outfile);
+     outfile = NULL;
+-    outfile = fopen(outfile_NAME, "w");
++    outfile = fopen(outfile_NAME, "wb");
+     if (outfile == NULL)
+       _EscIO2(FileNotFound, outfile_NAME);
+     fclose(outfile);

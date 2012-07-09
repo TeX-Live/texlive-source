@@ -237,7 +237,7 @@ boolean printLine;
     if (outfile != NULL)
       fclose(outfile);
     outfile = NULL;
-    outfile = fopen(outfile_NAME, "w");
+    outfile = fopen(outfile_NAME, "wb");
     if (outfile == NULL)
       _EscIO2(FileNotFound, outfile_NAME);
     fclose(outfile);
