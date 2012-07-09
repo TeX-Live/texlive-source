@@ -1,3 +1,10 @@
+2012-05-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvidvi.c: Drop the problematic prototype for isatty(),
+	already declared in <unistd.h> or <kpathsea/c-fopen.h>.
+	Cast arguments to avoid MSVC compiler warnings.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2011-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvidvi.test: New shell script for tests.

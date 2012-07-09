@@ -61,10 +61,6 @@ void error(const char *);
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#else
-#ifndef __cplusplus
-extern int isatty (int );
-#endif /* __cplusplus */
 #endif
 
 #ifdef KPATHSEA
@@ -977,7 +973,7 @@ static void outdviquad(integer v)
 static void putbuf(integer length)
 {
    while ( length-- > 0 )
-      outdvibyte(dvibyte()) ;
+      outdvibyte((unsigned char)dvibyte()) ;
 }
 /*
  *   This routine outputs a string, terminated by null.
@@ -1103,10 +1099,10 @@ static void dopage(integer num)
                fseek(infile,p,SEEK_SET);
             }
             if (len < 64)
-               outdvibyte(171 + len) ;
+               outdvibyte((unsigned char)(171 + len)) ;
             else {
                outdvibyte(235) ;
-               outdvibyte(len) ;
+               outdvibyte((unsigned char)len) ;
             }
          } else {
             v = 0 ;
