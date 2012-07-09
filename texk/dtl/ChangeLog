@@ -1,3 +1,10 @@
+2012-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dt2dv.c, dv2dt.c: Drop the problematic prototype for isatty(),
+	already declared in <unistd.h> or <kpathsea/c-fopen.h>.
+	Use binary mode for output files.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2010-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dt2dv.c, dv2dt.c (SET_BINARY): Remove casts to void.

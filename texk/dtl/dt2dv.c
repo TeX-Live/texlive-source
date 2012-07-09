@@ -33,10 +33,6 @@
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#else
-#ifndef __cplusplus
-extern int isatty (int );
-#endif /* __cplusplus */
 #endif
 
 #ifdef KPATHSEA

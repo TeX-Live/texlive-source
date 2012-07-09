@@ -26,10 +26,6 @@
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#else
-#ifndef __cplusplus
-extern int isatty (int );
-#endif /* __cplusplus */
 #endif
 
 #ifdef KPATHSEA
@@ -230,11 +226,11 @@ open_dtl
     exit (1);
   }
 
-  *pdtl = fopen (dtl_file, "w");
+  *pdtl = fopen (dtl_file, "wb");
 
   if (*pdtl == NULL)
   {
-    fprintf (stderr, "%s:  Cannot open \"%s\" for text writing.\n",
+    fprintf (stderr, "%s:  Cannot open \"%s\" for writing.\n",
       program, dtl_file);
     exit (1);
   }
