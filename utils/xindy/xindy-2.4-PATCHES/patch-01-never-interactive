@@ -1,0 +1,9 @@
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/tex2xindy/tex2xindy.l xindy-2.4/tex2xindy/tex2xindy.l
+--- xindy-2.4.orig/tex2xindy/tex2xindy.l	2010-05-11 01:02:17.000000000 +0200
++++ xindy-2.4/tex2xindy/tex2xindy.l	2012-06-21 12:13:02.000000000 +0200
+@@ -1,3 +1,5 @@
++%option never-interactive
++
+ %{
+   /* $Id: tex2xindy.l,v 1.24 2010/05/10 23:02:17 jschrod Exp $
+      ============================================================

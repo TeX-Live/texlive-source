@@ -1,3 +1,9 @@
+2012-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-0[12]-never-interactive (new): Added the never-interactive
+	option to prevent flex from creating a problematic prototype for
+	isatty().
+
 2011-11-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-70-persian (new): Add persian alphabet.

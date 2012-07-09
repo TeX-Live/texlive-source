@@ -1,0 +1,370 @@
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/tex2xindy/tex2xindy.c xindy-2.4/tex2xindy/tex2xindy.c
+--- xindy-2.4.orig/tex2xindy/tex2xindy.c	2010-05-11 01:02:19.000000000 +0200
++++ xindy-2.4/tex2xindy/tex2xindy.c	2012-06-21 12:14:36.000000000 +0200
+@@ -1,5 +1,5 @@
+ 
+-#line 3 "<stdout>"
++#line 3 "tex2xindy.c"
+ 
+ #define  YY_INT_ALIGNED short int
+ 
+@@ -549,7 +549,7 @@
+ #define YY_RESTORE_YY_MORE_OFFSET
+ char *yytext;
+ #line 1 "tex2xindy.l"
+-#line 2 "tex2xindy.l"
++#line 4 "tex2xindy.l"
+   /* $Id: tex2xindy.l,v 1.24 2010/05/10 23:02:17 jschrod Exp $
+      ============================================================
+      (history at end)
+@@ -735,7 +735,7 @@
+ }
+ 
+ 
+-#line 739 "<stdout>"
++#line 739 "tex2xindy.c"
+ 
+ #define INITIAL 0
+ #define key 1
+@@ -925,10 +925,10 @@
+ 	register char *yy_cp, *yy_bp;
+ 	register int yy_act;
+     
+-#line 207 "tex2xindy.l"
++#line 209 "tex2xindy.l"
+ 
+ 
+-#line 932 "<stdout>"
++#line 932 "tex2xindy.c"
+ 
+ 	if ( !(yy_init) )
+ 		{
+@@ -987,16 +987,12 @@
+ 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+ 			++yy_cp;
+ 			}
+-		while ( yy_base[yy_current_state] != 263 );
++		while ( yy_current_state != 115 );
++		yy_cp = (yy_last_accepting_cpos);
++		yy_current_state = (yy_last_accepting_state);
+ 
+ yy_find_action:
+ 		yy_act = yy_accept[yy_current_state];
+-		if ( yy_act == 0 )
+-			{ /* have to back up */
+-			yy_cp = (yy_last_accepting_cpos);
+-			yy_current_state = (yy_last_accepting_state);
+-			yy_act = yy_accept[yy_current_state];
+-			}
+ 
+ 		YY_DO_BEFORE_ACTION;
+ 
+@@ -1013,7 +1009,7 @@
+ 
+ case 1:
+ YY_RULE_SETUP
+-#line 209 "tex2xindy.l"
++#line 211 "tex2xindy.l"
+ {
+ 			  printf("(indexentry :tkey ((\"");
+ 			  xref_mode = 0;
+@@ -1023,7 +1019,7 @@
+ 	YY_BREAK
+ case 2:
+ YY_RULE_SETUP
+-#line 216 "tex2xindy.l"
++#line 218 "tex2xindy.l"
+ {
+ 			  printf("(indexentry :tkey ((\"");
+ 			  xref_mode = 0;
+@@ -1033,23 +1029,23 @@
+ 	YY_BREAK
+ case 3:
+ YY_RULE_SETUP
+-#line 223 "tex2xindy.l"
++#line 225 "tex2xindy.l"
+ { QUOTE_ECHO; }
+ 	YY_BREAK
+ case 4:
+ /* rule 4 can match eol */
+ YY_RULE_SETUP
+-#line 224 "tex2xindy.l"
++#line 226 "tex2xindy.l"
+ { qc(yytext[1]); lineno++; }
+ 	YY_BREAK
+ case 5:
+ YY_RULE_SETUP
+-#line 225 "tex2xindy.l"
++#line 227 "tex2xindy.l"
+ { qc(yytext[1]); }
+ 	YY_BREAK
+ case 6:
+ YY_RULE_SETUP
+-#line 226 "tex2xindy.l"
++#line 228 "tex2xindy.l"
+ {
+ 			 printf("\")) :attr \"");
+                          range = NO_RANGE;
+@@ -1058,7 +1054,7 @@
+ 	YY_BREAK
+ case 7:
+ YY_RULE_SETUP
+-#line 231 "tex2xindy.l"
++#line 233 "tex2xindy.l"
+ {
+ 			 if ( glos_mode ) {
+                              printf("\")) :attr \"is\" :xref (\"");
+@@ -1072,22 +1068,22 @@
+ 	YY_BREAK
+ case 8:
+ YY_RULE_SETUP
+-#line 241 "tex2xindy.l"
++#line 243 "tex2xindy.l"
+ { printf("\") (\""); }
+ 	YY_BREAK
+ case 9:
+ YY_RULE_SETUP
+-#line 242 "tex2xindy.l"
++#line 244 "tex2xindy.l"
+ { printf("\") (\""); BEGIN(key); }
+ 	YY_BREAK
+ case 10:
+ YY_RULE_SETUP
+-#line 243 "tex2xindy.l"
++#line 245 "tex2xindy.l"
+ { ECHO; braces++; }
+ 	YY_BREAK
+ case 11:
+ YY_RULE_SETUP
+-#line 244 "tex2xindy.l"
++#line 246 "tex2xindy.l"
+ {
+ 			 if ( braces > 0 ) {
+ 			     ECHO;
+@@ -1100,32 +1096,32 @@
+ 	YY_BREAK
+ case 12:
+ YY_RULE_SETUP
+-#line 254 "tex2xindy.l"
++#line 256 "tex2xindy.l"
+ { printf("\" \""); BEGIN(print); }
+ 	YY_BREAK
+ case 13:
+ YY_RULE_SETUP
+-#line 255 "tex2xindy.l"
++#line 257 "tex2xindy.l"
+ { multiple_err; }
+ 	YY_BREAK
+ case 14:
+ YY_RULE_SETUP
+-#line 257 "tex2xindy.l"
++#line 259 "tex2xindy.l"
+ { multiple_err; }
+ 	YY_BREAK
+ case 15:
+ YY_RULE_SETUP
+-#line 258 "tex2xindy.l"
++#line 260 "tex2xindy.l"
+ { range = OPEN_RANGE; }
+ 	YY_BREAK
+ case 16:
+ YY_RULE_SETUP
+-#line 259 "tex2xindy.l"
++#line 261 "tex2xindy.l"
+ { range = CLOSE_RANGE; }
+ 	YY_BREAK
+ case 17:
+ YY_RULE_SETUP
+-#line 260 "tex2xindy.l"
++#line 262 "tex2xindy.l"
+ { /* close :attr "... */
+                          printf("\" :xref (\"");
+ 			 if (attrfd) fprintf(attrfd, "\txref\n");
+@@ -1135,7 +1131,7 @@
+ 	YY_BREAK
+ case 18:
+ YY_RULE_SETUP
+-#line 266 "tex2xindy.l"
++#line 268 "tex2xindy.l"
+ {
+ 			 if ( braces > 0 ) {
+ 			     ECHO;
+@@ -1158,7 +1154,7 @@
+ case 19:
+ /* rule 19 can match eol */
+ YY_RULE_SETUP
+-#line 284 "tex2xindy.l"
++#line 286 "tex2xindy.l"
+ {
+ 			 QUOTE_ECHO;
+                          if (attrfd)  fwrite(yytext, sizeof(char), 1, attrfd);
+@@ -1167,17 +1163,17 @@
+ 	YY_BREAK
+ case 20:
+ YY_RULE_SETUP
+-#line 292 "tex2xindy.l"
++#line 294 "tex2xindy.l"
+ { printf("\" \""); }
+ 	YY_BREAK
+ case 21:
+ YY_RULE_SETUP
+-#line 293 "tex2xindy.l"
++#line 295 "tex2xindy.l"
+ { ECHO; braces++; }
+ 	YY_BREAK
+ case 22:
+ YY_RULE_SETUP
+-#line 294 "tex2xindy.l"
++#line 296 "tex2xindy.l"
+ {
+ 			 if ( braces > 1 ) {
+ 			     ECHO;
+@@ -1193,7 +1189,7 @@
+ 	YY_BREAK
+ case 23:
+ YY_RULE_SETUP
+-#line 306 "tex2xindy.l"
++#line 308 "tex2xindy.l"
+ {
+ 			 if ( braces > 0 ) {
+ 			     ECHO;
+@@ -1207,7 +1203,7 @@
+ 	YY_BREAK
+ case 24:
+ YY_RULE_SETUP
+-#line 317 "tex2xindy.l"
++#line 319 "tex2xindy.l"
+ {
+                          if (xref_mode) {
+ 			     BEGIN(skiplocation);
+@@ -1219,22 +1215,22 @@
+ 	YY_BREAK
+ case 25:
+ YY_RULE_SETUP
+-#line 325 "tex2xindy.l"
++#line 327 "tex2xindy.l"
+ { printf("\")\n"); BEGIN(0); }
+ 	YY_BREAK
+ case 26:
+ YY_RULE_SETUP
+-#line 327 "tex2xindy.l"
++#line 329 "tex2xindy.l"
+ { printf(")\n"); BEGIN(0); }
+ 	YY_BREAK
+ case 27:
+ YY_RULE_SETUP
+-#line 328 "tex2xindy.l"
++#line 330 "tex2xindy.l"
+ { ; }
+ 	YY_BREAK
+ case 28:
+ YY_RULE_SETUP
+-#line 330 "tex2xindy.l"
++#line 332 "tex2xindy.l"
+ {
+ 			if ( omega_mode ) {
+ 			    omega_output_utf8(2);
+@@ -1245,7 +1241,7 @@
+ 	YY_BREAK
+ case 29:
+ YY_RULE_SETUP
+-#line 337 "tex2xindy.l"
++#line 339 "tex2xindy.l"
+ {
+ 			if ( omega_mode ) {
+ 			    omega_output_utf8(4);
+@@ -1256,7 +1252,7 @@
+ 	YY_BREAK
+ case 30:
+ YY_RULE_SETUP
+-#line 344 "tex2xindy.l"
++#line 346 "tex2xindy.l"
+ {
+ 			if ( omega_mode ) {
+ 			    omega_output_utf8(8);
+@@ -1268,28 +1264,28 @@
+ case 31:
+ /* rule 31 can match eol */
+ YY_RULE_SETUP
+-#line 352 "tex2xindy.l"
++#line 354 "tex2xindy.l"
+ { ECHO; lineno++; }
+ 	YY_BREAK
+ case 32:
+ YY_RULE_SETUP
+-#line 353 "tex2xindy.l"
++#line 355 "tex2xindy.l"
+ { QUOTE_ECHO; }
+ 	YY_BREAK
+ case 33:
+ /* rule 33 can match eol */
+ YY_RULE_SETUP
+-#line 355 "tex2xindy.l"
++#line 357 "tex2xindy.l"
+ { lineno++; }
+ 	YY_BREAK
+ case 34:
+ YY_RULE_SETUP
+-#line 356 "tex2xindy.l"
++#line 358 "tex2xindy.l"
+ { ; }
+ 	YY_BREAK
+ case 35:
+ YY_RULE_SETUP
+-#line 357 "tex2xindy.l"
++#line 359 "tex2xindy.l"
+ {
+ 			fprintf(stderr,
+ 				"Encountered unexpected char '%c' on line %d\n",
+@@ -1298,10 +1294,10 @@
+ 	YY_BREAK
+ case 36:
+ YY_RULE_SETUP
+-#line 363 "tex2xindy.l"
++#line 365 "tex2xindy.l"
+ ECHO;
+ 	YY_BREAK
+-#line 1305 "<stdout>"
++#line 1301 "tex2xindy.c"
+ case YY_STATE_EOF(INITIAL):
+ case YY_STATE_EOF(key):
+ case YY_STATE_EOF(print):
+@@ -1376,7 +1372,8 @@
+ 
+ 			else
+ 				{
+-				yy_cp = (yy_c_buf_p);
++				yy_cp = (yy_last_accepting_cpos);
++				yy_current_state = (yy_last_accepting_state);
+ 				goto yy_find_action;
+ 				}
+ 			}
+@@ -1859,10 +1856,6 @@
+ 	yyfree((void *) b  );
+ }
+ 
+-#ifndef __cplusplus
+-extern int isatty (int );
+-#endif /* __cplusplus */
+-    
+ /* Initializes or reinitializes a buffer.
+  * This function is sometimes called more than once on the same buffer,
+  * such as during a yyrestart() or at EOF.
+@@ -1886,7 +1879,7 @@
+         b->yy_bs_column = 0;
+     }
+ 
+-        b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
++        b->yy_is_interactive = 0;
+     
+ 	errno = oerrno;
+ }
+@@ -2307,7 +2300,7 @@
+ 
+ #define YYTABLES_NAME "yytables"
+ 
+-#line 363 "tex2xindy.l"
++#line 365 "tex2xindy.l"
+ 
+ 
+ 
