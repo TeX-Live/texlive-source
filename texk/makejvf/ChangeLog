@@ -1,3 +1,8 @@
+2012-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tfmread.c: Use fopen() mode "rb" for TFM file.
+	* main.c, tfmread.c, write.c: Use 8-bit exit() codes.
+
 2012-04-29  Norbert Preining  <preining@logic.at>
 
 	Update for upTeX-1.10. From TANAKA Takuji <KXD02663@nifty.ne.jp>.

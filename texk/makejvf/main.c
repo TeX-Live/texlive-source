@@ -55,7 +55,7 @@ int main(int argc, char ** argv)
 			}
 			if ((afp = fopen(afmname,"r"))==NULL) {
 				fprintf(stderr,"no AFM file, %s.\n",afmname);
-				exit(-1);
+				exit(100);
 			}
 			break;
 		case 'b':
@@ -119,7 +119,7 @@ int main(int argc, char ** argv)
 
 	if (kanatume>=0 && !afp) {
 		fprintf(stderr,"No AFM file for kanatume.\n");
-		exit(-1);
+		exit(100);
 	}
 
 	atfmname = malloc(strlen(*argv)+4);

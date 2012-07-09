@@ -33,10 +33,10 @@ int tfmget(char *name)
 	FILE *fp;
 
 	strcpy(nbuff,name);
-	fp = fopen(nbuff,"r");
+	fp = fopen(nbuff,"rb");
 	if (fp == NULL) {
 		strcat(nbuff,".tfm");
-		fp = fopen(nbuff,"r");
+		fp = fopen(nbuff,"rb");
 		if (fp == NULL) {
 			fprintf(stderr,"%s is not found.\n",name);
 			exit(0);
@@ -110,7 +110,7 @@ int tfmidx(FILE *fp)
 	}
 	else {
 		fprintf(stderr,"This TFM is not for Japanese.\n");
-		exit(-1);
+		exit(100);
 	}
 
 	return 0;

@@ -14,7 +14,7 @@ FILE *vfopen(char *name)
 	fp = fopen(name,"wb");
 	if (fp == NULL) {
 		fprintf(stderr,"I cannot create VF file, %s.",name);
-		exit(-1);
+		exit(100);
 	}
 
 	fputc(247,fp); /* PRE */
@@ -820,7 +820,7 @@ void maketfm(char *name)
 	fp = fopen(nbuf,"wb");
 	if (fp == NULL) {
 		fprintf(stderr,"I cannot create TFM file, %s.",name);
-		exit(-1);
+		exit(100);
 	}
 
 	fputnum(jfm_id,2,fp); /* JFM ID */
