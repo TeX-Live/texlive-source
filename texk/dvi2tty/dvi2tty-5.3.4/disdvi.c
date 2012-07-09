@@ -193,7 +193,10 @@ int main(int argc, char **argv)
         if ((i >= 5) && (!strcmp(*argv+i-4, dvi_ext)))
             dvi_name = *argv;
         else {
-            dvi_name = malloc((i+5) * sizeof(char));
+            if ((dvi_name = malloc((i+5) * sizeof(char))) == NULL) {
+                perror("dvi_name");
+                exit(1);
+            }
             strcpy(dvi_name, *argv);
             strcat(dvi_name, dvi_ext);
         }

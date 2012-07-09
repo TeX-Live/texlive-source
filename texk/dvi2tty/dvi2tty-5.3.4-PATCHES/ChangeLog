@@ -1,3 +1,12 @@
+2012-06-22  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* patch-05-win32 (new): WIN32 MSVC lacks <unistd.h> and requires
+	<malloc.h>.
+
+	* patch-06-malloc (new): Avoid buffer overrun for long pathnames
+	(detected by Ken Brown <kbrow1i@gmail.com>),
+	and check all values returned by malloc().
+
 2012-04-26  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	* patch-04-OpenSolaris: New patch:

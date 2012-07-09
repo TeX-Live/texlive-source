@@ -53,7 +53,6 @@
 
     /*------------------ end of customization constants ---------------------*/
 
-#define MAXLEN          100    /* size of char-arrays for strings            */
 #if defined(MSDOS) || defined(VMS) || defined(AMIGA)
 #define OPTSET      "haJweEpPousltvbcANU" /* legal options                   */
 #define OPTWARG     "weEpPovb"  /* options with argument                     */
@@ -109,7 +108,7 @@ const char  *   path;           /* name of the pager to run                  */
 char  *         progname;       /* our name                                  */
 int             Argc;
 char **         Argv;
-char            DVIfilename[MAXLEN];
+char  *         DVIfilename;
 const char *    OUTfilename;
 char            optch;          /* for option handling                       */
 
@@ -483,7 +482,10 @@ void getpages(int j, const char *str)
     int num;
 
     pageswitchon = TRUE;
-    firstpage = (printlisttype *) malloc(sizeof(printlisttype));
+    if ((firstpage = (printlisttype *) malloc(sizeof(printlisttype))) == NULL) {
+        perror("firstpage");
+        exit(1);
+    }
     firstpage->all = FALSE;
     firstpage->nxt = nil;
     firstpage->pag = 0;
@@ -543,7 +545,10 @@ void plcnxt(int pagnr)
 
     currentpage = lastpage;
     currentpage->pag = pagnr;
-    lastpage = (printlisttype *) malloc(sizeof(printlisttype));
+    if ((lastpage = (printlisttype *) malloc(sizeof(printlisttype))) == NULL) {
+        perror("lastpage");
+        exit(1);
+    }
     lastpage->all = FALSE;
     lastpage->nxt = nil;
     lastpage->pag = 0;
@@ -566,6 +571,10 @@ void getfname(const char *str)
     i = strlen(str);
     if (i == 0)
         usage(ign);
+    if ((DVIfilename = (char *) malloc(i+5)) == NULL) {
+        perror("DVIfilename");
+        exit(1);
+    }
     strcpy(DVIfilename, str);
 #ifdef KPATHSEA
     if (!kpse_readable_file(DVIfilename))
