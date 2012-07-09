@@ -527,23 +527,33 @@ runsystem (const char *cmd)
 /* Like runsystem(), the runpopen() function is called only when
    shellenabledp == 1.   Unlike runsystem(), here we write errors to
    stderr, since we have nowhere better to use; and of course we return
-   a file handle (or NULL) instead of a status indicator.  */
+   a file handle (or NULL) instead of a status indicator.
+
+   Also, we append "b" to IO_MODE on Windows.  */
 
 static FILE *
-runpopen (char *cmd, const char *mode)
+runpopen (char *cmd, const char *io_mode)
 {
   FILE *f = NULL;
   char *safecmd = NULL;
   char *cmdname = NULL;
   int allow;
 
-#ifdef WIN32
+#ifndef WIN32
+  /* Use mode "r" or "w" for Posix.  */
+  char mode[] = "X";
+#else
+  /* Use mode "rb" or "wb" for Windows.  */
+  char mode[] = "Xb";
   char *pp;
 
   for (pp = cmd; *pp; pp++) {
     if (*pp == '\'') *pp = '"';
   }
 #endif
+
+  /* Replace 'X' by 'r' or 'w'.  */
+  mode[0] = *io_mode;
 
   /* If restrictedshell == 0, any command is allowed. */
   if (restrictedshell == 0)
@@ -1857,12 +1867,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
       fname = xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
       recorder_record_input (fname + 1);
-#ifdef WIN32
-      /* Use binary mode on Windows.  */
-      *f_ptr = runpopen(fname+1,"rb");
-#else
       *f_ptr = runpopen(fname+1,"r");
-#endif
       free(fname);
       for (i=0; i<NUM_PIPES; i++) {
         if (pipes[i]==NULL) {
@@ -1904,19 +1909,10 @@ open_out_or_pipe (FILE **f_ptr, const_string fopen_mode)
            is better to be prepared */
         if (STREQ((fname+strlen(fname)-4),".tex"))
           *(fname+strlen(fname)-4) = 0;
-#ifdef WIN32
-        /* Use binary mode on Windows.  */
-        *f_ptr = runpopen(fname+1,"wb");
-#else
         *f_ptr = runpopen(fname+1,"w");
-#endif
         *(fname+strlen(fname)) = '.';
       } else {
-#ifdef WIN32
-        *f_ptr = runpopen(fname+1,"wb");
-#else
         *f_ptr = runpopen(fname+1,"w");
-#endif
       }
       recorder_record_output (fname + 1);
       free(fname);

@@ -1,3 +1,9 @@
+2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2012-06-27  Norbert Preining  <preining@logic.at>
+
+	* texmfmp.c (runpopen): Append "b" on Windows.
+	(open_{in,out}_or_pipe): Do not use the "b" here.
+
 2012-06-27  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (generic_synctex_get_current_name): return the
