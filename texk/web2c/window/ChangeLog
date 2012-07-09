@@ -1,3 +1,7 @@
+2012-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* win32.c: Avoid TL W32TeX differences.
+
 2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mfdisplay.h: New file with protos for display routines.

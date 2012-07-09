@@ -11,9 +11,14 @@
 #ifdef WIN32WIN
 #include <windows.h>
 
-#ifdef __MINGW32__
-static void Win32Error(const char *caller);
+#ifndef min
+#define min(a,b) ((a) < (b) ? (a) : (b))
 #endif
+#ifndef max
+#define max(a,b) ((a) < (b) ? (b) : (a))
+#endif
+
+static void Win32Error(const char *caller);
 
 /* 
    The following constant enables some hack that should allow the
@@ -212,7 +217,6 @@ mf_win32_paintrow (screenrow row,
     ReleaseMutex(hMutex);
 }
 
-#ifdef __MINGW32__
 static void Win32Error(const char *caller)
 {
   LPVOID lpMsgBuf;
@@ -231,7 +235,6 @@ static void Win32Error(const char *caller)
   /* Free the buffer. */
   LocalFree( lpMsgBuf );
 }
-#endif
 
 LRESULT APIENTRY WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
