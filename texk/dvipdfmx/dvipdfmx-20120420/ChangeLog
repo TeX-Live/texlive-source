@@ -34,7 +34,7 @@ ChangeLog: Changes for DVIPDFMx
 
 2012-01-17  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
-	* dvi.c, pdfdev.c:: Support for (e-)(u)pTeX dtou direction.
+	* dvi.c, pdfdev.c: Support for (e-)(u)pTeX dtou direction.
 
 2011-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
@@ -390,7 +390,7 @@ ChangeLog: Changes for DVIPDFMx
 	  Combined code with jpegimage.c and pngimage.c, added number
 	  of pages to xbb output for PDF files, introduced quiet mode
 	  (option "-q") and output to stdout (option "-s"), improved test
-	  of filename check in dvipdfmx.c (now uses >libgen.h>), new
+	  of filename check in dvipdfmx.c (now uses <libgen.h>), new
 	  version numbering for xbb (same as dvipdfmx version)
 
 2009-03-15  Jin-Hwan Cho
