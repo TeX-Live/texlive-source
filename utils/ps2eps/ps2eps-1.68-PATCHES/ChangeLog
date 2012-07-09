@@ -1,3 +1,8 @@
+2012-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-write-bin (new): Use binary mode for output files.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2011-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Renamed bin/ps2eps => bin/ps2eps.pl.

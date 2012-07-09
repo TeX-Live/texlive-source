@@ -211,6 +211,9 @@ void readppm_and_calcbb(const char *name,
 	  i= _setmode( _fileno(stdin), _O_BINARY);
 	  if (i == -1)
 	    fprintf(stderr,"%s: ERROR - Cannot set binary mode for STDIN\n", prgname);
+	  i= _setmode( _fileno(stdout), _O_BINARY);
+	  if (i == -1)
+	    fprintf(stderr,"%s: ERROR - Cannot set binary mode for STDOUT\n", prgname);
 #endif
           for (y= 0; y<height; y++) /* for every image row 0..height-1 */
           {
