@@ -1,3 +1,8 @@
+2012-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ctie-k.ch: Use binary mode for output files.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2010-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ctie-k.ch: Replace "-[m|c]" in usage message by "-m|-c".

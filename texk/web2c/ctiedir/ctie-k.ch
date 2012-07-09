@@ -257,6 +257,12 @@ char *s, *t;
 void pfatal_error (const char *s, const char *t)
 @z
 
+@x l.731 Use binary mode for output files
+    out_file=fopen(out_name, "w");
+@y
+    out_file=fopen(out_name, "wb");
+@z
+
 @x l.747 Use the kpathsea library to do this
 @ For the master file we start by reading its first line into the
 buffer, if we could open it.
