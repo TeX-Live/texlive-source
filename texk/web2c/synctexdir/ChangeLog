@@ -1,3 +1,9 @@
+2012-02-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex.c: Remove "# warning ..." line, because MSVC fails to
+	interpret it.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2012-05-16  Vladimir Volovich  <vvv@vsu.ru>
 
 	* synctex_parser.c (SYNCTEX_DECLARE_CHARINDEX): Bug fix, avoid

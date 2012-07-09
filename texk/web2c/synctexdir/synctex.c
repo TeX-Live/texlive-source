@@ -1719,7 +1719,4 @@ void synctex_node_recorder(halfword p)
     synctexabort(0);
     return;
 }
-
-#   else
-#       warning "SyncTeX is disabled"
 #   endif
