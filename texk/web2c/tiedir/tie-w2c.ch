@@ -46,7 +46,7 @@ static void
 get_line (file_index i)
 @z
 
-@x
+@x l.745
 void err_loc(i) /* prints location of error */
         int i;
 @y
@@ -54,13 +54,19 @@ static void
 err_loc (int i) /* prints location of error */
 @z
 
-@x
+@x l.790 Use binary mode for output files
+    out_file=fopen(out_name,"w");
+@y
+    out_file=fopen(out_name,"wb");
+@z
+
+@x l.811
 	  fopen(input_organization[0]->name_of_file,"r");
 @y
 	  kpse_open_file(input_organization[0]->name_of_file, kpse_web_format);
 @z
 
-@x
+@x l.830
 	fopen(input_organization[i]->name_of_file,"r");
 @y
 	kpse_open_file(input_organization[i]->name_of_file, kpse_web_format);
