@@ -1334,7 +1334,7 @@ int main(int argc, char **argv) {
       }
       if (strcasecmp(infil, outfil) == 0) strcat(outfil, DEFAULT_DEST_EXT);
    }
-   if ((f_out = fopen(outfil, "w")) == NULL) {
+   if ((f_out = fopen(outfil, "wb")) == NULL) {
       fclose(f_in);
       fprintf(stderr, "cannot open %s for output\n", outfil);
       exit(1);

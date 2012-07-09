@@ -1,15 +1,20 @@
+2012-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/devnag.c: Use binary mode for output files.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2010-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Version 2.15 (since 2008-07-03).
 
 2010-05-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* devnag.c: cast arguments in order to avoid compiler warnings.
+	* src/devnag.c: cast arguments in order to avoid compiler warnings.
 
 2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid maximal compiler warnings.
-	* devnag.c: Constify various global strings and string args.
+	* src/devnag.c: Constify various global strings and string args.
 	Drop global variable nbsub.
 
 2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
