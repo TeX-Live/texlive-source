@@ -162,7 +162,7 @@ static int io_tostring(lua_State * L)
 static int io_open(lua_State * L)
 {
     const char *filename = luaL_checkstring(L, 1);
-    const char *mode = luaL_optstring(L, 2, "r");
+    const char *mode = luaL_optstring(L, 2, "rb");
     FILE **pf = newfile(L);
     *pf = fopen(filename, mode);
     if (*pf == NULL)
@@ -178,7 +178,7 @@ static int io_open_ro(lua_State * L)
 {
     FILE **pf;
     const char *filename = luaL_checkstring(L, 1);
-    const char *mode = luaL_optstring(L, 2, "r");
+    const char *mode = luaL_optstring(L, 2, "rb");
     if ((strcmp(mode, "r") != 0) && (strcmp(mode, "rb") != 0))
         return pushresult(L, 0, filename);
     pf = newfile(L);
@@ -200,7 +200,7 @@ static int io_popen(lua_State * L)
     char *cmdname = NULL;
     int allow = 0;
     const char *cmd = luaL_checkstring(L, 1);
-    const char *mode = luaL_optstring(L, 2, "r");
+    const char *mode = luaL_optstring(L, 2, "rb");
     FILE **pf = newfile(L);
 
     if (shellenabledp <= 0) {
@@ -212,7 +212,7 @@ static int io_popen(lua_State * L)
     if (restrictedshell == 0)
         allow = 1;
     else
-        allow = shell_cmd_is_allowed(&cmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(cmd, &safecmd, &cmdname);
 
     if (allow == 1) {
         *pf = lua_popen(L, cmd, mode);
@@ -281,13 +281,13 @@ static int g_iofile(lua_State * L, int f, const char *mode)
 
 static int io_input(lua_State * L)
 {
-    return g_iofile(L, IO_INPUT, "r");
+    return g_iofile(L, IO_INPUT, "rb");
 }
 
 
 static int io_output(lua_State * L)
 {
-    return g_iofile(L, IO_OUTPUT, "w");
+    return g_iofile(L, IO_OUTPUT, "wb");
 }
 
 
@@ -319,7 +319,7 @@ static int io_lines(lua_State * L)
     } else {
         const char *filename = luaL_checkstring(L, 1);
         FILE **pf = newfile(L);
-        *pf = fopen(filename, "r");
+        *pf = fopen(filename, "rb");
         if (*pf == NULL)
             fileerror(L, 1, filename);
         else

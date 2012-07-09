@@ -463,7 +463,7 @@ static int os_exec(lua_State * L)
         allow = 1;
     } else {
         const char *theruncmd = runcmd;
-        allow = shell_cmd_is_allowed(&theruncmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(theruncmd, &safecmd, &cmdname);
     }
 
     if (allow > 0 && cmdline != NULL && runcmd != NULL) {
@@ -545,7 +545,7 @@ static int os_spawn(lua_State * L)
         allow = 1;
     } else {
         const char *theruncmd = runcmd;
-        allow = shell_cmd_is_allowed(&theruncmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(theruncmd, &safecmd, &cmdname);
     }
     if (allow > 0 && cmdline != NULL && runcmd != NULL) {
         if (allow == 2)
@@ -993,7 +993,7 @@ static int os_execute(lua_State * L)
     if (restrictedshell == 0)
         allow = 1;
     else
-        allow = shell_cmd_is_allowed(&cmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(cmd, &safecmd, &cmdname);
 
     if (allow == 1) {
         lua_pushinteger(L, system(cmd));

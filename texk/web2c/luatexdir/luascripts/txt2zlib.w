@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "%s: can't open %s for reading.\n", argv[0], argv[1]);
         exit(EXIT_FAILURE);
     }
-    fout = fopen(argv[2], "w");
+    fout = fopen(argv[2], "wb");
     if (fout == NULL) {
         fprintf(stderr, "%s: can't open %s for writing.\n", argv[0], argv[2]);
         exit(EXIT_FAILURE);
