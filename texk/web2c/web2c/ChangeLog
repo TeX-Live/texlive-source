@@ -1,3 +1,8 @@
+2012-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* web2c-lexer.l: Added the never-interactive option to prevent
+	flex from creating a problematic prototype for isatty().
+
 2012-04-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.defines (callmakempx, getrandomseed): Removed, MP only.

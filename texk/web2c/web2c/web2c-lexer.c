@@ -719,7 +719,7 @@ static int yy_prev_more_offset = 0;
 char yytext[YYLMAX];
 char *yytext_ptr;
 #line 1 "web2c-lexer.l"
-#line 2 "web2c-lexer.l"
+#line 4 "web2c-lexer.l"
 /* web2c-lexer.l -- lexical analysis for Tangle output.  Public domain. */
 
 #include "web2c.h"
@@ -933,7 +933,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 49 "web2c-lexer.l"
+#line 51 "web2c-lexer.l"
 
 #line 939 "web2c-lexer.c"
 
@@ -1000,7 +1000,7 @@ yy_match:
 			*(yy_state_ptr)++ = yy_current_state;
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 404 );
+		while ( yy_current_state != 277 );
 
 yy_find_action:
 		yy_current_state = *--(yy_state_ptr);
@@ -1040,17 +1040,17 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 50 "web2c-lexer.l"
+#line 52 "web2c-lexer.l"
 ;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 51 "web2c-lexer.l"
+#line 53 "web2c-lexer.l"
 { while (webinput() != '}'); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 53 "web2c-lexer.l"
+#line 55 "web2c-lexer.l"
 {
 		    register int c;
 		    putc('#', out);
@@ -1061,7 +1061,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 61 "web2c-lexer.l"
+#line 63 "web2c-lexer.l"
 {register int c;
 		 register char *cp=conditional;
 		 new_line();
@@ -1077,7 +1077,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 74 "web2c-lexer.l"
+#line 76 "web2c-lexer.l"
 {register int c;
 		 new_line();
 		 fputs("#endif /* ", out);
@@ -1092,7 +1092,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 86 "web2c-lexer.l"
+#line 88 "web2c-lexer.l"
 {register int c;
 		 register char *cp=conditional;
 		 new_line();
@@ -1108,7 +1108,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 99 "web2c-lexer.l"
+#line 101 "web2c-lexer.l"
 {register int c;
 		 new_line();
 		 fputs("#endif /* not ", out);
@@ -1124,205 +1124,205 @@ YY_RULE_SETUP
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 112 "web2c-lexer.l"
+#line 114 "web2c-lexer.l"
 ;
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 114 "web2c-lexer.l"
+#line 116 "web2c-lexer.l"
 ;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 116 "web2c-lexer.l"
+#line 118 "web2c-lexer.l"
 return last_tok=define_tok;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 117 "web2c-lexer.l"
+#line 119 "web2c-lexer.l"
 return last_tok=field_tok;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 118 "web2c-lexer.l"
+#line 120 "web2c-lexer.l"
 return last_tok=and_tok;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 119 "web2c-lexer.l"
+#line 121 "web2c-lexer.l"
 return last_tok=array_tok;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 120 "web2c-lexer.l"
+#line 122 "web2c-lexer.l"
 return last_tok=begin_tok;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 121 "web2c-lexer.l"
+#line 123 "web2c-lexer.l"
 return last_tok=case_tok;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 122 "web2c-lexer.l"
+#line 124 "web2c-lexer.l"
 return last_tok=const_tok;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 123 "web2c-lexer.l"
+#line 125 "web2c-lexer.l"
 return last_tok=div_tok;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 124 "web2c-lexer.l"
+#line 126 "web2c-lexer.l"
 return last_tok=break_tok;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 125 "web2c-lexer.l"
+#line 127 "web2c-lexer.l"
 return last_tok=do_tok;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 126 "web2c-lexer.l"
+#line 128 "web2c-lexer.l"
 return last_tok=downto_tok;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 127 "web2c-lexer.l"
+#line 129 "web2c-lexer.l"
 return last_tok=else_tok;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 128 "web2c-lexer.l"
+#line 130 "web2c-lexer.l"
 return last_tok=end_tok;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 129 "web2c-lexer.l"
+#line 131 "web2c-lexer.l"
 return last_tok=file_tok;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 130 "web2c-lexer.l"
+#line 132 "web2c-lexer.l"
 return last_tok=for_tok;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 131 "web2c-lexer.l"
+#line 133 "web2c-lexer.l"
 return last_tok=function_tok;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 132 "web2c-lexer.l"
+#line 134 "web2c-lexer.l"
 return last_tok=goto_tok;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 133 "web2c-lexer.l"
+#line 135 "web2c-lexer.l"
 return last_tok=if_tok;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 134 "web2c-lexer.l"
+#line 136 "web2c-lexer.l"
 return last_tok=label_tok;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 135 "web2c-lexer.l"
+#line 137 "web2c-lexer.l"
 return last_tok=mod_tok;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 136 "web2c-lexer.l"
+#line 138 "web2c-lexer.l"
 return last_tok=noreturn_tok;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 137 "web2c-lexer.l"
+#line 139 "web2c-lexer.l"
 return last_tok=not_tok;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 138 "web2c-lexer.l"
+#line 140 "web2c-lexer.l"
 return last_tok=of_tok;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 139 "web2c-lexer.l"
+#line 141 "web2c-lexer.l"
 return last_tok=or_tok;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 140 "web2c-lexer.l"
+#line 142 "web2c-lexer.l"
 return last_tok=procedure_tok;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 141 "web2c-lexer.l"
+#line 143 "web2c-lexer.l"
 return last_tok=program_tok;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 142 "web2c-lexer.l"
+#line 144 "web2c-lexer.l"
 return last_tok=record_tok;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 143 "web2c-lexer.l"
+#line 145 "web2c-lexer.l"
 return last_tok=repeat_tok;
 	YY_BREAK
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 144 "web2c-lexer.l"
+#line 146 "web2c-lexer.l"
 return last_tok=hhb0_tok;
 	YY_BREAK
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 145 "web2c-lexer.l"
+#line 147 "web2c-lexer.l"
 return last_tok=hhb1_tok;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 146 "web2c-lexer.l"
+#line 148 "web2c-lexer.l"
 return last_tok=then_tok;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 147 "web2c-lexer.l"
+#line 149 "web2c-lexer.l"
 return last_tok=to_tok;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 148 "web2c-lexer.l"
+#line 150 "web2c-lexer.l"
 return last_tok=type_tok;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 149 "web2c-lexer.l"
+#line 151 "web2c-lexer.l"
 return last_tok=until_tok;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 150 "web2c-lexer.l"
+#line 152 "web2c-lexer.l"
 return last_tok=var_tok;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 151 "web2c-lexer.l"
+#line 153 "web2c-lexer.l"
 return last_tok=while_tok;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 152 "web2c-lexer.l"
+#line 154 "web2c-lexer.l"
 return last_tok=others_tok;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 154 "web2c-lexer.l"
+#line 156 "web2c-lexer.l"
 {
 		  sprintf (temp, "%s%s", negbuf, yytext);
 		  negbuf[0] = '\0';
@@ -1331,7 +1331,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 160 "web2c-lexer.l"
+#line 162 "web2c-lexer.l"
 {
 		  sprintf (temp, "%s%s", negbuf, yytext);
 		  negbuf[0] = '\0';
@@ -1341,18 +1341,18 @@ YY_RULE_SETUP
 case 49:
 /* rule 49 can match eol */
 YY_RULE_SETUP
-#line 166 "web2c-lexer.l"
+#line 168 "web2c-lexer.l"
 return last_tok=single_char_tok;
 	YY_BREAK
 case 50:
 /* rule 50 can match eol */
 YY_RULE_SETUP
-#line 168 "web2c-lexer.l"
+#line 170 "web2c-lexer.l"
 return last_tok=string_literal_tok;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 170 "web2c-lexer.l"
+#line 172 "web2c-lexer.l"
 { if ((last_tok>=undef_id_tok &&
 		      last_tok<=field_id_tok) ||
 		      last_tok==i_num_tok ||
@@ -1364,7 +1364,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 179 "web2c-lexer.l"
+#line 181 "web2c-lexer.l"
 { if ((last_tok>=undef_id_tok &&
 		      last_tok<=field_id_tok) ||
 		      last_tok==i_num_tok ||
@@ -1385,102 +1385,102 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 197 "web2c-lexer.l"
+#line 199 "web2c-lexer.l"
 return last_tok='*';
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 198 "web2c-lexer.l"
+#line 200 "web2c-lexer.l"
 return last_tok='/';
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 199 "web2c-lexer.l"
+#line 201 "web2c-lexer.l"
 return last_tok='=';
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 200 "web2c-lexer.l"
+#line 202 "web2c-lexer.l"
 return last_tok=not_eq_tok;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 201 "web2c-lexer.l"
+#line 203 "web2c-lexer.l"
 return last_tok='<';
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 202 "web2c-lexer.l"
+#line 204 "web2c-lexer.l"
 return last_tok='>';
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 203 "web2c-lexer.l"
+#line 205 "web2c-lexer.l"
 return last_tok=less_eq_tok;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 204 "web2c-lexer.l"
+#line 206 "web2c-lexer.l"
 return last_tok=great_eq_tok;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 205 "web2c-lexer.l"
+#line 207 "web2c-lexer.l"
 return last_tok='(';
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 206 "web2c-lexer.l"
+#line 208 "web2c-lexer.l"
 return last_tok=')';
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 207 "web2c-lexer.l"
+#line 209 "web2c-lexer.l"
 return last_tok='[';
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 208 "web2c-lexer.l"
+#line 210 "web2c-lexer.l"
 return last_tok=']';
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 209 "web2c-lexer.l"
+#line 211 "web2c-lexer.l"
 return last_tok=assign_tok;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 210 "web2c-lexer.l"
+#line 212 "web2c-lexer.l"
 return last_tok=two_dots_tok;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 211 "web2c-lexer.l"
+#line 213 "web2c-lexer.l"
 return last_tok='.';
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 212 "web2c-lexer.l"
+#line 214 "web2c-lexer.l"
 return last_tok=',';
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 213 "web2c-lexer.l"
+#line 215 "web2c-lexer.l"
 return last_tok=';';
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 214 "web2c-lexer.l"
+#line 216 "web2c-lexer.l"
 return last_tok=':';
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 215 "web2c-lexer.l"
+#line 217 "web2c-lexer.l"
 return last_tok='^';
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 217 "web2c-lexer.l"
+#line 219 "web2c-lexer.l"
 { strcpy (last_id, yytext);
 		  l_s = search_table (last_id);
 		  return
@@ -1489,13 +1489,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 224 "web2c-lexer.l"
+#line 226 "web2c-lexer.l"
 { /* Any bizarre token will do.  */
 		  return last_tok = two_dots_tok; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 226 "web2c-lexer.l"
+#line 228 "web2c-lexer.l"
 ECHO;
 	YY_BREAK
 #line 1502 "web2c-lexer.c"
@@ -2023,10 +2023,6 @@ static void yy_load_buffer_state  (void)
 	yyfree((void *) b  );
 }
 
-#ifndef __cplusplus
-extern int isatty (int );
-#endif /* __cplusplus */
-    
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
@@ -2050,7 +2046,7 @@ extern int isatty (int );
         b->yy_bs_column = 0;
     }
 
-        b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+        b->yy_is_interactive = 0;
     
 	errno = oerrno;
 }
@@ -2482,7 +2478,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 226 "web2c-lexer.l"
+#line 228 "web2c-lexer.l"
 
 
 /* Some helper routines.  Defining these here means we don't have references

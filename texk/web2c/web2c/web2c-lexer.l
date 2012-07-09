@@ -1,3 +1,5 @@
+%option never-interactive
+
 %{
 /* web2c-lexer.l -- lexical analysis for Tangle output.  Public domain. */
 
