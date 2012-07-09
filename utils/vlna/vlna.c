@@ -797,7 +797,7 @@ if(argc> 3)printusage(),exit(BAD_OPTIONS);
 infile= stdin;outfile= stdout;
 if(argc>=2)infile= fopen(argv[1],"r");
 if(infile==NULL)ioerr(argv[1]),exit(IO_ERR);
-if(argc==3)outfile= fopen(argv[2],"w");
+if(argc==3)outfile= fopen(argv[2],"wb");
 if(outfile==NULL)ioerr(argv[2]),exit(IO_ERR);
 if(argc>=2)filename= argv[1];
 else filename= NULL;
@@ -839,7 +839,7 @@ if(j==0)infile= fopen(backup,"r");
 if(infile==NULL){
 ioerr(argv[0]);continue;
 }
-outfile= fopen(argv[0],"w");
+outfile= fopen(argv[0],"wb");
 if(outfile==NULL){
 ioerr(argv[0]);
 rename(backup,argv[0]);
