@@ -1,3 +1,9 @@
+2012-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mag.c, pk2bm.c: Use binary mode for output files (from W32TeX).
+
+	* pfb2pfa.c: Drop unused ambiguous code.
+
 2011-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* type1.c [FABS, CEIL, FLOOR]: Use routines from libm, the

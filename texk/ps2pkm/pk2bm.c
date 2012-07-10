@@ -91,6 +91,10 @@ int main(int argc, char *argv[])
       exit(1);
    }
 
+#ifdef WIN32
+   setmode(fileno(stdout), _O_BINARY);
+#endif
+
    pkname = argv[0];
 
    if (readchar(pkname, C, &cd)) {

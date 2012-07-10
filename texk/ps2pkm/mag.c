@@ -113,6 +113,10 @@ int main(int argc, char *argv[]) {
    if (argc < 1)
       fatal("Usage: %s [-r] [-Rdpi] size . . .\n", myname);
    
+#ifdef WIN32
+   setmode(fileno(stdout), _O_BINARY);
+#endif
+
    for ( ; argc; argc--, argv++) {
       arg=atof(argv[0]);
       switch (invert) {
