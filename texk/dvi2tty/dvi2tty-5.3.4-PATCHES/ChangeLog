@@ -1,3 +1,8 @@
+2012-07-10  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* patch-07-win32 (new): Cast arguments to avoid MSVC compiler
+	warnings (from W32TeX).
+
 2012-06-22  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	* patch-05-win32 (new): WIN32 MSVC lacks <unistd.h> and requires

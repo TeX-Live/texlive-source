@@ -1,0 +1,42 @@
+diff -ur dvi2tty-5.3.4.orig/dvistuff.c dvi2tty-5.3.4/dvistuff.c
+--- dvi2tty-5.3.4.orig/dvistuff.c	2012-04-26 09:20:32.000000000 +0200
++++ dvi2tty-5.3.4/dvistuff.c	2012-07-10 14:18:30.000000000 +0200
+@@ -970,13 +970,13 @@
+ 
+     i = toBUFF(fromDVI(ch));
+     kanji1 = 3;
+-    if (BYTE1(i) != 0) outchar(BYTE1(i));
++    if (BYTE1(i) != 0) outchar((unsigned char)BYTE1(i));
+     kanji1 = 2;
+-    if (BYTE2(i) != 0) outchar(BYTE2(i));
++    if (BYTE2(i) != 0) outchar((unsigned char)BYTE2(i));
+     kanji1 = 1;
+-    /* always */       outchar(BYTE3(i));
++    /* always */       outchar((unsigned char)BYTE3(i));
+     kanji1 = 0;
+-    /* always */       outchar(BYTE4(i));
++    /* always */       outchar((unsigned char)BYTE4(i));
+ 
+     return;
+ 
+@@ -1325,7 +1325,7 @@
+ void setchar(long charnr)
+ {
+ 
+-    outchar(allchar ? (unsigned char) charnr : '#');
++    outchar((unsigned char)(allchar ? charnr : '#'));
+ 
+     return;
+ 
+@@ -1541,9 +1541,9 @@
+ 
+     compute_jis(fnt->fontnum, (unsigned int) ch, &Ku, &Ten);
+     kanji1 = 1;
+-    outchar(Ku+128);
++    outchar((unsigned char)(Ku+128));
+     kanji1 = 0;
+-    outchar(Ten+128);
++    outchar((unsigned char)(Ten+128));
+ 
+     return;
+ 
