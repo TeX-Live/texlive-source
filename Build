@@ -49,13 +49,14 @@ fi
 if test "x$1" = x--debug || test "x$1" = x-g; then
   shift
   # The idea is that with Build -g, you can set TL_COMPILER_GFLAGS in
-  # the environment with options common to all three compilers used.
+  # the environment with options common to all four compilers used.
   # Not necessarily anything to do with debugging, e.g., -mcpu=sparvc9.
   : ${TL_COMPILER_GFLAGS=-g}
   c="CFLAGS='$TL_COMPILER_GFLAGS'"
   cxx="CXXFLAGS='$TL_COMPILER_GFLAGS'"
   objc="OBJCFLAGS='$TL_COMPILER_GFLAGS'"
-  TL_BUILD_ENV="$c $cxx $objc $TL_BUILD_ENV"
+  objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS'"
+  TL_BUILD_ENV="$c $cxx $objc $objcxx $TL_BUILD_ENV"
 fi
 
 test -d $TL_WORKDIR || mkdir $TL_WORKDIR
