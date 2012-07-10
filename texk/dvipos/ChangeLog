@@ -1,3 +1,9 @@
+2012-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipos.c: Use binary mode for output files.
+	* dvicore.c: Cast argument to avoid MSVC compiler warnings.
+	From W32TeX.
+
 2011-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid 'differ in signedness' warnings.

@@ -744,7 +744,7 @@ static void fin_set (UNSIGNED_BYTE p, int move)
 static void do_setchar (UNSIGNED_BYTE opcode)
 {
   if (opcode > 32 && opcode < 127) /* from '!' to '~' */
-    out_text(opcode - SET_CHAR_0);
+    out_text((char)(opcode - SET_CHAR_0));
   else
     flush_text();
   msg_out(M_DEBUG, "%ld: setchar%d", dvi_location, opcode - SET_CHAR_0);

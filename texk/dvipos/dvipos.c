@@ -21,7 +21,7 @@
 #include "dvicore.h"
 
 #include <limits.h>
-#if defined(MIKTEX) && defined(WIN32) && !defined(__MINGW32__)
+#ifdef MIKTEX
 #include <getopt.h>
 #endif
 
@@ -212,12 +212,16 @@ int main (int argc, char *argv[])
     msg_out(M_FAIL, "Could not open the input file %s.", infname);
 
   /* Open the output file */
-  if (outfname == NULL) outfp = stdout;
-  else if ((outfp = fopen(outfname, "at")) == NULL)
+  if (outfname == NULL) {
+    outfp = stdout;
+#ifdef WIN32
+    setmode(fileno(stdout), _O_BINARY);
+#endif
+  } else if ((outfp = fopen(outfname, "ab")) == NULL)
     msg_out(M_FAIL, "Could not open the output file %s.\n", outfname);
 
   /* Open the boundingbox file */
-  if (bbxfname && (bbxfp = fopen(bbxfname, "wt")) == NULL)
+  if (bbxfname && (bbxfp = fopen(bbxfname, "wb")) == NULL)
     msg_out(M_FAIL, "Could not open the boundingbox file %s.\n", bbxfname);
 
   /* Open the framed DVI file */
