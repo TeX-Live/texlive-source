@@ -33,6 +33,10 @@
 #include <stdio.h>
 #include "pkin.h"
 
+#ifdef WIN32
+#include <fcntl.h>
+#endif
+
 int main(int argc, char *argv[])
 {
    int done, C = 0, c, h = 0, w = 0, row, col;
