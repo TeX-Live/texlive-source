@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.5.1.  */
 
 /* Bison implementation for Yacc-like parsers in C
    
-      Copyright (C) 1984, 1989-1990, 2000-2011 Free Software Foundation, Inc.
+      Copyright (C) 1984, 1989-1990, 2000-2012 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.5"
+#define YYBISON_VERSION "2.5.1"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -82,6 +82,14 @@ fprintf(stderr, "line %d: %s\n", line_number, msg);
 
 /* Line 268 of yacc.c  */
 #line 85 "otp-parser.c"
+
+# ifndef YY_NULL
+#  if defined __cplusplus && 201103L <= __cplusplus
+#   define YY_NULL nullptr
+#  else
+#   define YY_NULL 0
+#  endif
+# endif
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -160,8 +168,8 @@ typedef int YYSTYPE;
 /* Copy the second part of user declarations.  */
 
 
-/* Line 343 of yacc.c  */
-#line 165 "otp-parser.c"
+/* Line 345 of yacc.c  */
+#line 173 "otp-parser.c"
 
 #ifdef short
 # undef short
@@ -267,6 +275,7 @@ YYID (yyi)
 #    if ! defined _ALLOCA_H && ! defined EXIT_SUCCESS && (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 #     include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
+      /* Use EXIT_SUCCESS as a witness for stdlib.h.  */
 #     ifndef EXIT_SUCCESS
 #      define EXIT_SUCCESS 0
 #     endif
@@ -358,20 +367,20 @@ union yyalloc
 #endif
 
 #if defined YYCOPY_NEEDED && YYCOPY_NEEDED
-/* Copy COUNT objects from FROM to TO.  The source and destination do
+/* Copy COUNT objects from SRC to DST.  The source and destination do
    not overlap.  */
 # ifndef YYCOPY
 #  if defined __GNUC__ && 1 < __GNUC__
-#   define YYCOPY(To, From, Count) \
-      __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
+#   define YYCOPY(Dst, Src, Count) \
+      __builtin_memcpy (Dst, Src, (Count) * sizeof (*(Src)))
 #  else
-#   define YYCOPY(To, From, Count)		\
-      do					\
-	{					\
-	  YYSIZE_T yyi;				\
-	  for (yyi = 0; yyi < (Count); yyi++)	\
-	    (To)[yyi] = (From)[yyi];		\
-	}					\
+#   define YYCOPY(Dst, Src, Count)              \
+      do                                        \
+        {                                       \
+          YYSIZE_T yyi;                         \
+          for (yyi = 0; yyi < (Count); yyi++)   \
+            (Dst)[yyi] = (Src)[yyi];            \
+        }                                       \
       while (YYID (0))
 #  endif
 # endif
@@ -512,7 +521,7 @@ static const char *const yytname[] =
   "Expressions", "MoreExpressions", "OneExpr", "$@2", "$@3", "$@4",
   "PushBack", "LeftState", "TotalLeft", "BegLeft", "EndLeft", "Left",
   "Right", "OneRight", "RestRightExpr", "$@5", "OneRightExpr",
-  "RightState", 0
+  "RightState", YY_NULL
 };
 #endif
 
@@ -726,17 +735,18 @@ static const yytype_uint8 yystos[] =
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)					\
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    {								\
-      yychar = (Token);						\
-      yylval = (Value);						\
-      YYPOPSTACK (1);						\
-      goto yybackup;						\
-    }								\
-  else								\
-    {								\
+#define YYBACKUP(Token, Value)                                  \
+do                                                              \
+  if (yychar == YYEMPTY)                                        \
+    {                                                           \
+      yychar = (Token);                                         \
+      yylval = (Value);                                         \
+      YYPOPSTACK (yylen);                                       \
+      yystate = *yyssp;                                         \
+      goto yybackup;                                            \
+    }                                                           \
+  else                                                          \
+    {                                                           \
       yyerror (YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
@@ -831,6 +841,8 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep)
     YYSTYPE const * const yyvaluep;
 #endif
 {
+  FILE *yyo = yyoutput;
+  YYUSE (yyo);
   if (!yyvaluep)
     return;
 # ifdef YYPRINT
@@ -1082,12 +1094,12 @@ static int
 yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                 yytype_int16 *yyssp, int yytoken)
 {
-  YYSIZE_T yysize0 = yytnamerr (0, yytname[yytoken]);
+  YYSIZE_T yysize0 = yytnamerr (YY_NULL, yytname[yytoken]);
   YYSIZE_T yysize = yysize0;
   YYSIZE_T yysize1;
   enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
   /* Internationalized format string. */
-  const char *yyformat = 0;
+  const char *yyformat = YY_NULL;
   /* Arguments of yyformat. */
   char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
   /* Number of reported tokens (one for the "unexpected", one per
@@ -1147,7 +1159,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
                     break;
                   }
                 yyarg[yycount++] = yytname[yyx];
-                yysize1 = yysize + yytnamerr (0, yytname[yyx]);
+                yysize1 = yysize + yytnamerr (YY_NULL, yytname[yyx]);
                 if (! (yysize <= yysize1
                        && yysize1 <= YYSTACK_ALLOC_MAXIMUM))
                   return 2;
@@ -1299,7 +1311,7 @@ yyparse ()
        `yyss': related to states.
        `yyvs': related to semantic values.
 
-       Refer to the stacks thru separate pointers, to allow yyoverflow
+       Refer to the stacks through separate pointers, to allow yyoverflow
        to reallocate them elsewhere.  */
 
     /* The state stack.  */
@@ -1532,168 +1544,168 @@ yyreduce:
     {
         case 3:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 72 "otp-parser.y"
     { input_bytes=2; }
     break;
 
   case 4:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 74 "otp-parser.y"
     { input_bytes=(yyvsp[(2) - (3)]).yint; }
     break;
 
   case 5:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 79 "otp-parser.y"
     { output_bytes=2; }
     break;
 
   case 6:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 81 "otp-parser.y"
     { output_bytes=(yyvsp[(2) - (3)]).yint; }
     break;
 
   case 11:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 96 "otp-parser.y"
     { store_table((yyvsp[(1) - (4)]).ystring, (yyvsp[(3) - (4)]).yint); }
     break;
 
   case 15:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 107 "otp-parser.y"
     { add_to_table((yyvsp[(1) - (1)]).yint); }
     break;
 
   case 16:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 109 "otp-parser.y"
     { add_to_table((yyvsp[(3) - (3)]).yint); }
     break;
 
   case 19:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 119 "otp-parser.y"
     { store_state((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 20:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 121 "otp-parser.y"
     { store_state((yyvsp[(3) - (3)]).ystring); }
     break;
 
   case 25:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 136 "otp-parser.y"
     { store_alias((yyvsp[(1) - (4)]).ystring, (yyvsp[(3) - (4)]).yleft); }
     break;
 
   case 26:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 141 "otp-parser.y"
     { (yyval).yleft = StringLeft((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 27:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 143 "otp-parser.y"
     { (yyval).yleft = CompleteLeft((yyvsp[(1) - (6)]).yleft, (yyvsp[(3) - (6)]).yint, (yyvsp[(5) - (6)]).yint); }
     break;
 
   case 28:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 145 "otp-parser.y"
     { (yyval).yleft = PlusLeft((yyvsp[(1) - (5)]).yleft, (yyvsp[(3) - (5)]).yint); }
     break;
 
   case 29:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 147 "otp-parser.y"
     { (yyval).yleft = CompleteLeft((yyvsp[(1) - (4)]).yleft, (yyvsp[(3) - (4)]).yint, (yyvsp[(3) - (4)]).yint); }
     break;
 
   case 30:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 149 "otp-parser.y"
     { (yyval).yleft = (yyvsp[(1) - (1)]).yleft; }
     break;
 
   case 31:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 154 "otp-parser.y"
     { (yyval).yleft = SingleLeft((yyvsp[(1) - (1)]).yint); }
     break;
 
   case 32:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 156 "otp-parser.y"
     { (yyval).yleft = DoubleLeft((yyvsp[(1) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 33:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 158 "otp-parser.y"
     { (yyval).yleft = WildCard(); }
     break;
 
   case 34:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 160 "otp-parser.y"
     { (yyval).yleft = NotChoiceLeft((yyvsp[(3) - (4)]).ylleft); }
     break;
 
   case 35:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 162 "otp-parser.y"
     { (yyval).yleft = ChoiceLeft((yyvsp[(2) - (3)]).ylleft); }
     break;
 
   case 36:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 164 "otp-parser.y"
     { (yyval).yleft = lookup_alias((yyvsp[(2) - (3)]).ystring); }
     break;
 
   case 37:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 169 "otp-parser.y"
     { (yyval).ylleft = llist1((yyvsp[(1) - (1)]).yleft); }
     break;
 
   case 38:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 171 "otp-parser.y"
     { (yyval).ylleft = lappend1((yyvsp[(1) - (3)]).ylleft, (yyvsp[(3) - (3)]).yleft); }
     break;
 
   case 39:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 176 "otp-parser.y"
     {
 	  for(cur_state=0; cur_state<no_states; cur_state++) {
@@ -1710,105 +1722,105 @@ yyreduce:
 
   case 42:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 196 "otp-parser.y"
     { states[cur_state].no_exprs++; }
     break;
 
   case 43:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 198 "otp-parser.y"
     { out_left((yyvsp[(3) - (3)]).ylleft); right_offset=0; }
     break;
 
   case 44:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 200 "otp-parser.y"
     { right_offset=OTP_PBACK_OFFSET; }
     break;
 
   case 45:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 202 "otp-parser.y"
     { fill_in_left(); }
     break;
 
   case 48:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 212 "otp-parser.y"
     { cur_state = 0; }
     break;
 
   case 49:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 214 "otp-parser.y"
     { cur_state = lookup_state((yyvsp[(2) - (3)]).ystring); }
     break;
 
   case 50:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 219 "otp-parser.y"
     { (yyval).ylleft = lappend((yyvsp[(1) - (3)]).ylleft, lappend((yyvsp[(2) - (3)]).ylleft, (yyvsp[(3) - (3)]).ylleft)); }
     break;
 
   case 51:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 221 "otp-parser.y"
     { (yyval).ylleft = lappend((yyvsp[(1) - (2)]).ylleft, (yyvsp[(2) - (2)]).ylleft); }
     break;
 
   case 52:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 226 "otp-parser.y"
     { (yyval).ylleft = nil; }
     break;
 
   case 53:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 228 "otp-parser.y"
     { (yyval).ylleft = llist1(BeginningLeft()); }
     break;
 
   case 54:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 233 "otp-parser.y"
     { (yyval).ylleft = nil; }
     break;
 
   case 55:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 235 "otp-parser.y"
     { (yyval).ylleft = llist1(EndLeft()); }
     break;
 
   case 56:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 240 "otp-parser.y"
     { (yyval).ylleft = llist1((yyvsp[(1) - (1)]).yleft); }
     break;
 
   case 57:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 242 "otp-parser.y"
     { (yyval).ylleft = lappend1((yyvsp[(1) - (2)]).ylleft, (yyvsp[(2) - (2)]).yleft); }
     break;
 
   case 60:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 252 "otp-parser.y"
     {
 	 len=strlen((yyvsp[(1) - (1)]).ystring);
@@ -1820,35 +1832,35 @@ yyreduce:
 
   case 61:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 259 "otp-parser.y"
     { out_right(OTP_RIGHT_NUM, (yyvsp[(1) - (1)]).yint); }
     break;
 
   case 62:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 261 "otp-parser.y"
     { out_right(OTP_RIGHT_CHAR, (yyvsp[(2) - (2)]).yint); }
     break;
 
   case 63:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 263 "otp-parser.y"
     { out_right(OTP_RIGHT_LCHAR, 0); }
     break;
 
   case 64:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 265 "otp-parser.y"
     { out_right(OTP_RIGHT_LCHAR, (yyvsp[(5) - (6)]).yint); }
     break;
 
   case 65:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 267 "otp-parser.y"
     {
 	 out_right(OTP_RIGHT_SOME, 0); 
@@ -1858,7 +1870,7 @@ yyreduce:
 
   case 66:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 272 "otp-parser.y"
     {
 	 out_right(OTP_RIGHT_SOME, (yyvsp[(5) - (6)]).yint);
@@ -1868,7 +1880,7 @@ yyreduce:
 
   case 67:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 277 "otp-parser.y"
     {
 	 out_right(OTP_RIGHT_SOME, 0);
@@ -1878,7 +1890,7 @@ yyreduce:
 
   case 68:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 282 "otp-parser.y"
     {
 	 out_right(OTP_RIGHT_SOME, (yyvsp[(5) - (8)]).yint);
@@ -1888,120 +1900,120 @@ yyreduce:
 
   case 69:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 287 "otp-parser.y"
     { out_right(OTP_RIGHT_OUTPUT, 0); }
     break;
 
   case 71:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 293 "otp-parser.y"
     { out_int(OTP_ADD, 0); }
     break;
 
   case 72:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 295 "otp-parser.y"
     { out_int(OTP_SUB, 0); }
     break;
 
   case 73:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 297 "otp-parser.y"
     { out_int(OTP_MULT, 0); }
     break;
 
   case 74:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 299 "otp-parser.y"
     { out_int(OTP_DIV, 0); }
     break;
 
   case 75:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 301 "otp-parser.y"
     { out_int(OTP_MOD, 0); }
     break;
 
   case 76:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 303 "otp-parser.y"
     { out_int(OTP_PUSH_NUM, lookup_table((yyvsp[(1) - (1)]).ystring)); }
     break;
 
   case 77:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 305 "otp-parser.y"
     { out_int(OTP_LOOKUP, 0); }
     break;
 
   case 78:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 310 "otp-parser.y"
     { out_int(OTP_PUSH_NUM, (yyvsp[(1) - (1)]).yint); }
     break;
 
   case 79:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 312 "otp-parser.y"
     { out_int(OTP_PUSH_CHAR, (yyvsp[(2) - (2)]).yint); }
     break;
 
   case 80:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 314 "otp-parser.y"
     { out_int(OTP_PUSH_LCHAR, 0); }
     break;
 
   case 81:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 316 "otp-parser.y"
     { out_int(OTP_PUSH_LCHAR, (yyvsp[(5) - (6)]).yint); }
     break;
 
   case 84:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 323 "otp-parser.y"
     { out_int(OTP_STATE_CHANGE, 0); }
     break;
 
   case 85:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 325 "otp-parser.y"
     { out_int(OTP_STATE_CHANGE, lookup_state((yyvsp[(2) - (3)]).ystring)); }
     break;
 
   case 86:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 327 "otp-parser.y"
     { out_int(OTP_STATE_PUSH, lookup_state((yyvsp[(3) - (4)]).ystring)); }
     break;
 
   case 87:
 
-/* Line 1806 of yacc.c  */
+/* Line 1810 of yacc.c  */
 #line 329 "otp-parser.y"
     { out_int(OTP_STATE_POP, 0); }
     break;
 
 
 
-/* Line 1806 of yacc.c  */
-#line 2005 "otp-parser.c"
+/* Line 1810 of yacc.c  */
+#line 2017 "otp-parser.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2188,7 +2200,7 @@ yyabortlab:
   yyresult = 1;
   goto yyreturn;
 
-#if !defined(yyoverflow) || YYERROR_VERBOSE
+#if !defined yyoverflow || YYERROR_VERBOSE
 /*-------------------------------------------------.
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
@@ -2231,7 +2243,7 @@ yyreturn:
 
 
 
-/* Line 2067 of yacc.c  */
+/* Line 2071 of yacc.c  */
 #line 331 "otp-parser.y"
 
 

@@ -1,3 +1,7 @@
+2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* web2c-parser.[ch]: Regenerate with bison 2.5.1.
+
 2012-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* web2c-lexer.l: Added the never-interactive option to prevent
