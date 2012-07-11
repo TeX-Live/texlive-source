@@ -1,3 +1,8 @@
+2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* help.h (LUATANGLEHELP): Removed, luatangle no longer exists.
+	[WIN32]: Use "nul" instead of "/dev/null" as for Unix.
+
 2012-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w2c/config.h: Define LONGINTEGER_{TYPE,PRId} for MSVC.
