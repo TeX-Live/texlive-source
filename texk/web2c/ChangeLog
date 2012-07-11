@@ -1,7 +1,7 @@
 2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* help.h (LUATANGLEHELP): Removed, luatangle no longer exists.
-	[WIN32]: Use "nul" instead of "/dev/null" as for Unix.
+	Use DEV_NULL instead of hard-coding /dev/null (from W32TeX).
 
 2012-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
