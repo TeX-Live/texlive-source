@@ -58,4 +58,4 @@ typedef struct {
    halfword *raster ;
 } chardesc ;
 
-int readchar();
+int readchar(char *name, shalfword c, chardesc *cd);

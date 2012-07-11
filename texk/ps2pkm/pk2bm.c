@@ -37,16 +37,18 @@
 #include <fcntl.h>
 #endif
 
+static quarterword lsbf(quarterword u);
+static void dots(quarterword u, int n);
+static int atoo(char *oct);
+
 int main(int argc, char *argv[])
 {
    int done, C = 0, c, h = 0, w = 0, row, col;
    unsigned int bitmap = 0, hexmap = 0;
    halfword *word;
-   quarterword lsbf();
-   void dots();
    chardesc cd;
-   char *myname = "pk2bm", *pkname;
-   int atoo(char *);
+   const char *myname = "pk2bm";
+   char *pkname;
 	
    while (--argc > 0 && (*++argv)[0] == '-') {
       done=0;
@@ -179,8 +181,8 @@ int main(int argc, char *argv[])
 /*
  * lsbf() transforms a byte (least significant bit first).
  */
-quarterword lsbf(u)
-quarterword u;
+static quarterword
+lsbf(quarterword u)
 {
 	int i; quarterword bit, result = 0;
 
@@ -195,9 +197,10 @@ quarterword u;
 /*
  * dots() print byte: `*' for a black and `.' for a white pixel
  */
-void dots(u, n)
-quarterword u; int n;
-{  unsigned int bit;
+static void
+dots(quarterword u, int n)
+{
+   unsigned int bit;
 
    bit=1<<7;
    for ( ;n>0 ;n--) {
@@ -207,8 +210,10 @@ quarterword u; int n;
    }
 }
 
-int atoo(char *oct)
-{  int octal = 0;
+static int
+atoo(char *oct)
+{
+   int octal = 0;
    while (*oct != '\0') octal = 8*octal + (*oct++) - '0';
    return octal & 0xff;
 }

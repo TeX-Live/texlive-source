@@ -1,0 +1,33 @@
+#! /bin/sh
+
+# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -f Symbol*
+
+cp $srcdir/tests/Symbol.afm $srcdir/tests/Symbol.pfb .
+
+./pfb2pfa -v Symbol.pfb || exit 1
+diff $srcdir/tests/Symbol.pfa Symbol.pfa || exit 1
+
+./ps2pk -v Symbol.pfa || exit 1
+diff $srcdir/tests/Symbol10.300pk Symbol10.300pk || exit 1
+
+rm -f Symbol10.300pk
+./ps2pk -v Symbol.pfb || exit 1
+diff $srcdir/tests/Symbol10.300pk Symbol10.300pk || exit 1
+
+./pk2bm -h -ca Symbol10.300pk >Symbol.alpha.hex || exit 1
+diff $srcdir/tests/Symbol.alpha.hex Symbol.alpha.hex || exit 1
+
+./pk2bm -b -o141 Symbol10.300pk >Symbol.alpha.pix || exit 1
+diff $srcdir/tests/Symbol.alpha.pix Symbol.alpha.pix || exit 1
+
+val1='167 240 263 288'
+val2=`./mag -r -R240 $val1` || exit 1
+val3=`./mag -R240 $val2` || exit 1
+
+echo "./mag -r -R240 $val1 => $val2"
+echo "./mag -R240 $val2 => $val3"
+test "x$val1" = "x$val3"  || exit 1
+

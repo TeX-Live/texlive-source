@@ -25,7 +25,7 @@
 /*
  * Forward declaration
  */
-static void error();
+static void error(const char *s);
 
 /*
  *   Now we have some routines to get stuff from the pk file.  pkbyte returns
@@ -35,7 +35,7 @@ static void error();
 static FILE *pkfile ;
 
 static shalfword
-pkbyte()
+pkbyte(void)
 {
    register shalfword i ;
 
@@ -45,7 +45,7 @@ pkbyte()
 }
 
 static integer
-pkquad()
+pkquad(void)
 {
    register integer i ;
 
@@ -59,7 +59,7 @@ pkquad()
 }
 
 static integer
-pktrio()
+pktrio(void)
 {
    register integer i ;
 
@@ -70,7 +70,7 @@ pktrio()
 }
 
 static integer
-pkpair()
+pkpair(void)
 {
   register integer i ;
   
@@ -80,7 +80,7 @@ pkpair()
 }
 
 static integer
-pkspair()
+pkspair(void)
 {
   register integer i ;
   
@@ -97,8 +97,7 @@ static char errbuf[80] ;
  */
 
 static Boolean	
-pkopen(name)
-	char name[] ;
+pkopen(const char *name)
 {
    if ((pkfile=fopen(name, RB))==NULL) {
       (void)sprintf(errbuf, "Could not open %s", name) ;
@@ -123,7 +122,7 @@ static halfword dynf ;
 static halfword repeatcount ;
 
 static shalfword
-getnyb ()
+getnyb (void)
 {   halfword temp;
     if ( bitweight == 0 ) 
     { bitweight = 16 ; 
@@ -137,7 +136,7 @@ getnyb ()
 } 
 
 static Boolean
-getbit ()
+getbit (void)
 {
     bitweight >>= 1 ; 
     if ( bitweight == 0 ) 
@@ -149,9 +148,11 @@ getbit ()
 
 static halfword (*realfunc)() ;
 long PKremainder ;
-static halfword handlehuge() ;
+static halfword handlehuge(halfword i, halfword k) ;
 
-static halfword pkpackednum () {
+static halfword
+pkpackednum (void)
+{
 register halfword i, j ; 
     i = getnyb () ; 
     if ( i == 0 ) 
@@ -185,7 +186,7 @@ register halfword i, j ;
       } 
     } 
 
-static halfword rest ()
+static halfword rest (void)
 {
    halfword i ;
 
@@ -210,8 +211,8 @@ static halfword rest ()
    return 0;
 }
 
-static halfword handlehuge ( i , k )
-halfword i , k ;
+static halfword
+handlehuge (halfword i, halfword k)
 {
    register long j = k ;
 
@@ -232,8 +233,7 @@ static halfword gpower[17] = { 0 , 1 , 3 , 7 , 15 , 31 , 63 , 127 ,
      255 , 511 , 1023 , 2047 , 4095 , 8191 , 16383 , 32767 , 65535 } ; 
 
 static void
-unpack(cd)
-chardesc *cd;
+unpack(chardesc *cd)
 { 
   register integer i, j ; 
   register halfword word, wordweight ;
@@ -334,10 +334,7 @@ chardesc *cd;
  *   return FALSE (0) otherwise.
  */
 int
-readchar(name, c, cd)
-char name[];
-shalfword c;
-chardesc *cd;
+readchar(char *name, shalfword c, chardesc *cd)
 {
    register shalfword i ;
    register integer k ;
@@ -446,8 +443,8 @@ default:
    return(0); /* character not found */
 }
 
-static void error(s)
-char s[];
+static void
+error(const char *s)
 {
    fprintf(stderr, "%s\n", s);
    exit(1);

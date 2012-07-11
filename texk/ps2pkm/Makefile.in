@@ -95,10 +95,12 @@ am_pfb2pfa_OBJECTS = basics.$(OBJEXT) filenames.$(OBJEXT) \
 pfb2pfa_OBJECTS = $(am_pfb2pfa_OBJECTS)
 pfb2pfa_LDADD = $(LDADD)
 pfb2pfa_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am_pk2bm_OBJECTS = pk2bm.$(OBJEXT) pkin.$(OBJEXT)
+am_pk2bm_OBJECTS = pk2bm-pk2bm.$(OBJEXT) pk2bm-pkin.$(OBJEXT)
 pk2bm_OBJECTS = $(am_pk2bm_OBJECTS)
-pk2bm_LDADD = $(LDADD)
-pk2bm_DEPENDENCIES = $(am__DEPENDENCIES_1)
+pk2bm_DEPENDENCIES =
+pk2bm_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(pk2bm_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_ps2pk_OBJECTS = arith.$(OBJEXT) basics.$(OBJEXT) bstring.$(OBJEXT) \
 	curves.$(OBJEXT) encoding.$(OBJEXT) filenames.$(OBJEXT) \
 	fontfcn.$(OBJEXT) hints.$(OBJEXT) lines.$(OBJEXT) \
@@ -166,6 +168,10 @@ ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
 AM_RECURSIVE_TARGETS = cscope
+am__tty_colors_dummy = \
+  mgn= red= grn= lgn= blu= brg= std=; \
+  am__color_tests=no
+am__tty_colors = $(am__tty_colors_dummy)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -306,6 +312,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA
 AM_CFLAGS = #$(WARNING_CFLAGS)
+LDADD = $(KPATHSEA_LIBS)	
+pk2bm_CPPFLAGS = 
+pk2bm_CFLAGS = $(WARNING_CFLAGS)
+pk2bm_LDADD = 
 mag_SOURCES = \
 	basics.c \
 	basics.h \
@@ -386,26 +396,15 @@ ps2pk_SOURCES = \
 	util.c \
 	util.h
 
-LDADD = $(KPATHSEA_LIBS)	
 dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
-EXTRA_DIST = \
-	CHANGES.type1 \
-	INSTALLATION \
-	README.14m \
-	README.type1 \
-	basename.c \
-	flisearch.c \
-	pktest.c \
-	protos.h \
-	psearch.c \
-	sexpr.c \
-	strexpr.c \
-	strexpr.h \
-	t1test.c \
-	texfiles.c \
-	texfiles.h \
-	usenet
-
+TESTS = tests/ps2pk.test
+EXTRA_DIST = $(TESTS) tests/Symbol.afm tests/Symbol.alpha.hex \
+	tests/Symbol.alpha.pix tests/Symbol.pfa tests/Symbol.pfb \
+	tests/Symbol10.300pk CHANGES.type1 INSTALLATION README.14m \
+	README.type1 basename.c flisearch.c pktest.c protos.h \
+	psearch.c sexpr.c strexpr.c strexpr.h t1test.c texfiles.c \
+	texfiles.h usenet
+DISTCLEANFILES = Symbol*
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -514,7 +513,7 @@ pfb2pfa$(EXEEXT): $(pfb2pfa_OBJECTS) $(pfb2pfa_DEPENDENCIES) $(EXTRA_pfb2pfa_DEP
 	$(LINK) $(pfb2pfa_OBJECTS) $(pfb2pfa_LDADD) $(LIBS)
 pk2bm$(EXEEXT): $(pk2bm_OBJECTS) $(pk2bm_DEPENDENCIES) $(EXTRA_pk2bm_DEPENDENCIES) 
 	@rm -f pk2bm$(EXEEXT)
-	$(LINK) $(pk2bm_OBJECTS) $(pk2bm_LDADD) $(LIBS)
+	$(pk2bm_LINK) $(pk2bm_OBJECTS) $(pk2bm_LDADD) $(LIBS)
 ps2pk$(EXEEXT): $(ps2pk_OBJECTS) $(ps2pk_DEPENDENCIES) $(EXTRA_ps2pk_DEPENDENCIES) 
 	@rm -f ps2pk$(EXEEXT)
 	$(LINK) $(ps2pk_OBJECTS) $(ps2pk_LDADD) $(LIBS)
@@ -538,8 +537,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/objects.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/paths.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pfb2pfa.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pk2bm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pk2bm-pk2bm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pk2bm-pkin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ps2pk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regions.Po@am__quote@
@@ -574,6 +573,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+pk2bm-pk2bm.o: pk2bm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pk2bm.o -MD -MP -MF $(DEPDIR)/pk2bm-pk2bm.Tpo -c -o pk2bm-pk2bm.o `test -f 'pk2bm.c' || echo '$(srcdir)/'`pk2bm.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pk2bm-pk2bm.Tpo $(DEPDIR)/pk2bm-pk2bm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pk2bm.c' object='pk2bm-pk2bm.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pk2bm.o `test -f 'pk2bm.c' || echo '$(srcdir)/'`pk2bm.c
+
+pk2bm-pk2bm.obj: pk2bm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pk2bm.obj -MD -MP -MF $(DEPDIR)/pk2bm-pk2bm.Tpo -c -o pk2bm-pk2bm.obj `if test -f 'pk2bm.c'; then $(CYGPATH_W) 'pk2bm.c'; else $(CYGPATH_W) '$(srcdir)/pk2bm.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pk2bm-pk2bm.Tpo $(DEPDIR)/pk2bm-pk2bm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pk2bm.c' object='pk2bm-pk2bm.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pk2bm.obj `if test -f 'pk2bm.c'; then $(CYGPATH_W) 'pk2bm.c'; else $(CYGPATH_W) '$(srcdir)/pk2bm.c'; fi`
+
+pk2bm-pkin.o: pkin.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pkin.o -MD -MP -MF $(DEPDIR)/pk2bm-pkin.Tpo -c -o pk2bm-pkin.o `test -f 'pkin.c' || echo '$(srcdir)/'`pkin.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pk2bm-pkin.Tpo $(DEPDIR)/pk2bm-pkin.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pkin.c' object='pk2bm-pkin.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pkin.o `test -f 'pkin.c' || echo '$(srcdir)/'`pkin.c
+
+pk2bm-pkin.obj: pkin.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -MT pk2bm-pkin.obj -MD -MP -MF $(DEPDIR)/pk2bm-pkin.Tpo -c -o pk2bm-pkin.obj `if test -f 'pkin.c'; then $(CYGPATH_W) 'pkin.c'; else $(CYGPATH_W) '$(srcdir)/pkin.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pk2bm-pkin.Tpo $(DEPDIR)/pk2bm-pkin.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pkin.c' object='pk2bm-pkin.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pk2bm_CPPFLAGS) $(CPPFLAGS) $(pk2bm_CFLAGS) $(CFLAGS) -c -o pk2bm-pkin.obj `if test -f 'pkin.c'; then $(CYGPATH_W) 'pkin.c'; else $(CYGPATH_W) '$(srcdir)/pkin.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -700,6 +727,99 @@ cscopelist:  $(HEADERS) $(SOURCES) $(LISP)
 distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 	-rm -f cscope.out cscope.in.out cscope.po.out cscope.files
+
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; skip=0; \
+	srcdir=$(srcdir); export srcdir; \
+	list=' $(TESTS) '; \
+	$(am__tty_colors); \
+	if test -n "$$list"; then \
+	  for tst in $$list; do \
+	    if test -f ./$$tst; then dir=./; \
+	    elif test -f $$tst; then dir=; \
+	    else dir="$(srcdir)/"; fi; \
+	    if $(TESTS_ENVIRONMENT) $${dir}$$tst $(AM_TESTS_FD_REDIRECT); then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *[\ \	]$$tst[\ \	]*) \
+		xpass=`expr $$xpass + 1`; \
+		failed=`expr $$failed + 1`; \
+		col=$$red; res=XPASS; \
+	      ;; \
+	      *) \
+		col=$$grn; res=PASS; \
+	      ;; \
+	      esac; \
+	    elif test $$? -ne 77; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *[\ \	]$$tst[\ \	]*) \
+		xfail=`expr $$xfail + 1`; \
+		col=$$lgn; res=XFAIL; \
+	      ;; \
+	      *) \
+		failed=`expr $$failed + 1`; \
+		col=$$red; res=FAIL; \
+	      ;; \
+	      esac; \
+	    else \
+	      skip=`expr $$skip + 1`; \
+	      col=$$blu; res=SKIP; \
+	    fi; \
+	    echo "$${col}$$res$${std}: $$tst"; \
+	  done; \
+	  if test "$$all" -eq 1; then \
+	    tests="test"; \
+	    All=""; \
+	  else \
+	    tests="tests"; \
+	    All="All "; \
+	  fi; \
+	  if test "$$failed" -eq 0; then \
+	    if test "$$xfail" -eq 0; then \
+	      banner="$$All$$all $$tests passed"; \
+	    else \
+	      if test "$$xfail" -eq 1; then failures=failure; else failures=failures; fi; \
+	      banner="$$All$$all $$tests behaved as expected ($$xfail expected $$failures)"; \
+	    fi; \
+	  else \
+	    if test "$$xpass" -eq 0; then \
+	      banner="$$failed of $$all $$tests failed"; \
+	    else \
+	      if test "$$xpass" -eq 1; then passes=pass; else passes=passes; fi; \
+	      banner="$$failed of $$all $$tests did not behave as expected ($$xpass unexpected $$passes)"; \
+	    fi; \
+	  fi; \
+	  dashes="$$banner"; \
+	  skipped=""; \
+	  if test "$$skip" -ne 0; then \
+	    if test "$$skip" -eq 1; then \
+	      skipped="($$skip test was not run)"; \
+	    else \
+	      skipped="($$skip tests were not run)"; \
+	    fi; \
+	    test `echo "$$skipped" | wc -c` -le `echo "$$banner" | wc -c` || \
+	      dashes="$$skipped"; \
+	  fi; \
+	  report=""; \
+	  if test "$$failed" -ne 0 && test -n "$(PACKAGE_BUGREPORT)"; then \
+	    report="Please report to $(PACKAGE_BUGREPORT)"; \
+	    test `echo "$$report" | wc -c` -le `echo "$$banner" | wc -c` || \
+	      dashes="$$report"; \
+	  fi; \
+	  dashes=`echo "$$dashes" | sed s/./=/g`; \
+	  if test "$$failed" -eq 0; then \
+	    col="$$grn"; \
+	  else \
+	    col="$$red"; \
+	  fi; \
+	  echo "$${col}$$dashes$${std}"; \
+	  echo "$${col}$$banner$${std}"; \
+	  test -z "$$skipped" || echo "$${col}$$skipped$${std}"; \
+	  test -z "$$report" || echo "$${col}$$report$${std}"; \
+	  echo "$${col}$$dashes$${std}"; \
+	  test "$$failed" -eq 0; \
+	else :; fi
 
 distdir: $(DISTFILES)
 	@list='$(MANS)'; if test -n "$$list"; then \
@@ -871,6 +991,7 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 all-am: Makefile $(PROGRAMS) $(MANS) c-auto.h
 installdirs:
@@ -903,6 +1024,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -982,16 +1104,16 @@ uninstall-am: uninstall-binPROGRAMS uninstall-man
 
 uninstall-man: uninstall-man1
 
-.MAKE: all install-am install-strip
+.MAKE: all check-am install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
-	clean-binPROGRAMS clean-cscope clean-generic clean-libtool \
-	cscope cscopelist ctags dist dist-all dist-bzip2 dist-gzip \
-	dist-lzip dist-shar dist-tarZ dist-xz dist-zip distcheck \
-	distclean distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
+.PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
+	clean clean-binPROGRAMS clean-cscope clean-generic \
+	clean-libtool cscope cscopelist ctags dist dist-all dist-bzip2 \
+	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
+	distcheck distclean distclean-compile distclean-generic \
+	distclean-hdr distclean-libtool distclean-tags distcleancheck \
+	distdir distuninstallcheck dvi dvi-am html html-am info \
+	info-am install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
 	install-info-am install-man install-man1 install-pdf \
@@ -1003,7 +1125,7 @@ uninstall-man: uninstall-man1
 	uninstall-man uninstall-man1
 
 
-$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(pk2bm_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
+$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
 

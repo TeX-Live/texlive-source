@@ -1,15 +1,20 @@
 ## Makefile.am for the TeX Live subdirectory texk/ps2pkm/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+bin_PROGRAMS = mag pfb2pfa pk2bm ps2pk
+
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA
 AM_CFLAGS = #$(WARNING_CFLAGS)
+LDADD = $(KPATHSEA_LIBS)	
 
-bin_PROGRAMS = mag pfb2pfa pk2bm ps2pk
+pk2bm_CPPFLAGS =
+pk2bm_CFLAGS = $(WARNING_CFLAGS)
+pk2bm_LDADD =
 
 mag_SOURCES = \
 	basics.c \
@@ -91,18 +96,25 @@ ps2pk_SOURCES = \
 	util.c \
 	util.h
 
-$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(pk2bm_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
-
-LDADD = $(KPATHSEA_LIBS)	
+$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
 dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
 
+## Tests.
+##
+TESTS = tests/ps2pk.test
+EXTRA_DIST = $(TESTS)
+## tests/ps2pk.test
+EXTRA_DIST += tests/Symbol.afm tests/Symbol.alpha.hex tests/Symbol.alpha.pix \
+	tests/Symbol.pfa tests/Symbol.pfb tests/Symbol10.300pk
+DISTCLEANFILES = Symbol*
+
 ## Not used
 ##
-EXTRA_DIST = \
+EXTRA_DIST += \
 	CHANGES.type1 \
 	INSTALLATION \
 	README.14m \

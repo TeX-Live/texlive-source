@@ -1,8 +1,19 @@
+2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ps2pk.test (new): Shell script for a test case.
+	* tests/Symbol.afm, tests/Symbol.pfb (new): Test input.
+	* tests/Symbol.pfa, tests/Symbol.alpha.{hex,pix},
+	tests/Symbol10.300pk (new): Expected output.
+	* Makefile.am: Adapted.
+
 2012-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mag.c, pk2bm.c: Use binary mode for output files (from W32TeX).
 
 	* pfb2pfa.c: Drop unused ambiguous code.
+
+	* Makefile.am: Pk2bm does not use KPATHSEA.
+	* pk2bm.c, pkin.[ch]: ANSI C function prototypes and definitions.
 
 2011-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
