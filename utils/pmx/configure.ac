@@ -29,11 +29,11 @@ AM_CONDITIONAL([WIN32_WRAP],
 dnl initial value for AM_CPPFLAGS
 AC_SUBST([AM_CPPFLAGS], ['-DNON_UNIX_STDIO'])
 
-dnl WIN32 has no <sys/times.h>
+dnl WIN32 has no <sys/times.h>, native WIN32 is as MSDOS
 KPSE_CHECK_WIN32
-if test "x$kpse_cv_have_win32" != xno; then
-  AM_CPPFLAGS="$AM_CPPPFLAGS -DUSE_CLOCK"
-fi
+AS_CASE([$kpse_cv_have_win32],
+        [native], [AM_CPPFLAGS="$AM_CPPPFLAGS -DMSDOS"],
+        [mingw32], [AM_CPPFLAGS="$AM_CPPPFLAGS -DUSE_CLOCK"])
 
 dnl Checks for programs.
 AC_PROG_INSTALL

@@ -3,6 +3,9 @@
 #endif
 #include <sys/types.h> /* for off_t */
 #include "stdio.h"
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* for isatty() */
+#endif
 #ifdef WIN32
 extern int w32getc(FILE *f);
 #define getc w32getc
@@ -113,7 +116,6 @@ extern void f_init(void);
 extern int (*f__donewrec)(void), t_putc(int), x_wSL(void);
 extern void b_char(char*,char*,ftnlen), g_char(char*,ftnlen,char*);
 extern int c_sfe(cilist*), z_rnew(void);
-extern int isatty(int);
 extern int err__fl(int,int,char*);
 extern int xrd_SL(void);
 extern int f__putbuf(int);

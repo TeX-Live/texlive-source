@@ -3893,9 +3893,14 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
 $as_echo "$kpse_cv_have_win32" >&6; }
 
-if test "x$kpse_cv_have_win32" != xno; then
-  AM_CPPFLAGS="$AM_CPPPFLAGS -DUSE_CLOCK"
-fi
+case $kpse_cv_have_win32 in #(
+  native) :
+    AM_CPPFLAGS="$AM_CPPPFLAGS -DMSDOS" ;; #(
+  mingw32) :
+    AM_CPPFLAGS="$AM_CPPPFLAGS -DUSE_CLOCK" ;; #(
+  *) :
+     ;;
+esac
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ln -s works" >&5

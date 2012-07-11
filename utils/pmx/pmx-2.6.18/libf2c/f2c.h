@@ -23,8 +23,13 @@ typedef short int shortlogical;
 typedef char logical1;
 typedef char integer1;
 #ifdef INTEGER_STAR_8	/* Adjust for integer*8. */
+#if defined(WIN32) && !defined(__MINGW32__)
+typedef __int64 longint;		/* system-dependent */
+typedef unsigned __int64 ulongint;	/* system-dependent */
+#else
 typedef long long longint;		/* system-dependent */
 typedef unsigned long long ulongint;	/* system-dependent */
+#endif
 #define qbit_clear(a,b)	((a) & ~((ulongint)1 << (b)))
 #define qbit_set(a,b)	((a) |  ((ulongint)1 << (b)))
 #endif
@@ -159,6 +164,8 @@ typedef struct Namelist Namelist;
 
 #define abs(x) ((x) >= 0 ? (x) : -(x))
 #define dabs(x) (doublereal)abs(x)
+#undef  min
+#undef  max
 #define min(a,b) ((a) <= (b) ? (a) : (b))
 #define max(a,b) ((a) >= (b) ? (a) : (b))
 #define dmin(a,b) (doublereal)min(a,b)
