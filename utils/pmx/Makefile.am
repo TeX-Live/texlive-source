@@ -253,11 +253,10 @@ dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
 
 ## Tests
 ##
-TESTS = pmx.test
-EXTRA_DIST += $(TESTS)
+TESTS = $(PMX_TREE)/pmx.test
 
 TESTS_ENVIRONMENT = test_src=$(srcdir)/$(PMX_TREE)/tests
 
-## pmx.test
+## $(PMX_TREE)/pmx.test
 DISTCLEANFILES = barsant* pmxaerr.dat
 

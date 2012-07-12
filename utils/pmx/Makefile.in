@@ -391,8 +391,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(PMX_TREE) $(PMX_TREE)-PATCHES ../../build-aux/relpath \
-	$(TESTS)
+EXTRA_DIST = $(PMX_TREE) $(PMX_TREE)-PATCHES ../../build-aux/relpath
 INCLUDES = -I$(srcdir)/$(PMX_TREE)/libf2c
 AM_CFLAGS = #$(WARNING_CFLAGS)
 pmxab_SOURCES = $(PMX_TREE)/pmxab.c
@@ -493,7 +492,7 @@ all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 texmfdir = $(datarootdir)/$(scriptsdir)
 dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
 dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
-TESTS = pmx.test
+TESTS = $(PMX_TREE)/pmx.test
 TESTS_ENVIRONMENT = test_src=$(srcdir)/$(PMX_TREE)/tests
 DISTCLEANFILES = barsant* pmxaerr.dat
 all: all-am

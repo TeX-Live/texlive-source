@@ -226,6 +226,7 @@ EXTRA_libf2c_a_SOURCES += \
 ## Tests
 ##
 TESTS = pmx.test
+TESTS_ENVIRONMENT = test_src=$(srcdir)/tests
 EXTRA_DIST = $(TESTS)
 
 PATCHES = PATCH-2.6.18-01 PATCH-2.6.18-02 

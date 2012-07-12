@@ -2,6 +2,8 @@
 
 	* configure.ac: Fixed a typo (AM_CPPPFLAGS => AM_CPPFLAGS).
 
+	* pmx.test (removed): Now distributed from upstream.
+
 2012-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: do handle pmx2pdf.lua here, since although it is
