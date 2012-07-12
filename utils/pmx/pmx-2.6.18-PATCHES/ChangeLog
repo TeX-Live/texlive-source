@@ -1,3 +1,8 @@
+2012-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-test (new): Use the same test script in TeX Live and
+	for the stand-alone version.
+
 2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-WIN32 (new): Build fix for MSVC (from W32TeX).

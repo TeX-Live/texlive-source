@@ -1,0 +1,45 @@
+diff -ur pmx-2.6.18.orig/Makefile.am pmx-2.6.18/Makefile.am
+--- pmx-2.6.18.orig/Makefile.am	2012-04-25 19:41:24.000000000 +0200
++++ pmx-2.6.18/Makefile.am	2012-07-12 15:53:22.341219739 +0200
+@@ -226,6 +226,7 @@
+ ## Tests
+ ##
+ TESTS = pmx.test
++TESTS_ENVIRONMENT = test_src=$(srcdir)/tests
+ EXTRA_DIST = $(TESTS)
+ 
+ PATCHES = PATCH-2.6.18-01 PATCH-2.6.18-02 
+diff -ur pmx-2.6.18.orig/pmx.test pmx-2.6.18/pmx.test
+--- pmx-2.6.18.orig/pmx.test	2012-04-23 23:36:53.000000000 +0200
++++ pmx-2.6.18/pmx.test	2012-05-19 21:44:30.000000000 +0200
+@@ -5,21 +5,22 @@
+ 
+ rm -f barsant* pmxaerr.dat
+ 
+-cp $srcdir/tests/barsant.pmx .
++cp $test_src/barsant.pmx .
+ 
+ failed=
+ 
+ ./scor2prt barsant \
+-        && diff barsant1.pmx $srcdir/tests/barsant1.pmx \
+-        && diff barsant2.pmx $srcdir/tests/barsant2.pmx \
+-        || failed="$failed scor2prt"
++	&& diff barsant1.pmx $test_src/barsant1.pmx \
++	&& diff barsant2.pmx $test_src/barsant2.pmx \
++	|| failed="$failed scor2prt"
+ 
+ ./pmxab barsant \
+-        && diff barsant.mid $srcdir/tests/barsant.mid \
+-        && diff barsant.pml $srcdir/tests/barsant.pml \
+-        && diff barsant.tex $srcdir/tests/barsant.tex \
+-        || failed="$failed pmxab"
++	&& diff barsant.mid $test_src/barsant.mid \
++	&& diff barsant.pml $test_src/barsant.pml \
++	&& diff barsant.tex $test_src/barsant.tex \
++	|| failed="$failed pmxab"
+ 
+ test -z "$failed" && exit 0
+ echo "failed tests:$failed"
+ exit 1
++
