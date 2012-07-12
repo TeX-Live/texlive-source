@@ -18,7 +18,7 @@
 // Copyright (C) 2008 Brad Hards <bradh@kde.org>
 // Copyright (C) 2008, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009-2011 Albert Astals Cid <aacid@kde.org>
-// Copyright (C) 2009, 2010 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009, 2010, 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2010 David Benjamin <davidben@mit.edu>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 //
@@ -180,6 +180,8 @@ public:
 
   // Get the current graphics state object.
   GfxState *getState() { return state; }
+
+  GBool checkTransparencyGroup(Dict *resDict);
 
   void drawForm(Object *str, Dict *resDict, double *matrix, double *bbox,
 	       GBool transpGroup = gFalse, GBool softMask = gFalse,

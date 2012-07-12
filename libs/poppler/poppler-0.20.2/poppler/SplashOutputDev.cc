@@ -3517,6 +3517,17 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
   str->close();
 }
 
+GBool SplashOutputDev::checkTransparencyGroup(GfxState *state, GBool knockout) {
+  if (state->getFillOpacity() != 1 || 
+    state->getStrokeOpacity() != 1 ||
+    state->getAlphaIsShape() ||
+    state->getBlendMode() != gfxBlendNormal ||
+    splash->getSoftMask() != NULL ||
+    knockout) 
+    return gTrue;
+  return transpGroupStack != NULL && transpGroupStack->shape != NULL;
+}
+
 void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
 					     GfxColorSpace *blendingColorSpace,
 					     GBool isolated, GBool knockout,

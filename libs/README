@@ -27,13 +27,13 @@ graphite 2.4 - checked 15may12
 icu 49.1 (49.1 release) - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
-libpng 1.5.10 - checked 30mar12
+libpng 1.5.12 - checked 11jul12
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
 obsdcompat - used by pdftex and luatex
 
-poppler 0.20.0 - checked 11may12
+poppler 0.20.2 - checked 11jul12
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 t1lib 5.1.2 - checked 10may12

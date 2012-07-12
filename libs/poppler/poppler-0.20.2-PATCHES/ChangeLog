@@ -1,3 +1,9 @@
+2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.20.2 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-02-warnings: Adapted.
+
 2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported poppler-0.20.0 source tree from:

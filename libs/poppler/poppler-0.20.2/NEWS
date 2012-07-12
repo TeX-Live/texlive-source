@@ -1,3 +1,39 @@
+Release 0.20.2
+        core:
+         * Fix compilation on Windows
+         * Copy resources content defined in the pages dict on save (Bug #51369)
+         * PSOutputDev: Correct %%DocumentCustomColors (Bug #51479)
+         * PSOutputDev: Fix handling of DeviceN images in level 3 PostScript (Bug #51548)
+         * Fix crash in malformed documents
+        
+        qt4:
+         * Do not hang on malformed /Annots objects (Bug #51361)
+
+Release 0.20.1
+        core:
+         * Remove unnecesary transparency group handling in splash (Bug #13487)
+         * Include substitute font name in system font cache (Bug #49826)
+         * Fix logic on SplashBitmap::writeImgFile
+         * PSOutputDev: use setoverprintmode only if rip knows it
+         * Fix crash in malformed documents
+        
+        qt4:
+         * Make TextAnnotation constructor public
+         * Fix saving of default TextAnnotation to xml
+         * Keep page rotation into account when normalizing annotation coords
+        
+        glib:
+         * Fix memory leak when document fails to load
+         * Make sure password is always converted to latin1
+         * Fix typo in documentation
+
+        build system:
+         * Distribute cmake/modules/FindLCMS2.cmake (Bug #49818)
+
+        utils:
+         * pdftohtml: Determine if font is bold or italic based on FontDescriptor (Bug #49758)
+         * pdfseparate: Syntax fixes in the man page
+
 Release 0.20.0
         core:
          * Reconstruct xref table if xref needed but missing (Bug #40719)

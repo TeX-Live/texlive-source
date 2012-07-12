@@ -224,6 +224,7 @@ FontInfo::FontInfo(FontInfo& f) {
   name = f.name ? f.name->copy() : NULL;
   file = f.file ? f.file->copy() : NULL;
   encoding = f.encoding ? f.encoding->copy() : NULL;
+  substituteName = f.substituteName ? f.substituteName->copy() : NULL;
   type = f.type;
   emb = f.emb;
   subset = f.subset;

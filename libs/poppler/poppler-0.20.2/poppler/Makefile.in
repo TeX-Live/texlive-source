@@ -570,7 +570,7 @@ libpoppler_la_LIBADD = \
 	$(PTHREAD_LIBS)				\
 	$(win32_libs)
 
-libpoppler_la_LDFLAGS = -version-info 25:0:0 @create_shared_lib@ @auto_import_flags@
+libpoppler_la_LDFLAGS = -version-info 26:0:0 @create_shared_lib@ @auto_import_flags@
 @ENABLE_XPDF_HEADERS_TRUE@poppler_includedir = $(includedir)/poppler
 @ENABLE_XPDF_HEADERS_TRUE@poppler_include_HEADERS = \
 @ENABLE_XPDF_HEADERS_TRUE@	$(splash_headers)	\

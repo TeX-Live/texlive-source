@@ -4,6 +4,8 @@
    // Copyright (C) 2010 Hib Eris <hib@hiberis.nl>
    // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
    // Copyright (C) 2012 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
+   // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
+   // Copyright (C) 2012 Mark Brand <mabrand@mabrand.nl>
 
 TODO: instead of a fixed mapping defined in displayFontTab, it could
 scan the whole fonts directory, parse TTF files and build font
@@ -313,6 +315,7 @@ SysFontInfo *SysFontList::makeWindowsFont(char *name, int fontNum,
   char c;
   int i;
   SysFontType type;
+  GooString substituteName;
 
   n = strlen(name);
   bold = italic = oblique = fixedWidth = gFalse;
@@ -380,7 +383,7 @@ SysFontInfo *SysFontList::makeWindowsFont(char *name, int fontNum,
   }
 
   return new SysFontInfo(s, bold, italic, oblique, fixedWidth,
-                         new GooString(path), type, fontNum);
+                         new GooString(path), type, fontNum, substituteName.copy());
 }
 
 static GooString* replaceSuffix(GooString *path,
@@ -570,6 +573,8 @@ GooString *GlobalParams::findSystemFontFile(GfxFont *font,
     path = fi->path->copy();
     *type = fi->type;
     *fontNum = fi->fontNum;
+    if (substituteFontName)
+      substituteFontName->Set(fi->substituteName->getCString());
   } else {
     GooString *substFontName = new GooString(findSubstituteName(font, fontFiles,
                                                                 substFiles,

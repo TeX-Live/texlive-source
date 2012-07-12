@@ -292,6 +292,7 @@ public:
 		       double llx, double lly, double urx, double ury);
 
   //----- transparency groups and soft masks
+  virtual GBool checkTransparencyGroup(GfxState *state, GBool knockout);
   virtual void beginTransparencyGroup(GfxState *state, double *bbox,
 				      GfxColorSpace *blendingColorSpace,
 				      GBool isolated, GBool knockout,

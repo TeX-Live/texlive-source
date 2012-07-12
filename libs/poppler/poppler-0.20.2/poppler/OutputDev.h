@@ -302,6 +302,7 @@ public:
   virtual GooHash *endProfile();
 
   //----- transparency groups and soft masks
+  virtual GBool checkTransparencyGroup(GfxState * /*state*/, GBool /*knockout*/) { return gTrue; }
   virtual void beginTransparencyGroup(GfxState * /*state*/, double * /*bbox*/,
 				      GfxColorSpace * /*blendingColorSpace*/,
 				      GBool /*isolated*/, GBool /*knockout*/,

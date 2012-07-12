@@ -49,7 +49,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/../am/hdr_links.am \
-	$(top_srcdir)/poppler-0.20.0/poppler/poppler-config.h.in
+	$(top_srcdir)/poppler-0.20.2/poppler/poppler-config.h.in
 subdir = poppler
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -211,10 +211,10 @@ poppler-config.h: stamp-h2
 	@if test ! -f $@; then rm -f stamp-h2; else :; fi
 	@if test ! -f $@; then $(MAKE) $(AM_MAKEFLAGS) stamp-h2; else :; fi
 
-stamp-h2: $(top_srcdir)/poppler-0.20.0/poppler/poppler-config.h.in $(top_builddir)/config.status
+stamp-h2: $(top_srcdir)/poppler-0.20.2/poppler/poppler-config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h2
 	cd $(top_builddir) && $(SHELL) ./config.status poppler/poppler-config.h
-$(top_srcdir)/poppler-0.20.0/poppler/poppler-config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+$(top_srcdir)/poppler-0.20.2/poppler/poppler-config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
 	rm -f stamp-h2
 	touch $@

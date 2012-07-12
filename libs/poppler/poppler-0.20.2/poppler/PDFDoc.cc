@@ -661,9 +661,14 @@ int PDFDoc::savePageAs(GooString *name, int pageNo)
   infoObj.free();
   
   // get and mark output intents etc.
-  Object catObj;
+  Object catObj, pagesObj, resourcesObj;
   getXRef()->getCatalog(&catObj);
   Dict *catDict = catObj.getDict();
+  catDict->lookup("Pages", &pagesObj);
+  Dict *pagesDict = pagesObj.getDict();
+  pagesDict->lookup("Resources", &resourcesObj);
+  if (resourcesObj.isDict())
+    markPageObjects(resourcesObj.getDict(), yRef, countRef, 0);
   markPageObjects(catDict, yRef, countRef, 0);
 
   Dict *pageDict = page.getDict();
@@ -687,12 +692,19 @@ int PDFDoc::savePageAs(GooString *name, int pageNo)
     }
   }
   catObj.free();
+  pagesObj.free();
   outStr->printf(">>\nendobj\n");
   objectsCount++;
 
   yRef->add(rootNum + 1,0,outStr->getPos(),gTrue);
   outStr->printf("%d 0 obj\n", rootNum + 1);
-  outStr->printf("<< /Type /Pages /Kids [ %d 0 R ] /Count 1 >>\n", rootNum + 2);
+  outStr->printf("<< /Type /Pages /Kids [ %d 0 R ] /Count 1 ", rootNum + 2);
+  if (resourcesObj.isDict()) {
+    outStr->printf("/Resources ");
+    writeObject(&resourcesObj, NULL, outStr, getXRef(), 0);
+    resourcesObj.free();
+  }
+  outStr->printf(">>\n");
   outStr->printf("endobj\n");
   objectsCount++;
 

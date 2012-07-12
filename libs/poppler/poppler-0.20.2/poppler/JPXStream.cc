@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2008 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008, 2012 Albert Astals Cid <aacid@kde.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -416,6 +416,10 @@ void JPXStream::fillReadBuf() {
 #endif
     tx = jpxCeilDiv((curX - img.xTileOffset) % img.xTileSize, tileComp->hSep);
     ty = jpxCeilDiv((curY - img.yTileOffset) % img.yTileSize, tileComp->vSep);
+    if (unlikely(ty >= (tileComp->y1 - tileComp->y0))) {
+      error(errSyntaxError, getPos(), "Unexpected ty in fillReadBuf in JPX stream");
+      return;
+    }
     pix = (int)tileComp->data[ty * (tileComp->x1 - tileComp->x0) + tx];
     pixBits = tileComp->prec;
 #if 1 //~ ignore the palette, assume the PDF ColorSpace object is valid
@@ -2846,7 +2850,13 @@ void JPXStream::inverseTransformLevel(JPXTileComp *tileComp,
 	cover(102);
 	++shift;
       }
-      t = tileComp->quantSteps[qStyle == 1 ? 0 : (3*r - 2 + sb)];
+      const Guint stepIndex = qStyle == 1 ? 0 : (3*r - 2 + sb);
+      if (unlikely(stepIndex >= tileComp->nQuantSteps)) {
+	error(errSyntaxError, getPos(),
+	      "Wrong index for quantSteps in inverseTransformLevel in JPX stream");
+	break;
+      }
+      t = tileComp->quantSteps[stepIndex];
       mu = (double)(0x800 + (t & 0x7ff)) / 2048.0;
     }
     if (tileComp->transform == 0) {

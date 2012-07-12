@@ -1158,8 +1158,9 @@ void Gfx::opSetExtGState(Object args[], int numArgs) {
 	  funcs[0] = NULL;
 	} else {
 	  funcs[0] = Function::parse(&obj3);
-	  if (funcs[0]->getInputSize() != 1 ||
-	      funcs[0]->getOutputSize() != 1) {
+      if (funcs[0] == NULL ||
+          funcs[0]->getInputSize() != 1 ||
+          funcs[0]->getOutputSize() != 1) {
 	    error(errSyntaxError, getPos(),
 		  "Invalid transfer function in soft mask in ExtGState");
 	    delete funcs[0];
@@ -4580,6 +4581,68 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
   error(errSyntaxError, getPos(), "Bad image parameters");
 }
 
+GBool Gfx::checkTransparencyGroup(Dict *resDict) {
+  // check the effect of compositing objects as a group:
+  // look for ExtGState entries with ca != 1 or CA != 1 or BM != normal
+  Object extGStates;
+  GBool transpGroup = gFalse;
+  double opac;
+
+  if (resDict == NULL)
+    return gFalse;
+  pushResources(resDict);
+  resDict->lookup("ExtGState", &extGStates);
+  if (extGStates.isDict()) {
+    Dict *dict = extGStates.getDict();
+    for (int i = 0; i < dict->getLength() && !transpGroup; i++) {
+      Object obj1, obj2;
+      GfxBlendMode mode;
+
+      if (res->lookupGState(dict->getKey(i), &obj1)) {
+        if (!obj1.dictLookup("BM", &obj2)->isNull()) {
+          if (state->parseBlendMode(&obj2, &mode)) {
+            if (mode != gfxBlendNormal)
+              transpGroup = gTrue;
+          } else {
+            error(errSyntaxError, getPos(), "Invalid blend mode in ExtGState");
+          }
+        }
+        obj2.free();
+        if (obj1.dictLookup("ca", &obj2)->isNum()) {
+          opac = obj2.getNum();
+          opac = opac < 0 ? 0 : opac > 1 ? 1 : opac;
+          if (opac != 1)
+            transpGroup = gTrue;
+        }
+        obj2.free();
+        if (obj1.dictLookup("CA", &obj2)->isNum()) {
+          opac = obj2.getNum();
+          opac = opac < 0 ? 0 : opac > 1 ? 1 : opac;
+          if (opac != 1)
+            transpGroup = gTrue;
+        }
+        obj2.free();
+        // alpha is shape
+        if (!transpGroup && obj1.dictLookup("AIS", &obj2)->isBool()) {
+          transpGroup = obj2.getBool();
+        }
+        obj2.free();
+        // soft mask
+        if (!transpGroup && !obj1.dictLookup("SMask", &obj2)->isNull()) {
+          if (!obj2.isName("None")) {
+            transpGroup = gTrue;
+          }
+        }
+        obj2.free();
+      }
+      obj1.free();
+    }
+  }
+  extGStates.free();
+  popResources();
+  return transpGroup;
+}
+
 void Gfx::doForm(Object *str) {
   Dict *dict;
   GBool transpGroup, isolated, knockout;
@@ -4666,7 +4729,6 @@ void Gfx::doForm(Object *str) {
   blendingColorSpace = NULL;
   if (dict->lookup("Group", &obj1)->isDict()) {
     if (obj1.dictLookup("S", &obj2)->isName("Transparency")) {
-      transpGroup = gTrue;
       if (!obj1.dictLookup("CS", &obj3)->isNull()) {
 	blendingColorSpace = GfxColorSpace::parse(&obj3, this);
       }
@@ -4679,6 +4741,7 @@ void Gfx::doForm(Object *str) {
 	knockout = obj3.getBool();
       }
       obj3.free();
+      transpGroup = isolated || out->checkTransparencyGroup(state, knockout) || checkTransparencyGroup(resDict);
     }
     obj2.free();
   }

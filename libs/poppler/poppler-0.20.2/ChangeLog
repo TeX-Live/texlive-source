@@ -1,3 +1,298 @@
+commit e15fe0e1e6accf779caeb1179a8d62161c0aa650
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Thu Jul 5 17:44:02 2012 +0200
+
+    Fix handling of DeviceN images in level 3 PostScript
+
+    bug #51548
+
+ poppler/PSOutputDev.cc |   14 --------------
+ 1 file changed, 14 deletions(-)
+
+commit 02c4e6bf4cc0f5535946fe31815081a40b1de986
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jun 29 01:56:55 2012 +0200
+
+    PSOutputDev: Correct %%DocumentCustomColors
+
+    Bug 51479
+
+ poppler/PSOutputDev.cc |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+commit f7990386d268a444c297958e9c50ed27a0825a00
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jun 28 00:18:07 2012 +0200
+
+    Add some security checks to JPXStream decoding
+
+    Fixes crash in broken/fuzzed pdf sent by Mateusz "j00ru" Jurczyk
+    and Gynvael Coldwind
+
+ poppler/JPXStream.cc |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+commit c5c6eed1623506e1206e89cee0b7c887d815ba62
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 24 23:43:03 2012 +0200
+
+    Change SplashBitmap gmallocn to gmallocn_checkoverflow
+
+    Fixes abort in KDE bug #302372
+
+ splash/Splash.cc       |   37 +++++++++++++++++++++++--------------
+ splash/SplashBitmap.cc |   18 +++++++++++-------
+ 2 files changed, 34 insertions(+), 21 deletions(-)
+
+commit c87738ee234aafc6eda5a263ad789205037020e1
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sun Jun 24 20:20:38 2012 +0200
+
+    copy resources content defined in the pages dict
+
+    Fixes bug #51369
+
+ poppler/PDFDoc.cc |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+commit 6cdf879e389f05abba30b3fad8083b7fff23056e
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Sun Jun 24 11:48:04 2012 +0200
+
+    qt4: Do not hang on malformed /Annots objects
+
+    Don't recurse infinitely if the /Annots object contains annotation
+    dictionaries (according to specs, /Annots must contain *references*
+    to annotation dictionaries).
+
+    Fixes bug #51361
+
+ qt4/src/poppler-annotation.cc |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit 3575becd60585324bcefc0631b1bac47c1db3c5c
+Author: Mark Brand <mabrand@mabrand.nl>
+Date:   Thu Jun 14 20:31:26 2012 +0200
+
+    fix typo to compile in Windows
+
+ poppler/GlobalParamsWin.cc |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 06618065c8a97a5bec125560546b98edfc1210f3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jun 11 15:17:59 2012 +0200
+
+    Add some security checks to JBIG2Stream decoding
+
+    Fixes crash in broken/fuzzed pdf sent by Mateusz "j00ru" Jurczyk
+    and Gynvael Coldwind
+
+ poppler/JBIG2Stream.cc |   58
+ ++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 44 insertions(+), 14 deletions(-)
+
+commit e3fe88df3646a80945210ba426eb4681a98b55e9
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Sun Jun 10 19:44:18 2012 +0200
+
+    Check value of first page in linearization table
+
+    Fixes crash in broken/fuzzed pdf sent by Mateusz "j00ru" Jurczyk
+    and Gynvael Coldwind
+
+ poppler/Linearization.cc |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1240eee8c0d0d01113443e0fda87721775a76da9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 10 20:42:55 2012 +0200
+
+    0.20.1
+
+ CMakeLists.txt      |    4 ++--
+ NEWS                |   25 +++++++++++++++++++++++++
+ configure.ac        |    2 +-
+ cpp/Doxyfile        |    2 +-
+ poppler/Makefile.am |    2 +-
+ qt4/src/Doxyfile    |    2 +-
+ 6 files changed, 31 insertions(+), 6 deletions(-)
+
+commit c783037619e2b4c101e8ecd7e61c94ee077b4be2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 10 20:15:01 2012 +0200
+
+    Update copyrights
+
+ poppler/GlobalParamsWin.cc |    1 +
+ 1 file changed, 1 insertion(+)
+
+commit f3f9d8f28a97338da92c842d5668b0ef3495ef13
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jun 10 19:09:17 2012 +0200
+
+    Do use NULL function
+
+    Fixes crash in broken/fuzzed pdf sent by Mateusz "j00ru" Jurczyk
+    and Gynvael Coldwind
+
+ poppler/Gfx.cc |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 92ef16e3699da949c80716c3fd4b438fe79c134d
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sun Jun 10 16:58:54 2012 +0200
+
+    use setoverprintmode only if rip knows it
+
+ poppler/PSOutputDev.cc |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 99aa734ae2d3ba51f840d4c8ef450488fb702a31
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Thu May 24 23:17:27 2012 +0200
+
+    qt4: Keep page rotation into account when normalizing annotation
+    coords
+
+    If the page is rotated by 90 or 270 degrees, width and height need
+    to be swapped
+
+ qt4/src/poppler-annotation.cc |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+commit bde31ce7b223abc86d25e06f3d73668b792c70df
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Sat Jun 9 01:31:29 2012 +0200
+
+    Fix saving to xml
+
+    The default icon is Note not comment
+
+ qt4/src/poppler-annotation.cc |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9904b8f10abf068a7816bd90976ccbb320387645
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Thu May 24 18:24:48 2012 +0930
+
+    glib docs: fix typo
+
+ glib/poppler-document.cc |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 028f580056f99719cfb8af7bbe8184ceac02cb16
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun May 13 21:36:36 2012 +0930
+
+    add sustitute font name to GlobalParamsWin32 to fix compilation
+
+ poppler/GlobalParamsWin.cc |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 1916d000a86336213ffd6e9bd44ce873e8955895
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sat May 12 16:31:38 2012 +0930
+
+    Include substitute font name in system font cache
+
+    Bug 49826
+
+ poppler/FontInfo.cc     |    1 +
+ poppler/GlobalParams.cc |   58
+ ++++++++++++++++++++++++++---------------------
+ 2 files changed, 33 insertions(+), 26 deletions(-)
+
+commit 1c6e84555572a6bf3a2e3fbe9a54b40f11c122ad
+Author: Fabio D'Urso <fabiodurso@hotmail.it>
+Date:   Fri May 18 16:22:46 2012 +0200
+
+    qt4: Make TextAnnotation ctor public
+
+ qt4/src/poppler-annotation.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8e504bf2543621973fdaddbd29055ce435540146
+Author: Ville Skyttä <ville.skytta@iki.fi>
+Date:   Wed May 16 23:49:01 2012 +0300
+
+    pdfseparate.1: Syntax fixes.
+
+ utils/pdfseparate.1 |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 9f7d919e68a26bb7dd809986d8394fe20b750bd0
+Author: Anthony Wesley <awesley@smartnetworks.com.au>
+Date:   Thu May 17 19:54:47 2012 +0200
+
+    Fix logic on SplashBitmap::writeImgFile
+
+ splash/SplashBitmap.cc |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7e7997e12faccf4c0513811b324a2fd0fa960a96
+Author: Igor Slepchin <igor.slepchin@gmail.com>
+Date:   Tue May 15 23:16:27 2012 +0200
+
+    Determine if font is bold or italic based on FontDescriptor.
+
+    Bug #49758
+
+ utils/HtmlFonts.cc     |   24 ++++++++++++++++++------
+ utils/HtmlFonts.h      |    3 ++-
+ utils/HtmlOutputDev.cc |    4 +---
+ 3 files changed, 21 insertions(+), 10 deletions(-)
+
+commit 329bb1e2b4f4b58832847bcf805d19ac0fd5ef02
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sun May 13 19:45:55 2012 +0200
+
+    glib: Make sure password is always converted to latin1
+
+    Remove the utf8 validation since glib API is supposed to always
+    receive
+    utf8 strings.
+
+ glib/poppler-document.cc |   38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
+commit 7714b4e319c48ee915061a172208245ae7c4141b
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sun May 13 19:30:17 2012 +0200
+
+    glib: Fix memory leak when document fails to load
+
+ glib/poppler-document.cc |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 13d2aa303eb1fd900f1045efec14af8002477b02
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sun May 13 17:25:15 2012 +0200
+
+    remove unnecesary transparency group handling in splash
+
+    Bug #13487
+
+ poppler/Gfx.cc             |   64
+ +++++++++++++++++++++++++++++++++++++++++++-
+ poppler/Gfx.h              |    4 ++-
+ poppler/GfxState.cc        |    4 ++-
+ poppler/OutputDev.h        |    1 +
+ poppler/SplashOutputDev.cc |   11 ++++++++
+ poppler/SplashOutputDev.h  |    1 +
+ 6 files changed, 82 insertions(+), 3 deletions(-)
+
+commit a76867003a7bff5ab03016156c75b4c928788d50
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun May 13 13:10:40 2012 +0200
+
+    Distribute cmake/modules/FindLCMS2.cmake
+
+    Bug #49818
+
+ Makefile.am |    1 +
+ 1 file changed, 1 insertion(+)
+
 commit 4114c928fa2560937e02319f57937f1c267a9817
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Thu May 10 21:09:14 2012 +0200

@@ -258,7 +258,7 @@ static const char *prolog[] = {
   "} def",
   "~3n",
   "/opm { dup /pdfOPM exch def",
-  "      setoverprintmode } def",
+  "      /setoverprintmode where{pop setoverprintmode}{pop}ifelse  } def",
   "~23n",
   "/cs { /pdfFillXform exch def dup /pdfFillCS exch def",
   "      setcolorspace } def",
@@ -292,7 +292,7 @@ static const char *prolog[] = {
   "} def",
   "~3s",
   "/opm { dup /pdfOPM exch def",
-  "      setoverprintmode } def",
+  "      /setoverprintmode where{pop setoverprintmode}{pop}ifelse } def",
   "~23s",
   "/k { 4 copy 4 array astore /pdfFill exch def setcmykcolor",
   "     /pdfLastFill true def /pdfLastStroke false def } def",
@@ -390,7 +390,7 @@ static const char *prolog[] = {
   "~3sn",
   "  /pdfOPM where {",
   "    pop",
-  "    pdfOPM setoverprintmode",
+  "    pdfOPM /setoverprintmode where{pop setoverprintmode}{pop}ifelse ",
   "  } if",
   "~23sn",
   "} def",
@@ -3984,6 +3984,26 @@ void PSOutputDev::addCustomColor(GfxSeparationColorSpace *sepCS) {
   GfxColor color;
   GfxCMYK cmyk;
 
+  if (!sepCS->getName()->cmp("Black")) {
+    processColors |= psProcessBlack;
+    return;
+  }
+  if (!sepCS->getName()->cmp("Cyan")) {
+    processColors |= psProcessCyan;
+    return;
+  }
+  if (!sepCS->getName()->cmp("Yellow")) {
+    processColors |= psProcessYellow;
+    return;
+  }
+  if (!sepCS->getName()->cmp("Magenta")) {
+    processColors |= psProcessMagenta;
+    return;
+  }
+  if (!sepCS->getName()->cmp("All")) 
+    return;
+  if (!sepCS->getName()->cmp("None")) 
+    return;
   for (cc = customColors; cc; cc = cc->next) {
     if (!cc->name->cmp(sepCS->getName())) {
       return;
@@ -6079,15 +6099,6 @@ void PSOutputDev::doImageL3(Object *ref, GfxImageColorMap *colorMap,
       n = (1 << colorMap->getBits()) - 1;
       writePSFmt("{0:.4g} {1:.4g}", colorMap->getDecodeLow(0) * n,
 		 colorMap->getDecodeHigh(0) * n);
-    } else if (colorMap->getColorSpace()->getMode() == csDeviceN) {
-      numComps = ((GfxDeviceNColorSpace *)colorMap->getColorSpace())->
-	           getAlt()->getNComps();
-      for (i = 0; i < numComps; ++i) {
-	if (i > 0) {
-	  writePS(" ");
-	}
-	writePS("0 1");
-      }
     } else {
       numComps = colorMap->getNumPixelComps();
       for (i = 0; i < numComps; ++i) {
@@ -6215,11 +6226,6 @@ void PSOutputDev::doImageL3(Object *ref, GfxImageColorMap *colorMap,
       str = new FixedLengthEncoder(str, len);
     } else if (useCompressed) {
       str = str->getUndecodedStream();
-    }
-
-    // recode DeviceN data
-    if (colorMap && colorMap->getColorSpace()->getMode() == csDeviceN) {
-      str = new DeviceNRecoder(str, width, height, colorMap);
     }
 
     // add RunLengthEncode and ASCIIHex/85 encode filters

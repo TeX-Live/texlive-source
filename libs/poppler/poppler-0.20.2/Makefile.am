@@ -76,6 +76,7 @@ EXTRA_DIST +=							\
 	cmake/modules/FindGTK.cmake				\
 	cmake/modules/FindIconv.cmake				\
 	cmake/modules/FindLCMS.cmake				\
+	cmake/modules/FindLCMS2.cmake				\
 	cmake/modules/FindQt4.cmake				\
 	cmake/modules/GObjectIntrospectionMacros.cmake		\
 	cmake/modules/MacroBoolTo01.cmake			\

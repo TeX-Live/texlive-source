@@ -18,7 +18,7 @@
 // Copyright (C) 2006, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2006-2012 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009, 2012 Koji Otani <sho@bbr.jp>
-// Copyright (C) 2009, 2011 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009, 2011, 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Christian Persch <chpe@gnome.org>
 // Copyright (C) 2010 Paweł Wiejacha <pawel.wiejacha@gmail.com>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
@@ -5609,6 +5609,8 @@ GfxState::GfxState(double hDPIA, double vDPIA, PDFRectangle *pageBox,
   lineCap = 0;
   miterLimit = 10;
   strokeAdjust = gFalse;
+  alphaIsShape = gFalse;
+  textKnockout = gFalse;
 
   font = NULL;
   fontSize = 0;

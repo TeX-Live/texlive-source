@@ -1860,13 +1860,18 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
 				       0, gFalse, gFalse, NULL, NULL, NULL,
 				       bmSize);
       }
-      x = 0;
-      for (; j < i; ++j) {
-	bitmaps[numInputSyms + j] =
-	    collBitmap->getSlice(x, 0, symWidths[j], symHeight);
-	x += symWidths[j];
+      if (likely(collBitmap != NULL)) {
+	x = 0;
+	for (; j < i; ++j) {
+	  bitmaps[numInputSyms + j] =
+	      collBitmap->getSlice(x, 0, symWidths[j], symHeight);
+	  x += symWidths[j];
+	}
+	delete collBitmap;
+      } else {
+	error(errSyntaxError, curStr->getPos(), "collBitmap was null");
+	goto syntaxError;
       }
-      delete collBitmap;
     }
   }
 
@@ -2858,6 +2863,7 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
     // ---> max refLine size = w + 2
     codingLine = (int *)gmallocn(w + 1, sizeof(int));
     refLine = (int *)gmallocn(w + 2, sizeof(int));
+    memset(refLine, 0, (w + 2) * sizeof(int));
     for (i = 0; i < w + 1; ++i) codingLine[i] = w;
 
     for (y = 0; y < h; ++y) {
@@ -2884,6 +2890,9 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
 	code1 = mmrDecoder->get2DCode();
 	switch (code1) {
 	case twoDimPass:
+          if (unlikely(b1i + 1 >= w + 2)) {
+            break;
+          }
           mmrAddPixels(refLine[b1i + 1], blackPixels, codingLine, &a0i, w);
           if (refLine[b1i + 1] < w) {
             b1i += 2;
@@ -2912,51 +2921,66 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
             mmrAddPixels(codingLine[a0i] + code2, blackPixels ^ 1,
 			 codingLine, &a0i, w);
           }
-          while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
+          while (likely(b1i < w + 2) && refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
             b1i += 2;
           }
           break;
 	case twoDimVertR3:
+          if (unlikely(b1i >= w + 2)) {
+            break;
+          }
           mmrAddPixels(refLine[b1i] + 3, blackPixels, codingLine, &a0i, w);
           blackPixels ^= 1;
           if (codingLine[a0i] < w) {
             ++b1i;
-            while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
+            while (likely(b1i < w + 2) && refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
               b1i += 2;
             }
           }
           break;
 	case twoDimVertR2:
+          if (unlikely(b1i >= w + 2)) {
+            break;
+          }
           mmrAddPixels(refLine[b1i] + 2, blackPixels, codingLine, &a0i, w);
           blackPixels ^= 1;
           if (codingLine[a0i] < w) {
             ++b1i;
-            while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
+            while (likely(b1i < w + 2) && refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
               b1i += 2;
             }
           }
           break;
 	case twoDimVertR1:
+          if (unlikely(b1i >= w + 2)) {
+            break;
+          }
           mmrAddPixels(refLine[b1i] + 1, blackPixels, codingLine, &a0i, w);
           blackPixels ^= 1;
           if (codingLine[a0i] < w) {
             ++b1i;
-            while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
+            while (likely(b1i < w + 2) && refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
               b1i += 2;
             }
           }
           break;
 	case twoDimVert0:
+          if (unlikely(b1i >= w + 2)) {
+            break;
+          }
           mmrAddPixels(refLine[b1i], blackPixels, codingLine, &a0i, w);
           blackPixels ^= 1;
           if (codingLine[a0i] < w) {
             ++b1i;
-            while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
+            while (likely(b1i < w + 2) && refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
               b1i += 2;
             }
           }
           break;
 	case twoDimVertL3:
+          if (unlikely(b1i >= w + 2)) {
+            break;
+          }
           mmrAddPixelsNeg(refLine[b1i] - 3, blackPixels, codingLine, &a0i, w);
           blackPixels ^= 1;
           if (codingLine[a0i] < w) {
@@ -2965,12 +2989,15 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
             } else {
               ++b1i;
             }
-            while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
+            while (likely(b1i < w + 2) && refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
               b1i += 2;
             }
           }
           break;
 	case twoDimVertL2:
+          if (unlikely(b1i >= w + 2)) {
+            break;
+          }
           mmrAddPixelsNeg(refLine[b1i] - 2, blackPixels, codingLine, &a0i, w);
           blackPixels ^= 1;
           if (codingLine[a0i] < w) {
@@ -2979,12 +3006,15 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
             } else {
               ++b1i;
             }
-            while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
+            while (likely(b1i < w + 2) && refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
               b1i += 2;
             }
           }
           break;
 	case twoDimVertL1:
+          if (unlikely(b1i >= w + 2)) {
+            break;
+          }
           mmrAddPixelsNeg(refLine[b1i] - 1, blackPixels, codingLine, &a0i, w);
           blackPixels ^= 1;
           if (codingLine[a0i] < w) {
@@ -2993,7 +3023,7 @@ JBIG2Bitmap *JBIG2Stream::readGenericBitmap(GBool mmr, int w, int h,
             } else {
               ++b1i;
             }
-            while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
+            while (likely(b1i < w + 2) && refLine[b1i] <= codingLine[a0i] && refLine[b1i] < w) {
               b1i += 2;
             }
           }
