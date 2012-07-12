@@ -1,7 +1,6 @@
 2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-WIN32 (new): Build fix for MSVC (from W32TeX).
-	Avoid the problematic prototype for isatty().
 	We pass -DMSDOS to MSVC or -DUSE_CLOCK to the MinGW compiler.
 
 2012-05-19  Peter Breitenlohner  <peb@mppmu.mpg.de>

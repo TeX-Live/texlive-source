@@ -32,8 +32,8 @@ AC_SUBST([AM_CPPFLAGS], ['-DNON_UNIX_STDIO'])
 dnl WIN32 has no <sys/times.h>, native WIN32 is as MSDOS
 KPSE_CHECK_WIN32
 AS_CASE([$kpse_cv_have_win32],
-        [native], [AM_CPPFLAGS="$AM_CPPPFLAGS -DMSDOS"],
-        [mingw32], [AM_CPPFLAGS="$AM_CPPPFLAGS -DUSE_CLOCK"])
+        [native], [AM_CPPFLAGS="$AM_CPPFLAGS -DMSDOS"],
+        [mingw32], [AM_CPPFLAGS="$AM_CPPFLAGS -DUSE_CLOCK"])
 
 dnl Checks for programs.
 AC_PROG_INSTALL
@@ -45,7 +45,7 @@ AC_SEARCH_LIBS([sqrt], [m])
 
 AC_CHECK_SIZEOF([long long])
 if test $ac_cv_sizeof_long_long -lt 8; then
-  AM_CPPFLAGS="$AM_CPPPFLAGS -DNO_LONG_LONG"
+  AM_CPPFLAGS="$AM_CPPFLAGS -DNO_LONG_LONG"
 fi
 
 AC_SUBST([PMX_TREE], [pmx-]pmx_version)

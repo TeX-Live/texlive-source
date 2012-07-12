@@ -1,8 +1,10 @@
 #include "f2c.h"
-#undef abs
 #ifdef KR_headers
 extern char *F77_aloc(), *getenv();
 #else
+#undef abs
+#undef max
+#undef min
 #include <stdlib.h>
 #include <string.h>
 #ifdef __cplusplus
