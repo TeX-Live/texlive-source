@@ -1,3 +1,7 @@
+2012-07-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pk2bm.c: Cast arg2 of readchar() to avoid MSVC warning.
+
 2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/ps2pk.test (new): Shell script for a test case.

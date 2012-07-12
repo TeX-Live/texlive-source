@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
    pkname = argv[0];
 
-   if (readchar(pkname, C, &cd)) {
+   if (readchar(pkname, (shalfword)C, &cd)) {
       int H, dh, W, dw, bitsleft;
       halfword nextword; quarterword nextbyte;
 
