@@ -693,7 +693,7 @@ enable_cxx_runtime_hack
 enable_libtool_hack
 enable_biber
 enable_chktex
-enable_mtx
+enable_m_tx
 enable_pmx
 enable_ps2eps
 enable_psutils
@@ -1483,7 +1483,7 @@ Optional Features:
   --enable-libtool-hack   ignore libtool dependency_libs
   --disable-biber         do not build the biber package
   --disable-chktex        do not build the chktex package
-  --disable-mtx           do not build the mtx package
+  --disable-m-tx          do not build the m-tx package
   --disable-pmx           do not build the pmx package
   --disable-ps2eps        do not build the ps2eps package
   --disable-psutils       do not build the psutils package
@@ -3245,21 +3245,21 @@ $as_echo "$as_me: Assuming \`--enable-chktex=$enable_chktex'" >&6;}
 esac
 
 
-## utils/mtx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/mtx/
+## utils/m-tx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/m-tx/
 ## configure options and TL libraries required for mtx
-# Check whether --enable-mtx was given.
-if test "${enable_mtx+set}" = set; then :
-  enableval=$enable_mtx;
+# Check whether --enable-m-tx was given.
+if test "${enable_m_tx+set}" = set; then :
+  enableval=$enable_m_tx;
 fi
-case $enable_mtx in #(
+case $enable_m_tx in #(
   yes|no) :
      ;; #(
   *) :
 
-   enable_mtx=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-mtx=$enable_mtx'" >&5
-$as_echo "$as_me: Assuming \`--enable-mtx=$enable_mtx'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-mtx=$enable_mtx'"
+   enable_m_tx=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-m-tx=$enable_m_tx'" >&5
+$as_echo "$as_me: Assuming \`--enable-m-tx=$enable_m_tx'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-m-tx=$enable_m_tx'"
     ;;
 esac
 

@@ -7,7 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define mtx_version
-AC_INIT([mtx for TeX Live], mtx_version, [tex-k@tug.org])
+AC_INIT([m-tx for TeX Live], mtx_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([mtx-]mtx_version[/analyze.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

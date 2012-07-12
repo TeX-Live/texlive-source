@@ -1,3 +1,7 @@
+2012-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): Rename mtx => m-tx.
+
 2012-04-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-common.m4 (_KPSE_LIB_FLAGS_TL): Replace sed substitutions

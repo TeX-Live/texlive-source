@@ -1,4 +1,4 @@
-## Makefile.am for the TeX Live subdirectory utils/mtx/
+## Makefile.am for the TeX Live subdirectory utils/m-tx/
 ##
 ## Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
@@ -80,10 +80,10 @@ dist_man1_MANS = m-tx.1 prepmx.1
 
 ## Tests
 ##
-TESTS = mtx.test
+TESTS = m-tx.test
 EXTRA_DIST += $(TESTS)
 
-## mtx.test
+## m-tx.test
 EXTRA_DIST += tests/mozart.mtx tests/mozart.pmx
 DISTCLEANFILES = mozart*
 

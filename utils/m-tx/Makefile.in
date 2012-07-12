@@ -309,7 +309,7 @@ all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 texmfdir = $(datarootdir)/$(scriptsdir)
 dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
 dist_man1_MANS = m-tx.1 prepmx.1
-TESTS = mtx.test
+TESTS = m-tx.test
 DISTCLEANFILES = mozart*
 all: all-am
 
