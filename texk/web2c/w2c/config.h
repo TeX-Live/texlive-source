@@ -86,7 +86,7 @@ typedef off_t longinteger;
 #else
 #define LONGINTEGER_TYPE long
 #define LONGINTEGER_PRId "ld"
-#define LONGINTEGER_PRId "li"
+#define LONGINTEGER_PRIi "li"
 #endif
 
 /* I don't want to write a configure test for remove when all Unix
