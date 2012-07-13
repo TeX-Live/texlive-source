@@ -285,6 +285,7 @@ texmf_dist_other_scripts = \
 	latexdiff/latexdiff-vc.pl \
 	latexdiff/latexrevise.pl \
 	latexmk/latexmk.pl \
+	latexpand/latexpand \
 	luaotfload/mkluatexfontdb.lua \
 	match_parens/match_parens \
 	mathspic/mathspic.pl \

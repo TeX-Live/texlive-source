@@ -1,0 +1,243 @@
+#!/usr/bin/perl
+# Inspired by latexpand by D. Musliner, University of Michigan
+# 2012 Matthieu Moy <Matthieu.Moy@imag.fr>
+# BSD License
+
+use strict;
+use Cwd;
+use Getopt::Long;
+use Pod::Usage;
+use IO::Handle;
+
+my $TEXINPUTS = $ENV{'TEXINPUTS'};
+if (!$TEXINPUTS) { $TEXINPUTS = getcwd(); }
+
+my $verbose;
+my $keep_comments;
+my $keep_includes;
+my $empty_comments;
+my $help;
+my $long_help;
+my $output;
+my $explain;
+my $show_graphics;
+my $graphics_extensions = ":.pdf:.png:.jpg:.eps";
+my $expand_usepackage;
+my $expand_bbl;
+
+GetOptions (
+	'h' => \$help,
+	'help' => \$long_help,
+	'verbose|v' => \$verbose,
+	'keep-comments' => \$keep_comments,
+	'keep-includes' => \$keep_includes,
+	'empty-comments' => \$empty_comments,
+	'output|o=s' => \$output,
+	'explain' => \$explain,
+	'show-graphics' => \$show_graphics,
+	'graphics-extensions' => \$graphics_extensions,
+	'expand-usepackage' => \$expand_usepackage,
+	'expand-bbl=s' => \$expand_bbl,
+) or pod2usage(2);
+pod2usage(1) if $help;
+pod2usage(-exitstatus => 0, -verbose => 2) if $long_help;
+
+my $comment_newline;
+
+my $nl = "";
+if ($empty_comments) {
+	$nl = "%\n";
+}
+
+if ($output && $output ne "-") {
+	open OUTPUT, '>', "$output" or die $!;
+	STDOUT->fdopen(\*OUTPUT, 'w') or die $!;
+}
+
+sub say
+{
+	if ($verbose) {
+		print STDERR "$_[0]";
+	}
+}
+
+foreach my $file (@ARGV)
+{
+	say "processing $file\n";
+	process_file($file, "  ");
+}
+
+sub process_file
+{
+	my $file = shift;
+	my $prefix = (shift || "");
+	local(*FILE);
+	open(FILE, $file) or die "could not open input file '$file'\n";
+	while (<FILE>) {
+		process_line($_, $prefix);
+		if (/^%.*[^\n]\z/ || /[^\\]%.*[^\n]\z/) {
+			# file ends with a comment not ending with a newline
+			print "\n";
+		}
+	}
+	close(FILE);
+}
+
+sub process_line
+{
+	my ($_, $prefix) = @_;
+	unless ($keep_comments) {
+		if ($empty_comments) {
+			s/^%.*$/%/;
+			s/([^\\])%.*$/$1%/;
+		} else {
+			s/^%.*\n//;
+			s/([^\\])%.*\n/$1/;
+		}
+	}
+
+	unless ($keep_includes) {
+		if (my ($before, $ignored, $full_filename, $after)
+		    = /^(([^%]|[^\\]%)*)\\include[{\s]+(.*?)[\s}](.*)$/) {
+			$full_filename = find_tex_file($full_filename . ".tex");
+			say $prefix . "Found include for file: $full_filename\n";
+			print $before . $nl;
+			print '\clearpage{}' . $nl;
+			print '\makeatletter{}' . $nl;
+			print "% start include $full_filename\n" if ($explain);
+			process_file($full_filename, $prefix . "  ");
+			print "% end include $full_filename\n" if ($explain);
+			print '\clearpage{}' . $nl;
+			print $nl . $after . "\n";
+			$_ = "";
+		} elsif (my ($before, $ignored, $full_filename, $after)
+			 = /^(([^%]|[^\\]%)*)\\input[{\s]+(.*?)[\s}](.*)$/) {
+			$full_filename .= ".tex" unless $full_filename =~ m/\./;
+			$full_filename = find_tex_file($full_filename);
+			say $prefix . "Found input for file: $full_filename\n";
+			print $before . $nl;
+			print '\makeatletter{}' . $nl;
+			print "% start input $full_filename\n" if ($explain);
+			process_file($full_filename, $prefix . "  ");
+			print "% end input $full_filename\n" if ($explain);
+			# LaTeX produces this space, so let's do it also
+			print " " . $nl . $after . "\n";
+			$_ = "";
+		}
+	}
+	if ($expand_usepackage) {
+		# Don't bother with before and after text, we just require the
+		# usepackage to be alone on its line.
+		if (my ($package_name) = /^\s*\\usepackage{([^}]*)}\s*$/) {
+			my $full = find_file($package_name . ".sty", $TEXINPUTS);
+			if ($full) {
+				say $prefix . "Found package file: $full\n";
+				process_file($full, $prefix . "  ");
+				$_ = "";
+			} else {
+				say $prefix . "Not including external package $package_name\n";
+			}
+		}
+	}
+	if ($expand_bbl) {
+		if (my ($before, $bib_name, $after)
+			 = /^(.*)\\bibliography{([^}]*)}(.*)$/) {
+			# The BBL file is not necessarily $bib_name.
+			# Take it from the command-line.
+			print $before . $nl;
+			say $prefix . "Expanding BBL file: $expand_bbl\n";
+			process_file($expand_bbl, $prefix . "  ");
+			print " " . $nl . $after . "\n";
+			$_ = "";
+		}
+	}
+	if ($show_graphics) {
+		if (/\\includegraphics{([^}]*)}/) {
+			my $full = find_tex_file($1, $graphics_extensions);
+			say $prefix . "needs graphics file: ";
+			print STDERR "$full\n";
+		}
+	}
+	print;
+}
+
+# search $1 in $TEXINPUTS, with possible extensions in $2
+sub find_tex_file
+{
+	my $file = shift;
+	my $extensions = (shift || ":");
+	foreach my $ext (split(':', $extensions, -1)) {
+		my $full = find_file($file . $ext, $TEXINPUTS);
+		if ($full) {
+			return $full;
+		}
+	}
+	die "ERROR: Could not find file [$file]\n";
+}
+
+sub find_file
+{
+	my ($file, $path) = @_;
+	if (File::Spec->file_name_is_absolute($file)) {
+		if (-e "$file") {
+			return $file;
+		} else {
+			return;
+		}
+	}
+	foreach my $dir (split(':', $path)) {
+		if (-e "$dir/$file") {
+			return("$dir/$file");
+		}
+	}
+	return;
+}
+
+
+__END__
+
+=head1 NAME
+
+latexpand - Flatten LaTeX file by expanding \include and \input, remove comments
+
+=head1 SYNOPSIS
+
+latexpand [options] FILE...
+
+ Options:
+	--verbose        show what's going on
+    	--keep-comments  don't strip comments
+    	--empty-comments keep empty comments (i.e. % at end of lines) for clarity
+	--keep-includes  don't expand \input and \include directives
+	--expand-usepackage
+	                 Expand \usepackage{...} directives if the
+	                 corresponding .sty file is found in
+	                 $TEXINPUTS
+	--help           this help message
+	--output <file>, -o <file>
+	                 generate output in <file>
+	--explain        generate explanatory comments in output
+	--show-graphics  show included graphics
+	--graphics_extensions
+	                 colon-separated list of possible graphics extensions
+	                 (used by --show-graphics to find the actual graphics files)
+
+=head1 USES
+
+The most common use of latexpand is to simplify distribution of source
+LaTeX files, typically to satisfy the requirement of editors and
+archival sites (springer, arXiv.org, ...) who force the authors to
+submit sources. One does not necessarily want to submit sources with
+comments, and uploading a document made of several files including
+each other is a bit painful. By default, latexpand answers both
+problems by outputing a single LaTeX file that contain no comment.
+
+=head1 GETTING LATEXPAND
+
+The latest version of latexpand is available here:
+
+  https://gitorious.org/latexpand
+
+=head1 BUGS
+
+Please, report bugs to Matthieu Moy <Matthieu.Moy@imag.fr>.
