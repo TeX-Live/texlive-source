@@ -76,9 +76,7 @@ libkpathsea_la_SOURCES = \
 	xdirname.c \
 	xfopen.c \
 	xfseek.c \
-	xfseeko.c \
 	xftell.c \
-	xftello.c \
 	xgetcwd.c \
 	xmalloc.c \
 	xopendir.c \
@@ -89,13 +87,22 @@ libkpathsea_la_SOURCES = \
 
 if WIN32
 if MINGW32
-libkpathsea_la_SOURCES += mingw32.c
+libkpathsea_la_SOURCES += \
+	mingw32.c \
+	xfseeko.c \
+	xftello.c
 else !MINGW32
-libkpathsea_la_SOURCES += win32lib.c
+libkpathsea_la_SOURCES += \
+	win32lib.c
 endif !MINGW32
-libkpathsea_la_SOURCES += knj.c
+libkpathsea_la_SOURCES += \
+	knj.c
 SUBDIRS += win32
-endif WIN32
+else !WIN32
+libkpathsea_la_SOURCES += \
+	xfseeko.c \
+	xftello.c
+endif !WIN32
 
 $(libkpathsea_la_OBJECTS): paths.h kpathsea.h
 

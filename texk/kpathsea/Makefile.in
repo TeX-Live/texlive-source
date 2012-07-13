@@ -54,10 +54,22 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@MINGW32_TRUE@@WIN32_TRUE@am__append_1 = mingw32.c
-@MINGW32_FALSE@@WIN32_TRUE@am__append_2 = win32lib.c
-@WIN32_TRUE@am__append_3 = knj.c
+@MINGW32_TRUE@@WIN32_TRUE@am__append_1 = \
+@MINGW32_TRUE@@WIN32_TRUE@	mingw32.c \
+@MINGW32_TRUE@@WIN32_TRUE@	xfseeko.c \
+@MINGW32_TRUE@@WIN32_TRUE@	xftello.c
+
+@MINGW32_FALSE@@WIN32_TRUE@am__append_2 = \
+@MINGW32_FALSE@@WIN32_TRUE@	win32lib.c
+
+@WIN32_TRUE@am__append_3 = \
+@WIN32_TRUE@	knj.c
+
 @WIN32_TRUE@am__append_4 = win32
+@WIN32_FALSE@am__append_5 = \
+@WIN32_FALSE@	xfseeko.c \
+@WIN32_FALSE@	xftello.c
+
 bin_PROGRAMS = kpseaccess$(EXEEXT) kpsereadlink$(EXEEXT) \
 	kpsestat$(EXEEXT) kpsewhich$(EXEEXT)
 EXTRA_PROGRAMS = progname-test$(EXEEXT) xdirtest$(EXEEXT)
@@ -138,12 +150,16 @@ am__libkpathsea_la_SOURCES_DIST = tex-file.c absolute.c atou.c cnf.c \
 	progname.c readable.c rm-suffix.c str-list.c str-llist.c \
 	tex-glyph.c tex-hush.c tex-make.c tilde.c truncate.c \
 	uppercasify.c variable.c version.c xbasename.c xcalloc.c \
-	xdirname.c xfopen.c xfseek.c xfseeko.c xftell.c xftello.c \
-	xgetcwd.c xmalloc.c xopendir.c xputenv.c xrealloc.c xstat.c \
-	xstrdup.c mingw32.c win32lib.c knj.c
-@MINGW32_TRUE@@WIN32_TRUE@am__objects_1 = libkpathsea_la-mingw32.lo
+	xdirname.c xfopen.c xfseek.c xftell.c xgetcwd.c xmalloc.c \
+	xopendir.c xputenv.c xrealloc.c xstat.c xstrdup.c mingw32.c \
+	xfseeko.c xftello.c win32lib.c knj.c
+@MINGW32_TRUE@@WIN32_TRUE@am__objects_1 = libkpathsea_la-mingw32.lo \
+@MINGW32_TRUE@@WIN32_TRUE@	libkpathsea_la-xfseeko.lo \
+@MINGW32_TRUE@@WIN32_TRUE@	libkpathsea_la-xftello.lo
 @MINGW32_FALSE@@WIN32_TRUE@am__objects_2 = libkpathsea_la-win32lib.lo
 @WIN32_TRUE@am__objects_3 = libkpathsea_la-knj.lo
+@WIN32_FALSE@am__objects_4 = libkpathsea_la-xfseeko.lo \
+@WIN32_FALSE@	libkpathsea_la-xftello.lo
 am_libkpathsea_la_OBJECTS = libkpathsea_la-tex-file.lo \
 	libkpathsea_la-absolute.lo libkpathsea_la-atou.lo \
 	libkpathsea_la-cnf.lo libkpathsea_la-concat.lo \
@@ -167,13 +183,12 @@ am_libkpathsea_la_OBJECTS = libkpathsea_la-tex-file.lo \
 	libkpathsea_la-variable.lo libkpathsea_la-version.lo \
 	libkpathsea_la-xbasename.lo libkpathsea_la-xcalloc.lo \
 	libkpathsea_la-xdirname.lo libkpathsea_la-xfopen.lo \
-	libkpathsea_la-xfseek.lo libkpathsea_la-xfseeko.lo \
-	libkpathsea_la-xftell.lo libkpathsea_la-xftello.lo \
+	libkpathsea_la-xfseek.lo libkpathsea_la-xftell.lo \
 	libkpathsea_la-xgetcwd.lo libkpathsea_la-xmalloc.lo \
 	libkpathsea_la-xopendir.lo libkpathsea_la-xputenv.lo \
 	libkpathsea_la-xrealloc.lo libkpathsea_la-xstat.lo \
 	libkpathsea_la-xstrdup.lo $(am__objects_1) $(am__objects_2) \
-	$(am__objects_3)
+	$(am__objects_3) $(am__objects_4)
 libkpathsea_la_OBJECTS = $(am_libkpathsea_la_OBJECTS)
 libkpathsea_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -426,9 +441,9 @@ libkpathsea_la_SOURCES = tex-file.c absolute.c atou.c cnf.c concat.c \
 	readable.c rm-suffix.c str-list.c str-llist.c tex-glyph.c \
 	tex-hush.c tex-make.c tilde.c truncate.c uppercasify.c \
 	variable.c version.c xbasename.c xcalloc.c xdirname.c xfopen.c \
-	xfseek.c xfseeko.c xftell.c xftello.c xgetcwd.c xmalloc.c \
-	xopendir.c xputenv.c xrealloc.c xstat.c xstrdup.c \
-	$(am__append_1) $(am__append_2) $(am__append_3)
+	xfseek.c xftell.c xgetcwd.c xmalloc.c xopendir.c xputenv.c \
+	xrealloc.c xstat.c xstrdup.c $(am__append_1) $(am__append_2) \
+	$(am__append_3) $(am__append_5)
 kpseincludedir = ${includedir}/kpathsea
 nodist_kpseinclude_HEADERS = \
 	c-auto.h \
@@ -1124,26 +1139,12 @@ libkpathsea_la-xfseek.lo: xfseek.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfseek.lo `test -f 'xfseek.c' || echo '$(srcdir)/'`xfseek.c
 
-libkpathsea_la-xfseeko.lo: xfseeko.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xfseeko.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xfseeko.Tpo -c -o libkpathsea_la-xfseeko.lo `test -f 'xfseeko.c' || echo '$(srcdir)/'`xfseeko.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xfseeko.Tpo $(DEPDIR)/libkpathsea_la-xfseeko.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xfseeko.c' object='libkpathsea_la-xfseeko.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfseeko.lo `test -f 'xfseeko.c' || echo '$(srcdir)/'`xfseeko.c
-
 libkpathsea_la-xftell.lo: xftell.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xftell.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xftell.Tpo -c -o libkpathsea_la-xftell.lo `test -f 'xftell.c' || echo '$(srcdir)/'`xftell.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xftell.Tpo $(DEPDIR)/libkpathsea_la-xftell.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xftell.c' object='libkpathsea_la-xftell.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xftell.lo `test -f 'xftell.c' || echo '$(srcdir)/'`xftell.c
-
-libkpathsea_la-xftello.lo: xftello.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xftello.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xftello.Tpo -c -o libkpathsea_la-xftello.lo `test -f 'xftello.c' || echo '$(srcdir)/'`xftello.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xftello.Tpo $(DEPDIR)/libkpathsea_la-xftello.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xftello.c' object='libkpathsea_la-xftello.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xftello.lo `test -f 'xftello.c' || echo '$(srcdir)/'`xftello.c
 
 libkpathsea_la-xgetcwd.lo: xgetcwd.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xgetcwd.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xgetcwd.Tpo -c -o libkpathsea_la-xgetcwd.lo `test -f 'xgetcwd.c' || echo '$(srcdir)/'`xgetcwd.c
@@ -1200,6 +1201,20 @@ libkpathsea_la-mingw32.lo: mingw32.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mingw32.c' object='libkpathsea_la-mingw32.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-mingw32.lo `test -f 'mingw32.c' || echo '$(srcdir)/'`mingw32.c
+
+libkpathsea_la-xfseeko.lo: xfseeko.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xfseeko.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xfseeko.Tpo -c -o libkpathsea_la-xfseeko.lo `test -f 'xfseeko.c' || echo '$(srcdir)/'`xfseeko.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xfseeko.Tpo $(DEPDIR)/libkpathsea_la-xfseeko.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xfseeko.c' object='libkpathsea_la-xfseeko.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xfseeko.lo `test -f 'xfseeko.c' || echo '$(srcdir)/'`xfseeko.c
+
+libkpathsea_la-xftello.lo: xftello.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-xftello.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-xftello.Tpo -c -o libkpathsea_la-xftello.lo `test -f 'xftello.c' || echo '$(srcdir)/'`xftello.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-xftello.Tpo $(DEPDIR)/libkpathsea_la-xftello.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xftello.c' object='libkpathsea_la-xftello.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-xftello.lo `test -f 'xftello.c' || echo '$(srcdir)/'`xftello.c
 
 libkpathsea_la-win32lib.lo: win32lib.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-win32lib.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-win32lib.Tpo -c -o libkpathsea_la-win32lib.lo `test -f 'win32lib.c' || echo '$(srcdir)/'`win32lib.c

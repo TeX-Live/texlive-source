@@ -1,3 +1,10 @@
+2012-07-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (libkpathsea_la_SOURCES): Skip compilation of
+	xfseeko.c and xftello.c for MSVC.
+	* win32lib.h: Drop xfseeko() and xftello() prototypes, they will
+	subsequently be defined in lib.h.
+
 2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: Update version number 6.1.0 => 6.1.1dev.

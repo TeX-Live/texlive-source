@@ -264,8 +264,6 @@ extern KPSEDLL int pclose(FILE * f);
 extern KPSEDLL int system(const char * cmd);
 #endif /* KPSE_COMPAT_API */
 
-extern KPSEDLL void xfseek64 (FILE *f, __int64 offset, int wherefrom,  const char *fname);
-extern KPSEDLL __int64 xftell64 (FILE *f, const char *fname);
 extern KPSEDLL void texlive_gs_init(void);
 extern KPSEDLL int getlongpath (char *output, char *input, int len);
 extern KPSEDLL char *get_home_directory (void);
