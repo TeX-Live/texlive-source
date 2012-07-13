@@ -629,7 +629,7 @@ static void write_stream_length(PDF pdf, longinteger length, longinteger offset)
         jobname_cstr = makecstring(job_name);
     if (pdf->draftmode == 0) {
         xfseeko(pdf->file, (off_t) offset, SEEK_SET, jobname_cstr);
-        fprintf(pdf->file, "%" LONGINTEGER_PRId, length);
+        fprintf(pdf->file, "%" LONGINTEGER_PRIi, length);
         xfseeko(pdf->file, (off_t) pdf_offset(pdf), SEEK_SET, jobname_cstr);
     }
 }

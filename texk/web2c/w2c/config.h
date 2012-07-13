@@ -78,12 +78,15 @@ typedef off_t longinteger;
 #if defined(WIN32) && !defined(__MINGW32__)
 #define LONGINTEGER_TYPE __int64
 #define LONGINTEGER_PRId "I64d"
+#define LONGINTEGER_PRIi "I64i"
 #elif SIZEOF_LONG < SIZEOF_OFF_T
 #define LONGINTEGER_TYPE long long
 #define LONGINTEGER_PRId "lld"
+#define LONGINTEGER_PRIi "lli"
 #else
 #define LONGINTEGER_TYPE long
 #define LONGINTEGER_PRId "ld"
+#define LONGINTEGER_PRId "li"
 #endif
 
 /* I don't want to write a configure test for remove when all Unix
