@@ -377,7 +377,7 @@ static void readfilehdr(FILEINFO * fip)
     /* Annex D.4 File header syntax */
     /* Annex D.4.1 ID string */
     unsigned char jbig2_id[] = { 0x97, 'J', 'B', '2', 0x0d, 0x0a, 0x1a, 0x0a };
-    xfseeko(fip->file, 0, SEEK_SET, fip->filename);
+    xfseeko(fip->file, (off_t)0, SEEK_SET, fip->filename);
     for (i = 0; i < 8; i++)
         if (ygetc(fip->file) != jbig2_id[i])
             pdftex_fail
@@ -386,9 +386,9 @@ static void readfilehdr(FILEINFO * fip)
     fip->filehdrflags = ygetc(fip->file);
     fip->sequentialaccess = (fip->filehdrflags & 0x01) ? true : false;
     if (fip->sequentialaccess) {        /* Annex D.1 vs. Annex D.2 */
-        xfseeko(fip->file, 0, SEEK_END, fip->filename);
+        xfseeko(fip->file, (off_t)0, SEEK_END, fip->filename);
         fip->filesize = xftello(fip->file, fip->filename);
-        xfseeko(fip->file, 9, SEEK_SET, fip->filename);
+        xfseeko(fip->file, (off_t)9, SEEK_SET, fip->filename);
     }
     /* Annex D.4.3 Number of pages */
     if (!(fip->filehdrflags >> 1) & 0x01)       /* known number of pages */

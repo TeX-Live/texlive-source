@@ -1,6 +1,10 @@
+2012-07-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writejbig2.c: Cast xfseeko() arg2 to avoid MSVC warning.
+
 2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	 * pdftexextra.c [W32TeX]: #define DLLPROC for pdftex.dll.
+	* pdftexextra.c [W32TeX]: #define DLLPROC for pdftex.dll.
 
 2012-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
