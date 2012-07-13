@@ -623,13 +623,13 @@ void pdf_begin_stream(PDF pdf)
 }
 
 @ @c
-static void write_stream_length(PDF pdf, int length, longinteger offset)
+static void write_stream_length(PDF pdf, longinteger length, longinteger offset)
 {
     if (jobname_cstr == NULL)
         jobname_cstr = makecstring(job_name);
     if (pdf->draftmode == 0) {
         xfseeko(pdf->file, (off_t) offset, SEEK_SET, jobname_cstr);
-        fprintf(pdf->file, "%i", length);
+        fprintf(pdf->file, "%" LONGINTEGER_PRId, length);
         xfseeko(pdf->file, (off_t) pdf_offset(pdf), SEEK_SET, jobname_cstr);
     }
 }
@@ -644,7 +644,7 @@ void pdf_end_stream(PDF pdf)
         pdf->stream_length = pdf_offset(pdf) - pdf_saved_offset(pdf);
     pdf_flush(pdf);
     if (pdf->seek_write_length)
-        write_stream_length(pdf, (int) pdf->stream_length,
+        write_stream_length(pdf, pdf->stream_length,
                             pdf->stream_length_offset);
     pdf->seek_write_length = false;
     if (pdf->last_byte != pdf_newline_char)
