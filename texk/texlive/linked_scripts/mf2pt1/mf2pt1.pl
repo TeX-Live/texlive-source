@@ -21,7 +21,7 @@
 # version 2006/05/20 or later.                                         #
 ########################################################################
 
-our $VERSION = "2.4.6";   # mf2pt1 version number
+our $VERSION = "2.5";     # mf2pt1 version number
 require 5.6.1;            # I haven't tested mf2pt1 with older Perl versions
 
 use File::Basename;
@@ -588,7 +588,7 @@ sub output_font_programs ()
         my @fontprog;
         push @fontprog, ("/$gname {",
                          frac_string (frac_approx ($charbbox[$charnum]->[0]),
-                                      frac_approx ($charwd[$charnum] * $mag))
+                                      frac_approx ($charbbox[$charnum]->[2]))
                          . "hsbw");
         my ($cpx, $cpy) =
             ($charbbox[$charnum]->[0], 0);  # Current point (PostScript)
