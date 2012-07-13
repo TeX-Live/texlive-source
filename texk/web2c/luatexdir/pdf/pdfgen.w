@@ -629,8 +629,8 @@ static void write_stream_length(PDF pdf, int length, longinteger offset)
         jobname_cstr = makecstring(job_name);
     if (pdf->draftmode == 0) {
         xfseeko(pdf->file, (off_t) offset, SEEK_SET, jobname_cstr);
-        fprintf(pdf->file, "%li", (long int) length);
-        xfseeko(pdf->file, pdf_offset(pdf), SEEK_SET, jobname_cstr);
+        fprintf(pdf->file, "%i", length);
+        xfseeko(pdf->file, (off_t) pdf_offset(pdf), SEEK_SET, jobname_cstr);
     }
 }
 

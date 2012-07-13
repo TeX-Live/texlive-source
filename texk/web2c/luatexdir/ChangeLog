@@ -1,3 +1,7 @@
+2012-07-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdf/pdfgen.w: Cast xfseeko() arg2 to avoid MSVC warning.
+
 2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex/texfileio.w (runpopen): Sync with ../lib/texmfmp.c.
