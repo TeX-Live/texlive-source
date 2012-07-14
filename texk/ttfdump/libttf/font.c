@@ -20,7 +20,7 @@ TTFontPtr ttfInitFont(char *filename)
     font = XCALLOC1 (TTFont);
 
     font->ttfname = filename;
-    if ((font->fp = fopen (filename,"r")) == NULL)
+    if ((font->fp = fopen_truetype (filename)) == NULL)
 	{
 	    fprintf(stderr,"Can't open ttf file %s\n",filename);
 	    free(font);

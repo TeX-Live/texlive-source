@@ -1,7 +1,11 @@
 #! /bin/sh
 
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+TTFONTS=$srcdir/tests
+export TEXMFCNF TTFONTS
 
 failed=
 
@@ -23,7 +27,7 @@ cp $srcdir/tests/FonetikaDaniaIwonaeRegular.ttf .
 	&& echo "ttfdump.gsub tests OK" \
 	|| failed="$failed ttfdump.gsub"
 
-./ttfdump -t head -o ttftest.head FonetikaDaniaIwonaeRegular.ttf \
+./ttfdump -t head FonetikaDaniaIwonaeRegular.ttf > ttftest.head \
 	&& diff -b $srcdir/tests/ttfdump.head ttftest.head \
 	&& echo "ttfdump.head tests OK" \
 	|| failed="$failed ttfdump.head"

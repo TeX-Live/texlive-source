@@ -18,6 +18,29 @@ void FixedSplit(Fixed f, int b[]);
 #define FT_MAKE_TAG( _x1, _x2, _x3, _x4 ) _x1 << 24 | _x2 << 16 | _x3 << 8 | _x4
 char *TagToStr(ULONG tag);
 
+#ifdef KPATHSEA
+
+#include <stdlib.h>
+#include <kpathsea/lib.h>
+#include <kpathsea/tex-file.h>
+
+static inline FILE *
+fopen_truetype (const char *path)
+{
+    FILE *fp;
+    char *p;
+
+    if ((p = kpse_find_file (path, kpse_truetype_format, 0)) == NULL)
+        return NULL;
+
+    fp = fopen (p, "rb");
+    free (p);
+
+    return fp;
+}
+
+#else /* !KPATHSEA */
+
 /* Functions copied or adapted from kpathsea.  */
 void xfseek (FILE *fp, long offset, int wherefrom, const char *funcname);
 long xftell (FILE *fp, const char *funcname);
@@ -27,8 +50,13 @@ char *xstrdup(const char *s);
 
 #define FATAL_PERROR(str) do { perror (str); exit (EXIT_FAILURE); } while (0)
 #define XTALLOC(n, t) ((t *) xmalloc ((n) * sizeof (t)))
-#define XCALLOC(n, t) ((t *) xcalloc (n, sizeof (t)))
 #define XTALLOC1(t) XTALLOC (1, t)
+
+#define fopen_truetype(path) fopen (path, "rb")
+
+#endif /* !KPATHSEA */
+
+#define XCALLOC(n, t) ((t *) xcalloc (n, sizeof (t)))
 #define XCALLOC1(t) XCALLOC (1, t)
 
 #include "protos.h"

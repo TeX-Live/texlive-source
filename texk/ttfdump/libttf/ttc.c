@@ -18,7 +18,7 @@ TTCHeaderPtr ttfLoadTTCHeader(char * filename)
     TTCHeaderPtr ttc;
     FILE *fp;
     
-    if ((fp = fopen (filename,"r")) == NULL)
+    if ((fp = fopen_truetype (filename)) == NULL)
 	{
 	    fprintf(stderr,"Can't open ttc file %s\n",filename);
 	    return NULL;

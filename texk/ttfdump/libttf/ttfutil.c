@@ -31,6 +31,7 @@ void ttfError(const char * msg)
     exit(EXIT_FAILURE);
 }
 
+#ifndef KPATHSEA
 /* Functions copied or adapted from kpathsea.  */
 long
 xftell (FILE *fp, const char *funcname)
@@ -85,3 +86,4 @@ xstrdup (const char *s)
   char *new_string = xmalloc(strlen (s) + 1);
   return strcpy(new_string, s);
 }
+#endif /* !KPATHSEA */

@@ -1,7 +1,16 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef WIN32
+
+#if defined(KPATHSEA)
+/* including <kpathsea/kpathsea.h> would yield conflicting typedefs */
+#include <kpathsea/lib.h>
+#include <kpathsea/tex-file.h>
+#include <kpathsea/c-fopen.h>
+#include <kpathsea/progname.h>
+#include <kpathsea/c-unistd.h>
+#include <kpathsea/getopt.h>
+#elif defined(WIN32)
 #include <getopt.h>
 #else
 #include <unistd.h>
@@ -74,6 +83,10 @@ main(int argc, char *argv[])
   /* print all glyphs by default */
   int glyphnum = ALL_GLYF, collection = 0;
 
+#ifdef KPATHSEA
+  kpse_set_program_name(argv[0], "ttfdump");
+#endif
+
   if (argc < 2)
   {
     usage();
@@ -129,9 +142,12 @@ main(int argc, char *argv[])
   }
   if (!strcmp(dumpname, "-"))
   {
+#ifdef WIN32
+    _setmode(fileno(stdout), _O_BINARY);
+#endif
     dp_file = stdout;
   }
-  else if ((dp_file = fopen(dumpname, "wt")) == NULL)
+  else if ((dp_file = fopen(dumpname, "wb")) == NULL)
   {
     fprintf(stderr, "Can't open dumping file\n");
     exit(EXIT_FAILURE);

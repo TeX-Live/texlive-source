@@ -69,6 +69,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	ChangeLog INSTALL TODO
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
@@ -103,7 +104,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am_ttfdump_OBJECTS = ttfdump.$(OBJEXT)
 ttfdump_OBJECTS = $(am_ttfdump_OBJECTS)
 ttfdump_LDADD = $(LDADD)
-ttfdump_DEPENDENCIES = libttf.a
+am__DEPENDENCIES_1 =
+ttfdump_DEPENDENCIES = libttf.a $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -210,6 +212,9 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
+KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
+KPATHSEA_LIBS = @KPATHSEA_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -296,7 +301,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = -I$(top_srcdir)/include
+INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = -DUNIX -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libttf.a
 libttf_a_SOURCES = \
@@ -351,7 +357,7 @@ EXTRA_DIST = libttf/fixed.c libttf/interp.c libttf/stack.c \
 	tests/ttfdump.gpos tests/ttfdump.gsub tests/ttfdump.head ILX \
 	NOTE README.bg5
 ttfdump_SOURCES = src/ttfdump.c
-LDADD = libttf.a
+LDADD = libttf.a $(KPATHSEA_LIBS)
 dist_man1_MANS = docs/ttfdump.1
 TESTS = tests/ttfdump.test
 DISTCLEANFILES = FonetikaDaniaIwonaeRegular.ttf ttftest.*
@@ -1513,6 +1519,10 @@ uninstall-man: uninstall-man1
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-man uninstall-man1
 
+
+$(libttf_a_OBJECTS): $(KPATHSEA_DEPEND)
+
+@KPATHSEA_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

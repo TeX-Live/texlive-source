@@ -1,3 +1,11 @@
+2012-07-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac, include/ttf.h, include/ttfutil.h,
+	libttf/font.c, libttf/ttc.c, libttf/ttfutil.c, src/ttfdump.c:
+	Use libkpathsea instead of copying xmalloc() & Co (from W32TeX).
+
+	* tests/ttfdump.test [WIN32]: Also test binary mode for stdout.
+
 2012-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* include/ttfutil.h: Declare ttfError() with attribute noreturn.

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -19,6 +19,8 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_SIZEOF([int])
 
 AC_CONFIG_HEADERS([config.h])
+
+KPSE_KPATHSEA_FLAGS
 
 AC_CONFIG_FILES([Makefile])
 
