@@ -20,11 +20,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "openbsd-compat.h"
 
 #include <sys/types.h>
-#ifdef WIN32
-#define EX_SOFTWARE EXIT_FAILURE
-#else
-#include <sysexits.h>
-#endif
 #include <regex.h>
 #include <kpathsea/c-proto.h>
 #include <kpathsea/c-stat.h>
@@ -253,7 +248,7 @@ void pdftex_fail(const char *fmt, ...)
         println();
         abort();
     } else {
-        exit(EX_SOFTWARE);
+        exit(EXIT_FAILURE);
     }
 }
 

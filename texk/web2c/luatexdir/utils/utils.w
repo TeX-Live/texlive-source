@@ -28,11 +28,6 @@ static const char _svn_version[] =
 #include <kpathsea/config.h> /* this is a trick to load mingw32's io.h early,
 				using a macro redefinition of |eof()|. */
 #include "sys/types.h"
-#ifndef __MINGW32__
-#  include "sysexits.h"
-#else
-#  define EX_SOFTWARE 70
-#endif
 #include <kpathsea/c-stat.h>
 #include <kpathsea/c-fopen.h>
 #include <string.h>
@@ -168,7 +163,7 @@ void pdftex_fail(const char *fmt, ...)
     if (kpathsea_debug) {
         abort();
     } else {
-        exit(EX_SOFTWARE);
+        exit(EXIT_FAILURE);
     }
 }
 

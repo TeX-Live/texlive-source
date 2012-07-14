@@ -1,3 +1,7 @@
+2012-07-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils/utils.w: Use EXIT_FAILURE instead of EX_SOFTWARE.
+
 2012-07-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdf/pdfgen.w: Cast xfseeko() arg2 to avoid MSVC warning.
