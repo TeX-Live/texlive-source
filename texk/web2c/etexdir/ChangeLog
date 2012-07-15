@@ -1,3 +1,7 @@
+2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* etexextra.c: Must #define DLLPROC before reading etexd.h.
+
 2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etexextra.c [W32TeX]: #define DLLPROC for etex.dll.

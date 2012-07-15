@@ -1,3 +1,7 @@
+2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftexextra.c: Must #define DLLPROC before reading pdftexd.h.
+
 2012-07-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c: Use EXIT_FAILURE instead of EX_SOFTWARE.

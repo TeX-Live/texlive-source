@@ -1,3 +1,7 @@
+2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexextra.c: Must #define DLLPROC before reading ptexd.h.
+
 2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexextra.c [W32TeX]: #define DLLPROC for ptex.dll.

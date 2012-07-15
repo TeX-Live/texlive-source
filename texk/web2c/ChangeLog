@@ -1,3 +1,7 @@
+2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texextra.c: Must #define DLLPROC before reading texd.h.
+
 2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* help.h (LUATANGLEHELP): Removed, luatangle no longer exists.

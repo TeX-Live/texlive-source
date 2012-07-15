@@ -1,3 +1,7 @@
+2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* eptexextra.c: Must #define DLLPROC before reading eptexd.h.
+
 2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptexextra.c [W32TeX]: #define DLLPROC for eptex.dll.

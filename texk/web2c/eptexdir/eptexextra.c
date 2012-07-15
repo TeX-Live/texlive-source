@@ -3,10 +3,10 @@
    This file is public domain.  */
 
 #define	EXTERN /* Instantiate data from eptexd.h here.  */
+#define DLLPROC dlleptexmain
 
 /* This file defines TeX and epTeX.  */
 #include <eptexd.h>
 
 /* Hand-coded routines for TeX or Metafont in C.  */
-#define DLLPROC dlleptexmain
 #include <lib/texmfmp.c>
