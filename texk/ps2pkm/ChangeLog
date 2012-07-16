@@ -1,3 +1,11 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ps2pk.c: Invoke kpse_set_program_name() with original argv[0]
+	and program name string.
+	* mag.c, ps2pk.c: ANSI C function declarations and definitions.
+	No nested function declarations. Declare functions as static.
+	* tests/ps2pk.test: Set environment for kpatsea file search.
+
 2012-07-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pk2bm.c: Cast arg2 of readchar() to avoid MSVC warning.

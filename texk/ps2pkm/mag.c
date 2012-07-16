@@ -80,14 +80,14 @@
 int invert = 0;
 float DPI = 300.0;
 
+/* Prototypes */
+static int fontsize(double);
+static double stepsize(double);
+
 int main(int argc, char *argv[]) {
    float  sz, arg; int c;
    char *myname = "mag";
    short done;
-
-   /* prototypes */
-   int fontsize(double);
-   double stepsize(double);
 
    while (--argc > 0 && (*++argv)[0] == '-') {
       if (isdigit((int)(*argv)[1])) { /* allow negative numbers as arguments */
@@ -134,13 +134,16 @@ int main(int argc, char *argv[]) {
    return 0;
 }
 
-int fontsize(x) double x;
+static int
+fontsize(double x)
 {
    return(DPI*pow(1.2, x) + 0.5);
 }
 
-double stepsize(x) double x;
-{  double s;
+static double
+stepsize(double x)
+{
+   double s;
    s=(log(x)-log(DPI))/log(1.2);
    if (s>=0) return floor(10*s+0.5)/10;
    return -floor(10*(-s)+0.5)/10;

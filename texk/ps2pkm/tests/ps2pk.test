@@ -3,6 +3,10 @@
 # Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+TEXMFCNF=$srcdir/../kpathsea
+TEXFONTS=.
+export TEXMFCNF TEXFONTS
+
 rm -f Symbol*
 
 cp $srcdir/tests/Symbol.afm $srcdir/tests/Symbol.pfb .

@@ -231,9 +231,17 @@ UINT32 checksum(encoding, int [256]);
 UINT32 old_checksum(encoding, int [256]);
 UINT32 (*pchecksum)(encoding, int [256]) = checksum;
 
-main(argc, argv)
-int argc; char *argv[];
-{  char *argp, c;
+/* Prototypes */
+static int next_pixel(void);
+static void print_pixmap(void);
+static void first_pixel(CharInfoRec *);
+static INT32 TFMwidth(int);
+static int h_escapement(int);
+static void add_option(const char *, const char *);
+
+main(int argc, char *argv[])
+{
+   char *argp, c;
    int done, i;
    char *myname = "ps2pk", *psname, *psbasename, *afmname = NULL,
 	*encname = NULL, *psfile = NULL, *psfilebn, pkname[80],
@@ -251,14 +259,10 @@ int argc; char *argv[];
    int WX[256];
 
    float efactor = 1.0, slant = 0.0;
-   
-   /* proto's */
-   int next_pixel();
-   void print_pixmap();
-   void first_pixel(CharInfoRec *);
-   INT32 TFMwidth(int);
-   int h_escapement(int);
-   void add_option(char *, char *);
+
+#ifdef KPATHSEA
+   kpse_set_program_name(argv[0], "ps2pk");
+#endif
 
    while (--argc > 0 && (*++argv)[0] == '-') {
       done=0;
@@ -350,10 +354,6 @@ int argc; char *argv[];
    }
 
    psname = argv[0]; argc--; argv++;
-
-#ifdef KPATHSEA
-   kpse_set_program_name(myname, NULL);
-#endif
 
 #ifndef KPATHSEA
    if (ps_resource(psname)) {
@@ -581,8 +581,10 @@ static int row, col;
 static int data, bitno;
 static unsigned char *p_data;
 
-int next_pixel()
-{  int pixel;
+static int
+next_pixel(void)
+{
+   int pixel;
 
    while (row < H) {
        if (col++ < W) { 
@@ -595,7 +597,8 @@ int next_pixel()
    fatal("Not that many pixels!\n");
 } 
 
-void first_pixel(CharInfoRec *G)
+static void
+first_pixel(CharInfoRec *G)
 {
    row = col = 0;
    p_data = (unsigned char *) G->bits;
@@ -604,8 +607,10 @@ void first_pixel(CharInfoRec *G)
    bitno = 0; 
 }
 
-void print_pixmap()
-{  int c, r;
+static void
+print_pixmap(void)
+{
+   int c, r;
    unsigned char *save_p_data;
 
    save_p_data = p_data;
@@ -625,7 +630,8 @@ void print_pixmap()
    an integer representation for fractions. The decimal point is 
    left from bit 20. (The method is `stolen' from afm2tfm.) */
  
-INT32 TFMwidth(int wx)
+static INT32
+TFMwidth(int wx)
 {  
    return (((wx  / 1000) << 20) +
            (((wx % 1000) << 20) + 500) / 1000) ;
@@ -634,7 +640,8 @@ INT32 TFMwidth(int wx)
 static float HXU = -1.0; /* horizontal pixels per design unit */
 
 /* the horizontal escapent is the number of pixels to next origin */
-int h_escapement(int wx)
+static int
+h_escapement(int wx)
 {
    if (HXU == -1.0) 
       HXU = (pointsize * x_resolution) / 72270.0;
@@ -642,7 +649,9 @@ int h_escapement(int wx)
 }
 
 /* add ps2pk option to string */
-void add_option(char *option, char *value) {
+static void
+add_option(const char *option, const char *value)
+{
    static char *p_args = NULL;
 
    if (p_args == NULL) {
@@ -665,22 +674,19 @@ int CheckFSFormat(format, fmask, bit, Byte, scan, glyph, image)
  
 }
  
-long MakeAtom(p, len, foo)
-       char *p;
-       unsigned int len;
-       Bool foo;
+long MakeAtom(char *p, unsigned int len, Bool foo)
 {
        return (long)p;
 }
 
-GetClientResolutions(resP)
-       int *resP;
+GetClientResolutions(int *resP)
 {
        *resP = 0;
 }
 
 char *Xalloc(size_t size)
-{  char *p;
+{
+   char *p;
    p = malloc(size);
    if (p == NULL) fatal("Out of memory\n");
    return p;
