@@ -11,8 +11,10 @@
 @z
 
 @x [2] l.69 - pTeX:
+@d my_name=='pltotf'
 @d banner=='This is PLtoTF, Version 3.5' {printed when the program starts}
 @y
+@d my_name=='ppltotf'
 @d banner=='This is pPLtoTF, Version 3.5-p1.8'
   {printed when the program starts}
 @z
@@ -355,12 +357,6 @@ const n_options = 5; {Pascal won't count array lengths for us.}
 @z
 
 @x
-      usage ('pltotf');
-@y
-      usage ('ppltotf');
-@z
-
-@x
       usage_help (PLTOTF_HELP, nil);
 @y
       usage_help (PPLTOTF_HELP, nil);
@@ -374,14 +370,6 @@ const n_options = 5; {Pascal won't count array lengths for us.}
         print_ln('Bad kanji encoding "', stringcast(optarg), '".');
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
-@z
-
-@x
-    write_ln (stderr, 'pltotf: Need one or two file arguments.');
-    usage ('pltotf');
-@y
-    write_ln (stderr, 'ppltotf: Need one or two file arguments.');
-    usage ('ppltotf');
 @z
 
 @x

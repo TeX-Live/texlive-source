@@ -1,6 +1,8 @@
 @x
+@d my_name=='pbibtex'
 @d banner=='This is pBibTeX, Version 0.99d-j0.33'
 @y
+@d my_name=='upbibtex'
 @d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.10'
 @z
 
@@ -285,12 +287,6 @@ const n_options = 7; {Pascal won't count array lengths for us.}
 @z
 
 @x
-      usage ('pbibtex');
-@y
-      usage ('upbibtex');
-@z
-
-@x
       usage_help (PBIBTEX_HELP, nil);
 @y
       usage_help (UPBIBTEX_HELP, nil);
@@ -305,14 +301,6 @@ const n_options = 7; {Pascal won't count array lengths for us.}
         write_ln('Bad internal kanji encoding "', stringcast(optarg), '".');
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
-@z
-
-@x
-    write_ln (stderr, 'pbibtex: Need exactly one file argument.');
-    usage ('pbibtex');
-@y
-    write_ln (stderr, 'upbibtex: Need exactly one file argument.');
-    usage ('upbibtex');
 @z
 
 @x

@@ -16,6 +16,13 @@
 \def\title{PK$\,$\lowercase{type} changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is PKtype, Version 2.3' {printed when the program starts}
+@y
+@d my_name=='pktype'
+@d banner=='This is PKtype, Version 2.3' {printed when the program starts}
+@z
+
 @x [4] Redirect output to stdout.
 @d t_print_ln(#)==write_ln(typ_file,#)
 @y
@@ -38,7 +45,7 @@ var @<Globals in the outer block@>@/
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
 begin
-  kpse_set_program_name (argv[0], nil);
+  kpse_set_program_name (argv[0], my_name);
   kpse_init_prog ('PKTYPE', 0, nil, nil);
   parse_arguments;
   print(banner); print_ln(version_string);@/
@@ -324,7 +331,7 @@ begin
       do_nothing;
 
     end else if getopt_return_val = '?' then begin
-      usage ('pktype');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (PKTYPE_HELP, nil);
@@ -337,8 +344,8 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.}
   if (optind + 1 <> argc) then begin
-    write_ln (stderr, 'pktype: Need exactly one file argument.');
-    usage ('pktype');
+    write_ln (stderr, my_name, ': Need exactly one file argument.');
+    usage (my_name);
   end;
 end;
 

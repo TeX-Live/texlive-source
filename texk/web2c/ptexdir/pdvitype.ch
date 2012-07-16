@@ -3,8 +3,10 @@
 % 09/27/95 (KA)  Supporting ASCII pTeX
 %
 @x
+@d my_name=='dvitype'
 @d banner=='This is DVItype, Version 3.6' {printed when the program starts}
 @y
+@d my_name=='pdvitype'
 @d banner=='This is pDVItype, Version 3.6-p0.4'
   {printed when the program starts}
 @z
@@ -489,12 +491,6 @@ const n_options = 10; {Pascal won't count array lengths for us.}
 @z
 
 @x
-      usage ('dvitype');
-@y
-      usage ('pdvitype');
-@z
-
-@x
       usage_help (DVITYPE_HELP, nil);
 @y
       usage_help (PDVITYPE_HELP, nil);
@@ -510,14 +506,6 @@ const n_options = 10; {Pascal won't count array lengths for us.}
       end;
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
-@z
-
-@x
-    write_ln (stderr, 'dvitype: Need exactly one file argument.');
-    usage ('dvitype');
-@y
-    write_ln (stderr, 'pdvitype: Need exactly one file argument.');
-    usage ('pdvitype');
 @z
 
 @x

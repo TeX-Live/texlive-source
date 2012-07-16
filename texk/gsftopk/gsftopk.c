@@ -2251,7 +2251,7 @@ Author of gsftopk: Paul Vojta.");
 #ifdef WIN32
 	setmode(fileno(stdout), _O_BINARY);
 #endif
-	kpse_set_program_name(argv[0], NULL);
+	kpse_set_program_name(argv[0], "gsftopk");
 	kpse_init_prog("GSFTOPK", (int) (dpi + 0.5), NULL, "cmr10");
 	if (!test)
 	    xputenv_int("KPATHSEA_DPI", (int) (dpi + 0.5));

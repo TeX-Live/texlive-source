@@ -17,6 +17,13 @@
 %\def\title{VF$\,$\lowercase{to}$\,$VP changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is OVF2OVP, Version 1.12' {printed when the program starts}
+@y
+@d my_name=='ovf2ovp'
+@d banner=='This is OVF2OVP, Version 1.12' {printed when the program starts}
+@z
+
 % [2] We need to tell web2c about one special variable.
 % Perhaps it would be better to allow @define's
 % anywhere in a source file, but that seemed just as painful as this.
@@ -38,7 +45,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @!k:integer; {all-purpose index for initialization}
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     kpse_init_prog ('VFTOVP', 0, nil, nil);
     {We |xrealloc| when we know how big the file is.  The 1000 comes
      from the negative lower bound.}
@@ -521,7 +528,7 @@ begin
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
     end else if getopt_return_val = "?" then begin
-      usage ('ovf2ovp');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (OVF2OVP_HELP, nil);
@@ -545,8 +552,8 @@ begin
    We must have one two three remaining arguments.}
   if (optind + 1 <> argc) and (optind + 2 <> argc)
      and (optind + 3 <> argc) then begin
-    write_ln (stderr, 'ovf2ovp: Need one to three file arguments.');
-    usage ('ovf2ovp');
+    write_ln (stderr, my_name, ': Need one to three file arguments.');
+    usage (my_name);
   end;
 
   vf_name := cmdline (optind);

@@ -1,3 +1,7 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gsftopk.c: Pass program name string to kpse_set_program_name.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

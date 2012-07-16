@@ -26,6 +26,13 @@
 %\def\title{OPL2OFM changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is OPL2OFM, Version 1.12'
+@y
+@d my_name=='opl2ofm'
+@d banner=='This is OPL2OFM, Version 1.12'
+@z
+
 @x [still 2] No banner unless verbose.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -35,7 +42,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
 begin
-  kpse_set_program_name (argv[0], nil);
+  kpse_set_program_name (argv[0], my_name);
   parse_arguments;
 @z
 
@@ -299,7 +306,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('opl2ofm');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (OPL2OFM_HELP, nil);
@@ -314,8 +321,8 @@ begin
   {Now |optind| is the index of first non-option on the command line.
    We must have one or two remaining arguments.}
   if (optind + 1 <> argc) and (optind + 2 <> argc) then begin
-    write_ln (stderr, 'opl2ofm: Need one or two file arguments.');
-    usage ('opl2ofm');
+    write_ln (stderr, my_name, ': Need one or two file arguments.');
+    usage (my_name);
   end;
 
   pl_name := extend_filename (cmdline (optind), 'opl');

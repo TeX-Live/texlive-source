@@ -23,6 +23,13 @@
 \def\title{GF$\,$\lowercase{type} changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is GFtype, Version 3.1' {printed when the program starts}
+@y
+@d my_name=='gftype'
+@d banner=='This is GFtype, Version 3.1' {printed when the program starts}
+@z
+
 @x [3] No global labels.
 @d print(#)==write(#)
 @d print_ln(#)==write_ln(#)
@@ -51,7 +58,7 @@ procedure initialize; {this procedure gets things started properly}
   @!bound_default:integer; {temporary for setup}
   @!bound_name:const_cstring; {temporary for setup}
 begin
-  kpse_set_program_name (argv[0], 'gftype');
+  kpse_set_program_name (argv[0], my_name);
   kpse_init_prog ('GFTYPE', 0, nil, nil);
   parse_arguments;
   print(banner);print_ln(version_string);
@@ -436,7 +443,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('gftype');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (GFTYPE_HELP, nil);
@@ -450,8 +457,8 @@ begin
   {Now |optind| is the index of first non-option on the command line.
    We must have one remaining argument.}
   if (optind + 1 <> argc) then begin
-    write_ln (stderr, 'gftype: Need exactly one file argument.');
-    usage ('gftype');
+    write_ln (stderr, my_name, ': Need exactly one file argument.');
+    usage (my_name);
   end;
 end;
 

@@ -10,6 +10,13 @@
 \def\title{VF$\,$\lowercase{to}$\,$VP changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is VFtoVP, Version 1.3' {printed when the program starts}
+@y
+@d my_name=='vftovp'
+@d banner=='This is VFtoVP, Version 1.3' {printed when the program starts}
+@z
+
 @x [2] All terminal output goes to stderr, so we can dump the vpl on stdout.
 @d print(#)==write(#)
 @d print_ln(#)==write_ln(#)
@@ -41,7 +48,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @!k:integer; {all-purpose index for initialization}
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     kpse_init_prog ('VFTOVP', 0, nil, nil);
     {We |xrealloc| when we know how big the file is.  The 1000 comes
      from the negative lower bound.}
@@ -587,7 +594,7 @@ begin
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
     end else if getopt_return_val = "?" then begin
-      usage ('vftovp');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (VFTOVP_HELP, nil);
@@ -610,8 +617,8 @@ begin
    We must have one two three remaining arguments.}
   if (optind + 1 <> argc) and (optind + 2 <> argc)
      and (optind + 3 <> argc) then begin
-    print_ln ('vftovp: Need one to three file arguments.');
-    usage ('vftovp');
+    print_ln (my_name, ': Need one to three file arguments.');
+    usage (my_name);
   end;
 
   vf_name := cmdline (optind);

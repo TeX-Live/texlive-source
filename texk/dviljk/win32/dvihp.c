@@ -144,7 +144,7 @@ main (int argc, char *argv[])
   output_and_cleanup_function = output_and_cleanup;
 
   progname = argv[0];
-  kpse_set_program_name (progname, NULL);
+  kpse_set_program_name (argv[0], "dvihp");
 #ifdef _WIN32
   setmode(fileno(stdin), _O_BINARY);
   setmode(fileno(stdout), _O_BINARY);

@@ -30,6 +30,13 @@
 %\def\title{TF\lowercase{to}PL changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is OFM2OPL, Version 1.12'
+@y
+@d my_name=='ofm2opl'
+@d banner=='This is OFM2OPL, Version 1.12'
+@z
+
 % [2] Fix files in program statement.  We need to tell web2c about one
 % special variable.  Perhaps it would be better to allow @define's
 % anywhere in a source file, but that seemed just as painful as this.
@@ -49,7 +56,7 @@ procedure initialize; {this procedure gets things started properly}
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     kpse_init_prog ('OFM2OPL', 0, nil, nil);
     {We |xrealloc| when we know how big the file is.  The 1000 comes
      from the negative lower bound.}
@@ -341,7 +348,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('ofm2opl');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (OFM2OPL_HELP, nil);
@@ -363,8 +370,8 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.}
   if (optind + 1 <> argc) and (optind + 2 <> argc) then begin
-    write_ln (stderr, 'ofm2opl: Need one or two file arguments.');
-    usage ('ofm2opl');
+    write_ln (stderr, my_name, ': Need one or two file arguments.');
+    usage (my_name);
   end;
 
   tfm_name := cmdline (optind);

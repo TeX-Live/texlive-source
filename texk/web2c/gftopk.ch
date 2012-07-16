@@ -19,6 +19,13 @@
 \def\title{GF$\,$\lowercase{to}$\,$PK changes C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is GFtoPK, Version 2.3' {printed when the program starts}
+@y
+@d my_name=='gftopk'
+@d banner=='This is GFtoPK, Version 2.3' {printed when the program starts}
+@z
+
 @x [4] No global labels.
 @ The binary input comes from |gf_file|, and the output font is written
 on |pk_file|.  All text output is written on \PASCAL's standard |output|
@@ -55,7 +62,7 @@ var @<Globals in the outer block@>@/
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
 begin
-  kpse_set_program_name (argv[0], nil);
+  kpse_set_program_name (argv[0], my_name);
   kpse_init_prog ('GFTOPK', 0, nil, nil);
   parse_arguments;
   print(banner); print_ln(version_string);
@@ -416,7 +423,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('gftopk'); {|getopt| has already given an error message.}
+      usage (my_name); {|getopt| has already given an error message.}
 
     end else if argument_is ('help') then begin
       usage_help (GFTOPK_HELP, nil);
@@ -430,8 +437,8 @@ begin
   {Now |optind| is the index of first non-option on the command line.
    We must have one or two remaining arguments.}
   if (optind + 1 <> argc) and (optind + 2 <> argc) then begin
-    write_ln (stderr, 'gftopk: Need one or two file arguments.');
-    usage ('gftopk');
+    write_ln (stderr, my_name, ': Need one or two file arguments.');
+    usage (my_name);
   end;
 
   gf_name := cmdline (optind);

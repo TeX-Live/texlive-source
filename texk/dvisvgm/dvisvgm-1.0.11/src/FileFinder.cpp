@@ -79,7 +79,7 @@ void FileFinder::init (const char *progname, bool enable_mktexmf, const char *us
 	if (FAILED(hres))
 		throw MessageException("MiKTeX.Session could not be initialized");
 #else
-	kpse_set_program_name(progname, NULL);
+	kpse_set_program_name(progname, "dvisvgm");
 	// enable tfm and mf generation (actually invoked by calls of kpse_make_tex)
 	kpse_set_program_enabled(kpse_tfm_format, 1, kpse_src_env);
 	kpse_set_program_enabled(kpse_mf_format, 1, kpse_src_env);

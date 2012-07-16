@@ -1,3 +1,7 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttf2afm.c: Pass program name string to kpse_set_program_name.
+
 2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftexextra.c: Must #define DLLPROC before reading pdftexd.h.

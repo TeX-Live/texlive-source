@@ -1,3 +1,10 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.ch, dvicopy.ch, dvitype.ch, gftodvi.ch, gftopk.ch,
+	gftype.ch, mft.ch, patgen.ch, pktogf.ch, pktype.ch, pltotf.ch,
+	pooltype.ch, tangle.ch, tftopl.ch, vftovp.ch, vptovf.ch,
+	weave.ch: Define and use my_name.
+
 2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texextra.c: Must #define DLLPROC before reading texd.h.

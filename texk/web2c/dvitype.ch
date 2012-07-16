@@ -28,6 +28,13 @@
 \def\title{DVI$\,$\lowercase{type} changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is DVItype, Version 3.6' {printed when the program starts}
+@y
+@d my_name=='dvitype'
+@d banner=='This is DVItype, Version 3.6' {printed when the program starts}
+@z
+
 % [3] Specify the output file to simplify web2c, and don't print the
 % banner until later.
 @x
@@ -47,7 +54,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
   begin
-  kpse_set_program_name (argv[0], nil);
+  kpse_set_program_name (argv[0], my_name);
   parse_arguments;
   print (banner);
   print_ln (version_string);
@@ -537,7 +544,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('dvitype');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (DVITYPE_HELP, nil);
@@ -569,8 +576,8 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.}
   if (optind + 1 <> argc) then begin
-    write_ln (stderr, 'dvitype: Need exactly one file argument.');
-    usage ('dvitype');
+    write_ln (stderr, my_name, ': Need exactly one file argument.');
+    usage (my_name);
   end;
   dvi_name := extend_filename (cmdline (optind), 'dvi');
 end;
@@ -630,7 +637,7 @@ while optarg[m] do begin
   end else if optarg[m] = "." then begin
     incr (k);
     if k >= 10 then begin
-      write_ln (stderr, 'dvitype: More than ten count registers specified.');
+      write_ln (stderr, my_name, ': More than ten count registers specified.');
       uexit (1);
     end;
     incr (m);
@@ -638,7 +645,7 @@ while optarg[m] do begin
   end else begin
     start_count[k] := strtol (optarg + m, address_of (end_num), 10);
     if end_num = optarg + m then begin
-      write_ln (stderr, 'dvitype: -page-start values must be numeric or *.');
+      write_ln (stderr, my_name, ': -page-start values must be numeric or *.');
       uexit (1);
     end;
     start_there[k] := true;

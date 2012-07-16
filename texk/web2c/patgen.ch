@@ -13,6 +13,13 @@
 \def\title{PATGEN changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is PATGEN, Version 2.4' {printed when the program starts}
+@y
+@d my_name=='patgen'
+@d banner=='This is PATGEN, Version 2.4' {printed when the program starts}
+@z
+
 @x Terminal I/O, Need standard input.
 @d get_input(#)==read(input,#)
 @d get_input_ln(#)==
@@ -45,7 +52,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
 begin
-  kpse_set_program_name (argv[0], nil);
+  kpse_set_program_name (argv[0], my_name);
   parse_arguments;
   print (banner);
   print_ln (version_string);
@@ -220,7 +227,7 @@ begin
       do_nothing;
 
     end else if getopt_return_val = '?' then begin
-      usage ('patgen');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (PATGEN_HELP, nil);
@@ -235,8 +242,8 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.}
   if (optind + 4 <> argc) then begin
-    write_ln (stderr, 'patgen: Need exactly four arguments.');
-    usage ('patgen');
+    write_ln (stderr, my_name, ': Need exactly four arguments.');
+    usage (my_name);
   end;
 end;
 

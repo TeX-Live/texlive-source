@@ -1,27 +1,15 @@
 @x
+@d my_name=='ppltotf'
 @d banner=='This is pPLtoTF, Version 3.5-p1.8'
 @y
+@d my_name=='uppltotf'
 @d banner=='This is upPLtoTF, Version 3.5-p1.8-u1.10'
-@z
-
-@x
-      usage ('ppltotf');
-@y
-      usage ('uppltotf');
 @z
 
 @x
       usage_help (PPLTOTF_HELP, nil);
 @y
       usage_help (UPPLTOTF_HELP, nil);
-@z
-
-@x
-    write_ln (stderr, 'ppltotf: Need one or two file arguments.');
-    usage ('ppltotf');
-@y
-    write_ln (stderr, 'uppltotf: Need one or two file arguments.');
-    usage ('uppltotf');
 @z
 
 @x

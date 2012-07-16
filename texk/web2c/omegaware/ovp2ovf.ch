@@ -15,6 +15,13 @@
 %\def\title{OVP2OVF changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is OVP2OVF, Version 1.12'
+@y
+@d my_name=='ovp2ovf'
+@d banner=='This is OVP2OVF, Version 1.12'
+@z
+
 @x [2] Print the banner later.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -24,7 +31,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     parse_arguments;
 @z
 
@@ -265,7 +272,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('ovp2ovf'); {|getopt| has already given an error message.}
+      usage (my_name); {|getopt| has already given an error message.}
 
     end else if argument_is ('help') then begin
       usage_help (OVP2OVF_HELP, nil);
@@ -281,8 +288,8 @@ begin
    We must have one to three remaining arguments.}
   if (optind + 1 <> argc) and (optind + 2 <> argc)
      and (optind + 3 <> argc) then begin
-    write_ln (stderr, 'ovp2ovf: Need one to three file arguments.');
-    usage ('ovp2ovf');
+    write_ln (stderr, my_name, ': Need one to three file arguments.');
+    usage (my_name);
   end;
 
   vpl_name := extend_filename (cmdline (optind), 'ovp');

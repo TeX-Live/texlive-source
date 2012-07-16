@@ -1,3 +1,7 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.c: Pass program name string to kpse_set_program_name.
+
 2011-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.c (main): The argument of kpse_set_program_name() must

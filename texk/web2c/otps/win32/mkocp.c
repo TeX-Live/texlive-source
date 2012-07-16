@@ -20,7 +20,7 @@ int main(int ac, char **av)
   char fullname[256];
   char *p;
 
-  kpse_set_program_name(av[0], NULL);
+  kpse_set_program_name(av[0], "mkocp");
 
   if(ac != 2) {
     fprintf(stderr,"%s : Usage %s ocpname\n", av[0], av[0]);

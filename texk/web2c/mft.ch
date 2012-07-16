@@ -36,6 +36,13 @@ been developed in January, 1980.
 Changes for \MP\ by W.~Bzyl in July, 2001.
 @z
 
+@x [2] Define my_name
+@d banner=='This is MFT, Version 2.0'
+@y
+@d my_name=='mft'
+@d banner=='This is MFT, Version 2.0'
+@z
+
 % [3] No need for the final label in C.
 % AIX defines `class' in <math.h>, so let's take this opportunity to
 % define that away.
@@ -59,7 +66,7 @@ procedure initialize;
 procedure initialize;
   var @<Local variables for initialization@>@/
 begin
-  kpse_set_program_name (argv[0], nil);
+  kpse_set_program_name (argv[0], my_name);
   parse_arguments;
   @<Set initial values@>;
 @z
@@ -1090,7 +1097,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('mft');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (MFT_HELP, nil);
@@ -1106,7 +1113,7 @@ begin
     end else if argument_is ('style') then begin
       if (n_style_name = max_style_name) then begin
 	fatal_error ('Too many style files specified.');
-        usage ('mft');
+        usage (my_name);
       end;
       style_name[n_style_name] := extend_filename (optarg, 'mft');
       n_style_name := n_style_name + 1;
@@ -1117,8 +1124,8 @@ begin
   {Now |optind| is the index of first non-option on the command line.
    We must have exactly one remaining argument.}
   if (optind + 1 <> argc) then begin
-    write_ln (stderr, 'mft: Need exactly one file argument.');
-    usage ('mft');
+    write_ln (stderr, my_name, ': Need exactly one file argument.');
+    usage (my_name);
   end;
 
   suffix := find_suffix (cmdline (optind));

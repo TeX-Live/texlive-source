@@ -52,6 +52,13 @@
 \def\title{TANGLE changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is OTANGLE, Version 4.4'
+@y
+@d my_name=='otangle'
+@d banner=='This is OTANGLE, Version 4.4'
+@z
+
 @x [2] Eliminate the |end_of_TANGLE| label.
 @d end_of_TANGLE = 9999 {go here to wrap it up}
 
@@ -71,7 +78,7 @@ procedure initialize;
 procedure initialize;
   var @<Local variables for initialization@>@/
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     parse_arguments;
     @<Set initial values@>@/
 @z
@@ -425,7 +432,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('otangle');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (OTANGLE_HELP, nil);
@@ -439,8 +446,8 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.}
   if (optind + 1 <> argc) and (optind + 2 <> argc) then begin
-    write_ln (stderr, 'otangle: Need one or two file arguments.');
-    usage ('otangle');
+    write_ln (stderr, my_name, ': Need one or two file arguments.');
+    usage (my_name);
   end;
 
   {Supply |".web"| and |".ch"| extensions if necessary.}

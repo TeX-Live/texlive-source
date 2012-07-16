@@ -1,3 +1,7 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkocp.c: Pass program name string to kpse_set_program_name.
+
 2011-05-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkocp.c, mkofm.c: New files from Akira's W32TeX.

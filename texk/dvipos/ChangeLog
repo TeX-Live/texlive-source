@@ -1,3 +1,7 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipos.c: Pass program name string to kpse_set_program_name.
+
 2012-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipos.c: Use binary mode for output files.

@@ -1,3 +1,7 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvihp.c: Pass program name string to kpse_set_program_name.
+
 2011-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* stackenv.c: Do not #include "variables.h".

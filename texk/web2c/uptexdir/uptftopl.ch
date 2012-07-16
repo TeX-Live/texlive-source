@@ -1,27 +1,15 @@
 @x
+@d my_name=='ptftopl'
 @d banner=='This is pTFtoPL, Version 3.2-p1.7'
 @y
+@d my_name=='uptftopl'
 @d banner=='This is upTFtoPL, Version 3.2-p1.7-u1.10'
-@z
-
-@x
-      usage ('ptftopl');
-@y
-      usage ('uptftopl');
 @z
 
 @x
       usage_help (PTFTOPL_HELP, nil);
 @y
       usage_help (UPTFTOPL_HELP, nil);
-@z
-
-@x
-    print_ln ('ptftopl: Need one or two file arguments.');
-    usage ('ptftopl');
-@y
-    print_ln ('uptftopl: Need one or two file arguments.');
-    usage ('uptftopl');
 @z
 
 @x

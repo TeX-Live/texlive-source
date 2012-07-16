@@ -10,8 +10,10 @@
 @z
 
 @x [2] l.64 - pTeX:
+@d my_name=='tftopl'
 @d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
 @y
+@d my_name=='ptftopl'
 @d banner=='This is pTFtoPL, Version 3.2-p1.7'
   {printed when the program starts}
 @z
@@ -352,12 +354,6 @@ const n_options = 6; {Pascal won't count array lengths for us.}
 @z
 
 @x
-      usage ('tftopl');
-@y
-      usage ('ptftopl');
-@z
-
-@x
       usage_help (TFTOPL_HELP, nil);
 @y
       usage_help (PTFTOPL_HELP, nil);
@@ -371,14 +367,6 @@ const n_options = 6; {Pascal won't count array lengths for us.}
         print_ln('Bad kanji encoding "', stringcast(optarg), '".');
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
-@z
-
-@x
-    print_ln ('tftopl: Need one or two file arguments.');
-    usage ('tftopl');
-@y
-    print_ln ('ptftopl: Need one or two file arguments.');
-    usage ('ptftopl');
 @z
 
 @x

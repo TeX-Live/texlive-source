@@ -8,6 +8,13 @@
 \def\title{VP$\,$\lowercase{to}$\,$VF changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is VPtoVF, Version 1.5' {printed when the program starts}
+@y
+@d my_name=='vptovf'
+@d banner=='This is VPtoVF, Version 1.5' {printed when the program starts}
+@z
+
 @x [2] Print the banner later.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -17,7 +24,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     parse_arguments;
 @z
 
@@ -245,7 +252,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('vptovf'); {|getopt| has already given an error message.}
+      usage (my_name); {|getopt| has already given an error message.}
 
     end else if argument_is ('help') then begin
       usage_help (VPTOVF_HELP, nil);
@@ -260,8 +267,8 @@ begin
    We must have one to three remaining arguments.}
   if (optind + 1 <> argc) and (optind + 2 <> argc)
      and (optind + 3 <> argc) then begin
-    write_ln (stderr, 'vptovf: Need one to three file arguments.');
-    usage ('vptovf');
+    write_ln (stderr, my_name ,': Need one to three file arguments.');
+    usage (my_name);
   end;
 
   vpl_name := extend_filename (cmdline (optind), 'vpl');

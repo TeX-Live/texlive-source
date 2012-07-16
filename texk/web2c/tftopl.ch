@@ -23,6 +23,13 @@
 \def\title{TF\lowercase{to}PL changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
+@y
+@d my_name=='tftopl'
+@d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
+@z
+
 @x [2] Print all terminal output on stderr, so the pl can be sent to stdout.
 @d print(#)==write(#)
 @d print_ln(#)==write_ln(#)
@@ -50,7 +57,7 @@ procedure initialize; {this procedure gets things started properly}
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     kpse_init_prog ('TFTOPL', 0, nil, nil);
     {We |xrealloc| when we know how big the file is.  The 1000 comes
      from the negative lower bound.}
@@ -332,7 +339,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('tftopl');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (TFTOPL_HELP, nil);
@@ -353,8 +360,8 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.}
   if (optind + 1 <> argc) and (optind + 2 <> argc) then begin
-    print_ln ('tftopl: Need one or two file arguments.');
-    usage ('tftopl');
+    print_ln (my_name, ': Need one or two file arguments.');
+    usage (my_name);
   end;
 
   tfm_name := cmdline (optind);

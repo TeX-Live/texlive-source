@@ -42,8 +42,10 @@
 % [1] banner
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
+@d my_name=='bibtex'
 @d banner=='This is BibTeX, Version 0.99d' {printed when the program starts}
 @y
+@d my_name=='pbibtex'
 @d banner=='This is pBibTeX, Version 0.99d-j0.33'
   {printed when the program starts}
 @z
@@ -520,12 +522,6 @@ const n_options = 6; {Pascal won't count array lengths for us.}
 @z
 
 @x
-      usage ('bibtex');
-@y
-      usage ('pbibtex');
-@z
-
-@x
       usage_help (BIBTEX_HELP, nil);
 @y
       usage_help (PBIBTEX_HELP, nil);
@@ -539,14 +535,6 @@ const n_options = 6; {Pascal won't count array lengths for us.}
         write_ln('Bad kanji encoding "', stringcast(optarg), '".');
 
     end; {Else it was a flag; |getopt| has already done the assignment.}
-@z
-
-@x
-    write_ln (stderr, 'bibtex: Need exactly one file argument.');
-    usage ('bibtex');
-@y
-    write_ln (stderr, 'pbibtex: Need exactly one file argument.');
-    usage ('pbibtex');
 @z
 
 @x

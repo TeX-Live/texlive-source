@@ -229,7 +229,7 @@ int main (int argc, char *argv[])
     msg_out(M_FAIL, "Could not open the framed DVI file %s.\n", frmfname);
 
 #ifdef KPATHSEA
-  kpse_set_program_name(argv[0], NULL);
+  kpse_set_program_name(argv[0], "dvipos");
 #elif MIKTEX
   miktex_initialize();
 #endif

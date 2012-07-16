@@ -12,6 +12,14 @@
 \def\title{POOL\lowercase{type} changes for C}
 @z
 
+@x [1] Define my_name
+copied from \TeX82.
+@y
+copied from \TeX82.
+
+@d my_name=='pooltype'
+@z
+
 @x [2] main program changes: no global labels, read command line.
 label 9999; {this labels the end of the program}
 @y
@@ -25,7 +33,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@;
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     parse_arguments;
     @<Set initial values of key variables@>
 @z
@@ -115,7 +123,7 @@ begin
       do_nothing;
 
     end else if getopt_return_val = '?' then begin
-      usage ('pooltype');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (POOLTYPE_HELP, nil);
@@ -130,8 +138,8 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.}
   if (optind + 1 <> argc) then begin
-    write_ln (stderr, 'pooltype: Need exactly one file argument.');
-    usage ('pooltype');
+    write_ln (stderr, my_name, ': Need exactly one file argument.');
+    usage (my_name);
   end;
 
   pool_name := extend_filename (cmdline (optind), 'pool');

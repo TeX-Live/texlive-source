@@ -106,7 +106,7 @@ main(int argc, char *argv[])
     int     log_given = FALSE;
 
 #if USE_KPATHSEA
-    kpse_set_program_name (*argv, NULL);
+    kpse_set_program_name (argv[0], "makeindex");
 #endif
 
     /* determine program name */

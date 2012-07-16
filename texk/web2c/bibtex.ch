@@ -22,6 +22,13 @@
 \let\maybe = \iffalse % process only changed sections
 @z
 
+@x [1] Define my_name
+@d banner=='This is BibTeX, Version 0.99d' {printed when the program starts}
+@y
+@d my_name=='bibtex'
+@d banner=='This is BibTeX, Version 0.99d' {printed when the program starts}
+@z
+
 % [2] `term_in' and `term_out' are standard input and output.  But
 % there is a complication: BibTeX passes `term_out' to some routines as
 % a var parameter.  web2c turns a var parameter f into &f at the calling
@@ -1518,7 +1525,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('bibtex');
+      usage (my_name);
 
     end else if argument_is ('min-crossrefs') then begin
       min_crossrefs := atoi (optarg);
@@ -1535,8 +1542,8 @@ begin
   {Now |optind| is the index of first non-option on the command line.
    We must have one remaining argument.}
   if (optind + 1 <> argc) then begin
-    write_ln (stderr, 'bibtex: Need exactly one file argument.');
-    usage ('bibtex');
+    write_ln (stderr, my_name, ': Need exactly one file argument.');
+    usage (my_name);
   end;
 end;
 

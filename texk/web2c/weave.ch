@@ -55,6 +55,13 @@
 \def\title{WEAVE changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is WEAVE, Version 4.4'
+@y
+@d my_name=='weave'
+@d banner=='This is WEAVE, Version 4.4'
+@z
+
 @x [2] No global labels, define and call parse_arguments.
 label end_of_WEAVE; {go here to finish}
 const @<Constants in the outer block@>@/
@@ -73,7 +80,7 @@ var @<Globals in the outer block@>@/
 procedure initialize;
   var @<Local variables for initialization@>@/
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     parse_arguments;
     @<Set initial values@>@/
 @z
@@ -360,7 +367,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('weave');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (WEAVE_HELP, nil);
@@ -373,8 +380,8 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.}
   if (optind + 1 <> argc) and (optind + 2 <> argc) then begin
-    write_ln (stderr, 'weave: Need one or two file arguments.');
-    usage ('weave');
+    write_ln (stderr, my_name, ': Need one or two file arguments.');
+    usage (my_name);
   end;
 
   {Supply |".web"| and |".ch"| extensions if necessary.}

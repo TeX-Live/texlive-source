@@ -1021,7 +1021,7 @@ int main(int argc, char **argv)
     char date[128], *s;
     time_t t = time(&t);
     int c;
-    kpse_set_program_name(argv[0], NULL);
+    kpse_set_program_name(argv[0], "ttf2afm");
     kpse_init_prog("ttf2afm", 0, 0, 0);
     while ((c = getopt(argc, argv, "iucve:o:m:")) != -1)
         switch (c) {

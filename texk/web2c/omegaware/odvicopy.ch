@@ -24,7 +24,14 @@
 \let\maybe=\iffalse
 @z
 
-@x [1] No random reading on stdin, may be not seekable.
+@x [1] Define my_name
+@d banner=='This is ODVIcopy, Version 1.6' {printed when the program starts}
+@y
+@d my_name=='odvicopy'
+@d banner=='This is ODVIcopy, Version 1.6' {printed when the program starts}
+@z
+
+@x [2] No random reading on stdin, may be not seekable.
 @d random_reading==true {should we skip around in the file?}
 @y
 @<Globals in the outer block@>=
@@ -40,7 +47,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     parse_arguments;
     print (banner); print_ln (version_string);
 @z
@@ -629,7 +636,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('odvicopy');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (ODVICOPY_HELP, nil);
@@ -653,8 +660,8 @@ begin
   {Now |optind| is the index of first non-option on the command line.
    We can have zero, one, or two remaining arguments.}
   if (optind > argc) or (optind + 2 < argc) then begin
-    write_ln (stderr, 'odvicopy: Need at most two file arguments.');
-    usage ('odvicopy');
+    write_ln (stderr, my_name, ': Need at most two file arguments.');
+    usage (my_name);
   end;
 
   if optind = argc then begin
@@ -741,7 +748,7 @@ while optarg[m] do begin
   end else if optarg[m] = "." then begin
     incr (k);
     if k >= 10 then begin
-      write_ln (stderr, 'odvicopy: More than ten count registers specified.');
+      write_ln (stderr, my_name, ': More than ten count registers specified.');
       uexit (1);
     end;
     incr (m);
@@ -749,7 +756,7 @@ while optarg[m] do begin
   end else begin
     start_count[k] := strtol (optarg + m, address_of (end_num), 10);
     if end_num = optarg + m then begin
-      write_ln (stderr, 'odvicopy: -page-start values must be numeric or *.');
+      write_ln (stderr, my_name, ': -page-start values must be numeric or *.');
       uexit (1);
     end;
     start_there[k] := true;

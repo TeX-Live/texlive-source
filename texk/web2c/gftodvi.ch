@@ -43,6 +43,13 @@
 \def\title{GF$\,$\lowercase{to}$\,$DVI changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is GFtoDVI, Version 3.0' {printed when the program starts}
+@y
+@d my_name=='gftodvi'
+@d banner=='This is GFtoDVI, Version 3.0' {printed when the program starts}
+@z
+
 @x [3] Redirect output to term_out.
 @d print(#)==write(#)
 @d print_ln(#)==write_ln(#)
@@ -69,7 +76,7 @@ var @<Globals in the outer block@>@/
 procedure initialize; {this procedure gets things started properly}
   var @!i,@!j,@!m,@!n:integer; {loop indices for initializations}
   begin
-    kpse_set_program_name (argv[0], nil);
+    kpse_set_program_name (argv[0], my_name);
     kpse_init_prog ('GFTODVI', 0, nil, nil);
     parse_arguments;
     if verbose then begin
@@ -650,7 +657,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('gftodvi');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (GFTODVI_HELP, nil);
@@ -668,8 +675,8 @@ begin
   {Now |optind| is the index of first non-option on the command line.
    We must have one remaining argument.}
   if (optind + 1 <> argc) then begin
-    write_ln (stderr, 'gftodvi: Need exactly one file argument.');
-    usage ('gftodvi');
+    write_ln (stderr, my_name, ': Need exactly one file argument.');
+    usage (my_name);
   end;
 end;
 

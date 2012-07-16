@@ -19,6 +19,13 @@
 \def\title{PL$\,$\lowercase{to}$\,$TF changes for C}
 @z
 
+@x [1] Define my_name
+@d banner=='This is PLtoTF, Version 3.5' {printed when the program starts}
+@y
+@d my_name=='pltotf'
+@d banner=='This is PLtoTF, Version 3.5' {printed when the program starts}
+@z
+
 @x [still 2] No banner unless verbose.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -28,7 +35,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
 begin
-  kpse_set_program_name (argv[0], nil);
+  kpse_set_program_name (argv[0], my_name);
   parse_arguments;
 @z
 
@@ -255,7 +262,7 @@ begin
       {End of arguments; we exit the loop below.} ;
 
     end else if getopt_return_val = "?" then begin
-      usage ('pltotf');
+      usage (my_name);
 
     end else if argument_is ('help') then begin
       usage_help (PLTOTF_HELP, nil);
@@ -269,8 +276,8 @@ begin
   {Now |optind| is the index of first non-option on the command line.
    We must have one or two remaining arguments.}
   if (optind + 1 <> argc) and (optind + 2 <> argc) then begin
-    write_ln (stderr, 'pltotf: Need one or two file arguments.');
-    usage ('pltotf');
+    write_ln (stderr, my_name, ': Need one or two file arguments.');
+    usage (my_name);
   end;
 
   pl_name := extend_filename (cmdline (optind), 'pl');

@@ -1,3 +1,8 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch:
+	Adapt to the use my_name.
+
 2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexextra.c: Must #define DLLPROC before reading ptexd.h.

@@ -1,3 +1,8 @@
+2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch:
+	Adapt to the use my_name.
+
 2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* uptexextra.c: Must #define DLLPROC before reading uptexd.h.

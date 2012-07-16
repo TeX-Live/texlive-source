@@ -1,6 +1,8 @@
 @x
+@d my_name=='pdvitype'
 @d banner=='This is pDVItype, Version 3.6-p0.4'
 @y
+@d my_name=='updvitype'
 @d banner=='This is upDVItype, Version 3.6-p0.4-u1.10'
 @z
 
@@ -30,22 +32,8 @@
 @z
 
 @x
-      usage ('pdvitype');
-@y
-      usage ('updvitype');
-@z
-
-@x
       usage_help (PDVITYPE_HELP, nil);
 @y
       usage_help (UPDVITYPE_HELP, nil);
-@z
-
-@x
-    write_ln (stderr, 'pdvitype: Need exactly one file argument.');
-    usage ('pdvitype');
-@y
-    write_ln (stderr, 'updvitype: Need exactly one file argument.');
-    usage ('updvitype');
 @z
 
