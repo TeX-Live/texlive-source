@@ -1,3 +1,8 @@
+2012-07-17  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: fix a bug in
+	@<Scan an alphabetic character code into |cur_val|@>
+
 2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch:
