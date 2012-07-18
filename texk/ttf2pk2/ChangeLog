@@ -1,3 +1,11 @@
+2012-07-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tfmaux.c, ttf2tfm.c: Use binary mode for output files.
+	* pklib.c (putshort), tfmaux.c (write16): Change the param from
+	short into int to avoid MSVC warnings without casting args.
+	* errormsg.h, tfmaux.c [WIN32]: Drop XCDECL.
+	From W32TeX.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

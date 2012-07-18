@@ -11,26 +11,6 @@
 #ifndef ERRORMSG_H
 #define ERRORMSG_H
 
-
-/*
-   Disable some annoying warnings when you compile with -W3.  Namely the
-   warnings about missing __cdecl specifiers at some places where they are
-   not really needed because the compiler can generate them.
-
-   This is relevant only if you compile with -Gr option, i.e., use fastcall
-   calling convention.
-
-   This is needed for fpTeX.
- */
-
-#ifdef WIN32
-#pragma warning (disable : 4007 4096)
-#define XCDECL __cdecl
-#else
-#define XCDECL
-#endif
-
-
 extern const char *progname;         /* the origin of the error/warning message */
 
 void oops(const char *message,

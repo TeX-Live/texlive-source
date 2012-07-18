@@ -688,7 +688,7 @@ handle_options(int argc, char *argv[], Font *fnt)
       oops("Bad small caps height.");
 
     if (vpl_name)
-      if ((fnt->vplout = fopen(vpl_name, "wt")) == NULL)
+      if ((fnt->vplout = fopen(vpl_name, "wb")) == NULL)
         oops("Cannot open vpl output file.");
   
     if (fnt->subfont_ligs)

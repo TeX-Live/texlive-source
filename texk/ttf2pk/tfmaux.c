@@ -50,7 +50,7 @@ static int unsort[257];
  *   A simple function for sorting sf_array (in inverse order)
  */
 
-static int XCDECL
+static int
 compare_sf(const void *a, const void *b)
 {
   return (int)(((const struct sf *)b)->sf_code - ((const struct sf *)a)->sf_code);
@@ -163,8 +163,7 @@ remap(long *what,
 
 
 static void
-write16(register short what,
-        register FILE *out)
+write16(int what, FILE *out)
 {
   (void)fputc(what >> 8, out);
   (void)fputc(what & 0xFF, out);
@@ -607,7 +606,7 @@ writeenc(Font *fnt)
   strcat(enc_name, fnt->fullname);
   strcat(enc_name, ".enc");
 
-  if ((out = fopen(enc_name, "wt")) == NULL)
+  if ((out = fopen(enc_name, "wb")) == NULL)
     oops("Cannot open enc file `%s'.", enc_name);
 
   free(enc_name);

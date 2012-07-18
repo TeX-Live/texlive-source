@@ -652,7 +652,7 @@ pk_bm_cvt(void)
 
 
 static void
-putshort(short w)
+putshort(int w)
 {
   putc(w >> 8, pk_file);
   putc(w, pk_file);
