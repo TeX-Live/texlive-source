@@ -1,3 +1,8 @@
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/writejbig2.w: Use LONGINTEGER_PRI, not LONGINTEGER_PRId.
+	* pdf/pdfgen.w: Use LONGINTEGER_PRI, not LONGINTEGER_PRIi.
+
 2012-07-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils/utils.w: Use EXIT_FAILURE instead of EX_SOFTWARE.
