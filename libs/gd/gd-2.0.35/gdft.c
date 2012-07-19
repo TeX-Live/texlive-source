@@ -22,11 +22,13 @@
 #include <unistd.h>
 #else
 #include <io.h>
+#ifndef R_OK
 #define R_OK 04			/* Needed in Windows */
+#endif
 #endif
 
 /* number of antialised colors for indexed bitmaps */
-#define NUMCOLORS 8
+#define gd_NUMCOLORS 8
 
 static int fontConfigFlag = 0;
 
@@ -537,7 +539,7 @@ tweenColorTest (void *element, void *key)
 /*
  * Computes a color in im's color table that is part way between
  * the background and foreground colors proportional to the gray
- * pixel value in the range 0-NUMCOLORS. The fg and bg colors must already
+ * pixel value in the range 0-gd_NUMCOLORS. The fg and bg colors must already
  * be in the color table for palette images. For truecolor images the
  * returned value simply has an alpha component and gdImageAlphaBlend
  * does the work so that text can be alpha blended across a complex
@@ -564,14 +566,14 @@ tweenColorFetch (char **error, void *key)
   /* if fg is specified by a negative color idx, then don't antialias */
   if (fg < 0)
     {
-      if ((pixel + pixel) >= NUMCOLORS)
+      if ((pixel + pixel) >= gd_NUMCOLORS)
 	a->tweencolor = -fg;
       else
 	a->tweencolor = bg;
     }
   else
     {
-      npixel = NUMCOLORS - pixel;
+      npixel = gd_NUMCOLORS - pixel;
       if (im->trueColor)
 	{
 	  /* 2.0.1: use gdImageSetPixel to do the alpha blending work,
@@ -584,20 +586,20 @@ tweenColorFetch (char **error, void *key)
 					    gdTrueColorGetBlue (fg),
 					    gdAlphaMax -
 					    (gdTrueColorGetAlpha (fg) *
-					     pixel / NUMCOLORS));
+					     pixel / gd_NUMCOLORS));
 	}
       else
 	{
 	  a->tweencolor = gdImageColorResolve (im,
 					       (pixel * im->red[fg] +
 						npixel * im->red[bg]) /
-					       NUMCOLORS,
+					       gd_NUMCOLORS,
 					       (pixel * im->green[fg] +
 						npixel * im->green[bg]) /
-					       NUMCOLORS,
+					       gd_NUMCOLORS,
 					       (pixel * im->blue[fg] +
 						npixel * im->blue[bg]) /
-					       NUMCOLORS);
+					       gd_NUMCOLORS);
 	}
     }
   return (void *) a;
@@ -734,23 +736,23 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 	  if (bitmap.pixel_mode == ft_pixel_mode_grays)
 	    {
 	      /*
-	       * Round to NUMCOLORS levels of antialiasing for
+	       * Round to gd_NUMCOLORS levels of antialiasing for
 	       * index color images since only 256 colors are
 	       * available.
 	       */
-	      tc_key.pixel = ((bitmap.buffer[pc] * NUMCOLORS)
+	      tc_key.pixel = ((bitmap.buffer[pc] * gd_NUMCOLORS)
 			      + bitmap.num_grays / 2)
 		/ (bitmap.num_grays - 1);
 	    }
 	  else if (bitmap.pixel_mode == ft_pixel_mode_mono)
 	    {
 	      tc_key.pixel = ((bitmap.buffer[pc / 8]
-			       << (pc % 8)) & 128) ? NUMCOLORS : 0;
+			       << (pc % 8)) & 128) ? gd_NUMCOLORS : 0;
 	      /* 2.0.5: mode_mono fix from Giuliano Pochini */
 	      tc_key.pixel =
 		((bitmap.
 		  buffer[(col >> 3) +
-			 pcr]) & (1 << (~col & 0x07))) ? NUMCOLORS : 0;
+			 pcr]) & (1 << (~col & 0x07))) ? gd_NUMCOLORS : 0;
 	    }
 	  else
 	    {
@@ -766,7 +768,7 @@ gdft_draw_bitmap (gdCache_head_t * tc_cache, gdImage * im, int fg,
 	    continue;
 	  /* get pixel location in gd buffer */
 	  pixel = &im->pixels[y][x];
-	  if (tc_key.pixel == NUMCOLORS)
+	  if (tc_key.pixel == gd_NUMCOLORS)
 	    {
 	      /* use fg color directly. gd 2.0.2: watch out for
 	         negative indexes (thanks to David Marwood). */
@@ -1561,6 +1563,16 @@ static char * font_path(char **fontpath, char *name_list)
    */
   *fontpath = NULL;
   fontsearchpath = getenv ("GDFONTPATH");
+#ifdef WIN32
+  if (!fontsearchpath) {
+    char *ffptr = getenv ("SYSTEMROOT");
+    if (ffptr) {
+      fontsearchpath = malloc (strlen(ffptr) + strlen("\\fonts") + 1);
+      strcpy(fontsearchpath, ffptr);
+      strcat(fontsearchpath, "\\fonts");
+    }
+  }
+#endif
   if (!fontsearchpath)
     fontsearchpath = DEFAULT_FONTPATH;
   fontlist = strdup (name_list);

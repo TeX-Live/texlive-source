@@ -1,0 +1,8 @@
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-win32 [WIN32] (new): Avoid 'redefined' warnings.
+	Add $SYSTEMROOT\fonts fontsearchpath.
+	Mail from Akira, 18 Jul 2012 19:11:09.
+
+Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
