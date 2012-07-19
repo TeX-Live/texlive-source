@@ -63,14 +63,13 @@ xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
 
 # We must create libxetex.a etc before building the xetex_OBJECTS
-xetex_prereq = $(libxetex) xetexdir/etex_version.h xetexdir/xetex_version.h
+xetex_prereq = $(libxetex) xetexdir/xetex_version.h
 $(xetex_OBJECTS): $(xetex_prereq)
 
 ## XeTeX C sources
 xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
-nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c \
-	xetexdir/etex_version.h xetexdir/xetex_version.h
-dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h
+nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c
+dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h xetexdir/xetex_version.h
 
 $(xetex_c_h): xetex-web2c
 	@$(web2c) xetex
@@ -86,14 +85,8 @@ xetex.p xetex.pool: xetex-tangle
 xetex-tangle: ./otangle$(EXEEXT) xetex.web tangle-sh
 	@$(o_tangle) xetex
 
-## Extract etex version
-xetexdir/etex_version.h: etexdir/etex.ch
-	$(MKDIR_P) xetexdir
-	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
-
 ## Extract xetex version
-xetexdir/xetex_version.h: xetexdir/xetex.ch
+xetexdir/xetex_version.h: xetexdir/xetex.ch etexdir/etex_version.h
 	$(MKDIR_P) xetexdir
 	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.ch \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@

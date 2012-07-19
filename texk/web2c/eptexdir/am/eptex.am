@@ -1,6 +1,6 @@
 ## texk/web2c/eptexdir/am/eptex.am: Makefile fragment for e-pTeX.
 ##
-## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-pTeX
@@ -24,11 +24,11 @@ eptex_DEPENDENCIES = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependen
 
 # e-pTeX C sources
 eptex_c_h = eptexini.c eptex0.c eptexcoerce.h eptexd.h
-nodist_eptex_SOURCES = $(eptex_c_h) eptex-pool.c eptexdir/etex_version.h eptexdir/eptex_version.h eptexdir/ptex_version.h
-dist_eptex_SOURCES = eptexdir/eptexextra.c eptexdir/eptexextra.h
+nodist_eptex_SOURCES = $(eptex_c_h) eptex-pool.c
+dist_eptex_SOURCES = eptexdir/eptexextra.c eptexdir/eptexextra.h eptexdir/eptex_version.h
 
-# We must create eptexd.h and eptexdir/[ep]tex_version.h before building the eptex_OBJECTS.
-eptex_prereq = eptexd.h eptexdir/etex_version.h eptexdir/eptex_version.h eptexdir/ptex_version.h
+# We must create eptexd.h and eptexdir/eptex_version.h before building the eptex_OBJECTS.
+eptex_prereq = eptexd.h eptexdir/eptex_version.h
 $(eptex_OBJECTS): $(eptex_prereq)
 
 $(eptex_c_h): eptex-web2c
@@ -45,23 +45,11 @@ eptex.p eptex.pool: eptex-tangle
 eptex-tangle: tangle$(EXEEXT) eptex.web eptex.ch tangle-sh
 	@$(texmf_tangle) eptex eptex
 
-# Extract etex version
-eptexdir/etex_version.h: etexdir/etex.ch
-	$(MKDIR_P) eptexdir
-	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
-
 # Extract eptex version
-eptexdir/eptex_version.h: eptexdir/eptex.ech
+eptexdir/eptex_version.h: eptexdir/eptex.ech etexdir/etex_version.h ptexdir/ptex_version.h
 	$(MKDIR_P) eptexdir
 	grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
 	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@
-
-# Extract ptex version
-eptexdir/ptex_version.h: ptexdir/ptex-base.ch
-	$(MKDIR_P) eptexdir
-	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
-	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate eptex.web
 eptex.web: tie$(EXEEXT) $(eptex_web_srcs)

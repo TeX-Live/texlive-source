@@ -1,3 +1,7 @@
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am: Distribute ptex_version.h.
+
 2012-07-17  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: fix a bug in

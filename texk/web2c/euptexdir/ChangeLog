@@ -1,3 +1,9 @@
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* euptexextra.h: Use the distributed files
+	../{ep,e,p,up}texdir/{ep,e,p,up}tex_version.h.
+	* am/euptex.am: Adapted.
+
 2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* euptexextra.c: Must #define DLLPROC before reading euptexd.h.

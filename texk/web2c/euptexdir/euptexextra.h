@@ -3,10 +3,10 @@
    This is included by e-upTeX, from euptexextra.c
 */
 
-#include <euptexdir/eptex_version.h> /* for EPTEX_VERSION */
-#include <euptexdir/etex_version.h> /* for ETEX_VERSION */
-#include <euptexdir/ptex_version.h> /* for PTEX_VERSION */
-#include <euptexdir/uptex_version.h> /* for UPTEX_VERSION */
+#include <eptexdir/eptex_version.h> /* for EPTEX_VERSION */
+#include <etexdir/etex_version.h> /* for ETEX_VERSION */
+#include <ptexdir/ptex_version.h> /* for PTEX_VERSION */
+#include <uptexdir/uptex_version.h> /* for UPTEX_VERSION */
 
 #define BANNER "This is e-upTeX, Version 3.1415926-" PTEX_VERSION "-" UPTEX_VERSION "-" EPTEX_VERSION "-" ETEX_VERSION
 #define COPYRIGHT_HOLDER "D.E. Knuth"

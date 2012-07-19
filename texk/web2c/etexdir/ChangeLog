@@ -1,3 +1,7 @@
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: Distribute etex_version.h.
+
 2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* etexextra.c: Must #define DLLPROC before reading etexd.h.

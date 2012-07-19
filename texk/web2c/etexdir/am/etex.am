@@ -17,8 +17,8 @@ etex_LDADD = $(LDADD) $(ipc_socketlibs)
 
 # e-TeX C sources
 etex_c_h = etexini.c etex0.c etexcoerce.h etexd.h
-nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexdir/etex_version.h
-dist_etex_SOURCES = etexdir/etexextra.c etexdir/etexextra.h
+nodist_etex_SOURCES = $(etex_c_h) etex-pool.c
+dist_etex_SOURCES = etexdir/etexextra.c etexdir/etexextra.h etexdir/etex_version.h
 
 # We must create etexd.h and etexdir/etex_version.h before building the etex_OBJECTS.
 etex_prereq = etexd.h etexdir/etex_version.h

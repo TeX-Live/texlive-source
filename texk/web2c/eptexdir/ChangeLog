@@ -1,3 +1,8 @@
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/eptex.am: Distribute eptex_version.h.
+	* eptexextra.h: Use ../[ep]texdir/[ep]tex_version.h.
+
 2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* eptexextra.c: Must #define DLLPROC before reading eptexd.h.

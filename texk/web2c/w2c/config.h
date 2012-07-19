@@ -75,18 +75,18 @@ typedef INTEGER_TYPE integer;
 /* We need a type that's at least off_t wide */
 typedef off_t longinteger;
 
+/* To print file offsets we cast them to `LONGINTEGER_TYPE' (or
+   `unsigned LONGINTEGER_TYPE') and use the conversion specifier
+   `"%" LONGINTEGER_PRI "d"' (or `"%" LONGINTEGER_PRI "u"').  */
 #if defined(WIN32) && !defined(__MINGW32__)
 #define LONGINTEGER_TYPE __int64
-#define LONGINTEGER_PRId "I64d"
-#define LONGINTEGER_PRIi "I64i"
+#define LONGINTEGER_PRI "I64"
 #elif SIZEOF_LONG < SIZEOF_OFF_T
 #define LONGINTEGER_TYPE long long
-#define LONGINTEGER_PRId "lld"
-#define LONGINTEGER_PRIi "lli"
+#define LONGINTEGER_PRI "ll"
 #else
 #define LONGINTEGER_TYPE long
-#define LONGINTEGER_PRId "ld"
-#define LONGINTEGER_PRIi "li"
+#define LONGINTEGER_PRI "l"
 #endif
 
 /* I don't want to write a configure test for remove when all Unix

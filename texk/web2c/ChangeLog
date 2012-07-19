@@ -1,3 +1,8 @@
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* w2c/config.h: Define LONGINTEGER_PRI instead of
+	LONGINTEGER_PRId, also to be used for unsigned quantities.
+
 2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex.ch, dvicopy.ch, dvitype.ch, gftodvi.ch, gftopk.ch,

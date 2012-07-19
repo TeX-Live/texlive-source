@@ -53,7 +53,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-#include <xetexdir/etex_version.h> /* for ETEX_VERSION */
+#include <etexdir/etex_version.h> /* for ETEX_VERSION */
 #include <xetexdir/xetex_version.h> /* for XETEX_VERSION */
 
 #define BANNER "This is XeTeX, Version 3.1415926-" ETEX_VERSION "-" XETEX_VERSION

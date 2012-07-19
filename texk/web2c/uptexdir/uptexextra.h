@@ -3,7 +3,7 @@
    This is included by upTeX, from uptexextra.c
 */
 
-#include <uptexdir/ptex_version.h> /* for PTEX_VERSION */
+#include <ptexdir/ptex_version.h> /* for PTEX_VERSION */
 #include <uptexdir/uptex_version.h> /* for UPTEX_VERSION */
 
 #define BANNER "This is upTeX, Version 3.1415926-" PTEX_VERSION "-" UPTEX_VERSION

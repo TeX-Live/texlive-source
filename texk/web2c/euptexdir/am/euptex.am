@@ -1,6 +1,6 @@
 ## texk/web2c/euptexdir/am/euptex.am: Makefile fragment for e-upTeX.
 ##
-## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-upTeX
@@ -24,13 +24,12 @@ euptex_DEPENDENCIES = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_depend
 
 # e-upTeX C sources
 euptex_c_h = euptexini.c euptex0.c euptexcoerce.h euptexd.h
-nodist_euptex_SOURCES = $(euptex_c_h) euptex-pool.c euptexdir/etex_version.h \
-	euptexdir/eptex_version.h euptexdir/ptex_version.h euptexdir/uptex_version.h
-dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h
+nodist_euptex_SOURCES = $(euptex_c_h) euptex-pool.c
+dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h \
+	eptexdir/eptex_version.h uptexdir/uptex_version.h
 
-# We must create euptexd.h and euptexdir/*tex_version.h before building the euptex_OBJECTS.
-euptex_prereq = euptexd.h euptexdir/etex_version.h euptexdir/eptex_version.h \
-	euptexdir/ptex_version.h euptexdir/uptex_version.h
+# We must create euptexd.h and [eu]ptexdir/[eu]ptex_version.h before building the euptex_OBJECTS.
+euptex_prereq = euptexd.h eptexdir/eptex_version.h uptexdir/uptex_version.h
 $(euptex_OBJECTS): $(euptex_prereq)
 
 $(euptex_c_h): euptex-web2c
@@ -46,30 +45,6 @@ euptex.p euptex.pool: euptex-tangle
 	@$(texmf_tangle) euptex euptex
 euptex-tangle: tangle$(EXEEXT) euptex.web euptex.ch tangle-sh
 	@$(texmf_tangle) euptex euptex
-
-# Extract etex version
-euptexdir/etex_version.h: etexdir/etex.ch
-	$(MKDIR_P) euptexdir
-	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
-	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
-
-# Extract eptex version
-euptexdir/eptex_version.h: eptexdir/eptex.ech
-	$(MKDIR_P) euptexdir
-	grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
-	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@
-
-# Extract ptex version
-euptexdir/ptex_version.h: ptexdir/ptex-base.ch
-	$(MKDIR_P) euptexdir
-	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
-	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
-
-# Extract uptex version
-euptexdir/uptex_version.h: uptexdir/uptex-m.ch
-	$(MKDIR_P) euptexdir
-	grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
-	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 # Generate euptex.web
 euptex.web: tie$(EXEEXT) $(euptex_web_srcs)

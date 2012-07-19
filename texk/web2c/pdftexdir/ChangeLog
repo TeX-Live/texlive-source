@@ -1,3 +1,12 @@
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am: Distribute pdftex_version.h.
+	* pdftexextra.h: Use ../etexdir/etex_version.h.
+
+2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writejbig2.c: Use LONGINTEGER_PRI instead of LONGINTEGER_PRId.
+
 2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ttf2afm.c: Pass program name string to kpse_set_program_name.

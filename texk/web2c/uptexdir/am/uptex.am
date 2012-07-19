@@ -1,6 +1,6 @@
 ## texk/web2c/uptexdir/am/uptex.am: Makefile fragment for upTeX.
 ##
-## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -46,11 +46,11 @@ uptex_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX C sources
 uptex_c_h = uptexini.c uptex0.c uptexcoerce.h uptexd.h
-nodist_uptex_SOURCES = $(uptex_c_h) uptex-pool.c uptexdir/ptex_version.h uptexdir/uptex_version.h
-dist_uptex_SOURCES = uptexdir/uptexextra.c uptexdir/uptexextra.h
+nodist_uptex_SOURCES = $(uptex_c_h) uptex-pool.c
+dist_uptex_SOURCES = uptexdir/uptexextra.c uptexdir/uptexextra.h uptexdir/uptex_version.h
 
-# We must create uptexd.h and uptexdir/*ptex_version.h before building the uptex_OBJECTS.
-uptex_prereq = uptexd.h uptexdir/ptex_version.h uptexdir/uptex_version.h
+# We must create uptexd.h and uptexdir/uptex_version.h before building the uptex_OBJECTS.
+uptex_prereq = uptexd.h uptexdir/uptex_version.h
 $(uptex_OBJECTS): $(uptex_prereq)
 
 $(uptex_c_h): uptex-web2c
@@ -67,14 +67,8 @@ uptex.p uptex.pool: uptex-tangle
 uptex-tangle: tangle$(EXEEXT) uptex.web uptex.ch tangle-sh
 	@$(texmf_tangle) uptex uptex
 
-# Extract ptex version
-uptexdir/ptex_version.h: ptexdir/ptex-base.ch
-	$(MKDIR_P) uptexdir
-	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex-base.ch \
-	  | sed "s/^.*'-/#define PTEX_VERSION \"/;s/'.*$$/\"/" >$@
-
 # Extract uptex version
-uptexdir/uptex_version.h: uptexdir/uptex-m.ch
+uptexdir/uptex_version.h: uptexdir/uptex-m.ch ptexdir/ptex_version.h
 	$(MKDIR_P) uptexdir
 	grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
 	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@

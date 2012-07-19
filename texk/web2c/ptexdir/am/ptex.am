@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright (C) 2010-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -56,8 +56,8 @@ ptex_DEPENDENCIES = $(ptex_dependencies)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
-nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexdir/ptex_version.h
-dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h
+nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c
+dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h ptexdir/ptex_version.h
 
 # We must create ptexd.h and ptexdir/ptex_version.h before building the ptex_OBJECTS.
 ptex_prereq = ptexd.h ptexdir/ptex_version.h
