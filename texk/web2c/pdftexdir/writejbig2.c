@@ -720,7 +720,7 @@ static void wr_jbig2(FILEINFO * fip, unsigned long page)
         pdf_printf("/Height %i\n", pip->height);
         pdf_puts("/ColorSpace /DeviceGray\n");
         pdf_puts("/BitsPerComponent 1\n");
-        pdf_printf("/Length %" LONGINTEGER_PRId "\n",
+        pdf_printf("/Length %" LONGINTEGER_PRI "d\n",
                    (LONGINTEGER_TYPE) getstreamlen(pip->segments.first, true));
         pdf_puts("/Filter [/JBIG2Decode]\n");
         if (fip->page0.last != NULL) {
@@ -735,7 +735,7 @@ static void wr_jbig2(FILEINFO * fip, unsigned long page)
         pip = find_pageinfo(&(fip->page0), page);
         assert(pip != NULL);
         pdfbegindict(fip->pdfpage0objnum, 0);
-        pdf_printf("/Length %" LONGINTEGER_PRId "\n",
+        pdf_printf("/Length %" LONGINTEGER_PRI "d\n",
                    (LONGINTEGER_TYPE) getstreamlen(pip->segments.first, false));
     }
     pdf_puts(">>\n");
