@@ -460,12 +460,11 @@ struct env_c_rec{
 
 #if defined(DOS_WIN32) || defined(__MSDOS__)
 #define READ_BIN_FLAGS "rb"
+#define READ_TEXT_FLAGS "r"
 #define WRITE_BIN_FLAGS "wb"
 #ifdef WIN32
-#define READ_TEXT_FLAGS "rb"
 #define WRITE_TEXT_FLAGS "wb"
 #else
-#define READ_TEXT_FLAGS "r"
 #define WRITE_TEXT_FLAGS "w"
 #endif
 #else
