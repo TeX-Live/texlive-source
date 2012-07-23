@@ -22,7 +22,7 @@
 
 FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char *fmode)
 {
-  char *mode = "Xb";
+  char mode[3];
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
   SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
@@ -45,7 +45,9 @@ FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char 
 
   /* We always use binary mode */
 
-  *mode = *fmode;
+  mode[0] = fmode[0];
+  mode[1] = 'b';
+  mode[2] = '\0';
 
   /* We should look for the application name along the PATH,
      and decide to prepend "%COMSPEC% /c " or not to the command line.
