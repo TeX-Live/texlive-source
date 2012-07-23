@@ -20,8 +20,9 @@
 #include <kpathsea/concatn.h>
 #include <kpathsea/variable.h>
 
-FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char *mode)
+FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char *fmode)
 {
+  char *mode = "Xb";
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
   SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
@@ -41,6 +42,10 @@ FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char 
   char *suffixes[] = { ".bat", ".cmd", ".com", ".exe", NULL };
   char **s;
   BOOL go_on;
+
+  /* We always use binary mode */
+
+  *mode = *fmode;
 
   /* We should look for the application name along the PATH,
      and decide to prepend "%COMSPEC% /c " or not to the command line.
