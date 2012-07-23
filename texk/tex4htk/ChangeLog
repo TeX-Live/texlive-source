@@ -1,3 +1,9 @@
+2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* t4ht.c, tex4ht.c [WIN32]: Use binary mode for output files.
+	Pass program name string to kpse_set_program_name.
+	Adapt to W32TeX versions.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

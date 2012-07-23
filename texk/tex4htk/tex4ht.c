@@ -1,6 +1,6 @@
 
 /* tex4ht.c (2010-12-16-08:39), generated from tex4ht-c.tex
-   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 2009-2012 TeX Users Group
    Copyright (C) 1996-2009 Eitan M. Gurari
 
 %
@@ -154,10 +154,11 @@
 
 
 #ifdef WIN32
-#include <windows.h>
 #ifdef KPATHSEA
 #undef CDECL
 #define CDECL                     __cdecl
+#else
+#include <windows.h>
 #endif
 #else
 #ifdef KPATHSEA
@@ -194,9 +195,6 @@
 
 
 #ifdef KPATHSEA
-#ifdef __MINGW32__
-#define HAVE_BOOLEAN 1
-#endif /* __MINGW32__ */
 #include <kpathsea/config.h>
 #include <kpathsea/c-errno.h>
 #include <kpathsea/c-ctype.h>
@@ -406,7 +404,7 @@ struct env_c_rec{
 #endif
 
 
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
 #define dir_path_slash(str) (is_forward_slash(str)? '/' : '\\')
 #else
 #define dir_path_slash(str)  '/'
@@ -462,9 +460,14 @@ struct env_c_rec{
 
 #if defined(DOS_WIN32) || defined(__MSDOS__)
 #define READ_BIN_FLAGS "rb"
-#define READ_TEXT_FLAGS "r"
 #define WRITE_BIN_FLAGS "wb"
+#ifdef WIN32
+#define READ_TEXT_FLAGS "rb"
+#define WRITE_TEXT_FLAGS "wb"
+#else
+#define READ_TEXT_FLAGS "r"
 #define WRITE_TEXT_FLAGS "w"
+#endif
 #else
 #define READ_BIN_FLAGS "r"
 #define READ_TEXT_FLAGS "r"
@@ -1320,7 +1323,7 @@ static void add_to_cache( ARG_III(const char*,const char*,int) );
 static FILE* search_file_ext( ARG_III(const char *, const U_CHAR *, const U_CHAR *) );
 
 
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
    static BOOL is_forward_slash( ARG_I(const char*) );
 #endif
 
@@ -3402,7 +3405,7 @@ static  int math_class_of
 }
 
 
-#if defined(DOS_WIN32) || defined(__MSDOS__)
+#if defined(__MSDOS__)
 
 
 static char *get_env_dir
@@ -3752,7 +3755,7 @@ do
   *(q++) = ch = (int) getc(cache_files);
 while( (ch !='\n') && (ch != EOF) );
 *(q-1 - (*(q-2) == 
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
  '\\'
 #else
  '/'
@@ -3791,7 +3794,7 @@ while( search_dot_file( typ ) && !flag ){        U_CHAR *q, save_ch;
   flag = *(q - 2) = '!';
   q -= (flag? 2 : 1);
   *(q - (*(q-1) == 
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
  '\\'
 #else
  '/'
@@ -3963,7 +3966,7 @@ if( (file = f_open(name, flags)) != NULL ){
       if( subs )  str[i] = '\0';  else i++;
       
 (IGNORED) strct(str,
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
  (( dir[i-1] == '/') ||  ( dir[i-1] == '\\'))
  ?  ""
  :  (is_forward_slash(dir)?  "/" : "\\" )
@@ -4109,7 +4112,7 @@ static FILE* search_file_ext
     int    n;
   n = (int) strlen(dir);
   (IGNORED) sprintf(str,
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
  (( dir[n-1] == '/') ||  ( dir[n-1] == '\\'))
  ?  "%s%s"
  :  (is_forward_slash(dir)?  "%s/%s" : "%s\\%s" )
@@ -4122,7 +4125,7 @@ static FILE* search_file_ext
      return file;
   }
   if( (str[n] == 
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
  '\\'
 #else
  '/'
@@ -4142,8 +4145,7 @@ static FILE* search_file_ext
     HANDLE hnd;
     int proceed;
     (IGNORED) strcpy((char *) dirname, (char *) str);
-    strct(dirname, (is_forward_slash(dirname)?  "/" : "\\") );
-    strct(dirname, "*.*");       
+    strct(dirname, "/*.*");       
     hnd = FindFirstFile(dirname, &find_file_data);
     if (hnd != INVALID_HANDLE_VALUE) {
       
@@ -4207,7 +4209,7 @@ if( LSTAT(str, &buf) >= 0 )
 }
 
 
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
 
 static BOOL is_forward_slash
 #ifdef ANSI
@@ -5890,13 +5892,13 @@ BOOL in_accenting;
 
 char* tex4ht_env_file = (char *) 0;
 char* dos_env_file =
-#if defined(DOS_WIN32) || defined(__MSDOS__)
+#if defined(__MSDOS__)
   
 get_env_dir(argv[0])
 
 ;
 #endif
-#if !defined(DOS_WIN32) && !defined(__MSDOS__)
+#if !defined(__MSDOS__)
   (char *) 0;
 #endif
 
@@ -6084,7 +6086,7 @@ HOME_DIR = getenv("HOME");
   
 
 #ifdef KPATHSEA
-   kpse_set_program_name (argv[0], NULL);
+   kpse_set_program_name (argv[0], "tex4ht");
 #endif
 
 
@@ -6363,10 +6365,8 @@ if( (idv_file = fopen(job_name, WRITE_BIN_FLAGS)) == NULL )
 
 
  }
-#ifdef KPATHSEA
 #ifdef KWIN32
    else if (!isatty(fileno(stdin))) SET_BINARY(fileno(stdin));
-#endif
 #endif
 
 
@@ -6450,7 +6450,7 @@ if( TEX4HTENV ){
 if( !dot_file ){
    if( HOME_DIR ){
       (IGNORED) sprintf(str,
-#if defined(DOS_WIN32) || defined(__DJGPP__)
+#if defined(__DJGPP__)
   is_forward_slash(HOME_DIR)?  "%s/tex4ht.env" :  "%s\\tex4ht.env"
 #else
   "%s/tex4ht.env"
@@ -6468,7 +6468,7 @@ if( !dot_file ){
         dot_file = f_open(str,READ_TEXT_FLAGS);
    } }
 #endif
-#if defined(DOS_WIN32) || defined(__MSDOS__)
+#if defined(__MSDOS__)
    if( !dot_file ){
       if( dump_env_search ){ (IGNORED) printf("%s?\n", "C:/tex4ht.env"); }
       dot_file = f_open("C:/tex4ht.env",READ_TEXT_FLAGS);

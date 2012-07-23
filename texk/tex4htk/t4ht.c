@@ -1,6 +1,6 @@
 
 /* t4ht.c (2010-12-16-08:47), generated from tex4ht-t4ht.tex
-   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 2009-2012 TeX Users Group
    Copyright (C) 1998-2009 Eitan M. Gurari
 
 %
@@ -240,9 +240,14 @@
 
 #if defined(DOS_WIN32) || defined(__MSDOS__)
 #define READ_BIN_FLAGS "rb"
-#define READ_TEXT_FLAGS "r"
 #define WRITE_BIN_FLAGS "wb"
+#ifdef WIN32
+#define READ_TEXT_FLAGS "rb"
+#define WRITE_TEXT_FLAGS "wb"
+#else
+#define READ_TEXT_FLAGS "r"
 #define WRITE_TEXT_FLAGS "w"
+#endif
 #else
 #define READ_BIN_FLAGS "r"
 #define READ_TEXT_FLAGS "r"
@@ -898,7 +903,7 @@ static struct script_struct * add_script
 }
 
 
-#if defined(DOS_WIN32) || defined(__MSDOS__)
+#if defined(__MSDOS__)
 
 
 static char *get_env_dir
@@ -1421,13 +1426,13 @@ struct empty_pic_struct *empty_pic;
 
 Q_CHAR * tex4ht_env_file = (Q_CHAR *) 0;
 Q_CHAR * dos_env_file =
-#if defined(DOS_WIN32) || defined(__MSDOS__)
+#if defined(__MSDOS__)
   
 get_env_dir(argv[0])
 
 ;
 #endif
-#if !defined(DOS_WIN32) && !defined(__MSDOS__)
+#if !defined(__MSDOS__)
   (Q_CHAR *) 0;
 #endif
 
@@ -1585,7 +1590,7 @@ system( yes ) != 0
        Q_CHAR *p, *q;
   
 #ifdef KPATHSEA
-   kpse_set_program_name (argv[0], NULL);
+   kpse_set_program_name (argv[0], "tex4ht");
 #endif
 
 
