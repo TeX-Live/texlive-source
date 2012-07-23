@@ -2012,7 +2012,7 @@ fonts worse than mode-tuned Type 1 bitmap fonts.  So, MixedMap is used
 for fonts that are available as both Type 1 and Metafont.
 KanjiMap entries are added to psfonts_t1.map and kanjix.map.
 
-Explanation of the OPTION names for --showoptions, --showoptions, --setoption:
+Explanation of the OPTION names for --showoptions, --showoption, --setoption:
 
   dvipsPreferOutline    true|false  (default true)
     Whether dvips uses bitmaps or outlines, when both are available.
