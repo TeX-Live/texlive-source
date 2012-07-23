@@ -99,7 +99,6 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/OutputDev.cc \
 	$(POPPLER_SRC)/PDFDoc.cc \
 	$(POPPLER_SRC)/PDFDocEncoding.cc \
-	$(POPPLER_SRC)/PSOutputDev.cc \
 	$(POPPLER_SRC)/PSTokenizer.cc \
 	$(POPPLER_SRC)/Page.cc \
 	$(POPPLER_SRC)/PageLabelInfo.cc \

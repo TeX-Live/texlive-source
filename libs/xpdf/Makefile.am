@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build xpdf for TeX Live.
 ##
-##   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -107,7 +107,6 @@ xpdf_libxpdf_a_sources = \
 	$(XPDF_SRC)/OutputDev.cc \
 	$(XPDF_SRC)/PDFDoc.cc \
 	$(XPDF_SRC)/PDFDocEncoding.cc \
-	$(XPDF_SRC)/PSOutputDev.cc \
 	$(XPDF_SRC)/PSTokenizer.cc \
 	$(XPDF_SRC)/Page.cc \
 	$(XPDF_SRC)/Parser.cc \

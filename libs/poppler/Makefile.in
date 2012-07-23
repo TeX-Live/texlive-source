@@ -96,12 +96,12 @@ am__objects_3 = Annot.$(OBJEXT) Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 	Link.$(OBJEXT) Movie.$(OBJEXT) NameToCharCode.$(OBJEXT) \
 	Object.$(OBJEXT) OptionalContent.$(OBJEXT) Outline.$(OBJEXT) \
 	OutputDev.$(OBJEXT) PDFDoc.$(OBJEXT) PDFDocEncoding.$(OBJEXT) \
-	PSOutputDev.$(OBJEXT) PSTokenizer.$(OBJEXT) Page.$(OBJEXT) \
-	PageLabelInfo.$(OBJEXT) PageTransition.$(OBJEXT) \
-	Parser.$(OBJEXT) PopplerCache.$(OBJEXT) \
-	PreScanOutputDev.$(OBJEXT) ProfileData.$(OBJEXT) \
-	Rendition.$(OBJEXT) SecurityHandler.$(OBJEXT) Sound.$(OBJEXT) \
-	Stream.$(OBJEXT) strtok_r.$(OBJEXT) UnicodeMap.$(OBJEXT) \
+	PSTokenizer.$(OBJEXT) Page.$(OBJEXT) PageLabelInfo.$(OBJEXT) \
+	PageTransition.$(OBJEXT) Parser.$(OBJEXT) \
+	PopplerCache.$(OBJEXT) PreScanOutputDev.$(OBJEXT) \
+	ProfileData.$(OBJEXT) Rendition.$(OBJEXT) \
+	SecurityHandler.$(OBJEXT) Sound.$(OBJEXT) Stream.$(OBJEXT) \
+	strtok_r.$(OBJEXT) UnicodeMap.$(OBJEXT) \
 	UnicodeTypeTable.$(OBJEXT) ViewerPreferences.$(OBJEXT) \
 	XRef.$(OBJEXT) XpdfPluginAPI.$(OBJEXT)
 nodist_libpoppler_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
@@ -354,7 +354,6 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/OutputDev.cc \
 	$(POPPLER_SRC)/PDFDoc.cc \
 	$(POPPLER_SRC)/PDFDocEncoding.cc \
-	$(POPPLER_SRC)/PSOutputDev.cc \
 	$(POPPLER_SRC)/PSTokenizer.cc \
 	$(POPPLER_SRC)/Page.cc \
 	$(POPPLER_SRC)/PageLabelInfo.cc \
@@ -491,7 +490,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OutputDev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFDoc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFDocEncoding.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSOutputDev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSTokenizer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Page.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageLabelInfo.Po@am__quote@
@@ -1256,20 +1254,6 @@ PDFDocEncoding.obj: $(POPPLER_SRC)/PDFDocEncoding.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/PDFDocEncoding.cc' object='PDFDocEncoding.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDocEncoding.obj `if test -f '$(POPPLER_SRC)/PDFDocEncoding.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/PDFDocEncoding.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/PDFDocEncoding.cc'; fi`
-
-PSOutputDev.o: $(POPPLER_SRC)/PSOutputDev.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSOutputDev.o -MD -MP -MF $(DEPDIR)/PSOutputDev.Tpo -c -o PSOutputDev.o `test -f '$(POPPLER_SRC)/PSOutputDev.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/PSOutputDev.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PSOutputDev.Tpo $(DEPDIR)/PSOutputDev.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/PSOutputDev.cc' object='PSOutputDev.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PSOutputDev.o `test -f '$(POPPLER_SRC)/PSOutputDev.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/PSOutputDev.cc
-
-PSOutputDev.obj: $(POPPLER_SRC)/PSOutputDev.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSOutputDev.obj -MD -MP -MF $(DEPDIR)/PSOutputDev.Tpo -c -o PSOutputDev.obj `if test -f '$(POPPLER_SRC)/PSOutputDev.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/PSOutputDev.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/PSOutputDev.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PSOutputDev.Tpo $(DEPDIR)/PSOutputDev.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/PSOutputDev.cc' object='PSOutputDev.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PSOutputDev.obj `if test -f '$(POPPLER_SRC)/PSOutputDev.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/PSOutputDev.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/PSOutputDev.cc'; fi`
 
 PSTokenizer.o: $(POPPLER_SRC)/PSTokenizer.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSTokenizer.o -MD -MP -MF $(DEPDIR)/PSTokenizer.Tpo -c -o PSTokenizer.o `test -f '$(POPPLER_SRC)/PSTokenizer.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/PSTokenizer.cc

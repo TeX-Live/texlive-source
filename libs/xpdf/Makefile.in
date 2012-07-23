@@ -90,8 +90,8 @@ am__objects_3 = Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 	Link.$(OBJEXT) NameToCharCode.$(OBJEXT) Object.$(OBJEXT) \
 	OptionalContent.$(OBJEXT) Outline.$(OBJEXT) \
 	OutputDev.$(OBJEXT) PDFDoc.$(OBJEXT) PDFDocEncoding.$(OBJEXT) \
-	PSOutputDev.$(OBJEXT) PSTokenizer.$(OBJEXT) Page.$(OBJEXT) \
-	Parser.$(OBJEXT) SecurityHandler.$(OBJEXT) Stream.$(OBJEXT) \
+	PSTokenizer.$(OBJEXT) Page.$(OBJEXT) Parser.$(OBJEXT) \
+	SecurityHandler.$(OBJEXT) Stream.$(OBJEXT) \
 	UnicodeMap.$(OBJEXT) XRef.$(OBJEXT)
 nodist_libxpdf_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3)
@@ -331,7 +331,6 @@ xpdf_libxpdf_a_sources = \
 	$(XPDF_SRC)/OutputDev.cc \
 	$(XPDF_SRC)/PDFDoc.cc \
 	$(XPDF_SRC)/PDFDocEncoding.cc \
-	$(XPDF_SRC)/PSOutputDev.cc \
 	$(XPDF_SRC)/PSTokenizer.cc \
 	$(XPDF_SRC)/Page.cc \
 	$(XPDF_SRC)/Parser.cc \
@@ -444,7 +443,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OutputDev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFDoc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFDocEncoding.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSOutputDev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSTokenizer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Page.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Parser.Po@am__quote@
@@ -1015,20 +1013,6 @@ PDFDocEncoding.obj: $(XPDF_SRC)/PDFDocEncoding.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PDFDocEncoding.cc' object='PDFDocEncoding.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PDFDocEncoding.obj `if test -f '$(XPDF_SRC)/PDFDocEncoding.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PDFDocEncoding.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PDFDocEncoding.cc'; fi`
-
-PSOutputDev.o: $(XPDF_SRC)/PSOutputDev.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSOutputDev.o -MD -MP -MF $(DEPDIR)/PSOutputDev.Tpo -c -o PSOutputDev.o `test -f '$(XPDF_SRC)/PSOutputDev.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PSOutputDev.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PSOutputDev.Tpo $(DEPDIR)/PSOutputDev.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PSOutputDev.cc' object='PSOutputDev.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PSOutputDev.o `test -f '$(XPDF_SRC)/PSOutputDev.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PSOutputDev.cc
-
-PSOutputDev.obj: $(XPDF_SRC)/PSOutputDev.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSOutputDev.obj -MD -MP -MF $(DEPDIR)/PSOutputDev.Tpo -c -o PSOutputDev.obj `if test -f '$(XPDF_SRC)/PSOutputDev.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PSOutputDev.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PSOutputDev.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PSOutputDev.Tpo $(DEPDIR)/PSOutputDev.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(XPDF_SRC)/PSOutputDev.cc' object='PSOutputDev.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PSOutputDev.obj `if test -f '$(XPDF_SRC)/PSOutputDev.cc'; then $(CYGPATH_W) '$(XPDF_SRC)/PSOutputDev.cc'; else $(CYGPATH_W) '$(srcdir)/$(XPDF_SRC)/PSOutputDev.cc'; fi`
 
 PSTokenizer.o: $(XPDF_SRC)/PSTokenizer.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PSTokenizer.o -MD -MP -MF $(DEPDIR)/PSTokenizer.Tpo -c -o PSTokenizer.o `test -f '$(XPDF_SRC)/PSTokenizer.cc' || echo '$(srcdir)/'`$(XPDF_SRC)/PSTokenizer.cc

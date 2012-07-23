@@ -1,3 +1,8 @@
+2012-07-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (xpdf_libxpdf_a_sources): Drop PSOutputDev.cc,
+	not used by pdfTeX.
+
 2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* {fofi,goo,splash,xpdf}/Makefile.am: Use ../am/hdr_links.am.

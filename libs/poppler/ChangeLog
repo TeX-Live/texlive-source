@@ -1,3 +1,8 @@
+2012-07-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (poppler_libpoppler_a_sources): Drop PSOutputDev.cc,
+	not used by {lua,Xe}TeX.
+
 2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import poppler-0.20.2.
