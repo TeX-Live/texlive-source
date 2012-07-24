@@ -60,4 +60,18 @@ extern char *quote_args(char **);
 extern KPSEDLL BOOL win32_get_long_filename (char *, char *, int);
 extern KPSEDLL void texlive_gs_init(void);
 
+static inline FILE *
+win32_popen (const char *command, const char *fmode)
+{
+  char mode[3];
+
+  /* We always use binary mode */
+  mode[0] = fmode[0];
+  mode[1] = 'b';
+  mode[2] = '\0';
+
+  return _popen (command, mode);
+}
+#define popen(cmd, mode) win32_popen(cmd, mode)
+
 #endif
