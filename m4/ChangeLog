@@ -1,3 +1,8 @@
+2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): Moved chktex from here ...
+	(KPSE_TEXK_PKGS): ... to here (now using kpathsea).
+
 2012-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): Rename mtx => m-tx.

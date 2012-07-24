@@ -1,4 +1,4 @@
-## Makefile.am for the TeX Live subdirectory utils/chktex/
+## Makefile.am for the TeX Live subdirectory texk/chktex/
 ##
 ## Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
@@ -26,15 +26,13 @@ EXTRA_DIST += $(CHKTEX_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-AM_CPPFLAGS = -DNO_KPSE_DLL
+INCLUDES = $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = chktex
 
 chktex_SOURCES = \
-	getopt.c \
-	getopt.h \
-	getopt1.c \
 	$(CHKTEX_TREE)/ChkTeX.c \
 	$(CHKTEX_TREE)/ChkTeX.h \
 	$(CHKTEX_TREE)/FindErrs.c \
@@ -46,6 +44,10 @@ chktex_SOURCES = \
 	$(CHKTEX_TREE)/Utility.c \
 	$(CHKTEX_TREE)/Utility.h \
 	$(CHKTEX_TREE)/types.h
+
+$(chktex_OBJECTS): $(KPATHSEA_DEPEND)
+
+LDADD = $(KPATHSEA_LIBS)
 
 man_MANS = \
 	$(CHKTEX_TREE)/chktex.1 \
@@ -80,7 +82,11 @@ dist_pdfdoc_DATA = $(CHKTEX_TREE)/ChkTeX.pdf
 
 CLEANFILES = $(nodist_bin_SCRIPTS)
 
-# chktex tests
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+
+## Tests
+##
 TESTS = chktex.test
 
 TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE)

@@ -19,37 +19,22 @@ AC_CONFIG_SRCDIR([chktex-]chktex_version[/ChkTeX.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_MAINTAINER_MODE
-
-dnl Check compiler and flags
-AC_PROG_CC
-
-KPSE_COMPILER_WARNINGS
+dnl Common code for all programs using libkpathsea.
+KPSE_COMMON([chktex])
 
 dnl Checks for programs.
-AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_MAKE_SET
 KPSE_CHECK_PDFLATEX
 
 dnl No termlib/termcap/ncurses library for TeX Live
 
 dnl Checks for header files.
-AC_HEADER_STDC
-AC_HEADER_DIRENT
-AC_CHECK_HEADERS([limits.h stat.h strings.h stdarg.h sys/stat.h unistd.h])
-
-dnl Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
-AC_C_INLINE
-AC_TYPE_SIZE_T
+AC_CHECK_HEADERS([stat.h stdarg.h sys/stat.h])
 
 dnl Checks for library functions.
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([access closedir fileno isatty opendir readdir stat strcasecmp strdup strlwr strtol])
 
-dnl Rebuild ChkTeX.pdf if required and amintainer-mode is enabled.
+dnl Rebuild ChkTeX.pdf if required and maintainer-mode is enabled.
 test "x$enable_maintainer_mode" = xyes && PDF_DEPEND=ChkTeX.tex
 AC_SUBST([PDF_DEPEND])
 
@@ -63,6 +48,8 @@ AM_CONDITIONAL([WIN32_WRAP],
 
 AC_SUBST([CHKTEX_TREE], [chktex-]chktex_version)
 AC_SUBST([PERL5], ['/usr/bin/env perl'])
+
+KPSE_KPATHSEA_FLAGS
 
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_FILES([ChkTeX.tmp:chktex-]chktex_version[/ChkTeX.tex.in])

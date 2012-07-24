@@ -27,7 +27,9 @@
  */
 
 
+#ifndef KPATHSEA
 #include "getopt.h"
+#endif
 #include "ChkTeX.h"
 #include "OpSys.h"
 #include "Utility.h"

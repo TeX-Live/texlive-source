@@ -38,6 +38,11 @@
 #  include CONFIG_H_NAME
 #endif
 
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#include <kpathsea/getopt.h>
+#endif
+
 #include <ctype.h>
 #include <math.h>
 #include <stdio.h>

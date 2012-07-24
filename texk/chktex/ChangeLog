@@ -1,3 +1,9 @@
+2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Moved from ../utils/chktex to here, using kpathsea.
+	* configure.ac, Makefile.am: Using kpathsea.
+	* getopt.[ch], getopt1.c (removed): Now from kpathsea.
+
 2012-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: New file defining the chktex version.

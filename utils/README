@@ -9,10 +9,6 @@ asymptote 2.16 - checked 31may12
   see http://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy
 
-chktex 1.6.6 - checked 10apr12
-  http://mirror.ctan.org/support/chktex/ for pdf, otherwise same as
-  http://download.savannah.gnu.org/releases/chktex/
-
 m-tx 0.60d - checked 16apr12
   http://mirror.ctan.org/support/m-tx/
 
