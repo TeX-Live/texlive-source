@@ -527,33 +527,23 @@ runsystem (const char *cmd)
 /* Like runsystem(), the runpopen() function is called only when
    shellenabledp == 1.   Unlike runsystem(), here we write errors to
    stderr, since we have nowhere better to use; and of course we return
-   a file handle (or NULL) instead of a status indicator.
-
-   Also, we append "b" to IO_MODE on Windows.  */
+   a file handle (or NULL) instead of a status indicator.  */
 
 static FILE *
-runpopen (char *cmd, const char *io_mode)
+runpopen (char *cmd, const char *mode)
 {
   FILE *f = NULL;
   char *safecmd = NULL;
   char *cmdname = NULL;
   int allow;
 
-#ifndef WIN32
-  /* Use mode "r" or "w" for Posix.  */
-  char mode[] = "X";
-#else
-  /* Use mode "rb" or "wb" for Windows.  */
-  char mode[] = "Xb";
+#ifdef WIN32
   char *pp;
 
   for (pp = cmd; *pp; pp++) {
     if (*pp == '\'') *pp = '"';
   }
 #endif
-
-  /* Replace 'X' by 'r' or 'w'.  */
-  mode[0] = *io_mode;
 
   /* If restrictedshell == 0, any command is allowed. */
   if (restrictedshell == 0)

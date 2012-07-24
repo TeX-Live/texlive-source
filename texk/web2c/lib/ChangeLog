@@ -1,3 +1,8 @@
+2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (runpopen): Binary mode for popen() on Windows now
+	done in kpathsea.
+
 2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c [WIN32]: Ignore DLLPROC for __MINGW32__.
