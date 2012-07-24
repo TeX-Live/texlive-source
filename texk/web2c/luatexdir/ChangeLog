@@ -1,3 +1,7 @@
+2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex/texfileio.w (runpopen): Sync with ../lib/texmfmp.c.
+
 2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/writejbig2.w: Use LONGINTEGER_PRI, not LONGINTEGER_PRId.
