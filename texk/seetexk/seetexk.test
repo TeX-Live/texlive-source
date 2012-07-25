@@ -24,6 +24,15 @@ echo dviselect tests OK
 
 echo dvibook tests OK
 
+rm -f playbook.2
+
+cat playsel.dvi | ./dvibook -s4 -o playbook.dvi \
+	2>playbook.2 \
+	&& diff playbook.2 $srcdir/tests/playbook.2 \
+	|| exit 1
+
+echo dvibook reading stdin tests OK
+
 ./dviselect =5:7 $srcdir/tests/play.dvi playsel1.dvi \
 	2>playconc.2 \
 	&& ./dviselect 23:25 $srcdir/tests/play.dvi playsel2.dvi \
@@ -41,4 +50,13 @@ echo dviconcat tests OK
 	|| exit 1
 
 echo dvitodvi tests OK
+
+rm -f playdvi.2
+
+cat playsel.dvi | ./dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' -o playdvi.dvi \
+	2>playdvi.2 \
+	&& diff playdvi.2 $srcdir/tests/playdvi.2 \
+	|| exit 1
+
+echo dvitodvi reading stdin tests OK
 
