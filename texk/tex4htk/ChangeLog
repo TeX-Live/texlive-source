@@ -1,3 +1,7 @@
+2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* t4ht.c, tex4ht.c [WIN32]: More changes from W32TeX .
+
 2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* t4ht.c, tex4ht.c [WIN32]: Use binary mode for output files.

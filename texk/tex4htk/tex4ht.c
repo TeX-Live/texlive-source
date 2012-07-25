@@ -4144,7 +4144,7 @@ static FILE* search_file_ext
     HANDLE hnd;
     int proceed;
     (IGNORED) strcpy((char *) dirname, (char *) str);
-    strct(dirname, "/*.*");       
+    strct(dirname, "/*.*");
     hnd = FindFirstFile(dirname, &find_file_data);
     if (hnd != INVALID_HANDLE_VALUE) {
       
@@ -5906,7 +5906,7 @@ get_env_dir(argv[0])
 struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
 
 
-   
+
 #ifdef WIN32
   /* The idea here is to split options apart at spaces: a single argument
      "-foo -bar" becomes the two options "-foo" and "-bar".  We need to
@@ -5952,9 +5952,12 @@ struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
       }
     }
 
+#if 0
+    /* crashes here for some reason.  */
     for (i=0; i < argc; i++)
       free (argv[i]);
     free (argv);
+#endif
     nargv[nargc] = NULL;
     argv = nargv;
     argc = nargc;
@@ -5962,7 +5965,7 @@ struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
 #endif
 
 
-   
+
 
 #ifdef SIGSEGV
   (void) signal(SIGSEGV,sig_err);

@@ -1437,7 +1437,7 @@ get_env_dir(argv[0])
 
 
 
-   
+
 #ifdef WIN32
   /* See comments in tex4ht */
   if (argc > 2) {
@@ -1477,9 +1477,12 @@ get_env_dir(argv[0])
       }
     }
 
+#if 0
+    /* crashes here for some reason.  */
     for (i=0; i < argc; i++)
       free (argv[i]);
     free (argv);
+#endif
     nargv[nargc] = NULL;
     argv = nargv;
     argc = nargc;
@@ -1487,7 +1490,7 @@ get_env_dir(argv[0])
 #endif
 
 
-   
+
 
 #ifdef SIGSEGV
   (void) signal(SIGSEGV,sig_err);
