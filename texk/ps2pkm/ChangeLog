@@ -1,3 +1,9 @@
+2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pkout.c (pk_runlengths): Pretend that the first pixel of an
+	empty glyph is white; avoid using uninitialized data.
+	Found by Martin Schroeder <martin@oneiros.de>.
+
 2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ps2pk.c: Invoke kpse_set_program_name() with original argv[0]

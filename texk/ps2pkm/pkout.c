@@ -207,6 +207,9 @@ static void pk_runlengths(int W, int H, int (*next_pixel)())
    if (runlength>0)
       count[cnt++] = runlength;
 
+   /* for an empty glyph */
+   if (cnt == first_count) count[cnt++] = 0;
+
 #ifdef DEBUG
    current_value = BLACK;
    for (i=first_count; i<cnt; i++)
