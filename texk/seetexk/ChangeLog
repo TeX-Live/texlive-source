@@ -1,3 +1,7 @@
+2012-07-25  Ken Brown  <kbrow1i@gmail.com>
+
+	* seek.c (CopyFile): No special file mode handling for Cygwin.
+
 2012-03-20  Karl Berry  <karl@tug.org>
 
 	* *.c, *.h, *.man: update license of UMD files to use the X11

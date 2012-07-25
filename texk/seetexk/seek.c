@@ -38,10 +38,6 @@
 #include <config.h>
 #endif
 
-#ifdef __CYGWIN32__
-#include <io.h>
-#endif
-
 #ifdef KPATHSEA
 #include <kpathsea/c-fopen.h>
 #endif
@@ -86,7 +82,7 @@ CopyFile(FILE *f)
 #define BSIZE BUFSIZ
 #endif
 	char stackbuf[BSIZE];
-#if defined(WIN32) || defined(MSDOS) || defined(__CYGWIN32__)
+#if defined(WIN32) || defined(MSDOS)
 	int orig_fdmode;
 #endif
 	const char *open_mode;
@@ -123,7 +119,7 @@ CopyFile(FILE *f)
 	}
 #endif
 
-#if defined(WIN32) || defined(MSDOS) || defined(__CYGWIN32__)
+#if defined(WIN32) || defined(MSDOS)
 	/* make sure we open the temp file in the same mode that
 	   the original handle was open.  */
 	orig_fdmode = setmode(ifd, 0);
@@ -155,7 +151,7 @@ CopyFile(FILE *f)
 	(void) fclose(f);
 	(void) lseek(tf, 0L, 0);
 	errno = 0;
-#if defined(WIN32) || defined(MSDOS) || defined(__CYGWIN32__)
+#if defined(WIN32) || defined(MSDOS)
 	open_mode =  orig_fdmode == O_BINARY ? FOPEN_RBIN_MODE : "r";
 #else
 	open_mode = "r";
