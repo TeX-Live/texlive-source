@@ -1,3 +1,9 @@
+2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* getopt.c [WIN32 && ! __CYGWIN__]: Use __CYGWIN__ instead of
+	__CYGWIN32__ which is deprecated and may be removed.
+	Mail from Ken Brown <kbrow1i@gmail.com>, Tue, 24 Jul 2012.
+
 2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.h (win32_popen): Static inline wrapper for _popen()
