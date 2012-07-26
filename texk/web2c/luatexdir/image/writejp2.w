@@ -50,13 +50,13 @@ ISO/IEC 15444-1, Second edition, 2004-09-15, file |15444-1annexi.pdf|.
 
 /* 1.4 Box definition */
 typedef struct {
-    unsigned long long lbox;
+    uint64_t lbox;
     unsigned int tbox;
 } hdr_struct;
 
-static unsigned long long read8bytes(FILE * f)
+static uint64_t read8bytes(FILE * f)
 {
-    unsigned long long l = read4bytes(f);
+    uint64_t l = read4bytes(f);
     l = (l << 32) + read4bytes(f);
     return l;
 }
@@ -110,10 +110,10 @@ static void scan_resc_resd(image_dict * idict)
 }
 
 /* 1.5.3.7 Resolution box (superbox) */
-static void scan_res(image_dict * idict, unsigned long long epos_s)
+static void scan_res(image_dict * idict, uint64_t epos_s)
 {
     hdr_struct hdr;
-    unsigned long long spos, epos;
+    uint64_t spos, epos;
     epos = xftell(img_file(idict), img_filepath(idict));
     while (1) {
         spos = epos;
@@ -146,11 +146,11 @@ static void scan_res(image_dict * idict, unsigned long long epos_s)
 }
 
 /* 1.5.3 JP2 Header box (superbox) */
-static boolean scan_jp2h(image_dict * idict, unsigned long long epos_s)
+static boolean scan_jp2h(image_dict * idict, uint64_t epos_s)
 {
     boolean ihdr_found = false;
     hdr_struct hdr;
-    unsigned long long spos, epos;
+    uint64_t spos, epos;
     epos = xftell(img_file(idict), img_filepath(idict));
     while (1) {
         spos = epos;
@@ -194,7 +194,7 @@ void read_jp2_info(image_dict * idict, img_readtype_e readtype)
 {
     boolean ihdr_found = false;
     hdr_struct hdr;
-    unsigned long long spos, epos;
+    uint64_t spos, epos;
     assert(img_type(idict) == IMG_TYPE_JP2);
     img_totalpages(idict) = 1;
     img_pagenum(idict) = 1;
@@ -208,7 +208,7 @@ void read_jp2_info(image_dict * idict, img_readtype_e readtype)
         (int) xftell(img_file(idict), img_filepath(idict));
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
 
-    assert(sizeof(unsigned long long) >= 8);
+    assert(sizeof(uint64_t) >= 8);
     spos = epos = 0;
 
     /* 1.5.1 JPEG 2000 Signature box */

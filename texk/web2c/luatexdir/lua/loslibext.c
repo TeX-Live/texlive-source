@@ -1,6 +1,6 @@
 /* loslibext.c
    
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -880,7 +880,7 @@ static int os_gettimeofday(lua_State * L)
     v = (double) tv.tv_sec + (double) tv.tv_usec / 1000000.0;
 #  else
     FILETIME ft;
-    unsigned __int64 tmpres = 0;
+    uint64_t tmpres = 0;
 
     GetSystemTimeAsFileTime(&ft);
 

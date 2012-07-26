@@ -1,7 +1,7 @@
 /* pdftoepdf.cc
 
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2010 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -21,6 +21,8 @@
 static const char _svn_version[] =
     "$Id: pdftoepdf.cc 4136 2011-04-11 22:06:50Z hhenkel $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.66.0/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
+
+#define __STDC_FORMAT_MACROS /* for PRId64 etc.  */
 
 // define DEBUG
 
@@ -75,8 +77,8 @@ static char *get_file_checksum(char *a, file_error_mode fe)
         if (ck == NULL)
             pdftex_fail("PDF inclusion: out of memory while processing '%s'",
                         a);
-        snprintf(ck, PDF_CHECKSUM_SIZE, "%llu_%llu", (unsigned long long) size,
-                 (unsigned long long) mtime);
+        snprintf(ck, PDF_CHECKSUM_SIZE, "%" PRIu64 "_%" PRIu64, (uint64_t) size,
+                 (uint64_t) mtime);
     } else {
         switch (fe) {
         case FE_FAIL:
