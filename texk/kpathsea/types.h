@@ -1,6 +1,6 @@
 /* types.h: general types for kpathsea.
 
-   Copyright 1993, 1995, 1996, 2005, 2008, 2009, 2010, 2011 Karl Berry.
+   Copyright 1993, 1995, 1996, 2005, 2008-2012 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,27 @@ typedef int boolean;
 #endif /* FALSE */
 
 #include <stdio.h> /* for FILE* */
+
+/* Declare int64_t and uint64_t, and define PRId64 etc.  */
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
+#if (!defined __cplusplus || defined __STDC_FORMAT_MACROS) && !defined PRId64
+# if SIZEOF_LONG == 8
+#  define __PRI64_PREFIX	"l"
+# else
+#  define __PRI64_PREFIX	"ll"
+# endif
+# define PRId64		__PRI64_PREFIX "d"
+# define PRIi64		__PRI64_PREFIX "i"
+# define PRIo64		__PRI64_PREFIX "o"
+# define PRIu64		__PRI64_PREFIX "u"
+# define PRIx64		__PRI64_PREFIX "x"
+# define PRIX64		__PRI64_PREFIX "X"
+#endif
 
 /* The usual null-terminated string.  */
 typedef char *string;
