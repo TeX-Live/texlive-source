@@ -880,7 +880,7 @@ static int os_gettimeofday(lua_State * L)
     v = (double) tv.tv_sec + (double) tv.tv_usec / 1000000.0;
 #  else
     FILETIME ft;
-    uint64_t tmpres = 0;
+    int64_t tmpres = 0;
 
     GetSystemTimeAsFileTime(&ft);
 
