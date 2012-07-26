@@ -1,5 +1,5 @@
 
-/* t4ht.c (2010-12-16-08:47), generated from tex4ht-t4ht.tex
+/* t4ht.c (2012-07-25-19:28), generated from tex4ht-t4ht.tex
    Copyright (C) 2009-2012 TeX Users Group
    Copyright (C) 1998-2009 Eitan M. Gurari
 
@@ -1437,7 +1437,7 @@ get_env_dir(argv[0])
 
 
 
-
+   
 #ifdef WIN32
   /* See comments in tex4ht */
   if (argc > 2) {
@@ -1477,12 +1477,6 @@ get_env_dir(argv[0])
       }
     }
 
-#if 0
-    /* crashes here for some reason.  */
-    for (i=0; i < argc; i++)
-      free (argv[i]);
-    free (argv);
-#endif
     nargv[nargc] = NULL;
     argv = nargv;
     argc = nargc;
@@ -1490,7 +1484,7 @@ get_env_dir(argv[0])
 #endif
 
 
-
+   
 
 #ifdef SIGSEGV
   (void) signal(SIGSEGV,sig_err);
@@ -1512,15 +1506,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47)\n");
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2010-12-16-08:47 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2012-07-25-19:28 kpathsea)\n");
 #endif
 #endif
 

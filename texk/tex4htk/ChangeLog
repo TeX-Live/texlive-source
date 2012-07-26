@@ -1,6 +1,7 @@
 2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* t4ht.c, tex4ht.c [WIN32]: More changes from W32TeX .
+	* t4ht.c, tex4ht.c [WIN32]: More changes from W32TeX.
+	Must not free argv.
 
 2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

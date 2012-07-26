@@ -1,5 +1,5 @@
 
-/* tex4ht.c (2010-12-16-08:39), generated from tex4ht-c.tex
+/* tex4ht.c (2012-07-25-19:36), generated from tex4ht-c.tex
    Copyright (C) 2009-2012 TeX Users Group
    Copyright (C) 1996-2009 Eitan M. Gurari
 
@@ -5906,7 +5906,7 @@ get_env_dir(argv[0])
 struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
 
 
-
+   
 #ifdef WIN32
   /* The idea here is to split options apart at spaces: a single argument
      "-foo -bar" becomes the two options "-foo" and "-bar".  We need to
@@ -5952,12 +5952,6 @@ struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
       }
     }
 
-#if 0
-    /* crashes here for some reason.  */
-    for (i=0; i < argc; i++)
-      free (argv[i]);
-    free (argv);
-#endif
     nargv[nargc] = NULL;
     argv = nargv;
     argc = nargc;
@@ -5965,7 +5959,7 @@ struct htf_com_rec* htf_font_dir = (struct htf_com_rec *) 0;
 #endif
 
 
-
+   
 
 #ifdef SIGSEGV
   (void) signal(SIGSEGV,sig_err);
@@ -5987,15 +5981,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2012-07-25-19:36 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2010-12-16-08:39)\n");
+   (IGNORED) printf("tex4ht.c (2012-07-25-19:36)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2012-07-25-19:36 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2010-12-16-08:39 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2012-07-25-19:36 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){
