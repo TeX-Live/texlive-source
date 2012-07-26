@@ -1,3 +1,8 @@
+2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop check for 64-bit integer types, already
+	done via KPSE_COMMON.
+
 2012-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipng.test: Cope with spaces in paths returned by kpsewhich.

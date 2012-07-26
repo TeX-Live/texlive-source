@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 - 2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -65,8 +65,6 @@ AC_HEADER_STDBOOL
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_PID_T
-AC_TYPE_INT64_T
-AC_TYPE_UINT64_T
 
 # Checks for library functions.
 AC_FUNC_ALLOCA

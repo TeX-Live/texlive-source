@@ -224,8 +224,7 @@ dnl
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_FUNC_CLOSEDIR_VOID
-AC_CHECK_HEADERS([assert.h float.h limits.h memory.h pwd.h stdlib.h \
-                  string.h strings.h sys/param.h unistd.h])
+AC_CHECK_HEADERS([assert.h float.h limits.h pwd.h stdlib.h sys/param.h])
 dnl
 dnl Replacement functions that may be required on ancient broken system.
 AC_CHECK_FUNCS([putenv strcasecmp strtol strstr])
@@ -236,6 +235,10 @@ dnl
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
+AC_TYPE_INT64_T
+AC_TYPE_UINT64_T
+AS_CASE([:$ac_cv_c_int64_t:$ac_cv_c_int64_t:],
+        [*':no:'*], [AC_MSG_ERROR([Sorry, your compiler does not support 64-bit integer types.])])
 dnl
 dnl Check whether struct stat provides high-res time.
 AC_CHECK_MEMBERS([struct stat.st_mtim])

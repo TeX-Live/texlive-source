@@ -1,3 +1,9 @@
+2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-common.m4 (KPSE_COMMON): Check for 64-bit integer types
+	and bail out if unsupported.
+	Some headers are already checked by AC_HEADER_STDC.
+
 2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): Moved chktex from here ...
