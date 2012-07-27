@@ -35,6 +35,9 @@ int main(int argc, char **argv)
 	const char *envbuff;
 
         set_enc_string(NULL, "EUC");
+#ifdef WIN32
+		_setmaxstdio(2048);
+#endif
 #ifdef KPATHSEA
 	KP_init(argv[0]);
 	kp_ist.var_name = "INDEXSTYLE";
@@ -241,7 +244,7 @@ int main(int argc, char **argv)
 		if (i==-1) sprintf(logfile,"%s.ilg",idxfile[0]);
 		}
 	if ((logfile[0] != '\0') && kpse_out_name_ok(logfile))
-		efp=fopen(logfile,"w");
+		efp=fopen(logfile,"wb");
 	if(efp == NULL) {
 		efp=stderr;
 		strcpy(logfile,"stderr");
@@ -309,7 +312,7 @@ int main(int argc, char **argv)
 	if (lines==0) {
 		verb_printf(efp,"Nothing written in output file.\n");
 		if (efp!=stderr) fclose(efp);
-		exit(-1);
+		exit(255);
 	}
 
 /*   sort index   */
@@ -367,5 +370,5 @@ int main(int argc, char **argv)
 	verb_printf(efp,"Output written in %s.\n",indfile);
 	if (efp!=stderr) fclose(efp);
 
-	exit(0);
+	return 0;
 }

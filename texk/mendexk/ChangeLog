@@ -1,3 +1,10 @@
+2012-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fwrite.c, main.c: Use binary mode for input and output
+	(from W32TeX).
+	* convert.c, fread.c, main.c: Use 8-bit exit() codes.
+	* main.c: Terminate main() with return instead of exit().
+
 2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kp.c: Pass program name string to kpse_set_program_name.

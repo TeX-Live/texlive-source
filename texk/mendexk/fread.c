@@ -27,6 +27,9 @@ int idxread(char *filename, int start)
 
 	if (filename==NULL) {
 		fp=stdin;
+#ifdef WIN32
+		setmode(fileno(fp), _O_BINARY);
+#endif
 		verb_printf(efp, "Scanning input file stdin.");
 	}
 	else {
@@ -122,7 +125,7 @@ LOOP:
 						ind[i].idx[indent]=malloc(k+1);
 						if (ind[i].idx[indent]==NULL) {
 							fprintf(stderr,"Malloc error.(ind[%d].idx[%d])\n",i,indent);
-							exit(-1);
+							exit(255);
 						}
 						strncpy(ind[i].idx[indent],wbuff,k);
 						ind[i].idx[indent][k]='\0';
@@ -145,7 +148,7 @@ LOOP:
 						ind[i].org[indent]=malloc(k+1);
 						if (ind[i].org[indent]==NULL) {
 							fprintf(stderr,"Malloc error.(ind[%d].org[%d])\n",i,indent);
-							exit(-1);
+							exit(255);
 						}
 						strncpy(ind[i].org[indent],wbuff,k);
 						ind[i].org[indent][k]='\0';
@@ -173,7 +176,7 @@ LOOP:
 						ind[i].idx[indent]=malloc(k+1);
 						if (ind[i].idx[indent]==NULL) {
 							fprintf(stderr,"Malloc error.(ind[%d].idx[%d])\n",i,indent);
-							exit(-1);
+							exit(255);
 						}
 						strncpy(ind[i].idx[indent],wbuff,k);
 						ind[i].idx[indent][k]='\0';
@@ -243,7 +246,7 @@ LOOP:
 				ind[i].dic[k]=malloc(strlen(table)+1);
 				if (ind[i].dic[k]==NULL) {
 					fprintf(stderr,"Malloc error.(ind[%d].dic[%d])\n",i,k);
-					exit(-1);
+					exit(255);
 				}
 				strcpy(ind[i].dic[k],table);
 			}
@@ -260,7 +263,7 @@ LOOP:
 				ind[i].dic[k]=malloc(strlen(table)+1);
 				if (ind[i].dic[k]==NULL) {
 					fprintf(stderr,"Malloc error.(ind[%d].dic[%d])\n",i,k);
-					exit(-1);
+					exit(255);
 				}
 				strcpy(ind[i].dic[k],table);
 			}
@@ -299,7 +302,7 @@ LOOP:
 						ind[0].p[0].page=malloc(strlen(table)+1);
 						if (ind[0].p[0].page==NULL) {
 							fprintf(stderr,"Malloc error.(ind[0].p[0].page)\n");
-							exit(-1);
+							exit(255);
 						}
 						strcpy(ind[0].p[0].page,table);
 						break;
@@ -316,7 +319,7 @@ LOOP:
 			ind[0].p[0].enc=malloc(strlen(estr)+1);
 			if (ind[0].p[0].enc==NULL) {
 				fprintf(stderr,"Malloc error.(ind[0].p[0].enc)\n");
-				exit(-1);
+				exit(255);
 			}
 			strcpy(ind[0].p[0].enc,estr);
 			chkpageattr(&ind[0].p[0]);

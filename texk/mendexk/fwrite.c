@@ -77,8 +77,13 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 	char datama[256],lbuff[4096];
 	FILE *fp;
 
-	if (filename[0]!='\0' && kpse_out_name_ok(filename)) fp=fopen(filename,"w");
-	else fp=stdout;
+	if (filename[0]!='\0' && kpse_out_name_ok(filename)) fp=fopen(filename,"wb");
+	else {
+		fp=stdout;
+#ifdef WIN32
+		setmode(fileno(fp), _O_BINARY);
+#endif
+	}
 
 	convert(atama,datama);
 	fputs(preamble,fp);

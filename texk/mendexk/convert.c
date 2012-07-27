@@ -143,7 +143,7 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 		fp=nkf_open(filename,"rb");
 	else {
 		fprintf(stderr, "mendex: %s is forbidden to open for reading.\n",filename);
-		exit(-1);
+		exit(255);
 	}
 	for (i=0;i<line;i++) {
 		if (mfgets(buff,255,fp)==NULL) break;
