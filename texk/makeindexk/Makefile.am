@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/makeindexk/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -21,6 +21,7 @@ makeindex_SOURCES = \
 	mkind.c \
 	mkind.h \
 	qsort.c \
+	qsort.h \
 	scanid.c \
 	scanid.h \
 	scanst.c \
@@ -40,11 +41,14 @@ EXTRA_DIST = CONTRIB NOTES
 
 ## Tests
 ##
-TESTS = tests/nested-range-test.pl
+TESTS = tests/nested-range-test.pl tests/makeindex.test
 EXTRA_DIST += $(TESTS)
 
 ## tests/nested-range-test.pl
 EXTRA_DIST += tests/nested-range.tex tests/nested-range.idx \
 	tests/nested-range-bb.tex tests/nested-range-bb.idx
 DISTCLEANFILES = nested-range.ilg nested-range.ind
+## tests/makeindex.test
+EXTRA_DIST += tests/sample.idx tests/sample.ind
+DISTCLEANFILES += sample.*
 

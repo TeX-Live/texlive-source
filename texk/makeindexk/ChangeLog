@@ -1,3 +1,18 @@
+2012-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.[ch] [WIN32]: Use binary mode for input and output
+	(from W32TeX).
+	* mkind.h: Drop extern declaration of qqsort() and main().
+	* qsort.h (new): Extern declaration of of qqsort().
+	* qsort.c: Replace #include "mkind.h" by #include "qsort.h".
+	* sortid.c: Add #include "qsort.h".
+	* Makefile.am (makeindex_SOURCES): Add the new file qsort.h.
+
+	* tests/makeindex.test (new): Shell script for a test case.
+	* tests/sample.idx (new): Test input.
+	* tests/sample.ind (new): Expected output.
+	* Makefile.am: Adapted.
+
 2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.c: Pass program name string to kpse_set_program_name.

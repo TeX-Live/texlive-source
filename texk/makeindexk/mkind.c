@@ -3,7 +3,7 @@
  *  This file is part of
  *	MakeIndex - A formatter and format independent index processor
  *
- *  Copyright (C) 1998-2011 by the TeX Live project.
+ *  Copyright (C) 1998-2012 by the TeX Live project.
  *  Copyright (C) 1989 by Chen & Harrison International Systems, Inc.
  *  Copyright (C) 1988 by Olivetti Research Center
  *  Copyright (C) 1987 by Regents of the University of California
@@ -323,6 +323,9 @@ FATAL1("Option -g invalid, quote character must be different from '%c'.\n",
     if (use_stdin) {
 	idx_fn = "stdin";
 	idx_fp = stdin;
+#ifdef WIN32
+	setmode(fileno(stdin), _O_BINARY);
+#endif
 
 	if (ind_given) {
 	    if (!kpse_out_name_ok(ind_fn) ||
@@ -331,6 +334,9 @@ FATAL1("Option -g invalid, quote character must be different from '%c'.\n",
 	} else {
 	    ind_fn = "stdout";
 	    ind_fp = stdout;
+#ifdef WIN32
+	    setmode(fileno(stdout), _O_BINARY);
+#endif
 	}
 
 	if (ilg_given) {

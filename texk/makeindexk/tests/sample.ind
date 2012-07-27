@@ -1,0 +1,15 @@
+\begin{theindex}
+
+  \item alpha, 1
+    \subitem beta, 3
+      \subsubitem delta, 8
+      \subsubitem gamma, 10
+    \subitem phi, 5
+      \subsubitem rho, 7, 12, 14
+      \subsubitem sigma, 6, 12--14
+
+  \indexspace
+
+  \item random text, \bold{2}, 9--11
+
+\end{theindex}

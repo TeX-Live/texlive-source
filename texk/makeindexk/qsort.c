@@ -15,8 +15,7 @@
  * bytes. The MTHREShold is where we stop finding a better median.
  */
 
-/* #include <stdio.h> -- mkind.h includes this */
-#include    "mkind.h"		       /* only for type declarations */
+#include    "qsort.h"
 
 #define THRESH  4		       /* threshold for insertion */
 #define MTHRESH 6		       /* threshold for median */
