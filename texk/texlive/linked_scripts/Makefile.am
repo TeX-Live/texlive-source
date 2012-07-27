@@ -57,6 +57,7 @@ texmf_dist_shell_scripts = \
 	latexfileversion/latexfileversion \
 	listbib/listbib \
 	listings-ext/listings-ext.sh \
+	lua2dox/lua2dox_lua \
 	pdfjam/pdf180 \
 	pdfjam/pdf270 \
 	pdfjam/pdf90 \
@@ -143,6 +144,7 @@ nobase_dist_texmf_dist_scripts_SCRIPTS = \
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	epstopdf:repstopdf \
+	lua2dox_lua:lua2dox_filter \
 	pdfcrop:rpdfcrop
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
