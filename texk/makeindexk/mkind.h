@@ -507,7 +507,7 @@ extern NODE_PTR tail;
 
 extern int idx_dot;
 extern int idx_tt;
-extern int idx_gt;
+extern size_t idx_gt;
 extern int idx_et;
 extern int idx_dc;
 
@@ -545,7 +545,7 @@ fprintf(ilg_fp, \
 }
 
 extern void gen_ind (void);
-extern int group_type (char *str);
+extern int group_type (const char *str);
 extern void scan_idx (void);
 extern void scan_sty (void);
 extern void sort_idx (void);

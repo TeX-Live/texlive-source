@@ -398,7 +398,7 @@ scan_field(int *n, char field[], int len_field, int ck_level, int ck_encap,
 }
 
 int
-group_type(char *str)
+group_type(const char *str)
 {
     int     i = 0;
 

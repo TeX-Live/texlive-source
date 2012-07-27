@@ -34,13 +34,13 @@
 
 static	long	idx_gc;
 
-static	int	check_mixsym (char *x,char *y);
-static	int	compare (struct KFIELD * *a,struct KFIELD * *b);
-static	int	compare_one (char *x,char *y);
-static	int	compare_page (struct KFIELD * *a,struct KFIELD * *b);
-static	int	compare_string (unsigned char *a,unsigned char *b);
-static	int	new_strcmp (unsigned char *a, unsigned char *b,
-				 int option);
+static int check_mixsym (const char *x, const char *y);
+static int compare (const void *va, const void *vb);
+static int compare_one (const char *x, const char *y);
+static int compare_page (const FIELD_PTR *a, const FIELD_PTR *b);
+static int compare_string (const unsigned char *a, const unsigned char *b);
+static int new_strcmp (const unsigned char *a, const unsigned char *b,
+           int option);
 
 void
 sort_idx(void)
@@ -56,8 +56,7 @@ sort_idx(void)
 #endif
     idx_dc = 0;
     idx_gc = 0L;
-    qqsort((char *) idx_key, (int) idx_gt, (int) sizeof(FIELD_PTR), 
-	(int (*)(char*,char*))compare);
+    qqsort(idx_key, idx_gt, sizeof(FIELD_PTR), compare);
 #ifdef HAVE_SETLOCALE
     setlocale(LC_COLLATE, prev_locale);
 #endif
@@ -65,8 +64,10 @@ sort_idx(void)
 }
 
 static int
-compare(FIELD_PTR *a, FIELD_PTR *b)
+compare(const void *va, const void *vb)
 {
+    const FIELD_PTR *a = va;
+    const FIELD_PTR *b = vb;
     int     i;
     int     dif;
 
@@ -90,7 +91,7 @@ compare(FIELD_PTR *a, FIELD_PTR *b)
 }
 
 static int
-compare_one(char *x,char *y)
+compare_one(const char *x, const char *y)
 {
     int     m;
     int     n;
@@ -138,11 +139,11 @@ compare_one(char *x,char *y)
 	return (1);
 
     /* strings with a leading letter, the ALPHA type */
-    return (compare_string((unsigned char*)x, (unsigned char*)y));
+    return (compare_string((const unsigned char*)x, (const unsigned char*)y));
 }
 
 static int
-check_mixsym(char *x, char *y)
+check_mixsym(const char *x, const char *y)
 {
     int     m;
     int     n;
@@ -161,14 +162,14 @@ check_mixsym(char *x, char *y)
 
 
 static int
-compare_string(unsigned char *a, unsigned char *b)
+compare_string(const unsigned char *a, const unsigned char *b)
 {
     int     i = 0;
     int     j = 0;
     int     al;
     int     bl;
 
-    if (locale_sort) return strcoll((char *)a, (char *)b);
+    if (locale_sort) return strcoll((const char *)a, (const char *)b);
 
     while ((a[i] != NUL) || (b[j] != NUL)) {
 	if (a[i] == NUL)
@@ -192,11 +193,11 @@ compare_string(unsigned char *a, unsigned char *b)
     if (german_sort)
 	return (new_strcmp(a, b, GERMAN));
     else
-	return (strcmp((char*)a, (char*)b));
+	return (strcmp((const char*)a, (const char*)b));
 }
 
 static int
-compare_page(FIELD_PTR *a, FIELD_PTR *b)
+compare_page(const FIELD_PTR *a, const FIELD_PTR *b)
 {
     int     m = 0;
     short   i = 0;
@@ -280,8 +281,8 @@ compare_page(FIELD_PTR *a, FIELD_PTR *b)
 		    m = (*a)->lc - (*b)->lc; /* order by input line number */
 		else			/* order non-range items by */
 					/* their encap strings */
-		    m = compare_string((unsigned char*)((*a)->encap),
-				       (unsigned char*)((*b)->encap));
+		    m = compare_string((const unsigned char*)((*a)->encap),
+				       (const unsigned char*)((*b)->encap));
 	    }
 	}
 	else if ((i == (*a)->count) && (i < (*b)->count))
@@ -294,7 +295,7 @@ compare_page(FIELD_PTR *a, FIELD_PTR *b)
 
 
 static int
-new_strcmp(unsigned char *s1, unsigned char *s2, int option)
+new_strcmp(const unsigned char *s1, const unsigned char *s2, int option)
 {
     int     i;
 

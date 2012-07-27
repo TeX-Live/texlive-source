@@ -43,7 +43,7 @@ int     idx_dot = TRUE;		       /* flag which shows dot in ilg being
 					* active */
 int     idx_tt = 0;		       /* total entry count (all files) */
 int     idx_et = 0;		       /* erroneous entry count (all files) */
-int     idx_gt = 0;		       /* good entry count (all files) */
+size_t  idx_gt = 0;		       /* good entry count (all files) */
 
 FIELD_PTR *idx_key;
 FILE   *log_fp;

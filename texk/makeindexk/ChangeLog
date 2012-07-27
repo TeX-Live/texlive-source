@@ -1,3 +1,12 @@
+2012-07-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Cleanup Nelson Beebe's qqsort() used instead of qsort().
+	* qsort.[ch] (qqsort): Declare exactly as qsort().
+	(qq_compar_fn_t) Declare and use the comparison function type.
+	* mkind.[ch] (idx_gt): Change type 'int' into 'size_t'.
+	* mkind.h, scanid.c: Constify group_type() arg.
+	* sortid.c: Constify all comparison function args.
+
 2012-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.[ch] [WIN32]: Use binary mode for input and output

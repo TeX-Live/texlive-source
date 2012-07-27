@@ -14,18 +14,17 @@
  * the insertion sort threshold, and has been adjusted for records of size 48
  * bytes. The MTHREShold is where we stop finding a better median.
  */
+#include "qsort.h"			/* qq_compar_fn_t type and qqsort() prototype */
 
-#include    "qsort.h"
+#define THRESH  4			/* threshold for insertion */
+#define MTHRESH 6			/* threshold for median */
 
-#define THRESH  4		       /* threshold for insertion */
-#define MTHRESH 6		       /* threshold for median */
+static int qsz;				/* size of each record */
+static int thresh;			/* THRESHold in chars */
+static int mthresh;			/* MTHRESHold in chars */
 
-static int qsz;			       /* size of each record */
-static int thresh;		       /* THRESHold in chars */
-static int mthresh;		       /* MTHRESHold in chars */
-
-static int	(*qcmp) (char*,char*); /* the comparison routine */
-static void	qst (char *base, char *max);
+static qq_compar_fn_t qcmp;		/* the comparison routine */
+static void qst(char *base, char *max);
 /*
  * qqsort: First, set up some global parameters for qst to share.  Then,
  * quicksort with qst(), and then a cleanup insertion sort ourselves.  Sound
@@ -33,7 +32,7 @@ static void	qst (char *base, char *max);
  */
 
 void
-qqsort(char *base, int n, int size, int (*compar)(char*,char*))
+qqsort(void *base, size_t n, size_t size, qq_compar_fn_t compar)
 {
     register char *i;
     register char *j;
@@ -41,7 +40,7 @@ qqsort(char *base, int n, int size, int (*compar)(char*,char*))
     register char *hi;
     register char *min;
     register char c;
-    char   *max;
+    char *max;
 
     if (n <= 1)
 	return;
@@ -49,10 +48,10 @@ qqsort(char *base, int n, int size, int (*compar)(char*,char*))
     qcmp = compar;
     thresh = qsz * THRESH;
     mthresh = qsz * MTHRESH;
-    max = base + n * qsz;
+    max = (char *)base + n * qsz;
     if (n >= THRESH) {
 	qst(base, max);
-	hi = base + thresh;
+	hi = (char *)base + thresh;
     } else {
 	hi = max;
     }
@@ -66,8 +65,8 @@ qqsort(char *base, int n, int size, int (*compar)(char*,char*))
 	if ((*qcmp) (j, lo) > 0)
 	    j = lo;
     }
-    if (j != base) {		       /* swap j into place */
-	for (i = base, hi = base + qsz; i < hi;) {
+    if (j != base) {			/* swap j into place */
+	for (i = base, hi = i + qsz; i < hi;) {
 	    c = *j;
 	    *j++ = *i;
 	    *i++ = c;
@@ -118,11 +117,11 @@ qst(char *base, char *max)
     register char *mid;
     register int ii;
     register char c;
-    char   *tmp;
-    int     lo;
-    int     hi;
+    void *tmp;
+    int lo;
+    int hi;
 
-    lo = (int)(max - base);		/* number of elements as chars */
+    lo = max - base;	/* number of elements as chars */
     do {
 	/*
 	 * At the top here, lo is the number of characters of elements in the
@@ -160,10 +159,10 @@ qst(char *base, char *max)
 		    j -= qsz;
 		    continue;
 		}
-		tmp = i + qsz;	       /* value of i after swap */
-		if (i == mid) {	       /* j <-> mid, new mid is j */
+		tmp = i + qsz;		/* value of i after swap */
+		if (i == mid) {		/* j <-> mid, new mid is j */
 		    mid = jj = j;
-		} else {	       /* i <-> j */
+		} else {		/* i <-> j */
 		    jj = j;
 		    j -= qsz;
 		}
@@ -171,9 +170,9 @@ qst(char *base, char *max)
 	    }
 	    if (i == mid) {
 		break;
-	    } else {		       /* i <-> mid, new mid is i */
+	    } else {			/* i <-> mid, new mid is i */
 		jj = mid;
-		tmp = mid = i;	       /* value of i after swap */
+		tmp = mid = i;		/* value of i after swap */
 		j -= qsz;
 	    }
     swap:
@@ -188,12 +187,12 @@ qst(char *base, char *max)
 	/*
 	 * Look at sizes of the two partitions, do the smaller one first by
 	 * recursion, then do the larger one by making sure lo is its size,
-	 * base and max are update correctly, and branching back. But only
+	 * base and max are updated correctly, and branching back. But only
 	 * repeat (recursively or by branching) if the partition is of at
 	 * least size THRESH.
 	 */
 	i = (j = mid) + qsz;
-	if ((lo = (int)(j - base)) <= (hi = (int)(max - i))) {
+	if ((lo = j - base) <= (hi = max - i)) {
 	    if (lo >= thresh)
 		qst(base, j);
 	    base = i;
