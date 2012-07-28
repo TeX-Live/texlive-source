@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 26857 2012-06-08 00:31:28Z karl $
+# $Id: tlmgr.pl 27170 2012-07-26 22:38:00Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 26857 $';
-my $datrev = '$Date: 2012-06-08 02:31:28 +0200 (Fri, 08 Jun 2012) $';
+my $svnrev = '$Revision: 27170 $';
+my $datrev = '$Date: 2012-07-27 00:38:00 +0200 (Fri, 27 Jul 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5596,11 +5596,11 @@ L<http://tug.org/texlive/tlmgr.html>, along with procedures for updating
 C<tlmgr> itself and information about test versions.
 
 TeX Live is organized into a few top-level I<schemes>, each of which is
-defined as a different set of I<collections> and I<packages>, where a
+specified as a different set of I<collections> and I<packages>, where a
 collection is a set of packages, and a package is what contains actual
 files.  Schemes typically contain a mix of collections and packages, but
 each package is included in exactly one collection, no more and no less.
-Installation can be customized and managed at any level.
+A TeX Live installation can be customized and managed at any level.
 
 See L<http://tug.org/texlive/doc> for all the TeX Live documentation
 available.
@@ -5686,9 +5686,9 @@ you can select a different language by giving this option with a
 language code (based on ISO 639-1).  Currently supported (but not
 necessarily completely translated) are: English (en, default), Czech
 (cs), German (de), French (fr), Italian (it), Japanese (ja), Dutch (nl),
-Polish (pl), Brazilian Portuguese (pt_br), Russian (ru), Slovak (sk),
+Polish (pl), Brazilian Portuguese (pt_BR), Russian (ru), Slovak (sk),
 Slovenian (sl), Serbian (sr), Vietnamese (vi), simplified Chinese
-(zh-cn), and traditional Chinese (zh-tw).
+(zh_CN), and traditional Chinese (zh_TW).
 
 =item B<--machine-readable>
 

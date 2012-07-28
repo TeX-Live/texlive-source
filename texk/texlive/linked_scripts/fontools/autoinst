@@ -1782,11 +1782,9 @@ without TeX-specific support files.
 John Owens' F<otfinst> (available from CTAN) is another wrapper
 around F<otftotfm>, and may work when B<autoinst> doesn't.
 
-The MinionPro for LaTeX project
-(F<http://developer.berlios.de/projects/minionpro/>, also on CTAN)
-developed very complete support files for Minion Pro (including math),
-but the project appears to have been abandoned;
-these files don't work with the latest versions of Minion Pro.
+The FontPro project (F<https://github.com/sebschub/FontPro>)
+offers very complete support for Adobe's Minion Pro and Myriad Pro
+(including math), and is currently working on Cronos Pro as well.
 
 
 =head1 AUTHOR
@@ -1828,6 +1826,10 @@ GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2012-07-06>
+
+Documentation update.
 
 =item I<2012-03-06>
 
