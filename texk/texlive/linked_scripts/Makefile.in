@@ -48,6 +48,9 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+@WIN32_FALSE@am__append_1 = \
+@WIN32_FALSE@	lua2dox_lua:lua2dox_filter
+
 subdir = linked_scripts
 DIST_COMMON = README $(nobase_dist_texmf_dist_scripts_SCRIPTS) \
 	$(nobase_dist_texmf_scripts_SCRIPTS) $(srcdir)/Makefile.am \
@@ -325,11 +328,7 @@ nobase_dist_texmf_dist_scripts_SCRIPTS = \
 
 
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
-bin_links = \
-	epstopdf:repstopdf \
-	lua2dox_lua:lua2dox_filter \
-	pdfcrop:rpdfcrop
-
+bin_links = epstopdf:repstopdf pdfcrop:rpdfcrop $(am__append_1)
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)

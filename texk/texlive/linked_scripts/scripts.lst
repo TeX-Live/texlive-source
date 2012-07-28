@@ -13,6 +13,7 @@ installfont/installfont-tl
 latexfileversion/latexfileversion
 listbib/listbib
 listings-ext/listings-ext.sh
+lua2dox/lua2dox_lua
 pdfjam/pdf180
 pdfjam/pdf270
 pdfjam/pdf90

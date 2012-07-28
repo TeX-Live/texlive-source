@@ -1,3 +1,7 @@
+2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (bin_links) [WIN32]: Skip shell script links.
+
 2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Rename the target scripts.tmp into scripts-list

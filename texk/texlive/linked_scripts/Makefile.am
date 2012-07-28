@@ -144,8 +144,11 @@ nobase_dist_texmf_dist_scripts_SCRIPTS = \
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	epstopdf:repstopdf \
-	lua2dox_lua:lua2dox_filter \
 	pdfcrop:rpdfcrop
+if !WIN32
+bin_links += \
+	lua2dox_lua:lua2dox_filter
+endif !WIN32
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,
