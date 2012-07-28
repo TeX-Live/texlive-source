@@ -1,3 +1,7 @@
+2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mplib.am (nodist_libmplib_a_SOURCES): Omit $(tfmin_c_h).
+
 2012-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvitomp.test: Cope with spaces in paths returned by kpsewhich.

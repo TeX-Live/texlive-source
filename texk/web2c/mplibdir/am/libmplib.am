@@ -1,6 +1,6 @@
 ## texk/web2c/mplibdir/am/libmplib.am: Makefile fragment for libmplib.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libmplib.a, used by MetaPost and luaTeX
@@ -11,7 +11,7 @@ libmplib_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 
 ## libmplib C sources
 libmplib_a_SOURCES = mplibdir/avl.h mplibdir/avl.c
-nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(psout_c_h) $(svgout_c_h) $(tfmin_c_h)
+nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(psout_c_h) $(svgout_c_h)
 mp_c_h =  mp.c mplib.h mpmp.h
 mpmath_c_h = mpmath.h mpmath.c
 psout_c_h = mppsout.h psout.c mplibps.h
