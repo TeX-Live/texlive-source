@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <kpathsea/config.h>
 #include "mendex.h"
+#include "qsort.h"
 
 #include "exkana.h"
 #include "exvar.h"
@@ -155,7 +157,7 @@ void pagesort(struct index *ind, int num)
 	for (i=0;i<num;i++) {
 		if (ind[i].num==0) continue;
 
-		buff=malloc(sizeof(struct page)*(ind[i].num+1));
+		buff=xmalloc(sizeof(struct page)*(ind[i].num+1));
 		for (j=0;j<=ind[i].num;j++) {
 			buff[j]=ind[i].p[j];
 		}

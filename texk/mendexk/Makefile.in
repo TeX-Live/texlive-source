@@ -86,8 +86,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_mendex_OBJECTS = convert.$(OBJEXT) fread.$(OBJEXT) fwrite.$(OBJEXT) \
-	kp.$(OBJEXT) main.$(OBJEXT) pageread.$(OBJEXT) sort.$(OBJEXT) \
-	styfile.$(OBJEXT)
+	kp.$(OBJEXT) main.$(OBJEXT) pageread.$(OBJEXT) qsort.$(OBJEXT) \
+	sort.$(OBJEXT) styfile.$(OBJEXT)
 mendex_OBJECTS = $(am_mendex_OBJECTS)
 mendex_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
@@ -287,7 +287,6 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 mendex_SOURCES = \
 	convert.c \
@@ -302,6 +301,8 @@ mendex_SOURCES = \
 	main.c \
 	mendex.h \
 	pageread.c \
+	qsort.c \
+	qsort.h \
 	sort.c \
 	styfile.c \
 	var.h
@@ -425,6 +426,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pageread.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qsort.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sort.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/styfile.Po@am__quote@
 

@@ -9,9 +9,7 @@
 
 #include "exvar.h"
 
-#ifdef KPATHSEA
 #include "kp.h"
-#endif
 
 FILE *fp;
 
@@ -23,15 +21,29 @@ static size_t sstrlen(const char *buff);
 static int sstrcmp(const char *s1, const char *s2);
 static int sstrncmp(const char *s1, const char *s2, size_t len);
 
+static char *
+bfgets (char *buf, int size, FILE *fp)
+{
+	char *p, *q;
+	p = fgets (buf, size, fp);
+	for (q = buf; *q; q++) {
+		if(*q == '\r') {
+			*q++ = '\n';
+			*q = '\0';
+			break;
+		}
+	}
+	return p;
+}
+#define fgets bfgets
+
 /*   read style file   */
 void styread(const char *filename)
 {
 	int i,cc;
 	char buff[4096];
 
-#ifdef KPATHSEA
 	filename = KP_find_file(&kp_ist,filename);
-#endif
 	if(kpse_in_name_ok(filename))
 		fp=nkf_open(filename,"rb");
 	else

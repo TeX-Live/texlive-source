@@ -3,18 +3,17 @@
 #include <string.h>
 
 #include <kpathsea/config.h>
-#include <kpathsea/lib.h>
 #include <kpathsea/tex-file.h>
+#include <kpathsea/variable.h>
 #include <ptexenc/ptexenc.h>
 #include "mendex.h"
+#include "qsort.h"
 
 #include "exkana.h"
 #include "ktable.h"
 #include "exvar.h"
 
-#ifdef KPATHSEA
 #include "kp.h"
-#endif
 
 struct dictionary{
 char dic[2][50];
@@ -68,9 +67,7 @@ int dicread(const char *filename)
 	FILE *fp;
 
 	if (filename!=NULL) {
-#ifdef KPATHSEA
 		filename = KP_find_file(&kp_dict,filename);
-#endif
 		if(kpse_in_name_ok(filename))
 			fp=nkf_open(filename,"rb");
 		else
@@ -83,11 +80,11 @@ int dicread(const char *filename)
 
 		for (i=0;;i++) {
 			if (mfgets(buff,4095,fp)==NULL) break;
-			if ((buff[0]=='\n')||(buff[0]=='\0')) i--;
+			if ((buff[0]=='\r')||(buff[0]=='\n')||(buff[0]=='\0')) i--;
 		}
 		nkf_close(fp);
 
-		dictable=malloc(sizeof(struct dictionary)*i);
+		dictable=xmalloc(sizeof(struct dictionary)*i);
 
 		dlines=dicvalread(filename,dictable,i);
 
@@ -95,15 +92,9 @@ int dicread(const char *filename)
 	}
 
 ENV:
-#ifdef KPATHSEA
-	envfile=KP_get_value("INDEXDEFAULTDICTIONARY",NULL);
-#else
-	envfile=getenv("INDEXDEFAULTDICTIONARY");
-#endif
+	envfile=kpse_var_value("INDEXDEFAULTDICTIONARY");
 	if ((envfile!=NULL)&&(strlen(envfile)!=0)) {
-#ifdef KPATHSEA
 		envfile = KP_find_file(&kp_dict,envfile);
-#endif
 		if(kpse_in_name_ok(envfile))
 			fp=nkf_open(envfile,"rb");
 		else
@@ -116,11 +107,11 @@ ENV:
 
 		for (i=0;;i++) {
 			if (mfgets(buff,255,fp)==NULL) break;
-			if ((buff[0]=='\n')||(buff[0]=='\0')) i--;
+			if ((buff[0]=='\r')||(buff[0]=='\n')||(buff[0]=='\0')) i--;
 		}
 		nkf_close(fp);
 
-		envdic=malloc(sizeof(struct dictionary)*i);
+		envdic=xmalloc(sizeof(struct dictionary)*i);
 
 		elines=dicvalread(envfile,envdic,i);
 
@@ -147,12 +138,12 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 	}
 	for (i=0;i<line;i++) {
 		if (mfgets(buff,255,fp)==NULL) break;
-		if ((buff[0]=='\n')||(buff[0]=='\0')) {
+		if ((buff[0]=='\r')||(buff[0]=='\n')||(buff[0]=='\0')) {
 			i--;
 			continue;
 		}
 		for (j=0;((buff[j]==' ')||(buff[j]=='\t'));j++);
-		for (k=0;((buff[j]!='\n')&&(buff[j]!=' ')&&(buff[j]!='\t'));j++,k++) {
+		for (k=0;((buff[j]!='\r')&&(buff[j]!='\n')&&(buff[j]!=' ')&&(buff[j]!='\t'));j++,k++) {
 			dicval[i].dic[0][k]=buff[j];
 		}
 		dicval[i].dic[0][k]='\0';
@@ -161,7 +152,7 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 			continue;
 		}
 		for (;((buff[j]==' ')||(buff[j]=='\t'));j++);
-		for (k=0;((buff[j]!='\n')&&(buff[j]!=' ')&&(buff[j]!='\t'));j++,k++) {
+		for (k=0;((buff[j]!='\r')&&(buff[j]!='\n')&&(buff[j]!=' ')&&(buff[j]!='\t'));j++,k++) {
 			dicval[i].dic[1][k]=buff[j];
 		}
 		dicval[i].dic[1][k]='\0';

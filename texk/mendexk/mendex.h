@@ -41,23 +41,19 @@ int chkcontinue(struct page *p, int num);
 void styread(const char *filename);
 
 /* fread.c */
-char *mfgets(char *buf, int byte, FILE *fp);
+char *mfgets(char *buf, int size, FILE *fp);
 int idxread(char *filename, int start);
 
 /* fwrite.c */
 int fprintf2   (FILE *fp, const char *format, ...);
-int warn_printf(FILE *fp, const char *format, ...);
-int verb_printf(FILE *fp, const char *format, ...);
+void warn_printf(FILE *fp, const char *format, ...);
+void verb_printf(FILE *fp, const char *format, ...);
 
 struct index;
 void indwrite(char *filename, struct index *ind, int pagenum);
 
-#ifdef fprintf
 #undef fprintf
-#endif
 #define fprintf fprintf2
 
-#ifdef fputs
 #undef fputs
-#endif
 #define fputs   fputs2

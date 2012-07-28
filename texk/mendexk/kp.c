@@ -1,27 +1,8 @@
 /* Written by K.Asayayam  Sep. 1995 */
-#ifdef KPATHSEA
 
 #include <kpathsea/kpathsea.h>
 #include <string.h>
 #include "kp.h"
-
-int
-KP_init(char *prog)
-{
-  kpse_set_program_name(prog, "mendex");
-  return 0;
-}
-
-/* KP_get_value(char *var,char *def_val)
-     ARGUMENTS:
-       char *var:     name of variable.
-       char *def_val: default value.
- */
-const char *KP_get_value(const char *var, const char *def_val)
-{
-  const char *p = kpse_var_value(var);
-  return p ? p : def_val;
-}
 
 /* KP_get_path(char *var, char *def_val)
      ARGUMENTS:
@@ -41,10 +22,9 @@ static const char *KP_get_path(const char *var, const char *def_val)
 
 /*
  */
-int KP_entry_filetype(KpathseaSupportInfo *info)
+void KP_entry_filetype(KpathseaSupportInfo *info)
 {
   info->path = KP_get_path(info->var_name,info->path);
-  return 0;
 }
 
 /* KP_find_file(KpathseaSupportInfo *info, char *name)
@@ -64,7 +44,3 @@ const char *KP_find_file(KpathseaSupportInfo *info, const char *name)
   }
   return ret ? ret : name;
 }
-
-#else
-int KP_dummy_variable;
-#endif

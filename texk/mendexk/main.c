@@ -4,19 +4,17 @@
 
 #include <kpathsea/config.h>
 #include <kpathsea/tex-file.h>
+#include <kpathsea/variable.h>
 #include <ptexenc/ptexenc.h>
 #include "mendex.h"
 
 #include "kana.h"
 #include "var.h"
 
-#ifdef KPATHSEA
 #include "kp.h"
-#endif
 
 char *styfile,*idxfile[256],indfile[256],*dicfile,logfile[256];
 
-#ifdef KPATHSEA
 /* default paths */
 #ifndef DEFAULT_INDEXSTYLES
 #define DEFAULT_INDEXSTYLES "."
@@ -25,7 +23,6 @@ char *styfile,*idxfile[256],indfile[256],*dicfile,logfile[256];
 #define DEFAULT_INDEXDICTS "."
 #endif
 KpathseaSupportInfo kp_ist,kp_dict;
-#endif
 
 #define VERSION "version 2.6f [14-Aug-2009]"
 
@@ -38,8 +35,7 @@ int main(int argc, char **argv)
 #ifdef WIN32
 		_setmaxstdio(2048);
 #endif
-#ifdef KPATHSEA
-	KP_init(argv[0]);
+	kpse_set_program_name(argv[0], "mendex");
 	kp_ist.var_name = "INDEXSTYLE";
 	kp_ist.path = DEFAULT_INDEXSTYLES; /* default path. */
 	kp_ist.suffix = "ist";
@@ -48,7 +44,6 @@ int main(int argc, char **argv)
 	kp_dict.path = DEFAULT_INDEXDICTS; /* default path */
 	kp_dict.suffix = "dict";
 	KP_entry_filetype(&kp_dict);
-#endif
 
 /*   check options   */
 
@@ -61,13 +56,10 @@ int main(int argc, char **argv)
 
 			case 'd':
 				if ((argv[i][2]=='\0')&&(i+1<argc)) {
-					i++;
-					dicfile=malloc(strlen(argv[i])+1);
-					strcpy(dicfile,argv[i]);
+					dicfile=xstrdup(argv[++i]);
 				}
 				else {
-					dicfile=malloc(strlen(&argv[i][2])+1);
-					strcpy(dicfile,&argv[i][2]);
+					dicfile=xstrdup(&argv[i][2]);
 				}
 				break;
 
@@ -137,13 +129,10 @@ int main(int argc, char **argv)
 
 			case 's':
 				if ((argv[i][2]=='\0')&&(i+1<argc)) {
-					i++;
-					styfile=malloc(strlen(argv[i])+1);
-					strcpy(styfile,argv[i]);
+					styfile=xstrdup(argv[++i]);
 				}
 				else {
-					styfile=malloc(strlen(&argv[i][2])+1);
-					strcpy(styfile,&argv[i][2]);
+					styfile=xstrdup(&argv[i][2]);
 				}
 				break;
 
@@ -198,7 +187,7 @@ int main(int argc, char **argv)
 			cc=strlen(argv[i]);
 			if (cc<4) cc+=4;
 			else if (strcmp(&argv[i][cc-4],".idx")) cc+=4;
-			idxfile[j]=malloc(cc+1);
+			idxfile[j]=xmalloc(cc+1);
 			strcpy(idxfile[j++],argv[i]);
 		}
 	}
@@ -209,14 +198,9 @@ int main(int argc, char **argv)
 	if (idxcount==0) idxcount=fsti=1;
 
 	if (styfile==NULL) {
-#ifdef KPATHSEA
-		envbuff=KP_get_value("INDEXDEFAULTSTYLE",NULL);
-#else
-		envbuff=getenv("INDEXDEFAULTSTYLE");
-#endif
+		envbuff=kpse_var_value("INDEXDEFAULTSTYLE");
 		if (envbuff!=NULL) {
-			styfile=malloc(strlen(envbuff)+1);
-			strcpy(styfile,envbuff);
+			styfile=xstrdup(envbuff);
 		}
 	}
 
@@ -295,7 +279,7 @@ int main(int argc, char **argv)
 
 	lines=0;
 	ecount=0;
-	ind=malloc(sizeof(struct index));
+	ind=xmalloc(sizeof(struct index));
 
 	for (i=0;i<idxcount-fsti;i++) {
 		ecount+=idxread(idxfile[i],lines);

@@ -1,3 +1,22 @@
+2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert.c, pageread.c, styfile.c: Handle input files with
+	Dos/Windows (CRLF) line endings (from W32TeX).
+
+	Use Nelson Beebe's qqsort() instead of qsort() (from W32TeX).
+	* convert.c, sort.c: Add #include "qsort.h".
+	* qsort.[ch] (new): Copied from ../makeindexk.
+	* Makefile.am (mendex_SOURCES): Add the new files.
+
+2012-07-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert.c, kp.[ch], main.c, styfile.c: Always use KPATHSEA.
+	* Makefile.am (AM_CPPFLAGS): Remove '-DKPATHSEA'.
+	* convert.c, fread.c, main.c, sort.c: Use xmalloc().
+	* fread.c, main.c: Use xstrdup() instead of malloc()+strcpy().
+	* fwrite.c, mendex.h, kp.[ch]: Change {verb,warn}_printf() and
+	KP_entry_filetype() return type from 'int' into 'void'.
+
 2012-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fwrite.c, main.c: Use binary mode for input and output
@@ -58,9 +77,6 @@
 	char' or 'unsigned char *' to plain 'char' or 'char *', but
 	always cast string bytes to 'unsigned char' when tested for '<',
 	'<=', '>', or '>='.
-
-	* convert.c, fread.c, main.c, sort.c: Do not typecast the
-	result of malloc().
 
 2010-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

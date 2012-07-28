@@ -5,6 +5,21 @@
 #include <kpathsea/tex-file.h>
 #include "mendex.h"
 
+static inline int
+bfgetc (FILE *stream)
+{
+	int cc = getc (stream);
+	if (cc == '\r') {
+		cc = getc (stream);
+		if (cc != '\n') {
+			ungetc (cc, stream);
+			cc = '\r';
+		}
+	}
+	return cc;
+}
+#define fgetc bfgetc
+
 /*   checking last page   */
 int lastpage(const char *filename)
 {

@@ -1,12 +1,11 @@
 ## Makefile.am for the TeX Live subdirectory texk/mendexk/
 ##
-## Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = mendex
@@ -24,10 +23,11 @@ mendex_SOURCES = \
 	main.c \
 	mendex.h \
 	pageread.c \
+	qsort.c \
+	qsort.h \
 	sort.c \
 	styfile.c \
 	var.h
-
 
 $(mendex_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 

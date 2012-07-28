@@ -38,35 +38,31 @@ int fprintf2(FILE *fp, const char *format, ...)
     return n;
 }
 
-int warn_printf(FILE *fp, const char *format, ...)
+void warn_printf(FILE *fp, const char *format, ...)
 {
     char print_buff[8000];
     va_list argptr;
-    int n;
 
     va_start(argptr, format);
-    n = vsnprintf(print_buff, sizeof print_buff, format, argptr);
+    vsnprintf(print_buff, sizeof print_buff, format, argptr);
     va_end(argptr);
 
     warn++;    
     fputs(print_buff, stderr);
     if (fp!=stderr) fputs(print_buff, fp);
-    return n;
 }
 
-int verb_printf(FILE *fp, const char *format, ...)
+void verb_printf(FILE *fp, const char *format, ...)
 {
     char print_buff[8000];
     va_list argptr;
-    int n;
 
     va_start(argptr, format);
-    n = vsnprintf(print_buff, sizeof print_buff, format, argptr);
+    vsnprintf(print_buff, sizeof print_buff, format, argptr);
     va_end(argptr);
 
     if (verb!=0)    fputs(print_buff, stderr);
     if (fp!=stderr) fputs(print_buff, fp);
-    return n;
 }
 
 
