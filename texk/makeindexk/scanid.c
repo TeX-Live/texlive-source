@@ -181,7 +181,7 @@ make_key(void)
 	    len,totmem);
 #endif /* DEBUG */
 
-    if ((ptr = (NODE_PTR) malloc(len)) == NULL)
+    if ((ptr = malloc(len)) == NULL)
 	fprintf (stderr, "Not enough core...abort.\n");
 
     bzero(ptr, len);
@@ -239,7 +239,7 @@ make_string(char **ppstr, int n)
      * sort key may differ at german_sort and strange indexentries
      * <werner@suse.de>
      */
-    (*ppstr) = (char*)malloc(n);
+    (*ppstr) = malloc(n);
     if (!(*ppstr))
 	fprintf (stderr, "Not enough core...abort.\n");
     bzero(*ppstr, n);		/* Always zero anything, <werner@suse.de> */

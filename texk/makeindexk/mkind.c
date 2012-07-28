@@ -410,7 +410,7 @@ check_idx(char *fn, int open_fn)
 		    STRING_MAX,totmem);
 #endif /* DEBUG */
 
-	    if ((tmp_fn = (char *) malloc(STRING_MAX+5)) == NULL)
+	    if ((tmp_fn = malloc(STRING_MAX+5)) == NULL)
 		FATAL("Not enough core...abort.\n");
 	    snprintf(tmp_fn, STRING_MAX+5, "%s%s", base, INDEX_IDX);
 	    idx_fn = tmp_fn;

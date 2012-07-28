@@ -1,3 +1,7 @@
+2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.c, scanid.c: Do not typecast the result of malloc().
+
 2012-07-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Cleanup Nelson Beebe's qqsort() used instead of qsort().

@@ -12,3 +12,5 @@
 typedef int (*qq_compar_fn_t)(const void *, const void *);
 
 extern void qqsort (void *base, size_t n, size_t size, qq_compar_fn_t compar);
+
+#define qsort qqsort
