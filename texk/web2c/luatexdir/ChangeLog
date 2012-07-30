@@ -1,3 +1,8 @@
+2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luainit.w (lua_initialize): Avoid using asprintf().
+	* utils/utils.w (initversionstring): Avoid using asprintf().
+
 2012-07-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/loslibext.c os_gettimeofday): Use int64_t (from W32TeX).

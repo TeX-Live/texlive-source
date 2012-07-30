@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/libluatex.am: Makefile fragment for libluatex.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libluatex
@@ -22,7 +22,9 @@ libluatex_web =
 
 nodist_libluatex_a_SOURCES =
 
-libluatex_a_SOURCES = luatexdir/luatex.h
+libluatex_a_SOURCES = \
+	luatexdir/luatex.h \
+	luatexdir/luatex-common.h
 
 ## from luatexdir/dvi
 ##

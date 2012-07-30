@@ -738,9 +738,18 @@ void lua_initialize(int ac, char **av)
     argc = ac;
     argv = av;
 
-    if (asprintf(&banner, "This is LuaTeX, Version %s-%d" WEB2CVERSION,
-                 luatex_version_string, luatex_date_info) < 0) {
-        exit(EXIT_FAILURE);
+    {
+        const char *fmt = "This is LuaTeX, Version %s-%s" WEB2CVERSION;
+        size_t len;
+        char buf[16];
+
+        sprintf(buf, "%d", luatex_date_info);
+        len = strlen(fmt) + strlen(luatex_version_string) + strlen(buf) - 3;
+
+        /* len is just enough, because of the placeholder chars in fmt
+           that get replaced by the arguments.  */
+        banner = xmalloc(len);
+        sprintf(banner, fmt, luatex_version_string, buf);
     }
     ptexbanner = banner;
 
