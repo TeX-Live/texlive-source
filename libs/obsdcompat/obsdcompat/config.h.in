@@ -6,9 +6,6 @@
 /* Define if your snprintf is busted */
 #undef BROKEN_SNPRINTF
 
-/* Define to 1 if you have the `asprintf' function. */
-#undef HAVE_ASPRINTF
-
 /* OpenBSD's gcc has bounded */
 #undef HAVE_ATTRIBUTE__BOUNDED__
 
@@ -29,9 +26,6 @@
 
 /* Define to 1 if you have the <floatingpoint.h> header file. */
 #undef HAVE_FLOATINGPOINT_H
-
-/* Define to 1 if you have the `getrusage' function. */
-#undef HAVE_GETRUSAGE
 
 /* define if you have int64_t data type */
 #undef HAVE_INT64_T
@@ -150,26 +144,8 @@
 /* define if you have u_intxx_t data type */
 #undef HAVE_U_INTXX_T
 
-/* Define to 1 if you have the `vasprintf' function. */
-#undef HAVE_VASPRINTF
-
-/* Define if va_copy exists */
-#undef HAVE_VA_COPY
-
 /* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
-
-/* Define if compiler implements __FUNCTION__ */
-#undef HAVE___FUNCTION__
-
-/* Define if libc defines __progname */
-#undef HAVE___PROGNAME
-
-/* Define if __va_copy exists */
-#undef HAVE___VA_COPY
-
-/* Define if compiler implements __func__ */
-#undef HAVE___func__
 
 /* max value of long long calculated by configure */
 #undef LLONG_MAX

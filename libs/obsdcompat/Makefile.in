@@ -77,10 +77,9 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libopenbsd_compat_a_AR = $(AR) $(ARFLAGS)
 libopenbsd_compat_a_LIBADD =
-am__objects_1 = bsd-asprintf.$(OBJEXT) bsd-snprintf.$(OBJEXT)
-am__objects_2 = strlcat.$(OBJEXT) strlcpy.$(OBJEXT) strsep.$(OBJEXT) \
+am_libopenbsd_compat_a_OBJECTS = bsd-snprintf.$(OBJEXT) \
+	strlcat.$(OBJEXT) strlcpy.$(OBJEXT) strsep.$(OBJEXT) \
 	strtoll.$(OBJEXT) strtonum.$(OBJEXT) strtoul.$(OBJEXT)
-am_libopenbsd_compat_a_OBJECTS = $(am__objects_1) $(am__objects_2)
 libopenbsd_compat_a_OBJECTS = $(am_libopenbsd_compat_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/obsdcompat
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -223,24 +222,17 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 noinst_LIBRARIES = libopenbsd-compat.a
-compat_sources = \
-	bsd-asprintf.c \
-	bsd-snprintf.c
-
-openbsd_sources = \
+libopenbsd_compat_a_SOURCES = \
+	bsd-snprintf.c \
+	defines.h \
+	includes.h \
+	openbsd-compat.h \
 	strlcat.c \
 	strlcpy.c \
 	strsep.c \
 	strtoll.c \
 	strtonum.c \
 	strtoul.c
-
-libopenbsd_compat_a_SOURCES = \
-	$(compat_sources) \
-	$(openbsd_sources) \
-	defines.h \
-	includes.h \
-	openbsd-compat.h
 
 all: all-am
 
@@ -309,7 +301,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bsd-asprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bsd-snprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strlcat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strlcpy.Po@am__quote@

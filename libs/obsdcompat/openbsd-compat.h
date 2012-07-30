@@ -28,7 +28,7 @@
  * ---------------------------------------------------------------------------
  *
  * Modified (butchered) 2006 by Martin Schröder for pdfTeX
- *
+ * Modified 2009 by Peter Breitenlohner for new TeX Live build system
  */
 
 #ifndef _OPENBSD_COMPAT_H
@@ -40,29 +40,22 @@
 #define OBSDLIB_VERNUM 0x4310
 
 /* OpenBSD function replacements */
-#ifndef HAVE_STRLCPY
-/* #include <sys/types.h> XXX Still needed? */
-/* see http://www.openbsd.org/cgi-bin/man.cgi?query=strlcpy */
-size_t strlcpy(char *dst, const char *src, size_t siz);
-#endif
-
 #ifndef HAVE_STRLCAT
 /* #include <sys/types.h> XXX Still needed? */
 /* see http://www.openbsd.org/cgi-bin/man.cgi?query=strlcat */
 size_t strlcat(char *dst, const char *src, size_t siz);
 #endif 
 
+#ifndef HAVE_STRLCPY
+/* #include <sys/types.h> XXX Still needed? */
+/* see http://www.openbsd.org/cgi-bin/man.cgi?query=strlcpy */
+size_t strlcpy(char *dst, const char *src, size_t siz);
+#endif
+
 #ifndef HAVE_STRSEP
 /* see http://www.openbsd.org/cgi-bin/man.cgi?query=strsep */
 char *strsep(char **stringp, const char *delim);
 #endif
-
-/*#include <sys/types.h> XXX Still needed? * For uid_t, gid_t * */
-
-#ifndef HAVE_ASPRINTF
-/* see http://www.openbsd.org/cgi-bin/man.cgi?query=asprintf */
-int asprintf(char **, const char *, ...);
-#endif 
 
 /* #include <sys/types.h> XXX needed? For size_t */
 
@@ -79,11 +72,6 @@ long long strtoll(const char *, char **, int);
 #ifndef HAVE_STRTONUM
 /* see http://www.openbsd.org/cgi-bin/man.cgi?query=strtonum */
 long long strtonum(const char *, long long, long long, const char **);
-#endif
-
-#ifndef HAVE_VASPRINTF
-/* see http://www.openbsd.org/cgi-bin/man.cgi?query=vasprintf */
-int vasprintf(char **, const char *, va_list);
 #endif
 
 #ifndef HAVE_VSNPRINTF

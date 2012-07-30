@@ -1,6 +1,7 @@
 # $Id: configure.ac,v 1.322.2.6 2006/02/08 11:11:06 dtucker Exp $
 #
 # Copyright (c) 1999-2004 Damien Miller
+# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -19,7 +20,7 @@
 # Modified (butchered) 2006 by Martin Schröder for pdfTeX
 # Modified 2009 by Peter Breitenlohner for new TeX Live build system
 
-AC_INIT([OpenBSD-Compat],[Portable],[martin@pdftex.org])
+AC_INIT([OpenBSD-Compat], [Portable], [tex-k@tug.org])
 AC_REVISION($Revision: 1.322.2.6 $)
 AC_CONFIG_SRCDIR([openbsd-compat.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
@@ -300,7 +301,6 @@ AC_FUNC_STRFTIME
 
 dnl    Checks for library functions. Please keep in alphabetical order
 AC_CHECK_FUNCS( \
-	asprintf \
 	bcopy \
 	snprintf \
 	strdup \
@@ -311,12 +311,10 @@ AC_CHECK_FUNCS( \
 	strtoll \
 	strtoul \
 	sysconf \
-	vasprintf \
 	vsnprintf \
 )
 
 dnl Make sure prototypes are defined for these before using them.
-AC_CHECK_DECL(getrusage, [AC_CHECK_FUNCS(getrusage)])
 AC_CHECK_DECL(strsep,
 	[AC_CHECK_FUNCS(strsep)],
 	[],
@@ -678,53 +676,6 @@ main() { exit(0); }
 		]])], [ true ], [ AC_DEFINE(BROKEN_SNPRINTF) ],
 		AC_MSG_WARN([cross compiling: Assuming working snprintf()])
 	)
-fi
-
-AC_CACHE_CHECK([if libc defines __progname], ac_cv_libc_defines___progname, [
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[ extern char *__progname; printf("%s", __progname); ]])],[ ac_cv_libc_defines___progname="yes" ],[ ac_cv_libc_defines___progname="no" 
-	])
-])
-if test "x$ac_cv_libc_defines___progname" = "xyes" ; then
-	AC_DEFINE(HAVE___PROGNAME, 1, [Define if libc defines __progname])
-fi
-
-AC_CACHE_CHECK([whether $CC implements __FUNCTION__], ac_cv_cc_implements___FUNCTION__, [
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <stdio.h>
-]], [[ printf("%s", __FUNCTION__); ]])],[ ac_cv_cc_implements___FUNCTION__="yes" ],[ ac_cv_cc_implements___FUNCTION__="no" 
-	])
-])
-if test "x$ac_cv_cc_implements___FUNCTION__" = "xyes" ; then
-	AC_DEFINE(HAVE___FUNCTION__, 1,
-		[Define if compiler implements __FUNCTION__])
-fi
-
-AC_CACHE_CHECK([whether $CC implements __func__], ac_cv_cc_implements___func__, [
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <stdio.h>
-]], [[ printf("%s", __func__); ]])],[ ac_cv_cc_implements___func__="yes" ],[ ac_cv_cc_implements___func__="no" 
-	])
-])
-if test "x$ac_cv_cc_implements___func__" = "xyes" ; then
-	AC_DEFINE(HAVE___func__, 1, [Define if compiler implements __func__])
-fi
-
-AC_CACHE_CHECK([whether va_copy exists], ac_cv_have_va_copy, [
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>
-		 va_list x,y;]], [[va_copy(x,y);]])],[ ac_cv_have_va_copy="yes" ],[ ac_cv_have_va_copy="no" 
-	])
-])
-if test "x$ac_cv_have_va_copy" = "xyes" ; then
-	AC_DEFINE(HAVE_VA_COPY, 1, [Define if va_copy exists])
-fi
-
-AC_CACHE_CHECK([whether __va_copy exists], ac_cv_have___va_copy, [
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>
-		 va_list x,y;]], [[__va_copy(x,y);]])],[ ac_cv_have___va_copy="yes" ],[ ac_cv_have___va_copy="no" 
-	])
-])
-if test "x$ac_cv_have___va_copy" = "xyes" ; then
-	AC_DEFINE(HAVE___VA_COPY, 1, [Define if __va_copy exists])
 fi
 
 dnl Adding -Werror to CFLAGS early prevents configure tests from running.

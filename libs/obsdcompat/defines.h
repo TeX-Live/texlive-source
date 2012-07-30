@@ -24,7 +24,7 @@
  * ---------------------------------------------------------------------------
  *
  * Modified (butchered) 2006 by Martin Schröder for pdfTeX
- *
+ * Modified 2009 by Peter Breitenlohner for new TeX Live build system
  */
 
 #ifndef _DEFINES_H
@@ -32,18 +32,6 @@
 
 /* $Id: defines.h,v 1.130 2005/12/17 11:04:09 dtucker Exp $ */
 
-
-/* Constants */
-
-#ifndef STDIN_FILENO
-# define STDIN_FILENO    0
-#endif
-#ifndef STDOUT_FILENO
-# define STDOUT_FILENO   1
-#endif
-#ifndef STDERR_FILENO
-# define STDERR_FILENO   2
-#endif
 
 /* Types */
 
@@ -169,14 +157,6 @@ typedef int ssize_t;
 #ifndef MAX
 # define MAX(a,b) (((a)>(b))?(a):(b))
 # define MIN(a,b) (((a)<(b))?(a):(b))
-#endif
-
-#ifndef roundup
-# define roundup(x, y)   ((((x)+((y)-1))/(y))*(y))
-#endif
-
-#ifndef __P
-# define __P(x) x
 #endif
 
 #if !defined(__GNUC__) || (__GNUC__ < 2)

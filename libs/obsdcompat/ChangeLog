@@ -1,3 +1,14 @@
+2012-07-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bsd-asprintf.c (removed): We no longer use asprintf().
+	* Makefile.am (libopenbsd_compat_a_SOURCES): Drop bsd-asprintf.c.
+	* configure.ac: Drop tests for (v)asprintf, getrusage,
+	__progname, __FUNCTION__, __func__, va_copy, and __va_copy.
+	* defines.h: Drop STD{IN,OUT,ERR}_FILENO, roundup, and __P.
+	* openbsd-compat.h: Drop asprintf() and vasprintf() prototypes.
+
+	* strlcpy.c: Update from openbsd-compat of openssh 6.0p1.
+
 2012-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop test for `optreset' (result is not used).
