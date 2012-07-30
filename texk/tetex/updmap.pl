@@ -220,7 +220,13 @@ sub main {
       push @used_files, (win32() ? lc($f) : $f);
     }
     #
-    chomp(my $TEXMFLOCALVAR =`kpsewhich --expand-path='\$TEXMFLOCAL'`);
+    my $TEXMFLOCALVAR;
+    if (win32()) {
+      chomp($TEXMFLOCALVAR =`kpsewhich --expand-path=\$TEXMFLOCAL`);
+    } else {
+      chomp($TEXMFLOCALVAR =`kpsewhich --expand-path='\$TEXMFLOCAL'`);
+    }
+      
     my @TEXMFLOCAL = split /:/ , $TEXMFLOCALVAR;
     chomp(my $TEXMFHOME =`kpsewhich --var-value=TEXMFHOME`);
     if (win32()) {
