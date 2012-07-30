@@ -220,43 +220,35 @@ sub main {
       push @used_files, (win32() ? lc($f) : $f);
     }
     #
-    chomp(my $TEXMFLOCAL =`kpsewhich --var-value=TEXMFLOCAL`);
+    chomp(my $TEXMFLOCALVAR =`kpsewhich --expand-path='\$TEXMFLOCAL'`);
+    my @TEXMFLOCAL = split /:/ , $TEXMFLOCALVAR;
     chomp(my $TEXMFHOME =`kpsewhich --var-value=TEXMFHOME`);
     if (win32()) {
-      $TEXMFLOCAL = lc($TEXMFLOCAL);
+      @TEXMFLOCAL = lc(@TEXMFLOCAL);
       $TEXMFHOME = lc($TEXMFHOME);
     }
     #
     # search for TEXMFLOCAL/web2c/updmap.cfg
-    # see compatibility with updmap-local.cfg below
-    my $found = 0;
-    my $TMLabs = Cwd::abs_path($TEXMFLOCAL);
-    if ($TMLabs) {
-      for my $f (@used_files) {
-        my $absf = Cwd::abs_path($f); #should always work
-        if ($absf =~ m/^\Q$TMLabs\E/) {
-          $found = 1;
-          last;
+    # check for compatibility with old updmap-local.cfg
+    my @tmlused;
+    for my $tml (@TEXMFLOCAL) {
+      my $TMLabs = Cwd::abs_path($tml);
+      next if (!$TMLabs);
+      my $oldfound = 0;
+      if (-r "$TMLabs/web2c/updmap-local.cfg") {
+        push @tmlused, "$TMLabs/web2c/updmap-local.cfg";
+        warning("Old configuration file\n  $TMLabs/web2c/updmap-local.cfg\nfound! ");
+        $oldfound = 1;
+      }
+      if (-r "$TMLabs/web2c/updmap.cfg") {
+        if ($oldfound) {
+          warning("Will read it *instead* of\n  $TMLabs/web2c/updmap.cfg\n");
+        } else {
+          push @tmlused, "$TMLabs/web2c/updmap.cfg";
         }
       }
-    }
-    #
-    # backward compatibility with TL2011 and before updmap-local.cfg
-    # we read this instead of TEXMFLOCAL/web2c/updmap.cfg, but give
-    # a big fat warning
-    my $old_updmap_local_found = 0;
-    if (-r "$TMLabs/web2c/updmap-local.cfg") {
-      $old_updmap_local_found = 1;
-      warning("Old configuration file TEXMFLOCAL/web2c/updmap-local.cfg found!\n");
-      if ($found) {
-        warning("Will read this file *instead* of TEXMFLOCAL/web2c/updmap.cfg!!!\n");
-        # rest of the action is done in the reordering of cfg files
-      } else {
-        # if TEXMFLOCAL updmap.cfg does not exist, we have to make sure
-        # that the replacement is added to the list of updmap files
-        push @used_files, "$TMLabs/web2c/updmap-local.cfg";
-      }
-      warning("Please consider moving the information from updmap-local.cfg to TEXMFLOCAL/web2c/updmap.cfg\n");
+      warning("Please consider moving the information from updmap-local.cfg to\n  $TMLabs/web2c/updmap.cfg\n")
+        if ($oldfound);
     }
     #
     # reorder used files: we move TEXMFLOCAL (if used) just above TEXMFMAIN
@@ -300,27 +292,27 @@ sub main {
     # TEXMFMAIN      $TEXLIVE/YYYY/texmf/web2c/updmap.cfg
     # TEXMFDIST      $TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
     #
-    if ($found || $old_updmap_local_found) {
+    if (@tmlused) {
       my @tmp;
       for my $f (@used_files) {
         if ($f =~ m!\Q$TEXMFMAIN/\E!) {
-          if ($old_updmap_local_found) {
-            push @tmp, "$TEXMFLOCAL/web2c/updmap-local.cfg";
-          } else {
-            # since we are under if ($found || $old_updmap_local_found)
-            # we know that TEXMFLOCAL/web2c/updmap.cfg exists!
-            push @tmp, "$TEXMFLOCAL/web2c/updmap.cfg";
-          }
+          push @tmp, @tmlused;
           push @tmp, $f;
         } else {
-          if ($f !~ m!\Q$TEXMFLOCAL\E!) {
-            push @tmp, $f;
+          my $pushit = 1;
+          for my $tml (@TEXMFLOCAL) {
+            if ($f =~ m!\Q$tml\E!) {
+              $pushit = 0;
+              last;
+            }
           }
+          push @tmp, $f if ($pushit);
         }
       }
       @used_files = @tmp;
     }
     @{$opts{'cnffile'}}  = @used_files;
+    #
     # determine the config file that we will use for changes
     # if in the list of used files contains either one from
     # TEXMFHOME or TEXMFCONFIG (which is TEXMFSYSCONFIG in the -sys case)
@@ -346,6 +338,8 @@ sub main {
     for my $f (@{$opts{'cnffile'}}) {
       print "  $f\n";
     }
+    print "$prg is using the following updmap.cfg file for writing changes:\n";
+    print "  $changes_config_file\n";
   }
   if ($opts{'listfiles'}) {
     # we listed it above, so be done

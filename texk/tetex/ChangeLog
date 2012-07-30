@@ -1,3 +1,8 @@
+2012-07-30  Norbert Preining  <preining@logic.at>
+
+	* updmap.pl (main): support for multiple entry TEXMFLOCAL.
+	Tell the user which config files is used for writing.
+
 2012-07-23  Karl Berry  <karl@tug.org>
 
 	* updmap.pl (help): we have both --showoption and --showoptions.
