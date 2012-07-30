@@ -1,3 +1,7 @@
+2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c (initversionstring): Avoid using asprintf().
+
 2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/pdftex.am: Distribute pdftex_version.h.
