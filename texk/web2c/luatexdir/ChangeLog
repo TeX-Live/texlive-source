@@ -1,3 +1,8 @@
+2012-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdf/pdfpage.w (print_pdffloat): Cope with broken snprintf().
+	* lua/luastuff.w (luatex_error): Drop snprintf() return value.
+
 2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/luainit.w (lua_initialize): Avoid using asprintf().

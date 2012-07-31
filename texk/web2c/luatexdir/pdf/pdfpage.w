@@ -173,7 +173,7 @@ void print_pdffloat(PDF pdf, pdffloat f)
     if (l != 0) {
         pdf_puts(pdf, ".");
         j = snprintf(a, 23, "%ld", l + ten_pow[e]);
-        assert(j < 23);
+        assert((unsigned)j < 23);
         for (i = e; i > 0; i--) {
             if (a[i] != '0')
                 break;
