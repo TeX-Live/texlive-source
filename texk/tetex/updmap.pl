@@ -53,6 +53,7 @@ reset_root_home();
 chomp(my $TEXMFMAIN = `kpsewhich --var-value=TEXMFMAIN`);
 chomp(my $TEXMFVAR = `kpsewhich -var-value=TEXMFVAR`);
 chomp(my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
+chomp(my $TEXMFHOME = `kpsewhich -var-value=TEXMFHOME`);
 
 # make sure that on windows *everything* is in lower case for comparison
 if (win32()) {
@@ -60,6 +61,7 @@ if (win32()) {
   $TEXMFVAR = lc($TEXMFVAR);
   $TEXMFCONFIG = lc($TEXMFCONFIG);
   $TEXMFROOT = lc($TEXMFROOT);
+  $TEXMFHOME = lc($TEXMFHOME);
 }
 
 
@@ -221,17 +223,13 @@ sub main {
     }
     #
     my $TEXMFLOCALVAR;
+    my @TEXMFLOCAL;
     if (win32()) {
       chomp($TEXMFLOCALVAR =`kpsewhich --expand-path=\$TEXMFLOCAL`);
+      @TEXMFLOCAL = map { lc } split(/;/ , $TEXMFLOCALVAR);
     } else {
       chomp($TEXMFLOCALVAR =`kpsewhich --expand-path='\$TEXMFLOCAL'`);
-    }
-      
-    my @TEXMFLOCAL = split /:/ , $TEXMFLOCALVAR;
-    chomp(my $TEXMFHOME =`kpsewhich --var-value=TEXMFHOME`);
-    if (win32()) {
-      @TEXMFLOCAL = lc(@TEXMFLOCAL);
-      $TEXMFHOME = lc($TEXMFHOME);
+      @TEXMFLOCAL = split /:/ , $TEXMFLOCALVAR;
     }
     #
     # search for TEXMFLOCAL/web2c/updmap.cfg

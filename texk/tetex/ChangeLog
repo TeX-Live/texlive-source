@@ -1,6 +1,7 @@
 2012-07-31  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl (main): fix quoting and var expansion on Windows.
+	* updmap.pl (main): and another fix, this time for PATH separator
 
 2012-07-30  Norbert Preining  <preining@logic.at>
 
