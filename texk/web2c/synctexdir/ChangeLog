@@ -1,4 +1,8 @@
-2012-02-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2012-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex_main.c (TEST): Check values returned by snprintf().
+
+2012-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex.c: Remove "# warning ..." line, because MSVC fails to
 	interpret it.

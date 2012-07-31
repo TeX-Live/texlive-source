@@ -1,5 +1,5 @@
 /* 
-Copyright (c) 2008, 2009, 2010, 2011 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008-2012 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
@@ -424,6 +424,11 @@ int synctex_view_proceed(synctex_view_params_t * Ps) {
 						}\
 						buffer_cur += printed;size-=printed;\
 						printed = snprintf(buffer_cur,size,FORMAT,WHAT);\
+						if((unsigned)printed >= (unsigned)size) {\
+							synctex_help_view("Snprintf problem");\
+							free(buffer);\
+							return -1;\
+						}\
 						buffer_cur += printed;size-=printed;\
 						*buffer_cur='\0';\
 						viewer = where+strlen(KEY);\
@@ -702,6 +707,11 @@ int synctex_edit_proceed(synctex_edit_params_t * Ps) {
 						}\
 						buffer_cur += printed;size-=printed;\
 						printed = snprintf(buffer_cur,size,FORMAT,WHAT);\
+						if((unsigned)printed >= (unsigned)size) {\
+							synctex_help_edit("Snprintf problem");\
+							free(buffer);\
+							return -1;\
+						}\
 						buffer_cur += printed;size-=printed;\
 						*buffer_cur='\0';\
 						Ps->editor = where+strlen(KEY);\
