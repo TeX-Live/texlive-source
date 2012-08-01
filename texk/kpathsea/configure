@@ -778,6 +778,7 @@ enable_mkocp_default
 enable_mkofm_default
 enable_mktexfmt_default
 enable_mktextex_default
+with_snprintf_wrapper
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1440,6 +1441,8 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot=DIR Search for dependent libraries within DIR
                         (or the compiler's sysroot if not specified).
+  --with-snprintf-wrapper use (v)snprintf wrapper functions [automatic for
+                          native compilation or Windows]
 
 Some influential environment variables:
   CC          C compiler command
@@ -13298,7 +13301,7 @@ fi
 
 
 
-if test $ac_cv_func_getcwd = yes; then
+if test "x$ac_cv_func_getcwd" = xyes; then
 # We only need to run this if we have getcwd.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether getcwd uses fork or vfork" >&5
 $as_echo_n "checking whether getcwd uses fork or vfork... " >&6; }
@@ -13334,7 +13337,7 @@ fi
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kb_cv_func_getcwd_forks" >&5
 $as_echo "$kb_cv_func_getcwd_forks" >&6; }
-if test $kb_cv_func_getcwd_forks = yes; then
+if test "x$kb_cv_func_getcwd_forks" = xyes; then
 
 $as_echo "#define GETCWD_FORKS 1" >>confdefs.h
 
@@ -13406,6 +13409,115 @@ fi
 
 LT_OBJDIR="$lt_cv_objdir"
 
+
+# Checking snprintf and vsnprintf
+
+# Check whether --with-snprintf-wrapper was given.
+if test "${with_snprintf_wrapper+set}" = set; then :
+  withval=$with_snprintf_wrapper; kpse_cv_wrap_snprintf=$withval
+else
+  test "x$kpse_cv_have_win32" != xno && kpse_cv_wrap_snprintf=yes
+fi
+if test "x$kpse_cv_have_win32" = xno; then
+  snfunc=snprintf vsnfunc=vsnprintf
+else
+  snfunc=_snprintf vsnfunc=_vsnprintf
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $snfunc and $vsnfunc" >&5
+$as_echo_n "checking for $snfunc and $vsnfunc... " >&6; }
+if ${kpse_cv_have_snfuncs+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <stdarg.h>
+                                                  char buf[16];
+                                                  va_list ap;
+int
+main ()
+{
+$snfunc (buf, 16, "%s", "abc");
+                                                  $vsnfunc (buf, 16, "%s", ap);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  kpse_cv_have_snfuncs=yes
+else
+  kpse_cv_have_snfuncs=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_snfuncs" >&5
+$as_echo "$kpse_cv_have_snfuncs" >&6; }
+if test "x$kpse_cv_have_snfuncs" != xyes; then
+  as_fn_error $? "Sorry, you need $snfunc and $vsnfunc." "$LINENO" 5
+fi
+if test "$cross_compiling" = yes; then :
+  :
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+char buf[4] = "abc";
+int
+main ()
+{
+if ($snfunc (buf, 1, "%s", "x") == 0 || buf[1] != 'b')
+                                   return 1;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_run "$LINENO"; then :
+
+else
+  as_fn_error $? "Sorry, your $snfunc is badly broken." "$LINENO" 5
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if we need (v)snprintf wrapper functions" >&5
+$as_echo_n "checking if we need (v)snprintf wrapper functions... " >&6; }
+if ${kpse_cv_wrap_snprintf+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "$cross_compiling" = yes; then :
+  kpse_cv_wrap_snprintf=no
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+char buf[4] = "abc";
+int
+main ()
+{
+$snfunc (buf, 3, "xyz");
+                                                 if (buf[2] != 0) return 1;
+                                                 $snfunc (buf, 2, "xyz");
+                                                 if (buf[1] != 0) return 1;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_run "$LINENO"; then :
+  kpse_cv_wrap_snprintf=no
+else
+  kpse_cv_wrap_snprintf=yes
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_wrap_snprintf" >&5
+$as_echo "$kpse_cv_wrap_snprintf" >&6; }
+if test "x$kpse_cv_wrap_snprintf" = xyes; then
+
+$as_echo "#define WRAP_SNPRINTF 1" >>confdefs.h
+
+fi
 
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 

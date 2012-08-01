@@ -40,7 +40,7 @@ dnl Replacement functions that may be required on ancient broken system.
 AC_CHECK_DECLS([putenv, strstr])
 AC_REPLACE_FUNCS([putenv strcasecmp strtol strstr])
 
-if test $ac_cv_func_getcwd = yes; then
+if test "x$ac_cv_func_getcwd" = xyes; then
 # We only need to run this if we have getcwd.
 AC_CACHE_CHECK([whether getcwd uses fork or vfork],
                [kb_cv_func_getcwd_forks],
@@ -52,7 +52,7 @@ AC_CACHE_CHECK([whether getcwd uses fork or vfork],
                               [kb_cv_func_getcwd_forks=no],
                               [kb_cv_func_getcwd_forks=yes],
                               [kb_cv_func_getcwd_forks=no])])
-if test $kb_cv_func_getcwd_forks = yes; then
+if test "x$kb_cv_func_getcwd_forks" = xyes; then
   AC_DEFINE([GETCWD_FORKS], 1,
             [Define to 1 if getcwd is implemented using fork or vfork.
              Let me know if you have to add this by hand because configure
@@ -65,6 +65,51 @@ AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
 AC_SUBST([LT_OBJDIR], ["$lt_cv_objdir"])
+
+# Checking snprintf and vsnprintf
+AC_ARG_WITH([snprintf-wrapper],
+            AS_HELP_STRING([--with-snprintf-wrapper],
+                           [use (v)snprintf wrapper functions @<:@automatic
+                            for native compilation or Windows@:>@]),
+            [kpse_cv_wrap_snprintf=$withval],
+            [test "x$kpse_cv_have_win32" != xno && kpse_cv_wrap_snprintf=yes])[]dnl
+if test "x$kpse_cv_have_win32" = xno; then
+  snfunc=snprintf vsnfunc=vsnprintf
+else
+  snfunc=_snprintf vsnfunc=_vsnprintf
+fi
+AC_CACHE_CHECK([for $snfunc and $vsnfunc],
+               [kpse_cv_have_snfuncs],
+               [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>
+                                                  char buf[16];
+                                                  va_list ap;]],
+                                                [[$snfunc (buf, 16, "%s", "abc");
+                                                  $vsnfunc (buf, 16, "%s", ap);]])],
+                               [kpse_cv_have_snfuncs=yes],
+                               [kpse_cv_have_snfuncs=no])])
+if test "x$kpse_cv_have_snfuncs" != xyes; then
+  AC_MSG_ERROR([Sorry, you need $snfunc and $vsnfunc.])
+fi
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[char buf[4] = "abc";]],
+                               [[if ($snfunc (buf, 1, "%s", "x") == 0 || buf[1] != 'b')
+                                   return 1;]])],
+              [],
+              [AC_MSG_ERROR([Sorry, your $snfunc is badly broken.])],
+              [:])
+AC_CACHE_CHECK([if we need (v)snprintf wrapper functions],
+               [kpse_cv_wrap_snprintf],
+               [AC_RUN_IFELSE([AC_LANG_PROGRAM([[char buf[4] = "abc";]],
+                                               [[$snfunc (buf, 3, "xyz");
+                                                 if (buf[2] != 0) return 1;
+                                                 $snfunc (buf, 2, "xyz");
+                                                 if (buf[1] != 0) return 1;]])],
+                              [kpse_cv_wrap_snprintf=no],
+                              [kpse_cv_wrap_snprintf=yes],
+                              [kpse_cv_wrap_snprintf=no])])
+if test "x$kpse_cv_wrap_snprintf" = xyes; then
+  AC_DEFINE([WRAP_SNPRINTF], 1,
+            [Define to 1 if we need (v)snprintf wrapper functions.])
+fi               
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in],

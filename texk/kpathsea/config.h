@@ -103,6 +103,75 @@
 #endif
 #endif
 
+#if defined(WIN32) || defined(WRAP_SNPRINTF)
+/* All Unix systems known to us have snprintf() and vsnprintf(),
+   while all known Windows systems have _snprintf() and _vsnprintf().
+   
+   Consider a call
+     RET = snprintf(BUF, SIZE, FMT, ...)
+   and let LEN be the number that would be written to BUF if SIZE were
+   sufficiently large (not counting the trailing null byte).
+
+   C99 requires that snprintf
+   (A) modifies at most the first SIZE bytes of BUF,
+   (B) writes a trailing null byte except when SIZE=0, and
+   (C) always returns LEN.
+   
+   All known implementations (except some ancient buggy ones, e.g., for
+   64-bit Solaris 7 from Oct. 1998) satisfy (A).  As long as LEN<SIZE
+   they all write a trailing null byte and return LEN.
+
+   Condition (C) is, however, violated for LEN>=SIZE by some older
+   implementations (SUSv2, glibc <= 2.0.6, etc.) and for Windows even
+   (B) is violated..
+
+   TeX Live does not require the full C99 semantics, but will need that
+   (1) there is always a trailing null byte, and
+   (2) for LEN>=SIZE the return value is either >=SIZE or <0, i.e.,
+       (unsigned)RET >= (unsigned)SIZE.
+
+   A violation of (2) is detected by configure (except when cross
+   compiling) and by a runtime check in the initialization routine
+   kpathsea_set_program_name.
+   
+   A violation of (1) is handled here through static inline wrapper
+   functions.  */
+
+#include <stdarg.h>
+
+#undef snprintf
+#undef vsnprintf
+
+static inline int
+kpse_vsnprintf (char *str, size_t size, const char *format, va_list ap)
+{
+#ifdef WIN32
+  int ret = _vsnprintf (str, size, format, ap);
+#else
+  int ret = vsnprintf (str, size, format, ap);
+#endif
+  if (size > 0 && (unsigned)ret >= (unsigned)size)
+    str [size - 1] = '\0';
+  return ret;
+}
+
+static inline int
+kpse_snprintf (char *str, size_t size, const char *format, ...)
+{
+  int ret;
+  va_list ap;
+
+  va_start (ap, format);
+  ret = kpse_vsnprintf (str, size, format, ap);
+  va_end (ap);
+  return ret;
+}
+
+#define snprintf kpse_snprintf
+#define vsnprintf kpse_vsnprintf
+
+#endif /* WIN32 || WRAP_SNPRINTF */
+
 /* Transform filename characters for use in hash tables.  */
 #if defined(MONOCASE_FILENAMES)
 #if defined(WIN32) && !defined(__i386_pc_gnu__)

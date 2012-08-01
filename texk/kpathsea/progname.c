@@ -696,6 +696,13 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
     }
   }
 
+  /* Runtime check that snprintf always writes a trailing NUL byte.  */
+  {
+    char buf[4] = "old";
+    assert (snprintf (buf, 2, "a") == 1 && buf[1] == '\0');
+    assert ((unsigned)snprintf (buf, 2, "ab") >= 2 && buf[1] == '\0');
+    assert ((unsigned)snprintf (buf, 2, "abc") >= 2 && buf[1] == '\0');
+  }
   /* Some of the utility routines (like atou() and xfopen()) will use
      FATAL and variations thereof (see lib.h) if there is a problem.
 

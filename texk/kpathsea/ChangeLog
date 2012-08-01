@@ -1,3 +1,11 @@
+2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Bail out for a badly broken snprintf()
+        (hopefully this will not happen).
+	Check if we need (v)snprintf wrapper functions.
+	* config.h: If needed, declare (v)snprintf wrapper functions.
+	* progname.c (kpathsea_set_program_name): Check snprintf sanity.
+
 2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Add AC_CHECK_SIZEOF([long]).
