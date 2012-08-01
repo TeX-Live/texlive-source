@@ -12,3 +12,18 @@ diff -ur dvipng-1.14.orig/dvipng.c dvipng-1.14/dvipng.c
    initcolor();
    parsestdin = DecodeArgs(argc, argv);
  
+diff -ur dvipng-1.14.orig/special.c dvipng-1.14/special.c
+--- dvipng-1.14.orig/special.c	2011-02-07 11:47:08.000000000 +0100
++++ dvipng-1.14/special.c	2012-08-01 16:22:11.000000000 +0200
+@@ -28,11 +28,7 @@
+ #ifndef WIN32
+ #include <sys/wait.h>
+ #else /* WIN32 */
+-#include <fcntl.h>
+-#include <io.h>
+-#include <process.h>
+ #define pipe(p) _pipe(p, 65536, O_BINARY | _O_NOINHERIT)
+-#define snprintf _snprintf
+ #endif /* WIN32 */
+ #endif
+ 

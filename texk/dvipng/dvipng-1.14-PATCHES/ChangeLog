@@ -1,3 +1,8 @@
+2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-WIN32: Do not redefine snprintf, handled by kpathsea.
+	Also, kpathsea has included <fcntl.h>, <io.h>, and <process.h>.
+
 2011-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-WIN32 (new): Call texlive_gs_init() for MINGW32,

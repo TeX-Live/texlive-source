@@ -28,11 +28,7 @@
 #ifndef WIN32
 #include <sys/wait.h>
 #else /* WIN32 */
-#include <fcntl.h>
-#include <io.h>
-#include <process.h>
 #define pipe(p) _pipe(p, 65536, O_BINARY | _O_NOINHERIT)
-#define snprintf _snprintf
 #endif /* WIN32 */
 #endif
 
