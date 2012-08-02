@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 27031 $';
+my $svnrev = '$Revision: 27249 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -2723,12 +2723,15 @@ See the documentation for updmap.
     }
 
   } else {  # first line did not match
-    print STDERR "Apparently
-  $oldupd
-was created by hand.  This config file should not be used anymore,
-so please do what's necessary to eliminate it.
-See the documentation for updmap.
-";
+    # that is NOT a good idea, because updmap creates updmap.cfg in
+    # TEXMFSYSCONFIG when called with --enable Map etc, so we should
+    # NOT warn here
+    # print STDERR "Apparently
+#  $oldupd
+# was created by hand.  This config file should not be used anymore,
+# so please do what's necessary to eliminate it.
+# See the documentation for updmap.
+# ";
   }
 }
 

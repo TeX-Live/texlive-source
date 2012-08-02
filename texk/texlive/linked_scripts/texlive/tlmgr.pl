@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 27170 2012-07-26 22:38:00Z karl $
+# $Id: tlmgr.pl 27258 2012-07-30 22:52:04Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 27170 $';
-my $datrev = '$Date: 2012-07-27 00:38:00 +0200 (Fri, 27 Jul 2012) $';
+my $svnrev = '$Revision: 27258 $';
+my $datrev = '$Date: 2012-07-31 00:52:04 +0200 (Tue, 31 Jul 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5706,7 +5706,7 @@ different file for the log.
 =item B<--pause>
 
 This option makes C<tlmgr> wait for user input before exiting.  Useful on
-Windows to avoid command windows disappearing.
+Windows to avoid disappearing command windows.
 
 =item B<--persistent-downloads>
 
