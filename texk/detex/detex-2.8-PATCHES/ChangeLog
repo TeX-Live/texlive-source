@@ -1,3 +1,8 @@
+2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-rename: Rename ERROR -> my_ERROR to avoid a conflict
+	with WIN32 headers (from W32TeX).
+
 2012-06-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-never-interactive (new): Added the never-interactive

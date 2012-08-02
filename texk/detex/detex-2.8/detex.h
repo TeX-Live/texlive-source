@@ -78,4 +78,4 @@
 #define	CHTEXOPT	't'
 #define	CHWORDOPT	'w'
 
-#define	ERROR		-1
+#define	my_ERROR	-1

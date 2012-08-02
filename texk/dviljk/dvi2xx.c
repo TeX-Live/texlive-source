@@ -246,11 +246,11 @@ main(int argc, char *argv[])
 
   /* it is important that these be the very first things output !!! */
   if ( G_header )
-    CopyFile( HeaderFileName );
+    my_CopyFile( HeaderFileName );
 
   /*****************************/
   /*for( i0=0; i0<nif; i0++ )  */    /* copy all included files */
-  /*    CopyFile( Ifile[i0] ); */
+  /*    my_CopyFile( Ifile[i0] ); */
   /*****************************/
 
 #ifdef IBM3812
@@ -268,7 +268,7 @@ main(int argc, char *argv[])
      reset sequence (\eE). According to PJL Reference Manual (p. 4-3) the
      correct order is (1) UEL, (2) PJL commands, (3) Reset and PCL job, (4)
      Reset, (5) UEL. */
-  if (ResetPrinter) {
+  if (my_ResetPrinter) {
     EMIT1("\033%%-12345X"); /* UEL: Universal Exit Language */
     EMIT2("@PJL SET RESOLUTION=%d\012",RESOLUTION);
     EMIT1("@PJL SET PAGEPROTECT=OFF\012");
@@ -283,7 +283,7 @@ main(int argc, char *argv[])
   if (econoMode && !LJ6)
     EMIT1("\033*v1T");
 # else
-  if (ResetPrinter)
+  if (my_ResetPrinter)
     EMIT1("\033E");
 # endif
 # ifdef LJ2P
@@ -642,7 +642,7 @@ main(int argc, char *argv[])
 
 /*------------------------ begin dviIO.c ----------------------------------*/
 
-/* The following functions buffer input/output during CopyFile / CopyHPFile
+/* The following functions buffer input/output during my_CopyFile / CopyHPFile
    Write functions are only needed if RISC_BUFFER is defined; otherwise output
    is not buffered. */
 
@@ -706,12 +706,12 @@ b_oflush(FILEPTR spfp)
 /* end of buffer handling functions */
 
 
-/*-->CopyFile*/   /* copy a file straight through to output */
+/*-->my_CopyFile*/   /* copy a file straight through to output */
 /*********************************************************************/
-/***************************** CopyFile ******************************/
+/***************************** my_CopyFile ***************************/
 /*********************************************************************/
 void
-CopyFile(const char *str )
+my_CopyFile(const char *str )
 {
   FILEPTR spfp;
   int     todo;
@@ -2911,7 +2911,7 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
         break;
 #ifdef LJ
       case 'g':       /* do not reset printer (go) */
-        ResetPrinter = _FALSE;
+        my_ResetPrinter = _FALSE;
         break;
 #endif
       case 'h':     /* copy header file through to output  */
@@ -3526,14 +3526,13 @@ void AllDone(bool PFlag)
 /*****************************  DoSpecial  ***************************/
 /*********************************************************************/
 
-#define PATTERN LJPATTERN
 typedef enum {
   ORIENTATION,
   RESETPOINTS,
   DEFPOINT,
   FILL,
   GRAY,
-  PATTERN,
+  my_PATTERN,
   COMMENT,
   HPFILE,
   HPFILE_VERBATIM,
@@ -3554,7 +3553,7 @@ KeyDesc KeyTab[] = {
   { FILL, "fill", String},
   { GRAY, "gray", Integer},
   { GRAY, "grey", Integer},
-  { PATTERN, "pattern", Integer},
+  { my_PATTERN, "pattern", Integer},
   { COMMENT, "comment", String},
   { HPFILE, "hpfile", String},
   { HPFILE_VERBATIM, "hpfile-verbatim", String},
@@ -3876,7 +3875,7 @@ void DoSpecial(char *str, int n)
 	}
         break;
 
-      case PATTERN:
+      case my_PATTERN:
         if ((k.v.i >= 0) && (k.v.i < 7)) {
           Pattern = k.v.i;
           GrayFill = _FALSE;
@@ -4108,7 +4107,7 @@ void DoSpecial(char *str, int n)
     if ( file_type == HPFile )
       CopyHPFile( include_file );
     else if ( file_type == VerbFile )
-      CopyFile( include_file );
+      my_CopyFile( include_file );
     else if ( file_type == None )
       /* do nothing */ ;
     else

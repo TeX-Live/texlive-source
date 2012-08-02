@@ -1,0 +1,48 @@
+diff -ur detex-2.8.orig/detex.h detex-2.8/detex.h
+--- detex-2.8.orig/detex.h	2008-02-01 20:55:51.000000000 +0100
++++ detex-2.8/detex.h	2012-08-02 10:31:17.000000000 +0200
+@@ -78,4 +78,4 @@
+ #define	CHTEXOPT	't'
+ #define	CHWORDOPT	'w'
+ 
+-#define	ERROR		-1
++#define	my_ERROR	-1
+diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
+--- detex-2.8.orig/detex.l	2012-06-21 11:52:31.000000000 +0200
++++ detex-2.8/detex.l	2012-08-02 10:31:20.000000000 +0200
+@@ -580,7 +580,7 @@
+ 	sb = SafeMalloc(strlen(sbEnvList) + 1, "malloc for SetEnvIgnore failed");
+ 	(void) strcpy(sb, sbEnvList);
+ 	csbEnvIgnore = SeparateList(sb, rgsbEnvIgnore, CHENVSEP, MAXENVS);
+-	if (csbEnvIgnore == ERROR)
++	if (csbEnvIgnore == my_ERROR)
+ 	    ErrorExit("The environtment list contains too many environments");
+ }
+ 
+@@ -738,7 +738,7 @@
+ 	    (void)strcat(sbPaths, DEFAULTINPUTS);
+ 
+ 	csbInputPaths = SeparateList(sbPaths, rgsbInputPaths, CHPATHSEP, MAXINPUTPATHS);
+-	if (csbInputPaths == ERROR)
++	if (csbInputPaths == my_ERROR)
+ #ifdef OS2
+ 	    ErrorExit("TEXINPUT(S) environment variable has too many paths");
+ #else
+@@ -751,7 +751,7 @@
+ ** SeparateList -- takes a chSep separated list sbList, replaces the
+ **	chSep's with NULLs and sets rgsbList[i] to the beginning of
+ **	the ith word in sbList.  The number of words is returned.  A
+-**	ERROR is returned if there are more than csbMax words.
++**	my_ERROR is returned if there are more than csbMax words.
+ ******/
+ 
+ int
+@@ -764,7 +764,7 @@
+ 	    if ((sbList = index(sbList, chSep)))
+ 		*sbList++ = '\0';
+ 	}
+-	return(sbList && *sbList ? ERROR : csbList);
++	return(sbList && *sbList ? my_ERROR : csbList);
+ }
+ 
+ /******

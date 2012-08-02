@@ -329,10 +329,6 @@ int     intdos();
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#undef CopyFile
-#define CopyFile LJCopyFile
-#undef ResetPrinter
-#define ResetPrinter LJResetPrinter
 #endif
 
 #ifndef USEPXL
@@ -457,7 +453,7 @@ void    AllDone(bool);
 void    AssureBinary(FILEPTR);  /* DOS and Microsoft C dependent !!! */
 #endif
 void    CloseFiles(void);
-void    CopyFile(const char *);
+void    my_CopyFile(const char *);
 void    CopyHPFile(char *);
 void    DecodeArgs(int, char *[]);
 #ifdef __riscos
@@ -535,7 +531,7 @@ bool    FirstAlternate = _FALSE; /* first page from alternate casette ?   */
 #endif
 bool    Reverse = _FALSE;        /* process DVI pages in reverse order?   */
 bool    Landscape = _FALSE;      /* print document in ladscape mode       */
-bool    ResetPrinter = _TRUE;    /* reset printer at the begin of the job */
+bool    my_ResetPrinter = _TRUE; /* reset printer at the begin of the job */
 bool    DoublePage = _FALSE;     /* print on both sides of a paper        */
 bool    PrintSecondPart = _TRUE; /* print First Part when DoublePage      */
 bool    PrintFirstPart  = _TRUE; /* print Second Part when DoublePage     */
