@@ -1,3 +1,7 @@
+2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mp.w: Drop replacement function for snprintf().
+
 2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mplib.am (nodist_libmplib_a_SOURCES): Omit $(tfmin_c_h).

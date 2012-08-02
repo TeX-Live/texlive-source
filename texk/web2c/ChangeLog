@@ -1,3 +1,7 @@
+2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (AC_CHECK_FUNCS): Remove test for snprintf.
+
 2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w2c/config.h: Define LONGINTEGER_PRI instead of
