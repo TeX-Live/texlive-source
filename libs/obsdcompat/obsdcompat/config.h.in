@@ -3,9 +3,6 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
-/* Define if your snprintf is busted */
-#undef BROKEN_SNPRINTF
-
 /* OpenBSD's gcc has bounded */
 #undef HAVE_ATTRIBUTE__BOUNDED__
 
@@ -53,9 +50,6 @@
 
 /* define if you have size_t data type */
 #undef HAVE_SIZE_T
-
-/* Define to 1 if you have the `snprintf' function. */
-#undef HAVE_SNPRINTF
 
 /* define if you have ssize_t data type */
 #undef HAVE_SSIZE_T
@@ -144,9 +138,6 @@
 /* define if you have u_intxx_t data type */
 #undef HAVE_U_INTXX_T
 
-/* Define to 1 if you have the `vsnprintf' function. */
-#undef HAVE_VSNPRINTF
-
 /* max value of long long calculated by configure */
 #undef LLONG_MAX
 
@@ -188,9 +179,6 @@
 
 /* The size of `short int', as computed by sizeof. */
 #undef SIZEOF_SHORT_INT
-
-/* Define as const if snprintf() can declare const char *fmt */
-#undef SNPRINTF_CONST
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

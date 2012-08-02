@@ -5848,7 +5848,6 @@ done
 
 for ac_func in \
 	bcopy \
-	snprintf \
 	strdup \
 	strerror \
 	strlcat \
@@ -5857,7 +5856,6 @@ for ac_func in \
 	strtoll \
 	strtoul \
 	sysconf \
-	vsnprintf \
 
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -5891,119 +5889,6 @@ done
 
 fi
 
-
-# Check for broken snprintf
-if test "x$ac_cv_func_snprintf" = "xyes" ; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether snprintf correctly terminates long strings" >&5
-$as_echo_n "checking whether snprintf correctly terminates long strings... " >&6; }
-	if test "$cross_compiling" = yes; then :
-   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: cross compiling: Assuming working snprintf()" >&5
-$as_echo "$as_me: WARNING: cross compiling: Assuming working snprintf()" >&2;}
-
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <stdio.h>
-int main(void){char b[5];snprintf(b,5,"123456789");exit(b[4]!='\0');}
-
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-$as_echo "#define BROKEN_SNPRINTF 1" >>confdefs.h
-
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: ****** Your snprintf() function is broken, complain to your vendor" >&5
-$as_echo "$as_me: WARNING: ****** Your snprintf() function is broken, complain to your vendor" >&2;}
-
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
-fi
-
-# If we don't have a working asprintf, then we strongly depend on vsnprintf
-# returning the right thing on overflow: the number of characters it tried to
-# create (as per SUSv3)
-if test "x$ac_cv_func_asprintf" != "xyes" && \
-   test "x$ac_cv_func_vsnprintf" = "xyes" ; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether vsnprintf returns correct values on overflow" >&5
-$as_echo_n "checking whether vsnprintf returns correct values on overflow... " >&6; }
-	if test "$cross_compiling" = yes; then :
-   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: cross compiling: Assuming working vsnprintf()" >&5
-$as_echo "$as_me: WARNING: cross compiling: Assuming working vsnprintf()" >&2;}
-
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdarg.h>
-
-int x_snprintf(char *str,size_t count,const char *fmt,...)
-{
-	size_t ret; va_list ap;
-	va_start(ap, fmt); ret = vsnprintf(str, count, fmt, ap); va_end(ap);
-	return ret;
-}
-int main(void)
-{
-	char x[1];
-	exit(x_snprintf(x, 1, "%s %d", "hello", 12345) == 11 ? 0 : 1);
-}
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-$as_echo "#define BROKEN_SNPRINTF 1" >>confdefs.h
-
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: ****** Your vsnprintf() function is broken, complain to your vendor" >&5
-$as_echo "$as_me: WARNING: ****** Your vsnprintf() function is broken, complain to your vendor" >&2;}
-
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
-fi
-
-# On systems where [v]snprintf is broken, but is declared in stdio,
-# check that the fmt argument is const char * or just char *.
-# This is only useful for when BROKEN_SNPRINTF
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether snprintf can declare const char *fmt" >&5
-$as_echo_n "checking whether snprintf can declare const char *fmt... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdio.h>
-	   int snprintf(char *a, size_t b, const char *c, ...) { return 0; }
-	   int main(void) { snprintf(0, 0, 0); }
-
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-$as_echo "#define SNPRINTF_CONST const" >>confdefs.h
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-    $as_echo "#define SNPRINTF_CONST /* not const */" >>confdefs.h
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 # Check for  long long datatypes
 ac_fn_c_check_type "$LINENO" "long long" "ac_cv_type_long_long" "$ac_includes_default"
@@ -6793,60 +6678,6 @@ $as_echo "$ac_cv_have_ssize_t" >&6; }
 if test "x$ac_cv_have_ssize_t" = "xyes" ; then
 
 $as_echo "#define HAVE_SSIZE_T 1" >>confdefs.h
-
-fi
-
-
-# We need int64_t or else certian parts of the compile will fail.
-if test "x$ac_cv_have_int64_t" = "xno" && \
-	test "x$ac_cv_sizeof_long_int" != "x8" && \
-	test "x$ac_cv_sizeof_long_long_int" = "x0" ; then
-	echo "TeX requires int64_t support.  Contact your vendor or install"
-	echo "an alternative compiler (I.E., GCC) before continuing."
-	echo ""
-	exit 1;
-else
-	if test "$cross_compiling" = yes; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: cross compiling: Assuming working snprintf()" >&5
-$as_echo "$as_me: WARNING: cross compiling: Assuming working snprintf()" >&2;}
-
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <stdio.h>
-#include <string.h>
-#ifdef HAVE_SNPRINTF
-main()
-{
-	char buf[50];
-	char expected_out[50];
-	int mazsize = 50 ;
-#if (SIZEOF_LONG_INT == 8)
-	long int num = 0x7fffffffffffffff;
-#else
-	long long num = 0x7fffffffffffffffll;
-#endif
-	strcpy(expected_out, "9223372036854775807");
-	snprintf(buf, mazsize, "%lld", num);
-	if(strcmp(buf, expected_out) != 0)
-		exit(1);
-	exit(0);
-}
-#else
-main() { exit(0); }
-#endif
-
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-   true
-else
-   $as_echo "#define BROKEN_SNPRINTF 1" >>confdefs.h
-
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
 
 fi
 

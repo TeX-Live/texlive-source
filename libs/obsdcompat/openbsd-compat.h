@@ -57,13 +57,6 @@ size_t strlcpy(char *dst, const char *src, size_t siz);
 char *strsep(char **stringp, const char *delim);
 #endif
 
-/* #include <sys/types.h> XXX needed? For size_t */
-
-#ifndef HAVE_SNPRINTF
-/* see http://www.openbsd.org/cgi-bin/man.cgi?query=snprintf */
-int snprintf(char *, size_t, SNPRINTF_CONST char *, ...);
-#endif 
-
 #ifndef HAVE_STRTOLL
 /* see http://www.openbsd.org/cgi-bin/man.cgi?query=strtoll */
 long long strtoll(const char *, char **, int);
@@ -72,11 +65,6 @@ long long strtoll(const char *, char **, int);
 #ifndef HAVE_STRTONUM
 /* see http://www.openbsd.org/cgi-bin/man.cgi?query=strtonum */
 long long strtonum(const char *, long long, long long, const char **);
-#endif
-
-#ifndef HAVE_VSNPRINTF
-/* see http://www.openbsd.org/cgi-bin/man.cgi?query=vsnprintf */
-int vsnprintf(char *, size_t, const char *, va_list);
 #endif
 
 #endif /* _OPENBSD_COMPAT_H */

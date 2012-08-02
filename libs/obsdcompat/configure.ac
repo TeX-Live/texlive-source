@@ -302,7 +302,6 @@ AC_FUNC_STRFTIME
 dnl    Checks for library functions. Please keep in alphabetical order
 AC_CHECK_FUNCS( \
 	bcopy \
-	snprintf \
 	strdup \
 	strerror \
 	strlcat \
@@ -311,7 +310,6 @@ AC_CHECK_FUNCS( \
 	strtoll \
 	strtoul \
 	sysconf \
-	vsnprintf \
 )
 
 dnl Make sure prototypes are defined for these before using them.
@@ -324,73 +322,6 @@ AC_CHECK_DECL(strsep,
 #endif
 	])
 	
-# Check for broken snprintf
-if test "x$ac_cv_func_snprintf" = "xyes" ; then
-	AC_MSG_CHECKING([whether snprintf correctly terminates long strings])
-	AC_RUN_IFELSE(
-		[AC_LANG_SOURCE([[
-#include <stdio.h>
-int main(void){char b[5];snprintf(b,5,"123456789");exit(b[4]!='\0');}
-		]])],
-		[AC_MSG_RESULT(yes)],
-		[
-			AC_MSG_RESULT(no)
-			AC_DEFINE(BROKEN_SNPRINTF, 1,
-				[Define if your snprintf is busted])
-			AC_MSG_WARN([****** Your snprintf() function is broken, complain to your vendor])
-		],
-		[ AC_MSG_WARN([cross compiling: Assuming working snprintf()]) ]
-	)
-fi
-
-# If we don't have a working asprintf, then we strongly depend on vsnprintf
-# returning the right thing on overflow: the number of characters it tried to
-# create (as per SUSv3)
-if test "x$ac_cv_func_asprintf" != "xyes" && \
-   test "x$ac_cv_func_vsnprintf" = "xyes" ; then
-	AC_MSG_CHECKING([whether vsnprintf returns correct values on overflow])
-	AC_RUN_IFELSE(
-		[AC_LANG_SOURCE([[
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdarg.h>
-
-int x_snprintf(char *str,size_t count,const char *fmt,...)
-{
-	size_t ret; va_list ap;
-	va_start(ap, fmt); ret = vsnprintf(str, count, fmt, ap); va_end(ap);
-	return ret;
-}
-int main(void)
-{
-	char x[1];
-	exit(x_snprintf(x, 1, "%s %d", "hello", 12345) == 11 ? 0 : 1);
-} ]])],
-		[AC_MSG_RESULT(yes)],
-		[
-			AC_MSG_RESULT(no)
-			AC_DEFINE(BROKEN_SNPRINTF, 1,
-				[Define if your snprintf is busted])
-			AC_MSG_WARN([****** Your vsnprintf() function is broken, complain to your vendor])
-		],
-		[ AC_MSG_WARN([cross compiling: Assuming working vsnprintf()]) ]
-	)
-fi
-
-# On systems where [v]snprintf is broken, but is declared in stdio,
-# check that the fmt argument is const char * or just char *.
-# This is only useful for when BROKEN_SNPRINTF
-AC_MSG_CHECKING([whether snprintf can declare const char *fmt])
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
-	   int snprintf(char *a, size_t b, const char *c, ...) { return 0; }
-	   int main(void) { snprintf(0, 0, 0); } 
-    ]])],
-   [AC_MSG_RESULT(yes)
-    AC_DEFINE(SNPRINTF_CONST, [const],
-              [Define as const if snprintf() can declare const char *fmt])],
-   [AC_MSG_RESULT(no)
-    AC_DEFINE(SNPRINTF_CONST, [/* not const */])])
-
 # Check for  long long datatypes
 AC_CHECK_TYPES([long long, unsigned long long, long double])
 
@@ -636,46 +567,6 @@ AC_CACHE_CHECK([for ssize_t], ac_cv_have_ssize_t, [
 ])
 if test "x$ac_cv_have_ssize_t" = "xyes" ; then
 	AC_DEFINE(HAVE_SSIZE_T, 1, [define if you have ssize_t data type])
-fi
-
-
-# We need int64_t or else certian parts of the compile will fail.
-if test "x$ac_cv_have_int64_t" = "xno" && \
-	test "x$ac_cv_sizeof_long_int" != "x8" && \
-	test "x$ac_cv_sizeof_long_long_int" = "x0" ; then
-	echo "TeX requires int64_t support.  Contact your vendor or install"
-	echo "an alternative compiler (I.E., GCC) before continuing."
-	echo ""
-	exit 1;
-else
-dnl test snprintf (broken on SCO w/gcc)
-	AC_RUN_IFELSE(
-		[AC_LANG_SOURCE([[
-#include <stdio.h>
-#include <string.h>
-#ifdef HAVE_SNPRINTF
-main()
-{
-	char buf[50];
-	char expected_out[50];
-	int mazsize = 50 ;
-#if (SIZEOF_LONG_INT == 8)
-	long int num = 0x7fffffffffffffff;
-#else
-	long long num = 0x7fffffffffffffffll;
-#endif
-	strcpy(expected_out, "9223372036854775807");
-	snprintf(buf, mazsize, "%lld", num);
-	if(strcmp(buf, expected_out) != 0)
-		exit(1);
-	exit(0);
-}
-#else
-main() { exit(0); }
-#endif
-		]])], [ true ], [ AC_DEFINE(BROKEN_SNPRINTF) ],
-		AC_MSG_WARN([cross compiling: Assuming working snprintf()])
-	)
 fi
 
 dnl Adding -Werror to CFLAGS early prevents configure tests from running.

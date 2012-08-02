@@ -12,7 +12,6 @@ rebuild: all
 noinst_LIBRARIES = libopenbsd-compat.a
 
 libopenbsd_compat_a_SOURCES = \
-	bsd-snprintf.c \
 	defines.h \
 	includes.h \
 	openbsd-compat.h \
