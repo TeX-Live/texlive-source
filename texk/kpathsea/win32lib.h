@@ -85,7 +85,6 @@
 #define mkdir      _mkdir
 #define mktemp     _mktemp
 #define open       _open
-#define pipe       _pipe
 
 #define putenv     _putenv
 #define read       _read

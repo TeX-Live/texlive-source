@@ -1,3 +1,7 @@
+2012-08-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.h: remove definition of pipe.
+
 2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Bail out for a badly broken snprintf()
