@@ -1,3 +1,7 @@
+2012-08-03  Karl Berry  <karl@tug.org>
+
+	* tl-sys-wrapper.pl: initial attempt.
+
 2012-07-31  Norbert Preining  <preining@logic.at>
 
 	* updmap.pl (main): fix quoting and var expansion on Windows.
