@@ -1,3 +1,10 @@
+2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch, etex_version.h: Version 2.5.
+	Better tracing of font definitions, reported by
+	Bruno Le Floch <blflatex@@gmail.com>, Jul 2012.
+	* etrip/etrip.tex: Test the additional tracing.
+
 2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am: Distribute etex_version.h.

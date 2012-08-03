@@ -1,3 +1,8 @@
+2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex/texdeffont.w (tex_def_font): Better tracing of font
+	definitions, adapted from e-TeX version 2.5.
+
 2012-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdf/pdfpage.w (print_pdffloat): Cope with broken snprintf().

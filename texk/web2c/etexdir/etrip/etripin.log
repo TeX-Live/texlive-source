@@ -1,9 +1,9 @@
-This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (INITEX)  11 MAY 2012 13:47
+This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev) (INITEX)  2 AUG 2012 21:16
 entering extended mode
 ***etrip
 (./etrip.tex
-This is the e-Trip test [2012-05-11] for e-TeX v3.1415926-2.4.
-(You are using e-TeX version/revision 2.4)
+This is the e-Trip test [2012-08-02] for e-TeX v3.1415926-2.5.
+(You are using e-TeX version/revision 2.5)
 e-IniTeX: Assigning category codes, tracing switches, other codes,
 definitions for e-VirTeX e-Trip test run, constants and registers,
 fonts, some math characters, some math parameters, hyphenation,
@@ -23,8 +23,8 @@ Proceed; I'll ignore the character I just read.
 enable e-TeX enhancements (TeXXeT),
 prepare saved items (not to be dumped), everyjob ...dumped. )
 Beginning to dump on file etrip.fmt
- (format=etrip 2012.5.11)
-1491 strings of total length 26238
+ (format=etrip 2012.8.2)
+1491 strings of total length 26237
 280 memory locations dumped; current usage is 36&166
 408 multiletter control sequences
 \font\nullfont=nullfont

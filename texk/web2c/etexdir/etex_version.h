@@ -1,1 +1,1 @@
-#define ETEX_VERSION "2.4"
+#define ETEX_VERSION "2.5"

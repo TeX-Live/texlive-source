@@ -63,7 +63,7 @@ xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
 
 # We must create libxetex.a etc before building the xetex_OBJECTS
-xetex_prereq = $(libxetex) xetexdir/xetex_version.h
+xetex_prereq = $(libxetex) etexdir/etex_version.h xetexdir/xetex_version.h
 $(xetex_OBJECTS): $(xetex_prereq)
 
 ## XeTeX C sources
@@ -86,7 +86,7 @@ xetex-tangle: ./otangle$(EXEEXT) xetex.web tangle-sh
 	@$(o_tangle) xetex
 
 ## Extract xetex version
-xetexdir/xetex_version.h: xetexdir/xetex.ch etexdir/etex_version.h
+xetexdir/xetex_version.h: xetexdir/xetex.ch
 	$(MKDIR_P) xetexdir
 	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.ch \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@

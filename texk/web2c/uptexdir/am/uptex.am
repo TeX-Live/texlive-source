@@ -50,7 +50,7 @@ nodist_uptex_SOURCES = $(uptex_c_h) uptex-pool.c
 dist_uptex_SOURCES = uptexdir/uptexextra.c uptexdir/uptexextra.h uptexdir/uptex_version.h
 
 # We must create uptexd.h and uptexdir/uptex_version.h before building the uptex_OBJECTS.
-uptex_prereq = uptexd.h uptexdir/uptex_version.h
+uptex_prereq = uptexd.h ptexdir/ptex_version.h uptexdir/uptex_version.h
 $(uptex_OBJECTS): $(uptex_prereq)
 
 $(uptex_c_h): uptex-web2c
@@ -68,7 +68,7 @@ uptex-tangle: tangle$(EXEEXT) uptex.web uptex.ch tangle-sh
 	@$(texmf_tangle) uptex uptex
 
 # Extract uptex version
-uptexdir/uptex_version.h: uptexdir/uptex-m.ch ptexdir/ptex_version.h
+uptexdir/uptex_version.h: uptexdir/uptex-m.ch
 	$(MKDIR_P) uptexdir
 	grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
 	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@

@@ -25,11 +25,11 @@ euptex_DEPENDENCIES = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_depend
 # e-upTeX C sources
 euptex_c_h = euptexini.c euptex0.c euptexcoerce.h euptexd.h
 nodist_euptex_SOURCES = $(euptex_c_h) euptex-pool.c
-dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h \
-	eptexdir/eptex_version.h uptexdir/uptex_version.h
+dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h
 
 # We must create euptexd.h and [eu]ptexdir/[eu]ptex_version.h before building the euptex_OBJECTS.
-euptex_prereq = euptexd.h eptexdir/eptex_version.h uptexdir/uptex_version.h
+euptex_prereq = euptexd.h etexdir/etex_version.h ptexdir/ptex_version.h \
+	eptexdir/eptex_version.h uptexdir/uptex_version.h
 $(euptex_OBJECTS): $(euptex_prereq)
 
 $(euptex_c_h): euptex-web2c

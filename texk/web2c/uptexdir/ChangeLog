@@ -1,3 +1,7 @@
+2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/uptex.am: Clarify *tex_version.h dependencies.
+
 2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/uptex.am: Distribute uptex_version.h.

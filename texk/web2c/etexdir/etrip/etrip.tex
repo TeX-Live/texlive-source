@@ -1,4 +1,4 @@
-%%; This is `etrip.tex' for e-TeX v3.1415926-2.4 as of May 11, 2012.
+%%; This is `etrip.tex' for e-TeX v3.1415926-2.5 as of Aug 02, 2012.
 %%;
 %%; This is a diabolical test file for e-TeX, an extension of TeX82.
 %%; It is not as diabolical as `trip.tex', Knuth's torture test for TeX.
@@ -9,9 +9,9 @@
 %%; ==>> wrong e-TeX input to produce errors and warnings.      <<==
 %%;
 \catcode`\{=1\catcode`\}=2\catcode`\#=6 \let\bgroup={ \let\egroup=}
-\def\etripdate   {2012-05-11}
+\def\etripdate   {2012-08-02}
 \def\texversion  {3.1415926}
-\def\etripversion{2.4}
+\def\etripversion{2.5}
 %
 \message{This is the e-Trip test [\etripdate] for
          e-TeX v\texversion-\etripversion.}
@@ -266,9 +266,11 @@
 \typeout{Checking \string\tracingassigns:}
 \begingroup
   \tracingrestores=1 \tracingassigns=1
+  \global\font\6=etrip at 11pt \font\6=etrip at 11pt 
   \global\count17=7 \count17=7
   \global\def\9{\relax} \global\let\8=\9 \let\8=\9
   \bgroup
+    \global\font\5=etrip at 12pt \font\5=etrip at 12pt \let\4=\5
     \global\count17=0 \count17=0
     \global\let\9=\7 \global\let\8=\9 \let\8=\9
   \egroup

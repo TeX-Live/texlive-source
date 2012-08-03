@@ -9,9 +9,9 @@
 @z
 
 @x [1.2] l.190 - epTeX:
-@d eTeX_version_string=='-2.4' {current \eTeX\ version}
+@d eTeX_version_string=='-2.5' {current \eTeX\ version}
 @y
-@d eTeX_version_string=='-2.4' {current \eTeX\ version}
+@d eTeX_version_string=='-2.5' {current \eTeX\ version}
 @#
 @d epTeX_version_string=='-110825'
 @z

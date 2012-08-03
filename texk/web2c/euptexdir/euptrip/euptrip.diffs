@@ -13,7 +13,7 @@
 1c1
 < This is TeX, Version 3.1415926 (INITEX)  15 MAR 2008 02:23
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (INITEX)  12 MAY 2012 14:18
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev) (INITEX)  2 AUG 2012 21:34
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -37,8 +37,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2012.5.12)
-> 1613 strings of total length 27734
+>  (format=trip 2012.8.2)
+> 1613 strings of total length 27733
 > 489 memory locations dumped; current usage is 110&278
 > 393 multiletter control sequences
 461c454
@@ -54,7 +54,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012)
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -68,7 +68,7 @@
 1c1
 < This is TeX, Version 3.1415926 (preloaded format=trip 2008.3.15)  15 MAR 2008 02:23
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (format=trip 2012.5.12)  12 MAY 2012 14:18
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev) (format=trip 2012.8.2)  2 AUG 2012 21:34
 3c3
 < (trip.tex ##
 ---
@@ -318,7 +318,7 @@
 <  372 multiletter control sequences out of 2100
 ---
 >  44 strings out of 1687
->  261 string characters out of 8266
+>  261 string characters out of 8267
 >  4017 words of memory out of 4500
 >  424 multiletter control sequences out of 15000+0
 7301c7304
@@ -331,11 +331,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012)
+> This is DVItype, Version 3.6 (TeX Live 2013/dev)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2012.05.12:1418'
+> ' TeX output 2012.08.02:2134'
 419c419
 < 1121: down4 639342208 
 ---
@@ -365,7 +365,7 @@
 < I changed this one to zero.
 < 
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (INITEX)  12 MAY 2012 14:18
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev) (INITEX)  2 AUG 2012 21:34
 > entering extended mode
 > ***\input trip
 > (./trip.tex
@@ -387,8 +387,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (format=trip 2012.5.12)
-> 1613 strings of total length 27734
+>  (format=trip 2012.8.2)
+> 1613 strings of total length 27733
 > 536 memory locations dumped; current usage is 157&278
 > 465 multiletter control sequences
 461c449
@@ -404,7 +404,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012)
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev)
 > **entering extended mode
 > ## (./trip.tex
 17c17
@@ -425,7 +425,7 @@
 < ** &trip  trip
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (format=trip 2012.5.12)  12 MAY 2012 14:18
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev) (format=trip 2012.8.2)  2 AUG 2012 21:34
 > entering extended mode
 > **&trip \toksdef\tokens=0 \input trip
 >  (./trip.tex
@@ -739,7 +739,7 @@
 <  372 multiletter control sequences out of 2100
 ---
 >  44 strings out of 1687
->  261 string characters out of 8266
+>  261 string characters out of 8267
 >  4017 words of memory out of 4500
 >  496 multiletter control sequences out of 15000+0
 7301,7302c7301,7302
@@ -754,11 +754,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2012)
+> This is DVItype, Version 3.6 (TeX Live 2013/dev)
 9c9
 < ' TeX output 2008.03.15:0223'
 ---
-> ' TeX output 2012.05.12:1418'
+> ' TeX output 2012.08.02:2134'
 419c419
 < 1121: down4 639342208 
 ---
@@ -779,54 +779,56 @@
 + sed 's/, yoko direction//;s/yoko direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etripin.log euptripin.log
 1c1
-< This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012) (INITEX)  11 MAY 2012 13:47
+< This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev) (INITEX)  2 AUG 2012 21:16
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (INITEX)  12 MAY 2012 14:18
-26,29c26,29
-<  (format=etrip 2012.5.11)
-< 1491 strings of total length 26238
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev) (INITEX)  2 AUG 2012 21:34
+27,29c27,29
+< 1491 strings of total length 26237
 < 280 memory locations dumped; current usage is 36&166
 < 408 multiletter control sequences
 ---
->  (format=etrip 2012.5.12)
-> 1614 strings of total length 27765
+> 1614 strings of total length 27764
 > 283 memory locations dumped; current usage is 40&166
 > 465 multiletter control sequences
 + ./euptex --progname=euptex
 + sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etrip.fot euptrip.fot
 1c1
-< This is e-TeX, Version 3.1415926-2.4 (TeX Live 2012)
+< This is e-TeX, Version 3.1415926-2.5 (TeX Live 2013/dev)
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012)
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev)
 + diff SRCDIR/eptexdir/eptrip/etrip.log euptrip.log
 1c1
-< This is e-pTeX, Version 3.1415926-p3.3-110825-2.4 (utf8.euc) (TeX Live 2012) (format=etrip 2012.5.12)  12 MAY 2012 14:12
+< This is e-pTeX, Version 3.1415926-p3.3-110825-2.5 (utf8.euc) (TeX Live 2013/dev) (format=etrip 2012.8.2)  2 AUG 2012 21:24
 ---
-> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.4 (utf8.uptex) (TeX Live 2012) (format=etrip 2012.5.12)  12 MAY 2012 14:18
-2189,2194d2188
+> This is e-upTeX, Version 3.1415926-p3.3-u1.10-110825-2.5 (utf8.uptex) (TeX Live 2013/dev) (format=etrip 2012.8.2)  2 AUG 2012 21:34
+2210,2215d2209
 < ! Bad character code (256).
-< l.674   \iffontchar\font 256 
+< l.676   \iffontchar\font 256 
 <                              \else \fi    % <== bad character...
 < A character number must be between 0 and 255, or KANJI code.
 < I changed this one to zero.
 < 
-4275,4276c4269,4270
+4296,4297c4290,4291
 <  18 strings out of 1696
-<  140 string characters out of 8256
+<  140 string characters out of 8257
 ---
 >  18 strings out of 1686
->  140 string characters out of 8235
-4278c4272
+>  140 string characters out of 8236
+4299c4293
 <  460 multiletter control sequences out of 15000+0
 ---
 >  466 multiletter control sequences out of 15000+0
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
 + diff SRCDIR/etexdir/etrip/etrip.typ euptrip.typ
+1c1
+< This is DVItype, Version 3.6 (TeX Live 2012)
+---
+> This is DVItype, Version 3.6 (TeX Live 2013/dev)
 9c9
 < ' TeX output 2012.05.11:1347'
 ---
-> ' TeX output 2012.05.12:1418'
+> ' TeX output 2012.08.02:2134'
 + :
 PASS: euptexdir/euptrip.test

@@ -36,7 +36,7 @@ pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
 # We must create libpdftex.a etc before building the pdftex_OBJECTS.
-pdftex_prereq = libpdftex.a pdftexdir/pdftex_version.h
+pdftex_prereq = libpdftex.a etexdir/etex_version.h pdftexdir/pdftex_version.h
 $(pdftex_OBJECTS): $(pdftex_prereq)
 
 pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
@@ -54,7 +54,7 @@ pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 
 # Extract pdftex version
-pdftexdir/pdftex_version.h: pdftexdir/pdftex.web etexdir/etex_version.h
+pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
 	$(MKDIR_P) pdftexdir
 	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@

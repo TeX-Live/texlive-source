@@ -28,7 +28,7 @@ nodist_eptex_SOURCES = $(eptex_c_h) eptex-pool.c
 dist_eptex_SOURCES = eptexdir/eptexextra.c eptexdir/eptexextra.h eptexdir/eptex_version.h
 
 # We must create eptexd.h and eptexdir/eptex_version.h before building the eptex_OBJECTS.
-eptex_prereq = eptexd.h eptexdir/eptex_version.h
+eptex_prereq = eptexd.h etexdir/etex_version.h ptexdir/ptex_version.h eptexdir/eptex_version.h
 $(eptex_OBJECTS): $(eptex_prereq)
 
 $(eptex_c_h): eptex-web2c
@@ -46,7 +46,7 @@ eptex-tangle: tangle$(EXEEXT) eptex.web eptex.ch tangle-sh
 	@$(texmf_tangle) eptex eptex
 
 # Extract eptex version
-eptexdir/eptex_version.h: eptexdir/eptex.ech etexdir/etex_version.h ptexdir/ptex_version.h
+eptexdir/eptex_version.h: eptexdir/eptex.ech
 	$(MKDIR_P) eptexdir
 	grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
 	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@

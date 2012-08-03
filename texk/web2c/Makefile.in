@@ -737,8 +737,7 @@ etex_OBJECTS = $(dist_etex_OBJECTS) $(nodist_etex_OBJECTS)
 etex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_4)
 am__dist_euptex_SOURCES_DIST = euptexdir/euptexextra.c \
-	euptexdir/euptexextra.h eptexdir/eptex_version.h \
-	uptexdir/uptex_version.h synctexdir/synctex.c \
+	euptexdir/euptexextra.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-euptex.h
 @EUPTEX_SYNCTEX_TRUE@am__objects_15 = euptex-synctex.$(OBJEXT)
@@ -1967,7 +1966,8 @@ dist_eptex_SOURCES = eptexdir/eptexextra.c eptexdir/eptexextra.h \
 	eptexdir/eptex_version.h $(am__append_106)
 
 # We must create eptexd.h and eptexdir/eptex_version.h before building the eptex_OBJECTS.
-eptex_prereq = eptexd.h eptexdir/eptex_version.h $(am__append_105)
+eptex_prereq = eptexd.h etexdir/etex_version.h ptexdir/ptex_version.h \
+	eptexdir/eptex_version.h $(am__append_105)
 eptex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -2016,7 +2016,8 @@ dist_uptex_SOURCES = uptexdir/uptexextra.c uptexdir/uptexextra.h \
 	uptexdir/uptex_version.h $(am__append_102)
 
 # We must create uptexd.h and uptexdir/uptex_version.h before building the uptex_OBJECTS.
-uptex_prereq = uptexd.h uptexdir/uptex_version.h $(am__append_101)
+uptex_prereq = uptexd.h ptexdir/ptex_version.h \
+	uptexdir/uptex_version.h $(am__append_101)
 uptex_web_srcs = \
 	tex.web \
 	tex.ch
@@ -2062,11 +2063,11 @@ euptex_DEPENDENCIES = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_depend
 euptex_c_h = euptexini.c euptex0.c euptexcoerce.h euptexd.h
 nodist_euptex_SOURCES = $(euptex_c_h) euptex-pool.c
 dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h \
-	eptexdir/eptex_version.h uptexdir/uptex_version.h \
 	$(am__append_110)
 
 # We must create euptexd.h and [eu]ptexdir/[eu]ptex_version.h before building the euptex_OBJECTS.
-euptex_prereq = euptexd.h eptexdir/eptex_version.h \
+euptex_prereq = euptexd.h etexdir/etex_version.h \
+	ptexdir/ptex_version.h eptexdir/eptex_version.h \
 	uptexdir/uptex_version.h $(am__append_109)
 euptex_web_srcs = \
 	tex.web \
@@ -2112,7 +2113,7 @@ pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
 # We must create libpdftex.a etc before building the pdftex_OBJECTS.
-pdftex_prereq = libpdftex.a pdftexdir/pdftex_version.h
+pdftex_prereq = libpdftex.a etexdir/etex_version.h pdftexdir/pdftex_version.h
 pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c
 dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h \
@@ -2580,7 +2581,7 @@ xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
 
 # We must create libxetex.a etc before building the xetex_OBJECTS
-xetex_prereq = $(libxetex) xetexdir/xetex_version.h
+xetex_prereq = $(libxetex) etexdir/etex_version.h xetexdir/xetex_version.h
 xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
 nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c
 dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h \
@@ -9851,7 +9852,7 @@ eptex-tangle: tangle$(EXEEXT) eptex.web eptex.ch tangle-sh
 	@$(texmf_tangle) eptex eptex
 
 # Extract eptex version
-eptexdir/eptex_version.h: eptexdir/eptex.ech etexdir/etex_version.h ptexdir/ptex_version.h
+eptexdir/eptex_version.h: eptexdir/eptex.ech
 	$(MKDIR_P) eptexdir
 	grep '^@d epTeX_version_string==' $(srcdir)/eptexdir/eptex.ech \
 	  | sed "s/^.*'-/#define EPTEX_VERSION \"/;s/'.*$$/\"/" >$@
@@ -9891,7 +9892,7 @@ uptex-tangle: tangle$(EXEEXT) uptex.web uptex.ch tangle-sh
 	@$(texmf_tangle) uptex uptex
 
 # Extract uptex version
-uptexdir/uptex_version.h: uptexdir/uptex-m.ch ptexdir/ptex_version.h
+uptexdir/uptex_version.h: uptexdir/uptex-m.ch
 	$(MKDIR_P) uptexdir
 	grep '^@d upTeX_version_string==' $(srcdir)/uptexdir/uptex-m.ch \
 	  | sed "s/^.*'-/#define UPTEX_VERSION \"/;s/'.*$$/\"/" >$@
@@ -9991,7 +9992,7 @@ pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 
 # Extract pdftex version
-pdftexdir/pdftex_version.h: pdftexdir/pdftex.web etexdir/etex_version.h
+pdftexdir/pdftex_version.h: pdftexdir/pdftex.web
 	$(MKDIR_P) pdftexdir
 	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define PDFTEX_VERSION \"/;s/'.*$$/\"/" >$@
@@ -10244,7 +10245,7 @@ xetex.p xetex.pool: xetex-tangle
 xetex-tangle: ./otangle$(EXEEXT) xetex.web tangle-sh
 	@$(o_tangle) xetex
 
-xetexdir/xetex_version.h: xetexdir/xetex.ch etexdir/etex_version.h
+xetexdir/xetex_version.h: xetexdir/xetex.ch
 	$(MKDIR_P) xetexdir
 	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.ch \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
