@@ -102,6 +102,11 @@
 #include <config.h>
 #endif
 
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#include <kpathsea/progname.h>
+#endif
+
 #include "sysdep.h"
 #include "bibtex.h"
 #include "datatype.h"
@@ -117,13 +122,6 @@ Include the ICU heads. 23/sep/2009
 #include "unicode/ustdio.h"
 #include "unicode/ucnv.h"
 #include "unicode/ucol.h"
-
-
-#ifdef KPATHSEA
-#include <kpathsea/config.h>
-#include <kpathsea/progname.h>
-#endif
-
 
 /***************************************************************************
  * WEB section number:	 39

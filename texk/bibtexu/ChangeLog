@@ -1,3 +1,7 @@
+2012-08-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* bibtex.c : Change order of inclusion of headers to avoid warnings.
+
 2012-04-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bibtex-2.c: Do not check whether Glob_Str_Size > Buf_Size,
