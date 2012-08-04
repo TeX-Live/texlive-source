@@ -50,7 +50,7 @@ int main(int ac, char **av)
 
 /* COMMAND */
 
-  spawnlp(P_WAIT, "otp2ocp", "otp2ocp", name, NULL);
+  spawnlp(_P_WAIT, "otp2ocp", "otp2ocp", name, NULL);
 
 /* END COMMAND */
   

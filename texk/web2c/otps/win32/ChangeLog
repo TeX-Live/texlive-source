@@ -1,3 +1,7 @@
+2012-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkocp.c, mkofm.c: Replace P_WAIT by _P_WAIT.
+
 2012-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkocp.c: Pass program name string to kpse_set_program_name.

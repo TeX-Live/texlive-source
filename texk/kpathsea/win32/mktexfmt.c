@@ -73,7 +73,7 @@ int main(int ac, char **av)
   strcpy(fullbin, texbindir);
   strcat(fullbin, "fmtutil.exe");
   fprintf(stderr, "Running the command %s\n", fullbin);
-  spawnlp(P_WAIT, fullbin, "fmtutil", "--byfmt", av[1], NULL);
+  spawnlp(_P_WAIT, fullbin, "fmtutil", "--byfmt", av[1], NULL);
 
 /* END COMMAND */
   

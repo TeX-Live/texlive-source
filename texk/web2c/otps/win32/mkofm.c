@@ -5,5 +5,5 @@
 int main(int argc, char *argv[])
 {
   strcpy(argv[0], "mkofm");
-  return spawnvp(P_WAIT, "mktextfm.exe", (const char* const*)argv);
+  return spawnvp(_P_WAIT, "mktextfm.exe", (const char* const*)argv);
 }

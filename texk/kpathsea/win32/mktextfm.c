@@ -283,7 +283,7 @@ issetdest = 2 : current directory
   fprintf (stderr, "%s %s\n", execfile, cmd);
   strcpy(fullbin, texbindir);
   strcat(fullbin, execfile);
-  (void) spawnlp (P_WAIT, fullbin, execfile, cmd, NULL);
+  (void) spawnlp (_P_WAIT, fullbin, execfile, cmd, NULL);
 
 /* return to original stdout and stdin */
   _dup2 (savo, fileno (stdout));
