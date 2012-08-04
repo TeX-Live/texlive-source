@@ -7,8 +7,6 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 EXTRA_DIST =
 
-EXTRA_DIST += tl-sys-wrapper.pl
-
 perl_scripts = \
 	updmap
 

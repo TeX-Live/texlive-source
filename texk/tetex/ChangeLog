@@ -1,3 +1,9 @@
+2012-08-04  Karl Berry  <karl@tug.org>
+
+	* tl-sys-wrapper: not needed.  The Windows wrapper, runscript.tlu,
+	already handles -sys, as does the Windows fmtutil.c.
+	* Makefile.am (EXTRA_DIST): remove it again.
+
 2012-08-03  Karl Berry  <karl@tug.org>
 
 	* tl-sys-wrapper.pl: initial attempt.

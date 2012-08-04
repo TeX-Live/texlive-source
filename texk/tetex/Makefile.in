@@ -230,9 +230,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = tl-sys-wrapper.pl ../../build-aux/relpath README.texdoctk \
-	old-fontinst.bat old-updmap updmap-single.pl updmap.help2man \
-	$(TESTS)
+EXTRA_DIST = ../../build-aux/relpath README.texdoctk old-fontinst.bat \
+	old-updmap updmap-single.pl updmap.help2man $(TESTS)
 perl_scripts = \
 	updmap
 
