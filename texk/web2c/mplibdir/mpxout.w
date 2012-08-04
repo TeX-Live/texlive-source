@@ -3981,7 +3981,7 @@ static int do_spawn (MPX mpx, char *icmd, char **options) {
     }  
   }
 #else
-  retcode = spawnvp(P_WAIT, cmd, (const char **)options);
+  retcode = spawnvp(_P_WAIT, cmd, (const char **)options);
 #endif
   xfree(cmd);
   return retcode;

@@ -1,3 +1,8 @@
+2012-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpost.w: Reduce diffs between TeX Live and W32TeX.
+	* mpxout.w: Replace P_WAIT by _P_WAIT.
+
 2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mp.w: Drop replacement function for snprintf().

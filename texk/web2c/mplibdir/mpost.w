@@ -27,29 +27,21 @@ have our customary command-line interface.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #if defined (HAVE_SYS_TIME_H)
 #include <sys/time.h>
 #elif defined (HAVE_SYS_TIMEB_H)
 #include <sys/timeb.h>
 #endif
+#include <time.h> /* For `struct tm'.  Moved here for Visual Studio 2005.  */
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 #include <mplib.h>
 #include <mpxout.h>
-#ifdef WIN32
-#include <process.h>
-#endif
 #include <kpathsea/kpathsea.h>
 @= /*@@null@@*/ @> static char *mpost_tex_program = NULL;
 static int debug = 0; /* debugging for makempx */
 static int nokpse = 0;
-#ifdef WIN32
-#define GETCWD _getcwd
-#else
-#define GETCWD getcwd
-#endif
 static boolean recorder_enabled = false;
 static string recorder_name = NULL;
 static FILE *recorder_file = NULL;
@@ -101,18 +93,46 @@ static char *mpost_itoa (int i) {
 
 
 @ @c
+#ifdef WIN32
+static int
+Isspace (char c)
+{
+  return (c == ' ' || c == '\t');
+}
+#endif
 static void mpost_run_editor (MP mp, char *fname, int fline) {
-  char *temp, *command, *edit_value;
+  char *temp, *command, *fullcmd, *edit_value;
   char c;
   boolean sdone, ddone;
+
+#ifdef WIN32
+  char *fp, *ffp, *env, editorname[256], buffer[256];
+  int cnt = 0;
+  int dontchange = 0;
+#endif
+
   sdone = ddone = false;
   edit_value = kpse_var_value ("MPEDIT");
+  if (edit_value == NULL)
+    edit_value = getenv("EDITOR");
   if (edit_value == NULL) {
-    fprintf (stderr,"call_edit: can't find a suitable MPEDIT variable\n");
+    fprintf (stderr,"call_edit: can't find a suitable MPEDIT or EDITOR variable\n");
     exit(mp_status(mp));    
   }
   command = (string) mpost_xmalloc (strlen (edit_value) + strlen(fname) + 11 + 3);
   temp = command;
+
+#ifdef WIN32
+  fp = editorname;
+  if ((isalpha(*edit_value) && *(edit_value + 1) == ':'
+        && IS_DIR_SEP (*(edit_value + 2)))
+      || (*edit_value == '"' && isalpha(*(edit_value + 1))
+        && *(edit_value + 2) == ':'
+        && IS_DIR_SEP (*(edit_value + 3)))
+     )
+    dontchange = 1;
+#endif
+
   while ((c = *edit_value++) != (char)0) {
       if (c == '%')   {
         switch (c = *edit_value++) {
@@ -153,12 +173,54 @@ static void mpost_run_editor (MP mp, char *fname, int fline) {
 	    *temp++ = c;
 	    break;
 	  }
-     } else {
+     }
+   else {
+#ifdef WIN32
+        if (dontchange)
+          *temp++ = c;
+        else { if(Isspace(c) && cnt == 0) {
+            cnt++;
+            temp = command;
+            *temp++ = c;
+            *fp = '\0';
+	  } else if(!Isspace(c) && cnt == 0) {
+            *fp++ = c;
+	  } else {
+            *temp++ = c;
+	  }
+        }
+#else
      	*temp++ = c;
+#endif
      }
    }
   *temp = '\0';
-  if (system (command) != 0)
+
+#ifdef WIN32
+  if (dontchange == 0) {
+    if(editorname[0] == '.' ||
+       editorname[0] == '/' ||
+       editorname[0] == '\\') {
+      fprintf(stderr, "%s is not allowed to execute.\n", editorname);
+      exit(EXIT_FAILURE);
+    }
+    env = (char *)getenv("PATH");
+    if(SearchPath(env, editorname, ".exe", 256, buffer, &ffp)==0) {
+      if(SearchPath(env, editorname, ".bat", 256, buffer, &ffp)==0) {
+        fprintf(stderr, "I cannot find %s in the PATH.\n", editorname);
+        exit(EXIT_FAILURE);
+      }
+    }
+    fullcmd = mpost_xmalloc(strlen(buffer)+strlen(command)+5);
+    strcpy(fullcmd, "\"");
+    strcat(fullcmd, buffer);
+    strcat(fullcmd, "\"");
+    strcat(fullcmd, command);
+  } else
+#endif
+  fullcmd = command;
+
+  if (system (fullcmd) != 0)
     fprintf (stderr, "! Trouble executing `%s'.\n", command);
   exit(EXIT_FAILURE);
 }
@@ -212,7 +274,16 @@ void recorder_start(char *jobname) {
     }
     recorder_file = xfopen(recorder_name, FOPEN_W_MODE);
 
-    if(GETCWD(cwd,1020) != NULL) {
+    if(getcwd(cwd,1020) != NULL) {
+#ifdef WIN32
+      char *p;
+      for (p = cwd; *p; p++) {
+        if (*p == '\\')
+          *p = '/';
+        else if (IS_KANJI(p))
+          p++;
+      }
+#endif
       fprintf(recorder_file, "PWD %s\n", cwd);
     } else {
       fprintf(recorder_file, "PWD <unknown>\n");
@@ -452,7 +523,7 @@ static int get_random_seed (void) {
 #if defined (HAVE_GETTIMEOFDAY)
   struct timeval tv;
   gettimeofday(&tv, NULL);
-  ret = (tv.tv_usec + 1000000 * tv.tv_usec);
+  ret = (int)(tv.tv_usec + 1000000 * tv.tv_usec);
 #elif defined (HAVE_FTIME)
   struct timeb tb;
   ftime(&tb);
@@ -629,7 +700,7 @@ void internal_set_option(const char *opt) {
 }
 
 @ After the initialization stage is done, the next function
-runs thourgh the list of options and feeds them to the MPlib
+runs through the list of options and feeds them to the MPlib
 function |mp_set_internal|.
 
 @<Declarations@>=
@@ -1117,9 +1188,6 @@ was a \.{--jobname} on the command line, we have to reset
 the options structure as well.
 
 @<Discover the job name@>=
-#ifndef IS_DIR_SEP
-#define IS_DIR_SEP(c) (c=='/' || c=='\\')
-#endif
 { 
 char *tmp_job = NULL;
 if (options->job_name != NULL) {
@@ -1193,10 +1261,24 @@ if (options->job_name != NULL) {
 options->job_name = job_name;
 
 
+@ For W32\TeX we can |#define DLLPROC dllmpostmain| in order to build \MP\
+as DLL.
+
+@<Declarations@>=
+#if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
+extern __declspec(dllexport) int DLLPROC (int argc, char **argv);
+#endif
+
 @ Now this is really it: \MP\ starts and ends here.
 
 @c 
-int main (int argc, char **argv) { /* |start_here| */
+int
+#if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
+DLLPROC (int argc, char **argv)
+#else
+main (int argc, char **argv)
+#endif
+{ /* |start_here| */
   int k; /* index into buffer */
   int history; /* the exit status */
   MP mp; /* a metapost instance */
