@@ -215,4 +215,6 @@
         - added '-i', '.' to psview argument list (author's request)
         - added environment clean up from Perl specific variables 
           (when not using external Perl)
+		2012/08/05
+		    - added alias for fmtutil
 

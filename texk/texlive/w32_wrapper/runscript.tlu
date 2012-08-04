@@ -228,6 +228,8 @@ local docstr = [[
         - added '-i', '.' to psview argument list (author's request)
         - added environment clean up from Perl specific variables 
           (when not using external Perl)
+		2012/08/05
+		    - added alias for fmtutil
 ]]
 
 -- HELPER SUBROUTINES --
@@ -533,6 +535,8 @@ elseif progname == 'dviout' then
               [[^r\vf\\^s.vf;^r\ovf\\^s.ovf;^r\tfm\\^s.tfm" "-TEXROOT=']] ..
               table.concat(texrt, ';') .. [['"]]
   ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
+elseif progname == 'fmtutil' and sysprog then
+  ARGV = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil', argline}
 elseif progname == 'psv' then
   argline = '-sINPUT='..argline
   ARGV = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
