@@ -438,11 +438,15 @@ const_string c_job_name;
 
 const char *ptexbanner;
 
-#if !defined(WIN32) || defined(__MINGW32__)
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
 
-int main(int ac, string * av)
+int
+#if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
+DLLPROC (int ac, string *av)
+#else
+main (int ac, string *av)
+#endif
 {
 #  ifdef __EMX__
     _wildcard(&ac, &av);
@@ -460,7 +464,6 @@ int main(int ac, string * av)
 
     return EXIT_SUCCESS;
 }
-#endif                          /* !(WIN32 || __MINGW32__) */
 
 
 /* This is supposed to ``open the terminal for input'', but what we

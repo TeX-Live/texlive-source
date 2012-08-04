@@ -76,6 +76,10 @@ extern int shell_cmd_is_allowed(const char *cmd, char **safecmd,
                                 char **cmdname);
 extern int runsystem(char *cmd);
 
+#if defined(WIN32) && !defined(__MINGW32__) && defined(DLLPROC)
+extern __declspec(dllexport) int DLLPROC (int ac, string *av);
+#endif
+
 #  ifndef GLUERATIO_TYPE
 #    define GLUERATIO_TYPE double
 #  endif

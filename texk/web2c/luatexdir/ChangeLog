@@ -1,3 +1,8 @@
+2012-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatex.[ch] [W32TeX]: Use DLLPROC for luatex.dll.
+	* pdf/pdfgen.w [WIN32]: Convert file names '\\' -> '/'.
+
 2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex/texdeffont.w (tex_def_font): Better tracing of font

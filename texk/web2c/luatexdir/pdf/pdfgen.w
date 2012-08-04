@@ -1380,6 +1380,17 @@ static void print_ID(PDF pdf, const char *file_name)
     /* get the file name */
     if (getcwd(pwd, sizeof(pwd)) == NULL)
         pdftex_fail("getcwd() failed (%s), (path too long?)", strerror(errno));
+#ifdef WIN32
+    {
+        char *p;
+        for (p = pwd; *p; p++) {
+            if (*p == '\\')
+                *p = '/';
+            else if (IS_KANJI(p))
+                p++;
+        }
+    }
+#endif
     md5_append(&state, (const md5_byte_t *) pwd, (int) strlen(pwd));
     md5_append(&state, (const md5_byte_t *) "/", 1);
     md5_append(&state, (const md5_byte_t *) file_name, (int) strlen(file_name));
