@@ -293,8 +293,8 @@ helping to determine whether a particular implementation deserves to be
 known as `\eTeX'.
 
 @d eTeX_version=2 { \.{\\eTeXversion} }
-@d eTeX_revision==".4" { \.{\\eTeXrevision} }
-@d eTeX_version_string=='-2.4' {current \eTeX\ version}
+@d eTeX_revision==".5" { \.{\\eTeXrevision} }
+@d eTeX_version_string=='-2.5' {current \eTeX\ version}
 @#
 @d eTeX_banner=='This is e-TeX, Version 3.1415926',eTeX_version_string
   {printed when \eTeX\ starts}

@@ -1,3 +1,7 @@
+2012-08-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftex.web: Update eTeX_revision and eTeX_version_string.
+
 2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Adapt to e-TeX Version 2.5.
