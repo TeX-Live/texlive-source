@@ -2074,13 +2074,13 @@ input_line (FILE *f)
     if (position == 0L) {  /* Detect and skip Byte order marks.  */
       int k1 = getc (f);
 
-      if (k1 == EOF || k1 == '\r' || k1 == '\n')
-        fseek (f, -1L , SEEK_CUR);
+      if (k1 != 0xff && k1 != 0xfe && k1 != 0xef)
+        rewind (f);
       else {
         int k2 = getc (f);
 
-        if (k2 == EOF || k2 == '\r' || k2 == '\n')
-          fseek (f, -2L , SEEK_CUR);
+        if (k2 != 0xff && k2 != 0xfe && k2 != 0xbb)
+          rewind (f);
         else if ((k1 == 0xff && k2 == 0xfe) || /* UTF-16(LE) */
                  (k1 == 0xfe && k2 == 0xff))   /* UTF-16(BE) */
           ;
@@ -2090,7 +2090,7 @@ input_line (FILE *f)
           if (k1 == 0xef && k2 == 0xbb && k3 == 0xbf) /* UTF-8 */
             ;
           else
-            fseek (f, -3L, SEEK_CUR);
+            rewind (f);
         }
       }
     }

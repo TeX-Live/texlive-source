@@ -1,3 +1,8 @@
+2012-08-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c [WIN32]: bug fix. use rewind (f) to clear error and
+	EOF indicators.
+
 2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (runpopen): Binary mode for popen() on Windows now
