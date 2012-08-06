@@ -1,3 +1,10 @@
+2012-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.94.
+	* version.ac: Adapted.
+	* configure.ac: Adapted.
+	* patch-01-const: Adapted
+
 2011-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace DISTCHECK_CONFIGURE_FLAGS by
@@ -16,7 +23,7 @@
 	* Makefile.am: Avoid pkgdata_DATA in order not to install an
 	empty $(pkgdatadir).
 
-2011-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2011-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import lcdf-typetools-2.92.
 	* version.ac: Adapt.

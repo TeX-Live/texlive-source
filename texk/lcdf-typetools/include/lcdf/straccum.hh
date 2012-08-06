@@ -35,7 +35,13 @@ class StringAccum { public:
     explicit inline StringAccum(int capacity);
 
     /** @brief Construct a StringAccum containing the characters in @a s. */
-    explicit inline StringAccum(const char *s, int len = -1)
+    explicit inline StringAccum(const char *cstr)
+	: _s(0), _len(0), _cap(0) {
+	append(cstr);
+    }
+
+    /** @brief Construct a StringAccum containing the characters in @a s. */
+    inline StringAccum(const char *s, int len)
 	: _s(0), _len(0), _cap(0) {
 	append(s, len);
     }
@@ -72,6 +78,11 @@ class StringAccum { public:
     /** @overload */
     inline char *data() {
 	return reinterpret_cast<char *>(_s);
+    }
+
+    /** @brief Return true iff the StringAccum is empty or out-of-memory. */
+    bool empty() const {
+	return _len == 0;
     }
 
     /** @brief Return the length of the StringAccum. */
@@ -200,8 +211,10 @@ class StringAccum { public:
      * All characters in the StringAccum are erased.  Also resets the
      * StringAccum's out-of-memory status. */
     inline void clear() {
-	if (_cap < 0)
-	    _cap = 0, _s = 0;
+	if (_cap < 0) {
+	    _cap = 0;
+	    _s = 0;
+	}
 	_len = 0;
     }
 
@@ -220,10 +233,10 @@ class StringAccum { public:
      * On failure, null is returned and errno is set to ENOMEM. */
     inline char *reserve(int n) {
 	assert(n >= 0);
-	if (_len + n <= _cap || grow(_len + n))
-	    return (char *)(_s + _len);
+	if (_len + n <= _cap)
+	    return reinterpret_cast<char *>(_s + _len);
 	else
-	    return 0;
+	    return grow(_len + n);
     }
 
     /** @brief Set the StringAccum's length to @a len.
@@ -234,6 +247,11 @@ class StringAccum { public:
 	assert(len >= 0 && _len <= _cap);
 	_len = len;
     }
+
+    /** @brief Set the StringAccum's length to @a len.
+     * @pre @a len >= 0
+     * @return 0 on success, -ENOMEM on failure */
+    int resize(int len);
 
     /** @brief Adjust the StringAccum's length.
      * @param delta  length adjustment
@@ -258,10 +276,12 @@ class StringAccum { public:
      * reserve() call. */
     inline char *extend(int nadjust, int nreserve = 0) {
 	assert(nadjust >= 0 && nreserve >= 0);
-	char *c = reserve(nadjust + nreserve);
-	if (c)
+	if (_len + nadjust + nreserve <= _cap) {
+	    char *x = reinterpret_cast<char *>(_s + _len);
 	    _len += nadjust;
-	return c;
+	    return x;
+	} else
+	    return hard_extend(nadjust, nreserve);
     }
 
 
@@ -299,29 +319,24 @@ class StringAccum { public:
 	    append_utf8_hard(ch);
     }
 
+    /** @brief Append the null-terminated C string @a s to this StringAccum.
+     * @param s data to append */
+    void append(const char *s);
     /** @brief Append the first @a len characters of @a s to this StringAccum.
      * @param s data to append
      * @param len length of data
-     *
-     * If @a len < 0, treats @a s as a null-terminated C string. */
-    inline void append(const char *s, int len) {
-	if (len < 0)
-	    len = strlen(s);
-	append_data(s, len);
-    }
+     * @pre @a len >= 0 */
+    inline void append(const char *s, int len);
     /** @overload */
-    inline void append(const unsigned char *s, int len) {
-	append(reinterpret_cast<const char *>(s), len);
-    }
+    inline void append(const unsigned char *s, int len);
 
     /** @brief Append the data from @a begin to @a end to the end of this
      * StringAccum.
      *
      * Does nothing if @a begin >= @a end. */
-    inline void append(const char *begin, const char *end) {
-	if (begin < end)
-	    append_data(begin, end - begin);
-    }
+    inline void append(const char *begin, const char *end);
+    /** @overload */
+    inline void append(const unsigned char *begin, const unsigned char *end);
 
     // word joining
     void append_break_lines(const String &text, int linelen, const String &leftmargin = String());
@@ -377,28 +392,12 @@ class StringAccum { public:
     int _len;
     int _cap;
 
-    bool grow(int);
+    char *grow(int);
     void assign_out_of_memory();
 
-    // We must be careful about calls like "sa.append(sa.begin(), sa.end())";
-    // a naive implementation might use sa's data after freeing it.
-    // append_external_data() takes a string guaranteed not to be part of the
-    // current StringAccum; append_internal_data() takes a string that likely
-    // is part of the current StringAccum; append_data() takes either kind.
-    inline void append_external_data(const char *s, int len) {
-	if (char *x = extend(len))
-	    memcpy(x, s, len);
-    }
-    void append_internal_data(const char *s, int len);
-    inline void append_data(const char *s, int len) {
-	const char *my_s = reinterpret_cast<char *>(_s);
-	if (s < my_s || s >= my_s + _cap)
-	    append_external_data(s, len);
-	else
-	    append_internal_data(s, len);
-    }
+    char *hard_extend(int nadjust, int nreserve);
+    void hard_append(const char *s, int len);
     void append_utf8_hard(unsigned ch);
-
 
     friend StringAccum &operator<<(StringAccum &sa, const char *s);
     friend StringAccum &operator<<(StringAccum &sa, const String &str);
@@ -442,6 +441,29 @@ StringAccum::StringAccum(int capacity)
     }
 }
 
+inline void StringAccum::append(const char *s, int len) {
+    assert(len >= 0);
+    if (_len + len <= _cap) {
+	memcpy(_s + _len, s, len);
+	_len += len;
+    } else
+	hard_append(s, len);
+}
+
+inline void StringAccum::append(const unsigned char *s, int len) {
+    append(reinterpret_cast<const char *>(s), len);
+}
+
+inline void StringAccum::append(const char *begin, const char *end) {
+    if (begin < end)
+	append(begin, end - begin);
+}
+
+inline void StringAccum::append(const unsigned char *begin, const unsigned char *end) {
+    if (begin < end)
+	append(begin, end - begin);
+}
+
 /** @relates StringAccum
     @brief Append character @a c to StringAccum @a sa.
     @return @a sa
@@ -467,11 +489,11 @@ operator<<(StringAccum &sa, unsigned char c)
 /** @relates StringAccum
     @brief Append null-terminated C string @a cstr to StringAccum @a sa.
     @return @a sa
-    @note Same as @a sa.append(@a cstr, -1). */
+    @note Same as @a sa.append(@a cstr). */
 inline StringAccum &
 operator<<(StringAccum &sa, const char *cstr)
 {
-    sa.append(cstr, -1);
+    sa.append(cstr);
     return sa;
 }
 
@@ -481,7 +503,11 @@ operator<<(StringAccum &sa, const char *cstr)
 inline StringAccum &
 operator<<(StringAccum &sa, bool b)
 {
-    sa.append("truefalse" + (b ? 0 : 4), (b ? 4 : 5));
+    static const char truefalse[] = "truefalse";
+    if (b)
+	sa.append(truefalse, 4);
+    else
+	sa.append(truefalse + 4, 5);
     return sa;
 }
 
@@ -528,7 +554,7 @@ inline StringAccum &
 operator<<(StringAccum &sa, const String &str)
 {
     if (!str.out_of_memory())
-	sa.append_external_data(str.begin(), str.length());
+	sa.hard_append(str.begin(), str.length());
     else
 	sa.assign_out_of_memory();
     return sa;
@@ -538,7 +564,7 @@ operator<<(StringAccum &sa, const String &str)
 inline StringAccum &
 operator<<(StringAccum &sa, PermString s)
 {
-    sa.append_external_data(s.c_str(), s.length());
+    sa.append(s.c_str(), s.length());
     return sa;
 }
 #endif

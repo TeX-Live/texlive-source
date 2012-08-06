@@ -775,7 +775,7 @@ Coverage::Coverage(const Vector<bool> &gmap) throw ()
     while (end > 0 && !gmap[end - 1])
 	--end;
     if (end > 0) {
-	_str = String::make_garbage(8 + end);
+	_str = String::make_uninitialized(8 + end);
 	_str.align(4);
 	uint8_t *data = _str.mutable_udata();
 	memset(data, 0, 8 + end);

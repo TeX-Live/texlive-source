@@ -67,13 +67,13 @@ StringAccum::assign_out_of_memory()
     _len = 0;
 }
 
-bool
+char *
 StringAccum::grow(int want)
 {
     // can't append to out-of-memory strings
     if (_cap < 0) {
 	errno = ENOMEM;
-	return false;
+	return 0;
     }
 
     int ncap = (_cap ? (_cap + MEMO_SPACE) * 2 : 128) - MEMO_SPACE;
@@ -84,17 +84,46 @@ StringAccum::grow(int want)
     if (!n) {
 	assign_out_of_memory();
 	errno = ENOMEM;
-	return false;
+	return 0;
     }
     n += MEMO_SPACE;
 
     if (_s) {
-	memcpy(n, _s, _cap);
+	memcpy(n, _s, _len);
 	delete[] (_s - MEMO_SPACE);
     }
     _s = n;
     _cap = ncap;
-    return true;
+    return reinterpret_cast<char *>(_s + _len);
+}
+
+int
+StringAccum::resize(int len)
+{
+    assert(len >= 0);
+    if (len > _cap && !grow(len))
+	return -ENOMEM;
+    else {
+	_len = len;
+	return 0;
+    }
+}
+
+char *
+StringAccum::hard_extend(int nadjust, int nreserve)
+{
+    char *x = grow(_len + nadjust + nreserve);
+    if (x)
+	_len += nadjust;
+    return x;
+}
+
+const char *
+StringAccum::c_str()
+{
+    if (_len < _cap || grow(_len))
+	_s[_len] = '\0';
+    return reinterpret_cast<char *>(_s);
 }
 
 void
@@ -125,22 +154,21 @@ StringAccum::append_utf8_hard(unsigned ch)
 	append((unsigned char) '?');
 }
 
-const char *
-StringAccum::c_str()
-{
-    if (_len < _cap || grow(_len))
-	_s[_len] = '\0';
-    return reinterpret_cast<char *>(_s);
-}
-
 void
-StringAccum::append_internal_data(const char *s, int len)
+StringAccum::hard_append(const char *s, int len)
 {
-    if (out_of_memory())
-	/* do nothing */;
-    else if (!_s || _len + len <= _cap)
-	append_external_data(s, len);
-    else {
+    // We must be careful about calls like "sa.append(sa.begin(), sa.end())";
+    // a naive implementation might use sa's data after freeing it.
+    const char *my_s = reinterpret_cast<char *>(_s);
+
+    if (_len + len <= _cap) {
+    success:
+	memcpy(_s + _len, s, len);
+	_len += len;
+    } else if (s < my_s || s >= my_s + _cap) {
+	if (grow(_len + len))
+	    goto success;
+    } else {
 	unsigned char *old_s = _s;
 	int old_len = _len;
 
@@ -155,6 +183,12 @@ StringAccum::append_internal_data(const char *s, int len)
 
 	delete[] (old_s - MEMO_SPACE);
     }
+}
+
+void
+StringAccum::append(const char *s)
+{
+    hard_append(s, strlen(s));
 }
 
 String

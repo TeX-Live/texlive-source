@@ -4,7 +4,7 @@
  * Eddie Kohler
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
- * Copyright (c) 2001-2011 Eddie Kohler
+ * Copyright (c) 2001-2012 Eddie Kohler
  * Copyright (c) 2008-2009 Meraki, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -41,14 +41,6 @@
  * allocated; String operations allocate and free memory as needed.  A String
  * and its substrings generally share memory.  Accessing a character by index
  * takes O(1) time; so does creating a substring.
- *
- * <h3>Initialization</h3>
- *
- * The String implementation must be explicitly initialized before use; see
- * static_initialize().  Explicit initialization is used because static
- * constructors and other automatic initialization tricks don't work in the
- * kernel.  However, at user level, you can declare a String::Initializer
- * object to initialize the library.
  *
  * <h3>Out-of-memory strings</h3>
  *
@@ -266,14 +258,6 @@ String::make_stable(const char *s, int len)
 }
 
 String
-String::make_garbage(int len)
-{
-    String s;
-    s.append_garbage(len);
-    return s;
-}
-
-String
 String::make_fill(int c, int len)
 {
     String s;
@@ -333,7 +317,7 @@ String::assign(const char *str, int len, bool need_deref)
 }
 
 char *
-String::append_garbage(int len)
+String::append_uninitialized(int len)
 {
     // Appending anything to "out of memory" leaves it as "out of memory"
     if (len <= 0 || _r.data == &oom_data)
@@ -387,7 +371,7 @@ String::append_garbage(int len)
 }
 
 void
-String::append(const char *s, int len)
+String::append(const char *s, int len, memo_t *memo)
 {
     if (!s) {
 	assert(len <= 0);
@@ -401,14 +385,17 @@ String::append(const char *s, int len)
 	assign_out_of_memory();
     else if (len == 0)
 	/* do nothing */;
-    else if (!(_r.memo
-	       && s >= _r.memo->real_data
-	       && s + len <= _r.memo->real_data + _r.memo->capacity)) {
-	if (char *space = append_garbage(len))
+    else if (_r.length == 0 && memo && !out_of_memory()) {
+	deref();
+	assign_memo(s, len, memo);
+    } else if (!(_r.memo
+		 && s >= _r.memo->real_data
+		 && s + len <= _r.memo->real_data + _r.memo->capacity)) {
+	if (char *space = append_uninitialized(len))
 	    memcpy(space, s, len);
     } else {
 	String preserve_s(*this);
-	if (char *space = append_garbage(len))
+	if (char *space = append_uninitialized(len))
 	    memcpy(space, s, len);
     }
 }
@@ -417,7 +404,7 @@ void
 String::append_fill(int c, int len)
 {
     assert(len >= 0);
-    if (char *space = append_garbage(len))
+    if (char *space = append_uninitialized(len))
 	memset(space, c, len);
 }
 
@@ -745,7 +732,7 @@ String::align(int n)
     int offset = reinterpret_cast<uintptr_t>(_r.data) % n;
     if (offset) {
 	String s;
-	s.append_garbage(_r.length + n + 1);
+	s.append_uninitialized(_r.length + n + 1);
 	offset = reinterpret_cast<uintptr_t>(s._r.data) % n;
 	memcpy((char *)s._r.data + n - offset, _r.data, _r.length);
 	s._r.data += n - offset;

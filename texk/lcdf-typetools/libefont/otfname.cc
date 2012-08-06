@@ -88,14 +88,14 @@ Name::parse_header(ErrorHandler *errh)
     int len = _str.length();
     const uint8_t *data = _str.udata();
     if (len == 0)
-	return errh->error("font has no 'name' table"), -EFAULT;
+	return errh->error("font has no %<name%> table"), -EFAULT;
     if (HEADER_SIZE > len)
-	return errh->error("'name' table too small"), -EFAULT;
+	return errh->error("%<name%> table too small"), -EFAULT;
     if (!(data[0] == '\000' && data[1] == '\000'))
-	return errh->error("bad 'name' version number"), -ERANGE;
+	return errh->error("bad %<name%> version number"), -ERANGE;
     int count = USHORT_AT(data + 2);
     if (HEADER_SIZE + count*NAMEREC_SIZE > len)
-	return errh->error("'name' table too small"), -EFAULT;
+	return errh->error("%<name%> table too small"), -EFAULT;
     return 0;
 }
 
@@ -152,7 +152,11 @@ Name::utf8_name(const_iterator i) const
 String
 Name::english_name(int nameid) const
 {
-    return utf8_name(std::find_if(begin(), end(), EnglishPlatformPred(nameid)));
+    const_iterator end = this->end();
+    const_iterator it = std::find_if(begin(), end, PlatformPred(nameid, P_MICROSOFT, E_MS_UNICODE_BMP, L_MS_ENGLISH_AMERICAN));
+    if (it == end)
+	it = std::find_if(begin(), end, PlatformPred(nameid, P_MACINTOSH, E_MAC_ROMAN, 0));
+    return utf8_name(it);
 }
 
 bool

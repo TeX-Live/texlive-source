@@ -25,7 +25,7 @@ char *strerror(int errno);
 #endif
 
 /* Prototype strnlen if necessary. */
-#if !HAVE_STRNLEN || !HAVE_DECL_STRNLEN
+#if !HAVE_DECL_STRNLEN
 size_t strnlen(const char *s, size_t maxlen);
 #endif
 

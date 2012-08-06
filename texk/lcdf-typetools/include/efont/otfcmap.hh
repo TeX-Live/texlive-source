@@ -22,13 +22,14 @@ class Cmap { public:
     String _str;
     int _error;
     int _ntables;
-    int _first_unicode_table;
+    mutable int _first_unicode_table;
     mutable Vector<int> _table_error;
 
     enum { HEADER_SIZE = 4, ENCODING_SIZE = 8,
 	   HIBYTE_SUBHEADERS = 524 };
     enum Format { F_BYTE = 0, F_HIBYTE = 2, F_SEGMENTED = 4, F_TRIMMED = 6,
 		  F_HIBYTE32 = 8, F_TRIMMED32 = 10, F_SEGMENTED32 = 12 };
+    enum { USE_FIRST_UNICODE_TABLE = -2 };
 
     int parse_header(ErrorHandler *);
     int first_unicode_table() const	{ return _first_unicode_table; }
@@ -42,12 +43,12 @@ class Cmap { public:
 
 inline Glyph Cmap::map_uni(uint32_t c) const
 {
-    return map_table(first_unicode_table(), c, ErrorHandler::default_handler());
+    return map_table(USE_FIRST_UNICODE_TABLE, c, ErrorHandler::default_handler());
 }
 
 inline void Cmap::unmap_all(Vector<uint32_t> &g2c) const
 {
-    dump_table(first_unicode_table(), g2c, ErrorHandler::default_handler());
+    dump_table(USE_FIRST_UNICODE_TABLE, g2c, ErrorHandler::default_handler());
 }
 
 }}

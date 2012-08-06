@@ -30,100 +30,9 @@ dnl
 dnl directory searching
 dnl
 
+AC_LANG_C
 AC_HEADER_DIRENT
-
-
-dnl
-dnl select programs to be compiled and automatically run
-dnl
-
-m4_include([ac/lcdf-typetools.ac])
-
-SELECTED_SUBDIRS=
-AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
-           [test "x$enable_[]Kpse_Prog" = xno || SELECTED_SUBDIRS="$SELECTED_SUBDIRS Kpse_Prog"
-])
-AC_SUBST(SELECTED_SUBDIRS)
-
-AC_FOREACH([Kpse_Opt], kpse_otftotfm_auto_opts,
-           [AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
-                  [AC_DEFINE([HAVE_AUTO_]AS_TR_CPP(Kpse_Opt), 1,
-                             [Define to run ]Kpse_Opt[ from otftotfm.])])
-])
-
-
-dnl
-dnl kpathsea
-dnl
-
-dnl The configure option '--enable-texlive-build' is inherited
-dnl and automatically enabled, when built as part of TeX Live.
-
-AM_CONDITIONAL([texlive_build], [test "x$enable_texlive_build" = xyes])
-
-AC_ARG_WITH([kpathsea],
-            AS_HELP_STRING([--without-kpathsea],
-                           [build otftotfm without kpathsea]))
-
-KPSE_KPATHSEA_FLAGS
-
-if test "x$enable_build" != xno || test -f config.force; then
-
-KPSE_ADD_FLAGS([kpathsea])
-
-if test "x$with_kpathsea" != xno; then
-  AC_MSG_CHECKING([for kpathsea headers and library])
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
-                                  [[kpse_tfm_format;]])],
-                 [AC_MSG_RESULT([yes])
-                  AC_CHECK_DECLS([kpse_opentype_format], , ,
-                                 [#include <kpathsea/kpathsea.h>])],
-                 [AC_MSG_RESULT([no])
-                  with_kpathsea=no])
-
-  if test "x$with_kpathsea" = xno; then
-    AC_MSG_ERROR([
-=========================================
-
-I can't find the kpathsea library and/or header files. Tell me where to look
-using the --with-kpathsea-libdir=DIR option (library under DIR) and
---with-kpathsea-includes=DIR option (header files under DIR/kpathsea), or
-disable kpathsea support using --without-kpathsea.
-
-=========================================])
-  fi
-  AC_DEFINE(HAVE_KPATHSEA, 1, [Define if you want to use kpathsea.])
-fi
-
-KPSE_RESTORE_FLAGS
-
-echo timestamp >config.force
-fi
-
-AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
-
-AC_ARG_ENABLE(selfauto-set, [  --disable-selfauto-set  disable setting SELFAUTO variables from kpsewhich], :, enable_selfauto_set=yes)
-
-if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno -a "x$enable_texlive_build" != xyes; then
-    kpsewhich='kpsewhich'
-    test "x$kpathsea" != xyes -a -x "$kpathsea/bin/kpsewhich" && kpsewhich="$kpathsea/bin/kpsewhich"
-    SELFAUTOLOC=`$kpsewhich --expand-var='$SELFAUTOLOC' 2>/dev/null`
-    SELFAUTODIR=`$kpsewhich --expand-var='$SELFAUTODIR' 2>/dev/null`
-    SELFAUTOPARENT=`$kpsewhich --expand-var='$SELFAUTOPARENT' 2>/dev/null`
-    if test -z "$SELFAUTODIR"; then
-	AC_MSG_WARN([
-=========================================
-
-Could not extract SELFAUTO variables from $kpsewhich.
-Either supply the correct PREFIX to --with-kpathsea, or supply
---disable-selfauto-loc.
-
-=========================================])
-    fi
-    AC_DEFINE_UNQUOTED(SELFAUTOLOC, "$SELFAUTOLOC", [kpsewhich's $SELFAUTOLOC variable])
-    AC_DEFINE_UNQUOTED(SELFAUTODIR, "$SELFAUTODIR", [kpsewhich's $SELFAUTODIR variable])
-    AC_DEFINE_UNQUOTED(SELFAUTOPARENT, "$SELFAUTOPARENT", [kpsewhich's $SELFAUTOPARENT variable])
-fi
+AC_CHECK_HEADERS([fcntl.h unistd.h sys/time.h sys/wait.h])
 
 
 dnl
@@ -138,9 +47,9 @@ AC_CACHE_CHECK([whether <new> works], ac_cv_good_new_hdr,
   return 0;
 ], ac_cv_good_new_hdr=yes, ac_cv_good_new_hdr=no)])
 if test "$ac_cv_good_new_hdr" = yes; then
-   AC_DEFINE(HAVE_NEW_HDR, 1, [Define if <new> exists and works.])
+   AC_DEFINE([HAVE_NEW_HDR], [1], [Define if <new> exists and works.])
 fi
-AC_CHECK_HEADERS(new.h unistd.h)
+AC_CHECK_HEADERS([new.h])
 
 
 dnl
@@ -158,7 +67,7 @@ dnl
 
 AC_LANG_C
 need_fixlibc=0
-AC_CHECK_FUNCS([strerror], [:], [need_fixlibc=1])
+AC_CHECK_FUNCS([strerror], [], [need_fixlibc=1])
 
 AC_CACHE_CHECK([for broken strtod], [ac_cv_broken_strtod],
 [AC_TRY_RUN([#include <stdio.h>
@@ -172,12 +81,11 @@ int main(int c, char **v) {
 [ac_cv_broken_strtod=no])])
 if test "x$ac_cv_broken_strtod" = xyes; then
     need_fixlibc=1
-    AC_DEFINE(HAVE_BROKEN_STRTOD, 1, [Define if strtod is broken.])
+    AC_DEFINE([HAVE_BROKEN_STRTOD], [1], [Define if strtod is broken.])
 fi
 
 AC_LANG_CPLUSPLUS
-AC_CHECK_DECLS([strnlen])
-AC_LANG_C
+AC_CHECK_DECLS([strnlen], [], [], [#include <string.h>])
 AC_CHECK_FUNCS([strnlen], [have_strnlen=1], [need_fixlibc=1])
 if test "x$have_strnlen" = x1; then
     AC_CACHE_CHECK([for broken strnlen], [ac_cv_broken_strnlen],
@@ -193,11 +101,11 @@ int main(int c, char **v) {
 	AC_DEFINE([HAVE_BROKEN_STRNLEN], [1], [Define if strnlen is broken.])
     fi
 fi
+AC_LANG_C
 
 AC_CHECK_FUNCS([ctime ftruncate mkstemp sigaction strdup strtoul vsnprintf waitpid])
-AC_CHECK_FUNC([floor], [:], [AC_CHECK_LIB(m, floor)])
-AC_CHECK_FUNC([fabs], [:], [AC_CHECK_LIB(m, fabs)])
-AC_CHECK_HEADERS([unistd.h fcntl.h sys/time.h sys/wait.h])
+AC_CHECK_FUNC([floor], [], [AC_CHECK_LIB([m], [floor])])
+AC_CHECK_FUNC([fabs], [], [AC_CHECK_LIB([m], [fabs])])
 AM_CONDITIONAL([FIXLIBC], [test x$need_fixlibc = x1])
 
 
@@ -317,7 +225,7 @@ dnl is va_list addressable?
 dnl
 
 AC_LANG_CPLUSPLUS
-AC_CACHE_CHECK([for addressable va_list type], 
+AC_CACHE_CHECK([for addressable va_list type],
     ac_cv_va_list_addr,
     [AC_TRY_COMPILE([#include <stdarg.h>
 void f(va_list *) {
@@ -337,12 +245,108 @@ fi
 
 
 dnl
+dnl select programs to be compiled and automatically run
+dnl
+
+m4_include([ac/lcdf-typetools.ac])
+
+SELECTED_SUBDIRS=
+AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
+           [test "x$enable_[]Kpse_Prog" = xno || SELECTED_SUBDIRS="$SELECTED_SUBDIRS Kpse_Prog"
+])
+AC_SUBST(SELECTED_SUBDIRS)
+
+AC_FOREACH([Kpse_Opt], kpse_otftotfm_auto_opts,
+           [AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
+                  [AC_DEFINE([HAVE_AUTO_]AS_TR_CPP(Kpse_Opt), 1,
+                             [Define to run ]Kpse_Opt[ from otftotfm.])])
+])
+
+
+dnl
+dnl kpathsea
+dnl
+
+dnl The configure option '--enable-texlive-build' is inherited
+dnl and automatically enabled, when built as part of TeX Live.
+
+AM_CONDITIONAL([texlive_build], [test "x$enable_texlive_build" = xyes])
+
+AC_ARG_WITH([kpathsea],
+            AS_HELP_STRING([--without-kpathsea],
+                           [build otftotfm without kpathsea]))
+
+KPSE_KPATHSEA_FLAGS
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+KPSE_ADD_FLAGS([kpathsea])
+
+if test "x$with_kpathsea" != xno; then
+  AC_MSG_CHECKING([for kpathsea headers and library])
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
+                                  [[kpse_tfm_format;]])],
+                 [AC_MSG_RESULT([yes])
+                  AC_CHECK_DECLS([kpse_opentype_format], , ,
+                                 [#include <kpathsea/kpathsea.h>])],
+                 [AC_MSG_RESULT([no])
+                  with_kpathsea=no])
+
+  if test "x$with_kpathsea" = xno; then
+    AC_MSG_ERROR([
+=========================================
+
+I can't find the kpathsea library and/or header files. Tell me where to look
+using the --with-kpathsea-libdir=DIR option (library under DIR) and
+--with-kpathsea-includes=DIR option (header files under DIR/kpathsea), or
+disable kpathsea support using --without-kpathsea.
+
+=========================================])
+  fi
+  AC_DEFINE(HAVE_KPATHSEA, 1, [Define if you want to use kpathsea.])
+fi
+
+KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
+
+AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
+
+AC_ARG_ENABLE([selfauto-set],
+  AS_HELP_STRING([--disable-selfauto-set], [disable setting SELFAUTO variables from kpsewhich]),
+  [], [enable_selfauto_set=yes])
+
+if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno -a "x$enable_texlive_build" != xyes; then
+    kpsewhich='kpsewhich'
+    test "x$kpathsea" != xyes -a -x "$kpathsea/bin/kpsewhich" && kpsewhich="$kpathsea/bin/kpsewhich"
+    SELFAUTOLOC=`$kpsewhich --expand-var='$SELFAUTOLOC' 2>/dev/null`
+    SELFAUTODIR=`$kpsewhich --expand-var='$SELFAUTODIR' 2>/dev/null`
+    SELFAUTOPARENT=`$kpsewhich --expand-var='$SELFAUTOPARENT' 2>/dev/null`
+    if test -z "$SELFAUTODIR"; then
+	AC_MSG_WARN([
+=========================================
+
+Could not extract SELFAUTO variables from $kpsewhich.
+Either supply the correct PREFIX to --with-kpathsea, or supply
+--disable-selfauto-loc.
+
+=========================================])
+    fi
+    AC_DEFINE_UNQUOTED(SELFAUTOLOC, "$SELFAUTOLOC", [kpsewhich's $SELFAUTOLOC variable])
+    AC_DEFINE_UNQUOTED(SELFAUTODIR, "$SELFAUTODIR", [kpsewhich's $SELFAUTODIR variable])
+    AC_DEFINE_UNQUOTED(SELFAUTOPARENT, "$SELFAUTOPARENT", [kpsewhich's $SELFAUTOPARENT variable])
+fi
+
+
+dnl
 dnl verbatim portions of the header
 dnl
 
 AC_DEFINE(HAVE_PERMSTRING, 1, [Define if PermStrings are available.])
 AC_DEFINE(MMAFM_RUN_MMPFB, 1, [Define to 0 if you don't want mmafm to run mmpfb when it needs to get an intermediate master conversion program.])
 dnl PATHNAME_SEPARATOR?
+
 
 dnl
 dnl set path variables

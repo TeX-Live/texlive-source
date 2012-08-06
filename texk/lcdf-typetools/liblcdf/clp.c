@@ -476,6 +476,7 @@ Clp_NewParser(int argc, const char * const *argv, int nopt, const Clp_Option *op
     if (!clp || !cli || !iopt || !cli->valtype)
 	goto failed;
 
+    clp->opt = -1;
     clp->negated = 0;
     clp->have_val = 0;
     clp->vstr = 0;
@@ -1175,15 +1176,18 @@ parse_string_list(Clp_Parser *clp, const char *arg, int complain, void *user_dat
     }
 
     if (complain) {
-	const char *complaint = (ambiguous ? "ambiguous" : "invalid");
-	if (!ambiguous) {
+	const char *complaint;
+	if (ambiguous)
+	    complaint = "ambiguous value %<%s%> for option %<%O%>";
+	else {
+	    complaint = "unknown value %<%s%> for option %<%O%>";
 	    ambiguous = sl->nitems_invalid_report;
 	    for (idx = 0; idx < ambiguous; idx++)
 		ambiguous_values[idx] = idx;
 	}
 	return ambiguity_error
 	    (clp, ambiguous, ambiguous_values, sl->items, sl->iopt,
-	     "", "option %<%O%> value %<%s%> is %s", arg, complaint);
+	     "", complaint, arg);
     } else
 	return 0;
 }
@@ -1820,7 +1824,8 @@ Clp_Next(Clp_Parser *clp)
     /* Get the next argument or option */
     if (!next_argument(clp, cli->option_processing ? 0 : 2)) {
 	clp->val.s = clp->vstr;
-	return clp->have_val ? Clp_NotOption : Clp_Done;
+	clp->opt = clp->have_val ? Clp_NotOption : Clp_Done;
+	return clp->opt;
     }
 
     clp->negated = cli->whole_negated;
@@ -1858,7 +1863,7 @@ Clp_Next(Clp_Parser *clp)
 	    Clp_OptionError(clp, "unrecognized option %<%s%s%>",
 			    cli->option_chars, cli->xtext);
 
-	return Clp_BadOption;
+	return (clp->opt = Clp_BadOption);
     }
 
     /* Set the current option */
@@ -1871,19 +1876,20 @@ Clp_Next(Clp_Parser *clp)
 	|| (!cli->iopt[optno].imandatory && !cli->iopt[optno].ioptional)) {
 	if (clp->have_val) {
 	    Clp_OptionError(clp, "%<%O%> can%,t take an argument");
-	    return Clp_BadOption;
+	    clp->opt = Clp_BadOption;
 	} else
-	    return cli->opt[optno].option_id;
+	    clp->opt = cli->opt[optno].option_id;
+	return clp->opt;
     }
 
     /* Get an argument if we need one, or if it's optional */
     /* Sanity-check the argument type. */
     opt = &cli->opt[optno];
     if (opt->val_type <= 0)
-	return Clp_Error;
+	return (clp->opt = Clp_Error);
     vtpos = val_type_binsearch(cli, opt->val_type);
     if (vtpos == cli->nvaltype || cli->valtype[vtpos].val_type != opt->val_type)
-	return Clp_Error;
+	return (clp->opt = Clp_Error);
 
     /* complain == 1 only if the argument was explicitly given,
        or it is mandatory. */
@@ -1903,14 +1909,16 @@ Clp_Next(Clp_Parser *clp)
 		Clp_OptionError(clp, "%<%O%> requires a non-option argument");
 	    else
 		Clp_OptionError(clp, "%<%O%> requires an argument");
-	    return Clp_BadOption;
+	    return (clp->opt = Clp_BadOption);
 	}
 
     } else if (cli->is_short && !clp->have_val
-	       && cli->xtext[clp_utf8_charlen(cli, cli->xtext)])
+	       && cli->xtext[clp_utf8_charlen(cli, cli->xtext)]) {
 	/* The -[option]argument case:
 	   Assume that the rest of the current string is the argument. */
 	next_argument(clp, 1);
+	complain = 1;
+    }
 
     /* Parse the argument */
     if (clp->have_val) {
@@ -1918,14 +1926,14 @@ Clp_Next(Clp_Parser *clp)
 	if (atr->func(clp, clp->vstr, complain, atr->user_data) <= 0) {
 	    /* parser failed */
 	    clp->have_val = 0;
-	    if (cli->iopt[optno].imandatory)
-		return Clp_BadOption;
+	    if (complain)
+		return (clp->opt = Clp_BadOption);
 	    else
 		Clp_RestoreParser(clp, &clpsave);
 	}
     }
 
-    return opt->option_id;
+    return (clp->opt = opt->option_id);
 }
 
 

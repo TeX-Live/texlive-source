@@ -43,6 +43,10 @@ class String { public:
     inline String(const char *s, int len) {
 	assign(s, len, false);
     }
+    /** @overload */
+    inline String(const unsigned char *s, int len) {
+	assign(reinterpret_cast<const char *>(s), len, false);
+    }
 
     /** @brief Construct a String containing the characters from @a begin
      * to @a end.
@@ -54,6 +58,11 @@ class String { public:
      * String::out_of_memory_data(), returns an out-of-memory string. */
     inline String(const char *begin, const char *end) {
 	assign(begin, (end > begin ? end - begin : 0), false);
+    }
+    /** @overload */
+    inline String(const unsigned char *begin, const unsigned char *end) {
+	assign(reinterpret_cast<const char *>(begin),
+	       (end > begin ? end - begin : 0), false);
     }
 
     /** @brief Construct a String equal to "true" or "false" depending on the
@@ -102,7 +111,11 @@ class String { public:
     }
 
     /** @brief Return a String containing @a len unknown characters. */
-    static String make_garbage(int len);
+    static String make_uninitialized(int len) {
+	String s;
+	s.append_uninitialized(len);
+	return s;
+    }
 
     /** @brief Return a String that directly references the first @a len
      * characters of @a s.
@@ -185,8 +198,13 @@ class String { public:
     }
 
     /** @brief Return true iff the string is empty. */
-    inline bool operator!() const {
+    inline bool empty() const {
 	return _r.length == 0;
+    }
+
+    /** @brief Return true iff the string is empty. */
+    inline bool operator!() const {
+	return empty();
     }
 
 
@@ -228,14 +246,14 @@ class String { public:
      * pointer.  The returned pointer is semi-temporary; it will persist until
      * the string is destroyed or appended to. */
     inline const char *c_str() const {
-	// We may already have a '\0' in the right place.  If _memo does not
-	// exist, then this is one of the special strings (null or
+	// We may already have a '\0' in the right place.  If _memo has no
+	// capacity, then this is one of the special strings (null or
 	// stable). We are guaranteed, in these strings, that _data[_length]
-	// exists. Otherwise must check whether _data[_length] exists.
+	// exists. Otherwise must check that _data[_length] exists.
 	const char *end_data = _r.data + _r.length;
 	if ((_r.memo && end_data >= _r.memo->real_data + _r.memo->dirty)
 	    || *end_data != '\0') {
-	    if (char *x = const_cast<String *>(this)->append_garbage(1)) {
+	    if (char *x = const_cast<String *>(this)->append_uninitialized(1)) {
 		*x = '\0';
 		--_r.length;
 	    }
@@ -468,12 +486,19 @@ class String { public:
     }
 #endif
 
+    /** @brief Append the null-terminated C string @a cstr to this string.
+     * @param cstr data to append */
+    inline void append(const char *cstr) {
+	append(cstr, -1, 0);
+    }
+
     /** @brief Append the first @a len characters of @a s to this string.
      * @param s data to append
      * @param len length of data
-     *
-     * If @a len @< 0, treats @a s as a null-terminated C string. */
-    void append(const char *s, int len);
+     * @pre @a len @>= 0 */
+    inline void append(const char *s, int len) {
+	append(s, len, 0);
+    }
 
     /** @brief Appends the data from @a begin to @a end to the end of this
      * string.
@@ -492,14 +517,14 @@ class String { public:
      *
      * The caller may safely modify the returned memory.  Null is returned if
      * the string becomes out-of-memory. */
-    char *append_garbage(int len);
+    char *append_uninitialized(int len);
 
 
     /** @brief Append a copy of @a x to the end of this string.
      *
      * Returns the result. */
     inline String &operator+=(const String &x) {
-	append(x._r.data, x._r.length);
+	append(x._r.data, x._r.length, x._r.memo);
 	return *this;
     }
 
@@ -507,7 +532,7 @@ class String { public:
      *
      * Returns the result. */
     inline String &operator+=(const char *cstr) {
-	append(cstr, -1);
+	append(cstr);
 	return *this;
     }
 
@@ -686,6 +711,7 @@ class String { public:
     }
 #endif
     void assign_out_of_memory();
+    void append(const char *s, int len, memo_t *memo);
     static memo_t *create_memo(char *space, int dirty, int capacity);
     static void delete_memo(memo_t *memo);
 
@@ -698,7 +724,7 @@ class String { public:
 
     static String make_claim(char *, int, int); // claim memory
 
-    friend class rep_t;
+    friend struct rep_t;
     friend class StringAccum;
 
 };
@@ -796,7 +822,7 @@ inline String operator+(String a, const String &b) {
 
 /** @relates String */
 inline String operator+(String a, const char *b) {
-    a.append(b, -1);
+    a.append(b);
     return a;
 }
 

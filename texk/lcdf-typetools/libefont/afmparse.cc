@@ -259,7 +259,7 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 		  int n = (endbrack ? endbrack - (str + 1) : 0);
 		  if (!endbrack || n % 2 != 0)
 		      FAIL("should be hex values in <angle brackets>");
-		  String s = String::make_garbage(n/2);
+		  String s = String::make_uninitialized(n/2);
 		  unsigned char *data = s.mutable_udata();
 
 		  str++;

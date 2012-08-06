@@ -1,5 +1,17 @@
 LCDF Typetools NEWS
 
+Version 2.94   3.Aug.2012
+
+* More compilation updates.
+
+
+Version 2.93   23.Jul.2012
+
+* Correct compilation problem reported by Dennis Veatch.
+
+* Update OpenType feature, script, and language lists, and some other nits.
+
+
 Version 2.92   14.Aug.2011
 
 * Correct horrible x86-64 byte-order issue.  Bug reported by Michael Ummels.

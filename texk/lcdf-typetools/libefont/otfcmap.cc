@@ -2,7 +2,7 @@
 
 /* otfcmap.{cc,hh} -- OpenType cmap table
  *
- * Copyright (c) 2002-2011 Eddie Kohler
+ * Copyright (c) 2002-2012 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -121,6 +121,12 @@ Cmap::check_table(int t, ErrorHandler *errh) const
 {
     if (!errh)
 	errh = ErrorHandler::silent_handler();
+    if (t == USE_FIRST_UNICODE_TABLE && _first_unicode_table == -1) {
+	errh->warning("font appears not to support Unicode");
+	_first_unicode_table = 0;
+    }
+    if (t == USE_FIRST_UNICODE_TABLE)
+	t = _first_unicode_table;
     if (_error < 0 || t < 0 || t >= _ntables)
 	return errh->error("no such table");
     if (_table_error[t] > -2)
@@ -245,13 +251,13 @@ Cmap::check_table(int t, ErrorHandler *errh) const
     }
 
     _table_error[t] = 0;
-    return 0;
+    return t;
 }
 
 Glyph
 Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
 {
-    if (check_table(t, errh) < 0)
+    if ((t = check_table(t, errh)) < 0)
 	return 0;
 
     const uint8_t *data = _str.udata();
@@ -351,7 +357,7 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
 void
 Cmap::dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler *errh) const
 {
-    if (check_table(t, errh) < 0)
+    if ((t = check_table(t, errh)) < 0)
 	return;
 
     const uint8_t *data = _str.udata();
@@ -462,8 +468,8 @@ Cmap::dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler *errh) const
 int
 Cmap::map_uni(const Vector<uint32_t> &vin, Vector<Glyph> &vout) const
 {
-    int t = first_unicode_table();
-    if (check_table(t) < 0)
+    int t;
+    if ((t = check_table(USE_FIRST_UNICODE_TABLE)) < 0)
 	return -1;
     vout.resize(vin.size(), 0);
     for (int i = 0; i < vin.size(); i++)
