@@ -1,3 +1,8 @@
+2012-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (texmf_*_scripts): Move a2ping/, simpdftex/,
+	tetex/, and texdoc/ scripts from texmf/ to texmf-dist/.
+
 2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (bin_links) [WIN32]: Skip shell script links.

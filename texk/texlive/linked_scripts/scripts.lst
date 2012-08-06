@@ -1,9 +1,4 @@
 texmf_scripts='
-simpdftex/simpdftex
-a2ping/a2ping.pl
-tetex/e2pall.pl
-tetex/texdoctk.pl
-texdoc/texdoc.tlu
 texlive/rungs.tlu
 texlive/tlmgr.pl
 '
@@ -27,7 +22,9 @@ pdfjam/pdfjoin
 pdfjam/pdfnup
 pdfjam/pdfpun
 pst-pdf/ps4pdf
+simpdftex/simpdftex
 typeoutfileinfo/typeoutfileinfo.sh
+a2ping/a2ping.pl
 accfonts/mkt1font
 accfonts/vpl2ovp
 accfonts/vpl2vpl
@@ -81,6 +78,9 @@ purifyeps/purifyeps
 splitindex/perl/splitindex.pl
 sty2dtx/sty2dtx.pl
 svn-multi/svn-multi.pl
+tetex/e2pall.pl
+tetex/texdoctk.pl
+texdoc/texdoc.tlu
 texcount/texcount.pl
 texdef/texdef.pl
 texdiff/texdiff

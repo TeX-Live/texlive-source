@@ -37,13 +37,8 @@ bin_SCRIPTS =
 #
 texmf_scriptsdir = $(datarootdir)/texmf/scripts
 ## We distinguish shell and other (perl, lua, python, ruby, ...) scripts.
-texmf_shell_scripts = \
-	simpdftex/simpdftex
+texmf_shell_scripts =
 texmf_other_scripts = \
-	a2ping/a2ping.pl \
-	tetex/e2pall.pl \
-	tetex/texdoctk.pl \
-	texdoc/texdoc.tlu \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
 nobase_dist_texmf_scripts_SCRIPTS = \
@@ -71,8 +66,10 @@ texmf_dist_shell_scripts = \
 	pdfjam/pdfnup \
 	pdfjam/pdfpun \
 	pst-pdf/ps4pdf \
+	simpdftex/simpdftex \
 	typeoutfileinfo/typeoutfileinfo.sh
 texmf_dist_other_scripts = \
+	a2ping/a2ping.pl \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
@@ -126,6 +123,9 @@ texmf_dist_other_scripts = \
 	splitindex/perl/splitindex.pl \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
+	tetex/e2pall.pl \
+	tetex/texdoctk.pl \
+	texdoc/texdoc.tlu \
 	texcount/texcount.pl \
 	texdef/texdef.pl \
 	texdiff/texdiff \
