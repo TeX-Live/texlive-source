@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.5.1.  */
+/* A Bison parser, made by GNU Bison 2.6.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
    
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.5.1"
+#define YYBISON_VERSION "2.6.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -58,14 +58,11 @@
 /* Pull parsers.  */
 #define YYPULL 1
 
-/* Using locations.  */
-#define YYLSP_NEEDED 0
 
 
 
 /* Copy the first part of user declarations.  */
-
-/* Line 268 of yacc.c  */
+/* Line 336 of yacc.c  */
 #line 24 "web2c-parser.y"
 
 #include "web2c.h"
@@ -102,9 +99,8 @@ static void do_proc_args (void);
 static void gen_function_head (void);
 static boolean doreturn (string);
 
-
-/* Line 268 of yacc.c  */
-#line 108 "web2c-parser.c"
+/* Line 336 of yacc.c  */
+#line 104 "../../../../tex-live-2012-07-09/texk/web2c/web2c/web2c-parser.c"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -114,11 +110,6 @@ static boolean doreturn (string);
 #  endif
 # endif
 
-/* Enabling traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
-
 /* Enabling verbose error messages.  */
 #ifdef YYERROR_VERBOSE
 # undef YYERROR_VERBOSE
@@ -127,11 +118,17 @@ static boolean doreturn (string);
 # define YYERROR_VERBOSE 0
 #endif
 
-/* Enabling the token table.  */
-#ifndef YYTOKEN_TABLE
-# define YYTOKEN_TABLE 0
+/* In a future release of Bison, this section will be replaced
+   by #include "y.tab.h".  */
+#ifndef YY_Y_TAB_H
+# define YY_Y_TAB_H
+/* Enabling traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
 #endif
-
+#if YYDEBUG
+extern int yydebug;
+#endif
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -259,7 +256,6 @@ static boolean doreturn (string);
 
 
 
-
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
@@ -267,12 +263,28 @@ typedef int YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+extern YYSTYPE yylval;
+
+#ifdef YYPARSE_PARAM
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void *YYPARSE_PARAM);
+#else
+int yyparse ();
+#endif
+#else /* ! YYPARSE_PARAM */
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void);
+#else
+int yyparse ();
+#endif
+#endif /* ! YYPARSE_PARAM */
+
+#endif /* !YY_Y_TAB_H  */
 
 /* Copy the second part of user declarations.  */
 
-
-/* Line 345 of yacc.c  */
-#line 276 "web2c-parser.c"
+/* Line 353 of yacc.c  */
+#line 288 "../../../../tex-live-2012-07-09/texk/web2c/web2c/web2c-parser.c"
 
 #ifdef short
 # undef short
@@ -717,7 +729,7 @@ static const yytype_uint16 yyrline[] =
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+#if YYDEBUG || YYERROR_VERBOSE || 0
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
@@ -1261,31 +1273,32 @@ while (YYID (0))
 #define YYTERROR	1
 #define YYERRCODE	256
 
-
 /* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
    If N is 0, then set CURRENT to the empty location which ends
    the previous symbol: RHS[0] (always defined).  */
 
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
 #ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)				\
-    do									\
-      if (YYID (N))                                                    \
-	{								\
-	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
-	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
-	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
-	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
-	}								\
-      else								\
-	{								\
-	  (Current).first_line   = (Current).last_line   =		\
-	    YYRHSLOC (Rhs, 0).last_line;				\
-	  (Current).first_column = (Current).last_column =		\
-	    YYRHSLOC (Rhs, 0).last_column;				\
-	}								\
+# define YYLLOC_DEFAULT(Current, Rhs, N)                                \
+    do                                                                  \
+      if (YYID (N))                                                     \
+        {                                                               \
+          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;        \
+          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;      \
+          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;         \
+          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;       \
+        }                                                               \
+      else                                                              \
+        {                                                               \
+          (Current).first_line   = (Current).last_line   =              \
+            YYRHSLOC (Rhs, 0).last_line;                                \
+          (Current).first_column = (Current).last_column =              \
+            YYRHSLOC (Rhs, 0).last_column;                              \
+        }                                                               \
     while (YYID (0))
 #endif
+
+#define YYRHSLOC(Rhs, K) ((Rhs)[K])
+
 
 
 /* This macro is provided for backward compatibility. */
@@ -1756,20 +1769,6 @@ yydestruct (yymsg, yytype, yyvaluep)
 }
 
 
-/* Prevent warnings from -Wmissing-prototypes.  */
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
 
 
 /* The lookahead symbol.  */
@@ -1870,7 +1869,6 @@ yyparse ()
      The wasted elements are never initialized.  */
   yyssp = yyss;
   yyvsp = yyvs;
-
   goto yysetstate;
 
 /*------------------------------------------------------------.
@@ -2048,8 +2046,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 66 "web2c-parser.y"
     {
 	    printf ("#define %s\n", uppercasify (program_name));
@@ -2059,22 +2056,19 @@ yyreduce:
     break;
 
   case 3:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 73 "web2c-parser.y"
     { printf ("\n#include \"%s\"\n", coerce_name); }
     break;
 
   case 4:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 76 "web2c-parser.y"
     { YYACCEPT; }
     break;
 
   case 7:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 86 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2083,8 +2077,7 @@ yyreduce:
     break;
 
   case 8:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 91 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2093,8 +2086,7 @@ yyreduce:
     break;
 
   case 9:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 96 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2103,8 +2095,7 @@ yyreduce:
     break;
 
   case 10:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 101 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2113,8 +2104,7 @@ yyreduce:
     break;
 
   case 11:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 106 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2123,8 +2113,7 @@ yyreduce:
     break;
 
   case 12:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 111 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2133,8 +2122,7 @@ yyreduce:
     break;
 
   case 13:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 116 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2143,8 +2131,7 @@ yyreduce:
     break;
 
   case 14:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 121 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2157,8 +2144,7 @@ yyreduce:
     break;
 
   case 15:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 130 "web2c-parser.y"
     {
 	      ii = add_to_table (last_id);
@@ -2167,8 +2153,7 @@ yyreduce:
     break;
 
   case 23:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 157 "web2c-parser.y"
     {	if (block_level > 0) my_output("{\n ");
                 indent++; block_level++;
@@ -2176,8 +2161,7 @@ yyreduce:
     break;
 
   case 24:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 162 "web2c-parser.y"
     { if (block_level == 2) {
                   if (strcmp(fn_return_type, "void")) {
@@ -2195,15 +2179,13 @@ yyreduce:
     break;
 
   case 25:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 176 "web2c-parser.y"
     { doing_statements = true; }
     break;
 
   case 26:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 178 "web2c-parser.y"
     {
               if (block_level == 2) {
@@ -2234,36 +2216,31 @@ yyreduce:
     break;
 
   case 28:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 208 "web2c-parser.y"
     { my_output("/*"); }
     break;
 
   case 29:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 210 "web2c-parser.y"
     { my_output("*/"); }
     break;
 
   case 32:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 218 "web2c-parser.y"
     { my_output(temp); }
     break;
 
   case 34:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 224 "web2c-parser.y"
     { new_line(); }
     break;
 
   case 37:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 233 "web2c-parser.y"
     { /* `#define' must be in column 1 for pcc. */
             unsigned save = indent;
@@ -2275,8 +2252,7 @@ yyreduce:
     break;
 
   case 38:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 241 "web2c-parser.y"
     { ii = add_to_table (last_id);
 	    sym_table[ii].typ = const_id_tok;
@@ -2285,29 +2261,25 @@ yyreduce:
     break;
 
   case 39:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 245 "web2c-parser.y"
     { my_output ("("); }
     break;
 
   case 40:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 246 "web2c-parser.y"
     { my_output (")"); }
     break;
 
   case 41:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 247 "web2c-parser.y"
     { sym_table[ii].val = last_i_num; new_line(); }
     break;
 
   case 42:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 252 "web2c-parser.y"
     {
              sscanf (temp, "%ld", &last_i_num);
@@ -2319,253 +2291,217 @@ yyreduce:
     break;
 
   case 43:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 259 "web2c-parser.y"
     { my_output(temp); (yyval) = ex_real; }
     break;
 
   case 44:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 260 "web2c-parser.y"
     { (yyval) = 0; }
     break;
 
   case 45:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 261 "web2c-parser.y"
     { (yyval) = ex_32; }
     break;
 
   case 46:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 266 "web2c-parser.y"
     { (yyval) = (yyvsp[(2) - (2)]); }
     break;
 
   case 47:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 267 "web2c-parser.y"
     { my_output ("+"); }
     break;
 
   case 48:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 268 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 49:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 269 "web2c-parser.y"
     { my_output ("-"); }
     break;
 
   case 50:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 270 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 51:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 271 "web2c-parser.y"
     { my_output ("*"); }
     break;
 
   case 52:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 272 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 53:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 273 "web2c-parser.y"
     { my_output ("/"); }
     break;
 
   case 54:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 274 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 55:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 275 "web2c-parser.y"
     { my_output ("=="); }
     break;
 
   case 56:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 276 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 57:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 277 "web2c-parser.y"
     { my_output ("!="); }
     break;
 
   case 58:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 278 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 59:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 279 "web2c-parser.y"
     { my_output ("%"); }
     break;
 
   case 60:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 280 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 61:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 281 "web2c-parser.y"
     { my_output ("<"); }
     break;
 
   case 62:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 282 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 63:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 283 "web2c-parser.y"
     { my_output (">"); }
     break;
 
   case 64:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 284 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 65:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 285 "web2c-parser.y"
     { my_output ("<="); }
     break;
 
   case 66:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 286 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 67:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 287 "web2c-parser.y"
     { my_output (">="); }
     break;
 
   case 68:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 288 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 69:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 289 "web2c-parser.y"
     { my_output ("&&"); }
     break;
 
   case 70:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 290 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 71:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 291 "web2c-parser.y"
     { my_output ("||"); }
     break;
 
   case 72:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 292 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 73:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 293 "web2c-parser.y"
     { my_output ("/ ((double)"); }
     break;
 
   case 74:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 294 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); my_output (")"); }
     break;
 
   case 75:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 295 "web2c-parser.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 76:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 300 "web2c-parser.y"
     { my_output ("("); }
     break;
 
   case 77:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 302 "web2c-parser.y"
     { my_output (")"); (yyval) = (yyvsp[(1) - (4)]); }
     break;
 
   case 79:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 308 "web2c-parser.y"
     {
               char s[132];
@@ -2575,8 +2511,7 @@ yyreduce:
     break;
 
   case 80:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 314 "web2c-parser.y"
     {
               char s[5];
@@ -2586,22 +2521,19 @@ yyreduce:
     break;
 
   case 81:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 322 "web2c-parser.y"
     { my_output (last_id); }
     break;
 
   case 86:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 334 "web2c-parser.y"
     { my_output ("typedef"); }
     break;
 
   case 87:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 336 "web2c-parser.y"
     {
             ii = add_to_table(last_id);
@@ -2612,8 +2544,7 @@ yyreduce:
     break;
 
   case 88:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 343 "web2c-parser.y"
     {
             array_bounds[0] = 0;
@@ -2622,8 +2553,7 @@ yyreduce:
     break;
 
   case 89:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 348 "web2c-parser.y"
     {
             if (*array_offset) {
@@ -2637,8 +2567,7 @@ yyreduce:
     break;
 
   case 92:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 366 "web2c-parser.y"
     {
               if (last_type >= 0)
@@ -2675,8 +2604,7 @@ yyreduce:
     break;
 
   case 97:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 412 "web2c-parser.y"
     {
               lower_bound = upper_bound;
@@ -2687,8 +2615,7 @@ yyreduce:
     break;
 
   case 98:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 419 "web2c-parser.y"
     {
               lower_bound = upper_bound;
@@ -2699,8 +2626,7 @@ yyreduce:
     break;
 
   case 99:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 426 "web2c-parser.y"
     { /* We've changed some constants into dynamic variables.
 	         To avoid changing all the subrange decls, just use integer.
@@ -2713,8 +2639,7 @@ yyreduce:
     break;
 
   case 100:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 435 "web2c-parser.y"
     { /* Same as var_id_tok, to avoid changing type definitions.
 	         Should keep track of the variables we use in this way
@@ -2727,8 +2652,7 @@ yyreduce:
     break;
 
   case 101:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 447 "web2c-parser.y"
     {
             if (last_type >= 0) {
@@ -2743,8 +2667,7 @@ yyreduce:
     break;
 
   case 102:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 461 "web2c-parser.y"
     { if (last_type >= 0)
 	        sym_table[last_type].var_not_needed = true;
@@ -2752,8 +2675,7 @@ yyreduce:
     break;
 
   case 104:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 466 "web2c-parser.y"
     { if (last_type >= 0)
 	        sym_table[last_type].var_not_needed = true;
@@ -2761,8 +2683,7 @@ yyreduce:
     break;
 
   case 105:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 470 "web2c-parser.y"
     { if (last_type >= 0)
 	        sym_table[last_type].var_not_needed = true;
@@ -2770,8 +2691,7 @@ yyreduce:
     break;
 
   case 106:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 477 "web2c-parser.y"
     {
             if (last_type >= 0) {
@@ -2787,15 +2707,13 @@ yyreduce:
     break;
 
   case 109:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 497 "web2c-parser.y"
     { compute_array_bounds(); }
     break;
 
   case 110:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 499 "web2c-parser.y"
     {
               lower_bound = sym_table[l_s].val;
@@ -2807,29 +2725,25 @@ yyreduce:
     break;
 
   case 112:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 512 "web2c-parser.y"
     { my_output ("struct"); my_output ("{"); indent++; }
     break;
 
   case 113:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 514 "web2c-parser.y"
     { indent--; my_output ("}"); semicolon(); }
     break;
 
   case 116:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 522 "web2c-parser.y"
     { field_list[0] = 0; }
     break;
 
   case 117:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 524 "web2c-parser.y"
     {
 				  /*array_bounds[0] = 0;
@@ -2838,8 +2752,7 @@ yyreduce:
     break;
 
   case 118:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 529 "web2c-parser.y"
     { int i=0, j; char ltemp[80];
 				  while(field_list[i++] == '!') {
@@ -2857,8 +2770,7 @@ yyreduce:
     break;
 
   case 122:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 550 "web2c-parser.y"
     { int i=0, j=0;
 				  while (field_list[i] == '!')
@@ -2874,8 +2786,7 @@ yyreduce:
     break;
 
   case 123:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 562 "web2c-parser.y"
     { int i=0, j=0;
 				  while (field_list[i] == '!')
@@ -2889,22 +2800,19 @@ yyreduce:
     break;
 
   case 124:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 575 "web2c-parser.y"
     { my_output ("text /* of "); }
     break;
 
   case 125:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 577 "web2c-parser.y"
     { my_output ("*/"); }
     break;
 
   case 130:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 591 "web2c-parser.y"
     {
             var_list[0] = 0;
@@ -2916,8 +2824,7 @@ yyreduce:
     break;
 
   case 131:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 599 "web2c-parser.y"
     {
             array_bounds[0] = 0;
@@ -2926,15 +2833,13 @@ yyreduce:
     break;
 
   case 132:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 604 "web2c-parser.y"
     { fixup_var_list(); }
     break;
 
   case 135:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 612 "web2c-parser.y"
     { int i=0, j=0;
 				  ii = add_to_table(last_id);
@@ -2952,8 +2857,7 @@ yyreduce:
     break;
 
   case 136:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 626 "web2c-parser.y"
     { int i=0, j=0;
 				  ii = add_to_table(last_id);
@@ -2971,8 +2875,7 @@ yyreduce:
     break;
 
   case 137:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 640 "web2c-parser.y"
     { int i=0, j=0;
 				  ii = add_to_table(last_id);
@@ -2990,8 +2893,7 @@ yyreduce:
     break;
 
   case 139:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 658 "web2c-parser.y"
     { my_output ("void mainbody( void ) {");
 		  indent++;
@@ -3000,8 +2902,7 @@ yyreduce:
     break;
 
   case 140:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 663 "web2c-parser.y"
     { indent--;
                   my_output ("}");
@@ -3010,29 +2911,25 @@ yyreduce:
     break;
 
   case 143:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 675 "web2c-parser.y"
     { new_line(); remove_locals(); }
     break;
 
   case 144:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 677 "web2c-parser.y"
     { new_line(); remove_locals(); }
     break;
 
   case 147:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 686 "web2c-parser.y"
     { proc_is_noreturn = 1; }
     break;
 
   case 149:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 692 "web2c-parser.y"
     { ii = add_to_table(last_id);
 	      if (debug)
@@ -3048,8 +2945,7 @@ yyreduce:
     break;
 
   case 150:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 704 "web2c-parser.y"
     { strcpy(fn_return_type, "void");
 	      do_proc_args();
@@ -3057,8 +2953,7 @@ yyreduce:
     break;
 
   case 151:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 708 "web2c-parser.y"
     { ii = l_s;
 	      if (debug)
@@ -3070,8 +2965,7 @@ yyreduce:
     break;
 
   case 152:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 716 "web2c-parser.y"
     { strcpy(fn_return_type, "void");
 	      do_proc_args();
@@ -3080,8 +2974,7 @@ yyreduce:
     break;
 
   case 153:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 724 "web2c-parser.y"
     {
               strcpy (z_id, last_id);
@@ -3091,8 +2984,7 @@ yyreduce:
     break;
 
   case 154:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 730 "web2c-parser.y"
     { sprintf (z_id, "z%s", last_id);
 	      ids_paramed = 0;
@@ -3105,15 +2997,13 @@ yyreduce:
     break;
 
   case 158:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 746 "web2c-parser.y"
     { ids_typed = ids_paramed; }
     break;
 
   case 159:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 748 "web2c-parser.y"
     { int i, need_var;
 	      i = search_table(last_id);
@@ -3130,22 +3020,19 @@ yyreduce:
     break;
 
   case 160:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 762 "web2c-parser.y"
     {var_formals = 0; }
     break;
 
   case 162:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 763 "web2c-parser.y"
     {var_formals = 1; }
     break;
 
   case 167:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 775 "web2c-parser.y"
     {
               orig_out = out;
@@ -3160,8 +3047,7 @@ yyreduce:
     break;
 
   case 168:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 786 "web2c-parser.y"
     {
               normal();
@@ -3171,8 +3057,7 @@ yyreduce:
     break;
 
   case 169:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 792 "web2c-parser.y"
     {
               get_result_type(fn_return_type);
@@ -3182,8 +3067,7 @@ yyreduce:
     break;
 
   case 171:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 799 "web2c-parser.y"
     {
               orig_out = out;
@@ -3197,8 +3081,7 @@ yyreduce:
     break;
 
   case 172:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 809 "web2c-parser.y"
     { normal();
               array_bounds[0] = 0;
@@ -3207,8 +3090,7 @@ yyreduce:
     break;
 
   case 173:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 814 "web2c-parser.y"
     { get_result_type(fn_return_type);
               do_proc_args();
@@ -3217,22 +3099,19 @@ yyreduce:
     break;
 
   case 179:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 832 "web2c-parser.y"
     { my_output ("{"); indent++; new_line(); }
     break;
 
   case 180:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 834 "web2c-parser.y"
     { indent--; my_output ("}"); new_line(); }
     break;
 
   case 185:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 847 "web2c-parser.y"
     {if (!doreturn(temp)) {
 				      sprintf(safe_string, "lab%s:", temp);
@@ -3242,43 +3121,37 @@ yyreduce:
     break;
 
   case 186:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 855 "web2c-parser.y"
     { semicolon(); }
     break;
 
   case 187:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 857 "web2c-parser.y"
     { semicolon(); }
     break;
 
   case 192:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 865 "web2c-parser.y"
     { my_output ("break"); }
     break;
 
   case 193:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 869 "web2c-parser.y"
     { my_output ("="); }
     break;
 
   case 195:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 872 "web2c-parser.y"
     { my_output ("Result ="); }
     break;
 
   case 197:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 877 "web2c-parser.y"
     { if (strcmp(last_id, "mem") == 0)
 					uses_mem = 1;
@@ -3292,8 +3165,7 @@ yyreduce:
     break;
 
   case 199:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 888 "web2c-parser.y"
     { if (sym_table[l_s].var_formal)
 					putchar('*');
@@ -3301,36 +3173,31 @@ yyreduce:
     break;
 
   case 200:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 894 "web2c-parser.y"
     { (yyval) = ex_32; }
     break;
 
   case 201:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 896 "web2c-parser.y"
     { (yyval) = ex_32; }
     break;
 
   case 204:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 904 "web2c-parser.y"
     { my_output ("["); }
     break;
 
   case 205:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 906 "web2c-parser.y"
     { my_output ("]"); }
     break;
 
   case 206:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 908 "web2c-parser.y"
     {if (tex || mf) {
 				   if (strcmp(last_id, "int")==0)
@@ -3352,316 +3219,271 @@ yyreduce:
     break;
 
   case 207:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 926 "web2c-parser.y"
     { my_output (".hh.b0"); }
     break;
 
   case 208:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 928 "web2c-parser.y"
     { my_output (".hh.b1"); }
     break;
 
   case 210:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 933 "web2c-parser.y"
     { my_output ("]["); }
     break;
 
   case 212:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 938 "web2c-parser.y"
     { (yyval) = (yyvsp[(2) - (2)]); }
     break;
 
   case 213:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 939 "web2c-parser.y"
     { my_output ("+"); }
     break;
 
   case 214:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 940 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 215:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 941 "web2c-parser.y"
     { my_output ("-"); }
     break;
 
   case 216:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 942 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 217:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 943 "web2c-parser.y"
     { my_output ("*"); }
     break;
 
   case 218:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 944 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 219:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 945 "web2c-parser.y"
     { my_output ("/"); }
     break;
 
   case 220:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 946 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 221:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 947 "web2c-parser.y"
     { my_output ("=="); }
     break;
 
   case 222:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 948 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 223:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 949 "web2c-parser.y"
     { my_output ("!="); }
     break;
 
   case 224:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 950 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 225:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 951 "web2c-parser.y"
     { my_output ("%"); }
     break;
 
   case 226:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 952 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 227:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 953 "web2c-parser.y"
     { my_output ("<"); }
     break;
 
   case 228:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 954 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 229:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 955 "web2c-parser.y"
     { my_output (">"); }
     break;
 
   case 230:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 956 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 231:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 957 "web2c-parser.y"
     { my_output ("<="); }
     break;
 
   case 232:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 958 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 233:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 959 "web2c-parser.y"
     { my_output (">="); }
     break;
 
   case 234:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 960 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 235:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 961 "web2c-parser.y"
     { my_output ("&&"); }
     break;
 
   case 236:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 962 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 237:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 963 "web2c-parser.y"
     { my_output ("||"); }
     break;
 
   case 238:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 964 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); }
     break;
 
   case 239:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 966 "web2c-parser.y"
     { my_output ("/ ((double)"); }
     break;
 
   case 240:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 968 "web2c-parser.y"
     { (yyval) = max ((yyvsp[(1) - (4)]), (yyvsp[(4) - (4)])); my_output (")"); }
     break;
 
   case 241:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 970 "web2c-parser.y"
     { (yyval) = (yyvsp[(1) - (1)]); }
     break;
 
   case 243:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 976 "web2c-parser.y"
     { my_output ("- (integer)"); }
     break;
 
   case 244:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 978 "web2c-parser.y"
     { my_output ("!"); }
     break;
 
   case 245:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 983 "web2c-parser.y"
     { my_output ("("); }
     break;
 
   case 246:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 985 "web2c-parser.y"
     { my_output (")"); (yyval) = (yyvsp[(1) - (4)]); }
     break;
 
   case 249:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 989 "web2c-parser.y"
     { my_output (last_id); my_output ("()"); }
     break;
 
   case 250:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 991 "web2c-parser.y"
     { my_output (last_id); }
     break;
 
   case 252:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 996 "web2c-parser.y"
     { my_output ("("); }
     break;
 
   case 253:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 997 "web2c-parser.y"
     { my_output (")"); }
     break;
 
   case 255:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1002 "web2c-parser.y"
     { my_output (","); }
     break;
 
   case 258:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1009 "web2c-parser.y"
     { my_output (last_id); }
     break;
 
   case 261:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1018 "web2c-parser.y"
     { my_output (last_id); my_output ("()"); }
     break;
 
   case 262:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1020 "web2c-parser.y"
     { my_output (last_id);
 				  ii = add_to_table(last_id);
@@ -3671,15 +3493,13 @@ yyreduce:
     break;
 
   case 263:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1026 "web2c-parser.y"
     { my_output (last_id); }
     break;
 
   case 265:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1031 "web2c-parser.y"
     {if (doreturn(temp)) {
 				    if (strcmp(fn_return_type,"void"))
@@ -3695,58 +3515,50 @@ yyreduce:
     break;
 
   case 272:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1057 "web2c-parser.y"
     { my_output ("if"); my_output ("("); }
     break;
 
   case 274:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1062 "web2c-parser.y"
     { my_output (")"); }
     break;
 
   case 276:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1067 "web2c-parser.y"
     { new_line (); }
     break;
 
   case 278:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1070 "web2c-parser.y"
     { my_output ("{"); indent++; new_line();
 				  my_output ("if"); my_output ("("); }
     break;
 
   case 279:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1073 "web2c-parser.y"
     { indent--; my_output ("}"); new_line(); }
     break;
 
   case 282:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1079 "web2c-parser.y"
     { my_output ("else"); }
     break;
 
   case 284:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1084 "web2c-parser.y"
     { my_output ("switch"); my_output ("("); }
     break;
 
   case 285:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1086 "web2c-parser.y"
     { my_output (")"); new_line();
 				  my_output ("{"); indent++;
@@ -3754,22 +3566,19 @@ yyreduce:
     break;
 
   case 286:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1090 "web2c-parser.y"
     { indent--; my_output ("}"); new_line(); }
     break;
 
   case 289:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1098 "web2c-parser.y"
     { my_output ("break"); semicolon(); }
     break;
 
   case 292:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1106 "web2c-parser.y"
     { my_output ("case");
 				  my_output (temp);
@@ -3778,15 +3587,13 @@ yyreduce:
     break;
 
   case 293:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1111 "web2c-parser.y"
     { my_output ("default:"); new_line(); }
     break;
 
   case 299:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1124 "web2c-parser.y"
     { my_output ("while");
 				  my_output ("(");
@@ -3794,22 +3601,19 @@ yyreduce:
     break;
 
   case 300:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1128 "web2c-parser.y"
     { my_output (")"); }
     break;
 
   case 302:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1133 "web2c-parser.y"
     { my_output ("do"); my_output ("{"); indent++; }
     break;
 
   case 303:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1135 "web2c-parser.y"
     { indent--; my_output ("}");
 				  my_output ("while"); my_output ("( ! (");
@@ -3817,15 +3621,13 @@ yyreduce:
     break;
 
   case 304:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1139 "web2c-parser.y"
     { my_output (") )"); }
     break;
 
   case 305:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1143 "web2c-parser.y"
     {
 				  my_output ("{");
@@ -3838,8 +3640,7 @@ yyreduce:
     break;
 
   case 306:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1152 "web2c-parser.y"
     { if (strict_for)
 					my_output ("for_begin");
@@ -3849,8 +3650,7 @@ yyreduce:
     break;
 
   case 307:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1158 "web2c-parser.y"
     { my_output ("; if (");
 				  if (strict_for) my_output ("for_begin");
@@ -3871,8 +3671,7 @@ yyreduce:
     break;
 
   case 308:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1175 "web2c-parser.y"
     {
 				  char *top = strrchr (for_stack, '#');
@@ -3892,22 +3691,19 @@ yyreduce:
     break;
 
   case 309:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1193 "web2c-parser.y"
     { strcpy(control_var, last_id); }
     break;
 
   case 310:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1197 "web2c-parser.y"
     { my_output (";"); }
     break;
 
   case 311:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1199 "web2c-parser.y"
     {
 				  strcpy(relation, "<=");
@@ -3916,8 +3712,7 @@ yyreduce:
     break;
 
   case 312:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1204 "web2c-parser.y"
     {
 				  sprintf(for_stack + strlen(for_stack),
@@ -3926,15 +3721,13 @@ yyreduce:
     break;
 
   case 313:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1209 "web2c-parser.y"
     { my_output (";"); }
     break;
 
   case 314:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1211 "web2c-parser.y"
     {
 				  strcpy(relation, ">=");
@@ -3943,8 +3736,7 @@ yyreduce:
     break;
 
   case 315:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 1216 "web2c-parser.y"
     {
 				  sprintf(for_stack + strlen(for_stack),
@@ -3953,9 +3745,8 @@ yyreduce:
     break;
 
 
-
-/* Line 1810 of yacc.c  */
-#line 3959 "web2c-parser.c"
+/* Line 1787 of yacc.c  */
+#line 3750 "../../../../tex-live-2012-07-09/texk/web2c/web2c/web2c-parser.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -4184,8 +3975,7 @@ yyreturn:
 }
 
 
-
-/* Line 2071 of yacc.c  */
+/* Line 2048 of yacc.c  */
 #line 1221 "web2c-parser.y"
 
 
@@ -4370,4 +4160,3 @@ gen_function_head (void)
     my_output (")");
     new_line ();
 }
-

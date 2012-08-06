@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.5.1.  */
+/* A Bison parser, made by GNU Bison 2.6.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
    
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.5.1"
+#define YYBISON_VERSION "2.6.2"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -58,14 +58,11 @@
 /* Pull parsers.  */
 #define YYPULL 1
 
-/* Using locations.  */
-#define YYLSP_NEEDED 0
 
 
 
 /* Copy the first part of user declarations.  */
-
-/* Line 268 of yacc.c  */
+/* Line 336 of yacc.c  */
 #line 1 "pl-parser.y"
 
 /* pl-parser.y: Grammar for reading property list files
@@ -108,9 +105,8 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "extra_routines.h"
 
 
-
-/* Line 268 of yacc.c  */
-#line 114 "pl-parser.c"
+/* Line 336 of yacc.c  */
+#line 110 "../../../../tex-live-2012-07-09/texk/web2c/omegafonts/pl-parser.c"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -120,11 +116,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #  endif
 # endif
 
-/* Enabling traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
-
 /* Enabling verbose error messages.  */
 #ifdef YYERROR_VERBOSE
 # undef YYERROR_VERBOSE
@@ -133,11 +124,17 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 # define YYERROR_VERBOSE 0
 #endif
 
-/* Enabling the token table.  */
-#ifndef YYTOKEN_TABLE
-# define YYTOKEN_TABLE 0
+/* In a future release of Bison, this section will be replaced
+   by #include "y.tab.h".  */
+#ifndef YY_Y_TAB_H
+# define YY_Y_TAB_H
+/* Enabling traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
 #endif
-
+#if YYDEBUG
+extern int yydebug;
+#endif
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -317,7 +314,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 
 
-
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
@@ -325,12 +321,28 @@ typedef int YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+extern YYSTYPE yylval;
+
+#ifdef YYPARSE_PARAM
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void *YYPARSE_PARAM);
+#else
+int yyparse ();
+#endif
+#else /* ! YYPARSE_PARAM */
+#if defined __STDC__ || defined __cplusplus
+int yyparse (void);
+#else
+int yyparse ();
+#endif
+#endif /* ! YYPARSE_PARAM */
+
+#endif /* !YY_Y_TAB_H  */
 
 /* Copy the second part of user declarations.  */
 
-
-/* Line 345 of yacc.c  */
-#line 334 "pl-parser.c"
+/* Line 353 of yacc.c  */
+#line 346 "../../../../tex-live-2012-07-09/texk/web2c/omegafonts/pl-parser.c"
 
 #ifdef short
 # undef short
@@ -703,7 +715,7 @@ static const yytype_uint16 yyrline[] =
 };
 #endif
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+#if YYDEBUG || YYERROR_VERBOSE || 0
 /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
@@ -1037,31 +1049,32 @@ while (YYID (0))
 #define YYTERROR	1
 #define YYERRCODE	256
 
-
 /* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
    If N is 0, then set CURRENT to the empty location which ends
    the previous symbol: RHS[0] (always defined).  */
 
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
 #ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)				\
-    do									\
-      if (YYID (N))                                                    \
-	{								\
-	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
-	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
-	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
-	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
-	}								\
-      else								\
-	{								\
-	  (Current).first_line   = (Current).last_line   =		\
-	    YYRHSLOC (Rhs, 0).last_line;				\
-	  (Current).first_column = (Current).last_column =		\
-	    YYRHSLOC (Rhs, 0).last_column;				\
-	}								\
+# define YYLLOC_DEFAULT(Current, Rhs, N)                                \
+    do                                                                  \
+      if (YYID (N))                                                     \
+        {                                                               \
+          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;        \
+          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;      \
+          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;         \
+          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;       \
+        }                                                               \
+      else                                                              \
+        {                                                               \
+          (Current).first_line   = (Current).last_line   =              \
+            YYRHSLOC (Rhs, 0).last_line;                                \
+          (Current).first_column = (Current).last_column =              \
+            YYRHSLOC (Rhs, 0).last_column;                              \
+        }                                                               \
     while (YYID (0))
 #endif
+
+#define YYRHSLOC(Rhs, K) ((Rhs)[K])
+
 
 
 /* This macro is provided for backward compatibility. */
@@ -1532,20 +1545,6 @@ yydestruct (yymsg, yytype, yyvaluep)
 }
 
 
-/* Prevent warnings from -Wmissing-prototypes.  */
-#ifdef YYPARSE_PARAM
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void *YYPARSE_PARAM);
-#else
-int yyparse ();
-#endif
-#else /* ! YYPARSE_PARAM */
-#if defined __STDC__ || defined __cplusplus
-int yyparse (void);
-#else
-int yyparse ();
-#endif
-#endif /* ! YYPARSE_PARAM */
 
 
 /* The lookahead symbol.  */
@@ -1646,7 +1645,6 @@ yyparse ()
      The wasted elements are never initialized.  */
   yyssp = yyss;
   yyvsp = yyvs;
-
   goto yysetstate;
 
 /*------------------------------------------------------------.
@@ -1824,562 +1822,482 @@ yyreduce:
   switch (yyn)
     {
         case 5:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 170 "pl-parser.y"
     { set_check_sum((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 6:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 172 "pl-parser.y"
     { set_design_size((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 7:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 174 "pl-parser.y"
     { set_design_units((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 8:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 176 "pl-parser.y"
     { set_coding_scheme((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 9:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 178 "pl-parser.y"
     { set_family((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 10:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 180 "pl-parser.y"
     { set_face((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 11:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 182 "pl-parser.y"
     { set_seven_bit_safe_flag((yyvsp[(1) - (1)]).yint); }
     break;
 
   case 12:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 184 "pl-parser.y"
     { set_header_word((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 13:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 186 "pl-parser.y"
     { init_parameters(); }
     break;
 
   case 15:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 189 "pl-parser.y"
     { init_ligkern(); }
     break;
 
   case 17:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 192 "pl-parser.y"
     { set_boundary_character((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 18:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 194 "pl-parser.y"
     { init_character((yyvsp[(2) - (2)]).yint, NULL); }
     break;
 
   case 21:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 201 "pl-parser.y"
     { set_vtitle((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 22:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 203 "pl-parser.y"
     { init_map_font((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 24:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 209 "pl-parser.y"
     { set_ofm_level((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 25:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 211 "pl-parser.y"
     { set_font_dir((yyvsp[(1) - (1)]).yint); }
     break;
 
   case 26:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 213 "pl-parser.y"
     { init_character((yyvsp[(2) - (3)]).yint,NULL); }
     break;
 
   case 27:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 215 "pl-parser.y"
     { copy_characters((yyvsp[(2) - (5)]).yint,(yyvsp[(3) - (5)]).yint); }
     break;
 
   case 28:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 217 "pl-parser.y"
     {init_font_ivalue((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 30:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 220 "pl-parser.y"
     { init_font_mvalue((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 32:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 223 "pl-parser.y"
     { init_font_fvalue((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 34:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 226 "pl-parser.y"
     { init_font_penalty((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 36:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 229 "pl-parser.y"
     { init_font_rule((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 38:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 232 "pl-parser.y"
     { init_font_glue((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 42:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 244 "pl-parser.y"
     { set_param_word((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 43:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 246 "pl-parser.y"
     { set_param_word((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yfix); }
     break;
 
   case 47:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 258 "pl-parser.y"
     { set_label_command((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 48:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 260 "pl-parser.y"
     { set_label_command(CHAR_BOUNDARY); }
     break;
 
   case 49:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 262 "pl-parser.y"
     { set_ligature_command((yyvsp[(1) - (3)]).yint, (yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 50:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 264 "pl-parser.y"
     { set_kerning_command((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yfix); }
     break;
 
   case 51:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 266 "pl-parser.y"
     { set_stop_command(); }
     break;
 
   case 52:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 268 "pl-parser.y"
     { set_skip_command((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 54:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 274 "pl-parser.y"
     { set_c_label_command((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 55:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 276 "pl-parser.y"
     { set_c_kerning_command((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yfix); }
     break;
 
   case 56:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 278 "pl-parser.y"
     { set_c_glue_command((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 57:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 280 "pl-parser.y"
     { set_c_penalty_command((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 58:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 282 "pl-parser.y"
     { set_c_penglue_command((yyvsp[(2) - (4)]).yint, (yyvsp[(3) - (4)]).yint, (yyvsp[(4) - (4)]).yint); }
     break;
 
   case 61:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 293 "pl-parser.y"
     { set_character_measure((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 62:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 295 "pl-parser.y"
     { set_next_larger((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 63:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 297 "pl-parser.y"
     { init_var_character(); }
     break;
 
   case 66:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 304 "pl-parser.y"
     { init_map(); }
     break;
 
   case 67:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 306 "pl-parser.y"
     { end_map(); }
     break;
 
   case 68:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 311 "pl-parser.y"
     { set_accent((yyvsp[(1) - (1)]).yint); }
     break;
 
   case 69:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 313 "pl-parser.y"
     { set_character_ivalue((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 70:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 315 "pl-parser.y"
     { set_character_mvalue((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 71:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 317 "pl-parser.y"
     { set_character_fvalue((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 72:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 319 "pl-parser.y"
     { set_character_penalty((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 73:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 321 "pl-parser.y"
     { set_character_rule((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 74:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 323 "pl-parser.y"
     { set_character_glue((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 77:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 335 "pl-parser.y"
     { set_extensible_piece((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yint); }
     break;
 
   case 81:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 350 "pl-parser.y"
     { set_font_name((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 82:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 352 "pl-parser.y"
     { set_font_area((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 83:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 354 "pl-parser.y"
     { set_font_check_sum((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 84:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 356 "pl-parser.y"
     { set_font_at((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 85:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 358 "pl-parser.y"
     { set_font_design_size((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 89:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 370 "pl-parser.y"
     { set_select_font((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 90:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 372 "pl-parser.y"
     { set_set_char((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 91:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 374 "pl-parser.y"
     { set_set_rule((yyvsp[(2) - (3)]).yfix, (yyvsp[(3) - (3)]).yfix); }
     break;
 
   case 92:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 376 "pl-parser.y"
     { set_move((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 93:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 378 "pl-parser.y"
     { set_push(); }
     break;
 
   case 94:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 380 "pl-parser.y"
     { set_pop(); }
     break;
 
   case 95:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 382 "pl-parser.y"
     { set_special((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 96:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 384 "pl-parser.y"
     { set_special_hex((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 99:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 397 "pl-parser.y"
     { init_font_ivalue_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 104:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 410 "pl-parser.y"
     { set_font_ivalue_definition((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 108:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 422 "pl-parser.y"
     { init_font_mvalue_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 113:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 435 "pl-parser.y"
     { set_font_mvalue_definition((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 117:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 447 "pl-parser.y"
     { init_font_fvalue_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 122:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 460 "pl-parser.y"
     { set_font_fvalue_definition((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 126:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 472 "pl-parser.y"
     { init_font_penalty_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 131:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 485 "pl-parser.y"
     { set_font_penalty_definition((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 135:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 497 "pl-parser.y"
     { init_font_rule_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 140:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 510 "pl-parser.y"
     { set_font_rule_measure((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 144:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 522 "pl-parser.y"
     { init_font_glue_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 149:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 535 "pl-parser.y"
     { set_font_glue_type((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 150:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 537 "pl-parser.y"
     { set_font_glue_width((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 151:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 539 "pl-parser.y"
     { set_font_glue_character((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 152:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 541 "pl-parser.y"
     { set_font_glue_rule((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 153:
-
-/* Line 1810 of yacc.c  */
+/* Line 1787 of yacc.c  */
 #line 543 "pl-parser.y"
     { set_font_glue_shrink_stretch((yyvsp[(1) - (3)]).yint, (yyvsp[(2) - (3)]).yfix, (yyvsp[(3) - (3)]).yint); }
     break;
 
 
-
-/* Line 1810 of yacc.c  */
-#line 2383 "pl-parser.c"
+/* Line 1787 of yacc.c  */
+#line 2301 "../../../../tex-live-2012-07-09/texk/web2c/omegafonts/pl-parser.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2606,6 +2524,5 @@ yyreturn:
   /* Make sure YYID is used.  */
   return YYID (yyresult);
 }
-
 
 
