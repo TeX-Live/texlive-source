@@ -1,3 +1,9 @@
+2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex/dumpdata.h: Remove the swap_items() prototype.
+	* luatex.c (swap_items): Moved from here ...
+	* tex/texfileio.w (swap_items): ... to here and declared static.
+
 2012-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatex.[ch] [W32TeX]: Use DLLPROC for luatex.dll.

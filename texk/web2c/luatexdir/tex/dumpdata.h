@@ -1,6 +1,6 @@
 /* dumpdata.h
    
-   Copyright 2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2009, 2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -37,10 +37,6 @@ extern boolean load_fmt_file(const char *);
 
 extern void do_zdump(char *, int, int, FILE *);
 extern void do_zundump(char *, int, int, FILE *);
-
-#  if !defined (WORDS_BIGENDIAN) && !defined (NO_DUMP_SHARE)    /* this fn */
-extern void swap_items(char *p, int nitems, int size);  /* in luatex.c */
-#  endif
 
 /* Like do_undump, but check each value against LOW and HIGH.  The
    slowdown isn't significant, and this improves the chances of
