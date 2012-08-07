@@ -1,3 +1,14 @@
+2012-08-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexlib.h: extern void writestreamlength(longinteger, longinteger);
+	for largefile. 
+	extern void storepacket(internalfontnumber, integer, strnumber); to
+	avoid a compiler warning.
+	* utils.c: void writestreamlength(longinteger length, longinteger offset)
+	for largefile.
+	* vfpacket.c: void storepacket(internalfontnumber f, integer c, strnumber s)
+	to avoid a compiler warning.
+
 2012-08-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftex.web: Update eTeX_revision and eTeX_version_string.

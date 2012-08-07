@@ -52,7 +52,7 @@ integer newvfpacket(internalfontnumber f)
     return vf_ptr++ - vf_array;
 }
 
-void storepacket(internalfontnumber f, eightbits c, strnumber s)
+void storepacket(internalfontnumber f, integer c, strnumber s)
 {
     int l = strstart[s + 1] - strstart[s];
     vf_array[vfpacketbase[f]].len[c - fontbc[f]] = l;
