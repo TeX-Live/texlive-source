@@ -74,10 +74,8 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__dist_bin_SCRIPTS_DIST = allcm allneeded dvi2fax dvired fmtutil \
-	fmtutil-sys fontinst kpsetool kpsewhere ps2frag pslatex \
-	rubibtex rumakeindex texconfig texconfig-dialog texconfig-sys \
-	texlinks
+am__dist_bin_SCRIPTS_DIST = fmtutil fmtutil-sys texconfig \
+	texconfig-dialog texconfig-sys texlinks
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -231,19 +229,8 @@ EXTRA_DIST = ../../build-aux/relpath README.texdoctk old-fontinst.bat \
 perl_scripts = 
 shell_scripts = 
 sh_scripts = \
-	allcm \
-	allneeded \
-	dvi2fax \
-	dvired \
 	fmtutil \
 	fmtutil-sys \
-	fontinst \
-	kpsetool \
-	kpsewhere \
-	ps2frag \
-	pslatex \
-	rubibtex \
-	rumakeindex \
 	texconfig \
 	texconfig-dialog \
 	texconfig-sys \
@@ -259,19 +246,7 @@ dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh)
 @WIN32_FALSE@dist_bin_SCRIPTS = $(sh_scripts)
 CLEANFILES = $(nodist_bin_SCRIPTS)
 dist_man1_MANS = \
-	allcm.man \
-	allec.man \
-	allneeded.man \
-	dvi2fax.man \
-	dvired.man \
 	fmtutil.man \
-	fontinst.man \
-	kpsetool.man \
-	kpsewhere.man \
-	ps2frag.man \
-	pslatex.man \
-	rubibtex.man \
-	rumakeindex.man \
 	texconfig.man \
 	texlinks.man
 
@@ -284,10 +259,7 @@ dist_texconfig_DATA = tcfmgr.map
 web2cdir = $(datarootdir)/texmf/web2c
 dist_web2c_DATA = fmtutil.cnf
 bin_links = \
-	allcm:allec \
-	fmtutil:mktexfmt \
-	kpsetool:kpsexpand \
-	kpsetool:kpsepath
+	fmtutil:mktexfmt
 
 man1_links = $(bin_links) \
 	fmtutil:fmtutil-sys \

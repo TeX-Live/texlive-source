@@ -1,6 +1,9 @@
 2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* updmap.help2man, tetex/updmap* (new): Moved from ../../tetex/
+	* updmap.help2man, tetex/all*, tetex/dvi2fax*, tetex/dvired*,
+	tetex/fontinst*, tetex/kpsetool*, tetex/kpsewhere*,
+	tetex/ps2frag*, tetex/pslatex*, tetex/rubibtex*,
+	tetex/rumakeindex*, tetex/updmap* (new): Moved from ../../tetex/
 	to here.
 	* Makefile.am: Added man1_links and rule for xupdmap.1.
 

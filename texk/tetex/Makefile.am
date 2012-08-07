@@ -12,19 +12,8 @@ perl_scripts =
 shell_scripts =
 
 sh_scripts = \
-	allcm \
-	allneeded \
-	dvi2fax \
-	dvired \
 	fmtutil \
 	fmtutil-sys \
-	fontinst \
-	kpsetool \
-	kpsewhere \
-	ps2frag \
-	pslatex \
-	rubibtex \
-	rumakeindex \
 	texconfig \
 	texconfig-dialog \
 	texconfig-sys \
@@ -45,19 +34,7 @@ endif !WIN32
 CLEANFILES = $(nodist_bin_SCRIPTS)
 
 dist_man1_MANS = \
-	allcm.man \
-	allec.man \
-	allneeded.man \
-	dvi2fax.man \
-	dvired.man \
 	fmtutil.man \
-	fontinst.man \
-	kpsetool.man \
-	kpsewhere.man \
-	ps2frag.man \
-	pslatex.man \
-	rubibtex.man \
-	rumakeindex.man \
 	texconfig.man \
 	texlinks.man
 
@@ -72,10 +49,7 @@ web2cdir = $(datarootdir)/texmf/web2c
 dist_web2c_DATA = fmtutil.cnf
 
 bin_links = \
-	allcm:allec \
-	fmtutil:mktexfmt \
-	kpsetool:kpsexpand \
-	kpsetool:kpsepath
+	fmtutil:mktexfmt
 
 include $(top_srcdir)/../am/bin_links.am
 

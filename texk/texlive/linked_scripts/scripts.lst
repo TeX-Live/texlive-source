@@ -23,6 +23,17 @@ pdfjam/pdfnup
 pdfjam/pdfpun
 pst-pdf/ps4pdf
 simpdftex/simpdftex
+tetex/allcm.sh
+tetex/allneeded.sh
+tetex/dvi2fax.sh
+tetex/dvired.sh
+tetex/fontinst.sh
+tetex/kpsetool.sh
+tetex/kpsewhere.sh
+tetex/ps2frag.sh
+tetex/pslatex.sh
+tetex/rubibtex.sh
+tetex/rumakeindex.sh
 typeoutfileinfo/typeoutfileinfo.sh
 a2ping/a2ping.pl
 accfonts/mkt1font

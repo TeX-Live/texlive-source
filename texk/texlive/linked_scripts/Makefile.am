@@ -69,6 +69,17 @@ texmf_dist_shell_scripts = \
 	pdfjam/pdfpun \
 	pst-pdf/ps4pdf \
 	simpdftex/simpdftex \
+	tetex/allcm.sh \
+	tetex/allneeded.sh \
+	tetex/dvi2fax.sh \
+	tetex/dvired.sh \
+	tetex/fontinst.sh \
+	tetex/kpsetool.sh \
+	tetex/kpsewhere.sh \
+	tetex/ps2frag.sh \
+	tetex/pslatex.sh \
+	tetex/rubibtex.sh \
+	tetex/rumakeindex.sh \
 	typeoutfileinfo/typeoutfileinfo.sh
 texmf_dist_other_scripts = \
 	a2ping/a2ping.pl \
@@ -151,18 +162,36 @@ bin_links = \
 	pdfcrop:rpdfcrop
 if !WIN32
 bin_links += \
+	allcm:allec \
+	kpsetool:kpsexpand \
+	kpsetool:kpsepath \
 	lua2dox_lua:lua2dox_filter
 endif !WIN32
 
 ## Manpages
 dist_man_MANS = \
+	tetex/allcm.1 \
+	tetex/allec.1 \
+	tetex/allneeded.1 \
+	tetex/dvi2fax.1 \
+	tetex/dvired.1 \
 	tetex/e2pall.1 \
+	tetex/fontinst.1 \
+	tetex/kpsetool.1 \
+	tetex/kpsewhere.1 \
+	tetex/ps2frag.1 \
+	tetex/pslatex.1 \
+	tetex/rubibtex.1 \
+	tetex/rumakeindex.1 \
 	tetex/texdoctk.1 \
 	tetex/updmap.1 \
 	tetex/updmap.cfg.5 \
 	thumbpdf/thumbpdf.1
 
-man1_links = updmap:updmap-sys
+man1_links = \
+	kpsetool:kpsexpand \
+	kpsetool:kpsepath \
+	updmap:updmap-sys
 
 include $(top_srcdir)/../am/man1_links.am
 
