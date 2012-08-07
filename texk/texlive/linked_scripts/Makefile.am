@@ -37,6 +37,8 @@ bin_SCRIPTS =
 #
 texmf_scriptsdir = $(datarootdir)/texmf/scripts
 ## We distinguish shell and other (perl, lua, python, ruby, ...) scripts.
+## Some shell scripts are, however, listed under *_other_scripts because
+## they are correctly handled by ../w32_wrapper/runscript.exe.
 texmf_shell_scripts =
 texmf_other_scripts = \
 	texlive/rungs.tlu \
@@ -125,6 +127,8 @@ texmf_dist_other_scripts = \
 	svn-multi/svn-multi.pl \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
+	tetex/updmap.pl \
+	tetex/updmap-sys.sh \
 	texdoc/texdoc.tlu \
 	texcount/texcount.pl \
 	texdef/texdef.pl \
@@ -141,7 +145,7 @@ nobase_dist_texmf_dist_scripts_SCRIPTS = \
 	$(texmf_dist_shell_scripts) \
 	$(texmf_dist_other_scripts)
 
-# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
+## Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	epstopdf:repstopdf \
 	pdfcrop:rpdfcrop
@@ -149,6 +153,18 @@ if !WIN32
 bin_links += \
 	lua2dox_lua:lua2dox_filter
 endif !WIN32
+
+## Manpages
+dist_man_MANS = \
+	tetex/e2pall.1 \
+	tetex/texdoctk.1 \
+	tetex/updmap.1 \
+	tetex/updmap.cfg.5 \
+	thumbpdf/thumbpdf.1
+
+man1_links = updmap:updmap-sys
+
+include $(top_srcdir)/../am/man1_links.am
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,
@@ -173,7 +189,7 @@ endif !WIN32
 EXTRA_DIST += ../../../build-aux/relpath
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
-install-data-hook:
+install-data-hook: install-man1-links
 if WIN32
 	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
@@ -236,7 +252,7 @@ if WIN32
 WINEXT = $(EXEEXT)
 endif WIN32
 
-uninstall-hook:
+uninstall-hook: uninstall-man1-links
 	@for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	  echo "$$s" | grep listings-ext.sh >/dev/null \
@@ -252,4 +268,14 @@ if !WIN32
 	  rm -f $(DESTDIR)$(bindir)/man; \
 	else :; fi
 endif !WIN32
+
+## Generate the updmap man page using help2man plus a bit of
+## handwritten material.  But don't actually update updmap.man,
+## we don't want to require help2man for an install.  Leave that to be
+## done by hand.
+.PHONY: xupdmap.1
+xupdmap.1: updmap.help2man tetex/updmap.pl
+	help2man --include=$< --source="TeX Live" --no-info \
+	  $(srcdir)/tetex/updmap.pl >/tmp/$@
+EXTRA_DIST += updmap.help2man
 

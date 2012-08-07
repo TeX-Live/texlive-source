@@ -80,6 +80,8 @@ sty2dtx/sty2dtx.pl
 svn-multi/svn-multi.pl
 tetex/e2pall.pl
 tetex/texdoctk.pl
+tetex/updmap.pl
+tetex/updmap-sys.sh
 texdoc/texdoc.tlu
 texcount/texcount.pl
 texdef/texdef.pl

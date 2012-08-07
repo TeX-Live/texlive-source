@@ -51,10 +51,12 @@ POST_UNINSTALL = :
 @WIN32_FALSE@am__append_1 = \
 @WIN32_FALSE@	lua2dox_lua:lua2dox_filter
 
-subdir = linked_scripts
-DIST_COMMON = README $(nobase_dist_texmf_dist_scripts_SCRIPTS) \
+DIST_COMMON = README $(dist_man_MANS) \
+	$(nobase_dist_texmf_dist_scripts_SCRIPTS) \
 	$(nobase_dist_texmf_scripts_SCRIPTS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in ChangeLog
+	$(srcdir)/Makefile.in $(top_srcdir)/../am/man1_links.am \
+	ChangeLog
+subdir = linked_scripts
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/configure.ac
@@ -92,7 +94,8 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(texmf_dist_scriptsdir)" \
-	"$(DESTDIR)$(texmf_scriptsdir)"
+	"$(DESTDIR)$(texmf_scriptsdir)" "$(DESTDIR)$(man1dir)" \
+	"$(DESTDIR)$(man5dir)"
 SCRIPTS = $(bin_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS) \
 	$(nobase_dist_texmf_scripts_SCRIPTS)
 SOURCES =
@@ -102,6 +105,10 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+man1dir = $(mandir)/man1
+man5dir = $(mandir)/man5
+NROFF = nroff
+MANS = $(dist_man_MANS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -210,7 +217,7 @@ DISTCLEANFILES = scripts-list
 #
 # We support native builds, multiplatform or not, as well as distro builds.
 #
-EXTRA_DIST = scripts.lst ../../../build-aux/relpath
+EXTRA_DIST = scripts.lst ../../../build-aux/relpath updmap.help2man
 bin_SCRIPTS = 
 
 # Copies of these scripts exist here for the sake of avoiding
@@ -308,6 +315,8 @@ texmf_dist_other_scripts = \
 	svn-multi/svn-multi.pl \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
+	tetex/updmap.pl \
+	tetex/updmap-sys.sh \
 	texdoc/texdoc.tlu \
 	texcount/texcount.pl \
 	texdef/texdef.pl \
@@ -325,16 +334,22 @@ nobase_dist_texmf_dist_scripts_SCRIPTS = \
 	$(texmf_dist_shell_scripts) \
 	$(texmf_dist_other_scripts)
 
-
-# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = epstopdf:repstopdf pdfcrop:rpdfcrop $(am__append_1)
+dist_man_MANS = \
+	tetex/e2pall.1 \
+	tetex/texdoctk.1 \
+	tetex/updmap.1 \
+	tetex/updmap.cfg.5 \
+	thumbpdf/thumbpdf.1
+
+man1_links = updmap:updmap-sys
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/man1_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -355,6 +370,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
 	esac;
+$(top_srcdir)/../am/man1_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -483,6 +499,92 @@ uninstall-nobase_dist_texmf_scriptsSCRIPTS:
 	files=`$(am__nobase_strip) \
 	       -e 'h;s,.*/,,;$(transform);x;s|[^/]*$$||;G;s,\n,,'`; \
 	dir='$(DESTDIR)$(texmf_scriptsdir)'; $(am__uninstall_files_from_dir)
+install-man1: $(dist_man_MANS)
+	@$(NORMAL_INSTALL)
+	@list1=''; \
+	list2='$(dist_man_MANS)'; \
+	test -n "$(man1dir)" \
+	  && test -n "`echo $$list1$$list2`" \
+	  || exit 0; \
+	echo " $(MKDIR_P) '$(DESTDIR)$(man1dir)'"; \
+	$(MKDIR_P) "$(DESTDIR)$(man1dir)" || exit 1; \
+	{ for i in $$list1; do echo "$$i"; done;  \
+	if test -n "$$list2"; then \
+	  for i in $$list2; do echo "$$i"; done \
+	    | sed -n '/\.1[a-z]*$$/p'; \
+	fi; \
+	} | while read p; do \
+	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; echo "$$p"; \
+	done | \
+	sed -e 'n;s,.*/,,;p;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,' | \
+	sed 'N;N;s,\n, ,g' | { \
+	list=; while read file base inst; do \
+	  if test "$$base" = "$$inst"; then list="$$list $$file"; else \
+	    echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man1dir)/$$inst'"; \
+	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man1dir)/$$inst" || exit $$?; \
+	  fi; \
+	done; \
+	for i in $$list; do echo "$$i"; done | $(am__base_list) | \
+	while read files; do \
+	  test -z "$$files" || { \
+	    echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(man1dir)'"; \
+	    $(INSTALL_DATA) $$files "$(DESTDIR)$(man1dir)" || exit $$?; }; \
+	done; }
+
+uninstall-man1:
+	@$(NORMAL_UNINSTALL)
+	@list=''; test -n "$(man1dir)" || exit 0; \
+	files=`{ for i in $$list; do echo "$$i"; done; \
+	l2='$(dist_man_MANS)'; for i in $$l2; do echo "$$i"; done | \
+	  sed -n '/\.1[a-z]*$$/p'; \
+	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
+	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
+install-man5: $(dist_man_MANS)
+	@$(NORMAL_INSTALL)
+	@list1=''; \
+	list2='$(dist_man_MANS)'; \
+	test -n "$(man5dir)" \
+	  && test -n "`echo $$list1$$list2`" \
+	  || exit 0; \
+	echo " $(MKDIR_P) '$(DESTDIR)$(man5dir)'"; \
+	$(MKDIR_P) "$(DESTDIR)$(man5dir)" || exit 1; \
+	{ for i in $$list1; do echo "$$i"; done;  \
+	if test -n "$$list2"; then \
+	  for i in $$list2; do echo "$$i"; done \
+	    | sed -n '/\.5[a-z]*$$/p'; \
+	fi; \
+	} | while read p; do \
+	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; echo "$$p"; \
+	done | \
+	sed -e 'n;s,.*/,,;p;h;s,.*\.,,;s,^[^5][0-9a-z]*$$,5,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,' | \
+	sed 'N;N;s,\n, ,g' | { \
+	list=; while read file base inst; do \
+	  if test "$$base" = "$$inst"; then list="$$list $$file"; else \
+	    echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man5dir)/$$inst'"; \
+	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man5dir)/$$inst" || exit $$?; \
+	  fi; \
+	done; \
+	for i in $$list; do echo "$$i"; done | $(am__base_list) | \
+	while read files; do \
+	  test -z "$$files" || { \
+	    echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(man5dir)'"; \
+	    $(INSTALL_DATA) $$files "$(DESTDIR)$(man5dir)" || exit $$?; }; \
+	done; }
+
+uninstall-man5:
+	@$(NORMAL_UNINSTALL)
+	@list=''; test -n "$(man5dir)" || exit 0; \
+	files=`{ for i in $$list; do echo "$$i"; done; \
+	l2='$(dist_man_MANS)'; for i in $$l2; do echo "$$i"; done | \
+	  sed -n '/\.5[a-z]*$$/p'; \
+	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^5][0-9a-z]*$$,5,;x' \
+	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
+	dir='$(DESTDIR)$(man5dir)'; $(am__uninstall_files_from_dir)
 tags: TAGS
 TAGS:
 
@@ -493,6 +595,19 @@ cscope cscopelist:
 
 
 distdir: $(DISTFILES)
+	@list='$(MANS)'; if test -n "$$list"; then \
+	  list=`for p in $$list; do \
+	    if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
+	    if test -f "$$d$$p"; then echo "$$d$$p"; else :; fi; done`; \
+	  if test -n "$$list" && \
+	    grep 'ab help2man is required to generate this page' $$list >/dev/null; then \
+	    echo "error: found man pages containing the 'missing help2man' replacement text:" >&2; \
+	    grep -l 'ab help2man is required to generate this page' $$list | sed 's/^/         /' >&2; \
+	    echo "       to fix them, install help2man, remove and regenerate the man pages;" >&2; \
+	    echo "       typically 'make maintainer-clean' will remove them" >&2; \
+	    exit 1; \
+	  else :; fi; \
+	else :; fi
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
 	list='$(DISTFILES)'; \
@@ -524,9 +639,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(SCRIPTS) all-local
+all-am: Makefile $(SCRIPTS) $(MANS) all-local
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmf_dist_scriptsdir)" "$(DESTDIR)$(texmf_scriptsdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmf_dist_scriptsdir)" "$(DESTDIR)$(texmf_scriptsdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -580,7 +695,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nobase_dist_texmf_dist_scriptsSCRIPTS \
+install-data-am: install-man \
+	install-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	install-nobase_dist_texmf_scriptsSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
@@ -598,7 +714,7 @@ install-info: install-info-am
 
 install-info-am:
 
-install-man:
+install-man: install-man1 install-man5
 
 install-pdf: install-pdf-am
 
@@ -626,11 +742,13 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binSCRIPTS \
+uninstall-am: uninstall-binSCRIPTS uninstall-man \
 	uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	uninstall-nobase_dist_texmf_scriptsSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+uninstall-man: uninstall-man1 uninstall-man5
+
 .MAKE: install-am install-data-am install-strip uninstall-am
 
 .PHONY: all all-am all-local check check-am clean clean-generic \
@@ -639,13 +757,15 @@ uninstall-am: uninstall-binSCRIPTS \
 	install-data install-data-am install-data-hook install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
+	install-man1 install-man5 \
 	install-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	install-nobase_dist_texmf_scriptsSCRIPTS install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am uninstall uninstall-am uninstall-binSCRIPTS \
-	uninstall-hook uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
+	uninstall-hook uninstall-man uninstall-man1 uninstall-man5 \
+	uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	uninstall-nobase_dist_texmf_scriptsSCRIPTS
 
 
@@ -661,7 +781,24 @@ scripts-list: Makefile
 
 @MAINTAINER_MODE_TRUE@all-local: scripts-list
 @MAINTAINER_MODE_FALSE@all-local:
-install-data-hook:
+.PHONY: install-man1-links uninstall-man1-links
+
+install-man1-links:
+	@cd $(DESTDIR)$(man1dir) && \
+	  for s in $(man1_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`; \
+	    file=`echo $$s | sed 's,:.*,,'`; \
+	    rm -f $$link.1; \
+	    echo "creating link '$$link.1' -> '$$file.1'"; \
+	    echo ".so man1/$$file.1" >$$link.1; \
+	  done
+
+uninstall-man1-links:
+	@for s in $(man1_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
+	done
+install-data-hook: install-man1-links
 @WIN32_TRUE@	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
@@ -710,7 +847,7 @@ install-data-hook:
 .PHONY: install-links
 install-links:
 
-uninstall-hook:
+uninstall-hook: uninstall-man1-links
 	@for s in $(nobase_dist_texmf_scripts_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS); do \
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 	  echo "$$s" | grep listings-ext.sh >/dev/null \
@@ -724,6 +861,11 @@ uninstall-hook:
 @WIN32_FALSE@	if test -h $(DESTDIR)$(bindir)/man; then \
 @WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/man; \
 @WIN32_FALSE@	else :; fi
+
+.PHONY: xupdmap.1
+xupdmap.1: updmap.help2man tetex/updmap.pl
+	help2man --include=$< --source="TeX Live" --no-info \
+	  $(srcdir)/tetex/updmap.pl >/tmp/$@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

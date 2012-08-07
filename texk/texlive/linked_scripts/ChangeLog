@@ -1,7 +1,17 @@
+2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* updmap.help2man, tetex/updmap* (new): Moved from ../../tetex/
+	to here.
+	* Makefile.am: Added man1_links and rule for xupdmap.1.
+
 2012-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (texmf_*_scripts): Move a2ping/, simpdftex/,
 	tetex/, and texdoc/ scripts from texmf/ to texmf-dist/.
+
+	* tetex/{e2pall,texdoctk}.1, thumbpdf/thumbpdf.1 (new):
+	Moved from ../../tetex/{e2pall,texdoctk,thumbpdf}.man to here.
+	* Makefile.am: Added dist_man_MANS.
 
 2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

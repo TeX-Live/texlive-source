@@ -7,11 +7,9 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 EXTRA_DIST =
 
-perl_scripts = \
-	updmap
+perl_scripts =
 
-shell_scripts = \
-	updmap-sys
+shell_scripts =
 
 sh_scripts = \
 	allcm \
@@ -52,7 +50,6 @@ dist_man1_MANS = \
 	allneeded.man \
 	dvi2fax.man \
 	dvired.man \
-	e2pall.man \
 	fmtutil.man \
 	fontinst.man \
 	kpsetool.man \
@@ -62,14 +59,10 @@ dist_man1_MANS = \
 	rubibtex.man \
 	rumakeindex.man \
 	texconfig.man \
-	texdoctk.man \
-	texlinks.man \
-	thumbpdf.man \
-	updmap.man
+	texlinks.man
 
 dist_man5_MANS = \
-	fmtutil.cnf.5 \
-	updmap.cfg.5
+	fmtutil.cnf.5
 
 texconfigdir = $(datarootdir)/texmf/texconfig
 dist_texconfig_SCRIPTS = tcfmgr
@@ -88,8 +81,7 @@ include $(top_srcdir)/../am/bin_links.am
 
 man1_links = $(bin_links) \
 	fmtutil:fmtutil-sys \
-	texconfig:texconfig-sys \
-	updmap:updmap-sys
+	texconfig:texconfig-sys
 
 include $(top_srcdir)/../am/man1_links.am
 
@@ -124,19 +116,4 @@ run-texlinks:
 if !WIN32
 	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 endif !WIN32
-
-## Generate the updmap man page using help2man plus a bit of
-## handwritten material.  But don't actually update updmap.man,
-## we don't want to require help2man for an install.  Leave that to be
-## done by hand.
-.PHONY: xupdmap.man
-xupdmap.man: updmap.help2man updmap.pl
-	help2man --include=$< --source="TeX Live" --no-info \
-	  $(srcdir)/updmap.pl >/tmp/$@
-EXTRA_DIST += updmap.help2man
-
-## Tests
-##
-TESTS = tests/updmap-cmdline-test.pl
-EXTRA_DIST += $(TESTS)
 

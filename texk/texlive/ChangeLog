@@ -1,3 +1,8 @@
+2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ (new): Moved from ../tetex/ to here and adapted.
+	* Makefile.am: Adapted.
+
 2012-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/ (removed): Moved from here to ../tetex/.

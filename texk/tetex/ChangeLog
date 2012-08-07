@@ -1,3 +1,13 @@
+2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/, updmap* (removed): Moved from here to ../texlive/.
+	* Makefile.am: Adapted.
+
+2012-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* e2pall.man, texdoctk.man, texdoctk.man: Moved to ../texlive/.
+	* Makefile.am: Adapted.
+
 2012-08-04  Karl Berry  <karl@tug.org>
 
 	* tl-sys-wrapper: not needed.  The Windows wrapper, runscript.tlu,
