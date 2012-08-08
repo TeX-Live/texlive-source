@@ -1,3 +1,9 @@
+2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fmtutil*, tcfmgr*, texconfig*, texlinks* (new): Moved from
+	../../tetex/ to ./tetex/.
+	* Makefile.am: Moved run-texlinks rule from /../tetex/ to here.
+
 2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* updmap.help2man, tetex/all*, tetex/dvi2fax*, tetex/dvired*,

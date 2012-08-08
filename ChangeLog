@@ -1,3 +1,7 @@
+2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Running texlinks in texk/texlive/linked_scripts.
+
 2012-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Build: Add TL_COMPILER_GFLAGS also to OBJCXXFLAGS.

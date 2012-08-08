@@ -88,8 +88,8 @@ world: all
 	@echo "top-level make $@: running install-strip..."
 	$(MAKE) $(AM_MAKEFLAGS) install-strip
 ##
-	@echo "top-level make $@: running texlinks in texk/tetex..."
-	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
+	@echo "top-level make $@: running texlinks in texk/texlive/linked_scripts..."
+	cd texk/texlive/linked_scripts && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 ##
 	@echo "top-level make $@: running $(check_target)..."
 	$(MAKE) $(AM_MAKEFLAGS) $(check_target)

@@ -1,13 +1,20 @@
+2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fmtutil*, tcfmgr*, texconfig*, texlinks*  (removed):
+	Moved from here to ../texlive/tetex/.
+	* Makefile.am: Adapted; run-texlinks rule
+
 2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/, all*, dvi2fax*, dvired*, fontinst*, kpsetool*,
 	kpsewhere*, ps2frag*, pslatex*, rubibtex*, rumakeindex*,
-	updmap* (removed): Moved from here to ../texlive/.
+	updmap* (removed): Moved from here to ../texlive/tetex/.
 	* Makefile.am: Adapted.
 
 2012-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* e2pall.man, texdoctk.man, texdoctk.man: Moved to ../texlive/.
+	* e2pall.man, texdoctk.man, texdoctk.man (removed): Moved from
+	here to ../texlive/tetex/.
 	* Makefile.am: Adapted.
 
 2012-08-04  Karl Berry  <karl@tug.org>

@@ -39,8 +39,14 @@ texmf_scriptsdir = $(datarootdir)/texmf/scripts
 ## We distinguish shell and other (perl, lua, python, ruby, ...) scripts.
 ## Some shell scripts are, however, listed under *_other_scripts because
 ## they are correctly handled by ../w32_wrapper/runscript.exe.
-texmf_shell_scripts =
+texmf_shell_scripts = \
+	tetex/fmtutil.sh \
+	tetex/texconfig.sh \
+	tetex/texconfig-dialog.sh \
+	tetex/texconfig-sys.sh \
+	tetex/texlinks.sh
 texmf_other_scripts = \
+	tetex/fmtutil-sys.sh \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
 nobase_dist_texmf_scripts_SCRIPTS = \
@@ -163,6 +169,7 @@ bin_links = \
 if !WIN32
 bin_links += \
 	allcm:allec \
+	fmtutil:mktexfmt \
 	kpsetool:kpsexpand \
 	kpsetool:kpsepath \
 	lua2dox_lua:lua2dox_filter
@@ -176,6 +183,8 @@ dist_man_MANS = \
 	tetex/dvi2fax.1 \
 	tetex/dvired.1 \
 	tetex/e2pall.1 \
+	tetex/fmtutil.1 \
+	tetex/fmtutil.cnf.5 \
 	tetex/fontinst.1 \
 	tetex/kpsetool.1 \
 	tetex/kpsewhere.1 \
@@ -183,17 +192,30 @@ dist_man_MANS = \
 	tetex/pslatex.1 \
 	tetex/rubibtex.1 \
 	tetex/rumakeindex.1 \
+	tetex/texconfig.1 \
 	tetex/texdoctk.1 \
+	tetex/texlinks.1 \
 	tetex/updmap.1 \
 	tetex/updmap.cfg.5 \
 	thumbpdf/thumbpdf.1
 
 man1_links = \
+	fmtutil:fmtutil-sys \
 	kpsetool:kpsexpand \
 	kpsetool:kpsepath \
+	fmtutil:mktexfmt \
+	texconfig:texconfig-sys \
 	updmap:updmap-sys
 
 include $(top_srcdir)/../am/man1_links.am
+
+## Support files
+texconfigdir = $(datarootdir)/texmf/texconfig
+dist_texconfig_SCRIPTS = tetex/tcfmgr
+dist_texconfig_DATA = tetex/tcfmgr.map
+
+web2cdir = $(datarootdir)/texmf/web2c
+dist_web2c_DATA = tetex/fmtutil.cnf
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,
@@ -299,12 +321,30 @@ if !WIN32
 endif !WIN32
 
 ## Generate the updmap man page using help2man plus a bit of
-## handwritten material.  But don't actually update updmap.man,
+## handwritten material.  But don't actually update updmap.1,
 ## we don't want to require help2man for an install.  Leave that to be
 ## done by hand.
 .PHONY: xupdmap.1
-xupdmap.1: updmap.help2man tetex/updmap.pl
+xupdmap.1: tetex/updmap.help2man tetex/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(srcdir)/tetex/updmap.pl >/tmp/$@
-EXTRA_DIST += updmap.help2man
+EXTRA_DIST += tetex/updmap.help2man
+
+## 
+web2cdir = $(datarootdir)/texmf/web2c
+
+.PHONY: run-texlinks
+## This target is invoked by the top-level make,
+## to create the per-format engine symlinks in $(bindir),
+## after everything else is installed.  We explicitly specify the
+## fmtutil.cnf file to use for the sake of distro builds.
+## We pass along the executable extension for the sake of cygwin, so we
+## don't create dangling symlinks there (even though they work).
+run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
+	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
+	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
+run-texlinks:
+if !WIN32
+	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
+endif !WIN32
 

@@ -1,4 +1,10 @@
 texmf_scripts='
+tetex/fmtutil.sh
+tetex/texconfig.sh
+tetex/texconfig-dialog.sh
+tetex/texconfig-sys.sh
+tetex/texlinks.sh
+tetex/fmtutil-sys.sh
 texlive/rungs.tlu
 texlive/tlmgr.pl
 '

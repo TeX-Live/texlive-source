@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__make_dryrun = \
   { \
@@ -50,11 +51,13 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 @WIN32_FALSE@am__append_1 = \
 @WIN32_FALSE@	allcm:allec \
+@WIN32_FALSE@	fmtutil:mktexfmt \
 @WIN32_FALSE@	kpsetool:kpsexpand \
 @WIN32_FALSE@	kpsetool:kpsepath \
 @WIN32_FALSE@	lua2dox_lua:lua2dox_filter
 
-DIST_COMMON = README $(dist_man_MANS) \
+DIST_COMMON = README $(dist_man_MANS) $(dist_texconfig_DATA) \
+	$(dist_texconfig_SCRIPTS) $(dist_web2c_DATA) \
 	$(nobase_dist_texmf_dist_scripts_SCRIPTS) \
 	$(nobase_dist_texmf_scripts_SCRIPTS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/../am/man1_links.am \
@@ -95,11 +98,13 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(bindir)" \
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texconfigdir)" \
 	"$(DESTDIR)$(texmf_dist_scriptsdir)" \
 	"$(DESTDIR)$(texmf_scriptsdir)" "$(DESTDIR)$(man1dir)" \
-	"$(DESTDIR)$(man5dir)"
-SCRIPTS = $(bin_SCRIPTS) $(nobase_dist_texmf_dist_scripts_SCRIPTS) \
+	"$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" \
+	"$(DESTDIR)$(web2cdir)"
+SCRIPTS = $(bin_SCRIPTS) $(dist_texconfig_SCRIPTS) \
+	$(nobase_dist_texmf_dist_scripts_SCRIPTS) \
 	$(nobase_dist_texmf_scripts_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
@@ -112,6 +117,7 @@ man1dir = $(mandir)/man1
 man5dir = $(mandir)/man5
 NROFF = nroff
 MANS = $(dist_man_MANS)
+DATA = $(dist_texconfig_DATA) $(dist_web2c_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -220,7 +226,8 @@ DISTCLEANFILES = scripts-list
 #
 # We support native builds, multiplatform or not, as well as distro builds.
 #
-EXTRA_DIST = scripts.lst ../../../build-aux/relpath updmap.help2man
+EXTRA_DIST = scripts.lst ../../../build-aux/relpath \
+	tetex/updmap.help2man
 bin_SCRIPTS = 
 
 # Copies of these scripts exist here for the sake of avoiding
@@ -228,8 +235,15 @@ bin_SCRIPTS =
 # The instances in texmf* are the masters (except when it is CTAN).
 #
 texmf_scriptsdir = $(datarootdir)/texmf/scripts
-texmf_shell_scripts = 
+texmf_shell_scripts = \
+	tetex/fmtutil.sh \
+	tetex/texconfig.sh \
+	tetex/texconfig-dialog.sh \
+	tetex/texconfig-sys.sh \
+	tetex/texlinks.sh
+
 texmf_other_scripts = \
+	tetex/fmtutil-sys.sh \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
 
@@ -356,6 +370,8 @@ dist_man_MANS = \
 	tetex/dvi2fax.1 \
 	tetex/dvired.1 \
 	tetex/e2pall.1 \
+	tetex/fmtutil.1 \
+	tetex/fmtutil.cnf.5 \
 	tetex/fontinst.1 \
 	tetex/kpsetool.1 \
 	tetex/kpsewhere.1 \
@@ -363,19 +379,33 @@ dist_man_MANS = \
 	tetex/pslatex.1 \
 	tetex/rubibtex.1 \
 	tetex/rumakeindex.1 \
+	tetex/texconfig.1 \
 	tetex/texdoctk.1 \
+	tetex/texlinks.1 \
 	tetex/updmap.1 \
 	tetex/updmap.cfg.5 \
 	thumbpdf/thumbpdf.1
 
 man1_links = \
+	fmtutil:fmtutil-sys \
 	kpsetool:kpsexpand \
 	kpsetool:kpsepath \
+	fmtutil:mktexfmt \
+	texconfig:texconfig-sys \
 	updmap:updmap-sys
 
+texconfigdir = $(datarootdir)/texmf/texconfig
+dist_texconfig_SCRIPTS = tetex/tcfmgr
+dist_texconfig_DATA = tetex/tcfmgr.map
+web2cdir = $(datarootdir)/texmf/web2c
+dist_web2c_DATA = tetex/fmtutil.cnf
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
+run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
+	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
+	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
+
 all: all-am
 
 .SUFFIXES:
@@ -445,6 +475,41 @@ uninstall-binSCRIPTS:
 	files=`for p in $$list; do echo "$$p"; done | \
 	       sed -e 's,.*/,,;$(transform)'`; \
 	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
+install-dist_texconfigSCRIPTS: $(dist_texconfig_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_texconfig_SCRIPTS)'; test -n "$(texconfigdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(texconfigdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(texconfigdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(texconfigdir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(texconfigdir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-dist_texconfigSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_texconfig_SCRIPTS)'; test -n "$(texconfigdir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	dir='$(DESTDIR)$(texconfigdir)'; $(am__uninstall_files_from_dir)
 install-nobase_dist_texmf_dist_scriptsSCRIPTS: $(nobase_dist_texmf_dist_scripts_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	@list='$(nobase_dist_texmf_dist_scripts_SCRIPTS)'; test -n "$(texmf_dist_scriptsdir)" || list=; \
@@ -615,6 +680,48 @@ uninstall-man5:
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^5][0-9a-z]*$$,5,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man5dir)'; $(am__uninstall_files_from_dir)
+install-dist_texconfigDATA: $(dist_texconfig_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_texconfig_DATA)'; test -n "$(texconfigdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(texconfigdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(texconfigdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(texconfigdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(texconfigdir)" || exit $$?; \
+	done
+
+uninstall-dist_texconfigDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_texconfig_DATA)'; test -n "$(texconfigdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(texconfigdir)'; $(am__uninstall_files_from_dir)
+install-dist_web2cDATA: $(dist_web2c_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_web2c_DATA)'; test -n "$(web2cdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(web2cdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(web2cdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(web2cdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(web2cdir)" || exit $$?; \
+	done
+
+uninstall-dist_web2cDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_web2c_DATA)'; test -n "$(web2cdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(web2cdir)'; $(am__uninstall_files_from_dir)
 tags: TAGS
 TAGS:
 
@@ -669,9 +776,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(SCRIPTS) $(MANS) all-local
+all-am: Makefile $(SCRIPTS) $(MANS) $(DATA) all-local
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmf_dist_scriptsdir)" "$(DESTDIR)$(texmf_scriptsdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(texmf_dist_scriptsdir)" "$(DESTDIR)$(texmf_scriptsdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(texconfigdir)" "$(DESTDIR)$(web2cdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -725,8 +832,9 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man \
-	install-nobase_dist_texmf_dist_scriptsSCRIPTS \
+install-data-am: install-dist_texconfigDATA \
+	install-dist_texconfigSCRIPTS install-dist_web2cDATA \
+	install-man install-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	install-nobase_dist_texmf_scriptsSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
@@ -772,8 +880,9 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binSCRIPTS uninstall-man \
-	uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
+uninstall-am: uninstall-binSCRIPTS uninstall-dist_texconfigDATA \
+	uninstall-dist_texconfigSCRIPTS uninstall-dist_web2cDATA \
+	uninstall-man uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	uninstall-nobase_dist_texmf_scriptsSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
@@ -784,17 +893,20 @@ uninstall-man: uninstall-man1 uninstall-man5
 .PHONY: all all-am all-local check check-am clean clean-generic \
 	distclean distclean-generic distdir dvi dvi-am html html-am \
 	info info-am install install-am install-binSCRIPTS \
-	install-data install-data-am install-data-hook install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-man5 \
+	install-data install-data-am install-data-hook \
+	install-dist_texconfigDATA install-dist_texconfigSCRIPTS \
+	install-dist_web2cDATA install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-man5 \
 	install-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	install-nobase_dist_texmf_scriptsSCRIPTS install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am uninstall uninstall-am uninstall-binSCRIPTS \
-	uninstall-hook uninstall-man uninstall-man1 uninstall-man5 \
+	uninstall-dist_texconfigDATA uninstall-dist_texconfigSCRIPTS \
+	uninstall-dist_web2cDATA uninstall-hook uninstall-man \
+	uninstall-man1 uninstall-man5 \
 	uninstall-nobase_dist_texmf_dist_scriptsSCRIPTS \
 	uninstall-nobase_dist_texmf_scriptsSCRIPTS
 
@@ -893,9 +1005,13 @@ uninstall-hook: uninstall-man1-links
 @WIN32_FALSE@	else :; fi
 
 .PHONY: xupdmap.1
-xupdmap.1: updmap.help2man tetex/updmap.pl
+xupdmap.1: tetex/updmap.help2man tetex/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(srcdir)/tetex/updmap.pl >/tmp/$@
+
+.PHONY: run-texlinks
+run-texlinks:
+@WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
