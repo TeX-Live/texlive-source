@@ -4,6 +4,10 @@
 	* luatex.c (swap_items): Moved from here ...
 	* tex/texfileio.w (swap_items): ... to here and declared static.
 
+	* luatex.c (input_line) [WIN32]: Sync with ../lib/texmfmp.c.
+	Detect and skip Byte order marks.
+	* tex/texfileio.[ch] [WIN32]: Use Poptr to record pipe input.
+
 2012-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatex.[ch] [W32TeX]: Use DLLPROC for luatex.dll.

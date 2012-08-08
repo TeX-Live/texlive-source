@@ -1270,6 +1270,10 @@ static FILE *pipes[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
     NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
+#ifdef WIN32
+FILE *Poptr;
+#endif
+
 boolean open_in_or_pipe(FILE ** f_ptr, char *fn, int filefmt,
                         const_string fopen_mode, boolean must_exist)
 {
@@ -1299,6 +1303,9 @@ boolean open_in_or_pipe(FILE ** f_ptr, char *fn, int filefmt,
         }
         if (*f_ptr)
             setvbuf(*f_ptr, (char *) NULL, _IOLBF, 0);
+#ifdef WIN32
+        Poptr = *f_ptr;
+#endif
 
         return *f_ptr != NULL;
     }
@@ -1360,8 +1367,12 @@ void close_file_or_pipe(FILE * f)
         for (i = 0; i <= 15; i++) {
         /* if this file was a pipe, |pclose()| it and return */
             if (pipes[i] == f) {
-                if (f)
+                if (f) {
                     pclose(f);
+#ifdef WIN32
+                    Poptr = NULL;
+#endif
+                }
                 pipes[i] = NULL;
                 return;
             }

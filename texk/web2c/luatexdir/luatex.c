@@ -842,6 +842,35 @@ boolean input_line(FILE * f)
 {
     int i = EOF;
 
+#ifdef WIN32
+    if (f != Poptr && fileno (f) != fileno (stdin)) {
+        long position = ftell (f);
+
+        if (position == 0L) {  /* Detect and skip Byte order marks.  */
+            int k1 = getc (f);
+
+            if (k1 != 0xff && k1 != 0xfe && k1 != 0xef)
+                rewind (f);
+            else {
+                int k2 = getc (f);
+
+                if (k2 != 0xff && k2 != 0xfe && k2 != 0xbb)
+                    rewind (f);
+                else if ((k1 == 0xff && k2 == 0xfe) || /* UTF-16(LE) */
+                         (k1 == 0xfe && k2 == 0xff))   /* UTF-16(BE) */
+                    ;
+                else {
+                    int k3 = getc (f);
+
+                    if (k1 == 0xef && k2 == 0xbb && k3 == 0xbf) /* UTF-8 */
+                        ;
+                    else
+                        rewind (f);
+                }
+            }
+        }
+    }
+#endif
     /* Recognize either LF or CR as a line terminator.  */
     last = first;
     while (last < buf_size && (i = getc(f)) != EOF && i != '\n' && i != '\r')

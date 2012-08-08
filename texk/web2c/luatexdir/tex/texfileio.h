@@ -135,6 +135,10 @@ extern int readbinfile(FILE * f, unsigned char **b, int *s);
 extern boolean openinnameok(const_string);
 extern boolean openoutnameok(const_string);
 
+#  ifdef WIN32
+extern FILE *Poptr;
+#  endif
+
 extern boolean open_in_or_pipe(FILE **, char *, int, const_string fopen_mode,
                                boolean must_exist);
 extern boolean open_out_or_pipe(FILE **, char *, const_string fopen_mode);
