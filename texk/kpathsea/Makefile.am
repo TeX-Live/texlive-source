@@ -246,11 +246,7 @@ dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 
 dist_noinst_DATA = texmf.cnf
 
-# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
-bin_links = \
-	mktexlsr:texhash
-
-install-exec-hook:
+install-exec-local: installdirs-am
 if !WIN32
 	@for f in $(dist_noinst_SCRIPTS); do \
 	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
@@ -259,17 +255,9 @@ if !WIN32
 	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
 	  else :; fi; \
 	done
-	@cd $(DESTDIR)$(bindir) && \
-	  for s in $(bin_links); do \
-	    link=`echo $$s | sed 's,.*:,,'`; \
-	    file=`echo $$s | sed 's,:.*,,'`; \
-	    rm -f $$link; \
-	    echo "creating link '$$link' -> '$$file'"; \
-	    $(LN_S) $$file $$link || exit 1; \
-	  done
 endif !WIN32
 
-install-data-hook:
+install-data-local: installdirs-am
 	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
 	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
@@ -278,17 +266,13 @@ install-data-hook:
 	  else :; fi; \
 	done
 
-uninstall-hook:
+uninstall-local:
 if !WIN32
 	@for f in $(dist_noinst_SCRIPTS); do \
 	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1; then \
 	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	  else :; fi; \
-	done
-	@for s in $(bin_links); do \
-	  link=`echo $$s | sed 's,.*:,,'`; \
-	  rm -f $(DESTDIR)$(bindir)/$$link; \
 	done
 endif !WIN32
 	@for f in $(dist_noinst_DATA); do \
@@ -297,6 +281,14 @@ endif !WIN32
 	    rm -f "$(DESTDIR)$(web2cdir)/$$f"; \
 	  else :; fi; \
 	done
+
+bin_links = mktexlsr:texhash
+
+include $(top_srcdir)/../am/bin_links.am
+
+install-exec-hook: install-bin-links
+
+uninstall-hook: uninstall-bin-links
 
 ## The tests
 TESTS = kpseaccess.test kpsereadlink.test kpsestat.test kpsewhich.test

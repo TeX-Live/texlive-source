@@ -29,7 +29,8 @@ EXTRA_DIST = scripts.lst
 
 ## Make sure $(bindir) exists
 ##
-bin_SCRIPTS =
+installdirs-local:
+	$(MKDIR_P) $(DESTDIR)$(bindir)
 
 # Copies of these scripts exist here for the sake of avoiding
 # dangling symlinks produced by `make install'.
@@ -240,7 +241,7 @@ dist_web2c_DATA = tetex/fmtutil.cnf
 EXTRA_DIST += ../../../build-aux/relpath
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
-install-data-hook: install-man1-links
+install-data-hook: installdirs-local install-man1-links
 if WIN32
 	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \

@@ -66,6 +66,12 @@ mktexupd_SOURCES = \
 
 LDADD = ../libkpathsea.la
 
+install-exec-hook:
+	cp -p $(DESTDIR)$(bindir)/mktexlsr$(EXEEXT) $(DESTDIR)$(bindir)/texhash$(EXEEXT)
+
+uninstall-hook:
+	rm -f $(DESTDIR)$(bindir)/texhash$(EXEEXT)
+
 ## Rebuild libkpathsea
 ../libkpathsea.la: ${top_srcdir}/../kpathsea/*.[ch] ../paths.h
 	cd .. && $(MAKE) $(AM_MAKEFLAGS) rebuild

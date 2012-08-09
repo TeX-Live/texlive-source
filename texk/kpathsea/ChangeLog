@@ -1,3 +1,7 @@
+2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use ../am/bin_links.am.
+
 2012-08-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.h: remove definition of pipe.

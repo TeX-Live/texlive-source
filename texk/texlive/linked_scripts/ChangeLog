@@ -1,3 +1,7 @@
+2012-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (installdirs-local): Make sure $(bindir) exists.
+
 2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fmtutil*, tcfmgr*, texconfig*, texlinks* (new): Moved from

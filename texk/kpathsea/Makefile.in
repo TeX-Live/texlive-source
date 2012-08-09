@@ -73,7 +73,6 @@ host_triplet = @host@
 bin_PROGRAMS = kpseaccess$(EXEEXT) kpsereadlink$(EXEEXT) \
 	kpsestat$(EXEEXT) kpsewhich$(EXEEXT)
 EXTRA_PROGRAMS = progname-test$(EXEEXT) xdirtest$(EXEEXT)
-subdir = .
 DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
 	$(dist_noinst_SCRIPTS) $(dist_web2c_DATA) \
 	$(dist_web2c_SCRIPTS) $(kpseinclude_HEADERS) $(noinst_HEADERS) \
@@ -83,12 +82,14 @@ DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
-	$(top_srcdir)/../../build-aux/missing $(top_srcdir)/configure \
+	$(top_srcdir)/../../build-aux/missing \
+	$(top_srcdir)/../am/bin_links.am $(top_srcdir)/configure \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap AUTHORS \
 	ChangeLog NEWS putenv.c strcasecmp.c strstr.c strtol.c
+subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
@@ -523,11 +524,7 @@ dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
 dist_web2c_DATA = mktex.opt mktexdir.opt mktexnam.opt
 dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 dist_noinst_DATA = texmf.cnf
-
-# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
-bin_links = \
-	mktexlsr:texhash
-
+bin_links = mktexlsr:texhash
 TESTS = kpseaccess.test kpsereadlink.test kpsestat.test kpsewhich.test
 TESTS_ENVIRONMENT = LN_S='$(LN_S)' LT_OBJDIR='$(LT_OBJDIR)'
 all: $(BUILT_SOURCES) c-auto.h
@@ -537,7 +534,7 @@ all: $(BUILT_SOURCES) c-auto.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../am/bin_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -560,6 +557,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(top_srcdir)/../am/bin_links.am:
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1796,15 +1794,16 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-dist_web2cDATA install-dist_web2cSCRIPTS \
-	install-kpseincludeHEADERS install-nodist_kpseincludeHEADERS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
+install-data-am: install-data-local install-dist_web2cDATA \
+	install-dist_web2cSCRIPTS install-kpseincludeHEADERS \
+	install-nodist_kpseincludeHEADERS
+
 install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-libLTLIBRARIES
+install-exec-am: install-binPROGRAMS install-exec-local \
+	install-libLTLIBRARIES
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-html: install-html-recursive
@@ -1849,13 +1848,14 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	uninstall-dist_web2cSCRIPTS uninstall-kpseincludeHEADERS \
-	uninstall-libLTLIBRARIES uninstall-nodist_kpseincludeHEADERS
+	uninstall-libLTLIBRARIES uninstall-local \
+	uninstall-nodist_kpseincludeHEADERS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check \
 	check-am cscopelist-recursive ctags-recursive install \
-	install-am install-data-am install-exec-am install-strip \
-	tags-recursive uninstall-am
+	install-am install-exec-am install-strip tags-recursive \
+	uninstall-am
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-TESTS check-am clean \
@@ -1868,11 +1868,12 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
 	install-binPROGRAMS install-data install-data-am \
-	install-data-hook install-dist_web2cDATA \
+	install-data-local install-dist_web2cDATA \
 	install-dist_web2cSCRIPTS install-dvi install-dvi-am \
-	install-exec install-exec-am install-exec-hook install-html \
-	install-html-am install-info install-info-am \
-	install-kpseincludeHEADERS install-libLTLIBRARIES install-man \
+	install-exec install-exec-am install-exec-hook \
+	install-exec-local install-html install-html-am install-info \
+	install-info-am install-kpseincludeHEADERS \
+	install-libLTLIBRARIES install-man \
 	install-nodist_kpseincludeHEADERS install-pdf install-pdf-am \
 	install-ps install-ps-am install-strip installcheck \
 	installcheck-am installdirs installdirs-am maintainer-clean \
@@ -1882,7 +1883,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	uninstall-dist_web2cSCRIPTS uninstall-hook \
 	uninstall-kpseincludeHEADERS uninstall-libLTLIBRARIES \
-	uninstall-nodist_kpseincludeHEADERS
+	uninstall-local uninstall-nodist_kpseincludeHEADERS
 
 
 # Rebuild
@@ -1920,7 +1921,7 @@ kpathsea.h: Makefile paths.h
 	  echo "#include <kpathsea/$$f>" >>$@; \
 	done
 
-install-exec-hook:
+install-exec-local: installdirs-am
 @WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
 @WIN32_FALSE@	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
 @WIN32_FALSE@	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
@@ -1928,6 +1929,32 @@ install-exec-hook:
 @WIN32_FALSE@	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
 @WIN32_FALSE@	  else :; fi; \
 @WIN32_FALSE@	done
+
+install-data-local: installdirs-am
+	@for f in $(dist_noinst_DATA); do \
+	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
+	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
+	    echo " $(INSTALL_DATA) '$(srcdir)/$$f' '$(DESTDIR)$(web2cdir)/$$f'"; \
+	    $(INSTALL_DATA) "$(srcdir)/$$f" "$(DESTDIR)$(web2cdir)/$$f"; \
+	  else :; fi; \
+	done
+
+uninstall-local:
+@WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
+@WIN32_FALSE@	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1; then \
+@WIN32_FALSE@	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+@WIN32_FALSE@	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
+@WIN32_FALSE@	  else :; fi; \
+@WIN32_FALSE@	done
+	@for f in $(dist_noinst_DATA); do \
+	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1; then \
+	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
+	    rm -f "$(DESTDIR)$(web2cdir)/$$f"; \
+	  else :; fi; \
+	done
+.PHONY: install-bin-links uninstall-bin-links
+
+install-bin-links:
 @WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
 @WIN32_FALSE@	  for s in $(bin_links); do \
 @WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
@@ -1937,32 +1964,15 @@ install-exec-hook:
 @WIN32_FALSE@	    $(LN_S) $$file $$link || exit 1; \
 @WIN32_FALSE@	  done
 
-install-data-hook:
-	@for f in $(dist_noinst_DATA); do \
-	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
-	    echo " $(INSTALL_DATA) '$(srcdir)/$$f' '$(DESTDIR)$(web2cdir)/$$f'"; \
-	    $(INSTALL_DATA) "$(srcdir)/$$f" "$(DESTDIR)$(web2cdir)/$$f"; \
-	  else :; fi; \
-	done
-
-uninstall-hook:
-@WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
-@WIN32_FALSE@	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1; then \
-@WIN32_FALSE@	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-@WIN32_FALSE@	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
-@WIN32_FALSE@	  else :; fi; \
-@WIN32_FALSE@	done
+uninstall-bin-links:
 @WIN32_FALSE@	@for s in $(bin_links); do \
 @WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
 @WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
 @WIN32_FALSE@	done
-	@for f in $(dist_noinst_DATA); do \
-	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1; then \
-	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
-	    rm -f "$(DESTDIR)$(web2cdir)/$$f"; \
-	  else :; fi; \
-	done
+
+install-exec-hook: install-bin-links
+
+uninstall-hook: uninstall-bin-links
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
