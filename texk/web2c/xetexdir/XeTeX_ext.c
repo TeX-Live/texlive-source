@@ -45,6 +45,13 @@ authorization from the copyright holders.
 
 #include "zlib.h"
 
+#include <time.h> /* For `struct tm'.  */
+#if defined (HAVE_SYS_TIME_H)
+#include <sys/time.h>
+#elif defined (HAVE_SYS_TIMEB_H)
+#include <sys/timeb.h>
+#endif
+
 #define EXTERN extern
 #include "xetexd.h"
 
@@ -65,13 +72,6 @@ authorization from the copyright holders.
 #include <kpathsea/absolute.h>
 
 #include <math.h> /* for fabs() */
-
-#include <time.h> /* For `struct tm'.  */
-#if defined (HAVE_SYS_TIME_H)
-#include <sys/time.h>
-#elif defined (HAVE_SYS_TIMEB_H)
-#include <sys/timeb.h>
-#endif
 
 #if defined(__STDC__)
 #include <locale.h>

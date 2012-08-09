@@ -45,7 +45,9 @@ authorization from the copyright holders.
 
 #include <math.h>
 
+extern "C" {
 extern Fixed loadedfontdesignsize;
+}
 
 // functions from the Pascal/WEB side
 extern "C" {
@@ -544,6 +546,12 @@ XeTeXFontMgr::getDesignSize(XeTeXFont font)
 	else
 		return 10.0;
 }
+
+#ifdef WIN32
+#ifndef M_PI
+#define M_PI 3.14159265358979323846264
+#endif
+#endif
 
 void
 XeTeXFontMgr::getOpSizeRecAndStyleFlags(Font* theFont)
