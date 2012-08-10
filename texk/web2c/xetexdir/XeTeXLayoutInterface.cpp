@@ -1,7 +1,7 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
  copyright (c) 1994-2008 by SIL International
- copyright (c) 2009 by Jonathan Kew
+ copyright (c) 2009-2012 by Jonathan Kew
 
  Written by Jonathan Kew
 
@@ -56,6 +56,10 @@ authorization from the copyright holders.
 #include "unicode/utext.h"
 
 #include <math.h>
+/* apparently M_PI isn't defined by <math.h> under VC++ */
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 struct XeTeXLayoutEngine_rec
 	/* this is used for both ICU and Graphite, because so much of the font stuff is common;
@@ -193,13 +197,6 @@ void* getFontTablePtr(XeTeXFont font, UInt32 tableTag)
 {
 	return const_cast<void*>(((XeTeXFontInst*)font)->getFontTable(tableTag));
 }
-
-/* apparently M_PI isn't defined by <math.h> under VC++ */
-#ifdef WIN32
-#ifndef M_PI
-#define M_PI 3.1415926535898
-#endif
-#endif
 
 Fixed getSlant(XeTeXFont font)
 {

@@ -1,3 +1,9 @@
+2012-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXFontMgr.cpp, XeTeXLayoutInterface.cpp: Always put
+	'#define M_PI' immediately after '#include <math.h>'.
+	* numbers.h: Drop unused definition of M_PI.
+
 2012-08-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c: use rewind(f) instead of fseek(f, 0, SEEK_SET)

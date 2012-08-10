@@ -2,7 +2,7 @@
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002, 2012 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -58,10 +58,6 @@ extern SIGNED_QUAD axboverc (SIGNED_QUAD n1, SIGNED_QUAD n2, SIGNED_QUAD divide)
 #endif
 #define ISODD(n) (((n)/2)*2!=(n))
 #define ISEVEN(n) (((n)/2)*2==(n))
-
-#ifndef M_PI
-#  define M_PI (4.0*atan(1.0))
-#endif
 
 #define ROUND(n,acc) (floor(((double)n)/(acc)+0.5)*(acc)) 
 
