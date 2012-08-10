@@ -1,4 +1,4 @@
-2012-08-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2012-08-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c: use rewind(f) instead of fseek(f, 0, SEEK_SET)
 	in u_open_in() in order to work also on W32.
