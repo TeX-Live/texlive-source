@@ -1,3 +1,7 @@
+2012-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptexmac.h: Drop unused definition of M_PI & Co.
+
 2012-04-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvips.c: do not free getenved string.
