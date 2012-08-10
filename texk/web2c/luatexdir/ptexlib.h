@@ -1,7 +1,7 @@
 /* ptexlib.h
 
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -68,11 +68,6 @@ extern char **suffixlist;       /* in luainit.w */
 
 
 /* pdftexlib macros from ptexmac.h */
-
-/* Not all systems define it. */
-#  ifndef M_PI
-#    define M_PI           3.14159265358979323846       /* pi */
-#  endif
 
 #  ifdef WIN32
 #    define inline __inline
