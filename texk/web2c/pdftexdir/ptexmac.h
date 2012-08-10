@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2011 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2012 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -19,16 +19,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef PDFTEXMAC
 #  define PDFTEXMAC
-
-/* Not all systems define it. */
-#  ifndef M_PI
-#    define M_PI           3.14159265358979323846
-                                                /* pi */
-#    define M_PI_2         1.5707963267948966192E0
-                                                /*Hex  2^ 0 * 1.921FB54442D18 */
-#    define M_PI_4         7.8539816339744830962E-1
-                                                /*Hex  2^-1 * 1.921FB54442D18 */
-#  endif
 
 #  ifdef WIN32
 // Why relying on gmalloc() ???
