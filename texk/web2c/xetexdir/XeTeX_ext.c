@@ -2946,11 +2946,11 @@ u_open_in(unicodefile* f, integer filefmt, const_string fopen_mode, integer mode
 				mode = UTF16LE;
 			else if (B1 == 0 && B2 != 0) {
 				mode = UTF16BE;
-				fseek((*f)->f, SEEK_SET, 0);
+				rewind((*f)->f);
 			}
 			else if (B2 == 0 && B1 != 0) {
 				mode = UTF16LE;
-				fseek((*f)->f, SEEK_SET, 0);
+				rewind((*f)->f);
 			}
 			else if (B1 == 0xef && B2 == 0xbb) {
 				int	B3 = getc((*f)->f);
@@ -2958,7 +2958,7 @@ u_open_in(unicodefile* f, integer filefmt, const_string fopen_mode, integer mode
 					mode = UTF8;
 			}
 			if (mode == AUTO) {
-				fseek((*f)->f, SEEK_SET, 0);
+				rewind((*f)->f);
 				mode = UTF8;
 			}
 		}

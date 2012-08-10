@@ -1,5 +1,10 @@
 2012-08-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	* XeTeX_ext.c: use rewind(f) instead of fseek(f, 0, SEEK_SET)
+	in u_open_in() in order to work also on W32.
+
+2012-08-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	* XeTeXFontMgr.cpp: Add 'extern "C" {' to avoid link error in MSVC.
 	* XeTeX_ext.c: Change order of inlusion of headers to be able to
 	compile by using MSVC.
