@@ -429,7 +429,7 @@ DVIPDFMXINPUTS = $TEXMF/dvipdfmx
 % the /tex/ will not be found.
 % 
 % So, duplicate the TEXINPUTS.*lualatex values as LUAINPUTS.*lualatex.
-% The default LUAINPUTS sufficess for luatex and dviluatex.
+% The default LUAINPUTS suffices for luatex and dviluatex.
 %
 LUAINPUTS.lualatex = .;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 LUAINPUTS.dvilualatex = .;$TEXMF/scripts/{$progname,$engine,}/{lua,}//;$TEXMF/tex/{lualatex,latex,luatex,generic,}//

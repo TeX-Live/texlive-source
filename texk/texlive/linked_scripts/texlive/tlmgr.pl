@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 27258 2012-07-30 22:52:04Z karl $
+# $Id: tlmgr.pl 27356 2012-08-09 23:46:20Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 27258 $';
-my $datrev = '$Date: 2012-07-31 00:52:04 +0200 (Tue, 31 Jul 2012) $';
+my $svnrev = '$Revision: 27356 $';
+my $datrev = '$Date: 2012-08-10 01:46:20 +0200 (Fri, 10 Aug 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -2005,7 +2005,7 @@ sub write_w32_updater {
     
 :update
   for %%I in (@upd_tar) do (
-    temp\\tar.exe -xf temp\\%%I
+    temp\\tar.exe -xmf temp\\%%I
     if errorlevel 1 goto :rollback
   )
   tlpkg\\tlperl\\bin\\perl.exe .\\texmf\\scripts\\texlive\\tlmgr.pl _include_tlpobj @upd_tlpobj
@@ -2023,7 +2023,7 @@ sub write_w32_updater {
   >con echo failed self update: @upd_info
   >con echo Rolling back to previous version ...
   for %%I in (@rst_tar) do (
-    temp\\tar.exe -xf temp\\%%I
+    temp\\tar.exe -xmf temp\\%%I
     if errorlevel 1 goto :panic
   )
   tlpkg\\tlperl\\bin\\perl.exe .\\texmf\\scripts\\texlive\\tlmgr.pl _include_tlpobj @rst_tlpobj
@@ -2268,7 +2268,7 @@ sub action_update {
   # if --list is given:    nothing
   # other options just change the behaviour
   if (!($opts{"list"} || @ARGV || $opts{"all"} || $opts{"self"})) {
-    tlwarn("tlmgr update: please specify a list of packages, --all, --self, or --list.\n");
+    tlwarn("tlmgr update: specify --list, --all, --self, or a list of package names.\n");
     return;
   }
 
