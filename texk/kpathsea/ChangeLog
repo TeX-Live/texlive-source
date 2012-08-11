@@ -1,3 +1,7 @@
+2012-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-std.h: Define M_PI if not defined by <math.h> (old MSVC).
+
 2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use ../am/bin_links.am.

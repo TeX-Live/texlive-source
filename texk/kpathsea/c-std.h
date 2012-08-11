@@ -26,6 +26,10 @@
    extern "C" in a c++ source file. */
 #ifndef __cplusplus
 #include <math.h>
+/* apparently M_PI isn't defined by <math.h> under older VC */
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 #endif
 #include <stdio.h>
 
