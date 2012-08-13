@@ -2085,7 +2085,9 @@ euptex_ch_srcs = \
 	euptexdir/euptex.ch1 \
 	eptexdir/etex.ch1 \
 	$(euptex_ch_synctex) \
+	euptexdir/fam256-eup-pre.ch \
 	eptexdir/fam256.ch \
+	euptexdir/fam256-eup-post.ch \
 	euptexdir/pdfstrcmp-eup-pre.ch \
 	eptexdir/pdfstrcmp.ch \
 	euptexdir/pdfstrcmp-eup-post.ch \
