@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 
+# N.B. !!!!!!!!!!!  See 17 July 2012 comments !!!!!!!!!!!!!!!!!!
+
+
 # On a UNIX-like system, the above enables latexmk to run independently
 #   of the location of the perl executable.  This line relies on the 
 #   existence of the program /usr/bin/env
@@ -9,7 +12,6 @@
 #!/usr/bin/perl -w
 
 # with the path of the perl executable adjusted for your system. 
-
 
 use warnings;
 
@@ -109,8 +111,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.31';
-$version_details = "$My_name, John Collins, 30 March 2012";
+$version_num = '4.33b';
+$version_details = "$My_name, John Collins, 12 Aug. 2012";
 
 use Config;
 use File::Copy;
@@ -180,36 +182,71 @@ else {
 ##   Modification log from 9 Dec 2011 onwards in detail
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
-##     29, 30 Mar 2012, John Collins Optimize file checking, and # calcs of MD5
-##     24 Jan 2012, John Collins Remove unneeded call to traceback
-##     23 Jan 2012, John Collins Remove initial ./ from ./foo entries in .fls file
-##     16 Jan 2012, John Collins Make aux and/or out directories if it/they
-##                                  don't exist
-##     14 Jan 2012, John Collins Correct bug in parse_quotes
-##     12 Jan 2012, John Collins $success_cmd, $compiling_cmd, $failure_cmd
-##                                  allow actions (e.g., to set window title)
-##                                  after successful compilation, before 
-##                                  compilation, and after failure, in -pvc mode
-##                               Thanks to Aasmud Ervik (12 Jan 2012)
-##      2 Jan 2012, John Collins Add MikTeX-specific options to pass-through list
-##                               Remove redundancy of subroutines rdb_ext_cmd and rdb_ext_cmd1
-##                               In rdb_one_file, give &$file_act null argument list
-##     30 Dec 2011 STILL NEED TO DOCUMENT next items
-##     30 Dec 2011, John Collins Add nostart to possible keywords in commands
-##                               Insert start before command called from view
-##     24 Dec 2011, John Collins Add -xelatex option
-##                               Change OS-X defaults for viewers.
-##     21 Dec 2011, John Collins Add options reproducing options of (pdf)latex
-##     21 Dec 2011, John Collins Add -latexoption=... option
-##     20 Dec 2011, John Collins Command specification string can start
-##                               with "include routine" to invoke a Perl
-##                               subroutine instead of an external cmd.
-##     19 Dec 2011, John Collins Recorder option is now on by default.
-##     13 Dec 2011, John Collins Add -M -MP and -MF options, like gcc.
-##      9 Dec 2011, John Collins Use OS-dependent search path separator when
-##                                  when manipulating TEXINPUTS, etc.
-##                               Correct treatment of current directory
-##                                  when modifying TEXINPUTS, etc
+##     12 Aug 2012  John Collins  V. 4.33b
+##                                Improve text displayed by -showextraoptions
+##      8 Aug 2012  John Collins  V. 4.33a
+##                                Fix problem that with Cygwin,
+##                                   latexmk runs very slowly, because 
+##                                   subroutine good_cwd() runs the
+##                                   program cygpath on every
+##                                   invocation.  Solution: cach cwd.
+##      6 Aug 2012  John Collins  Version number to 4.33
+##      4 Aug 2012  John Collins  Further fixes of filename treatment:
+##                                   normalize_filename routine to remove
+##                                   string for current directory, and
+##                                   convert '\' directory separator to '/'
+##                                   (Note MiKTeX uses BOTH, see e.g., its
+##                                   log file, so MSWin systems are NOT
+##                                   guaranteed to be consistent.  But latexmk
+##                                   needs to treat filenames differing by
+##                                   change of directory separator as equivalent.
+##                                   Warning: SOME MWWin programs, e.g., current
+##                                   cmd.exe (as tested yesterday on PSU computer
+##                                   in library) do not accept '/' as directory
+##                                   separator, so it may be worth allowing conversion
+##                                   to '\' in executed files.)
+##                                Also improve running when $silent is on:
+##                                   don't print warnings about undefined references
+##                                   and citations, but simply display a summary, whose
+##                                   criterion for being shown had to be fixed.
+##      3 Aug 2012  John Collins  Fix finding of files in aux-dir
+##      1 Aug 2012  John Collins  Handle aliasing of cwd in output file
+##                                to avoid unnecessary warnings about
+##                                actual o/p file .ne. expected with MiKTeX
+##                                Clean up subroutine names:
+##                       parse_logB to parse_log
+##                       make_preview_continuousB to make_preview_continuous
+##                       rdb_find_new_filesB to rdb_find_new_files
+##                       rdb_set_dependentsA to rdb_set_dependents
+##                       rdb_makeB to rdb_make
+##                       rdb_makeB1 to rdb_make1
+##                       rdb_one_depA to rdb_one_dep
+##                       rdb_recurseA to rdb_recurse
+##                       rdb_update_filesA to rdb_update_files
+##     28, 29, 30 Jul 2012  John Collins  Try better file-name normalization in reading fls file.
+##     18 Jul 2012  John Collins  Change ver. to 4.32d.
+##                                Merge changes from 29 June 2012:
+##                                Add $dvipdf_silent_switch
+##     17 Jul 2012  John Collins  Try better fix for error/rerun and retest issue.
+##                                Now rdb_primary_run doesn't have so many complications
+##                                rdb_makeB's PASS loop is simpler
+##                                rdb_submakeB is unneeded.
+##                                See the lines starting #??
+##                                See comments nearby
+##                                Compare w/ v. 4.32a
+##                                V. 4.32b
+##     17 Jul 2012  John Collins  Fix problem that after finding error in a run
+##                                  of (pdf)latex, latexmk didn't check for
+##                                  changed files before giving up.
+##                                  To do that, I reverted some changes in
+##                                  rdb_primary_run to pre v. 4.31
+##                                Remove unused code
+##                                v. 4.32a
+##      8 May 2012  John Collins  Possibility to substitute backslashes for
+##                                  forward slashes in file and directory
+##                                  names in executed command line,
+##                                  for MSWin
+##      5 May 2012  John Collins  Comment on ctrl/C handling in WAIT loop
 ##
 ##   1998-2010, John Collins.  Many improvements and fixes.
 ##       See CHANGE-log.txt for full list, and CHANGES for summary
@@ -542,6 +579,12 @@ $makeindex_silent_switch  = '-q';
 
 ## Command to convert dvi file to pdf file directly:
 $dvipdf  = 'dvipdf %O %S %D';
+# N.B. Standard dvipdf runs dvips and gs with their silent switch, so for
+#      standard dvipdf $dvipdf_silent_switch is unneeded, but innocuous. 
+#      But dvipdfmx can be used instead, and it has a silent switch (-q).
+#      So implementing $dvipdf_silent_switch is useful.
+
+$dvipdf_silent_switch  = '-q';
 
 ## Command to convert dvi file to ps file:
 $dvips  = 'dvips %O -o %D %S';
@@ -575,6 +618,10 @@ $print_type = 'ps';     # When printing, print the postscript file.
 ##   possibilities. 
 ## Current tex's treat extensions like UNIX teTeX:
 $extension_treatment = 'unix';
+
+## Substitute backslashes in file and directory names for
+##  MSWin command line
+$MSWin_back_slash = 1;
 
 $dvi_update_signal = undef;
 $ps_update_signal = undef;
@@ -1046,8 +1093,11 @@ $dependents_list = 0;   # Whether to display list(s) of dependencies
 $dependents_phony = 0;  # Whether list(s) of dependencies includes phony targets
                         # (as with 'gcc -MP').
 $deps_file = '-';       # File for dependency list output.  Default stdout.
-$rules_list = 0;   # Whether to display list(s) of dependencies
-@dir_stack = (); # Stack of pushed directories.
+$rules_list = 0;        # Whether to display list(s) of dependencies
+@dir_stack = ();        # Stack of pushed directories, each of form of 
+			# pointer to array  [ cwd, good_cwd ], where
+			# good_cwd differs from cwd by being converted
+			# to native MSWin path when cygwin is used.
 $cleanup_mode = 0;      # No cleanup of nonessential LaTex-related files.
                         # $cleanup_mode = 0: no cleanup
                         # $cleanup_mode = 1: full cleanup 
@@ -1097,6 +1147,10 @@ $reference_changed = 0;
 $bad_reference = 0;
 $bad_citation = 0;
 
+# Cache of expensive-to-compute state variables, e.g., cwd in form
+# fixed to deal with cygwin issues.
+%cache = ();
+&cache_good_cwd;
 
 # Set search paths for includes.
 # Set them early so that they can be overridden
@@ -1229,7 +1283,7 @@ if (!$BIBINPUTS) { $BIBINPUTS = '.'; }
 %primaries = ();    # Hash of rules for primary part of make.  Keys are 
                     # currently 'latex', 'pdflatex' or both.  Value is
                     # currently irrelevant.  Use hash for ease of lookup
-   # Make remove this later, if use makeB
+   # Make remove this later, if use rdb_makeB
 
 # Hashes, whose keys give names of particular kinds of rule.  We use
 # hashes for ease of lookup.
@@ -1530,10 +1584,17 @@ while ($_ = $ARGV[0])
   elsif (/^-rules$/ ) { $rules_list = 1; }
   elsif (/^-norules$/ || /^-rules-$/ ) { $rules_list = 0; }
   elsif (/^-showextraoptions$/) {
-     print "List of extra latex and pdflatex options recognized by $my_name:\n",
+     print "List of extra latex and pdflatex options recognized by $my_name.\n",
            "These are passed as is to (pdf)latex.  They may not be recognized by\n",
            "particular versions of (pdf)latex.  This list is a combination of those\n",
-           "for TeXLive and MikTeX.\n\n";
+           "for TeXLive and MikTeX.\n",
+           "\n",
+           "Note that in addition to the options in this list, there are several\n",
+           "options known to the (pdf)latex programs that are also recognized by\n",
+           "latexmk and trigger special behavior by latexmk.  Since these options\n",
+           "appear in the main list given by running 'latexmk --help', they do not\n",
+           "appear in the following list\n",
+           "\n";
      foreach $option ( sort( keys %allowed_latex_options, keys %allowed_latex_options_with_arg ) ) {
        if (exists $allowed_latex_options{$option} ) { print "   $allowed_latex_options{$option}\n"; }
        if (exists $allowed_latex_options_with_arg{$option} ) { print "   $allowed_latex_options_with_arg{$option}\n"; }
@@ -1642,6 +1703,11 @@ if ( ($out_dir ne '') && ($aux_dir eq '') ){
     $aux_dir = $out_dir;
 }
 
+foreach ($out_dir, $aux_dir) {
+   # Remove aliases to cwd:
+   $_ = normalize_filename( $_ );
+   if ($_ eq '.' ) { $_ = ''; }
+}
 # Versions terminating in directory/path separator
 $out_dir1 = $out_dir;
 $aux_dir1 = $aux_dir;
@@ -1794,6 +1860,7 @@ if ( $silent ) {
     add_option( "$biber_silent_switch", \$biber );
     add_option( "$bibtex_silent_switch", \$bibtex );
     add_option( "$makeindex_silent_switch", \$makeindex );
+    add_option( "$dvipdf_silent_switch", \$dvipdf );
     add_option( "$dvips_silent_switch", \$dvips );
 }
 
@@ -2031,10 +2098,10 @@ foreach $filename ( @file_list )
             );
         }
         else {
-            # No fdb file, so do inferior job by parse_logB
+            # No fdb file, so do inferior job by parse_log
             print "$My_name: Examining log file '$log_name' for generated files...\n";
 
-            # Variables set by parse_logB. Can I remove them
+            # Variables set by parse_log. Can I remove them
             local %generated_log = ();
 	    local %dependents = ();    # Maps files to status.  Not used here.
 	    local @bbl_files = ();     # Not used here.
@@ -2043,7 +2110,7 @@ foreach $filename ( @file_list )
 			 # Maps output file created and read by (pdf)latex
 			 #    to source file of conversion.
 	    local $primary_out = '';   # Actual output file (dvi or pdf). Not used here.
-            &parse_logB;
+            &parse_log;
             %other_generated = %generated_log;
 	}
 
@@ -2097,7 +2164,7 @@ foreach $filename ( @file_list )
     if ($cleanup_only) { next FILE; }
 
 
-#??? The following are not needed if use makeB.  
+#??? The following are not needed if use rdb_make.  
 #    ?? They may be set too early?
 # Arrays and hashes for picking out accessible rules.
 # Distinguish rules for making files and others
@@ -2140,7 +2207,7 @@ foreach $filename ( @file_list )
         # previous run.  So use filetime criterion for make
         # instead of change from previous run, until we have
         # done our own make.
-	rdb_recurseA( [keys %possible_primaries],
+	rdb_recurse( [keys %possible_primaries],
 		      sub{ if ( $$Ptest_kind == 1 ) { $$Ptest_kind = 3;} }
         );
         if ( -e $log_name ) {
@@ -2158,7 +2225,7 @@ foreach $filename ( @file_list )
 
     if ($go_mode) {
         # Force everything to be remade.
-	rdb_recurseA( [keys %requested_filerules], sub{$$Pout_of_date=1;}  );
+	rdb_recurse( [keys %requested_filerules], sub{$$Pout_of_date=1;}  );
     }
 
 
@@ -2170,7 +2237,7 @@ foreach $filename ( @file_list )
     #************************************************************
 
     if ( $preview_continuous_mode ) { 
-        &make_preview_continuousB; 
+        &make_preview_continuous; 
         # Will probably exit by ctrl/C and never arrive here.
         next FILE;
     }
@@ -2191,7 +2258,7 @@ foreach $filename ( @file_list )
     #Initialize failure flags now.
     $failure = 0;
     $failure_msg = '';
-    $failure = rdb_makeB( keys %requested_filerules );
+    $failure = rdb_make( keys %requested_filerules );
     if ($failure > 0) { next FILE; }
     rdb_for_some( [keys %one_time], \&rdb_run1 );
 } # end FILE
@@ -2718,7 +2785,7 @@ sub find_basename
 
 #************************************************************
 
-sub make_preview_continuousB {
+sub make_preview_continuous {
     local @changed = ();
     local @disappeared = ();
     local @no_dest = ();       # Non-existent destination files
@@ -2726,7 +2793,6 @@ sub make_preview_continuousB {
     local @rules_to_apply = ();
 
     local $failure = 0;
-    local $runs = 0;
     local %rules_applied = ();
     local $updated = 0;
 
@@ -2796,7 +2862,7 @@ CHANGE:
         if ($compiling_cmd) {
 	    Run_subst( $compiling_cmd );
         }
-        $failure = rdb_makeB( @targets );
+        $failure = rdb_make( @targets );
 
 ##     warn "=========Viewer PID = $$Pviewer_process; updated=$updated\n";
 
@@ -2878,6 +2944,10 @@ CHANGE:
             print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
         }
         $waiting = 1; if ($diagnostics) { warn "WAITING\n"; }
+# During waiting for file changes, handle ctrl/C and ctrl/break here, rather than letting
+#   system handle them by terminating script (and any script that calls it).  This allows,
+#   for example, the clean up code in the following command line to work:
+#          latexmk -pvc foo; cleanup;
         &catch_break;
         $have_break = 0;
   WAIT: while (1) {
@@ -2894,7 +2964,7 @@ CHANGE:
            $processing_time1 = processing_time();
         # Does this do this job????
            local $new_files = 0;
-           rdb_for_some( [keys %current_primaries], sub{ $new_files += &rdb_find_new_filesB } );
+           rdb_for_some( [keys %current_primaries], sub{ $new_files += &rdb_find_new_files } );
            if ($new_files > 0) {
 	       warn "$My_name: New file(s) found.\n";
                last WAIT; 
@@ -2908,7 +2978,7 @@ CHANGE:
      }
      $waiting = 0; if ($diagnostics) { warn "NOT       WAITING\n"; }
   } #end infinite_loop CHANGE:
-} #END sub make_preview_continuousB
+} #END sub make_preview_continuous
 
 #************************************************************
 
@@ -3488,40 +3558,25 @@ sub check_bibtex_log {
 
 #**************************************************
 
-sub force_directory {
-    #  Usage, force_directory( dir, filename )
-    #  If filename contains no path component, return concatenation
-    #     of dir and filename,
-    #  else return filename
+sub normalize_force_directory {
+    #  Usage, normalize_force_directory( dir, filename )
+    #  Perform the following operations:
+    #    Clean filename
+    #    If filename contains no path component, insert dir in front
+    #    Normalize filename
+    #  Return result
     my $default_dir = $_[0];
-    my $filename = $_[1];
+    my $filename = clean_filename( $_[1] );
     my ($base_name, $path ) = fileparse( $filename );
-    if ( $path ne '' ) { $filename = "$default_dir$filename"; }
-    return $filename;
-}
+    if ( $base_name eq $filename ) {
+       $filename = "$default_dir$filename";
+    }
+    return normalize_filename( $filename );
+} #END normalize force_directory
 
 # ------------------------------
 
-sub clean_file_name {
-    # Convert quoted filename as found in log file to filename without quotes
-    # Allows arbitrarily embedded double-quoted substrings, includes the
-    # cases
-    # 1. `"string".ext', which arises e.g., from \jobname.bbl:
-    #    when the base filename contains spaces, \jobname has quotes.
-    #    and from \includegraphics with basename specified.
-    #    Also deals with filenames written by asymptote.sty
-    # 2. Or "string.ext" from \includegraphcs with basename and ext specified.
-    #    and from MiKTeX logfile for input files with spaces. 
-    # Doubled quotes (e.g., A""B) don't get converted.
-    # Neither do unmatched quotes.
-    my $filename = $_[0];
-    while ( $filename =~ s/^([^\"]*)\"([^\"]+)\"(.*)$/$1$2$3/ ) {}
-    return $filename;
-}
-
-# ------------------------------
-
-sub parse_logB {
+sub parse_log {
 # Scan log file for: dependent files
 #    reference_changed, bad_reference, bad_citation
 # Return value: 1 if success, 0 if no log file.
@@ -3660,8 +3715,9 @@ LINE:
 	        # First line OK
                 next LINE;
             } else {
-                warn "$My_name: Error on first line of '$log_name'.  ".
-                    "This is apparently not a TeX log file.\n";
+                warn "$My_name: Error on first line of '$log_name'.\n".
+                    "This is apparently not a TeX log file.  ",
+		    "The first line is:\n$_\n";
                 $failure = 1;
                 $failure_msg = "Log file '$log_name' appears to have wrong format.";
                 return 0;
@@ -3674,7 +3730,7 @@ LINE:
                 if ( ($block_type eq 'conversion') 
                      && /^\($current_pkg\)\s+Output file: <([^>]+)>/ ) 
                 {
-		    $delegated_output = $1;
+		    $delegated_output = normalize_clean_filename($1);
                 }
 		next LINE;
 	    }
@@ -3688,20 +3744,20 @@ LINE:
 	}
         # Check for changed references, bad references and bad citations:
         if (/Rerun to get/) { 
-            warn "$My_name: References changed.\n";
+            warn "$My_name: References changed.\n" if ! $silent;
             $reference_changed = 1;
         } 
 	if (/LaTeX Warning: (Reference[^\001]*undefined)./) { 
-	    warn "$My_name: $1 \n";
-	    $bad_reference = 1;
+	    warn "$My_name: $1 \n" unless $silent;
+	    $bad_reference++;
 	} 
 	if (/LaTeX Warning: (Citation[^\001]*undefined)./) {
-	    warn "$My_name: $1 \n";
-	    $bad_citation = 1;
+	    warn "$My_name: $1 \n" unless $silent;
+	    $bad_citation++;
 	}
         if (/Package natbib Warning: (Citation[^\001]*undefined)./) {
-            warn "$My_name: $1 \n";
-            $bad_citation = 1;
+            warn "$My_name: $1 \n" unless $silent;
+            $bad_citation++;
 	}
 	if ( /^Document Class: / ) {
 	    # Class sign-on line
@@ -3717,7 +3773,7 @@ LINE:
 	    next LINE;
 	}
 	if ( /^Output written on\s+(.*)\s+\(\d+\s+page/ ) {
-            $primary_out = clean_file_name($1);
+            $primary_out = normalize_clean_filename($1);
 	    warn "$My_name: Log file says output to '$primary_out'\n"
 	       unless $silent;
 	    next LINE;
@@ -3734,15 +3790,15 @@ LINE:
                 #  When (pdf)latex is run with an -output-directory 
                 #    or an -aux_directory, the file name does not contain
                 #    the output path; fix this, after removing quotes:
-            $generated_log{ force_directory( $aux_dir1, clean_file_name($1) )} = 1;
+            $generated_log{normalize_force_directory( $aux_dir1, $1 )} = 1;
 	    next LINE;
 	}
         # Test for conversion produced by package:
 	if ( /^Package (\S+) Info: Source file: <([^>]+)>/ ) {
 	    # Info. produced by epstopdf (and possibly others) 
             #    about file conversion
-            $current_pkg = clean_file_name($1);
-            $delegated_source = clean_file_name($2);
+            $current_pkg = normalize_clean_filename($1);
+            $delegated_source = normalize_clean_filename($2);
             $block_type = 'conversion';
 	    next LINE;
 	}
@@ -3774,7 +3830,7 @@ LINE:
                 #  When (pdf)latex is run with an -output-directory 
                 #    or an -aux_directory, the file name does not contain
                 #    the output path; fix this, after removing quotes:
-	    $idx_file = force_directory( $aux_dir1, clean_file_name($idx_file) );
+	    $idx_file = normalize_force_directory( $aux_dir1, $idx_file );
 	    my ($idx_base, $idx_path, $idx_ext) = fileparseA( $idx_file );
 	    $idx_base = $idx_path.$idx_base;
             $idx_file = $idx_base.$idx_ext;
@@ -3801,7 +3857,7 @@ LINE:
                 #  When (pdf)latex is run with an -output-directory 
                 #    or an -aux_directory, the file name does not contain
                 #    the output path; fix this, after removing quotes:
-	    my $bbl_file = force_directory( $aux_dir1, clean_file_name($1) );
+	    my $bbl_file = normalize_force_directory( $aux_dir1, $1 );
 	    warn "$My_name: Non-existent bbl file '$bbl_file'\n $_\n";
     	    $dependents{$bbl_file} = 0;
 	    push @bbl_files, $bbl_file;
@@ -3809,27 +3865,28 @@ LINE:
 	}
 	foreach my $pattern (@file_not_found) {
 	    if ( /$pattern/ ) {
-		my $file = clean_file_name($1);
-                my ($base, $path) = fileparse( $file );
+                my $file = clean_filename($1);
 		warn "$My_name: Missing input file: '$file' from line\n  '$_'\n"
 		    unless $silent;
-		$dependents{$file} = 0;
-                if (  $aux_dir && ( ($path eq './') || ($path eq '') )  ) {
-                      # This allows for the possibility that latex generated
+		$dependents{normalize_filename($file)} = 0;
+		my $file1 = $file;
+                if ( $aux_dir ) {
+                      # Allow for the possibility that latex generated
                       # a file in $aux_dir, from which the missing file can
                       # be created by a cusdep (or other) rule that puts
                       # the result in $out_dir.  If the announced missing file
                       # has no path, then it would be effectively a missing
                       # file in $aux_dir, with a path.  So give this alternate
                       # location.
-		    $dependents{$aux_dir1.$file} = 0;
+                      my $file1 = normalize_force_directory( $aux_dir1, $file );
+		      $dependents{$file1} = 0;
 		}
 		next LINE;
 	    }
 	}
 	if ( /^File: (.+) Graphic file \(type / ) {
 	    # First line of message from includegraphics/x
-	    $dependents{clean_file_name($1)} = 1;
+	    $dependents{normalize_clean_filename($1)} = 1;
 	    next LINE;
 	}
 	# Now test for generic lines to ignore, only after special cases!
@@ -3958,6 +4015,7 @@ LINE:
 	    }
 	INCLUDE_NAME:
             foreach my $include_name (@new_includes) {
+                $include_name = normalize_filename( $include_name );
 	        my ($base, $path, $ext) = fileparseB( $include_name );
                 if ( ($path eq './') || ($path eq '.\\') ) {
                     $include_name = $base.$ext;
@@ -4145,7 +4203,7 @@ CANDIDATE_PAIR:
         }
     }
     return 1;
-} #END parse_logB
+} #END parse_log
 
 #************************************************************
 
@@ -4153,26 +4211,95 @@ sub parse_fls {
     my ($fls_name, $Pinputs, $Poutputs ) = @_;
     %$Pinputs = %$Poutputs = ();
     my $fls_file = new FileHandle;
+    # Make a note of current working directory
+    # I'll update it from the fls file later
+    # Currently I don't use this, but it would be useful to use
+    # this when testing prefix for cwd in a filename, by
+    # giving (pdf)latex's best view of the cwd.  Note that the
+    # value given by the cwd() function may be mangled, e.g., by cygwin
+    # compared with native MSWin32.
+    my $cwd = good_cwd();
     if ( ! open ($fls_file, "<$fls_name") ) {
         return 1;
     }
     foreach $_ ( <$fls_file> ) {
-        if (/^\s*INPUT\s+(.*)\s+$/) {
-            my $file = $1;
-            # Take precautions against aliasing of ./foo and foo:
-            $file =~ s(^\./)();
-	    $$Pinputs{$file} = 1;
+        if (/^\s*PWD\s+(.*)\s+$/) {
+            $cwd = $1;
+        }
+        elsif (/^\s*INPUT\s+(.*)\s+$/) {
+            # Take precautions against aliasing of foo, ./foo and other possibilities for cwd.
+	    $$Pinputs{ normalize_filename( $1 )} = 1;
 	}
         elsif (/^\s*OUTPUT\s+(.*)\s+$/) {
-            my $file = $1;
-            # Take precautions against aliasing of ./foo and foo:
-            $file =~ s(^\./)();
-	    $$Poutputs{$file} = 1;
+            # Take precautions against aliasing of foo, ./foo and other possibilities for cwd.
+	    $$Poutputs{ normalize_filename( $1 )} = 1;
 	}
     }
     close( $fls_file );
     return 0;
 } #END parse_fls
+
+#************************************************************
+
+sub clean_filename {
+    # Convert quoted filename as found in log file to filename without quotes
+    # Allows arbitrarily embedded double-quoted substrings, includes the
+    # cases
+    # 1. `"string".ext', which arises e.g., from \jobname.bbl:
+    #    when the base filename contains spaces, \jobname has quotes.
+    #    and from \includegraphics with basename specified.
+    #    Also deals with filenames written by asymptote.sty
+    # 2. Or "string.ext" from \includegraphcs with basename and ext specified.
+    #    and from MiKTeX logfile for input files with spaces. 
+    # Doubled quotes (e.g., A""B) don't get converted.
+    # Neither do unmatched quotes.
+    my $filename = $_[0];
+    while ( $filename =~ s/^([^\"]*)\"([^\"]+)\"(.*)$/$1$2$3/ ) {}
+    return $filename;
+}
+
+# ------------------------------
+
+sub normalize_filename {
+   # Remove various forms for cwd at start of filename.
+   # Convert to have directory separator = '/' only
+   my $file = $_[0];
+   my $file1 = $file;   # Saved original value
+   my $cwd = good_cwd();
+   # Normalize files to use / to separate directory components:
+   # (Note both / and \ are allowed under MSWin.)
+   $cwd =~ s(\\)(/)g;
+   $file =~ s(\\)(/)g;
+
+   # Remove current directory string:
+   $file =~ s(^\./)();
+   $file =~ s(^$cwd/)();
+
+   return $file;
+}
+
+# ------------------------------
+
+sub normalize_clean_filename {
+    # Remove quotes around filename --- see clean_filename --- as from log file.
+    # Then remove any string for cwd, and convert to use '/' for directory separator,
+    # (and any other standardization) done by normalize_filename.
+    return normalize_filename( clean_filename( $_[0] ));
+}
+
+#************************************************************
+
+sub OS_preferred_filename {
+   # Usage: OS_preferred_filename(name)
+   # Returns filename with directory separator '/' converted
+   # to preferred conventions for current OS.
+   # Currently implemented: only '\' for MSWin32
+   my $file = $_[0];
+   if ( $^O eq 'MSWin32' ) {
+      $file =~ s(/)(\\)g;
+    }
+   return $file;
+}
 
 #************************************************************
 
@@ -4570,7 +4697,7 @@ LINE:
     }
     undef $in_handle;
     # Set cus dependencies.
-    &rdb_set_dependentsA( keys %rule_db );
+    &rdb_set_dependents( keys %rule_db );
 
 #?? Check from_rules exist.
 
@@ -4673,7 +4800,7 @@ sub rdb_set_latex_deps {
     # The following are also returned, but are global, to be used by caller
     # $reference_changed, $bad_reference $bad_citation
 
-    &parse_logB;
+    &parse_log;
     my $fls_file = "$aux_dir1$root_filename.fls";
     if ($recorder && test_gen_file($fls_file) ) {
         parse_fls( $fls_file, \%source_fls, \%generated_fls );
@@ -4681,6 +4808,7 @@ sub rdb_set_latex_deps {
             $dependents{$_} = 4;
 	}
         foreach (keys %generated_fls) {
+            $_ = normalize_filename($_);
             rdb_add_generated( $_ );
             if ( exists($dependents{$_}) ) {
                $dependents{$_} = 6;
@@ -4696,7 +4824,7 @@ sub rdb_set_latex_deps {
     #         missing input file might be correctable by a run of some
     #         other program whose running is provoked AFTER a run of
     #         (pdf)latex, we'll set a diagnostic and leave it to the
-    #         rdb_makeB to handle after all circular dependencies are
+    #         rdb_make to handle after all circular dependencies are
     #         resolved. 
     #   2.  The output file might be of a different kind than expected
     #         (i.e., dvi instead of pdf, or vv).  This could
@@ -4722,7 +4850,7 @@ sub rdb_set_latex_deps {
             rdb_create_rule( $from_rule, 'external', $makeindex, '', 1, 
                              $idx_file, $ind_file, $ind_base, 1, 0, 0 );
             print "  ===Source file '$ind_file' for '$rule'\n"
-                  if ($diagnostics > -1);
+                  if ($diagnostics);
             rdb_ensure_file( $rule, $ind_file, $from_rule );
 	}
         # Make sure the .ind file is treated as a detected source file;
@@ -4842,7 +4970,7 @@ NEW_SOURCE:
         }
     }
 
-    my @more_sources = &rdb_set_dependentsA( $rule );
+    my @more_sources = &rdb_set_dependents( $rule );
     my $num_new = $#more_sources + 1;
     foreach (@more_sources) { 
 	$dependents{$_} = 4;
@@ -4894,8 +5022,8 @@ sub test_gen_file {
 
 #************************************************************
 
-sub rdb_find_new_filesB {
-    # Call: rdb_find_new_filesB
+sub rdb_find_new_files {
+    # Call: rdb_find_new_files
     # Assumes rule context for primary rule.
     # Deal with files which were missing and for which a method
     # of finding them has become available:
@@ -4987,30 +5115,30 @@ MISSING_FILE:
 	}
     }
     return $found;
-} # END rdb_find_new_filesB
+} # END rdb_find_new_files
 
 #************************************************************
 
-sub rdb_set_dependentsA {
-    # Call rdb_set_dependentsA( rules ...)
+sub rdb_set_dependents {
+    # Call rdb_set_dependents( rules ...)
     # Returns array (sorted), of new source files.
     local @new_sources = ();
     local @deletions = ();
 
 # Shouldn't recurse.  The definite rules to be examined are given.
-    rdb_for_some( [@_],  0, \&rdb_one_depA );
-# OLD    rdb_recurseA( [@_],  0, \&rdb_one_depA );
+    rdb_for_some( [@_],  0, \&rdb_one_dep );
+# OLD    rdb_recurse( [@_],  0, \&rdb_one_dep );
     foreach (@deletions) {
 	my ($rule, $file) = @$_;
         rdb_remove_files( $rule, $file );
     }
     &rdb_make_links;
     return uniqs( @new_sources );
-} #END rdb_set_dependentsA
+} #END rdb_set_dependents
 
 #************************************************************
 
-sub rdb_one_depA {
+sub rdb_one_dep {
     # Helper for finding dependencies.  One case, $rule and $file given
     # Assume file (and rule) context for DESTINATION file.
 
@@ -5019,7 +5147,7 @@ sub rdb_one_depA {
     if ( (! exists $possible_primaries{$rule}) && ($rule !~ /^cusdep/) ) {
         return;
     }
-#print "=============ONE_DEPA: '$rule' '$file'\n";
+#print "=============ONE_DEP: '$rule' '$file'\n";
     local $new_dest = $file;
     my ($base_name, $path, $toext) = fileparseA( $new_dest );
     $base_name = $path.$base_name;
@@ -5141,7 +5269,7 @@ DEP:
 	   }
 	}
     }
-} #END rdb_one_depA
+} #END rdb_one_dep
 
 #************************************************************
 
@@ -5247,7 +5375,7 @@ sub rdb_accessible {
     # Call: rdb_accessible( rule, ...)
     # Returns array of rules accessible from the given rules
     local @accessible = ();
-    rdb_recurseA( [@_], sub{ push @accessible, $rule; } );
+    rdb_recurse( [@_], sub{ push @accessible, $rule; } );
     return @accessible;
 } #END rdb_accessible
 
@@ -5255,8 +5383,8 @@ sub rdb_accessible {
 #************************************************************
 #************************************************************
 
-sub rdb_makeB {
-    # Call: rdb_makeB( target, ... )
+sub rdb_make {
+    # Call: rdb_make( target, ... )
     # Makes the targets and prerequisites.  
     # Leaves one-time rules to last.
     # Does appropriate repeated makes to resolve dependency loops
@@ -5416,7 +5544,7 @@ sub rdb_makeB {
     local $failure = 0;        # General accumulated error flag
     local $missing_dvi_pdf = ''; # Did primary run fail to make its output file? 
     local $runs = 0;
-    local $too_many_runs = 0;
+    local $too_many_passes = 0;
     local %rules_applied = ();
     my $retry_msg = 0;         # Did I earlier say I was going to attempt 
                                # another pass after a failure?
@@ -5437,25 +5565,14 @@ sub rdb_makeB {
 	    if ($diagnostics) {
                 print "MakeB: doing pre_primary and primary...\n";
             }
-            rdb_for_some( [@pre_primary, $primary], \&rdb_makeB1 );
-            if ( ($runs > 0) && ! $too_many_runs ) {
-                $retry_msg = 0;
-                if ( $failure && $newrule_nofile ) { 
-                    $retry_msg = 1;
-                    print "$My_name: Error on run, but found possibility to ",
-                          "make new source files\n";
-                    next PASS;
-		}
-                elsif ( $force_mode || (! $failure) ) {
-                    next PASS;
-		}
+            rdb_for_some( [@pre_primary, $primary], \&rdb_make1 );
+            if ( ($runs > 0) && ! $too_many_passes ) {
+                next PASS;
             }
-            elsif ($runs == 0) {
+            if ($runs == 0) {
                 # $failure not set on this pass, so use value from previous pass:
                 $failure = $previous_failure;
-                if ($retry_msg) {
-                    print "But in fact no new files made\n";
-		}
+                if ($failure && !$force_mode ) { last PASS; }
 	    }
             if ( $missing_dvi_pdf ) { 
                # No output from primary, after completing circular dependence
@@ -5463,19 +5580,13 @@ sub rdb_makeB {
                $failure = 1; 
                last PASS;
             }    
-            if ($failure && !$force_mode ) { last PASS; }
 	    if ($diagnostics) {
   	        print "MakeB: doing post_primary...\n";
 	    }
-            rdb_for_some( [@post_primary], \&rdb_makeB1 );
-            if ($failure) { last PASS; }
-            if ($runs > 0) {
-               # If something was run, repeat the loop to test for any changes
-               # that entail further processing.
-               next PASS;
-            }
-            # Get here if nothing was run.
-            last PASS;
+            rdb_for_some( [@post_primary], \&rdb_make1 );
+            if ($runs == 0) {
+                last PASS;
+	    }
 	}
 	continue {
             # Re-evaluate rule classification and accessibility,
@@ -5487,18 +5598,11 @@ sub rdb_makeB {
             &rdb_make_links;
 	}
     }
-    rdb_for_some( [@one_time], \&rdb_makeB1 );
+    rdb_for_some( [@one_time], \&rdb_make1 );
     rdb_write( $fdb_name );
 
-    if (! $silent) { 
-        # Diagnose of the runs
-        if ( $#{keys %rules_applied }  > -1 ) {
-            print "$My_name: $runs runs.  Rules applied:\n";
-            foreach (sort keys %rules_applied) {
-		print "    '$_'\n";
-	    }
-	}
-	elsif ($failure && $force_mode) {
+    if (! $silent) {
+	if ($failure && $force_mode) {
             print "$My_name: Errors, in force_mode: so I tried finishing targets\n";
 	}
 	elsif ($failure) {
@@ -5511,7 +5615,7 @@ sub rdb_makeB {
 	}
     }
     return $failure;
-} #END rdb_makeB
+} #END rdb_make
 
 #-------------------
 
@@ -5556,9 +5660,9 @@ sub rdb_show_rule_errors {
 
 #-------------------
 
-sub rdb_makeB1 {
-    # Call: rdb_makeB1
-    # Helper routine for rdb_makeB.
+sub rdb_make1 {
+    # Call: rdb_make1
+    # Helper routine for rdb_make.
     # Carries out make at level of given rule (all data available).
     # Assumes contexts for recursion, make, and rule, and
     # assumes that source files for the rule are to be considered
@@ -5672,7 +5776,7 @@ sub rdb_makeB1 {
              "without getting stable files\n";
         warn "     Use the -f option to force complete processing.\n"
             if (! $force_mode);
-        $too_many_runs = 1;
+        $too_many_passes = 1;
         # Treat rule as completed, else in -pvc mode get infinite reruns:
         $$Pout_of_date = 0;
         $failure = 1;
@@ -5723,7 +5827,7 @@ sub rdb_makeB1 {
             # For a primary rule, i.e., (pdf)latex, not to produce the 
             #    expected output file may not be an error condition.  
             # Diagnostics were handled in parsing the log file.
-            # Special action in main loop in rdb_makeB
+            # Special action in main loop in rdb_make
             $missing_dvi_pdf = $$Pdest;
         }
         elsif ($return == -2) {
@@ -5743,20 +5847,20 @@ sub rdb_makeB1 {
 # !!??        $failure_msg = $$Plast_message;
         
     }
-}  #END rdb_makeB1
+}  #END rdb_make1
 
 #************************************************************
 
-sub rdb_submakeB {
-    # Call: rdb_submakeB
-    # Makes all the source files for a given rule.
-    # Assumes contexts for recursion, for make, and rule.
-    %visited = %visited_at_rule_start;
-    local $failure = 0;  # Error flag
-    my @v = keys %visited;
-    rdb_do_files( sub{ rdb_recurse_rule( $$Pfrom_rule, 0,0,0, \&rdb_makeB1 ) } );
-    return $failure;
-}  #END rdb_submakeB
+#??sub rdb_submake {
+#??    # Call: rdb_submake
+#??    # Makes all the source files for a given rule.
+#??    # Assumes contexts for recursion, for make, and rule.
+#??    %visited = %visited_at_rule_start;
+#??    local $failure = 0;  # Error flag
+#??    my @v = keys %visited;
+#??    rdb_do_files( sub{ rdb_recurse_rule( $$Pfrom_rule, 0,0,0, \&rdb_make1 ) } );
+#??    return $failure;
+#??}  #END rdb_submake
 
 #************************************************************
 
@@ -5783,7 +5887,7 @@ sub rdb_classify_rules {
     @post_primary = ();
     @one_time = ();
 
-    rdb_recurseA( \@requested_targets, \&rdb_classify1, 0,0, \&rdb_classify2 );
+    rdb_recurse( \@requested_targets, \&rdb_classify1, 0,0, \&rdb_classify2 );
 
     # Reverse, as tendency is to find last rules first.
     @pre_primary = reverse @pre_primary;
@@ -5878,7 +5982,7 @@ sub rdb_run1 {
 
     # Source file data, by definition, correspond to the file state just
     # before the latest run, and the run_time to the time just before the run:
-    &rdb_update_filesA;
+    &rdb_update_files;
     $$Prun_time = time;
     $$Pchanged = 0;       # No special changes in files
     $$Plast_result = 0;
@@ -6019,7 +6123,7 @@ sub rdb_dummy_run1 {
 
     # Source file data, by definition, correspond to the file state just before 
     # the latest run, and the run_time to the time just before the run:
-    &rdb_update_filesA;
+    &rdb_update_files;
     $$Prun_time = time;
     $$Pchanged = 0;       # No special changes in files
     $$Plast_result = 0;
@@ -6085,6 +6189,11 @@ sub Run_subst {
        '%Z' => $q.$out_dir1.$q,
        '%%' => '%'         # To allow literal %B, %R, etc, by %%B.
     );
+    if ( ($^O eq "MSWin32" ) && $MSWin_back_slash ) {
+	foreach ( '%R', '%B', '%T', '%S', '%D', '%Y', '%Z' ) {
+	    $subst{$_} =~ s(/)(\\)g;
+	}
+    }
 
     my @tokens = split /(%.)/, $ext_cmd;
     foreach (@tokens) {
@@ -6169,7 +6278,24 @@ sub rdb_primary_run {
     #   up-to-date:
     rdb_do_files( sub { if ($$Pcorrect_after_primary) {&rdb_update1;} } );
 
+#??    # There may be new source files, and the run may have caused
+#??    # circular-dependency files to be changed.  And the regular
+#??    # source files may have been updated during a lengthy run of
+#??    # latex.  So redo the makes for sources of the current rule:
+#??    my $submake_return = &rdb_submake;
+#??    &rdb_clear_change_record;
+#??    &rdb_flag_changes_here(0);
+#??    if ($$Pout_of_date && !$silent) { 
+#??        &rdb_diagnose_changes( "Rule '$rule': " );
+#??    }
+
     $updated = 1;    # Flag that some dependent file has been remade
+
+#??    # Fix the state of the files as of now: this will solve the
+#??    # problem of latex and pdflatex interfering with each other,
+#??    # at the expense of some non-optimality
+#??    #??  Check this is correct:
+#??    &rdb_update_files;
 
     if ( $diagnostics ) {
 	print "$My_name: Rules after run: \n";
@@ -6177,6 +6303,8 @@ sub rdb_primary_run {
     }
 
     $return = $return_latex;
+
+# ???? Is the following needed?
     if ($return_latex && $$Pout_of_date_user) {
        print "Error in (pdf)LaTeX, but change of user file(s), ",
              "so ignore error & provoke rerun\n"
@@ -6187,12 +6315,12 @@ sub rdb_primary_run {
     # Summarize issues that may have escaped notice:
     my @warnings = ();
     if ($bad_reference) {
-        push @warnings, "Latex could not resolve all references";
+        push @warnings, "Latex failed to resolve $bad_reference reference(s)";
     }
     if ($bad_citation) {
-        push @warnings, "Latex could not resolve all citations";
+        push @warnings, "Latex failed to resolve $bad_citation citation(s)";
     }
-    if ($#warnings > 0) {
+    if ($#warnings > -1) {
 	show_array( "$My_name: Summary of warnings:", @warnings );
     }
     return $return;
@@ -6296,7 +6424,7 @@ sub rdb_file_change1 {
 
 sub rdb_new_changes {
     &rdb_clear_change_record;
-    rdb_recurseA( [@_], sub{ &rdb_flag_changes_here(1); } );
+    rdb_recurse( [@_], sub{ &rdb_flag_changes_here(1); } );
     return ($#changed >= 0) || ($#no_dest >= 0) || ($#rules_to_apply >= 0);
 } #END rdb_new_changes
 
@@ -6416,8 +6544,8 @@ sub rdb_diagnose_changes {
 
 #************************************************************
 
-sub rdb_recurseA {
-    # Call: rdb_recurseA( rule | [ rules],
+sub rdb_recurse {
+    # Call: rdb_recurse( rule | [ rules],
     #                    \&rule_act1, \&file_act1, \&file_act2, 
     #                    \&rule_act2 )
     # The actions are pointers to subroutines, and may be null (0, or
@@ -6451,7 +6579,7 @@ sub rdb_recurseA {
 
     foreach $rule ( @heads ) { rdb_recurse_rule( $rule, @_ ); }
 
-} #END rdb_recurseA
+} #END rdb_recurse
 
 #************************************************************
 
@@ -6533,7 +6661,7 @@ sub rdb_recurse_rule {
     $depth++;
     # We may need to repeat actions on dependent rules, without being
     # blocked by the test on visited files.  So save %visited:
-    local %visited_at_rule_start = %visited;
+    # NOT CURRENTLY USED!!    local %visited_at_rule_start = %visited;
     # At end, the last value set for %visited wins.
     rdb_one_rule( $rule, $rule_act1, \&rdb_recurse_file, $rule_act2 );
     $depth--;
@@ -6797,8 +6925,8 @@ sub rdb_update_gen_files {
 
 #************************************************************
 
-sub rdb_update_filesA {
-    # Call: rdb_update_filesA
+sub rdb_update_files {
+    # Call: rdb_update_files
     # Assumes rule context.  Update source files of rule to current state.
     rdb_do_files( \&rdb_update1 );
 }
@@ -6897,7 +7025,7 @@ sub show_array {
 #  Then print rest of @_, one item per line preceeded by some space
     warn "$_[0]\n";
     shift;
-    if ($#_ >= 0) {  foreach (@_){ warn "  '$_'\n";} }
+    if ($#_ >= 0) {  foreach (@_){ warn "  $_\n";} }
     else { warn "  NONE\n"; }
 }
 
@@ -7131,6 +7259,7 @@ sub get_checksum_md5 {
     my $md5 = Digest::MD5->new;
     my $ignore_pattern = '';
 
+#&traceback;
 #warn "======= GETTING MD5: $source\n";
     if ( $source eq "" ) { 
        # STDIN:
@@ -7620,7 +7749,7 @@ sub Run {
 #             string is then to be obeyed by the system, and any necessary
 #             detaching (as of a previewer) is done by the executed command(s).
 #   internal: The following command string, of the form 'routine arguments'
-#             specifies a called to the named Perl subroutine.
+#             specifies a call to the named Perl subroutine.
 #   NONE:   This does not run anything, but causes an error message to be
 #             printed.  This is provided to allow program names defined in the
 #             configuration to flag themselves as unimplemented.
@@ -7797,10 +7926,11 @@ sub find_process_id {
 
 #============================================
 
-sub good_cwd {
-    # Return cwd, but under cygwin, convert to MSWin path
-    # so that result can be used for input to MSWin programs
-    # as well as cygwin programs
+sub cache_good_cwd {
+    # Set cached value of cwd to current cwd.
+    # Under cygwin, the cwd is converted to a native MSWin path so
+    # that the result can be used for input to MSWin programs as well
+    # as cygwin programs. 
     my $cwd = cwd();
     if ( $^O eq "cygwin" ) {
         my $cmd = "cygpath -w \"$cwd\"";
@@ -7818,22 +7948,37 @@ sub good_cwd {
                  "     'Win_cwd'\n";
 	}
     }
-    return $cwd;
-}
+    $cache{cwd} = $cwd;
+}  # END cache_good_cwd
+
+#============================================
+
+sub good_cwd {
+    # Return cwd, but under cygwin, convert to MSWin path.
+    # Use cached result
+    return $cache{cwd};
+}  # END good_cwd
 
 #============================================
 
 #   Directory stack routines
 
 sub pushd {
-    push @dir_stack, cwd();
-    if ( $#_ > -1) { chdir $_[0]; }
+    push @dir_stack, [cwd(), $cache{cwd}];
+    if ( $#_ > -1) {
+        chdir $_[0]; 
+        &cache_good_cwd;
+    }
 }
 
 #************************************************************
 
 sub popd {
-    if ($#dir_stack > -1 ) { chdir pop @dir_stack; }
+    if ($#dir_stack > -1 ) { 
+        my $Parr = pop @dir_stack;
+        chdir $$Parr[0]; 
+        $cache{cwd} = $$Parr[1];
+    }
 }
 
 #************************************************************
