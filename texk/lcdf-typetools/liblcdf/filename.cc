@@ -126,5 +126,5 @@ Filename::open_write(bool binary) const
     if (_actual || !_path)
 	return _actual;
     else
-	return fopen(_path.c_str(), binary ? "wb" : "w");
+	return fopen(_path.c_str(), "wb");
 }

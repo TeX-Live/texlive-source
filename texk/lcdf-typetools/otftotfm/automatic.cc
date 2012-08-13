@@ -40,6 +40,18 @@
 
 #ifdef WIN32
 # define mkdir(dir, access) mkdir(dir)
+# define COPY_CMD "copy"
+#else
+# define COPY_CMD "cp"
+#endif
+
+/* kpathsea may already have defined this */
+#ifndef DEV_NULL
+# ifdef WIN32
+#  define DEV_NULL "NUL"
+# else
+#  define DEV_NULL "/dev/null"
+# endif
 #endif
 
 #if HAVE_AUTO_T1DOTLESSJ
@@ -297,7 +309,7 @@ update_odir(int o, String file, ErrorHandler *errh)
     String ls_r = writable_texdir + "ls-R";
     bool success = false;
     if (access(ls_r.c_str(), R_OK) >= 0) // make sure it already exists
-	if (FILE *f = fopen(ls_r.c_str(), "a")) {
+	if (FILE *f = fopen(ls_r.c_str(), "ab")) {
 	    fprintf(f, "./%s:\n%s\n", directory.c_str(), file.c_str());
 	    success = true;
 	    fclose(f);
@@ -307,7 +319,11 @@ update_odir(int o, String file, ErrorHandler *errh)
     if (!success && writable_texdir.find_left('\'') < 0 && directory.find_left('\'') < 0 && file.find_left('\'') < 0) {
 	// look for mktexupd script
 	if (!mktexupd_tried) {
+#ifdef WIN32
+	    mktexupd = strdup("mktexupd");
+#else
 	    mktexupd = kpsei_string(kpsei_find_file("mktexupd", KPSEI_FMT_WEB2C));
+#endif
 	    mktexupd_tried = true;
 	}
 
@@ -482,7 +498,7 @@ installed_truetype(const String &ttf_filename, bool allow_generate, ErrorHandler
 
 	int retval;
 	if (!same_filename(ttf_filename, installed_ttf_filename)) {
-	    String command = "cp " + shell_quote(ttf_filename) + " " + shell_quote(installed_ttf_filename);
+	    String command = COPY_CMD " " + shell_quote(ttf_filename) + " " + shell_quote(installed_ttf_filename);
 	    retval = mysystem(command.c_str(), errh);
 	    if (retval == 127)
 		errh->error("could not run %<%s%>", command.c_str());
@@ -664,7 +680,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 #endif
 	{
 	    fclose(f);
-	    f = fopen(map_file.c_str(), "w");
+	    f = fopen(map_file.c_str(), "wb");
 	    fd = fileno(f);
 	}
 
@@ -731,7 +747,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 	    if (verbose)
 		command += " 1>&2";
 	    else
-		command += " >/dev/null 2>&1";
+		command += " >" DEV_NULL " 2>&1";
 	    int retval = mysystem(command.c_str(), errh);
 	    if (retval == 127)
 		errh->warning("could not run %<%s%>", command.c_str());

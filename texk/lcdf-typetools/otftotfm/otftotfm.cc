@@ -50,6 +50,10 @@
 #include <signal.h>
 #include <algorithm>
 #include <math.h>
+/* apparently M_PI isn't defined by <math.h> under VC++ */
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 #ifdef HAVE_CTIME
 # include <time.h>
 #endif
@@ -551,7 +555,7 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
 
     if (verbose)
 	errh->message("creating %s", filename.c_str());
-    FILE *f = fopen(filename.c_str(), "w");
+    FILE *f = fopen(filename.c_str(), "wb");
     if (!f) {
 	errh->error("%s: %s", filename.c_str(), strerror(errno));
 	return;
@@ -993,7 +997,7 @@ write_encoding_file(String &filename, const String &encoding_name,
 #endif
     {
 	fclose(f);
-	f = fopen(filename.c_str(), "w");
+	f = fopen(filename.c_str(), "wb");
 	fd = fileno(f);
     }
 

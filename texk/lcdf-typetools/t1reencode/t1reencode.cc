@@ -1094,10 +1094,10 @@ particular purpose.\n");
 	if (!outf)
 	    errh->fatal("%s: %s", output_file, strerror(errno));
     }
-    if (binary) {
 #if defined(_MSDOS) || defined(_WIN32)
-	_setmode(_fileno(outf), _O_BINARY);
+    _setmode(_fileno(outf), _O_BINARY);
 #endif
+    if (binary) {
 	Type1PFBWriter w(outf);
 	font->write(w);
     } else {

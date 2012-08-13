@@ -1,3 +1,9 @@
+2012-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-WIN32 (new): Adapt for WIN32.
+	* patch-20-TL-binary (new): Use binary mode for output files.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2012-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import lcdf-typetools-2.94.

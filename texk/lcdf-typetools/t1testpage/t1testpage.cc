@@ -665,6 +665,9 @@ particular purpose.\n");
 	if (!outf)
 	    errh->fatal("%s: %s", output_file, strerror(errno));
     }
+#if defined(_MSDOS) || defined(_WIN32)
+    _setmode(_fileno(outf), _O_BINARY);
+#endif
 
     //font->undo_synthetic();
 
