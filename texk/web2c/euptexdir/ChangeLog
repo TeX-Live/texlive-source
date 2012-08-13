@@ -1,3 +1,9 @@
+2012-08-13  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* am/euptex.am: Use the new fam256-eup-pre.ch and fam256-eup-post.ch
+	for upTeX u1.11.
+	* fam256-eup-pre.ch, fam256-eup-post.ch: Add for upTeX u1.11.
+
 2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/euptex.am: Clarify *tex_version.h dependencies.
