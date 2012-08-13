@@ -1,3 +1,8 @@
+2012-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* w32_wrapper/runscript.dll (new): DLL for runscript.exe.
+	* w32_wrapper/context/* (new): ConTeXt wrapper (src and bin).
+
 2012-08-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/ (new): Moved from ../tetex/ to here and adapted.
