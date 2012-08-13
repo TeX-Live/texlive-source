@@ -36,6 +36,11 @@
 # endif
 #endif
 #include <string.h>
+
+#ifdef W32TEX
+#include <windows.h>
+#endif
+
 namespace Efont {
 
 PsresDatabase::PsresDatabase()

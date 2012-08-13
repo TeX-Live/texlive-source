@@ -1739,6 +1739,11 @@ parse_base_encodings(const String &filename, ErrorHandler *errh)
     }
 }
 
+#ifdef W32TEX
+#include <windows.h>
+HINSTANCE Hinstance;
+#endif
+
 int
 main(int argc, char *argv[])
 {
@@ -1750,6 +1755,15 @@ main(int argc, char *argv[])
     Clp_AddType(clp, CHAR_OPTTYPE, 0, clp_parse_char, 0);
     program_name = Clp_ProgramName(clp);
 #if HAVE_KPATHSEA
+#ifdef W32TEX
+    Hinstance = LoadLibrary(KPSEDLLNAME);
+    if(Hinstance == NULL)
+	Hinstance = LoadLibrary(KPSEOLDDLLNAME);
+    if(Hinstance == NULL) {
+	fprintf(stderr, "I cannot load Kpathsea dynamic library.\n");
+	return 100;
+    }
+#endif
     kpsei_init(argv[0], "lcdftools");
 #endif
 #ifdef HAVE_CTIME
@@ -2121,11 +2135,19 @@ main(int argc, char *argv[])
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
+#ifdef W32TEX
+            if(Hinstance != NULL)
+              FreeLibrary(Hinstance);
+#endif
 	    exit(0);
 	    break;
 
 	  case HELP_OPT:
 	    usage();
+#ifdef W32TEX
+            if(Hinstance != NULL)
+              FreeLibrary(Hinstance);
+#endif
 	    exit(0);
 	    break;
 
@@ -2181,8 +2203,13 @@ particular purpose.\n");
     try {
 	// read font
 	otf_data = read_file(input_file, errh);
-	if (errh->nerrors())
+	if (errh->nerrors()) {
+#ifdef W32TEX
+	    if(Hinstance != NULL)
+	      FreeLibrary(Hinstance);
+#endif
 	    exit(1);
+	}
 
 	LandmarkErrorHandler cerrh(errh, printable_filename(input_file));
 	BailErrorHandler bail_errh(&cerrh);
@@ -2271,6 +2298,10 @@ particular purpose.\n");
     } catch (OpenType::Error e) {
 	errh->error("unhandled exception %<%s%>", e.description.c_str());
     }
+#ifdef W32TEX
+    if(Hinstance != NULL)
+      FreeLibrary(Hinstance);
+#endif
 
     return (errh->nerrors() == 0 ? 0 : 1);
 }

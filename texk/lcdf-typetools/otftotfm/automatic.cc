@@ -124,7 +124,18 @@ look_for_writable_texdir(const char *path_variable, bool create)
 static void
 find_writable_texdir(ErrorHandler *errh, const char *)
 {
+#if defined(W32TEX)
+// W32TeX does not have TEXMFVAR
+    char *p = kpsei_var_value("TEXMFVAR");
+    if (p == NULL) // W32TeX
+        look_for_writable_texdir("$TEXMFLOCAL", true);
+    else { // TeXLive
+        free (p);
+        look_for_writable_texdir("$TEXMFVAR", true);
+    }
+#else
     look_for_writable_texdir("$TEXMFVAR", true);
+#endif
     if (!writable_texdir)
 	look_for_writable_texdir("$VARTEXMF", false);
     if (!writable_texdir)
@@ -745,6 +756,14 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 	    int slash = filename.find_right('\'');
 	    if (slash >= 0)
 		filename = filename.substring(slash + 1);
+#if defined(W32TEX)
+// guess_input_kanji_encoding is defined only in W32TeX
+	    char *p = kpsei_var_value("guess_input_kanji_encoding");
+	    if (p != NULL) { // W32TeX
+		free(p);
+		String command = "updmap --nomkmap --add " + shell_quote(filename) + CMD_SEP " updmap";
+	    } else // TeXLive
+#endif
 	    String command = "updmap --nomkmap --enable Map " + shell_quote(filename) + CMD_SEP " updmap";
 	    if (verbose)
 		command += " 1>&2";

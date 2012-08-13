@@ -13,6 +13,13 @@ enum { KPSEI_FMT_WEB2C, KPSEI_FMT_ENCODING, KPSEI_FMT_TYPE1,
 char* kpsei_find_file(const char* name, int format);
 void kpsei_set_debug_flags(unsigned flags);
 
+#ifdef W32TEX
+int kpsei_getlongpath(char *buff, char *input, int len);
+char *kpsei_var_value(const char *var);
+#define true  1
+#define false 0
+#endif
+
 #ifdef __cplusplus
 }
 #endif
