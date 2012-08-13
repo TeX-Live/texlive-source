@@ -403,10 +403,10 @@ particular purpose.\n");
     // write it to output
     if (!outputf)
 	outputf = stdout;
-    if (binary) {
 #if defined(_MSDOS) || defined(_WIN32)
-	_setmode(_fileno(outputf), _O_BINARY);
+    _setmode(_fileno(outputf), _O_BINARY);
 #endif
+    if (binary) {
 	Type1PFBWriter w(outputf);
 	dotless_font->write(w);
     } else {

@@ -41,8 +41,10 @@
 #ifdef WIN32
 # define mkdir(dir, access) mkdir(dir)
 # define COPY_CMD "copy"
+# define CMD_SEP "&"
 #else
 # define COPY_CMD "cp"
+# define CMD_SEP ";"
 #endif
 
 /* kpathsea may already have defined this */
@@ -743,7 +745,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 	    int slash = filename.find_right('\'');
 	    if (slash >= 0)
 		filename = filename.substring(slash + 1);
-	    String command = "updmap --nomkmap --enable Map " + shell_quote(filename) + "; updmap";
+	    String command = "updmap --nomkmap --enable Map " + shell_quote(filename) + CMD_SEP " updmap";
 	    if (verbose)
 		command += " 1>&2";
 	    else
