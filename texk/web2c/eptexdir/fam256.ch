@@ -1092,10 +1092,8 @@ primitive("omathchardef",shorthand_def,omath_char_def_code);@/
 @z
 %-----------------------------------------------
 @x
-  char_def_code: print_esc("chardef");
   math_char_def_code: print_esc("mathchardef");
 @y
-  char_def_code: print_esc("chardef");
   math_char_def_code: print_esc("mathchardef");
   omath_char_def_code: print_esc("omathchardef");
 @z

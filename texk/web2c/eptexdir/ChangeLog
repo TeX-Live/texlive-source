@@ -1,3 +1,7 @@
+2012-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fam256.ch: Slightly reduce one changeset to simplify e-upTeX.
+
 2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptex.ech, eptrip/etrip.tex: Adapt to e-TeX Version 2.5.

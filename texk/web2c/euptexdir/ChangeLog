@@ -1,3 +1,8 @@
+2012-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fam256-eup-pre.ch, fam256-eup-post.ch (removed): Now obsolete.
+	* am/euptex.am: Drop fam256-eup-pre.ch and fam256-eup-post.ch.
+
 2012-08-13  TANAKA Takuji <KXD02663@nifty.ne.jp>
 
 	* am/euptex.am: Use the new fam256-eup-pre.ch and fam256-eup-post.ch
