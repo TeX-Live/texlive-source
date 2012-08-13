@@ -747,6 +747,7 @@ particular purpose.\n");
   /* As we might be processing a PFB (binary) input file, we must set its file
      mode to binary. */
   _setmode(_fileno(ifp), _O_BINARY);
+  _setmode(_fileno(ofp), _O_BINARY);
 #endif
 
   /* prepare font reader */

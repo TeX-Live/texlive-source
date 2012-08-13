@@ -651,8 +651,7 @@ particular purpose.\n");
   _setmode(_fileno(ifp), _O_BINARY);
   /* If we are processing a PFB (binary) output */
   /* file, we must set its file mode to binary. */
-  if (pfb)
-    _setmode(_fileno(ofp), _O_BINARY);
+  _setmode(_fileno(ofp), _O_BINARY);
 #endif
 
   if (pfb)

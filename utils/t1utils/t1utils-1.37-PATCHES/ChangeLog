@@ -1,3 +1,8 @@
+2012-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-TL-binary (new): Use binary mode for output files.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2011-07-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to t1utils-1.37.
