@@ -12,19 +12,15 @@
 
 if !WIN32
 dist_bin_SCRIPTS = \
-	context \
 	ctxtools \
 	luatools \
-	mtxrun \
 	pstopdf \
 	texexec \
 	texmfstart
 endif !WIN32
 
 dist_man1_MANS = \
-	context.man \
 	ctxtools.man \
-	mptopdf.man \
 	pstopdf.man \
 	texexec.man \
 	texmfstart.man

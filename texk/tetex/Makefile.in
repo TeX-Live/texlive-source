@@ -54,7 +54,7 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -164,10 +164,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = \
-	README.texdoctk \
-	old-fontinst.bat \
-	old-updmap \
-	updmap-single.pl
+	README.texdoctk
 
 all: all-am
 

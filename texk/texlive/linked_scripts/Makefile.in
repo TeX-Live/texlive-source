@@ -226,7 +226,7 @@ DISTCLEANFILES = scripts-list
 #
 # We support native builds, multiplatform or not, as well as distro builds.
 #
-EXTRA_DIST = scripts.lst ../../../build-aux/relpath \
+EXTRA_DIST = scripts.lst tetex/ChangeLog ../../../build-aux/relpath \
 	tetex/updmap.help2man
 
 # Copies of these scripts exist here for the sake of avoiding
@@ -246,9 +246,11 @@ texmf_other_scripts = \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
 
+texmf_context_scripts = 
 nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_shell_scripts) \
-	$(texmf_other_scripts)
+	$(texmf_other_scripts) \
+	$(texmf_context_scripts)
 
 texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_dist_shell_scripts = \
@@ -357,12 +359,19 @@ texmf_dist_other_scripts = \
 	urlbst/urlbst \
 	vpe/vpe.pl
 
+texmf_dist_context_scripts = \
+	context/lua/mtxrun.lua \
+	context/shell/context.sh
+
 nobase_dist_texmf_dist_scripts_SCRIPTS = \
 	$(texmf_dist_shell_scripts) \
-	$(texmf_dist_other_scripts)
+	$(texmf_dist_other_scripts) \
+	$(texmf_dist_context_scripts)
 
 bin_links = epstopdf:repstopdf pdfcrop:rpdfcrop $(am__append_1)
 dist_man_MANS = \
+	context/context.1 \
+	context/mptopdf.1 \
 	tetex/allcm.1 \
 	tetex/allec.1 \
 	tetex/allneeded.1 \
@@ -400,6 +409,7 @@ web2cdir = $(datarootdir)/texmf/web2c
 dist_web2c_DATA = tetex/fmtutil.cnf
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
+ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
 run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
@@ -912,6 +922,11 @@ install-data-hook: installdirs-local install-man1-links
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 @WIN32_TRUE@	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
+@WIN32_TRUE@	done
+@WIN32_TRUE@	@for s in $(texmf_context_scripts) $(texmf_dist_context_scripts); do \
+@WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
+@WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
+@WIN32_TRUE@	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
 @WIN32_TRUE@	done
 @WIN32_TRUE@	@for s in $(bin_links); do \
 @WIN32_TRUE@	  link=`echo $$s | sed 's,.*:,,'`; \

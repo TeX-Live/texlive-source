@@ -6,8 +6,5 @@
 ACLOCAL_AMFLAGS = -I ../../m4
 
 EXTRA_DIST = \
-	README.texdoctk \
-	old-fontinst.bat \
-	old-updmap \
-	updmap-single.pl
+	README.texdoctk
 

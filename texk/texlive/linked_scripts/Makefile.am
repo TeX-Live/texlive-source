@@ -36,10 +36,17 @@ installdirs-local:
 # dangling symlinks produced by `make install'.
 # The instances in texmf* are the masters (except when it is CTAN).
 #
+## We distinguish several classes of scripts according to their
+## destination in texmf/scripts/ or texmf-dist/scripts/ and their
+## type: `shell', `context', or `other'.  On Unix systems a symlink
+## from $(bindir) to the script is installed for all of them;
+## on Windows nothing is installed in $(bindir) for `shell' scripts
+## whereas for `other' (usually perl, lua, ...) scripts the standard
+## wrapper ../w32_wrapper/runscript.exe is installed or the ConTeXt
+## wrapper ../w32_wrapper/context/mtxrun.exe for `context' scripts.
+## Note that some /bin/sh scripts are listed as `other' or `context'
+## scripts because they are correctly handled by the wrapper binaries.
 texmf_scriptsdir = $(datarootdir)/texmf/scripts
-## We distinguish shell and other (perl, lua, python, ruby, ...) scripts.
-## Some shell scripts are, however, listed under *_other_scripts because
-## they are correctly handled by ../w32_wrapper/runscript.exe.
 texmf_shell_scripts = \
 	tetex/fmtutil.sh \
 	tetex/texconfig.sh \
@@ -50,9 +57,11 @@ texmf_other_scripts = \
 	tetex/fmtutil-sys.sh \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
+texmf_context_scripts =
 nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_shell_scripts) \
-	$(texmf_other_scripts)
+	$(texmf_other_scripts) \
+	$(texmf_context_scripts)
 
 texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_dist_shell_scripts = \
@@ -159,9 +168,13 @@ texmf_dist_other_scripts = \
 	uptex/convbkmk.rb \
 	urlbst/urlbst \
 	vpe/vpe.pl
+texmf_dist_context_scripts = \
+	context/lua/mtxrun.lua \
+	context/shell/context.sh
 nobase_dist_texmf_dist_scripts_SCRIPTS = \
 	$(texmf_dist_shell_scripts) \
-	$(texmf_dist_other_scripts)
+	$(texmf_dist_other_scripts) \
+	$(texmf_dist_context_scripts)
 
 ## Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
@@ -178,6 +191,8 @@ endif !WIN32
 
 ## Manpages
 dist_man_MANS = \
+	context/context.1 \
+	context/mptopdf.1 \
 	tetex/allcm.1 \
 	tetex/allec.1 \
 	tetex/allneeded.1 \
@@ -210,6 +225,9 @@ man1_links = \
 
 include $(top_srcdir)/../am/man1_links.am
 
+## Old ../../tetex/ChangeLog
+EXTRA_DIST += tetex/ChangeLog
+
 ## Support files
 texconfigdir = $(datarootdir)/texmf/texconfig
 dist_texconfig_SCRIPTS = tetex/tcfmgr
@@ -241,12 +259,18 @@ dist_web2c_DATA = tetex/fmtutil.cnf
 EXTRA_DIST += ../../../build-aux/relpath
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
+ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
 install-data-hook: installdirs-local install-man1-links
 if WIN32
 	@for s in $(texmf_other_scripts) $(texmf_dist_other_scripts); do \
 	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
 	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$t.exe; \
+	done
+	@for s in $(texmf_context_scripts) $(texmf_dist_context_scripts); do \
+	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
+	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
+	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
 	done
 	@for s in $(bin_links); do \
 	  link=`echo $$s | sed 's,.*:,,'`; \
@@ -332,8 +356,6 @@ xupdmap.1: tetex/updmap.help2man tetex/updmap.pl
 EXTRA_DIST += tetex/updmap.help2man
 
 ## 
-web2cdir = $(datarootdir)/texmf/web2c
-
 .PHONY: run-texlinks
 ## This target is invoked by the top-level make,
 ## to create the per-format engine symlinks in $(bindir),

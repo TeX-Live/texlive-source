@@ -111,4 +111,6 @@ ulqda/ulqda.pl
 uptex/convbkmk.rb
 urlbst/urlbst
 vpe/vpe.pl
+context/lua/mtxrun.lua
+context/shell/context.sh
 '

@@ -59,8 +59,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__dist_bin_SCRIPTS_DIST = context ctxtools luatools mtxrun pstopdf \
-	texexec texmfstart
+am__dist_bin_SCRIPTS_DIST = ctxtools luatools pstopdf texexec \
+	texmfstart
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -187,18 +187,14 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @WIN32_FALSE@dist_bin_SCRIPTS = \
-@WIN32_FALSE@	context \
 @WIN32_FALSE@	ctxtools \
 @WIN32_FALSE@	luatools \
-@WIN32_FALSE@	mtxrun \
 @WIN32_FALSE@	pstopdf \
 @WIN32_FALSE@	texexec \
 @WIN32_FALSE@	texmfstart
 
 dist_man1_MANS = \
-	context.man \
 	ctxtools.man \
-	mptopdf.man \
 	pstopdf.man \
 	texexec.man \
 	texmfstart.man
