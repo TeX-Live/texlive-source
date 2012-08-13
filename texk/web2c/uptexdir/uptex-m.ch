@@ -1,4 +1,4 @@
-% This is a change file for upTeX u1.10
+% This is a change file for upTeX u1.11
 % By Takuji Tanaka.
 %
 % (02/26/2007) TTK  upTeX u0.01
@@ -31,13 +31,14 @@
 % (04/10/2010) TTK  upTeX u0.30
 % (01/15/2012) TTK  upTeX u1.00
 % (04/29/2012) TTK  upTeX u1.10
+% (08/13/2012) TTK  upTeX u1.11
 
 @x upTeX: banner
   {printed when p\TeX\ starts}
 @y
   {printed when p\TeX\ starts}
 @#
-@d upTeX_version_string=='-u1.10' {current up\TeX\ version}
+@d upTeX_version_string=='-u1.11' {current up\TeX\ version}
 @#
 @d upTeX_version==pTeX_version_string,upTeX_version_string
 @d upTeX_banner=='This is upTeX, Version 3.1415926',upTeX_version
@@ -258,14 +259,10 @@ primitive("kchar",kchar_num,0);@/
 @z
 
 @x
-char_num: print_esc("char");
-cs_name: print_esc("csname");
-def_font: print_esc("font");
+ital_corr: print_esc("/");
 @y
-char_num: print_esc("char");
+ital_corr: print_esc("/");
 kchar_num: print_esc("kchar");
-cs_name: print_esc("csname");
-def_font: print_esc("font");
 @z
 
 @x
@@ -947,6 +944,17 @@ primitive("chardef",shorthand_def,char_def_code);@/
 @!@:char_def_}{\.{\\chardef} primitive@>
 primitive("kchardef",shorthand_def,kchar_def_code);@/
 @!@:kchar_def_}{\.{\\kchardef} primitive@>
+@z
+
+@x
+shorthand_def: case chr_code of
+  char_def_code: print_esc("chardef");
+  math_char_def_code: print_esc("mathchardef");
+@y
+shorthand_def: case chr_code of
+  char_def_code: print_esc("chardef");
+  kchar_def_code: print_esc("kchardef");
+  math_char_def_code: print_esc("mathchardef");
 @z
 
 @x l.23698 - upTeX

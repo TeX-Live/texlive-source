@@ -1,3 +1,8 @@
+2012-08-13  TANAKA Takuji <KXD02663@nifty.ne.jp>
+
+	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,
+	uptex_version.h: upTeX version u1.11.
+
 2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/uptex.am: Clarify *tex_version.h dependencies.
