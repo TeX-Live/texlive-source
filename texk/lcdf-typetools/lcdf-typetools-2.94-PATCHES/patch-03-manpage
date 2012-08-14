@@ -10,3 +10,14 @@ diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetoo
  Print the contents of the font's OpenType table \fItable\fR.
  '
  .PD
+diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.94.orig/t1rawafm/t1rawafm.1 lcdf-typetools-2.94/t1rawafm/t1rawafm.1
+--- lcdf-typetools-2.94.orig/t1rawafm/t1rawafm.1	2012-08-03 18:19:11.000000000 +0200
++++ lcdf-typetools-2.94/t1rawafm/t1rawafm.1	2012-08-14 15:33:05.000000000 +0200
+@@ -11,7 +11,6 @@
+ t1rawafm \- produce raw AFM metrics from a PostScript Type 1 font
+ .SH SYNOPSIS
+ .B t1rawafm
+-\%\-e ENCODING
+ \%[OPTIONS...]
+ .I font
+ .RI [ outputfile ]
