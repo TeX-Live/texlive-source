@@ -48,7 +48,7 @@ const Clp_Option options[] = {
     { "help", 'h', HELP_OPT, 0, 0 },
     { "output", 'o', OUTPUT_OPT, Clp_ValString, 0 },
     { "pfa", 'a', PFA_OPT, 0, 0 },
-    { "pfb", 'b', PFA_OPT, 0, 0 },
+    { "pfb", 'b', PFB_OPT, 0, 0 },
     { "name", 'n', FONTNAME_OPT, Clp_ValString, 0 },
     { "fullname", 'N', FULLNAME_OPT, Clp_ValString, 0 },
     { "full-name", 'N', FULLNAME_OPT, Clp_ValString, 0 },

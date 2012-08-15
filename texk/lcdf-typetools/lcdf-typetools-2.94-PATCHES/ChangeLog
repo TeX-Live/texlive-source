@@ -1,6 +1,20 @@
+2012-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-WIN32: Adapted from upstream.
+	* patch-05-backport (new): From upstream.
+
+	* tests/t1.test tests/ttf.test: New shell scripts for tests.
+	* tests/t2c.enc, tests/uhvrrc8a.pfb, tests/uhv_dl.{pfa,pfb,ps},
+	tests/uhv_re.{afm,pfa}: T1 test input and expected output.
+	* tests/FonetikaDaniaIwonaeBold.ttf, tests/texmfhome.otf,
+	tests/Fon.{post,t42}, tests/tmf.{info,pfa,pfb,tables}:
+	Ttf test input and expected output.
+	* Makefile.am: Add the tests and their data.
+
 2012-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-03-manpage (new): Fix manpages.
+	* patch-04-PFB_OPT (new): Correctly handle '-b' option.
 
 2012-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

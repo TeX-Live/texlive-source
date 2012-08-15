@@ -1,0 +1,14 @@
+diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.94.orig/t1rawafm/t1rawafm.cc lcdf-typetools-2.94/t1rawafm/t1rawafm.cc
+--- lcdf-typetools-2.94.orig/t1rawafm/t1rawafm.cc	2011-11-03 17:51:58.000000000 +0100
++++ lcdf-typetools-2.94/t1rawafm/t1rawafm.cc	2012-08-15 12:09:30.000000000 +0200
+@@ -81,8 +81,8 @@
+ \n\
+ Usage: %s [OPTION]... [FONT]\n\
+ \n\
+-FONT is the name of a PFA or PFB font file. If omitted, t1testpage will read\n\
+-a font file from the standard input.\n\
++FONT is the name of a PFA or PFB font file. If omitted, t1rawafm will read a\n\
++font file from the standard input.\n\
+ \n\
+ Options:\n\
+   -o, --output=FILE            Write output to FILE instead of standard out.\n\

@@ -1,0 +1,48 @@
+#! /bin/sh
+
+# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+failed=
+
+rm -rf Fon* tmf.*
+
+cfftot1/cfftot1 -a $srcdir/tests/texmfhome.otf tmf.pfa \
+	&& diff tmf.pfa $srcdir/tests/tmf.pfa \
+	&& echo "cfftot1/asc tests OK" \
+	|| failed="$failed cfftot1/asc"
+
+cat $srcdir/tests/texmfhome.otf | cfftot1/cfftot1 -b >tmf.pfb \
+	&& cmp -s tmf.pfb $srcdir/tests/tmf.pfb \
+	&& echo "cfftot1/bin tests OK" \
+	|| failed="$failed cfftot1/bin"
+
+ttftotype42/ttftotype42 $srcdir/tests/FonetikaDaniaIwonaeBold.ttf Fon_f.t42 \
+	&& diff Fon_f.t42 $srcdir/tests/Fon.t42 \
+	&& echo "ttftotype42/file tests OK" \
+	|| failed="$failed ttftotype42/file"
+
+cat $srcdir/tests/FonetikaDaniaIwonaeBold.ttf | ttftotype42/ttftotype42 >Fon_t.t42 \
+	&& diff Fon_t.t42 $srcdir/tests/Fon.t42 \
+	&& echo "ttftotype42/term tests OK" \
+	|| failed="$failed ttftotype42/term"
+
+otfinfo/otfinfo -t $srcdir/tests/texmfhome.otf >tmf.tables \
+	&& diff tmf.tables $srcdir/tests/tmf.tables \
+	&& echo "otfinfo/t tests OK" \
+	|| failed="$failed otfinfo/t"
+
+cat $srcdir/tests/texmfhome.otf | otfinfo/otfinfo -i >tmf.info \
+	&& diff tmf.info $srcdir/tests/tmf.info \
+	&& echo "otfinfo/i tests OK" \
+	|| failed="$failed otfinfo/i"
+
+cat $srcdir/tests/texmfhome.otf | otfinfo/otfinfo -T post >Fon.post \
+	&& cmp -s Fon.post $srcdir/tests/Fon.post \
+	&& echo "otfinfo/T tests OK" \
+	|| failed="$failed otfinfo/T"
+
+test -z "$failed" && exit 0
+echo "failed tests:$failed"
+exit 1
+

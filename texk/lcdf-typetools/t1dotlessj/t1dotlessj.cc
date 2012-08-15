@@ -56,7 +56,7 @@ const Clp_Option options[] = {
     { "name", 'n', NAME_OPT, Clp_ValString, 0 },
     { "output", 'o', OUTPUT_OPT, Clp_ValString, 0 },
     { "pfa", 'a', PFA_OPT, 0, 0 },
-    { "pfb", 'b', PFA_OPT, 0, 0 },
+    { "pfb", 'b', PFB_OPT, 0, 0 },
     { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
     { "version", 0, VERSION_OPT, 0, 0 },
 };

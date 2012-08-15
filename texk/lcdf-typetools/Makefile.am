@@ -108,3 +108,20 @@ EXTRA_DIST += lcdf-typetools-$(LCDF_TYPETOOLS_VERSION)-PATCHES
 ## Original files from lcdf-typetools distribution
 ##
 EXTRA_DIST += Makefile.am.orig configure.ac.orig
+
+## Tests
+##
+TESTS = tests/t1.test tests/ttf.test
+EXTRA_DIST += $(TESTS)
+
+## tests/t1.test
+EXTRA_DIST += tests/t2c.enc tests/uhvrrc8a.pfb \
+	tests/uhv_dl.pfa tests/uhv_dl.pfb tests/uhv_dl.ps \
+	tests/uhv_re.afm tests/uhv_re.pfa
+DISTCLEANFILES += uhv*
+## tests/ttf.test
+EXTRA_DIST += tests/FonetikaDaniaIwonaeBold.ttf tests/texmfhome.otf \
+	tests/Fon.post tests/Fon.t42 \
+	tests/tmf.info tests/tmf.pfa tests/tmf.pfb tests/tmf.tables
+DISTCLEANFILES += Fon* tmf.*
+

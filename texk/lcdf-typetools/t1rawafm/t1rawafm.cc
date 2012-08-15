@@ -81,8 +81,8 @@ to the specified Type 1 font file and writes it to the standard output.\n\
 \n\
 Usage: %s [OPTION]... [FONT]\n\
 \n\
-FONT is the name of a PFA or PFB font file. If omitted, t1testpage will read\n\
-a font file from the standard input.\n\
+FONT is the name of a PFA or PFB font file. If omitted, t1rawafm will read a\n\
+font file from the standard input.\n\
 \n\
 Options:\n\
   -o, --output=FILE            Write output to FILE instead of standard out.\n\
