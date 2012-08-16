@@ -1,3 +1,13 @@
+2012-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-enc_format (new): Bug fix.
+	* patch-30-W32TeX: Adapted.
+
+	* tfm.test: New shell script for an additional test.
+	* tests/antpolt-regular.otf, tests/texnansx.enc,
+	tests/Ant.{enc,map,pfb,pl}: Tfm test input and expected output.
+	* Makefile.am: Add the additional test and its data.
+
 2012-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-WIN32: Adapted from upstream.

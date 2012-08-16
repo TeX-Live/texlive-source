@@ -163,7 +163,7 @@ kpsei_find_file(const char* name, int format)
       case KPSEI_FMT_WEB2C:
 	return kpse_find_file(name, kpse_web2c_format, true);
       case KPSEI_FMT_ENCODING:
-	return kpse_find_file(name, kpse_tex_ps_header_format, true);
+	return kpse_find_file(name, kpse_enc_format, true);
       case KPSEI_FMT_TYPE1:
 	return kpse_find_file(name, kpse_type1_format, false);
       case KPSEI_FMT_TYPE42:

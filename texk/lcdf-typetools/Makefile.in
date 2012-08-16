@@ -314,7 +314,8 @@ ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 AM_DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
 SUBDIRS = . liblcdf libefont @SELECTED_SUBDIRS@
 DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
-DISTCLEANFILES = config.force CXXLD.sh uhv* Fon* tmf.*
+DISTCLEANFILES = config.force CXXLD.sh uhv* Ant* a_enhg3c.enc Fon* \
+	tmf.*
 @texlive_build_FALSE@glyphlistdir = $(pkgdatadir)
 @texlive_build_TRUE@glyphlistdir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
 @texlive_build_FALSE@encdir = $(pkgdatadir)
@@ -352,10 +353,12 @@ EXTRA_DIST = ONEWS lcdf-typetools.spec include/config.h \
 	Makefile.am.orig configure.ac.orig $(TESTS) tests/t2c.enc \
 	tests/uhvrrc8a.pfb tests/uhv_dl.pfa tests/uhv_dl.pfb \
 	tests/uhv_dl.ps tests/uhv_re.afm tests/uhv_re.pfa \
+	tests/antpolt-regular.otf tests/texnansx.enc tests/Ant.enc \
+	tests/Ant.map tests/Ant.pfb tests/Ant.pl \
 	tests/FonetikaDaniaIwonaeBold.ttf tests/texmfhome.otf \
 	tests/Fon.post tests/Fon.t42 tests/tmf.info tests/tmf.pfa \
 	tests/tmf.pfb tests/tmf.tables
-TESTS = tests/t1.test tests/ttf.test
+TESTS = tests/t1.test tests/tfm.test tests/ttf.test
 all: autoconf.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

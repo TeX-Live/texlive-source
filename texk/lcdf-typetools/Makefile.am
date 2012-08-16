@@ -111,7 +111,7 @@ EXTRA_DIST += Makefile.am.orig configure.ac.orig
 
 ## Tests
 ##
-TESTS = tests/t1.test tests/ttf.test
+TESTS = tests/t1.test tests/tfm.test tests/ttf.test
 EXTRA_DIST += $(TESTS)
 
 ## tests/t1.test
@@ -119,6 +119,10 @@ EXTRA_DIST += tests/t2c.enc tests/uhvrrc8a.pfb \
 	tests/uhv_dl.pfa tests/uhv_dl.pfb tests/uhv_dl.ps \
 	tests/uhv_re.afm tests/uhv_re.pfa
 DISTCLEANFILES += uhv*
+## tests/tfm.test
+EXTRA_DIST += tests/antpolt-regular.otf tests/texnansx.enc \
+	tests/Ant.enc tests/Ant.map tests/Ant.pfb tests/Ant.pl
+DISTCLEANFILES += Ant* a_enhg3c.enc
 ## tests/ttf.test
 EXTRA_DIST += tests/FonetikaDaniaIwonaeBold.ttf tests/texmfhome.otf \
 	tests/Fon.post tests/Fon.t42 \

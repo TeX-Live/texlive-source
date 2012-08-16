@@ -1,0 +1,21 @@
+#! /bin/sh
+
+# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+ENCFONTS=.:$srcdir/tests
+export TEXMFCNF ENCFONTS
+
+rm -f Ant* a_enhg3c.enc
+
+otftotfm/otftotfm -e texnansx --glyphlist=$srcdir/glyphlist.txt \
+	-p -fkern -fliga \
+	$srcdir/tests/antpolt-regular.otf Ant >Ant.map \
+	&& sed -e '1d' Ant.pl >Ant.plx \
+	&& diff Ant.plx $srcdir/tests/Ant.pl \
+	&& diff Ant.map $srcdir/tests/Ant.map \
+	&& sed -e '4d;/line:/,/Ant/d' a_enhg3c.enc >Ant.enc \
+	&& diff Ant.enc $srcdir/tests/Ant.enc \
+	&& cmp -s AntPolt-Regular.pfb $srcdir/tests/Ant.pfb || exit 1
+
