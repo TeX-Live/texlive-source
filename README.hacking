@@ -14,7 +14,7 @@ them with configure --prefix=/usr/local/gnu and having
 
 autoconf (GNU Autoconf) 2.69
 
-automake (GNU automake) 1.12.2
+automake (GNU automake) 1.12.3
 
 ltmain.sh (GNU libtool) 2.4.2
 
