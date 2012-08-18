@@ -1,6 +1,26 @@
-SUBDIRS = data src man
-ACLOCAL_AMFLAGS = -I m4
+## Makefile.am for the TeX Live subdirectory texk/xdvipdfmx/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+ACLOCAL_AMFLAGS = -I ../../m4
 
-# to regenerate autofiles, run
-#   aclocal -I m4 && autoconf && autoheader && automake
-# tested with autoconf 2.62 and automake 1.10.1.  --karl, 21apr08.
+SUBDIRS = src man data
+
+all-local: config.force
+
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
+
+EXTRA_DIST = \
+	BUGS \
+	ChangeLog.TL \
+	data
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
