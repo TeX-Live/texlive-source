@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-08-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c: Fix a bug in dvi_init(). The old one fails for dvi or xdv
+	files of very short name. For example "xdvipdfmx t" fails for t.xdv.
+
 2012-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* fontmap.c: fix a typo. allow pdftex.map without PS name.

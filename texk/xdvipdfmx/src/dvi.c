@@ -2253,6 +2253,12 @@ dvi_do_page (long n,
   }
 }
 
+#ifdef WIN32
+#define STR_CMP strcasecmp
+#else
+#define STR_CMP strcmp
+#endif
+
 double
 dvi_init (char *dvi_filename, double mag)
 {
@@ -2271,12 +2277,13 @@ dvi_init (char *dvi_filename, double mag)
   else {
     dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
     if (!dvi_file) {
-      if ((strlen(dvi_filename) > 4)
-          && (    strcmp(dvi_filename + strlen(dvi_filename) - 4, ".dvi") != 0
+      char *p;
+      p = strrchr(dvi_filename, '.');
 #ifdef XETEX
-               || strcmp(dvi_filename + strlen(dvi_filename) - 4, ".xdv") != 0
+      if (p == NULL || (STR_CMP(p, ".dvi") && STR_CMP(p, ".xdv"))) {
+#else
+      if (p == NULL || STR_CMP(p, ".dvi")) {
 #endif
-             )) {
 #ifdef XETEX
         strcat(dvi_filename, ".xdv");
         dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
