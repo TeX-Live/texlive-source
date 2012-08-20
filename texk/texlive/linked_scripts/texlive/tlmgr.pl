@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 27356 2012-08-09 23:46:20Z karl $
+# $Id: tlmgr.pl 27413 2012-08-15 22:26:59Z karl $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 27356 $';
-my $datrev = '$Date: 2012-08-10 01:46:20 +0200 (Fri, 10 Aug 2012) $';
+my $svnrev = '$Revision: 27413 $';
+my $datrev = '$Date: 2012-08-16 00:26:59 +0200 (Thu, 16 Aug 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5730,7 +5730,7 @@ debugging.
 =item B<--debug-translation>
 
 In GUI mode, this switch makes C<tlmgr> report any missing, or more
-likely untranslated, messages to standard error.  Helpful for
+likely untranslated, messages to standard error.  This can help
 translators to see what remains to be done.
 
 =back

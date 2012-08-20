@@ -111,8 +111,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.33b';
-$version_details = "$My_name, John Collins, 12 Aug. 2012";
+$version_num = '4.33c';
+$version_details = "$My_name, John Collins, 19 Aug. 2012";
 
 use Config;
 use File::Copy;
@@ -182,6 +182,10 @@ else {
 ##   Modification log from 9 Dec 2011 onwards in detail
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
+##     19 Aug 2012  John Collins  V. 4.33c
+##                                Correct infinite loop when maximum passes
+##                                   exceeded.
+##                                Improve error messages
 ##     12 Aug 2012  John Collins  V. 4.33b
 ##                                Improve text displayed by -showextraoptions
 ##      8 Aug 2012  John Collins  V. 4.33a
@@ -2271,7 +2275,8 @@ continue {
         if ( $failure_msg ) {
             #Remove trailing space
             $failure_msg =~ s/\s*$//;
-            warn "$My_name: Did not finish processing file:\n   $failure_msg\n";
+            warn "$My_name: Did not finish processing file '$filename':\n",
+                 "   $failure_msg\n";
             $failure = 1;
         }
     }
@@ -2309,7 +2314,8 @@ if ($failure_count > 0) {
            @failed_primaries);
     }
     if ( !$force_mode ) {
-      warn "$My_name: Use the -f option to force complete processing.\n";
+      warn "$My_name: Use the -f option to force complete processing,\n",
+           " unless error was exceeding maximum runs of latex/pdflatex.\n";
     }
     exit 12;
 }
@@ -5555,6 +5561,7 @@ sub rdb_make {
         }
       PASS:
         while (1==1) {
+            # Exit condition at end of body of loop.
             $runs = 0;
             my $previous_failure = $failure;
             $failure = 0;
@@ -5565,6 +5572,12 @@ sub rdb_make {
 	    if ($diagnostics) {
                 print "MakeB: doing pre_primary and primary...\n";
             }
+            # Do the primary run if it is needed. On return $runs == 0
+            #       signals that nothing was run (and hence no output
+            #       files changed), either because no input files
+            #       changed and no run was needed, or because the
+            #       number of passes through the rule exceeded the
+            #       limit.  In the second case $too_many_runs is set.
             rdb_for_some( [@pre_primary, $primary], \&rdb_make1 );
             if ( ($runs > 0) && ! $too_many_passes ) {
                 next PASS;
@@ -5584,7 +5597,10 @@ sub rdb_make {
   	        print "MakeB: doing post_primary...\n";
 	    }
             rdb_for_some( [@post_primary], \&rdb_make1 );
-            if ($runs == 0) {
+            if ( ($runs == 0) || $too_many_passes ) {
+                # If $too_many_passes is set, it should also be that
+                # $runs == 0; but for safety, I also checked
+                # $too_many_passes.
                 last PASS;
 	    }
 	}
@@ -5758,9 +5774,6 @@ sub rdb_make1 {
         &rdb_diagnose_changes( "Rule '$rule': " );
     }
 
-    $rules_applied{$rule} = 1;
-    $runs++;
-
     # We are applying the rule, so its source file state for when it
     # was last made is as of now:
     # ??IS IT CORRECT TO DO NOTHING IN CURRENT VERSION?
@@ -5774,8 +5787,6 @@ sub rdb_make1 {
         # Getting here represents some kind of weird error.
         warn "$My_name: Maximum runs of $rule reached ",
              "without getting stable files\n";
-        warn "     Use the -f option to force complete processing.\n"
-            if (! $force_mode);
         $too_many_passes = 1;
         # Treat rule as completed, else in -pvc mode get infinite reruns:
         $$Pout_of_date = 0;
@@ -5783,6 +5794,10 @@ sub rdb_make1 {
 	$failure_msg = "'$rule' needed too many passes";
         return;
     }
+
+    $rules_applied{$rule} = 1;
+    $runs++;
+
     $pass{$rule}++; 
     if ($bibtex_not_run > 0) {
         if ($bibtex_not_run == 1 ) {
