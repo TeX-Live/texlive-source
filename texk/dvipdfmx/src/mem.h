@@ -30,35 +30,8 @@
 extern void *new (size_t size);
 extern void *renew (void *p, size_t size);
 
-extern void mem_debug_init(void);
-extern void mem_debug_check(void);
-
-#ifdef MEM_DEBUG
-
-extern void *mem_add    (void *ptr,
-			 const char *file, const char *function, int line);
-extern void *mem_remove (void *ptr,
-			 const char *file, const char *function, int line);
-#define MEM_ADD(p)     mem_add(p, __FILE__, __FUNCTION__, __LINE__)
-#define MEM_REMOVE(p)  mem_remove(p, __FILE__, __FUNCTION__, __LINE__)
-
-#else /* ! MEM_DEBUG */
-
-extern void *mem_add    (void *ptr);
-extern void *mem_remove (void *ptr);
-#define MEM_ADD(p)     mem_add(p)
-#define MEM_REMOVE(p)  mem_remove(p)
-
-#endif /* MEM_DEBUG */
-
-
-#define NEW(n,type)     (type *) MEM_ADD(new(((size_t)(n))*sizeof(type)))
-#define RENEW(p,n,type) (type *) MEM_ADD(renew(MEM_REMOVE(p),(n)*sizeof(type)))
-#define RELEASE(p)      free(MEM_REMOVE(p))
-
-/* wrappers for functions from kpathsea */
-#define kpse_path_search(x,y,z)   (char *) MEM_ADD(kpse_path_search(x,y,z))
-#define kpse_find_file(x,y,z)     (char *) MEM_ADD(kpse_find_file(x,y,z))
-#define kpse_find_glyph(x,y,z,w)  (char *) MEM_ADD(kpse_find_glyph(x,y,z,w))
+#define NEW(n,type)     (type *) new(((size_t)(n))*sizeof(type))
+#define RENEW(p,n,type) (type *) renew(p,(n)*sizeof(type))
+#define RELEASE(p)      free(p)
 
 #endif /* _MEM_H_ */

@@ -856,8 +856,6 @@ main (int argc, char *argv[])
       return extractbb(argc, argv);
   }
 
-  mem_debug_init();
-
   if (argc < 2) {
     if (!really_quiet)
       fprintf(stderr, "No dvi filename specified.");
@@ -1000,8 +998,6 @@ main (int argc, char *argv[])
 #ifdef MIKTEX
   miktex_uninitialize ();
 #endif
-
-  mem_debug_check();
 
   return 0;
 }

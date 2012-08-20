@@ -232,8 +232,6 @@ static void do_pdf (FILE *fp, char *filename)
 
 int extractbb (int argc, char *argv[]) 
 {
-  mem_debug_init();
-
   pdf_files_init();
 
   pdf_set_version(5);
@@ -332,8 +330,6 @@ int extractbb (int argc, char *argv[])
   }
 
   pdf_files_close();
-
-  mem_debug_check();
 
   return 0;
 }

@@ -1,8 +1,13 @@
+2012-08-20  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/dvipdfmx.c, src/mem.c, src/mem.h, src/xbb.c, src/dvipdfmx.c,
+	src/mem.c, src/mem.h, src/xbb.c: Remove memory debugging code.
+
 2012-08-18  Khaled Hosny  <khaledhosny@eglug.org>
 
 	Move contents of dvipdfmx-20120420 to the top directory
 	* Makefile.am, configure.ac, data/Makefile.am, man/Makefile.am,
-	src/Makefile.am: Adpated.
+	src/Makefile.am: Adapted.
 	* configure.in, m4/cho-kpse.m4, m4/cho-libs.m4, m4/maw-time.m4:
 	Removed.
 
