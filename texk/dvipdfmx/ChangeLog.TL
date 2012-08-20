@@ -1,3 +1,11 @@
+2012-08-18  Khaled Hosny  <khaledhosny@eglug.org>
+
+	Move contents of dvipdfmx-20120420 to the top directory
+	* Makefile.am, configure.ac, data/Makefile.am, man/Makefile.am,
+	src/Makefile.am: Adpated.
+	* configure.in, m4/cho-kpse.m4, m4/cho-libs.m4, m4/maw-time.m4:
+	Removed.
+
 2012-04-20  Norbert Preining  <preining@logic.at>
 
 	Imported snapshot 20120420.
