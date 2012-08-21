@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-08-21  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+
+	* tt_post.c (read_v2_post_names): support large truetype fonts
+	which are strictly speaking out of spec, idx > 32767.
+
 2012-08-21  keiichirou shikano <k16.shikano@gmail.com>
 
 	* src/cff.c, src/cff.h. src/type1.c: fix type1 SEAC bug.

@@ -50,15 +50,20 @@ read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
     idx = sfnt_get_ushort(sfont);
     if (idx >= 258) {
       if (idx > 32767) {
-	/* although this is strictly speaking out of spec, it seems to work
-	   and there are real-life fonts that use it */
+	/* Although this is strictly speaking out of spec, it seems to work
+	   and there are real-life fonts that use it.
+           We show a warning only once, instead of thousands of times */
 	static char warning_issued = 0;
 	if (!warning_issued) {
 	  WARN("TrueType post table name index %u > 32767", idx);
 	  warning_issued = 1;
 	}
-	/* don't zero the index - we assume it's valid */
-	/* idx = 0; */
+        /* In a real-life large font, (x)dvipdfmx crashes if we use
+           nonvanishing idx in the case of idx > 32767.
+           If we set idx = 0, (x)dvipdfmx works fine for the font and
+           created pdf seems fine. The post table may not be important
+           in such a case */
+        idx = 0;
       }
       post->count++;
     }
