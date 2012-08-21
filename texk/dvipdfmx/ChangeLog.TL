@@ -1,3 +1,7 @@
+2012-08-21  keiichirou shikano <k16.shikano@gmail.com>
+
+	* src/cff.c, src/cff.h. src/type1.c: fix type1 SEAC bug.
+
 2012-08-20  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* src/dvipdfmx.c, src/mem.c, src/mem.h, src/xbb.c, src/dvipdfmx.c,

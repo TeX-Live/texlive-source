@@ -523,6 +523,21 @@ long cff_get_sid (cff_font *cff, const char *str)
   return -1;
 }
 
+long cff_get_seac_sid (cff_font *cff, const char *str)
+{
+  card16 i;
+
+  if (!cff || !str)
+    return -1;
+
+  for (i = 0; i < CFF_STDSTR_MAX; i++) {
+    if (!strcmp(str, cff_stdstr[i]))
+      return i;
+  }
+
+  return -1;
+}
+
 int cff_match_string (cff_font *cff, const char *str, s_SID sid)
 {
   card16 i;
