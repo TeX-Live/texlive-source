@@ -1,7 +1,8 @@
 2012-08-21  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
 
-	* tt_post.c (read_v2_post_names): support large truetype fonts
+	* src/tt_post.c (read_v2_post_names): support large truetype fonts
 	which are strictly speaking out of spec, idx > 32767.
+	* src/dvipdfmx.c: support monocase file system.
 
 2012-08-21  keiichirou shikano <k16.shikano@gmail.com>
 

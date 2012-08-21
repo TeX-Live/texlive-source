@@ -104,6 +104,12 @@ char *dvi_filename = NULL, *pdf_filename = NULL;
 static void
 read_config_file (const char *config);
 
+#ifdef WIN32
+#define STRN_CMP strncasecmp
+#else
+#define STRN_CMP strncmp
+#endif
+
 static void
 set_default_pdf_filename(void)
 {
@@ -112,12 +118,12 @@ set_default_pdf_filename(void)
   dvi_base = xbasename(dvi_filename);
   if (mp_mode &&
       strlen(dvi_base) > 4 &&
-      !strncmp(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
+      !STRN_CMP(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base) - 4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
-             !strncmp(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
+             !STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
@@ -596,7 +602,7 @@ do_args (int argc, char *argv[])
      * is do_args was called from config file.  In that case, there is
      * no dvi file name.  Check for that case .
      */
-    if (!mp_mode && strncmp(".dvi", argv[0] + strlen(argv[0]) - 4, 4)) {
+    if (!mp_mode && STRN_CMP(".dvi", argv[0] + strlen(argv[0]) - 4, 4)) {
       dvi_filename = NEW(strlen(argv[0]) + 5, char);
       strcpy(dvi_filename, argv[0]);
       strcat(dvi_filename, ".dvi");
