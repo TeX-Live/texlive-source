@@ -827,9 +827,10 @@ main (int argc, char *argv[])
 {
   double dvi2pts;
 
-  if (strcmp(argv[0], "ebb") == 0)
+  const char *av0 = xbasename(argv[0]);
+  if (STRN_CMP(av0, "ebb", 3) == 0)
     return extractbb(argc, argv, EBB_OUTPUT);
-  else if (strcmp(argv[0], "xbb") == 0 || strcmp(argv[0], "extractbb") == 0)
+  else if (STRN_CMP(av0, "xbb", 3) == 0 || STRN_CMP(av0, "extractbb", 9) == 0)
     return extractbb(argc, argv, XBB_OUTPUT);
 
   mem_debug_init();
