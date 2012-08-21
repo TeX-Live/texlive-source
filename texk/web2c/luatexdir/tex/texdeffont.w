@@ -198,11 +198,17 @@ void tex_def_font(small_number a)
     fn = makecstring(cur_name);
     f = read_font_info(u, fn, s, natural_dir);
     xfree(fn);
+/*  
+    The new code seems not to work.
     if (a >= 4) {
         geq_define(u, set_font_cmd, null_font);
     } else {
         eq_define(u, set_font_cmd, null_font);
     }
+    Therefore the old code is used here.
+*/
+    equiv(u) = f;
+
     eqtb[font_id_base + f] = eqtb[u];
     cs_text(font_id_base + f) = t;
 }
