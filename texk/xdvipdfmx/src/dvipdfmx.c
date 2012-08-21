@@ -109,6 +109,12 @@ char *dvi_filename = NULL, *pdf_filename = NULL;
 static void
 read_config_file (const char *config);
 
+#ifdef WIN32
+#define STRN_CMP strncasecmp
+#else
+#define STRN_CMP strncmp
+#endif
+
 static void
 set_default_pdf_filename(void)
 {
@@ -117,16 +123,16 @@ set_default_pdf_filename(void)
   dvi_base = xbasename(dvi_filename);
   if (mp_mode &&
       strlen(dvi_base) > 4 &&
-      !strncmp(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
+      !STRN_CMP(".mps", dvi_base + strlen(dvi_base) - 4, 4)) {
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base) - 4);
     pdf_filename[strlen(dvi_base)-4] = '\0';
   } else if (strlen(dvi_base) > 4 &&
 #ifdef XETEX
-             (!strncmp(".dvi", dvi_base+strlen(dvi_base)-4, 4) ||
-              !strncmp(".xdv", dvi_base+strlen(dvi_base)-4, 4))) {
+             (!STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4) ||
+              !STRN_CMP(".xdv", dvi_base+strlen(dvi_base)-4, 4))) {
 #else
-             !strncmp(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
+             !STRN_CMP(".dvi", dvi_base+strlen(dvi_base)-4, 4)) {
 #endif
     pdf_filename = NEW(strlen(dvi_base)+1, char);
     strncpy(pdf_filename, dvi_base, strlen(dvi_base)-4);
