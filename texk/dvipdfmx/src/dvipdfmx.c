@@ -852,13 +852,13 @@ main (int argc, char *argv[])
   {
     const char *base = xbasename(argv[0]);
 
-#define STRCMP_BASE(s) strcmp(base, s) && strcasecmp(base, s ".exe")
-
-    if (!(STRCMP_BASE("dvipdfm") && STRCMP_BASE("ebb")))
+    if (STRN_CMP(base, "dvipdfmx", 8) != 0 &&
+        (STRN_CMP(base, "dvipdfm",7) == 0 || STRN_CMP(base, "ebb", 3) == 0))
       compat_mode = 1;
 
-    if (!(STRCMP_BASE("extractbb") && STRCMP_BASE("xbb") &&
-	  STRCMP_BASE("ebb")))
+    if (STRN_CMP(base, "extractbb", 9) == 0 ||
+        STRN_CMP(base, "xbb", 3) == 0 ||
+        STRN_CMP(base, "ebb", 3) == 0)
       return extractbb(argc, argv);
   }
 
