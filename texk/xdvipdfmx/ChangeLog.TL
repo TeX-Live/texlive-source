@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-08-21  keiichirou shikano <k16.shikano@gmail.com>
+
+	* src/cff.c, src/cff.h. src/type1.c: fix type1 SEAC bug.
+
 2012-08-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c: Fix a bug in dvi_init(). The old one fails for dvi or xdv

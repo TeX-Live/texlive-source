@@ -147,6 +147,7 @@ extern unsigned short* cff_get_ft_to_gid(cff_font *cff);
 extern int   cff_match_string  (cff_font *cff, const char *str, s_SID sid);
 extern char *cff_get_string    (cff_font *cff, s_SID id);
 extern long  cff_get_sid       (cff_font *cff, const char *str);
+extern long  cff_get_seac_sid  (cff_font *cff, const char *str);
 extern s_SID cff_add_string    (cff_font *cff, const char *str, int unique);
 extern void  cff_update_string (cff_font *cff);
 
