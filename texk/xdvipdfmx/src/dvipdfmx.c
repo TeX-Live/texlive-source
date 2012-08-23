@@ -833,8 +833,6 @@ main (int argc, char *argv[])
   else if (STRN_CMP(av0, "xbb", 3) == 0 || STRN_CMP(av0, "extractbb", 9) == 0)
     return extractbb(argc, argv, XBB_OUTPUT);
 
-  mem_debug_init();
-
 #ifdef MIKTEX
   miktex_initialize();
 #else
@@ -970,8 +968,6 @@ main (int argc, char *argv[])
 #ifdef MIKTEX
   miktex_uninitialize ();
 #endif
-
-  mem_debug_check();
 
   return 0;
 }

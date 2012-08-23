@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-08-23  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/dvipdfmx.c, src/mem.c, src/mem.h, src/xbb.c, src/dvipdfmx.c,
+	src/mem.c, src/mem.h, src/xbb.c: Remove memory debugging code.
+
 2012-08-21  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
 
 	* src/tt_post.c (read_v2_post_names): support large truetype fonts
