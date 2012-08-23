@@ -1,3 +1,7 @@
+2012-08-23  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/Makefile.am: Remove mention of non-existent files.
+
 2012-08-21  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
 
 	* src/tt_post.c (read_v2_post_names): support large truetype fonts

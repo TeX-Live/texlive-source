@@ -61,8 +61,6 @@ include $(srcdir)/../../am/bin_links.am
 ## Rebuild libz
 @ZLIB_RULE@
 
-EXTRA_DIST = asl_charset.h mk_agl_standard_c.pl
-
 install-exec-hook: install-bin-links
 if WIN32
 	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)

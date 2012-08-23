@@ -54,5 +54,3 @@ endif !build_MacOsX
 ## Rebuild libz
 @ZLIB_RULE@
 
-EXTRA_DIST = asl_charset.h
-
