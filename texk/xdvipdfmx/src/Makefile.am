@@ -10,7 +10,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 bin_PROGRAMS = xdvipdfmx
 
 xdvipdfmx_SOURCES = \
-	agl.c agl_standard.c bmpimage.c cff.c cff_dict.c cid.c cidtype0.c cidtype2.c \
+	agl.c bmpimage.c cff.c cff_dict.c cid.c cidtype0.c cidtype2.c \
 	cmap.c cmap_read.c cmap_write.c cs_type2.c \
 	dpxconf.c dpxcrypt.c dpxfile.c dpxutil.c \
 	dvi.c dvipdfmx.c epdf.c error.c fontmap.c jpegimage.c mem.c mfileio.c mpost.c \
@@ -54,5 +54,5 @@ endif !build_MacOsX
 ## Rebuild libz
 @ZLIB_RULE@
 
-EXTRA_DIST = asl_charset.h mk_agl_standard_c.pl
+EXTRA_DIST = asl_charset.h
 

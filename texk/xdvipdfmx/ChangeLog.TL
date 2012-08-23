@@ -5,6 +5,10 @@ ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 
 	* src/dvipdfmx.c, src/mem.c, src/mem.h, src/xbb.c, src/dvipdfmx.c,
 	src/mem.c, src/mem.h, src/xbb.c: Remove memory debugging code.
+	* src/agl.c, src/agl.h: Remove the built-in AGL name list to minimize
+	difference with dvipdfmx.
+	* src/agl_standard.c, src/mk_agl_standard_c.pl: Removed.
+	* src/Makefile.am: Adapted.
 
 2012-08-21  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
 
