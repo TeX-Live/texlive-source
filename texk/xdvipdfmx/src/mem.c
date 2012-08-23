@@ -29,7 +29,6 @@
 #include "mem.h"
 #include "error.h"
 
-
 void *new (size_t size)
 {
   void *result = malloc (size);
