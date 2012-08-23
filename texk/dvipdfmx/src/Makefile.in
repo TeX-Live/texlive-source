@@ -314,7 +314,6 @@ bin_links = \
 	dvipdfmx$(EXEEXT):ebb \
 	dvipdfmx$(EXEEXT):extractbb
 
-EXTRA_DIST = asl_charset.h mk_agl_standard_c.pl
 all: all-am
 
 .SUFFIXES:
