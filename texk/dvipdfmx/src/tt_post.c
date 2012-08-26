@@ -55,7 +55,7 @@ read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
            We show a warning only once, instead of thousands of times */
 	static char warning_issued = 0;
 	if (!warning_issued) {
-	  WARN("TrueTypes post table name index %u > 32767", idx);
+	  WARN("TrueType post table name index %u > 32767", idx);
           warning_issued = 1;
         }
         /* In a real-life large font, (x)dvipdfmx crashes if we use

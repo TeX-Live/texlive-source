@@ -1,6 +1,7 @@
 2012-08-26  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
 
-	* tt_table.c (tt_read_hhea_table): typo.
+	* src/tt_table.c (tt_read_hhea_table),
+	src/tt_post.c (read_v2_post_names): typos.
 
 2012-08-23  Khaled Hosny  <khaledhosny@eglug.org>
 
