@@ -4,6 +4,9 @@ ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 2012-08-26  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* src/agl.c: Reduce differences with dvipdfmx.
+	* BUGS, NEWS, TODO, contrib/*, doc/*, index.html, style_base.css,
+	style_dflt.css, style_ie.css, style_plain.css: Remove files removed
+	from dvipdfmx.
 
 2012-08-23  Khaled Hosny  <khaledhosny@eglug.org>
 

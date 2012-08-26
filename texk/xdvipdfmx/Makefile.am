@@ -16,16 +16,8 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBPNG_FREETYPE2) $(KPATHSEA_DEP
 DISTCLEANFILES = config.force
 
 EXTRA_DIST = \
-	BUGS \
 	ChangeLog.TL \
-	contrib \
-	data \
-	doc \
-	index.html \
-	style_base.css \
-	style_dflt.css \
-	style_ie.css \
-	style_plain.css
+	data
 
 # in case of an SVN repository
 dist-hook:
