@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-08-26  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/agl.c: Reduce differences with dvipdfmx.
+
 2012-08-23  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* src/dvipdfmx.c, src/mem.c, src/mem.h, src/xbb.c, src/dvipdfmx.c,

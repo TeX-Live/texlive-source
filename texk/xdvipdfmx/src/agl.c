@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/agl.c,v 1.33 2007/11/14 02:07:14 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/agl.c,v 1.35 2011/03/06 03:14:13 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -143,7 +143,7 @@ static const char * const modifiers[] = {
 };
 
 static int
-skip_capital (char **p, char *endptr)
+skip_capital (const char **p, const char *endptr)
 {
   long slen = 0, len;
 
@@ -178,7 +178,7 @@ skip_capital (char **p, char *endptr)
 }
 
 static int
-skip_modifier (char **p, char *endptr)
+skip_modifier (const char **p, const char *endptr)
 {
   long slen = 0, len;
   int  i;
@@ -201,12 +201,12 @@ static int
 is_smallcap (const char *glyphname)
 {
   long  len, slen;
-  char *p, *endptr;
+  const char *p, *endptr;
 
   if (!glyphname)
     return 0;
 
-  p   = (char *) glyphname;
+  p   = glyphname;
   len = strlen(glyphname);
   if (len < 6 ||
       strcmp(p + len - 5, "small"))
@@ -395,7 +395,8 @@ int
 agl_load_listfile (const char *filename, int is_predef)
 {
   int   count = 0;
-  char *p, *endptr, *nextptr;
+  const char *p, *endptr;
+  char *nextptr;
   char  wbuf[WBUF_SIZE];
   FILE *fp;
 
@@ -558,7 +559,7 @@ long
 agl_name_convert_unicode (const char *glyphname)
 {
   long  ucv = -1;
-  char *p;
+  const char *p;
 
   if (!agl_name_is_unicode(glyphname))
     return -1;
@@ -569,9 +570,9 @@ agl_name_convert_unicode (const char *glyphname)
   }
 
   if (glyphname[1] == 'n')
-    p = (char *) (glyphname + 3);
+    p = glyphname + 3;
   else
-    p = (char *) (glyphname + 1);
+    p = glyphname + 1;
   ucv = 0;
   while (*p != '\0' && *p != '.') {
     if (!isdigit(*p) && (*p < 'A' || *p > 'F')) {
@@ -626,10 +627,10 @@ static long
 put_unicode_glyph (const char *name,
 		   unsigned char **dstpp, unsigned char *limptr)
 {
-  char *p;
+  const char *p;
   long  len = 0, ucv;
 
-  p   = (char *) name;
+  p   = name;
   ucv = 0;
 
   if (p[1] != 'n') {
@@ -655,17 +656,18 @@ agl_sput_UTF16BE (const char *glyphstr,
 {
   long  len   = 0;
   int   count = 0;
-  char *p, *endptr;
+  const char *p, *endptr;
 
   ASSERT(glyphstr && dstpp);
 
-  p      = (char *) glyphstr;
+  p      =  glyphstr;
   endptr = strchr(p, '.');
   if (!endptr)
     endptr = p + strlen(p);
 
   while (p < endptr) {
-    char     *name, *delim;
+    char     *name;
+    const char *delim;
     long      sub_len;
     int       i;
     agl_name *agln0, *agln1 = NULL;
@@ -736,15 +738,16 @@ agl_get_unicodes (const char *glyphstr,
 		  long *unicodes, int max_unicodes)
 {
   int   count = 0;
-  char *p, *endptr;
+  const char *p, *endptr;
 
-  p      = (char *) glyphstr;
+  p      = glyphstr;
   endptr = strchr(p, '.');
   if (!endptr)
     endptr = p + strlen(p);
 
   while (p < endptr) {
-    char     *name, *delim;
+    char     *name;
+    const char *delim;
     long      sub_len;
     int       i;
     agl_name *agln0, *agln1 = NULL;
