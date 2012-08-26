@@ -1797,7 +1797,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
       }
       opt_conf = otl_conf_find_opt(conf, opt_tag);
       if (!opt_conf)
-	ERROR("There are no option \"%s\" in \"%s\".",
+	ERROR("There is no option \"%s\" in \"%s\".",
 	      opt_tag, conf_name);
       load_gsub(opt_conf, gsub_list, sfont);
     }
@@ -1808,7 +1808,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     if (opt_tag) {
       opt_conf = otl_conf_find_opt(conf, opt_tag);
       if (!opt_conf)
-	ERROR("There are no option \"%s\" in \"%s\".",
+	ERROR("There is no option \"%s\" in \"%s\".",
 	      opt_tag, conf_name);
       handle_gsub(opt_conf, ttcmap, gsub_list, &unencoded);
     }
