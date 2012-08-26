@@ -1,3 +1,7 @@
+2012-08-26  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+
+	* tt_table.c (tt_read_hhea_table): typo.
+
 2012-08-23  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* src/Makefile.am: Remove mention of non-existent files.

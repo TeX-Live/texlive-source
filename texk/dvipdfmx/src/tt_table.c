@@ -207,7 +207,7 @@ tt_read_hhea_table (sfnt *sfont)
   }
   table->metricDataFormat = sfnt_get_short(sfont);
   if (table->metricDataFormat != 0)
-    ERROR("unknown metricDaraFormat");
+    ERROR("unknown metricDataFormat");
   table->numOfLongHorMetrics = sfnt_get_ushort(sfont);
 
   len = sfnt_find_table_len(sfont, "hmtx");
