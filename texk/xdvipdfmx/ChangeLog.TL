@@ -7,6 +7,7 @@ ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 	* BUGS, NEWS, TODO, contrib/*, doc/*, index.html, style_base.css,
 	style_dflt.css, style_ie.css, style_plain.css: Remove files removed
 	from dvipdfmx.
+	* data/*: Sync with dvipdfmx.
 
 2012-08-23  Khaled Hosny  <khaledhosny@eglug.org>
 

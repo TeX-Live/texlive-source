@@ -1,13 +1,16 @@
-## Makefile.am for the TeX Live subdirectory texk/xdvipdfmx/data/
-##
-## Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
-## You may freely use, modify and/or distribute this file.
-##
-pkgdatadir = $(datarootdir)/texmf/dvipdfm
-dist_pkgdata_DATA = \
-  $(srcdir)/CMap/EUC-UCS2 \
-  $(srcdir)/CMap/UniKSCms-UCS2-H \
-  $(srcdir)/CMap/UniKSCms-UCS2-V \
-  $(srcdir)/config/glyphlist.txt \
-  $(srcdir)/config/cid-x.map \
-  $(srcdir)/config/dvipdfmx.cfg
+configdatadir = $(datarootdir)/texmf/dvipdfmx
+dist_configdata_DATA = \
+  $(srcdir)/dvipdfmx.cfg
+ 
+glyphlistdatadir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
+dist_glyphlistdata_DATA = \
+  $(srcdir)/glyphlist.txt \
+  $(srcdir)/pdfglyphlist.txt
+
+mapdatadir = $(datarootdir)/texmf/fonts/map/dvipdfmx
+dist_mapdata_DATA = \
+  $(srcdir)/cid-x.map
+
+cmapdatadir = $(datarootdir)/texmf/fonts/cmap/dvipdfmx
+dist_cmapdata_DATA = \
+  $(srcdir)/EUC-UCS2
