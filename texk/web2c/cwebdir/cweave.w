@@ -124,7 +124,7 @@ you have to change them also in the file |"common.w"|.
 @d max_sections 10239 /* greater than the total number of sections */
 @d hash_size 8501 /* should be prime */
 @d buf_size 1000 /* maximum length of input line, plus one */
-@d longest_name 1000 /* section names and strings shouldn't be longer than this */
+@d longest_name 10000 /* section names and strings shouldn't be longer than this */
 @d long_buf_size (buf_size+longest_name)
 @d line_length 80 /* lines of \TEX/ output have at most this many characters;
   should be less than 256 */

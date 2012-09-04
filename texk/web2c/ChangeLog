@@ -1,3 +1,14 @@
+2012-09-05  Karl Berry  <karl@tug.org>
+
+	* cwebdir/cweave.w (longest_name): restore to 10000,
+	the value in the Knuth/Levy distribution on CTAN
+	(which matches Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/cweb.tar.gz)
+	Report from Arthur O'Dwyer, 3 Sep 2012 18:06:05.
+	
+	Our cweave.w has many other changes relative to the original.
+	These should be moved to cweav-w2c.ch so our originals are
+	unmodified, but can't do everything right now.
+
 2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac (AC_CHECK_FUNCS): Remove test for snprintf.
