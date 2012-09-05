@@ -1,3 +1,21 @@
+2012-09-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* common.w, ctangle.w, cweave.w: copy the original ones in
+	ftp://ftp.cs.stanford.edu/pub/cweb/cweb.tar.gz.
+	* comm-w2c.ch, ctang-w2c.ch, cweav-w2c.ch: move our changes to change
+	files.
+
+2012-09-05  Karl Berry  <karl@tug.org>
+
+	* cweave.w (longest_name): restore to 10000,
+	the value in the Knuth/Levy distribution on CTAN
+	(which matches Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/cweb.tar.gz)
+	Report from Arthur O'Dwyer, 3 Sep 2012 18:06:05.
+	
+	Our cweave.w has many other changes relative to the original.
+	These should be moved to cweav-w2c.ch so our originals are
+	unmodified, but can't do everything right now.
+
 2012-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* {comm,ctang,cweav}-w2c.ch: Use binary mode for output files.

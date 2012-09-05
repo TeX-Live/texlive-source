@@ -66,6 +66,12 @@ common_init (void)
   @<Set up |PROGNAME| feature and initialize the search path mechanism@>;
 @z
 
+@x l.153
+@d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
+@y
+@d buf_size 1000 /* for \.{CWEAVE} and \.{CTANGLE} */
+@z
+
 Section 9.
 
 @x l.173
@@ -145,6 +151,12 @@ if ((found_filename=kpse_find_cweb(change_file_name))==NULL ||
   strcpy(change_file_name, found_filename);
   free(found_filename);
 }
+@z
+
+@x l.415
+@d max_sections 2000 /* number of identifiers, strings, section names;
+@y
+@d max_sections 10239 /* number of identifiers, strings, section names;
 @z
 
 Section 21.
@@ -262,6 +274,24 @@ Section 26.
 check_complete(){
 @y
 check_complete (void) {
+@z
+
+@x l.589
+@d max_bytes 90000 /* the number of bytes in identifiers,
+@y
+@d max_bytes 1000000 /* the number of bytes in identifiers,
+@z
+
+@x l.591
+@d max_names 4000 /* number of identifiers, strings, section names;
+@y
+@d max_names 10239 /* number of identifiers, strings, section names;
+@z
+
+@x l.642
+@d hash_size 353 /* should be prime */
+@y
+@d hash_size 8501 /* should be prime */
 @z
 
 Section 33.

@@ -90,6 +90,48 @@ int main (int ac, char **av)
   return wrap_up(); /* and exit gracefully */
 @z
 
+@x l.120
+@d max_bytes 90000 /* the number of bytes in identifiers,
+@y
+@d max_bytes 1000000 /* the number of bytes in identifiers,
+@z
+
+@x l.112
+@d max_names 4000 /* number of identifiers, strings, section names;
+@y
+@d max_names 10239 /* number of identifiers, strings, section names;
+@z
+
+@x l.124
+@d max_sections 2000 /* greater than the total number of sections */
+@d hash_size 353 /* should be prime */
+@d buf_size 100 /* maximum length of input line, plus one */
+@y
+@d max_sections 10239 /* greater than the total number of sections */
+@d hash_size 8501 /* should be prime */
+@d buf_size 1000 /* maximum length of input line, plus one */
+@z
+
+@x l.131
+@d max_refs 20000 /* number of cross-references; must be less than 65536 */
+@d max_toks 20000 /* number of symbols in \CEE/ texts being parsed;
+@y
+@d max_refs 65535 /* number of cross-references; must be less than 65536 */
+@d max_toks 65535 /* number of symbols in \CEE/ texts being parsed;
+@z
+
+@x l.134
+@d max_texts 4000 /* number of phrases in \CEE/ texts being parsed;
+@y
+@d max_texts 10239 /* number of phrases in \CEE/ texts being parsed;
+@z
+
+@x l.136
+@d max_scraps 2000 /* number of tokens in \CEE/ texts being parsed */
+@y
+@d max_scraps 10000 /* number of tokens in \CEE/ texts being parsed */
+@z
+
 Section 5.
 
 @x common.h l.30 - boolean comes from kpathsea.

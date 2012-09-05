@@ -150,7 +150,7 @@ Since |buf_size| is strictly less than |long_buf_size|,
 some of \.{CWEB}'s routines use the fact that it is safe to refer to
 |*(limit+2)| without overstepping the bounds of the array.
 
-@d buf_size 1000 /* for \.{CWEAVE} and \.{CTANGLE} */
+@d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
 @d longest_name 1000
 @d long_buf_size (buf_size+longest_name) /* for \.{CWEAVE} */
 @d xisspace(c) (isspace(c)&&((unsigned char)c<0200))
@@ -412,7 +412,7 @@ If we've just changed from the |cur_file| to the |change_file|, or if
 the |cur_file| has changed, we tell \.{CTANGLE} to print this
 information in the \CEE/ file by means of the |print_where| flag.
 
-@d max_sections 10239 /* number of identifiers, strings, section names;
+@d max_sections 2000 /* number of identifiers, strings, section names;
   must be less than 10240 */
 
 @<Defin...@>=
@@ -586,9 +586,9 @@ elements are structures of type |name_info|, containing a pointer into
 the |byte_mem| array (the address where the name begins) and other data.
 A |name_pointer| variable is a pointer into |name_dir|.
 
-@d max_bytes 1000000 /* the number of bytes in identifiers,
+@d max_bytes 90000 /* the number of bytes in identifiers,
   index entries, and section names; must be less than $2^{24}$ */
-@d max_names 10239 /* number of identifiers, strings, section names;
+@d max_names 4000 /* number of identifiers, strings, section names;
   must be less than 10240 */
 
 @<Definitions that...@>=
@@ -639,7 +639,7 @@ function |names_match|, which is slightly different in
 \.{CWEAVE} and \.{CTANGLE}.  If there is no match for the identifier,
 it is inserted into the table.
 
-@d hash_size 8501 /* should be prime */
+@d hash_size 353 /* should be prime */
 
 @<Defini...@>=
 typedef name_pointer *hash_pointer;
