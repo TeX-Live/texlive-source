@@ -45,12 +45,10 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap AUTHORS COPYING ChangeLog INSTALL NEWS \
-	TODO
+	../../build-aux/ylwrap AUTHORS COPYING ChangeLog INSTALL
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/cho-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-fontconfig-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
@@ -154,8 +152,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-FONTCONFIG_INCLUDES = @FONTCONFIG_INCLUDES@
-FONTCONFIG_LIBS = @FONTCONFIG_LIBS@
 FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
 FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
 FREETYPE2_LIBS = @FREETYPE2_LIBS@
@@ -265,7 +261,6 @@ ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = . src
 DISTCLEANFILES = config.force
 EXTRA_DIST = \
-	BUGS \
 	ChangeLog.TL \
 	data
 

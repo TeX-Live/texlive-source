@@ -35,14 +35,11 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = xdvipdfmx$(EXEEXT)
-@build_MacOsX_FALSE@am__append_1 = $(FONTCONFIG_INCLUDES)
-@build_MacOsX_FALSE@am__append_2 = $(FONTCONFIG_LIBS)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/cho-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-fontconfig-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
@@ -90,7 +87,6 @@ am_xdvipdfmx_OBJECTS = agl.$(OBJEXT) bmpimage.$(OBJEXT) cff.$(OBJEXT) \
 xdvipdfmx_OBJECTS = $(am_xdvipdfmx_OBJECTS)
 xdvipdfmx_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-@build_MacOsX_FALSE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -134,8 +130,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-FONTCONFIG_INCLUDES = @FONTCONFIG_INCLUDES@
-FONTCONFIG_LIBS = @FONTCONFIG_LIBS@
 FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
 FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
 FREETYPE2_LIBS = @FREETYPE2_LIBS@
@@ -241,8 +235,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-INCLUDES = $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) \
-	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(am__append_1)
+INCLUDES = $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = 
 AM_CFLAGS = $(WARNING_CFLAGS)
 xdvipdfmx_SOURCES = \
@@ -271,8 +264,7 @@ xdvipdfmx_SOURCES = \
 	unicode.h vf.h xbb.h
 
 xdvipdfmx_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBPNG_FREETYPE2) $(KPATHSEA_DEPEND)
-LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) \
-	$(am__append_2)
+LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 @build_MacOsX_TRUE@AM_LDFLAGS = -framework ApplicationServices
 all: all-am
 
