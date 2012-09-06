@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 27413 2012-08-15 22:26:59Z karl $
+# $Id: tlmgr.pl 27601 2012-09-05 23:52:48Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 27413 $';
-my $datrev = '$Date: 2012-08-16 00:26:59 +0200 (Thu, 16 Aug 2012) $';
+my $svnrev = '$Revision: 27601 $';
+my $datrev = '$Date: 2012-09-06 01:52:48 +0200 (Thu, 06 Sep 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -280,8 +280,24 @@ sub main {
     # But not all Unix platforms have it, and on Windows our Config.pm
     # can apparently interfere, so always skip it there.
     my @noperldoc = ();
-    if (win32() || ! TeXLive::TLUtils::which("perldoc")) {
+    if (win32()) {
       @noperldoc = ("-noperldoc", "1");
+    } else {
+      if (!TeXLive::TLUtils::which("perldoc")) {
+        @noperldoc = ("-noperldoc", "1");
+      } else {
+        # checking only for the existence of perldoc is not enough
+        # because stupid Debian/Ubuntu ships a stub that does nothing
+        # which is very very bad idea
+        # try to check for that, too
+        my $ret = system("perldoc -V > /dev/null 2>&1");
+        if ($ret == 0) {
+          debug("Working perldoc found, using it.\n");
+        } else {
+          tlwarn("Your perldoc seems to be non functional!\n");
+          @noperldoc = ("-noperldoc", "1");
+        }
+      }
     }
     # in some cases LESSPIPE of less breaks control characters
     # and the output of pod2usage is broken.
@@ -3489,11 +3505,13 @@ sub array_to_repository {
   }
   for my $k (keys %r) {
     my $v = $r{$k};
-    if ($k eq $v) {
-      push @ret, $k;
-    } else {
-      push @ret, "$v#$k";
+    if ($k ne $v) {
+      $v = "$v#$k";
     }
+    # encode spaces and % in the path and tags
+    $v =~ s/%/%25/g;
+    $v =~ s/ /%20/g;
+    push @ret, $v;
   }
   return "@ret";
 }
@@ -3507,11 +3525,17 @@ sub repository_to_array {
     return %r;
   }
   for my $rr (@repos) {
+    my $tag;
+    my $url;
+    # decode spaces and % in reverse order
+    $rr =~ s/%20/ /g;
+    $rr =~ s/%25/%/g;
+    $tag = $url = $rr;
     if ($rr =~ m/^([^#]+)#(.*)$/) {
-      $r{$2} = $1;
-    } else {
-      $r{$rr} = $rr;
+      $tag = $2;
+      $url = $1;
     }
+    $r{$tag} = $url;
   }
   return %r;
 }

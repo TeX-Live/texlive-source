@@ -1018,10 +1018,11 @@ sub mkMaps {
   &writeLines(">$dvipsoutputdir/builtin35.map", 
     normalizeLines(@builtin35_map));
 
-  my @dftdvips_fonts = ($dvipsDownloadBase35 ? @ps2pk_fonts : @dvips35_fonts);
+  my @dftdvips_fonts = 
+    (($dvipsDownloadBase35 eq "true") ? @ps2pk_fonts : @dvips35_fonts);
 
   my @psfonts_t1_map;
-  if ($dvipsDownloadBase35) {
+  if ($dvipsDownloadBase35 eq "true") {
     push @psfonts_t1_map, "% ps2pk35.map",
     @dftdvips_fonts = @ps2pk_fonts;
   } else {
