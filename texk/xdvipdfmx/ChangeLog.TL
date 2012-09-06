@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-09-06  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* configure.ac, src/fontmap.c, src/Makefile.am: Remove FontConfig
+	dependency, as it is not needed anymore with recent XeTeX.
+
 2012-08-26  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* src/agl.c: Reduce differences with dvipdfmx.

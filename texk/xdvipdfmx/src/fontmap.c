@@ -38,15 +38,12 @@
 #include "fontmap.h"
 
 #ifdef XETEX
+#include "ft2build.h"
+#include FT_FREETYPE_H
 #ifdef XETEX_MAC
 #include <CoreFoundation/CoreFoundation.h>
 #include <ApplicationServices/ApplicationServices.h>
-#include "ft2build.h"
-#include FT_FREETYPE_H
 #include FT_MAC_H
-#else
-#include "fontconfig/fontconfig.h"
-#include "fontconfig/fcfreetype.h"
 #endif
 #endif
 
@@ -1212,17 +1209,7 @@ pdf_load_native_font (const char *ps_name,
 
 #else
 
-  int i;
-
-  FcObjectSet *os;
-  FcPattern   *pat;
-  FcFontSet   *matches;
-
   if (!sInitialized) {
-    if (FcInit() == FcFalse) {
-      WARN("Fontconfig initialization failed.");
-      return error;
-    }
     if (FT_Init_FreeType(&ftLib) != 0) {
       WARN("FreeType initialization failed.");
       return error;
@@ -1235,34 +1222,7 @@ pdf_load_native_font (const char *ps_name,
     error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant, embolden);
   }
   else {
-    os = FcObjectSetBuild(FC_FILE, FC_INDEX, FC_FAMILY, FC_STYLE, NULL);
-    pat = FcPatternBuild(0, FC_FAMILY,  FcTypeString, fam_name,
-                            FC_STYLE,   FcTypeString, sty_name,
-                            FC_OUTLINE, FcTypeBool,   FcTrue, NULL);
-    matches = FcFontList(FcConfigGetCurrent(), pat, os);
-    FcObjectSetDestroy(os);
-    FcPatternDestroy(pat);
-
-    for (i = 0; i < matches->nfont; i++) {
-      FcChar8 *path;
-      const char *name;
-      int      index;
-      FT_Face  face;
-      if (FcPatternGetString(matches->fonts[i],
-                             FC_FILE, 0, &path) == FcResultMatch &&
-          FcPatternGetInteger(matches->fonts[i],
-                              FC_INDEX, 0, &index) == FcResultMatch) {
-        FT_New_Face(ftLib, (char*)path, index, &face);
-        name = FT_Get_Postscript_Name(face);
-        if (!strcmp(name, ps_name)) {
-          error = pdf_insert_native_fontmap_record(ps_name, (char*)path, index, face,
-                                                   layout_dir, extend, slant, embolden);
-          /* don't dispose of the FT_Face, as we'll be using it to retrieve font data */
-          break;
-        }
-        FT_Done_Face(face);
-      }
-    }
+    ERROR("Loading fonts by font name is not supported.");
   }
 
 #endif

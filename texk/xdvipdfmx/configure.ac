@@ -82,25 +82,19 @@ if test "x$enable_texlive_build" != xyes || test ! -d $srcdir/../kpathsea; then
   CHO_CHECK_LIBPAPER
 fi
 
+dnl XXX we should do the check under Mac only
+can_build=yes
 KPSE_CHECK_FRAMEWORK([ApplicationServices], [ATSFontRef fontRef])
-KPSE_FONTCONFIG_FLAGS
 if test "x$kpse_cv_have_ApplicationServices" = xyes; then
-  can_build=yes
   AC_DEFINE([XETEX_MAC], 1, [Define if part of a TeX Live build for Mac OS X.])
-else
-  KPSE_ADD_FLAGS([fontconfig])
-  CHO_CHECK_LIBFONTCONFIG
-  KPSE_RESTORE_FLAGS
-  can_build=$cho_cv_have_fontconfig
 fi
 
 if test "x$can_build" = xyes; then
   AC_DEFINE([XETEX], 1, [Define if part of a TeX Live build.])
 else
-  AC_MSG_WARN([fontconfig library or ApplicationServices framework not found.
-This version of xdvipdfmx requires either ApplicationServices (on Mac OS X)
-or the fontconfig library (on other platforms) to be available, otherwise it
-cannot support XeTeX output using standard system-installed fonts.])
+  AC_MSG_WARN([ApplicationServices framework not found.  This version of
+xdvipdfmx requires ApplicationServices (on Mac OS X) to be available, otherwise
+it cannot support XeTeX output using standard system-installed fonts.])
   if test "x$enable_build" != xno; then
     AC_MSG_ERROR([exiting])
   fi
