@@ -1057,7 +1057,6 @@ pdf_load_fontmap_file (const char *filename, int mode)
 }
 
 #ifdef XETEX
-
 static int
 pdf_insert_native_fontmap_record (const char *name, const char *path, int index, FT_Face face,
                                   int layout_dir, int extend, int slant, int embolden)
@@ -1162,8 +1161,6 @@ pdf_load_native_font (const char *ps_name,
   static int        sInitialized = 0;
   int error = -1;
 
-#ifdef XETEX_MAC
-
   if (!sInitialized) {
     if (FT_Init_FreeType(&ftLib) != 0) {
       WARN("FreeType initialization failed.");
@@ -1177,6 +1174,7 @@ pdf_load_native_font (const char *ps_name,
     error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant, embolden);
   }
   else {
+#ifdef XETEX_MAC
     CFStringRef theName = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
                             ps_name, kCFStringEncodingASCII, kCFAllocatorNull);
     ATSFontRef fontRef = ATSFontFindFromPostScriptName(theName, kATSOptionFlagsDefault);
@@ -1205,31 +1203,14 @@ pdf_load_native_font (const char *ps_name,
       if (atsName != NULL)
         CFRelease(atsName);
     }
-  }
-
 #else
-
-  if (!sInitialized) {
-    if (FT_Init_FreeType(&ftLib) != 0) {
-      WARN("FreeType initialization failed.");
-      return error;
-    }
-    FT_Library_Version(ftLib, &ft_major, &ft_minor, &ft_patch);
-    sInitialized = 1;
-  }
-
-  if (ps_name[0] == '[') {
-    error = pdf_load_native_font_from_path(ps_name, layout_dir, extend, slant, embolden);
-  }
-  else {
     ERROR("Loading fonts by font name is not supported.");
+#endif /* XETEX_MAC */
   }
-
-#endif
 
   return error;
 }
-#endif
+#endif /* XETEX */
 
 #if  0
 /* tfm_name="dmjhira10", map_name="dmj@DNP@10", sfd_name="DNP"
