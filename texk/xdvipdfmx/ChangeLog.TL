@@ -1,6 +1,29 @@
 ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
 =================================================
 
+2012-09-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* fontmap.c: unused function pdf_clear_fontmaps
+	* fontmap.h: unused function pdf_clear_fontmaps
+	* pdfcolor.c: unused functions pdf_get_colorspace_num_components,
+	pdf_get_colorspace_subtype
+	* pdfcolor.h: unused functions pdf_get_colorspace_num_components,
+	pdf_get_colorspace_subtype
+	* pdfdev.c: unused functions pdf_dev_currentfont, pdf_dev_get_font_ptsize
+	* pdfdev.h: unused functions pdf_dev_currentfont, pdf_dev_get_font_ptsize
+	* pdfdraw.c: unused functions static int pdf_coord__itransform,
+	pdf_dev_setflat, pdf_dev_itransform, pdf_dev_rectstroke
+	* pdfdraw.h: unused functions pdf_dev_setflat, pdf_dev_itransform,
+	pdf_dev_rectstroke
+	* pdffont.c: unused functions pdf_get_font_fontname, pdf_font_get_flags
+	* pdffont.h: unused functions pdf_get_font_fontname, pdf_font_get_flags
+	* pdfobj.c: unused functions pdf_put_array, pdf_shift_array,
+	pdf_pop_array, pdf_put_dict, pdf_stream_set_flags, pdf_stream_get_flags
+	* pdfobj.h: unused functions pdf_put_array, pdf_shift_array,
+	pdf_pop_array, pdf_put_dict, pdf_stream_set_flags, pdf_stream_get_flags
+	* type0.c: unused function Type0Font_get_encoding
+	* type0.h: unused function Type0Font_get_encoding
+
 2012-09-06  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* configure.ac, src/fontmap.c, src/Makefile.am: Remove FontConfig

@@ -164,8 +164,10 @@ extern void   pdf_dev_set_origin (double orig_x, double orig_y);
 extern double pdf_dev_scale      (void);
 
 /* Access text state parameters. */
+#if 0
 extern int    pdf_dev_currentfont     (void); /* returns font_id */
 extern double pdf_dev_get_font_ptsize (int font_id);
+#endif /* 0 */
 extern int    pdf_dev_get_font_wmode  (int font_id); /* ps: special support want this (pTeX). */
 
 /* Text composition (direction) mode

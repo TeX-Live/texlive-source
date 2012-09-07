@@ -374,6 +374,7 @@ pdf_get_font_subtype (int font_id)
   return font->subtype;
 }
 
+#if 0
 char *
 pdf_get_font_fontname (int font_id)
 {
@@ -385,6 +386,7 @@ pdf_get_font_fontname (int font_id)
 
   return font->fontname;
 }
+#endif /* 0 */
 
 int
 pdf_get_font_encoding (int font_id)
@@ -929,6 +931,7 @@ pdf_font_get_flag (pdf_font *font, int mask)
   return ((font->flags & mask) ? 1 : 0);
 }
 
+#if 0
 int
 pdf_font_get_flags (pdf_font *font)
 {
@@ -936,6 +939,7 @@ pdf_font_get_flags (pdf_font *font)
 
   return font->flags;
 }
+#endif /* 0 */
 
 double
 pdf_font_get_param (pdf_font *font, int param_type)

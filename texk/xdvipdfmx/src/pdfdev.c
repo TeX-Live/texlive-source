@@ -838,6 +838,7 @@ dev_set_font (int font_id)
 
 /* Access text state parameters.
  */
+#if 0
 int
 pdf_dev_currentfont (void)
 {
@@ -856,6 +857,7 @@ pdf_dev_get_font_ptsize (int font_id)
 
   return 1.0;
 }
+#endif /* 0 */
 
 int
 pdf_dev_get_font_wmode (int font_id)

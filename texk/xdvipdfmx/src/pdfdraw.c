@@ -138,6 +138,7 @@ pdf_coord__transform (pdf_coord *p, const pdf_tmatrix *M)
   return 0;
 }
 
+#if 0
 static /* __inline__ */ int
 pdf_coord__itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
@@ -155,6 +156,7 @@ pdf_coord__itransform (pdf_coord *p, const pdf_tmatrix *M)
 
   return 0;
 }
+#endif /* 0 */
 
 static /* __inline__ */ int
 pdf_coord__dtransform (pdf_coord *p, const pdf_tmatrix *M)
@@ -1417,6 +1419,7 @@ pdf_dev_setdash (int count, double *pattern, double offset)
   return 0;
 }
 
+#if 0
 int
 pdf_dev_setflat (int flatness)
 {
@@ -1436,6 +1439,7 @@ pdf_dev_setflat (int flatness)
 
   return 0;
 }
+#endif /* 0 */
     
 /* ZSYUEDVEDEOF */
 int
@@ -1672,6 +1676,7 @@ pdf_dev_transform (pdf_coord *p, const pdf_tmatrix *M)
   return;
 }
 
+#if 0
 void
 pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
@@ -1685,6 +1690,7 @@ pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 
   return;
 }
+#endif /* 0 */
 
 int
 pdf_dev_arc  (double c_x , double c_y, double r,
@@ -1756,7 +1762,7 @@ pdf_dev_bspline (double x0, double y0,
   return  pdf_path__curveto(cpa, cpt, &p1, &p2, &p3);
 }
 
-
+#if 0
 int
 pdf_dev_rectstroke (double x, double y,
                     double w, double h,
@@ -1772,6 +1778,7 @@ pdf_dev_rectstroke (double x, double y,
 
   return  pdf_dev__rectshape(NULL, &r, M, 'S');
 }
+#endif /* 0 */
 
 int
 pdf_dev_rectfill  (double x, double y,

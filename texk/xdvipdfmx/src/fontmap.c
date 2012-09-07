@@ -1300,12 +1300,14 @@ pdf_close_fontmaps (void)
   release_sfd_record();
 }
 
+#if 0
 void
 pdf_clear_fontmaps (void)
 {
   pdf_close_fontmaps();
   pdf_init_fontmaps();
 }
+#endif
 
 /* CIDFont options
  *

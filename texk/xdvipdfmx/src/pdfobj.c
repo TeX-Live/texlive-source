@@ -1216,6 +1216,7 @@ pdf_add_array (pdf_obj *array, pdf_obj *object)
   return;
 }
 
+#if 0
 void
 pdf_put_array (pdf_obj *array, unsigned idx, pdf_obj *object)
 {
@@ -1268,6 +1269,7 @@ pdf_shift_array (pdf_obj *array)
 
   return result;
 }
+#endif /* 0 */
 
 /* Prepend an object to an array */
 void
@@ -1289,6 +1291,7 @@ pdf_unshift_array (pdf_obj *array, pdf_obj *object)
   data->size++;
 }
 
+#if 0
 pdf_obj *
 pdf_pop_array (pdf_obj *array)
 {
@@ -1307,7 +1310,7 @@ pdf_pop_array (pdf_obj *array)
 
   return result;
 }
-
+#endif /* 0 */
 
 static void
 write_dict (pdf_dict *dict, FILE *file)
@@ -1397,6 +1400,7 @@ pdf_add_dict (pdf_obj *dict, pdf_obj *key, pdf_obj *value)
   return 0;
 }
 
+#if 0
 void
 pdf_put_dict (pdf_obj *dict, const char *key, pdf_obj *value)
 {
@@ -1439,6 +1443,7 @@ pdf_put_dict (pdf_obj *dict, const char *key, pdf_obj *value)
     data->value = value;
   }
 }
+#endif /* 0 */
 
 /* pdf_merge_dict makes a link for each item in dict2 before stealing it */
 void
@@ -1875,6 +1880,7 @@ pdf_stream_uncompress (pdf_obj *src) {
   return dst;
 }
 
+#if 0
 void
 pdf_stream_set_flags (pdf_obj *stream, int flags)
 {
@@ -1897,6 +1903,7 @@ pdf_stream_get_flags (pdf_obj *stream)
 
   return data->_flags;
 }
+#endif /* 0 */
 
 static void
 pdf_write_obj (pdf_obj *object, FILE *file)

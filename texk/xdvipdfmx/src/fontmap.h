@@ -87,7 +87,9 @@ typedef struct fontmap_rec {
 extern void         pdf_fontmap_set_verbose   (void);
 
 extern void         pdf_init_fontmaps         (void);
+#if 0
 extern void         pdf_clear_fontmaps        (void);
+#endif
 extern void         pdf_close_fontmaps        (void);
 
 extern void         pdf_init_fontmap_record   (fontmap_rec *mrec);

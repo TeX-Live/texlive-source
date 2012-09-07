@@ -71,7 +71,9 @@ extern int    pdf_dev_setlinejoin   (int     style);
 extern int    pdf_dev_setdash       (int     count,
                                      double *pattern,
                                      double  offset);
+#if 0
 extern int    pdf_dev_setflat       (int     flatness);
+#endif /* 0 */
 
 /* Path Construction */
 extern int    pdf_dev_moveto        (double x , double y);
@@ -104,11 +106,13 @@ extern int    pdf_dev_newpath       (void);
 extern int    pdf_dev_clip          (void);
 extern int    pdf_dev_eoclip        (void);
 
-
+#if 0
 extern int    pdf_dev_rectstroke    (double x, double y,
                                      double w, double h,
                                      const pdf_tmatrix *M  /* optional */
                                     );
+#endif /* 0 */
+
 extern int    pdf_dev_rectfill      (double x, double y, double w, double h);
 extern int    pdf_dev_rectclip      (double x, double y, double w, double h);
 extern int    pdf_dev_rectadd       (double x, double y, double w, double h);
@@ -125,7 +129,9 @@ extern int    pdf_dev_concat        (const pdf_tmatrix *M);
 extern void   pdf_dev_dtransform    (pdf_coord *p, const pdf_tmatrix *M);
 extern void   pdf_dev_idtransform   (pdf_coord *p, const pdf_tmatrix *M);
 extern void   pdf_dev_transform     (pdf_coord *p, const pdf_tmatrix *M);
+#if 0
 extern void   pdf_dev_itransform    (pdf_coord *p, const pdf_tmatrix *M);
+#endif /* 0 */
 
 extern int    pdf_dev_gsave         (void);
 extern int    pdf_dev_grestore      (void);

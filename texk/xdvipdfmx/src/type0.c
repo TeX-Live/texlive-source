@@ -290,6 +290,7 @@ Type0Font_get_wmode (Type0Font *font)
   return font->wmode;
 }
 
+#if 0
 char *
 Type0Font_get_encoding (Type0Font *font)
 {
@@ -297,6 +298,7 @@ Type0Font_get_encoding (Type0Font *font)
 
   return font->encoding;
 }
+#endif /* 0 */
 
 char *
 Type0Font_get_usedchars (Type0Font *font)
