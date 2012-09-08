@@ -411,6 +411,8 @@ relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/w32_wrapper/runscript.exe
 ctxscript = $(top_srcdir)/w32_wrapper/context/mtxrun.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
+shell_scripts = $(texmf_shell_scripts) $(texmf_dist_shell_scripts) \
+	$(texmf_dist_context_scripts)
 run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
@@ -990,6 +992,10 @@ uninstall-hook: uninstall-man1-links
 xupdmap.1: tetex/updmap.help2man tetex/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(srcdir)/tetex/updmap.pl >/tmp/$@
+
+.PHONY: echo-shell-scripts
+echo-shell-scripts:
+	@echo $(shell_scripts)
 
 .PHONY: run-texlinks
 run-texlinks:

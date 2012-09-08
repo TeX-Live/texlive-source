@@ -356,8 +356,16 @@ xupdmap.1: tetex/updmap.help2man tetex/updmap.pl
 EXTRA_DIST += tetex/updmap.help2man
 
 ## 
-.PHONY: run-texlinks
+## This target is invoked by check-wrapper-consistency (run from cron).
+.PHONY: echo-shell-scripts
+shell_scripts = $(texmf_shell_scripts) $(texmf_dist_shell_scripts)
+shell_scripts += $(texmf_dist_context_scripts)
+echo-shell-scripts:
+	@echo $(shell_scripts)
+
+## 
 ## This target is invoked by the top-level make,
+.PHONY: run-texlinks
 ## to create the per-format engine symlinks in $(bindir),
 ## after everything else is installed.  We explicitly specify the
 ## fmtutil.cnf file to use for the sake of distro builds.
