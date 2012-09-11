@@ -621,6 +621,11 @@ texmf_yesno(const_string var)
 const char *ptexbanner = BANNER;
 #endif
 
+#ifdef WIN32
+string
+normalize_quotes (const_string name, const_string mesg);
+#endif
+
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
 
@@ -695,6 +700,47 @@ maininit (int ac, string *av)
   
   /* Were we given a simple filename? */
   main_input_file = get_input_file_name();
+
+#ifdef WIN32
+  if (main_input_file == NULL) {
+    string name;
+    boolean quoted;
+
+    name = argv[argc-1];
+    if (name && name[0] != '-' && name[0] != '&' && name[0] != '\\') {
+      if (strlen (name) > 2 && isalpha (name[0]) && name[1] == ':' &&
+          name[2] == '\\') {
+        string pp;
+        for (pp = name; *pp; pp++) {
+          if (IS_KANJI (pp))
+            pp++;
+          else if (*pp == '\\')
+            *pp = '/';
+        }
+      }
+#ifdef XeTeX
+      name = normalize_quotes(argv[argc-1], "argument");
+      main_input_file = kpse_find_file(argv[argc-1], INPUT_FORMAT, false);
+      argv[argc-1] = name;
+#else
+      name = normalize_quotes(argv[argc-1], "argument");
+      quoted = (name[0] == '"');
+      if (quoted) {
+        /* Overwrite last quote and skip first quote. */
+        name[strlen(name)-1] = '\0';
+        name++;
+      }
+      main_input_file = kpse_find_file(name, INPUT_FORMAT, false);
+      if (quoted) {
+        /* Undo modifications */
+        name[strlen(name)] = '"';
+        name--;
+      }
+      argv[argc-1] = name;
+#endif
+    }
+  }
+#endif
 
   /* Second chance to activate file:line:error style messages, this
      time from texmf.cnf. */
@@ -1596,7 +1642,7 @@ parse_options (int argc, string *argv)
           unsigned i;
           for (i = 0; i < 20 && !ipc_is_open (); i++) {
 #ifdef WIN32
-            Sleep (2000);
+            Sleep (100); /* 2000ms is too long for a simple w32 example */
 #else
             sleep (2);
 #endif

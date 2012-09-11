@@ -1,3 +1,8 @@
+2012-09-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.c (maininit): On Windows, latex "\input" "a b c", for example,
+	was not allowed. Allow file name with spaces in these cases.
+
 2012-08-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c [WIN32]: bug fix. use rewind (f) to clear error and
