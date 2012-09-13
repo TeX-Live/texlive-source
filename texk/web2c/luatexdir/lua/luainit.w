@@ -86,7 +86,7 @@ const_string LUATEX_IHELP[] = {
     "   --[no-]mktex=FMT              disable/enable mktexFMT generation (FMT=tex/tfm)",
     "   --nosocket                    disable the lua socket library",
     "   --output-comment=STRING       use STRING for DVI file comment instead of date (no effect for PDF)",
-    "   --output-directory=DIR        use DIR as the directory to write files to",
+    "   --output-directory=DIR        use existing DIR as the directory to write files in",
     "   --output-format=FORMAT        use FORMAT for job output; FORMAT is 'dvi' or 'pdf'",
     "   --[no-]parse-first-line       disable/enable parsing of the first line of the input file",
     "   --progname=STRING             set the program name to STRING",
@@ -112,6 +112,7 @@ const_string LUATEX_IHELP[] = {
 static char *ex_selfdir(char *argv0)
 {
 #if defined(WIN32)
+#if defined(__MINGW32__)
     char path[PATH_MAX], *fp;
 
     /* SearchPath() always gives back an absolute directory */
@@ -121,8 +122,19 @@ static char *ex_selfdir(char *argv0)
     for (fp = path; fp && *fp; fp++)
         if (IS_DIR_SEP(*fp))
             *fp = DIR_SEP;
+#else /* __MINGW32__ */
+#define PATH_MAX 512
+    char short_path[PATH_MAX], path[PATH_MAX], *fp;
+
+    /* SearchPath() always gives back an absolute directory */
+    if (SearchPath(NULL, argv0, ".exe", PATH_MAX, short_path, &fp) == 0)
+        FATAL1("Can't determine where the executable %s is.\n", argv0);
+    if (getlongpath(path, short_path, sizeof(path)) == 0) {
+        FATAL1("This path points to an invalid file : %s\n", short_path);
+    }
+#endif /* __MINGW32__ */
     return xdirname(path);
-#else
+#else /* WIN32 */
     return kpse_selfdir(argv0);
 #endif
 }
@@ -217,6 +229,11 @@ static struct option long_options[]
 @ @c
 static void parse_options(int argc, char **argv)
 {
+#ifdef WIN32
+/* save argc and argv */
+    int sargc = argc;
+    char **sargv = argv;
+#endif
     int g;                      /* `getopt' return code.  */
     int option_index;
     char *firstfile = NULL;
@@ -347,7 +364,7 @@ static void parse_options(int argc, char **argv)
                  "lua       by Roberto Ierusalimschy, Waldemar Celes,\n" 
                  "             Luiz Henrique de Figueiredo\n" 
                  "metapost  by John Hobby, Taco Hoekwater and friends.\n" 
-                 "poppler   by Derek Noonburg, Kristian Høgsberg (partial)\n" 
+                 "poppler   by Derek Noonburg, Kristian H\\ogsberg (partial)\n"
                  "fontforge by George Williams (partial)\n\n" 
                  "Some extensions to lua and additional lua libraries are used, as well as\n" 
                  "libraries for graphic inclusion. More details can be found in the source.\n" 
@@ -361,16 +378,16 @@ static void parse_options(int argc, char **argv)
     /* attempt to find |input_name| / |dump_name| */
     if (lua_only) {
 	if (argv[optind]) {
- 	   startup_filename = strdup(argv[optind]);
+ 	   startup_filename = xstrdup(argv[optind]);
            lua_offset = optind;
         }
     } else if (argv[optind] && argv[optind][0] == '&') {
-        dump_name = strdup(argv[optind] + 1);
+        dump_name = xstrdup(argv[optind] + 1);
     } else if (argv[optind] && argv[optind][0] != '\\') {
         if (argv[optind][0] == '*') {
-            input_name = strdup(argv[optind] + 1);
+            input_name = xstrdup(argv[optind] + 1);
         } else {
-            firstfile = strdup(argv[optind]);
+            firstfile = xstrdup(argv[optind]);
             if ((strstr(firstfile, ".lua") ==
                  firstfile + strlen(firstfile) - 4)
                 || (strstr(firstfile, ".luc") ==
@@ -389,6 +406,29 @@ static void parse_options(int argc, char **argv)
                 input_name = firstfile;
             }
         }
+#ifdef WIN32
+    } else if (sargv[sargc-1] && sargv[sargc-1][0] != '-' &&
+               sargv[sargc-1][0] != '\\') {
+        if (sargv[sargc-1][0] == '&')
+            dump_name = xstrdup(sargv[sargc-1] + 1);
+        else  {
+            char *p;
+            if (sargv[sargc-1][0] == '*')
+                input_name = xstrdup(sargv[sargc-1] + 1);
+            else
+                input_name = xstrdup(sargv[sargc-1]);
+            sargv[sargc-1] = normalize_quotes(input_name, "argument");
+            input_name = (char *)xbasename(input_name);
+            p = strrchr(input_name, '.');
+            if (p != NULL && strcasecmp(p, ".tex") == 0)
+                *p = '\0';
+            if (!c_job_name)
+                c_job_name = normalize_quotes(input_name, "jobname");
+        }
+        if (safer_option)      /* --safer implies --nosocket */
+            nosocket_option = 1;
+        return;
+#endif
     }
     if (safer_option)           /* --safer implies --nosocket */
         nosocket_option = 1;
@@ -416,7 +456,7 @@ static char *find_filename(char *name, const char *envkey)
     } else {
         dirname = getenv(envkey);
         if ((dirname != NULL) && strlen(dirname)) {
-            dirname = strdup(getenv(envkey));
+            dirname = xstrdup(getenv(envkey));
             if (*(dirname + strlen(dirname) - 1) == '/') {
                 *(dirname + strlen(dirname) - 1) = 0;
             }
@@ -924,7 +964,7 @@ void check_texconfig_init(void)
 void write_svnversion(char *v)
 {
     char *a_head, *n;
-    char *a = strdup(v);
+    char *a = xstrdup(v);
     size_t l = strlen("$Id: luatex.web ");
     if (a != NULL) {
         a_head = a;

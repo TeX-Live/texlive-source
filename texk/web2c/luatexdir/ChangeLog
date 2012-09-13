@@ -1,3 +1,8 @@
+2012-09-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* lua/luainit.w (parse_options): allow lualatex "\input" "a b" on
+	Windows.
+
 2012-08-21  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* tex/texdeffont.w (tex_def_font): Recover the old code, because the
