@@ -1836,9 +1836,16 @@ sub read_map_files {
             # defined in another map file already
             if (defined($alldata->{'fonts'}{$font}{'origin'})) {
               my $fontorig = $alldata->{'fonts'}{$font}{'origin'};
-              my $maporig = $alldata->{'maps'}{$fontorig}{'origin'};
+              my $maporig;
+              if (($fontorig eq "ps2pk35.map") ||
+                  ($fontorig eq "pdftex35.map") ||
+                  ($fontorig eq "dvips35.map")) {
+                $maporig = "built in map - both used - warning!";
+              } else {
+                $maporig = "from " . $alldata->{'maps'}{$fontorig}{'origin'};
+              }
               warning("$prg: font $font is defined multiple times:\n");
-              warning("$prg:   $fontorig (from $maporig)\n");
+              warning("$prg:   $fontorig ($maporig)\n");
               warning("$prg:   $m (from $f) (used)\n");
             } else {
               warning("$prg: font $font is multiply defined in $m, using an arbitrary instance!\n");
