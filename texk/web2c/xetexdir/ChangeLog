@@ -1,3 +1,10 @@
+2012-09-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* XeTeX_ext.c (open_dvi_output): sync with W32TeX. On Windows,
+	use $SELFAUTOLOC/xdvipdfmx.exe as a driver for security reason.
+	Otherwise a malicious xdvipdfmx.bat in the current directory can
+	be called.
+
 2012-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXFontMgr.cpp, XeTeXLayoutInterface.cpp: Always put
