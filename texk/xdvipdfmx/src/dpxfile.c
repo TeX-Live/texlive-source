@@ -755,7 +755,7 @@ dpx_create_temp_file (void)
   }
 #elif defined(HAVE_MKSTEMP)
 #  define __TMPDIR     "/tmp"
-#  define TEMPLATE     "/dvipdfmx.XXXXXXXX"
+#  define TEMPLATE     "/dvipdfmx.XXXXXX"
   {
     const char *_tmpd;
     int   _fd = -1;
@@ -811,7 +811,6 @@ dpx_delete_temp_file (char *tmp)
  * This should be system dependent. (MiKTeX may want something different)
  * Please modify as appropriate (see also pdfximage.c and dvipdfmx.c).
  */
-
 int
 dpx_file_apply_filter (const char *cmdtmpl,
                       const char *input, const char *output,

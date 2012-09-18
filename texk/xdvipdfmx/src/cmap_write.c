@@ -201,13 +201,13 @@ write_map (mapDef *mtab, int count,
       *(wbuf->curptr)++ = '<';
       for (j = 0; j < depth; j++)
 	sputx(codestr[j], &(wbuf->curptr), wbuf->limptr);
-      sputx(c, &(wbuf->curptr), wbuf->limptr);
+      sputx((unsigned char)c, &(wbuf->curptr), wbuf->limptr);
       *(wbuf->curptr)++ = '>';
       *(wbuf->curptr)++ = ' ';
       *(wbuf->curptr)++ = '<';
       for (j = 0; j < depth; j++)
 	sputx(codestr[j], &(wbuf->curptr), wbuf->limptr);
-      sputx(c + blocks[i].count, &(wbuf->curptr), wbuf->limptr);
+      sputx((unsigned char)(c + blocks[i].count), &(wbuf->curptr), wbuf->limptr);
       *(wbuf->curptr)++ = '>';
       *(wbuf->curptr)++ = ' ';
       *(wbuf->curptr)++ = '<';

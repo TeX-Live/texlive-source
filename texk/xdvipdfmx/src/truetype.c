@@ -342,7 +342,7 @@ do_builtin_encoding (pdf_font *font, const char *usedchars, sfnt *sfont)
     } else {
       idx = tt_find_glyph(glyphs, gid);
       if (idx == 0)
-        idx  = tt_add_glyph(glyphs, gid, count); /* count returned. */
+        idx  = tt_add_glyph(glyphs, (USHORT)gid, (USHORT)count); /* count returned. */
     }
     cmap_table[18+code] = idx & 0xff; /* bug here */
     count++;
@@ -498,7 +498,7 @@ selectglyph (USHORT in, const char *suffix, struct glyph_mapper *gm, USHORT *out
           memcpy(t, s, strlen(s));
           error = select_gsub(s, gm);
           if (!error)
-            error = otl_gsub_apply_alt(gm->gsub, n, &in);
+            error = otl_gsub_apply_alt(gm->gsub, (USHORT)n, (USHORT *)&in);
         }
       }
     }
@@ -532,7 +532,8 @@ composeglyph (USHORT *glyphs, int n_glyphs,
   }
 
   if (!error)
-    error = otl_gsub_apply_lig(gm->gsub, glyphs, n_glyphs, gid);
+    error = otl_gsub_apply_lig(gm->gsub, (USHORT *)glyphs, (USHORT)n_glyphs,
+                               (USHORT *)gid);
 
   return  error;
 }
@@ -842,7 +843,7 @@ do_custom_encoding (pdf_font *font,
       }
       idx = tt_find_glyph(glyphs, gid);
       if (idx == 0) {
-        idx = tt_add_glyph(glyphs, gid, count); /* count returned. */
+        idx = tt_add_glyph(glyphs, (USHORT)gid, (USHORT)count); /* count returned. */
         count++;
       }
     }

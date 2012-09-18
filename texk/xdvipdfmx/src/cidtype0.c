@@ -546,7 +546,7 @@ CIDFont_type0_dofont (CIDFont *font)
   cid = 0; last_cid = 0; num_glyphs = 0;
   for (cid = 0; cid <= CID_MAX; cid++) {
     if (is_used_char2(used_chars, cid)) {
-      gid = cff_charsets_lookup(cffont, cid);
+      gid = cff_charsets_lookup(cffont, (card16)cid);
       if (cid != 0 && gid == 0) {
 	WARN("Glyph for CID %u missing in font \"%s\".", (CID) cid, font->ident);
 	used_chars[cid/8] &= ~(1 << (7 - (cid % 8)));
@@ -613,7 +613,7 @@ CIDFont_type0_dofont (CIDFont *font)
   fdselect->data.ranges = NEW(num_glyphs, cff_range3);
 
   /* New CharStrings INDEX */
-  charstrings = cff_new_index(num_glyphs+1);
+  charstrings = cff_new_index((card16)(num_glyphs+1));
   max_len = 2 * CS_STR_LEN_MAX;
   charstrings->data = NEW(max_len, card8);
   charstring_len = 0;
@@ -1029,7 +1029,7 @@ CIDFont_type0_t1cdofont (CIDFont *font)
     ERROR("No valid charstring data found.");
 
   /* New CharStrings INDEX */
-  charstrings = cff_new_index(num_glyphs+1);
+  charstrings = cff_new_index((card16)(num_glyphs+1));
   max_len = 2 * CS_STR_LEN_MAX;
   charstrings->data = NEW(max_len, card8);
   charstring_len = 0;
@@ -1979,7 +1979,7 @@ CIDFont_type0_t1dofont (CIDFont *font)
     widths = NEW(num_glyphs, double);
     memset(w_stat, 0, sizeof(int)*1001);
     offset  = 0L;
-    cstring = cff_new_index(num_glyphs);
+    cstring = cff_new_index((card16)num_glyphs);
     cstring->data = NULL;
     cstring->offset[0] = 1;
     gid = 0;

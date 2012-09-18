@@ -40,6 +40,8 @@
 #define XBB_PROGRAM "extractbb"
 #define XBB_VERSION "Version 0.2"
 
+static int xbb_output_mode = XBB_OUTPUT;
+
 static void usage(void)
 {
   fprintf (stderr, "%s, version %s, Copyright (C) 2008 by Jin-Hwan Cho\n",
@@ -51,8 +53,13 @@ static void usage(void)
   fprintf (stdout, "(at your option) any later version.\n");
   fprintf (stderr, "\nUsage: %s [-v] [-b] [-m|-x] [files]\n", XBB_PROGRAM);
   fprintf (stderr, "\t-b\tWrite output file in binary mode\n");
-  fprintf (stderr, "\t-m\tOutput .bb  file used in DVIPDFM\n");
-  fprintf (stderr, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+  if(xbb_output_mode == EBB_OUTPUT) {
+    fprintf (stderr, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
+    fprintf (stderr, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
+  } else {
+    fprintf (stderr, "\t-m\tOutput .bb  file used in DVIPDFM\n");
+    fprintf (stderr, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+  }
   fprintf (stderr, "\t-v\tVerbose\n");
   exit(1);
 }
@@ -72,8 +79,6 @@ static void do_time(FILE *file)
 const char *extensions[] = {
   ".jpeg", ".JPEG", ".jpg", ".JPG", ".pdf", ".PDF", ".png", ".PNG"
 };
-
-static int xbb_output_mode = XBB_OUTPUT;
 
 static char *make_xbb_filename(const char *name)
 {

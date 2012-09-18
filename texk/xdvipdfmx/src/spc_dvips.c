@@ -298,7 +298,7 @@ spc_handler_ps_tricks_gdef (struct spc_env *spe, struct spc_arg *args)
 {
   FILE* fp;
 
-  fp = fopen(global_defs, "a");
+  fp = fopen(global_defs, "ab");
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\n");
   fclose(fp);
@@ -321,7 +321,7 @@ spc_handler_ps_tricks_pdef (struct spc_env *spe, struct spc_arg *args)
   pdf_concatmatrix(&M, &T);
   if (page_defs == 0)
     page_defs = dpx_create_temp_file();
-  fp = fopen(page_defs, "a");
+  fp = fopen(page_defs, "ab");
   fprintf(fp, "gsave initmatrix [%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user - pt.x, spe->y_user - pt.y);
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\ngrestore\n");
@@ -336,7 +336,7 @@ spc_handler_ps_tricks_tdef (struct spc_env *spe, struct spc_arg *args)
   FILE* fp;
   if (!temporary_defs)
     temporary_defs = dpx_create_temp_file();
-  fp = fopen(temporary_defs, "w");
+  fp = fopen(temporary_defs, "wb");
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\n");
   fclose(fp);
@@ -391,7 +391,7 @@ spc_handler_ps_tricks_bput (struct spc_env *spe, struct spc_arg *args, int must_
     FILE* fp;
     if (!temporary_defs)
       temporary_defs = dpx_create_temp_file();
-    fp  = fopen(temporary_defs, "a");
+    fp  = fopen(temporary_defs, "ab");
     fprintf(fp, "gsave\n");
     if (label == 0)
       fprintf(fp, "[%f %f %f %f %f %f] concat %f %f moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
@@ -535,7 +535,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
       WARN("Failed to create temporary input file for PSTricks image conversion.");
       return  -1;
     }
-    fp = fopen(gs_in, "w");
+    fp = fopen(gs_in, "wb");
     for (k = 0; k < num_ps_headers; k++)
       fprintf(fp, "(%s) run\n", ps_headers[k]);
     fprintf(fp, "[%f %f %f %f %f %f] concat %f %f translate 0 0 moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
@@ -563,7 +563,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
     }
 #endif
   } else {
-    fp = fopen(gs_in, "a");
+    fp = fopen(gs_in, "ab");
     fprintf(fp, "flattenpath stroke\n");
   }
   fclose(fp);
@@ -595,7 +595,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
     return error;
   }
 
-  fp = fopen(gs_out, "r");
+  fp = fopen(gs_out, "rb");
    if (pdf_copy_clip(fp, 1, 0, 0) != 0) {
     spc_warn(spe, "Failed to parse the clipping path.");
     RELEASE(gs_in);
@@ -629,7 +629,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
       WARN("Failed to create temporary input file for PSTricks image conversion.");
       return  -1;
     }
-    fp = fopen(gs_in, "w");
+    fp = fopen(gs_in, "wb");
     for (k = 0; k < num_ps_headers; k++)
       fprintf(fp, "(%s) run\n", ps_headers[k]);
     fprintf(fp, "[%f %f %f %f %f %f] concat %f %f translate 0 0 moveto\n", M.a, M.b, M.c, M.d, M.e, M.f, spe->x_user, spe->y_user);
@@ -637,7 +637,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
     if (page_defs != 0)
       fprintf(fp, "(%s) run\n", page_defs);
   } else
-    fp = fopen(gs_in, "a");
+    fp = fopen(gs_in, "ab");
 
   fprintf(fp, "\nsave\n");
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
@@ -885,7 +885,7 @@ spc_dvips_at_begin_document (void)
 
   /* This, together with \pscharpath support code, must be moved to xtex.pro header. */
   global_defs = dpx_create_temp_file();
-  fp = fopen(global_defs, "w");
+  fp = fopen(global_defs, "wb");
   fprintf(fp, "tx@Dict begin /STV {} def end\n");
   fclose(fp);
   return  0;
@@ -894,6 +894,12 @@ spc_dvips_at_begin_document (void)
 int
 spc_dvips_at_end_document (void)
 {
+  if (ps_headers) {
+    while (num_ps_headers > 0)
+      RELEASE(ps_headers[--num_ps_headers]);
+    free(ps_headers);
+    ps_headers = NULL;
+  }
   dpx_delete_temp_file(global_defs);
   dpx_delete_temp_file(page_defs);
   return  0;
@@ -980,9 +986,11 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 }
 
 #ifdef __EMX__
-#define GS_CALCULATOR "gsos2 -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f  "
+#define GS_CALCULATOR "gsos2 -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
+#elif defined(WIN32)
+#define GS_CALCULATOR "gswin32c -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #else
-#define GS_CALCULATOR "gs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f  "
+#define GS_CALCULATOR "gs -q -dNOPAUSE -dBATCH -sDEVICE=nullpage -f "
 #endif
 
 static
@@ -994,7 +1002,7 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
   if (res1 == 0 && res2 == 0)
     return -1;
   formula = dpx_create_temp_file();
-  fp = fopen(formula, "w");
+  fp = fopen(formula, "wb");
   for (k = 0; k < num_ps_headers; k++)
     fprintf(fp, "(%s) run\n", ps_headers[k]);
   fprintf(fp, "0 0 moveto\n");
@@ -1013,10 +1021,9 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
         *p = '/';
   }
 #endif
-  k = strlen(GS_CALCULATOR) + strlen(formula) + 2;
-  cmd = malloc(k);
+  k = strlen(GS_CALCULATOR) + strlen(formula) + 1;
+  cmd = NEW(k, char);
   strcpy(cmd, GS_CALCULATOR);
-  strcat(cmd, " ");
   strcat(cmd, formula);
 
   coord = popen(cmd, "r");
@@ -1033,6 +1040,7 @@ int calculate_PS (char *string, int length, double *res1, double *res2, double *
     return -1;
 
   pclose(coord);
+  RELEASE(cmd);
   dpx_delete_temp_file(formula);
   return 0;
 }

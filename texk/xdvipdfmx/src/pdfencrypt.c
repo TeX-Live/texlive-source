@@ -359,6 +359,8 @@ static char *getpass (const char *prompt)
     pwd_buf[i] = getch();
     if (pwd_buf[i] == '\r')
       break;
+    fputs("*", stderr);
+    fflush(stderr);
   }
   pwd_buf[i] = '\0';
   fputs("\n", stderr);

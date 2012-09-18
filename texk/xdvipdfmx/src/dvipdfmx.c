@@ -837,6 +837,9 @@ main (int argc, char *argv[])
   miktex_initialize();
 #else
   kpse_set_program_name(argv[0], "dvipdfmx"); /* we pretend to be dvipdfmx for kpse purposes */
+#ifdef WIN32
+  texlive_gs_init ();
+#endif
 #endif
 
   paperinit();
