@@ -88,8 +88,17 @@ This is the command line interface to the synctex_parser.c.
 inline static double my_fmax(double x, double y) { return (x < y) ? y : x; }
 #   endif
 
+#ifdef WIN32
+#   define snprintf _snprintf
+#endif
+
 #if SYNCTEX_DEBUG
-#   include "unistd.h"
+#   ifdef WIN32
+#       include <direct.h>
+#       define getcwd _getcwd
+#   else
+#       include <unistd.h>
+#   endif
 #endif
 
 int main(int argc, char *argv[]);

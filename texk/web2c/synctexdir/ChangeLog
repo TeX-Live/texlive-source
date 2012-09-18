@@ -1,3 +1,7 @@
+2012-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex_main.c: Define snprintf and getcwd for WIN32.
+
 2012-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex_main.c (TEST): Check values returned by snprintf().
