@@ -267,8 +267,6 @@ const char *MFMODE     = MFMODE600;
 # define  XDEFAULTOFF   RESOLUTION   /*x default offset on page 1in (LJ2)*/
 # define  YDEFAULTOFF   RESOLUTION    /* y default offset on page 1inch */
 #endif
-# undef max
-# define  max(x,y)       if ((y)>(x)) x = y
 # ifndef vms
 #  define  INT_ASCII(b,i) \
    if (i == 0) b[0] = '\0'; else sprintf((char *)b,"%hd",i)

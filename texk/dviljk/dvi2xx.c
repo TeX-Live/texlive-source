@@ -167,10 +167,12 @@ main(int argc, char *argv[])
   y_origin = YDEFAULTOFF; /* y-origin in dots                    */
 
   setbuf(ERR_STREAM, NULL);
-  G_progname = argv[0];
 #ifdef KPATHSEA
   kpse_set_program_name(argv[0], "dvilj");
   kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
+  G_progname = kpse_program_name;
+#else
+  G_progname = argv[0];
 #endif
   DecodeArgs(argc, argv);
 
@@ -3622,7 +3624,7 @@ ParseNumbers(char *str, int *result, int number, char **end)
 
 
 /* Diagram commands are parsed separately since the format varies from the one
-+    used by the other special commands */
+   used by the other special commands.  */
 bool ParseDiagram(char *str)
 {
   diagtrafo dt;
@@ -3710,6 +3712,7 @@ static char * mkdtemp ( char * template )
     return NULL;
   }
 #ifdef WIN32
+#undef mkdir
 #define mkdir(path, mode) mkdir(path)
 #endif
   if ( mkdir(template, 0700) == -1 ) {
@@ -5044,11 +5047,10 @@ printf("[%ld]=%lf * %lf * %lf + 0.5 = %ld\n",
       else
         tcharptr->charsize = SMALL_SIZE;
 #ifdef LJ
-#undef max
-# define  max(x,y)       if ((y)>(x)) x = y
+# define set_max(x,y) if ((y)>(x)) x = y
 
-      max(tfontptr->max_width,tcharptr->width);
-      max(tfontptr->max_height,tcharptr->height);
+      set_max(tfontptr->max_width,tcharptr->width);
+      set_max(tfontptr->max_height,tcharptr->height);
       if (tcharptr->yOffset > 0  && (int)tfontptr->max_yoff < (int)tcharptr->yOffset)
         tfontptr->max_yoff = tcharptr->yOffset;
       if ((depth = tcharptr->height - tcharptr->yOffset)>max_depth)
@@ -5190,8 +5192,8 @@ printf("[%ld]=%lf * %lf * %lf + 0.5 = %ld\n",
         tcharptr->height,tfontptr->max_height,
         tcharptr->yOffset,tfontptr->max_yoff);
         */
-      max(tfontptr->max_width, tcharptr->width);
-      max(tfontptr->max_height,tcharptr->height);
+      set_max(tfontptr->max_width, tcharptr->width);
+      set_max(tfontptr->max_height,tcharptr->height);
       if (tcharptr->yOffset > 0  && (int)tfontptr->max_yoff < (int)tcharptr->yOffset)
         tfontptr->max_yoff = tcharptr->yOffset;
 

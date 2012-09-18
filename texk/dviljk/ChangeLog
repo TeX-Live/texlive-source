@@ -1,3 +1,12 @@
+2012-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi2xx.c: The macro max(x,y) is not the usual function, so
+	rename it -> set_max(x,y) to avoid confusion.
+	* dvi2xx.h: Drop useless definition of max(x,y).
+
+	* dvi2xx.c: With KPATHSEA set G_progname to kpse_program_name
+	instead of argv[0] (from W32TeX).
+
 2012-08-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi2xx.[ch]: Rename CopyFile -> my_CopyFile, ResetPrinter ->
