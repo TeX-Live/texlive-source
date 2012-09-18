@@ -256,6 +256,7 @@ texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_dist_shell_scripts = \
 	bibexport/bibexport.sh \
 	installfont/installfont-tl \
+	jfontmaps/updmap-setup-kanji-sys.sh \
 	latexfileversion/latexfileversion \
 	listbib/listbib \
 	listings-ext/listings-ext.sh \
