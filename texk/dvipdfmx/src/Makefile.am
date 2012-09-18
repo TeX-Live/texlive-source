@@ -43,7 +43,7 @@ dvipdfmx_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND)
 
 dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 
-call_dvipdfmx_SOURCES = $(srcdir)/../texlive/w32_wrapper/callexe.c
+call_dvipdfmx_SOURCES = $(srcdir)/../../texlive/w32_wrapper/callexe.c
 
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
 
