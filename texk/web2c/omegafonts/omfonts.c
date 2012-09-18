@@ -123,7 +123,7 @@ main (int argc, string *argv)
     int option_index = 0;
 
     name_program = xbasename(argv[0]);
-#define PROG_IS(s) !strcmp(name_program, s) || !strcasecmp(name_program, s ".exe")
+#define PROG_IS(s) !strcasecmp(name_program, s) || !strcasecmp(name_program, s ".exe")
     if (PROG_IS("ofm2opl"))
         program = PROG_OFM2OPL;
     else if (PROG_IS("opl2ofm"))

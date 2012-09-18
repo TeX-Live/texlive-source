@@ -1,3 +1,8 @@
+2012-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* omfonts.c (PROG_IS): Compare program name case insensistively.
+	(from W32TeX).
+
 2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pl-parser.[ch]: Regenerate with bison 2.5.1.
