@@ -1,23 +1,25 @@
 ## texk/am/script_links.am: Makefile fragment for lua/perl/shell script links.
 ##
-## Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-## Install/uninstall 'linked scripts' or win32 wrappers
-## to use it, add prerequisite uninstall-links to uninstall-hook and
-##  one ore more of install-{lua,perl,shell}-scripts to install-data-hook
+## Install/uninstall 'linked scripts' or win32 wrappers:
+## Add the prerequisite uninstall-links to uninstall-hook and one or
+##  or more of install-{perl,shell,sh}-scripts to install-data-hook
+##
+## The sh_scripts are special because they have no corresponding
+##  win32 wrapper, whereas shell_scripts do have such wrappers.
 ##
 ## requires conditionals WIN32 and WIN32_WRAP
 ## requires $(scriptsdir): e.g., texmf/scripts/chktex
 ## appends to $(nodist_bin_SCRIPTS) and $(EXTRA_DIST)
 ##
-## install-lua-scripts requires $(lua_scripts), e.g., musixflx
+## install-lua-scripts requires $(lua_scripts), e.g., pmx2pdf
 ## install-perl-scripts requires $(perl_scripts), e.g., deweb
 ## install-shell-scripts requires $(shell_scripts), e.g. htlatex
+## install-sh-scripts requires $(sh_scripts), e.g. getafm
 ##
-## shell_scripts are somewhat special because win32 needs
-## additional .bat scripts or similar
-.PHONY: install-lua-links install-perl-links install-shell-links \
+.PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
 	install-links uninstall-links
 
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
@@ -48,6 +50,11 @@ if !WIN32
 	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
 endif !WIN32
 
+install-sh-links:
+if !WIN32
+	$(MAKE) $(AM_MAKEFLAGS) TYPE=sh EXT=sh install-links
+endif !WIN32
+
 EXTRA_DIST += ../../build-aux/relpath
 
 # We support native builds, multiplatform or not, as well as distro builds.
@@ -66,7 +73,7 @@ install-links:
 
 uninstall-links:
 if !WIN32
-	@for f in $(all_scripts); do \
+	@for f in $(all_scripts) $(sh_scripts); do \
 	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	done

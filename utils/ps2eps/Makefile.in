@@ -972,7 +972,7 @@ uninstall-man: uninstall-man1
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-.PHONY: install-lua-links install-perl-links install-shell-links \
+.PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \
 	install-links uninstall-links
 @WIN32_TRUE@@WIN32_WRAP_TRUE@$(wrappers): $(runscript)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@	$(LN_S) $(runscript) $@
@@ -985,6 +985,9 @@ install-perl-links:
 
 install-shell-links:
 @WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=shell EXT=sh install-links
+
+install-sh-links:
+@WIN32_FALSE@	$(MAKE) $(AM_MAKEFLAGS) TYPE=sh EXT=sh install-links
 
 # We support native builds, multiplatform or not, as well as distro builds.
 install-links:
@@ -1001,7 +1004,7 @@ install-links:
 	  done  
 
 uninstall-links:
-@WIN32_FALSE@	@for f in $(all_scripts); do \
+@WIN32_FALSE@	@for f in $(all_scripts) $(sh_scripts); do \
 @WIN32_FALSE@	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 @WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 @WIN32_FALSE@	done

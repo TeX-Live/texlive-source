@@ -1,3 +1,8 @@
+2012-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/script_links.am: Add support for shell scripts without
+	win32 wrapper.
+
 2011-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/script_links.am: Replace ${prefix} => $(datarootdir).
