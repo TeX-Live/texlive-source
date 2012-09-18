@@ -31,9 +31,11 @@ int main(int argc, char **argv)
 	int i,j,cc=0,startpagenum=-1,ecount=0;
 	const char *envbuff;
 
-        set_enc_string(NULL, "EUC");
 #ifdef WIN32
-		_setmaxstdio(2048);
+	_setmaxstdio(2048);
+        set_enc_string("sjis", "euc");
+#else
+        set_enc_string(NULL, "euc");
 #endif
 	kpse_set_program_name(argv[0], "mendex");
 	kp_ist.var_name = "INDEXSTYLE";

@@ -1,3 +1,7 @@
+2012-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* main.c [WIN32]: Use "sjis" file encoding (from W32TeX).
+
 2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* convert.c, pageread.c, styfile.c: Handle input files with
