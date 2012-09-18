@@ -347,7 +347,7 @@ ttf2tfm_SOURCES = \
 	vplaux.c \
 	vplaux.h
 
-DISTCLEANFILES = config.force GenR-ec.vpl GenR102-*
+DISTCLEANFILES = config.force GenR-ec.vpl GenR102-* ipaexg-*
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE_LIBS)
 dist_man1_MANS = ttf2pk.1 ttf2tfm.1
 cfgdatadir = $(datarootdir)/texmf/ttf2pk
@@ -375,8 +375,10 @@ dist_sfddata_DATA = \
 TESTS = tests/ttf2pk.test
 EXTRA_DIST = $(TESTS) tests/GenR102.ttf tests/gentium-ec.enc \
 	tests/ttf2pk.cfg tests/GenR102-ec.map tests/GenR102-h.map \
-	tests/GenR102-v.map BUGS MakeSub.in Makefile.dm dvidrv.btm \
-	dvidrv.doc emdir.c emdir.h emtexdir.c emtexdir.h ttf2pk.doc
+	tests/GenR102-v.map tests/Test.sfd tests/ipaexg.ttf \
+	tests/ipaexg-h.map tests/ipaexg-v.map BUGS MakeSub.in \
+	Makefile.dm dvidrv.btm dvidrv.doc emdir.c emdir.h emtexdir.c \
+	emtexdir.h ttf2pk.doc
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

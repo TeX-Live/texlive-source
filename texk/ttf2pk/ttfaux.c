@@ -3,7 +3,7 @@
  *
  *   This file is part of the ttf2pk package.
  *
- *   Copyright 1997-1999, 2000 by
+ *   Copyright 1997-1999, 2000, 2002, 2003 by
  *     Frederic Loyer <loyer@ensta.fr>
  *     Werner Lemberg <wl@gnu.org>
  */
@@ -72,7 +72,7 @@ static void
 readttf_kern(Font *fnt)
 {
   register kern *nk;
-  register ttfinfo *ti;
+  register ttfinfo *ti_l, *ti_r;
   TT_Kern_0_Pair* pairs0;
   TT_Error error;
   unsigned int i, j;
@@ -95,18 +95,18 @@ readttf_kern(Font *fnt)
       pairs0 = directory.tables[i].t.kern0.pairs;
       for (j = 0; j < directory.tables[i].t.kern0.nPairs; j++, pairs0++)
       {
-        ti = findglyph(pairs0->left, fnt->charlist);
-        if (ti == NULL)
-          warning("kern char not found");
-        else
-        {
-          nk = newkern();
-          nk->succ = findglyph(pairs0->right, fnt->charlist)->adobename;
-          nk->delta = transform(pairs0->value * 1000 / fnt->units_per_em, 0,
-                                fnt->efactor, fnt->slant);
-          nk->next = ti->kerns;
-          ti->kerns = nk;
-        }
+        ti_l = findglyph(pairs0->left, fnt->charlist);
+        if (ti_l == NULL)
+          continue;
+        ti_r = findglyph(pairs0->right, fnt->charlist);
+        if (ti_r == NULL)
+          continue;
+        nk = newkern();
+        nk->succ = ti_r->adobename;
+        nk->delta = transform(pairs0->value * 1000 / fnt->units_per_em, 0,
+                              fnt->efactor, fnt->slant);
+        nk->next = ti_l->kerns;
+        ti_l->kerns = nk;
       }
       return;   /* we stop after the first format 0 kerning table */
 
@@ -258,6 +258,9 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
     fnt->units_per_em = properties.header->Units_Per_EM;
     fnt->fixedpitch = properties.postscript->isFixedPitch;
     fnt->italicangle = properties.postscript->italicAngle / 65536.0;
+#if TT_FREETYPE_MINOR >= 5
+    fnt->xheight = properties.os2->sxHeight * 1000 / fnt->units_per_em;
+#endif
 
     if (fnt->PSnames != Only)
     {
@@ -442,8 +445,8 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
       printf("\n\n%s:\n", fnt->fullname);
     printf("\n");
     printf("Glyph  Code   Glyph Name                ");
-    printf("Width  llx    lly      urx    ury\n");
-    printf("---------------------------------------");
+    printf("Width    llx   lly      urx   ury\n");
+    printf("----------------------------------------");
     printf("---------------------------------\n");
   }
 
@@ -561,6 +564,8 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
       ti->lly = bbox.yMin * 1000 / fnt->units_per_em;
       ti->urx = bbox.xMax * 1000 / fnt->units_per_em;
       ti->ury = bbox.yMax * 1000 / fnt->units_per_em;
+
+      ti->fntnum = fnt->subfont_num;
 
       /*
        *   We must now shift the rotated character both horizontally

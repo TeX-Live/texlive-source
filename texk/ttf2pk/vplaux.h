@@ -16,6 +16,7 @@
 
 void writevpl(Font *fnt, char makevpl, Boolean forceoctal);
 void upmap(Font *fnt);
+void writeovp(Font *fnt);
 
 #endif /* VPLAUX_H */
 

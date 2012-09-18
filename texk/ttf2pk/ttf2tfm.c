@@ -235,6 +235,37 @@ end:
 }
 
 
+#define MAX_SFLIST 10
+static void
+add_subfont_list(Font *fnt)
+{
+  if (fnt->subfont_list == NULL)
+    fnt->subfont_list = (sflist *)mymalloc(MAX_SFLIST * sizeof(sflist));
+  else if (fnt->subfont_num % MAX_SFLIST == 0)
+    fnt->subfont_list = (sflist *)myrealloc(fnt->subfont_list,
+      (fnt->subfont_num / MAX_SFLIST + 1) * MAX_SFLIST * sizeof(sflist));
+
+  (fnt->subfont_list[fnt->subfont_num]).name =
+      (char *)mymalloc(strlen(fnt->fullname)+1);
+  strcpy((fnt->subfont_list[fnt->subfont_num]).name, fnt->fullname);
+  (fnt->subfont_list[fnt->subfont_num]).cksum = fnt->cksum;
+
+  fnt->subfont_num++;
+}
+
+
+static void
+release_subfont_list(Font *fnt)
+{
+  register int i;
+
+  for (i = 0; i < fnt->subfont_num; i++)
+    free((fnt->subfont_list[i]).name);
+
+  free(fnt->subfont_list);
+}
+
+
 #define VERSION "\
 Copyright (C) 1997-1999, 2000, 2002 Frederic Loyer and Werner Lemberg.\n\
 There is NO warranty.  You may redistribute this software\n\
@@ -272,6 +303,7 @@ version(void)
 -L LIGFILE[.sfd]    create 1st/2nd byte ligatures in subfonts using LIGFILE\n\
 -n                  use PS names of TrueType font\n\
 -N                  use only PS names and no cmap\n\
+-o FILE[.ovp]       make an OVP file for conversion to OVF and OFM\n\
 -O                  use octal for all character codes in the vpl file\n\
 -p ENCFILE[.enc]    read ENCFILE for the TTF->raw TeX mapping\n\
 -P INT              select INT as the TTF platform ID [3]\n\
@@ -528,6 +560,15 @@ handle_options(int argc, char *argv[], Font *fnt)
       arginc = 1;
       break;
 
+    case 'o':
+      if (argc <= 3)
+        oops("Missing parameter for -o option.");
+      if (vpl_name)
+        free(vpl_name);
+      vpl_name = newstring(argv[3]);
+      handle_extension(&vpl_name, ".ovp");
+      break;
+
     default:
       if (argc <= 3 || argv[3][0] == '-')
       {
@@ -664,6 +705,9 @@ handle_options(int argc, char *argv[], Font *fnt)
       warning("Ignoring `-v' and `-V' switches for subfonts.");
       makevpl = 0;
     }
+    if (vpl_name)
+      if ((fnt->vplout = fopen(vpl_name, "wb")) == NULL)
+        oops("Cannot open ovp output file.");
     if (have_capheight)
       warning("Ignoring `-c' switch for subfonts.");
     if (fnt->inencname || fnt->outencname)
@@ -864,6 +908,18 @@ main(int argc, char *argv[])
       if (font.replacements)
         warning("Replacement glyphs will be ignored.");
 
+      /* second try to get an xheight value */
+      if (font.xheight == 0)
+      {
+        if (NULL != (ti = findadobe("x", font.charlist)))
+          font.xheight = ti->ury;
+        else if (font.pid == 3 && font.eid == 1 &&
+                 NULL != (ti = findadobe(".c0x78", font.charlist)))
+          font.xheight = ti->ury;
+        else
+          font.xheight = 400;
+      }
+
       if (NULL != (ti = findadobe("space", font.charlist)))
         font.fontspace = ti->width;
       else if (NULL != (ti = findadobe(".c0x20", font.charlist)))
@@ -879,10 +935,19 @@ main(int argc, char *argv[])
         writetfm(&font);
         if (font.write_enc)
           writeenc(&font);
+        if (font.vplout)
+          add_subfont_list(&font);
       }
     }
 
     close_sfd();
+
+    if (font.vplout)
+    {
+      writeovp(&font);
+      fclose(font.vplout);
+      release_subfont_list(&font);
+    }
   }
   else
   {
@@ -890,6 +955,18 @@ main(int argc, char *argv[])
 
     readttf(&font, quiet, False);
     replace_glyphs(&font);
+
+    /* second try to get an xheight value */
+    if (font.xheight == 0)
+    {
+      if (NULL != (ti = findadobe("x", font.charlist)))
+        font.xheight = ti->ury;
+      else if (font.pid == 3 && font.eid == 1 &&
+               NULL != (ti = findadobe(".c0x78", font.charlist)))
+        font.xheight = ti->ury;
+      else
+        font.xheight = 400;
+    }
 
     if (NULL != (ti = findadobe("space", font.charlist)))
       font.fontspace = ti->width;

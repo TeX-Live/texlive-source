@@ -202,6 +202,8 @@ newchar(Font *fnt)
   ti->dptr = 0;
   ti->iptr = 0;
 
+  ti->fntnum = -1;
+
   fnt->charlist = ti;
 
   return ti;
@@ -313,6 +315,10 @@ init_font_structure(Font *fnt)
   fnt->codingscheme = default_codingscheme;
   fnt->titlebuf = NULL;
 
+  fnt->cksum = 0;
+  fnt->subfont_num = 0;
+  fnt->subfont_list = NULL;
+
   fnt->units_per_em = 0;
   fnt->italicangle = 0.0;
   fnt->fixedpitch = 0;
@@ -321,7 +327,7 @@ init_font_structure(Font *fnt)
   fnt->pid = 3;
   fnt->eid = 1;
 
-  fnt->xheight = 400;
+  fnt->xheight = 0;
   fnt->fontspace = 0;
 
   fnt->y_offset = 0.25;

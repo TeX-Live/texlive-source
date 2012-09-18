@@ -282,7 +282,6 @@ buildtfm(Font *fnt)
   register int i, j;
   register ttfinfo *ti;
   int byte1, old_byte1, byte2;
-  long cksum;
   double Slant;
   char buffer[256];
   struct sf sf_array[256];
@@ -365,8 +364,8 @@ buildtfm(Font *fnt)
   }
 
   header = (long *)mymalloc(40000L);
-  cksum = checksum(fnt->inencptrs);
-  header[0] = cksum;
+  fnt->cksum = checksum(fnt->inencptrs);
+  header[0] = fnt->cksum;
   header[1] = 0xA00000;                     /* 10pt design size */
 
   (void)makebcpl(header + 2, fnt->codingscheme, 39);
@@ -509,7 +508,8 @@ buildtfm(Font *fnt)
       old_byte1 = byte1;
       nl++;
     }
-    ligkern[nl - 1] |= 0x80000000L;
+    if (nl > 0)
+      ligkern[nl - 1] |= 0x80000000L;
   }
 
   kerns = ligkern + nl;

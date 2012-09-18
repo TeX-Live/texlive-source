@@ -35,7 +35,7 @@ static realsubfont *real_sfd_name = NULL, *real_lig_name = NULL;
 static realsubfont *
 really_init_sfd(char *name, Boolean fatal);
 static Boolean
-really_get_sfd(Font *fnt, Boolean next, realsubfont *rsf);
+really_get_sfd(Font *fnt, Boolean next, realsubfont *rsf, Boolean new_sfd);
 static void
 really_close_sfd(realsubfont *real_name);
 
@@ -163,14 +163,14 @@ really_init_sfd(char *name, Boolean fatal)
 Boolean get_sfd(Font *fnt, Boolean is_sfd)
 {
   if (is_sfd)
-    return really_get_sfd(fnt, False, real_sfd_name);
+    return really_get_sfd(fnt, False, real_sfd_name, True);
   else
-    return really_get_sfd(fnt, False, real_lig_name);
+    return really_get_sfd(fnt, False, real_lig_name, False);
 }
 
 
 static Boolean
-really_get_sfd(Font *fnt, Boolean next, realsubfont *rsf)
+really_get_sfd(Font *fnt, Boolean next, realsubfont *rsf, Boolean new_sfd)
 {
   long i, offset;
   long begin, end = -1;
@@ -229,7 +229,7 @@ again:
   if (*bufp == '\0')
     oops("Invalid subfont entry in `%s'.", rsf->name);
 
-  if (next)
+  if (next || !new_sfd)
   {
     if (strcmp(fnt->subfont_name, buffer))
       goto again;
@@ -309,7 +309,7 @@ again:
 
   if (!next)
     while ((rsf = rsf->next))
-      (void)really_get_sfd(fnt, True, rsf);
+      (void)really_get_sfd(fnt, True, rsf, new_sfd);
 
   return True;
 }

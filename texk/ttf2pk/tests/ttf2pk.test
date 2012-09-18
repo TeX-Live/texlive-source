@@ -1,14 +1,14 @@
 #! /bin/sh
 
-# Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-rm -f GenR-ec.vpl GenR102-*
+rm -f GenR-ec.vpl GenR102-* ipaexg-*
 
 TEXMFCNF=$srcdir/../kpathsea
 TEXFONTS=.:$srcdir/tests
 TTF2PKINPUTS=$srcdir/tests
-SFDFONTS=$srcdir/data
+SFDFONTS="$srcdir/data;$srcdir/tests"
 
 export TEXMFCNF TEXFONTS TTF2PKINPUTS SFDFONTS
 
@@ -49,4 +49,24 @@ for sf in 00 01 02 24; do
 done
 
 echo passed GenR102-v test
+
+./ttf2tfm ipaexg -q ipaexg-h@Test@ >ipaexg-h.map || exit 1
+diff $srcdir/tests/ipaexg-h.map ipaexg-h.map || exit 1
+
+./ttf2pk -q ipaexg-h03 100 || exit 1
+
+tftopl ipaexg-h03 ipaexg-h03  || exit 77
+pktype ipaexg-h03.100pk >ipaexg-h03.typ || exit 77
+
+echo passed ipaexg-h test
+
+./ttf2tfm ipaexg -q -x ipaexg-v@Test@ >ipaexg-v.map || exit 1
+diff $srcdir/tests/ipaexg-v.map ipaexg-v.map || exit 1
+
+./ttf2pk -q ipaexg-v03 100 || exit 1
+
+tftopl ipaexg-v03 ipaexg-v03  || exit 77
+pktype ipaexg-v03.100pk >ipaexg-v03.typ || exit 77
+
+echo passed ipaexg-v test
 

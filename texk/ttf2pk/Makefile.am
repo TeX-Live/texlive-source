@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ttf2pk/
 ##
-## Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -100,8 +100,9 @@ TESTS = tests/ttf2pk.test
 EXTRA_DIST = $(TESTS)
 ## tests/ttf2pk.test
 EXTRA_DIST += tests/GenR102.ttf tests/gentium-ec.enc tests/ttf2pk.cfg \
-	tests/GenR102-ec.map tests/GenR102-h.map tests/GenR102-v.map
-DISTCLEANFILES += GenR-ec.vpl GenR102-*
+	tests/GenR102-ec.map tests/GenR102-h.map tests/GenR102-v.map \
+	tests/Test.sfd tests/ipaexg.ttf tests/ipaexg-h.map tests/ipaexg-v.map
+DISTCLEANFILES += GenR-ec.vpl GenR102-* ipaexg-*
 
 ## Not used
 ##
