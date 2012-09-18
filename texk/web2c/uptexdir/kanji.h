@@ -35,11 +35,8 @@ extern integer calc_pos (integer c);
 extern integer kcatcodekey (integer c);
 extern integer multilenbuffchar (integer c);
 
-extern void init_kanji (const_string file_str, const_string internal_str);
 extern void init_default_kanji (const_string file_str, const_string internal_str);
-/* for upTeX and e-upTeX */
-#define initdefaultkanji() init_default_kanji("utf8", "uptex")
-/* for upBibTeX, upDVItype, upPLtoTF, and upTFtoPL */
+/* for upTeX, e-upTeX, upBibTeX, upDVItype, upPLtoTF, and upTFtoPL */
 #define initkanji() init_default_kanji("utf8", "uptex")
 /* for upDVItype */
 #define setpriorfileenc() set_prior_file_enc()
@@ -58,6 +55,7 @@ extern void init_default_kanji (const_string file_str, const_string internal_str
 #define inputline2(fp,buff,pos,size) input_line2(fp,buff,pos,size,NULL)
 #endif
 
+extern void init_kanji (const_string file_str, const_string internal_str);
 extern void dump_kanji (FILE *fp);
 extern void undump_kanji (FILE *fp);
 #define dumpkanji dump_kanji

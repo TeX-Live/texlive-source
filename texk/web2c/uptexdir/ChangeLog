@@ -1,3 +1,9 @@
+2012-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kanji.c (init_default_kanji): Set defaults before testing
+	PTEX_KANJI_ENC from the environment.
+	* kanji.c: All programs use init_default_kanji("utf8","uptex"). 
+
 2012-08-13  TANAKA Takuji <KXD02663@nifty.ne.jp>
 
 	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,

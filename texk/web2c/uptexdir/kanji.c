@@ -388,6 +388,8 @@ void init_default_kanji (const_string file_str, const_string internal_str)
 
     enable_UPTEX (true); /* enable */
 
+    init_kanji (file_str, internal_str);
+
     p = getenv ("PTEX_KANJI_ENC");
     if (p) {
         if (!set_enc_string (p, NULL))
@@ -402,6 +404,4 @@ void init_default_kanji (const_string file_str, const_string internal_str)
         free(p);
     }
 #endif
-
-    init_kanji (file_str, internal_str);
 }
