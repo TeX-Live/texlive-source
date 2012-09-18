@@ -1,3 +1,8 @@
+2012-08-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-WIN32: Adapt to W32TeX (from Akira Kakuto).
+	* patch-06-MINGW (removed): Obsolete.
+
 2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-11-extern (new): Remove extern decls from *.c files.

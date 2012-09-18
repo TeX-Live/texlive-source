@@ -1,26 +1,24 @@
 diff -ur psutils-1.17.orig/config.h psutils-1.17/config.h
 --- psutils-1.17.orig/config.h	1997-03-11 23:52:52.000000000 +0100
-+++ psutils-1.17/config.h	2006-01-17 22:16:42.000000000 +0100
-@@ -4,13 +4,16 @@
++++ psutils-1.17/config.h	2012-08-26 15:44:12.000000000 +0200
+@@ -4,13 +4,13 @@
   * OS specific configuration for PSUtils
   */
  
 -#if defined(MSDOS) || defined(WINNT)
+-#define TMPDIR "\\tmp"
 +#if defined(MSDOS) || defined(WINNT) || defined(WIN32)
- #define TMPDIR "\\tmp"
++#define TMPDIR "."
  #define OPEN_READ "rb"
  #define OPEN_WRITE "wb"
  #include <fcntl.h>
  #include <io.h>
 -#else /* ! MSDOS && ! WINNT */
-+#if defined(WIN32)
-+#include <win32lib.h>
-+#endif /* WIN32 */
 +#else /* ! MSDOS && ! WINNT && ! WIN32 */
  #if defined(OS2)
  #define TMPDIR "."
  #define OPEN_READ "rb"
-@@ -26,5 +29,5 @@
+@@ -26,5 +26,5 @@
  #define TMPDIR "/tmp"
  #endif /* ! VMS */
  #endif /* ! OS2 */

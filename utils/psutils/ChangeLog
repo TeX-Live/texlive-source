@@ -1,3 +1,7 @@
+2012-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Install getafm and showchar as linked scripts.
+
 2011-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace ${prefix}/texmf => $(datarootdir)/texmf.

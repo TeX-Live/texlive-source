@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/psutils/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -90,8 +90,8 @@ perl_scripts = \
 	psmerge
 
 sh_scripts = \
-	$(PSUTILS_TREE)/getafm \
-	$(PSUTILS_TREE)/showchar
+	getafm \
+	showchar
 
 scriptsdir = texmf/scripts/psutils
 nodist_bin_SCRIPTS =
@@ -100,12 +100,11 @@ include $(srcdir)/../../texk/am/script_links.am
 
 texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
+texmf_SCRIPTS = \
+	$(PSUTILS_TREE)/getafm.sh \
+	$(PSUTILS_TREE)/showchar.sh
 
-if !WIN32
-bin_SCRIPTS = $(sh_scripts)
-endif !WIN32
-
-install-data-hook: install-perl-links
+install-data-hook: install-perl-links install-sh-links
 
 uninstall-hook: uninstall-links
 

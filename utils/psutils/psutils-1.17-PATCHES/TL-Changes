@@ -7,6 +7,8 @@ Remove non-free files:
 
 Rename:
 	patchlev.h -> patchlev.h.in
-	getafm.sh -> getafm
-	showchar.sh -> showchar
+
+Add execute permissions:
+	getafm.sh
+	showchar.sh
 

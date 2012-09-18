@@ -5,14 +5,11 @@
  */
 
 #if defined(MSDOS) || defined(WINNT) || defined(WIN32)
-#define TMPDIR "\\tmp"
+#define TMPDIR "."
 #define OPEN_READ "rb"
 #define OPEN_WRITE "wb"
 #include <fcntl.h>
 #include <io.h>
-#if defined(WIN32) && !defined(__MINGW32__)
-#include <win32lib.h>
-#endif /* WIN32 && !__MINGW32__ */
 #else /* ! MSDOS && ! WINNT && ! WIN32 */
 #if defined(OS2)
 #define TMPDIR "."
