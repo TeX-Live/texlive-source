@@ -1,3 +1,8 @@
+2012-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptexextra.h: Set AUTHOR to "Peter Breitenlohner" and
+	BUG_ADDRESS to "tex-k@tug.org" (from W32TeX).
+
 2012-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fam256.ch: Slightly reduce one changeset to simplify e-upTeX.
