@@ -1,3 +1,39 @@
+2012-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ttf2pk.cfg, tests/ttf2pk.test: Extend the test to cover
+	vertical glyph presentation forms from GSUB table.
+	* tests/Test.sfd, tests/ipaexg.ttf, tests/ipaexg-[vh].map:
+	Additional test input.
+	* Makefile.am (EXTRA_DIST, DISTCLEANFILES): Adapted.
+
+2012-09-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttflib.c (SetRasterArea, LoadTrueTypeChar, TTFprocess):
+	Handle bitmap and bounding box.
+
+2012-09-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Factor out common parts of freetype2 handling into
+	separate files ftlib.c and ftlib.h.
+	* ttflib.c, ttfaux.c: Moved code from here ...
+	* ftlib.c, ftlib.h: ... to these new files.
+	* Makefile.am (common_sources): Add the new files.
+
+2012-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Revert parts of ttf2pk.diff.bz2 from ???.
+	* ligkern.c (checkligkern): This was obviously wrong.
+	* newobj.c (init_font_structure), ttf2tfm.c (main): Most of this was
+	never applied for W32TeX.
+	* ttfaux.c (readttf): Obtain font xheight from OS/2 table.
+
+2012-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* newobj.c, subfont.c, tfmaux.c, ttf2tfm.[ch], ttfaux.c,
+	vplaux.[ch]: Apply ttf2pk-1.5-20020430.patch from
+	http://ftp.ktug.or.kr/pub/ktug/freetype/contrib/ as already done
+	long ago for W32TeX.
+
 2012-07-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tfmaux.c, ttf2tfm.c: Use binary mode for output files.

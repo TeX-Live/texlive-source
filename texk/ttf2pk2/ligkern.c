@@ -212,7 +212,7 @@ checkligkern(char *s, Font *fnt)
           lig *lig;
 
 
-          if (findadobe(mlist[2], fnt->charlist))
+          if (findadobe(mlist[1], fnt->charlist))
                                                 /* remove coincident kerns */
             rmkern(mlist[0], mlist[1], ti, fnt);
 

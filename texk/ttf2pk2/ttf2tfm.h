@@ -54,7 +54,8 @@ struct _pcc;
 typedef struct _pcc pcc;
 struct _stringlist;
 typedef struct _stringlist stringlist;
-
+struct _sflist;
+typedef struct _sflist sflist;
 
 
 struct _ttfinfo
@@ -77,6 +78,8 @@ struct _ttfinfo
   pcc *pccs;                    /* we use the composite feature for */
                                 /* `germandbls' <--> `SS' only      */
   unsigned char wptr, hptr, dptr, iptr;
+
+  short fntnum;
 };
 
 
@@ -117,6 +120,13 @@ struct _stringlist
   char *old_name;
   char *new_name;
   Boolean single_replacement;
+};
+
+
+struct _sflist
+{
+  char *name;
+  long cksum;
 };
 
 
@@ -186,6 +196,11 @@ struct _Font
   short boundarychar;               /* the boundary character */
   const char *codingscheme;         /* coding scheme for TeX */
   char *titlebuf;
+
+  long cksum;
+
+  short subfont_num;
+  sflist *subfont_list;
 
   /*
    *   The name of the subfont definition file.

@@ -595,4 +595,117 @@ writevpl(Font *fnt, char makevpl, Boolean forceoctal)
 }
 
 
+void
+writeovp(Font *fnt)
+{
+  register int i;
+  register ttfinfo *ti;
+  long bc, ec;
+  char header[256];
+  float Slant;
+  ttfinfo *ofm_array[65536];
+
+
+  out = fnt->vplout;
+
+  header[0] = '\0';
+  strncat(header, "Created by `", 12);
+  strncat(header, fnt->titlebuf, 255 - 12 - 1);
+  strncat(header, "'", 1);
+
+  voutln2("(VTITLE %s)", header);
+  voutln("(COMMENT Please change VTITLE if you edit this file)");
+
+  voutln("(OFMLEVEL H 1)");
+  voutln("(FONTDIR TL)");
+  voutln2("(FAMILY %s)", fnt->outname);
+  voutln("(FACE F MRR)");
+  voutln("(CODINGSCHEME UNSPECIFIED)");
+  voutln("(DESIGNSIZE R 10.0)");
+  voutln("(DESIGNUNITS R 1000)");
+  voutln("(COMMENT DESIGNSIZE (1 em) IS IN POINTS)");
+  voutln("(COMMENT OTHER DIMENSIONS ARE MULTIPLES OF DESIGNSIZE/1000)");
+
+#if 0
+  /* Let vptovf compute the checksum. */
+  voutln2("(CHECKSUM O %lo)", cksum ^ 0xFFFFFFFF);
+#endif
+
+  vleft(&level);
+  voutln("FONTDIMEN");
+
+  Slant = fnt->slant - fnt->efactor * tan(fnt->italicangle * (PI / 180.0));
+
+  if (Slant)
+    voutln2("(SLANT R %f)", Slant);
+  voutln2("(SPACE D %d)", fnt->fontspace);
+  if (!fnt->fixedpitch)
+  {
+    voutln2("(STRETCH D %d)", transform(200, 0, fnt->efactor, fnt->slant));
+    voutln2("(SHRINK D %d)", transform(100, 0, fnt->efactor, fnt->slant));
+  }
+  voutln2("(XHEIGHT D %d)", fnt->xheight);
+  voutln2("(QUAD D %d)", transform(1000, 0, fnt->efactor, fnt->slant));
+  voutln2("(EXTRASPACE D %d)",
+          fnt->fixedpitch ? fnt->fontspace :
+                            transform(111, 0, fnt->efactor, fnt->slant));
+  vright(&level);
+
+  for (i = 0; i < fnt->subfont_num; i++)
+  {
+    vleft(&level);
+    voutln2("MAPFONT D %d", i);
+    voutln2("(FONTNAME %s)", (fnt->subfont_list[i]).name);
+    voutln2("(FONTCHECKSUM O %lo)", (fnt->subfont_list[i]).cksum);
+    vright(&level);
+  }
+
+  for (i = 0; i <= 0xFFFF; i++)
+    ofm_array[i] = NULL;
+
+  for (ti = fnt->charlist; ti != NULL; ti = ti->next)
+    if (ti->charcode >= 0 && ti->charcode <= 0xFFFF)
+      ofm_array[ti->charcode] = ti;
+
+  for (i = 0; i <= 0xFFFF && ofm_array[i] == NULL; i++)
+    ;
+  bc = i;
+  for (i = 0xFFFF; i >= 0 && ofm_array[i] == NULL; i--)
+    ;
+  ec = i;
+
+  if (ec < bc)
+    oops("No TTF characters.");
+
+  for (i = bc; i <= ec; i++)
+  {
+    if ((ti = ofm_array[i]) == NULL) continue;
+
+    vleft(&level);
+    fprintf(out, "CHARACTER H %lX\n   ", ti->charcode);
+
+    voutln2("(CHARWD R %d)", ti->width);
+    if (ti->ury)
+      voutln2("(CHARHT R %d)", ti->ury);
+    if (ti->lly)
+      voutln2("(CHARDP R %d)", -ti->lly);
+    if (ti->urx > ti->width)
+      voutln2("(CHARIC R %d)", ti->urx - ti->width);
+
+    vleft(&level);
+    voutln("MAP");
+    if (ti->fntnum)
+      voutln2("(SELECTFONT D %d)", ti->fntnum);
+
+    voutln2("(SETCHAR H %X)", (unsigned)ti->incode);
+    vright(&level);
+
+    vright(&level);
+  }
+
+  if (level)
+    oops("I forgot to match the parentheses.");
+}
+
+
 /* end */
