@@ -10,9 +10,9 @@
 
 #define BANNER "This is e-upTeX, Version 3.1415926-" PTEX_VERSION "-" UPTEX_VERSION "-" EPTEX_VERSION "-" ETEX_VERSION
 #define COPYRIGHT_HOLDER "D.E. Knuth"
-#define AUTHOR NULL
+#define AUTHOR "Peter Breitenlohner"
 #define PROGRAM_HELP EUPTEXHELP
-#define BUG_ADDRESS "ptex-staff@ml.asciimw.jp"
+#define BUG_ADDRESS "tex-k@tug.org"
 #define DUMP_VAR TEXformatdefault
 #define DUMP_LENGTH_VAR formatdefaultlength
 #define DUMP_OPTION "fmt"
