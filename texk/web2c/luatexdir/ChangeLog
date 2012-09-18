@@ -3,6 +3,11 @@
 	* lua/luainit.w (parse_options): allow lualatex "\input" "a b" on
 	Windows.
 
+2012-09-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatex-api.h: Avoid conflicting extern declaration of environ,
+	declared in <stdlib.h> for WIN32 (from W32TeX).
+
 2012-08-21  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* tex/texdeffont.w (tex_def_font): Recover the old code, because the

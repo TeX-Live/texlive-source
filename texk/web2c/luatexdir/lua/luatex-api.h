@@ -1,6 +1,6 @@
 /* luatex-api.h
 
-   Copyright 2006-2010 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -195,7 +195,9 @@ extern char *FindResourceTtfFont(char *filename, char *fontname);       /* luafo
 
 extern char charsetstr[];       /* from mpdir/psout.w */
 
+#ifndef WIN32
 extern char **environ;
+#endif
 
 extern int luac_main(int argc, char *argv[]);   /* texluac.w */
 
