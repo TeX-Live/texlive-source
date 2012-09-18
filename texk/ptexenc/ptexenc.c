@@ -23,7 +23,7 @@
 #define ENC_UTF8     4
 #define ENC_UPTEX    5
 
-static int default_kanji_enc = ENC_UTF8;
+static int default_kanji_enc;
 static boolean UPTEX_enabled;
 static boolean prior_file_enc = false;
 
@@ -36,7 +36,7 @@ static boolean prior_file_enc = false;
 # define NOFILE OPEN_MAX
 #endif
 
-const char *ptexenc_version_string = "ptexenc " PTEXENC_VERSION;
+const char *ptexenc_version_string = PTEXENCVERSION;
 #if defined(WIN32)
 int sjisterminal;
 FILE *Poptr;
@@ -149,12 +149,17 @@ static int get_terminal_enc(void)
 void enable_UPTEX (boolean enable)
 {
     UPTEX_enabled = enable;
-    if (enable)
+    if (enable) {
         default_kanji_enc = ENC_UPTEX;
-    else {
+        internal_enc = ENC_UPTEX;
+    } else {
+#ifdef WIN32
+        default_kanji_enc = ENC_SJIS;
+        internal_enc = ENC_SJIS;
+#else
         default_kanji_enc = ENC_UTF8;
-        if (internal_enc == ENC_UPTEX)
-            internal_enc = ENC_EUC;
+        internal_enc = ENC_EUC;
+#endif
     }
 }
 
@@ -408,12 +413,46 @@ static long toENC(long kcode, int enc)
     }
 }
 
-
-
 #define KANJI_IN   LONG(0, ESC, '$', 'B')
 #define KANJI_OUT  LONG(0, ESC, '(', 'B')
 
 static int put_multibyte(long c, FILE *fp) {
+#ifdef WIN32
+    if (sjisterminal) {
+        const int fd = fileno(fp);
+
+        if ((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)) {
+            HANDLE hStdout;
+            DWORD ret, wclen;
+            wchar_t buff[2];
+            char str[4];
+            int mblen;
+
+            if (fd == fileno(stdout))
+                hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+            else
+                hStdout = GetStdHandle(STD_ERROR_HANDLE);
+
+            mblen=0;
+            if (BYTE1(c) != 0) str[mblen++]=BYTE1(c);
+            if (BYTE2(c) != 0) str[mblen++]=BYTE2(c);
+            if (BYTE3(c) != 0) str[mblen++]=BYTE3(c);
+            /* always */       str[mblen++]=BYTE4(c);
+
+#define CP_932     932
+
+            if (MultiByteToWideChar(CP_932, 0, str, mblen, buff, 2) == 0)
+                return EOF;
+
+            wclen = mblen > 3 ? 2 : 1;
+            if (WriteConsoleW(hStdout, buff, wclen, &ret, NULL) == 0)
+                return EOF;
+
+            return BYTE4(c);
+      }
+    }
+#endif
+
     if (BYTE1(c) != 0 && putc(BYTE1(c), fp) == EOF) return EOF;
     if (BYTE2(c) != 0 && putc(BYTE2(c), fp) == EOF) return EOF;
     if (BYTE3(c) != 0 && putc(BYTE3(c), fp) == EOF) return EOF;
@@ -443,9 +482,18 @@ int putc2(int c, FILE *fp)
     const int fd = fileno(fp);
     int ret = c, output_enc;
 
-    if ((fp == stdout || fp == stderr) && !(prior_file_enc))
-                                      output_enc = get_terminal_enc();
-    else                              output_enc = get_file_enc();
+#ifdef WIN32
+    if ((fp == stdout || fp == stderr) && (_isatty(fd) || !prior_file_enc)) {
+        if (sjisterminal)
+            output_enc = ENC_SJIS;
+        else
+#else
+    if ((fp == stdout || fp == stderr) && !prior_file_enc) {
+#endif
+
+        output_enc = get_terminal_enc();
+    } else
+        output_enc = get_file_enc();
 
     if (num[fd] > 0) {        /* multi-byte char */
         if (is_internalUPTEX() && iskanji1(c)) { /* error */
@@ -727,6 +775,15 @@ long input_line2(FILE *fp, unsigned char *buff, long pos,
     buffer[last] = '\0';
     if (i == EOF || i == '\n' || i == '\r') injis = false;
     if (lastchar != NULL) *lastchar = i;
+
+    if (i == '\r' && !isatty(fd)) {
+       int ii;
+       while ((ii = getc4(fp)) == EOF && errno == EINTR)
+          ;
+       if (ii != '\n')
+          ungetc4(ii, fp);
+    }
+
     return last;
 }
 

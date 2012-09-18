@@ -36,7 +36,7 @@ extern PTENCDLL void set_prior_file_enc(void);
 
 /* get/set Kanji encoding by string */
 extern PTENCDLL const_string get_enc_string(void);
-extern PTENCDLL int set_enc_string(const_string file, const_string inter);
+extern PTENCDLL boolean set_enc_string(const_string file, const_string inter);
 #define getencstring  get_enc_string
 #define setencstring  set_enc_string
 
