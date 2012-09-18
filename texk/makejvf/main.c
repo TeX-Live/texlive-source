@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <kpathsea/config.h>
+#include <kpathsea/kpathsea.h>
 #include <ptexenc/ptexenc.h>
 #include "makejvf.h"
 #include "uniblock.h"
@@ -15,71 +15,55 @@ long ucs=0;
 int main(int argc, char ** argv)
 {
 	int i,j,ib;
+	int c;
 	long ch;
 
-	set_enc_string(NULL, "EUC");
-	if (argc < 3) {
-		usage();
-		exit(0);
-	}
+	kpse_set_program_name(argv[0], "makejvf");
+	set_enc_string("sjis", "euc");
 
-	argv++;
+	while ((c = getopt (argc, argv, "k:K:Ca:b:mu:3J:U:Hi")) != -1)
+		switch (c) {
 
-	for (;**argv=='-';argv++) {
-		switch ((*argv)[1]) {
+
 		case 'k':
-			if ((*argv)[2]!='\0') {
-				kanatume = atoi(&(*argv)[2]);
-			}
-			else {
-				kanatume = atoi(*(++argv));
-			}
+			kanatume = atoi(optarg);
 			break;
 		case 'K':
-			if ((*argv)[2]!='\0') {
-				kanatfm = strdup(&(*argv)[2]);
-			}
-			else {
-				kanatfm = strdup(*(++argv));
-			}
+			kanatfm = xstrdup(optarg);
 			break;
 		case 'C':
 			chotai=1;
 			break;
 		case 'a':
-			if ((*argv)[2]!='\0') {
-				afmname = strdup(&(*argv)[2]);
+			afmname = xstrdup(optarg);
+			{
+				char *fpath = kpse_find_file(afmname, kpse_afm_format, 0);
+				if (fpath) {
+					afp = fopen(fpath, "r");
+					free(fpath);
+					}
 			}
-			else {
-				afmname = strdup(*(++argv));
-			}
-			if ((afp = fopen(afmname,"r"))==NULL) {
+			if (!afp) {
 				fprintf(stderr,"no AFM file, %s.\n",afmname);
 				exit(100);
 			}
 			break;
 		case 'b':
-			if ((*argv)[2]!='\0') {
-				baseshift = atoi(&(*argv)[2]);
-			}
-			else {
-				baseshift = atoi(*(++argv));
-			}
+			baseshift = atoi(optarg);
 			break;
 		case 'm':
 			minute=1;
 			break;
 		case 'u':
-			argv++;
-			if (!strcmp(*argv,"gb"))
+			if (!strcmp(optarg, "gb"))
 				ucs = ENTRY_G;
-			else if (!strcmp(*argv,"cns"))
+			else if (!strcmp(optarg, "cns"))
 				ucs = ENTRY_C;
-			else if (!strcmp(*argv,"jisq"))
+			else if (!strcmp(optarg, "jisq"))
 				ucs = ENTRY_JQ;
-			else if (!strcmp(*argv,"jis"))
+			else if (!strcmp(optarg, "jis"))
 				ucs = ENTRY_J;
-			else if (!strcmp(*argv,"ks"))
+			else if (!strcmp(optarg, "ks"))
 				ucs = ENTRY_K;
 			else {
 				fprintf(stderr,"Charset is not set\n");
@@ -90,21 +74,10 @@ int main(int argc, char ** argv)
 			useset3=1;
 			break;
 		case 'J':
-			if ((*argv)[2]!='\0') {
-				jistfm = strdup(&(*argv)[2]);
-			}
-			else {
-				jistfm = strdup(*(++argv));
-			}
+			jistfm = xstrdup(optarg);
 			break;
 		case 'U':
-			if ((*argv)[2]!='\0') {
-				ucsqtfm = strdup(&(*argv)[2]);
-			}
-			else {
-				ucsqtfm = strdup(*(++argv));
-			}
-			break;
+			ucsqtfm = xstrdup(optarg);
 		case 'H':
 			hankana=1;
 			break;
@@ -115,33 +88,32 @@ int main(int argc, char ** argv)
 			usage();
 			exit(0);
 		}
-	}
 
 	if (kanatume>=0 && !afp) {
 		fprintf(stderr,"No AFM file for kanatume.\n");
 		exit(100);
 	}
 
-	atfmname = malloc(strlen(*argv)+4);
-	strcpy(atfmname,*argv);
-
-	vfname = malloc(strlen(*argv)+4);
-	strcpy(vfname,*argv);
-	for (i = strlen(vfname)-1 ; i >= 0 ; i--) {
-		if (vfname[i] == '/') {
-			vfname = &vfname[i+1];
-			break;
-		}
+	if (argc - optind != 2) {
+		usage();
+		exit(0);
 	}
-	if (!strcmp(&vfname[strlen(vfname)-4],".tfm")) {
+
+	atfmname = xmalloc(strlen(argv[optind])+4);
+	strcpy(atfmname, argv[optind]);
+
+	{
+		const char *p = xbasename(argv[optind]);
+		vfname = xmalloc(strlen(p)+4);
+		strcpy(vfname, p);
+	}
+	if (FILESTRCASEEQ(&vfname[strlen(vfname)-4], ".tfm")) {
 		vfname[strlen(vfname)-4] = '\0';
 	}
 	strcat(vfname,".vf");
 
-	argv++;
-
-	vtfmname = strdup(*argv);
-	if (!strcmp(&vtfmname[strlen(vtfmname)-4],".tfm")) {
+	vtfmname = xstrdup(argv[optind+1]);
+	if (FILESTRCASEEQ(&vtfmname[strlen(vtfmname)-4], ".tfm")) {
 		vtfmname[strlen(vtfmname)-4] = '\0';
 	}
 
@@ -150,21 +122,21 @@ int main(int argc, char ** argv)
 	maketfm(vtfmname);
 
 	if (kanatfm) {
-		if (!strcmp(&kanatfm[strlen(kanatfm)-4],".tfm")) {
+		if (FILESTRCASEEQ(&kanatfm[strlen(kanatfm)-4], ".tfm")) {
 			kanatfm[strlen(kanatfm)-4] = '\0';
 		}
 		maketfm(kanatfm);
 	}
 
 	if (jistfm) {
-		if (!strcmp(&jistfm[strlen(jistfm)-4],".tfm")) {
+		if (FILESTRCASEEQ(&jistfm[strlen(jistfm)-4], ".tfm")) {
 			jistfm[strlen(jistfm)-4] = '\0';
 		}
 		maketfm(jistfm);
 	}
 
 	if (ucsqtfm) {
-		if (!strcmp(&ucsqtfm[strlen(ucsqtfm)-4],".tfm")) {
+		if (FILESTRCASEEQ(&ucsqtfm[strlen(ucsqtfm)-4], ".tfm")) {
 			ucsqtfm[strlen(ucsqtfm)-4] = '\0';
 		}
 		maketfm(ucsqtfm);

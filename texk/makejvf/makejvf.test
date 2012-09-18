@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 ./makejvf $srcdir/tests/min10.tfm rml && \
@@ -12,4 +12,9 @@ cmp $srcdir/tests/min10.vf min10.vf || :
   cmp $srcdir/tests/rmlv.tfm rmlv.tfm || exit 1
 
 cmp $srcdir/tests/tmin10.vf tmin10.vf || :
+
+TEXMFCNF=$srcdir/../kpathsea \
+	./makejvf -k0 -a abc && exit 1
+
+exit 0
 

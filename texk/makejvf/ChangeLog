@@ -1,3 +1,21 @@
+2012-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* main.c: Use xmalloc() and xstrdup().  Use getopt() to parse
+	options, avoiding segmentation fault for missing parameters.
+	* tfmread.c: Use xmalloc().
+	* makejvf.test: Test options '-k0 -a abc'.
+
+2012-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Remove W32TeX/TL diffs (from Akira).
+	* main.c: Use "sjis" file encoding.
+	Use kpse_find_file() to locate AFM file.
+	Use FILESTRCASEEQ() and xbasename().
+
+2012-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tool.c: Drop useless '#include <strings.h>'.
+
 2012-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tfmread.c: Use fopen() mode "rb" for TFM file.

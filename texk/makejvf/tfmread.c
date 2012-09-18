@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <kpathsea/config.h>
+#include <kpathsea/kpathsea.h>
 #include "makejvf.h"
 
 int nt,unit,zh,zw,jfm_id;
@@ -72,32 +72,32 @@ int tfmidx(FILE *fp)
 		ng = ufpair(fp);
 		np = ufpair(fp);
 
-		header = malloc(lh*4);
+		header = xmalloc(lh*4);
 		for (i = 0 ; i < lh*4 ; i++) {
 			header[i] = fgetc(fp);
 		}
-		char_type = malloc(nt*4);
+		char_type = xmalloc(nt*4);
 		for (i = 0 ; i < nt*4 ; i++) {
 			char_type[i] = fgetc(fp);
 		}
-		char_info = malloc((ec+1)*4);
+		char_info = xmalloc((ec+1)*4);
 		for (i = 0 ; i < (ec+1)*4 ; i++) {
 			char_info[i] = fgetc(fp);
 		}
-		width = malloc(nw*sizeof(int));
+		width = xmalloc(nw*sizeof(int));
 		for (i = 0 ; i < nw ; i++) {
 			width[i] = fquad(fp);
 		}
-		height = malloc(nh*sizeof(int));
+		height = xmalloc(nh*sizeof(int));
 		for (i = 0 ; i < nh ; i++) {
 			height[i] = fquad(fp);
 		}
-		depth = malloc(nd*sizeof(int));
+		depth = xmalloc(nd*sizeof(int));
 		for (i = 0 ; i < nd ; i++) {
 			depth[i] = fquad(fp);
 		}
 		fseek(fp,(ni+nl+nk+ng)*4,SEEK_CUR);
-		param = malloc(np*sizeof(int));
+		param = xmalloc(np*sizeof(int));
 		for (i = 0 ; i < np ; i++) {
 			param[i] = fquad(fp);
 		}

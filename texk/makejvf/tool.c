@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <strings.h>
 #include <math.h>
 
 #include <kpathsea/config.h>
