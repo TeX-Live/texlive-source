@@ -1,3 +1,7 @@
+2012-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pfb2pfa.c (main): Drop unnecessary nested fatal() prototype.
+
 2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pkout.c (pk_runlengths): Pretend that the first pixel of an

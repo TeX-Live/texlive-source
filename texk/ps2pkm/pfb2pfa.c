@@ -37,9 +37,6 @@ int main (int argc, char *argv[])
    FILE *pfb, *pfa;
    char *pfbname, *pfaname = NULL, *myname = "pfb2pfa";
 
-   /* prototypes */
-   void fatal(char *fmt, ...);
-
    while (--argc > 0 && (*++argv)[0] == '-') {
       done=0;
       while ((!done) && (c = *++argv[0]))  /* allow -bcK like options */
