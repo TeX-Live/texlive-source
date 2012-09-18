@@ -1,3 +1,10 @@
+2012-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fixwrites.c, main.c, makecpool.c, splitup.c:
+	Use binary mode for output files.
+	* fixwrites.c: Recognize (u)ppltotf as pltotf variant.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
 2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* web2c-parser.[ch]: Regenerate with bison 2.5.1.

@@ -5,6 +5,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef WIN32
+#include <io.h>
+#include <fcntl.h>
+#endif
+
 static const char __svn_version[] =
     "$Id: makecpool.c 1230 2008-05-03 11:11:32Z oneiros $ $URL: svn://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/makecpool.c $";
 
@@ -15,6 +20,10 @@ int main(int argc, char *argv[])
     char data[1024];
     int is_metafont = 0;
     int is_luatex = 0;
+
+#ifdef WIN32
+    setmode(fileno(stdout), _O_BINARY);
+#endif
     if (argc != 2) {
         fprintf(stderr,
                 "%s: need exactly one argument (base name).\n",

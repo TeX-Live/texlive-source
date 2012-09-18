@@ -75,12 +75,21 @@ read_line (void)
   return true;
 }
 
+#ifdef WIN32
+#include <io.h>
+#include <fcntl.h>
+#endif
+
 int
 main (int argc, string *argv)
 {
   const_string coerce;
   unsigned coerce_len;
   int option;
+
+#ifdef WIN32
+  setmode(fileno(stdout), _O_BINARY);
+#endif
 
   while ((option = getopt(argc, argv, "il:")) != -1) {
     switch (option) {
@@ -181,7 +190,7 @@ main (int argc, string *argv)
     {
       /* Read one routine into a temp file */
       has_ini = false;
-      temp = xfopen (tempfile, "w+");
+      temp = xfopen (tempfile, "wb+");
 
       while (read_line ())
 	{

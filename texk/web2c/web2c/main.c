@@ -218,11 +218,19 @@ initialize (void)
   coerce = xfopen (coerce_name, FOPEN_W_MODE);
 }
 
+#ifdef WIN32
+#include <io.h>
+#include <fcntl.h>
+#endif
+
 int
 main (int argc, string *argv)
 {
   int error, i;
 
+#ifdef WIN32
+  setmode(fileno(stdout), _O_BINARY);
+#endif
   for (i = 1; i < argc; i++)
     if (argv[i][0] == '-')
       switch (argv[i][1])
