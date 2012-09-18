@@ -1,3 +1,19 @@
+2012-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/tables.h, libttf/os2.c: Handle fields present only in
+	versions 1 and 2 of OS/2 table.
+	* tests/ttfdump.test: Add a test case for OS/2 table.
+	* tests/texmfhome.otf (new): Test input.
+	* tests/ttfdump.os_2 (new): Expected output.
+	* Makefile.am: Adapted.
+
+2012-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/protos.h: Move prototypes for functions in
+	libttf/stack.c from here ...
+	* include/stack.h: ... to this new (and unused) file.
+	* Makefile.am (EXTRA_DIST): Add the new file.
+
 2012-07-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac, include/ttf.h, include/ttfutil.h,

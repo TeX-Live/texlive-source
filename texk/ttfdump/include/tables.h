@@ -483,8 +483,15 @@ typedef struct
   SHORT sTypoLineGap;
   USHORT usWinAscent;
   USHORT usWinDescent;
+  /* only version 1 tables */
   ULONG ulCodePageRange1;
   ULONG ulCodePageRange2;
+  /* only version 2 tables */
+  SHORT sxHeight;
+  SHORT sCapHeight;
+  USHORT usDefaultChar;
+  USHORT usBreakChar;
+  USHORT usMaxContext;
 }
 OS_2, *OS_2Ptr;
 

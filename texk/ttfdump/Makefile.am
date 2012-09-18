@@ -60,6 +60,7 @@ libttf_a_SOURCES = \
 ## Not used (interp.c would just produce compiler warnings).
 ##
 EXTRA_DIST = \
+	include/stack.h \
 	libttf/fixed.c \
 	libttf/interp.c \
 	libttf/stack.c
@@ -92,12 +93,15 @@ DISTCLEANFILES =
 ## tests/ttfdump.test
 EXTRA_DIST += \
 	tests/FonetikaDaniaIwonaeRegular.ttf \
+	tests/texmfhome.otf \
 	tests/ttfdump.glyf \
 	tests/ttfdump.gpos \
 	tests/ttfdump.gsub \
-	tests/ttfdump.head
+	tests/ttfdump.head \
+	tests/ttfdump.os_2
 DISTCLEANFILES += \
 	FonetikaDaniaIwonaeRegular.ttf \
+	texmfhome.otf \
 	ttftest.*
 
 ## Not used

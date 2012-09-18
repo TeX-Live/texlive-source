@@ -1,0 +1,69 @@
+True Type Font File Dumper: v 0.5.5
+Copyright 1996-1998 ollie@ms1.hinet.net
+Dumping File:texmfhome.otf
+
+
+Offset Table
+------------
+	 sfnt version: 'OTTO'
+	 number of tables: 10
+   0. 'CFF ' - checksum = 0xedbe4dbb, offset = 0x00000540, len =       499
+   1. 'FFTM' - checksum = 0x5648ee58, offset = 0x00000734, len =        28
+   2. 'OS/2' - checksum = 0x55da5fc2, offset = 0x00000110, len =        96
+   3. 'cmap' - checksum = 0x000d03f5, offset = 0x000003dc, len =       322
+   4. 'head' - checksum = 0xf1a97fe4, offset = 0x000000ac, len =        54
+   5. 'hhea' - checksum = 0x04b90210, offset = 0x000000e4, len =        36
+   6. 'hmtx' - checksum = 0x042b0020, offset = 0x00000750, len =        10
+   7. 'maxp' - checksum = 0x00035000, offset = 0x00000108, len =         6
+   8. 'name' - checksum = 0x4777499b, offset = 0x00000170, len =       618
+   9. 'post' - checksum = 0xff860033, offset = 0x00000520, len =        32
+
+'OS/2' Table - OS/2 and Windows Metrics
+---------------------------------------
+	 'OS/2' version:	 3
+	 xAvgCharWidth:		 525
+	 usWeightClass:		 500 	 'Medium'
+	 usWidthClass:		 5 	 'Medium'
+	 fsType:		 0
+	 ySubscriptXSize:	 650
+	 ySubscriptYSize:	 699
+	 ySubscriptXOffset:	 0
+	 ySubscriptYOffset:	 140
+	 ySuperscriptXSize:	 650
+	 ySuperscriptYSize:	 699
+	 ySuperscriptXOffset:	 0
+	 ySuperscriptYOffset:	 479
+	 yStrikeoutSize:	 49
+	 yStrikeoutPosition	 258
+	 sFamilyClass:	 0 	 subclass = 0
+	 PANOSE:
+		 Family Kind:	 2 	 'Text and Display'
+		 Serif Style:	 0 	 'Any'
+		 Weight:	 6 	 'Medium'
+		 Proportion:	 9 	 'Monospaced'
+		 Contrast:	 0 	 'Any'
+		 Stroke:	 0 	 'Any'
+		 Arm Style:	 0 	 'Any'
+		 Lettreform:	 0 	 'Any'
+		 Midline:	 0 	 'Any'
+		 X-height:	 0 	 'Any'
+	 Unicode Range 1( Bits 0 - 31 ): 	 0x00000001
+	 Unicode Range 2( Bits 32 - 63 ): 	 0x00000000
+	 Unicode Range 3( Bits 64 - 95 ): 	 0x00000000
+	 Unicode Range 4( Bits 96 - 128 ): 	 0x00000000
+	 achVendID:		 'PfEd'
+	 fsSelection:		 0x0040 	 'Regular '
+	 usFirstCharIndex:	 0xffff
+ 	 usLastCharIndex:	 0x0000
+	 sTypoAscender:		 800
+	 sTypoDescender:	 -200
+	 sTypoLineGap:		 90
+	 usWinAscent:		 611
+	 usWinDescent:		 0
+	 CodePage Range 1( Bits 0 - 31 ):	 0x00000001
+	 CodePage Range 2( Bits 32- 63 ):	 0x00000000
+	 sxHeight:		 0
+	 sCapHeight:		 0
+	 usDefaultChar:		 0x0020
+	 usBreakChar:		 0x0020
+	 usMaxContext:		 1

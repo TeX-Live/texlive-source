@@ -14,9 +14,5 @@ extern void ttfPrintPCLT(FILE*, PCLTPtr);
 extern void ttfPrintVHEA(FILE*, VHEAPtr);
 extern void ttfPrintVMTX(FILE*, VMTXPtr);
 extern BYTE ttfGetBYTE(FILE*);
-extern BYTE GetBYTE(VirtualMachine *);
-extern SHORT GetSHORT(VirtualMachine *);
-extern void Push(VirtualMachine *, LONG);
-extern LONG Pop(VirtualMachine *);
 
 #endif

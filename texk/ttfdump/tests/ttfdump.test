@@ -9,8 +9,9 @@ export TEXMFCNF TTFONTS
 
 failed=
 
-rm -rf FonetikaDaniaIwonaeRegular.ttf ttftest.*
+rm -rf FonetikaDaniaIwonaeRegular.ttf texmfhome.otf ttftest.*
 cp $srcdir/tests/FonetikaDaniaIwonaeRegular.ttf .
+cp $srcdir/tests/texmfhome.otf .
 
 ./ttfdump -t glyf -g 1 -o ttftest.glyf FonetikaDaniaIwonaeRegular.ttf \
 	&& diff -b $srcdir/tests/ttfdump.glyf ttftest.glyf \
@@ -27,10 +28,15 @@ cp $srcdir/tests/FonetikaDaniaIwonaeRegular.ttf .
 	&& echo "ttfdump.gsub tests OK" \
 	|| failed="$failed ttfdump.gsub"
 
-./ttfdump -t head FonetikaDaniaIwonaeRegular.ttf > ttftest.head \
+./ttfdump -t head FonetikaDaniaIwonaeRegular.ttf >ttftest.head \
 	&& diff -b $srcdir/tests/ttfdump.head ttftest.head \
 	&& echo "ttfdump.head tests OK" \
 	|| failed="$failed ttfdump.head"
+
+./ttfdump -t OS/2 texmfhome.otf >ttftest.os_2 \
+	&& diff -b $srcdir/tests/ttfdump.os_2 ttftest.os_2 \
+	&& echo "ttfdump.os_2 tests OK" \
+	|| failed="$failed ttfdump.os_2"
 
 test -z "$failed" && exit 0
 echo "failed tests:$failed"

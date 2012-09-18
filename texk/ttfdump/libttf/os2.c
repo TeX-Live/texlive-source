@@ -46,7 +46,7 @@ static void ttfLoadOS2(FILE *fp, OS_2Ptr os2, ULONG offset)
     os2->sFamilyClass = ttfGetSHORT(fp);
 
     if (fread(os2->panose, sizeof(CHAR), 10, fp) != 10)
-	ttfError("Error readind PANOSE\n");
+	ttfError("Error reading PANOSE\n");
 
     os2->ulUnicodeRange1 = ttfGetULONG(fp);
     os2->ulUnicodeRange2 = ttfGetULONG(fp);
@@ -54,7 +54,7 @@ static void ttfLoadOS2(FILE *fp, OS_2Ptr os2, ULONG offset)
     os2->ulUnicodeRange4 = ttfGetULONG(fp);
 
     if (fread(os2->achVendID, sizeof(CHAR), 4, fp) != 4)
-	ttfError("Error readind achVendID\n");
+	ttfError("Error reading achVendID\n");
     os2->achVendID[4] = 0x0;
 
     os2->fsSelection = ttfGetUSHORT(fp);
@@ -65,8 +65,21 @@ static void ttfLoadOS2(FILE *fp, OS_2Ptr os2, ULONG offset)
     os2->sTypoLineGap = ttfGetSHORT(fp);
     os2->usWinAscent = ttfGetUSHORT(fp);
     os2->usWinDescent = ttfGetUSHORT(fp);
+
+    if (os2->version < 0x0001)
+        return;
+
     os2->ulCodePageRange1 = ttfGetULONG(fp);
     os2->ulCodePageRange2 = ttfGetULONG(fp);
+
+    if (os2->version < 0x0002)
+        return;
+
+    os2->sxHeight = ttfGetSHORT(fp);
+    os2->sCapHeight = ttfGetSHORT(fp);
+    os2->usDefaultChar = ttfGetUSHORT(fp);
+    os2->usBreakChar = ttfGetUSHORT(fp);
+    os2->usMaxContext = ttfGetUSHORT(fp);
 }
 
 void ttfPrintOS2(FILE *fp,OS_2Ptr os2)
@@ -147,10 +160,23 @@ void ttfPrintOS2(FILE *fp,OS_2Ptr os2)
     fprintf(fp,"\t sTypoLineGap:\t\t %d\n",os2->sTypoLineGap);
     fprintf(fp,"\t usWinAscent:\t\t %d\n",os2->usWinAscent);
     fprintf(fp,"\t usWinDescent:\t\t %d\n",os2->usWinDescent);
+
+    if (os2->version < 0x0001)
+        return;
+
     fprintf(fp,"\t CodePage Range 1( Bits 0 - 31 ):\t 0x%08x\n",
 	    os2->ulCodePageRange1);
     fprintf(fp,"\t CodePage Range 2( Bits 32- 63 ):\t 0x%08x\n",
 	    os2->ulCodePageRange2);
+
+    if (os2->version < 0x0002)
+        return;
+
+    fprintf(fp,"\t sxHeight:\t\t %d\n",os2->sxHeight);
+    fprintf(fp,"\t sCapHeight:\t\t %d\n",os2->sCapHeight);
+    fprintf(fp,"\t usDefaultChar:\t\t 0x%04x\n",os2->usDefaultChar);
+    fprintf(fp,"\t usBreakChar:\t\t 0x%04x\n",os2->usBreakChar);
+    fprintf(fp,"\t usMaxContext:\t\t %d\n",os2->usMaxContext);
 }
 
 void ttfFreeOS2(OS_2Ptr os2)
