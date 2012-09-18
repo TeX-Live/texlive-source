@@ -19,6 +19,10 @@ main (int  ac,  string* av)
   _response (&ac, &av);
 #endif
 
+#ifdef WIN32
+  _setmaxstdio(2048);
+#endif
+
   argc = ac;
   argv = av;
   mainbody ();

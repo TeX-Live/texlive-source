@@ -43,15 +43,12 @@ recorder_start(void)
        default name.  Throw in the pid so at least parallel builds might
        work (Debian bug 575731).  */
     string cwd;
-    pid_t pid = getpid();
     char pid_str[MAX_INT_LENGTH];
-    sprintf (pid_str, "%ld", (long) pid);
-    
-    recorder_name = xmalloc(strlen(kpse_program_name)
-                                    + strlen (pid_str) + 5);
-    strcpy(recorder_name, kpse_program_name);
-    strcat(recorder_name, pid_str);
-    strcat(recorder_name, ".fls");
+
+    /* Windows (MSVC) seems to have no pid_t, so instead of storing the
+       value returned by getpid() we immediately consume it.  */
+    sprintf (pid_str, "%ld", (long) getpid());
+    recorder_name = concat3(kpse_program_name, pid_str, ".fls");
     
     /* If an output directory was specified, use it instead of cwd.  */
     if (output_directory) {

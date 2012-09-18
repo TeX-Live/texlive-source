@@ -658,7 +658,7 @@ maininit (int ac, string *av)
 
 #if IS_pTeX
   kpse_set_program_name (argv[0], NULL);
-  initdefaultkanji ();
+  initkanji ();
 #endif
 
   /* If the user says --help or --version, we need to notice early.  And
