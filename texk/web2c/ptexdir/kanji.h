@@ -33,10 +33,15 @@ extern integer calc_pos (integer c);
 extern integer kcatcodekey (integer c);
 
 extern void init_default_kanji (const_string file_str, const_string internal_str);
-/* for pTeX and e-pTeX */
-#define initdefaultkanji() init_default_kanji(NULL, "euc")
-/* for pBibTeX, pDVItype, pPLtoTF, and pTFtoPL */
+#ifdef PBIBTEX
+/* pBibTeX is EUC only */
 #define initkanji() init_default_kanji(NULL, "euc")
+#elif defined(WIN32)
+/* for pTeX, e-pTeX, pDVItype, pPLtoTF, and pTFtoPL */
+#define initkanji() init_default_kanji(NULL, "sjis")
+#else
+#define initkanji() init_default_kanji(NULL, "euc")
+#endif
 /* for pDVItype */
 #define setpriorfileenc() set_prior_file_enc()
 

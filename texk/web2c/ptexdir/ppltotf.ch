@@ -48,20 +48,6 @@ for k:=@'40 to 255 do xchr[k]:=k;
 for k:=first_ord to last_ord do xord[chr(k)]:=invalid_code;
 @z
 
-@x [27] l.587 - pTeX: to convert putc of web2c
-for k:=1 to loc do print(buffer[k]); {print the characters already scanned}
-@y
-for k:=1 to loc do print(xchr[buffer[k]]);
-  {print the characters already scanned}
-@z
-
-@x [27] l.591 - pTeX: to convert putc of web2c
-for k:=loc+1 to limit do print(buffer[k]); {print the characters yet unseen}
-@y
-for k:=loc+1 to limit do print(xchr[buffer[k]]);
-  {print the characters yet unseen}
-@z
-
 @x [28] l.619 - pTeX:
 else  begin while (limit<buf_size-2)and(not eoln(pl_file)) do
     begin incr(limit); read(pl_file,buffer[limit]);

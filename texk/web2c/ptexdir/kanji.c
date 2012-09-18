@@ -80,6 +80,13 @@ void init_default_kanji (const_string file_str, const_string internal_str)
 
     enable_UPTEX (false); /* disable */
 
+    if (!set_enc_string (file_str, internal_str)) {
+        fprintf (stderr, "Bad kanji encoding \"%s\" or \"%s\".\n",
+                 file_str ? file_str  : "NULL",
+                 internal_str ? internal_str : "NULL");
+        uexit(1);
+    }
+
     p = getenv ("PTEX_KANJI_ENC");
     if (p) {
         if (!set_enc_string (p, NULL))
@@ -94,11 +101,4 @@ void init_default_kanji (const_string file_str, const_string internal_str)
         free(p);
     }
 #endif
-
-    if (!set_enc_string (file_str, internal_str)) {
-        fprintf (stderr, "Bad kanji encoding \"%s\" or \"%s\".\n",
-                 file_str ? file_str  : "NULL",
-                 internal_str ? internal_str : "NULL");
-        uexit(1);
-    }
 }

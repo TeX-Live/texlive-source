@@ -1,3 +1,11 @@
+2012-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ppltotf.ch: Remove putc kludge, convert knows (u)ppltotf.
+
+	* kanji.c (init_default_kanji): Set defaults before testing
+	PTEX_KANJI_ENC from the environment.
+	* kanji.c: WIN32 defaults differ, except for pBibTeX.
+
 2012-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am: Distribute ptex_version.h.
