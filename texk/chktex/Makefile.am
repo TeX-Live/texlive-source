@@ -55,6 +55,7 @@ man_MANS = \
 	$(CHKTEX_TREE)/deweb.1
 
 perl_scripts = deweb
+sh_scripts = chkweb
 scriptsdir = texmf/scripts/chktex
 nodist_bin_SCRIPTS =
 
@@ -62,13 +63,10 @@ include $(srcdir)/../../texk/am/script_links.am
 
 texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
+texmf_SCRIPTS = $(CHKTEX_TREE)/chkweb.sh
 
-install-data-hook: install-perl-links
+install-data-hook: install-perl-links install-sh-links
 uninstall-hook: uninstall-links
-
-if !WIN32
-bin_SCRIPTS = $(CHKTEX_TREE)/chkweb
-endif !WIN32
 
 # resource file
 configdir = $(datarootdir)/texmf/chktex
