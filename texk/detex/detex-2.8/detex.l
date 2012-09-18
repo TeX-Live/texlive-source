@@ -83,6 +83,11 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.22 2007/0
 #include <stdlib.h>
 #endif
 
+#ifdef WIN32
+#include <fcntl.h>
+#include <io.h>
+#endif
+
 #endif /* KPATHSEA */
 
 #undef IGNORE
@@ -436,10 +441,10 @@ main(int cArgs, char *rgsbArgs[])
 #endif
 	_splitpath (rgsbArgs[0], drive, dir, fname, ext);
 	sbProgName = strlwr(fname);
-#else
-#ifdef KPATHSEA
+#elif defined(KPATHSEA)
 	kpse_set_program_name (rgsbArgs[0], NULL);
-#endif
+	sbProgName = kpse_program_name;
+#else
 	if ((sbProgName = rindex(rgsbArgs[0], '/')) != NULL)
 	    sbProgName++;
 	else
@@ -462,7 +467,7 @@ main(int cArgs, char *rgsbArgs[])
 			break;
 		    case CHENVOPT:
 			if (++iArgs >= cArgs) {
-				ErrorExit("-e option requires and argument");
+				ErrorExit("-e option requires an argument");
 			}
 			sbEnvList = rgsbArgs[iArgs];
 			break;
@@ -493,6 +498,10 @@ main(int cArgs, char *rgsbArgs[])
 		iArgs++;
 	}
 	SetEnvIgnore(sbEnvList);
+
+#ifdef WIN32
+	_setmode(fileno(stdout), _O_BINARY);
+#endif
 
 	/* process input files */
 	for (; iArgs < cArgs; iArgs++) {

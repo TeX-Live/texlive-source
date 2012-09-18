@@ -1,0 +1,52 @@
+	Clarify that DEFAULTINPUTS and CHPATHSEP are not used with KPATHSEA
+
+diff -ur detex-2.8.orig/detex.h detex-2.8/detex.h
+--- detex-2.8.orig/detex.h	2012-08-02 10:31:17.000000000 +0200
++++ detex-2.8/detex.h	2012-08-24 10:23:29.000000000 +0200
+@@ -51,6 +51,7 @@
+ 
+ #define	MAXINCLIST	40
+ 
++#ifndef KPATHSEA
+ #ifdef OS2
+ #define	DEFAULTINPUTS	".;/emtex/texinput"
+ #define	CHPATHSEP	';'
+@@ -58,6 +59,8 @@
+ #define	DEFAULTINPUTS	".:/usr/local/tex/inputs"
+ #define	CHPATHSEP	':'
+ #endif
++#endif
++
+ #define	MAXINPUTPATHS	10
+ 
+ #define	DEFAULTENV	"array,eqnarray,equation,figure,mathmatica,picture,table,verbatim"
+
+	With KPATHSEA use kpse_program_name.
+	Fixed a typo.
+
+diff -ur detex-2.8.orig/detex.l detex-2.8/detex.l
+--- detex-2.8.orig/detex.l	2012-08-02 10:31:20.000000000 +0200
++++ detex-2.8/detex.l	2012-08-24 10:37:03.000000000 +0200
+@@ -436,10 +436,10 @@
+ #endif
+ 	_splitpath (rgsbArgs[0], drive, dir, fname, ext);
+ 	sbProgName = strlwr(fname);
+-#else
+-#ifdef KPATHSEA
++#elif defined(KPATHSEA)
+ 	kpse_set_program_name (rgsbArgs[0], NULL);
+-#endif
++	sbProgName = kpse_program_name;
++#else
+ 	if ((sbProgName = rindex(rgsbArgs[0], '/')) != NULL)
+ 	    sbProgName++;
+ 	else
+@@ -462,7 +467,7 @@
+ 			break;
+ 		    case CHENVOPT:
+ 			if (++iArgs >= cArgs) {
+-				ErrorExit("-e option requires and argument");
++				ErrorExit("-e option requires an argument");
+ 			}
+ 			sbEnvList = rgsbArgs[iArgs];
+ 			break;

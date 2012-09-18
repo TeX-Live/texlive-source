@@ -51,6 +51,7 @@
 
 #define	MAXINCLIST	40
 
+#ifndef KPATHSEA
 #ifdef OS2
 #define	DEFAULTINPUTS	".;/emtex/texinput"
 #define	CHPATHSEP	';'
@@ -58,6 +59,8 @@
 #define	DEFAULTINPUTS	".:/usr/local/tex/inputs"
 #define	CHPATHSEP	':'
 #endif
+#endif
+
 #define	MAXINPUTPATHS	10
 
 #define	DEFAULTENV	"array,eqnarray,equation,figure,mathmatica,picture,table,verbatim"
