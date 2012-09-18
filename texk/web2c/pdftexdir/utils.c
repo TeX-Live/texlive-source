@@ -21,6 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <sys/types.h>
 #include <regex.h>
+#include <kpathsea/config.h>
 #include <kpathsea/c-proto.h>
 #include <kpathsea/c-stat.h>
 #include <kpathsea/c-fopen.h>
@@ -767,6 +768,17 @@ void printID(strnumber filename)
     /* get the file name */
     if (getcwd(pwd, sizeof(pwd)) == NULL)
         pdftex_fail("getcwd() failed (%s), path too long?", strerror(errno));
+#ifdef WIN32
+    {
+        char *p;
+        for (p = pwd; *p; p++) {
+            if (*p == '\\')
+                *p = '/';
+            else if (IS_KANJI(p))
+                p++;
+        }
+    }
+#endif
     file_name = makecstring(filename);
     md5_append(&state, (const md5_byte_t *) pwd, strlen(pwd));
     md5_append(&state, (const md5_byte_t *) "/", 1);

@@ -29,7 +29,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <kpathsea/kpathsea.h>
 #include <time.h>
-#include <libgen.h>
 #include <pdftexdir/ptexmac.h>
 #include <pdftexdir/writettf.h>
 #include <string.h>

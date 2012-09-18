@@ -1,3 +1,12 @@
+2012-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c [WIN32] (printID): Convert file names '\\' -> '/'.
+
+2012-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttf2afm.c: Drop '#include <libgen.h>', we use xbasename().
+	* ptexmac.h: Avoid C++ style comment.
+
 2012-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexmac.h: Drop unused definition of M_PI & Co.

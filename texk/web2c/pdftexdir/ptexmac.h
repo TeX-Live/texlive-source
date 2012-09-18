@@ -21,7 +21,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #  define PDFTEXMAC
 
 #  ifdef WIN32
-// Why relying on gmalloc() ???
+/* Why relying on gmalloc() ??? */
 #    define gmalloc(n) xmalloc(n)
 #    define gfree(p) free(p)
 #    define inline __inline
