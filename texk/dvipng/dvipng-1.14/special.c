@@ -28,6 +28,7 @@
 #ifndef WIN32
 #include <sys/wait.h>
 #else /* WIN32 */
+#undef pipe
 #define pipe(p) _pipe(p, 65536, O_BINARY | _O_NOINHERIT)
 #endif /* WIN32 */
 #endif

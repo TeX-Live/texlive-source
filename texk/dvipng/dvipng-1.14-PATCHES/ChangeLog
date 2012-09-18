@@ -1,3 +1,7 @@
+2012-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-WIN32: Avoid warning when redefining pipe.
+
 2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-WIN32: Do not redefine snprintf, handled by kpathsea.
