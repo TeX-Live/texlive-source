@@ -31,9 +31,6 @@ if XETEX_MACOSX
 xetex_cppflags += -DXETEX_MAC
 xetex_LDFLAGS = -framework Carbon -framework Cocoa -framework QuickTime
 
-## Extra library for the Objective C++ file xetexdir/XeTeXFontMgr_Mac.mm.
-libxetex += libxetexmm.a
-
 else !XETEX_MACOSX
 
 xetex_cppflags += -DXETEX_OTHER
@@ -124,8 +121,7 @@ EXTRA_LIBRARIES += libxetex.a
 libxetex_a_CPPFLAGS = $(xetex_cppflags)
 libxetex_a_CFLAGS = # $(WARNING_CFLAGS)
 libxetex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
-## Not yet for ObjC++ (not yet implemented)
-libxetex_a_OBJCXXFLAGS = ## $(WARNING_OBJCXXFLAGS)
+libxetex_a_OBJCXXFLAGS = # $(WARNING_OBJCXXFLAGS)
 
 libxetex_a_SOURCES = \
 	xetexdir/MathTable.h \
@@ -162,6 +158,8 @@ if XETEX_MACOSX
 libxetex_a_SOURCES += \
 	xetexdir/XeTeXFontInst_Mac.cpp \
 	xetexdir/XeTeXFontInst_Mac.h \
+	xetexdir/XeTeXFontMgr_Mac.mm \
+	xetexdir/XeTeXFontMgr_Mac.h \
 	xetexdir/XeTeX_mac.c
 
 else !XETEX_MACOSX
@@ -196,27 +194,6 @@ endif XETEX_GRAPHITE
 # We must create xetexd.h etc. before building the libxetex_a_OBJECTS.
 libxetex_prereq = xetexd.h $(xetex_dependencies)
 $(libxetex_a_OBJECTS): $(libxetex_prereq)
-
-## libxetexmm (Mac OS X only)
-##
-## Automake (1.10.2) does not generate a rule to compile
-## the Objective C++ file xetexdir/XeTeXFontMgr_Mac.mm.
-## Since this file is to be compiled with '$(CXX) -ObjC++' we provide a
-## C++ wrapper xetexdir/XeTeXFontMgr_Mac.cpp including the Objective C++ file.
-## Since Automake does not allow to specify CXXFLAGS for individual objects,
-## we use an additional library libxetexmm.a.
-EXTRA_LIBRARIES += libxetexmm.a
-
-libxetexmm_a_CPPFLAGS = $(xetex_cppflags)
-
-libxetexmm_a_CXXFLAGS = -ObjC++
-
-libxetexmm_a_SOURCES = \
-	xetexdir/XeTeXFontMgr_Mac.cpp \
-	xetexdir/XeTeXFontMgr_Mac.h
-
-## included by xetexdir/XeTeXFontMgr_Mac.cpp
-EXTRA_DIST += xetexdir/XeTeXFontMgr_Mac.mm
 
 EXTRA_DIST += xetexdir/ChangeLog
 

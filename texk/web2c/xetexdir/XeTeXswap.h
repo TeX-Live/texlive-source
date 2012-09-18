@@ -35,10 +35,6 @@ authorization from the copyright holders.
 
 #include "unicode/platform.h"	// ICU's platform.h defines U_IS_BIG_ENDIAN for us
 
-#ifdef WIN32
-#define inline __inline /* for VC++ (non-C99); not sure about other compilers on W32 */
-#endif
-
 static inline UInt16
 SWAP16(const UInt16 p)
 {

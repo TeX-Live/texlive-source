@@ -5,6 +5,17 @@
 	Otherwise a malicious xdvipdfmx.bat in the current directory can
 	be called.
 
+2012-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am: Use Automake generated rule for ObjC++ file,
+	it is no longer necessary to build a separate libxetexmm.a.
+	* XeTeXFontMgr_Mac.cpp (removed): Obsolete.
+
+2012-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXswap.h [WIN32]: Do not '#define inline __inline';
+	if needed this comes via c-auto.h or ../../kpathsea/config.h.
+
 2012-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXFontMgr.cpp, XeTeXLayoutInterface.cpp: Always put
