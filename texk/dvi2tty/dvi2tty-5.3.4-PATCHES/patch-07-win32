@@ -1,3 +1,18 @@
+diff -ur dvi2tty-5.3.4.orig/dvi2tty.c dvi2tty-5.3.4/dvi2tty.c
+--- dvi2tty-5.3.4.orig/dvi2tty.c	2012-06-22 10:12:43.000000000 +0200
++++ dvi2tty-5.3.4/dvi2tty.c	2012-09-06 21:51:41.000000000 +0200
+@@ -164,7 +164,11 @@
+     Argc = argc;
+     Argv = argv;
+ 
++#ifdef WIN32
++    set_enc_string ("sjis", "default");
++#else
+     set_enc_string (NULL, "default");
++#endif
+     getargs();                              /* read command line arguments   */
+ #if defined(THINK_C)
+     if (inputfromfile) {
 diff -ur dvi2tty-5.3.4.orig/dvistuff.c dvi2tty-5.3.4/dvistuff.c
 --- dvi2tty-5.3.4.orig/dvistuff.c	2012-04-26 09:20:32.000000000 +0200
 +++ dvi2tty-5.3.4/dvistuff.c	2012-07-10 14:18:30.000000000 +0200

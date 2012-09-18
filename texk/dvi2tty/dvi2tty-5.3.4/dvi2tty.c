@@ -164,7 +164,11 @@ int main(int argc, char **argv)
     Argc = argc;
     Argv = argv;
 
+#ifdef WIN32
+    set_enc_string ("sjis", "default");
+#else
     set_enc_string (NULL, "default");
+#endif
     getargs();                              /* read command line arguments   */
 #if defined(THINK_C)
     if (inputfromfile) {
