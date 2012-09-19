@@ -262,9 +262,6 @@
    #define below would cause a syntax error. */
 #undef _UINT64_T
 
-/* Define to 0x200406L if your libkpathsea supports enc formats. */
-#undef __TDS_VERSION__
-
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 

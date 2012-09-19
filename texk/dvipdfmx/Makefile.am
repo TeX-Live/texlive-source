@@ -15,12 +15,3 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND)
 
 DISTCLEANFILES = config.force
 
-EXTRA_DIST = \
-	ChangeLog.PATCHES \
-	ChangeLog.TL \
-	data
-
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
-

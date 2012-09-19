@@ -79,16 +79,13 @@ if test "x$enable_texlive_build" != xyes || test ! -d $srcdir/../kpathsea; then
   CHO_CHECK_LIBPAPER
 fi
 
-AC_DEFINE([__TDS_VERSION__], [0x200406L],
-	  [Define to 0x200406L if your libkpathsea supports enc formats.])
-
 KPSE_CHECK_WIN32
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 
 AC_CONFIG_FILES([Makefile
-		 src/Makefile
 		 data/Makefile
 		 man/Makefile
+		 src/Makefile
 		 ])
 
 AC_OUTPUT

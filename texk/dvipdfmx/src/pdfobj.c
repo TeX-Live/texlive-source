@@ -539,12 +539,11 @@ void pdf_out_char (FILE *file, char c)
   }
 }
 
+static char xchar[] = "0123456789abcdef";
+
 #define pdf_out_xchar(f,c) do {\
-  int __tmpnum;\
-  __tmpnum = ((c) >> 4) & 0x0f;\
-  pdf_out_char((f), (((__tmpnum) >= 10) ? (__tmpnum)+'W' : (__tmpnum)+'0'));\
-  __tmpnum = (c) & 0x0f;\
-  pdf_out_char((f), (((__tmpnum) >= 10) ? (__tmpnum)+'W' : (__tmpnum)+'0'));\
+  pdf_out_char((f), xchar[((c) >> 4) & 0x0f]);\
+  pdf_out_char((f), xchar[(c) & 0x0f]);\
 } while (0)
 
 static

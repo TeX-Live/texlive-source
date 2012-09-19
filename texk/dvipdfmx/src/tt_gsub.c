@@ -1253,9 +1253,9 @@ otl_gsub_apply_ligature (struct otl_gsub_subtab *subtab,
 
       ligset = &(data->LigatureSet[idx]);
       for (j = 0; j < ligset->LigatureCount; j++) {
-        if (!glyph_seq_cmp(&gid_in[1], num_gids - 1,
+        if (!glyph_seq_cmp(&gid_in[1], (USHORT)(num_gids - 1),
                            ligset->Ligature[j].Component,
-                           ligset->Ligature[j].CompCount - 1)) {
+                           (USHORT)(ligset->Ligature[j].CompCount - 1))) {
           *gid_out = ligset->Ligature[j].LigGlyph;
           return 0; /* found */
         }

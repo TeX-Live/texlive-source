@@ -1399,7 +1399,7 @@ handle_assign (pdf_obj *dst, pdf_obj *src, int flag,
   }
 
   rv = otl_gsub_apply_lig(gsub_list,
-			  gid_in, n_unicodes, &lig);
+			  gid_in, (USHORT)n_unicodes, &lig);
   if (rv < 0) {
     if (flag == 'p')
       WARN("No ligature found...");

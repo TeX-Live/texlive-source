@@ -15620,10 +15620,6 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 fi
 
-
-$as_echo "#define __TDS_VERSION__ 0x200406L" >>confdefs.h
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
 $as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
 if ${kpse_cv_have_win32+:} false; then :
@@ -15679,7 +15675,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile data/Makefile man/Makefile"
+ac_config_files="$ac_config_files Makefile data/Makefile man/Makefile src/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -16701,9 +16697,9 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "data/Makefile") CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

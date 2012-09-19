@@ -66,8 +66,13 @@ static void show_usage(void)
   fprintf(stdout, "\t-v\tBe verbose\n");
   fprintf(stdout, "\t-q\tBe quiet\n");
   fprintf(stdout, "\t-O\tWrite output to stdout\n");
-  fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
-  fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+  if(compat_mode) {
+    fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM (default)\n");
+    fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx\n");
+  } else {
+    fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
+    fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+  }
 }
 
 static void usage(void)
@@ -137,6 +142,9 @@ static void write_xbb(char *fname,
     }
   } else {
     fp = stdout;
+#ifdef WIN32
+    setmode(fileno(fp), _O_BINARY);
+#endif
   }
 
   if (verbose) {

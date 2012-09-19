@@ -1,16 +1,11 @@
 configdatadir = $(datarootdir)/texmf/dvipdfmx
-dist_configdata_DATA = \
-  $(srcdir)/dvipdfmx.cfg
+dist_configdata_DATA = dvipdfmx.cfg
  
 glyphlistdatadir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
-dist_glyphlistdata_DATA = \
-  $(srcdir)/glyphlist.txt \
-  $(srcdir)/pdfglyphlist.txt
+dist_glyphlistdata_DATA = glyphlist.txt pdfglyphlist.txt
 
 mapdatadir = $(datarootdir)/texmf/fonts/map/dvipdfmx
-dist_mapdata_DATA = \
-  $(srcdir)/cid-x.map
+dist_mapdata_DATA = cid-x.map
 
 cmapdatadir = $(datarootdir)/texmf/fonts/cmap/dvipdfmx
-dist_cmapdata_DATA = \
-  $(srcdir)/EUC-UCS2
+dist_cmapdata_DATA = EUC-UCS2

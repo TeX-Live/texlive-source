@@ -1188,12 +1188,12 @@ do_operator (const char *token, double x_user, double y_user)
   case SETLINECAP:
     error = pop_get_numbers(values, 1);
     if (!error)
-      error = pdf_dev_setlinecap(values[0]);
+      error = pdf_dev_setlinecap((int)values[0]);
     break;
   case SETLINEJOIN:
     error = pop_get_numbers(values, 1);
     if (!error)
-      error = pdf_dev_setlinejoin(values[0]);
+      error = pdf_dev_setlinejoin((int)values[0]);
     break;
   case SETLINEWIDTH:
     error = pop_get_numbers(values, 1);
