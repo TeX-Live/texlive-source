@@ -1,3 +1,36 @@
+2012-09-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ChangeLog.TL (removed): Now merged ...
+	* ChangeLog: ... into this.
+
+2012-09-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* fontmap.c: unused function pdf_clear_fontmaps
+	* fontmap.h: unused function pdf_clear_fontmaps
+	* pdfcolor.c: unused functions pdf_get_colorspace_num_components,
+	pdf_get_colorspace_subtype
+	* pdfcolor.h: unused functions pdf_get_colorspace_num_components,
+	pdf_get_colorspace_subtype
+	* pdfdev.c: unused functions pdf_dev_currentfont, pdf_dev_get_font_ptsize
+	* pdfdev.h: unused functions pdf_dev_currentfont, pdf_dev_get_font_ptsize
+	* pdfdraw.c: unused functions static int pdf_coord__itransform,
+	pdf_dev_setflat, pdf_dev_itransform, pdf_dev_rectstroke
+	* pdfdraw.h: unused functions pdf_dev_setflat, pdf_dev_itransform,
+	pdf_dev_rectstroke
+	* pdffont.c: unused functions pdf_get_font_fontname, pdf_font_get_flags
+	* pdffont.h: unused functions pdf_get_font_fontname, pdf_font_get_flags
+	* pdfobj.c: unused functions pdf_put_array, pdf_shift_array,
+	pdf_pop_array, pdf_put_dict, pdf_stream_set_flags, pdf_stream_get_flags
+	* pdfobj.h: unused functions pdf_put_array, pdf_shift_array,
+	pdf_pop_array, pdf_put_dict, pdf_stream_set_flags, pdf_stream_get_flags
+	* type0.c: unused function Type0Font_get_encoding
+	* type0.h: unused function Type0Font_get_encoding
+
+2012-09-06  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* configure.ac, src/fontmap.c, src/Makefile.am: Remove FontConfig
+	dependency, as it is not needed anymore with recent XeTeX.
+
 2012-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Reduce TL/W32TeX diffs.
@@ -12,10 +45,43 @@
 	[WIN32]: Use gswin32c; avoid memory leak.
 	* xbb.c (show_usage): Correctly report .bb or .xbb as default.
 
+2012-08-26  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/agl.c: Reduce differences with dvipdfmx.
+	* BUGS, NEWS, TODO, contrib/*, doc/*, index.html, style_base.css,
+	style_dflt.css, style_ie.css, style_plain.css: Remove files removed
+	from dvipdfmx.
+	* data/*: Sync with dvipdfmx.
+
+2012-08-23  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/dvipdfmx.c, src/mem.c, src/mem.h, src/xbb.c, src/dvipdfmx.c,
+	src/mem.c, src/mem.h, src/xbb.c: Remove memory debugging code.
+	* src/agl.c, src/agl.h: Remove the built-in AGL name list to minimize
+	difference with dvipdfmx.
+	* src/agl_standard.c, src/mk_agl_standard_c.pl: Removed.
+	* src/asl_charset.h: Removed unused file.
+	* src/Makefile.am: Adapted.
+
+2012-08-21  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+
+	* src/tt_post.c (read_v2_post_names): support large truetype fonts
+	which are strictly speaking out of spec, idx > 32767.
+	* src/dvipdfmx.c: support monocase filesystem.
+
+2012-08-21  keiichirou shikano <k16.shikano@gmail.com>
+
+	* src/cff.c, src/cff.h. src/type1.c: fix type1 SEAC bug.
+
 2012-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Try to avoid mem_debug_check warning.
 	* spc_dvips.c (spc_dvips_at_end_document): Free ps_headers.
+
+2012-08-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c: Fix a bug in dvi_init(). The old one fails for dvi or xdv
+	files of very short name. For example "xdvipdfmx t" fails for t.xdv.
 
 2012-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
