@@ -1,4 +1,4 @@
-%!/usr/bin/env bash
+#!/bin/sh
 ##
 ## This is `typeoutfileinfo.sh', a minimalist shell script for Unices.
 ## 
@@ -31,11 +31,11 @@ EOM
 ##
 ## There is NO WARRANTY.
 ##
-## This is package version v0.2 as of 2012-09-16.
+## This is package version v0.21 as of 2012-09-19.
 ##
 ## CREDIT: this work derived from Harald Harders' `latexfileversion' 
 ## as a simplification using my `readprov'. I learnt "here document" 
-## from `latexfileversion' -- UL.
+## from `latexfileversion's -- UL.
 ##
 ## PURPOSE/BACKGROUND: A package like this, `latexfileversion' or 
 ## `ltxfileinfo' when you wonder which version of a source file 
@@ -50,3 +50,4 @@ EOM
 ## HISTORY:
 ## v0.1a  2012/03/16
 ## v0.2   2012/09/16  adds \batchmode thanks to Heiko Oberdiek on texhax
+## v0.21  2012/09/19  shebang line corrected/improved by Reinhard Kotucha

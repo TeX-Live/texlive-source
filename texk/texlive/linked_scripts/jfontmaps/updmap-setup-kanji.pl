@@ -19,10 +19,10 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "updmap-setup-kanji";
-my $vers = "0.9.5";
-my $version = '$Id: updmap-setup-kanji.pl 25640 2012-03-14 22:44:37Z preining $';
+my $vers = "0.9.6";
+my $version = '$Id: updmap-setup-kanji.pl 27277 2012-08-02 00:16:14Z karl $';
 
-my $updmap_real = "updmap-sys";
+my $updmap_real = "updmap";
 my $updmap = $updmap_real;
 
 my $dry_run = 0;
@@ -44,7 +44,7 @@ my $nul = (win32() ? 'nul' : '/dev/null') ;
 
 
 if ($dry_run) {
-  $updmap = "echo updmap-sys"; 
+  $updmap = "echo updmap"; 
 }
 
 if ($opt_help) {
@@ -91,7 +91,7 @@ sub Usage {
 
   Please see the documentation of updmap for details (updmap --help).
 
-  Usage:  $prg {<fontname>|auto|nofont|status}
+  Usage:  $prg [OPTION] {<fontname>|auto|nofont|status}
 
      <family>    embed an arbitrary font family <family>, at least the
                  map file otf-<family>.map has to be available.
@@ -105,6 +105,12 @@ sub Usage {
                  families as specified above, this target is selected 
                  automatically.
      status:     get information about current environment and usable font map
+
+  Options:
+    -n, --dry-run  do not actually run updmap
+    -h, --help     show this message and exit
+    -jis2004       use JIS2004 variants for default fonts of (u)pTeX
+    --version      show version information and exit
 
 EOF
 ;
@@ -145,13 +151,10 @@ sub check_mapfile {
 sub GetStatus {
   my $val = `$updmap_real --quiet --showoption kanjiEmbed`;
   my $STATUS;
-  if ($val =~ m/^kanjiEmbed=(.*)( \()?/) {
+  if ($val =~ m/^kanjiEmbed=([^()\s]*)(\s+\()?/) {
     $STATUS = $1;
-    $STATUS =~ s/\s*$//;
-    $STATUS =~ s/\(.*\)$//;
-    $STATUS =~ s/^"(.*)"$/\1/;
   } else {
-    printf STDERR "Cannot find status of current kanjiEmbed setting via updmap-sys --showoption!\n";
+    printf STDERR "Cannot find status of current kanjiEmbed setting via updmap --showoption!\n";
     exit 1;
   }
 
