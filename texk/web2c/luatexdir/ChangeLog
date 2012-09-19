@@ -1,3 +1,7 @@
+2012-09-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luainit.w (parse_options): Avoid cast const => non-const.
+
 2012-09-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* lua/luainit.w (parse_options): allow lualatex "\input" "a b" on

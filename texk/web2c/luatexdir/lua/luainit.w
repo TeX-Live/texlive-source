@@ -418,7 +418,10 @@ static void parse_options(int argc, char **argv)
             else
                 input_name = xstrdup(sargv[sargc-1]);
             sargv[sargc-1] = normalize_quotes(input_name, "argument");
-            input_name = (char *)xbasename(input_name);
+            /* Same as
+                  input_name = (char *)xbasename(input_name);
+               but without cast const => non-const.  */
+            input_name += xbasename(input_name) - input_name;
             p = strrchr(input_name, '.');
             if (p != NULL && strcasecmp(p, ".tex") == 0)
                 *p = '\0';
