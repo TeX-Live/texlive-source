@@ -67,7 +67,6 @@ texmf_dist_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_dist_shell_scripts = \
 	bibexport/bibexport.sh \
 	installfont/installfont-tl \
-	jfontmaps/updmap-setup-kanji-sys.sh \
 	latexfileversion/latexfileversion \
 	listbib/listbib \
 	listings-ext/listings-ext.sh \
@@ -127,6 +126,7 @@ texmf_dist_other_scripts = \
 	fragmaster/fragmaster.pl \
 	glossaries/makeglossaries \
 	jfontmaps/updmap-setup-kanji.pl \
+	jfontmaps/updmap-setup-kanji-sys.sh \
 	latex2man/latex2man \
 	latexdiff/latexdiff.pl \
 	latexdiff/latexdiff-vc.pl \
