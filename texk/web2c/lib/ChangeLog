@@ -1,3 +1,8 @@
+2012-09-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Since normalize_quotes() is declared static,
+	the forward declaration should also be static.
+
 2012-09-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c (maininit): On Windows, latex "\input" "a b c", for example,

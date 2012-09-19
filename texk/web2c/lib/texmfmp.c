@@ -622,7 +622,7 @@ const char *ptexbanner = BANNER;
 #endif
 
 #ifdef WIN32
-string
+static string
 normalize_quotes (const_string name, const_string mesg);
 #endif
 
