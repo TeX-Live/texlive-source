@@ -78,6 +78,7 @@ int main(int argc, char ** argv)
 			break;
 		case 'U':
 			ucsqtfm = xstrdup(optarg);
+			break;
 		case 'H':
 			hankana=1;
 			break;

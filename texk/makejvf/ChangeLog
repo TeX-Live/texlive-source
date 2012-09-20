@@ -1,3 +1,7 @@
+2012-09-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* main.c (main): add break;.
+
 2012-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* main.c: Use xmalloc() and xstrdup().  Use getopt() to parse
