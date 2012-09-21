@@ -1,14 +1,14 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.64 2008/05/22 10:08:02 matthias Exp $
+/*  
     
 	This is xdvipdfmx, an extended version of...
 
-    DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
+    DVIPDFMx, an eXtended-2012 version of DVIPDFM by Mark A. Wicks.
 
-	Copyright (c) 2006 SIL International (Jonathan Kew) and Jin-Hwan Cho
+	Copyright (c) 2006 SIL.
 	(xdvipdfmx extensions for XeTeX support)
 
     Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
-    the DVIPDFMx project team <dvipdfmx@project.ktug.or.kr>
+    the DVIPDFMx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 

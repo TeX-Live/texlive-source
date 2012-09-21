@@ -1,10 +1,10 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.13 2008/05/22 10:08:02 matthias Exp $
+/*  
 
     This is extractbb, a bounding box extraction program.
 
-    Copyright (C) 2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
+    Copyright (C) 2008-2012 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free.
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.

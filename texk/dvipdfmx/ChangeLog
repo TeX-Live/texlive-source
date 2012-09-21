@@ -1,3 +1,8 @@
+2012-09-21  Karl Berry  <karl@tug.org>
+
+	* many files: remove useless $Header$ from old repo,
+	do not point to dvipdfmx@ email address any more.
+
 2012-09-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ChangeLog.PATCHES, ChangeLog.TL (removed): Now merged ...

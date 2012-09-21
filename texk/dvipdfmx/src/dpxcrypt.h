@@ -1,9 +1,9 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxcrypt.h,v 1.2 2011/03/06 03:14:13 chofchof Exp $
+/*  
  
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
-    Copyright (C) 2003 by Jin-Hwan Cho and Shunsaku Hirata,
-    the DVIPDFMx project team <dvipdfmx@project.ktug.or.kr>
+    Copyright (C) 2003-2012 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
