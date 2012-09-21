@@ -1,3 +1,8 @@
+2012-09-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-31-WIN32 (new): Avoid that WIN32 puts temporary files
+	into the root directory resulting in 'Permission denied'.
+
 2012-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-enc_format (new): Bug fix.

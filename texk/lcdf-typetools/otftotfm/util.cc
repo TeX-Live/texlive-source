@@ -184,9 +184,22 @@ temporary_file(String &filename, ErrorHandler *errh)
 	errh->error("temporary file %<%s%>: %s", filename.c_str(), strerror(errno));
     return fd;
 #else  // !HAVE_MKSTEMP
+#ifdef WIN32
+    const char *tmp_dir = getenv("TEMP");
+    if (!tmp_dir)
+	tmp_dir = ".";
+#endif
     for (int tries = 0; tries < 5; tries++) {
 	if (!(filename = tmpnam(0)))
 	    return errh->error("cannot create temporary file");
+#ifdef WIN32
+	char *tmpp;
+	if ((tmpp = strrchr(filename.c_str(), '/')))
+	    filename = ++tmpp;
+	if ((tmpp = strrchr(filename.c_str(), '\\')))
+	    filename = ++tmpp;
+	filename = String(tmp_dir) + "\\" + filename;
+#endif
 # ifdef O_EXCL
 	int fd = ::open(filename.c_str(), O_RDWR | O_CREAT | O_EXCL | O_TRUNC, 0600);
 # else
