@@ -3,12 +3,12 @@ dnl Adapted for TeX Live.
 m4_include([version.ac])[] dnl define lcdf_typetools_version
 AC_INIT([LCDF typetools for TeX Live], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([NEWS])
+AC_CONFIG_SRCDIR([lcdf-typetools-]lcdf_typetools_version[/NEWS])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
 dnl Common code for all programs using libkpathsea.
-KPSE_COMMON([lcdf-typetools], [check-news])
+KPSE_COMMON([lcdf-typetools])
 
 LCDF_TYPETOOLS_VERSION=lcdf_typetools_version
 AC_SUBST([LCDF_TYPETOOLS_VERSION])
@@ -288,6 +288,8 @@ if test "x$with_kpathsea" != xno; then
                                   [[kpse_tfm_format;]])],
                  [AC_MSG_RESULT([yes])
                   AC_CHECK_DECLS([kpse_opentype_format], , ,
+                                 [#include <kpathsea/kpathsea.h>])
+                  AC_CHECK_DECLS([kpse_enc_format], , ,
                                  [#include <kpathsea/kpathsea.h>])],
                  [AC_MSG_RESULT([no])
                   with_kpathsea=no])
@@ -340,6 +342,15 @@ fi
 
 
 dnl
+dnl directories for data files
+dnl
+glyphlistdir='${datarootdir}/texmf-dist/fonts/map/glyphlist'
+encdir='${datarootdir}/texmf-dist/fonts/enc/dvips/base'
+AC_SUBST([glyphlistdir])
+AC_SUBST([encdir])
+
+
+dnl
 dnl verbatim portions of the header
 dnl
 
@@ -376,8 +387,10 @@ dnl
 dnl Output
 dnl
 
-AC_CONFIG_FILES([Makefile liblcdf/Makefile libefont/Makefile])
-AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
-           [AC_CONFIG_FILES(Kpse_Prog[/Makefile])])
+AC_SUBST([LCDF_TYPETOOLS_TREE], [lcdf-typetools-]lcdf_typetools_version)
+
+AC_CONFIG_FILES([Makefile lcdf-typetools-]lcdf_typetools_version[/Makefile])
+AC_FOREACH([Kpse_Prog], [liblcdf libefont] kpse_lcdf_typetools_progs,
+           [AC_CONFIG_FILES([lcdf-typetools-]lcdf_typetools_version[/]Kpse_Prog[/Makefile])])
 
 AC_OUTPUT

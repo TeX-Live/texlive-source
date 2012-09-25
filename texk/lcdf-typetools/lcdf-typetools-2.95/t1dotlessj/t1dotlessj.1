@@ -1,0 +1,96 @@
+.ds V 2.95
+.de M
+.BR "\\$1" "(\\$2)\\$3"
+..
+.de Sp
+.if n .sp
+.if t .sp 0.4
+..
+.TH T1DOTLESSJ 1 "LCDF Typetools" "Version \*V"
+.SH NAME
+t1dotlessj \- create a dotless-j PostScript Type 1 font
+.SH SYNOPSIS
+.B t1dotlessj
+\%[OPTIONS...]
+.I font
+.RI [ outputfile ]
+.SH DESCRIPTION
+.BR T1dotlessj
+creates a PostScript Type\~1 font whose only character is a dotless 'j'
+matching the input font's design.  It works simply by removing the dot from
+the input font's 'j'.  The output font has three characters: '.notdef',
+\&'space', and 'uni0237', where 'uni0237' is the dotless 'j'.  The command
+fails if the input font already has a dotless 'j' character, or if there
+seems to be no dot to remove.  T1dotlessj writes the created PFA or PFB font
+to the standard output (but see the
+.B \-\-output
+option); if no input file is supplied, it reads a PFA or PFB font from the
+standard input.
+'
+.SH OPTIONS
+.PD 0
+.TP 5
+.BR \-\-output "=\fIfile\fR, " \-o " \fIfile"
+Send output to
+.I file
+instead of standard output.
+'
+.Sp
+.TP 5
+.BR \-\-pfb ", " \-b
+Output a PFB font.  This is the default.
+'
+.Sp
+.TP 5
+.BR \-\-pfa ", " \-a
+Output a PFA font.
+'
+.Sp
+.TP 5
+.BR \-\-name "=\fIname\fR, " \-n " \fIname"
+Set the output font's PostScript name to
+.IR name .
+The default is
+.IR InputFontName "LCDFJ."
+'
+.Sp
+.TP 5
+.BR \-q ", " \-\-quiet
+Do not generate any error messages.
+'
+.Sp
+.TP 5
+.BR \-h ", " \-\-help
+Print usage information and exit.
+'
+.Sp
+.TP 5
+.BR \-v ", " \-\-version
+Print the version number and some short non-warranty information and exit.
+.PD
+'
+.SH "RETURN VALUES"
+.B T1dotlessj
+exits with one of the following values:
+.TP 5
+0
+A dotless-j font was successfully generated.
+.TP 5
+1
+The font already contained a dotless-j character.
+.TP 5
+2
+The font's "j" character had no dot to remove.
+.TP 5
+3
+The font had no "j" character.
+.TP 5
+>3
+An error occurred.
+'
+.SH "SEE ALSO"
+.LP
+.I "Adobe Type 1 Font Format"
+'
+.SH AUTHOR
+Eddie Kohler (ekohler@gmail.com)

@@ -13,7 +13,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 am__make_dryrun = \
   { \
@@ -51,7 +50,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
+DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/autoconf.h.in \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
@@ -61,8 +60,7 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap COPYING \
-	INSTALL NEWS
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_template_objs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
@@ -98,35 +96,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-am__installdirs = "$(DESTDIR)$(encdir)" "$(DESTDIR)$(glyphlistdir)"
-DATA = $(enc_DATA) $(glyphlist_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -220,6 +189,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
 KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
+LCDF_TYPETOOLS_TREE = @LCDF_TYPETOOLS_TREE@
 LCDF_TYPETOOLS_VERSION = @LCDF_TYPETOOLS_VERSION@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -281,7 +251,9 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
+encdir = @encdir@
 exec_prefix = @exec_prefix@
+glyphlistdir = @glyphlistdir@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -310,55 +282,30 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+
+#************************************************************************
+#
+#  Adapted for TeX Live from lcdf-typetools-2.88/Makefile.am
+#  Copyright (c) 2003-2011 Eddie Kohler
+#
+#************************************************************************
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
-AM_DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
-SUBDIRS = . liblcdf libefont @SELECTED_SUBDIRS@
-DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
-DISTCLEANFILES = config.force CXXLD.sh uhv* Ant* a_enhg3c.enc Fon* \
-	tmf.*
-@texlive_build_FALSE@glyphlistdir = $(pkgdatadir)
-@texlive_build_TRUE@glyphlistdir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
-@texlive_build_FALSE@encdir = $(pkgdatadir)
-@texlive_build_TRUE@encdir = $(datarootdir)/texmf-dist/fonts/enc/dvips/base
-glyphlist_DATA = glyphlist.txt texglyphlist.txt
-enc_DATA = 7t.enc
-EXTRA_DIST = ONEWS lcdf-typetools.spec include/config.h \
-	include/lcdf/bezier.hh include/lcdf/clp.h \
-	include/lcdf/error.hh include/lcdf/filename.hh \
-	include/lcdf/globmatch.hh include/lcdf/hashcode.hh \
-	include/lcdf/hashmap.hh include/lcdf/hashmap.cc \
-	include/lcdf/inttypes.h include/lcdf/landmark.hh \
-	include/lcdf/md5.h include/lcdf/permstr.hh \
-	include/lcdf/point.hh include/lcdf/slurper.hh \
-	include/lcdf/straccum.hh include/lcdf/string.hh \
-	include/lcdf/strtonum.h include/lcdf/transform.hh \
-	include/lcdf/vector.hh include/lcdf/vector.cc \
-	include/efont/afm.hh include/efont/afmparse.hh \
-	include/efont/afmw.hh include/efont/amfm.hh \
-	include/efont/cff.hh include/efont/encoding.hh \
-	include/efont/findmet.hh include/efont/metrics.hh \
-	include/efont/otf.hh include/efont/otfcmap.hh \
-	include/efont/otfdata.hh include/efont/otfgpos.hh \
-	include/efont/otfgsub.hh include/efont/otfname.hh \
-	include/efont/otfos2.hh include/efont/otfpost.hh \
-	include/efont/pairop.hh include/efont/psres.hh \
-	include/efont/t1bounds.hh include/efont/t1cs.hh \
-	include/efont/t1csgen.hh include/efont/t1font.hh \
-	include/efont/t1interp.hh include/efont/t1item.hh \
-	include/efont/t1mm.hh include/efont/t1rw.hh \
-	include/efont/t1unparser.hh include/efont/ttfcs.hh \
-	include/efont/ttfhead.hh include/efont/ttfkern.hh \
-	glyphlist.txt texglyphlist.txt texglyphlist-g2u.txt 7t.enc \
-	lcdf-typetools-$(LCDF_TYPETOOLS_VERSION)-PATCHES \
-	Makefile.am.orig configure.ac.orig $(TESTS) tests/t2c.enc \
-	tests/uhvrrc8a.pfb tests/uhv_dl.pfa tests/uhv_dl.pfb \
-	tests/uhv_dl.ps tests/uhv_re.afm tests/uhv_re.pfa \
-	tests/antpolt-regular.otf tests/texnansx.enc tests/Ant.enc \
-	tests/Ant.map tests/Ant.pfb tests/Ant.pl \
+SUBDIRS = . $(LCDF_TYPETOOLS_TREE)
+DIST_SUBDIRS = $(SUBDIRS)
+EXTRA_DIST = $(LCDF_TYPETOOLS_TREE)-PATCHES \
+	$(LCDF_TYPETOOLS_TREE)/autoconf.h.in \
+	$(LCDF_TYPETOOLS_TREE)/configure.ac $(LCDF_TYPETOOLS_TREE)/m4 \
+	$(TESTS) tests/t2c.enc tests/uhvrrc8a.pfb tests/uhv_dl.pfa \
+	tests/uhv_dl.pfb tests/uhv_dl.ps tests/uhv_re.afm \
+	tests/uhv_re.pfa tests/antpolt-regular.otf tests/texnansx.enc \
+	tests/Ant.enc tests/Ant.map tests/Ant.pfb tests/Ant.pl \
 	tests/FonetikaDaniaIwonaeBold.ttf tests/texmfhome.otf \
 	tests/Fon.post tests/Fon.t42 tests/tmf.info tests/tmf.pfa \
 	tests/tmf.pfb tests/tmf.tables
+DISTCLEANFILES = config.force CXXLD.sh uhv* Ant* a_enhg3c.enc Fon* \
+	tmf.*
 TESTS = tests/t1.test tests/tfm.test tests/ttf.test
+TESTS_ENVIRONMENT = LCDF_TYPETOOLS_TREE=$(LCDF_TYPETOOLS_TREE)
 all: autoconf.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -421,48 +368,6 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-encDATA: $(enc_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(enc_DATA)'; test -n "$(encdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(encdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(encdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(encdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(encdir)" || exit $$?; \
-	done
-
-uninstall-encDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(enc_DATA)'; test -n "$(encdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(encdir)'; $(am__uninstall_files_from_dir)
-install-glyphlistDATA: $(glyphlist_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(glyphlist_DATA)'; test -n "$(glyphlistdir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(glyphlistdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(glyphlistdir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(glyphlistdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(glyphlistdir)" || exit $$?; \
-	done
-
-uninstall-glyphlistDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(glyphlist_DATA)'; test -n "$(glyphlistdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(glyphlistdir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -694,12 +599,6 @@ check-TESTS: $(TESTS)
 	else :; fi
 
 distdir: $(DISTFILES)
-	@case `sed 15q $(srcdir)/NEWS` in \
-	*"$(VERSION)"*) : ;; \
-	*) \
-	  echo "NEWS not updated; not releasing" 1>&2; \
-	  exit 1;; \
-	esac
 	$(am__remove_distdir)
 	test -d "$(distdir)" || mkdir "$(distdir)"
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -886,12 +785,9 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
-all-am: Makefile $(DATA) autoconf.h all-local
+all-am: Makefile autoconf.h all-local
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(encdir)" "$(DESTDIR)$(glyphlistdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
@@ -945,7 +841,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-encDATA install-glyphlistDATA
+install-data-am:
 
 install-dvi: install-dvi-recursive
 
@@ -991,7 +887,7 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-encDATA uninstall-glyphlistDATA
+uninstall-am:
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check-am \
 	cscopelist-recursive ctags-recursive install-am install-strip \
@@ -1007,41 +903,24 @@ uninstall-am: uninstall-encDATA uninstall-glyphlistDATA
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
-	install-encDATA install-exec install-exec-am \
-	install-glyphlistDATA install-html install-html-am \
+	install-exec install-exec-am install-html install-html-am \
 	install-info install-info-am install-man install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs installdirs-am \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-recursive uninstall uninstall-am uninstall-encDATA \
-	uninstall-glyphlistDATA
+	tags tags-recursive uninstall uninstall-am
 
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
 
 all-local: config.force
 
 config.force: $(KPATHSEA_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
-
-liblcdf libefont:
-	cd $@ && $(MAKE)
-libefont: liblcdf
-cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42: liblcdf libefont
-	cd $@ && $(MAKE)
-
-versionize:
-	perl -pi -e 's/^\.ds V.*/.ds V $(VERSION)/;' $(top_srcdir)/cfftot1/cfftot1.1 $(top_srcdir)/mmafm/mmafm.1 $(top_srcdir)/mmpfb/mmpfb.1 $(top_srcdir)/otfinfo/otfinfo.1 $(top_srcdir)/otftotfm/otftotfm.1 $(top_srcdir)/t1dotlessj/t1dotlessj.1 $(top_srcdir)/t1lint/t1lint.1 $(top_srcdir)/t1rawafm/t1rawafm.1 $(top_srcdir)/t1reencode/t1reencode.1 $(top_srcdir)/t1testpage/t1testpage.1 $(top_srcdir)/ttftotype42/ttftotype42.1
-	perl -pi -e 's/^(\U$(PACKAGE)\E) [\d.ab]+$$/$$1 $(VERSION)/;' $(top_srcdir)/README
-	perl -pi -e 's/^Version: [\d.ab]+$$/Version: $(VERSION)/;' $(top_srcdir)/lcdf-typetools.spec
-
-dist-hook:
-	if test -f $(top_srcdir)/make-glyphtounicode.pl; then (cd $(top_srcdir); perl make-glyphtounicode.pl) > $(distdir)/glyphtounicode.tex; elif test -f $(top_srcdir)/glyphtounicode.tex; then cp -p $(top_srcdir)/glyphtounicode.tex $(distdir); fi
-
-$(top_srcdir)/glyphtounicode.tex: $(top_srcdir)/glyphlist.txt $(top_srcdir)/texglyphlist.txt $(top_srcdir)/texglyphlist-g2u.txt $(top_srcdir)/make-glyphtounicode.pl
-	cd $(top_srcdir); perl make-glyphtounicode.pl > glyphtounicode.tex
-
-.PHONY: rpm liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

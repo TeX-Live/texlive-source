@@ -1,0 +1,96 @@
+2012-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.95.
+	* patch-01-const, patch-02-WIN32, patch-03-manpage,
+	patch-04-PFB_OPT, patch-05-backport, patch-06-enc_format
+	(removed): Now all distributed.
+
+	* patch-07-typos (new): Fix some typos.
+	* patch-08-future (new): Use distributed top-level Makefile.
+	* patch-20-TL-binary: Adapted.
+	* patch-21-TL-paths (new): Use bin/win32/mktexupd.exe.
+	* patch-30-W32TeX, patch-31-WIN32: Adapted.
+
+2012-09-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-31-WIN32: Update using _tempnam().
+
+2012-09-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-31-WIN32 (new): Avoid that WIN32 puts temporary files
+	into the root directory resulting in 'Permission denied'.
+
+2012-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-enc_format (new): Bug fix.
+	* patch-30-W32TeX: Adapted.
+
+2012-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-WIN32: Adapted from upstream.
+	* patch-05-backport (new): From upstream.
+
+2012-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-manpage (new): Fix manpages.
+	* patch-04-PFB_OPT (new): Correctly handle '-b' option.
+
+2012-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-WIN32: More WIN32.
+	* patch-20-TL-binary: More binary mode for output files.
+	* patch-30-W32TeX: W32TeX specific changes (from Akira).
+
+2012-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-WIN32 (new): Adapt for WIN32.
+	* patch-20-TL-binary (new): Use binary mode for output files.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp> (W32TeX).
+
+2012-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.94.
+	* patch-01-const: Adapted
+
+2011-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-const (new): Avoid cast from const to non-const.
+
+2011-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.92.
+	* patch-01-void-func (removed): Now distributed.
+
+2011-06-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-void-func (new): Patch from
+	Vladimir Volovich <vvv@vsu.ru>.
+
+2011-06-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.90.
+	* patch-03-warning (removed): Now distributed.
+
+2011-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.88.
+	* patch-02-warnings (removed): Now distributed.
+
+	* patch-03-warning (new): Avoid `uninitialized' warning (the
+	compiler may not realize that this actually can'thappen).
+
+2011-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-warnings (new): Remove unused variables; add explicit
+	cast for `-1' used as `uint32_t'.
+
+2010-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.85.
+	* patch-01-otftotfm-Makefile (removed): Now distributed.
+
+2010-04-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.83.
+	* patch-01-otftotfm-Makefile (new): Adapt otftotfm/Makefile.am.
+

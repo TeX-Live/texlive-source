@@ -7,47 +7,47 @@ failed=
 
 rm -rf uhv*
 
-t1dotlessj/t1dotlessj -a $srcdir/tests/uhvrrc8a.pfb uhv_dl.pfa \
+$LCDF_TYPETOOLS_TREE/t1dotlessj/t1dotlessj -a $srcdir/tests/uhvrrc8a.pfb uhv_dl.pfa \
 	&& diff uhv_dl.pfa $srcdir/tests/uhv_dl.pfa \
 	&& echo "t1dotlessj/asc tests OK" \
 	|| failed="$failed t1dotlessj/asc"
 
-cat $srcdir/tests/uhvrrc8a.pfb | t1dotlessj/t1dotlessj -b >uhv_dl.pfb \
+cat $srcdir/tests/uhvrrc8a.pfb | $LCDF_TYPETOOLS_TREE/t1dotlessj/t1dotlessj -b >uhv_dl.pfb \
 	&& cmp -s uhv_dl.pfb $srcdir/tests/uhv_dl.pfb \
 	&& echo "t1dotlessj/bin tests OK" \
 	|| failed="$failed t1dotlessj/bin"
 
-t1lint/t1lint uhv_dl.pfa \
+$LCDF_TYPETOOLS_TREE/t1lint/t1lint uhv_dl.pfa \
 	&& echo "t1lint/asc tests OK" \
 	|| failed="$failed t1lint/asc"
 
-cat uhv_dl.pfb | t1lint/t1lint \
+cat uhv_dl.pfb | $LCDF_TYPETOOLS_TREE/t1lint/t1lint \
 	&& echo "t1lint/bin tests OK" \
 	|| failed="$failed t1lint/bin"
 
-t1testpage/t1testpage -o uhv_dl_a.ps uhv_dl.pfa \
+$LCDF_TYPETOOLS_TREE/t1testpage/t1testpage -o uhv_dl_a.ps uhv_dl.pfa \
 	&& diff uhv_dl_a.ps $srcdir/tests/uhv_dl.ps \
 	&& echo "t1testpage/asc tests OK" \
 	|| failed="$failed t1testpage/asc"
 
-cat uhv_dl.pfb | t1testpage/t1testpage >uhv_dl_b.ps \
+cat uhv_dl.pfb | $LCDF_TYPETOOLS_TREE/t1testpage/t1testpage >uhv_dl_b.ps \
 	&& diff uhv_dl_b.ps $srcdir/tests/uhv_dl.ps \
 	&& echo "t1testpage/bin tests OK" \
 	|| failed="$failed t1testpage/bin"
 
-t1reencode/t1reencode -e $srcdir/tests/t2c.enc -a $srcdir/tests/uhvrrc8a.pfb uhv_re.tmp \
+$LCDF_TYPETOOLS_TREE/t1reencode/t1reencode -e $srcdir/tests/t2c.enc -a $srcdir/tests/uhvrrc8a.pfb uhv_re.tmp \
 	&& grep -v 'Created by t1reencode' uhv_re.tmp >uhv_re.pfa \
 	&& diff uhv_re.pfa $srcdir/tests/uhv_re.pfa \
 	&& echo "t1reencode/asc tests OK" \
 	|| failed="$failed t1reencode/asc"
 
-t1rawafm/t1rawafm -o uhv_re_a.afm uhv_re.pfa \
+$LCDF_TYPETOOLS_TREE/t1rawafm/t1rawafm -o uhv_re_a.afm uhv_re.pfa \
 	&& diff uhv_re_a.afm $srcdir/tests/uhv_re.afm \
 	&& echo "t1rawafm/asc tests OK" \
 	|| failed="$failed t1rawafm/asc"
 
-cat $srcdir/tests/uhvrrc8a.pfb | t1reencode/t1reencode -e $srcdir/tests/t2c.enc -b \
-		| t1rawafm/t1rawafm >uhv_re_b.afm \
+cat $srcdir/tests/uhvrrc8a.pfb | $LCDF_TYPETOOLS_TREE/t1reencode/t1reencode -e $srcdir/tests/t2c.enc -b \
+		| $LCDF_TYPETOOLS_TREE/t1rawafm/t1rawafm >uhv_re_b.afm \
 	&& diff uhv_re_b.afm $srcdir/tests/uhv_re.afm \
 	&& echo "t1reencode+t1rawafm/bin tests OK" \
 	|| failed="$failed t1reencode+t1rawafm/bin"

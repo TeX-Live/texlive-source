@@ -1,0 +1,32 @@
+diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.95.orig/Makefile.am lcdf-typetools-2.95/Makefile.am
+--- lcdf-typetools-2.95.orig/Makefile.am	2012-09-17 00:17:57.000000000 +0200
++++ lcdf-typetools-2.95/Makefile.am	2012-09-24 18:44:31.000000000 +0200
+@@ -4,7 +4,8 @@
+ SUBDIRS = liblcdf libefont @SELECTED_SUBDIRS@
+ DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
+ 
+-pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
++glyphlist_DATA = glyphlist.txt texglyphlist.txt
++enc_DATA = 7t.enc
+ 
+ EXTRA_DIST = \
+ 	ONEWS \
+diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.95.orig/configure.ac lcdf-typetools-2.95/configure.ac
+--- lcdf-typetools-2.95.orig/configure.ac	2012-09-22 05:29:26.000000000 +0200
++++ lcdf-typetools-2.95/configure.ac	2012-09-25 09:47:23.000000000 +0200
+@@ -433,6 +433,15 @@
+ 
+ 
+ dnl
++dnl directories for data files
++dnl
++glyphlistdir='${pkgdatadir}'
++encdir='${pkgdatadir}'
++AC_SUBST([glyphlistdir])
++AC_SUBST([encdir])
++
++
++dnl
+ dnl TeX Live build stub
+ dnl
+ 

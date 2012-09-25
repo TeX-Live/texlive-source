@@ -1,0 +1,66 @@
+.ds V 2.95
+.de M
+.BR "\\$1" "(\\$2)\\$3"
+..
+.de Sp
+.if n .sp
+.if t .sp 0.4
+..
+.TH T1TESTPAGE 1 "LCDF Typetools" "Version \*V"
+.SH NAME
+t1testpage \- create a PostScript proof for a Type 1 font
+.SH SYNOPSIS
+.B t1testpage
+\%[\fIfont...\fR]
+.SH DESCRIPTION
+.BR T1testpage
+creates a PostScript proof document for the specified Type 1 font file and
+writes it to the standard output. The proof shows every glyph in the
+font, including its glyph name and encoding. The
+.I font
+argument should be the name of a PFA or PFB font file. If more than one
+.I font
+is given, the output proof contains all the fonts in order. If
+.I font
+is omitted,
+t1testpage will read a font file from the standard input.
+.PP
+T1testpage is preliminary software.
+'
+.SH OPTIONS
+.PD 0
+.TP 5
+.BR \-g " \fIglyphs\fR, " \-\-glyph= \fIglyphs
+Print only glyphs matching
+.IR glyphs .
+The argument is a glyph pattern, using shell-like matching rules; thus,
+.BR "\-g " 'A*'
+will match the glyphs 'A', 'Atilde', and 'Ampersand', among others.  You
+can give this option multiple times, or supply multiple space-separated
+patterns in a single option.
+'
+.Sp
+.TP 5
+.BR \-s ", " \-\-smoke
+Print smoke proofs, one glyph per page.  This option is preliminary.
+'
+.Sp
+.TP 5
+.BR \-o " \fIfile\fR, " \-\-output= \fIfile
+Write the output proof to
+.I file
+instead of the standard output.
+'
+.Sp
+.TP 5
+.BR \-h ", " \-\-help
+Print usage information and exit.
+'
+.Sp
+.TP 5
+.BR \-v ", " \-\-version
+Print the version number and some short non-warranty information and exit.
+.PD
+'
+.SH AUTHOR
+Eddie Kohler (ekohler@gmail.com)

@@ -1,0 +1,24 @@
+diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.95.orig/t1rawafm/t1rawafm.1 lcdf-typetools-2.95/t1rawafm/t1rawafm.1
+--- lcdf-typetools-2.95.orig/t1rawafm/t1rawafm.1	2012-09-22 05:30:11.000000000 +0200
++++ lcdf-typetools-2.95/t1rawafm/t1rawafm.1	2012-09-24 18:37:57.000000000 +0200
+@@ -10,7 +10,7 @@
+ .SH NAME
+ t1rawafm \- produce raw AFM metrics from a PostScript Type 1 font
+ .SH SYNOPSIS
+-\fBt1rawafm\fR \%[OPTIONS...] \fIfont\fR [\fIoutputfile\fR]
++\fBt1rawafm\fR \%[OPTIONS...] [\fIfont\fR [\fIoutputfile\fR]]
+ .SH DESCRIPTION
+ .BR T1rawafm
+ generates an AFM file with the information available in a PostScript
+diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.95.orig/t1rawafm/t1rawafm.cc lcdf-typetools-2.95/t1rawafm/t1rawafm.cc
+--- lcdf-typetools-2.95.orig/t1rawafm/t1rawafm.cc	2012-09-17 00:17:57.000000000 +0200
++++ lcdf-typetools-2.95/t1rawafm/t1rawafm.cc	2012-09-24 18:38:53.000000000 +0200
+@@ -85,7 +85,7 @@
+ font file from the standard input.\n\
+ \n\
+ Options:\n\
+-  -o, --output=OUTPUT          Write output to FILE instead of standard output.\n\
++  -o, --output=FILE            Write output to FILE instead of standard output.\n\
+   -h, --help                   Print this message and exit.\n\
+       --version                Print version number and exit.\n\
+ \n\

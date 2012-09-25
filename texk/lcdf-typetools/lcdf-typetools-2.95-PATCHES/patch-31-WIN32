@@ -1,0 +1,22 @@
+diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.95.orig/otftotfm/util.cc lcdf-typetools-2.95/otftotfm/util.cc
+--- lcdf-typetools-2.95.orig/otftotfm/util.cc	2012-09-17 00:17:57.000000000 +0200
++++ lcdf-typetools-2.95/otftotfm/util.cc	2012-09-24 19:01:33.000000000 +0200
+@@ -184,9 +184,18 @@
+ 	errh->error("temporary file %<%s%>: %s", filename.c_str(), strerror(errno));
+     return fd;
+ #else  // !HAVE_MKSTEMP
++# ifdef WIN32
++    const char *tmp_dir = getenv("TEMP");
++    if (!tmp_dir)
++	tmp_dir = ".";
++    for (int tries = 0; tries < 5; tries++) {
++	if (!(filename = _tempnam(tmp_dir, "otftmp.")))
++	    return errh->error("cannot create temporary file");
++# else
+     for (int tries = 0; tries < 5; tries++) {
+ 	if (!(filename = tmpnam(0)))
+ 	    return errh->error("cannot create temporary file");
++# endif
+ # ifdef O_EXCL
+ 	int fd = ::open(filename.c_str(), O_RDWR | O_CREAT | O_EXCL | O_TRUNC, 0600);
+ # else

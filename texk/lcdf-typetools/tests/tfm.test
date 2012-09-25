@@ -9,7 +9,7 @@ export TEXMFCNF ENCFONTS
 
 rm -f Ant* a_enhg3c.enc
 
-otftotfm/otftotfm -e texnansx --glyphlist=$srcdir/glyphlist.txt \
+$LCDF_TYPETOOLS_TREE/otftotfm/otftotfm -e texnansx --glyphlist=$srcdir/$LCDF_TYPETOOLS_TREE/glyphlist.txt \
 	-p -fkern -fliga \
 	$srcdir/tests/antpolt-regular.otf Ant >Ant.map \
 	&& sed -e '1d' Ant.pl >Ant.plx \
