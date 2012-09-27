@@ -1,0 +1,52 @@
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.4.orig/tex2xindy/tex2xindy.l xindy-2.4/tex2xindy/tex2xindy.l
+--- xindy-2.4.orig/tex2xindy/tex2xindy.l	2012-06-21 12:13:02.000000000 +0200
++++ xindy-2.4/tex2xindy/tex2xindy.l	2012-09-27 14:37:06.000000000 +0200
+@@ -89,11 +89,24 @@
+ =cut
+ 
+ */
++%}
+ 
++%top{
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <unistd.h>
++#ifdef WIN32
++# include <kpathsea/getopt.h>
++# include <fcntl.h>
++# define YY_NO_UNISTD_H 1
++# ifdef W32TeX
++#  define __STDC_VERSION__ 199901L
++# endif
++#else
++# include <unistd.h>
++#endif
++}
+ 
++%{
+ #define QUOTE_ECHO qs(yytext)
+ 
+ FILE* attrfd = NULL;
+@@ -375,8 +388,13 @@
+ main(int argc, char* argv[])
+ {
+     int option;
++
++#ifdef WIN32
++    setmode (fileno(stdout), _O_BINARY);
++#else
+     extern char *optarg;
+     extern int optind, optopt;
++#endif
+ 
+     while ( (option=getopt(argc, argv, ":o")) != -1 ) {
+ 	switch (option) {
+@@ -398,7 +416,7 @@
+     if ( optind == argc - 1 ) {
+ 	fprintf(stderr, "Writing attribute names to file \"%s\".\n",
+ 		argv[optind]);
+-	if ( (attrfd = fopen(argv[optind], "w")) == NULL ) {
++	if ( (attrfd = fopen(argv[optind], "wb")) == NULL ) {
+ 	    perror (argv[optind]);
+ 	    exit (1);
+ 	}

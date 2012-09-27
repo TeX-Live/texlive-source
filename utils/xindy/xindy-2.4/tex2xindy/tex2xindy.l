@@ -89,11 +89,24 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 =cut
 
 */
+%}
 
+%top{
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef WIN32
+# include <kpathsea/getopt.h>
+# include <fcntl.h>
+# define YY_NO_UNISTD_H 1
+# ifdef W32TeX
+#  define __STDC_VERSION__ 199901L
+# endif
+#else
+# include <unistd.h>
+#endif
+}
 
+%{
 #define QUOTE_ECHO qs(yytext)
 
 FILE* attrfd = NULL;
@@ -375,8 +388,13 @@ int
 main(int argc, char* argv[])
 {
     int option;
+
+#ifdef WIN32
+    setmode (fileno(stdout), _O_BINARY);
+#else
     extern char *optarg;
     extern int optind, optopt;
+#endif
 
     while ( (option=getopt(argc, argv, ":o")) != -1 ) {
 	switch (option) {
@@ -398,7 +416,7 @@ main(int argc, char* argv[])
     if ( optind == argc - 1 ) {
 	fprintf(stderr, "Writing attribute names to file \"%s\".\n",
 		argv[optind]);
-	if ( (attrfd = fopen(argv[optind], "w")) == NULL ) {
+	if ( (attrfd = fopen(argv[optind], "wb")) == NULL ) {
 	    perror (argv[optind]);
 	    exit (1);
 	}
