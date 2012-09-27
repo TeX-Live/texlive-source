@@ -1,0 +1,22 @@
+ChkTeX
+======
+
+ChkTeX is a tool to check for common errors in LaTeX files.  It also
+supports checking CWEB files (uses a perl5 script).  It is highly
+customizable allowing you turn off any warnings you don't like, as
+well as add your own warnings.  It works easily with Emacs and AUCTeX,
+but should also be easy to interface with other editors.  If you have
+interfaced ChkTeX with another editor, please contribute how you did
+it.
+
+It is important to remember that ChkTeX is only intended as a *guide*
+to fixing faults.  It is by no means always correct.  This means that
+correct LaTeX code may produce errors in ChkTeX, and vice versa:
+incorrect LaTeX code may pass silently through.  If you have ideas for
+new warnings or ways in which current warnings could be improved,
+please report them on the
+[bug tracker](https://savannah.nongnu.org/bugs/?group=chktex).
+
+For complete documentation see [the manual](http://www.nongnu.org/chktex/ChkTeX.pdf).
+
+ChkTeX is released under the GNU Public License version 2 or greater.

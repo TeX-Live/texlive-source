@@ -33,6 +33,31 @@
 #include "Utility.h"
 #include "Resource.h"
 
+/* Not everyone has stpcpy() */
+static inline char *
+stpcpy(char *dest, const char *src)
+{
+    return strcpy(dest, src) + strlen(src);
+}
+
+#if HAVE_PCRE || HAVE_POSIX_ERE
+
+#if HAVE_PCRE
+#include <pcreposix.h>
+#else
+#include <regex.h>
+#endif
+
+#define REGEX_FLAGS REG_EXTENDED
+#define NUM_MATCHES 10
+#define ERROR_STRING_SIZE 100
+
+regex_t* RegexArray = NULL;
+regex_t* SilentRegex = NULL;
+int NumRegexes = 0;
+
+#endif
+
 /***************************** ERROR MESSAGES ***************************/
 
 #undef MSG
@@ -49,7 +74,10 @@ static int my_##func(int c) \
    return(func(c)); \
 }
 
-#define INUSE(c)        (LaTeXMsgs[(enum ErrNum) c].InUse == iuOK)
+#define SUPPRESSED_ON_LINE(c)  (LineSuppressions & (1LL<<c))
+
+#define INUSE(c) \
+    ((LaTeXMsgs[(enum ErrNum) c].InUse == iuOK) && !SUPPRESSED_ON_LINE(c))
 
 #define PSERR2(pos,len,err,a,b) \
     PrintError(CurStkName(&InputStack), RealBuf, pos, len, Line, err, a, b)
@@ -98,6 +126,31 @@ static const char LTX_GenPunc[] = { ',', ';', 0 };
  */
 static const char LTX_SmallPunc[] = { '.', ',', 0 };
 
+/*
+ * String used to delimit a line suppression.  This string must be
+ * followed immediately by the number of the warning to be suppressed.
+ * If more than one warning is to be suppressed, then multiple copies
+ * of LineSuppDelim+number must be used.
+ */
+const char LineSuppDelim[] = "chktex ";
+
+/*
+ * String used to delimit a file suppression.  This string must be
+ * followed immediately by the number of the warning to be suppressed.
+ * If more than one warning is to be suppressed, then multiple copies
+ * of FileSuppDelim+number must be used.
+ */
+const char FileSuppDelim[] = "chktex-file ";
+
+/*
+ * A bit field used to hold the suppressions for the current line.
+ */
+static unsigned long long LineSuppressions;
+/*
+ * A bit field used to hold the suppressions of numbered user warnings
+ * for the current line.
+ */
+static unsigned long long UserLineSuppressions;
 
 static unsigned long Line;
 
@@ -106,6 +159,7 @@ static char *LineCpy;
 static char *BufPtr;
 
 static int ItFlag = efNone;
+static int MathFlag = efNone;
 
 NEWBUF(Buf, BUFSIZ);
 NEWBUF(CmdBuffer, BUFSIZ);
@@ -258,20 +312,89 @@ static char *MakeCpy(void)
 
 static char *PreProcess(void)
 {
-    /* First, kill comments. */
-
     char *TmpPtr;
 
+    /* Reset any line suppressions  */
+
+    LineSuppressions = FileSuppressions;
+    UserLineSuppressions = UserFileSuppressions;
+
+    /* Kill comments. */
     strcpy(Buf, RealBuf);
 
     TmpPtr = Buf;
 
     while ((TmpPtr = strchr(TmpPtr, '%')))
     {
-        if (TmpPtr == Buf || TmpPtr[-1] != '\\')
+        char *EscapePtr = TmpPtr;
+        int NumBackSlashes = 0;
+        while (EscapePtr != Buf && EscapePtr[-1] == '\\')
+        {
+            ++NumBackSlashes;
+            --EscapePtr;
+        }
+
+        /* If there is an even number of backslashes, then it's a comment. */
+        if ((NumBackSlashes % 2) == 0)
         {
             PSERR(TmpPtr - Buf, 1, emComment);
             *TmpPtr = 0;
+            /* Check for line suppressions */
+            if (!NoLineSupp)
+            {
+                int error;
+                const int MaxSuppressionBits = sizeof(unsigned long long)*8-1;
+
+                /* Convert to lowercase to compare with LineSuppDelim */
+                EscapePtr = ++TmpPtr; /* move past NUL terminator */
+                while ( *EscapePtr )
+                {
+                    *EscapePtr = tolower(*EscapePtr);
+                    ++EscapePtr;
+                }
+
+                EscapePtr = TmpPtr; /* Save it for later */
+                while ((TmpPtr = strstr(TmpPtr, FileSuppDelim))) {
+                    TmpPtr += STRLEN(FileSuppDelim);
+                    error = atoi(TmpPtr);
+
+                    if (abs(error) > MaxSuppressionBits)
+                    {
+                        PrintPrgErr(pmSuppTooHigh, error, MaxSuppressionBits);
+                    }
+                    if (error > 0)
+                    {
+                        FileSuppressions |= (1LL << error);
+                        LineSuppressions |= (1LL << error);
+                    }
+                    else
+                    {
+                        UserFileSuppressions |= (1LL << (-error));
+                        UserLineSuppressions |= (1LL << (-error));
+                    }
+                }
+                TmpPtr = EscapePtr;
+
+                while ((TmpPtr = strstr(TmpPtr, LineSuppDelim))) {
+
+                    TmpPtr += STRLEN(LineSuppDelim);
+                    error = atoi(TmpPtr);
+
+                    if (abs(error) > MaxSuppressionBits)
+                    {
+                        PrintPrgErr(pmSuppTooHigh, error, MaxSuppressionBits);
+                    }
+
+                    if (error > 0)
+                    {
+                        LineSuppressions |= (1LL << error);
+                    }
+                    else
+                    {
+                        UserLineSuppressions |= (1LL << (-error));
+                    }
+                }
+            }
             break;
         }
         TmpPtr++;
@@ -416,11 +539,17 @@ static void WipeArgument(const char *Cmd, char *CmdPtr)
                 if (*TmpPtr == '[')
                     TmpPtr = GetLTXArg(TmpPtr, ArgBuffer, ']', NULL);
                 break;
+            case '(':
+                SKIP_AHEAD(TmpPtr, TmpC, LATEX_SPACE(TmpC));
+                if (*TmpPtr == '(')
+                    TmpPtr = GetLTXArg(TmpPtr, ArgBuffer, ')', NULL);
+                break;
             case '{':
                 SKIP_AHEAD(TmpPtr, TmpC, LATEX_SPACE(TmpC));
                 TmpPtr = GetLTXArg(TmpPtr, ArgBuffer, GET_TOKEN, NULL);
             case '}':
             case ']':
+            case ')':
                 break;
             default:
                 PrintPrgErr(pmWrongWipeTemp, &Cmd[strlen(Cmd) + 1]);
@@ -429,9 +558,9 @@ static void WipeArgument(const char *Cmd, char *CmdPtr)
         }
 
         if (TmpPtr)
-            strwrite(CmdPtr, VerbClear, TmpPtr - CmdPtr);
+            strwrite(CmdPtr+CmdLen, VerbClear, TmpPtr - CmdPtr - CmdLen);
         else
-            strxrep(CmdPtr, "()[]{}", *VerbClear);
+            strxrep(CmdPtr+CmdLen, "()[]{}", *VerbClear);
     }
 }
 
@@ -646,9 +775,175 @@ static void CheckRest(void)
 
     /* Search for user-specified warnings */
 
-    if (INUSE(emUserWarn))
+#if ! (HAVE_PCRE || HAVE_POSIX_ERE)
+
+    if (INUSE(emUserWarnRegex) && UserWarnRegex.Stack.Used > 0)
+    {
+        PrintPrgErr(pmNoRegExp);
+        ClearWord( &UserWarnRegex );
+    }
+    else if (INUSE(emUserWarn))
     {
         strcpy(TmpBuffer, Buf);
+    }
+
+#else
+
+    if (INUSE(emUserWarnRegex) && UserWarnRegex.Stack.Used > 0)
+    {
+        static char error[ERROR_STRING_SIZE];
+        static regmatch_t MatchVector[NUM_MATCHES];
+        int rc;
+        int len = strlen(TmpBuffer);
+        strcpy(TmpBuffer, Buf);
+
+        /* Compile all regular expressions if not already compiled. */
+        if ( !RegexArray && UserWarnRegex.Stack.Used > 0 )
+        {
+            RegexArray = (regex_t*)malloc( sizeof(regex_t) * UserWarnRegex.Stack.Used );
+            if (!RegexArray)
+            {
+                /* Allocation failed. */
+                PrintPrgErr(pmNoRegexMem);
+                ClearWord(&UserWarnRegex);
+                NumRegexes = 0;
+            }
+            else
+            {
+                NumRegexes = 0;
+                FORWL(Count, UserWarnRegex)
+                {
+                    char *pattern = UserWarnRegex.Stack.Data[Count];
+                    char *CommentEnd = NULL;
+
+                    /* See if it's got a special name that it goes by.
+                       Only use the comment if it's at the very beginning. */
+                    if ( strncmp(pattern,"(?#",3) == 0 )
+                    {
+                        CommentEnd = strchr(pattern, ')');
+                        /* TODO: check for PCRE/POSIX only regexes */
+                        *CommentEnd = '\0';
+                        /* We're leaking a little here, but this was never freed until exit anyway... */
+                        UserWarnRegex.Stack.Data[NumRegexes] = pattern+3;
+
+                        /* Compile past the end of the comment so that it works with POSIX too. */
+                        pattern = CommentEnd + 1;
+                    }
+
+                    /* Ignore PCRE and POSIX specific regexes.
+                     * This is mostly to make testing easier. */
+                    if ( strncmp(pattern,"PCRE:",5) == 0 )
+                    {
+                        #if HAVE_PCRE
+                        pattern += 5;
+                        #else
+                        continue;
+                        #endif
+                    }
+                    if ( strncmp(pattern,"POSIX:",6) == 0 )
+                    {
+                        #if HAVE_POSIX_ERE
+                        pattern += 6;
+                        #else
+                        continue;
+                        #endif
+                    }
+
+                    rc = regcomp((regex_t*)(&RegexArray[NumRegexes]),
+                                 pattern, REGEX_FLAGS);
+
+                    /* Compilation failed: print the error message */
+                    if (rc != 0)
+                    {
+                        /* TODO: decide whether a non-compiling regex should completely stop, or just be ignored */
+                        regerror(rc,(regex_t*)(&RegexArray[NumRegexes]),
+                                 error, ERROR_STRING_SIZE);
+                        PrintPrgErr(pmRegexCompileFailed, pattern, error);
+                    }
+                    else
+                    {
+                        if ( !CommentEnd )
+                        {
+                            ((char*)UserWarnRegex.Stack.Data[NumRegexes])[0] = '\0';
+                        }
+                        ++NumRegexes;
+                    }
+                }
+            }
+        }
+
+        for (Count = 0; Count < NumRegexes; ++Count)
+        {
+            int offset = 0;
+            char *ErrMessage = UserWarnRegex.Stack.Data[Count];
+            const int NamedWarning = strlen(ErrMessage) > 0;
+
+            while (offset < len)
+            {
+                /* Check if this warning should be suppressed. */
+                if (UserLineSuppressions != 0LL && NamedWarning)
+                {
+                    /* The warning can be named with positive or negative numbers. */
+                    int UserWarningNumber = abs(atoi(ErrMessage));
+                    if (UserLineSuppressions & (1LL << UserWarningNumber))
+                    {
+                        break;
+                    }
+                }
+
+                rc = regexec( (regex_t*)(&RegexArray[Count]), TmpBuffer+offset,
+                              NUM_MATCHES, MatchVector, 0);
+                /* Matching failed: handle error cases */
+                if (rc != 0)
+                {
+                    switch(rc)
+                    {
+                        case REG_NOMATCH:
+                            /* no match, no problem */
+                            break;
+                        default:
+                            regerror(rc, (regex_t*)(&RegexArray[Count]),
+                                     error, ERROR_STRING_SIZE);
+                            PrintPrgErr(pmRegexMatchingError, error);
+                            break;
+                    }
+
+                    offset = len; /* break out of loop */
+                }
+                else
+                {
+#define MATCH (MatchVector[0])
+                    if ( NamedWarning )
+                    {
+                        /* User specified error message */
+                        PSERR2(offset + MATCH.rm_so, MATCH.rm_eo - MATCH.rm_so,
+                               emUserWarnRegex,
+                               strlen(ErrMessage), ErrMessage);
+                    }
+                    else
+                    {
+                        /* Default -- show the match */
+                        PSERR2(offset + MATCH.rm_so, MATCH.rm_eo - MATCH.rm_so,
+                               emUserWarnRegex,
+                               MATCH.rm_eo - MATCH.rm_so,
+                               TmpBuffer + offset + MATCH.rm_so);
+                    }
+                    offset += MATCH.rm_eo;
+#undef MATCH
+                }
+            }
+        }
+    }
+    else if (INUSE(emUserWarn))
+    {
+        strcpy(TmpBuffer, Buf);
+    }
+
+#endif
+
+
+    if (INUSE(emUserWarn))
+    {
         FORWL(Count, UserWarn)
         {
             for (UsrPtr = TmpBuffer;
@@ -656,10 +951,9 @@ static void CheckRest(void)
                  UsrPtr++)
             {
                 CmdLen = strlen(UserWarn.Stack.Data[Count]);
-                PSERR(UsrPtr - TmpBuffer, CmdLen, emUserWarn);
+                PSERRA(UsrPtr - TmpBuffer, CmdLen, emUserWarn, UserWarn.Stack.Data[Count]);
             }
         }
-
 
         strlwr(TmpBuffer);
 
@@ -670,7 +964,7 @@ static void CheckRest(void)
                  UsrPtr++)
             {
                 CmdLen = strlen(UserWarnCase.Stack.Data[Count]);
-                PSERR(UsrPtr - TmpBuffer, CmdLen, emUserWarn);
+                PSERRA(UsrPtr - TmpBuffer, CmdLen, emUserWarn, UserWarnCase.Stack.Data[Count]);
             }
         }
     }
@@ -749,6 +1043,7 @@ static void HandleBracket(int Char)
             if ((ei = PopErr(&CharStack)))
             {
                 Match = MatchBracket(*(ei->Data));
+                /* Return italics to proper state */
                 if (ei->Flags & efNoItal)
                 {
                     if (ItState == itOn)
@@ -756,7 +1051,13 @@ static void HandleBracket(int Char)
                         TmpPtr = BufPtr;
                         SKIP_AHEAD(TmpPtr, TmpC, TmpC == '}');
 
-                        if (!strchr(LTX_SmallPunc, *TmpPtr))
+                        /* If the next character is a period or comma,
+                         * or the last character is, then it's not an
+                         * error. */
+                        /* Checking 2 characters back seems dangerous,
+                         * but it's already done in CheckDash. */
+                        if ( !strchr(LTX_SmallPunc, *TmpPtr) &&
+                             !strchr(LTX_SmallPunc, *(TmpPtr-2)) )
                             HERE(1, emNoItFound);
                     }
 
@@ -764,6 +1065,17 @@ static void HandleBracket(int Char)
                 }
                 else if (ei->Flags & efItal)
                     ItState = TRUE;
+
+                /* Same for math mode */
+                if (ei->Flags & efMath)
+                {
+                    MathMode = 1;
+                }
+                else if (ei->Flags & efNoMath)
+                {
+                    MathMode = 0;
+                }
+
                 FreeErrInfo(ei);
             }
             else
@@ -793,11 +1105,21 @@ static void HandleBracket(int Char)
                     switch (ItFlag)
                     {
                     default:
-                        ei->Flags = ItFlag;
+                        ei->Flags |= ItFlag;
                         ItFlag = efNone;
                         break;
                     case efNone:
                         ei->Flags |= ItState ? efItal : efNoItal;
+                    }
+
+                    switch (MathFlag)
+                    {
+                    default:
+                        ei->Flags |= MathFlag;
+                        MathFlag = efNone;
+                        break;
+                    case efNone:
+                        ei->Flags |= MathMode ? efMath : efNoMath;
                     }
                 }
             }
@@ -809,6 +1131,95 @@ static void HandleBracket(int Char)
 }
 
 
+/*
+ * Checks to see if CmdBuffer matches any of the words in Silent, or
+ * any of the regular expressions in SilentCase.
+ *
+ */
+
+int CheckSilentRegex(void)
+{
+
+#if ! (HAVE_PCRE || HAVE_POSIX_ERE)
+
+    return HasWord(CmdBuffer, &Silent);
+
+#else
+
+    static char error[ERROR_STRING_SIZE];
+    char *pattern;
+    char *tmp;
+    int i;
+    int rc;
+    int len = 4;                /* Enough for the (?:) */
+
+    /* Initialize regular expression */
+    if (INUSE(emSpaceTerm) && SilentCase.Stack.Used > 0)
+    {
+        /* Find the total length we need */
+        /* There is 1 for | and the final for null terminator */
+        FORWL(i, SilentCase)
+        {
+            len += strlen( SilentCase.Stack.Data[i] ) + 1;
+        }
+
+        /* (A|B|...) */
+        tmp = (pattern = (char*)malloc( sizeof(char) * len ));
+
+        #if HAVE_PCRE
+        tmp = stpcpy(tmp,"(?:");
+        #else
+        tmp = stpcpy(tmp,"(");
+        #endif
+
+        FORWL(i, SilentCase)
+        {
+            tmp = stpcpy(tmp, SilentCase.Stack.Data[i]);
+            *tmp++ = '|';
+        }
+        tmp = stpcpy(--tmp, ")");
+
+        SilentRegex = malloc( sizeof(regex_t) );
+        rc = regcomp(SilentRegex, pattern, REGEX_FLAGS);
+
+        /* Compilation failed: print the error message */
+        if (rc != 0)
+        {
+            regerror(rc, SilentRegex, error, ERROR_STRING_SIZE);
+            PrintPrgErr(pmRegexCompileFailed, pattern, error);
+            SilentRegex = NULL;
+        }
+        /* Ensure we won't initialize it again */
+        SilentCase.Stack.Used = 0;
+        free(pattern);
+    }
+
+    /* Check against the normal */
+    if ( HasWord(CmdBuffer, &Silent) )
+        return 1;
+    if (!SilentRegex)
+        return 0;
+
+    /* Check against the regexes */
+    rc = regexec(SilentRegex, CmdBuffer, 0, NULL, 0);
+    if (rc == 0)
+        return 1;
+
+    /* Matching failed: handle error cases */
+    switch(rc)
+    {
+        case REG_NOMATCH:
+            return 0;
+            break;
+        default:
+            regerror(rc, SilentRegex, error, ERROR_STRING_SIZE);
+            PrintPrgErr(pmRegexMatchingError, error);
+            break;
+    }
+    return 0;
+
+#endif
+}
 
 /*
  * Searches the `Buf' for possible errors, and prints the errors. `Line'
@@ -974,10 +1385,10 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                     HEREA(3, emEllipsis, cTmpPtr);
                 }
 
-                /* Regexp: "([^A-Z@.])\.[.!?:;]*\s+[a-z]" */
+                /* Regexp: "([^A-Z@.])\.[.!?:]*\s+[a-z]" */
 
                 TmpPtr = BufPtr;
-                SKIP_AHEAD(TmpPtr, TmpC, strchr(LTX_GenPunc, TmpC));
+                SKIP_AHEAD(TmpPtr, TmpC, strchr(LTX_EosPunc, TmpC));
                 if (LATEX_SPACE(*TmpPtr))
                 {
                     if (!isupper((unsigned char)*PrePtr) && (*PrePtr != '@') &&
@@ -1161,7 +1572,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 }
 
                 if (LATEX_SPACE(*BufPtr) && !MathMode &&
-                    (!HasWord(CmdBuffer, &Silent)) &&
+                    !CheckSilentRegex() &&
                     (strlen(CmdBuffer) != 2))
                 {
                     PSERR(BufPtr - Buf, 1, emSpaceTerm);
@@ -1224,6 +1635,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
         {
             CheckRest();
         }
+
     }
 
     return (TRUE);
@@ -1297,7 +1709,8 @@ void PrintStatus(unsigned long Lines)
     {
         Transit(stderr, ErrPrint, "error%s printed; ");
         Transit(stderr, WarnPrint, "warning%s printed; ");
-        Transit(stderr, UserSupp, "user suppressed warning%s printed.\n");
+        Transit(stderr, UserSupp, "user suppressed warning%s; ");
+        Transit(stderr, LineSupp, "line suppressed warning%s.\n");
     }
 }
 
@@ -1344,7 +1757,11 @@ PrintError(const char *File, const char *String,
         switch (LaTeXMsgs[Error].InUse)
         {
         case iuOK:
-            do
+            if (SUPPRESSED_ON_LINE(Error))
+            {
+                LineSupp++;
+            }
+            else
             {
                 Context = LaTeXMsgs[Error].Context;
 
@@ -1453,7 +1870,6 @@ PrintError(const char *File, const char *String,
                 }
                 fputs(LastNorm, OutputFile);
             }
-            while (FALSE);
             break;
         case iuNotUser:
             UserSupp++;
@@ -1480,8 +1896,7 @@ static enum ErrNum PerformCommand(const char *Cmd, char *Arg)
         AtLetter = TRUE;
     else if (!strcmp(Cmd, "\\makeatother"))
         AtLetter = FALSE;
-    else if (InputFiles &&
-             !(strcmp(Cmd, "\\input") && strcmp(Cmd, "\\include")))
+    else if (InputFiles && !(strcmp(Cmd, "\\input") && strcmp(Cmd, "\\include")))
     {
         SKIP_AHEAD(Arg, TmpC, LATEX_SPACE(TmpC));
         if (*Arg == '{')        /* } */
@@ -1497,6 +1912,24 @@ static enum ErrNum PerformCommand(const char *Cmd, char *Arg)
     }
     else if (HasWord(Cmd, &Primitives))
         en = emTeXPrim;
+    else if (HasWord(Cmd, &MathCmd))
+    {
+        SKIP_AHEAD(Arg, TmpC, LATEX_SPACE(TmpC));
+        if (*Arg == '{')
+        {
+            MathFlag = MathMode ? efMath : efNoMath;
+            MathMode = 1;
+        }
+    }
+    else if (HasWord(Cmd, &TextCmd))
+    {
+        SKIP_AHEAD(Arg, TmpC, LATEX_SPACE(TmpC));
+        if (*Arg == '{')
+        {
+            MathFlag = MathMode ? efMath : efNoMath;
+            MathMode = 0;
+        }
+    }
     else if (*Cmd == '\\')
     {
         /* Quicker check of single lettered commands. */

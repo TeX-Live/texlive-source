@@ -75,9 +75,18 @@ NEWBUF(ReadBuffer, BUFSIZ);
 static const char *Banner =
     "ChkTeX v" PACKAGE_VERSION " - Copyright 1995-96 Jens T. Berger Thielemann.\n"
 #ifdef __OS2__
-    "OS/2 port generated with emx compiler, by Wolfgang Fritsch, <fritsch@hmi.de>"
+    "OS/2 port generated with emx compiler, by Wolfgang Fritsch, <fritsch@hmi.de>\n"
 #elif defined(__MSDOS__)
-    "MS-DOS port by Bj\\o rn Ove Thue, <bjort@ifi.uio.no>"
+    "MS-DOS port by Bj\\o rn Ove Thue, <bjort@ifi.uio.no>\n"
+#endif
+#if HAVE_PCRE
+    "Compiled with PCRE regex support."
+#else
+#if HAVE_POSIX_ERE
+    "Compiled with POSIX extended regex support."
+#else
+    "Compiled with no regex support."
+#endif
 #endif
     "\n";
 
@@ -116,7 +125,7 @@ static const char *HelpText =
     "\n"
     "\n"
     "                         Usage of ChkTeX v" PACKAGE_VERSION "\n"
-    "                         ~~~~~~~~~~~~~~~~~~~~\n"
+    "                         ~~~~~~~~~~~~~~~~~~~~~~\n"
     "\n"
     "                               Template\n"
     "                               ~~~~~~~~\n"
@@ -131,7 +140,7 @@ static const char *HelpText =
     "~~~~~~~~~~~~~\n"
     "    -h  --help      : This text.\n"
     "    -i  --license   : Show distribution information\n"
-    "    -l  --localrc   : Read local .chktexrc formatted  file.\n"
+    "    -l  --localrc   : Read local .chktexrc formatted file.\n"
     "    -d  --debug     : Debug information. Give it a number.\n"
     "    -r  --reset     : Reset settings to default.\n"
     "\n"
@@ -141,6 +150,7 @@ static const char *HelpText =
     "    -e  --erroron   : Makes msg # given an error and turns it on.\n"
     "    -m  --msgon     : Makes msg # given a message and turns it on.\n"
     "    -n  --nowarn    : Mutes msg # given.\n"
+    "    -L  --nolinesupp: Disables per-line suppressions.\n"
     "\n"
     "Output control flags:\n"
     "~~~~~~~~~~~~~~~~~~~~~\n"
@@ -169,7 +179,7 @@ static const char *HelpText =
     "----------------------------------------------------------------------\n"
     "If no LaTeX files are specified on the command line, we will read from\n"
     "stdin.   For explanation of warning/error messages, please consult the\n"
-    "main document ChkTeX.dvi or ChkTeX.ps.\n";
+    "main documentation ChkTeX.dvi, ChkTeX.ps or ChkTeX.pdf.\n";
 
 
 
@@ -184,7 +194,8 @@ enum Quote Quote;
 char VerbNormal[] = "%k %n in %f line %l: %m\n" "%r%s%t\n" "%u\n";
 
 #define DEF(type, name, value)  type name = value;
-OPTION_DEFAULTS STATE_VARS;
+OPTION_DEFAULTS;
+STATE_VARS;
 #undef DEF
 FILE *OutputFile = NULL;
 
@@ -352,7 +363,7 @@ int main(int argc, char **argv)
         }
 
         if (!Quiet || LicenseOnly)
-            fprintf(stderr, Banner);
+            fprintf(stderr, "%s", Banner);
 
         if (CurArg == argc)
             UsingStdIn = TRUE;
@@ -370,7 +381,7 @@ int main(int argc, char **argv)
 
         if ((UsingStdIn && StdInTTY && !Quiet) || LicenseOnly)
         {
-            fprintf(stderr, BigBanner);
+            fprintf(stderr, "%s", BigBanner);
         }
 
         if (!StdOutTTY && PipeOutputFormat)
@@ -378,7 +389,7 @@ int main(int argc, char **argv)
 
         if (LicenseOnly)
         {
-            fprintf(stderr, Distrib);
+            fprintf(stderr, "%s", Distrib);
         }
         else
         {
@@ -414,10 +425,9 @@ int main(int argc, char **argv)
                         Brackets[Count] = 0L;
 
 #define DEF(type, name, value) name = value;
-
-                    STATE_VARS
+                    STATE_VARS;
 #undef DEF
-                        if (UsingStdIn)
+                    if (UsingStdIn)
                     {
                         if (StdInUse)
                             break;
@@ -558,7 +568,7 @@ static void ShowWL(const char *Name, const struct WordList *wl)
 
 
 /*
- * Prints some of the internal flags; mainly for debugging purposes 
+ * Prints some of the internal flags; mainly for debugging purposes
  */
 
 static void ShowIntStatus(void)
@@ -640,6 +650,7 @@ static void ShowIntStatus(void)
         BOOLSTAT("Use stdin", UsingStdIn);
         BOOLSTAT("\\input files", InputFiles);
         BOOLSTAT("Output header errors", HeadErrOut);
+        BOOLSTAT("No line suppressions", NoLineSupp);
     }
 #endif
 }
@@ -675,9 +686,9 @@ static void ResetSettings(void)
 {
 
 #define DEF(type, name, value)  name = value;
-    OPTION_DEFAULTS
+    OPTION_DEFAULTS;
 #undef DEF
-        if (OutputFile != stdout)
+    if (OutputFile != stdout)
     {
         fclose(OutputFile);
         OutputFile = stdout;
@@ -750,6 +761,7 @@ static int ParseArgs(int argc, char **argv)
         {"erroron", required_argument, 0L, 'e'},
         {"msgon", required_argument, 0L, 'm'},
         {"nowarn", required_argument, 0L, 'n'},
+        {"nolinesupp", no_argument, 0L, 'L'},
         {"verbosity", optional_argument, 0L, 'v'},
         {"pipeverb", optional_argument, 0L, 'V'},
         {"debug", required_argument, 0L, 'd'},
@@ -790,7 +802,7 @@ static int ParseArgs(int argc, char **argv)
 
     while (!ArgErr &&
            ((c = getopt_long((int) argc, argv,
-                             "b::d:e:f:g::hH::I::il:m:n:o:p:qrs:t::v::V::w:Wx::",
+                             "b::d:e:f:g::hH::I::il:m:n:Lo:p:qrs:t::v::V::w:Wx::",
                              long_options, &option_index)) != EOF))
     {
         while (c)
@@ -827,6 +839,11 @@ static int ParseArgs(int argc, char **argv)
                 break;
             case 'i':
                 LicenseOnly = TRUE;
+
+                nextc = ShiftArg(&optarg);
+                break;
+            case 'L':
+                NoLineSupp = TRUE;
 
                 nextc = ShiftArg(&optarg);
                 break;
@@ -955,7 +972,7 @@ static int ParseArgs(int argc, char **argv)
                 nextc = ParseBoolArg(&HeadErrOut, &optarg);
                 break;
             case 'W':
-                printf(Banner);
+                printf("%s", Banner);
                 exit(EXIT_SUCCESS);
             case '?':
             default:

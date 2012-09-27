@@ -49,7 +49,7 @@
 (eval-after-load 'tex
   '(progn
      (add-to-list 'TeX-command-list
-                  '("ChkTeX" "chktex -v3 %s" TeX-run-compile nil t))))
+                  '("ChkTeX" "chktex -v6 %s" TeX-run-compile nil t))))
 
 (provide 'chktex)
 

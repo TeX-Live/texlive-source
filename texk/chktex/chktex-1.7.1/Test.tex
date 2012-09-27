@@ -25,7 +25,7 @@ ${{[{(ab)}^{-1}]}}^{-2}$ is beautiful
 % Warning 4-6, 28
 
 Testing {\it italic} in \/ this {\em sentence\/}, as {\em you \/ see\/}.
-Testing {\it italic\/} in this {\em sentence}, as {\em you see}.
+Testing {\it italic\/} in this {\em sentence,} as {\em you see}.
 
 % LaTeX2e
 
@@ -67,8 +67,8 @@ Foo\dots bar. $1,\ldots,3$. $1+\cdots+3$. $1,\ldots,3$. $1\cdot\cdots\cdot3$.
 
 % Warning 12
 
-1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar
-1st.\ foo Inc.\ ab.cd.\ foo ab.cd.\ Foo.\ bar
+1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george
+1st.\ foo Inc.\ ab.cd.\ foo ab.cd.\ Foo.\ bar baz., billy.; bob.:\ joe.!\ frank.?\ james..\ george
 
 % Warning 13
 
@@ -88,6 +88,7 @@ Is this an `example', or is it an `example'.
 % Warning 20
 
 That bug is \unknown\ to me.
+% That bug is \unknown\ to me.
 
 % Warning 21
 
@@ -119,7 +120,7 @@ Do you understand?
 \input input.tex
 \input input
 
-% Warning 29 
+% Warning 29
 The program opens a screen sized 640x200 pixels
 The program opens a screen sized $640\times200$ pixels
 
@@ -145,7 +146,7 @@ $\sin^2 + \cos^2 = 1$
 
 % Warning 36-37
 
-This( an example( Nuff said )), illustrates( ``my'' )point. 
+This( an example( Nuff said )), illustrates( ``my'' )point.
 This (an example (Nuff said)), illustrates (``my'') point.
 
 % Warning 38
@@ -169,6 +170,39 @@ foo \above qux
 This is a footnote \footnote{foo}.
 This is a footnote\footnote{foo}.
 
+% Warning 43
+Here is a mistake $\left{x\right}$.
+This one triggers warning 22 $\left\{x\right\}$.
+Here \chktex\ doesn't complain $\left\lbrace x\right\rbrace$.
+
+% Warning 44 -- user regex -- default message
+You should always write a good intro.
+You should always write a good introduction.
+
+% Warning 44 -- user regex -- user message
+For every $p\not|n$ you have an ugly prime which doesn't divide $n$.
+For every $p\nmid n$ you have a cute prime which doesn't divide $n$.
+
+% Math mode check
+\ensuremath{sin x\text{is not the same as sin x, but is the same as $sin x$}}
+Also, $x(3)\text{ is not x(3) but it is $x(3)$}$
+
+This is\\% a comment. Nothing here should be checked(right)?
+a broken line.
+But this is not a \% comment, so we should find this error(right)?
+
+Here(on this line only)is a warning $sin(x)$ suppressed. % chktex 36 chktex 35
+Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36
+
+In section~\ref{sec:3} we have a warning.
+In section~\ref{sec:4} it is suppressed. % chktex -1
+% In section~\ref{sec:5} we don't have a warning.
+
+\begin{tabular*}{1.0\linewidth}[h]{|c|cc|}
+  a & b \\
+  \hline
+  c & d
+\end{tabular*}
 
 % Verb check
 
@@ -182,5 +216,3 @@ This is a footnote\footnote{foo}.
 % Warning 16,15
 
 $$(
-
-

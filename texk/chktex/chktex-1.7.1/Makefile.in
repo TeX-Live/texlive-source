@@ -85,7 +85,7 @@ SOURCEFILES=$(CSOURCES) $(wildcard $(CSOURCES:.c=.h)) types.h
 
 DISTFILES=$(EXTRA_DIST) $(SOURCEFILES)
 
-all: chktex 
+all: chktex
 
 DISTDIR:=chktex-@PACKAGE_VERSION@
 dist: $(DISTDIR).tar.gz
@@ -126,23 +126,26 @@ OBJS= ChkTeX.o FindErrs.o OpSys.o Resource.o Utility.o
 
 MAKETEST= (builddir=`pwd` ; cd $(srcdir) ; $${builddir}/chktex -mall -r -g0 -lchktexrc -v5 Test.tex)
 
-$(srcdir)/Test.out:
+$(srcdir)/Test.out: $(srcdir)/Test.tex
 	-rm -f $(srcdir)/Test.out
-	$(MAKETEST) 1> $(srcdir)/Test.out 
+	@echo ""
+	@echo "***Warning: creating Test.out***"
+	@echo ""
+	$(MAKETEST) 1> $(srcdir)/Test.out
 
-check: chktex
+check: chktex $(srcdir)/Test.out
 	@echo ">>> Testing that checking algorithms work correctly..."
 	@-rm -f chktest
-	$(MAKETEST) 1> chktest  
+	$(MAKETEST) 1> chktest
 	@if cmp -s chktest $(srcdir)/Test.out; then \
-	echo ">>> OK!"; \
-	rm -f chktest; \
+		echo ">>> OK!"; \
+		rm -f chktest; \
 	else \
-	echo "***WARNING***"; \
-	echo "Problems when checking compilation. This may or may not"; \
-	echo "be a problem; anyway, I'm giving you a diff from what the"; \
-	echo "results were *supposed* to be..."; \
-	diff -u chktest $(srcdir)/Test.out; \
+		echo "***WARNING***"; \
+		echo "Problems when checking compilation. This may or may not"; \
+		echo "be a problem; anyway, I'm giving you a diff from what the"; \
+		echo "results were *supposed* to be..."; \
+		diff -u $(srcdir)/Test.out chktest; \
 	fi
 
 
@@ -200,6 +203,8 @@ maintainer-clean: distclean
 	  configure missing rmeheader stamp-h mkinstalldirs tags
 
 dvi: ChkTeX.dvi
+
+pdf: ChkTeX.pdf
 
 ifneq ($(LATEX2HTML),)
 html: ChkTeX.tex MakeHTML.pl

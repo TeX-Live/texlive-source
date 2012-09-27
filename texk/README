@@ -27,8 +27,8 @@ bibtex8 - ?
 bibtexu - ?
   http://omega.enstb.org/yannis/bibtexu/
 
-chktex 1.6.6 - checked 10apr12
-  http://mirror.ctan.org/support/chktex/ for pdf, otherwise same as
+chktex 1.7.1 - checked 27sep12
+  http://mirror.ctan.org/support/chktex/
   http://download.savannah.gnu.org/releases/chktex/
 
 cjkutils 4.8.3 - checked 11may12

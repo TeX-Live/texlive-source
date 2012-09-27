@@ -182,14 +182,26 @@ Message 22 in Test.tex: Comment displayed.
 % Warning 12  
 ^
 Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
-1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar  
+1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
     ^
 Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
-1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar  
+1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
                     ^
 Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
-1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar  
+1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
                                     ^
+Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
+1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
+                                                           ^
+Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
+1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
+                                                                 ^
+Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
+1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
+                                                                         ^
+Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
+1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
+                                                                                 ^
 Message 22 in Test.tex: Comment displayed.
 % Warning 13  
 ^
@@ -223,9 +235,12 @@ Is this an "example", or is it an ´example´.
 Message 22 in Test.tex: Comment displayed.
 % Warning 20  
 ^
-Message 20 in Test.tex: User-specified pattern found.
+Message 20 in Test.tex: User-specified pattern found: \unknown.
 That bug is \unknown\ to me.  
             ^^^^^^^^
+Message 22 in Test.tex: Comment displayed.
+% That bug is \unknown\ to me.  
+^
 Message 22 in Test.tex: Comment displayed.
 % Warning 21  
 ^
@@ -272,7 +287,7 @@ Message 11 in input.tex: You should use \ldots to achieve an ellipsis.
 \this is a test of whether the file is actually inputted...  
                                                         ^^^
 Message 22 in Test.tex: Comment displayed.
-% Warning 29   
+% Warning 29  
 ^
 Message 29 in Test.tex: $\times$ may look prettier here.
 The program opens a screen sized 640x200 pixels  
@@ -323,31 +338,31 @@ Message 22 in Test.tex: Comment displayed.
 % Warning 36-37  
 ^
 Message 36 in Test.tex: You should put a space in front of parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
     ^
 Message 37 in Test.tex: You should avoid spaces after parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
      ^
 Message 36 in Test.tex: You should put a space in front of parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
                 ^
 Message 37 in Test.tex: You should avoid spaces after parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
                  ^
 Message 37 in Test.tex: You should avoid spaces in front of parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
                             ^
 Message 36 in Test.tex: You should put a space in front of parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
                                            ^
 Message 37 in Test.tex: You should avoid spaces after parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
                                             ^
 Message 37 in Test.tex: You should avoid spaces in front of parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
                                                     ^
 Message 36 in Test.tex: You should put a space after parenthesis.
-This( an example( Nuff said )), illustrates( ``my'' )point.   
+This( an example( Nuff said )), illustrates( ``my'' )point.  
                                                      ^
 Message 22 in Test.tex: Comment displayed.
 % Warning 38  
@@ -385,6 +400,78 @@ Message 22 in Test.tex: Comment displayed.
 Message 42 in Test.tex: You should remove spaces in front of `\footnote'
 This is a footnote \footnote{foo}.  
                   ^
+Message 22 in Test.tex: Comment displayed.
+% Warning 43  
+^
+Message 43 in Test.tex: `\left' is normally not followed by `{'.
+Here is a mistake $\left{x\right}$.  
+                   ^^^^^
+Message 43 in Test.tex: `\right' is normally not followed by `}'.
+Here is a mistake $\left{x\right}$.  
+                          ^^^^^^
+Message 21 in Test.tex: This command might not be intended.
+This one triggers warning 22 $\left\{x\right\}$.  
+                                   ^^
+Message 21 in Test.tex: This command might not be intended.
+This one triggers warning 22 $\left\{x\right\}$.  
+                                            ^^
+Message 22 in Test.tex: Comment displayed.
+% Warning 44 -- user regex -- default message  
+^
+Message 44 in Test.tex: User Regex:  intro..
+You should always write a good intro.  
+                              ^^^^^^^
+Message 22 in Test.tex: Comment displayed.
+% Warning 44 -- user regex -- user message  
+^
+Message 44 in Test.tex: User Regex: Always use \nmid.
+For every $p\not|n$ you have an ugly prime which doesn't divide $n$.  
+            ^^^^^
+Message 22 in Test.tex: Comment displayed.
+% Math mode check  
+^
+Message 35 in Test.tex: You should perhaps use `\sin' instead.
+\ensuremath{sin x\text{is not the same as sin x, but is the same as $sin x$}}  
+            ^^^
+Message 35 in Test.tex: You should perhaps use `\sin' instead.
+\ensuremath{sin x\text{is not the same as sin x, but is the same as $sin x$}}  
+                                                                     ^^^
+Message 36 in Test.tex: You should put a space in front of parenthesis.
+Also, $x(3)\text{ is not x(3) but it is $x(3)$}$  
+                          ^
+Message 22 in Test.tex: Comment displayed.
+This is\\% a comment. Nothing here should be checked(right)?  
+         ^
+Message 36 in Test.tex: You should put a space in front of parenthesis.
+But this is not a \% comment, so we should find this error(right)?  
+                                                          ^
+Message 22 in Test.tex: Comment displayed.
+Here(on this line only)is a warning $sin(x)$ suppressed. % chktex 36 chktex 35  
+                                                         ^
+Message 22 in Test.tex: Comment displayed.
+Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36  
+                                                         ^
+Message 36 in Test.tex: You should put a space in front of parenthesis.
+Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36  
+    ^
+Message 36 in Test.tex: You should put a space after parenthesis.
+Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36  
+                       ^
+Message 44 in Test.tex: User Regex: 1:Capitalize before references.
+In section~\ref{sec:3} we have a warning.  
+  ^^^^^^^^^^^^^
+Message 22 in Test.tex: Comment displayed.
+In section~\ref{sec:4} it is suppressed. % chktex -1  
+                                         ^
+Message 22 in Test.tex: Comment displayed.
+% In section~\ref{sec:5} we don't have a warning.  
+^
+Message 44 in Test.tex: User Regex: -2:Vertical rules in tables are ugly.
+\begin{tabular*}{1.0\linewidth}[h]{|c|cc|}  
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Message 44 in Test.tex: User Regex: -2:Use \toprule, midrule, or \bottomrule from booktabs.
+  \hline  
+  ^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Verb check  
 ^

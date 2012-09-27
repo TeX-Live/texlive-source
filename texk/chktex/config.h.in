@@ -79,6 +79,12 @@
 /* Define to 1 if you have the `opendir' function. */
 #undef HAVE_OPENDIR
 
+/* Whether PCRE can be used for user warnings. */
+#undef HAVE_PCRE
+
+/* Whether POSIX ERE can be used for user warnings. */
+#undef HAVE_POSIX_ERE
+
 /* Define to 1 if you have the `putenv' function. */
 #undef HAVE_PUTENV
 

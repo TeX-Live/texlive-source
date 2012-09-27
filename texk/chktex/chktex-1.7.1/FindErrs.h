@@ -76,7 +76,7 @@
  MSG(emUseOtherQuote, etWarn, iuOK, ctNone,\
      "Use \"'\" (ASCII 39) instead  of \"´\" (ASCII 180).")\
  MSG(emUserWarn, etWarn, iuOK, ctNone,\
-     "User-specified pattern found.")\
+     "User-specified pattern found: %s.")\
  MSG(emNotIntended, etWarn, iuNotSys, ctNone,\
      "This command might not be intended.")\
  MSG(emComment, etMsg, iuNotSys, ctNone,\
@@ -122,7 +122,9 @@
  MSG(emRemPSSpace, etWarn, iuOK, ctOutMath,\
      "You should remove spaces in front of `%s'") \
  MSG(emNoCharMean, etWarn, iuOK, ctNone,\
-     "`%s' is normally not followed by `%c'.")
+     "`%s' is normally not followed by `%c'.")\
+ MSG(emUserWarnRegex, etWarn, iuOK, ctNone,\
+     "User Regex: %.*s.")
 
 #undef MSG
 #define MSG(num, type, inuse, ctxt, text) num,
@@ -185,6 +187,7 @@ extern struct ErrMsg LaTeXMsgs[emMaxFault + 1];
 
 extern char *OutputFormat;
 
+int CheckSilentRegex(void);
 int FindErr(const char *, const unsigned long);
 void PrintError(const char *, const char *, const long, const long,
                 const long, const enum ErrNum, ...);

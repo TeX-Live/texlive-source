@@ -1,3 +1,12 @@
+2012-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported chktex-1.7.1 source tree from:
+	  http://download.savannah.gnu.org/
+	* patch-06-extern(removed): Now distributed.
+	* patch-07-kpathsea: Adapted.
+	* patch-08-stpcpy (new): Not everyone has stpcpy().
+	* patch-09-test-output (new): Our Test.out.
+
 2012-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-07-kpathsea (new): With -DKPATHSEA now using kpathsea.

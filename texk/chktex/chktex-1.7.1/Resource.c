@@ -41,7 +41,7 @@ RESOURCE_INFO
 #undef LCASE
 #undef LNEMPTY
 #undef LIST
-    struct KeyWord
+struct KeyWord
 {
     const char *Name;
     const char **String;        /* Keyword = item */
@@ -79,15 +79,15 @@ struct KeyWord Keys[] = {
 
 #undef BIT
 #define BIT BITDEF1
-TOKENBITS(Token_BIT)
+TOKENBITS(Token_BIT);
 #undef BIT
 #define BIT BITDEF2
-    TOKENBITS(Token)
-     static enum Token Expect;
-     static unsigned long RsrcLine;
+TOKENBITS(Token);
+static enum Token Expect;
+static unsigned long RsrcLine;
 
-     static enum Token ReadWord(char *, FILE *);
-     static char MapChars(char **String);
+static enum Token ReadWord(char *, FILE *);
+static char MapChars(char **String);
 
 
 
@@ -104,7 +104,7 @@ TOKENBITS(Token_BIT)
  * Returns whether the attempt was a successful one.
  */
 
-     int ReadRC(const char *Filename)
+int ReadRC(const char *Filename)
 {
     const char *String = NULL;
     int Success = FALSE;

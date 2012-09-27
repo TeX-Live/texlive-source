@@ -237,41 +237,54 @@ DEBUGBITS(Debug_BIT)
  MSG(pmNoOpenDir,  etWarn, TRUE, 0, \
      "Could not open the directory `%s'.") \
  MSG(pmNoDebugFlag, etWarn, TRUE, 0, \
-     "This version of doesn't support the -d flag. Please recompile.")
+     "This version of doesn't support the -d flag. Please recompile.")\
+ MSG(pmNoRegexMem,  etErr,  TRUE, 0,\
+     "Unable to allocate regular expressions - no memory?\n")\
+ MSG(pmRegexCompileFailed,  etWarn,  TRUE, 0,\
+     "Compilation of regular expression %s failed with error %s.\n")\
+ MSG(pmRegexMatchingError,  etErr,  TRUE, 0,\
+     "PCRE matching error %d.\n") \
+ MSG(pmSuppTooHigh,  etWarn,  TRUE, 0,\
+     "Warning %d is numbered too high (max %d) and won't be suppressed.\n") \
+MSG(pmLongLines,  etWarn,  TRUE, 0,\
+     "ChkTeX does not handle lines over %d bytes correctly.  Some errors and line numbers may be wrong in this file.")
+
 #undef MSG
 #define MSG(num, type, inuse, ctxt, text) num,
-     enum PrgErrNum
-     {
-         PRGMSGS pmMaxFault
-     };
+enum PrgErrNum
+{
+    PRGMSGS pmMaxFault
+};
 #undef MSG
 
-     extern struct ErrMsg PrgMsgs[pmMaxFault + 1];
+extern struct ErrMsg PrgMsgs[pmMaxFault + 1];
 
-     struct ErrInfo
-     {
-         char *Data;
-         const char *LineBuf;
-         const char *File;
-         unsigned long Line, Column, ErrLen;
-         enum
-         {
-             efNone = 0x00,
-             efNoItal = 0x01,
-             efItal = 0x02
-         } Flags;
-     };
+struct ErrInfo
+{
+    char *Data;
+    const char *LineBuf;
+    const char *File;
+    unsigned long Line, Column, ErrLen;
+    enum
+    {
+        efNone   = 0x00,
+        efNoItal = 0x01,
+        efItal   = 0x02,
+        efNoMath = 0x04,
+        efMath   = 0x08
+    } Flags;
+};
 
-     extern char *ReadBuffer;
-     extern char *CmdBuffer;
-     extern char *TmpBuffer;
+extern char *ReadBuffer;
+extern char *CmdBuffer;
+extern char *TmpBuffer;
 
-     extern const char BrOrder[NUMBRACKETS + 1];
+extern const char BrOrder[NUMBRACKETS + 1];
 
-     extern unsigned long Brackets[NUMBRACKETS];
+extern unsigned long Brackets[NUMBRACKETS];
 
 
-     extern FILE *OutputFile, *InputFile;
+extern FILE *OutputFile, *InputFile;
 
 #define OPTION_DEFAULTS \
   DEF(int, GlobalRC,    TRUE) \
@@ -287,37 +300,41 @@ DEBUGBITS(Debug_BIT)
   DEF(char *, OutputFormat, VerbNormal) \
   DEF(char *, PipeOutputFormat, NULL) \
   DEF(const char *, Delimit, ":") \
-  DEF(long,  DebugLevel, 0)
+  DEF(long,  DebugLevel, 0) \
+  DEF(int,  NoLineSupp, FALSE)
 
 #define STATE_VARS \
   DEF(enum ItState, ItState, itOff) /* Are we doing italics? */ \
   DEF(int, AtLetter, FALSE) /* Whether `@' is a letter or not. */ \
   DEF(int, InHeader, TRUE)  /* Whether we're in the header */ \
   DEF(int, VerbMode, FALSE) /* Whether we're in complete ignore-mode */ \
-  DEF(long, MathMode, 0)     /* Whether we're in math mode or not */ \
-  DEF(const char *, VerbStr, "")   /* String we'll terminate verbmode upon */ \
+  DEF(long, MathMode, 0)    /* Whether we're in math mode or not */ \
+  DEF(const char *, VerbStr, "")     /* String we'll terminate verbmode upon */ \
   DEF(unsigned long, ErrPrint, 0)    /* # errors printed */ \
   DEF(unsigned long, WarnPrint, 0)   /* # warnings printed */ \
-  DEF(unsigned long, UserSupp, 0)    /* # user suppressed warnings */
+  DEF(unsigned long, UserSupp, 0)    /* # user suppressed warnings */ \
+  DEF(unsigned long, LineSupp, 0)    /* # warnings suppressed on a single line */ \
+  DEF(unsigned long long, FileSuppressions, 0)     /* # warnings suppressed in a file */ \
+  DEF(unsigned long long, UserFileSuppressions, 0) /* # User warnings suppressed in a file */
 
 #define DEF(type, name, value) extern type name;
-     OPTION_DEFAULTS STATE_VARS
+OPTION_DEFAULTS STATE_VARS
 #undef DEF
-     extern struct Stack CharStack, InputStack, EnvStack;
+extern struct Stack CharStack, InputStack, EnvStack;
 
-     enum Quote
-     {
-         quLogic,
-         quTrad
-     };
+enum Quote
+{
+    quLogic,
+    quTrad
+};
 
-     extern enum Quote Quote;
-     extern int StdInTTY, StdOutTTY, UsingStdIn;
+extern enum Quote Quote;
+extern int StdInTTY, StdOutTTY, UsingStdIn;
 
-     int main(int argc, char **argv);
-     void PrintPrgErr(enum PrgErrNum, ...);
-     void ErrPrintf(const char *fmt, ...);
+int main(int argc, char **argv);
+void PrintPrgErr(enum PrgErrNum, ...);
+void ErrPrintf(const char *fmt, ...);
 
-     extern char *PrgName;
+extern char *PrgName;
 
 #endif /* CHKTEX_H */

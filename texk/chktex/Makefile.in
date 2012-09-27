@@ -53,6 +53,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = chktex$(EXEEXT)
+@MINGW32_TRUE@am__append_1 = \
+@MINGW32_TRUE@	regex/regex.c \
+@MINGW32_TRUE@	regex/regex.h
+
 DIST_COMMON = $(am__configure_deps) $(dist_pdfdoc_DATA) \
 	$(srcdir)/../../texk/am/script_links.am $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -62,18 +66,16 @@ DIST_COMMON = $(am__configure_deps) $(dist_pdfdoc_DATA) \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing \
-	$(top_srcdir)/chktex-1.6.6/ChkTeX.tex.in \
-	$(top_srcdir)/chktex-1.6.6/deweb.in $(top_srcdir)/configure \
+	$(top_srcdir)/chktex-1.7.1/deweb.in $(top_srcdir)/configure \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
-@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_1 = $(wrappers)
+@WIN32_TRUE@@WIN32_WRAP_TRUE@am__append_2 = $(wrappers)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-progs.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
@@ -88,15 +90,24 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = ChkTeX.tmp deweb.pl
+CONFIG_CLEAN_FILES = deweb.pl
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(texmfdir)" \
 	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(configdir)" \
 	"$(DESTDIR)$(pdfdocdir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__chktex_SOURCES_DIST = $(CHKTEX_TREE)/ChkTeX.c \
+	$(CHKTEX_TREE)/ChkTeX.h $(CHKTEX_TREE)/FindErrs.c \
+	$(CHKTEX_TREE)/FindErrs.h $(CHKTEX_TREE)/OpSys.c \
+	$(CHKTEX_TREE)/OpSys.h $(CHKTEX_TREE)/Resource.c \
+	$(CHKTEX_TREE)/Resource.h $(CHKTEX_TREE)/Utility.c \
+	$(CHKTEX_TREE)/Utility.h $(CHKTEX_TREE)/types.h regex/regex.c \
+	regex/regex.h
+@MINGW32_TRUE@am__objects_1 = regex.$(OBJEXT)
 am_chktex_OBJECTS = ChkTeX.$(OBJEXT) FindErrs.$(OBJEXT) \
-	OpSys.$(OBJEXT) Resource.$(OBJEXT) Utility.$(OBJEXT)
+	OpSys.$(OBJEXT) Resource.$(OBJEXT) Utility.$(OBJEXT) \
+	$(am__objects_1)
 chktex_OBJECTS = $(am_chktex_OBJECTS)
 chktex_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
@@ -143,8 +154,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(chktex_SOURCES)
-DIST_SOURCES = $(chktex_SOURCES)
+SOURCES = $(chktex_SOURCES) $(EXTRA_chktex_SOURCES)
+DIST_SOURCES = $(am__chktex_SOURCES_DIST) $(EXTRA_chktex_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -240,8 +251,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PDFLATEX = @PDFLATEX@
-PDF_DEPEND = @PDF_DEPEND@
 PERL5 = @PERL5@
 RANLIB = @RANLIB@
 SED = @SED@
@@ -309,23 +318,23 @@ top_srcdir = @top_srcdir@
 #
 #************************************************************************
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES \
-	../../build-aux/relpath chktex.test
-INCLUDES = $(KPATHSEA_INCLUDES)
+EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES regex/COPYING.LIB \
+	regex/README ../../build-aux/relpath $(TESTS)
+INCLUDES = $(REGEX_INCLUDES) $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
-chktex_SOURCES = \
-	$(CHKTEX_TREE)/ChkTeX.c \
-	$(CHKTEX_TREE)/ChkTeX.h \
-	$(CHKTEX_TREE)/FindErrs.c \
-	$(CHKTEX_TREE)/FindErrs.h \
-	$(CHKTEX_TREE)/OpSys.c \
-	$(CHKTEX_TREE)/OpSys.h \
-	$(CHKTEX_TREE)/Resource.c \
-	$(CHKTEX_TREE)/Resource.h \
-	$(CHKTEX_TREE)/Utility.c \
-	$(CHKTEX_TREE)/Utility.h \
-	$(CHKTEX_TREE)/types.h
+chktex_SOURCES = $(CHKTEX_TREE)/ChkTeX.c $(CHKTEX_TREE)/ChkTeX.h \
+	$(CHKTEX_TREE)/FindErrs.c $(CHKTEX_TREE)/FindErrs.h \
+	$(CHKTEX_TREE)/OpSys.c $(CHKTEX_TREE)/OpSys.h \
+	$(CHKTEX_TREE)/Resource.c $(CHKTEX_TREE)/Resource.h \
+	$(CHKTEX_TREE)/Utility.c $(CHKTEX_TREE)/Utility.h \
+	$(CHKTEX_TREE)/types.h $(am__append_1)
+@MINGW32_TRUE@REGEX_INCLUDES = -I$(srcdir)/regex
+EXTRA_chktex_SOURCES = \
+	regex/regcomp.c \
+	regex/regex_internal.c \
+	regex/regex_internal.h \
+	regex/regexec.c
 
 LDADD = $(KPATHSEA_LIBS)
 man_MANS = \
@@ -333,10 +342,12 @@ man_MANS = \
 	$(CHKTEX_TREE)/chkweb.1 \
 	$(CHKTEX_TREE)/deweb.1
 
+
+# scripts
 perl_scripts = deweb
 sh_scripts = chkweb
 scriptsdir = texmf/scripts/chktex
-nodist_bin_SCRIPTS = $(am__append_1)
+nodist_bin_SCRIPTS = $(am__append_2)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@wrappers = $(all_scripts:=.exe)
 @WIN32_TRUE@@WIN32_WRAP_TRUE@runscript = $(top_srcdir)/../../texk/texlive/w32_wrapper/runscript.exe
@@ -409,9 +420,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-ChkTeX.tmp: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.6/ChkTeX.tex.in
-	cd $(top_builddir) && $(SHELL) ./config.status $@
-deweb.pl: $(top_builddir)/config.status $(top_srcdir)/chktex-1.6.6/deweb.in
+deweb.pl: $(top_builddir)/config.status $(top_srcdir)/chktex-1.7.1/deweb.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
@@ -579,6 +588,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OpSys.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Resource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Utility.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regcomp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regex_internal.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regexec.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -670,6 +683,62 @@ Utility.obj: $(CHKTEX_TREE)/Utility.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(CHKTEX_TREE)/Utility.c' object='Utility.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Utility.obj `if test -f '$(CHKTEX_TREE)/Utility.c'; then $(CYGPATH_W) '$(CHKTEX_TREE)/Utility.c'; else $(CYGPATH_W) '$(srcdir)/$(CHKTEX_TREE)/Utility.c'; fi`
+
+regex.o: regex/regex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex.o -MD -MP -MF $(DEPDIR)/regex.Tpo -c -o regex.o `test -f 'regex/regex.c' || echo '$(srcdir)/'`regex/regex.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regex.Tpo $(DEPDIR)/regex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regex.c' object='regex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex.o `test -f 'regex/regex.c' || echo '$(srcdir)/'`regex/regex.c
+
+regex.obj: regex/regex.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex.obj -MD -MP -MF $(DEPDIR)/regex.Tpo -c -o regex.obj `if test -f 'regex/regex.c'; then $(CYGPATH_W) 'regex/regex.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regex.Tpo $(DEPDIR)/regex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regex.c' object='regex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex.obj `if test -f 'regex/regex.c'; then $(CYGPATH_W) 'regex/regex.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex.c'; fi`
+
+regcomp.o: regex/regcomp.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regcomp.o -MD -MP -MF $(DEPDIR)/regcomp.Tpo -c -o regcomp.o `test -f 'regex/regcomp.c' || echo '$(srcdir)/'`regex/regcomp.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regcomp.Tpo $(DEPDIR)/regcomp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regcomp.c' object='regcomp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regcomp.o `test -f 'regex/regcomp.c' || echo '$(srcdir)/'`regex/regcomp.c
+
+regcomp.obj: regex/regcomp.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regcomp.obj -MD -MP -MF $(DEPDIR)/regcomp.Tpo -c -o regcomp.obj `if test -f 'regex/regcomp.c'; then $(CYGPATH_W) 'regex/regcomp.c'; else $(CYGPATH_W) '$(srcdir)/regex/regcomp.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regcomp.Tpo $(DEPDIR)/regcomp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regcomp.c' object='regcomp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regcomp.obj `if test -f 'regex/regcomp.c'; then $(CYGPATH_W) 'regex/regcomp.c'; else $(CYGPATH_W) '$(srcdir)/regex/regcomp.c'; fi`
+
+regex_internal.o: regex/regex_internal.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex_internal.o -MD -MP -MF $(DEPDIR)/regex_internal.Tpo -c -o regex_internal.o `test -f 'regex/regex_internal.c' || echo '$(srcdir)/'`regex/regex_internal.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regex_internal.Tpo $(DEPDIR)/regex_internal.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regex_internal.c' object='regex_internal.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex_internal.o `test -f 'regex/regex_internal.c' || echo '$(srcdir)/'`regex/regex_internal.c
+
+regex_internal.obj: regex/regex_internal.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regex_internal.obj -MD -MP -MF $(DEPDIR)/regex_internal.Tpo -c -o regex_internal.obj `if test -f 'regex/regex_internal.c'; then $(CYGPATH_W) 'regex/regex_internal.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex_internal.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regex_internal.Tpo $(DEPDIR)/regex_internal.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regex_internal.c' object='regex_internal.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regex_internal.obj `if test -f 'regex/regex_internal.c'; then $(CYGPATH_W) 'regex/regex_internal.c'; else $(CYGPATH_W) '$(srcdir)/regex/regex_internal.c'; fi`
+
+regexec.o: regex/regexec.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regexec.o -MD -MP -MF $(DEPDIR)/regexec.Tpo -c -o regexec.o `test -f 'regex/regexec.c' || echo '$(srcdir)/'`regex/regexec.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regexec.Tpo $(DEPDIR)/regexec.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regexec.c' object='regexec.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regexec.o `test -f 'regex/regexec.c' || echo '$(srcdir)/'`regex/regexec.c
+
+regexec.obj: regex/regexec.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT regexec.obj -MD -MP -MF $(DEPDIR)/regexec.Tpo -c -o regexec.obj `if test -f 'regex/regexec.c'; then $(CYGPATH_W) 'regex/regexec.c'; else $(CYGPATH_W) '$(srcdir)/regex/regexec.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/regexec.Tpo $(DEPDIR)/regexec.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='regex/regexec.c' object='regexec.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o regexec.obj `if test -f 'regex/regexec.c'; then $(CYGPATH_W) 'regex/regexec.c'; else $(CYGPATH_W) '$(srcdir)/regex/regexec.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

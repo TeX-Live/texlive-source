@@ -22,9 +22,6 @@ AC_CONFIG_MACRO_DIR([../../m4])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([chktex])
 
-dnl Checks for programs.
-KPSE_CHECK_PDFLATEX
-
 dnl No termlib/termcap/ncurses library for TeX Live
 
 dnl Checks for header files.
@@ -34,14 +31,15 @@ dnl Checks for library functions.
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([access closedir fileno isatty opendir readdir stat strcasecmp strdup strlwr strtol])
 
-dnl Rebuild ChkTeX.pdf if required and maintainer-mode is enabled.
-test "x$enable_maintainer_mode" = xyes && PDF_DEPEND=ChkTeX.tex
-AC_SUBST([PDF_DEPEND])
-
 AC_CONFIG_HEADERS([config.h])
+
+dnl For TeX Live we always use Posix extended regular expressions
 AC_DEFINE([TEX_LIVE], 1, [Define to 1 for a TeX Live build.])
+AC_DEFINE([HAVE_PCRE], 0, [Whether PCRE can be used for user warnings.])
+AC_DEFINE([HAVE_POSIX_ERE], 1, [Whether POSIX ERE can be used for user warnings.])
 
 KPSE_CHECK_WIN32
+AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([WIN32_WRAP],
                [test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe])
@@ -52,7 +50,6 @@ AC_SUBST([PERL5], ['/usr/bin/env perl'])
 KPSE_KPATHSEA_FLAGS
 
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([ChkTeX.tmp:chktex-]chktex_version[/ChkTeX.tex.in])
 AC_CONFIG_FILES([deweb.pl:chktex-]chktex_version[/deweb.in], [chmod +x deweb.pl])
 
 AC_OUTPUT

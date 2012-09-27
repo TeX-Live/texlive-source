@@ -1,5 +1,28 @@
-Development of ChkTeX is now in a maintainance mode. All versions
-after 1.6 are essentially bug fixes.
+Development of ChkTeX is now in a maintainance mode.  All versions
+1.6.x are essentially bug fixes.  Version 1.7 added some new features.
+
+1.7.1 (2012-08-22), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Improvements for TeX Live and CTAN
+  * Fixed bug when checking for interword spacing
+  * Added warning when a file has lines that are too long which can cause problems
+  * Added ability to suppress user regular expression warnings by "naming" them
+  * Added ability to suppress warnings for the rest of the file
+  * Allow using PCRE or POSIX ERE or neither (at configure time).
+      Regular expressions can be marked as PCRE or POSIX only.
+  * Allow () to specify an optional argument in WipeArg to support \cmidrule[](){}
+  * Allow regular expressions for Silent keyword, specified in [] for "case insensitive"
+  * Added warning about \hline and vertical rules in tabular environments
+  * I changed user warnings to be post WipeArg (like they were pre
+      1.7.0).  I had changed them in 1.7.0 to be pre WipeArg so that I
+      could match things like \label{...}, but this caused many false
+      positives by matching in comments, etc.
+
+1.7.0 (2012-05-28), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Added support for user defined regular expression based warnings
+  * Added support for macros like \ensuremath and \text
+  * Added support for suppressing messages on a single line
 
 1.6.6 (2012-04-07), released by Ivan Andrus <darthandrus@gmail.com>
 

@@ -703,6 +703,7 @@ int PushFile(const char *Name, FILE * fh, struct Stack *stack)
 
 char *FGetsStk(char *Dest, unsigned long len, struct Stack *stack)
 {
+    static short HasSeenLong = 0;
     struct FileNode *fn;
     char *Retval = NULL;
 
@@ -714,13 +715,19 @@ char *FGetsStk(char *Dest, unsigned long len, struct Stack *stack)
             if (Retval) {
                 if (Retval[strlen(Retval)-1] == '\n')
                     fn->Line++;
+                /* We only want the long lines warning once per file */
+                else if (!HasSeenLong)
+                {
+                    PrintPrgErr(pmLongLines, BUFSIZ);
+                    HasSeenLong = 1;
+                }
                 break;
             }
 
             fn = StkPop(stack);
             fclose(fn->fh);
             free(fn);
-
+            HasSeenLong = 0;
         }
         while (!Retval && (fn = StkTop(stack)));
     }

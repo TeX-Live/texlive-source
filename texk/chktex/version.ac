@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current chktex version
-m4_define([chktex_version], [1.6.6])
+m4_define([chktex_version], [1.7.1])

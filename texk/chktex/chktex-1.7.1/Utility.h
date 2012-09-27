@@ -95,6 +95,12 @@ struct FileNode
 /* Rotates x n bits right (should be an int, long, etc.) */
 #define ROTATER(x,n) ((x>>n) | (x<<((CHAR_BIT*sizeof(x)) - n)))
 
+/* Subtract 1 because sizeof includes the null terminator.
+ * WARNING: To use this on a variable, the type should be char[]
+ * rather than char*, since for some versions of gcc these give
+ * different values. */
+#define STRLEN(x)  (sizeof(x)/sizeof(x[0]) - 1)
+
 int fexists(const char *Filename);
 
 void *sfmemset(void *to, int c, long n);

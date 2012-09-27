@@ -96,10 +96,10 @@
 \section{Introduction}
 
 This program has been written in frustration because some constructs in
-\LaTeX\ are sometimes non-intuitive, and easy to forget. It is 
+\LaTeX\ are sometimes non-intuitive, and easy to forget. It is
 \emph{not} a replacement for the built-in checker in \LaTeX\@; however it
 catches some typographic errors \LaTeX\ oversees. In other words, it
-is Lint for \LaTeX. Filters are also provided for checking the 
+is Lint for \LaTeX. Filters are also provided for checking the
 \LaTeX\ parts of CWEB documents.
 
 It is written in ANSI C and compiles silently under GCC using
@@ -109,8 +109,8 @@ Full source included.
 
 The program also supports output formats suitable for further
 processing by editors or other programs, making errors easy to cycle through.
-Software is provided for beautifully interfacing against the 
-AUC-\TeX\ Emacs mode, CygnusED, GoldEd and various Amiga message browsers.
+Software is provided for beautifully interfacing with the
+AUC\TeX\ Emacs mode.
 
 The program itself does not have any machine requirements; However compiling
 for other platforms has not been done for a long time now so the code has been
@@ -163,6 +163,7 @@ and configurations.
         available.
       \item Space in front of footnotes.
       \item Bogus characters following commands.
+      \item Ability to suppress warnings on a single line.
       \end{itemize}
 %latex
     \end{flushleft}
@@ -182,7 +183,7 @@ and configurations.
 \item Flexible output handling. Has some predefined formats and lets
   the user specify his own format.  Uses a \Cmd{printf()} similar
   syntax. \Cmd{lacheck} compatible mode included for interfacing with
-  the AUC-\TeX\ Emacs mode.
+  the AUC\TeX\ Emacs mode.
 \item Written in ANSI C\@. \Cmd{configure} script included for easy
   setup and installation on UNIX systems.
 \end{itemize}
@@ -225,8 +226,8 @@ along   with  this  program;  if  not,  write  to:
 
 \section{Availability}
 
-This program will be uploaded to CTAN\@; thus it can be
-found at any mirrors of those.
+This program is on CTAN\@; thus it can be found at any mirrors of those.
+It is also part of TeX Live 2011.
 
 \section{Installation}
 
@@ -237,7 +238,7 @@ A few words on installation on various platforms:
   \Cmd{make~install}. To make sure everything proceeded correctly,
   type \Cmd{make~check}.  If you don't have superuser privileges and thus
   access to the default system areas, you should type
-  \Cmd{configure~--help} to help you set up correct paths.
+  \Cmd{configure~-{}-help} to help you set up correct paths.
 
   If you haven't installed any software like this before, that is
   distributed in source form, here are some guidelines to help you
@@ -260,13 +261,24 @@ A few words on installation on various platforms:
   \item Now, we can configure the program.  There are some
     configuration options you should know about:
     \begin{description}
-    \item[\Cmd{--enable-emacs-hack}:] Install a small file which
-      adds \chktex\ to the command menu of AUC-\TeX. This is to be
+    \item[\Cmd{-{}-enable-pcre}:] Allows using PCRE (perl compatible
+      regular expressions) for use defined warnings.  The default is
+      to use PCRE if it is installed on your system as determined by
+      \Cmd{pcre-config}.  You can use \Cmd{-{}-disable-pcre} if you
+      plan to distribute this for systems in which you cannot ensure
+      PCRE will be installed.
+
+      User defined regular expressions are defined using
+      \texttt{UserWarnRegex} in the \rsrc\ file.  See warning~44 for
+      more information.
+
+    \item[\Cmd{-{}-enable-emacs-hack}:] Install a small file which
+      adds \chktex\ to the command menu of AUC\TeX. This is to be
       considered as a hack, and may break in future versions of
-      AUC-\TeX. It works fine under AUC-\TeX\ v2.9, though.
+      AUC\TeX. It works fine under AUC\TeX\ v2.9, though.
 
       This option needs the path of your elisp directory as argument,
-      e.g. \Cmd{--enable-emacs-hack=/home/myself/elisp} or similar.
+      e.g. \Cmd{-{}-enable-emacs-hack=/home/myself/elisp} or similar.
 
       You'll also have to add the following line to your \Cmd{.emacs}
       file:
@@ -274,10 +286,10 @@ A few words on installation on various platforms:
 (require 'chktex)
 \end{verbatim}
       You can now access \chktex\ from the \Cmd{Command} menu in
-      AUC-\TeX. To cycle through the messages, type \verb#C-x `#.
+      AUC\TeX. To cycle through the messages, type \verb#C-x `#.
 
-    \item[\Cmd{--enable-lacheck-replace}] This enables a quick
-      hack for making the AUC-\TeX\ Emacs mode use \chktex\ instead of
+    \item[\Cmd{-{}-enable-lacheck-replace}] This enables a quick
+      hack for making the AUC\TeX\ Emacs mode use \chktex\ instead of
       lacheck. This is done by installing a stub script which
       ``overrides'' the original lacheck executable.
 
@@ -285,10 +297,10 @@ A few words on installation on various platforms:
       significantly less elegant --- in computing terms, this is the
       ``brute force'' approach.
 
-    \item[\Cmd{--enable-debug-info}] \chktex\ has an ability to spit
+    \item[\Cmd{-{}-enable-debug-info}] \chktex\ has an ability to spit
       out various diagnostic messages using the \Cmd{-d} flag. This
       behaviour is on by default. By adding the flag
-      \Cmd{--disable-debug-info} to the commandline, this will not be
+      \Cmd{-{}-disable-debug-info} to the commandline, this will not be
       compiled in.
 
       This may be useful if you're running short of disk space (the
@@ -345,7 +357,7 @@ A few words on installation on various platforms:
   file, and edit it appropiately, for more
   comfort.  This should not be necessary, though, at least not the
   first time.
-  
+
   Finally, you may now compile and link all \verb@.c@ files.  Do not
   forget to define \Cmd{HAVE\_CONFIG\_H} to 1 (on the command-line,
   for instance).  If the \Cmd{config.h} you wish to use has another
@@ -412,17 +424,17 @@ options:
 \item[Misc.\ options:] General options which aren't related to some
   specific subpart of \chktex.
   \begin{description}
-  \item[\texttt{-h [--help]}] Gives you a command summary.
-  \item[\texttt{-i [--license]}] Shows distribution information.
-  \item[\texttt{-l [--localrc]}] Reads a resource-file formatted
+  \item[\texttt{-h [-{}-help]}] Gives you a command summary.
+  \item[\texttt{-i [-{}-license]}] Shows distribution information.
+  \item[\texttt{-l [-{}-localrc]}] Reads a resource-file formatted
     as the global resource-file \rsrc, in addition to the global
     resource-file. This option needs the name of the resource-file
     as a parameter. See also \texttt{-g}.
-  \item[\texttt{-r [--reset]}] This will reset all settings to their
+  \item[\texttt{-r [-{}-reset]}] This will reset all settings to their
     defaults. This may be useful if you use the \texttt{CMDLINE}
     directive in your \rsrc\ file, and wish to do something
     unusual.
-  \item[\texttt{-d [--debug]}] Needs a numeric argument; a bitmask
+  \item[\texttt{-d [-{}-debug]}] Needs a numeric argument; a bitmask
     telling what to output.  The values below may be added in order
     to output multiple debugging info.
 
@@ -439,27 +451,30 @@ options:
 
     It is possible to install versions of \chktex\ that ignore this
     flag; this means that it is not certain that this flag works.
-  \item[\texttt{-W [--version]}] Displays version information, and exits.
+  \item[\texttt{-W [-{}-version]}] Displays version information, and exits.
   \end{description}
 \item[Muting warning messages:] Controls whether and in what form
   error messages will appear. Usually they accept a specific warning
   number (e.g.\ \Cmd{-w2}), but you may also say \Cmd{all} (e.g.\
   \Cmd{-wall}) which does the operation on \emph{all} warnings.
   \begin{description}
-  \item[\texttt{-w [--warnon]}] Makes the message number passed as
+  \item[\texttt{-w [-{}-warnon]}] Makes the message number passed as
     parameter a warning and turns it on.
-  \item[\texttt{-e [--erroron]}] Makes the message number passed as
+  \item[\texttt{-e [-{}-erroron]}] Makes the message number passed as
     parameter an error and turns it on.
-  \item[\texttt{-m [--msgon]}] Makes the message number passed as
+  \item[\texttt{-m [-{}-msgon]}] Makes the message number passed as
     parameter a message and turns it on. Messages are not counted.
-  \item[\texttt{-n [--nowarn]}] Turns the warning/error number passed
+  \item[\texttt{-n [-{}-nowarn]}] Turns the warning/error number passed
     as a parameter off.
+  \item[\texttt{-L [-{}-nolinesupp]}] Turns off suppression of messages
+    on a per line basis.  This is meant to be used to ensure that no new
+    errors have crept into a document while editing.
   \end{description}
 \item[Output control flags:] Determines the appearance and
   destination of the error reports.
   \begin{description}
-  \item[\texttt{-q [--quiet]}] Shuts up about copyright information.
-  \item[\texttt{-o [--output]}] Normally, all errors are piped to \texttt{stdout}.
+  \item[\texttt{-q [-{}-quiet]}] Shuts up about copyright information.
+  \item[\texttt{-o [-{}-output]}] Normally, all errors are piped to \texttt{stdout}.
     Using this option with a parameter, errors will be sent to the
     named file instead. Only information relative to the \LaTeX\ file
     will be sent to that file. Memory problems and similar will as as
@@ -468,7 +483,7 @@ options:
     (\Cmd{foobar.\$cl} under MS-DOS), \Cmd{foobar} being the name of
     the file.  See also \Cmd{-b}.
 
-  \item[\texttt{-v [--verbosity]}] Specifies how much and how you
+  \item[\texttt{-v [-{}-verbosity]}] Specifies how much and how you
     wish the error reports to be displayed. This is specified in the
     \rsrc\ file; we'll list the default values below. If you wish,
     you may thus edit the \rsrc\ file to add or modify new formats.
@@ -514,7 +529,7 @@ File:Line:Column:Warning number:Warning message
       longer time to parse, but much more informative in use.
     \end{description}
 
-  \item[\texttt{-f [--format]}] Specifies the format of the output.
+  \item[\texttt{-f [-{}-format]}] Specifies the format of the output.
     This is done using a format similar to \Cmd{printf()}, where we
     support the specifiers listed below.
 
@@ -554,7 +569,7 @@ File:Line:Column:Warning number:Warning message
     file; read that for seeing how each format is implemented. If
     you find yourself using a particular format often by using the
     -f switch, consider putting it in the \rsrc\ file instead.
-  \item[\texttt{-V [--pipeverb]}] Which entry we'll use in the \rsrc\
+  \item[\texttt{-V [-{}-pipeverb]}] Which entry we'll use in the \rsrc\
     file whenever \texttt{stdout} isn't a terminal.
 
     The default is to use the same mode as specified with the
@@ -569,7 +584,7 @@ File:Line:Column:Warning number:Warning message
 setenv LESS -r
 \end{verbatim}
 
-  \item[\texttt{-p [--pseudoname]}] With this switch, you can provide
+  \item[\texttt{-p [-{}-pseudoname]}] With this switch, you can provide
     the filename which will be used when we report the errors. This
     may be useful in scripts, especially when doing pipes. It is in
     other words similar to C's \verb@#line@ directive.
@@ -578,7 +593,7 @@ setenv LESS -r
     this one in turn \verb@\@\verb@input@ are presented under their original
     names. This seems most logical to me.
 
-  \item[\texttt{-s [--splitchar]}] String to use instead of the
+  \item[\texttt{-s [-{}-splitchar]}] String to use instead of the
     colons when doing \texttt{-v0}; e.g.\ this string will be output
     between the fields.
 
@@ -590,23 +605,23 @@ setenv LESS -r
   any parameter.
 
   \begin{description}
-  \item[\texttt{-b [--backup]}] If you use the \texttt{-o} switch, and the
+  \item[\texttt{-b [-{}-backup]}] If you use the \texttt{-o} switch, and the
     named outputfile exists, it will be renamed to \texttt{filename.bak}.
-  \item[\texttt{-I [--inputfiles]}] Execute \verb@\@\verb@input@
+  \item[\texttt{-I [-{}-inputfiles]}] Execute \verb@\@\verb@input@
     statements; e.g.\ include the file in the input. Our input parsing
     does of course nest; we use an input-stack to keep track of this.
-  \item[\texttt{-H [--headererr]}] Show errors found in front of the
+  \item[\texttt{-H [-{}-headererr]}] Show errors found in front of the
     \verb@\begin{document}@ line. Some people keep \emph{lots} of
     pure \TeX\ code there, which errors can't be detected reliably
     (in other words, we will in most cases just produce a lot of
     garbage).
-  \item[\texttt{-g [--globalrc]}] Read in the global resource file.  This
+  \item[\texttt{-g [-{}-globalrc]}] Read in the global resource file.  This
     switch may be useful together with the \texttt{-l} option.
-  \item[\texttt{-t [--tictoc]}] Display a twirling baton, to show that
+  \item[\texttt{-t [-{}-tictoc]}] Display a twirling baton, to show that
     we're working. \texttt{-v0} does an \texttt{-t0}, too, as it assumes
     that the user then uses the program non-interactively.  This is
     now a no-op.
-  \item[\texttt{-x [--wipeverb]}] Ignore the ``\verb@\verb@'' command
+  \item[\texttt{-x [-{}-wipeverb]}] Ignore the ``\verb@\verb@'' command
     found within the \LaTeX\ file and its argument is completely by
     the checking routines.  This is done by simply overwriting them.
     If you somehow don't like that (for instance, you would like to
@@ -627,16 +642,15 @@ following keycombinations:
 \end{tabular}
 \smallskip
 
-By default, we're using the 1994 version of GNU's \Cmd{getopt()}
-routine.
+By default, we use GNU's \Cmd{getopt()} routine.
 
 \begin{itemize}
 \item Options may be given in any order; the names of the \LaTeX-files
   do not have to be the last arguments. This behaviour may be turned
   off by creating an environment variable named \Cmd{POSIXLY\_CORRECT}.
-\item The special argument \Cmd{--} forces an end of
+\item The special argument \Cmd{-{}-} forces an end of
   option-scanning.
-\item Long-named options begin with \Cmd{--} instead of \Cmd{-}.
+\item Long-named options begin with \Cmd{-{}-} instead of \Cmd{-}.
   Their names may be abbreviated as long as the abbreviation is unique
   or is an exact match for some defined option. If they have an
   argument, it follows the option name in the argument, separated from
@@ -647,11 +661,13 @@ routine.
 
 You should also take a look at the \rsrc\ file. As it is
 self-documenting, you should be able to get the meaning of each
-keyword by simply reading the file. The method for \emph{finding it},
-however, has grown rather complex. An outline is given below.
+keyword by simply reading the file. In fact, since not all options
+are described in this documentation it is necessary that you read
+the \rsrc\ file in order to understand them all. The method for
+\emph{finding it} has grown rather complex. An outline is given below.
 
-If \chktex\ finds multiple files when searching, each and everyone
-will be read in the order specified below. The \Cmd{Keyword = \{ item
+If \chktex\ finds multiple files when searching, each and every one
+will be read in the order specified below. The \Cmd{Keyword = \{ item
   item \dots \}} may thus be necessary to reset previously defined
 lists.
 
@@ -661,7 +677,7 @@ In this list, \Cmd{\$foo} is assumed to be the environment variable
 \begin{enumerate}
 \item First, we'll take a look at the directory which was specified as
   \Cmd{DATADIR} during compilation. On UNIX boxes, this usually
-  evaluates to something similar to 
+  evaluates to something similar to
   \Cmd{/usr/local/share/chktexrc}, under MS-DOS it is set
   to \Cmd{\BS{}emtex\BS{}data\BS{}chktexrc}.
 
@@ -693,15 +709,66 @@ If you for some reason wish to undo what the previous files may have
 done, you may say \Cmd{CmdLine \{ -g0 -r \}} somewhere in the \rsrc\
 file; this will reset all previous settings.
 
+\subsubsection{Per Line and File Suppressions}
+
+There are many cases in which \chktex{} will give a warning about a
+construct which, although it usually indicates a mistake, is
+intentional.  In these cases it can be extremely annoying to have
+this message appear everytime \chktex{} is run.  For this reason you
+can use \LaTeX{} comments to suppress a certain message on a single
+line.  This can be done by adding a (case-insensitive) comment at the
+end of the line of the form
+\begin{center}
+  \verb+% checktex ##+
+\end{center}
+where \verb+##+ is the number of the message to be suppressed.
+For example the line
+\begin{center}
+  \verb+$[0,\infty)$+\\*
+\end{center}
+will produce a warning (number 9) about mismatched \verb+]+ and \verb+)+.
+However the lines
+\begin{center}
+  \verb+$[0,\infty)$ % chktex 9+\\*
+  \verb+$[0,\infty)$ % ChkTeX 9+\\*
+\end{center}
+will not produce such a message.  In this case, message number 17 will
+still appear at the end, stating that the numbers of \verb+]+ and
+\verb+)+ don't match for the entire file.
+
+To suppress two different errors on the same line you will need two
+instances of \verb+chktex+ in the comment.  This format is a little
+cumbersome, but it shouldn't be needed often, and hopefully will help
+avoid accidental suppressions.
+\begin{center}
+  \verb+Jordan--H\"older on $[0,\infty)$ % chktex 8 chktex 9+\\*
+\end{center}
+
+One problem inherent in line-by-line suppressions is that during editing
+another error of the same type may creep into the same line.  Therefore,
+I suggest using the \texttt{-L} or \texttt{-{}-nolinesupp} option to
+disallow line based suppressions once just before the document is finished.
+At that point you should go back over all the warnings and decide if they
+should be fixed.
+
+In addition to line-specific suppressions, you can create a suppression which will be in effect for the remainder of the file.
+This can be used, for example, to turn off warning 18 (about \verb+"+) in a file which uses a package (like \Cmd{babel}) where \verb+"+ is an active character.
+The syntax is nearly the same, namely
+\begin{center}
+  \verb+% checktex-file ##+
+\end{center}
 
 \subsubsection{Hints}
 I've tried to collect some advice that may be useful --- if you have a
 favourite hint, feel free to send it to me!
 
 \begin{itemize}
-\item If you use \Cmd{german.sty}; it may be wise to put \Cmd{-n18} in
+\item If you use \Cmd{german.sty} or several of \Cmd{babel} languages
+  which use \verb+"+ as an active character; it may be wise to put \Cmd{-n18} in
   the \Cmd{CmdLine} entry in the \rsrc\ file. This will probably reduce
-  the amount of false warnings significantly.
+  the amount of false warnings significantly. Alternately, you can put
+  \verb+% checktex-file 18+ in your files which use one of these packages so
+  that other files will still have these checks performed.
 \item Put \Cmd{-v} in the \Cmd{CmdLine} entry of the \rsrc\ file; this
   makes the fancy printing the default.
 \item If you're working on a large project, it may pay off to make a
@@ -715,7 +782,7 @@ favourite hint, feel free to send it to me!
   of your \LaTeX\ file:
 \begin{verbatim}
 % ChkTeX will ignore material within this environment
-\newenvironment{ignore}{}{} 
+\newenvironment{ignore}{}{}
 \end{verbatim}
   In addition, you should add the item \Cmd{ignore} to the \Cmd{VerbEnvir}
   entry in the \rsrc\ file.
@@ -738,14 +805,20 @@ have the first half of their argument wiped if the argument stretches
 over two lines. We will, however, take care not to wipe parenthesis
 in such cases, in order to avoid false warnings.
 
+Long lines are broken up into chunks and handled separately.  The exact
+length is platform dependent, though is guaranteed to be at least 256 bytes.
+The first portions of the line will have line numbers that are 1 less than
+they should be.  Some errors can be missed and some can be added erroneously.
+A warning will be issued if lines are too long.
+
 Before submitting a bug report, please first see whether the problem can be
-solved by editing the \rsrc\ file appropiately.
+solved by editing the \rsrc\ file appropriately.
 
 
 
 \subsection{ChkWEB}
 
-This  shell  script is provided for checking CWEB files.  The template is
+This shell script is provided for checking CWEB files.  The template is
 as follows:
 \begin{verbatim}
 chkweb [options] file1 file2 ...
@@ -753,7 +826,7 @@ chkweb [options] file1 file2 ...
 As you may see from the script, it is only a trivial interface towards
 \texttt{deweb} and \chktex.  It does not support any individual options
 on the command line --- all options found will be passed onto \chktex.
-If \Cmd{--} or a filename is found, the remaining parameters will be
+If \Cmd{-{}-} or a filename is found, the remaining parameters will be
 ignored.
 The  only  real  intelligence  it  features  is  that it will try to append
 \verb@.w@ to filenames it can't find.
@@ -817,6 +890,11 @@ keyword in the \rsrc\ file which controls the discussed warning.
   You tried to terminate a command with a blank space.  Usually, this
   is an error as these are ignored by \LaTeX. In most cases, you would
   like to have a real space there.
+
+  You can also specify regular expressions to match commands which can
+  safely be terminated with a space.  They are specified in in the
+  \rsrc\ file in \texttt{[]}, which in some other cases is used to
+  indicate case-insensitive matching.
 
   \begin{errexam}
     \verb@\LaTeX@\underline{\tt }\verb@is a typesetter.@ \\*
@@ -934,12 +1012,23 @@ keyword in the \rsrc\ file which controls the discussed warning.
     Alphabetic character & \texttt{HyphDash} \\*
   \end{tabular}
 
-  This is more or less correct, according to my references.  Hopefully
-  this check can be even more improved (suggestions?).
+  This is more or less correct, according to my references.  One
+  complication is that most often a hyphen (single dash) is desired
+  between letters, but occasionally an n-dash (double dash) is
+  required.  This is the case for theorems named after two people
+  e.g.\ Jordan--H\"older.  A hyphen would indicate that it was one
+  person with a hyphenated name e.g.\ Gregorio Ricci-Curbastro.
+  In my experience this is rare enough to be dealt with via line
+  based suppressions.  There is still the problem that no warning
+  will be raised for Jordan-H\"older, so care must still be taken.
+
+  Some manuals---particularly American manuals---also suggest
+  \emph{not} adding space around an m-dash (triple dash).
+  Hopefully this check can be improved even more (suggestions?).
 
   \begin{errexam}
     \verb@It wasn't anything @\underline{\tt-}\verb@ just a 2@\underline
-    {\tt---}\verb@3 star@\underline{\tt--}\verb@shots.@ \\*
+    {\tt-{}-{}-}\verb@3 star@\underline{\tt-{}-}\verb@shots.@ \\*
     It wasn't anything - just a 2---3 star--shots. \\*
     \smallskip
     \verb@It wasn't anything --- just a 2--3 star-shots@ \\*
@@ -986,6 +1075,9 @@ keyword in the \rsrc\ file which controls the discussed warning.
   One of the specified abbreviations were found. Unless you have
   previously said \verb@\frenchspacing@, you'll have incorrect
   spacing, which one should avoid if possible.
+
+  You can also specify case-insensitive abbreviations in \texttt{[]}, though
+  only the first letter is actually case-insensitive.
 
   \begin{errexam}
     \verb@This is an example, i.e.@\underline{\tt\ }\verb@an demonstration.@ \\*
@@ -1082,10 +1174,14 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \end{errexam}
 \end{errdesc}
 
-\Keyword{Userwarn}
-\begin{errdesc}{User-specified pattern found.}
-  A substring  you've specified using \texttt{USERWARN} in the \rsrc\ file,
-  has been found.
+\Keyword{UserWarn}
+\begin{errdesc}{User-specified pattern found: \%s.}
+  A substring you've specified using \texttt{UserWarn} in the \rsrc\ file,
+  has been found.  See also warning~44 which allows using regular
+  expressions.  You can also specify case-insensitive versions in
+  \texttt{[]}.
+  % Normally I would use a ref here, but if the numbers change that would be
+  % hugely backwards incompatible.  Also it would require adding special label code.
 \end{errdesc}
 
 \begin{errdesc*}{This command might not be intended.}
@@ -1106,8 +1202,8 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \chktex\ dumps all comments it finds, which in some cases is useful.
   I usually keep all my notes in the comments, and like to review them
   before I ship the final version. For commenting out parts of the
-  document, the \Cmd{comment} environment is better suited.
-
+  document, the \Cmd{comment} environment is better suited. Setting
+  this warning allows you to see notes you have left in comments.
 \end{errdesc*}
 
 
@@ -1133,9 +1229,8 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \rsrc\ file).  Sometimes, this space may cause that the word and the
   index happens on separate pages, if a pagebreak happens just there.
 
-  You might also use this warning to warn you about spaces in front of
-  footnotes; however, the warning text may not be entirely correct
-  then.
+  Warning~42 is similar in that it warns about spaces in front of footnotes.
+  The difference is that the warning text makes more sense for that case.
 
   \begin{errexam}
     \verb@Indexing text@\underline{\tt\ }\verb@\index{text} is fun!@ \\*
@@ -1147,7 +1242,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 \begin{errdesc}{You might wish to put this between a pair of `\{\}'}
 
   This warning is given whenever \chktex\ finds a \Cmd{\^{ }}' or a
-  \Cmd{\_} followed by either two or more numberic digits or two or
+  \Cmd{\_} followed by either two or more numeric digits or two or
   more alphabetic characters.  In most situations, this means that
   you've forgotten some \{\}'s.
 
@@ -1178,7 +1273,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
   Some \LaTeX\ commands will be interpreted by \chktex; however, some
   of them are sensible to errors in the \LaTeX\ source. Most notably,
-  the \verb@\@\verb@input@ command relies on that the input file exists\dots
+  the \verb@\@\verb@input@ command requires that the input file exist\dots
 
 \end{errdesc}
 
@@ -1396,20 +1491,80 @@ keyword in the \rsrc\ file which controls the discussed warning.
   this and similar errors.
 \end{errdesc}
 
+\Keyword{UserWarnRegex}
+\begin{errdesc}{User Regex:\ \%s.}
+  A pattern you've specified using \texttt{UserWarnRegex} in the \rsrc\ file,
+  has been found.  See also warning~20 which allows specification of simple
+  string matching.
+
+  Depending on how \chktex\ was configured, you can use either PCRE regular
+  expressions, POSIX extended regular expressions, or none at all.
+  A warning will be issued if \chktex\ was built without regular expression
+  support, but you try to use one.
+
+  By default the matching portion of the line is printed to help distinguish
+  between user specified regular expressions.  However, if the regular
+  expression begins with a PCRE comment (which has a syntax of
+  \verb+(?#+~\dots~\verb+)+), then that comment will be printed instead.
+  This can be used to remind yourself why you were searching for the problem
+  or how to fix it.  This applies even if POSIX regular expressions are used
+  since \chktex\ itself parses a single initial PCRE-style comment.
+
+  \emph{Note:} If a regular expression (not a comment) starts with
+  \texttt{PCRE:} or \texttt{POSIX:} it will be used only if support for that
+  regular expression engine has been compiled in.  It is primarily meant to
+  make testing easier but, can be used to allow better regular expressions
+  if PCRE is available.  If you want a regular expression that starts with
+  \texttt{PCRE:} or \texttt{POSIX:} then you can enclose one of the
+  characters in brackets like \texttt{[P]CRE:}.
+
+  An example, included in the \rsrc\ file, is given below.  Remember that you
+  have to escape (with~\verb+!+) spaces and \verb+#+ as well as a few other
+  characters.  One should always use \verb+\nmid+ instead of \verb+\not\mid+
+  because the results are much better.
+  \begin{errexam}
+    \verb+\\not! *(\||\\mid)+\\*
+    \verb+User Regex: \not\mid.+\\*
+  \end{errexam}
+  or with an initial comment
+  \begin{errexam}
+    \verb+(?!#Always! use! \nmid)\\not! *(\||\\mid)+\\*
+    \verb+User Regex: Always use \nmid.+
+  \end{errexam}
+
+  You can use \verb+% chktex 44+ to suppress user regular expression
+  warnings on a given line, but this is often undesirable since all such
+  warnings are suppressed this way.  For this reason you can ``name'' user
+  regular expression warnings with negative numbers.  For example
+  \verb+% chktex 4+ will suppress the system warning number 4, but
+  \verb+% chktex -4+ will suppress the user regular expression warning
+  number 4.  Since one might wish to add, remove, or rearrange user warnings
+  in the \rsrc\ file, you must explicitly name particular warnings rather
+  than relying on position in that file.
+
+  In order to name one, include an initial PCRE-style comment with the first
+  characters being a number (positive or negative---the absolute value will
+  be used).  The numbers are limited by the number of bits in a \texttt{long},
+  usually giving 1--63 as possible names.  You can give more than one regular
+  expression the same name, and suppressing that name will suppress all
+  regular expressions with that name.
+
+  Using the example from before, all of the following will be suppressed with
+  \verb+% chktex -4+.  Note that the name \emph{will} be printed as written
+  so that you know which number to suppress.
+  \begin{errexam}
+    \verb+(?!#4:Always! use! \nmid)\\not! *(\||\\mid)+\\*
+    \verb+(?!#-4Always! use! \nmid)\\not! *(\||\\mid)+\\*
+    \verb+(?!#-4! Always! use! \nmid)\\not! *(\||\\mid)+\\*
+  \end{errexam}
+\end{errdesc}
+
 \section{Future plans}
 
 In a somewhat prioritized sequence, this is what I'd like to put into the
 program --- if I have the time.
 
 \begin{itemize}
-\item Do a final fix for maths mode. Currently, \chktex\ doesn't
-  recognize constructions like
-  \verb@$$a+b\text{for $a \leq 0$}$$@, i.e.\ embedded math mode.
-
-\item Support for regular expressions as user patterns. I'll do it at
-  once I get the GNU \Cmd{rx} package up and running (it doesn't
-  produce correct include files).
-
 \item De-linearize the checker. Currently, it works on a line-by-line
   basis, in most respects, at least. I hope to be able to remove this
   barrier; as this will reduce the amount of false warnings
@@ -1475,25 +1630,7 @@ I would like to receive. The following ideas are given:
   appreciated (and included). Look at the \verb@deweb@ script to see
   what I mean.
 
-\item Arexx interfaces for other editors are also welcomed; these
-  should be rather fast to write.  They should to the following:
-  \begin{enumerate}
-  \item Get the filename of the active file.
-  \item If possible, save the file to disk if there has been any
-    changes.
-  \item Call the program \Cmd{ChkTeX.rexx} with the filename as the
-    only parameter.
-  \end{enumerate}
-
-\item If somebody out there actually possesses (and uses) GoldED, it
-  would be nice if they checked whether the ARexx script included
-  actually work.  If not, please send me a fixed copy; perhaps also
-  one which supports point 2 above, too. If it does work, then please
-  tell me so, so I can remove this item.
-
-  I don't have GoldEd in my possession; the script was just modelled
-  after Juergen Zeschky's, (\texttt{<juergen@sokrates.nbg.de>})
-  $\mbox{PGP}\leftrightarrow\mbox{GoldED}$ interface.
+\item Interfaces for other editors are also welcomed.
 
 \item If you update the \rsrc\ file in anyway that is not strictly
   local, I would appreciate to receive your updated version.
@@ -1507,11 +1644,6 @@ Of course, people doing any of this will be mentioned in this document, and
 thus receive eternal glory and appreciation.
 
 \subsection{Caps and stuff}
-
-This program uses the \Cmd{getopt()} routine, as supplied from GNU\@.
-The source included in this distribution has been modified slightly.
-To make the use of C2LOCAL easier, portions which were
-\verb@#ifdef@'ed out, have now been commented out.
 
 Where trademarks have been used, the author is aware of that they
 belong to someone, and has tried to stick to the original caps.
@@ -1588,7 +1720,7 @@ The author wishes to thank the following people (in alphabetical order):
   In addition, he sent me a huge list of 238 common English
   abbreviations, for inclusion in the \rsrc\ file! Together with the
   enhanced abbreviation recognizer, I do now believe most
-  abbreviations should be catched\dots
+  abbreviations should be caught\dots
 
   Finally, he has also given me valuable hints for improving the
   program's outputting routine, and given me lots of suggestions for
@@ -1598,6 +1730,14 @@ The author wishes to thank the following people (in alphabetical order):
   Improved and bug-fixed the MS-DOS port of \chktex\ v1.4, sending me
   ready-to-yank code patches. The original port didn't respect all
   the peculiarities of the MS-DOS file-system, unfortunately.
+
+  \Name{Antonio DiCesare}{dicesare@vodafone.it}
+  He provided many feature requests and bug reports for the 1.7.1
+  version making it a much better release than it would have otherwise
+  been.  He also helped expand several keywords in the \rsrc\ file.
+
+  \Name{Baruch Even}{chktex@ev-en.org}
+  Maintainer of \chktex\ for about a decade.
 
   \Name{Lars Frellesen}{frelle@math-tech.dk} Sent a few bug reports
   regarding the filtering of messages. He has also helped me to
@@ -1676,8 +1816,8 @@ Since the original author is unreachable, the maintainer these days is:
 \begin{samepage}
 %endlatex
   \begin{quote}
-    Baruch Even     \\
-    E-mail: \texttt{<chktex@ev-en.org>}
+    Ivan Andrus     \\
+    E-mail: \texttt{<darthandrus@gmail.com>}
   \end{quote}
 %latex
 \end{samepage}
@@ -1688,3 +1828,9 @@ Have fun.
 
 \end{document}
 
+% Rudimentary support for AUCTeX.
+% The "Make" target is my own.
+% Local Variables:
+% TeX-command-default: "Make"
+% TeX-master: "ChkTeX.tex"
+% End:

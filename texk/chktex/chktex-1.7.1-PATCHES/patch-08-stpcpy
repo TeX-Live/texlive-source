@@ -1,0 +1,17 @@
+diff -ur chktex-1.7.1.orig/FindErrs.c chktex-1.7.1/FindErrs.c
+--- chktex-1.7.1.orig/FindErrs.c	2012-08-08 22:27:57.000000000 +0200
++++ chktex-1.7.1/FindErrs.c	2012-09-27 10:58:01.000000000 +0200
+@@ -33,6 +33,13 @@
+ #include "Utility.h"
+ #include "Resource.h"
+ 
++/* Not everyone has stpcpy() */
++static inline char *
++stpcpy(char *dest, const char *src)
++{
++    return strcpy(dest, src) + strlen(src);
++}
++
+ #if HAVE_PCRE || HAVE_POSIX_ERE
+ 
+ #if HAVE_PCRE

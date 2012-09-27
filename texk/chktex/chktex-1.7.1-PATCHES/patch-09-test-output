@@ -1,0 +1,27 @@
+diff -ur chktex-1.7.1.orig/Test.out chktex-1.7.1/Test.out
+--- chktex-1.7.1.orig/Test.out	2012-08-09 17:11:32.000000000 +0200
++++ chktex-1.7.1/Test.out	2012-09-27 10:56:14.000000000 +0200
+@@ -418,9 +418,9 @@
+ Message 22 in Test.tex: Comment displayed.
+ % Warning 44 -- user regex -- default message  
+ ^
+-Message 44 in Test.tex: User Regex: intro.
++Message 44 in Test.tex: User Regex:  intro..
+ You should always write a good intro.  
+-                               ^^^^^
++                              ^^^^^^^
+ Message 22 in Test.tex: Comment displayed.
+ % Warning 44 -- user regex -- user message  
+ ^
+@@ -457,9 +457,9 @@
+ Message 36 in Test.tex: You should put a space after parenthesis.
+ Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36  
+                        ^
+-Message 44 in Test.tex: User Regex: -1:Capitalize before references.
++Message 44 in Test.tex: User Regex: 1:Capitalize before references.
+ In section~\ref{sec:3} we have a warning.  
+-   ^^^^^^^^^^^^
++  ^^^^^^^^^^^^^
+ Message 22 in Test.tex: Comment displayed.
+ In section~\ref{sec:4} it is suppressed. % chktex -1  
+                                          ^
