@@ -15,6 +15,7 @@
  * ---------------------------------------------------------------------------
  *
  * Modified (butchered) 2006 by Martin Schröder for pdfTeX
+ * Modified 2009-2012 by Peter Breitenlohner for TeX Live
  *
  */
 
@@ -34,21 +35,6 @@ static /**/const char *const rcsid[] = { (const char *)rcsid, "\100(#)" msg }
 #include <stdio.h>
 #include <ctype.h>
 #include <errno.h>
-#ifdef __MINGW32__
-/* In mingw32, the eof() function is part of the !_NO_OLDNAMES section
-   of <io.h>, that is read in automatically via <fcntl.h>. We cannot
-   allow that because web2c/lib/eofeoln.c defines a private,
-   incompatible function named eof().
-   But many of the other things defined via !_NO_OLDNAMES are needed,
-   so #define _NO_OLDNAMES cannot be used. So, temporarily define eof
-   as a macro.
-*/
-#define eof saved_eof
-#include <fcntl.h> /* For O_NONBLOCK */
-#undef eof
-#else
-#include <fcntl.h> /* For O_NONBLOCK */
-#endif
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>

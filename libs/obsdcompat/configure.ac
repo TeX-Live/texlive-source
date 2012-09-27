@@ -18,7 +18,7 @@
 # ---------------------------------------------------------------------------
 #
 # Modified (butchered) 2006 by Martin Schröder for pdfTeX
-# Modified 2009 by Peter Breitenlohner for new TeX Live build system
+# Modified 2009-2012 by Peter Breitenlohner for TeX Live
 
 AC_INIT([OpenBSD-Compat], [Portable], [tex-k@tug.org])
 AC_REVISION($Revision: 1.322.2.6 $)
@@ -322,98 +322,11 @@ AC_CHECK_DECL(strsep,
 #endif
 	])
 	
-# Check for  long long datatypes
-AC_CHECK_TYPES([long long, unsigned long long, long double])
-
 # Check datatype sizes
 AC_CHECK_SIZEOF(char, 1)
 AC_CHECK_SIZEOF(short int, 2)
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long int, 4)
-AC_CHECK_SIZEOF(long long int, 8)
-
-# Sanity check long long for some platforms (AIX)
-if test "x$ac_cv_sizeof_long_long_int" = "x4" ; then
-	ac_cv_sizeof_long_long_int=0
-fi
-
-# compute LLONG_MIN and LLONG_MAX if we don't know them.
-if test -z "$have_llong_max"; then
-	AC_MSG_CHECKING([for max value of long long])
-	AC_RUN_IFELSE(
-		[AC_LANG_SOURCE([[
-#include <stdio.h>
-/* Why is this so damn hard? */
-#ifdef __GNUC__
-# undef __GNUC__
-#endif
-#define __USE_ISOC99
-#include <limits.h>
-#define DATA "conftest.llminmax"
-int main(void) {
-	FILE *f;
-	long long i, llmin, llmax = 0;
-
-	if((f = fopen(DATA,"w")) == NULL)
-		exit(1);
-
-#if defined(LLONG_MIN) && defined(LLONG_MAX)
-	fprintf(stderr, "Using system header for LLONG_MIN and LLONG_MAX\n");
-	llmin = LLONG_MIN;
-	llmax = LLONG_MAX;
-#else
-	fprintf(stderr, "Calculating  LLONG_MIN and LLONG_MAX\n");
-	/* This will work on one's complement and two's complement */
-	for (i = 1; i > llmax; i <<= 1, i++)
-		llmax = i;
-	llmin = llmax + 1LL;	/* wrap */
-#endif
-
-	/* Sanity check */
-	if (llmin + 1 < llmin || llmin - 1 < llmin || llmax + 1 > llmax
-	    || llmax - 1 > llmax) {
-		fprintf(f, "unknown unknown\n");
-		exit(2);
-	}
-
-	if (fprintf(f ,"%lld %lld", llmin, llmax) < 0)
-		exit(3);
-
-	exit(0);
-}
-		]])],
-		[
-			llong_min=`$AWK '{print $1}' conftest.llminmax`
-			llong_max=`$AWK '{print $2}' conftest.llminmax`
-
-			# snprintf on some Tru64s doesn't understand "%lld"
-			case "$host" in
-			alpha-dec-osf*)
-				if test "x$ac_cv_sizeof_long_long_int" = "x8" &&
-				  test "x$llong_max" = "xld"; then
-					llong_min="-9223372036854775808"
-					llong_max="9223372036854775807"
-				fi
-				;;
-			esac
-
-			AC_MSG_RESULT($llong_max)
-			AC_DEFINE_UNQUOTED(LLONG_MAX, [${llong_max}LL],
-			    [max value of long long calculated by configure])
-			AC_MSG_CHECKING([for min value of long long])
-			AC_MSG_RESULT($llong_min)
-			AC_DEFINE_UNQUOTED(LLONG_MIN, [${llong_min}LL],
-			    [min value of long long calculated by configure])
-		],
-		[
-			AC_MSG_RESULT(not found)
-		],
-		[
-			AC_MSG_WARN([cross compiling: not checking])
-		]
-	)
-fi
-
 
 # More checks for data types
 AC_CACHE_CHECK([for u_int type], ac_cv_have_u_int, [
@@ -445,23 +358,6 @@ then
 	])
 fi
 
-AC_CACHE_CHECK([for int64_t type], ac_cv_have_int64_t, [
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <sys/types.h>
-#ifdef HAVE_STDINT_H
-# include <stdint.h>
-#endif
-#include <sys/socket.h>
-#ifdef HAVE_SYS_BITYPES_H
-# include <sys/bitypes.h>
-#endif
-		]], [[ int64_t a; a = 1;]])],[ ac_cv_have_int64_t="yes" ],[ ac_cv_have_int64_t="no" 
-	])
-])
-if test "x$ac_cv_have_int64_t" = "xyes" ; then
-	AC_DEFINE(HAVE_INT64_T, 1, [define if you have int64_t data type])
-fi
-
 AC_CACHE_CHECK([for u_intXX_t types], ac_cv_have_u_intxx_t, [
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ #include <sys/types.h> ]], [[ u_int8_t a; u_int16_t b; u_int32_t c; a = b = c = 1;]])],[ ac_cv_have_u_intxx_t="yes" ],[ ac_cv_have_u_intxx_t="no" 
 	])
@@ -475,24 +371,6 @@ if test -z "$have_u_intxx_t" ; then
     AC_MSG_CHECKING([for u_intXX_t types in sys/socket.h])
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ #include <sys/socket.h> ]], [[ u_int8_t a; u_int16_t b; u_int32_t c; a = b = c = 1;]])],[
 			AC_DEFINE(HAVE_U_INTXX_T)
-			AC_MSG_RESULT(yes)
-		],[ AC_MSG_RESULT(no) 
-	])
-fi
-
-AC_CACHE_CHECK([for u_int64_t types], ac_cv_have_u_int64_t, [
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ #include <sys/types.h> ]], [[ u_int64_t a; a = 1;]])],[ ac_cv_have_u_int64_t="yes" ],[ ac_cv_have_u_int64_t="no" 
-	])
-])
-if test "x$ac_cv_have_u_int64_t" = "xyes" ; then
-	AC_DEFINE(HAVE_U_INT64_T, 1, [define if you have u_int64_t data type])
-	have_u_int64_t=1
-fi
-
-if test -z "$have_u_int64_t" ; then
-    AC_MSG_CHECKING([for u_int64_t type in sys/bitypes.h])
-	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ #include <sys/bitypes.h> ]], [[ u_int64_t a; a = 1]])],[
-			AC_DEFINE(HAVE_U_INT64_T)
 			AC_MSG_RESULT(yes)
 		],[ AC_MSG_RESULT(no) 
 	])

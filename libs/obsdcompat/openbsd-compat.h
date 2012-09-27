@@ -28,7 +28,7 @@
  * ---------------------------------------------------------------------------
  *
  * Modified (butchered) 2006 by Martin Schröder for pdfTeX
- * Modified 2009 by Peter Breitenlohner for new TeX Live build system
+ * Modified 2009-2012 by Peter Breitenlohner for TeX Live
  */
 
 #ifndef _OPENBSD_COMPAT_H
@@ -55,16 +55,6 @@ size_t strlcpy(char *dst, const char *src, size_t siz);
 #ifndef HAVE_STRSEP
 /* see http://www.openbsd.org/cgi-bin/man.cgi?query=strsep */
 char *strsep(char **stringp, const char *delim);
-#endif
-
-#ifndef HAVE_STRTOLL
-/* see http://www.openbsd.org/cgi-bin/man.cgi?query=strtoll */
-long long strtoll(const char *, char **, int);
-#endif
-
-#ifndef HAVE_STRTONUM
-/* see http://www.openbsd.org/cgi-bin/man.cgi?query=strtonum */
-long long strtonum(const char *, long long, long long, const char **);
 #endif
 
 #endif /* _OPENBSD_COMPAT_H */

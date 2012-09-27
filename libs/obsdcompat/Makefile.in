@@ -78,8 +78,7 @@ ARFLAGS = cru
 libopenbsd_compat_a_AR = $(AR) $(ARFLAGS)
 libopenbsd_compat_a_LIBADD =
 am_libopenbsd_compat_a_OBJECTS = strlcat.$(OBJEXT) strlcpy.$(OBJEXT) \
-	strsep.$(OBJEXT) strtoll.$(OBJEXT) strtonum.$(OBJEXT) \
-	strtoul.$(OBJEXT)
+	strsep.$(OBJEXT) strtoul.$(OBJEXT)
 libopenbsd_compat_a_OBJECTS = $(am_libopenbsd_compat_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/obsdcompat
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -229,8 +228,6 @@ libopenbsd_compat_a_SOURCES = \
 	strlcat.c \
 	strlcpy.c \
 	strsep.c \
-	strtoll.c \
-	strtonum.c \
 	strtoul.c
 
 all: all-am
@@ -303,8 +300,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strlcat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strlcpy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strsep.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strtoll.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strtonum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strtoul.Po@am__quote@
 
 .c.o:

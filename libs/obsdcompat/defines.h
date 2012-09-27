@@ -24,7 +24,7 @@
  * ---------------------------------------------------------------------------
  *
  * Modified (butchered) 2006 by Martin Schröder for pdfTeX
- * Modified 2009 by Peter Breitenlohner for new TeX Live build system
+ * Modified 2009-2012 by Peter Breitenlohner for TeX Live
  */
 
 #ifndef _DEFINES_H
@@ -110,26 +110,6 @@ typedef unsigned long  u_int32_t;
 #  endif
 # endif
 #define __BIT_TYPES_DEFINED__
-#endif
-
-/* 64-bit types */
-#ifndef HAVE_INT64_T
-# if (SIZEOF_LONG_INT == 8)
-typedef long int int64_t;
-# else
-#  if (SIZEOF_LONG_LONG_INT == 8)
-typedef long long int int64_t;
-#  endif
-# endif
-#endif
-#ifndef HAVE_U_INT64_T
-# if (SIZEOF_LONG_INT == 8)
-typedef unsigned long int u_int64_t;
-# else
-#  if (SIZEOF_LONG_LONG_INT == 8)
-typedef unsigned long long int u_int64_t;
-#  endif
-# endif
 #endif
 
 #ifndef HAVE_U_CHAR

@@ -24,9 +24,6 @@
 /* Define to 1 if you have the <floatingpoint.h> header file. */
 #undef HAVE_FLOATINGPOINT_H
 
-/* define if you have int64_t data type */
-#undef HAVE_INT64_T
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -38,12 +35,6 @@
 
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
-
-/* Define to 1 if the system has the type `long double'. */
-#undef HAVE_LONG_DOUBLE
-
-/* Define to 1 if the system has the type `long long'. */
-#undef HAVE_LONG_LONG
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -120,9 +111,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if the system has the type `unsigned long long'. */
-#undef HAVE_UNSIGNED_LONG_LONG
-
 /* Define to 1 if you have the <util.h> header file. */
 #undef HAVE_UTIL_H
 
@@ -132,17 +120,8 @@
 /* define if you have u_int data type */
 #undef HAVE_U_INT
 
-/* define if you have u_int64_t data type */
-#undef HAVE_U_INT64_T
-
 /* define if you have u_intxx_t data type */
 #undef HAVE_U_INTXX_T
-
-/* max value of long long calculated by configure */
-#undef LLONG_MAX
-
-/* min value of long long calculated by configure */
-#undef LLONG_MIN
 
 /* Name of package */
 #undef PACKAGE
@@ -173,9 +152,6 @@
 
 /* The size of `long int', as computed by sizeof. */
 #undef SIZEOF_LONG_INT
-
-/* The size of `long long int', as computed by sizeof. */
-#undef SIZEOF_LONG_LONG_INT
 
 /* The size of `short int', as computed by sizeof. */
 #undef SIZEOF_SHORT_INT

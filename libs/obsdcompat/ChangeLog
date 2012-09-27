@@ -1,3 +1,12 @@
+2012-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* strtoll.c, strtonum.c (removed): We don't use these functions.
+	* Makefile.am (libopenbsd_compat_a_SOURCES): Drop these files.
+	* openbsd-compat.h: Drop decarations for strtoll(), strtonum().
+	* includes.h: Drop '#include <fcntl.h>', O_NONBLOCK is unused.
+	* configure.ac: Drop everything for 'long double', 'long long',
+	and 64-bit integers.
+
 2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bsd-snprintf.c (removed): We no longer need [v]snprintf().

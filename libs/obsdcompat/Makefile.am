@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory libs/obsdcompat/
 ##
-## Copyright (C) 2009, 2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -18,7 +18,5 @@ libopenbsd_compat_a_SOURCES = \
 	strlcat.c \
 	strlcpy.c \
 	strsep.c \
-	strtoll.c \
-	strtonum.c \
 	strtoul.c
 
