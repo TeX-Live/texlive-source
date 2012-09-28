@@ -1,3 +1,8 @@
+2012-09-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.h: remove definition of mkdir.
+	* c-proto.h: introduce NO_KPSE_DLL as in getopt.h.
+
 2012-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* c-std.h: Define M_PI if not defined by <math.h> (old MSVC).

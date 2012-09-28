@@ -19,7 +19,7 @@
 #ifndef KPATHSEA_C_PROTO_H
 #define KPATHSEA_C_PROTO_H
 
-#if defined (WIN32) && !defined(__MINGW32__)
+#if defined (WIN32) && !defined (__MINGW32__) && !defined (NO_KPSE_DLL)
 #define KPSE_DLL 1
 #endif /* WIN32 && ! __MINGW32__ */
 

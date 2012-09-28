@@ -82,7 +82,6 @@
 #define link       _link
 #define lseek      _lseek
 #define memicmp    _memicmp
-#define mkdir      _mkdir
 #define mktemp     _mktemp
 #define open       _open
 
