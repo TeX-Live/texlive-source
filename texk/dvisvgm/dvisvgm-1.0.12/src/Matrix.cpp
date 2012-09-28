@@ -26,13 +26,43 @@
 
 using namespace std;
 
-static double deg2rad (double deg) {
+
+
+/** Computes the determinant of a given matrix */
+double det (const Matrix &m) {
+	double sum=0;
+	for (int i=0; i < 3; ++i) {
+		sum += m.values[0][i] * m.values[1][(i+1)%3] * m.values[2][(i+2)%3]
+		     - m.values[0][2-i] * m.values[1][(4-i)%3] * m.values[2][(3-i)%3];
+	}
+	return sum;
+}
+
+
+/** Computes the determinant of the 2x2 submatrix of m where a given 
+ *  row and column were removed. 
+ *  @param[in] m base matrix
+ *  @param[in] row row to remove
+ *  @param[in] col column to remove */
+double det (const Matrix &m, int row, int col) {
+	int c1 = (col+1)%3, c2 = (col+2)%3;
+	int r1 = (row+1)%3, r2 = (row+2)%3;
+	if (c1 > c2) 
+		swap(c1, c2);
+	if (r1 > r2)
+		swap(r1, r2);
+	return m.values[r1][c1] * m.values[r2][c2] 
+	     - m.values[r1][c2] * m.values[r2][c1];
+}
+
+
+static inline double deg2rad (double deg) {
    const double PI = acos(-1.0);
    return PI*deg/180.0;
 }
 
 
-static double round (double x, int n) {
+static inline double round (double x, int n) {
    double pow10 = pow(10.0, n);
    return floor(x*pow10+0.5)/pow10;
 }
@@ -60,9 +90,10 @@ Matrix::Matrix (double v[], unsigned size) {
 /** Creates the matrix ((v0,v1,v2),(v3,v4,v5),(v6,v7,v8)).
  *  If vector v has less than 9 elements, the remaining matrix components will be set to
  *  those of the identity matrix.
- *  @param[in] v array containing the matrix components */
-Matrix::Matrix (const std::vector<double> &v) {
-	set(v);
+ *  @param[in] v array containing the matrix components 
+ *  @param[in] start use vector components start,...,start+8 */
+Matrix::Matrix (const std::vector<double> &v, int start) {
+	set(v, start);
 }
 
 
@@ -81,10 +112,15 @@ Matrix& Matrix::set (double v[], unsigned size) {
 }
 
 
-Matrix& Matrix::set (const vector<double> &v) {
-	unsigned size = min((unsigned)v.size(), 9u);
+/** Set matrix values ((v0,v1,v2),(v3,v4,v5),(v6,v7,v8)).
+ *  If vector v has less than 9 elements, the remaining matrix components will be set to
+ *  those of the identity matrix.
+ *  @param[in] v array containing the matrix components 
+ *  @param[in] start use vector components start,...,start+8 */
+Matrix& Matrix::set (const vector<double> &v, int start) {
+	unsigned size = min((unsigned)v.size()-start, 9u);
 	for (unsigned i=0; i < size; i++)
-		values[i/3][i%3] = v[i];
+		values[i/3][i%3] = v[i+start];
 	for (unsigned i=size; i < 9; i++)
 		values[i/3][i%3] = (i%4 ? 0 : 1);
 	return *this;
@@ -180,6 +216,30 @@ Matrix& Matrix::rmultiply (const Matrix &tm) {
 			for (int k=0; k < 3; k++)
 				ret.values[i][j] += tm.values[i][k] * values[k][j];
 	return *this = ret;
+}
+
+
+Matrix& Matrix::invert () {
+	Matrix ret;
+	if (double denom = det(*this)) {
+		for (int i=0; i < 3; ++i) {
+			for (int j=0; j < 3; ++j) {
+				ret.values[i][j] = det(*this, i, j)/denom;
+				if ((i+j)%2 != 0)
+					ret.values[i][j] *= -1;
+			}
+		}
+		return *this = ret;
+	}
+	throw exception();
+}
+
+
+Matrix& Matrix::operator *= (double c) {
+   for (int i=0; i < 3; i++)
+      for (int j=0; j < 3; j++)
+			values[i][j] *= c;
+	return *this;
 }
 
 

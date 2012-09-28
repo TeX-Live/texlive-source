@@ -1,12 +1,16 @@
-Changes applied to the dvisvgm-1.0.11 tree as obtained from:
-	http://downloads.sourceforge.net/dvisvgm/dvisvgm-1.0.11.tar.gz
+Changes applied to the dvisvgm-1.0.12 tree as obtained from:
+	http://downloads.sourceforge.net/dvisvgm/dvisvgm-1.0.12.tar.gz
 
 Removed:
+	Makefile.in
+	aclocal.m4
 	config.guess
 	config.sub
+	configure
 	depcomp
 	install-sh
 	missing
+	*/Makefile.in
 
 Converted Dos/Win line ends to native:
 	potracelib/auxiliary.h
