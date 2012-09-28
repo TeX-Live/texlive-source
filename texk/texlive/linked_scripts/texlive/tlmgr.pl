@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 27601 2012-09-05 23:52:48Z preining $
+# $Id: tlmgr.pl 27748 2012-09-20 10:36:14Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 27601 $';
-my $datrev = '$Date: 2012-09-06 01:52:48 +0200 (Thu, 06 Sep 2012) $';
+my $svnrev = '$Revision: 27748 $';
+my $datrev = '$Date: 2012-09-20 12:36:14 +0200 (Thu, 20 Sep 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -170,6 +170,7 @@ sub main {
                          "no-depends-at-all" => 1,
                          "force" => 1,
                          "dry-run|n" => 1 },
+    "repository"    => { "with-platforms" => 1 },
     "restore"       => { "backupdir" => "=s",
                          "dry-run|n" => 1,
                          "all" => 1,
@@ -537,6 +538,9 @@ sub execute_action {
     finish(0);
   } elsif ($action =~ m/^repository$/i) {
     action_repository();
+    finish(0);
+  } elsif ($action =~ m/^pinning$/i) {
+    action_pinning();
     finish(0);
   } elsif ($action =~ m/^candidates$/i) {
     action_candidates();
@@ -3486,10 +3490,25 @@ sub show_list_of_packages {
   return;
 }
 
+#  PINNING
+#
+# this action manages the pinning file
+# of course it can be edited by hand, but we want to make this
+# easier for people to use
+# tlmgr pinning show
+# tlmgr pinning check
+# tlmgr pinning add <repo> <pkgglob> [<pkgglob>, ...]
+# tlmgr pinning remove <repo> <pkgglob> [<pkgglob>, ...]
+# tlmgr pinning remove <repo> --all
+sub action_pinning {
+  tlwarn("Not implemented by now, sorry!\n");
+}
+
 #  REPOSITORY
 #
 # this action manages the list of repositories
 # tlmgr repository list               -> lists repositories
+# tlmgr repository list path|tag      -> lists content of repo path|tag
 # tlmgr repository add path [tag]     -> add repository with optional tag
 # tlmgr repository remove [path|tag]  -> removes repository or tag
 # tlmgr repository set path[#tag] [path[#tag] ...] -> sets the list
@@ -3539,20 +3558,73 @@ sub repository_to_array {
   }
   return %r;
 }
+sub merge_sub_packages {
+  my %pkgs;
+  for my $p (@_) {
+    if ($p =~ m/^(.*)\.([^.]*)$/) {
+      my $n = $1;
+      my $a = $2;
+      if ($p eq "texlive.infra") {
+        push @{$pkgs{$p}}, "all";
+      } else {
+        push @{$pkgs{$n}}, $a;
+      }
+    } else {
+      push @{$pkgs{$p}}, "all";
+    }
+  }
+  return %pkgs;
+}
 sub action_repository {
   init_local_db();
   my $what = shift @ARGV;
   $what = "list" if !defined($what);
   my %repos = repository_to_array($localtlpdb->option("location"));
   if ($what =~ m/^list$/i) {
-    print "List of repositories (with tags if set):\n";
-    for my $k (keys %repos) {
-      my $v = $repos{$k};
-      print "\t$v";
-      if ($k ne $v) {
-        print " ($k)";
+    if (@ARGV) {
+      # list what is in a repository
+      for my $repo (@ARGV) {
+        my $loc = $repo;
+        if (defined($repos{$repo})) {
+          $loc = $repos{$repo};
+        }
+        my ($tlpdb, $errormsg) = setup_one_remotetlpdb($loc);
+        if (!defined($tlpdb)) {
+          tlwarn("cannot locate get TLPDB from $loc\n\n");
+        } else {
+          print "Packages at $loc:\n";
+          my %pkgs = merge_sub_packages($tlpdb->list_packages);
+          for my $p (sort keys %pkgs) {
+            next if ($p =~ m/00texlive/);
+            print "  $p";
+            if (!$opts{'with-platforms'}) {
+              print "\n";
+            } else {
+              my @a = @{$pkgs{$p}};
+              if ($#a == 0) {
+                if ($a[0] eq "all") {
+                  # no further information necessary
+                  print "\n";
+                } else {
+                  print ".$a[0]\n";
+                }
+              } else {
+                print " (@{$pkgs{$p}})\n";
+              }
+            }
+          }
+        }
       }
-      print "\n";
+    } else {
+      print "List of repositories (with tags if set):\n";
+      for my $k (keys %repos) {
+        my $v = $repos{$k};
+        print "\t$v";
+        if ($k ne $v) {
+          print " ($k)";
+        }
+        print "\n";
+      }
     }
     return;
   }
@@ -6151,6 +6223,8 @@ written to the terminal.
 
 =item B<repository list>
 
+=item B<repository list I<path|tag>>
+
 =item B<repository add I<path> [I<tag>]>
 
 =item B<repository remove I<path|tag>>
@@ -6161,8 +6235,15 @@ This action manages the list of repositories.  See L</"MULTIPLE
 REPOSITORIES"> below for detailed explanations.
 
 The first form (C<list>) lists all configured repositories and the
-respective tags if set.  The second form (C<add>) adds a repository
-(optionally attaching a tag) to the list of repositories.  The third
+respective tags if set. If a path, url, or tag is given after the
+C<list> keyword, it is interpreted as source from where to 
+initialize a TeX Live Database and lists the contained packages.
+This can also be an up-to-now not used repository, both locally
+and remote. If one pass in addition C<--with-platforms>, for each
+package the available platforms (if any) are listed, too.
+
+The third form (C<add>) adds a repository
+(optionally attaching a tag) to the list of repositories.  The forth
 form (C<remove>) removes a repository, either by full path/url, or by
 tag.  The last form (C<set>) sets the list of repositories to the items
 given on the command line, not keeping previous settings
