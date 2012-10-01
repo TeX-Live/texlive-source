@@ -1,3 +1,7 @@
+2012-10-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c: remove _osver since it is obsolete.
+
 2012-09-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.h: remove definition of mkdir.

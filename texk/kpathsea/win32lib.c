@@ -113,10 +113,7 @@ FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char 
 #ifdef TRACE
     fprintf(stderr, "%s not found, concatenating comspec\n", app_name);
 #endif
-    if(_osver & 0x8000)
-      new_cmd = concatn("command.com", " /c ", cmd, NULL);
-    else
-      new_cmd = concatn("cmd.exe", " /c ", cmd, NULL);
+    new_cmd = concatn("cmd.exe", " /c ", cmd, NULL);
     free(app_name);
     app_name = NULL;
   }
@@ -664,10 +661,7 @@ look_for_cmd(const char *cmd, char **app, char **new)
 #ifdef TRACE
     fprintf(stderr, "%s not found, concatenating comspec\n", app_name);
 #endif
-    if(_osver & 0x8000)
-      new_cmd = concatn("command.com", " /c ", cmd, NULL);
-    else
-      new_cmd = concatn("cmd.exe", " /c ", cmd, NULL);
+    new_cmd = concatn("cmd.exe", " /c ", cmd, NULL);
     free(app_name);
     app_name = NULL;
   }
