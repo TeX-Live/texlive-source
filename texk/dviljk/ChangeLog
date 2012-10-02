@@ -1,5 +1,10 @@
 2012-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* dvi2xx.c [WIN32]: Drop is_dir() and handle tmp_dir differently
+	(from Akira).
+
+2012-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* dvi2xx.c [WIN32]: Define is_dir() and handle tmp_dir
 	(from Akira).  Use IS_DIR_SEP_CH().
 	* dvi2xx.h: #include <kpathsea/c-pathch.h>.

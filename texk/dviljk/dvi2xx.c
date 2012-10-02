@@ -121,25 +121,6 @@ VisChar(unsigned char c)
 }
 #endif
 
-#ifdef WIN32
-static int is_dir(const char *buff)
-{
-  HANDLE h;
-  WIN32_FIND_DATA w32fd;
-
-  if(((h = FindFirstFile(buff, &w32fd))
-      != INVALID_HANDLE_VALUE) &&
-     (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-    FindClose(h);
-    return (1);
-  }
-  else {
-    FindClose(h);
-    return (0);
-  }
-}
-#endif
-
 
 /**********************************************************************/
 /*******************************  main  *******************************/
@@ -4040,7 +4021,7 @@ void DoSpecial(char *str, int n)
       if ( tmp_dir[0] == '\0' ) {
 	const char * base_dir, * base_base;
 #ifdef WIN32
-# define def_tmp "c:/tmp"
+	char *def_tmp = concat (getenv ("WINDIR"), "/Temp");
 	if ( (base_dir = getenv("TMPDIR")) == NULL &&
 	     (base_dir = getenv("TMP")) == NULL &&
 	     (base_dir = getenv("TEMP")) == NULL ) {
@@ -4050,7 +4031,7 @@ void DoSpecial(char *str, int n)
 #endif
 	  base_dir = def_tmp;
 	} else if ( strlen(base_dir) > STRSIZE - sizeof("/dviljkXXXXXX/include.pcl") ) {
-	  Warning ("TMPDIR %s is too long, using " def_tmp " instead", base_dir);
+	  Warning ("TMPDIR %s is too long, using %s instead", base_dir, def_tmp);
 	  base_dir = def_tmp;
 	}
 	/* FIXME: Actually, we would need a function to sanitize base_dir here.
@@ -4064,11 +4045,10 @@ void DoSpecial(char *str, int n)
 	  Warning ("Feeling naughty, do we? %s is no temporary directory, dude", base_dir);
 	  base_dir = def_tmp;
 	}
-#ifdef WIN32
-	if ( !is_dir(base_dir) )
-	  mkdir(base_dir, 0700);
-#endif
 	strcpy (tmp_dir, base_dir);
+#ifdef WIN32
+	free (def_tmp);
+#endif
 	strcat (tmp_dir, "/dviljkXXXXXX");
 	if ( mkdtemp(tmp_dir) == NULL ) {
 	  Warning ("Could not create temporary directory %s, errno = %d; ignoring include file special",
