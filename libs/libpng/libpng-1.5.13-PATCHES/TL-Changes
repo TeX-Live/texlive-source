@@ -6,6 +6,7 @@ Copied:
 
 Removed:
 	Makefile.in
+	aclocal.m4
 	config.guess
 	config.sub
 	configure
