@@ -12,6 +12,7 @@
 #include <kpathsea/config.h>
 #include <kpathsea/c-std.h>
 #include <kpathsea/c-limits.h>
+#include <kpathsea/c-pathch.h>
 #include <kpathsea/magstep.h>
 #include <kpathsea/proginit.h>
 #include <kpathsea/progname.h>

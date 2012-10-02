@@ -1,3 +1,9 @@
+2012-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi2xx.c [WIN32]: Define is_dir() and handle tmp_dir
+	(from Akira).  Use IS_DIR_SEP_CH().
+	* dvi2xx.h: #include <kpathsea/c-pathch.h>.
+
 2012-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi2xx.c: The macro max(x,y) is not the usual function, so
