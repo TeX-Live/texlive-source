@@ -1,3 +1,7 @@
+2012-10-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi2xx.c [WIN32]: Avoid segmentation fault for missing WINDIR.
+
 2012-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi2xx.c [WIN32]: Drop is_dir() and handle tmp_dir differently

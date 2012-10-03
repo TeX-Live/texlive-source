@@ -4021,16 +4021,19 @@ void DoSpecial(char *str, int n)
       if ( tmp_dir[0] == '\0' ) {
 	const char * base_dir, * base_base;
 #ifdef WIN32
-	char *def_tmp = concat (getenv ("WINDIR"), "/Temp");
+	char *def_tmp;
+	if ( (base_dir = getenv("WINDIR")) == NULL )
+	  base_dir = "";
+	def_tmp = concat (base_dir, "/Temp");
 	if ( (base_dir = getenv("TMPDIR")) == NULL &&
 	     (base_dir = getenv("TMP")) == NULL &&
-	     (base_dir = getenv("TEMP")) == NULL ) {
+	     (base_dir = getenv("TEMP")) == NULL )
 #else
 # define def_tmp "/tmp"
-	if ( (base_dir = getenv("TMPDIR")) == NULL ) {
+	if ( (base_dir = getenv("TMPDIR")) == NULL )
 #endif
 	  base_dir = def_tmp;
-	} else if ( strlen(base_dir) > STRSIZE - sizeof("/dviljkXXXXXX/include.pcl") ) {
+	else if ( strlen(base_dir) > STRSIZE - sizeof("/dviljkXXXXXX/include.pcl") ) {
 	  Warning ("TMPDIR %s is too long, using %s instead", base_dir, def_tmp);
 	  base_dir = def_tmp;
 	}
