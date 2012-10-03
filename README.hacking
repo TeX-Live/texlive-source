@@ -14,7 +14,7 @@ them with configure --prefix=/usr/local/gnu and having
 
 autoconf (GNU Autoconf) 2.69
 
-automake (GNU automake) 1.12.3
+automake (GNU automake) 1.12.4
 
 ltmain.sh (GNU libtool) 2.4.2
 
@@ -173,8 +173,8 @@ in order to restore CPPFLAGS and LIBS to their former values.
 In order to use, e.g., libpng (and zlib) the Make variables mentioned above
 must be used in Makefile.am as follows
 
-$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) must be added to either INCLUDES or
-AM_CPPFLAGS (or target specific target_CPPFLAGS).
+$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) must be added to AM_CPPFLAGS (or target
+specific target_CPPFLAGS).
 
 $(LIBPNG_LIBS) $(ZLIB_LIBS) must be added to LDADD or target_LDADD.
 
