@@ -1,3 +1,7 @@
+2012-10-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mingw32.c: use stat in static int is_dir ().
+
 2012-10-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c: use stat in static int is_dir ().

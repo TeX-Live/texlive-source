@@ -32,6 +32,7 @@
 #include <kpathsea/lib.h>
 #include <kpathsea/concatn.h>
 #include <kpathsea/variable.h>
+#include <kpathsea/c-stat.h>
 #include <shlobj.h>
 #include <errno.h>
 
@@ -490,18 +491,9 @@ look_for_cmd(const char *cmd, char **app)
 
 static int is_dir (char *buff)
 {
-  HANDLE h;
-  WIN32_FIND_DATA w32fd;
+  struct stat stats;
 
-  if (((h = FindFirstFile (buff, &w32fd))
-       != INVALID_HANDLE_VALUE) &&
-      (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-    FindClose (h);
-    return (1);
-  } else {
-    FindClose (h);
-    return (0);
-  }
+  return stat (buff, &stats) == 0 && S_ISDIR (stats.st_mode);
 }
 
 /*
