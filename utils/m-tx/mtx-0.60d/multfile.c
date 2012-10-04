@@ -60,7 +60,7 @@ void pushFile(Char *filename)
     printf("===! Ignoring recursive include of file %s\n", filename);
     return;
   }
-  newnode = malloc(sizeof(filenode));
+  newnode = Malloc(sizeof(filenode));
   newnode->actualfile = NULL;
   strcpy(newnode->name, filename);
   newnode->prev = current;

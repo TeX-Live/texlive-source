@@ -1,3 +1,8 @@
+2012-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-malloc (new): Check value returned by malloc(), i.e.,
+	undo action of sed from Makefile.orig.
+
 2012-05-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-write-bin (new): Use binary mode for output files.
