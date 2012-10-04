@@ -15,7 +15,6 @@
 @SET_MAKE@
 
 
-
 VPATH = @srcdir@
 am__make_dryrun = \
   { \
@@ -74,13 +73,6 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-AR = ar
-ARFLAGS = cru
-libp2c_a_AR = $(AR) $(ARFLAGS)
-libp2c_a_LIBADD =
-am_libp2c_a_OBJECTS = p2clib.$(OBJEXT)
-libp2c_a_OBJECTS = $(am_libp2c_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" \
 	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
@@ -92,7 +84,6 @@ am_prepmx_OBJECTS = analyze.$(OBJEXT) cfuncs.$(OBJEXT) \
 	utility.$(OBJEXT)
 prepmx_OBJECTS = $(am_prepmx_OBJECTS)
 prepmx_LDADD = $(LDADD)
-prepmx_DEPENDENCIES = libp2c.a
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -129,8 +120,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libp2c_a_SOURCES) $(prepmx_SOURCES)
-DIST_SOURCES = $(libp2c_a_SOURCES) $(prepmx_SOURCES)
+SOURCES = $(prepmx_SOURCES)
+DIST_SOURCES = $(prepmx_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -259,8 +250,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(MTX_TREE) $(MTX_TREE)-PATCHES ../../build-aux/relpath \
 	$(TESTS) tests/mozart.mtx tests/mozart.pmx
-INCLUDES = -I$(srcdir)/$(MTX_TREE)/libp2c
-AM_CPPFLAGS = -DNO_DECLARE_MALLOC
+AM_CPPFLAGS = -I$(srcdir)/$(MTX_TREE)/libp2c -DNO_DECLARE_MALLOC
 AM_CFLAGS = #$(WARNING_CFLAGS)
 prepmx_SOURCES = \
 	$(MTX_TREE)/analyze.c \
@@ -273,6 +263,7 @@ prepmx_SOURCES = \
 	$(MTX_TREE)/files.h \
 	$(MTX_TREE)/globals.c \
 	$(MTX_TREE)/globals.h \
+	$(MTX_TREE)/libp2c/p2c.h \
 	$(MTX_TREE)/lyrics.c \
 	$(MTX_TREE)/lyrics.h \
 	$(MTX_TREE)/mtx.c \
@@ -293,12 +284,6 @@ prepmx_SOURCES = \
 	$(MTX_TREE)/uptext.h \
 	$(MTX_TREE)/utility.c \
 	$(MTX_TREE)/utility.h
-
-LDADD = libp2c.a
-noinst_LIBRARIES = libp2c.a
-libp2c_a_SOURCES = \
-	$(MTX_TREE)/libp2c/p2c.h \
-	$(MTX_TREE)/libp2c/p2clib.c
 
 lua_scripts = m-tx
 scriptsdir = texmf-dist/scripts/m-tx
@@ -350,13 +335,6 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
-
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libp2c.a: $(libp2c_a_OBJECTS) $(libp2c_a_DEPENDENCIES) $(EXTRA_libp2c_a_DEPENDENCIES) 
-	-rm -f libp2c.a
-	$(libp2c_a_AR) libp2c.a $(libp2c_a_OBJECTS) $(libp2c_a_LIBADD)
-	$(RANLIB) libp2c.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -487,7 +465,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mtxline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/notes.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/p2clib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/preamble.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/prepmx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/status.Po@am__quote@
@@ -507,20 +484,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-p2clib.o: $(MTX_TREE)/libp2c/p2clib.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT p2clib.o -MD -MP -MF $(DEPDIR)/p2clib.Tpo -c -o p2clib.o `test -f '$(MTX_TREE)/libp2c/p2clib.c' || echo '$(srcdir)/'`$(MTX_TREE)/libp2c/p2clib.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/p2clib.Tpo $(DEPDIR)/p2clib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/libp2c/p2clib.c' object='p2clib.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o p2clib.o `test -f '$(MTX_TREE)/libp2c/p2clib.c' || echo '$(srcdir)/'`$(MTX_TREE)/libp2c/p2clib.c
-
-p2clib.obj: $(MTX_TREE)/libp2c/p2clib.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT p2clib.obj -MD -MP -MF $(DEPDIR)/p2clib.Tpo -c -o p2clib.obj `if test -f '$(MTX_TREE)/libp2c/p2clib.c'; then $(CYGPATH_W) '$(MTX_TREE)/libp2c/p2clib.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/libp2c/p2clib.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/p2clib.Tpo $(DEPDIR)/p2clib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(MTX_TREE)/libp2c/p2clib.c' object='p2clib.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o p2clib.obj `if test -f '$(MTX_TREE)/libp2c/p2clib.c'; then $(CYGPATH_W) '$(MTX_TREE)/libp2c/p2clib.c'; else $(CYGPATH_W) '$(srcdir)/$(MTX_TREE)/libp2c/p2clib.c'; fi`
 
 analyze.o: $(MTX_TREE)/analyze.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT analyze.o -MD -MP -MF $(DEPDIR)/analyze.Tpo -c -o analyze.o `test -f '$(MTX_TREE)/analyze.c' || echo '$(srcdir)/'`$(MTX_TREE)/analyze.c
@@ -1117,7 +1080,7 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(SCRIPTS) $(MANS)
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -1155,8 +1118,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
-	mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -1234,19 +1196,19 @@ uninstall-man: uninstall-man1
 .MAKE: check-am install-am install-data-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
-	clean clean-binPROGRAMS clean-cscope clean-generic \
-	clean-noinstLIBRARIES cscope cscopelist ctags dist dist-all \
-	dist-bzip2 dist-gzip dist-hook dist-lzip dist-shar dist-tarZ \
-	dist-xz dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-data-hook install-dist_texmfSCRIPTS \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-man1 install-nodist_binSCRIPTS install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	clean clean-binPROGRAMS clean-cscope clean-generic cscope \
+	cscopelist ctags dist dist-all dist-bzip2 dist-gzip dist-hook \
+	dist-lzip dist-shar dist-tarZ dist-xz dist-zip distcheck \
+	distclean distclean-compile distclean-generic distclean-tags \
+	distcleancheck distdir distuninstallcheck dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-data-hook \
+	install-dist_texmfSCRIPTS install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-nodist_binSCRIPTS install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-binPROGRAMS uninstall-dist_texmfSCRIPTS \

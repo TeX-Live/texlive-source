@@ -14,13 +14,10 @@ EXTRA_DIST += $(MTX_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-INCLUDES = -I$(srcdir)/$(MTX_TREE)/libp2c
-AM_CPPFLAGS = -DNO_DECLARE_MALLOC
+AM_CPPFLAGS = -I$(srcdir)/$(MTX_TREE)/libp2c -DNO_DECLARE_MALLOC
 AM_CFLAGS = #$(WARNING_CFLAGS)
 
 bin_PROGRAMS = prepmx
-
-## prepmx_SOURCES =  config.h
 
 prepmx_SOURCES = \
 	$(MTX_TREE)/analyze.c \
@@ -33,6 +30,7 @@ prepmx_SOURCES = \
 	$(MTX_TREE)/files.h \
 	$(MTX_TREE)/globals.c \
 	$(MTX_TREE)/globals.h \
+	$(MTX_TREE)/libp2c/p2c.h \
 	$(MTX_TREE)/lyrics.c \
 	$(MTX_TREE)/lyrics.h \
 	$(MTX_TREE)/mtx.c \
@@ -54,13 +52,7 @@ prepmx_SOURCES = \
 	$(MTX_TREE)/utility.c \
 	$(MTX_TREE)/utility.h
 
-LDADD = libp2c.a
-
-noinst_LIBRARIES = libp2c.a
-
-libp2c_a_SOURCES = \
-	$(MTX_TREE)/libp2c/p2c.h \
-	$(MTX_TREE)/libp2c/p2clib.c
+## We can not use $(MTX_TREE)/libp2c/p2clib.c (multiple definitions).
 
 lua_scripts = m-tx
 

@@ -18,6 +18,8 @@ int P_eof (FILE * infile)
   if (x==EOF) return 1;
   ungetc(x,infile); return 0;
   }
+void *__MallocTemp__;
+int _OutMem(void) { fprintf(stderr,"Out of memory\n"); exit(-2); return -2; }
 void PASCAL_MAIN (int npars, char ** pars)
 { P_argc = npars; P_argv = pars; }
 

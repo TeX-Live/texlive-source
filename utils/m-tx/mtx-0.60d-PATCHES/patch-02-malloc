@@ -1,3 +1,15 @@
+diff -ur mtx-0.60d.orig/cfuncs.c mtx-0.60d/cfuncs.c
+--- mtx-0.60d.orig/cfuncs.c	2012-04-05 13:05:08.000000000 +0200
++++ mtx-0.60d/cfuncs.c	2012-10-04 13:27:57.000000000 +0200
+@@ -18,6 +18,8 @@
+   if (x==EOF) return 1;
+   ungetc(x,infile); return 0;
+   }
++void *__MallocTemp__;
++int _OutMem(void) { fprintf(stderr,"Out of memory\n"); exit(-2); return -2; }
+ void PASCAL_MAIN (int npars, char ** pars)
+ { P_argc = npars; P_argv = pars; }
+ 
 diff -ur mtx-0.60d.orig/multfile.c mtx-0.60d/multfile.c
 --- mtx-0.60d.orig/multfile.c	2012-04-05 14:47:20.000000000 +0200
 +++ mtx-0.60d/multfile.c	2012-10-04 11:56:59.000000000 +0200

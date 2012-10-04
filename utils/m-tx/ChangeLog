@@ -1,3 +1,7 @@
+2012-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop libp2c.a (multiple definitions).
+
 2012-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	This directory utils/mtx/ renamed into utils/m-tx/.
