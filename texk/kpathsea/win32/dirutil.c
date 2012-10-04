@@ -7,18 +7,9 @@
 int
 is_dir (char *buff)
 {
-  HANDLE h;
-  WIN32_FIND_DATA w32fd;
+  struct stat stats;
 
-  if (((h = FindFirstFile (buff, &w32fd))
-       != INVALID_HANDLE_VALUE) &&
-      (w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-    FindClose (h);
-    return (1);
-  } else {
-    FindClose (h);
-    return (0);
-  }
+  return stat (buff, &stats) == 0 && S_ISDIR (stats.st_mode);
 }
 
 /* make a directory */

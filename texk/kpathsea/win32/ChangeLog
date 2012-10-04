@@ -1,3 +1,8 @@
+2012-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dirutil.c: Use stat in int is_dir ().
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Install texhash.exe as copy of mktexlsr.exe.
