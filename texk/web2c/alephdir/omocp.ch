@@ -316,7 +316,6 @@ begin g:=null_ocp;@/
   done|; otherwise |incr(ocp_ptr)| and |goto done|@>;
 bad_ocp: @<Report that the ocp won't be loaded@>;
 done: if file_opened then b_close(ocp_file);
-ocp_name(f):=nom; ocp_area(f):=aire;
 read_ocp_info:=g;
 end;
 
@@ -336,16 +335,28 @@ help2("I wasn't able to read the data for this ocp,")@/
 error
 
 @ @<Read and check the ocp data...@>=
+file_opened:=false;
+if (ocp_ptr=ocp_biggest) then
+  @<Apologize for not loading the ocp, |goto done|@>;
 if external_ocp then 
   @<Check |ocp_file| exists@>
 else begin
   @<Open |ocp_file| for input@>;
   @<Read the {\.{OCP}} file@>;
   end;
+ocp_name(f):=nom; ocp_area(f):=aire
+
+@ @<Apologize for not loading the ocp...@>=
+begin start_ocp_error_message;
+print(" not loaded: Not enough room left");
+@.Translation process x=xx not loaded...@>
+help2("I cant handle more than 65535 translation processes,")@/
+("so I will ignore the ocp specification.");
+error; goto done;
+end
 
 @ @<Check |ocp_file| exists@>=
 begin
-file_opened:=false;
 pack_file_name(nom,aire,ext);
 b_test_in;
 if name_length=0 then ocp_abort("opening file");
@@ -367,7 +378,6 @@ goto done;
 end
 
 @ @<Open |ocp_file| for input@>=
-file_opened:=false;
 pack_file_name(nom,aire,".ocp");
 if not b_open_in(ocp_file) then ocp_abort("opening file");
 file_opened:=true

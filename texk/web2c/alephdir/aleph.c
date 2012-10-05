@@ -335,14 +335,13 @@ allocatefonttable (int font_number, int font_size)
 {
     int i;
     if (font_entries==0) {
-      fonttables = (memoryword **) xmalloc(256*sizeof(memoryword**));
+      fonttables = xmalloc(256*sizeof(memoryword*));
       font_entries=256;
     } else if ((font_number==256)&&(font_entries==256)) {
-      fonttables = xrealloc(fonttables, 65536);
+      fonttables = xrealloc(fonttables, 65536*sizeof(memoryword*));
       font_entries=65536;
     }
-    fonttables[font_number] =
-       (memoryword *) xmalloc((font_size+1)*sizeof(memoryword));
+    fonttables[font_number] = xmalloc((font_size+1)*sizeof(memoryword));
     fonttables[font_number][0].cint = font_size;
     fonttables[font_number][0].cint1 = 0;
     for (i=1; i<=font_size; i++) {
@@ -363,20 +362,20 @@ undumpfonttable(int font_number)
 {
     memoryword sizeword;
     if (font_entries==0) {
-      fonttables = (memoryword **) xmalloc(256*sizeof(memoryword**));
+      fonttables = xmalloc(256*sizeof(memoryword*));
       font_entries=256;
     } else if ((font_number==256)&&(font_entries==256)) {
-      fonttables = xrealloc(fonttables, 65536);
+      fonttables = xrealloc(fonttables, 65536*sizeof(memoryword*));
       font_entries=65536;
     }
 
     undumpthings(sizeword,1);
-    fonttables[font_number] =
-        (memoryword *) xmalloc((sizeword.cint+1)*sizeof(memoryword));
+    fonttables[font_number] = xmalloc((sizeword.cint+1)*sizeof(memoryword));
     fonttables[font_number][0].cint = sizeword.cint;
     undumpthings(fonttables[font_number][1], sizeword.cint);
 }
 
+#if 0 /* unused */
 memoryword **fontsorttables;
 static int fontsort_entries = 0;
 
@@ -385,14 +384,13 @@ allocatefontsorttable (int  fontsort_number, int  fontsort_size)
 {
     int i;
     if (fontsort_entries==0) {
-      fontsorttables = (memoryword **) xmalloc(256*sizeof(memoryword**));
+      fontsorttables = xmalloc(256*sizeof(memoryword*));
       fontsort_entries=256;
     } else if ((fontsort_number==256)&&(fontsort_entries==256)) {
-      fontsorttables = xrealloc(fontsorttables, 65536);
+      fontsorttables = xrealloc(fontsorttables, 65536*sizeof(memoryword*));
       fontsort_entries=65536;
     }
-    fontsorttables[fontsort_number] =
-       (memoryword *) xmalloc((fontsort_size+1)*sizeof(memoryword));
+    fontsorttables[fontsort_number] = xmalloc((fontsort_size+1)*sizeof(memoryword));
     fontsorttables[fontsort_number][0].cint = fontsort_size;
     fontsorttables[fontsort_number][0].cint1 = 0;
     for (i=1; i<=fontsort_size; i++) {
@@ -414,19 +412,19 @@ undumpfontsorttable(int fontsort_number)
 {
     memoryword sizeword;
     if (fontsort_entries==0) {
-      fontsorttables = (memoryword **) xmalloc(256*sizeof(memoryword**));
+      fontsorttables = xmalloc(256*sizeof(memoryword*));
       fontsort_entries=256;
     } else if ((fontsort_number==256)&&(fontsort_entries==256)) {
-      fontsorttables = xrealloc(fontsorttables, 65536);
+      fontsorttables = xrealloc(fontsorttables, 65536*sizeof(memoryword*));
       fontsort_entries=65536;
     }
 
     undumpthings(sizeword,1);
-    fontsorttables[fontsort_number] =
-        (memoryword *) xmalloc((sizeword.cint+1)*sizeof(memoryword));
+    fontsorttables[fontsort_number] = xmalloc((sizeword.cint+1)*sizeof(memoryword));
     fontsorttables[fontsort_number][0].cint = sizeword.cint;
     undumpthings(fontsorttables[fontsort_number][1], sizeword.cint);
 }
+#endif
 
 int **ocptables;
 static int ocp_entries = 0;
@@ -436,14 +434,13 @@ allocateocptable (int ocp_number, int ocp_size)
 {
     int i;
     if (ocp_entries==0) {
-      ocptables = (int **) xmalloc(256*sizeof(int**));
+      ocptables = xmalloc(256*sizeof(int*));
       ocp_entries=256;
     } else if ((ocp_number==256)&&(ocp_entries==256)) {
-      ocptables = xrealloc(ocptables, 65536);
+      ocptables = xrealloc(ocptables, 65536*sizeof(int*));
       ocp_entries=65536;
     }
-    ocptables[ocp_number] =
-       (int *) xmalloc((1+ocp_size)*sizeof(int));
+    ocptables[ocp_number] = xmalloc((1+ocp_size)*sizeof(int));
     ocptables[ocp_number][0] = ocp_size;
     for (i=1; i<=ocp_size; i++) {
         ocptables[ocp_number][i]  = 0;
@@ -461,15 +458,14 @@ undumpocptable (int ocp_number)
 {
     int sizeword;
     if (ocp_entries==0) {
-      ocptables = (int **) xmalloc(256*sizeof(int**));
+      ocptables = xmalloc(256*sizeof(int*));
       ocp_entries=256;
     } else if ((ocp_number==256)&&(ocp_entries==256)) {
-      ocptables = xrealloc(ocptables, 65536);
+      ocptables = xrealloc(ocptables, 65536*sizeof(int*));
       ocp_entries=65536;
     }
     undumpthings(sizeword,1);
-    ocptables[ocp_number] =
-        (int *) xmalloc((1+sizeword)*sizeof(int));
+    ocptables[ocp_number] = xmalloc((1+sizeword)*sizeof(int));
     ocptables[ocp_number][0] = sizeword;
     undumpthings(ocptables[ocp_number][1], sizeword);
 }

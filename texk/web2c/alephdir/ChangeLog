@@ -1,3 +1,12 @@
+2012-10-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* aleph.c ({allocate,undump}{font,ocp}table): Correctly specify
+	the new size for xrealloc().  Remove useless casts.
+	({allocate,{un,}dump}fontsorttable): Drop unused functions.
+	* omocp.ch: Fix the logic of read_ocp_info().
+	Check for ocp table overflow.
+	Avoid segmentation fault (uninitialized use of 'f').
+
 2012-07-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* alephextra.c: Must #define DLLPROC before reading alephd.h.
