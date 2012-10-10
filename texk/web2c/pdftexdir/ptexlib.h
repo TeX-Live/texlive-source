@@ -35,8 +35,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* avl */
 #  include "avlstuff.h"
 
-#  include "openbsd-compat.h"
-
 /* pdftexlib type declarations */
 typedef struct {
     const char *pdfname;

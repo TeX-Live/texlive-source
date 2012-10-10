@@ -1,3 +1,9 @@
+2012-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/web2c.ac (kpse_tex_progs): Remove obsdcompat.
+	* configure.ac: Remove KPSE_OBSDCOMPAT_FLAGS.
+	* Makefile.am: Remove OBSDCOMPAT_RULE.
+
 2012-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac (AC_CHECK_FUNCS): Remove test for snprintf.

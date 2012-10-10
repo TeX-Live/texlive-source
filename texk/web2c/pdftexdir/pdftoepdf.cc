@@ -65,8 +65,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern "C" {
 
-#include <openbsd-compat.h>
-
 #include <kpathsea/c-auto.h>
 #include <kpathsea/c-proto.h>
 #include <kpathsea/lib.h>

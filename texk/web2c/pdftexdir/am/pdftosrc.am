@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/pdftosrc.am: Makefile fragment for pdftosrc.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## pdftosrc
@@ -22,7 +22,7 @@ pdftosrc_LDADD = $(pdftex_ldadd) $(LDADD)
 
 pdftosrc_DEPENDENCIES = $(pdftex_dependencies)
 
-$(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND)
+$(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND)
 
 ## Tests
 ##

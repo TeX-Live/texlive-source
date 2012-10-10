@@ -67,7 +67,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
-	$(top_srcdir)/../../m4/kpse-obsdcompat-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-poppler-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-ptexenc-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
@@ -221,9 +220,6 @@ OBJCXXDEPMODE = @OBJCXXDEPMODE@
 OBJCXXFLAGS = @OBJCXXFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
-OBSDCOMPAT_DEPEND = @OBSDCOMPAT_DEPEND@
-OBSDCOMPAT_INCLUDES = @OBSDCOMPAT_INCLUDES@
-OBSDCOMPAT_LIBS = @OBSDCOMPAT_LIBS@
 OTANGLE = @OTANGLE@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@

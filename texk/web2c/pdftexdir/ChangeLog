@@ -1,3 +1,10 @@
+2012-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	The openbsd compat library is no longer used.
+	* pdftoepdf.cc, ptexlib.h, utils.c:
+	Drop #include "openbsd-compat.h".
+	* am/pdftex.am, am/pdftosrc.am: Remove OBSDCOMPAT_*.
+
 2012-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid (most) MinGW compiler warnings from regex code.

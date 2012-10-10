@@ -76,7 +76,6 @@ extern "C" {
 
 #  include <c-auto.h>           /* define SIZEOF_LONG */
 
-#  include "openbsd-compat.h"
 #  include "image.h"
 #  include "utils/avlstuff.h"
 #  include "pdf/pdftypes.h"

@@ -24,7 +24,6 @@ static const char _svn_version[] =
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.70.x/source/texk/web2c/luatexdir/utils/utils.w $";
 
 @ @c
-#include "openbsd-compat.h"
 #include <kpathsea/config.h> /* this is a trick to load mingw32's io.h early,
 				using a macro redefinition of |eof()|. */
 #include "sys/types.h"

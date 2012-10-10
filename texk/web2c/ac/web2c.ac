@@ -1,6 +1,6 @@
 ## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 dnl
-dnl Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options for TeX and MF
@@ -38,8 +38,8 @@ m4_define([kpse_tex_progs], [dnl
 [[uptex],  [yes], [yes], [upTeX],   [ptexenc]],
 [[euptex], [yes], [yes], [e-upTeX], [ptexenc]],
 [[aleph],  [yes], [],    [Aleph],   []],
-[[pdftex], [yes], [yes], [pdfTeX],  [xpdf libpng obsdcompat]],
-[[luatex], [yes], [],    [luaTeX],  [poppler libpng obsdcompat zziplib]],
+[[pdftex], [yes], [yes], [pdfTeX],  [xpdf libpng]],
+[[luatex], [yes], [],    [luaTeX],  [poppler libpng zziplib]],
 [[xetex],  [yes], [yes], [XeTeX],   [poppler libpng freetype2 icu-xetex teckit graphite]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_tex_progs],

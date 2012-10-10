@@ -145,7 +145,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../libs/freetype2/ac/withenable.ac \
 	$(top_srcdir)/../libs/freetype/ac/withenable.ac \
 	$(top_srcdir)/../libs/t1lib/ac/withenable.ac \
-	$(top_srcdir)/../libs/obsdcompat/ac/withenable.ac \
 	$(top_srcdir)/../libs/libpng/ac/withenable.ac \
 	$(top_srcdir)/../libs/zlib/ac/withenable.ac \
 	$(top_srcdir)/../texk/ptexenc/ac/withenable.ac \

@@ -273,7 +273,6 @@ KPSE_GRAPHITE_FLAGS
 KPSE_FREETYPE2_FLAGS
 KPSE_TECKIT_FLAGS
 KPSE_ICU_XETEX_FLAGS([icule])
-KPSE_OBSDCOMPAT_FLAGS
 
 # Check size of off_t (using <kpathsea/config.h>)
 KPSE_ADD_FLAGS([kpathsea])

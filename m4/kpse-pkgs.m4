@@ -34,7 +34,6 @@ gd
 freetype2
 freetype
 t1lib
-obsdcompat
 libpng
 zlib
 ])[]dnl

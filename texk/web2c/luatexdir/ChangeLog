@@ -1,3 +1,10 @@
+2012-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	The openbsd compat library is no longer used.
+	* image/epdf.h, lua/luainit.w, ptexlib.h, utils/utils.w:
+	Drop #include "openbsd-compat.h".
+	* am/libluatex.am, am/luatex.am: Remove OBSDCOMPAT_*.
+
 2012-09-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/luainit.w (parse_options): Avoid cast const => non-const.

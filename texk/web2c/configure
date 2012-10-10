@@ -644,10 +644,6 @@ CTANGLE
 CTANGLEBOOT
 TANGLE
 TANGLEBOOT
-OBSDCOMPAT_RULE
-OBSDCOMPAT_DEPEND
-OBSDCOMPAT_LIBS
-OBSDCOMPAT_INCLUDES
 ICU_RULE
 ICU_DEPEND
 ICU_LIBS
@@ -17857,7 +17853,6 @@ fi
 test "x$enable_web2c:$enable_pdftex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
-  need_obsdcompat=yes
 }
 # Check whether --enable-luatex was given.
 if test "${enable_luatex+set}" = set; then :
@@ -17873,7 +17868,6 @@ esac
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_poppler=yes
   need_libpng=yes
-  need_obsdcompat=yes
   need_zziplib=yes
 }
 # Check whether --enable-xetex was given.
@@ -22906,14 +22900,6 @@ $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-
-## _KPSE_LIB_FLAGS: Setup obsdcompat (-lopenbsd-compat) flags
-  OBSDCOMPAT_INCLUDES="-I$kpse_BLD/libs/obsdcompat -I$kpse_SRC/libs/obsdcompat"
-  OBSDCOMPAT_LIBS="$kpse_BLD/libs/obsdcompat/libopenbsd-compat.a"
-  OBSDCOMPAT_DEPEND='${top_builddir}/../../libs/obsdcompat/libopenbsd-compat.a'
-  OBSDCOMPAT_RULE='# Rebuild libopenbsd-compat
-$(OBSDCOMPAT_DEPEND): ${top_srcdir}/../../libs/obsdcompat/*.[ch]
-	cd ${top_builddir}/../../libs/obsdcompat && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
 
 # Check size of off_t (using <kpathsea/config.h>)

@@ -3673,7 +3673,6 @@ fi
 test "x$enable_web2c:$enable_pdftex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
-  need_obsdcompat=yes
 }
 # Check whether --enable-luatex was given.
 if test "${enable_luatex+set}" = set; then :
@@ -3689,7 +3688,6 @@ esac
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_poppler=yes
   need_libpng=yes
-  need_obsdcompat=yes
   need_zziplib=yes
 }
 # Check whether --enable-xetex was given.
@@ -4994,10 +4992,6 @@ $as_echo "$as_me: Assuming installed \`t1lib' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-t1lib=$with_system_t1lib'"
 fi
-
-
-## libs/obsdcompat/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/obsdcompat/
-## configure options and TL libraries required for obsdcompat
 
 
 ## libs/libpng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/

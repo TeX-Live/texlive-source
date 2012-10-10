@@ -852,7 +852,6 @@ gd
 freetype2
 freetype
 t1lib
-obsdcompat
 libpng
 zlib'
 
@@ -3652,7 +3651,6 @@ fi
 test "x$enable_web2c:$enable_pdftex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
-  need_obsdcompat=yes
 }
 # Check whether --enable-luatex was given.
 if test "${enable_luatex+set}" = set; then :
@@ -3668,7 +3666,6 @@ esac
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_poppler=yes
   need_libpng=yes
-  need_obsdcompat=yes
   need_zziplib=yes
 }
 # Check whether --enable-xetex was given.
@@ -4975,10 +4972,6 @@ $as_echo "$as_me: Assuming installed \`t1lib' headers and library" >&6;}
 fi
 
 
-## libs/obsdcompat/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/obsdcompat/
-## configure options and TL libraries required for obsdcompat
-
-
 ## libs/libpng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
 ## configure options and TL libraries required for libpng
 
@@ -6000,19 +5993,6 @@ if test -x $srcdir/t1lib/configure; then
   DIST_SUBLIBS="t1lib $DIST_SUBLIBS"
   if false; then
     subdirs="$subdirs t1lib"
-
-  fi
-fi
-
-
-if test -x $srcdir/obsdcompat/configure; then
-  if test "x$with_system_obsdcompat" != xyes && \
-     test "x$need_obsdcompat" = xyes; then
-    SUBLIBS="obsdcompat $SUBLIBS"
-  fi
-  DIST_SUBLIBS="obsdcompat $DIST_SUBLIBS"
-  if false; then
-    subdirs="$subdirs obsdcompat"
 
   fi
 fi

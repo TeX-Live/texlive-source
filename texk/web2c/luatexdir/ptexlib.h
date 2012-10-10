@@ -171,7 +171,6 @@ size_t          T##_limit
 #  include "utils/avlstuff.h"
 #  include "utils/managed-sa.h"
 #  include "image/writeimg.h"
-#  include "openbsd-compat.h"
 #  include "dvi/dvigen.h"
 #  include "pdf/pagetree.h"
 #  include "pdf/pdfgen.h"

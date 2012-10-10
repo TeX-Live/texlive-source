@@ -1,3 +1,8 @@
+2012-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex_parser_utils.h: Avoid definition of FALSE and TRUE
+	that may cause warnings.	
+
 2012-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex_main.c: Define snprintf and getcwd for WIN32.

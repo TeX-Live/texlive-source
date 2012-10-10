@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/luatex.am: Makefile fragment for luaTeX.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## luaTeX
@@ -21,7 +21,7 @@ EXTRA_PROGRAMS += luatex
 nodist_EXTRA_luatex_SOURCES = dummy.cxx
 
 luatex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
-luatex_CPPFLAGS += $(POPPLER_INCLUDES) $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
+luatex_CPPFLAGS += $(POPPLER_INCLUDES) -I$(srcdir)/libmd5
 luatex_CPPFLAGS += -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51 -I$(srcdir)/mplibdir
 luatex_CPPFLAGS += -Dextra_version_info=`date +-%Y%m%d%H`
 luatex_CPPFLAGS += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
@@ -29,7 +29,7 @@ luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 luatex_ldadd = libluatex.a libff.a libluamisc.a libluasocket.a liblua51.a
 luatex_ldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
-luatex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a libmplib.a 
+luatex_ldadd += libmd5.a libmplib.a 
 
 luatex_LDFLAGS = -export-dynamic
 
@@ -37,7 +37,7 @@ luatex_LDADD = $(luatex_ldadd) $(LDADD) $(LIBADD_DLOPEN) $(lua_socketlibs)
 
 luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a
 luatex_DEPENDENCIES += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(POPPLER_DEPEND)
-luatex_DEPENDENCIES += $(OBSDCOMPAT_DEPEND) libmd5.a libmplib.a
+luatex_DEPENDENCIES += libmd5.a libmplib.a
 
 $(luatex_OBJECTS): libluatex.a
 

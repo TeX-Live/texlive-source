@@ -18,7 +18,6 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>. 
 
 @ @c
-#include "openbsd-compat.h"
 #include <kpathsea/c-stat.h>
 
 #include "ptexlib.h"
