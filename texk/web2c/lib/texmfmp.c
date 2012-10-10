@@ -205,7 +205,7 @@ Isspace (char c)
 static char **cmdlist = NULL;
 
 static void 
-mk_shellcmdlist (const char *v)
+mk_shellcmdlist (char *v)
 {
   char **p;
   const char *q, *r1;
@@ -246,9 +246,6 @@ mk_shellcmdlist (const char *v)
     *p = NULL;
 }
 
-/* Called from maininit.  Not static because also called from
-   luatexdir/lua/luainit.c.  */
-
 static void
 init_shell_escape (void)
 {
@@ -273,7 +270,7 @@ init_shell_escape (void)
     if (shellenabledp && restrictedshell == 1) {
       char *v2 = kpse_var_value ("shell_escape_commands");
       if (v2) {
-        mk_shellcmdlist ((const char *)v2);
+        mk_shellcmdlist (v2);
         free (v2);
       }
     }
@@ -452,9 +449,17 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
     {
       char *p, *q, *r;
       p = *safecmd;
-      if (!(IS_DIR_SEP (p[0]) && IS_DIR_SEP (p[1])) &&
-          !(p[1] == ':' && IS_DIR_SEP (p[2]))) { 
-        p = (char *) kpse_var_value ("SELFAUTOLOC");
+      if (p[1] == ':' && !IS_DIR_SEP (p[2])) {
+          q = xmalloc (strlen (p) + 2);
+          q[0] = p[0];
+          q[1] = p[1];
+          q[2] = '\\';
+          q[3] = '\0';
+          strcat (q, (p + 2));
+          free (*safecmd);
+          *safecmd = q;
+      } else if (!IS_DIR_SEP (p[0]) && !(p[1] == ':' && IS_DIR_SEP (p[2]))) { 
+        p = kpse_var_value ("SELFAUTOLOC");
         if (p) {
           r = *safecmd;
           while (*r && !Isspace(*r))

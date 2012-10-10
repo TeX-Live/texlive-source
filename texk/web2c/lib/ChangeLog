@@ -1,3 +1,8 @@
+2012-10-10  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Modify determination of fullpath for restricted shell
+	escape commands.
+
 2012-09-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: Since normalize_quotes() is declared static,

@@ -1,3 +1,8 @@
+2012-10-10  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* luatex.c: Modify determination of fullpath for restricted shell
+	escape commands.
+
 2012-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid TL vs W32TeX differences (from Akira).

@@ -353,9 +353,17 @@ int shell_cmd_is_allowed(const char *cmd, char **safecmd, char **cmdname)
         {
           char *p, *q, *r;
           p = *safecmd;
-          if (!(IS_DIR_SEP (p[0]) && IS_DIR_SEP (p[1])) &&
-              !(p[1] == ':' && IS_DIR_SEP (p[2]))) { 
-            p = (char *) kpse_var_value ("SELFAUTOLOC");
+          if (p[1] == ':' && !IS_DIR_SEP (p[2])) {
+              q = xmalloc (strlen (p) + 2);
+              q[0] = p[0];
+              q[1] = p[1];
+              q[2] = '\\';
+              q[3] = '\0';
+              strcat (q, (p + 2));
+              free (*safecmd);
+              *safecmd = q;
+          } else if (!IS_DIR_SEP (p[0]) && !(p[1] == ':' && IS_DIR_SEP (p[2]))) { 
+            p = kpse_var_value ("SELFAUTOLOC");
             if (p) {
               r = *safecmd;
               while (*r && !Isspace(*r))
