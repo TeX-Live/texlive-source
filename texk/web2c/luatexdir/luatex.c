@@ -353,7 +353,7 @@ int shell_cmd_is_allowed(const char *cmd, char **safecmd, char **cmdname)
         {
           char *p, *q, *r;
           p = *safecmd;
-          if (p[1] == ':' && !IS_DIR_SEP (p[2])) {
+          if (strlen (p) > 2 && p[1] == ':' && !IS_DIR_SEP (p[2])) {
               q = xmalloc (strlen (p) + 2);
               q[0] = p[0];
               q[1] = p[1];
