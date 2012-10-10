@@ -208,8 +208,7 @@ static void
 mk_shellcmdlist (char *v)
 {
   char **p;
-  const char *q, *r1;
-  char *r;
+  char *q, *r;
   int  n;
 
   q = v;
@@ -218,10 +217,10 @@ mk_shellcmdlist (char *v)
 /* analyze the variable shell_escape_commands = foo,bar,...
    spaces before and after (,) are not allowed. */
 
-  while ((r1 = strchr (q, ',')) != 0) {
+  while ((r = strchr (q, ',')) != 0) {
     n++;
-    r1++;
-    q = r1;
+    r++;
+    q = r;
   }
   if (*q)
     n++;

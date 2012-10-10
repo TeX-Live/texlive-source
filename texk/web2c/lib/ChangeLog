@@ -1,3 +1,7 @@
+2012-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (mk_shellcmdlist): The argument is not constant.
+
 2012-10-10  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Modify determination of fullpath for restricted shell
