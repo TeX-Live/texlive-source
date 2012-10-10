@@ -357,7 +357,7 @@ int shell_cmd_is_allowed(const char *cmd, char **safecmd, char **cmdname)
               q = xmalloc (strlen (p) + 2);
               q[0] = p[0];
               q[1] = p[1];
-              q[2] = '\\';
+              q[2] = '/';
               q[3] = '\0';
               strcat (q, (p + 2));
               free (*safecmd);
