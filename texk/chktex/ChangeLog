@@ -1,3 +1,7 @@
+2012-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for declaration of stpcpy().
+
 2012-10-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid (most) MinGW compiler warnings from regex code.

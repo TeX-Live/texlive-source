@@ -164,6 +164,8 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(access closedir fileno isatty opendir readdir stat dnl
 strcasecmp strdup strlwr strtol)
 
+dnl Checks for declarations.
+AC_CHECK_DECLS([stpcpy])
 
 dnl Check for PCRE regular expression support
 AC_MSG_CHECKING(whether PCRE regular expressions are enabled)

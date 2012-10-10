@@ -21,6 +21,10 @@
 /* Define to 1 if you have the `closedir' function. */
 #undef HAVE_CLOSEDIR
 
+/* Define to 1 if you have the declaration of `stpcpy', and to 0 if you don't.
+   */
+#undef HAVE_DECL_STPCPY
+
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H

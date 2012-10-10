@@ -1,26 +1,29 @@
 diff -ur chktex-1.7.1.orig/ChkTeX.c chktex-1.7.1/ChkTeX.c
 --- chktex-1.7.1.orig/ChkTeX.c	2012-07-26 12:44:22.000000000 +0200
-+++ chktex-1.7.1/ChkTeX.c	2012-09-27 10:08:21.000000000 +0200
-@@ -27,7 +27,9 @@
++++ chktex-1.7.1/ChkTeX.c	2012-10-10 11:34:16.000000000 +0200
+@@ -27,8 +27,12 @@
   */
  
  
-+#ifndef KPATHSEA
- #include "getopt.h"
-+#endif
+-#include "getopt.h"
  #include "ChkTeX.h"
++#ifdef KPATHSEA
++#include <kpathsea/getopt.h>
++#else
++#include <getopt.h>
++#endif
  #include "OpSys.h"
  #include "Utility.h"
+ #include "FindErrs.h"
 diff -ur chktex-1.7.1.orig/ChkTeX.h chktex-1.7.1/ChkTeX.h
 --- chktex-1.7.1.orig/ChkTeX.h	2012-08-04 21:28:49.000000000 +0200
-+++ chktex-1.7.1/ChkTeX.h	2012-09-27 10:08:21.000000000 +0200
-@@ -38,6 +38,11 @@
++++ chktex-1.7.1/ChkTeX.h	2012-10-10 11:32:49.000000000 +0200
+@@ -38,6 +38,10 @@
  #  include CONFIG_H_NAME
  #endif
  
 +#ifdef KPATHSEA
 +#include <kpathsea/config.h>
-+#include <kpathsea/getopt.h>
 +#endif
 +
  #include <ctype.h>

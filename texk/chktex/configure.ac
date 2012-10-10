@@ -31,6 +31,9 @@ dnl Checks for library functions.
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([access closedir fileno isatty opendir readdir stat strcasecmp strdup strlwr strtol])
 
+dnl Checks for declarations.
+AC_CHECK_DECLS([stpcpy])
+
 AC_CONFIG_HEADERS([config.h])
 
 dnl For TeX Live we always use Posix extended regular expressions

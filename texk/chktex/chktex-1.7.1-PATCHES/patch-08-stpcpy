@@ -1,17 +1,30 @@
 diff -ur chktex-1.7.1.orig/FindErrs.c chktex-1.7.1/FindErrs.c
 --- chktex-1.7.1.orig/FindErrs.c	2012-08-08 22:27:57.000000000 +0200
-+++ chktex-1.7.1/FindErrs.c	2012-09-27 10:58:01.000000000 +0200
-@@ -33,6 +33,13 @@
++++ chktex-1.7.1/FindErrs.c	2012-10-10 11:24:26.000000000 +0200
+@@ -33,6 +33,14 @@
  #include "Utility.h"
  #include "Resource.h"
  
-+/* Not everyone has stpcpy() */
++#if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)
 +static inline char *
 +stpcpy(char *dest, const char *src)
 +{
 +    return strcpy(dest, src) + strlen(src);
 +}
++#endif
 +
  #if HAVE_PCRE || HAVE_POSIX_ERE
  
  #if HAVE_PCRE
+diff -ur chktex-1.7.1.orig/configure.in chktex-1.7.1/configure.in
+--- chktex-1.7.1.orig/configure.in	2012-08-22 16:27:32.000000000 +0200
++++ chktex-1.7.1/configure.in	2012-10-10 11:24:37.000000000 +0200
+@@ -164,6 +164,8 @@
+ AC_CHECK_FUNCS(access closedir fileno isatty opendir readdir stat dnl
+ strcasecmp strdup strlwr strtol)
+ 
++dnl Checks for declarations.
++AC_CHECK_DECLS([stpcpy])
+ 
+ dnl Check for PCRE regular expression support
+ AC_MSG_CHECKING(whether PCRE regular expressions are enabled)

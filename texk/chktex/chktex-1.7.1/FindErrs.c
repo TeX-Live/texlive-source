@@ -33,12 +33,13 @@
 #include "Utility.h"
 #include "Resource.h"
 
-/* Not everyone has stpcpy() */
+#if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)
 static inline char *
 stpcpy(char *dest, const char *src)
 {
     return strcpy(dest, src) + strlen(src);
 }
+#endif
 
 #if HAVE_PCRE || HAVE_POSIX_ERE
 

@@ -40,7 +40,6 @@
 
 #ifdef KPATHSEA
 #include <kpathsea/config.h>
-#include <kpathsea/getopt.h>
 #endif
 
 #include <ctype.h>

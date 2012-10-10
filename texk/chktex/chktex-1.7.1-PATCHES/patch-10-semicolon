@@ -1,0 +1,23 @@
+diff -ur chktex-1.7.1.orig/ChkTeX.c chktex-1.7.1/ChkTeX.c
+--- chktex-1.7.1.orig/ChkTeX.c	2012-10-10 11:34:16.000000000 +0200
++++ chktex-1.7.1/ChkTeX.c	2012-10-10 11:41:42.000000000 +0200
+@@ -196,8 +196,8 @@
+ char VerbNormal[] = "%k %n in %f line %l: %m\n" "%r%s%t\n" "%u\n";
+ 
+ #define DEF(type, name, value)  type name = value;
+-OPTION_DEFAULTS;
+-STATE_VARS;
++OPTION_DEFAULTS
++STATE_VARS
+ #undef DEF
+ FILE *OutputFile = NULL;
+ 
+@@ -688,7 +688,7 @@
+ {
+ 
+ #define DEF(type, name, value)  name = value;
+-    OPTION_DEFAULTS;
++    OPTION_DEFAULTS
+ #undef DEF
+     if (OutputFile != stdout)
+     {

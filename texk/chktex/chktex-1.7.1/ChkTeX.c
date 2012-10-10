@@ -27,10 +27,12 @@
  */
 
 
-#ifndef KPATHSEA
-#include "getopt.h"
-#endif
 #include "ChkTeX.h"
+#ifdef KPATHSEA
+#include <kpathsea/getopt.h>
+#else
+#include <getopt.h>
+#endif
 #include "OpSys.h"
 #include "Utility.h"
 #include "FindErrs.h"
@@ -194,8 +196,8 @@ enum Quote Quote;
 char VerbNormal[] = "%k %n in %f line %l: %m\n" "%r%s%t\n" "%u\n";
 
 #define DEF(type, name, value)  type name = value;
-OPTION_DEFAULTS;
-STATE_VARS;
+OPTION_DEFAULTS
+STATE_VARS
 #undef DEF
 FILE *OutputFile = NULL;
 
@@ -686,7 +688,7 @@ static void ResetSettings(void)
 {
 
 #define DEF(type, name, value)  name = value;
-    OPTION_DEFAULTS;
+    OPTION_DEFAULTS
 #undef DEF
     if (OutputFile != stdout)
     {
