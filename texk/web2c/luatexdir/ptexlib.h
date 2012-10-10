@@ -33,7 +33,7 @@
 
 #  include "lib/lib.h"
 
-#  ifdef MSVC
+#  ifdef _MSC_VER
 extern double rint(double x);
 #  endif
 

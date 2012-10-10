@@ -1,3 +1,13 @@
+2012-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid TL vs W32TeX differences (from Akira).
+	* luatex.h: Include "ptexlib.h" instead of <luatexdir/ptexlib.h>
+	as in all other cases.
+	* ptexlib.h: Use _MSC_VER instead of MSVC.
+	* image/epdf.h: Change arg3 of extern void pdf_begin_obj() from
+	bool to int, as declared and defined in pdf/pdfgen.[hw].
+	FIXME: There should be only one extern declaration in one file.
+
 2012-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	The openbsd compat library is no longer used.

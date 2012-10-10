@@ -102,7 +102,7 @@ extern void ipcpage(int);
 
 extern boolean input_line(FILE *);
 
-#  include <luatexdir/ptexlib.h>
+#  include "ptexlib.h"
 
 #  define COPYRIGHT_HOLDER "Taco Hoekwater"
 #  define AUTHOR NULL
