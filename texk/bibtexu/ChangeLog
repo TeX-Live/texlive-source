@@ -1,3 +1,8 @@
+2012-10-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c (c8read_csf): DEFAULT_BIBTEX_CSFILE is set to
+	"/nonesuch" in ../kpathsea/paths.h; so we use CSF_FILE_ENVVAR.
+
 2012-08-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bibtex.c : Change order of inclusion of headers to avoid warnings.

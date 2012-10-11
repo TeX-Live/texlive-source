@@ -1,3 +1,8 @@
+2012-10-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c (c8read_csf): DEFAULT_BIBTEX_CSFILE is set to
+	"/nonesuch" in ../kpathsea/paths.h; so we use CSF_FILE_ENVVAR.
+
 2012-04-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bibtex-2.c: Do not check whether Glob_Str_Size > Buf_Size,

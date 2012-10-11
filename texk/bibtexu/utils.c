@@ -1746,8 +1746,11 @@ int c8read_csf (void)
     */
     if (Str_csfile == NULL) {
 #ifdef KPATHSEA
+#ifndef CSF_FILE_ENVVAR
+#define CSF_FILE_ENVVAR "BIBTEX_CSFILE"
+#endif
       /* Default value from environment or texmf.cnf */
-      Str_csfile = kpse_var_value (DEFAULT_BIBTEX_CSFILE);
+      Str_csfile = kpse_var_value (CSF_FILE_ENVVAR);
       if (Str_csfile == NULL)  /* Use fallback value */
           Str_csfile = xstrdup ("88591lat.csf");
 #else
