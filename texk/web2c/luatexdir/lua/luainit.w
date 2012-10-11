@@ -911,6 +911,7 @@ void lua_initialize(int ac, char **av)
                 shellenabledp = 1;
                 restrictedshell = 1;
             }
+            free(v1);
         }
         /* If shell escapes are restricted, get allowed cmds from cnf.  */
         if (shellenabledp && restrictedshell == 1) {
@@ -918,6 +919,7 @@ void lua_initialize(int ac, char **av)
             get_lua_string("texconfig", "shell_escape_commands", &v1);
             if (v1) {
                 mk_shellcmdlist(v1);
+                free(v1);
             }
         }
 
