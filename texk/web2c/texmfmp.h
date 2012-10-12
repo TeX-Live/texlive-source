@@ -108,8 +108,8 @@ typedef void* voidpointer;
 /* Hacks for TeX that are better not to #ifdef, see lib/openclose.c.  */
 extern int tfmtemp, texinputtype;
 
-/* pdfTeX uses these for pipe support */
-#if defined(pdfTeX)
+/* pdftex etc. except for tex use these for pipe support */
+#if defined(TeX) && !defined(onlyTeX)
 extern boolean open_in_or_pipe (FILE **, int, const_string fopen_mode);
 extern boolean open_out_or_pipe (FILE **, const_string fopen_mode);
 extern void close_file_or_pipe (FILE *);

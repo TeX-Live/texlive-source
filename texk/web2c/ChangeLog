@@ -1,3 +1,7 @@
+2012-10-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmfmp.h: Support pipe except for tex.
+
 2012-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/web2c.ac (kpse_tex_progs): Remove obsdcompat.
