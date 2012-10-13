@@ -291,7 +291,10 @@ boolean lua_a_open_in(alpha_file * f, char *fn, int n)
     } else {
         read_file_callback_id[n] = 0;
     }
-    fnam = luatex_find_read_file(fn, n, find_read_file_callback);
+    if (*fn == '|')
+        fnam = fn;
+    else
+        fnam = luatex_find_read_file(fn, n, find_read_file_callback);
     if (!fnam)
         return false;
     callback_id = callback_defined(open_read_file_callback);
@@ -1266,9 +1269,8 @@ static FILE *runpopen(char *cmd, const char *mode)
    closed using |pclose()|.
 
 @c
-static FILE *pipes[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
-};
+#define NUM_PIPES 16
+static FILE *pipes[NUM_PIPES];
 
 #ifdef WIN32
 FILE *Poptr;
@@ -1295,14 +1297,14 @@ boolean open_in_or_pipe(FILE ** f_ptr, char *fn, int filefmt,
         recorder_record_input(fname + 1);
         *f_ptr = runpopen(fname + 1, "r");
         free(fname);
-        for (i = 0; i <= 15; i++) {
+        for (i = 0; i < NUM_PIPES; i++) {
             if (pipes[i] == NULL) {
                 pipes[i] = *f_ptr;
                 break;
             }
         }
         if (*f_ptr)
-            setvbuf(*f_ptr, (char *) NULL, _IOLBF, 0);
+            setvbuf(*f_ptr, (char *) NULL, _IONBF, 0);
 #ifdef WIN32
         Poptr = *f_ptr;
 #endif
@@ -1342,7 +1344,7 @@ boolean open_out_or_pipe(FILE ** f_ptr, char *fn, const_string fopen_mode)
         recorder_record_output(fname + 1);
         free(fname);
 
-        for (i = 0; i <= 15; i++) {
+        for (i = 0; i < NUM_PIPES; i++) {
             if (pipes[i] == NULL) {
                 pipes[i] = *f_ptr;
                 break;
@@ -1350,7 +1352,7 @@ boolean open_out_or_pipe(FILE ** f_ptr, char *fn, const_string fopen_mode)
         }
 
         if (*f_ptr)
-            setvbuf(*f_ptr, (char *) NULL, _IOLBF, 0);
+            setvbuf(*f_ptr, (char *) NULL, _IONBF, 0);
 
         return *f_ptr != NULL;
     }
