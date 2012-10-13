@@ -1916,7 +1916,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
         }
       }
       if (*f_ptr)
-        setvbuf (*f_ptr,NULL,_IOLBF,0);
+        setvbuf (*f_ptr,NULL,_IONBF,0);
 #ifdef WIN32
       Poptr = *f_ptr;
 #endif
@@ -1965,7 +1965,7 @@ open_out_or_pipe (FILE **f_ptr, const_string fopen_mode)
       }
 
       if (*f_ptr)
-        setvbuf(*f_ptr,NULL,_IOLBF,0);
+        setvbuf(*f_ptr,NULL,_IONBF,0);
 
       return *f_ptr != NULL;
     }

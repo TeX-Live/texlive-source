@@ -1,3 +1,7 @@
+2012-10-14  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Use _IONBF for unbuffered stream.
+
 2012-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (mk_shellcmdlist): The argument is not constant.
