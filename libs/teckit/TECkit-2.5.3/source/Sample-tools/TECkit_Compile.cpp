@@ -32,8 +32,6 @@ void
 CALLBACK
 errFunc(void* userData, const char* msg, const char* param, UInt32 line)
 {
-#pragma unused(userData)
-
 	fprintf(stderr, "%s", msg);
 	if (param != 0)
 		fprintf(stderr, ": \"%s\"", param);

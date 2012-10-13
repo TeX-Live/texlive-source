@@ -30,6 +30,9 @@ extern "C" {
 #ifdef _WIN32
 /* MS compiler has predefined _WIN32, so assume Windows target  */
 #include <windows.h>	// apparently just using windef.h fails on VC++6
+#undef WINAPI
+#define WINAPI
+#define EXPORTED
 #else
 /* not the MS compiler, so try Metrowerks' platform macros */
 #ifndef __APPLE__

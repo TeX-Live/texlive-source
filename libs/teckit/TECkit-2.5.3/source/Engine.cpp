@@ -51,12 +51,6 @@ Description:
 #	define NOSERVICE
 #	define NOMCX
 #	include <windows.h>
-
-	BOOL WINAPI
-	DllMain(HINSTANCE /*hInst*/, DWORD /*wDataSeg*/, LPVOID /*lpReserved*/)
-	{
-		return true;
-	}
 #endif
 
 #include "Engine.h"
@@ -102,8 +96,6 @@ READ(const UInt32 p)
 #endif
 }
 
-#pragma mark --- class Stage ---
-
 Stage::Stage()
 	: oBuffer(0)
 	, oBufSize(0)
@@ -124,8 +116,6 @@ Stage::lookaheadCount() const
 {
 	return 0;
 }
-
-#pragma mark --- class Normalizer ---
 
 #include "NormalizationData.c"
 
@@ -395,8 +385,6 @@ Normalizer::getChar()
 	}
 	return c;
 }
-
-#pragma mark --- class Pass ---
 
 Pass::Pass(const TableHeader* inTable, Converter* cnv)
 	: converter(cnv)
@@ -1282,8 +1270,6 @@ if (traceLevel > 0)
 	return 0;
 }
 
-#pragma mark --- class Converter ---
-
 Converter::Converter(const Byte* inTable, UInt32 inTableSize, bool inForward,
 						UInt16 inForm, UInt16 outForm)
 	: table(0)
@@ -1934,8 +1920,6 @@ Converter::Validate(const Converter* cnv)
 	}
 	return true;
 }
-
-#pragma mark --- Public "C" API functions ---
 
 TECkit_Status
 WINAPI

@@ -1,3 +1,9 @@
+2012-10-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid TL vs W32TeX diffs (from Akira).
+	* patch-04-pragmas (new): Remove '#pragma's.
+	* patch-05-static (new): Build a static library and not a Dll.
+
 2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported TECkit-2.5.3 source tree (teckit) from
