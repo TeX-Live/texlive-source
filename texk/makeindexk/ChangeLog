@@ -1,3 +1,7 @@
+2012-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.c: Avoid TL vs W32TeX diffs (from Akira).
+
 2012-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.c, scanid.c: Do not typecast the result of malloc().

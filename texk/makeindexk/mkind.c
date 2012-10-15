@@ -107,8 +107,8 @@ main(int argc, char *argv[])
 
 #if USE_KPATHSEA
     kpse_set_program_name (argv[0], "makeindex");
-#endif
-
+    pgm_fn = kpse_program_name;
+#else
     /* determine program name */
     pgm_fn = strrchr(*argv, DIR_DELIM);
 #ifdef ALT_DIR_DELIM
@@ -123,6 +123,7 @@ main(int argc, char *argv[])
 	pgm_fn = *argv;
     else
 	pgm_fn++;
+#endif /* USE_KPATHSEA */
 
     /* process command line options */
     while (--argc > 0) {
