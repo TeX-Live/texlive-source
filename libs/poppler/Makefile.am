@@ -51,6 +51,7 @@ goo_libGoo_a_sources = \
 	$(GOO_SRC)/GooList.cc \
 	$(GOO_SRC)/GooString.cc \
 	$(GOO_SRC)/GooTimer.cc \
+	$(GOO_SRC)/grandom.cc \
 	$(GOO_SRC)/gstrtod.cc
 
 fofi_libfofi_a_sources = \
@@ -114,6 +115,7 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/strtok_r.cpp \
 	$(POPPLER_SRC)/UnicodeMap.cc \
 	$(POPPLER_SRC)/UnicodeTypeTable.cc \
+	$(POPPLER_SRC)/UTF.cc \
 	$(POPPLER_SRC)/ViewerPreferences.cc \
 	$(POPPLER_SRC)/XRef.cc \
 	$(POPPLER_SRC)/XpdfPluginAPI.cc

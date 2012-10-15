@@ -1,0 +1,72 @@
+2012-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.21.0 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-02-warnings: Adapted.
+
+2012-07-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.20.2 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-02-warnings: Adapted.
+
+2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.20.0 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-01-missing-param (removed): Obsolete.
+	* patch-02-warnings: Adapted.
+
+2012-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.19.4 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-03-POPPLER_VERSION (removed): Obsolete.
+	* patch-01-missing-param (new): Bug fix, missing new func param.
+	* patch-02-warnings: Adapted.
+
+2012-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.18.4 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-01-PDF_PARSER_ONLY (removed): Obsolete.
+	* patch-0[23]-*: Adapted.
+
+2011-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-mingw (removed): Instead add `-lgdi32'.
+
+2011-10-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-mingw (new): Split off ...
+	* patch-01-PDF_PARSER_ONLY: ... from here.
+
+2011-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-POPPLER_VERSION: Reorg definition of POPPLER_VERSION.
+
+2011-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.18.0 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-0[123]-*: Adapted.
+
+2011-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-PDF_PARSER_ONLY: Fix PDF_PARSER_ONLY for MinGW.
+
+	* patch-03-POPPLER_VERSION (new): #define POPPLER_VERSION.
+
+2011-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-warnings (new): 
+	poppler/Movie.cc: Cast -1 to Gulong.
+	goo/PNGWriter.h: Add newline at end of file.
+	
+2011-04-12  Taco Hoekwater  <taco@luatex.org>
+
+	Imported poppler-0.12.4 source tree from:
+	  http://poppler.freedesktop.org/
+
+	* patch-01-PDF_PARSER_ONLY (new): Implement PDF_PARSER_ONLY.
+

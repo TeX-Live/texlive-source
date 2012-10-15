@@ -31,7 +31,7 @@ libpng 1.5.13 - checked 28sep12
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
-poppler 0.20.2 - checked 11jul12
+poppler 0.21.0 - checked 15oct12
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 t1lib 5.1.2 - checked 10may12

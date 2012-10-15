@@ -78,7 +78,8 @@ libpoppler_a_AR = $(AR) $(ARFLAGS)
 libpoppler_a_LIBADD =
 am__objects_1 = FixedPoint.$(OBJEXT) gfile.$(OBJEXT) gmem.$(OBJEXT) \
 	gmempp.$(OBJEXT) GooHash.$(OBJEXT) GooList.$(OBJEXT) \
-	GooString.$(OBJEXT) GooTimer.$(OBJEXT) gstrtod.$(OBJEXT)
+	GooString.$(OBJEXT) GooTimer.$(OBJEXT) grandom.$(OBJEXT) \
+	gstrtod.$(OBJEXT)
 am__objects_2 = FoFiBase.$(OBJEXT) FoFiEncodings.$(OBJEXT) \
 	FoFiIdentifier.$(OBJEXT) FoFiTrueType.$(OBJEXT) \
 	FoFiType1.$(OBJEXT) FoFiType1C.$(OBJEXT)
@@ -102,8 +103,9 @@ am__objects_3 = Annot.$(OBJEXT) Array.$(OBJEXT) BuiltinFont.$(OBJEXT) \
 	ProfileData.$(OBJEXT) Rendition.$(OBJEXT) \
 	SecurityHandler.$(OBJEXT) Sound.$(OBJEXT) Stream.$(OBJEXT) \
 	strtok_r.$(OBJEXT) UnicodeMap.$(OBJEXT) \
-	UnicodeTypeTable.$(OBJEXT) ViewerPreferences.$(OBJEXT) \
-	XRef.$(OBJEXT) XpdfPluginAPI.$(OBJEXT)
+	UnicodeTypeTable.$(OBJEXT) UTF.$(OBJEXT) \
+	ViewerPreferences.$(OBJEXT) XRef.$(OBJEXT) \
+	XpdfPluginAPI.$(OBJEXT)
 nodist_libpoppler_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
 	$(am__objects_3)
 libpoppler_a_OBJECTS = $(nodist_libpoppler_a_OBJECTS)
@@ -306,6 +308,7 @@ goo_libGoo_a_sources = \
 	$(GOO_SRC)/GooList.cc \
 	$(GOO_SRC)/GooString.cc \
 	$(GOO_SRC)/GooTimer.cc \
+	$(GOO_SRC)/grandom.cc \
 	$(GOO_SRC)/gstrtod.cc
 
 fofi_libfofi_a_sources = \
@@ -369,6 +372,7 @@ poppler_libpoppler_a_sources = \
 	$(POPPLER_SRC)/strtok_r.cpp \
 	$(POPPLER_SRC)/UnicodeMap.cc \
 	$(POPPLER_SRC)/UnicodeTypeTable.cc \
+	$(POPPLER_SRC)/UTF.cc \
 	$(POPPLER_SRC)/ViewerPreferences.cc \
 	$(POPPLER_SRC)/XRef.cc \
 	$(POPPLER_SRC)/XpdfPluginAPI.cc
@@ -502,6 +506,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SecurityHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Sound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Stream.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UTF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeTypeTable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ViewerPreferences.Po@am__quote@
@@ -510,6 +515,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gmem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gmempp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grandom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstrtod.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strtok_r.Po@am__quote@
 
@@ -638,6 +644,20 @@ GooTimer.obj: $(GOO_SRC)/GooTimer.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/GooTimer.cc' object='GooTimer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GooTimer.obj `if test -f '$(GOO_SRC)/GooTimer.cc'; then $(CYGPATH_W) '$(GOO_SRC)/GooTimer.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/GooTimer.cc'; fi`
+
+grandom.o: $(GOO_SRC)/grandom.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grandom.o -MD -MP -MF $(DEPDIR)/grandom.Tpo -c -o grandom.o `test -f '$(GOO_SRC)/grandom.cc' || echo '$(srcdir)/'`$(GOO_SRC)/grandom.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/grandom.Tpo $(DEPDIR)/grandom.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/grandom.cc' object='grandom.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grandom.o `test -f '$(GOO_SRC)/grandom.cc' || echo '$(srcdir)/'`$(GOO_SRC)/grandom.cc
+
+grandom.obj: $(GOO_SRC)/grandom.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grandom.obj -MD -MP -MF $(DEPDIR)/grandom.Tpo -c -o grandom.obj `if test -f '$(GOO_SRC)/grandom.cc'; then $(CYGPATH_W) '$(GOO_SRC)/grandom.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/grandom.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/grandom.Tpo $(DEPDIR)/grandom.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GOO_SRC)/grandom.cc' object='grandom.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grandom.obj `if test -f '$(GOO_SRC)/grandom.cc'; then $(CYGPATH_W) '$(GOO_SRC)/grandom.cc'; else $(CYGPATH_W) '$(srcdir)/$(GOO_SRC)/grandom.cc'; fi`
 
 gstrtod.o: $(GOO_SRC)/gstrtod.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gstrtod.o -MD -MP -MF $(DEPDIR)/gstrtod.Tpo -c -o gstrtod.o `test -f '$(GOO_SRC)/gstrtod.cc' || echo '$(srcdir)/'`$(GOO_SRC)/gstrtod.cc
@@ -1464,6 +1484,20 @@ UnicodeTypeTable.obj: $(POPPLER_SRC)/UnicodeTypeTable.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/UnicodeTypeTable.cc' object='UnicodeTypeTable.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeTypeTable.obj `if test -f '$(POPPLER_SRC)/UnicodeTypeTable.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/UnicodeTypeTable.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/UnicodeTypeTable.cc'; fi`
+
+UTF.o: $(POPPLER_SRC)/UTF.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UTF.o -MD -MP -MF $(DEPDIR)/UTF.Tpo -c -o UTF.o `test -f '$(POPPLER_SRC)/UTF.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/UTF.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/UTF.Tpo $(DEPDIR)/UTF.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/UTF.cc' object='UTF.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UTF.o `test -f '$(POPPLER_SRC)/UTF.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/UTF.cc
+
+UTF.obj: $(POPPLER_SRC)/UTF.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UTF.obj -MD -MP -MF $(DEPDIR)/UTF.Tpo -c -o UTF.obj `if test -f '$(POPPLER_SRC)/UTF.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/UTF.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/UTF.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/UTF.Tpo $(DEPDIR)/UTF.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(POPPLER_SRC)/UTF.cc' object='UTF.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UTF.obj `if test -f '$(POPPLER_SRC)/UTF.cc'; then $(CYGPATH_W) '$(POPPLER_SRC)/UTF.cc'; else $(CYGPATH_W) '$(srcdir)/$(POPPLER_SRC)/UTF.cc'; fi`
 
 ViewerPreferences.o: $(POPPLER_SRC)/ViewerPreferences.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ViewerPreferences.o -MD -MP -MF $(DEPDIR)/ViewerPreferences.Tpo -c -o ViewerPreferences.o `test -f '$(POPPLER_SRC)/ViewerPreferences.cc' || echo '$(srcdir)/'`$(POPPLER_SRC)/ViewerPreferences.cc

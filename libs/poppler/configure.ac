@@ -66,7 +66,7 @@ AC_HEADER_DIRENT
 
 dnl **** Checks for library functions ****
 
-AC_CHECK_FUNCS([gettimeofday gmtime_r popen mkstemp])
+AC_CHECK_FUNCS([gettimeofday gmtime_r mkstemp popen rand_r])
 AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO
 

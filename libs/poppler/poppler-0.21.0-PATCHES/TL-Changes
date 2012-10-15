@@ -1,0 +1,30 @@
+Changes applied to the poppler-0.21.0 tree as obtained from:
+	http://poppler.freedesktop.org/
+
+Removed:
+	aclocal.m4
+	config.guess
+	config.sub
+	configure
+	depcomp
+	install-sh
+	ltmain.sh
+	missing
+	Makefile.in
+	fofi/Makefile.in
+	goo/Makefile.in
+	poppler/Makefile.in
+
+Removed unused dirs:
+	cmake
+	cpp
+	glib
+	m4
+	qt4
+	splash
+	test
+	utils
+
+Removed execute permission:
+	goo/GooTimer.h
+

@@ -1,3 +1,11 @@
+2012-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import poppler-0.21.0.
+	* version.ac: Adjust.
+	* configure.ac: Add check for rand_r().
+	* Makefile.am (goo_libGoo_a_sources): Add grandom.cc;
+	(poppler_libpoppler_a_sources): add UTF.cc (new files).
+
 2012-07-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (poppler_libpoppler_a_sources): Drop PSOutputDev.cc,
