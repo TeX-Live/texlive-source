@@ -433,7 +433,7 @@ static void fill(dest, h, w, area, Byte, bit, wordsize)
                rightP = edge->link->xvalues;
  
                for (y = edge->ymin; y < edge->ymax; y++) {
-                       fillrun(p, *leftP++ - xmin, *rightP++ - xmin, bit);
+                       fillrun(p, (pel)(*leftP++ - xmin), (pel)(*rightP++ - xmin), bit);
                        p += wbytes;
                }
        }

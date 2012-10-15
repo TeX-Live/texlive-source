@@ -1,3 +1,9 @@
+2012-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reduce TL vs W32TeX diffs (from Akira).
+	* mag.c [WIN32]: Add '#include <fcntl.h>' for setmode().
+	* t1funcs.c: Add casts to avoid MSVC warnings.
+
 2012-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pfb2pfa.c (main): Drop unnecessary nested fatal() prototype.
