@@ -421,7 +421,7 @@ sub make_commands {
     my @commands = map { make_cmdline($_) } @worklist;
 
     # make sure the last command *does* call updmap
-    $commands[-1] =~ s/--no-updmap//xms;
+    $commands[-1] =~ s/--no-updmap//xms if $ARGV{updmap};
 
     if ($ARGV{manual}) {
         open my $BAT, '>', 'autoinst.bat'
@@ -486,12 +486,16 @@ sub set_targetdirs {
     my $family = shift;
 
     my %dir = map { ($_ => File::Spec->catdir(
-                        $ARGV{target}, 'fonts', $_, 'lcdftools', $family))
+                        $ARGV{target}, 
+                        'fonts', 
+                        $_, 
+                        $ARGV{vendor}, 
+                        $ARGV{typeface} || $family))
                   }
                   qw(tfm vf pl vpl type1 truetype type42);
 
     $dir{$_} = File::Spec->catdir(
-            $ARGV{target}, 'fonts', $_, 'dvips', 'lcdftools')
+            $ARGV{target}, 'fonts', $_, 'dvips', $ARGV{vendor})
         for qw(enc map);
 
     File::Path::make_path(values %dir);
@@ -531,18 +535,24 @@ Possible options:
 
     -sanserif               Install font as sanserif font
     -typewriter             Install font as typewriter font
+
     -extra="TEXT"           Add TEXT to the command line for 'otftotfm'
     -target="DIRECTORY"     Install files into specified TEXMF tree
+    -vendor="VENDOR"        Specify part of directory name for installation
+    -typeface="TYPEFACE"    Specify part of directory name for installation
+    -(no)updmap             Toggle running of updmap
+    
     -manual                 Manual mode (see documentation)
-
+    
     -(no)figurekern         Keep or remove kerns between tabular figures
 
-    -help                   Print this text
-    -verbose                Make some noise
+    -help                   Prints this text and exit
+    -verbose                Prints detailed info about operation
 
     font[s]                 The fonts (either .otf or .ttf) to install.
 
 Please report any bugs or suggestions to <marcpenninga@gmail.com>.
+
 END_USAGE
 
 # Default values for the command-line arguments
@@ -559,6 +569,9 @@ END_USAGE
     nfss        => 'rm',
     extra       => '',
     target      => '',
+    vendor      => 'lcdftools',
+    typeface    => '',
+    updmap      => '1',     # 0 = no, 1 = yes
     manual      => '0',     # 0 = no, 1 = yes
     verbose     => '0',     # 0 = no, 1 = yes
     figurekern  => '1',     # 0 = no, 1 = yes
@@ -585,6 +598,9 @@ sub parse_options {
         'typewriter'  =>  sub { $ARGV{nfss} = 'tt' },
         'extra=s'     => \$ARGV{extra},
         'target=s'    => \$ARGV{target},
+        'vendor=s'    => \$ARGV{vendor},
+        'typeface=s'  => \$ARGV{typeface},
+        'updmap!'     => \$ARGV{updmap},
         'manual'      => \$ARGV{manual},
         'figurekern!' => \$ARGV{figurekern},
         'verbose'     => \$ARGV{verbose},
@@ -717,7 +733,7 @@ $info->{filename}
 
 END_FONTINFO
     }
-
+    
     return $info;
 }
 
@@ -1002,7 +1018,8 @@ sub write_stylefile {
     my %seen = %{ get_keys($data) };
 
     my $fn = sprintf "%s.sty", $fam;
-    my $dir = File::Spec->catdir($ARGV{target}, 'tex', 'latex', $fam);
+    my $dir = File::Spec->catdir(
+        $ARGV{target}, 'tex', 'latex', $ARGV{typeface} || $fam);
     File::Path::make_path($dir);
     $fn = File::Spec->catfile($dir, $fn);
     open my $STY, '>', $fn or die "[ERROR] Can't create '$fn': $!";
@@ -1204,7 +1221,8 @@ sub write_fdfile {
     my ($fam, $enc, $sty, $data) = @_;
 
     my $fn = sprintf "%s%s-%s.fd", $enc, $fam, $sty;
-    my $dir = File::Spec->catdir($ARGV{target}, 'tex', 'latex', $fam);
+    my $dir = File::Spec->catdir(
+        $ARGV{target}, 'tex', 'latex', $ARGV{typeface} || $fam);
     File::Path::make_path($dir);
     $fn = File::Spec->catfile($dir, $fn);
     open my $FD, '>', $fn or die "[ERROR] Can't create '$fn': $!";
@@ -1300,8 +1318,8 @@ B<autoinst> will create several LaTeX font families:
 
 =item -
 
-Four text families (with lining and oldstyle digits, in tabular and
-proportional variants), each with the following shapes:
+Four text families (with lining and oldstyle digits, in both tabular 
+and proportional variants), each with the following shapes:
 
 =over 2
 
@@ -1394,9 +1412,9 @@ tabular oldstyle figures
 
 =item I<Sup>
 
-superior characters (many fonts have only an incomplete set of superiors:
-digits, punctuation and the letters I<abdeilmnorst>;
-normal forms will be used for the other characters)
+superior characters (many fonts have only an incomplete set of superior
+characters: digits, some punctuation and the letters I<abdeilmnorst>;
+normal forms will then be used for the other characters)
 
 =item I<Inf>
 
@@ -1509,8 +1527,8 @@ LaTeX installation) and supplying the name of the ornament font.
 
 To access the ornaments, B<autoinst> creates a font-specific encoding file
 F<< <FontFamily>_orn.enc >>, but only if that file doesn't yet exist.
-This means you can provide your own encoding vector,
-e.g. if your fonts use non-standard glyph names for ornaments.
+This is a deliberate feature that allows you to provide your own 
+encoding vector, e.g. if your fonts use non-standard glyph names for ornaments.
 
 These commands are only generated for shapes and number styles
 that actually exist; no commands are generated for shapes and styles
@@ -1534,16 +1552,17 @@ NFSS identifies fonts by a combination of family, series (weight plus width),
 shape and size.
 B<autoinst> parses the output of C<otfinfo --info> to determine
 these parameters. When this fails
-(e.g., because the font family contains unusual widths or weights),
+(e.g., because the font family contains uncommon widths or weights),
 B<autoinst> ends up with different fonts having the I<same> values
 for the font parameters, which means that these fonts cannot be used in NFSS.
 B<autoinst> will then split the font family into multiple subfamilies
-(based on the font's "Subfamily" value) and try again.
-(Since many font families overdo the "Subfamily" by making each font
-a separate subfamily, this strategy is only used as a last resort.)
+(based on each font file's "Subfamily" value) and try again.
+(Since many font families misunderstand the "Subfamily" concept 
+and make each font file a separate subfamily, 
+this strategy is only used as a last resort.)
 
 If this proliferation of font families is unwanted,
-either rerun B<autoinst> on a smaller set of fonts (omitting the ones that
+either run B<autoinst> on a smaller set of fonts (omitting the ones that
 failed to parse correctly)
 or else add the missing widths, weights and shapes to the tables C<%FD_WIDTH>,
 C<%FD_WEIGHT> and C<%FD_SHAPE>, near the top of the source code.
@@ -1629,7 +1648,8 @@ and TeXLive (F<http://tug.org/texlive>) don't have this problem.
 
 You may use either one or two dashes before options,
 and option names may be shortened to a unique prefix
-(e.g., B<-enc> instead of B<-encoding>).
+(e.g., B<-encoding> may be abbreviated to B<-enc> or even B<-en>,
+but B<-e> is ambiguous (B<-encoding>, B<-extra>).
 
 =over 4
 
@@ -1650,14 +1670,14 @@ specified, so the last one will be the default text encoding.
 
 Install the font as a sanserif font, accessed via C<\sffamily> and C<\textsf>.
 Note that the generated style file redefines C<\familydefault>,
-so including it will still make this font the default text font.
+so including it will make this font the default text font.
 
 =item B<-typewriter>
 
 Install the font as a typewriter font, accessed via C<\ttfamily> and
 C<\texttt>.
 Note that the generated style file redefines C<\familydefault>,
-so including it will still make this font the default text font.
+so including it will make this font the default text font.
 
 =item B<-ts1>
 
@@ -1713,38 +1733,10 @@ The default is B<-nofractions>.
 
 Turn the creation of ornament fonts on or off. The default is B<-ornaments>.
 
-=item B<-target>=I<DIRECTORY>
-
-Install all generated files into the TEXMF tree at I<DIRECTORY>.
-
-By default, B<autoinst> searches your $TEXMFLOCAL and $TEXMFHOME paths
-and installs all files into subdirectories of the first writable TEXMF tree
-it finds (or into subdirectories of the current directory,
-if no writable directory is found).
-
-B<Note>: this option gets overriden by the B<-manual> option!
-
-=item B<-manual>
-
-Manual mode. By default, B<autoinst> immediately executes all F<otftotfm>
-command lines it generates; with the B<-manual> option, these commands are
-instead written to a file F<autoinst.bat>.
-Also, the generated F<otftotfm> command lines specify the I< --pl> option
-(which tells F<otftotfm> to generate readable/editable F<pl> and F<vpl> files
-instead of the default F<tfm> and F<vf> files)
-and leave out the I< --automatic> option (which tells F<otftotfm> to
-leave all generated files in the current directory, rather than install
-them into your TEXMF tree).
-
-When using this option, you should run F<pltotf> and F<vptovf> after
-executing all commands,
-to convert the F<pl> and F<vf> files to F<tfm> and F<vf> format.
-
-B<Note>: this option overrides the B<-target> option!
-
 =item B<-verbose>
 
-Verbose mode; print detailed info about what B<autoinst> thinks it's doing.
+Verbose mode; print detailed info about what B<autoinst> thinks it's doing,
+especially during font info parsing.
 
 =item B<-extra>=I<text>
 
@@ -1756,12 +1748,63 @@ being interpreted as options to B<autoinst>, it should be properly quoted.
 =item B<-nofigurekern>
 
 Some fonts provide kerning pairs for tabular figures.
-This is probably unwanted (e.g., numbers in tables won't line up exactly).
+This is very probably unwanted (e.g., numbers in tables won't line up exactly).
 The option B<-nofigurekern> adds extra I< --ligkern> options
 to the command lines for I<otftotfm> to suppress such kerns
 (but only for the "TLF" and "TOsF" families).
 Since this leads to very long command lines (it adds one hundred such options)
-and the problem affects only few fonts, the default is B<-figurekern>.
+and the problem affects only few fonts, the default is however B<-figurekern>.
+
+=item B<-manual>
+
+Manual mode. By default, B<autoinst> executes all F<otftotfm>
+command lines it generates; with the B<-manual> option, these commands are
+instead written to a file F<autoinst.bat>.
+Also, the generated F<otftotfm> command lines specify the I< --pl> option
+(which tells F<otftotfm> to generate readable/editable F<pl> and F<vpl> files
+instead of the default F<tfm> and F<vf> files)
+and leave out the I< --automatic> option (which tells F<otftotfm> to
+leave all generated files in the current directory, rather than install
+them into your TEXMF tree).
+
+When using this option, you should run F<pltotf> and F<vptovf> after
+executing all commands,
+to convert the F<pl> and F<vpl> files to F<tfm> and F<vf> format.
+
+=back
+
+The following options are only meaningful in automatic mode,
+and hence ignored in manual mode:
+
+=over 4
+
+=item B<-target>=I<DIRECTORY>
+
+Install all generated files into the TEXMF tree at I<DIRECTORY>.
+
+By default, B<autoinst> searches your $TEXMFLOCAL and $TEXMFHOME paths
+and installs all files into subdirectories of the first writable TEXMF tree
+it finds (or into subdirectories of the current directory,
+if no writable directory is found).
+
+=item B<-vendor>=I<VENDOR>
+
+=item B<-typeface>=I<TYPEFACE>
+
+These options are equivalent to F<otftotfm>'s I< --vendor> and I< --typeface>
+options: they change the "vendor" and "typeface" parts of the names of the
+subdirectories in the TEXMF tree where generated files will be stored. 
+The default values are "lcdftools" and the font's FontFamily name.
+
+Please note that these options change I<only> directory names, 
+not the names of any generated files.
+
+=item B<-updmap>
+
+=item B<-noupdmap>
+
+Control whether or not F<updmap> is called after the last call to F<otftotfm>.
+The default is B<-updmap>.
 
 =back
 
@@ -1770,21 +1813,21 @@ and the problem affects only few fonts, the default is B<-figurekern>.
 
 Eddie Kohler's TypeTools (F<http://www.lcdf.org/type>).
 
-Perl is pre-installed on most Linux and Unix systems;
-on Windows, try ActiveState's ActivePerl
-(available from F<http://www.activestate.com>)
-or Strawberry Perl (F<http://strawberryperl.com>).
+The FontPro project (F<https://github.com/sebschub/FontPro>)
+offers very complete support for Adobe's Minion Pro and Myriad Pro
+(including math), and is currently working on Cronos Pro as well.
 
 XeTeX (F<http://www.tug.org/xetex>) and LuaTeX (F<http://www.luatex.org>)
 are TeX extensions that can use any font (including both flavours of OpenType)
 without TeX-specific support files.
 
 John Owens' F<otfinst> (available from CTAN) is another wrapper
-around F<otftotfm>, and may work when B<autoinst> doesn't.
+around F<otftotfm>, and may work for you when B<autoinst> doesn't.
 
-The FontPro project (F<https://github.com/sebschub/FontPro>)
-offers very complete support for Adobe's Minion Pro and Myriad Pro
-(including math), and is currently working on Cronos Pro as well.
+Perl is pre-installed on most Linux and Unix systems;
+on Windows, try ActiveState's ActivePerl
+(available from F<http://www.activestate.com>)
+or Strawberry Perl (F<http://strawberryperl.com>).
 
 
 =head1 AUTHOR
@@ -1827,6 +1870,10 @@ GNU General Public License for more details.
 
 =over 12
 
+=item I<2012-10-03>
+
+Added the I<-vendor>, I<-typeface> and I<-(no)updmap> command line options.
+
 =item I<2012-07-06>
 
 Documentation update.
@@ -1854,6 +1901,13 @@ the same TEXMF tree as the other generated files.
 Generate OT1, T1 and LY1 encoded text fonts by default.
 Made I<-titling> a default option (instead of I<-notitling>).
 Updated the documentation.
+
+=back
+
+
+=begin Really_old_history
+
+=over 12
 
 =item I<2011-06-15>
 
@@ -1892,13 +1946,6 @@ I<fontools_>, to prevent name clashes with other packages.
 A small patch to the C<get_orn> subroutine:
 it now also recognises the I<bullet.xxx> ornament glyphs
 in Adobe Kepler Pro.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2007-08-07>
 
