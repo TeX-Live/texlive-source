@@ -1,3 +1,7 @@
+2012-10-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.h: Drop duplicate '#include "c-auto.h"'.
+
 2012-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.c: Avoid TL vs W32TeX diffs (from Akira).
