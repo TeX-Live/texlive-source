@@ -1,12 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <kpathsea/config.h>
+#include "mendex.h"
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 #include <ptexenc/ptexenc.h>
-#include "mendex.h"
 
 #include "kana.h"
 #include "var.h"
@@ -30,14 +25,34 @@ int main(int argc, char **argv)
 {
 	int i,j,cc=0,startpagenum=-1,ecount=0;
 	const char *envbuff;
+	char *p;
+
+	enable_UPTEX (false); /* disable */
 
 #ifdef WIN32
 	_setmaxstdio(2048);
         set_enc_string("sjis", "euc");
+        sjisterminal = 0;
 #else
         set_enc_string(NULL, "euc");
 #endif
 	kpse_set_program_name(argv[0], "mendex");
+
+	p = getenv ("PTEX_KANJI_ENC");
+	if (p) {
+		if (!set_enc_string (p, NULL))
+			fprintf (stderr, "Ignoring bad kanji encoding \"%s\".\n", p);
+	}
+
+#ifdef WIN32
+	p = kpse_var_value ("guess_input_kanji_encoding");
+	if (p) {
+		if (*p == '1' || *p == 'y' || *p == 't')
+			infile_enc_auto = 1;
+		free(p);
+	}
+#endif
+
 	kp_ist.var_name = "INDEXSTYLE";
 	kp_ist.path = DEFAULT_INDEXSTYLES; /* default path. */
 	kp_ist.suffix = "ist";
@@ -154,6 +169,12 @@ int main(int argc, char **argv)
 				set_enc_string("SJIS", NULL);
 				break;
 
+#ifdef WIN32
+			case 'T':
+				sjisterminal = 1;
+				break;
+#endif
+
 			case 'U':
 				set_enc_string("UTF8", NULL);
 				break;
@@ -162,7 +183,11 @@ int main(int argc, char **argv)
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s).\n",VERSION, get_enc_string());
 				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS.(ptex-staff@ml.asciimw.jp)\n");
 				fprintf(stderr,"usage:\n");
-				fprintf(stderr,"%% mendex [-ilqrcg] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [idx0 idx1 ...]\n");
+				fprintf(stderr,"%% mendex [-ilqrcgfEJS"
+#ifdef WIN32
+					       "T"
+#endif
+					       "U] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [idx0 idx1 ...]\n");
 				fprintf(stderr,"options:\n");
 				fprintf(stderr,"-i      use stdin as the input file.\n");
 				fprintf(stderr,"-l      use letter ordering.\n");
@@ -179,6 +204,9 @@ int main(int argc, char **argv)
 				fprintf(stderr,"-E      EUC mode.\n");
 				fprintf(stderr,"-J      JIS mode.\n");
 				fprintf(stderr,"-S      ShiftJIS mode.\n");
+#ifdef WIN32
+				fprintf(stderr,"-T      ShiftJIS terminal.\n");
+#endif
 				fprintf(stderr,"-U      UTF-8 mode.\n");
 				fprintf(stderr,"idx...  input files.\n");
 				exit(0);

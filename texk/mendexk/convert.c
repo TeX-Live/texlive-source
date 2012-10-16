@@ -1,12 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "mendex.h"
 
-#include <kpathsea/config.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 #include <ptexenc/ptexenc.h>
-#include "mendex.h"
+
 #include "qsort.h"
 
 #include "exkana.h"

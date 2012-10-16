@@ -1,7 +1,9 @@
 /* Written by K.Asayayam  Sep. 1995 */
 
-#include <kpathsea/kpathsea.h>
-#include <string.h>
+#include "mendex.h"
+#include <kpathsea/expand.h>
+#include <kpathsea/pathsearch.h>
+
 #include "kp.h"
 
 /* KP_get_path(char *var, char *def_val)

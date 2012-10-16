@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <kpathsea/config.h>
 #include "mendex.h"
 #include "qsort.h"
 

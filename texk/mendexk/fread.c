@@ -1,11 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "mendex.h"
 
-#include <kpathsea/config.h>
 #include <kpathsea/tex-file.h>
 #include <ptexenc/ptexenc.h>
-#include "mendex.h"
 
 #include "exkana.h"
 #include "exvar.h"

@@ -1,9 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "mendex.h"
 
 #include <kpathsea/tex-file.h>
-#include "mendex.h"
 
 static inline int
 bfgetc (FILE *stream)
