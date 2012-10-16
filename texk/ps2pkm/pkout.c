@@ -116,9 +116,9 @@ void pk_preamble(char *comment, 	/* source of the font */
    pk1(len);
    for (i=0; i<len; i++) pk1(*comment++);
 
-   pk4(pointsize * (1<<20) + 0.5);
+   pk4((INT32)(pointsize * (1<<20) + 0.5));
    pk4(checksum);
-   pk4(h_res / DPI * (1<<16)); pk4(v_res / DPI * (1<<16));
+   pk4((INT32)(h_res / DPI * (1<<16))); pk4((INT32)(v_res / DPI * (1<<16)));
 }
 
 /* From `The GFtoPK processor', pp. 231 */

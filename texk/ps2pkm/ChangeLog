@@ -1,5 +1,10 @@
 2012-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	Remove TL vs W32TeX diffs (from Akira).
+	* pkout.c: Add casts to avoid MSVC warnings.
+
+2012-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Reduce TL vs W32TeX diffs (from Akira).
 	* mag.c [WIN32]: Add '#include <fcntl.h>' for setmode().
 	* t1funcs.c: Add casts to avoid MSVC warnings.
