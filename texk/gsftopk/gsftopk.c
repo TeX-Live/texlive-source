@@ -172,11 +172,6 @@ char	*getenv();
 #endif
 #endif /* undef FOPEN_WBIN_MODE */
 
-
-#ifndef __STDC__
-#define	const	/* nothing */
-#endif /* not __STDC__ */
-
 #else /* KPATHSEA */
 
 #include <kpathsea/config.h>
