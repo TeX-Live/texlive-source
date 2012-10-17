@@ -1,3 +1,7 @@
+2012-10-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gsftopk.c: Avoid MSVC warning.
+
 2012-10-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* gsftopk.c: All current C compilers support `const'.

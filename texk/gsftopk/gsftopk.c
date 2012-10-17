@@ -405,8 +405,8 @@ Boolean		test		= False;
 char		*fontname;
 int		fontlen;
 char		*mapline	= NULL;
-const char	*mapfile	= NULL;
-const char	*gspath		= GS_PATH;	/* gs interpreter path */
+char		*mapfile	= NULL;
+char		gspath[]	= GS_PATH;	/* gs interpreter path */
 Boolean		dosnames	= False;
 Boolean		quiet		= False;
 
