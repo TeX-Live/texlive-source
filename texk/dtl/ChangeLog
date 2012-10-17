@@ -1,3 +1,12 @@
+2012-10-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dt2dv.c, dv2dt.c, man2ps: Reduce TL/W32TeX diffs (from Akira).
+	* Makefile.am: Use the kpathsea library.
+	* configure.ac (KPSE_KPATHSEA_FLAGS): Adapt (drop [no-debug]).
+
+	* Makefile.am: Add explicit dv2dt_SOURCES.
+	Avoid use of deprecated INCLUDES.
+
 2012-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dt2dv.c, dv2dt.c: Drop the problematic prototype for isatty(),

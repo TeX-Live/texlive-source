@@ -24,18 +24,5 @@ case `basename $0` in
 	*)	echo "Unknown troff format:" ; exit 1 ;;
 esac
 
-# We can use either GNU groff or Sun Solaris troff + dpost
-if [ -x /usr/local/bin/groff ]
-then	# GNU groff
-	TROFF="groff $FORMAT"
-	TROFF2PS="cat"
-elif [ -x /usr/lib/lp/postscript/dpost ]
-then	# Solaris 2.1
-	TROFF="troff $FORMAT"
-	TROFF2PS="/usr/lib/lp/postscript/dpost"
-else
-	echo "Cannot find troff-to-PostScript filter"
-	exit 1
-fi
-
-tbl $* | eqn | $TROFF | $TROFF2PS
+# We use GNU groff
+gtbl $* | eqn | groff $FORMAT

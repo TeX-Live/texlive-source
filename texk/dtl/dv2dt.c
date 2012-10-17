@@ -30,6 +30,7 @@
 
 #ifdef KPATHSEA
 #include <kpathsea/c-fopen.h>
+#include <kpathsea/progname.h>
 #endif
 
 #include "dtl.h"
@@ -147,7 +148,7 @@ COUNT postamble ARGS((FILE * dvi,  FILE * dtl));
 COUNT postpost  ARGS((FILE * dvi,  FILE * dtl));
 
 
-String program;  /* name of dv2dt program */
+const char * program;  /* name of dv2dt program */
 
 int
 main
@@ -162,8 +163,12 @@ main
   FILE * dvi = stdin;
   FILE * dtl = stdout;
 
-  /* Watch out:  C's standard library's string functions are dicey */
-  strncpy (program, argv[0], MAXSTRLEN);
+#ifdef KPATHSEA
+  kpse_set_program_name(argv[0], "dv2dt");
+  program = kpse_program_name;
+#else
+  program = argv[0];
+#endif
 
   if (argc > 1)
     open_dvi (argv[1], &dvi);

@@ -88,9 +88,12 @@ PROGRAMS = $(bin_PROGRAMS)
 am_dt2dv_OBJECTS = dt2dv.$(OBJEXT)
 dt2dv_OBJECTS = $(am_dt2dv_OBJECTS)
 dt2dv_LDADD = $(LDADD)
-dv2dt_SOURCES = dv2dt.c
-dv2dt_OBJECTS = dv2dt.$(OBJEXT)
+am__DEPENDENCIES_1 =
+dt2dv_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_dv2dt_OBJECTS = dv2dt.$(OBJEXT)
+dv2dt_OBJECTS = $(am_dv2dt_OBJECTS)
 dv2dt_LDADD = $(LDADD)
+dv2dt_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -104,8 +107,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(dt2dv_SOURCES) dv2dt.c
-DIST_SOURCES = $(dt2dv_SOURCES) dv2dt.c
+SOURCES = $(dt2dv_SOURCES) $(dv2dt_SOURCES)
+DIST_SOURCES = $(dt2dv_SOURCES) $(dv2dt_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -286,10 +289,11 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 dt2dv_SOURCES = dt2dv.c dtl.h
+dv2dt_SOURCES = dv2dt.c dtl.h
+LDADD = $(KPATHSEA_LIBS)
 dist_man1_MANS = dt2dv.man dv2dt.man
 dist_check_SCRIPTS = dtl.test
 TESTS = dtl.test
@@ -956,6 +960,10 @@ uninstall-man: uninstall-man1
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-man uninstall-man1
 
+
+$(dt2dv_OBJECTS) $(dv2dt_OBJECTS): $(KPATHSEA_DEPEND)
+
+@KPATHSEA_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
