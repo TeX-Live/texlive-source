@@ -17,11 +17,14 @@ You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* For MINGW32 <rpcndr.h> defines 'boolean' as 'unsigned char',
-   conflicting with the definition for Pascal's boolean as 'int'
-   in <kpathsea/types.h>.
+/* Do this early in order to avoid a conflict between
+   MINGW32 <rpcndr.h> defining 'boolean' as 'unsigned char' and
+   <kpathsea/types.h> defining Pascal's boolean as 'int'.
 */
-#define boolean MINGW32_boolean
+extern "C" {
+#include <w2c/config.h>
+#include <kpathsea/lib.h>
+}
 
 #include <stdlib.h>
 #include <math.h>
@@ -58,23 +61,12 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GlobalParams.h"
 #include "Error.h"
 
-#undef boolean
-
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.
 
 extern "C" {
-
-#include <kpathsea/c-auto.h>
-#include <kpathsea/c-proto.h>
-#include <kpathsea/lib.h>
-
-#include <w2c/c-auto.h>         /* define SIZEOF_LONG */
-#include <w2c/config.h>         /* define type integer */
-
 #include <pdftexdir/ptexmac.h>
 #include <pdftexdir/pdftex-common.h>
-
 }
 
 // The prefix "PTEX" for the PDF keys is special to pdfTeX;
