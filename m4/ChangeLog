@@ -1,3 +1,8 @@
+2012-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-poppler-flags.m4 [WIN32]: Add '-lgdi32' to POPPLER_LIBS.
+	* kpse-xpdf-flags.m4 [WIN32]: Add '-lgdi32' to XPDF_LIBS.
+
 2012-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (kpse_libs_pkgs): Remove obsdcompat.

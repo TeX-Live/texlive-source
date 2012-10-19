@@ -22663,6 +22663,7 @@ $(XPDF_DEPEND): ${top_builddir}/../../libs/xpdf/xpdf/Stream.h
 ${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
 	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+test "x$kpse_cv_have_win32" = xno || XPDF_LIBS="$XPDF_LIBS -lgdi32"
 
 ## _KPSE_LIB_FLAGS: Setup poppler (-lpoppler) flags
 
@@ -22688,8 +22689,8 @@ $(POPPLER_DEPEND): ${top_builddir}/../../libs/poppler/poppler/Stream.h
 ${top_builddir}/../../libs/poppler/poppler/Stream.h:
 	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
 test "x$kpse_cv_have_win32" = xno || POPPLER_LIBS="$POPPLER_LIBS -lgdi32"
+
 ## _KPSE_LIB_FLAGS: Setup zziplib (-lzzip) flags
 
 # Check whether --with-system-zziplib was given.

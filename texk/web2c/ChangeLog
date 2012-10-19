@@ -1,3 +1,8 @@
+2012-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (POPPLER): Adding '-lgdi32' for WIN32 now done
+	in KPSE_POPPLER_FLAGS (../../m4/kpse-poppler-flags.m4).
+
 2012-10-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.h: Support pipe except for tex.

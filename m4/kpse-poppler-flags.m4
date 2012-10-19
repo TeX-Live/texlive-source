@@ -12,10 +12,12 @@
 # Set the make variables POPPLER_INCLUDES and POPPLER_LIBS to the CPPFLAGS and
 # LIBS required for the `-lpoppler' library in libs/poppler/ of the TL tree.
 AC_DEFUN([KPSE_POPPLER_FLAGS],
-[_KPSE_LIB_FLAGS([poppler], [poppler], [],
-                 [-IBLD/libs/poppler -IBLD/libs/poppler/goo -IBLD/libs/poppler/poppler],
-                 [BLD/libs/poppler/libpoppler.a], [],
-                 [], [${top_builddir}/../../libs/poppler/poppler/Stream.h])[]dnl
+[AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
+_KPSE_LIB_FLAGS([poppler], [poppler], [],
+                [-IBLD/libs/poppler -IBLD/libs/poppler/goo -IBLD/libs/poppler/poppler],
+                [BLD/libs/poppler/libpoppler.a], [],
+                [], [${top_builddir}/../../libs/poppler/poppler/Stream.h])[]dnl
+test "x$kpse_cv_have_win32" = xno || POPPLER_LIBS="$POPPLER_LIBS -lgdi32"
 ]) # KPSE_POPPLER_FLAGS
 
 # KPSE_POPPLER_OPTIONS([WITH-SYSTEM])

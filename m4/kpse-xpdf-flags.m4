@@ -12,10 +12,12 @@
 # Set the make variables XPDF_INCLUDES and XPDF_LIBS to the CPPFLAGS and
 # LIBS required for the `-lxpdf' library in libs/xpdf/ of the TL tree.
 AC_DEFUN([KPSE_XPDF_FLAGS],
-[_KPSE_LIB_FLAGS([xpdf], [xpdf], [],
-                 [-DPDF_PARSER_ONLY -IBLD/libs/xpdf -IBLD/libs/xpdf/goo -IBLD/libs/xpdf/xpdf],
-                 [BLD/libs/xpdf/libxpdf.a], [],
-                 [], [${top_builddir}/../../libs/xpdf/xpdf/Stream.h])[]dnl
+[AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
+_KPSE_LIB_FLAGS([xpdf], [xpdf], [],
+                [-DPDF_PARSER_ONLY -IBLD/libs/xpdf -IBLD/libs/xpdf/goo -IBLD/libs/xpdf/xpdf],
+                [BLD/libs/xpdf/libxpdf.a], [],
+                [], [${top_builddir}/../../libs/xpdf/xpdf/Stream.h])[]dnl
+test "x$kpse_cv_have_win32" = xno || XPDF_LIBS="$XPDF_LIBS -lgdi32"
 ]) # KPSE_XPDF_FLAGS
 
 # KPSE_XPDF_OPTIONS([WITH-SYSTEM])
