@@ -1,0 +1,28 @@
+	WIN32TeX uses MSVC 5.0 with the kpathsea headers and library.
+
+diff -ur -N xpdf-3.03.orig/xpdf/GlobalParams.cc xpdf-3.03/xpdf/GlobalParams.cc
+--- xpdf-3.03.orig/xpdf/GlobalParams.cc	2012-10-19 10:06:40.000000000 +0200
++++ xpdf-3.03/xpdf/GlobalParams.cc	2012-10-19 10:15:52.000000000 +0200
+@@ -47,6 +47,7 @@
+ #include "GlobalParams.h"
+ 
+ #ifdef WIN32
++#  undef strcasecmp
+ #  define strcasecmp stricmp
+ #else
+ #  include <strings.h>
+diff -ur -N xpdf-3.03.orig/xpdf/config.h xpdf-3.03/xpdf/config.h
+--- xpdf-3.03.orig/xpdf/config.h	2011-08-15 23:08:53.000000000 +0200
++++ xpdf-3.03/xpdf/config.h	2012-10-19 10:22:29.000000000 +0200
+@@ -78,11 +78,6 @@
+ // popen
+ //------------------------------------------------------------------------
+ 
+-#if defined(_MSC_VER) || defined(__BORLANDC__)
+-#define popen _popen
+-#define pclose _pclose
+-#endif
+-
+ #if defined(VMS) || defined(VMCMS) || defined(DOS) || defined(OS2) || defined(__EMX__) || defined(WIN32) || defined(__DJGPP__) || defined(MACOS)
+ #define POPEN_READ_MODE "rb"
+ #else

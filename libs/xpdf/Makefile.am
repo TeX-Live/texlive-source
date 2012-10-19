@@ -48,11 +48,12 @@ SUBDIRS = goo fofi splash xpdf
 
 GOO_SRC = $(top_srcdir)/$(XPDF_TREE)/goo
 FOFI_SRC = $(top_srcdir)/$(XPDF_TREE)/fofi
-SPLAHS_SRC = $(top_srcdir)/$(XPDF_TREE)/splash
+SPLASH_SRC = $(top_srcdir)/$(XPDF_TREE)/splash
 XPDF_SRC = $(top_srcdir)/$(XPDF_TREE)/xpdf
 
-INCLUDES = -Igoo -Ifofi -Isplash -Ixpdf -I$(GOO_SRC) -I$(FOFI_SRC) -I$(SPLAHS_SRC) -I$(XPDF_SRC)
-AM_CPPFLAGS = -DPDF_PARSER_ONLY
+AM_CPPFLAGS = -Igoo -Ifofi -Isplash -Ixpdf
+AM_CPPFLAGS += -I$(FOFI_SRC) -I$(SPLASH_SRC) -I$(XPDF_SRC)
+AM_CPPFLAGS += -DPDF_PARSER_ONLY
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(NO_WARN_CXXFLAGS)
 

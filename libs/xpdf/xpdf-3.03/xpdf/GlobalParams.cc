@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef __MINGW32__
-#undef WIN32
-#endif
-
 #ifdef USE_GCC_PRAGMAS
 #pragma implementation
 #endif
@@ -51,6 +47,7 @@
 #include "GlobalParams.h"
 
 #ifdef WIN32
+#  undef strcasecmp
 #  define strcasecmp stricmp
 #else
 #  include <strings.h>
@@ -630,15 +627,10 @@ Plugin::~Plugin() {
 // parsing
 //------------------------------------------------------------------------
 
-#ifdef PDF_PARSER_ONLY
-GlobalParams::GlobalParams() {
-  UnicodeMap *map;
-#else
 GlobalParams::GlobalParams(char *cfgFileName) {
   UnicodeMap *map;
   GString *fileName;
   FILE *f;
-#endif
   int i;
 
 #if MULTITHREADED
@@ -789,11 +781,11 @@ GlobalParams::GlobalParams(char *cfgFileName) {
   map = new UnicodeMap("UCS-2", gTrue, &mapUCS2);
   residentUnicodeMaps->add(map->getEncodingName(), map);
 
-#ifndef PDF_PARSER_ONLY
   // look for a user config file, then a system-wide config file
   f = NULL;
   fileName = NULL;
   if (cfgFileName && cfgFileName[0]) {
+#ifndef PDF_PARSER_ONLY
     fileName = new GString(cfgFileName);
     if (!(f = fopen(fileName->getCString(), "r"))) {
       delete fileName;
@@ -826,8 +818,8 @@ GlobalParams::GlobalParams(char *cfgFileName) {
     parseFile(fileName, f);
     delete fileName;
     fclose(f);
-  }
 #endif /* !PDF_PARSER_ONLY */
+  }
 }
 
 void GlobalParams::createDefaultKeyBindings() {

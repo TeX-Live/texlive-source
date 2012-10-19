@@ -1,6 +1,6 @@
 	Patches for pdfTeX / luaTeX / XeTeX
 
-	Declare GlobalParams constructor without config file argument
+	Declare GlobalParams constructor with a default config file argument
 	and skip reading a config file.
 
 	from:
@@ -8,43 +8,37 @@
 		Peter Breitenlohner <tex-live@tug.org>
 
 diff -ur -N xpdf-3.03.orig/xpdf/GlobalParams.cc xpdf-3.03/xpdf/GlobalParams.cc
---- xpdf-3.03.orig/xpdf/GlobalParams.cc	2011-08-22 13:57:15.000000000 +0200
-+++ xpdf-3.03/xpdf/GlobalParams.cc	2011-08-22 14:11:46.000000000 +0200
-@@ -628,10 +628,15 @@
- // parsing
- //------------------------------------------------------------------------
+--- xpdf-3.03.orig/xpdf/GlobalParams.cc	2011-08-15 23:08:53.000000000 +0200
++++ xpdf-3.03/xpdf/GlobalParams.cc	2012-10-19 10:01:03.000000000 +0200
+@@ -5,6 +5,9 @@
+ // Copyright 2001-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
  
-+#ifdef PDF_PARSER_ONLY
-+GlobalParams::GlobalParams() {
-+  UnicodeMap *map;
-+#else
- GlobalParams::GlobalParams(char *cfgFileName) {
-   UnicodeMap *map;
-   GString *fileName;
-   FILE *f;
-+#endif
-   int i;
+ #include <aconf.h>
  
- #if MULTITHREADED
-@@ -782,6 +787,7 @@
-   map = new UnicodeMap("UCS-2", gTrue, &mapUCS2);
-   residentUnicodeMaps->add(map->getEncodingName(), map);
- 
-+#ifndef PDF_PARSER_ONLY
-   // look for a user config file, then a system-wide config file
+@@ -779,6 +782,7 @@
    f = NULL;
    fileName = NULL;
-@@ -819,6 +825,7 @@
+   if (cfgFileName && cfgFileName[0]) {
++#ifndef PDF_PARSER_ONLY
+     fileName = new GString(cfgFileName);
+     if (!(f = fopen(fileName->getCString(), "r"))) {
+       delete fileName;
+@@ -811,6 +815,7 @@
+     parseFile(fileName, f);
      delete fileName;
      fclose(f);
-   }
 +#endif /* !PDF_PARSER_ONLY */
+   }
  }
  
- void GlobalParams::createDefaultKeyBindings() {
 diff -ur -N xpdf-3.03.orig/xpdf/GlobalParams.h xpdf-3.03/xpdf/GlobalParams.h
 --- xpdf-3.03.orig/xpdf/GlobalParams.h	2011-08-15 23:08:53.000000000 +0200
-+++ xpdf-3.03/xpdf/GlobalParams.h	2011-08-22 14:11:46.000000000 +0200
++++ xpdf-3.03/xpdf/GlobalParams.h	2012-10-19 09:58:39.000000000 +0200
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
  //
@@ -55,18 +49,12 @@ diff -ur -N xpdf-3.03.orig/xpdf/GlobalParams.h xpdf-3.03/xpdf/GlobalParams.h
  
  #ifndef GLOBALPARAMS_H
  #define GLOBALPARAMS_H
-@@ -171,9 +174,14 @@
- class GlobalParams {
- public:
+@@ -173,7 +176,7 @@
  
-+#ifdef PDF_PARSER_ONLY
-+  // Initialize the global parameters  without reading a config file.
-+  GlobalParams();
-+#else
    // Initialize the global parameters by attempting to read a config
    // file.
-   GlobalParams(char *cfgFileName);
-+#endif
+-  GlobalParams(char *cfgFileName);
++  GlobalParams(char *cfgFileName = NULL);
  
    ~GlobalParams();
  

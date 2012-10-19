@@ -174,14 +174,9 @@ public:
 class GlobalParams {
 public:
 
-#ifdef PDF_PARSER_ONLY
-  // Initialize the global parameters  without reading a config file.
-  GlobalParams();
-#else
   // Initialize the global parameters by attempting to read a config
   // file.
-  GlobalParams(char *cfgFileName);
-#endif
+  GlobalParams(char *cfgFileName = NULL);
 
   ~GlobalParams();
 

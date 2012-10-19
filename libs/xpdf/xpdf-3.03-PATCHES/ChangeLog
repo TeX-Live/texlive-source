@@ -1,3 +1,11 @@
+2012-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-mingw32 (removed): The library now needs '-lgdi32'.
+	* patch-20-skip-reading-config-file: Less intrusive solution.
+	* patch-30-include-strings_h: Adapted.
+
+	* patch-40-W32TeX (new): Remove TL vs W32TeX diffs (from Akira).
+
 2012-05-16  Vladimir Volovich  <vvv@vsu.ru>
 
 	* patch-30-include-strings_h (new): Bug fix for AIX 4.3 and xlc.
