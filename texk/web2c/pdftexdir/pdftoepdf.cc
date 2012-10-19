@@ -285,6 +285,11 @@ static int getNewObjectNumber(Ref ref)
         }
         pdftex_fail("Object not yet copied: %i %i", ref.num, ref.gen);
     }
+#ifdef _MSC_VER
+    /* Never reached, but without __attribute__((noreturn)) for pdftex_fail()
+       MSVC 5.0 requires an int return value.  */
+    return -60000;
+#endif
 }
 
 static void copyObject(Object *);

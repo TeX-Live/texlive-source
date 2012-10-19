@@ -1,3 +1,8 @@
+2012-10-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftoepdf.cc: In MSVC 5.0 getNewObjectNumber() requires an int
+	return value.
+
 2012-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftoepdf.cc: #include <w2c/config.h> early to avoid problems
