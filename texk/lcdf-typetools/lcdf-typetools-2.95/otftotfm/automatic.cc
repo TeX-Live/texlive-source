@@ -757,8 +757,8 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 	    if (slash >= 0)
 		filename = filename.substring(slash + 1);
 #if defined(W32TEX)
-// guess_input_kanji_encoding is defined only in W32TeX
-	    char *p = kpsei_var_value("guess_input_kanji_encoding");
+// jtex_filetype is defined only in W32TeX
+	    char *p = kpsei_var_value("jtex_filetype");
 	    if (p != NULL) { // W32TeX
 		free(p);
 		String command = "updmap --nomkmap --add " + shell_quote(filename) + CMD_SEP " updmap";

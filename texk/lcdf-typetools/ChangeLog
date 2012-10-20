@@ -1,3 +1,10 @@
+2012-10-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* lcdf-typetools-2.95-PATHES/patch-30-W32TeX: 
+	* lcdf-typetools-2.95/otftotfm/automatic.cc:
+	use a texmf.cnf variable jtex_filetype to distinguish TeX Live and
+	W32TeX.
+
 2012-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import lcdf-typetools-2.95, now into subdirectory.
