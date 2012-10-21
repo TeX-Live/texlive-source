@@ -169,6 +169,7 @@ sub main {
 
   if ($opts{'_readsave'}) {
     read_updmap_files($opts{'_readsave'});
+    merge_settings_replace_kanji();
     print "READING DONE ============================\n";
     #print Dumper($alldata);
     $alldata->{'updmap'}{$opts{'_readsave'}}{'changed'} = 1;
@@ -355,6 +356,7 @@ sub main {
   read_updmap_files(@{$opts{'cnffile'}});
 
   if ($opts{'showoption'}) {
+    merge_settings_replace_kanji();
     for my $o (@{$opts{'showoption'}}) {
       if (defined($settings{$o})) {
         my ($v, $vo) = get_cfg($o);
@@ -368,6 +370,7 @@ sub main {
   }
 
   if ($opts{'listmaps'}) {
+    merge_settings_replace_kanji();
     for my $m (keys %{$alldata->{'maps'}}) {
       my $origin = $alldata->{'maps'}{$m}{'origin'};
       print $alldata->{'updmap'}{$origin}{'maps'}{$m}{'type'}, " $m ",
@@ -383,6 +386,7 @@ sub main {
   my $changed = 0;
 
   if ($opts{'syncwithtrees'}) {
+    merge_settings_replace_kanji();
     my @missing = read_map_files();
     if (@missing) {
       print "Missing map files found, disabling\n";
@@ -457,6 +461,7 @@ sub main {
       setupOutputDir("pdftex");
       setupOutputDir("dvipdfmx");
       setupOutputDir("pxdvi");
+      merge_settings_replace_kanji();
       my @missing = read_map_files();
       if (@missing) {
         print STDERR "\nERROR:  The following map file(s) couldn't be found:\n"; 
@@ -1248,7 +1253,6 @@ sub enable_disable_maps {
       disable_map($tc, $w);
     }
   }
-  merge_settings();
   return save_updmap($tc);
 }
 
@@ -1618,12 +1622,9 @@ sub read_updmap_files {
   }
   #
   $alldata->{'order'} = \@l;
-
-  # merge data and check for kanji embed
-  merge_settings();
 }
 
-sub merge_settings {
+sub merge_settings_replace_kanji {
   #
   my @l = @{$alldata->{'order'}};
   #
