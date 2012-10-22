@@ -128,11 +128,6 @@ typedef struct
 	UInt32	maxMemType1;
 } POSTTable;
 
-enum {
-    LE_MAXP_TABLE_TAG = 0x6D617870UL, /**< 'maxp' */
-    LE_POST_TABLE_TAG = 0x706F7374UL, /**< 'post' */
-};
-
 /* tables/values used in UTF-8 interpretation - 
    code is based on ConvertUTF.[ch] sample code
    published by the Unicode consortium */

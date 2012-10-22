@@ -1,3 +1,8 @@
+2012-10-22  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* XeTeXFontInst.cpp, XeTeXOTMath.cpp, XeTeXOTMath.h, XeTeX_ext.c,
+	XeTeX_ext.h, xetex.ch, xetex.h: Merge changes from XeTeX repository.
+
 2012-09-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c (open_dvi_output): sync with W32TeX. On Windows,

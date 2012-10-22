@@ -30,7 +30,6 @@ use or other dealings in this Software without prior written
 authorization from the copyright holders.
 \****************************************************************************/
 
-#define XETEX_OT_MATH_IMPLEMENTATION 1
 #include "XeTeXOTMath.h"
 
 #include "XeTeX_ext.h"
@@ -76,7 +75,7 @@ static SInt16 getMathConstant(LEFontInstance* fontInst, mathConstantIndex whichC
 }
 
 int
-getotmathconstant(int f, int n)
+get_ot_math_constant(int f, int n)
 {
 	int	rval = 0;
 
@@ -136,7 +135,7 @@ const mathConstantIndex TeX_sym_to_OT_map[] = {
 };
 
 int
-getnativemathsyparam(int f, int n)
+get_native_mathsy_param(int f, int n)
 {
 	int	rval = 0;
 
@@ -146,7 +145,7 @@ getnativemathsyparam(int f, int n)
 		if (n < sizeof(TeX_sym_to_OT_map) / sizeof(mathConstantIndex)) {
 			mathConstantIndex ot_index = TeX_sym_to_OT_map[n];
 			if (ot_index != unknown)
-				rval = getotmathconstant(f, (int)ot_index);
+				rval = get_ot_math_constant(f, (int)ot_index);
 		}
 	}
 //	fprintf(stderr, " math_sy(%d, %d) returns %.3f\n", f, n, Fix2X(rval));
@@ -180,7 +179,7 @@ const mathConstantIndex TeX_ext_to_OT_map[] = {
 };
 
 int
-getnativemathexparam(int f, int n)
+get_native_mathex_param(int f, int n)
 {
 	int	rval = 0;
 
@@ -190,7 +189,7 @@ getnativemathexparam(int f, int n)
 		if (n < sizeof(TeX_ext_to_OT_map) / sizeof(mathConstantIndex)) {
 			mathConstantIndex ot_index = TeX_ext_to_OT_map[n];
 			if (ot_index != unknown)
-				rval = getotmathconstant(f, (int)ot_index);
+				rval = get_ot_math_constant(f, (int)ot_index);
 		}
 	}
 //	fprintf(stderr, " math_ex(%d, %d) returns %.3f\n", f, n, Fix2X(rval));
@@ -199,7 +198,7 @@ getnativemathexparam(int f, int n)
 }
 
 int
-getotmathvariant(int f, int g, int v, integer* adv, int horiz)
+get_ot_math_variant(int f, int g, int v, integer* adv, int horiz)
 {
 	int	rval = g;
 	*adv = -1;
@@ -239,7 +238,7 @@ getotmathvariant(int f, int g, int v, integer* adv, int horiz)
 }
 
 void*
-getotassemblyptr(int f, int g, int horiz)
+get_ot_assembly_ptr(int f, int g, int horiz)
 {
 	void*	rval = NULL;
 	
@@ -276,7 +275,7 @@ getotassemblyptr(int f, int g, int horiz)
 }
 
 int
-getotmathitalcorr(int f, int g)
+get_ot_math_ital_corr(int f, int g)
 {
 	int	rval = 0;
 	
@@ -311,7 +310,7 @@ getotmathitalcorr(int f, int g)
 }
 
 int
-getotmathaccentpos(int f, int g)
+get_ot_math_accent_pos(int f, int g)
 {
 	int	rval = 0x7fffffffUL;
 	
@@ -348,7 +347,7 @@ getotmathaccentpos(int f, int g)
 }
 
 int
-otminconnectoroverlap(int f)
+ot_min_connector_overlap(int f)
 {
 	int	rval = 0;
 	
@@ -371,25 +370,25 @@ otminconnectoroverlap(int f)
 }
 
 int
-otpartcount(const GlyphAssembly* a)
+ot_part_count(const GlyphAssembly* a)
 {
 	return SWAPW(a->partCount);
 }
 
 int
-otpartglyph(const GlyphAssembly* a, int i)
+ot_part_glyph(const GlyphAssembly* a, int i)
 {
 	return SWAPW(a->partRecords[i].glyph);
 }
 
 int
-otpartisextender(const GlyphAssembly* a, int i)
+ot_part_is_extender(const GlyphAssembly* a, int i)
 {
 	return (SWAPW(a->partRecords[i].partFlags) & fExtender) != 0;
 }
 
 int
-otpartstartconnector(int f, const GlyphAssembly* a, int i)
+ot_part_start_connector(int f, const GlyphAssembly* a, int i)
 {
 	int	rval = 0;
 	
@@ -402,7 +401,7 @@ otpartstartconnector(int f, const GlyphAssembly* a, int i)
 }
 
 int
-otpartendconnector(int f, const GlyphAssembly* a, int i)
+ot_part_end_connector(int f, const GlyphAssembly* a, int i)
 {
 	int	rval = 0;
 	
@@ -415,7 +414,7 @@ otpartendconnector(int f, const GlyphAssembly* a, int i)
 }
 
 int
-otpartfulladvance(int f, const GlyphAssembly* a, int i)
+ot_part_full_advance(int f, const GlyphAssembly* a, int i)
 {
 	int	rval = 0;
 	

@@ -260,8 +260,10 @@ XeTeXFontInst::getGlyphHeightDepth(LEGlyphID gid, float* ht, float* dp)
 	GlyphBBox	bbox;
 	getGlyphBounds(gid, &bbox);
 	
-	*ht = bbox.yMax;
-	*dp = -bbox.yMin;
+	if (ht)
+		*ht = bbox.yMax;
+	if (dp)
+		*dp = -bbox.yMin;
 }
 
 void
@@ -273,8 +275,10 @@ XeTeXFontInst::getGlyphSidebearings(LEGlyphID gid, float* lsb, float* rsb)
 	GlyphBBox	bbox;
 	getGlyphBounds(gid, &bbox);
 
-	*lsb = bbox.xMin;
-	*rsb = adv.fX - bbox.xMax;
+	if (lsb)
+		*lsb = bbox.xMin;
+	if (rsb)
+		*rsb = adv.fX - bbox.xMax;
 }
 
 float

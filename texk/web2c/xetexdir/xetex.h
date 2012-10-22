@@ -32,11 +32,11 @@ authorization from the copyright holders.
 
 /* additional declarations we want to slip in for xetex */
 
-#define	native_node_size	6
-#define native_node_text(p)	((unsigned short*)(&(mem[(p) + native_node_size])))
+#define	native_node_size			6
+#define native_node_text(p)			((unsigned short*)(&(mem[(p) + native_node_size])))
 
-#define getnativechar(p,i)		native_node_text(p)[i]
-#define setnativechar(p,i,v)	native_node_text(p)[i] = v
+#define getnativechar(p,i)			native_node_text(p)[i]
+#define setnativechar(p,i,v)			native_node_text(p)[i] = v
 
 #define getnativeusv(p,i) \
   ((native_node_text(p)[i] >= 0xd800 && native_node_text(p)[i] < 0xdc00) ? \
@@ -44,66 +44,82 @@ authorization from the copyright holders.
     native_node_text(p)[i])
 
 /* p is native_word node; g is XeTeX_use_glyph_metrics flag */
-#define setnativemetrics(p,g)					measure_native_node(&(mem[p]), g)
+#define setnativemetrics(p,g)			measure_native_node(&(mem[p]), g)
 
-#define setnativeglyphmetrics(p,g)				measure_native_glyph(&(mem[p]), g)
+#define setnativeglyphmetrics(p,g)		measure_native_glyph(&(mem[p]), g)
 
-#define setjustifiednativeglyphs(p)				store_justified_native_glyphs(&(mem[p]))
+#define setjustifiednativeglyphs(p)		store_justified_native_glyphs(&(mem[p]))
 
-#define getnativeitaliccorrection(p)			get_native_ital_corr(&(mem[p]))
-#define getnativeglyphitaliccorrection(p)		get_native_glyph_ital_corr(&(mem[p]))
+#define getnativeitaliccorrection(p)		get_native_ital_corr(&(mem[p]))
+#define getnativeglyphitaliccorrection(p)	get_native_glyph_ital_corr(&(mem[p]))
 
-#define getnativeglyph(p,i)						get_native_glyph_id(&(mem[p]), i)
+#define getnativeglyph(p,i)			get_native_glyph_id(&(mem[p]), i)
 
-#define makexdvglypharraydata(p)				makeXDVGlyphArrayData(&(mem[p]))
-#define xdvbufferbyte(i)						xdvbuffer[i]
+#define makexdvglypharraydata(p)		makeXDVGlyphArrayData(&(mem[p]))
+#define xdvbufferbyte(i)			xdvbuffer[i]
 
-#define getnativewordcp(p,s)					get_native_word_cp(&(mem[p]), s)
+#define getnativewordcp(p,s)			get_native_word_cp(&(mem[p]), s)
 
 
-void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp */
+void* get_ot_assembly_ptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp */
 
-#define pic_node_size		8
+#define pic_node_size				8
 
 #define deref(p)				(*(p))
 
-#define findpicfile(a,b,c,d)	find_pic_file(a, b, c, d)
+#define findpicfile(a,b,c,d)			find_pic_file(a, b, c, d)
 
-#define picpathbyte(p,i)		((unsigned char*)&(mem[p+pic_node_size]))[i]
+#define picpathbyte(p,i)			((unsigned char*)&(mem[p+pic_node_size]))[i]
 
-#define dviopenout(f)			open_dvi_output(&(f))
+#define dviopenout(f)				open_dvi_output(&(f))
 
-#define nullptr				(NULL)
-#define glyphinfobyte(p,k)	((unsigned char*)p)[k]
-#define casttoushort(x)		(unsigned short)(x)
+#define nullptr					(NULL)
+#define glyphinfobyte(p,k)			((unsigned char*)p)[k]
+#define casttoushort(x)				(unsigned short)(x)
 
 /* easier to do the bit-twiddling here than in Pascal */
 /* read fields from a 32-bit math code */
-#define mathfamfield(x)     (((unsigned)(x) >> 24) & 0xFF)
-#define mathclassfield(x)   (((unsigned)(x) >> 21) & 0x07)
-#define mathcharfield(x)    ((unsigned)(x) & 0x1FFFFF)
+#define mathfamfield(x)     			(((unsigned)(x) >> 24) & 0xFF)
+#define mathclassfield(x)   			(((unsigned)(x) >> 21) & 0x07)
+#define mathcharfield(x)    			((unsigned)(x) & 0x1FFFFF)
 /* calculate pieces to assign to a math code */
-#define setfamilyfield(x)   (((unsigned)(x) & 0xFF) << 24)
-#define setclassfield(x)    (((unsigned)(x) & 0x07) << 21)
+#define setfamilyfield(x)   			(((unsigned)(x) & 0xFF) << 24)
+#define setclassfield(x)    			(((unsigned)(x) & 0x07) << 21)
+
+/* aliases */
+#define getnativemathsyparam			get_native_mathsy_param
+#define getnativemathexparam			get_native_mathex_param
+#define getotmathconstant			get_ot_math_constant
+#define getotmathvariant			get_ot_math_variant
+#define getotassemblyptr			get_ot_assembly_ptr
+#define getotmathitalcorr			get_ot_math_ital_corr
+#define getotmathaccentpos			get_ot_math_accent_pos
+#define otpartcount				ot_part_count
+#define otpartglyph				ot_part_glyph
+#define otpartisextender			ot_part_is_extender
+#define otpartstartconnector			ot_part_start_connector
+#define otpartendconnector			ot_part_end_connector
+#define otpartfulladvance			ot_part_full_advance
+#define otminconnectoroverlap			ot_min_connector_overlap
 
 /* Unicode file reading modes */
-#define AUTO		0	/* default: will become one of 1..3 at file open time, after sniffing */
-#define UTF8		1
-#define UTF16BE		2
-#define UTF16LE		3
-#define RAW			4
-#define ICUMAPPING	5
+#define AUTO					0	/* default: will become one of 1..3 at file open time, after sniffing */
+#define UTF8					1
+#define UTF16BE					2
+#define UTF16LE					3
+#define RAW					4
+#define ICUMAPPING				5
 
 /* we don't use xchr, so change the cpascal.h definition of this... */
 #undef Xchr
-#define Xchr(x)		(x)
+#define Xchr(x)					(x)
 
 #ifdef XETEX_MAC
-#undef input /* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
+#undef input				/* this is defined in texmfmp.h, but we don't need it and it confuses the carbon headers */
 #undef output
-#include <Carbon/Carbon.h>	/* for Mac OS X, it's handy to have the Carbon APIs available */
+#include <Carbon/Carbon.h>		/* for Mac OS X, it's handy to have the Carbon APIs available */
 #endif
 
-#include "trans.h"	/* functions for affine transform operations */
-#include <teckit/TECkit_Common.h> /* include this before XeTeX_ext.h */
-#include "XeTeX_ext.h" /* other extension functions */
+#include "trans.h"			/* functions for affine transform operations */
+#include <teckit/TECkit_Common.h>	/* include this before XeTeX_ext.h */
+#include "XeTeX_ext.h"			/* other extension functions */

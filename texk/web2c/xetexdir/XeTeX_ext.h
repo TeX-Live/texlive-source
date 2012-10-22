@@ -237,7 +237,6 @@ extern "C" {
 
 	void setinputfileencoding(unicodefile f, integer mode, integer encodingData);
 	void uclose(unicodefile f);
-	int input_line_icu(unicodefile f);
 	void linebreakstart(integer localeStrNum, const UniChar* text, integer textLength);
 	int linebreaknext();
 	int getencodingmodeandinfo(integer* info);
