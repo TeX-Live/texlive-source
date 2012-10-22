@@ -75,7 +75,7 @@ static int my_##func(int c) \
    return(func(c)); \
 }
 
-#define SUPPRESSED_ON_LINE(c)  (LineSuppressions & (1LL<<c))
+#define SUPPRESSED_ON_LINE(c)  (LineSuppressions & ((uint64_t)1<<c))
 
 #define INUSE(c) \
     ((LaTeXMsgs[(enum ErrNum) c].InUse == iuOK) && !SUPPRESSED_ON_LINE(c))
@@ -146,12 +146,12 @@ const char FileSuppDelim[] = "chktex-file ";
 /*
  * A bit field used to hold the suppressions for the current line.
  */
-static unsigned long long LineSuppressions;
+static uint64_t LineSuppressions;
 /*
  * A bit field used to hold the suppressions of numbered user warnings
  * for the current line.
  */
-static unsigned long long UserLineSuppressions;
+static uint64_t UserLineSuppressions;
 
 static unsigned long Line;
 
@@ -344,7 +344,7 @@ static char *PreProcess(void)
             if (!NoLineSupp)
             {
                 int error;
-                const int MaxSuppressionBits = sizeof(unsigned long long)*8-1;
+                const int MaxSuppressionBits = 63;
 
                 /* Convert to lowercase to compare with LineSuppDelim */
                 EscapePtr = ++TmpPtr; /* move past NUL terminator */
@@ -365,13 +365,13 @@ static char *PreProcess(void)
                     }
                     if (error > 0)
                     {
-                        FileSuppressions |= (1LL << error);
-                        LineSuppressions |= (1LL << error);
+                        FileSuppressions |= ((uint64_t)1 << error);
+                        LineSuppressions |= ((uint64_t)1 << error);
                     }
                     else
                     {
-                        UserFileSuppressions |= (1LL << (-error));
-                        UserLineSuppressions |= (1LL << (-error));
+                        UserFileSuppressions |= ((uint64_t)1 << (-error));
+                        UserLineSuppressions |= ((uint64_t)1 << (-error));
                     }
                 }
                 TmpPtr = EscapePtr;
@@ -388,11 +388,11 @@ static char *PreProcess(void)
 
                     if (error > 0)
                     {
-                        LineSuppressions |= (1LL << error);
+                        LineSuppressions |= ((uint64_t)1 << error);
                     }
                     else
                     {
-                        UserLineSuppressions |= (1LL << (-error));
+                        UserLineSuppressions |= ((uint64_t)1 << (-error));
                     }
                 }
             }
@@ -882,11 +882,11 @@ static void CheckRest(void)
             while (offset < len)
             {
                 /* Check if this warning should be suppressed. */
-                if (UserLineSuppressions != 0LL && NamedWarning)
+                if (UserLineSuppressions && NamedWarning)
                 {
                     /* The warning can be named with positive or negative numbers. */
                     int UserWarningNumber = abs(atoi(ErrMessage));
-                    if (UserLineSuppressions & (1LL << UserWarningNumber))
+                    if (UserLineSuppressions & ((uint64_t)1 << UserWarningNumber))
                     {
                         break;
                     }

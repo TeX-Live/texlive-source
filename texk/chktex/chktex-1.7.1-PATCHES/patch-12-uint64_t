@@ -1,0 +1,122 @@
+diff -ur chktex-1.7.1.orig/ChkTeX.h chktex-1.7.1/ChkTeX.h
+--- chktex-1.7.1.orig/ChkTeX.h	2012-10-21 14:33:01.000000000 +0200
++++ chktex-1.7.1/ChkTeX.h	2012-10-22 10:26:21.000000000 +0200
+@@ -72,6 +72,14 @@
+ #  include <strings.h>
+ #endif
+ 
++#ifdef HAVE_INTTYPES_H
++#  include <inttypes.h>
++#endif
++
++#ifdef HAVE_STDINT_H
++#  include <stdint.h>
++#endif
++
+ #include "types.h"
+ 
+ #ifndef LONG_MAX
+@@ -313,8 +321,8 @@
+   DEF(unsigned long, WarnPrint, 0);   /* # warnings printed */ \
+   DEF(unsigned long, UserSupp, 0);    /* # user suppressed warnings */ \
+   DEF(unsigned long, LineSupp, 0);    /* # warnings suppressed on a single line */ \
+-  DEF(unsigned long long, FileSuppressions, 0);     /* # warnings suppressed in a file */ \
+-  DEF(unsigned long long, UserFileSuppressions, 0); /* # User warnings suppressed in a file */
++  DEF(uint64_t, FileSuppressions, 0);     /* # warnings suppressed in a file */ \
++  DEF(uint64_t, UserFileSuppressions, 0); /* # User warnings suppressed in a file */
+ 
+ #define DEF(type, name, value) extern type name
+ OPTION_DEFAULTS;
+diff -ur chktex-1.7.1.orig/FindErrs.c chktex-1.7.1/FindErrs.c
+--- chktex-1.7.1.orig/FindErrs.c	2012-10-10 11:24:26.000000000 +0200
++++ chktex-1.7.1/FindErrs.c	2012-10-22 10:34:58.000000000 +0200
+@@ -75,7 +75,7 @@
+    return(func(c)); \
+ }
+ 
+-#define SUPPRESSED_ON_LINE(c)  (LineSuppressions & (1LL<<c))
++#define SUPPRESSED_ON_LINE(c)  (LineSuppressions & ((uint64_t)1<<c))
+ 
+ #define INUSE(c) \
+     ((LaTeXMsgs[(enum ErrNum) c].InUse == iuOK) && !SUPPRESSED_ON_LINE(c))
+@@ -146,12 +146,12 @@
+ /*
+  * A bit field used to hold the suppressions for the current line.
+  */
+-static unsigned long long LineSuppressions;
++static uint64_t LineSuppressions;
+ /*
+  * A bit field used to hold the suppressions of numbered user warnings
+  * for the current line.
+  */
+-static unsigned long long UserLineSuppressions;
++static uint64_t UserLineSuppressions;
+ 
+ static unsigned long Line;
+ 
+@@ -344,7 +344,7 @@
+             if (!NoLineSupp)
+             {
+                 int error;
+-                const int MaxSuppressionBits = sizeof(unsigned long long)*8-1;
++                const int MaxSuppressionBits = 63;
+ 
+                 /* Convert to lowercase to compare with LineSuppDelim */
+                 EscapePtr = ++TmpPtr; /* move past NUL terminator */
+@@ -365,13 +365,13 @@
+                     }
+                     if (error > 0)
+                     {
+-                        FileSuppressions |= (1LL << error);
+-                        LineSuppressions |= (1LL << error);
++                        FileSuppressions |= ((uint64_t)1 << error);
++                        LineSuppressions |= ((uint64_t)1 << error);
+                     }
+                     else
+                     {
+-                        UserFileSuppressions |= (1LL << (-error));
+-                        UserLineSuppressions |= (1LL << (-error));
++                        UserFileSuppressions |= ((uint64_t)1 << (-error));
++                        UserLineSuppressions |= ((uint64_t)1 << (-error));
+                     }
+                 }
+                 TmpPtr = EscapePtr;
+@@ -388,11 +388,11 @@
+ 
+                     if (error > 0)
+                     {
+-                        LineSuppressions |= (1LL << error);
++                        LineSuppressions |= ((uint64_t)1 << error);
+                     }
+                     else
+                     {
+-                        UserLineSuppressions |= (1LL << (-error));
++                        UserLineSuppressions |= ((uint64_t)1 << (-error));
+                     }
+                 }
+             }
+@@ -882,11 +882,11 @@
+             while (offset < len)
+             {
+                 /* Check if this warning should be suppressed. */
+-                if (UserLineSuppressions != 0LL && NamedWarning)
++                if (UserLineSuppressions && NamedWarning)
+                 {
+                     /* The warning can be named with positive or negative numbers. */
+                     int UserWarningNumber = abs(atoi(ErrMessage));
+-                    if (UserLineSuppressions & (1LL << UserWarningNumber))
++                    if (UserLineSuppressions & ((uint64_t)1 << UserWarningNumber))
+                     {
+                         break;
+                     }
+diff -ur chktex-1.7.1.orig/configure.in chktex-1.7.1/configure.in
+--- chktex-1.7.1.orig/configure.in	2012-10-10 11:24:37.000000000 +0200
++++ chktex-1.7.1/configure.in	2012-10-22 10:24:01.000000000 +0200
+@@ -158,6 +158,7 @@
+ AC_C_CONST
+ AC_C_INLINE
+ AC_TYPE_SIZE_T
++AC_TYPE_UINT64_T
+ 
+ dnl Checks for library functions.
+ AC_FUNC_VPRINTF

@@ -1,0 +1,107 @@
+diff -ur chktex-1.7.1.orig/ChkTeX.c chktex-1.7.1/ChkTeX.c
+--- chktex-1.7.1.orig/ChkTeX.c	2012-10-21 14:42:07.000000000 +0200
++++ chktex-1.7.1/ChkTeX.c	2012-10-21 16:00:08.000000000 +0200
+@@ -334,7 +334,15 @@
+ #endif
+ 
+     OutputFile = stdout;
++#ifdef KPATHSEA
++    kpse_set_program_name(argv[0], "chktex");
++    PrgName = kpse_program_name;
++#ifdef WIN32
++    setmode(fileno(stdout), _O_BINARY);
++#endif
++#else
+     PrgName = argv[0];
++#endif
+ 
+ #undef KEY
+ #undef LCASE
+@@ -512,7 +520,11 @@
+ 
+         if (Success)
+         {
++#ifdef KPATHSEA
++            if (!(OutputFile = fopen(OutputName, "wb")))
++#else
+             if (!(OutputFile = fopen(OutputName, "w")))
++#endif
+             {
+                 PrintPrgErr(pmOutOpen);
+                 Success = FALSE;
+diff -ur chktex-1.7.1.orig/OpSys.c chktex-1.7.1/OpSys.c
+--- chktex-1.7.1.orig/OpSys.c	2010-12-18 22:12:10.000000000 +0100
++++ chktex-1.7.1/OpSys.c	2012-10-21 15:56:54.000000000 +0200
+@@ -37,6 +37,10 @@
+ #include "OpSys.h"
+ #include "Utility.h"
+ 
++#ifdef KPATHSEA
++#include <kpathsea/variable.h>
++#endif
++
+ #ifdef HAVE_SYS_STAT_H
+ #  include <sys/stat.h>
+ #endif
+@@ -105,6 +109,8 @@
+ 
+ #ifdef __MSDOS__
+ #  define LOCALRCFILE             RCBASENAME
++#elif defined(WIN32)
++#  define LOCALRCFILE             RCBASENAME
+ #else
+ #  define LOCALRCFILE             "." RCBASENAME
+ #endif
+@@ -173,6 +179,8 @@
+ #ifdef __MSDOS__
+ 
+             if ((Env = getenv("CHKTEXRC")) || (Env = getenv("CHKTEX_HOME")))
++#elif defined(TEX_LIVE)
++            if ((Env = kpse_var_value("CHKTEXRC")))
+ #else
+ 
+             if ((Env = getenv("CHKTEXRC")))
+@@ -181,6 +189,9 @@
+             {
+                 strcpy(ConfigFile, Env);
+                 tackon(ConfigFile, LOCALRCFILE);
++#ifdef TEX_LIVE
++                free(Env);
++#endif
+             }
+             else
+ #ifdef __MSDOS__
+@@ -217,24 +228,20 @@
+             break;
+         case liSysDir:         /* System dir for resource files */
+ #ifdef TEX_LIVE
+-            if ((Env = getenv("CHKTEX_CONFIG")))
++            if ((Env = kpse_var_value("CHKTEX_CONFIG")))
+             {
+                 strcpy(ConfigFile, Env);
++                free(Env);
+             }
+-            else
++            else if ((Env = kpse_var_value("TEXMFMAIN")))
+             {
+-                FILE *f;
+-                *ConfigFile = 0;
+-                if ((f = popen("kpsewhich -expand-var='$TEXMFMAIN'", "r")))
+-                {
+-                    if (1 == fscanf(f, "%1024s", ConfigFile))
+-                    {
+-                        tackon(ConfigFile, "chktex");
+-                        tackon(ConfigFile, RCBASENAME);
+-                    }
+-                    (void)pclose(f);
+-                }
++                strcpy(ConfigFile, Env);
++                tackon(ConfigFile, "chktex");
++                tackon(ConfigFile, RCBASENAME);
++                free(Env);
+             }
++            else
++                *ConfigFile = 0;
+ #else /* TEX_LIVE */
+ #if defined(__unix__) || defined(__MSDOS__)
+             strcpy(ConfigFile, SYSCONFDIR);

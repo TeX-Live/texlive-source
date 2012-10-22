@@ -1,23 +1,150 @@
 diff -ur chktex-1.7.1.orig/ChkTeX.c chktex-1.7.1/ChkTeX.c
 --- chktex-1.7.1.orig/ChkTeX.c	2012-10-10 11:34:16.000000000 +0200
-+++ chktex-1.7.1/ChkTeX.c	2012-10-10 11:41:42.000000000 +0200
-@@ -196,8 +196,8 @@
++++ chktex-1.7.1/ChkTeX.c	2012-10-21 14:42:07.000000000 +0200
+@@ -195,7 +195,7 @@
+ 
  char VerbNormal[] = "%k %n in %f line %l: %m\n" "%r%s%t\n" "%u\n";
  
- #define DEF(type, name, value)  type name = value;
--OPTION_DEFAULTS;
--STATE_VARS;
-+OPTION_DEFAULTS
-+STATE_VARS
+-#define DEF(type, name, value)  type name = value;
++#define DEF(type, name, value)  type name = value
+ OPTION_DEFAULTS;
+ STATE_VARS;
  #undef DEF
- FILE *OutputFile = NULL;
+@@ -426,7 +426,7 @@
+                     for (Count = 0; Count < NUMBRACKETS; Count++)
+                         Brackets[Count] = 0L;
  
-@@ -688,7 +688,7 @@
+-#define DEF(type, name, value) name = value;
++#define DEF(type, name, value) name = value
+                     STATE_VARS;
+ #undef DEF
+                     if (UsingStdIn)
+@@ -687,7 +687,7 @@
+ static void ResetSettings(void)
  {
  
- #define DEF(type, name, value)  name = value;
--    OPTION_DEFAULTS;
-+    OPTION_DEFAULTS
+-#define DEF(type, name, value)  name = value;
++#define DEF(type, name, value)  name = value
+     OPTION_DEFAULTS;
  #undef DEF
      if (OutputFile != stdout)
-     {
+@@ -855,11 +855,13 @@
+                 nextc = ShiftArg(&optarg);
+                 break;
+ 
+-            LOOP(warntype, case 'w':
+-            ErrType = etWarn; InUse = iuOK; LAST(warntype); case 'e':
+-            ErrType = etErr; InUse = iuOK; LAST(warntype); case 'm':
+-            ErrType = etMsg; InUse = iuOK; LAST(warntype); case 'n':
+-            ErrType = etMsg; InUse = iuNotUser; LAST(warntype);) if (isdigit((unsigned char)*optarg))
++            LOOP(warntype,
++            case 'w': ErrType = etWarn; InUse = iuOK; LAST(warntype);
++            case 'e': ErrType = etErr; InUse = iuOK; LAST(warntype);
++            case 'm': ErrType = etMsg; InUse = iuOK; LAST(warntype);
++            case 'n': ErrType = etMsg; InUse = iuNotUser; LAST(warntype);
++                ) 
++                if (isdigit((unsigned char)*optarg))
+                 {
+                     nextc = ParseNumArg(&Err, -1, &optarg);
+                     if (betw(emMinFault, Err, emMaxFault))
+diff -ur chktex-1.7.1.orig/ChkTeX.h chktex-1.7.1/ChkTeX.h
+--- chktex-1.7.1.orig/ChkTeX.h	2012-10-10 11:32:49.000000000 +0200
++++ chktex-1.7.1/ChkTeX.h	2012-10-21 14:33:01.000000000 +0200
+@@ -286,38 +286,39 @@
+ extern FILE *OutputFile, *InputFile;
+ 
+ #define OPTION_DEFAULTS \
+-  DEF(int, GlobalRC,    TRUE) \
+-  DEF(int, WipeVerb,    TRUE) \
+-  DEF(int, BackupOut,   TRUE) \
+-  DEF(int, Quiet,       FALSE) \
+-  DEF(int, LicenseOnly, FALSE) \
+-  DEF(int, UsingStdIn,  FALSE) \
+-  DEF(int, InputFiles,  TRUE) \
+-  DEF(int, HeadErrOut,  TRUE) \
+-  DEF(const char *, OutputName, "") \
+-  DEF(const char *, PseudoInName, NULL) \
+-  DEF(char *, OutputFormat, VerbNormal) \
+-  DEF(char *, PipeOutputFormat, NULL) \
+-  DEF(const char *, Delimit, ":") \
+-  DEF(long,  DebugLevel, 0) \
++  DEF(int, GlobalRC,    TRUE); \
++  DEF(int, WipeVerb,    TRUE); \
++  DEF(int, BackupOut,   TRUE); \
++  DEF(int, Quiet,       FALSE); \
++  DEF(int, LicenseOnly, FALSE); \
++  DEF(int, UsingStdIn,  FALSE); \
++  DEF(int, InputFiles,  TRUE); \
++  DEF(int, HeadErrOut,  TRUE); \
++  DEF(const char *, OutputName, ""); \
++  DEF(const char *, PseudoInName, NULL); \
++  DEF(char *, OutputFormat, VerbNormal); \
++  DEF(char *, PipeOutputFormat, NULL); \
++  DEF(const char *, Delimit, ":"); \
++  DEF(long,  DebugLevel, 0); \
+   DEF(int,  NoLineSupp, FALSE)
+ 
+ #define STATE_VARS \
+-  DEF(enum ItState, ItState, itOff) /* Are we doing italics? */ \
+-  DEF(int, AtLetter, FALSE) /* Whether `@' is a letter or not. */ \
+-  DEF(int, InHeader, TRUE)  /* Whether we're in the header */ \
+-  DEF(int, VerbMode, FALSE) /* Whether we're in complete ignore-mode */ \
+-  DEF(long, MathMode, 0)    /* Whether we're in math mode or not */ \
+-  DEF(const char *, VerbStr, "")     /* String we'll terminate verbmode upon */ \
+-  DEF(unsigned long, ErrPrint, 0)    /* # errors printed */ \
+-  DEF(unsigned long, WarnPrint, 0)   /* # warnings printed */ \
+-  DEF(unsigned long, UserSupp, 0)    /* # user suppressed warnings */ \
+-  DEF(unsigned long, LineSupp, 0)    /* # warnings suppressed on a single line */ \
+-  DEF(unsigned long long, FileSuppressions, 0)     /* # warnings suppressed in a file */ \
+-  DEF(unsigned long long, UserFileSuppressions, 0) /* # User warnings suppressed in a file */
++  DEF(enum ItState, ItState, itOff); /* Are we doing italics? */ \
++  DEF(int, AtLetter, FALSE); /* Whether `@' is a letter or not. */ \
++  DEF(int, InHeader, TRUE);  /* Whether we're in the header */ \
++  DEF(int, VerbMode, FALSE); /* Whether we're in complete ignore-mode */ \
++  DEF(long, MathMode, 0);    /* Whether we're in math mode or not */ \
++  DEF(const char *, VerbStr, "");     /* String we'll terminate verbmode upon */ \
++  DEF(unsigned long, ErrPrint, 0);    /* # errors printed */ \
++  DEF(unsigned long, WarnPrint, 0);   /* # warnings printed */ \
++  DEF(unsigned long, UserSupp, 0);    /* # user suppressed warnings */ \
++  DEF(unsigned long, LineSupp, 0);    /* # warnings suppressed on a single line */ \
++  DEF(unsigned long long, FileSuppressions, 0);     /* # warnings suppressed in a file */ \
++  DEF(unsigned long long, UserFileSuppressions, 0); /* # User warnings suppressed in a file */
+ 
+-#define DEF(type, name, value) extern type name;
+-OPTION_DEFAULTS STATE_VARS
++#define DEF(type, name, value) extern type name
++OPTION_DEFAULTS;
++STATE_VARS;
+ #undef DEF
+ extern struct Stack CharStack, InputStack, EnvStack;
+ 
+diff -ur chktex-1.7.1.orig/Resource.c chktex-1.7.1/Resource.c
+--- chktex-1.7.1.orig/Resource.c	2012-04-23 22:22:26.000000000 +0200
++++ chktex-1.7.1/Resource.c	2012-10-21 14:45:14.000000000 +0200
+@@ -75,7 +75,7 @@
+   BIT(Equal),    /* = */ \
+   BIT(Word),     /* Keyword */ \
+   BIT(Item)      /* List item */ \
+-};
++}
+ 
+ #undef BIT
+ #define BIT BITDEF1
+@@ -323,7 +323,7 @@
+ 
+ #define DONEKEY (FLG_Open | FLG_Equal | FLG_BrOpen)
+ #define DONELIST (FLG_Close | FLG_BrClose)
+-#define TOKEN(c, ctxt, tk) case c: if(Expect & (ctxt)) Retval = tk; LAST(token);
++#define TOKEN(c, ctxt, tk) case c: if(Expect & (ctxt)) Retval = tk; LAST(token)
+ 
+                     LOOP(token,
+                          TOKEN('{', DONEKEY, FLG_Open);
+@@ -331,7 +331,7 @@
+                          TOKEN('=', DONEKEY, FLG_Equal);
+                          TOKEN(']', DONELIST, FLG_BrClose);
+                          TOKEN('}', DONELIST, FLG_Close);
+-                        );
++                        )
+                     if (Retval != FLG_Eof)
+                     {
+                         OnceMore = FALSE;

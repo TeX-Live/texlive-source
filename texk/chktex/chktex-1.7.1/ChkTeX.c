@@ -195,9 +195,9 @@ enum Quote Quote;
 
 char VerbNormal[] = "%k %n in %f line %l: %m\n" "%r%s%t\n" "%u\n";
 
-#define DEF(type, name, value)  type name = value;
-OPTION_DEFAULTS
-STATE_VARS
+#define DEF(type, name, value)  type name = value
+OPTION_DEFAULTS;
+STATE_VARS;
 #undef DEF
 FILE *OutputFile = NULL;
 
@@ -334,7 +334,15 @@ int main(int argc, char **argv)
 #endif
 
     OutputFile = stdout;
+#ifdef KPATHSEA
+    kpse_set_program_name(argv[0], "chktex");
+    PrgName = kpse_program_name;
+#ifdef WIN32
+    setmode(fileno(stdout), _O_BINARY);
+#endif
+#else
     PrgName = argv[0];
+#endif
 
 #undef KEY
 #undef LCASE
@@ -426,7 +434,7 @@ int main(int argc, char **argv)
                     for (Count = 0; Count < NUMBRACKETS; Count++)
                         Brackets[Count] = 0L;
 
-#define DEF(type, name, value) name = value;
+#define DEF(type, name, value) name = value
                     STATE_VARS;
 #undef DEF
                     if (UsingStdIn)
@@ -512,7 +520,11 @@ static int OpenOut(void)
 
         if (Success)
         {
+#ifdef KPATHSEA
+            if (!(OutputFile = fopen(OutputName, "wb")))
+#else
             if (!(OutputFile = fopen(OutputName, "w")))
+#endif
             {
                 PrintPrgErr(pmOutOpen);
                 Success = FALSE;
@@ -687,8 +699,8 @@ static void ResetStacks(void)
 static void ResetSettings(void)
 {
 
-#define DEF(type, name, value)  name = value;
-    OPTION_DEFAULTS
+#define DEF(type, name, value)  name = value
+    OPTION_DEFAULTS;
 #undef DEF
     if (OutputFile != stdout)
     {
@@ -855,11 +867,13 @@ static int ParseArgs(int argc, char **argv)
                 nextc = ShiftArg(&optarg);
                 break;
 
-            LOOP(warntype, case 'w':
-            ErrType = etWarn; InUse = iuOK; LAST(warntype); case 'e':
-            ErrType = etErr; InUse = iuOK; LAST(warntype); case 'm':
-            ErrType = etMsg; InUse = iuOK; LAST(warntype); case 'n':
-            ErrType = etMsg; InUse = iuNotUser; LAST(warntype);) if (isdigit((unsigned char)*optarg))
+            LOOP(warntype,
+            case 'w': ErrType = etWarn; InUse = iuOK; LAST(warntype);
+            case 'e': ErrType = etErr; InUse = iuOK; LAST(warntype);
+            case 'm': ErrType = etMsg; InUse = iuOK; LAST(warntype);
+            case 'n': ErrType = etMsg; InUse = iuNotUser; LAST(warntype);
+                ) 
+                if (isdigit((unsigned char)*optarg))
                 {
                     nextc = ParseNumArg(&Err, -1, &optarg);
                     if (betw(emMinFault, Err, emMaxFault))

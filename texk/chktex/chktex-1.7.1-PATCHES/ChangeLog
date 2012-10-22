@@ -1,3 +1,9 @@
+2012-10-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-10-semicolon: Adapt to upstream.
+	* patch-11-TL (new): Use kpse_var_value(), binary output files.
+	* patch-12-uint64_t (new): Use uint64_t and check for it.
+
 2012-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-08-stpcpy: Check for declaration of stpcpy().

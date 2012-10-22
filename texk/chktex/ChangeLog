@@ -1,3 +1,8 @@
+2012-10-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+	(TESTS_ENVIRONMENT): Add TEXMFCNF.
+
 2012-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check for declaration of stpcpy().

@@ -72,6 +72,14 @@
 #  include <strings.h>
 #endif
 
+#ifdef HAVE_INTTYPES_H
+#  include <inttypes.h>
+#endif
+
+#ifdef HAVE_STDINT_H
+#  include <stdint.h>
+#endif
+
 #include "types.h"
 
 #ifndef LONG_MAX
@@ -286,38 +294,39 @@ extern unsigned long Brackets[NUMBRACKETS];
 extern FILE *OutputFile, *InputFile;
 
 #define OPTION_DEFAULTS \
-  DEF(int, GlobalRC,    TRUE) \
-  DEF(int, WipeVerb,    TRUE) \
-  DEF(int, BackupOut,   TRUE) \
-  DEF(int, Quiet,       FALSE) \
-  DEF(int, LicenseOnly, FALSE) \
-  DEF(int, UsingStdIn,  FALSE) \
-  DEF(int, InputFiles,  TRUE) \
-  DEF(int, HeadErrOut,  TRUE) \
-  DEF(const char *, OutputName, "") \
-  DEF(const char *, PseudoInName, NULL) \
-  DEF(char *, OutputFormat, VerbNormal) \
-  DEF(char *, PipeOutputFormat, NULL) \
-  DEF(const char *, Delimit, ":") \
-  DEF(long,  DebugLevel, 0) \
+  DEF(int, GlobalRC,    TRUE); \
+  DEF(int, WipeVerb,    TRUE); \
+  DEF(int, BackupOut,   TRUE); \
+  DEF(int, Quiet,       FALSE); \
+  DEF(int, LicenseOnly, FALSE); \
+  DEF(int, UsingStdIn,  FALSE); \
+  DEF(int, InputFiles,  TRUE); \
+  DEF(int, HeadErrOut,  TRUE); \
+  DEF(const char *, OutputName, ""); \
+  DEF(const char *, PseudoInName, NULL); \
+  DEF(char *, OutputFormat, VerbNormal); \
+  DEF(char *, PipeOutputFormat, NULL); \
+  DEF(const char *, Delimit, ":"); \
+  DEF(long,  DebugLevel, 0); \
   DEF(int,  NoLineSupp, FALSE)
 
 #define STATE_VARS \
-  DEF(enum ItState, ItState, itOff) /* Are we doing italics? */ \
-  DEF(int, AtLetter, FALSE) /* Whether `@' is a letter or not. */ \
-  DEF(int, InHeader, TRUE)  /* Whether we're in the header */ \
-  DEF(int, VerbMode, FALSE) /* Whether we're in complete ignore-mode */ \
-  DEF(long, MathMode, 0)    /* Whether we're in math mode or not */ \
-  DEF(const char *, VerbStr, "")     /* String we'll terminate verbmode upon */ \
-  DEF(unsigned long, ErrPrint, 0)    /* # errors printed */ \
-  DEF(unsigned long, WarnPrint, 0)   /* # warnings printed */ \
-  DEF(unsigned long, UserSupp, 0)    /* # user suppressed warnings */ \
-  DEF(unsigned long, LineSupp, 0)    /* # warnings suppressed on a single line */ \
-  DEF(unsigned long long, FileSuppressions, 0)     /* # warnings suppressed in a file */ \
-  DEF(unsigned long long, UserFileSuppressions, 0) /* # User warnings suppressed in a file */
+  DEF(enum ItState, ItState, itOff); /* Are we doing italics? */ \
+  DEF(int, AtLetter, FALSE); /* Whether `@' is a letter or not. */ \
+  DEF(int, InHeader, TRUE);  /* Whether we're in the header */ \
+  DEF(int, VerbMode, FALSE); /* Whether we're in complete ignore-mode */ \
+  DEF(long, MathMode, 0);    /* Whether we're in math mode or not */ \
+  DEF(const char *, VerbStr, "");     /* String we'll terminate verbmode upon */ \
+  DEF(unsigned long, ErrPrint, 0);    /* # errors printed */ \
+  DEF(unsigned long, WarnPrint, 0);   /* # warnings printed */ \
+  DEF(unsigned long, UserSupp, 0);    /* # user suppressed warnings */ \
+  DEF(unsigned long, LineSupp, 0);    /* # warnings suppressed on a single line */ \
+  DEF(uint64_t, FileSuppressions, 0);     /* # warnings suppressed in a file */ \
+  DEF(uint64_t, UserFileSuppressions, 0); /* # User warnings suppressed in a file */
 
-#define DEF(type, name, value) extern type name;
-OPTION_DEFAULTS STATE_VARS
+#define DEF(type, name, value) extern type name
+OPTION_DEFAULTS;
+STATE_VARS;
 #undef DEF
 extern struct Stack CharStack, InputStack, EnvStack;
 

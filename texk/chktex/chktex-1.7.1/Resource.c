@@ -75,7 +75,7 @@ struct KeyWord Keys[] = {
   BIT(Equal),    /* = */ \
   BIT(Word),     /* Keyword */ \
   BIT(Item)      /* List item */ \
-};
+}
 
 #undef BIT
 #define BIT BITDEF1
@@ -323,7 +323,7 @@ static enum Token ReadWord(char *Buffer, FILE * fh)
 
 #define DONEKEY (FLG_Open | FLG_Equal | FLG_BrOpen)
 #define DONELIST (FLG_Close | FLG_BrClose)
-#define TOKEN(c, ctxt, tk) case c: if(Expect & (ctxt)) Retval = tk; LAST(token);
+#define TOKEN(c, ctxt, tk) case c: if(Expect & (ctxt)) Retval = tk; LAST(token)
 
                     LOOP(token,
                          TOKEN('{', DONEKEY, FLG_Open);
@@ -331,7 +331,7 @@ static enum Token ReadWord(char *Buffer, FILE * fh)
                          TOKEN('=', DONEKEY, FLG_Equal);
                          TOKEN(']', DONELIST, FLG_BrClose);
                          TOKEN('}', DONELIST, FLG_Close);
-                        );
+                        )
                     if (Retval != FLG_Eof)
                     {
                         OnceMore = FALSE;

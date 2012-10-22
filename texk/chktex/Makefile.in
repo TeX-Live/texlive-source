@@ -320,8 +320,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES regex/COPYING.LIB \
 	regex/README ../../build-aux/relpath $(TESTS)
-INCLUDES = $(REGEX_INCLUDES) $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
+AM_CPPFLAGS = $(REGEX_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 chktex_SOURCES = $(CHKTEX_TREE)/ChkTeX.c $(CHKTEX_TREE)/ChkTeX.h \
 	$(CHKTEX_TREE)/FindErrs.c $(CHKTEX_TREE)/FindErrs.h \
@@ -364,7 +363,7 @@ pdfdocdir = $(datarootdir)/texmf/doc/chktex
 dist_pdfdoc_DATA = $(CHKTEX_TREE)/ChkTeX.pdf
 CLEANFILES = $(nodist_bin_SCRIPTS) chktest
 TESTS = chktex.test
-TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE)
+TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE) TEXMFCNF=$(abs_srcdir)/../kpathsea
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

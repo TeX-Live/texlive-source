@@ -9,6 +9,7 @@ texlive/rungs.tlu
 texlive/tlmgr.pl
 '
 texmf_dist_scripts='
+adhocfilelist/adhocfilelist.sh
 bibexport/bibexport.sh
 installfont/installfont-tl
 latexfileversion/latexfileversion
