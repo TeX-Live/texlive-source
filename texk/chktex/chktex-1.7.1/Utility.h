@@ -150,9 +150,9 @@ struct ErrInfo *TopErr(struct Stack *Stack);
 struct ErrInfo *PopErr(struct Stack *Stack);
 struct ErrInfo *TopMatch(struct Stack *Stack, char *String);
 
-long BrackIndex(char const c);
-void AddBracket(char const c);
-char MatchBracket(char const);
+long BrackIndex(const char c);
+void AddBracket(const char c);
+char MatchBracket(const char c);
 
 
 

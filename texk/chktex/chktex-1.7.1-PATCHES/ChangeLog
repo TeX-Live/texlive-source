@@ -1,3 +1,8 @@
+2012-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-13-char (new): Modify a function parameter and a few
+	local variables int => char in order to avois MSVC warnings.
+
 2012-10-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-10-semicolon: Adapt to upstream.

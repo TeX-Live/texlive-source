@@ -1027,11 +1027,11 @@ static void CheckDash(void)
  *
  */
 
-static void HandleBracket(int Char)
+static void HandleBracket(char Char)
 {
     unsigned long BrOffset;     /* Offset into BrOrder array */
     struct ErrInfo *ei;
-    int TmpC, Match;
+    char TmpC, Match;
     char ABuf[2], BBuf[2];
     char *TmpPtr;
 
@@ -1235,7 +1235,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
     char *TmpPtr;               /* Temporary pointer */
     char *ErrPtr;               /* Ptr to where an error started */
 
-    int TmpC,                   /* Just a temp var used throughout the proc. */
+    char TmpC,                  /* Just a temp var used throughout the proc. */
       MatchC, Char;             /* Char. currently processed */
     unsigned long CmdLen;       /* Length of misc. things */
     int MixingQuotes;

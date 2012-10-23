@@ -1,0 +1,47 @@
+	Modify a function parameter and a few local variables
+	int => char in order to avois MSVC warnings.
+
+	Replace 'char const' => 'const char'.
+
+diff -ur chktex-1.7.1.orig/FindErrs.c chktex-1.7.1/FindErrs.c
+--- chktex-1.7.1.orig/FindErrs.c	2012-10-22 10:34:58.000000000 +0200
++++ chktex-1.7.1/FindErrs.c	2012-10-22 20:53:21.000000000 +0200
+@@ -1027,11 +1027,11 @@
+  *
+  */
+ 
+-static void HandleBracket(int Char)
++static void HandleBracket(char Char)
+ {
+     unsigned long BrOffset;     /* Offset into BrOrder array */
+     struct ErrInfo *ei;
+-    int TmpC, Match;
++    char TmpC, Match;
+     char ABuf[2], BBuf[2];
+     char *TmpPtr;
+ 
+@@ -1235,7 +1235,7 @@
+     char *TmpPtr;               /* Temporary pointer */
+     char *ErrPtr;               /* Ptr to where an error started */
+ 
+-    int TmpC,                   /* Just a temp var used throughout the proc. */
++    char TmpC,                  /* Just a temp var used throughout the proc. */
+       MatchC, Char;             /* Char. currently processed */
+     unsigned long CmdLen;       /* Length of misc. things */
+     int MixingQuotes;
+diff -ur chktex-1.7.1.orig/Utility.h chktex-1.7.1/Utility.h
+--- chktex-1.7.1.orig/Utility.h	2012-08-04 18:40:33.000000000 +0200
++++ chktex-1.7.1/Utility.h	2012-10-22 20:53:20.707448783 +0200
+@@ -150,9 +150,9 @@
+ struct ErrInfo *PopErr(struct Stack *Stack);
+ struct ErrInfo *TopMatch(struct Stack *Stack, char *String);
+ 
+-long BrackIndex(char const c);
+-void AddBracket(char const c);
+-char MatchBracket(char const);
++long BrackIndex(const char c);
++void AddBracket(const char c);
++char MatchBracket(const char c);
+ 
+ 
+ 
