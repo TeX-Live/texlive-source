@@ -3,9 +3,12 @@
 # Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+PATH=$LCDF_TYPETOOLS_TREE/cfftot1:$PATH		# May need to run cfftot1, ...
+PATH=$LCDF_TYPETOOLS_TREE/t1dotlessj:$PATH	# ... t1dotlessj, ...
+PATH=$LCDF_TYPETOOLS_TREE/ttftotype42:$PATH	# ... or ttftotype42.
 TEXMFCNF=$srcdir/../kpathsea
 ENCFONTS=.:$srcdir/tests
-export TEXMFCNF ENCFONTS
+export PATH TEXMFCNF ENCFONTS
 
 rm -f Ant* a_enhg3c.enc
 

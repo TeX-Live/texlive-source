@@ -1,3 +1,8 @@
+2012-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/tfm.test: Add to PATH because otftotfm may need to run
+	the uninstalled version of cfftot1, t1dotlessj, or ttftotype42.
+
 2012-10-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lcdf-typetools-2.95-PATHES/patch-30-W32TeX: 
