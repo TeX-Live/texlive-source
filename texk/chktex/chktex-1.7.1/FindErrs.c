@@ -1505,11 +1505,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 HERE(1, emUseQuoteLiga);
                 break;
 
-                /* One of these are unnecessary, but what the heck... */
-            case 180:          /* ´. NOTE: '\xb4' gets converted to - something */
-            case ~(0xff & (~180)):     /* This yields 0xff...fb4 in */
-                /* arbitrary precision. */
-
+            case '\264':          /* '´' */
                 HERE(1, emUseOtherQuote);
                 break;
 
