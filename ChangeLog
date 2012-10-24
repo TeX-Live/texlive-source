@@ -1,3 +1,11 @@
+2012-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2012-10-24.
+
+2012-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2012-08-19.
+
 2012-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Running texlinks in texk/texlive/linked_scripts.
@@ -8,7 +16,6 @@
 
 2012-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* tardate.ac: Switch to 2012-06-15.
 	* version.ac: Switch 2012 => 2013/dev.
 
 2012-06-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
