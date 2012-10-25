@@ -22,8 +22,8 @@ $^W=1; # turn warning on
 my $prj         = 'pdfcrop';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.33";
-my $date        = "2012/02/01";
+my $version     = "1.37";
+my $date        = "2012/10/16";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2002-2012 by $author.";
 #
@@ -101,6 +101,10 @@ my $copyright   = "Copyright (c) 2002-2012 by $author.";
 # 2012/04/18 v1.34: * Format of --version changed
 #                     from naked version number to a line with
 #                     program name, date and version.
+# 2012/10/15 v1.35: * Additional debug infos added for Perl version.
+# 2012/10/16 v1.36: * More error codes added.
+# 2012/10/16 v1.37: * Extended error messages if available.
+#                   * Fix for broken v1.36.
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -119,11 +123,41 @@ use Config;
 my $archname = $Config{'archname'};
 $archname = 'unknown' unless defined $Config{'archname'};
 
+### extended error messages
+sub exterr () {
+    chomp(my $msg_errno = $!);
+    chomp(my $msg_extended_os_error = $^E);
+    if ($msg_errno eq $msg_extended_os_error) {
+        $msg_errno;
+    }
+    else {
+        "$msg_errno/$msg_extended_os_error";
+    }
+}
+
 ### string constants for Ghostscript run
 # get Ghostscript command name
 $::opt_gscmd = '';
 sub find_ghostscript () {
     return if $::opt_gscmd;
+    if ($::opt_debug) {
+        print "* Perl executable: $^X\n";
+        if ($] < 5.006) {
+            print "* Perl version: $]\n";
+        }
+        else {
+            printf "* Perl version: v%vd\n", $^V;
+        }
+        if (defined &ActivePerl::BUILD) {
+            printf "* Perl product: ActivePerl, build %s\n", ActivePerl::BUILD();
+        }
+        use Config;
+        printf "* Pointer size: $Config{'ptrsize'}\n";
+        printf "* Pipe support: %s\n",
+                (defined($Config{'d_pipe'}) ? 'yes' : 'no');
+        printf "* Fork support: %s\n",
+                (defined($Config{'d_fork'}) ? 'yes' : 'no');
+    }
     my $system = 'unix';
     $system = "dos" if $^O =~ /dos/i;
     $system = "os2" if $^O =~ /os2/i;
@@ -628,7 +662,9 @@ if ($inputfile eq '-') {
     $inputfilesafe = "$tmp-stdin.pdf";
     print "* Temporary input file: $inputfilesafe\n" if $::opt_debug;
     push @unlink_files, $inputfilesafe;
-    open(OUT, '>', $inputfilesafe) or die "$Error Cannot write `$inputfilesafe'!\n";
+    open(OUT, '>', $inputfilesafe)
+            or die sprintf "$Error Cannot write `%s' (%s)!\n",
+                           $inputfilesafe, exterr;
     binmode(OUT);
     my $size = 0;
     my $len = 0;
@@ -637,11 +673,12 @@ if ($inputfile eq '-') {
     do {
         $len = read STDIN, $buf, $buf_size;
         if (not defined $len) {
-            my $msg = $!;
-            chomp $msg;
+            my $msg = exterr;
             die "$Error Reading standard input ($msg)!\n";
         }
-        print OUT $buf or die "$Error Writing `$inputfilesafe'!\n";
+        print OUT $buf
+                or die sprintf "$Error Writing `%s` (%s)!\n",
+                               $inputfilesafe, exterr;
         $size += $len;
     }
     while ($len);
@@ -658,21 +695,25 @@ elsif (not $inputfile =~ /^[\w\d\.\-\:\/@]+$/) { # /[\s\$~'"#{}%]/
             if $::opt_verbose;
     if ($symlink_exists) {
         symlink($inputfile, $inputfilesafe)
-            or die "$Error Link from `$inputfile' to"
-                   . " `$inputfilesafe' failed: $!\n";
+            or die sprintf "$Error Link from `%s' to `%s' failed (%s)!\n",
+                           $inputfile, $inputfilesafe, exterr;
     }
     else {
         use File::Copy;
         copy($inputfile, $inputfilesafe)
-                or die "$Error Copy from `$inputfile' to"
-                       . " `$inputfilesafe' failed: $!\n";
+                or die sprintf "$Error Copy from `%s' to `%s' failed (%s)\n",
+                               $inputfile, $inputfilesafe, exterr;
     }
 }
 
 if ($::opt_pdfversion eq 'auto') {
-    open(IN, '<', $inputfilesafe) or die "!!! Error: Cannot open `$inputfilesafe'!\n";
+    open(IN, '<', $inputfilesafe)
+            or die sprintf "!!! Error: Cannot open `%s' (%s)!\n",
+                           $inputfilesafe, exterr;
     my $buf;
-    read(IN, $buf, 1024) or die "!!! Error: Cannot read the header of `$inputfilesafe' failed!\n";
+    read(IN, $buf, 1024)
+            or die sprintf "!!! Error: Cannot read the header of `%s' failed (%s)!\n",
+                           $inputfilesafe, exterr;
     close(IN);
     if ($buf =~ /%PDF-1.([0-7])\s/) {
         $::opt_pdfversion = $1;
@@ -704,8 +745,9 @@ push @gsargs,
 
 my $tmpfile = "$tmp.tex";
 push @unlink_files, $tmpfile;
-open(TMP, ">$tmpfile") or
-    die "$Error Cannot write tmp file `$tmpfile'!\n";
+open(TMP, ">$tmpfile")
+    or die sprintf "$Error Cannot write tmp file `%s' (%s)!\n",
+                   $tmpfile, exterr;
 print TMP <<'END_TMP';
 \catcode37 14 % percent
 \catcode33 12 % exclam
@@ -989,10 +1031,11 @@ sub getbbox ($$$$$) {
 my $page = 0;
 my $gs_pipe = "$::opt_gscmd -dSAFER @gsargs 2>&1";
 $gs_pipe .= " 1>$null" unless $::opt_verbose;
-$gs_pipe .= "|";
+$gs_pipe .= " |";
 
-open(GS, $gs_pipe) or
-        die "$Error Cannot call ghostscript ($::opt_gscmd)!\n";
+open(GS, $gs_pipe)
+        or die sprintf "$Error Cannot call ghostscript `%s' (%s)!\n",
+                       $::opt_gscmd, exterr;
 my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
 my $previous_line = 'Previous line';
 # Ghostscript workaround for buggy ports that prints
@@ -1056,7 +1099,11 @@ END_WARNING
 }
 close(GS);
 
-if ($? & 127) {
+if ($? == -1) {
+    die sprintf "$Error Ghostscript failed to execute (%s)!\n",
+                exterr;
+}
+elsif ($? & 127) {
     die sprintf  "$Error Ghostscript died with signal %d!\n",
                  ($? & 127);
 }
@@ -1108,19 +1155,36 @@ if ($::opt_verbose) {
 else {
     `$cmd`;
 }
-if ($?) {
-    die "$Error $texname run failed!\n";
+if ($? == -1) {
+    die sprintf "$Error %s run failed to execute (%s)!\n",
+                $texname, exterr;
+}
+elsif ($? & 127) {
+    die sprintf "$Error %s run died with signal %d!\n",
+                $texname, ($? & 127);
+}
+elsif ($? != 0) {
+    die sprintf "$Error %s run failed with value %d!\n",
+                $texname, ($? >> 8);
 }
 
 ### Check pdf version of temp file
 if ($::opt_pdfversion) {
-    open(PDF, '+<', "$tmp.pdf") or die "!!! Error: Cannot open `$tmp.pdf'!\n";
+    open(PDF, '+<', "$tmp.pdf")
+            or die sprintf "!!! Error: Cannot open `%s' (%s)!\n",
+                           "$tmp.pdf", exterr;
     my $header;
-    read PDF, $header, 9 or die "!!! Error: Cannot read header of `$tmp.pdf'!\n";
+    read PDF, $header, 9
+            or die sprintf "!!! Error: Cannot read header of `%s' (%s)!\n",
+                           "$tmp.pdf", exterr;
     $header =~ /^%PDF-1\.(\d)\s$/ or die "!!! Error: Cannot find header of `$tmp.pdf'!\n";
     if ($1 ne $::opt_pdfversion) {
-        seek PDF, 7, 0 or die "!!! Error: Cannot seek in `$tmp.pdf'!\n";
-        print PDF $::opt_pdfversion or die "!!! Error: Cannot write in `$tmp.pdf'!\n";
+        seek PDF, 7, 0
+                or die sprintf "!!! Error: Cannot seek in `%s' (%s)!\n",
+                               "$tmp.pdf", exterr;
+        print PDF $::opt_pdfversion
+                or die sprintf "!!! Error: Cannot write in `%s' (%s)!\n",
+                               "$tmp.pdf", exterr;
         print "* PDF version correction in output file: 1.$::opt_pdfversion\n"
                 if $::opt_debug;
     }
