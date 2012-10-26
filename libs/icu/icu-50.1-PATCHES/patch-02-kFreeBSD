@@ -1,0 +1,14 @@
+	The kFreeBSD declaration of timezone conforms with Posix.
+
+diff -ur icu-50.1.orig/source/common/putilimp.h icu-50.1/source/common/putilimp.h
+--- icu-50.1.orig/source/common/putilimp.h	2012-10-23 07:08:36.000000000 +0200
++++ icu-50.1/source/common/putilimp.h	2012-10-24 09:52:09.000000000 +0200
+@@ -119,7 +119,7 @@
+ #   define U_TIMEZONE __timezone
+ #elif U_PLATFORM_USES_ONLY_WIN32_API
+ #   define U_TIMEZONE _timezone
+-#elif U_PLATFORM == U_PF_BSD && !defined(__NetBSD__)
++#elif U_PLATFORM == U_PF_BSD && !defined(__NetBSD__) && !defined(__FreeBSD_kernel__)
+    /* not defined */
+ #elif U_PLATFORM == U_PF_OS400
+    /* not defined */

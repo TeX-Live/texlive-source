@@ -1,0 +1,13 @@
+	Required for cross compilation linux -> MinGW32.
+
+diff -ur icu-50.1.orig/source/tools/toolutil/pkg_genc.c icu-50.1/source/tools/toolutil/pkg_genc.c
+--- icu-50.1.orig/source/tools/toolutil/pkg_genc.c	2012-10-23 07:08:44.000000000 +0200
++++ icu-50.1/source/tools/toolutil/pkg_genc.c	2012-10-25 14:05:44.000000000 +0200
+@@ -54,6 +54,7 @@
+ /*
+  * The following is needed by MinGW64
+  */
++#undef  __USER_LABEL_PREFIX__ /* Disables MinGW64, but required for MinGW32 cross compilation. */
+ #ifndef __USER_LABEL_PREFIX__
+ #define __USER_LABEL_PREFIX__ _
+ #endif
