@@ -1,3 +1,8 @@
+2012-10-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.97.
+	* version.ac, configure.ac: Adapted.
+
 2012-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/tfm.test: Add to PATH because otftotfm may need to run

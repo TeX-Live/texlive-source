@@ -1,36 +1,108 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl Adapted for TeX Live.
-m4_include([version.ac])[] dnl define lcdf_typetools_version
-AC_INIT([LCDF typetools for TeX Live], lcdf_typetools_version, [tex-k@tug.org])
-AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([lcdf-typetools-]lcdf_typetools_version[/NEWS])
-AC_CONFIG_AUX_DIR([../../build-aux])
-AC_CONFIG_MACRO_DIR([../../m4])
-
-dnl Common code for all programs using libkpathsea.
-KPSE_COMMON([lcdf-typetools])
-
-LCDF_TYPETOOLS_VERSION=lcdf_typetools_version
-AC_SUBST([LCDF_TYPETOOLS_VERSION])
-
+AC_INIT([lcdf-typetools], [2.97])
+AC_CONFIG_SRCDIR([NEWS])
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([autoconf.h])
+AM_MAINTAINER_MODE
 
+AC_PROG_MAKE_SET
+
+AC_PROG_CC
+AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_CXXCPP
 
-CC="$CC $WARNING_CFLAGS"
-CXX="$CXX $WARNING_CXXFLAGS"
+AC_ARG_ENABLE([warnings],
+  [AS_HELP_STRING([--enable-warnings], [compile with -W -Wall])],
+  [if test "$enableval" = yes; then
+    CFLAGS="$CFLAGS -W -Wall"; CXXFLAGS="$CXXFLAGS -W -Wall"
+  fi])
+
+dnl AN_MAKEVAR([AR], [AC_PROG_AR])
+dnl AN_PROGRAM([ar], [AC_PROG_AR])
+dnl AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
+dnl AC_PROG_AR
+
+AC_PROG_RANLIB
+
+
+dnl Available from the GNU Autoconf Macro Archive at:
+dnl http://www.gnu.org/software/ac-archive/htmldoc/ac_cxx_template_objs.html
+dnl
+AC_DEFUN([AC_CXX_TEMPLATE_OBJS],
+[AC_CACHE_CHECK(where template objects are stored, ac_cv_cxx_templobjs,
+ [ ac_cv_cxx_templobjs='unknown'
+   if test "$GXX" = yes; then
+     ac_cv_cxx_templobjs='nowhere'
+   else
+     case $CXX in
+       CC|*/CC)
+        cat > conftest.cc <<EOF
+template<class T> class A { public : A () {} };
+template<class T> void f (const A<T>&) {}
+main()
+{ A<double> d;
+  A<int> i;
+  f (d);
+  f (i);
+  return 0;
+}
+EOF
+        if test "$ac_cv_cxx_templobjs" = 'unknown' ; then
+          if test -d Templates.DB ; then
+            rm -fr Templates.DB
+          fi
+          if $CXX $CXXFLAGS -ptr. -c conftest.cc 1> /dev/null 2>&1; then
+            if test -d Templates.DB ; then
+#             this should be Sun CC <= 4.2
+              CXXFLAGS="$CXXFLAGS -ptr."
+              if test x"$LIBTOOL" = x ; then
+                ac_cv_cxx_templobjs='Templates.DB/*.o'
+              else
+                ac_cv_cxx_templobjs='Templates.DB/*.lo'
+              fi
+              rm -fr Templates.DB
+            fi
+          fi
+        fi
+        if test "$ac_cv_cxx_templobjs" = 'unknown' ; then
+          if test -d SunWS_cache ; then
+            rm -fr SunWS_cache
+          fi
+          if $CXX $CXXFLAGS -c conftest.cc 1> /dev/null 2>&1; then
+            if test -d SunWS_cache ; then
+#             this should be Sun WorkShop C++ compiler 5.x
+#             or Sun Forte C++ compiler >= 6.x
+              if test x"$LIBTOOL" = x ; then
+                ac_cv_cxx_templobjs='SunWS_cache/*/*.o'
+              else
+                ac_cv_cxx_templobjs='SunWS_cache/*/*.lo'
+              fi
+              rm -fr SunWS_cache
+            fi
+          fi
+        fi
+        rm -f conftest* ;;
+     esac
+   fi
+   case "x$ac_cv_cxx_templobjs" in
+     xunknown|xnowhere)
+     TEMPLATE_OBJS="" ;;
+     *)
+     TEMPLATE_OBJS="$ac_cv_cxx_templobjs" ;;
+   esac])
+   AC_SUBST(TEMPLATE_OBJS)])
 
 AC_CXX_TEMPLATE_OBJS
 
-KPSE_CXX_HACK
-
 
 dnl
-dnl directory searching
+dnl standard headers
+dnl (Though obsolete, AC_HEADER_STC changes the standard includes.)
 dnl
 
 AC_LANG_C
+AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS([fcntl.h unistd.h sys/time.h sys/wait.h])
 
@@ -203,22 +275,15 @@ ac_ntoh_defined=yes],
     fi
 fi
 if test $ac_ntoh_defined = no; then
-    AC_MSG_WARN([
+    AC_MSG_ERROR([
 =========================================
 
 Cannot find a definition for ntohs and/or ntohl!
 
 =========================================])
-  if test "x$enable_build" != xno; then
-    AC_MSG_ERROR([exiting])
-  fi
 fi
 AC_LANG_C
 
-KPSE_CHECK_WIN32
-if test "x$kpse_cv_have_win32" != xno; then
-  LIBS="$LIBS -lwsock32"
-fi
 
 dnl
 dnl is va_list addressable?
@@ -248,7 +313,7 @@ dnl
 dnl select programs to be compiled and automatically run
 dnl
 
-m4_include([ac/lcdf-typetools.ac])
+m4_include([m4/lcdf-typetools.m4])
 
 SELECTED_SUBDIRS=
 AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
@@ -267,59 +332,85 @@ dnl
 dnl kpathsea
 dnl
 
-dnl The configure option '--enable-texlive-build' is inherited
-dnl and automatically enabled, when built as part of TeX Live.
-
-AM_CONDITIONAL([texlive_build], [test "x$enable_texlive_build" = xyes])
-
 AC_ARG_WITH([kpathsea],
-            AS_HELP_STRING([--without-kpathsea],
-                           [build otftotfm without kpathsea]))
+  [AS_HELP_STRING([--with-kpathsea=PREFIX], [Kpathsea is installed (under PREFIX)])],
+  [kpathsea=$withval], [kpathsea=])
 
-KPSE_KPATHSEA_FLAGS
+KPATHSEA_INCLUDES=
+KPATHSEA_LIBS=
+KPATHSEA_DEPEND=
 
-if test "x$enable_build" != xno || test -f config.force; then
+if test "x$kpathsea" != xno; then
+    SAVE_CPPFLAGS="$CPPFLAGS"; SAVE_LDFLAGS="$LDFLAGS"
+    if test "x$kpathsea" != x -a "x$kpathsea" != xyes; then
+	KPATHSEA_INCLUDES="-I$kpathsea/include"
+	KPATHSEA_LIBS="-L$kpathsea/lib"
+    else
+	kpathsea=yes
+    fi
 
-KPSE_ADD_FLAGS([kpathsea])
+    dnl check for kpathsea/kpathsea.h
+    if true; then
+	CPPFLAGS="$SAVE_CPPFLAGS $KPATHSEA_INCLUDES"
+	AC_CHECK_HEADER([kpathsea/kpathsea.h], [kpse_header=yes], [kpse_header=no])
+    fi
 
-if test "x$with_kpathsea" != xno; then
-  AC_MSG_CHECKING([for kpathsea headers and library])
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
-                                  [[kpse_tfm_format;]])],
-                 [AC_MSG_RESULT([yes])
-                  AC_CHECK_DECLS([kpse_opentype_format], , ,
-                                 [#include <kpathsea/kpathsea.h>])
-                  AC_CHECK_DECLS([kpse_enc_format], , ,
-                                 [#include <kpathsea/kpathsea.h>])],
-                 [AC_MSG_RESULT([no])
-                  with_kpathsea=no])
+    dnl if not found and kpathsea prefix not set, check /usr/local
+    if test "x$kpse_header" != xyes -a "x$kpathsea" = xyes -a -r /usr/local/include/kpathsea/tex-file.h; then
+	KPATHSEA_INCLUDES="-I/usr/local/include"
+	KPATHSEA_LIBS="-L/usr/local/lib"
+	CPPFLAGS="$SAVE_CPPFLAGS $KPATHSEA_INCLUDES"
+	AC_CHECK_HEADER([kpathsea/tex-file.h], [kpse_header=yes], [kpse_header=no])
+    fi
 
-  if test "x$with_kpathsea" = xno; then
-    AC_MSG_ERROR([
+    dnl check for -lkpathsea
+    if true; then
+	LDFLAGS="$SAVE_LDFLAGS $KPATHSEA_LIBS"
+	AC_CHECK_LIB([kpathsea], [kpse_set_program_name], [kpse_library=yes], [kpse_library=no])
+    fi
+
+    dnl bail out if not found
+    if test "x$kpse_header" != xyes -o "x$kpse_library" != xyes; then
+	AC_MSG_ERROR([
 =========================================
 
 I can't find the kpathsea library and/or header files. Tell me where to look
-using the --with-kpathsea-libdir=DIR option (library under DIR) and
---with-kpathsea-includes=DIR option (header files under DIR/kpathsea), or
-disable kpathsea support using --without-kpathsea.
+using the --with-kpathsea=PREFIX option (header files should be under
+PREFIX/include/kpathsea, and library under PREFIX/lib), or disable support
+using --without-kpathsea.
 
 =========================================])
-  fi
-  AC_DEFINE(HAVE_KPATHSEA, 1, [Define if you want to use kpathsea.])
-fi
+    fi
 
-KPSE_RESTORE_FLAGS
+    dnl OK, found
+    AC_DEFINE(HAVE_KPATHSEA, 1, [Define if you want to use kpathsea.])
+    if true; then
+	KPATHSEA_LIBS="$KPATHSEA_LIBS -lkpathsea"
+    fi
 
-echo timestamp >config.force
+    dnl does it have opentype support?
+    if false; then
+	AC_DEFINE(HAVE_DECL_KPSE_OPENTYPE_FORMAT)
+    else
+	AC_CHECK_DECLS([kpse_opentype_format], [], [], [#include <kpathsea/kpathsea.h>])
+    fi
+
+    dnl does it have a separate format for encoding files?
+    AC_CHECK_DECLS([kpse_enc_format], [], [], [#include <kpathsea/kpathsea.h>])
+
+    CPPFLAGS="$SAVE_CPPFLAGS"; LDFLAGS="$SAVE_LDFLAGS"
 fi
 
 AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
+AC_SUBST([KPATHSEA_INCLUDES])
+AC_SUBST([KPATHSEA_LIBS])
+AC_SUBST([KPATHSEA_DEPEND])
 
 AC_ARG_ENABLE([selfauto-set],
-  AS_HELP_STRING([--disable-selfauto-set], [disable setting SELFAUTO variables from kpsewhich]),
+  [AS_HELP_STRING([--disable-selfauto-set], [disable setting SELFAUTO variables from kpsewhich])],
   [], [enable_selfauto_set=yes])
 
-if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno -a "x$enable_texlive_build" != xyes; then
+if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno; then
     kpsewhich='kpsewhich'
     test "x$kpathsea" != xyes -a -x "$kpathsea/bin/kpsewhich" && kpsewhich="$kpathsea/bin/kpsewhich"
     SELFAUTOLOC=`$kpsewhich --expand-var='$SELFAUTOLOC' 2>/dev/null`
@@ -344,10 +435,27 @@ fi
 dnl
 dnl glyphlist.txt and *.enc installation locations
 dnl
-glyphlistdir='${datarootdir}/texmf-dist/fonts/map/glyphlist'
-encdir='${datarootdir}/texmf-dist/fonts/enc/dvips/base'
+
+AC_ARG_ENABLE([glyphlistdir],
+  [AS_HELP_STRING([--enable-glyphlistdir=DIR], [store glyphlist.txt files in DIR [pkgdatadir]])], [glyphlistdir="$enableval"], [glyphlistdir=NONE])
+AC_ARG_ENABLE([encdir],
+  [AS_HELP_STRING([--enable-encdir=DIR], [store encoding files in DIR [pkgdatadir]])], [encdir="$enableval"], [encdir=NONE])
+
+test "x$glyphlistdir" = xNONE -o "x$glyphlistdir" = xno \
+     -o "x$glyphlistdir" = x && glyphlistdir='${pkgdatadir}'
+test "x$encdir" = xNONE -o "x$encdir" = xno \
+     -o "x$encdir" = x && encdir='${pkgdatadir}'
+
 AC_SUBST([glyphlistdir])
 AC_SUBST([encdir])
+
+
+dnl
+dnl TeX Live build stub
+dnl
+
+KPATHSEA_RULE=
+AC_SUBST([KPATHSEA_RULE])
 
 
 dnl
@@ -364,23 +472,19 @@ dnl set path variables
 dnl
 
 shell_expand () {
-  val=`eval echo '$'"$1"`
-  while echo "x$val" | fgrep '$' >/dev/null 2>&1; do val=`eval echo "$val"`; done
-  eval "$1='$val'"
+    val=`eval echo '$'"$1"`
+    while echo "x$val" | grep '\$' >/dev/null 2>&1; do val=`eval echo "$val"`; done
+    val=`echo "$val" | sed 's,//*,/,g'`
+    eval "$1='$val'"
 }
 
 dnl Preset $prefix and $exec_prefix.
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-shell_expand datadir
-
-if test "x$enable_native_texlive_build" = xyes; then
-  gdir=/nonesuch
-else
-  gdir="$glyphlistdir"
-  for i in data dataroot pkgdata g; do shell_expand ${i}dir; done
-fi
+pkgdatadir="${datadir}/$PACKAGE"
+gdir="$glyphlistdir"
+for i in data dataroot pkgdata g; do shell_expand ${i}dir; done
 AC_DEFINE_UNQUOTED([GLYPHLISTDIR], ["$gdir"], [Directory for glyphlist.txt files.])
 
 
@@ -388,10 +492,4 @@ dnl
 dnl Output
 dnl
 
-AC_SUBST([LCDF_TYPETOOLS_TREE], [lcdf-typetools-]lcdf_typetools_version)
-
-AC_CONFIG_FILES([Makefile lcdf-typetools-]lcdf_typetools_version[/Makefile])
-AC_FOREACH([Kpse_Prog], [liblcdf libefont] kpse_lcdf_typetools_progs,
-           [AC_CONFIG_FILES([lcdf-typetools-]lcdf_typetools_version[/]Kpse_Prog[/Makefile])])
-
-AC_OUTPUT
+AC_OUTPUT(Makefile liblcdf/Makefile libefont/Makefile cfftot1/Makefile mmafm/Makefile mmpfb/Makefile otfinfo/Makefile otftotfm/Makefile t1dotlessj/Makefile t1lint/Makefile t1rawafm/Makefile t1reencode/Makefile t1testpage/Makefile ttftotype42/Makefile)
