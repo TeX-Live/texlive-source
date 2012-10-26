@@ -120,6 +120,24 @@ my %FD_SHAPE = (
     romanii         => 'it',    # we map the second one to 'it'
 );
 
+=begin Comment
+
+    The next table is used to generate extra DeclareFontShape rules
+    in the .fd files that map slanted shapes to italic. 
+
+    Note that the rules should be read 'backwards': so "it => 'sl'" 
+    means that 'it' replaces 'sl'. Sorry about that.
+
+=end Comment
+
+=cut
+
+my %FD_SSUB = (
+    it      => 'sl',
+    scit    => 'scsl',
+    tlit    => 'tlsl',
+);
+
 
 =begin Comment
 
@@ -535,24 +553,21 @@ Possible options:
 
     -sanserif               Install font as sanserif font
     -typewriter             Install font as typewriter font
-
     -extra="TEXT"           Add TEXT to the command line for 'otftotfm'
     -target="DIRECTORY"     Install files into specified TEXMF tree
-    -vendor="VENDOR"        Specify part of directory name for installation
-    -typeface="TYPEFACE"    Specify part of directory name for installation
+    -vendor="VENDOR"        Only used for naming directories
+    -typeface="TYPEFACE"    Only used for naming directories
     -(no)updmap             Toggle running of updmap
-    
     -manual                 Manual mode (see documentation)
     
     -(no)figurekern         Keep or remove kerns between tabular figures
 
-    -help                   Prints this text and exit
-    -verbose                Prints detailed info about operation
+    -help                   Print this text
+    -verbose                Make some noise
 
     font[s]                 The fonts (either .otf or .ttf) to install.
 
 Please report any bugs or suggestions to <marcpenninga@gmail.com>.
-
 END_USAGE
 
 # Default values for the command-line arguments
@@ -1256,6 +1271,13 @@ END_FD_HEADER
                             " \\${fam}\@\@scale $item->[2]\n";
             }
             print {$FD} "}{}\n\n";
+            if (exists $FD_SSUB{$shape}) {
+                print {$FD} <<"END_FD_SSUB";
+\\DeclareFontShape{$enc}{${fam}-${sty}}{$series}{$FD_SSUB{$shape}}{
+    <-> ssub * ${fam}-${sty}/${series}/${shape}
+}{}
+END_FD_SSUB
+            }
         }
     }
     print {$FD} "\\endinput\n";
@@ -1670,14 +1692,14 @@ specified, so the last one will be the default text encoding.
 
 Install the font as a sanserif font, accessed via C<\sffamily> and C<\textsf>.
 Note that the generated style file redefines C<\familydefault>,
-so including it will make this font the default text font.
+so including it will still make this font the default text font.
 
 =item B<-typewriter>
 
 Install the font as a typewriter font, accessed via C<\ttfamily> and
 C<\texttt>.
 Note that the generated style file redefines C<\familydefault>,
-so including it will make this font the default text font.
+so including it will still make this font the default text font.
 
 =item B<-ts1>
 
@@ -1735,8 +1757,7 @@ Turn the creation of ornament fonts on or off. The default is B<-ornaments>.
 
 =item B<-verbose>
 
-Verbose mode; print detailed info about what B<autoinst> thinks it's doing,
-especially during font info parsing.
+Verbose mode; print detailed info about what B<autoinst> thinks it's doing.
 
 =item B<-extra>=I<text>
 
@@ -1748,12 +1769,12 @@ being interpreted as options to B<autoinst>, it should be properly quoted.
 =item B<-nofigurekern>
 
 Some fonts provide kerning pairs for tabular figures.
-This is very probably unwanted (e.g., numbers in tables won't line up exactly).
+This is probably unwanted (e.g., numbers in tables won't line up exactly).
 The option B<-nofigurekern> adds extra I< --ligkern> options
 to the command lines for I<otftotfm> to suppress such kerns
 (but only for the "TLF" and "TOsF" families).
 Since this leads to very long command lines (it adds one hundred such options)
-and the problem affects only few fonts, the default is however B<-figurekern>.
+and the problem affects only few fonts, the default is B<-figurekern>.
 
 =item B<-manual>
 
@@ -1769,7 +1790,7 @@ them into your TEXMF tree).
 
 When using this option, you should run F<pltotf> and F<vptovf> after
 executing all commands,
-to convert the F<pl> and F<vpl> files to F<tfm> and F<vf> format.
+to convert the F<pl> and F<vf> files to F<tfm> and F<vf> format.
 
 =back
 
@@ -1813,21 +1834,21 @@ The default is B<-updmap>.
 
 Eddie Kohler's TypeTools (F<http://www.lcdf.org/type>).
 
-The FontPro project (F<https://github.com/sebschub/FontPro>)
-offers very complete support for Adobe's Minion Pro and Myriad Pro
-(including math), and is currently working on Cronos Pro as well.
+Perl is pre-installed on most Linux and Unix systems;
+on Windows, try ActiveState's ActivePerl
+(available from F<http://www.activestate.com>)
+or Strawberry Perl (F<http://strawberryperl.com>).
 
 XeTeX (F<http://www.tug.org/xetex>) and LuaTeX (F<http://www.luatex.org>)
 are TeX extensions that can use any font (including both flavours of OpenType)
 without TeX-specific support files.
 
+The FontPro project (F<https://github.com/sebschub/FontPro>)
+offers very complete support for Adobe's Minion Pro and Myriad Pro
+(including math), and is currently working on Cronos Pro as well.
+
 John Owens' F<otfinst> (available from CTAN) is another wrapper
 around F<otftotfm>, and may work for you when B<autoinst> doesn't.
-
-Perl is pre-installed on most Linux and Unix systems;
-on Windows, try ActiveState's ActivePerl
-(available from F<http://www.activestate.com>)
-or Strawberry Perl (F<http://strawberryperl.com>).
 
 
 =head1 AUTHOR
@@ -1870,7 +1891,12 @@ GNU General Public License for more details.
 
 =over 12
 
-=item I<2012-10-03>
+=item I<2012-10-25>
+
+Added extra "ssub" rules to the F<fd> files that substitute italic
+shapes for slanted ones.
+
+=item I<2012-09-25>
 
 Added the I<-vendor>, I<-typeface> and I<-(no)updmap> command line options.
 
