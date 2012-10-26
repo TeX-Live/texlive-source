@@ -1,3 +1,8 @@
+2012-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import icu-50.1 (50_rc).
+	* version.ac: Adjust.
+
 2012-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Update icu-49.1 (release).

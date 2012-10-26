@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -34,14 +34,8 @@ if test "x$cache_file" != x/dev/null; then
   icu_config="$icu_config -C"
 fi
 # Add '--disable-strict': required for MinGW32, otherwise reduce warnings.
-# Add '--disable-threads': required for FreeBSD, neither XeTeX nor BibTeXU use threads.
 # Add '--disable-dyload': neither XeTeX nor BibTeXU use plugins, new in ICU 4.4.
-icu_config="$icu_config --disable-strict --disable-threads --disable-dyload"
-
-# Add '--disable-utf16-string-check': gcc 4.4+ supports this, but
-# XeTeX/BibTeXU don't need it, and propagating the necessary compiler
-# flags as computed by ICU is not easy.
-icu_config="$icu_config --disable-utf16-string-check"
+icu_config="$icu_config --disable-strict --disable-dyload"
 AC_SUBST([icu_config])
 
 if test "x$cross_compiling" = xyes; then

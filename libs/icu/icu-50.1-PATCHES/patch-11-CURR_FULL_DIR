@@ -1,0 +1,80 @@
+	When cross compiling, e.g., Unix => mingw CURR_FULL_DIR must
+	certainly be that for the native (Unix) system and not that for
+	the build (mingw) system.
+
+diff -ur icu-50.rc.orig/source/Makefile.in icu-50.rc/source/Makefile.in
+--- icu-50.rc.orig/source/Makefile.in	2012-10-23 07:11:52.000000000 +0200
++++ icu-50.rc/source/Makefile.in	2012-10-24 09:53:37.000000000 +0200
+@@ -52,7 +52,7 @@
+ INSTALLED_BUILT_FILES = $(top_builddir)/config/Makefile.inc $(top_builddir)/config/pkgdata.inc $(top_builddir)/config/icu-config @platform_make_fragment@ $(EXTRA_DATA:%=$(DESTDIR)$(pkglibdir)/%) $(ALL_PKGCONFIG_FILES)
+ 
+ ## Files built (autoconfed) but not installed
+-LOCAL_BUILT_FILES = icudefs.mk config/icucross.mk
++LOCAL_BUILT_FILES = icudefs.mk config/icucross.mk config/icucross.inc
+ 
+ DOCDIRS = common i18n
+ SUBDIRS =  stubdata common i18n $(LAYOUT) tools data $(ICUIO) $(EXTRA) $(SAMPLE) $(TEST)
+@@ -206,7 +206,7 @@
+ 
+ distclean-local: clean-local
+ 	$(RMV) $(top_builddir)/config/Makefile.inc $(top_builddir)/config/pkgdata.inc $(top_builddir)/config/icu-config $(top_builddir)/config/icu.pc $(ALL_PKGCONFIG_FILES)
+-	$(RMV) config.cache config.log config.status $(top_builddir)/config/icucross.mk autom4te.cache uconfig.h.prepend
++	$(RMV) config.cache config.log config.status $(top_builddir)/config/icucross.mk $(top_builddir)/config/icucross.inc autom4te.cache uconfig.h.prepend
+ 	$(RMV) Makefile config/Makefile icudefs.mk $(LIBDIR) $(BINDIR)
+ 	-$(RMV) dist
+ 
+@@ -238,6 +238,12 @@
+ 	  echo "PKGDATA_INVOKE=$(LDLIBRARYPATH_ENVVAR)=$(LIBRARY_PATH_PREFIX)"'$$(cross_buildroot)/stubdata:$$(cross_buildroot)/tools/ctestfw:$$(TOOLLIBDIR):$$$$'"$(LDLIBRARYPATH_ENVVAR) " ;\
+ 	  echo ) >> $@
+ 
++config/icucross.inc: $(top_builddir)/icudefs.mk  $(top_builddir)/Makefile
++	@echo rebuilding $@
++	@(grep '^CURR_FULL_DIR' $(top_builddir)/icudefs.mk ;\
++	  grep '^CURR_FULL_DIR' @platform_make_fragment@ ;\
++	   ) > $@ ; :
++
+ 
+ config/icu.pc: $(srcdir)/config/icu.pc.in
+ 	cd $(top_builddir) \
+diff -ur icu-50.rc.orig/source/config/mh-cygwin-msvc icu-50.rc/source/config/mh-cygwin-msvc
+--- icu-50.rc.orig/source/config/mh-cygwin-msvc	2012-10-23 07:08:58.000000000 +0200
++++ icu-50.rc/source/config/mh-cygwin-msvc	2012-10-24 09:53:37.000000000 +0200
+@@ -125,7 +125,7 @@
+ 
+ # The #M# is used to delete lines for icu-config
+ # Current full path directory.
+-CURR_FULL_DIR=$(subst \,/,$(shell cygpath -da .))#M# -m isn't used because it doesn't work on Win98
++CURR_FULL_DIR?=$(subst \,/,$(shell cygpath -da .))#M# -m isn't used because it doesn't work on Win98
+ # Current full path directory for use in source code in a -D compiler option.
+ CURR_SRCCODE_FULL_DIR=$(subst \,\\,$(shell cygpath -da .))#M#
+ 
+diff -ur icu-50.1.orig/source/config/mh-mingw icu-50.1/source/config/mh-mingw
+--- icu-50.1.orig/source/config/mh-mingw	2012-10-23 07:08:58.000000000 +0200
++++ icu-50.1/source/config/mh-mingw	2012-10-24 09:53:37.000000000 +0200
+@@ -79,8 +79,8 @@
+ 
+ # The #M# is used to delete lines for icu-config
+ # Current full path directory.
+-#CURR_FULL_DIR=$(shell pwd -W)#M# for MSYS
+-CURR_FULL_DIR=$(subst \,/,$(shell cmd /c cd))#M# for Cygwin shell
++#CURR_FULL_DIR?=$(shell pwd -W)#M# for MSYS
++CURR_FULL_DIR?=$(subst \,/,$(shell cmd /c cd))#M# for Cygwin shell
+ # Current full path directory for use in source code in a -D compiler option.
+ #CURR_SRCCODE_FULL_DIR=$(subst /,\\\\,$(shell pwd -W))#M# for MSYS
+ CURR_SRCCODE_FULL_DIR=$(subst \,/,$(shell cmd /c cd))#M# for Cygwin shell
+diff -ur icu-50.1.orig/source/icudefs.mk.in icu-50.1/source/icudefs.mk.in
+--- icu-50.1.orig/source/icudefs.mk.in	2012-10-23 07:11:52.000000000 +0200
++++ icu-50.1/source/icudefs.mk.in	2012-10-24 09:53:37.000000000 +0200
+@@ -279,6 +279,12 @@
+ PKGDATA_INVOKE = $(LDLIBRARYPATH_ENVVAR)=$(top_builddir)/stubdata:$(top_builddir)/tools/ctestfw:$(LIBRARY_PATH_PREFIX)$(LIBDIR):$$$(LDLIBRARYPATH_ENVVAR) $(LEAK_CHECKER)
+ INSTALLED_INVOKE = $(LDLIBRARYPATH_ENVVAR)=$(libdir):$$$(LDLIBRARYPATH_ENVVAR)
+ 
++# Current full path directory for cross compilation
++ifneq ($(strip $(cross_buildroot)),)
++include $(cross_buildroot)/config/icucross.inc
++endif
++
++
+ # Platform-specific setup
+ include @platform_make_fragment@
+ 

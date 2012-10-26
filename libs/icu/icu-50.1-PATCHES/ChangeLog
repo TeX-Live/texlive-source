@@ -1,0 +1,332 @@
+2012-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-50.1 source tree (icu4c-50_rc-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/50rc/
+
+	* patch-01-Cygwin, patch-02-FreeBSD (removed): Now in icu-50.1.
+	* patch-14-GENCCODE_ASSEMBLY (removed): Obsolete.
+
+	* patch-{08,11,12,13,40,50,60,70,82}-*:Adapted.
+
+ 	* patch-02-kFreeBSD (new): Use Posix conform timezone decl.
+	* patch-03-gcc-atomic (new): Required for gcc-4.4.
+	* patch-14-mingw-cross (new): Required for linux->MinGW32 cross.
+
+2012-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-82-Indic-bugfix (new): Revert ICU SVN commit 26090.
+
+2012-06-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-49.1.2 source tree (icu4c-49_1_2-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/49.1.2/
+
+	* patch-07-configure-utf16-string, patch-09-generated (removed):
+	Obsolete.
+
+	* patch-{01,02,08,11,12,13,14,40,50,60,70}-*: Adapted.
+
+2012-04-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-FreeBSD (new): Build fix for FreeBSD.
+	Reported by Nikola Lecic <nikola.lecic@anthesphoria.net>
+
+2012-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-49.1.1 source tree (icu4c-49_1_1-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/49.1.1/
+
+	* patch-05-m4-quoting: Removed, now in icu-49.1.1.
+
+	* patch-{01,07,08,09,11,12,13,14,40,50,60,70}-*: Adapted.
+
+2012-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-Cygwin (new): Build fix for Cygwin.
+	Reported by Ken Brown <kbrow1i@gmail.com>.
+
+2012-03-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Updated icu-49.1 source tree (icu4c-49_1-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/49.1/
+
+	* patch-{01,02,03,04}-*: Removed, now in icu-49.1.
+
+	* patch-{05,07,08,09,11,12,13,14,40,50,60,70}-*: Adapted.
+
+2012-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-m4-quoting (new): Correct m4 quoting in configure.in.
+
+2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-FreeBSD (new): From ICU.
+
+2012-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-40-auxParam: Fix a typo (auxillary => auxiliary).
+	* patch-70-Arabic: Remove useless changes of original code.
+
+2012-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-U_PF_UNKNOWN (new): Bug fix for the case that
+	U_PLATFORM == U_PF_UNKNOWN as, e.g., for FreeBSD (why?).
+	Reported by Hilmar Preusse <hille42@web.de>.
+
+2012-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-49.1 source tree (icu4c-49_rc-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/49rc/
+
+	* patch-40-LESwaps, patch-81-Indic: Removed, now in icu-49.1.
+
+	* patch-01-UVoidFunction (new): Bug fix for '--disable-dyload'.
+	* patch-02-AC_CHECK_TOOL (new): Bug fix for cross compilation.
+
+	* TL-Changes, patch-07-configure-utf16-string,
+	patch-08-avoid-rebuild, patch-09-generated,
+	patch-11-CURR_FULL_DIR, patch-12-mingw, patch-13-STATIC_PREFIX,
+	patch-14-GENCCODE_ASSEMBLY, patch-50-Vertical, patch-60-KernPair,
+	patch-70-Arabic: Adapted.
+	* patch-05-auxParam (removed): Renamed ...
+	* patch-40-auxParam (new): ... to this and adapted.
+
+2011-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-40-LESwaps: See ICU Ticket #8657, comment 11.
+
+2011-08-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-4.8.1 source tree (icu4c-4_8_1-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/4.8.1/
+
+	* patch-06-mingw: Removed, included in icu-4.8.1.
+
+	* TL-Changes, patch-05-auxParam,
+	patch-07-configure-utf16-string, patch-08-avoid-rebuild,
+	patch-09-generated, patch-11-CURR_FULL_DIR, patch-12-mingw,
+	patch-13-STATIC_PREFIX, patch-14-GENCCODE_ASSEMBLY,
+	patch-50-Vertical, patch-60-KernPair, patch-70-Arabic,
+	patch-81-Indic: Adapted.
+
+	* patch-40-LESwaps: Rewritten, see ICU Ticket #8657, comment 7.
+
+2011-06-19  Karl Berry  <karl@tug.org>
+
+	* patch-40-LESwaps: revert to ICU 4.4, as 4.6 and 4.8 code
+	is broken on BigEndian machines.
+	http://bugs.icu-project.org/trac/ticket/8657
+	tlbuild mail, 17 Jun 2011 17:10:38
+
+2011-05-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-4.8 source tree (icu4c-4_8-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/4.8/
+
+	* patch-80-Indic: Removed (not needed).
+
+	* TL-Changes, patch-05-auxParam, patch-06-mingw,
+	patch-07-configure-utf16-string, patch-08-avoid-rebuild,
+	patch-09-generated, patch-11-CURR_FULL_DIR, patch-12-mingw,
+	patch-13-STATIC_PREFIX, patch-14-GENCCODE_ASSEMBLY,
+	patch-50-Vertical, patch-60-KernPair, patch-70-Arabic,
+	patch-81-Indic: Adapted.
+
+2011-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-14-GENCCODE_ASSEMBLY (new): For amd64-kfreebsd.
+
+2011-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-13-STATIC_PREFIX (new): Never use libsicuxxx.a.
+
+2011-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-81-Indic (new): IndicReordering.*: Respect array bounds.
+
+	* patch-05-auxParam: Fix a bug introduced when importing icu-4.6.
+
+2010-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-CURR_FULL_DIR: Correctly handle CURR_FULL_DIR when
+	cross compiling.
+
+2010-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-4.6 source tree (icu4c-4_6-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/4.6/
+
+	* patch-10-cross-TOOLEXEEXT, patch-13-remove-extra-token:
+	All removed, included in icu-4.6.
+
+	* TL-Changes, patch-05-auxParam, patch-07-configure-utf16-string,
+	patch-08-avoid-rebuild, patch-11-CURR_FULL_DIR, patch-12-mingw,
+	patch-50-Vertical, patch-60-KernPair, patch-70-Arabic,
+	patch-80-Indic: Adapted.
+
+	* patch-06-mingw (new): MinGW32 is Windows, not Cygwin.
+	* patch-09-generated (new): Regenerate configure.
+
+2010-04-08  Karl Berry  <karl@tug.org>
+
+	* patch-07-configure-utf16-string: new patch so we can disable the
+	check for UTF16 string literals.  See comments in our
+	libs/icu/configure.ac.
+
+2010-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-4.4 source tree (icu4c-4_4-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/4.4/
+
+	* fix-case-insensitive, patch-07-cygwin, patch-09-cross,
+	patch-20-fix-gt_ge, patch-21-fix-not_aligned,
+	patch-22-fix-JK-adjust_for_marks, patch-23-fix-JK-GlyphPos:
+	All removed, included in icu-4.4.
+
+	* TL-Changes, patch-05-auxParam, patch-08-avoid-rebuild,
+	patch-10-cross-TOOLEXEEXT, patch-11-CURR_FULL_DIR,
+	patch-12-mingw, patch-50-Vertical, patch-60-KernPair,
+	patch-70-Arabic, patch-80-Indic: Adapted.
+
+	* patch-13-remove-extra-token (new): Avoid compiler warning.
+
+2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Fixes for Linux => MinGW32 cross compilation.
+	* patch-10-cross-TOOLEXEEXT (new): Fix a cross compilation typo.
+	* patch-11-CURR_FULL_DIR (new): Fix for cross compilation on
+	a Unix like system.  Does MinGW32 have pwd?
+	* patch-12-mingw (new): Changes in config/mh-mingw (libraries
+	named as for everyone else).
+
+2009-10-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-09-cross (new): Modify AC_CHECK_64BIT_LIBS in aclocal.m4
+	to allow cross compilation.
+
+2009-10-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-08-avoid-rebuild (new): Modify data/Makefile.in such
+	that libsicudata.a is not rebuilt again and again.
+
+2009-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-4.2.1 source tree (icu4c-4_2_1-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/4.2.1/
+
+	* patch-02-syntax, patch-40-Shaping (both removed): Obsolete.
+
+	* TL-Changes, patch-80-Indic: Adapted.
+
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-4.0.1 source tree (icu4c-4_0_1-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/4.0.1/
+
+	* patch-01-backport-4.0.1, patch-01-too_much-4.0.1,
+	patch-06-build-fix, patch-06-partial-4.0.1,
+	patch-10-backport-4.0.1, patch-11-partial-4.0.1,
+	patch-99-test (all removed): Obsolete.
+
+	* TL-Changes, patch-40-Shaping, patch-80-Indic: Adapted.
+
+2009-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported icu-3.8.1 source tree (icu4c-3_8_1-src.tgz) from:
+	  http://download.icu-project.org/files/icu4c/3.8.1/
+
+	* TL-Changes (new): Description of modifications of source tree.
+
+	* fix-case-insensitive (new): Shell script used to rename
+	source/layout/Features.h => ICUFeatures.h (required for Cygwin)
+	and modify references to that file accordingly.
+
+	* patch-01-backport-4.0.1 (new): Replace layout/CanonData.cpp,
+	layout/GlyphPositionAdjustments.cpp,
+	layout/IndicReordering.{cpp,h}, layout/LELanguages.h,
+	layout/LESwaps.h, layout/OpenTypeLayoutEngine.cpp,
+	layout/ScriptAndLanguage.cpp, layout/ThaiLayoutEngine.{cpp,h},
+	layoutex/ParagraphLayout.cpp, and test/letest/sfnt.h by their
+	4.0.1 versions.
+	* patch-01-too_much-4.0.1 (new): Undo one change in
+	layoutex/ParagraphLayout.cpp.
+
+	* patch-02-syntax (new): Fix some dubious syntax in
+	layoutex/ParagraphLayout.cpp.
+
+	* patch-05-auxParam (new): Handling of extension for XeTeX in
+	layout/AlternateSubstSubtables.cpp,
+	layout/GlyphIterator.{cpp,h},
+	layout/LEGlyphStorage.{cpp,h},
+	and layout/OpenTypeLayoutEngine.{cpp,h}.
+
+	* patch-06-build-fix (new): Build fix in common/ubidi.c.
+	* patch-06-partial-4.0.1 (new): Partial backport of common/putil.c
+	from 4.0.1.
+	* patch-07-cygwin (new): Changes in config/mh-cygwin (libraries
+	named as for everyone else).
+
+	* patch-10-backport-4.0.1 (new): Replace
+	layout/ScriptAndLanguageTags.{cpp,h} by their 4.0.1 versions.
+	* patch-11-partial-4.0.1 (new): Backport of some changes in
+	layout/LayoutEngine.cpp from 4.0.1.
+
+	Bug fixes originally by: Jonathan Kew <jfkthame@googlemail.com>
+	* patch-20-fix-gt_ge (new): In layout/ClassDefinitionTables.cpp.
+	* patch-21-fix-not_aligned (new): In layout/ExtensionSubtables.cpp.
+	* patch-22-fix-JK-adjust_for_marks (new): In
+	layout/MarkToBasePosnSubtables.cpp.
+	* patch-23-fix-JK-GlyphPos (new): In
+	layout/OpenTypeLayoutEngine.cpp.
+
+	* patch-40-Shaping (new): Update shaping type data in
+	layout/ShapingTypeData.cpp to Unicode 5.1.
+
+	* patch-50-Vertical (new): Handling vertical writing in
+	layout/LEFontInstance.h and layout/ValueRecords.cpp.
+
+	* patch-60-KernPair (new): Modified handling of kerns in
+	layout/LEFontInstance.{cpp,h} and layout/LayoutEngine.cpp.
+
+	* patch-70-Arabic (new): Add Draft Mongolian shaping classes
+	in layout/ArabicShaping.{cpp,h} and LayoutEngine.cpp.
+
+	* patch-80-Indic (new): Backport of some changes in
+	layout/IndicClassTables.cpp from 4.0.1 and in
+	layout/IndicReordering.cpp from 4.2.1.
+
+	* patch-99-test (new): Changes from TeX Live icu-xetex in
+	test/letest/PortableFontInstance.{cpp,h},
+	test/letest/gendata.{cpp,xml}, test/letest/letest.{cpp,xml}.
+
+	These modifications and patches of icu-3.8.1/ reproduce the
+	previous icu-xetex/ source tree (except for test data).
+
+2009-10-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Slightly rearranged the icu-xetex/ source tree.
+
+	* layout/LELanguages.h: Changed some comments, from 4.0.1.
+
+	* layout/LEGlyphStorage.{cpp,h}, 
+	layout/OpenTypeLayoutEngine.cpp: Renamed adoptAuxDataArrays
+	back to adoptAuxDataArray as it was in 3.8.1.
+
+	* layout/LEGlyphStorage.h: The XeTeX modifications have added
+	an additional parameter for setAuxData, however, in most cases
+	the corresponding argument is NULL.  Added an inline definition
+	of the original method.
+	layout/ArabicShaping.cpp, layout/HanLayoutEngine.cpp,
+	layout/HangulLayoutEngine.cpp, layout/IndicReordering.cpp,
+	layout/KhmerReordering.cpp, layout/LayoutEngine.cpp,
+	layout/TibetanReordering.cpp: Restored the original 3.8.1 use of
+	setAuxData without the additional argument NULL.
+
+	* data/Makefile.in: Restored 3.8.1 version, Autoconf >=2.61 ensures
+	a posix shell making, these changes obsolete.
+
+	* layout/ScriptAndLanguageTags.{cpp,h}: Backport from 4.0.1,
+	additional tags and changed comments.
+
+	* layout/OpenTypeLayoutEngine.cpp: Removed some obsolete code,
+	surrounded by #if 0...#endif.

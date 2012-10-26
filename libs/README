@@ -24,7 +24,7 @@ graphite 2.4 - checked 15may12
   http://scripts.sil.org/svn-public/graphite/graphite/trunk
   (svn r1333 2012-05-14 14:47:16 UTC, omitting changes in test/).
 
-icu 49.1 (49.1 release) - http://download.icu-project.org/files/icu4c/
+icu 50.1 (50_rc) - http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu
 
 libpng 1.5.13 - checked 28sep12

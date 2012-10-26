@@ -1,0 +1,15 @@
+Changes applied to the icu-50.1/ tree as obtained from:
+	http://download.icu-project.org/files/icu4c/50.1/icu4c-50_1-src.tgz
+
+Updated:
+	source/config.guess
+	source/config.sub
+	source/install-sh
+
+Added data/in/icudt50l.dat and reduced size
+	icupkg -r 'curr/*' IN OUT
+	icupkg -r 'lang/*' IN OUT
+	icupkg -r 'region/*' IN OUT
+	icupkg -r 'rfc*.spp' IN OUT
+	icupkg -r 'zone/*' IN OUT
+
