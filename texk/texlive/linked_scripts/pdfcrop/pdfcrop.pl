@@ -22,8 +22,8 @@ $^W=1; # turn warning on
 my $prj         = 'pdfcrop';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.37";
-my $date        = "2012/10/16";
+my $version     = "1.38";
+my $date        = "2012/11/02";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2002-2012 by $author.";
 #
@@ -105,6 +105,8 @@ my $copyright   = "Copyright (c) 2002-2012 by $author.";
 # 2012/10/16 v1.36: * More error codes added.
 # 2012/10/16 v1.37: * Extended error messages if available.
 #                   * Fix for broken v1.36.
+# 2012/11/02 v1.38: * Fix for unsufficient cleanup, if function `cleanup' is
+#                     prematurely called in `eval' for `symlink' checking.
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -688,7 +690,11 @@ if ($inputfile eq '-') {
 elsif (not $inputfile =~ /^[\w\d\.\-\:\/@]+$/) { # /[\s\$~'"#{}%]/
     $inputfilesafe = "$tmp-img.pdf";
     push @unlink_files, $inputfilesafe;
-    my $symlink_exists = eval { symlink("", ""); 1 };
+    my $symlink_exists = eval {
+        local $SIG{'__DIE__'};
+        symlink("", "");
+        1;
+    };
     print "* Input file name `$inputfile' contains special characters.\n"
           . "* " . ($symlink_exists ? "Link" : "Copy")
           . " input file to temporary file `$inputfilesafe'.\n"

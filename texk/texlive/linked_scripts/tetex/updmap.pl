@@ -792,8 +792,142 @@ sub transLW35 {
 # cidx2dvips()
 #   reads from stdin, writes to stdout. It transforms "cid-x"-like syntax into
 #   "dvips"-like syntax.
+#
+# Specifying the PS Name:
+# dvips needs the PSname instead of the file name. Thus we allow specifying
+# the PSname in the comment:
+#       The PS Name can be specified in the font definition line
+#       by including the following sequence somewhere after the
+#       other components:
+#
+#       %!PS<SPACE-TAB><PSNAME><NON-WORD-CHAR-OR-EOL>
+#
+#       where
+#         <SPACE-TAB> is either a space or a tab character
+#         <PSNAME>    is *one* word, defined by \w\w* perl re
+#         <NON-WORD-CHAR-OR-EOL> is a non-\w char or the end of line
+#
+# That means we could have
+#       ... %here the PS font name: %!PS fontname some other comment
+#       ... %!PS fontname %other comments
+#       ... %!PS fontname
+#
 ###############################################################################
+
+# reimplementation of the cryptic code that was there before
 sub cidx2dvips {
+  my ($s) = @_;
+  my %fname_psname = (
+    # Morisawa
+    'A-OTF-FutoGoB101Pr6N-Bold'  => 'FutoGoB101Pr6N-Bold',
+    'A-OTF-FutoGoB101Pro-Bold'   => 'FutoGoB101Pro-Bold',
+    'A-OTF-FutoMinA101Pr6N-Bold' => 'FutoMinA101Pr6N-Bold',
+    'A-OTF-FutoMinA101Pro-Bold'  => 'FutoMinA101Pro-Bold',
+    'A-OTF-GothicBBBPr6N-Medium' => 'GothicBBBPr6N-Medium',
+    'A-OTF-GothicBBBPro-Medium'  => 'GothicBBBPro-Medium',
+    'A-OTF-Jun101Pr6N-Light'     => 'Jun101Pr6N-Light',
+    'A-OTF-Jun101Pro-Light'      => 'Jun101Pro-Light',
+    'A-OTF-MidashiGoPr6N-MB31'   => 'MidashiGoPr6N-MB31',
+    'A-OTF-MidashiGoPro-MB31'    => 'MidashiGoPro-MB31',
+    'A-OTF-RyuminPr6N-Light'     => 'RyuminPr6N-Light',
+    'A-OTF-RyuminPro-Light'      => 'RyuminPro-Light',
+    # Hiragino font file names and PS names are the same
+    #
+    # IPA
+    'ipaexg' => 'IPAexGothic',
+    'ipaexm' => 'IPAexMincho',
+    'ipag'   => 'IPAGothic',
+    'ipam'   => 'IPAMincho',
+    #
+    # Kozuka font names and PS names are the same
+    );
+  my @d;
+  foreach (@$s) {
+    # ship empty lines and comment lines out as is
+    if (m/^\s*(%.*)?$/) {
+      push(@d, $_);
+      next;
+    }
+    # get rid of new lines for now
+    chomp;
+    # save the line for warnings
+    my $l = $_;
+    # first check whether a PSname is given
+    my $psname;
+    #
+    # the matching on \w* is greedy, so will take all the word chars available
+    # that means we do not need to test for end of word
+    if ($_ =~ m/%!PS\s\s*([0-9A-Za-z-_][0-9A-Za-z-_]*)/) {
+      $psname = $1;
+    }
+    # remove comments
+    s/[^0-9A-Za-z-_]*%.*$//;
+    # replace supported ",SOMETHING" constructs
+    my $italicmax = 0;
+    if (m/,BoldItalic/) {
+      $italicmax = .3;
+      s/,BoldItalic//;
+    }
+    s/,Bold//;
+    if (m/,Italic/) {
+      $italicmax = .3;
+      s/,Italic//;
+    }
+    # break out if unsupported constructs are found: @ / ,
+    next if (m![\@/,]!);
+    # make everything single spaced
+    s/\s\s*/ /g;
+    # unicode encoded fonts are not supported
+    next if (m!^\w\w* unicode !);
+    # now we have the following format
+    #  <word> <word> <word> some options like -e or -s
+    if ($_ !~ m/([^ ][^ ]*) ([^ ][^ ]*) ([^ ][^ ]*)( (.*))?$/) {
+      print STDERR "cidx2dvips warning: Cannot translate font line:\n==> $l\n";
+      print STDERR "Current translation status: ==>$_==\n";
+      next;
+    }
+    my $tfmname = $1;
+    my $cid = $2;
+    my $fname = $3;
+    my $opts = (defined($5) ? " $5" : "");
+    # remove extensions from $fname
+    $fname =~ s/\.[Oo][Tt][Ff]//;
+    $fname =~ s/\.[Tt][Tt][FfCc]//;
+    # remove leading ! from $fname
+    $fname =~ s/^!//;
+    # remove leading :<number>: from $fname
+    $fname =~ s/:[0-9]+://;
+    # remove leading space from $opt
+    $opts =~ s/^\s+//;
+    # replace -e and -s in the options
+    $opts =~ s/-e ([.0-9-][.0-9-]*)/ "$1 ExtendFont"/;
+    if (m/-s ([.0-9-][.0-9-]*)/) {
+      if ($italicmax > 0) {
+        # we have already a definition of SlantFont via ,Italic or ,BoldItalic
+        # warn the user that larger one is kept
+        print STDERR "cidx2dvips: warning: Double slant specified via Italic and -s:\n==> $l\n==> Using only the biggest slant value.\n";
+      }
+      $italicmax = $1 if ($1 > $italicmax);
+      $opts =~ s/-s ([.0-9-][.0-9-]*)//;
+    }
+    if ($italicmax != 0) {
+      $opts .= " \"$italicmax SlantFont\"";
+    }
+    # print out the result
+    if (defined($psname)) {
+      push @d, "$tfmname $psname-$cid$opts\n";
+    } else {
+      if (defined($fname_psname{$fname})) {
+        push @d, "$tfmname $fname_psname{$fname}-$cid$opts\n";
+      } else {
+        push @d, "$tfmname $fname-$cid$opts\n";
+      }
+    }
+  }
+  return @d;
+}
+
+sub cidx2dvips_old {
     my ($s) = @_;
     my @d;
     foreach (@$s) {
