@@ -310,7 +310,7 @@ known as `\eTeX'.
 @#
 @d banner==pdfTeX_banner
 @#
-@d TEX==ETEX {change program name into |ETEX|}
+@d TEX==PDFTEX {change program name into |PDFTEX|}
 @#
 @d TeXXeT_code=0 {the \TeXXeT\ feature is optional}
 @#

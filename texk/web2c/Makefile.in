@@ -1472,8 +1472,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	euptexdir/COPYRIGHT.jis euptexdir/ChangeLog \
 	euptexdir/EUPTEX.txt eptexdir/eptrip/etrip.log \
 	eptexdir/eptrip/etrip.tex euptexdir/euptrip/euptrip.diffs \
-	euptexdir/euptrip/texmf.cnf $(pdftex_ch_srcs) etexdir/etex.ch \
-	pdftexdir/pdftex.defines pdftexdir/pdftex.h \
+	euptexdir/euptrip/texmf.cnf $(pdftex_ch_srcs) \
+	pdftexdir/pdftex.defines \
 	pdftexdir/ChangeLog pdftexdir/NEWS pdftexdir/README \
 	pdftexdir/change-files.txt $(pdftex_tests) tests/wprob.tex \
 	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
@@ -2125,7 +2125,8 @@ pdftex_ch_srcs = \
 	tex.ch \
 	enctex.ch \
 	$(pdftex_ch_synctex) \
-	pdftexdir/pdftex.ch
+	pdftexdir/pdftex.ch \
+	tex-binpool.ch
 
 
 # pdfTeX Tests

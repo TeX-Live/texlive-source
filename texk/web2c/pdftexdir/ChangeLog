@@ -1,3 +1,9 @@
+2012-11-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.web: Change program name into PDFTEX (not ETEX).
+	* pdftex.ch: Remove the contents of ../tex-binpool.ch.
+	* am/pdftex.am (pdftex_ch_srcs): Add tex-binpool.ch.
+
 2012-10-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftoepdf.cc: In MSVC 5.0 getNewObjectNumber() requires an int

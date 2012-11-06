@@ -65,10 +65,10 @@ pdftex_ch_srcs = \
 	tex.ch \
 	enctex.ch \
 	$(pdftex_ch_synctex) \
-	pdftexdir/pdftex.ch
+	pdftexdir/pdftex.ch \
+	tex-binpool.ch
 ##
-EXTRA_DIST += $(pdftex_ch_srcs) etexdir/etex.ch \
-	pdftexdir/pdftex.defines pdftexdir/pdftex.h
+EXTRA_DIST += $(pdftex_ch_srcs) pdftexdir/pdftex.defines
 
 DISTCLEANFILES += $(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c \
 	pdftex.p pdftex.pool pdftex-tangle
