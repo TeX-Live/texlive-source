@@ -1,3 +1,7 @@
+2012-11-06  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* pdf/pdflistout.w: sync with r4471 (a bug fix by H. Henkel).
+
 2012-10-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* tex/texfileio.w: input by pipe was impossible. enable it.
