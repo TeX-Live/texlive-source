@@ -1,8 +1,8 @@
 	We don't want this for TeX Live cross compilation.
 
 diff -ur icu-50.1.orig/source/config/mh-mingw icu-50.1/source/config/mh-mingw
---- icu-50.1.orig/source/config/mh-mingw	2012-10-24 09:53:37.000000000 +0200
-+++ icu-50.1/source/config/mh-mingw	2012-10-25 13:57:04.000000000 +0200
+--- icu-50.1.orig/source/config/mh-mingw	2012-11-06 18:03:56.000000000 +0100
++++ icu-50.1/source/config/mh-mingw	2012-11-06 18:06:48.000000000 +0100
 @@ -56,27 +56,9 @@
  ## Non-shared intermediate object suffix
  STATIC_O = ao

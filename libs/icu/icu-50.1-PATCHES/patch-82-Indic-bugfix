@@ -1,6 +1,6 @@
 diff -ur icu-50.1.orig/source/layout/IndicClassTables.cpp icu-50.1/source/layout/IndicClassTables.cpp
---- icu-50.1.orig/source/layout/IndicClassTables.cpp	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/IndicClassTables.cpp	2012-10-24 10:06:39.000000000 +0200
+--- icu-50.1.orig/source/layout/IndicClassTables.cpp	2012-11-05 18:18:12.000000000 +0100
++++ icu-50.1/source/layout/IndicClassTables.cpp	2012-11-06 18:21:49.000000000 +0100
 @@ -66,7 +66,6 @@
  // special forms... (Bengali RA?)
  #define _bb  (_ct | CF_BELOW_BASE)
@@ -19,8 +19,8 @@ diff -ur icu-50.1.orig/source/layout/IndicClassTables.cpp icu-50.1/source/layout
      _xx, _xx, _xx, _xx, _xx, _xx, _xx, _m2, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, // 0D50 - 0D5F
      _iv, _iv, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx, _xx  // 0D60 - 0D6F
 diff -ur icu-50.1.orig/source/layout/IndicReordering.cpp icu-50.1/source/layout/IndicReordering.cpp
---- icu-50.1.orig/source/layout/IndicReordering.cpp	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/IndicReordering.cpp	2012-10-24 10:06:39.000000000 +0200
+--- icu-50.1.orig/source/layout/IndicReordering.cpp	2012-11-05 18:18:12.000000000 +0100
++++ icu-50.1/source/layout/IndicReordering.cpp	2012-11-06 18:21:49.000000000 +0100
 @@ -129,10 +129,6 @@
      le_int32    fSMIndex;
      FeatureMask fSMFeatures;
@@ -178,8 +178,8 @@ diff -ur icu-50.1.orig/source/layout/IndicReordering.cpp icu-50.1/source/layout/
  
      LEUnicode currentChar;
 diff -ur icu-50.1.orig/source/layout/IndicReordering.h icu-50.1/source/layout/IndicReordering.h
---- icu-50.1.orig/source/layout/IndicReordering.h	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/IndicReordering.h	2012-10-24 10:06:39.000000000 +0200
+--- icu-50.1.orig/source/layout/IndicReordering.h	2012-11-05 18:18:12.000000000 +0100
++++ icu-50.1/source/layout/IndicReordering.h	2012-11-06 18:21:49.000000000 +0100
 @@ -50,7 +50,6 @@
  #define CF_BELOW_BASE    0x10000000U
  #define CF_POST_BASE     0x08000000U

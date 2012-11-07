@@ -6,7 +6,7 @@ Updated:
 	source/config.sub
 	source/install-sh
 
-Added data/in/icudt50l.dat and reduced size
+Reduced size of data/in/icudt50l.dat
 	icupkg -r 'curr/*' IN OUT
 	icupkg -r 'lang/*' IN OUT
 	icupkg -r 'region/*' IN OUT

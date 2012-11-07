@@ -1,8 +1,8 @@
 	Avoid to run pkgdata again and again.
 
 diff -ur icu-50.1.orig/source/data/Makefile.in icu-50.1/source/data/Makefile.in
---- icu-50.1.orig/source/data/Makefile.in	2012-10-23 07:11:44.000000000 +0200
-+++ icu-50.1/source/data/Makefile.in	2012-10-25 19:23:22.000000000 +0200
+--- icu-50.1.orig/source/data/Makefile.in	2012-11-05 18:18:04.000000000 +0100
++++ icu-50.1/source/data/Makefile.in	2012-11-06 18:01:46.000000000 +0100
 @@ -109,7 +109,7 @@
  .PHONY : all all-local all-recursive install install-local install-files	\
  install-recursive clean clean-local clean-recursive distclean		\

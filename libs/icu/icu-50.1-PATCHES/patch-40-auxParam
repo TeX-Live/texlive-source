@@ -1,6 +1,6 @@
 diff -ur icu-50.1.orig/source/layout/AlternateSubstSubtables.cpp icu-50.1/source/layout/AlternateSubstSubtables.cpp
---- icu-50.1.orig/source/layout/AlternateSubstSubtables.cpp	2012-10-23 07:11:48.000000000 +0200
-+++ icu-50.1/source/layout/AlternateSubstSubtables.cpp	2012-10-24 10:01:00.000000000 +0200
+--- icu-50.1.orig/source/layout/AlternateSubstSubtables.cpp	2012-11-05 18:18:10.000000000 +0100
++++ icu-50.1/source/layout/AlternateSubstSubtables.cpp	2012-11-06 18:12:35.000000000 +0100
 @@ -27,13 +27,19 @@
              Offset alternateSetTableOffset = SWAPW(alternateSetTableOffsetArray[coverageIndex]);
              const AlternateSetTable *alternateSetTable =
@@ -26,8 +26,8 @@ diff -ur icu-50.1.orig/source/layout/AlternateSubstSubtables.cpp icu-50.1/source
  
          // XXXX If we get here, the table's mal-formed...
 diff -ur icu-50.1.orig/source/layout/GlyphIterator.cpp icu-50.1/source/layout/GlyphIterator.cpp
---- icu-50.1.orig/source/layout/GlyphIterator.cpp	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/GlyphIterator.cpp	2012-10-24 10:01:00.000000000 +0200
+--- icu-50.1.orig/source/layout/GlyphIterator.cpp	2012-11-05 18:18:10.000000000 +0100
++++ icu-50.1/source/layout/GlyphIterator.cpp	2012-11-06 18:12:35.000000000 +0100
 @@ -19,7 +19,7 @@
                               FeatureMask theFeatureMask, const GlyphDefinitionTableHeader *theGlyphDefinitionTableHeader)
    : direction(1), position(-1), nextLimit(-1), prevLimit(-1),
@@ -123,8 +123,8 @@ diff -ur icu-50.1.orig/source/layout/GlyphIterator.cpp icu-50.1/source/layout/Gl
  
  le_bool GlyphIterator::findFeatureTag()
 diff -ur icu-50.1.orig/source/layout/GlyphIterator.h icu-50.1/source/layout/GlyphIterator.h
---- icu-50.1.orig/source/layout/GlyphIterator.h	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/GlyphIterator.h	2012-10-24 10:01:00.000000000 +0200
+--- icu-50.1.orig/source/layout/GlyphIterator.h	2012-11-05 18:18:12.000000000 +0100
++++ icu-50.1/source/layout/GlyphIterator.h	2012-11-06 18:12:35.000000000 +0100
 @@ -28,7 +28,7 @@
  
      GlyphIterator(GlyphIterator &that);
@@ -161,8 +161,8 @@ diff -ur icu-50.1.orig/source/layout/GlyphIterator.h icu-50.1/source/layout/Glyp
  
      const GlyphClassDefinitionTable *glyphClassDefinitionTable;
 diff -ur icu-50.1.orig/source/layout/LEGlyphStorage.cpp icu-50.1/source/layout/LEGlyphStorage.cpp
---- icu-50.1.orig/source/layout/LEGlyphStorage.cpp	2012-10-23 07:11:52.000000000 +0200
-+++ icu-50.1/source/layout/LEGlyphStorage.cpp	2012-10-24 10:01:00.000000000 +0200
+--- icu-50.1.orig/source/layout/LEGlyphStorage.cpp	2012-11-05 18:18:12.000000000 +0100
++++ icu-50.1/source/layout/LEGlyphStorage.cpp	2012-11-06 18:12:35.000000000 +0100
 @@ -20,7 +20,7 @@
  
  LEGlyphStorage::LEGlyphStorage()
@@ -296,8 +296,8 @@ diff -ur icu-50.1.orig/source/layout/LEGlyphStorage.cpp icu-50.1/source/layout/L
          fGlyphs[fDestIndex]      = fGlyphs[fSrcIndex];
          fCharIndices[fDestIndex] = fCharIndices[fSrcIndex];
 diff -ur icu-50.1.orig/source/layout/LEGlyphStorage.h icu-50.1/source/layout/LEGlyphStorage.h
---- icu-50.1.orig/source/layout/LEGlyphStorage.h	2012-10-23 07:11:48.000000000 +0200
-+++ icu-50.1/source/layout/LEGlyphStorage.h	2012-10-24 10:01:00.000000000 +0200
+--- icu-50.1.orig/source/layout/LEGlyphStorage.h	2012-11-05 18:18:10.000000000 +0100
++++ icu-50.1/source/layout/LEGlyphStorage.h	2012-11-06 18:12:35.000000000 +0100
 @@ -63,12 +63,12 @@
      float     *fPositions;
  
@@ -359,8 +359,8 @@ diff -ur icu-50.1.orig/source/layout/LEGlyphStorage.h icu-50.1/source/layout/LEG
  U_NAMESPACE_END
  #endif
 diff -ur icu-50.1.orig/source/layout/OpenTypeLayoutEngine.cpp icu-50.1/source/layout/OpenTypeLayoutEngine.cpp
---- icu-50.1.orig/source/layout/OpenTypeLayoutEngine.cpp	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/OpenTypeLayoutEngine.cpp	2012-10-24 10:01:00.000000000 +0200
+--- icu-50.1.orig/source/layout/OpenTypeLayoutEngine.cpp	2012-11-05 18:18:10.000000000 +0100
++++ icu-50.1/source/layout/OpenTypeLayoutEngine.cpp	2012-11-06 18:12:35.000000000 +0100
 @@ -78,7 +78,7 @@
  OpenTypeLayoutEngine::OpenTypeLayoutEngine(const LEFontInstance *fontInstance, le_int32 scriptCode, le_int32 languageCode,
                          le_int32 typoFlags, const GlyphSubstitutionTableHeader *gsubTable, LEErrorCode &success)
@@ -380,8 +380,8 @@ diff -ur icu-50.1.orig/source/layout/OpenTypeLayoutEngine.cpp icu-50.1/source/la
  
      return count;
 diff -ur icu-50.1.orig/source/layout/OpenTypeLayoutEngine.h icu-50.1/source/layout/OpenTypeLayoutEngine.h
---- icu-50.1.orig/source/layout/OpenTypeLayoutEngine.h	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/OpenTypeLayoutEngine.h	2012-10-24 10:01:00.000000000 +0200
+--- icu-50.1.orig/source/layout/OpenTypeLayoutEngine.h	2012-11-05 18:18:10.000000000 +0100
++++ icu-50.1/source/layout/OpenTypeLayoutEngine.h	2012-11-06 18:12:35.000000000 +0100
 @@ -194,6 +194,13 @@
      le_bool fFeatureOrder;
  

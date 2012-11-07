@@ -1,8 +1,8 @@
 	Required for cross compilation linux -> MinGW32.
 
 diff -ur icu-50.1.orig/source/tools/toolutil/pkg_genc.c icu-50.1/source/tools/toolutil/pkg_genc.c
---- icu-50.1.orig/source/tools/toolutil/pkg_genc.c	2012-10-23 07:08:44.000000000 +0200
-+++ icu-50.1/source/tools/toolutil/pkg_genc.c	2012-10-25 14:05:44.000000000 +0200
+--- icu-50.1.orig/source/tools/toolutil/pkg_genc.c	2012-11-05 18:14:58.000000000 +0100
++++ icu-50.1/source/tools/toolutil/pkg_genc.c	2012-11-06 18:10:50.000000000 +0100
 @@ -54,6 +54,7 @@
  /*
   * The following is needed by MinGW64

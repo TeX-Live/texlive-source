@@ -1,6 +1,6 @@
 diff -ur icu-50.1.orig/source/layout/ArabicShaping.cpp icu-50.1/source/layout/ArabicShaping.cpp
---- icu-50.1.orig/source/layout/ArabicShaping.cpp	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/ArabicShaping.cpp	2012-10-24 10:05:03.000000000 +0200
+--- icu-50.1.orig/source/layout/ArabicShaping.cpp	2012-11-05 18:18:12.000000000 +0100
++++ icu-50.1/source/layout/ArabicShaping.cpp	2012-11-06 18:20:40.000000000 +0100
 @@ -24,6 +24,31 @@
      ArabicShaping::ST_TRANSPARENT   // [T]
  };
@@ -151,8 +151,8 @@ diff -ur icu-50.1.orig/source/layout/ArabicShaping.cpp icu-50.1/source/layout/Ar
      }
  
 diff -ur icu-50.1.orig/source/layout/ArabicShaping.h icu-50.1/source/layout/ArabicShaping.h
---- icu-50.1.orig/source/layout/ArabicShaping.h	2012-10-23 07:11:50.000000000 +0200
-+++ icu-50.1/source/layout/ArabicShaping.h	2012-10-24 10:05:03.000000000 +0200
+--- icu-50.1.orig/source/layout/ArabicShaping.h	2012-11-05 18:18:10.000000000 +0100
++++ icu-50.1/source/layout/ArabicShaping.h	2012-11-06 18:20:40.000000000 +0100
 @@ -39,7 +39,10 @@
          MASK_SHAPE_RIGHT    = 1, // if this bit set, shapes to right
          MASK_SHAPE_LEFT     = 2, // if this bit set, shapes to left
@@ -185,8 +185,8 @@ diff -ur icu-50.1.orig/source/layout/ArabicShaping.h icu-50.1/source/layout/Arab
      static void adjustTags(le_int32 outIndex, le_int32 shapeOffset, LEGlyphStorage &glyphStorage); 
  };
 diff -ur icu-50.1.orig/source/layout/LayoutEngine.cpp icu-50.1/source/layout/LayoutEngine.cpp
---- icu-50.1.orig/source/layout/LayoutEngine.cpp	2012-10-24 10:04:03.000000000 +0200
-+++ icu-50.1/source/layout/LayoutEngine.cpp	2012-10-24 10:05:03.000000000 +0200
+--- icu-50.1.orig/source/layout/LayoutEngine.cpp	2012-11-06 18:19:35.000000000 +0100
++++ icu-50.1/source/layout/LayoutEngine.cpp	2012-11-06 18:20:40.000000000 +0100
 @@ -567,6 +567,8 @@
              break;
  

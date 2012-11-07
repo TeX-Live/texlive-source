@@ -1,8 +1,8 @@
 	It seems gcc-4.4 uses external calls.
 
 diff -ur icu-50.1.orig/source/common/putilimp.h icu-50.1/source/common/putilimp.h
---- icu-50.1.orig/source/common/putilimp.h	2012-10-24 09:52:09.000000000 +0200
-+++ icu-50.1/source/common/putilimp.h	2012-10-25 14:03:34.000000000 +0200
+--- icu-50.1.orig/source/common/putilimp.h	2012-11-06 17:56:30.000000000 +0100
++++ icu-50.1/source/common/putilimp.h	2012-11-06 17:59:54.000000000 +0100
 @@ -180,7 +180,7 @@
   */
  #ifdef U_HAVE_GCC_ATOMICS

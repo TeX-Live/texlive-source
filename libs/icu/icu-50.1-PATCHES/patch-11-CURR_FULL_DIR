@@ -2,9 +2,9 @@
 	certainly be that for the native (Unix) system and not that for
 	the build (mingw) system.
 
-diff -ur icu-50.rc.orig/source/Makefile.in icu-50.rc/source/Makefile.in
---- icu-50.rc.orig/source/Makefile.in	2012-10-23 07:11:52.000000000 +0200
-+++ icu-50.rc/source/Makefile.in	2012-10-24 09:53:37.000000000 +0200
+diff -ur icu-50.1.orig/source/Makefile.in icu-50.1/source/Makefile.in
+--- icu-50.1.orig/source/Makefile.in	2012-11-05 18:18:12.000000000 +0100
++++ icu-50.1/source/Makefile.in	2012-11-06 18:03:56.000000000 +0100
 @@ -52,7 +52,7 @@
  INSTALLED_BUILT_FILES = $(top_builddir)/config/Makefile.inc $(top_builddir)/config/pkgdata.inc $(top_builddir)/config/icu-config @platform_make_fragment@ $(EXTRA_DATA:%=$(DESTDIR)$(pkglibdir)/%) $(ALL_PKGCONFIG_FILES)
  
@@ -36,9 +36,9 @@ diff -ur icu-50.rc.orig/source/Makefile.in icu-50.rc/source/Makefile.in
  
  config/icu.pc: $(srcdir)/config/icu.pc.in
  	cd $(top_builddir) \
-diff -ur icu-50.rc.orig/source/config/mh-cygwin-msvc icu-50.rc/source/config/mh-cygwin-msvc
---- icu-50.rc.orig/source/config/mh-cygwin-msvc	2012-10-23 07:08:58.000000000 +0200
-+++ icu-50.rc/source/config/mh-cygwin-msvc	2012-10-24 09:53:37.000000000 +0200
+diff -ur icu-50.1.orig/source/config/mh-cygwin-msvc icu-50.1/source/config/mh-cygwin-msvc
+--- icu-50.1.orig/source/config/mh-cygwin-msvc	2012-11-05 18:15:12.000000000 +0100
++++ icu-50.1/source/config/mh-cygwin-msvc	2012-11-06 18:03:56.000000000 +0100
 @@ -125,7 +125,7 @@
  
  # The #M# is used to delete lines for icu-config
@@ -49,8 +49,8 @@ diff -ur icu-50.rc.orig/source/config/mh-cygwin-msvc icu-50.rc/source/config/mh-
  CURR_SRCCODE_FULL_DIR=$(subst \,\\,$(shell cygpath -da .))#M#
  
 diff -ur icu-50.1.orig/source/config/mh-mingw icu-50.1/source/config/mh-mingw
---- icu-50.1.orig/source/config/mh-mingw	2012-10-23 07:08:58.000000000 +0200
-+++ icu-50.1/source/config/mh-mingw	2012-10-24 09:53:37.000000000 +0200
+--- icu-50.1.orig/source/config/mh-mingw	2012-11-05 18:15:12.000000000 +0100
++++ icu-50.1/source/config/mh-mingw	2012-11-06 18:03:56.000000000 +0100
 @@ -79,8 +79,8 @@
  
  # The #M# is used to delete lines for icu-config
@@ -63,8 +63,8 @@ diff -ur icu-50.1.orig/source/config/mh-mingw icu-50.1/source/config/mh-mingw
  #CURR_SRCCODE_FULL_DIR=$(subst /,\\\\,$(shell pwd -W))#M# for MSYS
  CURR_SRCCODE_FULL_DIR=$(subst \,/,$(shell cmd /c cd))#M# for Cygwin shell
 diff -ur icu-50.1.orig/source/icudefs.mk.in icu-50.1/source/icudefs.mk.in
---- icu-50.1.orig/source/icudefs.mk.in	2012-10-23 07:11:52.000000000 +0200
-+++ icu-50.1/source/icudefs.mk.in	2012-10-24 09:53:37.000000000 +0200
+--- icu-50.1.orig/source/icudefs.mk.in	2012-11-05 18:18:14.000000000 +0100
++++ icu-50.1/source/icudefs.mk.in	2012-11-06 18:03:56.000000000 +0100
 @@ -279,6 +279,12 @@
  PKGDATA_INVOKE = $(LDLIBRARYPATH_ENVVAR)=$(top_builddir)/stubdata:$(top_builddir)/tools/ctestfw:$(LIBRARY_PATH_PREFIX)$(LIBDIR):$$$(LDLIBRARYPATH_ENVVAR) $(LEAK_CHECKER)
  INSTALLED_INVOKE = $(LDLIBRARYPATH_ENVVAR)=$(libdir):$$$(LDLIBRARYPATH_ENVVAR)
