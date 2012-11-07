@@ -1,0 +1,14 @@
+diff -ur icu-50.1.orig/source/i18n/zonemeta.cpp icu-50.1/source/i18n/zonemeta.cpp
+--- icu-50.1.orig/source/i18n/zonemeta.cpp	2012-11-05 18:14:14.000000000 +0100
++++ icu-50.1/source/i18n/zonemeta.cpp	2012-11-07 11:13:56.000000000 +0100
+@@ -876,8 +876,8 @@
+           id.append((UChar)0x2B);    // '+'
+         }
+         // Always use US-ASCII digits
+-        id.append((UChar)0x30 + (hour%100)/10);
+-        id.append((UChar)0x30 + (hour%10));
++        id.append((UChar)(0x30 + (hour%100)/10));
++        id.append((UChar)(0x30 + (hour%10)));
+         id.append((UChar)0x3A);    // ':'
+         id.append((UChar)(0x30 + (min%100)/10));
+         id.append((UChar)(0x30 + (min%10)));
