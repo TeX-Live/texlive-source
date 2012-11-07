@@ -32,6 +32,39 @@ authorization from the copyright holders.
 
 % When updating code here, also increment version number/string in xetex.ch
 
+% \vadjust
+@x l.3142
+@d adjust_node=5 {|type| of an adjust node}
+@y
+@d adjust_node=5 {|type| of an adjust node}
+@d adjust_pre == subtype  {<>0 => pre-adjustment}
+@#{|append_list| is used to append a list to |tail|}
+@d append_list(#) == begin link(tail) := link(#); append_list_end
+@d append_list_end(#) == tail := #; end
+@z
+
+% \vadjust
+@x l.3581
+@d backup_head==mem_top-13 {head of token list built by |scan_keyword|}
+@d hi_mem_stat_min==mem_top-13 {smallest statically allocated word in
+  the one-word |mem|}
+@d hi_mem_stat_usage=14 {the number of one-word nodes always present}
+@y
+@d backup_head==mem_top-13 {head of token list built by |scan_keyword|}
+@d pre_adjust_head==mem_top-14  {head of pre-adjustment list returned by |hpack|}
+@d hi_mem_stat_min==mem_top-14 {smallest statically allocated word in
+  the one-word |mem|}
+@d hi_mem_stat_usage=15 {the number of one-word nodes always present}
+@z
+
+% \vadjust
+@x l.4145
+begin print_esc("vadjust"); node_list_display(adjust_ptr(p)); {recursive call}
+@y
+begin print_esc("vadjust"); if adjust_pre(p) <> 0 then print(" pre ");
+node_list_display(adjust_ptr(p)); {recursive call}
+@z
+
 % \primitive
 @x l.4868
 @d frozen_null_font=frozen_control_sequence+11

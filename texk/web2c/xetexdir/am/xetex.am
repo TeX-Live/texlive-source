@@ -13,6 +13,8 @@ EXTRA_PROGRAMS += xetex
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_xetex_SOURCES = dummy.cxx
 
+xe_tangle = WEBINPUTS=.:$(srcdir)/xetexdir $(SHELL) ./tangle-sh $@ $(OTANGLE)
+
 libxetex = libxetex.a
 
 xetex_cppflags = $(AM_CPPFLAGS) -I$(srcdir)/xetexdir
@@ -78,21 +80,38 @@ xetex-pool.c: xetex.pool xetexd.h $(makecpool_stamp)
 
 ## Tangling XeTeX
 xetex.p xetex.pool: xetex-tangle
-	@$(o_tangle) xetex
-xetex-tangle: ./otangle$(EXEEXT) xetex.web tangle-sh
-	@$(o_tangle) xetex
+	@$(xe_tangle) xetex xetex
+xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex.ch tangle-sh
+	@$(xe_tangle) xetex xetex
 
 ## Extract xetex version
 xetexdir/xetex_version.h: xetexdir/xetex.ch
 	$(MKDIR_P) xetexdir
-	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.ch \
+	grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
-## Generate xetex.web
-xetex.web: tie$(EXEEXT) $(xetex_web_srcs)
-	$(tie) -m xetex.web $(xetex_web_srcs)
+## Generate xetex.ch
+xetex.ch: tie$(EXEEXT) $(xetex_ch_srcs)
+	$(tie) -c xetex.ch $(xetex_ch_srcs)
+xetex_ch_srcs = \
+	xetexdir/xetex.web \
+	xetexdir/tex.ch0 \
+	tex.ch \
+	$(xetex_ch_synctex) \
+	xetexdir/xetex.ch \
+	xetexdir/xetex-latex3.ch \
+	xetexdir/xetex-hz.ch \
+	$(xetex_post_ch_synctex) \
+	tex-binpool.ch
 
-xetex_web_srcs = \
+## Merging in XeTeX change files - begin
+Xold.p Xold.pool: Xold-tangle
+	@$(xe_tangle) Xold
+Xold-tangle: otangle$(EXEEXT) Xold.web tangle-sh
+	@$(xe_tangle) Xold
+Xold.web: tie$(EXEEXT) $(Xold_web_srcs)
+	$(tie) -m Xold.web $(Xold_web_srcs)
+Xold_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
 	etexdir/tex.ch0 \
@@ -101,14 +120,31 @@ xetex_web_srcs = \
 	etexdir/tex.ech \
 	tex-binpool.ch \
 	$(xetex_ch_synctex) \
-	xetexdir/xetex.ch \
-	xetexdir/xetex-latex3.ch \
-	xetexdir/xetex-hz.ch \
+	xetex-orig.ch \
+	xetex-latex3.ch \
+	xetex-hz.ch \
 	$(xetex_post_ch_synctex)
-##
-EXTRA_DIST += $(xetex_web_srcs) xetexdir/xetex.defines
+#
+Xnew.web: tie$(EXEEXT) xetexdir/xetex.web xetex.ch
+	$(tie) -m Xnew.web xetexdir/xetex.web xetex.ch
+#
+Xweb.diff: Xold.web Xnew.web
+	diff -u Xold.web Xnew.web >Xweb.diff; :
+Xp.diff: Xold.p xetex.p
+	diff -u Xold.p xetex.p >Xp.diff; :
+Xpool.diff: Xold.pool xetex.pool
+	diff -u Xold.pool xetex.pool >Xpool.diff; :
+X.diff: Xweb.diff Xp.diff Xpool.diff
+	cat Xweb.diff Xp.diff Xpool.diff >X.diff
+#
+EXTRA_DIST += $(Xold_web_srcs)
+DISTCLEANFILES += X*
+## Merging in XeTeX change files - end
 
-DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex-web2c \
+##
+EXTRA_DIST += $(xetex_web_srcs) $(xetex_ch_srcs) xetexdir/xetex.defines
+
+DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex.ch xetex-web2c \
 	xetex.p xetex.pool xetex-tangle
 
 EXTRA_DIST += \

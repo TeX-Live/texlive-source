@@ -32,6 +32,174 @@ authorization from the copyright holders.
 \****************************************************************************/
 
 @x
+new_kern:=p;
+end;
+@y
+new_kern:=p;
+end;
+
+@ Some stuff for character protrusion.
+@# {memory structure for marginal kerns}
+@d margin_kern_node = 40
+@d margin_kern_node_size = 3
+@d margin_char(#) == info(# + 2)    {unused for now; relevant for font expansion}
+
+@# {|subtype| of marginal kerns}
+@d left_side == 0
+@d right_side == 1
+
+@# {base for lp/rp codes starts from 2:
+    0 for |hyphen_char|,
+    1 for |skew_char|}
+@d lp_code_base == 2
+@d rp_code_base == 3
+
+@d max_hlist_stack = 512 {maximum fill level for |hlist_stack|}
+{maybe good if larger than |2 * max_quarterword|, so that box nesting level would overflow first}
+
+@<Glob...@>=
+@!last_leftmost_char: pointer;
+@!last_rightmost_char: pointer;
+@!hlist_stack:array[0..max_hlist_stack] of pointer; {stack for |find_protchar_left()| and |find_protchar_right()|}
+@!hlist_stack_level:0..max_hlist_stack; {fill level for |hlist_stack|}
+@!first_p: pointer; {to access the first node of the paragraph}
+@!global_prev_p: pointer; {to access |prev_p| in |line_break|; should be kept in sync with |prev_p| by |update_prev_p|}
+@z
+
+@x
+@<Search |hyph_list| for pointers to |p|@>;
+end;
+gubed
+@y
+@<Search |hyph_list| for pointers to |p|@>;
+end;
+gubed
+
+@ Some stuff for character protrusion.
+
+@d pdf_debug_on == true {change to |false| to suppress debugging info}
+@p
+procedure pdf_error(t, p: str_number);
+begin
+    normalize_selector;
+    print_err("Error");
+    if t <> 0 then begin
+        print(" (");
+        print(t);
+        print(")");
+    end;
+    print(": "); print(p);
+    succumb;
+end;
+
+procedure pdf_DEBUG(s: str_number);
+begin
+    if not pdf_debug_on then
+        return;
+    print_ln; print("DEBUG: "); print(s);
+end;
+
+procedure pdf_DEBUG_int(s: str_number; i: integer);
+begin
+    if not pdf_debug_on then
+        return;
+    print_ln; print("DEBUG: "); print(s); print_int(i);
+end;
+
+procedure pdf_DEBUG_str(s, s2: str_number);
+begin
+    if not pdf_debug_on then
+        return;
+    print_ln; print("DEBUG: "); print(s); print(s2);
+end;
+
+function prev_rightmost(s, e: pointer): pointer;
+{finds the node preceding the rightmost node |e|; |s| is some node
+before |e|}
+var p: pointer;
+begin
+    prev_rightmost := null;
+    p := s;
+    if p = null then
+        return;
+    while link(p) <> e do begin
+        p := link(p);
+        if p = null then
+            return;
+    end;
+    prev_rightmost := p;
+end;
+
+function round_xn_over_d(@!x:scaled; @!n,@!d:integer):scaled;
+var positive:boolean; {was |x>=0|?}
+@!t,@!u,@!v:nonnegative_integer; {intermediate quantities}
+begin if x>=0 then positive:=true
+else  begin negate(x); positive:=false;
+  end;
+t:=(x mod @'100000)*n;
+u:=(x div @'100000)*n+(t div @'100000);
+v:=(u mod d)*@'100000 + (t mod @'100000);
+if u div d>=@'100000 then arith_error:=true
+else u:=@'100000*(u div d) + (v div d);
+v := v mod d;
+if 2*v >= d then
+    incr(u);
+if positive then
+    round_xn_over_d := u
+else
+    round_xn_over_d := -u;
+end;
+@z
+
+@x
+  kern_node: @<Display kern |p|@>;
+@y
+  kern_node: @<Display kern |p|@>;
+  margin_kern_node: begin
+    print_esc("kern");
+    print_scaled(width(p));
+    if subtype(p) = left_side then
+        print(" (left margin)")
+    else
+        print(" (right margin)");
+    end;
+@z
+
+@x
+show_node_list(p); {the show starts at |p|}
+print_ln;
+end;
+@y
+show_node_list(p); {the show starts at |p|}
+print_ln;
+end;
+
+procedure short_display_n(@!p, m:integer); {prints highlights of list |p|}
+begin
+    breadth_max := m;
+    depth_threshold:=pool_size-pool_ptr-1;
+    show_node_list(p); {the show starts at |p|}
+end;
+@z
+
+@x
+    kern_node,math_node,penalty_node:begin
+        free_node(p, medium_node_size);
+        goto done;
+      end;
+@y
+    kern_node,math_node,penalty_node:begin
+        free_node(p, medium_node_size);
+        goto done;
+      end;
+    margin_kern_node: begin
+{         free_avail(margin_char(p)); }
+        free_node(p, margin_kern_node_size);
+        goto done;
+      end;
+@z
+
+@x
   words:=medium_node_size;
   end;
 @y
@@ -44,6 +212,37 @@ margin_kern_node: begin
 {     character(margin_char(r)) := character(margin_char(p)); }
     words := margin_kern_node_size;
   end;
+@z
+
+@x
+@d XeTeX_linebreak_penalty_code=etex_int_base+11 {penalty to use at locale-dependent linebreak locations}
+@d eTeX_state_code=etex_int_base+12 {\eTeX\ state variables}
+@y
+@d XeTeX_linebreak_penalty_code=etex_int_base+11 {penalty to use at locale-dependent linebreak locations}
+@d XeTeX_protrude_chars_code=etex_int_base+12 {protrude chars at left/right edge of paragraphs}
+@d eTeX_state_code=etex_int_base+13 {\eTeX\ state variables}
+@z
+
+@x
+@d XeTeX_linebreak_penalty==int_par(XeTeX_linebreak_penalty_code)
+@y
+@d XeTeX_linebreak_penalty==int_par(XeTeX_linebreak_penalty_code)
+@d XeTeX_protrude_chars==int_par(XeTeX_protrude_chars_code)
+@z
+
+@x
+XeTeX_linebreak_penalty_code:print_esc("XeTeXlinebreakpenalty");
+@y
+XeTeX_linebreak_penalty_code:print_esc("XeTeXlinebreakpenalty");
+XeTeX_protrude_chars_code:print_esc("XeTeXprotrudechars");
+@z
+
+@x
+primitive("XeTeXlinebreakpenalty",assign_int,int_base+XeTeX_linebreak_penalty_code);@/
+@y
+primitive("XeTeXlinebreakpenalty",assign_int,int_base+XeTeX_linebreak_penalty_code);@/
+primitive("XeTeXprotrudechars",assign_int,int_base+XeTeX_protrude_chars_code);@/
+@!@:XeTeX_protrude_chars_}{\.{\\XeTeXprotrudechars} primitive@>
 @z
 
 @x
