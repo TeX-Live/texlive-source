@@ -99,12 +99,23 @@ xetex_ch_srcs = \
 	tex.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
-	xetexdir/xetex-latex3.ch \
-	xetexdir/xetex-hz.ch \
 	$(xetex_post_ch_synctex) \
 	tex-binpool.ch
 
 ## Merging in XeTeX change files - begin
+if XETEX_SYNCTEX
+Xold_ch_synctex = \
+	synctexdir/synctex-mem.ch0 \
+	synctexdir/synctex-e-mem.ch0 \
+	synctexdir/synctex-e-mem.ch1 \
+	synctexdir/synctex-xe-mem.ch2 \
+	synctexdir/synctex-rec.ch0 \
+	synctexdir/synctex-e-rec.ch0 \
+	synctexdir/synctex-xe-rec.ch2
+Xold_post_ch_synctex = \
+	synctexdir/synctex-xe-rec.ch3
+endif XETEX_SYNCTEX
+
 Xold.p Xold.pool: Xold-tangle
 	@$(xe_tangle) Xold
 Xold-tangle: otangle$(EXEEXT) Xold.web tangle-sh
@@ -119,11 +130,11 @@ Xold_web_srcs = \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
 	tex-binpool.ch \
-	$(xetex_ch_synctex) \
+	$(Xold_ch_synctex) \
 	xetex-orig.ch \
 	xetex-latex3.ch \
 	xetex-hz.ch \
-	$(xetex_post_ch_synctex)
+	$(Xold_post_ch_synctex)
 #
 Xnew.web: tie$(EXEEXT) xetexdir/xetex.web xetex.ch
 	$(tie) -m Xnew.web xetexdir/xetex.web xetex.ch

@@ -936,16 +936,10 @@ noreturn procedure confusion(@!s:str_number);
 
 % [8.110] Make it easy to change constants.  Do not increase
 % max_quarterword without changing the memoryword structure in `texmfmem.h'.
-% If you set min_quarterword to a non-zero value, you have to remove the
-% definitions of qi/qo in this change file!
-@x [8.110] l.2405 - increase |max_halfword|
-@d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword=255 {largest allowable value in a |quarterword|}
+@x [8.110] l.2422 - increase |max_halfword|
 @d min_halfword==0 {smallest allowable value in a |halfword|}
 @d max_halfword==65535 {largest allowable value in a |halfword|}
-@y 2407
-@d min_quarterword=0 {smallest allowable value in a |quarterword|}
-@d max_quarterword=255 {largest allowable value in a |quarterword|}
+@y 2424
 @d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
 @d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @z
@@ -1195,12 +1189,10 @@ substitution definitions.
 
 @x [17.222] l.4523 - frozen_special, for source specials.
 @d frozen_null_font=frozen_control_sequence+10
-  {permanent `\.{\\nullfont}'}
 @y
 @d frozen_special=frozen_control_sequence+10
   {permanent `\.{\\special}'}
 @d frozen_null_font=frozen_control_sequence+11
-  {permanent `\.{\\nullfont}'}
 @z
 
 @x [17.222] l.4526 - max_font_max
@@ -3232,13 +3224,11 @@ l:=k; v:=min_trie_op;
 
 @x [46.1034] l.20074 - source specials
 @<Append character |cur_chr|...@>=
-adjust_space_factor;@/
 @y
 @<Append character |cur_chr|...@>=
 if ((head=tail) and (mode>0)) then begin
   if (insert_src_special_auto) then append_src_special;
 end;
-adjust_space_factor;@/
 @z
 
 @x [46.1036] l.20138 - MLTeX: substitution in |main_control|
@@ -4010,17 +4000,19 @@ else print(" hyphenation exception");
 
 @x [50.1324] l.24066 - Make dumping/undumping more efficient - trie
 for k:=0 to trie_max do dump_hh(trie[k]);
-dump_int(trie_op_ptr);
+@y
+dump_things(trie_trl[0], trie_max+1);
+dump_things(trie_tro[0], trie_max+1);
+dump_things(trie_trc[0], trie_max+1);
+@z
+
+@x [50.1324] l.24068 - Make dumping/undumping more efficient - trie
 for k:=1 to trie_op_ptr do
   begin dump_int(hyf_distance[k]);
   dump_int(hyf_num[k]);
   dump_int(hyf_next[k]);
   end;
 @y
-dump_things(trie_trl[0], trie_max+1);
-dump_things(trie_tro[0], trie_max+1);
-dump_things(trie_trc[0], trie_max+1);
-dump_int(trie_op_ptr);
 dump_things(hyf_distance[1], trie_op_ptr);
 dump_things(hyf_num[1], trie_op_ptr);
 dump_things(hyf_next[1], trie_op_ptr);
@@ -4065,15 +4057,8 @@ for k:=1 to hyph_count do
   if hyph_next >= hyph_prime then incr(hyph_next);
 @z
 
-
 @x [50.1325] l.24094 - Make dumping/undumping more efficient - trie
 for k:=0 to j do undump_hh(trie[k]);
-undump_size(0)(trie_op_size)('trie op size')(j); @+init trie_op_ptr:=j;@+tini
-for k:=1 to j do
-  begin undump(0)(63)(hyf_distance[k]); {a |small_number|}
-  undump(0)(63)(hyf_num[k]);
-  undump(min_quarterword)(max_quarterword)(hyf_next[k]);
-  end;
 @y
 {These first three haven't been allocated yet unless we're \.{INITEX};
  we do that precisely so we don't allocate more space than necessary.}
@@ -4083,7 +4068,15 @@ if not trie_tro then trie_tro:=xmalloc_array(trie_pointer,j+1);
 undump_things(trie_tro[0], j+1);
 if not trie_trc then trie_trc:=xmalloc_array(quarterword, j+1);
 undump_things(trie_trc[0], j+1);
-undump_size(0)(trie_op_size)('trie op size')(j); @+init trie_op_ptr:=j;@+tini
+@z
+
+@x [50.1325] l.24096 - Make dumping/undumping more efficient - trie
+for k:=1 to j do
+  begin undump(0)(63)(hyf_distance[k]); {a |small_number|}
+  undump(0)(63)(hyf_num[k]);
+  undump(min_quarterword)(max_quarterword)(hyf_next[k]);
+  end;
+@y
 {I'm not sure we have such a strict limitation (64) on these values, so
  let's leave them unchecked.}
 undump_things(hyf_distance[1], j);

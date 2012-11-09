@@ -2595,10 +2595,20 @@ xetex_ch_srcs = \
 	tex.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
-	xetexdir/xetex-latex3.ch \
-	xetexdir/xetex-hz.ch \
 	$(xetex_post_ch_synctex) \
 	tex-binpool.ch
+
+@XETEX_SYNCTEX_TRUE@Xold_ch_synctex = \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-mem.ch0 \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch0 \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-mem.ch1 \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-mem.ch2 \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-rec.ch0 \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-e-rec.ch0 \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch2
+
+@XETEX_SYNCTEX_TRUE@Xold_post_ch_synctex = \
+@XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xe-rec.ch3
 
 Xold_web_srcs = \
 	tex.web \
@@ -2608,11 +2618,11 @@ Xold_web_srcs = \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
 	tex-binpool.ch \
-	$(xetex_ch_synctex) \
+	$(Xold_ch_synctex) \
 	xetex-orig.ch \
 	xetex-latex3.ch \
 	xetex-hz.ch \
-	$(xetex_post_ch_synctex)
+	$(Xold_post_ch_synctex)
 
 libxetex_a_CPPFLAGS = $(xetex_cppflags)
 libxetex_a_CFLAGS = # $(WARNING_CFLAGS)

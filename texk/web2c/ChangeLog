@@ -1,3 +1,7 @@
+2012-11-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex.ch: Avoid conflict with xetexdir/xetex.web.
+
 2012-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac (POPPLER): Adding '-lgdi32' for WIN32 now done
