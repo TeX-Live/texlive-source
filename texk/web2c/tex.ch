@@ -1699,12 +1699,10 @@ if ext_delimiter<>0 then begin
 @z
 
 @x [29.517] l.10011 - end_name: string recycling
-  str_start[str_ptr+1]:=str_start[str_ptr]+area_delimiter; incr(str_ptr);
   end;
 if ext_delimiter=0 then
   begin cur_ext:=""; cur_name:=make_string;
 @y
-  str_start[str_ptr+1]:=str_start[str_ptr]+area_delimiter; incr(str_ptr);
   temp_str:=search_string(cur_area);
   if temp_str>0 then
     begin cur_area:=temp_str;
@@ -1720,12 +1718,8 @@ if ext_delimiter=0 then
 @z
 
 @x [29.517] l.10016 - end_name: string recycling
-else  begin cur_name:=str_ptr;
-  str_start[str_ptr+1]:=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
   incr(str_ptr); cur_ext:=make_string;
 @y
-else  begin cur_name:=str_ptr;
-  str_start[str_ptr+1]:=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
   incr(str_ptr); cur_ext:=make_string;
   decr(str_ptr); {undo extension string to look at name part}
   temp_str:=search_string(cur_name);
@@ -1741,30 +1735,35 @@ else  begin cur_name:=str_ptr;
 @z
 
 @x [29.518] l.10042 - print_file_name: quote if spaces in names.
+some operating systems put the file area last instead of first.)
+@^system dependencies@>
+@y
+some operating systems put the file area last instead of first.)
+@^system dependencies@>
+
+@d check_quoted(#) == {check if string |#| needs quoting}
+if #<>0 then begin
+  j:=str_start[#];
+  while (not must_quote) and (j<str_start[#+1]) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+  end;
+end
+@#
+@d print_quoted(#) == {print string |#|, omitting quotes}
+if #<>0 then
+  for j:=str_start[#] to str_start[#+1]-1 do
+    if so(str_pool[j])<>"""" then
+      print(so(str_pool[j]))
+@z
+
+@x [29.518] l.10042 - print_file_name: quote if spaces in names.
 begin slow_print(a); slow_print(n); slow_print(e);
 @y
 var must_quote: boolean; {whether to quote the filename}
 @!j:pool_pointer; {index into |str_pool|}
 begin
 must_quote:=false;
-if a<>0 then begin
-  j:=str_start[a];
-  while (not must_quote) and (j<str_start[a+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-if n<>0 then begin
-  j:=str_start[n];
-  while (not must_quote) and (j<str_start[n+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-if e<>0 then begin
-  j:=str_start[e];
-  while (not must_quote) and (j<str_start[e+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
+check_quoted(a); check_quoted(n); check_quoted(e);
 {FIXME: Alternative is to assume that any filename that has to be quoted has
  at least one quoted component...if we pick this, a number of insertions
  of |print_file_name| should go away.
@@ -1772,18 +1771,7 @@ end;
               ((|n|<>0)and(|str_pool|[|str_start|[|n|]]=""""))or
               ((|e|<>0)and(|str_pool|[|str_start|[|e|]]=""""));}
 if must_quote then print_char("""");
-if a<>0 then
-  for j:=str_start[a] to str_start[a+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if n<>0 then
-  for j:=str_start[n] to str_start[n+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if e<>0 then
-  for j:=str_start[e] to str_start[e+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
+print_quoted(a); print_quoted(n); print_quoted(e);
 if must_quote then print_char("""");
 @z
 
@@ -1800,11 +1788,11 @@ if must_quote then print_char("""");
 % [29.519] In pack_file_name, leave room for the extra null we append at
 % the end of a filename.
 @x [29.519] l.10047 - pack_file_name, leave room for the extra null
-for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
+begin k:=0;
 @y
+begin k:=0;
 if name_of_file then libc_free (name_of_file);
 name_of_file:= xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
-for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
 @z
 
 @x [29.519] l.10051 - pack_file_name, append the extra null
@@ -1889,24 +1877,17 @@ name_of_file[name_length+1]:=0;
 @.I can't find the format...@>
 @z
 
-@x [29.525] l.10163 - make_name_string
-@p function make_name_string:str_number;
-var k:1..file_name_size; {index into |name_of_file|}
+@x [29.525] l.10170 - make_name_string
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
- (cur_length>0) then
-  make_name_string:="?"
-else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
-  make_name_string:=make_string;
-  end;
 @y
-@p function make_name_string:str_number;
-var k:1..file_name_size; {index into |name_of_file|}
 save_area_delimiter, save_ext_delimiter: pool_pointer;
 save_name_in_progress, save_stop_at_space: boolean;
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
- (cur_length>0) then
-  make_name_string:="?"
-else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+@z
+
+@x [29.525] l.10174 - make_name_string
+  make_name_string:=make_string;
+@y
   make_name_string:=make_string;
   {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
    match the contents of |name_of_file|.}
@@ -1922,7 +1903,6 @@ else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
   end_name;
   name_in_progress:=save_name_in_progress;
   area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
-  end;
 @z
 
 @x [29.526] l.10194 - stop scanning file name if we're at end-of-line.
@@ -2585,10 +2565,9 @@ else begin dvi_out(fnt1+1);
 
 % We output each portion of the page as we get to it, if we are using
 % IPC, so that the previewer (TeXView) can display it immediately. [SPM]
-@x [32.640] l.12690 - IPC
-dvi_out(eop); incr(total_pages); cur_s:=-1;
+@x [32.640] l.12723 - IPC
+done:
 @y
-dvi_out(eop); incr(total_pages); cur_s:=-1;
 ifdef ('IPC')
 if ipc_on>0 then
   begin if dvi_limit=half_buf then
@@ -2610,6 +2589,7 @@ if ipc_on>0 then
   ipc_page(dvi_gone);
   end;
 endif ('IPC');
+done:
 @z
 
 @x [32.645] l.12766 - check dvi file size
@@ -2659,11 +2639,9 @@ if (qo(y)>=font_bc[g])and(qo(y)<=font_ec[g]) then
   begin continue: q:=orig_char_info(g)(y);
 @z
 
-@x [36.722] l.14172 - MLTeX: avoid substitution in |fetch|
-else  begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
+@x [36.722] l.14207 - MLTeX: avoid substitution in |fetch|
     cur_i:=char_info(cur_f)(cur_c)
 @y
-else  begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
     cur_i:=orig_char_info(cur_f)(cur_c)
 @z
 
@@ -3288,25 +3266,7 @@ if indented then
   end;
  @z
 
-@x
-begin print_err("Extra "); print_esc("endcsname");
-@.Extra \\endcsname@>
-help1("I'm ignoring this, since I wasn't doing a \csname.");
-@y
-begin
-if cur_chr = 10 then
-begin
-  print_err("Extra "); print_esc("endmubyte");
-@.Extra \\endmubyte@>
-  help1("I'm ignoring this, since I wasn't doing a \mubyte.");
-end else begin
-  print_err("Extra "); print_esc("endcsname");
-@.Extra \\endcsname@>
-  help1("I'm ignoring this, since I wasn't doing a \csname.");
-end;
-@z
-
-@x [48.1139] l.21650 - source specials
+@x [48.1142] l.21697 - source specials
 if every_math<>null then begin_token_list(every_math,every_math_text);
 @y
 if (insert_src_special_every_math) then insert_src_special;
@@ -3393,11 +3353,11 @@ else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 %   a) the string is already replaced in |scan_file_name| and therefore
 %   b) the wrong string will get flushed!!!
 %
-@x [49.1257] l.23318 unused variable
+@x [49.1257] l.23328 unused variable
 @!flushable_string:str_number; {string not yet referenced}
 @y
 @z
-@x [49.1260] l.23331 new_font: string recycling -- already done
+@x [49.1260] l.23383 new_font: string recycling -- already done
 flushable_string:=str_ptr-1;
 @y
 @z
@@ -3416,7 +3376,7 @@ flushable_string:=str_ptr-1;
 %
 % otherwise the wrong string will get removed by |flush_string|!!
 %
-@x [49.1260] l.23334 new_font: string recycling -- already done
+@x [49.1260] l.23386 new_font: string recycling -- already done
     begin if cur_name=flushable_string then
       begin flush_string; cur_name:=font_name[f];
       end;

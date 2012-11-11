@@ -1,6 +1,9 @@
-2012-11-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2012-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex.ch: Avoid conflict with xetexdir/xetex.web.
+	Introduce Web macros check_quoted and print_quoted.
+	(cs_error): Move "endmubyte" code from here ...
+	* enctex.ch (cs_error): ... to here.
 
 2012-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

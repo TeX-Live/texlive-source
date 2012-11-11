@@ -2615,6 +2615,7 @@ Xold_web_srcs = \
 	etexdir/etex.ch \
 	etexdir/tex.ch0 \
 	tex.ch \
+	xetexdir/tex.mod \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
 	tex-binpool.ch \

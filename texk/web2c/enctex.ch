@@ -414,6 +414,24 @@ if enctex_enabled_p then
   end;
 @z
 
+@x [48.1138] l.21648 - encTeX: \endmubyte primitive
+begin print_err("Extra "); print_esc("endcsname");
+@.Extra \\endcsname@>
+help1("I'm ignoring this, since I wasn't doing a \csname.");
+@y
+begin
+if cur_chr = 10 then
+begin
+  print_err("Extra "); print_esc("endmubyte");
+@.Extra \\endmubyte@>
+  help1("I'm ignoring this, since I wasn't doing a \mubyte.");
+end else begin
+  print_err("Extra "); print_esc("endcsname");
+@.Extra \\endcsname@>
+  help1("I'm ignoring this, since I wasn't doing a \csname.");
+end;
+@z
+
 @x [49.1211] - encTeX: extra variables for \mubyte primitive
 @!p,@!q:pointer; {for temporary short-term use}
 @y

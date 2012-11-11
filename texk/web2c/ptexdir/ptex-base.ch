@@ -5266,26 +5266,6 @@ else link(p):=tail;
 p:=q;
 @z
 
-@x l.22334 - pTeX
-procedure cs_error;
-begin
-if cur_chr = 10 then
-begin
-  print_err("Extra "); print_esc("endmubyte");
-@.Extra \\endmubyte@>
-  help1("I'm ignoring this, since I wasn't doing a \mubyte.");
-end else begin
-  print_err("Extra "); print_esc("endcsname");
-@.Extra \\endcsname@>
-  help1("I'm ignoring this, since I wasn't doing a \csname.");
-end;
-@y
-procedure cs_error;
-begin print_err("Extra "); print_esc("endcsname");
-@.Extra \\endcsname@>
-help1("I'm ignoring this, since I wasn't doing a \csname.");
-@z
-
 @x [48.1138] l.22385 - pTeX: init math : direction < 0 ... math direction
 if (cur_cmd=math_shift)and(mode>0) then @<Go into display math mode@>
 else  begin back_input; @<Go into ordinary math mode@>;

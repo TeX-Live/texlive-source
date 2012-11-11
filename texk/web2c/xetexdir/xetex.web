@@ -4461,6 +4461,13 @@ glue_node: begin r:=get_node(small_node_size); add_glue_ref(glue_ptr(p));
 kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
   words:=small_node_size;
   end;
+margin_kern_node: begin
+    r := get_node(margin_kern_node_size);
+{     fast_get_avail(margin_char(r)); }
+{     font(margin_char(r)) := font(margin_char(p)); }
+{     character(margin_char(r)) := character(margin_char(p)); }
+    words := margin_kern_node_size;
+  end;
 ligature_node: begin r:=get_node(small_node_size);
   mem[lig_char(r)]:=mem[lig_char(p)]; {copy |font| and |character|}
   lig_ptr(r):=copy_node_list(lig_ptr(p));
@@ -11362,13 +11369,13 @@ begin if str_ptr+3>max_strings then
 @:TeX capacity exceeded number of strings}{\quad number of strings@>
 if area_delimiter=0 then cur_area:=""
 else  begin cur_area:=str_ptr;
-  str_start[str_ptr+1]:=str_start[str_ptr]+area_delimiter; incr(str_ptr);
+  str_start_macro(str_ptr+1):=str_start_macro(str_ptr)+area_delimiter; incr(str_ptr);
   end;
 if ext_delimiter=0 then
   begin cur_ext:=""; cur_name:=make_string;
   end
 else  begin cur_name:=str_ptr;
-  str_start[str_ptr+1]:=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
+  str_start_macro(str_ptr+1):=str_start_macro(str_ptr)+ext_delimiter-area_delimiter-1;
   incr(str_ptr); cur_ext:=make_string;
   end;
 end;
@@ -11398,9 +11405,9 @@ var k:integer; {number of positions filled in |name_of_file|}
 @!c: ASCII_code; {character being packed}
 @!j:pool_pointer; {index into |str_pool|}
 begin k:=0;
-for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
-for j:=str_start[n] to str_start[n+1]-1 do append_to_name(so(str_pool[j]));
-for j:=str_start[e] to str_start[e+1]-1 do append_to_name(so(str_pool[j]));
+for j:=str_start_macro(a) to str_start_macro(a+1)-1 do append_to_name(so(str_pool[j]));
+for j:=str_start_macro(n) to str_start_macro(n+1)-1 do append_to_name(so(str_pool[j]));
+for j:=str_start_macro(e) to str_start_macro(e+1)-1 do append_to_name(so(str_pool[j]));
 if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 end;
@@ -11502,13 +11509,18 @@ This routine might be called after string memory has overflowed, hence
 we dare not use `|str_room|'.
 
 @p function make_name_string:str_number;
-var k:1..file_name_size; {index into |name_of_file|}
+var k:0..file_name_size; {index into |name_of_file|}
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
  (cur_length>0) then
   make_name_string:="?"
-else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
+else  begin
+  make_utf16_name;
+  for k:=0 to name_length16-1 do append_char(name_of_file16[k]);
   make_name_string:=make_string;
   end;
+end;
+function u_make_name_string(var f:unicode_file):str_number;
+begin u_make_name_string:=make_name_string;
 end;
 function a_make_name_string(var f:alpha_file):str_number;
 begin a_make_name_string:=make_name_string;
@@ -12691,7 +12703,12 @@ begin if tracing_lost_chars>0 then
   begin begin_diagnostic;
   print_nl("Missing character: There is no ");
 @.Missing character@>
-  print_ASCII(c); print(" in font ");
+  if c < @"10000 then print_ASCII(c)
+  else begin { non-Plane 0 Unicodes can't be sent through |print_ASCII| }
+    print("character number ");
+    print_hex(c);
+  end;
+  print(" in font ");
   slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
   end;
  tracing_online:=old_setting;
@@ -14148,13 +14165,16 @@ var left_edge: scaled; {the left coordinate for this box}
 @!glue_temp:real; {glue value before rounding}
 @!cur_glue:real; {glue seen so far}
 @!cur_g:scaled; {rounded equivalent of |cur_glue| times the glue ratio}
+@!upwards:boolean; {whether we're stacking upwards}
 begin cur_g:=0; cur_glue:=float_constant(0);
 this_box:=temp_ptr; g_order:=glue_order(this_box);
 g_sign:=glue_sign(this_box); p:=list_ptr(this_box);
+upwards:=(subtype(this_box)=min_quarterword+1);
 incr(cur_s);
 if cur_s>0 then dvi_out(push);
 if cur_s>max_push then max_push:=cur_s;
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
+if upwards then cur_v:=cur_v+depth(this_box) else cur_v:=cur_v-height(this_box);
 top_edge:=cur_v;
 while p<>null do @<Output node |p| for |vlist_out| and move to the next node,
   maintaining the condition |cur_h=left_edge|@>;
@@ -14192,14 +14212,14 @@ usually be constant.
 
 @<Output a box in a vlist@>=
 if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
-else  begin cur_v:=cur_v+height(p); synch_v;
+else  begin if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p); synch_v;
   save_h:=dvi_h; save_v:=dvi_v;
   if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
   else cur_h:=left_edge+shift_amount(p); {shift the box right}
   temp_ptr:=p;
   if type(p)=vlist_node then vlist_out@+else hlist_out;
   dvi_h:=save_h; dvi_v:=save_v;
-  cur_v:=save_v+depth(p); cur_h:=left_edge;
+  if upwards then cur_v:=save_v-height(p) else cur_v:=save_v+depth(p); cur_h:=left_edge;
   end
 
 @ @<Output a rule in a vlist...@>=
@@ -14370,6 +14390,7 @@ cur_v:=height(p)+v_offset; { does this need changing for upwards mode ???? }
 temp_ptr:=p;
 if type(p)=vlist_node then vlist_out@+else hlist_out;
 dvi_out(eop); incr(total_pages); cur_s:=-1;
+if not no_pdf_output then fflush(dvi_file);
 done:
 
 @ Sometimes the user will generate a huge page because other error messages
@@ -16261,10 +16282,13 @@ nonexistent characters; in such cases, |char_exists(cur_i)| will be |false|
 after |fetch| has acted, and the field will also have been reset to |empty|.
 
 @p procedure fetch(@!a:pointer); {unpack the |math_char| field |a|}
-begin cur_c:=character(a); cur_f:=fam_fnt(fam(a)+cur_size);
+begin cur_c:=cast_to_ushort(character(a)); cur_f:=fam_fnt(fam(a)+cur_size);
+cur_c:=cur_c + (plane_and_fam_field(a) div @"100) * @"10000;
 if cur_f=null_font then
   @<Complain about an undefined family and set |cur_i| null@>
-else  begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
+else if is_native_font(cur_f) then begin
+  cur_i:=null_character;
+end else begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
     cur_i:=char_info(cur_f)(cur_c)
   else cur_i:=null_character;
   if not(char_exists(cur_i)) then
@@ -26862,8 +26886,9 @@ the new name becomes the font identifier of record. Font names `\.{xyz}' and
 
 @<If this font has already been loaded...@>=
 flushable_string:=str_ptr-1;
-for f:=font_base+1 to font_ptr do
-  if str_eq_str(font_name[f],cur_name)and str_eq_str(font_area[f],cur_area) then
+for f:=font_base+1 to font_ptr do begin
+  if str_eq_str(font_name[f],cur_name) and
+    (((cur_area = "") and is_native_font(f)) or str_eq_str(font_area[f],cur_area)) then
     begin if cur_name=flushable_string then
       begin flush_string; cur_name:=font_name[f];
       end;
@@ -26872,7 +26897,21 @@ for f:=font_base+1 to font_ptr do
       end
     else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
       goto common_ending;
+    end;
+  { could be a native font whose "name" ended up partly in area or extension }
+  append_str(cur_area); append_str(cur_name); append_str(cur_ext);
+  if str_eq_str(font_name[f], make_string) then begin
+    flush_string;
+    if is_native_font(f) then
+      begin if s>0 then
+        begin if s=font_size[f] then goto common_ending;
+        end
+      else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+        goto common_ending;
+      end
     end
+  else flush_string;
+  end
 
 @ @<Cases of |print_cmd_chr|...@>=
 set_font:begin print("select font ");

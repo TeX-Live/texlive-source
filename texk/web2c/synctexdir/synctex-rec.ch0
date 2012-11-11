@@ -175,11 +175,11 @@ end
 @p procedure vlist_out; {output a |vlist_node| box}
 @z
 
-@x tex.web l.12533
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
+@x tex.web l.12534
+top_edge:=cur_v;
 @y
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
 MISSING @<Start vlist {\sl Sync\TeX} information record@> before cur_v:=cur_v-height(this_box);
+top_edge:=cur_v;
 @z
 
 @x tex.web l.12535

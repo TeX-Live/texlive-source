@@ -1,3 +1,7 @@
+2012-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptex-base.ch (cs_error): Remove "endmubyte" code.
+
 2012-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ppltotf.ch: Remove putc kludge, convert knows (u)ppltotf.

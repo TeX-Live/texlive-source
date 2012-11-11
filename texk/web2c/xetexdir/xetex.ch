@@ -144,21 +144,6 @@ if last<>first then for k:=first to last-1 do print(buffer[k]);
 @d max_halfword==@"3FFFFFFF {largest allowable value in a |halfword|}
 @z
 
-@x
-  words:=medium_node_size;
-  end;
-@y
-  words:=medium_node_size;
-  end;
-margin_kern_node: begin
-    r := get_node(margin_kern_node_size);
-{     fast_get_avail(margin_char(r)); }
-{     font(margin_char(r)) := font(margin_char(p)); }
-{     character(margin_char(r)) := character(margin_char(p)); }
-    words := margin_kern_node_size;
-  end;
-@z
-
 @x [15.209] l.4165
 @d shorthand_def=95 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @y
@@ -201,16 +186,12 @@ margin_kern_node: begin
 @* \[29] File names.
 @z
 
-@x
-@p function more_name(@!c:ASCII_code):boolean;
+@x [29.516] l.9992 - filenames: more_name
 begin if (c=" ") and stop_at_space and (not quoted_filename) then
   more_name:=false
 else  if c="""" then begin
   quoted_filename:=not quoted_filename;
-  more_name:=true;
-  end
 @y
-@p function more_name(@!c:ASCII_code):boolean;
 begin if stop_at_space and (c=" ") and (file_name_quote_char=0) then
   more_name:=false
 else if stop_at_space and (file_name_quote_char<>0) and (c=file_name_quote_char) then begin
@@ -221,18 +202,15 @@ else if stop_at_space and (file_name_quote_char=0) and ((c="""") or (c="'") or (
   if c="(" then file_name_quote_char:=")"
   else file_name_quote_char:=c;
   quoted_filename:=true;
-  more_name:=true;
-  end
 @z
 
-@x
-@p procedure end_name;
-var temp_str: str_number; {result of file name cache lookups}
+@x [29.517] l.10002 - end_name: string recycling
 @!j,@!s,@!t: pool_pointer; {running indices}
 @!must_quote:boolean; {whether we need to quote a string}
-begin if str_ptr+3>max_strings then
-  overflow("number of strings",max_strings-init_str_ptr);
-@:TeX capacity exceeded number of strings}{\quad number of strings@>
+@y
+@!j: pool_pointer; {running index}
+@z
+@x [29.517] l.10002 - end_name: string recycling
 str_room(6); {Room for quotes, if needed.}
 {add quotes if needed}
 if area_delimiter<>0 then begin
@@ -287,18 +265,6 @@ if ext_delimiter<>0 then begin
     end;
   end;
 @y
-@p procedure end_name;
-var temp_str: str_number; {result of file name cache lookups}
-@!j: pool_pointer; {running index}
-begin if str_ptr+3>max_strings then
-  overflow("number of strings",max_strings-init_str_ptr);
-@:TeX capacity exceeded number of strings}{\quad number of strings@>
-@z
-
-@x
-  str_start[str_ptr+1]:=str_start[str_ptr]+area_delimiter; incr(str_ptr);
-@y
-  str_start_macro(str_ptr+1):=str_start_macro(str_ptr)+area_delimiter; incr(str_ptr);
 @z
 
 @x
@@ -308,41 +274,58 @@ begin if str_ptr+3>max_strings then
 @z
 
 @x
-  str_start[str_ptr+1]:=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
-@y
-  str_start_macro(str_ptr+1):=str_start_macro(str_ptr)+ext_delimiter-area_delimiter-1;
-@z
-
-@x
     for j:=str_start[str_ptr+1] to pool_ptr-1 do
 @y
     for j:=str_start_macro(str_ptr+1) to pool_ptr-1 do
 @z
 
-@x
-procedure print_file_name(@!n,@!a,@!e:integer);
-var must_quote: boolean; {whether to quote the filename}
+@x [29.518] l.10042 - print_file_name: quote if spaces in names.
+@d check_quoted(#) == {check if string |#| needs quoting}
+if #<>0 then begin
+  j:=str_start[#];
+  while (not must_quote) and (j<str_start[#+1]) do begin
+    must_quote:=str_pool[j]=" "; incr(j);
+  end;
+end
+@y
+@d check_quoted(#) == {check if string |#| needs quoting}
+if #<>0 then begin
+  j:=str_start_macro(#);
+  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(#+1)) do begin
+    if (str_pool[j]=" ") then must_quote:=true
+    else if (str_pool[j]="""") or (str_pool[j]="'") then begin
+      must_quote:=true;
+      quote_char:="""" + "'" - str_pool[j];
+    end;
+    incr(j);
+  end;
+end
+@z
+
+@x [29.518] l.10042 - print_file_name: quote if spaces in names.
+@d print_quoted(#) == {print string |#|, omitting quotes}
+if #<>0 then
+  for j:=str_start[#] to str_start[#+1]-1 do
+    if so(str_pool[j])<>"""" then
+      print(so(str_pool[j]))
+@y
+@d print_quoted(#) == {print string |#|, omitting quotes}
+if #<>0 then
+  for j:=str_start_macro(#) to str_start_macro(#+1)-1 do begin
+    if str_pool[j]=quote_char then begin
+      print(quote_char);
+      quote_char:="""" + "'" - quote_char;
+      print(quote_char);
+    end;
+    print(str_pool[j]);
+  end
+@z
+
+@x [29.518] l.10042 - print_file_name: quote if spaces in names.
 @!j:pool_pointer; {index into |str_pool|}
 begin
 must_quote:=false;
-if a<>0 then begin
-  j:=str_start[a];
-  while (not must_quote) and (j<str_start[a+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-if n<>0 then begin
-  j:=str_start[n];
-  while (not must_quote) and (j<str_start[n+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-if e<>0 then begin
-  j:=str_start[e];
-  while (not must_quote) and (j<str_start[e+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
+check_quoted(a); check_quoted(n); check_quoted(e);
 {FIXME: Alternative is to assume that any filename that has to be quoted has
  at least one quoted component...if we pick this, a number of insertions
  of |print_file_name| should go away.
@@ -350,94 +333,21 @@ end;
               ((|n|<>0)and(|str_pool|[|str_start|[|n|]]=""""))or
               ((|e|<>0)and(|str_pool|[|str_start|[|e|]]=""""));}
 if must_quote then print_char("""");
-if a<>0 then
-  for j:=str_start[a] to str_start[a+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if n<>0 then
-  for j:=str_start[n] to str_start[n+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if e<>0 then
-  for j:=str_start[e] to str_start[e+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
+print_quoted(a); print_quoted(n); print_quoted(e);
 if must_quote then print_char("""");
-end;
 @y
-procedure print_file_name(@!n,@!a,@!e:integer);
-var @!must_quote: boolean; {whether to quote the filename}
 @!quote_char: integer; {current quote char (single or double)}
 @!j:pool_pointer; {index into |str_pool|}
 begin
 must_quote:=false;
 quote_char:=0;
-if a<>0 then begin
-  j:=str_start_macro(a);
-  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(a+1)) do begin
-    if (str_pool[j]=" ") then must_quote:=true
-    else if (str_pool[j]="""") or (str_pool[j]="'") then begin
-      must_quote:=true;
-      quote_char:="""" + "'" - str_pool[j];
-    end;
-    incr(j);
-  end;
-end;
-if n<>0 then begin
-  j:=str_start_macro(n);
-  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(n+1)) do begin
-    if (str_pool[j]=" ") then must_quote:=true
-    else if (str_pool[j]="""") or (str_pool[j]="'") then begin
-      must_quote:=true;
-      quote_char:="""" + "'" - str_pool[j];
-    end;
-    incr(j);
-  end;
-end;
-if e<>0 then begin
-  j:=str_start_macro(e);
-  while ((not must_quote) or (quote_char=0)) and (j<str_start_macro(e+1)) do begin
-    if (str_pool[j]=" ") then must_quote:=true
-    else if (str_pool[j]="""") or (str_pool[j]="'") then begin
-      must_quote:=true;
-      quote_char:="""" + "'" - str_pool[j];
-    end;
-    incr(j);
-  end;
-end;
+check_quoted(a); check_quoted(n); check_quoted(e);
 if must_quote then begin
   if quote_char=0 then quote_char:="""";
   print_char(quote_char);
 end;
-if a<>0 then
-  for j:=str_start_macro(a) to str_start_macro(a+1)-1 do begin
-    if str_pool[j]=quote_char then begin
-      print(quote_char);
-      quote_char:="""" + "'" - quote_char;
-      print(quote_char);
-    end;
-    print(str_pool[j]);
-  end;
-if n<>0 then
-  for j:=str_start_macro(n) to str_start_macro(n+1)-1 do begin
-    if str_pool[j]=quote_char then begin
-      print(quote_char);
-      quote_char:="""" + "'" - quote_char;
-      print(quote_char);
-    end;
-    print(str_pool[j]);
-  end;
-if e<>0 then
-  for j:=str_start_macro(e) to str_start_macro(e+1)-1 do begin
-    if str_pool[j]=quote_char then begin
-      print(quote_char);
-      quote_char:="""" + "'" - quote_char;
-      print(quote_char);
-    end;
-    print(str_pool[j]);
-  end;
+print_quoted(a); print_quoted(n); print_quoted(e);
 if quote_char<>0 then print_char(quote_char);
-end;
 @z
 
 @x
@@ -462,14 +372,8 @@ end;
 
 @x
 name_of_file:= xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
-for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
-for j:=str_start[n] to str_start[n+1]-1 do append_to_name(so(str_pool[j]));
-for j:=str_start[e] to str_start[e+1]-1 do append_to_name(so(str_pool[j]));
 @y
 name_of_file:= xmalloc_array (UTF8_code, (length(a)+length(n)+length(e))*3+1);
-for j:=str_start_macro(a) to str_start_macro(a+1)-1 do append_to_name(so(str_pool[j]));
-for j:=str_start_macro(n) to str_start_macro(n+1)-1 do append_to_name(so(str_pool[j]));
-for j:=str_start_macro(e) to str_start_macro(e+1)-1 do append_to_name(so(str_pool[j]));
 @z
 
 @x
@@ -487,62 +391,11 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
 @z
 
 @x
-@p function make_name_string:str_number;
-var k:1..file_name_size; {index into |name_of_file|}
-save_area_delimiter, save_ext_delimiter: pool_pointer;
-save_name_in_progress, save_stop_at_space: boolean;
-begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
- (cur_length>0) then
-  make_name_string:="?"
-else  begin for k:=1 to name_length do append_char(xord[name_of_file[k]]);
-  make_name_string:=make_string;
-  {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
-   match the contents of |name_of_file|.}
-  save_area_delimiter:=area_delimiter; save_ext_delimiter:=ext_delimiter;
-  save_name_in_progress:=name_in_progress; save_stop_at_space:=stop_at_space;
-  name_in_progress:=true;
-  begin_name;
-  stop_at_space:=false;
   k:=1;
   while (k<=name_length)and(more_name(name_of_file[k])) do
-    incr(k);
-  stop_at_space:=save_stop_at_space;
-  end_name;
-  name_in_progress:=save_name_in_progress;
-  area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
-  end;
-end;
 @y
-@p function make_name_string:str_number;
-var k:0..file_name_size; {index into |name_of_file|}
-save_area_delimiter, save_ext_delimiter: pool_pointer;
-save_name_in_progress, save_stop_at_space: boolean;
-begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
- (cur_length>0) then
-  make_name_string:="?"
-else  begin
-  make_utf16_name;
-  for k:=0 to name_length16-1 do append_char(name_of_file16[k]);
-  make_name_string:=make_string;
-  {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
-   match the contents of |name_of_file|.}
-  save_area_delimiter:=area_delimiter; save_ext_delimiter:=ext_delimiter;
-  save_name_in_progress:=name_in_progress; save_stop_at_space:=stop_at_space;
-  name_in_progress:=true;
-  begin_name;
-  stop_at_space:=false;
   k:=0;
   while (k<name_length16)and(more_name(name_of_file16[k])) do
-    incr(k);
-  stop_at_space:=save_stop_at_space;
-  end_name;
-  name_in_progress:=save_name_in_progress;
-  area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
-  end;
-end;
-function u_make_name_string(var f:unicode_file):str_number;
-begin u_make_name_string:=make_name_string;
-end;
 @z
 
 @x
@@ -564,11 +417,9 @@ end;
 @z
 
 @x
-  if kpse_in_name_ok(stringcast(name_of_file+1))
      and a_open_in(cur_file, kpse_tex_format) then
     goto done;
 @y
-  if kpse_in_name_ok(stringcast(name_of_file+1))
      and u_open_in(cur_file, kpse_tex_format, XeTeX_default_input_mode, XeTeX_default_input_encoding) then
     {At this point |name_of_file| contains the actual name found, as a UTF8 string.
      We convert to UTF16, then extract the |cur_area|, |cur_name|, and |cur_ext| from it.}
@@ -627,10 +478,8 @@ end;
 @z
 
 @x
-@d start_font_error_message==print_err("Font "); sprint_cs(u);
   print_char("="); print_file_name(nom,aire,"");
 @y
-@d start_font_error_message==print_err("Font "); sprint_cs(u);
   print_char("=");
   if file_name_quote_char=")" then print_char("(")
   else if file_name_quote_char<>0 then print_char(file_name_quote_char);
@@ -665,7 +514,12 @@ begin if tracing_lost_chars>0 then
   begin begin_diagnostic;
   print_nl("Missing character: There is no ");
 @.Missing character@>
-  print_ASCII(c); print(" in font ");
+  if c < @"10000 then print_ASCII(c)
+  else begin { non-Plane 0 Unicodes can't be sent through |print_ASCII| }
+    print("character number ");
+    print_hex(c);
+  end;
+  print(" in font ");
   slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
   end;
  tracing_online:=old_setting;
@@ -712,71 +566,11 @@ label reswitch, move_past, fin_rule, next_p, continue, found, check_next, end_no
 @z
 
 @x
-@p procedure vlist_out; {output a |vlist_node| box}
-@y
-@p procedure vlist_out; {output a |vlist_node| box}
-@z
-
-@x
-@!cur_g:scaled; {rounded equivalent of |cur_glue| times the glue ratio}
-begin cur_g:=0; cur_glue:=float_constant(0);
-this_box:=temp_ptr; g_order:=glue_order(this_box);
-g_sign:=glue_sign(this_box); p:=list_ptr(this_box);
-incr(cur_s);
-if cur_s>0 then dvi_out(push);
-if cur_s>max_push then max_push:=cur_s;
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h; cur_v:=cur_v-height(this_box);
-@y
-@!cur_g:scaled; {rounded equivalent of |cur_glue| times the glue ratio}
-@!upwards:boolean; {whether we're stacking upwards}
-begin cur_g:=0; cur_glue:=float_constant(0);
-this_box:=temp_ptr; g_order:=glue_order(this_box);
-g_sign:=glue_sign(this_box); p:=list_ptr(this_box);
-upwards:=(subtype(this_box)=min_quarterword+1);
-incr(cur_s);
-if cur_s>0 then dvi_out(push);
-if cur_s>max_push then max_push:=cur_s;
-save_loc:=dvi_offset+dvi_ptr; left_edge:=cur_h;
-if upwards then cur_v:=cur_v+depth(this_box) else cur_v:=cur_v-height(this_box);
-@z
-
-@x
-@<Output a box in a vlist@>=
 if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
 @y
-@<Output a box in a vlist@>=
 if list_ptr(p)=null then begin
     if upwards then cur_v:=cur_v-depth(p)-height(p) else cur_v:=cur_v+height(p)+depth(p);
   end
-@z
-
-@x
-else  begin cur_v:=cur_v+height(p); synch_v;
-  save_h:=dvi_h; save_v:=dvi_v;
-  if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
-  else cur_h:=left_edge+shift_amount(p); {shift the box right}
-  temp_ptr:=p;
-  if type(p)=vlist_node then vlist_out@+else hlist_out;
-  dvi_h:=save_h; dvi_v:=save_v;
-  cur_v:=save_v+depth(p); cur_h:=left_edge;
-  end
-@y
-else  begin if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p); synch_v;
-  save_h:=dvi_h; save_v:=dvi_v;
-  if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
-  else cur_h:=left_edge+shift_amount(p); {shift the box right}
-  temp_ptr:=p;
-  if type(p)=vlist_node then vlist_out@+else hlist_out;
-  dvi_h:=save_h; dvi_v:=save_v;
-  if upwards then cur_v:=save_v-height(p) else cur_v:=save_v+depth(p); cur_h:=left_edge;
-  end
-@z
-
-@x
-dvi_out(eop); incr(total_pages); cur_s:=-1;
-@y
-dvi_out(eop); incr(total_pages); cur_s:=-1;
-if not no_pdf_output then fflush(dvi_file);
 @z
 
 @x
@@ -813,27 +607,7 @@ if not no_pdf_output then fflush(dvi_file);
 @* \[36] Typesetting math formulas.
 @z
 
-% Conflict with ../tex.ch
-@x
-@p procedure fetch(@!a:pointer); {unpack the |math_char| field |a|}
-begin cur_c:=character(a); cur_f:=fam_fnt(fam(a)+cur_size);
-if cur_f=null_font then
-  @<Complain about an undefined family and set |cur_i| null@>
-else  begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
-    cur_i:=orig_char_info(cur_f)(cur_c)
-@y
-@p procedure fetch(@!a:pointer); {unpack the |math_char| field |a|}
-begin cur_c:=cast_to_ushort(character(a)); cur_f:=fam_fnt(fam(a)+cur_size);
-cur_c:=cur_c + (plane_and_fam_field(a) div @"100) * @"10000;
-if cur_f=null_font then
-  @<Complain about an undefined family and set |cur_i| null@>
-else if is_native_font(cur_f) then begin
-  cur_i:=null_character;
-end else begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
-    cur_i:=orig_char_info(cur_f)(cur_c)
-@z
-
-@x
+@x [36.749] l.14638 - MLTeX: avoid substitution in |make_op|
     begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
 @y
       begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
@@ -903,83 +677,18 @@ for k:=0 to biggest_lang do trie_used[k]:=min_trie_op;
 @z
 
 @x
-@* \[46] The chief executive.
-@y
-@* \[46] The chief executive.
-@z
-
-% Revert ../tex.ch
-@x
-procedure cs_error;
-begin
-if cur_chr = 10 then
-begin
-  print_err("Extra "); print_esc("endmubyte");
-@.Extra \\endmubyte@>
-  help1("I'm ignoring this, since I wasn't doing a \mubyte.");
-end else begin
-  print_err("Extra "); print_esc("endcsname");
-@.Extra \\endcsname@>
-  help1("I'm ignoring this, since I wasn't doing a \csname.");
-end;
-@y
-procedure cs_error;
-begin print_err("Extra "); print_esc("endcsname");
-@.Extra \\endcsname@>
-help1("I'm ignoring this, since I wasn't doing a \csname.");
-@z
-
-@x
 @* \[49] Mode-independent processing.
 @y
 @* \[49] Mode-independent processing.
 @z
 
-% Conflict with ../tex.ch
-@x
+@x [49.1222] l.22833 - MLTeX: \charsubdef primitive
 else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 @y
 else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,too_big_usv);
 @z
 
-% Conflict with ../tex.ch
-@x
-for f:=font_base+1 to font_ptr do
-  if str_eq_str(font_name[f],cur_name)and str_eq_str(font_area[f],cur_area) then
-    begin if s>0 then
-      begin if s=font_size[f] then goto common_ending;
-      end
-    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
-      goto common_ending;
-    end
-@y
-for f:=font_base+1 to font_ptr do begin
-  if str_eq_str(font_name[f],cur_name) and
-    (((cur_area = "") and is_native_font(f)) or str_eq_str(font_area[f],cur_area)) then
-    begin if s>0 then
-      begin if s=font_size[f] then goto common_ending;
-      end
-    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
-      goto common_ending;
-    end;
-  { could be a native font whose "name" ended up partly in area or extension }
-  append_str(cur_area); append_str(cur_name); append_str(cur_ext);
-  if str_eq_str(font_name[f], make_string) then begin
-    flush_string;
-    if is_native_font(f) then
-      begin if s>0 then
-        begin if s=font_size[f] then goto common_ending;
-        end
-      else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
-        goto common_ending;
-      end
-    end
-  else flush_string;
-  end
-@z
-
-% Conflict with ../tex.ch
-@x
+@x [49.1275] l.23441 - Same stuff as for \input, this time for \openin.
      and a_open_in(read_file[n], kpse_tex_format) then
     read_open[n]:=just_open;
 @y

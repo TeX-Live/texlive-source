@@ -1,3 +1,7 @@
+2012-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex-rec.ch0: Avoid conflict with xetexdir/xetex.web.
+
 2012-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex_parser_utils.h: Avoid definition of FALSE and TRUE
