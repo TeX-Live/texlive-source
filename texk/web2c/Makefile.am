@@ -114,7 +114,6 @@ tie = WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
 
 # Calling tangle & Co. via tangle-sh (several output files)
 texmf_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(TANGLE)
-o_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 
 # For trip, trap, and other tests
 DIFF = diff

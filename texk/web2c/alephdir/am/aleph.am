@@ -1,6 +1,6 @@
 ## texk/web2c/alephdir/am/aleph.am: Makefile fragment for Aleph.
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Aleph
@@ -9,6 +9,8 @@ if ALEPH
 bin_PROGRAMS += aleph
 endif ALEPH
 EXTRA_PROGRAMS += aleph
+
+al_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 
 # With --enable-ipc, Aleph may need to link with -lsocket.
 aleph_LDADD = $(LDADD) $(ipc_socketlibs)
@@ -37,9 +39,9 @@ aleph-pool.c: aleph.pool alephd.h $(makecpool_stamp)
 
 # Tangling Aleph
 aleph.p aleph.pool: aleph-tangle
-	@$(o_tangle) aleph aleph
+	@$(al_tangle) aleph aleph
 aleph-tangle: otangle$(EXEEXT) aleph.web aleph.ch tangle-sh
-	@$(o_tangle) aleph aleph
+	@$(al_tangle) aleph aleph
 
 # Generate aleph.web
 aleph_web_srcs = \

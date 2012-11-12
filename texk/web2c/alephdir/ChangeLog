@@ -1,3 +1,7 @@
+2012-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/aleph.am: Define al_tangle and use it instead of o_tangle.
+
 2012-10-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* aleph.c ({allocate,undump}{font,ocp}table): Correctly specify

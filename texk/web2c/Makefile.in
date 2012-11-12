@@ -1732,7 +1732,6 @@ tie = WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
 
 # Calling tangle & Co. via tangle-sh (several output files)
 texmf_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(TANGLE)
-o_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 
 # For trip, trap, and other tests
 DIFF = diff
@@ -2674,6 +2673,7 @@ OMFONTS_tests = omegaware/level1.test omegaware/ofonts.test \
 	omegaware/omfonts.test omegaware/realnum.test omegaware/repeat.test \
 	omegaware/selectfont.test omegaware/specialhex.test
 
+al_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 
 # With --enable-ipc, Aleph may need to link with -lsocket.
 aleph_LDADD = $(LDADD) $(ipc_socketlibs)
@@ -10366,9 +10366,9 @@ aleph-pool.c: aleph.pool alephd.h $(makecpool_stamp)
 
 # Tangling Aleph
 aleph.p aleph.pool: aleph-tangle
-	@$(o_tangle) aleph aleph
+	@$(al_tangle) aleph aleph
 aleph-tangle: otangle$(EXEEXT) aleph.web aleph.ch tangle-sh
-	@$(o_tangle) aleph aleph
+	@$(al_tangle) aleph aleph
 aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
 	$(tie) -m aleph.web $(aleph_web_srcs)
 aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)

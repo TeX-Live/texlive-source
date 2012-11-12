@@ -1,3 +1,7 @@
+2012-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop o_tangle, no longer used.
+
 2012-11-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex.ch: Move native buffer printing code from here ...
