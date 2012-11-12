@@ -1,3 +1,14 @@
+2012-11-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Merge the XeTeX change files.
+	* xetex.ch: Moved most from here ...
+	* xetex-hz.ch (removed): ... and all from here ...
+	* xetex-latex3.ch (removed): ... and here ...
+	* xetex.web: ... and the results of merging ../tex.web with
+	../etexdir/etex.ch into this new file.
+	* tex.ch0 (new): Glue between xetex.web and ../tex.ch.
+	* am/xetex.am: Adapted to the new layout.
+
 2012-10-22  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* XeTeXFontInst.cpp, XeTeXOTMath.cpp, XeTeXOTMath.h, XeTeX_ext.c,

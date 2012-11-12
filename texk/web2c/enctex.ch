@@ -76,6 +76,12 @@ no_convert := false; active_noconvert := false;
     no_convert := false;
 @z
 
+@x [5.71] encTeX - native buffer printing
+if last<>first then for k:=first to last-1 do print(buffer[k]);
+@y
+k:=first; while k < last do begin print_buffer(k) end;
+@z
+
 @x [17.230] l.4725 - encTeX: xord_code_base, xchr_code_base, prn_code_base,
 @d math_font_base=cur_font_loc+1 {table of 48 math font numbers}
 @y

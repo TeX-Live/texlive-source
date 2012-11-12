@@ -1,3 +1,8 @@
+2012-11-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex.ch: Move native buffer printing code from here ...
+	* enctex.ch: ... to here.
+
 2012-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex.ch: Avoid conflict with xetexdir/xetex.web.

@@ -45,7 +45,7 @@ authorization from the copyright holders.
 @d banner_k==XeTeX_banner
 @z
 
-@x
+@x [2.20] l.579 - printable characters
 xchr: array [ASCII_code] of text_char;
    { specifies conversion of output characters }
 xprn: array [ASCII_code] of ASCII_code;
@@ -55,14 +55,14 @@ xprn: array [ASCII_code] of ASCII_code;
   {dummy variable so tangle doesn't complain; not actually used}
 @z
 
-@x
+@x [2.23] l.723 - Translate characters if desired, otherwise allow them all.
 {Initialize |xchr| to the identity mapping.}
 for i:=0 to @'37 do xchr[i]:=i;
 for i:=@'177 to @'377 do xchr[i]:=i;
 @y
 @z
 
-@x
+@x [2.24] l.733 - Don't reinitialize xord.
 for i:=0 to @'176 do xord[xchr[i]]:=i;
 {Set |xprn| for printable ASCII, unless |eight_bit_p| is set.}
 for i:=0 to 255 do xprn[i]:=(eight_bit_p or ((i>=" ")and(i<="~")));
@@ -79,7 +79,7 @@ if translate_filename then read_tcx_file;
 @y
 @z
 
-@x
+@x [3.26] l.789 - name_of_file is no longer an array
 @!name_of_file:^text_char;
 @y
 @!name_of_file:^UTF8_code; {we build filenames in utf8 to pass to the OS}
@@ -91,18 +91,18 @@ if translate_filename then read_tcx_file;
 @!name_of_file16:^UTF16_code;
 @z
 
-@x
+@x [3.30] l.888 - Array size of input buffer is determined at runtime.
 @!buffer:^ASCII_code; {lines of characters being read}
 @y
 @!buffer:^UnicodeScalar; {lines of characters being read}
 @z
 
-@x
+@x [3.32] l.961 - `term_in' and `term_out' are standard input and output.
 @d term_in==stdin {the terminal as an input file}
 @y
 @z
 
-@x
+@x [3.32] l.961
 @!bound_default:integer; {temporary for setup}
 @y
 @!term_in:unicode_file;
@@ -110,7 +110,7 @@ if translate_filename then read_tcx_file;
 @!bound_default:integer; {temporary for setup}
 @z
 
-@x
+@x [5.61] l.1556 - Print rest of banner, eliminate misleading `(no format preloaded)'.
 if translate_filename then begin
   wterm(' (');
   fputs(translate_filename, stdout);
@@ -120,12 +120,6 @@ if translate_filename then begin
   wterm(' (WARNING: translate-file "');
   fputs(translate_filename, stdout);
   wterm_ln('" ignored)');
-@z
-
-@x
-k:=first; while k < last do begin print_buffer(k) end;
-@y
-if last<>first then for k:=first to last-1 do print(buffer[k]);
 @z
 
 @x [6.84] l.1904 - Implement the switch-to-editor option.
@@ -174,16 +168,10 @@ if last<>first then for k:=first to last-1 do print(buffer[k]);
 @d etex_int_base=web2c_int_pars {base for \eTeX's integer parameters}
 @z
 
-@x
+@x [22.304] l.6536 - texarray; additions for file:line:error style.
 @!input_file : ^alpha_file;
 @y
 @!input_file : ^unicode_file;
-@z
-
-@x
-@* \[29] File names.
-@y
-@* \[29] File names.
 @z
 
 @x [29.516] l.9992 - filenames: more_name
@@ -267,13 +255,13 @@ if ext_delimiter<>0 then begin
 @y
 @z
 
-@x
+@x [29.517] l.10011 - end_name: string recycling
     for j:=str_start[str_ptr+1] to pool_ptr-1 do
 @y
     for j:=str_start_macro(str_ptr+1) to pool_ptr-1 do
 @z
 
-@x
+@x [29.517] l.10016 - end_name: string recycling
     for j:=str_start[str_ptr+1] to pool_ptr-1 do
 @y
     for j:=str_start_macro(str_ptr+1) to pool_ptr-1 do
@@ -285,8 +273,6 @@ if #<>0 then begin
   j:=str_start[#];
   while (not must_quote) and (j<str_start[#+1]) do begin
     must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end
 @y
 @d check_quoted(#) == {check if string |#| needs quoting}
 if #<>0 then begin
@@ -298,8 +284,6 @@ if #<>0 then begin
       quote_char:="""" + "'" - str_pool[j];
     end;
     incr(j);
-  end;
-end
 @z
 
 @x [29.518] l.10042 - print_file_name: quote if spaces in names.
@@ -350,7 +334,7 @@ print_quoted(a); print_quoted(n); print_quoted(e);
 if quote_char<>0 then print_char(quote_char);
 @z
 
-@x
+@x [29.519] l.10051 - have append_to_name skip quotes.
 @d append_to_name(#)==begin c:=#; if not (c="""") then begin incr(k);
   if k<=file_name_size then name_of_file[k]:=xchr[c];
   end end
@@ -370,13 +354,13 @@ if quote_char<>0 then print_char(quote_char);
   end
 @z
 
-@x
+@x [29.519] l.10047 - pack_file_name, leave room for the extra null
 name_of_file:= xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
 @y
 name_of_file:= xmalloc_array (UTF8_code, (length(a)+length(n)+length(e))*3+1);
 @z
 
-@x
+@x [29.523] l.10095 - Change to pack_buffered_name as with pack_file_name.
 name_of_file := xmalloc_array (ASCII_code, n+(b-a+1)+format_ext_length+1);
 for j:=1 to n do append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @y
@@ -384,13 +368,13 @@ name_of_file := xmalloc_array (UTF8_code, n+(b-a+1)+format_ext_length+1);
 for j:=1 to n do append_to_name(TEX_format_default[j]);
 @z
 
-@x
+@x [29.523] l.10095 - Change to pack_buffered_name as with pack_file_name.
   append_to_name(xord[ucharcast(TEX_format_default[j])]);
 @y
   append_to_name(TEX_format_default[j]);
 @z
 
-@x
+@x [29.525] l.10174 - make_name_string
   k:=1;
   while (k<=name_length)and(more_name(name_of_file[k])) do
 @y
@@ -398,7 +382,7 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
   while (k<name_length16)and(more_name(name_of_file16[k])) do
 @z
 
-@x
+@x [29.526] l.10194 - stop scanning file name if we're at end-of-line.
   {If |cur_chr| is a space and we're not scanning a token list, check
    whether we're at the end of the buffer. Otherwise we end up adding
    spurious spaces to file names in some cases.}
@@ -406,7 +390,7 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
 @y
 @z
 
-@x
+@x [29.536] l.10331
   wlog(' (');
   fputs(translate_filename, log_file);
   wlog(')');
@@ -416,7 +400,7 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
   wlog('" ignored)');
 @z
 
-@x
+@x [29.537] l.10338 - start_input
      and a_open_in(cur_file, kpse_tex_format) then
     goto done;
 @y
@@ -438,13 +422,7 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
     end;
 @z
 
-@x
-@* \[30] Font metric data.
-@y
-@* \[30] Font metric data.
-@z
-
-@x
+@x [30.549] l.10682 - texarray
 @!font_bc: ^eight_bits;
   {beginning (smallest) character code}
 @!font_ec: ^eight_bits;
@@ -456,7 +434,7 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
   {ending (largest) character code}
 @z
 
-@x
+@x [30.549] l.10682 - texarray
 @!font_false_bchar: ^nine_bits;
   {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
 @y
@@ -477,65 +455,27 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
 @!xdv_buffer: ^char; { scratch buffer used in generating XDV output }
 @z
 
-@x
-  print_char("="); print_file_name(nom,aire,"");
-@y
-  print_char("=");
-  if file_name_quote_char=")" then print_char("(")
-  else if file_name_quote_char<>0 then print_char(file_name_quote_char);
-  print_file_name(nom,aire,cur_ext);
-  if file_name_quote_char<>0 then print_char(file_name_quote_char);
-@z
-
-@x
+@x [30.561] l.10939 - Check lengths
 else print(" not loadable: Metric (TFM) file not found");
 @y
 else print(" not loadable: Metric (TFM) file or installed font not found");
 @z
 
 @x
-@ @<Open |tfm_file| for input...@>=
-file_opened:=false;
+@ We need a few subroutines for |new_character|.
+
+@p @t\4@>@<Declare subroutines for |new_character|@>@;
 @y
-@ @<Open |tfm_file| for input...@>=
+@ The subroutines for |new_character| have been moved.
 @z
 
-@x
-@ When \TeX\ wants to typeset a character that doesn't exist, the
-character node is not created; thus the output routine can assume
-that characters exist when it sees them. The following procedure
-prints a warning message unless the user has suppressed it.
-
-@p procedure char_warning(@!f:internal_font_number;@!c:eight_bits);
-var old_setting: integer; {saved value of |tracing_online|}
-begin if tracing_lost_chars>0 then
- begin old_setting:=tracing_online;
- if eTeX_ex and(tracing_lost_chars>1) then tracing_online:=1;
-  begin begin_diagnostic;
-  print_nl("Missing character: There is no ");
-@.Missing character@>
-  if c < @"10000 then print_ASCII(c)
-  else begin { non-Plane 0 Unicodes can't be sent through |print_ASCII| }
-    print("character number ");
-    print_hex(c);
-  end;
-  print(" in font ");
-  slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
-  end;
- tracing_online:=old_setting;
- end;
-end;
-@y
-@ Procedure |char_warning| has been moved in the source.
-@z
-
-@x
+@x [30.582] l.11276 - MLTeX: call |effective_char| in |new_character|
 @p function new_character(@!f:internal_font_number;@!c:eight_bits):pointer;
 @y
 @p function new_character(@!f:internal_font_number;@!c:ASCII_code):pointer;
 @z
 
-@x
+@x [30.582] l.11276 - MLTeX: call |effective_char| in |new_character|
 begin ec:=effective_char(false,f,qi(c));
 @y
 begin
@@ -545,21 +485,7 @@ if is_native_font(f) then
 ec:=effective_char(false,f,qi(c));
 @z
 
-@x
-@* \[32] Shipping pages out.
-@y
-@* \[32] Shipping pages out.
-@z
-
-@x
-  for s:=str_start[str_ptr] to pool_ptr-1 do dvi_out(so(str_pool[s]));
-  pool_ptr:=str_start[str_ptr]; {flush the current string}
-@y
-  for s:=str_start_macro(str_ptr) to pool_ptr-1 do dvi_out(so(str_pool[s]));
-  pool_ptr:=str_start_macro(str_ptr); {flush the current string}
-@z
-
-@x
+@x [32.619] l.12294 - MLTeX: substitute character in |hlist_out|
 label reswitch, move_past, fin_rule, next_p, continue, found;
 @y
 label reswitch, move_past, fin_rule, next_p, continue, found, check_next, end_node_run;
@@ -573,7 +499,7 @@ if list_ptr(p)=null then begin
   end
 @z
 
-@x
+@x [32.645] l.12780 - use print_file_name
   print_nl("Output written on "); print_file_name(0, output_file_name, 0);
 @.Output written on x@>
   print(" ("); print_int(total_pages);
@@ -601,85 +527,30 @@ if list_ptr(p)=null then begin
     end;
 @z
 
-@x
-@* \[36] Typesetting math formulas.
-@y
-@* \[36] Typesetting math formulas.
-@z
-
 @x [36.749] l.14638 - MLTeX: avoid substitution in |make_op|
     begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
 @y
       begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
 @z
 
-@x
-@* \[42] Hyphenation.
-@y
-@* \[42] Hyphenation.
-@z
-
-% Conflict with ../tex.ch
-@x
-  begin j:=1; u:=str_start[k];
-@y
-  begin j:=1; u:=str_start_macro(k);
-@z
-
-% Conflict with ../tex.ch
-@x
-u:=str_start[k]; v:=str_start[s];
-@y
-u:=str_start_macro(k); v:=str_start_macro(s);
-@z
-
-% Conflict with ../tex.ch
-@x
-until u=str_start[k+1];
-@y
-until u=str_start_macro(k+1);
-@z
-
-@x
-@* \[43] Initializing the hyphenation tables.
-@y
-@* \[43] Initializing the hyphenation tables.
-@z
-
-% Conflict with ../tex.ch
-@x
+@x [43.943] l.18348 - bigtrie: Larger hyphenation tries.
 @!trie_used:array[ASCII_code] of trie_opcode;
 @y
 @!trie_used:array[0..biggest_lang] of trie_opcode;
 @z
 
-% Conflict with ../tex.ch
-@x
-@!trie_op_lang:array[1..trie_op_size] of ASCII_code;
-@y
-@!trie_op_lang:array[1..trie_op_size] of 0..biggest_lang;
-@z
-
-% Conflict with ../tex.ch
-@x
+@x [43.946] l.18416 - bigtrie: And larger tries again.
 for k:=0 to 255 do trie_used[k]:=min_trie_op;
 @y
 for k:=0 to biggest_lang do trie_used[k]:=min_trie_op;
 @z
 
-% Conflict with ../tex.ch
-@x
+@xx [43.958] l.18638 - bigtrie: Larger tries.
   begin for r:=0 to 256 do clear_trie;
   trie_max:=256;
 @y
   begin for r:=0 to max_hyph_char do clear_trie;
   trie_max:=max_hyph_char;
-@z
-
-@x
-@* \[49] Mode-independent processing.
-@y
-@* \[49] Mode-independent processing.
 @z
 
 @x [49.1222] l.22833 - MLTeX: \charsubdef primitive
@@ -708,66 +579,56 @@ else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,too_big_usv);
     end;
 @z
 
-@x
-@* \[50] Dumping and undumping the tables.
-@y
-@* \[50] Dumping and undumping the tables.
-@z
-
-@x
+@x [50.1302] l.23690 - store_fmt_file
 @!format_engine: ^text_char;
 @y
 @!format_engine: ^char;
 @z
 
-@x
+@x [50.1303] l.23722 - load_fmt_file
 @!format_engine: ^text_char;
-@y
-@!format_engine: ^char;
-@z
-
-@x
 @!dummy_xord: ASCII_code;
 @!dummy_xchr: text_char;
 @!dummy_xprn: ASCII_code;
 @y
+@!format_engine: ^char;
 @z
 
-@x
+@x [50,1307] l.23779 - texarray
 format_engine:=xmalloc_array(text_char,x+4);
 @y
 format_engine:=xmalloc_array(char,x+4);
 @z
 
-@x
+@x [50,1307] l.23779 - texarray
 @<Dump |xord|, |xchr|, and |xprn|@>;
 @y
 @z
 
-@x
+@x [50.1308] l.23793 - texarray
 format_engine:=xmalloc_array(text_char, x);
 @y
 format_engine:=xmalloc_array(char, x);
 @z
 
-@x
+@x [50.1308] l.23793 - texarray
 @<Undump |xord|, |xchr|, and |xprn|@>;
 @y
 @z
 
-@x
+@x [50.1309] l.23814 - Make dumping/undumping more efficient.
 dump_things(str_start[0], str_ptr+1);
 @y
 dump_things(str_start_macro(too_big_char), str_ptr+1-too_big_char);
 @z
 
-@x
+@x [50.1310] l.23829 - Make dumping/undumping more efficient.
 undump_checked_things(0, pool_ptr, str_start[0], str_ptr+1);@/
 @y
 undump_checked_things(0, pool_ptr, str_start_macro(too_big_char), str_ptr+1-too_big_char);@/
 @z
 
-@x
+@x [50.1322] l.24000 - Make dumping/undumping more efficient - tfm
   print_file_name(font_name[k],font_area[k],"");
 @y
   if is_native_font(k) or (font_mapping[k]<>0) then
@@ -781,7 +642,7 @@ undump_checked_things(0, pool_ptr, str_start_macro(too_big_char), str_ptr+1-too_
   else print_file_name(font_name[k],font_area[k],"");
 @z
 
-@x
+@x [50.1322] l.24031 - Make dumping/undumping more efficient - tfm
 begin {Allocate the font arrays}
 @y
 begin {Allocate the font arrays}
@@ -791,7 +652,7 @@ font_flags:=xmalloc_array(char, font_max);
 font_letter_space:=xmalloc_array(scaled, font_max);
 @z
 
-@x
+@x [50.1322] l.24031 - Make dumping/undumping more efficient - tfm
 font_bc:=xmalloc_array(eight_bits, font_max);
 font_ec:=xmalloc_array(eight_bits, font_max);
 @y
@@ -799,33 +660,27 @@ font_bc:=xmalloc_array(UTF16_code, font_max);
 font_ec:=xmalloc_array(UTF16_code, font_max);
 @z
 
-@x
+@x [50.1322] l.24031 - Make dumping/undumping more efficient - tfm
 undump_things(font_check[null_font], font_ptr+1-null_font);
 @y
 for k:=null_font to font_ptr do font_mapping[k]:=0;
 undump_things(font_check[null_font], font_ptr+1-null_font);
 @z
 
-@x
-@* \[51] The main program.
-@y
-@* \[51] The main program.
-@z
-
-@x
+@x [51.1332] l.24203 - make the main program a procedure, for eqtb hack.
   setup_bound_var (15000)('max_strings')(max_strings);
 @y
   setup_bound_var (15000)('max_strings')(max_strings);
   max_strings:=max_strings+too_big_char; {the |max_strings| value doesn't include the 64K synthetic strings}
 @z
 
-@x
+@x [51.1332] l.24203 - make the main program a procedure, for eqtb hack.
   buffer:=xmalloc_array (ASCII_code, buf_size);
 @y
   buffer:=xmalloc_array (UnicodeScalar, buf_size);
 @z
 
-@x
+@x [51.1332] l.24203 - make the main program a procedure, for eqtb hack.
   input_file:=xmalloc_array (alpha_file, max_in_open);
 @y
   input_file:=xmalloc_array (unicode_file, max_in_open);
@@ -840,7 +695,7 @@ undump_things(font_check[null_font], font_ptr+1-null_font);
   if_stack:=xmalloc_array (pointer, max_in_open);
 @z
 
-@x
+@x [51.1333] l.24254 - Print new line before termination; switch to editor if necessary.
     print_file_name(0, log_name, 0); print_char(".");
 @y
     print(log_name); print_char(".");
@@ -853,7 +708,7 @@ undump_things(font_check[null_font], font_ptr+1-null_font);
   hyph_root:=0; hyph_start:=0;
 @z
 
-@x
+@x [51.1337] l.24371 - Allocate hyphenation tries, do char translation, MLTeX
   {Allocate and initialize font arrays}
 @y
   {Allocate and initialize font arrays}
@@ -863,7 +718,7 @@ undump_things(font_check[null_font], font_ptr+1-null_font);
   font_letter_space:=xmalloc_array(scaled, font_max);
 @z
 
-@x
+@x [51.1337] l.24371 - Allocate hyphenation tries, do char translation, MLTeX
   font_bc:=xmalloc_array(eight_bits, font_max);
   font_ec:=xmalloc_array(eight_bits, font_max);
 @y
@@ -871,41 +726,33 @@ undump_things(font_check[null_font], font_ptr+1-null_font);
   font_ec:=xmalloc_array(UTF16_code, font_max);
 @z
 
-@x
+@x [51.1337] l.24371 - Allocate hyphenation tries, do char translation, MLTeX
   param_base[null_font]:=-1;
 @y
   font_mapping[null_font]:=0;
   param_base[null_font]:=-1;
 @z
 
-@x
-@* \[53] Extensions.
-@y
-@* \[53] Extensions.
-@z
-
-% Revert ../tex.ch
-% i and j are unused by TeX but required for XeTeX
-@x [53.1348] (do_extension)
+@x [53.1348] (do_extension) Remove unused variables
 var k:integer; {all-purpose integers}
 @y
 var i,@!j,@!k:integer; {all-purpose integers}
 @z
 
-@x
+@x [53.1370] l.24779 - system: (write_out) \write18{foo} => system(foo).
     print(so(str_pool[str_start[str_ptr]+d])); {N.B.: not |print_char|}
 @y
     print(so(str_pool[str_start_macro(str_ptr)+d])); {N.B.: not |print_char|}
 @z
 
-@x
+@x [53.1370] l.24779 - system: (write_out) \write18{foo} => system(foo).
         str_pool[str_start[str_ptr]+d]:=xchr[str_pool[str_start[str_ptr]+d]];
         if (str_pool[str_start[str_ptr]+d]=null_code)
 @y
       if (str_pool[str_start_macro(str_ptr)+d]=null_code)
 @z
 
-@x convert from UTF-16 to UTF-8 for system(3).
+@x [53.1370] l.24779 - convert from UTF-16 to UTF-8 for system(3).
       runsystem_ret := runsystem(conststringcast(addressof(
                                               str_pool[str_start[str_ptr]])));
 @y
@@ -918,7 +765,7 @@ var i,@!j,@!k:integer; {all-purpose integers}
       runsystem_ret := runsystem(conststringcast(name_of_file+1));
 @z
 
-@x
+@x [53.1370] l.24779 - system: (write_out) \write18{foo} => system(foo).
   pool_ptr:=str_start[str_ptr];  {erase the string}
 @y
   pool_ptr:=str_start_macro(str_ptr);  {erase the string}
@@ -958,13 +805,13 @@ var i,@!j,@!k:integer; {all-purpose integers}
 @!if_stack : ^pointer; {initial |cond_ptr|}
 @z
 
-@x
+@x [54.1376] l.24903 - print_csnames
       for c := str_start[text(h)] to str_start[text(h) + 1] - 1
 @y
       for c := str_start_macro(text(h)) to str_start_macro(text(h) + 1) - 1
 @z
 
-@x
+@x [54.1376] l.24903 - Dumping/Undumping
 @ Dumping the |xord|, |xchr|, and |xprn| arrays.  We dump these always
 in the format, so a TCX file loaded during format creation can set a
 default for users of the format.
@@ -1052,401 +899,6 @@ exit:end;
 @y
 effective_char_info:=null_character;
 exit:end;
-
-{ the following procedure has been moved so that |new_native_character| can call it }
-
-procedure char_warning(@!f:internal_font_number;@!c:integer);
-var old_setting: integer; {saved value of |tracing_online|}
-begin if tracing_lost_chars>0 then
- begin old_setting:=tracing_online;
- if eTeX_ex and(tracing_lost_chars>1) then tracing_online:=1;
-  begin begin_diagnostic;
-  print_nl("Missing character: There is no ");
-@.Missing character@>
-  if c < @"10000 then print_ASCII(c)
-  else begin { non-Plane 0 Unicodes can't be sent through |print_ASCII| }
-    print("character number ");
-    print_hex(c);
-  end;
-  print(" in font ");
-  slow_print(font_name[f]); print_char("!"); end_diagnostic(false);
-  end;
- tracing_online:=old_setting;
- end;
-end;
-
-{ additional functions for native font support }
-
-function new_native_word_node(@!f:internal_font_number;@!n:integer):pointer;
-	{ note that this function creates the node, but does not actually set its metrics;
-		call |set_native_metrics(node)| if that is required! }
-var
-	l:	integer;
-	q:	pointer;
-begin
-	l := native_node_size + (n * sizeof(UTF16_code) + sizeof(memory_word) - 1) div sizeof(memory_word);
-
-	q := get_node(l);
-	type(q) := whatsit_node;
-	subtype(q) := native_word_node;
-
-	native_size(q) := l;
-	native_font(q) := f;
-	native_length(q) := n;
-
-	native_glyph_count(q) := 0;
-	native_glyph_info_ptr(q) := null_ptr;
-
-	new_native_word_node := q;
-end;
-
-function new_native_character(@!f:internal_font_number;@!c:UnicodeScalar):pointer;
-var
-	p:	pointer;
-	i, len: integer;
-begin
-	if font_mapping[f] <> 0 then begin
-		if c > @"FFFF then begin
-			str_room(2);
-			append_char((c - @"10000) div 1024 + @"D800);
-			append_char((c - @"10000) mod 1024 + @"DC00);
-		end
-		else begin
-			str_room(1);
-			append_char(c);
-		end;
-		len := apply_mapping(font_mapping[f], addressof(str_pool[str_start_macro(str_ptr)]), cur_length);
-		pool_ptr := str_start_macro(str_ptr); { flush the string, as we'll be using the mapped text instead }
-
-		i := 0;
-		while i < len do begin
-			if (mapped_text[i] >= @"D800) and (mapped_text[i] < @"DC00) then begin
-				c := (mapped_text[i] - @"D800) * 1024 + mapped_text[i+1] - @"DC00 + @"10000;
-				if map_char_to_glyph(f, c) = 0 then begin
-					char_warning(f, c);
-				end;
-				i := i + 2;
-			end
-			else begin
-				if map_char_to_glyph(f, mapped_text[i]) = 0 then begin
-					char_warning(f, mapped_text[i]);
-				end;
-				i := i + 1;
-			end;
-		end;
-
-		p := new_native_word_node(f, len);
-		for i := 0 to len-1 do begin
-			set_native_char(p, i, mapped_text[i]);
-		end
-	end
-	else begin
-		if tracing_lost_chars > 0 then
-			if map_char_to_glyph(f, c) = 0 then begin
-				char_warning(f, c);
-			end;
-
-		p := get_node(native_node_size + 1);
-		type(p) := whatsit_node;
-		subtype(p) := native_word_node;
-
-		native_size(p) := native_node_size + 1;
-		native_glyph_count(p) := 0;
-		native_glyph_info_ptr(p) := null_ptr;
-		native_font(p) := f;
-
-		if c > @"FFFF then begin
-			native_length(p) := 2;
-			set_native_char(p, 0, (c - @"10000) div 1024 + @"D800);
-			set_native_char(p, 1, (c - @"10000) mod 1024 + @"DC00);
-		end
-		else begin
-			native_length(p) := 1;
-			set_native_char(p, 0, c);
-		end;
-	end;
-
-	set_native_metrics(p, XeTeX_use_glyph_metrics);
-
-	new_native_character := p;
-end;
-
-procedure font_feature_warning(featureNameP:void_pointer; featLen:integer;
-	settingNameP:void_pointer; setLen:integer);
-var
-	i: integer;
-begin
-	begin_diagnostic;
-	print_nl("Unknown ");
-	if setLen > 0 then begin
-		print("selector `");
-		print_utf8_str(settingNameP, setLen);
-		print("' for ");
-	end;
-	print("feature `");
-	print_utf8_str(featureNameP, featLen);
-	print("' in font `");
-	i := 1;
-	while ord(name_of_file[i]) <> 0 do begin
-		print_visible_char(name_of_file[i]); { this is already UTF-8 }
-		incr(i);
-	end;
-	print("'.");
-	end_diagnostic(false);
-end;
-
-procedure font_mapping_warning(mappingNameP:void_pointer;
-	mappingNameLen:integer;
-	warningType:integer); { 0: just logging; 1: file not found; 2: can't load }
-var
-	i: integer;
-begin
-	begin_diagnostic;
-	if warningType=0 then print_nl("Loaded mapping `")
-	else print_nl("Font mapping `");
-	print_utf8_str(mappingNameP, mappingNameLen);
-	print("' for font `");
-	i := 1;
-	while ord(name_of_file[i]) <> 0 do begin
-		print_visible_char(name_of_file[i]); { this is already UTF-8 }
-		incr(i);
-	end;
-	case warningType of
-		1: print("' not found.");
-		2: begin print("' not usable;");
-		     print_nl("bad mapping file or incorrect mapping type.");
-		   end;
-		othercases print("'.")
-	endcases;
-	end_diagnostic(false);
-end;
-
-procedure graphite_warning;
-var
-	i: integer;
-begin
-	begin_diagnostic;
-	print_nl("Font `");
-	i := 1;
-	while ord(name_of_file[i]) <> 0 do begin
-		print_visible_char(name_of_file[i]); { this is already UTF-8 }
-		incr(i);
-	end;
-	print("' does not support Graphite. Trying ICU layout instead.");
-	end_diagnostic(false);
-end;
-
-function load_native_font(u: pointer; nom, aire:str_number; s: scaled): internal_font_number;
-label
-	done;
-const
-	first_math_fontdimen = 10;
-var
-	k, num_font_dimens: integer;
-	font_engine: void_pointer;	{really an ATSUStyle or XeTeXLayoutEngine}
-	actual_size: scaled;	{|s| converted to real size, if it was negative}
-	p: pointer;	{for temporary |native_char| node we'll create}
-	ascent, descent, font_slant, x_ht, cap_ht: scaled;
-	f: internal_font_number;
-	full_name: str_number;
-begin
-	{ on entry here, the full name is packed into |name_of_file| in UTF8 form }
-
-	load_native_font := null_font;
-
-	font_engine := find_native_font(name_of_file + 1, s);
-	if font_engine = 0 then goto done;
-	
-	if s>=0 then
-		actual_size := s
-	else begin
-		if (s <> -1000) then
-			actual_size := xn_over_d(loaded_font_design_size,-s,1000)
-		else
-			actual_size := loaded_font_design_size;
-	end;
-
-	{ look again to see if the font is already loaded, now that we know its canonical name }
-	str_room(name_length);
-	for k := 1 to name_length do
-		append_char(name_of_file[k]);
-    full_name := make_string; { not |slow_make_string| because we'll flush it if the font was already loaded }
-
-	for f:=font_base+1 to font_ptr do
-  		if (font_area[f] = native_font_type_flag) and str_eq_str(font_name[f], full_name) and (font_size[f] = actual_size) then begin
-  		    release_font_engine(font_engine, native_font_type_flag);
-  			flush_string;
-  		    load_native_font := f;
-  		    goto done;
-        end;
-
-	if (native_font_type_flag = otgr_font_flag) and isOpenTypeMathFont(font_engine) then
-		num_font_dimens := first_math_fontdimen + lastMathConstant
-	else
-		num_font_dimens := 8;
-
-	if (font_ptr = font_max) or (fmem_ptr + num_font_dimens > font_mem_size) then begin
-		@<Apologize for not loading the font, |goto done|@>;
-	end;
-
-	{ we've found a valid installed font, and have room }
-	incr(font_ptr);
-	font_area[font_ptr] := native_font_type_flag; { set by |find_native_font| to either |aat_font_flag| or |ot_font_flag| }
-
-	{ store the canonical name }
-	font_name[font_ptr] := full_name;
-
-	font_check[font_ptr].b0 := 0;
-	font_check[font_ptr].b1 := 0;
-	font_check[font_ptr].b2 := 0;
-	font_check[font_ptr].b3 := 0;
-	font_glue[font_ptr] := null;
-	font_dsize[font_ptr] := loaded_font_design_size;
-	font_size[font_ptr] := actual_size;
-
-	if (native_font_type_flag = aat_font_flag) then begin
-		atsu_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
-								addressof(x_ht), addressof(cap_ht), addressof(font_slant))
-	end else begin
-		ot_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
-								addressof(x_ht), addressof(cap_ht), addressof(font_slant));
-	end;
-
-	height_base[font_ptr] := ascent;
-	depth_base[font_ptr] := -descent;
-
-	font_params[font_ptr] := num_font_dimens;	{ we add an extra fontdimen: \#8 -> |cap_height|;
-													then OT math fonts have a bunch more }
-	font_bc[font_ptr] := 0;
-	font_ec[font_ptr] := 65535;
-	font_used[font_ptr] := false;
-	hyphen_char[font_ptr] := default_hyphen_char;
-	skew_char[font_ptr] := default_skew_char;
-	param_base[font_ptr] := fmem_ptr-1;
-
-	font_layout_engine[font_ptr] := font_engine;
-	font_mapping[font_ptr] := 0; { don't use the mapping, if any, when measuring space here }
-	font_letter_space[font_ptr] := loaded_font_letter_space;
-
-	{measure the width of the space character and set up font parameters}
-	p := new_native_character(font_ptr, " ");
-	s := width(p) + loaded_font_letter_space;
-	free_node(p, native_size(p));
-
-	font_info[fmem_ptr].sc := font_slant;							{|slant|}
-	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := s;									{|space| = width of space character}
-	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := s div 2;								{|space_stretch| = 1/2 * space}
-	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := s div 3;								{|space_shrink| = 1/3 * space}
-	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := x_ht;									{|x_height|}
-	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := font_size[font_ptr];					{|quad| = font size}
-	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := s div 3;								{|extra_space| = 1/3 * space}
-	incr(fmem_ptr);
-	font_info[fmem_ptr].sc := cap_ht;								{|cap_height|}
-	incr(fmem_ptr);
-
-	if num_font_dimens = first_math_fontdimen + lastMathConstant then begin
-		font_info[fmem_ptr].int := num_font_dimens; { \fontdimen9 = number of assigned fontdimens }
-		incr(fmem_ptr);
-		for k := 0 to lastMathConstant do begin
-			font_info[fmem_ptr].sc := get_ot_math_constant(font_ptr, k);
-			incr(fmem_ptr);
-		end;
-	end;
-
-	font_mapping[font_ptr] := loaded_font_mapping;
-	font_flags[font_ptr] := loaded_font_flags;
-
-	load_native_font := font_ptr;
-done:
-end;
-
-procedure do_locale_linebreaks(s: integer; len: integer);
-var
-	offs, prevOffs, i: integer;
-	use_penalty, use_skip: boolean;
-begin
-	if (XeTeX_linebreak_locale = 0) or (len = 1) then begin
-		link(tail) := new_native_word_node(main_f, len);
-		tail := link(tail);
-		for i := 0 to len - 1 do
-			set_native_char(tail, i, native_text[s + i]);
-		set_native_metrics(tail, XeTeX_use_glyph_metrics);
-	end else begin
-		use_skip := XeTeX_linebreak_skip <> zero_glue;
-		use_penalty := XeTeX_linebreak_penalty <> 0 or not use_skip;
-		if (is_gr_font(main_f)) and (str_eq_str(XeTeX_linebreak_locale, "G")) then begin
-			initGraphiteBreaking(font_layout_engine[main_f], native_text + s, len);
-			offs := 0;
-			repeat
-				prevOffs := offs;
-				offs := findNextGraphiteBreak(offs, 15); {klbWordBreak = 15}
-				if offs > 0 then begin
-					if prevOffs <> 0 then begin
-						if use_penalty then
-							tail_append(new_penalty(XeTeX_linebreak_penalty));
-						if use_skip then
-							tail_append(new_param_glue(XeTeX_linebreak_skip_code));
-					end;
-					link(tail) := new_native_word_node(main_f, offs - prevOffs);
-					tail := link(tail);
-					for i := prevOffs to offs - 1 do
-						set_native_char(tail, i - prevOffs, native_text[s + i]);
-					set_native_metrics(tail, XeTeX_use_glyph_metrics);
-				end;
-			until offs < 0;
-		end
-		else begin
-			linebreak_start(XeTeX_linebreak_locale, native_text + s, len);
-			offs := 0;
-			repeat
-				prevOffs := offs;
-				offs := linebreak_next;
-				if offs > 0 then begin
-					if prevOffs <> 0 then begin
-						if use_penalty then
-							tail_append(new_penalty(XeTeX_linebreak_penalty));
-						if use_skip then
-							tail_append(new_param_glue(XeTeX_linebreak_skip_code));
-					end;
-					link(tail) := new_native_word_node(main_f, offs - prevOffs);
-					tail := link(tail);
-					for i := prevOffs to offs - 1 do
-						set_native_char(tail, i - prevOffs, native_text[s + i]);
-					set_native_metrics(tail, XeTeX_use_glyph_metrics);
-				end;
-			until offs < 0;
-		end
-	end
-end;
-
-procedure bad_utf8_warning;
-begin
-	begin_diagnostic;
-	print_nl("Invalid UTF-8 byte or sequence");
-	if terminal_input then print(" in terminal input")
-	else begin
-		print(" at line ");
-		print_int(line);
-	end;
-	print(" replaced by U+FFFD.");
-	end_diagnostic(false);
-end;
-
-function get_input_normalization_state: integer;
-begin
-	if eqtb=nil then get_input_normalization_state:=0 { may be called before eqtb is initialized }
-	else get_input_normalization_state:=XeTeX_input_normalization_state;
-end;
-
-function get_tracing_fonts_state: integer;
-begin
-	get_tracing_fonts_state:=XeTeX_tracing_fonts_state;
-end;
-
+@#
+@<Declare subroutines for |new_character|@>@;
 @z

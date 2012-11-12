@@ -782,12 +782,6 @@ if translate_filename then begin
 end;
 @z
 
-@x [5.71] encTeX - native buffer printing
-if last<>first then for k:=first to last-1 do print(buffer[k]);
-@y
-k:=first; while k < last do begin print_buffer(k) end;
-@z
-
 @x [6.73] l.1732 - Add unspecified_mode.
 @d error_stop_mode=3 {stops at every opportunity to interact}
 @y
@@ -2012,7 +2006,7 @@ months := ' JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 
 % Print whether we're using src-specials and other such features.
 % Print TCX name if one's given.
-@x [29/536] l.10331
+@x [29.536] l.10331
 end
 @y
 if shellenabledp then begin
@@ -2332,18 +2326,12 @@ else if name_too_long then print(" not loadable: Metric (TFM) file name too long
 else print(" not loadable: Metric (TFM) file not found");
 @z
 
-@x [30.563] l.10960 - Check lengths
-file_opened:=false;
-@y
-file_opened:=false;
-name_too_long:=(length(nom)>255)or(length(aire)>255);
-if name_too_long then abort;
-@z
-
-@x [30.563] l.10961 - Don't use TEX_font_area.
+@x [30.563] l.10961 - Check lengths, don't use TEX_font_area.
 if aire="" then pack_file_name(nom,TEX_font_area,".tfm")
 else pack_file_name(nom,aire,".tfm");
 @y
+name_too_long:=(length(nom)>255)or(length(aire)>255);
+if name_too_long then abort;
 {|kpse_find_file| will append the |".tfm"|, and avoid searching the disk
  before the font alias files as well.}
 pack_file_name(nom,aire,"");
@@ -2373,10 +2361,10 @@ pack_file_name(nom,aire,"");
   qw:=orig_char_info(f)(#); {N.B.: not |qi(#)|}
 @z
 
-% [32.575] We only want `eof' on the TFM file to be true if we
+% [30.575] We only want `eof' on the TFM file to be true if we
 % previously had EOF, not if we're at EOF now.  This is like `feof', and
 % unlike our implementation of `eof' elsewhere.
-@x [32.575] l.11161 - Reading the tfm file, replace eof() by feof().
+@x [30.575] l.11180 - Reading the tfm file, replace eof() by feof().
 if eof(tfm_file) then abort;
 @y
 if feof(tfm_file) then abort;
@@ -2484,7 +2472,7 @@ else begin dvi_out(fnt_def1+1);
   end;
 @z
 
-@x [32.617] l.12261 - Use output_comment if the user set it. Assume it's short enough.
+@x [32.617] l.12280 - Use output_comment if the user set it. Assume it's short enough.
   old_setting:=selector; selector:=new_string;
 @y
 if output_comment then
@@ -2495,11 +2483,11 @@ else begin {the default code is unchanged}
   old_setting:=selector; selector:=new_string;
 @z
 
-@x [32.617] l.12268 - Use output_comment if the user set it.
-  pool_ptr:=str_start[str_ptr]; {flush the current string}
+@x [32.617] l.12288 - Use output_comment if the user set it.
+  end
 @y
-  pool_ptr:=str_start[str_ptr]; {flush the current string}
 end;
+  end
 @z
 
 @x [32.619] l.12294 - MLTeX: substitute character in |hlist_out|
@@ -2839,36 +2827,23 @@ loop@+  begin @<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|,
 not_found: decr(hn)
 @z
 
-%%%%%%%% dynamic hyph_size
-@x 18172 m.931
+@x [42.931] l.18206 - dynamic hyph_size
 @ @<If the string |hyph_word[h]| is less than \(hc)...@>=
 k:=hyph_word[h]; if k=0 then goto not_found;
 if length(k)<hn then goto not_found;
-if length(k)=hn then
-  begin j:=1; u:=str_start[k];
-  repeat if so(str_pool[u])<hc[j] then goto not_found;
-  if so(str_pool[u])>hc[j] then goto done;
-  incr(j); incr(u);
-  until j>hn;
-  @<Insert hyphens as specified in |hyph_list[h]|@>;
-  decr(hn); goto found;
-  end;
-done:
-@y  18184
+@y
 @ @<If the string |hyph_word[h]| is less than \(hc)...@>=
 {This is now a simple hash list, not an ordered one, so
 the module title is no longer descriptive.}
 k:=hyph_word[h]; if k=0 then goto not_found;
-if length(k)=hn then
-  begin j:=1; u:=str_start[k];
+@z
+
+@x [42.931] l.18211 - dynamic hyph_size
+  repeat if so(str_pool[u])<hc[j] then goto not_found;
+  if so(str_pool[u])>hc[j] then goto done;
+@y
   repeat
   if so(str_pool[u])<>hc[j] then goto done;
-  incr(j); incr(u);
-  until j>hn;
-  @<Insert hyphens as specified in |hyph_list[h]|@>;
-  decr(hn); goto found;
-  end;
-done:
 @z
 
 %%%%%%%% dynamic hyph_size
@@ -2920,30 +2895,31 @@ while hyph_word[h]<>0 do
 found: hyph_word[h]:=s; hyph_list[h]:=p
 @z
 
-%%%%%%%% dynamic hyph_size
-@x 18292 m.941
+@x [42.941] l.18326 - dynamic hyph_size
 @ @<If the string |hyph_word[h]| is less than \(or)...@>=
 k:=hyph_word[h];
 if length(k)<length(s) then goto found;
 if length(k)>length(s) then goto not_found;
-u:=str_start[k]; v:=str_start[s];
-repeat if str_pool[u]<str_pool[v] then goto found;
-if str_pool[u]>str_pool[v] then goto not_found;
-incr(u); incr(v);
-until u=str_start[k+1];
-found:q:=hyph_list[h]; hyph_list[h]:=p; p:=q;@/
-t:=hyph_word[h]; hyph_word[h]:=s; s:=t;
-not_found:
-@y  18303
+@y
 @ @<If the string |hyph_word[h]| is less than \(or)...@>=
 {This is now a simple hash list, not an ordered one, so
 the module title is no longer descriptive.}
 k:=hyph_word[h];
 if length(k)<>length(s) then goto not_found;
-u:=str_start[k]; v:=str_start[s];
+@z
+
+@x [42.941] l.18331 - dynamic hyph_size
+repeat if str_pool[u]<str_pool[v] then goto found;
+if str_pool[u]>str_pool[v] then goto not_found;
+@y
 repeat if str_pool[u]<>str_pool[v] then goto not_found;
-incr(u); incr(v);
-until u=str_start[k+1];
+@z
+
+@x [42.941] l.18335 - dynamic hyph_size
+found:q:=hyph_list[h]; hyph_list[h]:=p; p:=q;@/
+t:=hyph_word[h]; hyph_word[h]:=s; s:=t;
+not_found:
+@y
 {repeat hyphenation exception; flushing old data}
 flush_string; s:=hyph_word[h]; {avoid |slow_make_string|!}
 decr(hyph_count);
@@ -3414,7 +3390,7 @@ if ini_version then format_ident:=" (INITEX)";
 
 % Eliminate now-unused variable `w' in `store_fmt_file'.
 % Add format_engine.
-@x [50.1302] l.23690
+@x [50.1302] l.23690 - store_fmt_file
 @!w: four_quarters; {four ASCII codes}
 @y
 @!format_engine: ^text_char;
@@ -3431,7 +3407,7 @@ if ini_version then format_ident:=" (INITEX)";
 % Eliminate now-unused variable `w' in `load_fmt_file'.
 % Add format_engine.
 % Add dummies for undumping |xord|, |xchr|, and |xprn| into the void.
-@x [50.1303] l.23722
+@x [50.1303] l.23722 - load_fmt_file
 @!w: four_quarters; {four ASCII codes}
 @y
 @!format_engine: ^text_char;

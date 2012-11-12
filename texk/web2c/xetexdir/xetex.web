@@ -12337,7 +12337,11 @@ precise details about why it rejects a particular \.{TFM} file.
 @.TFtoPL@> @.PLtoTF@>
 
 @d start_font_error_message==print_err("Font "); sprint_cs(u);
-  print_char("="); print_file_name(nom,aire,"");
+  print_char("=");
+  if file_name_quote_char=")" then print_char("(")
+  else if file_name_quote_char<>0 then print_char(file_name_quote_char);
+  print_file_name(nom,aire,cur_ext);
+  if file_name_quote_char<>0 then print_char(file_name_quote_char);
   if s>=0 then
     begin print(" at "); print_scaled(s); print("pt");
     end
@@ -12371,7 +12375,6 @@ error
 end
 
 @ @<Open |tfm_file| for input...@>=
-file_opened:=false;
 if aire="" then pack_file_name(nom,TEX_font_area,".tfm")
 else pack_file_name(nom,aire,".tfm");
 check_for_tfm_font_mapping;
@@ -12695,7 +12698,8 @@ character node is not created; thus the output routine can assume
 that characters exist when it sees them. The following procedure
 prints a warning message unless the user has suppressed it.
 
-@p procedure char_warning(@!f:internal_font_number;@!c:eight_bits);
+@<Declare subroutines for |new_character|@>=
+procedure char_warning(@!f:internal_font_number;@!c:integer);
 var old_setting: integer; {saved value of |tracing_online|}
 begin if tracing_lost_chars>0 then
  begin old_setting:=tracing_online;
@@ -12714,6 +12718,10 @@ begin if tracing_lost_chars>0 then
  tracing_online:=old_setting;
  end;
 end;
+
+@ We need a few subroutines for |new_character|.
+
+@p @t\4@>@<Declare subroutines for |new_character|@>@;
 
 @ Here is a function that returns a pointer to a character node for a
 given character in a given font. If that character doesn't exist,
@@ -13799,8 +13807,8 @@ if total_pages=0 then
   print_char(":"); print_two(time div 60);
   print_two(time mod 60);
   selector:=old_setting; dvi_out(cur_length);
-  for s:=str_start[str_ptr] to pool_ptr-1 do dvi_out(so(str_pool[s]));
-  pool_ptr:=str_start[str_ptr]; {flush the current string}
+  for s:=str_start_macro(str_ptr) to pool_ptr-1 do dvi_out(so(str_pool[s]));
+  pool_ptr:=str_start_macro(str_ptr); {flush the current string}
   end
 
 @ When |hlist_out| is called, its duty is to output the box represented
@@ -15714,6 +15722,381 @@ define_mathex_accessor(big_op_spacing2)(10)(big_op_spacing2);
 define_mathex_accessor(big_op_spacing3)(11)(big_op_spacing3);
 define_mathex_accessor(big_op_spacing4)(12)(big_op_spacing4);
 define_mathex_accessor(big_op_spacing5)(13)(big_op_spacing5);
+
+@ Native font support requires these additional subroutines.
+
+@<Declare subroutines for |new_character|@>=
+function new_native_word_node(@!f:internal_font_number;@!n:integer):pointer;
+	{ note that this function creates the node, but does not actually set its metrics;
+		call |set_native_metrics(node)| if that is required! }
+var
+	l:	integer;
+	q:	pointer;
+begin
+	l := native_node_size + (n * sizeof(UTF16_code) + sizeof(memory_word) - 1) div sizeof(memory_word);
+
+	q := get_node(l);
+	type(q) := whatsit_node;
+	subtype(q) := native_word_node;
+
+	native_size(q) := l;
+	native_font(q) := f;
+	native_length(q) := n;
+
+	native_glyph_count(q) := 0;
+	native_glyph_info_ptr(q) := null_ptr;
+
+	new_native_word_node := q;
+end;
+
+function new_native_character(@!f:internal_font_number;@!c:UnicodeScalar):pointer;
+var
+	p:	pointer;
+	i, len: integer;
+begin
+	if font_mapping[f] <> 0 then begin
+		if c > @"FFFF then begin
+			str_room(2);
+			append_char((c - @"10000) div 1024 + @"D800);
+			append_char((c - @"10000) mod 1024 + @"DC00);
+		end
+		else begin
+			str_room(1);
+			append_char(c);
+		end;
+		len := apply_mapping(font_mapping[f], addressof(str_pool[str_start_macro(str_ptr)]), cur_length);
+		pool_ptr := str_start_macro(str_ptr); { flush the string, as we'll be using the mapped text instead }
+
+		i := 0;
+		while i < len do begin
+			if (mapped_text[i] >= @"D800) and (mapped_text[i] < @"DC00) then begin
+				c := (mapped_text[i] - @"D800) * 1024 + mapped_text[i+1] - @"DC00 + @"10000;
+				if map_char_to_glyph(f, c) = 0 then begin
+					char_warning(f, c);
+				end;
+				i := i + 2;
+			end
+			else begin
+				if map_char_to_glyph(f, mapped_text[i]) = 0 then begin
+					char_warning(f, mapped_text[i]);
+				end;
+				i := i + 1;
+			end;
+		end;
+
+		p := new_native_word_node(f, len);
+		for i := 0 to len-1 do begin
+			set_native_char(p, i, mapped_text[i]);
+		end
+	end
+	else begin
+		if tracing_lost_chars > 0 then
+			if map_char_to_glyph(f, c) = 0 then begin
+				char_warning(f, c);
+			end;
+
+		p := get_node(native_node_size + 1);
+		type(p) := whatsit_node;
+		subtype(p) := native_word_node;
+
+		native_size(p) := native_node_size + 1;
+		native_glyph_count(p) := 0;
+		native_glyph_info_ptr(p) := null_ptr;
+		native_font(p) := f;
+
+		if c > @"FFFF then begin
+			native_length(p) := 2;
+			set_native_char(p, 0, (c - @"10000) div 1024 + @"D800);
+			set_native_char(p, 1, (c - @"10000) mod 1024 + @"DC00);
+		end
+		else begin
+			native_length(p) := 1;
+			set_native_char(p, 0, c);
+		end;
+	end;
+
+	set_native_metrics(p, XeTeX_use_glyph_metrics);
+
+	new_native_character := p;
+end;
+
+procedure font_feature_warning(featureNameP:void_pointer; featLen:integer;
+	settingNameP:void_pointer; setLen:integer);
+var
+	i: integer;
+begin
+	begin_diagnostic;
+	print_nl("Unknown ");
+	if setLen > 0 then begin
+		print("selector `");
+		print_utf8_str(settingNameP, setLen);
+		print("' for ");
+	end;
+	print("feature `");
+	print_utf8_str(featureNameP, featLen);
+	print("' in font `");
+	i := 1;
+	while ord(name_of_file[i]) <> 0 do begin
+		print_visible_char(name_of_file[i]); { this is already UTF-8 }
+		incr(i);
+	end;
+	print("'.");
+	end_diagnostic(false);
+end;
+
+procedure font_mapping_warning(mappingNameP:void_pointer;
+	mappingNameLen:integer;
+	warningType:integer); { 0: just logging; 1: file not found; 2: can't load }
+var
+	i: integer;
+begin
+	begin_diagnostic;
+	if warningType=0 then print_nl("Loaded mapping `")
+	else print_nl("Font mapping `");
+	print_utf8_str(mappingNameP, mappingNameLen);
+	print("' for font `");
+	i := 1;
+	while ord(name_of_file[i]) <> 0 do begin
+		print_visible_char(name_of_file[i]); { this is already UTF-8 }
+		incr(i);
+	end;
+	case warningType of
+		1: print("' not found.");
+		2: begin print("' not usable;");
+		     print_nl("bad mapping file or incorrect mapping type.");
+		   end;
+		othercases print("'.")
+	endcases;
+	end_diagnostic(false);
+end;
+
+procedure graphite_warning;
+var
+	i: integer;
+begin
+	begin_diagnostic;
+	print_nl("Font `");
+	i := 1;
+	while ord(name_of_file[i]) <> 0 do begin
+		print_visible_char(name_of_file[i]); { this is already UTF-8 }
+		incr(i);
+	end;
+	print("' does not support Graphite. Trying ICU layout instead.");
+	end_diagnostic(false);
+end;
+
+function load_native_font(u: pointer; nom, aire:str_number; s: scaled): internal_font_number;
+label
+	done;
+const
+	first_math_fontdimen = 10;
+var
+	k, num_font_dimens: integer;
+	font_engine: void_pointer;	{really an ATSUStyle or XeTeXLayoutEngine}
+	actual_size: scaled;	{|s| converted to real size, if it was negative}
+	p: pointer;	{for temporary |native_char| node we'll create}
+	ascent, descent, font_slant, x_ht, cap_ht: scaled;
+	f: internal_font_number;
+	full_name: str_number;
+begin
+	{ on entry here, the full name is packed into |name_of_file| in UTF8 form }
+
+	load_native_font := null_font;
+
+	font_engine := find_native_font(name_of_file + 1, s);
+	if font_engine = 0 then goto done;
+	
+	if s>=0 then
+		actual_size := s
+	else begin
+		if (s <> -1000) then
+			actual_size := xn_over_d(loaded_font_design_size,-s,1000)
+		else
+			actual_size := loaded_font_design_size;
+	end;
+
+	{ look again to see if the font is already loaded, now that we know its canonical name }
+	str_room(name_length);
+	for k := 1 to name_length do
+		append_char(name_of_file[k]);
+    full_name := make_string; { not |slow_make_string| because we'll flush it if the font was already loaded }
+
+	for f:=font_base+1 to font_ptr do
+  		if (font_area[f] = native_font_type_flag) and str_eq_str(font_name[f], full_name) and (font_size[f] = actual_size) then begin
+  		    release_font_engine(font_engine, native_font_type_flag);
+  			flush_string;
+  		    load_native_font := f;
+  		    goto done;
+        end;
+
+	if (native_font_type_flag = otgr_font_flag) and isOpenTypeMathFont(font_engine) then
+		num_font_dimens := first_math_fontdimen + lastMathConstant
+	else
+		num_font_dimens := 8;
+
+	if (font_ptr = font_max) or (fmem_ptr + num_font_dimens > font_mem_size) then begin
+		@<Apologize for not loading the font, |goto done|@>;
+	end;
+
+	{ we've found a valid installed font, and have room }
+	incr(font_ptr);
+	font_area[font_ptr] := native_font_type_flag; { set by |find_native_font| to either |aat_font_flag| or |ot_font_flag| }
+
+	{ store the canonical name }
+	font_name[font_ptr] := full_name;
+
+	font_check[font_ptr].b0 := 0;
+	font_check[font_ptr].b1 := 0;
+	font_check[font_ptr].b2 := 0;
+	font_check[font_ptr].b3 := 0;
+	font_glue[font_ptr] := null;
+	font_dsize[font_ptr] := loaded_font_design_size;
+	font_size[font_ptr] := actual_size;
+
+	if (native_font_type_flag = aat_font_flag) then begin
+		atsu_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
+								addressof(x_ht), addressof(cap_ht), addressof(font_slant))
+	end else begin
+		ot_get_font_metrics(font_engine, addressof(ascent), addressof(descent),
+								addressof(x_ht), addressof(cap_ht), addressof(font_slant));
+	end;
+
+	height_base[font_ptr] := ascent;
+	depth_base[font_ptr] := -descent;
+
+	font_params[font_ptr] := num_font_dimens;	{ we add an extra fontdimen: \#8 -> |cap_height|;
+													then OT math fonts have a bunch more }
+	font_bc[font_ptr] := 0;
+	font_ec[font_ptr] := 65535;
+	font_used[font_ptr] := false;
+	hyphen_char[font_ptr] := default_hyphen_char;
+	skew_char[font_ptr] := default_skew_char;
+	param_base[font_ptr] := fmem_ptr-1;
+
+	font_layout_engine[font_ptr] := font_engine;
+	font_mapping[font_ptr] := 0; { don't use the mapping, if any, when measuring space here }
+	font_letter_space[font_ptr] := loaded_font_letter_space;
+
+	{measure the width of the space character and set up font parameters}
+	p := new_native_character(font_ptr, " ");
+	s := width(p) + loaded_font_letter_space;
+	free_node(p, native_size(p));
+
+	font_info[fmem_ptr].sc := font_slant;							{|slant|}
+	incr(fmem_ptr);
+	font_info[fmem_ptr].sc := s;									{|space| = width of space character}
+	incr(fmem_ptr);
+	font_info[fmem_ptr].sc := s div 2;								{|space_stretch| = 1/2 * space}
+	incr(fmem_ptr);
+	font_info[fmem_ptr].sc := s div 3;								{|space_shrink| = 1/3 * space}
+	incr(fmem_ptr);
+	font_info[fmem_ptr].sc := x_ht;									{|x_height|}
+	incr(fmem_ptr);
+	font_info[fmem_ptr].sc := font_size[font_ptr];					{|quad| = font size}
+	incr(fmem_ptr);
+	font_info[fmem_ptr].sc := s div 3;								{|extra_space| = 1/3 * space}
+	incr(fmem_ptr);
+	font_info[fmem_ptr].sc := cap_ht;								{|cap_height|}
+	incr(fmem_ptr);
+
+	if num_font_dimens = first_math_fontdimen + lastMathConstant then begin
+		font_info[fmem_ptr].int := num_font_dimens; { \fontdimen9 = number of assigned fontdimens }
+		incr(fmem_ptr);
+		for k := 0 to lastMathConstant do begin
+			font_info[fmem_ptr].sc := get_ot_math_constant(font_ptr, k);
+			incr(fmem_ptr);
+		end;
+	end;
+
+	font_mapping[font_ptr] := loaded_font_mapping;
+	font_flags[font_ptr] := loaded_font_flags;
+
+	load_native_font := font_ptr;
+done:
+end;
+
+procedure do_locale_linebreaks(s: integer; len: integer);
+var
+	offs, prevOffs, i: integer;
+	use_penalty, use_skip: boolean;
+begin
+	if (XeTeX_linebreak_locale = 0) or (len = 1) then begin
+		link(tail) := new_native_word_node(main_f, len);
+		tail := link(tail);
+		for i := 0 to len - 1 do
+			set_native_char(tail, i, native_text[s + i]);
+		set_native_metrics(tail, XeTeX_use_glyph_metrics);
+	end else begin
+		use_skip := XeTeX_linebreak_skip <> zero_glue;
+		use_penalty := XeTeX_linebreak_penalty <> 0 or not use_skip;
+		if (is_gr_font(main_f)) and (str_eq_str(XeTeX_linebreak_locale, "G")) then begin
+			initGraphiteBreaking(font_layout_engine[main_f], native_text + s, len);
+			offs := 0;
+			repeat
+				prevOffs := offs;
+				offs := findNextGraphiteBreak(offs, 15); {klbWordBreak = 15}
+				if offs > 0 then begin
+					if prevOffs <> 0 then begin
+						if use_penalty then
+							tail_append(new_penalty(XeTeX_linebreak_penalty));
+						if use_skip then
+							tail_append(new_param_glue(XeTeX_linebreak_skip_code));
+					end;
+					link(tail) := new_native_word_node(main_f, offs - prevOffs);
+					tail := link(tail);
+					for i := prevOffs to offs - 1 do
+						set_native_char(tail, i - prevOffs, native_text[s + i]);
+					set_native_metrics(tail, XeTeX_use_glyph_metrics);
+				end;
+			until offs < 0;
+		end
+		else begin
+			linebreak_start(XeTeX_linebreak_locale, native_text + s, len);
+			offs := 0;
+			repeat
+				prevOffs := offs;
+				offs := linebreak_next;
+				if offs > 0 then begin
+					if prevOffs <> 0 then begin
+						if use_penalty then
+							tail_append(new_penalty(XeTeX_linebreak_penalty));
+						if use_skip then
+							tail_append(new_param_glue(XeTeX_linebreak_skip_code));
+					end;
+					link(tail) := new_native_word_node(main_f, offs - prevOffs);
+					tail := link(tail);
+					for i := prevOffs to offs - 1 do
+						set_native_char(tail, i - prevOffs, native_text[s + i]);
+					set_native_metrics(tail, XeTeX_use_glyph_metrics);
+				end;
+			until offs < 0;
+		end
+	end
+end;
+
+procedure bad_utf8_warning;
+begin
+	begin_diagnostic;
+	print_nl("Invalid UTF-8 byte or sequence");
+	if terminal_input then print(" in terminal input")
+	else begin
+		print(" at line ");
+		print_int(line);
+	end;
+	print(" replaced by U+FFFD.");
+	end_diagnostic(false);
+end;
+
+function get_input_normalization_state: integer;
+begin
+	if eqtb=nil then get_input_normalization_state:=0 { may be called before eqtb is initialized }
+	else get_input_normalization_state:=XeTeX_input_normalization_state;
+end;
+
+function get_tracing_fonts_state: integer;
+begin
+	get_tracing_fonts_state:=XeTeX_tracing_fonts_state;
+end;
 
 @ We also need to compute the change in style between mlists and their
 subsidiaries. The following macros define the subsidiary style for
@@ -20954,7 +21337,7 @@ not_found: decr(hn)
 k:=hyph_word[h]; if k=0 then goto not_found;
 if length(k)<hn then goto not_found;
 if length(k)=hn then
-  begin j:=1; u:=str_start[k];
+  begin j:=1; u:=str_start_macro(k);
   repeat if so(str_pool[u])<hc[j] then goto not_found;
   if so(str_pool[u])>hc[j] then goto done;
   incr(j); incr(u);
@@ -21087,11 +21470,11 @@ hyph_word[h]:=s; hyph_list[h]:=p
 k:=hyph_word[h];
 if length(k)<length(s) then goto found;
 if length(k)>length(s) then goto not_found;
-u:=str_start[k]; v:=str_start[s];
+u:=str_start_macro(k); v:=str_start_macro(s);
 repeat if str_pool[u]<str_pool[v] then goto found;
 if str_pool[u]>str_pool[v] then goto not_found;
 incr(u); incr(v);
-until u=str_start[k+1];
+until u=str_start_macro(k+1);
 found:q:=hyph_list[h]; hyph_list[h]:=p; p:=q;@/
 t:=hyph_word[h]; hyph_word[h]:=s; s:=t;
 not_found:
@@ -21141,7 +21524,7 @@ is |trie_op_ptr|.
   {trie op codes for quadruples}
 @!trie_used:array[ASCII_code] of quarterword;
   {largest opcode used so far for this language}
-@!trie_op_lang:array[1..trie_op_size] of ASCII_code;
+@!trie_op_lang:array[1..trie_op_size] of 0..biggest_lang;
   {language part of a hashed quadruple}
 @!trie_op_val:array[1..trie_op_size] of quarterword;
   {opcode corresponding to a hashed quadruple}

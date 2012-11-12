@@ -1,6 +1,12 @@
 % Compensate recent changes in ../tex.ch
 
-@x
+@x [5.71] encTeX - native buffer printing
+if last<>first then for k:=first to last-1 do print(buffer[k]);
+@y
+k:=first; while k < last do begin print_buffer(k) end;
+@z
+
+@x [29.518] l.10042 - print_file_name: quote if spaces in names.
 some operating systems put the file area last instead of first.)
 @^system dependencies@>
 
@@ -22,7 +28,7 @@ some operating systems put the file area last instead of first.)
 @^system dependencies@>
 @z
 
-@x
+@x [29.518] l.10042 - print_file_name: quote if spaces in names.
 check_quoted(a); check_quoted(n); check_quoted(e);
 @y
 if a<>0 then begin
@@ -45,7 +51,7 @@ if e<>0 then begin
 end;
 @z
 
-@x
+@x [29.518] l.10042 - print_file_name: quote if spaces in names.
 print_quoted(a); print_quoted(n); print_quoted(e);
 @y
 if a<>0 then

@@ -301,12 +301,6 @@ else
   wterm(')');
 @z
 
-@x l.1820 - pTeX
-k:=first; while k < last do begin print_buffer(k) end;
-@y
-if last<>first then for k:=first to last-1 do print(buffer[k]);
-@z
-
 @x [8.111] l.2436 - pTeX: check hi/ho
   (mem_top+sup_main_memory>=max_halfword) then bad:=14;
 @y
