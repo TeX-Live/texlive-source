@@ -6,7 +6,7 @@ $opt_l = 'kKsSvVzZoOuUiIA';             # defaults for Slovak and Czech
 $opt_c = $opt_f = $opt_h = $opt_v = 0;
 getopts('cfphvl:');
 
-$version_msg = "findhyph version 3.0\n";
+$version_msg = "findhyph version 3.1\n";
 $help_msg = "\nUsage: findhyph [options] <yourtexfile.log>\n" .
             "\n" .
             "Options: -c           display hyphenated words in context\n" .
@@ -163,16 +163,22 @@ sub do_hyph {
   for $i (1..$max_break-1) {
     if (defined $USED[$i]) {
       if ($search_hyphens) {              # hyphenated words
-        if ($act_text =~ /(\S+\@$i\@\S+)/) {        # only hyphenated words match
-          $out_text = $1;
-          if ($opt_c) {
-            $context_before = $context_after = "";
-            if ($act_text =~ /(\S+)\s+\S+\@$i\@/) {$context_before = $1;}
-            if ($act_text =~ /\@$i\@\S+\s+(\S+)/) {$context_after = $1;}
-            $out_text = "$context_before $out_text $context_after";
+        if ($act_text =~ /(\S+)(\@$i\@)(\S+)/) {        # only hyphenated words match
+          $out_pre = $1;
+          $out_post = $3;
+          if (substr($out_pre,-1) ne "-") {        # hyphenated ligatures
+            $out_pre_A = substr($out_pre,0,rindex($out_pre,"-"));
+            $out_pre_B = substr($out_pre,rindex($out_pre,"-")+1);
+            $out_pre = $out_pre_A;
+            $out_post = $out_pre_B.$out_post;
           }
-          $out_text =~ s/-//g;
-          $out_text =~ s/\@$i\@/-/g;
+          if ($opt_c) {
+            if ($act_text =~ /(\S+)\s+\S+\@$i\@/) {$out_pre = "$1 $out_pre";}
+            if ($act_text =~ /\@$i\@\S+\s+(\S+)/) {$out_post = "$out_post $1";}
+          }
+          $out_pre =~ s/-//g;
+          $out_post =~ s/-//g;
+          $out_text = "$out_pre-$out_post";
           $out_text =~ s/\@\d+\@//g;                 # very narrow columns
           print O1 "$out_text\n";
           $write_hyph_page = 1;
@@ -183,10 +189,8 @@ sub do_hyph {
           $out_text = $1;
           if ($out_text =~ /^[$opt_l]$/) {
             if ($opt_c) {
-              $context_before = $context_after = "";
-              if($act_text =~ /(\S+) \S \@$i\@/) {$context_before = $1;}
-              if($act_text =~ /\@$i\@ ?(\S+)/) {$context_after = $1;}
-              $out_text = "$context_before $out_text $context_after";
+              if($act_text =~ /(\S+) \S \@$i\@/) {$out_text = "$1 $out_text";}
+              if($act_text =~ /\@$i\@ ?(\S+)/) {$out_text = "$out_text $1";}
               $out_text =~ s/-//g;
               $out_text =~ s/\@\d+\@//g;                 # very narrow columns
             }
@@ -345,6 +349,16 @@ fixed a bug when total paragraph demerits are negative
 
 C<\looseness> setting is now taken into account (thanks to Karel Horak
 for identifying the issue)
+
+=back
+
+=head4 3.1 (2012-11-03)
+
+=over 4
+
+=item *
+
+fixed displaying of hyphenated ligatures (bug reported by Karel Horak)
 
 =back
 

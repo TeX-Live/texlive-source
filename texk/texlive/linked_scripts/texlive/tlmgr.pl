@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 27748 2012-09-20 10:36:14Z preining $
+# $Id: tlmgr.pl 28216 2012-11-09 12:34:08Z preining $
 #
 # Copyright 2008, 2009, 2010, 2011, 2012 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 27748 $';
-my $datrev = '$Date: 2012-09-20 12:36:14 +0200 (Thu, 20 Sep 2012) $';
+my $svnrev = '$Revision: 28216 $';
+my $datrev = '$Date: 2012-11-09 13:34:08 +0100 (Fri, 09 Nov 2012) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1921,7 +1921,6 @@ sub write_w32_updater {
   my $opt_doc = $localtlpdb->option("install_docfiles");
   my $root = $localtlpdb->root;
   my $temp = "$root/temp";
-  my $repo = $remotetlpdb->root . "/$Archive";
   TeXLive::TLUtils::mkdirhier($temp);
   tlwarn("Backup option not implemented for infrastructure update.\n") if ($opts{"backup"});
   if ($media eq 'local_uncompressed') {
@@ -1931,7 +1930,17 @@ sub write_w32_updater {
   }
   my (@upd_tar, @upd_tlpobj, @upd_info, @rst_tar, @rst_tlpobj, @rst_info);
   foreach my $pkg (@w32_updated) {
-    my $mediatlp = $remotetlpdb->get_package($pkg);
+    my $repo;
+    my $mediatlp;
+    if ($media eq "virtual") {
+      my $maxtlpdb;
+      (undef, undef, $mediatlp, $maxtlpdb) = 
+        $remotetlpdb->virtual_candidate($pkg);
+      $repo = $maxtlpdb->root . "/$Archive";
+    } else {
+      $mediatlp = $remotetlpdb->get_package($pkg);
+      $repo = $remotetlpdb->root . "/$Archive";
+    }
     my $localtlp = $localtlpdb->get_package($pkg);
     my $oldrev = $localtlp->revision;
     my $newrev = $mediatlp->revision;
