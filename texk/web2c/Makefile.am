@@ -108,7 +108,6 @@ buildenv = TEXMFCNF=$(srcdir)/../kpathsea
 # Calling tangle & Co.
 tangle = WEBINPUTS=.:$(srcdir) $(buildenv) $(TANGLE)
 tangleboot = WEBINPUTS=.:$(srcdir) $(buildenv) $(TANGLEBOOT)
-otangle = WEBINPUTS=.:$(srcdir) $(buildenv) $(OTANGLE)
 ctangle = $(buildenv) $(CTANGLE)
 tie = WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
 
