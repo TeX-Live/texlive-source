@@ -817,6 +817,7 @@ enable_aleph
 enable_pdftex
 enable_pdftex_synctex
 enable_luatex
+enable_mp
 enable_xetex
 enable_xetex_synctex
 enable_mf
@@ -830,7 +831,6 @@ enable_regiswin
 enable_suntoolswin
 enable_tektronixwin
 enable_unitermwin
-enable_mp
 enable_web_progs
 enable_afm2pl
 enable_bibtex8
@@ -1617,6 +1617,7 @@ Optional Features:
   --disable-pdftex          do not compile and install pdfTeX
   --disable-pdftex-synctex    build pdfTeX without SyncTeX support
   --disable-luatex          do not compile and install luaTeX
+  --disable-mp              do not compile and install MetaPost
   --disable-xetex           do not compile and install XeTeX
   --disable-xetex-synctex     build XeTeX without SyncTeX support
   --disable-mf              do not build METAFONT
@@ -1630,7 +1631,6 @@ Optional Features:
   --enable-suntoolswin        include old Suntools (not X) window support
   --enable-tektronixwin       include Tektronix window support
   --enable-unitermwin         include Uniterm window support
-  --disable-mp              do not build METAPOST
   --disable-web-progs       do not build WEB programs bibtex ... weave
   --disable-afm2pl        do not build the afm2pl package
   --disable-bibtex8       do not build the bibtex8 package
@@ -4474,6 +4474,20 @@ test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_libpng=yes
   need_zziplib=yes
 }
+# Check whether --enable-mp was given.
+if test "${enable_mp+set}" = set; then :
+  enableval=$enable_mp;
+fi
+case $enable_mp in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_mp=yes ;;
+esac
+
+test "x$enable_web2c:$enable_mp" = xyes:yes && {
+  need_libpng=yes
+}
 # Check whether --enable-xetex was given.
 if test "${enable_xetex+set}" = set; then :
   enableval=$enable_xetex;
@@ -4543,11 +4557,6 @@ fi
 # Check whether --enable-unitermwin was given.
 if test "${enable_unitermwin+set}" = set; then :
   enableval=$enable_unitermwin;
-fi
-## configure options for MP
-# Check whether --enable-mp was given.
-if test "${enable_mp+set}" = set; then :
-  enableval=$enable_mp;
 fi
 ## configure options for WEB programs
 # Check whether --enable-web-progs was given.

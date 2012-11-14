@@ -701,8 +701,6 @@ PWEB_FALSE
 PWEB_TRUE
 WEB_FALSE
 WEB_TRUE
-MP_FALSE
-MP_TRUE
 wlibs
 x_tool_libs
 x_ext_lib
@@ -725,6 +723,8 @@ XETEX_SYNCTEX_FALSE
 XETEX_SYNCTEX_TRUE
 XETEX_FALSE
 XETEX_TRUE
+MP_FALSE
+MP_TRUE
 LUATEX_FALSE
 LUATEX_TRUE
 PDFTEX_SYNCTEX_FALSE
@@ -941,6 +941,7 @@ enable_aleph
 enable_pdftex
 enable_pdftex_synctex
 enable_luatex
+enable_mp
 enable_xetex
 enable_xetex_synctex
 enable_mf
@@ -954,7 +955,6 @@ enable_regiswin
 enable_suntoolswin
 enable_tektronixwin
 enable_unitermwin
-enable_mp
 enable_web_progs
 enable_missing
 with_fontconfig_includes
@@ -1658,6 +1658,7 @@ Optional Features:
   --disable-pdftex        do not compile and install pdfTeX
   --disable-pdftex-synctex  build pdfTeX without SyncTeX support
   --disable-luatex        do not compile and install luaTeX
+  --disable-mp            do not compile and install MetaPost
   --disable-xetex         do not compile and install XeTeX
   --disable-xetex-synctex   build XeTeX without SyncTeX support
   --disable-mf            do not build METAFONT
@@ -1671,7 +1672,6 @@ Optional Features:
   --enable-suntoolswin      include old Suntools (not X) window support
   --enable-tektronixwin     include Tektronix window support
   --enable-unitermwin       include Uniterm window support
-  --disable-mp            do not build METAPOST
   --disable-web-progs     do not build WEB programs bibtex ... weave
   --disable-missing       terminate if a requested program or feature must be
                           disabled, e.g., due to missing libraries
@@ -17870,6 +17870,20 @@ test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_libpng=yes
   need_zziplib=yes
 }
+# Check whether --enable-mp was given.
+if test "${enable_mp+set}" = set; then :
+  enableval=$enable_mp;
+fi
+case $enable_mp in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_mp=yes ;;
+esac
+
+test "x$enable_web2c:$enable_mp" = xyes:yes && {
+  need_libpng=yes
+}
 # Check whether --enable-xetex was given.
 if test "${enable_xetex+set}" = set; then :
   enableval=$enable_xetex;
@@ -17939,11 +17953,6 @@ fi
 # Check whether --enable-unitermwin was given.
 if test "${enable_unitermwin+set}" = set; then :
   enableval=$enable_unitermwin;
-fi
-## configure options for MP
-# Check whether --enable-mp was given.
-if test "${enable_mp+set}" = set; then :
-  enableval=$enable_mp;
 fi
 ## configure options for WEB programs
 # Check whether --enable-web-progs was given.
@@ -19022,6 +19031,13 @@ fi
 else
   LUATEX_TRUE='#'
   LUATEX_FALSE=
+fi
+ if test "x$enable_mp" = xyes; then
+  MP_TRUE=
+  MP_FALSE='#'
+else
+  MP_TRUE='#'
+  MP_FALSE=
 fi
  if test "x$enable_xetex" = xyes; then
   XETEX_TRUE=
@@ -23589,6 +23605,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${LUATEX_TRUE}" && test -z "${LUATEX_FALSE}"; then
   as_fn_error $? "conditional \"LUATEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${MP_TRUE}" && test -z "${MP_FALSE}"; then
+  as_fn_error $? "conditional \"MP\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${XETEX_TRUE}" && test -z "${XETEX_FALSE}"; then

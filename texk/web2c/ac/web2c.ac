@@ -40,6 +40,7 @@ m4_define([kpse_tex_progs], [dnl
 [[aleph],  [yes], [],    [Aleph],   []],
 [[pdftex], [yes], [yes], [pdfTeX],  [xpdf libpng]],
 [[luatex], [yes], [],    [luaTeX],  [poppler libpng zziplib]],
+[[mp],     [yes], [],    [MetaPost],[libpng]],
 [[xetex],  [yes], [yes], [XeTeX],   [poppler libpng freetype2 icu-xetex teckit graphite]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
@@ -70,11 +71,6 @@ m4_define([kpse_mf_win], [dnl
 m4_foreach([Kpse_Win], [kpse_mf_win],
            [m4_ifset([Kpse_Win],
                      [KPSE_WITH_MFWIN(Kpse_Win)])])[]dnl
-## configure options for MP
-AC_ARG_ENABLE([mp],
-              AS_HELP_STRING([--disable-mp],
-                             [do not build METAPOST],
-                             kpse_indent_26))[]dnl
 ## configure options for WEB programs
 AC_ARG_ENABLE([web-progs],
               AS_HELP_STRING([--disable-web-progs],

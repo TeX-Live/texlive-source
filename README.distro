@@ -1,4 +1,4 @@
-Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2011, 2012 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	Building TeX Live (TL) for a distro
@@ -33,8 +33,8 @@ You may specify
   --enable-shared
 to build the TL specific kpathsea and ptexenc libraries as shared libraries
 and may add
-  --disable-shared
-if you don't want them as static libraries.
+  --disable-static
+to not build the static libraries.
 
 You should use
   --with-system-LIB
