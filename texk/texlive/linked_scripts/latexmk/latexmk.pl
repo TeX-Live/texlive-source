@@ -111,8 +111,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.33c';
-$version_details = "$My_name, John Collins, 19 Aug. 2012";
+$version_num = '4.35';
+$version_details = "$My_name, John Collins, 11 Nov. 2012";
 
 use Config;
 use File::Copy;
@@ -182,6 +182,22 @@ else {
 ##   Modification log from 9 Dec 2011 onwards in detail
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
+##     11 Nov 2012  John Collins  V. 4.35
+##                                Correct bug that under some combinations of
+##                                   MS-Windows, cygwin and distributions of
+##                                   TeX, line endings in fls file (CRLF v. LF)
+##                                   were misparsed, resulting in source
+##                                   filenames that incorrectly contained CR
+##                                   characters.
+##                                Correct bug that when --gg mode is on, the
+##                                   rule database contained items from the OLD
+##                                   fdb file.  Using --gg mode implies that
+##                                   the rules in the OLD fdb file must be
+##                                   ignored (since they may be wrong).
+##      1 Oct 2012  John Collins  V. 4.34
+##                                Correct problem that if a file is read by
+##                                   latex only after being written, it is
+##                                   not a true source file.
 ##     19 Aug 2012  John Collins  V. 4.33c
 ##                                Correct infinite loop when maximum passes
 ##                                   exceeded.
@@ -2065,7 +2081,8 @@ foreach $filename ( @file_list )
     # For use under error conditions:
     @default_includes = ($texfile_name, $aux_main);
 
-    # Initialize file and rule databases.
+    # Initialize rule database.  
+    # ?? Should I also initialize file database?
     %rule_list = ();
     &rdb_make_rule_list;
     &rdb_set_rules(\%rule_list);
@@ -2164,7 +2181,13 @@ foreach $filename ( @file_list )
                      );
         }
     }
-    if ($cleanup_fdb) { unlink_or_move( $fdb_name ); }
+    if ($cleanup_fdb) {
+       unlink_or_move( $fdb_name );
+       # If the fdb file exists, it will have been read, and therefore changed
+       #   rule database.  But deleting the fdb file implies we also want
+       #   a virgin rule database, so we must reset it:
+       rdb_set_rules( \%rule_list );
+    }
     if ($cleanup_only) { next FILE; }
 
 
@@ -4214,8 +4237,8 @@ CANDIDATE_PAIR:
 #************************************************************
 
 sub parse_fls {
-    my ($fls_name, $Pinputs, $Poutputs ) = @_;
-    %$Pinputs = %$Poutputs = ();
+    my ($fls_name, $Pinputs, $Poutputs, $Pfirst_read_after_write ) = @_;
+    %$Pinputs = %$Poutputs = %$Pfirst_read_after_write = ();
     my $fls_file = new FileHandle;
     # Make a note of current working directory
     # I'll update it from the fls file later
@@ -4229,14 +4252,23 @@ sub parse_fls {
         return 1;
     }
     foreach $_ ( <$fls_file> ) {
-        if (/^\s*PWD\s+(.*)\s+$/) {
+        # Remove trailing CR and LF. Thus we get correct behavior when an fls file
+        #  is produced by MS-Windows program (e.g., in MiKTeX) with CRLF line ends,
+        #  but is read by Unix Perl (which treats LF as line end, and preserves CRLF
+        #  in read-in lines):
+        $_ =~ s/[\n\r]*$//;
+        if (/^\s*PWD\s+(.*)$/) {
             $cwd = $1;
         }
-        elsif (/^\s*INPUT\s+(.*)\s+$/) {
+        elsif (/^\s*INPUT\s+(.*)$/) {
             # Take precautions against aliasing of foo, ./foo and other possibilities for cwd.
-	    $$Pinputs{ normalize_filename( $1 )} = 1;
+            my $file = normalize_filename( $1 );
+            if ( (exists $$Poutputs{$file}) && (! exists $$Pinputs{$file}) ) {
+                $$Pfirst_read_after_write{$file} = 1;
+            }
+	    $$Pinputs{$file} = 1;
 	}
-        elsif (/^\s*OUTPUT\s+(.*)\s+$/) {
+        elsif (/^\s*OUTPUT\s+(.*)$/) {
             # Take precautions against aliasing of foo, ./foo and other possibilities for cwd.
 	    $$Poutputs{ normalize_filename( $1 )} = 1;
 	}
@@ -4799,6 +4831,9 @@ sub rdb_set_latex_deps {
     local %generated_log = (); # Lists generated files found in log file
     local %generated_fls = (); # Lists generated files found in fls file
     local %source_fls = ();    # Lists source files found in fls file
+    local %first_read_after_write = (); # Lists source files that are only read
+                                  # after being written (so are not true
+                                  # source files.
     local $primary_out = $$Pdest;  # output file (dvi or pdf)
     local %conversions = ();   # (pdf)latex-performed conversions.
                      # Maps output file created and read by (pdf)latex
@@ -4809,7 +4844,7 @@ sub rdb_set_latex_deps {
     &parse_log;
     my $fls_file = "$aux_dir1$root_filename.fls";
     if ($recorder && test_gen_file($fls_file) ) {
-        parse_fls( $fls_file, \%source_fls, \%generated_fls );
+        parse_fls( $fls_file, \%source_fls, \%generated_fls, \%first_read_after_write );
         foreach (keys %source_fls) {
             $dependents{$_} = 4;
 	}
@@ -4987,6 +5022,9 @@ NEW_SOURCE:
             $$Pchanged = 1; # New files can be made.  Ignore error.
         }
     }
+    foreach (keys %first_read_after_write) {
+        delete $dependents{$_};
+    }
     if ($diagnostics) {
 	if ($num_new > 0 ) {
 	    print "$num_new new source files for rule '$rule':\n";
@@ -4995,6 +5033,13 @@ NEW_SOURCE:
 	else {
 	    print "No new source files for rule '$rule':\n";
 	}
+        my @first_read_after_write = sort keys %first_read_after_write;
+        if ($#first_read_after_write >= 0) {
+            print "The following files were only read after being written:\n";
+            foreach (@first_read_after_write) {
+                print "   '$_'\n";
+	    }
+	  }
     }
     my @files_not_needed = ();
     foreach (keys %$PHsource) { 
