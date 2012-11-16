@@ -1,3 +1,7 @@
+2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import poppler-0.21.0.

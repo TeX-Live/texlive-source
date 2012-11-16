@@ -264,8 +264,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(ZLIB_TREE) $(ZLIB_TREE)-PATCHES
 SUBDIRS = . include
-INCLUDES = -I$(top_srcdir)/$(ZLIB_TREE)
-AM_CPPFLAGS = $(ZLIB_DEFINES)
+AM_CPPFLAGS = -I$(top_srcdir)/$(ZLIB_TREE) $(ZLIB_DEFINES)
 noinst_LIBRARIES = libz.a
 nodist_libz_a_SOURCES = \
 	$(ZLIB_TREE)/adler32.c \

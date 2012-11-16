@@ -277,8 +277,8 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 EXTRA_DIST = $(ZZIPLIB_TREE) $(ZZIPLIB_TREE)-PATCHES
 SUBDIRS = include/zzip
-INCLUDES = -Iinclude -I$(top_srcdir)/$(ZZIPLIB_TREE) $(ZLIB_INCLUDES)
-AM_CPPFLAGS = $(ZZIPLIB_DEFINES)
+AM_CPPFLAGS = -Iinclude -I$(top_srcdir)/$(ZZIPLIB_TREE) \
+	$(ZLIB_INCLUDES) $(ZZIPLIB_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libzzip.a
 nodist_libzzip_a_SOURCES = \

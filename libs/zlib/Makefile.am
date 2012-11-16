@@ -30,8 +30,7 @@ dist-hook:
 
 SUBDIRS = . include
 
-INCLUDES = -I$(top_srcdir)/$(ZLIB_TREE)
-AM_CPPFLAGS = $(ZLIB_DEFINES)
+AM_CPPFLAGS = -I$(top_srcdir)/$(ZLIB_TREE) $(ZLIB_DEFINES)
 
 noinst_LIBRARIES = libz.a
 

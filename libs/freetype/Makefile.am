@@ -1,4 +1,4 @@
-## Proxy Makefile.am to build FreeType for TeX Live.
+## Wrapper Makefile.am to build FreeType for TeX Live.
 ##
 ##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##

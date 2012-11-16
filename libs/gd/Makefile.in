@@ -304,8 +304,8 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(GD_TREE) $(GD_TREE)-PATCHES
 SUBDIRS = include
-INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(FREETYPE2_INCLUDES)
-AM_CPPFLAGS = -DNONDLL
+AM_CPPFLAGS = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) \
+	$(LIBPNG_INCLUDES) $(FREETYPE2_INCLUDES) -DNONDLL
 noinst_LIBRARIES = libgd.a
 nodist_libgd_a_SOURCES = \
 	$(GD_TREE)/gd.c \

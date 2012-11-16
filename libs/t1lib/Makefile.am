@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build t1lib for TeX Live.
 ##
-##   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -33,8 +33,7 @@ dist-hook:
 	  $(distdir)/$(T1LIB_TREE)/ac-tools/mkinstalldirs \
 	  $(distdir)/$(T1LIB_TREE)/lib/t1lib/t1lib.h
 
-INCLUDES = -Ilib -I$(top_srcdir)/$(T1LIB_TREE)
-AM_CPPFLAGS = $(T1LIB_DEFINES)
+AM_CPPFLAGS = -Ilib -I$(top_srcdir)/$(T1LIB_TREE) $(T1LIB_DEFINES)
 AM_CPPFLAGS += -DT1LIB_IDENT=\"@T1LIB_VERSIONSTRING@\"
 AM_CPPFLAGS += -DGLOBAL_CONFIG_DIR=\"@T1LIB_DATA_DIR@\"
 

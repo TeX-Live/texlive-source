@@ -289,8 +289,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(TECKIT_TREE) $(TECKIT_TREE)-PATCHES teckit.test \
 	tex-text.map tex-text.tec
 SUBDIRS = include/teckit
-INCLUDES = -I$(top_srcdir)/$(TECKIT_TREE)/source/Public-headers $(ZLIB_INCLUDES)
-AM_CPPFLAGS = -DNDEBUG
+AM_CPPFLAGS = -I$(top_srcdir)/$(TECKIT_TREE)/source/Public-headers \
+	$(ZLIB_INCLUDES) -DNDEBUG
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 noinst_LIBRARIES = libTECkit_Compiler.a libTECkit.a

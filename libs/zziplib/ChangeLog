@@ -1,3 +1,7 @@
+2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import zziplib-0.13.62.

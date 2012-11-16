@@ -1,6 +1,6 @@
-## Proxy Makefile.am to build ICU for TeX Live.
+## Wrapper Makefile.am to build ICU for TeX Live.
 ##
-##   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,

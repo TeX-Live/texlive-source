@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build libpng for TeX Live.
 ##
-##   Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -36,8 +36,7 @@ dist-hook:
 
 SUBDIRS = include
 
-INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
-AM_CPPFLAGS = $(LIBPNG_DEFINES)
+AM_CPPFLAGS = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES) $(LIBPNG_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES=libpng.a

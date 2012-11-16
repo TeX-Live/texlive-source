@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory libs/graphite/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -26,9 +26,9 @@ dist-hook:
 
 SUBDIRS = include/graphite
 
-INCLUDES = -I$(top_srcdir)/$(GRAPHITE_TREE)/include/graphite -I$(top_srcdir)/$(GRAPHITE_TREE)/src/generic
-INCLUDES += -I$(top_srcdir)/$(GRAPHITE_TREE)/src/font -I$(top_srcdir)/$(GRAPHITE_TREE)/src/segment
-AM_CPPFLAGS = -DNDEBUG
+AM_CPPFLAGS = -I$(top_srcdir)/$(GRAPHITE_TREE)/include/graphite -I$(top_srcdir)/$(GRAPHITE_TREE)/src/generic
+AM_CPPFLAGS += -I$(top_srcdir)/$(GRAPHITE_TREE)/src/font -I$(top_srcdir)/$(GRAPHITE_TREE)/src/segment
+AM_CPPFLAGS += -DNDEBUG
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 

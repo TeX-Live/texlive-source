@@ -1,3 +1,7 @@
+2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2011-07-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Use KPSE_COMPILER_WARNINGS.

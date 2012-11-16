@@ -1,3 +1,7 @@
+2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* include/Makefile.am: Use ../am/hdr_links.am.

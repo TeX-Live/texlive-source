@@ -1,3 +1,7 @@
+2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import TECkit-2.5.3

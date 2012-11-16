@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build zziplib for TeX Live.
 ##
-##   Copyright (C) 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2010-2012 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -33,8 +33,8 @@ dist-hook:
 
 SUBDIRS = include/zzip
 
-INCLUDES = -Iinclude -I$(top_srcdir)/$(ZZIPLIB_TREE) $(ZLIB_INCLUDES)
-AM_CPPFLAGS = $(ZZIPLIB_DEFINES)
+AM_CPPFLAGS = -Iinclude -I$(top_srcdir)/$(ZZIPLIB_TREE) $(ZLIB_INCLUDES)
+AM_CPPFLAGS += $(ZZIPLIB_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES=libzzip.a

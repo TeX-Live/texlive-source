@@ -270,11 +270,10 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(GRAPHITE_TREE) $(GRAPHITE_TREE)-PATCHES
 SUBDIRS = include/graphite
-INCLUDES = -I$(top_srcdir)/$(GRAPHITE_TREE)/include/graphite \
+AM_CPPFLAGS = -I$(top_srcdir)/$(GRAPHITE_TREE)/include/graphite \
 	-I$(top_srcdir)/$(GRAPHITE_TREE)/src/generic \
 	-I$(top_srcdir)/$(GRAPHITE_TREE)/src/font \
-	-I$(top_srcdir)/$(GRAPHITE_TREE)/src/segment
-AM_CPPFLAGS = -DNDEBUG
+	-I$(top_srcdir)/$(GRAPHITE_TREE)/src/segment -DNDEBUG
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 noinst_LIBRARIES = libgraphite.a
