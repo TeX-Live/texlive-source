@@ -1,3 +1,7 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import cjk-4.8.3/utils as cjkutils-4.8.3.

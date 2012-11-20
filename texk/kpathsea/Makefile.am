@@ -14,12 +14,12 @@ SUBDIRS = . doc man
 
 EXTRA_DIST = BUGS PROJECTS
 
-INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
+AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 lib_LTLIBRARIES = libkpathsea.la
 
-libkpathsea_la_CPPFLAGS = -DMAKE_KPSE_DLL
+libkpathsea_la_CPPFLAGS = $(AM_CPPFLAGS) -DMAKE_KPSE_DLL
 
 libkpathsea_la_LDFLAGS = -no-undefined -version-info $(KPSE_LT_VERSINFO)
 
@@ -229,7 +229,7 @@ kpsewhich_LDADD = libkpathsea.la
 
 EXTRA_PROGRAMS = progname-test xdirtest
 
-progname_test_CPPFLAGS = -DMAKE_KPSE_DLL -DTEST
+progname_test_CPPFLAGS = $(AM_CPPFLAGS) -DMAKE_KPSE_DLL -DTEST
 progname_test_SOURCES = progname.c
 progname_test_LDADD = libkpathsea.la
 

@@ -1,3 +1,7 @@
+2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-04-25  Peter Breitenlohner   <peb@mppmu.mpg.de>
 
 	* dvi2tty.test: Add a copyright statement.

@@ -26,14 +26,14 @@ AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([WIN32_WRAP],
                [test -r $srcdir/../../texk/texlive/w32_wrapper/runscript.exe])
 
-dnl initial value for AM_CPPFLAGS
-AC_SUBST([AM_CPPFLAGS], ['-DNON_UNIX_STDIO'])
+dnl initial value for PMX_DEFINES
+AC_SUBST([PMX_DEFINES], ['-DNON_UNIX_STDIO'])
 
 dnl WIN32 has no <sys/times.h>, native WIN32 is as MSDOS
 KPSE_CHECK_WIN32
 AS_CASE([$kpse_cv_have_win32],
-        [native], [AM_CPPFLAGS="$AM_CPPFLAGS -DMSDOS"],
-        [mingw32], [AM_CPPFLAGS="$AM_CPPFLAGS -DUSE_CLOCK"])
+        [native], [PMX_DEFINES="$PMX_DEFINES -DMSDOS"],
+        [mingw32], [PMX_DEFINES="$PMX_DEFINES -DUSE_CLOCK"])
 
 dnl Checks for programs.
 AC_PROG_INSTALL
@@ -45,7 +45,7 @@ AC_SEARCH_LIBS([sqrt], [m])
 
 AC_CHECK_SIZEOF([long long])
 if test $ac_cv_sizeof_long_long -lt 8; then
-  AM_CPPFLAGS="$AM_CPPFLAGS -DNO_LONG_LONG"
+  PMX_DEFINES="$PMX_DEFINES -DNO_LONG_LONG"
 fi
 
 AC_SUBST([PMX_TREE], [pmx-]pmx_version)

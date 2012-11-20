@@ -1,3 +1,7 @@
+2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-10-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c (c8read_csf): DEFAULT_BIBTEX_CSFILE is set to

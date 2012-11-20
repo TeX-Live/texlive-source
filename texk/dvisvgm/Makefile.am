@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvisvgm/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -24,12 +24,12 @@ EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-INCLUDES = -I$(top_srcdir)/$(DVISVGM_TREE)/src
-INCLUDES += -I$(top_srcdir)/$(DVISVGM_TREE)/potracelib
-INCLUDES += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES)
-INCLUDES += $(ZLIB_INCLUDES) $(LIBGS_INCLUDES)
+AM_CPPFLAGS = -I$(top_srcdir)/$(DVISVGM_TREE)/src
+AM_CPPFLAGS += -I$(top_srcdir)/$(DVISVGM_TREE)/potracelib
+AM_CPPFLAGS += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES)
+AM_CPPFLAGS += $(ZLIB_INCLUDES) $(LIBGS_INCLUDES)
 if WIN32
-AM_CPPFLAGS = -DTEXLIVEWIN32
+AM_CPPFLAGS += -DTEXLIVEWIN32
 endif WIN32
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)

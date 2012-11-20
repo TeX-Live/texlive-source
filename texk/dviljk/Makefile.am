@@ -1,12 +1,11 @@
 ## Makefile.am for the TeX Live subdirectory texk/dviljk/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libdvilj.a
@@ -32,19 +31,19 @@ dvi2xx_sources = \
 	dvi2xx.c \
 	dvi2xx.h
 
-dvilj_CPPFLAGS = -DKPATHSEA -DLJ
+dvilj_CPPFLAGS = $(AM_CPPFLAGS) -DLJ
 dvilj_SOURCES = $(dvi2xx_sources)
 $(dvilj_OBJECTS): libdvilj.a
 
-dvilj2p_CPPFLAGS = -DKPATHSEA -DLJ2P
+dvilj2p_CPPFLAGS = $(AM_CPPFLAGS) -DLJ2P
 dvilj2p_SOURCES = $(dvi2xx_sources)
 $(dvilj2p_OBJECTS): libdvilj.a
 
-dvilj4_CPPFLAGS = -DKPATHSEA -DLJ4
+dvilj4_CPPFLAGS = $(AM_CPPFLAGS) -DLJ4
 dvilj4_SOURCES = $(dvi2xx_sources)
 $(dvilj4_OBJECTS): libdvilj.a
 
-dvilj4l_CPPFLAGS = -DKPATHSEA -DLJ4 -DLJ4L
+dvilj4l_CPPFLAGS = $(AM_CPPFLAGS) -DLJ4 -DLJ4L
 dvilj4l_SOURCES = $(dvi2xx_sources)
 $(dvilj4l_OBJECTS): libdvilj.a
 

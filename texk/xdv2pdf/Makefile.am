@@ -1,12 +1,11 @@
 ## Makefile.am for the TeX Live subdirectory texk/xdv2pdf/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS =
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 ## Not yet for C++ (too many warnings)
 AM_CXXFLAGS = ## $(WARNING_CXXFLAGS)

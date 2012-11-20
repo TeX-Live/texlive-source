@@ -1,3 +1,7 @@
+2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2010-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Remove detex-2.7/ and detex-2.7-PATCHES/.

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/cjkutils/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -26,8 +26,7 @@ config.force: $(KPATHSEA_DEPEND)
 
 DISTCLEANFILES = config.force
 
-INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = $(XX_CPPFLAGS)
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(XX_CPPFLAGS)
 AM_CFLAGS = $(XX_CFLAGS)
 
 bin_PROGRAMS = \
@@ -43,7 +42,7 @@ hbf2gf_SOURCES = \
 	$(CJKUTILS_TREE)/hbf2gf/hbf.c \
 	$(CJKUTILS_TREE)/hbf2gf/hbf.h \
 	hbf2gf.c
-hbf2gf_CPPFLAGS = -I$(srcdir)/$(CJKUTILS_TREE)/hbf2gf -Dunix -DHAVE_LIBKPATHSEA $(AM_CPPFLAGS)
+hbf2gf_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/$(CJKUTILS_TREE)/hbf2gf -Dunix -DHAVE_LIBKPATHSEA
 hbf2gf_DEPENDENCIES = $(KPATHSEA_DEPEND)
 hbf2gf_LDADD = $(KPATHSEA_LIBS)
 
@@ -73,7 +72,7 @@ gbklatex_DEPENDENCIES = $(KPATHSEA_DEPEND)
 gbklatex_LDADD = $(KPATHSEA_LIBS)
 
 gbkpdflatex_SOURCES = $(gbklatex_SOURCES)
-gbkpdflatex_CPPFLAGS = -DLATEX=\"pdflatex\" $(AM_CPPFLAGS)
+gbkpdflatex_CPPFLAGS = $(AM_CPPFLAGS) -DLATEX=\"pdflatex\"
 gbkpdflatex_DEPENDENCIES = $(gbklatex_DEPENDENCIES)
 gbkpdflatex_LDADD = $(gbklatex_LDADD)
 

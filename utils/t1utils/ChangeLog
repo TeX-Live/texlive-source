@@ -1,3 +1,7 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2011-11-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* t1utils.test: Perform all sub-tests and report failed ones.

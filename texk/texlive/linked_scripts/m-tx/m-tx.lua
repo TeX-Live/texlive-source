@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.3"
+VERSION = "0.4"
 
 --[[
      m-tx.lua: processes MusiXTeX files using prepmx and pmxab as pre-processors (and deletes intermediate files)
@@ -26,6 +26,7 @@ VERSION = "0.3"
 --[[
 
   ChangeLog:
+
      version 0.3   2012-04-09 RDT
        Change name to m-tx to avoid clash with another program.
 
@@ -134,9 +135,9 @@ repeat
     end
     os.remove( filename .. ".mx2" )
     if ( OK ) and
-       ((tex == "") or os.execute(tex .. " " .. filename) == 0) and
-       ((tex == "") or os.execute(musixflx .. " " .. filename) == 0) and
-       ((tex == "") or os.execute(tex .. " " .. filename) == 0) and
+       (tex == "" or os.execute(tex .. " " .. filename) == 0) and
+       (tex == "" or os.execute(musixflx .. " " .. filename) == 0) and
+       (tex == "" or os.execute(tex .. " " .. filename) == 0) and
        ((tex ~= "latex" and tex ~= "pdflatex") 
          or (os.execute(tex .. " " .. filename) == 0)) and
        (dvi == "" or  (os.execute(dvi .. " " .. filename) == 0)) and

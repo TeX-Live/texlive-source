@@ -1,3 +1,9 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Avoid use of deprecated INCLUDES.
+	* Makefile.am: Drop pmx2pdf.lua,
+	now in ../../texk/texlive/linked_scripts/pmx.
+
 2012-07-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Fixed a typo (AM_CPPPFLAGS => AM_CPPFLAGS).

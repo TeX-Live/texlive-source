@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/t1utils/
 ##
-## Copyright (C) 2008-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2008-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -26,7 +26,7 @@ EXTRA_DIST += $(T1UTILS_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-INCLUDES = -I$(top_srcdir)/$(T1UTILS_TREE)/include
+AM_CPPFLAGS = -I$(top_srcdir)/$(T1UTILS_TREE)/include
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = t1ascii t1binary t1asm t1disasm t1unmac t1mac

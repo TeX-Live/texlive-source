@@ -78,6 +78,7 @@ latexdiff/latexrevise.pl
 latexmk/latexmk.pl
 latexpand/latexpand
 luaotfload/mkluatexfontdb.lua
+m-tx/m-tx.lua
 match_parens/match_parens
 mathspic/mathspic.pl
 mf2pt1/mf2pt1.pl
@@ -92,6 +93,7 @@ pedigree-perl/pedigree.pl
 perltex/perltex.pl
 pkfix/pkfix.pl
 pkfix-helper/pkfix-helper
+pmx/pmx2pdf.lua
 pst2pdf/pst2pdf
 purifyeps/purifyeps
 splitindex/perl/splitindex.pl

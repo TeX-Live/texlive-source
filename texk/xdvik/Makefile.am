@@ -11,7 +11,7 @@ SUBDIRS = squeeze . tests
 
 include common.am
 
-INCLUDES = -I$(srcdir)/gui $(common_includes)
+AM_CPPFLAGS = -I$(srcdir)/gui $(common_includes)
 
 ## The object files created from ./*.c and gui/*.c are used for both
 ## ./xdvi-bin and tests/run_tests.

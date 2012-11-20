@@ -1,3 +1,7 @@
+2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-07-25  Ken Brown  <kbrow1i@gmail.com>
 
 	* seek.c (CopyFile): No special file mode handling for Cygwin.

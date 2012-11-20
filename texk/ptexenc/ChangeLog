@@ -1,3 +1,7 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexenc.c: Define ptexenc_version_string as PTEXENCVERSION.

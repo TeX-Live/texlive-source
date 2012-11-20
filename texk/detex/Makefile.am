@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/detex/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -14,8 +14,7 @@ EXTRA_DIST += $(DETEX_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-INCLUDES = -I$(top_srcdir)/$(DETEX_TREE) $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DNO_MALLOC_DECL -DKPATHSEA -Dlint
+AM_CPPFLAGS = -I$(top_srcdir)/$(DETEX_TREE) $(KPATHSEA_INCLUDES) -DNO_MALLOC_DECL -DKPATHSEA -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## The Makefile.in from 2002 by Thomas Esser applied the sed script

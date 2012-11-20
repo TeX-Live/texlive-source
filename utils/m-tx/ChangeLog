@@ -1,3 +1,8 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Drop m-tx.lua,
+	now in ../../texk/texlive/linked_scripts/m-tx.
+
 2012-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop libp2c.a (multiple definitions).

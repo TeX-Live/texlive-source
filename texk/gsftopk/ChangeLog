@@ -1,3 +1,7 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-10-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* gsftopk.c: Avoid MSVC warning.

@@ -40,6 +40,7 @@ tangleboot-web2c: tangleboot.p $(web2c_depend)
 # tangleboot.pin is in the distribution
 .pin.p:
 	cp -f $< $@
+$(tangleboot_OBJECTS): $(tangleboot_DEPENDENCIES)
 tangleboot_DEPENDENCIES = $(default_dependencies)
 EXTRA_DIST += tangleboot.pin
 DISTCLEANFILES += tangleboot.c tangleboot.h tangleboot.p tangleboot-web2c
@@ -67,7 +68,7 @@ DISTCLEANFILES += ctangle.c cweb.c cweb.h ctangle-ctangle common-ctangle
 
 noinst_PROGRAMS += ctangleboot
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
-$(ctangleboot_OBJECTS): cwebboot.h
+$(ctangleboot_OBJECTS): cwebboot.h $(ctangleboot_DEPENDENCIES)
 # ctangleboot.cin and cwebboot.[ch]in are in the distribution
 .cin.c:
 	cp -f $< $@

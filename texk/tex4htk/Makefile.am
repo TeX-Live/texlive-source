@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/tex4htk/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -12,8 +12,7 @@ EXTRA_DIST = java
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DANSI -DKPATHSEA
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DANSI -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = t4ht tex4ht

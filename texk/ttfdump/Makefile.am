@@ -5,8 +5,7 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CPPFLAGS = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libttf.a

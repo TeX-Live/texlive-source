@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, tests/Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Remove some obsolete comments.

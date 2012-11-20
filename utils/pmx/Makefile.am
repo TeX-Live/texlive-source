@@ -14,7 +14,7 @@ EXTRA_DIST += $(PMX_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-INCLUDES = -I$(srcdir)/$(PMX_TREE)/libf2c
+AM_CPPFLAGS = -I$(srcdir)/$(PMX_TREE)/libf2c $(PMX_DEFINES)
 AM_CFLAGS = #$(WARNING_CFLAGS)
 
 bin_PROGRAMS = pmxab scor2prt
@@ -234,20 +234,6 @@ EXTRA_libf2c_a_SOURCES += \
 ## unused
 EXTRA_libf2c_a_SOURCES += \
 	$(PMX_TREE)/libf2c/signbit.c
-
-lua_scripts = pmx2pdf
-
-scriptsdir = texmf-dist/scripts/pmx
-nodist_bin_SCRIPTS =
-
-include $(srcdir)/../../texk/am/script_links.am
-
-texmfdir = $(datarootdir)/$(scriptsdir)
-dist_texmf_SCRIPTS = $(lua_scripts:=.lua)
-
-install-data-hook: install-lua-links
-
-uninstall-hook: uninstall-links
 
 dist_man1_MANS = pmx2pdf.1 pmxab.1 scor2prt.1
 

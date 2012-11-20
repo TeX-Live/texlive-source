@@ -1,3 +1,8 @@
+2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/bootstrap.am: Add dependency of (c)tangleboot_OBJECTS on
+	(c)tangleboot_DEPENDENCIES.
+
 2012-11-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Also drop the unused otangle.

@@ -1,3 +1,7 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c: Move extern decl from here ...

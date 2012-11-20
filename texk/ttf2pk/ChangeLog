@@ -1,3 +1,7 @@
+2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/ttf2pk.cfg, tests/ttf2pk.test: Extend the test to cover

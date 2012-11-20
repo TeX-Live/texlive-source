@@ -9,12 +9,12 @@ ACLOCAL_AMFLAGS = -I ../../m4
 .PHONY: rebuild
 rebuild: all
 
-INCLUDES = $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 lib_LTLIBRARIES = libptexenc.la
 
-libptexenc_la_CPPFLAGS = -DMAKE_PTENC_DLL
+libptexenc_la_CPPFLAGS = $(AM_CPPFLAGS) -DMAKE_PTENC_DLL
 
 libptexenc_la_LDFLAGS = -no-undefined -version-info $(PTEXENC_LT_VERSINFO)
 
