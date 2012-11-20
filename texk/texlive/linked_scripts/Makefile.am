@@ -38,14 +38,18 @@ installdirs-local:
 #
 ## We distinguish several classes of scripts according to their
 ## destination in texmf/scripts/ or texmf-dist/scripts/ and their
-## type: `shell', `context', or `other'.  On Unix systems a symlink
-## from $(bindir) to the script is installed for all of them;
-## on Windows nothing is installed in $(bindir) for `shell' scripts
-## whereas for `other' (usually perl, lua, ...) scripts the standard
-## wrapper ../w32_wrapper/runscript.exe is installed or the ConTeXt
-## wrapper ../w32_wrapper/context/mtxrun.exe for `context' scripts.
-## Note that some /bin/sh scripts are listed as `other' or `context'
+## type: `shell', `context', or `other'.
+## 
+## On Unix systems a symlink from $(bindir) to the script is installed
+## for all of them; on Windows nothing is installed in $(bindir) for
+## `shell' scripts whereas for `other' (usually perl, lua, ...) scripts
+## the standard wrapper ../w32_wrapper/runscript.exe is installed or the
+## ConTeXt wrapper ../w32_wrapper/context/mtxrun.exe for `context'
+## scripts.
+## 
+## Some /bin/sh scripts are listed as `other' or `context'
 ## scripts because they are correctly handled by the wrapper binaries.
+## 
 texmf_scriptsdir = $(datarootdir)/texmf/scripts
 texmf_shell_scripts = \
 	tetex/fmtutil.sh \
@@ -149,6 +153,7 @@ texmf_dist_other_scripts = \
 	perltex/perltex.pl \
 	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
+	pmx/pmx2pdf.lua \
 	pst2pdf/pst2pdf \
 	purifyeps/purifyeps \
 	splitindex/perl/splitindex.pl \
