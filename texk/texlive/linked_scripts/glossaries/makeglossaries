@@ -27,9 +27,11 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.04 (2012-05-19)";
+my $version="2.05 (2012-11-12)";
 
 # History:
+# v2.05 (2012-11-12):
+#   * added -d option
 # v2.04 (2012-04-19):
 #   * fixed bug in &scan_aux
 # v2.03 (2011-04-12):
@@ -76,8 +78,9 @@ use Getopt::Std;
 use strict;
 # v2.01 added the following line
 use warnings;
+# v2.05 added $opt_d
 use vars qw($opt_q $opt_t $opt_o $opt_s $opt_p $opt_g $opt_c $opt_r
-   $opt_l $opt_i $opt_L $opt_n $opt_C);
+   $opt_l $opt_i $opt_L $opt_n $opt_C $opt_d);
 
 
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
@@ -86,7 +89,7 @@ $Getopt::Std::STANDARD_HELP_VERSION = 1;
 # .tex file)
 # v1.5 added -n (print the command that would be issued but
 # don't actually run the command)
-getopts('s:o:t:p:L:C:ilqrcgn');
+getopts('s:o:t:p:L:C:ilqrcgnd:');
 
 unless ($#ARGV == 0)
 {
@@ -96,6 +99,9 @@ unless ($#ARGV == 0)
 
 # v2.02: added:
 print "makeglossaries version $version\n" unless ($opt_q);
+
+# v2.05 added:
+chdir $opt_d if ($opt_d);
 
 # v2.02: added:
 my $xdynotist = 1;
@@ -941,8 +947,9 @@ sub HELP_MESSAGE{
    print "-q\t\tQuiet mode\n";
    print "-s <sty>\tEmploy <sty> as the style file\n";
    print "-t <log>\tEmploy <log> as the transcript file\n";
-   print "-n\tPrint the command that would normally be executed,\n",
-         "\tbut don't execute it\n";
+   print "-d <directory>\tRun xindy/makeindex in <directory>\n";
+   print "-n\t\tPrint the command that would normally be executed,\n",
+         "\t\tbut don't execute it\n";
 
    print "\n Xindy Options:\n";
    print "-L <language>\tUse <language>.\n";
