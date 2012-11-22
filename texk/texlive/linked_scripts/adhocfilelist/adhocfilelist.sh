@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## \ProvidesFile{adhocfilelist.sh}
-##              [2012/10/17 v0.7 command line -> \string\listfiles 
+##              [2012/11/19 v0.71 command line -> \string\listfiles 
 ##                                                      \space(UL)]
 ##
 ## (C) 2012 Uwe Lück LaTeX Project Public License 
@@ -17,7 +17,7 @@ add_type () {
 }
 add_type sty; add_type cfg; add_type cls; 
 add_type dtx; add_type def; add_type fd;
-adhoc_find_std="-follow -maxdepth 1 ( $adhoc_find_std )"
+adhoc_find_std="-L -maxdepth 1 ( $adhoc_find_std )" ## -L 2012-11-19 
 #echo adhoc_find_std = $adhoc_find_std
 ## standard action (v0.7):
 adhoc_fmt_std=',%f'
