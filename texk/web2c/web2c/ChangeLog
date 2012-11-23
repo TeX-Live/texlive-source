@@ -1,3 +1,7 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fixwrites.c, main.c, makecpool.c, splitup.c:

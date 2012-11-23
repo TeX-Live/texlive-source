@@ -3,9 +3,7 @@
 ## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-INCLUDES = -I$(top_srcdir) $(KPATHSEA_INCLUDES)
-
-AM_CPPFLAGS = $(X_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir) $(KPATHSEA_INCLUDES) $(X_CFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## Rebuild libkpathsea

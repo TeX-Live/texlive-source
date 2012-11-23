@@ -1,11 +1,11 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/web2c/
 ##
-## Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../../m4
 
-INCLUDES = -I$(srcdir)/../..
+AM_CPPFLAGS = -I$(srcdir)/../..
 AM_YFLAGS = -d -v
 AM_CFLAGS = $(WARNING_CFLAGS)
 

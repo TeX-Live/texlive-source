@@ -1,3 +1,9 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: No need to check for Annot::decRefCnt with
+	poppler 0.18 or better.
+	* Makefile.am: Avoid use of deprecated INCLUDES.
+
 2012-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/bootstrap.am: Add dependency of (c)tangleboot_OBJECTS on
