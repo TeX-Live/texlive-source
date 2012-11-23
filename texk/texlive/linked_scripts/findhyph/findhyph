@@ -6,7 +6,7 @@ $opt_l = 'kKsSvVzZoOuUiIA';             # defaults for Slovak and Czech
 $opt_c = $opt_f = $opt_h = $opt_v = 0;
 getopts('cfphvl:');
 
-$version_msg = "findhyph version 3.1\n";
+$version_msg = "findhyph version 3.2\n";
 $help_msg = "\nUsage: findhyph [options] <yourtexfile.log>\n" .
             "\n" .
             "Options: -c           display hyphenated words in context\n" .
@@ -236,7 +236,7 @@ B<findhyph [options]> F<foo.log>
 If you are setting C<\looseness=E<lt>NE<gt>> to optimize paragraphs, 
 you need to pass that information to the file F<foo.log> in a form 
 C<@looseness=E<lt>NE<gt>> (on a separate line). You can use a macro like
-C<\def\setlooseness#1{\immediate\write-1{@looseness=#1}\looseness=#1}>
+C<\def\setlooseness#1{\looseness=#1 \immediate\write-1{@looseness=#1}}>
 for this purpose. If the paragraph contains material in display math mode,
 you need to use the macro in all split parts of the paragraph.
 
@@ -359,6 +359,17 @@ for identifying the issue)
 =item *
 
 fixed displaying of hyphenated ligatures (bug reported by Karel Horak)
+
+=back
+
+=head4 3.2 (2012-11-21)
+
+=over 4
+
+=item *
+
+improved example definition of the C<\setlooseness> macro
+(thanks to Karl Berry)
 
 =back
 
