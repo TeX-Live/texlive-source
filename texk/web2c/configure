@@ -22688,12 +22688,11 @@ if test "${with_system_poppler+set}" = set; then :
   withval=$with_system_poppler;
 fi
 if test "x$with_system_poppler" = xyes; then
-  if $PKG_CONFIG poppler --atleast-version=0.12; then
-  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-  POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
+  if $PKG_CONFIG poppler --atleast-version=0.18; then
+  POPPLER_INCLUDES=`$PKG_CONFIG poppler --cflags`
   POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
 elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
+  as_fn_error $? "did not find poppler-0.18 or better" "$LINENO" 5
 fi
 else
   POPPLER_INCLUDES="-I$kpse_BLD/libs/poppler -I$kpse_BLD/libs/poppler/goo -I$kpse_BLD/libs/poppler/poppler"
@@ -22958,57 +22957,6 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-
-# Checks for xpdf poppler features.
-eval CPPFLAGS=\"$POPPLER_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$POPPLER_LIBS \$LIBS\"
-
-ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-ac_link="./libtool --mode=link --tag=CXX $ac_link"
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Annot::decRefCnt" >&5
-$as_echo_n "checking for Annot::decRefCnt... " >&6; }
-if ${kpse_cv_have_Annot_decRefCnt+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <goo/GooString.h>
-#include <Object.h>
-#include <Array.h>
-#include <Annot.h>
-int
-main ()
-{
-Annot *an; an->decRefCnt();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"; then :
-  kpse_cv_have_Annot_decRefCnt=yes
-else
-  kpse_cv_have_Annot_decRefCnt=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_Annot_decRefCnt" >&5
-$as_echo "$kpse_cv_have_Annot_decRefCnt" >&6; }
-if test "x$kpse_cv_have_Annot_decRefCnt" = xyes; then :
-
-$as_echo "#define HAVE_ANNOTDECREFCNT 1" >>confdefs.h
-
-fi
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-ac_link="./libtool --mode=link --tag=CC $ac_link"
 
 CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS

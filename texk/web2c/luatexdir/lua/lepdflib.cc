@@ -350,11 +350,7 @@ static int m_Annot__gc(lua_State * L)
     printf("\n===== Annot GC ===== uin=<%p>\n", uin);
 #endif
     if (uin->atype == ALLOC_LEPDF)
-#ifdef HAVE_ANNOTDECREFCNT
         ((Annot *) uin->d)->decRefCnt();
-#else
-        delete(Annot *) uin->d;
-#endif
     return 0;
 }
 

@@ -46,9 +46,6 @@
 /* Define to 1 if you have the `access' function. */
 #undef HAVE_ACCESS
 
-/* Define to 1 if class `Annot' has the `decRefCnt' member. */
-#undef HAVE_ANNOTDECREFCNT
-
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 

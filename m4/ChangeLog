@@ -1,3 +1,7 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-poppler-flags.m4: Require poppler-0.18 or better.
+
 2012-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-poppler-flags.m4 [WIN32]: Add '-lgdi32' to POPPLER_LIBS.

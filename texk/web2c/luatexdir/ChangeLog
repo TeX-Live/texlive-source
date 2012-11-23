@@ -1,3 +1,8 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/lepdflib.cc: No need to test for Annot::decRefCnt with
+	poppler 0.18 or better.
+
 2012-11-06  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* pdf/pdflistout.w: sync with r4471 (a bug fix by H. Henkel).
