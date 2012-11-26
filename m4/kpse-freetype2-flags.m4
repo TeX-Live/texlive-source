@@ -17,10 +17,8 @@ AC_DEFUN([KPSE_FREETYPE2_FLAGS],
 [AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
 AC_REQUIRE([_KPSE_CHECK_FT2_CONFIG])[]dnl
 _KPSE_LIB_FLAGS([freetype2], [freetype], [lt],
-                [BLD/libs/freetype2],
-                [BLD/libs/freetype2/libfreetype.la],
-                [FREETYPE2_LIBS="\`cat $FREETYPE2_INCLUDES/ft-libs\`"
-  FREETYPE2_INCLUDES="\`cat $FREETYPE2_INCLUDES/ft-includes\`"],
+                [-IBLD/libs/freetype2/freetype2 -IBLD/libs/freetype2],
+                [BLD/libs/freetype2/libfreetype.la], [],
                 [], [${top_builddir}/../../libs/freetype2/ft2build.h])[]dnl
 ]) # KPSE_FREETYPE2_FLAGS
 

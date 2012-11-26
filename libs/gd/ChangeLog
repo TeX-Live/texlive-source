@@ -1,3 +1,9 @@
+2012-11-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for parallel build.
+	* configure.ac: Make sure 'config.status --recheck' leaves the
+	generated config.h unchanged.
+
 2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.

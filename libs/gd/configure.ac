@@ -63,8 +63,11 @@ echo timestamp >config.force
 fi
 
 AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
+AC_DEFINE([HAVE_ZLIB_H], 1)
 AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have the png library.])
+AC_DEFINE([HAVE_PNG_H], 1)
 AC_DEFINE([HAVE_LIBFREETYPE], 1, [ Define if you have the freetype library.])
+AC_DEFINE([HAVE_FT2BUILD_H], 1)
 
 AC_SUBST([GD_TREE], [gd-]gd_version)
 

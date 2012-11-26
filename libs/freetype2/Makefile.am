@@ -14,8 +14,6 @@ rebuild: all
 
 ## We want to re-distribute the whole original FreeType source tree.
 ##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
 EXTRA_DIST = $(FREETYPE_TREE)
 
 ## Changes applied to the original source tree
@@ -28,7 +26,12 @@ dist-hook:
 
 noinst_DATA = libfreetype.a
 
-ft-build/Makefile:
+# On MacOSX, using our zlib from TL results in a .a that is unusable; ld
+# warns "file is not of required architecture", and does not read it.
+# There is no apparent reason for this.  Using --without-zlib evidently
+# causes freetype2 to use its internal zlib, so no functionality should
+# be lost, even though it is not the cleanest solution.
+ft-config:
 	rm -rf ft-build
 	$(MKDIR_P) ft-build
 	cd ft-build && \
@@ -41,24 +44,15 @@ ft-build/Makefile:
 	    --prefix=$(abs_builddir)/ft-install \
 	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)
+	echo timestamp >ft-config
 
-# On MacOSX, using our zlib from TL results in a .a that is unusable; ld
-# warns "file is not of required architecture", and does not read it.
-# There is no apparent reason for this.  Using --without-zlib evidently
-# causes freetype2 to use its internal zlib, so no functionality should
-# be lost, even though it is not the cleanest solution.
-#	    --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE) \
-#
 # Unfortunately the FreeType build system installs the headers after the library;
 # to get our dependencies right we wait for a second and then touch the library.
-libfreetype.a: ft-build/Makefile $(ZLIB_DEPEND)
+libfreetype.a: ft-config
 	rm -rf ft-install
 	cd ft-build \
 	  && $(MAKE) $(AM_MAKEFLAGS) \
 	  && $(MAKE) $(AM_MAKEFLAGS) install
-	ft-install/bin/freetype-config --cflags >ft-includes
-	ft-install/bin/freetype-config --libs \
-	  | sed -e 's,-L\(.*\) -lfreetype,\1/libfreetype.la,' >ft-libs
 	sleep 1
 	@for f in libfreetype.*; do touch $$f; done
 

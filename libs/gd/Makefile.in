@@ -86,7 +86,7 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libgd_a_AR = $(AR) $(ARFLAGS)
 libgd_a_LIBADD =
-nodist_libgd_a_OBJECTS = gd.$(OBJEXT) gd_gd.$(OBJEXT) gd_gd2.$(OBJEXT) \
+am_libgd_a_OBJECTS = gd.$(OBJEXT) gd_gd.$(OBJEXT) gd_gd2.$(OBJEXT) \
 	gd_gif_in.$(OBJEXT) gd_gif_out.$(OBJEXT) gd_io.$(OBJEXT) \
 	gd_io_dp.$(OBJEXT) gd_io_file.$(OBJEXT) gd_io_ss.$(OBJEXT) \
 	gd_jpeg.$(OBJEXT) gd_png.$(OBJEXT) gd_security.$(OBJEXT) \
@@ -96,7 +96,7 @@ nodist_libgd_a_OBJECTS = gd.$(OBJEXT) gd_gd.$(OBJEXT) gd_gd2.$(OBJEXT) \
 	gdft.$(OBJEXT) gdfx.$(OBJEXT) gdhelpers.$(OBJEXT) \
 	gdkanji.$(OBJEXT) gdtables.$(OBJEXT) gdxpm.$(OBJEXT) \
 	wbmp.$(OBJEXT)
-libgd_a_OBJECTS = $(nodist_libgd_a_OBJECTS)
+libgd_a_OBJECTS = $(am_libgd_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -110,8 +110,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(nodist_libgd_a_SOURCES)
-DIST_SOURCES =
+SOURCES = $(libgd_a_SOURCES)
+DIST_SOURCES = $(libgd_a_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -307,7 +307,7 @@ SUBDIRS = include
 AM_CPPFLAGS = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(FREETYPE2_INCLUDES) -DNONDLL
 noinst_LIBRARIES = libgd.a
-nodist_libgd_a_SOURCES = \
+libgd_a_SOURCES = \
 	$(GD_TREE)/gd.c \
 	$(GD_TREE)/gd_gd.c \
 	$(GD_TREE)/gd_gd2.c \
@@ -1333,11 +1333,10 @@ dist-hook:
 
 $(libgd_a_OBJECTS): config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND)
+config.force: $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
-@ZLIB_RULE@
 @LIBPNG_RULE@
 @FREETYPE2_RULE@
 

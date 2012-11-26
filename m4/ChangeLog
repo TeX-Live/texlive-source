@@ -1,6 +1,12 @@
+2012-11-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-poppler-flags.m4: Require poppler-0.20 or better for
+	definition of POPPLER_VERSION in <poppler-config.h>.
+
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-poppler-flags.m4: Require poppler-0.18 or better.
+	* kpse-freetype2-flags.m4: Simplify flags for lib from TL tree.
 
 2012-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

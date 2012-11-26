@@ -14,9 +14,6 @@ rebuild: all
 
 ## We want to re-distribute the whole original libpng source tree.
 ##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
-## Thus nodist_* for all files in $(GD_TREE).
 EXTRA_DIST = $(GD_TREE)
 
 ## Changes applied to the original source tree
@@ -46,7 +43,7 @@ AM_CPPFLAGS += -DNONDLL
 
 noinst_LIBRARIES=libgd.a
 
-nodist_libgd_a_SOURCES = \
+libgd_a_SOURCES = \
 	$(GD_TREE)/gd.c \
 	$(GD_TREE)/gd_gd.c \
 	$(GD_TREE)/gd_gd2.c \
@@ -78,14 +75,12 @@ nodist_libgd_a_SOURCES = \
 
 $(libgd_a_OBJECTS): config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND)
+config.force: $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
 DISTCLEANFILES = config.force
 
-## Rebuild zlib
-@ZLIB_RULE@
 ## Rebuild libpng
 @LIBPNG_RULE@
 ## Rebuild libfreetype

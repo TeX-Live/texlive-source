@@ -1,3 +1,7 @@
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for parallel build.
+
 2012-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use $(SHELL) for sub-configure.

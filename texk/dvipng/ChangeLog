@@ -1,3 +1,7 @@
+2012-11-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (dvipng_dependencies): Drop indirect dependencies.
+
 2012-07-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop check for 64-bit integer types, already

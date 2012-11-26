@@ -4075,7 +4075,6 @@ esac
 
 test "x$enable_dvipng" = xno || {
   need_kpathsea=yes
-  need_freetype2=yes
   need_gd=yes
   need_t1lib=yes
 }
