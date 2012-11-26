@@ -33,10 +33,11 @@ AC_DEFUN([KPSE_POPPLER_OPTIONS],
 # ----------------------
 AC_DEFUN([KPSE_POPPLER_SYSTEM_FLAGS],
 [AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
-if $PKG_CONFIG poppler --atleast-version=0.20; then
-  POPPLER_INCLUDES=`$PKG_CONFIG poppler --cflags`
+if $PKG_CONFIG poppler --atleast-version=0.18; then
+  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+  POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
   POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
 elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  AC_MSG_ERROR([did not find poppler-0.20 or better])
+  AC_MSG_ERROR([did not find poppler-0.18 or better])
 fi
 ]) # KPSE_POPPLER_SYSTEM_FLAGS

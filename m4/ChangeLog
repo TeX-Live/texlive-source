@@ -1,7 +1,6 @@
 2012-11-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* kpse-poppler-flags.m4: Require poppler-0.20 or better for
-	definition of POPPLER_VERSION in <poppler-config.h>.
+	* kpse-poppler-flags.m4: Restore -DPOPPLER_VERSION for 0.18.
 
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

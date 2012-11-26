@@ -22688,11 +22688,12 @@ if test "${with_system_poppler+set}" = set; then :
   withval=$with_system_poppler;
 fi
 if test "x$with_system_poppler" = xyes; then
-  if $PKG_CONFIG poppler --atleast-version=0.20; then
-  POPPLER_INCLUDES=`$PKG_CONFIG poppler --cflags`
+  if $PKG_CONFIG poppler --atleast-version=0.18; then
+  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+  POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
   POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
 elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  as_fn_error $? "did not find poppler-0.20 or better" "$LINENO" 5
+  as_fn_error $? "did not find poppler-0.18 or better" "$LINENO" 5
 fi
 else
   POPPLER_INCLUDES="-I$kpse_BLD/libs/poppler -I$kpse_BLD/libs/poppler/goo -I$kpse_BLD/libs/poppler/poppler"
