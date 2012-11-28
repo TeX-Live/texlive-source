@@ -1,0 +1,10 @@
+#! /bin/sh
+
+# Copyright (C) 2012 Taco Hoekwater <taco@metapost.org>
+# You may freely use, modify and/or distribute this file.
+
+# sorry, don't know what to do ..
+
+echo '                *** cairo test SKIPPED ***'
+
+exit 77

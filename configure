@@ -893,6 +893,8 @@ with_system_graphite
 with_system_zziplib
 with_system_xpdf
 with_system_poppler
+with_system_cairo
+with_system_pixman
 with_system_gd
 with_gd_includes
 with_gd_libdir
@@ -1745,6 +1747,10 @@ Optional Packages:
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf library from TL (requires pkg-config)
   --with-system-poppler   use installed poppler headers and library (requires
+                          pkg-config)
+  --with-system-cairo     use installed cairo headers and library (requires
+                          pkg-config)
+  --with-system-pixman    use installed pixman headers and library (requires
                           pkg-config)
   --with-system-gd        use installed gd headers and library
   --with-gd-includes=DIR  gd headers installed in DIR
@@ -5693,6 +5699,82 @@ fi
 test "x$need_poppler" = xyes && {
   need_zlib=yes
 }
+
+
+## libs/cairo/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/cairo/
+## configure options and TL libraries required for cairo
+
+# Check whether --with-system-cairo was given.
+if test "${with_system_cairo+set}" = set; then :
+  withval=$with_system_cairo;
+fi
+if test "x$with_system_cairo" = x; then
+  if test -f $srcdir/libs/cairo/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`cairo' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`cairo' headers and library from TL tree" >&6;}
+    with_system_cairo=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`cairo' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`cairo' headers and library" >&6;}
+    with_system_cairo=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-cairo=$with_system_cairo'"
+elif test "x$with_system_cairo" = xyes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`cairo' headers and library" >&5
+$as_echo "$as_me: Using installed \`cairo' headers and library" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`cairo' headers and library from TL tree" >&5
+$as_echo "$as_me: Using \`cairo' headers and library from TL tree" >&6;}
+  if test "x$with_system_cairo" != xno; then
+    with_system_cairo=no
+    ac_configure_args="$ac_configure_args '--without-system-cairo'"
+  fi
+fi
+if test "x$with_system_cairo" = xyes; then
+  if test "x$with_system_pixman" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`pixman' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`pixman' headers and library" >&6;}
+    with_system_pixman=yes
+    ac_configure_args="$ac_configure_args '--with-system-pixman'"
+  elif test "x$with_system_pixman" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-cairo' requires \`--with-system-pixman'" "$LINENO" 5
+  fi
+fi
+
+test "x$need_cairo" = xyes && {
+  need_pixman=yes
+}
+
+
+## libs/pixman/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/pixman/
+## configure options and TL libraries required for pixman
+
+# Check whether --with-system-pixman was given.
+if test "${with_system_pixman+set}" = set; then :
+  withval=$with_system_pixman;
+fi
+if test "x$with_system_pixman" = x; then
+  if test -f $srcdir/libs/pixman/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`pixman' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`pixman' headers and library from TL tree" >&6;}
+    with_system_pixman=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`pixman' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`pixman' headers and library" >&6;}
+    with_system_pixman=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-pixman=$with_system_pixman'"
+elif test "x$with_system_pixman" = xyes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`pixman' headers and library" >&5
+$as_echo "$as_me: Using installed \`pixman' headers and library" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`pixman' headers and library from TL tree" >&5
+$as_echo "$as_me: Using \`pixman' headers and library from TL tree" >&6;}
+  if test "x$with_system_pixman" != xno; then
+    with_system_pixman=no
+    ac_configure_args="$ac_configure_args '--without-system-pixman'"
+  fi
+fi
 
 
 ## libs/gd/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
@@ -20174,6 +20256,20 @@ if test "x$with_gd_libdir" != x && test "x$with_gd_libdir" != xyes; then
   GD_LIBS="-L$with_gd_libdir $GD_LIBS"
 fi
 
+if $PKG_CONFIG pixman-1 --atleast-version=0.18; then
+  PIXMAN_INCLUDES=`$PKG_CONFIG pixman-1 --cflags`
+  PIXMAN_LIBS=`$PKG_CONFIG pixman-1 --libs`
+elif test "x$need_pixman:$with_system_pixman" = xyes:yes; then
+  as_fn_error $? "did not find pixman-0.18 or better" "$LINENO" 5
+fi
+
+if $PKG_CONFIG cairo --atleast-version=1.10; then
+  CAIRO_INCLUDES=`$PKG_CONFIG cairo --cflags`
+  CAIRO_LIBS=`$PKG_CONFIG cairo --libs`
+elif test "x$need_cairo:$with_system_cairo" = xyes:yes; then
+  as_fn_error $? "did not find cairo-1.10 or better" "$LINENO" 5
+fi
+
 if $PKG_CONFIG poppler --atleast-version=0.12; then
   POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
   XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
@@ -20549,6 +20645,66 @@ int
 main ()
 {
 gdImageCreate(1, 2);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  syslib_used=yes kpse_res=ok
+else
+  syslib_status=no kpse_res=failed
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
+$as_echo "$kpse_res" >&6; }
+fi
+
+
+## libs/pixman/ac/pixman.ac: configure.ac fragment for the TeX Live subdirectory libs/pixman/
+## basic check of system pixman
+if test "x$need_pixman:$with_system_pixman" = xyes:yes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`pixman' library" >&5
+$as_echo_n "checking requested system \`pixman' library... " >&6; }
+  CPPFLAGS="$PIXMAN_INCLUDES $CPPFLAGS"
+  LIBS="$PIXMAN_LIBS $LIBS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <pixman.h>
+int
+main ()
+{
+const char *s = pixman_version_string();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  syslib_used=yes kpse_res=ok
+else
+  syslib_status=no kpse_res=failed
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
+$as_echo "$kpse_res" >&6; }
+fi
+
+
+## libs/cairo/ac/cairo.ac: configure.ac fragment for the TeX Live subdirectory libs/cairo/
+## basic check of system cairo
+if test "x$need_cairo:$with_system_cairo" = xyes:yes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`cairo' library" >&5
+$as_echo_n "checking requested system \`cairo' library... " >&6; }
+  CPPFLAGS="$CAIRO_INCLUDES $CPPFLAGS"
+  LIBS="$CAIRO_LIBS $LIBS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <cairo.h>
+int
+main ()
+{
+const char *s = cairo_version_string();
   ;
   return 0;
 }

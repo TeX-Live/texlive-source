@@ -9,6 +9,9 @@ bypassing or using the original one.
 
 See also comments in ../texk/README.
 
+cairo 1.12.8 - checked 28nov12
+  http://cairographics.org/releases/
+
 freetype 1.5 - ?
 
 freetype2 2.4.9 - checked 9mar12
@@ -31,6 +34,9 @@ icu 50.1 (50_1) - checked 7nov12
 libpng 1.5.13 - checked 28sep12
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
+
+pixman 0.28.0 - checked 28nov12
+  http://cairographics.org/releases/
 
 poppler 0.21.0 - checked 15oct12
   http://poppler.freedesktop.org/ - used by luatex and xetex

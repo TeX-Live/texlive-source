@@ -1,0 +1,36 @@
+Changes applied to the cairo-1.12.8/ tree as obtained from:
+	http://cairographics.org/releases/cairo-1.12.8.tar.xz
+e.g., through the shell script do-Changes
+
+Removed all files in:
+	boilerplate/
+	doc/
+	perf/
+	test/
+	util/
+
+Created dummy files:
+	boilerplate/Makefile.am
+	doc/Makefile.am
+	doc/public/Makefile.am
+	perf/Makefile.am
+	perf/micro/Makefile.am
+	test/Makefile.am
+	test/pdiff/Makefile.am
+	util/Makefile.am
+	util/cairo-fdr/Makefile.am
+	util/cairo-gobject/Makefile.am
+	util/cairo-script/Makefile.am
+	util/cairo-script/examples/Makefile.am
+	util/cairo-sphinx/Makefile.am
+	util/cairo-trace/Makefile.am
+	util/cairo-trace/cairo-trace.in
+
+Removed the empty directories:
+	doc/public/html/
+	doc/public/tmpl/
+	doc/public/xml/
+
+Executed:
+	ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf
+

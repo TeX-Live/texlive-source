@@ -60,7 +60,8 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	build-aux/depcomp build-aux/install-sh build-aux/ltmain.sh \
 	build-aux/missing build-aux/texinfo.tex build-aux/ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
+	$(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/m4/kpse-freetype-flags.m4 \
 	$(top_srcdir)/m4/kpse-freetype2-flags.m4 \
@@ -71,7 +72,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/m4/kpse-mktex.m4 \
-	$(top_srcdir)/m4/kpse-options.m4 $(top_srcdir)/m4/kpse-pkgs.m4 \
+	$(top_srcdir)/m4/kpse-options.m4 \
+	$(top_srcdir)/m4/kpse-pixman-flags.m4 \
+	$(top_srcdir)/m4/kpse-pkgs.m4 \
 	$(top_srcdir)/m4/kpse-poppler-flags.m4 \
 	$(top_srcdir)/m4/kpse-ptexenc-flags.m4 \
 	$(top_srcdir)/m4/kpse-setup.m4 \
@@ -144,6 +147,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/libs/zziplib/ac/withenable.ac \
 	$(top_srcdir)/libs/xpdf/ac/withenable.ac \
 	$(top_srcdir)/libs/poppler/ac/withenable.ac \
+	$(top_srcdir)/libs/cairo/ac/withenable.ac \
+	$(top_srcdir)/libs/pixman/ac/withenable.ac \
 	$(top_srcdir)/libs/gd/ac/withenable.ac \
 	$(top_srcdir)/libs/freetype2/ac/withenable.ac \
 	$(top_srcdir)/libs/freetype/ac/withenable.ac \
@@ -161,6 +166,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/libs/freetype/ac/freetype.ac \
 	$(top_srcdir)/libs/freetype2/ac/freetype2.ac \
 	$(top_srcdir)/libs/gd/ac/gd.ac \
+	$(top_srcdir)/libs/pixman/ac/pixman.ac \
+	$(top_srcdir)/libs/cairo/ac/cairo.ac \
 	$(top_srcdir)/libs/poppler/ac/poppler.ac \
 	$(top_srcdir)/libs/xpdf/ac/xpdf.ac \
 	$(top_srcdir)/libs/zziplib/ac/zziplib.ac \

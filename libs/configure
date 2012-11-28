@@ -804,6 +804,8 @@ with_system_graphite
 with_system_zziplib
 with_system_xpdf
 with_system_poppler
+with_system_cairo
+with_system_pixman
 with_system_gd
 with_gd_includes
 with_gd_libdir
@@ -848,6 +850,8 @@ graphite
 zziplib
 xpdf
 poppler
+cairo
+pixman
 gd
 freetype2
 freetype
@@ -1635,6 +1639,10 @@ Optional Packages:
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf library from TL (requires pkg-config)
   --with-system-poppler   use installed poppler headers and library (requires
+                          pkg-config)
+  --with-system-cairo     use installed cairo headers and library (requires
+                          pkg-config)
+  --with-system-pixman    use installed pixman headers and library (requires
                           pkg-config)
   --with-system-gd        use installed gd headers and library
   --with-gd-includes=DIR  gd headers installed in DIR
@@ -4829,6 +4837,62 @@ test "x$need_poppler" = xyes && {
 }
 
 
+## libs/cairo/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/cairo/
+## configure options and TL libraries required for cairo
+
+# Check whether --with-system-cairo was given.
+if test "${with_system_cairo+set}" = set; then :
+  withval=$with_system_cairo;
+fi
+if test "x$with_system_cairo" = x; then
+  if test -f $srcdir/../libs/cairo/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`cairo' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`cairo' headers and library from TL tree" >&6;}
+    with_system_cairo=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`cairo' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`cairo' headers and library" >&6;}
+    with_system_cairo=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-cairo=$with_system_cairo'"
+fi
+if test "x$with_system_cairo" = xyes; then
+  if test "x$with_system_pixman" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`pixman' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`pixman' headers and library" >&6;}
+    with_system_pixman=yes
+    ac_configure_args="$ac_configure_args '--with-system-pixman'"
+  elif test "x$with_system_pixman" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-cairo' requires \`--with-system-pixman'" "$LINENO" 5
+  fi
+fi
+
+test "x$need_cairo" = xyes && {
+  need_pixman=yes
+}
+
+
+## libs/pixman/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/pixman/
+## configure options and TL libraries required for pixman
+
+# Check whether --with-system-pixman was given.
+if test "${with_system_pixman+set}" = set; then :
+  withval=$with_system_pixman;
+fi
+if test "x$with_system_pixman" = x; then
+  if test -f $srcdir/../libs/pixman/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`pixman' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`pixman' headers and library from TL tree" >&6;}
+    with_system_pixman=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`pixman' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`pixman' headers and library" >&6;}
+    with_system_pixman=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-pixman=$with_system_pixman'"
+fi
+
+
 ## libs/gd/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
 ## configure options and TL libraries required for gd
 
@@ -5949,6 +6013,32 @@ if test -x $srcdir/poppler/configure; then
   DIST_SUBLIBS="poppler $DIST_SUBLIBS"
   if false; then
     subdirs="$subdirs poppler"
+
+  fi
+fi
+
+
+if test -x $srcdir/cairo/configure; then
+  if test "x$with_system_cairo" != xyes && \
+     test "x$need_cairo" = xyes; then
+    SUBLIBS="cairo $SUBLIBS"
+  fi
+  DIST_SUBLIBS="cairo $DIST_SUBLIBS"
+  if false; then
+    subdirs="$subdirs cairo"
+
+  fi
+fi
+
+
+if test -x $srcdir/pixman/configure; then
+  if test "x$with_system_pixman" != xyes && \
+     test "x$need_pixman" = xyes; then
+    SUBLIBS="pixman $SUBLIBS"
+  fi
+  DIST_SUBLIBS="pixman $DIST_SUBLIBS"
+  if false; then
+    subdirs="$subdirs pixman"
 
   fi
 fi

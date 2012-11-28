@@ -1,0 +1,17 @@
+2012-11-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Make sure 'config.status --recheck' leaves the
+	generated Makefile unchanged.
+
+2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.12.8.
+	* version.ac: Adapted.
+
+2012-11-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.10.2.
+
+2012-11-10  Taco Hoekwater  <taco@metatex.org>
+
+	Import cairo-1.12.8.
