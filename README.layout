@@ -1,4 +1,4 @@
-Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	Design of the TeX Live (TL) build system
@@ -57,43 +57,90 @@ texk/am/*.am		Makefile.am fragments
 texk/web2c/am/*.am	  for the Kpathsea library
 texk/web2c/*/am/*.am	  and the Web2C programs
 
-1.2. A generic library `Lib'
-----------------------------
+1.1.1. The TeX specific libraries
 
-libs/Lib/ac/withenable.ac	defines libraries required by Lib
+texk/kpathsea/ac/withenable.ac	defines that kpathsea requires no other libraries
+texk/kpathsea/ac/kpathsea.ac	defines basic tests for a system version of kpathsea
+texk/kpathsea/ac/mktex.ac	configure options also seen at the top-level
+m4/kpse-kpathsea-flags.m4	defines Autoconf macros for configure options
+				  as well as KPSE_KPATHSEA_FLAGS defining
+				  Make variables and to be used in configure.ac
+				  files for modules depending on kpathsea.
+
+texk/ptexenc/ac/withenable.ac	defines that ptexenc requires kpathsea
+texk/ptexenc/ac/ptexenc.ac	defines basic tests for a system version of ptexenc
+m4/kpse-ptexenc-flags.m4	defines Autoconf macros for configure options
+				  as well as KPSE_PTEXENC_FLAGS defining
+				  Make variables and to be used in configure.ac
+				  files for modules depending on ptexenc.
+
+1.1.2 A generic library `Lib'
+
+libs/Lib/ac/withenable.ac	defines libraries required by Lib (if any)
 libs/Lib/ac/Lib.ac		defines basic tests for a system version of Lib
 m4/kpse-Lib-flags.m4		defines Autoconf macros for configure options
-				  as well as KPSE_LIB_FLAGS, to be used
-				  in configure.ac files and defining
-				  Make variables
+				  as well as KPSE_LIB_FLAGS defining
+				  Make variables and to be used in configure.ac
+				  files for modules depending on this library.
 
-Several libraries use an (almost) unmodified source tree supplemented by a
-proxy build system (bypassing that of the source tree), e.g.,
-
-libs/zlib/zlib-1.2.5/		(almost) unmodified source tree
-libs/zlib/zlib-1.2.5-PATCHES/	modifications applied to that source tree
-libs/zlib/Makefile.am		proxy Makefile.am
-libs/zlib/configure.ac		  and configure.ac
-
-The header files for many libraries are `installed' (as symlinks) under
-libs/Lib/include/ in the build tree exactly as they are for a system version
-under, e.g., /usr/include/.
-
-The same structure is used for the TeX specific libraries.
-
-1.3. A TeX specific program `Prog'
-----------------------------------
+1.1.3. A TeX specific program `Prog'
 
 texk/Prog/ac/withenable.ac	defines libraries required by Prog,
                                   provides the configure option --disable-Prog
 texk/Prog/ac/Prog.ac		optionally defines Prog specific configure
                                   option that should be seen at the top-level
 
-1.4. A utility program `Util'
------------------------------
+1.1.4. A utility program `Util'
 
 utils/Util/ac/withenable.ac	defines libraries required by Util, provides
 				  the configure option --disable-Util
+
+1.2. The individual modules
+---------------------------
+
+All generic libraries and many programs are maintained independently and use
+the distributed source tree, with any patches to that source tree kept as
+documentation of our changes.  There are several types of proxy or wrapper
+build systems for these modules.
+
+1.2.1. A proxy build system, e.g., for libs/zlib/
+
+libs/zlib/zlib-1.2.7/		(almost) unmodified source tree
+libs/zlib/zlib-1.2.7-PATCHES/	modifications applied to that source tree
+libs/zlib/Makefile.am		proxy Makefile.am
+libs/zlib/configure.ac		  and configure.ac
+
+In these cases the build system of the distributed source tree is ignored.
+The header files for many libraries are `installed' (as symlinks) under
+libs/Lib/include/ in the build tree exactly as they are for a system version
+under, e.g., /usr/include/.
+
+1.2.2. A wrapper build system, e.g., for libs/freetype2/
+
+libs/freetype2/freetype-2.4.9/		(almost) unmodified source tree
+libs/freetype2/freetype-2.4.9-PATCHES/	modifications applied to that source tree
+libs/freetype2/Makefile.am		wrapper Makefile.am
+libs/freetype2/configure.ac		  and configure.ac
+
+Configuring libs/freetype2/ will create the wrapper Makefile handling all
+targets except 'all'.  For 'make all' this will run the configure script of
+the distribution and then run 'make all' and usually also 'make install' to
+`install' the library and headers in the build tree
+
+1.2.3. A mixed build system, e.g., for utils/xindy/
+
+utils/xindy/xindy-2.4/			(almost) unmodified source tree
+utils/xindy/xindy-2.4-PATCHES/		modifications applied to that source tree
+utils/xindy/Makefile.am			wrapper Makefile.am
+utils/xindy/configure.ac		proxy configure.ac
+
+Configuring utils/xindy/ will create the wrapper Makefile and the Makefiles
+of the distribution (except the top-level one).  The wrapper Makefile will
+essentially delegate all targets to the sub-Makefiles of the distribution.
+The module texk/lcdf-typetools/ is handled in the same way, this time using
+the top-level Makefile of the distribution.  Both cases require that the
+Makefiles of the distribution allow a VPATH build, can handle all targets,
+and do not refer to $(top_srcdir) or $(top_builddir).
 
 2. Running `configure'
 ======================
@@ -133,10 +180,10 @@ directory.  Subsequently, this recurses into all required subdirectories to
 -------------------
 
 The TL build system allows for parallel builds ('make -j n' with n>1),
-carefully formulating Make rules when a tool (such as 'tangle' or 'convert')
-creates several output files.  This can considerably speed up a TL build on
-multi core systems.  I usually use 'make -j 4 -l 8.0' or even 'make -j' with
-up to 50 compilations in parallel.
+carefully formulating dependencies as well as Make rules when a tool
+(such as 'tangle' or 'convert') creates several output files.  This can
+considerably speed up a TL build on multi core systems.  I usually use
+'make j 4 -l 8.0' or even 'make -j' with up to 50 compilations in parallel.
 
 3.4 Using a Configure Cache File
 --------------------------------

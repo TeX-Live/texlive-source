@@ -1,3 +1,8 @@
+2012-11-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf: Increase main_memory, font_mem_size, hash_extra,
+	and pool_size.
+
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.
