@@ -265,6 +265,28 @@ uprv_detectWindowsTimeZone() {
     TZI tziReg;
     TIME_ZONE_INFORMATION apiTZI;
 
+    OSVERSIONINFO winosversion;
+    static int NewerThanWindows2000 = -1;
+
+    /*  If the OS version is older than Windows XP, we use the
+     *  code in ICU-49.1.2, since GetGeoInfo() is not available.
+     */
+
+    if (NewerThanWindows2000 == -1) {
+        if (GetVersionEx (&winosversion) == 0) {
+            /*  GetVersionEx() failed for some reason. We assume
+             *  the Windows OS is newer than Windows 2000.
+             */
+            NewerThanWindows2000 = 1;
+        } else if (winosversion.dwMajorVersion > 5 ||
+                   (winosversion.dwMajorVersion == 5 &&
+                    winosversion.dwMinorVersion > 0)) {
+            NewerThanWindows2000 = 1;
+        } else {
+            NewerThanWindows2000 = 0;
+        }
+    }
+
     /* Obtain TIME_ZONE_INFORMATION from the API, and then convert it
        to TZI.  We could also interrogate the registry directly; we do
        this below if needed. */
@@ -285,9 +307,31 @@ uprv_detectWindowsTimeZone() {
 
     tmpid[0] = 0;
 
-    id = GetUserGeoID(GEOCLASS_NATION);
-    errorCode = GetGeoInfo(id,GEO_ISO2,ISOcode,3,0);
+    if (NewerThanWindows2000 == 1) {
+        HINSTANCE hi;
+        PROC pgetusergeoid, pgetgeoinfo;
 
+        /*  if LoadLibrary() and/or GetProcAdress() fail, we again
+         *  set NewerThanWindows2000 = 0, and use the code in ICU 49.1.2.
+         */
+
+        hi = LoadLibrary ("kernel32.dll");
+        if (hi == NULL) {
+            NewerThanWindows2000 = 0;
+        } else {
+            pgetusergeoid = GetProcAddress (hi, "GetUserGeoID");
+            pgetgeoinfo = GetProcAddress (hi, "GetGeoInfoA");
+        }
+        if (!pgetusergeoid || !pgetgeoinfo)
+            NewerThanWindows2000 = 0;
+
+        if (NewerThanWindows2000 == 1) {
+            id = (int)pgetusergeoid (GEOCLASS_NATION);
+            errorCode = (int)pgetgeoinfo (id,GEO_ISO2,ISOcode,3,0);
+        }
+        if (hi)
+            FreeLibrary (hi);
+    }
     bundle = ures_openDirect(NULL, "windowsZones", &status);
     ures_getByKey(bundle, "mapTimezones", bundle, &status);
 
@@ -310,14 +354,19 @@ uprv_detectWindowsTimeZone() {
             tziKey.daylightBias = tziReg.daylightBias;
 
             if (uprv_memcmp((char *)&tziKey, (char*)&tziReg, sizeof(tziKey)) == 0) {
-                const UChar* icuTZ = NULL;
-                if (errorCode != 0) {
-                    icuTZ = ures_getStringByKey(winTZ, ISOcode, &len, &status);
-                }
-                if (errorCode==0 || icuTZ==NULL) {
-                    /* fallback to default "001" and reset status */
-                    status = U_ZERO_ERROR;
+                const UChar* icuTZ;
+                if (NewerThanWindows2000 == 0) {
                     icuTZ = ures_getStringByKey(winTZ, "001", &len, &status);
+                } else if (NewerThanWindows2000 == 1) {
+                    icuTZ = NULL;
+                    if (errorCode != 0) {
+                        icuTZ = ures_getStringByKey(winTZ, ISOcode, &len, &status);
+                    }
+                    if (errorCode==0 || icuTZ==NULL) {
+                        /* fallback to default "001" and reset status */
+                        status = U_ZERO_ERROR;
+                        icuTZ = ures_getStringByKey(winTZ, "001", &len, &status);
+                    }
                 }
 
                 if (U_SUCCESS(status)) {
@@ -336,12 +385,17 @@ uprv_detectWindowsTimeZone() {
                      * the current time zone information)
                      */
                     if (idFound || tmpid[0] == 0) {
-                        /* if icuTZ has more than one city, take only the first (i.e. terminate icuTZ at first space) */
-                        int index=0;
-                        while (! (*icuTZ == '\0' || *icuTZ ==' ')) {
-                            tmpid[index++]=*icuTZ++;
+                        if (NewerThanWindows2000 == 0) {
+                            uprv_memset(tmpid, 0, sizeof(tmpid));
+                            u_austrncpy(tmpid, icuTZ, len);
+                        } else if (NewerThanWindows2000 == 1) {
+                            /* if icuTZ has more than one city, take only the first (i.e. terminate icuTZ at first space) */
+                            int index=0;
+                            while (! (*icuTZ == '\0' || *icuTZ ==' ')) {
+                                tmpid[index++]=*icuTZ++;
+                            }
+                            tmpid[index]='\0';
                         }
-                        tmpid[index]='\0';
                     }
                 }
             }
@@ -364,7 +418,7 @@ uprv_detectWindowsTimeZone() {
     }
 
     ures_close(bundle);
-    
+
     return icuid;
 }
 

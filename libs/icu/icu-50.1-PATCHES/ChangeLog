@@ -1,3 +1,7 @@
+2012-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-Windows2000 (new): From Akira.
+
 2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-84-c++11-bugfix (new): Required for gcc-4.7.
