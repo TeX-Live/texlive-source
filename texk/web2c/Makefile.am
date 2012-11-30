@@ -85,6 +85,12 @@ $(proglib): ${srcdir}/lib/*.c
 @ZLIB_RULE@
 ## Rebuild libpng
 @LIBPNG_RULE@
+## Rebuild libfreetype
+@FREETYPE2_RULE@
+## Rebuild libpixman
+@PIXMAN_RULE@
+## Rebuild libcairo
+@CAIRO_RULE@
 ## Rebuild libxpdf & Co
 @XPDF_RULE@
 ## Rebuild poppler
@@ -93,12 +99,12 @@ $(proglib): ${srcdir}/lib/*.c
 @ZZIPLIB_RULE@
 ## Rebuild libgraphite
 @GRAPHITE_RULE@
-## Rebuild libfreetype
-@FREETYPE2_RULE@
 ## Rebuild libTEXkit
 @TECKIT_RULE@
 ## Rebuild libsicuxxx
 @ICU_RULE@
+## Rebuild libharfbuzz
+@HARFBUZZ_RULE@
 
 # The environment for building.
 buildenv = TEXMFCNF=$(srcdir)/../kpathsea

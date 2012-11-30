@@ -1,0 +1,8 @@
+2012-11-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-from-git (new): Update from git as of 2012-11-30.
+
+2012-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported harfbuzz-0.9.7 source tree from:
+	  http://cgit.freedesktop.org/harfbuzz/

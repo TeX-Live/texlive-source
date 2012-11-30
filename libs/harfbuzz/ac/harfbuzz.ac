@@ -1,0 +1,9 @@
+## libs/harfbuzz/ac/harfbuzz.ac: configure.ac fragment for the TeX Live subdirectory libs/harfbuzz/
+dnl
+dnl Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## basic check of system harfbuzz
+KPSE_TRY_LIB([harfbuzz],
+             [#include <hb.h>],
+             [const char *v = hb_version_string();])

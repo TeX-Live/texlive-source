@@ -71,18 +71,21 @@ subdir = man
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-asm.m4 \
+	$(top_srcdir)/../../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cross.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-fontconfig-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-graphite-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-harfbuzz-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lex.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
+	$(top_srcdir)/../../m4/kpse-pixman-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-poppler-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-ptexenc-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
@@ -154,6 +157,9 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+CAIRO_DEPEND = @CAIRO_DEPEND@
+CAIRO_INCLUDES = @CAIRO_INCLUDES@
+CAIRO_LIBS = @CAIRO_LIBS@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -188,6 +194,10 @@ GRAPHITE_DEPEND = @GRAPHITE_DEPEND@
 GRAPHITE_INCLUDES = @GRAPHITE_INCLUDES@
 GRAPHITE_LIBS = @GRAPHITE_LIBS@
 GREP = @GREP@
+HARFBUZZ_DEPEND = @HARFBUZZ_DEPEND@
+HARFBUZZ_INCLUDES = @HARFBUZZ_INCLUDES@
+HARFBUZZ_LIBS = @HARFBUZZ_LIBS@
+ICU_CONFIG = @ICU_CONFIG@
 ICU_DEPEND = @ICU_DEPEND@
 ICU_INCLUDES = @ICU_INCLUDES@
 ICU_LIBS = @ICU_LIBS@
@@ -237,6 +247,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PIXMAN_DEPEND = @PIXMAN_DEPEND@
+PIXMAN_INCLUDES = @PIXMAN_INCLUDES@
+PIXMAN_LIBS = @PIXMAN_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
 POPPLER_DEPEND = @POPPLER_DEPEND@
 POPPLER_INCLUDES = @POPPLER_INCLUDES@

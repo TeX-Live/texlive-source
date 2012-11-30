@@ -67,6 +67,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/m4/kpse-gd-flags.m4 \
 	$(top_srcdir)/m4/kpse-graphite-flags.m4 \
+	$(top_srcdir)/m4/kpse-harfbuzz-flags.m4 \
 	$(top_srcdir)/m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/m4/kpse-libpng-flags.m4 \
@@ -141,6 +142,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/xdvipdfmx/ac/withenable.ac \
 	$(top_srcdir)/texk/tetex/ac/withenable.ac \
 	$(top_srcdir)/texk/texlive/ac/withenable.ac \
+	$(top_srcdir)/libs/harfbuzz/ac/withenable.ac \
 	$(top_srcdir)/libs/icu/ac/withenable.ac \
 	$(top_srcdir)/libs/teckit/ac/withenable.ac \
 	$(top_srcdir)/libs/graphite/ac/withenable.ac \
@@ -173,7 +175,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/libs/zziplib/ac/zziplib.ac \
 	$(top_srcdir)/libs/graphite/ac/graphite.ac \
 	$(top_srcdir)/libs/teckit/ac/teckit.ac \
-	$(top_srcdir)/libs/icu/ac/icu.ac $(top_srcdir)/configure.ac
+	$(top_srcdir)/libs/icu/ac/icu.ac \
+	$(top_srcdir)/libs/harfbuzz/ac/harfbuzz.ac \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \

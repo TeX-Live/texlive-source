@@ -27,6 +27,9 @@ graphite 2.4 - checked 15may12
   http://scripts.sil.org/svn-public/graphite/graphite/trunk
   (svn r1333 2012-05-14 14:47:16 UTC, omitting changes in test/).
 
+harfbuzz 0.9.7 - checked 30nov12
+  http://cgit.freedesktop.org/harfbuzz/
+
 icu 50.1 (50_1) - checked 7nov12
   http://download.icu-project.org/files/icu4c/
   with modifications required for xetex, also used by bibtexu

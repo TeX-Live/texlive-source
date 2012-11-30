@@ -1,3 +1,9 @@
+2012-11-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Add libs/harfbuzz for future XeTeX.
+	* kpse-harfbuzz-flags.m4: New file.
+	* kpse-pkgs.m4: Add the new library.
+
 2012-11-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Add libs/pixman and libs/cairo for future MetaPost.

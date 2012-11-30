@@ -134,13 +134,11 @@ utils/xindy/xindy-2.4-PATCHES/		modifications applied to that source tree
 utils/xindy/Makefile.am			wrapper Makefile.am
 utils/xindy/configure.ac		proxy configure.ac
 
-Configuring utils/xindy/ will create the wrapper Makefile and the Makefiles
-of the distribution (except the top-level one).  The wrapper Makefile will
-essentially delegate all targets to the sub-Makefiles of the distribution.
-The module texk/lcdf-typetools/ is handled in the same way, this time using
-the top-level Makefile of the distribution.  Both cases require that the
-Makefiles of the distribution allow a VPATH build, can handle all targets,
-and do not refer to $(top_srcdir) or $(top_builddir).
+Configuring utils/xindy/ (or texk/lcdf-typetools/) will create the wrapper
+Makefile and the Makefiles of the distribution.  The wrapper Makefile will
+essentially just invoke the top-level Makefile of the distribution.  This
+requires that the Makefiles of the distribution allow a VPATH build, can
+handle all targets, and do not refer to $(top_srcdir) or $(top_builddir).
 
 2. Running `configure'
 ======================

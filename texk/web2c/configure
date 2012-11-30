@@ -644,19 +644,19 @@ CTANGLE
 CTANGLEBOOT
 TANGLE
 TANGLEBOOT
+HARFBUZZ_RULE
+HARFBUZZ_DEPEND
+HARFBUZZ_LIBS
+HARFBUZZ_INCLUDES
 ICU_RULE
 ICU_DEPEND
 ICU_LIBS
 ICU_INCLUDES
+ICU_CONFIG
 TECKIT_RULE
 TECKIT_DEPEND
 TECKIT_LIBS
 TECKIT_INCLUDES
-FREETYPE2_RULE
-FREETYPE2_DEPEND
-FREETYPE2_LIBS
-FREETYPE2_INCLUDES
-FT2_CONFIG
 GRAPHITE_RULE
 GRAPHITE_DEPEND
 GRAPHITE_LIBS
@@ -673,6 +673,19 @@ XPDF_RULE
 XPDF_DEPEND
 XPDF_LIBS
 XPDF_INCLUDES
+CAIRO_RULE
+CAIRO_DEPEND
+CAIRO_LIBS
+CAIRO_INCLUDES
+PIXMAN_RULE
+PIXMAN_DEPEND
+PIXMAN_LIBS
+PIXMAN_INCLUDES
+FREETYPE2_RULE
+FREETYPE2_DEPEND
+FREETYPE2_LIBS
+FREETYPE2_INCLUDES
+FT2_CONFIG
 LIBPNG_RULE
 LIBPNG_DEPEND
 LIBPNG_LIBS
@@ -970,14 +983,18 @@ with_system_zlib
 with_zlib_includes
 with_zlib_libdir
 with_system_libpng
+with_system_freetype2
+with_system_pixman
+with_system_cairo
 with_system_xpdf
 with_system_poppler
 with_system_zziplib
 with_system_graphite
-with_system_freetype2
 with_system_teckit
 with_teckit_includes
 with_teckit_libdir
+with_system_icu
+with_system_harfbuzz
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1709,6 +1726,12 @@ Optional Packages:
   --with-zlib-libdir=DIR  zlib library installed in DIR
   --with-system-libpng    use installed libpng headers and library (requires
                           pkg-config)
+  --with-system-freetype2 use installed freetype2 headers and library
+                          (requires freetype-config)
+  --with-system-pixman    use installed pixman headers and library (requires
+                          pkg-config)
+  --with-system-cairo     use installed cairo headers and library (requires
+                          pkg-config)
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf library from TL (requires pkg-config)
   --with-system-poppler   use installed poppler headers and library (requires
@@ -1717,13 +1740,15 @@ Optional Packages:
                           pkg-config)
   --with-system-graphite  use installed silgraphite headers and library
                           (requires pkg-config)
-  --with-system-freetype2 use installed freetype2 headers and library
-                          (requires freetype-config)
   --with-system-teckit    use installed teckit headers and library
   --with-teckit-includes=DIR
                           teckit headers installed in DIR
   --with-teckit-libdir=DIR
                           teckit library installed in DIR
+  --with-system-icu       use installed ICU headers and libraries (requires
+                          icu-config, not for XeTeX)
+  --with-system-harfbuzz  use installed harfbuzz headers and library (requires
+                          pkg-config)
 
 Some influential environment variables:
   CC          C compiler command
@@ -22655,106 +22680,6 @@ ${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-## _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags
-
-# Check whether --with-system-xpdf was given.
-if test "${with_system_xpdf+set}" = set; then :
-  withval=$with_system_xpdf;
-fi
-if test "x$with_system_xpdf" = xyes; then
-  if $PKG_CONFIG poppler --atleast-version=0.12; then
-  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-  XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
-  XPDF_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
-  as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
-fi
-else
-  XPDF_INCLUDES="-DPDF_PARSER_ONLY -I$kpse_BLD/libs/xpdf -I$kpse_BLD/libs/xpdf/goo -I$kpse_BLD/libs/xpdf/xpdf"
-  XPDF_LIBS="$kpse_BLD/libs/xpdf/libxpdf.a"
-  XPDF_DEPEND='${top_builddir}/../../libs/xpdf/libxpdf.a'
-  XPDF_RULE='# Rebuild libxpdf
-$(XPDF_DEPEND): ${top_builddir}/../../libs/xpdf/xpdf/Stream.h
-	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
-	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-test "x$kpse_cv_have_win32" = xno || XPDF_LIBS="$XPDF_LIBS -lgdi32"
-
-## _KPSE_LIB_FLAGS: Setup poppler (-lpoppler) flags
-
-# Check whether --with-system-poppler was given.
-if test "${with_system_poppler+set}" = set; then :
-  withval=$with_system_poppler;
-fi
-if test "x$with_system_poppler" = xyes; then
-  if $PKG_CONFIG poppler --atleast-version=0.18; then
-  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-  POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
-  POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  as_fn_error $? "did not find poppler-0.18 or better" "$LINENO" 5
-fi
-else
-  POPPLER_INCLUDES="-I$kpse_BLD/libs/poppler -I$kpse_BLD/libs/poppler/goo -I$kpse_BLD/libs/poppler/poppler"
-  POPPLER_LIBS="$kpse_BLD/libs/poppler/libpoppler.a"
-  POPPLER_DEPEND='${top_builddir}/../../libs/poppler/libpoppler.a'
-  POPPLER_RULE='# Rebuild libpoppler
-$(POPPLER_DEPEND): ${top_builddir}/../../libs/poppler/poppler/Stream.h
-	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/poppler/poppler/Stream.h:
-	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-test "x$kpse_cv_have_win32" = xno || POPPLER_LIBS="$POPPLER_LIBS -lgdi32"
-
-## _KPSE_LIB_FLAGS: Setup zziplib (-lzzip) flags
-
-# Check whether --with-system-zziplib was given.
-if test "${with_system_zziplib+set}" = set; then :
-  withval=$with_system_zziplib;
-fi
-if test "x$with_system_zziplib" = xyes; then
-  if $PKG_CONFIG zziplib --atleast-version=0.12; then
-  ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
-  ZZIPLIB_LIBS=`$PKG_CONFIG zziplib --libs`
-elif test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
-  as_fn_error $? "did not find zziplib-0.12 or better" "$LINENO" 5
-fi
-else
-  ZZIPLIB_INCLUDES="-I$kpse_BLD/libs/zziplib/include"
-  ZZIPLIB_LIBS="$kpse_BLD/libs/zziplib/libzzip.a"
-  ZZIPLIB_DEPEND='${top_builddir}/../../libs/zziplib/libzzip.a'
-  ZZIPLIB_RULE='# Rebuild libzzip
-$(ZZIPLIB_DEPEND): ${top_builddir}/../../libs/zziplib/include/zzip/zzip.h
-	cd ${top_builddir}/../../libs/zziplib && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/zziplib/include/zzip/zzip.h:
-	cd ${top_builddir}/../../libs/zziplib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-
-## _KPSE_LIB_FLAGS: Setup graphite (-lgraphite) flags
-
-# Check whether --with-system-graphite was given.
-if test "${with_system_graphite+set}" = set; then :
-  withval=$with_system_graphite;
-fi
-if test "x$with_system_graphite" = xyes; then
-  if $PKG_CONFIG silgraphite --atleast-version=2.3; then
-  GRAPHITE_INCLUDES="`$PKG_CONFIG silgraphite --cflags`"
-  GRAPHITE_LIBS=`$PKG_CONFIG silgraphite --libs`
-elif test "x$need_graphite:$with_system_graphite" = xyes:yes; then
-  as_fn_error $? "did not find silgraphite 2.3 or better" "$LINENO" 5
-fi
-else
-  GRAPHITE_INCLUDES="-I$kpse_BLD/libs/graphite/include"
-  GRAPHITE_LIBS="$kpse_BLD/libs/graphite/libgraphite.a"
-  GRAPHITE_DEPEND='${top_builddir}/../../libs/graphite/libgraphite.a'
-  GRAPHITE_RULE='# Rebuild libgraphite
-$(GRAPHITE_DEPEND): ${top_builddir}/../../libs/graphite/include/graphite/GrClient.h
-	cd ${top_builddir}/../../libs/graphite && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/graphite/include/graphite/GrClient.h:
-	cd ${top_builddir}/../../libs/graphite && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}freetype-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}freetype-config; ac_word=$2
@@ -22871,6 +22796,180 @@ ${top_builddir}/../../libs/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+## _KPSE_LIB_FLAGS: Setup pixman (-lpixman) flags
+
+# Check whether --with-system-pixman was given.
+if test "${with_system_pixman+set}" = set; then :
+  withval=$with_system_pixman;
+fi
+if test "x$with_system_pixman" = xyes; then
+  if $PKG_CONFIG pixman-1 --atleast-version=0.18; then
+  PIXMAN_INCLUDES=`$PKG_CONFIG pixman-1 --cflags`
+  PIXMAN_LIBS=`$PKG_CONFIG pixman-1 --libs`
+elif test "x$need_pixman:$with_system_pixman" = xyes:yes; then
+  as_fn_error $? "did not find pixman-0.18 or better" "$LINENO" 5
+fi
+else
+  PIXMAN_INCLUDES="-I$kpse_BLD/libs/pixman/include"
+  PIXMAN_LIBS="$kpse_BLD/libs/pixman/libpixman.la"
+  PIXMAN_DEPEND='${top_builddir}/../../libs/pixman/libpixman.la'
+  PIXMAN_RULE='# Rebuild libpixman
+$(PIXMAN_DEPEND): ${top_builddir}/../../libs/pixman/include/pixman.h
+	cd ${top_builddir}/../../libs/pixman && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/pixman/include/pixman.h:
+	cd ${top_builddir}/../../libs/pixman && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
+## _KPSE_LIB_FLAGS: Setup cairo (-lcairo) flags
+
+# Check whether --with-system-cairo was given.
+if test "${with_system_cairo+set}" = set; then :
+  withval=$with_system_cairo;
+fi
+if test "x$with_system_cairo" = xyes; then
+  if $PKG_CONFIG cairo --atleast-version=1.10; then
+  CAIRO_INCLUDES=`$PKG_CONFIG cairo --cflags`
+  CAIRO_LIBS=`$PKG_CONFIG cairo --libs`
+elif test "x$need_cairo:$with_system_cairo" = xyes:yes; then
+  as_fn_error $? "did not find cairo-1.10 or better" "$LINENO" 5
+fi
+else
+  CAIRO_INCLUDES="-I$kpse_BLD/libs/cairo/cairo"
+  CAIRO_LIBS="$kpse_BLD/libs/cairo/libcairo.a"
+  CAIRO_DEPEND='${top_builddir}/../../libs/cairo/libcairo.a'
+  CAIRO_RULE='# Rebuild libcairo
+$(CAIRO_DEPEND): ${top_builddir}/../../libs/cairo/cairo/cairo.h
+	cd ${top_builddir}/../../libs/cairo && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/cairo/cairo/cairo.h:
+	cd ${top_builddir}/../../libs/cairo && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
+## _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags
+
+# Check whether --with-system-xpdf was given.
+if test "${with_system_xpdf+set}" = set; then :
+  withval=$with_system_xpdf;
+fi
+if test "x$with_system_xpdf" = xyes; then
+  if $PKG_CONFIG poppler --atleast-version=0.12; then
+  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+  XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
+  XPDF_LIBS=`$PKG_CONFIG poppler --libs`
+elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
+  as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
+fi
+else
+  XPDF_INCLUDES="-DPDF_PARSER_ONLY -I$kpse_BLD/libs/xpdf -I$kpse_BLD/libs/xpdf/goo -I$kpse_BLD/libs/xpdf/xpdf"
+  XPDF_LIBS="$kpse_BLD/libs/xpdf/libxpdf.a"
+  XPDF_DEPEND='${top_builddir}/../../libs/xpdf/libxpdf.a'
+  XPDF_RULE='# Rebuild libxpdf
+$(XPDF_DEPEND): ${top_builddir}/../../libs/xpdf/xpdf/Stream.h
+	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
+	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+test "x$kpse_cv_have_win32" = xno || XPDF_LIBS="$XPDF_LIBS -lgdi32"
+
+## _KPSE_LIB_FLAGS: Setup poppler (-lpoppler) flags
+
+# Check whether --with-system-poppler was given.
+if test "${with_system_poppler+set}" = set; then :
+  withval=$with_system_poppler;
+fi
+if test "x$with_system_poppler" = xyes; then
+  if $PKG_CONFIG poppler --atleast-version=0.18; then
+  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+  POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
+  POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
+elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
+  as_fn_error $? "did not find poppler-0.18 or better" "$LINENO" 5
+fi
+else
+  POPPLER_INCLUDES="-I$kpse_BLD/libs/poppler -I$kpse_BLD/libs/poppler/goo -I$kpse_BLD/libs/poppler/poppler"
+  POPPLER_LIBS="$kpse_BLD/libs/poppler/libpoppler.a"
+  POPPLER_DEPEND='${top_builddir}/../../libs/poppler/libpoppler.a'
+  POPPLER_RULE='# Rebuild libpoppler
+$(POPPLER_DEPEND): ${top_builddir}/../../libs/poppler/poppler/Stream.h
+	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/poppler/poppler/Stream.h:
+	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+test "x$kpse_cv_have_win32" = xno || POPPLER_LIBS="$POPPLER_LIBS -lgdi32"
+
+## _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags
+
+# Check whether --with-system-xpdf was given.
+if test "${with_system_xpdf+set}" = set; then :
+  withval=$with_system_xpdf;
+fi
+if test "x$with_system_xpdf" = xyes; then
+  if $PKG_CONFIG poppler --atleast-version=0.12; then
+  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+  XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
+  XPDF_LIBS=`$PKG_CONFIG poppler --libs`
+elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
+  as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
+fi
+else
+  XPDF_INCLUDES="-DPDF_PARSER_ONLY -I$kpse_BLD/libs/xpdf -I$kpse_BLD/libs/xpdf/goo -I$kpse_BLD/libs/xpdf/xpdf"
+  XPDF_LIBS="$kpse_BLD/libs/xpdf/libxpdf.a"
+  XPDF_DEPEND='${top_builddir}/../../libs/xpdf/libxpdf.a'
+  XPDF_RULE='# Rebuild libxpdf
+$(XPDF_DEPEND): ${top_builddir}/../../libs/xpdf/xpdf/Stream.h
+	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
+	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+test "x$kpse_cv_have_win32" = xno || XPDF_LIBS="$XPDF_LIBS -lgdi32"
+
+## _KPSE_LIB_FLAGS: Setup zziplib (-lzzip) flags
+
+# Check whether --with-system-zziplib was given.
+if test "${with_system_zziplib+set}" = set; then :
+  withval=$with_system_zziplib;
+fi
+if test "x$with_system_zziplib" = xyes; then
+  if $PKG_CONFIG zziplib --atleast-version=0.12; then
+  ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
+  ZZIPLIB_LIBS=`$PKG_CONFIG zziplib --libs`
+elif test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
+  as_fn_error $? "did not find zziplib-0.12 or better" "$LINENO" 5
+fi
+else
+  ZZIPLIB_INCLUDES="-I$kpse_BLD/libs/zziplib/include"
+  ZZIPLIB_LIBS="$kpse_BLD/libs/zziplib/libzzip.a"
+  ZZIPLIB_DEPEND='${top_builddir}/../../libs/zziplib/libzzip.a'
+  ZZIPLIB_RULE='# Rebuild libzzip
+$(ZZIPLIB_DEPEND): ${top_builddir}/../../libs/zziplib/include/zzip/zzip.h
+	cd ${top_builddir}/../../libs/zziplib && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/zziplib/include/zzip/zzip.h:
+	cd ${top_builddir}/../../libs/zziplib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
+## _KPSE_LIB_FLAGS: Setup graphite (-lgraphite) flags
+
+# Check whether --with-system-graphite was given.
+if test "${with_system_graphite+set}" = set; then :
+  withval=$with_system_graphite;
+fi
+if test "x$with_system_graphite" = xyes; then
+  if $PKG_CONFIG silgraphite --atleast-version=2.3; then
+  GRAPHITE_INCLUDES="`$PKG_CONFIG silgraphite --cflags`"
+  GRAPHITE_LIBS=`$PKG_CONFIG silgraphite --libs`
+elif test "x$need_graphite:$with_system_graphite" = xyes:yes; then
+  as_fn_error $? "did not find silgraphite 2.3 or better" "$LINENO" 5
+fi
+else
+  GRAPHITE_INCLUDES="-I$kpse_BLD/libs/graphite/include"
+  GRAPHITE_LIBS="$kpse_BLD/libs/graphite/libgraphite.a"
+  GRAPHITE_DEPEND='${top_builddir}/../../libs/graphite/libgraphite.a'
+  GRAPHITE_RULE='# Rebuild libgraphite
+$(GRAPHITE_DEPEND): ${top_builddir}/../../libs/graphite/include/graphite/GrClient.h
+	cd ${top_builddir}/../../libs/graphite && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/graphite/include/graphite/GrClient.h:
+	cd ${top_builddir}/../../libs/graphite && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
 ## _KPSE_LIB_FLAGS: Setup teckit (-lTECkit) flags
 
 # Check whether --with-system-teckit was given.
@@ -22906,6 +23005,123 @@ ${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h:
 	cd ${top_builddir}/../../libs/teckit && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}icu-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}icu-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ICU_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ICU_CONFIG"; then
+  ac_cv_prog_ICU_CONFIG="$ICU_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ICU_CONFIG="${ac_tool_prefix}icu-config"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ICU_CONFIG=$ac_cv_prog_ICU_CONFIG
+if test -n "$ICU_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ICU_CONFIG" >&5
+$as_echo "$ICU_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_ICU_CONFIG"; then
+  ac_ct_ICU_CONFIG=$ICU_CONFIG
+  # Extract the first word of "icu-config", so it can be a program name with args.
+set dummy icu-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_ICU_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_ICU_CONFIG"; then
+  ac_cv_prog_ac_ct_ICU_CONFIG="$ac_ct_ICU_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_ICU_CONFIG="icu-config"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_ICU_CONFIG=$ac_cv_prog_ac_ct_ICU_CONFIG
+if test -n "$ac_ct_ICU_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_ICU_CONFIG" >&5
+$as_echo "$ac_ct_ICU_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_ICU_CONFIG" = x; then
+    ICU_CONFIG="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    ICU_CONFIG=$ac_ct_ICU_CONFIG
+  fi
+else
+  ICU_CONFIG="$ac_cv_prog_ICU_CONFIG"
+fi
+
+## _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags
+
+# Check whether --with-system-icu was given.
+if test "${with_system_icu+set}" = set; then :
+  withval=$with_system_icu;
+fi
+if test "x$with_system_icu" = xyes; then
+  if $ICU_CONFIG --version >/dev/null 2>&1; then
+  ICU_INCLUDES=`$ICU_CONFIG --cppflags`
+  # Work around bug in icu-config version 4.4
+  ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath `
+  ICU_LIBS="$ICU_LIBS `$ICU_CONFIG --ldflags-libsonly --ldflags-system`"
+elif test "x$need_icu:$with_system_icu" = xyes:yes; then
+  as_fn_error $? "did not find icu-config required for system icu libraries" "$LINENO" 5
+fi
+else
+  ICU_INCLUDES="-DU_STATIC_IMPLEMENTATION -I$kpse_BLD/libs/icu/include"
+  ICU_LIBS="$kpse_BLD/libs/icu/icu-build/lib/libicule.a $kpse_BLD/libs/icu/icu-build/lib/libicuuc.a $kpse_BLD/libs/icu/icu-build/lib/libicudata.a"
+  ICU_DEPEND='${top_builddir}/../../libs/icu/icu-build/lib/libicule.a ${top_builddir}/../../libs/icu/icu-build/lib/libicuuc.a ${top_builddir}/../../libs/icu/icu-build/lib/libicudata.a'
+  ICU_RULE='# Rebuild libicuxxx
+$(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
+	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/icu/include/unicode/uversion.h:
+	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
 ## _KPSE_LIB_FLAGS: Setup icu (-lsicuxxx) flags
   ICU_INCLUDES="-DU_STATIC_IMPLEMENTATION -I$kpse_BLD/libs/icu/include"
   ICU_LIBS="$kpse_BLD/libs/icu/icu-build/lib/libicule.a $kpse_BLD/libs/icu/icu-build/lib/libicuuc.a $kpse_BLD/libs/icu/icu-build/lib/libicudata.a"
@@ -22915,6 +23131,30 @@ $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+
+## _KPSE_LIB_FLAGS: Setup harfbuzz (-lharfbuzz) flags
+
+# Check whether --with-system-harfbuzz was given.
+if test "${with_system_harfbuzz+set}" = set; then :
+  withval=$with_system_harfbuzz;
+fi
+if test "x$with_system_harfbuzz" = xyes; then
+  if $PKG_CONFIG harfbuzz; then
+  HARFBUZZ_INCLUDES=`$PKG_CONFIG harfbuzz --cflags`
+  HARFBUZZ_LIBS=`$PKG_CONFIG harfbuzz --libs`
+elif test "x$need_harfbuzz:$with_system_harfbuzz" = xyes:yes; then
+  as_fn_error $? "did not find harfbuzz" "$LINENO" 5
+fi
+else
+  HARFBUZZ_INCLUDES="-I$kpse_BLD/libs/harfbuzz/include"
+  HARFBUZZ_LIBS="$kpse_BLD/libs/harfbuzz/libharfbuzz.a"
+  HARFBUZZ_DEPEND='${top_builddir}/../../libs/harfbuzz/libharfbuzz.a'
+  HARFBUZZ_RULE='# Rebuild libharfbuzz
+$(HARFBUZZ_DEPEND): ${top_builddir}/../../libs/harfbuzz/include/hb.h
+	cd ${top_builddir}/../../libs/harfbuzz && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/harfbuzz/include/hb.h:
+	cd ${top_builddir}/../../libs/harfbuzz && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
 
 
 # Check size of off_t (using <kpathsea/config.h>)

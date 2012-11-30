@@ -795,6 +795,7 @@ with_xdvi_x_toolkit
 enable_xdvipdfmx
 enable_tetex
 enable_texlive
+with_system_harfbuzz
 with_system_icu
 with_system_teckit
 with_teckit_includes
@@ -844,7 +845,8 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS'
-ac_subdirs_all='icu
+ac_subdirs_all='harfbuzz
+icu
 teckit
 graphite
 zziplib
@@ -1624,6 +1626,8 @@ Optional Packages:
   --with-xdvi-x-toolkit=KIT
                           Use toolkit KIT (motif/xaw/xaw3d/neXtaw) for xdvi
                           [default: Motif if available, else Xaw]
+  --with-system-harfbuzz  use installed harfbuzz headers and library (requires
+                          pkg-config)
   --with-system-icu       use installed ICU headers and libraries (requires
                           icu-config, not for XeTeX)
   --with-system-teckit    use installed teckit headers and library
@@ -4651,6 +4655,50 @@ esac
 
 
 
+## libs/harfbuzz/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/harfbuzz/
+## configure options and TL libraries required for harfbuzz
+
+# Check whether --with-system-harfbuzz was given.
+if test "${with_system_harfbuzz+set}" = set; then :
+  withval=$with_system_harfbuzz;
+fi
+if test "x$with_system_harfbuzz" = x; then
+  if test -f $srcdir/../libs/harfbuzz/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`harfbuzz' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`harfbuzz' headers and library from TL tree" >&6;}
+    with_system_harfbuzz=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`harfbuzz' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`harfbuzz' headers and library" >&6;}
+    with_system_harfbuzz=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-harfbuzz=$with_system_harfbuzz'"
+fi
+if test "x$with_system_harfbuzz" = xyes; then
+  if test "x$with_system_freetyp2" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`freetyp2' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`freetyp2' headers and library" >&6;}
+    with_system_freetyp2=yes
+    ac_configure_args="$ac_configure_args '--with-system-freetyp2'"
+  elif test "x$with_system_freetyp2" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-harfbuzz' requires \`--with-system-freetyp2'" "$LINENO" 5
+  fi
+  if test "x$with_system_icu" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`icu' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`icu' headers and library" >&6;}
+    with_system_icu=yes
+    ac_configure_args="$ac_configure_args '--with-system-icu'"
+  elif test "x$with_system_icu" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-harfbuzz' requires \`--with-system-icu'" "$LINENO" 5
+  fi
+fi
+
+test "x$need_harfbuzz" = xyes && {
+  need_freetyp2=yes
+  need_icu=yes
+}
+
+
 ## libs/icu/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/icu/
 ## configure options and TL libraries required for icu (modified for XeTeX)
 
@@ -5938,6 +5986,19 @@ SUBLIBS=
 DIST_SUBLIBS=
 test "x$need_icu_xetex" = xyes && need_icu=yes && with_system_icu=no
 
+
+
+if test -x $srcdir/harfbuzz/configure; then
+  if test "x$with_system_harfbuzz" != xyes && \
+     test "x$need_harfbuzz" = xyes; then
+    SUBLIBS="harfbuzz $SUBLIBS"
+  fi
+  DIST_SUBLIBS="harfbuzz $DIST_SUBLIBS"
+  if false; then
+    subdirs="$subdirs harfbuzz"
+
+  fi
+fi
 
 
 if test -x $srcdir/icu/configure; then
