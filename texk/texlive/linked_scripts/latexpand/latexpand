@@ -112,8 +112,7 @@ sub process_line
 			$_ = "";
 		} elsif (my ($before, $ignored, $full_filename, $after)
 			 = /^(([^%]|[^\\]%)*)\\input[{\s]+(.*?)[\s}](.*)$/) {
-			$full_filename .= ".tex" unless $full_filename =~ m/\./;
-			$full_filename = find_tex_file($full_filename);
+			$full_filename = find_tex_file($full_filename, ":.tex");
 			say $prefix . "Found input for file: $full_filename\n";
 			print $before . $nl;
 			print '\makeatletter{}' . $nl;
@@ -213,6 +212,9 @@ latexpand [options] FILE...
 	                 Expand \usepackage{...} directives if the
 	                 corresponding .sty file is found in
 	                 $TEXINPUTS
+	--expand-bbl FILE
+	                 Expand the bibliography by inlining FILE
+	                 (should be a *.bbl file)
 	--help           this help message
 	--output <file>, -o <file>
 	                 generate output in <file>
