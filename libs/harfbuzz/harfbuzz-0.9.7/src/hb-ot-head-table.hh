@@ -52,7 +52,7 @@ struct head
   }
 
   inline bool sanitize (hb_sanitize_context_t *c) {
-    TRACE_SANITIZE (this);
+    TRACE_SANITIZE ();
     return TRACE_RETURN (c->check_struct (this) && likely (version.major == 1));
   }
 

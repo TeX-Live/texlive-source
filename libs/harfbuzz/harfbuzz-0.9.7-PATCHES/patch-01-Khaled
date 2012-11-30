@@ -1,0 +1,106 @@
+diff -ur harfbuzz-0.9.7.orig/src/hb-ot-layout-common-private.hh harfbuzz-0.9.7/src/hb-ot-layout-common-private.hh
+--- harfbuzz-0.9.7.orig/src/hb-ot-layout-common-private.hh	2012-11-17 03:44:32.000000000 +0100
++++ harfbuzz-0.9.7/src/hb-ot-layout-common-private.hh	2012-11-30 14:23:03.000000000 +0100
+@@ -248,6 +248,33 @@
+ 
+ typedef RecordListOf<Script> ScriptList;
+ 
++struct FeatureParamsSize
++{
++  inline bool sanitize (hb_sanitize_context_t *c) {
++    TRACE_SANITIZE ();
++    return TRACE_RETURN (c->check_struct (this));
++  }
++
++  USHORT params[5];
++  public:
++  DEFINE_SIZE_STATIC (10);
++};
++
++struct FeatureParams
++{
++  /* Note: currently the only feature with params is 'size', so we hardcode
++   * the length of the table to that of the FeatureParamsSize. */
++
++  inline bool sanitize (hb_sanitize_context_t *c) {
++    TRACE_SANITIZE ();
++    return TRACE_RETURN (c->check_struct (this));
++  }
++
++  union {
++  FeatureParamsSize size;
++  } u;
++  DEFINE_SIZE_STATIC (10);
++};
+ 
+ struct Feature
+ {
+@@ -260,12 +287,17 @@
+ 					  unsigned int *lookup_tags /* OUT */) const
+   { return lookupIndex.get_indexes (start_index, lookup_count, lookup_tags); }
+ 
++  inline const FeatureParams &get_feature_params (void) const
++  { return this+featureParams; }
++
+   inline bool sanitize (hb_sanitize_context_t *c) {
+     TRACE_SANITIZE ();
+-    return TRACE_RETURN (c->check_struct (this) && lookupIndex.sanitize (c));
++    return TRACE_RETURN (c->check_struct (this) && lookupIndex.sanitize (c) &&
++			 featureParams.sanitize (c, this));
+   }
+ 
+-  Offset	featureParams;	/* Offset to Feature Parameters table (if one
++  OffsetTo<FeatureParams>
++		 featureParams;	/* Offset to Feature Parameters table (if one
+ 				 * has been defined for the feature), relative
+ 				 * to the beginning of the Feature Table; = Null
+ 				 * if not required */
+diff -ur harfbuzz-0.9.7.orig/src/hb-ot-layout.cc harfbuzz-0.9.7/src/hb-ot-layout.cc
+--- harfbuzz-0.9.7.orig/src/hb-ot-layout.cc	2012-11-17 04:06:56.000000000 +0100
++++ harfbuzz-0.9.7/src/hb-ot-layout.cc	2012-11-30 14:23:03.000000000 +0100
+@@ -539,3 +539,30 @@
+ {
+   OT::GPOS::position_finish (font, buffer, zero_width_attached_marks);
+ }
++
++hb_bool_t
++hb_ot_layout_position_get_size (hb_face_t *face,
++				uint16_t  *data /* OUT, 5 items */)
++{
++  const OT::GPOS &gpos = _get_gpos (face);
++
++  unsigned int num_features = gpos.get_feature_count ();
++  for (unsigned int i = 0; i < num_features; i++) {
++
++    if (HB_TAG ('s','i','z','e') == gpos.get_feature_tag (i))
++    {
++      const OT::Feature &f = gpos.get_feature (i);
++      const OT::FeatureParams &params = f.get_feature_params ();
++
++      for (unsigned int i = 0; i < 5; i++)
++	data[i] = params.u.size.params[i];
++
++      return true;
++    }
++  }
++
++  for (unsigned int i = 0; i < 5; i++)
++    data[i] = 0;
++
++  return false;
++}
+diff -ur harfbuzz-0.9.7.orig/src/hb-ot-layout.h harfbuzz-0.9.7/src/hb-ot-layout.h
+--- harfbuzz-0.9.7.orig/src/hb-ot-layout.h	2012-11-17 03:50:38.000000000 +0100
++++ harfbuzz-0.9.7/src/hb-ot-layout.h	2012-11-30 14:23:03.000000000 +0100
+@@ -279,6 +279,11 @@
+ 			      hb_glyph_position_t  *positions /* IN / OUT */);
+ #endif
+ 
++/* Optical 'size' feature info.  Returns true if found. */
++hb_bool_t
++hb_ot_layout_position_get_size (hb_face_t *face,
++				uint16_t  *data /* OUT, 5 items */);
++
+ 
+ HB_END_DECLS
+ 
