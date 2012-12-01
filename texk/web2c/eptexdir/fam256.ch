@@ -291,6 +291,21 @@ else if m=(math_code_base+128) then begin
            +(cur_val1 mod @"100);
   scanned_result(cur_val)(int_val);
   end
+else if m=del_code_base then begin
+  cur_val1:=del_code(cur_val); cur_val:=del_code1(cur_val);
+  if ((cur_val1 div @"100) mod @"100 >= 16) or (cur_val>=@"1000) then
+  begin print_err("Extended delimiter code used as delcode");
+@.Bad delimiter code@>
+    help2("A numeric delimiter code must be between 0 and 2^{27}-1.")@/
+      ("I changed this one to zero."); error;
+    scanned_result(0)(int_val);
+    end
+  else scanned_result(cur_val1*@"1000+cur_val)(int_val);
+  end
+else if m=(del_code_base+128) then begin
+  { Aleph seems \.{\\odelcode} always returns $-1$.}
+  scanned_result(-1)(int_val);
+  end
 @z
 %-----------------------------------------------
 @x

@@ -1,3 +1,7 @@
+2012-12-01  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* fam256.ch: fix a delcode bug.
+
 2012-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptexextra.h: Set AUTHOR to "Peter Breitenlohner" and
