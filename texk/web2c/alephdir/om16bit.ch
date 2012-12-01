@@ -1245,6 +1245,22 @@ if m=math_code_base then begin
   end
 else if m=(math_code_base+256) then
   scanned_result(ho(math_code(cur_val)))(int_val)
+else if m=del_code_base then begin
+  cur_val1:=del_code1(cur_val); cur_val:=del_code0(cur_val);
+  cur_val1:=(cur_val1 div @"10000)*@"100 + (cur_val1 mod @"10000);
+  cur_val:=(cur_val div @"10000)*@"100 + (cur_val mod @"10000);
+  if ((cur_val div @"100) mod @"100 > 15) or (cur_val1>=@"1000) then
+  begin print_err("Extended delimiter code used as delcode");
+@.Bad delimiter code@>
+    help2("A numeric delimiter code must be between 0 and 2^{27}-1.")@/
+      ("I changed this one to zero."); error;
+    scanned_result(0)(int_val);
+    end
+    else scanned_result(cur_val*@"1000+cur_val1)(int_val);
+  end
+else if m=(del_code_base+256) then begin
+  scanned_result(-1)(int_val);
+  end
 else if m<math_code_base then scanned_result(equiv(m+cur_val))(int_val)
 else scanned_result(new_eqtb_int(m+cur_val))(int_val);
 @z
