@@ -30,6 +30,7 @@ Removed the empty directories:
 	doc/public/html/
 	doc/public/tmpl/
 	doc/public/xml/
+	test/reference/
 
 Executed:
 	ACLOCAL=aclocal-1.11 AUTOMAKE=automake-1.11 autoreconf

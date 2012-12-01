@@ -5488,13 +5488,13 @@ $as_echo "$as_me: Using \`harfbuzz' headers and library from TL tree" >&6;}
   fi
 fi
 if test "x$with_system_harfbuzz" = xyes; then
-  if test "x$with_system_freetyp2" = x; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`freetyp2' headers and library" >&5
-$as_echo "$as_me:   ->  installed \`freetyp2' headers and library" >&6;}
-    with_system_freetyp2=yes
-    ac_configure_args="$ac_configure_args '--with-system-freetyp2'"
-  elif test "x$with_system_freetyp2" != xyes; then
-    as_fn_error $? "Sorry, \`--with-system-harfbuzz' requires \`--with-system-freetyp2'" "$LINENO" 5
+  if test "x$with_system_freetype2" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`freetype2' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`freetype2' headers and library" >&6;}
+    with_system_freetype2=yes
+    ac_configure_args="$ac_configure_args '--with-system-freetype2'"
+  elif test "x$with_system_freetype2" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-harfbuzz' requires \`--with-system-freetype2'" "$LINENO" 5
   fi
   if test "x$with_system_icu" = x; then
     { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`icu' headers and library" >&5
@@ -5507,7 +5507,7 @@ $as_echo "$as_me:   ->  installed \`icu' headers and library" >&6;}
 fi
 
 test "x$need_harfbuzz" = xyes && {
-  need_freetyp2=yes
+  need_freetype2=yes
   need_icu=yes
 }
 
