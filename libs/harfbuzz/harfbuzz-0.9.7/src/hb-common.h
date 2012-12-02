@@ -27,7 +27,9 @@
  */
 
 #ifndef HB_H_IN
+#ifndef _MSC_VER
 #error "Include <hb.h> instead."
+#endif
 #endif
 
 #ifndef HB_COMMON_H

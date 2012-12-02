@@ -1,0 +1,143 @@
+diff -u src-orig/hb-blob.h src/hb-blob.h
+--- src-orig/hb-blob.h	Fri Nov 30 19:42:46 2012
++++ src/hb-blob.h	Sun Dec 02 11:39:40 2012
+@@ -25,7 +25,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_BLOB_H
+diff -u src-orig/hb-buffer.h src/hb-buffer.h
+--- src-orig/hb-buffer.h	Fri Nov 30 19:42:46 2012
++++ src/hb-buffer.h	Sun Dec 02 11:40:00 2012
+@@ -28,7 +28,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_BUFFER_H
+diff -u src-orig/hb-common.h src/hb-common.h
+--- src-orig/hb-common.h	Fri Nov 30 19:42:46 2012
++++ src/hb-common.h	Sun Dec 02 11:40:26 2012
+@@ -27,7 +27,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_COMMON_H
+diff -u src-orig/hb-font.h src/hb-font.h
+--- src-orig/hb-font.h	Fri Nov 30 19:42:46 2012
++++ src/hb-font.h	Sun Dec 02 11:40:42 2012
+@@ -25,7 +25,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_FONT_H
+diff -u src-orig/hb-ot-layout.h src/hb-ot-layout.h
+--- src-orig/hb-ot-layout.h	Fri Nov 30 22:29:00 2012
++++ src/hb-ot-layout.h	Sun Dec 02 11:40:58 2012
+@@ -25,7 +25,9 @@
+  */
+ 
+ #ifndef HB_OT_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb-ot.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_OT_LAYOUT_H
+diff -u src-orig/hb-ot-tag.h src/hb-ot-tag.h
+--- src-orig/hb-ot-tag.h	Fri Nov 30 19:42:46 2012
++++ src/hb-ot-tag.h	Sun Dec 02 11:41:15 2012
+@@ -25,7 +25,9 @@
+  */
+ 
+ #ifndef HB_OT_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb-ot.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_OT_TAG_H
+diff -u src-orig/hb-set.h src/hb-set.h
+--- src-orig/hb-set.h	Fri Nov 30 19:42:46 2012
++++ src/hb-set.h	Sun Dec 02 11:41:31 2012
+@@ -25,7 +25,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_SET_H
+diff -u src-orig/hb-shape-plan.h src/hb-shape-plan.h
+--- src-orig/hb-shape-plan.h	Fri Nov 30 19:42:46 2012
++++ src/hb-shape-plan.h	Sun Dec 02 11:41:49 2012
+@@ -25,7 +25,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_SHAPE_PLAN_H
+diff -u src-orig/hb-shape.h src/hb-shape.h
+--- src-orig/hb-shape.h	Fri Nov 30 19:42:46 2012
++++ src/hb-shape.h	Sun Dec 02 11:42:04 2012
+@@ -27,7 +27,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_SHAPE_H
+diff -u src-orig/hb-unicode.h src/hb-unicode.h
+--- src-orig/hb-unicode.h	Fri Nov 30 19:42:46 2012
++++ src/hb-unicode.h	Sun Dec 02 11:42:16 2012
+@@ -29,7 +29,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_UNICODE_H
+diff -u src-orig/hb-version.h.in src/hb-version.h.in
+--- src-orig/hb-version.h.in	Fri Nov 30 19:42:46 2012
++++ src/hb-version.h.in	Sun Dec 02 11:42:40 2012
+@@ -25,7 +25,9 @@
+  */
+ 
+ #ifndef HB_H_IN
++#ifndef _MSC_VER
+ #error "Include <hb.h> instead."
++#endif
+ #endif
+ 
+ #ifndef HB_VERSION_H

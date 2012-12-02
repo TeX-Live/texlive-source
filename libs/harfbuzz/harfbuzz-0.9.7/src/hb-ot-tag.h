@@ -25,7 +25,9 @@
  */
 
 #ifndef HB_OT_H_IN
+#ifndef _MSC_VER
 #error "Include <hb-ot.h> instead."
+#endif
 #endif
 
 #ifndef HB_OT_TAG_H

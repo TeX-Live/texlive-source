@@ -1,3 +1,9 @@
+2012-12-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* hb-blob.h hb-buffer.h hb-common.h hb-font.h hb-ot-layout.h
+	hb-ot-tag.h hb-set.h hb-shape-plan.h hb-shape.h hb-unicode.h
+	hb-version.h.in in harfbuzz-0.9.7/src: disable '#error' for MSVC.
+	
 2012-11-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import harfbuzz-0.9.7.
