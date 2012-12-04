@@ -1,0 +1,9 @@
+Changes to make to the API when we are forced to change it:
+
+* add font table deletion function ptr so that the app doesn't have to
+  manage a collection of font tables
+
+Other stuff we should do
+
+* Change logging generation id to be a magic extra user attribute. This allows for use within justification logging. Also add [ ] around the whoe log to bring the fragments together.
+

@@ -1,0 +1,14 @@
+	Required for case-sensitive filesystems.
+
+diff -ur graphite2-1.2.0.orig/src/gr_logging.cpp graphite2-1.2.0/src/gr_logging.cpp
+--- graphite2-1.2.0.orig/src/gr_logging.cpp	2012-09-21 10:39:40.000000000 +0200
++++ graphite2-1.2.0/src/gr_logging.cpp	2012-12-04 12:19:51.657709606 +0100
+@@ -33,7 +33,7 @@
+ #include "inc/Segment.h"
+ 
+ #if defined _WIN32
+-#include "Windows.h"
++#include "windows.h"
+ #endif
+ 
+ using namespace graphite2;

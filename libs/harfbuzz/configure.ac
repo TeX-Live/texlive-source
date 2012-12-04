@@ -32,7 +32,7 @@ KPSE_COMPILER_WARNINGS
 LT_INIT
 
 KPSE_FREETYPE2_FLAGS
-dnl not yet  KPSE_GRAPHITE2_FLAGS
+KPSE_GRAPHITE2_FLAGS
 KPSE_ICU_FLAGS
 
 # Functions and headers
@@ -55,7 +55,7 @@ fi
 if :; then
   AC_DEFINE([HAVE_OT], 1, [Use native OpenType Layout backend])
   AC_DEFINE([HAVE_ICU], 1, [Use ICU library])
-dnl not yet  AC_DEFINE([HAVE_GRAPHITE2], 1, [Use Graphite library])
+  AC_DEFINE([HAVE_GRAPHITE2], 1, [Use Graphite library])
   AC_DEFINE([HAVE_FREETYPE], 1, [Use FreeType 2 library])
   AC_DEFINE([HAVE_FT_FACE_GETCHARVARIANTINDEX], 1,
             [Define to 1 if you have the `FT_Face_GetCharVariantIndex' function.])
@@ -70,7 +70,6 @@ dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([HAVE_CAIRO], 1, [Use cairo graphics library])
   AC_DEFINE([HAVE_CAIRO_FT], 1, [Use cairo-ft support in cairo graphics library])
   AC_DEFINE([HAVE_ICU_LE], 1, [Use ICU Layout Engine library])
-  AC_DEFINE([HAVE_GRAPHITE2], 1, [Use Graphite library])
   AC_DEFINE([HAVE_UNISCRIBE], 1, [Use Uniscribe backend])
   AC_DEFINE([HAVE_CORETEXT], 1, [Use Core Text backend])
   AC_DEFINE([HAVE_INTEL_ATOMIC_PRIMITIVES], 1, [Use Intel __sync_* atomic primitives])

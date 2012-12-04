@@ -800,6 +800,7 @@ with_system_icu
 with_system_teckit
 with_teckit_includes
 with_teckit_libdir
+with_system_graphite2
 with_graphite
 with_system_graphite
 with_system_zziplib
@@ -1654,6 +1655,8 @@ Optional Packages:
                           teckit headers installed in DIR
   --with-teckit-libdir=DIR
                           teckit library installed in DIR
+  --with-system-graphite2 use installed graphite2 headers and library
+                          (requires pkg-config)
   --without-graphite      build XeTeX without graphite support
   --with-system-graphite  use installed silgraphite headers and library
                           (requires pkg-config)
@@ -4702,6 +4705,14 @@ $as_echo "$as_me:   ->  installed \`freetype2' headers and library" >&6;}
   elif test "x$with_system_freetype2" != xyes; then
     as_fn_error $? "Sorry, \`--with-system-harfbuzz' requires \`--with-system-freetype2'" "$LINENO" 5
   fi
+  if test "x$with_system_graphite2" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`graphite2' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`graphite2' headers and library" >&6;}
+    with_system_graphite2=yes
+    ac_configure_args="$ac_configure_args '--with-system-graphite2'"
+  elif test "x$with_system_graphite2" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-harfbuzz' requires \`--with-system-graphite2'" "$LINENO" 5
+  fi
   if test "x$with_system_icu" = x; then
     { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`icu' headers and library" >&5
 $as_echo "$as_me:   ->  installed \`icu' headers and library" >&6;}
@@ -4714,6 +4725,7 @@ fi
 
 test "x$need_harfbuzz" = xyes && {
   need_freetype2=yes
+  need_graphite2=yes
   need_icu=yes
 }
 
@@ -4782,6 +4794,27 @@ fi
 test "x$need_teckit" = xyes && {
   need_zlib=yes
 }
+
+
+## libs/graphite2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/graphite2/
+## configure options and TL libraries required for graphite2
+
+# Check whether --with-system-graphite2 was given.
+if test "${with_system_graphite2+set}" = set; then :
+  withval=$with_system_graphite2;
+fi
+if test "x$with_system_graphite2" = x; then
+  if test -f $srcdir/../libs/graphite2/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`graphite2' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`graphite2' headers and library from TL tree" >&6;}
+    with_system_graphite2=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`graphite2' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`graphite2' headers and library" >&6;}
+    with_system_graphite2=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-graphite2=$with_system_graphite2'"
+fi
 
 
 ## libs/graphite/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/graphite/

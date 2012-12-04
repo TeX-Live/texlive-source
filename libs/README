@@ -27,6 +27,9 @@ graphite 2.4 - checked 15may12
   http://scripts.sil.org/svn-public/graphite/graphite/trunk
   (svn r1333 2012-05-14 14:47:16 UTC, omitting changes in test/).
 
+graphite2 1.2.0 - checked 4dec12
+  http://sourceforge.net/projects/silgraphite/files/graphite2/
+
 harfbuzz 0.9.7 - checked 30nov12
   http://cgit.freedesktop.org/harfbuzz/
 

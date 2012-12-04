@@ -104,9 +104,9 @@ libharfbuzz_dependencies += $(ICU_DEPEND)
 libharfbuzz_a_SOURCES += $(HARFBUZZ_SRC)/hb-icu.cc
 
 ## Graphite library
-## not yet AM_CPPFLAGS += $(GRAPHITE2_INCLUDES)
-## not yet libharfbuzz_dependencies += $(GRAPHITE2_DEPEND)
-## not yet libharfbuzz_a_SOURCES += $(HARFBUZZ_SRC)/hb-graphite2.cc
+AM_CPPFLAGS += $(GRAPHITE2_INCLUDES)
+libharfbuzz_dependencies += $(GRAPHITE2_DEPEND)
+libharfbuzz_a_SOURCES += $(HARFBUZZ_SRC)/hb-graphite2.cc
 
 ## FreeType 2 library
 AM_CPPFLAGS += $(FREETYPE2_INCLUDES)
@@ -124,7 +124,7 @@ DISTCLEANFILES = config.force
 ## Rebuild libsicuxxx
 @ICU_RULE@
 ## Rebuild libgraphite2
-## not yet @GRAPHITE2_RULE@
+@GRAPHITE2_RULE@
 ## Rebuild libfreetype
 @FREETYPE2_RULE@
 

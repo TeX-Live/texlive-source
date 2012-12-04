@@ -1,3 +1,9 @@
+2012-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Add libs/graphite2 for future XeTeX.
+	* kpse-graphite2-flags.m4: New file.
+	* kpse-harfbuzz-flags.m4, kpse-pkgs.m4: Add the new library.
+
 2012-11-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Add libs/harfbuzz for future XeTeX.

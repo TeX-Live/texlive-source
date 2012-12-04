@@ -639,6 +639,11 @@ LIBOBJS
 HARFBUZZ_TREE
 build_FALSE
 build_TRUE
+GRAPHITE2_RULE
+GRAPHITE2_DEPEND
+GRAPHITE2_LIBS
+GRAPHITE2_INCLUDES
+PKG_CONFIG
 ICU_RULE
 ICU_DEPEND
 ICU_LIBS
@@ -795,6 +800,7 @@ with_zlib_includes
 with_zlib_libdir
 with_system_freetype2
 with_system_icu
+with_system_graphite2
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1460,6 +1466,8 @@ Optional Packages:
                           (requires freetype-config)
   --with-system-icu       use installed ICU headers and libraries (requires
                           icu-config, not for XeTeX)
+  --with-system-graphite2 use installed graphite2 headers and library
+                          (requires pkg-config)
 
 Some influential environment variables:
   CC          C compiler command
@@ -17202,6 +17210,148 @@ ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_PKG_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$PKG_CONFIG"; then
+  ac_cv_prog_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_PKG_CONFIG="${ac_tool_prefix}pkg-config"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+PKG_CONFIG=$ac_cv_prog_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
+$as_echo "$PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_PKG_CONFIG"; then
+  ac_ct_PKG_CONFIG=$PKG_CONFIG
+  # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_PKG_CONFIG+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_PKG_CONFIG"; then
+  ac_cv_prog_ac_ct_PKG_CONFIG="$ac_ct_PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_PKG_CONFIG="pkg-config"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_PKG_CONFIG=$ac_cv_prog_ac_ct_PKG_CONFIG
+if test -n "$ac_ct_PKG_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_PKG_CONFIG" >&5
+$as_echo "$ac_ct_PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_PKG_CONFIG" = x; then
+    PKG_CONFIG="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    PKG_CONFIG=$ac_ct_PKG_CONFIG
+  fi
+else
+  PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
+fi
+
+## _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags
+
+# Check whether --with-system-graphite2 was given.
+if test "${with_system_graphite2+set}" = set; then :
+  withval=$with_system_graphite2;
+fi
+if test "x$with_system_graphite2" = xyes; then
+  if $PKG_CONFIG graphite2; then
+  GRAPHITE2_INCLUDES=`$PKG_CONFIG graphite2 --cflags`
+  GRAPHITE2_LIBS=`$PKG_CONFIG graphite2 --libs`
+elif test "x$need_graphite2:$with_system_graphite2" = xyes:yes; then
+  as_fn_error $? "did not find graphite2" "$LINENO" 5
+fi
+else
+  GRAPHITE2_INCLUDES="-I$kpse_BLD/libs/graphite2/include -DGRAPHITE2_STATIC"
+  GRAPHITE2_LIBS="$kpse_BLD/libs/graphite2/libgraphite2.a"
+  GRAPHITE2_DEPEND='${top_builddir}/../../libs/graphite2/libgraphite2.a'
+  GRAPHITE2_RULE='# Rebuild libgraphite2
+$(GRAPHITE2_DEPEND): ${top_builddir}/../../libs/graphite2/include/graphite2/Font.h
+	cd ${top_builddir}/../../libs/graphite2 && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/graphite2/include/graphite2/Font.h:
+	cd ${top_builddir}/../../libs/graphite2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
+## _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags
+
+# Check whether --with-system-icu was given.
+if test "${with_system_icu+set}" = set; then :
+  withval=$with_system_icu;
+fi
+if test "x$with_system_icu" = xyes; then
+  if $ICU_CONFIG --version >/dev/null 2>&1; then
+  ICU_INCLUDES=`$ICU_CONFIG --cppflags`
+  # Work around bug in icu-config version 4.4
+  ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath `
+  ICU_LIBS="$ICU_LIBS `$ICU_CONFIG --ldflags-libsonly --ldflags-system`"
+elif test "x$need_icu:$with_system_icu" = xyes:yes; then
+  as_fn_error $? "did not find icu-config required for system icu libraries" "$LINENO" 5
+fi
+else
+  ICU_INCLUDES="-DU_STATIC_IMPLEMENTATION -I$kpse_BLD/libs/icu/include"
+  ICU_LIBS=" $kpse_BLD/libs/icu/icu-build/lib/libicuuc.a $kpse_BLD/libs/icu/icu-build/lib/libicudata.a"
+  ICU_DEPEND=' ${top_builddir}/../../libs/icu/icu-build/lib/libicuuc.a ${top_builddir}/../../libs/icu/icu-build/lib/libicudata.a'
+  ICU_RULE='# Rebuild libicuxxx
+$(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
+	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/icu/include/unicode/uversion.h:
+	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
 
 # Functions and headers
 for ac_func in atexit mprotect sysconf getpagesize sched_yield mmap _setmode isatty
@@ -17272,6 +17422,9 @@ $as_echo "#define HAVE_OT 1" >>confdefs.h
 $as_echo "#define HAVE_ICU 1" >>confdefs.h
 
 
+$as_echo "#define HAVE_GRAPHITE2 1" >>confdefs.h
+
+
 $as_echo "#define HAVE_FREETYPE 1" >>confdefs.h
 
 
@@ -17304,9 +17457,6 @@ $as_echo "#define HAVE_CAIRO_FT 1" >>confdefs.h
 
 
 $as_echo "#define HAVE_ICU_LE 1" >>confdefs.h
-
-
-$as_echo "#define HAVE_GRAPHITE2 1" >>confdefs.h
 
 
 $as_echo "#define HAVE_UNISCRIBE 1" >>confdefs.h

@@ -1,0 +1,7 @@
+## libs/graphite2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/graphite2/
+dnl
+dnl Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## configure options and TL libraries required for graphite2
+KPSE_WITH_LIB([graphite2])

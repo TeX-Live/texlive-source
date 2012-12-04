@@ -67,6 +67,7 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-graphite2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
@@ -100,7 +101,7 @@ am_libharfbuzz_a_OBJECTS = hb-blob.$(OBJEXT) hb-buffer.$(OBJEXT) \
 	hb-ot-shape-complex-indic.$(OBJEXT) \
 	hb-ot-shape-complex-thai.$(OBJEXT) \
 	hb-ot-shape-normalize.$(OBJEXT) hb-ot-shape-fallback.$(OBJEXT) \
-	hb-icu.$(OBJEXT) hb-ft.$(OBJEXT)
+	hb-icu.$(OBJEXT) hb-graphite2.$(OBJEXT) hb-ft.$(OBJEXT)
 libharfbuzz_a_OBJECTS = $(am_libharfbuzz_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -221,6 +222,9 @@ FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
 FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
 FREETYPE2_LIBS = @FREETYPE2_LIBS@
 FT2_CONFIG = @FT2_CONFIG@
+GRAPHITE2_DEPEND = @GRAPHITE2_DEPEND@
+GRAPHITE2_INCLUDES = @GRAPHITE2_INCLUDES@
+GRAPHITE2_LIBS = @GRAPHITE2_LIBS@
 GREP = @GREP@
 HARFBUZZ_TREE = @HARFBUZZ_TREE@
 HB_VERSION = @HB_VERSION@
@@ -262,6 +266,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -332,8 +337,9 @@ HARFBUZZ_SRC = $(HARFBUZZ_TREE)/src
 SUBDIRS = . include
 noinst_LIBRARIES = libharfbuzz.a
 AM_CPPFLAGS = -DHB_NO_MT -I$(top_srcdir)/$(HARFBUZZ_SRC) \
-	$(ICU_INCLUDES) $(FREETYPE2_INCLUDES)
-libharfbuzz_dependencies = $(ICU_DEPEND) $(FREETYPE2_DEPEND)
+	$(ICU_INCLUDES) $(GRAPHITE2_INCLUDES) $(FREETYPE2_INCLUDES)
+libharfbuzz_dependencies = $(ICU_DEPEND) $(GRAPHITE2_DEPEND) \
+	$(FREETYPE2_DEPEND)
 libharfbuzz_a_SOURCES = $(HARFBUZZ_SRC)/hb-atomic-private.hh \
 	$(HARFBUZZ_SRC)/hb-blob.cc \
 	$(HARFBUZZ_SRC)/hb-buffer-private.hh \
@@ -388,7 +394,8 @@ libharfbuzz_a_SOURCES = $(HARFBUZZ_SRC)/hb-atomic-private.hh \
 	$(HARFBUZZ_SRC)/hb-ot-shape-fallback-private.hh \
 	$(HARFBUZZ_SRC)/hb-ot-shape-fallback.cc \
 	$(HARFBUZZ_SRC)/hb-ot-shape-private.hh \
-	$(HARFBUZZ_SRC)/hb-icu.cc $(HARFBUZZ_SRC)/hb-ft.cc
+	$(HARFBUZZ_SRC)/hb-icu.cc $(HARFBUZZ_SRC)/hb-graphite2.cc \
+	$(HARFBUZZ_SRC)/hb-ft.cc
 DISTCLEANFILES = config.force
 LDADD = libharfbuzz.a
 all: config.h
@@ -467,6 +474,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hb-fallback-shape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hb-font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hb-ft.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hb-graphite2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hb-icu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hb-ot-layout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hb-ot-map.Po@am__quote@
@@ -828,6 +836,20 @@ hb-icu.obj: $(HARFBUZZ_SRC)/hb-icu.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(HARFBUZZ_SRC)/hb-icu.cc' object='hb-icu.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hb-icu.obj `if test -f '$(HARFBUZZ_SRC)/hb-icu.cc'; then $(CYGPATH_W) '$(HARFBUZZ_SRC)/hb-icu.cc'; else $(CYGPATH_W) '$(srcdir)/$(HARFBUZZ_SRC)/hb-icu.cc'; fi`
+
+hb-graphite2.o: $(HARFBUZZ_SRC)/hb-graphite2.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hb-graphite2.o -MD -MP -MF $(DEPDIR)/hb-graphite2.Tpo -c -o hb-graphite2.o `test -f '$(HARFBUZZ_SRC)/hb-graphite2.cc' || echo '$(srcdir)/'`$(HARFBUZZ_SRC)/hb-graphite2.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/hb-graphite2.Tpo $(DEPDIR)/hb-graphite2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(HARFBUZZ_SRC)/hb-graphite2.cc' object='hb-graphite2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hb-graphite2.o `test -f '$(HARFBUZZ_SRC)/hb-graphite2.cc' || echo '$(srcdir)/'`$(HARFBUZZ_SRC)/hb-graphite2.cc
+
+hb-graphite2.obj: $(HARFBUZZ_SRC)/hb-graphite2.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hb-graphite2.obj -MD -MP -MF $(DEPDIR)/hb-graphite2.Tpo -c -o hb-graphite2.obj `if test -f '$(HARFBUZZ_SRC)/hb-graphite2.cc'; then $(CYGPATH_W) '$(HARFBUZZ_SRC)/hb-graphite2.cc'; else $(CYGPATH_W) '$(srcdir)/$(HARFBUZZ_SRC)/hb-graphite2.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/hb-graphite2.Tpo $(DEPDIR)/hb-graphite2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(HARFBUZZ_SRC)/hb-graphite2.cc' object='hb-graphite2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hb-graphite2.obj `if test -f '$(HARFBUZZ_SRC)/hb-graphite2.cc'; then $(CYGPATH_W) '$(HARFBUZZ_SRC)/hb-graphite2.cc'; else $(CYGPATH_W) '$(srcdir)/$(HARFBUZZ_SRC)/hb-graphite2.cc'; fi`
 
 hb-ft.o: $(HARFBUZZ_SRC)/hb-ft.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hb-ft.o -MD -MP -MF $(DEPDIR)/hb-ft.Tpo -c -o hb-ft.o `test -f '$(HARFBUZZ_SRC)/hb-ft.cc' || echo '$(srcdir)/'`$(HARFBUZZ_SRC)/hb-ft.cc
@@ -1322,6 +1344,7 @@ config.force: $(libharfbuzz_dependencies)
 	$(SHELL) ./config.status --recheck
 
 @ICU_RULE@
+@GRAPHITE2_RULE@
 @FREETYPE2_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

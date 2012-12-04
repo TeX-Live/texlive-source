@@ -648,6 +648,10 @@ HARFBUZZ_RULE
 HARFBUZZ_DEPEND
 HARFBUZZ_LIBS
 HARFBUZZ_INCLUDES
+GRAPHITE2_RULE
+GRAPHITE2_DEPEND
+GRAPHITE2_LIBS
+GRAPHITE2_INCLUDES
 ICU_RULE
 ICU_DEPEND
 ICU_LIBS
@@ -994,6 +998,7 @@ with_system_teckit
 with_teckit_includes
 with_teckit_libdir
 with_system_icu
+with_system_graphite2
 with_system_harfbuzz
 '
       ac_precious_vars='build_alias
@@ -1747,6 +1752,8 @@ Optional Packages:
                           teckit library installed in DIR
   --with-system-icu       use installed ICU headers and libraries (requires
                           icu-config, not for XeTeX)
+  --with-system-graphite2 use installed graphite2 headers and library
+                          (requires pkg-config)
   --with-system-harfbuzz  use installed harfbuzz headers and library (requires
                           pkg-config)
 
@@ -23131,6 +23138,30 @@ $(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+
+## _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags
+
+# Check whether --with-system-graphite2 was given.
+if test "${with_system_graphite2+set}" = set; then :
+  withval=$with_system_graphite2;
+fi
+if test "x$with_system_graphite2" = xyes; then
+  if $PKG_CONFIG graphite2; then
+  GRAPHITE2_INCLUDES=`$PKG_CONFIG graphite2 --cflags`
+  GRAPHITE2_LIBS=`$PKG_CONFIG graphite2 --libs`
+elif test "x$need_graphite2:$with_system_graphite2" = xyes:yes; then
+  as_fn_error $? "did not find graphite2" "$LINENO" 5
+fi
+else
+  GRAPHITE2_INCLUDES="-I$kpse_BLD/libs/graphite2/include -DGRAPHITE2_STATIC"
+  GRAPHITE2_LIBS="$kpse_BLD/libs/graphite2/libgraphite2.a"
+  GRAPHITE2_DEPEND='${top_builddir}/../../libs/graphite2/libgraphite2.a'
+  GRAPHITE2_RULE='# Rebuild libgraphite2
+$(GRAPHITE2_DEPEND): ${top_builddir}/../../libs/graphite2/include/graphite2/Font.h
+	cd ${top_builddir}/../../libs/graphite2 && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/graphite2/include/graphite2/Font.h:
+	cd ${top_builddir}/../../libs/graphite2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
 
 ## _KPSE_LIB_FLAGS: Setup harfbuzz (-lharfbuzz) flags
 
