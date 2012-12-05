@@ -1,0 +1,21 @@
+2012-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported harfbuzz-0.9.8 source tree from:
+	  http://cgit.freedesktop.org/harfbuzz/
+	* patch-01-Khaled (removed): Now distributed, with
+	  hb_ot_layout_position_get_size() renamed into
+	  hb_ot_layout_get_size_params().
+	* patch-02-oldmsvc (removed): Not needed.
+
+2012-12-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-02-oldmsvc (new): #error is not recognized by old msvcs.
+
+2012-11-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-Khaled (new): Partial update from git, from Khaled.
+
+2012-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported harfbuzz-0.9.7 source tree from:
+	  http://cgit.freedesktop.org/harfbuzz/

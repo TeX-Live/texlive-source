@@ -1,3 +1,9 @@
+2012-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import harfbuzz-0.9.8.
+	* version.ac: Adjust.
+	* include/Makefile.am (hdr_links): Add hb-graphite2.h.
+
 2012-12-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* hb-blob.h hb-buffer.h hb-common.h hb-font.h hb-ot-layout.h

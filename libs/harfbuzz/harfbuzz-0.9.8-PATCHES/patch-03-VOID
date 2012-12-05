@@ -1,0 +1,57 @@
+	Replace VOID by HB_VOID because winnt.h wants to '#define VOID void'
+
+diff -ur harfbuzz-0.9.8.orig/src/hb-ot-layout-gsubgpos-private.hh harfbuzz-0.9.8/src/hb-ot-layout-gsubgpos-private.hh
+--- harfbuzz-0.9.8.orig/src/hb-ot-layout-gsubgpos-private.hh	2012-12-04 21:43:38.000000000 +0100
++++ harfbuzz-0.9.8/src/hb-ot-layout-gsubgpos-private.hh	2012-12-05 11:03:08.000000000 +0100
+@@ -60,8 +60,8 @@
+   typedef void_t return_t;
+   typedef return_t (*recurse_func_t) (hb_closure_context_t *c, unsigned int lookup_index);
+   template <typename T>
+-  inline return_t process (const T &obj) { obj.closure (this); return VOID; }
+-  static return_t default_return_value (void) { return VOID; }
++  inline return_t process (const T &obj) { obj.closure (this); return HB_VOID; }
++  static return_t default_return_value (void) { return HB_VOID; }
+   bool stop_sublookup_iteration (const return_t r) const { return false; }
+   return_t recurse (unsigned int lookup_index)
+   {
+@@ -71,7 +71,7 @@
+     nesting_level_left--;
+     recurse_func (this, lookup_index);
+     nesting_level_left++;
+-    return VOID;
++    return HB_VOID;
+   }
+ 
+   hb_face_t *face;
+@@ -148,8 +148,8 @@
+   typedef void_t return_t;
+   typedef return_t (*recurse_func_t) (hb_collect_glyphs_context_t *c, unsigned int lookup_index);
+   template <typename T>
+-  inline return_t process (const T &obj) { obj.collect_glyphs (this); return VOID; }
+-  static return_t default_return_value (void) { return VOID; }
++  inline return_t process (const T &obj) { obj.collect_glyphs (this); return HB_VOID; }
++  static return_t default_return_value (void) { return HB_VOID; }
+   bool stop_sublookup_iteration (const return_t r) const { return false; }
+   return_t recurse (unsigned int lookup_index)
+   {
+@@ -161,7 +161,7 @@
+     hb_collect_glyphs_context_t new_c (this->face, NULL, NULL, NULL, &output, nesting_level_left);
+     recurse_func (&new_c, lookup_index);
+     nesting_level_left++;
+-    return VOID;
++    return HB_VOID;
+   }
+ 
+   hb_face_t *face;
+diff -ur harfbuzz-0.9.8.orig/src/hb-private.hh harfbuzz-0.9.8/src/hb-private.hh
+--- harfbuzz-0.9.8.orig/src/hb-private.hh	2012-12-04 21:43:38.000000000 +0100
++++ harfbuzz-0.9.8/src/hb-private.hh	2012-12-05 11:03:12.000000000 +0100
+@@ -65,7 +65,7 @@
+ /* Void! */
+ struct _void_t;
+ typedef const _void_t &void_t;
+-#define VOID (* (const _void_t *) NULL)
++#define HB_VOID (* (const _void_t *) NULL)
+ 
+ 
+ /* Basics */
