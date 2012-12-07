@@ -78,7 +78,7 @@ typedef off_t longinteger;
 /* To print file offsets we cast them to `LONGINTEGER_TYPE' (or
    `unsigned LONGINTEGER_TYPE') and use the conversion specifier
    `"%" LONGINTEGER_PRI "d"' (or `"%" LONGINTEGER_PRI "u"').  */
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
 #define LONGINTEGER_TYPE __int64
 #define LONGINTEGER_PRI "I64"
 #elif SIZEOF_LONG < SIZEOF_OFF_T

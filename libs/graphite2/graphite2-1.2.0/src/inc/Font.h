@@ -54,9 +54,6 @@ private:
     float               m_scale;      // scales from design units to ppm
     bool                m_hinted;
 
-    // do not instantiate
-    Font();
-
     Font(const Font&);
     Font& operator=(const Font&);
 };

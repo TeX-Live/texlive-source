@@ -1,0 +1,14 @@
+	Required for MS Visual Studio 2005.
+
+diff -ur harfbuzz-0.9.8.orig/src/hb-private.hh harfbuzz-0.9.8/src/hb-private.hh
+--- harfbuzz-0.9.8.orig/src/hb-private.hh	2012-12-05 11:03:12.000000000 +0100
++++ harfbuzz-0.9.8/src/hb-private.hh	2012-12-06 16:40:07.414531612 +0100
+@@ -63,7 +63,7 @@
+ 
+ 
+ /* Void! */
+-struct _void_t;
++struct _void_t {};
+ typedef const _void_t &void_t;
+ #define HB_VOID (* (const _void_t *) NULL)
+ 

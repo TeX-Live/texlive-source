@@ -63,7 +63,7 @@
 
 
 /* Void! */
-struct _void_t;
+struct _void_t {};
 typedef const _void_t &void_t;
 #define HB_VOID (* (const _void_t *) NULL)
 

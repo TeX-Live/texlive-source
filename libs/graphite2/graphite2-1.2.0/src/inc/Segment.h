@@ -148,9 +148,6 @@ public:       //only used by: GrSegment* makeAndInitialize(const GrFont *font, c
     float justify(Slot *pSlot, const Font *font, float width, enum justFlags flags, Slot *pFirst, Slot *pLast);
   
 private:
-    // do not instantiate
-    Segment();
-
     Rect            m_bbox;             // ink box of the segment
     Position        m_advance;          // whole segment advance
     SlotRope        m_slots;            // std::vector of slot buffers

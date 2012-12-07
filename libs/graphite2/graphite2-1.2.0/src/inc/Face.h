@@ -89,9 +89,6 @@ public:
 
     CLASS_NEW_DELETE;
 private:
-    // do not instantiate
-    Face();
-
     SillMap                 m_Sill;
     gr_face_ops             m_ops;
     const void            * m_appFaceHandle;    // non-NULL
