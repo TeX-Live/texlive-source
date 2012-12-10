@@ -1285,7 +1285,7 @@ static void find_page_location (void)
  * command is being processed. */
 static void define_font (SIGNED_QUAD e)
 {
-  SIGNED_QUAD c, q, d, m;
+  SIGNED_QUAD q, d, m;
   int p, n;
   char *name;
 
@@ -1294,7 +1294,7 @@ static void define_font (SIGNED_QUAD e)
     dvi_fonts = (struct dvi_font *)realloc(dvi_fonts, max_dvi_fonts * sizeof(struct dvi_font));
   }
 
-  c = dvi_signed_quad(); /* font_check_sum */
+      dvi_signed_quad(); /* font_check_sum */
   q = dvi_signed_quad(); /* font_scaled_size */
   d = dvi_signed_quad(); /* font_design_size */
 

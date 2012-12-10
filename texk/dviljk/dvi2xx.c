@@ -3760,7 +3760,7 @@ void DoSpecial(char *str, int n)
      already about the problem. */
   while ( (str = GetKeyStr(str, &k)) != NULL ) {
     /* get all keyword-value pairs */
-    if ( k.vt == None ) {		/* no value */
+    if ( k.vt == (ValTyp) None ) {	/* no value */
       /* Single word might also be "comment", then ignore the rest */
       if ( EQ(k.Key, "comment") )
 	return;
@@ -4240,9 +4240,7 @@ bool GetKeyVal(KeyWord *kw, KeyDesc tab[], int nt, int *tno)
 /* compare strings, ignore case */
 bool IsSame(const char *a, const char *b)
 {
-  const char *x, *y;
-
-  for (x = a, y = b; *a; a++, b++)
+  for (; *a; a++, b++)
     if ( tolower(*a) != tolower(*b) )
       return( _FALSE );
 

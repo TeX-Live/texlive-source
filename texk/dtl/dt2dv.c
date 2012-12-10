@@ -674,7 +674,6 @@ dt2dv
 {
   int nprefixes = 0;  /* number of prefixes in cmd_prefixes[] list. */
   static Token dtl_cmd = "";  /* DTL command name */
-  COUNT nread = 0;  /* number of bytes read by a function from dtl file. */
 
   nprefixes = sizeof (cmd_prefixes) / sizeof (CmdPrefix);
 
@@ -695,7 +694,7 @@ dt2dv
 
   /* The very first thing should be the "variety" signature */
 
-  nread = read_variety (dtl);
+  read_variety (dtl);
 
   /* while not end of dtl file or reading error, */
   /*   read, interpret, and write commands */
@@ -710,7 +709,7 @@ dt2dv
     {
       /* BCOM check */
       static Token token = "";  /* DTL token */
-      nread = read_token (dtl, token);
+      read_token (dtl, token);
       /* test for end of input, or reading error */
       if (strlen (token) == 0)
       {
@@ -734,7 +733,7 @@ dt2dv
     }
 
     /* read the command name */
-    nread = read_token (dtl, dtl_cmd);
+    read_token (dtl, dtl_cmd);
     /* test for end of input, or reading error */
     if (strlen (dtl_cmd) == 0)
     {
@@ -784,7 +783,7 @@ dt2dv
     {
       /* seek ECOM after command's last argument and optional whitespace */
       static Token token = "";  /* DTL token */
-      nread = read_token (dtl, token);
+      read_token (dtl, token);
       /* test for end of input, or reading error */
       if (strlen (token) == 0)
       {
@@ -1149,12 +1148,10 @@ read_variety
 /* Uniformity here enables the program easily to modify its behavior. */
 {
   COUNT vread = 0;  /* number of DTL bytes read by read_variety */
-  COUNT nread = 0;  /* number of DTL bytes read by read_token */
   static Token token = "";
 
   /* read the DTL VARIETY keyword */
-  nread = read_token (dtl, token);
-  vread += nread;
+  vread += read_token (dtl, token);
   /* test whether signature begins correctly */
   if (strcmp (token, "variety") != 0)
   {
@@ -1166,8 +1163,7 @@ read_variety
   }
 
   /* read the DTL variety */
-  nread = read_token (dtl, token);
-  vread += nread;
+  vread += read_token (dtl, token);
   /* test whether variety is correct */
   if (strcmp (token, VARIETY) != 0)
   {
@@ -1665,7 +1661,6 @@ xfer_hex
 /* return value of hexadecimal number */
 {
   U4 unum = 0;  /* at most this space needed */
-  COUNT nread = 0;  /* number of DTL bytes read by read_token */
   int nconv = 0;  /* number of arguments converted by sscanf */
   static Token token = "";  /* DTL token */
 
@@ -1678,7 +1673,7 @@ xfer_hex
     dexit (1);
   }
 
-  nread = read_token (dtl, token);
+  read_token (dtl, token);
 
   nconv = sscanf (token, XF4, &unum);
 
@@ -1711,7 +1706,6 @@ xfer_oct
 /* return value of octal number */
 {
   U4 unum = 0;  /* at most this space needed */
-  COUNT nread = 0;  /* number of DTL bytes read by read_token */
   int nconv = 0;  /* number of arguments converted by sscanf */
   static Token token = "";  /* DTL token */
 
@@ -1724,7 +1718,7 @@ xfer_oct
     dexit (1);
   }
 
-  nread = read_token (dtl, token);
+  read_token (dtl, token);
 
   nconv = sscanf (token, OF4, &unum);
 
@@ -1801,11 +1795,10 @@ get_unsigned
 /* return value of unsigned number */
 {
   U4 unum = 0;  /* at most this space needed */
-  COUNT nread = 0;  /* number of DTL bytes read by read_token */
   int nconv = 0;  /* number of arguments converted by sscanf */
   static Token token = "";  /* DTL token */
 
-  nread = read_token (dtl, token);
+  read_token (dtl, token);
 
   nconv = sscanf (token, UF4, &unum);
 
@@ -1834,11 +1827,10 @@ get_signed
 /* return value of signed number */
 {
   S4 snum = 0;
-  COUNT nread = 0;  /* number of DTL bytes read by read_token */
   int nconv = 0;  /* number of sscanf arguments converted and assigned */
   static Token token = "";
 
-  nread = read_token (dtl, token);
+  read_token (dtl, token);
 
   nconv = sscanf (token, SF4, &snum);
 
@@ -2316,11 +2308,10 @@ xfer_bop_address
 /* return value of bop address written to DVI file */
 {
   S4 snum = 0;  /* at most this space needed for byte address */
-  COUNT nread = 0;  /* number of DTL bytes read by read_token */
   int nconv = 0;  /* number of arguments converted by sscanf */
   static Token token = "";  /* DTL token */
 
-  nread += read_token (dtl, token);
+  read_token (dtl, token);
 
   nconv = sscanf (token, SF4, &snum);
 
@@ -2365,11 +2356,10 @@ xfer_postamble_address
 /* return value of postamble address written to DVI file */
 {
   S4 snum = 0;  /* at most this space needed for byte address */
-  COUNT nread = 0;  /* number of DTL bytes read by read_token */
   int nconv = 0;  /* number of arguments converted by sscanf */
   static Token token = "";  /* DTL token */
 
-  nread += read_token (dtl, token);
+  read_token (dtl, token);
 
   nconv = sscanf (token, SF4, &snum);
 

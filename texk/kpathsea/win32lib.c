@@ -90,7 +90,7 @@ FILE * __cdecl kpathsea_win32_popen (kpathsea kpse, const char *cmd, const char 
   }
 
   /* Looking for appname on the path */
-  for (s = suffixes, go_on = TRUE; go_on; *s++) {
+  for (s = suffixes, go_on = TRUE; go_on; s++) {
     if (SearchPath(env_path,    /* Address of search path */
                    app_name,    /* Address of filename */
                    *s,          /* Address of extension */
@@ -629,7 +629,7 @@ look_for_cmd(const char *cmd, char **app, char **new)
   }
 
   /* Looking for appname on the path */
-  for (s = suffixes, go_on = TRUE; go_on; *s++) {
+  for (s = suffixes, go_on = TRUE; go_on; s++) {
     if (SearchPath(env_path,    /* Address of search path */
                    app_name,    /* Address of filename */
                    *s,          /* Address of extension */

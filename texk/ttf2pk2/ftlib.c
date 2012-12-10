@@ -93,6 +93,7 @@ get_UShort(void)
   return (FT_UShort) cc;
 }
 
+#if 0 /* unised */
 static FT_Short
 get_Short(void)
 {
@@ -101,6 +102,7 @@ get_Short(void)
   cc |= get_Byte();
   return (FT_Short) cc;
 }
+#endif
 
 static FT_ULong
 get_ULong(void)
@@ -113,6 +115,7 @@ get_ULong(void)
   return (FT_ULong) cc;
 }
 
+#if 0 /* unised */
 static FT_Long
 get_Long(void)
 {
@@ -123,6 +126,7 @@ get_Long(void)
   cc |= get_Byte();
   return (FT_Long) cc;
 }
+#endif
 
 #if 0
 FT_UShort in_string[2];

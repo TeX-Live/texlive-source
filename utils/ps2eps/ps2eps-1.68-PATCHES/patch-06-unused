@@ -1,0 +1,28 @@
+diff -ur ps2eps-1.68.orig/src/C/bbox.c ps2eps-1.68/src/C/bbox.c
+--- ps2eps-1.68.orig/src/C/bbox.c	2012-06-16 18:21:11.000000000 +0200
++++ ps2eps-1.68/src/C/bbox.c	2012-12-07 10:24:48.000000000 +0100
+@@ -114,7 +114,6 @@
+                         *tmpcolumnbytep;
+         unsigned int 	width,height;	 /* Image Size	*/
+         unsigned int    byte_width;
+-        unsigned char   stepsize;
+         unsigned char   colormax= 0;       /* max color value */
+         unsigned int    ui_colormax= 0;    /* max color value */
+ 
+@@ -141,16 +140,10 @@
+           fprintf(stderr,"read:[%s]\n",inputline);
+ #endif
+           if ( strcmp(inputline,"P4\n") == 0 )
+-          {
+-            stepsize= 1;
+             magic_found= 4;
+-          }
+           else
+           if ( strcmp(inputline,"P6\n") == 0 )
+-          {
+-            stepsize= 3;
+             magic_found= 6;
+-          }
+         }
+         while ( !feof(inputfile) && !magic_found );
+ 

@@ -198,7 +198,6 @@ ensure_existence(unsigned c)
         if (planes[plane] != NULL) { \
             for (index = 0; index <=char_max[plane]; index++) { \
                 entry = planes[plane][index]; \
-                c = plane*PLANE + index; \
                 if (entry != NULL) {  \
                     FOR_ALL_CHARACTERS_ACTION \
                 } \
@@ -216,11 +215,12 @@ ensure_existence(unsigned c)
 void
 output_ovf_chars(void)
 {
-    register unsigned index, plane, c, k;
+    register unsigned index, plane, k;
     char_entry *entry;
     fix wd;
 
     FOR_ALL_EXISTING_CHARACTERS(
+        unsigned c = plane*PLANE + index;
         wd = lval(entry->indices[C_WD]);
         if (design_units != UNITY)
             wd = zround(((double)wd) / ((double)design_units) * 1048576.0);
@@ -243,12 +243,13 @@ output_ovf_chars(void)
 void
 check_existence_all_character_fields(void)
 {
-    register unsigned index, plane, c;
+    register unsigned index, plane;
     char_entry *entry;
     unsigned *exten;
     unsigned j;
  
     FOR_ALL_EXISTING_CHARACTERS(
+        unsigned c = plane*PLANE + index;
         if (entry->indices[C_WD] == NULL) {
             current_character = entry;
             set_character_measure(C_WD, 0);
@@ -283,7 +284,7 @@ check_existence_all_character_fields(void)
 void
 clear_ligature_entries(void)
 {
-    register unsigned index, plane, c;
+    register unsigned index, plane;
     char_entry *entry;
 
     FOR_ALL_EXISTING_CHARACTERS(
@@ -334,7 +335,7 @@ doublecheck_existence(unsigned g, const_string extra, const_string fmt)
 void
 print_characters(boolean read_ovf)
 {
-    register unsigned index, plane, c;
+    register unsigned index, plane;
     char_entry *entry;
     four_pieces *exten;
     four_entries *lentry;
@@ -342,6 +343,7 @@ print_characters(boolean read_ovf)
     unsigned copies = 0;
 
     FOR_ALL_CHARACTERS(
+      unsigned c = plane*PLANE + index;
       if (copies > 0)
         copies--;
       else {
@@ -632,7 +634,6 @@ void
 adjust_labels(boolean play_with_starts)
 {
     unsigned plane, index;
-    unsigned c;
     char_entry *entry;
     int max_start = (ofm_level==OFM_TFM) ? MAX_START_TFM : MAX_START_OFM;
 
@@ -640,6 +641,7 @@ adjust_labels(boolean play_with_starts)
     label_ptr = 0;
     label_table[0].rr = -1; /* sentinel */
     FOR_ALL_CHARACTERS(
+        unsigned c = plane*PLANE + index;
         if ((c>=bc) && (c<=ec) && (entry->tag == TAG_LIG)) {
             sort_ptr = label_ptr; /* hole at position sort_ptr+1 */
             while (label_table[sort_ptr].rr > (int)(entry->remainder)) {
@@ -720,11 +722,11 @@ void
 check_charlist_infinite_loops(void)
 {
     unsigned plane, index;
-    unsigned c;
     char_entry *entry;
     unsigned g;
 
     FOR_ALL_CHARACTERS(
+        unsigned c = plane*PLANE + index;
         if (entry->tag == TAG_LIST) {
             g = entry->remainder;
             while ((g < c) && (planes[g/PLANE][g%PLANE]->tag == TAG_LIST)) {
@@ -859,11 +861,11 @@ void
 compute_ofm_character_info(void)
 {
     unsigned plane, index;
-    unsigned c;
     char_entry *entry;
 
     bc = 0x7fffffff; ec=0;
     FOR_ALL_EXISTING_CHARACTERS(
+        unsigned c = plane*PLANE + index;
         if (c < bc) bc = c;
         if (c > ec) ec = c;
     )
@@ -888,35 +890,33 @@ compute_ofm_character_info(void)
                 "Char (%x) too big for OFM level-1 (max ffff); use level-2",
                 ec);
             /* Level 1 only uses plane 0.  Take advantage of this fact. */
-            plane=0;
             num_char_info = 0;
             for (index = bc; index <=ec; index++) {
                 unsigned saved_index = index;
                 char_entry *next;
 
-                entry = planes[plane][index]; 
-                c = plane*PLANE + index;
+                entry = planes[0][index]; 
                 if ((entry != NULL) && (WD_ENTRY != 0)) {
                     unsigned wd = WD_ENTRY, ht = HT_ENTRY, dp = DP_ENTRY, ic = IC_ENTRY;
 
                     index += entry->copies;
                     for (; index < ec; index++) {
-                        next = planes[plane][index+1];
+                        next = planes[0][index+1];
                         if ((WD_NEXT != wd) || (HT_NEXT != ht) ||
                             (DP_NEXT != dp) || (IC_NEXT != ic) ||
                             (RM_NEXT != entry->remainder) || (TG_NEXT != entry->tag))
                             break;
-                        planes[plane][index+1] = entry;
+                        planes[0][index+1] = entry;
                     }
                 } else {
-                    planes[plane][index] = NULL;
-                    init_character(c, NULL);
+                    planes[0][index] = NULL;
+                    init_character(index, NULL);
                     entry = current_character;
                     for (; index < ec; index++) {
-                        next = planes[plane][index+1];
+                        next = planes[0][index+1];
                         if (WD_NEXT != 0)
                             break;
-                        planes[plane][index+1] = entry;
+                        planes[0][index+1] = entry;
                     }
                 }
                 entry->copies = index - saved_index;
@@ -932,7 +932,6 @@ void
 output_ofm_character_info(void)
 {
     unsigned plane, index;
-    unsigned c;
     char_entry *entry;
 
     switch (ofm_level) {
@@ -940,7 +939,6 @@ output_ofm_character_info(void)
             plane=0;
             for (index = bc; index <=ec; index++) {
                 entry = planes[plane][index]; 
-                c = plane*PLANE + index;
                 if (entry == NULL) { 
                     out_ofm_4(0);
                 } else {
@@ -956,7 +954,6 @@ output_ofm_character_info(void)
             plane=0;
             for (index = bc; index <=ec; index++) {
                 entry = planes[plane][index]; 
-                c = plane*PLANE + index;
                 if (entry == NULL) { 
                     out_ofm_4(0); out_ofm_4(0);
                 } else {
@@ -975,7 +972,6 @@ output_ofm_character_info(void)
             plane=0;
             for (index = bc; index <=ec; index++) {
                 entry = planes[plane][index]; 
-                c = plane*PLANE + index;
                 if (entry == NULL) { 
                     for (i=0; i<words_per_entry; i++)
                         out_ofm_4(0);

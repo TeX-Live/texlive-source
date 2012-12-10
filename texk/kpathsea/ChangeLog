@@ -1,3 +1,8 @@
+2012-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mingw32.c (look_for_cmd): Do not compute unused value.
+	* win32lib.c (look_for_cmd, kpathsea_win32_popen): Same.
+
 2012-11-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf: Increase main_memory, font_mem_size, hash_extra,

@@ -454,7 +454,7 @@ look_for_cmd(const char *cmd, char **app)
   }
 
   /* Looking for appname on the path */
-  for (s = suffixes, go_on = TRUE; go_on; *s++) {
+  for (s = suffixes, go_on = TRUE; go_on; s++) {
     if (SearchPath(env_path,    /* Address of search path */
                    app_name,    /* Address of filename */
                    *s,          /* Address of extension */

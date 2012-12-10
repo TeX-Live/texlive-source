@@ -1,0 +1,16 @@
+diff -ur cjkutils-4.8.3.orig/hbf2gf/hbf.c cjkutils-4.8.3/hbf2gf/hbf.c
+--- cjkutils-4.8.3.orig/hbf2gf/hbf.c	2012-05-07 00:00:00.000000000 +0200
++++ cjkutils-4.8.3/hbf2gf/hbf.c	2012-12-07 10:57:31.000000000 +0100
+@@ -1041,12 +1041,10 @@
+ {
+ 	if (LocalFileName(filename) && path != NULL) {
+ #ifdef PATH_DELIMITER
+-		int	len;
+ 		char	*fullname;
+ 		FILE	*f;
+ 		const	char	*p_next;
+ 
+-		len = strlen(filename);
+ 		for (;;) {
+ 			p_next = strchr(path, PATH_DELIMITER);
+ 			if (p_next == NULL)

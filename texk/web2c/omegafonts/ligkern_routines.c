@@ -230,7 +230,6 @@ void
 print_ligkern_table(void)
 {
     unsigned i;
-    four_entries *entry;
 
     sort_ptr = 1;
     if (nl>0) {
@@ -240,7 +239,6 @@ print_ligkern_table(void)
                 print_label_command(label_table[sort_ptr].cc);
                 sort_ptr++;
             }
-            entry = lig_kern_table+i;
             print_one_lig_kern_entry(lig_kern_table+i, TRUE);
         }
         right();
@@ -457,12 +455,11 @@ check_ligature_infinite_loops(void)
 {
     list entry = hash_entries.front;
     hash_list tt;
-    unsigned new_class;
 
     while (entry != NULL) {
         tt = (hash_list) entry->contents;
         if (tt->new_class > LIG_SIMPLE)
-             new_class = l_f(tt, tt->x, tt->y);
+             l_f(tt, tt->x, tt->y);
         entry = entry->ptr;
     }
     if (y_lig_cycle != 0x80000000) {

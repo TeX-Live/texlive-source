@@ -354,13 +354,11 @@ really_close_sfd(realsubfont *real_name)
 void
 handle_sfd(char *s, int *sfd_begin, int *postfix_begin)
 {
-  size_t len;
   int i;
   Boolean have_atsign;
 
 
   have_atsign = False;
-  len = strlen(s);
   *sfd_begin = -1;
   *postfix_begin = -1;
 

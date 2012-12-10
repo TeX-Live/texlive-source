@@ -1,3 +1,7 @@
+2012-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpxout.w: Cast arg3 of spawnvp() to `const char* const*'.
+
 2012-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mpost.w: Reduce diffs between TeX Live and W32TeX.

@@ -3179,7 +3179,6 @@ This fonction is for transform UTF-8 to Unicode with ICU libs.		 23/sep/2009
 
 int32_t icu_toUChars(BufType_T buf, BufPointer_T bf_ptr,BufPointer_T len,UChar * target, int32_t tarcap)
 BEGIN
-	int32_t tarlen;
 	UConverter * ucon1;
 	UErrorCode err1 = U_ZERO_ERROR;
 	ucon1 = ucnv_open(NULL, &err1);
@@ -3187,7 +3186,7 @@ BEGIN
 	BEGIN
 		printf("1there is a error: U_ZERO_ERROR");
 	END
-	tarlen = ucnv_toUChars(ucon1, target, tarcap, (char *)&buf[bf_ptr], len, &err1);
+	ucnv_toUChars(ucon1, target, tarcap, (char *)&buf[bf_ptr], len, &err1);
 	if (!U_SUCCESS(err1))
 	BEGIN
 		printf("2there is a error: U_ZERO_ERROR");

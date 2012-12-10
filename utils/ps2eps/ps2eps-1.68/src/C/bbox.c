@@ -114,7 +114,6 @@ void readppm_and_calcbb(const char *name,
                         *tmpcolumnbytep;
         unsigned int 	width,height;	 /* Image Size	*/
         unsigned int    byte_width;
-        unsigned char   stepsize;
         unsigned char   colormax= 0;       /* max color value */
         unsigned int    ui_colormax= 0;    /* max color value */
 
@@ -141,16 +140,10 @@ void readppm_and_calcbb(const char *name,
           fprintf(stderr,"read:[%s]\n",inputline);
 #endif
           if ( strcmp(inputline,"P4\n") == 0 )
-          {
-            stepsize= 1;
             magic_found= 4;
-          }
           else
           if ( strcmp(inputline,"P6\n") == 0 )
-          {
-            stepsize= 3;
             magic_found= 6;
-          }
         }
         while ( !feof(inputfile) && !magic_found );
 

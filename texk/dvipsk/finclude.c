@@ -226,7 +226,6 @@ scan_fontnames(char *str, const char *psfile)
 {
   char *p,*pe;
   struct resfont *re;
-  int i;
 
   /* Turn all newlines, CRs, and tabs into spaces. */
   p = str;
@@ -248,7 +247,7 @@ scan_fontnames(char *str, const char *psfile)
      pe = strchr(p,' ');
      if(pe != NULL) *pe = '\0';
 
-     i = add_name(p,&ps_fonts_used);
+     add_name(p,&ps_fonts_used);
 
      if (1) {
 #ifdef DEBUG

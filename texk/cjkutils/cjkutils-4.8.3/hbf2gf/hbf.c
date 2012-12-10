@@ -1041,12 +1041,10 @@ path_open(const char *path, const char *filename, char **fullp)
 {
 	if (LocalFileName(filename) && path != NULL) {
 #ifdef PATH_DELIMITER
-		int	len;
 		char	*fullname;
 		FILE	*f;
 		const	char	*p_next;
 
-		len = strlen(filename);
 		for (;;) {
 			p_next = strchr(path, PATH_DELIMITER);
 			if (p_next == NULL)

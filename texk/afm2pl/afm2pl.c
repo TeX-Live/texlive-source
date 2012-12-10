@@ -1346,9 +1346,6 @@ checkligkern(char *s, int isencfile)
   char *mlist[5];               /* tokens constituting a ligkern spec */
   int n, i, bch;
   struct adobeinfo *ai;
-  char *ll;
-
-  ll = s;
 
   if (s[0] == '%')
     s++;           /* skip optional leading `%' */
