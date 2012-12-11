@@ -1,6 +1,6 @@
 /* rm-suffix.c: remove any suffix.
 
-   Copyright 2008, 2011 Karl Berry.
+   Copyright 2008, 2011, 2012 Karl Berry.
    Copyright 1992, 1993, 1995 Free Software Foundation, Inc.
    Modified for kpathsea by Karl Berry.
 
@@ -20,8 +20,6 @@
 #include <kpathsea/config.h>
 
 
-/* Generic const warning -- see readable.c.  */
-
 string
 remove_suffix (const_string s)
 {
@@ -37,7 +35,7 @@ remove_suffix (const_string s)
       ret[suffix - s] = 0;
     }
   else
-    ret = (string) s;
+    ret = xstrdup (s);
 
   return ret;
 }

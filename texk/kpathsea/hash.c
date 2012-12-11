@@ -1,6 +1,6 @@
 /* hash.c: hash table operations.
 
-   Copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2002, 2005, 2008
+   Copyright 1994-2000, 2002, 2005, 2008, 2012
    Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -158,23 +158,22 @@ hash_remove (hash_table_type *table,  const_string key,
 /* Look up KEY in TABLE, and return NULL-terminated list of all matching
    values (not copies), in insertion order.  If none, return NULL.  */
 
-string *
+const_string *
 hash_lookup (hash_table_type table,  const_string key)
 {
   hash_element_type *p;
-  str_list_type ret;
+  cstr_list_type ret;
   unsigned n = hash (table, key);
-  ret = str_list_init ();
+  ret = cstr_list_init ();
 
   /* Look at everything in this bucket.  */
   for (p = table.buckets[n]; p != NULL; p = p->next)
     if (FILESTRCASEEQ (key, p->key))
-      /* Cast because the general str_list_type shouldn't force const data.  */
-      str_list_add (&ret, (string) p->value);
+      cstr_list_add (&ret, p->value);
 
   /* If we found anything, mark end of list with null.  */
   if (STR_LIST (ret))
-    str_list_add (&ret, NULL);
+    cstr_list_add (&ret, NULL);
 
 #ifdef KPSE_DEBUG
 #if defined (KPSE_COMPAT_API)
@@ -187,7 +186,7 @@ hash_lookup (hash_table_type table,  const_string key)
         fputs (" (nil)\n", stderr);
       else
         {
-          string *r;
+          const_string *r;
           for (r = STR_LIST (ret); *r; r++)
             {
               putc (' ', stderr);
@@ -207,6 +206,7 @@ hash_lookup (hash_table_type table,  const_string key)
   return STR_LIST (ret);
 }
 
+#ifdef KPSE_DEBUG
 /* We only print nonempty buckets, to decrease output volume.  */
 
 void
@@ -246,7 +246,9 @@ hash_print (hash_table_type table,  boolean summary_only)
           total_elements,
           total_buckets ? total_elements / (double) total_buckets : 0.0);
 }
+#endif
 
+#if KPATHSEA_CAN_FREE
 void
 hash_free (hash_table_type table)
 {
@@ -260,3 +262,4 @@ hash_free (hash_table_type table)
         p = q;
     }
 }
+#endif

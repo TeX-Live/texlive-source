@@ -1,3 +1,18 @@
+2012-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Resolve some const related problems.
+	* str-list.[ch]: Add cstr_list_type and cstr_list_add() for
+	const strings.  Define [c]str_list_init() as static inline.
+	* kpathsea.c: Move definition of KPATHSEA_CAN_FREE from here ...
+	* hash.h: ... to here.
+	* hash.[ch]: Define hash_free() only if KPATHSEA_CAN_FREE!=0.
+	(hash_lookup): Change return type 'string*' => 'const_string*'.
+	* cnf.[ch] (kpathsea_cnf_get, kpse_cnf_get):
+	Change return type 'string*' => 'const_string*'.
+	* dir.c (kpathsea_dir_links): Adapt.
+	* rm-suffix.c (remove_suffix): Adapt.
+	* db.c, fontmap.c: Remove casts 'string*' => 'const_string*'.	
+
 2012-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.c: Remove look_for_cmd().

@@ -1,6 +1,6 @@
 /* kpathsea.c: creating and freeing library instances
 
-   Copyright 2009 Taco Hoekwater.
+   Copyright 2009, 2012 Taco Hoekwater.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,6 @@
  * The code freeing the strings used in this struct is enabled/disabled
  * by KPATHSEA_CAN_FREE.
  */
-/* At the moment can not free */
-#define KPATHSEA_CAN_FREE 0
 
 #include <kpathsea/config.h>
 

@@ -1,6 +1,6 @@
 /* str-list.h: declarations for string lists.
 
-   Copyright 1993, 1994, 2007, 2008, 2010 Karl Berry.
+   Copyright 1993, 1994, 2007, 2008, 2010, 2012 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -24,12 +24,18 @@
 
 
 /* Lists of strings; used for, e.g., directory lists.  */
-
 typedef struct
 {
   unsigned length;
   string *list;
 } str_list_type;
+
+/* Lists of const strings; used for, e.g., hash tables.  */
+typedef struct
+{
+  unsigned length;
+  const_string *list;
+} cstr_list_type;
 
 #define STR_LIST_LENGTH(l) ((l).length)
 #define STR_LIST(l) ((l).list)
@@ -39,7 +45,26 @@ typedef struct
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Return a new, empty, list.  */
-extern str_list_type str_list_init (void);
+static inline str_list_type
+str_list_init (void)
+{
+  str_list_type ret;
+
+  STR_LIST_LENGTH (ret) = 0;
+  STR_LIST (ret) = NULL;
+
+  return ret;
+}
+static inline cstr_list_type
+cstr_list_init (void)
+{
+  cstr_list_type ret;
+
+  STR_LIST_LENGTH (ret) = 0;
+  STR_LIST (ret) = NULL;
+
+  return ret;
+}
 
 #endif /* MAKE_KPSE_DLL */
 
@@ -47,6 +72,7 @@ extern str_list_type str_list_init (void);
    deallocate S; we don't copy it.  Also up to the caller to terminate
    the list with a null entry.  */
 extern KPSEDLL void str_list_add (str_list_type *l, string s);
+extern KPSEDLL void cstr_list_add (cstr_list_type *l, const_string s);
 
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 

@@ -435,7 +435,7 @@ str_list_type *
 kpathsea_db_search (kpathsea kpse, const_string name,
                     const_string orig_path_elt, boolean all)
 {
-  string *db_dirs, *orig_dirs;
+  const_string *db_dirs, *orig_dirs;
   const_string last_slash, path_elt;
   string temp_str = NULL;
   boolean done;
@@ -480,7 +480,7 @@ kpathsea_db_search (kpathsea kpse, const_string name,
 
   /* If we have aliases for this name, use them.  */
   if (kpse->alias_db.buckets)
-    aliases = (const_string *) hash_lookup (kpse->alias_db, name);
+    aliases = hash_lookup (kpse->alias_db, name);
   else
     aliases = NULL;
 
@@ -586,7 +586,7 @@ str_list_type *
 kpathsea_db_search_list (kpathsea kpse, const_string* names,
                          const_string path_elt, boolean all)
 {
-  string *db_dirs, *orig_dirs;
+  const_string *db_dirs, *orig_dirs;
   const_string last_slash, name, path;
   string temp_str = NULL;
   boolean done;
@@ -645,7 +645,7 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
 
       /* If we have aliases for this name, use them.  */
       if (kpse->alias_db.buckets)
-          aliases = (const_string *) hash_lookup (kpse->alias_db, name);
+          aliases = hash_lookup (kpse->alias_db, name);
       else
           aliases = NULL;
 

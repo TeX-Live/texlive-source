@@ -26,10 +26,10 @@
    On the first call, also read all the `texmf.cnf' files in the
    path for kpse_cnf_format (and initialize the path).  */
 
-extern KPSEDLL string kpathsea_cnf_get (kpathsea kpse, const_string name);
+extern KPSEDLL const_string kpathsea_cnf_get (kpathsea kpse, const_string name);
 
 #if defined(KPSE_COMPAT_API)
-extern KPSEDLL string kpse_cnf_get (const_string var);
+extern KPSEDLL const_string kpse_cnf_get (const_string var);
 #endif
 
 #endif /* not KPATHSEA_CNF_H */

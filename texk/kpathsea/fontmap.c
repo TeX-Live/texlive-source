@@ -177,14 +177,14 @@ kpathsea_fontmap_lookup (kpathsea kpse, const_string key)
     read_all_maps (kpse);
   }
 
-  ret = (const_string *) hash_lookup (kpse->map, key);
+  ret = hash_lookup (kpse->map, key);
   if (!ret) {
     /* OK, the original KEY didn't work.  Let's check for the KEY without
        an extension -- perhaps they gave foobar.tfm, but the mapping only
        defines `foobar'.  */
     if (suffix) {
       string base_key = remove_suffix (key);
-      ret = (const_string *) hash_lookup (kpse->map, base_key);
+      ret = hash_lookup (kpse->map, base_key);
       free (base_key);
     }
   }

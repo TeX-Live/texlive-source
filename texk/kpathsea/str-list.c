@@ -1,6 +1,6 @@
 /* str-list.c: define routines for string lists.
 
-    Copyright 1993, 2008 Karl Berry.
+    Copyright 1993, 2008, 2012 Karl Berry.
     Copyright 2001, 2005 Olaf Weber.
 
     This library is free software; you can redistribute it and/or
@@ -24,23 +24,19 @@
 /* See the .h file for comments.  */
 
 
-str_list_type
-str_list_init (void)
-{
-  str_list_type ret;
-
-  STR_LIST_LENGTH (ret) = 0;
-  STR_LIST (ret) = NULL;
-
-  return ret;
-}
-
-
 void
 str_list_add (str_list_type *l,  string s)
 {
   STR_LIST_LENGTH (*l)++;
   XRETALLOC (STR_LIST (*l), STR_LIST_LENGTH (*l), string);
+  STR_LIST_LAST_ELT (*l) = s;
+}
+
+void
+cstr_list_add (cstr_list_type *l,  const_string s)
+{
+  STR_LIST_LENGTH (*l)++;
+  XRETALLOC (STR_LIST (*l), STR_LIST_LENGTH (*l), const_string);
   STR_LIST_LAST_ELT (*l) = s;
 }
 

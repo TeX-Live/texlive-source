@@ -1,6 +1,6 @@
 /* dir.c: directory operations.
 
-   Copyright 1992, 1993, 1994, 1995, 2008, 2009, 2010, 2011 Karl Berry.
+   Copyright 1992, 1993, 1994, 1995, 2008-2012 Karl Berry.
    Copyright 2000, 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -78,7 +78,7 @@ dir_p (string fn)
 int
 kpathsea_dir_links (kpathsea kpse, const_string fn, long nlinks)
 {
-  string *hash_ret;
+  const_string *hash_ret;
 
   if (kpse->link_table.size == 0)
     kpse->link_table = hash_create (457);

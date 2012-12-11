@@ -1,6 +1,6 @@
 /* hash.h: declarations for a hash table.
 
-   Copyright 1994, 1995, 2008, 2010, 2011 Karl Berry.
+   Copyright 1994, 1995, 2008, 2010-2012 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -22,6 +22,12 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
+/*
+ * The code freeing strings and hash tables is enabled/disabled
+ * by KPATHSEA_CAN_FREE.
+ */
+/* At the moment can not free */
+#define KPATHSEA_CAN_FREE 0
 
 /* A single (key,value) pair.  */
 typedef struct hash_element_struct
@@ -65,15 +71,17 @@ extern KPSEDLL void hash_remove (hash_table_type *table,  const_string key,
 
 /* Look up KEY in TABLE, and return NULL-terminated list of all matching
    values (not copies), in insertion order.  If none, return NULL.  */
-extern KPSEDLL string *hash_lookup (hash_table_type table, const_string key);
+extern KPSEDLL const_string *hash_lookup (hash_table_type table, const_string key);
 
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Print TABLE to stderr.  */
 extern void hash_print (hash_table_type table, boolean summary_only);
 
+#if KPATHSEA_CAN_FREE
 /* Drop the TABLE */
 extern void hash_free (hash_table_type table);
+#endif
 
 #endif /* MAKE_KPSE_DLL */
 

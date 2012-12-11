@@ -224,11 +224,11 @@ read_all_cnf (kpathsea kpse)
 /* Read the cnf files on the first call.  Return the first value in the
    returned list -- this will be from the last-read cnf file.  */
 
-string
+const_string
 kpathsea_cnf_get (kpathsea kpse, const_string name)
 {
-  string ret, ctry;
-  string *ret_list;
+  string ctry;
+  const_string ret, *ret_list;
 
   /* When we expand the compile-time value for DEFAULT_TEXMFCNF,
      we end up needing the value for TETEXDIR and other variables,
@@ -273,7 +273,7 @@ kpathsea_cnf_get (kpathsea kpse, const_string name)
 }
 
 #if defined(KPSE_COMPAT_API)
-string
+const_string
 kpse_cnf_get (const_string name)
 {
     return kpathsea_cnf_get(kpse_def, name);
