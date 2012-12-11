@@ -1,3 +1,8 @@
+2012-12-11  Khaled Hosnt  <khaledhosny@eglug.org>
+
+	* src/tt_cmap.c: Fix crash with fonts that has some glyphs without name
+	entries in 'post' table.
+
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/Makefile.am: Avoid use of deprecated INCLUDES.

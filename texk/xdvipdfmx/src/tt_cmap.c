@@ -874,11 +874,11 @@ handle_subst_glyphs (CMap *cmap,
         long unicodes[MAX_UNICODES];
         int  unicode_count = -1;
         int  k;
-        if (gid < post->numberOfGlyphs) {
+        if (gid < post->numberOfGlyphs && post->glyphNamePtr[gid] != NULL) {
           unicode_count = agl_get_unicodes(post->glyphNamePtr[gid], unicodes, MAX_UNICODES);
         }
         if (unicode_count == -1)
-	  MESG("No Unicode mapping available: GID=%u, name=%s", gid,
+	  MESG("No Unicode mapping available: GID=%u, name=%s\n", gid,
 	        gid < post->numberOfGlyphs ? post->glyphNamePtr[gid] : "(none)");
 	else {
 	  /* the Unicode characters go into wbuf[2] and following, in UTF16BE */
