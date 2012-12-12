@@ -1,3 +1,14 @@
+2012-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Somewhat disentangle path search functions.
+	* db.c (kpathsea_init_db):
+	Directly call kpathsea_path_search_list_generic()
+	instead of the kpathsea_all_path_search_list() wrapper.
+	* pathsearch.c: Rename the static function search_list() into
+	the non-static kpathsea_path_search_list_generic() and drop
+	the former kpathsea_path_search_list_generic() wrapper.
+	* pathsearch.[ch]: Drop the now unused *_path_search_list().
+
 2012-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Resolve some const related problems.

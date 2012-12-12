@@ -383,7 +383,7 @@ kpathsea_init_db (kpathsea kpse)
   assert (sizeof(DB_NAME) == sizeof(DB_NAME_LC));
 
   db_path = kpathsea_init_format (kpse, kpse_db_format);
-  db_files = kpathsea_all_path_search_list (kpse, db_path, db_names);
+  db_files = kpathsea_path_search_list_generic (kpse, db_path, db_names, true, true);
   orig_db_files = db_files;
 
   /* Must do this after the path searching (which ends up calling
