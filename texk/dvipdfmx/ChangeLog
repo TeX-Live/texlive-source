@@ -1,3 +1,8 @@
+2012-12-12  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* src/tt_cmap.c: Make sure CMapName of embedded CMaps does not contain
+	slashes.
+
 2012-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac (removed): We now maintain dvipdfmx here.

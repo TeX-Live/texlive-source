@@ -1028,14 +1028,26 @@ otf_create_ToUnicode_stream (const char *font_name,
   CMap       *cmap_add;
   int         cmap_add_id;
   tt_cmap    *ttcmap;
+  char       *normalized_font_name;
   char       *cmap_name;
   FILE       *fp = NULL;
   sfnt       *sfont;
   long        offset = 0;
 
 
+  /* replace slash in map name with dash to make the output cmap name valid,
+   * happens when XeTeX embeds full font path
+   * https://sourceforge.net/p/xetex/bugs/52/
+   */
+  normalized_font_name = NEW(strlen(font_name), char);
+  strcpy(normalized_font_name, font_name);
+  for (i = 0; i < strlen(font_name); ++i) {
+    if (normalized_font_name[i] == '/')
+		normalized_font_name[i] = '-';
+  }
+
   cmap_name = NEW(strlen(font_name)+strlen("-UTF16")+5, char);
-  sprintf(cmap_name, "%s,%03d-UTF16", font_name, ttc_index);
+  sprintf(cmap_name, "%s,%03d-UTF16", normalized_font_name, ttc_index);
 
   res_id = pdf_findresource("CMap", cmap_name);
   if (res_id >= 0) {
