@@ -1040,7 +1040,7 @@ otf_create_ToUnicode_stream (const char *font_name,
    * happens when XeTeX embeds full font path
    * https://sourceforge.net/p/xetex/bugs/52/
    */
-  normalized_font_name = NEW(strlen(font_name), char);
+  normalized_font_name = NEW(strlen(font_name)+1, char);
   strcpy(normalized_font_name, font_name);
   for (i = 0; i < strlen(font_name); ++i) {
     if (normalized_font_name[i] == '/')
