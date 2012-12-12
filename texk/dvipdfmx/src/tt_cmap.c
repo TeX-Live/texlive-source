@@ -1033,6 +1033,7 @@ otf_create_ToUnicode_stream (const char *font_name,
   FILE       *fp = NULL;
   sfnt       *sfont;
   long        offset = 0;
+  int         i;
 
 
   /* replace slash in map name with dash to make the output cmap name valid,
