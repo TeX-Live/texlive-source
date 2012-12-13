@@ -67,7 +67,6 @@ libkpathsea_la_SOURCES = \
 	tex-hush.c \
 	tex-make.c \
 	tilde.c \
-	truncate.c \
 	uppercasify.c \
 	variable.c \
 	version.c \
@@ -175,7 +174,6 @@ noinst_HEADERS = \
 	fn.h \
 	fontmap.h \
 	tilde.h \
-	truncate.h \
 	xopendir.h \
 	xstat.h
 

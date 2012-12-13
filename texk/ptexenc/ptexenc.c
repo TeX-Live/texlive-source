@@ -817,6 +817,7 @@ static void nkf_check(void)
 /* 'mode' must be read */
 FILE *nkf_open(const char *path, const char *mode) {
     char buff[PATH_MAX * 2 + 20];  /* 20 is enough gaps */
+    char *name;
     FILE *fp;
 
     if (in_filter == NULL) {
@@ -830,10 +831,14 @@ FILE *nkf_open(const char *path, const char *mode) {
     }
 
     if (in_filter[0] == '\0') return fopen(path, mode);
-    path = kpse_readable_file(path);
-    if (path == NULL) return NULL; /* can't read */
+    name = xstrdup(path);
+    if (kpse_readable_file(name) == NULL) {
+        free(name);
+        return NULL; /* can't read */
+    }
 
     sprintf(buff, "%.*s < '%.*s'", PATH_MAX, in_filter, PATH_MAX, path);
+    free(name);
     /* fprintf(stderr, "\n`%s`", buff); */
     fp = popen(buff , "r");
     if (piped_num < NOFILE) piped_fp[piped_num++] = fp;

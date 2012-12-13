@@ -1,5 +1,9 @@
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* ptexenc.c: Use kpse_readable_file() with non-const arg.
+
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* Makefile.am: Avoid use of deprecated INCLUDES.
 
 2012-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>

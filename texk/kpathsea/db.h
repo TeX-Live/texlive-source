@@ -38,8 +38,9 @@ extern void kpathsea_init_db (kpathsea kpse);
 extern str_list_type *kpathsea_db_search (kpathsea kpse, const_string name,
                                           const_string path_elt, boolean all);
 
+/* Note: NAMES[i] is not modified.  */
 extern str_list_type *kpathsea_db_search_list (kpathsea kpse,
-                                               const_string* names,
+                                               string* names,
                                                const_string  path_elt,
                                                boolean all);
 

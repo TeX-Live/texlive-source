@@ -17,11 +17,13 @@
    along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
 #include <kpathsea/config.h>
+#include <kpathsea/c-namemx.h>
+#include <kpathsea/c-pathch.h>
+#include <kpathsea/c-pathmx.h>
 #include <kpathsea/c-stat.h>
 #include <kpathsea/pathsearch.h>
 #include <kpathsea/readable.h>
 #include <kpathsea/tex-hush.h>
-#include <kpathsea/truncate.h>
 
 
 /* If access can read FN, run stat (assigning to stat buffer ST) and
@@ -62,38 +64,59 @@ READABLE(const_string fn, unsigned int st)
   (access (fn, R_OK) == 0 && stat (fn, &(st)) == 0 && !S_ISDIR (st.st_mode))
 #endif
 
+
 /* POSIX invented the brain-damage of not necessarily truncating
    filename components; the system's behavior is defined by the value of
-   the symbol _POSIX_NO_TRUNC, but you can't change it dynamically!
-
-   We may or may not return NAME.  It's up to the caller not to assume
-   the return value is modifiable.  */
-
+   the symbol _POSIX_NO_TRUNC, but you can't change it dynamically!  */
 
 string
-kpathsea_readable_file (kpathsea kpse, const_string name)
+kpathsea_readable_file (kpathsea kpse, string name)
 {
-  string ret;
-
 #ifdef WIN32
   unsigned int st = 0;
 #else /* ! WIN32 */
   struct stat st;
 #endif
 
-  kpathsea_normalize_path(kpse, (string)name);
+  kpathsea_normalize_path (kpse, name);
   if (READABLE (name, st)) {
-      ret = (string) name;
+      return name;
 #ifdef ENAMETOOLONG
   } else if (errno == ENAMETOOLONG) {
-      ret = kpathsea_truncate_filename (kpse, name);
+      /* Truncate any too-long components in NAME.  */
+      unsigned c_len = 0;        /* Length of current component.  */
+      char *s = name;            /* Position in current component.  */
+      char *t = name;            /* End of allowed length.  */
+      
+      for (; *s; s++) {
+          if (c_len <= NAME_MAX)
+              t = s;
+#if defined(WIN32)
+          if (IS_KANJI (s)) {
+              s++;
+              c_len += 2;
+              continue;
+          }
+#endif
+          if (IS_DIR_SEP (*s) || IS_DEVICE_SEP (*s)) {
+              if (c_len > NAME_MAX) {
+                  /* Truncate if past the max for a component.  */
+                  memmove (t, s, strlen (s) + 1);
+                  s = t;
+              }
+              /* At a directory delimiter, reset component length.  */
+              c_len = 0;
+          } else
+              c_len++;
+      }
+      if (c_len > NAME_MAX)
+          /* Truncate if past the max for last component.  */
+          *t = 0;
 
       /* Perhaps some other error will occur with the truncated name, so
          let's call access again.  */
-      if (!READABLE (ret, st)) { /* Failed.  */
-          if (ret != name) free (ret);
-          ret = NULL;
-      }
+      if (READABLE (name, st)) /* Success.  */
+          return name;
 #endif /* ENAMETOOLONG */
   } else { /* Some other error.  */
       if (errno == EACCES) { /* Maybe warn them if permissions are bad.  */
@@ -101,14 +124,13 @@ kpathsea_readable_file (kpathsea kpse, const_string name)
               perror (name);
           }
       }
-      ret = NULL;
   }
-  return ret;
+  return NULL;
 }
 
 #if defined (KPSE_COMPAT_API)
 string
-kpse_readable_file (const_string name)
+kpse_readable_file (string name)
 {
     return kpathsea_readable_file (kpse_def, name);
 }

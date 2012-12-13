@@ -43,11 +43,16 @@
 #define DB_NAME_LC "ls-r"
 #endif
 
-/* read ls-R only on WIN32 */
-static const_string db_names[] = {
-    DB_NAME,
+static char db_name[] = DB_NAME;
 #ifndef WIN32
-    DB_NAME_LC,
+static char db_name_lc[] = DB_NAME_LC;
+#endif
+
+/* read ls-R only on WIN32 */
+static string db_names[] = {
+    db_name,
+#ifndef WIN32
+    db_name_lc,
 #endif
     NULL
 };
@@ -583,7 +588,7 @@ kpathsea_db_search (kpathsea kpse, const_string name,
 }
 
 str_list_type *
-kpathsea_db_search_list (kpathsea kpse, const_string* names,
+kpathsea_db_search_list (kpathsea kpse, string* names,
                          const_string path_elt, boolean all)
 {
   const_string *db_dirs, *orig_dirs;

@@ -1,5 +1,9 @@
 2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* lua/lkpselib.c: Use kpse_readable_file() with non-const arg.
+
+2012-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* lua/lepdflib.cc: No need to test for Annot::decRefCnt with
 	poppler 0.18 or better.
 

@@ -764,17 +764,19 @@ static int lua_kpse_version(lua_State * L)
 
 static int readable_file(lua_State * L)
 {
-    const char *name = luaL_checkstring(L, 1);
+    char *name = xstrdup(luaL_checkstring(L, 1));
     TEST_PROGRAM_NAME_SET;
     lua_pushstring(L, kpse_readable_file(name));
+    free(name);
     return 1;
 }
 
 static int lua_kpathsea_readable_file(lua_State * L)
 {
     kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
-    const char *name = luaL_checkstring(L, 2);
+    char *name = xstrdup(luaL_checkstring(L, 2));
     lua_pushstring(L, kpathsea_readable_file(*kp, name));
+    free(name);
     return 1;
 }
 

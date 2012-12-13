@@ -1081,7 +1081,7 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
 
   /* Search, trying to minimize disk-pounding.  */
   ret = kpathsea_path_search_list_generic (kpse, FMT_INFO.path,
-                                           (const_string*) target, false, all);
+                                           target, false, all);
 
   /* Do we need to pound the disk? */
   if (! *ret && must_exist) {
@@ -1100,7 +1100,7 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
     }
     target[count] = NULL;
     ret = kpathsea_path_search_list_generic (kpse, FMT_INFO.path,
-                                             (const_string*) target, true, all);
+                                             target, true, all);
   }
 
   /* Free the list we created. */

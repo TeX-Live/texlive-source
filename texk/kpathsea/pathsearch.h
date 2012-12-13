@@ -92,7 +92,7 @@ extern KPSEDLL string *kpathsea_all_path_search
 /* Search for any of the NAMES in PATH, and allow specifying both
    MUST_EXIST and ALL.  */
 extern string *kpathsea_path_search_list_generic (kpathsea kpse,
-   const_string path, const_string* names, boolean must_exist, boolean all);
+   const_string path, string* names, boolean must_exist, boolean all);
 
 #endif /* MAKE_KPSE_DLL */
 

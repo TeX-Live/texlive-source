@@ -157,8 +157,9 @@ dir_list_search (kpathsea kpse, str_llist_type *dirs,  const_string name,
   return ret;
 }
 
+/* Note: NAMES[i] is not modified.  */
 static str_list_type
-dir_list_search_list (kpathsea kpse, str_llist_type *dirs, const_string* names,
+dir_list_search_list (kpathsea kpse, str_llist_type *dirs, string* names,
                       boolean search_all)
 {
   str_llist_elt_type *elt;
@@ -408,11 +409,11 @@ search (kpathsea kpse, const_string path,  const_string original_name,
 
 string *
 kpathsea_path_search_list_generic (kpathsea kpse,
-                                   const_string path, const_string* names,
+                                   const_string path, string* names,
                                    boolean must_exist, boolean all)
 {
   str_list_type ret_list;
-  const_string* namep;
+  string* namep;
   string elt;
   boolean done = false;
   boolean all_absolute = true;

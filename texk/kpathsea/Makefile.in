@@ -149,11 +149,11 @@ am__libkpathsea_la_SOURCES_DIST = tex-file.c absolute.c atou.c cnf.c \
 	getopt.c getopt1.c hash.c kdefault.c kpathsea.c line.c \
 	magstep.c make-suffix.c path-elt.c pathsearch.c proginit.c \
 	progname.c readable.c rm-suffix.c str-list.c str-llist.c \
-	tex-glyph.c tex-hush.c tex-make.c tilde.c truncate.c \
-	uppercasify.c variable.c version.c xbasename.c xcalloc.c \
-	xdirname.c xfopen.c xfseek.c xftell.c xgetcwd.c xmalloc.c \
-	xopendir.c xputenv.c xrealloc.c xstat.c xstrdup.c mingw32.c \
-	xfseeko.c xftello.c win32lib.c knj.c
+	tex-glyph.c tex-hush.c tex-make.c tilde.c uppercasify.c \
+	variable.c version.c xbasename.c xcalloc.c xdirname.c xfopen.c \
+	xfseek.c xftell.c xgetcwd.c xmalloc.c xopendir.c xputenv.c \
+	xrealloc.c xstat.c xstrdup.c mingw32.c xfseeko.c xftello.c \
+	win32lib.c knj.c
 @MINGW32_TRUE@@WIN32_TRUE@am__objects_1 = libkpathsea_la-mingw32.lo \
 @MINGW32_TRUE@@WIN32_TRUE@	libkpathsea_la-xfseeko.lo \
 @MINGW32_TRUE@@WIN32_TRUE@	libkpathsea_la-xftello.lo
@@ -180,16 +180,16 @@ am_libkpathsea_la_OBJECTS = libkpathsea_la-tex-file.lo \
 	libkpathsea_la-str-list.lo libkpathsea_la-str-llist.lo \
 	libkpathsea_la-tex-glyph.lo libkpathsea_la-tex-hush.lo \
 	libkpathsea_la-tex-make.lo libkpathsea_la-tilde.lo \
-	libkpathsea_la-truncate.lo libkpathsea_la-uppercasify.lo \
-	libkpathsea_la-variable.lo libkpathsea_la-version.lo \
-	libkpathsea_la-xbasename.lo libkpathsea_la-xcalloc.lo \
-	libkpathsea_la-xdirname.lo libkpathsea_la-xfopen.lo \
-	libkpathsea_la-xfseek.lo libkpathsea_la-xftell.lo \
-	libkpathsea_la-xgetcwd.lo libkpathsea_la-xmalloc.lo \
-	libkpathsea_la-xopendir.lo libkpathsea_la-xputenv.lo \
-	libkpathsea_la-xrealloc.lo libkpathsea_la-xstat.lo \
-	libkpathsea_la-xstrdup.lo $(am__objects_1) $(am__objects_2) \
-	$(am__objects_3) $(am__objects_4)
+	libkpathsea_la-uppercasify.lo libkpathsea_la-variable.lo \
+	libkpathsea_la-version.lo libkpathsea_la-xbasename.lo \
+	libkpathsea_la-xcalloc.lo libkpathsea_la-xdirname.lo \
+	libkpathsea_la-xfopen.lo libkpathsea_la-xfseek.lo \
+	libkpathsea_la-xftell.lo libkpathsea_la-xgetcwd.lo \
+	libkpathsea_la-xmalloc.lo libkpathsea_la-xopendir.lo \
+	libkpathsea_la-xputenv.lo libkpathsea_la-xrealloc.lo \
+	libkpathsea_la-xstat.lo libkpathsea_la-xstrdup.lo \
+	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
+	$(am__objects_4)
 libkpathsea_la_OBJECTS = $(am_libkpathsea_la_OBJECTS)
 libkpathsea_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -440,10 +440,10 @@ libkpathsea_la_SOURCES = tex-file.c absolute.c atou.c cnf.c concat.c \
 	getopt1.c hash.c kdefault.c kpathsea.c line.c magstep.c \
 	make-suffix.c path-elt.c pathsearch.c proginit.c progname.c \
 	readable.c rm-suffix.c str-list.c str-llist.c tex-glyph.c \
-	tex-hush.c tex-make.c tilde.c truncate.c uppercasify.c \
-	variable.c version.c xbasename.c xcalloc.c xdirname.c xfopen.c \
-	xfseek.c xftell.c xgetcwd.c xmalloc.c xopendir.c xputenv.c \
-	xrealloc.c xstat.c xstrdup.c $(am__append_1) $(am__append_2) \
+	tex-hush.c tex-make.c tilde.c uppercasify.c variable.c \
+	version.c xbasename.c xcalloc.c xdirname.c xfopen.c xfseek.c \
+	xftell.c xgetcwd.c xmalloc.c xopendir.c xputenv.c xrealloc.c \
+	xstat.c xstrdup.c $(am__append_1) $(am__append_2) \
 	$(am__append_3) $(am__append_5)
 kpseincludedir = ${includedir}/kpathsea
 nodist_kpseinclude_HEADERS = \
@@ -507,7 +507,6 @@ noinst_HEADERS = \
 	fn.h \
 	fontmap.h \
 	tilde.h \
-	truncate.h \
 	xopendir.h \
 	xstat.h
 
@@ -770,7 +769,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-tex-hush.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-tex-make.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-tilde.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-truncate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-uppercasify.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-variable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libkpathsea_la-version.Plo@am__quote@
@@ -1073,13 +1071,6 @@ libkpathsea_la-tilde.lo: tilde.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tilde.c' object='libkpathsea_la-tilde.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-tilde.lo `test -f 'tilde.c' || echo '$(srcdir)/'`tilde.c
-
-libkpathsea_la-truncate.lo: truncate.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-truncate.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-truncate.Tpo -c -o libkpathsea_la-truncate.lo `test -f 'truncate.c' || echo '$(srcdir)/'`truncate.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libkpathsea_la-truncate.Tpo $(DEPDIR)/libkpathsea_la-truncate.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='truncate.c' object='libkpathsea_la-truncate.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libkpathsea_la-truncate.lo `test -f 'truncate.c' || echo '$(srcdir)/'`truncate.c
 
 libkpathsea_la-uppercasify.lo: uppercasify.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libkpathsea_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libkpathsea_la-uppercasify.lo -MD -MP -MF $(DEPDIR)/libkpathsea_la-uppercasify.Tpo -c -o libkpathsea_la-uppercasify.lo `test -f 'uppercasify.c' || echo '$(srcdir)/'`uppercasify.c

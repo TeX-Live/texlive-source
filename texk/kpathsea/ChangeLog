@@ -1,3 +1,16 @@
+2012-12-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Resolve remaining const related problems.
+	* db.[ch] (kpathsea_db_search_list): Make arg3 non-const.
+	* pathsearch.[ch] (kpathsea_path_search_list_generic,
+	dir_list_search_list): Make arg3 non-const.
+	* tex-file.c: Remove casts 'string*' => 'const_string*'.
+	* readable.[ch] (kpathsea_readable_file): Make arg non-const.
+	Include code to truncate too-long filename components.
+
+	* truncate.[ch] (kpathsea_truncate_filename): Files removed.
+	* Makefile.am: Drop truncate.c and truncate.h.
+
 2012-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Somewhat disentangle path search functions.
