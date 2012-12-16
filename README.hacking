@@ -14,11 +14,11 @@ them with configure --prefix=/usr/local/gnu and having
 
 autoconf (GNU Autoconf) 2.69
 
-automake (GNU automake) 1.12.5
+automake (GNU automake) 1.12.6
 
 ltmain.sh (GNU libtool) 2.4.2
 
-bison (GNU Bison) 2.6.2
+bison (GNU Bison) 2.7
 
 flex 2.5.37
 
