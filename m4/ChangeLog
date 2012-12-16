@@ -1,3 +1,7 @@
+2012-12-16  Karl Berry  <karl@tug.org>
+
+	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): no more tetex.
+
 2012-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Add libs/graphite2 for future XeTeX.

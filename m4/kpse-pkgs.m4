@@ -128,7 +128,6 @@ ttfdump
 xdv2pdf
 xdvik
 xdvipdfmx
-tetex
 texlive
 ])]) # KPSE_TEXK_PKGS
 

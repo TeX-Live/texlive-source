@@ -793,7 +793,6 @@ enable_xdv2pdf
 enable_xdvik
 with_xdvi_x_toolkit
 enable_xdvipdfmx
-enable_tetex
 enable_texlive
 with_system_harfbuzz
 with_system_icu
@@ -878,7 +877,6 @@ ttfdump
 xdv2pdf
 xdvik
 xdvipdfmx
-tetex
 texlive'
 
 # Initialize some variables set by options.
@@ -1607,7 +1605,6 @@ Optional Features:
   --disable-xdv2pdf       do not build the xdv2pdf package
   --disable-xdvik         do not build the xdvik package
   --disable-xdvipdfmx     do not build the xdvipdfmx package
-  --disable-tetex         do not build the tetex (teTeX scripts) package
   --disable-texlive       do not build the texlive (TeX Live scripts) package
   --disable-mktexmf-default   do not run mktexmf if MF source missing
   --disable-mktexpk-default   do not run mktexpk if PK font missing
@@ -4638,25 +4635,6 @@ test "x$enable_xdvipdfmx" = xno || {
 }
 
 
-## texk/tetex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/tetex/
-## configure options and TL libraries required for tetex
-# Check whether --enable-tetex was given.
-if test "${enable_tetex+set}" = set; then :
-  enableval=$enable_tetex;
-fi
-case $enable_tetex in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_tetex=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-tetex=$enable_tetex'" >&5
-$as_echo "$as_me: Assuming \`--enable-tetex=$enable_tetex'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-tetex=$enable_tetex'"
-    ;;
-esac
-
-
 ## texk/texlive/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
 ## configure options and TL libraries required for texlive
 # Check whether --enable-texlive was given.
@@ -6354,16 +6332,6 @@ if test -x $srcdir/xdvipdfmx/configure; then
   DIST_SUBTEXK="$DIST_SUBTEXK xdvipdfmx"
   if false; then
     subdirs="$subdirs xdvipdfmx"
-
-  fi
-fi
-
-
-if test -x $srcdir/tetex/configure; then
-  test "x$enable_tetex" = xno || SUBTEXK="$SUBTEXK tetex"
-  DIST_SUBTEXK="$DIST_SUBTEXK tetex"
-  if false; then
-    subdirs="$subdirs tetex"
 
   fi
 fi

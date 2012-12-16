@@ -141,7 +141,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/xdvik/ac/withenable.ac \
 	$(top_srcdir)/texk/xdvik/ac/xdvik.ac \
 	$(top_srcdir)/texk/xdvipdfmx/ac/withenable.ac \
-	$(top_srcdir)/texk/tetex/ac/withenable.ac \
 	$(top_srcdir)/texk/texlive/ac/withenable.ac \
 	$(top_srcdir)/libs/harfbuzz/ac/withenable.ac \
 	$(top_srcdir)/libs/icu/ac/withenable.ac \
