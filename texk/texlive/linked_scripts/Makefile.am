@@ -161,7 +161,6 @@ texmf_dist_other_scripts = \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
 	tetex/e2pall.pl \
-	tetex/texdoctk.pl \
 	tetex/updmap.pl \
 	tetex/updmap-sys.sh \
 	texdoc/texdoc.tlu \
@@ -217,7 +216,6 @@ dist_man_MANS = \
 	tetex/rubibtex.1 \
 	tetex/rumakeindex.1 \
 	tetex/texconfig.1 \
-	tetex/texdoctk.1 \
 	tetex/texlinks.1 \
 	tetex/updmap.1 \
 	tetex/updmap.cfg.5 \
