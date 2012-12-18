@@ -22,8 +22,8 @@
 -- ******************************************************************
 
 -- version and date, to be updated on each release/commit
-VERSION = "1.0h"
-DATE = "March 16, 2012"
+VERSION = "1.0i"
+DATE = "December 18, 2012"
 
 -- globals
 -- warning about \citation{*}
@@ -311,7 +311,7 @@ function getDataFromBibFiles(theBibFiles)
 			for currentLine in fileHandler:lines() do
 
                 -- if a reference is found
-				for reference in string.gmatch(currentLine, '@%w+{(.+),') do
+				for reference in string.gmatch(currentLine, '@%w+{%s*(.+),') do
 
                     -- insert the reference
 					table.insert(theReferences, reference)
