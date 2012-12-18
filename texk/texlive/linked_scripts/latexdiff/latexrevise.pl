@@ -1,30 +1,39 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl 
 #   latexrevise - takes output file of latexdiff and removes either discarded
 #                 or appended passages, then deletes all other latexdiff markup
 #
-#   Copyright (C) 2004  F J Tilmann (tilmann@esc.cam.ac.uk)
+#   Copyright (C) 2004  F J Tilmann (tilmann@gfz-potsdam.de, ftilmann@users.berlios.de)
 #
-#    This program is free software; you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License Version 2 as published by
-#    the Free Software Foundation.
+# Project webpages:   http://latexdiff.berlios.de/
+# CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
-#
 #    You should have received a copy of the GNU General Public License
-#    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # Detailed usage information at the end of the file
-#
-# Version 0.1   First public release
+# Note: version number now keeping up with latexdiff
+# Version 1.0.2  Option --version
+# Version 1.0.1   no changes to latexrevise
 # Version 0.3   Updated for compatibility with latexdiff 0.3 output (DIFAUXCMD removal)
-#
+# Version 0.1   First public release
 
 use Getopt::Long ;
 use strict;
+use warnings;
+
+my $versionstring=<<EOF ;
+This is LATEXREVISE 1.0.2
+  (c) 2005-2012 F J Tilmann
+EOF
 
 # Markup strings (make sure that this are set to the same value as in 
 # latexdiff)
@@ -64,7 +73,7 @@ my $brat0 = '(?:[^\[\]]|\\\[|\\\])*';
 my ($input,$preamble,$body,$post);
 my (@matches);
 my ($cnt,$prematch,$postmatch);
-my ($help);
+my ($help,$version);
 my ($verbose,$quiet,$accept,$decline,$simplify)=(0,0,0,0,0);
 my ($comment,$comenv,$markup,$markenv);
 
@@ -80,12 +89,18 @@ GetOptions('accept|a' => \$accept,
 	   'markup|m=s' => \$markup,
 	   'markup-environment|n=s' => \$markenv,
 	   'no-warnings|q' => \$verbose,
+           'version' => \$version,
 	   'verbose|V' => \$verbose,
 	   'help|h|H' => \$help);
 
 if ( $help ) {
   usage() ;
 }
+
+if ( $version ) {
+  die $versionstring ; 
+}
+
 
 if ( ($accept &&  $decline) || ($accept && $simplify) || ($decline && $simplify) ) {
   die '-a,-d and -s options are mutually axclusive. Type latexrevise -h to get more help.';
@@ -493,15 +508,16 @@ which should have been removed already.
 =head1 BUGS
 
 The current version is a beta version which has not yet been
-extensively tested, but worked fine locally.  Please send bug reports
-to I<tilmann@esc.cam.ac.uk>.  Include the serial number of I<latexrevise>
+extensively tested, but worked fine locally.  Please submit bug reports through
+the latexdiff project page I<http://developer.berlios.de/projects/latexdiff/> or send
+to I<tilmann@gfz-potsdam.de>.  Include the serial number of I<latexrevise>
 (from comments at the top of the source).  If you come across latexdiff
 output which is not processed correctly by I<latexrevise> please include the
 problem file as well as the old and new files on which it is based,
 ideally edited to only contain the offending passage as long as that still
 reproduces the problem.
 
-I<latexrevise> gets confused by commented C<\begin{document}> or 
+Note that I<latexrevise> gets confused by commented C<\begin{document}> or 
 C<\end{document}> statements
 
 =head1 SEE ALSO
@@ -518,6 +534,6 @@ on any platform  supporting PERL v5 or higher.
 Copyright (C) 2004 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License Version 2
+it under the terms of the GNU General Public License Version 3
 
 =cut

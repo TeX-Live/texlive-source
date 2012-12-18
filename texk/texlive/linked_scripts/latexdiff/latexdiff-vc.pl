@@ -1,41 +1,54 @@
-#!/usr/bin/perl -w
-# Place the following 2 lines at beginning to make script independent of location of perl
-#eval 'exec perl -w -S $0 ${1+"$@"}'
-#    if 0; # not running under some shell
+#!/usr/bin/env perl 
 #
 # latexdiff-vc  - wrapper script for applying latexdiff to rcs managed files
 #                 and for automatised creation of postscript or pdf from difference file
 #
-#   Copyright (C) 2005  F J Tilmann (tilmann@esc.cam.ac.uk)
+#   Copyright (C) 2005-12  F J Tilmann (tilmann@gfz-potsdam.de, ftilmann@users.berlios.de)
+#
+# Project webpages:   http://latexdiff.berlios.de/
+# CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
+#
 #
 #   Contributors: S Utcke, H Bruyninckx
 #
-#    This program is free software; you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License Version 2 as published by
-#    the Free Software Foundation.
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
-#
 #    You should have received a copy of the GNU General Public License
-#    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # Detailed usage information at the end of the file
 #
+# version 1.0.2: - option --so to use latexdiff-so
+# version 1.0.1 (change version numbering to match that of latexdiff)
+#   - Option --fast to use latexdiff-fast, 
+#   - git support (thanks to Bjørn Magnus Mathisen, Santi Béjar, Pietro Battiston and Stefan Alfredson for patches) - UNTESTED
 # version 0.25:
 #   - bbl is allowed as alternative extension (instead of .tex)
-#   
+# version 0.26a
+#   - Bug fix: it copes now correctly with the possibility that there are no changes between current
+#         and archived version
 use Getopt::Long ;
 use Pod::Usage qw/pod2usage/ ;
 use File::Temp qw/tempdir/ ;
 use File::Basename qw/dirname/;
 use strict ;
+use warnings ;
+
+my $versionstring=<<EOF ;
+This is LATEXDIFF-VC 1.0.2
+  (c) 2005-2012 F J Tilmann
+EOF
+
 
 # Option names
-my ($version,$help,$postscript,$pdf,$force,$dir,$cvs,$rcs,$svn,$diffcmd,$patchcmd,@revs);
+my ($version,$help,$fast,$so,$postscript,$pdf,$force,$dir,$cvs,$rcs,$svn,$git,$diffcmd,$patchcmd,@revs);
 # Preset Variables
 my $latexdiff="latexdiff"; # Program for making the comparison
 my $vc="";
@@ -44,14 +57,16 @@ my $tempdir=tempdir(CLEANUP => 1);
 my ($file1,$file2,$diff,$diffbase,$answer,$options,$infile,$append,$dirname,$cwd);
 my (@files,@ldoptions,@tmpfiles,@ptmpfiles,@difffiles); # ,
 
-
 Getopt::Long::Configure('pass_through','bundling');
 
 GetOptions('revision|r:s' => \@revs,
            'cvs' => \$cvs,
            'rcs' => \$rcs,
            'svn' => \$svn,
+           'git' => \$git,
            'dir|d:s' => \$dir,
+	   'fast' => \$fast,
+	   'so' => \$so,
            'postscript|ps' => \$postscript,
            'pdf' => \$pdf,
            'force' => \$force,
@@ -63,31 +78,46 @@ if ( $help ) {
 }
 
 if ( $version ) {
-  die "This is LATEXDIFF-VC 0.25\n" ;
+  die $versionstring ; 
+}
+
+if ( $so ) {
+  $latexdiff='latexdiff-so';
+}
+if ( $fast ) { 
+  die "Cannot specify more than one of --fast or --so " if ($so);
+  $latexdiff='latexdiff-fast';
 }
 
 if ( $cvs ) {
   $vc="CVS";
 }
 if ( $rcs ) {
-  die "Cannot specify more than one of --cvs, --rcs or --svn." if ($vc);
+  die "Cannot specify more than one of --cvs, --rcs --svn or --git." if ($vc);
   $vc="RCS";
 }
 if ( $svn ) {
-  die "Cannot specify more than one of --cvs, --rcs or --svn." if ($vc);
+  die "Cannot specify more than one of --cvs, --rcs --svn or --git." if ($vc);
   $vc="SVN";
 }
+if ( $git ) {
+  die "Cannot specify more than one of --cvs, --rcs, --svn or --git." if ($vc);
+  $vc="GIT";
+}
 
-# check whether the first file name got misinterpreted as an option to an empty -r option
-if ( @revs && -f $revs[$#revs] ) {
+
+# check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty -r option
+if ( @revs && ( -f $revs[$#revs] || $revs[$#revs] =~ /^-/ ) ) {
   unshift @ARGV,$revs[$#revs];
   $revs[$#revs]="";
 }
-# check whether the first file name got misinterpreted as an option to an empty -d option
-if ( defined($dir) && -f $dir ) {
+# check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty -d option
+if ( defined($dir) && ( -f $dir || $dir =~ /^-/ ) ) {
   unshift @ARGV,$dir;
   $dir="";
 }
+
+#print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n"; 
 
 $file2=pop @ARGV;
 ( defined($file2) && $file2 =~ /\.(tex|bbl)$/ ) or pod2usage("Must specify at least one tex or bbl file");
@@ -101,6 +131,8 @@ if (! $vc && scalar(@revs)>0 ) {
     $vc="RCS";
   } elsif ( $0 =~ /-svn$/ ) {
     $vc="SVN";
+  } elsif ( $0 =~ /-git$/ ) {
+    $vc="GIT";
   } elsif ( -e "CVSROOT" || defined($ENV{"CVSROOT"}) ) {
     print STDERR "Guess you are using CVS ...\n";
     $vc="CVS";
@@ -110,6 +142,9 @@ if (! $vc && scalar(@revs)>0 ) {
   } elsif ( -d ".svn" ) {
     print STDERR "Guess you are using SVN ...\n";
     $vc="SVN";
+  } elsif ( -d ".git" ) {
+    print STDERR "Guess you are using GIT ...\n";
+    $vc="GIT";
   } else {
     print STDERR "Cannot figure out version control system, so I default to CVS\n";
     $vc="CVS";
@@ -117,7 +152,7 @@ if (! $vc && scalar(@revs)>0 ) {
 }
 
 if (defined($dir) && $dir=~/^\.\/?/ ) {
-  print STDERR "You wrote selected -dir=.  but you do not really like to do that, do you ?\n";
+  print STDERR "You wrote -dir=.  but you do not really like to do that, do you ?\n";
   exit 10
 }
 
@@ -131,6 +166,12 @@ if ( scalar(@revs)>0 ) {
   } elsif ( $vc eq "SVN" ) {
     $diffcmd  = "svn diff -r ";  
     $patchcmd = "patch -R -p0";
+  } elsif ( $vc eq "GIT" ) {
+    $diffcmd  = "git diff -r --relative --no-prefix ";  
+    $patchcmd = "patch -R -p0";
+    # alternatively:
+    # $diffcmd  = "git diff ";
+    # $patchcmd = "patch -R -p1";
   } else {
     print STDERR "Unknown versioning system $vc \n";
     exit 10;
@@ -189,13 +230,22 @@ while ( $infile=$file2=shift @files ) {
     ($file1=$infile) =~ s/\.(tex|bbl)/-oldtmp-$$.$1/ ;
     push @tmpfiles,$file1;
     # compare file with previous version ($revs[0]="") or specified version
-    system("$diffcmd$revs[0] $infile| $patchcmd -o$file1") ;
+    ### system("$diffcmd$revs[0] $infile| $patchcmd -o$file1") ;
+    if (system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")==0  and -z $file1 ) {
+      # no differences detected, i.e. file is equal to current version
+      system("\cp $infile $file1");
+    }
   } elsif ( scalar(@revs) == 2 ) {
     ($file1=$infile) =~ s/\.(tex|bbl)/-oldtmp-$$.$1/ ;
     $file2 =~ s/\.(tex|bbl)/-newtmp-$$.$1/ ;
     push @tmpfiles,$file2;
-    system("$diffcmd$revs[1] $infile | $patchcmd -o$file2")  ;
-    system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")  ;
+      ;
+    if (system("$diffcmd$revs[1] $infile | $patchcmd -o$file2")==0 and -z $file2 ) {
+      system("\cp $infile $file2");
+    }
+    if (system("$diffcmd$revs[0] $infile | $patchcmd -o$file1")==0 and -z $file1 ) {
+	system("\cp $infile $file1");
+    };
   }
 
   if ( -z $file1 || -z $file2) {
@@ -315,7 +365,7 @@ B<latexdiff-vc> [ F<latexdiff-options> ]  [ F<latexdiff-vc-options> ][ B<--posts
 =head1 DESCRIPTION
 
 I<latexdiff-vc> is a wrapper script that applies I<latexdiff> to a
-file, or multiple files under version control (CVS or RCS), and optionally runs the
+file, or multiple files under version control (CVS, RCS or SVN), and optionally runs the
 sequence of C<latex> and C<dvips> or C<pdflatex> commands necessary to
 produce pdf or postscript output of the difference tex file(s). It can
 also be applied to a pair of files to automatise the generation of difference
@@ -325,7 +375,7 @@ file in postscript or pdf format.
 
 =over 4
 
-=item B<--rcs>, B<--svn>, or B<--cvs>
+=item B<--rcs>, B<--svn>, B<--cvs>, or B<--git>
 
 Set the version system. 
 If no version system is specified, latexdiff-vc will venture a guess.
@@ -335,8 +385,8 @@ the respective versioning system. However, this default can still be overridden 
 
 =item B<-r>, B<-r> F<rev> or B<--revision>, B<--revision=>F<rev>
 
-Choose revision (under RCS, CVS or SVN). One or two B<-r> options can be
-specified, and the resulting in different behaviour:
+Choose revision (under RCS, CVS, SVN or GIT). One or two B<-r> options can be
+specified, and they result in different behaviour:
 
 =over 4
 
@@ -371,6 +421,10 @@ numbers given to the output-file, this will prepend a directory name C<diff>
 to the
 original filename, creating the directory and subdirectories should they not exist already.  This is particularly useful in order to clone a
 complete directory hierarchy.  Optionally, a pathname F<path> can be specified, which is prepended instead of C<diff>.
+
+=item B<--fast> or B<--so>
+
+Use C<latexdiff-fast> or C<latexdiff-so>, respectively (instead of C<latexdiff>).
 
 =item B<--ps> or B<--postscript>
 
@@ -417,13 +471,19 @@ limited to Unix-like systems. It also requires the RCS version control
 system and latex to be installed on the system.  Modules from Perl 5.8
 or higher are required.
 
+=head1 BUG REPORTING
 
+ Please submit bug reports through
+the latexdiff project page I<http://developer.berlios.de/projects/latexdiff/> or send
+to I<tilmann@gfz-potsdam.de>.  Include the serial number of I<latexdiff-vc>
+(option C<--version>)
+.
 =head1 AUTHOR
 
-Copyright (C) 2005 Frederik Tilmann
+Copyright (C) 2005,2012 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License Version 2
+it under the terms of the GNU General Public License Version 3
 Contributors: S Utcke, H Bruyninckx
 
 =cut

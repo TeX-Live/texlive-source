@@ -1,23 +1,57 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
+##!/usr/bin/perl -w
 # latexdiff - differences two latex files on the word level
 #             and produces a latex file with the differences marked up.
 #
-#   Copyright (C) 2004-2007  F J Tilmann (tilmann@esc.cam.ac.uk)
+#   Copyright (C) 2004-12  F J Tilmann (tilmann@gfz-potsdam.de, ftilmann@users.berlios.de)
 #
-#    This program is free software; you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License Version 2 as published by
-#    the Free Software Foundation.
+# Project webpages:   http://latexdiff.berlios.de/
+# CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
-#
 #    You should have received a copy of the GNU General Public License
-#    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # Detailed usage information at the end of the file
+#
+# Version 1.0.1 - treat \big,\bigg etc. equivalently to \left and
+#              \right - include starred version in MATHENV - apply
+#            - flatten recursively and --flatten expansion is now
+#              aware of comments (thanks to Tim Connors for patch) 
+#            - Change to post-processing for more reliability for
+#              deleted math environments
+#            - On linux systems, recognise  and remove DOS style newlines 
+#            - Provide markup for some special preamble commands (\title,
+#              \author,\date, 
+#            - configurable by setting context2cmd 
+#            - for styles using ulem package, remove \emph and \text.. from list of
+#              safe commands in order to allow linebreaks within the
+#              highlighted sections.  
+#            - for ulem style, now show citations by enclosing them in \mbox commands. 
+#              This unfortunately implies linebreaks within citations no longer function, 
+#              so this functionality can be turned off (Option --disable-citation-markup). 
+#              With --enable-citation-markup, the mbox markup is forced for other styles)
+#            - new substyle COLOR.  This is particularly useful for marking up citations
+#              and some special post-processing is implemented to retain cite
+#              commands in deleted blocks.
+#            - four different levels of math-markup
+#            - Option --driver for choosing driver for modes employing changebar package
+#            - accept \\* as valid command (and other commands of form \.*). Also accept
+#              \<nl> (backslashed newline) 
+#            - some typo fixes, include commands defined in preamble as safe commands
+#              (Sebastian Gouezel) 
+#            - include compared filenames as comments as line 2 and 3 of
+#              the preamble (can be modified with option --label, and suppressed with 
+#              --no-label), option --visible-label to show files in generated pdf or dvi
+#              at the beginning of main document
 #
 # Version 0.5  A number of minor improvements based on feedback
 #              Deleted blocks are now shown before added blocks
@@ -499,14 +533,15 @@ import Algorithm::Diff qw(traverse_sequences);
 
 use Getopt::Long ;
 use strict ;
+use warnings;
 use utf8 ;
 
 my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 0.5  (Algorithm::Diff $Algorithm::Diff::VERSION)
-  (c) 2004-2007 F J Tilmann
+This is LATEXDIFF 1.0.2  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2012 F J Tilmann
 EOF
 
 # Configuration variables: these have to be visible from the subroutines
@@ -514,16 +549,20 @@ my $MINWORDSBLOCK=3; # minimum number of tokens to form an independent block
                      # shorter identical blocks will be merged to the previous word
 my $FLOATENV='(?:figure|table|plate)[\w\d*@]*' ;   # Environments in which FL variants of defined commands are used
 my $PICTUREENV='(?:picture|DIFnomarkup)[\w\d*@]*' ;   # Environments in which all change markup is removed
-my $MATHENV='(?:equation|displaymath|DOLLARDOLLAR)' ;           # Environments turning on display math mode (code also knows about \[ and \]
+my $MATHENV='(?:equation[*]?|displaymath|DOLLARDOLLAR)[*]?' ;           # Environments turning on display math mode (code also knows about \[ and \])
 my $MATHREPL='displaymath';  # Environment introducing deleted maths blocks
-my $MATHARRENV='(?:eqnarray|align|gather|multiline|flalign)[*]?' ;           # Environments turning on eqnarray math mode
+my $MATHARRENV='(?:eqnarray|align|alignat|gather|multline|flalign)[*]?' ;           # Environments turning on eqnarray math mode
 my $MATHARRREPL='eqnarray*';  # Environment introducing deleted maths blocks
-my $ARRENV='(?:array|[pbvBV]matrix)'; # Enviroments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
-my $COUNTERCMD='(?:footnote|part|section|subsection|subsubsection|paragraph|subparagraph)';  # textcmds which are associated with a counter
+my $ARRENV='(?:array|[pbvBV]matrix)'; # Environments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
+my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragraph|subparagraph)';  # textcmds which are associated with a counter
                                         # If any of these commands occur in a deleted block
                                         # they will be succeeded by an \addtocounter{...}{-1}
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
+my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
+my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
+
+
 
 # Markup strings
 # If at all possible, do not change these as parts of the program
@@ -554,13 +593,19 @@ my @CONTEXT1CMDLIST=();  # array containing patterns of commands with text argum
                          # In deleted passages, the command will be disabled but its argument is marked up
                          # Otherwise they behave exactly like TEXTCMD's 
 my @CONTEXT1CMDEXCL=();  # exclude list for above, but always empty
-my @CONTEXT2CMDLIST=();  # array containing patterns of commands with text arguments, but which fail cause confusion
+my @CONTEXT2CMDLIST=();  # array containing patterns of commands with text arguments, but which fail or cause confusion
                          # if used out of context (e.g. \title). They and their arguments will be disabled in deleted
                          # passages
 my @CONTEXT2CMDEXCL=();  # exclude list for above, but always empty
+my @MATHTEXTCMDLIST=();  # treat like textcmd.  If a textcmd is in deleted or added block, just wrap the
+                         # whole content with \DIFadd or \DIFdel irrespective of content.  This functionality 
+                         # is useful for pseudo commands \MATHBLOCK.. into which math environments are being
+                         # transformed 
+my @MATHTEXTCMDEXCL=();  # 
 
-my @SAFECMDLIST=();  # array containing patterns of safe commands (which do not break when in the argument of DIFadd or DIFDEL)
-my @SAFECMDEXCL=();
+# Note I need to declare this with "our" instead of "my" because later in the code I have to "local"ise these  
+our @SAFECMDLIST=();  # array containing patterns of safe commands (which do not break when in the argument of DIFadd or DIFDEL)
+our @SAFECMDEXCL=();
 
 my ($i,$j,$l);
 my ($old,$new);
@@ -572,14 +617,25 @@ my ($oldbody, $newbody, $diffbo);
 my ($oldpost, $newpost);
 my ($diffall);
 # Option names
-my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,
+my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblelabel,
     $showpreamble,$showsafe,$showtext,$showconfig,$showall,
     $replacesafe,$appendsafe,$excludesafe,
     $replacetext,$appendtext,$excludetext,
     $replacecontext1,$appendcontext1,
     $replacecontext2,$appendcontext2,
-    $help,$verbose,$version,$ignorewarnings,$allowspaces,$flatten,$debug);
-my (@configlist,
+    $help,$verbose,$driver,$version,$ignorewarnings,
+    $enablecitmark,$disablecitmark,$allowspaces,$flatten,$debug);  ###$disablemathmark,
+# MNEMNONICS for mathmarkup
+my $mathmarkup;
+use constant {
+  OFF => 0,
+  WHOLE => 1,
+  COARSE => 2,
+  FINE => 3
+};
+
+
+my (@configlist,@labels,
     @appendsafelist,@excludesafelist,
     @appendtextlist,@excludetextlist,
     @appendcontext1list,@appendcontext2list,
@@ -592,9 +648,11 @@ my ($pkg,%packages);
 $type='UNDERLINE';
 $subtype='SAFE';
 $floattype='FLOATSAFE';
+$mathmarkup=COARSE;
 
 $verbose=0;
-$debug=1; 
+# output debug and intermediate files, set to 0 in final distribution
+$debug=0; 
 # define character properties
 sub IsNonAsciiPunct { return <<'END'    # Unicode punctuation but excluding ASCII punctuation
 +utf8::IsPunct
@@ -608,8 +666,7 @@ END
 }
 
 
-
-  my %verbhash;
+my %verbhash;
 
 Getopt::Long::Configure('bundling');
 GetOptions('type|t=s' => \$type, 
@@ -618,6 +675,9 @@ GetOptions('type|t=s' => \$type,
 	   'config|c=s' => \@configlist,
 	   'preamble|p=s' => \$preamblefile,
 	   'encoding|e=s' => \$encoding,
+	   'label|L=s' => \@labels,
+	   'no-label' => \$nolabel,
+	   'visible-label' => \$visiblelabel,
 	   'exclude-safecmd|A=s' => \@excludesafelist,
 	   'replace-safecmd=s' => \$replacesafe,
 	   'append-safecmd|a=s' => \@appendsafelist,
@@ -634,9 +694,13 @@ GetOptions('type|t=s' => \$type,
 	   'show-config' => \$showconfig,
 	   'show-all' => \$showall,
            'packages=s' => \@packagelist,
+	   'allow-spaces' => \$allowspaces,
+           'math-markup=s' => \$mathmarkup,
+           'enable-citation-markup' => \$enablecitmark,
+           'disable-citation-markup' => \$disablecitmark,
 	   'verbose|V' => \$verbose,
 	   'ignore-warnings' => \$ignorewarnings,
-	   'allow-spaces' => \$allowspaces,
+	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
 	   'version' => \$version,
 	   'help|h|H' => \$help);
@@ -656,6 +720,22 @@ if (defined($showall)){
   $showpreamble=$showsafe=$showtext=$showconfig=1;
 }
 
+if (defined($mathmarkup)) {
+  $mathmarkup=~tr/a-z/A-Z/;
+  if ( $mathmarkup eq 'OFF' ){
+    $mathmarkup=OFF;
+  } elsif ( $mathmarkup eq 'WHOLE' ){ 
+    $mathmarkup=WHOLE;
+  } elsif ( $mathmarkup eq 'COARSE' ){
+    $mathmarkup=COARSE;
+  } elsif ( $mathmarkup eq 'FINE' ){
+    $mathmarkup=FINE;
+  } elsif ( $mathmarkup !~ m/^[0123]$/ ) {
+    die "Illegal value: ($mathmarkup)  for option--math-markup. Possible values: OFF,WHOLE,COARSE,FINE,0- ";
+  }
+  # else use numerical value
+}
+
 # setting extra preamble commands
 if (defined($preamblefile)) {
   $latexdiffpreamble=join "\n",(extrapream($preamblefile),"");
@@ -663,6 +743,10 @@ if (defined($preamblefile)) {
   $latexdiffpreamble=join "\n",(extrapream($type,$subtype,$floattype),"");
 }
 
+if ( defined($driver) ) {
+  # for changebar only
+  $latexdiffpreamble=~s/\[dvips\]/[$driver]/sg;
+}
 # setting up @SAFECMDLIST and @SAFECMDEXCL
 if (defined($replacesafe)) {
   init_regex_arr_ext(\@SAFECMDLIST,$replacesafe);
@@ -679,9 +763,25 @@ foreach $excludesafe ( @excludesafelist ) {
 # Special: treat all cite commands as safe except in UNDERLINE and FONTSTRIKE mode
 # (there is a conflict between citation and ulem package, see
 # package documentation)
+# Use post-processing
+
 if ( uc($type) ne "UNDERLINE" && uc($type) ne "FONTSTRIKE" && uc($type) ne "CULINECHBAR" ) {
   push (@SAFECMDLIST, qr/^cite.*$/);
+} else {
+  ### Experimental: disable text and emph commands
+  push (@SAFECMDLIST, qr/^cite.*$/) unless $disablecitmark;
+  push(@SAFECMDEXCL, qr/^emph$/, qr/^text..$/);
+  # replace \cite{..} by \mbox{\cite{..}} in added or deleted blocks in post-processing
+  if ( uc($subtype) eq "COLOR" or uc($subtype) eq "DVIPSCOL" ) {
+    # remove \cite command again from list of safe commands
+    pop @SAFECMDLIST;
+    # deleted cite commands
+    $CITE2CMD='(?:cite\w*|nocite)' unless $disablecitmark ; # \cite-type commands which should be reinstated in deleted blocks
+  } else {
+    $CITECMD='(?:cite\w*|nocite)' unless $disablecitmark ; # \cite commands which need to be protected within an mbox in UNDERLINE and other modes using ulem
+  }
 }
+$CITECMD='(?:cite\w*|nocite)' if $enablecitmark ; # as above for explicit selection
 
 # setting up @TEXTCMDLIST and @TEXTCMDEXCL
 if (defined($replacetext)) {
@@ -718,9 +818,6 @@ foreach $appendcontext2 ( @appendcontext2list ) {
   init_regex_arr_ext(\@CONTEXT2CMDLIST, $appendcontext2);
 }
 
-
-
-
 # setting configuration variables
 @config=();
 foreach $config ( @configlist ) {
@@ -754,6 +851,11 @@ foreach $assign ( @config ) {
   else { die "Unknown variable $1 in assignment.";}
 }
 
+if ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
+  push(@MATHTEXTCMDLIST,qr/^MATHBLOCK(?:$MATHENV|$MATHARRENV|SQUAREBRACKET)$/);
+}
+
+
 
 foreach $pkg ( @packagelist ) {
   map { $packages{$_}="" } split(/,/,$pkg) ;
@@ -776,11 +878,12 @@ if ($showtext) {
   print_regex_arr(@TEXTCMDLIST);
   print "\nContext1 commands (last argument textual, command will be disabled in deleted passages, last argument will be shown as plain text):\n";
   print_regex_arr(@CONTEXT1CMDLIST);
-  print "\nContext2 commands (last argument textual, command ant its argument will be disabled in deleted passages):\n";
+  print "\nContext2 commands (last argument textual, command and its argument will be disabled in deleted passages):\n";
   print_regex_arr(@CONTEXT2CMDLIST);  
   print "\nExclude list of Commands with last argument not textual (overrides patterns above):\n";
   print_regex_arr(@TEXTCMDEXCL);
 }
+
 
 if ($showconfig) {
   print "Configuration variables:\n";
@@ -813,14 +916,21 @@ if ($allowspaces) {
 push @TEXTCMDLIST, @CONTEXT1CMDLIST;
 push @TEXTCMDLIST, @CONTEXT2CMDLIST;
 
+push @TEXTCMDLIST, @MATHTEXTCMDLIST if $mathmarkup==COARSE;
+
+# internal additions to SAFECMDLIST
+push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
+
 
 # Patterns. These are used by some of the subroutines, too
 # I can only define them down here because value of extraspace depends on an option
-  my $pat0 = '(?:[^{}]|\\\{|\\\})*';
-  my $pat1 = '(?:[^{}]|\\\{|\\\}|\{'.$pat0.'\})*';
-  my $pat2 = '(?:[^{}]|\\\{|\\\}|\{'.$pat1.'\})*'; # 
-  my $pat3 = '(?:[^{}]|\\\{|\\\}|\{'.$pat2.'\})*';
-  my $pat4 = '(?:[^{}]|\\\{|\\\}|\{'.$pat3.'\})*';
+  my $pat0 = '(?:[^{}])*';
+  my $pat1 = '(?:[^{}]|\{'.$pat0.'\})*';
+  my $pat2 = '(?:[^{}]|\{'.$pat1.'\})*';
+  my $pat3 = '(?:[^{}]|\{'.$pat2.'\})*';
+  my $pat4 = '(?:[^{}]|\{'.$pat3.'\})*';
+  my $pat5 = '(?:[^{}]|\{'.$pat4.'\})*';
+  my $pat6 = '(?:[^{}]|\{'.$pat5.'\})*';
   my $brat0 = '(?:[^\[\]]|\\\[|\\\])*'; 
 
   my $quotemarks = '(?:\'\')|(?:\`\`)';
@@ -831,19 +941,44 @@ push @TEXTCMDLIST, @CONTEXT2CMDLIST;
   my $coords= '[\-.,\s\d]*';
 # word: sequence of letters or accents followed by letter
   my $word='(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])+';
-  my $cmdleftright='\\\\(?:left|right)\s*(?:[()\[\]|]|\\\\(?:[|{}]|\w+))';
+  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[()\[\]|]|\\\\(?:[|{}]|\w+))';
 
-  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat4 . '\}|\(' . $coords .'\))'.$extraspace.')*';
-  my $oneletcmd='\\\\.(?:\['.$brat0.'\]|\{'. $pat4 . '\})*';
+  my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))'.$extraspace.')*';
+  my $backslashnl='\\\\\n';
+  my $oneletcmd='\\\\.\*?(?:\['.$brat0.'\]|\{'. $pat6 . '\})*';
   my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(].*?\\\\[)]';
-#  my $math='\$(?:[^$]|\\\$)*\$';
+## the current maths command cannot cope with newline within the math expression
+
   my $comment='%.*?\n';
-  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$cmdleftright|${cmdoptseq}|${math}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 
 
 # now we are done setting up and can start working   
 my ($oldfile, $newfile) = @ARGV;
+# check for existence of input files
+if ( ! -e $oldfile ) {
+  die "Input file $oldfile does not exist.";
+}
+if ( ! -e $newfile ) {
+  die "Input file $newfile does not exist.";
+}
+
+
+# set the labels to be included into the file
+my ($oldtime,$newtime,$oldlabel,$newlabel);
+if (defined($labels[0])) {
+  $oldlabel=$labels[0] ;
+} else {
+  $oldtime=localtime((stat($oldfile))[9]); 
+  $oldlabel="$oldfile   " . " "x(length($newfile)-length($oldfile)) . $oldtime;
+}
+if (defined($labels[1])) {
+  $newlabel=$labels[1] ;
+} else {
+  $newtime=localtime((stat($newfile))[9]);
+  $newlabel="$newfile   " . " "x(length($oldfile)-length($newfile)) . $newtime;
+}
 
 $encoding=guess_encoding($newfile) unless defined($encoding);
 
@@ -872,10 +1007,19 @@ if ($flatten) {
   $newbody=flatten($newbody,$newpreamble,$newfile,$encoding);
 }
 
+my @auxlines;
 if ( length $oldpreamble && length $newpreamble ) {
+  # pre-process preamble by looking for commands used in \maketitle (title, author, date etc commands) 
+  # and marking up content with latexdiff markup
+  @auxlines=preprocess_preamble($oldpreamble,$newpreamble);
+
   @oldpreamble = split /\n/, $oldpreamble;
   @newpreamble = split /\n/, $newpreamble;
-  
+
+  # If a command is defined in the preamble of the new file, and only uses safe commands, then it can be considered to be safe) (contribution S. Gouezel)
+  # Base this assessment on the new preamble
+  add_safe_commands($newpreamble);
+
   %packages=list_packages(@newpreamble) unless %packages;
   if (defined $packages{"hyperref"} ) {
     print STDERR "hyperref package detected.\n" if $verbose ;
@@ -883,13 +1027,23 @@ if ( length $oldpreamble && length $newpreamble ) {
     $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
     $latexdiffpreamble .= join "\n",(extrapream("HYPERREF"),"");
   }
+  print STDERR "Differencing preamble.\n" if $verbose;
+
   # insert dummy first line such that line count begins with line 1 (rather than perl's line 0) - just so that line numbers inserted by linediff are correct
   unshift @newpreamble,'';
   unshift @oldpreamble,'';
-  print STDERR "Differencing preamble.\n" if $verbose;
   @diffpreamble = linediff(\@oldpreamble, \@newpreamble);
   # remove dummy line again
   shift @diffpreamble; 
+  # add filenames, modification time and latexdiff mark
+  defined($nolabel) or splice @diffpreamble,1,0,
+      "%DIF LATEXDIFF DIFFERENCE FILE",
+      ,"%DIF DEL $oldlabel",
+      "%DIF ADD $newlabel";
+  if ( @auxlines ) {
+    push @diffpreamble,"%DIF DELETED TITLE COMMANDS FOR MARKUP";
+    push @diffpreamble,join("\n",@auxlines);
+  }
   push @diffpreamble,$latexdiffpreamble;
   push @diffpreamble,'\begin{document}';
 }
@@ -900,7 +1054,7 @@ elsif ( !length $oldpreamble && !length $newpreamble ) {
   exit(2);
 }
 
-if (defined $packages{"amsmath"} ) {
+if (defined $packages{"amsmath"}  or defined $packages{"amsart"} or defined $packages{"amsbook"} ) {
   print STDERR "amsmath package detected.\n" if $verbose ;
   $MATHARRREPL='align*';
 }
@@ -912,9 +1066,22 @@ my ($oldleadin,$newleadin)=preprocess($oldbody,$newbody);
 # run difference algorithm
 @diffbody=bodydiff($oldbody, $newbody);
 $diffbo=join("",@diffbody);
+if ( $debug ) {
+    open(RAWDIFF,">","latexdiff.debug.bodydiff");
+    print RAWDIFF $diffbo;
+    close(RAWDIFF);
+}
 print STDERR "(",exetime()," s)\n","Postprocessing body. \n " if $verbose;
 postprocess($diffbo);
 $diffall =join("\n",@diffpreamble) ;
+# add visible labels
+if (defined($visiblelabel)) {
+  # Give information right after \begin{document} (or at the beginning of the text for files without preamble
+  ### if \date command is used, add information to \date argument, otherwise give right after \begin{document}
+  ###  $diffall=~s/(\\date$extraspace(?:\[$brat0\])?$extraspace)\{($pat6)\}/$1\{$2 \\ LATEXDIFF comparison \\ Old: $oldlabel \\ New: $newlabel \}/  or
+  $diffbo = "\\begin{verbatim}LATEXDIFF comparison\nOld: $oldlabel\nNew: $newlabel\\end{verbatim}\n$diffbo"   ;
+}
+
 $diffall .= "$newleadin$diffbo" ;
 $diffall .= "\\end{document}$newpost" if length $newpreamble ;
 if ( lc($encoding) ne "utf8" && lc($encoding) ne "ascii" ) {
@@ -971,6 +1138,9 @@ sub read_file_with_encoding {
     $output=Encode::decode($encoding,$output);
   }
   close FILE;
+  if ($^O eq "linux" ) {
+    $output =~ s/\r\n/\n/g ;
+  }
   return $output;
 }
 
@@ -995,13 +1165,66 @@ sub list_packages {
   return (%packages);
 }
 
+# Subroutine add_safe_commands modified from version provided by S. Gouezel
+# add_safe_commands($preamble)
+# scans the argument for \newcommand and \DeclareMathOperator,
+# and adds the created commands which are clearly safe to @SAFECMDLIST
+sub add_safe_commands {
+  my ($preamble)=@_;
+  my $added_command = 1;
+
+  $preamble=~s/(?<!\\)%.*$//mg ;
+
+  while ($added_command) { 
+    $added_command  = 0;
+      # get rid of comments
+    my $to_test = "";
+      # test for \DeclareMathOperator{\foo}{myoperator}
+    while ( $preamble =~ m/\DeclareMathOperator\s*\{\\(\w*?)\}/s) {
+      $to_test=$1;
+      if ($to_test ne "" and not iscmd($to_test,\@SAFECMDLIST,\@SAFECMDEXCL) and not iscmd($to_test, \@SAFECMDEXCL, []))  {
+        # one should add $to_test to the list of safe commands.
+        init_regex_arr_ext(\@SAFECMDLIST, $to_test);
+        $added_command = 1;
+        print STDERR "Adding $to_test to the list of safe commands\n" if $verbose;
+      }
+    }
+
+    while ( $preamble =~ m/\\(?:|re|provide)newcommand\s*{\\(\w*)\}(?:|\[\d*\])\s*\{(${pat6})\}/osg ) {
+      my $maybe_to_test  = $1;
+      my $should_be_safe = $2;
+      my $success = 0;
+      # test if all latex commands inside it are safe
+      $success = 1;
+      if ($should_be_safe =~ m/\\\\/) {
+	$success = 0;
+      } else {
+	while ($should_be_safe =~ m/\\(\w+)/g) {
+	  $success = 0 unless iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL); ### or $1 eq "";
+	}
+      }
+      ###      }
+      $to_test = $maybe_to_test if $success;
+      
+      if ($to_test ne "" and not iscmd($to_test,\@SAFECMDLIST,\@SAFECMDEXCL) and not iscmd($to_test, \@SAFECMDEXCL, []))  {
+#        # one should add $to_test to the list of safe commands.
+        init_regex_arr_ext(\@SAFECMDLIST, $to_test);
+        $added_command = 1;
+        print STDERR "Adding $to_test to the list of safe commands\n" if $verbose;
+      }
+    }
+  }
+}
+
+
+
 # flatten($text,$preamble,$filename,$encoding)
 # expands \input and \include commands within text
-# premable is scanned for includeonly commands
+# preamble is scanned for includeonly commands
 # encoding is the encoding
 sub flatten {
   my ($text,$preamble,$filename,$encoding)=@_;
-  my ($includeonly,$dirname,$fname,$newpage,$replacement);
+  my ($includeonly,$dirname,$fname,$newpage,$replacement,$begline);
   require File::Basename ; 
   require File::Spec ; 
   $dirname = File::Basename::dirname($filename);
@@ -1012,21 +1235,24 @@ sub flatten {
     $includeonly = '.*?';
   }
 
-  print STDERR "DEBUG: includeonly $includeonly\n";
+  print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
-  $text=~s/\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
-	    $fname = $1 if defined($1)  ;
-	    $fname = $2 if defined($2) ;       
+  $text=~s/(^(?:[^%\n]|\\%)*)\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
+	    $fname = $2 if defined($2) ;
+	    $fname = $3 if defined($3) ;       
             #      # add tex extension unless there is a three letter extension already 
             $fname .= ".tex" unless $fname =~ m|\.\w{3}|;
+            print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
             print STDERR "Include file $fname\n" if $verbose;
-            print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n";
-            # content of file becomes replacement value, add \newpage if the command was include
-            $replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die
-                "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
-	    $newpage=(defined($2)? " \\newpage " : "") ;
-	    "$newpage$replacement$newpage";
-          }/exg;
+            print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
+            # content of file becomes replacement value (use recursion), add \newpage if the command was include
+            ###$replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
+	    $replacement=flatten(read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding), $preamble,$filename,$encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
+	    # \include always starts a new page; use explicit \newpage command to simulate this
+	    $begline=(defined($1)? $1 : "") ;
+	    $newpage=(defined($3)? " \\newpage " : "") ;
+	    "$begline$newpage$replacement$newpage";
+          }/exgm;
 
   return($text);
 }
@@ -1133,13 +1359,29 @@ sub bodydiff {
   my @oldwords = splitlatex($oldwords);
   print STDERR "Parsing $newfile \n" if $verbose;
   my @newwords = splitlatex($newwords);
-  my $token;
+
+  if ( $debug ) {
+    open(TOKENOLD,">","latexdiff.debug.tokenold");
+    print TOKENOLD join("***\n",@oldwords);
+    close(TOKENOLD);
+    open(TOKENNEW,">","latexdiff.debug.tokennew");
+    print TOKENNEW join("***\n",@newwords);
+    close(TOKENNEW);
+  }
 
   print STDERR "(",exetime()," s)\n","Pass 1: Expanding text commands and merging isolated identities with changed blocks  " if $verbose;
   pass1(\@oldwords, \@newwords);
 
 
   print STDERR "(",exetime()," s)\n","Pass 2: inserting DIF tokens and mark up.  " if $verbose;
+  if ( $debug ) {
+    open(TOKENOLD,">","latexdiff.debug.tokenold2.tex");
+    print TOKENOLD join("***\n",@oldwords);
+    close(TOKENOLD);
+    open(TOKENNEW,">","latexdiff.debug.tokennew2.tex");
+    print TOKENNEW join("***\n",@newwords);
+    close(TOKENNEW);
+  }
 
   @retwords=pass2(\@oldwords, \@newwords);
 
@@ -1156,6 +1398,9 @@ sub bodydiff {
 # a latex command
 sub splitlatex {
   my ($string) = @_ ;
+  # if input is empty, return empty list
+  length($string)>0 or return ();
+
   my @retval=($string =~ m/$pat/osg);  
 
   if (length($string) != length(join("",@retval))) {
@@ -1241,7 +1486,7 @@ sub pass1 {
 #			print STDERR "Unchanged block $cnt, $last1,$last2 \n";
                         if ($cnt < $MINWORDSBLOCK 
 			    && $cnt==scalar (
-				     grep { /^$wpat/ || ( /^\\([\w\d\*]+)((?:\[$brat0\]|\{$pat4\})*)/o 
+				     grep { /^$wpat/ || ( /^\\([\w\d\*]+)((?:\[$brat0\]|\{$pat6\})*)/o 
 							   && iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 							   && scalar(@dummy=split(" ",$2))<3 ) }
 					     @$block) )  {
@@ -1373,7 +1618,7 @@ sub extracttextblocks {
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
-    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d\*]+)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat4\})*)/o 
+    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d\*]+)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*)/o 
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
       # we have text or a command which can be treated as text
@@ -1427,7 +1672,7 @@ sub extractcommands {
     # $2: \cmd
     # $3: last argument
     # $4: }  + trailing spaces
-    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat4\})*${extraspace}\{)($pat4)(\}\s*)$/so )
+    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat6\})*${extraspace}\{)($pat6)(\}\s*)$/so )
 	 && iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL) ) {
       #      push(@$retval,[ $2,$index,$1,$3,$4 ]);
       ($cmd,$open,$mid,$closing) = ($2,$1,$3,$4) ;
@@ -1521,7 +1766,7 @@ sub pass2 {
 # braces, ampersands, or comments
 # mark comments with $comment
 # exclude all other exceptions from scope of open, close like this
-# ($openmark, $open,...,$close, $opencomd,command, command,$closecmd, $open, ..., $close, $closemark)
+# ($openmark, $open,...,$close, $opencmd,command, command,$closecmd, $open, ..., $close, $closemark)
 # If $opencmd begins with "%" marktags assumes it is operating on a deleted block, otherwise on an added block
 sub marktags {
   my ($openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment,$block)=@_;
@@ -1553,21 +1798,30 @@ sub marktags {
       $noncomment=1;
     }
     # negative lookahead pattern (?!) in second clause is put in to avoid mathcing \( .. \) patterns
-    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()([\w*@]*)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
+    # also note that second pattern will match \\
+    # Note: the second pattern should really be $word =~ /^\\(?!\()(\\|[\w*@]+)/, ie * replaced by +
+    # and then all commands \" \' etc declared safe. But as I don't have a complete list of one letter 
+    # commands, and nobody has complained so far, I will eave this as is
+    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[\w*@]*)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       # word is a command or other significant token (not in SAFECMDLIST)
 	## same conditions as in subroutine extractcommand:
 	# check if token is an alphanumeric command sequence with at least one non-optional argument
 	# \cmd[...]{...}{last argument}  
 	# Capturing in the following results in these associations
 	# $1: \cmd[...]{...}{
-	# $2: \cmd
+	# $2: cmd
 	# $3: last argument
 	# $4: }  + trailing spaces
-	### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat4\})*\{)($pat4)(\}\s*)$/so )
-      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat4\})*${extraspace}\{)($pat4)(\}\s*)$/so )
-	   && iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL)  && ( !$cmdcomment || !iscmd($2,\@CONTEXT2CMDLIST, \@CONTEXT2CMDEXCL) )  ) {	 
-	# word is a text command - we mark up the interior of the word. But if we are in a deleted block ($cmdcomment=1) and
-        # $2 (the command) is in context2, just treat it as an ordinary command (i.e. comment it open with $opencmd)
+	### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat6\})*\{)($pat6)(\}\s*)$/so )
+      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat0\]|${extraspace}\{$pat6\})*${extraspace}\{)($pat6)(\}\s*)$/so )
+	   && (iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL)|| iscmd($2,\@MATHTEXTCMDLIST,\@MATHTEXTCMDEXCL))
+           && ( !$cmdcomment || !iscmd($2,\@CONTEXT2CMDLIST, \@CONTEXT2CMDEXCL) )  ) {
+	# Condition 1: word is a command? - if yes, $1,$2,.. will be set as above
+        # Condition 2: word is a text command - we mark up the interior of the word. There is a separate check for MATHTEXTCMDLIST
+        #              because for $mathmarkup=WHOLE, the commands should not be split in pass1 (ie. math mode commands are not in
+        #              TEXTCMDLIST, but the interior of MATHTEXT commands should be highlighted in both deleted and added blocks
+        # Condition 3: But if we are in a deleted block ($cmdcomment=1) and
+        #            $2 (the command) is in context2, just treat it as an ordinary command (i.e. comment it open with $opencmd)
         # Because we do not want to disable this command
 	# here we do not use $opencmd and $closecmd($opencmd is empty) 
 	if ($cmd==1) {
@@ -1587,7 +1841,15 @@ sub marktags {
           # to suppress linebreak after opening parentheses, which is important
           # for latexrevise
           push (@$retval,$command,"%\n{$AUXCMD\n",marktags("","",$open,$close,$opencmd,$closecmd,$comment,\@argtext),$closingbracket);
-	} else {
+        } elsif ( iscmd($commandword,,\@MATHTEXTCMDLIST, \@MATHTEXTCMDEXCL) ) {
+	  # MATHBLOCK pseudo command: consider all commands safe, except & and \\	
+	  # Keep these commands even in deleted blocks, hence set $opencmd and $closecmd (5th and 6th argument of marktags) to 
+	  # ""
+	  local @SAFECMDLIST=(".*"); 
+	  local @SAFECMDEXCL=('\\','\\\\');
+	  push(@$retval,$command,marktags("","",$open,$close,"","",$comment,\@argtext)#@argtext
+                       ,$closingbracket);
+        } else {
 	  # normal textcmd or context1cmd in an added block
 	  push (@$retval,$command,marktags("","",$open,$close,$opencmd,$closecmd,$comment,\@argtext),$closingbracket);  
 	}
@@ -1619,6 +1881,9 @@ sub marktags {
 # preprocess($string, ..)
 # carry out the following pre-processing steps for all arguments:
 # 1. Remove leading white-space
+#    Change \{ to \LEFTBRACE and \} to \RIGHTBRACE
+# #. change begin and end commands  within comments to BEGINDIF, ENDDIF
+#    so they don't disturb the pattern matching (if there are several \begin or \end in one line
 # 2. mark all first empty line (in block of several) with \PAR tokens
 # 3. Convert all '\%' into '\PERCENTAGE ' to make parsing regular expressions easier
 # 4. Convert all \verb|some verbatim text| commands (where | can be an arbitrary character)
@@ -1628,8 +1893,11 @@ sub marktags {
 # 7. Convert ^n into \SUPERSCRIPTNB{n} and ^{nnn} into \SUPERSCRIPT{nn}
 # 8. a. Convert $$ $$ into \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR}
 #    b. Convert \[ \] into \begin{SQUAREBRACKET} \end{SQUAREBRACKET}
+# 9. Convert all picture environmentent (\begin{PICTUREENV} .. \end{PICTUREENV} \PICTUREBLOCKenv
+#     For --block-math-markup option -convert all \begin{MATH} .. \end{MATH}
+#    into \MATHBLOCKmath{...} commands, where MATH/math is any valid math environment
 
-# 9. Add final token STOP to the very end.  This is put in because the algorithm works better if the last token is identical.  This is removed again in postprocessing.
+# 10. Add final token STOP to the very end.  This is put in because the algorithm works better if the last token is identical.  This is removed again in postprocessing.
 #
 # NB: step 6 and 7 is likely to  convert some "_" inappropriately, e.g. in file
 #     names or labels but it does not matter because they are converted back in the postprocessing step
@@ -1639,21 +1907,39 @@ sub preprocess {
   for (@_) { 
     s/^(\s*)//s;
     push(@leadin,$1);
+    #    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE
+    s/(?<!\\)\\{/\\QLEFTBRACE /sg;
+    s/(?<!\\)\\}/\\QRIGHTBRACE /sg;
+    # change begin and end commands  within comments such that they
+    # don't disturb the pattern matching (if there are several \begin or \end in one line
+    # this substitution is insufficient but that appears unlikely)
+    s/(%.*)\\begin\{(.*)$/$1\\BEGINDIF\{$2/mg ;
+    s/(%.*)\\end\{(.*)$/$1\\ENDDIF\{$2/mg ;
+
     s/\n(\s*?)\n((?:\s*\n)*)/\n$1\\PAR\n$2/g ;
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
     s/(\\verb\*?)(\S)(.*?)\2/"${1}{". tohash(\%verbhash,"${2}${3}${2}") ."}"/esg;
     s/\\begin\{(verbatim\*?)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
     # Convert _n or _\cmd into \SUBSCRIPTNB{n} or \SUBSCRIPTNB{\cmd} and _{nnn} into \SUBSCRIPT{nn}
-    s/_([^{\\]|\\\w+)/\\SUBSCRIPTNB{$1}/g ;
-    s/_{($pat4)}/\\SUBSCRIPT{$1}/g ;
+    1 while s/_([^{\\]|\\\w+)/\\SUBSCRIPTNB{$1}/g ;
+    1 while s/_{($pat6)}/\\SUBSCRIPT{$1}/g ;
     # Convert ^n into \SUPERSCRIPTNB{n} and ^{nnn} into \SUPERSCRIPT{nn}
-    s/\^([^{\\]|\\\w+)/\\SUPERSCRIPTNB{$1}/g ;
-    s/\^{($pat4)}/\\SUPERSCRIPT{$1}/g ;
+    1 while s/\^([^{\\]|\\\w+)/\\SUPERSCRIPTNB{$1}/g ;
+    1 while s/\^{($pat6)}/\\SUPERSCRIPT{$1}/g ;
     # Convert $$ $$ into \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR}
     s/\$\$(.*?)\$\$/\\begin{DOLLARDOLLAR}$1\\end{DOLLARDOLLAR}/sg;
     # Convert \[ \] into \begin{SQUAREBRACKET} \end{SQUAREBRACKET}
     s/(?<!\\)\\\[/\\begin{SQUAREBRACKET}/sg;
     s/\\\]/\\end{SQUAREBRACKET}/sg;
+    # Convert all picture environmentent (\begin{PICTUREENV} .. \end{PICTUREENV} \PICTUREBLOCKenv
+    s/\\begin{($PICTUREENV)}(.*?)\\end{\1}/\\PICTUREBLOCK$1\{$2\}/sg;
+    #    For --block-math-markup option -convert all \begin{MATH} .. \end{MATH}
+    #    into \MATHBLOCKMATH{...} commands, where MATH is any valid math environment
+    #    Also convert all array environments into ARRAYBLOCK environments
+    if ( $mathmarkup != FINE ) {
+      s/\\begin{($ARRENV)}(.*?)\\end{\1}/\\ARRAYBLOCK$1\{$2\}/sg;
+      s/\\begin{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end{\1}/\\MATHBLOCK$1\{$2\}/sg;
+    }
     # add final token " STOP"
     $_ .= " STOP"
   }
@@ -1701,9 +1987,10 @@ sub fromhash {
 # carry out the following post-processing steps for all arguments:
 # * Remove STOP token from the end
 # * Replace \RIGHTBRACE by }
+# *  change citation commands within comments to protect from processing (using marker CITEDIF)
 # 1. Check all deleted blocks: 
 #    a.where a deleted block contains a matching \begin and
-#      \end environment (these will be disabled by a %DIFDELCMD statements), for selected environment enable enable
+#      \end environment (these will be disabled by a %DIFDELCMD statements), for selected environments enable
 #      these commands again (such that for example displayed math in a deleted equation
 #      is properly within math mode.  For math mode environments replace numbered equation
 #      environments with their display only variety (so that equation numbers in new file and
@@ -1713,8 +2000,19 @@ sub fromhash {
 #      subtracting one from the respective counter to keep numbering consistent with new file
 #    Replace all MATHMODE environment commands by the correct environment to achieve matching
 #    pairs
+#    c. Convert MATHBLOCKmath commands to their uncounted numbers (e.g. convert equation -> displaymath
+#       (environments defined in $MATHENV will be replaced by $MATHREPL, and  environments in $MATHARRENV
+#       will be replaced by $MATHARRREPL
+#    d. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
+#    d. place \cite commands in mbox'es (for UNDERLINE style)
+#
+#   For added blocks:
 #    c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
-# 2. Remove DIFadd, DIFdel, DIFFaddbegin , ... from picture environments
+#    d. place \cite commands in mbox'es (for UNDERLINE style)
+#     
+# 2.   If --block-math-markup option set: Convert \MATHBLOCKmath{..} commands back to environments
+#
+#      Convert all PICTUREblock{..} commands back to the appropriate environments
 # 3. Convert DIFadd, DIFdel, DIFFaddbegin , ... into FL varieties
 #    within floats (currently recognised float environments: plate,table,figure
 #    plus starred varieties).
@@ -1729,7 +2027,7 @@ sub fromhash {
 # 10.  package specific processing:  endfloat: make sure \begin{figure} and \end{figure} are always
 #      on a line by themselves, similarly for table environment
 #  4, undo renaming of the \begin and \end in comments
-
+#    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
 #
 # Note have to manually synchronize substitution commands below and 
 # DIF.. command names in the header
@@ -1747,6 +2045,11 @@ sub postprocess {
     s/ STOP$//;
     # Replace \RIGHTBRACE by }    
     s/\\RIGHTBRACE/}/g;
+
+    # change citation commands within comments to protect from processing
+    if ($CITECMD){
+      1 while s/(%.*)\\($CITECMD)/$1\\CITEDIF$2/m ;
+    }
     # Check all deleted blocks: where a deleted block contains a matching \begin and
     #    \end environment (these will be disabled by a %DIFDELCMD statements), enable
     #    these commands again (such that for example displayed math in a deleted equation
@@ -1763,55 +2066,72 @@ sub postprocess {
       ### (.*?[^\n]?)\n? construct is necessary to avoid empty lines in math mode, which result in
       ### an error
       # displayed math environments
-      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
-      # also transform the opposite pair \end{displaymath} .. \begin{displaymath} but we have to be careful not to interfere with the results of the transformation in the line directly above
-      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
+      if ($mathmarkup == FINE ) {
+	$delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
+	# also transform the opposite pair \end{displaymath} .. \begin{displaymath} but we have to be careful not to interfere with the results of the transformation in the line directly above
+	### pre-0.42 obsolete version which did not work on eqnarray test      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHENV)\}\s*?\n)(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/$1\\end{$MATHREPL}$AUXCMD\n$3\n\\begin{$MATHREPL}$AUXCMD\n$4/sg;
+	###0.5:      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
+	$delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
+  
+        # now look for unpaired %DIFDELCMD < \begin{MATHENV}; if found add \begin{$MATHREPL} and insert \end{$MATHREPL} 
+        # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\begin{$MATHREPL}$AUXCMD\n/sg ) {
+	  $delblock =~ s/(\\DIFdelend$)/\\end{$MATHREPL}$AUXCMD\n$1/s ;
+        }
+        # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
+        # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end{MATHMODE}$AUXCMD\n/sg ) {
+	  $delblock =~ s/(\\DIFdelend$)/\\begin{MATHMODE}$AUXCMD\n$1/s ;
+	}
 
-      # now look for unpaired %DIFDELCMD < \begin{MATHENV}; if found add \begin{$MATHREPL} and insert \end{$MATHREPL} 
-      # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-      if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\begin{$MATHREPL}$AUXCMD\n/sg ) {
-	$delblock =~ s/(\\DIFdelend$)/\\end{$MATHREPL}$AUXCMD\n$1/s ;
-      }
-      # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
-      # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-      if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end{MATHMODE}$AUXCMD\n/sg ) {
-	$delblock =~ s/(\\DIFdelend$)/\\begin{MATHMODE}$AUXCMD\n$1/s ;
-      }
 
+	### pre-0.42      # same as above for special case \[.\] (latex abbreviation for displaymath)
+        ### pre-0.42      $delblock=~ s/(\%DIFDELCMD < \s*\\\[\s*?\n())(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\\])/$1\\\[$AUXCMD\n$3\n\\\]$AUXCMD\n$4/sg;
+        ### pre-0.42      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\\]\s*?\n())(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\\[)/$1\\\]$AUXCMD\n$3\n\\\[$AUXCMD\n$4/sg;
+        # equation array environment
+        ###pre-0.3      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?\n)(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/$1\\begin{$MATHARRREPL}$AUXCMD\n$3\n\\end{$MATHARRREPL}$AUXCMD\n$4/sg;
+        ###0.5      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHARRREPL}$AUXCMD\n$1$3\n\\end{$MATHARRREPL}$AUXCMD\n$4/sg;
+        $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHARRREPL}$AUXCMD\n$1$3\n\\end{$MATHARRREPL}$AUXCMD\n$4/sg;
+        ###  pre-0.42 obsolete version which did not work on eqnarray test     $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHARRENV)\}\s*?\n)(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/$1\\end{$MATHARRREPL}$AUXCMD\n$3\n\\begin{$MATHARRREPL}$AUXCMD\n$4/sg;
+        $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
 
-      # equation array environment
-      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHARRREPL}$AUXCMD\n$1$3\n\\end{$MATHARRREPL}$AUXCMD\n$4/sg;
-      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
-
-      # now look for unpaired %DIFDELCMD < \begin{MATHARRENV}; if found add \begin{$MATHARRREPL} and insert \end{$MATHARRREPL} 
-      # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-      if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\begin{$MATHARRREPL}$AUXCMD\n/sg ) {
-	$delblock =~ s/(\\DIFdelend$)/\\end{$MATHARRREPL}$AUXCMD\n$1/s ;
-      }
-      # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
-      # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-      if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end{MATHMODE}$AUXCMD\n/sg ) {
-	$delblock =~ s/(\\DIFdelend$)/\\begin{MATHMODE}$AUXCMD\n$1/s ;
-      }
+        # now look for unpaired %DIFDELCMD < \begin{MATHARRENV}; if found add \begin{$MATHARRREPL} and insert \end{$MATHARRREPL} 
+        # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\begin{$MATHARRREPL}$AUXCMD\n/sg ) {
+           $delblock =~ s/(\\DIFdelend$)/\\end{$MATHARRREPL}$AUXCMD\n$1/s ;
+        }
+        # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
+        # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end{MATHMODE}$AUXCMD\n/sg ) {
+	  $delblock =~ s/(\\DIFdelend$)/\\begin{MATHMODE}$AUXCMD\n$1/s ;
+        }
 
       # parse $delblock for deleted and reinstated eqnarray* environments - within those reinstate \\ and & commands
-      while ( $delblock =~ m/\\begin\Q{$MATHARRREPL}$AUXCMD\E\n.*?\n\\end\Q{$MATHARRREPL}$AUXCMD\E\n/sg ) {
-	$cnt2=0;
-	$len2=length($&);
-	$begin2=pos($delblock) - $len2;
-	$eqarrayblock=$&;
-	# reinstate deleted & and \\ commands
-	$eqarrayblock=~ s/(\%DIFDELCMD < \s*(\&|\\\\)\s*?(?:$DELCMDCLOSE|\n))/$1$2$AUXCMD\n/sg ;
-
-	substr($delblock,$begin2,$len2)=$eqarrayblock;
-	pos($delblock) = $begin2 + length($eqarrayblock);
+        while ( $delblock =~ m/\\begin\Q{$MATHARRREPL}$AUXCMD\E\n.*?\n\\end\Q{$MATHARRREPL}$AUXCMD\E\n/sg ) {
+	  $cnt2=0;
+	  $len2=length($&);
+	  $begin2=pos($delblock) - $len2;
+	  $eqarrayblock=$&;
+	  # reinstate deleted & and \\ commands
+	  $eqarrayblock=~ s/(\%DIFDELCMD < \s*(\&|\\\\)\s*?(?:$DELCMDCLOSE|\n))/$1$2$AUXCMD\n/sg ;
+	  
+	  substr($delblock,$begin2,$len2)=$eqarrayblock;
+	  pos($delblock) = $begin2 + length($eqarrayblock);
+	}
+      } elsif ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
+#       Convert MATHBLOCKmath commands to their uncounted numbers (e.g. convert equation -> displaymath
+#       (environments defined in $MATHENV will be replaced by $MATHREPL, and  environments in $MATHARRENV
+#       will be replaced by $MATHARRREPL
+	$delblock=~ s/\\MATHBLOCK($MATHENV)\{($pat6)\}/\\MATHBLOCK$MATHREPL\{$2\}/sg;
+	$delblock=~ s/\\MATHBLOCK($MATHARRENV)\{($pat6)\}/\\MATHBLOCK$MATHARRREPL\{$2\}/sg;
       }
-
 
 
 #    b.where one of the commands matching $COUNTERCMD is used as a DIFAUXCMD, add a statement
 #      subtracting one from the respective counter to keep numbering consistent with new file
-      $delblock=~ s/\\($COUNTERCMD)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat4\})*\s*${AUXCMD}\n)/\\$1$2\\addtocounter{$1}{-1}${AUXCMD}\n/sg ;
+      $delblock=~ s/\\($COUNTERCMD)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*\s*${AUXCMD}\n)/\\$1$2\\addtocounter{$1}{-1}${AUXCMD}\n/sg ;
+
+
 #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
       while ( $delblock =~ m/($math)(\s*)/sg ) {
 	$cnt2=0;
@@ -1822,7 +2142,18 @@ sub postprocess {
 	substr($delblock,$begin2,$len2)=$mathblock;
 	pos($delblock) = $begin2 + length($mathblock);
       }
-
+      if ($CITE2CMD) {
+	$delblock=~s/($DELCMDOPEN\s*\\($CITE2CMD)(.*)$DELCMDCLOSE)/
+	  # Replacement code 
+	  {my ($aux,$all);
+	   $aux=$all=$1;
+	   $aux=~s#\n?($DELCMDOPEN|$DELCMDCLOSE)##g;
+	   $all."$aux$AUXCMD\n";}/sge;
+      }
+      # or protect \cite commands with \mbox
+      if ($CITECMD) {
+	$delblock=~s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+      } 
 #     splice in modified delblock
       substr($_,$begin,$len)=$delblock;
       pos = $begin + length($delblock);
@@ -1842,7 +2173,10 @@ sub postprocess {
 	substr($addblock,$begin2,$len2)=$mathblock;
 	pos($addblock) = $begin2 + length($mathblock);
       }
-
+      if ($CITECMD) {
+	my $addblockbefore=$addblock;
+	$addblock=~ s/(\\($CITECMD)${extraspace}(?:\[$brat0\]${extraspace}){0,2}\{$pat2\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
+      }
 #     splice in modified addblock
       substr($_,$begin,$len)=$addblock;
       pos = $begin + length($addblock);
@@ -1853,6 +2187,7 @@ sub postprocess {
     # change begin and end commands  within comments such that they
     # don't disturb the pattern matching (if there are several \begin or \end in one line
     # this substitution is insufficient but that appears unlikely)
+    # This needs to be repeated here to also get rid of DIFdelcmd-protected environments
     s/(%.*)\\begin\{(.*)$/$1\\BEGINDIF\{$2/mg ;
     s/(%.*)\\end\{(.*)$/$1\\ENDDIF\{$2/mg ;
 
@@ -1861,32 +2196,40 @@ sub postprocess {
     # The next line is complicated.  The negative look-ahead insertion makes sure that no \end{$MATHENV} (or other mathematical
     # environments) are between the \begin{$MATHENV} and \end{MATHMODE} commands. This is necessary as the minimal matching 
     # is not globally minimal but only 'locally' (matching is beginning from the left side of the string)
-    1 while s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:.(?!(?:\\end{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin{MATHMODE})))*?)\\end{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
-    1 while s/\\begin{MATHMODE}((?:.(?!\\end{MATHMODE}))*?)\\end{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
-    # convert remaining \begin{MATHMODE} \end{MATHMODE} (and not containing & or \\ )into MATHREPL environments
-    s/\\begin{MATHMODE}((?:(.(?!(?<!\\)\&|\\\\))*)?)\\end{MATHMODE}/\\begin{$MATHREPL}$1\\end{$MATHREPL}/sg;
-    # others into MATHARRREPL
-    s/\\begin{MATHMODE}(.*?)\\end{MATHMODE}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
+    if ( $mathmarkup == FINE ) {
+      1 while s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:.(?!(?:\\end{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin{MATHMODE})))*?)\\end{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
+      1 while s/\\begin{MATHMODE}((?:.(?!\\end{MATHMODE}))*?)\\end{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
+      # convert remaining \begin{MATHMODE} \end{MATHMODE} (and not containing & or \\ )into MATHREPL environments
+      s/\\begin{MATHMODE}((?:(.(?!(?<!\\)\&|\\\\))*)?)\\end{MATHMODE}/\\begin{$MATHREPL}$1\\end{$MATHREPL}/sg;
+      # others into MATHARRREPL
+      s/\\begin{MATHMODE}(.*?)\\end{MATHMODE}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
 
-    # now look for AUXCMD math-mode pairs which have only comments (or empty lines between them), and remove the added commands
-    s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end{\1}$AUXCMD\n/$2/sg; 
-
-
-    # Remove all mark up within picture environments
-    while ( m/\\begin\{($PICTUREENV)\}.*?\\end\{\1\}/sg ) {
-      $cnt=0;
-      $len=length($&);
-      $begin=pos($_) - $len;
-      $float=$&;
-      $float =~ s/\\DIFaddbegin //g;
-      $float =~ s/\\DIFaddend //g;
-      $float =~ s/\\DIFadd\{($pat4)\}/$1/g;
-      $float =~ s/\\DIFdelbegin //g;
-      $float =~ s/\\DIFdelend //g;
-      $float =~ s/\\DIFdel\{($pat4)\}//g;
-      substr($_,$begin,$len)=$float;
-      pos = $begin + length($float);
+      # now look for AUXCMD math-mode pairs which have only comments (or empty lines between them), and remove the added commands
+      s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end{\1}$AUXCMD\n/$2/sg;       
+    } else {
+      #   math modes OFF,WHOLE,COARSE: Convert \MATHBLOCKmath{..} commands back to environments
+      s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{($pat6)\}/\\begin{$1}$2\\end{$1}/sg;
+      # convert ARRAYBLOCK.. commands back to environments
+      s/\\ARRAYBLOCK($ARRENV)\{($pat6)\}/\\begin{$1}$2\\end{$1}/sg;
     }
+    #  Convert all PICTUREblock{..} commands back to the appropriate environments
+    s/\\PICTUREBLOCK($PICTUREENV)\{($pat6)\}/\\begin{$1}$2\\end{$1}/sg;
+#0.5:    # Remove all mark up within picture environments
+#     while ( m/\\begin\{($PICTUREENV)\}.*?\\end\{\1\}/sg ) {
+#       $cnt=0;
+#       $len=length($&);
+#       $begin=pos($_) - $len;
+#       $float=$&;
+#       $float =~ s/\\DIFaddbegin //g;
+#       $float =~ s/\\DIFaddend //g;
+#       $float =~ s/\\DIFadd\{($pat6)\}/$1/g;
+#       $float =~ s/\\DIFdelbegin //g;
+#       $float =~ s/\\DIFdelend //g;
+#       $float =~ s/\\DIFdel\{($pat6)\}//g;
+#       $float =~ s/$DELCMDOPEN.*//g;
+#       substr($_,$begin,$len)=$float;
+#       pos = $begin + length($float);
+#     }
     # Convert DIFadd, DIFdel, DIFFaddbegin , ... into  varieties
     #    within floats (currently recognised float environments: plate,table,figure
     #    plus starred varieties).
@@ -1939,21 +2282,146 @@ sub postprocess {
     s/(%.*)\\BEGINDIF\{(.*)$/$1\\begin\{$2/mg ;
     s/(%.*)\\ENDDIF\{(.*)$/$1\\end\{$2/mg ;
     1 while s/(%.*)DOLLARDIF/$1\$/mg ;
+    # undo renaming of the \cite.. commands in comments 
+    if ( $CITECMD ) {
+      1 while s/(%.*)\\CITEDIF($CITECMD)/$1\\$2/mg ;
+    }
 #   Convert \begin{SQUAREBRACKET} \end{SQUAREBRACKET} into \[ \]
     s/\\end{SQUAREBRACKET}/\\\]/sg;
     s/\\begin{SQUAREBRACKET}/\\\[/sg;
 # 4. Convert \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR} into $$ $$
     s/\\begin\{DOLLARDOLLAR\}(.*?)\\end\{DOLLARDOLLAR\}/\$\$$1\$\$/sg;
 # 5. Convert  \SUPERSCRIPTNB{n} into ^n  and  \SUPERSCRIPT{nn} into ^{nnn}
-    s/\\SUPERSCRIPTNB{($pat0)}/^$1/g ;
-    s/\\SUPERSCRIPT{($pat4)}/^{$1}/g ;
+    1 while s/\\SUPERSCRIPTNB{($pat0)}/^$1/g ;
+    1 while s/\\SUPERSCRIPT{($pat6)}/^{$1}/g ;
     # Convert  \SUBSCRIPNB{n} into _n  and  \SUBCRIPT{nn} into _{nnn}
-    s/\\SUBSCRIPTNB{($pat0)}/_$1/g ;
-    s/\\SUBSCRIPT{($pat4)}/_{$1}/g ;
+    1 while s/\\SUBSCRIPTNB{($pat0)}/_$1/g ;
+    1 while s/\\SUBSCRIPT{($pat6)}/_{$1}/g ;
+#    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
+    s/\\QLEFTBRACE /\\{/sg;
+    s/\\QRIGHTBRACE /\\}/sg;
 
   return;
   }
 }
+
+
+# @auxlines=preprocess_preamble($oldpreamble,$newpreamble);
+  # pre-process preamble by looking for commands used in \maketitle (title, author, date etc commands) 
+  # if found then use a bodydiff to mark up content, and replace the corresponding commands 
+  # in both preambles by marked up version to 'fool' the linediff (such that only body is marked
+  # up.
+  # A special case are e.g. author commands being added (or removed)
+  # 1. If commands are added, then the entire content is marked up as new, but also the lines are marked as new in the linediff
+  # 2. If commands are removed, then the linediff will mark the line as deleted.  The program returns 
+  #    with $auxlines a text to be appended at the end of the preamble, which shows the respective fields as deleted
+sub preprocess_preamble {
+  my ($oldpreambleref,$newpreambleref)=(\$_[0],\$_[1]) ;
+  my @auxlines=();
+  # Remember to use $$oldpreambleref to refer to oldpreamble
+  my ($titlecmd,$titlecmdpat);
+  my (@oldtitlecommands,@newtitlecommands );
+  my  %oldhash  = ();
+  my  %newhash  = ();
+  my ($line,$cmd,$optarg,$arg,$optargnew,$optargold,$optargdiff,$argold,$argnew,$argdiff,$auxline);
+
+  # resuse context2cmdlist to define these commands to  look out for in preamble
+  $titlecmd = "(?:".join("|",@CONTEXT2CMDLIST).")";
+  # as context2cmdlist is stored as regex, e.g. ((?-xism:^title$), we need to remove ^- fo
+  # resue in a more complex regex
+  $titlecmd =~ s/[\$\^]//g; 
+  # make sure to not match on comment lines:
+  $titlecmdpat=qr/^(?:[^%\n]|\\%)*(\\($titlecmd)$extraspace(?:\[($brat0)\])?(?:\{($pat6)\}))/ms;
+  @oldtitlecommands= ( $$oldpreambleref =~ m/$titlecmdpat/g );
+  @newtitlecommands= ( $$newpreambleref =~ m/$titlecmdpat/g );
+
+
+  while ( @oldtitlecommands ) {
+    $line=shift @oldtitlecommands;
+    $cmd=shift @oldtitlecommands;
+    $optarg=shift @oldtitlecommands;
+    $arg=shift @oldtitlecommands;
+  
+    if ( defined($oldhash{$cmd})) {
+      warn "$cmd is used twice in preamble of old file. Reverting to pure line diff mode for preamble.\n";
+      return;
+    }
+    $oldhash{$cmd}=[ $line, $optarg, $arg ];
+  }
+  while ( @newtitlecommands ) {
+    $line=shift @newtitlecommands;
+    $cmd=shift @newtitlecommands;
+    $optarg=shift @newtitlecommands;
+    $arg=shift @newtitlecommands;
+  
+    if ( defined($newhash{$cmd})) {
+      warn "$cmd is used twice in preamble of new file. Reverting to pure line diff mode for preamble.\n";
+      return;
+    }
+    $newhash{$cmd}=[ $line, $optarg, $arg ];
+  }
+  foreach $cmd ( keys %newhash ) {
+    if ( defined($newhash{$cmd}->[1])) {
+       $optargnew=$newhash{$cmd}->[1];
+    } else {
+      $optargnew="";
+    }
+    if ( defined($oldhash{$cmd}->[1])) {
+       $optargold=$oldhash{$cmd}->[1];
+    } else {
+      $optargold="";
+    }
+
+    if ( defined($oldhash{$cmd}) ) {
+      $argold=$oldhash{$cmd}->[2];
+    } else {
+      $argold="";
+    }
+    $argnew=$newhash{$cmd}->[2];
+    $argdiff="{" . join("",bodydiff($argold,$argnew)) ."}";
+    if ( length $optargnew ) {
+      $optargdiff="[".join("",bodydiff($optargold,$optargnew))."]" ;
+      $optargdiff =~ s/\\DIFaddbegin /\\DIFaddbeginFL /g;
+      $optargdiff =~ s/\\DIFaddend /\\DIFaddendFL /g;
+      $optargdiff =~ s/\\DIFadd\{/\\DIFaddFL{/g;
+      $optargdiff =~ s/\\DIFdelbegin /\\DIFdelbeginFL /g;
+      $optargdiff =~ s/\\DIFdelend /\\DIFdelendFL /g;
+      $optargdiff =~ s/\\DIFdel\{/\\DIFdelFL{/g;
+    } else {
+      $optargdiff="";
+    }
+    ### print STDERR "DEBUG s/\\Q$newhash{$cmd}->[0]\\E/\\$cmd$optargdiff$argdiff/s\n";
+    # Note: \Q and \E force literal interpretation of what it between them but allow 
+    #      variable interpolation, such that e.g. \title matches just that and not TAB-itle
+    $$newpreambleref=~s/\Q$newhash{$cmd}->[0]\E/\\$cmd$optargdiff$argdiff/s;
+    # replace this in old preamble if necessary
+    if ( defined($oldhash{$cmd}->[0])) {
+      $$oldpreambleref=~s/\Q$oldhash{$cmd}->[0]\E/\\$cmd$optargdiff$argdiff/s ;
+    }
+    ### print STDERR "DEBUG NEW PRE ".$$newpreambleref."\n";
+  }
+
+  foreach $cmd ( keys %oldhash ) {
+    # if this has already been dealt with above can just skip
+    next if defined($newhash{$cmd}) ;
+    if ( defined($oldhash{$cmd}->[1])) {
+      $optargold=$oldhash{$cmd}->[1];
+      $optargdiff="[".join("",bodydiff($optargold,""))."]" ;
+      $optargdiff =~ s/\\DIFdelbegin /\\DIFdelbeginFL /g;
+      $optargdiff =~ s/\\DIFdelend /\\DIFdelendFL /g;
+      $optargdiff =~ s/\\DIFdel\{/\\DIFdelFL{/g;
+    } else {
+      $optargdiff="";
+    }
+    $argdiff="{" . join("",bodydiff($argold,"")) ."}";
+    $auxline = "\\$cmd$optargdiff$argdiff";
+    $auxline =~s/$/$AUXCMD/sg;
+    push @auxlines,$auxline;
+  }
+  # add auxcmd comment to highlight added lines
+  return(@auxlines);
+}
+
 
 
 # @diffs=linediff(\@seq1, \@seq2)
@@ -2091,7 +2559,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 --subtype=markstyle
 -s markstyle           Add code to preamble for selected style for bracketing
                        commands (e.g. to mark changes in  margin)
-                       Available styles: SAFE MARGINAL DVIPSCOL
+                       Available styles: SAFE MARGINAL DVIPSCOL COLOR
                        [ Default: SAFE ]
 
 --floattype=markstyle
@@ -2207,9 +2675,47 @@ format as new.tex but has all changes relative to old.tex marked up or commented
    NB For all --show commands, no old.tex or new.tex file needs to be given, and no 
       differencing takes place.
 
+Other configuration options:
+
 --allow-spaces         Allow spaces between bracketed or braced arguments to commands
                        [Default requires arguments to directly follow each other without 
                                 intervening spaces]
+
+--math-markup=level    Determine granularity of markup in displayed math environments:
+                      Possible values for level are (both numerical and text labels are acceptable):
+                      off or 0: suppress markup for math environments.  Deleted equations will not 
+                               appear in diff file. This mode can be used if all the other modes 
+                               cause invalid latex code.
+                      whole or 1: Differencing on the level of whole equations. Even trivial changes
+                               to equations cause the whole equation to be marked changed.  This 
+                               mode can be used if processing in coarse or fine mode results in 
+                               invalid latex code.
+                      coarse or 2: Detect changes within equations marked up with a coarse
+                               granularity; changes in equation type (e.g.displaymath to equation) 
+                               appear as a change to the complete equation. This mode is recommended
+                               for situations where the content and order of some equations are still
+                               being changed. [Default]
+                      fine or 3: Detect small change in equations and mark up and fine granularity.
+                               This mode is most suitable, if only minor changes to equations are
+                               expected, e.g. correction of typos. 
+
+--disable-citation-markup  Suppress citation markup in styles using ulem (UNDERLINE, 
+                       FONTSTRIKE, CULINECHBAR)
+--enable-citation-markup   Protect citation commands in changed sections with \\mbox command
+                       [i.e. use default behaviour for ulem package for other packages]
+
+Miscelleneous options
+
+--label=label
+-L label               Sets the labels used to describe the old and new files.  The first use
+                       of this option sets the label describing the old file and the second
+                       use of the option sets the label for the new file.
+                       [Default: use the filename and modification dates for the label]
+
+--no-label             Suppress inclusion of old and new file names as comment in output file
+
+--visble-label         Include old and new filenames (or labels set with --label option) as 
+                       visible output
 
 --flatten              Replace \\input and \\include commands within body by the content
                        of the files in their argument.  If \\includeonly is present in the
@@ -2218,6 +2724,8 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        included sections are not expanded.  The included files are assumed to 
                        be located in the same directories as the old and new master files,
                        respectively, making it possible to organise files into old and new directories.
+                       --flatten is applied recursively, so inputted files can contain further
+                       \\input statements.
 
 --help
 -h                     Show this help text.
@@ -2230,6 +2738,8 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        Default is to work silently.
 
 --version              Show version number.
+
+For further information, consult   http://latexdiff.berlios.de
 EOF
 }
 
@@ -2392,7 +2902,7 @@ B<-s markstyle>
 Add code to preamble for selected style for bracketing
 commands (e.g. to mark changes in  margin). This option defines
 C<\DIFaddbegin>, C<\DIFaddend>, C<\DIFdelbegin> and C<\DIFdelend> commands.
-Available styles: C<SAFE MARGINAL DVIPSCOL>
+Available styles: C<SAFE MARGINAL COLOR DVIPSCOL>
 
 [ Default: C<SAFE> ]
 
@@ -2526,7 +3036,7 @@ or table.  These commands behave like text commands, except when
 they occur in a deleted section, when they are disabled, but their
 argument is shown as deleted text.
 
-=item B<--replace-context1cmd=replace-file> 
+=item B<--replace-context2cmd=replace-file> 
 
 =item B<--append-context2cmd=append-file> or
 =item B<--append-context2cmd="cmd1,cmd2,...">
@@ -2581,17 +3091,69 @@ Combine all --show commands.
 NB For all --show commands, no C<old.tex> or C<new.tex> file needs to be specified, and no 
 differencing takes place.
 
+=back
+
+=head2 Other configuration options:
+
+=over 4
+
+=item B<--allow-spaces>
+
+Allow spaces between bracketed or braced arguments to commands.  Note
+that this option might have undesirable side effects (unrelated scope
+might get lumpeded with preceding commands) so should only be used if the
+default produces erroneous results.  (Default requires arguments to
+directly follow each other without intervening spaces).
+
+=item B<--math-markup=level>   
+
+Determine granularity of markup in displayed math environments:               
+Possible values for level are (both numerical and text labels are acceptable):
+
+C<off> or C<0>: suppress markup for math environments.  Deleted equations will not 
+appear in diff file. This mode can be used if all the other modes 
+cause invalid latex code.
+
+C<whole> or C<1>: Differencing on the level of whole equations. Even trivial changes
+to equations cause the whole equation to be marked changed.  This 
+mode can be used if processing in coarse or fine mode results in 
+invalid latex code.
+
+C<coarse> or C<2>: Detect changes within equations marked up with a coarse
+granularity; changes in equation type (e.g.displaymath to equation) 
+appear as a change to the complete equation. This mode is recommended
+for situations where the content and order of some equations are still
+being changed. [Default]
+
+C<fine> or C<3>: Detect small change in equations and mark up at fine granularity.
+This mode is most suitable, if only minor changes to equations are
+expected, e.g. correction of typos. 
+
+=item B<--disable-citation-markup>
+
+Suppress citation markup in styles using ulem (UNDERLINE, 
+FONTSTRIKE, CULINECHBAR)
+
+=item B<--enable-citation-markup>
+
+Protect citation commands in changed sections with \\mbox command [i.e. use default behaviour for ulem package for other packages]
 
 =back
 
 =head2 Miscellaneous
 
 =over 4
-
 =item B<--verbose> or B<-V>
 
 Output various status information to stderr during processing.
 Default is to work silently.
+
+=item B<--driver=type>
+
+Choose driver for changebar package (only relevant for styles using
+   changebar: CCHANGEBAR CFONTCHBAR CULINECHBAR CHANGEBAR). Possible
+drivers are listed in changebar manual, e.g. pdftex,dvips,dvitops
+  [Default: dvips]
 
 =item B<--ignore-warnings>
 
@@ -2602,13 +3164,23 @@ syntax unknown to C<latexdiff> but the resulting difference argument
 is often fully functional anyway, particularly if the non-standard
 latex only occurs in parts of the text which have not changed.
 
-=item B<--allow-spaces>
+=item B<--label=label> or
+B<-L label>
 
-Allow spaces between bracketed or braced arguments to commands.  Note
-that this option might have undesirable side effects (unrelated scope
-might get lumpeded with preceding commands) so should only be used if the
-default produces erroneous results.  (Default requires arguments to
-directly follow each other without intervening spaces).
+Sets the labels used to describe the old and new files.  The first use
+of this option sets the label describing the old file and the second
+use of the option sets the label for the new file, i.e. set both
+labels like this C<-L labelold -L labelnew>.
+[Default: use the filename and modification dates for the label]
+
+=item B<--no-label>
+
+Suppress inclusion of old and new file names as comment in output file
+
+=item B<--visble-label>
+
+Include old and new filenames (or labels set with --label option) as 
+visible output.
 
 =item B<--flatten>
 
@@ -2619,11 +3191,12 @@ no recursion is done, i.e. C<\input> and C<\include> commands within
 included sections are not expanded.  The included files are assumed to 
  be located in the same directories as the old and new master files,
 respectively, making it possible to organise files into old and new directories. 
+--flatten is applied recursively, so inputted files can contain further
+C<\input> statements.
 
-Use of this option is not recommended
-primarily the processing time for the large documents is prohibitive, and
-the resulting difference document no longer reflects the structure of the 
-input documents. 
+Use of this option might result in prohibitive processing times for
+larger documents, and the resulting difference document
+no longer reflects the structure of the input documents.
 
 =item B<--help> or
 B<-h>
@@ -2635,6 +3208,8 @@ Show help text
 Show version number
 
 =back
+
+
 
 =head2 Predefined styles 
 
@@ -2703,6 +3278,13 @@ No additional markup (Recommended choice)
 Mark beginning and end of changed blocks with symbols in the margin nearby (using
 the standard C<\marginpar> command - note that this sometimes moves somewhat
 from the intended position.
+
+=item C<COLOR>
+
+An alternative way of marking added passages in blue, and deleted ones in red.
+(It is recommeneded to use instead the main types to effect colored markup,
+although in some cases coloring with dvipscol can be more complete, for example 
+with citation commands).
 
 =item C<DVIPSCOL>
 
@@ -2797,26 +3379,49 @@ C<|subsubsection|paragraph|subparagraph)>  ]
 
 =back
 
-=head1 BUGS
+=head1 COMMON PROBLEMS
 
-UTF-8 support requires a relatively new version of perl (5.8.0 is sufficient 
-but 5.6.2 up would work OK, too).
+=over 10
+
+=item Citations result in overfull boxes
+
+There is an incompatibility between the C<ulem> package, which C<latexdiff> uses for underlining and striking out in the UNDERLINE style,
+the default style. In order to be able to mark up citations properly, they are placed with an C<\mbox> command in post-processing. As mboxes
+cannot be broken across lines, this procedure frequently results in overfull boxes, possibly obscuring the content as it extends beyond the right margin. If this is a problem, you have two possibilities:
+
+1. Use C<COLOR> or C<DVIPSCOL> subtype markup (option C<-s COLOR>): If this markup is chosen, then changed citations are no longer marked up
+with the wavy line (additions) or struck out (deletions), but are still highlighted in the appropriate color.
+
+2. Choose option C<--disable-citation-markup> which turns off the marking up of citations: deleted citations are no longer shown, and
+added ctations are shown without markup. (This was the default behaviour of latexdiff at versions 0.6 and older)
+
+=item Changes in complicated mathematical equations result in latex processing errors
+
+Try options C<--math-markup=whole>.   If even that fails, you can turn off mark up for equations with C<--math-markup=off>.
+
+=back
+
+=head1 BUGS
 
 Option allow-spaces not implemented entirely consistently. It breaks
 the rules that number and type of white space does not matter, as
 different numbers of inter-argument spaces are treated as significant.
 
-Please send bug reports
-to I<tilmann@esc.cam.ac.uk>.  Include the serial number of I<latexdiff>
+Please submit bug reports on the latexdiff project page I<http://latexdiff.berlios.de>, 
+send them to user discussion list C<latexdiff-users@lists.berlios,de> (prior subscription 
+to list required, also on project webpage)
+or send them to I<tilmann@gfz-potsdam.de>.  Include the serial number of I<latexdiff>
 (from comments at the top of the source or use B<--version>).  If you come across latex
 files that are error-free and conform to the specifications set out
 above, and whose differencing still does not result in error-free
 latex, please send me those files, ideally edited to only contain the
-offending passage as long as that still reproduces the problem. 
+offending passage as long as that still reproduces the problem. If your 
+file relies on non-standard class files, you must include those.  I will not
+look at examples where I have trouble to latex the original files.
 
 =head1 SEE ALSO
 
-L<latexrevise>
+L<latexrevise>, L<latexdiff-vc>
 
 =head1 PORTABILITY
 
@@ -2832,13 +3437,15 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Copyright (C) 2004-2007 Frederik Tilmann
+Version 1.0.2
+Copyright (C) 2004-2012 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License Version 2
+it under the terms of the GNU General Public License Version 3
 
-Contributors of fixes and additions: V. Kuhlmann, J. Paisley, N. Becker, T. Doerges, K. Huebner
-Thanks to everyone who send in bug reports.
+Contributors of fixes and additions: V. Kuhlmann, J. Paisley, N. Becker, T. Doerges, K. Huebner, 
+T. Connors, Sebastian Gouezel and many others.
+Thanks to the many people who send in bug reports, feature suggestions, and other feedback.
 
 =cut
 
@@ -3093,14 +3700,16 @@ sqrt
 %%END TEXT COMMANDS 
 
 %%BEGIN CONTEXT1 COMMANDS
-% Regex matching commands with a text argument (leave out the \), which will fail out of context, but who's arguemtn should be printed as plain text
+% Regex matching commands with a text argument (leave out the \), which will fail out of context, but whose argument should be printed as plain text
 caption
 %%END CONTEXT1 COMMANDS 
 
 %%BEGIN CONTEXT2 COMMANDS
-% Regex matching commands with a text argument (leave out the \), which will fail out of context, but who's arguemtn should be printed as plain text
+% Regex matching commands with a text argument (leave out the \), which will fail out of context, but whose argument should be printed as plain text
 title
 author
+date
+institute
 %%END CONTEXT2 COMMANDS 
 
 
@@ -3197,6 +3806,14 @@ author
 \providecommand{\DIFdelbegin}{\protect\nogroupcolor{red}}
 \providecommand{\DIFdelend}{\protect\nogroupcolor{black}}
 %DIF END DVIPSCOL PREAMBLE
+
+%DIF COLOR PREAMBLE
+\RequirePackage{color}
+\providecommand{\DIFaddbegin}{\protect\color{blue}}
+\providecommand{\DIFaddend}{\protect\color{black}}
+\providecommand{\DIFdelbegin}{\protect\color{red}}
+\providecommand{\DIFdelend}{\protect\color{black}}
+%DIF END COLOR PREAMBLE
 
 
 %% FLOAT TYPES 
