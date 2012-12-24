@@ -3,11 +3,14 @@
 # texdoctk - GUI for TeX documentation access
 # Copyright (C) 2000-2004  Thomas Ruedas
 # Updated in 2010 by Manuel Pegourie-Gonnard
-# This program is provided under the GNU Public License; see the file
-# README.texdoctk for details about requirements, installation, configuration,
+# Trivial non-code updates in 2012 by Karl Berry
+# (This program is looking for a maintainer, email tex-live@tug.org.)
+# 
+# This program is provided under the GNU Public License; see the texdoctk
+# README for details about requirements, installation, configuration,
 # and the full disclaimer.
 ###############################################################################
-my ($version, $date) = ("0.6.1", "2004-11-05");
+my ($version, $date) = ("0.6.1", "2012-12-23");
 use strict;
 use Tk;
 use Getopt::Long;

@@ -1,0 +1,7 @@
+2012-12-24  Karl Berry  <karl@tug.org>
+
+	* Makefile.am,
+	* configure.ac: new files.
+	* README: rename from README.texdoctk.
+	* texdoctk.pl: change version date, looking for a maintainer.
+

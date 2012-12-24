@@ -1,3 +1,7 @@
+2012-12-24  Karl Berry  <karl@tug.org>
+
+	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): add texdoctk.
+
 2012-12-16  Karl Berry  <karl@tug.org>
 
 	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): no more tetex.

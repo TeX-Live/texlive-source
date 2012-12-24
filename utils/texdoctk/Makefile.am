@@ -1,0 +1,30 @@
+## Makefile.am for the TeX Live subdirectory utils/texdoctk/
+## (In a separate directory because we hope that some day a new
+##  volunteer will appear to take over this program.)
+##
+## Copyright (C) 2012 Karl Berry <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+ACLOCAL_AMFLAGS = -I ../../m4
+
+EXTRA_DIST =
+dist-hook: # in case of an SVN repository
+	rm -rf `find $(distdir) -name .svn`
+
+perl_scripts = texdoctk
+scriptsdir = texmf/scripts/texdoctk
+nodist_bin_SCRIPTS =
+#
+include $(srcdir)/../../texk/am/script_links.am
+#
+texmfdir = $(datarootdir)/$(scriptsdir)
+nodist_texmf_SCRIPTS = texdoctk.pl
+
+install-data-hook: install-perl-links
+uninstall-hook: uninstall-links
+
+man1_MANS = texdoctk.1 
+
+CLEANFILES = $(nodist_bin_SCRIPTS)
+
+## No tests since it's unlikely builders will have Perl Tk installed.

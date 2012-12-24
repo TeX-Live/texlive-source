@@ -84,6 +84,7 @@ pmx
 ps2eps
 psutils
 t1utils
+texdoctk
 tpic2pdftex
 vlna
 xindy
